@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { WebSocketService, EngineerModeService, JailService } from '../../../services';
+import { WebSocketService, JailService } from '../../../services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 
@@ -15,57 +15,39 @@ export class AvailablePluginsComponent implements OnInit {
     @Input() config: any;
     @Input() parent: any;
 
-    protected queryCall = 'jail.list_resource';
-    protected queryCallOption = ["PLUGIN", true];
+    protected queryCall = 'plugin.available';
+    protected queryCallOption = {'plugin_repository': 'https://github.com/freenas/iocage-ix-plugins.git'};
 
     public plugins: any;
     public selectedPlugin: any;
     public isSelectedOffical = true;
-    public engineerMode: boolean;
-    public isFreenas = window.localStorage['is_freenas'] === 'true';
-    public availableBranches = [];
-    public selectedBranch: any;
+    public availableRepo = [];
+    public selectedRepo: any;
     public installedPlugins: any = {};
 
-    constructor(private ws: WebSocketService, protected engineerModeService: EngineerModeService, protected jailService: JailService,
+    constructor(private ws: WebSocketService, protected jailService: JailService,
                 private router: Router) {
-        this.engineerMode = localStorage.getItem('engineerMode') === 'true' ? true : false;
-        this.engineerModeService.engineerMode.subscribe((res) => {
-            this.engineerMode = res === 'true' ? true : false;
-        });
-        this.jailService.getBranches().subscribe(
+        this.ws.call('plugin.official_repositories').subscribe(
             (res) => {
-                if (res.result) {
-                    for (let i = 0; i < res.result.length; i++) {
-                        const branchIndexObj = _.find(this.availableBranches, { name: res.result[i].repo });
-                        if (branchIndexObj === undefined) {
-                            this.availableBranches.push({ name: res.result[i].repo, branches: [{ label: res.result[i].name, value: res.result[i].name }] })
-                        } else {
-                            branchIndexObj.branches.push({ label: res.result[i].name, value: res.result[i].name });
-                        }
-                    }
+                for (const repo in res) {
+                    this.availableRepo.push(res[repo]);
                 }
-                if (res.error) {
-                    this.parent.dialogService.errorReport('Get Branches Failed', res.error, res.exception);
-                }
-            }
-        )
-        this.jailService.getVersion().subscribe(
-            (res) => {
-                this.selectedBranch = res;
+                this.selectedRepo = this.availableRepo[0].git_repository;
+            },
+            (err) => {
+                new EntityUtils().handleWSError(this.parent, err, this.parent.dialogService);
             }
         )
     }
 
     getInstances() {
-        this.jailService.getInstalledPlugins().subscribe(
+        this.ws.call('plugin.query').subscribe(
             (res) => {
                 for (const item of res) {
-                    const name = _.split(item[1],'_')[0];
-                    if (this.installedPlugins[name] == undefined) {
-                        this.installedPlugins[name] = 0;
+                    if (this.installedPlugins[item.plugin] == undefined) {
+                        this.installedPlugins[item.plugin] = 0;
                     }
-                    this.installedPlugins[name]++;
+                    this.installedPlugins[item.plugin]++;
                 }
             }
         )
@@ -76,8 +58,11 @@ export class AvailablePluginsComponent implements OnInit {
         this.getPlugin();
     }
 
-    getPlugin() {
-        this.ws.job(this.queryCall, this.queryCallOption).subscribe(
+    getPlugin(cache = true) {
+        this.parent.cardHeaderReady = false;
+        this.queryCallOption['cache'] = cache;
+
+        this.ws.job(this.queryCall, [this.queryCallOption]).subscribe(
             (res) => {
                 if (res.result) {
                     this.plugins = res.result;
@@ -99,16 +84,15 @@ export class AvailablePluginsComponent implements OnInit {
             });
     }
 
-    switchBranch(event) {
+    switchRepo(event) {
         this.parent.loader.open();
         this.parent.loaderOpen = true;
-        this.isSelectedOffical = event.source.selected.group.label === 'official';
-        this.queryCallOption = ["PLUGIN", true, true, this.selectedBranch];
+        this.queryCallOption.plugin_repository = this.selectedRepo;
         this.getPlugin();
     }
 
     install(plugin) {
-        this.router.navigate(new Array('').concat(["plugins", "add", plugin]));
+        this.router.navigate(new Array('').concat(["plugins", "add", plugin, {'plugin_repository': this.selectedRepo}]));
     }
 
 }

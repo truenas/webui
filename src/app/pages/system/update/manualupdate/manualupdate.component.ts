@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -16,7 +16,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 @Component({
   selector: 'app-manualupdate',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers : [ MessageService ]
+  providers : [ MessageService, SystemGeneralService ]
 })
 export class ManualUpdateComponent {
   public formGroup: FormGroup;
@@ -36,6 +36,11 @@ export class ManualUpdateComponent {
   // ];
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
+    {
+      type: 'paragraph',
+      name: 'version',
+      paraText: helptext.version.paraText,
+    },
     {
       type: 'select',
       name: 'filelocation',
@@ -98,7 +103,13 @@ export class ManualUpdateComponent {
     public translate: TranslateService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
-  ) {}
+    private systemService: SystemGeneralService,
+  ) {
+    this.systemService.getSysInfo().subscribe(
+      (res) => {
+        _.find(this.fieldConfig, {name: 'version'}).paraText += res.version;
+      })
+  }
 
   preInit(entityForm: any) {
     if (window.localStorage.getItem('is_freenas') === 'false') {

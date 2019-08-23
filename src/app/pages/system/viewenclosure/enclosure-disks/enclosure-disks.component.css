@@ -159,6 +159,7 @@ nav.view-nav-bar{
   opacity:0; /* animations will change this */
   text-align:center;
   position:absolute;
+  padding:3px;
 }
 
 .view-card .dom-overlay .content .legend{

@@ -68,12 +68,21 @@ export class EntityUtils {
       }
     }
 
-    if (res.extra && entity.fieldConfig) {
+    if (res.extra && (entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
       for (let i = 0; i < res.extra.length; i++) {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];
-        const fc = _.find(entity.fieldConfig, {'name' : field});
+        let fc = _.find(entity.fieldConfig, {'name' : field}) || entity.getErrorField(field) || undefined;
+        let stepIndex;
+        if (entity.wizardConfig) {
+            _.find(entity.wizardConfig, function(step, index) {
+              stepIndex = index;
+              fc = _.find(step.fieldConfig, {'name' : field});
+              return fc;
+            });
+        }
+
         if (fc && !fc['isHidden']) {
           const element = document.getElementById(field);
           if (element) {
@@ -89,6 +98,9 @@ export class EntityUtils {
           }
           fc['hasErrors'] = true;
           fc['errors'] = error;
+          if (entity.wizardConfig && entity.entityWizard) {
+            entity.entityWizard.stepper.selectedIndex = stepIndex;
+          }
         } else {
           entity.error = error;
         }

@@ -90,9 +90,7 @@
     <!-- </div> -->
   </mat-card-title>
   <mat-card-content id="changelog-scrollbox">
-    <markdown>
-      {{changeLog}}
-    </markdown>
+    <div [innerHTML]="changeLog"></div>
   </mat-card-content>
 </mat-card>
 

@@ -13,7 +13,8 @@ import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
-import { map } from 'rxjs/operators';
+import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
+import { filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
@@ -58,6 +59,11 @@ export class VMWizardComponent {
         blurEvent: this.blurEvent,
         parent: this
       },
+      { type: 'input',
+        name : 'description',
+        placeholder : helptext.description_placeholder,
+        tooltip : helptext.description_tooltip,
+      },
       {
         name: 'time',
         type: 'select',
@@ -88,6 +94,13 @@ export class VMWizardComponent {
       isHidden: false
       },
       {
+        name : 'wait',
+        placeholder : add_edit_helptext.wait_placeholder,
+        tooltip : add_edit_helptext.wait_tooltip,
+        type: 'checkbox',
+        value: false
+      },
+      {
         type: 'select',
         name : 'vnc_bind',
         placeholder : helptext.vnc_bind_placeholder,
@@ -108,6 +121,11 @@ export class VMWizardComponent {
           min: 1,
           validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: helptext.vcpus_tooltip,
+        },
+        {
+          type: 'paragraph',
+          name: 'memory_limitation',
+          paraText: helptext.memory_limitation + ' 0 MB'
         },
         {
           type: 'input',
@@ -289,6 +307,20 @@ export class VMWizardComponent {
         this.wizardConfig[2].fieldConfig.find(config => config.name === "datastore").options = options;
       });
 
+    /* Patch memory paraText with machine's available memory */
+    this.ws
+      .call("vm.get_available_memory", [])
+      .pipe(filter(availableMemory => typeof availableMemory === "number" && availableMemory > 0))
+      .subscribe(
+        availableMemory => {
+          this.wizardConfig
+            .find(step => step.label === helptext.vcpus_label)
+            .fieldConfig.find(config => config.type === "paragraph").paraText =
+              helptext.memory_limitation + `: ${(window as any).filesize(availableMemory, { exponent: 2 })}`;
+        },
+        error => new EntityUtils().handleWSError(this, error, this.dialogService)
+      );
+
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
         _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).options.push(
@@ -302,16 +334,27 @@ export class VMWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(bootloader === "UEFI_CSM"){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
+
       } else {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
+
       }
 
 
     });
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('enable_vnc')).valueChanges.subscribe((res) => {
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'}).isHidden = !res;
       _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
-      res ? ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable() : ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).disable();
+      if (res) {
+        ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable()
+      } else {
+        ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).disable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).disable();
+      }
     });
 
 
@@ -430,10 +473,13 @@ export class VMWizardComponent {
         _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = false;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = false;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = true;
+        entityWizard.setDisabled('datastore', false, '2');
+
       } else {
         _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = true;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = true;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = false;
+        entityWizard.setDisabled('datastore', true, '2');
       }
 
     });
@@ -544,11 +590,15 @@ blurEvent3(parent){
 }
 
 async customSubmit(value) {
-    value.datastore = value.datastore.replace('/mnt/','')
-    const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
+    let hdd;
     const vm_payload = {}
     const zvol_payload = {}
 
+    if(value.datastore) {
+      value.datastore = value.datastore.replace('/mnt/','')
+      hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
+    }
+    
     // zvol_payload only applies if the user is creating one
     zvol_payload['create_zvol'] = true
     zvol_payload["zvol_name"] = hdd
@@ -556,6 +606,7 @@ async customSubmit(value) {
 
     vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;
+    vm_payload["description"] = value.description;
     vm_payload["time"]= value.time;
     vm_payload["vcpus"] = value.vcpus;
     vm_payload["memory"] = value.memory;
@@ -574,11 +625,11 @@ async customSubmit(value) {
         {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
       ]
     }
-
+    
     if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
       vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
-            "wait": true,
+            "wait": value.wait,
             "vnc_port": String(this.getRndInteger(5553,6553)),
             "vnc_resolution": "1024x768",
             "vnc_bind": value.vnc_bind,

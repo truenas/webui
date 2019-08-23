@@ -1,40 +1,44 @@
-import { WebSocketService, DialogService, JobService, EngineerModeService} from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
-import * as _ from 'lodash';
-import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import * as cronParser from 'cron-parser';
+import { Moment } from 'moment';
+import { DialogService, JobService, TaskService, WebSocketService } from '../../../../services';
+import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
+import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
 
 @Component({
   selector: 'app-cloudsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [JobService],
+  providers: [JobService, TaskService],
 })
-export class CloudsyncListComponent {
+export class CloudsyncListComponent implements InputTableConf {
 
   public title = "Cloud Sync Tasks";
-  protected queryCall = 'cloudsync.query';
-  protected route_add: string[] = ['tasks', 'cloudsync', 'add'];
-  protected route_add_tooltip = "Add Cloud Sync Task";
-  protected route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
-  protected wsDelete = "cloudsync.delete";
+  public queryCall = 'cloudsync.query';
+  public route_add: string[] = ['tasks', 'cloudsync', 'add'];
+  public route_add_tooltip = "Add Cloud Sync Task";
+  public route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
+  public wsDelete = "cloudsync.delete";
   protected entityList: any;
-  protected asyncView = true;
+  public asyncView = true;
 
   public columns: Array < any > = [
     { name: T('Description'), prop: 'description' },
-    { name: T('Direction'), prop: 'direction'},
-    { name: T('Path'), prop: 'path'},
+    { name: T('Credential'), prop: 'credential', hidden: true },
+    { name: T('Direction'), prop: 'direction', hidden: true},
+    { name: T('Transfer Mode'), prop: 'transfer_mode', hidden: true },
+    { name: T('Path'), prop: 'path', hidden: true},
+    { name: T('Schedule'), prop: 'cron', hidden: true, widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' }},
+    { name: T('Next Run'), prop: 'next_run', hidden: true},
+    { name: T('Minute'), prop: 'minute', hidden: true },
+    { name: T('Hour'), prop: 'hour', hidden: true },
+    { name: T('Day of Month'), prop: 'dom', hidden: true },
+    { name: T('Month'), prop: 'month', hidden: true },
+    { name: T('Day of Week'), prop: 'dow', hidden: true },
     { name: T('Status'), prop: 'status', state: 'state'},
-    { name: T('Minute'), prop: 'minute' },
-    { name: T('Hour'), prop: 'hour' },
-    { name: T('Day of Month'), prop: 'daymonth' },
-    { name: T('Month'), prop: 'month' },
-    { name: T('Day of Week'), prop: 'dayweek' },
-    // { name: T('Auxiliary arguments'), prop: 'args' },
-    { name: T('Credential'), prop: 'credential' },
     { name: T('Enabled'), prop: 'enabled' },
   ];
   public config: any = {
@@ -50,35 +54,59 @@ export class CloudsyncListComponent {
               protected ws: WebSocketService,
               protected translateService: TranslateService,
               protected dialog: DialogService,
-              protected job: JobService,
-              protected engineerModeService: EngineerModeService) {
+              protected job: JobService) {
               }
-
-  preInit(entityList) {
-    if (localStorage.getItem('engineerMode') === 'true') {
-      this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
-    }
-
-    this.engineerModeService.engineerMode.subscribe((res) => {
-      if (res === 'true') {
-        this.columns.splice(9, 0, { name: T('Auxiliary arguments'), prop: 'args' });
-      } else {
-        if (this.columns.length === 12) {
-          this.columns.splice(9, 1);
-        }
-      }
-    });
-
-  }
 
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
 
+  resourceTransformIncomingRestData(data) {
+    return data.map(task =>  {
+      task.minute = task.schedule['minute'];
+      task.hour = task.schedule['hour'];
+      task.dom = task.schedule['dom'];
+      task.month = task.schedule['month'];
+      task.dow = task.schedule['dow'];
+      task.credential = task.credentials['name'];
+      
+      task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
+      
+      /* Weird type assertions are due to a type definition error in the cron-parser library */
+      task.next_run = ((cronParser.parseExpression(task.cron, { iterator: true }).next() as unknown) as {
+        value: { _date: Moment };
+      }).value._date.fromNow();
+
+      if (task.job == null) {
+        task.status = T("Not run since last boot");
+      } else {
+        task.state = task.job.state;
+        task.status = task.job.state;
+        if (task.job.error) {
+          task.status += ":" + task.job.error;
+        }
+        this.job.getJobStatus(task.job.id).subscribe((t) => {
+          t.state = t.job.state;
+          t.status = t.state;
+          if (t.error) {
+            t.status += ":" + t.error;
+          }
+          if (t.progress.description && t.state !== 'SUCCESS') {
+            t.status += ':' + t.progress.description;
+          }
+        });
+      }
+
+      return task;
+    });
+  }
+
   getActions(parentrow) {
     return [{
-      id: "start",
+      id: parentrow.description,
+      actionName: 'run_now',
       label: T("Run Now"),
+      icon: 'play_arrow',
       onClick: (row) => {
         this.dialog.confirm(T("Run Now"), T("Run this cloud sync now?"), true).subscribe((res) => {
           if (res) {
@@ -107,8 +135,10 @@ export class CloudsyncListComponent {
         });
       },
     }, {
-      id: "stop",
+      id: parentrow.description,
+      actionName: 'stop',
       label: T("Stop"),
+      icon: 'stop',
       onClick: (row) => {
         this.dialog.confirm(T("Stop"), T("Stop this cloud sync?"), true).subscribe((res) => {
           if (res) {
@@ -125,15 +155,19 @@ export class CloudsyncListComponent {
         });
       },
     }, {
-      id: "edit",
+      actionName: "edit",
+      id: parentrow.description,
+      icon: 'edit',
       label: T("Edit"),
       onClick: (row) => {
         this.route_edit.push(row.id);
         this.router.navigate(this.route_edit);
       },
     }, {
-      id: "delete",
+      id: parentrow.description,
+      actionName: "delete",
       label: T("Delete"),
+      icon: 'delete',
       onClick: (row) => {
         this.entityList.doDelete(row);
       },
@@ -147,37 +181,6 @@ export class CloudsyncListComponent {
       return false;
     }
     return true;
-  }
-
-  dataHandler(entityList: any) {
-    for (let i = 0; i < entityList.rows.length; i++) {
-      entityList.rows[i].minute = entityList.rows[i].schedule['minute'];
-      entityList.rows[i].hour = entityList.rows[i].schedule['hour'];
-      entityList.rows[i].daymonth = entityList.rows[i].schedule['dom'];
-      entityList.rows[i].month = entityList.rows[i].schedule['month'];
-      entityList.rows[i].dayweek = entityList.rows[i].schedule['dow'];
-      entityList.rows[i].credential = entityList.rows[i].credentials['name'];
-      if (entityList.rows[i].job == null) {
-        entityList.rows[i].status = T("Not run since last boot");
-      } else {
-        entityList.rows[i].state = entityList.rows[i].job.state;
-        entityList.rows[i].status = entityList.rows[i].job.state;
-        if (entityList.rows[i].job.error) {
-          entityList.rows[i].status += ":" + entityList.rows[i].job.error;
-        }
-        this.job.getJobStatus(entityList.rows[i].job.id).subscribe((task) => {
-          entityList.rows[i].state = entityList.rows[i].job.state;
-          entityList.rows[i].status = task.state;
-          if (task.error) {
-            entityList.rows[i].status += ":" + task.error;
-          }
-          if (task.progress.description && task.state != 'SUCCESS') {
-            entityList.rows[i].status += ':' + task.progress.description;
-          }
-        });
-      }
-    }
-
   }
 
   stateButton(row) {

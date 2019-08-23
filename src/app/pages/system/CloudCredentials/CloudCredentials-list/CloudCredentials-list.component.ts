@@ -18,7 +18,7 @@ export class CloudCredentialsListComponent {
   protected wsDelete = 'cloudsync.credentials.delete';
 
   public columns: Array<any> = [
-    {name : 'Account Name', prop : 'name'},
+    {name : 'Account Name', prop : 'name', always_display: true },
     {name : 'Provider', prop : 'provider'},
   ];
     public config: any = {

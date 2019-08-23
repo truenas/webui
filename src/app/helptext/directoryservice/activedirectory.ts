@@ -1,5 +1,6 @@
 import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
+import globalHelptext from '../../helptext/global-helptext';
 
 export default {
 activedirectory_custactions_basic_id: 'basic_mode',
@@ -27,16 +28,7 @@ activedirectory_bindname_validation: [ Validators.required ],
 activedirectory_bindpw_name: 'bindpw',
 activedirectory_bindpw_placeholder: T('Domain Account Password'),
 activedirectory_bindpw_tooltip: T('Enter the administrator account password.'),
-
-activedirectory_monitor_frequency_name: 'monitor_frequency',
-activedirectory_monitor_frequency_placeholder: T('Connectivity Check'),
-activedirectory_monitor_frequency_tooltip: T('Enter how often in seconds for the system to verify\
- Active Directory services are functioning.'),
-
-activedirectory_recover_retry_name: 'recover_retry',
-activedirectory_recover_retry_placeholder: T('Recovery Attempts'),
-activedirectory_recover_retry_tooltip: T('Enter a number of times to attempt reconnecting to the\
- Active directory server. Tries forever when set to <i>0</i>.'),
+activedirectory_bindpw_validation: [ Validators.required ],
 
 activedirectory_ssl_name: 'ssl',
 activedirectory_ssl_placeholder: T('Encryption Mode'),
@@ -100,6 +92,16 @@ activedirectory_kerberos_principal_tooltip : T('Select the keytab created in\
  <a href="--docurl--/directoryservices.html#kerberos-keytabs"\
  target="_blank">Kerberos Keytabs</a>.'),
 
+computer_account_OU_name: T('createcomputer'),
+computer_account_OU_placeholder: T('Computer Account OU'),
+computer_account_OU_tooltip: T('The OU in which new computer accounts are created. \
+ The OU string is read from top to bottom without RDNs. Slashes ("/") are used as \
+ delimiters, like <samp>Computers/Servers/NAS</samp>. The backslash ("\\") is \
+ used to escape characters but not as a separator. Backslashes are interpreted at \
+ multiple levels and might require doubling or even quadrupling to take effect. \
+ When this field is blank, new computer accounts are created in the Active Directory \
+ default OU.'),
+
 activedirectory_timeout_name: 'timeout',
 activedirectory_timeout_placeholder : T('AD Timeout'),
 activedirectory_timeout_tooltip : T('Number of seconds before timeout. If the AD service\
@@ -138,7 +140,7 @@ activedirectory_netbiosname_a_tooltip : T('Netbios Name of this NAS. This name m
 activedirectory_netbiosname_a_validation : [Validators.required, Validators.maxLength(15)],
 
 activedirectory_netbiosname_b_name: 'netbiosname_b',
-activedirectory_netbiosname_b_placeholder : T('Netbios Name (Storage Controller 2)'),
+activedirectory_netbiosname_b_placeholder : T(`Netbios Name (${globalHelptext.Ctrlr} 2)`),
 activedirectory_netbiosname_b_tooltip : T('Netbios Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
 activedirectory_netbiosname_b_validation : [Validators.required, Validators.maxLength(15)],
@@ -162,6 +164,7 @@ activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can
 'gcname',
 'kerberos_realm',
 'kerberos_principal',
+'createcomputer',
 'timeout',
 'dns_timeout',
 'idmap_backend',

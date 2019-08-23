@@ -1,5 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges, OnDestroy } from '@angular/core';
-import { NgModel }   from '@angular/forms';
+import { ApplicationRef, Component, Injector, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -9,7 +8,7 @@ import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
 
@@ -32,7 +31,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
   private _globalPreview:boolean = false;
   public baseThemes: Theme[];
   public snapshot:FormSnapshot;
-  customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in 
+  customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in
   protected isEntity: boolean = true; // was true
 
   // EXAMPLE THEME
@@ -41,7 +40,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     description:'',
     label:'',
     labelSwatch:'',
-    hasDarkLogo:true,
+    hasDarkLogo:false,
     accentColors:['violet','blue','magenta', 'cyan', 'red','green', 'orange', 'yellow'],
     favorite:false,
     primary:"",
@@ -111,35 +110,27 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           placeholder: 'Menu Label',
           required:true,
           tooltip: 'Enter a short name for the theme. The Menu Label is \
-                    shown when the theme is registered in the Favorites \
-                    menu.',
+                    shown when the theme is listed in Preferences.'
         },
+        // Not using this now, but theme preview breaks if it isn't here...
         {
           type: 'select',
           name: 'labelSwatch',
           width:'100%',
           placeholder: 'Menu Swatch',
-          required:true,
+          required:false,
+          isHidden: true,
           options:this.colorOptions,
           tooltip: "Choose the color to display next to the Menu Label \
                     in the Favorites menu.",
           class:'inline'
+
         },
         { type: 'input',
           name : 'description',
           width:'100%',
           placeholder : 'Description',
           tooltip: 'Enter a short description of the theme.',
-        },
-        {
-          type: 'checkbox',
-          name: 'favorite',
-          width:'100%',
-          placeholder: 'Add to Favorites',
-          tooltip: 'Set to add this theme to the favorites list. \
-                    Favorites are always available on the top navigation \
-                    bar.',
-          class:'inline'
         },
         {
           type: 'checkbox',
@@ -422,7 +413,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           case "FormSubmitted":
             let valid:boolean = this.validateForm(evt.data);
              if(valid){
-              evt.data.labelSwatch = evt.data.labelSwatch.slice(6, -1);
+              evt.data.labelSwatch = evt.data.primary.slice(6, -1);
               evt.data.accentColors = ['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'];
               this.core.emit({name:"AddCustomThemePreference",data:evt.data});
               this.globalPreview = false;
@@ -439,7 +430,9 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           case "UpdatePreview":
             this.snapshot = {theme:evt.data, baseTheme:this.baseTheme}
             if(this.globalPreview){
-              this.updateGlobal(this.snapshot);
+              setTimeout(() => {
+                this.updateGlobal(this.snapshot);
+              })
             }
             this.updatePreview(evt.data);
           break;
@@ -474,7 +467,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
 
       let ct = Object.assign({},theme);
       let palette = Object.keys(ct);
-      palette.splice(0,6);
+      palette.splice(0,4);
 
       palette.forEach((color)=>{
         values[color] = ct[color];
@@ -486,7 +479,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     updatePreview(theme:Theme){
       let palette = Object.keys(theme);
       palette.splice(0,5);
-
+      
       palette.forEach((color)=>{
       let swatch = theme[color];
       (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);

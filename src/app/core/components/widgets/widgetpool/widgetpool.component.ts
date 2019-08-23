@@ -1,19 +1,57 @@
-import { Component, AfterViewInit, Input, ViewChild, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef,TemplateRef, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
-import { NgForm } from '@angular/forms';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
-import { StorageService } from '../../../../services/storage.service'
 
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import filesize from 'filesize';
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { ChartData } from 'app/core/components/viewchart/viewchart.component';
+import { environment } from 'app/../environments/environment';
 
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
+
+import {
+  tween,
+  styler,
+  listen,
+  pointer,
+  value,
+  decay,
+  spring,
+  physics,
+  easing,
+  everyFrame,
+  keyframes,
+  timeline,
+  //velocity,
+  multicast,
+  action,
+  transform,
+  //transformMap,
+  //clamp
+  } from 'popmotion';
+
+interface NetIfInfo {
+  name:string;
+  primary:string;
+  aliases?: string;
+}
+
+interface NetTraffic {
+  "KB/s in": string;
+  "KB/s out": string;
+  name: string;
+}
+
+interface Slide {
+  name: string;
+  index?: string;
+  dataSource?: any;
+  template: TemplateRef<any>;
+}
 
 interface PoolDiagnosis {
   isHealthy: boolean;
@@ -57,159 +95,130 @@ export interface VolumeData {
 @Component({
   selector: 'widget-pool',
   templateUrl:'./widgetpool.component.html',
-  styleUrls: ['./widgetpool.component.css'],
+  styleUrls: ['./widgetpool.component.css']
 })
-export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
-  public loader:boolean = false;
-  private _dataRcvd:boolean = false;
-  get dataRcvd(){
-    return this._dataRcvd;
+  @Input() poolState;
+  @Input() volumeData?:VolumeData;
+  @ViewChild('carousel', {static:true}) carousel:ElementRef;
+  @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
+
+  @ViewChild('overview', {static:false}) overview:TemplateRef<any>;
+  @ViewChild('data', {static:false}) data:TemplateRef<any>;
+  @ViewChild('disks', {static:false}) disks:TemplateRef<any>;
+  @ViewChild('disk_details', {static:false}) disk_details:TemplateRef<any>;
+  @ViewChild('empty', {static:false}) empty:TemplateRef<any>;
+  public templates:any;
+  public tpl = this.overview;
+
+  // NAVIGATION
+  public currentSlide:string = "0";
+
+  get currentSlideIndex(){
+    return this.path.length > 0 ? parseInt(this.currentSlide) : this.title;
   }
-  set dataRcvd(val){
-    this._dataRcvd = val;
-    if(this.loader){
-      this.loader = false;
-    }
+  
+  get currentSlideName(){
+    return this.path[parseInt(this.currentSlide)].name;
   }
+
+  get previousSlide(){
+    return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
+  }
+
+  path: Slide[] = [];
+
+  public title: string = this.path.length > 0 && this.poolState && this.currentSlide !== "0" ? this.poolState.name : "Pool";
   public voldataavail = false;
-
-  public title:string = T("ZFS Pool");
-  @Input() volumeData:VolumeData;
-  public volumeName:string = "";
-  public volumeId:number;
-  public volumeHealth: PoolDiagnosis = {
+  public displayValue: any;
+  public diskSize: any;
+  public diskSizeLabel: string;
+  public poolHealth: PoolDiagnosis = {
     isHealthy: true,
     warnings: [],
     errors: [],
     selector: "fn-theme-green",
     level: "safe"
   };
-  public diskSets:any[][] = [[]];
-  public disks: string[] = [];
-  public diskDetails:Disk[] = [];
-  public selectedDisk:number = -1;
-  public gridCols:number = 8;
-  public currentDiskSet:number = 0;
-  private simulateDiskArray:number;
-  public displayValue: any;
-  public displayValueTotal: string;
-  public diskSize: any;
-  public diskSizeLabel: string;
-  public diskSizeTotal: any;
-  public diskSizeTotalLabel: string;
-  @Input() configurable:boolean;
 
-  constructor(public router: Router, public translate: TranslateService, public storage: StorageService){
-    super(translate);
-    setTimeout(() => {
-        if(!this.dataRcvd){
-          this.loader = true;
-        }
-    }, 5000);
+  public currentMultipathDetails: any;
+  public currentDiskDetails:Disk;
+  get currentDiskDetailsKeys(){
+    return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) : [];
   }
+  
 
-  ngOnChanges(changes){
-    if(changes.volumeData){
-      this.parseVolumeData();
-    }
+  constructor(public router: Router, public translate: TranslateService, private cdr: ChangeDetectorRef){
+    super(translate);
+    this.configurable = false;
   }
 
   ngOnDestroy(){
-    //this.core.emit({name:"StatsRemoveListener", data:{name:"Pool",obj:this}});
     this.core.unregister({observerClass:this});
   }
 
+  ngOnChanges(changes: SimpleChanges){
+    if(changes.poolState){
+      //console.warn(changes.poolState);
+    } else if(changes.volumeData){
+      this.getAvailableSpace();
+    }
+  }
+
+  ngOnInit(){
+
+    this.core.emit({name:"NetInfoRequest"});
+    
+    //Get Network info and determine Primary interface
+    this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
+    });
+
+    this.core.register({observerClass:this, eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
+    });
+
+  }
+
+  ngAfterContentInit(){
+    
+  }
+
   ngAfterViewInit(){
-    this.core.register({observerClass:this,eventName:"PoolDisks" + this.volumeData.id}).subscribe((evt:CoreEvent) => {
-      //if(evt.data.callArgs[0] == this.volumeData.id){
-        // Simulate massive array
-        //this.simulateDiskArray = 600;
-        if(this.simulateDiskArray){
-          for(let i = 0; i < this.simulateDiskArray; i++){
-            this.disks.push("ada" + i);
-          }
-        } else {
-          this.disks = evt.data.data;
-        }
+    this.templates = {
+      overview: this.overview,
+      data: this.data,
+      disks: this.disks,
+      empty: this.empty,
+      'disk details': this.disk_details
+    }
 
-          let total = Math.ceil(this.disks.length/32);
-          let set = 0;
-          let last = 32*total-1
-          for(let i = 0; i < (32*total); i++ ){
-            let modulo = i % 32;
-            this.diskSets[set].push(this.disks[i]);
-            if(modulo == 31){
-              set++
+    this.path = [
+      { name: "overview",template: this.overview},
+      { name: "empty", template: this.empty},
+      { name: "empty", template: this.empty},
+      { name: "empty", template: this.empty}
+    ];
 
-              if(i < last){this.diskSets.push([]);}
-            }
+    this.cdr.detectChanges();
 
-          }
-
-          if(this.disks.length > 0){
-            this.storage.diskNameSort(this.disks);
-          } 
-      //}
+    this.core.register({observerClass:this,eventName:"MultipathData"}).subscribe((evt:CoreEvent) => {
+      this.currentMultipathDetails = evt.data[0];
+      console.log(this.currentMultipathDetails);
+      const activeDisk = evt.data[0].children.filter(prop => prop.status == "ACTIVE");
+      this.core.emit({name:"DisksRequest", data:[[["name", "=", activeDisk[0].name]]]});
     });
 
-
-    this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
-      let data = [];
-      let temp = 0;
-      if (evt.data && evt.data.data && evt.data.data.data) {
-        data = evt.data.data.data;
-        for(let i = data.length-1; i >= 0; i--){
-          if(data[i][0]){
-            temp = data[i][0];
-            break;
-          }
-        }
-        this.diskDetails[evt.data.callArgs[1]].temp = temp;
-      }
+    this.core.register({observerClass:this,eventName:"DisksData"}).subscribe((evt:CoreEvent) => {
+      delete evt.data[0].enclosure;
+      delete evt.data[0].name;
+      delete evt.data[0].devname;
+      delete evt.data[0].multipath_name;
+      delete evt.data[0].multipath_member;
+      this.currentDiskDetails = evt.data[0];
     });
-
-    this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      this.setDisksData(evt);
-      this.dataRcvd = true;
-    });
-
-
-    this.core.emit({name:"DisksInfoRequest"});
   }
 
-  setDisksData(evt:CoreEvent){
-    for(const i in evt.data){
-      const disk:Disk = {
-        name:evt.data[i].name,
-        smart_enabled:evt.data[i].togglesmart,
-        size:Number(evt.data[i].size),
-        description: evt.data[i].description,
-        model: evt.data[i].model,
-        enclosure_slot: evt.data[i].enclosure_slot,
-        expiretime: evt.data[i].expiretime,
-        hddstandby: evt.data[i].hddstandby,
-        serial: evt.data[i].serial,
-        smartoptions: evt.data[i].smartoptions,
-        temp:0,
-        displaysize: (<any>window).filesize(Number(evt.data[i].size), {standard: "iec"})
-      }
-    
-      this.diskDetails.push(disk);
-    }
-
-    if (this.diskDetails.length > 0 && this.disks.length > 0) {
-      this.setSelectedDisk(this.disks[0]);
-    }
-    
-    /*console.log(evt.data)
-    if(evt.data.length > 0){
-      this.setSelectedDisk(Number(0));
-    }
-    //console.log(this.selectedDisk)*/
-  }
-
-  parseVolumeData(){
+  getAvailableSpace(){
     let usedValue;
     if (isNaN(this.volumeData.used)) {
       usedValue = this.volumeData.used;
@@ -251,14 +260,6 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     } else {
       this.diskSizeLabel = this.displayValue.slice(-3);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
-    }    
-    this.displayValueTotal = (<any>window).filesize(this.volumeData.avail + this.volumeData.used, {standard: "iec"});
-    if (this.displayValueTotal.slice(-2) === ' B') {
-      this.diskSizeTotalLabel = this.displayValueTotal.slice(-1);
-      this.diskSizeTotal = new Intl.NumberFormat().format(parseFloat(this.displayValueTotal.slice(0, -2)))
-    } else {
-      this.diskSizeTotalLabel = this.displayValueTotal.slice(-3);
-      this.diskSizeTotal = new Intl.NumberFormat().format(parseFloat(this.displayValueTotal.slice(0, -4)))
     }
     // Adds a zero to numbers with one (and only one) digit after the decimal
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
@@ -268,83 +269,132 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.checkVolumeHealth();
   };
 
-  setPreferences(form:NgForm){
-    let filtered: string[] = [];
-    for(let i in form.value){
-      if(form.value[i]){
-        filtered.push(i);
-      }
-    }
-  }
+  getDiskDetails(key:string, value:string, isMultipath?:boolean){
+    if(isMultipath && key == 'name'){
+     
+      let v = "multipath/" + this.checkMultipathLabel(value);
+      this.core.emit({name:"MultipathRequest", data:[[[key, "=", v]]]});
+    
+    } else if(!isMultipath) {
 
-  setSelectedDisk(disk?: any){
-    if(disk){
-      for(let i = 0; i < this.diskDetails.length; i++){
-        if(this.diskDetails[i].name === disk){
-          this.selectedDisk = i;
-          this.core.emit({name:"StatsDiskTempRequest", data:[this.diskDetails[i].name, i] });
-        } 
-      }
+      delete this.currentMultipathDetails
+      this.core.emit({name:"DisksRequest", data:[[[key, "=", value]]]});
+
     } else {
-      this.selectedDisk = -1; 
+      console.warn("If this is a multipath disk, you must query by name!")
     }
   }
 
-  setCurrentDiskSet(num:number){
-    this.currentDiskSet = num;
+  checkMultipathLabel(name){
+    const truth = this.checkMultipath(name);
+    let diskName = name;
+    if(truth){
+
+      let str = name.replace("multipath/","");
+      let spl = str.split("p");
+      diskName = spl[0];
+    }
+    return diskName;
+  }
+
+  checkMultipath(name:string){
+    const truth = name.startsWith("multipath/");
+    return truth;
+  }
+
+  updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){
+    if(name !=="overview" && !verified){ return; }
+    const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
+    if(direction == 'forward'){
+      // Setup next path segment
+      let slide: Slide = {
+        name: name,
+        index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null,
+        dataSource: typeof dataSource !== 'undefined' ? dataSource : null,
+        template: this.templates[name]
+      }
+  
+      this.path[slideIndex] = slide;
+    } else if(direction == 'back'){
+      // empty the path segment
+      this.path[parseInt(this.currentSlide)] = { name: "empty", template: this.empty}
+    }
+
+    this.updateSlidePosition(slideIndex);
+  }
+
+  updateSlidePosition(value){
+    if(value.toString() == this.currentSlide){ return; }
+    let el = styler(this.carouselParent.nativeElement.querySelector('.carousel'));
+    const startX = (parseInt(this.currentSlide) * 600) * -1;
+    const endX = (value * 600) * -1;
+    tween({
+      from:{ x: startX },
+      to:{ x: endX },
+      duration: 250
+    }).start(el.set);
+    
+    this.currentSlide = value.toString();
+    this.title = this.currentSlide == "0" ? "Pool" : this.poolState.name;
+    //console.log(this.path[this.currentSlideIndex].name);
+    
   }
 
   checkVolumeHealth(){
-    switch(this.volumeData.status){
+    switch(this.poolState.status){
       case "HEALTHY":
         break;
       case "LOCKED":
-        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'locked');
+        this.updateVolumeHealth("Pool status is " + this.poolState.status, false, 'locked');
         break;
       case "UNKNOWN":
       case "OFFLINE":
-        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'unknown');
+        this.updateVolumeHealth("Pool status is " + this.poolState.status, false, 'unknown');
         break;
       case "DEGRADED":
-        this.updateVolumeHealth("Pool status is " + this.volumeData.status, false, 'degraded');
+        this.updateVolumeHealth("Pool status is " + this.poolState.status, false, 'degraded');
         break
       case "FAULTED":
       case "REMOVED":
-        this.updateVolumeHealth("Pool status is " + this.volumeData.status, true, 'faulted');
+        this.updateVolumeHealth("Pool status is " + this.poolState.status, true, 'faulted');
         break;
     }
   }
 
   updateVolumeHealth(symptom: string, isCritical?: boolean, condition?: string){
     if(isCritical){
-      this.volumeHealth.errors.push(symptom);
+      this.poolHealth.errors.push(symptom);
     } else {
-      this.volumeHealth.warnings.push(symptom);
+      this.poolHealth.warnings.push(symptom);
     }
-    if(this.volumeHealth.isHealthy){
-      this.volumeHealth.isHealthy = false;
+    if(this.poolHealth.isHealthy){
+      this.poolHealth.isHealthy = false;
     }
 
-    if(this.volumeHealth.errors.length > 0){
-      this.volumeHealth.level = "error"
-    } else if(this.volumeHealth.warnings.length > 0){
-      this.volumeHealth.level = "warn"
+    if(this.poolHealth.errors.length > 0){
+      this.poolHealth.level = "error"
+    } else if(this.poolHealth.warnings.length > 0){
+      this.poolHealth.level = "warn"
     } else {
-      this.volumeHealth.level = "safe"
+      this.poolHealth.level = "safe"
     }
 
     if (condition === 'locked') {
-      this.volumeHealth.selector = "fn-theme-yellow"
+      this.poolHealth.selector = "fn-theme-yellow"
     } else if (condition === 'unknown') {
-      this.volumeHealth.selector = "fn-theme-blue"
+      this.poolHealth.selector = "fn-theme-blue"
     } else if (condition === 'degraded') {
-      this.volumeHealth.selector = "fn-theme-orange"
+      this.poolHealth.selector = "fn-theme-orange"
     } else if (condition === 'faulted') {
-      this.volumeHealth.selector = "fn-theme-red"
+      this.poolHealth.selector = "fn-theme-red"
     } else {
-      this.volumeHealth.selector = "fn-theme-green"
+      this.poolHealth.selector = "fn-theme-green"
     }
   }
-  
+
+  nextPath(obj:any, index:number|string){
+    if(typeof index == 'string'){ index = parseInt(index) }
+    return obj[index];
+  }
 
 }

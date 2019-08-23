@@ -41,7 +41,7 @@ export class StorageListComponent {
   }
 
   public columns: Array < any > = [
-    { name: T('Source'), prop: 'source' },
+    { name: T('Source'), prop: 'source', always_display: true },
     { name: T('Destination'), prop: 'destination' },
   ];
   public config: any = {

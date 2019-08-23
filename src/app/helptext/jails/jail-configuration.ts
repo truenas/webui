@@ -6,6 +6,8 @@ export default {
 
 wizard_step1_label: T('Name Jail and Choose FreeBSD Release'),
 
+plugin_name_placeholder: T('Plugin Name'),
+
 uuid_placeholder: T('Name'),
 uuid_tooltip: T('Required. Can only contain alphanumeric\
  characters (Aa-Zz 0-9), dashes (-), or underscores (_).'),
@@ -371,10 +373,10 @@ exec_fib_tooltip: T('Enter the routing table (<a\
  href="https://www.freebsd.org/cgi/man.cgi?query=setfib"\
  target="_blank">FIB</a>) to use when running commands inside the jail.'),
 
-ip4_saddrsel_placeholder: T('ip4_saddrsel'),
-ip4_saddrsel_tooltip: T('Only available when the jail is not configured\
- to use VNET. Disables IPv4 source address selection for the jail in\
- favor of the primary IPv4 address of the jail.'),
+ip4_saddrsel_placeholder: T('ip4.saddrsel'),
+ip4_saddrsel_tooltip: T('Disable IPv4 source address selection for \
+ the jail in favor of the primary IPv4 address of the jail. \
+ Only available when the jail is not configured to use VNET.'),
 
 ip4_placeholder: T('ip4'),
 ip4_tooltip: T('Control the availability of IPv4 addresses.<br>\
@@ -383,9 +385,9 @@ ip4_tooltip: T('Control the availability of IPv4 addresses.<br>\
  Stop the jail from using IPv4 entirely.'),
 
 ip6_saddrsel_placeholder: T('ip6.saddrsel'),
-ip6_saddrsel_tooltip: T('Only available when the jail is not configured\
- to use VNET. Disables IPv6 source address selection for the jail in\
- favor of the primary IPv6 address of the jail.'),
+ip6_saddrsel_tooltip: T('Disable IPv6 source address selection for \
+ the jail in favor of the primary IPv6 address of the jail. \
+ Only available when the jail is not configured to use VNET.'),
 
 ip6_placeholder: T('ip6'),
 ip6_tooltip: T('Control the availability of IPv6 addresses.<br>\

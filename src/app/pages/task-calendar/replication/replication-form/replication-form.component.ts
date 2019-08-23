@@ -4,13 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
-import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService } from 'app/services';
+import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService } from 'app/services';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-form [conf]='this'></entity-form>`,
-    providers: [TaskService, KeychainCredentialService, ReplicationService]
+    providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService]
 })
 export class ReplicationFormComponent {
 
@@ -22,6 +22,18 @@ export class ReplicationFormComponent {
     protected isEntity = true;
     protected entityForm: any;
     protected queryRes: any;
+    public speedLimitField: any;
+
+    protected retentionPolicyChoice = [{
+        label: 'Same as Source',
+        value: 'SOURCE',
+    }, {
+        label: 'Custom',
+        value: 'CUSTOM',
+    }, {
+        label: 'None',
+        value: 'NONE',
+    }];
 
     protected fieldConfig: FieldConfig[] = [
         {
@@ -164,6 +176,7 @@ export class ReplicationFormComponent {
             initial: '',
             explorerType: 'dataset',
             multiple: true,
+            tristate: false,
             name: 'source_datasets_PUSH',
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_tooltip,
@@ -493,26 +506,8 @@ export class ReplicationFormComponent {
             name: 'retention_policy',
             placeholder: helptext.retention_policy_placeholder,
             tooltip: helptext.retention_policy_tooltip,
-            options: [
-                {
-                    label: 'Same as Source',
-                    value: 'SOURCE',
-                }, {
-                    label: 'Custom',
-                    value: 'CUSTOM',
-                }, {
-                    label: 'None',
-                    value: 'NONE',
-                }
-            ],
+            options: this.retentionPolicyChoice,
             value: 'NONE',
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'input',
             inputType: 'number',
@@ -583,24 +578,35 @@ export class ReplicationFormComponent {
             value: 'DISABLED',
             relation: [{
                 action: 'SHOW',
+                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'SSH',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
                 }]
             }],
         }, {
             type: 'input',
-            inputType: 'number',
             name: 'speed_limit',
             placeholder: helptext.speed_limit_placeholder,
             tooltip: helptext.speed_limit_tooltip,
+            hasErrors: false,
             relation: [{
                 action: 'SHOW',
+                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'SSH',
+                }, {
+                    name: 'transport',
+                    value: 'LEGACY',
                 }]
             }],
+            blurStatus : true,
+            blurEvent : this.blurEvent,
+            parent : this,
         },
         {
             type: 'checkbox',
@@ -694,6 +700,13 @@ export class ReplicationFormComponent {
                 }
             ],
             value: 'DEFAULT',
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
         }, {
             type: 'checkbox',
             name: 'enabled',
@@ -706,6 +719,7 @@ export class ReplicationFormComponent {
     constructor(
         private ws: WebSocketService,
         protected taskService: TaskService,
+        protected storageService: StorageService,
         private aroute: ActivatedRoute,
         private keychainCredentialService: KeychainCredentialService,
         private replicationService: ReplicationService) {
@@ -754,6 +768,27 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        if (this.entityForm.formGroup.controls['speed_limit'].value) {
+            let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
+            this.storageService.humanReadable = presetSpeed;
+        }
+        
+        const retentionPolicyField = _.find(this.fieldConfig, {name: 'retention_policy'});
+        entityForm.formGroup.controls['transport'].valueChanges.subscribe(
+            (res) => {
+                if (res !== 'LEGACY' && retentionPolicyField.options !== this.retentionPolicyChoice) {
+                    retentionPolicyField.options = this.retentionPolicyChoice;
+                } else if (res === 'LEGACY') {
+                    const options = [...this.retentionPolicyChoice];
+                    options.splice(1, 1);
+                    retentionPolicyField.options = options;
+                    if (entityForm.formGroup.controls['retention_policy'].value === 'CUSTOM') {
+                        entityForm.formGroup.controls['retention_policy'].setValue('NONE');
+                    }
+                }
+            }
+        )
+
         entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
             (res) => {
                 if (entityForm.formGroup.controls['transport'].value !== 'LEGACY') {
@@ -784,6 +819,17 @@ export class ReplicationFormComponent {
                 }
             }
         )
+
+        entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
+            const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
+            const filteredValue = this.storageService.convertHumanStringToNum(value);
+            speedLimitField['hasErrors'] = false;
+            speedLimitField['errors'] = '';
+                if (isNaN(filteredValue)) {
+                    speedLimitField['hasErrors'] = true;
+                    speedLimitField['errors'] = helptext.speed_limit_errors;
+                };
+        });
     }
 
     resourceTransformIncomingRestData(wsResponse) {
@@ -843,6 +889,7 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
+        data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
@@ -939,5 +986,11 @@ export class ReplicationFormComponent {
         return new Promise((resolve, reject) => {
             resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
         });
+    }
+
+    blurEvent(parent){
+        if (parent.entityForm) {
+            parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable)
+        }
     }
 }

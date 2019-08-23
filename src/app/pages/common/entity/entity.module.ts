@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../appMaterial.module';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { MatSortHeader, MatSort } from '@angular/material';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgUploaderModule } from 'ngx-uploader';
@@ -50,6 +51,7 @@ import { EntityTableActionsComponent } from './entity-table/entity-table-actions
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
+import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
@@ -75,16 +77,19 @@ import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-butt
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
+import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 
 @NgModule({
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule,
+    CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
     OverlayModule, A11yModule, TreeTableModule, FileSizeModule
   ],
   declarations: [
+    TaskScheduleListComponent,
     EntityTableComponent,
+    EntityTableRowDetailsComponent,
     EntityRowDetailsComponent,
     EntityTreeTableComponent,
     EntityCardComponent,
@@ -159,7 +164,7 @@ import { EntityRowDetailsComponent } from './entity-table/entity-row-details.com
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarMenuComponent,
-    ToolbarMultimenuComponent
+    ToolbarMultimenuComponent,
   ],
   entryComponents: [
     FormButtonComponent,
@@ -187,6 +192,8 @@ import { EntityRowDetailsComponent } from './entity-table/entity-row-details.com
     FormParagraphComponent,
     EntityToolbarComponent,
     EntitySnackbarComponent,
+    EntityTableRowDetailsComponent,
+    TaskScheduleListComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

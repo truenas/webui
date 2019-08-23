@@ -3,3 +3,8 @@
   margin-left:auto;
   margin-right:auto;
 }
+#ipmi_controller-spinner {
+  position: absolute;
+  top: 10px;
+  left: 25px;
+}

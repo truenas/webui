@@ -78,25 +78,15 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'input',
+      inputType : 'password',
       name : helptext.activedirectory_bindpw_name,
       placeholder : helptext.activedirectory_bindpw_placeholder,
       tooltip : helptext.activedirectory_bindpw_tooltip,
-      inputType : 'password',
+      validation : helptext.activedirectory_bindpw_validation,
+      required: true,
       togglePw: true,
       disabled: false,
       isHidden:false
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_monitor_frequency_name,
-      placeholder : helptext.activedirectory_monitor_frequency_placeholder,
-      tooltip : helptext.activedirectory_monitor_frequency_tooltip,
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_recover_retry_name,
-      placeholder : helptext.activedirectory_recover_retry_placeholder,
-      tooltip : helptext.activedirectory_recover_retry_tooltip,
     },
     {
       type : 'select',
@@ -165,6 +155,12 @@ export class ActiveDirectoryComponent {
       options : [
         {label : '---', value : ""},
       ]
+    },
+    {
+      type : 'input',
+      name : helptext.computer_account_OU_name,
+      placeholder : helptext.computer_account_OU_placeholder,
+      tooltip : helptext.computer_account_OU_tooltip,
     },
     {
       type : 'input',
@@ -276,11 +272,11 @@ export class ActiveDirectoryComponent {
       });
     });
 
-    this.rest.get("directoryservice/kerberosprincipal", {}).subscribe((res) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.kerberos_principal.options.push(
-            {label : item.principal_name, value : item.id});
+            {label : item, value : item});
       });
     });
 
@@ -367,8 +363,13 @@ export class ActiveDirectoryComponent {
       data.netbiosalias = [];
     }
     if(data.kerberos_principal){
-      data.bindname = ""
       data.bindpw = ""
+    }
+    data['site'] = data['site'] === null ? '' : data['site'];
+    for (let i in data) {
+      if(data[i]===null) {
+        delete data[i];
+      }
     }
   }
 

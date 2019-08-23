@@ -25,74 +25,74 @@ xpaths = {
 }
 
 
-def test_01_navigate_service(wb_driver):
+def test_01_navigate_service(browser):
     # click Service Menu
-    wb_driver.find_element_by_xpath(xpaths['navService']).click()
+    browser.find_element_by_xpath(xpaths['navService']).click()
     # allowing the button to load
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Services" in page_data, page_data
 
 
-def test_02_navigate_to_configure_nfs(wb_driver):
+def test_02_navigate_to_configure_nfs(browser):
     # click on configure button
-    wb_driver.find_element_by_xpath(xpaths['configButton']).click()
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    browser.find_element_by_xpath(xpaths['configButton']).click()
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Services" in page_data, page_data
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "NFS" in page_data, page_data
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_03_check_enable_nfsv4(wb_driver):
+def test_03_check_enable_nfsv4(browser):
     # unchecked on Login as Root with Password
-    wb_driver.find_element_by_xpath(xpaths['nsfv4Checkbox']).click()
+    browser.find_element_by_xpath(xpaths['nsfv4Checkbox']).click()
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-    root_checkbox = wb_driver.find_element_by_xpath(xpaths['verifyNsfv4Check'])
+    take_screenshot(browser, script_name, test_name)
+    root_checkbox = browser.find_element_by_xpath(xpaths['verifyNsfv4Check'])
     class_value = root_checkbox.get_attribute('class')
     assert 'mat-checkbox-checked' in class_value, class_value
 
 
-def test_04_save_nfs_configuration(wb_driver):
+def test_04_save_nfs_configuration(browser):
     # click on save button
-    wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-    assert is_element_present(wb_driver, xpaths['breadcrumbBar2']) is False
+    take_screenshot(browser, script_name, test_name)
+    assert is_element_present(browser, xpaths['breadcrumbBar2']) is False
 
 
-def test_05_enable_nfs_service(wb_driver):
-    wb_driver.find_element_by_xpath(xpaths['nsfCheckbox']).click()
+def test_05_enable_nfs_service(browser):
+    browser.find_element_by_xpath(xpaths['nsfCheckbox']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-    root_checkbox = wb_driver.find_element_by_xpath(xpaths['verifyNsfCheck'])
+    take_screenshot(browser, script_name, test_name)
+    root_checkbox = browser.find_element_by_xpath(xpaths['verifyNsfCheck'])
     class_value = root_checkbox.get_attribute('class')
     # assert 'mat-checkbox-checked' in class_value, class_value
 
 
-def test_06_start_nfs_service(wb_driver):
+def test_06_start_nfs_service(browser):
     time.sleep(2)
-    status_change(wb_driver, "nfs")
+    status_change(browser, "nfs")
     time.sleep(2)
-    status_check(wb_driver, "nfs")
+    status_check(browser, "nfs")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
 def test_07_checking_if_sysctl_vfs_nfsd_server_max_nfsvers_is_4():
@@ -102,58 +102,58 @@ def test_07_checking_if_sysctl_vfs_nfsd_server_max_nfsvers_is_4():
     assert results['output'].strip() == '4', results['output']
 
 
-def test_08_stop_nfs_service(wb_driver):
+def test_08_stop_nfs_service(browser):
     time.sleep(2)
-    status_change(wb_driver, "nfs")
+    status_change(browser, "nfs")
     time.sleep(2)
-    status_check(wb_driver, "nfs")
+    status_check(browser, "nfs")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_09_disable_nfs_service(wb_driver):
-    wb_driver.find_element_by_xpath(xpaths['nsfCheckbox']).click()
+def test_09_disable_nfs_service(browser):
+    browser.find_element_by_xpath(xpaths['nsfCheckbox']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-    root_checkbox = wb_driver.find_element_by_xpath(xpaths['verifyNsfCheck'])
+    take_screenshot(browser, script_name, test_name)
+    root_checkbox = browser.find_element_by_xpath(xpaths['verifyNsfCheck'])
     class_value = root_checkbox.get_attribute('class')
     assert 'mat-checkbox-checked' not in class_value, class_value
 
 
-def test_10_navigate_back_to_configure_nfs(wb_driver):
+def test_10_navigate_back_to_configure_nfs(browser):
     # click on configure button
-    wb_driver.find_element_by_xpath(xpaths['configButton']).click()
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    browser.find_element_by_xpath(xpaths['configButton']).click()
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Services" in page_data, page_data
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar2'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "NFS" in page_data, page_data
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_11_uncheck_enable_nfsv4(wb_driver):
+def test_11_uncheck_enable_nfsv4(browser):
     # unchecked on Login as Root with Password
-    wb_driver.find_element_by_xpath(xpaths['nsfv4Checkbox']).click()
+    browser.find_element_by_xpath(xpaths['nsfv4Checkbox']).click()
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-    root_checkbox = wb_driver.find_element_by_xpath(xpaths['verifyNsfv4Check'])
+    take_screenshot(browser, script_name, test_name)
+    root_checkbox = browser.find_element_by_xpath(xpaths['verifyNsfv4Check'])
     class_value = root_checkbox.get_attribute('class')
     assert 'mat-checkbox-checked' not in class_value, class_value
 
 
-def test_12_save_nfs_configuration(wb_driver):
+def test_12_save_nfs_configuration(browser):
     # click on save button
-    wb_driver.find_element_by_xpath(xpaths['saveButton']).click()
+    browser.find_element_by_xpath(xpaths['saveButton']).click()
     time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
-    assert is_element_present(wb_driver, xpaths['breadcrumbBar2']) is False
+    take_screenshot(browser, script_name, test_name)
+    assert is_element_present(browser, xpaths['breadcrumbBar2']) is False

@@ -86,6 +86,15 @@ export class ApiService {
         responseEvent: "DisksData"
       }
     },
+    MultipathRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "multipath.query",
+        responseEvent: "MultipathData"
+      }
+    },
     EnclosureDataRequest:{
       apiCall:{
         protocol:"websocket",
@@ -142,6 +151,15 @@ export class ApiService {
         namespace:"interface.websocket_interface",
         args: [],
         responseEvent: "PrimaryNicInfo"
+      }
+    },
+    NicInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"interface.query",
+        args: [],
+        responseEvent: "NicInfo"
       }
     },
     NetInfoRequest:{
@@ -375,6 +393,15 @@ export class ApiService {
         namespace:"stats.get_sources",
         args:[],
         responseEvent:"StatsSources"
+      }
+    },
+    ReportingGraphsRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2",
+        namespace:"reporting.graphs",
+        args:[],
+        responseEvent:"ReportingGraphs"
       }
     },
     StatsCpuRequest:{

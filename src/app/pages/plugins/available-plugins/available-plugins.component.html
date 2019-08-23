@@ -1,13 +1,17 @@
 <mat-card-content class="plugin-info">
-    <section *ngIf="engineerMode || isFreenas">
-        <mat-label>{{ "Browse a Collection" | translate}}</mat-label>
-        <mat-select [(ngModel)]="selectedBranch" (selectionChange)="switchBranch($event)">
-            <mat-optgroup *ngFor="let branchIndex of availableBranches" [label]="branchIndex.name">
-                <mat-option *ngFor="let branch of branchIndex.branches" [value]="branch.value">
-                    {{branch.label}}
+    <section>
+        <mat-form-field>
+            <mat-label fxFlex>{{ "Browse a Collection" | translate}}</mat-label>
+            <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)">
+                <mat-option *ngFor="let repo of availableRepo" [value]="repo.git_repository">
+                    {{repo.name}}
                 </mat-option>
-            </mat-optgroup>
-        </mat-select>
+            </mat-select>
+        </mat-form-field>
+        <button mat-flat-button id="plugin-refresh-button" (click)="getPlugin(false)" class="plugin-button">
+            <mat-icon>refresh</mat-icon>
+            {{ "REFRESH INDEX" | translate }}
+        </button>
     </section>
     <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="selectedPlugin">
         <div fxFlex fxFlex.xs="100">
@@ -21,10 +25,10 @@
         <div fxFlex="25" fxFlexOffset="3" fxFlex.xs="100">
             <div class="plugin-vinfo">
                 <p *ngIf="isSelectedOffical">Official Plugin <mat-icon class="official-plugin">verified_user</mat-icon></p>
-                <p>Version: {{selectedPlugin.revision}}</p>
+                <p>Version: {{selectedPlugin.version}} Revision: {{selectedPlugin.revision}}</p>
                 <p>Installed Instances: {{installedPlugins[selectedPlugin.plugin] || 0}}</p>
             </div>
-            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);">
+            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);" class="plugin-button">
                 {{ "INSTALL" | translate }}
             </button>
         </div>

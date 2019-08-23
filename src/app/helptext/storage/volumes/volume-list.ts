@@ -5,8 +5,9 @@ export default {
 unlockDialog_password_placeholder: T('Passphrase'),
 
 unlockDialog_recovery_key_placeholder: T('Recovery Key'),
-unlockDialog_recovery_key_tooltip: T('Click <b>Browse</b> to select a recovery key to\
- upload. This allows the system to decrypt the disks.'),
+unlockDialog_recovery_key_tooltip: T('Unlock the pool with a recovery \
+ key file instead of a passphrase. Select a recovery key file to upload \
+ from the local system.'),
 
 unlockDialog_services_placeholder: T('Restart Services'),
 unlockDialog_services_tooltip: T('List of system services to restart when the pool is unlocked.'),
@@ -33,7 +34,7 @@ detachDialog_pool_detach_warning_paratext_b: T("'.\
 detachDialog_pool_detach_warning__encrypted_paratext: T("' is encrypted! If the passphrase for\
  this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE!\
  Before exporting/disconnecting encrypted pools, download and safely\
- store the recovery key."),
+ store the encryption key and any passphrase associated with it."),
 
 detachDialog_pool_detach_destroy_checkbox_placeholder: T("Destroy data on this pool?"),
 detachDialog_pool_detach_cascade_checkbox_placeholder: T("Delete configuration of shares that used this pool?"),

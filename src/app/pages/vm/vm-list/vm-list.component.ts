@@ -28,7 +28,7 @@ export class VmListComponent {
   public title = "Virtual Machines"
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name', card: true},
+    {name : 'Name', prop : 'name', card: true, always_display: true },
     {name : 'Description', prop : 'description'},
     {name : 'Info', prop : 'info', card: true},
     {name : 'Virtual CPUs', prop : 'vcpus'},
@@ -47,7 +47,9 @@ export class VmListComponent {
   getActions(row) {
     let actions = [];
     actions.push({
-      id : "start",
+      id: row.name,
+      icon: 'play_arrow',
+      name: "start",
       label : row.state == "RUNNING" ? "Stop" : "Start",
       onClick : (row) => {
         let rpc: string;
@@ -60,6 +62,9 @@ export class VmListComponent {
       }
     });
     actions.push({
+      id: row.name,
+      icon: 'edit',
+      name: 'edit',
       label : "Edit",
       onClick : (row) => {
         this.router.navigate(
@@ -67,12 +72,18 @@ export class VmListComponent {
       }
     });
     actions.push({
+      id: row.name,
+      icon: 'delete',
+      name: 'delete',
       label : "Delete",
       onClick : (row) => {
         this.entityTable.doDelete(row.id );
       },
     });
     actions.push({
+      id: row.name,
+      name: 'devices',
+      icon: 'storage',
       label : "Devices",
       onClick : (row) => {
         this.router.navigate(
@@ -80,6 +91,9 @@ export class VmListComponent {
       }
     });
     actions.push({
+      id: row.name,
+      name: 'web_vnc',
+      icon: 'keyboard_arrow_right',
       label : "Web VNC",
       onClick : (row) => {
         let rpc: string;
@@ -91,7 +105,10 @@ export class VmListComponent {
       }
     });
         actions.push({
-      label : "wizard",
+          id: row.name,
+          name: 'wizard',
+          icon: 'linear_scale',
+      label : "Wizard",
       onClick : (row) => {
         this.router.navigate(
             new Array('').concat([ "", "wizard" ]));

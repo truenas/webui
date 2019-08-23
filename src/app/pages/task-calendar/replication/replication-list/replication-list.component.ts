@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { T } from '../../../../translate-marker';
-import { EntityUtils } from '../../../common/entity/utils';
-import { WebSocketService, DialogService, SnackbarService, JobService } from '../../../../services';
-import { TranslateService } from '@ngx-translate/core';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
+import * as moment from 'moment';
+import { DialogService, JobService, SnackbarService, WebSocketService } from '../../../../services';
 
 @Component({
     selector: 'app-replication-list',
@@ -19,22 +18,23 @@ export class ReplicationListComponent {
     protected route_add: string[] = ["tasks", "replication", "wizard"];
     protected route_edit: string[] = ['tasks', 'replication', 'edit'];
     protected route_success: string[] = ['tasks', 'replication'];
-    protected entityList: any;
+    public entityList: any;
     protected asyncView = true;
 
     public columns: Array<any> = [
         { name: 'Name', prop: 'name' },
-        { name: 'Direction', prop: 'direction', hidden: true},
+        { name: 'Direction', prop: 'direction'},
         { name: 'Transport', prop: 'transport', hidden: true},
         { name: 'SSH Connection', prop: 'ssh_connection', hidden: true},
         { name: 'Source Dataset', prop: 'source_datasets', hidden: true},
         { name: 'Target Dataset', prop: 'target_dataset', hidden: true},
         { name: 'Recursive', prop: 'recursive', hidden: true},
         { name: 'Auto', prop: 'auto', hidden: true},
-        { name: 'Enabled', prop: 'enabled' },
+        { name: 'Enabled', prop: 'enabled', hidden: true },
         { name: 'State', prop: 'task_state', state: 'state' },
-        { name: 'Last Snapshot', prop: 'task_last_snapshot' },
+        { name: 'Last Snapshot', prop: 'task_last_snapshot' }
     ];
+
     public config: any = {
         paging: true,
         sorting: { columns: this.columns },
@@ -48,7 +48,6 @@ export class ReplicationListComponent {
         private router: Router,
         private ws: WebSocketService,
         private dialog: DialogService,
-        private translateService: TranslateService,
         private snackbarService: SnackbarService,
         protected job: JobService) { }
 
@@ -56,17 +55,25 @@ export class ReplicationListComponent {
         this.entityList = entityList;
     }
 
-    dataHandler(entityList) {
-        for (let i = 0; i < entityList.rows.length; i++) {
-            entityList.rows[i].task_state = entityList.rows[i].state.state;
-            entityList.rows[i].task_last_snapshot = entityList.rows[i].state.last_snapshot;
-            entityList.rows[i].ssh_connection = entityList.rows[i].ssh_credentials ? entityList.rows[i].ssh_credentials.name : '-';
-        }
+    resourceTransformIncomingRestData(tasks: any[]): any[] {
+        return tasks.map(task => {
+            task.task_state = task.state.state;
+            task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
+            if (task.state.job && task.state.job.time_finished) {
+                const d = moment(task.state.job.time_finished.$date);
+                task.task_last_snapshot = d.format('MM/D/YYYY h:mma') + ` (${d.fromNow()})`;
+            } else {
+                task.task_last_snapshot = T('No snapshots sent yet');
+            }
+            return task;
+        });
     }
 
     getActions(parentrow) {
         return [{
-            id: "run",
+            id: parentrow.name,
+            icon: 'play_arrow',
+            name: "run",
             label: T("Run Now"),
             onClick: (row) => {
                 this.dialog.confirm(T("Run Now"), T("Replicate <i>") + row.name + T("</i> now?"), true).subscribe((res) => {
@@ -83,14 +90,18 @@ export class ReplicationListComponent {
                 });
             },
         }, {
-            id: "edit",
+            id: parentrow.name,
+            icon: 'edit',
+            name: "edit",
             label: T("Edit"),
             onClick: (row) => {
                 this.route_edit.push(row.id);
                 this.router.navigate(this.route_edit);
             },
         }, {
-            id: "delete",
+            id: parentrow.name,
+            icon: 'delete',
+            name: "delete",
             label: T("Delete"),
             onClick: (row) => {
                 this.entityList.doDelete(row);

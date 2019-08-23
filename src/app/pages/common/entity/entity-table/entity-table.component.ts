@@ -1,24 +1,22 @@
 
-import {fromEvent as observableFromEvent,  Observable ,  BehaviorSubject ,  Subscription, of } from 'rxjs';
-
-import {distinctUntilChanged, debounceTime, filter, switchMap, tap, catchError, take} from 'rxjs/operators';
-import { Component, OnInit, OnDestroy ,Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-
-//local libs
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { EntityUtils } from '../utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService, JobService } from '../../../../services';
-import { ErdService } from '../../../../services/erd.service';
-import { StorageService } from '../../../../services/storage.service'
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import * as _ from 'lodash';
+import { fromEvent as observableFromEvent, Observable, of, Subscription } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap } from 'rxjs/operators';
+import { DialogService, JobService } from '../../../../services';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { ErdService } from '../../../../services/erd.service';
+import { RestService } from '../../../../services/rest.service';
+import { StorageService } from '../../../../services/storage.service';
+import { WebSocketService } from '../../../../services/ws.service';
 import { T } from '../../../../translate-marker';
+import { EntityUtils } from '../utils';
+import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -30,7 +28,7 @@ export interface InputTableConf {
   queryCallOption?: any;
   queryCallJob?: any;
   resource_name?: string;
-  route_edit?: string;
+  route_edit?: string | string[];
   route_add?: string[];
   queryRes?: any [];
   showActions?: boolean;
@@ -39,23 +37,23 @@ export interface InputTableConf {
   multiActions?:any[];
   multiActionsIconsOnly?:boolean;
   config?: any;
-  confirmDeleteDialog?: Object;
+  confirmDeleteDialog?: any;
   checkbox_confirm?: any;
   checkbox_confirm_show?: any;
   hasDetails?:boolean;
   rowDetailComponent?: any;
   cardHeaderComponent?: any;
   asyncView?: boolean;
+  wsDelete?: string;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
   afterInit?(entity: EntityTableComponent);
   dataHandler?(entity: EntityTableComponent);
   resourceTransformIncomingRestData?(data);
-  getActions?(row): any [];
+  getActions?(row: any): EntityTableAction[];
   getAddActions?(): any [];
   rowValue?(row, attr): any;
-  wsDelete?(resp): any;
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
@@ -63,6 +61,14 @@ export interface InputTableConf {
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
   callGetFunction?(entity: EntityTableComponent): any;
+}
+
+export interface EntityTableAction {
+  id: string | number;
+  actionName: string;
+  icon: string;
+  label: string;
+  onClick: (row: any) => void;
 }
 
 export interface SortingConfig {
@@ -73,6 +79,8 @@ export interface TableConfig {
   paging: boolean;
   sorting: SortingConfig;
 }
+
+const DETAIL_HEIGHT = 24;
 
 @Component({
   selector: 'entity-table',
@@ -109,7 +117,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
-  public originalConfColumns: any; // The 'factory setting
+  public originalConfColumns = []; // The 'factory setting
 
   public startingHeight: number;
   public expandedRows = 0;
@@ -127,7 +135,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSpinner: boolean = false;
   public cardHeaderReady = false;
   public showActions: boolean = true;
-  public detailRowHeight = 100;
+  public entityTableRowDetailsComponent = EntityTableRowDetailsComponent;
   private _multiActionsIconsOnly: boolean = false;
   get multiActionsIconsOnly(){
     return this._multiActionsIconsOnly;
@@ -140,6 +148,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public selected = [];
 
   private interval: any;
+
+  public hasDetails = () =>
+    this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+  public getRowDetailHeight = () => 
+     this.hasDetails() && !this.conf.rowDetailComponent
+      ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
+      : 100;
+  
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
@@ -199,38 +215,25 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showActions = this.conf.showActions === undefined ? true : this.conf.showActions ;
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
-    this.originalConfColumns = this.conf.columns; // to go back to defaults
 
-    // Keep track of original layout
-    if (this.originalConfColumns) {
-      this.originalConfColumns = [];
-
-      for (let item of this.allColumns) {
-        if (!item.hidden) {
-          this.originalConfColumns.push(item);
-        }
+    for (let item of this.allColumns) {
+      if (!item.hidden) {
+        this.originalConfColumns.push(item);
       }
     }
+    this.conf.columns = this.originalConfColumns;
 
-    // Get preferred list of columns from pref service
-    let preferredCols = this.prefService.preferences.tableDisplayedColumns;
-    // No preferences set for any table, show 'default' configuration
-    if (preferredCols.length === 0) {
-      this.conf.columns = this.originalConfColumns;  
-    } else {
-      preferredCols.forEach((i) => {
-        let match = 0;
-        // If preferred columns have been set for THIS table...
-        if (i.title === this.title) {
-          this.conf.columns = i.cols;
-          match++;
-        }
-        // If no preferred columns for THIS table, show 'default' configuration
-        if (match === 0) {
-          this.conf.columns = this.originalConfColumns;
-        }
-      });
-    }
+    setTimeout(() => {
+      const preferredCols = this.prefService.preferences.tableDisplayedColumns;
+      if (preferredCols.length > 0) {
+        preferredCols.forEach((i) => {
+          // If preferred columns have been set for THIS table...
+          if (i.title === this.title) {
+            this.conf.columns = i.cols;
+          }
+        });
+      }
+    }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 2000 : 0)
 
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
@@ -251,6 +254,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    if (this.filter) {
     observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
       debounceTime(150),
       distinctUntilChanged(),)
@@ -293,7 +297,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
-      });              
+      });      
+    };        
   }
 
   setTableHeight() {
@@ -430,11 +435,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.addRows) {
       this.conf.addRows(this);
     }
+    if (!this.showDefaults) {
+      this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
+      this.paginationPageIndex  = 0;
+      this.setPaginationInfo();
+      this.showDefaults = true;
+    }
+    if ((this.expandedRows == 0 || !this.asyncView) && this.filter.nativeElement.value === '') {
+      this.currentRows = this.rows;
+      this.paginationPageIndex  = 0;
+      this.setPaginationInfo();
+    }
 
-    this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
-    this.paginationPageIndex  = 0;
-    this.setPaginationInfo();
-    this.showDefaults = true;
     return res;
 
   }
@@ -473,14 +485,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.conf.queryRes = rows;
       }
     } else {
-      const newCurrentRows = this.currentRows;
-      for (let i = 0; i < newCurrentRows.length; i++) {
-        const index = _.findIndex(rows, {id: newCurrentRows[i].id});
+      for (let i = 0; i < this.currentRows.length; i++) {
+        const index = _.findIndex(rows, {id: this.currentRows[i].id});
         if (index > -1) {
-          newCurrentRows[i] = rows[index];
+          for (let prop in rows[index]) {
+            this.currentRows[i][prop] = rows[index][prop];
+          }
         }
       }
-      this.currentRows = newCurrentRows;
 
       const newRows = [];
       for (let i = 0; i < this.rows.length; i++) {
@@ -513,12 +525,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.conf.getActions(row);
     } else {
       return [{
+        name: 'edit',
         id: "edit",
-        label: "Edit",
+        icon: 'edit',
+        label: T("Edit"),
         onClick: (rowinner) => { this.doEdit(rowinner.id); },
       }, {
+        name: 'delete',
         id: "delete",
-        label: "Delete",
+        icon: 'delete',
+        label: T("Delete"),
         onClick: (rowinner) => { this.doDelete(rowinner); },
       },]
     }
@@ -596,20 +612,25 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doDelete(item) {
-    let deleteMsg = this.getDeleteMessage(item);
+    const deleteMsg =
+      this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
+        ? ''
+        : this.getDeleteMessage(item);
+    
     let id;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
       id = item[this.conf.config.deleteMsg.id_prop];
     } else {
       id = item.id;
     }
-    let dialog = {};
     if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
       this.conf.checkbox_confirm(id, deleteMsg);
       return;
     }
-    if (this.conf.confirmDeleteDialog) {
-      dialog = this.conf.confirmDeleteDialog;
+
+    const dialog = this.conf.confirmDeleteDialog || {};
+    if (dialog.buildTitle) {
+      dialog.title = dialog.buildTitle(item);
     }
 
     this.dialogService.confirm(
@@ -865,8 +886,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
-
     this.selectColumnsToShowOrHide();
+    this.updateTableHeightAfterDetailToggle();
   }
 
   // Stores currently selected columns in preference service
@@ -888,6 +909,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   // resets col view to the default set in the table's component
   resetColViewToDefaults() {
     this.conf.columns = this.originalConfColumns;
+    this.updateTableHeightAfterDetailToggle();
     this.selectColumnsToShowOrHide();
   }
 
@@ -903,12 +925,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.columns.length < this.allColumns.length) {
       this.conf.columns = this.allColumns;
       this.selectColumnsToShowOrHide();
-      return this.conf.columns
     } else {
       this.conf.columns = [];
       this.selectColumnsToShowOrHide();
-      return this.conf.columns;
     }
+    this.updateTableHeightAfterDetailToggle();
+    return this.conf.columns
   }
 
   // Used by the select all checkbox to determine whether it should be checked
@@ -932,19 +954,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
-    if (!this.startingHeight) {
-      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }  
     this.table.rowDetail.toggleExpandRow(row);
-    setTimeout(() => {
-      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
-      let newHeight = (this.expandedRows * 100) + this.startingHeight;
-      let heightStr = `height: ${newHeight}px`;
-      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 100)
+    this.updateTableHeightAfterDetailToggle();
   }
 
-  onDetailToggle(event) {
-    //console.log('Detail Toggled', event);
+  resetTableToStartingHeight() {
+    if (!this.startingHeight) {
+      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+    }
+    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+  }
+
+  updateTableHeightAfterDetailToggle() {
+    if (!this.startingHeight) {
+      this.resetTableToStartingHeight();
+    }
+    setTimeout(() => {
+      this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
+      const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
+      const heightStr = `height: ${newHeight}px`;
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
+    }, 0);
   }
 }

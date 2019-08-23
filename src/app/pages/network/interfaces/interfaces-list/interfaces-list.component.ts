@@ -32,8 +32,8 @@ export class InterfacesListComponent implements OnDestroy {
   public checkinWaiting = false;
   pending_changes_text: string;
   pending_checkin_text: string;
-  checkin_text: string = T("Changes will revert after ");
-  checkin_text_2: string = T(" seconds unless kept permanently.");
+  checkin_text: string = T("Once applied, changes will revert after ");
+  checkin_text_2: string = T(" seconds unless kept permanently. Adjust this amount to allow for testing.");
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
   public checkin_remaining = null;
@@ -41,11 +41,21 @@ export class InterfacesListComponent implements OnDestroy {
   public ha_enabled = false;
 
   public columns: Array<any> = [
-    {name : T('Name'), prop : 'name'},
+    {name : T('Name'), prop : 'name', always_display: true },
+    {name : T('Type'), prop : 'type' },
     {name : T('Link State'), prop : 'link_state'},
     {name : T('DHCP'), prop : 'ipv4_dhcp'},
     {name : T('IPv6 Auto Configure'), prop: 'ipv6_auto'},
-    {name : T('IP Addresses'), prop : 'addresses'}
+    {name : T('IP Addresses'), prop : 'addresses'},,
+    {name : T('Description'), prop : 'description', hidden: true},
+    {name : T('Active Media Type'), prop: 'active_media_type', hidden: true},
+    {name : T('Active Media Subtype'), prop: 'active_media_subtype', hidden: true},
+    {name : T('VLAN Tag'), prop: 'vlan_tag', hidden: true},
+    {name : T('VLAN Parent Interface'), prop: 'vlan_parent_interface', hidden: true},
+    {name : T('Bridge Members'), prop: 'bridge_members', hidden: true},
+    {name : T('LAGG Ports'), prop: 'lagg_ports', hidden: true},
+    {name : T('LAGG Protocol'), prop: 'lagg_protocol', hidden: true},
+    {name : T('MAC Address'), prop: 'mac_address', hidden: true}
   ];
   public config: any = {
     paging : true,
@@ -63,54 +73,64 @@ export class InterfacesListComponent implements OnDestroy {
     const rows = res.rows;
     for (let i=0; i<rows.length; i++) {
       rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
-      const addresses = [];
+      const addresses = new Set([]);
       for (let j=0; j<rows[i]['aliases'].length; j++) {
         const alias = rows[i]['aliases'][j];
         if (alias.type.startsWith('INET')) {
-          addresses.push(alias.address + '/' + alias.netmask);
+          addresses.add(alias.address + '/' + alias.netmask);
+        }
+      }
+      if (rows[i]['ipv4_dhcp']) {
+        for (let j = 0; j < rows[i]['state']['aliases'].length; j++) {
+          const alias = rows[i]['state']['aliases'][j];
+          if (alias.type.startsWith('INET')) {
+            addresses.add(alias.address + '/' + alias.netmask);
+          }
         }
       }
       if (rows[i].hasOwnProperty('failover_aliases')) {
         for (let j=0; j<rows[i]['failover_aliases'].length; j++) {
           const alias = rows[i]['failover_aliases'][j];
           if (alias.type.startsWith('INET')) {
-            addresses.push(alias.address + '/' + alias.netmask);
+            addresses.add(alias.address + '/' + alias.netmask);
           }
         }
       }
-      rows[i]['addresses'] = addresses.join(', ');
-      rows[i].details = []
+      rows[i]['addresses'] = Array.from(addresses).join(', ');
       if (rows[i].type === "PHYSICAL") {
-        rows[i].details.push({label: T("Active Media Type"), value:rows[i]["state"]["active_media_type"]},
-                             {label: T("Active Media Subtype"), value:rows[i]["state"]["active_media_subtype"]})
+        rows[i].active_media_type = rows[i]["state"]["active_media_type"];
+        rows[i].active_media_subtype = rows[i]["state"]["active_media_subtype"];
       } else if (rows[i].type === "VLAN") {
-        rows[i].details.push({label: T("VLAN Tag"), value:rows[i]["vlan_tag"]},
-                             {label: T("VLAN Parent Interface"), value: rows[i]["state"]["vlan_parent_interface"]})
+        rows[i].vlan_tag = rows[i]["vlan_tag"];
+        rows[i].vlan_parent_interface = rows[i]["state"]["vlan_parent_interface"];
       } else if (rows[i].type === "BRIDGE") {
-        rows[i].details.push({label:T("Bridge Members"), value:rows[i]["bridge_members"]});
+        rows[i].bridge_members = rows[i]["bridge_members"];
       } else if (rows[i].type === "LINK_AGGREGATION") {
-        rows[i].details.push({label:T("Lagg Ports"), value:rows[i]["lag_ports"]},
-                             {label:T("Lagg Protocol"), value:rows[i]["lag_protocol"]});
+        rows[i].lagg_ports = rows[i]["lag_ports"];
+        rows[i].lagg_protocol = rows[i]["lag_protocol"];
       }
-      rows[i].details.push({label:T("IP Addresses"), value:rows[i]['addresses']});
-      rows[i].details.push({label:T("MAC Address"), value:rows[i]['state']['link_address']});
+      rows[i].mac_address = rows[i]['state']['link_address'];
     }
 
   }
 
   getActions(row) {
     return [{
-      id: "edit",
+      id: row.name,
+      icon: 'edit',
+      name: "edit",
       label: T("Edit"),
       onClick: (rowinner) => { 
         if(this.ha_enabled) {
-          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_delete_msg);
+          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
         } else {
           this.entityList.doEdit(rowinner.id);
         }
       },
     }, {
-      id: "delete",
+      id: row.name,
+      icon: 'delete',
+      name: "delete",
       label: T("Delete"),
       onClick: (rowinner) => {
         if(this.ha_enabled) {
@@ -261,7 +281,10 @@ export class InterfacesListComponent implements OnDestroy {
       }
     )
   }*/
-
+  goToHA() {
+    this.router.navigate(new Array('/').concat('system', 'failover'));
+  }
+  
   ngOnDestroy() {
     this.checkChangesSubscription.unsubscribe();
   }

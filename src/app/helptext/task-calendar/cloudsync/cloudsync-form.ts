@@ -32,7 +32,11 @@ encryption_placeholder: T('Server Side Encryption'),
 encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
 
 storage_class_placeholder: T('Storage Class'),
-storage_class_tooltip: T(''),
+storage_class_tooltip: T('Classification for each S3 object. Choose a\
+ class based on the specific use case or performance requirements.\
+ See <a\
+ href="https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html"\
+ target="_blank">Amazon S3 Storage Classes</a> for more information.'),
 
 b2_chunk_size_placeholder:  T('Upload Chunk Size (MiB)'),
 b2_chunk_size_tooltip: T('Files are split into chunks of this size before upload.\
@@ -51,17 +55,18 @@ path_tooltip: T('Select the directories or files to be sent to the cloud\
 path_validation : [ Validators.required ],
 
 transfer_mode_placeholder: T('Transfer Mode'),
-transfer_mode_tooltip: T('<i>SYNC</i> makes files on the destination system identical\
- to those on the source. Files that have been removed from\
- the source are removed from the destination, similar to\
- <i>rsync --delete</i>.\
- <i>COPY</i> copies files from source to destination,\
- skipping files that are identical, similar to <i>rsync</i>.\
- <i>MOVE</i> copies files from source to destination,\
- deleting files from the source after the copy, similar\
- to <i>mv</i>.'),
 
 transfer_mode_validation : [ Validators.required ],
+
+transfer_mode_warning_sync: T('<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match those on the\
+ source. If a file does not exist on the source, it is also <i><u>deleted</u></i>\
+ from the destination.'),
+
+transfer_mode_warning_copy: T('<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the destination. If files with\
+ the same names are present on the destination, they are <i><u>overwritten</u></i>.'),
+
+transfer_mode_warning_move: T('<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the destination, they are\
+ <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.'),
 
 snapshot_placeholder: T('Take Snapshot'),
 snapshot_tooltip: T('Set to take a snapshot of the dataset before a\
@@ -115,9 +120,12 @@ enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
  Sync Task without deleting it.'),
 
 bwlimit_placeholder: T('Bandwidth Limit'),
-bwlimit_tooltip: T('Either single bandwidth limit or bandwidth limit schedule in rclone format.<br />\
- Example: "08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off".<br />\
- Default unit is kilobytes.'),
+bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\
+ Example: <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
+ Units can be specified with the beginning letter: <samp>b</samp>,\
+ <samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>.\
+ See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
+ target="_blank">rclone --bwlimit</a>.'),
 
 exclude_placeholder: T('Exclude'),
 exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\

@@ -17,6 +17,8 @@ export class StorageService {
   public SMARToptions: any;
   public advPowerMgt: any;
   public acousticLevel: any;
+  public humanReadable: any;
+  public IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
@@ -222,5 +224,123 @@ export class StorageService {
     return this.ws
       .call("pool.filesystem_choices")
       .pipe(map(response => response.map(value => ({ label: value, value }))));
+  }
+
+  /**
+   * @param path The path of the dataset excluding "/mnt/"
+   */
+  isDatasetTopLevel(path: string): boolean {
+    if (typeof path !== 'string') {
+      throw new Error('isDatasetTopLevel received "path" parameter that is not of type "string."');
+    }
+
+    /**
+     * Strip leading forward slash if present
+     * /zpool/d0 -> zpool/d0
+     */
+    path = path.indexOf('/') === 0 ? path.substr(1) : path;
+
+    return path.indexOf('/') < 0;
+  }
+
+  // ----------------------- //
+
+  normalizeUnit(unitStr) {
+    // normalize short units ("MB") or human units ("M") to IEC units ("MiB")
+    // unknown values return undefined
+
+    // empty unit is valid, just return
+    if (!unitStr) {
+        return '';
+    }
+
+    const IECUnitsStr   = this.IECUnits.join('|');
+    const shortUnitsStr = this.IECUnits.map(unit => unit.charAt(0) + unit.charAt(2)).join('|');
+    const humanUnitsStr = this.IECUnits.map(unit => unit.charAt(0)).join('|');
+    const allUnitsStr   = (IECUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
+    const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
+
+    unitStr = unitStr.toUpperCase();
+    if (unitStr.match(unitsRE)) {
+        // always return IEC units
+        // could take a parameter to return short or human units
+        return unitStr.charAt(0).toUpperCase() + 'iB';
+    } else {
+        return undefined;
+    }
+  }
+
+  convertUnitToNum(unitStr) {
+      // convert IEC ("MiB"), short ("MB"), or human ("M") units to numbers
+      // unknown units are evaluated as 1
+
+      unitStr = this.normalizeUnit(unitStr);
+      if (!unitStr) {
+          return 1;
+      }
+      return (1024**( this.IECUnits.indexOf(unitStr)+1) );
+  }
+  
+  // sample data, input and return values
+  // input       normalized       number value
+  // '12345'     '12345'          12345
+  // '512x'      ''               NaN
+  // '0'         '0'              0
+  // '0b'        ''               NaN
+  // '',         '0'              0
+  // '4MB',      '4 MiB'          4*1024**2 (4,194,304)
+  // '16KiB'     '16 KiB'         16*1024   (16,384)
+  // 'g'         ''               NaN
+  // ' t1'       ''               NaN
+  // '   5   m'  '5 MiB'          5*1024**2 (5,242,880)
+  // '1m',       '1 MiB'          1024**2   (1,048,576)
+  // '    T'     ''               NaN
+  // '2 MiB  '   '2 MiB'          2*1024**2 (2,097,152)
+  // '2 MiB x8'  ''               NaN
+  // '256 k'     '256 KiB'        256*1024  (262,144)
+  // 'm4m k'     ''               NaN
+  // '4m k'      ''               NaN
+  // '1.2m'      ''               NaN
+  // '12k4'      ''               NaN
+  // '12.4k'     ''               NaN
+  // ' 10G'      '10 GiB'         10*1024**3 (10,737,418,240)
+
+  convertHumanStringToNum(hstr) {
+
+      const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
+
+      let num = 0;
+      let unit = '';
+
+      // empty value is evaluated as zero
+      if (!hstr) {
+          this.humanReadable = '0';
+          return 0;
+      }
+
+      // remove whitespace
+      hstr = hstr.replace(/\s+/g, '');
+
+      // get leading number
+      if ( num = hstr.match(/^(\d+)/) ) {
+          num = num[1];
+      } else {
+          // leading number is required
+          this.humanReadable = '';
+          return NaN;
+      }
+
+      // get optional unit
+      unit = hstr.replace(num, '');
+      if ( (unit) && !(unit = this.normalizeUnit(unit)) ) {
+          // error when unit is present but not recognized
+          this.humanReadable = '';
+          return NaN;
+      }
+
+      let spacer = (unit) ? ' ' : '';
+
+      this.humanReadable = num.toString() + spacer + unit;
+      return num * this.convertUnitToNum(unit);
   }
 }

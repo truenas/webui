@@ -19,7 +19,7 @@
 }
 
 .widget .mat-toolbar-row{
-  border-bottom:solid 1px var(--bg1);
+  
 }
 
 /* Legends */
@@ -244,3 +244,19 @@ g.c3-brush + g{
 .widget .bar-chart .c3-xgrid-focus{
   opacity: 0;
 }
+
+/* DyGraph */
+.dygraph-axis-label-y,
+.dygraph-axis-label-x{
+  opacity:0.5;
+}
+
+.dygraph-label{
+  opacity:0.75;
+}
+
+.dygraph-ylabel{
+  transform: rotate(-90deg);
+  text-align:center;
+}
+

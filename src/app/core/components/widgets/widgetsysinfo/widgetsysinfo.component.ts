@@ -19,14 +19,16 @@ import { T } from '../../../../translate-marker';
 @Component({
   selector: 'widget-sysinfo',
   templateUrl:'./widgetsysinfo.component.html',
-  styleUrls: ['./widgetsysinfo.component.scss']
+  styleUrls: ['./widgetsysinfo.component.css']
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,OnDestroy, AfterViewInit {
   public title: string = T("System Info");
   public data: any;
   public memory:string;
   public imagePath:string = "assets/images/";
-  public cardBg:string = "";
+  //public cardBg:string = "";
+  public product_image = '';
+  public certified = false;
   public updateAvailable:boolean = false;
   private _updateBtnStatus:string = "default";
   public updateBtnLabel:string = T("Check for Updates")
@@ -46,8 +48,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log("******** SysInfo ********");
-      //DEBUG: console.log(evt.data);
       this.loader = false;
       this.data = evt.data;
 
@@ -68,26 +68,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       }
       if (this.is_freenas === 'true') {
         this.systemLogo = 'logo.svg';
+        this.getFreeNASImage(evt.data.system_product);
         this.isFN = true;
       } else {
         this.systemLogo = 'TrueNAS_Logomark_Black.svg';
+        this.getTrueNASImage(evt.data.system_product);
         this.isFN = false;
       }    
 
-      // Hardware detection
-      switch(evt.data.system_product){
-        case "FREENAS-MINI-2.0":
-          this.cardBg = 'freenas_mini.png';
-          //this.cardBg = 'logo.svg';
-        break;
-        case "FREENAS-MINI-XL":
-          this.cardBg = 'freenas_mini_xl.png';
-          //this.cardBg = 'logo.svg';
-        break;
-        default:
-          this.cardBg = this.systemLogo;
-        break;
-      }
     });
 
     this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
@@ -105,10 +93,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
-  }
-
-  getCardBg(){
-    return "url('" + this.imagePath + this.cardBg + "')";
   }
 
   get themeAccentColors(){
@@ -137,5 +121,51 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     }
     return result;
   }
+
+  getTrueNASImage(sys_product) {
+    if (sys_product.includes('X10')) {
+      this.product_image = '/servers/X10.png';
+    } else if (sys_product.includes('X20')) {
+      this.product_image = '/servers/X20.png';
+    } else if (sys_product.includes('M40')) {
+      this.product_image = '/servers/M40.png';
+    }  else if (sys_product.includes('M50')) {
+      this.product_image = '/servers/M50.png';
+    } else if (sys_product.includes('Z20')) {
+      this.product_image = '/servers/Z20.png';
+    } else if (sys_product.includes('M50')) {
+      this.product_image = '/servers/M50.png';
+    } else if (sys_product.includes('Z35')) {
+      this.product_image = '/servers/Z35.png';
+    } else if (sys_product.includes('Z50')) {
+      this.product_image = '/servers/Z50.png';
+    }
+    else {
+      this.product_image = 'ix-original.svg';
+    }
+  }
+
+  getFreeNASImage(sys_product) {
+
+    if (sys_product.includes('CERTIFIED')) {
+      //this.product_image = 'ix-original.svg';
+      this.product_image = '';
+      this.certified = true;
+      return;
+    }
+    
+    switch(sys_product){
+      case "FREENAS-MINI-2.0":
+        this.product_image = 'freenas_mini_cropped.png';
+      break;
+      case "FREENAS-MINI-XL":
+        this.product_image = 'freenas_mini_xl_cropped.png';
+      break;
+      default:
+        this.product_image = '';
+      break;
+    }
+  }
+
 
 }

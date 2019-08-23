@@ -8,7 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { NgxWebstorageModule } from 'ngx-webstorage';
-import { KonamiModule } from 'ngx-konami';
 
 import { MaterialModule} from './appMaterial.module'; //customized MaterialModule
 import { rootRouterConfig } from './app.routes';
@@ -41,7 +40,6 @@ import { MarkdownModule } from 'ngx-markdown';
 import { CoreServices} from 'app/core/services/coreservices.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { StatsService } from 'app/services/stats.service';
 
 import { ErdService } from 'app/services/erd.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -82,7 +80,6 @@ export function createTranslateLoader(http: HttpClient) {
     ReactiveFormsModule,
     EntityModule,
     NgxWebstorageModule.forRoot(),
-    KonamiModule
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TaskManagerComponent, DirectoryServicesMonitorComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
@@ -93,7 +90,6 @@ export function createTranslateLoader(http: HttpClient) {
     RestService,
     AppLoaderService, 
     NotificationsService,
-    StatsService,
     ErdService,
     ENV_PROVIDERS],
   bootstrap: [

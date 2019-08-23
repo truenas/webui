@@ -20,53 +20,53 @@ xpaths = {
 }
 
 
-def test_00_set_implicitly_wait(wb_driver):
-    wb_driver.implicitly_wait(1)
+def test_00_set_implicitly_wait(browser):
+    browser.implicitly_wait(1)
 
 
-def test_01_turnon_dc(wb_driver):
+def test_01_turnon_dc(browser):
     # Click Service Menu
-    wb_driver.find_element_by_xpath(xpaths['navService']).click()
+    browser.find_element_by_xpath(xpaths['navService']).click()
     # check if the Service page is opens
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Services" in page_data, page_data
-    status_change(wb_driver, "2", "start")
+    status_change(browser, "2", "start")
     # dc test takes almost takes 18 seconds to turn on
     time.sleep(18)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_checkif_dc_on(wb_driver):
+def test_02_checkif_dc_on(browser):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "2")
+    status_check(browser, "2")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_03_turnoff_dc(wb_driver):
+def test_03_turnoff_dc(browser):
     time.sleep(2)
-    status_change(wb_driver, "2", "stop")
+    status_change(browser, "2", "stop")
     # dc takes almost 22 sec to turn off
     time.sleep(22)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_04_checkif_dc_off(wb_driver):
+def test_04_checkif_dc_off(browser):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "2")
+    status_check(browser, "2")
     time.sleep(10)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

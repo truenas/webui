@@ -281,7 +281,6 @@ export class JailWizardComponent {
   ]
 
   protected releaseField: any;
-  protected currentServerVersion: any;
   protected ip4_interfaceField: any;
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
@@ -307,71 +306,37 @@ export class JailWizardComponent {
     this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'release' });
     this.template_list = new Array<string>();
     this.jailService.getTemplates().subscribe(
-      (res) => {
-        if (res.result) {
-          for (const i in res.result) {
-            this.template_list.push(res.result[i][1]);
-            this.releaseField.options.push({ label: res.result[i][1] + '(template)', value: res.result[i][1] });
-          }
+      (templates) => {
+        for (const template of templates) {
+          this.template_list.push(template.host_hostuuid);
+          this.releaseField.options.push({ label: template.host_hostuuid + ' (template)', value: template.host_hostuuid });
         }
-        if (res.error) {
-          this.dialogService.errorReport(T('Error: Displaying templates failed.'), res.error, res.exception);
-        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
       }
     )
-
-    this.ws.call('system.info').subscribe((res) => {
-      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-      this.jailService.getLocalReleaseChoices().subscribe(
-        (res_local) => {
-          if (res_local.result) {
-            for (const j in res_local.result) {
-              const rlVersion = Number(_.split(res_local.result[j], '-')[0]);
-              if (this.currentServerVersion >= Math.floor(rlVersion)) {
-                this.releaseField.options.push({ label: res_local.result[j] + '(fetched)', value: res_local.result[j] });
-              }
-            }
-
-            this.jailService.getRemoteReleaseChoices().subscribe(
-              (res_remote) => {
-                if (res_remote.result) {
-                  for (const i in res_remote.result) {
-                    if (_.indexOf(res_local.result, res_remote.result[i]) < 0) {
-                      const rmVersion = Number(_.split(res_remote.result[i], '-')[0]);
-                      if (this.currentServerVersion >= Math.floor(rmVersion)) {
-                        this.releaseField.options.push({ label: res_remote.result[i], value: res_remote.result[i] });
-                        this.unfetchedRelease.push(res_remote.result[i]);
-                      }
-                    }
-                  }
-                }
-
-                if (res_remote.error) {
-                  this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.error, res_remote.exception);
-                }
-              });
-          }
-
-          if (res_local.error) {
-            this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.error, res_local.exception);
-          }
-        });
+    this.jailService.getReleaseChoices().subscribe(
+      (releases) => {
+        for (const item in releases) {
+          this.releaseField.options.push({ label: item, value: releases[item] });
+        }
       },
-      (res) => {
-        new EntityUtils().handleError(this, res);
-      });
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      }
+    );
 
     this.ip4_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_interface'});
     this.ip4_netmaskField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_prefix'});
 
-    // get interface options
-    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
-        for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        for (const i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{

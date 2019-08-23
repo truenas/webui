@@ -41,6 +41,7 @@ def webDriverFirefox():
         capabilities=caps,
         firefox_binary=binary
     )
+    driver.set_window_size(1470, 900)
     return driver
 
 
@@ -61,7 +62,7 @@ elif browser == "Chrome":
 
 
 @pytest.fixture
-def wb_driver():
+def browser():
     global driver
     return driver
 

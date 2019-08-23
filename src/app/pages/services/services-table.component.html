@@ -47,10 +47,10 @@
       <span class="datatable-header-cell-label">Actions</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-      <button mat-icon-button id="action-button__{{row.label}}" (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Configure" matTooltipPosition="right" *ngIf="row.title != 'netdata'">
+      <button mat-icon-button id="action-button__{{row.label}}" (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Configure" matTooltipPosition="right" >
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-icon-button id="action-button__{{row.label}}" (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Launch" matTooltipPosition="right" *ngIf="row.title == 'netdata' && row.state == 'RUNNING'">
+      <button mat-icon-button (click)="this.conf.openNetdataPortal()" style="position: relative;bottom:3px;left:35px"  matTooltip="Launch" matTooltipPosition="right" *ngIf="row.title == 'netdata' && row.state == 'RUNNING'">
         <mat-icon>featured_play_list</mat-icon>
       </button>
     </ng-template>

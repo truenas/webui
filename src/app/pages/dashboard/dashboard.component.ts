@@ -1,12 +1,10 @@
 import { Component, OnInit, AfterViewInit, ViewChild,OnDestroy } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-//import { StatsService } from 'app/services/stats.service';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
-//import { StatsUtils } from 'app/core/classes/stats-utils';
 
 import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
-import { Disk, VolumeData } from 'app/core/components/widgets/widgetpool/widgetpool.component';
+import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
 import {RestService,WebSocketService} from '../../services/';
 
@@ -27,12 +25,19 @@ export class DashboardComponent implements OnInit,OnDestroy {
   //public statsData: StatsUtils;
   private statsEvents: any;
   private statsEventsTC: any;
+  public tcStats: any;
 
   public isFooterConsoleOpen: boolean;
 
   // For widgetpool
-  public volumes: VolumeData[] = [];
-  public disks:Disk[] = [];
+  public system: any;
+  public system_product: string = "Generic";
+  public pools: any[] = [];
+  public volumeData:any = {};
+  //public volumes: VolumeData[] = [];
+  //public disks:Disk[] = [];
+
+  public nics: any[] = [];
 
   public animation = "stop";
   public shake = false;
@@ -40,14 +45,6 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public showSpinner: boolean = true;
 
   constructor(protected core:CoreService, /*stats: StatsService,*/ protected ws: WebSocketService){
-    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"sum", obj:this }});
-    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"average", obj:this }});
-    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"test", obj:this }});
-    /*this.core.emit({name:"StatsAddListener", data:{name:"Cpu", obj:this }});
-    setTimeout(() => {
-      this.core.emit({name:"StatsRemoveListener", data:{name:"Cpu", obj:this} });
-    }, 20000);*/
-
     this.statsDataEvents = new Subject<CoreEvent>();
   }
 
@@ -64,20 +61,15 @@ export class DashboardComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy(){
-    //this.core.emit({name:"StatsKillAll", sender:this});
-    this.statsEvents.unsubscribe();
-    //this.statsEventsTC.unsubscribe();
+    this.statsEvents.complete();
+    this.statsEventsTC.complete();
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
   }
 
   init(){
-    //this.statsData = new StatsUtils();
 
-    //this.statsEvents = this.ws.job("reporting.realtime",[{"name": "cpu", "identifier": null}]).subscribe((evt)=>{
     this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
-      if(!evt.virtual_memory){return;}
-      //console.log(evt);
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
@@ -86,59 +78,82 @@ export class DashboardComponent implements OnInit,OnDestroy {
       }
     });
 
-    /*this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+    this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
       if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
-
-      if(evt.memory_summary){
-        console.log(evt);
-
-        //this.statsData.updateStats(evt);
-        //let cpuLoad = this.statsData.cpuLoad();
-        //console.log(cpuLoad);
-      } 
-    });*/
-
-    this.core.register({observerClass:this,eventName:"VolumeData"}).subscribe((evt:CoreEvent) => {
-      this.setPoolData(evt);
+        
+      evt.network_usage.forEach((item, index) => {
+        this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
+      });
     });
 
-    this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      this.setDisksData(evt);
+    this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
+      let clone = Object.assign([],evt.data);
+      let removeNics = {};
+
+      // Store keys for fast lookup
+      let nicKeys = {};
+      evt.data.forEach((item, index) => {
+        nicKeys[item.name] = index.toString();
+      });
+        
+      // Process Vlans (attach vlans to their parent)
+      evt.data.forEach((item, index) => {
+        if(item.type !== "VLAN" && !clone[index].state.vlans){
+          clone[index].state.vlans = [];
+        }
+
+        if(item.type == "VLAN"){
+          let parentIndex = parseInt(nicKeys[item.state.parent]);
+          if(!clone[parentIndex].state.vlans) {
+            clone[parentIndex].state.vlans = [];
+          }
+
+          clone[parentIndex].state.vlans.push(item.state);
+          removeNics[item.name] = index;
+        }
+      })
+
+      // Process LAGGs
+      evt.data.forEach((item, index) => {
+        if(item.type == "LINK_AGGREGATION" ){
+          clone[index].state.lagg_ports = item.lag_ports;
+          item.lag_ports.forEach((nic) => {
+            // Consolidate addresses 
+            clone[index].state.aliases.forEach((item) => { item.interface = nic});
+            clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic]].state.aliases);
+
+            // Consolidate vlans
+            clone[index].state.vlans.forEach((item) => { item.interface = nic});
+            clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic]].state.vlans);
+            
+            // Mark interface for removal
+            removeNics[nic] = nicKeys[nic];
+          });
+        }
+      });
+
+      // Remove NICs from list
+      for(let i = clone.length - 1; i >= 0; i--){
+        if(removeNics[clone[i].name]){ 
+          // Remove
+          clone.splice(i, 1)
+        } else {
+          // Only keep INET addresses
+          clone[i].state.aliases = clone[i].state.aliases.filter(address => address.type == "INET");
+        }
+      }
+      
+      // Update NICs array
+      this.nics = clone;
     });
 
     this.core.emit({name:"VolumeDataRequest"});
-    this.core.emit({name:"DisksInfoRequest"});
+    this.core.emit({name:"NicInfoRequest"});
+    this.getDisksData();
   }
 
-  parseStats(data){
-  }
-
-  setDisksData(evt:CoreEvent){
-    //DEBUG: console.log("******** DISKS INFO ********");
-    //DEBUG: console.log(evt);
-    for(let i in evt.data){
-      let disk:Disk = {
-        name:evt.data[i].name,
-        smart_enabled:evt.data[i].togglesmart,
-        size:Number(evt.data[i].size),
-        description: evt.data[i].description,
-        model: evt.data[i].model,
-        enclosure_slot: evt.data[i].enclosure_slot,
-        expiretime: evt.data[i].expiretime,
-        hddstandby: evt.data[i].hddstandby,
-        serial: evt.data[i].serial,
-        smartoptions: evt.data[i].smartoptions
-      }
-
-      this.disks.push(disk);
-    }
-    this.showSpinner = false;
-  }
-
-  setPoolData(evt:CoreEvent){
-    //DEBUG: console.log("******** ZPOOL DATA ********");
-    //DEBUG: console.log(evt.data);
-    let result = [];
+  setVolumeData(evt:CoreEvent){
+    //let result = [];
     for(let i in evt.data){
       let avail = null;
       if (evt.data[i].children && evt.data[i].children[0]) {
@@ -159,17 +174,26 @@ export class DashboardComponent implements OnInit,OnDestroy {
         vol_guid:evt.data[i].vol_guid,
         vol_name:evt.data[i].vol_name
       }
-
-      result.push(zvol);
+      this.volumeData[zvol.id] = zvol;
+      //result.push(zvol);
     }
-    this.volumes = result.sort(function(a,b){
-    	var x = a.name.toLowerCase();
-        var y = b.name.toLowerCase();
-        if(x < y){ return -1}
-        if(x > y){ return 1}
-        return 0;
+  }
+
+  getDisksData(){
+
+    this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
+      //this.system.pools = evt.data;
+      this.pools = evt.data;
     });
-    // this.showSpinner = false;
+
+    this.core.register({observerClass: this, eventName: 'VolumeData'}).subscribe((evt:CoreEvent) => {
+      this.setVolumeData(evt);
+    });
+
+    this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
+      this.core.emit({name: 'PoolDataRequest', sender: this});
+    });
+    this.core.emit({name: 'SysInfoRequest', sender: this});
   }
 
   toggleShake(){
@@ -180,10 +204,4 @@ export class DashboardComponent implements OnInit,OnDestroy {
     }
   }
 
-  updateData(data){
-    // Do Something
-    }
-
-  updateDataAll(data){
-  }
 }

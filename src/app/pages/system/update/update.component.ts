@@ -410,7 +410,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
               }
             });
             if (res.changelog) {
-              this.changeLog = res.changelog;
+              this.changeLog = res.changelog.replace(/\n/g, '<br>');
             }
             if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;
@@ -650,7 +650,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             });
 
             if (res.changelog) {
-              this.changeLog = res.changelog;
+              this.changeLog = res.changelog.replace(/\n/g, '<br>');
             }
             if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;

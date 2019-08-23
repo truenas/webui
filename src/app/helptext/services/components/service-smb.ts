@@ -11,7 +11,8 @@ cifs_srv_netbiosname_tooltip: T('Automatically populated with the original hostn
 cifs_srv_netbiosname_validation : [ Validators.required, Validators.maxLength(15) ],
 
 cifs_srv_netbiosalias_placeholder: T('NetBIOS Alias'),
-cifs_srv_netbiosalias_tooltip: T('Enter an alias. Limited to 15 characters.'),
+cifs_srv_netbiosalias_tooltip: T('Enter any aliases, separated by spaces.\
+ Each alias can be up to 15 characters long.'),
 cifs_srv_netbiosalias_validation: [ Validators.maxLength(15) ],
 
 cifs_srv_workgroup_placeholder: T('Workgroup'),
@@ -33,11 +34,11 @@ cifs_srv_unixcharset_tooltip: T('Default is UTF-8 which supports all characters 
 cifs_srv_loglevel_placeholder: T('Log Level'),
 cifs_srv_loglevel_tooltip: T('Choices are <i>Minimum, Normal, or Debug</i>.'),
 cifs_srv_loglevel_options: [
-  { label: 'None', value: 0 },
-  { label: 'Minimum', value: 1 },
-  { label: 'Normal', value: 2 },
-  { label: 'Full', value: 3 },
-  { label: 'Debug', value: 10 },
+  { label: 'None', value: '0' },
+  { label: 'Minimum', value: '1' },
+  { label: 'Normal', value: '2' },
+  { label: 'Full', value: '3' },
+  { label: 'Debug', value: '10' },
 ],
 
 cifs_srv_syslog_placeholder: T('Use syslog only'),

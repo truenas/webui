@@ -12,8 +12,8 @@
     width: 90vw;
     margin: auto;
     padding: 11px;
+    padding-top: 20px;
     border-radius: 6px;
-    border: 1px solid #fff;
     color: #fff;
     font-size: 110%;
     text-align: left;
@@ -35,6 +35,10 @@
     font-size: 20px;
 }
 
+.tooltip-icon {
+    cursor: pointer;
+}
+
 .tooltip .tooltiptext.lock {
     visibility: visible !important;
     opacity: 1;
@@ -43,15 +47,29 @@
 
 .pin {
     position: absolute;
-    right: -8px;
-    top: -8px;
+    right: -6px;
+    top: -6px;
     cursor: pointer;
     color: black;
     background: white;
-    height: 16px;
+    height: 18px;
 }
 
 .pin-icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
+}
+
+#tooltip-header {
+    height: 13px;
+    width: 100%;
+    background-color: var(--primary);
+    position: absolute;
+    top: -3px;
+    right: 0px;
+    border-top-left-radius: 6px;
+}
+
+#tooltip-header:hover {
+    cursor: grab;
 }

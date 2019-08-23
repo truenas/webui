@@ -23,6 +23,7 @@ export class TargetListComponent {
     {
       name : 'Target Name',
       prop : 'name',
+      always_display: true
     },
     {
       name : 'Target Alias',
@@ -45,13 +46,17 @@ export class TargetListComponent {
     this.entityList = entityList;
   }
 
-  getActions() {
+  getActions(row) {
     return [{
-      id: "edit",
+      id: row.name,
+      icon: 'edit',
+      name: "edit",
       label: "Edit",
       onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
     }, {
-      id: "delete",
+      id: row.name,
+      icon: 'delete',
+      name: "delete",
       label: "Delete",
       onClick: (rowinner) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);

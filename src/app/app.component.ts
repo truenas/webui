@@ -18,7 +18,6 @@ import { WebSocketService } from './services/ws.service';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from "@angular/material/icon";
 import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
-import { EngineerModeService } from './services/engineerMode.service';
 
 import productText from './helptext/product';
 
@@ -26,7 +25,6 @@ import productText from './helptext/product';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [EngineerModeService]
 })
 export class AppComponent {
   appTitle = 'FreeNAS';
@@ -48,8 +46,7 @@ export class AppComponent {
     public themeservice: ThemeService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
-    public chartDataUtils: ChartDataUtilsService,
-    public engineerModeService: EngineerModeService) {
+    public chartDataUtils: ChartDataUtilsService) {
 
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
@@ -83,6 +80,19 @@ export class AppComponent {
       "truenas_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logo_full.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-text.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-full.svg")
+    );
+
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
@@ -150,11 +160,5 @@ export class AppComponent {
     if(this.router.url === '/ui-preferences/create-theme' || this.router.url === '/ui-preferences/edit-theme'){
       snackBarRef.dismiss();
     }
-  }
-
-  onEnginnerMode() {
-    const tobeEngineerMode = localStorage.getItem('engineerMode') === 'true' ? 'false' : 'true';
-    localStorage.setItem('engineerMode', tobeEngineerMode);
-    this.engineerModeService.engineerMode.emit(tobeEngineerMode);
   }
 }

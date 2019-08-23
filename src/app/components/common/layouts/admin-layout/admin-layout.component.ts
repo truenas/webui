@@ -78,7 +78,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.freenasThemes = this.themeService.freenasThemes;
+    this.freenasThemes = this.themeService.allThemes;
     this.currentTheme = this.themeService.currentTheme().name;
     // Initialize Perfect scrollbar for sidenav
     let navigationHold = document.getElementById('scroll-area');
