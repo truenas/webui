@@ -56,7 +56,7 @@
 
               <div fxFlex="66" class="left-content">
                 <div class="nic-name" [ngClass]="{ 'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP' }">
-                  {{nicState.name}}
+                  <span textLimiter threshold="7" >{{nicState.name}}</span>
                   <!--<div class="icon-wrapper">
                     <mat-icon *ngIf="nicState.link_state == 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                     <mat-icon *ngIf="nicState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
