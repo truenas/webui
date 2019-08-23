@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
@@ -50,11 +50,12 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public trainDescriptionOnPageLoad: string;
   public fullTrainList: any[];
   public isFooterConsoleOpen: boolean;
+  public isUpdateRunning = false;
   public updateMethod: string = 'update.update';
-  public isHA = false;
+  public is_ha = false;
+  public isfreenas: boolean;
   public ds: any;
   public failover_upgrade_pending = false;
-  isfreenas: boolean;
   public busy: Subscription;
   public busy2: Subscription;
   private checkChangesSubscription: Subscription;
@@ -91,8 +92,10 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
+      this.sysGenService.updateRunning.subscribe((res) => { 
+        res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }
 
   parseTrainName(name) {
@@ -215,6 +218,10 @@ export class UpdateComponent implements OnInit, OnDestroy {
         // On page load, make sure we are working with train of the current OS
         this.train = res.current;
         this.selectedTrain = res.current;
+        this.ws.call('update.set_train', [res.current]).subscribe(() => {},
+        (err) => {
+          console.error(err);
+        });
   
         if (this.autoCheck) {
           this.check();
@@ -253,14 +260,30 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
 
     if (!this.isfreenas) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
-        if (is_ha) {
+      this.ws.call('failover.licensed').subscribe((res) => {
+        if (res) {
           this.updateMethod = 'failover.upgrade';
-          this.isHA = true;
+          this.is_ha = true;
           this.checkUpgradePending();
-        }
-      })
+        };
+        this.checkForUpdateRunning();
+      });
+    } else {
+      this.checkForUpdateRunning();
     }
+  }
+
+  checkForUpdateRunning() {
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res && res.length > 0) {
+          this.isUpdateRunning = true;
+          this.showRunningUpdate(res[0].id);
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
   }
 
   checkUpgradePending() {
@@ -394,7 +417,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
               if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
-                if (!this.isHA) {
+                if (!this.is_ha) {
                   //this.updateMethod is upgrade.upgrade
                   this.ds  = this.dialogService.confirm(
                     T("Download Update"), T("Continue with download?"),true,"",true,
@@ -432,7 +455,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
-                  if (!this.isHA) {
+                  if (!this.is_ha) {
                     this.ds  = this.dialogService.confirm(
                       T("Download Update"), T("Continue with download?"),true,"",true,
                         T("Apply updates and reboot system after downloading."),
@@ -441,7 +464,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                    
                     this.ds.afterClosed().subscribe((status)=>{
                       if(status){
-                        if (!this.isHA && !this.ds.componentInstance.data[0].reboot){
+                        if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
                           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
                           this.dialogRef.componentInstance.setCall('update.download');
                           this.dialogRef.componentInstance.submit();
@@ -508,8 +531,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   update() {
+    this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
-    if (!this.isHA) {
+    if (!this.is_ha) {
       this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.subscribe((res) => {
@@ -523,7 +547,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.dialogRef.componentInstance.setCall('failover.upgrade');
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.subscribe(() => {
-          if (!this.isHA) { 
+          if (!this.is_ha) { 
             this.router.navigate(['/others/reboot']); 
           }
         });
