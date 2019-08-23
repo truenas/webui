@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MaterialModule } from '../../appMaterial.module';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { PortalModule } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
 
 import { PageComponent } from 'app/core/components/page/page.component';
@@ -34,6 +36,8 @@ import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widg
 import { TranslateModule } from '@ngx-translate/core';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
+import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
+import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 
 /*
  *
@@ -47,6 +51,8 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
   imports: [
     CommonModule,
     MaterialModule,
+    OverlayModule,
+    PortalModule,
     FlexLayoutModule,
     FormsModule,
     TranslateModule
@@ -77,11 +83,15 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
-    WidgetPoolComponent
+    WidgetPoolComponent,
+    TextLimiterDirective,
+    TextLimiterTooltipComponent
   ],
   exports: [ // Modules and Components here
     CommonModule,
     MaterialModule,
+    OverlayModule,
+    PortalModule,
     FlexLayoutModule,
     Display,
     DisplayContainer,
@@ -108,6 +118,7 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
+    TextLimiterTooltipComponent,
     WidgetPoolComponent
   ],
   entryComponents:[
@@ -134,7 +145,8 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
-    WidgetPoolComponent
+    WidgetPoolComponent,
+    TextLimiterTooltipComponent
   ],
   providers:[
     StorageService

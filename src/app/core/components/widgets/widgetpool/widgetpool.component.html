@@ -63,7 +63,8 @@
 
               <div fxFlex="66" class="left-content">
                 <div class="pool-name" >
-                  {{poolState.name | translate}}
+                  <span textLimiter threshold="9">{{poolState.name | translate}}</span>
+
                   <!--<div class="icon-wrapper">
                     <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" class="{{poolHealth.level}}">
                       <mat-icon>lock</mat-icon>
