@@ -128,6 +128,7 @@ nav.view-nav-bar{
   font-weight:300;
   font-size: 120%;
   line-height: 85%;
+  word-break: break-word;
 /*
     text-align: left;
     font-weight: 300;
