@@ -36,7 +36,7 @@
           <div fxFlex="100" id="memory-usage-chart" class="bar-chart"></div>
             <div fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
               <div *ngIf="memData; else noLegend" id="cpu-load-cores-legend-values" fxFlex fxLayout="row wrap" fxLayoutAlign="space-around center">
-                <div fxFlex="26" *ngFor="let legendItem of memData.data; let i=index"  class="legend-item">
+                <div fxFlex="28" *ngFor="let legendItem of memData.data; let i=index"  class="legend-item">
                   <div class="legend-swatch" [style.background-color]="trustedSecurity(colorPattern[i])"></div><span class="label">{{legendItem[0]}}:</span> {{legendItem[1]}} GiB
                 </div>
               </div>
