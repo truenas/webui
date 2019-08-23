@@ -56,11 +56,11 @@
       </div>
 
       <div *ngIf="!formReady || config.options.length == 0">
-        <!--<ng-container>
+        <ng-container>
           <mat-option disabled style="opacity:0.5">
-              (No Options)
+            {{config.zeroStateMessage ? config.zeroStateMessage : '--'}}
           </mat-option>
-        </ng-container>-->
+        </ng-container>
       </div>
     </mat-select>
 

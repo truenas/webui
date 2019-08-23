@@ -19,5 +19,5 @@ export interface FieldConfig {
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
   isLargeText?: boolean, paragraphIcon?: string,
   customEventMethod?(data:any), onChangeOption?(data:any),
-
+  zeroStateMessage?: string
 }
