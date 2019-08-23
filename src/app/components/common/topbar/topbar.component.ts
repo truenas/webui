@@ -8,15 +8,13 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { SystemGeneralService } from '../../../services/system-general.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
-<<<<<<< HEAD
 import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
-=======
->>>>>>> master
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
 import { TranslateService } from '@ngx-translate/core';
@@ -66,6 +64,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   upgradeWaitingToFinish = false; 
   sysName: string = 'FreeNAS';
   hostname: string;
+  public updateNotificationSent = false;
   private user_check_in_prompted = false;
 
   protected dialogRef: any;
@@ -80,11 +79,19 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private rest: RestService,
     public language: LanguageService,
     private dialogService: DialogService,
+    public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
 
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {}
+    protected loader: AppLoaderService, ) {
+      this.sysGenService.updateRunningNoticeSent.subscribe(() => {
+        this.updateNotificationSent = true;
+        setTimeout(() => {
+          this.updateNotificationSent = false;
+        }, 600000);
+      });
+    }
 
   ngOnInit() {
     if (window.localStorage.getItem('is_freenas') === 'false') {
@@ -93,6 +100,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
+        this.isUpdateRunning();
         if (this.is_ha) {
           this.checkUpgradePending();
         }
@@ -101,6 +109,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     } else {
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
+      this.isUpdateRunning();
     }
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
@@ -134,6 +143,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
       this.getDirServicesStatus();
+      this.isUpdateRunning();
+
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -428,26 +439,30 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
       this.upgradeWaitingToFinish = res;
       if(res) {
-        this.dialogService.confirm(
-          T("Pending Upgrade"),
-          T("There is an upgrade waiting to finish."),
-          true, T('Continue')).subscribe(res => {
-            if (res) {
-              this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-              this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
-              this.dialogRef.componentInstance.submit();
-              this.dialogRef.componentInstance.success.subscribe((success) => {
-                this.dialogRef.close(false);
-                console.log('success', success);
-                this.upgradeWaitingToFinish = false
-              });
-              this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-              });
-            }
-          });        
-      }
+        this.upgradePendingDialog();
+      };
     });
+  }
+
+  upgradePendingDialog() {
+    this.dialogService.confirm(
+      T("Pending Upgrade"),
+      T("There is an upgrade waiting to finish."),
+      true, T('Continue')).subscribe(res => {
+        if (res) {
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+          this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((success) => {
+            this.dialogRef.close(false);
+            console.info('success', success);
+            this.upgradeWaitingToFinish = false
+          });
+          this.dialogRef.componentInstance.failure.subscribe((failure) => {
+            this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+          });
+        }
+      });
   }
 
   getDirServicesStatus() {
@@ -469,5 +484,29 @@ export class TopbarComponent implements OnInit, OnDestroy {
         });
       });
     });
+  }
+
+  isUpdateRunning() {
+    let method;
+    this.is_ha ? method = 'failover.upgrade' : method = 'update.update';
+    this.ws.call('core.get_jobs', [[["method", "=", method], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res && res.length > 0) {
+          this.sysGenService.updateRunning.emit('true');
+          if (!this.updateNotificationSent) {
+            this.dialogService.confirm(helptext.updateRunning_dialog_title, helptext.updateRunning_dialog_message,
+              true, T('Close'), false, '', '', '', '', true);
+            this.updateNotificationSent = true;
+            setTimeout(() => {
+              this.updateNotificationSent = false;
+            }, 600000);
+          }      
+        } else {
+          this.sysGenService.updateRunning.emit('false');
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
   }
 }

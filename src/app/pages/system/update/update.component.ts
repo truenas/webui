@@ -418,50 +418,54 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
               if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
                 if (!this.is_ha) {
-                  //this.updateMethod is upgrade.upgrade
                   this.ds  = this.dialogService.confirm(
                     T("Download Update"), T("Continue with download?"),true,"",true,
                       T("Apply updates and reboot system after downloading."),
-                      this.updateMethod,[{ train: this.train, reboot: false }]
+                      'upgrade.upgrade',[{ train: this.train, reboot: false }]
                   )                  
+                  this.ds.afterClosed().subscribe((status)=>{
+                    if(status){
+                      if (!this.ds.componentInstance.data[0].reboot){
+                        this.ws.call('update.set_train', this.train).subscribe(() => {
+                          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                          this.dialogRef.componentInstance.setCall('update.download');
+                          this.dialogRef.componentInstance.submit();
+                          this.dialogRef.componentInstance.success.subscribe((succ) => {
+                            this.dialogRef.close(false);
+                            this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                            this.pendingupdates();
+                          });
+                          this.dialogRef.componentInstance.failure.subscribe((err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                          });
+                        }, 
+                        (err) => { 
+                          console.error(err) 
+                        });
+                      }
+                      else{
+                        this.update();
+                      };
+                    };
+                  });
                 } else {
-                  this.ws.call('update.set_train', [this.train]).subscribe(() => { 
-                    this.ds  = this.dialogService.confirm(
-                      T("Download Update"), T("Continue with download?"),true,"",false, "", this.updateMethod, {}
-                    )
-                  })
-                }
-                this.ds.afterClosed().subscribe((status)=>{
-                  if(status){
-                    if (!this.ds.componentInstance.data[0].reboot){
-                      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-                      this.dialogRef.componentInstance.setCall('update.download');
-                      this.dialogRef.componentInstance.submit();
-                      this.dialogRef.componentInstance.success.subscribe((succ) => {
-                        this.dialogRef.close(false);
-                        this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
-                        this.pendingupdates();
-
-                      });
-                      this.dialogRef.componentInstance.failure.subscribe((err) => {
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                      });
-                    }
-                    else{
-                      this.update();
-                    }
-                  }
-                });
-
+                  this.ds  = this.dialogService.confirm(
+                    T("Download Update"), T("Upgrades both controllers. Files will be downloaded in the Active Controller\
+                    and then transferred to the Standby Controller. Upgrade process will start concurrently on both nodes.\
+                    Continue with download?"), true).subscribe((res) =>  {
+                      if (res) {
+                        this.update()
+                      };
+                    })
+                };
               } else {
                 this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
                   if (!this.is_ha) {
                     this.ds  = this.dialogService.confirm(
                       T("Download Update"), T("Continue with download?"),true,"",true,
                         T("Apply updates and reboot system after downloading."),
-                        this.updateMethod,[{ train: this.train, reboot: false }]
+                        'update.update',[{ train: this.train, reboot: false }]
                     )
-                   
                     this.ds.afterClosed().subscribe((status)=>{
                       if(status){
                         if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
@@ -484,19 +488,15 @@ export class UpdateComponent implements OnInit, OnDestroy {
                       }
                     });
                    } else {
-                    this.ws.call('update.set_train', [this.train]).subscribe(() => { 
                       this.ds  = this.dialogService.confirm(
                         T("Download Update"), T("Upgrades both controllers. Files will be downloaded in the Active Controller\
                          and then transferred to the Standby Controller. Upgrade process will start concurrently on both nodes.\
-                         Continue with download?"),true,"",false, "", this.updateMethod, {}
-                      ).subscribe((res) =>  {
-                        if (res) {
-                          this.update()
-                        }
-                      })
-                    })
-                  }
-
+                         Continue with download?"),true).subscribe((res) =>  {
+                          if (res) {
+                            this.update()
+                          };
+                        });
+                  };
                 });
               };
             });
@@ -508,7 +508,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
         (err) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
-///////          
           this.dialogService.errorReport(T("Error checking for updates."), err.reason, err.trace.formatted);
         },
         () => {

@@ -20,7 +20,7 @@
       </div -->
       <span fxFlex></span>
       <!-- finish update -->
-      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" matTooltip="Upgrade waiting to finish" (click)="showUpgradePending()" class="topbar-button-right">
+      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" matTooltip="Upgrade waiting to finish" (click)="upgradePendingDialog()" class="topbar-button-right">
         <mat-icon class="movement">update</mat-icon>
       </button>
       <!--loading icon-->

@@ -25,15 +25,6 @@ export class ManualUpdateComponent {
   public fileLocation: any;
   public subs: any;
   public isHA = false;
-  // public custActions: Array<any> = [
-  //   {
-  //     id : 'save_config',
-  //     name : T('Save Config'),
-  //     function : () => {
-  //       this.dialogservice.dialogForm(this.saveConfigFormConf);
-  //     }
-  //   }
-  // ];
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
@@ -55,13 +46,11 @@ export class ManualUpdateComponent {
       name: 'filename',
       placeholder: helptext.filename.placeholder,
       tooltip: helptext.filename.tooltip,
-      // validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      // required: true,
       hideButton: true,
     },
     {
