@@ -56,7 +56,7 @@ export const helptext_system_cloudcredentials = {
 
   endpoint_s3: {
     placeholder: T("Endpoint URL"),
-    tooltip: T('S3 API. When using AWS, the endpoint field can be \
+    tooltip: T('S3 API endpoint URL. When using AWS, the endpoint field can be \
  empty to use the default endpoint for the region, and available \
  buckets are automatically fetched. Refer to the AWS Documentation \
  for a list of \
