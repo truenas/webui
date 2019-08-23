@@ -450,7 +450,6 @@ export class UpdateComponent implements OnInit {
   }
 
   downloadUpdate() {
-    this.sysGenService.updateRunningNoticeSent.emit();
     this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
         if (res[0]) {
@@ -465,6 +464,7 @@ export class UpdateComponent implements OnInit {
   }
 
   update() {
+    this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
     this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
     this.dialogRef.componentInstance.submit();
@@ -477,7 +477,6 @@ export class UpdateComponent implements OnInit {
   }
 
   ApplyPendingUpdate() {
-    this.sysGenService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.dialogService.confirm(
@@ -503,7 +502,6 @@ export class UpdateComponent implements OnInit {
   };
 
   ManualUpdate() {
-    this.sysGenService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
         this.router.navigate([this.router.url +'/manualupdate']);
