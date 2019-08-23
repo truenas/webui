@@ -219,7 +219,7 @@ export class ReplicationWizardComponent {
                             value: 'SSH+NETCAT',
                         }
                     ],
-                    value: true,
+                    value: 'SSH',
                     relation: [{
                         action: 'SHOW',
                         connective: 'OR',
@@ -274,7 +274,9 @@ export class ReplicationWizardComponent {
                             name: 'schedule_method',
                             value: 'corn',
                         }]
-                    }]
+                    }],
+                    required: true,
+                    validation: [Validators.required],
                 },
                 {
                     type: 'radio',
@@ -291,7 +293,7 @@ export class ReplicationWizardComponent {
                         label: 'Custom',
                         value: 'CUSTOM',
                     }],
-                    value: 'same_as_source',
+                    value: 'SOURCE',
                     class: 'inline',
                     width: '50%',
                 },
@@ -301,7 +303,8 @@ export class ReplicationWizardComponent {
                     name: 'lifetime_value',
                     inputType: 'number',
                     value: 2,
-                    validation: [Validators.min(0)],
+                    required: true,
+                    validation: [Validators.required, Validators.min(0)],
                     class: 'inline',
                     width: '25%',
                     relation: [{
@@ -310,11 +313,8 @@ export class ReplicationWizardComponent {
                         when: [{
                             name: 'retention_policy',
                             value: 'CUSTOM',
-                        }, {
-                            name: 'retention_policy',
-                            value: 'SOURCE',
                         }]
-                    }]
+                    }],
                 },
                 {
                     type: 'select',
@@ -345,11 +345,10 @@ export class ReplicationWizardComponent {
                         when: [{
                             name: 'retention_policy',
                             value: 'CUSTOM',
-                        }, {
-                            name: 'retention_policy',
-                            value: 'SOURCE',
                         }]
-                    }]
+                    }],
+                    required: true,
+                    validation: [Validators.required],
                 },
             ]
         }
@@ -359,6 +358,20 @@ export class ReplicationWizardComponent {
     protected directions = ['PULL', 'PUSH'];
     protected selectedReplicationTask: any;
 
+    protected createCalls = {
+        private_key: 'keychaincredential.create',
+        ssh_credentials_semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
+        ssh_credentials_manual:'keychaincredential.create',
+        periodic_snapshot_tasks: 'pool.snapshottask.create',
+        replication: 'replication.create',
+    }
+
+    protected deleteCalls = {
+        private_key: 'keychaincredential.delete',
+        ssh_credentials: 'keychaincredential.delete',
+        periodic_snapshot_tasks: 'pool.snapshottask.delete',
+        replication: 'replication.delete',
+    }
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -465,7 +478,7 @@ export class ReplicationWizardComponent {
 
     step1Init() {
         this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value) => {
-            let disable = value === 'SOURCE' ? true : false;
+            const disable = value === 'SOURCE' ? true : false;
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
         });
@@ -539,7 +552,7 @@ export class ReplicationWizardComponent {
         }
 
         if (task.schedule || task.periodic_snapshot_tasks ) {
-            let scheduleData = task.periodic_snapshot_tasks[0] || task;
+            const scheduleData = task.periodic_snapshot_tasks[0] || task;
             task['schedule_method'] = 'corn';
             task['schedule_picker'] = scheduleData.schedule.minute + " " +scheduleData.schedule.hour + " " + scheduleData.schedule.dom + " " + scheduleData.schedule.month + " " + scheduleData.schedule.dow;
             
@@ -577,64 +590,156 @@ export class ReplicationWizardComponent {
         };
     }
 
-    getPayload(data) {
-        console.log(data['transport']);
-        
-        const payload = {
-            name: data['name'],
-            direction: data['source_datasets_from'] === 'remote' ? 'PULL' : 'PUSH',
-            source_datasets: data['source_datasets'],
-            target_dataset: data['target_dataset'],
-            ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
-            transport: data['transport'] ? data['transport'] : 'LOCAL',
-            retention_policy: data['retention_policy'],
-        }
-        payload['recursive'] = data['recursive'];
-        payload['auto'] = data['schedule_method'] === 'corn' ? true : false;
-        if (data['schedule_method'] === 'corn') {
-            payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-        } else {
-            payload['also_include_naming_schema'] = ['auto-%Y-%m-%d_%H-%M'];
-        }
-
-        if (data['retention_policy'] === 'CUSTOM') {
-            payload['lifetime_value'] = data['lifetime_value'];
-            payload['lifetime_unit'] = data['lifetime_unit'];
-        }
-        
-        // payload["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
-
-
-        // if (payload['direction'] == 'PUSH') {
-        //     payload['source_datasets'] = this.parseLocalDS(value, 'source_datasets_PUSH');
-        //     payload['target_dataset'] = value['target_dataset_PUSH'];
-
-        //     payload["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
-        // } else {
-        //     payload['source_datasets'] =  value['source_datasets_PULL'].split(' ');
-        //     payload['target_dataset'] = this.parseLocalDS(value, 'target_dataset_PULL').join(' ');
-
-        //     payload['naming_schema'] = value['naming_schema'].split(' ');
-        //     if (value['schedule_picker']) {
-        //         payload['schedule'] = this.parsePickerTime(value['schedule_picker'], value['begin'], value['end']);
+    async doCreate(data, item) {
+        let payload;
+        // if (item === 'private_key') {
+        //     payload = {
+        //         name: value['name'] + ' Key',
+        //         type: 'SSH_KEY_PAIR',
+        //         attributes: value['sshkeypair'],
         //     }
         // }
-        return payload;
-    }
-    customSubmit(value) {
-        console.log('submit', value);
-        const payload = this.getPayload(value);
-        console.log(payload);
-        
-        this.ws.call('replication.create', [payload]).subscribe(
-            (res) => {
-                console.log(res);
-                this.router.navigate(new Array('/').concat(this.route_success));
-            },
-            (err) => {
-                console.log(err);
-                new EntityUtils().handleWSError(this, err);
+        // if (item === 'ssh_credentials') {
+        //     item += '_' + value['setup_method'];
+        //     if (value['setup_method'] == 'manual') {
+        //         payload = {
+        //             name: value['name'],
+        //             type: 'SSH_CREDENTIALS',
+        //             attributes: {
+        //                 cipher: value['cipher'],
+        //                 host: value['host'],
+        //                 port: value['port'],
+        //                 private_key: value['private_key'],
+        //                 remote_host_key: value['remote_host_key'],
+        //                 username: value['username'],
+        //             }
+        //         };
+        //     } else {
+        //         payload = {
+        //             name: value['name'],
+        //             private_key: value['private_key'],
+        //             cipher: value['cipher'],
+        //         };
+        //         for (const i of this.semiSSHFieldGroup) {
+        //             payload[i] = value[i];
+        //         }
+        //     }
+        // }
+
+        if (item === 'periodic_snapshot_tasks') {
+            const snapshotPromises = [];
+            for (const dataset of data['source_datasets']) {
+                payload = {
+                    dataset: dataset,
+                    recursive: data['recursive'],
+                    schedule: data['schedule'],
+                    lifetime_value: 2, // payload['lifetime_value'] ,
+                    lifetime_unit: 'WEEK', //payload['lifetime_unit'],
+                    naming_schema: 'auto-%Y-%m-%d_%H-%M',
+                    enabled: true,
+                };
+                snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
             }
-        );
+            return Promise.all(snapshotPromises);
+        }
+        if (item === 'replication') {
+            payload = {
+                name: data['name'],
+                direction: 'PUSH',
+                source_datasets: data['source_datasets'],
+                target_dataset: data['target_dataset'],
+                ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
+                transport: data['transport'] ? data['transport'] : 'LOCAL',
+                retention_policy: data['retention_policy'],
+            }
+            payload['recursive'] = data['recursive'];
+            payload['auto'] = data['schedule_method'] === 'corn' ? true : false;
+            if (data['schedule_method'] === 'corn') {
+                payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
+            } else {
+                payload['also_include_naming_schema'] = ['auto-%Y-%m-%d_%H-%M']; //default?
+            }
+    
+            if (data['retention_policy'] === 'CUSTOM') {
+                payload['lifetime_value'] = data['lifetime_value'];
+                payload['lifetime_unit'] = data['lifetime_unit'];
+            }
+            
+            if (payload['transport'] === 'SSH+NETCAT') {
+                payload['netcat_active_side'] = 'REMOTE'; // default?
+            }
+            return this.ws.call(this.createCalls[item], [payload]).toPromise();
+        }
+    }
+
+    async customSubmit(value) {
+        this.loader.open();
+        let toStop = false;
+        // if (value['ssh_credentials'] == 'NEW' && value['private_key'] == 'NEW') {
+        //     await this.replicationService.genSSHKeypair().then(
+        //         (res) => {
+        //             value['sshkeypair'] = res;
+        //         },
+        //         (err) => {
+        //             toStop = true;
+        //             new EntityUtils().handleWSError(this, err, this.dialogService);
+        //         }
+        //     )
+        // }
+        // if (value['ssh_credentials'] == 'NEW' && value['setup_method'] == 'manual') {
+        //     await this.getRemoteHostKey(value).then(
+        //         (res) => {
+        //             value['remote_host_key'] = res;
+        //         },
+        //         (err) => {
+        //             toStop = true;
+        //             new EntityUtils().handleWSError(this, err, this.dialogService);
+        //         }
+        //     )
+        // }
+
+        const createdItems = {
+            private_key: null,
+            ssh_credentials: null,
+            periodic_snapshot_tasks: null,
+            replication: null,
+        }
+
+        for (const item in createdItems) {
+            if (!toStop) {
+                if (!((item === 'private_key' && value['private_key'] !== 'NEW') || (item === 'ssh_credentials' && value['ssh_credentials'] !== 'NEW') || (item === 'periodic_snapshot_tasks' && value['schedule_method'] !== 'corn'))) {
+                    await this.doCreate(value, item).then(
+                        (res) => {
+                            value[item] = res.id || res.map(snapshot => snapshot.id);
+                            createdItems[item] = res.id || res.map(snapshot => snapshot.id);
+                        },
+                        (err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                            toStop = true;
+                            this.rollBack(createdItems);
+                        }
+                    )
+                }
+            }
+        }
+
+        this.loader.close();
+        if (!toStop) {
+            this.router.navigate(new Array('/').concat(this.route_success));
+        }
+    }
+
+
+    async rollBack(items) {
+        const keys = Object.keys(items).reverse();
+        for (let i = 0; i < keys.length; i++) {
+            if (items[keys[i]] != null) {
+                await this.ws.call(this.deleteCalls[keys[i]], [items[keys[i]]]).toPromise().then(
+                    (res) => {
+                        console.log('rollback ' + keys[i], res);
+                    }
+                );
+            }
+        }
     }
 }

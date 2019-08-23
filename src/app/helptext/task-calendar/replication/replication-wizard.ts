@@ -44,8 +44,8 @@ export default {
     schedule_placeholder: T('Scheduling'),
     schedule_tooltip: T(''),
 
-    snapshot_lifetime_placeholder: T('Destination Snapshot Lifetime'),
-    snapshot_lifetime_tooltip: T(''),
+    retention_policy_placeholder: T('Destination Snapshot Lifetime'),
+    retention_policy_tooltip: T(''),
 
     lifetime_value_placeholder: T(''),
     lifetime_value_tooltip: T(''),
