@@ -16,8 +16,9 @@ export default {
 
     generate_key_button: T('Generate Keypair'),
 
-    key_instructions: T('To import an SSH keypair, paste both key values or just the private key (the public key will be \
-    automatically derived from the private key). To store a public key, paste \
-    it into the public key field. To create a new keypair, click <b>Generate Keypair</b>. Encrypted keypairs or \
-    keypairs with a passphrase are not supported.')
+    key_instructions: T('Paste either or both public and private keys. If only a public key is entered, \
+ it will be stored alone. If only a private key is pasted, the public key will be automatically \
+ calculated and entered in the public key field. \
+ Click <b>Generate Keypair</b> to create a new keypair. \
+ Encrypted keypairs or keypairs with passphrases are not supported.')
 }
