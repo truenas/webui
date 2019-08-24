@@ -14,15 +14,24 @@ export class TooltipComponent {
   public tooltipMsgStyle: any;
   public isLockTooltip: Boolean = false;
 
+  public positionString: string = 'Default';
+
   constructor(public translate: TranslateService) {}
 
   showTooltip($event) {
     this.isShowTooltip = $event;
 
+    let formParent = this.tooltip.nativeElement.offsetParent/*.offsetParent.offsetParent.offsetParent*/;
     let screenW = document.body.clientWidth;
     let screenH = document.body.clientHeight;
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
     let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
+
+    let posLeft = this.tooltip.nativeElement.offsetLeft
+    let posRight = this.tooltip.nativeElement.offsetLeft + this.tooltip.nativeElement.offsetWidth;
+    let posTop = this.tooltip.nativeElement.offsetTop
+    let posBottom = this.tooltip.nativeElement.offsetTop + this.tooltip.nativeElement.offsetHeight;
+
     let dynamicWidth = this.message.length * 8.5;
     let tooltipHeight = this.tooltip.nativeElement.scrollHeight;
 
@@ -32,7 +41,7 @@ export class TooltipComponent {
       this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
     }
 
-    if(this.message.length <= 40) {
+    /*if(this.message.length <= 40) {
       if((posX/screenW) <= .6) {
         this.tooltipMsgStyle = {'left' : '0px', 'max-width' : dynamicWidth + 'px'};
       }
@@ -54,9 +63,24 @@ export class TooltipComponent {
         this.tooltipMsgStyle = {'left' : '0px', 'max-width' : '270px'};
       }
       else {
+        // Position Left
         this.tooltipMsgStyle = {'right' : '8px'};
       }
-    }
+    }*/
+
+    this.tooltipMsgStyle = {
+      'right': '32px',
+      'top':'-32px',
+      'min-height':'64px'
+    };
+
+    const fpr = formParent.offsetLeft + formParent.offsetWidth
+    let insideJob = formParent.clientWidth - posRight > 100 ? true : false;
+    this.positionString = insideJob ? 'above' : 'left';
+    console.log(this.tooltip);
+    console.log(posRight);
+    console.log(fpr);
+
   }
 
   toggleVis(state?) {
@@ -64,10 +88,12 @@ export class TooltipComponent {
       this.isLockTooltip = true;
       this.isShowTooltip = true;
     } else {
-      this.isLockTooltip = !this.isLockTooltip;
+      this.isLockTooltip = false;
+      this.isShowTooltip = false;
+      /*this.isLockTooltip = !this.isLockTooltip;
       if (this.isLockTooltip === false) {
         this.isShowTooltip = false;
-      }
+      }*/
     }
   }
 }
