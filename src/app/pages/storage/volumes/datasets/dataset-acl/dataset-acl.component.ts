@@ -395,7 +395,7 @@ export class DatasetAclComponent implements OnDestroy {
               if (res[i].basic_perms === "OTHER") {
                 basic_perms_fc.warnings = helptext.dataset_acl_basic_perms_other_warning;
                 canSave = false;
-              } else { 
+              } else {
                 basic_perms_fc.warnings = null;
               }
             }
@@ -419,7 +419,12 @@ export class DatasetAclComponent implements OnDestroy {
     });
     this.entityForm.formGroup.controls['default_acl_choices'].valueChanges.subscribe((value) => {
       this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
-        console.log(res);
+        if (value === 'RESTRICTED') {
+          const obj = {tag: '', type: '', id: null, flags: {BASIC: ''}, perms: {BASIC: ''}};
+          res.push(obj);
+        }
+        // special cases - restricted - no @everyone; domain-home needs advanced flags (multi-select)under groups
+        this.dataHandler(this.entityForm, res);
       });
     });
   }
@@ -428,9 +433,12 @@ export class DatasetAclComponent implements OnDestroy {
     return {"aces": []}; // stupid hacky thing that gets around entityForm's treatment of data
   }
 
-  async dataHandler(entityForm) {
+  async dataHandler(entityForm, defaults?) {
     this.loader.open();
     const res = entityForm.queryResponse;
+    if (defaults) {
+      res.acl = defaults;
+    }
     const user = await this.userService.getUserObject(res.uid);
     if (user && user.pw_name) {
       entityForm.formGroup.controls['uid'].setValue(user.pw_name);
@@ -488,6 +496,7 @@ export class DatasetAclComponent implements OnDestroy {
 
       const propName = "aces";
       const aces_fg = entityForm.formGroup.controls[propName];
+      console.log(aces_fg)
       if (aces_fg.controls[i] === undefined) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
@@ -569,7 +578,7 @@ export class DatasetAclComponent implements OnDestroy {
     if (doesNotWantToEditDataset) {
       return;
     }
-  
+
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
     this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
     let dacl = body.dacl;
@@ -628,7 +637,7 @@ export class DatasetAclComponent implements OnDestroy {
         this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-    }); 
+    });
   }
 
   updateGroupSearchOptions(value = "", parent, config) {
