@@ -284,6 +284,12 @@ export class ReplicationFormComponent {
                 }]
             }],
         }, {
+            type: 'checkbox',
+            name: 'properties',
+            placeholder: helptext.properties_placeholder,
+            tooltip: helptext.properties_tooltip,
+            value: true,
+        }, {
             type: 'select',
             multiple: true,
             name: 'periodic_snapshot_tasks',
