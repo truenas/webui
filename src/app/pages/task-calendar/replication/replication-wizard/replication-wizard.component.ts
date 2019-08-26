@@ -651,13 +651,16 @@ export class ReplicationWizardComponent {
                 ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
                 transport: data['transport'] ? data['transport'] : 'LOCAL',
                 retention_policy: data['retention_policy'],
+                recursive: data['recursive'],
             }
-            payload['recursive'] = data['recursive'];
-            payload['auto'] = data['schedule_method'] === 'corn' ? true : false;
+
+            // schedule option
             if (data['schedule_method'] === 'corn') {
                 payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
+                payload['auto'] = true;
             } else {
                 payload['also_include_naming_schema'] = ['auto-%Y-%m-%d_%H-%M']; //default?
+                payload['auto'] = false;
             }
     
             if (data['retention_policy'] === 'CUSTOM') {
