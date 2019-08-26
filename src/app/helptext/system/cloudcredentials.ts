@@ -12,8 +12,8 @@ export const helptext_system_cloudcredentials = {
 
   provider: {
     placeholder: T("Provider"),
-    tooltip: T("Third-party Cloud service providers. Choose an option to \
- configure connection credentials for the selected provider."),
+    tooltip: T("Third-party Cloud service providers. Choose a provider \
+ to configure connection credentials."),
     validation: [Validators.required]
   },
 
@@ -56,7 +56,7 @@ export const helptext_system_cloudcredentials = {
     placeholder: T("Secret Access Key"),
     tooltip: T(
       "Amazon Web Services password. If the Secret Access Key cannot be \
- found or remembered, go to <i>My Account > Security Credentials > \
+ found or remembered, go to <i>My Account -> Security Credentials -> \
  Access Keys</i> and create a new key pair."
     )
   },
@@ -255,7 +255,7 @@ export const helptext_system_cloudcredentials = {
   drive_type_onedrive: {
     placeholder: T("Drive Account Type"),
     tooltip: T(
-      'Choose the account type: <i>PERSONAL, BUSINESS,</i> or \
+      'Choose the account type: <i>PERSONAL</i>, <i>BUSINESS</i>, or \
  <a href="https://products.office.com/en-us/sharepoint/collaboration"\
  target="_blank">SharePoint</a> <i>DOCUMENT_LIBRARY</i>.'
     )
