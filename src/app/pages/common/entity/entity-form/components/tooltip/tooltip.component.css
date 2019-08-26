@@ -140,5 +140,8 @@ div.tooltiptext.left:before{
   z-index:100;
 }
 
+.tooltip-container.wizard{
+  position:fixed;
+}
 
 

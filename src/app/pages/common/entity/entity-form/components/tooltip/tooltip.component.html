@@ -1,17 +1,17 @@
-<div #tooltip class="tooltip" (mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">
+<div #tooltip class="tooltip" > <!--(mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">-->
   <i class="material-icons tooltip-icon" (click)="toggleVis(!isLockTooltip ? 'lock' : '')" >help_outline</i>
 
-  <div class="tooltip-container fn-theme-primary">
+  <div class="tooltip-container fn-theme-primary" [ngClass]="{'wizard': isWizard}">
     <div cdkDrag class="tooltiptext {{positionString}}" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" >
 
       <div id="tooltip-header" (click)="toggleVis('lock')" cdkDragHandle>
         <div class="tooltip-header-text">Help</div>
       </div>
 
-        <div class="pin" (click)="toggleVis(!isLockTooltip ? 'lock' : 'unlock')">
+        <!--<div class="pin" (click)="toggleVis(!isLockTooltip ? 'lock' : 'unlock')">
           <mat-icon *ngIf="!isLockTooltip" role="img" fontSet="mdi-set" fontIcon="mdi-pin-off"></mat-icon>
           <mat-icon *ngIf="isLockTooltip" role="img" fontSet="mdi-set" fontIcon="mdi-pin"></mat-icon>
-        </div>
+          </div>-->
 
       <div class="tooltip-message" [innerHTML]="message | translate | docreplace"></div>
 

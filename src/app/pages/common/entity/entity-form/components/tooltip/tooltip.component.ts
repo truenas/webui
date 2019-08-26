@@ -10,9 +10,10 @@ export class TooltipComponent {
   @Input('message') message: string;
   @ViewChild('tooltip', { static: true}) private tooltip: ElementRef;
 
-  public isShowTooltip: Boolean;
+  public isShowTooltip: boolean;
   public tooltipMsgStyle: any;
-  public isLockTooltip: Boolean = false;
+  public isLockTooltip: boolean = false;
+  public isWizard: boolean = false
 
   public positionString: string = 'Default';
 
@@ -21,7 +22,9 @@ export class TooltipComponent {
   showTooltip($event) {
     this.isShowTooltip = $event;
 
-    let formParent = this.tooltip.nativeElement.offsetParent/*.offsetParent.offsetParent.offsetParent*/;
+    //let formParent = this.tooltip.nativeElement.offsetParent;
+    let formParent = this.findParent();
+
     let screenW = document.body.clientWidth;
     let screenH = document.body.clientHeight;
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
@@ -37,36 +40,7 @@ export class TooltipComponent {
 
     if (tooltipHeight > 200) {
       this.tooltip.nativeElement.lastElementChild.id = 'adjustme';
-    } /*else if((posY / screenH > .85)) {
-      this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
-    }*/
-
-    /*if(this.message.length <= 40) {
-      if((posX/screenW) <= .6) {
-        this.tooltipMsgStyle = {'left' : '0px', 'max-width' : dynamicWidth + 'px'};
-      }
-      else {
-        this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  dynamicWidth + 'px'};
-      }
-    } else if (this.message.length > 750) {
-        if((posX/screenW) <= .6) {
-          this.tooltipMsgStyle = {'left' : '0px', 'max-width' :  '600px', 'top' : '-20px'};
-        } else {
-          this.tooltipMsgStyle = {'right' : '8px', 'max-width' :  '600px', 'top' : '-20px'};
-        }
-    }
-    else {
-      if((posX/screenW) <= .52) {
-        this.tooltipMsgStyle = {'left' : '0px'};
-      }
-      else if((posX/screenW) <= .63) {
-        this.tooltipMsgStyle = {'left' : '0px', 'max-width' : '270px'};
-      }
-      else {
-        // Position Left
-        this.tooltipMsgStyle = {'right' : '8px'};
-      }
-    }*/
+    } 
 
     this.tooltipMsgStyle = {
       'right': '32px',
@@ -75,25 +49,44 @@ export class TooltipComponent {
     };
 
     const fpr = formParent.offsetLeft + formParent.offsetWidth
-    let insideJob = formParent.clientWidth - posRight > 100 ? true : false;
+    let insideJob = formParent.clientWidth - posRight > 200 ? true : false;
     this.positionString = insideJob ? 'above' : 'left';
-    console.log(this.tooltip);
-    console.log(posRight);
-    console.log(fpr);
 
   }
 
   toggleVis(state?) {
     if (state ==='lock') {
+      this.showTooltip(true);
       this.isLockTooltip = true;
       this.isShowTooltip = true;
     } else {
+      this.showTooltip(false);
       this.isLockTooltip = false;
       this.isShowTooltip = false;
-      /*this.isLockTooltip = !this.isLockTooltip;
-      if (this.isLockTooltip === false) {
-        this.isShowTooltip = false;
-      }*/
     }
   }
+
+  findParent(){
+    console.log(this.tooltip); 
+    let formParent = this.tooltip.nativeElement.offsetParent;
+    let card;
+    if(formParent.tagName.toLowerCase() == 'mat-card'){
+      card = formParent;
+    } else if(formParent.offsetParent.tagName.toLowerCase() == 'mat-card'){
+      card = formParent.offsetParent;
+    } else if(formParent.offsetParent.offsetParent.tagName.toLowerCase() == 'mat-card'){
+      card = formParent.offsetParent.offsetParent;
+    } else if(formParent.offsetParent.offsetParent.offsetParent.tagName.toLowerCase() == 'mat-card'){
+      card = formParent.offsetParent.offsetParent.offsetParent;
+    } else if(formParent.offsetParent.offsetParent.offsetParent.offsetParent.tagName.toLowerCase() == 'mat-card'){
+      card = formParent.offsetParent.offsetParent.offsetParent.offsetParent;
+    }
+
+    if(card.parentNode.nodeName.toLowerCase() == 'entity-wizard'){
+      this.isWizard = true;
+    }
+
+    return card;
+  }
+
 }
