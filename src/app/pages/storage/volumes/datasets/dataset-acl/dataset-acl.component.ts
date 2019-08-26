@@ -418,12 +418,15 @@ export class DatasetAclComponent implements OnDestroy {
       this.save_button_enabled = canSave;
     });
     this.entityForm.formGroup.controls['default_acl_choices'].valueChanges.subscribe((value) => {
+      let num;
+      value === 'RESTRICTED' ? num = 2 : num = 3;
+      while(this.aces.controls.length > num) {
+        this.aces.removeAt(num)
+      }
+      // this.aces.removeAt(1)
       this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
-        if (value === 'RESTRICTED') {
-          const obj = {tag: '', type: '', id: null, flags: {BASIC: ''}, perms: {BASIC: ''}};
-          res.push(obj);
-        }
-        // special cases - restricted - no @everyone; domain-home needs advanced flags (multi-select)under groups
+        console.log(res)
+
         this.dataHandler(this.entityForm, res);
       });
     });
@@ -496,7 +499,6 @@ export class DatasetAclComponent implements OnDestroy {
 
       const propName = "aces";
       const aces_fg = entityForm.formGroup.controls[propName];
-      console.log(aces_fg)
       if (aces_fg.controls[i] === undefined) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
