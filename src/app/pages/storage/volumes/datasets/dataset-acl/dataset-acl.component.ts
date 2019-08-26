@@ -423,10 +423,7 @@ export class DatasetAclComponent implements OnDestroy {
       while(this.aces.controls.length > num) {
         this.aces.removeAt(num)
       }
-      // this.aces.removeAt(1)
       this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
-        console.log(res)
-
         this.dataHandler(this.entityForm, res);
       });
     });
