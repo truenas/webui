@@ -8,10 +8,11 @@
         <div class="tooltip-header-text">Help</div>
       </div>
 
-        <!--<div class="pin" (click)="toggleVis(!isLockTooltip ? 'lock' : 'unlock')">
-          <mat-icon *ngIf="!isLockTooltip" role="img" fontSet="mdi-set" fontIcon="mdi-pin-off"></mat-icon>
-          <mat-icon *ngIf="isLockTooltip" role="img" fontSet="mdi-set" fontIcon="mdi-pin"></mat-icon>
-          </div>-->
+        <div class="pin" (click)="toggleVis(!isLockTooltip ? 'lock' : 'unlock')">
+          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close"></mat-icon>
+          <!--<mat-icon *ngIf="!isLockTooltip" role="img" fontSet="mdi-set" fontIcon="mdi-pin-off"></mat-icon>
+            <mat-icon *ngIf="isLockTooltip" role="img" fontSet="mdi-set" fontIcon="mdi-pin"></mat-icon>-->
+          </div>
 
       <div class="tooltip-message" [innerHTML]="message | translate | docreplace"></div>
 

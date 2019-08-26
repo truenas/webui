@@ -38,9 +38,9 @@ export class TooltipComponent {
     let dynamicWidth = this.message.length * 8.5;
     let tooltipHeight = this.tooltip.nativeElement.scrollHeight;
 
-    if (tooltipHeight > 200) {
+    /*if (tooltipHeight > 200) {
       this.tooltip.nativeElement.lastElementChild.id = 'adjustme';
-    } 
+    } */
 
     this.tooltipMsgStyle = {
       'right': '32px',
