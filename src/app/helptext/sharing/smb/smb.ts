@@ -49,11 +49,15 @@ export const helptext_sharing_smb = {
  regardless of this setting.'),
 
     placeholder_recyclebin: T('Export Recycle Bin'),
-    tooltip_recyclebin: T('When set, deleted files are moved to a hidden\
- <b>.recycle</b> in the root folder of the share.\
- The <b>.recycle</b> directory can be\
- deleted to reclaim space and is automatically\
- recreated when a file is deleted.'),
+    tooltip_recyclebin: T('Files that are deleted from the same \
+ dataset are moved to the Recycle Bin and do not take any additional \
+ space. When the files are in a different dataset or a child dataset, \
+ they are copied to the dataset where the Recycle Bin is located. To \
+ prevent excessive space usage, files larger than 20 MiB are deleted \
+ rather than moved. Adjust the <i>Auxiliary Parameter</i> \
+ <samp>crossrename:sizelimit=</samp> setting to allow larger files. \
+ For example, <samp>crossrename:sizelimit={50}</samp> allows moves of \
+ files up to 50 MiB in size.'),
 
     placeholder_showhiddenfiles: T('Show Hidden Files'),
     tooltip_showhiddenfiles: T('Set to disable the Windows <i>hidden</i> attribute\
