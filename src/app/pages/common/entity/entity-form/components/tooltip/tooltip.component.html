@@ -1,5 +1,5 @@
 <div #tooltip class="tooltip" (mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">
-  <i class="material-icons tooltip-icon">help_outline</i>
+  <i class="material-icons tooltip-icon" (click)="toggleVis(!isLockTooltip ? 'lock' : '')" >help_outline</i>
 
   <div class="tooltip-container fn-theme-primary">
     <div cdkDrag class="tooltiptext {{positionString}}" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" >

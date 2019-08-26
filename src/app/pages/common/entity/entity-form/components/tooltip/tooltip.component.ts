@@ -37,9 +37,9 @@ export class TooltipComponent {
 
     if (tooltipHeight > 200) {
       this.tooltip.nativeElement.lastElementChild.id = 'adjustme';
-    } else if((posY / screenH > .85)) {
+    } /*else if((posY / screenH > .85)) {
       this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
-    }
+    }*/
 
     /*if(this.message.length <= 40) {
       if((posX/screenW) <= .6) {
