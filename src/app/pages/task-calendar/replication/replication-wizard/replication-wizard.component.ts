@@ -42,6 +42,8 @@ export class ReplicationWizardComponent {
         }
     ];
 
+    protected suggestName: any;
+
     protected wizardConfig: Wizard[] = [
         {
             label: helptext.step1_label,
@@ -533,8 +535,6 @@ export class ReplicationWizardComponent {
         const exist_replicationField = _.find(this.wizardConfig[0].fieldConfig, { name: 'exist_replication' });
         this.replicationService.getReplicationTasks().subscribe(
             (res) => {
-                console.log(res);
-                
                 for (const task of res) {
                     const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
                     exist_replicationField.options.push({ label: lable, value: task });
@@ -574,6 +574,12 @@ export class ReplicationWizardComponent {
             }
             this.selectedReplicationTask = value;
         });
+        this.entityWizard.formArray.controls[0].controls['source_datasets'].statusChanges.subscribe((value) => {
+            this.genTaskName();
+        });
+        this.entityWizard.formArray.controls[0].controls['target_dataset'].statusChanges.subscribe((value) => {
+            this.genTaskName();
+        });
 
         for (const i of ['source', 'target']) {
             const credentialName = 'ssh_credentials_' + i;
@@ -600,18 +606,18 @@ export class ReplicationWizardComponent {
                 if (value === 'NEW') {
                     // pop up dialog
                     this.createSSHConnection(credentialName);
+                } else {
+                    const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: datasetName}).customTemplateStringOptions.explorerComponent;
+                    if (explorerComponent) {
+                        explorerComponent.nodes = [{
+                            mountpoint: explorerComponent.config.initial,
+                            name: explorerComponent.config.initial,
+                            hasChildren: true
+                        }];
+                        this.entityWizard.formArray.controls[0].controls[datasetName].setValue('');
+                    }
+                    this.setDisable(datasetName, false, false, 0);
                 }
-                const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: datasetName}).customTemplateStringOptions.explorerComponent;
-                if (explorerComponent) {
-                    explorerComponent.nodes = [{
-                        mountpoint: explorerComponent.config.initial,
-                        name: explorerComponent.config.initial,
-                        hasChildren: true
-                    }];
-                    this.entityWizard.formArray.controls[0].controls[datasetName].setValue('');
-                }
-
-                this.setDisable(datasetName, false, false, 0);
             });
         }
 
@@ -680,7 +686,6 @@ export class ReplicationWizardComponent {
     }
 
     loadReplicationTask(task) {
-        console.log(task);
         if (task.direction === 'PUSH') {
             task['source_datasets_from'] = 'local';
             task['target_dataset_from'] = 'remote';
@@ -722,7 +727,6 @@ export class ReplicationWizardComponent {
     }
 
     clearReplicationTask() {
-        console.log('clear replication task');
         this.entityWizard.formArray.reset();
     }
 
@@ -738,8 +742,6 @@ export class ReplicationWizardComponent {
     }
 
     async doCreate(data, item) {
-        console.log(data, item);
-        
         let payload;
         if (item === 'private_key') {
             payload = {
@@ -891,8 +893,6 @@ export class ReplicationWizardComponent {
                 await self.replicationService.genSSHKeypair().then(
                     (res) => {
                         value['sshkeypair'] = res;
-                        console.log('sshkeypair', res);
-                        
                     },
                     (err) => {
                         new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -903,7 +903,6 @@ export class ReplicationWizardComponent {
                 await this.getRemoteHostKey(value).then(
                     (res) => {
                         value['remote_host_key'] = res;
-                        console.log('remote_host_key', res);
                     },
                     (err) => {
                         new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -954,5 +953,16 @@ export class ReplicationWizardComponent {
             'port': value['port'],
         };
         return this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).toPromise();
+    }
+
+    genTaskName() {
+        const source = this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [];
+        const target = this.entityWizard.formArray.controls[0].controls['target_dataset'].value;
+        if (source.length > 3) {
+            this.suggestName = source[0] + ',...,' + source[source.length - 1] + ' - ' + target;
+        } else {
+            this.suggestName = source.join(',') + ' - ' + target;
+        }
+        this.entityWizard.formArray.controls[0].controls['name'].setValue(this.suggestName);
     }
 }
