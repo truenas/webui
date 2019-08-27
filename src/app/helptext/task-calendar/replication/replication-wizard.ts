@@ -51,4 +51,8 @@ export default {
     lifetime_value_tooltip: T(''),
 
     lifetime_unit_tooltip: T(''),
+
+    // dialog
+    cipher_placeholder: T('Cipher'),
+    cipher_tooltip: T(''),
 }
