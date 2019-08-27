@@ -1,0 +1,15 @@
+<mat-card id="eula-card">
+  <div id="eula" [innerHTML]="eula"></div>
+  <div *ngIf="eula">
+    <mat-divider></mat-divider>
+    <mat-card-actions id="button-row">
+      <button 
+        id="back-to-support-button" 
+        mat-flat-button 
+        class="mat-button mat-primary"
+        (click)="goToSupport()">
+        {{ "Back to Support" | translate }}
+      </button>
+    </mat-card-actions>
+  </div>
+</mat-card>
