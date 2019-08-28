@@ -50,7 +50,7 @@ export class TooltipComponent {
 
     const fpr = formParent.offsetLeft + formParent.offsetWidth
     let insideJob = formParent.clientWidth - posRight > 200 ? true : false;
-    this.positionString = insideJob ? 'above' : 'left';
+    this.positionString = insideJob ? 'right' : 'left';
 
   }
 
