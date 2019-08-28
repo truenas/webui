@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class TooltipComponent {
   @Input('message') message: string;
+  @Input('position') positionOverride?: string;
   @ViewChild('tooltip', { static: true}) private tooltip: ElementRef;
 
   public isShowTooltip: boolean;
@@ -49,8 +50,13 @@ export class TooltipComponent {
     };
 
     const fpr = formParent.offsetLeft + formParent.offsetWidth
-    let insideJob = formParent.clientWidth - posRight > 200 ? true : false;
-    this.positionString = insideJob ? 'right' : 'left';
+    let insideJob = formParent.clientWidth - posRight > 300 ? true : false;
+
+    if(this.positionOverride){
+      this.positionString = this.positionOverride;
+    } else {
+      this.positionString = insideJob ? 'right' : 'left';
+    }
 
   }
 
