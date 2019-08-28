@@ -603,8 +603,7 @@ export class ReplicationWizardComponent {
             });
 
             this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value) => {
-                if (value === 'NEW') {
-                    // pop up dialog
+                if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === 'remote') {
                     this.createSSHConnection(credentialName);
                 } else {
                     const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: datasetName}).customTemplateStringOptions.explorerComponent;
@@ -725,7 +724,6 @@ export class ReplicationWizardComponent {
                 ctrl.setValue(task[i]);
             }
         }
-
     }
 
     clearReplicationTask() {
