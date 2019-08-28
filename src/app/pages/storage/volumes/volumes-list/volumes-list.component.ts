@@ -80,7 +80,7 @@ export class VolumesListTableConfig implements InputTableConf {
       key_props: ['name']
     },
   };
-  
+
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
@@ -132,8 +132,8 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getEncryptedActions(rowData: any) {
-    const actions = [], 
-    localLoader = this.loader, localRest = this.rest, localDialogService = this.dialogService, 
+    const actions = [],
+    localLoader = this.loader, localRest = this.rest, localDialogService = this.dialogService,
       localResourceName = this.resource_name, localParentVolumesList = this.parentVolumesListComponent;
 
     if (rowData.vol_encrypt === 2) {
@@ -231,7 +231,7 @@ export class VolumesListTableConfig implements InputTableConf {
     localParentVol = this.parentVolumesListComponent,
     localDialogService = this.dialogService,
     localSnackBar = this.snackBar
-    
+
     this.storageService.poolUnlockServiceChoices().pipe(
       map(serviceChoices => {
         return {
@@ -262,7 +262,7 @@ export class VolumesListTableConfig implements InputTableConf {
               options: serviceChoices
             }
           ],
-    
+
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
             const value = entityDialog.formValue;
@@ -272,7 +272,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 passphrase: value.passphrase,
                 recovery_key: value.recovery_key,
                 services: value.services
-                }) 
+                })
               }).subscribe((restPostResp) => {
               entityDialog.dialogRef.close(true);
               localLoader.close();
@@ -321,16 +321,16 @@ export class VolumesListTableConfig implements InputTableConf {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
-                p1 = `These services depend on <b>${row1.name}</b> and will be disrupted when the volume is detached:`;
+                p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is detached:`;
                 res.forEach((item) => {
                   p1 += `<br><br>${item.type}:`;
                   item.attachments.forEach((i) => {
                     let tempArr = i.split(',');
                     tempArr.forEach((i) => {
                       p1 += `<br> - ${i}`
-                    }) 
+                    })
                   })
-  
+
                 })
               }
               this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
@@ -352,7 +352,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       if (process.name) {
                         p1 += `<br> - ${process.name}`
                       }
-                      
+
                     });
                   };
                   if (running_unknown_processes.length > 0) {
@@ -453,10 +453,10 @@ export class VolumesListTableConfig implements InputTableConf {
                   if (res.extra && res.extra['code'] === 'services_restart') {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    conditionalErrMessage = 
-                    `Warning: These services have to be restarted in order to export pool: 
+                    conditionalErrMessage =
+                    `Warning: These services must be restarted to export the pool:
                       ${res.extra['services']}
-                      <br><br>Services will now be restarted and then exporting/disconnecting will continue.`;
+                      <br><br>Exporting/disconnecting will continue after services have been restarted.`;
                       localDialogService.confirm(T("Error exporting/disconnecting pool."),
                         conditionalErrMessage, true, 'Restart Services and Continue')
                           .subscribe((res) => {
@@ -468,8 +468,8 @@ export class VolumesListTableConfig implements InputTableConf {
                   } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                     entityDialog.dialogRef.close(true);
 
-                    conditionalErrMessage = 
-                    `Unable to terminate following processes using this pool: ${res.extra['processes']}`;
+                    conditionalErrMessage =
+                    `Unable to terminate processes which are using this pool: ${res.extra['processes']}`;
                     dialogRef.close(true);
                     localDialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
                   }
@@ -477,7 +477,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   entityDialog.dialogRef.close(true);
                   dialogRef.close(true);
                   localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
-                };  
+                };
               });
             }
           }
@@ -636,7 +636,7 @@ export class VolumesListTableConfig implements InputTableConf {
               } else {
                 this.dialogService.confirm(T("Dataset has complex ACLs"),
                   T("This dataset has ACLs that are too complex to be edited with \
-                    the permissions editor.  Open in ACL editor instead?"), 
+                    the permissions editor.  Open in ACL editor instead?"),
                   true, T("EDIT ACL")).subscribe(edit_acl => {
                     if (edit_acl) {
                         this._router.navigate(new Array('/').concat([
@@ -669,13 +669,13 @@ export class VolumesListTableConfig implements InputTableConf {
           name: 'Delete Dataset',
           label: T("Delete Dataset"),
           onClick: (row1) => {
-            this.dialogService.confirm(T("Delete"), 
+            this.dialogService.confirm(T("Delete"),
               T("Delete the dataset ") + "<i>" + row1.path + "</i>"+  T(" and all snapshots of it?")
               , false, T('Delete Dataset')).subscribe((confirmed) => {
                 if (confirmed) {
                   this.dialogService.doubleConfirm(
                     T('Verify Deletion of ') + row1.path + T(' Dataset'),
-                    T('To delete the <b>') + row1.path + T('</b> dataset and all snapshots stored with it, please type the name of the dataset to confirm:'),
+                    T('To delete the <i>') + row1.path + T('</i> dataset and all snapshots stored with it, please type the name of the dataset to confirm:'),
                     row1.path
                   ).subscribe((doubleConfirmDialog)=> {
                     if (doubleConfirmDialog) {
@@ -686,7 +686,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       }, (e_res) => {
                         this.loader.close();
                         if (e_res.reason.indexOf('Device busy') > -1) {
-                          this.dialogService.confirm(T('Device Busy'), T('Do you want to force delete dataset ') + "<i>" + row1.path + "</i>?", false, T('Force Delete')).subscribe(
+                          this.dialogService.confirm(T('Device Busy'), T('Force deletion of dataset ') + "<i>" + row1.path + "</i>?", false, T('Force Delete')).subscribe(
                             (res) => {
                               if (res) {
                                 this.loader.open();
@@ -784,7 +784,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 tooltip: helptext.snapshotDialog_name_tooltip,
                 validation: helptext.snapshotDialog_name_validation,
                 required: true,
-                value: "manual" + '-' + this.getTimestamp()            
+                value: "manual" + '-' + this.getTimestamp()
               },
               {
                 type: 'checkbox',
@@ -991,7 +991,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         this.showDefaults = true;
         this.showSpinner = false;
 
-        
+
       }, (res) => {
         this.showDefaults = true;
         this.showSpinner = false;
