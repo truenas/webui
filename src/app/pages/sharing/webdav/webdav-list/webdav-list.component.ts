@@ -12,7 +12,7 @@ import { helptext_sharing_webdav } from 'app/helptext/sharing';
 export class WebdavListComponent {
 
     public title = "WebDAV";
-    protected resource_name: string = 'sharing/webdav';
+    protected queryCall: string = 'sharing.webdav.query';
     public busy: Subscription;
     public sub: Subscription;
 
@@ -22,11 +22,11 @@ export class WebdavListComponent {
     protected route_delete: string[] = [ 'sharing', 'webdav', 'delete'];
 
     public columns: Array<any> = [
-        {prop: 'webdav_name', name: helptext_sharing_webdav.column_name, always_display: true },
-        {prop: 'webdav_comment', name: helptext_sharing_webdav.column_comment},
-        {prop: 'webdav_path', name:  helptext_sharing_webdav.column_path},
-        {prop: 'webdav_ro', name:  helptext_sharing_webdav.column_ro},
-        {prop: 'webdav_perm', name:  helptext_sharing_webdav.column_perm},
+        {prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
+        {prop: 'comment', name: helptext_sharing_webdav.column_comment},
+        {prop: 'path', name:  helptext_sharing_webdav.column_path},
+        {prop: 'ro', name:  helptext_sharing_webdav.column_ro},
+        {prop: 'perm', name:  helptext_sharing_webdav.column_perm},
     ];
 
     public config: any = {
@@ -34,7 +34,7 @@ export class WebdavListComponent {
         sorting : {columns : this.columns},
         deleteMsg: {
             title: 'WebDAV Share',
-            key_props: ['webdav_name']
+            key_props: ['name']
         },
     };
 
