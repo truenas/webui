@@ -156,6 +156,10 @@ div.tooltiptext.right:before{
   left: -8px;
 }
 
+.moved div.tooltiptext:before{
+  display:none;
+}
+
 .tooltip-container{
   position:relative;
   filter: drop-shadow(0 4px 4px rgba(0,0,0, 0.5));

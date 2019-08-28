@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { CdkDrag } from '@angular/cdk/drag-drop';
 
 @Component({
   selector : 'tooltip',
@@ -10,6 +11,7 @@ export class TooltipComponent {
   @Input('message') message: string;
   @Input('position') positionOverride?: string;
   @ViewChild('tooltip', { static: true}) private tooltip: ElementRef;
+  @ViewChild(CdkDrag, {static: true}) dragTarget: CdkDrag;
 
   public isShowTooltip: boolean;
   public tooltipMsgStyle: any;
@@ -17,6 +19,7 @@ export class TooltipComponent {
   public isWizard: boolean = false
 
   public positionString: string = 'Default';
+  public isMoved: boolean = false;
 
   constructor(public translate: TranslateService) {}
 
@@ -69,6 +72,10 @@ export class TooltipComponent {
       this.showTooltip(false);
       this.isLockTooltip = false;
       this.isShowTooltip = false;
+      setTimeout(() =>{
+        this.dragTarget.reset();
+        this.isMoved = false;
+      }, 1000);
     }
   }
 
@@ -92,6 +99,10 @@ export class TooltipComponent {
     }
 
     return card;
+  }
+
+  hideTail(evt?){
+    this.isMoved = true;
   }
 
 }
