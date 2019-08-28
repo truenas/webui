@@ -35,7 +35,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   //public cardBg:string = "";
   public product_image = '';
   public certified = false;
-  public failoverBtnLabel: string = "FAILOVER TO PASSIVE NODE"
+  public failoverBtnLabel: string = "FAILOVER TO STANDBY"
   public updateAvailable:boolean = false;
   private _updateBtnStatus:string = "default";
   public updateBtnLabel:string = T("Check for Updates")
@@ -138,6 +138,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.isFN = false;
       }    
 
+  }
+
+  failoverInit(){
+      console.warn("FAILOVER INITIATED...");
+      //this.ws.call('system.info').subscribe((res) => {})
   }
 
   formatMemory(physmem:number, units:string){

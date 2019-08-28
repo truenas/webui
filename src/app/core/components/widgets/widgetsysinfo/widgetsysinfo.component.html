@@ -5,7 +5,7 @@
         <mat-toolbar-row class="view-overview">
           <span class="mat-card-title-text">
             <span class="card-title-text">
-              &nbsp;System Information&nbsp;<span *ngIf="isPassive" class="passive">(Passive)</span>
+              &nbsp;System Information&nbsp;<span *ngIf="isPassive" class="passive">(Standby)</span>
             </span>
           </span>
         </mat-toolbar-row>
@@ -31,13 +31,13 @@
                     <mat-icon *ngIf="isFN" class="generic" svgIcon="freenas_logomark"></mat-icon>
                   </ng-template>
                   <img class="certified-badge" *ngIf="certified" src="assets/images/freenas_certified.svg">
-                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Passive" : "Active" }})</div>
+                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" }})</div>
               </div>
             </div>
 
             <div fxFlex="18" class="update-action">
               <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-              <button *ngIf="isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="log('CLICK!')">{{failoverBtnLabel | translate}}</button>
+              <button *ngIf="isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="failoverInit()">{{failoverBtnLabel | translate}}</button>
             </div>
   
           </div>
