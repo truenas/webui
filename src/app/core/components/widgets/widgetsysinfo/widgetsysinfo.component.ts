@@ -46,7 +46,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public loader:boolean = false;
   public is_freenas: string = window.localStorage['is_freenas'];
   public systemLogo: any;
-  public isFN: boolean;
+  public isFN: boolean = false;
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService){
     super(translate);
