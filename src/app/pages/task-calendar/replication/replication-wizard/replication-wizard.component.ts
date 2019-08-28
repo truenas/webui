@@ -256,12 +256,12 @@ export class ReplicationWizardComponent {
                     tooltip: helptext.schedule_method_tooltip,
                     options: [{
                         label: 'Run On a Schedule',
-                        value: 'corn',
+                        value: 'cron',
                     }, {
                         label: 'Run Once',
                         value: 'once',
                     }],
-                    value: 'corn',
+                    value: 'cron',
                     class: 'inline',
                     width: '50%',
                 },
@@ -276,7 +276,7 @@ export class ReplicationWizardComponent {
                         action: 'SHOW',
                         when: [{
                             name: 'schedule_method',
-                            value: 'corn',
+                            value: 'cron',
                         }]
                     }],
                     required: true,
@@ -705,7 +705,7 @@ export class ReplicationWizardComponent {
 
         if (task.schedule || task.periodic_snapshot_tasks ) {
             const scheduleData = task.periodic_snapshot_tasks[0] || task;
-            task['schedule_method'] = 'corn';
+            task['schedule_method'] = 'cron';
             task['schedule_picker'] = scheduleData.schedule.minute + " " +scheduleData.schedule.hour + " " + scheduleData.schedule.dom + " " + scheduleData.schedule.month + " " + scheduleData.schedule.dow;
             
             if (scheduleData['lifetime_value'] === null && scheduleData['lifetime_unit'] === null) {
@@ -799,7 +799,7 @@ export class ReplicationWizardComponent {
         if (item === 'replication') {
             payload = {
                 name: data['name'],
-                direction: 'PUSH',
+                direction: data['source_datasets_from'] === 'remote' ? 'PULL' : 'PUSH',
                 source_datasets: data['source_datasets'],
                 target_dataset: data['target_dataset'],
                 ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
@@ -809,11 +809,16 @@ export class ReplicationWizardComponent {
             }
 
             // schedule option
-            if (data['schedule_method'] === 'corn') {
-                payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
+            if (data['schedule_method'] === 'cron') {
                 payload['auto'] = true;
+                if (payload['direction'] === 'PULL') {
+                    payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
+                    payload['naming_schema'] = ['auto-%Y-%m-%d_%H-%M']; //default?
+                } else {
+                    payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
+                }
             } else {
-                payload['also_include_naming_schema'] = ['auto-%Y-%m-%d_%H-%M']; //default?
+                payload['also_include_naming_schema'] = []; //default?
                 payload['auto'] = false;
             }
     
@@ -834,15 +839,13 @@ export class ReplicationWizardComponent {
         let toStop = false;
 
         const createdItems = {
-            private_key: null,
-            ssh_credentials: null,
             periodic_snapshot_tasks: null,
             replication: null,
         }
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!((item === 'private_key' && value['private_key'] !== 'NEW') || (item === 'ssh_credentials' && value['ssh_credentials'] !== 'NEW') || (item === 'periodic_snapshot_tasks' && value['schedule_method'] !== 'corn'))) {
+                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== 'cron' || value['source_datasets_from'] !== 'local'))) {
                     await this.doCreate(value, item).then(
                         (res) => {
                             value[item] = res.id || res.map(snapshot => snapshot.id);
