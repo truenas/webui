@@ -181,15 +181,12 @@ export class VMwareSnapshotFormComponent {
       if(payload['password'] !== "" && typeof(payload['password'])!== "undefined") {
         parent.loader.open();
         parent.ws.call("vmware.get_datastores", [payload]).subscribe((res) => {
-        if(this.datastore.options.length >0){
-          this.datastore.options.length = 0;
-        }
-          for (const key in res) {
-            const datastores = res[key]
-            for (const datastore in datastores) {
-              this.datastore.options.push({ label: datastore, value: datastore })
-            }
-          }
+          if(this.datastore.options.length > 0) {
+            this.datastore.options.length = 0;
+          };
+          res.forEach((datastore) => {
+            this.datastore.options.push({ label: datastore, value: datastore })
+          });
           parent.loader.close();
         }
         ,
