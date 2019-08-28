@@ -1,5 +1,8 @@
 <mat-card id="eula-card">
-  <div id="eula" [innerHTML]="eula"></div>
+  <div id="eula">
+      <h2>{{ "End User License Agreement - TrueNAS" | translate }}</h2>
+      <div [innerHTML]="eula"></div>
+  </div>
   <div *ngIf="eula">
     <mat-divider></mat-divider>
     <mat-card-actions id="button-row">
@@ -13,3 +16,4 @@
     </mat-card-actions>
   </div>
 </mat-card>
+<div [style.height.px]="50" *ngIf="isFooterConsoleOpen"></div>
