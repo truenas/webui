@@ -730,6 +730,14 @@ export class ReplicationWizardComponent {
 
     clearReplicationTask() {
         this.entityWizard.formArray.reset();
+        for (let i = 0; i < this.entityWizard.formArray.controls.length; i++) {
+            for (const item in this.entityWizard.formArray.controls[i].controls) {
+                const itemConf = _.find(this.wizardConfig[i].fieldConfig, {name: item});
+                if (itemConf.value !== undefined && item !== "exist_replication") {
+                    this.entityWizard.formArray.controls[i].controls[item].setValue(itemConf.value);
+                }
+            }
+        }
     }
 
     parsePickerTime(picker) {
