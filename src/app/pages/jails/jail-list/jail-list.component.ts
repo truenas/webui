@@ -35,6 +35,7 @@ export class JailListComponent implements OnInit {
   public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
+    { name: T('JID'), prop: 'jid'},
     { name: T('Name'), prop: 'host_hostuuid', always_display: true },
     { name: T('Boot'), prop: 'boot_readble', hidden: true},
     { name: T('State'), prop: 'state'},
