@@ -71,6 +71,8 @@ export class ReplicationWizardComponent {
                         label: 'On a Different System',
                         value: 'remote',
                     }],
+                    required: true,
+                    validation: [Validators.required],
                     class: 'inline',
                     width: '50%',
                 },
@@ -86,6 +88,8 @@ export class ReplicationWizardComponent {
                         label: 'On a Different System',
                         value: 'remote',
                     }],
+                    required: true,
+                    validation: [Validators.required],
                     class: 'inline',
                     width: '50%',
                 },
@@ -105,6 +109,8 @@ export class ReplicationWizardComponent {
                         }]
                     }],
                     isHidden: true,
+                    required: true,
+                    validation: [Validators.required],
                 },
                 {
                     type: 'select',
@@ -122,6 +128,8 @@ export class ReplicationWizardComponent {
                         }]
                     }],
                     isHidden: true,
+                    required: true,
+                    validation: [Validators.required],
                 },
                 {
                     type: 'explorer',
