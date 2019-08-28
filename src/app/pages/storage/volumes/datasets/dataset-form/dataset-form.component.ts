@@ -12,6 +12,8 @@ import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { Validators } from '@angular/forms';
 
 interface DatasetFormData {
   name: string;
@@ -64,7 +66,8 @@ export class DatasetFormComponent implements Formconfiguration{
   protected recordsize_fg: any;
   protected recommended_size_number: any;
   protected recordsize_warning: any;
-
+  public namesInUse = [];
+  public nameIsCaseInsensitive = false;
 
   public parent: string;
   public data: any;
@@ -97,7 +100,7 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: helptext.dataset_form_name_tooltip,
       readonly: true,
       required: true,
-      validation: helptext.dataset_form_name_validation
+      validation: [Validators.required, forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive)],
     },
     {
       type: 'input',
@@ -527,7 +530,7 @@ export class DatasetFormComponent implements Formconfiguration{
         const unit = field + '_unit';
         if (this.OrigDec[field] !== data[field] || this.OrigUnit[field] !== data[unit]) {
           data[field] = Math.round(data[field] * this.byteMap[data[unit]]);
-        } else { 
+        } else {
           data[field] = this.OrigSize[field];
         }
       }
@@ -566,6 +569,21 @@ export class DatasetFormComponent implements Formconfiguration{
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     } else {
       entityForm.setDisabled('share_type', false, false);
+      entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
+        this.nameIsCaseInsensitive = this.nameIsCaseInsensitive;
+        const field = _.find(this.fieldConfig, {name: "name"});
+        field['hasErrors'] = false;
+        field['errors'] = '';
+        if (this.nameIsCaseInsensitive) {
+          value = value.toLowerCase();
+        }
+        if (this.namesInUse.includes(value)) {
+          let sensitivity;
+          this.nameIsCaseInsensitive ? sensitivity = '(This field is not case-sensitive).' : sensitivity = '';
+          field['hasErrors'] = true;
+          field['errors'] = T(`The name <em>${value}</em> is already in use. ${sensitivity}`);
+        }
+      })
     }
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
@@ -573,8 +591,8 @@ export class DatasetFormComponent implements Formconfiguration{
     this.recordsize_fg.valueChanges.subscribe((record_size)=>{
       const record_size_number = parseInt(this.reverseRecordSizeMap[record_size],10);
       if(this.minimum_recommended_dataset_recordsize && this.recommended_size_number){
-        this.recordsize_warning = helptext.dataset_form_warning_1 + 
-          this.minimum_recommended_dataset_recordsize + 
+        this.recordsize_warning = helptext.dataset_form_warning_1 +
+          this.minimum_recommended_dataset_recordsize +
           helptext.dataset_form_warning_2;
         if (record_size_number < this.recommended_size_number) {
           this.recordsize_field.warnings = this.recordsize_warning;
@@ -612,6 +630,22 @@ export class DatasetFormComponent implements Formconfiguration{
         this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
       });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
+        let children = (pk_dataset[0].children);
+        if (pk_dataset[0].casesensitivity.value === 'SENSITIVE') {
+          this.nameIsCaseInsensitive = false;
+        } else {
+          this.nameIsCaseInsensitive = true;
+        }
+        if (children.length > 0) {
+          for (let i in children) {
+            if (this.nameIsCaseInsensitive) {
+              this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0].toLowerCase());
+            } else {
+              this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+            }
+          };
+        };
+
       if(this.isNew){
         const sync = _.find(this.fieldConfig, {name:'sync'});
         const compression = _.find(this.fieldConfig, {name:'compression'});
@@ -654,22 +688,22 @@ export class DatasetFormComponent implements Formconfiguration{
               '512':'512',
               '1K':'1K',
               '2K':'2K',
-            }; 
+            };
             if ( current_dataset.hasOwnProperty("recordsize") && current_dataset['recordsize'].value ) {
                 _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset['recordsize'].value})['hiddenFromDisplay'] = false
-            } 
+            }
             if ( current_dataset.hasOwnProperty("quota") && current_dataset['quota'].rawvalue === '0' ) {
               entityForm.formGroup.controls['quota_unit'].setValue('M');
-            } 
+            }
             if ( current_dataset.hasOwnProperty("refquota")&& current_dataset['refquota'].rawvalue === '0' ) {
               entityForm.formGroup.controls['refquota_unit'].setValue('M');
-            } 
+            }
             if ( current_dataset.hasOwnProperty("reservation") && current_dataset['reservation'].rawvalue === '0' ) {
               entityForm.formGroup.controls['reservation_unit'].setValue('M');
-            } 
+            }
             if ( current_dataset.hasOwnProperty("refreservation") && current_dataset['refreservation'].rawvalue === '0' ) {
               entityForm.formGroup.controls['refreservation_unit'].setValue('M');
-            }  
+            }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});

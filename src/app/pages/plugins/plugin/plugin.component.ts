@@ -108,6 +108,7 @@ export class PluginComponent implements OnInit {
       visible: this.isActionVisible('update'),
       onClick: () => {
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
+        dialogRef.componentInstance.disableProgressValue(true);
         dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.name]);
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {

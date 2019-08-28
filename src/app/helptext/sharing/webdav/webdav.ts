@@ -24,5 +24,11 @@ export const helptext_sharing_webdav = {
     column_comment: T('Comment'),
     column_path: T('Path'),
     column_ro: T('Read Only'),
-    column_perm: T('Change User & Group Ownership')
+    column_perm: T('Change User and Group Ownership'),
+
+    warning_dialog_title: T('WARNING'),
+    warning_dialog_message: T('The ownership of all files in the share will be \
+ changed to group <samp>webdav</samp> and user <samp>webdav</samp>. Existing permissions \
+ will not be changed, but the file ownership change might make files inaccessible to \
+ their original owners.')
 };
