@@ -64,30 +64,6 @@
               <div fxFlex="66" class="left-content">
                 <div class="pool-name" >
                   <span textLimiter threshold="9">{{poolState.name | translate}}</span>
-
-                  <!--<div class="icon-wrapper">
-                    <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" class="{{poolHealth.level}}">
-                      <mat-icon>lock</mat-icon>
-                    </span>
-                    <span *ngIf="poolState.status == 'HEALTHY'" class="{{poolHealth.level}}">
-                      <mat-icon>check_circle</mat-icon>
-                    </span>
-                    <span *ngIf="poolHealth.level == 'error'" class="{{poolHealth.level}}">
-                      
-                      <mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-                    </span>
-                    <span *ngIf="poolHealth.level == 'warn' && poolState.status == 'UNKNOWN'" class="{{poolHealth.level}}">
-                      
-                      <mat-icon role="img">help</mat-icon>
-                    </span>
-                    <span *ngIf="poolHealth.level == 'warn' && poolState.status !== 'UNKNOWN'" class="{{poolHealth.level}}">
-                      
-                      <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-                    </span>
-                    <span *ngIf="poolState.status == 'ONLINE'" class="{{poolHealth.level}}">
-                      <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                    </span>
-                    </div>-->
                 </div> 
 
                 <div class="pool-status" >
