@@ -563,16 +563,16 @@ export class ReplicationWizardComponent {
         })
 
         this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.subscribe((value) => {
-            if (value !== undefined && value !== '') {
-                this.loadReplicationTask(value);
-            } else {
-                if (this.selectedReplicationTask !== undefined && this.selectedReplicationTask !== '') {
-                    // reset form
-                    this.clearReplicationTask();
-
+            if (value !== null) {
+                if (value !== undefined && value !== '') {
+                    this.loadReplicationTask(value);
+                } else {
+                    if (this.selectedReplicationTask !== undefined && this.selectedReplicationTask !== '') {
+                        this.clearReplicationTask();
+                    }
                 }
+                this.selectedReplicationTask = value;
             }
-            this.selectedReplicationTask = value;
         });
         this.entityWizard.formArray.controls[0].controls['source_datasets'].statusChanges.subscribe((value) => {
             this.genTaskName();
@@ -688,8 +688,10 @@ export class ReplicationWizardComponent {
     loadReplicationTask(task) {
         if (task.direction === 'PUSH') {
             task['source_datasets_from'] = 'local';
-            task['target_dataset_from'] = 'remote';
-            task['ssh_credentials_target'] = task.ssh_credentials.id;
+            task['target_dataset_from'] = task.ssh_credentials ? 'remote' : 'local';
+            if (task.ssh_credentials) {
+                task['ssh_credentials_target'] = task.ssh_credentials.id;
+            }
         } else {
             task['source_datasets_from'] = 'remote';
             task['target_dataset_from'] = 'local';
