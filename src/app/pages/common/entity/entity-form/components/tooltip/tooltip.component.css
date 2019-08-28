@@ -129,9 +129,20 @@ div.tooltiptext.above{
   min-height:64px;
 }
 
+div.tooltiptext.below{
+  top:16px !important;
+  left:-42px !important;
+  min-height:64px;
+}
+
 /* Arrow */
 div.tooltiptext.above:before{
   bottom: -8px;
+  left: 42px; /*calc(50% - 10px);*/
+}
+
+div.tooltiptext.below:before{
+  top: -8px;
   left: 42px; /*calc(50% - 10px);*/
 }
 

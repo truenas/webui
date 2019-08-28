@@ -73,7 +73,6 @@ export class TooltipComponent {
   }
 
   findParent(){
-    console.log(this.tooltip); 
     let formParent = this.tooltip.nativeElement.offsetParent;
     let card;
     if(formParent.tagName.toLowerCase() == 'mat-card'){
