@@ -119,7 +119,7 @@ export const helptext_system_support = {
   },
 
   is_production_snackbar: {
-    message: T('Production status successfully uptated'),
+    message: T('Production status successfully updated'),
     action: T('Close')
   }
 };

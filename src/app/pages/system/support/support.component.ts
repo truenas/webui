@@ -87,7 +87,7 @@ export class SupportComponent {
           type: 'checkbox',
           name: 'TN_send_debug',
           placeholder: 'Send initial debug',
-          tooltip: 'Send initial debug',
+          tooltip: 'Send initial debug.',
           value: false,
           relation : [
             {
@@ -421,7 +421,10 @@ export class SupportComponent {
       this.ws.call('truenas.is_production').subscribe((res) => {
         this.isProduction = res;
         this.entityEdit.formGroup.controls['TN_is_production'].setValue(this.isProduction);
-        this.updateButton = <HTMLInputElement> document.getElementById('cust_button_Update');
+        setTimeout(() => {
+          this.updateButton = <HTMLInputElement> document.getElementById('cust_button_Update');
+        }, 500)
+      
         this.entityEdit.formGroup.controls['TN_is_production'].valueChanges.subscribe(() => {
           this.updateButton.disabled = false;
         });
