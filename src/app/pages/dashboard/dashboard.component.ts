@@ -29,6 +29,9 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
   public isFooterConsoleOpen: boolean;
 
+  // For widgetsysinfo
+  public isHA: boolean = false;
+
   // For widgetpool
   public system: any;
   public system_product: string = "Generic";
@@ -55,6 +58,12 @@ export class DashboardComponent implements OnInit,OnDestroy {
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
+      }
+    });
+
+    this.ws.call('failover.licensed').subscribe((res)=> {
+      if (res) {
+        this.isHA = true;
       }
     });
 
