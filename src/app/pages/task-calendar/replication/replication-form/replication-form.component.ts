@@ -817,11 +817,13 @@ export class ReplicationFormComponent {
             (res) => {
                 for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
                     const explorerComponent = _.find(this.fieldConfig, {name: item}).customTemplateStringOptions.explorerComponent;
-                    explorerComponent.nodes = [{
-                        mountpoint: explorerComponent.config.initial,
-                        name: explorerComponent.config.initial,
-                        hasChildren: true
-                    }];
+                    if (explorerComponent) {
+                        explorerComponent.nodes = [{
+                            mountpoint: explorerComponent.config.initial,
+                            name: explorerComponent.config.initial,
+                            hasChildren: true
+                        }];
+                    }
                 }
             }
         )
@@ -895,7 +897,10 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
-        data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
+        if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
+            data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
+        }
+
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
@@ -967,8 +972,8 @@ export class ReplicationFormComponent {
                 if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
                     data[prop] = false;
                 }
-                if (prop !== 'id' && prop !== 'state' && data[prop] === undefined) {
-                    data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
+                if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && data[prop] === undefined) {
+                    data[prop] = Array.isArray(this.queryRes[prop]) ? [] :  null;
                 }
             }
         }
