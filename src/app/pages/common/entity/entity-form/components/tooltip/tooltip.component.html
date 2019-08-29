@@ -1,4 +1,4 @@
-<div #tooltip class="tooltip" > <!--(mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">-->
+<div #tooltip class="tooltip" > 
   <i class="material-icons tooltip-icon" (click)="toggleVis(!isLockTooltip ? 'lock' : '')" >help_outline</i>
 
   <div class="tooltip-container fn-theme-primary" [ngClass]="{'wizard': isWizard, 'moved': isMoved}">
@@ -12,8 +12,6 @@
 
         <div class="pin" (click)="toggleVis(!isLockTooltip ? 'lock' : 'unlock')">
           <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close"></mat-icon>
-          <!--<mat-icon *ngIf="!isLockTooltip" role="img" fontSet="mdi-set" fontIcon="mdi-pin-off"></mat-icon>
-            <mat-icon *ngIf="isLockTooltip" role="img" fontSet="mdi-set" fontIcon="mdi-pin"></mat-icon>-->
           </div>
 
       <div class="tooltip-message" [innerHTML]="message | translate | docreplace"></div>

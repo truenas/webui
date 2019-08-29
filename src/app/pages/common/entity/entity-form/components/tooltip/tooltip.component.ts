@@ -27,7 +27,6 @@ export class TooltipComponent {
   showTooltip($event) {
     this.isShowTooltip = $event;
 
-    //let formParent = this.tooltip.nativeElement.offsetParent;
     let formParent = this.findParent();
 
     let screenW = document.body.clientWidth;
@@ -42,10 +41,6 @@ export class TooltipComponent {
 
     let dynamicWidth = this.message.length * 8.5;
     let tooltipHeight = this.tooltip.nativeElement.scrollHeight;
-
-    /*if (tooltipHeight > 200) {
-      this.tooltip.nativeElement.lastElementChild.id = 'adjustme';
-    } */
 
     this.tooltipMsgStyle = {
       'right': '32px',
