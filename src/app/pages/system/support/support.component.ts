@@ -30,6 +30,7 @@ export class SupportComponent {
   public type: any;
   public category: any;
   public payload = {};
+  public proactiveInfo = {};
   public entityEdit: any;
   public saveSubmitText = "Submit";
   public password_fc: any;
@@ -43,6 +44,10 @@ export class SupportComponent {
   protitle = '';
   proemail = '';
   prophone = '';
+  secname = '';
+  sectitle = '';
+  secemail = '';
+  secphone = '';
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -226,23 +231,30 @@ export class SupportComponent {
         {
           type: 'input',
           name: 'TN_proactive_secondary_name',
-          placeholder : helptext.proactive.sec_name_placeholder
+          placeholder : helptext.proactive.sec_name_placeholder,
+          required: true,
+          validation : helptext.proactive.pc_validation
         },
         {
           type: 'input',
           name: 'TN_proactive_secondary_title',
-          placeholder :  helptext.proactive.sec_title_placeholder
+          placeholder :  helptext.proactive.sec_title_placeholder,
+          required: true,
+          validation : helptext.proactive.pc_validation
         },
         {
           type: 'input',
           name: 'TN_proactive_secondary_email',
           placeholder : helptext.proactive.sec_email_placeholder,
-          validation: helptext.proactive.sec_email_validation
+          validation: helptext.proactive.sec_email_validation,
+          required: true,
         },
         {
           type: 'input',
           name: 'TN_proactive_secondary_phone',
-          placeholder : helptext.proactive.sec_phone_placeholder
+          placeholder : helptext.proactive.sec_phone_placeholder,
+          required: true,
+          validation : helptext.proactive.pc_validation
         }
       ]
     },
@@ -638,12 +650,55 @@ export class SupportComponent {
       this.prophone = res;
       this.enableProactiveCheck();
     });
+    this.entityEdit.formGroup.controls['TN_proactive_secondary_name'].valueChanges.subscribe((res) => {
+      this.secname = res;
+      this.enableProactiveCheck();
+    });
+    this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].valueChanges.subscribe((res) => {
+      this.sectitle = res;
+      this.enableProactiveCheck();
+    });
+    this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].valueChanges.subscribe((res) => {
+      this.secemail = res;
+      this.enableProactiveCheck();
+    });
+    this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].valueChanges.subscribe((res) => {
+      this.secphone = res;
+      this.enableProactiveCheck();
+    });
+    this.entityEdit.formGroup.controls['TN_proactive_checkbox'].valueChanges.subscribe((res) => {
+      if (res) {
+        this.enableProactiveSupport();
+      }
+    });
   }
 
   enableProactiveCheck() {
-    if(this.proname !== '' && this.protitle !== '' && this.proemail !== '' && this.prophone !== '') {
+    if(this.proname !== '' && this.protitle !== '' && this.proemail !== '' && this.prophone !== '' &&
+    this.secname !== '' && this.sectitle !== '' && this.secemail !== '' && this.secphone !== '') {
       this.entityEdit.setDisabled("TN_proactive_checkbox", false, false);
-    };
+    } else {
+      this.entityEdit.setDisabled("TN_proactive_checkbox", true, false);
+    }
+  }
+
+  enableProactiveSupport() {
+    this.proactiveInfo['name'] = this.entityEdit.formGroup.controls['TN_proactive_primary_name'].value;
+    this.proactiveInfo['title'] = this.entityEdit.formGroup.controls['TN_proactive_primary_title'].value;
+    this.proactiveInfo['email'] = this.entityEdit.formGroup.controls['TN_proactive_primary_email'].value;
+    this.proactiveInfo['phone'] = this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].value;
+    this.proactiveInfo['secondary_name'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_name'].value || '';
+    this.proactiveInfo['secondary_title'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].value || '';
+    this.proactiveInfo['secondary_email'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].value || '';
+    this.proactiveInfo['secondary_phone'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].value || '';
+    this.proactiveInfo['enabled'] = true;
+
+    this.ws.call('support.update', [this.proactiveInfo]).subscribe((res) => {
+      console.log(res);
+    },
+    (err) => {
+      console.error(err);
+    })
   }
 
   getTrueNASImage(sys_product) {
