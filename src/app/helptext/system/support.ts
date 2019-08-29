@@ -131,6 +131,6 @@ export const helptext_system_support = {
     save_button: T('Save License'),
     success_message: T('License has been updated.'),
     error_dialog_title: T('Error Unlocking'),
-    snackbar_action: T('close')
+    snackbar_action: T('Close')
   }
 };

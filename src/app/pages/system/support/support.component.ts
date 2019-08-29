@@ -624,30 +624,26 @@ export class SupportComponent {
     };
     this.entityEdit.formGroup.controls['TN_proactive_primary_name'].valueChanges.subscribe((res) => {
       this.proname = res;
-      this.ex();
+      this.enableProactiveCheck();
     });
     this.entityEdit.formGroup.controls['TN_proactive_primary_title'].valueChanges.subscribe((res) => {
       this.protitle = res;
-      this.ex();
+      this.enableProactiveCheck();
     });
     this.entityEdit.formGroup.controls['TN_proactive_primary_email'].valueChanges.subscribe((res) => {
       this.proemail = res;
-      this.ex();
+      this.enableProactiveCheck();
     });
     this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].valueChanges.subscribe((res) => {
       this.prophone = res;
-      this.ex();
+      this.enableProactiveCheck();
     });
   }
 
-  ex() {
-    console.log('hey')
+  enableProactiveCheck() {
     if(this.proname !== '' && this.protitle !== '' && this.proemail !== '' && this.prophone !== '') {
-      let field = _.find(this.fieldConfig, {name : "TN_proactive_checkbox"});
-      console.log(this.proname, field)
       this.entityEdit.setDisabled("TN_proactive_checkbox", false, false);
-      console.log(field)
-    }
+    };
   }
 
   getTrueNASImage(sys_product) {
