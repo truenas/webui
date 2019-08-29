@@ -38,6 +38,12 @@ export class SupportComponent {
   public product_image = '';
   public scrshot: any;
   public subs: any;
+
+  proname = '';
+  protitle = '';
+  proemail = '';
+  prophone = '';
+
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -158,8 +164,7 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'TN_proactive_section_title',
-          paraText: '<i class="material-icons">swap_horiz</i>Proactive Support',
-          disabled: true
+          paraText: '<i class="material-icons">swap_horiz</i>' + helptext.proactive.title
         },
         {
           type: 'paragraph',
@@ -176,35 +181,35 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'TN_proactive_title',
-          paraText: 'Primary Contact'
+          paraText: helptext.proactive.primary_contact
         },
         {
           type: 'input',
           name: 'TN_proactive_primary_name',
-          placeholder : 'Name',
+          placeholder : helptext.proactive.pc_name_placeholder,
           required: true,
-          validation : helptext.username.validation,
+          validation : helptext.proactive.pc_validation
         },
         {
           type: 'input',
           name: 'TN_proactive_primary_title',
-          placeholder : 'Title',
+          placeholder : helptext.proactive.pc_title_placeholder,
           required: true,
-          validation : helptext.username.validation,
+          validation : helptext.proactive.pc_validation
         },
         {
           type: 'input',
           name: 'TN_proactive_primary_email',
-          placeholder : 'Email',
+          placeholder : helptext.proactive.pc_email_placeholder,
           required: true,
-          validation : helptext.username.validation,
+          validation : helptext.proactive.pc_email_validation,
         },
         {
           type: 'input',
           name: 'TN_proactive_primary_phone',
-          placeholder : 'Phone Number',
+          placeholder : helptext.proactive.pc_phone_placeholder,
           required: true,
-          validation : helptext.username.validation,
+          validation : helptext.proactive.pc_validation,
         },
       ]
     },
@@ -216,27 +221,28 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'TN_proactive_second_title',
-          paraText: 'Secondary Contact'
+          paraText: helptext.proactive.secondary_contact
         },
         {
           type: 'input',
           name: 'TN_proactive_secondary_name',
-          placeholder : 'Name'
+          placeholder : helptext.proactive.sec_name_placeholder
         },
         {
           type: 'input',
           name: 'TN_proactive_secondary_title',
-          placeholder : 'Title'
+          placeholder :  helptext.proactive.sec_title_placeholder
         },
         {
           type: 'input',
           name: 'TN_proactive_secondary_email',
-          placeholder : 'Email'
+          placeholder : helptext.proactive.sec_email_placeholder,
+          validation: helptext.proactive.sec_email_validation
         },
         {
           type: 'input',
           name: 'TN_proactive_secondary_phone',
-          placeholder : 'Phone Number'
+          placeholder : helptext.proactive.sec_phone_placeholder
         }
       ]
     },
@@ -248,7 +254,8 @@ export class SupportComponent {
         {
           type: 'checkbox',
           name: 'TN_proactive_checkbox',
-          placeholder: 'Enable iXsystems Proactive Support'
+          placeholder: helptext.proactive.enable_checkbox_placeholder,
+          disabled: true
         }
       ]
     },
@@ -447,6 +454,25 @@ export class SupportComponent {
     'type'
   ];
 
+  private proactiveParatext: Array<any> = [
+    'TN_proactive_section_title',
+    'TN_proactive_instructions',
+    'TN_proactive_title',
+    'TN_proactive_second_title',
+  ];
+
+  private proactiveFields: Array<any> = [
+    'TN_proactive_primary_name',
+    'TN_proactive_primary_title',
+    'TN_proactive_primary_email',
+    'TN_proactive_primary_phone',
+    'TN_proactive_secondary_name',
+    'TN_proactive_secondary_title',
+    'TN_proactive_secondary_email',
+    'TN_proactive_secondary_phone',
+    'TN_proactive_checkbox'
+  ];
+
   private trueNASFields: Array<any> = [
     'TN_col1',
     'TN_model',
@@ -461,21 +487,7 @@ export class SupportComponent {
     'phone',
     'TNCategory',
     'environment',
-    'criticality',
-    'TN_proactive_section_title',
-    'TN_proactive_instructions',
-    'TN_proactive_title',
-    'TN_proactive_primary_name',
-    'TN_proactive_primary_title',
-    'TN_proactive_primary_email',
-    'TN_proactive_primary_phone',
-    'TN_proactive_second_title',
-    'TN_proactive_secondary_name',
-    'TN_proactive_secondary_title',
-    'TN_proactive_secondary_email',
-    'TN_proactive_secondary_phone',
-    'TN_proactive_checkbox',
-    // 'TN_proactive_divider'
+    'criticality'
   ];
 
   public custActions: Array<any> = [];
@@ -496,7 +508,13 @@ export class SupportComponent {
     if (this.is_freenas) {
       for (let i in this.trueNASFields) {
         this.hideField(this.trueNASFields[i], true, entityEdit);
-      }
+      };
+      for (let i in this.proactiveParatext) {
+        this.hideField(this.proactiveFields[i], true, entityEdit);
+      };
+      for (let i in this.proactiveFields) {
+        this.hideField(this.proactiveFields[i], true, entityEdit);
+      };
       this.product_image = 'freenas_mini_cropped.png';
       this.ws.call('system.info').subscribe((res) => {
         this.getFreeNASImage(res.system_product)
@@ -590,7 +608,45 @@ export class SupportComponent {
         let addhw;
         res.license.addhw.length === 0 ? addhw = 'NONE' : addhw = res.license.addhw.join(', ');
         _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += addhw; 
-      })
+
+        if (res.license.contract_type !== 'GOLD' && res.license.contract_type !== 'SILVER') {
+          for (let i in this.proactiveFields) {
+            this.entityEdit.setDisabled(this.proactiveFields[i], true, false);
+          };
+          this.proactiveParatext.forEach((i) => {
+            document.getElementById(i).style.opacity = '0.38';
+          });
+        };
+      },
+      (err) => { 
+        console.error(err);
+      });
+    };
+    this.entityEdit.formGroup.controls['TN_proactive_primary_name'].valueChanges.subscribe((res) => {
+      this.proname = res;
+      this.ex();
+    });
+    this.entityEdit.formGroup.controls['TN_proactive_primary_title'].valueChanges.subscribe((res) => {
+      this.protitle = res;
+      this.ex();
+    });
+    this.entityEdit.formGroup.controls['TN_proactive_primary_email'].valueChanges.subscribe((res) => {
+      this.proemail = res;
+      this.ex();
+    });
+    this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].valueChanges.subscribe((res) => {
+      this.prophone = res;
+      this.ex();
+    });
+  }
+
+  ex() {
+    console.log('hey')
+    if(this.proname !== '' && this.protitle !== '' && this.proemail !== '' && this.prophone !== '') {
+      let field = _.find(this.fieldConfig, {name : "TN_proactive_checkbox"});
+      console.log(this.proname, field)
+      this.entityEdit.setDisabled("TN_proactive_checkbox", false, false);
+      console.log(field)
     }
   }
 

@@ -7,7 +7,23 @@ export const helptext_system_support = {
     instructions: T('Silver / Gold Coverage Customers can enable iXsystems Proactive Support. This \
  automatically emails iXsystems when certain conditions occur on this TrueNAS system. The iX Support \
  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may \
- have occurred on the system.')
+ have occurred on the system.'),
+    primary_contact: T('Primary Contact'),
+    pc_name_placeholder: T('Name'),
+    pc_title_placeholder: T('Title'),
+    pc_email_placeholder: T('Email'),
+    pc_phone_placeholder: T('Phone Number'),
+    pc_validation: [Validators.required],
+    pc_email_validation: [Validators. required, Validators.email],
+
+    secondary_contact: T('Secondary Contact'),
+    sec_name_placeholder: T('Name'),
+    sec_title_placeholder: T('Title'),
+    sec_email_placeholder: T('Email'),
+    sec_phone_placeholder: T('Phone Number'),
+    sec_email_validation: [Validators. required, Validators.email],
+
+    enable_checkbox_placeholder: T('Enable iXsystems Proactive Support')
   },
 
   username: {
