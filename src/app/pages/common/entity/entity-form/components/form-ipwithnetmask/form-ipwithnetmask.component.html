@@ -35,7 +35,7 @@
 			{{config.netmaskPreset}}
 		</mat-option>
 	</mat-select>
-	<tooltip style="width: 5%" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	<tooltip style="width: 5%" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
 	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 	<mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>
