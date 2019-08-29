@@ -1272,7 +1272,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   app-replication-wizard #adjustme {
-    top: -70px;
+    //top: -70px;
   }
 
   jail-wizard .tooltiptext {
@@ -1438,5 +1438,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // end of reset encryption form
+
+  confirm-dialog div.message-content p {
+    margin-bottom: 10px;
+  }
+
+  app-eula p {
+    margin-bottom: 15px;
+  }
 
  } // end of ix theme
