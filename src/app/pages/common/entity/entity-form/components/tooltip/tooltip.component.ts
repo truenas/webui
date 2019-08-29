@@ -9,6 +9,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop';
 })
 export class TooltipComponent {
   @Input('message') message: string;
+  @Input('header') header?: string;
   @Input('position') positionOverride?: string;
   @ViewChild('tooltip', { static: true}) private tooltip: ElementRef;
   @ViewChild(CdkDrag, {static: true}) dragTarget: CdkDrag;

@@ -2,10 +2,12 @@
   <i class="material-icons tooltip-icon" (click)="toggleVis(!isLockTooltip ? 'lock' : '')" >help_outline</i>
 
   <div class="tooltip-container fn-theme-primary" [ngClass]="{'wizard': isWizard, 'moved': isMoved}">
-    <div cdkDrag (cdkDragStarted)="hideTail($event)" class="tooltiptext {{positionString}}" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" >
+    <div cdkDrag 
+      (cdkDragStarted)="hideTail($event)" 
+      class="tooltiptext {{positionString}}" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" >
 
       <div id="tooltip-header" (click)="toggleVis('lock')" cdkDragHandle>
-        <div class="tooltip-header-text">Help</div>
+        <div class="tooltip-header-text">{{ header ? header : 'Help'}}</div>
       </div>
 
         <div class="pin" (click)="toggleVis(!isLockTooltip ? 'lock' : 'unlock')">
