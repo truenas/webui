@@ -114,6 +114,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       name: 'vnet',
       placeholder: helptext.vnet_placeholder,
       tooltip: helptext.vnet_tooltip,
+      value: false,
     },
     {
       type: 'checkbox',
