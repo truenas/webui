@@ -28,6 +28,7 @@ export class WebdavListComponent {
         {prop: 'webdav_ro', name:  helptext_sharing_webdav.column_ro},
         {prop: 'webdav_perm', name:  helptext_sharing_webdav.column_perm},
     ];
+    public rowIdentifier = helptext_sharing_webdav.column_name;
 
     public config: any = {
         paging : true,

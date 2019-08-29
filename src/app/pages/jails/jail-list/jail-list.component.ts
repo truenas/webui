@@ -46,6 +46,7 @@ export class JailListComponent implements OnInit {
     { name: T("Template"), prop: 'template', hidden: true },
     { name: T("Basejail"), prop: 'basejail_readble', hidden: true }
   ];
+  public rowIdentifier = 'host_hostuuid';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

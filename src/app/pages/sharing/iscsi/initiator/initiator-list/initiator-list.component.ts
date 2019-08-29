@@ -34,6 +34,7 @@ export class InitiatorListComponent {
       prop : 'comment',
     },
   ];
+  public rowIdentifier = 'id';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

@@ -39,6 +39,7 @@ export class CronListComponent {
     { name: T('Hide Stdout'), prop: 'cron_stdout', hidden: true },
     { name: T('Hide Stderr'), prop: 'cron_stderr', hidden: true }
   ];
+  public rowIdentifier = 'cron_user';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
