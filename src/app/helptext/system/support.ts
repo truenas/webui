@@ -2,6 +2,14 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_support = {
+  proactive: {
+    title: T('Proactive Support'),
+    instructions: T('Silver / Gold Coverage Customers can enable iXsystems Proactive Support. This \
+ automatically emails iXsystems when certain conditions occur on this TrueNAS system. The iX Support \
+ Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may \
+ have occurred on the system.')
+  },
+
   username: {
     placeholder: T("Username"),
     tooltip: T(
@@ -28,19 +36,19 @@ export const helptext_system_support = {
 
   name: {
     placeholder: T("Name"),
-    tooltip: T("Enter the name of the contact person."), //DRAFT TOOLTIP
+    tooltip: T("Enter the name of the contact person."),
     validation: [Validators.required]
   },
 
   email: {
     placeholder: T("Email"),
-    tooltip: T("Enter the email of the contact person."), //DRAFT TOOLTIP
+    tooltip: T("Enter the email of the contact person."),
     validation: [Validators.required, Validators.email]
   },
 
   phone: {
     placeholder: T("Phone"),
-    tooltip: T("Enter the phone number of the contact person."), //DRAFT TOOLTIP
+    tooltip: T("Enter the phone number of the contact person."),
     validation: [Validators.required]
   },
 

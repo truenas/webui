@@ -152,6 +152,112 @@ export class SupportComponent {
     }, 
     {
       name: 'Column 4',
+      label: false,
+      width: '100%',
+      config:[
+        {
+          type: 'paragraph',
+          name: 'TN_proactive_section_title',
+          paraText: '<i class="material-icons">swap_horiz</i>Proactive Support',
+          disabled: true
+        },
+        {
+          type: 'paragraph',
+          name: 'TN_proactive_instructions',
+          paraText: helptext.proactive.instructions
+        },
+      ]
+    },
+    {
+      name: 'Column 5',
+      label: false,
+      width: '50%',
+      config:[
+        {
+          type: 'paragraph',
+          name: 'TN_proactive_title',
+          paraText: 'Primary Contact'
+        },
+        {
+          type: 'input',
+          name: 'TN_proactive_primary_name',
+          placeholder : 'Name',
+          required: true,
+          validation : helptext.username.validation,
+        },
+        {
+          type: 'input',
+          name: 'TN_proactive_primary_title',
+          placeholder : 'Title',
+          required: true,
+          validation : helptext.username.validation,
+        },
+        {
+          type: 'input',
+          name: 'TN_proactive_primary_email',
+          placeholder : 'Email',
+          required: true,
+          validation : helptext.username.validation,
+        },
+        {
+          type: 'input',
+          name: 'TN_proactive_primary_phone',
+          placeholder : 'Phone Number',
+          required: true,
+          validation : helptext.username.validation,
+        },
+      ]
+    },
+    {
+      name: 'Column 6',
+      label: false,
+      width: '50%',
+      config:[
+        {
+          type: 'paragraph',
+          name: 'TN_proactive_second_title',
+          paraText: 'Secondary Contact'
+        },
+        {
+          type: 'input',
+          name: 'TN_proactive_secondary_name',
+          placeholder : 'Name'
+        },
+        {
+          type: 'input',
+          name: 'TN_proactive_secondary_title',
+          placeholder : 'Title'
+        },
+        {
+          type: 'input',
+          name: 'TN_proactive_secondary_email',
+          placeholder : 'Email'
+        },
+        {
+          type: 'input',
+          name: 'TN_proactive_secondary_phone',
+          placeholder : 'Phone Number'
+        }
+      ]
+    },
+    {
+      name: 'Column 7',
+      label: false,
+      width: '100%',
+      config:[
+        {
+          type: 'checkbox',
+          name: 'TN_proactive_checkbox',
+          placeholder: 'Enable iXsystems Proactive Support'
+        }
+      ]
+    },
+    {
+      name: 'TN_proactive_divider',
+      divider: true
+    },
+    {
+      name: 'Column 8',
       width: '50%',
       label: false,
       config:[
@@ -269,7 +375,7 @@ export class SupportComponent {
       ]
     },
     {
-    name: 'Column 5',
+    name: 'Column 9',
     width: '50%',
     label: false,
     class: 'lowerme',
@@ -356,6 +462,20 @@ export class SupportComponent {
     'TNCategory',
     'environment',
     'criticality',
+    'TN_proactive_section_title',
+    'TN_proactive_instructions',
+    'TN_proactive_title',
+    'TN_proactive_primary_name',
+    'TN_proactive_primary_title',
+    'TN_proactive_primary_email',
+    'TN_proactive_primary_phone',
+    'TN_proactive_second_title',
+    'TN_proactive_secondary_name',
+    'TN_proactive_secondary_title',
+    'TN_proactive_secondary_email',
+    'TN_proactive_secondary_phone',
+    'TN_proactive_checkbox',
+    // 'TN_proactive_divider'
   ];
 
   public custActions: Array<any> = [];

@@ -1201,7 +1201,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .fieldset {
       padding-left: 15px;
     }
-    #FN_col1, #FN_col2, #TN_col1 {
+    #FN_col1, #FN_col2, #TN_col1, #TN_proactive_section_title {
       font-size: 180%;
       margin-bottom: 15px;
 
@@ -1216,6 +1216,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #TN_col1, #FN_col1, #support_text {
       width: 200%;
     }
+    #TN_proactive_title, #TN_proactive_second_title {
+      font-size: 140%;
+    }
     .lowerme {
       margin-top: 60px !important;
     }
@@ -1223,6 +1226,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       font-size: 110%;
       margin-right: 30px;
       margin-top: 10px;
+    }
+    #TN_proactive_instructions {
+      font-size: 120%;
+      margin-right: 10px;
+      margin-bottom: 20px;
+
     }
     h4 {
       font-size: 130%;
