@@ -63,8 +63,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
   is_ha = false;
   sysName: string = 'FreeNAS';
   hostname: string;
+  public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
+  public mat_tooltips = helptext.mat_tooltips;
 
   constructor(
     public themeService: ThemeService,
@@ -456,9 +458,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
       (res) => {
         if (res && res.length > 0) {
           this.sysGenService.updateRunning.emit('true');
+          this.updateIsRunning = true;
           if (!this.updateNotificationSent) {
-            this.dialogService.confirm(helptext.updateRunning_dialog_title, helptext.updateRunning_dialog_message,
-              true, T('Close'), false, '', '', '', '', true);
+            this.showUpdateDialog();
             this.updateNotificationSent = true;
             setTimeout(() => {
               this.updateNotificationSent = false;
@@ -471,5 +473,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
       (err) => {
         console.error(err);
       });
-  }
+  };
+
+  showUpdateDialog() {
+    this.dialogService.confirm(helptext.updateRunning_dialog.title, 
+      helptext.updateRunning_dialog.message,
+      true, T('Close'), false, '', '', '', '', true);
+  };
 }
