@@ -25,7 +25,10 @@ export class ReplicationFormComponent {
     protected entityForm: any;
     protected queryRes: any;
     public speedLimitField: any;
-    public form_message: string;
+    public form_message = {
+        type: 'notice',
+        content: '',
+    };
 
     protected retentionPolicyChoice = [{
         label: 'Same as Source',
@@ -788,11 +791,11 @@ export class ReplicationFormComponent {
             formValue['ssh_credentials']
         ]).subscribe(
             (res) => {
-                const color = res.eligible == 0 ? 'red' : 'green';
-                this.form_message = '<p style="color:red;">' + T(`${res.eligible} of ${res.total} existing snapshots of dataset ${formValue['target_dataset_PUSH']} would be replicated with this task.`) + '</p>';
+                this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
+                this.form_message.content = T(`${res.eligible} of ${res.total} existing snapshots of dataset ${formValue['target_dataset_PUSH']} would be replicated with this task.`);
             },
             (err) => {
-                this.form_message = '';
+                this.form_message.content = '';
                 new EntityUtils().handleWSError(this, err);
             }
         )
