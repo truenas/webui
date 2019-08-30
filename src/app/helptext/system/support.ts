@@ -23,7 +23,12 @@ export const helptext_system_support = {
     sec_phone_placeholder: T('Phone Number'),
     sec_email_validation: [Validators. required, Validators.email],
 
-    enable_checkbox_placeholder: T('Enable iXsystems Proactive Support')
+    enable_checkbox_placeholder: T('Enable iXsystems Proactive Support'),
+    save_button: T('Save'),
+    snackbar_mesage: T('Successfully saved proactive support settings.'),
+    snackbar_action: T('Close')
+
+
   },
 
   username: {
@@ -132,5 +137,19 @@ export const helptext_system_support = {
     success_message: T('License has been updated.'),
     error_dialog_title: T('Error Unlocking'),
     snackbar_action: T('Close')
+  },
+
+  is_production_checkbox: {
+    placeholder: T('This is a production system.'),
+    tooltip: T('Set system production state and optionally send initial debug.')
+  },
+
+  is_production_error_dialog: {
+    title: T('Error Updating Production Status'),
+  },
+
+  is_production_snackbar: {
+    message: T('Production status successfully updated'),
+    action: T('Close')
   }
 };

@@ -1213,6 +1213,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         font-size: 36px;
       }
     }
+
+    #TN_proactive_section_border {
+      border-top: 1px solid;
+      border-color: var(--alt-fg1);
+      opacity: .15;
+      padding-top: 10px;
+      margin-top: 40px;
+    }
     #TN_col1, #FN_col1, #support_text {
       width: 200%;
     }
@@ -1245,6 +1253,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-bottom: -25px;
       position: relative;
       right: 40px;
+      display: flex;
+      justify-content: center;
 
       & img {
         max-width: 480px;
@@ -1269,6 +1279,52 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-card-actions {
       margin-top: -54px;
       width: 50%
+    }
+
+    #cust_button_Save {
+      top: -483px;
+      right: -150px;
+    }
+
+    #TN_proactive_checkbox {
+      position: relative;
+      top: 10px;
+    }
+
+    a {
+      text-decoration: underline;
+    }
+
+    #TN_is_production {
+      margin-top: 10px;
+    }
+
+    #cust_button_Update {
+      top: -947px;
+    }
+
+    #TN_is_production {
+      margin-bottom: unset;
+    }
+
+    form {
+      min-width: 860px;
+    }
+
+    .mat-divider {
+      position: relative;
+      top: 30px;
+      margin-bottom: 25px;
+    }
+
+    .fieldset {
+      padding-top: 15px;
+    }
+  }
+
+  @media (max-width: 599px) {
+    app-support #cust_button_Update {
+      top: -1135px;
     }
   }
 

@@ -40,6 +40,9 @@ export class SupportComponent {
   public product_image = '';
   public scrshot: any;
   public subs: any;
+  private serial: any;
+  public isProduction: boolean;
+  public updateButton: any;
 
   proname = '';
   protitle = '';
@@ -57,6 +60,7 @@ export class SupportComponent {
   sectitleField: any;
   secemailField: any;
   secphoneField: any;
+  procheckbox: any;
   contacts: any;
 
   public fieldConfig: FieldConfig[] = []
@@ -88,11 +92,6 @@ export class SupportComponent {
         },
         {
           type: 'paragraph',
-          name: 'TN_features',
-          paraText: '<h4>Features: </h4>'
-        },
-        {
-          type: 'paragraph',
           name: 'TN_contracttype',
           paraText: '<h4>Contract Type: </h4>'
         },
@@ -100,6 +99,28 @@ export class SupportComponent {
           type: 'paragraph',
           name: 'TN_contractdate',
           paraText: '<h4>Expiration Date: </h4>'
+        },
+        {
+          type: 'checkbox',
+          name: 'TN_is_production',
+          placeholder: helptext.is_production_checkbox.placeholder,
+          tooltip: helptext.is_production_checkbox.tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'TN_send_debug',
+          placeholder: 'Send initial debug',
+          tooltip: 'Send initial debug.',
+          value: false,
+          relation : [
+            {
+              action : 'SHOW',
+              when : [ {
+                name : 'TN_is_production',
+                value : true,
+              } ]
+            },
+          ]
         },
         {
           type: 'paragraph',
@@ -150,6 +171,11 @@ export class SupportComponent {
         },
         {
           type: 'paragraph',
+          name: 'TN_features',
+          paraText: '<h4>Features: </h4>'
+        },
+        {
+          type: 'paragraph',
           name: 'TN_addhardware',
           paraText: '<h4>Additional Hardware: </h4>'
         }
@@ -167,15 +193,20 @@ export class SupportComponent {
         },
       ]
     },
-    {
-      name: 'divider',
-      divider: true
-    }, 
+    // {
+    //   name: 'divider',
+    //   divider: true
+    // }, 
     {
       name: 'Column 4',
       label: false,
       width: '100%',
       config:[
+        {
+          type: 'paragraph',
+          name: 'TN_proactive_section_border',
+          paraText: ''
+        },
         {
           type: 'paragraph',
           name: 'TN_proactive_section_title',
@@ -477,6 +508,7 @@ export class SupportComponent {
   ];
 
   private proactiveParatext: Array<any> = [
+    'TN_proactive_section_border',
     'TN_proactive_section_title',
     'TN_proactive_instructions',
     'TN_proactive_title',
@@ -504,6 +536,8 @@ export class SupportComponent {
     'TN_contracttype',
     'TN_contractdate',
     'TN_addhardware',
+    'TN_is_production',
+    'TN_send_debug',
     'name',
     'email',
     'phone',
@@ -532,7 +566,7 @@ export class SupportComponent {
         this.hideField(this.trueNASFields[i], true, entityEdit);
       };
       for (let i in this.proactiveParatext) {
-        this.hideField(this.proactiveFields[i], true, entityEdit);
+        this.hideField(this.proactiveParatext[i], true, entityEdit);
       };
       for (let i in this.proactiveFields) {
         this.hideField(this.proactiveFields[i], true, entityEdit);
@@ -551,7 +585,21 @@ export class SupportComponent {
     } else {
       for (let i in this.freeNASFields) {
         this.hideField(this.freeNASFields[i], true, entityEdit);
-      }  
+      }
+      this.ws.call('truenas.is_production').subscribe((res) => {
+        this.isProduction = res;
+        this.entityEdit.formGroup.controls['TN_is_production'].setValue(this.isProduction);
+        setTimeout(() => {
+          this.updateButton = <HTMLInputElement> document.getElementById('cust_button_Update');
+        }, 500)
+
+        this.entityEdit.formGroup.controls['TN_is_production'].valueChanges.subscribe(() => {
+          this.updateButton.disabled = false;
+        });
+        this.entityEdit.formGroup.controls['TN_send_debug'].valueChanges.subscribe(() => {
+          this.updateButton.disabled = false;
+        });
+      });
       this.custActions = [
         {
           id : 'update_license',
@@ -605,6 +653,46 @@ export class SupportComponent {
           function : () => {
             this.router.navigate(['/system/support/eula'])
           }
+        },
+        {
+          id : 'change_prod_status',
+          name: 'Update',
+          disabled: true,
+          function : () => {
+            let prod_status = this.entityEdit.formGroup.controls['TN_is_production'].value;
+            let debug_status = this.entityEdit.formGroup.controls['TN_send_debug'].value;
+            this.loader.open();
+            if (prod_status) {
+              this.ws.call('truenas.set_production',[true, debug_status]).subscribe(() => {
+                this.loader.close();
+                this.updateButton.disabled = true;
+                this.snackbar.open(helptext.is_production_snackbar.message, helptext.is_production_snackbar.action,
+                  { duration: 6000 } );
+              },
+              (err) => {
+                this.loader.close();
+                this.dialogService.errorReport(helptext.is_production_error_dialog.title, err.reason, err.trace.formatted);
+              });
+            } else {
+              this.ws.call('truenas.set_production', [false]).subscribe(() => {
+                this.loader.close();
+                this.updateButton.disabled = true;
+                this.snackbar.open(helptext.is_production_snackbar.message, helptext.is_production_snackbar.action,
+                  { duration: 6000 } );              },
+              (err) => {
+                this.loader.close();
+                this.dialogService.errorReport(helptext.is_production_error_dialog.title, err.reason, err.trace.formatted);
+              });
+            }
+          }
+        },      
+        {
+          id : 'proactive_support',
+          name: helptext.proactive.save_button,
+          disabled: false,
+          function : () => {
+            this.enableProactiveSupport();
+          }
         }
       ]
       this.ws.call('system.info').subscribe((res) => {
@@ -617,8 +705,9 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "TN_custname"}).paraText += res.license.customer_name || '---';
 
         res.license.system_serial_ha ?
-          _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.license.system_serial + ' / ' + res.license.system_serial_ha :
-          _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += res.license.system_serial;          
+          this.serial = res.license.system_serial + ' / ' + res.license.system_serial_ha :
+          this.serial = res.license.system_serial;
+        _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += this.serial;        
         
         let featureList;
         res.license.features.length === 0 ? featureList = 'NONE' : featureList = res.license.features.join(', ');
@@ -635,76 +724,59 @@ export class SupportComponent {
           for (let i in this.proactiveFields) {
             this.entityEdit.setDisabled(this.proactiveFields[i], true, false);
           };
-          this.proactiveParatext.forEach((i) => {
-            document.getElementById(i).style.opacity = '0.38';
-          });
+          setTimeout(() => {
+            this.proactiveParatext.forEach((i) => {
+              document.getElementById(i).style.opacity = '0.38';
+            });
+            let btn = <HTMLInputElement> document.getElementById('cust_button_Save');
+            btn.disabled = true;
+          }, 800);
         } else {
           this.pronameField = this.entityEdit.formGroup.controls['TN_proactive_primary_name'];
           this.protitleField = this.entityEdit.formGroup.controls['TN_proactive_primary_title'];
           this.proemailField = this.entityEdit.formGroup.controls['TN_proactive_primary_email'];
           this.prophoneField = this.entityEdit.formGroup.controls['TN_proactive_primary_phone'];
           this.secnameField = this.entityEdit.formGroup.controls['TN_proactive_secondary_name'];
+          this.sectitleField = this.entityEdit.formGroup.controls['TN_proactive_secondary_title'];
+          this.secemailField = this.entityEdit.formGroup.controls['TN_proactive_secondary_email'];
+          this.secphoneField = this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'];
+          this.procheckbox = this.entityEdit.formGroup.controls['TN_proactive_checkbox'];
           _.find(this.fieldConfig, {name : "TN_proactive_primary_name"}).isLoading = true;
           _.find(this.fieldConfig, {name : "TN_proactive_secondary_name"}).isLoading = true;
-
-          setTimeout(() => {
-            this.contacts = this.prefService.preferences.proactiveSupportContacts;
-            if (this.contacts.length > 0) {
-              this.entityEdit.formGroup.controls['TN_proactive_primary_name'].setValue(this.contacts[0].name);
-              this.entityEdit.formGroup.controls['TN_proactive_primary_title'].setValue(this.contacts[0].title);
-              this.entityEdit.formGroup.controls['TN_proactive_primary_email'].setValue(this.contacts[0].email);
-              this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].setValue(this.contacts[0].phone);
-              this.entityEdit.formGroup.controls['TN_proactive_secondary_name'].setValue(this.contacts[0].secondary_name);
-              this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].setValue(this.contacts[0].secondary_title);
-              this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].setValue(this.contacts[0].secondary_email);
-              this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].setValue(this.contacts[0].secondary_phone);
-              this.entityEdit.formGroup.controls['TN_proactive_checkbox'].setValue(this.contacts[0].enabled);
-            }
-            _.find(this.fieldConfig, {name : "TN_proactive_primary_name"}).isLoading = false;
-            _.find(this.fieldConfig, {name : "TN_proactive_secondary_name"}).isLoading = false;
-          }, 2200);
+         
+          this.getContacts();
           
-          this.entityEdit.formGroup.controls['TN_proactive_primary_name'].valueChanges.subscribe((res) => {
+          this.pronameField.valueChanges.subscribe((res) => {
             this.proname = res;
             this.enableProactiveCheck();
           });
-          this.entityEdit.formGroup.controls['TN_proactive_primary_title'].valueChanges.subscribe((res) => {
+          this.protitleField.valueChanges.subscribe((res) => {
             this.protitle = res;
             this.enableProactiveCheck();
           });
-          this.entityEdit.formGroup.controls['TN_proactive_primary_email'].valueChanges.subscribe((res) => {
+          this.proemailField.valueChanges.subscribe((res) => {
             this.proemail = res;
             this.enableProactiveCheck();
           });
-          this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].valueChanges.subscribe((res) => {
+          this.prophoneField.valueChanges.subscribe((res) => {
             this.prophone = res;
             this.enableProactiveCheck();
           });
-          this.entityEdit.formGroup.controls['TN_proactive_secondary_name'].valueChanges.subscribe((res) => {
+          this.secnameField.valueChanges.subscribe((res) => {
             this.secname = res;
             this.enableProactiveCheck();
           });
-          this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].valueChanges.subscribe((res) => {
+          this.sectitleField.valueChanges.subscribe((res) => {
             this.sectitle = res;
             this.enableProactiveCheck();
           });
-          this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].valueChanges.subscribe((res) => {
+          this.secemailField.valueChanges.subscribe((res) => {
             this.secemail = res;
             this.enableProactiveCheck();
           });
-          this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].valueChanges.subscribe((res) => {
+          this.secphoneField.valueChanges.subscribe((res) => {
             this.secphone = res;
             this.enableProactiveCheck();
-          });
-          this.entityEdit.formGroup.controls['TN_proactive_checkbox'].valueChanges.subscribe((res) => {
-            if (res) {
-              this.enableProactiveSupport(res);
-            }
-            setTimeout(() => {
-              if(!res) {
-                this.enableProactiveSupport();
-              }
-            },2000)
           });
         }
       },
@@ -712,8 +784,25 @@ export class SupportComponent {
         console.error(err);
       });
     };
-    
+  }
 
+  getContacts() {
+    setTimeout(() => {
+      this.contacts = this.prefService.preferences.proactiveSupportContacts;
+      if (this.contacts.length > 0) {
+        this.pronameField.setValue(this.contacts[0].name);
+        this.protitleField.setValue(this.contacts[0].title);
+        this.proemailField.setValue(this.contacts[0].email);
+        this.prophoneField.setValue(this.contacts[0].phone);
+        this.secnameField.setValue(this.contacts[0].secondary_name);
+        this.sectitleField.setValue(this.contacts[0].secondary_title);
+        this.secemailField.setValue(this.contacts[0].secondary_email);
+        this.secphoneField.setValue(this.contacts[0].secondary_phone);
+        this.procheckbox.setValue(this.contacts[0].enabled);
+      }
+      _.find(this.fieldConfig, {name : "TN_proactive_primary_name"}).isLoading = false;
+      _.find(this.fieldConfig, {name : "TN_proactive_secondary_name"}).isLoading = false;
+    }, 2200);
   }
 
   enableProactiveCheck() {
@@ -726,21 +815,24 @@ export class SupportComponent {
   }
 
   enableProactiveSupport(enabled?) {
-    this.proactiveInfo['name'] = this.entityEdit.formGroup.controls['TN_proactive_primary_name'].value;
-    this.proactiveInfo['title'] = this.entityEdit.formGroup.controls['TN_proactive_primary_title'].value;
-    this.proactiveInfo['email'] = this.entityEdit.formGroup.controls['TN_proactive_primary_email'].value;
-    this.proactiveInfo['phone'] = this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].value;
-    this.proactiveInfo['secondary_name'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_name'].value || '';
-    this.proactiveInfo['secondary_title'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].value || '';
-    this.proactiveInfo['secondary_email'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].value || '';
-    this.proactiveInfo['secondary_phone'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].value || '';
-    enabled ? this.proactiveInfo['enabled'] = true : this.proactiveInfo['enabled'] = false;
-
+    this.proactiveInfo['name'] = this.pronameField.value;
+    this.proactiveInfo['title'] = this.protitleField.value;
+    this.proactiveInfo['email'] = this.proemailField.value;
+    this.proactiveInfo['phone'] = this.prophoneField.value;
+    this.proactiveInfo['secondary_name'] = this.secnameField.value;
+    this.proactiveInfo['secondary_title'] = this.sectitleField.value;
+    this.proactiveInfo['secondary_email'] = this.secemailField.value;
+    this.proactiveInfo['secondary_phone'] = this.secphoneField.value;
+    this.proactiveInfo['enabled'] = this.procheckbox.value;
     this.contacts = this.prefService.preferences.proactiveSupportContacts;
     this.contacts.length = 0;
     this.contacts.push(this.proactiveInfo);
     this.ws.call('support.update', [this.proactiveInfo]).subscribe((res) => {
       this.prefService.savePreferences(this.prefService.preferences);
+      this.snackbar.open((helptext.proactive.snackbar_mesage), (helptext.proactive.snackbar_action), {
+        duration: 4000,
+      });
+      
     },
     (err) => {
       console.error(err);
@@ -845,7 +937,6 @@ export class SupportComponent {
           });
         });
         dialogRef.componentInstance.setDescription(url);
-        this.resetForm();
       } else {
         dialogRef.componentInstance.setDescription(url);
         this.resetForm();
@@ -862,6 +953,7 @@ export class SupportComponent {
       this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
       this.entityEdit.formGroup.controls['environment'].setValue('production');
       this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
+      this.getContacts();
     }
   };
 
