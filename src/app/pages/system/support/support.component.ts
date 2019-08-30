@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -48,6 +49,15 @@ export class SupportComponent {
   sectitle = '';
   secemail = '';
   secphone = '';
+  pronameField: any;
+  protitleField: any;
+  proemailField: any;
+  prophoneField: any;
+  secnameField: any;
+  sectitleField: any;
+  secemailField: any;
+  secphoneField: any;
+  contacts: any;
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -507,7 +517,7 @@ export class SupportComponent {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MatDialog,
-              protected dialogService: DialogService,
+              protected dialogService: DialogService, protected prefService: PreferencesService,
               public loader: AppLoaderService, private snackbar: SnackbarService)
               {}
 
@@ -628,49 +638,76 @@ export class SupportComponent {
           this.proactiveParatext.forEach((i) => {
             document.getElementById(i).style.opacity = '0.38';
           });
-        };
+        } else {
+          setTimeout(() => {
+            this.contacts = this.prefService.preferences.proactiveSupportContacts;
+            this.pronameField = this.entityEdit.formGroup.controls['TN_proactive_primary_name'];
+            this.protitleField = this.entityEdit.formGroup.controls['TN_proactive_primary_title'];
+            this.proemailField = this.entityEdit.formGroup.controls['TN_proactive_primary_email'];
+            this.prophoneField = this.entityEdit.formGroup.controls['TN_proactive_primary_phone'];
+            this.secnameField = this.entityEdit.formGroup.controls['TN_proactive_secondary_name'];
+            
+            this.entityEdit.formGroup.controls['TN_proactive_primary_name'].setValue(this.contacts[0].name);
+            this.entityEdit.formGroup.controls['TN_proactive_primary_title'].setValue(this.contacts[0].title);
+            this.entityEdit.formGroup.controls['TN_proactive_primary_email'].setValue(this.contacts[0].email);
+            this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].setValue(this.contacts[0].phone);
+            this.entityEdit.formGroup.controls['TN_proactive_secondary_name'].setValue(this.contacts[0].secondary_name);
+            this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].setValue(this.contacts[0].secondary_title);
+            this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].setValue(this.contacts[0].secondary_email);
+            this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].setValue(this.contacts[0].secondary_phone);
+            this.entityEdit.formGroup.controls['TN_proactive_checkbox'].setValue(this.contacts[0].enabled);
+          }, 2200);
+          
+          this.entityEdit.formGroup.controls['TN_proactive_primary_name'].valueChanges.subscribe((res) => {
+            this.proname = res;
+            this.enableProactiveCheck();
+          });
+          this.entityEdit.formGroup.controls['TN_proactive_primary_title'].valueChanges.subscribe((res) => {
+            this.protitle = res;
+            this.enableProactiveCheck();
+          });
+          this.entityEdit.formGroup.controls['TN_proactive_primary_email'].valueChanges.subscribe((res) => {
+            this.proemail = res;
+            this.enableProactiveCheck();
+          });
+          this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].valueChanges.subscribe((res) => {
+            this.prophone = res;
+            this.enableProactiveCheck();
+          });
+          this.entityEdit.formGroup.controls['TN_proactive_secondary_name'].valueChanges.subscribe((res) => {
+            this.secname = res;
+            this.enableProactiveCheck();
+          });
+          this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].valueChanges.subscribe((res) => {
+            this.sectitle = res;
+            this.enableProactiveCheck();
+          });
+          this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].valueChanges.subscribe((res) => {
+            this.secemail = res;
+            this.enableProactiveCheck();
+          });
+          this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].valueChanges.subscribe((res) => {
+            this.secphone = res;
+            this.enableProactiveCheck();
+          });
+          this.entityEdit.formGroup.controls['TN_proactive_checkbox'].valueChanges.subscribe((res) => {
+            if (res) {
+              this.enableProactiveSupport(res);
+            }
+            setTimeout(() => {
+              if(!res) {
+                this.enableProactiveSupport();
+              }
+            },2000)
+          });
+        }
       },
       (err) => { 
         console.error(err);
       });
     };
-    this.entityEdit.formGroup.controls['TN_proactive_primary_name'].valueChanges.subscribe((res) => {
-      this.proname = res;
-      this.enableProactiveCheck();
-    });
-    this.entityEdit.formGroup.controls['TN_proactive_primary_title'].valueChanges.subscribe((res) => {
-      this.protitle = res;
-      this.enableProactiveCheck();
-    });
-    this.entityEdit.formGroup.controls['TN_proactive_primary_email'].valueChanges.subscribe((res) => {
-      this.proemail = res;
-      this.enableProactiveCheck();
-    });
-    this.entityEdit.formGroup.controls['TN_proactive_primary_phone'].valueChanges.subscribe((res) => {
-      this.prophone = res;
-      this.enableProactiveCheck();
-    });
-    this.entityEdit.formGroup.controls['TN_proactive_secondary_name'].valueChanges.subscribe((res) => {
-      this.secname = res;
-      this.enableProactiveCheck();
-    });
-    this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].valueChanges.subscribe((res) => {
-      this.sectitle = res;
-      this.enableProactiveCheck();
-    });
-    this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].valueChanges.subscribe((res) => {
-      this.secemail = res;
-      this.enableProactiveCheck();
-    });
-    this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].valueChanges.subscribe((res) => {
-      this.secphone = res;
-      this.enableProactiveCheck();
-    });
-    this.entityEdit.formGroup.controls['TN_proactive_checkbox'].valueChanges.subscribe((res) => {
-      if (res) {
-        this.enableProactiveSupport();
-      }
-    });
+    
+
   }
 
   enableProactiveCheck() {
@@ -682,7 +719,7 @@ export class SupportComponent {
     }
   }
 
-  enableProactiveSupport() {
+  enableProactiveSupport(enabled?) {
     this.proactiveInfo['name'] = this.entityEdit.formGroup.controls['TN_proactive_primary_name'].value;
     this.proactiveInfo['title'] = this.entityEdit.formGroup.controls['TN_proactive_primary_title'].value;
     this.proactiveInfo['email'] = this.entityEdit.formGroup.controls['TN_proactive_primary_email'].value;
@@ -691,10 +728,13 @@ export class SupportComponent {
     this.proactiveInfo['secondary_title'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_title'].value || '';
     this.proactiveInfo['secondary_email'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].value || '';
     this.proactiveInfo['secondary_phone'] = this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].value || '';
-    this.proactiveInfo['enabled'] = true;
+    enabled ? this.proactiveInfo['enabled'] = true : this.proactiveInfo['enabled'] = false;
 
+    this.contacts = this.prefService.preferences.proactiveSupportContacts;
+    this.contacts.length = 0;
+    this.contacts.push(this.proactiveInfo);
     this.ws.call('support.update', [this.proactiveInfo]).subscribe((res) => {
-      console.log(res);
+      this.prefService.savePreferences(this.prefService.preferences);
     },
     (err) => {
       console.error(err);
