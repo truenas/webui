@@ -65,14 +65,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             tooltip: 'Preserve screen space with icons and tooltips instead of text labels.',
             class:'inline'
           },
-          /*{
-            type: 'checkbox',
-            name: 'showTooltips',
-            placeholder: 'Enable Help Text in Forms',
-            value: this.showTooltips,
-            tooltip: 'Display help icons in forms.',
-            class:'inline'
-          },*/
           {
             type: 'checkbox',
             name: 'allowPwToggle',
@@ -150,25 +142,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       });
       this.generateFieldConfig();
     }
-
-    /*afterInit(entityForm: any) {
-     }*/
-
-     /*setFavoriteFields(){
-       for(let i = 0; i < this.themeService.freenasThemes.length; i++){
-         let theme = this.themeService.freenasThemes[i];
-         let field = {
-           type: 'checkbox',
-           name: theme.name,
-           width: '200px',
-           placeholder:theme.label,
-           value: false,
-           tooltip: 'Add ' + theme.label + ' to favorites',
-           class:'inline'
-         }
-         this.favoriteFields.push(field);
-       }
-     }*/
 
      setThemeOptions(){
        this.themeOptions.splice(0,this.themeOptions.length);
