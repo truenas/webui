@@ -314,11 +314,6 @@ export class ApiService {
         responseEvent:"VmProfiles",
         errorResponseEvent: "VmCloneFailure"
       },
-      // preProcessor(def:ApiCall){
-      //   let redef = Object.assign({}, def);
-      //   def.args = [redef.args[0]];
-      //   return def;
-      // },
       postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
         cloneRes = null; 
@@ -345,15 +340,6 @@ export class ApiService {
         responseEvent:"SysInfo"
       }
     },
-    /*NetInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"stats.get_sources",
-        args:[],
-        responseEvent:"NetInfo"
-      }
-    },*/
     // Used by stats service!!
     StatsRequest:{
       apiCall:{
