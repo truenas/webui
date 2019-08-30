@@ -6,6 +6,8 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import helptext from '../../../../helptext/task-calendar/replication/replication';
 import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService } from 'app/services';
 import * as _ from 'lodash';
+import { EntityUtils } from '../../../common/entity/utils';
+import { T } from '../../../../translate-marker';
 
 @Component({
     selector: 'app-replication-list',
@@ -23,6 +25,7 @@ export class ReplicationFormComponent {
     protected entityForm: any;
     protected queryRes: any;
     public speedLimitField: any;
+    public form_message: string;
 
     protected retentionPolicyChoice = [{
         label: 'Same as Source',
@@ -341,6 +344,9 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
+            blurStatus: true,
+            blurEvent: this.blurEventNamingSchema,
+            parent: this
         },
         {
             type: 'checkbox',
@@ -772,6 +778,26 @@ export class ReplicationFormComponent {
         });
     }
 
+    countEligibleManualSnapshots() {
+        let formValue = _.cloneDeep(this.entityForm.formGroup.value);
+        this.ws.call('replication.count_eligible_manual_snapshots',
+        [
+            formValue['target_dataset_PUSH'],
+            formValue['also_include_naming_schema'].split(' '),
+            formValue['transport'],
+            formValue['ssh_credentials']
+        ]).subscribe(
+            (res) => {
+                const color = res.eligible == 0 ? 'red' : 'green';
+                this.form_message = '<p style="color:red;">' + T(`${res.eligible} of ${res.total} existing snapshots of dataset ${formValue['target_dataset_PUSH']} would be replicated with this task.`) + '</p>';
+            },
+            (err) => {
+                this.form_message = '';
+                new EntityUtils().handleWSError(this, err);
+            }
+        )
+    }
+
     afterInit(entityForm) {
         this.entityForm = entityForm;
         if (this.entityForm.formGroup.controls['speed_limit'].value) {
@@ -779,9 +805,32 @@ export class ReplicationFormComponent {
             this.storageService.humanReadable = presetSpeed;
         }
         
+        entityForm.formGroup.controls['direction'].valueChanges.subscribe(
+            (res) => {
+                if (res === 'PUSH' &&
+                entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+                entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    this.countEligibleManualSnapshots();
+                }
+            }
+        );
+        entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe(
+            (res) => {
+                if (entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+                entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+                entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    this.countEligibleManualSnapshots();
+                }
+            }
+        );
+
         const retentionPolicyField = _.find(this.fieldConfig, {name: 'retention_policy'});
         entityForm.formGroup.controls['transport'].valueChanges.subscribe(
             (res) => {
+                if (res !== 'LOCAL' && entityForm.formGroup.controls['direction'].value === 'PUSH' && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    this.countEligibleManualSnapshots();
+                }
+
                 if (res !== 'LEGACY' && retentionPolicyField.options !== this.retentionPolicyChoice) {
                     retentionPolicyField.options = this.retentionPolicyChoice;
                 } else if (res === 'LEGACY') {
@@ -1002,6 +1051,15 @@ export class ReplicationFormComponent {
     blurEvent(parent){
         if (parent.entityForm) {
             parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable)
+        }
+    }
+
+    blurEventNamingSchema(parent) {
+        if (parent.entityForm &&
+            parent.entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+            parent.entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+            parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+            parent.countEligibleManualSnapshots();
         }
     }
 }
