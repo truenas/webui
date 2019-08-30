@@ -782,17 +782,21 @@ export class ReplicationFormComponent {
     }
 
     countEligibleManualSnapshots() {
-        let formValue = _.cloneDeep(this.entityForm.formGroup.value);
+        if ((typeof this.entityForm.formGroup.controls['also_include_naming_schema'].value) !== "string" && this.entityForm.formGroup.controls['also_include_naming_schema'].value.length === 0) {
+            return;
+        }
+
         this.ws.call('replication.count_eligible_manual_snapshots',
         [
-            formValue['target_dataset_PUSH'],
-            formValue['also_include_naming_schema'].split(' '),
-            formValue['transport'],
-            formValue['ssh_credentials']
+            this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
+            typeof this.entityForm.formGroup.controls['also_include_naming_schema'].value === "string" ?
+            this.entityForm.formGroup.controls['also_include_naming_schema'].value.split(' ') : this.entityForm.formGroup.controls['also_include_naming_schema'].value,
+            this.entityForm.formGroup.controls['transport'].value,
+            this.entityForm.formGroup.controls['ssh_credentials'].value,
         ]).subscribe(
             (res) => {
                 this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
-                this.form_message.content = T(`${res.eligible} of ${res.total} existing snapshots of dataset ${formValue['target_dataset_PUSH']} would be replicated with this task.`);
+                this.form_message.content = T(`${res.eligible} of ${res.total} existing snapshots of dataset ${this.entityForm.formGroup.controls['target_dataset_PUSH'].value} would be replicated with this task.`);
             },
             (err) => {
                 this.form_message.content = '';
@@ -807,22 +811,25 @@ export class ReplicationFormComponent {
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
         }
-        
+        this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe(
+            (res) => {
+                if (entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+                entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+                entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    this.countEligibleManualSnapshots();
+                } else {
+                    this.form_message.content = '';
+                }
+            }
+        );
         entityForm.formGroup.controls['direction'].valueChanges.subscribe(
             (res) => {
                 if (res === 'PUSH' &&
                 entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
                 entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
                     this.countEligibleManualSnapshots();
-                }
-            }
-        );
-        entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe(
-            (res) => {
-                if (entityForm.formGroup.controls['direction'].value === 'PUSH' &&
-                entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
-                entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
-                    this.countEligibleManualSnapshots();
+                } else {
+                    this.form_message.content = '';
                 }
             }
         );
@@ -832,6 +839,8 @@ export class ReplicationFormComponent {
             (res) => {
                 if (res !== 'LOCAL' && entityForm.formGroup.controls['direction'].value === 'PUSH' && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
                     this.countEligibleManualSnapshots();
+                } else {
+                    this.form_message.content = '';
                 }
 
                 if (res !== 'LEGACY' && retentionPolicyField.options !== this.retentionPolicyChoice) {
@@ -1063,6 +1072,8 @@ export class ReplicationFormComponent {
             parent.entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
             parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
             parent.countEligibleManualSnapshots();
+        } else {
+            this.form_message.content = '';
         }
     }
 }
