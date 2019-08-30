@@ -185,7 +185,7 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_blocksize: T("Logical block size"),
   extent_tooltip_blocksize: T(
-    "Only override the default if the initiator\
+    "Leave at the default of 512 unless the initiator\
  requires a different block size."
   ),
 
