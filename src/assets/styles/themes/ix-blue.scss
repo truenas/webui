@@ -1218,6 +1218,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
     #TN_proactive_title, #TN_proactive_second_title {
       font-size: 140%;
+      margin-bottom: 5px;
     }
     .lowerme {
       margin-top: 60px !important;
@@ -1257,7 +1258,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-bottom: 10px;
     }
 
-    #category_form-select-spinner {
+    #category_form-select-spinner,
+    #TN_proactive_primary_name_form-input-spinner,
+    #TN_proactive_secondary_name_form-input-spinner {
       position: absolute;
       top: -20px;
       right: 45%;

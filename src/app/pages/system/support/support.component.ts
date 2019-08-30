@@ -639,14 +639,16 @@ export class SupportComponent {
             document.getElementById(i).style.opacity = '0.38';
           });
         } else {
+          this.pronameField = this.entityEdit.formGroup.controls['TN_proactive_primary_name'];
+          this.protitleField = this.entityEdit.formGroup.controls['TN_proactive_primary_title'];
+          this.proemailField = this.entityEdit.formGroup.controls['TN_proactive_primary_email'];
+          this.prophoneField = this.entityEdit.formGroup.controls['TN_proactive_primary_phone'];
+          this.secnameField = this.entityEdit.formGroup.controls['TN_proactive_secondary_name'];
+          _.find(this.fieldConfig, {name : "TN_proactive_primary_name"}).isLoading = true;
+          _.find(this.fieldConfig, {name : "TN_proactive_secondary_name"}).isLoading = true;
+
           setTimeout(() => {
             this.contacts = this.prefService.preferences.proactiveSupportContacts;
-            this.pronameField = this.entityEdit.formGroup.controls['TN_proactive_primary_name'];
-            this.protitleField = this.entityEdit.formGroup.controls['TN_proactive_primary_title'];
-            this.proemailField = this.entityEdit.formGroup.controls['TN_proactive_primary_email'];
-            this.prophoneField = this.entityEdit.formGroup.controls['TN_proactive_primary_phone'];
-            this.secnameField = this.entityEdit.formGroup.controls['TN_proactive_secondary_name'];
-            
             this.entityEdit.formGroup.controls['TN_proactive_primary_name'].setValue(this.contacts[0].name);
             this.entityEdit.formGroup.controls['TN_proactive_primary_title'].setValue(this.contacts[0].title);
             this.entityEdit.formGroup.controls['TN_proactive_primary_email'].setValue(this.contacts[0].email);
@@ -656,6 +658,8 @@ export class SupportComponent {
             this.entityEdit.formGroup.controls['TN_proactive_secondary_email'].setValue(this.contacts[0].secondary_email);
             this.entityEdit.formGroup.controls['TN_proactive_secondary_phone'].setValue(this.contacts[0].secondary_phone);
             this.entityEdit.formGroup.controls['TN_proactive_checkbox'].setValue(this.contacts[0].enabled);
+            _.find(this.fieldConfig, {name : "TN_proactive_primary_name"}).isLoading = false;
+            _.find(this.fieldConfig, {name : "TN_proactive_secondary_name"}).isLoading = false;
           }, 2200);
           
           this.entityEdit.formGroup.controls['TN_proactive_primary_name'].valueChanges.subscribe((res) => {
