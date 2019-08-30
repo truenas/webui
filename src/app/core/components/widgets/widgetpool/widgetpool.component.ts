@@ -326,9 +326,16 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   updateSlidePosition(value){
     if(value.toString() == this.currentSlide){ return; }
-    let el = styler(this.carouselParent.nativeElement.querySelector('.carousel'));
-    const startX = (parseInt(this.currentSlide) * 600) * -1;
-    const endX = (value * 600) * -1;
+
+    const carousel = this.carouselParent.nativeElement.querySelector('.carousel')
+    const slide = this.carouselParent.nativeElement.querySelector('.slide');
+
+    let el = styler(carousel);
+    const slideW = styler(slide).get('width'); //600;
+
+    const startX = (parseInt(this.currentSlide) * slideW) * -1;
+    const endX = (value * slideW) * -1;
+
     tween({
       from:{ x: startX },
       to:{ x: endX },

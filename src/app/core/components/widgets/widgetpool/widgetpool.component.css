@@ -282,8 +282,22 @@ span.capitalize{
 .error, .warning , .healthy {
   font-size: 120%;
 }
+
+
 /* NARROW SCREENS */
 .xs.widget{
   width:100%;
-  max-height:320px;
+  height: calc(100vh - 96px);
+  position: fixed;
+  top: 88px;
+  z-index: 2;
+}
+
+.xs.widget .slide.overview .left{
+  background-size: 240%;
+  background-position: 100% 100% 00;
+}
+
+.xs.widget .overview .right .list-subheader{
+  margin-top:0;
 }
