@@ -26,21 +26,6 @@ export const helptext_system_cloudcredentials = {
     placeholder: T('OAuth Client Secret'),
     tooltip: T(''),
   },
-    // Amazon cloud drive is disabled
-  client_id_amazon_cloud_drive: {
-    placeholder: T("Amazon Application Client ID"),
-    tooltip: T(
-      'Client ID for the <a\
- href="https://developer.amazon.com/docs/amazon-drive/ad-get-started.html"\
- target="_blank">Amazon Drive account</a>.'
-    )
-  },
-
-  client_secret_amazon_cloud_drive: {
-    placeholder: T("Application Client Secret"),
-    tooltip: T("Client secret for the Amazon Drive account.")
-  },
-    // Amazon cloud drive is disabled
 
   access_key_id_s3: {
     placeholder: T("Access Key ID"),
