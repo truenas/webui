@@ -14,7 +14,7 @@ export class JailService {
   listJails() { return this.ws.call('jail.query', {}); }
 
   getReleaseChoices() {
-    return this.ws.call('jail.releases_choices');
+    return this.ws.call('jail.releases_choices', [true]);
   }
 
   getBranches() {

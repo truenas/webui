@@ -105,6 +105,11 @@
   margin-left: 8px;
 }
 
+.slide.overview .left .left-content{
+  display:table;
+  min-height:50%;
+}
+
 .pool-name{
   font-size:300%;
 }
@@ -136,11 +141,18 @@ span.warn{
 span.safe{
   color: var(--green);
 }
-/*
-.pool-name.down .icon-wrapper,
-.pool-status.down .icon-wrapper{
-  color: var(--red);
-}*/
+
+.pool-status span.safe .mat-icon{
+  width:auto;
+  height:auto;
+  font-size: 18px;
+  position: relative;
+  top: 2px;
+}
+
+.pool-status span.safe.lock-icon-wrapper{
+  top:1px;
+}
 
 .controls{
   position:absolute;
@@ -209,7 +221,7 @@ span.safe{
 }
 
 .slide .locked.offline .mat-icon{
-  font-size: 666%;
+  font-size: 444%;
   width:auto;
   height:auto;
 }

@@ -31,7 +31,7 @@ export class RsyncListComponent {
     { name: T('Remote Module Name'), prop: 'remotemodule' },
     { name: T('Remote Path'), prop: 'path', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true },
-    { name: T('Schedule'), prop: 'cron', hidden: true, widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' }},
+    { name: T('Schedule'), prop: 'cron', hidden: true, widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' } },
     { name: T('Short Description'), prop: 'desc', hidden: true },
     { name: T('User'), prop: 'user' },
     { name: T('Delay Updates'), prop: 'delayupdates', hidden: true },

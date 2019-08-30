@@ -70,6 +70,7 @@ export class SystemProfiler {
       switch(model){
         case 'M Series':
         case 'X Series':
+        case 'Z Series':
           this.headIndex = i;
           break;
       }

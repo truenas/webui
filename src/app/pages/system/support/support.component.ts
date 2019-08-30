@@ -438,6 +438,13 @@ export class SupportComponent {
             // TODO: Need updated address before release
             window.open('https://www.ixsystems.com/blog/knowledgebase_category/truenas/')
           }
+        },
+        {
+          id : 'eula',
+          name: helptext.update_license.eula_button,
+          function : () => {
+            this.router.navigate(['/system/support/eula'])
+          }
         }
       ]
       this.ws.call('system.info').subscribe((res) => {

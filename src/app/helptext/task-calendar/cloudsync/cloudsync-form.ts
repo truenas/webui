@@ -67,7 +67,7 @@ transfer_mode_warning_copy: T('<b>COPY</b>: Files from the source are <i><u>copi
 
 transfer_mode_warning_move: T('<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the destination, they are\
  <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.'),
-  
+
 snapshot_placeholder: T('Take Snapshot'),
 snapshot_tooltip: T('Set to take a snapshot of the dataset before a\
  <i>PUSH</i> or <i>PULL</i>.'),
@@ -120,9 +120,12 @@ enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
  Sync Task without deleting it.'),
 
 bwlimit_placeholder: T('Bandwidth Limit'),
-bwlimit_tooltip: T('Either single bandwidth limit or bandwidth limit schedule in rclone format.<br />\
- Example: "08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off".<br />\
- Default unit is kilobytes.'),
+bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\
+ Example: <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
+ Units can be specified with the beginning letter: <samp>b</samp>,\
+ <samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>.\
+ See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
+ target="_blank">rclone --bwlimit</a>.'),
 
 exclude_placeholder: T('Exclude'),
 exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\
