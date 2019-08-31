@@ -75,7 +75,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     } else {
 
       this.ws.call('system.info').subscribe((res) => {
-        console.log(res);
         const evt = {name: 'SysInfo', data:res};
         this.processSysInfo(evt);
       });
@@ -174,8 +173,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   getFreeNASImage(sys_product) {
 
-    if (sys_product.includes('CERTIFIED')) {
-      //this.product_image = 'ix-original.svg';
+    if (sys_product && sys_product.includes('CERTIFIED')) {
       this.product_image = '';
       this.certified = true;
       return;
