@@ -16,7 +16,6 @@ import { environment } from 'app/../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
-//import { SimpleFailoverBtnComponent } from './simple-failover-btn.component';
 
 @Component({
   selector: 'widget-sysinfo',
@@ -69,7 +68,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       // Delay query
       setTimeout(() => {
         this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
-          console.log(res);
           const evt = {name: 'SysInfoPassive', data:res};
           this.processSysInfo(evt);
         });
