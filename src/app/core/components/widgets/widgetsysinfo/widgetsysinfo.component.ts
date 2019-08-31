@@ -139,42 +139,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   }
 
-  failoverInit(){
-      /*console.warn("FAILOVER INITIATED...");
-      //this.ws.call('system.info').subscribe((res) => {});
-      //const self = this;
-      const conf: DialogFormConfiguration = {
-      title: helptext_system_failover.dialog_initiate_failover_title,
-      fieldConfig: [{
-        type: 'paragraph',
-        name: 'failover_warning',
-        paraText: helptext_system_failover.dialog_initiate_failover_message,
-        isHidden: false
-      }, {
-        type: 'checkbox',
-        name: 'reboot',
-        value: false,
-        placeholder: helptext_system_failover.dialog_initiate_failover_checkbox,
-      }, {
-        type: 'checkbox',
-        name: 'confirm',
-        placeholder: T("Confirm"),
-        required: true
-      }],
-      saveButtonText: T('Failover'),
-      customSubmit: function (entityDialog) {
-        const value = entityDialog.formValue;
-        let route = '/others/failover';
-        if (value.reboot) {
-          route = '/others/reboot';
-        }
-        self.router.navigate([route]);
-      }
-
-    }
-    this.dialog.dialogForm(conf);*/
-  }
-
   formatMemory(physmem:number, units:string){
     let result:string;
     if(units == "MiB"){
