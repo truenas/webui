@@ -921,7 +921,7 @@ export class ReplicationFormComponent {
         wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
 
         if (wsResponse.schedule) {
-            wsResponse['schedule_picker'] = "0" + " " +
+            wsResponse['schedule_picker'] = wsResponse.schedule.minute + " " +
                 wsResponse.schedule.hour + " " +
                 wsResponse.schedule.dom + " " +
                 wsResponse.schedule.month + " " +
@@ -932,7 +932,7 @@ export class ReplicationFormComponent {
         }
 
         if (wsResponse.restrict_schedule) {
-            wsResponse['restrict_schedule_picker'] = "0" + " " +
+            wsResponse['restrict_schedule_picker'] = wsResponse.restrict_schedule.minute + " " +
                 wsResponse.restrict_schedule.hour + " " +
                 wsResponse.restrict_schedule.dom + " " +
                 wsResponse.restrict_schedule.month + " " +
