@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
   // For widgetsysinfo
   public isHA: boolean = false;
+  public isFN: boolean = window.localStorage['is_freenas'];
 
   // For widgetpool
   public system: any;
@@ -61,11 +62,13 @@ export class DashboardComponent implements OnInit,OnDestroy {
       }
     });
 
-    this.ws.call('failover.licensed').subscribe((res)=> {
-      if (res) {
-        this.isHA = true;
-      }
-    });
+    if(!this.isFN){
+      this.ws.call('failover.licensed').subscribe((res)=> {
+        if (res) {
+          this.isHA = true;
+        }
+      });
+    }
 
   }
 
