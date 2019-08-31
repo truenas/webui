@@ -33,6 +33,7 @@ export class VdevComponent implements OnInit {
   public error;
   public diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
   public vdev_type_tooltip = helptext.vdev_type_tooltip;
+  public vdev_type_disabled = false;
 
   public startingHeight: any;
   public expandedRows: any;
@@ -44,6 +45,7 @@ export class VdevComponent implements OnInit {
   ngOnInit() {
     this.estimateSize();
     if (this.group === 'data') {
+      this.vdev_type_disabled = !this.manager.isNew;
       this.type = 'stripe';
     } else {
       this.type = this.group;
@@ -71,7 +73,7 @@ export class VdevComponent implements OnInit {
   }
 
   guessVdevType() {
-    if (this.group === "data") {
+    if (this.group === "data" && !this.vdev_type_disabled) {
       if (this.disks.length === 2) {
         this.type = "mirror";
       } else if (this.disks.length === 3) {
@@ -83,6 +85,8 @@ export class VdevComponent implements OnInit {
       } else {
         this.type = "stripe";
       }
+    } else if (this.vdev_type_disabled) {
+      this.type = this.manager.first_data_vdev_type;
     }
   }
 
