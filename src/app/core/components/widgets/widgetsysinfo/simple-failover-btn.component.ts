@@ -30,7 +30,6 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(res => {
-      console.log(res);
       if(res){
         this.router.navigate(['/others/failover']);
       }
