@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
       }
     });
 
-    if(!this.isFN){
+    if(this.isFN.toString() == 'false'){
       this.ws.call('failover.licensed').subscribe((res)=> {
         if (res) {
           this.isHA = true;

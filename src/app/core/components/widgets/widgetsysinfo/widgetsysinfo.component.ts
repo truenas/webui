@@ -78,8 +78,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         const evt = {name: 'SysInfo', data:res};
         this.processSysInfo(evt);
       });
-
+      
       this.core.emit({name:"UpdateCheck"});
+      
     }
   }
 
