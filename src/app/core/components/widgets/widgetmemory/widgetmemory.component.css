@@ -165,7 +165,7 @@ h1.memory-used span.memory-used-units{
   height: calc(100vh - 96px);
   position:fixed;
   top: 88px;
-  z-index: 2;
+  /*z-index: 2;*/
 }
 
 .list-subheader{

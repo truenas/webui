@@ -3,12 +3,18 @@
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content>
         <mat-toolbar-row >
+          <!-- Mobile Only: Exit widget -->
+          <button *ngIf="screenType == 'Mobile'" class="mat-card-title-text" mat-icon-button color="default" >
+            <mat-icon class="back-arrow">chevron_left</mat-icon>
+          </button>&nbsp;&nbsp;
           <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
+
           <!--<ng-template *ngIf="configurable === true">
             <button mat-icon-button (click)="toggleConfig()">
             <mat-icon>settings</mat-icon>
             </button>
             </ng-template>-->
+
             <div class="controls">
               <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/cpu'])">
                 <mat-icon role="img"
@@ -20,70 +26,101 @@
               </button>
             </div>
         </mat-toolbar-row>
-        <div class="cpu-model">{{cpuModel ? cpuModel : 'gathering info...'}}</div>
-        <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
-        <!-- Chart -->
-        <div id="cpu-load-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
-          <h3 fxFlex="33" id="cpu-load-label">LOAD</h3>
-          <!--<div *ngIf="cpuAvg && cpuAvg.data" id="cpu-load-value">{{cpuAvg.data[1]}}%</div>-->
-          <viewchartgauge fxFlex="34" *ngIf="cpuAvg && cpuAvg.data" [config]="cpuAvg" #load class=""></viewchartgauge>
-          <div fxFlex="33" id="cpu-load-cores">
-            <h3 class="core-count">{{coreCount}}</h3>
-            <h4 class="core-count-label">Threads</h4>
+
+          <div *ngIf="screenType == 'Desktop'" class="cpu-model top">{{cpuModel ? cpuModel : 'gathering info...'}}</div>
+          
+          <!-- Chart -->
+          <div [ngClass]="{'mobile': screenType == 'Mobile'}" id="cpu-load-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
+
+            <h3 fxFlex="33" fxFlex.xs="100" id="cpu-load-label">LOAD</h3>
+
+            <div class="viewchartgauge" fxFlex="34" fxFlex.xs="100" *ngIf="cpuAvg && cpuAvg.data">
+              <viewchartgauge [config]="cpuAvg" #load></viewchartgauge>
+            </div>
+
+            <div *ngIf="screenType == 'Desktop'" fxFlex="33" fxFlex.xs="100" id="cpu-load-cores">
+              <h3 class="core-count">{{coreCount}}</h3>
+              <h4 class="core-count-label">Threads</h4>
+            </div>
+
+          </div>
+
+
+        <div *ngIf="screenType == 'Mobile'" fxLayout="column" class="mobile" >
+          <div fxFlex="65" class="bottom">
+            <div class="list-subheader">  <span class="capitalize">CPU Details</span></div>
+            <mat-list>
+              <mat-list-item><span class="label">Model:</span> &nbsp;&nbsp;{{cpuModel ? cpuModel : 'Gathering info...'}}</mat-list-item>
+              <mat-list-item><span class="label">Threads:</span> &nbsp;&nbsp;{{coreCount}}</mat-list-item>
+            </mat-list>
           </div>
         </div>
 
 
-        <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="column">
-            <!--<viewchartbar *ngIf="cpuData && cpuData.data" [config]="cpuData" #cores class=""></viewchartbar>-->
-            
-            <div fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
-              <div *ngIf="legendData; else noLegend" id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
+        <div *ngIf="screenType == 'Mobile'" fxLayout="column" class="mobile" >
+          <div fxFlex="65" class="bottom">
+            <div class="list-subheader">  <span class="capitalize">Stats Per Thread</span></div>
+            <mat-list>
+              <mat-list-item>
+                <span class="label">Hottest:</span> &nbsp;&nbsp;{{tempMax}}°C &nbsp;&nbsp;
+                <span class="subtext">({{tempMaxThreads.length < 2 ? 'Thread #' + tempMaxThreads.toString(): tempMaxThreads.length + ' threads at ' + tempMax + '°C'}})</span>
+              </mat-list-item>
+              <mat-list-item>
+                <span class="label">Coolest:</span> &nbsp;&nbsp;{{tempMin}}°C &nbsp;&nbsp;
+                <span class="subtext" >({{tempMinThreads.length < 2 ? 'Thread #' + tempMinThreads.toString() : tempMinThreads.length + ' threads at ' + tempMin + '°C'}})</span>
+              </mat-list-item>
+              <mat-list-item>
+                <span class="label">Highest Usage:</span> &nbsp;&nbsp;{{usageMax}}% &nbsp;&nbsp;
+                <span class="subtext" >({{usageMaxThreads.length < 2 ? 'Thread #' + usageMaxThreads.toString(): usageMaxThreads.length + ' threads at ' + usageMax + '%'}})</span>
+              </mat-list-item>
+              <mat-list-item>
+                <span class="label">Lowest Usage:</span> &nbsp;&nbsp;{{usageMin}}% &nbsp;&nbsp;
+                <span class="subtext" >({{usageMinThreads.length < 2 ? 'Thread #' + usageMinThreads.toString() : usageMinThreads.length + ' threads at ' + usageMin + '%'}})</span>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
 
-                <div fxFlex="26" class="legend-item core-number"><span class="label">Thread number:</span> {{legendData[0].index}}</div>
-                <div fxFlex="26" class="legend-item usage">
-                  <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].name}}:</span> {{legendData[0].value}}%
-                </div>
-                <div fxFlex="26" *ngIf="legendData[1]" class="legend-item temperature">
-                  <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{legendData[1].name}}:</span> {{legendData[1].value}}°C
-                </div>
+
+        <!-- Start Cores Wrapper -->
+          <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="column">
               
-              </div>
-            </div>
+            <div [ngClass]="{ 'mobile': screenType == 'Desktop'}" fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
+                <div *ngIf="legendData; else noLegend" id="cpu-load-cores-legend-values" fxFlex fxLayout="row wrap" fxLayoutAlign="space-around center">
+  
+                  <div fxFlex="26" fxFlex.xs="calc(100% - 16px)" class="legend-item core-number"><span class="label">Thread number:</span> {{legendData[0].index}}</div>
 
-            <ng-template #noLegend>
-              <div id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
+                  <div fxFlex="26" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
+                    <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].name}}:</span> {{legendData[0].value}}%
+                  </div>
 
-                <div fxFlex="26" class="legend-item core-number"><span class="label">Stats Per Thread</span></div>
-                <div fxFlex="26" class="legend-item usage">
-                  <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">Usage:</span> 
+                  <div fxFlex="26" fxFlex.xs="calc(50% - 16px)" *ngIf="legendData[1]" class="legend-item temperature">
+                    <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{legendData[1].name}}:</span> {{legendData[1].value}}°C
+                  </div>
+                
                 </div>
-                <div fxFlex="26" class="legend-item temperature">
-                  <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">Temperature:</span> 
-                </div>
-
-                <!--<div fxFlex="100" class="legend-item chart-label">
-                  <span class="label">CPU Usage/Temperature per Core</span>
-                  </div>-->
               </div>
-            </ng-template>
+  
+              <ng-template #noLegend>
+                <div id="cpu-load-cores-legend-values" fxFlex fxLayout="row wrap" fxLayoutAlign="space-around center">
+  
+                  <div fxFlex="26" fxFlex.xs="calc(100% - 16px)" class="legend-item core-number"><span class="label">{{screenType == 'Mobile' ? 'Thread number:' : 'Stats Per Thread'}}</span></div>
 
-          <div fxFlex="100" id="cpu-cores-chart" class="bar-chart"></div>
-        </div> <!-- Cores Wrapper -->
+                  <div fxFlex="26" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
+                    <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">Usage</span> 
+                  </div>
 
+                  <div fxFlex="26" fxFlex.xs="calc(50% - 16px)"  class="legend-item temperature">
+                    <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">Temperature</span> 
+                  </div>
+  
+                </div>
+              </ng-template>
+  
+            <div fxFlex="100" id="cpu-cores-chart" class="bar-chart"></div>
+          </div> <!-- End Cores Wrapper -->
+        
         <!-- DETAILS -->
-        <!--<div class="title-wrapper fn-theme-primary" fxFlex="100">
-          <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
-          <ng-container *ngIf="showLegendValues">
-          <p class="title">{{altTitle}}</p>
-          <p class="subtitle">{{altSubtitle}}</p>
-          </ng-container>
-          <ng-container *ngIf="!showLegendValues">
-          <p class="title">{{title}}</p>
-          <p class="subtitle">{{subtitle}}</p>
-          </ng-container>
-          <button mat-button class="reports-btn" (click)="router.navigate(['reportsdashboard/cpu'])">REPORTS</button>
-          </div>-->
       </mat-card-content>
     </mat-card>
 

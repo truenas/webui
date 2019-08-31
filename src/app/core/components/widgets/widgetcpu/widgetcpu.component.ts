@@ -5,6 +5,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { Subject } from 'rxjs';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
@@ -58,13 +59,38 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   public chartId = UUID.UUID();
   public coreCount: number;
   public legendData: any;
+  public screenType: string = 'Desktop'; // Desktop || Mobile
+
+  // Mobile Stats
+  public tempMax: number;
+  public tempMaxThreads: number[] = [];
+  public tempMin: number;
+  public tempMinThreads: number[] = [];
+  public usageMax: number;
+  public usageMaxThreads: number[] = [];
+  public usageMin: number;
+  public usageMinThreads: number[] = [];
 
   public legendColors: string[];
   private legendIndex: number;
 
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver){
     super(translate);
+
+    mediaObserver.media$.subscribe((evt) =>{
+      const size = {
+        width: evt.mqAlias == 'xs' ? 320 : 536,
+        height: 140
+      }
+
+      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      if(this.chart && this.screenType !== st){
+        this.chart.resize(size);
+      }
+
+      this.screenType = st;
+    });
   }
 
   ngOnDestroy(){
@@ -114,17 +140,48 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       if(data.temperature && data.temperature[i]){
         temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
       }
-      /*
-      // JSON Approach (c3 has a bug in angular)
-      let dataPoint:DataPoint = {coreNumber:i};
-      dataPoint.usage = parseInt(data[i.toString()].usage.toFixed(1));
-      dataPoint.temperature = data.temperature && data.temperature[i] ? parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)) : 'N/A';
-      result.push(dataPoint);
-      */
+    }
+    
+    if(this.screenType == 'Mobile'){
+      this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) );
     }
 
     return [usageColumn, temperatureColumn];
-    //return result;
+    
+  }
+
+  setMobileStats(usage, temps){
+    // Usage
+    usage.splice(0,1);
+    this.usageMin = Math.min(...usage);
+    this.usageMax = Math.max(...usage);
+    this.usageMinThreads = [];
+    this.usageMaxThreads = [];
+    for(let u = 0; u < usage.length; u++){
+      if(usage[u] == this.usageMin){
+        this.usageMinThreads.push(u);
+      }
+
+      if(usage[u] == this.usageMax){
+        this.usageMaxThreads.push(u);
+      }
+    }
+
+    // Temperature
+    temps.splice(0,1)
+    this.tempMin = Math.min(...temps);
+    this.tempMax = Math.max(...temps);
+    this.tempMinThreads = [];
+    this.tempMaxThreads = [];
+    for(let t = 0; t < temps.length; t++){
+      if(temps[t] == this.tempMin){
+        this.tempMinThreads.push(t);
+      }
+
+      if(temps[t] == this.tempMax){
+        this.tempMaxThreads.push(t);
+      }
+    }
   }
 
   setCpuData(/*chart,*/ data){
@@ -168,7 +225,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     let conf = {
       bindto: '#cpu-cores-chart',
       size: {
-        width: 536,
+        width: this.screenType == 'Desktop' ? 536 : 300,
         height: 140//160
       },
       tooltip:{
