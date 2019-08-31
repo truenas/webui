@@ -161,11 +161,15 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
 
   updateSlidePosition(value){
     if(value.toString() == this.currentSlide){ return; }
-    let el = styler(this.carouselParent.nativeElement.querySelector('.carousel'));
+    const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
+    const slide = this.carouselParent.nativeElement.querySelector('.slide');
+
+    let el = styler(carousel);
+    let slideW = styler(slide).get('width');
+
     tween({
       from:{ x: (parseInt(this.currentSlide) * 100) * -1 },
-      //to:{ x: (value * 100) * -1 },
-      to:{ x: (value * 600) * -1 },
+      to:{ x: (value * slideW) * -1 },
       duration: 250
     }).start(el.set);
     

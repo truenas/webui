@@ -71,7 +71,7 @@
 
 .slide .left,
 .slide .right{
-  width:50%;
+  /*width:50%;*/
   height:100%;
   display:inline-block;
   padding:32px 0;
@@ -240,6 +240,13 @@
 
 /* NARROW SCREENS */
 .xs.widget{
-  width:100%;
-  max-height:320px;
+  width: 100%;
+  height: calc(100vh - 96px);
+  position: fixed;
+  top: 88px;
+  z-index: 2;
+}
+
+.xs.widget .overview .right .list-subheader{
+  margin-top: 0;
 }

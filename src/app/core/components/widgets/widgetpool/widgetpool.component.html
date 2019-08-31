@@ -5,7 +5,7 @@
         <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}">
 
           <!-- Mobile Only: Exit widget -->
-          <button fxShow.xs class="mat-card-title-text" *ngIf="currentSlide == '0'" mat-icon-button color="default" >
+          <button fxHide.gt-xs class="mat-card-title-text" *ngIf="currentSlide == '0'" mat-icon-button color="default" >
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
 
@@ -66,7 +66,7 @@
           
           <ng-template #overview>
             <div fxFlex="100" class="overview-inner" fxLayout.xs="column" fxLayout="row" fxLayoutAlign="space-between">
-            <div class="left" fxFlex="40" fxFlex.xs="30" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="left" fxFlex="40" fxFlex.xs="35" fxLayout="column" fxLayoutAlign="space-around center">
 
               <div fxFlex="66" class="left-content">
                 <div class="pool-name" >
@@ -101,7 +101,7 @@
               </div>
             </div>
 
-            <div class="right" fxFlex="60" fxFlex.xs="70" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="right" fxFlex="60" fxFlex.xs="65" fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100" *ngIf="poolState.topology && poolState.topology.data; else locked;">
                 <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>
