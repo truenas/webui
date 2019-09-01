@@ -16,9 +16,8 @@ import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector : 'app-support',
-  template : `
-  <entity-form [conf]="this"></entity-form>
-  `,
+  templateUrl: './support.component.html',
+  styleUrls: ['./support.component.scss'],
   providers: [SnackbarService]
 })
 export class SupportComponent {
@@ -37,12 +36,30 @@ export class SupportComponent {
   public password_fc: any;
   public username_fc: any;
   public is_freenas: boolean;
-  public product_image = '';
   public scrshot: any;
   public subs: any;
   private serial: any;
   public isProduction: boolean;
   public updateButton: any;
+
+  ///
+  public FN_version;
+  public FN_model;
+  public FN_memory;
+  public FN_serial;
+  public FN_instructions;
+
+  public customer_name;
+  public features;
+  public contract_type;
+  public expiration_date;
+  public model;
+  public sys_serial;
+  public add_hardware;
+  public daysLeftinContract;
+  public product_image = '';
+
+  ///
 
   proname = '';
   protitle = '';
@@ -140,7 +157,7 @@ export class SupportComponent {
         {
           type: 'paragraph',
           name: 'support_text',
-          paraText: 
+          paraText:
             'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
               target="_blank">FreeNAS issue tracker</a> \
               to ensure the issue has not already been reported before \
@@ -196,7 +213,7 @@ export class SupportComponent {
     // {
     //   name: 'divider',
     //   divider: true
-    // }, 
+    // },
     {
       name: 'Column 4',
       label: false,
@@ -555,6 +572,50 @@ export class SupportComponent {
               public loader: AppLoaderService, private snackbar: SnackbarService)
               {}
 
+  ngOnInit() {
+    window.localStorage['is_freenas'] === 'true' ? this.is_freenas = true : this.is_freenas = false;
+    this.ws.call('system.info').subscribe((res) => {
+      if (this.is_freenas) {
+        console.log(res)
+        this.getFNSysInfo(res);
+        this.getFreeNASImage(res.system_product)
+      } else {
+        this.getTNSysInfo(res);
+        this.getTrueNASImage(res.sys_product);
+      };
+    });
+  }
+
+  getFNSysInfo(res) {
+    this.FN_version = res.version;
+    this.FN_model = res.sys_product;
+    this.FN_memory = (res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB'
+    res.system_serial ? this.FN_serial = res.system_serial : this.FN_serial = '';
+    this.FN_instructions = helptext.FN_instructions;
+  }
+
+  getTNSysInfo(res) {
+    this.model = res.system_product;
+    if (res.license) {
+      this.customer_name = res.license.customer_name;
+      res.license.features.length === 0 ? this.features = 'NONE' : this.features = res.license.features.join(', ');
+      this.contract_type = res.license.contract_type;
+      this.expiration_date =res.license.contract_end.$value;
+      res.license.system_serial_ha ?
+          this.sys_serial = res.license.system_serial + ' / ' + res.license.system_serial_ha :
+          this.sys_serial = res.license.system_serial;
+      res.license.addhw.length === 0 ? this.add_hardware = 'NONE' : this.add_hardware = res.license.addhw.join(', ');
+      const now = new Date();
+      const then = new Date(res.license.contract_end.$value);
+      this.daysLeftinContract = this.daysTillExpiration(now, then);
+    };
+  }
+
+  daysTillExpiration(now, then) {
+    const oneDay = 24*60*60*1000; // milliseconds in a day
+    return Math.round(Math.abs((now.getTime() - then.getTime())/(oneDay)));
+  }
+
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
@@ -577,7 +638,7 @@ export class SupportComponent {
         _.find(this.fieldConfig, {name : "FN_version"}).paraText += res.version;
         _.find(this.fieldConfig, {name : "FN_model"}).paraText += res.system_product;
         _.find(this.fieldConfig, {name : "FN_memory"}).paraText += Number(res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
-        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ? 
+        _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText ?
           _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText += res.system_serial :
           _.find(this.fieldConfig, {name : "FN_sysserial"}).paraText = '';
         _.find(this.fieldConfig, {name : "pic"}).paraText = `<img src="assets/images/${this.product_image}" height="350">`;
@@ -609,7 +670,7 @@ export class SupportComponent {
             const localWS = this.ws;
             const localSnackbar = this.snackbar;
             const localDialogService = this.dialogService;
-            
+
             const licenseForm: DialogFormConfiguration = {
               title: helptext.update_license.dialog_title,
               fieldConfig: [
@@ -626,16 +687,16 @@ export class SupportComponent {
                 localWS.call('system.license_update', [value]).subscribe((res) => {
                   entityDialog.dialogRef.close(true);
                   localLoader.close();
-                  localSnackbar.open(helptext.update_license.success_message, 
+                  localSnackbar.open(helptext.update_license.success_message,
                     helptext.update_license.snackbar_action, { duration: 5000 });
-                }, 
+                },
                 (err) => {
                   localLoader.close();
                   entityDialog.dialogRef.close(true);
                   localDialogService.errorReport((helptext.update_license.error_dialog_title), err.reason, err.trace.formatted);
                 });
               }
-              
+
             }
             this.dialogService.dialogForm(licenseForm);
           }
@@ -685,7 +746,7 @@ export class SupportComponent {
               });
             }
           }
-        },      
+        },
         {
           id : 'proactive_support',
           name: helptext.proactive.save_button,
@@ -707,8 +768,8 @@ export class SupportComponent {
         res.license.system_serial_ha ?
           this.serial = res.license.system_serial + ' / ' + res.license.system_serial_ha :
           this.serial = res.license.system_serial;
-        _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += this.serial;        
-        
+        _.find(this.fieldConfig, {name : "TN_sysserial"}).paraText += this.serial;
+
         let featureList;
         res.license.features.length === 0 ? featureList = 'NONE' : featureList = res.license.features.join(', ');
         _.find(this.fieldConfig, {name : "TN_features"}).paraText += featureList;
@@ -718,7 +779,7 @@ export class SupportComponent {
 
         let addhw;
         res.license.addhw.length === 0 ? addhw = 'NONE' : addhw = res.license.addhw.join(', ');
-        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += addhw; 
+        _.find(this.fieldConfig, {name : "TN_addhardware"}).paraText += addhw;
 
         if (res.license.contract_type !== 'GOLD' && res.license.contract_type !== 'SILVER') {
           for (let i in this.proactiveFields) {
@@ -743,9 +804,9 @@ export class SupportComponent {
           this.procheckbox = this.entityEdit.formGroup.controls['TN_proactive_checkbox'];
           _.find(this.fieldConfig, {name : "TN_proactive_primary_name"}).isLoading = true;
           _.find(this.fieldConfig, {name : "TN_proactive_secondary_name"}).isLoading = true;
-         
+
           this.getContacts();
-          
+
           this.pronameField.valueChanges.subscribe((res) => {
             this.proname = res;
             this.enableProactiveCheck();
@@ -780,7 +841,7 @@ export class SupportComponent {
           });
         }
       },
-      (err) => { 
+      (err) => {
         console.error(err);
       });
     };
@@ -832,7 +893,7 @@ export class SupportComponent {
       this.snackbar.open((helptext.proactive.snackbar_mesage), (helptext.proactive.snackbar_action), {
         duration: 4000,
       });
-      
+
     },
     (err) => {
       console.error(err);
@@ -876,10 +937,7 @@ export class SupportComponent {
     }
   }
 
-  daysTillExpiration(now, then) {
-    let oneDay = 24*60*60*1000; // milliseconds in a day
-    return Math.round(Math.abs((now.getTime() - then.getTime())/(oneDay)));
-  }
+
 
   customSubmit(entityEdit): void{
     if (this.is_freenas) {
@@ -1006,7 +1064,7 @@ export class SupportComponent {
         if (fileBrowser.files[i].size >= 52428800) {
           this.scrshot['hasErrors'] = true;
           this.scrshot['errors'] = 'File size is limited to 50 MiB.';
-        } 
+        }
         else {
           parent.subs.push({"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[i]});
         }

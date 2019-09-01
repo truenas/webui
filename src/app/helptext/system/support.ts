@@ -151,5 +151,14 @@ export const helptext_system_support = {
   is_production_snackbar: {
     message: T('Production status successfully updated'),
     action: T('Close')
-  }
+  },
+
+  FN_instructions: 'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
+   target="_blank">FreeNAS issue tracker</a> \
+   to ensure the issue has not already been reported before \
+   filing a bug report or feature request. If an issue has \
+   already been created, add a comment to the existing issue. \
+   Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank"> \
+   iXsystems storage page</a> \
+   for enterprise-grade storage solutions and support.'
 };

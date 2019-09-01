@@ -1,0 +1,11 @@
+<div id="TN-sys-info-wrapper">
+  <h1><i class="material-icons">info</i>License Information</h1>
+  <div>Customer Name: {{customer_name}}</div>
+  <div>Features: {{features}}</div>
+  <div>Contract Type: {{contract_type}}</div>
+  <div>Expiration Date: {{expiration_date}}
+    <span *ngIf="daysLeftinContract"> (expires in {{daysLeftinContract}} days)</span>
+  </div>
+  <div>Model: {{model}}</div><div>System Serial: {{sys_serial}}</div>
+  <div>Additional Hardware: {{add_hardware}}</div>
+</div>
