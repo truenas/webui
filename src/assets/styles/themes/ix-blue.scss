@@ -1269,8 +1269,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
 
     #category_form-select-spinner,
-    #TN_proactive_primary_name_form-input-spinner,
-    #TN_proactive_secondary_name_form-input-spinner {
+    app-proactive #name_form-input-spinner,
+    app-proactive #secondary_name_form-input-spinner {
       position: absolute;
       top: -20px;
       right: 45%;
@@ -1288,7 +1288,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
     #TN_proactive_checkbox {
       position: relative;
-      top: 10px;
+      top: -10px;
     }
 
     a {
