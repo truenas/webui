@@ -23,7 +23,7 @@
           >
           </app-tn-sys-info>
         </ng-template>
-        <app-production-status *ngIf="!is_freenas"></app-production-status>
+        <!-- <app-production-status *ngIf="!is_freenas"></app-production-status> -->
       </div>
       <div id="top-right" fxFlex="50%">
         <div class="sys-image">
@@ -34,7 +34,7 @@
 
       </div>
     </div>
-    <hr class='support-hr'>
+    <hr class='support-hr' *ngIf="is_freenas">
     <app-proactive *ngIf="!is_freenas"></app-proactive>
     <app-fn-support *ngIf="is_freenas; else TNsupport"></app-fn-support>
     <ng-template #TNsupport>

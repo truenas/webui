@@ -25,11 +25,6 @@ export class ProactiveComponent implements OnInit {
     config:[
       {
         type: 'paragraph',
-        name: 'TN_proactive_section_border',
-        paraText: ''
-      },
-      {
-        type: 'paragraph',
         name: 'TN_proactive_section_title',
         paraText: '<i class="material-icons">swap_horiz</i>' + helptext.proactive.title
       },
@@ -43,7 +38,7 @@ export class ProactiveComponent implements OnInit {
   {
     name: 'col1',
     label: false,
-    width: '50%',
+    width: '47%',
     config:[
       {
         type: 'paragraph',
@@ -81,9 +76,15 @@ export class ProactiveComponent implements OnInit {
     ]
   },
   {
+    name: 'middle',
+    label: false,
+    width: '5%',
+    config:[]
+  },
+  {
     name: 'col2',
     label: false,
-    width: '50%',
+    width: '47%',
     config:[
       {
         type: 'paragraph',
@@ -121,7 +122,7 @@ export class ProactiveComponent implements OnInit {
     ]
   },
   {
-    name: 'Column 7',
+    name: 'enablec',
     label: false,
     width: '100%',
     config:[
@@ -132,10 +133,6 @@ export class ProactiveComponent implements OnInit {
       }
     ]
   },
-  {
-    name: 'TN_proactive_divider',
-    divider: true
-  }
 ]
 
   constructor(public ws: WebSocketService, protected prefService: PreferencesService) { }
@@ -159,25 +156,20 @@ export class ProactiveComponent implements OnInit {
     ];
 
     const proactiveParatext: Array<any> = [
-      'TN_proactive_section_border',
       'TN_proactive_section_title',
       'TN_proactive_instructions',
       'TN_proactive_title',
       'TN_proactive_second_title',
     ];
 
-    this.ws.call('support.is_available').subscribe((res) => {
+    this.ws.call('support.is_available').subscribe((res) => { console.log(res)
       if (!res) {
         for (const i in proactiveFields) {
           this.entityEdit.setDisabled(proactiveFields[i], true, false);
+          proactiveParatext.forEach((i) => {
+            document.getElementById(i).style.opacity = '0.38';
+          });
         };
-        proactiveParatext.forEach((i) => {
-          document.getElementById(i).style.opacity = '0.38';
-        });
-        setTimeout(() => {
-          const btn = <HTMLInputElement> document.getElementById('save_button');
-          btn.disabled = true;
-        }, 800);
       } else {
         this.getContacts();
         this.ws.call('support.is_available_and_enabled').subscribe((res) => {

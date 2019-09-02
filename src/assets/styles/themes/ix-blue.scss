@@ -1218,10 +1218,51 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       top: -40px;
       position: relative;
     }
+    .mat-card {
+      background-color: rgba(127,127,127,0.1);
+    }
     form {
       margin-bottom: -40px;
     }
   }
+
+  app-tn-support {
+    .mat-card {
+      background-color: rgba(127,127,127,0.1);
+    }
+  }
+
+  app-proactive {
+    .mat-card-actions {
+      height: 0px;
+      top: -45px;
+      position: relative;
+      left: 230px;
+    }
+    .mat-card {
+      top: 20px;
+      background-color: rgba(127,127,127,0.1);
+    }
+    #enabled {
+      position: relative;
+      top: 5px;
+    }
+  }
+
+  app-production-status {
+    .mat-card {
+        top: 30px;
+        background-color: rgba(127,127,127,0.1);
+    }
+    .mat-card-actions {
+      left: -15px;
+      top: 5px;
+      position: relative;
+    }
+
+  }
+
+
   app-support {
     #top-row {
       margin: 0 15px;

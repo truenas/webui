@@ -1,11 +1,23 @@
 <div id="TN-sys-info-wrapper">
-  <h1><i class="material-icons">info</i>License Information</h1>
-  <div>Customer Name: {{customer_name}}</div>
-  <div>Features: {{features}}</div>
-  <div>Contract Type: {{contract_type}}</div>
-  <div>Expiration Date: {{expiration_date}}
-    <span *ngIf="daysLeftinContract"> (expires in {{daysLeftinContract}} days)</span>
+  <p class="support-title"><i class="material-icons">info</i>License Information</p>
+  <div id="tn-sys-info" class="container" fxLayout="row">
+    <div id=tn-sys-col1 fxFlex="50%">
+        <div><h4>Customer Name:</h4> {{customer_name}}</div>
+        <div><h4>Features:</h4> {{features}}</div>
+        <div><h4>Contract Type:</h4> {{contract_type}}</div>
+        <div><h4>Expiration Date:</h4> {{expiration_date}}
+          <span *ngIf="daysLeftinContract"> (expires in {{daysLeftinContract}} days)</span>
+        </div>
+    </div>
+    <div id=tn-sys-col2 fxFlex="50%">
+        <div><h4>Model:</h4> {{model}}</div>
+        <div><h4>System Serial:</h4> {{sys_serial}}</div>
+        <div><h4>Additional Hardware:</h4> {{add_hardware}}</div>
+    </div>
   </div>
-  <div>Model: {{model}}</div><div>System Serial: {{sys_serial}}</div>
-  <div>Additional Hardware: {{add_hardware}}</div>
+  <div id="tn-sys-info" class="container" fxLayout="row">
+    <div id="production-status-wrapper" [style.max-width.px]="450">
+      <app-production-status *ngIf="!is_freenas"></app-production-status>
+    </div>
+  </div>
 </div>
