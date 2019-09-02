@@ -1196,11 +1196,52 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   #acme_directory_uri mat-form-field {
     width: 50%;
   }
-
-  app-support {
-    .fieldset {
-      padding-left: 15px;
+  //////////////////////////
+  app-fn-sys-info {
+    #fn-support-title {
+      margin-bottom: 25px;
     }
+    .fn-sys-info-line {
+      margin-top: 10px;
+    }
+    #fn-instructions {
+      font-size: 110%;
+    }
+  }
+  app-sys-image img {
+    height: 350px;
+  }
+
+  app-fn-support {
+    .mat-card-actions {
+      left: -15px;
+      top: -40px;
+      position: relative;
+    }
+    form {
+      margin-bottom: -40px;
+    }
+  }
+  app-support {
+    #top-row {
+      margin: 0 15px;
+    }
+    .sys-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 400px;
+    }
+
+    .support-hr {
+      width: 98%;
+      color: var(--fg2);
+      opacity: .38;
+    }
+
+    // .fieldset {
+    //   padding-left: 15px;
+    // }
     .support-title, #FN_col1, #FN_col2, #TN_col1, #TN_proactive_section_title {
       font-size: 180%;
       margin-bottom: 15px;
@@ -1317,9 +1358,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-bottom: 25px;
     }
 
-    .fieldset {
-      padding-top: 15px;
-    }
+    // .fieldset {
+    //   padding-top: 15px;
+    // }
   }
 
   @media (max-width: 599px) {

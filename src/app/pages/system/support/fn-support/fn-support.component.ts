@@ -22,12 +22,9 @@ export class FnSupportComponent {
   public username_fc: any;
   public payload = {};
   public subs: any;
+  public saveSubmitText = helptext.FN_submit;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
-    {
-      name: 'TN_proactive_divider',
-      divider: true
-    },
     {
       name: 'column1',
       width: '50%',

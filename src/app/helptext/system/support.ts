@@ -160,5 +160,7 @@ export const helptext_system_support = {
    already been created, add a comment to the existing issue. \
    Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank"> \
    iXsystems storage page</a> \
-   for enterprise-grade storage solutions and support.'
+   for enterprise-grade storage solutions and support.',
+
+   FN_submit: T('Submit')
 };

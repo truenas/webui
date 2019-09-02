@@ -61,7 +61,7 @@ export class SupportComponent {
 
   getFNSysInfo(res) {
     this.FN_version = res.version;
-    this.FN_model = res.sys_product;
+    this.FN_model = res.system_product;
     this.FN_memory = (res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB'
     res.system_serial ? this.FN_serial = res.system_serial : this.FN_serial = '';
     this.FN_instructions = helptext.FN_instructions;
