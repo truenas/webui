@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { SnackbarService } from 'app/services/snackbar.service'
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
@@ -12,7 +15,6 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 })
 export class ProactiveComponent {
   public entityEdit: any;
-  public addCall: 'support.update';
   public contacts: any;
   public controls: any;
   public fieldConfig: FieldConfig[] = []
@@ -134,7 +136,9 @@ export class ProactiveComponent {
   },
 ]
 
-  constructor(public ws: WebSocketService, protected prefService: PreferencesService) { }
+  constructor(public ws: WebSocketService, protected prefService: PreferencesService,
+    protected snackbar: SnackbarService, protected loader: AppLoaderService,
+    protected dialogService: DialogService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -158,25 +162,28 @@ export class ProactiveComponent {
       'TN_proactive_second_title',
     ];
 
-    this.ws.call('support.is_available').subscribe((res) => { 
-      if (!res) {
-        for (const i in proactiveFields) {
-          this.entityEdit.setDisabled(proactiveFields[i], true, false);
-          proactiveParatext.forEach((i) => {
-            document.getElementById(i).style.opacity = '0.38';
+    setTimeout(() => {
+      this.ws.call('support.is_available').subscribe((res) => { 
+        if (!res) {
+          for (const i in proactiveFields) {
+            this.entityEdit.setDisabled(proactiveFields[i], true, false);
+            proactiveParatext.forEach((i) => {
+              document.getElementById(i).style.opacity = '0.38';
+            });
+          };
+        } else {
+          this.getContacts();
+          this.ws.call('support.is_available_and_enabled').subscribe((res) => {
+            if (res) {
+              this.entityEdit.formGroup.controls['enabled'].setValue(true);
+            } else {
+              this.entityEdit.formGroup.controls['enabled'].setValue(false);
+            }
           });
-        };
-      } else {
-        this.getContacts();
-        this.ws.call('support.is_available_and_enabled').subscribe((res) => {
-          if (res) {
-            this.entityEdit.formGroup.controls['enabled'].setValue(true);
-          } else {
-            this.entityEdit.formGroup.controls['enabled'].setValue(false);
-          }
-        });
-      }
-    })
+        }
+      })
+    }, 1000);
+
   }
 
   getContacts() {
@@ -211,8 +218,18 @@ export class ProactiveComponent {
     this.prefService.savePreferences(this.prefService.preferences);
   }
 
-  // customSubmit(data) {
-  //   console.log(data)
-  // }
+  customSubmit(data) {
+    this.loader.open();
+    this.ws.call('support.update', [data]).subscribe(() => {
+      this.loader.close();
+      this.snackbar.open(helptext.proactive.snackbar_mesage, 
+        helptext.proactive.snackbar_action, {duration: 4000});
+    }, 
+    (err) => {
+      this.loader.close();
+      this.dialogService.errorReport(helptext.proactive.dialog_err,
+        err.error.message, err.error.traceback);
+    });
+  };
 
 }

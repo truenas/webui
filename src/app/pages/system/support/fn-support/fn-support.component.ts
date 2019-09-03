@@ -141,11 +141,11 @@ export class FnSupportComponent {
     this.entityEdit = entityEdit;
   }
 
-  blurEvent(parent){ console.log(parent)
+  blurEvent(parent){
     this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
     this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
-    this.category = _.find(parent.fieldConfig, {name: "category"}); console.log(this.password_fc)
-      if(parent.entityEdit){ console.log('check')
+    this.category = _.find(parent.fieldConfig, {name: "category"});
+      if(parent.entityEdit){
         this.username  = parent.entityEdit.formGroup.controls['username'].value;
         this.password  = parent.entityEdit.formGroup.controls['password'].value;
         this.password_fc['hasErrors'] = false;
@@ -248,6 +248,5 @@ export class FnSupportComponent {
         }
       }
     }
-  }
-
+  };
 }

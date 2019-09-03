@@ -28,7 +28,7 @@ export class TnSupportComponent implements OnInit {
   public fieldSets: FieldSet[] = [
     {
       name: 'column1',
-      width: '50%',
+      width: '47%',
       label: false,
       config:[
         {
@@ -91,8 +91,14 @@ export class TnSupportComponent implements OnInit {
       ]
     },
     {
+      name: 'middle',
+      label: false,
+      width: '5%',
+      config:[]
+    },
+    {
     name: 'col2',
-    width: '50%',
+    width: '47%',
     label: false,
     class: 'lowerme',
     config: [

@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { WebSocketService } from '../../../services/';
-import { DialogService } from '../../../services/dialog.service';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { SnackbarService } from '../../../services/snackbar.service';
@@ -38,10 +34,8 @@ export class SupportComponent implements OnInit {
 
   public custActions: Array<any> = [];
 
-  constructor(protected router: Router, protected ws: WebSocketService,
-              protected dialog: MatDialog, protected dialogService: DialogService,
-              protected prefService: PreferencesService,
-              public loader: AppLoaderService, private snackbar: SnackbarService)
+  constructor(protected ws: WebSocketService,
+              protected prefService: PreferencesService)
               {}
 
   ngOnInit() {
@@ -55,12 +49,14 @@ export class SupportComponent implements OnInit {
         this.getTrueNASImage(res.system_product);
       };
     });
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
-    })
-  }
+    setTimeout(() => {
+      this.ws.call('system.advanced.config').subscribe((res)=> {
+        if (res) {
+          this.isFooterConsoleOpen = res.consolemsg;
+        }
+      });
+    }, 500);
+  };
 
   getFNSysInfo(res) {
     this.FN_version = res.version;
