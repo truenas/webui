@@ -18,7 +18,10 @@
           <ng-container  *ngIf="widget.rendered">
             <ng-container [ngSwitch]="widget.name.toLowerCase()">
   
-              <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
+              <!--
+                <widget-sysinfo id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
+                <widget-sysinfo id="passive" *ngIf="isHA" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
+              -->
 
               <widget-cpu *ngSwitchCase="'cpu'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
   
@@ -34,19 +37,6 @@
       </ng-container>
     </ng-container>
 
-
-    <!-- NEW WIDGETS -->
-    <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
-    <widget-cpu fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-cpu>
-    <widget-memory fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-memory>
-
-    <ng-container  *ngIf="pools && pools.length > 0">
-      <widget-pool *ngFor="let pool of pools; let i=index" [poolState]="pool" [volumeData]="volumeData[pool.id]" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-pool>
-    </ng-container>
-
-    <ng-container  *ngFor="let nic of nics; let i=index">
-      <widget-nic *ngIf="statsDataEvents" [nicState]="nics[i].state" [stats]="statsDataEvents" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-nic>
-      </ng-container>-->
 
     <!--<widget-notes-collection fxFlex="98" [widgetSize]="medium" [widgetFlex]="noteFlex" [collectionLayout]="'row'"></widget-notes-collection>-->
 
@@ -71,6 +61,11 @@
               <ng-container [ngSwitch]="widget.name.toLowerCase()">
         
                 <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
+  
+              <!--
+                <widget-sysinfo id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
+                <widget-sysinfo id="passive" *ngIf="isHA" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
+              -->
       
                 <widget-cpu (back)="onMobileBack()" *ngSwitchCase="'cpu'" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
         

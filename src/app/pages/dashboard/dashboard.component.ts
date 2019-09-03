@@ -40,6 +40,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public isFooterConsoleOpen: boolean;
 
+  // For widgetsysinfo
+  public isHA: boolean = false;
+  public isFN: boolean = window.localStorage['is_freenas'];
+
   // For CPU widget
   public systemInformation: any;
 
@@ -127,6 +131,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
+    if(this.isFN.toString() == 'false'){
+      this.ws.call('failover.licensed').subscribe((res)=> {
+        if (res) {
+          this.isHA = true;
+        }
+      });
+    }
+
   }
 
   ngOnDestroy(){
@@ -147,13 +159,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+    /*this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
       if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
         
       evt.network_usage.forEach((item, index) => {
         this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
       });
-    });
+    });*/
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
       let clone = Object.assign([],evt.data);
