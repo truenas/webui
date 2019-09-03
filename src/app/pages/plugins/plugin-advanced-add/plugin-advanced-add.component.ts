@@ -1033,6 +1033,13 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       }
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
       _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = res;
+
+      if (res && !this.formGroup.controls['nat'].disabled) {
+        this.setDisabled('nat', true);
+      }
+      if (!res && this.formGroup.controls['nat'].disabled) {
+        this.setDisabled('nat', false);
+      }
     });
     this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
       if (res) {

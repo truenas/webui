@@ -1156,9 +1156,17 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = true;
         this.formGroup.controls['bpf'].setValue(true);
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = true;
+
+        if (!this.formGroup.controls['nat'].disabled) {
+          this.setDisabled('nat', true);
+        }
       } else {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
-         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+
+        if (this.formGroup.controls['nat'].disabled && this.wsResponse.state != 'up') {
+          this.setDisabled('nat', false);
+        }
       }
     });
     this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
