@@ -159,13 +159,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    /*this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
+    this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
       if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
         
       evt.network_usage.forEach((item, index) => {
         this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
       });
-    });*/
+    });
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
       let clone = Object.assign([],evt.data);
@@ -310,10 +310,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   generateDefaultConfig(){
     let conf: DashConfigItem[] = [
-      {name:'System Information', rendered: true },
-      {name:'CPU', rendered: true },
-      {name:'Memory', rendered: true },
+      {name:'System Information', rendered: false },
     ];
+
+    /*if(this.isHA){
+      conf.push({name:'System Information', identifier: 'passive,true', rendered: true })
+    }*/
+
+    conf.push({name:'CPU', rendered: false });
+    conf.push({name:'Memory', rendered: false });
 
     this.pools.forEach((pool, index) => {
       conf.push({name:'Pool', identifier: 'name,' + pool.name, rendered: true })

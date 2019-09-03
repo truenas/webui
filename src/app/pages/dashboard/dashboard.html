@@ -18,6 +18,7 @@
           <ng-container  *ngIf="widget.rendered">
             <ng-container [ngSwitch]="widget.name.toLowerCase()">
   
+              <widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
               <!--
                 <widget-sysinfo id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
                 <widget-sysinfo id="passive" *ngIf="isHA" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
