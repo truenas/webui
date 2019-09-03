@@ -26,6 +26,7 @@
   line-height: 180%;
 }
 
+.widget mat-toolbar-row.view-overview .controls,
 .widget mat-toolbar-row.view-overview .primary-nav{
   color:#efefef;
 }
