@@ -16,8 +16,6 @@ import { SnackbarService } from '../../../services/snackbar.service';
   providers: [SnackbarService]
 })
 export class SupportComponent {
-  public entityEdit: any;
-  public saveSubmitText = "Submit";
   public is_freenas: boolean;
   public isFooterConsoleOpen: boolean;
   public scrshot: any;
@@ -95,58 +93,6 @@ export class SupportComponent {
     return Math.round(Math.abs((now.getTime() - then.getTime())/(oneDay)));
   }
 
-  afterInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
-      this.ws.call('truenas.is_production').subscribe((res) => {
-        this.isProduction = res;
-        this.entityEdit.formGroup.controls['TN_is_production'].setValue(this.isProduction);
-        setTimeout(() => {
-          this.updateButton = <HTMLInputElement> document.getElementById('cust_button_Update');
-        }, 500)
-
-        this.entityEdit.formGroup.controls['TN_is_production'].valueChanges.subscribe(() => {
-          this.updateButton.disabled = false;
-        });
-        this.entityEdit.formGroup.controls['TN_send_debug'].valueChanges.subscribe(() => {
-          this.updateButton.disabled = false;
-        });
-      });
-      this.custActions = [
-        {
-          id : 'change_prod_status',
-          name: 'Update',
-          disabled: true,
-          function : () => {
-            let prod_status = this.entityEdit.formGroup.controls['TN_is_production'].value;
-            let debug_status = this.entityEdit.formGroup.controls['TN_send_debug'].value;
-            this.loader.open();
-            if (prod_status) {
-              this.ws.call('truenas.set_production',[true, debug_status]).subscribe(() => {
-                this.loader.close();
-                this.updateButton.disabled = true;
-                this.snackbar.open(helptext.is_production_snackbar.message, helptext.is_production_snackbar.action,
-                  { duration: 6000 } );
-              },
-              (err) => {
-                this.loader.close();
-                this.dialogService.errorReport(helptext.is_production_error_dialog.title, err.reason, err.trace.formatted);
-              });
-            } else {
-              this.ws.call('truenas.set_production', [false]).subscribe(() => {
-                this.loader.close();
-                this.updateButton.disabled = true;
-                this.snackbar.open(helptext.is_production_snackbar.message, helptext.is_production_snackbar.action,
-                  { duration: 6000 } );              },
-              (err) => {
-                this.loader.close();
-                this.dialogService.errorReport(helptext.is_production_error_dialog.title, err.reason, err.trace.formatted);
-              });
-            }
-          }
-        }
-      ]
-    };
-
   getTrueNASImage(sys_product) {
     if (sys_product.includes('X10')) {
       this.product_image = '/servers/X10.png';
@@ -166,21 +112,20 @@ export class SupportComponent {
       this.product_image = '/servers/Z50.png';
     }
     else {
-      this.product_image = 'ix-original.svg';
+      this.product_image = 'ix-original.png';
     }
   }
 
   getFreeNASImage(sys_product) {
     switch(sys_product){
       case "FREENAS-MINI-2.0":
-        // this.product_image = 'freenas_mini_cropped.png';
-        this.product_image = 'ix-original.png';
+        this.product_image = 'freenas_mini_cropped.png';
       break;
       case "FREENAS-MINI-XL":
         this.product_image = 'freenas_mini_xl_cropped.png';
       break;
       default:
-        this.product_image = 'ix-original.svg';
+        this.product_image = 'ix-original.png';
       break;
     }
   }

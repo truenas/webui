@@ -140,9 +140,16 @@ export const helptext_system_support = {
   },
 
   is_production_checkbox: {
-    placeholder: T('This is a production system.'),
+    placeholder: T('This is a production system'),
     tooltip: T('Set system production state and optionally send initial debug.')
   },
+
+  is_production_debug: {
+    placeholder: T('Send initial debug'),
+    tooltip: T('Send initial debug.')
+  },
+
+  is_production_submit: T('Update Status'),
 
   is_production_error_dialog: {
     title: T('Error Updating Production Status'),
