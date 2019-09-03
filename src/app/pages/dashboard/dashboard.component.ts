@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild,OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 
@@ -10,10 +10,7 @@ import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
 import { RestService,WebSocketService } from '../../services/';
 import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
-
-/*export interface DashConfig {
-  displayList: DashConfigItem[];
-}*/
+import { tween, styler } from 'popmotion';
 
 @Component({
   selector: 'dashboard',
@@ -21,8 +18,7 @@ import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/wid
   styleUrls: ['./dashboard.scss'],
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
-
-  //@ViewChild('launcher', {static: true}) widgetLauncher: WidgetControllerComponent;
+ 
   public screenType: string = 'Desktop'; // Desktop || Mobile
 
   public dashState: DashConfigItem[]; // Saved State
@@ -60,7 +56,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showSpinner: boolean = true;
 
-  constructor(protected core:CoreService, protected ws: WebSocketService, public mediaObserver: MediaObserver){
+  constructor(protected core:CoreService, protected ws: WebSocketService, public mediaObserver: MediaObserver, private el: ElementRef){
     this.statsDataEvents = new Subject<CoreEvent>();
 
     mediaObserver.media$.subscribe((evt) =>{
@@ -77,10 +73,48 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onMobileLaunch(evt: DashConfigItem) {
     this.activeMobileWidget = [evt];
+
+    // Transition 
+    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
+    let viewport = styler(vp);
+    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    let carousel = styler(c);
+    const vpw = viewport.get('width'); //600;
+
+    const startX = 0;
+    const endX = vpw * -1;
+
+    tween({
+      from:{ x: startX },
+      to:{ x: endX },
+      duration: 250
+    }).start(carousel.set);
   }
 
   onMobileBack() {
-    this.activeMobileWidget = [];
+    // Transition 
+    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
+    let viewport = styler(vp);
+    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    let carousel = styler(c);
+    const vpw = viewport.get('width'); //600;
+
+    const startX = vpw * -1;
+    const endX = 0;
+
+    tween({
+      from:{ x: startX },
+      to:{ x: endX },
+      duration: 250
+    }).start({
+      update: (v) => { 
+        carousel.set(v);
+      },
+      complete: () => {
+        this.activeMobileWidget = [];
+      }
+    });
+
   }
 
   ngOnInit(){

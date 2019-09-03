@@ -243,9 +243,9 @@
 .xs.widget{
   width: 100%;
   height: calc(100vh - 96px);
-  position: fixed;
-  top: 88px;
-  /*z-index: 2;*/
+  position: absolute;
+  /*top: 88px;
+  z-index: 2;*/
 }
 
 .xs.widget .overview .right .list-subheader{
