@@ -9,8 +9,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 
 @Component({
   selector: 'app-fn-support',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  styleUrls: ['./fn-support.component.css']
+  template : `<entity-form [conf]="this"></entity-form>`
 })
 export class FnSupportComponent {
   public entityEdit: any;

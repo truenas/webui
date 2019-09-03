@@ -2,8 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-sys-image',
-  templateUrl: './sys-image.component.html',
-  styleUrls: ['./sys-image.component.css']
+  templateUrl: './sys-image.component.html'
 })
 export class SysImageComponent  {
   @Input() product_image: string;

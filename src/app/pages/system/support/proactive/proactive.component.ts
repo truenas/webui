@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -8,10 +8,9 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 
 @Component({
   selector: 'app-proactive',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  styleUrls: ['./proactive.component.css']
+  template : `<entity-form [conf]="this"></entity-form>`
 })
-export class ProactiveComponent implements OnInit {
+export class ProactiveComponent {
   public entityEdit: any;
   public addCall: 'support.update';
   public contacts: any;
@@ -137,9 +136,6 @@ export class ProactiveComponent implements OnInit {
 
   constructor(public ws: WebSocketService, protected prefService: PreferencesService) { }
 
-  ngOnInit() {
-  }
-
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const proactiveFields: Array<any> = [
@@ -162,7 +158,7 @@ export class ProactiveComponent implements OnInit {
       'TN_proactive_second_title',
     ];
 
-    this.ws.call('support.is_available').subscribe((res) => { console.log(res)
+    this.ws.call('support.is_available').subscribe((res) => { 
       if (!res) {
         for (const i in proactiveFields) {
           this.entityEdit.setDisabled(proactiveFields[i], true, false);
@@ -205,6 +201,9 @@ export class ProactiveComponent implements OnInit {
     delete data.TN_proactive_section_border;
     delete data.TN_proactive_section_title
     delete data.TN_proactive_title;
+    if (!data.enabled) {
+      data.enabled = false;
+    }
 
     this.contacts = this.prefService.preferences.proactiveSupportContacts;
     this.contacts.length = 0;
@@ -212,8 +211,8 @@ export class ProactiveComponent implements OnInit {
     this.prefService.savePreferences(this.prefService.preferences);
   }
 
-  customSubmit() {
-    console.log('do not submit :)')
-  }
+  // customSubmit(data) {
+  //   console.log(data)
+  // }
 
 }

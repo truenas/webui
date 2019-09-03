@@ -15,13 +15,13 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 
 @Component({
   selector: 'app-tn-support',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  styleUrls: ['./tn-support.component.css']
+  template : `<entity-form [conf]="this"></entity-form>`
+
 })
 export class TnSupportComponent implements OnInit {
   public entityEdit: any;
   public screenshot: any;
-  public payload: any;
+  public payload = {};
   public subs: any;
   public custActions: Array<any> = [];
   public fieldConfig: FieldConfig[] = []
@@ -221,7 +221,7 @@ export class TnSupportComponent implements OnInit {
     this.payload['category'] = entityEdit.TNCategory;
     this.payload['environment'] = entityEdit.environment;
     this.payload['criticality'] = entityEdit.criticality;
-    this.payload['attach_debug'] = entityEdit.attach_debug;
+    this.payload['attach_debug'] = entityEdit.attach_debug || false;
     this.payload['title'] = entityEdit.title;
     this.payload['body'] = entityEdit.body;
     this.openDialog();
@@ -241,21 +241,16 @@ export class TnSupportComponent implements OnInit {
           const formData: FormData = new FormData();
             formData.append('data', JSON.stringify({
               "method": "support.attach_ticket",
-              "params": [{'ticket': (res.result.ticket), 'filename': item.file.name, 'username': this.payload['username'], 'password': this.payload['password'] }]
-            }));
-            formData.append('data', JSON.stringify({
-              "method": "support.attach_ticket",
               "params": [{'ticket': (res.result.ticket), 'filename': item.file.name }]
             }));
-
-          formData.append('file', item.file, item.apiEndPoint);
-          dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-          dialogRef.componentInstance.success.subscribe(res=>{
-            this.resetForm();
-          }),
-          dialogRef.componentInstance.failure.subscribe((res) => {
-            dialogRef.componentInstance.setDescription(res.error);
-          });
+            formData.append('file', item.file, item.apiEndPoint);
+            dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
+            dialogRef.componentInstance.success.subscribe(res=>{
+              this.resetForm();
+            }),
+            dialogRef.componentInstance.failure.subscribe((res) => {
+              dialogRef.componentInstance.setDescription(res.error);
+            });
         });
         dialogRef.componentInstance.setDescription(url);
       } else {

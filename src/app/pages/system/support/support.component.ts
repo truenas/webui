@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
@@ -12,10 +12,9 @@ import { SnackbarService } from '../../../services/snackbar.service';
 @Component({
   selector : 'app-support',
   templateUrl: './support.component.html',
-  styleUrls: ['./support.component.scss'],
   providers: [SnackbarService]
 })
-export class SupportComponent {
+export class SupportComponent implements OnInit {
   public is_freenas: boolean;
   public isFooterConsoleOpen: boolean;
   public scrshot: any;

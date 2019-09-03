@@ -2,8 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-fn-sys-info',
-  templateUrl: './fn-sys-info.component.html',
-  styleUrls: ['./fn-sys-info.component.css']
+  templateUrl: './fn-sys-info.component.html'
 })
 export class FnSysInfoComponent implements OnInit {
   @Input() FN_version;
