@@ -94,7 +94,7 @@ export class VdevComponent implements OnInit {
       } else {
         this.type = "stripe";
       }
-    } 
+    }
   }
 
   estimateSize() {
