@@ -38,6 +38,7 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
+import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcontroller.component';
 
 /*
  *
@@ -85,7 +86,8 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetNotesCollectionComponent,
     WidgetPoolComponent,
     TextLimiterDirective,
-    TextLimiterTooltipComponent
+    TextLimiterTooltipComponent,
+    WidgetControllerComponent
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -119,7 +121,8 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     TextLimiterTooltipComponent,
-    WidgetPoolComponent
+    WidgetPoolComponent,
+    WidgetControllerComponent
   ],
   entryComponents:[
     ContextMenuComponent,
@@ -146,7 +149,8 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent,
-    TextLimiterTooltipComponent
+    TextLimiterTooltipComponent,
+    WidgetControllerComponent
   ],
   providers:[
     StorageService

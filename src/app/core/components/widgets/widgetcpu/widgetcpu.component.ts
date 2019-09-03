@@ -37,6 +37,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   @ViewChild('load', {static: true}) cpuLoad: ViewChartGaugeComponent;
   @ViewChild('cores',{static: true}) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
+  @Input() cpuModel: string;
   public chart: any;// c3 chart with per core data
   private _cpuData: any;
   get cpuData() { return this._cpuData}
@@ -50,7 +51,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
-  public cpuModel;
   public cpuAvg: any;
   public title:string = T("CPU");
   public subtitle:string = T("% of all cores");
@@ -99,9 +99,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   ngAfterViewInit(){
 
-    this.core.register({observerClass: this, eventName:"SysInfo"}).subscribe((evt: CoreEvent) => {
+    /*this.core.register({observerClass: this, eventName:"SysInfo"}).subscribe((evt: CoreEvent) => {
       this.cpuModel = evt.data.model;
-    });
+    });*/
 
     this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
       d3.select('#grad1 .begin')

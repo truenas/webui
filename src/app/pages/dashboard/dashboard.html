@@ -11,8 +11,32 @@
        fxLayoutAlign="center center"
        fxLayoutAlign.gt-sm="space-around center">
 
+    <!-- SORTABLE WIDGETS -->
+    <ng-container  *ngIf="screenType == 'Desktop' && statsDataEvents && statsEventsTC && pools && nics && volumeData">
+      <ng-container  *ngIf="dashState">
+        <ng-container  *ngFor="let widget of dashState">
+          <ng-container  *ngIf="widget.rendered">
+            <ng-container [ngSwitch]="widget.name.toLowerCase()">
+  
+              <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
+
+              <widget-cpu *ngSwitchCase="'cpu'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
+  
+              <widget-memory *ngSwitchCase="'memory'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [widgetSize]="medium"   configurable="false"></widget-memory>
+              
+              <widget-pool *ngSwitchCase="'pool'" fxFlex="600px" fxFlex.xs="100" [poolState]="dataFromConfig(widget)" [volumeData]="volumeDataFromConfig(widget)" [widgetSize]="medium" configurable="false"></widget-pool>
+  
+              <widget-nic *ngSwitchCase="'interface'" fxFlex="600px" fxFlex.xs="100" [nicState]="dataFromConfig(widget)" [stats]="statsDataEvents" [widgetSize]="medium" configurable="false"></widget-nic>
+  
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+
     <!-- NEW WIDGETS -->
-    <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
+    <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
     <widget-cpu fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-cpu>
     <widget-memory fxFlex="600px" fxFlex.xs="100" *ngIf="statsDataEvents" [data]="statsDataEvents" [widgetSize]="medium"   configurable="false"></widget-memory>
 
@@ -22,7 +46,30 @@
 
     <ng-container  *ngFor="let nic of nics; let i=index">
       <widget-nic *ngIf="statsDataEvents" [nicState]="nics[i].state" [stats]="statsDataEvents" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-nic>
+      </ng-container>-->
+
+      <widget-controller (launcher)="onMobileLaunch($event)" *ngIf="dashState && dashState.length > 0;" fxFlex="600px" fxFlex.xs="100" [rendered]="true" [dashState]="dashState" [widgetSize]="medium"   configurable="false"></widget-controller>
+
+
+    <!-- MOBILE WIDGETS -->
+    <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvents && statsEventsTC && pools && nics && volumeData">
+      <ng-container  *ngFor="let widget of activeMobileWidget">
+        <ng-container [ngSwitch]="widget.name.toLowerCase()">
+  
+          <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
+
+          <widget-cpu (back)="onMobileBack()" *ngSwitchCase="'cpu'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
+  
+          <widget-memory *ngSwitchCase="'memory'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [widgetSize]="medium"   configurable="false"></widget-memory>
+          
+          <widget-pool *ngSwitchCase="'pool'" fxFlex="600px" fxFlex.xs="100" [poolState]="dataFromConfig(widget)" [volumeData]="volumeDataFromConfig(widget)" [widgetSize]="medium" configurable="false"></widget-pool>
+  
+          <widget-nic *ngSwitchCase="'interface'" fxFlex="600px" fxFlex.xs="100" [nicState]="dataFromConfig(widget)" [stats]="statsDataEvents" [widgetSize]="medium" configurable="false"></widget-nic>
+  
+        </ng-container>
+      </ng-container>
     </ng-container>
+
 
     <!--<widget-notes-collection fxFlex="98" [widgetSize]="medium" [widgetFlex]="noteFlex" [collectionLayout]="'row'"></widget-notes-collection>-->
 

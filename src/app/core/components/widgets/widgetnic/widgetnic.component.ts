@@ -62,7 +62,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   @Input() stats;
   @Input() nicState;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
-  @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
+  @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
   public traffic: NetTraffic;
   public currentSlide:string = "0";
   

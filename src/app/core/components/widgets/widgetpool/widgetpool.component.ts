@@ -103,7 +103,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @Input() poolState;
   @Input() volumeData?:VolumeData;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
-  @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
+  @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
 
   @ViewChild('overview', {static:false}) overview:TemplateRef<any>;
   @ViewChild('data', {static:false}) data:TemplateRef<any>;

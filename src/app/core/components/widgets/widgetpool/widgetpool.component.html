@@ -1,4 +1,4 @@
-<div class="widget stats-widget" ngClass.xs="double-height xs">
+<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container  front">
     <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
@@ -109,7 +109,7 @@
 
                   <mat-list-item>
                     <strong>Available Space: </strong>&nbsp;&nbsp; 
-                    <span *ngIf="voldataavail;else unavail">
+                    <span *ngIf="volumeData && volumeData.used_pct;else unavail">
                       <span class="value">{{diskSize}}</span>
                       <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
                       <span class="value-used">({{volumeData.used_pct}} used)</span>&nbsp;&nbsp;

@@ -1,11 +1,11 @@
-<div class="widget stats-widget" ngClass.xs="double-height xs">
+<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container  front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content>
         <mat-toolbar-row >
           <!-- Mobile Only: Exit widget -->
           <button *ngIf="screenType == 'Mobile'" class="mat-card-title-text" mat-icon-button color="default" >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
           </button>&nbsp;&nbsp;
           <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
 
