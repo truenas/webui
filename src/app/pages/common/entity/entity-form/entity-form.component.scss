@@ -114,3 +114,10 @@
   z-index: 10;
   margin: 0 auto;
 }
+
+span.form-message.info {
+  color: var(--primary);
+}
+span.form-message.warning {
+  color: var(--red);
+}
