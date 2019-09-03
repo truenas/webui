@@ -6,7 +6,7 @@
 
           <!-- Mobile Only: Exit Widget -->
           <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
           </button>
 
           <!-- Back to previous slide -->

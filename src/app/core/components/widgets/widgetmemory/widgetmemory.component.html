@@ -6,7 +6,7 @@
 
           <!-- Mobile Only: Exit widget -->
           <button fxHide.gt-xs class="mat-card-title-text" mat-icon-button color="default" >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
           </button><span fxHide.gt-xs>&nbsp;&nbsp;</span>
 
           <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>

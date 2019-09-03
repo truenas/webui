@@ -48,7 +48,7 @@
       <widget-nic *ngIf="statsDataEvents" [nicState]="nics[i].state" [stats]="statsDataEvents" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium"   configurable="false"></widget-nic>
       </ng-container>-->
 
-      <widget-controller (launcher)="onMobileLaunch($event)" *ngIf="dashState && dashState.length > 0;" fxFlex="600px" fxFlex.xs="100" [rendered]="true" [dashState]="dashState" [widgetSize]="medium"   configurable="false"></widget-controller>
+      <widget-controller (launcher)="onMobileLaunch($event)" *ngIf="screenType == 'Mobile' && dashState && dashState.length > 0;" fxFlex="600px" fxFlex.xs="100" [rendered]="true" [dashState]="dashState" [widgetSize]="medium"   configurable="false"></widget-controller>
 
 
     <!-- MOBILE WIDGETS -->
@@ -60,11 +60,11 @@
 
           <widget-cpu (back)="onMobileBack()" *ngSwitchCase="'cpu'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
   
-          <widget-memory *ngSwitchCase="'memory'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [widgetSize]="medium"   configurable="false"></widget-memory>
+          <widget-memory (back)="onMobileBack()" *ngSwitchCase="'memory'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [widgetSize]="medium"   configurable="false"></widget-memory>
           
-          <widget-pool *ngSwitchCase="'pool'" fxFlex="600px" fxFlex.xs="100" [poolState]="dataFromConfig(widget)" [volumeData]="volumeDataFromConfig(widget)" [widgetSize]="medium" configurable="false"></widget-pool>
+          <widget-pool (back)="onMobileBack()" *ngSwitchCase="'pool'" fxFlex="600px" fxFlex.xs="100" [poolState]="dataFromConfig(widget)" [volumeData]="volumeDataFromConfig(widget)" [widgetSize]="medium" configurable="false"></widget-pool>
   
-          <widget-nic *ngSwitchCase="'interface'" fxFlex="600px" fxFlex.xs="100" [nicState]="dataFromConfig(widget)" [stats]="statsDataEvents" [widgetSize]="medium" configurable="false"></widget-nic>
+          <widget-nic (back)="onMobileBack()" *ngSwitchCase="'interface'" fxFlex="600px" fxFlex.xs="100" [nicState]="dataFromConfig(widget)" [stats]="statsDataEvents" [widgetSize]="medium" configurable="false"></widget-nic>
   
         </ng-container>
       </ng-container>
