@@ -23,7 +23,9 @@
           >
           </app-tn-sys-info>
         </ng-template>
-        <!-- <app-production-status *ngIf="!is_freenas"></app-production-status> -->
+        <div id="production-status-wrapper" [style.max-width.px]="375">
+          <app-production-status *ngIf="!is_freenas"></app-production-status>
+        </div>
       </div>
       <div id="top-right" fxFlex="50%">
         <div class="sys-image">
@@ -31,10 +33,8 @@
             [product_image]="product_image"
           ></app-sys-image>
         </div>
-
       </div>
     </div>
-    <hr class='support-hr' *ngIf="is_freenas">
     <app-proactive *ngIf="!is_freenas"></app-proactive>
     <app-fn-support *ngIf="is_freenas; else TNsupport"></app-fn-support>
     <ng-template #TNsupport>
@@ -42,4 +42,5 @@
     </ng-template>
   </div>
 </mat-card>
+<div [style.height.px]="50" *ngIf="isFooterConsoleOpen"></div>
 

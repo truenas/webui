@@ -19,6 +19,7 @@ export class SupportComponent {
   public entityEdit: any;
   public saveSubmitText = "Submit";
   public is_freenas: boolean;
+  public isFooterConsoleOpen: boolean;
   public scrshot: any;
   public subs: any;
   public isProduction: boolean;
@@ -57,6 +58,11 @@ export class SupportComponent {
         this.getTrueNASImage(res.system_product);
       };
     });
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
+    })
   }
 
   getFNSysInfo(res) {
@@ -167,7 +173,8 @@ export class SupportComponent {
   getFreeNASImage(sys_product) {
     switch(sys_product){
       case "FREENAS-MINI-2.0":
-        this.product_image = 'freenas_mini_cropped.png';
+        // this.product_image = 'freenas_mini_cropped.png';
+        this.product_image = 'ix-original.png';
       break;
       case "FREENAS-MINI-XL":
         this.product_image = 'freenas_mini_xl_cropped.png';
