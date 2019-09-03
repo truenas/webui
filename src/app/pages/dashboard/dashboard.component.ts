@@ -286,7 +286,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const value = spl[1];
     
     const pool = this.pools.filter(pool => pool[key] == value);
-    return this.volumeData ? this.volumeData[pool[0].id] : console.warn('No volume data available!');; 
+    return this.volumeData && this.volumeData[pool[0].id] ? this.volumeData[pool[0].id] : console.warn('No volume data available!');; 
   }
 
   dataFromConfig(item:DashConfigItem){

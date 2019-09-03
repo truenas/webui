@@ -101,7 +101,7 @@ export interface VolumeData {
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
   @Input() poolState;
-  @Input() volumeData?:VolumeData;
+  @Input() volumeData:any;//VolumeData;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
   @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
 
@@ -161,8 +161,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   ngOnChanges(changes: SimpleChanges){
     if(changes.poolState){
-      //console.warn(changes.poolState);
-    } else if(changes.volumeData){
+    } 
+    
+    if(changes.volumeData){
       this.getAvailableSpace();
     }
   }
@@ -266,7 +267,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
       this.diskSize = this.diskSize.concat('0')
     };
-
     this.checkVolumeHealth();
   };
 
