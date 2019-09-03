@@ -9,7 +9,7 @@ import { T } from 'app/translate-marker';
 export class NFSListComponent {
 
   public title = "NFS";
-  protected resource_name: string = 'sharing/nfs/';
+  protected queryCall: string = 'sharing.nfs.query';
   protected wsDelete = 'sharing.nfs.delete';
   protected route_add: string[] = [ 'sharing', 'nfs', 'add' ];
   protected route_add_tooltip: string = "Add Unix (NFS) Share";
@@ -17,15 +17,15 @@ export class NFSListComponent {
   protected route_delete: string[] = [ 'sharing', 'nfs', 'delete' ];
 
   public columns: any[] = [
-    {name: helptext_sharing_nfs.column_path, prop: 'nfs_paths', always_display: true },
-    {name: helptext_sharing_nfs.column_comment, prop: 'nfs_comment'},
+    {name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
+    {name: helptext_sharing_nfs.column_comment, prop: 'comment'},
   ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Unix (NFS) Share',
-      key_props: ['nfs_paths']
+      key_props: ['paths']
     },
   };
 
@@ -33,6 +33,6 @@ export class NFSListComponent {
     message: delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
-    buildTitle: share => `${T('Unshare')} ${share.nfs_paths.join(', ')}`
+    buildTitle: share => `${T('Unshare')} ${share.paths.join(', ')}`
   }
 }
