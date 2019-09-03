@@ -46,10 +46,19 @@ export class VdevComponent implements OnInit {
     this.estimateSize();
     if (this.group === 'data') {
       this.vdev_type_disabled = !this.manager.isNew;
-      this.type = 'stripe';
+      if (!this.vdev_type_disabled) {
+        this.type = 'stripe';
+      }
     } else {
       this.type = this.group;
     }
+  }
+
+  getType() {
+    if (this.type === undefined) {
+      this.type = this.manager.first_data_vdev_type;
+    }
+    return helptext.vdev_types[this.type];
   }
 
   getTitle() {
@@ -85,9 +94,7 @@ export class VdevComponent implements OnInit {
       } else {
         this.type = "stripe";
       }
-    } else if (this.vdev_type_disabled) {
-      this.type = this.manager.first_data_vdev_type;
-    }
+    } 
   }
 
   estimateSize() {
