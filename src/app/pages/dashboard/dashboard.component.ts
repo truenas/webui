@@ -67,6 +67,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     mediaObserver.media$.subscribe((evt) =>{
 
       let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+
+      // If leaving .xs screen then reset mobile position
+      if(st == 'Desktop' && this.screenType == 'Mobile'){
+        this.activeMobileWidget = [];
+      }
+
       this.screenType = st;
 
       // Eliminate top level scrolling 

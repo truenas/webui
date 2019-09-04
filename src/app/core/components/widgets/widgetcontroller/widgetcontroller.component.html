@@ -4,28 +4,7 @@
       <mat-card-content>
         <mat-toolbar-row >
           <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
-
-          <!--<ng-template *ngIf="configurable === true">
-            <button mat-icon-button (click)="toggleConfig()">
-            <mat-icon>settings</mat-icon>
-            </button>
-            </ng-template>-->
-
-            <!--
-            <div class="controls">
-              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/cpu'])">
-                <mat-icon role="img"
-                  matTooltip="CPU Reports"
-                  matTooltipPosition="above"
-                  aria-label="CPU Reports">
-                    insert_chart
-                </mat-icon>
-              </button>
-            </div>
-            -->
         </mat-toolbar-row>
-
-
 
         <div *ngIf="screenType == 'Mobile' || 'Desktop'" fxLayout="column" class="mobile" >
           <div fxFlex="65" class="bottom">
@@ -45,22 +24,8 @@
           </div>
         </div>
 
-
-        
-        <!-- DETAILS -->
       </mat-card-content>
     </mat-card>
-
-    <!--<ng-template *ngIf="configurable">
-      <mat-card class="back">
-      <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
-      </mat-card-content>
-      <div class="widget-footer">
-      <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
-      <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
-      </div>
-      </mat-card>
-      </ng-template>-->
 
   </div>
 </div>
