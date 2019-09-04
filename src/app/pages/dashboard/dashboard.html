@@ -62,8 +62,8 @@
               <ng-container [ngSwitch]="widget.name.toLowerCase()">
         
                 <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
-                <widget-sysinfo *ngSwitchCase="'system information'" id="active" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
-                <widget-sysinfo *ngSwitchCase="'system information(standby)'" id="passive" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
+                <widget-sysinfo (back)="onMobileBack()" *ngSwitchCase="'system information'" id="active" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
+                <widget-sysinfo (back)="onMobileBack()" *ngSwitchCase="'system information(standby)'" id="passive" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
   
               <!--
                 <widget-sysinfo id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>

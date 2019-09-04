@@ -317,8 +317,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       conf.push({name:'System Information(Standby)', identifier: 'passive,true', rendered: true })
     }
 
-    conf.push({name:'CPU', rendered: false });
-    conf.push({name:'Memory', rendered: false });
+    conf.push({name:'CPU', rendered: true });
+    conf.push({name:'Memory', rendered: true });
 
     this.pools.forEach((pool, index) => {
       conf.push({name:'Pool', identifier: 'name,' + pool.name, rendered: true })
