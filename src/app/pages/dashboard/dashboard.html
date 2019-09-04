@@ -12,7 +12,7 @@
        fxLayoutAlign.gt-sm="space-around center">
 
     <!-- SORTABLE WIDGETS -->
-    <ng-container  *ngIf="screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData && isHA !== undefined">
+    <ng-container  *ngIf="screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
       <ng-container  *ngIf="dashState">
         <ng-container  *ngFor="let widget of dashState">
           <ng-container  *ngIf="widget.rendered">
@@ -57,7 +57,7 @@
         <widget-controller (launcher)="onMobileLaunch($event)" *ngIf="screenType == 'Mobile' && dashState && dashState.length > 0;"  [rendered]="true" [dashState]="dashState" [widgetSize]="medium"   configurable="false"></widget-controller>
   
         <div class="mobile-widget-container">
-          <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvents && pools && nics && volumeData && isHA !== undefined">
+          <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
             <ng-container  *ngFor="let widget of activeMobileWidget">
               <ng-container [ngSwitch]="widget.name.toLowerCase()">
         

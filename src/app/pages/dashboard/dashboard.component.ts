@@ -43,6 +43,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   // For widgetsysinfo
   public isHA: boolean; // = false;
   public isFN: boolean = window.localStorage['is_freenas'];
+  public sysinfoReady: boolean = false;
 
   // For CPU widget
   public systemInformation: any;
@@ -140,7 +141,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         if (res) {
           this.isHA = true;
         }
+        this.sysinfoReady = true;
       });
+    } else {
+      this.sysinfoReady = true;
     }
 
   }
