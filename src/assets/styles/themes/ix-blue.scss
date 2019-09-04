@@ -1260,6 +1260,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         margin-bottom: 3px;
       }
     }
+    #update-license-btn {
+      background-color: var(--primary);
+      color: white;
+      top: 13px;
+    }
 
   }
 
