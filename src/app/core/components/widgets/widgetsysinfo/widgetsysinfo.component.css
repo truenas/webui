@@ -332,3 +332,7 @@ img.platform-logo{
   height:25%;
 }
 
+.xs.widget .left {
+  min-height:275px;
+}
+

@@ -20,7 +20,7 @@
           <div class="slide overview" fxFlex="100" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between">
   
           <!-- Summary Section -->
-          <div fxFlex.xs="35" fxFlex="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
+          <div fxFlex.xs="250px" fxFlex="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
 
             <div class="platform-logo-wrapper" fxFlex="20">
                 <img *ngIf="isFN" class="platform-logo" src="assets/images/light-logo-full.svg">
@@ -47,7 +47,7 @@
           </div>
   
           <!-- Details Section -->
-          <div class="right" fxFlex.xs="65" fxFlex.gt-xs="60" fxLayout="column">
+          <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
             <div  fxFlex *ngIf="data" class="data-container">
               <div fxHide.gt-xs class="list-subheader">{{isPassive ? 'System Information (Standby)' : 'System Information'}}</div>
               <div fxHide.xs class="list-subheader">Overview</div>
@@ -71,13 +71,13 @@
                 <mat-list-item><strong>{{"Uptime" | translate}}:</strong> &nbsp;&nbsp;{{data.uptime}}</mat-list-item>
   
               </mat-list>
+
+              <div class="mobile-update-action update-action" *ngIf="ready">
+                <button *ngIf="!isPassive" class="" mat-button color="primary" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+                <simple-failover-button color="primary" *ngIf="isPassive"></simple-failover-button>
+              </div>
               
             </div> <!-- END datacontainer -->
-
-            <div fxHide.gt-xs fxFlex class="mobile-update-action update-action" *ngIf="ready">
-              <button *ngIf="!isPassive" class="" mat-button color="primary" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-              <simple-failover-button color="primary" *ngIf="isPassive"></simple-failover-button>
-            </div>
   
           </div> <!-- End right -->
 
