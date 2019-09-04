@@ -427,10 +427,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     flex: 1 1 auto;
   }
 
-  .dynamic-field tooltip{
-    @include variable(display, --tooltip, $tooltip);
-  }
-
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
   .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){
@@ -1272,7 +1268,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   app-replication-wizard #adjustme {
-    top: -70px;
+    //top: -70px;
   }
 
   jail-wizard .tooltiptext {
@@ -1381,7 +1377,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-createpassphrase-form #changekey-instructions,
   app-createpassphrase-form #createkey-instructions,
   app-addkey-form #addkey-instructions,
-  app-volumeunlock-form #rekey-instructions {
+  app-volumeunlock-form #rekey-instructions,
+  app-ssh-keypairs-form #key_instructions {
     font-size: 0.9rem;
     margin-bottom: 1rem;
   }
@@ -1437,5 +1434,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // end of reset encryption form
+
+  confirm-dialog div.message-content p {
+    margin-bottom: 10px;
+  }
+
+  app-eula p {
+    margin-bottom: 15px;
+  }
 
  } // end of ix theme

@@ -284,12 +284,13 @@ export class VMWizardComponent {
     this.entityWizard = entityWizard;
   }
   afterInit(entityWizard: EntityWizardComponent) {
-    this.systemGeneralService.getIPChoices().subscribe((res) => {
-      if (res.length > 0) {
+
+    this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
+        if(res && Object.keys(res).length > 0) {
         const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
-        for (const item of res){
-          vnc_bind.options.push({label : item[1], value : item[0]});
-        }
+        Object.keys(res).forEach((address) => {
+          vnc_bind.options.push({label : address, value : address});
+        })
         this.ws.call('interface.ip_in_use', [{"ipv4": true}]).subscribe(
           (ip) => {
             if (_.find(vnc_bind.options, { value: ip[0].address })){

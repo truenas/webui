@@ -12,6 +12,12 @@ export class WebdavFormComponent {
     protected route_success: string[] = [ 'sharing', 'webdav' ];
     protected isEntity: boolean = true;
 
+    public confirmSubmit = true;
+    public confirmSubmitDialog = {
+      title: helptext_sharing_webdav.warning_dialog_title,
+      message: helptext_sharing_webdav.warning_dialog_message,
+      hideCheckbox: false
+    }
 
     public fieldConfig: FieldConfig[] = [
       {
@@ -50,6 +56,12 @@ export class WebdavFormComponent {
         value: true,
         placeholder : helptext_sharing_webdav.placeholder_perm,
         tooltip: helptext_sharing_webdav.tooltip_perm
-      },
+      }
     ];
-}
+
+    afterInit(entityForm: any) {
+      entityForm.formGroup.controls['webdav_perm'].valueChanges.subscribe((value) => {
+        value ? this.confirmSubmit = true : this.confirmSubmit = false;
+      })
+    };
+  }

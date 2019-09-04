@@ -123,7 +123,7 @@ export class ServiceFTPComponent implements OnInit {
       name : 'ssltls_certificate',
       placeholder : helptext.ssltls_certificate_placeholder,
       tooltip: helptext.ssltls_certificate_tooltip,
-      options : helptext.ssltls_certificate_options
+      options : [{label:'-', value:null}],
     },
     {
       type : 'permissions',

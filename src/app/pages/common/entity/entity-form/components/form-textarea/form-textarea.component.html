@@ -10,7 +10,7 @@
       (blur)='blurEvent()'>
     </textarea>
   </mat-form-field>
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

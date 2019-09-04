@@ -6,6 +6,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
 import { environment } from 'app/../environments/environment';
 
 import { TranslateService } from '@ngx-translate/core';

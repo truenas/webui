@@ -122,10 +122,12 @@ h6 {
 code {
     padding: 8px;
     background: rgba(0, 0, 0, .08);
+    font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace !important;
 }
 samp {
-    font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
     padding: 2px;
+    background: rgba(180, 180, 180, .5);
+    font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace !important;
 }
 /*---- Common -----*/
 .bg-none {

@@ -12,12 +12,12 @@
     width: 90vw;
     margin: auto;
     padding: 11px;
-    padding-top: 20px;
+    padding-top: 32px;
     border-radius: 6px;
     color: #fff;
     font-size: 110%;
     text-align: left;
-    z-index: 1;
+    /*z-index: 1;*/
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s linear 0.33s, opacity 0.33s linear;
@@ -46,30 +46,128 @@
 }
 
 .pin {
-    position: absolute;
-    right: -6px;
-    top: -6px;
-    cursor: pointer;
-    color: black;
-    background: white;
-    height: 18px;
+  position:absolute;
+  z-index:101;
+  cursor: pointer;
+  top: 0px;
+  right: 0;
+}
+
+.pin .mat-icon{
+  margin:8px 8px 0;
 }
 
 .pin-icon {
     width: 18px;
-    height: 18px;
+    height: auto;
 }
 
 #tooltip-header {
-    height: 13px;
     width: 100%;
-    background-color: var(--primary);
     position: absolute;
-    top: -3px;
-    right: 0px;
-    border-top-left-radius: 6px;
+    top: 0;
+    left: 0;
+    text-align:right;
+    padding:0 12px;
+    border-radius: 6px 6px 0 0;
+    z-index: 99;
 }
 
 #tooltip-header:hover {
     cursor: grab;
 }
+
+.tooltip-header-text {
+  position:absolute;
+  width:calc(100% - 48px);
+  top:8px;
+  font-weight:500;
+  text-align:left;
+}
+
+/* speech bubble styles */
+div.tooltiptext{
+  background-color: var(--primary) !important;
+  color: var(--primary-txt) !important;
+  
+  padding: 40px 16px 6px;
+  z-index:100;
+}
+
+div.tooltiptext:before{
+  content: "";
+  position: absolute;
+  display: block;
+  width: 20px;
+  height:20px;
+  z-index: 99;
+  transform: rotate( 45deg );
+  -moz-transform:    rotate( 45deg );
+  -ms-transform:     rotate( 45deg );
+  -o-transform:      rotate( 45deg );
+  -webkit-transform: rotate( 45deg );
+
+  background-color: var(--primary);
+
+}
+
+div.tooltiptext.left{
+  top:-42px !important;
+  right:42px !important;
+  min-height:64px;
+}
+
+div.tooltiptext.right{
+  top:-42px !important;
+  left:42px !important;
+  min-height:64px;
+}
+
+div.tooltiptext.above{
+  bottom:42px !important;
+  left:-42px !important;
+  min-height:64px;
+}
+
+div.tooltiptext.below{
+  top:16px !important;
+  left:-42px !important;
+  min-height:64px;
+}
+
+/* Arrow */
+div.tooltiptext.above:before{
+  bottom: -8px;
+  left: 42px; /*calc(50% - 10px);*/
+}
+
+div.tooltiptext.below:before{
+  top: -8px;
+  left: 42px; /*calc(50% - 10px);*/
+}
+
+div.tooltiptext.left:before{
+  top: calc(32px - 10px);
+  right: -8px;
+}
+
+div.tooltiptext.right:before{
+  top: calc(32px - 10px);
+  left: -8px;
+}
+
+.moved div.tooltiptext:before{
+  display:none;
+}
+
+.tooltip-container{
+  position:relative;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0, 0.5));
+  z-index:100;
+}
+
+.tooltip-container.wizard{
+  position:fixed;
+}
+
+

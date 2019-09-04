@@ -14,7 +14,7 @@ import { map } from 'rxjs/operators';
 export class SMBListComponent {
 
   public title = "Samba";
-  protected resource_name: string = 'sharing/cifs/';
+  protected queryCall: string = 'sharing.smb.query';
   protected wsDelete = 'sharing.smb.delete';
   protected route_add: string[] = [ 'sharing', 'smb', 'add' ];
   protected route_add_tooltip: string = "Add Windows (SMB) Share";
@@ -23,15 +23,15 @@ export class SMBListComponent {
   private entityList: EntityTableComponent;
 
   public columns: any[] = [
-    {name: helptext_sharing_smb.column_name, prop: 'cifs_name', always_display: true },
-    {name: helptext_sharing_smb.column_path, prop: 'cifs_path'},
+    {name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
+    {name: helptext_sharing_smb.column_path, prop: 'path'},
   ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Windows (SMB) Share',
-      key_props: ['cifs_name']
+      key_props: ['name']
     },
   };
 
@@ -39,7 +39,7 @@ export class SMBListComponent {
     message: delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
-    buildTitle: share => `${T('Unshare')} ${share.cifs_name}`
+    buildTitle: share => `${T('Unshare')} ${share.name}`
   }
 
   constructor(private ws: WebSocketService, private router: Router, private dialogService: DialogService) {}
@@ -51,19 +51,19 @@ export class SMBListComponent {
   getActions(row): any[] {
     return [
       {
-        id: row.cifs_name,
+        id: row.name,
         icon: 'edit',
         name: "edit",
         label: "Edit",
         onClick: row => this.entityList.doEdit(row.id)
       },
       {
-        id: row.cifs_name,
+        id: row.name,
         icon: 'security',
         name: "edit_acl",
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
-          const datasetId = row.cifs_path.replace("/mnt/", "");
+          const datasetId = row.path.replace("/mnt/", "");
           this.ws
             .call("pool.dataset.query", [[["id", "=", datasetId]]])
             .pipe(map(datasets => datasets[0]))
@@ -77,7 +77,7 @@ export class SMBListComponent {
         }
       },
       {
-        id: row.cifs_name,
+        id: row.name,
         icon: 'delete',
         name: "delete",
         label: "Delete",

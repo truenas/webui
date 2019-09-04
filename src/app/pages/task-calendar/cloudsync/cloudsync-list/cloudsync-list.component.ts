@@ -31,7 +31,7 @@ export class CloudsyncListComponent implements InputTableConf {
     { name: T('Direction'), prop: 'direction', hidden: true},
     { name: T('Transfer Mode'), prop: 'transfer_mode', hidden: true },
     { name: T('Path'), prop: 'path', hidden: true},
-    { name: T('Schedule'), prop: 'cron', hidden: true, widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' }},
+    { name: T('Schedule'), prop: 'cron', hidden: true, widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' } },
     { name: T('Next Run'), prop: 'next_run', hidden: true},
     { name: T('Minute'), prop: 'minute', hidden: true },
     { name: T('Hour'), prop: 'hour', hidden: true },
