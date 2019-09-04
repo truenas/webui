@@ -4,6 +4,7 @@ import { T } from '../../../translate-marker';
 export default {
     dataset_placeholder: T('Dataset'),
     dataset_tooltip: T('Select a pool, dataset, or zvol.'),
+    dataset_warning: T('Invalid dataset.'),
 
     recursive_placeholder: T('Recursive'),
     recursive_tooltip: T('Set to take separate snapshots of the\
