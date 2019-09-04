@@ -427,10 +427,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     flex: 1 1 auto;
   }
 
-  .dynamic-field tooltip{
-    @include variable(display, --tooltip, $tooltip);
-  }
-
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
   .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){
@@ -1345,7 +1341,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   app-replication-wizard #adjustme {
-    top: -70px;
+    //top: -70px;
   }
 
   jail-wizard .tooltiptext {

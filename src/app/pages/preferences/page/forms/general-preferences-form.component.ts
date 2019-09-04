@@ -11,23 +11,23 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subject } from 'rxjs';
 import { T } from '../../../../translate-marker';
 
+interface UserPreferences {
+  //Preferences Object Structure
+  platform:string; // FreeNAS || TrueNAS
+  timestamp:Date;
+  userTheme:string; // Theme name
+  customThemes?: Theme[];
+  favoriteThemes?: string[]; // Theme Names
+  showTooltips?:boolean; // Form Tooltips on/off // Deprecated
+  metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
+}
+   
+
 @Component({
   selector : 'general-preferences-form',
   template:`<entity-form-embedded fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
 export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDestroy {
-
-  /*
-   //Preferences Object Structure
-   platform:string; // FreeNAS || TrueNAS
-   timestamp:Date;
-   userTheme:string; // Theme name
-   customThemes?: Theme[];
-   favoriteThemes?: string[]; // Theme Names
-   showTooltips:boolean; // Form Tooltips on/off
-   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
-
-   */
 
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
@@ -63,14 +63,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
             placeholder: 'Prefer buttons with icons only',
             value:this.preferIconsOnly,
             tooltip: 'Preserve screen space with icons and tooltips instead of text labels.',
-            class:'inline'
-          },
-          {
-            type: 'checkbox',
-            name: 'showTooltips',
-            placeholder: 'Enable Help Text in Forms',
-            value: this.showTooltips,
-            tooltip: 'Display help icons in forms.',
             class:'inline'
           },
           {
@@ -151,25 +143,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       this.generateFieldConfig();
     }
 
-    /*afterInit(entityForm: any) {
-     }*/
-
-     /*setFavoriteFields(){
-       for(let i = 0; i < this.themeService.freenasThemes.length; i++){
-         let theme = this.themeService.freenasThemes[i];
-         let field = {
-           type: 'checkbox',
-           name: theme.name,
-           width: '200px',
-           placeholder:theme.label,
-           value: false,
-           tooltip: 'Add ' + theme.label + ' to favorites',
-           class:'inline'
-         }
-         this.favoriteFields.push(field);
-       }
-     }*/
-
      setThemeOptions(){
        this.themeOptions.splice(0,this.themeOptions.length);
        for(let i = 0; i < this.themeService.allThemes.length; i++){
@@ -183,7 +156,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
      loadValues(themeName?:string){
        this.enableWarning = this.prefs.preferences.enableWarning
        this.allowPwToggle = this.prefs.preferences.allowPwToggle
-       this.showTooltips = this.prefs.preferences.showTooltips
+       this.showTooltips = true; //this.prefs.preferences.showTooltips
        this.preferIconsOnly = this.prefs.preferences.preferIconsOnly;
      }
 

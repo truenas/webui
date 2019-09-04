@@ -1,12 +1,12 @@
 <div id="{{config.name}}" class="dynamic-field mat-radio" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>
-    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   </div>
   <mat-radio-group [formControlName]="config.name">
     <mat-radio-button *ngFor="let option of config.options" [value]="option.value" [attr.name]="option.name" [attr.id]="option.id" >
       {{ option.label | translate }} 
-      <tooltip *ngIf="option.tooltip" [message]="option.tooltip"></tooltip>
+      <tooltip *ngIf="option.tooltip" [header]="config.placeholder" [message]="option.tooltip"></tooltip>
     </mat-radio-button>
   </mat-radio-group>
   <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>

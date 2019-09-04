@@ -13,6 +13,7 @@ import { Display,DisplayContainer } from 'app/core/components/display/display.co
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
+
 //import { C3ChartComponent } from 'app/core/components/c3chart/c3chart.component';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -32,6 +33,8 @@ import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
+import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
+
 
 import { TranslateModule } from '@ngx-translate/core';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
@@ -55,7 +58,7 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     PortalModule,
     FlexLayoutModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
   ],
   declarations: [
     ContextMenuComponent,
@@ -85,7 +88,9 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetNotesCollectionComponent,
     WidgetPoolComponent,
     TextLimiterDirective,
-    TextLimiterTooltipComponent
+    TextLimiterTooltipComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -119,7 +124,9 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     TextLimiterTooltipComponent,
-    WidgetPoolComponent
+    WidgetPoolComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   entryComponents:[
     ContextMenuComponent,
@@ -146,7 +153,9 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
     WidgetPoolComponent,
-    TextLimiterTooltipComponent
+    TextLimiterTooltipComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   providers:[
     StorageService

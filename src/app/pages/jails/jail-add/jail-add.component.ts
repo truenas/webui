@@ -114,12 +114,20 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       name: 'vnet',
       placeholder: helptext.vnet_placeholder,
       tooltip: helptext.vnet_tooltip,
+      value: false,
     },
     {
       type: 'checkbox',
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
     },
     {
       type: 'list',
@@ -1085,9 +1093,17 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = true;
         this.formGroup.controls['bpf'].setValue(true);
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = true;
+
+        if (!this.formGroup.controls['nat'].disabled) {
+          this.setDisabled('nat', true);
+        }
       } else {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
-         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+
+        if (this.formGroup.controls['nat'].disabled) {
+          this.setDisabled('nat', false);
+        }
       }
     });
     this.formGroup.controls['nat'].valueChanges.subscribe((res) => {

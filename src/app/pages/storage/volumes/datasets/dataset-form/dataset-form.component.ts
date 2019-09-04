@@ -14,6 +14,7 @@ import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { Validators } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 
 interface DatasetFormData {
   name: string;
@@ -585,6 +586,26 @@ export class DatasetFormComponent implements Formconfiguration{
         }
       })
     }
+
+    entityForm.formGroup.get('share_type').valueChanges.pipe(filter(shareType => !!shareType && entityForm.isNew)).subscribe(shareType => {
+      const aclControl = entityForm.formGroup.get('aclmode');
+      const caseControl = entityForm.formGroup.get('casesensitivity');
+      if (shareType === 'SMB') {
+        aclControl.setValue('RESTRICTED');
+        caseControl.setValue('INSENSITIVE');
+        aclControl.disable();
+        caseControl.disable();
+      } else {
+        aclControl.setValue('PASSTHROUGH');
+        caseControl.setValue('SENSITIVE');
+        aclControl.enable();
+        caseControl.enable();
+      }
+
+      aclControl.updateValueAndValidity();
+      caseControl.updateValueAndValidity();
+    });
+
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
     this.recordsize_field = _.find(this.fieldConfig, {name:'recordsize'});
