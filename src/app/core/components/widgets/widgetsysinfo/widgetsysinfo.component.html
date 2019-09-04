@@ -5,7 +5,7 @@
         <mat-toolbar-row class="view-overview">
           <span class="mat-card-title-text">
             <span class="card-title-text">
-              &nbsp;System Information
+              &nbsp;System Information&nbsp;<span *ngIf="isPassive" class="passive">(Standby)</span>
             </span>
           </span>
         </mat-toolbar-row>
@@ -15,7 +15,7 @@
           <div class="slide overview">
   
           <!-- Summary Section -->
-          <div fxFlex="100" fxFlex.gt-xs="40" class="left fn-theme-primary" fxLayout="column" fxLayoutAlign="space-between center">
+          <div fxFlex="100" fxFlex.gt-xs="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
 
             <div class="platform-logo-wrapper" fxFlex="20" >
                 <img *ngIf="isFN" class="platform-logo" src="assets/images/light-logo-full.svg">
@@ -28,17 +28,28 @@
               <div class="product-image {{!isFN ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                   <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image">
                   <ng-template #generic>
-                    <mat-icon class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="isFN" class="generic" svgIcon="freenas_logomark"></mat-icon>
                   </ng-template>
                   <img class="certified-badge" *ngIf="certified" src="assets/images/freenas_certified.svg">
+                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" }})</div>
               </div>
             </div>
 
-            <div fxFlex="18" class="update-action">
-              <button *ngIf="!isUpdateRunning" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-              <p [style.font-weight]='500' *ngIf="isUpdateRunning" class="">{{'UPDATE IN PROGRESS' | translate}}</p>
+            <div *ngIf="isUpdateRunning">
+              <div fxFlex="18" class="update-action">
+                <p [style.font-weight]='500' class="">{{'UPDATE IN PROGRESS' | translate}}</p>
+              </div>
             </div>
-  
+
+            <ng-template #noUpdateRunning>
+              <div fxFlex="18" class="update-action">
+                <button *ngIf="!isUpdateRunning" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+                <p [style.font-weight]='500' *ngIf="isUpdateRunning" class="">{{'UPDATE IN PROGRESS' | translate}}</p>
+                <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+                <!--<button *ngIf="isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="failoverInit()">{{failoverBtnLabel | translate}}</button>-->
+                <simple-failover-button *ngIf="isPassive"></simple-failover-button>
+              </div>
+            </ng-template>  
           </div>
   
           <!-- Details Section -->
@@ -57,7 +68,8 @@
                 </mat-list-item>
   
                 <mat-list-item  *ngIf="data.system_serial && manufacturer == 'ixsystems' ">
-                  <strong>{{"Serial Number" | translate}}:</strong>&nbsp;&nbsp;{{data.system_serial}}
+                  <span *ngIf="isHA"><strong>{{"Serial Number" | translate}}:</strong>&nbsp;&nbsp;{{isPassive ? data.license.system_serial_ha : data.license.system_serial}}</span>
+                  <span *ngIf="!isHA"><strong>{{"Serial Number" | translate}}:</strong>&nbsp;&nbsp;{{ data.system_serial}}</span>
                 </mat-list-item>
               
                 <mat-list-item><strong>{{"HostName" | translate}}:</strong> &nbsp;&nbsp;{{data.hostname}}</mat-list-item>

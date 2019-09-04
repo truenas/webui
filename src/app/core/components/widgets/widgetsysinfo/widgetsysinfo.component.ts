@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, Input, ViewChild, Renderer
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { WebSocketService} from 'app/services/ws.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
@@ -24,6 +25,11 @@ import { T } from '../../../../translate-marker';
   styleUrls: ['./widgetsysinfo.component.css']
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,OnDestroy, AfterViewInit {
+
+  // HA
+  @Input('isHA') isHA: boolean = false
+  @Input('passive') isPassive: boolean = false
+
   public title: string = T("System Info");
   public data: any;
   public memory:string;
@@ -31,6 +37,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   //public cardBg:string = "";
   public product_image = '';
   public certified = false;
+  public failoverBtnLabel: string = "FAILOVER TO STANDBY"
   public updateAvailable:boolean = false;
   private _updateBtnStatus:string = "default";
   public updateBtnLabel:string = T("Check for Updates")
@@ -41,7 +48,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public loader:boolean = false;
   public is_freenas: string = window.localStorage['is_freenas'];
   public systemLogo: any;
-  public isFN: boolean;
+  public isFN: boolean = false;
   public isUpdateRunning = false;
   public is_ha: boolean;
   public updateMethod = 'update.update';
@@ -55,44 +62,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     });
   }
 
+
+  log(str){ console.log(str); }
+
   ngAfterViewInit(){
-    this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
-      this.loader = false;
-      this.data = evt.data;
-
-      let build = new Date(this.data.buildtime[0]['$date']);
-      let year = build.getUTCFullYear();
-      let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
-      let month = months[build.getUTCMonth()];
-      let day = build.getUTCDate();
-      let hours = build.getUTCHours();
-      let minutes = build.getUTCMinutes();
-      this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
-
-      this.memory = this.formatMemory(this.data.physmem, "GiB");
-      if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
-        this.manufacturer = "ixsystems";
-      } else {
-        this.manufacturer = "other";
-      }
-      if (this.is_freenas === 'true') {
-        this.systemLogo = 'logo.svg';
-        this.getFreeNASImage(evt.data.system_product);
-        this.isFN = true;
-        this.checkForRunningUpdate();
-      } else {
-        this.systemLogo = 'TrueNAS_Logomark_Black.svg';
-        this.getTrueNASImage(evt.data.system_product);
-        this.isFN = false;
-        this.ws.call('failover.licensed').subscribe((res) => {
-          if (res) {
-            this.updateMethod = 'failover.upgrade';
-            this.is_ha = true;
-          };
-          this.checkForRunningUpdate();
-        });
-      }    
-    });
 
     this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log(evt);
@@ -100,8 +73,32 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.updateAvailable = true;
       }
     });
-    this.core.emit({name:"SysInfoRequest"});
-    this.core.emit({name:"UpdateCheck"});
+
+    if(this.isHA && this.isPassive){
+      // Delay query
+      setTimeout(() => {
+        this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
+          const evt = {name: 'SysInfoPassive', data:res};
+          this.processSysInfo(evt);
+        });
+      }, 500);
+    } else {
+
+      this.ws.call('system.info').subscribe((res) => {
+        const evt = {name: 'SysInfo', data:res};
+        this.processSysInfo(evt);
+      });
+      
+      this.core.emit({name:"UpdateCheck"});
+      
+    }
+    this.ws.call('failover.licensed').subscribe((res) => {
+      if (res) {
+        this.updateMethod = 'failover.upgrade';
+        this.is_ha = true;
+      };
+      this.checkForRunningUpdate();
+    });
   }
 
   ngOnInit(){
@@ -140,6 +137,37 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     return this._updateBtnStatus;
   }
 
+  processSysInfo(evt:CoreEvent){
+      this.loader = false;
+      this.data = evt.data;
+
+      let build = new Date(this.data.buildtime[0]['$date']);
+      let year = build.getUTCFullYear();
+      let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
+      let month = months[build.getUTCMonth()];
+      let day = build.getUTCDate();
+      let hours = build.getUTCHours();
+      let minutes = build.getUTCMinutes();
+      this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
+
+      this.memory = this.formatMemory(this.data.physmem, "GiB");
+      if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
+        this.manufacturer = "ixsystems";
+      } else {
+        this.manufacturer = "other";
+      }
+      if (this.is_freenas === 'true') {
+        this.systemLogo = 'logo.svg';
+        this.getFreeNASImage(evt.data.system_product);
+        this.isFN = true;
+      } else {
+        this.systemLogo = 'TrueNAS_Logomark_Black.svg';
+        this.getTrueNASImage(evt.data.system_product);
+        this.isFN = false;
+      }    
+
+  }
+
   formatMemory(physmem:number, units:string){
     let result:string;
     if(units == "MiB"){
@@ -175,8 +203,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   getFreeNASImage(sys_product) {
 
-    if (sys_product.includes('CERTIFIED')) {
-      //this.product_image = 'ix-original.svg';
+    if (sys_product && sys_product.includes('CERTIFIED')) {
       this.product_image = '';
       this.certified = true;
       return;

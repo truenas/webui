@@ -13,6 +13,7 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { EntityUtils } from '../../../../common/entity/utils';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 
 interface ZvolFormData {
   name: string;
@@ -53,6 +54,7 @@ export class ZvolFormComponent {
   public edit_data: any;
   protected entityForm: any;
   public minimum_recommended_zvol_volblocksize: string;
+  public namesInUse = [];
 
   protected origVolSize;
   protected origVolSizeUnit;
@@ -98,7 +100,7 @@ export class ZvolFormComponent {
       name: 'name',
       placeholder: helptext.zvol_name_placeholder,
       tooltip: helptext.zvol_name_tooltip,
-      validation: helptext.zvol_name_validation,
+      validation: [Validators.required, forbiddenValues(this.namesInUse)],
       required: true,
       isHidden: false
     },
@@ -268,6 +270,12 @@ export class ZvolFormComponent {
 
 
     await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).toPromise().then((pk_dataset)=>{
+      let children = (pk_dataset[0].children);
+      if (children.length > 0) {
+        for (let i in children) {
+          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+        };
+      }
 
       if(pk_dataset && pk_dataset[0].type ==="FILESYSTEM"){
 
@@ -400,7 +408,18 @@ export class ZvolFormComponent {
           _.find(this.fieldConfig, {name:'volblocksize'}).warnings = null;
         };
       };
-    });  }
+    }); 
+
+    entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
+      const field = _.find(this.fieldConfig, {name: "name"});
+      field['hasErrors'] = false;
+      field['errors'] = '';
+      if (this.namesInUse.includes(value)) {
+        field['hasErrors'] = true;
+        field['errors'] = T(`The name <em>${value}</em> is already in use.`)
+      }
+    })
+  }
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
@@ -490,5 +509,4 @@ export class ZvolFormComponent {
       this.editSubmit(body);
     }
   }
-
 }

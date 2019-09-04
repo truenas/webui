@@ -107,9 +107,9 @@ export class EntityWizardComponent implements OnInit {
   }
 
   setDisabled(name: string, disable: boolean, stepIndex: any) {
-    if (( < FormGroup > this.formArray.get(stepIndex)).controls[name]) {
+    if (( < FormGroup > this.formArray.get([stepIndex])).controls[name]) {
       const method = disable ? 'disable' : 'enable';
-      ( < FormGroup > this.formArray.get(stepIndex)).controls[name][method]();
+      ( < FormGroup > this.formArray.get([stepIndex])).controls[name][method]();
       return;
     }
 

@@ -284,12 +284,13 @@ export class VMWizardComponent {
     this.entityWizard = entityWizard;
   }
   afterInit(entityWizard: EntityWizardComponent) {
-    this.systemGeneralService.getIPChoices().subscribe((res) => {
-      if (res.length > 0) {
+
+    this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
+        if(res && Object.keys(res).length > 0) {
         const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
-        for (const item of res){
-          vnc_bind.options.push({label : item[1], value : item[0]});
-        }
+        Object.keys(res).forEach((address) => {
+          vnc_bind.options.push({label : address, value : address});
+        })
         this.ws.call('interface.ip_in_use', [{"ipv4": true}]).subscribe(
           (ip) => {
             if (_.find(vnc_bind.options, { value: ip[0].address })){
@@ -473,10 +474,13 @@ export class VMWizardComponent {
         _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = false;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = false;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = true;
+        entityWizard.setDisabled('datastore', false, '2');
+
       } else {
         _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = true;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = true;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = false;
+        entityWizard.setDisabled('datastore', true, '2');
       }
 
     });
@@ -587,11 +591,15 @@ blurEvent3(parent){
 }
 
 async customSubmit(value) {
-    value.datastore = value.datastore.replace('/mnt/','')
-    const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
+    let hdd;
     const vm_payload = {}
     const zvol_payload = {}
 
+    if(value.datastore) {
+      value.datastore = value.datastore.replace('/mnt/','')
+      hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
+    }
+    
     // zvol_payload only applies if the user is creating one
     zvol_payload['create_zvol'] = true
     zvol_payload["zvol_name"] = hdd

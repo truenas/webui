@@ -103,6 +103,11 @@
     bottom: 3px;
 }
 
+.updatecheckTooltip {
+    position: relative;
+    top: 5px;
+}
+
 @media screen and (max-width: 1270px) {
     #train-selector, #single-train-name {
         max-width: 75%;

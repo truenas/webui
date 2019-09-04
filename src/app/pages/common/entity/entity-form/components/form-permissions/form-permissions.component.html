@@ -1,7 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
 	<div class="top">
 		<label>{{ config.placeholder | translate }}</label>
-		<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+		<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
 		<mat-form-field class="full-width" style="display:none">
 			<input matInput [type]="config.inputType ? config.inputType : 'text'"
 				[placeholder]="config.placeholder"

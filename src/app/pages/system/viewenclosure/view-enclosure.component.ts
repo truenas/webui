@@ -35,7 +35,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       id: 0,
       showInNavbar: true
   }
-    
+   
+  public scrollContainer: HTMLElement;
   public system: SystemProfiler;
   public system_product;
   public selectedEnclosure: any;
@@ -83,7 +84,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      this.system_product = 'M50'; // Just for testing on my FreeNAS box
+      this.system_product = evt.data.license.model;
       core.emit({name: 'EnclosureDataRequest', sender: this});
     });
 
@@ -91,13 +92,16 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   }
 
   ngAfterContentInit(){
+    this.scrollContainer = document.querySelector('.rightside-content-hold');
+    this.scrollContainer.style.overflow = 'hidden';
   }
 
   ngOnChanges(changes:SimpleChanges){
   }
 
   ngOnDestroy(){
-    this.core.unregister({observerClass:this})
+    this.core.unregister({observerClass:this});
+    this.scrollContainer.style.overflow = 'auto';
   }
 
   selectEnclosure(value){

@@ -53,7 +53,8 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
-import { EnclosureModule } from './viewenclosure/enclosure.module'
+import { EnclosureModule } from './viewenclosure/enclosure.module';
+import { EulaComponent } from './support/eula/eula.component'
 
 
 @NgModule({
@@ -106,6 +107,7 @@ import { EnclosureModule } from './viewenclosure/enclosure.module'
     FailoverComponent,
     ProactiveSupportComponent,
     ReportingComponent,
+    EulaComponent,
   ],
   providers: []
 })

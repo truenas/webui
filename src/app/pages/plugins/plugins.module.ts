@@ -12,7 +12,6 @@ import {routing} from './plugins.routing';
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
 import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advanced-add.component';
 import { PluginsComponent } from './plugins.component';
-import { PluginComponent } from './plugin/plugin.component';
 import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
 
 @NgModule({
@@ -25,10 +24,9 @@ import { AvailablePluginsComponent } from './available-plugins/available-plugins
   	PluginAddComponent,
     PluginAdvancedAddComponent,
     PluginsComponent,
-    PluginComponent,
     AvailablePluginsComponent,
   ],
-  entryComponents: [AvailablePluginsComponent, PluginComponent]
+  entryComponents: [AvailablePluginsComponent]
 })
 export class PluginsModule {
 }

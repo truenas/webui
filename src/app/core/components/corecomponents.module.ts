@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MaterialModule } from '../../appMaterial.module';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { PortalModule } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
 
 import { PageComponent } from 'app/core/components/page/page.component';
@@ -11,6 +13,7 @@ import { Display,DisplayContainer } from 'app/core/components/display/display.co
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
+
 //import { C3ChartComponent } from 'app/core/components/c3chart/c3chart.component';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -30,10 +33,14 @@ import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
+import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
+
 
 import { TranslateModule } from '@ngx-translate/core';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
+import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
+import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 
 /*
  *
@@ -47,9 +54,11 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
   imports: [
     CommonModule,
     MaterialModule,
+    OverlayModule,
+    PortalModule,
     FlexLayoutModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
   ],
   declarations: [
     ContextMenuComponent,
@@ -77,11 +86,17 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
-    WidgetPoolComponent
+    WidgetPoolComponent,
+    TextLimiterDirective,
+    TextLimiterTooltipComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   exports: [ // Modules and Components here
     CommonModule,
     MaterialModule,
+    OverlayModule,
+    PortalModule,
     FlexLayoutModule,
     Display,
     DisplayContainer,
@@ -108,7 +123,10 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
-    WidgetPoolComponent
+    TextLimiterTooltipComponent,
+    WidgetPoolComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   entryComponents:[
     ContextMenuComponent,
@@ -134,7 +152,10 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
     WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
-    WidgetPoolComponent
+    WidgetPoolComponent,
+    TextLimiterTooltipComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   providers:[
     StorageService

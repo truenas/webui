@@ -212,6 +212,10 @@ export class UpdateComponent implements OnInit {
         // On page load, make sure we are working with train of the current OS
         this.train = res.current;
         this.selectedTrain = res.current;
+        this.ws.call('update.set_train', [res.current]).subscribe(() => {},
+          (err) => {
+            console.error(err);
+          });
   
         if (this.autoCheck) {
           this.check();

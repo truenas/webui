@@ -273,6 +273,11 @@ export class LdapComponent {
         this.ldapCertificate.options.push(
           {label : item.name, value : item.id});
       });
+
+      // Handle case when there is no data
+      if(res.length == 0){
+        this.ldapCertificate.zeroStateMessage = 'No Certificates Found';
+      }
     });
 
     this.ws.call('notifier.choices', ['IDMAP_CHOICES']).subscribe((res) => {
