@@ -17,6 +17,7 @@ export class ProactiveComponent {
   public entityEdit: any;
   public contacts: any;
   public controls: any;
+  public save_button_enabled: boolean;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
   {
@@ -123,7 +124,7 @@ export class ProactiveComponent {
     ]
   },
   {
-    name: 'enablec',
+    name: 'enabled',
     label: false,
     width: '100%',
     config:[
@@ -171,8 +172,10 @@ export class ProactiveComponent {
               document.getElementById(i).style.opacity = '0.38';
             });
           };
+          this.save_button_enabled = false;
         } else {
           this.getContacts();
+          this.save_button_enabled = true;
           this.ws.call('support.is_available_and_enabled').subscribe((res) => {
             if (res) {
               this.entityEdit.formGroup.controls['enabled'].setValue(true);

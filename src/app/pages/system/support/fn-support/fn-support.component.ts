@@ -26,7 +26,7 @@ export class FnSupportComponent {
   public fieldSets: FieldSet[] = [
     {
       name: 'column1',
-      width: '50%',
+      width: '47%',
       label: false,
       config:[
         {
@@ -91,8 +91,14 @@ export class FnSupportComponent {
       ]
     },
     {
+      name: 'middle',
+      label: false,
+      width: '5%',
+      config:[]
+    },
+    {
     name: 'column2',
-    width: '50%',
+    width: '47%',
     label: false,
     class: 'lowerme',
     config: [
@@ -139,6 +145,7 @@ export class FnSupportComponent {
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
+    console.log(entityEdit)
   }
 
   blurEvent(parent){

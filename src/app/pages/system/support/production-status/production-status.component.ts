@@ -66,7 +66,9 @@ export class ProductionStatusComponent {
     if (!data.send_debug) {
       data.send_debug = false;
     }
+    this.loader.open();
     this.ws.call('truenas.set_production', [data.production, data.send_debug]).subscribe(() => {
+      this.loader.close();
       this.snackBar.open(helptext.is_production_snackbar.message, 
         helptext.is_production_snackbar.action, {duration: 4000});
     },

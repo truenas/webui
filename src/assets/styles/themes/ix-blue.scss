@@ -1205,7 +1205,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 420px;
+      height: 350px;
     }
 
     .lowerme {
@@ -1241,6 +1241,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .fn-sys-info-line {
       margin-top: 10px;
       height: 40px;
+
+      h4 {
+        margin-bottom: 3px;
+      }
     }
     #fn-instructions {
       font-size: 110%;
@@ -1249,8 +1253,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-tn-sys-info {
     .tn-sys-info-line {
+      margin-top: 10px;
       height: 40px;
+
+      h4 {
+        margin-bottom: 3px;
+      }
     }
+
   }
 
   app-sys-image img {
@@ -1303,9 +1313,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-card {
       background-color: rgba(127,127,127,0.1);
       margin: 0 15px !important;
+      top: 30px;
     }
     .mat-card-actions {
-      // left: -15px;
       top: -40px;
       position: relative;
       width: 300px;
