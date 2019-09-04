@@ -34,9 +34,13 @@
 
             <h3 fxFlex="33" fxFlex.xs="100" id="cpu-load-label">LOAD</h3>
 
-            <div class="viewchartgauge" fxFlex="34" fxFlex.xs="100" *ngIf="cpuAvg && cpuAvg.data">
-              <viewchartgauge [config]="cpuAvg" #load></viewchartgauge>
+            <div class="viewchartgauge" fxFlex="34" fxFlex.xs="100">
+              <viewchartgauge [config]="cpuAvg" #load *ngIf="cpuAvg && cpuAvg.data; else loader"></viewchartgauge>
             </div>
+
+            <ng-template #loader>
+              <mat-spinner [diameter]="40" style="margin: 0 auto;"></mat-spinner>
+            </ng-template>
 
             <div *ngIf="screenType == 'Desktop'" fxFlex="33" fxFlex.xs="100" id="cpu-load-cores">
               <h3 class="core-count">{{coreCount}}</h3>
