@@ -25,7 +25,8 @@ dataset_permissions_recursive_tooltip: T('Apply permissions recursively to all d
  and files within the current dataset.'),
 
 dataset_permissions_traverse_placeholder: T('Traverse'),
-dataset_permissions_traverse_tooltip: T(''),
+dataset_permissions_traverse_tooltip: T('Apply permissions recursively to all child\
+ datasets of the current dataset.'),
 
 dataset_permissions_dialog_warning: T('Warning'),
 dataset_permissions_dialog_warning_message: T('Changing dataset permission mode can severely\

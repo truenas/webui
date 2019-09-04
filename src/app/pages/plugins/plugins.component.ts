@@ -1,15 +1,16 @@
 import { Component } from '@angular/core'
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 
+import * as myIP from 'what-is-my-ip-address';
+
 import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
-import { PluginComponent } from './plugin/plugin.component';
-import { AppLoaderService, WebSocketService } from '../../services';
+import { AppLoaderService, WebSocketService, DialogService } from '../../services';
 import { EntityUtils } from '../common/entity/utils';
-import { DialogService } from '../../../app/services';
 import { T } from '../../translate-marker';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-plugins-ui',
@@ -39,6 +40,12 @@ export class PluginsComponent {
     { name: T('Status'), prop: 'state' },
     { name: T('IPv4 Address'), prop: 'ip4' },
     { name: T('IPv6 Address'), prop: 'ip6' },
+    { name: T('Version'), prop: 'version', hidden: true },
+    { name: T('Plugin'), prop: 'plugin', hidden: true },
+    { name: T('Release'), prop: 'release', hidden: true },
+    { name: T('Boot'), prop: 'boot', hidden: true },
+    { name: T('Revision'), prop: 'revision', hidden: true },
+    { name: T('Collection'), prop: 'plugin_repository', hidden: true },
   ];
   public config: any = {
     paging: true,
@@ -57,11 +64,8 @@ export class PluginsComponent {
       },
     },
   };
-  protected columnFilter = false;
+
   protected cardHeaderComponent = AvailablePluginsComponent;
-  protected showActions = false;
-  protected hasDetails = true;
-  protected rowDetailComponent = PluginComponent;
 
   public multiActions: Array<any> = [
     {
@@ -162,12 +166,21 @@ export class PluginsComponent {
     // }
   ];
 
+  protected publicIp = '';
+
   constructor(
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private dialogService: DialogService,
     private snackBar: MatSnackBar,
-    private router: Router) {
+    private router: Router,
+    protected matDialog: MatDialog) {
+      myIP.v4().then((pubIp) => {
+        this.publicIp = pubIp;
+      }).catch((e) => {
+        console.log("Error getting Public IP: ", e);
+        this.publicIp = '';
+      });
     }
 
   prerequisite(): Promise<boolean> {
@@ -323,5 +336,178 @@ export class PluginsComponent {
     const params: Array<any> = ['jail.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;
+  }
+
+
+  getActions(parentrow) {
+    const actions = [{
+      id: parentrow.name,
+      name: "start",
+      label: T("START"),
+      icon: 'play_arrow',
+      onClick: (row) => {
+        this.loader.open();
+        this.ws.job('jail.start', [row.name]).subscribe(
+          (res) => {
+            this.updateRows([row]).then(() => {
+              this.loader.close();
+            });
+          },
+          (res) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, res, this.dialogService);
+          });
+      }
+    },
+    {
+      id: parentrow.name,
+      name: "restart",
+      label: T("RESTART"),
+      icon: 'replay',
+      onClick: (row) => {
+        this.loader.open();
+        this.ws.job('jail.restart', [row.name]).subscribe(
+          (res) => {
+            this.updateRows([row]).then(() => {
+              this.loader.close();
+            });
+          },
+          (err) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialogService);
+          });
+      }
+    },
+    {
+      id: parentrow.name,
+      name: "stop",
+      label: T("STOP"),
+      icon: 'stop',
+      onClick: (row) => {
+        this.loader.open();
+        this.ws.job('jail.stop', [row.name]).subscribe(
+          (res) => {
+            this.updateRows([row]).then(() => {
+              this.loader.close()
+            });
+          },
+          (res) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, res, this.dialogService);
+          });
+      }
+    },
+    {
+      id: parentrow.name,
+      name: "update",
+      label: T("UPDATE"),
+      icon: 'update',
+      onClick: (row) => {
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
+        dialogRef.componentInstance.disableProgressValue(true);
+        dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.name]);
+        dialogRef.componentInstance.submit();
+        dialogRef.componentInstance.success.subscribe((res) => {
+          dialogRef.close(true);
+          this.snackBar.open(T("Plugin ") + row.name + T(" updated."), T('Close'), { duration: 5000 });
+        });
+      }
+    },
+    {
+      id: parentrow.name,
+      name: "management",
+      label: T("MANAGE"),
+      icon: 'settings',
+      onClick: (row) => {
+        window.open(row.admin_portal);
+      }
+    },
+    {
+      id: parentrow.name,
+      name: "delete",
+      label: T("UNINSTALL"),
+      icon: 'delete',
+      onClick: (row) => {
+        this.entityList.doDelete(row);
+      }
+    }];
+
+    if (parentrow.plugin === 'asigra') {
+      actions.push({
+        id: parentrow.name,
+        name: "register",
+        label: T('REGISTER'),
+        icon: 'assignment',
+        onClick: (row) => {
+          this.getRegistrationLink();
+        }
+      });
+    }
+    if (parentrow.plugin_info) {
+      actions.push({
+        id: parentrow.name,
+        name: "postinstall",
+        label: T('POST INSTALL NOTES'),
+        icon: 'description',
+        onClick: (row) => {
+          let install_notes = '';
+          for (const msg of row.plugin_info.split('\n')) {
+            install_notes += '<p>' + msg + '</p>';
+          }
+          this.dialogService.Info(T('Post Install Notes'), install_notes, '500px', 'description', true);
+        }
+      });
+    }
+    if (parentrow.doc_url) {
+      actions.push({
+        id: parentrow.name,
+        name: "docurl",
+        label: T('DOCUMENTATION'),
+        icon: 'info',
+        onClick: (row) => {
+          window.open(row.doc_url);
+        }
+      });
+    }
+    return actions;
+  }
+
+  isActionVisible(actionId: string, row: any) {
+    if (actionId === 'start' && row.state === "up") {
+      return false;
+    } else if (actionId === 'stop' && row.state === "down") {
+      return false;
+    } else if (actionId === 'management' && (row.state === "down" || row.admin_portal == null)) {
+      return false;
+    } else if (actionId === 'restart' && row.state === "down") {
+      return false;
+    }
+    return true;
+  }
+
+  getRegistrationLink() {
+    const url = 'https://licenseportal.asigra.com/licenseportal/user-registration.do';
+    const form = document.createElement('form');
+    form.action = url;
+    form.method = 'POST';
+    form.target = '_blank';
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'dsSystemPublicIP';
+    input.value = this.publicIp;
+
+    const submit = document.createElement('input');
+    submit.type = 'submit';
+    submit.id = 'submitProject';
+
+    form.appendChild(input);
+    form.appendChild(submit);
+    document.body.appendChild(form);
+
+    submit.click();
+
+    document.body.removeChild(form);
   }
 }

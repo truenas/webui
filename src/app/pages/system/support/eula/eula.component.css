@@ -1,0 +1,25 @@
+mat-card {
+    max-width: 960px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+#eula {
+    color: var(--fg1);
+    font-size: 120%; 
+    padding: 100px 100px 15px 100px;
+}
+
+h2 {
+    margin-bottom: 1rem;
+}
+
+.mat-card-actions {
+    margin-bottom: unset;
+}
+
+#button-row {
+    display: flex;
+    justify-content: center;
+    padding-top: 22px;
+}

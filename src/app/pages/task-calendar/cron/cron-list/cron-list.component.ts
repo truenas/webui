@@ -28,7 +28,7 @@ export class CronListComponent {
     { name: T('Users'), prop: 'cron_user', always_display: true },
     { name: T('Command'), prop: 'cron_command' },
     { name: T('Description'), prop: 'cron_description' },
-    { name: T('Schedule'), prop: 'cron_schedule', widget: { icon: 'date_range', component: TaskScheduleListComponent } },
+    { name: T('Schedule'), prop: 'cron_schedule', widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' } },
     { name: T('Enabled'), prop: 'cron_enabled' },
     { name: T('Next Run'), prop: 'cron_next_run', hidden: true },
     { name: T('Minute'), prop: 'cron_minute', hidden: true },

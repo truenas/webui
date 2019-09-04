@@ -124,12 +124,11 @@ export class EntityWizardComponent implements OnInit {
       });
     }
 
-    if (( < FormGroup > this.formArray.get(stepIndex)).controls[name]) {
+    if (( < FormGroup > this.formArray.get([stepIndex])).controls[name]) {
       const method = disable ? 'disable' : 'enable';
-      ( < FormGroup > this.formArray.get(stepIndex)).controls[name][method]();
+      ( < FormGroup > this.formArray.get([stepIndex])).controls[name][method]();
       return;
     }
-
   }
 
   relationUpdate(config: FieldConfig, activations: any, stepIndex: any) {

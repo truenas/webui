@@ -33,8 +33,8 @@
   margin-left:calc(40% + 16px) !important;
 }
 
-.view-overview .primary-nav .card-title-text{
-  /*display:none;*/
+span.passive{
+  font-size:90%;
 }
 
 .primary-nav .card-title-text{
@@ -277,6 +277,14 @@ img.platform-logo{
 
 .content-left{
   position:relative;
+}
+
+.ha-node-status{
+  font-weight:500;
+}
+
+.left.passive .product-image {
+  opacity: 0.5;
 }
 
 /* NARROW SCREENS */

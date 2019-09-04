@@ -285,20 +285,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
-    if (!this.isNew) {
-      setTimeout(() => { // goofy workaround for stupid angular error
-        this.dialog.confirm(T("Warning"), helptext.manager_extend_warning, 
-            false, T("Continue")).subscribe((res) => {
-          if (!res) {
-            if (this.loaderOpen) {
-              this.loader.close();
-              this.loaderOpen = false;
-            }
-            this.goBack();
-          }
-        });
-      });
-    }
   }
 
   ngOnDestroy() {
@@ -462,6 +448,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                 let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
 
                 dialogRef.componentInstance.volumeId = res.data.id;
+                dialogRef.componentInstance.fileName = 'pool_' + res.data.name + '_encryption.key';
                 dialogRef.afterClosed().subscribe(result => {
                   this.goBack();
                 });

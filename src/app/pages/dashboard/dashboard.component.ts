@@ -29,6 +29,10 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
   public isFooterConsoleOpen: boolean;
 
+  // For widgetsysinfo
+  public isHA: boolean = false;
+  public isFN: boolean = window.localStorage['is_freenas'];
+
   // For widgetpool
   public system: any;
   public system_product: string = "Generic";
@@ -57,6 +61,14 @@ export class DashboardComponent implements OnInit,OnDestroy {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
+
+    if(this.isFN.toString() == 'false'){
+      this.ws.call('failover.licensed').subscribe((res)=> {
+        if (res) {
+          this.isHA = true;
+        }
+      });
+    }
 
   }
 

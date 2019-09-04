@@ -25,10 +25,9 @@ msgstr ""
 "UPS <i>Master</i> system. 默认端口是<i>3493</i>。"
 
 msgid ""
-" a passphrase creates a new encryption key  file and invalidates any "
-"existing recovery key or encryption key files.  A dialog opens to save a "
-"backup of the new encryption key. A new  recovery key can be added from the "
-"Encryption Operations menu."
+" a passphrase invalidates an existing pool  recovery key file. To save a "
+"backup of the existing encryption key  without making any changes, click "
+"<b>DOWNLOAD ENCRYPTION KEY</b>."
 msgstr ""
 
 msgid " and all snapshots of it?"
@@ -64,7 +63,7 @@ msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
 "encrypted pools, download and safely store the encryption key and any "
-"passphrase associated with it."
+"passphrase for it."
 msgstr ""
 
 msgid ""
@@ -74,12 +73,6 @@ msgstr ""
 
 msgid "'. All data on that pool was destroyed."
 msgstr "’。所有此存储池的数据已被销毁。"
-
-msgid ""
-"'. Exporting/disconnecting a pool makes the data unavailable. The pool data "
-"can also be wiped by setting the related option. Back up any critical data "
-"before exporting/disconnecting a pool."
-msgstr "’。导出/断开存储池会使数据不可用。存储池数据可以通过设置相关选项被抹掉。在导出/断开存储池前请备份重要数据。"
 
 msgid "(No description)"
 msgstr ""
@@ -109,19 +102,25 @@ msgid ": Automatic update check failed. Please check system network settings."
 msgstr "：自动更新检查失败。请检查系统网络设置。"
 
 msgid ""
-"</b> dataset and all snapshots stored with it, please type the name of the "
-"dataset to confirm:"
+"</b> plugin and all data and snapshots stored with it, please type the name "
+"of the plugin to confirm:"
 msgstr ""
 
 msgid ""
-"</b> plugin and all data and snapshots stored with it, please type the name "
-"of the plugin to confirm:"
+"</i> dataset and all snapshots stored with it, please type the name of the "
+"dataset to confirm:"
 msgstr ""
 
 msgid "</i> has started."
 msgstr ""
 
 msgid "</i> now?"
+msgstr ""
+
+msgid ""
+"</i>. Data on the pool will not be available after export. Data on the pool "
+"disks can be destroyed by setting the <b>Destroy data</b> option. Back up "
+"critical data <b>before</b> exporting/disconnecting the pool."
 msgstr ""
 
 msgid ""
@@ -134,22 +133,26 @@ msgstr ""
 msgid ""
 "<a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
-"html\" target=\"_blank\">S3 API endpoint URL</a>. When using AWS, the "
-"endpoint field can be left empty to use the default endpoint for the "
-"region. Available buckets are automatically fetched.<br> Refer to the AWS "
-"Documentation for a list of <a "
+"html\"  target=\"_blank\">S3 API endpoint URL</a>. When using AWS, the "
+"endpoint  field can be empty to use the default endpoint for the region, "
+"and  available buckets are automatically fetched. Refer to the AWS  "
+"Documentation for a list of  <a "
 "href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
-"region_endpoints\" target=\"_blank\">Simple Storage Service Website "
+"region_endpoints  target=\"_blank\">Simple Storage Service Website "
 "Endpoints</a>."
 msgstr ""
 
 msgid ""
-"<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\" "
-"target=\"_blank\">pCloud Access Token</a>. These tokens can expire and "
+"<a "
+"href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
+"storage-account\"  target=\"_blank\">Microsoft Azure</a> account name."
+msgstr ""
+
+msgid ""
+"<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
+"target=\"_blank\">pCloud Access Token</a>. These tokens can expire and  "
 "require extension."
 msgstr ""
-"<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\" "
-"target=\"_blank\">pCloud访问令牌</a>。这些令牌会失效并需要延期。"
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
@@ -159,6 +162,12 @@ msgstr ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
 "      target=\"_blank\">Extended attributes</a> are preserved, but must be "
 "supported by both systems."
+
+msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
+msgstr ""
+
+msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  username."
+msgstr ""
 
 msgid ""
 "<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
@@ -423,17 +432,13 @@ msgstr ""
 "Seed，全部密码将会在上传配置数据库后被重置。</font></p>"
 
 msgid ""
-"A User Access Token for <a href=\"https://developer.box.com/\" "
-"target=\"_blank\">Box</a>. An <a "
-"href=\"https://developer.box.com/reference#token\" target=\"_blank\">access "
-"token</a> enables Box to verify a request belongs to an authorized session. "
-"Example token: <i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>."
+"A User Access Token for <a href=\"https://developer.box.com/\"  "
+"target=\"_blank\">Box</a>. An  <a "
+"href=\"https://developer.box.com/reference#token\"  "
+"target=\"_blank\">access token</a> enables Box to verify a request  belongs "
+"to an authorized session. Example token:  "
+"<i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>."
 msgstr ""
-"用于<a href=\"https://developer.box.com/\" "
-"target=\"_blank\">Box</a>的用户访问令牌。An <a "
-"href=\"https://developer.box.com/reference#token\" target=\"_blank\">access "
-"token</a> enables Box to verify a request belongs to an authorized session. "
-"样例令牌：<i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>。"
 
 msgid ""
 "A list of simple patterns matching the IPs of the servers that will be "
@@ -454,6 +459,15 @@ msgstr ""
 
 msgid "A pool with this name already exists."
 msgstr "已存在使用此名称的存储池。"
+
+msgid ""
+"A single bandwidth limit or bandwidth limit schedule in rclone format. "
+"Example: <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>. "
+"Units can be specified with the beginning letter: <samp>b</samp>, "
+"<samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>. See <a "
+"href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" "
+"target=\"_blank\">rclone --bwlimit</a>."
+msgstr ""
 
 msgid ""
 "A space-delimited list of network interfaces attached to a <b>VNET</b> "
@@ -479,7 +493,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"A username on the FTP Host system. This user must already exist on the FTP "
+"A username on the FTP Host system. This user must already exist  on the FTP "
 "Host."
 msgstr ""
 
@@ -552,9 +566,6 @@ msgstr ""
 msgid "ATA Security User"
 msgstr "ATA安全用户"
 
-msgid "AUTOSTART"
-msgstr ""
-
 msgid "AWS Region"
 msgstr ""
 
@@ -601,21 +612,17 @@ msgid "Access Token"
 msgstr "访问令牌"
 
 msgid ""
-"Access Token <a href=\"https://api.hubic.com/sandbox/\" "
+"Access Token <a href=\"https://api.hubic.com/sandbox/\"  "
 "target=\"_blank\">generated by a Hubic account</a>."
 msgstr ""
-"访问令牌<a href=\"https://api.hubic.com/sandbox/\" "
-"target=\"_blank\">通过Hubic账户生成</a>。"
 
 msgid ""
-"Access Token for a Dropbox account. A <a "
+"Access Token for a Dropbox account. A  <a "
 "href=\"https://blogs.dropbox.com/developers/2014/05/generate-an-access-"
-"token-for-your-own-account/\" target=\"_blank\">token must be generated</a> "
-"in the account before adding it here."
+"token-for-your-own-account/\"  target=\"_blank\">token must be "
+"generated</a> by the  <a href=\"https://www.dropbox.com/\" "
+"target=\"_blank\">Dropbox account</a>  before adding it here."
 msgstr ""
-"Dropbox账户的访问令牌。在被添加前，一个<a "
-"href=\"https://blogs.dropbox.com/developers/2014/05/generate-an-access-"
-"token-for-your-own-account/\" target=\"_blank\">令牌必须被生成</a>于这个账户。"
 
 msgid "Account"
 msgstr "账户"
@@ -715,6 +722,11 @@ msgid "Add a name for the new snapshot."
 msgstr "给新的快照添加一个名字。"
 
 msgid "Add a naming schema for the new snapshot"
+msgstr ""
+
+msgid ""
+"Add a passphrase to the new  encryption key. This is used to lock and "
+"unlock the pool."
 msgstr ""
 
 msgid ""
@@ -900,6 +912,9 @@ msgstr ""
 
 msgid "Administrator Password"
 msgstr "管理员密码"
+
+msgid "Administrator password"
+msgstr ""
 
 msgid "Administrators Group"
 msgstr ""
@@ -1143,13 +1158,13 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Alphanumeric <a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
-"target=\"_blank\">Backblaze B2</a> ID. Find an Account ID or "
-"applicationKeyID by logging in to the account, clicking <i>Buckets</i>, and "
-"clicking <i>Show Account ID and Application Key</i>. Enter the <i>Account "
-"ID</i> to associate the entire account or generate a new <i>Application "
-"Key</i>. The <i>keyID</i> replaces the Account ID and the key string is "
-"used in place of the <i>Master Application Key</i>."
+"Alphanumeric  <a href=\"https://www.backblaze.com/b2/cloud-storage.html\"  "
+"target=\"_blank\">Backblaze B2</a> ID. Find an Account ID or  "
+"applicationKeyID by logging in to the account, clicking <i>Buckets</i>,  "
+"and clicking <i>Show Account ID and Application Key</i>. Enter the  "
+"<i>Account ID</i> to associate the entire account or generate a new  "
+"<i>Application Key</i>. The <i>keyID</i> replaces the Account ID and  the "
+"key string is used in place of the <i>Master Application Key</i>."
 msgstr ""
 
 msgid "Also Include Naming Schema"
@@ -1168,24 +1183,18 @@ msgid ""
 "with no chance of recovery."
 msgstr "总是备份密钥！失去密钥会使在磁盘内的全部数据丢失并且不可恢复。"
 
-msgid "Amazon Application Client ID"
+msgid ""
+"Amazon Web Services Key ID. This is found on  <a "
+"href=\"https://aws.amazon.com/\" target=\"_blank\">Amazon AWS</a> by  going "
+"through <i>My account -> Security Credentials -> Access Keys  (Access Key "
+"ID and Secret Access Key)</i>."
 msgstr ""
 
 msgid ""
-"Amazon Web Services Key ID. This is found on <a "
-"href=\"https://aws.amazon.com/\" target=\"_blank\">Amazon AWS</a> by going "
-"through <i>My account -> Security Credentials -> Access Keys (Access Key ID "
-"and Secret Access Key)</i>."
-msgstr ""
-
-msgid ""
-"Amazon Web Services password. If the Secret Access Key cannot be found or "
-"remembered, go to <i>My Account > Security Credentials > Access Keys</i> "
+"Amazon Web Services password. If the Secret Access Key cannot be  found or "
+"remembered, go to <i>My Account -> Security Credentials ->  Access Keys</i> "
 "and create a new key pair."
 msgstr ""
-"Amazon Web Services 密码。If the Secret Access Key cannot be found or "
-"remembered, go to <i>My Account > Security Credentials > Access Keys</i> "
-"and create a new key pair."
 
 msgid "Amount of locked memory in bytes for the jail."
 msgstr ""
@@ -1213,15 +1222,6 @@ msgstr ""
 msgid "Apple Shares (AFP)"
 msgstr ""
 
-msgid "Application Client Secret"
-msgstr ""
-
-msgid "Apply Access Mode"
-msgstr ""
-
-msgid "Apply Group"
-msgstr "应用群组"
-
 msgid "Apply Network Changes"
 msgstr ""
 
@@ -1234,25 +1234,13 @@ msgstr "应用待决更新"
 msgid "Apply Permissions Recursively"
 msgstr ""
 
-msgid "Apply User"
-msgstr "应用用户"
-
-msgid "Apply changes to the group."
-msgstr ""
-
-msgid "Apply changes to the mode."
-msgstr ""
-
-msgid "Apply changes to the user."
-msgstr ""
-
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
 
 msgid "Apply permissions recursively"
 msgstr "递归的应用权限"
 
-msgid "Apply permissions recursively to all child datasets of the current dataset"
+msgid "Apply permissions recursively to all child datasets of the current dataset."
 msgstr ""
 
 msgid ""
@@ -1332,6 +1320,11 @@ msgid "Authenticator"
 msgstr ""
 
 msgid "Authenticator Attributes"
+msgstr ""
+
+msgid ""
+"Authenticator to validate the Domain. Choose a previously configured ACME "
+"DNS authenticator."
 msgstr ""
 
 msgid "Authorized Access"
@@ -1416,22 +1409,18 @@ msgstr "Awesome!现在一起来探索Freenas的新特性吧。"
 msgid "Back"
 msgstr "返回"
 
-msgid ""
-"Backblaze B2 Application Key. Log in to the B2 account and generate a key "
-"on the Buckets page. <a "
-"href=\"https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-"
-"find-my-Account-ID-and-Application-Key-\" target=\"_blank\">Generating a "
-"new Master Application Key</a> will invalidate the existing Master key and "
-"require updating this field. Using a limited permissions Application Key "
-"also requires changing the <i>Account ID</i> to the new <i>keyID</i>."
+msgid "Back to Support"
 msgstr ""
-"Backblaze B2应用密钥。Log in to the B2 account and generate a key on the Buckets "
-"page. <a "
+
+msgid ""
+"Backblaze B2 Application Key. Log in to the B2 account and  generate a key "
+"on the Buckets page.  <a "
 "href=\"https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-"
-"find-my-Account-ID-and-Application-Key-\" "
-"target=\"_blank\">生成一个新的主应用密钥</a>将会使现有的主密钥失效，你需要更新这个密钥。Using a limited "
-"permissions Application Key also requires changing the <i>Account ID</i> to "
-"the new <i>keyID</i>."
+"find-my-Account-ID-and-Application-Key-\"  target=\"_blank\">Generating a "
+"new Master Application Key</a> invalidates  the existing Master key and "
+"requires updating this field. Using a  limited permissions Application Key "
+"also requires changing the  <i>Account ID</i> to the new <i>keyID</i>."
+msgstr ""
 
 msgid ""
 "Backend used to map Windows security identifiers (SIDs) to UNIX UIDs and "
@@ -1656,9 +1645,6 @@ msgstr ""
 msgid "CN Realm"
 msgstr "CN Realm"
 
-msgid "COLLECTION"
-msgstr ""
-
 msgid "CPU"
 msgstr "处理器"
 
@@ -1714,6 +1700,16 @@ msgstr "修改密码"
 
 msgid "Change User & Group Ownership"
 msgstr "变更用户和群组的所有人"
+
+msgid "Change User and Group Ownership"
+msgstr ""
+
+msgid ""
+"Change existing ownership of ALL files in the share  to user "
+"<samp>webdav</samp> and group <samp>webdav</samp>. If unset,  ownership of "
+"files to be accessed through WebDAV must be manually set  to the "
+"<samp>webdav</samp> or <samp>www</samp> user/group."
+msgstr ""
 
 msgid ""
 "Change from <i>public</i> to increase system security. Can only contain "
@@ -1901,19 +1897,13 @@ msgid ""
 msgstr "选择<i>ON</i>在文件访问被读取时更新访问时间。选择<i>Off</i>避免读取文件时产生日志流量。这可以带来明显性能提升。"
 
 msgid ""
-"Choose a <i>Drive Account Type</i>: <i>PERSONAL, BUSINESS,</i> or <a "
-"href=\"https://products.office.com/en-us/sharepoint/collaboration\" "
-"target=\"_blank\">SharePoint</a> <i>DOCUMENT_LIBRARY</i>."
-msgstr ""
-"选择<i>网盘账户类型</i>： <i>个人，企业，</i>或<a "
-"href=\"https://products.office.com/en-us/sharepoint/collaboration\" "
-"target=\"_blank\">SharePoint</a> <i>DOCUMENT_LIBRARY</i>。"
-
-msgid ""
 "Choose a <i>Stripe</i>, <i>Mirror</i>, or <i>Raid-Z</i> configuration for "
 "the chosen disk layout. See the <a "
 "href=\"--docurl--/storage.html#pool-manager\" target=\"_blank\">Pool "
 "Manager</a> section of the guide for more details."
+msgstr ""
+
+msgid "Choose a DNS provider and configure any required authenticator attributes."
 msgstr ""
 
 msgid "Choose a color scheme."
@@ -1970,13 +1960,6 @@ msgstr ""
 msgid ""
 "Choose a system (<i>LOCAL</i> or <i>REMOTE</i>) to open TCP ports and allow "
 "the connection between both systems."
-msgstr ""
-
-msgid ""
-"Choose a unique drive identifier. Open the <i>Shell</i>, enter <i>rclone "
-"config</i>, and follow the prompts to find the <i>Drive ID</i>. The rclone "
-"<a href=\"https://rclone.org/onedrive\" target=\"_blank\">OneDrive "
-"documentation</a> walks through the configuration process."
 msgstr ""
 
 msgid "Choose an alert service to display options for that service."
@@ -2055,6 +2038,12 @@ msgstr "选择用于Jail操作系统的FreeBSD发行版。已下载的发行版�
 
 msgid "Choose the VM operating system type."
 msgstr "选择虚拟机操作系统类型"
+
+msgid ""
+"Choose the account type: <i>PERSONAL</i>, <i>BUSINESS</i>, or  <a "
+"href=\"https://products.office.com/en-us/sharepoint/collaboration\" "
+"target=\"_blank\">SharePoint</a> <i>DOCUMENT_LIBRARY</i>."
+msgstr ""
 
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
@@ -2167,16 +2156,7 @@ msgstr "点击<b>浏览</b>以选择一个加密密钥来上传。这允许系�
 msgid "Click on alarms to select or unselect."
 msgstr ""
 
-msgid ""
-"Client ID for the <a "
-"href=\"https://developer.amazon.com/docs/amazon-drive/ad-get-started.html\" "
-"target=\"_blank\">Amazon Drive account</a>."
-msgstr ""
-
 msgid "Client Name"
-msgstr ""
-
-msgid "Client secret for the Amazon Drive account."
 msgstr ""
 
 msgid "Clients"
@@ -2201,6 +2181,9 @@ msgid "Cloud sync stopped."
 msgstr ""
 
 msgid "Cluster Name"
+msgstr ""
+
+msgid "Collection"
 msgstr ""
 
 msgid "Com Port"
@@ -2379,6 +2362,9 @@ msgstr ""
 msgid "Confirm"
 msgstr "确认"
 
+msgid "Confirm Export/Disconnect"
+msgstr ""
+
 msgid "Confirm Options"
 msgstr "确认选项"
 
@@ -2403,17 +2389,11 @@ msgstr ""
 msgid "Confirm detach"
 msgstr "确认分离"
 
-msgid "Confirm export/disconnect"
-msgstr "确认导出/断开"
-
 msgid "Confirm it is okay to proceed with Detach."
 msgstr "确认可以继续分离。"
 
 msgid "Confirm password"
 msgstr "确认密码"
-
-msgid "Confirm the encryption key passphrase."
-msgstr ""
 
 msgid "Confirm these settings."
 msgstr "确认这些设置。"
@@ -2438,6 +2418,9 @@ msgstr "联系方式"
 
 msgid "Container"
 msgstr "容器"
+
+msgid "Contents of the uploaded Service Account JSON file."
+msgstr ""
 
 msgid ""
 "Context menu copy and paste operations     are disabled in the Shell. Copy "
@@ -2668,6 +2651,9 @@ msgstr "星期"
 msgid "Days of the Week"
 msgstr "星期"
 
+msgid "Deactivate the recovery key for this pool?"
+msgstr ""
+
 msgid "Decrypt pool"
 msgstr "解密存储池"
 
@@ -2797,8 +2783,8 @@ msgstr "定义原始文件大小，以GiB为单位。"
 msgid "Delay Updates"
 msgstr "延迟更新"
 
-msgid "Delay VM Boot until VNC Connects"
-msgstr "推迟VM启动直到VNC连接"
+msgid "Delay VM Boot Until VNC Connects"
+msgstr ""
 
 msgid "Delete"
 msgstr "删除"
@@ -2812,14 +2798,14 @@ msgstr "删除数据集"
 msgid "Delete Device"
 msgstr "删除设备"
 
+msgid "Delete Key"
+msgstr ""
+
 msgid "Delete Mount Point"
 msgstr "删除挂载点"
 
 msgid "Delete Path"
 msgstr ""
-
-msgid "Delete Recovery Key"
-msgstr "删除恢复密钥"
 
 msgid "Delete Zvol"
 msgstr "删除Zvol"
@@ -2835,9 +2821,6 @@ msgid ""
 "in the source directory."
 msgstr ""
 
-msgid "Delete recovery key for "
-msgstr ""
-
 msgid "Delete selections"
 msgstr "删除选中项目"
 
@@ -2847,6 +2830,11 @@ msgstr "删除快照 "
 msgid "Delete the dataset "
 msgstr "删除数据集 "
 
+msgid ""
+"Delete the passphrase from  the encryption key. Invalidates an existing "
+"pool recovery key file. A  dialog prompts to back up the encryption key."
+msgstr ""
+
 msgid "Delete the zvol "
 msgstr "删除Zvol "
 
@@ -2855,12 +2843,6 @@ msgstr "删除这个设备？"
 
 msgid "Delete this path."
 msgstr ""
-
-msgid "Delete zvol"
-msgstr "删除zvol"
-
-msgid "Deleted Recovery Key"
-msgstr "已删除恢复密钥"
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
@@ -3113,9 +3095,6 @@ msgstr ""
 msgid "Do not set this if the Serial Port is disabled."
 msgstr "如果串口被禁用，请不要设置这个。"
 
-msgid "Do you want to force delete dataset "
-msgstr ""
-
 msgid "Docker Host"
 msgstr "Docker主机"
 
@@ -3140,11 +3119,11 @@ msgstr "域名"
 msgid "Done"
 msgstr "完成"
 
-msgid "Download Encrypt Key"
-msgstr "下载加密密钥"
-
 msgid "Download Logs"
 msgstr "下载日志"
+
+msgid "Download Recovery Key"
+msgstr ""
 
 msgid "Download Sucessful"
 msgstr "下载成功"
@@ -3165,6 +3144,9 @@ msgid "EC Curve"
 msgstr ""
 
 msgid "EDIT ACL"
+msgstr ""
+
+msgid "EULA"
 msgstr ""
 
 msgid "Edit"
@@ -3200,12 +3182,6 @@ msgstr "修改以下磁盘："
 msgid ""
 "Editing top-level datasets can prevent users from accessing data in child "
 "datasets."
-msgstr ""
-
-msgid ""
-"Either single bandwidth limit or bandwidth limit schedule in rclone "
-"format.<br /> Example: \"08:00,512 12:00,10MB 13:00,512 18:00,30MB "
-"23:00,off\".<br /> Default unit is kilobytes."
 msgstr ""
 
 msgid "Email"
@@ -3402,17 +3378,23 @@ msgstr "加密"
 msgid "Encryption Key"
 msgstr "加密密钥"
 
+msgid "Encryption Key Passphrase"
+msgstr ""
+
 msgid "Encryption Key Required"
 msgstr "需要加密密钥"
+
+msgid "Encryption Key for Pool "
+msgstr ""
+
+msgid "Encryption Key/Passphrase"
+msgstr ""
 
 msgid "Encryption Mode"
 msgstr "加密模式"
 
 msgid "Encryption Password"
 msgstr "加密密码"
-
-msgid "Encryption Rekey"
-msgstr ""
 
 msgid "Encryption Salt"
 msgstr "加密盐"
@@ -3512,6 +3494,12 @@ msgstr ""
 
 msgid "Enter a fully qualified domain name. Example: <b>yourname.dyndns.org</b>"
 msgstr "Enter a fully qualified domain name. 例子：<b>yourname.dyndns.org</b>"
+
+msgid ""
+"Enter a line- or space-separated list of destinations where the collected "
+"metrics are to be sent. Use the format <samp>HOST:PORT</samp> (port is "
+"optional). Netdata uses the first working destination."
+msgstr ""
 
 msgid ""
 "Enter a list of allowed hostnames or IP addresses. Separate entries with a "
@@ -3963,6 +3951,9 @@ msgstr ""
 msgid "Enter the administrator account password."
 msgstr "输入管理员账户密码"
 
+msgid "Enter the administrator password to authorize this operation."
+msgstr ""
+
 msgid "Enter the bug tracker account password."
 msgstr ""
 
@@ -4123,12 +4114,6 @@ msgid ""
 "Directory."
 msgstr ""
 
-msgid "Enter the root password to authorize this operation."
-msgstr "输入Root密码来批准这个操作。"
-
-msgid "Enter the root password."
-msgstr "输入Root密码。"
-
 msgid ""
 "Enter the routing table (<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setfib\" "
@@ -4180,9 +4165,6 @@ msgstr ""
 msgid "Error"
 msgstr "错误"
 
-msgid "Error Deleting Key"
-msgstr "删除密钥错误"
-
 msgid "Error Deleting zvol "
 msgstr "删除zvol错误 "
 
@@ -4195,20 +4177,11 @@ msgstr "解锁错误"
 msgid "Error Upgrading Pool "
 msgstr "升级存储池错误 "
 
-msgid "Error adding recovery key to pool."
-msgstr ""
-
-msgid "Error changing passphrase for pool "
-msgstr "修改存储池密码短语错误 "
-
 msgid "Error checking for updates."
 msgstr "检查更新错误"
 
 msgid "Error creating VM."
 msgstr "创建虚拟机错误。"
-
-msgid "Error creating passphrase for pool "
-msgstr "创建存储池密码短语错误。 "
 
 msgid "Error creating pool"
 msgstr "创建存储池错误"
@@ -4241,9 +4214,6 @@ msgid "Error importing pool"
 msgstr "导入存储池错误"
 
 msgid "Error locking pool."
-msgstr ""
-
-msgid "Error re-keying pool"
 msgstr ""
 
 msgid "Error restarting web service"
@@ -4369,8 +4339,8 @@ msgstr "额外选项"
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr "FTP Host to connect to. 例子：<i>ftp.example.com</i>."
 
-msgid "FTP Port number. Leave blank to use a default port of <i>21</i>."
-msgstr "FTP端口号Leave blank to use a default port of <i>21</i>."
+msgid "FTP Port number. Leave blank to use the default port <i>21</i>."
+msgstr ""
 
 msgid "Failed"
 msgstr "失败"
@@ -4418,6 +4388,17 @@ msgid ""
 "Files are split into chunks of this size before upload. Up to «--transfers» "
 "chunks can be in progress at one time. The single largest file being "
 "transferred must fit into no more than 10,000 chunks."
+msgstr ""
+
+msgid ""
+"Files that are deleted from the same  dataset are moved to the Recycle Bin "
+"and do not take any additional  space. When the files are in a different "
+"dataset or a child dataset,  they are copied to the dataset where the "
+"Recycle Bin is located. To  prevent excessive space usage, files larger "
+"than 20 MiB are deleted  rather than moved. Adjust the <i>Auxiliary "
+"Parameter</i>  <samp>crossrename:sizelimit=</samp> setting to allow larger "
+"files.  For example, <samp>crossrename:sizelimit={50}</samp> allows moves "
+"of  files up to 50 MiB in size."
 msgstr ""
 
 msgid "Filesize"
@@ -4469,14 +4450,17 @@ msgstr "强制"
 msgid "Force Delete"
 msgstr ""
 
+msgid "Force deletion of dataset "
+msgstr ""
+
 msgid "Force size"
 msgstr "强制尺寸"
 
 msgid ""
-"Force using <a "
+"Force using  <a "
 "href=\"https://docs.aws.amazon.com/general/latest/gr/signature-version-2."
-"html\" target=\"_blank\">Signature Version 2</a> to sign API requests. Set "
-"this when configuring a custom Endpoint URL."
+"html\"  target=\"_blank\">Signature Version 2</a> to sign API requests. Set "
+"this  when configuring a custom Endpoint URL."
 msgstr ""
 
 msgid ""
@@ -4641,6 +4625,9 @@ msgstr ""
 
 msgid "HTTP Proxy"
 msgstr "HTTP代理"
+
+msgid "HTTP host URL."
+msgstr ""
 
 msgid "HTTPS Port"
 msgstr "HTTPS端口"
@@ -4972,8 +4959,8 @@ msgid "Import an existing pool"
 msgstr "导入一个现有存储池"
 
 msgid ""
-"Import the private key from an existing SSH keypair. Choose the name of the "
-"SSH keypair to use for this connection."
+"Import the private key from an existing SSH keypair.  Choose the name of "
+"the SSH keypair to use for this connection."
 msgstr ""
 
 msgid "Importing Disk"
@@ -5105,13 +5092,18 @@ msgstr ""
 msgid "Internal"
 msgstr "内部"
 
+msgid "Internal identifier for the authenticator."
+msgstr ""
+
+msgid ""
+"Internal identifier of the certificate. Only alphanumeric characters, dash "
+"(<b>-</b>), and underline (<b>_</b>) are allowed."
+msgstr ""
+
 msgid ""
 "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" "
 "are allowed."
 msgstr ""
-
-msgid "Invalid password"
-msgstr "密码错误"
 
 msgid "Invalid regex filter"
 msgstr ""
@@ -5121,10 +5113,7 @@ msgid ""
 "like <samp>256k</samp> or <samp>1G</samp>."
 msgstr ""
 
-msgid ""
-"Invalidate the existing  passphrase by generating a new encryption key. "
-"Also invalidates any  existing encryption or recovery key files. A dialog "
-"opens to save a  copy of the new encryption key."
+msgid "Invalidate Existing Key"
 msgstr ""
 
 msgid "Is the pool encrypted?"
@@ -5148,6 +5137,9 @@ msgstr ""
 "different numbers of disks. 继续？"
 
 msgid "Items Delete Failed"
+msgstr ""
+
+msgid "JID"
 msgstr ""
 
 msgid "Jail"
@@ -5247,6 +5239,13 @@ msgstr "密钥长度"
 msgid "Key Type"
 msgstr ""
 
+msgid ""
+"Key generated by the Amazon Web Services account. See the <a "
+"href=\"https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_"
+"access-keys.html\" target=\"_blank\">AWS Access Key documentation</a> for "
+"instructions to generate the key."
+msgstr ""
+
 msgid "LAGG Ports"
 msgstr ""
 
@@ -5329,6 +5328,11 @@ msgstr "链路聚合协议"
 
 msgid "Language"
 msgstr "语言"
+
+msgid ""
+"Leave at the default of 512 unless the initiator requires a different block "
+"size."
+msgstr ""
 
 msgid ""
 "Leave empty for default (<a href=\"https://api.opsgenie.com\" "
@@ -5591,11 +5595,6 @@ msgid ""
 "limit is 50."
 msgstr "Maximum number of simultaneous connections permitted via AFP. 默认限制是50。"
 
-msgid ""
-"Maximum size for individual file blocks in the file system. Only override "
-"the default unless the initiator requires a specific block size."
-msgstr ""
-
 msgid "Maximum swap space to use for the jail."
 msgstr "可用于Jail的最大Swap空间。"
 
@@ -5656,14 +5655,10 @@ msgid "Microsoft Account"
 msgstr "微软账户"
 
 msgid ""
-"Microsoft Onedrive <a "
+"Microsoft Onedrive  <a "
 "href=\"https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-"
-"started/authentication\" target=\"_blank\">Access Token</a>."
+"started/authentication\"  target=\"_blank\">Access Token</a>."
 msgstr ""
-"微软Onedrive <a                  "
-"href=\"https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-"
-"started/authentication\"                  target=\"_blank\">Access "
-"Token</a>."
 
 msgid "Min. Poll"
 msgstr "最小Poll"
@@ -5808,12 +5803,6 @@ msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
 msgid "Name of NIS domain."
-msgstr ""
-
-msgid ""
-"Name of a <a "
-"href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
-"storage-account\" target=\"_blank\">Microsoft Azure</a> account."
 msgstr ""
 
 msgid ""
@@ -6077,7 +6066,7 @@ msgid ""
 "target=\"_blank\">JAIL(8)</a> man page explains the finer details."
 msgstr ""
 
-msgid "Number of days to renew certificate before expiring"
+msgid "Number of days to renew certificate before expiring."
 msgstr ""
 
 msgid ""
@@ -6217,8 +6206,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Only needed when connecting to a Team Drive. The ID of the top level folder "
-"of the Team Drive."
+"Only needed when connecting to a Team Drive. The ID of the top  level "
+"folder of the Team Drive."
 msgstr ""
 
 msgid "Only override the default if the initiator requires a different block size."
@@ -6263,6 +6252,9 @@ msgstr "可选的。"
 msgid "Optional. Enter a server description."
 msgstr "可选的。输入服务器说明。"
 
+msgid "Optional: Add passphrase and recovery key"
+msgstr ""
+
 msgid "Optional: Choose installation media image"
 msgstr "可选：选择安装介质映像"
 
@@ -6293,7 +6285,13 @@ msgstr ""
 msgid "Owner of the jail. Can be any string."
 msgstr ""
 
-msgid "PLUGIN"
+msgid ""
+"Ownership of all files in the share will  be changed to user "
+"<samp>webdav</samp> and group <samp>webdav</samp>.  Existing permissions "
+"will not be changed, but the ownership change  might make files inaccesible "
+"to their original owners. This operation  cannot be undone! If unset, "
+"ownership of files to be accessed through  WebDAV must be manually set to "
+"the <samp>webdav</samp> or  <samp>www</samp> user/group."
 msgstr ""
 
 msgid "POST INSTALL NOTES"
@@ -6307,9 +6305,6 @@ msgstr "父接口"
 
 msgid "Passphrase"
 msgstr "密码短语"
-
-msgid "Passphrase created for pool "
-msgstr "创建存储池密码短语完成 "
 
 msgid "Password"
 msgstr "密码"
@@ -6326,19 +6321,14 @@ msgstr ""
 msgid "Password for SED"
 msgstr ""
 
-msgid ""
-"Password for the <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
-"account."
-msgstr ""
-
 msgid "Password for the Bind DN."
 msgstr ""
 
 msgid "Password for the SSH Username account."
 msgstr "SSH用户名的密码"
 
-msgid "Password for the username."
-msgstr "用户名的密码"
+msgid "Password for the user account."
+msgstr ""
 
 msgid ""
 "Passwords cannot contain a <b>?</b>. Passwords should be at least eight "
@@ -6350,6 +6340,14 @@ msgstr ""
 
 msgid "Passwords do not match"
 msgstr "密码不匹配"
+
+msgid ""
+"Paste either or both public and private keys. If only a public key is "
+"entered,  it will be stored alone. If only a private key is pasted, the "
+"public key will be automatically  calculated and entered in the public key "
+"field.  Click <b>Generate Keypair</b> to create a new keypair.  Encrypted "
+"keypairs or keypairs with passphrases are not supported."
+msgstr ""
 
 msgid ""
 "Paste the <a href=\"https://api.slack.com/incoming-webhooks\" "
@@ -6412,11 +6410,8 @@ msgstr "选择成员的物理接口。"
 msgid "Platform"
 msgstr ""
 
-msgid "Please accept terms of service for the given ACME Server."
+msgid "Please accept the terms of service for the given ACME Server."
 msgstr ""
-
-msgid "Please enter the correct password."
-msgstr "请输入正确的密码。"
 
 msgid "Please enter your password"
 msgstr "请输入您的密码"
@@ -6431,22 +6426,16 @@ msgid "Please enter your username again"
 msgstr "请再次输入您的用户名"
 
 msgid ""
-"Please provide a line- or space-separated list of destinations where the "
-"collected metrics are to be sent. Use the format HOST:PORT (port is "
-"optional). Netdata uses the first working destination."
-msgstr ""
-
-msgid ""
 "Please read about <a href=\"--docurl--/storage.html#deduplication\" "
 "target=\"_blank\">deduplication</a> before considering changing this "
 "setting."
 msgstr ""
 
-msgid "Please specify URI of ACME Server Directory."
-msgstr ""
-
 msgid "Please wait"
 msgstr "请等待"
+
+msgid "Plugin"
+msgstr ""
 
 msgid "Plugin "
 msgstr ""
@@ -6622,6 +6611,9 @@ msgstr ""
 msgid "Promote Dataset"
 msgstr ""
 
+msgid "Properties"
+msgstr ""
+
 msgid "Protocol"
 msgstr "协议"
 
@@ -6668,13 +6660,7 @@ msgstr ""
 msgid "REGISTER"
 msgstr ""
 
-msgid "RELEASE"
-msgstr ""
-
 msgid "RESTART"
-msgstr ""
-
-msgid "REVISION"
 msgstr ""
 
 msgid "Raid-z"
@@ -6700,18 +6686,6 @@ msgstr "原始文件"
 
 msgid "Raw filesize"
 msgstr "原始文件大小"
-
-msgid "Re-key Pool"
-msgstr ""
-
-msgid ""
-"Re-keying the pool resets the encryption on the  GELI master key of each "
-"encrypted disk in this pool. <b>This invalidates  all existing encryption "
-"and recovery key files, as well as any configured  passphrase.</b><br />  A "
-"new encryption key file is generated and an option opens to save a  backup "
-"of this file. Adding a passphrase or recovery key file is done  from the "
-"Encryption Operations menu."
-msgstr ""
 
 msgid "Read Only"
 msgstr "只读"
@@ -6758,8 +6732,8 @@ msgstr "记录大小"
 msgid "Recovery Key"
 msgstr "Recovery Key"
 
-msgid "Recovery key added to pool "
-msgstr "恢复密钥已被加入到存储池 "
+msgid "Recovery Key for Pool "
+msgstr ""
 
 msgid "Recursive"
 msgstr "循环"
@@ -6809,13 +6783,16 @@ msgstr "移除额外路径"
 msgid "Remove Keep Flag"
 msgstr "移除保持标志"
 
+msgid "Remove Recovery Key"
+msgstr ""
+
 msgid "Remove passphrase"
 msgstr ""
 
 msgid "Rename the existing boot environment."
 msgstr "重命名现有启动环境"
 
-msgid "Renew certificate day"
+msgid "Renew Certificate Days"
 msgstr ""
 
 msgid "Replacing disk..."
@@ -6921,6 +6898,15 @@ msgstr "此数据集及其子数据集的保留空间"
 msgid "Reset Config"
 msgstr "重置设置"
 
+msgid "Reset Encryption"
+msgstr ""
+
+msgid "Reset Keys"
+msgstr ""
+
+msgid "Reset Keys for Pool "
+msgstr ""
+
 msgid "Reset Layout"
 msgstr ""
 
@@ -6930,6 +6916,13 @@ msgstr "重置字体大小到默认值"
 msgid ""
 "Reset system configuration to default settings. The system  will restart to "
 "complete this operation. You will be required to reset your password."
+msgstr ""
+
+msgid ""
+"Reset the master key encryption used by this pool.  Invalidates the current "
+"encryption key, recovery key, and passphrase  for the pool. <br /> <br /> "
+"Clicking <b>RESET ENCRYPTION</b> generates a new encryption key and  "
+"prompts to download a backup of the new key."
 msgstr ""
 
 msgid "Resetting system configuration to default settings. The system will restart."
@@ -6980,6 +6973,9 @@ msgstr ""
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
+msgstr ""
+
+msgid "Revision"
 msgstr ""
 
 msgid "Rollback"
@@ -7706,11 +7702,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select to automatically set the contents of the share to the <i>webdav</i> "
-"user and group."
-msgstr ""
-
-msgid ""
 "Select when the command or script runs:<br>     <i>Pre Init</i> is early in "
 "the boot process, after mounting     filesystems and starting "
 "networking.<br> <i>Post Init</i> is at the     end of the boot process, "
@@ -7734,6 +7725,9 @@ msgid "Send Email Status Updates"
 msgstr "状态更新时发送邮件"
 
 msgid "Send Test Mail"
+msgstr ""
+
+msgid "Send dataset properties along with snapshots."
 msgstr ""
 
 msgid ""
@@ -8664,7 +8658,7 @@ msgid "Size for this zvol"
 msgstr "zvol容量"
 
 msgid ""
-"Skip automatic detection of the Endpoint URL region. Set this when "
+"Skip automatic detection of the Endpoint URL region. Set this  when "
 "configuring a custom Endpoint URL."
 msgstr ""
 
@@ -8741,9 +8735,6 @@ msgstr ""
 
 msgid "Sparse"
 msgstr "备用"
-
-msgid "Specify Authenticator to be used"
-msgstr ""
 
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
@@ -8897,16 +8888,13 @@ msgstr "发起成功。 "
 msgid "Successfully Upgraded "
 msgstr "升级成功 "
 
-msgid "Successfully deleted recovery key for "
-msgstr "成功删除了恢复密钥用于 "
-
 msgid "Successfully detached pool "
 msgstr "成功分离存储池 "
 
 msgid "Successfully exported/disconnected '"
 msgstr "成功导出/断开'"
 
-msgid "Successfully re-keyed pool "
+msgid "Successfully reset encryption for pool: "
 msgstr ""
 
 msgid "Successfully updated."
@@ -9086,9 +9074,6 @@ msgid "Team"
 msgstr ""
 
 msgid "Team Drive ID"
-msgstr ""
-
-msgid "Temp tooltip"
 msgstr ""
 
 msgid "Template"
@@ -9277,7 +9262,7 @@ msgstr ""
 "一个最短<i>2048</i>位的密钥是被推荐的。"
 
 msgid ""
-"The number of entries the netdata daemon keeps in memory for each chart "
+"The number of entries the Netdata daemon keeps in memory for each chart "
 "dimension. Default is 86400."
 msgstr ""
 
@@ -9299,6 +9284,21 @@ msgstr ""
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
 "computer."
+msgstr ""
+
+msgid ""
+"The recovery key is an additional key file that  can be used to decrypt the "
+"pool. <br /> <br />  Entering the administrator password and clicking "
+"<b>ADD RECOVERY KEY</b>  generates a single recovery key file and downloads "
+"it to the client  system. Store the recovery key file in a secure location! "
+"Adding a new  recovery key invalidates any previous recovery key files for "
+"this pool.  <br /> <br />To deactivate the recovery key for this pool, "
+"click  <b>INVALIDATE EXISTING KEY</b>."
+msgstr ""
+
+msgid ""
+"The recovery key is used to decrypt  the pool. Store the key file in a "
+"secure location!"
 msgstr ""
 
 msgid "The search base where group objects can be found in the LDAP server."
@@ -9400,6 +9400,11 @@ msgstr ""
 msgid "Third DNS server."
 msgstr ""
 
+msgid ""
+"Third-party Cloud service providers. Choose a provider  to configure "
+"connection credentials."
+msgstr ""
+
 msgid "This Controller"
 msgstr ""
 
@@ -9415,15 +9420,6 @@ msgid ""
 "This field remains empty until a valid <b>Username</b> and <b>Password</b> "
 "is entered. Choose the category that best describes the bug or feature "
 "being reported."
-msgstr ""
-
-msgid ""
-"This is an additional key file that can be used  to unlock the pool instead "
-"of the passphrase or encryption key file. <br /> <br />  Entering the "
-"administrator password and clicking <b>ADD RECOVERY KEY</b>  generates a "
-"single recovery key file and downloads it to the local system. Store the "
-"recovery key file in a secure location!<br />  Adding a new recovery key "
-"invalidates any previously downloaded  recovery key file for this pool."
 msgstr ""
 
 msgid "This is the FreeBSD device name for the disk."
@@ -9483,15 +9479,15 @@ msgstr ""
 msgid "To delete the <b>"
 msgstr ""
 
+msgid "To delete the <i>"
+msgstr ""
+
 msgid ""
-"Token created with <a "
+"Token created with  <a "
 "href=\"https://developers.google.com/drive/api/v3/about-auth\" "
-"target=\"_blank\">Google Drive</a>. Access Tokens expire periodically and "
+"target=\"_blank\">Google Drive</a>. Access Tokens expire periodically and  "
 "must be refreshed."
 msgstr ""
-"Token created with <a "
-"href=\"https://developers.google.com/drive/api/v3/about-auth\" "
-"target=\"_blank\">Google Drive</a>. 访问令牌会定期失效并需要被更新。"
 
 msgid ""
 "Top level of the LDAP directory tree to be used when searching for "
@@ -9517,6 +9513,9 @@ msgid "Transfers"
 msgstr "传输"
 
 msgid "Transport"
+msgstr ""
+
+msgid "Traverse"
 msgstr ""
 
 msgid "TrueNAS Controller"
@@ -9549,6 +9548,11 @@ msgstr ""
 msgid "UPS Mode"
 msgstr "UPS 模式"
 
+msgid ""
+"URI of the ACME Server Directory. Choose a preconfigured URI or enter a "
+"custom URI."
+msgstr ""
+
 msgid "URL"
 msgstr "URL"
 
@@ -9568,6 +9572,14 @@ msgstr "未加密存储池可以被直接导入。"
 
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr "独特的LUN ID。The default is generated from the MAC address of the system."
+
+msgid ""
+"Unique drive identifier. Log in to the  <a "
+"href=\"https://onedrive.live.com\" target=\"_blank\">OneDrive account</a>  "
+"and copy the string that appears in the browser address bar after  "
+"<i>cid=</i>. Example: "
+"https://onedrive.live.com/?id=root&cid=<i>12A34567B89C10D1</i>."
+msgstr ""
 
 msgid "Unix Shares (NFS)"
 msgstr ""
@@ -9687,19 +9699,16 @@ msgstr ""
 msgid "Upload Config"
 msgstr "上传设置"
 
+msgid ""
+"Upload a Google  <a "
+"href=\"https://rclone.org/googlecloudstorage/#service-account-support\"  "
+"target=\"_blank\">Service Account credential file</a>. The file is  created "
+"with the  <a href=\"https://console.cloud.google.com/apis/credentials\"  "
+"target=\"_blank\">Google Cloud Platform Console</a>."
+msgstr ""
+
 msgid "Upload an installer image file"
 msgstr "上传安装镜像文件"
-
-msgid ""
-"Upload the Service Account JSON credential file. This <a "
-"href=\"https://cloud.google.com/storage/docs/authentication#generating-a-"
-"private-key\" target=\"_blank\">file must be generated</a> with the Google "
-"Cloud Platform Console and uploaded from the local system."
-msgstr ""
-"上传服务账户的JSON身份文件。This <a "
-"href=\"https://cloud.google.com/storage/docs/authentication#generating-a-"
-"private-key\" target=\"_blank\">file must be generated</a> with the Google "
-"Cloud Platform Console and uploaded from the local system."
 
 msgid ""
 "Upsmon will wait up to this many seconds in master mode for the slaves to "
@@ -9798,7 +9807,7 @@ msgstr ""
 msgid "User Distinguished Name to use for authentication."
 msgstr ""
 
-msgid "User Guide (pdf)"
+msgid "User Guide"
 msgstr ""
 
 msgid "User ID"
@@ -9835,11 +9844,6 @@ msgstr ""
 msgid "Username"
 msgstr "用户名"
 
-msgid ""
-"Username for a <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
-"account."
-msgstr ""
-
 msgid "Username for this service."
 msgstr ""
 
@@ -9863,9 +9867,6 @@ msgstr "用户"
 
 msgid "Users & Groups"
 msgstr "用户与群组"
-
-msgid "VERSION"
-msgstr ""
 
 msgid "VFS Objects"
 msgstr "VFS 对像"
@@ -9938,9 +9939,6 @@ msgstr "查看"
 msgid "View Enclosure"
 msgstr ""
 
-msgid "View the contents of the Service Account JSON file."
-msgstr ""
-
 msgid "Virtual CPUs"
 msgstr "虚拟处理器"
 
@@ -9965,6 +9963,9 @@ msgstr "虚拟化"
 msgid "Vlan Tag"
 msgstr "VLAN 标签"
 
+msgid "WARNING"
+msgstr ""
+
 msgid "WARNING: "
 msgstr ""
 
@@ -9976,8 +9977,8 @@ msgstr "警告： Adding data vdevs with different numbers of disks is not recom
 msgid "WARNING: Based on the pool topology, "
 msgstr ""
 
-msgid "WARNING: Exporting/disconnecting '"
-msgstr "警告：导出/断开”"
+msgid "WARNING: Exporting/disconnecting pool <i>"
+msgstr ""
 
 msgid "Wait to start VM until VNC client connects."
 msgstr ""
@@ -10068,12 +10069,6 @@ msgid ""
 "they are a member of the <i>wheel</i> group."
 msgstr ""
 
-msgid ""
-"When set, deleted files are moved to a hidden <b>.recycle</b> in the root "
-"folder of the share. The <b>.recycle</b> directory can be deleted to "
-"reclaim space and is automatically recreated when a file is deleted."
-msgstr ""
-
 msgid "When set, report CPU usage in percent instead of jiffies."
 msgstr ""
 
@@ -10136,13 +10131,10 @@ msgid "Xen initiator compat mode"
 msgstr "Xen Initiator 兼容模式"
 
 msgid ""
-"Yandex <a "
+"Yandex  <a "
 "href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
-"\" target=\"_blank\">Access Token</a>."
+"\"  target=\"_blank\">Access Token</a>."
 msgstr ""
-"Yandex <a "
-"href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
-"\" target=\"_blank\">访问令牌</a>."
 
 msgid "Yes"
 msgstr "是"
@@ -10328,9 +10320,6 @@ msgid "hostid"
 msgstr ""
 
 msgid "hostid_strict_check"
-msgstr ""
-
-msgid "identifier"
 msgstr ""
 
 msgid "interfaces"

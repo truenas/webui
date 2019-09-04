@@ -427,10 +427,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     flex: 1 1 auto;
   }
 
-  .dynamic-field tooltip{
-    @include variable(display, --tooltip, $tooltip);
-  }
-
   // System wide hover effects
   .mat-select-panel .mat-option:focus,
   .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple){
@@ -1272,7 +1268,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   app-replication-wizard #adjustme {
-    top: -70px;
+    //top: -70px;
   }
 
   jail-wizard .tooltiptext {
@@ -1381,9 +1377,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-createpassphrase-form #changekey-instructions,
   app-createpassphrase-form #createkey-instructions,
   app-addkey-form #addkey-instructions,
-  app-volumeunlock-form #rekey-instructions {
+  app-volumeunlock-form #rekey-instructions,
+  app-ssh-keypairs-form #key_instructions {
     font-size: 0.9rem;
     margin-bottom: 1rem;
+  }
+
+  app-createpassphrase-form, app-addkey-form {
+    #cust_button_Cancel {
+      background-color: var(--accent);
+      color: black !important;
+    }
   }
 
   #recovery_key span {
@@ -1404,6 +1408,39 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-interfaces-list #timeout-field {
     width: 50px;
     text-align: center;
+  }
+
+  // Reset Encryption form
+  #encrypt-headline p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: .7rem;
+
+    i {
+      margin-right: 5px;
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  #encryptionkey-passphrase-instructions p,
+  #set_recoverykey-instructions p {
+    margin-top: 1rem;
+    font-size: .9rem;
+  }
+
+  #encryptionkey-passphrase {
+    max-width: 640px;
+  }
+
+  // end of reset encryption form
+
+  confirm-dialog div.message-content p {
+    margin-bottom: 10px;
+  }
+
+  app-eula p {
+    margin-bottom: 15px;
   }
 
  } // end of ix theme

@@ -16,7 +16,7 @@
 }
 
 #cpu-cores-wrapper{
-  /*border-top:solid 1px var(--bg1);*/
+  padding-top: 3%;
 }
 
 #cpu-load-wrapper{
@@ -93,7 +93,8 @@
 }
 
 .bar-chart{
-  margin-bottom:32px;
+  margin-bottom:8px;
+  padding-left: 32px;
 }
 
 h1.memory-used{

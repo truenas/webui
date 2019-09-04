@@ -100,7 +100,8 @@ export const helptext_system_support = {
 
   update_license: {
     open_dialog_button: T('Update License'),
-    user_guide_button: T('User Guide (pdf)'),
+    user_guide_button: T('User Guide'),
+    eula_button: T('EULA'),
     dialog_title: T('Update License'),
     license_placeholder: T('License'),
     save_button: T('Save License'),
