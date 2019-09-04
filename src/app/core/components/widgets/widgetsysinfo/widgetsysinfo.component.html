@@ -31,7 +31,7 @@
             <div class="content-left" fxFlex="60" fxLayout="column" fxLayoutAlign="center center">
 
               <div class="product-image {{!isFN ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
-                  <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image">
+                <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
                     <mat-icon *ngIf="isFN" class="generic" svgIcon="freenas_logomark"></mat-icon>
                   </ng-template>
