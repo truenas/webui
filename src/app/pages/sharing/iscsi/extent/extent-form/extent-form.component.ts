@@ -233,6 +233,9 @@ export class ExtentFormComponent {
         this.avail_threshold_field.isHidden = false;
       } else {
         this.avail_threshold_field.isHidden = true;
+        if (this.pk && value != undefined && _.find(extent_disk_field.options, {value: value}) === undefined) {
+          extent_disk_field.options.push({label: value, value: value});
+        }
       }
     });
 
