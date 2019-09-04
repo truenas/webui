@@ -1,4 +1,4 @@
-<div class="widget" ngClass.xs="double-height xs">
+<div class="widget" ngClass.xs="double-height xs {{!product_image ? 'generic-hardware' : 'ix-hardware'}}" >
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
@@ -22,7 +22,7 @@
           <!-- Summary Section -->
           <div fxFlex.xs="35" fxFlex="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
 
-            <div class="platform-logo-wrapper" fxFlex="20" >
+            <div class="platform-logo-wrapper" fxFlex="20">
                 <img *ngIf="isFN" class="platform-logo" src="assets/images/light-logo-full.svg">
                 <img *ngIf="!isFN" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">
                 <!--<p class="subtitle">System Information</p>-->

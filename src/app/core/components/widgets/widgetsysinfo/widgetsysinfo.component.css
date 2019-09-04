@@ -349,3 +349,17 @@ img.platform-logo{
 .xs.widget img#Z20{
   margin: 14% 0 18px;
 }
+
+/* FIX Generic hardware icon */
+.xs.widget.generic-hardware .platform-logo-wrapper{
+  display:none;
+}
+
+.xs.widget.generic-hardware .product-image.freenas{
+  margin-top:50%;
+}
+.xs.widget.generic-hardware .product-image.freenas .certified-badge{
+  bottom:-40%;
+  height:25%;
+}
+
