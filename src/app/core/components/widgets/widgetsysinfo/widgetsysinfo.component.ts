@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, AfterViewInit, Input, ViewChild, Renderer
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { WebSocketService} from 'app/services/ws.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';

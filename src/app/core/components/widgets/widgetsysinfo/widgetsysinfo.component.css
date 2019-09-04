@@ -292,3 +292,8 @@ img.platform-logo{
   width:100%;
   max-height:320px;
 }
+
+#update-in-progress {
+  font-weight: 500;
+  margin-bottom: 40px;
+}
