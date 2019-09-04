@@ -150,8 +150,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(){
-    this.statsEvents.complete();
-    this.statsEventsTC.complete();
+    // unsubscribe from middleware
+    this.statsEvents.unsubscribe();
+    this.statsEventsTC.unsubscribe();
+
+    // close out subscribers
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
 
@@ -304,20 +307,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if(!this.dashState){
         this.dashState = this.availableWidgets;
       }
-
-      //this.generateRenderedList();
     }
-  }
-
-  generateRenderedList(){
-    /*this.renderedWidgets = this.availableWidgets.forEach((item, index) => { 
-      if(item.identifier){
-        let spl = item.identifier.split(',');
-        let key = spl[0];
-        let value = spl[1];
-      }
-      
-    });*/
   }
 
   generateDefaultConfig(){

@@ -91,7 +91,6 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
   }
 
   launchWidget(widget){
-    //console.log(widget);
     this.launcher.emit(widget);
   }
 

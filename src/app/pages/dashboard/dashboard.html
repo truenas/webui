@@ -1,10 +1,4 @@
-<div> <!-- Important wrapper div. Removing this will break flex layout -->
-  <!--<mat-spinner 
-    [diameter]='40' 
-    id="dashboard-spinner"
-    *ngIf="showSpinner"
-    >
-    </mat-spinner> -->
+<div> 
   
   <div class="widgets-wrapper"
        fxLayout="row wrap"
@@ -17,8 +11,6 @@
         <ng-container  *ngFor="let widget of dashState">
           <ng-container  *ngIf="widget.rendered">
             <ng-container [ngSwitch]="widget.name.toLowerCase()">
-  
-              <!--<widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
               
               <widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
               <widget-sysinfo *ngSwitchCase="'system information(standby)'" id="passive" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
@@ -61,14 +53,8 @@
             <ng-container  *ngFor="let widget of activeMobileWidget">
               <ng-container [ngSwitch]="widget.name.toLowerCase()">
         
-                <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
                 <widget-sysinfo (back)="onMobileBack()" *ngSwitchCase="'system information'" id="active" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
                 <widget-sysinfo (back)="onMobileBack()" *ngSwitchCase="'system information(standby)'" id="passive" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
-  
-              <!--
-                <widget-sysinfo id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
-                <widget-sysinfo id="passive" *ngIf="isHA" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
-              -->
       
                 <widget-cpu (back)="onMobileBack()" *ngSwitchCase="'cpu'" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
         

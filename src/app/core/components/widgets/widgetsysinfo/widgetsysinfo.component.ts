@@ -76,7 +76,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     } else {
 
       this.ws.call('system.info').subscribe((res) => {
-        console.log(res);
         const evt = {name: 'SysInfo', data:res};
         this.processSysInfo(evt);
       });

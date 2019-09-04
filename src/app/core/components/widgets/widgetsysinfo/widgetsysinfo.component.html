@@ -2,6 +2,7 @@
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
+
         <mat-toolbar-row class="view-overview">
           <!-- Mobile Only: Exit Widget -->
           <button fxHide.gt-xs class="mat-card-title-text primary-nav" mat-icon-button color="default" >
@@ -14,7 +15,6 @@
             </span>
           </span>
         </mat-toolbar-row>
-        <!--<mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>-->
 
         <div class="carousel">
           <div class="slide overview" fxFlex="100" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between">
@@ -25,7 +25,6 @@
             <div class="platform-logo-wrapper" fxFlex="20">
                 <img *ngIf="isFN" class="platform-logo" src="assets/images/light-logo-full.svg">
                 <img *ngIf="!isFN" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">
-                <!--<p class="subtitle">System Information</p>-->
               </div>
 
             <div class="content-left" fxFlex="60" fxLayout="column" fxLayoutAlign="center center">
@@ -42,7 +41,6 @@
 
             <div fxHide.xs fxFlex="18" class="update-action">
               <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-              <!--<button *ngIf="isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="failoverInit()">{{failoverBtnLabel | translate}}</button>-->
               <simple-failover-button *ngIf="isPassive"></simple-failover-button>
             </div>
   
@@ -51,7 +49,8 @@
           <!-- Details Section -->
           <div class="right" fxFlex.xs="65" fxFlex.gt-xs="60" fxLayout="column">
             <div  fxFlex *ngIf="data" class="data-container">
-              <div  class="list-subheader">{{isPassive ? 'System Information (Standby)' : 'System Information'}}</div>
+              <div fxHide.gt-xs class="list-subheader">{{isPassive ? 'System Information (Standby)' : 'System Information'}}</div>
+              <div fxHide.xs class="list-subheader">Overview</div>
           
               <mat-list>
                 <mat-list-item><strong>{{'Platform' | translate}}:</strong> &nbsp;&nbsp;{{data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic'}}</mat-list-item>
@@ -69,7 +68,6 @@
                 </mat-list-item>
               
                 <mat-list-item><strong>{{"HostName" | translate}}:</strong> &nbsp;&nbsp;{{data.hostname}}</mat-list-item>
-                <!--<mat-list-item><strong>{{"TimeZone" | translate}}:</strong> &nbsp;&nbsp;{{data.timezone}}</mat-list-item>-->
                 <mat-list-item><strong>{{"Uptime" | translate}}:</strong> &nbsp;&nbsp;{{data.uptime}}</mat-list-item>
   
               </mat-list>
