@@ -32,8 +32,20 @@
 
 
         <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="column">
-          <h1 fxFlex="100" class="memory-used">{{memData ? memData.data[0][1] : 'Loading...'}}<span class="memory-used-units">GiB</span></h1> 
-          <div fxFlex="100" class="memory-used-caption">free of {{memData ? memData.max : 'unknown'}}GiB total</div>
+         
+          <mat-spinner [diameter]="40" *ngIf="!memData" style="margin: 0 auto;"></mat-spinner>
+        
+          <h1 fxFlex="100" class="memory-used">
+            <span *ngIf="memData">
+              <span>{{memData.data[0][1]}}</span>
+              <span class="memory-used-units">GiB</span>
+            </span>
+          </h1> 
+          <div fxFlex="100" class="memory-used-caption">
+            <span *ngIf="memData">
+              free of {{memData.max}}GiB total
+            </span>
+          </div>
 
           <!-- Chart --> 
           <div fxFlex="100"  fxFlex.xs="80" id="memory-usage-chart" class="bar-chart"></div>
@@ -66,7 +78,7 @@
           <ng-template #noLegend>
             <div id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
               <div fxFlex="100" class="legend-item chart-label">
-                <span class="label">CPU Usage/Temperature per Core</span>
+                <span class="label"></span>
               </div>
             </div>
           </ng-template>

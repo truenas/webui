@@ -52,6 +52,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     }
   }
 
+  public isReady: boolean = false;
   public usage: any;
   public title:string = T("Memory");
   public subtitle:string = T("% of all cores");
@@ -198,6 +199,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
         y:{ show: false }
       },
     }
+
+    this.isReady = true;
 
     this.chart = c3.generate(conf);
       
