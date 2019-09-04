@@ -18,6 +18,6 @@ export default {
     legacyUIWarning: `${globalHelptext.legacyUIWarning}`,
     updateRunning_dialog_title: T('Update in Progress'),
     updateRunning_dialog_message: T('A system update is in progress. It may have been \
- launched in another window, via an API, or by an external source such as TrueCommand. \
- <b>This system may restart soon.</b>')
+ started in another window or by an external source like TrueCommand. \
+ <b>This system will restart when the update is complete.</b>')
 }
