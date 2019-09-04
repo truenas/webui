@@ -41,7 +41,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public isFooterConsoleOpen: boolean;
 
   // For widgetsysinfo
-  public isHA: boolean = false;
+  public isHA: boolean; // = false;
   public isFN: boolean = window.localStorage['is_freenas'];
 
   // For CPU widget
@@ -310,12 +310,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   generateDefaultConfig(){
     let conf: DashConfigItem[] = [
-      {name:'System Information', rendered: false },
+      {name:'System Information', rendered: true },
     ];
 
-    /*if(this.isHA){
-      conf.push({name:'System Information', identifier: 'passive,true', rendered: true })
-    }*/
+    if(this.isHA){
+      conf.push({name:'System Information(Standby)', identifier: 'passive,true', rendered: true })
+    }
 
     conf.push({name:'CPU', rendered: false });
     conf.push({name:'Memory', rendered: false });

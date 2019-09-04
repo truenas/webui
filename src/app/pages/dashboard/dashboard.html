@@ -12,17 +12,17 @@
        fxLayoutAlign.gt-sm="space-around center">
 
     <!-- SORTABLE WIDGETS -->
-    <ng-container  *ngIf="screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData">
+    <ng-container  *ngIf="screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData && isHA !== undefined">
       <ng-container  *ngIf="dashState">
         <ng-container  *ngFor="let widget of dashState">
           <ng-container  *ngIf="widget.rendered">
             <ng-container [ngSwitch]="widget.name.toLowerCase()">
   
-              <widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>
-              <!--
-                <widget-sysinfo id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
-                <widget-sysinfo id="passive" *ngIf="isHA" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
-              -->
+              <!--<widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
+              
+              <widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
+              <widget-sysinfo *ngSwitchCase="'system information(standby)'" id="passive" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
+              
 
               <widget-cpu *ngSwitchCase="'cpu'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
   
@@ -57,11 +57,13 @@
         <widget-controller (launcher)="onMobileLaunch($event)" *ngIf="screenType == 'Mobile' && dashState && dashState.length > 0;"  [rendered]="true" [dashState]="dashState" [widgetSize]="medium"   configurable="false"></widget-controller>
   
         <div class="mobile-widget-container">
-          <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvents && pools && nics && volumeData">
+          <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvents && pools && nics && volumeData && isHA !== undefined">
             <ng-container  *ngFor="let widget of activeMobileWidget">
               <ng-container [ngSwitch]="widget.name.toLowerCase()">
         
                 <!--<widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium"></widget-sysinfo>-->
+                <widget-sysinfo *ngSwitchCase="'system information'" id="active" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
+                <widget-sysinfo *ngSwitchCase="'system information(standby)'" id="passive" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
   
               <!--
                 <widget-sysinfo id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>

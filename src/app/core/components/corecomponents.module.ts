@@ -32,6 +32,8 @@ import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/
 import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
+import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
+
 
 import { TranslateModule } from '@ngx-translate/core';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
@@ -87,7 +89,9 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     WidgetPoolComponent,
     TextLimiterDirective,
     TextLimiterTooltipComponent,
-    WidgetControllerComponent
+    WidgetControllerComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -122,7 +126,9 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     WidgetNotesCollectionComponent,
     TextLimiterTooltipComponent,
     WidgetPoolComponent,
-    WidgetControllerComponent
+    WidgetControllerComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   entryComponents:[
     ContextMenuComponent,
@@ -150,7 +156,9 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     WidgetNotesCollectionComponent,
     WidgetPoolComponent,
     TextLimiterTooltipComponent,
-    WidgetControllerComponent
+    WidgetControllerComponent,
+    SimpleFailoverBtnComponent,
+    SimpleFailoverBtnDialog,
   ],
   providers:[
     StorageService
