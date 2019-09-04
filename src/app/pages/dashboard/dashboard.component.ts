@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // If leaving .xs screen then reset mobile position
       if(st == 'Desktop' && this.screenType == 'Mobile'){
-        this.activeMobileWidget = [];
+        this.onMobileBack();
       }
 
       this.screenType = st;
