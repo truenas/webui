@@ -283,7 +283,7 @@ img.platform-logo{
   font-weight:500;
 }
 
-.left.passive .product-image {
+.left.passive .product-image img {
   opacity: 0.5;
 }
 
@@ -313,17 +313,35 @@ img.platform-logo{
 .xs.widget .product-image.truenas img,
 .xs.widget .product-image.ix-logo img {
   width:auto;
-  height:20%;
-  margin-top:33%;
+  height:28%;
+  /*margin-top:20%;*/
+  margin: 21% 0 8px;
 }
 
 .xs.widget img.platform-logo{
     width: auto;
     height: 48px;
-    display:none;
+    /*display:none;*/
 }
 
 .xs.widget .view-overview .mat-card-title-text {
   color: var(--primary-txt);
   margin-left: unset !important;
+}
+
+.xs.widget .ha-node-status{
+  font-size:125%;
+}
+
+.xs.widget .slide.overview {
+    overflow-x: hidden;
+}
+
+.xs.widget .mat-card {
+    border-radius: 0;
+}
+
+.xs.widget .mobile-update-action {
+  padding:32px 0;
+  text-align:center;
 }

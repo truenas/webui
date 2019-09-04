@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Input, Inject, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MaterialModule } from 'app/appMaterial.module';
 import { Router } from '@angular/router';
@@ -10,11 +10,12 @@ interface DialogData {
 
 @Component({
   selector: 'simple-failover-button',
-  template: `<button mat-button (click)="openDialog()">INITIATE FAILOVER</button>`,
+  template: `<button mat-button [color]="color" (click)="openDialog()">INITIATE FAILOVER</button>`,
 })
 
 export class SimpleFailoverBtnComponent implements OnDestroy {
 
+  @Input() color:string = 'default';
   constructor(
     private dialog: MatDialog,
     protected matDialog: MatDialog,

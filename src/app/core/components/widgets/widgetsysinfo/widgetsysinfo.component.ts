@@ -32,7 +32,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public data: any;
   public memory:string;
   public imagePath:string = "assets/images/";
-  //public cardBg:string = "";
+  public ready:boolean = false;
   public product_image = '';
   public certified = false;
   public failoverBtnLabel: string = "FAILOVER TO STANDBY"
@@ -136,6 +136,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.getTrueNASImage(evt.data.system_product);
         this.isFN = false;
       }    
+
+      this.ready = true;
 
   }
 

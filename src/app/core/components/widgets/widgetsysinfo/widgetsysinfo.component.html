@@ -8,9 +8,9 @@
             <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
           </button>
 
-          <span class="mat-card-title-text">
+          <span fxHide.xs class="mat-card-title-text">
             <span class="card-title-text">
-              &nbsp;System Information&nbsp;<span fxHide.xs *ngIf="isPassive" class="passive">(Standby)</span>
+              &nbsp;System Information&nbsp;<span *ngIf="isPassive" class="passive">(Standby)</span>
             </span>
           </span>
         </mat-toolbar-row>
@@ -49,9 +49,9 @@
           </div>
   
           <!-- Details Section -->
-          <div class="right" fxFlex.xs="65" fxFlex.gt-xs="60">
-            <div  *ngIf="data" class="data-container">
-              <div  class="list-subheader">Overview</div>
+          <div class="right" fxFlex.xs="65" fxFlex.gt-xs="60" fxLayout="column">
+            <div  fxFlex *ngIf="data" class="data-container">
+              <div  class="list-subheader">{{isPassive ? 'System Information (Standby)' : 'System Information'}}</div>
           
               <mat-list>
                 <mat-list-item><strong>{{'Platform' | translate}}:</strong> &nbsp;&nbsp;{{data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic'}}</mat-list-item>
@@ -75,13 +75,14 @@
               </mat-list>
               
             </div> <!-- END datacontainer -->
+
+            <div fxHide.gt-xs fxFlex class="mobile-update-action update-action" *ngIf="ready">
+              <button *ngIf="!isPassive" class="" mat-button color="primary" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+              <simple-failover-button color="primary" *ngIf="isPassive"></simple-failover-button>
+            </div>
+  
           </div> <!-- End right -->
 
-          <div fxHide.gt-xs fxFlex class="update-action">
-            <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-            <simple-failover-button *ngIf="isPassive"></simple-failover-button>
-          </div>
-  
           </div> <!-- end slide -->
         </div> <!-- end carousel -->
       </mat-card-content>

@@ -67,6 +67,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
+
+      // Eliminate top level scrolling 
+      let wrapper = (<any>document).querySelector('.fn-maincontent');
+      wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
       
     });
 
