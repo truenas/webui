@@ -89,6 +89,13 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
     },
     {
       type: 'list',

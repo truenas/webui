@@ -93,6 +93,13 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
       disabled: false,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
     },
     {
       type: 'list',
