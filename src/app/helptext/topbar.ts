@@ -19,8 +19,8 @@ export default {
     updateRunning_dialog : {
         title: T('Update in Progress'),
         message: T('A system update is in progress. It might have been \
- launched in another window, via an API, or by an external source such as TrueCommand. \
- <b>This system will restart soon.</b>')
+ launched in another window or by an external source like TrueCommand. \
+ <b>This system will restart when the update completes.</b>')
     },
 
     mat_tooltips : {

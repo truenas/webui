@@ -123,10 +123,10 @@
     </div>
   </div>
 </mat-card>
-<mat-card id="update-in-progress-card" *ngIf="isUpdateRunning">
+<mat-card id="update-in-progress-card" *ngIf="!isUpdateRunning">
   <div class="row">
     <div class="col-md-12">
-      <p><i class="material-icons">warning</i><span id="update-running-msg">{{"An update is currently in progress. This system may restart soon." | translate}}</span></p>
+      <p><i class="material-icons">warning</i><span id="update-running-msg">{{"A system update is in progress. This system will restart when the update completes." | translate}}</span></p>
     </div>
   </div>
 </mat-card>
