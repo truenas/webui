@@ -3,12 +3,7 @@
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
 
-        <mat-toolbar-row class="view-overview">
-          <!-- Mobile Only: Exit Widget -->
-          <button fxHide.gt-xs class="mat-card-title-text primary-nav" mat-icon-button color="default" >
-            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
-          </button>
-
+        <mat-toolbar-row fxHide.xs class="view-overview">
           <span fxHide.xs class="mat-card-title-text">
             <span class="card-title-text">
               &nbsp;System Information&nbsp;<span *ngIf="isPassive" class="passive">(Standby)</span>
@@ -21,6 +16,11 @@
   
           <!-- Summary Section -->
           <div fxFlex.xs="250px" fxFlex="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
+
+            <!-- Mobile Only: Exit Widget -->
+            <button fxHide.gt-xs class="mat-card-title-text primary-nav" mat-icon-button color="default" >
+              <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
+            </button>
 
             <div class="platform-logo-wrapper" fxFlex="20">
                 <img *ngIf="isFN" class="platform-logo" src="assets/images/light-logo-full.svg">

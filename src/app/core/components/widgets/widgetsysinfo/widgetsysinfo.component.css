@@ -336,3 +336,11 @@ img.platform-logo{
   min-height:275px;
 }
 
+.primary-nav.mat-card-title-text{
+  position:absolute;
+  top:4px;
+  left:16px;
+  z-index:2;
+}
+
+
