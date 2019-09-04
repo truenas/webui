@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { helptext_system_update } from 'app/helptext/system/update';
 
 @Component({
   selector: 'app-update',
@@ -56,6 +57,7 @@ export class UpdateComponent implements OnInit {
   public busy2: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
+  sysUpdateMessage = ('A system update is in progress. ') + helptext_system_update.sysUpdateMessage;
   public updatecheck_tooltip = T('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
