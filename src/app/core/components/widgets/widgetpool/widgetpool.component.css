@@ -290,8 +290,7 @@ span.capitalize{
   width:100%;
   height: calc(100vh - 96px);
   position: absolute;
-  /*top: 88px;
-  z-index: 2;*/
+  min-height:700px; 
 }
 
 .xs.widget .slide.overview .left{

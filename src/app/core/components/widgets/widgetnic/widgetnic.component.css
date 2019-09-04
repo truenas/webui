@@ -244,8 +244,7 @@
   width: 100%;
   height: calc(100vh - 96px);
   position: absolute;
-  /*top: 88px;
-  z-index: 2;*/
+  min-height:600px; 
 }
 
 .xs.widget .overview .right .list-subheader{

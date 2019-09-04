@@ -132,6 +132,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  onMobileResize(evt){
+    if(this.screenType == 'Desktop'){ return; }
+    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
+    let viewport = styler(vp);
+    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    let carousel = styler(c);
+
+    const startX = viewport.get('x');
+    const endX = this.activeMobileWidget.length > 0 ? evt.target.innerWidth * -1 : 0;
+
+    if(startX !== endX){
+      carousel.set('x', endX);
+    }
+  }
+
   ngOnInit(){
 
     this.init();

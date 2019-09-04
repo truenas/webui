@@ -46,7 +46,7 @@
         <!-- Carousel -->
         <div id="" class="carousel" #carousel [ngClass]="{'lagg': nicState.lagg_ports}" >
           <div fxFlex="100" class="slide overview" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between">
-            <div class="left" fxFlex="40" fxFlex.xs="35">
+            <div class="left" fxFlex="40" fxFlex.xs="250px">
               <div class="overlay" fxFlex="100" fxLayout="column" fxLayoutAlign="space-around center">
 
               <div fxFlex="66" class="left-content">
@@ -77,7 +77,7 @@
               </div>
             </div>
 
-            <div class="right" fxFlex="60" fxFlex.xs="65" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="right" fxFlex="60" fxFlex.xs fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100">
                 <div class="list-subheader">{{currentSlideName}}</div>
                 <mat-list>

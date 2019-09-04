@@ -72,7 +72,7 @@
   
               </mat-list>
 
-              <div class="mobile-update-action update-action" *ngIf="ready">
+              <div fxHide.gt-xs class="mobile-update-action update-action" *ngIf="ready">
                 <button *ngIf="!isPassive" class="" mat-button color="primary" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
                 <simple-failover-button color="primary" *ngIf="isPassive"></simple-failover-button>
               </div>
