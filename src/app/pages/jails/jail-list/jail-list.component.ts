@@ -72,6 +72,18 @@ export class JailListComponent implements OnInit {
               }
               this.updateMultiAction(selected);
               this.loader.close();
+              let message = "";
+              for (let i = 0; i < res.result.length; i++) {
+                if (res.result[i].error != null) {
+                  message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
+                }
+              }
+              if (message === "") {
+                this.snackBar.open(T("Jails started."), 'close', { duration: 5000 });
+              } else {
+                message = '<ul>' + message + '</ul>';
+                this.dialogService.errorReport(T('Jails failed to start'), message);
+              }
             },
             (res) => {
               this.loader.close();
