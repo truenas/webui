@@ -32,8 +32,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public data: any;
   public memory:string;
   public imagePath:string = "assets/images/";
-  //public cardBg:string = "";
+  public ready:boolean = false;
   public product_image = '';
+  public product_model = '';
   public certified = false;
   public failoverBtnLabel: string = "FAILOVER TO STANDBY"
   public updateAvailable:boolean = false;
@@ -46,7 +47,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public loader:boolean = false;
   public is_freenas: string = window.localStorage['is_freenas'];
   public systemLogo: any;
-  public isFN: boolean = false;
+  public isFN: boolean = false; 
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService){
     super(translate);
@@ -109,6 +110,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   processSysInfo(evt:CoreEvent){
+      
       this.loader = false;
       this.data = evt.data;
 
@@ -137,6 +139,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.isFN = false;
       }    
 
+      this.ready = true;
+
   }
 
   formatMemory(physmem:number, units:string){
@@ -152,20 +156,28 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   getTrueNASImage(sys_product) {
     if (sys_product.includes('X10')) {
       this.product_image = '/servers/X10.png';
+      this.product_model = 'X10';
     } else if (sys_product.includes('X20')) {
       this.product_image = '/servers/X20.png';
+      this.product_model = 'X20';
     } else if (sys_product.includes('M40')) {
       this.product_image = '/servers/M40.png';
+      this.product_model = 'M40';
     }  else if (sys_product.includes('M50')) {
       this.product_image = '/servers/M50.png';
+      this.product_model = 'M50';
     } else if (sys_product.includes('Z20')) {
       this.product_image = '/servers/Z20.png';
+      this.product_model = 'Z20';
     } else if (sys_product.includes('M50')) {
       this.product_image = '/servers/M50.png';
+      this.product_model = 'M50';
     } else if (sys_product.includes('Z35')) {
       this.product_image = '/servers/Z35.png';
+      this.product_model = 'Z35';
     } else if (sys_product.includes('Z50')) {
       this.product_image = '/servers/Z50.png';
+      this.product_model = 'Z50';
     }
     else {
       this.product_image = 'ix-original.svg';

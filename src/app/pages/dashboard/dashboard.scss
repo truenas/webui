@@ -1,41 +1,33 @@
-// .dashboard-wrap,
-// .widgets-wrapper{
-//   display: flex;
-//   flex-direction: row;
-//   flex-wrap: wrap;
-//   justify-content: stretch;
-//   align-items: stretch;
-//   align-content: stretch;
-// }
-// .dashboard-item {
-//   flex-basis: 400px;
-//   -webkit-box-flex: 1;
-//   flex-grow: 1;
-// }
-// .mat-fab-bottom-right-1 {
-//   top: auto !important;
-//   right: 30px !important;
-//   bottom: 48px !important;
-//   left: auto !important;
-//   position: fixed !important;
-//   z-index: 1;
-// }
-// .dashboard-note-cardback {
-//   /*padding-left: -3%;*/
-//   width: 80%;
-// }
-
-// widget-sysinfo,
-// widget-netinfo,
-// widget-cpu-history,
-// widget-load-history,
-// widget-memory-history{
-//   max-width:928px;
-// }
-
 #dashboard-spinner {
   position: absolute;
   left: 48%;
   top: 58px;
   z-index: 10;
 }
+
+.mobile-viewport{
+  position:fixed; 
+  z-index:2;
+  width: 100vw;
+  height: 100vh;
+  overflow:hidden;
+  top:88px;
+}
+
+.mobile-viewport.hidden{
+  display:none;
+}
+
+.mobile-viewport .carousel{
+  width:200%;
+}
+
+.mobile-widget-container{
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  top:0;
+  left:100vw;
+  background-color:var(--bg2);
+}
+

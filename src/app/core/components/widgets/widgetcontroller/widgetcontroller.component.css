@@ -5,6 +5,7 @@
 
 .widget mat-card-content{
   width: 100%;
+  overflow-y:auto;
 }
 
 #cpu-cores-chart{
@@ -151,6 +152,18 @@
   z-index:1
 }*/
 
+.clickable {
+  cursor:pointer;
+}
+
+.next-slide{
+  position: absolute;
+  right: 0;
+}
+
+.bottom {
+}
+
 /* NARROW SCREENS */
 .xs.widget{
   width:100vw;
@@ -200,6 +213,7 @@
   margin:16px 0;
 }
 
+.widget .mobile .list-subheader,
 .xs.widget .mobile .list-subheader{
   font-weight:700;
   padding:8px 0px 16px 16px;
@@ -208,6 +222,7 @@
   color: var(--fg1);
 }
 
+.widget .mat-list-base .mat-list-item,
 .xs.widget .mat-list-base .mat-list-item{
   border-bottom:solid 1px rgba(0,0,0,0.1);
 }

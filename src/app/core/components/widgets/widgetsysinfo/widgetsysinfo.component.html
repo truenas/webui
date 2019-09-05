@@ -1,32 +1,36 @@
-<div class="widget" ngClass.xs="double-height xs">
+<div class="widget" ngClass.xs="double-height xs {{!product_image ? 'generic-hardware' : 'ix-hardware'}}" >
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
-        <mat-toolbar-row class="view-overview">
-          <span class="mat-card-title-text">
+
+        <mat-toolbar-row fxHide.xs class="view-overview">
+          <span fxHide.xs class="mat-card-title-text">
             <span class="card-title-text">
               &nbsp;System Information&nbsp;<span *ngIf="isPassive" class="passive">(Standby)</span>
             </span>
           </span>
         </mat-toolbar-row>
-        <!--<mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>-->
 
         <div class="carousel">
-          <div class="slide overview">
+          <div class="slide overview" fxFlex="100" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between">
   
           <!-- Summary Section -->
-          <div fxFlex="100" fxFlex.gt-xs="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
+          <div fxFlex.xs="250px" fxFlex="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
 
-            <div class="platform-logo-wrapper" fxFlex="20" >
+            <!-- Mobile Only: Exit Widget -->
+            <button fxHide.gt-xs class="mat-card-title-text primary-nav" mat-icon-button color="default" >
+              <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
+            </button>
+
+            <div class="platform-logo-wrapper" fxFlex="20">
                 <img *ngIf="isFN" class="platform-logo" src="assets/images/light-logo-full.svg">
                 <img *ngIf="!isFN" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">
-                <!--<p class="subtitle">System Information</p>-->
               </div>
 
             <div class="content-left" fxFlex="60" fxLayout="column" fxLayoutAlign="center center">
 
               <div class="product-image {{!isFN ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
-                  <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image">
+                <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
                     <mat-icon *ngIf="isFN" class="generic" svgIcon="freenas_logomark"></mat-icon>
                   </ng-template>
@@ -35,18 +39,18 @@
               </div>
             </div>
 
-            <div fxFlex="18" class="update-action">
+            <div fxHide.xs fxFlex="18" class="update-action">
               <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-              <!--<button *ngIf="isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="failoverInit()">{{failoverBtnLabel | translate}}</button>-->
               <simple-failover-button *ngIf="isPassive"></simple-failover-button>
             </div>
   
           </div>
   
           <!-- Details Section -->
-          <div class="right" fxFlex.gt-xs="60" fxFlex.xs="100">
-            <div  *ngIf="data" class="data-container">
-              <div  class="list-subheader">Overview</div>
+          <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
+            <div  fxFlex *ngIf="data" class="data-container">
+              <div fxHide.gt-xs class="list-subheader">{{isPassive ? 'System Information (Standby)' : 'System Information'}}</div>
+              <div fxHide.xs class="list-subheader">Overview</div>
           
               <mat-list>
                 <mat-list-item><strong>{{'Platform' | translate}}:</strong> &nbsp;&nbsp;{{data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic'}}</mat-list-item>
@@ -64,14 +68,19 @@
                 </mat-list-item>
               
                 <mat-list-item><strong>{{"HostName" | translate}}:</strong> &nbsp;&nbsp;{{data.hostname}}</mat-list-item>
-                <!--<mat-list-item><strong>{{"TimeZone" | translate}}:</strong> &nbsp;&nbsp;{{data.timezone}}</mat-list-item>-->
                 <mat-list-item><strong>{{"Uptime" | translate}}:</strong> &nbsp;&nbsp;{{data.uptime}}</mat-list-item>
   
               </mat-list>
+
+              <div fxHide.gt-xs class="mobile-update-action update-action" *ngIf="ready">
+                <button *ngIf="!isPassive" class="" mat-button color="primary" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+                <simple-failover-button color="primary" *ngIf="isPassive"></simple-failover-button>
+              </div>
               
             </div> <!-- END datacontainer -->
-          </div> <!-- End right -->
   
+          </div> <!-- End right -->
+
           </div> <!-- end slide -->
         </div> <!-- end carousel -->
       </mat-card-content>
