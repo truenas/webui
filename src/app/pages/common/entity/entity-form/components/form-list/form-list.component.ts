@@ -39,4 +39,12 @@ export class FormListComponent implements Field, OnInit {
     this.listsFromArray.removeAt(id);
     this.config.listFields.splice(id, 1);
   }
+
+  clear(id) {
+    this.listsFromArray.removeAt(id);
+    this.config.listFields.splice(id, 1);
+    const templateListField = _.cloneDeep(this.config.templateListField);
+    this.listsFromArray.push(this.entityFormService.createFormGroup(templateListField));
+    this.config.listFields.push(templateListField);
+  }
 }
