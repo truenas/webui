@@ -331,15 +331,6 @@ export class ApiService {
         responseEvent:"VmProfiles",
       },
     },
-    /*SysInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"system.info",
-        args:[],
-        responseEvent:"SysInfo"
-      }
-    },*/
     // Used by stats service!!
     StatsRequest:{
       apiCall:{
