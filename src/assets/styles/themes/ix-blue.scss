@@ -1278,6 +1278,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-card {
         top: 12px;
         background-color: rgba(127,127,127,0.1);
+        max-width: 460px !important;
+        min-width: 300px;
     }
     .mat-card-actions {
       top: 5px;
