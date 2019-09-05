@@ -303,7 +303,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   getDisksData(){
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
-      //this.system.pools = evt.data;
       this.pools = evt.data;
       this.isDataReady();
     });

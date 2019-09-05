@@ -18,6 +18,9 @@ export class SystemProfileService extends BaseService {
       eventName: "SysInfoRequest"
     }).subscribe((evt:CoreEvent) => {
       const ready = this.dataAvailable(evt);
+      if(ready){
+        this.respond({name:"SysInfoRequest", sender: this});
+      }
     });
   }
 
