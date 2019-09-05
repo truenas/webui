@@ -10,7 +10,7 @@ export interface FieldConfig {
   initialCount?: number, readonly?: boolean, initial?: string, rootSelectable?: boolean,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
   customEventActionLabel?: string, explorerType?: string, customTemplateStringOptions?: any,
-  required?: boolean, deleteButtonOnFirst?: boolean,
+  required?: boolean, deleteButtonOnFirst?: boolean, addBtnMessage?: string,
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string,
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
   noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,

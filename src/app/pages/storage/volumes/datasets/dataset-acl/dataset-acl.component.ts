@@ -108,6 +108,7 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'aces',
           width: '100%',
           deleteButtonOnFirst: true,
+          addBtnMessage: helptext.dataset_acl_add_item_btn,
           placeholder: helptext.dataset_acl_aces_placeholder,
           templateListField: [
             {
