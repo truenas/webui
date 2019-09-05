@@ -151,22 +151,46 @@ export default {
     SNMPTrap_port_tooltip: T(''),
 
     SNMPTrap_v3_placeholder: T('SNMPv3 Security Model'),
-    SNMPTrap_v3_tooltip: T(''),
+    SNMPTrap_v3_tooltip: T('Enable the SNMPv3 security model.'),
 
     SNMPTrap_v3_username_placeholder: T('Username'),
-    SNMPTrap_v3_username_tooltip: T(''),
+    SNMPTrap_v3_username_tooltip: T('Enter the username of the SNMP \
+ <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#user-based" \
+ target="_blank">User-based Security Model (USM)</a> user.'),
 
     SNMPTrap_v3_authkey_placeholder: T('Secret authentication key'),
-    SNMPTrap_v3_authkey_tooltip: T(''),
+    SNMPTrap_v3_authkey_tooltip: T('Initial secret authentication key. \
+ If no authenticaiton key is set, no <i>Authentication protocol</i> is \
+ used. If an authentication key is set and an \
+ <i>Authentication protocol</i> is not specified, \
+ <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmHMACMD5AuthProtocol" \
+ target="_blank">MD5</a> is used as the default.<br> \
+ Must be at least 8 and at most 32 octets long.'),
 
     SNMPTrap_v3_privkey_placeholder: T('Secret encryption key'),
-    SNMPTrap_v3_privkey_tooltip: T(''),
+    SNMPTrap_v3_privkey_tooltip: T('Initial secret encyprtion key. \
+ If no encryption key is set, no <i>Encryption protocol</i> is used. \
+ If an encryption key is set and an <i>Encryption protocol</i> is \
+ not specified, \
+ <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmDESPrivProtocol" \
+ target="_blank">DES</a> is used as the default.<br> \
+ Must be at least 8 and at most 32 octets long.'),
 
     SNMPTrap_v3_authprotocol_placeholder: T('Authentication protocol'),
-    SNMPTrap_v3_authprotocol_tooltip: T(''),
+    SNMPTrap_v3_authprotocol_tooltip: T('Choose the authentication \
+ protocol to authenticate messages sent on behalf of the specified \
+ <i>Username</i>. Descrptions of supported authenticaion protocols \
+ are \
+ <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
+ target="_blank">here</a>.'),
 
     SNMPTrap_v3_privprotocol_placeholder: T('Encryption protocol'),
-    SNMPTrap_v3_privprotocol_tooltip: T(''),
+    SNMPTrap_v3_privprotocol_tooltip: T('Choose the encryption \
+ protocol to encrypt messages sent on behalf of the specified \
+ <i>Username</i>. Descriptions of supported encryption protocols \
+ are \
+ <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoPrivProtocol" \
+ target="_blank">here</a>'),
 
     SNMPTrap_community_placeholder: T('SNMP Community'),
     SNMPTrap_community_tooltip: T(''),
