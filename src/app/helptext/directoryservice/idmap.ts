@@ -2,57 +2,58 @@ import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
-idmap_ad_range_low_name : 'idmap_ad_range_low',
+idmap_ad_range_low_name : 'range_low',
 idmap_ad_range_low_placeholder : T('Range Low'),
 idmap_ad_range_low_tooltip : T('Beginning UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_ad_range_high_name : 'idmap_ad_range_high',
+idmap_ad_range_high_name : 'range_high',
 idmap_ad_range_high_placeholder : T('Range High'),
 idmap_ad_range_high_tooltip : T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_ad_schema_mode_name : 'idmap_ad_schema_mode',
+idmap_ad_schema_mode_name : 'schema_mode',
 idmap_ad_schema_mode_placeholder : T('Schema mode'),
 idmap_ad_schema_mode_tooltip : T('Choose the schema to use with LDAP authentication for\
  SMB shares. The LDAP server must be configured with Samba attributes to use a Samba Schema.'),
 idmap_ad_schema_mode_options:
 [{
 label: 'rfc2307',
-value: 'rfc2307',
+value: 'RFC2307',
 }, {
 label: 'sfu',
-value: 'sfu',
+value: 'SFU',
 }, {
 label: 'sfu20',
-value: 'sfu20',
+value: 'SFU20',
 }],
 
-idmap_autorid_range_low_name : 'idmap_autorid_range_low',
+idmap_autorid_range_low_name : 'range_low',
 idmap_autorid_range_low_placeholder : T('Range Low'),
 idmap_autorid_range_low_tooltip : T('Beginning UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_autorid_range_high_name : 'idmap_autorid_range_high',
+idmap_autorid_range_high_name : 'range_high',
 idmap_autorid_range_high_placeholder : T('Range High'),
 idmap_autorid_range_high_tooltip : T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_autorid_rangesize_name : 'idmap_autorid_rangesize',
+idmap_autorid_rangesize_name : 'rangesize',
 idmap_autorid_rangesize_placeholder : T('Range Size'),
 idmap_autorid_rangesize_tooltip : T('Define the number of UIDS/GIDS available per domain\
  range. The minimum is <i>2000</i> and the recommended default is <i>100000</i>.'),
 
-idmap_autorid_readonly_name : 'idmap_autorid_readonly',
+idmap_autorid_readonly_name : 'readonly',
 idmap_autorid_readonly_placeholder : T('Read Only'),
 idmap_autorid_readonly_tooltip : T('Set to make the module <i>read-only</i>. No new ranges\
  are allocated or new mappings created in the idmap pool.'),
 
-idmap_autorid_ignore_builtin_name : 'idmap_autorid_ignore_builtin',
+idmap_autorid_ignore_builtin_name : 'ignore_builtin',
 idmap_autorid_ignore_builtin_placeholder : T('Ignore Builtin'),
 idmap_autorid_ignore_builtin_tooltip : T('Set to ignore mapping requests for the <i>BUILTIN</i>\
  domain.'),
 
+///// Not in API
 idmap_fruit_range_low_name : 'idmap_fruit_range_low',
 idmap_fruit_range_low_placeholder : T('Range Low'),
 idmap_fruit_range_low_tooltip: T('Beginning UID/GID number for which this system is\
@@ -62,47 +63,48 @@ idmap_fruit_range_high_name : 'idmap_fruit_range_high',
 idmap_fruit_range_high_placeholder : T('Range High'),
 idmap_fruit_range_high_tooltip: T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
+///
 
-idmap_ldap_range_low_name : 'idmap_ldap_range_low',
+idmap_ldap_range_low_name : 'range_low',
 idmap_ldap_range_low_placeholder : T('Range Low'),
 idmap_ldap_range_low_tooltip: T('Beginning UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_ldap_range_high_name : 'idmap_ldap_range_high',
+idmap_ldap_range_high_name : 'range_high',
 idmap_ldap_range_high_placeholder : T('Range High'),
 idmap_ldap_range_high_tooltip : T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_ldap_basedn_name: 'idmap_ldap_ldap_base_dn',
+idmap_ldap_basedn_name: 'base_dn',
 idmap_ldap_basedn_placeholder: T('Base DN'),
 idmap_ldap_basedn_tooltip: T('The directory base suffix to use for SID/uid/gid\
  mapping entries. Example: dc=test,dc=org. When undefined, idmap_ldap defaults to using the ldap idmap\
  suffix option from <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
  target="_blank">smb.conf</a>.'),
 
-idmap_ldap_userdn_name : 'idmap_ldap_ldap_user_dn',
+idmap_ldap_userdn_name : 'user_dn',
 idmap_ldap_userdn_placeholder: T('User DN'),
 idmap_ldap_userdn_tooltip: T('User Distinguished Name (DN) to use for authentication.'),
 
-idmap_ldap_url_name : 'idmap_ldap_ldap_url',
+idmap_ldap_url_name : 'url',
 idmap_ldap_url_placeholder: T('URL'),
 idmap_ldap_url_tooltip: T('LDAP server to use for SID/uid/gid map entries. When\
  undefined, idmap_ldap uses *ldap://localhost/*.\
  Example: <i>ldap://ldap.netscape.com/o=Airius.com</i>.'),
 
-idmap_ldap_ssl_name : 'idmap_ldap_ssl',
+idmap_ldap_ssl_name : 'ssl',
 idmap_ldap_ssl_placeholder: T('Encryption Mode'),
 idmap_ldap_ssl_tooltip: T('Choose an encryption mode to use with LDAP.'),
 idmap_ldap_ssl_options: 
 [{
 label: 'Off',
-value: 'off',
+value: 'OFF',
 }, {
 label: 'SSL',
-value: 'ssl',
+value: 'ON',
 }, {
-label: 'TLS',
-value: 'tls',
+label: 'STARTTLS',
+value: 'START_TLS',
 }],
 
 idmap_ldap_cert_name : '',
@@ -112,26 +114,27 @@ idmap_ldap_cert_tooltip: T('Select the certificate of the Active Directory serve
  create a Certificate Authority and Certificate. Import the certificate to this system using the\
  System/Certificates menu.'),
 
-idmap_nss_range_low_name : 'idmap_nss_range_low',
+idmap_nss_range_low_name : 'range_low',
 idmap_nss_range_low_placeholder: T('Range Low'),
 idmap_nss_range_low_tooltip: T('Beginning UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_nss_range_high_name : 'idmap_nss_range_high',
+idmap_nss_range_high_name : 'range_high',
 idmap_nss_range_high_placeholder: T('Range High'),
 idmap_nss_range_high_tooltip: T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_rfc2307_range_low_name : 'idmap_rfc2307_range_low',
+idmap_rfc2307_range_low_name : 'range_low',
 idmap_rfc2307_range_low_placeholder: T('Range Low'),
 idmap_rfc2307_range_low_tooltip: T('Beginning UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_rfc2307_range_high_name : 'idmap_rfc2307_range_high',
+idmap_rfc2307_range_high_name : 'range_high',
 idmap_rfc2307_range_high_placeholder: T('Range High'),
 idmap_rfc2307_range_high_tooltip: T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
+ //// Not in API for idmap.rfc2307.update
 idmap_rfc2307_ldap_server_name : 'idmap_rfc2307_ldap_server',
 idmap_rfc2307_ldap_server_placeholder: T('LDAP Server'),
 idmap_rfc2307_ldap_server_tooltip: T('Select the type of LDAP server to use. This can be the\
@@ -199,39 +202,41 @@ idmap_rfc2307_cert_tooltip: T('Select the certificate of the Active Directory se
  if SSL connections are used. When no certificates are available, move to the Active Directory server and\
  create a Certificate Authority and Certificate. Import the certificate to this system using the\
  System/Certificates menu.'),
+/////
 
-idmap_rid_range_low_name : 'idmap_rid_range_low',
+
+idmap_rid_range_low_name : 'range_low',
 idmap_rid_range_low_placeholder: T('Range Low'),
 idmap_rid_range_low_tooltip: T('Beginning UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_rid_range_high_name : 'idmap_rid_range_high',
+idmap_rid_range_high_name : 'range_high',
 idmap_rid_range_high_placeholder: T('Range High'),
 idmap_rid_range_high_tooltip: T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_script_range_low_name : 'idmap_script_range_low',
+idmap_script_range_low_name : 'range_low',
 idmap_script_range_low_placeholder: T('Range Low'),
 idmap_script_range_low_tooltip: T('Beginning UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_script_range_high_name : 'idmap_script_range_high',
+idmap_script_range_high_name : 'range_high',
 idmap_script_range_high_placeholder: T('Range High'),
 idmap_script_range_high_tooltip: T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_script_name : 'idmap_script_script',
+idmap_script_name : 'script',
 idmap_script_placeholder: T('Script'),
 idmap_script_tooltip: T('Configure an external program to perform ID mapping. See\
  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html"\
  target="_blank">idmap_script(8)</a> for more details.'),
 
-idmap_tdb_range_low_name : 'idmap_tdb_range_low',
+idmap_tdb_range_low_name : 'range_low',
 idmap_tdb_range_low_placeholder: T('Range Low'),
 idmap_tdb_range_low_tooltip: T('Beginning UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_tdb_range_high_name : 'idmap_tdb_range_high',
+idmap_tdb_range_high_name : 'range_high',
 idmap_tdb_range_high_placeholder: T('Range High'),
 idmap_tdb_range_high_tooltip: T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
@@ -253,6 +258,5 @@ idmap_tdb2_script_tooltip: T('Configure an external program for ID mapping inste
  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_tdb2.8.html"\
  target="_blank">idmap_tdb2</a> database'),
 
-idmap_range_comparison_error: "Range low is greater than range high.",
-idmap_range_overlap_error: "Range overlapped with the default range: ["
+idmap_error_dialog_title: T('Error')
 }

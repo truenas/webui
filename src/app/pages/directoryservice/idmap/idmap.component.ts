@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { WebSocketService, RestService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -320,7 +321,8 @@ export class IdmapComponent implements OnInit {
     protected ws: WebSocketService,
     protected rest: RestService,
     protected entityFormService: EntityFormService,
-    protected loader: AppLoaderService) {}
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService) {}
 
   ngOnInit() {
     this.aroute.params.subscribe((res) => {
@@ -360,23 +362,12 @@ export class IdmapComponent implements OnInit {
     } else if (this.idmap_type === 'tdb2') {
       this.formGroup = this.entityFormService.createFormGroup(this.tdb2FieldConfig);
     }
-
-    // get default idmap range
-    this.rest.get('services/cifs', {}).subscribe((res) => {
-      this.ws.call('idmap.get_or_create_idmap_by_domain', [this.idmap_domain_name]).subscribe((idmap_res) => {
-        this.defaultIdmap = idmap_res;
-      });
-    });
-                                                     
+                                         
     this.ws.call('idmap.get_or_create_idmap_by_domain', [this.idmap_domain_name]).subscribe((res) => {
       if (res && res['id']) {
         this.idmapID = res['id'];
         for (let i in this.formGroup.controls) {
-          if(_.endsWith(i, 'range_low')) {
-              this.formGroup.controls[i].setValue(res['range_low']);
-          } else if (_.endsWith(i, 'range_high')) {
-            this.formGroup.controls[i].setValue(res['range_high']);
-          }
+          this.formGroup.controls[i].setValue(res[i]); // but incoming values don't all match - ldap for example
         }
       } else {
         // no idmap config find in datastore
@@ -408,57 +399,18 @@ export class IdmapComponent implements OnInit {
 
   onSubmit() {
     this.error = null;
-
-    let value = _.cloneDeep(this.formGroup.value);
-    let new_range_low: any;
-    let new_range_high: any;
-
-    for (let i in value) {
-      if (_.endsWith(i, 'range_low')) {
-        new_range_low = value[i];
+    let value = _.cloneDeep(this.formGroup.value); // values in form should all match API required names
+    this.loader.open();
+    this.ws.call(`idmap.${this.idmap_type}.update`, [this.idmapID, 
+        value]).subscribe(
+      (res) => {
+        this.loader.close();
+        this.router.navigate(new Array('').concat(this.route_success));
+      },
+      (err) => {
+        this.loader.close();
+        this.dialogService.errorReport(helptext.idmap_error_dialog_title, err.reason, err.trace.formatted)
       }
-      if (_.endsWith(i, 'range_high')) {
-        new_range_high = value[i];
-      }
-    }
-
-    if (new_range_low > new_range_high) {
-      this.error = helptext.idmap_range_comparison_error;
-    } else {
-      if (new_range_low < this.defaultIdmap['range_low'] || new_range_low > this.defaultIdmap['range_high']) {
-        if (new_range_high < this.defaultIdmap['range_low'] || new_range_high > this.defaultIdmap['range_high']) {
-          // no overlap, update/insert into datastore
-          if (this.idmapID) {
-            this.loader.open();
-            this.ws.call('datastore.update', [this.query_call + this.idmap_type, this.idmapID, value]).subscribe(
-              (res) => {
-               this.loader.close();
-               this.router.navigate(new Array('').concat(this.route_success));
-              },
-              (res) => {
-                this.loader.close();
-              }
-            );
-          } else {
-            value['idmap_ds_type'] = this.targetDS;
-            this.loader.open();
-            this.ws.call('datastore.insert', [this.query_call + this.idmap_type, value]).subscribe(
-              (res) => {
-               this.loader.close();
-               this.router.navigate(new Array('').concat(this.route_success));
-              },
-              (res) => {
-                this.loader.close();
-              }
-            );
-          }
-        } else {
-          this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['range_low'] + "," + this.defaultIdmap['range_high'] + "] !";
-        }
-      } else {
-        this.error = helptext.idmap_range_overlap_error + this.defaultIdmap['range_low'] + "," + this.defaultIdmap['range_high'] + "] !";
-      }
-    }
+    );
   }
-
 }
