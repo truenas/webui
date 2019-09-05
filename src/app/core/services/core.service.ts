@@ -106,6 +106,7 @@ export class CoreService {
   }
 
   public emit(evt: CoreEvent){
+    if(evt.name == "SysInfoRequest")console.log(evt.sender);
     if(this.debug && this.debug_show_emit_logs){ 
       console.log("*******************************************************");
       console.log("CORESERVICE: Emitting " + evt.name);

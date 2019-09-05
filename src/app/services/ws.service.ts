@@ -207,7 +207,7 @@ export class WebSocketService {
 
       if (debug || this.debug) {
         //console.log({ payload:payload, source: source, buffer: this.pendingCalls }); 
-        console.log(payload.method);
+        if(payload.method == 'system.info')console.log(payload.method);
         //console.log(this.subscriptions);
       }
 
