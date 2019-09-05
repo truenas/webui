@@ -23,6 +23,7 @@ export class TnSupportComponent implements OnInit {
   public screenshot: any;
   public payload = {};
   public subs: any;
+  public saveSubmitText = helptext.submitBtn;
   public custActions: Array<any> = [];
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [

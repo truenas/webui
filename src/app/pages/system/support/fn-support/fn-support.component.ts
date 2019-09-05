@@ -21,7 +21,7 @@ export class FnSupportComponent {
   public username_fc: any;
   public payload = {};
   public subs: any;
-  public saveSubmitText = helptext.FN_submit;
+  public saveSubmitText = helptext.submitBtn;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
