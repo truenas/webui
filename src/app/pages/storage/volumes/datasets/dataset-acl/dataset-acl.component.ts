@@ -107,6 +107,8 @@ export class DatasetAclComponent implements OnDestroy {
           type: 'list',
           name: 'aces',
           width: '100%',
+          deleteButtonOnFirst: true,
+          addBtnMessage: helptext.dataset_acl_add_item_btn,
           placeholder: helptext.dataset_acl_aces_placeholder,
           templateListField: [
             {
@@ -380,7 +382,7 @@ export class DatasetAclComponent implements OnDestroy {
               if (res[i].basic_perms === "OTHER") {
                 basic_perms_fc.warnings = helptext.dataset_acl_basic_perms_other_warning;
                 canSave = false;
-              } else { 
+              } else {
                 basic_perms_fc.warnings = null;
               }
             }
@@ -549,7 +551,7 @@ export class DatasetAclComponent implements OnDestroy {
     if (doesNotWantToEditDataset) {
       return;
     }
-  
+
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
     this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
     let dacl = body.dacl;
@@ -608,7 +610,7 @@ export class DatasetAclComponent implements OnDestroy {
         this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-    }); 
+    });
   }
 
   updateGroupSearchOptions(value = "", parent, config) {

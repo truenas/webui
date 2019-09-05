@@ -1534,4 +1534,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-bottom: 15px;
   }
 
+  app-dataset-acl #aces0 {
+    position: absolute;
+    left: 15px;
+    top: 200px;
+
+    @media screen and ( max-width: 599px) {
+      position: relative;
+      top: -380px;
+      left: 60px;
+    }
+  }
+
  } // end of ix theme
