@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { WebSocketService } from 'app/services/';
+import { DialogService } from 'app/services/dialog.service';
+import { SnackbarService } from 'app/services/snackbar.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -30,7 +34,7 @@ export class TnSupportComponent implements OnInit {
         {
           type: 'paragraph',
           name: 'FN_col2',
-          paraText: '<i class="material-icons">mail</i>Contact Support'
+          paraText: '<i class="material-icons">mail</i>' + helptext.contactUs
         },
         {
           type : 'input',
@@ -151,7 +155,8 @@ export class TnSupportComponent implements OnInit {
   ]
 
   constructor(public dialog: MatDialog, public loader: AppLoaderService,
-    public router: Router) { }
+    public ws: WebSocketService, public snackbar: SnackbarService,
+    public dialogService: DialogService, public router: Router) { }
 
   ngOnInit() {
   }
@@ -160,6 +165,44 @@ export class TnSupportComponent implements OnInit {
     this.entityEdit = entityEdit;
     this.custActions = [
       {
+        id : 'update_license',
+        name : helptext.update_license.open_dialog_button,
+        function : () => {
+          const localLoader = this.loader;
+          const localWS = this.ws;
+          const localSnackbar = this.snackbar;
+          const localDialogService = this.dialogService;
+
+          const licenseForm: DialogFormConfiguration = {
+            title: helptext.update_license.dialog_title,
+            fieldConfig: [
+              {
+                type: 'textarea',
+                name: 'license',
+                placeholder: helptext.update_license.license_placeholder
+              }
+            ],
+            saveButtonText: helptext.update_license.save_button,
+            customSubmit: function (entityDialog) {
+              const value = entityDialog.formValue.license;
+              localLoader.open();
+              localWS.call('system.license_update', [value]).subscribe((res) => {
+                entityDialog.dialogRef.close(true);
+                localLoader.close();
+                localSnackbar.open(helptext.update_license.success_message,
+                  helptext.update_license.snackbar_action, { duration: 5000 });
+              },
+              (err) => {
+                localLoader.close();
+                entityDialog.dialogRef.close(true);
+                localDialogService.errorReport((helptext.update_license.error_dialog_title), err.reason, err.trace.formatted);
+              });
+            }
+
+          }
+          this.dialogService.dialogForm(licenseForm);
+        }
+      },{
         id : 'userguide',
         name: helptext.update_license.user_guide_button,
         function : () => {
@@ -171,7 +214,7 @@ export class TnSupportComponent implements OnInit {
         id : 'eula',
         name: helptext.update_license.eula_button,
         function : () => {
-          this.router.navigate(['/system/support/eula']);
+          this.router.navigate(['/system/support/eula'])
         }
       }
     ]

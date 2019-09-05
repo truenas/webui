@@ -32,14 +32,12 @@ export class FnSupportComponent {
         {
           type: 'paragraph',
           name: 'FN_col2',
-          paraText: '<i class="material-icons">mail</i>Contact Support'
+          paraText: '<i class="material-icons">mail</i>' + helptext.contactUs
         },
         {
           type: 'paragraph',
           name: 'FN_jira-info',
-          paraText: '<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank">\
-          Create a Jira account</a> to file an issue. Use a valid \
-          email address when registering to receive issue status updates.'
+          paraText: helptext.FN_Jira_message
         },
         {
           type : 'input',
@@ -145,6 +143,7 @@ export class FnSupportComponent {
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
+    console.log(entityEdit)
   }
 
   blurEvent(parent){
@@ -236,6 +235,7 @@ export class FnSupportComponent {
   resetForm () {
     this.entityEdit.formGroup.reset();
   };
+
 
   updater(file: any, parent: any){
     parent.subs = [];

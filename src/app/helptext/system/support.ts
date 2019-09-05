@@ -159,14 +159,20 @@ export const helptext_system_support = {
     action: T('Close')
   },
 
-  FN_instructions: 'Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
+  FN_instructions: T('Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
    target="_blank">FreeNAS issue tracker</a> \
    to ensure the issue has not already been reported before \
    filing a bug report or feature request. If an issue has \
    already been created, add a comment to the existing issue. \
    Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank"> \
    iXsystems storage page</a> \
-   for enterprise-grade storage solutions and support.',
+   for enterprise-grade storage solutions and support.'),
 
-   FN_submit: T('Submit')
+  FN_Jira_message: T('<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank">\
+   Create a Jira account</a> to file an issue. Use a valid \
+   email address when registering to receive issue status updates.'),
+
+   FN_submit: T('Submit'),
+  
+   contactUs: T('Contact Support')
 };
