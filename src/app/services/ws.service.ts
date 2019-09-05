@@ -10,6 +10,7 @@ import { filter, map } from 'rxjs/operators';
 @Injectable()
 export class WebSocketService {
 
+  private debug: boolean = true;
   private _authStatus: Subject<any>;
   onCloseSubject: Subject<any>;
   onOpenSubject: Subject<any>;
@@ -194,8 +195,9 @@ export class WebSocketService {
   call(method, params?: any, debug = false): Observable<any> {
 
     let uuid = UUID.UUID();
-    let payload =
-        {"id" : uuid, "msg" : "method", "method" : method, "params" : params};
+    let payload = {"id" : uuid, "msg" : "method", "method" : method, "params" : params};
+
+    // Create the observable
     let source = Observable.create((observer) => {
       this.pendingCalls.set(uuid, {
         "method" : method,
@@ -203,12 +205,15 @@ export class WebSocketService {
         "observer" : observer,
       });
 
-      if (debug) {
-        console.log({ payload });
+      if (debug || this.debug) {
+        //console.log({ payload:payload, source: source, buffer: this.pendingCalls }); 
+        console.log(payload.method);
+        //console.log(this.subscriptions);
       }
 
       this.send(payload);
     });
+
 
     return source;
   }
