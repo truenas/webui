@@ -27,6 +27,12 @@ export default {
     recursive_placeholder: T('Recursive'),
     recursive_tooltip: T(''),
 
+    custom_snapshots_placeholder: T('Replicate Custom Snapshots'),
+    custom_snapshots_tooltip: T(''),
+
+    naming_schema_placeholder: T('Naming Schema'),
+    naming_schema_tooltip: T(''),
+
     encryption_placeholder: T('SSH Transfer Security'),
     encryption_tooltip: T('Data transfer security. The connection is authenticated with SSH,\
  then data can either be encrypted during transfer to maximise protection or left unencrypted\

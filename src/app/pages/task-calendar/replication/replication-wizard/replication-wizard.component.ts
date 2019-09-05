@@ -219,7 +219,45 @@ export class ReplicationWizardComponent {
                 {
                     type: 'paragraph',
                     name: 'snapshots_count',
-                    paraText: '# snapshots find',
+                    paraText: '',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'source_datasets_from',
+                            value: 'remote',
+                        }]
+                    }],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'custom_snapshots',
+                    placeholder: helptext.custom_snapshots_placeholder,
+                    tooltip: helptext.custom_snapshots_tooltip,
+                    value: false,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'source_datasets_from',
+                            value: 'remote',
+                        }]
+                    }],
+                },
+                {
+                    type: 'input',
+                    name: 'naming_schema',
+                    placeholder: helptext.naming_schema_placeholder,
+                    tooltip: helptext.naming_schema_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'AND',
+                        when: [{
+                            name: 'custom_snapshots',
+                            value: true,
+                        }, {
+                            name: 'source_datasets_from',
+                            value: 'remote',
+                        }]
+                    }],
                 },
                 {
                     type: 'radio',
