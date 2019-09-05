@@ -145,7 +145,6 @@ export class FnSupportComponent {
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    console.log(entityEdit)
   }
 
   blurEvent(parent){
@@ -237,7 +236,6 @@ export class FnSupportComponent {
   resetForm () {
     this.entityEdit.formGroup.reset();
   };
-
 
   updater(file: any, parent: any){
     parent.subs = [];

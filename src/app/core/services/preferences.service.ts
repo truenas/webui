@@ -18,7 +18,6 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
   tableDisplayedColumns:any;
-  proactiveSupportContacts: any;
 }
 
 @Injectable()
@@ -38,8 +37,7 @@ export class PreferencesService {
     "enableWarning": true,
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
-    "tableDisplayedColumns":[],
-    "proactiveSupportContacts": []
+    "tableDisplayedColumns":[]
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {

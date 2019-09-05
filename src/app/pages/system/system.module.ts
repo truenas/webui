@@ -55,7 +55,7 @@ import { ProactiveSupportComponent } from './proactive-support/proactive-support
 import { ReportingComponent } from './reporting/reporting.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
 import { EulaComponent } from './support/eula/eula.component';
-import { TnSysInfoComponent } from './support/sys-info/tn-sys-info.component';
+import { TnSysInfoComponent } from './support/tn-sys-info/tn-sys-info.component';
 import { SysImageComponent } from './support/sys-image/sys-image.component';
 import { ProductionStatusComponent } from './support/production-status/production-status.component';
 import { ProactiveComponent } from './support/proactive/proactive.component';

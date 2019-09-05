@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { SnackbarService } from 'app/services/snackbar.service'
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -15,6 +14,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 })
 export class ProactiveComponent {
   public entityEdit: any;
+  protected queryCall = 'support.config';
   public contacts: any;
   public controls: any;
   public save_button_enabled: boolean;
@@ -52,14 +52,28 @@ export class ProactiveComponent {
         name: 'name',
         placeholder : helptext.proactive.pc_name_placeholder,
         required: true,
-        validation : helptext.proactive.pc_validation
+        validation : helptext.proactive.pc_validation,
+        relation: [{
+          action: 'DISABLE',
+          when: [{
+              name: 'enabled',
+              value: false,
+          }]
+        }]
       },
       {
         type: 'input',
         name: 'title',
         placeholder : helptext.proactive.pc_title_placeholder,
         required: true,
-        validation : helptext.proactive.pc_validation
+        validation : helptext.proactive.pc_validation,
+        relation: [{
+          action: 'DISABLE',
+          when: [{
+              name: 'enabled',
+              value: false,
+          }]
+        }]
       },
       {
         type: 'input',
@@ -67,6 +81,13 @@ export class ProactiveComponent {
         placeholder : helptext.proactive.pc_email_placeholder,
         required: true,
         validation : helptext.proactive.pc_email_validation,
+        relation: [{
+          action: 'DISABLE',
+          when: [{
+              name: 'enabled',
+              value: false,
+          }]
+        }]
       },
       {
         type: 'input',
@@ -74,6 +95,13 @@ export class ProactiveComponent {
         placeholder : helptext.proactive.pc_phone_placeholder,
         required: true,
         validation : helptext.proactive.pc_validation,
+        relation: [{
+          action: 'DISABLE',
+          when: [{
+              name: 'enabled',
+              value: false,
+          }]
+        }]
       },
     ]
   },
@@ -98,14 +126,28 @@ export class ProactiveComponent {
         name: 'secondary_name',
         placeholder : helptext.proactive.sec_name_placeholder,
         required: true,
-        validation : helptext.proactive.pc_validation
+        validation : helptext.proactive.pc_validation,
+        relation: [{
+          action: 'DISABLE',
+          when: [{
+              name: 'enabled',
+              value: false,
+          }]
+        }]
       },
       {
         type: 'input',
         name: 'secondary_title',
         placeholder :  helptext.proactive.sec_title_placeholder,
         required: true,
-        validation : helptext.proactive.pc_validation
+        validation : helptext.proactive.pc_validation,
+        relation: [{
+          action: 'DISABLE',
+          when: [{
+              name: 'enabled',
+              value: false,
+          }]
+        }]
       },
       {
         type: 'input',
@@ -113,13 +155,27 @@ export class ProactiveComponent {
         placeholder : helptext.proactive.sec_email_placeholder,
         validation: helptext.proactive.sec_email_validation,
         required: true,
+        relation: [{
+          action: 'DISABLE',
+          when: [{
+              name: 'enabled',
+              value: false,
+          }]
+        }]
       },
       {
         type: 'input',
         name: 'secondary_phone',
         placeholder : helptext.proactive.sec_phone_placeholder,
         required: true,
-        validation : helptext.proactive.pc_validation
+        validation : helptext.proactive.pc_validation,
+        relation: [{
+          action: 'DISABLE',
+          when: [{
+              name: 'enabled',
+              value: false,
+          }]
+        }]
       }
     ]
   },
@@ -137,9 +193,8 @@ export class ProactiveComponent {
   },
 ]
 
-  constructor(public ws: WebSocketService, protected prefService: PreferencesService,
-    protected snackbar: SnackbarService, protected loader: AppLoaderService,
-    protected dialogService: DialogService) { }
+  constructor(public ws: WebSocketService,protected snackbar: SnackbarService, 
+    protected loader: AppLoaderService, protected dialogService: DialogService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -186,23 +241,19 @@ export class ProactiveComponent {
         }
       })
     }, 1000);
-
   }
 
   getContacts() {
-    _.find(this.fieldConfig, {name : "name"}).isLoading = true;
-    _.find(this.fieldConfig, {name : "secondary_name"}).isLoading = true;
     this.controls = this.entityEdit.formGroup.controls;
-    setTimeout(() => {
-      this.contacts = this.prefService.preferences.proactiveSupportContacts;
-      if (this.contacts.length > 0) {
-        for (const i in this.contacts[0]) {
-          this.controls[i].setValue(this.contacts[0][i])
+    this.ws.call(this.queryCall).subscribe((res) => {
+      if (res && res !== {}) {
+        for (const i in res) {
+          if (i !== 'id') {
+            this.controls[i].setValue(res[i])
+          }
         }
       }
-      _.find(this.fieldConfig, {name : "name"}).isLoading = false;
-      _.find(this.fieldConfig, {name : "secondary_name"}).isLoading = false;
-    }, 2200);
+    })
   }
 
   beforeSubmit(data) {
@@ -214,11 +265,6 @@ export class ProactiveComponent {
     if (!data.enabled) {
       data.enabled = false;
     }
-
-    this.contacts = this.prefService.preferences.proactiveSupportContacts;
-    this.contacts.length = 0;
-    this.contacts.push(data);
-    this.prefService.savePreferences(this.prefService.preferences);
   }
 
   customSubmit(data) {

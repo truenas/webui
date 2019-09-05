@@ -35,11 +35,15 @@
         </div>
       </div>
     </div>
-    <app-proactive *ngIf="!is_freenas"></app-proactive>
-    <app-fn-support *ngIf="is_freenas; else TNsupport"></app-fn-support>
-    <ng-template #TNsupport>
-      <app-tn-support></app-tn-support>
-    </ng-template>
+    <div *ngIf="!is_freenas">
+      <app-proactive></app-proactive>
+    </div>
+    <div>
+      <app-fn-support *ngIf="is_freenas; else TNsupport"></app-fn-support>
+      <ng-template #TNsupport>
+        <app-tn-support></app-tn-support>
+      </ng-template>
+    </div>
   </div>
 </mat-card>
 <div [style.height.px]="50" *ngIf="isFooterConsoleOpen"></div>
