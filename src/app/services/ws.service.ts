@@ -205,12 +205,6 @@ export class WebSocketService {
         "observer" : observer,
       });
 
-      if (debug || this.debug) {
-        //console.log({ payload:payload, source: source, buffer: this.pendingCalls }); 
-        //if(payload.method == 'system.info')console.log(payload.method);
-        //console.log(this.subscriptions);
-      }
-
       this.send(payload);
     });
 
