@@ -82,7 +82,7 @@ export class JailListComponent implements OnInit {
                 this.snackBar.open(T("Jails started."), 'close', { duration: 5000 });
               } else {
                 message = '<ul>' + message + '</ul>';
-                this.dialogService.errorReport(T('Jails failed to s:wtart'), message);
+                this.dialogService.errorReport(T('Jails failed to start'), message);
               }
             },
             (res) => {
