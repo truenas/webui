@@ -172,8 +172,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(){
     // unsubscribe from middleware
-    this.statsEvents.unsubscribe();
-    this.statsEventsTC.unsubscribe();
+    this.statsEvents.complete();
+    this.statsEventsTC.complete();
 
     // close out subscribers
     this.statsDataEvents.complete();
