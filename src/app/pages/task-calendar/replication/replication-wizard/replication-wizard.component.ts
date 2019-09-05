@@ -217,6 +217,11 @@ export class ReplicationWizardComponent {
                     }],
                 },
                 {
+                    type: 'paragraph',
+                    name: 'snapshots_count',
+                    paraText: '# snapshots find',
+                },
+                {
                     type: 'radio',
                     name: 'transport',
                     placeholder: helptext.encryption_placeholder,
@@ -517,6 +522,8 @@ export class ReplicationWizardComponent {
         replication: 'replication.delete',
     }
 
+    protected snapshotsCountField;
+
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
@@ -534,7 +541,7 @@ export class ReplicationWizardComponent {
 
     afterInit(entityWizard) {
         this.entityWizard = entityWizard;
-
+        this.snapshotsCountField = _.find(this.wizardConfig[0].fieldConfig, {name: 'snapshots_count'});
         this.step0Init();
         this.step1Init();
     }
@@ -584,9 +591,11 @@ export class ReplicationWizardComponent {
         });
         this.entityWizard.formArray.controls[0].controls['source_datasets'].statusChanges.subscribe((value) => {
             this.genTaskName();
+            this.getSnapshots();
         });
         this.entityWizard.formArray.controls[0].controls['target_dataset'].statusChanges.subscribe((value) => {
             this.genTaskName();
+            this.getSnapshots();
         });
 
         for (const i of ['source', 'target']) {
@@ -983,5 +992,23 @@ export class ReplicationWizardComponent {
             this.suggestName = source.join(',') + ' - ' + target;
         }
         this.entityWizard.formArray.controls[0].controls['name'].setValue(this.suggestName);
+    }
+
+    getSnapshots() {
+        this.ws.call('replication.count_eligible_manual_snapshots',
+        [
+            this.entityWizard.formArray.controls[0].controls['source_datasets'].value.toString(),
+            ['auto-%Y-%m-%d_%H-%M'],
+            this.entityWizard.formArray.controls[0].controls['transport'].value,
+            this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
+        ]).subscribe(
+            (res) => {
+                this.snapshotsCountField.paraText = res.eligible + ' snapshots found';
+            },
+            (err) => {
+                this.snapshotsCountField.paraText = '';
+                new EntityUtils().handleWSError(this, err);
+            }
+        )
     }
 }
