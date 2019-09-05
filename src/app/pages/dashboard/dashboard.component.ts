@@ -179,7 +179,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
 
-    // Eliminate top level scrolling 
+    // Restore top level scrolling 
     let wrapper = (<any>document).querySelector('.fn-maincontent');
     wrapper.style.overflow = 'auto';
   }
