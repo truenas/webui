@@ -19,7 +19,8 @@ export const helptext_sharing_iscsi = {
   target_form_tooltip_alias: T("Optional user-friendly name."),
 
   target_form_placeholder_mode: T("Target Mode"),
-  target_form_tooltip_mode: T(""),
+  target_form_tooltip_mode: T("Define the target as *iSCSI*,\
+ *Fibre Channel*, or *Both*."),
 
   target_form_placeholder_portal: T("Portal Group ID"),
   target_form_tooltip_portal: T(
