@@ -172,14 +172,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(){
     // unsubscribe from middleware
-    this.statsEvents.unsubscribe();
-    this.statsEventsTC.unsubscribe();
+    this.statsEvents.complete();
+    this.statsEventsTC.complete();
 
     // close out subscribers
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
 
-    // Eliminate top level scrolling 
+    // Restore top level scrolling 
     let wrapper = (<any>document).querySelector('.fn-maincontent');
     wrapper.style.overflow = 'auto';
   }
@@ -303,7 +303,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   getDisksData(){
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
-      //this.system.pools = evt.data;
       this.pools = evt.data;
       this.isDataReady();
     });
