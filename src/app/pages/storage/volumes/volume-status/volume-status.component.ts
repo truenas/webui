@@ -158,7 +158,7 @@ export class VolumeStatusComponent implements OnInit {
     this.getUnusedDisk();
   }
 
-  getAction(data, category): any {
+  getAction(data, category, vdev_type): any {
     const actions = [{
       label: "Edit",
       onClick: (row) => {
@@ -208,7 +208,7 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: data.status == "OFFLINE" ? true : false,
     }, {
-      label: "Online",
+      label: T("Online"),
       onClick: (row) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
@@ -235,7 +235,7 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: data.status == "ONLINE" || this.pool.encrypt !== 0 ? true : false,
     }, {
-      label: "Replace",
+      label: T("Replace"),
       onClick: (row) => {
         let name = row.name;
         if (!_.startsWith(name, '/')) {
@@ -276,7 +276,7 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: false,
     }, {
-      label: "Remove",
+      label: T("Remove"),
       onClick: (row) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
@@ -301,6 +301,32 @@ export class VolumeStatusComponent implements OnInit {
         });
       },
       isHidden: false,
+    }, {
+      label: T("Detach"),
+      onClick: (row) => {
+        const pIndex = row.name.lastIndexOf('p');
+        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+
+        this.dialogService.confirm(
+          T("Detach"),
+          T("Detach disk ") + diskName + "?", false, T('Detach')
+        ).subscribe((res) => {
+          if (res) {
+            this.loader.open();
+            this.ws.call('pool.detach', [this.pk, {label: row.guid}]).subscribe(
+              (res) => {
+                this.getData();
+                this.loader.close();
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+              }
+            )
+          };
+        });
+      },
+      isHidden: true,
     }];
 
     if (category == "data") {
@@ -314,10 +340,14 @@ export class VolumeStatusComponent implements OnInit {
       _.find(actions, { label: "Offline" }).isHidden = true;
     }
 
+    if (vdev_type === "MIRROR") {
+      _.find(actions, { label: "Detach" }).isHidden = false;
+    }
+
     return actions;
   }
 
-  parseData(data: any, category?: any) {
+  parseData(data: any, category?: any, vdev_type?: any) {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
@@ -347,20 +377,23 @@ export class VolumeStatusComponent implements OnInit {
 
     // add actions
     if (category && data.type && data.type == 'DISK') {
-      item.actions = this.getAction(data, category);
+      item.actions = this.getAction(data, category, vdev_type);
     }
     return item;
   }
 
-  parseTopolgy(data: any, category: any): TreeNode {
+  parseTopolgy(data: any, category: any, vdev_type?: any): TreeNode {
     const node: TreeNode = {};
-    node.data = this.parseData(data, category);
+    node.data = this.parseData(data, category, vdev_type);
     node.expanded = true;
     node.children = [];
+    if (vdev_type === undefined && data.name) {
+      vdev_type = data.name;
+    }
 
     if (data.children) {
       for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.parseTopolgy(data.children[i], category));
+        node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
       }
     }
     delete node.data.children;
