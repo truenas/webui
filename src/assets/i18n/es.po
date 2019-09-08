@@ -160,6 +160,12 @@ msgid ""
 "preserved, but must be supported by both systems."
 msgstr ""
 
+msgid ""
+"<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
+"target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
+"valid    email address when registering to receive issue status updates."
+msgstr ""
+
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr ""
 
@@ -655,6 +661,12 @@ msgid "Adapter Type"
 msgstr ""
 
 msgid "Adapter Type:"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Add ACL Item"
 msgstr ""
 
 msgid "Add Additional Path"
@@ -2281,6 +2293,9 @@ msgstr ""
 msgid "Contact"
 msgstr ""
 
+msgid "Contact Support"
+msgstr ""
+
 msgid "Container"
 msgstr ""
 
@@ -3113,6 +3128,9 @@ msgid "Enable autotune"
 msgstr ""
 
 msgid "Enable iSCSI ALUA"
+msgstr ""
+
+msgid "Enable iXsystems Proactive Support"
 msgstr ""
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
@@ -3977,7 +3995,13 @@ msgstr ""
 msgid "Error Promoting dataset "
 msgstr ""
 
+msgid "Error Saving Proactive Support Settings"
+msgstr ""
+
 msgid "Error Unlocking"
+msgstr ""
+
+msgid "Error Updating Production Status"
 msgstr ""
 
 msgid "Error Upgrading Pool "
@@ -4911,6 +4935,9 @@ msgid ""
 "are allowed."
 msgstr ""
 
+msgid "Invalid dataset."
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr ""
 
@@ -4985,6 +5012,12 @@ msgstr ""
 msgid ""
 "Jails cannot be created or managed untill a pool is present for storing "
 "them. Please create a pool first"
+msgstr ""
+
+msgid "Jails failed to start"
+msgstr ""
+
+msgid "Jails started."
 msgstr ""
 
 msgid "KDC"
@@ -5216,9 +5249,6 @@ msgid "Log in"
 msgstr ""
 
 msgid "Log in as root with password"
-msgstr ""
-
-msgid "Log in to Legacy User Interface?"
 msgstr ""
 
 msgid "Log mountd(8) requests"
@@ -5654,6 +5684,9 @@ msgstr ""
 msgid "Naming Schema"
 msgstr ""
 
+msgid "Navigation"
+msgstr ""
+
 msgid "NetBIOS Alias"
 msgstr ""
 
@@ -5817,9 +5850,6 @@ msgid "Not run since last boot"
 msgstr ""
 
 msgid "Note"
-msgstr ""
-
-msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
 msgstr ""
 
 msgid "Notes"
@@ -6175,6 +6205,9 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
+msgid "Phone Number"
+msgstr ""
+
 msgid "Physical interface of the selected member."
 msgstr ""
 
@@ -6375,6 +6408,9 @@ msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
 "versions of FreeNAS: "
+msgstr ""
+
+msgid "Production status successfully updated"
 msgstr ""
 
 msgid "Promote Dataset"
@@ -6963,6 +6999,19 @@ msgstr ""
 msgid "Scrub complete on pool <i>"
 msgstr ""
 
+msgid ""
+"Search the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
+"target=\"_blank\">FreeNAS issue tracker</a>    to ensure the issue has not "
+"already been reported before    filing a bug report or feature request. If "
+"an issue has    already been created, add a comment to the existing issue.  "
+"  Please visit the <a href=\"http://www.ixsystems.com/storage/\" "
+"target=\"_blank\">    iXsystems storage page</a>    for enterprise-grade "
+"storage solutions and support."
+msgstr ""
+
+msgid "Secondary Contact"
+msgstr ""
+
 msgid "Secondary Contact (optional)"
 msgstr ""
 
@@ -7487,6 +7536,12 @@ msgid ""
 "to iXsystems."
 msgstr ""
 
+msgid "Send initial debug"
+msgstr ""
+
+msgid "Send initial debug."
+msgstr ""
+
 msgid "Serial"
 msgstr ""
 
@@ -7599,6 +7654,9 @@ msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
 "target=\"_blank\">getrlimit(2)</a> utility."
+msgstr ""
+
+msgid "Set system production state and optionally send initial debug."
 msgstr ""
 
 msgid ""
@@ -8351,6 +8409,14 @@ msgstr ""
 msgid "Signing Request"
 msgstr ""
 
+msgid ""
+"Silver / Gold Coverage Customers can enable iXsystems Proactive Support. "
+"This  automatically emails iXsystems when certain conditions occur on this "
+"TrueNAS system. The iX Support  Team will promptly communicate with the "
+"Contacts saved below to quickly resolve any issue that may  have occurred "
+"on the system."
+msgstr ""
+
 msgid "Site Name"
 msgstr ""
 
@@ -8597,6 +8663,9 @@ msgstr ""
 msgid "Successfully reset encryption for pool: "
 msgstr ""
 
+msgid "Successfully saved proactive support settings."
+msgstr ""
+
 msgid "Successfully updated."
 msgstr ""
 
@@ -8759,6 +8828,9 @@ msgid "Target Alias"
 msgstr ""
 
 msgid "Target Dataset"
+msgstr ""
+
+msgid "Target Mode"
 msgstr ""
 
 msgid "Target Name"
@@ -9093,6 +9165,9 @@ msgid ""
 "being reported."
 msgstr ""
 
+msgid "This is a production system"
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -9127,9 +9202,6 @@ msgid "Time Machine Quota"
 msgstr ""
 
 msgid "Time remaining until changes reverted:"
-msgstr ""
-
-msgid "TimeZone"
 msgstr ""
 
 msgid "Timeout"
@@ -9212,6 +9284,9 @@ msgid "UNIX Charset"
 msgstr ""
 
 msgid "UPDATE"
+msgstr ""
+
+msgid "UPDATE LICENSE"
 msgstr ""
 
 msgid "UPS Mode"
@@ -9321,6 +9396,9 @@ msgid "Update License"
 msgstr ""
 
 msgid "Update Period"
+msgstr ""
+
+msgid "Update Status"
 msgstr ""
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
@@ -10013,9 +10091,6 @@ msgid "jail_zfs_dataset"
 msgstr ""
 
 msgid "jail_zfs_mountpoint"
-msgstr ""
-
-msgid "legacy web interface"
 msgstr ""
 
 msgid "list"
