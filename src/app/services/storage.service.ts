@@ -313,7 +313,7 @@ export class StorageService {
       let unit = '';
 
       // empty value is evaluated as zero
-      if (!hstr || typeof hstr === 'number') {
+      if (!hstr) {
           this.humanReadable = '0';
           return 0;
       }

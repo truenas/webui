@@ -16,6 +16,7 @@ import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
 import { filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import globalHelptext from './../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -134,10 +135,22 @@ export class VMWizardComponent {
           inputType: 'text',
           validation : [
             ...helptext.memory_validation,
-            (control: FormControl): ValidationErrors => 
-              control.value && isNaN(this.storageService.convertHumanStringToNum(control.value))
+            (control: FormControl): ValidationErrors => {
+              const config = this.wizardConfig.find(c => c.label === helptext.vcpus_label).fieldConfig.find(c => c.name === 'memory');
+              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value))
                 ? { invalid_byte_string: true }
                 : null
+
+              if (errors) {
+                config.hasErrors = true;
+                config.errors = globalHelptext.human_readable_input_error;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
+
+              return errors;
+            }
           ],
           value: '',
           required: true,
