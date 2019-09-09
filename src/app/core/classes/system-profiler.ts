@@ -63,8 +63,9 @@ export class SystemProfiler {
         this.headIndex = i;
       }
 
+      const series = this.getSeriesFromModel(this.platform);
       let enclosure = {
-        model: this.headIndex == i ? this.getSeriesFromModel(this.platform) : this.enclosures[i].model, 
+        model: this.headIndex == i ? series : this.enclosures[i].model, 
         disks: [], 
         diskKeys: {}, 
         poolKeys: {} 
@@ -87,6 +88,8 @@ export class SystemProfiler {
       return 'X Series';
     } else if(model.startsWith('M')){
       return 'M Series';
+    } else {
+      return model;
     }
   }
 
