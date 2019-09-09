@@ -269,4 +269,6 @@ div.vdev-disk {
   position:static;
 }
 
-
+.semibold{
+  font-weight:700;
+}
