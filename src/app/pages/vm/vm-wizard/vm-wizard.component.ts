@@ -387,7 +387,10 @@ export class VMWizardComponent {
         this.summary[T('Number of CPUs')] = vcpus;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
-        this.summary[T('Memory')] = memory;
+        this.summary[T('Memory')] =
+          isNaN(this.storageService.convertHumanStringToNum(memory))
+            ? '0 MB'
+            : Math.ceil(this.storageService.convertHumanStringToNum(memory) / 1024**2) + ' MiB' ;
       });
 
       ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
