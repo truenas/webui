@@ -629,7 +629,7 @@ async customSubmit(value) {
     vm_payload["description"] = value.description;
     vm_payload["time"]= value.time;
     vm_payload["vcpus"] = value.vcpus;
-    vm_payload["memory"] = this.storageService.convertHumanStringToNum(value.memory) / 1024**2; // bytes -> mb
+    vm_payload["memory"] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024**2); // bytes -> mb
     vm_payload["bootloader"] = value.bootloader;
     vm_payload["autoloader"] = value.autoloader;
     vm_payload["autostart"] = value.autostart;
