@@ -195,6 +195,7 @@ nav.view-nav-bar{
   bottom:20px;
   text-align:center;
   opacity:0.5;
+  z-index:2;
 }
 
 
