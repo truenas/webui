@@ -1546,4 +1546,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+  .styled-list-for-dialogs {
+    list-style: disc inside;
+    padding-left: 15px;
+  }
+
  } // end of ix theme
