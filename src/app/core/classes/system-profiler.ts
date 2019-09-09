@@ -12,6 +12,7 @@ interface VDev {
   disks?: any; // {devname: index} Only for mirrors and RAIDZ
   poolIndex: number;
   vdevIndex: number;
+  topology: string;
 }
 
 export class SystemProfiler {
@@ -132,34 +133,42 @@ export class SystemProfiler {
         return;
       }
 
-      pool.topology.data.forEach((vdev, vIndex) => {
-
-        let v:VDev = {
-          pool: pool.name,
-          type: vdev.type,
-          poolIndex: pIndex,
-          vdevIndex: vIndex,
-          disks: {}
-        }
-
-        if(vdev.children.length == 0 && vdev.device){
-            
-            let spl = vdev.device.split('p');
-            let name = spl[0]
-            v.disks[name] = -1; // no children so we use this as placeholder
-        } else if(vdev.children.length > 0) {
-          vdev.children.forEach((disk, dIndex) => {
-            let spl = disk.device.split('p');
-            let name = spl[0]
-            v.disks[name] = dIndex;
-          });
-        } 
-        
-        this.storeVdevInfo(v);
-      });
+      this.parseByTopology('data', pool, pIndex);
+      this.parseByTopology('spare', pool, pIndex);
+      this.parseByTopology('cache', pool, pIndex);
+      this.parseByTopology('log', pool, pIndex);
 
     });
     
+  }
+
+  private parseByTopology(role, pool, pIndex){
+    pool.topology[role].forEach((vdev, vIndex) => {
+
+      let v:VDev = {
+        pool: pool.name,
+        type: vdev.type,
+        topology: role,
+        poolIndex: pIndex,
+        vdevIndex: vIndex,
+        disks: {}
+      }
+
+      if(vdev.children.length == 0 && vdev.device){
+          
+          let spl = vdev.device.split('p');
+          let name = spl[0]
+          v.disks[name] = -1; // no children so we use this as placeholder
+      } else if(vdev.children.length > 0) {
+        vdev.children.forEach((disk, dIndex) => {
+          let spl = disk.device.split('p');
+          let name = spl[0]
+          v.disks[name] = dIndex;
+        });
+      } 
+      
+      this.storeVdevInfo(v);
+    });
   }
 
   getVdev(alias:VDev){
