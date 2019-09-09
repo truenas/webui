@@ -62,9 +62,9 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  restrictions on the number of CPUs.'),
 
 memory_limitation: T('Available memory'),
-memory_placeholder: T('Memory Size (MiB)'),
-memory_validation : [ Validators.required, Validators.min(128)],
-memory_tooltip: T('Allocate a number of megabytes of RAM for the VM.'),
+memory_placeholder: T('Memory Size'),
+memory_validation : [Validators.required],
+memory_tooltip: T('Allocate RAM for the VM'),
 
 disks_label: T('Hard Disks'),
 disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
