@@ -27,7 +27,6 @@ export class SystemProfiler {
   }
   set diskData(obj){
     this._diskData = this.filterSystemDisk(obj);
-    //this._diskData = obj;
     this.parseDiskData(this._diskData);
     this.parseEnclosures(this._enclosures);
   }
@@ -39,7 +38,6 @@ export class SystemProfiler {
   }
   set enclosures(obj){
     this._enclosures = obj;
-    //this.parseEnclosures(this._enclosures);
   }
 
   private _pools: any;
@@ -55,8 +53,6 @@ export class SystemProfiler {
     this.platform = model;
     this.enclosures = data;
     this.createProfile();
-    //this.diskData = data;
-    //this.parseDiskData(data);
   }
 
   createProfile(){
@@ -95,36 +91,13 @@ export class SystemProfiler {
   }
 
   private parseDiskData(disks){
-    //let data = this.filterSystemDisk(disks);
     let data = disks; // DEBUG
-    //let enclosureID = 0;
-    //let enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
-    //const last = data.length - 1;
     data.forEach((item, index) => {
       if(!item.enclosure){return};
       let enclosure = this.profile[item.enclosure.number];
       item.status = 'AVAILABLE'; // Label it as available. If it is assigned to a vdev/pool then this will be overridden later.
       enclosure.diskKeys[item.devname] = enclosure.disks.length; // index to enclosure.disks
       enclosure.disks.push(item);
-      //enclosure.diskKeys[item.devname] = index; // index to _diskData
-      //enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.platform;
-
-      //let next = data[index + 1];
-
-      // SIMLATE ENCLOSURE SLOT WHEN 
-      // TESTING ON NON TRUENAS HARDWARE
-      // REMOVE THIS FOR PRODUCTION!!!
-      //data[index].enclosure.slot = index;
-
-      //if( !next || next.enclosure_num > enclosureID ){ 
-        //enclosure.model = enclosureID > 0 ? "ES" +  enclosure.disks.length : this.platform;
-        //this.profile.push(enclosure);
-
-        //enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
-        //enclosureID++ 
-
-      //}
-
     });
 
   }
@@ -140,12 +113,6 @@ export class SystemProfiler {
       return item.enclosure;
       
     });
-    /*for(let index = data.length; index >= 0; index--){
-      if(sd.indexOf(index) !== -1){ 
-        data.splice(index, 1);
-      }
-    };*/
-    //this._diskData = data;
     return data;
   }
   
@@ -215,24 +182,6 @@ export class SystemProfiler {
       enclosure.poolKeys[vdev.pool] = vdev.poolIndex;
     }
 
-    /*for(let enclosure of this.profile){
-      let diskKey = enclosure.diskKeys[diskName];
-      let test = typeof diskKey;
-
-      if(test == "undefined" || typeof enclosure.disks[diskKey] == "undefined") { 
-        continue;
-      } else {
-        
-        enclosure.disks[diskKey].vdev = vdev;
-        enclosure.disks[diskKey].status = this.getDiskStatus(diskName, enclosure, vdev);
-        if(!enclosure.poolKeys[vdev.pool]){
-          enclosure.poolKeys[vdev.pool] = vdev.poolIndex;
-        }
-
-        break;
-      }
-      
-    }*/
   }
 
   getDiskStatus(diskName, enclosure, vdev?:VDev): string{
