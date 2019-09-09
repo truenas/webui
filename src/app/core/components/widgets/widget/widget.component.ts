@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -25,9 +25,12 @@ export class WidgetComponent extends iXObject implements AfterViewInit {
   protected core:CoreService;
   protected themeService: ThemeService;
   @Input() widgetSize: string;
+  @Input() rendered?:boolean = true;
   @Input() configurable:boolean = false;
+  @Output() back = new EventEmitter();
   public title:string = T("Widget Base Class");
   public chartSize:number;
+
   //public configurable: boolean = true;
   public flipAnimation = "stop";
   public flipDirection = "vertical";
@@ -61,6 +64,10 @@ export class WidgetComponent extends iXObject implements AfterViewInit {
   setPreferences(form:NgForm){
     console.log("******** FORM SUBMITTED!! ********");
     console.log(form);
+  }
+
+  goBack(){
+    this.back.emit();
   }
 
 }

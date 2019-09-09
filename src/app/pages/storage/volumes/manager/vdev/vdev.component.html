@@ -78,13 +78,14 @@
     <div class="vdev-wrapper">
         <div class="vdev-type">
         <div *ngIf="group === 'data'" class="datainfo">
-            <mat-select id="vdev__option-menu" *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
+            <mat-select id="vdev__option-menu" *ngIf="group === 'data' && !vdev_type_disabled" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
                 <mat-option value="mirror" *ngIf="getDisks().length >= 2">{{"Mirror" | translate}}</mat-option>
                 <mat-option value="raidz" *ngIf="getDisks().length >= 3">{{"Raid-z" | translate}}</mat-option>
                 <mat-option value="raidz2" *ngIf="getDisks().length >= 4">{{"Raid-z2" | translate}}</mat-option>
                 <mat-option value="raidz3" *ngIf="getDisks().length >= 5">{{"Raid-z3" | translate}}</mat-option>
             </mat-select>
+            <p *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</p>
             {{"Estimated raw capacity:" | translate}} {{size}}
             <tooltip class="vdevTooltip" [message]=vdev_type_tooltip></tooltip>
         </div>

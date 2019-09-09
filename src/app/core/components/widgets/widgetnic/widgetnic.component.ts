@@ -6,6 +6,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
 import { environment } from 'app/../environments/environment';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -61,7 +62,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   @Input() stats;
   @Input() nicState;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
-  @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
+  @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
   public traffic: NetTraffic;
   public currentSlide:string = "0";
   
@@ -160,11 +161,15 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
 
   updateSlidePosition(value){
     if(value.toString() == this.currentSlide){ return; }
-    let el = styler(this.carouselParent.nativeElement.querySelector('.carousel'));
+    const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
+    const slide = this.carouselParent.nativeElement.querySelector('.slide');
+
+    let el = styler(carousel);
+    let slideW = styler(slide).get('width');
+
     tween({
       from:{ x: (parseInt(this.currentSlide) * 100) * -1 },
-      //to:{ x: (value * 100) * -1 },
-      to:{ x: (value * 600) * -1 },
+      to:{ x: (value * slideW) * -1 },
       duration: 250
     }).start(el.set);
     

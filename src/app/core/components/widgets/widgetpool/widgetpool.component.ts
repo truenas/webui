@@ -6,6 +6,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { environment } from 'app/../environments/environment';
 
@@ -100,9 +101,9 @@ export interface VolumeData {
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
   @Input() poolState;
-  @Input() volumeData?:VolumeData;
+  @Input() volumeData:any;//VolumeData;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
-  @ViewChild('carouselparent', {static:true}) carouselParent:ElementRef;
+  @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
 
   @ViewChild('overview', {static:false}) overview:TemplateRef<any>;
   @ViewChild('data', {static:false}) data:TemplateRef<any>;
@@ -160,8 +161,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   ngOnChanges(changes: SimpleChanges){
     if(changes.poolState){
-      //console.warn(changes.poolState);
-    } else if(changes.volumeData){
+    } 
+    
+    if(changes.volumeData){
       this.getAvailableSpace();
     }
   }
@@ -265,7 +267,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
       this.diskSize = this.diskSize.concat('0')
     };
-
     this.checkVolumeHealth();
   };
 
@@ -325,9 +326,16 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   updateSlidePosition(value){
     if(value.toString() == this.currentSlide){ return; }
-    let el = styler(this.carouselParent.nativeElement.querySelector('.carousel'));
-    const startX = (parseInt(this.currentSlide) * 600) * -1;
-    const endX = (value * 600) * -1;
+
+    const carousel = this.carouselParent.nativeElement.querySelector('.carousel')
+    const slide = this.carouselParent.nativeElement.querySelector('.slide');
+
+    let el = styler(carousel);
+    const slideW = styler(slide).get('width'); //600;
+
+    const startX = (parseInt(this.currentSlide) * slideW) * -1;
+    const endX = (value * slideW) * -1;
+
     tween({
       from:{ x: startX },
       to:{ x: endX },

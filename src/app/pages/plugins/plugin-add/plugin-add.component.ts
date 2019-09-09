@@ -281,6 +281,14 @@ export class PluginAddComponent implements OnInit {
     this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
       this.updateIpValidation();
     });
+    this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
+      if (res && !this.formGroup.controls['nat'].disabled) {
+        this.setDisabled('nat', true);
+      }
+      if (!res && this.formGroup.controls['nat'].disabled) {
+        this.setDisabled('nat', false);
+      }
+    })
 
     for (let i in this.fieldConfig) {
       let config = this.fieldConfig[i];

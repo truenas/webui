@@ -91,8 +91,6 @@ const DETAIL_HEIGHT = 24;
 export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() title = '';
-  @Input() legacyWarning = '';
-  @Input() legacyWarningLink = '';
   @Input('conf') conf: InputTableConf;
 
   @ViewChild('filter', { static: false}) filter: ElementRef;
@@ -254,6 +252,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    if (this.filter) {
     observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
       debounceTime(150),
       distinctUntilChanged(),)
@@ -296,7 +295,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
-      });              
+      });      
+    };        
   }
 
   setTableHeight() {
@@ -936,14 +936,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.allColumns && this.conf.columns) {
       return this.conf.columns.length === this.allColumns.length;
     }
-  }
-
-  onGoToLegacy() {
-    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
-      if (res) {
-        window.location.href = '/legacy/';
-      }
-    });
   }
   // End checkbox section -----------------------
   

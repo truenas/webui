@@ -25,6 +25,7 @@
   line-height: 180%;
 }
 
+.xs.widget mat-toolbar-row.view-overview .controls,
 .widget mat-toolbar-row.view-overview .primary-nav{
   color:#efefef;
 }
@@ -71,7 +72,7 @@
 
 .slide .left,
 .slide .right{
-  width:50%;
+  /*width:50%;*/
   height:100%;
   display:inline-block;
   padding:32px 0;
@@ -118,6 +119,11 @@
   margin-left: 8px;
 }
 
+.slide.overview .left .left-content{
+  display:table;
+  min-height:50%;
+}
+
 .nic-name{
   font-size:300%;
 }
@@ -135,13 +141,21 @@
 }
 
 .nic-name.up .icon-wrapper,
-.link-state.up .icon-wrapper{
+.link-state.up .icon-wrapper,
+.link-state.up .mat-icon{
   color: var(--green);
 }
 
 .nic-name.down .icon-wrapper,
-.link-state.down .icon-wrapper{
+.link-state.down .icon-wrapper,
+.link-state.down .mat-icon{
   color: var(--red);
+}
+
+.link-state .mat-icon{
+  font-size: 18px;
+  position: relative;
+  top: 2px;
 }
 
 .controls{
@@ -227,6 +241,12 @@
 
 /* NARROW SCREENS */
 .xs.widget{
-  width:100%;
-  max-height:320px;
+  width: 100%;
+  height: calc(100vh - 96px);
+  position: absolute;
+  min-height:600px; 
+}
+
+.xs.widget .overview .right .list-subheader{
+  margin-top: 0;
 }

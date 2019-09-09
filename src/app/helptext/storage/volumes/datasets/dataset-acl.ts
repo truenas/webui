@@ -73,7 +73,7 @@ dataset_acl_basic_perms_options: [
                                   {label:'Modify', value: 'MODIFY'},
                                   {label:'Traverse', value: 'TRAVERSE'},
                                   {label:'Full Control', value: 'FULL_CONTROL'},
-                                  {label:'Other (Too complicated to be displayed)', 
+                                  {label:'Other (Too complicated to be displayed)',
                                    value: 'OTHER', disable: true, hiddenFromDisplay: true}
                                  ],
 dataset_acl_basic_perms_other_warning: T('These permissions are too complicated to be displayed and cannot be saved unless changed.'),
@@ -130,7 +130,7 @@ dataset_acl_recursive_tooltip: T('Apply permissions recursively to all\
 
 dataset_acl_traverse_placeholder: T('Apply permissions to child datasets'),
 dataset_acl_traverse_tooltip: T('Apply permissions recursively to all child\
- datasets of the current dataset'),
+ datasets of the current dataset.'),
 
 dataset_acl_dialog_warning: T('Warning'),
 dataset_acl_dialog_warning_message: T('Changing dataset permission mode\
@@ -152,5 +152,7 @@ dataset_acl_stripacl_dialog_warning_message: T('Stripping the ACL resets\
  permissions are created.'),
 
 dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can\
- prevent users from accessing data in child datasets.')
+ prevent users from accessing data in child datasets.'),
+
+dataset_acl_add_item_btn: T('Add ACL Item')
 }

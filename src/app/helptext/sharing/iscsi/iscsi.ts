@@ -18,6 +18,9 @@ export const helptext_sharing_iscsi = {
   target_form_placeholder_alias: T("Target Alias"),
   target_form_tooltip_alias: T("Optional user-friendly name."),
 
+  target_form_placeholder_mode: T("Target Mode"),
+  target_form_tooltip_mode: T(""),
+
   target_form_placeholder_portal: T("Portal Group ID"),
   target_form_tooltip_portal: T(
     "Leave empty or select number of existing portal to use."
@@ -196,9 +199,8 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_blocksize: T("Logical block size"),
   extent_tooltip_blocksize: T(
-    "Maximum size for individual file blocks in the file system. Only\
- override the default unless the initiator requires a specific block\
- size."
+    "Leave at the default of 512 unless the initiator\
+ requires a different block size."
   ),
 
   extent_placeholder_pblocksize: T("Disable physical block size reporting"),

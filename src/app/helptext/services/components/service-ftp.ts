@@ -60,7 +60,6 @@ masqaddress_tooltip: T('Public IP address or hostname. Set if FTP clients\
 ssltls_certificate_placeholder : T('Certificate'),
 ssltls_certificate_tooltip: T('The SSL certificate to be used for TLS FTP connections.\
  To create a certificate, use <b>System --> Certificates</b>.'),
-ssltls_certificate_options : [{label:'-', value:null}],
 
 filemask_placeholder : T('File Permission'),
 filemask_tooltip: T('Sets default permissions for newly created files.'),

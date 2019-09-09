@@ -26,7 +26,6 @@ export class ServiceSMBComponent {
   protected idmap_type = 'tdb'
   protected targetDS = '5';
 
-
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cifs_srv_netbiosname',
@@ -34,6 +33,16 @@ export class ServiceSMBComponent {
       tooltip: helptext.cifs_srv_netbiosname_tooltip,
       required: true,
       validation : helptext.cifs_srv_netbiosname_validation
+    },
+    {
+      type : 'input',
+      name : 'cifs_srv_netbiosname_b',
+      placeholder : helptext.cifs_srv_netbiosname_b_placeholder,
+      tooltip : helptext.cifs_srv_netbiosname_b_tooltip,
+      validation : helptext.cifs_srv_netbiosname_b_validation,
+      required : true,
+      isHidden: true,
+      disabled: true
     },
     {
       type: 'input',
@@ -160,6 +169,11 @@ export class ServiceSMBComponent {
   public entityEdit: any;
 
   preInit(entityForm: any) {
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        entityForm.setDisabled('cifs_srv_netbiosname_b', !is_ha, !is_ha);
+      });
+    }
     this.cifs_srv_unixcharset = _.find(this.fieldConfig, {"name": "cifs_srv_unixcharset"});
     this.ws.call("smb.unixcharset_choices").subscribe((res) => {
       const values = Object.values(res);
@@ -213,8 +227,6 @@ export class ServiceSMBComponent {
         this.idNumber = idmap_res.id;
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res.range_high);
         entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res.range_low);
-
-
       });
     });
   }

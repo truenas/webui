@@ -455,6 +455,13 @@ export class JailWizardComponent {
 
       if (res) {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
+        if (!( < FormGroup > entityWizard.formArray.get([1])).controls['nat'].disabled) {
+          entityWizard.setDisabled('nat', true, 1);
+        }
+      } else {
+        if (( < FormGroup > entityWizard.formArray.get([1])).controls['nat'].disabled) {
+          entityWizard.setDisabled('nat', false, 1);
+        }
       }
       _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
     });

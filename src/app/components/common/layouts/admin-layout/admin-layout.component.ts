@@ -75,6 +75,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.logoPath = theme.logoPath;
       this.logoTextPath = theme.logoTextPath;
     });
+
+    // Listen for system information changes
+    core.register({
+      observerClass:this, 
+      eventName:"SysInfo", 
+    }).subscribe((evt:CoreEvent)=>{
+      this.hostname = evt.data.hostname;
+    });
   }
 
   ngOnInit() {
@@ -95,9 +103,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
     this.checkIfConsoleMsgShows();
 
-    this.ws.call('system.info').subscribe((res) => {
-      this.hostname = res.hostname;
-    })
+    this.core.emit({name:"SysInfoRequest", sender:this});
   }
 
   ngAfterViewChecked() {

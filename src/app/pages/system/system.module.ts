@@ -53,7 +53,15 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
-import { EnclosureModule } from './viewenclosure/enclosure.module'
+import { EnclosureModule } from './viewenclosure/enclosure.module';
+import { EulaComponent } from './support/eula/eula.component';
+import { TnSysInfoComponent } from './support/tn-sys-info/tn-sys-info.component';
+import { SysImageComponent } from './support/sys-image/sys-image.component';
+import { ProductionStatusComponent } from './support/production-status/production-status.component';
+import { ProactiveComponent } from './support/proactive/proactive.component';
+import { TnSupportComponent } from './support/tn-support/tn-support.component';
+import { FnSupportComponent } from './support/fn-support/fn-support.component';
+import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
 
 
 @NgModule({
@@ -106,6 +114,14 @@ import { EnclosureModule } from './viewenclosure/enclosure.module'
     FailoverComponent,
     ProactiveSupportComponent,
     ReportingComponent,
+    EulaComponent,
+    TnSysInfoComponent,
+    SysImageComponent,
+    ProductionStatusComponent,
+    ProactiveComponent,
+    TnSupportComponent,
+    FnSupportComponent,
+    FnSysInfoComponent,
   ],
   providers: []
 })

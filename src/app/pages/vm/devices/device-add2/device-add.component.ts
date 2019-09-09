@@ -240,7 +240,8 @@ export class DeviceAddComponent implements OnInit {
       placeholder : helptext.vnc_resolution_placeholder,
       tooltip : helptext.vnc_resolution_tooltip,
       type: 'select',
-      options : helptext.vnc_resolution_options
+      options : helptext.vnc_resolution_options,
+      value: '1024x768'
     },
     {
       name : 'vnc_bind',
@@ -290,13 +291,13 @@ export class DeviceAddComponent implements OnInit {
 
   preInit() {
     // vnc
-    this.systemGeneralService.getIPChoices().subscribe((res) => {
-      if (res.length > 0) {
+    this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
+      if(res && Object.keys(res).length > 0) {
         this.ipAddress = _.find(this.vncFieldConfig, {'name' : 'vnc_bind'});
-        for (const item of res){
-          this.ipAddress.options.push({label : item[1], value : item[0]});
-        }
-      }
+        Object.keys(res).forEach((address) => {
+          this.ipAddress.options.push({label : address, value : address});
+        });
+      };
     });
 
     // nic

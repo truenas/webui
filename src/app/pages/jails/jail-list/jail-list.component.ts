@@ -31,10 +31,9 @@ export class JailListComponent implements OnInit {
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
-  public legacyWarning = T("Note: Legacy jails created before FreeNAS 11.2 must be managed from the");
-  public legacyWarningLink = T("legacy web interface");
 
   public columns: Array < any > = [
+    { name: T('JID'), prop: 'jid'},
     { name: T('Name'), prop: 'host_hostuuid', always_display: true },
     { name: T('Boot'), prop: 'boot_readble', hidden: true},
     { name: T('State'), prop: 'state'},
@@ -73,6 +72,18 @@ export class JailListComponent implements OnInit {
               }
               this.updateMultiAction(selected);
               this.loader.close();
+              let message = "";
+              for (let i = 0; i < res.result.length; i++) {
+                if (res.result[i].error != null) {
+                  message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
+                }
+              }
+              if (message === "") {
+                this.snackBar.open(T("Jails started."), 'close', { duration: 5000 });
+              } else {
+                message = '<ul>' + message + '</ul>';
+                this.dialogService.errorReport(T('Jails failed to start'), message);
+              }
             },
             (res) => {
               this.loader.close();

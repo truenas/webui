@@ -47,6 +47,7 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
+import { EulaComponent } from './support/eula/eula.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -334,12 +335,23 @@ export const routes: Routes = [
       path: 'failover',
       component: FailoverComponent,
       data: { title: 'Failover', breadcrumb: 'Failover', icon: 'device_hub' }
-    }, {
+    }, 
+    {
       path: 'support',
-      component: SupportComponent,
       data: { title: 'Support', breadcrumb: 'Support', icon: 'perm_phone_msg' },
-
-    },
+      children: [
+        {
+          path: '',
+          component: SupportComponent,
+          data: { title: 'Support', breadcrumb: 'Support' },
+        },
+        {
+          path: 'eula',
+          component: EulaComponent,
+          data: { title: 'EULA', breadcrumb: 'EULA'}
+        }
+      ]
+    }, 
     {
       path: 'proactivesupport',
       component: ProactiveSupportComponent,
