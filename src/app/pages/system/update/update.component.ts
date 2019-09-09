@@ -544,7 +544,8 @@ export class UpdateComponent implements OnInit {
           }
         },
         (err) => {
-          this.general_update_error =  err.reason.replace('>', '').replace('<','') + helptext.update_error
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + helptext.update_error;
+          this.showSpinner = false;
         },
         () => {
           this.showSpinner = false;
