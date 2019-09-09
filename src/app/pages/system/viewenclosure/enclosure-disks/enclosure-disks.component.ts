@@ -253,6 +253,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES12':
         this.enclosure = new ES12();
         break;
+      case "Z Series":
       case 'E16':
         this.enclosure = new E16();
       break;
@@ -323,6 +324,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES12':
         enclosure = new ES12();
         break;
+      case "Z Series":
       case 'E16':
         enclosure = new E16();
         break;

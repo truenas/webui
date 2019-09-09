@@ -62,45 +62,36 @@ export class SystemProfiler {
   createProfile(){
     // with the enclosure info we set up basic data structure
     for(let i = 0; i < this.enclosures.length; i++){
-      let enclosure = {model: this.platform, disks: [], diskKeys: {}, poolKeys: {} };
-      this.profile.push(enclosure);
-      let model = this.identifyProduct(this.enclosures[i]);
-      this.enclosures[i].model = model;
-      enclosure.model = model;
-      switch(model){
-        case 'M Series':
-        case 'X Series':
-        case 'Z Series':
-          this.headIndex = i;
-          break;
+
+      if(this.enclosures[i].controller == true){ 
+        this.headIndex = i;
       }
+
+      let enclosure = {
+        model: this.headIndex == i ? this.getSeriesFromModel(this.platform) : this.enclosures[i].model, 
+        disks: [], 
+        diskKeys: {}, 
+        poolKeys: {} 
+      };
+
+      this.profile.push(enclosure);
     }
-    if(!this.headIndex){
-      console.warn("No Head Unit Detected!");
+
+    if(typeof this.headIndex !== 'number'){
+      console.warn("No Head Unit Detected! Defaulting to enclosure 0...");
       this.headIndex = 0;
-    } else {
-    }
+    } 
+    
   }
 
-  identifyProduct(enclosure){
-    const definitions = [
-      {model: 'M Series' , regex: /4024S/},
-      {model: 'X Series' , regex: /P3217/},
-      {model: 'Z Series' , regex: /d1f8/},
-      {model: 'E60' , regex: /^QUANTA /},
-      {model: 'E24' , regex: /Storage 1729/},
-      {model: 'E16' , regex: /d10c/},
-      {model: 'ES60' , regex: /^CELESTIC R0904/},
-      {model: 'ES24' , regex: /4024J/},
-      {model: 'ES12' , regex: /^CELESTIC X2012/},
-    ]
-    let product;
-    definitions.forEach((def) => {
-      if(enclosure.name.match(def.regex)){
-        product = def.model
-      }
-    });
-    return product;
+  getSeriesFromModel(model: string): string{
+    if(model.startsWith('Z')){
+      return 'Z Series';
+    } else if(model.startsWith('X')){
+      return 'X Series';
+    } else if(model.startsWith('M')){
+      return 'M Series';
+    }
   }
 
   private parseDiskData(disks){
