@@ -67,16 +67,20 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             });
           }
         }
+      }
  
-        this.core.register({
-          observerClass: this,
-          eventName: "SysInfo"
+      this.core.register({
+        observerClass: this,
+        eventName: "SysInfo"
         }).subscribe((evt:CoreEvent) => {
-          
-          // Feature detection
-          if (evt.data.license.features.indexOf('JAILS') === -1) {
-            _.find(menuItem, {state : "plugins"}).disabled = true;
-            _.find(menuItem, {state : "jails"}).disabled = true;
+         
+          if (window.localStorage.getItem('is_freenas') === 'false') {
+            // Feature detection
+
+            if (evt.data.license.features.indexOf('JAILS') === -1) {
+              _.find(menuItem, {state : "plugins"}).disabled = true;
+              _.find(menuItem, {state : "jails"}).disabled = true;
+            }
           }
 
           // set the guide url
@@ -87,10 +91,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
               guide.state = docUrl;
           }
 
-        });
+      });
 
-        this.core.emit({name:"SysInfoRequest", sender:this});
-      }
+      this.core.emit({name:"SysInfoRequest", sender:this});
 
       this.menuItems = menuItem;
       //Checks item list has any icon type.
