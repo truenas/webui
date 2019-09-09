@@ -55,7 +55,8 @@ export class SshKeypairsListComponent {
 
                     let deletemsg = '<p>Delete the <i>' + rowinner.name + '</i> keypair?</p>';
                     for (const method in usedBy) {
-                        deletemsg += 'These items will be <b>' + this.methodTextDict[method] + (method === 'delete' ? '</b> with the keypair' : '</b>') + ':<ul>';
+                        deletemsg += 'These items will be <b>' + this.methodTextDict[method] + (method === 'delete' ? '</b> with the keypair' : '</b>') + 
+                            ':<ul class="styled-list-for-dialogs">';
                         for (let i = 0; i < usedBy[method].length; i++) {
                             deletemsg += '<li>' + usedBy[method][i] + '</li>';
                         }
