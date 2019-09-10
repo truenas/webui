@@ -55,7 +55,6 @@ def test_01_navigate_to_account_groups(browser):
 
 
 def test_02_create_newgroup(browser):
-    test_name = sys._getframe().f_code.co_name
     # Click create new group option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
@@ -64,16 +63,16 @@ def test_02_create_newgroup(browser):
     browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Loading Users page timeout'
+    wait = wait_on_element(browser, xpath)
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
 def test_03_create_supergroup(browser):
-    test_name = sys._getframe().f_code.co_name
     # Click create new group option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
@@ -84,16 +83,16 @@ def test_03_create_supergroup(browser):
     browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Loading Users page timeout'
+    wait = wait_on_element(browser, xpath)
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
 def test_04_create_duplicategroup(browser):
-    test_name = sys._getframe().f_code.co_name
     # Click create new group option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
     # Enter New Groupname
@@ -107,10 +106,11 @@ def test_04_create_duplicategroup(browser):
     browser.find_element_by_xpath(xpaths['cancelButton']).click()
     # wait on the fabAction
     xpath = xpaths['fabAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Loading Users page timeout'
+    wait = wait_on_element(browser, xpath)
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
