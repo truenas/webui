@@ -44,7 +44,6 @@ def test_00_disable_tour_guide_if_present(browser):
 
 
 def test_01_nav_acc_user(browser):
-    test_name = sys._getframe().f_code.co_name
     # Click  Account menu
     browser.find_element_by_xpath(xpaths['navAccount']).click()
     # allowing the button to load
@@ -63,15 +62,15 @@ def test_01_nav_acc_user(browser):
     # assert response
     assert "User" in page_data, page_data
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
 
 
 def test_02_create_newuser(browser):
-    test_name = sys._getframe().f_code.co_name
     # Click create new user option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
     # wait on the page to load
-    wait = wait_on_element(browser, xpaths['newUserName'], script_name, test_name)
+    wait = wait_on_element(browser, xpaths['newUserName'])
     assert wait, f'Loading Users Add page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfn)
@@ -89,21 +88,20 @@ def test_02_create_newuser(browser):
     print("found the save button")
     browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
-    xpath = xpaths['fabAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Loading Users page timeout'
+    wait = wait_on_element(browser, xpaths['fabAction'])
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
 def test_03_create_newuser_primarygroup_uncheck(browser):
-    test_name = sys._getframe().f_code.co_name
     # Click create new user option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
     # wait on the page to load
-    wait = wait_on_element(browser, xpaths['newUserName'], script_name, test_name)
+    wait = wait_on_element(browser, xpaths['newUserName'])
     assert wait, f'Loading Users Add page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newUserName']).send_keys(uncheckuserfn)
@@ -119,23 +117,22 @@ def test_03_create_newuser_primarygroup_uncheck(browser):
     assert is_element_present(browser, xpaths['saveButton']) is True
     browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
-    xpath = xpaths['fabAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Loading Users page timeout'
+    wait = wait_on_element(browser, xpaths['fabAction'])
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # check if there is a generic error when making a duplicate user, and print the error
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
 def test_04_create_superuser(browser):
-    test_name = sys._getframe().f_code.co_name
     browser.find_element_by_tag_name('html').send_keys(Keys.END)
     # Click create new user option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
     # wait on the page to load
-    wait = wait_on_element(browser, xpaths['newUserName'], script_name, test_name)
+    wait = wait_on_element(browser, xpaths['newUserName'])
     assert wait, f'Loading Users Add page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newUserName']).send_keys(superuserfn)
@@ -153,22 +150,21 @@ def test_04_create_superuser(browser):
     assert is_element_present(browser, xpaths['saveButton']) is True
     browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
-    xpath = xpaths['fabAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Loading Users page timeout'
+    wait = wait_on_element(browser, xpaths['fabAction'])
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     # check if there is a generic error when making a duplicate user, and print the error
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
 def test_05_create_duplicate_user(browser):
-    test_name = sys._getframe().f_code.co_name
     # Click create new user option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
     # wait on the page to load
-    wait = wait_on_element(browser, xpaths['newUserName'], script_name, test_name)
+    wait = wait_on_element(browser, xpaths['newUserName'])
     assert wait, f'Loading Users Add page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfn)
@@ -185,21 +181,20 @@ def test_05_create_duplicate_user(browser):
     browser.find_element_by_xpath(xpaths['saveButton']).click()
     browser.find_element_by_xpath(xpaths['cancelButton']).click()
     # wait on the fabAction
-    xpath = xpaths['fabAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Loading Users page timeout'
+    wait = wait_on_element(browser, xpaths['fabAction'])
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
 def test_06_create_newuser_suggested_name(browser):
-    test_name = sys._getframe().f_code.co_name
     # Click create new user option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
     # wait on the page to load
-    wait = wait_on_element(browser, xpaths['newUserName'], script_name, test_name)
+    wait = wait_on_element(browser, xpaths['newUserName'])
     assert wait, f'Loading Users Add page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newUserName']).send_keys(nouserfn)
@@ -213,10 +208,10 @@ def test_06_create_newuser_suggested_name(browser):
     assert is_element_present(browser, xpaths['saveButton']) is True
     browser.find_element_by_xpath(xpaths['saveButton']).click()
     # wait on the fabAction
-    xpath = xpaths['fabAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Loading Users page timeout'
+    wait = wait_on_element(browser, xpaths['fabAction'])
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Loading Users page timeout'
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
