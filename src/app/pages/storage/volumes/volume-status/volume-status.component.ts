@@ -340,7 +340,7 @@ export class VolumeStatusComponent implements OnInit {
       _.find(actions, { label: "Offline" }).isHidden = true;
     }
 
-    if (vdev_type === "MIRROR") {
+    if (vdev_type === "MIRROR" || vdev_type === "REPLACING") {
       _.find(actions, { label: "Detach" }).isHidden = false;
     }
 
@@ -387,11 +387,9 @@ export class VolumeStatusComponent implements OnInit {
     node.data = this.parseData(data, category, vdev_type);
     node.expanded = true;
     node.children = [];
-    if (vdev_type === undefined && data.name) {
-      vdev_type = data.name;
-    }
 
     if (data.children) {
+      vdev_type = data.name;
       for (let i = 0; i < data.children.length; i++) {
         node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
       }
