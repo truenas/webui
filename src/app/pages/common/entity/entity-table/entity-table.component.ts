@@ -17,6 +17,7 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
+import { browser } from 'protractor';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -107,7 +108,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
-  public tableHeight:number = (this.paginationPageSize * 50) + 100;
+  public rowHeight = 50;
+  public zoomLevel: number;
+  public tableHeight:number = (this.paginationPageSize * this.rowHeight) + 100;
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
@@ -313,12 +316,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       n = 0;
     }
     window.onresize = () => {
+      this.zoomLevel = Math.round(window.devicePixelRatio * 100);
+      // Browser zoom of exacly 175 causes pagination anomalies; Dropping row size to 49 fixes it
+      this.zoomLevel === 175 ? this.rowHeight = 49 : this.rowHeight = 50;
       let x = window.innerHeight;
       let y = x - 830;
       if (this.selected && this.selected.length > 0) {
-        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows -3;
+        this.paginationPageSize = rowNum - n + Math.floor(y/this.rowHeight) + addRows -3;
       } else {
-        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows;
+        this.paginationPageSize = rowNum - n + Math.floor(y/this.rowHeight) + addRows;
       }
 
       if (this.paginationPageSize < 2) {
@@ -751,9 +757,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.currentRows.length === 0) {
       this.tableHeight = 153;
     } else if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
-      this.tableHeight = (this.currentRows.length * 50) + 110;
+      this.tableHeight = (this.currentRows.length * this.rowHeight) + 110;
     } else {
-      this.tableHeight = (this.paginationPageSize * 50) + 100;
+      this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
     } 
     
     // Displays an accurate number for some edge cases
