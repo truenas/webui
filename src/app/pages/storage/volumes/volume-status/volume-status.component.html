@@ -3,6 +3,9 @@
     <div fxFlex="300px" class="mat-card-title-text">
       {{"Pool Status" | translate}}
     </div>
+    <div>
+      <button mat-button type="button" (click)="refresh()" mat-button color="primary">{{"Refresh" | translate}}</button>
+    </div>
   </div>
   <div>
     <mat-list *ngIf="poolScan">

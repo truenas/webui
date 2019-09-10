@@ -158,6 +158,12 @@ export class VolumeStatusComponent implements OnInit {
     this.getUnusedDisk();
   }
 
+  refresh() {
+    this.loader.open();
+    this.getData();
+    this.loader.close();
+  }
+
   getAction(data, category, vdev_type): any {
     const actions = [{
       label: "Edit",
