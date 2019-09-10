@@ -21,6 +21,7 @@ xpaths = {
     'navAccount': "//span[contains(.,'Accounts')]",
     'submenuUser': "//a[contains(.,'Users')]",
     'submenuGroup': "//a[contains(.,'Groups')]",
+    # 'primaryGroupcheckbox': '//label/div',
     'primaryGroupcheckbox': '//*[@id="group_create"]/mat-checkbox/label/div',
     'primaryGroupdropdown': '//*[@id="group"]',
     'newUserName': "//div[@id='full_name']/mat-form-field/div/div/div/input",
