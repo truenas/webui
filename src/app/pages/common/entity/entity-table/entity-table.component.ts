@@ -17,7 +17,6 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
-import { browser } from 'protractor';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -317,7 +316,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     window.onresize = () => {
       this.zoomLevel = Math.round(window.devicePixelRatio * 100);
-      // Browser zoom of exacly 175 causes pagination anomalies; Dropping row size to 49 fixes it
+      // Browser zoom of exacly 175% causes pagination anomalies; Dropping row size to 49 fixes it
       this.zoomLevel === 175 ? this.rowHeight = 49 : this.rowHeight = 50;
       let x = window.innerHeight;
       let y = x - 830;
