@@ -348,5 +348,15 @@ export const helptext_system_cloudcredentials = {
  href="https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"\
  target="_blank">Access Token</a>.'
     )
+  },
+
+  client_id: {
+    placeholder: T('OAuth Client ID'),
+    tooltip: T(''),
+  },
+
+  client_secret: {
+    placeholder: T('OAuth Client Secret'),
+    tooltip: T(''),
   }
 };
