@@ -69,8 +69,14 @@ def test_02_create_a_pool(browser):
     time.sleep(1)
     # Click create new pool option
     browser.find_element_by_xpath(xpaths['addAction']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['forwardButton'])
+    assert wait, f'Loading pool page timeout'
     # Click create Pool Button
     browser.find_element_by_xpath(xpaths['forwardButton']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['newpoolName'])
+    assert wait, f'Loading pool page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool1)
     # Select the disk
@@ -111,8 +117,14 @@ def test_04_create_newpool2(browser):
     time.sleep(1)
     # Click create new pool option
     browser.find_element_by_xpath(xpaths['addAction']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['forwardButton'])
+    assert wait, f'Loading pool page timeout'
     # Click create Pool Button
     browser.find_element_by_xpath(xpaths['forwardButton']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['newpoolName'])
+    assert wait, f'Loading pool page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool2)
     # Select the 2 disks

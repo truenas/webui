@@ -57,6 +57,9 @@ def test_01_navigate_to_account_groups(browser):
 def test_02_create_newgroup(browser):
     # Click create new group option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['newGroupName'])
+    assert wait, f'Loading Groups Add page timeout'
     # Enter New Groupname
     browser.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroup)
     # Click on save new Group button
@@ -75,6 +78,9 @@ def test_02_create_newgroup(browser):
 def test_03_create_supergroup(browser):
     # Click create new group option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['newGroupName'])
+    assert wait, f'Loading Groups Add page timeout'
     # Enter New Groupname
     browser.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroup)
     # Check Permit sudo  checkbox
@@ -95,6 +101,9 @@ def test_03_create_supergroup(browser):
 def test_04_create_duplicategroup(browser):
     # Click create new group option
     browser.find_element_by_xpath(xpaths['fabAction']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['newGroupName'])
+    assert wait, f'Loading Groups Add page timeout'
     # Enter New Groupname
     browser.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroup)
     # Click on save new Group button
