@@ -20,6 +20,7 @@ export class NFSListComponent {
     {name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
     {name: helptext_sharing_nfs.column_comment, prop: 'comment'},
   ];
+  public rowIdentifier = 'nfs_paths';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

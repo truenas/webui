@@ -595,7 +595,8 @@ export class UpdateComponent implements OnInit {
           }
         },
         (err) => {
-          this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.")
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.");
+          this.showSpinner = false;
         },
         () => {
           this.showSpinner = false;

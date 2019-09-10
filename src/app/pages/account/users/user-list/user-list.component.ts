@@ -40,6 +40,7 @@ export class UserListComponent implements OnInit {
     { name: 'Permit Sudo', prop: 'bsdusr_sudo', hidden: true },
     { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account', hidden: true },
   ];
+  public rowIdentifier = 'bsdusr_username';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

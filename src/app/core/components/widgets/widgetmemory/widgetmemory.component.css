@@ -161,8 +161,32 @@ h1.memory-used span.memory-used-units{
 
 /* NARROW SCREENS */
 .xs.widget{
-  width:100%;
-  max-height:320px;
+  width: 100%;
+  height: calc(100vh - 96px);
+  position:absolute;
+  /*top: 88px;
+  z-index: 2;*/
+}
+
+.list-subheader{
+  font-weight:700;
+  padding: 8px 8px 0 16px;
+  text-align:left;
+  font-size: 90%;
+  color: var(--fg1);
+}
+
+.mat-list-base .mat-list-item{
+  border-bottom:solid 1px rgba(0,0,0,0.1);
+}
+
+.xs.widget #cpu-load-cores-legend .legend-item .legend-swatch{
+  margin-top: 0;
+}
+
+.xs.widget #cpu-load-cores-legend .legend-item .label ,
+.xs.widget #cpu-load-cores-legend .legend-item .value {
+  margin-top: 2px;
 }
 
 /* Overrides */
@@ -170,3 +194,5 @@ h1.memory-used span.memory-used-units{
   fill-opacity:1;
   font-weight:500;
 }
+
+

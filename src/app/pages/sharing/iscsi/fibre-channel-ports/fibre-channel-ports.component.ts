@@ -12,7 +12,7 @@ export class FibreChannelPortsComponent {
     protected entityList: any;
 
     public columns: Array<any> = [
-        { name: 'Name', prop: 'name' },
+        { name: 'Name', prop: 'name', always_display: true },
         { name: 'WWPN', prop: 'wwpn' },
         { name: 'State', prop: 'state' },
     ];

@@ -7,10 +7,6 @@
   width: 100%;
 }
 
-/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
-  visibility:hidden;
-}*/
-
 .widget mat-toolbar-row{
   position:absolute;
   height:48px;
@@ -48,25 +44,14 @@ span.passive{
 
 .carousel{
   position:absolute;
-  /*top:48px;*/
   width:100%;
   height:100%;
-  /*height:calc(100% - 48px);*/
-  /*background:var(--alt-bg2);*/
 }
 
-/*.carousel.lagg{
-  width:400%;
-}*/
-
 .slide{
-  /*position:absolute;
-  top:48px;*/
   display:inline;
   width:100%;
-  /*height:calc(100% - 96px);*/
   height:100%;
-  /*border-left:solid 1px var(--bg1);*/
 }
 
 .slide .hidden{
@@ -91,12 +76,6 @@ span.passive{
 
 .slide.overview .left{
   background-color:var(--primary);
-  /*background-color:#303437;*/
-  /*background-size:cover;
-  background-image:url('https://cdn.pixabay.com/photo/2017/09/06/11/41/clean-2721104_960_720.jpg');
-  background-position-y:center;
-  background-position-x:65%;
-  background-blend-mode: overlay;*/
   color:#efefef;
   position:relative;
   padding:0;
@@ -104,7 +83,6 @@ span.passive{
 
 .slide.overview .left .overlay{
   position:absolute;
-  /*background:linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.5), rgba(0,0,0,0.15));*/
   width:100%;
   height:100%;
   padding:48px 0;
@@ -168,8 +146,6 @@ span.passive{
   top:0;
   right:16px;
   color: var(--fg2);
-  /*font-weight:500;
-  text-transform:capitalize;*/
 }
 
 .controls button{
@@ -207,11 +183,9 @@ span.passive{
 }
 
 .nic-traffic{
-  /*font-size: 150%;*/
 }
 
 .stat{
-  /*font-size: 250%;*/
 }
 
 .slide{
@@ -283,17 +257,95 @@ img.platform-logo{
   font-weight:500;
 }
 
-.left.passive .product-image {
+.left.passive .product-image img {
   opacity: 0.5;
 }
 
 /* NARROW SCREENS */
 .xs.widget{
+  width: 100%;
+  height: calc(100vh - 96px);
+  position: absolute;
+}
+
+.xs.widget .overview .right .list-subheader{
+  margin-top: 0;
+}
+
+.xs.widget .left,
+.xs.widget .right{
   width:100%;
-  max-height:320px;
 }
 
 #update-in-progress {
   font-weight: 500;
   margin-bottom: 40px;
 }
+
+.xs.widget .data-container{
+  position:relative;
+}
+
+.xs.widget .product-image.truenas img,
+.xs.widget .product-image.ix-logo img {
+  width:auto;
+  height:28%;
+  margin: 21% 0 8px;
+}
+
+.xs.widget img.platform-logo{
+    width: auto;
+    height: 48px;
+}
+
+.xs.widget .view-overview .mat-card-title-text {
+  color: var(--primary-txt);
+  margin-left: unset !important;
+}
+
+.xs.widget .ha-node-status{
+  font-size:125%;
+}
+
+.xs.widget .slide.overview {
+    overflow-x: hidden;
+}
+
+.xs.widget .mat-card {
+    border-radius: 0;
+}
+
+.xs.widget .mobile-update-action {
+  padding:32px 0;
+  text-align:center;
+}
+
+.xs.widget img#Z20{
+  margin: 14% 0 18px;
+}
+
+/* FIX Generic hardware icon */
+.xs.widget.generic-hardware .platform-logo-wrapper{
+  display:none;
+}
+
+.xs.widget.generic-hardware .product-image.freenas{
+  margin-top:50%;
+}
+.xs.widget.generic-hardware .product-image.freenas .certified-badge{
+  bottom:-40%;
+  height:25%;
+}
+
+.xs.widget .left {
+  min-height:275px;
+}
+
+.primary-nav.mat-card-title-text{
+  position:absolute;
+  top:4px;
+  left:16px;
+  z-index:2;
+}
+
+

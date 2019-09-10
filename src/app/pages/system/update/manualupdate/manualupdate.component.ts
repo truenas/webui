@@ -12,13 +12,15 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector: 'app-manualupdate',
   template: `<entity-form [conf]="this"></entity-form>`,
   providers : [ MessageService, SystemGeneralService ]
 })
-export class ManualUpdateComponent {
+export class ManualUpdateComponent extends ViewControllerComponent {
   public formGroup: FormGroup;
   public route_success: string[] = ['system','update'];
   protected dialogRef: any;
@@ -103,10 +105,16 @@ export class ManualUpdateComponent {
     private loader: AppLoaderService,
     private systemService: SystemGeneralService,
   ) {
-    this.systemService.getSysInfo().subscribe(
-      (res) => {
-        _.find(this.fieldConfig, {name: 'version'}).paraText += res.version;
-      })
+    super();
+    
+    this.core.register({
+     observerClass: this,
+     eventName: "SysInfo"
+    }).subscribe((evt: CoreEvent) => {
+       _.find(this.fieldConfig, {name: 'version'}).paraText += evt.data.version;
+    });
+ 
+    this.core.emit({name: "SysInfoRequest", sender:this});
   }
 
   preInit(entityForm: any) {
