@@ -48,11 +48,6 @@
                 <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
                 <simple-failover-button *ngIf="isPassive"></simple-failover-button>
               </div>
-              <div fxFlex="18" class="update-action">
-                <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-                <!--<button *ngIf="isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="failoverInit()">{{failoverBtnLabel | translate}}</button>-->
-                <simple-failover-button *ngIf="isPassive"></simple-failover-button>
-              </div>
             </ng-template>  
           </div>
   
