@@ -89,7 +89,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.updateNotificationSent = true;
         setTimeout(() => {
           this.updateNotificationSent = false;
-        }, 600000);
+        }, 900000);
       });
     }
 
@@ -328,7 +328,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     }, err => {
-      console.log(err);
+      console.error(err);
     })
   }
 

@@ -260,14 +260,16 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
 
     if (!this.isfreenas) {
-      this.ws.call('failover.licensed').subscribe((res) => {
-        if (res) {
-          this.updateMethod = 'failover.upgrade';
-          this.is_ha = true;
-          this.checkUpgradePending();
-        };
-        this.checkForUpdateRunning();
-      });
+      setTimeout(() => { // To get around too many concurrent calls???
+        this.ws.call('failover.licensed').subscribe((res) => {
+          if (res) {
+            this.updateMethod = 'failover.upgrade';
+            this.is_ha = true;
+          };
+          this.checkForUpdateRunning();
+        });        
+      })
+
     } else {
       this.checkForUpdateRunning();
     }
@@ -544,10 +546,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
     } else {
       this.ws.call('update.set_train', [this.train]).subscribe(() => { 
         this.dialogRef.componentInstance.setCall('failover.upgrade');
+        this.dialogRef.componentInstance.disableProgressValue(true);
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe(() => {
+        this.dialogRef.componentInstance.success.subscribe((res) => {
           if (!this.is_ha) { 
             this.router.navigate(['/others/reboot']); 
+          } else  {
+            console.log(res) 
+            this.checkUpgradePending();
           }
         });
         this.dialogRef.componentInstance.failure.subscribe((err) => {
