@@ -30,6 +30,7 @@ export class AuthorizedAccessListComponent {
       prop : 'peeruser',
     },
   ];
+  public rowIdentifier = 'tag';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

@@ -1,10 +1,8 @@
-
 import {interval as observableInterval,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService, Theme } from '../../../services/theme/theme.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -21,14 +19,15 @@ import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/topbar';
 
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector: 'topbar',
-//  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
-styleUrls: ['./topbar.component.css'],
-templateUrl: './topbar.template.html'
+  styleUrls: ['./topbar.component.css'],
+  templateUrl: './topbar.template.html'
 })
-export class TopbarComponent implements OnInit, OnDestroy {
+export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy {
 
   @Input() sidenav;
   @Input() notificPanel;
@@ -66,7 +65,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   constructor(
     public themeService: ThemeService,
-    public core: CoreService,
+    /*public core: CoreService,*/
     private router: Router,
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
@@ -78,7 +77,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
 
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {}
+    protected loader: AppLoaderService, ) {
+    super();
+  }
 
   ngOnInit() {
     if (window.localStorage.getItem('is_freenas') === 'false') {
@@ -142,9 +143,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
     }, 2500);
 
-    this.ws.call('system.info').subscribe((res) => {
-      this.hostname = res.hostname;
+    this.core.register({
+     observerClass: this,
+     eventName: "SysInfo"
+    }).subscribe((evt: CoreEvent) => {
+      this.hostname = evt.data.hostname;
     });
+ 
+    this.core.emit({name: "SysInfoRequest", sender:this});
   }
 
   checkLegacyUISetting() {
@@ -162,6 +168,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
 
     this.continuosStreaming.unsubscribe();
+
+    this.core.unregister({observerClass:this});
   }
 
   setLang(lang) {

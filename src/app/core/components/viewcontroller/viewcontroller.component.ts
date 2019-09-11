@@ -1,4 +1,4 @@
-import { Component,ComponentRef, AfterViewInit, ViewChild } from '@angular/core';
+import { Component,ComponentRef, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Display } from 'app/core/components/display/display.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -31,7 +31,7 @@ export interface ViewConfig {
   template:ViewControllerMetadata.template,
   styles:ViewControllerMetadata.styles
 })
-export class ViewControllerComponent extends ViewController implements AfterViewInit {
+export class ViewControllerComponent extends ViewController implements AfterViewInit, OnDestroy {
 
   readonly componentName = ViewControllerComponent;
   @ViewChild('display', { static: true}) display;
@@ -48,6 +48,10 @@ export class ViewControllerComponent extends ViewController implements AfterView
   }
 
   ngAfterViewInit(){
+  }
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
   }
 
   

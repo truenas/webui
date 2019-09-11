@@ -44,6 +44,7 @@ export class StorageListComponent {
     { name: T('Source'), prop: 'source', always_display: true },
     { name: T('Destination'), prop: 'destination' },
   ];
+  public rowIdentifier = 'source';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

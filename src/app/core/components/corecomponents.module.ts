@@ -13,7 +13,6 @@ import { Display,DisplayContainer } from 'app/core/components/display/display.co
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
-
 //import { C3ChartComponent } from 'app/core/components/c3chart/c3chart.component';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -41,6 +40,7 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
+import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcontroller.component';
 
 /*
  *
@@ -58,7 +58,7 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     PortalModule,
     FlexLayoutModule,
     FormsModule,
-    TranslateModule,
+    TranslateModule
   ],
   declarations: [
     ContextMenuComponent,
@@ -89,6 +89,7 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetPoolComponent,
     TextLimiterDirective,
     TextLimiterTooltipComponent,
+    WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
   ],
@@ -125,6 +126,7 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetNotesCollectionComponent,
     TextLimiterTooltipComponent,
     WidgetPoolComponent,
+    WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
   ],
@@ -154,6 +156,7 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
     WidgetNotesCollectionComponent,
     WidgetPoolComponent,
     TextLimiterTooltipComponent,
+    WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
   ],

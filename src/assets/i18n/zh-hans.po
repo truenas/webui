@@ -163,6 +163,12 @@ msgstr ""
 "      target=\"_blank\">Extended attributes</a> are preserved, but must be "
 "supported by both systems."
 
+msgid ""
+"<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
+"target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
+"valid    email address when registering to receive issue status updates."
+msgstr ""
+
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr ""
 
@@ -687,6 +693,12 @@ msgstr "适配器类型"
 
 msgid "Adapter Type:"
 msgstr "适配器类型："
+
+msgid "Add"
+msgstr ""
+
+msgid "Add ACL Item"
+msgstr ""
 
 msgid "Add Additional Path"
 msgstr "添加额外路径"
@@ -2416,6 +2428,9 @@ msgstr "控制台键盘映射"
 msgid "Contact"
 msgstr "联系方式"
 
+msgid "Contact Support"
+msgstr ""
+
 msgid "Container"
 msgstr "容器"
 
@@ -3271,6 +3286,9 @@ msgid "Enable autotune"
 msgstr "启用自动优化"
 
 msgid "Enable iSCSI ALUA"
+msgstr ""
+
+msgid "Enable iXsystems Proactive Support"
 msgstr ""
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
@@ -4171,8 +4189,14 @@ msgstr "删除zvol错误 "
 msgid "Error Promoting dataset "
 msgstr ""
 
+msgid "Error Saving Proactive Support Settings"
+msgstr ""
+
 msgid "Error Unlocking"
 msgstr "解锁错误"
+
+msgid "Error Updating Production Status"
+msgstr ""
 
 msgid "Error Upgrading Pool "
 msgstr "升级存储池错误 "
@@ -5105,6 +5129,9 @@ msgid ""
 "are allowed."
 msgstr ""
 
+msgid "Invalid dataset."
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr ""
 
@@ -5185,6 +5212,12 @@ msgstr "Jails不能在运行时被修改。"
 msgid ""
 "Jails cannot be created or managed untill a pool is present for storing "
 "them. Please create a pool first"
+msgstr ""
+
+msgid "Jails failed to start"
+msgstr ""
+
+msgid "Jails started."
 msgstr ""
 
 msgid "KDC"
@@ -5419,9 +5452,6 @@ msgstr "登录"
 
 msgid "Log in as root with password"
 msgstr "允许 Root 密码登录"
-
-msgid "Log in to Legacy User Interface?"
-msgstr "登录到经典用户界面？"
 
 msgid "Log mountd(8) requests"
 msgstr "记录mountd(8)请求"
@@ -5867,6 +5897,9 @@ msgstr "域名服务器"
 msgid "Naming Schema"
 msgstr ""
 
+msgid "Navigation"
+msgstr ""
+
 msgid "NetBIOS Alias"
 msgstr "NetBIOS 别名"
 
@@ -6033,9 +6066,6 @@ msgstr ""
 
 msgid "Note"
 msgstr "备注"
-
-msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
-msgstr "备注：管理在FreeNas 11.2 之前版本创建的经典Jail必须从"
 
 msgid "Notes"
 msgstr "备注"
@@ -6404,6 +6434,9 @@ msgstr "允许使用 Sudo"
 msgid "Phone"
 msgstr ""
 
+msgid "Phone Number"
+msgstr ""
+
 msgid "Physical interface of the selected member."
 msgstr "选择成员的物理接口。"
 
@@ -6607,6 +6640,9 @@ msgid ""
 msgstr ""
 "继续并升级存储池？警告: Upgrading a pool is a one-way operation that might make some "
 "features of the pool incompatible with older versions of FreeNAS: "
+
+msgid "Production status successfully updated"
+msgstr ""
 
 msgid "Promote Dataset"
 msgstr ""
@@ -7200,6 +7236,19 @@ msgstr "数据校验任务"
 msgid "Scrub complete on pool <i>"
 msgstr "数据校验完成在存储池<i>"
 
+msgid ""
+"Search the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
+"target=\"_blank\">FreeNAS issue tracker</a>    to ensure the issue has not "
+"already been reported before    filing a bug report or feature request. If "
+"an issue has    already been created, add a comment to the existing issue.  "
+"  Please visit the <a href=\"http://www.ixsystems.com/storage/\" "
+"target=\"_blank\">    iXsystems storage page</a>    for enterprise-grade "
+"storage solutions and support."
+msgstr ""
+
+msgid "Secondary Contact"
+msgstr ""
+
 msgid "Secondary Contact (optional)"
 msgstr ""
 
@@ -7736,6 +7785,12 @@ msgid ""
 "to iXsystems."
 msgstr ""
 
+msgid "Send initial debug"
+msgstr ""
+
+msgid "Send initial debug."
+msgstr ""
+
 msgid "Serial"
 msgstr "序列号"
 
@@ -7848,6 +7903,9 @@ msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
 "target=\"_blank\">getrlimit(2)</a> utility."
+msgstr ""
+
+msgid "Set system production state and optionally send initial debug."
 msgstr ""
 
 msgid ""
@@ -8645,6 +8703,14 @@ msgstr "签发CA机构"
 msgid "Signing Request"
 msgstr "签发请求"
 
+msgid ""
+"Silver / Gold Coverage Customers can enable iXsystems Proactive Support. "
+"This  automatically emails iXsystems when certain conditions occur on this "
+"TrueNAS system. The iX Support  Team will promptly communicate with the "
+"Contacts saved below to quickly resolve any issue that may  have occurred "
+"on the system."
+msgstr ""
+
 msgid "Site Name"
 msgstr "网站名称"
 
@@ -8897,6 +8963,9 @@ msgstr "成功导出/断开'"
 msgid "Successfully reset encryption for pool: "
 msgstr ""
 
+msgid "Successfully saved proactive support settings."
+msgstr ""
+
 msgid "Successfully updated."
 msgstr "更新成功。"
 
@@ -9059,6 +9128,9 @@ msgid "Target Alias"
 msgstr "目标别名"
 
 msgid "Target Dataset"
+msgstr ""
+
+msgid "Target Mode"
 msgstr ""
 
 msgid "Target Name"
@@ -9422,6 +9494,9 @@ msgid ""
 "being reported."
 msgstr ""
 
+msgid "This is a production system"
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -9456,9 +9531,6 @@ msgid "Time Machine Quota"
 msgstr "时间机器 Quota"
 
 msgid "Time remaining until changes reverted:"
-msgstr ""
-
-msgid "TimeZone"
 msgstr ""
 
 msgid "Timeout"
@@ -9543,6 +9615,9 @@ msgid "UNIX Charset"
 msgstr "UNIX 字符集"
 
 msgid "UPDATE"
+msgstr ""
+
+msgid "UPDATE LICENSE"
 msgstr ""
 
 msgid "UPS Mode"
@@ -9653,6 +9728,9 @@ msgstr ""
 
 msgid "Update Period"
 msgstr "更新周期"
+
+msgid "Update Status"
+msgstr ""
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr "更新成功。请重启以便更新生效。现在重启？"
@@ -10347,9 +10425,6 @@ msgid "jail_zfs_dataset"
 msgstr ""
 
 msgid "jail_zfs_mountpoint"
-msgstr ""
-
-msgid "legacy web interface"
 msgstr ""
 
 msgid "list"

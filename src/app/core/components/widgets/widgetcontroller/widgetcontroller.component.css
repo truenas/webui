@@ -1,0 +1,243 @@
+.widget{
+  width:600px;
+  height:400px;
+}
+
+.widget mat-card-content{
+  width: 100%;
+  overflow-y:auto;
+}
+
+#cpu-cores-chart{
+  /*position: absolute;
+  left: 0;
+  bottom: 0;*/
+  width: 536px;
+  margin:0 16px;
+}
+
+.xs.widget #cpu-cores-wrapper{
+  margin-bottom:32px;
+}
+
+#cpu-load-wrapper{
+  position:relative;
+  height:170px;
+
+}
+
+#cpu-load-cores{
+  /*opacity:0.5;*/
+}
+
+#cpu-load-cores-legend{
+  /*margin-top:36px;*/
+}
+
+#cpu-load-cores-legend .legend-item.chart-label{
+  text-align:center;
+}
+
+#cpu-load-cores-legend .legend-item{
+  text-align:left;
+}
+
+#cpu-load-cores-legend .legend-item .label{
+  font-weight:500;
+}
+
+#cpu-load-cores-legend .legend-item .legend-swatch{
+  margin: 4px 8px 0;
+}
+
+#cpu-load-cores-values {
+  width:100%;
+}
+
+#cpu-load-cores-values .temperature{
+  text-align:right;
+}
+
+.cpu-model{
+  opacity:0.5;
+}
+
+#cpu-load-label,
+.core-count{
+  margin-bottom:0;
+  font-weight:400;
+  font-size:1.65rem;
+}
+
+#cpu-load-value{
+  position:absolute;
+  top:41%;
+  width:100%;
+  font-size:175%;
+}
+
+.title-wrapper{
+  /*background-color:var(--blue);
+  color:#fff;*/
+  height:45%;
+  text-align: left;
+  padding: 16px;
+  width:100%;
+}
+
+.title-wrapper .widget-loader{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+}
+
+.title-wrapper .title{
+  font-size:150%;
+}
+
+.title-wrapper .subtitle{
+  font-size:80%;
+}
+
+.controls{
+  position:absolute;
+  right:16px;
+  color: var(--fg2);
+  /*font-weight:500;
+  text-transform:capitalize;*/
+}
+
+.controls button{
+  display:inline-block;
+}
+
+.chart-wrapper{
+  position:relative;
+  width:100%;
+}
+
+.x-axis .start-time, 
+.x-axis .end-time{
+    font-size: 75%;
+    position: absolute;
+    bottom: 0;
+    font-weight:500;
+    font-family:Roboto;
+    opacity:0.5;
+}
+
+.x-axis .start-time{
+  left:8px;
+}
+.x-axis .end-time{
+  right:8px;
+}
+
+/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
+  visibility:hidden;
+}*/
+
+/* MARKER */
+:host ::ng-deep .c3-chart-line .c3-circles circle._expanded_{
+  stroke:var(--primary) !important;
+}
+:host ::ng-deep .c3-chart-line circle.c3-circle{
+  fill:var(--bg2) !important;
+}
+
+/*.widget .bar-chart-wrapper{
+  position: static;
+  opacity: 1;
+  z-index:1
+}*/
+
+.clickable {
+  cursor:pointer;
+}
+
+.next-slide{
+  position: absolute;
+  right: 0;
+}
+
+.bottom {
+}
+
+/* NARROW SCREENS */
+.xs.widget{
+  width:100vw;
+  height: calc(100vh - 96px);
+  position: absolute;
+  /*top: 88px;
+  z-index: 2;*/
+}
+
+.xs.widget .mat-card{
+  overflow-y: scroll;
+}
+
+.xs.widget #cpu-load-label {
+  font-size: 1.25rem;
+}
+
+.xs.widget #cpu-load-cores-legend{
+  margin:16px 0 0;
+}
+
+.xs.widget .legend-item{
+  margin-left:16px;
+}
+
+.xs.widget #cpu-cores-chart{
+  width: calc(100vw - 16px);
+  margin: 0;
+}
+
+.xs.widget .mobile #cpu-load-label{
+  margin:16px 0;
+}
+
+.xs.widget .mobile .top{ 
+  /*border-bottom:solid 1px var(--fg1);*/
+  
+  padding-bottom:24px;
+}
+
+.xs.widget .mobile .bottom{
+  text-align:left;
+  padding: 16px 0;
+}
+
+.xs-widget .mobile .viewchartgauge{
+  margin:16px 0;
+}
+
+.widget .mobile .list-subheader,
+.xs.widget .mobile .list-subheader{
+  font-weight:700;
+  padding:8px 0px 16px 16px;
+  text-align:left;
+  font-size: 90%;
+  color: var(--fg1);
+}
+
+.widget .mat-list-base .mat-list-item,
+.xs.widget .mat-list-base .mat-list-item{
+  border-bottom:solid 1px rgba(0,0,0,0.1);
+}
+
+.mobile .mat-list-item span.label{
+  font-weight: 500;
+}
+
+.mobile .mat-list-item span.subtext{
+  opacity: 0.5;
+}
+
+/* Overrides */
+.widget .c3 .c3-axis g.tick tspan{
+  fill-opacity:1;
+  font-weight:500;
+}
+
