@@ -14,6 +14,9 @@ specified RELEASE directories as nullfs mounts over the jail \
 directories. Basejails are not linked to the original RELEASE \
 when upgraded.'),
 
+https_placeholder: T('Fetch Method'),
+https_tooltip: T(''),
+
 release_placeholder: T('Release'),
 release_tooltip: T('Choose the FreeBSD release to use as the jail \
 operating system. Releases that have already \
@@ -408,7 +411,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=setfib" \
 target="_blank">FIB</a>) \
 used when running commands inside the jail.'),
 
-ip4_saddrsel_placeholder: T('ip4_saddrsel'),
+ip4_saddrsel_placeholder: T('ip4.saddrsel'),
 ip4_saddrsel_tooltip: T('Only available when the jail is not configured to \
 use VNET. Disables IPv4 source address selection \
 for the jail in favor of the primary IPv4 address of \

@@ -72,7 +72,11 @@ export interface Formconfiguration {
   blurEvent?;
   customEditCall?;
   save_button_enabled?;
- 
+  form_message?: {
+    type: string; // info || warning
+    content: string;
+  };
+
   afterSubmit?;
   beforeSubmit?;
   customSubmit?;
@@ -299,6 +303,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 const current_field = this.fieldConfig.find((control) => control.name === i);
                 if (current_field.type === "array") {
                     this.setArrayValue(this.data[i], fg, i);
+                } else if (current_field.type === "list") {
+                  this.setListValue(this.data[i], fg as FormArray, i)
                 } else {
                   if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
                     if (this.data[i]) {
@@ -619,6 +625,25 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       for (const i in value) {
         const formControl = formGroup.controls[i];
         formControl.setValue(value[i]);
+      }
+      formArray.insert(index, formGroup);
+    });
+  }
+
+  setListValue(data: string[], formArray: FormArray, fieldName: string): void {
+    const config = this.fieldConfig.find(conf => conf.name === fieldName);
+    const template: FieldConfig[] = config.templateListField;
+
+    config.listFields = [];
+    formArray.clear();
+
+    data.forEach((val, index) => {
+      this.conf.initialCount += 1;
+      this.conf.initialCount_default += 1;
+      config.listFields.push(template);
+      const formGroup = this.entityFormService.createFormGroup(template);
+      for (const field of template) {
+        formGroup.setValue({ [field.name]: val });
       }
       formArray.insert(index, formGroup);
     });

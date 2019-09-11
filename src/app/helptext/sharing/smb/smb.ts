@@ -49,11 +49,15 @@ export const helptext_sharing_smb = {
  regardless of this setting.'),
 
     placeholder_recyclebin: T('Export Recycle Bin'),
-    tooltip_recyclebin: T('When set, deleted files are moved to a hidden\
- <b>.recycle</b> in the root folder of the share.\
- The <b>.recycle</b> directory can be\
- deleted to reclaim space and is automatically\
- recreated when a file is deleted.'),
+    tooltip_recyclebin: T('Files that are deleted from the same \
+ dataset are moved to the Recycle Bin and do not take any additional \
+ space. When the files are in a different dataset or a child dataset, \
+ they are copied to the dataset where the Recycle Bin is located. To \
+ prevent excessive space usage, files larger than 20 MiB are deleted \
+ rather than moved. Adjust the <i>Auxiliary Parameter</i> \
+ <samp>crossrename:sizelimit=</samp> setting to allow larger files. \
+ For example, <samp>crossrename:sizelimit={50}</samp> allows moves of \
+ files up to 50 MiB in size.'),
 
     placeholder_showhiddenfiles: T('Show Hidden Files'),
     tooltip_showhiddenfiles: T('Set to disable the Windows <i>hidden</i> attribute\
@@ -62,10 +66,10 @@ export const helptext_sharing_smb = {
  Existing files are not affected.'),
 
     placeholder_guestok: T('Allow Guest Access'),
-    tooltip_guestok: T('Set to allow access to this share without a password.\
- See the <a href="%%docurl%%/services.html#smb"\
- target="_blank">SMB</a> service documentation for more\
- information about guest user permissions.'),
+    tooltip_guestok: T('Privileges are the same as the guest account.\
+ Guest access is disabled by default in Windows 10 version 1709 and\
+ Windows Server version 1903. Additional client-side configuration is\
+ required to provide guest access to these clients.'),
 
     placeholer_guestonly: T('Only Allow Guest Access'),
     tooltip_guestonly: T('Requires <b>Allow guest access</b> to also be set.\
@@ -86,7 +90,7 @@ export const helptext_sharing_smb = {
 
     placeholder_vfsobjects: T('VFS Objects'),
     tooltip_vfsobjects: T('Adds <a\
- href="%%docurl%%/sharing.html#avail-vfs-modules-tab"\
+ href="--docurl--/sharing.html#avail-vfs-modules-tab"\
  target="blank">virtual file system modules</a> to\
  enhance functionality.'),
 
@@ -102,11 +106,17 @@ export const helptext_sharing_smb = {
     actions_basic_mode: T('Basic Mode'),
     actions_advanced_mode: T('Advanced Mode'),
 
+    action_edit_acl: T('Edit ACL'),
+
     dialog_enable_service_title: T("Enable service"),
     dialog_enable_service_message: T("Enable this service?"),
     dialog_enable_service_button: T("Enable Service"),
     dialog_warning: T('Warning'),
     dialog_warning_message: T("Setting default permissions will reset the permissions of this share and any others within its path."),
+
+    dialog_edit_acl_title: T("Configure ACL"),
+    dialog_edit_acl_message: T("Configure permissions for this share's dataset now?"),
+    dialog_edit_acl_button: T("Configure now"),
     
     snackbar_close: T('close'),
     snackbar_service_started: T("Service started")

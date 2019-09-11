@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CoreService, CoreEvent } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
+
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS
   timestamp:Date;
@@ -10,12 +11,13 @@ export interface UserPreferences {
   customThemes?: Theme[]; 
   favoriteThemes?: string[]; // Theme Names
   showGuide:boolean; // Guided Tour on/off
-  showTooltips:boolean; // Form Tooltips on/off
+  showTooltips?:boolean; // Form Tooltips on/off // Deprecated, remove in v12!
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
   allowPwToggle:boolean;
   enableWarning:boolean;
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
+  tableDisplayedColumns:any;
 }
 
 @Injectable()
@@ -23,7 +25,7 @@ export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
   private debug = false;
   public preferences: UserPreferences = {
-    "platform":"freenas",
+    "platform":"freenas",// Detect platform
     "timestamp":new Date(),
     "userTheme":"ix-dark", // Theme name
     "customThemes": [], // Theme Objects
@@ -35,6 +37,7 @@ export class PreferencesService {
     "enableWarning": true,
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
+    "tableDisplayedColumns":[]
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {

@@ -13,13 +13,12 @@ export class ConsolePanelModalDialog {
   public refreshMsg: String = "Check to stop refresh";
   public intervalPing;
   public consoleMsg: String = "Loading...";
-  @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
+  @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();
 
   constructor(
     protected translate: TranslateService,
-    public dialogRef: MatDialogRef<ConsolePanelModalDialog>,
-    private ws: WebSocketService) { }
+    public dialogRef: MatDialogRef<ConsolePanelModalDialog>) { }
 
   ngOnInit() {
     this.getLogConsoleMsg();

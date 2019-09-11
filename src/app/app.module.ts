@@ -8,7 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { NgxWebstorageModule } from 'ngx-webstorage';
-import { KonamiModule } from 'ngx-konami';
 
 import { MaterialModule} from './appMaterial.module'; //customized MaterialModule
 import { rootRouterConfig } from './app.routes';
@@ -21,6 +20,7 @@ import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
 import { TaskManagerComponent } from './components/common/dialog/task-manager/task-manager.component';
+import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
 import {SelectDialogComponent} from './pages/common/select-dialog/select-dialog.component'
@@ -40,7 +40,6 @@ import { MarkdownModule } from 'ngx-markdown';
 import { CoreServices} from 'app/core/services/coreservices.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { StatsService } from 'app/services/stats.service';
 
 import { ErdService } from 'app/services/erd.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -81,9 +80,8 @@ export function createTranslateLoader(http: HttpClient) {
     ReactiveFormsModule,
     EntityModule,
     NgxWebstorageModule.forRoot(),
-    KonamiModule
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TaskManagerComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TaskManagerComponent, DirectoryServicesMonitorComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -92,7 +90,6 @@ export function createTranslateLoader(http: HttpClient) {
     RestService,
     AppLoaderService, 
     NotificationsService,
-    StatsService,
     ErdService,
     ENV_PROVIDERS],
   bootstrap: [
@@ -105,6 +102,7 @@ export function createTranslateLoader(http: HttpClient) {
     InfoDialog,
     AboutModalDialog,
     TaskManagerComponent,
+    DirectoryServicesMonitorComponent,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
     SelectDialogComponent,

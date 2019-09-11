@@ -13,6 +13,7 @@ export class ConfirmDialog {
   public title: string;
   public message: string;
   public buttonMsg: string = T("Continue");
+  public cancelMsg: string = T('Cancel');
   public hideCheckBox = false;
   public isSubmitEnabled = false;
   public secondaryCheckBox = false;
@@ -20,10 +21,10 @@ export class ConfirmDialog {
   public method: string;
   public data: string;
   public tooltip: string;
+  public hideCancel = false;
   @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService ) {
-
   }
 
   toggleSubmit(data) {

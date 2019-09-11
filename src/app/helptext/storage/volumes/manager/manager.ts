@@ -24,7 +24,7 @@ manager_encryption_tooltip : T('<a href="https://www.freebsd.org/cgi/man.cgi?que
  target="_blank">GELI</a> encryption is\
  available for ZFS pools. <b>WARNING:</b>\
  Read the <a\
- href="%%docurl%%/storage.html#managing-encrypted-pools"\
+ href="--docurl--/storage.html#managing-encrypted-pools"\
  target="_blank">Encryption section</a>\
  of the guide before activating this option.'),
 manager_suggested_layout_tooltip : T('Create a recommended formation\
@@ -33,14 +33,5 @@ manager_suggested_layout_tooltip : T('Create a recommended formation\
 manager_encryption_message : T("Always back up the key! Losing the key\
  will also lose all data on the disks with\
  no chance of recovery."),
-
-manager_extend_warning : "Extending the pool adds new\
- vdevs in a stripe with the\
- existing vdevs. It is important\
- to only use new vdevs of the\
- same size and type as those\
- already in the pool. This\
- operation cannot be reversed.\
- Continue?"
 
 }

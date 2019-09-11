@@ -2,6 +2,10 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_update = {
+  version: {
+    paraText: T('<b>Current Version:</b> '),
+  },
+
   filelocation: {
     placeholder: T("Update File Temporary Storage Location"),
     tooltip: T(

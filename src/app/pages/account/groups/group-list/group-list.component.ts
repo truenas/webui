@@ -24,6 +24,7 @@ export class GroupListComponent {
     {name : 'Builtin', prop : 'bsdgrp_builtin'},
     {name : 'Permit Sudo', prop : 'bsdgrp_sudo'},
   ];
+  public rowIdentifier = 'bsdgrp_group';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
@@ -45,8 +46,10 @@ export class GroupListComponent {
   getActions(row) {
     const actions = [];
     actions.push({
+      id: row.bsdgrp_group,
+      name: helptext.group_list_actions_id_member,
       label : helptext.group_list_actions_label_member,
-      id: helptext.group_list_actions_id_member,
+      icon: 'people',
       onClick : (members) => {
         this._router.navigate(new Array('/').concat(
           [ "account", "groups", "members", members.id ]));
@@ -54,14 +57,19 @@ export class GroupListComponent {
     });
     if (row.bsdgrp_builtin === !true){
       actions.push({
+        id: row.bsdgrp_group,
+        icon: 'edit',
         label : helptext.group_list_actions_label_edit,
-        id: helptext.group_list_actions_id_edit,
+        name: helptext.group_list_actions_id_edit,
         onClick : (members_edit) => {
           this._router.navigate(new Array('/').concat(
             [ "account", "groups", "edit", members_edit.id ]));
         }
       })
       actions.push({
+        id: row.bsdgrp_group,
+        icon: 'delete',
+        name: 'delete',
         label : helptext.group_list_actions_label_delete,
         onClick : (members_delete) => {
           this.entityList.doDelete(members_delete);

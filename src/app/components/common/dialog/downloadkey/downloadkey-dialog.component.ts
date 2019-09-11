@@ -1,10 +1,9 @@
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 import {
   WebSocketService
 } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import {environment} from '../../../../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -15,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class DownloadKeyModalDialog {
 
   public volumeId: any;
+  public fileName: any;
   public isDownloaded: Boolean = false;
 
   constructor(
@@ -24,21 +24,25 @@ export class DownloadKeyModalDialog {
     private loader:AppLoaderService) { }
 
   ngOnInit() {
-    
+
   }
 
   downloadKey() {
     this.loader.open();
-    this.ws.call("pool.download_encryption_key", [this.volumeId]).subscribe((res) => {
+    const payload = [this.volumeId];
+    if (this.fileName !== undefined) {
+      payload.push(this.fileName);
+    }
+    this.ws.call("pool.download_encryption_key", payload).subscribe((res) => {
       this.loader.close();
       if(res !== null && res !== "") {
-        window.open("http://" + environment.remote + res);
+        window.open(res);
         this.isDownloaded = true;
       }
     }, (resError)=>{
       this.isDownloaded = true;
       this.loader.close();
-    
+
     });
   }
 }

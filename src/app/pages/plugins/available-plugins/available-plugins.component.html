@@ -1,0 +1,46 @@
+<mat-card-content class="plugin-info">
+    <section>
+        <mat-form-field>
+            <mat-label fxFlex>{{ "Browse a Collection" | translate}}</mat-label>
+            <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)">
+                <mat-option *ngFor="let repo of availableRepo" [value]="repo.git_repository">
+                    {{repo.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button mat-flat-button id="plugin-refresh-button" (click)="getPlugin(false)" class="plugin-button">
+            <mat-icon>refresh</mat-icon>
+            {{ "REFRESH INDEX" | translate }}
+        </button>
+    </section>
+    <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="selectedPlugin">
+        <div fxFlex fxFlex.xs="100">
+            <div>
+                <img class="plugin-img" height="150" [src]="selectedPlugin.icon" alt="{{selectedPlugin.name}}" />
+            </div>
+        </div>
+        <div fxFlex="40" fxFlexOffset="3" fxFlex.xs="100">
+            <p class="plugin-description">{{selectedPlugin.description}}</p>
+        </div>
+        <div fxFlex="25" fxFlexOffset="3" fxFlex.xs="100">
+            <div class="plugin-vinfo">
+                <p *ngIf="isSelectedOffical">Official Plugin <mat-icon class="official-plugin">verified_user</mat-icon></p>
+                <p>Version: {{selectedPlugin.version}} Revision: {{selectedPlugin.revision}}</p>
+                <p>Installed Instances: {{installedPlugins[selectedPlugin.plugin] || 0}}</p>
+            </div>
+            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);" class="plugin-button">
+                {{ "INSTALL" | translate }}
+            </button>
+        </div>
+    </div>
+</mat-card-content>
+<mat-button-toggle-group class="plugin-buttons" [(ngModel)]='selectedPlugin'>
+    <ng-container *ngFor="let plugin of plugins; let index">
+        <mat-button-toggle [value]='plugin'>
+            <figure>
+                <img class="plugin-img" height="40" [src]="plugin.icon" alt="{{plugin.plugin}} icon" />
+                <figcaption>{{plugin.name}}</figcaption>
+            </figure>
+        </mat-button-toggle>
+    </ng-container>
+</mat-button-toggle-group>

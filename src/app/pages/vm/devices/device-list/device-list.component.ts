@@ -35,10 +35,11 @@ export class DeviceListComponent {
   public busy: Subscription;
   protected loaderOpen = false;
   public columns: Array<any> = [
-    {name: 'Device ID', prop:'id'},
+    {name: 'Device ID', prop:'id', always_display: true},
     {name : 'Device', prop : 'dtype'},
     {name : 'Order', prop : 'order'},
   ];
+  public rowIdentifier = 'id';
   public title = "VM ";
   public config: any = {
     paging : true,
@@ -57,6 +58,9 @@ export class DeviceListComponent {
   getActions(row) {
     const actions = [];
     actions.push({
+      id: row.id,
+      name: 'edit',
+      icon: 'edit',
       label : T("Edit"),
       onClick : (edit_row) => {
         this.router.navigate(new Array('').concat(
@@ -64,12 +68,18 @@ export class DeviceListComponent {
       }
     });
     actions.push({
+      id: row.id,
+      name: 'delete',
+      icon: 'delete',
       label : T("Delete"),
       onClick : (delete_row) => {
         this.deviceDelete(delete_row.id);
       },
     });
     actions.push({
+      id: row.id,
+      name: 'reorder',
+      icon: 'reorder',
       label : T("Change Device Order"),
       onClick : (row1) => {
         const localLoader = this.loader,
@@ -110,6 +120,9 @@ export class DeviceListComponent {
         }
       }),
       actions.push({
+        id: row.id,
+        name: 'details',
+        icon: 'list',
         label : T("Details"),
         onClick : (device) => {
           let details = ``

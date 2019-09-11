@@ -15,7 +15,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import helptext from '../../../helptext/jails/jails-edit';
+import helptext from '../../../helptext/jails/jail-configuration';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
@@ -26,7 +26,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 })
 export class JailEditComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('basic') basicPanel:any;
+  @ViewChild('basic', { static: true}) basicPanel:any;
   public isReady: boolean =  false;
   protected updateCall = 'jail.do_update';
   protected upgradeCall = 'jail.upgrade';
@@ -48,7 +48,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       tooltip: helptext.host_hostuuid_tooltip,
       required: true,
       disabled: false,
-      validation: [ Validators.required ],
+      validation: [ Validators.required, regexValidator(this.jailService.jailNameRegex) ],
     },
     {
       type: 'select',
@@ -93,6 +93,13 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
       disabled: false,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
     },
     {
       type: 'list',
@@ -1122,43 +1129,17 @@ export class JailEditComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
-    // disabled upgrade for now
-    // this.ws.call('system.info').subscribe((res) => {
-    //   this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-    //   this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
-    //     for (let j in res_local) {
-    //       let rlVersion = Number(_.split(res_local[j], '-')[0]);
-    //       if (!this.isLowerVersion(rlVersion) && this.currentServerVersion >= Math.floor(rlVersion)) {
-    //         this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-    //       }
-    //     }
-    //     this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
-    //       for (let i in res_remote) {
-    //         if (_.indexOf(res_local, res_remote[i]) < 0) {
-    //           let rsVersion = Number(_.split(res_remote[i], '-')[0]);
-    //           if (!this.isLowerVersion(rsVersion) && this.currentServerVersion >= Math.floor(rsVersion)) {
-    //             this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-    //           }
-    //         }
-    //       }
-    //     });
-    //   });
-    // },
-    // (res) => {
-    //   new EntityUtils().handleWSError(this, res, this.dialogService);
-    // });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_addr'}).templateListField[0];
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_addr'}).templateListField[0];
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
 
-    // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
-        for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        for (const i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.vnet_default_interfaceField.options.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{
@@ -1182,9 +1163,17 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = true;
         this.formGroup.controls['bpf'].setValue(true);
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = true;
+
+        if (!this.formGroup.controls['nat'].disabled) {
+          this.setDisabled('nat', true);
+        }
       } else {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
-         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+
+        if (this.formGroup.controls['nat'].disabled && this.wsResponse.state != 'up') {
+          this.setDisabled('nat', false);
+        }
       }
     });
     this.formGroup.controls['nat'].valueChanges.subscribe((res) => {

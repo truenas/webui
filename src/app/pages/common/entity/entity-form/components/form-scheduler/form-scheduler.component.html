@@ -9,7 +9,7 @@
       </mat-option>
       </mat-select>
     </mat-form-field>
-    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>
 
@@ -38,7 +38,7 @@
       <mat-divider id="spacer"></mat-divider>
       <ul class="schedule-list" #preview>
         <ng-container *ngFor="let date of generatedSchedule;">
-          <li>{{date}}</li>
+          <li>{{date | date: 'E LLL  d y h:mm z' }}</li>
         </ng-container>
       </ul>
     </div>
@@ -59,6 +59,7 @@
 
       <section style="text-align:left;" class="m-h-d">
         <h4 class="preview-label"><span *ngIf="!config.noMinutes">Minutes/</span>Hours/Days</h4>
+        <span id="no-spaces">Separate values with commas, and without spaces.</span>
         <!--<mat-form-field >
           <input matInput placeholder="Seconds">
           </mat-form-field>-->

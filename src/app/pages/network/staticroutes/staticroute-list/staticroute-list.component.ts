@@ -19,10 +19,11 @@ export class StaticRouteListComponent {
   constructor(protected rest: RestService, protected router: Router) {}
 
   public columns: Array<any> = [
-    {name : T('Destination'), prop : 'sr_destination'},
+    {name : T('Destination'), prop : 'sr_destination', always_display: true },
     {name : T('Gateway'), prop : 'sr_gateway'},
     {name : T('Description'), prop : 'sr_description'}
   ];
+  public rowIdentifier = 'sr_destination';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

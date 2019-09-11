@@ -5,20 +5,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector: 'app-manualupdate',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers : [ MessageService ]
+  providers : [ MessageService, SystemGeneralService ]
 })
-export class ManualUpdateComponent {
+export class ManualUpdateComponent extends ViewControllerComponent {
   public formGroup: FormGroup;
   public route_success: string[] = ['system','update'];
   protected dialogRef: any;
@@ -35,6 +37,11 @@ export class ManualUpdateComponent {
   // ];
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
+    {
+      type: 'paragraph',
+      name: 'version',
+      paraText: helptext.version.paraText,
+    },
     {
       type: 'select',
       name: 'filelocation',
@@ -96,7 +103,19 @@ export class ManualUpdateComponent {
     public translate: TranslateService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
-  ) {}
+    private systemService: SystemGeneralService,
+  ) {
+    super();
+    
+    this.core.register({
+     observerClass: this,
+     eventName: "SysInfo"
+    }).subscribe((evt: CoreEvent) => {
+       _.find(this.fieldConfig, {name: 'version'}).paraText += evt.data.version;
+    });
+ 
+    this.core.emit({name: "SysInfoRequest", sender:this});
+  }
 
   preInit(entityForm: any) {
     this.ws.call('pool.query').subscribe((pools)=>{

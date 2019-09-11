@@ -15,18 +15,22 @@ export class DiskListComponent {
 	protected queryCall = "disk.query";
 
 	public columns: Array<any> = [
-	    { name: T('Name'), prop: 'name', always_display: true },
-	    { name: T('Pool'), prop: "pool" },
-	    { name: T('Serial'), prop: 'serial' },
-	    { name: T('Disk Size'), prop: 'readable_size' },
-	    { name: T('Description'), prop: 'description', hidden: true },
-	    { name: T('Transfer Mode'), prop: 'transfermode', hidden: true },
-	    { name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
-	    { name: T('Adv. Power Management'), prop: 'advpowermgmt' },
-	    { name: T('Acoustic Level'), prop: 'acousticlevel' },
-	    { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart' },
-	    { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
-	    { name: T('Password for SED'), prop: 'passwd', hidden: true },
+	  { name: T('Name'), prop: 'name', always_display: true },
+	  { name: T('Pool'), prop: "pool" },
+	  { name: T('Serial'), prop: 'serial' },
+		{ name: T('Disk Size'), prop: 'readable_size' },
+		{ name: T('Disk Type'), prop: 'type', hidden: true },
+	  { name: T('Description'), prop: 'description', hidden: true },
+	  { name: T('Model'), prop: 'model', hidden: true },
+		{ name: T('Transfer Mode'), prop: 'transfermode', hidden: true },
+		{ name: T("Rotation Rate (RPM)"), prop: 'rotationrate', hidden: true },
+	  { name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
+	  { name: T('Adv. Power Management'), prop: 'advpowermgmt', hidden: true },
+	  { name: T('Acoustic Level'), prop: 'acousticlevel', hidden: true },
+	  { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
+	  { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
+		{ name: T('Password for SED'), prop: 'passwd', hidden: true },
+		{ name: T('Enclosure'), prop: 'enclosure_parsed', hidden: true }
 	];
 	public config: any = {
 		paging: true,
@@ -129,35 +133,40 @@ export class DiskListComponent {
 	}
 
 	getActions(parentRow) {
-   	const actions = [{
-      label: T("Edit"),
-      onClick: (row) => {
-        this.router.navigate(new Array('/').concat([
-          "storage", "disks", "edit", row.identifier
-        ]));
-      }
-    }];
+		const actions = [{
+			id: parentRow.name,
+			icon: 'edit',
+			name: 'edit',
+			label: T("Edit"),
+			onClick: (row) => {
+				this.router.navigate(new Array('/').concat([
+				"storage", "disks", "edit", row.identifier
+				]));
+			}
+		}];
 		if (_.find(this.unused, {"name": parentRow.name})) {
-	   	actions.push({
-	   		label: T("Wipe"),
-	       onClick: (row) => {
-	        this.router.navigate(new Array('/').concat([
-	          "storage", "disks", "wipe", row.name
-	        ]));
-	      }
-	  	})
-	  }
-    return actions;
+			actions.push({
+				id: parentRow.name,
+				icon: 'delete_sweep',
+				name: 'wipe',
+				label: T("Wipe"),
+				onClick: (row) => {
+					this.router.navigate(new Array('/').concat([
+					"storage", "disks", "wipe", row.name
+					]));
+				}
+			})
+		}
+		return actions;
   }
 
-	dataHandler(entityList: any) {
-		this.disk_ready.subscribe((res)=>{
-			for (let i = 0; i < entityList.rows.length; i++) {
-	      entityList.rows[i].readable_size = (<any>window).filesize(entityList.rows[i].size, { standard: "iec" });
-	      entityList.rows[i].pool = this.disk_pool.get(entityList.rows[i].name) || this.disk_pool.get(entityList.rows[i].devname);
+  dataHandler(entityList: any) {
+    this.disk_ready.subscribe(() => {
+      for (const disk of entityList.rows) {
+        disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
+        disk.pool = this.disk_pool.get(disk.name) || this.disk_pool.get(disk.devname);
+        disk.enclosure_parsed = disk.enclosure ? disk.enclosure.number : undefined;
 	    }
-		})
-
-
+    });
   }
 }

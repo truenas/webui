@@ -15,20 +15,27 @@ script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
     'navService': '//*[@id="nav-8"]/div/a[1]',
-    'navSystem': '//*[@id="nav-2"]/div/a[1]',
-    'submenuAdvanced': '//*[@id="2-3"]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'navSystem': "//span[contains(.,'System')]",
+    'submenuAdvanced': "//a[contains(.,'Advanced')]",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
-def test_01_nav_system_advanced(wb_driver):
-    wb_driver.find_element_by_xpath(xpaths['submenuAdvanced']).click()
+def test_01_nav_system_advanced(browser):
+    browser.find_element_by_xpath(xpaths['submenuAdvanced']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "System" in page_data, page_data
+    # get the ui element
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Advanced" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

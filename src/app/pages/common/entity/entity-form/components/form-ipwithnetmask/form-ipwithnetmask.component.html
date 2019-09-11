@@ -16,8 +16,8 @@
 			(blur)="setAddress($event)"
 			[pattern]="network.ipv4_or_ipv6_cidr_optional"
 			>
-	</mat-form-field>
-	<mat-select style="width: 15%" 
+	</mat-form-field>/
+	<mat-select *ngIf="!config.netmaskPreset" style="width: 15%"
 		[value]="netmask"
 		[placeholder]="Netmask | translate"
 		(selectionChange)="setNetmask($event)"
@@ -26,7 +26,16 @@
 			{{option.label}}
 		</mat-option>
 	</mat-select>
-	<tooltip style="width: 5%" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	<mat-select *ngIf="config.netmaskPreset" style="width: 15%"
+		class="disabled-select"
+		[value]="config.netmaskPreset"
+		disabled
+		>
+		<mat-option [value]="config.netmaskPreset">
+			{{config.netmaskPreset}}
+		</mat-option>
+	</mat-select>
+	<tooltip style="width: 5%" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
 	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 	<mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

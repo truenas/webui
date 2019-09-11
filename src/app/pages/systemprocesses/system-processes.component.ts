@@ -1,19 +1,8 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  Output,
-  EventEmitter,
-  SimpleChange,
-  OnDestroy
-} from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
+import { ShellService, WebSocketService } from '../../services/';
+import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 
-import { WebSocketService, ShellService } from '../../services/';
-//import { Terminal } from 'vscode-xterm';
-//import * as fit from 'vscode-xterm/lib/addons/fit';
-//import * as attach from 'vscode-xterm/lib/addons/attach';
 @Component({
   selector: 'app-system-processes',
   templateUrl: './system-processes.component.html',
@@ -23,7 +12,7 @@ import { WebSocketService, ShellService } from '../../services/';
 export class SystemProcessesComponent implements OnInit, OnDestroy {
 
   //xter container
-  @ViewChild('terminal') container: ElementRef;
+  @ViewChild('terminal', { static: true}) container: ElementRef;
 
   // xterm variables
   public token: any;
@@ -82,8 +71,12 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     return this.ws.call('auth.generate_token');
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService) {
-//    Terminal.applyAddon(fit);
-//    Terminal.applyAddon(attach);
+  onShellRightClick(): false {
+    this.snackbar.openFromComponent(CopyPasteMessageComponent);
+
+    return false;
+  }
+
+  constructor(private ws: WebSocketService, public ss: ShellService, private snackbar: MatSnackBar) {
   }
 }

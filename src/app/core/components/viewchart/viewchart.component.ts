@@ -4,7 +4,7 @@ import { ViewComponent } from 'app/core/components/view/view.component';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
 //import { ChartConfiguration, LegendOptions, TooltipOptions } from 'c3';
-import { ChartConfiguration, LegendOptions, TooltipOptions } from './viewchart.component.types';
+import { /*ChartConfiguration,*/ LegendOptions, TooltipOptions } from './viewchart.component.types';
 
 export interface ChartData {
   legend: string;
@@ -67,7 +67,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   public chart: any;
   public chartLoaded: boolean = false;
   protected _chartType: string;
-  protected _data: any[];
+  protected _data: any[] = ['No Data', 1];
   protected _chartId: string;
   protected colors: string[];
   public legend: Legend[] = [];
@@ -96,7 +96,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     }
   }
 
-  protected chartConfig: ChartConfiguration;
+  protected chartConfig: any;//ChartConfiguration;
 
   constructor() { 
     super();
@@ -113,7 +113,13 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   ngOnChanges(changes) {
     //DEBUG: console.log("OnChanges");
     if(changes.data){ // This only works with @Input() properties
-      this.render();
+      console.log(changes.data);
+      if(this.chartConfig){
+        this.chart.load({
+          columns: [changes.data]
+        });
+      } 
+      
     }
   }
 
@@ -129,6 +135,15 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
         }
       }*/
       this._data = [];
+    /*} else if(this.chartType == "gauge") {
+      this._data = d;
+      if(this.chartConfig){
+        this.chart.load({
+          columns: [d]
+        });
+      } else {
+        this.render();
+      }*/
     } else {
       let result: any[] = [];
  
@@ -165,7 +180,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
       //DEBUG: console.log("DEBUG: set data() ********");
       //DEBUG: console.log(d);
-      //DEBUG: console.log(this.chartConfig);
+      console.log(this.chartConfig);
 
       //this.chartConfig.data.columns = result;
       this.render();
@@ -254,8 +269,8 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   }
 
   render(conf?:any){
-    if(this.data.length == 0){
-      //DEBUG: console.log("NO DATA FOUND");
+    if(!this.data || this.data.length == 0){
+      console.log("NO DATA FOUND");
       return -1;
     }
 

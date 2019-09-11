@@ -21,7 +21,7 @@ export class IscsiWizardComponent {
 
     public route_success: string[] = ['sharing', 'iscsi'];
     public isLinear = true;
-    public summary_title = "ISCSI Summary";
+    public summary_title = "iSCSI Summary";
     public summaryObj = {
         'name': null,
         'type': null,
@@ -35,8 +35,7 @@ export class IscsiWizardComponent {
         'portal': null,
         'discovery_authmethod': null,
         'discovery_authgroup': null,
-        'ip': null,
-        'port': null,
+        'listen': null,
         'auth': null,
         'tag': null,
         'user': null,
@@ -115,8 +114,8 @@ export class IscsiWizardComponent {
                 // zvol creation group
                 {
                     type: 'explorer',
-                    explorerType: 'directory',
-                    initial: '/mnt',
+                    explorerType: 'dataset',
+                    initial: '',
                     name: 'dataset',
                     placeholder: helptext.dataset_placeholder,
                     tooltip: helptext.dataset_tooltip,
@@ -190,7 +189,7 @@ export class IscsiWizardComponent {
                     ]
                 },
                 {
-                    type: 'select',
+                    type: 'input',
                     name: 'blocksize',
                     isHidden: true,
                 },
@@ -268,26 +267,31 @@ export class IscsiWizardComponent {
                     disabled: true,
                 },
                 {
-                    type: 'select',
-                    name: 'ip',
-                    placeholder: helptext.ip_placeholder,
-                    tooltip: helptext.ip_tooltip,
-                    options: [
+                    type: 'list',
+                    name: 'listen',
+                    templateListField: [
                         {
-                            label: '0.0.0.0',
-                            value: '0.0.0.0'
+                            type: 'select',
+                            name: 'ip',
+                            placeholder: helptext.ip_placeholder,
+                            tooltip: helptext.ip_tooltip,
+                            options: [],
+                            class: 'inline',
+                            width: '60%',
+                            required: true,
+                            validation : [ Validators.required ],
+                        },
+                        {
+                            type: 'input',
+                            name: 'port',
+                            placeholder: helptext.port_placeholder,
+                            tooltip: helptext.port_tooltip,
+                            value: '3260',
+                            class: 'inline',
+                            width: '30%',
                         }
                     ],
-                    value: '0.0.0.0',
-                    isHidden: true,
-                    disabled: true,
-                },
-                {
-                    type: 'input',
-                    name: 'port',
-                    placeholder: helptext.port_placeholder,
-                    tooltip: helptext.port_tooltip,
-                    value: '3260',
+                    listFields: [],
                     isHidden: true,
                     disabled: true,
                 },
@@ -446,8 +450,7 @@ export class IscsiWizardComponent {
     protected portalFieldGroup: any[] = [
         'discovery_authmethod',
         'discovery_authgroup',
-        'ip',
-        'port',
+        'listen',
     ];
     protected authAccessFieldGroup: any[] = [
         'tag',
@@ -532,15 +535,13 @@ export class IscsiWizardComponent {
 
     step1Init() {
         const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'discovery_authgroup' });
+        const listenIpField = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'listen' }).templateListField[0];
 
-        this.iscsiService.listPortals().subscribe((res) => {
+        this.iscsiService.listPortals().subscribe((portals) => {
             const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'portal' });
-            for (const i in res) {
-                let label = res[i].tag;
-                if (res[i].comment) {
-                    label += ' (' + res[i].comment + ')';
-                }
-                field.options.push({ label: label, value: res[i].id })
+            for (const portal of portals) {
+                const ips = portal.listen.map(ip => ip.ip + ':' + ip.port);
+                field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id })
             }
         });
 
@@ -550,11 +551,16 @@ export class IscsiWizardComponent {
             }
         });
 
-        this.iscsiService.getIpChoices().subscribe((res) => {
-            const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'ip' });
-            res.forEach((item) => {
-                field.options.push({ label: item[1], value: item[0] });
-            });
+        this.iscsiService.getIpChoices().subscribe((ips) => {
+            for (const ip in ips) {
+                listenIpField.options.push({ label: ip, value: ips[ip] });
+            }
+
+            const listenListFields = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'listen' }).listFields;
+            for (const listenField of listenListFields) {
+                const ipField = _.find(listenField, {name: 'ip'});
+                ipField.options = listenIpField.options;
+            }
         });
 
         this.iscsiService.getAuth().subscribe((res) => {
@@ -628,7 +634,7 @@ export class IscsiWizardComponent {
             'New Portal': {
                 'Discovery Auth Method': this.summaryObj.discovery_authmethod,
                 'Discovery Auth Group': this.summaryObj.discovery_authgroup,
-                'Listen': this.summaryObj.ip + ':' + this.summaryObj.port,
+                'Listen': this.summaryObj.listen === null ? null : this.summaryObj.listen.map(listen => listen.ip + ':' + listen.port),
             },
             'Authorized Access': this.summaryObj.auth,
             'New Authorized Access': {
@@ -697,13 +703,6 @@ export class IscsiWizardComponent {
     getDatasetValue(dataset) {
         const datasetField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'dataset' });
         datasetField.hasErrors = false;
-
-        if (!_.startsWith(dataset, '/mnt/')) {
-            datasetField.hasErrors = true;
-            return;
-        } else {
-            dataset = dataset.substring(5);
-        }
 
         const pool = dataset.split("/")[0];
         this.ws.call('pool.dataset.query', [[["id", "=", dataset]]]).subscribe(
@@ -782,7 +781,7 @@ export class IscsiWizardComponent {
         let payload;
         if (item === 'zvol') {
             payload = {
-                name: value['dataset'].substring(5) + '/' + value['name'],
+                name: value['dataset'] + '/' + value['name'],
                 type: 'VOLUME',
                 volblocksize: value['volblocksize'],
                 volsize: this.getRoundVolsize(value),
@@ -793,10 +792,7 @@ export class IscsiWizardComponent {
                 comment: value['name'],
                 discovery_authgroup: value['discovery_authgroup'],
                 discovery_authmethod: value['discovery_authmethod'],
-                listen: [{
-                    ip: value['ip'],
-                    port: value['port'],
-                }]
+                listen: value['listen'],
             }
             if (payload['discovery_authgroup'] === '') {
                 delete payload['discovery_authgroup'];

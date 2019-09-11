@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 //import {GeneralComponent} from './general/';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
 import { ViewEnclosureComponent } from './viewenclosure/';
 import { DatasetComponent } from './dataset/';
@@ -48,6 +47,7 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
+import { EulaComponent } from './support/eula/eula.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -65,10 +65,6 @@ export const routes: Routes = [
         path: '',
         component: GeneralComponent,
         data: { title: 'General', breadcrumb: 'General' },
-      }, {
-        path: 'config-reset',
-        component: ConfigResetComponent,
-        data: { title: 'Config Reset', breadcrumb: 'Config Reset' },
       }]
     }, {
       path: 'advanced',
@@ -87,8 +83,8 @@ export const routes: Routes = [
       component: DatasetComponent,
       data: { title: 'System Dataset', breadcrumb: 'System Dataset', icon: 'storage' },
     }, {
-      path: 'bootenv',
-      data: { title: 'Boot Environments', breadcrumb: 'Boot Environments', icon: 'replay' },
+      path: 'boot',
+      data: { title: 'Boot', breadcrumb: 'Boot', icon: 'replay' },
       children: [{
         path: '',
         component: BootEnvironmentListComponent,
@@ -339,12 +335,23 @@ export const routes: Routes = [
       path: 'failover',
       component: FailoverComponent,
       data: { title: 'Failover', breadcrumb: 'Failover', icon: 'device_hub' }
-    }, {
+    }, 
+    {
       path: 'support',
-      component: SupportComponent,
       data: { title: 'Support', breadcrumb: 'Support', icon: 'perm_phone_msg' },
-
-    },
+      children: [
+        {
+          path: '',
+          component: SupportComponent,
+          data: { title: 'Support', breadcrumb: 'Support' },
+        },
+        {
+          path: 'eula',
+          component: EulaComponent,
+          data: { title: 'EULA', breadcrumb: 'EULA'}
+        }
+      ]
+    }, 
     {
       path: 'proactivesupport',
       component: ProactiveSupportComponent,

@@ -1,136 +1,143 @@
-<div class="legacy-warning" *ngIf="legacyWarning">
-      {{ legacyWarning | translate }} 
-      <span class="legacy-warning-link" (click)="onGoToLegacy()">
-        {{ legacyWarningLink | translate }}.
-      </span>
-    </div>
-
 <div id="entity-table-component" class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap" fxLayoutAlign="space-between center">
+  <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap"
+    fxLayoutAlign="space-between center">
     <div fxFlex="300px" class="mat-card-title-text">{{ title | translate }}</div>
 
-  <!-- START OF CONTROLS SECTION -->
-  <div fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
-    <div id="filter" >
-      <mat-icon>search</mat-icon>
-      <mat-form-field floatPlaceholder="never">
-        <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
-      </mat-form-field>
-      <!--<tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>-->
-    </div>
-  
-  <!-- START MultiMenu-->
-  <div *ngIf="allColumns && allColumns.length > 0">
-  <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle">
-    <span>Columns <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
-  </button>
-  <mat-menu #menu="matMenu" multiple overlapTrigger="false">
-  
-    <!-- SELECT ALL -->
-    <div (click)="$event.stopPropagation()">
-      <button mat-menu-item (click)="checkAll()" id="check-all">
-        <span>
-          <mat-icon *ngIf="checkLength()">check_circle</mat-icon> 
-          <mat-icon *ngIf="!checkLength()">remove</mat-icon> 
-        </span> 
-        <span>Select All</span>
-      </button>
-    </div>
-  
-    <!-- INDIVIDUAL COLUMNS-->
-    <div (click)="$event.stopPropagation()">
-      <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name">
-        <span>
-          <mat-icon *ngIf="isChecked(col)">check_circle</mat-icon> 
-          <mat-icon *ngIf="!isChecked(col)">remove</mat-icon> 
-        </span> 
-        <span>{{col.name}}</span>
-      </button>
-    </div>
-  </mat-menu>
-  </div>
-  <!-- END MultiMenu-->
-  
-  
-      <div style="text-align:right;"><app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions></div>
-      <mat-spinner 
-        [diameter]='40' 
-        id="entity-spinner"
-        *ngIf="!showDefaults && showSpinner" #entityspinner>
-      </mat-spinner> 
-  
+    <!-- START OF CONTROLS SECTION -->
+    <div fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
+      <div id="filter">
+        <mat-icon>search</mat-icon>
+        <mat-form-field floatPlaceholder="never">
+          <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
+        </mat-form-field>
+        <!--<tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>-->
+      </div>
+
+      <!-- START MultiMenu-->
+      <div *ngIf="columnFilter && allColumns && allColumns.length > 0">
+        <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle">
+          <span>Columns <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
+        </button>
+        <mat-menu #menu="matMenu" multiple overlapTrigger="false">
+
+          <!-- SELECT ALL -->
+          <div (click)="$event.stopPropagation()">
+            <button mat-menu-item (click)="checkAll()" id="check-all">
+              <span>
+                <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
+                <mat-icon *ngIf="!checkLength()">remove</mat-icon>
+              </span>
+              <span *ngIf="!checkLength()">Select All</span>
+              <span *ngIf="checkLength()">Unselect All</span>
+            </button>
+          </div>
+
+          <!-- INDIVIDUAL COLUMNS-->
+          <div (click)="$event.stopPropagation()">
+            <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name">
+              <span>
+                <mat-icon *ngIf="isChecked(col)">check_circle</mat-icon>
+                <mat-icon *ngIf="!isChecked(col)">remove</mat-icon>
+              </span>
+              <span>{{col.name}}</span>
+            </button>
+          </div>
+
+          <div (click)="$event.stopPropagation()">
+            <button mat-menu-item (click)="resetColViewToDefaults()" id="reset_col_view">
+              <span>
+                <mat-icon>undo</mat-icon>
+              </span>
+              <span>Reset to Defaults</span>
+            </button>
+          </div>
+        </mat-menu>
+      </div>
+      <!-- END MultiMenu-->
+
+
+      <div style="text-align:right;">
+        <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+      </div>
+      <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="(!showDefaults && showSpinner) || !cardHeaderReady" #entityspinner>
+      </mat-spinner>
+
       <ng-container *ngIf="conf && conf.custActions">
         <!--<div id="action-button-wrapper" *ngIf="conf && conf.custActions">-->
         <span *ngFor="let custBtn of conf.custActions">
-          <button id="cust_button_{{custBtn.name}}" mat-button 
-            *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" 
-            type="button" 
-            color="primary"
+          <button id="cust_button_{{custBtn.name}}" mat-button
+            *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" color="primary"
             (click)="custBtn['function']()">
             {{custBtn.name | translate}}
           </button>
         </span>
         <!--</div>-->
-        </ng-container>
+      </ng-container>
+
+      <div id='config' *ngIf="conf.globalConfig">
+        <button mat-icon-button id="{{ conf.globalConfig.id }}" [matTooltip]="conf.globalConfig.tooltip" (click)="conf.globalConfig.onClick()">
+          <mat-icon>settings</mat-icon>
+        </button>
+      </div>
     </div><!-- end of mat-toolbar -->
-  
 
   </div>
   <!-- END OF CONTROLS SECTION -->
-  
-  
-  
-  <div  fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar" [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selected.length > 0" [style.display]="selected.length > 0 ? 'block' : 'none'" >
-      <div>
-        <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
-          <strong>Batch Operations</strong> 
-        </div>
-        <!-- -->
-        <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
-          <span *ngFor="let maction of conf.multiActions">
-            <!-- DEFAULT -->
-            <ng-container *ngIf="!multiActionsIconsOnly">
-              <button id="{{ maction?.id }}" 
-                mat-button 
-                *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
-                <mat-icon>{{ maction?.icon }}</mat-icon><br><span>{{maction?.label | translate}}</span>
-                </button>
-            </ng-container>
 
-            <!-- ICONS ONLY -->
-            <ng-container *ngIf="multiActionsIconsOnly">
-              <button id="{{ maction?.id }}" 
-                mat-button matTooltip="{{ maction?.label  | translate }}" [matTooltipPosition]=maction?.ttpos 
-                *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
-                <mat-icon>{{ maction?.icon }}</mat-icon>
-                </button>
-            </ng-container>
+  <!-- INSERT DYNAMIC CARDHEADER HERE -->
+  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]=""
+    [parent]="this"></ng-template>
 
-          </span>
-        </div>
-
-        <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
-          <span>
-            <!-- With Labels -->
-            <ng-container>
-              <button mat-button (click)="doMultiDelete(this.selected);">
-                <mat-icon>delete</mat-icon><br><span>DELETE</span>
-              </button>
-            </ng-container>
-            
-            <!-- Without Labels -->
-            <ng-container>
-              <button (click)="doMultiDelete(this.selected);"
-                mat-button matTooltip="{{ 'Delete selections'  | translate }}" 
-                matTooltipPosition="below" >
-                  <mat-icon>delete</mat-icon>
-              </button>
-            </ng-container>
-          </span>
-        </div>
-
+  <!-- TABLE START -->
+  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar"
+    [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selected.length > 0"
+    [style.display]="selected.length > 0 ? 'block' : 'none'">
+    <div>
+      <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
+        <strong>Batch Operations</strong>
       </div>
+      <!-- -->
+      <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
+        <span *ngFor="let maction of conf.multiActions">
+          <!-- DEFAULT -->
+          <ng-container *ngIf="!multiActionsIconsOnly">
+            <button id="{{ maction?.id }}" mat-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+              <mat-icon>{{ maction?.icon }}</mat-icon><br><span>{{maction?.label | translate}}</span>
+            </button>
+          </ng-container>
+
+          <!-- ICONS ONLY -->
+          <ng-container *ngIf="multiActionsIconsOnly">
+            <button id="{{ maction?.id }}" mat-button matTooltip="{{ maction?.label  | translate }}"
+              [matTooltipPosition]=maction?.ttpos *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+              <mat-icon>{{ maction?.icon }}</mat-icon>
+            </button>
+          </ng-container>
+
+        </span>
+      </div>
+
+      <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
+        <span>
+          <!-- With Labels -->
+          <ng-container>
+            <button mat-button (click)="doMultiDelete(this.selected);">
+              <mat-icon>delete</mat-icon><br><span>DELETE</span>
+            </button>
+          </ng-container>
+
+          <!-- Without Labels -->
+          <ng-container>
+            <button (click)="doMultiDelete(this.selected);" mat-button
+              matTooltip="{{ 'Delete selections'  | translate }}" matTooltipPosition="below">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-container>
+        </span>
+      </div>
+
     </div>
+  </div>
 
   <!-- DATATABLE START -->
   <div class="no-padding">
@@ -159,11 +166,12 @@
       #entityTable>
 
       <!-- Row Detail Template -->
-      <ngx-datatable-row-detail *ngIf="conf.hasDetails" [rowHeight]="100" #myDetailRow (toggle)="onDetailToggle($event)">
+      <ngx-datatable-row-detail [rowHeight]="getRowDetailHeight">
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-          <div *ngFor="let detail of row.details" style="padding-left:35px;">
-            <strong>{{detail.label | translate}}:</strong> {{detail.value}}
-          </div>
+          <div *ngIf="conf.rowDetailComponent; else default;" dynamicComponent [component]="conf.rowDetailComponent" [config]="row" [parent]="this"></div>
+          <ng-template #default>
+            <app-entity-table-row-details [config]="row" [parent]="this"></app-entity-table-row-details>
+          </ng-template>
         </ng-template>
       </ngx-datatable-row-detail>
 
@@ -199,32 +207,26 @@
         </ngx-datatable-footer>
 
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
-        <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+        <ng-template ngx-datatable-header-template let-column="column" let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
           <div class="headerCheckBox">
-            <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+            <mat-checkbox
+              [checked]="allRowsSelected"
+              (change)="selectFn(!allRowsSelected)"
+              ix-datatable-cell="multi-checkbox-all"
+              [ix-datatable-cell-identifier]="title"
+            ></mat-checkbox>
           </div>
         </ng-template>
 
-        <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
           <div>
-            <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+            <mat-checkbox 
+              ix-datatable-cell="multi-checkbox"
+              [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
+              [checked]="isSelected"
+              (change)="onCheckboxChangeFn($event)"
+            ></mat-checkbox>
           </div>
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column *ngIf="conf.hasDetails"
-        [width]="50"
-        [resizeable]="false"
-        [sortable]="false"
-        [draggable]="false"
-        [canAutoResize]="false">
-        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-          <a
-            href="javascript:void(0)"
-            [class.datatable-icon-right]="!expanded"
-            [class.datatable-icon-down]="expanded"
-            title="Expand/Collapse Row"
-            (click)="toggleExpandRow(row)">
-          </a>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
@@ -252,7 +254,9 @@
               [checked]="row[col.prop]==='RUNNING'"
             ></mat-slide-toggle>
             <div id="{{col.prop}}_{{row[col.prop]}}" 
-                 title="{{convertDisplayValue(row[col.prop])}}">
+                 title="{{convertDisplayValue(row[col.prop])}}" 
+                 [ix-datatable-cell]="col?.name"
+                 [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']">
               {{convertDisplayValue(row[col.prop])}}
             </div>
           </ng-template>
@@ -265,28 +269,69 @@
                [minWidth]="col.minWidth"
                [maxWidth]="col.maxWidth">
         <ng-template let-row="row" ngx-datatable-cell-template>
-          <div id="{{col.prop}}_{{row[col.prop]}}" 
-               title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
-            <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-            <mat-checkbox id="{{row.name}}_{{col.name}}-checkbox" 
-              *ngIf="col.selectable" 
-              [checked]="row[col.prop]" 
-              (change)="conf.onCheckboxChange(row)"
-            ></mat-checkbox>
-            <button mat-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
-              {{convertDisplayValue(row[col.prop])}}
-            </button>
-            <ng-template #colInfo>
-              <span *ngIf="!col.selectable">{{convertDisplayValue(row[col.prop])}}</span>
-            </ng-template>
+          <div
+            fxLayoutAlign="start center"
+            fxLayoutGap="4px"
+            [ix-datatable-cell]="col?.name"
+            [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
+          >
+            <ng-container *ngIf="col?.widget?.component">
+                <mat-icon
+                  [ix-datatable-cell]="col?.name + '_widget'"
+                  [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
+                  [matMenuTriggerFor]="widget"
+                  class="widget-icon"
+                  role="img"
+                  fontSet="mdi-set"
+                  fontIcon="mdi-{{ col.widget.icon }}"
+                ></mat-icon>
+                <mat-menu #widget="matMenu" xPosition="before" yPosition="below">
+                  <!-- column widgets need to be registered with this switch case -->
+                  <ng-container [ngSwitch]="col.widget.component">
+                    <app-task-schedule-list *ngSwitchCase="'TaskScheduleListComponent'" [value]="row[col.prop]" [config]="row" [parent]="this"></app-task-schedule-list>
+                  </ng-container>
+                </mat-menu>
+            </ng-container>
+            <div id="{{col.prop}}_{{row[col.prop]}}" 
+                 title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
+              <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
+              <mat-checkbox id="{{row.name}}_{{col.name}}-checkbox" 
+                *ngIf="col.selectable" 
+                [checked]="row[col.prop]" 
+                (change)="conf.onCheckboxChange(row)"
+              ></mat-checkbox>
+              <button mat-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
+                {{convertDisplayValue(row[col.prop])}}
+              </button>
+              <ng-template #colInfo>
+                <span *ngIf="!col.selectable">{{convertDisplayValue(row[col.prop])}}</span>
+              </ng-template>
+            </div>
           </div>
         </ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column>
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <app-entity-table-actions *ngIf="showActions" [entity]="this" [row]="row">
-          </app-entity-table-actions>
+      <!-- detail toggle / three-dot menu -->
+      <ngx-datatable-column
+        [width]="60"
+        [resizeable]="false"
+        [sortable]="false"
+        [draggable]="false"
+        [canAutoResize]="false">
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+          <a
+            *ngIf="hasDetails(); else threeDot"
+            href="javascript:void(0)"
+            [class.datatable-icon-right]="!expanded"
+            [class.datatable-icon-down]="expanded"
+            title="Expand/Collapse Row"
+            (click)="toggleExpandRow(row)"
+            ix-datatable-cell="expander"
+            [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']">
+          </a>
+          <ng-template #threeDot>
+            <app-entity-table-actions [entity]="this" [row]="row"></app-entity-table-actions>
+          </ng-template>
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

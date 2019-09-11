@@ -11,7 +11,7 @@ import { JailService, NetworkService, DialogService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
-import helptext from '../../../helptext/jails/jail-wizard';
+import helptext from '../../../helptext/jails/jail-configuration';
 
 @Component({
   selector: 'jail-wizard',
@@ -41,13 +41,14 @@ export class JailWizardComponent {
   }];
 
   protected wizardConfig: Wizard[] = [{
-      label: helptext.step1_label,
+      label: helptext.wizard_step1_label,
       fieldConfig: [{
           type: 'input',
           name: 'uuid',
           required: true,
           placeholder: helptext.uuid_placeholder,
           tooltip: helptext.uuid_tooltip,
+          validation: [regexValidator(this.jailService.jailNameRegex)],
           blurStatus: true,
           blurEvent: this.blurEvent,
           parent: this
@@ -77,12 +78,22 @@ export class JailWizardComponent {
           tooltip: helptext.release_tooltip,
           options: [],
         },
+        {
+          type: 'radio',
+          name: 'https',
+          placeholder: helptext.https_placeholder,
+          options: [
+            {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+            {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+          ],
+          value: true,
+          isHidden: true,
+        },
       ]
     },
     {
-      label: helptext.step2_label,
-      fieldConfig: [
-        {
+      label: helptext.wizard_step2_label,
+      fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
           placeholder: helptext.dhcp_placeholder,
@@ -270,7 +281,6 @@ export class JailWizardComponent {
   ]
 
   protected releaseField: any;
-  protected currentServerVersion: any;
   protected ip4_interfaceField: any;
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
@@ -280,6 +290,7 @@ export class JailWizardComponent {
   public ipv4: any;
   public ipv6: any;
   protected template_list: string[];
+  protected unfetchedRelease = [];
 
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
@@ -294,62 +305,38 @@ export class JailWizardComponent {
   preInit() {
     this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'release' });
     this.template_list = new Array<string>();
-    this.ws.call('jail.list_resource', ["TEMPLATE"]).subscribe(
-      (res) => {
-        for (const i in res) {
-          this.template_list.push(res[i][1]);
-          this.releaseField.options.push({ label: res[i][1] + '(template)', value: res[i][1] });
+    this.jailService.getTemplates().subscribe(
+      (templates) => {
+        for (const template of templates) {
+          this.template_list.push(template.host_hostuuid);
+          this.releaseField.options.push({ label: template.host_hostuuid + ' (template)', value: template.host_hostuuid });
         }
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);
       }
     )
-
-    this.ws.call('system.info').subscribe((res) => {
-        this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-        this.jailService.getLocalReleaseChoices().subscribe(
-          (res_local) => {
-            for (let j in res_local) {
-              let rlVersion = Number(_.split(res_local[j], '-')[0]);
-              if (this.currentServerVersion >= Math.floor(rlVersion)) {
-                this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-              }
-            }
-            this.jailService.getRemoteReleaseChoices().subscribe(
-              (res_remote) => {
-                for (let i in res_remote) {
-                  if (_.indexOf(res_local, res_remote[i]) < 0) {
-                    let rmVersion = Number(_.split(res_remote[i], '-')[0]);
-                    if (this.currentServerVersion >= Math.floor(rmVersion)) {
-                      this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-                    }
-                  }
-                }
-              },
-              (res_remote) => {
-                this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.reason, res_remote.trace.formatted);
-              });
-          },
-          (res_local) => {
-            this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.reason, res_local.trace.formatted);
-          });
+    this.jailService.getReleaseChoices().subscribe(
+      (releases) => {
+        for (const item in releases) {
+          this.releaseField.options.push({ label: item, value: releases[item] });
+        }
       },
-      (res) => {
-        new EntityUtils().handleError(this, res);
-      });
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      }
+    );
 
     this.ip4_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_interface'});
     this.ip4_netmaskField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_prefix'});
 
-    // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
-        for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        for (const i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{
@@ -405,11 +392,15 @@ export class JailWizardComponent {
 
   afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
+    const httpsField =  _.find(this.wizardConfig[0].fieldConfig, {'name': 'https'});
+
     ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
       this.summary[T('Jail Name')] = res;
     });
     ( < FormGroup > entityWizard.formArray.get([0])).get('release').valueChanges.subscribe((res) => {
       this.summary[T('Release')] = res;
+
+      httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
     });
     // update ipv4
     ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_interface').valueChanges.subscribe((res) => {
@@ -464,6 +455,13 @@ export class JailWizardComponent {
 
       if (res) {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
+        if (!( < FormGroup > entityWizard.formArray.get([1])).controls['nat'].disabled) {
+          entityWizard.setDisabled('nat', true, 1);
+        }
+      } else {
+        if (( < FormGroup > entityWizard.formArray.get([1])).controls['nat'].disabled) {
+          entityWizard.setDisabled('nat', false, 1);
+        }
       }
       _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
     });
@@ -537,7 +535,7 @@ export class JailWizardComponent {
             }
             delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release' && i != 'basejail') {
+            if (i != 'uuid' && i != 'release' && i != 'basejail' && i != 'https') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }

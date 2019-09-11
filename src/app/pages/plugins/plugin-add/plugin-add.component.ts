@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
@@ -21,20 +22,26 @@ import helptext from '../../../helptext/plugins/plugins';
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
-  providers: [EntityFormService, FieldRelationService, NetworkService],
+  providers: [EntityFormService, FieldRelationService, NetworkService, TranslateService],
 })
 export class PluginAddComponent implements OnInit {
 
-  protected addCall: string = 'jail.fetch';
-  public route_goback: string[] = ['plugins', 'available'];
-  public route_success: string[] = ['plugins', 'installed'];
-  protected isEntity: boolean = false;
+  protected addCall: string = 'plugin.create';
+  public route_goback: string[] = ['plugins'];
+  public route_success: string[] = ['plugins'];
 
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
-      name: 'name',
-      placeholder: helptext.name_placeholder,
+      name: 'plugin_name',
+      placeholder: helptext.plugin_name_placeholder,
       disabled: true,
+    },
+    {
+      type: 'input',
+      name: 'jail_name',
+      placeholder: helptext.jail_name_placeholder,
+      required: true,
+      validation: [ Validators.required ]
     },
     {
       type: 'checkbox',
@@ -196,10 +203,9 @@ export class PluginAddComponent implements OnInit {
   ];
 
   protected pluginName: any;
-  protected nameField: any;
+  protected pluginRepository: any;
   public formGroup: any;
   public error: string;
-  public busy: Subscription;
 
   protected ip4_interfaceField: any;
   protected ip4_netmaskField: any;
@@ -216,7 +222,8 @@ export class PluginAddComponent implements OnInit {
     protected dialog: DialogService,
     protected networkService: NetworkService,
     protected snackBar: MatSnackBar,
-    protected matdialog: MatDialog) {}
+    protected matdialog: MatDialog,
+    protected translate: TranslateService) {}
 
   updateIpValidation() {
     const ip4AddrField = _.find(this.fieldConfig, {'name': 'ip4_addr'});
@@ -255,7 +262,7 @@ export class PluginAddComponent implements OnInit {
     this.ip6_interfaceField = _.find(this.fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.fieldConfig, {'name': 'ip6_prefix'});
     // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res)=>{
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
@@ -274,6 +281,14 @@ export class PluginAddComponent implements OnInit {
     this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
       this.updateIpValidation();
     });
+    this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
+      if (res && !this.formGroup.controls['nat'].disabled) {
+        this.setDisabled('nat', true);
+      }
+      if (!res && this.formGroup.controls['nat'].disabled) {
+        this.setDisabled('nat', false);
+      }
+    })
 
     for (let i in this.fieldConfig) {
       let config = this.fieldConfig[i];
@@ -284,7 +299,8 @@ export class PluginAddComponent implements OnInit {
 
     this.aroute.params.subscribe(params => {
       this.pluginName = params['name'];
-      this.formGroup.controls['name'].setValue(this.pluginName);
+      this.pluginRepository =  params['plugin_repository'];
+      this.formGroup.controls['plugin_name'].setValue(this.pluginName);
     });
   }
 
@@ -310,7 +326,7 @@ export class PluginAddComponent implements OnInit {
     }
 
     for (let i in value) {
-      if (value.hasOwnProperty(i)) {
+      if (value.hasOwnProperty(i) && i !== 'jail_name') {
         if (value[i] != undefined && value[i] != '') {
           if (value[i] == true) {
             if (i == 'dhcp') {
@@ -328,13 +344,9 @@ export class PluginAddComponent implements OnInit {
         delete value[i];
       }
     }
-    value['name'] = this.pluginName;
+    value['plugin_name'] = this.pluginName;
+    value['plugin_repository'] = this.pluginRepository;
     value['props'] = property;
-
-    // only for plugin bru-server
-    if (this.pluginName == 'bru-server') {
-      value['accept'] = true;
-    }
 
     this.dialogRef = this.matdialog.open(EntityJobComponent, { data: { "title": T("Install") }, disableClose: true });
     this.dialogRef.componentInstance.setDescription(T("Installing plugin..."));
@@ -343,12 +355,8 @@ export class PluginAddComponent implements OnInit {
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialogRef.componentInstance.setTitle(T("Plugin installed successfully"));
       let install_notes = '<p><b>Install Notes:</b></p>';
-      for (let i in res.result.install_notes) {
-        if (res.result.install_notes[i] == "") {
-          install_notes += '<br>';
-        } else {
-          install_notes += '<p>' + res.result.install_notes[i] + '</p>';
-        }
+      for (const msg of res.result.install_notes.split('\n')) {
+          install_notes += '<p>' + msg + '</p>';
       }
       this.dialogRef.componentInstance.setDescription(install_notes);
       this.dialogRef.componentInstance.showCloseButton = true;
@@ -398,7 +406,7 @@ export class PluginAddComponent implements OnInit {
 
   goAdvanced() {
     this.router.navigate(
-      new Array('').concat(["plugins", "advanced", this.pluginName])
+      new Array('').concat(["plugins", "advanced", this.pluginName, {'plugin_repository': this.pluginRepository}])
     );
   }
 }

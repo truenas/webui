@@ -1,7 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { MatDialog } from '@angular/material';
 import { DialogService, LanguageService, RestService, WebSocketService, SnackbarService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -117,13 +118,26 @@ export class GeneralComponent {
       name: 'crash_reporting',
       placeholder: helptext.crash_reporting.placeholder,
       tooltip: helptext.crash_reporting.tooltip
+    },
+    {
+      type: 'checkbox',
+      name: 'usage_collection',
+      placeholder: helptext.usage_collection.placeholder,
+      tooltip: helptext.usage_collection.tooltip
     }
   ];
   protected saveConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: helptext.secretseed.placeholder
+      placeholder: helptext.secretseed.placeholder,
+      tooltip: helptext.secretseed.tooltip
+    },
+    {
+      type: 'checkbox',
+      name: 'pool_keys',
+      placeholder: helptext.poolkeys.placeholder,
+      tooltip: helptext.poolkeys.tooltip
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
@@ -133,6 +147,7 @@ export class GeneralComponent {
     method_ws: 'core.download',
     saveButtonText: helptext.save_config_form.button_text,
     customSubmit: this.saveConfigSubmit,
+    parent: this,
     warning: helptext.save_config_form.warning,
   }
 
@@ -156,6 +171,26 @@ export class GeneralComponent {
     customSubmit: this.uploadConfigSubmit,
     message: helptext.upload_config_form.message,
   }
+
+  protected resetConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'reboot_option',
+      placeholder: helptext.reset_config_placeholder,
+      required: true
+    }
+  ]
+
+  public resetConfigFormConf: DialogFormConfiguration = {
+    title: "Reset Configuration",
+    message: helptext.reset_config_form.message,
+    fieldConfig: this.resetConfigFieldConf,
+    method_ws: 'config.reset',
+    saveButtonText: helptext.reset_config_form.button_text,
+    customSubmit: this.resetConfigSubmit,
+    parent: this
+  }
+
   public custActions: Array<any> = [
   {
     id : 'save_config',
@@ -172,8 +207,11 @@ export class GeneralComponent {
   },{
     id : 'reset_config',
     name: helptext.actions.reset_config,
-    function: () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-reset']))}
+    function: () => {
+      this.dialog.dialogForm(this.resetConfigFormConf);
+    }
   }];
+
   private ui_address: any;
   private ui_v6address: any;
   private ui_certificate: any;
@@ -190,18 +228,19 @@ export class GeneralComponent {
   private guicertificate: any;
   //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
+  private dialogRef: any;
 
   constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
     protected dialog: DialogService, protected loader: AppLoaderService,
-    public http: Http, protected snackBar: SnackbarService) {}
+    public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog) {}
 
   resourceTransformIncomingRestData(value) {
     this.http_port = value['ui_port'];
     this.https_port = value['ui_httpsport'];
     this.redirect = value['ui_httpsredirect'];
-    this.guicertificate = value['ui_certificate'].id;
-    value['ui_certificate'] = this.guicertificate;
+    value['ui_certificate'] = value['ui_certificate'].id.toString();
+    this.guicertificate = value['ui_certificate'];
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
     return value;
@@ -226,10 +265,7 @@ export class GeneralComponent {
     entityEdit.ws.call('system.general.ui_certificate_choices')
       .subscribe((res) => {
         for (const id in res) {
-          if(res.hasOwnProperty(id)) {
-            const value = parseInt(id, 10); //fixme: we shouldn't have to convert this value after we switch to websocket
-            this.ui_certificate.options.push({ label: res[id], value: value });
-          }
+          this.ui_certificate.options.push({ label: res[id], value: id });
         }
       });
 
@@ -336,23 +372,26 @@ export class GeneralComponent {
   }
 
   saveConfigSubmit(entityDialog) {
+    parent = entityDialog.parent;
     entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
       if (res) {
         let hostname = res.hostname.split('.')[0];
         let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
         fileName = hostname + '-' + res.version + '-' + date;
-        if (entityDialog.formValue['secretseed']) {
+        if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
           fileName += '.tar';
         } else {
           fileName += '.db';
         }
       }
 
-      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
+      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'],
+                                                               'pool_keys': entityDialog.formValue['pool_keys'] }],
+                                                               fileName])
         .subscribe(
           (res) => {
-            this.snackBar.open(helptext.snackbar_download_success.title, helptext.snackbar_download_success.action, {
+            parent['snackBar'].open(helptext.snackbar_download_success.title, helptext.snackbar_download_success.action, {
               duration: 5000
             });
             if (window.navigator.userAgent.search("Firefox")>0) {
@@ -364,7 +403,7 @@ export class GeneralComponent {
             entityDialog.dialogRef.close();
           },
           (err) => {
-            this.snackBar.open(T("Check the network connection."), T("Failed") , {
+            parent['snackBar'].open(T("Check the network connection."), T("Failed") , {
               duration: 5000
             });
           }
@@ -403,9 +442,14 @@ export class GeneralComponent {
     );
   }
 
+  resetConfigSubmit(entityDialog) {
+    const parent = entityDialog.parent;
+    parent.router.navigate(new Array('').concat(['others', 'config-reset']))
+  }
+
   public customSubmit(body) {
     this.loader.open();
-    return this.ws.call('system.general.update', [body]).subscribe((res) => {
+    return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
       this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 });
       this.afterSubmit(body);

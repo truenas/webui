@@ -1,5 +1,11 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
   <mat-form-field class="full-width" value="fromFormField" #field>
+      <mat-spinner
+        diameter='40'
+        class="form-select-spinner"
+        id="{{config.name}}_form-select-spinner"
+        *ngIf="config.isLoading">
+      </mat-spinner>
     <mat-select 
       #selectTrigger
       [value]="formValue"
@@ -7,7 +13,7 @@
       [multiple]="config.multiple" 
       [required]="config.required" 
       [placeholder]="config.placeholder | translate" 
-      (change)="onChangeOption($event)">
+      (selectionChange)="onChangeOption($event)">
 
      
       <mat-select-trigger *ngIf="config.multiple">
@@ -50,17 +56,17 @@
       </div>
 
       <div *ngIf="!formReady || config.options.length == 0">
-        <!--<ng-container>
+        <ng-container>
           <mat-option disabled style="opacity:0.5">
-              (No Options)
+            {{config.zeroStateMessage ? config.zeroStateMessage : '--'}}
           </mat-option>
-        </ng-container>-->
+        </ng-container>
       </div>
     </mat-select>
 
 
   </mat-form-field>
-  <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+  <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
   <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

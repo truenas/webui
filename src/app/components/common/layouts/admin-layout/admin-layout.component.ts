@@ -1,9 +1,9 @@
-import { RestService, WebSocketService } from '../../../../services';
+import { RestService, WebSocketService, AppLoaderService } from '../../../../services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs";
-import { MediaChange, ObservableMedia } from "@angular/flex-layout";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatSidenav, MatDialog, MatDialogRef } from '@angular/material';
 import * as Ps from 'perfect-scrollbar';
@@ -25,6 +25,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isShowFooterConsole: Boolean = false;
   isSidenotOpen: Boolean = false;
   consoleMsg: String = "";
+  hostname: string;
   consoleMSgList: any[] = [];
   public is_freenas: Boolean = window.localStorage['is_freenas'];
   public logoPath: string = 'assets/images/light-logo.svg';
@@ -32,18 +33,18 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public currentTheme: string = "";
   // we will just have to add to this list as more languages are added
 
-  @ViewChild(MatSidenav) private sideNave: MatSidenav;
-  @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
+  @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
+  @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   freenasThemes;
 
   constructor(private router: Router,
     public core: CoreService,
     public themeService: ThemeService,
-    private media: ObservableMedia,
+    private media: MediaObserver,
     protected rest: RestService,
     protected ws: WebSocketService,
     public language: LanguageService,
-    public dialog: MatDialog) {
+    public dialog: MatDialog, private loader: AppLoaderService) {
     // detect server type
     ws.call('system.is_freenas').subscribe((res)=>{
       this.is_freenas = res;
@@ -56,7 +57,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       }
     });
     // Watches screen size and open/close sidenav
-    this.screenSizeWatcher = media.subscribe((change: MediaChange) => {
+    this.screenSizeWatcher = media.media$.subscribe((change: MediaChange) => {
       this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
       this.updateSidenav();
     });
@@ -74,10 +75,18 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.logoPath = theme.logoPath;
       this.logoTextPath = theme.logoTextPath;
     });
+
+    // Listen for system information changes
+    core.register({
+      observerClass:this, 
+      eventName:"SysInfo", 
+    }).subscribe((evt:CoreEvent)=>{
+      this.hostname = evt.data.hostname;
+    });
   }
 
   ngOnInit() {
-    this.freenasThemes = this.themeService.freenasThemes;
+    this.freenasThemes = this.themeService.allThemes;
     this.currentTheme = this.themeService.currentTheme().name;
     // Initialize Perfect scrollbar for sidenav
     let navigationHold = document.getElementById('scroll-area');
@@ -93,6 +102,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenavOpen = false;
     }
     this.checkIfConsoleMsgShows();
+
+    this.core.emit({name:"SysInfoRequest", sender:this});
   }
 
   ngAfterViewChecked() {
@@ -131,7 +142,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     let neededNumberconsoleMsg = 3; // Just 3 messages for footer bar
 
     this.ws.sub(subName).subscribe((res) => {
-      if(res && res.data != ""){
+      if(res && res.data && typeof res.data === 'string'){
         this.consoleMsg = this.accumulateConsoleMsg(res.data, neededNumberconsoleMsg);
       }
     });

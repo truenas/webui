@@ -1,55 +1,54 @@
-import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { RestService, WebSocketService } from '../../../../services/';
+import { WebSocketService, AppLoaderService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../../common/entity/utils';
+import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/system/alert-service';
 
 @Component({
   selector: 'app-alertservice',
-  templateUrl: './alert-service.component.html',
-  styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
-  providers: [EntityFormService, FieldRelationService]
+  template: `<entity-form [conf]="this"></entity-form>`,
+  providers: [EntityFormService]
 })
-export class AlertServiceComponent implements OnInit {
+export class AlertServiceComponent {
 
   protected addCall = 'alertservice.create';
   protected queryCall = 'alertservice.query';
+  protected queryCallOption: Array<any> = [['id', '=']];
   protected editCall = 'alertservice.update';
   protected testCall = 'alertservice.test';
   public route_success: string[] = ['system', 'alertservice'];
-  protected isNew = true;
-  protected pk: any;
-  public selectedType = 'AWSSNS';
+
+  protected isEntity = true;
+  public entityForm: any;
 
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'name',
-      placeholder: 'Name',
-      tooltip: 'Enter a name for the new alert service.',
+      placeholder: helptext.name_placeholder,
+      tooltip: helptext.name_tooltip,
       required: true,
       validation: [Validators.required],
     },
     {
       type: 'checkbox',
       name: 'enabled',
-      placeholder: 'Enabled',
-      tooltip: 'Unset to disable this service without deleting it.',
+      placeholder: helptext.enabled_placeholder,
+      tooltip: helptext.enabled_tooltip,
       value: true,
     },
     {
       type: 'select',
       name: 'type',
-      placeholder: 'Type',
-      tooltip: 'Choose an alert service to display options for that\
-                service.',
+      placeholder: helptext.type_placeholder,
+      tooltip: helptext.type_tooltip,
       options: [{
         label: 'AWS SNS',
         value: 'AWSSNS',
@@ -58,7 +57,7 @@ export class AlertServiceComponent implements OnInit {
         value: 'Mail',
       }, {
         label: 'HipChat',
-        value: 'HtpChat',
+        value: 'HipChat',
       }, {
         label: 'InfluxDB',
         value: 'InfluxDB',
@@ -83,430 +82,802 @@ export class AlertServiceComponent implements OnInit {
       }],
       value: 'AWSSNS',
     },
-  ];
-
-  public awssnsFieldConfig: FieldConfig[] = [
     {
-      type : 'input',
-      name : 'region',
-      placeholder : 'AWS Region',
-      togglePw: true,
-      tooltip: 'Enter the <a\
-                href="https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html"\
-                target="_blank">AWS account region</a>.',
-    }, {
-      type: 'input',
-      name: 'topic_arn',
-      placeholder: 'ARN',
-      tooltip: 'Enter the topic <a\
-                href="https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html"\
-                target="_blank">Amazon Resource Name (ARN)</a> for\
-                publishing. Example:\
-                <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
-    }, {
-      type : 'input',
-      name : 'aws_access_key_id',
-      placeholder : 'Key ID',
-      tooltip: 'Enter the Access Key ID for the linked AWS account.',
-    }, {
-      type: 'input',
-      name: 'aws_secret_access_key',
-      placeholder: 'Secret Key',
-      inputType: 'password',
-      togglePw: true,
-      tooltip: 'Enter the Secret Access Key for the linked AWS account.',
+      type: 'select',
+      name: 'level',
+      placeholder: helptext.level_placeholder,
+      tooltip: helptext.level_tooltip,
+      options: [
+        { label: 'Info', value: 'INFO' },
+        { label: 'Notice', value: 'NOTICE' },
+        { label: 'Warning', value: 'WARNING' },
+        { label: 'Error', value: 'ERROR' },
+        { label: 'Critical', value: 'CRITICAL' },
+        { label: 'Alert', value: 'ALERT' },
+        { label: 'Emergency', value: 'EMERGENCY' }
+      ],
+      value: 'WARNING',
     },
-  ];
-  public emailFieldConfig: FieldConfig[] = [{
-    type: 'input',
-    inputType: 'email',
-    name: 'email',
-    placeholder: 'Email Address',
-    tooltip: 'Enter a valid email address to receive alerts from this\
-              system.',
-  }];
-  public htpchatFieldConfig: FieldConfig[] = [
+    // AWSSNS
     {
       type: 'input',
-      name: 'hfrom',
-      placeholder: 'From',
-      tooltip: 'Enter a name to send alerts',
+      name: 'AWSSNS-region',
+      placeholder: helptext.AWSSNS_region_placeholder,
+      togglePw: true,
+      tooltip: helptext.AWSSNS_region_tooltip,
+      required: true,
+      validation: [Validators.required],
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'AWSSNS',
+        }]
+      }]
     }, {
       type: 'input',
-      name: 'cluster_name',
-      placeholder: 'Cluster Name',
-      tooltip: 'Enter the HipChat cluster name.',
+      name: 'AWSSNS-topic_arn',
+      placeholder: helptext.AWSSNS_topic_arn_placeholder,
+      tooltip: helptext.AWSSNS_topic_arn_tooltip,
+      required: true,
+      validation: [Validators.required],
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'AWSSNS',
+        }]
+      }]
     }, {
       type: 'input',
-      name: 'base_url',
-      placeholder: 'URL',
-      tooltip: 'Enter the HipChat base URL.',
+      name: 'AWSSNS-aws_access_key_id',
+      placeholder: helptext.AWSSNS_aws_access_key_id_placeholder,
+      tooltip: helptext.AWSSNS_aws_access_key_id_tooltip,
+      required: true,
+      validation: [Validators.required],
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'AWSSNS',
+        }]
+      }]
     }, {
       type: 'input',
-      name: 'room_id',
-      placeholder: 'Room',
-      tooltip: 'Enter the name of the room.',
-    }, {
-      type: 'input',
-      name: 'auth_token',
-      placeholder: 'Auth Token',
-      tooltip: 'Enter or paste an Authentication token.',
+      name: 'AWSSNS-aws_secret_access_key',
+      placeholder: helptext.AWSSNS_aws_secret_access_key_placeholder,
+      inputType: 'password',
+      togglePw: true,
+      tooltip: helptext.AWSSNS_aws_secret_access_key_tooltip,
+      required: true,
+      validation: [Validators.required],
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'AWSSNS',
+        }]
+      }]
     },
-  ];
-  public influxdbFieldConfig: FieldConfig[] = [
+    // Mail
     {
-      type : 'input',
-      name : 'host',
-      placeholder: 'Host',
-      tooltip: 'Enter the <a\
-                href="https://docs.influxdata.com/influxdb/v1.5/introduction/getting-started/"\
-                target="_blank">InfluxDB</a> hostname.',
+      type: 'input',
+      inputType: 'email',
+      name: 'Mail-email',
+      placeholder: helptext.Mail_email_placeholder,
+      tooltip: helptext.Mail_email_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Mail',
+        }]
+      }]
+    },
+    // HtpChat
+    {
+      type: 'input',
+      name: 'HipChat-hfrom',
+      placeholder: helptext.HipChat_hfrom_placeholder,
+      tooltip: helptext.HipChat_hfrom_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'HipChat',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
-      type : 'input',
-      name : 'username',
-      placeholder: 'Username',
-      tooltip: 'Enter the username for this service.',
+      type: 'input',
+      name: 'HipChat-cluster_name',
+      placeholder: helptext.HipChat_cluster_name_placeholder,
+      tooltip: helptext.HipChat_cluster_name_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'HipChat',
+        }]
+      }]
     }, {
-      type : 'input',
-      name : 'password',
-      placeholder: 'Password',
+      type: 'input',
+      name: 'HipChat-base_url',
+      placeholder: helptext.HipChat_base_url_placeholder,
+      tooltip: helptext.HipChat_base_url_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'HipChat',
+        }]
+      }]
+    }, {
+      type: 'input',
+      name: 'HipChat-room_id',
+      placeholder: helptext.HipChat_room_id_placeholder,
+      tooltip: helptext.HipChat_room_id_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'HipChat',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    }, {
+      type: 'input',
+      name: 'HipChat-auth_token',
+      placeholder: helptext.HipChat_auth_token_placeholder,
+      tooltip: helptext.HipChat_auth_token_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'HipChat',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    },
+    // InfluxDB
+    {
+      type: 'input',
+      name: 'InfluxDB-host',
+      placeholder: helptext.InfluxDB_host_placeholder,
+      tooltip: helptext.InfluxDB_host_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'InfluxDB',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    }, {
+      type: 'input',
+      name: 'InfluxDB-username',
+      placeholder: helptext.InfluxDB_username_placeholder,
+      tooltip: helptext.InfluxDB_username_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'InfluxDB',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    }, {
+      type: 'input',
+      name: 'InfluxDB-password',
+      placeholder: helptext.InfluxDB_password_placeholder,
       inputType: 'password',
       togglePw: true,
-      tooltip: 'Enter password.',
+      tooltip: helptext.InfluxDB_password_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'InfluxDB',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
-      type : 'input',
-      name : 'database',
-      placeholder: 'Database',
-      tooltip: 'Enter the name of the InfluxDB database.',
+      type: 'input',
+      name: 'InfluxDB-database',
+      placeholder: helptext.InfluxDB_database_placeholder,
+      tooltip: helptext.InfluxDB_database_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'InfluxDB',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
-      type : 'input',
-      name : 'series_name',
-      placeholder: 'Series',
-      tooltip: 'Enter InfluxDB time series name for collected points.',
-    }
-  ];
-  public mattermostFieldConfig: FieldConfig[] = [
+      type: 'input',
+      name: 'InfluxDB-series_name',
+      placeholder: helptext.InfluxDB_series_name_placeholder,
+      tooltip: helptext.InfluxDB_series_name_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'InfluxDB',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    },
+    // Mattermost
     {
-      type : 'input',
-      name : 'cluster_name',
-      placeholder: 'Cluster Name',
-      tooltip: 'Enter the name of the <a\
-                href="https://docs.mattermost.com/overview/index.html"\
-                target="_blank">Mattermost</a> cluster to join.',
+      type: 'input',
+      name: 'Mattermost-cluster_name',
+      placeholder: helptext.Mattermost_cluster_name_placeholder,
+      tooltip: helptext.Mattermost_cluster_name_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Mattermost',
+        }]
+      }]
     }, {
-      type : 'input',
-      name : 'url',
-      placeholder: 'Webhook URL',
-      tooltip:'Enter or paste the <a\
-               href="https://docs.mattermost.com/developer/webhooks-incoming.html"\
-               target="_blank">incoming webhook</a> URL associated with\
-               this service.',
+      type: 'input',
+      name: 'Mattermost-url',
+      placeholder: helptext.Mattermost_url_placeholder,
+      tooltip: helptext.Mattermost_url_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Mattermost',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
-      type : 'input',
-      name : 'username',
-      placeholder: 'Username',
-      tooltip: 'Enter the Mattermost username.',
+      type: 'input',
+      name: 'Mattermost-username',
+      placeholder: helptext.Mattermost_username_placeholder,
+      tooltip: helptext.Mattermost_username_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Mattermost',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
-      type : 'input',
+      type: 'input',
       inputType: 'password',
-      name : 'password',
-      placeholder: 'Password',
+      name: 'Mattermost-password',
+      placeholder: helptext.Mattermost_password_placeholder,
       togglePw: true,
-      tooltip: 'Enter the Mattermost password.',
+      tooltip: helptext.Mattermost_password_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Mattermost',
+        }]
+      }]
     }, {
-      type : 'input',
-      name : 'team',
-      placeholder: 'Team',
-      tooltip: 'Enter the Mattermost <a\
-                href="https://docs.mattermost.com/help/getting-started/creating-teams.html"\
-                target="_blank">team name</a>.',
+      type: 'input',
+      name: 'Mattermost-team',
+      placeholder: helptext.Mattermost_team_placeholder,
+      tooltip: helptext.Mattermost_team_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Mattermost',
+        }]
+      }]
     }, {
-      type : 'input',
-      name : 'channel',
-      placeholder: 'Channel',
-      tooltip: 'Enter the name of the <a\
-                href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
-                target="_blank">channel</a> to receive notifications.\
-                This overrides the default channel in the incoming\
-                webhook settings.',
-    }
-  ];
-  public opsgenieFieldConfig: FieldConfig[] = [
-    {
-      type : 'input',
-      name : 'cluster_name',
-      placeholder: 'Cluster Name',
-      tooltip: 'Enter the name of the <a\
-                href="https://docs.opsgenie.com/docs"\
-                target="_blank">OpsGenie</a> cluster. Find the Cluster\
-                Name by signing into the OpsGenie web interface and\
-                going to Integrations/Configured Integrations. Click the\
-                desired integration, Settings, and read the Name field.',
-    },{
-      type : 'input',
-      name : 'api_key',
-      placeholder: 'API Key',
-      tooltip: 'Enter or paste the <a\
-                href="https://docs.opsgenie.com/v1.0/docs/api-integration"\
-                target="_blank">API key</a>. Find the API key by signing\
-                into the OpsGenie web interface and going to\
-                Integrations/Configured Integrations. Click the desired\
-                integration, Settings, and read the API Key field.',
-    },{
-      type : 'input',
-      name : 'api_url',
-      placeholder: 'API URL',
-      tooltip: 'Leave empty for default (<a href="https://api.opsgenie.com" target="_blank">OpsGenie API</a>)',
-    }
-  ];
-  public pagerdutyFieldConfig: FieldConfig[] = [
+      type: 'input',
+      name: 'Mattermost-channel',
+      placeholder: helptext.Mattermost_channel_placeholder,
+      tooltip: helptext.Mattermost_channel_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Mattermost',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    },
+    // OpsGenie
     {
       type: 'input',
-      name: 'service_key',
-      placeholder: 'Service Key',
-      tooltip: 'Enter or paste the "integration/service" key for this\
-                system to access the <a\
-                href="https://v2.developer.pagerduty.com/v2/docs/events-api"\
-                target="_blank">PagerDuty API</a>.',
+      name: 'OpsGenie-cluster_name',
+      placeholder: helptext.OpsGenie_cluster_name_placeholder,
+      tooltip: helptext.OpsGenie_cluster_name_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'OpsGenie',
+        }]
+      }]
     }, {
       type: 'input',
-      name: 'client_name',
-      placeholder: 'Client Name',
-      tooltip: 'Enter the PagerDuty client name.',
-    }
-  ];
-  public slackFieldConfig: FieldConfig[] = [
+      name: 'OpsGenie-api_key',
+      placeholder: helptext.OpsGenie_api_key_placeholder,
+      tooltip: helptext.OpsGenie_api_key_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'OpsGenie',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    }, {
+      type: 'input',
+      name: 'OpsGenie-api_url',
+      placeholder: helptext.OpsGenie_api_url_placeholder,
+      tooltip: helptext.OpsGenie_api_url_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'OpsGenie',
+        }]
+      }]
+    },
+    // PagerDuty
     {
       type: 'input',
-      name: 'cluster_name',
-      placeholder: 'Cluster Name',
-      tooltip: 'Enter the name of the cluster.',
+      name: 'PagerDuty-service_key',
+      placeholder: helptext.PagerDuty_service_key_placeholder,
+      tooltip: helptext.PagerDuty_service_key_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'PagerDuty',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
-      name: 'url',
-      placeholder: 'Webhook URL',
-      tooltip: 'Paste the <a\
-                href="https://api.slack.com/incoming-webhooks"\
-                target="_blank">incoming webhook</a> URL associated with\
-                this service.',
+      name: 'PagerDuty-client_name',
+      placeholder: helptext.PagerDuty_client_name_placeholder,
+      tooltip: helptext.PagerDuty_client_name_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'PagerDuty',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    },
+    // Slack
+    {
+      type: 'input',
+      name: 'Slack-cluster_name',
+      placeholder: helptext.Slack_cluster_name_placeholder,
+      tooltip: helptext.Slack_cluster_name_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Slack',
+        }]
+      }]
     }, {
       type: 'input',
-      name: 'channel',
-      placeholder: 'Channel',
-      tooltip: 'Enter a Slack channel name. The service will post all\
-                messages to this channel.',
+      name: 'Slack-url',
+      placeholder: helptext.Slack_url_placeholder,
+      tooltip: helptext.Slack_url_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Slack',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
-      name: 'username',
-      placeholder: 'Username',
-      tooltip: 'Enter a Slack username for this service.',
-    },  {
-      type: 'input',
-      name: 'icon_url',
-      placeholder: 'Icon URL',
-      tooltip: 'Enter a URL to an image to use for notification icons.\
-                This overrides the incoming webhook setting.',
+      name: 'Slack-channel',
+      placeholder: helptext.Slack_channel_placeholder,
+      tooltip: helptext.Slack_channel_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Slack',
+        }]
+      }]
     }, {
+      type: 'input',
+      name: 'Slack-username',
+      placeholder: helptext.Slack_username_placeholder,
+      tooltip: helptext.Slack_username_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Slack',
+        }]
+      }]
+    }, {
+      type: 'input',
+      name: 'Slack-icon_url',
+      placeholder: helptext.Slack_icon_url_placeholder,
+      tooltip: helptext.Slack_icon_url_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'Slack',
+        }]
+      }]
+    },
+    // SNMPTrap
+    {
+      type: 'input',
+      name: 'SNMPTrap-host',
+      placeholder: helptext.SNMPTrap_host_placeholder,
+      tooltip: helptext.SNMPTrap_host_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      inputType: 'number',
+      name: 'SNMPTrap-port',
+      placeholder: helptext.SNMPTrap_port_placeholder,
+      tooltip: helptext.SNMPTrap_port_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }]
+      }],
+      value: 162,
+    },
+    {
       type: 'checkbox',
-      name: 'detailed',
-      placeholder: 'Detailed',
-      tooltip: 'Set to enable more verbose Slack notifications.',
-      value: true,
-    }
-  ];
-  public snmpTrapFieldConfig: FieldConfig[] = [];
-  public victoropsFieldConfig: FieldConfig[] = [
+      name: 'SNMPTrap-v3',
+      placeholder: helptext.SNMPTrap_v3_placeholder,
+      tooltip: helptext.SNMPTrap_v3_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }]
+      }],
+      value: false,
+    },
     {
       type: 'input',
-      name: 'api_key',
-      placeholder: 'API Key',
-      tooltip: 'Enter or paste the <a\
-                href="https://help.victorops.com/knowledge-base/api/"\
-                target="_blank">VictorOps API key</a>.',
+      name: 'SNMPTrap-v3_username',
+      placeholder: helptext.SNMPTrap_v3_username_placeholder,
+      tooltip: helptext.SNMPTrap_v3_username_tooltip,
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }]
+    },
+    {
+      type: 'input',
+      name: 'SNMPTrap-v3_authkey',
+      placeholder: helptext.SNMPTrap_v3_authkey_placeholder,
+      tooltip: helptext.SNMPTrap_v3_authkey_tooltip,
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }]
+    },
+    {
+      type: 'input',
+      name: 'SNMPTrap-v3_privkey',
+      placeholder: helptext.SNMPTrap_v3_privkey_placeholder,
+      tooltip: helptext.SNMPTrap_v3_privkey_tooltip,
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }]
+    },
+    {
+      type: 'select',
+      name: 'SNMPTrap-v3_authprotocol',
+      placeholder: helptext.SNMPTrap_v3_authprotocol_placeholder,
+      tooltip: helptext.SNMPTrap_v3_authprotocol_tooltip,
+      options: [
+        {
+          label: 'Disabled',
+          value: '',
+        },
+        {
+          label: 'MD5',
+          value: 'MD5',
+        },
+        {
+          label: 'SHA',
+          value: 'SHA',
+        },
+        {
+          label: 'HMAC128SHA224',
+          value: '128SHA224',
+        },
+        {
+          label: 'HMAC192SHA256',
+          value: '192SHA256',
+        },
+        {
+          label: 'HMAC256SHA384',
+          value: '256SHA384',
+        },
+        {
+          label: 'HMAC384SHA512',
+          value: '384SHA512',
+        }
+      ],
+      value: '',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }],
+    },
+    {
+      type: 'select',
+      name: 'SNMPTrap-v3_privprotocol',
+      placeholder: helptext.SNMPTrap_v3_privprotocol_placeholder,
+      tooltip: helptext.SNMPTrap_v3_privprotocol_tooltip,
+      options: [
+        {
+          label: 'Disabled',
+          value: '',
+        },
+        {
+          label: 'DES',
+          value: 'DES',
+        },
+        {
+          label: '3DES-EDE',
+          value: '3DESEDE',
+        },
+        {
+          label: 'CFB128-AES-128',
+          value: 'AESCFB128',
+        },
+        {
+          label: 'CFB128-AES-192',
+          value: 'AESCFB192',
+        },
+        {
+          label: 'CFB128-AES-256',
+          value: 'AESCFB256',
+        },
+        {
+          label: 'CFB128-AES-192 Blumenthal',
+          value: 'AESBLUMENTHALCFB192',
+        },
+        {
+          label: 'CFB128-AES-256 Blumenthal',
+          value: 'AESBLUMENTHALCFB256',
+        }
+      ],
+      value: '',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }, {
+          name: "SNMPTrap-v3",
+          value: true,
+        }]
+      }]
+    },
+    {
+      type: 'input',
+      name: 'SNMPTrap-community',
+      placeholder: helptext.SNMPTrap_community_placeholder,
+      tooltip: helptext.SNMPTrap_community_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'SNMPTrap',
+        }]
+      }],
+      value: 'public',
+    },
+    // VictorOps
+    {
+      type: 'input',
+      name: 'VictorOps-api_key',
+      placeholder: helptext.VictorOps_api_key_placeholder,
+      tooltip: helptext.VictorOps_api_key_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'VictorOps',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
     }, {
       type: 'input',
-      name: 'routing_key',
-      placeholder: 'Routing Key',
-      tooltip: 'Enter or paste the <a\
-                href="https://portal.victorops.com/public/api-docs.html#/Routing32Keys"\
-                target="_blank">VictorOps routing key</a>.',
-    }];
+      name: 'VictorOps-routing_key',
+      placeholder: helptext.VictorOps_routing_key_placeholder,
+      tooltip: helptext.VictorOps_routing_key_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "type",
+          value: 'VictorOps',
+        }]
+      }],
+      required: true,
+      validation: [Validators.required],
+    }
+  ];
 
-  public formGroup: any;
-  public activeFormGroup: any;
-  public emailFormGroup: any;
-  public snmpTrapFormGroup: any;
-  public slackFormGroup: any;
-  public awssnsFormGroup: any;
-  public influxdbFormGroup: any;
-  public mattermostFormGroup: any;
-  public opsgenieFormGroup: any;
-  public htpchatFormGroup: any;
-  public pagerdutyFormGroup: any;
-  public victoropsFormGroup: any;
+  public custActions: Array<any> = [
+    {
+      id: 'authenticate',
+      name: T('SEND TEST ALERT'),
+      function: () => {
+        this.entityFormService.clearFormError(this.fieldConfig);
+        const testPayload = this.generatePayload(_.cloneDeep(this.entityForm.formGroup.value));
 
-  protected settingOptions: any = [{
-    label: 'INHERIT',
-    value: 'INHERIT',
-  }];
+        this.loader.open();
+        this.ws.call(this.testCall, [testPayload]).subscribe(
+          (res) => {
+            this.loader.close();
+            if (res) {
+              this.snackBar.open('Test alert sent!', 'close', { duration: 5000 });
+            } else {
+              this.snackBar.open('Failed sending test alert!', 'close', { duration: 5000 });
+            }
+          },
+          (err) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+          });
+      }
+    }
+  ];
 
-  public fieldSets: any;
-
-  constructor(protected router: Router,
-    protected route: ActivatedRoute,
-    protected rest: RestService,
+  constructor(
+    protected router: Router,
+    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
-    protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    protected snackBar: MatSnackBar, ) {
-    this.ws.call('alert.list_policies', []).subscribe((res) => {
-      for(let i = 0; i < res.length; i++) {
-        this.settingOptions.push({label: res[i], value: res[i]});
+    protected snackBar: MatSnackBar) { }
+
+  preInit() {
+    this.aroute.params.subscribe(params => {
+      if (params['pk']) {
+        this.queryCallOption[0].push(Number(params['pk']));
       }
     });
   }
 
-  ngOnInit() {
-    this.fieldSets = [
-      {
-        name:'FallBack',
-        class:'fallback',
-        width:'100%',
-        divider:false,
-        fieldConfig: this.fieldConfig,
-        emailFieldConfig: this.emailFieldConfig,
-        snmpTrapFieldConfig: this.snmpTrapFieldConfig,
-        slackFieldConfig: this.slackFieldConfig,
-        awssnsFieldConfig: this.awssnsFieldConfig,
-        influxdbFieldConfig: this.influxdbFieldConfig,
-        mattermostFieldConfig: this.mattermostFieldConfig,
-        opsgenieFieldConfig: this.opsgenieFieldConfig,
-        htpchatFieldConfig: this.htpchatFieldConfig,
-        pagerdutyFieldConfig: this.pagerdutyFieldConfig,
-        victoropsFieldConfig: this.victoropsFieldConfig,
-      },
-      {
-        name:'divider',
-        divider:true,
-        width:'100%'
+  afterInit(entityForm) {
+    this.entityForm = entityForm;
+  }
+
+  dataAttributeHandler(entityForm: any) {
+    const type = entityForm.formGroup.controls['type'].value;
+    for (const i in entityForm.wsResponseIdx) {
+      const field_name = type + '-' + i;
+      if (entityForm.formGroup.controls[field_name]) {
+        if ((i === 'v3_authprotocol' || i === 'v3_privprotocol') && entityForm.wsResponseIdx[i] === null) {
+          entityForm.wsResponseIdx[i] = '';
+        }
+        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
       }
-    ];
+    }
+  }
 
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    this.emailFormGroup = this.entityFormService.createFormGroup(this.emailFieldConfig);
-    this.snmpTrapFormGroup = this.entityFormService.createFormGroup(this.snmpTrapFieldConfig);
-    this.slackFormGroup = this.entityFormService.createFormGroup(this.slackFieldConfig);
-    this.awssnsFormGroup = this.entityFormService.createFormGroup(this.awssnsFieldConfig);
-    this.influxdbFormGroup = this.entityFormService.createFormGroup(this.influxdbFieldConfig);
-    this.mattermostFormGroup = this.entityFormService.createFormGroup(this.mattermostFieldConfig);
-    this.opsgenieFormGroup = this.entityFormService.createFormGroup(this.opsgenieFieldConfig);
-    this.htpchatFormGroup = this.entityFormService.createFormGroup(this.htpchatFieldConfig);
-    this.pagerdutyFormGroup = this.entityFormService.createFormGroup(this.pagerdutyFieldConfig);
-    this.victoropsFormGroup = this.entityFormService.createFormGroup(this.victoropsFieldConfig);
+  generatePayload(data) {
+    const payload = { attributes: {} };
 
-    this.activeFormGroup = this.awssnsFormGroup;
-    this.formGroup.controls['type'].valueChanges.subscribe((res) => {
-      this.selectedType = res;
-      if (res == 'Mail') {
-        this.activeFormGroup = this.emailFormGroup;
-      } else if (res == 'SNMPTrap') {
-        this.activeFormGroup = this.snmpTrapFormGroup;
-      } else if (res == 'Slack') {
-        this.activeFormGroup = this.slackFormGroup;
-      } else if (res == 'AWSSNS') {
-        this.activeFormGroup = this.awssnsFormGroup;
-      } else if (res == 'InfluxDB') {
-        this.activeFormGroup = this.influxdbFormGroup;
-      } else if (res == 'Mattermost') {
-        this.activeFormGroup = this.mattermostFormGroup;
-      } else if (res == 'OpsGenie') {
-        this.activeFormGroup = this.opsgenieFormGroup;
-      } else if (res == 'HtpChat') {
-        this.activeFormGroup = this.htpchatFormGroup;
-      } else if (res == 'PagerDuty') {
-        this.activeFormGroup = this.pagerdutyFormGroup;
-      } else if (res == 'VictorOps') {
-        this.activeFormGroup = this.victoropsFormGroup;
-      }
-    });
-
-    this.route.params.subscribe(params => {
-      this.pk = params['pk'];
-      if (this.pk) {
-        this.isNew = false;
-        this.ws.call(this.queryCall, [
-          [
-            ['id', '=', Number(this.pk)]
-          ]
-        ]).subscribe((res) => {
-          for (const i in this.formGroup.controls) {
-            this.formGroup.controls[i].setValue(res[0][i]);
-          }
-          for (const j in this.activeFormGroup.controls) {
-            this.activeFormGroup.controls[j].setValue(res[0].attributes[j]);
-          }
-        })
+    for (const i in data) {
+      if (i === 'name' || i === 'type' || i === 'enabled' || i === 'level') {
+        payload[i] = data[i];
       } else {
-        this.isNew = true;
+        if (data[i] === '' && (i === 'SNMPTrap-v3_authprotocol' || i === 'SNMPTrap-v3_privprotocol')) {
+          data[i] = null;
+        }
+        payload['attributes'][i.split('-')[1]] = data[i];
       }
-    });
+    }
+    return payload;
   }
 
-  onSubmit(event: Event) {
-    let payload = _.cloneDeep(this.formGroup.value);
-    let serviceValue = _.cloneDeep(this.activeFormGroup.value);
-
-    payload['attributes'] = serviceValue;
+  customSubmit(value) {
+    this.entityFormService.clearFormError(this.fieldConfig);
+    const payload = this.generatePayload(value);
 
     this.loader.open();
-    if (this.isNew) {
+    if (this.entityForm.isNew) {
       this.ws.call(this.addCall, [payload]).subscribe(
         (res) => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (res) => {
+        (err) => {
           this.loader.close();
-          new EntityUtils().handleError(this, res);
+          new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
         });
     } else {
-      this.ws.call(this.editCall, [this.pk, payload]).subscribe(
+      this.ws.call(this.editCall, [this.entityForm.pk, payload]).subscribe(
         (res) => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (res) => {
+        (err) => {
           this.loader.close();
-          new EntityUtils().handleError(this, res);
+          new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
         });
     }
-
   }
 
-  sendTestAlet() {
-    let testPayload = _.cloneDeep(this.formGroup.value);
-    let serviceValue = _.cloneDeep(this.activeFormGroup.value);
-
-    testPayload['attributes'] = serviceValue;
-
-    this.loader.open();
-    this.ws.call(this.testCall, [testPayload]).subscribe(
-      (res) => {
-        this.loader.close();
-        if (res) {
-          this.snackBar.open('Test alert sent!', 'close', { duration: 5000 });
-        } else {
-          this.snackBar.open('Failed sending test alert!', 'close', { duration: 5000 });
-        }
-      },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleError(this, res);
-      });
-  }
-
-  goBack() {
-    this.router.navigate(new Array('/').concat(this.route_success));
+  getErrorField(field) {
+    return _.find(this.fieldConfig, { 'name': this.entityForm.formGroup.controls['type'].value + '-' + field });
   }
 }

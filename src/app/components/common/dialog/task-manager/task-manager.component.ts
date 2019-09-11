@@ -23,8 +23,8 @@ import { WebSocketService } from '../../../../services/';
 export class TaskManagerComponent implements OnInit, OnDestroy{
 
   public dataSource: MatTableDataSource<any>;
-  @ViewChild('taskTable') taskTable: MatTable<any>;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('taskTable', { static: true}) taskTable: MatTable<any>;
+  @ViewChild(MatSort, { static: false}) sort: MatSort;
   displayedColumns = ['state', 'method', 'percent'];
   private subscrition: Subscription;
   public expandedElement: any | null;

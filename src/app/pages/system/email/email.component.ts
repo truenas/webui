@@ -3,9 +3,11 @@ import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { helptext_system_email } from 'app/helptext/system/email';
 import * as _ from 'lodash';
-import { DialogService, RestService, WebSocketService } from '../../../services/';
+import { DialogService, RestService, WebSocketService, AppLoaderService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-email',
@@ -15,14 +17,15 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 })
 export class EmailComponent implements OnDestroy {
 
-  protected resource_name = 'system/email';
+  // protected resource_name = 'system/email';
+  queryCall = 'mail.config';
+  updateCall = 'mail.update';
   public entityEdit: any;
   public rootEmail: string;
-  private em_outgoingserver: any;
-  private em_port: any;
+  customSubmit = this.saveConfigSubmit;
   public custActions: Array < any > = [{
     id: 'send_mail',
-    name: 'Send Mail',
+    name: T('Send Test Mail'),
     function: () => {
       if (this.rootEmail){
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
@@ -30,27 +33,15 @@ export class EmailComponent implements OnDestroy {
           "subject" : "FreeNAS Test Message",
           "text" : "This is a test message from FreeNAS.",
         };
-        const security_table = {
-          'plain':'PLAIN',
-          'ssl': 'SSL',
-          'tls': 'TLS'
-        };
-        this.ws.call('system.info').subscribe((res) => {
-          const mail_form_payload = {}
-          mail_form_payload['fromemail'] = value.em_fromemail
-          mail_form_payload['outgoingserver']= value.em_outgoingserver
-          mail_form_payload['port']= value.em_port
-          mail_form_payload['security']= security_table[value.em_security]
-          mail_form_payload['smtp']= value.em_smtp
-          mail_form_payload['user']= value.em_user
-          mail_form_payload['pass']= value.em_pass || this.entityEdit.data.em_pass
-          mailObj['subject'] += " hostname: " + res['hostname'];
+        this.ws.call('system.info').subscribe(sysInfo => {
+          value.pass = value.pass || this.entityEdit.data.pass
+          mailObj['subject'] += " hostname: " + sysInfo['hostname'];
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
-          this.dialogRef.componentInstance.setCall('mail.send', [mailObj, mail_form_payload]);
+          this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((s_res)=>{
             this.dialogRef.close(false);
-            this.dialogservice.Info("email", "Test email sent!")
+            this.dialogservice.Info(T("Email"), T("Test email sent!"))
           });
           this.dialogRef.componentInstance.failure.subscribe((e_res) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
@@ -58,7 +49,7 @@ export class EmailComponent implements OnDestroy {
         });
       }
       else{
-        this.dialogservice.Info("email", "Configure the root user email address.");
+        this.dialogservice.Info(T("email"), T("Configure the root user email address."));
       }
     }
   }
@@ -66,96 +57,98 @@ export class EmailComponent implements OnDestroy {
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'em_fromemail',
-      placeholder : helptext_system_email.em_fromemail.placeholder,
-      tooltip : helptext_system_email.em_fromemail.tooltip,
+      name : 'fromemail',
+      placeholder : helptext_system_email.fromemail.placeholder,
+      tooltip : helptext_system_email.fromemail.tooltip,
     },
     {
       type : 'input',
-      name : 'em_outgoingserver',
-      placeholder : helptext_system_email.em_outgoingserver.placeholder,
-      tooltip : helptext_system_email.em_outgoingserver.tooltip,
+      name : 'fromname',
+      placeholder : helptext_system_email.fromname.placeholder,
+      tooltip : helptext_system_email.fromname.tooltip,
     },
     {
       type : 'input',
-      name : 'em_port',
-      placeholder : helptext_system_email.em_port.placeholder,
-      tooltip : helptext_system_email.em_port.tooltip,
+      name : 'outgoingserver',
+      placeholder : helptext_system_email.outgoingserver.placeholder,
+      tooltip : helptext_system_email.outgoingserver.tooltip,
+    },
+    {
+      type : 'input',
+      name : 'port',
+      placeholder : helptext_system_email.port.placeholder,
+      tooltip : helptext_system_email.port.tooltip,
     },
     {
       type : 'select',
-      name : 'em_security',
-      placeholder : helptext_system_email.em_security.placeholder,
-      tooltip : helptext_system_email.em_security.tooltip,
+      name : 'security',
+      placeholder : helptext_system_email.security.placeholder,
+      tooltip : helptext_system_email.security.tooltip,
       options : [
-        {label : 'Plain (No Encryption)', value : 'plain'},
-        {label : 'SSL (Implicit TLS)', value : 'ssl'},
-        {label : 'TLS (STARTTLS)', value : 'tls'},
+        {label : 'Plain (No Encryption)', value : 'PLAIN'},
+        {label : 'SSL (Implicit TLS)', value : 'SSL'},
+        {label : 'TLS (STARTTLS)', value : 'TLS'},
       ],
     },
     {
       type : 'checkbox',
-      name : 'em_smtp',
-      placeholder : helptext_system_email.em_smtp.placeholder,
-      tooltip : helptext_system_email.em_smtp.tooltip,
+      name : 'smtp',
+      placeholder : helptext_system_email.smtp.placeholder,
+      tooltip : helptext_system_email.smtp.tooltip,
     },
     {
       type : 'input',
-      name : 'em_user',
-      placeholder : helptext_system_email.em_user.placeholder,
-      tooltip : helptext_system_email.em_user.tooltip,
+      name : 'user',
+      placeholder : helptext_system_email.user.placeholder,
+      tooltip : helptext_system_email.user.tooltip,
       relation : [
         {
           action : 'DISABLE',
           when : [ {
-            name : 'em_smtp',
+            name : 'smtp',
             value : false,
           } ]
         },
       ],
       required: true,
-      validation : helptext_system_email.em_user.validation
-    },
-    {
-      type: 'paragraph',
-      name: 'em_pwmessage',
-      paraText: helptext_system_email.em_pwmessage.paraText,
+      validation : helptext_system_email.user.validation
     },
     {
       type : 'input',
-      name : 'em_pass',
-      placeholder : helptext_system_email.em_pass.placeholder,
-      tooltip : helptext_system_email.em_pass.tooltip,
+      name : 'pass',
+      placeholder : helptext_system_email.pass.placeholder,
+      tooltip : helptext_system_email.pass.tooltip,
       inputType : 'password',
       relation : [
         {
           action : 'DISABLE',
           when : [ {
-            name : 'em_smtp',
+            name : 'smtp',
             value : false,
           } ]
         },
       ],
-      required: true,
-      togglePw : true,
-      validation : helptext_system_email.em_pass.validation
+      togglePw : true
     }
   ];
   protected dialogRef: any;
 
-  private em_smtp;
-  private em_smtp_subscription;
-  private em_user;
-  private em_pwmessage;
-  private em_pass;
+  private smtp;
+  private smtp_subscription;
+  private pass;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef,private dialogservice: DialogService,
-              protected dialog: MatDialog
+              protected dialog: MatDialog, protected loader: AppLoaderService
             ) {}
 
-afterInit(entityEdit: any) {
+  resourceTransformIncomingRestData(data): void {
+    delete data.pass;
+    return data;
+  }
+
+  afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const payload = [];
     payload.push("username");
@@ -164,25 +157,29 @@ afterInit(entityEdit: any) {
     this.ws.call('user.query', [[payload]]).subscribe((res)=>{
       this.rootEmail = res[0].email;
     });
-    this.em_user = _.find(this.fieldConfig, {'name': 'em_user'});
-    this.em_pwmessage = _.find(this.fieldConfig, {'name': 'em_pwmessage'});
-    this.em_pass = _.find(this.fieldConfig, {'name': 'em_pass'});
+    this.pass = _.find(this.fieldConfig, {'name': 'pass'});
+    this.smtp = entityEdit.formGroup.controls['smtp'];
 
-    this.em_smtp = entityEdit.formGroup.controls['em_smtp'];
-    this.em_user['isHidden'] = !this.em_smtp.value;
-    this.em_pwmessage['isHidden'] = !this.em_smtp.value;
-    this.em_pass['isHidden'] = !this.em_smtp.value;
-
-    this.em_smtp_subscription = this.em_smtp.valueChanges.subscribe((value) => {
-      this.em_user['isHidden'] = !value;
-      this.em_pwmessage['isHidden'] = !value;
-      this.em_pass['isHidden'] = !value;
-      this.em_pass.hideButton = !value;
+    this.smtp_subscription = this.smtp.valueChanges.subscribe((value) => {
+      this.pass.hideButton = !value;
     });
   }
 
   ngOnDestroy() {
-    this.em_smtp_subscription.unsubscribe();
+    this.smtp_subscription.unsubscribe();
   }
 
+  saveConfigSubmit(emailConfig): void {
+    this.loader.open();
+    if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
+      delete emailConfig.pass;
+    }
+    this.ws
+      .call(this.updateCall, [emailConfig])
+      .subscribe(
+        () => {},
+        error => new EntityUtils().handleWSError(this, error, this.dialogservice),
+        () => this.loader.close()
+      );
+  }
 }

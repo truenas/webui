@@ -32,7 +32,7 @@ export class CertificateAuthorityListComponent {
     public snackBar: MatSnackBar) {}
 
   public columns: Array < any > = [
-    { name: helptext_system_ca.list.column_name, prop: 'name' },
+    { name: helptext_system_ca.list.column_name, prop: 'name', always_display: true },
     { name: helptext_system_ca.list.column_internal, prop: 'internal' },
     { name: helptext_system_ca.list.column_issuer, prop: 'issuer' },
     { name: helptext_system_ca.list.column_distinguished_name, prop: 'DN' },

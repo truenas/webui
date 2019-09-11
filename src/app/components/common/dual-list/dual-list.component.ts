@@ -17,9 +17,9 @@ export class DualListboxComponent implements OnInit {
   @Input() minHeight = '200px';
   @Input() maxHeight = '300px';
 
-  @ContentChild('templateItem') templateItem: TemplateRef<any>;
-  @ContentChild('templateArrowLeft') templateArrowLeft: TemplateRef<any>;
-  @ContentChild('templateArrowRight') templateArrowRight: TemplateRef<any>;
+  @ContentChild('templateItem', { static: true}) templateItem: TemplateRef<any>;
+  @ContentChild('templateArrowLeft', { static: true}) templateArrowLeft: TemplateRef<any>;
+  @ContentChild('templateArrowRight', { static: true}) templateArrowRight: TemplateRef<any>;
 
   availableItems: ListSelection;
   selectedItems: ListSelection;

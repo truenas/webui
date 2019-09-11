@@ -15,18 +15,25 @@ script_name = os.path.basename(__file__).partition('.')[0]
 xpaths = {
     'navTasks': '//*[@id="nav-3"]/div/a[1]',
     'submenuPeriodicSS': '//*[@id="3-4"]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 
-def test_01_nav_tasks_periodicSS(wb_driver):
-    wb_driver.find_element_by_xpath(xpaths['submenuPeriodicSS']).click()
+def test_01_nav_tasks_periodicSS(browser):
+    browser.find_element_by_xpath(xpaths['submenuPeriodicSS']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "Tasks" in page_data, page_data
+    # get the ui element
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Periodic Snapshot Tasks" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

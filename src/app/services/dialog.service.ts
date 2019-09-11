@@ -1,23 +1,28 @@
+import { Injectable } from '@angular/core';
+import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { T } from 'app/translate-marker';
+import { filter } from 'rxjs/operators';
 import { Observable } from 'rxjs/Rx';
 import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
+import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
 import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
 import { SelectDialogComponent } from '../pages/common/select-dialog/select-dialog.component';
-import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
-import { Injectable } from '@angular/core';
-import {WebSocketService} from '../services/ws.service';
-import { MatSnackBar } from '@angular/material';
 import { AppLoaderService } from '../services/app-loader/app-loader.service';
-import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
+import { WebSocketService } from '../services/ws.service';
 
 @Injectable()
 export class DialogService {
     protected loaderOpen = false;
 
 
-    constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,protected loader: AppLoaderService) { }
+    constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,protected loader: AppLoaderService) {
+        /* Close all open dialogs when websocket connection is dropped */
+        this.ws.onCloseSubject.pipe(filter(didClose => !!didClose)).subscribe(() => this.closeAllDialogs());
+    }
 
-    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any): any {
+    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, 
+        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
@@ -36,7 +41,15 @@ export class DialogService {
 
         if(tooltip) {
             dialogRef.componentInstance.tooltip = tooltip;
-        } 
+        }
+
+        if (hideCancel) {
+            dialogRef.componentInstance.hideCancel = hideCancel;
+            dialogRef.disableClose = hideCancel;
+        }
+        if(cancelMsg) {
+            dialogRef.componentInstance.cancelMsg = cancelMsg;
+        }
 
         if(secondaryCheckBox) {
             dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
@@ -140,4 +153,33 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
+    public doubleConfirm(title: string, message: string, name: string): any {
+        const conf = {
+            title: title,
+            message: message,
+            fieldConfig: [
+              {
+                type: 'input',
+                name: 'name',
+                required: true,
+              }
+            ],
+            saveButtonText: T("DELETE"),
+            afterInit: function(entityDialog) {
+                entityDialog.formGroup.controls['name'].valueChanges.subscribe((res) => {
+                    entityDialog.submitEnabled = res === name;
+                })
+            },
+            customSubmit: function (entityDialog) {
+                return entityDialog.dialogRef.close(true);
+            }
+          }
+        return this.dialogForm(conf);
+    }
+
+    public closeAllDialogs(): void {
+        for (const openDialog of this.dialog.openDialogs) {
+            openDialog.close();
+        }
+    }
 }

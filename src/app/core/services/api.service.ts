@@ -3,7 +3,8 @@ import { Subject } from 'rxjs';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService, CoreEvent } from './core.service';
-import {  DialogService } from '../../services';
+import { DialogService } from '../../services';
+//import { DataService } from './data.service';
 
 interface ApiCall {
   namespace: string; // namespace for ws and path for rest
@@ -86,6 +87,15 @@ export class ApiService {
         responseEvent: "DisksData"
       }
     },
+    MultipathRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "multipath.query",
+        responseEvent: "MultipathData"
+      }
+    },
     EnclosureDataRequest:{
       apiCall:{
         protocol:"websocket",
@@ -139,9 +149,18 @@ export class ApiService {
       apiCall:{
         protocol:"websocket",
         version:"2.0",
-        namespace:"interfaces.websocket_interface",
+        namespace:"interface.websocket_interface",
         args: [],
         responseEvent: "PrimaryNicInfo"
+      }
+    },
+    NicInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"interface.query",
+        args: [],
+        responseEvent: "NicInfo"
       }
     },
     NetInfoRequest:{
@@ -296,11 +315,6 @@ export class ApiService {
         responseEvent:"VmProfiles",
         errorResponseEvent: "VmCloneFailure"
       },
-      // preProcessor(def:ApiCall){
-      //   let redef = Object.assign({}, def);
-      //   def.args = [redef.args[0]];
-      //   return def;
-      // },
       postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
         cloneRes = null; 
@@ -317,25 +331,6 @@ export class ApiService {
         responseEvent:"VmProfiles",
       },
     },
-
-    SysInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"system.info",
-        args:[],
-        responseEvent:"SysInfo"
-      }
-    },
-    /*NetInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"stats.get_sources",
-        args:[],
-        responseEvent:"NetInfo"
-      }
-    },*/
     // Used by stats service!!
     StatsRequest:{
       apiCall:{
@@ -375,6 +370,15 @@ export class ApiService {
         namespace:"stats.get_sources",
         args:[],
         responseEvent:"StatsSources"
+      }
+    },
+    ReportingGraphsRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2",
+        namespace:"reporting.graphs",
+        args:[],
+        responseEvent:"ReportingGraphs"
       }
     },
     StatsCpuRequest:{
@@ -564,7 +568,13 @@ export class ApiService {
     },
   } 
 
-  constructor(protected core: CoreService, protected ws: WebSocketService,protected rest: RestService, private dialog:DialogService) {
+  constructor(
+    protected core: CoreService, 
+    protected ws: WebSocketService,
+    protected rest: RestService, 
+    private dialog:DialogService, 
+    //protected cache: DataService
+  ) {
     this.ws.authStatus.subscribe((evt:any) =>{
       this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]]});
       this.core.emit({name:"Authenticated",data:evt,sender:this});

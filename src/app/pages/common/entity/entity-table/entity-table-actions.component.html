@@ -1,8 +1,16 @@
 <div class="panel_container">
-  <mat-icon id="table_actions_menu_button__{{key_prop}}_{{row[key_prop]}}" [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">{{icon_name}}</mat-icon>
+  <mat-icon
+    ix-datatable-cell="three-dot"
+    [ix-datatable-cell-identifier]="row[entity?.conf?.rowIdentifier || 'name']"
+    id="table_actions_menu_button__{{key_prop}}_{{row[key_prop]}}"
+    [matMenuTriggerFor]="appMenu"
+    [style.cursor]="'pointer'"
+  >
+    {{icon_name}}
+  </mat-icon>
   <mat-menu #appMenu="matMenu">
     <span *ngFor="let action of actions">
-			<button id="action_button_{{ action?.label }}__{{key_prop}}_{{row[key_prop]}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
+			<button id="action_button_{{ action?.name }}__{{action.id}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
 						|| entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);">
 				<span>{{ action?.label | translate }}</span>
     </button>

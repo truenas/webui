@@ -228,9 +228,11 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   height:100%;
   padding:0;
   margin:0;
+  overflow:hidden;
 }
 
-.widget .mat-card .mat-toolbar-row{
+.widget.splitv .mat-card .mat-toolbar-row,
+.widget.splith .mat-card .mat-toolbar-row{
   padding:0 !important;
 }
 
@@ -311,10 +313,22 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 }
 
 /* Split Layout Widgets */
-.widget.splitv, .widget.splith{
+.widget.splitv, .widget.splith, .widget.stats-widget{
   width:600px;
-  height:320px;
+  height:400px;
 }
 
+/* New Rules */
+.widget mat-card-content{
+  /*background: rgba(0,0,0,0.05);*/
+}
 
+.widget mat-toolbar-row{
+  background: var(--bg2);
+}
 
+/* MOBILE */
+.xs.widget{
+  min-width:320px;
+  overflow-x: auto;
+}

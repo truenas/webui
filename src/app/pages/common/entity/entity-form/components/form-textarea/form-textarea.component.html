@@ -1,9 +1,16 @@
 <div id="{{config.name}}" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
   <mat-form-field class="full-width">
-    <textarea matInput [placeholder]="config.placeholder | translate" [formControlName]="config.name" rows="4" [ngClass]="config.class" [required]="config.required" [readonly]="config.readonly" (blur)='blurEvent()'>
+    <textarea matInput 
+      [placeholder]="config.placeholder | translate" 
+      [formControlName]="config.name" 
+      [rows]="config.textAreaRows || 4" 
+      [ngClass]="config.class" 
+      [required]="config.required" 
+      [readonly]="config.readonly" 
+      (blur)='blurEvent()'>
     </textarea>
   </mat-form-field>
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

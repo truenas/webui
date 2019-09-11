@@ -1,18 +1,16 @@
-
-import {interval as observableInterval,  Observable ,  Subscription } from 'rxjs';
+import {interval as observableInterval,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService, Theme } from '../../../services/theme/theme.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
-import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
 import { TranslateService } from '@ngx-translate/core';
@@ -21,14 +19,15 @@ import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/topbar';
 
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector: 'topbar',
-//  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
-styleUrls: ['./topbar.component.css'],
-templateUrl: './topbar.template.html'
+  styleUrls: ['./topbar.component.css'],
+  templateUrl: './topbar.template.html'
 })
-export class TopbarComponent implements OnInit, OnDestroy {
+export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy {
 
   @Input() sidenav;
   @Input() notificPanel;
@@ -49,18 +48,24 @@ export class TopbarComponent implements OnInit, OnDestroy {
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
   isTaskMangerOpened = false;
+  isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<TaskManagerComponent>;
+  dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
+  dirServicesStatus = [];
+  showDirServicesIcon = false;
+  exposeLegacyUI = false;
 
   ha_status_text: string;
   ha_disabled_reasons = [];
   ha_pending = false;
   is_ha = false;
   sysName: string = 'FreeNAS';
+  hostname: string;
   private user_check_in_prompted = false;
 
   constructor(
     public themeService: ThemeService,
-    public core: CoreService,
+    /*public core: CoreService,*/
     private router: Router,
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
@@ -72,15 +77,22 @@ export class TopbarComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
 
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {}
+    protected loader: AppLoaderService, ) {
+    super();
+  }
 
   ngOnInit() {
     if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.checkEULA();
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
+        this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
       });
       this.sysName = 'TrueNAS';
+    } else {
+      window.localStorage.setItem('alias_ips', '0');
+      this.checkLegacyUISetting();
     }
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
@@ -105,6 +117,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
+    this.getDirServicesStatus();
 
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
@@ -113,6 +126,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
+      this.getDirServicesStatus();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -128,6 +142,24 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.resilveringDetails = '';
       }
     }, 2500);
+
+    this.core.register({
+     observerClass: this,
+     eventName: "SysInfo"
+    }).subscribe((evt: CoreEvent) => {
+      this.hostname = evt.data.hostname;
+    });
+ 
+    this.core.emit({name: "SysInfoRequest", sender:this});
+  }
+
+  checkLegacyUISetting() {
+    this.ws.call('system.advanced.config').subscribe((res) => {
+      if (res.legacy_ui) {
+        this.exposeLegacyUI = res.legacy_ui;
+        window.localStorage.setItem('exposeLegacyUI', res.legacy_ui);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -136,19 +168,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
 
     this.continuosStreaming.unsubscribe();
+
+    this.core.unregister({observerClass:this});
   }
 
   setLang(lang) {
     this.language.currentLang = lang;
     this.onLangChange.emit(this.language.currentLang);
-  }
-
-  changeTheme(theme) {
-    this.themeService.changeTheme(theme);
-  }
-
-  createTheme(){
-    this.router.navigate(['/ui-preferences']);
   }
 
   toggleNotific() {
@@ -207,12 +233,28 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
   }
 
+  checkEULA() {
+    this.ws.call('truenas.is_eula_accepted').subscribe(eula_accepted => {
+      if (!eula_accepted) {
+        this.ws.call('truenas.get_eula').subscribe(eula => {
+          this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true, T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
+            if (accept_eula) {
+              this.ws.call('truenas.accept_eula').subscribe(accepted => {
+                this.snackBar.open(T("End User License Agreement Accepted"),T("OK"));
+              });
+            }
+          });
+        });
+      }
+    });
+  }
+
   checkNetworkChangesPending() {
     this.ws.call('interface.has_pending_changes').subscribe(res => {
       this.pendingNetworkChanges = res;
     });
   }
-  
+
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
       if (res != null) {
@@ -240,7 +282,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message);
-            this.waitingNetworkCheckin = false; 
+            this.waitingNetworkCheckin = false;
           }, (err) => {
             this.loader.close();
             new EntityUtils().handleWSError(null, err, this.dialogService);
@@ -292,7 +334,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onGoToLegacy() {
-    this.dialogService.confirm(T("Switch to Legacy User Interface?"), T(""), true, T("Continue")).subscribe((res) => {
+    this.dialogService.confirm(T("Warning"),
+      helptext.legacyUIWarning, 
+      true, T("Continue to Legacy UI")).subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
       }
@@ -322,6 +366,29 @@ export class TopbarComponent implements OnInit, OnDestroy {
     );
   }
 
+  onShowDirServicesMonitor() {
+    if (this.isDirServicesMonitorOpened) {
+      this.dirServicesMonitor.close(true);
+    } else {
+      this.isDirServicesMonitorOpened = true;
+      this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
+        disableClose: false,
+        width: '400px',
+        hasBackdrop: true,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+      });
+    }
+
+    this.dirServicesMonitor.afterClosed().subscribe(
+      (res) => {
+        this.isDirServicesMonitorOpened = false;
+      }
+    );
+  }
+
   getHAStatus() {
     this.ws.call('failover.disabled_reasons').subscribe(res => {
       this.ha_disabled_reasons = res;
@@ -345,7 +412,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.translate.get(reason_text).subscribe(reason => {
           reasons = reasons + '<li>' + reason_text + '</li>\n';
         });
-      } 
+      }
     } else {
       ha_status = helptext.ha_status_text_enabled;
       this.translate.get(helptext.ha_is_enabled).subscribe(ha_is_enabled => {
@@ -355,5 +422,26 @@ export class TopbarComponent implements OnInit, OnDestroy {
     reasons = reasons + '</ul>';
 
     this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
+  }
+
+  getDirServicesStatus() {
+    let counter = 0;
+    this.ws.call('activedirectory.get_state').subscribe((res) => {
+      this.dirServicesStatus.push({name: 'Active Directory', state: res});
+
+      this.ws.call('ldap.get_state').subscribe((res) => {
+        this.dirServicesStatus.push({name: 'LDAP', state: res});
+
+        this.ws.call('nis.get_state').subscribe((res) => {
+          this.dirServicesStatus.push({name: 'NIS', state: res});
+          this.dirServicesStatus.forEach((item) => {
+            if (item.state !== 'DISABLED') {
+              counter ++;
+            }
+          });
+          counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
+        });
+      });
+    });
   }
 }

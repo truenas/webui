@@ -55,12 +55,12 @@ export class NavigationService {
         //{name: 'Information', state: 'information'},
         { name: T('General'), state: 'general' },
         { name: T('NTP Servers'), state: 'ntpservers' },
-        { name: T('Boot Environments'), state: 'bootenv' },
+        { name: T('Boot'), state: 'boot' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('View Enclosure'), state: 'viewenclosure', disabled: true},
         { name: T('Email'), state: 'email'},
-        { name: T('Reporting'), state: 'reporting'},
         { name: T('System Dataset'), state: 'dataset'},
+        { name: T('Reporting'), state: 'reporting'},
         { name: T('Alert Services'), state: 'alertservice' },
         { name: T('Alert Settings'), state: 'alertsettings' },
         { name: T('Cloud Credentials'), state: 'cloudcredentials' },
@@ -146,11 +146,11 @@ export class NavigationService {
       icon: 'folder_shared',
       state: 'sharing',
       sub: [
-        { name: T('Apple (AFP) Shares'), state: 'afp' },
-        { name: T('Unix (NFS) Shares'), state: 'nfs' },
+        { name: T('Apple Shares (AFP)'), state: 'afp' },
+        { name: T('Block Shares (iSCSI)'), state: 'iscsi' },
+        { name: T('Unix Shares (NFS)'), state: 'nfs' },
         { name: T('WebDAV Shares'), state: 'webdav' },
-        { name: T('Windows (SMB) Shares'), state: 'smb' },
-        { name: T('Block (iSCSI)'), state: 'iscsi' },
+        { name: T('Windows Shares (SMB)'), state: 'smb' },
       ]
     },
     {
@@ -162,14 +162,10 @@ export class NavigationService {
     },
     {
       name: T('Plugins'),
-      type: 'dropDown',
+      type: 'link',
       tooltip: T('Plugins'),
       icon: 'extension',
       state: 'plugins',
-      sub: [
-        {name: 'Available', state: 'available'},
-        {name: 'Installed', state: 'installed'},
-      ]
     },
     {
       name: T('Jails'),

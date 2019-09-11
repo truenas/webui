@@ -18,6 +18,13 @@
         [externalSorting]="true"
         (sort)='reorderEvent($event)'
         (select)='onSelect($event)'>
+        <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
+            <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+              <div *ngFor="let detail of row.details" style="padding-left:35px;">
+                <strong>{{detail.label | translate}}:</strong> {{detail.value}}
+              </div>
+          </ng-template>
+        </ngx-datatable-row-detail>
         <ngx-datatable-column [width]="82" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
             <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
               <div class="headerCheckBox">
@@ -40,26 +47,45 @@
              [resizeable]="false">
         </ngx-datatable-column> -->
         <ngx-datatable-column 
-           [width]="158"
-           [flexGrow]="2"
-           name="Disk" 
-           prop="devname"></ngx-datatable-column>
+          [width]="125"
+          name="Disk" 
+          prop="devname"></ngx-datatable-column>
+        <ngx-datatable-column
+          [width]="100"
+          name="Type"
+          prop="type"></ngx-datatable-column>
         <ngx-datatable-column 
-            [width]="120"       
-            [flexGrow]="2"
-           	name="Capacity" 
-           	prop="capacity"></ngx-datatable-column>
+          [width]="120"       
+          name="Capacity" 
+          prop="capacity"></ngx-datatable-column>
+        <ngx-datatable-column
+          [width]="50"
+          [resizeable]="false"
+          [sortable]="false"
+          [draggable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+            <a
+              href="javascript:void(0)"
+              [class.datatable-icon-right]="!expanded"
+              [class.datatable-icon-down]="expanded"
+              title="Expand/Collapse Row"
+              (click)="toggleExpandRow(row)">
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
     </ngx-datatable>
     <div class="vdev-wrapper">
         <div class="vdev-type">
         <div *ngIf="group === 'data'" class="datainfo">
-            <mat-select id="vdev__option-menu" *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
+            <mat-select id="vdev__option-menu" *ngIf="group === 'data' && !vdev_type_disabled" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
                 <mat-option value="mirror" *ngIf="getDisks().length >= 2">{{"Mirror" | translate}}</mat-option>
                 <mat-option value="raidz" *ngIf="getDisks().length >= 3">{{"Raid-z" | translate}}</mat-option>
                 <mat-option value="raidz2" *ngIf="getDisks().length >= 4">{{"Raid-z2" | translate}}</mat-option>
                 <mat-option value="raidz3" *ngIf="getDisks().length >= 5">{{"Raid-z3" | translate}}</mat-option>
             </mat-select>
+            <p *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</p>
             {{"Estimated raw capacity:" | translate}} {{size}}
             <tooltip class="vdevTooltip" [message]=vdev_type_tooltip></tooltip>
         </div>

@@ -19,6 +19,7 @@ export class PortalListComponent {
     {
       name : 'Portal Group ID',
       prop : 'tag',
+      always_display: true
     },
     {
       name : 'Listen',
@@ -37,6 +38,7 @@ export class PortalListComponent {
       prop : 'discovery_authgroup',
     },
   ];
+  public rowIdentifier = 'tag';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

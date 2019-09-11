@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
@@ -9,7 +8,6 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityUtils } from '../../common/entity/utils';
 import { RestService, WebSocketService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
-import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -34,6 +32,7 @@ export class AdvancedComponent implements OnDestroy {
   public swapondrive_subscription: any;
   public entityForm: any;
   protected dialogRef: any;
+  public is_freenas = false;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: 'Save Debug',
@@ -42,41 +41,33 @@ export class AdvancedComponent implements OnDestroy {
         let fileName = "";
         if (res) {
           const hostname = res.hostname.split('.')[0];
-          const date = this.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+          const date = this.datePipe.transform(new Date(), "yyyyMMddHHmmss");
           fileName = `debug-${hostname}-${date}.tgz`;
         }
         this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
-            this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
-            this.dialogRef.componentInstance.setCall('system.debug', []);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe((system_debug) => {
-              this.dialogRef.close(true);
-              this.ws.call('core.download', ['filesystem.get', [system_debug.result], fileName]).subscribe(
-                (system_debug_result) => {
-                  if (window.navigator.userAgent.search("Firefox")>0) {
-                    window.open(system_debug_result[1]);
+            this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
+              (res) => {
+                if (window.navigator.userAgent.search("Firefox") > 0) {
+                  window.open(res[1]);
+                } else {
+                  window.location.href = res[1];
                 }
-                  else {
-                    window.location.href = system_debug_result[1];
-                  }
-                },
-                (err) => {
+
+                this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
+                this.dialogRef.componentInstance.jobId = res[0];
+                this.dialogRef.componentInstance.wsshow();
+                this.dialogRef.componentInstance.success.subscribe((save_debug) => {
+                  this.dialogRef.close();
+                });
+                this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
+                  this.dialogRef.close();
                   this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
-                }
-              ); 
-            }),
-            () => {
-              this.dialogRef.close();
-            }, 
-            () => {
-              this.dialogRef.close();
-              if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
-                this.openSnackBar(helptext_system_advanced.snackbar_network_error_message, helptext_system_advanced.snackbar_network_error_action);
-              } else {
-                console.log("User canceled");
-              }
-            }
+                });
+              },
+              (err) => {
+                new EntityUtils().handleWSError(this, err, this.dialog);
+              });
           }
         })
       })
@@ -142,6 +133,13 @@ export class AdvancedComponent implements OnDestroy {
     inputType: 'number',
     validation : helptext_system_advanced.swapondrive_validation,
     required: true,
+  },{
+    type: 'checkbox',
+    name: 'legacy_ui',
+    placeholder: helptext_system_advanced.enable_legacy_placeholder,
+    tooltip: helptext_system_advanced.enable_legacy_tooltip,
+    isHidden: true,
+    value: false
   }, {
     type: 'checkbox',
     name: 'autotune',
@@ -189,7 +187,7 @@ export class AdvancedComponent implements OnDestroy {
 // This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="%%docurl%%/system.html#self-encrypting-drives"\
+//  tooltip: T('See the <a href="--docurl--/system.html#self-encrypting-drives"\
 //                target="_blank"> Self Encrypting Drives</a> section of\
 //                the user guide for more information.'),
 //
@@ -246,42 +244,60 @@ export class AdvancedComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.swapondrive = _.find(this.fieldConfig, { 'name': 'swapondrive' });
-    this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
-      if (parseInt(value) === 0) {
-        this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
-      } else {
-        this.swapondrive.warnings = null;
-      }
-    });
-
-    this.ws.call(this.queryCall).subscribe((adv_values)=>{
-      entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
-    })
-    this.adv_serialport =
-    _.find(this.fieldConfig, { 'name': 'serialport' });
-    this.adv_serialspeed =
-    _.find(this.fieldConfig, { 'name': 'serialspeed' });
-    this.adv_serialconsole =
-    entityEdit.formGroup.controls['serialconsole'];
-    this.adv_serialspeed['isHidden'] = !this.adv_serialconsole.value;
-    this.adv_serialport['isHidden'] = !this.adv_serialconsole.value;
-    this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
-      this.adv_serialspeed['isHidden'] = !value;
-      this.adv_serialport['isHidden'] = !value;
-    });
-    entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
-      for(let i=0; i<serial_port_choices.length; i++){
-        this.adv_serialport.options.push(
-          {
-            label: serial_port_choices[i], value: serial_port_choices[i]
+    this.ws.call('system.is_freenas').subscribe((res)=>{
+      this.is_freenas = res;
+      _.find(this.fieldConfig, { 'name': 'legacy_ui' })['isHidden'] = this.is_freenas;
+      this.swapondrive = _.find(this.fieldConfig, { 'name': 'swapondrive' });
+      this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
+        if (parseInt(value) === 0) {
+          this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
+        } else {
+          this.swapondrive.warnings = null;
+        }
+      });
+      setTimeout(() => {
+        entityEdit.formGroup.controls['legacy_ui'].valueChanges.subscribe((value) => {
+          if (value) {
+            this.dialog.confirm('Warning', `${helptext_system_advanced.enable_legacy_dialog}`, true,
+             'I accept the risks').subscribe((res) => {
+               if (!res) {
+                entityEdit.formGroup.controls['legacy_ui'].setValue(false);
+               }
+             })
           }
-        )}
-    });
+        });
+      }, 50)
 
+  
+      this.ws.call(this.queryCall).subscribe((adv_values)=>{
+        entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
+      })
+      this.adv_serialport =
+      _.find(this.fieldConfig, { 'name': 'serialport' });
+      this.adv_serialspeed =
+      _.find(this.fieldConfig, { 'name': 'serialspeed' });
+      this.adv_serialconsole =
+      entityEdit.formGroup.controls['serialconsole'];
+      this.adv_serialspeed['isHidden'] = !this.adv_serialconsole.value;
+      this.adv_serialport['isHidden'] = !this.adv_serialconsole.value;
+      this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
+        this.adv_serialspeed['isHidden'] = !value;
+        this.adv_serialport['isHidden'] = !value;
+      });
+      entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
+        for(const k in serial_port_choices){
+          this.adv_serialport.options.push(
+            {
+              label: k, value: serial_port_choices[k]
+            }
+          )}
+      });
+    })
   }
 
   public customSubmit(body) {
+    body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui) :
+      window.localStorage.setItem('exposeLegacyUI', 'false');
     delete body.sed_passwd2;
     this.load.open();
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {

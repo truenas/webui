@@ -6,8 +6,8 @@
         <div *ngIf="theme.name == currentTheme">
           <div *ngIf="theme.hasDarkLogo; else lightLogo">
             <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasDark">
-              <img src="assets/images/logo.svg" alt="FreeNAS Shark logo" class="app-logo">
-              <img src="assets/images/logo-text.svg" alt="FreeNAS" class="app-logo-text">
+              <a routerLink="/dashboard" class="logo"><img [src]="logoPath" alt="FreeNAS Shark logo" class="app-logo"></a>
+              <a routerLink="/dashboard" class="logo-text"><img [src]="logoTextPath" alt="FreeNAS" class="app-logo-text"></a>
             </div>
             <ng-template #isTruenasDark>
               <div class="branding mat-bg-primary">
@@ -17,7 +17,7 @@
           </div>
           <ng-template #lightLogo>
             <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasLight">
-              <a routerLink="/dashboard" class="logo"><img [src]="logoPath" alt="FreeNAS icon" class="app-logo"></a>
+              <a routerLink="/dashboard" class="logo"><img [src]="logoPath" alt="FreeNAS Shark logo" class="app-logo"></a>
               <a routerLink="/dashboard" class="logo-text"><img [src]="logoTextPath" alt="FreeNAS" class="app-logo-text"></a>
             </div>
             <ng-template #isTruenasLight>
@@ -38,6 +38,7 @@
           <mat-icon class="icon-xs text-muted">lock</mat-icon>
           root
         </span>
+        <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       </div>
       <navigation (onStateChange)="changeState($event)"></navigation>
     </div>

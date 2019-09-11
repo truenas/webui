@@ -23,7 +23,11 @@ ldap_hostname_validation: [Validators.required],
 
 ldap_hostname_noreq_name : 'ldap_hostname_noreq',
 ldap_hostname_noreq_placeholder : T('Hostname'),
-ldap_hostname_noreq_tooltip: T('The hostname or IP address of the LDAP server.'),
+ldap_hostname_noreq_tooltip: T('LDAP server hostnames or IP addresses.\
+ Separate entries with an empty space. Multiple hostnames or IP\
+ addresses can be entered to create an LDAP failover priority list. If a\
+ host does not respond, the next host in the list is tried until a new\
+ connection is established.'),
 
 ldap_basedn_name : 'ldap_basedn',
 ldap_basedn_placeholder : T('Base DN'),
@@ -40,8 +44,8 @@ ldap_bindpw_placeholder : T('Bind Password'),
 ldap_bindpw_tooltip: T('Password for the Bind DN.'),
 
 ldap_anonbind_name : 'ldap_anonbind',
-ldap_anonbind_placeholder : T('Allow Anonymous Binding'),
-ldap_anonbind_tooltip: T('Set for the LDAP server to disable authentication and\
+ldap_anonbind_placeholder: T('Allow Anonymous Binding'),
+ldap_anonbind_tooltip : T('Set for the LDAP server to disable authentication and\
  allow read and write access to any client.'),
 
 ldap_usersuffix_name : 'ldap_usersuffix',
@@ -71,14 +75,14 @@ ldap_sudosuffix_tooltip: T('Suffix for LDAP-based users that need superuser acce
 ldap_kerberos_realm_name : 'ldap_kerberos_realm',
 ldap_kerberos_realm_placeholder : T('Kerberos Realm'),
 ldap_kerberos_realm_tooltip: T('Select the realm created using the instructions in <a\
- href="%%docurl%%/directoryservices.html#kerberos-realms"\
+ href="--docurl--/directoryservices.html#kerberos-realms"\
  target="_blank">Kerberos Realms</a>.'),
 
 ldap_kerberos_principal_name : 'ldap_kerberos_principal',
 ldap_kerberos_principal_placeholder : T('Kerberos Principal'),
 ldap_kerberos_principal_tooltip: T('Select the location of the principal in the keytab\
  created as described in <a\
- href="%%docurl%%/directoryservices.html#kerberos-keytabs"\
+ href="--docurl--/directoryservices.html#kerberos-keytabs"\
  target="_blank">Kerberos Keytabs</a>.'),
 
 ldap_ssl_name : 'ldap_ssl',
@@ -90,6 +94,12 @@ ldap_certificate_name : 'ldap_certificate',
 ldap_certificate_placeholder : T('Certificate'),
 ldap_certificate_tooltip: T('Select the LDAP CA certificate. The certificate for the\
  LDAP server CA must first be imported using the System/Certificates menu.'),
+
+ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
+ldap_disable_fn_cache_placeholder : T('Disable LDAP User/Group Cache'),
+ldap_disable_fn_cache_tooltip: T('Disable caching LDAP users and groups in large LDAP environments. \
+ When caching is disabled, LDAP users and groups do not appear in dropdown \
+ menus, but are still accepted when manually entered.'),
 
 ldap_timeout_name : 'ldap_timeout',
 ldap_timeout_placeholder : T('LDAP timeout'),
@@ -125,19 +135,10 @@ ldap_enable_placeholder : T('Enable'),
 ldap_enable_tooltip: T('Activates the configuration. Unset to disable the\
  configuration without deleting it.'),
 
-ldap_netbiosname_a_name : 'ldap_netbiosname_a',
-ldap_netbiosname_a_placeholder : T('Netbios Name'),
-ldap_netbiosname_a_tooltip: T('Netbios Name of this NAS. This name must differ from\
- the <i>Workgroup</i> name and be no greater than 15 characters.'),
-
-ldap_netbiosalias_name : 'ldap_netbiosalias',
-ldap_netbiosalias_placeholder : T('NetBIOS alias'),
-ldap_netbiosalias_tooltip: T('Alternative names that SMB clients can use when\
- connecting to this NAS. Can be no greater than 15 characters.'),
-
 ldap_advanced_fields : 
 [
 'ldap_anonbind',
+'ldap_disable_freenas_cache',
 'ldap_usersuffix',
 'ldap_groupsuffix',
 'ldap_passwordsuffix',
@@ -152,8 +153,6 @@ ldap_advanced_fields :
 'ldap_idmap_backend',
 'ldap_has_samba_schema',
 'ldap_auxiliary_parameters',
-'ldap_schema',
-'ldap_netbiosalias',
-'ldap_netbiosname_a'
+'ldap_schema'
 ]
 }

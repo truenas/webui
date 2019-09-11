@@ -62,7 +62,7 @@ export const routes: Routes = [
             data: { title: 'Edit Zvol', breadcrumb: 'Edit Zvol' }
           },
           {
-            path: 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,
+            path: 'permissions/:pk', component: DatasetPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
           },
           {
@@ -91,19 +91,19 @@ export const routes: Routes = [
           },
           {
             path: 'rekey/:pk', component: VolumeRekeyFormComponent,
-            data: { title: 'Rekey Pool', breadcrumb: 'Rekey Pool' }
+            data: { title: 'Reset Keys', breadcrumb: 'Reset Keys' }
           },
           {
             path: 'addkey/:pk', component: VolumeAddkeyFormComponent,
-            data: { title: 'Add Key', breadcrumb: 'Add Key' }
+            data: { title: 'Recovery Key', breadcrumb: 'Recovery Key' }
           },
           {
             path: 'createkey/:pk', component: VolumeCreatekeyFormComponent,
-            data: { title: 'Create Passphrase', breadcrumb: 'Create Passphrase' }
+            data: { title: 'Encryption Key', breadcrumb: 'Encryption Key' }
           },
           {
             path: 'changekey/:pk', component: VolumeChangekeyFormComponent,
-            data: { title: 'Change Passphrase', breadcrumb: 'Change Passphrase' }
+            data: { title: 'Encryption Key', breadcrumb: 'Encryption Key' }
           }
         ]
       },

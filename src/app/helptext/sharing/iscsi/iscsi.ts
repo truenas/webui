@@ -1,6 +1,7 @@
 import { T } from "app/translate-marker";
 import { Validators } from "@angular/forms";
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
+import globalHelptext from '../../../helptext/global-helptext';
 
 export const helptext_sharing_iscsi = {
   target_form_placeholder_name: T("Target Name"),
@@ -16,6 +17,9 @@ export const helptext_sharing_iscsi = {
 
   target_form_placeholder_alias: T("Target Alias"),
   target_form_tooltip_alias: T("Optional user-friendly name."),
+
+  target_form_placeholder_mode: T("Target Mode"),
+  target_form_tooltip_mode: T(""),
 
   target_form_placeholder_portal: T("Portal Group ID"),
   target_form_tooltip_portal: T(
@@ -44,13 +48,13 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_comment: T("Comment"),
   portal_form_tooltip_comment: T(
-    "Optional description. Portals are automatically\
- assigned a numeric group ID."
+    "Optional description. Portals are automatically assigned a numeric\
+ group."
   ),
 
   portal_form_placeholder_discovery_authmethod: T("Discovery Auth Method"),
   portal_form_tooltip_discovery_authmethod: T(
-    '<a href="%%docurl%%/sharing.html#block-iscsi"\
+    '<a href="--docurl--/sharing.html#block-iscsi"\
  target="_blank">iSCSI</a> supports multiple\
  authentication methods that are used by the target to\
  discover valid devices. <i>None</i> allows anonymous\
@@ -60,9 +64,9 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_discovery_authgroup: T("Discovery Auth Group"),
   portal_form_tooltip_discovery_authgroup: T(
-    "Select a user created in <b>Authorized Access</b> if\
- the <b>Discovery Auth Method</b> is set to\
- <i>CHAP</i> or <i>Mutual CHAP</i>."
+    "Select a Group ID created in <b>Authorized Access</b> if the\
+ <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
+ <i>Mutual CHAP</i>."
   ),
 
   portal_form_placeholder_ip: T("IP Address"),
@@ -81,23 +85,34 @@ export const helptext_sharing_iscsi = {
 
   portal_form_placeholder_delete: T("Delete"),
 
-  initiator_form_placeholder_initiators: T("Initiators"),
+  initiator_form_tooltip_connected_initiators: T(
+	'Initiators currently connected to the system. Shown in IQN\
+ format with an IP address. Set initiators and click an <b>-></b>\
+ (arrow) to add the initiators to either the <i>Allowed Initiators</i>\
+ or <i>Authorized Networks</i> lists. Clicking <i>Refresh</i> updates\
+ the <i>Connected Initiators</i> list.'
+  ),
+
+  initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
   initiator_form_tooltip_initiators: T(
-    "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
+    'Initiators allowed access to this system. Enter an\
+ <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
+ target="_blank">iSCSI Qualified Name (IQN)</a> and click <i>+</i> to\
+ add it to the list. Example:\
+ <i>iqn.1994-09.org.freebsd:freenas.local</i>'
   ),
 
   initiator_form_placeholder_auth_network: T("Authorized Networks"),
   initiator_form_tooltip_auth_network: T(
-    'Network addresses which can use this initiator. Use\
- <i>ALL</i> or list network addresses with a\
+    'Network addresses allowed use this initiator. Each address can\
+ include an optional\
  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing"\
- target="_blank">CIDR</a> mask. Separate multiple\
- addresses with a space:\
- <i>192.168.2.0/24 192.168.2.1/12</i>.'
+ target="_blank">CIDR</a> netmask. Click <i>+</i> to add the network\
+ address to the list. Example: <i>192.168.2.0/24</i>.'
   ),
 
   initiator_form_placeholder_comment: T("Comment"),
-  initiator_form_tooltip_comment: T("Optional description."),
+  initiator_form_tooltip_comment: T("Any notes about initiators."),
 
   globalconf_placeholder_basename: T("Base Name"),
   globalconf_tooltip_basename: T(
@@ -124,15 +139,15 @@ export const helptext_sharing_iscsi = {
     'Enter the percentage of free space to remain\
  in the pool. When this percentage is reached,\
  the system issues an alert, but only if zvols are used.\
- See <a href="%%docurl%%/vaai.html#vaai"\
+ See <a href="--docurl--/vaai.html#vaai"\
  target="_blank">VAAI Threshold Warning</a> for more\
  information.'
   ),
 
   globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
-  globalconf_tooltip_alua: T('Set for the initiator to discover paths\
- to both storage controllers on the target and increase storage traffic\
- efficiency. Requires ALUA-capable, High Availability (HA) hardware.'),
+  globalconf_tooltip_alua: T(`Allow initiator to discover paths to both\
+ ${globalHelptext.ctrlrs} on the target and increase storage traffic\
+ efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
 
   globalconf_dialog_title: T("Enable service"),
   globalconf_dialog_message: T("Enable this service?"),
@@ -143,8 +158,8 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(
-    "Name of the extent. If <i>Extent size</i> is non-zero,\
- this cannot be the name of a file that already exists."
+    "Name of the extent. If the <i>Extent size</i> is not <i>0</i>,\
+ it cannot be an existing file within the pool or dataset."
   ),
   extent_validators_name: [Validators.required],
 
@@ -169,33 +184,29 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_path: T("Path to the extent"),
   extent_tooltip_path: T(
-    "Browse to an existing file and use <i>0</i> as the\
- <b>Extent size</b>, or browse to the pool or dataset,\
- click <b>Close</b>, append the <b>Extent Name</b> to\
- the path, and specify a value in <b>Extent Size</b>.\
- Extents cannot be created inside the jail\
- root directory."
+    "Browse to an existing file. Create a new file by browsing to a\
+ dataset and appending the file name to the path. Extents cannot be\
+ created inside a jail root directory."
   ),
   extent_validators_path: [Validators.required],
 
   extent_placeholder_filesize: T("Extent size"),
   extent_tooltip_filesize: T(
-    "If the size is specified as <i>0</i>, the file must\
- already exist and the actual file size will be used.\
- Otherwise, specify the size of the file to create."
+    "Entering <i>0</i> uses the actual file size and requires that the\
+ file already exists. Otherwise, specify the file size for the new file."
   ),
   extent_validators_filesize: [Validators.required],
 
   extent_placeholder_blocksize: T("Logical block size"),
   extent_tooltip_blocksize: T(
-    "Do not override the default unless the initiator\
- requires a specific block size."
+    "Leave at the default of 512 unless the initiator\
+ requires a different block size."
   ),
 
   extent_placeholder_pblocksize: T("Disable physical block size reporting"),
   extent_tooltip_pblocksize: T(
-    "Set if the initiator does not support physical block\
- size values over 4K (MS SQL)."
+    "Set if the initiator does not support physical block size values\
+ over 4K (MS SQL)."
   ),
 
   extent_placeholder_avail_threshold: T("Available space threshold (%)"),
@@ -203,12 +214,12 @@ export const helptext_sharing_iscsi = {
     'Only appears if a <i>File</i> or zvol is selected. When\
  the specified percentage of free space is reached,\
  the system issues an alert.\
- See <a href="%%docurl%%/vaai.html#vaai"\
+ See <a href="--docurl--/vaai.html#vaai"\
  target="_blank">VAAI</a> Threshold Warning.'
   ),
 
   extent_placeholder_comment: T("Comment"),
-  extent_tooltip_comment: T("Enter any notes."),
+  extent_tooltip_comment: T("Notes about this extent."),
 
   extent_placeholder_insecure_tpc: T("Enable TPC"),
   extent_tooltip_insecure_tpc: T(
@@ -249,27 +260,32 @@ export const helptext_sharing_iscsi = {
 
   authaccess_placeholder_user: T("User"),
   authaccess_tooltip_user: T(
-    "Name of user account on remote system for CHAP authentication.\
- Many initiators use the initiator name as the user name."
+    "User account to create for CHAP authentication with the user on the\
+ remote system. Many initiators use the initiator name as the user name."
   ),
 
   authaccess_placeholder_secret: T("Secret"),
   authaccess_tooltip_secret: T(
-    "Password. Must be at least 12 and no more than 16 characters long."
+    "User password. Must be at least 12 and no more than 16 characters\
+ long."
   ),
 
   authaccess_placeholder_secret_confirm: T("Secret (Confirm)"),
 
   authaccess_placeholder_peeruser: T("Peer User"),
   authaccess_tooltip_peeruser: T(
-    "Only entered when configuring mutual CHAP.\
- Usually this is the same value as <i>User</i>."
+    "Only entered when configuring mutual CHAP. Usually the same value\
+ as <i>User</i>."
   ),
 
   authaccess_placeholder_peersecret: T("Peer Secret"),
   authaccess_tooltip_peersecret: T(
-    "Mutual secret password. Must be different than <i>Secret</i>."
+    "Mutual secret password. Required when Peer User is set. Must be\
+ different than the <i>Secret</i>."
   ),
+  authaccess_error_peersecret: T('Must match Peer Secret (Confirm) and be\
+ between 12 and 16 characters in length. Cannot be the same as\
+ Secret.'),
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
 
@@ -293,5 +309,14 @@ export const helptext_sharing_iscsi = {
 
   associated_target_placeholder_extent: T("Extent"),
   associated_target_tooltip_extent: T("Select an existing extent."),
-  associated_target_validators_extent: [Validators.required]
+  associated_target_validators_extent: [Validators.required],
+
+  fc_mode_placeholder: T('Mode'),
+  fc_mode_tooltip: T(''),
+
+  fc_target_placeholder: T('Targets'),
+  fc_target_tooltip: T(''),
+
+  fc_initiators_placeholder: T('Connected Initiators'),
+  fc_initiators_tooltip: T(''),
 };

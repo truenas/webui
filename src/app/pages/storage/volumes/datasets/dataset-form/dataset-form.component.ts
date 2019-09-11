@@ -12,6 +12,9 @@ import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { Validators } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 
 interface DatasetFormData {
   name: string;
@@ -20,6 +23,7 @@ interface DatasetFormData {
   compression: string;
   atime: string;
   share_type: string;
+  aclmode: string;
   refquota: number;
   refquota_unit?: string;
   quota: number;
@@ -63,7 +67,8 @@ export class DatasetFormComponent implements Formconfiguration{
   protected recordsize_fg: any;
   protected recommended_size_number: any;
   protected recordsize_warning: any;
-
+  public namesInUse = [];
+  public nameIsCaseInsensitive = false;
 
   public parent: string;
   public data: any;
@@ -96,7 +101,7 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: helptext.dataset_form_name_tooltip,
       readonly: true,
       required: true,
-      validation: helptext.dataset_form_name_validation
+      validation: [Validators.required, forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive)],
     },
     {
       type: 'input',
@@ -129,16 +134,6 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'zle (runs of zeros)', value: 'ZLE' },
         { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
-    },
-    {
-      type: 'radio',
-      name: 'share_type',
-      placeholder: helptext.dataset_form_share_type_placeholder,
-      tooltip: helptext.dataset_form_share_type_tooltip,
-      options: [{label:'Unix', value: 'UNIX'},
-                {label:'Windows', value: 'WINDOWS'},
-                {label:'Mac', value: 'MAC'}],
-      value: 'UNIX'
     },
     {
       type: 'select',
@@ -422,6 +417,15 @@ export class DatasetFormComponent implements Formconfiguration{
     },
     {
       type: 'select',
+      name: 'aclmode',
+      placeholder: helptext.dataset_form_aclmode_placeholder,
+      tooltip: helptext.dataset_form_aclmode_tooltip,
+      options: [{label:'Passthrough', value: 'PASSTHROUGH'},
+                {label:'Restricted', value: 'RESTRICTED'}],
+      value: 'PASSTHROUGH'
+    },
+    {
+      type: 'select',
       name: 'casesensitivity',
       placeholder: helptext.dataset_form_casesensitivity_placeholder,
       tooltip: helptext.dataset_form_casesensitivity_tooltip,
@@ -431,8 +435,18 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'Mixed', value: 'MIXED' }
       ],
       value: 'SENSITIVE'
+    },
+    {
+      type: 'select',
+      name: 'share_type',
+      placeholder: helptext.dataset_form_share_type_placeholder,
+      tooltip: helptext.dataset_form_share_type_tooltip,
+      options: [{label:'Generic', value: 'GENERIC'},
+                {label:'SMB', value: 'SMB'}],
+      value: 'GENERIC',
+      disabled: true,
+      isHidden: true,
     }
-
   ];
 
   public advanced_field: Array<any> = [
@@ -452,7 +466,8 @@ export class DatasetFormComponent implements Formconfiguration{
     'quota_warning',
     'quota_critical',
     'refquota_warning',
-    'refquota_critical'
+    'refquota_critical',
+    'aclmode'
 
   ];
 
@@ -516,7 +531,7 @@ export class DatasetFormComponent implements Formconfiguration{
         const unit = field + '_unit';
         if (this.OrigDec[field] !== data[field] || this.OrigUnit[field] !== data[unit]) {
           data[field] = Math.round(data[field] * this.byteMap[data[unit]]);
-        } else { 
+        } else {
           data[field] = this.OrigSize[field];
         }
       }
@@ -553,15 +568,52 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('casesensitivity',true);
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
+    } else {
+      entityForm.setDisabled('share_type', false, false);
+      entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
+        this.nameIsCaseInsensitive = this.nameIsCaseInsensitive;
+        const field = _.find(this.fieldConfig, {name: "name"});
+        field['hasErrors'] = false;
+        field['errors'] = '';
+        if (this.nameIsCaseInsensitive) {
+          value = value.toLowerCase();
+        }
+        if (this.namesInUse.includes(value)) {
+          let sensitivity;
+          this.nameIsCaseInsensitive ? sensitivity = '(This field is not case-sensitive).' : sensitivity = '';
+          field['hasErrors'] = true;
+          field['errors'] = T(`The name <em>${value}</em> is already in use. ${sensitivity}`);
+        }
+      })
     }
+
+    entityForm.formGroup.get('share_type').valueChanges.pipe(filter(shareType => !!shareType && entityForm.isNew)).subscribe(shareType => {
+      const aclControl = entityForm.formGroup.get('aclmode');
+      const caseControl = entityForm.formGroup.get('casesensitivity');
+      if (shareType === 'SMB') {
+        aclControl.setValue('RESTRICTED');
+        caseControl.setValue('INSENSITIVE');
+        aclControl.disable();
+        caseControl.disable();
+      } else {
+        aclControl.setValue('PASSTHROUGH');
+        caseControl.setValue('SENSITIVE');
+        aclControl.enable();
+        caseControl.enable();
+      }
+
+      aclControl.updateValueAndValidity();
+      caseControl.updateValueAndValidity();
+    });
+
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
     this.recordsize_field = _.find(this.fieldConfig, {name:'recordsize'});
     this.recordsize_fg.valueChanges.subscribe((record_size)=>{
       const record_size_number = parseInt(this.reverseRecordSizeMap[record_size],10);
       if(this.minimum_recommended_dataset_recordsize && this.recommended_size_number){
-        this.recordsize_warning = helptext.dataset_form_warning_1 + 
-          this.minimum_recommended_dataset_recordsize + 
+        this.recordsize_warning = helptext.dataset_form_warning_1 +
+          this.minimum_recommended_dataset_recordsize +
           helptext.dataset_form_warning_2;
         if (record_size_number < this.recommended_size_number) {
           this.recordsize_field.warnings = this.recordsize_warning;
@@ -599,6 +651,22 @@ export class DatasetFormComponent implements Formconfiguration{
         this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
       });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
+        let children = (pk_dataset[0].children);
+        if (pk_dataset[0].casesensitivity.value === 'SENSITIVE') {
+          this.nameIsCaseInsensitive = false;
+        } else {
+          this.nameIsCaseInsensitive = true;
+        }
+        if (children.length > 0) {
+          for (let i in children) {
+            if (this.nameIsCaseInsensitive) {
+              this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0].toLowerCase());
+            } else {
+              this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+            }
+          };
+        };
+
       if(this.isNew){
         const sync = _.find(this.fieldConfig, {name:'sync'});
         const compression = _.find(this.fieldConfig, {name:'compression'});
@@ -641,22 +709,22 @@ export class DatasetFormComponent implements Formconfiguration{
               '512':'512',
               '1K':'1K',
               '2K':'2K',
-            }; 
+            };
             if ( current_dataset.hasOwnProperty("recordsize") && current_dataset['recordsize'].value ) {
                 _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset['recordsize'].value})['hiddenFromDisplay'] = false
-            } 
+            }
             if ( current_dataset.hasOwnProperty("quota") && current_dataset['quota'].rawvalue === '0' ) {
               entityForm.formGroup.controls['quota_unit'].setValue('M');
-            } 
+            }
             if ( current_dataset.hasOwnProperty("refquota")&& current_dataset['refquota'].rawvalue === '0' ) {
               entityForm.formGroup.controls['refquota_unit'].setValue('M');
-            } 
+            }
             if ( current_dataset.hasOwnProperty("reservation") && current_dataset['reservation'].rawvalue === '0' ) {
               entityForm.formGroup.controls['reservation_unit'].setValue('M');
-            } 
+            }
             if ( current_dataset.hasOwnProperty("refreservation") && current_dataset['refreservation'].rawvalue === '0' ) {
               entityForm.formGroup.controls['refreservation_unit'].setValue('M');
-            }  
+            }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
@@ -717,7 +785,7 @@ export class DatasetFormComponent implements Formconfiguration{
             if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
               readonly_value = 'INHERIT';
             }
-            let atime_value = pk_dataset[0].exec.value;
+            let atime_value = pk_dataset[0].atime.value;
             if (pk_dataset[0].atime.source === 'DEFAULT' || pk_dataset[0].atime.source === 'INHERITED') {
               atime_value = 'INHERIT';
             }
@@ -768,8 +836,9 @@ export class DatasetFormComponent implements Formconfiguration{
         name: this.getFieldValueOrRaw(wsResponse.name),
         atime: this.getFieldValueOrRaw(wsResponse.atime),
         share_type: this.getFieldValueOrRaw(wsResponse.share_type),
+        aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
         casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
-        comments: this.getFieldValueOrRaw(wsResponse.comments),
+        comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
         compression: this.getFieldValueOrRaw(wsResponse.compression),
         copies: this.getFieldValueOrRaw(wsResponse.copies),
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),

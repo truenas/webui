@@ -21,7 +21,7 @@ import { FieldRelationService } from '../../common/entity/entity-form/services/f
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import helptext from '../../../helptext/jails/jails-add';
+import helptext from '../../../helptext/jails/jail-configuration';
 
 @Component({
   selector: 'jail-add',
@@ -48,7 +48,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       placeholder: helptext.uuid_placeholder,
       tooltip: helptext.uuid_tooltip,
       required: true,
-      validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
+      validation: [ regexValidator(this.jailService.jailNameRegex) ],
       blurStatus: true,
       blurEvent: this.blurEvent,
       parent: this
@@ -80,6 +80,17 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       validation: [ Validators.required ],
     },
     {
+      type: 'radio',
+      name: 'https',
+      placeholder: helptext.https_placeholder,
+      options: [
+        {label:'HTTPS', value: true, tooltip: helptext.https_tooltip,},
+        {label:'HTTP', value: false, tooltip: helptext.http_tooltip,},
+      ],
+      value: true,
+      isHidden: true,
+    },
+    {
       type: 'checkbox',
       name: 'dhcp',
       placeholder: helptext.dhcp_placeholder,
@@ -103,12 +114,20 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       name: 'vnet',
       placeholder: helptext.vnet_placeholder,
       tooltip: helptext.vnet_tooltip,
+      value: false,
     },
     {
       type: 'checkbox',
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
     },
     {
       type: 'list',
@@ -965,13 +984,13 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     'wallclock',
   ];
 
-  protected currentServerVersion: any;
   protected ip4_interfaceField: any;
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
   protected vnet_default_interfaceField:any;
   protected template_list: string[];
+  protected unfetchedRelease = [];
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -1013,11 +1032,11 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
     this.template_list = new Array<string>();
     // get jail templates as release options
-    this.ws.call('jail.list_resource', ["TEMPLATE"]).subscribe(
-      (res) => {
-        for (const i in res) {
-          this.template_list.push(res[i][1]);
-          this.releaseField.options.push({ label: res[i][1] + '(template)', value: res[i][1] });
+    this.jailService.getTemplates().subscribe(
+      (templates) => {
+        for (const template of templates) {
+          this.template_list.push(template.host_hostuuid);
+          this.releaseField.options.push({ label: template.host_hostuuid + ' (template)', value: template.host_hostuuid });
         }
       },
       (err) => {
@@ -1025,50 +1044,27 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       }
     )
 
-    this.ws.call('system.info').subscribe((res) => {
-      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-      this.jailService.getLocalReleaseChoices().subscribe(
-        (res_local) => {
-          for (let j in res_local) {
-            let rlVersion = Number(_.split(res_local[j], '-')[0]);
-            if (this.currentServerVersion >= Math.floor(rlVersion)) {
-              this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-            }
-          }
-          this.jailService.getRemoteReleaseChoices().subscribe(
-            (res_remote) => {
-              for (let i in res_remote) {
-                if (_.indexOf(res_local, res_remote[i]) < 0) {
-                  let rmVersion = Number(_.split(res_remote[i], '-')[0]);
-                  if (this.currentServerVersion >= Math.floor(rmVersion)) {
-                    this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-                  }
-                }
-              }
-            },
-            (res_remote) => {
-              this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.reason, res_remote.trace.formatted);
-            });
-        },
-        (res_local) => {
-          this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.reason, res_local.trace.formatted);
-        });
-    },
-    (res) => {
-      new EntityUtils().handleWSError(this, res, this.dialogService);
-    });
+    this.jailService.getReleaseChoices().subscribe(
+      (releases) => {
+        for (const item in releases) {
+          this.releaseField.options.push({ label: item, value: releases[item] });
+        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      }
+    );
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_addr'}).templateListField[0];
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_addr'}).templateListField[0];
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
 
-    // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
-        for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
-          this.vnet_default_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        for (const i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.vnet_default_interfaceField.options.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{
@@ -1086,15 +1082,28 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       }
     }
 
+    const httpsField =  _.find(this.formFileds, {'name': 'https'});
+    this.formGroup.controls['release'].valueChanges.subscribe((res) => {
+      httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
+    });
+
     this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
       if (res) {
         this.formGroup.controls['vnet'].setValue(true);
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = true;
         this.formGroup.controls['bpf'].setValue(true);
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = true;
+
+        if (!this.formGroup.controls['nat'].disabled) {
+          this.setDisabled('nat', true);
+        }
       } else {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
-         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+
+        if (this.formGroup.controls['nat'].disabled) {
+          this.setDisabled('nat', false);
+        }
       }
     });
     this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
@@ -1294,7 +1303,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
               }
               delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release' && i != 'basejail') {
+            if (i != 'uuid' && i != 'release' && i != 'basejail' && i != 'https') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }

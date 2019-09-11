@@ -1,0 +1,86 @@
+<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
+  <div class="card-container  front">
+    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <mat-card-content>
+        <mat-toolbar-row >
+
+          <!-- Mobile Only: Exit widget -->
+          <button fxHide.gt-xs class="mat-card-title-text" mat-icon-button color="default" >
+            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
+          </button><span fxHide.gt-xs>&nbsp;&nbsp;</span>
+
+          <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
+
+            <div class="controls">
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/memory'])">
+                <mat-icon role="img"
+                  matTooltip="Memory Reports"
+                  matTooltipPosition="above"
+                  aria-label="Memory Reports">
+                    insert_chart
+                </mat-icon>
+              </button>
+            </div>
+
+        </mat-toolbar-row>
+
+
+        <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="column">
+         
+          <mat-spinner [diameter]="40" *ngIf="!memData" style="margin: 0 auto;"></mat-spinner>
+        
+          <h1 fxFlex="100" class="memory-used">
+            <span *ngIf="memData">
+              <span>{{memData.data[0][1]}}</span>
+              <span class="memory-used-units">GiB</span>
+            </span>
+          </h1> 
+          <div fxFlex="100" class="memory-used-caption">
+            <span *ngIf="memData">
+              free of {{memData.max}}GiB total
+            </span>
+          </div>
+
+          <!-- Chart --> 
+          <div fxFlex="100"  fxFlex.xs="80" id="memory-usage-chart" class="bar-chart"></div>
+
+          <!-- Legend --> 
+          <div fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
+            <div *ngIf="memData; else noLegend" 
+              id="cpu-load-cores-legend-values" 
+              fxFlex 
+              fxLayout="row wrap" fxLayout.xs="row wrap"
+              fxLayoutAlign="space-around center">
+
+              <!-- Mobile -->
+              <div fxFlex="100" fxHide.gt-xs class="list-subheader">  <span>Legend</span></div>
+              <mat-list fxFlex="100" fxHide.gt-xs>
+                <mat-list-item *ngFor="let listItem of memData.data; let i=index"  class="legend-item">
+                  <div class="legend-swatch" [style.background-color]="trustedSecurity(colorPattern[i])"></div>
+                  <span class="label">{{listItem[0]}}:</span><span class="value">&nbsp;&nbsp; {{listItem[1]}} GiB</span>
+                </mat-list-item>
+              </mat-list>
+
+              <!-- Desktop -->
+              <div fxFlex="26" fxHide.xs *ngFor="let legendItem of memData.data; let i=index"  class="legend-item">
+                <div class="legend-swatch" [style.background-color]="trustedSecurity(colorPattern[i])"></div><span class="label">{{legendItem[0]}}:</span> {{legendItem[1]}} GiB
+              </div>
+
+            </div>
+          </div>
+
+          <ng-template #noLegend>
+            <div id="cpu-load-cores-legend-values" fxFlex fxLayout="row" fxLayoutAlign="space-around center">
+              <div fxFlex="100" class="legend-item chart-label">
+                <span class="label"></span>
+              </div>
+            </div>
+          </ng-template>
+
+        </div> 
+
+    </mat-card-content>
+  </mat-card>
+
+  </div>
+</div>

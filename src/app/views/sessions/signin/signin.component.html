@@ -67,7 +67,7 @@
                 <button name="signin_button2" mat-button class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
               </form>
             </ng-template>
-            <div id="legacy-btn-wrapper">
+            <div id="legacy-btn-wrapper" *ngIf='exposeLegacyUI'>
               <button mat-button color="default" class="mb-1 full-width" style="text-transform:capitalize !important;" (click)="onGoToLegacy()">{{"LEGACY WEB INTERFACE" | translate}}</button>
             </div>
           </span>
@@ -91,8 +91,13 @@
           </div>
         </div>
         <ng-template #notconnected>
-          <div class="disconnected">
-          <div class="fake-icon">?</div>  {{"Connecting to NAS... Make sure the NAS system is powered on and connected to the network." | translate}}
+          <div class="disconnected" *ngIf="product">
+            <div class="fake-icon">?</div>
+            <p>
+              {{"Connecting to " | translate}} {{product}}
+              {{"... Make sure the " | translate}} {{product}}
+              {{" system is powered on and connected to the network." | translate}}
+            </p>
           </div>
         </ng-template>
       </mat-card-content>

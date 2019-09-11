@@ -9,7 +9,7 @@ import replicationHelptext from '../../../../helptext/task-calendar/replication/
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
 import snapshotHelptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 
-import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService } from '../../../../services';
+import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
@@ -46,7 +46,10 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.name_placeholder,
                     tooltip: helptext.name_tooltip,
                     required: true,
-                    validation: [Validators.required]
+                    validation: [Validators.required],
+                    blurStatus: true,
+                    blurEvent: this.blurEvent,
+                    parent: this
                 },
                 {
                     type: 'select',
@@ -145,7 +148,7 @@ export class ReplicationWizardComponent {
                     tooltip: sshConnectionsHelptex.private_key_tooltip,
                     options: [
                         {
-                            label: 'Create New',
+                            label: 'Generate New',
                             value: 'NEW'
                         }
                     ],
@@ -296,22 +299,70 @@ export class ReplicationWizardComponent {
                 },
                 {
                     type: 'explorer',
-                    initial: '/mnt',
-                    explorerType: 'directory',
+                    initial: '',
+                    explorerType: 'dataset',
                     multiple: true,
-                    name: 'source_datasets',
+                    name: 'source_datasets_PUSH',
                     placeholder: replicationHelptext.source_datasets_placeholder,
                     tooltip: replicationHelptext.source_datasets_tooltip,
                     options: [],
+                    disabled: false,
                     required: true,
                     validation: [Validators.required],
-                }, {
-                    type: 'input',
-                    name: 'target_dataset',
+                    isHidden: true,
+                },
+                {
+                    type: 'explorer',
+                    name: 'target_dataset_PUSH',
                     placeholder: replicationHelptext.target_dataset_placeholder,
                     tooltip: replicationHelptext.target_dataset_tooltip,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
+                    disabled: false,
                     required: true,
                     validation: [Validators.required],
+                    isHidden: true,
+                },
+                {
+                    type: 'explorer',
+                    name: 'source_datasets_PULL',
+                    placeholder: replicationHelptext.source_datasets_placeholder,
+                    tooltip: replicationHelptext.source_datasets_placeholder,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
+                },
+                {
+                    type: 'explorer',
+                    initial: '',
+                    explorerType: 'dataset',
+                    name: 'target_dataset_PULL',
+                    placeholder: replicationHelptext.target_dataset_placeholder,
+                    tooltip: replicationHelptext.target_dataset_placeholder,
+                    options: [],
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
                 }, {
                     type: 'checkbox',
                     name: 'recursive',
@@ -427,8 +478,10 @@ export class ReplicationWizardComponent {
     ];
     protected replicationFieldGroup: any[] = [
         'direction',
-        'source_datasets',
-        'target_dataset',
+        'source_datasets_PUSH',
+        'target_dataset_PUSH',
+        'source_datasets_PULL',
+        'target_dataset_PULL',
         'recursive',
         'exclude',
         'auto',
@@ -465,8 +518,10 @@ export class ReplicationWizardComponent {
         'snapshot_begin': null,
         'snapshot_end': null,
         'direction': null,
-        'source_datasets': null,
-        'target_dataset': null,
+        'source_datasets_PUSH': null,
+        'target_dataset_PUSH': null,
+        'source_datasets_PULL': null,
+        'target_dataset_PULL': null,
         'recursive': null,
         'exclude': null,
         'auto': null,
@@ -494,11 +549,13 @@ export class ReplicationWizardComponent {
     }
 
     protected availSnapshottasks: any;
+    protected targetDatasetPush: any;
+    protected sourceDatasetPull: any;
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
-        private taskService: TaskService) { }
+        private taskService: TaskService, private storageService: StorageService) { }
 
     isCustActionVisible(id, stepperIndex) {
         if (stepperIndex == 0) {
@@ -535,20 +592,48 @@ export class ReplicationWizardComponent {
         this.entityWizard.formArray.controls[0].controls['transport'].valueChanges.subscribe((value) => {
             const ssh = value == 'SSH' ? true : false;
             this.disablefieldGroup(this.transportSSHnetcatFieldGroup, ssh, 0);
+            if (this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value === 'NEW') {
+                this.disablefieldGroup(['cipher'], !ssh, 0);
+            } else if (this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value != '') {
+                this.disablefieldGroup(['cipher'], !this.entityWizard.formArray.controls[0].controls['ssh_credentials'].disabled, 0);
+            }
         });
+
+        this.targetDatasetPush = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'target_dataset_PUSH' });
+        this.sourceDatasetPull = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'source_datasets_PULL' });
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].valueChanges.subscribe((value) => {
             const newSSH = value == 'NEW' ? true : false;
             this.disablefieldGroup([...this.sshFieldGroup, ...this.semiSSHFieldGroup, ...this.manualSSHFieldGroup], !newSSH, 0);
+            this.targetDatasetPush.disabled = newSSH;
+            this.sourceDatasetPull.disabled = newSSH;
             if (newSSH) {
+                this.blurEvent(this);
+                this.disablefieldGroup(['cipher'], this.entityWizard.formArray.controls[0].controls['transport'].value === 'SSH+NETCAT', 0);
                 this.entityWizard.formArray.controls[0].controls['setup_method'].setValue(this.entityWizard.formArray.controls[0].controls['setup_method'].value);
             }
+
+            for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
+                const explorerComponent = _.find(this.wizardConfig[1].fieldConfig, {name: item}).customTemplateStringOptions.explorerComponent;
+                if (explorerComponent) {
+                    explorerComponent.nodes = [{
+                        mountpoint: explorerComponent.config.initial,
+                        name: explorerComponent.config.initial,
+                        hasChildren: true
+                    }];
+                }
+            }
+
         });
         this.entityWizard.formArray.controls[0].controls['setup_method'].valueChanges.subscribe((value) => {
             const manual = value == 'manual' ? true : false;
             this.disablefieldGroup(this.semiSSHFieldGroup, manual, 0);
             this.disablefieldGroup(this.manualSSHFieldGroup, !manual, 0);
         });
-
+        this.entityWizard.formArray.controls[0].controls['private_key'].valueChanges.subscribe((value) => {
+            if (value == 'NEW') {
+                this.blurEvent(this);
+            }
+        });
         this.entityWizard.formArray.controls[0].controls['setup_method'].setValue('semiautomatic');
         this.entityWizard.formArray.controls[0].controls['ssh_credentials'].setValue('');
         this.entityWizard.formArray.controls[0].controls['transport'].setValue('SSH');
@@ -567,15 +652,12 @@ export class ReplicationWizardComponent {
         )
 
         const datasetField = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'dataset' });
-        this.taskService.getVolumeList().subscribe((res) => {
-            for (let i = 0; i < res.data.length; i++) {
-                const volume_list = new EntityUtils().flattenData(res.data[i].children);
-                for (const j in volume_list) {
-                    datasetField.options.push({ label: volume_list[j].path, value: volume_list[j].path });
-                }
-            }
-            datasetField.options = _.sortBy(datasetField.options, [function (o) { return o.label; }]);
-        });
+        this.storageService.getDatasetNameOptions().subscribe(
+            options => {
+                datasetField.options = _.sortBy(options, [o => o.label]);
+            },
+            error => new EntityUtils().handleWSError(this, error, this.dialogService)
+        )
 
         const snapshot_begin_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'snapshot_begin' });
         const snapshot_end_field = _.find(this.wizardConfig[1].fieldConfig, { name: 'snapshot_end' });
@@ -594,6 +676,11 @@ export class ReplicationWizardComponent {
             this.disablefieldGroup(['naming_schema'], disablePull, 1);
             this.disablefieldGroup(this.scheduleFieldGroup, disablePull || this.entityWizard.formArray.controls[1].controls['auto'].value == false, 1);
             this.disablefieldGroup(['periodic_snapshot_tasks'], !disablePull, 1);
+
+            this.disablefieldGroup(['source_datasets_PUSH', 'target_dataset_PUSH'], !disablePull, 1);
+            this.disablefieldGroup(['source_datasets_PULL', 'target_dataset_PULL'], disablePull, 1);
+            this.targetDatasetPush.disabled = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value == 'NEW' ? true : false;
+            this.sourceDatasetPull.disabled = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value == 'NEW' ? true : false;
         });
 
         this.entityWizard.formArray.controls[1].controls['periodic_snapshot_tasks'].valueChanges.subscribe((value) => {
@@ -603,7 +690,8 @@ export class ReplicationWizardComponent {
             if (!newSnapshot) {
                 const snapshottask = _.find(this.availSnapshottasks, {'id': value});
                 if (snapshottask) {
-                    this.entityWizard.formArray.controls[1].controls['source_datasets'].setValue(snapshottask['dataset']);
+                    const prop = this.entityWizard.formArray.controls[1].controls['direction'].value == 'PUSH' ? 'source_datasets_PUSH' : 'target_dataset_PULL';
+                    this.entityWizard.formArray.controls[1].controls[prop].setValue(snapshottask['dataset']);
                 }
             }
         });
@@ -641,7 +729,7 @@ export class ReplicationWizardComponent {
             Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
                 if (name in this.summaryObj) {
                     (<FormControl>control).valueChanges.subscribe(((value) => {
-                        if (value == undefined) {
+                        if (value == undefined || (<FormControl>control).disabled) {
                             this.summaryObj[name] = null;
                         } else {
                             this.summaryObj[name] = value;
@@ -675,8 +763,8 @@ export class ReplicationWizardComponent {
                 'FreeNAS/TrueNAS URL': this.summaryObj.url,
                 'Cipher': this.summaryObj.cipher,
             },
-            'Source Dataset': this.summaryObj.source_datasets,
-            'Target Dataset': this.summaryObj.target_dataset,
+            'Source Dataset': this.summaryObj['source_datasets_' + this.summaryObj.direction],
+            'Target Dataset': this.summaryObj['target_dataset_' + this.summaryObj.direction],
             'Recurisive': this.summaryObj.recursive,
             'Exclude Child Datasets': this.summaryObj.exclude,
             'Periodic Snapshot Tasks': this.summaryObj.periodic_snapshot_tasks,
@@ -742,7 +830,7 @@ export class ReplicationWizardComponent {
                 }
             )
         }
- 
+
         const createdItems = {
             private_key: null,
             ssh_credentials: null,
@@ -783,11 +871,20 @@ export class ReplicationWizardComponent {
         return this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).toPromise();
     }
 
+    parseLocalDS(value, prop) {
+        value[prop] = typeof value[prop] === "string" ? value[prop].split(' ') : value[prop];
+        for (let i = 0; i < value[prop].length; i++) {
+            if (_.startsWith(value[prop][i], '/mnt/')) {
+                value[prop][i] = value[prop][i].substring(5);
+            }
+        }
+        return value[prop];
+    }
     async doCreate(value, item) {
         let payload;
         if (item === 'private_key') {
             payload = {
-                name: value['name'] + '_keypair',
+                name: value['name'] + ' Key',
                 type: 'SSH_KEY_PAIR',
                 attributes: value['sshkeypair'],
             }
@@ -843,15 +940,15 @@ export class ReplicationWizardComponent {
                 transport: value['transport'],
             }
 
-            value['source_datasets'] = typeof value['source_datasets'] === "string" ? value['source_datasets'].split(' ') : value['source_datasets'];
-            for (let i = 0; i < value['source_datasets'].length; i++) {
-                if (_.startsWith(value['source_datasets'][i], '/mnt/')) {
-                    value['source_datasets'][i] = value['source_datasets'][i].substring(5);
-                }
-            }
             if (value['direction'] == 'PUSH') {
+                payload['source_datasets'] = this.parseLocalDS(value, 'source_datasets_PUSH');
+                payload['target_dataset'] = value['target_dataset_PUSH'];
+
                 payload["periodic_snapshot_tasks"] = value['periodic_snapshot_tasks'].toString().split(' ');
             } else {
+                payload['source_datasets'] =  value['source_datasets_PULL'].split(' ');
+                payload['target_dataset'] = this.parseLocalDS(value, 'target_dataset_PULL').join(' ');
+
                 payload['naming_schema'] = value['naming_schema'].split(' ');
                 if (value['schedule_picker']) {
                     payload['schedule'] = this.parsePickerTime(value['schedule_picker'], value['begin'], value['end']);
@@ -863,10 +960,12 @@ export class ReplicationWizardComponent {
                 }
             }
             for (const i of this.replicationFieldGroup) {
-                payload[i] = value[i];
+                if (!i.includes('dataset')) {
+                    payload[i] = value[i];
+                }
             }
         }
-       
+
         return this.ws.call(this.createCalls[item], [payload]).toPromise();
     }
 
@@ -894,5 +993,59 @@ export class ReplicationWizardComponent {
             begin: begin,
             end: end,
         };
+    }
+
+    getChildren(node) {
+        const transport = this.entityWizard.formArray.controls[0].controls['transport'].value;
+        const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials'].value;
+        return new Promise((resolve, reject) => {
+            this.replicationService.getRemoteDataset(transport,sshCredentials, this).then(
+                (res) => {
+                    resolve(res);
+                },
+                (err) => {
+                    node.collapse();
+                })
+        });
+    }
+
+    blurEvent(parent){
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = false;
+        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = '';
+        const name = parent.entityWizard.formGroup.value.formArray[0].name;
+        const privateKey = parent.entityWizard.formGroup.controls.formArray.controls[0].controls.private_key.value;
+        const sshConnection = parent.entityWizard.formGroup.controls.formArray.controls[0].controls.ssh_credentials.value;
+
+        const typeLabel = {
+            'SSH_CREDENTIALS': 'SSH Connection',
+            'SSH_KEY_PAIR': 'Private Key',
+        }
+        parent.ws.call('replication.query', [[['name', '=', name]]]).subscribe((res) => {
+            if (res.length > 0) {
+                _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Replication '${res[0].name}' already exists.`;
+                showError();
+            }
+        });
+        if (sshConnection == 'NEW') {
+            parent.ws.call('keychaincredential.query', [[['name', '=', name]]]).subscribe((res) => {
+                if (res.length > 0) {
+                    _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${typeLabel[res[0].type]} '${res[0].name}' already exists.`;
+                    showError();
+                }
+            });
+        }
+        if (privateKey == 'NEW') {
+            parent.ws.call('keychaincredential.query', [[['name', '=', name + ' Key']]]).subscribe((res) => {
+                if (res.length > 0) {
+                    _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `${typeLabel[res[0].type]} '${res[0].name}' already exists.`;
+                    showError();
+                }
+            });
+        }
+
+        function showError() {
+            _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
+            parent.entityWizard.formGroup.controls.formArray.controls[0].controls.name.setValue("");
+        }
     }
 }

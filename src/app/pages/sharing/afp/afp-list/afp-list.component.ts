@@ -1,7 +1,5 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
-
-import {RestService} from '../../../../services/rest.service';
+import { Component } from '@angular/core';
+import { delete_share_message } from 'app/helptext/sharing';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -11,24 +9,31 @@ import { T } from '../../../../translate-marker';
 export class AFPListComponent {
 
   public title = "AFP (Apple File Protocol)";
-  protected resource_name: string = 'sharing/afp/';
+  protected queryCall: string = 'sharing.afp.query';
+  protected wsDelete = 'sharing.afp.delete';
   protected route_add: string[] = [ 'sharing', 'afp', 'add' ];
   protected route_add_tooltip: string = "Add Apple (AFP) Share";
   protected route_edit: string[] = [ 'sharing', 'afp', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'afp', 'delete' ];
 
-  //constructor(_rest: RestService, _router: Router,) {}
-
   public columns: any[] = [
-    {name : T('Name'), prop : 'afp_name'},
-    {name : T('Path'), prop : 'afp_path'},
+    {name : T('Name'), prop : 'name', always_display: true},
+    {name : T('Path'), prop : 'path'},
   ];
+  public rowIdentifier = 'afp_name';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Apple (AFP) Share',
-      key_props: ['afp_name']
+      key_props: ['name']
     },
   };
+
+  public confirmDeleteDialog = {
+    message: delete_share_message,
+    isMessageComplete: true,
+    button: T('Unshare'),
+    buildTitle: share => `${T('Unshare')} ${share.name}`
+  }
 }

@@ -17,9 +17,10 @@ export class VMwareSnapshotListComponent {
   protected entityList: any;
 
   public columns: Array<any> = [
-    {name : 'Hostname', prop : 'hostname'}, {name : 'Username', prop : 'username'},
+    {name : 'Hostname', prop : 'hostname', always_display: true }, {name : 'Username', prop : 'username'},
     {name : 'filesystem', prop : 'filesystem'}, {name : 'datastore', prop : 'datastore'}
   ];
+  public rowIdentifier = 'hostname';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
@@ -42,12 +43,18 @@ export class VMwareSnapshotListComponent {
   getActions(row) {
     let actions = [];
     actions.push({
+      id: row.hostname,
+      icon: 'delete',
+      name: 'delete',
       label : T("Delete"),
       onClick : (row) => {
         this.entityList.doDelete(row);
       }
     });
       actions.push({
+        id: row.hostname,
+        icon: 'edit',
+        name: 'edit',
         label : T("Edit"),
         onClick : (row) => {
           this._router.navigate(new Array('/').concat(

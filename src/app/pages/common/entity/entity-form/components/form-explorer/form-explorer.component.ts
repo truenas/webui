@@ -6,11 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
+import { T } from '../../../../../../translate-marker';
 
 @Component({
   selector : 'form-explorer',
   templateUrl : './form-explorer.component.html',
-  styleUrls : [ 
+  styleUrls : [
                 '../dynamic-field/dynamic-field.css',
                 './form-explorer.component.scss'
               ],
@@ -23,6 +24,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   private treeVisible: boolean = false;
   private displayFieldName: string;
+  private rootSelectable: boolean;
 
   private actionMapping:IActionMapping = {
     mouse: {
@@ -33,6 +35,11 @@ export class FormExplorerComponent implements Field, OnInit {
         TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
       },
       click: (tree, node, $event) => {
+        if (node.isRoot && !this.rootSelectable) {
+          this.config.warnings = T('Root node is not a valid value');
+          return;
+        }
+        this.config.warnings = null;
         if (this.config.multiple) {
           TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
         } else {
@@ -44,7 +51,7 @@ export class FormExplorerComponent implements Field, OnInit {
     keys: {
       [KEYS.ENTER]: (tree, node, $event) => {
         this.setPath(node);
-        TREE_ACTIONS.FOCUS(tree, node, $event);  
+        TREE_ACTIONS.FOCUS(tree, node, $event);
       }
     }
   }
@@ -59,6 +66,7 @@ export class FormExplorerComponent implements Field, OnInit {
     nodeHeight: 23,
     allowDrag: true,
     useVirtualScroll: false,
+    useTriState: true
   }
 
 
@@ -67,15 +75,18 @@ export class FormExplorerComponent implements Field, OnInit {
 
   ngOnInit() {
     this.treeVisible = false;
+    this.rootSelectable = this.config.rootSelectable === undefined ? true : this.config.rootSelectable;
 
     if (this.config.multiple) {
       this.customTemplateStringOptions.useCheckbox = this.config.multiple;
+      this.customTemplateStringOptions.useTriState = this.config.tristate;
     }
 
     if (this.config.customTemplateStringOptions) {
       if (!this.config.customTemplateStringOptions.actionMapping) {
         this.config.customTemplateStringOptions.actionMapping = this.actionMapping;
       }
+      this.config.customTemplateStringOptions.explorerComponent = this;
       this.customTemplateStringOptions = this.config.customTemplateStringOptions;
       this.config.customTemplateStringOptions.explorer = this;
     }
@@ -84,7 +95,8 @@ export class FormExplorerComponent implements Field, OnInit {
       this.nodes = [{
         mountpoint: this.config.initial,
         name: this.config.initial,
-        hasChildren: true
+        hasChildren: true,
+        expanded: !this.rootSelectable,
       }];
     }
     else {
@@ -92,7 +104,8 @@ export class FormExplorerComponent implements Field, OnInit {
       this.nodes = [{
         name: this.config.initial,
         subTitle: this.config.initial,
-        hasChildren: true
+        hasChildren: true,
+        expanded: !this.rootSelectable,
       }];
     }
   }
@@ -108,13 +121,16 @@ export class FormExplorerComponent implements Field, OnInit {
       else if(this.config.explorerType === "file") {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
       }
+      else if (this.config.explorerType === "dataset") {
+        resolve(this.entityFormService.getPoolDatasets());
+      }
       else {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
-      }     
+      }
     });
   }
-  
-  
+
+
   private toggleTree() {
     this.treeVisible = !this.treeVisible;
   }
@@ -142,7 +158,7 @@ export class FormExplorerComponent implements Field, OnInit {
   valueHandler(selectedTreeNodes) {
     let res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
-        if (selectedTreeNodes[i].parent.isAllSelected) {
+        if (selectedTreeNodes[i].parent.isAllSelected && this.config.tristate) {
           let parent = selectedTreeNodes[i];
           while (parent && parent.isRoot != true && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
             parent = parent.parent;
@@ -151,7 +167,9 @@ export class FormExplorerComponent implements Field, OnInit {
             res.push(parent.data.name);
           }
         } else if (selectedTreeNodes[i].isAllSelected) {
-          res.push(selectedTreeNodes[i].data.name);
+          if (selectedTreeNodes[i].data.name !== '') {
+            res.push(selectedTreeNodes[i].data.name);
+          }
         }
     }
     this.group.controls[this.config.name].setValue(res);

@@ -20,76 +20,99 @@ xpaths = {
     'configButton': "//button[@id='action-button__WebDAV']",
     'wbdvPassword': "//div[@id='password']/mat-form-field/div/div/div/input",
     'wbdvPassword2': "//div[@id='password2']/mat-form-field/div/div/div/input",
-    'breadcrumbBar': "//div[@id='breadcrumb-bar']/ul/li/a",
-    'theEnd': "//a[contains(text(),'2')]"
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a",
+    'theEnd': "//a[contains(text(),'2')]",
+    'toDashboard': "//span[contains(.,'Dashboard')]",
+    'scrollToWebDav': "//datatable-row-wrapper[9]/datatable-body-row/div[2]/datatable-body-cell/div/div"
 }
 
 
-def test_01_turnon_webdav(wb_driver):
+def test_01_turnon_webdav(browser):
     # Click Service Menu
-    wb_driver.find_element_by_xpath(xpaths['navService']).click()
+    browser.find_element_by_xpath(xpaths['navService']).click()
     # check if the Services page is open
     time.sleep(1)
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Services" in page_data, page_data
     # scroll down
-    wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
-    time.sleep(2)
-    status_change(wb_driver, "17", "start")
+    scroll = browser.find_element_by_xpath(xpaths['scrollToWebDav'])
+    time.sleep(1)
+    browser.execute_script("arguments[0].scrollIntoView(true);", scroll)
+    time.sleep(1)
+    status_change(browser, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_checkif_webdav_on(wb_driver):
+def test_02_checkif_webdav_on(browser):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "17")
+    status_check(browser, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_03_configure_webdav(wb_driver):
+def test_03_configure_webdav(browser):
     time.sleep(1)
     # click on configure button
-    wb_driver.find_element_by_xpath(xpaths['configButton']).click()
+    browser.find_element_by_xpath(xpaths['configButton']).click()
     time.sleep(1)
     # Enter password newuserpassword
-    wb_driver.find_element_by_xpath(xpaths['wbdvPassword']).clear()
-    wb_driver.find_element_by_xpath(xpaths['wbdvPassword']).send_keys(psswrd)
+    browser.find_element_by_xpath(xpaths['wbdvPassword']).clear()
+    browser.find_element_by_xpath(xpaths['wbdvPassword']).send_keys(psswrd)
     # Enter password confirmation newuserpassword
-    wb_driver.find_element_by_xpath(xpaths['wbdvPassword2']).clear()
-    wb_driver.find_element_by_xpath(xpaths['wbdvPassword2']).send_keys(psswrd)
+    browser.find_element_by_xpath(xpaths['wbdvPassword2']).clear()
+    browser.find_element_by_xpath(xpaths['wbdvPassword2']).send_keys(psswrd)
     # Click on save button
-    wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
+    browser.find_element_by_xpath('//*[@id="save_button"]').click()
     # wait till saving is finished
     time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_04_turnoff_webdav(wb_driver):
+def test_04_turnoff_webdav(browser):
     # Click Service Menu
-    wb_driver.find_element_by_xpath(xpaths['navService']).click()
+    browser.find_element_by_xpath(xpaths['navService']).click()
     # scroll down
-    wb_driver.find_element_by_xpath(xpaths['theEnd']).click()
+    scroll = browser.find_element_by_xpath(xpaths['scrollToWebDav'])
+    time.sleep(1)
+    browser.execute_script("arguments[0].scrollIntoView(true);", scroll)
+    time.sleep(1)
     time.sleep(2)
-    status_change(wb_driver, "17", "stop")
+    status_change(browser, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_05_checkif_wedbdav_off(wb_driver):
+def test_05_checkif_wedbdav_off(browser):
     time.sleep(2)
     # status check
-    status_check(wb_driver, "17")
+    status_check(browser, "webdav")
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
+
+
+def test_06_return_to_dashboard(browser):
+    # Close the System Tab
+    browser.find_element_by_xpath(xpaths['toDashboard']).click()
+    time.sleep(1)
+    # get the ui element
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert page_data == "Dashboard", page_data
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(browser, script_name, test_name)

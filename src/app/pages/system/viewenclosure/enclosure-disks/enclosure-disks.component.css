@@ -128,6 +128,7 @@ nav.view-nav-bar{
   font-weight:300;
   font-size: 120%;
   line-height: 85%;
+  word-break: break-word;
 /*
     text-align: left;
     font-weight: 300;
@@ -159,6 +160,7 @@ nav.view-nav-bar{
   opacity:0; /* animations will change this */
   text-align:center;
   position:absolute;
+  padding:3px;
 }
 
 .view-card .dom-overlay .content .legend{
@@ -251,11 +253,14 @@ div.vdev-disk {
 }
 
 /*.view-card .mat-toolbar#Disks-toolbar,*/
-.view-card .mat-card-content#Disks-content{
-  opacity:0;
-  position:relative;
-  right: 100%;
+.view-card mat-card-content#Disks-content {
+  display:none;
 }
+
+.view-card mat-card-content#Disks-content.Disks {
+  display:block;
+}
+
 
 /*.view-card#Disks .mat-toolbar#Disks-toolbar,*/
 .view-card#Disks .mat-card-content#Disks-content{

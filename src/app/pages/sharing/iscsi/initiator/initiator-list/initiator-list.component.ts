@@ -18,7 +18,8 @@ export class InitiatorListComponent {
   public columns: Array<any> = [
     {
       name : 'Group ID',
-      prop : 'tag',
+      prop : 'id',
+      always_display: true
     },
     {
       name : 'Initiators',
@@ -33,12 +34,13 @@ export class InitiatorListComponent {
       prop : 'comment',
     },
   ];
+  public rowIdentifier = 'id';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Initiator',
-      key_props: ['tag']
+      key_props: ['id']
     },
   };
 

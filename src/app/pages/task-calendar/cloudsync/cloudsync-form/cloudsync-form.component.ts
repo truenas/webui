@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, DialogService, CloudCredentialService, EngineerModeService} from '../../../../services/';
+import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -13,6 +13,7 @@ import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
 import { Validators } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'cloudsync-add',
@@ -45,7 +46,7 @@ export class CloudsyncFormComponent implements OnInit {
       { label: 'PUSH', value: 'PUSH' },
       { label: 'PULL', value: 'PULL' },
     ],
-    value: 'PUSH',
+    value: 'PULL',
     required: true,
     validation : helptext.direction_validation,
   }, {
@@ -97,6 +98,7 @@ export class CloudsyncFormComponent implements OnInit {
     placeholder: helptext.folder_placeholder,
     tooltip: helptext.folder_tooltip,
     initial: '/',
+    value: '/',
     explorerType: 'directory',
     customTemplateStringOptions: {
       displayField: 'Path',
@@ -127,6 +129,23 @@ export class CloudsyncFormComponent implements OnInit {
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
     ],
+    value: "",
+    isHidden: true,
+  }, {
+    type: 'select',
+    name: 'storage_class',
+    placeholder: helptext.storage_class_placeholder,
+    tooltip: helptext.storage_class_tooltip,
+    options: [
+      {label: "---------", value: ""},
+      {label: "STANDARD", value: "STANDARD"},
+      {label: "REDUCED_REDUNDANCY", value: "REDUCED_REDUNDANCY"},
+      {label: "STANDARD_IA", value: "STANDARD_IA"},
+      {label: "ONEZONE_IA", value: "ONEZONE_IA"},
+      {label: "GLACIER", value: "GLACIER"},
+      {label: "DEEP_ARCHIVE", value: "DEEP_ARCHIVE"},
+    ],
+    value: '',
     isHidden: true,
   }, {
     type: 'input',
@@ -158,15 +177,22 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'transfer_mode',
     placeholder: helptext.transfer_mode_placeholder,
-    tooltip: helptext.transfer_mode_tooltip,
+    tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
     options: [
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
       { label: 'MOVE', value: 'MOVE' },
     ],
-    value: 'SYNC',
+    value: 'COPY',
     required: true,
     validation : helptext.transfer_mode_validation
+  },
+  {
+    type: 'paragraph',
+    name: 'transfer_mode_warning',
+    paraText: helptext.transfer_mode_warning_copy,
+    isLargeText: true,
+    paragraphIcon: 'add_to_photos'
   },
   {
     type: 'checkbox',
@@ -257,19 +283,12 @@ export class CloudsyncFormComponent implements OnInit {
     ]
   },
   {
-    type: 'textarea',
-    name: 'args',
-    placeholder: helptext.args_placeholder,
-    tooltip: helptext.args_tooltip,
-    value: "",
-    isHidden: true,
-  },
-  {
     type: 'scheduler',
     name: 'cloudsync_picker',
     placeholder: helptext.cloudsync_picker_placeholder,
     tooltip: helptext.cloudsync_picker_tooltip,
-    required: true
+    required: true,
+    value: "0 0 * * *",
   },
   {
     type: 'input',
@@ -314,7 +333,6 @@ export class CloudsyncFormComponent implements OnInit {
   protected bucket_field: any;
   protected bucket_input_field: any;
   protected folder_field: any;
-  protected argsField:any;
   public credentials_list = [];
 
   public formGroup: any;
@@ -326,6 +344,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected cloudcredential_query = 'cloudsync.credentials.query';
 
   protected providers: any;
+  protected taskSchemas = ['encryption', 'fast_list', 'b2-chunk-size', 'storage_class'];
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -334,8 +353,7 @@ export class CloudsyncFormComponent implements OnInit {
     protected loader: AppLoaderService,
     protected dialog: DialogService,
     protected ws: WebSocketService,
-    protected cloudcredentialService: CloudCredentialService,
-    protected engineerModeService: EngineerModeService) {
+    protected cloudcredentialService: CloudCredentialService) {
     this.cloudcredentialService.getProviders().subscribe((res) => {
       this.providers = res;
     });
@@ -462,14 +480,6 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.argsField = _.find(this.fieldConfig, { 'name': 'args' });
-    this.argsField.isHidden = localStorage.getItem('engineerMode') === 'true' ? false : true;
-
-    this.engineerModeService.engineerMode.subscribe((res) => {
-      this.argsField.isHidden = res === 'true' ? false : true;
-      this.setDisabled('args', this.argsField.isHidden, this.argsField.isHidden);
-    });
-
     this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
     this.bucket_input_field = _.find(this.fieldConfig, {'name': 'bucket_input'});
@@ -492,7 +502,8 @@ export class CloudsyncFormComponent implements OnInit {
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
-            if (_.find(this.providers, {"name": item.provider})['buckets']) {
+            const targetProvider = _.find(this.providers, {"name": item.provider});
+            if (targetProvider && targetProvider['buckets']) {
               this.loader.open();
               // update bucket fields name and tooltips based on provider
               if (item.provider == "AZUREBLOB" || item.provider == "HUBIC" ) {
@@ -535,25 +546,19 @@ export class CloudsyncFormComponent implements OnInit {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
             }
-            // enable/disable task schema properties
-            if (_.find(this.providers, {"name": item.provider})['task_schema']) {
-              const task_schema = _.find(this.providers, {"name": item.provider})['task_schema'];
-              if (task_schema.length == 0) {
-                this.setDisabled('task_encryption', true, true);
-                this.setDisabled('fast_list', true, true);
-                this.setDisabled('b2-chunk-size', true, true);
-              } else {
-                for (const i in task_schema) {
-                  if (task_schema[i].property == 'encryption') {
-                    this.setDisabled('task_encryption', false, false);
-                  } else {
-                    this.setDisabled(task_schema[i].property, false, false);
-                  }
-                }
-              }
+
+            const task_schema = _.find(this.providers, {"name": item.provider}) ?  _.find(this.providers, {"name": item.provider})['task_schema'] : [];
+
+            for (const i of this.taskSchemas) {
+              const tobeDisable = _.findIndex(task_schema, {property: i}) > -1 ? false : true;
+              this.setDisabled(i === 'encryption' ? 'task_encryption' : i, tobeDisable, tobeDisable);
             }
           }
         });
+      } else {
+        for (const i of this.taskSchemas) {
+          this.setDisabled(i === 'encryption' ? 'task_encryption' : i, true, true);
+        }
       }
     })
 
@@ -572,6 +577,31 @@ export class CloudsyncFormComponent implements OnInit {
       _.find(this.fieldConfig, {name: 'bwlimit'}).errors = null;
       this.formGroup.controls['bwlimit'].errors = null;
     });
+
+    // When user interacts with direction dropdown, change transfer_mode to COPY
+    this.formGroup
+      .get('direction')
+      .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== 'COPY'))
+      .subscribe(() => this.formGroup.get('transfer_mode').setValue('COPY'));
+
+    // Update transfer_mode paragraphs when the mode is changed
+    this.formGroup.get('transfer_mode').valueChanges.subscribe(mode => {
+      const paragraph = this.fieldConfig.find(config => config.name === 'transfer_mode_warning');
+      switch (mode) {
+        case 'SYNC':
+          paragraph.paraText = helptext.transfer_mode_warning_sync;
+          paragraph.paragraphIcon = 'sync';
+          break;
+        case 'MOVE':
+          paragraph.paraText = helptext.transfer_mode_warning_move;
+          paragraph.paragraphIcon = 'move_to_inbox';
+          break;
+        default:
+          paragraph.paraText = helptext.transfer_mode_warning_copy;
+          paragraph.paragraphIcon = 'add_to_photos';
+      }
+    });
+
     // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
@@ -640,7 +670,7 @@ export class CloudsyncFormComponent implements OnInit {
       for (let i = 0; i < data.bwlimit.length; i++) {
         if (data.bwlimit[i].bandwidth != null) {
           const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
-          const sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.suffix;
+          const sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
           if (bwlimit_str != "") {
             bwlimit_str += " " + sub_bwlimit;
           } else {
@@ -703,8 +733,12 @@ export class CloudsyncFormComponent implements OnInit {
     attributes['folder'] = value.folder;
     delete value.folder;
     if (value.task_encryption != undefined) {
-      attributes['encryption'] = value.task_encryption;
+      attributes['encryption'] = value.task_encryption === '' ? null : value.task_encryption;
       delete value.task_encryption;
+    }
+    if (value['storage_class'] != undefined) {
+      attributes['storage_class'] = value['storage_class'];
+      delete value['storage_class'];
     }
     if (value.fast_list != undefined) {
       attributes['fast_list'] = value.fast_list;

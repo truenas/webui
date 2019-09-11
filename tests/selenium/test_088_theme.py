@@ -15,39 +15,51 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'themeBar': "//*[@id='schemeToggle']/span/mat-icon",
-    'breadcrumbBar': '//*[@id="breadcrumb-bar"]/ul/li[2]/a'
+    'Setting': "//mat-icon[contains(.,'settings')]",
+    'Preferences': "//button[@name='settings-preferences']",
+    'SelectTheme': "//mat-select/div/div",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
 }
 
 theme_name = [
+    'iX Official',
     'iX Blue',
     'Dracula',
     'Solarized Dark',
-    'Solarized light',
+    'Midnight',
     'High Contrast',
     'iX Dark'
 ]
 
+theme_name = {
+    'iX Official': '//mat-option/span',
+    'iX Blue': '//mat-option[3]/span',
+    'Dracula': '//mat-option[4]/span',
+    'Solarized Dark': '//mat-option[5]/span',
+    'Midnight': '//mat-option[6]/span',
+    'High Contrast': '//mat-option[7]/span',
+    'iX Dark': '//mat-option[2]/span'
+}
 
-@pytest.mark.parametrize("theme", theme_name)
-def test_01_change_theme_to_(wb_driver, theme):
-    theme_change(wb_driver, theme)
+
+def test_01_go_settings_preferences(browser):
+    browser.find_element_by_xpath(xpaths['Setting']).click()
+    browser.find_element_by_xpath(xpaths['Preferences']).click()
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
+    find_select = is_element_present(browser, xpaths['SelectTheme'])
+    assert find_select is True, find_select
 
 
-def theme_change(wb_driver, theme):
-    # Click on the theme Button
-    wb_driver.find_element_by_xpath(xpaths['themeBar']).click()
+@pytest.mark.parametrize("theme", list(theme_name.keys()))
+def test_02_change_theme_to_(browser, theme):
+    browser.find_element_by_xpath(xpaths['SelectTheme']).click()
     time.sleep(1)
-    xpath = "//*[contains(text(), \'" + theme + "\'  )]"
-    ixblue = "//*[contains(text(), 'iX Blue')]"
-    if is_element_present(wb_driver, xpath):
-        print("attempting to click on theme: " + theme)
-        wb_driver.find_element_by_xpath(xpath).click()
-        time.sleep(2)
-    else:
-        print(" Theme not present so making theme default iX Blue")
-        wb_driver.find_element_by_xpath(ixblue).click()
-        time.sleep(2)
+    find_theme = is_element_present(browser, theme_name[theme])
+    assert find_theme is True, find_theme
+    browser.find_element_by_xpath(theme_name[theme]).click()
+    time.sleep(2)
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(browser, script_name, test_name)

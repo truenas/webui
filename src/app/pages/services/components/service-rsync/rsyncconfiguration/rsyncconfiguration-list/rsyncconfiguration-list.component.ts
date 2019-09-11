@@ -1,6 +1,7 @@
 import { Component, ElementRef } from '@angular/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { T } from '../../../../../../translate-marker';
 
 @Component({
     selector : 'app-rsync-module-list',
@@ -9,6 +10,7 @@ import { Subscription } from 'rxjs';
   export class RSYNCconfigurationListComponent {
     public title = "RSYNC Modules";
     protected queryCall = 'rsyncmod.query';
+    protected hasDetails = true;
     protected entityList: any;
     public busy: Subscription;
     public wsDelete = 'rsyncmod.delete'
@@ -17,20 +19,32 @@ import { Subscription } from 'rxjs';
     protected route_delete: string[] = ['services', 'rsync','rsync-module','delete' ];
 
     public columns: Array<any> = [
-        { name: 'Name', prop: 'name' },
-        { name: 'Comment', prop: 'comment' },    
-        { name: 'Path', prop: 'path' },
-        { name: 'Mode', prop: 'mode' },
-        { name: 'Maximum connections', prop: 'maxconn' },
-        { name: 'User', prop: 'user' },
-        { name: 'Group', prop: 'group' },
-        { name: 'Host Allow', prop: 'hostsallow' },
-        { name: 'Host Deny', prop: 'hostsdeny' },
-        { name: 'Auxiliary parameters', prop: 'auxiliary' },
+        { name: T('Name'), prop: 'name' },
+        { name: T('Comment'), prop: 'comment' },    
+        { name: T('Path'), prop: 'path' },
+        { name: T('Mode'), prop: 'mode' },
+        { name: T('Maximum connections'), prop: 'maxconn', hidden: true },
+        { name: T('User'), prop: 'user' },
+        { name: T('Group'), prop: 'group' },
+        { name: T('Host Allow'), prop: 'hostsallow', hidden: true },
+        { name: T('Host Deny'), prop: 'hostsdeny', hidden: true },
+        { name: T('Auxiliary parameters'), prop: 'auxiliary', hidden: true }
       ];
     public config: any = {
     paging : true,
     sorting : { columns : this.columns },
     };
-  
+
+    dataHandler(res) {
+      const rows = res.rows;
+      for (let i=0; i<rows.length; i++) {
+        rows[i].details = [];
+        rows[i].details.push({label: T("Maximum connections"), value:rows[i]["maxconn"]},
+                             {label: T("Host Allow"), value:rows[i]["hostsallow"]},
+                             {label: T("Host Deny"), value:rows[i]["hostsdeny"]},
+                             {label: T("Auxiliary parameters"), value:rows[i]["auxiliary"]}
+        );
+      }
+      
+    }
   }

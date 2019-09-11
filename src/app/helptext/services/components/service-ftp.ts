@@ -60,7 +60,6 @@ masqaddress_tooltip: T('Public IP address or hostname. Set if FTP clients\
 ssltls_certificate_placeholder : T('Certificate'),
 ssltls_certificate_tooltip: T('The SSL certificate to be used for TLS FTP connections.\
  To create a certificate, use <b>System --> Certificates</b>.'),
-ssltls_certificate_options : [{label:'-', value:null}],
 
 filemask_placeholder : T('File Permission'),
 filemask_tooltip: T('Sets default permissions for newly created files.'),
@@ -106,7 +105,7 @@ anonuserdlbw_validation: [rangeValidator(0), Validators.required],
 tls_placeholder : T('Enable TLS'),
 tls_tooltip: T('Set to enable encrypted connections. Requires a certificate\
  to be created or imported using\
- <a href="%%docurl%%/system.html#certificates"\
+ <a href="--docurl--/system.html#certificates"\
  target="_blank">Certificates</a>'),
 
 tls_policy_placeholder : T('TLS Policy'),

@@ -27,7 +27,7 @@ export class CloudCredentialsFormComponent {
   protected id: any;
   protected pk: any;
 
-  protected selectedProvider: string = 'AMAZON_CLOUD_DRIVE';
+  protected selectedProvider: string = 'S3';
   protected credentialsOauth = false;
   protected oauthURL: any;
 
@@ -45,44 +45,9 @@ export class CloudCredentialsFormComponent {
       name: 'provider',
       placeholder: helptext.provider.placeholder,
       options: [],
-      value: 'AMAZON_CLOUD_DRIVE',
+      value: this.selectedProvider,
       required: true,
       validation: helptext.provider.validation,
-    },
-    // Amazon_cloud_drive
-    {
-      type: 'input',
-      name: 'client_id-AMAZON_CLOUD_DRIVE',
-      placeholder: helptext.client_id_amazon_cloud_drive.placeholder,
-      tooltip: helptext.client_id_amazon_cloud_drive.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'AMAZON_CLOUD_DRIVE',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'client_secret-AMAZON_CLOUD_DRIVE',
-      placeholder: helptext.client_secret_amazon_cloud_drive.placeholder,
-      tooltip: helptext.client_secret_amazon_cloud_drive.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'AMAZON_CLOUD_DRIVE',
-           }]
-        }
-      ]
     },
     // Amazon_s3
     {
@@ -831,7 +796,7 @@ export class CloudCredentialsFormComponent {
   public custActions: Array<any> = [
     {
       id: 'authenticate',
-      name: T('Authenticate'),
+      name: T('LOGIN TO PROVIDER'),
       function: () => {
         window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
         const controls = this.entityForm.formGroup.controls;
@@ -862,8 +827,11 @@ export class CloudCredentialsFormComponent {
       id : 'validCredential',
       name : T('Verify Credential'),
       function : () => {
+        this.entityForm.loader.open();
+        this.entityForm.error = '';
         const attributes = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
+        this.beforeSubmit(value);
         let attr_name: string;
 
         for (const item in value) {
@@ -871,7 +839,7 @@ export class CloudCredentialsFormComponent {
             if (!this.entityForm.formGroup.controls[item].valid) {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
-            if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
+            if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3') {
               attr_name = item.split("-")[0];
               attributes[attr_name] = value[item];
             }
@@ -883,6 +851,7 @@ export class CloudCredentialsFormComponent {
 
         this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
           (res) => {
+            this.entityForm.loader.close();
             if (res.valid) {
               this.snackBar.open(T('The Credential is valid.'), T('Close'), { duration: 5000 });
             } else {
@@ -890,7 +859,8 @@ export class CloudCredentialsFormComponent {
             }
           },
           (err) => {
-            new EntityUtils().handleWSError(this.entityForm.conf, err);
+            this.entityForm.loader.close();
+            new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
           })
       }
     }
@@ -963,14 +933,17 @@ export class CloudCredentialsFormComponent {
     this.entityForm = entityForm;
     entityForm.submitFunction = this.submitFunction;
 
+    const providerField = _.find(this.fieldConfig, {'name' : 'provider'});
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
+      if (providerField.hasErrors) {
+        providerField.hasErrors = false;
+        providerField.errors = '';
+      }
+
       this.selectedProvider = res;
 
       this.oauthURL = _.find(this.providers, {'name': res}).credentials_oauth;
       this.credentialsOauth = this.oauthURL == null ? false : true;
-
-      entityForm.setDisabled(this.oauthClentIdField.name, !this.credentialsOauth, !this.credentialsOauth);
-      entityForm.setDisabled(this.oauthClentSecretField.name, !this.credentialsOauth, !this.credentialsOauth);
     });
     // preview service_account_credentials
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
@@ -991,9 +964,15 @@ export class CloudCredentialsFormComponent {
     });
   }
 
-  submitFunction() {
+  beforeSubmit(value) {
+    if (!this.credentialsOauth) {
+      delete value['client_id'];
+      delete value['client_secret'];
+    }
+  }
+
+  submitFunction(value) {
     const attributes = {};
-    const value = _.cloneDeep(this.formGroup.value);
     let attr_name: string;
 
     for (let item in value) {

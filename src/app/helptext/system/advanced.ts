@@ -1,6 +1,7 @@
 import { Validators } from "@angular/forms";
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { T } from "app/translate-marker";
+import global_helptext from '../global-helptext';
 
 export const helptext_system_advanced = {
   dialog_generate_debug_title: T("Generate Debug File"),
@@ -36,13 +37,17 @@ export const helptext_system_advanced = {
  DISCOURAGED</b>'),
   swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
 
+  enable_legacy_placeholder: T('Enable Legacy User Interface'),
+  enable_legacy_tooltip: T('WARNING: ') + global_helptext.legacyUIWarning,
+  enable_legacy_dialog: global_helptext.legacyUIWarning,
+
   autotune_placeholder: T('Enable autotune'),
   autotune_tooltip: T('Enables the autotune script which attempts to optimize\
  the system depending on the installed hardware.\
  <b>Warning:</b> Autotuning is only used as a temporary\
  measure and is not a permanent fix for system hardware\
  issues. See the\
- <a href="%%docurl%%/system.html#autotune"\
+ <a href="--docurl--/system.html#autotune"\
  target="_blank">Autotune section</a> of the guide for\
  more information.'),
 
@@ -76,7 +81,7 @@ export const helptext_system_advanced = {
   cpu_in_percentage_placeholder: T('Report CPU usage in percentage'),
   cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
-  sed_options_message_paragraph: T('<b>SED (<a href="%%docurl%%/system.html#self-encrypting-drives"\
+  sed_options_message_paragraph: T('<b>SED (<a href="--docurl--/system.html#self-encrypting-drives"\
  target="_blank">Self-Encrypting Drives</a>) Options</b>'),
 
   sed_user_placeholder: T('ATA Security User'),

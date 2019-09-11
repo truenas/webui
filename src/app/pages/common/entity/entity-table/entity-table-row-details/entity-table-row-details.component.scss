@@ -1,0 +1,33 @@
+:host {
+    display: block;
+    padding: 16px;
+
+    button {
+        padding: 8px 16px;
+    }
+
+    h4 {
+        font-style: bold;
+        line-height: 24px;
+        margin-bottom: 0;
+    }
+
+    p {
+        line-height: 24px;
+        margin: 0;
+    }
+
+    mat-icon.widget-icon {
+        cursor: pointer;
+        font-size: 24px;
+        line-height: 24px;
+    }
+
+    .wrapper__details {
+        padding-bottom: 12px;
+    }
+
+    .wrapper__action-buttons {
+        padding: 4px 0;
+    }
+}

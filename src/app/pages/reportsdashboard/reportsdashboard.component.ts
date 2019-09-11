@@ -1,29 +1,30 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
-import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
-import { Subject } from 'rxjs'; 
+import { Subject, BehaviorSubject } from 'rxjs'; 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { ReportComponent, Report } from './components/report/report.component';
+import { ReportsService } from './reports.service';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
+//import { PageEvent } from '@angular/material';
+import { ErdService } from 'app/services/erd.service';
+import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../translate-marker';
 import {
   RestService,
   SystemGeneralService,
   WebSocketService
 } from '../../services/';
-import { PageEvent } from '@angular/material';
-import { ErdService } from 'app/services/erd.service';
-import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../translate-marker';
 
-interface TabChartsMappingData {
-  keyName: string;
-  path: string;
-  chartConfigData: ChartConfigData[];
-  paginatedChartConfigData: ChartConfigData[]
+interface Tab {
+  label: string;
+  value: string;
 }
 
 @Component({
@@ -32,20 +33,30 @@ interface TabChartsMappingData {
   templateUrl: './reportsdashboard.html',
   providers: [SystemGeneralService]
 })
-export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChartConfigDataFunc, AfterViewInit {
+export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleChartConfigDataFunc,*/ AfterViewInit {
 
+  @ViewChild(CdkVirtualScrollViewport, {static:false}) viewport:CdkVirtualScrollViewport;
+  @ViewChild('container', {static:true}) container:ElementRef;
+  public scrollContainer:HTMLElement;
+  public scrolledIndex: number = 0;
+  public isFooterConsoleOpen;
 
-   // MdPaginator Inputs
-   paginationLength = 0;
-   paginationPageSize = 5;
-   paginationPageSizeOptions = [5, 10, 20];
-   paginationPageIndex = 0;
-   paginationPageEvent: PageEvent;
-   
-   setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
-     this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
-   }
-  
+  public diskReports: Report[];
+  public otherReports: Report[];
+  public activeReports: Report[] = [];
+
+  public activeTab: string = "CPU"; // Tabs (lower case only): CPU, Disk, Memory, Network, NFS, Partition?, System, Target, UPS, ZFS
+  public activeTabVerified: boolean = false;
+  public allTabs: Tab[] = [];
+  public loadingReports: boolean = false;
+
+  public displayList: number[] = [];
+  public visibleReports:number[] = [];
+
+  public totalVisibleReports:number = 4;
+  public viewportEnd: boolean = false;
+  public viewportOffset = new BehaviorSubject(null);
+
   // Report Builder Options (entity-form-embedded)
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
@@ -61,63 +72,229 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public fieldSets: FieldSet[];
   public diskReportConfigReady: boolean = false;
 
-    /*custActions: any[] = [
-      {
-        id: 'create-theme-link',
-        name: 'Create New Theme',
-        eventName:"CreateTheme"
-      }
-    ]*/
-  // End Report Builder Options
-
-  public info: any = {};
-  public ipAddress: any = [];
-  public drawTabs = false;
-  public tabChartsMappingDataArray: TabChartsMappingData[] = [];
-  public tabChartsMappingDataSelected: TabChartsMappingData;
-  public showSpinner: boolean = true;
-  public activeTab: string;
-  public filteredData: ChartConfigData[] = [];
-  public filteredPaginatedData: ChartConfigData[] = [];
-  public chartLayout = 'Grid'; // Defaults to grid layout
-  //@ViewChild('chartWidth') chartWidth: MatButtonToggleGroup; 
-  public isFooterConsoleOpen: boolean;
-  @ViewChild('pager') pagerElement;
-  
-  
-
-
-  constructor(private _lineChartService: LineChartService, private erdService: ErdService, 
-    public translate: TranslateService, private router:Router, private core:CoreService, 
+  constructor(private erdService: ErdService, 
+    public translate: TranslateService, 
+    private router:Router, 
+    private core:CoreService,
+    private rs: ReportsService,
     protected ws: WebSocketService) {
+
+    // EXAMPLE METHOD
+    //this.viewport.scrollToIndex(5);
   }
 
-  setupSubscriptions(){
-    this.target.subscribe((evt: CoreEvent) => {
-      switch(evt.name){
-        case 'FormSubmitted':
-          console.log(evt);
-          this.buildDiskReport(evt.data.devices, evt.data.metrics);
-          this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
-          //console.log(this.pagerElement);
-          //this.pagerElement.getNumberOfPages();
-          /*let list = Object.assign(this.tabChartsMappingDataSelected);
-          list.chartConfigData = this.filteredData;
-          this.setPaginationInfo(list);*/
-        break;
-        case 'ToolbarChanged':
-          if(evt.data.devices && evt.data.metrics){
-            this.buildDiskReport(evt.data.devices, evt.data.metrics);
-            this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
+  ngOnInit() { 
+    this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
+    this.scrollContainer.style.overflow = 'hidden';
+    
+    this.generateTabs();
+
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+      }
+    });
+ 
+    this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => { 
+      if (evt.data) {
+        let allReports = evt.data.map((report) => {
+          let list = [];
+          if(report.identifiers){
+            for(let i = 0; i < report.identifiers.length; i++){
+              list.push(true);
+            }
+          } else {
+            list.push(true);
           }
-        break;
+          report.isRendered = list;
+          return report;
+        });
+
+        this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
+
+        this.otherReports = allReports.filter((report) => !report.name.startsWith('disk') /*&& name !== 'df' && report.name !== 'uptime'*/);
+       
+        this.activateTabFromUrl();
       }
     });
 
-    this.target.next({name:"Refresh"});
+    this.core.emit({name:"ReportingGraphsRequest"});
+
   }
 
-  diskReportBuilderSetup(){
+  ngOnDestroy() {
+    this.scrollContainer.style.overflow = 'auto';
+    this.core.unregister({observerClass:this});
+  }
+
+  ngAfterViewInit(): void {
+    this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
+    
+    this.setupSubscriptions();
+  }
+
+  getVisibility(key){
+    const test = this.visibleReports.indexOf(key);
+    return test == -1 ? false : true;
+  }
+
+  getBatch(lastSeen: string){
+    // Do Stuff
+    console.log("getBatch Method");
+    return this.visibleReports;
+  }
+
+  nextBatch(evt, offset){
+    this.scrolledIndex = evt;
+  }
+
+  trackByIndex(i){
+    return i;
+  }
+
+
+  generateTabs(){
+      let labels = ['CPU', 'Disk', 'Memory', 'Network', 'NFS', 'Partition', 'System', 'Target', 'UPS', 'ZFS'];
+      labels.forEach((item) =>{
+        this.allTabs.push({label:item, value:item.toLowerCase()});
+      })
+  }
+
+
+  activateTabFromUrl (){ 
+    let subpath = this.router.url.split("/reportsdashboard/"); 
+    let tabFound = this.allTabs.find((tab) =>{
+      //return tab.path === subpath[1];
+      return tab.value === subpath[1];
+    });
+    this.updateActiveTab(tabFound);
+  }
+
+  isActiveTab(str:string){
+    let test: boolean;
+    if(!this.activeTab){ 
+      test = ('/reportsdashboard/' + str.toLowerCase()) == this.router.url;
+    } else {
+      test = (this.activeTab == str.toLowerCase());
+    }
+     return test;
+  }
+
+  updateActiveTab(tab:Tab){
+    
+    // Change the URL without reloading page/component
+    // the old fashioned way 
+    window.history.replaceState({}, '','/reportsdashboard/' + tab.value);
+
+    let pseudoRouteEvent = [
+      {
+        url: "/reportsdashboard/" + tab.value,
+        title:"Reporting",
+        breadcrumb:"Reporting",
+        disabled:true
+      },
+      {
+        url: "", 
+        title: tab.label,
+        breadcrumb: tab.label,
+        disabled:true
+      }
+    ]
+    
+    this.core.emit({name: "PseudoRouteChange", data: pseudoRouteEvent});
+
+    this.activateTab(tab.label); 
+
+    if(tab.label == 'Disk'){ this.diskReportBuilderSetup() }
+  }
+
+  navigateToTab(tabName){
+    const link = '/reportsdashboard/' + tabName.toLowerCase();
+    this.router.navigate([link]);
+  }
+
+
+  activateTab(name:string){
+    this.activeTab = name;
+    this.activeTabVerified = true;
+
+    let reportCategories = name == 'Disk' ? this.diskReports : this.otherReports.filter((report) => {
+      // Tabs: CPU, Disk, Memory, Network, NFS, Partition, System, Target, UPS, ZFS
+      let condition;
+      switch(name){
+        case 'CPU':
+          condition = (report.name == 'cpu' || report.name == 'load' || report.name == 'cputemp');
+          break;
+        case 'Memory':
+          condition = (report.name == 'memory' || report.name == 'swap');
+          break;
+        case 'Network':
+          condition = (report.name == 'interface');
+          break;
+        case 'NFS':
+          condition = (report.name == 'nfsstat');
+          break;
+        case 'Partition':
+          condition = (report.name == 'df');
+          break;
+        case 'System':
+          condition = (report.name == 'processes' || report.name == 'uptime');
+          break;
+        case 'Target':
+          condition = (report.name == 'ctl');
+          break;
+        case 'UPS':
+          condition = report.name.startsWith('ups');
+          break;
+        case 'ZFS':
+          condition = report.name.startsWith('arc');
+          break;
+      default:
+        condition = true;
+      }
+
+      return condition;
+    });
+
+    this.activeReports = this.flattenReports(reportCategories);
+    
+    if(name !== 'Disk'){
+      const keys = Object.keys(this.activeReports);
+      this.visibleReports = keys.map((v) => parseInt(v));
+    }
+  }
+
+  flattenReports(list:Report[]){
+    // Based on identifiers, create a single dimensional array of reports to render
+    let result = [];
+    list.forEach((report) => {
+      // Without identifiers
+    
+      // With identifiers
+      if(report.identifiers){
+        report.identifiers.forEach((item,index) => {
+          let r = Object.assign({}, report);
+          r.title = r.title.replace(/{identifier}/, item );
+
+          r.identifiers = [item];
+          if(report.isRendered[index]){
+            r.isRendered = [true];
+            result.push(r);
+          }
+        });
+      } else if(!report.identifiers && report.isRendered[0]) {
+        let r = Object.assign({}, report);
+        r.identifiers = [];
+        result.push(r);
+      }
+    });
+   
+    return result;
+  }
+
+// Disk Report Filtering
+
+diskReportBuilderSetup(){
 
     this.generateValues();
     
@@ -128,7 +305,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             name: 'devices',
             label: 'Devices',
             disabled:false,
-            options: this.diskDevices.map((v) => v.value), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
             //tooltip:'Choose a device for your report.',
           },
           {
@@ -136,7 +313,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             name: 'metrics',
             label: 'Metrics',
             disabled: false,
-            options: this.diskMetrics ? this.diskMetrics.map((v) => v.value) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            options: this.diskMetrics ? this.diskMetrics.map((v) => v) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
             //tooltip:'Choose a metric to display.',
           }
     ]
@@ -155,7 +332,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
             width:'calc(50% - 16px)',
             placeholder: 'Choose a Device',
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-            //value:[this.diskDevices[0]],
             required: true,
             multiple: true,
             tooltip:'Choose a device for your report.',
@@ -181,46 +357,25 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   }
 
   generateValues(){
-    let tab = this.tabChartsMappingDataArray.find(item => item.keyName == 'Disk');
-    let devices = [];
-    let deviceNames = [];
+    let devices = [];  
     let metrics = [];
-    let metricNames = [];
-    tab.chartConfigData.forEach((item) => {
-      let obj = item.dataList[0];
-      let src;
-      if(obj.source.includes('disk-')){
-        src = obj.source.replace('disk-', ''); 
-      } else if(obj.source.includes('disktemp-')){
-        src = obj.source.replace('disktemp-', '');
-      }
-      let dev = {label:src, value: src};
-      if(!deviceNames.includes(src)){ 
-        deviceNames.push(src);
-        devices.push(dev);
-      };
 
-      let metric;
-      let metricName;
-      if(obj.type == 'temperature'){
-        metricName = obj.type;
-        metric = {label: obj.type, value: obj.type};
-      } else {
-        metricName = obj.type.replace('disk_', '');
-        metric = {label: metricName, value: obj.type};
-      }
-      if(!metricNames.includes(metricName)){ 
-        metricNames.push(metricName);
-        metrics.push(metric);
-      };
+    this.diskReports[0].identifiers.forEach((item) => {
+      devices.push({label: item, value: item});
+    });
 
-      //console.log(metric);
-      //console.warn(this.diskMetrics)
-      //metrics.push(metric);
+    this.diskReports.forEach((item) => {
+      //if(item.name == 'disk'){ devices = item.identifiers }
+      let formatted = item.title.replace(/ \(.*\)/, '');// remove placeholders for identifiers eg. '({identifier})'
+      formatted = formatted.replace(/identifier/, '');
+      formatted = formatted.replace(/[{][}]/, '');
+      formatted = formatted.replace(/requests on/, '');
+      metrics.push({label: formatted, value: item.name});
     });
 
     this.diskDevices = devices;
     this.diskMetrics = metrics;
+
   }
 
   generateFieldConfig(){
@@ -232,342 +387,50 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.diskReportConfigReady = true;
   }
 
-  private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData, filteredConfigData?:ChartConfigData[]) {
-    let paginationChartData: ChartConfigData[] = new Array();
-    let sourceList = filteredConfigData ? filteredConfigData : tabChartsMappingDataSelected.chartConfigData;
-    sourceList.forEach((item)=>{paginationChartData.push(item)});
-
-    const beginIndex = this.paginationPageIndex * this.paginationPageSize;
-    const endIndex = beginIndex + this.paginationPageSize ;
-    if( beginIndex < paginationChartData.length && endIndex > paginationChartData.length ) {
-      paginationChartData = paginationChartData.slice(beginIndex, paginationChartData.length);
-    } else if( endIndex < paginationChartData.length ) {
-      paginationChartData = paginationChartData.slice(beginIndex, endIndex);
-    }
-
-    if(filteredConfigData){
-      this.filteredPaginatedData = paginationChartData; 
-    } else {
-      tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData; 
-    }
-
-    this.paginationLength = this.tabChartsMappingDataSelected.chartConfigData.length;
-    
-  }
-
-  ngOnInit() { 
-    this._lineChartService.getChartConfigData(/*this*/);
-
-    this.core.register({observerClass: this, eventName:"CacheConfigData"}).subscribe((evt:CoreEvent) => {
-      this.handleChartConfigDataFunc(evt.data);
-    });
-
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
-    });
-
-  }
-
-  ngOnDestroy() {
-    this.core.unregister({observerClass:this});
-  }
-
-  ngAfterViewInit(): void {
-    this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
-    this.setupSubscriptions();
-  }
-
-  /**
-   * The service returns back all sources as a flat list.  What I do in here is
-   * Go through the flat list.. And collect the ones I want for each Tab I want to show.
-   */
-  handleChartConfigDataFunc(chartConfigData: ChartConfigData[]) {
-  
-    const map: Map<string, TabChartsMappingData> = new Map<string, TabChartsMappingData>();
-
-    // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
-    map.set("CPU", {
-      keyName: T("CPU"),
-      path:"cpu",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-
-    });
-
-    map.set("Disk", {
-      keyName: T("Disk"),
-      path:"disk",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("Memory", {
-      keyName: T("Memory"),
-      path:"memory",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("Network", {
-      keyName: T("Network"),
-      path:"network",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-
-    map.set("Partition", {
-      keyName: T("Partition"),
-      path:"partition",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("System", {
-      keyName: T("System"),
-      path:"system",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("Target", {
-      keyName: T("Target"),
-      path:"target",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    map.set("ZFS", {
-      keyName: T("ZFS"),
-      path:"zfs",
-      chartConfigData: [],
-      paginatedChartConfigData: []
-    });
-
-    // Go through all the items.. Sticking each source in the appropraite bucket
-    // The non known buckets.. Just get one tab/one chart. (for now).. Will eventually 
-    // move towards.. just knowing the ones I want.
-    chartConfigData.forEach((chartConfigDataItem: ChartConfigData) => {
-      if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load" || chartConfigDataItem.title.startsWith("cputemp-")) {
-        const tab: TabChartsMappingData = map.get("CPU");
-        tab.chartConfigData.push(chartConfigDataItem);
-        // Clean up the title
-        if(chartConfigDataItem.title.startsWith('cputemp-')){
-          let spl = chartConfigDataItem.title.split("cputemp-");
-          chartConfigDataItem.title = "CPU Temperature (cpu" + spl[1] + ")";
-        } 
-
-        if(chartConfigDataItem.title == "Load"){
-          chartConfigDataItem.title = "CPU Load";
-        }
-
-
-      } else if (chartConfigDataItem.title.toLowerCase().startsWith("memory") || chartConfigDataItem.title.toLowerCase().startsWith("swap")) {
-        const tab: TabChartsMappingData = map.get("Memory");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.toLowerCase() === "processes") {
-        const tab: TabChartsMappingData = map.get("System");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("df-")) {
-        const tab: TabChartsMappingData = map.get("Partition");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("disk")) {
-        const tab: TabChartsMappingData = map.get("Disk");
-        tab.chartConfigData.push(chartConfigDataItem);
-        if(chartConfigDataItem.title.startsWith('disktemp-')){
-          let spl = chartConfigDataItem.title.split("disktemp-");
-          chartConfigDataItem.title = "Disk Temperature " + spl[1];
-        } 
-
-      } else if (chartConfigDataItem.title.startsWith("interface-")) {
-        const tab: TabChartsMappingData = map.get("Network");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("SCSI ")) {
-        const tab: TabChartsMappingData = map.get("Target");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } else if (chartConfigDataItem.title.startsWith("ZFS ")) {
-        const tab: TabChartsMappingData = map.get("ZFS");
-        tab.chartConfigData.push(chartConfigDataItem);
-
-      } 
-    });
-
-    this.tabChartsMappingDataArray.splice(0, this.tabChartsMappingDataArray.length);
-    map.forEach((value: TabChartsMappingData) => {
-
-      if (this.tabChartsMappingDataSelected === undefined) {
-        this.tabChartsMappingDataSelected = value;
-        this.setPaginationInfo( this.tabChartsMappingDataSelected );
-      }
-      this.tabChartsMappingDataArray.push(value);
-    });
-  
-        
-    // Put CPU and Load charts before the temperature charts
-    this.tabChartsMappingDataArray[0].chartConfigData.sort((a,b) => {return a.title > b.title ? 1 : -1;});
-    //console.log(this.tabChartsMappingDataArray.length);
-
-    this.drawTabs = true;
-    this.showSpinner = false;
-    this.activateTabFromUrl();
-  }// End handleChartConfigDataFunc Method
-  
-
-  activeTabToKeyname(){
-    if(this.activeTab){ return "false"}
-
-    let subpath = this.router.url.split("/reportsdashboard/"); 
-    let tabFound = this.tabChartsMappingDataArray.find((tab) =>{
-      //return tab.keyName.toLowerCase() === subpath[1];
-      return tab.path === subpath[1];
-    });
-    return tabFound.keyName;
-  }
-
-  activateTabFromUrl (){ 
-    let subpath = this.router.url.split("/reportsdashboard/"); 
-    let tabFound = this.tabChartsMappingDataArray.find((tab) =>{
-      //return tab.keyName.toLowerCase() === subpath[1];
-      return tab.path === subpath[1];
-    });
-    this.updateActiveTab(tabFound.keyName);
-  }
-
-  isActiveTab(str:string){
-    let test: boolean;
-    if(!this.activeTab){ 
-      test = ('/reportsdashboard/' + str.toLowerCase()) == this.router.url;
-    } else {
-      test = (this.activeTab == str.toLowerCase());
-    }
-     return test;
-  }
-
-  buildDiskReport(device: string | string[], metric: string | string[]){
-    // Convert strings to arrays
-    if(typeof device == "string"){ device = [device];}
-    if(typeof metric == "string"){ metric = [metric];}
-
-    // Find matches
-    const checkDevice = (item) => {
-      if(device[0] == 'all' || device[0] == '*'){
-        return true;
-      } else {
-        //return (item.dataList[0].source == 'disk-' + device || item.dataList[0].source == 'disktemp-' + device)
-        return ( device.includes(item.dataList[0].source.replace('disk-', '')) || device.includes(item.dataList[0].source.replace('disktemp-', '')) );
-      }
-    }
-    const checkMetric = (item) => {
-      if(metric[0] == 'all' || metric[0] == '*'){
-        return true;
-      } else {
-        return metric.includes(item.dataList[0].type)//item.dataList[0].type == metric;
-      }
-    }
-
-    let tab = this.tabChartsMappingDataArray.find(item => item.keyName == 'Disk');
-    let tabData = tab.chartConfigData.filter(item => (checkDevice(item) && checkMetric(item)) ); 
-    this.filteredData = tabData;
-
-    //TEST
-    //this.paginationLength = this.filteredData.length;
-  }
-
-  updateActiveTab(tabName:string){
-    
-    // Change the URL without reloading page/component
-    // the old fashioned way 
-    window.history.replaceState({}, '','/reportsdashboard/' + tabName.toLowerCase());
-
-    let pseudoRouteEvent = [
-      {
-        url: "/reportsdashboard/" + tabName.toLowerCase(),
-        title:"Reporting",
-        breadcrumb:"Reporting",
-        disabled:true
-      },
-      {
-        url: "", //"/reportsdashboard/" + tabName.toLowerCase(),
-        title: tabName,
-        breadcrumb: tabName,
-        disabled:true
-      }
-    ]
-    
-
-    this.core.emit({name: "PseudoRouteChange", data: pseudoRouteEvent});
-
-    // Simulate tab eventl
-    let evt = {
-      tab: {
-        textLabel: tabName
-      }
-    }
-    this.activeTab = tabName.toLowerCase(); 
-    this.tabSelectChangeHandler(evt);
-
-    if(tabName == 'Disk'){ this.diskReportBuilderSetup() }
-  }
-
-  navigateToTab(tabName){
-    const link = '/reportsdashboard/' + tabName.toLowerCase()
-    this.router.navigate([link]);
-  }
-
-  tabSelectChangeHandler($event) {
-    const selectedTabName: string = $event.tab.textLabel;
-    this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
-    this.paginationPageIndex = 0;
-    this.paginationPageSize = 5;
- 
-    if(this.activeTab == 'disk'){ 
-      this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
-    } else {
-      this.setPaginationInfo(this.tabChartsMappingDataSelected );
-    }
-    
-  }
-  
-  paginationUpdate($pageEvent: PageEvent) {
-   
-    this.paginationPageEvent = $pageEvent;
-    this.paginationPageIndex = this.paginationPageEvent.pageIndex;
-    this.paginationPageSize = this.paginationPageEvent.pageSize;
-    if(this.activeTab == 'disk'){ 
-      this.setPaginationInfo(this.tabChartsMappingDataSelected, this.filteredData );
-    } else {
-      this.setPaginationInfo(this.tabChartsMappingDataSelected );
-    }
-    
-  }
-
-
-  private getTabChartsMappingDataByName(name: string): TabChartsMappingData {
-    let foundTabChartsMappingData: TabChartsMappingData = null;
-
-    for (const item of this.tabChartsMappingDataArray) {
-      //fixme: using keynames for tab values is stupid and doesn't work well with translations
-      if (foundTabChartsMappingData !== null) {
+  setupSubscriptions(){
+    this.target.subscribe((evt: CoreEvent) => {
+      switch(evt.name){
+        case 'FormSubmitted':
+          this.buildDiskReport(evt.data.devices, evt.data.metrics);
+        break;
+        case 'ToolbarChanged':
+          if(evt.data.devices && evt.data.metrics){
+            this.buildDiskReport(evt.data.devices, evt.data.metrics);
+          }
         break;
       }
-      this.translate.get(item.keyName).subscribe((keyName) => {
-        if (name === keyName) {
-          foundTabChartsMappingData = item;
-        }
-      });
-    }
-    return foundTabChartsMappingData;
+    });
+
+    this.target.next({name:"Refresh"});
   }
 
-  setChartLayout(value:string){
-    this.chartLayout = value; 
+  buildDiskReport(device: string | any[], metric: string | any[]){
+    
+    // Convert strings to arrays
+    if(typeof device == "string"){
+      device = [device];
+    } else {
+      device = device.map((v) => v.value);
+    }
+    
+    if(typeof metric == "string"){ 
+      metric = [metric];
+    } else {
+      metric = metric.map((v) => v.value);
+    }
+
+    let visible = [];
+    this.activeReports.forEach((item, index) => {
+      const deviceMatch = device.indexOf(item.identifiers[0]) !== -1;
+      const metricMatch = metric.indexOf(item.name) !== -1;
+      const condition = (deviceMatch && metricMatch)
+      if(condition){
+        visible.push(index);
+      }
+    });
+
+    this.visibleReports = visible;
+
   }
 
 }

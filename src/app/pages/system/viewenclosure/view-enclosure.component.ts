@@ -6,12 +6,14 @@ import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.compon
 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
-import { SystemProfiler } from './enclosure-disks/system-profiler';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
 
 interface ViewConfig {
   name: string;
+  alias: string; // Used for tab label
   icon: string;
   id: number;
+  elementIndex?: number;
   showInNavbar: boolean;
 }
 
@@ -23,47 +25,25 @@ interface ViewConfig {
 export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
 
   public events:Subject<CoreEvent> ;
-  @ViewChild('navigation') nav: ElementRef
+  @ViewChild('navigation', { static: false}) nav: ElementRef
 
-  public currentView: string = 'Disks';
-  public system: SystemProfiler;
-  public system_product;
-  public selectedEnclosure: any;
-  public views: ViewConfig[] = [
-    { 
+  //public currentView: ViewConfig
+  public currentView: ViewConfig =  { 
       name: 'Disks',
+      alias: 'Disks',
       icon: "harddisk",
       id: 0,
       showInNavbar: true
-    },
-    { 
-      name: 'Cooling',
-      icon: "fan",
-      id: 1,
-      showInNavbar: true
-    },
-    { 
-      name: 'Power Supply',
-      icon: "power-socket",
-      id: 2,
-      showInNavbar: true
-    },
-    { 
-      name: 'Voltage',
-      icon: "flash",
-      id: 3,
-      showInNavbar: true
-    }/*,
-    { 
-      name: 'Pools',
-      icon: "any",
-      id: 4,
-      showInNavbar: false
-    }*/
-  ]
+  }
+   
+  public scrollContainer: HTMLElement;
+  public system: SystemProfiler;
+  public system_product;
+  public selectedEnclosure: any;
+  public views: ViewConfig[] = [];
 
   changeView(id){
-    this.currentView = this.views[id].name;
+    this.currentView = this.views[id];
   }
 
   constructor(private core: CoreService, protected router: Router){
@@ -94,6 +74,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
+      this.addViews();
     });
 
 
@@ -103,7 +84,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      this.system_product = 'M50'; // Just for testing on my FreeNAS box
+      this.system_product = evt.data.license.model;
       core.emit({name: 'EnclosureDataRequest', sender: this});
     });
 
@@ -111,17 +92,21 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   }
 
   ngAfterContentInit(){
+    this.scrollContainer = document.querySelector('.rightside-content-hold');
+    this.scrollContainer.style.overflow = 'hidden';
   }
 
   ngOnChanges(changes:SimpleChanges){
   }
 
   ngOnDestroy(){
-    this.core.unregister({observerClass:this})
+    this.core.unregister({observerClass:this});
+    this.scrollContainer.style.overflow = 'auto';
   }
 
   selectEnclosure(value){
     this.selectedEnclosure = this.system.profile[value];
+    this.addViews();
   }
 
   extractVisualizations(){
@@ -129,4 +114,73 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       this.events.next({name:"CanvasExtract", data: this.system.profile[index], sender:this});
     })
   }
+
+  addViews(){
+    let views = [];
+    let disks =  { 
+        name: 'Disks',
+        alias: 'Disks',
+        icon: "harddisk",
+        id: 0,
+        showInNavbar: true
+    }
+    
+    views.unshift(disks);
+    let matchIndex; 
+
+    this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element, index) => {
+      let view = { 
+        name: element.name,
+        alias: '',
+        icon: "",
+        id: views.length,
+        elementIndex: index,
+        showInNavbar: true
+      }
+
+      switch(element.name){
+        case "Cooling" :
+          view.alias = element.name;
+          view.icon = "fan";
+          views.push(view);
+        break;
+        case "Temperature Sensor" :
+          view.alias = "Temperature";
+          view.icon = "fan";
+          views.push(view);
+        break;
+        case "Voltage Sensor" :
+          view.alias = "Voltage";
+          view.icon = "flash";
+          views.push(view);
+        break;
+        case "Power Supply" :
+          view.alias = element.name;
+          view.icon = "flash";
+          views.push(view);
+        break;
+        case "SAS Connector" :
+          view.alias = "SAS";
+          view.icon = "flash";
+          views.push(view);
+        break;
+        case "Enclosure Services Controller Electronics":
+          view.alias = "Services";
+          view.icon = "flash";
+          views.push(view);
+        break;
+      }
+
+      if(view.alias == this.currentView.alias){ matchIndex = view.id;}
+    });
+
+    this.views = views;
+
+    if(matchIndex && matchIndex > 0){
+      this.currentView = views[matchIndex];
+    } else {
+      this.currentView = disks;
+    }
+  }
+
 }

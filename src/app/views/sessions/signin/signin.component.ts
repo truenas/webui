@@ -6,6 +6,7 @@ import { Http } from '@angular/http';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
+import productText from '../../../helptext/product';
 
 import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
@@ -19,17 +20,19 @@ import { ApiService } from 'app/core/services/api.service';
   styleUrls: ['./signin.component.scss']
 })
 export class SigninComponent implements OnInit {
-  @ViewChild(MatProgressBar) progressBar: MatProgressBar;
-  @ViewChild(MatButton) submitButton: MatButton;
+  @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
+  @ViewChild(MatButton, { static: false}) submitButton: MatButton;
 
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
+  public product = productText.product;
   public showPassword = false;
   public ha_info_ready = false;
   public checking_status = false;
   public copyrightYear = globalHelptext.copyright_year;
   private interval: any;
+  public exposeLegacyUI = false;
 
   signinData = {
     username: '',
@@ -40,9 +43,9 @@ export class SigninComponent implements OnInit {
   public failover_status = '';
   public failover_statuses = {
     'SINGLE': "",
-    'MASTER': T("Active storage controller."),
-    'BACKUP': T("Passive storage controller."),
-    'ELECTING': T("Electing storage controller."),
+    'MASTER': T(`Active ${globalHelptext.Ctrlr}.`),
+    'BACKUP': T(`Passive ${globalHelptext.Ctrlr}.`),
+    'ELECTING': T(`Electing ${globalHelptext.Ctrlr}.`),
     'IMPORTING': T("Importing pools."),
     'ERROR': T("Failover is in an error state.")
   }
@@ -74,10 +77,16 @@ export class SigninComponent implements OnInit {
         if (this.interval) {
           clearInterval(this.interval);
         }
-        setInterval(() => {
+        if (!this.is_freenas) {
           this.getHAStatus();
-        }, 5000);
+          setInterval(() => {
+            this.getHAStatus();
+          }, 6000);
+        }
         window.localStorage.setItem('is_freenas', res);
+        if (!this.is_freenas && window.localStorage.exposeLegacyUI === 'true') {
+          this.exposeLegacyUI = true;
+        }
       });
     }
   }
@@ -229,6 +238,7 @@ export class SigninComponent implements OnInit {
     this.ws.call('auth.generate_token', [300]).subscribe((result) => {
       if (result) {
         this.ws.token = result;
+        this.redirect()
       }
     });
   }
@@ -253,7 +263,9 @@ export class SigninComponent implements OnInit {
   }
 
   onGoToLegacy() {
-    this.dialogService.confirm(T("Log in to Legacy User Interface?"), "", true, T('Continue')).subscribe((res) => {
+    this.dialogService.confirm(T("Warning"),
+      globalHelptext.legacyUIWarning,
+       true, T('Continue to Legacy UI')).subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
       }

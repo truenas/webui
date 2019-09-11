@@ -16,7 +16,7 @@ order_tooltip : '',
 
 zvol_path_placeholder : 'Zvol',
 zvol_path_tooltip : 'Browse to an existing <a\
- href="%%docurl%%/storage.html#adding-zvols"\
+ href="--docurl--/storage.html#adding-zvols"\
  target="_blank">Zvol</a>.',
 zvol_path_validation : [Validators.required],
 options:[],
@@ -88,19 +88,22 @@ vnc_port_tooltip : T('Can be set to <i>0</i>, left empty for FreeNAS to\
  assign a port when the VM is started, or set to a\
  fixed, preferred port number.'),
 
-wait_placeholder : T('Delay VM Boot until VNC Connects'),
+wait_placeholder : T('Delay VM Boot Until VNC Connects'),
 wait_tooltip : T('Wait to start VM until VNC client connects.'),
 
 vnc_resolution_placeholder : T('Resolution'),
 vnc_resolution_tooltip : T('Select a screen resolution to use for VNC sessions.'),
 vnc_resolution_options : [
+  {label : '1920x1200', value : "1920x1200"},
   {label : '1920x1080', value : "1920x1080"},
+  {label : '1600x1200', value : "1600x1200"},
+  {label : '1600x900', value : "1600x900"},
   {label : '1400x1050', value : "1400x1050"},
   {label : '1280x1024', value : "1280x1024"},
-  {label : '1280x960', value : "1280x960"},
+  {label : '1280x720', value : "1280x720"},
   {label : '1024x768', value : '1024x768'},
   {label : '800x600', value : '800x600'},
-  {label : '640x480', value : '640x480'},
+  {label : '640x480', value : '640x480'}
 ],
 
 vnc_bind_placeholder : T('Bind'),

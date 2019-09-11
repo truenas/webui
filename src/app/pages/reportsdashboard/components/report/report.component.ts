@@ -1,15 +1,16 @@
 import { Component, AfterViewInit, Input, ViewChild, OnDestroy, OnChanges} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { WebSocketService } from 'app/services/';
+import { ReportsService } from '../../reports.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { Subject } from 'rxjs/Subject';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { LineChartComponent } from 'app/components/common/lineChart/lineChart.component';
+import { LineChartComponent } from '../lineChart/lineChart.component';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
-
 
 import * as moment from 'moment';
 import filesize from 'filesize';
@@ -37,6 +38,26 @@ interface LineChartConfig {
   legends:any;
 }
 
+export interface Report {
+  name: string;
+  title: string;
+  vertical_label: string;
+  identifiers?: string[];
+  isRendered?: boolean[];
+}
+
+export interface ReportData {
+  identifier?: string;
+  //units?: string;
+  start: number;
+  end: number;
+  aggregations: any;
+  legend: string[];
+  name: string;
+  step: number;
+  data: number[];
+}
+
 @Component({
   selector: 'report',
   templateUrl:'./report.component.html',
@@ -44,13 +65,28 @@ interface LineChartConfig {
 })
 export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges ,OnDestroy {
 
-  //Chart
-  @ViewChild(LineChartComponent) lineChart:LineChartComponent;
-
   // Labels
-  @Input() title:string = T("CPU Usage");
-  @Input() lineChartConfig;
+  @Input() localControls?: boolean = true;; 
+  @Input() report: Report;
+  @Input() identifier?: string;
+  @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
+
+
+  public data: ReportData;
+  public ready: boolean = false;
+  public isFN: string = window.localStorage['is_freenas'];
+  private delay: number = 1000; // delayed chart render time
+  
+  get reportTitle(){
+    return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
+  }
+
+  get aggregationKeys (){
+    return Object.keys(this.data.aggregations);
+  }
+
   public legendLabels: Subject<any> = new Subject();
+  public legendData: any = {};
   public subtitle:string = T("% of all cores");
   public altTitle: string = '';
   public altSubtitle: string = '';
@@ -94,20 +130,40 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   // Chart Options
-  //public showLegendValues:boolean = false;
+  public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
+  public chartColors: string[];
 
-  public startTime;
-  public endTime;
+  get startTime(){
+    return new Date(this.currentStartDate);
+  }
+  get endTime(){
+    return new Date(this.currentEndDate);
+  }
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, 
+    public translate: TranslateService,
+    private rs: ReportsService,
+    private ws: WebSocketService){
     super(translate); 
+    
+    this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
+      this.data = evt.data;
+    });
+    
+    this.core.register({observerClass:this, eventName:"LegendEvent-" + this.chartId}).subscribe((evt:CoreEvent) => {
+      this.legendData = evt.data;
+    });
 
-    setTimeout(() => {
-      if(!this.dataRcvd){
-        this.loader = true;
-      }
-    }, 5000)
+    this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
+      this.chartColors = this.processThemeColors(evt.data);
+    });
+
+    this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
+      this.chartColors = this.processThemeColors(evt.data);
+    });
+
+    this.core.emit({name:"ThemeDataRequest", sender:this});
   }
 
   ngOnDestroy(){
@@ -120,12 +176,35 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan)
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
   }
 
   ngOnChanges(changes){
-    /*if(changes.lineChartConfig){
-    }*/
+    if(changes.report){
+      if(changes.report.previousValue){
+        this.setupData(changes); 
+      } else if(!changes.report.previousValue){
+        setTimeout(() => {
+          this.ready = true;
+          this.setupData(changes); 
+        }, this.delay);
+      }
+    } 
+  }
+
+  private setupData(changes){
+      const zoom = this.zoomLevels[this.timeZoomIndex];
+      const rrdOptions = this.convertTimespan(zoom.timespan)
+      let identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
+      this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
+  }
+
+  private processThemeColors(theme):string[]{
+    //this.theme = theme;
+    let colors: string[] = [];
+    theme.accentColors.map((color) => {
+      colors.push(theme[color]);
+    }); 
+    return colors;
   }
 
   setChartInteractive(value:boolean){
@@ -141,7 +220,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    
+    let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   timeZoomOut(){
@@ -153,7 +234,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    
+    let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   stepBack(){
@@ -161,7 +244,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);  
+    
+    let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   stepForward(){
@@ -170,7 +255,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const rrdOptions = this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    this.lineChart.fetchData(rrdOptions, zoom.timeformat, zoom.culling);
+    
+    let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+    this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   // Convert timespan to start/end options for RRDTool
@@ -244,7 +331,16 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     }
   }
 
-  setChartData(evt:CoreEvent){
+  fetchReportData(rrdOptions, report:Report, identifier?: string){
+    // Report options
+    let params = identifier ? { name: report.name, identifier: identifier} : { name: report.name };
+
+    // Time scale options
+    const start = Math.floor(rrdOptions.start / 1000);
+    const end = Math.floor(rrdOptions.end / 1000);
+    let timeFrame = {"start": start, "end": end}; 
+  
+    this.core.emit({name:"ReportDataRequest", data:{report: report, params: params, timeFrame: timeFrame}, sender: this});
   }
 
   // Will be used for back of flip card

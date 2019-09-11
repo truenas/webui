@@ -1,5 +1,5 @@
-<div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow">
-    <ng-container>
+<div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']">
+    <ng-container *ngIf="listsFromArray?.controls">
         <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)">
             <div *ngFor="let field of config.listFields[i]; let ii = index" fxFlex="100%"
                 fxFlex.gt-xs="calc({{field.width}} - 16px)"
@@ -7,11 +7,28 @@
                 <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
             </div>
             <div class="list-action" [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
+              <div *ngIf="config.deleteButtonOnFirst; else defaultButtons">
+                    <button *ngIf="i === 0" mat-button color="primary" id="{{config.name+i}}" type="button"
+                        (click)="add()" [disabled]="listsFromArray.controls[i].disabled">
+                        {{config.addBtnMessage}}
+                    </button>
+                    <button mat-button color="accent" class="listBtn" type="button"
+                        (click)="delete(i)" [disabled]="listsFromArray.controls[i].disabled || listsFromArray.length === 1">
+                        {{"Delete" | translate}}
+                    </button>
+              </div>
+              <ng-template #defaultButtons>
                 <button *ngIf="i === 0; else deleteButton" mat-button color="primary" class="listBtn" type="button"
-                    (click)="add()" [disabled]="listsFromArray.controls[i].disabled">Add</button>
+                   (click)="add()" [disabled]="listsFromArray.controls[i].disabled">
+                   {{"Add" | translate}}
+                </button>
                 <ng-template #deleteButton>
-                    <button mat-button color="accent" class="listBtn" type="button" (click)="delete(i)" [disabled]="listsFromArray.controls[i].disabled">Delete</button>
+                    <button mat-button color="accent" class="listBtn" type="button" 
+                    (click)="delete(i)" [disabled]="listsFromArray.controls[i].disabled">
+                    {{"Delete" | translate}}
+                </button>
                 </ng-template>
+              </ng-template>
             </div>
         </div>
     </ng-container>

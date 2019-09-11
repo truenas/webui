@@ -1,34 +1,33 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges, OnDestroy } from '@angular/core';
-import { NgModel }   from '@angular/forms';
+import { ApplicationRef, Component, Injector, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import {RestService, WebSocketService} from 'app/services/';
+import { MatSnackBar } from '@angular/material';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subject } from 'rxjs';
 import { T } from '../../../../translate-marker';
 
+interface UserPreferences {
+  //Preferences Object Structure
+  platform:string; // FreeNAS || TrueNAS
+  timestamp:Date;
+  userTheme:string; // Theme name
+  customThemes?: Theme[];
+  favoriteThemes?: string[]; // Theme Names
+  showTooltips?:boolean; // Form Tooltips on/off // Deprecated
+  metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
+}
+   
+
 @Component({
   selector : 'general-preferences-form',
-  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="300px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<entity-form-embedded fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
 export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDestroy {
-
-  /*
-   //Preferences Object Structure
-   platform:string; // FreeNAS || TrueNAS
-   timestamp:Date;
-   userTheme:string; // Theme name
-   customThemes?: Theme[];
-   favoriteThemes?: string[]; // Theme Names
-   showTooltips:boolean; // Form Tooltips on/off
-   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
-
-   */
 
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
@@ -48,22 +47,19 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
         name:'General Preferences',
         class:'preferences',
         label:true,
-        width:'400px',
         config:[
           {
             type: 'select',
             name: 'userTheme',
-            width:'300px',
             placeholder: 'Choose Theme',
             options: this.themeOptions,
-            value:this.themeService.activeTheme,
+            value:this.prefs.preferences.userTheme,
             tooltip:'Choose a preferred theme.',
             class:'inline'
           },
           {
             type: 'checkbox',
             name: 'preferIconsOnly',
-            width:'300px',
             placeholder: 'Prefer buttons with icons only',
             value:this.preferIconsOnly,
             tooltip: 'Preserve screen space with icons and tooltips instead of text labels.',
@@ -71,17 +67,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           },
           {
             type: 'checkbox',
-            name: 'showTooltips',
-            width: '300px',
-            placeholder: 'Enable Help Text in Forms',
-            value: this.showTooltips,
-            tooltip: 'Display help icons in forms.',
-            class:'inline'
-          },
-          {
-            type: 'checkbox',
             name: 'allowPwToggle',
-            width: '300px',
             placeholder: 'Enable Password Toggle',
             value:this.allowPwToggle,
             tooltip: 'This option enables/disables a password toggle button.',
@@ -90,7 +76,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
           {
             type: 'checkbox',
             name: 'enableWarning',
-            width: '300px',
             placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
             value:this.enableWarning,
             tooltip: T('Show or hide a dialog to save the system\
@@ -102,14 +87,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       }
     ]
 
-    /*custActions: any[] = [
-      {
-        id: 'create-theme-link',
-        name: 'Create Theme',
-        eventName:"CreateTheme"
-      }
-    ]*/
-
     constructor(
       protected router: Router,
       protected rest: RestService,
@@ -118,12 +95,19 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       protected _appRef: ApplicationRef,
       public themeService:ThemeService,
       public prefs:PreferencesService,
+      public snackBar: MatSnackBar,
       private core:CoreService
     ) {}
 
     ngOnInit(){
       // Get current preferences so for form values
       this.init();
+    }
+    
+    afterInit(entity: any) {
+      entity.formGroup.controls['userTheme'].valueChanges.subscribe((theme) => {
+        this.themeService.changeTheme(theme);
+      })
     }
 
     ngOnChanges(changes){
@@ -147,6 +131,9 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
         switch(evt.name){
         case "FormSubmitted":
           this.core.emit({name:"ChangePreferences",data:evt.data});
+          this.snackBar.open(T('Changes Submitted'), T('close'), {
+            duration: 3000
+          });
           break;
         case "CreateTheme":
           this.router.navigate(new Array('').concat(['ui-preferences', 'create-theme']));
@@ -155,25 +142,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       });
       this.generateFieldConfig();
     }
-
-    /*afterInit(entityForm: any) {
-     }*/
-
-     /*setFavoriteFields(){
-       for(let i = 0; i < this.themeService.freenasThemes.length; i++){
-         let theme = this.themeService.freenasThemes[i];
-         let field = {
-           type: 'checkbox',
-           name: theme.name,
-           width: '200px',
-           placeholder:theme.label,
-           value: false,
-           tooltip: 'Add ' + theme.label + ' to favorites',
-           class:'inline'
-         }
-         this.favoriteFields.push(field);
-       }
-     }*/
 
      setThemeOptions(){
        this.themeOptions.splice(0,this.themeOptions.length);
@@ -188,7 +156,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
      loadValues(themeName?:string){
        this.enableWarning = this.prefs.preferences.enableWarning
        this.allowPwToggle = this.prefs.preferences.allowPwToggle
-       this.showTooltips = this.prefs.preferences.showTooltips
+       this.showTooltips = true; //this.prefs.preferences.showTooltips
        this.preferIconsOnly = this.prefs.preferences.preferIconsOnly;
      }
 

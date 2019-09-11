@@ -12,19 +12,20 @@ import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
 import { AnimationService } from 'app/core/services/animation.service';
 import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
+import { DataService } from 'app/core/services/data.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { WebSocketService } from './services/ws.service';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from "@angular/material/icon";
 import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
-import { EngineerModeService } from './services/engineerMode.service';
+
+import productText from './helptext/product';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [EngineerModeService]
 })
 export class AppComponent {
   appTitle = 'FreeNAS';
@@ -44,10 +45,10 @@ export class AppComponent {
     private core: CoreService,
     public preferencesService: PreferencesService,
     public themeservice: ThemeService,
+    public cache: DataService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
-    public chartDataUtils: ChartDataUtilsService,
-    public engineerModeService: EngineerModeService) {
+    public chartDataUtils: ChartDataUtilsService) {
 
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
@@ -81,7 +82,27 @@ export class AppComponent {
       "truenas_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logo_full.svg")
     );
-    // this.title.setTitle('FreeNAS - ' + window.location.hostname);
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-text.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "freenas_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-full.svg")
+    );
+
+
+    const product = productText.product.trim();
+    this.title.setTitle(product + ' - ' + window.location.hostname);
+    if (product === "FreeNAS") {
+      this.setFavicon("assets/images/favicon-96x96.png");
+    } else {
+      this.setFavicon("assets/images/TrueNAS_favicon.png");
+    }
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";
@@ -110,6 +131,15 @@ export class AppComponent {
     });
   }
 
+  private setFavicon(str) {
+    const link = document.querySelector("link[rel*='icon']") || document.createElement("link")
+      link['rel'] = "icon";
+      link['type'] = "image/png";
+      // link.sizes = "16x16";
+      link['href'] = str;
+      document.getElementsByTagName('head')[0].appendChild(link);
+  }
+
   private detectBrowser(name){
     let N = navigator.appName;
     let UA = navigator.userAgent;
@@ -132,11 +162,5 @@ export class AppComponent {
     if(this.router.url === '/ui-preferences/create-theme' || this.router.url === '/ui-preferences/edit-theme'){
       snackBarRef.dismiss();
     }
-  }
-
-  onEnginnerMode() {
-    const tobeEngineerMode = localStorage.getItem('engineerMode') === 'true' ? 'false' : 'true';
-    localStorage.setItem('engineerMode', tobeEngineerMode);
-    this.engineerModeService.engineerMode.emit(tobeEngineerMode);
   }
 }

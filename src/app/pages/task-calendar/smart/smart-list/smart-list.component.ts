@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import helptext from './../../../../helptext/task-calendar/smart/smart';
 
 @Component({
   selector: 'app-smart-list',
@@ -13,13 +14,11 @@ export class SmartListComponent {
   protected wsDelete = "smart.test.delete";
 
   public columns: Array<any> = [
-    { name: 'Type', prop: 'type' },
-    { name: 'Short Description', prop: 'desc' },
-    { name: 'Hour', prop: 'hour' },
-    { name: 'Day of Month', prop: 'dom' },
-    { name: 'Month', prop: 'month' },
-    { name: 'Day of Week', prop: 'dow' },
+    { name: helptext.smartlist_column_type, prop: 'type', always_display: true },
+    { name: helptext.smartlist_column_description, prop: 'desc' },
+    { name: helptext.smartlist_column_schedule, prop: 'schedule' }
   ];
+  public rowIdentifier = 'type';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
@@ -29,14 +28,10 @@ export class SmartListComponent {
     },
   };
 
-  constructor() { }
-
-  dataHandler(entityList: any) {
-    for (let i = 0; i < entityList.rows.length; i++) {
-      entityList.rows[i].month = entityList.rows[i].schedule.month;
-      entityList.rows[i].dow = entityList.rows[i].schedule.dow;
-      entityList.rows[i].dom = entityList.rows[i].schedule.dom;
-      entityList.rows[i].hour = entityList.rows[i].schedule.hour;
+  resourceTransformIncomingRestData(data: any) {
+    for (const test of data) {
+      test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
     }
+    return data;
   }
 }

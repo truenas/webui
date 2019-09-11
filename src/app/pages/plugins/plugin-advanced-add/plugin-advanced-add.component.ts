@@ -21,7 +21,7 @@ import { FieldRelationService } from '../../common/entity/entity-form/services/f
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import helptext from '../../../helptext/jails/jails-add';
+import helptext from '../../../helptext/jails/jail-configuration';
 
 @Component({
   selector: 'app-plugin-advanced-add',
@@ -31,9 +31,9 @@ import helptext from '../../../helptext/jails/jails-add';
 })
 export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
 
-  protected addCall: string = 'jail.fetch';
-  public route_goback: string[] = ['plugins', 'available'];
-  public route_success: string[] = ['plugins', 'installed'];
+  protected addCall: string = 'plugin.create';
+  public route_goback: string[] = ['plugins'];
+  public route_success: string[] = ['plugins'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;
@@ -45,12 +45,16 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
   public basicfieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: 'uuid',
-      placeholder: helptext.uuid_placeholder,
-      tooltip: helptext.uuid_tooltip,
-      required: true,
-      validation: [regexValidator(/^[a-zA-Z0-9-_]+$/)],
+      name: 'plugin_name',
+      placeholder: helptext.plugin_name_placeholder,
       disabled: true,
+    },
+    {
+      type: 'input',
+      name: 'jail_name',
+      placeholder: helptext.uuid_placeholder,
+      required: true,
+      validation: [ Validators.required, regexValidator(/^[a-zA-Z0-9-_]+$/) ]
     },
     {
       type: 'checkbox',
@@ -85,6 +89,13 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'bpf',
       placeholder: helptext.bpf_placeholder,
       tooltip: helptext.bpf_tooltip,
+      relation: [{
+        action: "DISABLE",
+        when: [{
+          name: "nat",
+          value: true
+        }]
+      }],
     },
     {
       type: 'list',
@@ -947,6 +958,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
   protected ip6_prefixField: any;
   protected vnet_default_interfaceField: any;
   protected plugin_name: any;
+  protected pluginRepository: any;
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -988,8 +1000,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.aroute.params.subscribe(params => {
       this.plugin_name = params['pk'];
-      const nameField = _.find(this.basicfieldConfig, { 'name': 'uuid' });
+      const nameField = _.find(this.basicfieldConfig, { 'name': 'plugin_name' });
       nameField.value = this.plugin_name;
+      this.pluginRepository =  params['plugin_repository'];
     });
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_addr'}).templateListField[0];
@@ -997,7 +1010,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
 
     // get interface options
-    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
       (res) => {
         for (let i in res) {
           this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name });
@@ -1027,6 +1040,13 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       }
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
       _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = res;
+
+      if (res && !this.formGroup.controls['nat'].disabled) {
+        this.setDisabled('nat', true);
+      }
+      if (!res && this.formGroup.controls['nat'].disabled) {
+        this.setDisabled('nat', false);
+      }
     });
     this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
       if (res) {
@@ -1095,7 +1115,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
                 res[0][i] = false;
               }
             }
-            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf' && i != 'nat') {
+            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf' && i !== 'nat' && i !== 'plugin_name') {
               this.formGroup.controls[i].setValue(res[0][i]);
             }
           }
@@ -1223,7 +1243,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             }
             delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release') {
+            if (i !== 'jail_name') {
               property.push(i + '=' + value[i]);
               delete value[i];
             }
@@ -1231,13 +1251,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
         }
       }
     }
+    value['plugin_name'] = this.plugin_name;
+    value['plugin_repository'] = this.pluginRepository;
     value['props'] = property;
-    value['name'] = this.plugin_name;
-
-    // only for plugin bru-server
-    if (this.plugin_name == 'bru-server') {
-      value['accept'] = true;
-    }
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Install") }, disableClose: true });
     this.dialogRef.componentInstance.setDescription(T("Installing plugin..."));
@@ -1246,12 +1262,8 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialogRef.componentInstance.setTitle(T("Plugin Installed Successfully"));
       let install_notes = '<p><b>Install Notes:</b></p>';
-      for (let i in res.result.install_notes) {
-        if (res.result.install_notes[i] == "") {
-          install_notes += '<br>';
-        } else {
-          install_notes += '<p>' + res.result.install_notes[i] + '</p>';
-        }
+      for (const msg of res.result.install_notes.split('\n')) {
+          install_notes += '<p>' + msg + '</p>';
       }
       this.dialogRef.componentInstance.setDescription(install_notes);
       this.dialogRef.componentInstance.showCloseButton = true;

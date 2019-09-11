@@ -1,0 +1,11 @@
+:host ::ng-deep .datatable-body {
+  overflow-x: hidden !important;
+}
+
+.has-tooltip mat-form-field.full-width {
+  width: calc(100% - 25px);
+}
+
+.div-content {
+  padding-bottom: 10px;
+}

@@ -1,6 +1,7 @@
 import { T } from '../../translate-marker';
 import {Validators} from '@angular/forms';
 import { matchOtherValidator } from '../../pages/common/entity/entity-form/validators/password-validation';
+import { UserService } from 'app/services';
 
 export default {
 user_form_title_name: T('Name & Contact'),
@@ -18,7 +19,7 @@ user_form_username_tooltip : T('Usernames can be up to 16 characters long.\
  tab, or these characters:\
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be\
  used as the last character of the username.'),
-user_form_username_validation: [ Validators.required, Validators.pattern('[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?'), Validators.maxLength(16) ],
+user_form_username_validation: [ Validators.required, Validators.pattern(UserService.VALIDATOR_NAME), Validators.maxLength(16) ],
 user_form_email_name:'email',
 user_form_email_placeholder : T('Email'),
 user_form_email_tooltip : T('Enter the email address of the new user.'),
@@ -65,8 +66,12 @@ user_form_dirs_explorer_name: 'home',
 user_form_dirs_explorer_class: 'meExplorer',
 user_form_dirs_explorer_placeholder: T('Home Directory'),
 user_form_dirs_explorer_value: '/nonexistent',
-user_form_dirs_explorer_tooltip : T('Define an <b>existing</b> pool or dataset as\
- the user home directory and adjust the permissions.'),
+user_form_dirs_explorer_tooltip : T('Choose a path to the user\'s\
+ home directory. If the directory exists and matches the username,\
+ it is set as the user\'s home directory. When the path does not\
+ end with a subdirectory matching the username, a new subdirectory is\
+ created. The full path to the user\'s home directory is shown\
+ here when editing a user.'),
 user_form_home_dir_permissions_name: 'home_mode',
 user_form_home_dir_permissions_placeholder : T('Home Directory Permissions'),
 user_form_home_dir_permissions_tooltip : T('Sets default Unix permissions of the user home\

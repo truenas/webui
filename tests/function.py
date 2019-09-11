@@ -1,6 +1,7 @@
 # /usr/bin/env python3.6
 
 from source import *
+from subprocess import run, PIPE
 
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -29,20 +30,42 @@ xpaths = {
     'deleteButton': '//*[contains(@name, "ok_button")]',
     'detachButton': '//*[contains(@name, "Detach_button")]',
     'closeButton': '//*[contains(text(), "Close")]',
-    'turnoffConfirm': '//*[contains(text(), "OK")]'
+    'turnoffConfirm': "//span[contains(.,'STOP')]"
 }
 
-service_dict = {
-    '1': '//*[@id="slide-toggle__AFP"]',
-    '2': '//*[@id="slide-toggle__Domain Controller"]',
-    '3': '//*[@id="slide-toggle__Dynamic DNS"]',
-    '4': '//*[@id="slide-toggle__FTP"]',
-    '5': '//*[@id="slide-toggle__iSCSI"]',
-    '6': '//*[@id="slide-toggle__LLDP"]',
-    '12': '//*[@id="slide-toggle__SMB"]',
-    '14': '//*[@id="slide-toggle__SSH"]',
-    '17': '//*[@id="slide-toggle__WebDAV"]'
+services_switch_xpath = {
+    'afp': "//div[@id='overlay__AFP']",
+    'dc': "//div[@id='overlay__Domain Controller']",
+    'dns': "//div[@id='overlay__Dynamic DNS']",
+    'nfs': "//div[@id='overlay__NFS']",
+    'ftp': "//div[@id='overlay__FTP']",
+    'iscsi': "//div[@id='overlay__iSCSI']",
+    'lldp': "//div[@id='overlay__LLDP']",
+    'smb': "//div[@id='overlay__SMB']",
+    'ssh': "//div[@id='overlay__SSH']",
+    'webdav': "//div[@id='overlay__WebDAV']"
 }
+
+
+def ssh_test(command, username, passwrd, host):
+    cmd = [] if passwrd is None else ["sshpass", "-p", passwrd]
+    cmd += [
+        "ssh",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "VerifyHostKeyDNS=no",
+        f"{username}@{host}",
+    ]
+    cmd += command.split()
+    process = run(cmd, stdout=PIPE, universal_newlines=True)
+    output = process.stdout
+    if process.returncode != 0:
+        return {'result': False, 'output': output}
+    else:
+        return {'result': True, 'output': output}
 
 
 # method to test if an element is present
@@ -57,12 +80,12 @@ def is_element_present(driver, xpath):
 def wait_on_element(driver, xpath, scriptname, testname):
     num = 0
     while is_element_present(driver, xpath) is False:
-        time.sleep(1)
         if num == 120:
             take_screenshot(driver, scriptname, testname)
             return False
         else:
             num += 1
+        time.sleep(1)
     return True
 
 
@@ -93,7 +116,7 @@ def take_screenshot(driver, scriptname, testname):
 
 # status check for services
 def status_check(driver, which):
-    toggle_status = driver.find_element_by_xpath(service_dict[which])
+    toggle_status = driver.find_element_by_xpath(services_switch_xpath[which])
     status_data = toggle_status.get_attribute("class")
     print(status_data)
     if (status_data == "mat-slide-toggle mat-accent ng-star-inserted mat-checked"):
@@ -101,136 +124,15 @@ def status_check(driver, which):
     else:
         print("current status is: STOPPED")
     # get the status data
-    print("current status is: " + service_dict[which])
+    print("current status is: " + services_switch_xpath[which])
 
 
-def status_change(driver, which, to):
-    # get the ui element
-    toggle_status = driver.find_element_by_xpath(service_dict[which])
-    status_data = toggle_status.get_attribute("class")
-    # get the status data
-    if to == "start":
-        if status_data == "STOPPED":
-            # Click on the toggle button
-            toggle_status.click()
-            time.sleep(1)
-            print("status has now changed to running")
-        else:
-            print("the status is already " + status_data)
-    elif to == "stop":
-        if status_data == "RUNNING":
-            # Click on the toggle button
-            toggle_status.click()
-            time.sleep(1)
-            # re-confirming if the turning off the service
-            if is_element_present(driver, xpaths['turnoffConfirm']):
-                driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-        else:
-            print("the status is already" + status_data)
-
-
-def user_edit(driver, type, name):
-    # the convention is set in such a way that a single function can cleanup
-    # both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , sub-menu{User/Group}
-    if (type == "user"):
-        path = "User"
-        fix = 'usr_username_'
-    elif (type == "group"):
-        path = "Group"
-        fix = 'grp_group_'
-    # Click User submenu
-    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-    # wait till the list is loaded
+def status_change(driver, which):
+    driver.find_element_by_xpath(services_switch_xpath[which]).click()
     time.sleep(2)
-    xpath1 = '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]'
-    xpath2 = '//*[@id="action_button_Edit__bsd' + fix + name + '\"]'
-
-    if (is_element_present(driver, xpath1)):
-        driver.find_element_by_xpath(xpath1).click()
-        driver.find_element_by_xpath(xpath2).click()
-    else:
-        print(name + " " + type + " doesnt exist")
-
-
-def user_delete(driver, type, name):
-    # the convention is set in such a way that a single function can cleanup
-    # both type:user/group, name:name of the group or user
-    # path plugs in the xpath of user or group , sub-menu{User/Group}
-    if (type == "user"):
-        path = "User"
-        fix = 'usr_username_'
-    elif (type == "group"):
-        path = "Group"
-        fix = 'grp_group_'
-    # Click User submenu
-    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-    # wait till the list is loaded
-    time.sleep(2)
-
-    if (is_element_present(driver, '//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]')):
-        driver.find_element_by_xpath('//*[@id="table_actions_menu_button__bsd' + fix + name + '\"]').click()
-        driver.find_element_by_xpath('//*[@id="action_button_Delete__bsd' + fix + name + '\"]').click()
-    else:
-        print(name + " " + type + " doesnt exist")
-
-    if (is_element_present(driver, xpaths['confirmCheckbox'])):
-        driver.find_element_by_xpath(xpaths['confirmsecondaryCheckbox']).click()
-        driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
-        time.sleep(1)
-        print("clicking delete")
-        driver.find_element_by_xpath(xpaths['deleteButton']).click()
-        time.sleep(20)
-
-
-def user_delete_old(driver, type, name):
-    # the convention is set in such a way that a single function can cleanup
-    # both type:user/group, name:name of the group or user path plugs in the
-    # xpath of user or group , sub-menu{User/Group} num specifies the column of
-    # the 3 dots which is different in user/group delNum specifies the option
-    # number where del is after clicking on the 3 dots
-    if (type == "user"):
-        num = 2
-        delNum = 6
-        path = "User"
-        plug = "bsdusr_username"
-    elif (type == "group"):
-        num = 2
-        delNum = 5
-        path = "Group"
-        plug = "bsdgrp_group"
-
-    # Click User submenu
-    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-    # wait till the list is loaded
-    time.sleep(2)
-    index = 1
-    ui_text = "null"
-    if (is_element_present(driver, '//*[@id="' + plug + '_' + name + '\"]' )):
-        print("username/groupname- " + name + " exists")
-        for x in range(0, 10):
-            if is_element_present(driver, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                ui_element = driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
-                ui_text = ui_element.text
-            if (ui_text == name):
-                index = x
-                break
-            ui_element = " "
-        print("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
-        time.sleep(1)
-        # click on the 3 dots
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(delNum) + ']/div/app-entity-table-actions/div/mat-icon').click()
-        time.sleep(1)
-        # click on delete option
-        driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
-        if (driver.find_element_by_xpath(xpaths['confirmCheckbox'])):
-            driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
-            time.sleep(1)
-            print("clicking delete once")
-            driver.find_element_by_xpath(xpaths['deleteButton']).click()
-            time.sleep(20)
-    else:
-        print("username/groupname- " + name + " does not exists..skipping")
+    if is_element_present(driver, xpaths['turnoffConfirm']):
+        driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
+        time.sleep(2)
 
 
 def plugin_install(driver, action, name):

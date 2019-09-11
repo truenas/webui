@@ -25,7 +25,7 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   protected active_tab: any;
   protected value: any;
   protected init: boolean;
-  @ViewChild('tabGroup') tabGroup;
+  @ViewChild('tabGroup', { static: true}) tabGroup;
 
   constructor(protected entityFormService: EntityFormService, 
               public translate: TranslateService) {}

@@ -15,34 +15,42 @@ skip_mesages = "Skipping first run"
 script_name = os.path.basename(__file__).partition('.')[0]
 
 xpaths = {
-    'outgoingMail': "//div[@id='em_outgoingserver']/mat-form-field/div/div/div/input",
-    'navSystem': '//*[@id="nav-2"]/div/a[1]',
-    'submenuEmail': '//*[@id="2-4"]',
-    'breadcrumbBar': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+    'outgoingMail': "//div[@id='outgoingserver']/mat-form-field/div/div/div/input",
+    'navSystem': "//span[contains(.,'System')]",
+    'submenuEmail': "//a[contains(.,'Email')]",
+    'breadcrumbBar1': "//div[@id='breadcrumb-bar']/ul/li/a",
+    'breadcrumbBar2': "//*[@id='breadcrumb-bar']/ul/li[2]/a"
+
 }
 
 
-def test_01_nav_system_email(wb_driver):
+def test_01_nav_system_email(browser):
     # driver.find_element_by_xpath(xpaths['navSystem']).click()
     time.sleep(1)
-    wb_driver.find_element_by_xpath(xpaths['submenuEmail']).click()
+    browser.find_element_by_xpath(xpaths['submenuEmail']).click()
     # get the ui element
-    ui_element = wb_driver.find_element_by_xpath(xpaths['breadcrumbBar'])
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar1'])
+    # get the weather data
+    page_data = ui_element.text
+    # assert response
+    assert "System" in page_data, page_data
+    # get the ui element
+    ui_element = browser.find_element_by_xpath(xpaths['breadcrumbBar2'])
     # get the weather data
     page_data = ui_element.text
     # assert response
     assert "Email" in page_data, page_data
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)
 
 
-def test_02_configure_email(wb_driver):
+def test_02_configure_email(browser):
     # Close the System Tab
-    wb_driver.find_element_by_xpath(xpaths['outgoingMail']).clear()
-    wb_driver.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
-    wb_driver.find_element_by_xpath('//*[@id="save_button"]').click()
+    browser.find_element_by_xpath(xpaths['outgoingMail']).clear()
+    browser.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
+    browser.find_element_by_xpath('//*[@id="save_button"]').click()
     time.sleep(5)
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
-    take_screenshot(wb_driver, script_name, test_name)
+    take_screenshot(browser, script_name, test_name)

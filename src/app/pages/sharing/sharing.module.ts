@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { JailService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
@@ -23,6 +24,7 @@ import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.componen
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/';
 import { PortalListComponent } from './iscsi/portal/portal-list/';
 import { PortalFormComponent } from './iscsi/portal/portal-form/';
+import { DynamicListComponent } from './iscsi/initiator/initiator-form/dynamic-list/dynamic-list-component';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/';
 import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list/';
@@ -33,6 +35,8 @@ import { ExtentListComponent } from './iscsi/extent/extent-list/';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/';
+import { FibreChannelPortsComponent } from './iscsi/fibre-channel-ports/fibre-channel-ports.component';
+import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
 
 @NgModule({
   imports : [
@@ -42,7 +46,8 @@ import { AssociatedTargetFormComponent } from './iscsi/associated-target/associa
     routing,
     EntityModule,
     MaterialModule,
-    TranslateModule
+    TranslateModule,
+    FlexLayoutModule
   ],
   declarations : [
     AFPListComponent,
@@ -58,6 +63,7 @@ import { AssociatedTargetFormComponent } from './iscsi/associated-target/associa
     GlobalconfigurationComponent,
     PortalListComponent,
     PortalFormComponent,
+    DynamicListComponent,
     InitiatorListComponent,
     InitiatorFormComponent,
     AuthorizedAccessListComponent,
@@ -68,12 +74,15 @@ import { AssociatedTargetFormComponent } from './iscsi/associated-target/associa
     ExtentFormComponent,
     AssociatedTargetListComponent,
     AssociatedTargetFormComponent,
+    FibreChannelPortsComponent,
+    FibreChannelPortComponent,
   ],
   providers : [
     JailService,
     EntityFormService,
     UserService,
-  ]
+  ],
+  entryComponents: [FibreChannelPortComponent]
 })
 export class SharingModule {
 }

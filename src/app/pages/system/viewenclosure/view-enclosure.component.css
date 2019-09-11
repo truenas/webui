@@ -2,18 +2,36 @@ nav.view-nav-bar{
   background-color:var(--alt-bg1);
   color:var(--alt-fg1);
   width:100%;
-  height:32px;
+  /*height:34px;
   padding-bottom: 4px;
-  margin:-15px 0 32px;
+  margin:-15px 0 32px;*/
+}
+
+.view-nav-btn-icon, 
+.view-nav-btn-label{
+  display:inline-block;
+}
+
+.view-nav-btn-icon{
+  font-size:155%
+}
+
+.view-nav-btn-label{
+  font-size:120%;
+  position:relative;
+  top: -2px;
+  left: 2px;
 }
 
 .view-nav-bar .view-nav-btn{
-  /*display:inline-block;*/
-  height:40px;
+  height:38px; /* Componensate for border width*/
   text-transform: capitalize !important;
-  /*font-weight:500;
-  padding:0 16px;
-  text-align:center;*/
+  border-bottom: solid 2px rgba(0,0,0,0);
+  border-radius:0;
+}
+
+.view-nav-bar .view-nav-btn.active{
+  border-bottom-color:var(--blue);
 }
 
 .view-card{
@@ -26,28 +44,25 @@ nav.view-nav-bar{
 .enclosure-selector{
   color: #efefef;
   background-color: #000;
-  width: 15rem;
-  min-height: 100%;
-  /*min-height: calc(100% - 124px);
-  position: fixed;*/
-  position:relative;
+  width: 240px;
+  height: 100%;
+  overflow: auto;
+  /*position:absolute;
   right: 0;
-  /*top: 126px;*/
-  top:-31px;
   overflow:auto;
-  z-index:10;
+  z-index:2;*/
 }
 
 .enclosure-selector .enclosure{
   text-align:center;
   min-height: 164px;
   border-bottom: solid 1px #333;
-  border-left: solid 3px rgba(0,0,0,0);
+  border-left: solid 4px rgba(0,0,0,0);
   padding:12px 0 24px;
 }
 
 .enclosure-selector .enclosure.active{
-  border-left: solid 3px var(--primary);
+  border-left: solid 4px var(--primary);
 }
 
 .enclosure-selector .enclosure:hover{
@@ -60,4 +75,18 @@ nav.view-nav-bar{
 
 .enclosure canvas{
   width:80% !important;
+}
+
+.page-viewport{
+  width:100%;
+  height: calc(100vh - 88px);
+  position:absolute;
+  top:88px;
+  left:0;
+}
+
+.main-content{
+  height:100%;
+  overflow:auto;
+  /*padding: 64px 0 0 0;*/
 }

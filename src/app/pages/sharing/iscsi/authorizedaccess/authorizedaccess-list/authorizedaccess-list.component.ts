@@ -19,6 +19,7 @@ export class AuthorizedAccessListComponent {
     {
       name : 'Group ID',
       prop : 'tag',
+      always_display: true
     },
     {
       name : 'User',
@@ -29,6 +30,7 @@ export class AuthorizedAccessListComponent {
       prop : 'peeruser',
     },
   ];
+  public rowIdentifier = 'tag';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

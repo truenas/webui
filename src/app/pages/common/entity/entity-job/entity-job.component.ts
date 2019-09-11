@@ -23,7 +23,7 @@ export class EntityJobComponent implements OnInit {
   public showCloseButton = true;
   public jobId: Number;
   public progressNumberType;
-  
+  public hideProgressValue = false;
 
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
@@ -62,6 +62,10 @@ export class EntityJobComponent implements OnInit {
 
   setTitle(title: string) {
     this.title = title;
+  }
+
+  disableProgressValue(hide: boolean) {
+    this.hideProgressValue = hide;
   }
 
   @HostListener('progress', ['$event'])

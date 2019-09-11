@@ -5,18 +5,18 @@ export interface FieldConfig {
   disabled?: boolean, label?: string, name: string, options?: any[],
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
   inputType?: string, validation?: any[] | ValidatorFn | ValidatorFn[],
-  value?: any, multiple?: boolean, tooltip?: string,
+  value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string,
   relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
-  initialCount?: number, readonly?: boolean, initial?: string,
+  initialCount?: number, readonly?: boolean, initial?: string, rootSelectable?: boolean,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
   customEventActionLabel?: string, explorerType?: string, customTemplateStringOptions?: any,
-  required?: boolean,
-  acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string, 
+  required?: boolean, deleteButtonOnFirst?: boolean, addBtnMessage?: string,
+  acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string,
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
   noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
-  updateLocal?: boolean
-  customEventMethod?(data:any), onChangeOption?(data:any), 
-  
+  updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
+  isLargeText?: boolean, paragraphIcon?: string, zeroStateMessage?: string
+  customEventMethod?(data:any), onChangeOption?(data:any),
 }

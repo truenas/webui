@@ -2,6 +2,7 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
+import globalHelptext from '../../../helptext/global-helptext';
 
 export default {
 cifs_srv_netbiosname_placeholder: T('NetBIOS Name'),
@@ -10,16 +11,23 @@ cifs_srv_netbiosname_tooltip: T('Automatically populated with the original hostn
  cannot be the <b>Workgroup</b> name.'),
 cifs_srv_netbiosname_validation : [ Validators.required, Validators.maxLength(15) ],
 
+cifs_srv_netbiosname_b_placeholder: T(`NetBIOS Name (${globalHelptext.Ctrlr} 2)`),
+cifs_srv_netbiosname_b_tooltip: T('Automatically populated with the original hostname\
+ of the system. This name is limited to 15 characters and\
+ cannot be the <b>Workgroup</b> name.'),
+cifs_srv_netbiosname_b_validation : [ Validators.required, Validators.maxLength(15) ],
+
 cifs_srv_netbiosalias_placeholder: T('NetBIOS Alias'),
-cifs_srv_netbiosalias_tooltip: T('Enter an alias. Limited to 15 characters.'),
+cifs_srv_netbiosalias_tooltip: T('Enter any aliases, separated by spaces.\
+ Each alias can be up to 15 characters long.'),
 cifs_srv_netbiosalias_validation: [ Validators.maxLength(15) ],
 
 cifs_srv_workgroup_placeholder: T('Workgroup'),
 cifs_srv_workgroup_tooltip: T('Must match Windows workgroup\
  name. This setting is ignored if the\
- <a href="%%docurl%%/directoryservices.html#active-directory"\
+ <a href="--docurl--/directoryservices.html#active-directory"\
  target="_blank">Active Directory</a> or <a\
- href="%%docurl%%/directoryservices.html#ldap"\
+ href="--docurl--/directoryservices.html#ldap"\
  target="_blank">LDAP</a> service is running.'),
 cifs_srv_workgroup_validation : [ Validators.required ],
 
@@ -33,11 +41,11 @@ cifs_srv_unixcharset_tooltip: T('Default is UTF-8 which supports all characters 
 cifs_srv_loglevel_placeholder: T('Log Level'),
 cifs_srv_loglevel_tooltip: T('Choices are <i>Minimum, Normal, or Debug</i>.'),
 cifs_srv_loglevel_options: [
-  { label: 'None', value: 0 },
-  { label: 'Minimum', value: 1 },
-  { label: 'Normal', value: 2 },
-  { label: 'Full', value: 3 },
-  { label: 'Debug', value: 10 },
+  { label: 'None', value: '0' },
+  { label: 'Minimum', value: '1' },
+  { label: 'Normal', value: '2' },
+  { label: 'Full', value: '3' },
+  { label: 'Debug', value: '10' },
 ],
 
 cifs_srv_syslog_placeholder: T('Use syslog only'),
@@ -70,12 +78,6 @@ cifs_srv_smb_options_tooltip: T('Enter additional <b>smb.conf</b> options. See t
 
 cifs_srv_zeroconf_placeholder: T('Zeroconf share discovery'),
 cifs_srv_zeroconf_tooltip: T('Enable if Mac clients will be connecting to the SMB share.'),
-
-cifs_srv_hostlookup_placeholder: T('Hostnames Lookups'),
-cifs_srv_hostlookup_tooltip: T('Set to allow using hostnames rather than IP addresses in\
- the <i>Hosts Allow</b> or </i>Hosts Deny</b> fields\
- of a SMB share. Leave this option\
- unset when IP addresses are used to avoid the delay of a host lookup.'),
 
 cifs_srv_ntlmv1_auth_placeholder: T('NTLMv1 Auth'),
 cifs_srv_ntlmv1_auth_tooltip: T('Off by default. When set,\

@@ -66,7 +66,7 @@ export class VolumeStatusComponent implements OnInit {
   }, {
     type: 'input',
     inputType: 'password',
-    name: 'pass',
+    name: 'passphrase',
     placeholder: T('Passphrase'),
     required: true,
     isHidden: true,
@@ -74,9 +74,9 @@ export class VolumeStatusComponent implements OnInit {
   }, {
     type: 'input',
     inputType: 'password',
-    name: 'pass2',
+    name: 'passphrase2',
     placeholder: T('Confirm Passphrase'),
-    validation : [ matchOtherValidator('pass') ],
+    validation : [ matchOtherValidator('passphrase') ],
     required: true,
     isHidden: true,
     disabled: true,
@@ -85,6 +85,8 @@ export class VolumeStatusComponent implements OnInit {
     name: 'force',
     placeholder: "Force",
   }];
+
+  protected pool: any;
 
   constructor(protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
@@ -113,13 +115,14 @@ export class VolumeStatusComponent implements OnInit {
       ]
     ]).subscribe(
       (res) => {
+        this.pool = res[0];
         if (res[0]) {
           // if pool is passphrase protected, abled passphrase field.
           if (res[0].encrypt === 2) {
-            _.find(this.replaceDiskFormFields, { name: 'pass' })['isHidden'] = false;
-            _.find(this.replaceDiskFormFields, { name: 'pass' }).disabled = false;
-            _.find(this.replaceDiskFormFields, { name: 'pass2' })['isHidden'] = false;
-            _.find(this.replaceDiskFormFields, { name: 'pass2' }).disabled = false;
+            _.find(this.replaceDiskFormFields, { name: 'passphrase' })['isHidden'] = false;
+            _.find(this.replaceDiskFormFields, { name: 'passphrase' }).disabled = false;
+            _.find(this.replaceDiskFormFields, { name: 'passphrase2' })['isHidden'] = false;
+            _.find(this.replaceDiskFormFields, { name: 'passphrase2' }).disabled = false;
           }
           this.poolScan = res[0].scan;
           // subscribe zfs.pool.scan to get scrub job info
@@ -140,7 +143,7 @@ export class VolumeStatusComponent implements OnInit {
     this.ws.call('disk.get_unused').subscribe((res) => {
       for (const i in res) {
         availableDisks.push({
-          label: res[i].name,
+          label: res[i].devname,
           value: res[i].identifier,
         })
       }
@@ -155,14 +158,22 @@ export class VolumeStatusComponent implements OnInit {
     this.getUnusedDisk();
   }
 
-  getAction(data, category): any {
+  refresh() {
+    this.loader.open();
+    this.getData();
+    this.loader.close();
+  }
+
+  getAction(data, category, vdev_type): any {
     const actions = [{
       label: "Edit",
       onClick: (row) => {
-        const diskName = _.split(row.name, 'p')[0];
+        const pIndex = row.name.lastIndexOf('p');
+        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+
         this.ws.call('disk.query', [
           [
-            ["name", "=", diskName]
+            ["devname", "=", diskName]
           ]
         ]).subscribe((res) => {
           this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
@@ -173,14 +184,17 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       label: T("Offline"),
       onClick: (row) => {
+        const encryptPoolWarning = T('<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>');
+
         let name = row.name;
         // if use path as name, show the full path
         if (!_.startsWith(name, '/')) {
-          name = _.split(row.name, 'p')[0];
+          const pIndex = name.lastIndexOf('p');
+          name = pIndex > -1 ? name.substring(0, pIndex) : name;
         }
         this.dialogService.confirm(
           "Offline",
-          "Offline disk " + name + "?", false, T('Offline')
+          "Offline disk " + name + "?" + (this.pool.encrypt == 0 ? '' : encryptPoolWarning), false, T('Offline')
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -200,11 +214,14 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: data.status == "OFFLINE" ? true : false,
     }, {
-      label: "Online",
+      label: T("Online"),
       onClick: (row) => {
+        const pIndex = row.name.lastIndexOf('p');
+        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+
         this.dialogService.confirm(
           "Online",
-          "Online disk " + _.split(row.name, 'p')[0] + "?", false, T('Online')
+          "Online disk " + diskName + "?", false, T('Online')
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -222,13 +239,14 @@ export class VolumeStatusComponent implements OnInit {
           }
         });
       },
-      isHidden: data.status == "ONLINE" ? true : false,
+      isHidden: data.status == "ONLINE" || this.pool.encrypt !== 0 ? true : false,
     }, {
-      label: "Replace",
+      label: T("Replace"),
       onClick: (row) => {
         let name = row.name;
         if (!_.startsWith(name, '/')) {
-          name = _.split(row.name, 'p')[0];
+          const pIndex = name.lastIndexOf('p');
+          name = pIndex > -1 ? name.substring(0, pIndex) : name;
         }
         const pk = this.pk;
         _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
@@ -239,6 +257,8 @@ export class VolumeStatusComponent implements OnInit {
           saveButtonText: "Replace Disk",
           parent: this,
           customSubmit: function (entityDialog: any) {
+            delete entityDialog.formValue['passphrase2'];
+
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title":"Replacing Disk"}, disableClose: true});
             dialogRef.componentInstance.setDescription(T("Replacing disk..."));
             dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
@@ -262,11 +282,14 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: false,
     }, {
-      label: "Remove",
+      label: T("Remove"),
       onClick: (row) => {
+        const pIndex = row.name.lastIndexOf('p');
+        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+
         this.dialogService.confirm(
           "Remove",
-          "Remove disk " + _.split(row.name, 'p')[0] + "?", false, T('Remove')
+          "Remove disk " + diskName + "?", false, T('Remove')
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -284,6 +307,32 @@ export class VolumeStatusComponent implements OnInit {
         });
       },
       isHidden: false,
+    }, {
+      label: T("Detach"),
+      onClick: (row) => {
+        const pIndex = row.name.lastIndexOf('p');
+        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+
+        this.dialogService.confirm(
+          T("Detach"),
+          T("Detach disk ") + diskName + "?", false, T('Detach')
+        ).subscribe((res) => {
+          if (res) {
+            this.loader.open();
+            this.ws.call('pool.detach', [this.pk, {label: row.guid}]).subscribe(
+              (res) => {
+                this.getData();
+                this.loader.close();
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+              }
+            )
+          };
+        });
+      },
+      isHidden: true,
     }];
 
     if (category == "data") {
@@ -297,10 +346,14 @@ export class VolumeStatusComponent implements OnInit {
       _.find(actions, { label: "Offline" }).isHidden = true;
     }
 
+    if (vdev_type === "MIRROR" || vdev_type === "REPLACING") {
+      _.find(actions, { label: "Detach" }).isHidden = false;
+    }
+
     return actions;
   }
 
-  parseData(data: any, category?: any) {
+  parseData(data: any, category?: any, vdev_type?: any) {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
@@ -330,20 +383,21 @@ export class VolumeStatusComponent implements OnInit {
 
     // add actions
     if (category && data.type && data.type == 'DISK') {
-      item.actions = this.getAction(data, category);
+      item.actions = this.getAction(data, category, vdev_type);
     }
     return item;
   }
 
-  parseTopolgy(data: any, category: any): TreeNode {
+  parseTopolgy(data: any, category: any, vdev_type?: any): TreeNode {
     const node: TreeNode = {};
-    node.data = this.parseData(data, category);
+    node.data = this.parseData(data, category, vdev_type);
     node.expanded = true;
     node.children = [];
 
     if (data.children) {
+      vdev_type = data.name;
       for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.parseTopolgy(data.children[i], category));
+        node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
       }
     }
     delete node.data.children;

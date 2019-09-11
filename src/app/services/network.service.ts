@@ -1,9 +1,6 @@
 
 
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
-
 import {RestService} from './rest.service'
 import {WebSocketService} from './ws.service';
 
@@ -62,9 +59,8 @@ export class NetworkService {
     return this.ws.call('interface.bridge_members_choices', [id]);
   }
 
-  getAllNicChoices() {
-    return this.ws.call('notifier.choices',
-                        [ 'NICChoices', [ false, false, true, false, false, true ] ]);
+  getVmNicChoices() {
+    return this.ws.call('vm.device.nic_attach_choices', []);
   }
 
   getV4Netmasks() {

@@ -25,6 +25,7 @@ export class AssociatedTargetListComponent {
     {
       name : 'Target',
       prop : 'target',
+      always_display: true
     },
     {
       name : 'LUN ID',
@@ -35,6 +36,7 @@ export class AssociatedTargetListComponent {
       prop : 'extent',
     }
   ];
+  public rowIdentifier = 'target';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
@@ -64,13 +66,17 @@ export class AssociatedTargetListComponent {
       });
     });
   }
-  getActions() {
+  getActions(row) {
     return [{
-      id: "edit",
+      id: row.target,
+      name: 'edit',
+      icon: 'edit',
       label: "Edit",
       onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
     }, {
-      id: "delete",
+      id: row.target,
+      name: 'delete',
+      icon: 'delete',
       label: "Delete",
       onClick: (rowinner) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);

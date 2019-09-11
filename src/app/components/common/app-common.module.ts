@@ -17,8 +17,8 @@ import { ThemeService } from '../../services/theme/theme.service';
 import { DialogService } from '../../services/dialog.service';
 import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { LineChartComponent } from './lineChart';
-import { LineChartService } from './lineChart/lineChart.service';
+//import { LineChartComponent } from './lineChart';
+//import { LineChartService } from './lineChart/lineChart.service';
 import { LanguageService } from '../../services/language.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularSvgIconModule } from 'angular-svg-icon';
@@ -41,9 +41,9 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     AuthLayoutComponent,
     TopbarComponent,
     NavigationComponent,
-    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
+    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, //LineChartComponent
   ],
-  providers: [ThemeService, DialogService, LineChartService, LanguageService],
-  exports: [LineChartComponent]
+  providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService],
+  exports: [/*LineChartComponent*/]
 })
 export class AppCommonModule {}

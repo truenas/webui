@@ -1,11 +1,11 @@
 <div class="report" ngClass.xs="double-height xs">
   <div class="card-container  front" (mouseenter)="setChartInteractive(true)" (mouseleave)="setChartInteractive(false)" >
-    <mat-card class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
+    <mat-card *ngIf="ready" class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
-        <mat-card-title fxFlex="65%"><h3>{{title}} <!--<span *ngIf="isActive">(active)</span>--></h3></mat-card-title>
+        <mat-card-title fxFlex="65%"><h3>{{reportTitle}} <!--<span *ngIf="isActive">(active)</span>--></h3></mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
-          <div class="line-chart-tools" *ngIf="lineChart.chart"> 
+          <div class="line-chart-tools" *ngIf="localControls"> 
             <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" (click)="timeZoomIn()">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" ></mat-icon>
                   </button>
@@ -31,70 +31,106 @@
           <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
           <!-- Chart -->
           <div class="chart-wrapper" fxFlex="100">
-            <line-chart 
+            <linechart 
+              *ngIf="report && data && chartColors"
+              [chartId]="chartId"
+              [chartColors]="chartColors"
+              [data]="data"
+              [title]="report.title"
+              [labelY]="report.vertical_label"
+              type="line"
+              interactive="false">
+              </linechart>
+            <!--<line-chart 
               [dataList]="lineChartConfig.dataList"
               [title]="title"
               [legends]="lineChartConfig.legends"
               [divideBy]="lineChartConfig.divideBy"
               [convertToCelsius]="lineChartConfig.convertToCelsius"
               [interactive]="isActive">
-              </line-chart>
+              </line-chart>-->
           </div>
 
           <!-- Legend Section -->
-          <div fxFlex="100" class="legend-wrapper">         
-          <!-- Time Stamp -->
-          <div class="legend-timestamp">
-            <div *ngIf="lineChart.showLegendValues">
-              <span *ngIf="lineChart.legendEvents | async as timestamp">
-                <h4><strong>Time:</strong> <span style="font-weight:normal;">{{timestamp[0].x}}</span></h4>
-              </span>
+          <div fxFlex="100" class="legend-wrapper" fxLayout="row wrap" fxLayoutAlign="space-between center">         
+
+            <!-- Time Stamps -->
+            <div class="legend-timestamp" fxFlex="calc(50% - 32px)">
+              <div >
+                <span *ngIf="data && legendData">
+                  <h4><strong>Start:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span></h4>
+                </span>
+              </div>
             </div>
-          </div>
-          </div>
+
+            <div class="legend-timestamp" fxFlex="calc(50% - 32px)">
+              <div >
+                <span *ngIf="data && legendData">
+                  <h4><strong>End:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span></h4>
+                </span>
+              </div>
+            </div>
+
+            <div class="legend-timestamp" fxFlex="100">
+              <div >
+                <span *ngIf="data && legendData">
+                  <h4 *ngIf="legendData && legendData.xHTML"><strong>Time:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{legendData.xHTML}}</span></h4>
+                </span>
+              </div>
+            </div>
+
+        </div>
+
         </mat-card-content>
-          <mat-card-footer>
-          <section class="legend" fxLayout="column" fxLayoutAlign="none"  *ngIf="lineChart.legendLabels | async as legendLabels">
-            <div class="legend-group" fxFlex="38px" fxLayout="row wrap" fxLayoutAlign="space-between start" fxLayoutGap="16px" *ngFor="let legendItem of legendLabels; let i=index">
+          <mat-card-footer *ngIf="data && data.legend">
+            <section class="legend" fxLayout="row wrap" fxLayoutAlign="none"  >
+            <div class="legend-group" 
+              fxFlex="calc(50% - 32px)" fxLayout="row wrap" fxLayoutAlign="start start" 
+              *ngFor="let legendItem of data.legend; let i=index">
 
-                <!--<div fxFlex="180px" class="legend-label" >
-                  <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
-                  
-                  <div class="legend-item">{{legendItem}}</div>
-                  </div>-->
-
-                <!--<div class="tooltip-wrapper legend-value"> 
-                  <div *ngIf="lineChart.legendEvents | async as tooltip">
-                    <div  *ngIf="lineChart.showLegendValues && tooltip[i]" class="tooltip-value" >
-                      {{tooltip[i].value}} {{lineChart.units}}
-                    </div>
-                  </div>
-                  </div>-->
-
-                <div fxFlex="150px" class="legend-label" >
+                <div fxFlex="25" class="legend-label" >
                   <!-- Legend Label -->
-                  <div class="swatch" [style.background-color]="lineChart.colorPattern[i]" ></div>
-                  <span class="legend-item">{{legendItem}}</span> 
+                  <div *ngIf="chartColors && legendItem" 
+                    class="swatch" 
+                    [style.background-color]="chartColors[i]" >
+                    </div>
+                  <span class="legend-item"><strong>{{legendItem}}</strong></span> 
 
-                  <span *ngIf="lineChart.legendEvents | async as tooltip">
-                    <span  *ngIf="lineChart.showLegendValues && tooltip[i]" class="tooltip-value" >
-                      : <span style="font-weight:normal;">{{tooltip[i].value}} {{lineChart.units}}</span>
+                  <span *ngIf="legendData && legendData.series">
+                    <span  class="tooltip-value" >
+                       : <span style="font-weight:normal;">{{legendData.series[i].yHTML}}</span>
                     </span>
                   </span>
                 </div>
 
-                  <!-- Analytics -->
-                  <div fxFlex class="report-analytics" *ngIf="lineChart.legendAnalytics | async as analytics" fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="16px">
-                    <span fxFlex="105px"><strong>Min:</strong>  {{analytics[i].min}}<span *ngIf="analytics[i].min !== 'N/A'">{{lineChart.units}}</span></span>
-                      <span fxFlex="105px"><strong>Max:</strong>  {{analytics[i].max}}<span *ngIf="analytics[i].max !== 'N/A'">{{lineChart.units}}</span></span>
-                        <span fxFlex="105px"><strong>Avg:</strong>  {{analytics[i].avg}}<span *ngIf="analytics[i].avg !== 'N/A'">{{lineChart.units}}</span></span>
-                          <span *ngIf="analytics[i].total" fxFlex=""><strong>Total:</strong>  {{analytics[i].total}}<span *ngIf="analytics[i].total !== 'N/A'">{{lineChart.units}}</span></span>
+                <!-- Aggregations -->
+                  <div style="opacity:0.75; border:red;" 
+                    fxFlex="75" 
+                    class="report-analytics" 
+                    *ngIf="data && data.aggregations" 
+                    fxLayout="row" 
+                    fxLayoutAlign="start start" 
+                    fxLayoutGap="16px">
+                    
+                   
+                    <span *ngFor="let key of aggregationKeys" fxFlex>
+                      <strong>{{key}}:</strong>  {{data.aggregations[key][i] ? data.aggregations[key][i] : 'null'}}
+                    </span>
+                   
+
                   </div>
 
-              </div>
+            </div>
             </section>
 
           </mat-card-footer>
+    </mat-card>
+
+    <mat-card *ngIf="!ready" class="front zero-state" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="center center">
+      <!--<div class="logo-wrapper">-->
+        <mat-icon *ngIf="isFN.toString() == 'false'" svgIcon="truenas_logo_full"></mat-icon>
+        <mat-icon *ngIf="isFN.toString() == 'true'" class="generic" svgIcon="freenas_logo_full"></mat-icon>
+        <!--</div>-->
     </mat-card>
 
     <ng-template *ngIf="configurable">

@@ -1,26 +1,11 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  OnChanges,
-  Input,
-  Output,
-  EventEmitter,
-  SimpleChange,
-  OnDestroy
-} from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core'
-
-import { WebSocketService, ShellService } from '../../../services/';
-import { TooltipComponent } from '../../common/entity/entity-form/components/tooltip/tooltip.component';
-import { T } from '../../../translate-marker';
-//import { Terminal } from 'vscode-xterm';
-//import * as fit from 'vscode-xterm/lib/addons/fit';
-//import * as attach from 'vscode-xterm/lib/addons/attach';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
+import { ShellService, WebSocketService } from '../../../services/';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-jail-shell',
@@ -33,7 +18,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
   //xter container
-  @ViewChild('terminal') container: ElementRef;
+  @ViewChild('terminal', { static: true}) container: ElementRef;
   // xterm variables
   cols: string;
   rows: string;
@@ -43,12 +28,12 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   private shellSubscription: any;
 
   public shell_tooltip = T('<b>Ctrl+C</b> kills a foreground process.<br>\
-                            Many utilities are built-in:<br> b>Iperf</b>,\
+                            Many utilities are built-in:<br> <b>Iperf</b>,\
                             <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
                             <b>tw_cli</b>, <br><b>MegaCli</b>,\
                             <b>freenas-debug</b>, <b>tmux</b>,\
                             <b>Dmidecode</b>.<br> Refer to the <a\
-                            href="%%docurl%%/cli.html"\
+                            href="--docurl--/cli.html"\
                             target="_blank">Command Line Utilities</a>\
                             chapter in the guide for usage information\
                             and examples.');
@@ -60,9 +45,8 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
               public ss: ShellService,
               protected aroute: ActivatedRoute,
               public translate: TranslateService,
-              protected router: Router) {
-                //Terminal.applyAddon(fit);
-                //Terminal.applyAddon(attach);
+              protected router: Router,
+              private snackbar: MatSnackBar) {
               }
 
   ngOnInit() {
@@ -141,5 +125,9 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     return this.ws.call('auth.generate_token');
   }
 
+  onShellRightClick(): false {
+    this.snackbar.openFromComponent(CopyPasteMessageComponent);
 
+    return false;
+  }
 }
