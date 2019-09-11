@@ -88,5 +88,12 @@ nav.view-nav-bar{
 .main-content{
   height:100%;
   overflow:auto;
-  /*padding: 64px 0 0 0;*/
+  position:relative;
+}
+
+.spinner{
+  position:absolute;
+  left: calc(50% - 20px);
+  top:64px;
+  z-index:4;
 }
