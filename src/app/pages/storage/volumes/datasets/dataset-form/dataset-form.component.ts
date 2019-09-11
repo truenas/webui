@@ -84,12 +84,20 @@ export class DatasetFormComponent implements Formconfiguration{
     {
       id: 'basic_mode',
       name: T('Basic Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
+      function: () => { 
+        this.isBasicMode = !this.isBasicMode;
+        _.find(this.fieldSets, {class:"dataset"}).label = false;
+        _.find(this.fieldSets, {class:"refdataset"}).label = false;
+      }
     },
     {
       id: 'advanced_mode',
       name: T('Advanced Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
+      function: () => { 
+        this.isBasicMode = !this.isBasicMode;
+        _.find(this.fieldSets, {class:"dataset"}).label = true;
+        _.find(this.fieldSets, {class:"refdataset"}).label = true;
+      }
     }
   ];
 
@@ -97,7 +105,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
-      name: "Name and Options",
+      name: helptext.dataset_form_name_section_placeholder,
       class: "name",
       label:true,
       config: [
@@ -154,7 +162,7 @@ export class DatasetFormComponent implements Formconfiguration{
       }]
     },
     {
-      name: "Dataset and Children",
+      name: helptext.dataset_form_refdataset_section_placeholder,
       class: "refdataset",
       label:true,
       width:'50%',
@@ -259,7 +267,7 @@ export class DatasetFormComponent implements Formconfiguration{
       }],
     },
     {
-      name: "This Dataset",
+      name: helptext.dataset_form_dataset_section_placeholder,
       class: "dataset",
       label:true,
       width:'50%',
@@ -364,7 +372,7 @@ export class DatasetFormComponent implements Formconfiguration{
       }],
     },
     {
-      name: "Other Options",
+      name: helptext.dataset_form_other_section_placeholder,
       class: "options",
       label:true,
       config: [

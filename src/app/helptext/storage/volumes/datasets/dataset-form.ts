@@ -100,5 +100,10 @@ dataset_form_casesensitivity_tooltip: T('<i>Sensitive</i> assumes filenames are 
  filenames.'),
 
 dataset_form_aclmode_placeholder: T('ACL Mode'),
-dataset_form_aclmode_tooltip: T('')
+dataset_form_aclmode_tooltip: T(''),
+
+dataset_form_dataset_section_placeholder: T("This Dataset and Child Datasets"),
+dataset_form_refdataset_section_placeholder: T("This Dataset"),
+dataset_form_name_section_placeholder: T("Name and Options"),
+dataset_form_other_section_placeholder: T("Other Options")
 }
