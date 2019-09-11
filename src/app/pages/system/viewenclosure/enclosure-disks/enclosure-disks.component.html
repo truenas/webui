@@ -69,7 +69,7 @@
             <div class="content">
               <h2 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h2>
               <div class="title">
-                <span class="semibold">Vdev: </span> 
+                <span class="semibold">vdev: </span> 
                 <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
                 <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
               </div>
