@@ -61,6 +61,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   ha_pending = false;
   is_ha = false;
   upgradeWaitingToFinish = false; 
+  upgradeWaitingNotificationSent = false;
   sysName: string = 'FreeNAS';
   hostname: string;
   public updateNotificationSent = false;
@@ -91,6 +92,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           this.updateNotificationSent = false;
         }, 900000);
       });
+      this.sysGenService.timeToCheckForWaitingUpdate.subscribe(() => {
+        this.checkUpgradePending();
+      })
     }
 
   ngOnInit() {
@@ -445,7 +449,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
       this.upgradeWaitingToFinish = res;
-      if(res) {
+      if(res && !this.upgradeWaitingNotificationSent) {
+        this.upgradeWaitingNotificationSent = true;
         this.upgradePendingDialog();
       };
     });
@@ -459,6 +464,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         if (res) {
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
           this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+          this.dialogRef.componentInstance.disableProgressValue(true);
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((success) => {
             this.dialogRef.close(false);

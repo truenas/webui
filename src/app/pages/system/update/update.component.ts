@@ -552,8 +552,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
           if (!this.is_ha) { 
             this.router.navigate(['/others/reboot']); 
           } else  {
-            console.log(res) 
-            this.checkUpgradePending();
+            this.dialogService.closeAllDialogs();
+            this.router.navigate(['/']);
+            this.sysGenService.timeToCheckForWaitingUpdate.emit();
           }
         });
         this.dialogRef.componentInstance.failure.subscribe((err) => {
