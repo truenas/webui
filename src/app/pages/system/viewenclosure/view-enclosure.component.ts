@@ -38,9 +38,19 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
    
   public scrollContainer: HTMLElement;
   public system: SystemProfiler;
-  public system_product;
   public selectedEnclosure: any;
   public views: ViewConfig[] = [];
+
+  private _system_product;
+  get system_product(){
+    return this._system_product;
+  }
+  set system_product(value){
+    if(!this._system_product){
+      this._system_product = value;
+      this.core.emit({name: 'EnclosureDataRequest', sender: this});
+    }
+  }
 
   changeView(id){
     this.currentView = this.views[id];
@@ -84,8 +94,11 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      this.system_product = evt.data.license.model;
-      core.emit({name: 'EnclosureDataRequest', sender: this});
+      if(!this.system_product){
+        this.system_product = evt.data.license.model;
+      } else {
+        return;
+      }
     });
 
     core.emit({name: 'SysInfoRequest', sender: this});

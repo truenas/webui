@@ -69,8 +69,8 @@
             <div class="content">
               <h2 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h2>
               <div class="title">
-                <span *ngIf="selectedVdev.type !== 'None'" class="semibold">Configuration: </span> 
-                <span *ngIf="selectedVdev.type == 'DISK'"> Single Disk </span>
+                <span class="semibold">Vdev: </span> 
+                <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
                 <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
               </div>
               <div *ngIf="selectedVdev.type !== 'None'" class="title"><span class="semibold">Function:</span> <span> {{selectedVdev.topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span></div>
