@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
@@ -93,359 +94,386 @@ export class DatasetFormComponent implements Formconfiguration{
   ];
 
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'input',
-      name: 'name',
-      placeholder: helptext.dataset_form_name_placeholder,
-      tooltip: helptext.dataset_form_name_tooltip,
-      readonly: true,
-      required: true,
-      validation: [Validators.required, forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive)],
-    },
-    {
-      type: 'input',
-      name: 'comments',
-      placeholder: helptext.dataset_form_comments_placeholder,
-      tooltip: helptext.dataset_form_comments_tooltip,
-    },
-    {
-      type: 'select',
-      name: 'sync',
-      placeholder: helptext.dataset_form_sync_placeholder,
-      tooltip: helptext.dataset_form_sync_tooltip,
-      options: [
-        { label: 'Standard', value: 'STANDARD' },
-        { label: 'Always', value: 'ALWAYS' },
-        { label: 'Disabled', value: 'DISABLED' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'compression',
-      placeholder: helptext.dataset_form_compression_placeholder,
-      tooltip: helptext.dataset_form_compression_tooltip,
-      options: [
-        { label: 'off', value: 'OFF' },
-        { label: 'lz4 (recommended)', value: 'LZ4' ,},
-        { label: 'gzip (fastest)', value: 'GZIP-1' },
-        { label: 'gzip (default level, 6)', value: 'GZIP' },
-        { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
-        { label: 'zle (runs of zeros)', value: 'ZLE' },
-        { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'atime',
-      placeholder: helptext.dataset_form_atime_placeholder,
-      tooltip: helptext.dataset_form_atime_tooltip,
-      options: [
-        { label: 'on', value: 'ON' },
-        { label: 'off', value: 'OFF' }
-      ],
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'refquota',
-      placeholder: helptext.dataset_form_refquota_placeholder,
-      tooltip: helptext.dataset_form_refquota_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_refquota_validation
-    },
-    {
-      type: 'select',
-      name: 'refquota_unit',
-      options: [
-        {
-          label: 'Bytes',
-          value: 'B',
-        },
+      name: "Name and Options",
+      class: "name",
+      label:true,
+      config: [
       {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
+        type: 'input',
+        name: 'name',
+        placeholder: helptext.dataset_form_name_placeholder,
+        tooltip: helptext.dataset_form_name_tooltip,
+        readonly: true,
+        required: true,
+        validation: [Validators.required, forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive)],
+      },
+      {
+        type: 'input',
+        name: 'comments',
+        placeholder: helptext.dataset_form_comments_placeholder,
+        tooltip: helptext.dataset_form_comments_tooltip,
+      },
+      {
+        type: 'select',
+        name: 'sync',
+        placeholder: helptext.dataset_form_sync_placeholder,
+        tooltip: helptext.dataset_form_sync_tooltip,
+        options: [
+          { label: 'Standard', value: 'STANDARD' },
+          { label: 'Always', value: 'ALWAYS' },
+          { label: 'Disabled', value: 'DISABLED' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'compression',
+        placeholder: helptext.dataset_form_compression_placeholder,
+        tooltip: helptext.dataset_form_compression_tooltip,
+        options: [
+          { label: 'off', value: 'OFF' },
+          { label: 'lz4 (recommended)', value: 'LZ4' ,},
+          { label: 'gzip (fastest)', value: 'GZIP-1' },
+          { label: 'gzip (default level, 6)', value: 'GZIP' },
+          { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
+          { label: 'zle (runs of zeros)', value: 'ZLE' },
+          { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'atime',
+        placeholder: helptext.dataset_form_atime_placeholder,
+        tooltip: helptext.dataset_form_atime_tooltip,
+        options: [
+          { label: 'on', value: 'ON' },
+          { label: 'off', value: 'OFF' }
+        ],
+      }]
+    },
+    {
+      name: "Dataset and Children",
+      class: "refdataset",
+      label:true,
+      width:'50%',
+      config: [
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'refquota',
+        placeholder: helptext.dataset_form_refquota_placeholder,
+        tooltip: helptext.dataset_form_refquota_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_refquota_validation
+      },
+      {
+        type: 'select',
+        name: 'refquota_unit',
+        options: [
+          {
+            label: 'Bytes',
+            value: 'B',
+          },
+        {
+          label: 'KiB',
+          value: 'K',
+        }, {
+          label: 'MiB',
+          value: 'M',
+        }, {
+          label: 'GiB',
+          value: 'G',
+        },{
+          label: 'TiB',
+          value: 'T',
+        }],
         value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T',
-      }],
-      value: 'M',
-      class: 'inline',
-      width: '30%',
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'refquota_warning',
-      placeholder: helptext.dataset_form_refquota_warning_placeholder,
-      tooltip: helptext.dataset_form_refquota_warning_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_refquota_warning_validation
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'refquota_critical',
-      placeholder: helptext.dataset_form_refquota_critical_placeholder,
-      tooltip: helptext.dataset_form_refquota_critical_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_refquota_critical_validation
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'quota',
-      placeholder: helptext.dataset_form_quota_placeholder,
-      tooltip: helptext.dataset_form_quota_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_quota_validation
-    },
-    {
-      type: 'select',
-      name: 'quota_unit',
-      options: [
-        {
-          label: 'Bytes',
-          value: 'B',
-        },
-        {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
+        class: 'inline',
+        width: '30%',
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'refquota_warning',
+        placeholder: helptext.dataset_form_refquota_warning_placeholder,
+        tooltip: helptext.dataset_form_refquota_warning_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_refquota_warning_validation
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'refquota_critical',
+        placeholder: helptext.dataset_form_refquota_critical_placeholder,
+        tooltip: helptext.dataset_form_refquota_critical_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_refquota_critical_validation
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'refreservation',
+        placeholder: helptext.dataset_form_refreservation_placeholder,
+        tooltip: helptext.dataset_form_refreservation_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_refreservation_validation
+      },
+      {
+        type: 'select',
+        name: 'refreservation_unit',
+        options: [
+          {
+            label: 'Bytes',
+            value: 'B',
+          },
+          {
+          label: 'KiB',
+          value: 'K',
+        }, {
+          label: 'MiB',
+          value: 'M',
+        }, {
+          label: 'GiB',
+          value: 'G',
+        },{
+          label: 'TiB',
+          value: 'T',
+        }],
         value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T',
+        class: 'inline',
+        width: '30%',
       }],
-      value: 'M',
-      class: 'inline',
-      width: '30%',
     },
     {
-      type: 'input',
-      inputType: 'number',
-      name: 'quota_warning',
-      placeholder: helptext.dataset_form_quota_warning_placeholder,
-      tooltip: helptext.dataset_form_quota_warning_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_quota_warning_validation
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'quota_critical',
-      placeholder: helptext.dataset_form_quota_critical_placeholder,
-      tooltip: helptext.dataset_form_quota_critical_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_quota_critical_validation
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'refreservation',
-      placeholder: helptext.dataset_form_refreservation_placeholder,
-      tooltip: helptext.dataset_form_refreservation_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_refreservation_validation
-    },
-    {
-      type: 'select',
-      name: 'refreservation_unit',
-      options: [
-        {
-          label: 'Bytes',
-          value: 'B',
-        },
-        {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
+      name: "This Dataset",
+      class: "dataset",
+      label:true,
+      width:'50%',
+      config: [
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'quota',
+        placeholder: helptext.dataset_form_quota_placeholder,
+        tooltip: helptext.dataset_form_quota_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_quota_validation
+      },
+      {
+        type: 'select',
+        name: 'quota_unit',
+        options: [
+          {
+            label: 'Bytes',
+            value: 'B',
+          },
+          {
+          label: 'KiB',
+          value: 'K',
+        }, {
+          label: 'MiB',
+          value: 'M',
+        }, {
+          label: 'GiB',
+          value: 'G',
+        },{
+          label: 'TiB',
+          value: 'T',
+        }],
         value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T',
-      }],
-      value: 'M',
-      class: 'inline',
-      width: '30%',
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'reservation',
-      placeholder: helptext.dataset_form_reservation_placeholder,
-      tooltip: helptext.dataset_form_reservation_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_reservation_validation
-    },
-    {
-      type: 'select',
-      name: 'reservation_unit',
-      options: [
-        {
-          label: 'Bytes',
-          value: 'B',
-        },
-        {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
+        class: 'inline',
+        width: '30%',
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'quota_warning',
+        placeholder: helptext.dataset_form_quota_warning_placeholder,
+        tooltip: helptext.dataset_form_quota_warning_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_quota_warning_validation
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'quota_critical',
+        placeholder: helptext.dataset_form_quota_critical_placeholder,
+        tooltip: helptext.dataset_form_quota_critical_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_quota_critical_validation
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'reservation',
+        placeholder: helptext.dataset_form_reservation_placeholder,
+        tooltip: helptext.dataset_form_reservation_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_reservation_validation
+      },
+      {
+        type: 'select',
+        name: 'reservation_unit',
+        options: [
+          {
+            label: 'Bytes',
+            value: 'B',
+          },
+          {
+          label: 'KiB',
+          value: 'K',
+        }, {
+          label: 'MiB',
+          value: 'M',
+        }, {
+          label: 'GiB',
+          value: 'G',
+        },{
+          label: 'TiB',
+          value: 'T'
+        }],
         value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T'
+        class: 'inline',
+        width: '30%',
       }],
-      value: 'M',
-      class: 'inline',
-      width: '30%',
     },
     {
-      type: 'select',
-      name: 'deduplication',
-      label: helptext.dataset_form_deduplication_label,
-      placeholder: helptext.dataset_form_deduplication_placeholder,
-      tooltip: helptext.dataset_form_deduplication_tooltip,
-      options: [
-        { label: 'on', value: 'ON' },
-        { label: 'verify', value: 'VERIFY' },
-        { label: 'off', value: 'OFF' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'readonly',
-      placeholder: helptext.dataset_form_readonly_placeholder,
-      tooltip: helptext.dataset_form_readonly_tooltip,
-      options: [
-        { label: 'On', value: 'ON' },
-        { label: 'Off', value: 'OFF' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'exec',
-      placeholder: helptext.dataset_form_exec_placeholder,
-      tooltip: helptext.dataset_form_exec_tooltip,
-      options: [
-        { label: 'On', value: 'ON' },
-        { label: 'Off', value: 'OFF' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'snapdir',
-      placeholder: helptext.dataset_form_snapdir_placeholder,
-      tooltip: helptext.dataset_form_snapdir_tooltip,
-      options: [
-        { label: 'Visible', value: 'VISIBLE' },
-        { label: 'Invisible', value: 'HIDDEN' },
-      ],
-    },
-    {
-      type: 'select',
-      name: 'copies',
-      placeholder: helptext.dataset_form_copies_placeholder,
-      tooltip: helptext.dataset_form_copies_tooltip,
-      options: [
-        { label: '1', value: '1' },
-        { label: '2', value: '2' },
-        { label: '3', value: '3' }
-      ],
-      value: 1
-    },
-    {
-      type: 'select',
-      name: 'recordsize',
-      placeholder: helptext.dataset_form_recordsize_placeholder,
-      tooltip: helptext.dataset_form_recordsize_tooltip,
-      options: [
-        { label: '512', value: '512', disable:true, hiddenFromDisplay: true },
-        { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true },
-        { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true },
-        { label: '4K', value: '4K' },
-        { label: '8K', value: '8K' },
-        { label: '16K', value: '16K' },
-        { label: '32K', value: '32K' },
-        { label: '64K', value: '64K' },
-        { label: '128K', value: '128K' },
-        { label: '256K', value: '256K' },
-        { label: '512K', value: '512K' },
-        { label: '1M', value: '1M' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'aclmode',
-      placeholder: helptext.dataset_form_aclmode_placeholder,
-      tooltip: helptext.dataset_form_aclmode_tooltip,
-      options: [{label:'Passthrough', value: 'PASSTHROUGH'},
-                {label:'Restricted', value: 'RESTRICTED'}],
-      value: 'PASSTHROUGH'
-    },
-    {
-      type: 'select',
-      name: 'casesensitivity',
-      placeholder: helptext.dataset_form_casesensitivity_placeholder,
-      tooltip: helptext.dataset_form_casesensitivity_tooltip,
-      options: [
-        { label: 'Sensitive', value: 'SENSITIVE' },
-        { label: 'Insensitive', value: 'INSENSITIVE' },
-        { label: 'Mixed', value: 'MIXED' }
-      ],
-      value: 'SENSITIVE'
-    },
-    {
-      type: 'select',
-      name: 'share_type',
-      placeholder: helptext.dataset_form_share_type_placeholder,
-      tooltip: helptext.dataset_form_share_type_tooltip,
-      options: [{label:'Generic', value: 'GENERIC'},
-                {label:'SMB', value: 'SMB'}],
-      value: 'GENERIC',
-      disabled: true,
-      isHidden: true,
+      name: "Other Options",
+      class: "options",
+      label:true,
+      config: [
+      {
+        type: 'select',
+        name: 'deduplication',
+        label: helptext.dataset_form_deduplication_label,
+        placeholder: helptext.dataset_form_deduplication_placeholder,
+        tooltip: helptext.dataset_form_deduplication_tooltip,
+        options: [
+          { label: 'on', value: 'ON' },
+          { label: 'verify', value: 'VERIFY' },
+          { label: 'off', value: 'OFF' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'readonly',
+        placeholder: helptext.dataset_form_readonly_placeholder,
+        tooltip: helptext.dataset_form_readonly_tooltip,
+        options: [
+          { label: 'On', value: 'ON' },
+          { label: 'Off', value: 'OFF' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'exec',
+        placeholder: helptext.dataset_form_exec_placeholder,
+        tooltip: helptext.dataset_form_exec_tooltip,
+        options: [
+          { label: 'On', value: 'ON' },
+          { label: 'Off', value: 'OFF' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'snapdir',
+        placeholder: helptext.dataset_form_snapdir_placeholder,
+        tooltip: helptext.dataset_form_snapdir_tooltip,
+        options: [
+          { label: 'Visible', value: 'VISIBLE' },
+          { label: 'Invisible', value: 'HIDDEN' },
+        ],
+      },
+      {
+        type: 'select',
+        name: 'copies',
+        placeholder: helptext.dataset_form_copies_placeholder,
+        tooltip: helptext.dataset_form_copies_tooltip,
+        options: [
+          { label: '1', value: '1' },
+          { label: '2', value: '2' },
+          { label: '3', value: '3' }
+        ],
+        value: 1
+      },
+      {
+        type: 'select',
+        name: 'recordsize',
+        placeholder: helptext.dataset_form_recordsize_placeholder,
+        tooltip: helptext.dataset_form_recordsize_tooltip,
+        options: [
+          { label: '512', value: '512', disable:true, hiddenFromDisplay: true },
+          { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true },
+          { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true },
+          { label: '4K', value: '4K' },
+          { label: '8K', value: '8K' },
+          { label: '16K', value: '16K' },
+          { label: '32K', value: '32K' },
+          { label: '64K', value: '64K' },
+          { label: '128K', value: '128K' },
+          { label: '256K', value: '256K' },
+          { label: '512K', value: '512K' },
+          { label: '1M', value: '1M' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'aclmode',
+        placeholder: helptext.dataset_form_aclmode_placeholder,
+        tooltip: helptext.dataset_form_aclmode_tooltip,
+        options: [{label:'Passthrough', value: 'PASSTHROUGH'},
+                  {label:'Restricted', value: 'RESTRICTED'}],
+        value: 'PASSTHROUGH'
+      },
+      {
+        type: 'select',
+        name: 'casesensitivity',
+        placeholder: helptext.dataset_form_casesensitivity_placeholder,
+        tooltip: helptext.dataset_form_casesensitivity_tooltip,
+        options: [
+          { label: 'Sensitive', value: 'SENSITIVE' },
+          { label: 'Insensitive', value: 'INSENSITIVE' },
+          { label: 'Mixed', value: 'MIXED' }
+        ],
+        value: 'SENSITIVE'
+      },
+      {
+        type: 'select',
+        name: 'share_type',
+        placeholder: helptext.dataset_form_share_type_placeholder,
+        tooltip: helptext.dataset_form_share_type_tooltip,
+        options: [{label:'Generic', value: 'GENERIC'},
+                  {label:'SMB', value: 'SMB'}],
+        value: 'GENERIC',
+        disabled: true,
+        isHidden: true,
+      }]
     }
   ];
 
