@@ -77,11 +77,10 @@ def is_element_present(driver, xpath):
     return True
 
 
-def wait_on_element(driver, xpath, scriptname, testname):
+def wait_on_element(driver, xpath, timeout=120):
     num = 0
     while is_element_present(driver, xpath) is False:
-        if num == 120:
-            take_screenshot(driver, scriptname, testname)
+        if num >= timeout:
             return False
         else:
             num += 1
