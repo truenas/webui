@@ -148,7 +148,7 @@ export class ReplicationWizardComponent {
                         allowDrag: false,
                         useVirtualScroll: false,
                         useCheckbox: true,
-                        useTriState: true,
+                        useTriState: false,
                     },
                     required: true,
                     validation: [Validators.required],
@@ -203,7 +203,7 @@ export class ReplicationWizardComponent {
                     name: 'recursive',
                     placeholder: helptext.recursive_placeholder,
                     tooltip: helptext.recursive_tooltip,
-                    value: true,
+                    value: false,
                     relation: [{
                         action: 'SHOW',
                         connective: 'OR',
@@ -258,6 +258,11 @@ export class ReplicationWizardComponent {
                             value: 'remote',
                         }]
                     }],
+                    parent: this,
+                    blurStatus : true,
+                    blurEvent: (parent) => {
+                        parent.getSnapshots();
+                    }
                 },
                 {
                     type: 'radio',
@@ -627,13 +632,12 @@ export class ReplicationWizardComponent {
                 this.selectedReplicationTask = value;
             }
         });
-        this.entityWizard.formArray.controls[0].controls['source_datasets'].statusChanges.subscribe((value) => {
+        this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.subscribe((value) => {
             this.genTaskName();
             this.getSnapshots();
         });
-        this.entityWizard.formArray.controls[0].controls['target_dataset'].statusChanges.subscribe((value) => {
+        this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.subscribe((value) => {
             this.genTaskName();
-            this.getSnapshots();
         });
 
         for (const i of ['source', 'target']) {
@@ -679,6 +683,13 @@ export class ReplicationWizardComponent {
             const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: 'source_datasets'}).customTemplateStringOptions;
             if (explorerComponent) {
                 explorerComponent.useTriState = value;
+            }
+        });
+
+        this.entityWizard.formArray.controls[0].controls['custom_snapshots'].valueChanges.subscribe((value) => {
+            this.setDisable('naming_schema', !value, !value, 0);
+            if (!value) {
+                this.getSnapshots();
             }
         });
     }
@@ -1033,20 +1044,25 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
-        this.ws.call('replication.count_eligible_manual_snapshots',
-        [
-            this.entityWizard.formArray.controls[0].controls['source_datasets'].value.toString(),
-            ['auto-%Y-%m-%d_%H-%M'],
+        let payload = [
+            this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
+            (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ?  this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : ['auto-%Y-%m-%d_%H-%M'],
             this.entityWizard.formArray.controls[0].controls['transport'].value,
             this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
-        ]).subscribe(
-            (res) => {
-                this.snapshotsCountField.paraText = res.eligible + ' snapshots found';
-            },
-            (err) => {
-                this.snapshotsCountField.paraText = '';
-                new EntityUtils().handleWSError(this, err);
-            }
-        )
+        ];
+
+        if (payload[0].length > 0 && payload[3] != undefined && payload[3] != '') {
+            this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
+                (res) => {
+                    this.snapshotsCountField.paraText = res.eligible + ' snapshots found';
+                },
+                (err) => {
+                    this.snapshotsCountField.paraText = '';
+                    new EntityUtils().handleWSError(this, err);
+                }
+            )
+        } else {
+            this.snapshotsCountField.paraText = '';
+        }
     }
 }
