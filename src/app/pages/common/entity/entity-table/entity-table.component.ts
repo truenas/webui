@@ -146,6 +146,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public selected = [];
 
   private interval: any;
+  private excuteDeletion = false;
 
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
@@ -439,7 +440,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPaginationInfo();
       this.showDefaults = true;
     }
-    if ((this.expandedRows == 0 || !this.asyncView) && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion) && this.filter.nativeElement.value === '') {
+      this.excuteDeletion = false;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
@@ -657,7 +659,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const data = {};
     if (this.conf.wsDelete) {
       this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
-        (resinner) => { this.getData() },
+        (resinner) => {
+          this.getData();
+          this.excuteDeletion = true;
+        },
         (resinner) => {
           new EntityUtils().handleWSError(this, resinner, this.dialogService);
           this.loader.close();
@@ -667,6 +672,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
         (resinner) => {
           this.getData();
+          this.excuteDeletion = true;
         },
         (resinner) => {
           new EntityUtils().handleError(this, resinner);
