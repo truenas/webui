@@ -22,6 +22,7 @@ export class InitshutdownListComponent {
     { name: 'Enabled', prop: 'enabled' },
     { name: 'Timeout', prop: 'timeout' },
   ];
+  public rowIdentifier = 'type';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

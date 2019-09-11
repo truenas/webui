@@ -26,7 +26,7 @@ export class CloudsyncListComponent implements InputTableConf {
   public asyncView = true;
 
   public columns: Array < any > = [
-    { name: T('Description'), prop: 'description' },
+    { name: T('Description'), prop: 'description', always_display: true },
     { name: T('Credential'), prop: 'credential', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true},
     { name: T('Transfer Mode'), prop: 'transfer_mode', hidden: true },
@@ -41,6 +41,7 @@ export class CloudsyncListComponent implements InputTableConf {
     { name: T('Status'), prop: 'status', state: 'state'},
     { name: T('Enabled'), prop: 'enabled' },
   ];
+  public rowIdentifier = 'description';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

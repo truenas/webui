@@ -20,6 +20,7 @@ export class AFPListComponent {
     {name : T('Name'), prop : 'name', always_display: true},
     {name : T('Path'), prop : 'path'},
   ];
+  public rowIdentifier = 'afp_name';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

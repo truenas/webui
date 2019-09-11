@@ -22,6 +22,7 @@ export class SnapshotListComponent {
     { name: 'VMware Sync', prop: 'vmware_sync', hidden: true },
     { name: 'Enabled', prop: 'enabled' },
   ];
+  public rowIdentifier = 'dataset';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
