@@ -22,6 +22,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   public error: string;
   protected route_success: string[] = ['storage', 'pools'];
   protected isEntity = true;
+  protected userOnLoad: string;
+  protected groupOnLoad: string;
 
   public fieldSets: FieldSet[] = [
     {
@@ -150,6 +152,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.storageService.filesystemStat(this.datasetPath).subscribe(res => {
+      this.userOnLoad = res.user;
+      this.groupOnLoad = res.group;
       this.datasetMode = res.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
       entityEdit.formGroup.controls['user'].setValue(res.user);
@@ -193,6 +197,12 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   beforeSubmit(data) {
+    if (data.user === this.userOnLoad) {
+      delete data.user;
+    };
+    if (data.group === this.groupOnLoad) {
+      delete data.group;
+    }
     data['acl'] = [];
 
     data['options'] = {

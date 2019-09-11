@@ -174,6 +174,12 @@ msgstr ""
 "target=\"_blank\">Расширенные атрибуты</a> сохраняются, но должны "
 "поддерживаться обеими системами."
 
+msgid ""
+"<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
+"target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
+"valid    email address when registering to receive issue status updates."
+msgstr ""
+
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr ""
 
@@ -794,6 +800,12 @@ msgstr "Тип адаптера"
 
 msgid "Adapter Type:"
 msgstr "Тип адаптера:"
+
+msgid "Add"
+msgstr ""
+
+msgid "Add ACL Item"
+msgstr ""
 
 msgid "Add Additional Path"
 msgstr "Добавить дополнительный путь"
@@ -2767,6 +2779,9 @@ msgstr "Раскладка клавиатуры консоли"
 msgid "Contact"
 msgstr "Контакт"
 
+msgid "Contact Support"
+msgstr ""
+
 msgid "Container"
 msgstr "Контейнер"
 
@@ -3724,6 +3739,9 @@ msgstr "Разрешить самонастройку"
 
 msgid "Enable iSCSI ALUA"
 msgstr "Включить iSCSI ALUA"
+
+msgid "Enable iXsystems Proactive Support"
+msgstr ""
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
 msgstr "Включите, если клиенты Mac будут подключаться к общему ресурсу SMB."
@@ -4804,8 +4822,14 @@ msgstr "Ошибка удаления zvol "
 msgid "Error Promoting dataset "
 msgstr "Ошибка продвижения набора данных "
 
+msgid "Error Saving Proactive Support Settings"
+msgstr ""
+
 msgid "Error Unlocking"
 msgstr "Ошибка разблокировки"
+
+msgid "Error Updating Production Status"
+msgstr ""
 
 msgid "Error Upgrading Pool "
 msgstr "Ошибка обновления пула"
@@ -5830,6 +5854,9 @@ msgstr ""
 "Внутренний идентификатор сертификата. Допускаются только буквенно-цифровые "
 "символы, \"_\" и \"-\"."
 
+msgid "Invalid dataset."
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr "Неверное регулярное выражение фильтра"
 
@@ -5913,6 +5940,12 @@ msgid ""
 msgstr ""
 "Jail'ы нельзя создавать или управлять ими, пока не будет создан пул для их "
 "хранения. Пожалуйста, сначала создайте пул"
+
+msgid "Jails failed to start"
+msgstr ""
+
+msgid "Jails started."
+msgstr ""
 
 msgid "KDC"
 msgstr "KDC"
@@ -6159,9 +6192,6 @@ msgstr "Войти"
 
 msgid "Log in as root with password"
 msgstr "Вход в систему как root с паролем"
-
-msgid "Log in to Legacy User Interface?"
-msgstr "Войти в старый интерфейс пользователя?"
 
 msgid "Log mountd(8) requests"
 msgstr "Журналировать запросы mountd(8)"
@@ -6660,6 +6690,9 @@ msgstr "Сервера имен"
 msgid "Naming Schema"
 msgstr "Схема именования"
 
+msgid "Navigation"
+msgstr ""
+
 msgid "NetBIOS Alias"
 msgstr "Псевдоним NetBIOS"
 
@@ -6828,9 +6861,6 @@ msgid "Not run since last boot"
 msgstr ""
 
 msgid "Note"
-msgstr ""
-
-msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
 msgstr ""
 
 msgid "Notes"
@@ -7186,6 +7216,9 @@ msgstr "Разрешить sudo"
 msgid "Phone"
 msgstr ""
 
+msgid "Phone Number"
+msgstr ""
+
 msgid "Physical interface of the selected member."
 msgstr ""
 
@@ -7386,6 +7419,9 @@ msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
 "versions of FreeNAS: "
+msgstr ""
+
+msgid "Production status successfully updated"
 msgstr ""
 
 msgid "Promote Dataset"
@@ -7974,6 +8010,19 @@ msgstr "Задачи проверки"
 msgid "Scrub complete on pool <i>"
 msgstr "Завершена проверка пула <i>"
 
+msgid ""
+"Search the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
+"target=\"_blank\">FreeNAS issue tracker</a>    to ensure the issue has not "
+"already been reported before    filing a bug report or feature request. If "
+"an issue has    already been created, add a comment to the existing issue.  "
+"  Please visit the <a href=\"http://www.ixsystems.com/storage/\" "
+"target=\"_blank\">    iXsystems storage page</a>    for enterprise-grade "
+"storage solutions and support."
+msgstr ""
+
+msgid "Secondary Contact"
+msgstr ""
+
 msgid "Secondary Contact (optional)"
 msgstr ""
 
@@ -8498,6 +8547,12 @@ msgid ""
 "to iXsystems."
 msgstr ""
 
+msgid "Send initial debug"
+msgstr ""
+
+msgid "Send initial debug."
+msgstr ""
+
 msgid "Serial"
 msgstr "Серийный номер"
 
@@ -8610,6 +8665,9 @@ msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
 "target=\"_blank\">getrlimit(2)</a> utility."
+msgstr ""
+
+msgid "Set system production state and optionally send initial debug."
 msgstr ""
 
 msgid ""
@@ -9362,6 +9420,14 @@ msgstr "Удостоверяющий центр"
 msgid "Signing Request"
 msgstr "Запрос подписи"
 
+msgid ""
+"Silver / Gold Coverage Customers can enable iXsystems Proactive Support. "
+"This  automatically emails iXsystems when certain conditions occur on this "
+"TrueNAS system. The iX Support  Team will promptly communicate with the "
+"Contacts saved below to quickly resolve any issue that may  have occurred "
+"on the system."
+msgstr ""
+
 msgid "Site Name"
 msgstr "Имя Сайта"
 
@@ -9608,6 +9674,9 @@ msgstr ""
 msgid "Successfully reset encryption for pool: "
 msgstr ""
 
+msgid "Successfully saved proactive support settings."
+msgstr ""
+
 msgid "Successfully updated."
 msgstr ""
 
@@ -9770,6 +9839,9 @@ msgid "Target Alias"
 msgstr "Псевдоним цели"
 
 msgid "Target Dataset"
+msgstr ""
+
+msgid "Target Mode"
 msgstr ""
 
 msgid "Target Name"
@@ -10104,6 +10176,9 @@ msgid ""
 "being reported."
 msgstr ""
 
+msgid "This is a production system"
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -10138,9 +10213,6 @@ msgid "Time Machine Quota"
 msgstr ""
 
 msgid "Time remaining until changes reverted:"
-msgstr ""
-
-msgid "TimeZone"
 msgstr ""
 
 msgid "Timeout"
@@ -10223,6 +10295,9 @@ msgid "UNIX Charset"
 msgstr ""
 
 msgid "UPDATE"
+msgstr ""
+
+msgid "UPDATE LICENSE"
 msgstr ""
 
 msgid "UPS Mode"
@@ -10332,6 +10407,9 @@ msgid "Update License"
 msgstr ""
 
 msgid "Update Period"
+msgstr ""
+
+msgid "Update Status"
 msgstr ""
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
@@ -11025,9 +11103,6 @@ msgstr ""
 
 msgid "jail_zfs_mountpoint"
 msgstr ""
-
-msgid "legacy web interface"
-msgstr "старый web интерфейс"
 
 msgid "list"
 msgstr ""

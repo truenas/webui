@@ -22,7 +22,7 @@ export class ReplicationListComponent {
     protected asyncView = true;
 
     public columns: Array<any> = [
-        { name: 'Name', prop: 'name' },
+        { name: 'Name', prop: 'name', always_display: true },
         { name: 'Direction', prop: 'direction'},
         { name: 'Transport', prop: 'transport', hidden: true},
         { name: 'SSH Connection', prop: 'ssh_connection', hidden: true},

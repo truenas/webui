@@ -27,19 +27,20 @@ export class UserListComponent implements OnInit {
   protected hasDetails = true;
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username', always_display: true, minWidth: 150 },
-    { name: 'UID', prop: 'bsdusr_uid', hidden: false },
-    { name: 'GID', prop: 'bsdusr_gid', hidden: true },
-    { name: 'Home directory', prop: 'bsdusr_home', hidden: true },
-    { name: 'Shell', prop: 'bsdusr_shell', hidden: true, minWidth: 150 },
-    { name: 'Builtin', prop: 'bsdusr_builtin', hidden: false },
+    { name: 'Username', prop: 'bsdusr_username', always_display: true, minWidth: 150, maxWidth: 250 },
+    { name: 'UID', prop: 'bsdusr_uid', hidden: false, maxWidth: 100 },
+    { name: 'GID', prop: 'bsdusr_gid', hidden: true, maxWidth: 100 },
+    { name: 'Home directory', prop: 'bsdusr_home', hidden: true, maxWidth: 250 },
+    { name: 'Shell', prop: 'bsdusr_shell', hidden: true, minWidth: 150, maxWidth: 300 },
+    { name: 'Builtin', prop: 'bsdusr_builtin', hidden: false, maxWidth: 100 },
     { name: 'Full Name', prop: 'bsdusr_full_name', hidden: false, minWidth: 250, maxWidth: 400 },
-    { name: 'Email', prop: 'bsdusr_email', hidden: true },
-    { name: 'Disable Password Login', prop: 'bsdusr_password_disabled', hidden: true },
-    { name: 'Lock User', prop: 'bsdusr_locked', hidden: true },
-    { name: 'Permit Sudo', prop: 'bsdusr_sudo', hidden: true },
-    { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account', hidden: true },
+    { name: 'Email', prop: 'bsdusr_email', hidden: true, maxWidth: 250 },
+    { name: 'Disable Password Login', prop: 'bsdusr_password_disabled', hidden: true, minWidth: 200, maxWidth: 200 },
+    { name: 'Lock User', prop: 'bsdusr_locked', hidden: true, maxWidth: 150},
+    { name: 'Permit Sudo', prop: 'bsdusr_sudo', hidden: true, maxWidth: 150 },
+    { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account', hidden: true, minWidth: 170, maxWidth: 170 },
   ];
+  public rowIdentifier = 'bsdusr_username';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

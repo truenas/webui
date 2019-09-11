@@ -1192,12 +1192,28 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   #acme_directory_uri mat-form-field {
     width: 50%;
   }
-
+  
+  // Support Section ////////////////////////
   app-support {
-    .fieldset {
-      padding-left: 15px;
+    .mat-card {
+      padding-bottom: 60px;
+      min-width: 720px;
     }
-    #FN_col1, #FN_col2, #TN_col1 {
+    #top-row {
+      margin: 0 15px;
+    }
+    .sys-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 350px;
+    }
+
+    .lowerme {
+      margin-top: 60px !important;
+    }
+
+    .support-title, #FN_col1, #FN_col2, #TN_col1, #TN_proactive_section_title {
       font-size: 180%;
       margin-bottom: 15px;
 
@@ -1209,52 +1225,127 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         font-size: 36px;
       }
     }
-    #TN_col1, #FN_col1, #support_text {
-      width: 200%;
-    }
-    .lowerme {
-      margin-top: 60px !important;
-    }
-    #support_text {
-      font-size: 110%;
-      margin-right: 30px;
-      margin-top: 10px;
-    }
-    h4 {
-      font-size: 130%;
-      margin-top: 15px;
-      margin-bottom: 5px;
-    }
-    #pic {
-      text-align: center;
-      margin-top: 25px;
-      margin-bottom: -25px;
-      position: relative;
-      right: 40px;
 
-      & img {
-        max-width: 480px;
-      }
-    }
-    .mat-card-actions {
-      margin-left: 15px;
-    }
-
-    #FN_jira-info {
-      margin-bottom: 10px;
-    }
-
-    #category_form-select-spinner {
+    #category_form-select-spinner,
+    app-proactive #name_form-input-spinner,
+    app-proactive #secondary_name_form-input-spinner {
       position: absolute;
       top: -20px;
       right: 45%;
     }
+  }
 
-    .mat-card-actions {
-      margin-top: -54px;
-      width: 50%
+  app-fn-sys-info {
+    #fn-support-title {
+      margin-bottom: 25px;
+    }
+    .fn-sys-info-line {
+      margin-top: 10px;
+      height: 40px;
+
+      h4 {
+        margin-bottom: 3px;
+      }
+    }
+    #fn-instructions {
+      font-size: 110%;
     }
   }
+
+  app-tn-sys-info {
+    .tn-sys-info-line {
+      margin-top: 10px;
+      height: 40px;
+
+      h4 {
+        margin-bottom: 3px;
+      }
+    }
+    #update-license-btn {
+      background-color: var(--primary);
+      color: white;
+      top: 13px;
+    }
+
+  }
+
+  app-sys-image img {
+    max-width: 90%;
+    height: auto;
+  }
+
+  app-production-status {
+    .mat-card {
+        top: 12px;
+        background-color: rgba(127,127,127,0.1);
+        max-width: 460px !important;
+        min-width: 300px;
+    }
+    .mat-card-actions {
+      top: 5px;
+      position: relative;
+    }
+    .temp {
+      height: 0 !important;
+    }
+  }
+
+  app-proactive {
+    .mat-card {
+      top: 25px;
+      background-color: rgba(127,127,127,0.1);
+      margin: 0 15px !important;
+    }
+    .mat-card-actions {
+      height: 0px;
+      top: -45px;
+      position: relative;
+      left: 230px;
+    }
+    #enabled {
+      position: relative;
+      top: 5px;
+    }
+    .temp {
+      height: 0 !important;
+    }
+    #TN_proactive_instructions {
+      font-size: 120%;
+      margin-right: 10px;
+      margin-bottom: 20px;
+
+    }
+  }
+
+  app-fn-support {
+    .mat-card {
+      background-color: rgba(127,127,127,0.1);
+      margin: 0 15px !important;
+      top: 30px;
+    }
+    .mat-card-actions {
+      top: -40px;
+      position: relative;
+      width: 300px;
+    }
+    form {
+      margin-bottom: -40px;
+    }
+  }
+
+  app-tn-support {
+    .mat-card {
+      top: 45px;
+      background-color: rgba(127,127,127,0.1);
+      margin: 0 15px !important;
+    }
+    .mat-card-actions {
+      height: 0px;
+      top: -55px;
+      position: relative;
+    }
+  }
+// End support section //////////////
 
   entity-form form-combobox mat-form-field {
     width: 50%;
@@ -1336,7 +1427,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-entity-dialog #pool_processes p {
     max-height: 170px;
-    overflow-y: auto; 
+    overflow-y: auto;
     padding: 3px;
     background-color: rgb(223, 223, 223);
     color: rgb(19, 19, 19);
@@ -1441,6 +1532,23 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-eula p {
     margin-bottom: 15px;
+  }
+
+  app-dataset-acl #aces0 {
+    position: absolute;
+    left: 15px;
+    top: 200px;
+
+    @media screen and ( max-width: 599px) {
+      position: relative;
+      top: -380px;
+      left: 60px;
+    }
+  }
+
+  .styled-list-for-dialogs {
+    list-style: disc inside;
+    padding-left: 15px;
   }
 
  } // end of ix theme

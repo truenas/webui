@@ -23,6 +23,7 @@ export class KerberosRealmsListComponent {
     { name: T('Admin Server'), prop: 'krb_admin_server' },
     { name: T('Password Server'), prop: 'krb_kpasswd_server' },
   ];
+  public rowIdentifier = 'krb_realm';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

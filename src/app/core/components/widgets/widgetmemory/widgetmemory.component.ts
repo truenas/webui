@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, OnDestroy} from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, OnDestroy, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -52,6 +52,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     }
   }
 
+  public isReady: boolean = false;
   public usage: any;
   public title:string = T("Memory");
   public subtitle:string = T("% of all cores");
@@ -66,7 +67,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   private legendIndex: number;
 
 
-  constructor(public router: Router, public translate: TranslateService, private sanitizer:DomSanitizer){
+  constructor(public router: Router, public translate: TranslateService, private sanitizer:DomSanitizer, private el: ElementRef){
     super(translate);
   }
 
@@ -164,11 +165,12 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
     let currentTheme = this.themeService.currentTheme();
     this.colorPattern = ["var(--green)", "var(--primary)", "var(--accent)"];
+    let startW = this.el.nativeElement.querySelector('#memory-usage-chart');
 
     let conf = {
       bindto: '#memory-usage-chart',
       size: {
-        width: 400,
+        width: 350, //400,
         height:64
       },
       tooltip:{
@@ -197,6 +199,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
         y:{ show: false }
       },
     }
+
+    this.isReady = true;
 
     this.chart = c3.generate(conf);
       

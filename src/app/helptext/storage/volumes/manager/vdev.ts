@@ -7,5 +7,12 @@ vdev_type_tooltip : T('Choose a <i>Stripe</i>, <i>Mirror</i>,\
  chosen disk layout. See the <a\
  href="--docurl--/storage.html#pool-manager"\
  target="_blank">Pool Manager</a> section\
- of the guide for more details.')
+ of the guide for more details.'),
+vdev_types : {
+    'stripe' : T('Stripe'),
+    'mirror' : T('Mirror'),
+    'raidz'  : T('Raid-z'),
+    'raidz2' : T('Raid-z2'),
+    'raidz3' : T('Raid-z3')
+  }
 }

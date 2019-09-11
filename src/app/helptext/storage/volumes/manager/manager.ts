@@ -34,13 +34,4 @@ manager_encryption_message : T("Always back up the key! Losing the key\
  will also lose all data on the disks with\
  no chance of recovery."),
 
-manager_extend_warning : "Extending the pool adds new\
- vdevs in a stripe with the\
- existing vdevs. It is important\
- to only use new vdevs of the\
- same size and type as those\
- already in the pool. This\
- operation cannot be reversed.\
- Continue?"
-
 }

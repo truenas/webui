@@ -128,11 +128,10 @@ export class ServiceSSHComponent implements OnInit {
   protected ssh_bindiface: any;
   ngOnInit() {
     this.ws.call('ssh.bindiface_choices').subscribe((res) => {
-      const values = Object.values(res);
       this.ssh_bindiface = _.find(this.fieldConfig, {'name' : 'ssh_bindiface'});
-      values.forEach((item) => {
-        this.ssh_bindiface.options.push({label : item, value : item});
-      });
+      for (const k in res) {
+        this.ssh_bindiface.options.push({label : res[k], value : k});
+      }
     });
   }
 }
