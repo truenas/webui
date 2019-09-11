@@ -40,6 +40,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   public system: SystemProfiler;
   public selectedEnclosure: any;
   public views: ViewConfig[] = [];
+  public spinner: boolean = true;
 
   private _system_product;
   get system_product(){
@@ -91,6 +92,9 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
       this.system.diskData = evt.data;
       core.emit({name: 'PoolDataRequest', sender: this});
+      setTimeout(() => {
+        this.spinner = false;
+      }, 1500);
     });
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
