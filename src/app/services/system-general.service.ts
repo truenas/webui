@@ -37,6 +37,4 @@ export class SystemGeneralService {
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
-  timeToCheckForWaitingUpdate = new EventEmitter<string>();
-
 }
