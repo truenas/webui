@@ -327,5 +327,8 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   background: var(--bg2);
 }
 
-
-
+/* MOBILE */
+.xs.widget{
+  min-width:320px;
+  overflow-x: auto;
+}

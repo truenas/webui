@@ -33,6 +33,7 @@ export class TunableListComponent {
     { name: 'Comment', prop: 'tun_comment' },
     { name: 'Enabled', prop: 'tun_enabled' },
   ];
+  public rowIdentifier = 'tun_var';
 
   public config: any = {
     paging: true,

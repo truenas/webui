@@ -36,6 +36,7 @@ export class AssociatedTargetListComponent {
       prop : 'extent',
     }
   ];
+  public rowIdentifier = 'target';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

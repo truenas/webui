@@ -22,6 +22,7 @@ export class NTPServerListComponent {
     {name : 'Min. Poll', prop : 'ntp_minpoll'},
     {name : 'Max. Poll', prop : 'ntp_maxpoll'},
   ];
+  public rowIdentifier = 'ntp_address';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

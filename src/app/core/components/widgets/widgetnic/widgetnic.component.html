@@ -1,11 +1,19 @@
-<div class="widget stats-widget" ngClass.xs="double-height xs">
+<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container  front">
     <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
         <mat-toolbar-row class="view-{{currentSlideName}}">
+
+          <!-- Mobile Only: Exit Widget -->
+          <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
+          </button>
+
+          <!-- Back to previous slide -->
           <button class="mat-card-title-text primary-nav" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
+
           <span class="mat-card-title-text primary-nav">
             <span class="card-title-text">
               &nbsp;<span>{{title | translate}} </span>
@@ -34,33 +42,16 @@
 
             </div>
 
-          <!--<ng-template #backBtn>
-            <button class="mat-card-title-text" *ngIf="currentSlide !== '0'" mat-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
-              <mat-icon class="back-arrow">chevron_left</mat-icon>
-            </button>
-            &nbsp;&nbsp; {{title | translate}}
-            </ng-template>-->
-
-          <!--<ng-template *ngIf="configurable === true">
-            <button mat-icon-button (click)="toggleConfig()">
-            <mat-icon>settings</mat-icon>
-            </button>
-            </ng-template>-->
-            <!--<button mat-button color="primary" class="" (click)="router.navigate(['reportsdashboard/cpu'])">CPU REPORTS</button>-->
         </mat-toolbar-row>
         <!-- Carousel -->
         <div id="" class="carousel" #carousel [ngClass]="{'lagg': nicState.lagg_ports}" >
-          <div fxFlex="100" class="slide overview" fxLayout="row" fxLayoutAlign="space-between">
-            <div class="left" fxFlex="40">
+          <div fxFlex="100" class="slide overview" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between">
+            <div class="left" fxFlex="40" fxFlex.xs="250px">
               <div class="overlay" fxFlex="100" fxLayout="column" fxLayoutAlign="space-around center">
 
               <div fxFlex="66" class="left-content">
                 <div class="nic-name" [ngClass]="{ 'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP' }">
                   <span textLimiter threshold="7" >{{nicState.name}}</span>
-                  <!--<div class="icon-wrapper">
-                    <mat-icon *ngIf="nicState.link_state == 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                    <mat-icon *ngIf="nicState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-                    </div>-->
                 </div> 
 
                 <div class="link-state" [ngClass]="{'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP'}">
@@ -86,7 +77,7 @@
               </div>
             </div>
 
-            <div class="right" fxFlex="60" fxLayout="column" fxLayoutAlign="space-around center">
+            <div class="right" fxFlex="60" fxFlex.xs fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100">
                 <div class="list-subheader">{{currentSlideName}}</div>
                 <mat-list>
@@ -162,37 +153,8 @@
 
         </div>
 
-        <!--<div class="carousel-nav">
-          <div class="btn-wrapper">
-          </div>
-          </div>-->
-
-        <!-- DETAILS -->
-        <!--<div class="title-wrapper fn-theme-primary" fxFlex="100">
-          <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
-          <ng-container *ngIf="showLegendValues">
-          <p class="title">{{altTitle}}</p>
-          <p class="subtitle">{{altSubtitle}}</p>
-          </ng-container>
-          <ng-container *ngIf="!showLegendValues">
-          <p class="title">{{title}}</p>
-          <p class="subtitle">{{subtitle}}</p>
-          </ng-container>
-          <button mat-button class="reports-btn" (click)="router.navigate(['reportsdashboard/cpu'])">REPORTS</button>
-          </div>-->
       </mat-card-content>
     </mat-card>
-
-    <!--<ng-template *ngIf="configurable">
-      <mat-card class="back">
-      <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
-      </mat-card-content>
-      <div class="widget-footer">
-      <button mat-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
-      <button mat-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
-      </div>
-      </mat-card>
-      </ng-template>-->
 
   </div>
 </div>

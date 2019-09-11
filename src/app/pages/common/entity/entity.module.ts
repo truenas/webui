@@ -78,6 +78,7 @@ import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/t
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
+import { DataTableCellDirective } from './entity-table/data-table-cell.directive';
 
 @NgModule({
   imports: [
@@ -137,7 +138,8 @@ import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/ta
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarMenuComponent,
-    ToolbarMultimenuComponent
+    ToolbarMultimenuComponent,
+    DataTableCellDirective
   ],
   exports: [
     EntityTemplateDirective,
@@ -165,6 +167,7 @@ import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/ta
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
+    DataTableCellDirective
   ],
   entryComponents: [
     FormButtonComponent,

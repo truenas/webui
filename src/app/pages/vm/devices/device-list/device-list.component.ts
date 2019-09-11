@@ -39,6 +39,7 @@ export class DeviceListComponent {
     {name : 'Device', prop : 'dtype'},
     {name : 'Order', prop : 'order'},
   ];
+  public rowIdentifier = 'id';
   public title = "VM ";
   public config: any = {
     paging : true,

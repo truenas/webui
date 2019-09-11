@@ -18,7 +18,7 @@ def test_00_open_web_browser(browser, ui_url):
     browser.get(ui_url)
     time.sleep(1)
     # setup implicit wait
-    browser.implicitly_wait(1)
+    browser.implicitly_wait(2)
     test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
 

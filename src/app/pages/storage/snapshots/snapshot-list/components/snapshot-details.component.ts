@@ -23,6 +23,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
   @Input() public parent: EntityTableComponent & { conf: SnapshotListComponent };
 
   public details: { label: string; value: string | number }[] = [];
+  public actions: EntityAction[] = [];
 
   constructor(private _ws: WebSocketService, private _router: Router) {}
 
@@ -33,7 +34,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
         map(response => ({
           ...response[0].properties,
           name: this.config.name,
-          creation: response[0].properties.creation.value
+          creation:  new Date(response[0].properties.creation.parsed.$date).toLocaleString()
         }))
       )
       .subscribe(snapshot => {
@@ -52,5 +53,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
           }
         ];
       });
+
+    this.actions = this.parent.conf.getActions();
   }
 }

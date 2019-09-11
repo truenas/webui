@@ -7,6 +7,7 @@ import { CoreService } from 'app/core/services/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 
 /*
@@ -31,7 +32,8 @@ import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.servic
     InteractionManagerService,
     ThemeService,
     PreferencesService,
-    ChartDataUtilsService
+    ChartDataUtilsService,
+    WebSocketService
   ],
   exports: [ // Modules and Components here
     CommonModule
@@ -48,7 +50,8 @@ export class CoreServices {
         InteractionManagerService,
         PreferencesService,
         ThemeService,
-        ChartDataUtilsService
+        ChartDataUtilsService,
+        WebSocketService
       ]
     }
   }

@@ -31,6 +31,11 @@ export class SshConnectionsListComponent {
         },
     };
 
+    public methodTextDict = {
+        disable: 'disabled',
+        delete: 'deleted',
+    }
+
     getActions(parentRow) {
         return [{
             id: "edit",
@@ -48,11 +53,12 @@ export class SshConnectionsListComponent {
                         }
                         usedBy[item.unbind_method].push(item.title);
                     }
-                    let deletemsg = '<p>Delete ' + this.config.deleteMsg.title + ' ' + rowinner.name + '?</p><br>';
-                    for (const item in usedBy) {
-                        deletemsg += '<ul> The following objects will be ' + item.toUpperCase();
-                        for (let i = 0; i < usedBy[item].length; i++) {
-                            deletemsg += '<li>' + usedBy[item][i] + '</li>';
+
+                    let deletemsg = '<p>Delete the <i>' + rowinner.name + '</i> connection?</p><br>';
+                    for (const method in usedBy) {
+                        deletemsg += 'These items will be <b>' + this.methodTextDict[method] + (method === 'delete' ? '</b> with the connection' : '</b>') + ':<ul>';
+                        for (let i = 0; i < usedBy[method].length; i++) {
+                            deletemsg += '<li>' + usedBy[method][i] + '</li>';
                         }
                         deletemsg += '</ul>';
                     }

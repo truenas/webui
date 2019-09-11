@@ -4,6 +4,12 @@
 	<input name = "DummyPassword" type="password" style="display:none;">
 
 	<mat-form-field class="full-width" *ngIf="config.inputType != 'file' else elseBlock">
+		<mat-spinner
+			diameter='40'
+			class="form-input-spinner"
+			id="{{config.name}}_form-input-spinner"
+			*ngIf="config.isLoading">
+		</mat-spinner>
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder | translate"
 			[attr.value]="config.value"
