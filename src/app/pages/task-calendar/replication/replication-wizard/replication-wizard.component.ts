@@ -7,9 +7,7 @@ import * as _ from 'lodash';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication-wizard';
-import replicationHelptext from '../../../../helptext/task-calendar/replication/replication';
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
-import snapshotHelptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 
 import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -566,6 +564,7 @@ export class ReplicationWizardComponent {
     }
 
     protected snapshotsCountField;
+    private existSnapshotTasks = [];
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -855,18 +854,27 @@ export class ReplicationWizardComponent {
         }
 
         if (item === 'periodic_snapshot_tasks') {
+            this.existSnapshotTasks = [];
             const snapshotPromises = [];
             for (const dataset of data['source_datasets']) {
                 payload = {
                     dataset: dataset,
                     recursive: data['recursive'],
-                    schedule: data['schedule'],
-                    lifetime_value: 2, // payload['lifetime_value'] ,
-                    lifetime_unit: 'WEEK', //payload['lifetime_unit'],
+                    schedule: this.parsePickerTime(data['schedule_picker']),
+                    lifetime_value: 2,
+                    lifetime_unit: 'WEEK',
                     naming_schema: 'auto-%Y-%m-%d_%H-%M',
                     enabled: true,
                 };
-                snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
+                await this.isSnapshotTaskExist(payload).then(
+                    (res) => {
+                        if (res.length === 0) {
+                            snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
+                        } else {
+                            this.existSnapshotTasks.push(...res.map(task => task.id));
+                        }
+                    }
+                )
             }
             return Promise.all(snapshotPromises);
         }
@@ -923,6 +931,9 @@ export class ReplicationWizardComponent {
                     await this.doCreate(value, item).then(
                         (res) => {
                             value[item] = res.id || res.map(snapshot => snapshot.id);
+                            if (item === 'periodic_snapshot_tasks' && this.existSnapshotTasks.length !== 0) {
+                                value[item].push(...this.existSnapshotTasks);
+                            }
                             createdItems[item] = res.id || res.map(snapshot => snapshot.id);
                         },
                         (err) => {
@@ -1064,5 +1075,16 @@ export class ReplicationWizardComponent {
         } else {
             this.snapshotsCountField.paraText = '';
         }
+    }
+
+    async isSnapshotTaskExist(payload) {
+        return this.ws.call('pool.snapshottask.query', [[
+            ["dataset", "=", payload['dataset']],
+            ["schedule.minute", "=", payload['schedule']['minute']],
+            ["schedule.hour", "=", payload['schedule']['hour']],
+            ["schedule.dom", "=", payload['schedule']['dom']],
+            ["schedule.month", "=", payload['schedule']['month']],
+            ["schedule.dow", "=", payload['schedule']['dow']]
+        ]]).toPromise();
     }
 }
