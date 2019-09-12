@@ -33,7 +33,10 @@ export class VdevComponent implements OnInit {
   public error;
   public diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
   public vdev_type_tooltip = helptext.vdev_type_tooltip;
+  public vdev_size_error = helptext.vdev_size_error;
+  public vdev_size_error_2 = helptext.vdev_size_error_2;
   public vdev_type_disabled = false;
+  protected mindisks = {'stripe': 1, 'mirror':2, 'raidz':3, 'raidz2':4, 'raidz3':5}
 
   public startingHeight: any;
   public expandedRows: any;
@@ -117,6 +120,14 @@ export class VdevComponent implements OnInit {
       }
       if (this.disks[i].real_capacity < smallestdisk) {
         smallestdisk = size;
+      }
+    }
+    if (this.group === 'data') {
+      if (this.disks.length > 0 && this.disks.length < this.mindisks[this.type]) {
+        this.error = this.vdev_size_error + this.mindisks[this.type] + this.vdev_size_error_2;
+        this.manager.vdevdisksError = true;
+      } else {
+        this.manager.vdevdisksError = false;
       }
     }
     totalsize = smallestdisk * this.disks.length;

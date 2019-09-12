@@ -92,6 +92,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevtypeError = null;
   public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
+  public vdevdisksError = false;
+
   public diskAddWarning = helptext.manager_diskAddWarning;
   public diskExtendWarning = helptext.manager_diskExtendWarning;
 
@@ -384,6 +386,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     if (this.poolError) {
+      return false;
+    }
+    if (this.vdevdisksError) {
       return false;
     }
     return true;
