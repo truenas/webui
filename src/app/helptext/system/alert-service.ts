@@ -160,9 +160,9 @@ export default {
 
     SNMPTrap_v3_authkey_placeholder: T('Secret Authentication Key'),
     SNMPTrap_v3_authkey_tooltip: T('Initial secret authentication key. \
- If no authentication key is set, no <i>Authentication protocol</i> is \
+ If no authentication key is set, no <i>Authentication Protocol</i> is \
  used. If an authentication key is set and an \
- <i>Authentication protocol</i> is not specified, \
+ <i>Authentication Protocol</i> is not specified, \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmHMACMD5AuthProtocol" \
  target="_blank">MD5</a> is used as the default.<br> \
  Must be at least 8 and at most 32 octets long.'),
@@ -170,7 +170,7 @@ export default {
     SNMPTrap_v3_privkey_placeholder: T('Secret Encryption Key'),
     SNMPTrap_v3_privkey_tooltip: T('Initial secret encryption key. \
  If no encryption key is set, no <i>Encryption protocol</i> is used. \
- If an encryption key is set and an <i>Encryption protocol</i> is \
+ If an encryption key is set and an <i>Encryption Protocol</i> is \
  not specified, \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmDESPrivProtocol" \
  target="_blank">DES</a> is used as the default.<br> \
@@ -179,18 +179,16 @@ export default {
     SNMPTrap_v3_authprotocol_placeholder: T('Authentication Protocol'),
     SNMPTrap_v3_authprotocol_tooltip: T('Choose the authentication \
  protocol to authenticate messages sent on behalf of the specified \
- <i>Username</i>. Descrptions of supported authenticaion protocols \
- are \
+ <i>Username</i>. Supported authentication protocols are shown at \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
- target="_blank">here</a>.'),
+ target="_blank">http://snmplabs.com/</a>.'),
 
     SNMPTrap_v3_privprotocol_placeholder: T('Encryption Protocol'),
     SNMPTrap_v3_privprotocol_tooltip: T('Encryption protocol \
  used to encrypt messages sent on behalf of the specified \
- <i>Username</i>. Descriptions of supported encryption protocols \
- are \
+ <i>Username</i>. Supported encryption protocols are shown at \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoPrivProtocol" \
- target="_blank">here</a>'),
+ target="_blank">http://snmplabs.com/</a>'),
 
     SNMPTrap_community_placeholder: T('SNMP Community'),
     SNMPTrap_community_tooltip: T(''),
