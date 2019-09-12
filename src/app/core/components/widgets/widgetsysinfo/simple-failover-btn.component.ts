@@ -1,6 +1,7 @@
 import { Component, Input, Inject, OnDestroy } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 
 interface DialogData {
@@ -18,7 +19,8 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
   constructor(
     private dialog: MatDialog,
     protected matDialog: MatDialog,
-    private router: Router) {}
+    private router: Router,
+    public translate: TranslateService) {}
 
   afterInit() {
   }
@@ -45,12 +47,12 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
 @Component({
   selector: 'simple-failover-btn-dialog',
   template: `
-    <h1 mat-dialog-title>{{title}}</h1>
-    <div mat-dialog-content>{{msg1}}</div>
+    <h1 mat-dialog-title>{{title | translate}}</h1>
+    <div mat-dialog-content>{{msg1 | translate}}</div>
     <div mat-dialog-actions fxLayout="row wrap">
-      <mat-checkbox fxFlex="80px" fxFlex.xs="100" class="confirm-checkbox" color="accent" [(ngModel)]="confirmed" style="margin:0 16px 16px 0;">{{checkbox}}</mat-checkbox>
-      <button fxFlex="calc(45% - 40px)" fxFlex.xs="45" style="margin-bottom:16px;" mat-button color="accent" (click)="onNoClick()" cdkFocusInitial>{{cancel}}</button>
-      <button fxFlex="calc(45% - 40px)" fxFlex.xs="45" style="margin-bottom:16px;" mat-button color="primary" [disabled]="isDisabled" [mat-dialog-close]="data.agreed">{{action}}</button>
+      <mat-checkbox fxFlex="80px" fxFlex.xs="100" class="confirm-checkbox" color="accent" [(ngModel)]="confirmed" style="margin:0 16px 16px 0;">{{checkbox | translate}}</mat-checkbox>
+      <button fxFlex="calc(45% - 40px)" fxFlex.xs="45" style="margin-bottom:16px;" mat-button color="accent" (click)="onNoClick()" cdkFocusInitial>{{cancel | translate}}</button>
+      <button fxFlex="calc(45% - 40px)" fxFlex.xs="45" style="margin-bottom:16px;" mat-button color="primary" [disabled]="isDisabled" [mat-dialog-close]="data.agreed">{{action | translate}}</button>
     </div>
   `
 })
