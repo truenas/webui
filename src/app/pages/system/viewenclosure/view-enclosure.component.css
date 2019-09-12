@@ -47,10 +47,6 @@ nav.view-nav-bar{
   width: 240px;
   height: 100%;
   overflow: auto;
-  /*position:absolute;
-  right: 0;
-  overflow:auto;
-  z-index:2;*/
 }
 
 .enclosure-selector .enclosure{
@@ -79,7 +75,6 @@ nav.view-nav-bar{
 
 .page-viewport{
   width:100%;
-  /*min-width:1024px;*/
   overflow-x:auto;
   height: calc(100vh - 88px);
   position:absolute;

@@ -186,8 +186,6 @@ export class SystemProfiler {
 
     let enclosureIndex = this.getEnclosureNumber(diskName);
     let enclosure = this.profile[enclosureIndex];
-    //console.log(this);
-    //console.log("Checking disk " + diskName + " on enclosure number " + enclosureIndex /*+ " && diskKey = " + diskKey*/);
     if(!enclosure){
       console.warn("Enclosure number is undefined!");
       return;
@@ -210,10 +208,8 @@ export class SystemProfiler {
 
         let poolDisk;
         if(vdev.disks[diskName] == -1){
-          //enclosure.disks[diskKey].status = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex].status;
           poolDisk = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex];
         } else {
-          //enclosure.disks[diskKey].status = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex][vdev.disks[diskName]].status;
           poolDisk = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex].children[vdev.disks[diskName]];
         }
         

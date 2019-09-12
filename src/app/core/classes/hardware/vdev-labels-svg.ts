@@ -7,23 +7,6 @@ import { LabelFactory } from './label-factory';
 import { Chassis } from './chassis';
 import { DriveTray } from './drivetray';
 import * as d3 from 'd3';
-/*import {
-  tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
-  easing,
-  everyFrame,
-  keyframes,
-  timeline,
-  multicast,
-  action,
-  transform,
-  } from 'popmotion';*/
 
 interface Position {
   x: number;
@@ -245,7 +228,7 @@ export class VDevLabelsSVG {
 
     this.svg.append("path")
       .attr('d', svgPath)
-      .attr('stroke', color)//.attr('style', 'stroke-opacity:' + opacity.toString() + ';')
+      .attr('stroke', color)
       .attr('stroke-opacity', opacity)
       .attr('class', diskName)
 
@@ -295,32 +278,23 @@ export class VDevLabelsSVG {
   }
 
   showTile(devname){
-    //if(devname == this.selectedDisk.devname){ return; }
     let targetEl = this.getParent().querySelector('rect.tile_' + devname);
     targetEl.style.opacity = 1;
   }
 
   hideTile(devname){
-    //if(devname == this.selectedDisk.devname){ return; }
     let targetEl = this.getParent().querySelector('rect.tile_' + devname);
     targetEl.style.opacity = 0;
   }
 
   hideAllTiles(tiles, exceptions?:string[]){
-    //if(!exceptions){ exceptions = []; }
-
     tiles.forEach((item, index) => {
-      //if(exceptions.includes(item.className.baseVal)){ return; }
       item.style.opacity = 0;
     });
   }
 
   showAllTiles(tiles, exceptions?: string[]){
-    //if(!exceptions){ exceptions = []}
-    //console.log('SHOWING ALL TILES');
     tiles.forEach((item, index) => {
-      //if(exceptions.includes(item.className.baseVal)){ return; }
-      //console.log('PING');
       item.style.opacity = 1;
     })
   }

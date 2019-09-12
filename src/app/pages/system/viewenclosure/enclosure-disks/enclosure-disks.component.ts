@@ -371,7 +371,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         console.log(profile.model);
         enclosure = new ES24();
     }
-    //enclosure = new ES24();
+    
     enclosure.events.subscribe((evt) => {
       switch(evt.name){
         case "Ready":
@@ -383,8 +383,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           enclosure.container.y = 0; //this.app._options.height / 2 - enclosure.container.height / 2;
           enclosure.chassis.alpha = 0.35;
 
-          //this.setDisksEnabledState(enclosure);
-          //this.setCurrentView(this.defaultView);
           profile.disks.forEach((disk, index) =>{
             this.setDiskHealthState(disk, enclosure);
           });
@@ -395,11 +393,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
 
     enclosure.load();
-    /*if(!this.resources[this.enclosure.model]){
-      this.enclosure.load();
-    } else {
-      this.onImport(); 
-    }*/
   }
 
   extractEnclosure(enclosure, profile){
@@ -431,14 +424,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return dt;
   }
 
-  /*importAsset(alias, path){
-    // NOTE: Alias will become the property name in resources
-    this.loader
-      .add(alias, path) //.add("catImage", "assets/res/cat.png")
-      .on("progress", this.loadProgressHandler)
-      .load(this.onImport.bind(this));
-  }*/
-
   onImport(){
     let sprite = PIXI.Sprite.from(this.enclosure.loader.resources.m50.texture.baseTexture);
     sprite.x = 0;
@@ -452,23 +437,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.setCurrentView(this.defaultView);
     
   }
-
-  loadProgressHandler(loader, resource) {
-
-    // Display the file `url` currently being loaded
-    // console.log("loading: " + resource.url);
-
-    // Display the percentage of files currently loaded
-
-    // console.log("progress: " + loader.progress + "%");
-
-    // If you gave your files names as the first argument
-    // of the `add` method, you can access them like this
-
-    // console.log("loading: " + resource.name);
-
-  }
-
 
   setCurrentView(opt: string){
     if(this.currentView){ this.exitingView = this.currentView; }
@@ -606,7 +574,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   setDisksEnabledState(enclosure?){
     if(!enclosure){enclosure = this.enclosure}
     enclosure.driveTrayObjects.forEach((dt, index) =>{
-      //let disk = this.selectedEnclosure.disks[index];
       let disk = this.findDiskBySlotNumber(index + 1);
       dt.enabled = disk ? true : false;
     });
@@ -818,8 +785,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   resizeView(override?: string){
     const visualizer = this.overview.nativeElement.querySelector('#visualizer');
     const left = this.cardWidth < 960 ? ((960 - this.cardWidth) / 2 * -1) : 0;
-    
-    console.log(left);
 
     setTimeout(() => {
       visualizer.style.left = left.toString() + 'px';

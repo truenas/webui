@@ -129,24 +129,15 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       if (force == 'close') {
         domHelper.removeClass(document.body, 'collapsed-menu');
       } 
-      //console.log(force + ' sidenav ');
       return;
     }
 
-    //let self = this;
-
-    //setTimeout(() => {
-      console.log("timeout code");
-      this.isSidenavOpen = !this.isMobile;
-      this.isSidenotOpen = false;
-      //self.sideNave.mode = self.isMobile ? 'over' : 'side';
-      this.sidenavMode = this.isMobile ? 'over' : 'side';
-      if (this.isMobile) {
-        domHelper.removeClass(document.body, 'collapsed-menu');
-      }
-
-    //}, -1);
-
+    this.isSidenavOpen = !this.isMobile;
+    this.isSidenotOpen = false;
+    this.sidenavMode = this.isMobile ? 'over' : 'side';
+    if (this.isMobile) {
+      domHelper.removeClass(document.body, 'collapsed-menu');
+    }
   }
 
   getSidenavWidth(): string{
