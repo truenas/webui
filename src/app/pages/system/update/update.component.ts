@@ -553,6 +553,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.router.navigate(['/others/reboot']); 
           } else  {
             this.dialogService.closeAllDialogs();
+            this.router.navigate(['/']); 
             this.dialogService.confirm(T('Complete the Upgrade'), 
               T('The standby controller has finished upgrading. To complete the update process, \
                failover to the standby controller.'), true, 

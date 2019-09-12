@@ -106,6 +106,7 @@ export class FailoverComponent implements OnDestroy {
             }],
             saveButtonText: T('Failover'),
             customSubmit: function (entityDialog) {
+              window.localStorage.setItem('failingover', 'true');
               const value = entityDialog.formValue;
               let route = '/others/failover';
               if (value.reboot) {

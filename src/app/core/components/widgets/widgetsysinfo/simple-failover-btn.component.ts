@@ -32,6 +32,7 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
 
     dialogRef.afterClosed().subscribe(res => {
       if(res){
+        window.localStorage.setItem('failingover', 'true');
         this.router.navigate(['/others/reboot']);
       }
     });

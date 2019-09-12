@@ -101,9 +101,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
         this.isUpdateRunning();
-        if (this.is_ha) {
-          this.checkUpgradePending();
-        }
       });
       this.sysName = 'TrueNAS';
     } else {
@@ -414,6 +411,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.ha_status_text = helptext.ha_status_text_disabled;
       } else {
         this.ha_status_text = helptext.ha_status_text_enabled;
+        if (window.localStorage.getItem('failingover') === 'true') {
+          this.checkUpgradePending();
+        }
       }
     });
   }
@@ -444,6 +444,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
+      window.localStorage.removeItem('failingover');
       this.upgradeWaitingToFinish = res;
       if(res) {
         this.upgradePendingDialog();
