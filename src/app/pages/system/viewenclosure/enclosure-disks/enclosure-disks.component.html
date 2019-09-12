@@ -1,4 +1,12 @@
-<mat-card class="view-card" id="{{currentTab.alias}}">
+<mat-card 
+  class="view-card" 
+  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
+  id="{{currentTab.alias}}" 
+  ngClass.gt-md="gt-md"
+  ngClass.md="md"
+  ngClass.sm="sm"
+  ngClass.xs="xs">
+
   <mat-toolbar id="Disks-toolbar">
     <div *ngIf="selectedEnclosure.enclosureKey > 0" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
     <div *ngIf="selectedEnclosure.enclosureKey < 1" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? system.platform + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
@@ -23,7 +31,11 @@
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
 
     <!-- VISUALIZATION/OVERVIEW -->
-    <div #disksoverview id="disks-overview" [class]="currentView">
+    <div class="disks-overview-wrapper">
+      <div #disksoverview 
+        id="disks-overview" 
+        [class]="currentView">
+      
 
         <!-- POOLS OVERLAY -->
         <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-left dom-overlay" >
@@ -69,7 +81,7 @@
             <div class="content">
               <h2 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h2>
               <div class="title">
-                <span class="semibold">Vdev: </span> 
+                <span class="semibold">vdev: </span> 
                 <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
                 <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
               </div>
@@ -86,7 +98,7 @@
 
               <ng-template #noVdevDisks>
                 <div class="legend">
-                  <div class="vdev-disk "> No Vdev info for disk.</div>
+                  <div class="vdev-disk "> No vdev info for disk.</div>
                 </div>
               </ng-template>
 
@@ -95,6 +107,9 @@
 
         <!-- CAPTION OVERLAY -->
         <div class="caption dom-overlay">Choose a Disk</div>
+
+        <!-- CANVAS/SVG OVERLAY -->
+        <div #visualizer id="visualizer" class="visualizer dom-overlay"></div>
 
         <!-- EXPANDERS OVERLAY -->
         <div *ngIf="currentView == 'expanders' || exitingView == 'expanders'" class="expanders full-stage dom-overlay">
@@ -107,6 +122,7 @@
           </div>
         </div>
         
+      </div>
     </div>
 
     <!-- DETAILS/TITLE -->

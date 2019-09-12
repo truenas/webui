@@ -47,10 +47,6 @@ nav.view-nav-bar{
   width: 240px;
   height: 100%;
   overflow: auto;
-  /*position:absolute;
-  right: 0;
-  overflow:auto;
-  z-index:2;*/
 }
 
 .enclosure-selector .enclosure{
@@ -79,6 +75,7 @@ nav.view-nav-bar{
 
 .page-viewport{
   width:100%;
+  overflow-x:auto;
   height: calc(100vh - 88px);
   position:absolute;
   top:88px;
@@ -88,5 +85,16 @@ nav.view-nav-bar{
 .main-content{
   height:100%;
   overflow:auto;
-  /*padding: 64px 0 0 0;*/
+  position:relative;
+}
+
+.spinner{
+  position:absolute;
+  left: calc(50% - 20px);
+  top:64px;
+  z-index:4;
+}
+
+.lt-lg.enclosure-selector{
+  color: var(--red);
 }

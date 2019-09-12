@@ -70,6 +70,10 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           this.extractVisualizations();
           break;
         case "EnclosureCanvas":
+          if(!this.nav){
+            console.warn("No navigation UI detected")
+            return;
+          }
           let el = this.nav.nativeElement.querySelector(".enclosure-" + evt.data.profile.enclosureKey);
           evt.data.canvas.setAttribute('style', 'width: 80% ;');
           el.appendChild(evt.data.canvas);
