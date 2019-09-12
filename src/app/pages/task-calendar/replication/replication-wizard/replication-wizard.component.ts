@@ -15,6 +15,7 @@ import { EntityFormService } from '../../../common/entity/entity-form/services/e
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from '../../../../translate-marker';
+import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 
 @Component({
     selector: 'app-replication-wizard',
@@ -40,7 +41,7 @@ export class ReplicationWizardComponent {
         }
     ];
 
-    protected suggestName: any;
+    protected namesInUse = [];
 
     protected wizardConfig: Wizard[] = [
         {
@@ -296,7 +297,7 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.name_placeholder,
                     tooltip: helptext.name_tooltip,
                     required: true,
-                    validation: [Validators.required],
+                    validation: [Validators.required, forbiddenValues(this.namesInUse)],
                 },
             ]
         },
@@ -571,7 +572,11 @@ export class ReplicationWizardComponent {
         private ws: WebSocketService, private replicationService: ReplicationService,
         private taskService: TaskService, private storageService: StorageService,
         private datePipe: DatePipe, private entityFormService: EntityFormService) {
-
+        this.ws.call('replication.query').subscribe(
+            (res) => {
+                this.namesInUse.push(...res.map(replication => replication.name));
+            }
+        )
     }
 
     isCustActionVisible(id, stepperIndex) {
@@ -691,6 +696,16 @@ export class ReplicationWizardComponent {
                 this.getSnapshots();
             }
         });
+
+        this.entityWizard.formArray.controls[0].controls['name'].valueChanges.subscribe((value) => {
+            const field = _.find(this.wizardConfig[0].fieldConfig, {name: "name"});
+            field['hasErrors'] = false;
+            field['errors'] = '';
+            if (this.namesInUse.includes(value)) {
+              field['hasErrors'] = true;
+              field['errors'] = T(`The name <em>${value}</em> is already in use.`)
+            }
+          })
     }
 
     step1Init() {
@@ -1046,12 +1061,13 @@ export class ReplicationWizardComponent {
     genTaskName() {
         const source = this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [];
         const target = this.entityWizard.formArray.controls[0].controls['target_dataset'].value;
+        let suggestName = "";
         if (source.length > 3) {
-            this.suggestName = source[0] + ',...,' + source[source.length - 1] + ' - ' + target;
+            suggestName = source[0] + ',...,' + source[source.length - 1] + ' - ' + target;
         } else {
-            this.suggestName = source.join(',') + ' - ' + target;
+            suggestName = source.join(',') + ' - ' + target;
         }
-        this.entityWizard.formArray.controls[0].controls['name'].setValue(this.suggestName);
+        this.entityWizard.formArray.controls[0].controls['name'].setValue(suggestName);
     }
 
     getSnapshots() {
