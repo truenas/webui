@@ -258,7 +258,7 @@ export class ReplicationWizardComponent {
                         }]
                     }],
                     parent: this,
-                    blurStatus : true,
+                    blurStatus: true,
                     blurEvent: (parent) => {
                         parent.getSnapshots();
                     }
@@ -415,10 +415,10 @@ export class ReplicationWizardComponent {
 
     protected dialogFieldConfig = [
         {
-          type: 'input',
-          name: 'name',
-          placeholder: sshConnectionsHelptex.name_placeholder,
-          tooltip: sshConnectionsHelptex.name_tooltip,  
+            type: 'input',
+            name: 'name',
+            placeholder: sshConnectionsHelptex.name_placeholder,
+            tooltip: sshConnectionsHelptex.name_tooltip,
         },
         {
             type: 'select',
@@ -539,7 +539,7 @@ export class ReplicationWizardComponent {
             ],
             value: 'STANDARD',
         }
-      ];
+    ];
 
     protected saveSubmitText = 'START REPLICATION';
     protected directions = ['PULL', 'PUSH'];
@@ -552,7 +552,7 @@ export class ReplicationWizardComponent {
     protected createCalls = {
         private_key: 'keychaincredential.create',
         ssh_credentials_semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
-        ssh_credentials_manual:'keychaincredential.create',
+        ssh_credentials_manual: 'keychaincredential.create',
         periodic_snapshot_tasks: 'pool.snapshottask.create',
         replication: 'replication.create',
     }
@@ -588,7 +588,7 @@ export class ReplicationWizardComponent {
 
     afterInit(entityWizard) {
         this.entityWizard = entityWizard;
-        this.snapshotsCountField = _.find(this.wizardConfig[0].fieldConfig, {name: 'snapshots_count'});
+        this.snapshotsCountField = _.find(this.wizardConfig[0].fieldConfig, { name: 'snapshots_count' });
         this.step0Init();
         this.step1Init();
     }
@@ -669,7 +669,7 @@ export class ReplicationWizardComponent {
                 if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === 'remote') {
                     this.createSSHConnection(credentialName);
                 } else {
-                    const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: datasetName}).customTemplateStringOptions.explorerComponent;
+                    const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, { name: datasetName }).customTemplateStringOptions.explorerComponent;
                     if (explorerComponent) {
                         explorerComponent.nodes = [{
                             mountpoint: explorerComponent.config.initial,
@@ -684,7 +684,7 @@ export class ReplicationWizardComponent {
         }
 
         this.entityWizard.formArray.controls[0].controls['recursive'].valueChanges.subscribe((value) => {
-            const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, {name: 'source_datasets'}).customTemplateStringOptions;
+            const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' }).customTemplateStringOptions;
             if (explorerComponent) {
                 explorerComponent.useTriState = value;
             }
@@ -698,14 +698,14 @@ export class ReplicationWizardComponent {
         });
 
         this.entityWizard.formArray.controls[0].controls['name'].valueChanges.subscribe((value) => {
-            const field = _.find(this.wizardConfig[0].fieldConfig, {name: "name"});
+            const field = _.find(this.wizardConfig[0].fieldConfig, { name: "name" });
             field['hasErrors'] = false;
             field['errors'] = '';
             if (this.namesInUse.includes(value)) {
-              field['hasErrors'] = true;
-              field['errors'] = T(`The name <em>${value}</em> is already in use.`)
+                field['hasErrors'] = true;
+                field['errors'] = T(`The name <em>${value}</em> is already in use.`)
             }
-          })
+        })
     }
 
     step1Init() {
@@ -777,18 +777,18 @@ export class ReplicationWizardComponent {
             task['ssh_credentials_source'] = task.ssh_credentials.id;
         }
 
-        for (let i of ['source_datasets_from','target_dataset_from', 'ssh_credentials_source', 'ssh_credentials_target', 'transport', 'source_datasets', 'target_dataset']) {
+        for (let i of ['source_datasets_from', 'target_dataset_from', 'ssh_credentials_source', 'ssh_credentials_target', 'transport', 'source_datasets', 'target_dataset']) {
             const ctrl = this.entityWizard.formArray.controls[0].controls[i];
             if (ctrl && !ctrl.disabled) {
                 ctrl.setValue(task[i]);
             }
         }
 
-        if (task.schedule || task.periodic_snapshot_tasks ) {
+        if (task.schedule || task.periodic_snapshot_tasks) {
             const scheduleData = task.periodic_snapshot_tasks[0] || task;
             task['schedule_method'] = 'cron';
-            task['schedule_picker'] = scheduleData.schedule.minute + " " +scheduleData.schedule.hour + " " + scheduleData.schedule.dom + " " + scheduleData.schedule.month + " " + scheduleData.schedule.dow;
-            
+            task['schedule_picker'] = scheduleData.schedule.minute + " " + scheduleData.schedule.hour + " " + scheduleData.schedule.dom + " " + scheduleData.schedule.month + " " + scheduleData.schedule.dow;
+
             if (scheduleData['lifetime_value'] === null && scheduleData['lifetime_unit'] === null) {
                 task['retention_policy'] = 'NONE';
             } else {
@@ -810,7 +810,7 @@ export class ReplicationWizardComponent {
         this.entityWizard.formArray.reset();
         for (let i = 0; i < this.entityWizard.formArray.controls.length; i++) {
             for (const item in this.entityWizard.formArray.controls[i].controls) {
-                const itemConf = _.find(this.wizardConfig[i].fieldConfig, {name: item});
+                const itemConf = _.find(this.wizardConfig[i].fieldConfig, { name: item });
                 if (itemConf.value !== undefined && item !== "exist_replication") {
                     this.entityWizard.formArray.controls[i].controls[item].setValue(itemConf.value);
                 }
@@ -918,12 +918,12 @@ export class ReplicationWizardComponent {
                 payload['also_include_naming_schema'] = []; //default?
                 payload['auto'] = false;
             }
-    
+
             if (data['retention_policy'] === 'CUSTOM') {
                 payload['lifetime_value'] = data['lifetime_value'];
                 payload['lifetime_unit'] = data['lifetime_unit'];
             }
-            
+
             if (payload['transport'] === 'SSH+NETCAT') {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
@@ -983,74 +983,74 @@ export class ReplicationWizardComponent {
 
     createSSHConnection(activedField) {
         const self = this;
-    
+
         const conf: DialogFormConfiguration = {
-          title: T("Create SSH Connection"),
-          fieldConfig: this.dialogFieldConfig,
-          saveButtonText: T("Create SSH Connection"),
-          customSubmit: async function (entityDialog) {
-            const value = entityDialog.formValue;
-            self.entityWizard.loader.open();
+            title: T("Create SSH Connection"),
+            fieldConfig: this.dialogFieldConfig,
+            saveButtonText: T("Create SSH Connection"),
+            customSubmit: async function (entityDialog) {
+                const value = entityDialog.formValue;
+                self.entityWizard.loader.open();
 
-            if (value['private_key'] == 'NEW') {
-                await self.replicationService.genSSHKeypair().then(
-                    (res) => {
-                        value['sshkeypair'] = res;
-                    },
-                    (err) => {
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                    }
-                )
-            }
-            if (value['setup_method'] == 'manual') {
-                await this.getRemoteHostKey(value).then(
-                    (res) => {
-                        value['remote_host_key'] = res;
-                    },
-                    (err) => {
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                    }
-                )
-            }
-
-            const createdItems = {
-                private_key: null,
-                ssh_credentials: null,
-            }
-    
-            for (const item in createdItems) {
-                if (!((item === 'private_key' && value['private_key'] !== 'NEW') )) {
-                    await self.doCreate(value, item).then(
+                if (value['private_key'] == 'NEW') {
+                    await self.replicationService.genSSHKeypair().then(
                         (res) => {
-                            value[item] = res.id;
-                            createdItems[item] = res.id;
-                            if (item === 'private_key') {
-                                const privateKeyField = _.find(self.dialogFieldConfig, { name: 'private_key' });
-                                privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
-                            }
-                            if (item === 'ssh_credentials') {
-                                const ssh_credentials_source_field = _.find(self.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_source' });
-                                const ssh_credentials_target_field = _.find(self.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_target' });
-                                ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                                ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                                self.entityWizard.formArray.controls[0].controls[activedField].setValue(res.id)
-                            }
-                            entityDialog.dialogRef.close(true);
+                            value['sshkeypair'] = res;
                         },
                         (err) => {
                             new EntityUtils().handleWSError(this, err, this.dialogService);
-                            this.rollBack(createdItems);
                         }
                     )
                 }
+                if (value['setup_method'] == 'manual') {
+                    await this.getRemoteHostKey(value).then(
+                        (res) => {
+                            value['remote_host_key'] = res;
+                        },
+                        (err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                        }
+                    )
+                }
+
+                const createdItems = {
+                    private_key: null,
+                    ssh_credentials: null,
+                }
+
+                for (const item in createdItems) {
+                    if (!((item === 'private_key' && value['private_key'] !== 'NEW'))) {
+                        await self.doCreate(value, item).then(
+                            (res) => {
+                                value[item] = res.id;
+                                createdItems[item] = res.id;
+                                if (item === 'private_key') {
+                                    const privateKeyField = _.find(self.dialogFieldConfig, { name: 'private_key' });
+                                    privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
+                                }
+                                if (item === 'ssh_credentials') {
+                                    const ssh_credentials_source_field = _.find(self.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_source' });
+                                    const ssh_credentials_target_field = _.find(self.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_target' });
+                                    ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
+                                    ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
+                                    self.entityWizard.formArray.controls[0].controls[activedField].setValue(res.id)
+                                }
+                                entityDialog.dialogRef.close(true);
+                            },
+                            (err) => {
+                                new EntityUtils().handleWSError(this, err, this.dialogService);
+                                this.rollBack(createdItems);
+                            }
+                        )
+                    }
+                }
+                self.entityWizard.loader.close();
             }
-            self.entityWizard.loader.close();
-          }
         }
         this.dialogService.dialogForm(conf);
-      }
+    }
 
-      getRemoteHostKey(value) {
+    getRemoteHostKey(value) {
         const payload = {
             'host': value['host'],
             'port': value['port'],
@@ -1073,7 +1073,7 @@ export class ReplicationWizardComponent {
     getSnapshots() {
         let payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
-            (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ?  this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : ['auto-%Y-%m-%d_%H-%M'],
+            (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : ['auto-%Y-%m-%d_%H-%M'],
             this.entityWizard.formArray.controls[0].controls['transport'].value,
             this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
         ];
