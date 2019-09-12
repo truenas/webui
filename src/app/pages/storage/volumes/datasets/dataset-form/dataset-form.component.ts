@@ -545,7 +545,7 @@ export class DatasetFormComponent implements Formconfiguration{
     hstr = hstr.replace(/\s+/g, '');
 
     // get leading number
-    if ( num = hstr.match(/^(\d+\.?\d+)/) ) {
+    if ( num = hstr.match(/^(\d+(\.\d+)?)/) ) {
         num = num[1];
     } else {
         // leading number is required
@@ -895,9 +895,7 @@ export class DatasetFormComponent implements Formconfiguration{
         this.OrigSize[field] = wsResponse[field].rawvalue;
       }
       sizeValues[field] = this.getFieldValueOrRaw(wsResponse[field]);
-      if (sizeValues[field]) {
-        this.convertHumanStringToNum(sizeValues[field], field);
-      }
+      this.convertHumanStringToNum(sizeValues[field], field);
       this.OrigHuman[field] = this.humanReadable[field];
     }
 
