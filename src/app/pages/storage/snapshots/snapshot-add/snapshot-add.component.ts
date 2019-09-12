@@ -8,6 +8,7 @@ import { DialogService, RestService, WebSocketService } from '../../../../servic
 import { EntityFormComponent, Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-snapshot-add',
@@ -45,6 +46,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
         placeholder: helptext.snapshot_add_name_placeholder,
         tooltip: helptext.snapshot_add_name_tooltip,
         options: [],
+        value: "manual-" + moment().format('YYYY-MM-DD_hh-mm'),
         validation: this.nameValidator,
         errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
         blurStatus: true,
