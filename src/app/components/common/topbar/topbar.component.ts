@@ -60,7 +60,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   ha_disabled_reasons = [];
   ha_pending = false;
   is_ha = false;
-  upgradeWaitingToFinish = false; 
+  upgradeWaitingToFinish = false;
+  pendingUpgradeChecked = false;
   sysName: string = 'FreeNAS';
   hostname: string;
   public updateNotificationSent = false;
@@ -411,7 +412,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.ha_status_text = helptext.ha_status_text_disabled;
       } else {
         this.ha_status_text = helptext.ha_status_text_enabled;
-        if (window.localStorage.getItem('failingover') === 'true') {
+        if (!this.pendingUpgradeChecked) {
           this.checkUpgradePending();
         }
       }
@@ -444,7 +445,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   checkUpgradePending() {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
-      window.localStorage.removeItem('failingover');
+     this.pendingUpgradeChecked = true;
       this.upgradeWaitingToFinish = res;
       if(res) {
         this.upgradePendingDialog();
