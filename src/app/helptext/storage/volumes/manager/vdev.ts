@@ -14,5 +14,7 @@ vdev_types : {
     'raidz'  : T('Raid-z'),
     'raidz2' : T('Raid-z2'),
     'raidz3' : T('Raid-z3')
-  }
+  },
+vdev_size_error: T('This type of VDEV requires at least '),
+vdev_size_error_2: T(' disks')
 }
