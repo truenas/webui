@@ -327,6 +327,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     let data_vdev_type;
     this.disknumError = null;
     this.vdevtypeError = null;
+    this.vdevdisksError = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
@@ -360,6 +361,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         if (vdev.disks.length > 0) {
           any_disk_found = true;
         }
+      }
+      if (vdev.vdev_disks_error) {
+        this.vdevdisksError = true;
       }
 
     });
