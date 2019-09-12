@@ -7,22 +7,27 @@ export default {
     scrub_volume_validation : [ Validators.required ],
 
     scrub_threshold_placeholder: T('Threshold days'),
-    scrub_threshold_tooltip: T('Define the number of days to prevent a scrub from\
-                running after the last has completed. This ignores any\
-                other calendar schedule. The default is a multiple of\
-                7 to ensure the scrub always occurs on the same\
-                weekday.'),
+    scrub_threshold_tooltip: T('Days before a completed scrub is allowed \
+ to run again. This controls the task schedule. For example, scheduling \
+ a scrub to run daily and setting :guilabel:`Threshold days` to *7* \
+ means the scrub attempts to run daily. When the scrub is successful, it \
+ continues to check daily but does not run again until seven days have \
+ elapsed. Using a multiple of seven ensures the scrub always occurs on \
+ the same weekday.'),
     scrub_threshold_validation: [ Validators.min(0), Validators.required ],
 
     scrub_description_placeholder: T('Description'),
     scrub_description_tooltip : T('Describe the scrub task.'),
 
     scrub_picker_placeholder: T('Schedule the Scrub Task'),
-    scrub_picker_tooltip: T('Choose one of the convenient presets\
-      or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+    scrub_picker_tooltip: T('Choose how often to run the scrub task. \
+ Choices are *Hourly*, *Daily*, *Weekly*, *Monthly*, or *Custom*. Select \
+ *Custom* to open a visual scheduler for selecting minutes, hours, days, \
+ month, and days of week. Spaces are not allowed in :guilabel:`Minutes`, \
+ :guilabel:`Hours`, or :guilabel:`Days` of the custom scheduler.'),
 
     scrub_enabled_placeholder: T('Enabled'),
-    scrub_enabled_tooltip : T('Unset to disable the scheduled scrub without\
-                 deleting it.'),
+    scrub_enabled_tooltip : T('Unset to disable the scheduled scrub \
+ without deleting it.'),
 
 }
