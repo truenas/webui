@@ -104,7 +104,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   constructor(public el:ElementRef, private core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
 
     this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
-      console.log(evt.mqAlias);
      
       if(evt.mqAlias == 'xs' || evt.mqAlias == 'sm' || evt.mqAlias == 'md'){
         core.emit({name: 'ForceSidenav', data: 'close', sender: this});
