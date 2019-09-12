@@ -638,7 +638,9 @@ export class ReplicationWizardComponent {
         });
         this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.subscribe((value) => {
             this.genTaskName();
-            this.getSnapshots();
+            if (this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'remote') {
+                this.getSnapshots();
+            }
         });
         this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.subscribe((value) => {
             this.genTaskName();
@@ -787,7 +789,12 @@ export class ReplicationWizardComponent {
         if (task.schedule || task.periodic_snapshot_tasks) {
             const scheduleData = task.periodic_snapshot_tasks[0] || task;
             task['schedule_method'] = 'cron';
-            task['schedule_picker'] = scheduleData.schedule.minute + " " + scheduleData.schedule.hour + " " + scheduleData.schedule.dom + " " + scheduleData.schedule.month + " " + scheduleData.schedule.dow;
+            task['schedule_picker'] = scheduleData.schedule ?
+            scheduleData.schedule.minute + " " +
+            scheduleData.schedule.hour + " " +
+            scheduleData.schedule.dom + " " +
+            scheduleData.schedule.month + " " +
+            scheduleData.schedule.dow : null;
 
             if (scheduleData['lifetime_value'] === null && scheduleData['lifetime_unit'] === null) {
                 task['retention_policy'] = 'NONE';
