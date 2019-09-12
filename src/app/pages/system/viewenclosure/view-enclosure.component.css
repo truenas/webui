@@ -79,6 +79,8 @@ nav.view-nav-bar{
 
 .page-viewport{
   width:100%;
+  /*min-width:1024px;*/
+  overflow-x:auto;
   height: calc(100vh - 88px);
   position:absolute;
   top:88px;
@@ -96,4 +98,8 @@ nav.view-nav-bar{
   left: calc(50% - 20px);
   top:64px;
   z-index:4;
+}
+
+.lt-lg.enclosure-selector{
+  color: var(--red);
 }

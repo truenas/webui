@@ -22,6 +22,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile;
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
+  sidenavMode: string = 'over';
   isShowFooterConsole: Boolean = false;
   isSidenotOpen: Boolean = false;
   consoleMsg: String = "";
@@ -36,6 +37,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   freenasThemes;
+
+  get sidenavWidth(){
+    return this.getSidenavWidth();
+  }
 
   constructor(private router: Router,
     public core: CoreService,
@@ -83,6 +88,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }).subscribe((evt:CoreEvent)=>{
       this.hostname = evt.data.hostname;
     });
+
+    core.register({
+      observerClass:this, 
+      eventName:"ForceSidenav", 
+    }).subscribe((evt:CoreEvent)=>{
+      this.updateSidenav(evt.data);
+    });
   }
 
   ngOnInit() {
@@ -110,19 +122,40 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.scrollToBottomOnFooterBar();
   }
 
-  updateSidenav() {
-    let self = this;
+  updateSidenav(force?:string) {
+    if(force){
+      this.isSidenavOpen = force == 'open' ? true : false;
+      this.isSidenotOpen = force == 'open' ? false : true;
+      if (force == 'close') {
+        domHelper.removeClass(document.body, 'collapsed-menu');
+      } 
+      //console.log(force + ' sidenav ');
+      return;
+    }
 
-    setTimeout(() => {
-      self.isSidenavOpen = !self.isMobile;
-      self.isSidenotOpen = false;
-      self.sideNave.mode = self.isMobile ? 'over' : 'side';
-      if (self.isMobile) {
+    //let self = this;
+
+    //setTimeout(() => {
+      console.log("timeout code");
+      this.isSidenavOpen = !this.isMobile;
+      this.isSidenotOpen = false;
+      //self.sideNave.mode = self.isMobile ? 'over' : 'side';
+      this.sidenavMode = this.isMobile ? 'over' : 'side';
+      if (this.isMobile) {
         domHelper.removeClass(document.body, 'collapsed-menu');
       }
 
-    }, -1);
+    //}, -1);
 
+  }
+
+  getSidenavWidth(): string{
+    let iconified =  domHelper.hasClass(document.body, 'collapsed-menu')
+    if(iconified){
+      return '48px';
+    } else {
+      return '240px';
+    }
   }
 
   scrollToBottomOnFooterBar(): void {

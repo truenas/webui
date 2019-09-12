@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils} from 'pixi.js';
@@ -19,6 +19,7 @@ import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { tween, easing, styler, value, keyframes } from 'popmotion';
 import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
   selector: 'enclosure-disks',
@@ -28,6 +29,8 @@ import { ExampleData } from './example-data';
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
+  private mediaObs;
+  @ViewChild('visualizer', { static: true}) visualizer: ElementRef;
   @ViewChild('disksoverview', { static: true}) overview: ElementRef;
   @ViewChild('diskdetails', { static: false}) details: ElementRef;
   @ViewChild('domLabels', { static: false}) domLabels: ElementRef;
@@ -86,9 +89,33 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private labels: VDevLabelsSVG;
   private identifyBtnRef: any;
   
+  get cardWidth(){
+    return this.overview.nativeElement.offsetWidth;
+  }
+ 
+  get cardScale(){
+    const scale = this.cardWidth / 960;
+    return scale > 1 ? 1 : scale;
+  }
+
+  public scaleArgs: string;
  
 
-  constructor(public el:ElementRef, private core: CoreService /*, private ngZone: NgZone*/) { 
+  constructor(public el:ElementRef, private core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
+
+    this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
+      console.log(evt.mqAlias);
+     
+      if(evt.mqAlias == 'xs' || evt.mqAlias == 'sm' || evt.mqAlias == 'md'){
+        core.emit({name: 'ForceSidenav', data: 'close', sender: this});
+        this.resizeView();
+      } else {
+        core.emit({name: 'ForceSidenav', data: 'open', sender: this});
+      }
+
+      this.resizeView();
+
+    });
 
     core.register({observerClass: this, eventName: 'EnclosureSlotStatusChanged'}).subscribe((evt:CoreEvent) => {
     });
@@ -212,26 +239,25 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
     this.app.destroy(true, true); 
+    this.mediaObs.unsubscribe();
   }
 
   pixiInit(){
-    //this.ngZone.runOutsideAngular(() => {
       PIXI.settings.PRECISION_FRAGMENT = 'highp'; //this makes text looks better? Answer = NO
       PIXI.utils.skipHello();
       this.app = new PIXI.Application({
-        width:960 ,
+        width: 960 ,
         height:304 ,
         forceCanvas:false,
         transparent:true,
         antialias:true,
-        autoStart:true
+        autoStart:true,
       });
-    //});
 
     this.renderer = this.app.renderer;
 
     this.app.renderer.backgroundColor = 0x000000;
-    this.overview.nativeElement.appendChild(this.app.view);
+    this.visualizer.nativeElement.appendChild(this.app.view);
 
     this.container = new PIXI.Container();
     this.container.name = "top_level_container";
@@ -488,6 +514,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     this.currentView = opt;
+    this.resizeView();
     
   }
 
@@ -672,6 +699,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   toggleHighlightMode(mode:string){
+    if(this.selectedDisk.status == 'AVAILABLE'){ return; }
+
     this.labels.events.next({
       name: mode == 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
       sender:this
@@ -698,7 +727,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   highlightPath(devname){
     // show the svg path
     this.labels.events.next({
-      name:'HighlightPath', 
+      name:'HighlightDisk', 
       data:{ devname:devname, overlay: this.domLabels}, 
       sender: this
     });
@@ -707,7 +736,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   unhighlightPath(devname){
     // show the svg path
     this.labels.events.next({
-      name:'UnhighlightPath', 
+      name:'UnhighlightDisk', 
       data:{ devname:devname, overlay: this.domLabels}, 
       sender: this
     });
@@ -785,4 +814,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       rgb:rgb
     }
   }
+
+  resizeView(override?: string){
+    const visualizer = this.overview.nativeElement.querySelector('#visualizer');
+    const left = this.cardWidth < 960 ? ((960 - this.cardWidth) / 2 * -1) : 0;
+    
+    console.log(left);
+
+    setTimeout(() => {
+      visualizer.style.left = left.toString() + 'px';
+      this.cdr.detectChanges(); // Force change detection
+    }, 250);
+  }
+
 }
