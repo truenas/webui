@@ -234,7 +234,7 @@ export class VDevLabelsSVG {
 
   }
 
-  highlightTrace(devname/*, overlay, color?: string*/){
+  highlightTrace(devname){
     if(devname == this.selectedDisk.devname){ return; }
 
     let targetEl = this.getParent().querySelector('svg path.' + devname);
