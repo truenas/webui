@@ -160,7 +160,7 @@ export default {
 
     SNMPTrap_v3_authkey_placeholder: T('Secret Authentication Key'),
     SNMPTrap_v3_authkey_tooltip: T('Initial secret authentication key. \
- If no authentication key is set, no <i>Authentication Protocol</i> is \
+ If an authentication key is not set, no <i>Authentication Protocol</i> is \
  used. If an authentication key is set and an \
  <i>Authentication Protocol</i> is not specified, \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmHMACMD5AuthProtocol" \
@@ -169,7 +169,7 @@ export default {
 
     SNMPTrap_v3_privkey_placeholder: T('Secret Encryption Key'),
     SNMPTrap_v3_privkey_tooltip: T('Initial secret encryption key. \
- If no encryption key is set, no <i>Encryption protocol</i> is used. \
+ If an encryption key is not set, no <i>Encryption Protocol</i> is used. \
  If an encryption key is set and an <i>Encryption Protocol</i> is \
  not specified, \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmDESPrivProtocol" \
@@ -177,8 +177,8 @@ export default {
  Must be at least 8 and at most 32 octets long.'),
 
     SNMPTrap_v3_authprotocol_placeholder: T('Authentication Protocol'),
-    SNMPTrap_v3_authprotocol_tooltip: T('Choose the authentication \
- protocol to authenticate messages sent on behalf of the specified \
+    SNMPTrap_v3_authprotocol_tooltip: T('Authentication protocol \
+ used to authenticate messages sent on behalf of the specified \
  <i>Username</i>. Supported authentication protocols are shown at \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
  target="_blank">http://snmplabs.com/</a>.'),
