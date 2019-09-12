@@ -34,7 +34,6 @@ dataset_form_share_type_tooltip: T('Choose the type that matches the type of cli
 dataset_form_refquota_placeholder: T('Quota for this dataset'),
 dataset_form_refquota_tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
  space for this dataset.'),
-dataset_form_refquota_validation: [Validators.min(0)],
 
 dataset_form_refquota_warning_placeholder: T('Quota warning alert at, %'),
 dataset_form_refquota_warning_tooltip: T('0=Disabled, blank=inherit'),
@@ -47,7 +46,6 @@ dataset_form_refquota_critical_validation: [Validators.min(0)],
 dataset_form_quota_placeholder: 'Quota for this dataset and all children',
 dataset_form_quota_tooltip: 'Define a maximum size for both the dataset and any child\
  datasets. Enter <i>0</i> to remove the quota.',
-dataset_form_quota_validation: [Validators.min(0)],
 
 dataset_form_quota_warning_placeholder: T('Quota warning alert at, %'),
 dataset_form_quota_warning_tooltip: T('0=Disabled, blank=inherit'),
@@ -61,12 +59,10 @@ dataset_form_refreservation_placeholder: T('Reserved space for this dataset'),
 dataset_form_refreservation_tooltip: T('<i>0</i> is unlimited. Reserve additional space for\
  datasets containing logs which could take up all\
  available free space.'),
-dataset_form_refreservation_validation: [Validators.min(0)],
 
 dataset_form_reservation_placeholder: T('Reserved space for this dataset and all children'),
 dataset_form_reservation_tooltip: T('<i>0</i> is unlimited. A specified value applies to\
  both this dataset and any child datasets.'),
-dataset_form_reservation_validation: [Validators.min(0)],
 
 dataset_form_deduplication_label: T('ZFS deduplication'),
 dataset_form_deduplication_placeholder: T('ZFS Deduplication'),
@@ -100,5 +96,10 @@ dataset_form_casesensitivity_tooltip: T('<i>Sensitive</i> assumes filenames are 
  filenames.'),
 
 dataset_form_aclmode_placeholder: T('ACL Mode'),
-dataset_form_aclmode_tooltip: T('')
+dataset_form_aclmode_tooltip: T(''),
+
+dataset_form_dataset_section_placeholder: T("This Dataset and Child Datasets"),
+dataset_form_refdataset_section_placeholder: T("This Dataset"),
+dataset_form_name_section_placeholder: T("Name and Options"),
+dataset_form_other_section_placeholder: T("Other Options")
 }
