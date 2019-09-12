@@ -79,16 +79,27 @@ failover_critical_tooltip: T('Interfaces marked <i>critical</i> are\
  triggered.'),
 
 failover_group_placeholder: T('Failover Group'),
-failover_group_tooltip: T('Multiple critical interfaces are combined into a single failover group. A failover is triggered if all of the interfaces in the group fail.'),
+failover_group_tooltip: T('Combine multiple, critical-for-failover \
+ interfaces into a group. Groups apply to single systems. A failover \
+ occurs when every interface in the group fails. Groups with a single \
+ interface trigger a failover when that interface fails. Configuring the \
+ system to failover when any interface fails requires marking each \
+ interface as critical and placing them in separate groups.'),
 
 failover_vhid_placeholder: T('Failover VHID'),
-failover_vhid_tooltip: T('Virtual Host ID for the failover interface.'),
+failover_vhid_tooltip: T('Unique Virtual Host ID on the broadcast \
+ segment of the network. Configuring multiple Virtual IP addresses \
+ requires a separate VHID for each address. Numbers greater than \
+ <i>20</i> are recommended, but any unused number between <i>1</i> and \
+ <i>255</i> is allowed.'),
 
 failover_alias_address_placeholder: T('Failover IP Address'),
-failover_alias_address_tooltip: T('IPv4 address to use for the failover interface. Set a manual IP address here if DHCP is not used.'),
+failover_alias_address_tooltip: T('IPv4 address to use for the failover \
+ interface. Set a manual IP address here if DHCP is not used.'),
 
 failover_virtual_alias_address_placeholder: T('Virtual IP Address'),
-failover_virtual_alias_address_tooltip: T(''),
+failover_virtual_alias_address_tooltip: T('IP address to use for \
+ administrative access to the array.'),
 
 vlan_pint_placeholder: T('Parent Interface'),
 vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
@@ -117,8 +128,8 @@ lagg_protocol_tooltip : T('Select the <a\
 lagg_protocol_validation : [ Validators.required ],
 lagg_protocol_options: [
     {label:"None", value:"NONE"},
-    {label:"LACP", value:"LACP"}, 
-    {label:"Failover", value:"FAILOVER"}, 
+    {label:"LACP", value:"LACP"},
+    {label:"Failover", value:"FAILOVER"},
     {label:"Load Balance", value:"LOADBALANCE"},
     {label:"Round Robin", value: "ROUNDROBIN"}
 ],
@@ -130,7 +141,10 @@ lagg_interfaces_tooltip : T('Select the interfaces to use in the aggregation.<br
 lagg_interfaces_validation : [ Validators.required ],
 
 mtu_placeholder: T('MTU'),
-mtu_tooltip: T('Maximum Transmission Unit, the largest protocol data unit that can be communicated. The largest workable MTU size varies with network interfaces and equipment. *1500* and *9000* are standard Ethernet MTU sizes.'),
+mtu_tooltip: T('Maximum Transmission Unit, the largest protocol data \
+ unit that can be communicated. The largest workable MTU size varies \
+ with network interfaces and equipment. *1500* and *9000* are standard \
+ Ethernet MTU sizes.'),
 mtu_validation: [rangeValidator(68, 9000)],
 
 alias_list_placeholder: T('Aliases'),

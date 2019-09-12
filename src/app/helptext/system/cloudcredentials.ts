@@ -57,6 +57,10 @@ export const helptext_system_cloudcredentials = {
  target="_blank">Simple Storage Service Website Endpoints</a>.'
     )
   },
+  region_s3: {
+    placeholder: T("Region"),
+    tooltip: T(""),
+  },
 
   skip_region_s3: {
     placeholder: T("Disable Endpoint Region"),

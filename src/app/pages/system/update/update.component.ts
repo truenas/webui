@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
@@ -9,6 +9,8 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../pages/common/entity/utils';
+
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
@@ -16,7 +18,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
   styleUrls: ['update.component.css'],
   templateUrl: './update.component.html',
 })
-export class UpdateComponent implements OnInit {
+export class UpdateComponent implements OnInit, OnDestroy {
 
   public packages: any[] = [];
   public status: string;
@@ -48,9 +50,15 @@ export class UpdateComponent implements OnInit {
   public trainDescriptionOnPageLoad: string;
   public fullTrainList: any[];
   public isFooterConsoleOpen: boolean;
-
+  public isUpdateRunning = false;
+  public updateMethod: string = 'update.update';
+  public is_ha = false;
+  public isfreenas: boolean;
+  public ds: any;
+  public failover_upgrade_pending = false;
   public busy: Subscription;
   public busy2: Subscription;
+  private checkChangesSubscription: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
   public updatecheck_tooltip = T('Check the update server daily for \
@@ -84,8 +92,10 @@ export class UpdateComponent implements OnInit {
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
+      this.sysGenService.updateRunning.subscribe((res) => { 
+        res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }
 
   parseTrainName(name) {
@@ -189,6 +199,8 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    window.localStorage.getItem('is_freenas') === 'true' ? this.isfreenas = true : this.isfreenas = false;
+
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures) => {
       if(ures[0].attributes.preferences !== undefined && ures[0].attributes.preferences.enableWarning) {
         ures[0].attributes.preferences['enableWarning'] = true;
@@ -207,9 +219,9 @@ export class UpdateComponent implements OnInit {
         this.train = res.current;
         this.selectedTrain = res.current;
         this.ws.call('update.set_train', [res.current]).subscribe(() => {},
-          (err) => {
-            console.error(err);
-          });
+        (err) => {
+          console.error(err);
+        });
   
         if (this.autoCheck) {
           this.check();
@@ -246,6 +258,58 @@ export class UpdateComponent implements OnInit {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
+
+    if (!this.isfreenas) {
+      setTimeout(() => { // To get around too many concurrent calls???
+        this.ws.call('failover.licensed').subscribe((res) => {
+          if (res) {
+            this.updateMethod = 'failover.upgrade';
+            this.is_ha = true;
+          };
+          this.checkForUpdateRunning();
+        });        
+      })
+
+    } else {
+      this.checkForUpdateRunning();
+    }
+  }
+
+  checkForUpdateRunning() {
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res && res.length > 0) {
+          this.isUpdateRunning = true;
+          this.showRunningUpdate(res[0].id);
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
+  }
+
+  checkUpgradePending() {
+    this.ws.call('failover.upgrade_pending').subscribe((res) => {
+      this.failover_upgrade_pending = res;
+    })
+  }
+
+  applyFailoverUpgrade() {
+    this.dialogService.confirm(T("Finish Upgrade?"), T(""), true, T("Continue")).subscribe((res) => {
+      if (res) {
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+        this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe((success) => {
+          console.info('success', success)
+          this.failover_upgrade_pending = false;
+          this.dialogRef.close(false);
+        });
+        this.dialogRef.componentInstance.failure.subscribe((failure) => {
+          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+        });
+      }
+    })
   }
 
   onTrainChanged(event) {
@@ -301,8 +365,8 @@ export class UpdateComponent implements OnInit {
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.router.navigate(['/others/reboot']);
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }
 
@@ -355,57 +419,86 @@ export class UpdateComponent implements OnInit {
             }
             this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
               if(ures[0].attributes.preferences !== undefined && !ures[0].attributes.preferences.enableWarning) {
-                const ds  = this.dialogService.confirm(
-                  T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
-                )
-                ds.afterClosed().subscribe((status)=>{
-                  if(status){
-                    if (!ds.componentInstance.data[0].reboot){
-                      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-                      this.dialogRef.componentInstance.setCall('update.download');
-                      this.dialogRef.componentInstance.submit();
-                      this.dialogRef.componentInstance.success.subscribe((succ) => {
-                        this.dialogRef.close(false);
-                        this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
-                        this.pendingupdates();
-
-                      });
-                      this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-                      });
-                    }
-                    else{
-                      this.update();
-                    }
-                  }
-                });
-
-              } else {
-                this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
-                  const ds  = this.dialogService.confirm(
-                    T("Download Update"), T("Continue with download?"),true,"",true,T("Apply updates and reboot system after downloading."),"update.update",[{ train: this.train, reboot: false }]
-                  )
-                  ds.afterClosed().subscribe((status)=>{
+                if (!this.is_ha) {
+                  this.ds  = this.dialogService.confirm(
+                    T("Download Update"), T("Continue with download?"),true,"",true,
+                      T("Apply updates and reboot system after downloading."),
+                      'upgrade.upgrade',[{ train: this.train, reboot: false }]
+                  )                  
+                  this.ds.afterClosed().subscribe((status)=>{
                     if(status){
-                      if (!ds.componentInstance.data[0].reboot){
-                        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-                        this.dialogRef.componentInstance.setCall('update.download');
-                        this.dialogRef.componentInstance.submit();
-                        this.dialogRef.componentInstance.success.subscribe((succ) => {
-                          this.dialogRef.close(false);
-                          this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
-                          this.pendingupdates();
-
-                        });
-                        this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                      if (!this.ds.componentInstance.data[0].reboot){
+                        this.ws.call('update.set_train', this.train).subscribe(() => {
+                          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                          this.dialogRef.componentInstance.setCall('update.download');
+                          this.dialogRef.componentInstance.submit();
+                          this.dialogRef.componentInstance.success.subscribe((succ) => {
+                            this.dialogRef.close(false);
+                            this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                            this.pendingupdates();
+                          });
+                          this.dialogRef.componentInstance.failure.subscribe((err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                          });
+                        }, 
+                        (err) => { 
+                          console.error(err) 
                         });
                       }
                       else{
                         this.update();
-                      }
-                    }
+                      };
+                    };
                   });
+                } else {
+                  this.ds  = this.dialogService.confirm(
+                    T("Download Update"), T("Upgrades both controllers. Files will be downloaded in the Active Controller\
+                    and then transferred to the Standby Controller. Upgrade process will start concurrently on both nodes.\
+                    Continue with download?"), true).subscribe((res) =>  {
+                      if (res) {
+                        this.update()
+                      };
+                    })
+                };
+              } else {
+                this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+                  if (!this.is_ha) {
+                    this.ds  = this.dialogService.confirm(
+                      T("Download Update"), T("Continue with download?"),true,"",true,
+                        T("Apply updates and reboot system after downloading."),
+                        'update.update',[{ train: this.train, reboot: false }]
+                    )
+                    this.ds.afterClosed().subscribe((status)=>{
+                      if(status){
+                        if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
+                          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                          this.dialogRef.componentInstance.setCall('update.download');
+                          this.dialogRef.componentInstance.submit();
+                          this.dialogRef.componentInstance.success.subscribe((succ) => {
+                            this.dialogRef.close(false);
+                            this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                            this.pendingupdates();
+
+                          });
+                          this.dialogRef.componentInstance.failure.subscribe((err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                          });
+                        }
+                        else{
+                          this.update();
+                        }
+                      }
+                    });
+                   } else {
+                      this.ds  = this.dialogService.confirm(
+                        T("Download Update"), T("Upgrades both controllers. Files will be downloaded in the Active Controller\
+                         and then transferred to the Standby Controller. Upgrade process will start concurrently on both nodes.\
+                         Continue with download?"),true).subscribe((res) =>  {
+                          if (res) {
+                            this.update()
+                          };
+                        });
+                  };
                 });
               };
             });
@@ -416,6 +509,7 @@ export class UpdateComponent implements OnInit {
         },
         (err) => {
           this.loader.close();
+          new EntityUtils().handleWSError(this, err, this.dialogService);
           this.dialogService.errorReport(T("Error checking for updates."), err.reason, err.trace.formatted);
         },
         () => {
@@ -424,7 +518,7 @@ export class UpdateComponent implements OnInit {
   }
 
   downloadUpdate() {
-    this.ws.call('core.get_jobs', [[["method", "=", "update.update"], ["state", "=", "RUNNING"]]]).subscribe(
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
       (res) => {
         if (res[0]) {
           this.showRunningUpdate(res[0].id);
@@ -433,20 +527,45 @@ export class UpdateComponent implements OnInit {
         }
       },
       (err) => {
-        this.dialogService.errorReport(T("Error"), err.reason, err.trace.formatted);
+        new EntityUtils().handleWSError(this, err, this.dialogService);
       });
   }
 
   update() {
+    this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
-    this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.router.navigate(['/others/reboot']);
-    });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
-    });
+    if (!this.is_ha) {
+      this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
+      this.dialogRef.componentInstance.submit();
+      this.dialogRef.componentInstance.success.subscribe((res) => {
+        this.router.navigate(['/others/reboot']);
+      });
+      this.dialogRef.componentInstance.failure.subscribe((res) => {
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+      });
+    } else {
+      this.ws.call('update.set_train', [this.train]).subscribe(() => { 
+        this.dialogRef.componentInstance.setCall('failover.upgrade');
+        this.dialogRef.componentInstance.disableProgressValue(true);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe((res) => {
+          if (!this.is_ha) { 
+            this.router.navigate(['/others/reboot']); 
+          } else  {
+            this.dialogService.closeAllDialogs();
+            this.router.navigate(['/']); 
+            this.dialogService.confirm(T('Complete the Upgrade'), 
+              T('The standby controller has finished upgrading. To complete the update process, \
+               failover to the standby controller.'), true, 
+              T('Close'),false, '','','','', true).subscribe(() => {
+              });
+          }
+        });
+        this.dialogRef.componentInstance.failure.subscribe((err) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService);
+        })
+      })
+    };
   }
 
   ApplyPendingUpdate() {
@@ -609,5 +728,11 @@ export class UpdateComponent implements OnInit {
           }
         );
     });
+  }
+
+  ngOnDestroy() {
+    if (this.checkChangesSubscription) {
+      this.checkChangesSubscription.unsubscribe();
+    }
   }
 }
