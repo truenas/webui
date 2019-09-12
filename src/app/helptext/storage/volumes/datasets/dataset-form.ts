@@ -1,5 +1,4 @@
 import {Validators} from '@angular/forms';
-import {humanReadableValidator} from '../../../../pages/common/entity/entity-form/validators/human-readable-validation'
 import { T } from '../../../../translate-marker';
 
 export default {

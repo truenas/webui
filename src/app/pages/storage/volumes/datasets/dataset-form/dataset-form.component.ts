@@ -16,7 +16,6 @@ import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-f
 import globalHelptext from '../../../../../helptext/global-helptext';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
-import {humanReadableValidator} from '../../../../common/entity/entity-form/validators/human-readable-validation'
 import { filter } from 'rxjs/operators';
 
 interface DatasetFormData {
