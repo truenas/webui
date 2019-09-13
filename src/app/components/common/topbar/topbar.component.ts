@@ -64,8 +64,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName: string = 'FreeNAS';
   hostname: string;
+  public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
+  public mat_tooltips = helptext.mat_tooltips;
 
   protected dialogRef: any;
 
@@ -82,7 +84,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-
     public translate: TranslateService,
     protected loader: AppLoaderService, ) {
       super();
@@ -142,7 +143,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.checkNetworkChangesPending();
       this.getDirServicesStatus();
       this.isUpdateRunning();
-
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -494,7 +494,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         });
       });
     });
-  }
+  };
 
   isUpdateRunning() {
     let method;
@@ -503,9 +503,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       (res) => {
         if (res && res.length > 0) {
           this.sysGenService.updateRunning.emit('true');
+          this.updateIsRunning = true;
           if (!this.updateNotificationSent) {
-            this.dialogService.confirm(helptext.updateRunning_dialog_title, helptext.updateRunning_dialog_message,
-              true, T('Close'), false, '', '', '', '', true);
+            this.showUpdateDialog();
             this.updateNotificationSent = true;
             setTimeout(() => {
               this.updateNotificationSent = false;
@@ -518,5 +518,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       (err) => {
         console.error(err);
       });
-  }
+  };
+
+  showUpdateDialog() {
+    this.dialogService.confirm(helptext.updateRunning_dialog.title, 
+      helptext.updateRunning_dialog.message,
+      true, T('Close'), false, '', '', '', '', true);
+  };
 }

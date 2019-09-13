@@ -50,7 +50,10 @@ export class EntityDialogComponent implements OnInit {
     protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit() {
-    this.title = this.conf.title;
+    this.translate.get(this.conf.title).subscribe(title => {
+      this.title = title;
+    });
+
     this.fieldConfig = this.conf.fieldConfig;
     
     if(this.conf.parent) {

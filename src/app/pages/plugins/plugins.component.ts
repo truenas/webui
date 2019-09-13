@@ -510,4 +510,8 @@ export class PluginsComponent {
 
     document.body.removeChild(form);
   }
+
+  wsDeleteParams(row, id) {
+    return row.state === 'up' ? [id, {force: true}] : [id];
+  }
 }

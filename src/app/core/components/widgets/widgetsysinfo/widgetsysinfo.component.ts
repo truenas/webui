@@ -2,12 +2,13 @@ import { Component, OnInit, OnDestroy, AfterViewInit, Input, ViewChild, Renderer
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { WebSocketService} from 'app/services/ws.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
+import { WebSocketService, SystemGeneralService } from '../../../../services/';
+
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -47,12 +48,20 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public loader:boolean = false;
   public is_freenas: string = window.localStorage['is_freenas'];
   public systemLogo: any;
-  public isFN: boolean = false; 
+  public isFN: boolean = false;
+  public isUpdateRunning = false;
+  public is_ha: boolean;
+  public updateMethod = 'update.update';
 
-  constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService){
+  constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
+    public sysGenService: SystemGeneralService){
     super(translate);
     this.configurable = false;
+    this.sysGenService.updateRunning.subscribe((res) => { 
+      res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+    });
   }
+
 
   log(str){ console.log(str); }
 
@@ -83,11 +92,30 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.core.emit({name:"UpdateCheck"});
       
     }
+    this.ws.call('failover.licensed').subscribe((res) => {
+      if (res) {
+        this.updateMethod = 'failover.upgrade';
+        this.is_ha = true;
+      };
+      this.checkForRunningUpdate();
+    });
   }
 
   ngOnInit(){
   }
 
+  checkForRunningUpdate() {
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res && res.length > 0) {
+          this.isUpdateRunning = true;
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
+  }
+ 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }
