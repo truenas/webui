@@ -436,6 +436,8 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async dataHandler(entityForm, defaults?) {
+    entityForm.formGroup.controls['aces'].reset();
+
     this.loader.open();
     const res = entityForm.queryResponse;
     if (defaults) {
@@ -454,6 +456,7 @@ export class DatasetAclComponent implements OnDestroy {
     if (!data.length) {
       data = [data];
     }
+    
     for (let i = 0; i < data.length; i++) {
       acl = {};
       acl.type = data[i].type;
@@ -495,7 +498,6 @@ export class DatasetAclComponent implements OnDestroy {
           }
         }
       }
-
       const propName = "aces";
       const aces_fg = entityForm.formGroup.controls[propName];
       if (aces_fg.controls[i] === undefined) {
