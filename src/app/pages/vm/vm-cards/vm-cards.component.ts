@@ -127,30 +127,10 @@ export class VmCardsComponent  implements OnDestroy {
         label: T("Start"),
         onClick: start_row => {
           const eventName = "VmStart";
-          const args = [start_row.id];
-          const overcommit = [{ overcommit: false }];
-          const dialogText = T(
-            "Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution."
-          );
-          const startDialog = this.dialog.confirm(
-            T("Power"),
-            undefined,
-            true,
-            T("Power On"),
-            true,
-            T("Overcommit Memory?"),
-            undefined,
-            overcommit,
-            dialogText
-          );
-          startDialog.afterClosed().subscribe(res => {
-            if (res) {
-              const checkbox = startDialog.componentInstance.data[0].overcommit;
-              args.push({ overcommit: checkbox });
-              this.core.emit({ name: eventName, data: args });
-              this.setTransitionState("STARTING", start_row);
-            }
-          });
+          let args = [row.id];
+          let overcommit = [{'overcommit':false}];
+          this.core.emit({name: eventName, data:args});
+          this.setTransitionState("STARTING", row);
         }
       });
     }
