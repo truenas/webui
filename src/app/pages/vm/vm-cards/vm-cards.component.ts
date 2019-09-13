@@ -347,7 +347,8 @@ export class VmCardsComponent  implements OnDestroy {
     let args = [id];
     let overcommit = [{'overcommit':false}];
     const dialogText = T("Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution.")
-    let startDialog = this.dialog.confirm(T("Power"), undefined, true, T("Power On"), true, T('Overcommit Memory?'), undefined, overcommit, dialogText)
+    const dialogMessage = "This configuration could potentially require more RAM than is available on the system. Check the box if you would like to run this anyway.";
+    let startDialog = this.dialog.confirm(T("Attention"), dialogMessage, true, T("Power On"), true, T('Overcommit Memory'), undefined, overcommit, dialogText)
     startDialog.afterClosed().subscribe((res) => {
       if (res) {
         let checkbox = startDialog.componentInstance.data[0].overcommit;
