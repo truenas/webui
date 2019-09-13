@@ -25,9 +25,9 @@ jailtype_tooltip: T('<i>Default (Clone Jail)</i> or <i>Basejail</i>.\
  when upgraded.'),
 
 release_placeholder: T('Release'),
-release_tooltip: T('Choose the FreeBSD release or template to use\
- as the jail operating system. Releases already downloaded show\
- <b>(fetched)</b>.'),
+release_tooltip: T('FreeBSD release to use as the jail operating system. \
+ Jails can run FreeBSD versions up to the same version as the host \
+ system. Newer releases are not shown.'),
 
 https_placeholder: T('Fetch Method'),
 https_tooltip: T('Use encrypted connection for increased security (preferred).'),

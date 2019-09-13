@@ -12,6 +12,7 @@ import { TaskManagerComponent } from '../dialog/task-manager/task-manager.compon
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
+import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
 import { TranslateService } from '@ngx-translate/core';
@@ -55,17 +56,20 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   dirServicesStatus = [];
   showDirServicesIcon = false;
   exposeLegacyUI = false;
-
   ha_status_text: string;
   ha_disabled_reasons = [];
   ha_pending = false;
   is_ha = false;
+  upgradeWaitingToFinish = false;
+  pendingUpgradeChecked = false;
   sysName: string = 'FreeNAS';
   hostname: string;
   public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
   public mat_tooltips = helptext.mat_tooltips;
+
+  protected dialogRef: any;
 
   constructor(
     public themeService: ThemeService,
@@ -81,15 +85,15 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     public translate: TranslateService,
-    protected loader: AppLoaderService) {
+    protected loader: AppLoaderService, ) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
         setTimeout(() => {
           this.updateNotificationSent = false;
-        }, 600000);
+        }, 900000);
       });
-  }
+    }
 
   ngOnInit() {
     if (window.localStorage.getItem('is_freenas') === 'false') {
@@ -130,7 +134,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
-
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
       if (this.is_ha) {
@@ -330,7 +333,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         }
       });
     }, err => {
-      console.log(err);
+      console.error(err);
     })
   }
 
@@ -409,6 +412,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.ha_status_text = helptext.ha_status_text_disabled;
       } else {
         this.ha_status_text = helptext.ha_status_text_enabled;
+        if (!this.pendingUpgradeChecked) {
+          this.checkUpgradePending();
+        }
       }
     });
   }
@@ -435,6 +441,38 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     reasons = reasons + '</ul>';
 
     this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
+  }
+
+  checkUpgradePending() {
+    this.ws.call('failover.upgrade_pending').subscribe((res) => {
+     this.pendingUpgradeChecked = true;
+      this.upgradeWaitingToFinish = res;
+      if(res) {
+        this.upgradePendingDialog();
+      };
+    });
+  }
+
+  upgradePendingDialog() {
+    this.dialogService.confirm(
+      T("Pending Upgrade"),
+      T("There is an upgrade waiting to finish."),
+      true, T('Continue')).subscribe(res => {
+        if (res) {
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+          this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+          this.dialogRef.componentInstance.disableProgressValue(true);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((success) => {
+            this.dialogRef.close(false);
+            console.info('success', success);
+            this.upgradeWaitingToFinish = false
+          });
+          this.dialogRef.componentInstance.failure.subscribe((failure) => {
+            this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+          });
+        }
+      });
   }
 
   getDirServicesStatus() {

@@ -26,15 +26,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   protected dialogRef: any;
   public fileLocation: any;
   public subs: any;
-  // public custActions: Array<any> = [
-  //   {
-  //     id : 'save_config',
-  //     name : T('Save Config'),
-  //     function : () => {
-  //       this.dialogservice.dialogForm(this.saveConfigFormConf);
-  //     }
-  //   }
-  // ];
+  public isHA = false;
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
@@ -56,13 +48,11 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       name: 'filename',
       placeholder: helptext.filename.placeholder,
       tooltip: helptext.filename.tooltip,
-      // validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      // required: true,
       hideButton: true,
     },
     {
@@ -70,7 +60,8 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       name: 'rebootAfterManualUpdate',
       placeholder: helptext.rebootAfterManualUpdate.placeholder,
       tooltip: helptext.rebootAfterManualUpdate.tooltip,
-      value: false
+      value: false,
+      isHidden: true
     }
   ];
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -118,6 +109,16 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   }
 
   preInit(entityForm: any) {
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        if (is_ha) {
+          this.isHA = true;
+        } else {
+          _.find(this.fieldConfig, {name : "rebootAfterManualUpdate"})['isHidden'] = false;
+        }
+      })
+    }
+
     this.ws.call('pool.query').subscribe((pools)=>{
       if(pools){
         pools.forEach(pool => {
@@ -157,6 +158,8 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     });
     entityForm.submitFunction = this.customSubmit;
   }
+
+
   customSubmit(entityForm: any) {
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
@@ -164,19 +167,21 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.subscribe((succ)=>{
         this.dialogRef.close(false);
-        if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
-          this.router.navigate(['/others/reboot']);
-        } else {
-          this.translate.get('Restart').subscribe((reboot: string) => {
-            this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
-              this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
-                if (reboot_res) {
-                  this.router.navigate(['/others/reboot']);
-                }
+        if (!this.isHA) {
+          if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
+            this.router.navigate(['/others/reboot']);
+          } else {
+            this.translate.get('Restart').subscribe((reboot: string) => {
+              this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+                this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
+                  if (reboot_res) {
+                    this.router.navigate(['/others/reboot']);
+                  }
+                });
               });
             });
-          });
-        };
+          };
+        } 
       })
       this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
         this.dialogRef.close(false);
@@ -187,10 +192,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         this.dialogRef.close(false);
         this.dialogService.errorReport(failure.error,failure.state,failure.exception)
       })
-
     })
-
-
   }
 
 updater(file: any, parent: any){
@@ -198,10 +200,16 @@ updater(file: any, parent: any){
   if (fileBrowser.files && fileBrowser.files[0]) {
     parent.save_button_enabled = true;
     const formData: FormData = new FormData();
-    formData.append('data', JSON.stringify({
-      "method": "update.file",
-      "params": [{"destination":this.fileLocation}]
-    }));
+    if (parent.isHA) {
+      formData.append('data', JSON.stringify({
+        "method": 'failover.upgrade'
+      }));
+    } else {
+      formData.append('data', JSON.stringify({
+        "method": 'update.file',
+        "params": [{"destination":this.fileLocation}]
+      }));
+    }
     formData.append('file', fileBrowser.files[0]);
     parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
   } else {

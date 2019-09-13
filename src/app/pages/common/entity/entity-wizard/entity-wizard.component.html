@@ -13,7 +13,7 @@
               </div>
             </ng-container>
           </div>
-          <mat-card-actions class="wizard-action">
+          <mat-card-actions class="wizard-action" *ngIf="conf.summary || i !== (conf.wizardConfig.length - 1); else lastStepAction">
             <button id="cancel_button" color="accent" class="btn btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
             <button id="goback_button" mat-button matStepperPrevious *ngIf="i == 0 ? false : true" color="accent">{{"Back" | translate}}</button>
             <button id="goforward_button" *ngIf="!conf.customNext" mat-button matStepperNext color="primary" >{{"Next" | translate}}</button>
@@ -22,9 +22,16 @@
               <button id="cust_button_{{custBtn.name}}" mat-button color="primary" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id, i)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
             </span>
           </mat-card-actions>
+          <ng-template #lastStepAction>
+            <mat-card-actions class="wizard-action">
+              <button id="secondary_cancel_button" color="accent" class="btn  btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
+              <button id="noconfirm_button" mat-button matStepperPrevious color="accent">{{"Back" | translate}}</button>
+              <button id="confirm_button" mat-button color="primary" (click)="onSubmit()">{{saveSubmitText | translate}}</button>
+            </mat-card-actions>
+          </ng-template>
         </mat-step>
       </div>
-      <mat-step>
+      <mat-step *ngIf="conf.summary">
         <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
         <div *ngIf="conf.summary">
           <div> {{ conf.summary_title }}</div>

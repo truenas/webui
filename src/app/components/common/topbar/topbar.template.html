@@ -19,6 +19,10 @@
       </form>
       </div -->
       <span fxFlex></span>
+      <!-- finish update -->
+      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" matTooltip="Upgrade waiting to finish" (click)="upgradePendingDialog()" class="topbar-button-right">
+        <mat-icon class="movement">update</mat-icon>
+      </button>
       <!--loading icon-->
       <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="mat_tooltips.update" (click)="showUpdateDialog()" class="topbar-button-right">
         <mat-icon class="movement">system_update_alt</mat-icon>
