@@ -50,8 +50,13 @@ export class TnSysInfoComponent implements OnInit {
         localWS.call('system.license_update', [value]).subscribe((res) => {
           entityDialog.dialogRef.close(true);
           localLoader.close();
-          localSnackbar.open(helptext.update_license.success_message,
-            helptext.update_license.snackbar_action, { duration: 5000 });
+          localDialogService.confirm(helptext.update_license.reload_dialog_title, 
+            helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action)
+            .subscribe(() => {
+            document.location.reload(true);
+          });
+          // localSnackbar.open(helptext.update_license.success_message,
+          //   helptext.update_license.snackbar_action, { duration: 5000 });
         },
         (err) => {
           localLoader.close();
