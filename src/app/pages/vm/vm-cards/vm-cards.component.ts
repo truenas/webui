@@ -246,32 +246,38 @@ export class VmCardsComponent  implements OnDestroy {
   afterInit(entityTable: EntityTableComponent) {
     this.entityTable = entityTable;
     this.core.emit({name: "VmProfilesRequest"});
-     this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
-       if(evt.data.error == 14 || evt.data.error == 12){
-         this.onMemoryError(evt.data.id[0]);
-         return;
-       }
-       this.entityTable.getData();
-       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
-     })
-     this.core.register({observerClass:this,eventName:"VmStopFailure"}).subscribe((evt:CoreEvent) => {
+
+    this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
+      if(evt.data.error == 12){
+        this.onMemoryError(evt.data.id[0]);
+        return;
+      }
       this.entityTable.getData();
       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
-    })
+    });
+
+    this.core.register({observerClass:this,eventName:"VmStopFailure"}).subscribe((evt:CoreEvent) => {
+      this.entityTable.getData();
+      this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
+    });
+
     this.core.register({observerClass:this,eventName:"VmCloneFailure"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
-    })
+    });
+
     this.core.register({observerClass:this,eventName:"VmDeleteFailure"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
-    })
+    });
+
     this.core.register({observerClass:this,eventName:"VmProfiles"}).subscribe((evt:CoreEvent) => {
-      this.entityTable.getData();
+      setTimeout(() => {
+        this.entityTable.getData();
+      }, 3000)
     });
 
     this.controlEvents.subscribe((evt:CoreEvent) => {
-      console.log(evt);
     });
   }
 
@@ -291,7 +297,7 @@ export class VmCardsComponent  implements OnDestroy {
   }
 
   setTransitionState(str:string, vm:any){
-    let index = this.table.rows.indexOf(vm);
+    const index  = this.table.rows.findIndex((v) => v.id == vm.id);
     this.table.rows[index].state = str;
   }
 
@@ -323,8 +329,8 @@ export class VmCardsComponent  implements OnDestroy {
   onSliderChange(row) {
     if(row['status']['state'] === "RUNNING") {
       const eventName = "VmStop";
-      this.core.emit({name: eventName, data:[row.id]});
       this.setTransitionState("STOPPING", row)
+      this.core.emit({name: eventName, data:[row.id]});
     } else {
       const eventName = "VmStart";
       let args = [row.id];
@@ -335,8 +341,7 @@ export class VmCardsComponent  implements OnDestroy {
   }
 
   onMemoryError(id){
-    const index = this.table.rows.find((r) => r.id == id);
-    const row = this.table.rows[index];
+    const row = this.table.rows.find((r) => r.id == id);
     
     const eventName = "VmStart";
     let args = [id];
