@@ -247,6 +247,10 @@ export class VmCardsComponent  implements OnDestroy {
     this.entityTable = entityTable;
     this.core.emit({name: "VmProfilesRequest"});
      this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
+       if(evt.data.error == 14 || evt.data.error == 12){
+         this.onMemoryError(evt.data.id[0]);
+         return;
+       }
        this.entityTable.getData();
        this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
      })
@@ -325,17 +329,29 @@ export class VmCardsComponent  implements OnDestroy {
       const eventName = "VmStart";
       let args = [row.id];
       let overcommit = [{'overcommit':false}];
-      const dialogText = T("Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution.")
-      let startDialog = this.dialog.confirm(T("Power"), undefined, true, T("Power On"), true, T('Overcommit Memory?'), undefined, overcommit, dialogText)
-      startDialog.afterClosed().subscribe((res) => {
-        if (res) {
-          let checkbox = startDialog.componentInstance.data[0].overcommit;
-          args.push({"overcommit": checkbox});
-          this.core.emit({name: eventName, data:args});
-          this.setTransitionState("STARTING", row);
-        } 
-      });
+      this.core.emit({name: eventName, data:args});
+      this.setTransitionState("STARTING", row);
     }
+  }
+
+  onMemoryError(id){
+    const index = this.table.rows.find((r) => r.id == id);
+    const row = this.table.rows[index];
+    
+    const eventName = "VmStart";
+    let args = [id];
+    let overcommit = [{'overcommit':false}];
+    const dialogText = T("Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution.")
+    let startDialog = this.dialog.confirm(T("Power"), undefined, true, T("Power On"), true, T('Overcommit Memory?'), undefined, overcommit, dialogText)
+    startDialog.afterClosed().subscribe((res) => {
+      if (res) {
+        let checkbox = startDialog.componentInstance.data[0].overcommit;
+        args.push({"overcommit": checkbox});
+        this.setTransitionState("STARTING", row);
+        this.core.emit({name: eventName, data:args});
+      } 
+    });
+    
   }
 
   ngOnDestroy(){
