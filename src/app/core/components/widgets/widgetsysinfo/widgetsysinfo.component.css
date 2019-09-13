@@ -277,6 +277,11 @@ img.platform-logo{
   width:100%;
 }
 
+#update-in-progress {
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
 .xs.widget .data-container{
   position:relative;
 }

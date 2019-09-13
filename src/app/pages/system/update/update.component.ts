@@ -12,6 +12,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityUtils } from '../../../pages/common/entity/utils';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { helptext_system_update } from 'app/helptext/system/update';
 
 @Component({
   selector: 'app-update',
@@ -61,6 +62,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   private checkChangesSubscription: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
+  sysUpdateMessage = ('A system update is in progress. ') + helptext_system_update.sysUpdateMessage;
   public updatecheck_tooltip = T('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
