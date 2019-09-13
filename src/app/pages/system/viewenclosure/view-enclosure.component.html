@@ -14,6 +14,11 @@
 
 <!-- Persistent Visualizer -->
 <div class="main-content" fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )">
+
+  <div>
+    <mat-spinner [diameter]="40" *ngIf="spinner" style="margin: 64px auto 0;"></mat-spinner>
+  </div>
+
   <div style="padding:64px"> 
     <enclosure-disks style.padding="32px 0 0 0"  
       *ngIf="events && system && system.pools && selectedEnclosure" 
@@ -24,8 +29,6 @@
     </enclosure-disks>
   </div>
 </div>
-
-<!--<enclosure-disks *ngIf="system && system.pools && selectedEnclosure && currentView == 'Disks'" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>-->
 
 <!-- Enclosure Selector -->
 <div fxFlex="240px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector">
