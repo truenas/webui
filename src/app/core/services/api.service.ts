@@ -270,7 +270,6 @@ export class ApiService {
         errorResponseEvent: "VmStopFailure"
       },
       postProcessor(res,callArgs){
-        //DEBUG: console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0]} // res:boolean
         return cloneRes;

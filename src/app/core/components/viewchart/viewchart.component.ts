@@ -178,11 +178,6 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
       }
       this._data = result;
 
-      //DEBUG: console.log("DEBUG: set data() ********");
-      //DEBUG: console.log(d);
-      console.log(this.chartConfig);
-
-      //this.chartConfig.data.columns = result;
       this.render();
     }
   }
@@ -270,7 +265,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   render(conf?:any){
     if(!this.data || this.data.length == 0){
-      console.log("NO DATA FOUND");
+      console.warn("NO DATA FOUND");
       return -1;
     }
 
