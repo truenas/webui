@@ -50,6 +50,15 @@ export class SystemProfiler {
     this.parsePoolsData(this._pools);
   }
 
+  private _sensorData: any;
+  get sensorData(){
+    return this._sensorData;
+  }
+  set sensorData(obj){
+    this._sensorData = obj;
+    this.parseSensorData(this._sensorData);
+  }
+
   constructor(model, data) {
     this.platform = model;
     this.enclosures = data;
@@ -127,6 +136,22 @@ export class SystemProfiler {
     });
   }
   
+  private parseSensorData(obj){
+    let powerStatus = obj.filter(v => v.name.startsWith("PS"));
+    if(this.enclosures[this.headIndex].model == "M Series"){
+      const elements = powerStatus.map((item, index) => {
+        item.descriptor = item.name;
+        item.status = item.value == 1 ? 'OK' : 'FAILED';
+        item.value = 'NONE';
+        item.data = {Descriptor: item.descriptor, Value: item.value, Status: item.status};
+        item.name = "Power Supply";
+        return item;
+      });
+      const powerSupply = {name: "Power Supply", elements: elements, header: ['Descriptor', 'Status', 'Value']};
+      this.enclosures[this.headIndex].elements.push(powerSupply);
+    } 
+  }
+
   private parsePoolsData(obj){
     obj.forEach((pool, pIndex) => {     
       if(!pool.topology){
