@@ -80,7 +80,7 @@ export class VolumesListTableConfig implements InputTableConf {
       key_props: ['name']
     },
   };
-  
+
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
@@ -132,8 +132,8 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getEncryptedActions(rowData: any) {
-    const actions = [], 
-    localLoader = this.loader, localRest = this.rest, localDialogService = this.dialogService, 
+    const actions = [],
+    localLoader = this.loader, localRest = this.rest, localDialogService = this.dialogService,
       localResourceName = this.resource_name, localParentVolumesList = this.parentVolumesListComponent;
 
     if (rowData.vol_encrypt === 2) {
@@ -231,7 +231,7 @@ export class VolumesListTableConfig implements InputTableConf {
     localParentVol = this.parentVolumesListComponent,
     localDialogService = this.dialogService,
     localSnackBar = this.snackBar
-    
+
     this.storageService.poolUnlockServiceChoices().pipe(
       map(serviceChoices => {
         return {
@@ -262,7 +262,7 @@ export class VolumesListTableConfig implements InputTableConf {
               options: serviceChoices
             }
           ],
-    
+
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
             const value = entityDialog.formValue;
@@ -272,7 +272,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 passphrase: value.passphrase,
                 recovery_key: value.recovery_key,
                 services: value.services
-                }) 
+                })
               }).subscribe((restPostResp) => {
               entityDialog.dialogRef.close(true);
               localLoader.close();
@@ -321,16 +321,16 @@ export class VolumesListTableConfig implements InputTableConf {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
-                p1 = `These services depend on <b>${row1.name}</b> and will be disrupted when the volume is detached:`;
+                p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is detached:`;
                 res.forEach((item) => {
                   p1 += `<br><br>${item.type}:`;
                   item.attachments.forEach((i) => {
                     let tempArr = i.split(',');
                     tempArr.forEach((i) => {
                       p1 += `<br> - ${i}`
-                    }) 
+                    })
                   })
-  
+
                 })
               }
               this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
@@ -352,7 +352,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       if (process.name) {
                         p1 += `<br> - ${process.name}`
                       }
-                      
+
                     });
                   };
                   if (running_unknown_processes.length > 0) {
@@ -453,10 +453,10 @@ export class VolumesListTableConfig implements InputTableConf {
                   if (res.extra && res.extra['code'] === 'services_restart') {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    conditionalErrMessage = 
-                    `Warning: These services have to be restarted in order to export pool: 
+                    conditionalErrMessage =
+                    `Warning: These services must be restarted to export the pool:
                       ${res.extra['services']}
-                      <br><br>Services will now be restarted and then exporting/disconnecting will continue.`;
+                      <br><br>Exporting/disconnecting will continue after services have been restarted.`;
                       localDialogService.confirm(T("Error exporting/disconnecting pool."),
                         conditionalErrMessage, true, 'Restart Services and Continue')
                           .subscribe((res) => {
@@ -468,8 +468,8 @@ export class VolumesListTableConfig implements InputTableConf {
                   } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                     entityDialog.dialogRef.close(true);
 
-                    conditionalErrMessage = 
-                    `Unable to terminate following processes using this pool: ${res.extra['processes']}`;
+                    conditionalErrMessage =
+                    `Unable to terminate processes which are using this pool: ${res.extra['processes']}`;
                     dialogRef.close(true);
                     localDialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
                   }
@@ -477,7 +477,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   entityDialog.dialogRef.close(true);
                   dialogRef.close(true);
                   localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
-                };  
+                };
               });
             }
           }
@@ -489,7 +489,7 @@ export class VolumesListTableConfig implements InputTableConf {
       if (rowData.is_decrypted) {
         actions.push({
           id: rowData.name,
-          name: 'extend',
+          name: 'Extend',
           label: T("Extend"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
@@ -498,7 +498,7 @@ export class VolumesListTableConfig implements InputTableConf {
         });
         actions.push({
           id: rowData.name,
-          name: 'scrub',
+          name: 'Scrub Pool',
           label: T("Scrub Pool"),
           onClick: (row1) => {
             this.getPoolData(row1.id).subscribe((res) => {
@@ -549,7 +549,7 @@ export class VolumesListTableConfig implements InputTableConf {
         });
         actions.push({
           id: rowData.name,
-          name: 'status',
+          name: 'Status',
           label: T("Status"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
@@ -561,7 +561,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
           actions.push({
             id: rowData.name,
-            name: 'upgrade',
+            name: 'Upgrade Pool',
             label: T("Upgrade Pool"),
             onClick: (row1) => {
 
@@ -591,7 +591,7 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.type === "dataset") {
       actions.push({
         id: rowData.name,
-        name: 'add_dataset',
+        name: 'Add Dataset',
         label: T("Add Dataset"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -602,7 +602,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
       actions.push({
         id: rowData.name,
-        name: 'add_zvol',
+        name: 'Add Zvol',
         label: T("Add Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -613,7 +613,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
       actions.push({
         id: rowData.name,
-        name: 'edit_options',
+        name: 'Edit Options',
         label: T("Edit Options"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -625,7 +625,7 @@ export class VolumesListTableConfig implements InputTableConf {
       if (rowDataPathSplit[1] !== "iocage") {
         actions.push({
           id: rowData.name,
-          name: 'edit_permissions',
+          name: 'Edit Permissions',
           label: T("Edit Permissions"),
           onClick: (row1) => {
             this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.path]).subscribe(acl_is_trivial => {
@@ -636,7 +636,7 @@ export class VolumesListTableConfig implements InputTableConf {
               } else {
                 this.dialogService.confirm(T("Dataset has complex ACLs"),
                   T("This dataset has ACLs that are too complex to be edited with \
-                    the permissions editor.  Open in ACL editor instead?"), 
+                    the permissions editor.  Open in ACL editor instead?"),
                   true, T("EDIT ACL")).subscribe(edit_acl => {
                     if (edit_acl) {
                         this._router.navigate(new Array('/').concat([
@@ -651,7 +651,7 @@ export class VolumesListTableConfig implements InputTableConf {
         },
         {
           id: rowData.name,
-          name: 'edit_acl',
+          name: 'Edit ACL',
           label: T("Edit ACL"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
@@ -666,16 +666,16 @@ export class VolumesListTableConfig implements InputTableConf {
       if (rowData.path.indexOf('/') !== -1) {
         actions.push({
           id: rowData.name,
-          name: 'delete_dataset',
+          name: 'Delete Dataset',
           label: T("Delete Dataset"),
           onClick: (row1) => {
-            this.dialogService.confirm(T("Delete"), 
+            this.dialogService.confirm(T("Delete"),
               T("Delete the dataset ") + "<i>" + row1.path + "</i>"+  T(" and all snapshots of it?")
               , false, T('Delete Dataset')).subscribe((confirmed) => {
                 if (confirmed) {
                   this.dialogService.doubleConfirm(
                     T('Verify Deletion of ') + row1.path + T(' Dataset'),
-                    T('To delete the <b>') + row1.path + T('</b> dataset and all snapshots stored with it, please type the name of the dataset to confirm:'),
+                    T('To delete the <i>') + row1.path + T('</i> dataset and all snapshots stored with it, please type the name of the dataset to confirm:'),
                     row1.path
                   ).subscribe((doubleConfirmDialog)=> {
                     if (doubleConfirmDialog) {
@@ -686,7 +686,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       }, (e_res) => {
                         this.loader.close();
                         if (e_res.reason.indexOf('Device busy') > -1) {
-                          this.dialogService.confirm(T('Device Busy'), T('Do you want to force delete dataset ') + "<i>" + row1.path + "</i>?", false, T('Force Delete')).subscribe(
+                          this.dialogService.confirm(T('Device Busy'), T('Force deletion of dataset ') + "<i>" + row1.path + "</i>?", false, T('Force Delete')).subscribe(
                             (res) => {
                               if (res) {
                                 this.loader.open();
@@ -721,8 +721,8 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.type === "zvol") {
       actions.push({
         id: rowData.name,
-        name: 'delete_zvol',
-        label: T("Delete zvol"),
+        name: 'Delete Zvol',
+        label: T("Delete Zvol"),
         onClick: (row1) => {
           this.dialogService.confirm(T("Delete "),
             T("Delete the zvol ") + "<i>" + row1.path + "</i>"+ T(" and all snapshots of it?")
@@ -745,7 +745,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
       actions.push({
         id: rowData.name,
-        name: 'edit_zvol',
+        name: 'Edit Zvol',
         label: T("Edit Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
@@ -760,7 +760,7 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.type === "zvol" || rowData.type === "dataset") {
       actions.push({
         id: rowData.name,
-        name: 'create_snapshot',
+        name: 'Create Snapshot',
         label: T("Create Snapshot"),
         onClick: (row) => {
           this.ws.call('vmware.dataset_has_vms',[row.path, false]).subscribe((vmware_res)=>{
@@ -784,7 +784,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 tooltip: helptext.snapshotDialog_name_tooltip,
                 validation: helptext.snapshotDialog_name_validation,
                 required: true,
-                value: "manual" + '-' + this.getTimestamp()            
+                value: "manual" + '-' + this.getTimestamp()
               },
               {
                 type: 'checkbox',
@@ -817,7 +817,7 @@ export class VolumesListTableConfig implements InputTableConf {
       if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
         actions.push({
           id: rowData.name,
-          name: 'promote_dataset',
+          name: 'Promote Dataset',
           label: T("Promote Dataset"),
           onClick: (row1) => {
             this.loader.open();
@@ -849,7 +849,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getTimestamp() {
     let dateTime = new Date();
-    return moment(dateTime).format("YYYYMMDD");
+    return moment(dateTime).format("YYYY-MM-DD_hh-mm");
   }
 
   dataHandler(data: any): TreeNode {
@@ -991,7 +991,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         this.showDefaults = true;
         this.showSpinner = false;
 
-        
+
       }, (res) => {
         this.showDefaults = true;
         this.showSpinner = false;

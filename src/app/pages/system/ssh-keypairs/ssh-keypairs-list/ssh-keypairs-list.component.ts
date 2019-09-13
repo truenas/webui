@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+import { T } from "app/translate-marker";
 import { WebSocketService, DialogService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 
@@ -20,25 +21,29 @@ export class SshKeypairsListComponent {
     protected entityList: any;
 
     public columns: Array<any> = [
-        { name: 'Name', prop: 'name', always_display: true },
+        { name: T('Name'), prop: 'name', always_display: true },
     ];
     public config: any = {
         paging: true,
         sorting: { columns: this.columns },
         deleteMsg: {
-            title: 'SSH Keypairs',
+            title: T('SSH Keypairs'),
             key_props: ['name']
         },
     };
+    public methodTextDict = {
+        disable: 'disabled',
+        delete: 'deleted',
+    }
 
     getActions(parentRow) {
         return [{
             id: "edit",
-            label: "Edit",
+            label: T("Edit"),
             onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
         }, {
             id: "delete",
-            label: "Delete",
+            label: T("Delete"),
             onClick: (rowinner) => {
                 const usedBy = {};
                 this.ws.call('keychaincredential.used_by', [rowinner.id]).subscribe((res) => {
@@ -48,16 +53,18 @@ export class SshKeypairsListComponent {
                         }
                         usedBy[item.unbind_method].push(item.title);
                     }
-                    let deletemsg = '<p>Delete ' + this.config.deleteMsg.title + ' ' + rowinner.name + '?</p><br>';
-                    for (const item in usedBy) {
-                        deletemsg += '<ul> The following objects will be ' + item.toUpperCase();
-                        for (let i = 0; i < usedBy[item].length; i++) {
-                            deletemsg += '<li>' + usedBy[item][i] + '</li>';
+
+                    let deletemsg = T('<p>Delete the <i>') + rowinner.name + T('</i> keypair?</p>');
+                    for (const method in usedBy) {
+                        deletemsg += T('These items will be <b>') + this.methodTextDict[method] + (method === 'delete' ? T('</b> with the keypair') : '</b>') + 
+                            ':<ul class="styled-list-for-dialogs">';
+                        for (let i = 0; i < usedBy[method].length; i++) {
+                            deletemsg += '<li>' + usedBy[method][i] + '</li>';
                         }
                         deletemsg += '</ul>';
                     }
 
-                    this.dialogService.confirm('Delete', deletemsg, false, 'Delete').subscribe((dialogRes) => {
+                    this.dialogService.confirm(T('Delete'), deletemsg, false, T('Delete')).subscribe((dialogRes) => {
                         if (dialogRes) {
                             this.entityList.loader.open();
                             this.entityList.loaderOpen = true;

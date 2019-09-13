@@ -1,0 +1,50 @@
+<mat-card class="form-card">
+  <div class="mat-content">
+    <div id="top-row" class="container" fxLayout="row">
+      <div id="top-left" fxFlex="50%">
+          <app-fn-sys-info
+          *ngIf="is_freenas; else TNsysinfo"
+          [FN_version]='FN_version'
+          [FN_model]="FN_model"
+          [FN_memory]="FN_memory"
+          [FN_serial]="FN_serial"
+          [FN_instructions]="FN_instructions"
+          ></app-fn-sys-info>
+        <ng-template #TNsysinfo>
+          <app-tn-sys-info
+            [customer_name]='customer_name'
+            [features]='features'
+            [contract_type]='contract_type'
+            [expiration_date]='expiration_date'
+            [model]='model'
+            [sys_serial]='sys_serial'
+            [add_hardware]='add_hardware'
+            [daysLeftinContract]='daysLeftinContract'
+          >
+          </app-tn-sys-info>
+        </ng-template>
+        <div id="production-status-wrapper" [style.max-width.px]="375">
+          <app-production-status *ngIf="!is_freenas"></app-production-status>
+        </div>
+      </div>
+      <div id="top-right" fxFlex="50%">
+        <div class="sys-image">
+            <app-sys-image
+            [product_image]="product_image"
+          ></app-sys-image>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!is_freenas">
+      <app-proactive></app-proactive>
+    </div>
+    <div>
+      <app-fn-support *ngIf="is_freenas; else TNsupport"></app-fn-support>
+      <ng-template #TNsupport>
+        <app-tn-support></app-tn-support>
+      </ng-template>
+    </div>
+  </div>
+</mat-card>
+<div [style.height.px]="50" *ngIf="isFooterConsoleOpen"></div>
+

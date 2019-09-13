@@ -6,6 +6,9 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import helptext from '../../../../helptext/task-calendar/replication/replication';
 import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService } from 'app/services';
 import * as _ from 'lodash';
+import { EntityUtils } from '../../../common/entity/utils';
+import { T } from '../../../../translate-marker';
+import globalHelptext from './../../../../helptext/global-helptext';
 
 @Component({
     selector: 'app-replication-list',
@@ -23,6 +26,10 @@ export class ReplicationFormComponent {
     protected entityForm: any;
     protected queryRes: any;
     public speedLimitField: any;
+    public form_message = {
+        type: 'notice',
+        content: '',
+    };
 
     protected retentionPolicyChoice = [{
         label: 'Same as Source',
@@ -284,6 +291,12 @@ export class ReplicationFormComponent {
                 }]
             }],
         }, {
+            type: 'checkbox',
+            name: 'properties',
+            placeholder: helptext.properties_placeholder,
+            tooltip: helptext.properties_tooltip,
+            value: true,
+        }, {
             type: 'select',
             multiple: true,
             name: 'periodic_snapshot_tasks',
@@ -335,6 +348,9 @@ export class ReplicationFormComponent {
                     value: 'LEGACY',
                 }]
             }],
+            blurStatus: true,
+            blurEvent: this.blurEventNamingSchema,
+            parent: this
         },
         {
             type: 'checkbox',
@@ -766,16 +782,68 @@ export class ReplicationFormComponent {
         });
     }
 
+    countEligibleManualSnapshots() {
+        if ((typeof this.entityForm.formGroup.controls['also_include_naming_schema'].value) !== "string" && this.entityForm.formGroup.controls['also_include_naming_schema'].value.length === 0) {
+            return;
+        }
+
+        this.ws.call('replication.count_eligible_manual_snapshots',
+        [
+            this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
+            typeof this.entityForm.formGroup.controls['also_include_naming_schema'].value === "string" ?
+            this.entityForm.formGroup.controls['also_include_naming_schema'].value.split(' ') : this.entityForm.formGroup.controls['also_include_naming_schema'].value,
+            this.entityForm.formGroup.controls['transport'].value,
+            this.entityForm.formGroup.controls['ssh_credentials'].value,
+        ]).subscribe(
+            (res) => {
+                this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
+                this.form_message.content = T(`${res.eligible} of ${res.total} existing snapshots of dataset ${this.entityForm.formGroup.controls['target_dataset_PUSH'].value} would be replicated with this task.`);
+            },
+            (err) => {
+                this.form_message.content = '';
+                new EntityUtils().handleWSError(this, err);
+            }
+        )
+    }
+
     afterInit(entityForm) {
         this.entityForm = entityForm;
         if (this.entityForm.formGroup.controls['speed_limit'].value) {
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
         }
-        
+        this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe(
+            (res) => {
+                if (entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+                entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+                entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    this.countEligibleManualSnapshots();
+                } else {
+                    this.form_message.content = '';
+                }
+            }
+        );
+        entityForm.formGroup.controls['direction'].valueChanges.subscribe(
+            (res) => {
+                if (res === 'PUSH' &&
+                entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+                entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    this.countEligibleManualSnapshots();
+                } else {
+                    this.form_message.content = '';
+                }
+            }
+        );
+
         const retentionPolicyField = _.find(this.fieldConfig, {name: 'retention_policy'});
         entityForm.formGroup.controls['transport'].valueChanges.subscribe(
             (res) => {
+                if (res !== 'LOCAL' && entityForm.formGroup.controls['direction'].value === 'PUSH' && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    this.countEligibleManualSnapshots();
+                } else {
+                    this.form_message.content = '';
+                }
+
                 if (res !== 'LEGACY' && retentionPolicyField.options !== this.retentionPolicyChoice) {
                     retentionPolicyField.options = this.retentionPolicyChoice;
                 } else if (res === 'LEGACY') {
@@ -811,11 +879,13 @@ export class ReplicationFormComponent {
             (res) => {
                 for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
                     const explorerComponent = _.find(this.fieldConfig, {name: item}).customTemplateStringOptions.explorerComponent;
-                    explorerComponent.nodes = [{
-                        mountpoint: explorerComponent.config.initial,
-                        name: explorerComponent.config.initial,
-                        hasChildren: true
-                    }];
+                    if (explorerComponent) {
+                        explorerComponent.nodes = [{
+                            mountpoint: explorerComponent.config.initial,
+                            name: explorerComponent.config.initial,
+                            hasChildren: true
+                        }];
+                    }
                 }
             }
         )
@@ -827,7 +897,7 @@ export class ReplicationFormComponent {
             speedLimitField['errors'] = '';
                 if (isNaN(filteredValue)) {
                     speedLimitField['hasErrors'] = true;
-                    speedLimitField['errors'] = helptext.speed_limit_errors;
+                    speedLimitField['errors'] = globalHelptext.human_readable_input_error;
                 };
         });
     }
@@ -852,7 +922,7 @@ export class ReplicationFormComponent {
         wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
 
         if (wsResponse.schedule) {
-            wsResponse['schedule_picker'] = "0" + " " +
+            wsResponse['schedule_picker'] = wsResponse.schedule.minute + " " +
                 wsResponse.schedule.hour + " " +
                 wsResponse.schedule.dom + " " +
                 wsResponse.schedule.month + " " +
@@ -863,7 +933,7 @@ export class ReplicationFormComponent {
         }
 
         if (wsResponse.restrict_schedule) {
-            wsResponse['restrict_schedule_picker'] = "0" + " " +
+            wsResponse['restrict_schedule_picker'] = wsResponse.restrict_schedule.minute + " " +
                 wsResponse.restrict_schedule.hour + " " +
                 wsResponse.restrict_schedule.dom + " " +
                 wsResponse.restrict_schedule.month + " " +
@@ -889,7 +959,10 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
-        data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
+        if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
+            data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
+        }
+
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
@@ -961,8 +1034,8 @@ export class ReplicationFormComponent {
                 if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
                     data[prop] = false;
                 }
-                if (prop !== 'id' && prop !== 'state' && data[prop] === undefined) {
-                    data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
+                if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && data[prop] === undefined) {
+                    data[prop] = Array.isArray(this.queryRes[prop]) ? [] :  null;
                 }
             }
         }
@@ -991,6 +1064,17 @@ export class ReplicationFormComponent {
     blurEvent(parent){
         if (parent.entityForm) {
             parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable)
+        }
+    }
+
+    blurEventNamingSchema(parent) {
+        if (parent.entityForm &&
+            parent.entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+            parent.entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+            parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+            parent.countEligibleManualSnapshots();
+        } else {
+            this.form_message.content = '';
         }
     }
 }

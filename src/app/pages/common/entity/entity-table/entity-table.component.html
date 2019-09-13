@@ -1,10 +1,3 @@
-<div class="legacy-warning" *ngIf="legacyWarning">
-  {{ legacyWarning | translate }}
-  <span class="legacy-warning-link" (click)="onGoToLegacy()">
-    {{ legacyWarningLink | translate }}.
-  </span>
-</div>
-
 <div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap"
     fxLayoutAlign="space-between center">
@@ -214,15 +207,25 @@
         </ngx-datatable-footer>
 
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
-        <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+        <ng-template ngx-datatable-header-template let-column="column" let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
           <div class="headerCheckBox">
-            <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+            <mat-checkbox
+              [checked]="allRowsSelected"
+              (change)="selectFn(!allRowsSelected)"
+              ix-datatable-cell="multi-checkbox-all"
+              [ix-datatable-cell-identifier]="title"
+            ></mat-checkbox>
           </div>
         </ng-template>
 
-        <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
           <div>
-            <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+            <mat-checkbox 
+              ix-datatable-cell="multi-checkbox"
+              [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
+              [checked]="isSelected"
+              (change)="onCheckboxChangeFn($event)"
+            ></mat-checkbox>
           </div>
         </ng-template>
       </ngx-datatable-column>
@@ -251,7 +254,9 @@
               [checked]="row[col.prop]==='RUNNING'"
             ></mat-slide-toggle>
             <div id="{{col.prop}}_{{row[col.prop]}}" 
-                 title="{{convertDisplayValue(row[col.prop])}}">
+                 title="{{convertDisplayValue(row[col.prop])}}" 
+                 [ix-datatable-cell]="col?.name"
+                 [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']">
               {{convertDisplayValue(row[col.prop])}}
             </div>
           </ng-template>
@@ -264,9 +269,16 @@
                [minWidth]="col.minWidth"
                [maxWidth]="col.maxWidth">
         <ng-template let-row="row" ngx-datatable-cell-template>
-          <div fxLayoutAlign="start center" fxLayoutGap="4px">
+          <div
+            fxLayoutAlign="start center"
+            fxLayoutGap="4px"
+            [ix-datatable-cell]="col?.name"
+            [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
+          >
             <ng-container *ngIf="col?.widget?.component">
                 <mat-icon
+                  [ix-datatable-cell]="col?.name + '_widget'"
+                  [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
                   [matMenuTriggerFor]="widget"
                   class="widget-icon"
                   role="img"
@@ -313,7 +325,9 @@
             [class.datatable-icon-right]="!expanded"
             [class.datatable-icon-down]="expanded"
             title="Expand/Collapse Row"
-            (click)="toggleExpandRow(row)">
+            (click)="toggleExpandRow(row)"
+            ix-datatable-cell="expander"
+            [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']">
           </a>
           <ng-template #threeDot>
             <app-entity-table-actions [entity]="this" [row]="row"></app-entity-table-actions>

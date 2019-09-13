@@ -28,8 +28,10 @@ Dynamic Host Configuration Protocol. <b>VNET</b> \
 and <b>Berkeley Packet Filter<b> are also required.'),
 
 nat_placeholder: T('NAT'),
-nat_tooltip: T('Network Address Translation (NAT). Transforms local network IP addresses into a single IP address.\
- Set when the jail will share a single connection to the Internet with other systems on the network.'),
+nat_tooltip: T('Network Address Translation (NAT). When set, the jail \
+ is given an internal IP address and connections are forwarded from \
+ the host to the jail. When <i>NAT</i> is set, \
+ <i>Berkeley Packet Filter</i> cannot be set.'),
 
 vnet_placeholder: T('VNET'),
 vnet_tooltip: T('Set to use <a \
@@ -43,7 +45,7 @@ bpf_placeholder: T('Berkeley Packet Filter'),
 bpf_tooltip: T('Set to use the Berkeley Packet Filter (<a \
 href="https://www.freebsd.org/cgi/man.cgi?query=bpf" \
 target="_blank">BPF(4)</a>) to data link layers in a \
-protocol independent fashion.'),
+protocol independent fashion. Cannot be set when <i>NAT</i> is set.'),
 
 ip4_interface_placeholder: T('IPv4 Interface'),
 ip4_interface_tooltip: T('IPv4 interface for the jail.'),

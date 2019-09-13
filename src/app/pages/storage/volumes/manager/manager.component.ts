@@ -92,6 +92,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevtypeError = null;
   public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
+  public vdevdisksError = false;
+
   public diskAddWarning = helptext.manager_diskAddWarning;
   public diskExtendWarning = helptext.manager_diskExtendWarning;
 
@@ -285,20 +287,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
-    if (!this.isNew) {
-      setTimeout(() => { // goofy workaround for stupid angular error
-        this.dialog.confirm(T("Warning"), helptext.manager_extend_warning, 
-            false, T("Continue")).subscribe((res) => {
-          if (!res) {
-            if (this.loaderOpen) {
-              this.loader.close();
-              this.loaderOpen = false;
-            }
-            this.goBack();
-          }
-        });
-      });
-    }
   }
 
   ngOnDestroy() {
@@ -339,6 +327,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     let data_vdev_type;
     this.disknumError = null;
     this.vdevtypeError = null;
+    this.vdevdisksError = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
@@ -373,6 +362,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           any_disk_found = true;
         }
       }
+      if (vdev.vdev_disks_error) {
+        this.vdevdisksError = true;
+      }
 
     });
     if (this.isNew) {
@@ -398,6 +390,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     if (this.poolError) {
+      return false;
+    }
+    if (this.vdevdisksError) {
       return false;
     }
     return true;

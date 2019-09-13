@@ -111,4 +111,54 @@ export class FieldRelationService {
         },
         false);
   }
+
+  setRelation(config: FieldConfig, formGroup, fieldConfig) {
+    const activations =
+        this.findActivationRelation(config.relation);
+    if (activations) {
+      const tobeDisabled = this.isFormControlToBeDisabled(
+          activations, formGroup);
+      const tobeHide = this.isFormControlToBeHide(
+          activations, formGroup);
+      this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
+
+      this.getRelatedFormControls(config, formGroup)
+          .forEach(control => {
+            control.valueChanges.subscribe(
+                () => { this.relationUpdate(config, activations, formGroup, fieldConfig); });
+          });
+    }
+  }
+
+  setDisabled(fieldConfig: FieldConfig[], formGroup: any, name: string, disable: boolean, hide?: boolean, status?:string) {
+    // if field is hidden, disable it too
+    if (hide) {
+      disable = hide;
+    } else {
+      hide = false;
+    }
+
+
+    fieldConfig = fieldConfig.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+        item['isHidden'] = hide;
+      }
+      return item;
+    });
+
+    if (formGroup.controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      formGroup.controls[name][method]();
+      return;
+    }
+  }
+
+  relationUpdate(config: any, activations: any, formGroup: any, fieldConfig: FieldConfig[]) {
+    const tobeDisabled = this.isFormControlToBeDisabled(
+        activations, formGroup);
+    const tobeHide = this.isFormControlToBeHide(
+          activations, formGroup);
+    this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
+  }
 }

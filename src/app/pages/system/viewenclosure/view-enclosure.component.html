@@ -14,7 +14,12 @@
 
 <!-- Persistent Visualizer -->
 <div class="main-content" fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )">
-  <div style="padding:64px"> 
+
+  <div>
+    <mat-spinner [diameter]="40" *ngIf="spinner" class="spinner"></mat-spinner>
+  </div>
+
+  <div style="padding:64px;"> 
     <enclosure-disks style.padding="32px 0 0 0"  
       *ngIf="events && system && system.pools && selectedEnclosure" 
       [controller-events]="events" 
@@ -25,10 +30,8 @@
   </div>
 </div>
 
-<!--<enclosure-disks *ngIf="system && system.pools && selectedEnclosure && currentView == 'Disks'" [system-profiler]="system" [selected-enclosure]="selectedEnclosure"></enclosure-disks>-->
-
 <!-- Enclosure Selector -->
-<div fxFlex="240px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector">
+<div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector" [ngClass.lt-lg]="lt-lg">
   <div *ngFor="let enclosure of system.enclosures; let i = index" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
     <div *ngIf="i < 1">{{system.platform}} ({{i}})</div>
     <div *ngIf="i > 0">{{enclosure.model}} ({{i}})</div>

@@ -239,8 +239,8 @@ export class GeneralComponent {
     this.http_port = value['ui_port'];
     this.https_port = value['ui_httpsport'];
     this.redirect = value['ui_httpsredirect'];
-    this.guicertificate = value['ui_certificate'].id;
     value['ui_certificate'] = value['ui_certificate'].id.toString();
+    this.guicertificate = value['ui_certificate'];
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
     return value;

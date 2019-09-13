@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, Input, ViewChild, Renderer
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { WebSocketService} from 'app/services/ws.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
@@ -22,13 +23,20 @@ import { T } from '../../../../translate-marker';
   styleUrls: ['./widgetsysinfo.component.css']
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,OnDestroy, AfterViewInit {
+
+  // HA
+  @Input('isHA') isHA: boolean = false
+  @Input('passive') isPassive: boolean = false
+
   public title: string = T("System Info");
   public data: any;
   public memory:string;
   public imagePath:string = "assets/images/";
-  //public cardBg:string = "";
+  public ready:boolean = false;
   public product_image = '';
+  public product_model = '';
   public certified = false;
+  public failoverBtnLabel: string = "FAILOVER TO STANDBY"
   public updateAvailable:boolean = false;
   private _updateBtnStatus:string = "default";
   public updateBtnLabel:string = T("Check for Updates")
@@ -39,15 +47,70 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public loader:boolean = false;
   public is_freenas: string = window.localStorage['is_freenas'];
   public systemLogo: any;
-  public isFN: boolean;
+  public isFN: boolean = false; 
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService){
     super(translate);
     this.configurable = false;
   }
 
+  log(str){ console.log(str); }
+
   ngAfterViewInit(){
-    this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
+
+    this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
+      //DEBUG: console.log(evt);
+      if(evt.data.status == "AVAILABLE"){
+        this.updateAvailable = true;
+      }
+    });
+
+    if(this.isHA && this.isPassive){
+      // Delay query
+      setTimeout(() => {
+        this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
+          const evt = {name: 'SysInfoPassive', data:res};
+          this.processSysInfo(evt);
+        });
+      }, 500);
+    } else {
+
+      this.ws.call('system.info').subscribe((res) => {
+        const evt = {name: 'SysInfo', data:res};
+        this.processSysInfo(evt);
+      });
+      
+      this.core.emit({name:"UpdateCheck"});
+      
+    }
+  }
+
+  ngOnInit(){
+  }
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
+  }
+
+  get themeAccentColors(){
+    let theme = this.themeService.currentTheme();
+    this._themeAccentColors = [];
+    for(let color in theme.accentColors){
+      this._themeAccentColors.push(theme[theme.accentColors[color]]);
+    }
+    return this._themeAccentColors;
+  }
+
+  get updateBtnStatus(){
+    if(this.updateAvailable){
+      this._updateBtnStatus = "default";
+      this.updateBtnLabel = T("Updates Available");
+    }
+    return this._updateBtnStatus;
+  }
+
+  processSysInfo(evt:CoreEvent){
+      
       this.loader = false;
       this.data = evt.data;
 
@@ -76,40 +139,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.isFN = false;
       }    
 
-    });
+      this.ready = true;
 
-    this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
-      if(evt.data.status == "AVAILABLE"){
-        this.updateAvailable = true;
-      }
-    });
-    this.core.emit({name:"SysInfoRequest"});
-    this.core.emit({name:"UpdateCheck"});
-  }
-
-  ngOnInit(){
-  }
-
-  ngOnDestroy(){
-    this.core.unregister({observerClass:this});
-  }
-
-  get themeAccentColors(){
-    let theme = this.themeService.currentTheme();
-    this._themeAccentColors = [];
-    for(let color in theme.accentColors){
-      this._themeAccentColors.push(theme[theme.accentColors[color]]);
-    }
-    return this._themeAccentColors;
-  }
-
-  get updateBtnStatus(){
-    if(this.updateAvailable){
-      this._updateBtnStatus = "default";
-      this.updateBtnLabel = T("Updates Available");
-    }
-    return this._updateBtnStatus;
   }
 
   formatMemory(physmem:number, units:string){
@@ -125,20 +156,28 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   getTrueNASImage(sys_product) {
     if (sys_product.includes('X10')) {
       this.product_image = '/servers/X10.png';
+      this.product_model = 'X10';
     } else if (sys_product.includes('X20')) {
       this.product_image = '/servers/X20.png';
+      this.product_model = 'X20';
     } else if (sys_product.includes('M40')) {
       this.product_image = '/servers/M40.png';
+      this.product_model = 'M40';
     }  else if (sys_product.includes('M50')) {
       this.product_image = '/servers/M50.png';
+      this.product_model = 'M50';
     } else if (sys_product.includes('Z20')) {
       this.product_image = '/servers/Z20.png';
+      this.product_model = 'Z20';
     } else if (sys_product.includes('M50')) {
       this.product_image = '/servers/M50.png';
+      this.product_model = 'M50';
     } else if (sys_product.includes('Z35')) {
       this.product_image = '/servers/Z35.png';
+      this.product_model = 'Z35';
     } else if (sys_product.includes('Z50')) {
       this.product_image = '/servers/Z50.png';
+      this.product_model = 'Z50';
     }
     else {
       this.product_image = 'ix-original.svg';
@@ -147,8 +186,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   getFreeNASImage(sys_product) {
 
-    if (sys_product.includes('CERTIFIED')) {
-      //this.product_image = 'ix-original.svg';
+    if (sys_product && sys_product.includes('CERTIFIED')) {
       this.product_image = '';
       this.certified = true;
       return;

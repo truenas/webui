@@ -1,13 +1,24 @@
-<div #tooltip class="tooltip" (mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">
-  <i class="material-icons tooltip-icon" (click)="toggleVis('toggle')">help_outline</i>
-  <div cdkDrag class="tooltiptext" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" [ngStyle]="tooltipMsgStyle">
-    <div id="tooltip-header" (click)="toggleVis('lock')" cdkDragHandle></div>
-    <div [innerHTML]="message | translate | docreplace"></div>
-    <div class="pin" 
-      (click)="toggleVis('toggle')" 
-      matTooltip="Pin or unpin this tooltip.">
-      <img *ngIf="!isLockTooltip" class="pin-icon" src="assets/images/add_box.png">
-      <img *ngIf="isLockTooltip" class="pin-icon" src="assets/images/close_box.png">
+<div #tooltip class="tooltip" > 
+  <i class="material-icons tooltip-icon" (click)="toggleVis(!isLockTooltip ? 'lock' : '')" >help_outline</i>
+
+  <div class="tooltip-container fn-theme-primary" [ngClass]="{'wizard': isWizard, 'moved': isMoved}">
+    <div cdkDrag 
+      (cdkDragStarted)="hideTail($event)" 
+      class="tooltiptext {{positionString}}" [class.show]="isShowTooltip" [class.lock]="isLockTooltip" >
+
+      <div id="tooltip-header" (click)="toggleVis('lock')" cdkDragHandle>
+        <div class="tooltip-header-text">Help{{ header ? ': ' + header : ''}}</div>
+      </div>
+
+        <div class="pin" (click)="toggleVis(!isLockTooltip ? 'lock' : 'unlock')">
+          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close"></mat-icon>
+          </div>
+
+      <div class="tooltip-message" [innerHTML]="message | translate | docreplace"></div>
+
     </div>
   </div>
+
 </div>
+
+

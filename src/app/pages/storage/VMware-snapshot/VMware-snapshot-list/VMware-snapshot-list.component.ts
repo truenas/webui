@@ -20,6 +20,7 @@ export class VMwareSnapshotListComponent {
     {name : 'Hostname', prop : 'hostname', always_display: true }, {name : 'Username', prop : 'username'},
     {name : 'filesystem', prop : 'filesystem'}, {name : 'datastore', prop : 'datastore'}
   ];
+  public rowIdentifier = 'hostname';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

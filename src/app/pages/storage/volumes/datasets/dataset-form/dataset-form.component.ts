@@ -3,15 +3,20 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../../../services/';
+import { RestService, WebSocketService, StorageService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
+import globalHelptext from '../../../../../helptext/global-helptext';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { Validators, ValidationErrors, FormControl } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 
 interface DatasetFormData {
   name: string;
@@ -64,7 +69,15 @@ export class DatasetFormComponent implements Formconfiguration{
   protected recordsize_fg: any;
   protected recommended_size_number: any;
   protected recordsize_warning: any;
+  public namesInUse = [];
+  public nameIsCaseInsensitive = false;
 
+  public humanReadable = {'quota': '0', 'refquota': '0', 'reservation': '0', 'refreservation': '0'}
+
+  private quota_subscription;
+  private refquota_subscription;
+  private reservation_subscription;
+  private refreservation_subscription;
 
   public parent: string;
   public data: any;
@@ -72,388 +85,395 @@ export class DatasetFormComponent implements Formconfiguration{
 
   protected size_fields = ['quota', 'refquota', 'reservation', 'refreservation'];
   protected OrigSize = {};
-  protected OrigUnit = {};
-  protected OrigDec = {};
+  protected OrigHuman = {};
 
   public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: T('Basic Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
+      function: () => { 
+        this.isBasicMode = !this.isBasicMode;
+        _.find(this.fieldSets, {class:"dataset"}).label = false;
+        _.find(this.fieldSets, {class:"refdataset"}).label = false;
+      }
     },
     {
       id: 'advanced_mode',
       name: T('Advanced Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
+      function: () => { 
+        this.isBasicMode = !this.isBasicMode;
+        _.find(this.fieldSets, {class:"dataset"}).label = true;
+        _.find(this.fieldSets, {class:"refdataset"}).label = true;
+      }
     }
   ];
 
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'input',
-      name: 'name',
-      placeholder: helptext.dataset_form_name_placeholder,
-      tooltip: helptext.dataset_form_name_tooltip,
-      readonly: true,
-      required: true,
-      validation: helptext.dataset_form_name_validation
-    },
-    {
-      type: 'input',
-      name: 'comments',
-      placeholder: helptext.dataset_form_comments_placeholder,
-      tooltip: helptext.dataset_form_comments_tooltip,
-    },
-    {
-      type: 'select',
-      name: 'sync',
-      placeholder: helptext.dataset_form_sync_placeholder,
-      tooltip: helptext.dataset_form_sync_tooltip,
-      options: [
-        { label: 'Standard', value: 'STANDARD' },
-        { label: 'Always', value: 'ALWAYS' },
-        { label: 'Disabled', value: 'DISABLED' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'compression',
-      placeholder: helptext.dataset_form_compression_placeholder,
-      tooltip: helptext.dataset_form_compression_tooltip,
-      options: [
-        { label: 'off', value: 'OFF' },
-        { label: 'lz4 (recommended)', value: 'LZ4' ,},
-        { label: 'gzip (fastest)', value: 'GZIP-1' },
-        { label: 'gzip (default level, 6)', value: 'GZIP' },
-        { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
-        { label: 'zle (runs of zeros)', value: 'ZLE' },
-        { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'atime',
-      placeholder: helptext.dataset_form_atime_placeholder,
-      tooltip: helptext.dataset_form_atime_tooltip,
-      options: [
-        { label: 'on', value: 'ON' },
-        { label: 'off', value: 'OFF' }
-      ],
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'refquota',
-      placeholder: helptext.dataset_form_refquota_placeholder,
-      tooltip: helptext.dataset_form_refquota_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_refquota_validation
-    },
-    {
-      type: 'select',
-      name: 'refquota_unit',
-      options: [
-        {
-          label: 'Bytes',
-          value: 'B',
-        },
+      name: helptext.dataset_form_name_section_placeholder,
+      class: "name",
+      label:true,
+      config: [
       {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
-        value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T',
+        type: 'input',
+        name: 'name',
+        placeholder: helptext.dataset_form_name_placeholder,
+        tooltip: helptext.dataset_form_name_tooltip,
+        readonly: true,
+        required: true,
+        validation: [Validators.required, forbiddenValues(this.namesInUse, this.nameIsCaseInsensitive)],
+      },
+      {
+        type: 'input',
+        name: 'comments',
+        placeholder: helptext.dataset_form_comments_placeholder,
+        tooltip: helptext.dataset_form_comments_tooltip,
+      },
+      {
+        type: 'select',
+        name: 'sync',
+        placeholder: helptext.dataset_form_sync_placeholder,
+        tooltip: helptext.dataset_form_sync_tooltip,
+        options: [
+          { label: 'Standard', value: 'STANDARD' },
+          { label: 'Always', value: 'ALWAYS' },
+          { label: 'Disabled', value: 'DISABLED' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'compression',
+        placeholder: helptext.dataset_form_compression_placeholder,
+        tooltip: helptext.dataset_form_compression_tooltip,
+        options: [
+          { label: 'off', value: 'OFF' },
+          { label: 'lz4 (recommended)', value: 'LZ4' ,},
+          { label: 'gzip (fastest)', value: 'GZIP-1' },
+          { label: 'gzip (default level, 6)', value: 'GZIP' },
+          { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
+          { label: 'zle (runs of zeros)', value: 'ZLE' },
+          { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'atime',
+        placeholder: helptext.dataset_form_atime_placeholder,
+        tooltip: helptext.dataset_form_atime_tooltip,
+        options: [
+          { label: 'on', value: 'ON' },
+          { label: 'off', value: 'OFF' }
+        ],
+      }]
+    },
+    {
+      name: helptext.dataset_form_refdataset_section_placeholder,
+      class: "refdataset",
+      label:true,
+      width:'50%',
+      config: [
+      {
+        type: 'input',
+        name: 'refquota',
+        placeholder: helptext.dataset_form_refquota_placeholder,
+        tooltip: helptext.dataset_form_refquota_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: '0',
+        blurEvent:this.blurEventRefQuota,
+        blurStatus: true,
+        parent: this,
+        validation: [
+          (control: FormControl): ValidationErrors => {
+            const config = this.fieldConfig.find(c => c.name === 'refquota');
+            
+            const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'refquota'))
+              ? { invalid_byte_string: true }
+              : null
+
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = globalHelptext.human_readable_input_error;
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+
+            return errors;
+          }
+        ],
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'refquota_warning',
+        placeholder: helptext.dataset_form_refquota_warning_placeholder,
+        tooltip: helptext.dataset_form_refquota_warning_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_refquota_warning_validation
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'refquota_critical',
+        placeholder: helptext.dataset_form_refquota_critical_placeholder,
+        tooltip: helptext.dataset_form_refquota_critical_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_refquota_critical_validation
+      },
+      {
+        type: 'input',
+        name: 'refreservation',
+        placeholder: helptext.dataset_form_refreservation_placeholder,
+        tooltip: helptext.dataset_form_refreservation_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: '0',
+        blurEvent: this.blurEventRefReservation,
+        blurStatus: true,
+        parent: this,
+        validation: [
+          (control: FormControl): ValidationErrors => {
+            const config = this.fieldConfig.find(c => c.name === 'refreservation');
+            
+            const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'refreservation'))
+              ? { invalid_byte_string: true }
+              : null
+
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = globalHelptext.human_readable_input_error;
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+
+            return errors;
+          }
+        ],
       }],
-      value: 'M',
-      class: 'inline',
-      width: '30%',
     },
     {
-      type: 'input',
-      inputType: 'number',
-      name: 'refquota_warning',
-      placeholder: helptext.dataset_form_refquota_warning_placeholder,
-      tooltip: helptext.dataset_form_refquota_warning_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_refquota_warning_validation
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'refquota_critical',
-      placeholder: helptext.dataset_form_refquota_critical_placeholder,
-      tooltip: helptext.dataset_form_refquota_critical_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_refquota_critical_validation
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'quota',
-      placeholder: helptext.dataset_form_quota_placeholder,
-      tooltip: helptext.dataset_form_quota_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_quota_validation
-    },
-    {
-      type: 'select',
-      name: 'quota_unit',
-      options: [
-        {
-          label: 'Bytes',
-          value: 'B',
-        },
-        {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
-        value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T',
+      name: helptext.dataset_form_dataset_section_placeholder,
+      class: "dataset",
+      label:true,
+      width:'50%',
+      config: [
+      {
+        type: 'input',
+        name: 'quota',
+        placeholder: helptext.dataset_form_quota_placeholder,
+        tooltip: helptext.dataset_form_quota_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: '0',
+        blurEvent: this.blurEventQuota,
+        blurStatus: true,
+        parent: this,
+        validation: [
+          (control: FormControl): ValidationErrors => {
+            const config = this.fieldConfig.find(c => c.name === 'quota');
+            
+            const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'quota'))
+              ? { invalid_byte_string: true }
+              : null
+
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = globalHelptext.human_readable_input_error;
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+
+            return errors;
+          }
+        ],
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'quota_warning',
+        placeholder: helptext.dataset_form_quota_warning_placeholder,
+        tooltip: helptext.dataset_form_quota_warning_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_quota_warning_validation
+      },
+      {
+        type: 'input',
+        inputType: 'number',
+        name: 'quota_critical',
+        placeholder: helptext.dataset_form_quota_critical_placeholder,
+        tooltip: helptext.dataset_form_quota_critical_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: 0,
+        min: 0,
+        validation: helptext.dataset_form_quota_critical_validation
+      },
+      {
+        type: 'input',
+        name: 'reservation',
+        placeholder: helptext.dataset_form_reservation_placeholder,
+        tooltip: helptext.dataset_form_reservation_tooltip,
+        class: 'inline',
+        width: '70%',
+        value: '0',
+        blurEvent: this.blurEventReservation,
+        blurStatus: true,
+        parent: this,
+        validation: [
+          (control: FormControl): ValidationErrors => {
+            const config = this.fieldConfig.find(c => c.name === 'reservation');
+            
+            const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'reservation'))
+              ? { invalid_byte_string: true }
+              : null
+
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = globalHelptext.human_readable_input_error;
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+
+            return errors;
+          }
+        ],
       }],
-      value: 'M',
-      class: 'inline',
-      width: '30%',
     },
     {
-      type: 'input',
-      inputType: 'number',
-      name: 'quota_warning',
-      placeholder: helptext.dataset_form_quota_warning_placeholder,
-      tooltip: helptext.dataset_form_quota_warning_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_quota_warning_validation
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'quota_critical',
-      placeholder: helptext.dataset_form_quota_critical_placeholder,
-      tooltip: helptext.dataset_form_quota_critical_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_quota_critical_validation
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'refreservation',
-      placeholder: helptext.dataset_form_refreservation_placeholder,
-      tooltip: helptext.dataset_form_refreservation_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_refreservation_validation
-    },
-    {
-      type: 'select',
-      name: 'refreservation_unit',
-      options: [
-        {
-          label: 'Bytes',
-          value: 'B',
-        },
-        {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
-        value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T',
-      }],
-      value: 'M',
-      class: 'inline',
-      width: '30%',
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'reservation',
-      placeholder: helptext.dataset_form_reservation_placeholder,
-      tooltip: helptext.dataset_form_reservation_tooltip,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-      validation: helptext.dataset_form_reservation_validation
-    },
-    {
-      type: 'select',
-      name: 'reservation_unit',
-      options: [
-        {
-          label: 'Bytes',
-          value: 'B',
-        },
-        {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
-        value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T'
-      }],
-      value: 'M',
-      class: 'inline',
-      width: '30%',
-    },
-    {
-      type: 'select',
-      name: 'deduplication',
-      label: helptext.dataset_form_deduplication_label,
-      placeholder: helptext.dataset_form_deduplication_placeholder,
-      tooltip: helptext.dataset_form_deduplication_tooltip,
-      options: [
-        { label: 'on', value: 'ON' },
-        { label: 'verify', value: 'VERIFY' },
-        { label: 'off', value: 'OFF' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'readonly',
-      placeholder: helptext.dataset_form_readonly_placeholder,
-      tooltip: helptext.dataset_form_readonly_tooltip,
-      options: [
-        { label: 'On', value: 'ON' },
-        { label: 'Off', value: 'OFF' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'exec',
-      placeholder: helptext.dataset_form_exec_placeholder,
-      tooltip: helptext.dataset_form_exec_tooltip,
-      options: [
-        { label: 'On', value: 'ON' },
-        { label: 'Off', value: 'OFF' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'snapdir',
-      placeholder: helptext.dataset_form_snapdir_placeholder,
-      tooltip: helptext.dataset_form_snapdir_tooltip,
-      options: [
-        { label: 'Visible', value: 'VISIBLE' },
-        { label: 'Invisible', value: 'HIDDEN' },
-      ],
-    },
-    {
-      type: 'select',
-      name: 'copies',
-      placeholder: helptext.dataset_form_copies_placeholder,
-      tooltip: helptext.dataset_form_copies_tooltip,
-      options: [
-        { label: '1', value: '1' },
-        { label: '2', value: '2' },
-        { label: '3', value: '3' }
-      ],
-      value: 1
-    },
-    {
-      type: 'select',
-      name: 'recordsize',
-      placeholder: helptext.dataset_form_recordsize_placeholder,
-      tooltip: helptext.dataset_form_recordsize_tooltip,
-      options: [
-        { label: '512', value: '512', disable:true, hiddenFromDisplay: true },
-        { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true },
-        { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true },
-        { label: '4K', value: '4K' },
-        { label: '8K', value: '8K' },
-        { label: '16K', value: '16K' },
-        { label: '32K', value: '32K' },
-        { label: '64K', value: '64K' },
-        { label: '128K', value: '128K' },
-        { label: '256K', value: '256K' },
-        { label: '512K', value: '512K' },
-        { label: '1M', value: '1M' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'aclmode',
-      placeholder: helptext.dataset_form_aclmode_placeholder,
-      tooltip: helptext.dataset_form_aclmode_tooltip,
-      options: [{label:'Passthrough', value: 'PASSTHROUGH'},
-                {label:'Restricted', value: 'RESTRICTED'}],
-      value: 'PASSTHROUGH'
-    },
-    {
-      type: 'select',
-      name: 'casesensitivity',
-      placeholder: helptext.dataset_form_casesensitivity_placeholder,
-      tooltip: helptext.dataset_form_casesensitivity_tooltip,
-      options: [
-        { label: 'Sensitive', value: 'SENSITIVE' },
-        { label: 'Insensitive', value: 'INSENSITIVE' },
-        { label: 'Mixed', value: 'MIXED' }
-      ],
-      value: 'SENSITIVE'
-    },
-    {
-      type: 'select',
-      name: 'share_type',
-      placeholder: helptext.dataset_form_share_type_placeholder,
-      tooltip: helptext.dataset_form_share_type_tooltip,
-      options: [{label:'Generic', value: 'GENERIC'},
-                {label:'SMB', value: 'SMB'}],
-      value: 'GENERIC',
-      disabled: true,
-      isHidden: true,
+      name: helptext.dataset_form_other_section_placeholder,
+      class: "options",
+      label:true,
+      config: [
+      {
+        type: 'select',
+        name: 'deduplication',
+        label: helptext.dataset_form_deduplication_label,
+        placeholder: helptext.dataset_form_deduplication_placeholder,
+        tooltip: helptext.dataset_form_deduplication_tooltip,
+        options: [
+          { label: 'on', value: 'ON' },
+          { label: 'verify', value: 'VERIFY' },
+          { label: 'off', value: 'OFF' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'readonly',
+        placeholder: helptext.dataset_form_readonly_placeholder,
+        tooltip: helptext.dataset_form_readonly_tooltip,
+        options: [
+          { label: 'On', value: 'ON' },
+          { label: 'Off', value: 'OFF' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'exec',
+        placeholder: helptext.dataset_form_exec_placeholder,
+        tooltip: helptext.dataset_form_exec_tooltip,
+        options: [
+          { label: 'On', value: 'ON' },
+          { label: 'Off', value: 'OFF' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'snapdir',
+        placeholder: helptext.dataset_form_snapdir_placeholder,
+        tooltip: helptext.dataset_form_snapdir_tooltip,
+        options: [
+          { label: 'Visible', value: 'VISIBLE' },
+          { label: 'Invisible', value: 'HIDDEN' },
+        ],
+      },
+      {
+        type: 'select',
+        name: 'copies',
+        placeholder: helptext.dataset_form_copies_placeholder,
+        tooltip: helptext.dataset_form_copies_tooltip,
+        options: [
+          { label: '1', value: '1' },
+          { label: '2', value: '2' },
+          { label: '3', value: '3' }
+        ],
+        value: 1
+      },
+      {
+        type: 'select',
+        name: 'recordsize',
+        placeholder: helptext.dataset_form_recordsize_placeholder,
+        tooltip: helptext.dataset_form_recordsize_tooltip,
+        options: [
+          { label: '512', value: '512', disable:true, hiddenFromDisplay: true },
+          { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true },
+          { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true },
+          { label: '4K', value: '4K' },
+          { label: '8K', value: '8K' },
+          { label: '16K', value: '16K' },
+          { label: '32K', value: '32K' },
+          { label: '64K', value: '64K' },
+          { label: '128K', value: '128K' },
+          { label: '256K', value: '256K' },
+          { label: '512K', value: '512K' },
+          { label: '1M', value: '1M' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'aclmode',
+        placeholder: helptext.dataset_form_aclmode_placeholder,
+        tooltip: helptext.dataset_form_aclmode_tooltip,
+        options: [{label:'Passthrough', value: 'PASSTHROUGH'},
+                  {label:'Restricted', value: 'RESTRICTED'}],
+        value: 'PASSTHROUGH'
+      },
+      {
+        type: 'select',
+        name: 'casesensitivity',
+        placeholder: helptext.dataset_form_casesensitivity_placeholder,
+        tooltip: helptext.dataset_form_casesensitivity_tooltip,
+        options: [
+          { label: 'Sensitive', value: 'SENSITIVE' },
+          { label: 'Insensitive', value: 'INSENSITIVE' },
+          { label: 'Mixed', value: 'MIXED' }
+        ],
+        value: 'SENSITIVE'
+      },
+      {
+        type: 'select',
+        name: 'share_type',
+        placeholder: helptext.dataset_form_share_type_placeholder,
+        tooltip: helptext.dataset_form_share_type_tooltip,
+        options: [{label:'Generic', value: 'GENERIC'},
+                  {label:'SMB', value: 'SMB'}],
+        value: 'GENERIC',
+        disabled: true,
+        isHidden: true,
+      }]
     }
   ];
 
   public advanced_field: Array<any> = [
     'refquota',
-    'refquota_unit',
     'quota',
     'quota_unit',
     'refreservation',
-    'refreservation_unit',
     'reservation',
-    'reservation_unit',
     'readonly',
     'snapdir',
     'copies',
@@ -504,6 +524,49 @@ export class DatasetFormComponent implements Formconfiguration{
     '1M':'1048576'
   };
 
+  convertHumanStringToNum(hstr, field) {
+
+    const IECUnitLetters = this.storageService.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
+
+    let num = 0;
+    let unit = '';
+
+    // empty value is evaluated as zero
+    if (!hstr) {
+        this.humanReadable[field] = '0';
+        return 0;
+    }
+
+    if (typeof hstr === 'number') {
+      hstr = hstr.toString();
+    }
+
+    // remove whitespace
+    hstr = hstr.replace(/\s+/g, '');
+
+    // get leading number
+    if ( num = hstr.match(/^(\d+(\.\d+)?)/) ) {
+        num = num[1];
+    } else {
+        // leading number is required
+        this.humanReadable[field] = '';
+        return NaN;
+    }
+
+    // get optional unit
+    unit = hstr.replace(num, '');
+    if ( (unit) && !(unit = this.storageService.normalizeUnit(unit)) ) {
+        // error when unit is present but not recognized
+        this.humanReadable[field] = '';
+        return NaN;
+    }
+
+    let spacer = (unit) ? ' ' : '';
+
+    this.humanReadable[field] = num.toString() + spacer + unit;
+    return num * this.storageService.convertUnitToNum(unit);
+}
+
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
 
     if( this.isNew === false ) {
@@ -524,22 +587,39 @@ export class DatasetFormComponent implements Formconfiguration{
     // calculate and delete _unit
       for (let i =0; i < this.size_fields.length; i++) {
         const field = this.size_fields[i];
-        const unit = field + '_unit';
-        if (this.OrigDec[field] !== data[field] || this.OrigUnit[field] !== data[unit]) {
-          data[field] = Math.round(data[field] * this.byteMap[data[unit]]);
-        } else { 
+        if (this.OrigHuman[field] !== data[field]) {
+          data[field] = Math.round(this.convertHumanStringToNum(data[field], field));
+        } else {
           data[field] = this.OrigSize[field];
         }
       }
 
-    delete data.refquota_unit;
-    delete data.quota_unit;
-    delete data.refreservation_unit;
-    delete data.reservation_unit;
-
     return data;
   }
 
+  blurEventQuota(parent){
+    if (parent.entityForm) {
+      parent.entityForm.formGroup.controls['quota'].setValue(parent.humanReadable['quota']);
+    }
+  }
+
+  blurEventRefQuota(parent){
+    if (parent.entityForm) {
+        parent.entityForm.formGroup.controls['refquota'].setValue(parent.humanReadable['refquota']);
+    }
+  }
+
+  blurEventReservation(parent){
+    if (parent.entityForm) {
+        parent.entityForm.formGroup.controls['reservation'].setValue(parent.humanReadable['reservation']);
+    }
+  }
+
+  blurEventRefReservation(parent){
+    if (parent.entityForm) {
+        parent.entityForm.formGroup.controls['refreservation'].setValue(parent.humanReadable['refreservation']);
+    }
+  }
 
 
 
@@ -554,7 +634,8 @@ export class DatasetFormComponent implements Formconfiguration{
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService, protected dialogService: DialogService ) { }
+    protected loader: AppLoaderService, protected dialogService: DialogService,
+    protected storageService: StorageService ) { }
 
 
 
@@ -566,15 +647,50 @@ export class DatasetFormComponent implements Formconfiguration{
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     } else {
       entityForm.setDisabled('share_type', false, false);
+      entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
+        this.nameIsCaseInsensitive = this.nameIsCaseInsensitive;
+        const field = _.find(this.fieldConfig, {name: "name"});
+        field['hasErrors'] = false;
+        field['errors'] = '';
+        if (this.nameIsCaseInsensitive) {
+          value = value.toLowerCase();
+        }
+        if (this.namesInUse.includes(value)) {
+          let sensitivity;
+          this.nameIsCaseInsensitive ? sensitivity = '(This field is not case-sensitive).' : sensitivity = '';
+          field['hasErrors'] = true;
+          field['errors'] = T(`The name <em>${value}</em> is already in use. ${sensitivity}`);
+        }
+      })
     }
+
+    entityForm.formGroup.get('share_type').valueChanges.pipe(filter(shareType => !!shareType && entityForm.isNew)).subscribe(shareType => {
+      const aclControl = entityForm.formGroup.get('aclmode');
+      const caseControl = entityForm.formGroup.get('casesensitivity');
+      if (shareType === 'SMB') {
+        aclControl.setValue('RESTRICTED');
+        caseControl.setValue('INSENSITIVE');
+        aclControl.disable();
+        caseControl.disable();
+      } else {
+        aclControl.setValue('PASSTHROUGH');
+        caseControl.setValue('SENSITIVE');
+        aclControl.enable();
+        caseControl.enable();
+      }
+
+      aclControl.updateValueAndValidity();
+      caseControl.updateValueAndValidity();
+    });
+
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
     this.recordsize_field = _.find(this.fieldConfig, {name:'recordsize'});
     this.recordsize_fg.valueChanges.subscribe((record_size)=>{
       const record_size_number = parseInt(this.reverseRecordSizeMap[record_size],10);
       if(this.minimum_recommended_dataset_recordsize && this.recommended_size_number){
-        this.recordsize_warning = helptext.dataset_form_warning_1 + 
-          this.minimum_recommended_dataset_recordsize + 
+        this.recordsize_warning = helptext.dataset_form_warning_1 +
+          this.minimum_recommended_dataset_recordsize +
           helptext.dataset_form_warning_2;
         if (record_size_number < this.recommended_size_number) {
           this.recordsize_field.warnings = this.recordsize_warning;
@@ -603,7 +719,9 @@ export class DatasetFormComponent implements Formconfiguration{
       this.parent = paramMap['parent'];
       this.pk = this.parent;
       this.isNew = true;
-      this.fieldConfig[0].readonly = false;
+      this.fieldSets[0].config[0].readonly = false;
+      _.find(this.fieldSets, {class:"dataset"}).label = false;
+      _.find(this.fieldSets, {class:"refdataset"}).label = false;
     }
     if(this.parent){
       const root = this.parent.split("/")[0];
@@ -612,6 +730,22 @@ export class DatasetFormComponent implements Formconfiguration{
         this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
       });
       this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
+        let children = (pk_dataset[0].children);
+        if (pk_dataset[0].casesensitivity.value === 'SENSITIVE') {
+          this.nameIsCaseInsensitive = false;
+        } else {
+          this.nameIsCaseInsensitive = true;
+        }
+        if (children.length > 0) {
+          for (let i in children) {
+            if (this.nameIsCaseInsensitive) {
+              this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0].toLowerCase());
+            } else {
+              this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+            }
+          };
+        };
+
       if(this.isNew){
         const sync = _.find(this.fieldConfig, {name:'sync'});
         const compression = _.find(this.fieldConfig, {name:'compression'});
@@ -654,22 +788,10 @@ export class DatasetFormComponent implements Formconfiguration{
               '512':'512',
               '1K':'1K',
               '2K':'2K',
-            }; 
+            };
             if ( current_dataset.hasOwnProperty("recordsize") && current_dataset['recordsize'].value ) {
                 _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset['recordsize'].value})['hiddenFromDisplay'] = false
-            } 
-            if ( current_dataset.hasOwnProperty("quota") && current_dataset['quota'].rawvalue === '0' ) {
-              entityForm.formGroup.controls['quota_unit'].setValue('M');
-            } 
-            if ( current_dataset.hasOwnProperty("refquota")&& current_dataset['refquota'].rawvalue === '0' ) {
-              entityForm.formGroup.controls['refquota_unit'].setValue('M');
-            } 
-            if ( current_dataset.hasOwnProperty("reservation") && current_dataset['reservation'].rawvalue === '0' ) {
-              entityForm.formGroup.controls['reservation_unit'].setValue('M');
-            } 
-            if ( current_dataset.hasOwnProperty("refreservation") && current_dataset['refreservation'].rawvalue === '0' ) {
-              entityForm.formGroup.controls['refreservation_unit'].setValue('M');
-            }  
+            }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
             const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
@@ -773,8 +895,8 @@ export class DatasetFormComponent implements Formconfiguration{
         this.OrigSize[field] = wsResponse[field].rawvalue;
       }
       sizeValues[field] = this.getFieldValueOrRaw(wsResponse[field]);
-      this.OrigDec[field] = sizeValues[field] ? sizeValues[field].substring(0, sizeValues[field].length - 1) : 0;
-      this.OrigUnit[field] = sizeValues[field] ? sizeValues[field].substr(-1, 1) : sizeValues[field];
+      this.convertHumanStringToNum(sizeValues[field], field);
+      this.OrigHuman[field] = this.humanReadable[field];
     }
 
      const returnValue: DatasetFormData = {
@@ -791,17 +913,13 @@ export class DatasetFormComponent implements Formconfiguration{
         quota_critical: quota_critical,
         refquota_warning: refquota_warning,
         refquota_critical: refquota_critical,
-        quota: this.OrigDec['quota'],
-        quota_unit: this.OrigUnit['quota'],
+        quota: this.OrigHuman['quota'],
         readonly: this.getFieldValueOrRaw(wsResponse.readonly),
         exec: this.getFieldValueOrRaw(wsResponse.exec),
         recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
-        refquota: this.OrigDec['refquota'],
-        refquota_unit: this.OrigUnit['refquota'],
-        refreservation: this.OrigDec['refreservation'],
-        refreservation_unit: this.OrigUnit['refreservation'],
-        reservation: this.OrigDec['reservation'],
-        reservation_unit: this.OrigUnit['reservation'],
+        refquota: this.OrigHuman['refquota'],
+        refreservation: this.OrigHuman['refreservation'],
+        reservation: this.OrigHuman['reservation'],
         snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };

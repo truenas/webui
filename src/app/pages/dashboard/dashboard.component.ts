@@ -1,20 +1,32 @@
-import { Component, OnInit, AfterViewInit, ViewChild,OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 
 import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
+import { WidgetControllerComponent } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component'; // POC
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
-import {RestService,WebSocketService} from '../../services/';
+import { RestService,WebSocketService } from '../../services/';
+import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
+import { tween, styler } from 'popmotion';
 
 @Component({
   selector: 'dashboard',
   templateUrl:'./dashboard.html',
   styleUrls: ['./dashboard.scss'],
 })
-export class DashboardComponent implements OnInit,OnDestroy {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
  
+  public screenType: string = 'Desktop'; // Desktop || Mobile
+
+  public dashState: DashConfigItem[]; // Saved State
+  public activeMobileWidget: DashConfigItem[] = [];
+  public availableWidgets: DashConfigItem[] = [];
+  public renderedWidgets: number[] = [];
+  public hiddenWidgets: number[] = []; 
+
   public large: string = "lg";
   public medium: string = "md";
   public small: string = "sm";
@@ -22,30 +34,117 @@ export class DashboardComponent implements OnInit,OnDestroy {
   public noteFlex:string = "23";
 
   public statsDataEvents:Subject<CoreEvent>;
-  //public statsData: StatsUtils;
   private statsEvents: any;
   private statsEventsTC: any;
   public tcStats: any;
 
   public isFooterConsoleOpen: boolean;
 
+  // For widgetsysinfo
+  public isHA: boolean; // = false;
+  public isFN: boolean = window.localStorage['is_freenas'];
+  public sysinfoReady: boolean = false;
+
+  // For CPU widget
+  public systemInformation: any;
+
   // For widgetpool
   public system: any;
   public system_product: string = "Generic";
-  public pools: any[] = [];
-  public volumeData:any = {};
-  //public volumes: VolumeData[] = [];
-  //public disks:Disk[] = [];
+  public pools: any[]; // = [];
+  public volumeData:any; //= {};
 
-  public nics: any[] = [];
+  public nics: any[]; // = [];
 
   public animation = "stop";
   public shake = false;
 
   public showSpinner: boolean = true;
 
-  constructor(protected core:CoreService, /*stats: StatsService,*/ protected ws: WebSocketService){
+  constructor(protected core:CoreService, protected ws: WebSocketService, public mediaObserver: MediaObserver, private el: ElementRef){
     this.statsDataEvents = new Subject<CoreEvent>();
+
+    mediaObserver.media$.subscribe((evt) =>{
+
+      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+
+      // If leaving .xs screen then reset mobile position
+      if(st == 'Desktop' && this.screenType == 'Mobile'){
+        this.onMobileBack();
+      }
+
+      this.screenType = st;
+
+      // Eliminate top level scrolling 
+      let wrapper = (<any>document).querySelector('.fn-maincontent');
+      wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
+      
+    });
+
+  }
+
+  ngAfterViewInit(){
+  }
+
+  onMobileLaunch(evt: DashConfigItem) {
+    this.activeMobileWidget = [evt];
+
+    // Transition 
+    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
+    let viewport = styler(vp);
+    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    let carousel = styler(c);
+    const vpw = viewport.get('width'); //600;
+
+    const startX = 0;
+    const endX = vpw * -1;
+
+    tween({
+      from:{ x: startX },
+      to:{ x: endX },
+      duration: 250
+    }).start(carousel.set);
+  }
+
+  onMobileBack() {
+    // Transition 
+    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
+    let viewport = styler(vp);
+    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    let carousel = styler(c);
+    const vpw = viewport.get('width'); //600;
+
+    const startX = vpw * -1;
+    const endX = 0;
+
+    tween({
+      from:{ x: startX },
+      to:{ x: endX },
+      duration: 250
+    }).start({
+      update: (v) => { 
+        carousel.set(v);
+      },
+      complete: () => {
+        this.activeMobileWidget = [];
+      }
+    });
+
+  }
+
+  onMobileResize(evt){
+    if(this.screenType == 'Desktop'){ return; }
+    const vp = this.el.nativeElement.querySelector('.mobile-viewport');
+    let viewport = styler(vp);
+    const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
+    let carousel = styler(c);
+
+    const startX = viewport.get('x');
+    const endX = this.activeMobileWidget.length > 0 ? evt.target.innerWidth * -1 : 0;
+
+    if(startX !== endX){
+      carousel.set('x', endX);
+    }
   }
 
   ngOnInit(){
@@ -58,13 +157,31 @@ export class DashboardComponent implements OnInit,OnDestroy {
       }
     });
 
+    if(this.isFN.toString() == 'false'){
+      this.ws.call('failover.licensed').subscribe((res)=> {
+        if (res) {
+          this.isHA = true;
+        }
+        this.sysinfoReady = true;
+      });
+    } else {
+      this.sysinfoReady = true;
+    }
+
   }
 
   ngOnDestroy(){
+    // unsubscribe from middleware
     this.statsEvents.complete();
     this.statsEventsTC.complete();
+
+    // close out subscribers
     this.statsDataEvents.complete();
     this.core.unregister({observerClass:this});
+
+    // Restore top level scrolling 
+    let wrapper = (<any>document).querySelector('.fn-maincontent');
+    wrapper.style.overflow = 'auto';
   }
 
   init(){
@@ -145,6 +262,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
       
       // Update NICs array
       this.nics = clone;
+
+      this.isDataReady();
     });
 
     this.core.emit({name:"VolumeDataRequest"});
@@ -153,7 +272,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
   }
 
   setVolumeData(evt:CoreEvent){
-    //let result = [];
+    let vd = {};
+
     for(let i in evt.data){
       let avail = null;
       if (evt.data[i].children && evt.data[i].children[0]) {
@@ -174,26 +294,104 @@ export class DashboardComponent implements OnInit,OnDestroy {
         vol_guid:evt.data[i].vol_guid,
         vol_name:evt.data[i].vol_name
       }
-      this.volumeData[zvol.id] = zvol;
-      //result.push(zvol);
+      vd[zvol.id] = zvol;
     }
+    
+    this.volumeData = vd;
   }
 
   getDisksData(){
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
-      //this.system.pools = evt.data;
       this.pools = evt.data;
+      this.isDataReady();
     });
 
     this.core.register({observerClass: this, eventName: 'VolumeData'}).subscribe((evt:CoreEvent) => {
       this.setVolumeData(evt);
+      this.isDataReady();
     });
 
     this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
+      this.systemInformation = evt.data;
       this.core.emit({name: 'PoolDataRequest', sender: this});
     });
+
     this.core.emit({name: 'SysInfoRequest', sender: this});
+  }
+
+  isDataReady(){
+    const isReady = this.statsDataEvents && this.pools && this.volumeData && this.nics ? true : false;
+    if(isReady){
+      this.availableWidgets = this.generateDefaultConfig();
+      if(!this.dashState){
+        this.dashState = this.availableWidgets;
+      }
+    }
+  }
+
+  generateDefaultConfig(){
+    let conf: DashConfigItem[] = [
+      {name:'System Information', rendered: true },
+    ];
+
+    if(this.isHA){
+      conf.push({name:'System Information(Standby)', identifier: 'passive,true', rendered: true })
+    }
+
+    conf.push({name:'CPU', rendered: true });
+    conf.push({name:'Memory', rendered: true });
+
+    this.pools.forEach((pool, index) => {
+      conf.push({name:'Pool', identifier: 'name,' + pool.name, rendered: true })
+    });
+
+    this.nics.forEach((nic, index) => {
+      conf.push({name:'Interface', identifier: 'name,' + nic.name, rendered: true })
+    });
+
+    return conf;
+  }
+
+  volumeDataFromConfig(item:DashConfigItem){
+    const spl = item.identifier.split(',');
+    const key = spl[0];
+    const value = spl[1];
+    
+    const pool = this.pools.filter(pool => pool[key] == value);
+    return this.volumeData && this.volumeData[pool[0].id] ? this.volumeData[pool[0].id] : console.warn('No volume data available!');; 
+  }
+
+  dataFromConfig(item:DashConfigItem){
+    let spl;
+    let key;
+    let value;
+    if(item.identifier){
+      spl = item.identifier.split(',');
+      key = spl[0];
+      value = spl[1];
+    }
+
+    let data: any;
+
+    switch(item.name.toLowerCase()){
+      case 'cpu':
+        data = this.statsDataEvents;
+      break;
+      case 'memory':
+        data = this.statsDataEvents;
+      break;
+      case 'pool':
+        data = spl ? this.pools.filter(pool => pool[key] == value) : console.warn("DashConfigItem has no identifier!");
+        if(data){ data = data[0];}
+      break;
+      case 'interface':
+        data = spl ? this.nics.filter(nic => nic[key] == value) : console.warn("DashConfigItem has no identifier!");
+        if(data){ data = data[0].state;}
+      break;
+    }
+
+    return data ? data : console.warn('Data for this widget is not available!') ;
   }
 
   toggleShake(){

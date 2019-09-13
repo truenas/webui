@@ -1,7 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
 	<div class="top">
 		<label>{{ config.placeholder | translate }}</label>
-		<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+		<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
 		<mat-form-field class="full-width" style="display:none">
 			<input matInput [type]="config.inputType ? config.inputType : 'text'"
 				[placeholder]="config.placeholder"
@@ -13,13 +13,13 @@
 		<table>
 			<tr>
 				<td></td>
-				<td>Owner</td>
-				<td>Group</td>
-				<td>Other</td>
+				<td>{{"User" | translate}}</td>
+				<td>{{"Group" | translate}}</td>
+				<td>{{"Other" | translate}}</td>
 			</tr>
 			<tr>
 				<td>
-					Read
+					{{"Read" | translate}}
 				</td>
 				<td>
 					<mat-checkbox [checked]="ownerRead" (change)="toggleOwnerRead()">
@@ -36,7 +36,7 @@
 			</tr>
 			<tr>
 				<td>
-					Write
+					{{"Write" | translate}}
 				</td>
 				<td>
 					<mat-checkbox [checked]="ownerWrite" (change)="toggleOwnerWrite()">
@@ -53,7 +53,7 @@
 			</tr>
 			<tr *ngIf="!config.noexec">
 				<td>
-					Execute
+					{{"Execute" | translate}}
 				</td>
 				<td>
 					<mat-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()">

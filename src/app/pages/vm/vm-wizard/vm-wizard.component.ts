@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService, WebSocketService, NetworkService, SystemGeneralService } from '../../../services';
-import { FormGroup, Validators } from '@angular/forms';
+import { RestService, WebSocketService, NetworkService, StorageService } from '../../../services';
+import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { MessageService } from '../../common/entity/entity-form/services/message.service';
@@ -16,6 +16,7 @@ import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
 import { filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import globalHelptext from './../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -131,9 +132,27 @@ export class VMWizardComponent {
           type: 'input',
           name: 'memory',
           placeholder: helptext.memory_placeholder,
-          inputType: 'number',
-          min: 128,
-          validation : helptext.memory_validation,
+          inputType: 'text',
+          validation : [
+            ...helptext.memory_validation,
+            (control: FormControl): ValidationErrors => {
+              const config = this.wizardConfig.find(c => c.label === helptext.vcpus_label).fieldConfig.find(c => c.name === 'memory');
+              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value))
+                ? { invalid_byte_string: true }
+                : null
+
+              if (errors) {
+                config.hasErrors = true;
+                config.errors = globalHelptext.human_readable_input_error;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
+
+              return errors;
+            }
+          ],
+          value: '',
           required: true,
           blurStatus: true,
           blurEvent: this.blurEvent2,
@@ -276,7 +295,7 @@ export class VMWizardComponent {
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
     public messageService: MessageService,private router: Router,
-    private dialogService: DialogService, private systemGeneralService: SystemGeneralService) {
+    private dialogService: DialogService, private storageService: StorageService) {
 
   }
 
@@ -284,12 +303,13 @@ export class VMWizardComponent {
     this.entityWizard = entityWizard;
   }
   afterInit(entityWizard: EntityWizardComponent) {
-    this.systemGeneralService.getIPChoices().subscribe((res) => {
-      if (res.length > 0) {
+
+    this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
+        if(res && Object.keys(res).length > 0) {
         const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
-        for (const item of res){
-          vnc_bind.options.push({label : item[1], value : item[0]});
-        }
+        Object.keys(res).forEach((address) => {
+          vnc_bind.options.push({label : address, value : address});
+        })
         this.ws.call('interface.ip_in_use', [{"ipv4": true}]).subscribe(
           (ip) => {
             if (_.find(vnc_bind.options, { value: ip[0].address })){
@@ -367,7 +387,10 @@ export class VMWizardComponent {
         this.summary[T('Number of CPUs')] = vcpus;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
-        this.summary[T('Memory')] = memory + ' MiB';
+        this.summary[T('Memory')] =
+          isNaN(this.storageService.convertHumanStringToNum(memory))
+            ? '0 MB'
+            : Math.ceil(this.storageService.convertHumanStringToNum(memory) / 1024**2) + ' MiB' ;
       });
 
       ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
@@ -443,12 +466,12 @@ export class VMWizardComponent {
           this.res = res;
           if (res === 'Windows') {
             ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4096MB');
             ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
           }
           else {
             ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(512);
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512MB');
             ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
           }
 
@@ -609,7 +632,7 @@ async customSubmit(value) {
     vm_payload["description"] = value.description;
     vm_payload["time"]= value.time;
     vm_payload["vcpus"] = value.vcpus;
-    vm_payload["memory"] = value.memory;
+    vm_payload["memory"] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024**2); // bytes -> mb
     vm_payload["bootloader"] = value.bootloader;
     vm_payload["autoloader"] = value.autoloader;
     vm_payload["autostart"] = value.autostart;

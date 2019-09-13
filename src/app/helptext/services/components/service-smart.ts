@@ -37,10 +37,4 @@ smart_critical_tooltip: T('Enter a threshold temperature in Celsius. SMART will\
  message with a log level of LOG_CRIT and send an email\
  if the temperature is higher than the threshold.'),
 smart_critical_validation : [ Validators.required ],
-
-smart_email_placeholder : T('Email'),
-smart_email_tooltip: T('Enter an email address to receive <a\
- href="--docurl--/services.html#s-m-a-r-t"\
- target="_blank">S.M.A.R.T.</a> alerts; use a space to \
- separate multiple email addresses.')
 }

@@ -310,17 +310,17 @@ export class InterfacesFormComponent implements OnDestroy {
       });
       this.networkService.getVlanParentInterfaceChoices().subscribe((res) => {
         for (const key in res) {
-          this.vlan_pint.options.push({label: key, value: res[key]});
+          this.vlan_pint.options.push({label: res[key], value: key});
         }
       });
       this.networkService.getLaggPortsChoices().subscribe((res) => {
         for (const key in res) {
-          this.lag_ports.options.push({label: key, value: res[key]});
+          this.lag_ports.options.push({label: res[key], value: key});
         }
       });
       this.networkService.getBridgeMembersChoices().subscribe((res) => {
         for (const key in res) {
-          this.bridge_members.options.push({label: key, value: res[key]});
+          this.bridge_members.options.push({label: res[key], value: key});
         }
       });
     } else {

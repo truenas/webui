@@ -27,7 +27,7 @@ export class CloudCredentialsFormComponent {
   protected id: any;
   protected pk: any;
 
-  protected selectedProvider: string = 'AMAZON_CLOUD_DRIVE';
+  protected selectedProvider: string = 'S3';
   protected credentialsOauth = false;
   protected oauthURL: any;
 
@@ -45,44 +45,9 @@ export class CloudCredentialsFormComponent {
       name: 'provider',
       placeholder: helptext.provider.placeholder,
       options: [],
-      value: 'AMAZON_CLOUD_DRIVE',
+      value: this.selectedProvider,
       required: true,
       validation: helptext.provider.validation,
-    },
-    // Amazon_cloud_drive
-    {
-      type: 'input',
-      name: 'client_id-AMAZON_CLOUD_DRIVE',
-      placeholder: helptext.client_id_amazon_cloud_drive.placeholder,
-      tooltip: helptext.client_id_amazon_cloud_drive.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'AMAZON_CLOUD_DRIVE',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'client_secret-AMAZON_CLOUD_DRIVE',
-      placeholder: helptext.client_secret_amazon_cloud_drive.placeholder,
-      tooltip: helptext.client_secret_amazon_cloud_drive.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'AMAZON_CLOUD_DRIVE',
-           }]
-        }
-      ]
     },
     // Amazon_s3
     {
@@ -143,6 +108,26 @@ export class CloudCredentialsFormComponent {
       name: 'endpoint-S3',
       placeholder: helptext.endpoint_s3.placeholder,
       tooltip: helptext.endpoint_s3.tooltip,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          connective: 'AND',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
+           }]
+        }
+      ]
+    },
+    {
+      type: 'input',
+      name: 'region-S3',
+      placeholder: helptext.region_s3.placeholder,
+      tooltip: helptext.region_s3.tooltip,
       isHidden: true,
       relation: [
         {

@@ -25,14 +25,15 @@ dataset_permissions_recursive_tooltip: T('Apply permissions recursively to all d
  and files within the current dataset.'),
 
 dataset_permissions_traverse_placeholder: T('Traverse'),
-dataset_permissions_traverse_tooltip: T(''),
+dataset_permissions_traverse_tooltip: T('Apply permissions recursively to all child\
+ datasets of the current dataset.'),
 
 dataset_permissions_dialog_warning: T('Warning'),
 dataset_permissions_dialog_warning_message: T('Changing dataset permission mode can severely\
  affect existing permissions, particularly when going from Windows to Unix permissions.'),
 
 heading_dataset_path: T('Dataset Path'),
-heading_who: T('Who'),
+heading_owner: T('Owner'),
 heading_access: T('Access'),
 heading_advanced: T('Advanced')
 }

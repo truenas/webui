@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
@@ -12,7 +12,7 @@ import { EntityUtils } from '../../../common/entity/utils';
   template: `<entity-form [conf]="this"></entity-form>`,
   providers: [TaskService]
 })
-export class SnapshotFormComponent {
+export class SnapshotFormComponent implements OnDestroy {
 
   protected queryCall = "pool.snapshottask.query";
   protected addCall = "pool.snapshottask.create";
@@ -21,6 +21,11 @@ export class SnapshotFormComponent {
   protected route_success: string[] = ['tasks', 'snapshot'];
   protected isEntity: boolean = true;
   protected pk: any;
+  protected dataset: any;
+  protected dataset_disabled = false;
+  protected datasetFg: any;
+  protected dataset_subscription: any;
+  protected save_button_enabled = true;
 
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
@@ -120,15 +125,6 @@ export class SnapshotFormComponent {
   constructor(protected router: Router, protected taskService: TaskService,
               protected aroute: ActivatedRoute, protected storageService: StorageService,
               private dialog: DialogService) {
-    const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
-
-    this.storageService.getDatasetNameOptions().subscribe(
-      options => {
-        datasetField.options = _.sortBy(options, [o => o.label]);
-      },
-      error => new EntityUtils().handleWSError(this, error, this.dialog)
-    );
-
     const begin_field = _.find(this.fieldConfig, { 'name': 'begin' });
     const end_field = _.find(this.fieldConfig, { 'name': 'end' });
     const time_options = this.taskService.getTimeOptions();
@@ -147,6 +143,40 @@ export class SnapshotFormComponent {
     });
   }
 
+  afterInit(entityForm) {
+    const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
+
+    this.storageService.getDatasetNameOptions().subscribe(
+      options => {
+        if (this.dataset !== undefined && !_.find(options, {'label' : this.dataset})) {
+          const disabled_dataset = {'label': this.dataset, 'value': this.dataset, 'disable': true};
+          this.dataset_disabled = true;
+          options.push(disabled_dataset);
+
+          datasetField.warnings = helptext.dataset_warning;
+          this.save_button_enabled = false;
+        }
+        datasetField.options = _.sortBy(options, [o => o.label]);
+      },
+      error => new EntityUtils().handleWSError(this, error, this.dialog)
+    );
+    
+    this.datasetFg = entityForm.formGroup.controls['dataset'];
+    this.dataset_subscription = this.datasetFg.valueChanges.subscribe(value => {
+      if (this.dataset_disabled && this.dataset !== value) {
+        this.save_button_enabled = true;
+        datasetField.warnings = '';
+      }
+    });
+
+  }
+
+  ngOnDestroy() {
+    if (this.dataset_subscription) {
+      this.dataset_subscription.unsubscribe();
+    }
+  }
+
   resourceTransformIncomingRestData(data) {
     data['snapshot_picker'] = 
       data.schedule.minute + " " +
@@ -162,6 +192,7 @@ export class SnapshotFormComponent {
     } else {
       data.exclude = '';
     }
+    this.dataset = data.dataset;
     return data;
   }
 

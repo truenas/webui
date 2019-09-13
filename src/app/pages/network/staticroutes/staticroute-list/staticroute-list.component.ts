@@ -23,6 +23,7 @@ export class StaticRouteListComponent {
     {name : T('Gateway'), prop : 'sr_gateway'},
     {name : T('Description'), prop : 'sr_description'}
   ];
+  public rowIdentifier = 'sr_destination';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},

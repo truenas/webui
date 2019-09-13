@@ -95,8 +95,9 @@ export class EntityWizardComponent implements OnInit {
   setRelation(config: FieldConfig, stepIndex: any) {
     let activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
-      let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, < FormGroup > this.formArray.get(stepIndex));
-      this.setDisabled(config.name, tobeDisabled, stepIndex);
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, < FormGroup > this.formArray.get(stepIndex));
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(activations, < FormGroup > this.formArray.get(stepIndex));
+      this.setDisabled(config.name, tobeDisabled, stepIndex, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, < FormGroup > this.formArray.get(stepIndex))
         .forEach(control => {
@@ -106,27 +107,36 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  setDisabled(name: string, disable: boolean, stepIndex: any) {
-    if (( < FormGroup > this.formArray.get(stepIndex)).controls[name]) {
-      const method = disable ? 'disable' : 'enable';
-      ( < FormGroup > this.formArray.get(stepIndex)).controls[name][method]();
-      return;
+  setDisabled(name: string, disable: boolean, stepIndex: any, hide?: boolean) {
+    if (hide) {
+      disable = hide;
+    } else {
+      hide = false;
     }
 
     for (let i in this.conf.wizardConfig) {
       this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item) => {
         if (item.name === name) {
           item.disabled = disable;
+          item['isHidden'] = hide;
         }
         return item;
       });
     }
+
+    if (( < FormGroup > this.formArray.get([stepIndex])).controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      ( < FormGroup > this.formArray.get([stepIndex])).controls[name][method]();
+      return;
+    }
   }
 
   relationUpdate(config: FieldConfig, activations: any, stepIndex: any) {
-    let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, < FormGroup > this.formArray.get(stepIndex));
-    this.setDisabled(config.name, tobeDisabled, stepIndex);
+    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+      activations, < FormGroup > this.formArray.get(stepIndex));
+    this.setDisabled(config.name, tobeDisabled, stepIndex, tobeHide);
   }
 
   onSubmit() {

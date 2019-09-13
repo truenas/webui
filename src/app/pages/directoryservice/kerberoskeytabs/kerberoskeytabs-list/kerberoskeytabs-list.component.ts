@@ -19,6 +19,7 @@ export class KerberosKeytabsListComponent {
   public columns: Array < any > = [
     { name: 'Name', prop: 'keytab_name', always_display: true },
   ];
+  public rowIdentifier = 'keytab_name';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

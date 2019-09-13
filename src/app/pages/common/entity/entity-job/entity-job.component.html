@@ -6,8 +6,10 @@
 			mode="indeterminate"
 			[value]="progressTotalPercent"
 			bufferValue="bufferValue">
-    	</mat-progress-bar>
-    	{{ progressTotalPercent | number: '1.2-2'}}%
+		</mat-progress-bar>
+		<label *ngIf="!hideProgressValue">
+			{{ progressTotalPercent | number: '1.2-2'}}%
+		</label>
     </div>
     <div>
 		<span *ngIf="description" [innerHTML]="description | translate"></span>

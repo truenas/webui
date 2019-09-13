@@ -24,6 +24,7 @@ export class GroupListComponent {
     {name : 'Builtin', prop : 'bsdgrp_builtin'},
     {name : 'Permit Sudo', prop : 'bsdgrp_sudo'},
   ];
+  public rowIdentifier = 'bsdgrp_group';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
