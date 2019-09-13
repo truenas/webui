@@ -55,8 +55,6 @@ export class TnSysInfoComponent implements OnInit {
             .subscribe(() => {
             document.location.reload(true);
           });
-          // localSnackbar.open(helptext.update_license.success_message,
-          //   helptext.update_license.snackbar_action, { duration: 5000 });
         },
         (err) => {
           localLoader.close();
