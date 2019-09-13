@@ -52,8 +52,10 @@ export class TnSysInfoComponent implements OnInit {
           localLoader.close();
           localDialogService.confirm(helptext.update_license.reload_dialog_title, 
             helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action)
-            .subscribe(() => {
-            document.location.reload(true);
+            .subscribe((res) => {
+              if (res) {
+                document.location.reload(true);
+              }
           });
         },
         (err) => {
