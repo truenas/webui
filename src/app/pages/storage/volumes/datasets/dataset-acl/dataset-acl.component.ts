@@ -100,8 +100,8 @@ export class DatasetAclComponent implements OnDestroy {
         {
           type: 'select',
           name: 'default_acl_choices',
-          placeholder: 'Default ACL Options',
-          tooltip: 'Set default options on this ACL.',
+          placeholder: helptext.acl_defaults_placeholder,
+          tooltip: helptext.acl_defaults_tooltip,
           options: []
         }
       ]
