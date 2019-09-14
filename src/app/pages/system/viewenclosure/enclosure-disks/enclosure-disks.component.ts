@@ -456,7 +456,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     
     switch(opt){
       case 'pools':
-        //this.setDisksDisabled();
         this.container.alpha = 1;
         this.setDisksPoolState();
       break
@@ -741,7 +740,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       const elementBorder = value({borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => btn.set({
         boxShadow: `0 0 0 ${borderWidth}px ${borderColor}` 
-        //border: `solid ${borderWidth} ${borderColor}px`
       }));
 
       // Convert color to rgb value
