@@ -93,9 +93,15 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
 
+    core.register({observerClass: this, eventName: 'SensorData'}).subscribe((evt:CoreEvent) => {
+      this.system.sensorData = evt.data;
+      core.emit({name: 'PoolDataRequest', sender: this});
+    });
+
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
       this.system.diskData = evt.data;
-      core.emit({name: 'PoolDataRequest', sender: this});
+      //core.emit({name: 'PoolDataRequest', sender: this});
+      core.emit({name: 'SensorDataRequest', sender: this});
       setTimeout(() => {
         this.spinner = false;
       }, 1500);

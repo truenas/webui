@@ -565,6 +565,15 @@ export class ApiService {
         responseEvent: "DisksInfo"
       }
     },
+    SensorDataRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"sensor.query",
+        args: [],
+        responseEvent: "SensorData"
+      }
+    },
   } 
 
   constructor(
