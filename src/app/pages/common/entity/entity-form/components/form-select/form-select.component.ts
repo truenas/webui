@@ -54,8 +54,18 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     }
     this.control.valueChanges.subscribe((evt) => {
       if(evt) {
-        if(this.config.multiple && evt.length > 0 && !this.formReady){
+        if(this.config.multiple && evt.length > 0){
           this.selectedValues = evt;
+          const newStates = this.config.options.map(item => this.selectedValues.indexOf(item.value) !== -1);
+          const triggerValue = [];
+          for (let i = 0; i < this.config.options.length; i++) {
+            const item = this.config.options[i];
+            if (this.selectedValues.indexOf(item.value) !== -1) {
+              triggerValue.push(item.label)
+            }
+          }
+          this.selectStates = newStates;
+          this.customTriggerValue = triggerValue;
         }
       }
     });
@@ -122,10 +132,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       this.onSelect(option,index);
       return;
     }
-    let currentState = this.selectStates[index];
-    this.selectStates[index] = !currentState;
 
-    this.updateValues();
     this.group.value[this.config.name] = this.selectedValues;
     
   }
