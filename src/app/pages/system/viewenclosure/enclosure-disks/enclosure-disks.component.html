@@ -2,7 +2,7 @@
   class="view-card" 
   [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
   id="{{currentTab.alias}}" 
-  (window:resize)="onResize(event)"
+  (window:resize)="onResize($event)"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
