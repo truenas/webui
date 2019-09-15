@@ -56,7 +56,6 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       if(evt) {
         if(this.config.multiple && evt.length > 0){
           this.selectedValues = evt;
-          this.group.value[this.config.name] = this.selectedValues;
           const newStates = this.config.options.map(item => this.selectedValues.indexOf(item.value) !== -1);
           const triggerValue = [];
           for (let i = 0; i < this.config.options.length; i++) {
