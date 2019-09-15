@@ -472,7 +472,7 @@ export class DatasetAclComponent implements OnDestroy {
           acl.group = grp.gr_name;
         }
       }
-      if (data[i].flags.hasOwnProperty('BASIC')) {
+      if (data[i].flags['BASIC']) {
         acl.flags_type = 'BASIC';
         acl.basic_flags = data[i].flags['BASIC'];
       } else {
@@ -485,7 +485,7 @@ export class DatasetAclComponent implements OnDestroy {
           }
         }
       }
-      if (data[i].perms.hasOwnProperty('BASIC')) {
+      if (data[i].perms['BASIC']) {
         acl.perms_type = 'BASIC';
         acl.basic_perms = data[i].perms['BASIC'];
       } else {
