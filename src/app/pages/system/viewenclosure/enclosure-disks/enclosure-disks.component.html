@@ -2,6 +2,7 @@
   class="view-card" 
   [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
   id="{{currentTab.alias}}" 
+  (window:resize)="onResize($event)"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
@@ -14,12 +15,7 @@
     <!-- ENCLOSURE MODEL -->
     <div class="model dom-overlay" style="opacity:0.75;">
       <div class="model-inner">
-        <!--<img src="assets/images/TrueNAS_Logomark_OnDark.svg" alt="TrueNAS Logo" class="logo mark">  -->
-        <!--<mat-icon svgIcon="truenas_logomark"></mat-icon>
-          <mat-icon svgIcon="truenas_logotype"></mat-icon>-->
         <mat-icon svgIcon="truenas_logo_full" style="width:140px; height:auto; margin-top:12px;"></mat-icon>
-        <!--<img src="assets/images/TrueNAS_Logotype_OnDark.svg" alt="TrueNAS Logo Text" class="logo type">  -->
-        <!--<span class="text">:   {{selectedEnclosure.model}}</span>-->
       </div>
     </div>
 
@@ -127,7 +123,6 @@
 
     <!-- DETAILS/TITLE -->
     <div id="disks-details-header" [class]="currentView"> 
-      <!--<button mat-icon-button color="primary" (click)="clearDisk()" color="default" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></button>-->
       <a class="back fn-theme-primary" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
       {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} 
     </div>
@@ -183,9 +178,7 @@
             </div>
           </div>
   
-          <!--<div fxFlex="75" class="tiles disk-advanced-details" fxLayoutWrap fxLayout="row" fxLayoutAlign="center center">-->
           <div fxFlex="75" class="tiles disk-advanced-details" >
-            <!--<h3 style="opacity:0.75;">Disk Properties Go Here</h3>-->
 
             <div class="details-wrapper" fxLayout="row wrap" fxLayoutGap="16px">
 

@@ -1,6 +1,6 @@
 import { RestService, WebSocketService, AppLoaderService } from '../../../../services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -44,6 +44,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   constructor(private router: Router,
     public core: CoreService,
+    public cd: ChangeDetectorRef,
     public themeService: ThemeService,
     private media: MediaObserver,
     protected rest: RestService,
@@ -65,6 +66,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.screenSizeWatcher = media.media$.subscribe((change: MediaChange) => {
       this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
       this.updateSidenav();
+      core.emit({name:"MediaChange", data: change, sender: this});
     });
 
     // Translator init
@@ -138,6 +140,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     if (this.isMobile) {
       domHelper.removeClass(document.body, 'collapsed-menu');
     }
+    this.cd.detectChanges();
   }
 
   getSidenavWidth(): string{
