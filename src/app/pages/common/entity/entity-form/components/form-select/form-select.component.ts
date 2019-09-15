@@ -133,10 +133,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       this.onSelect(option,index);
       return;
     }
-    let currentState = this.selectStates[index];
-    this.selectStates[index] = !currentState;
 
-    this.updateValues();
     this.group.value[this.config.name] = this.selectedValues;
     
   }
