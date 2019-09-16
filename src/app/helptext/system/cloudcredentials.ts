@@ -87,35 +87,13 @@ export const helptext_system_cloudcredentials = {
   },
 
   account_b2: {
-    placeholder: T("Master Application Key ID"),
-    tooltip: T(
-      'Alphanumeric <a\
- href="https://www.backblaze.com/b2/cloud-storage.html"\
- target="_blank">Backblaze B2</a> ID. Find an Account ID\
- or applicationKeyID by logging in to the account,\
- clicking <i>Buckets</i>, and clicking\
- <i>Show Account ID and Application Key</i>. Enter the\
- <i>Account ID</i> to associate the entire account or\
- generate a new <i>Application Key</i>. The <i>keyID</i>\
- replaces the Account ID and the key string is used in\
- place of the <i>Master Application Key</i>. Formerly called <a\
- href="https://help.backblaze.com/hc/en-us/articles/360022330274-Locating-the-Master-Application-Key-and-Master-Application-Key-ID-Pair"\
- target="_blank">Account ID</a>.')
+    placeholder: T("Key ID"),
+    tooltip: T(''),
   },
 
   key_b2: {
-    placeholder: T("Master Application Key"),
-    tooltip: T(
-      'Backblaze B2 Application Key. Log in to\
- the B2 account and generate a key on the Buckets\
- page. <a\
- href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-"\
- target="_blank">Generating a new Master Application Key</a>\
- will invalidate the existing Master key and require\
- updating this field. Using a limited permissions\
- Application Key also requires changing the\
- <i>Account ID</i> to the new <i>keyID</i>.'
-    )
+    placeholder: T("Application Key"),
+    tooltip: T(''),
   },
 
   token_box: {
