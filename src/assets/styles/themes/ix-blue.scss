@@ -1197,16 +1197,22 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-support {
     .mat-card {
       padding-bottom: 60px;
-      min-width: 720px;
+      // min-width: 720px;
     }
     #top-row {
       margin: 0 15px;
     }
+
     .sys-image {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 350px;
+
+      div {
+        display: flex;
+        justify-content: center;
+      }
     }
 
     .lowerme {
@@ -1233,6 +1239,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       top: -20px;
       right: 45%;
     }
+
+    @media screen and (max-width: 1025px) {
+      #fn-spacer {
+        height: 80px;
+      }
+    }  
+
+    @media screen and (max-width: 400px) {
+      app-sys-image img {
+        max-width: 80%;
+      }
+    }
   }
 
   app-fn-sys-info {
@@ -1252,6 +1270,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+
+
   app-tn-sys-info {
     .tn-sys-info-line {
       margin-top: 10px;
@@ -1267,19 +1287,31 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       top: 13px;
     }
 
+    #tn-sys-col1 {
+      min-width: 184px;
+    }
   }
 
-  app-sys-image img {
-    max-width: 90%;
-    height: auto;
+  app-sys-image {
+    img {
+      max-width: 90%;
+      height: auto;
+    }
+  }
+
+  @media screen and (min-width: 601px) and (max-width: 750px)  {
+    .tn-sys-image {
+      position: relative;
+      left: 25px;
+    }
   }
 
   app-production-status {
     .mat-card {
         top: 12px;
         background-color: rgba(127,127,127,0.1);
-        max-width: 460px !important;
-        min-width: 300px;
+        width: 230px;
+        margin: 0 !important;
     }
     .mat-card-actions {
       top: 5px;
@@ -1287,6 +1319,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
     .temp {
       height: 0 !important;
+    }
+
+    @media screen and (max-width: 599px) {
+      .mat-card {
+        top: 25px;
+      }
     }
   }
 
@@ -1315,6 +1353,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-bottom: 20px;
 
     }
+
+    @media screen and (max-width: 599px) {
+      .mat-card {
+        top: -35px;
+      }
+    }
   }
 
   app-fn-support {
@@ -1331,6 +1375,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     form {
       margin-bottom: -40px;
     }
+
+    @media screen and (max-width: 599px) {
+      .mat-card-actions {
+        top: 0;
+      }
+      .lowerme {
+        margin-top: 0 !important;
+      }
+      form {
+        margin-bottom: 4px;
+      }
+    }
+      
   }
 
   app-tn-support {
@@ -1343,6 +1400,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       height: 0px;
       top: -55px;
       position: relative;
+    }
+
+    @media screen and (max-width: 599px) {
+      .mat-card-actions {
+        top: 0;
+        height: 25px !important;
+      }
+      .lowerme {
+        margin-top: 0 !important;
+      }
+      .mat-card {
+        top: -15px;
+      }
     }
   }
 // End support section //////////////
