@@ -87,7 +87,7 @@ export const helptext_system_cloudcredentials = {
   },
 
   account_b2: {
-    placeholder: T("Account ID or Application Key ID"),
+    placeholder: T("Master Application Key ID"),
     tooltip: T(
       'Alphanumeric <a\
  href="https://www.backblaze.com/b2/cloud-storage.html"\
@@ -98,12 +98,13 @@ export const helptext_system_cloudcredentials = {
  <i>Account ID</i> to associate the entire account or\
  generate a new <i>Application Key</i>. The <i>keyID</i>\
  replaces the Account ID and the key string is used in\
- place of the <i>Master Application Key</i>.'
-    )
+ place of the <i>Master Application Key</i>. Formerly called <a\
+ href="https://help.backblaze.com/hc/en-us/articles/360022330274-Locating-the-Master-Application-Key-and-Master-Application-Key-ID-Pair"\
+ target="_blank">Account ID</a>.')
   },
 
   key_b2: {
-    placeholder: T("Master Application Key or Application Key"),
+    placeholder: T("Master Application Key"),
     tooltip: T(
       'Backblaze B2 Application Key. Log in to\
  the B2 account and generate a key on the Buckets\
