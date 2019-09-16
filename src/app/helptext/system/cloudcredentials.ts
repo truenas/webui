@@ -61,10 +61,10 @@ export const helptext_system_cloudcredentials = {
   region_s3: {
     placeholder: T("Region"),
     tooltip: T('<a href="https://docs.aws.amazon.com/general/latest/gr/rande-manage.html" \
- target="_blank">AWS resources in a geographic area</a>. Enter a \
- <a href="https://rclone.org/s3/#s3-region" target="_blank">region name</a> \
- for the credential to find Amazon buckets created in that region. Leave \
- empty to use the default <i>us-east-1</i> region.'),
+ target="_blank">AWS resources in a geographic area</a>. Leave empty to \
+ automatically detect the correct public region for the bucket. Enter a \
+ private region name to allow the credential to find Amazon buckets \
+ created in that region.'),
   },
 
   skip_region_s3: {
