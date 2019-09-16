@@ -1308,14 +1308,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-production-status {
     .mat-card {
-        top: 12px;
+        top: 25px;
         background-color: rgba(127,127,127,0.1);
-        width: 230px;
+        width: 400px;
+        height: 100px;
         margin: 0 !important;
     }
     .mat-card-actions {
-      top: 5px;
-      position: relative;
+      top: 25px;
+      position: absolute;
+      left: 240px;
+      width: unset;
     }
     .temp {
       height: 0 !important;
@@ -1330,7 +1333,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-proactive {
     .mat-card {
-      top: 25px;
+      top: 37px;
       background-color: rgba(127,127,127,0.1);
       margin: 0 15px !important;
     }
@@ -1392,7 +1395,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-tn-support {
     .mat-card {
-      top: 45px;
+      top: 50px;
       background-color: rgba(127,127,127,0.1);
       margin: 0 15px !important;
     }
