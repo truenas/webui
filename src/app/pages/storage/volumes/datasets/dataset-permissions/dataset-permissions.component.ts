@@ -22,6 +22,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   public error: string;
   protected route_success: string[] = ['storage', 'pools'];
   protected isEntity = true;
+  protected userOnLoad: string;
+  protected groupOnLoad: string;
 
   public fieldSets: FieldSet[] = [
     {
@@ -42,7 +44,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
       divider: true
     },
     {
-      name: helptext.heading_who,
+      name: helptext.heading_owner,
       label: true,
       config: [
         {
@@ -134,7 +136,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
-      const userField = _.find(this.fieldSets.find(set => set.name === helptext.heading_who).config, { 'name': 'user' });
+      const userField = _.find(this.fieldSets.find(set => set.name === helptext.heading_owner).config, { 'name': 'user' });
       userField.options = users;
     });
 
@@ -143,13 +145,15 @@ export class DatasetPermissionsComponent implements OnDestroy {
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
       }
-      const groupField = _.find(this.fieldSets.find(set => set.name === helptext.heading_who).config, { 'name': 'group' });
+      const groupField = _.find(this.fieldSets.find(set => set.name === helptext.heading_owner).config, { 'name': 'group' });
       groupField.options = groups;
     });
   }
 
   afterInit(entityEdit: any) {
     this.storageService.filesystemStat(this.datasetPath).subscribe(res => {
+      this.userOnLoad = res.user;
+      this.groupOnLoad = res.group;
       this.datasetMode = res.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
       entityEdit.formGroup.controls['user'].setValue(res.user);
@@ -193,6 +197,12 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   beforeSubmit(data) {
+    if (data.user === this.userOnLoad) {
+      delete data.user;
+    };
+    if (data.group === this.groupOnLoad) {
+      delete data.group;
+    }
     data['acl'] = [];
 
     data['options'] = {

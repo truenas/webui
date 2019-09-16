@@ -45,6 +45,7 @@ export interface InputTableConf {
   cardHeaderComponent?: any;
   asyncView?: boolean;
   wsDelete?: string;
+  wsDeleteParams?(row, id): any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -107,7 +108,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
-  public tableHeight:number = (this.paginationPageSize * 50) + 100;
+  public rowHeight = 50;
+  public zoomLevel: number;
+  public tableHeight:number = (this.paginationPageSize * this.rowHeight) + 100;
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
@@ -146,7 +149,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public selected = [];
 
   private interval: any;
+  private excuteDeletion = false;
 
+  protected toDeleteRow: any;
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   public getRowDetailHeight = () => 
@@ -313,12 +318,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       n = 0;
     }
     window.onresize = () => {
+      this.zoomLevel = Math.round(window.devicePixelRatio * 100);
+      // Browser zoom of exacly 175% causes pagination anomalies; Dropping row size to 49 fixes it
+      this.zoomLevel === 175 ? this.rowHeight = 49 : this.rowHeight = 50;
       let x = window.innerHeight;
       let y = x - 830;
       if (this.selected && this.selected.length > 0) {
-        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows -3;
+        this.paginationPageSize = rowNum - n + Math.floor(y/this.rowHeight) + addRows -3;
       } else {
-        this.paginationPageSize = rowNum - n + Math.floor(y/50) + addRows;
+        this.paginationPageSize = rowNum - n + Math.floor(y/this.rowHeight) + addRows;
       }
 
       if (this.paginationPageSize < 2) {
@@ -439,7 +447,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPaginationInfo();
       this.showDefaults = true;
     }
-    if ((this.expandedRows == 0 || !this.asyncView) && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion) && this.filter.nativeElement.value === '') {
+      this.excuteDeletion = false;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
@@ -641,10 +650,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           // double confirm: input delete item's name to confirm deletion
           this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
             if (doubleConfirmDialog) {
+              this.toDeleteRow = item;
               this.delete(id);
             }
           });
         } else {
+          this.toDeleteRow = item;
           this.delete(id);
         }
       }
@@ -656,17 +667,21 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loaderOpen = true;
     const data = {};
     if (this.conf.wsDelete) {
-      this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
-        (resinner) => { this.getData() },
+      this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
+        (resinner) => {
+          this.getData();
+          this.excuteDeletion = true;
+        },
         (resinner) => {
           new EntityUtils().handleWSError(this, resinner, this.dialogService);
           this.loader.close();
         }
-      );
+      ) 
     } else {
       this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
         (resinner) => {
           this.getData();
+          this.excuteDeletion = true;
         },
         (resinner) => {
           new EntityUtils().handleError(this, resinner);
@@ -751,9 +766,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.currentRows.length === 0) {
       this.tableHeight = 153;
     } else if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
-      this.tableHeight = (this.currentRows.length * 50) + 110;
+      this.tableHeight = (this.currentRows.length * this.rowHeight) + 110;
     } else {
-      this.tableHeight = (this.paginationPageSize * 50) + 100;
+      this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
     } 
     
     // Displays an accurate number for some edge cases

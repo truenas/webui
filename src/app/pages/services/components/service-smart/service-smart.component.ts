@@ -59,23 +59,10 @@ export class ServiceSMARTComponent {
       required: true,
       validation : helptext.smart_critical_validation
     },
-    {
-      type : 'input',
-      name : 'smart_email',
-      placeholder : helptext.smart_email_placeholder,
-      tooltip: helptext.smart_email_tooltip,
-    },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
-
-  resourceTransformIncomingRestData(data) {
-    data['smart_email'] = data['smart_email'].replace(/,/g, " ");
-    return data;
-  }
-
-  afterInit(entityEdit: any) {  }
 }

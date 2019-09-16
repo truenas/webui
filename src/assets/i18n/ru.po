@@ -4,9 +4,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid " Dataset"
-msgstr " Набор данных"
-
 msgid " First vdev has "
 msgstr " Первый vdev имеет "
 
@@ -36,6 +33,9 @@ msgstr " и все снимки этого?"
 
 msgid " but datastore "
 msgstr " но хранилище "
+
+msgid " disks"
+msgstr ""
 
 msgid " disks, new vdev has "
 msgstr " дисков, новый vdev имеет "
@@ -113,13 +113,14 @@ msgstr ""
 "</b> плагин и все данные и снимки, сохраненные с ним, пожалуйста, введите "
 "имя плагина для подтверждения:"
 
-msgid ""
-"</i> dataset and all snapshots stored with it, please type the name of the "
-"dataset to confirm:"
+msgid "</b> with the keypair"
 msgstr ""
 
 msgid "</i> has started."
 msgstr "</i> начата."
+
+msgid "</i> keypair?</p>"
+msgstr ""
 
 msgid "</i> now?"
 msgstr "</i> сейчас?"
@@ -173,6 +174,12 @@ msgstr ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\" "
 "target=\"_blank\">Расширенные атрибуты</a> сохраняются, но должны "
 "поддерживаться обеими системами."
+
+msgid ""
+"<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
+"target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
+"valid    email address when registering to receive issue status updates."
+msgstr ""
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr ""
@@ -484,6 +491,9 @@ msgstr ""
 "<i>global</i> - зарезервированное имя, которое нельзя использовать в "
 "качестве имени общего ресурса. Пожалуйста, введите другое имя ресурса. "
 
+msgid "<p>Delete the <i>"
+msgstr ""
+
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
@@ -512,6 +522,9 @@ msgid ""
 "target=\"_blank\">access token</a> enables Box to verify a request  belongs "
 "to an authorized session. Example token:  "
 "<i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>."
+msgstr ""
+
+msgid "A failover might cause temporary service interruption."
 msgstr ""
 
 msgid ""
@@ -794,6 +807,12 @@ msgstr "Тип адаптера"
 
 msgid "Adapter Type:"
 msgstr "Тип адаптера:"
+
+msgid "Add"
+msgstr ""
+
+msgid "Add ACL Item"
+msgstr ""
 
 msgid "Add Additional Path"
 msgstr "Добавить дополнительный путь"
@@ -1095,6 +1114,9 @@ msgstr "Службы оповещения"
 msgid "Alert Settings"
 msgstr "Настройки оповещения"
 
+msgid "Alerts"
+msgstr ""
+
 msgid "Aliases"
 msgstr ""
 
@@ -1104,11 +1126,11 @@ msgstr "Все диски"
 msgid "All dirs"
 msgstr "Все каталоги"
 
+msgid "Allocate RAM for the VM"
+msgstr ""
+
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr "Выделить число гигабайт пространства для нового zvol."
-
-msgid "Allocate a number of megabytes of RAM for the VM."
-msgstr "Выделить число мегабайт оперативной памяти для ВМ."
 
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "Выделить число мегабайт оперативной памяти ВМ."
@@ -1421,6 +1443,9 @@ msgstr ""
 "пользователей, если задан User CN)."
 
 msgid "Apple Shares (AFP)"
+msgstr ""
+
+msgid "Apply Failover Upgrade"
 msgstr ""
 
 msgid "Apply Network Changes"
@@ -2303,18 +2328,19 @@ msgstr ""
 "большого (<i>Debug</i>)."
 
 msgid ""
+"Choose how often to run the scrub task.  Choices are *Hourly*, *Daily*, "
+"*Weekly*, *Monthly*, or *Custom*. Select  *Custom* to open a visual "
+"scheduler for selecting minutes, hours, days,  month, and days of week. "
+"Spaces are not allowed in :guilabel:`Minutes`,  :guilabel:`Hours`, or "
+":guilabel:`Days` of the custom scheduler."
+msgstr ""
+
+msgid ""
 "Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
 "on this dataset."
 msgstr ""
 "Выберите, если каталог снимков .zfs <i>Видимый</i> или <i>Невидимый</i> в "
 "этом наборе данных."
-
-msgid ""
-"Choose one of the convenient presets      or choose <b>Custom</b> to "
-"trigger the advanced scheduler UI"
-msgstr ""
-"Выберите один из удобных пресетов или выберите <b>Пользовательский</b> для "
-"запуска расширенного интерфейса планировщика"
 
 msgid ""
 "Choose one of the convenient presets    or choose <b>Custom</b> to trigger "
@@ -2341,13 +2367,6 @@ msgid ""
 "Choose the <a href=\"--docurl--/system.html#ssh-connection\" "
 "target=\"_blank\">SSH connection</a>."
 msgstr ""
-
-msgid ""
-"Choose the FreeBSD release or template to use as the jail operating system. "
-"Releases already downloaded show <b>(fetched)</b>."
-msgstr ""
-"Выберите релиз FreeBSD или шаблон для использования в качестве операционной "
-"системы jail. Уже загруженные показывают <b>(fetched)</b>."
 
 msgid ""
 "Choose the FreeBSD release to use as the jail operating system. Releases "
@@ -2537,6 +2556,15 @@ msgstr ""
 msgid "Com Port"
 msgstr "Com порт"
 
+msgid ""
+"Combine multiple, critical-for-failover  interfaces into a group. Groups "
+"apply to single systems. A failover  occurs when every interface in the "
+"group fails. Groups with a single  interface trigger a failover when that "
+"interface fails. Configuring the  system to failover when any interface "
+"fails requires marking each  interface as critical and placing them in "
+"separate groups."
+msgstr ""
+
 msgid "Comma-, space-, or tab-delimited list of allowed hostnames or IP addresses."
 msgstr ""
 "Список разрешенных имен хостов или IP-адресов через запятую, пробел или "
@@ -2642,6 +2670,9 @@ msgstr "Общее имя"
 
 msgid "Community"
 msgstr "Сообщество"
+
+msgid "Complete the Upgrade"
+msgstr ""
 
 msgid "Compress"
 msgstr "Сжатие"
@@ -2767,6 +2798,9 @@ msgstr "Раскладка клавиатуры консоли"
 msgid "Contact"
 msgstr "Контакт"
 
+msgid "Contact Support"
+msgstr ""
+
 msgid "Container"
 msgstr "Контейнер"
 
@@ -2874,6 +2908,9 @@ msgstr "Задать пароль"
 msgid "Create Pool"
 msgstr "Создать пул"
 
+msgid "Create SSH Connection"
+msgstr ""
+
 msgid "Create Snapshot"
 msgstr "Создать снимок"
 
@@ -2964,6 +3001,9 @@ msgstr "Пользовательский сервер"
 msgid "DELETE"
 msgstr "УДАЛИТЬ"
 
+msgid "DELETE DATASET"
+msgstr ""
+
 msgid "DHCP"
 msgstr "DHCP"
 
@@ -2999,6 +3039,13 @@ msgstr "VDev данных"
 msgid "Data collection frequency, in seconds."
 msgstr "Частота сбора данных, в секундах."
 
+msgid ""
+"Data transfer security. The connection is authenticated with SSH, then data "
+"can either be encrypted during transfer to maximise protection or left "
+"unencrypted to maximise transfer speed. Transferring data without "
+"encryption is only recommended for secure networks."
+msgstr ""
+
 msgid "Database"
 msgstr ""
 
@@ -3023,6 +3070,15 @@ msgstr "День месяца"
 msgid "Day of Week"
 msgstr "День недели"
 
+msgid ""
+"Days before a completed scrub is allowed  to run again. This controls the "
+"task schedule. For example, scheduling  a scrub to run daily and setting "
+":guilabel:`Threshold days` to *7*  means the scrub attempts to run daily. "
+"When the scrub is successful, it  continues to check daily but does not run "
+"again until seven days have  elapsed. Using a multiple of seven ensures the "
+"scrub always occurs on  the same weekday."
+msgstr ""
+
 msgid "Days of the Week"
 msgstr "Дни недели"
 
@@ -3042,6 +3098,9 @@ msgstr ""
 "Система назначения также должна поддерживать дедуплицированные потоки. "
 "Смотрите <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
 "target=\"_blank\">zfs(8)</a>."
+
+msgid "Default ACL Options"
+msgstr ""
 
 msgid "Default Permissions"
 msgstr "Разрешения по умолчанию"
@@ -3164,17 +3223,6 @@ msgstr ""
 "Определите количество доступных UID/GID на домен. Минимум составляет "
 "<i>2000</i>, а рекомендуемое значение по умолчанию - <i>100000</i>."
 
-msgid ""
-"Define the number of days to prevent a scrub from                running "
-"after the last has completed. This ignores any                other "
-"calendar schedule. The default is a multiple of                7 to ensure "
-"the scrub always occurs on the same                weekday."
-msgstr ""
-"Определите количество дней, чтобы предотвратить запуск проверки после "
-"завершения последней. Это игнорирует любое другое календарное расписание. "
-"По умолчанию используется значение, кратное 7, чтобы проверка всегда "
-"происходила в один и тот же день недели."
-
 msgid "Define the server where all changes to the database are performed."
 msgstr "Определите сервер, на котором выполняются все изменения в базе данных."
 
@@ -3183,6 +3231,9 @@ msgstr "Определите сервер, на котором выполняю�
 
 msgid "Define the size of the raw file in GiB."
 msgstr "Определите размер необработанного файла в ГиБ."
+
+msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
+msgstr ""
 
 msgid "Delay Updates"
 msgstr "Задержать обновления"
@@ -3198,6 +3249,9 @@ msgstr "Удалить"
 
 msgid "Delete Dataset"
 msgstr "Удалить набор данных"
+
+msgid "Delete Dataset <i><b>"
+msgstr ""
 
 msgid "Delete Device"
 msgstr "Удалить устройство"
@@ -3232,9 +3286,6 @@ msgstr "Удалить выбранные"
 
 msgid "Delete snapshot "
 msgstr "Удалить снимок "
-
-msgid "Delete the dataset "
-msgstr "Удалить набор данных "
 
 msgid ""
 "Delete the passphrase from  the encryption key. Invalidates an existing "
@@ -3290,8 +3341,14 @@ msgstr "Описание интерфейса lagg."
 msgid "Destination"
 msgstr "Назначение"
 
+msgid "Destination Datasets"
+msgstr ""
+
 msgid "Destination Path"
 msgstr "Путь назначения"
+
+msgid "Destination Snapshot Lifetime"
+msgstr ""
 
 msgid ""
 "Destination hostname or IP address for collectd data sent by the Graphite "
@@ -3314,6 +3371,9 @@ msgstr "Отсоединить"
 
 msgid "Detach Pool"
 msgstr "Отсоединить пул"
+
+msgid "Detach disk "
+msgstr ""
 
 msgid "Details"
 msgstr "Детали"
@@ -3429,6 +3489,9 @@ msgstr "Права доступа к каталогу"
 
 msgid "Directory Services"
 msgstr "Службы каталогов"
+
+msgid "Directory Services Monitor"
+msgstr ""
 
 msgid "Directory/Files"
 msgstr "Каталог/Файлы"
@@ -3592,6 +3655,9 @@ msgstr "Кривая EC"
 msgid "EDIT ACL"
 msgstr "РЕДАКТИРОВАТЬ ACL"
 
+msgid "ERROR: Not Enough Memory"
+msgstr ""
+
 msgid "EULA"
 msgstr ""
 
@@ -3724,6 +3790,9 @@ msgstr "Разрешить самонастройку"
 
 msgid "Enable iSCSI ALUA"
 msgstr "Включить iSCSI ALUA"
+
+msgid "Enable iXsystems Proactive Support"
+msgstr ""
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
 msgstr "Включите, если клиенты Mac будут подключаться к общему ресурсу SMB."
@@ -4277,17 +4346,6 @@ msgid "Enter an alphanumeric name for the virtual machine."
 msgstr "Введите буквенно-цифровое имя для виртуальной машины."
 
 msgid ""
-"Enter an email address to receive <a "
-"href=\"--docurl--/services.html#s-m-a-r-t\" "
-"target=\"_blank\">S.M.A.R.T.</a> alerts; use a space to  separate multiple "
-"email addresses."
-msgstr ""
-"Введите адрес электронной почты, чтобы получать оповещения <a "
-"href=\"--docurl--/services.html#s-m-a-r-t\" "
-"target=\"_blank\">S.M.A.R.T.</a>; используйте пробел для разделения "
-"нескольких адресов электронной почты."
-
-msgid ""
 "Enter an email address to receive messages from the <a "
 "href=\"--docurl--/services.html#snmp\" target=\"_blank\">SNMP service</a>."
 msgstr ""
@@ -4804,8 +4862,14 @@ msgstr "Ошибка удаления zvol "
 msgid "Error Promoting dataset "
 msgstr "Ошибка продвижения набора данных "
 
+msgid "Error Saving Proactive Support Settings"
+msgstr ""
+
 msgid "Error Unlocking"
 msgstr "Ошибка разблокировки"
+
+msgid "Error Updating Production Status"
+msgstr ""
 
 msgid "Error Upgrading Pool "
 msgstr "Ошибка обновления пула"
@@ -4910,6 +4974,9 @@ msgstr ""
 
 msgid "Exec"
 msgstr "Исполнение"
+
+msgid "Execute"
+msgstr ""
 
 msgid "Export Certificate"
 msgstr "Экспортировать сертификат"
@@ -5054,6 +5121,9 @@ msgstr "Тип файловой системы"
 msgid "Filter"
 msgstr "Фильтр"
 
+msgid "Finish Upgrade?"
+msgstr ""
+
 msgid "Fix Credential"
 msgstr "Исправить учетные данные"
 
@@ -5131,6 +5201,12 @@ msgstr ""
 "недоступен."
 
 msgid "Form Invalid"
+msgstr ""
+
+msgid ""
+"FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
+"versions up to the same version as the host  system. Newer releases are not "
+"shown."
 msgstr ""
 
 msgid "FreeNAS URL"
@@ -5494,6 +5570,9 @@ msgid ""
 "<i>0.0.0.0</i>."
 msgstr ""
 
+msgid "IP address to use for  administrative access to the array."
+msgstr ""
+
 msgid "IPMI"
 msgstr "IPMI"
 
@@ -5519,11 +5598,9 @@ msgid "IPv4 address for the jail."
 msgstr "Адрес IPv4 для jail."
 
 msgid ""
-"IPv4 address to use for the failover interface. Set a manual IP address "
+"IPv4 address to use for the failover  interface. Set a manual IP address "
 "here if DHCP is not used."
 msgstr ""
-"IPv4-адрес для использования для отказоустойчивого интерфейса. Установите "
-"здесь IP-адрес, если DHCP не используется."
 
 msgid "IPv4 interface"
 msgstr "Интерфейс IPv4"
@@ -5746,13 +5823,6 @@ msgstr "Скрипты запуска/завершения"
 msgid "Initiate Failover"
 msgstr "Иницровать переключение"
 
-msgid ""
-"Initiating failover will temporarily disable services while failing over.  "
-"Failover now?"
-msgstr ""
-"Инициирование аварийного переключения временно отключит службы на время "
-"переключения. Переключить сейчас?"
-
 msgid "Initiator"
 msgstr "Инициатор"
 
@@ -5830,11 +5900,19 @@ msgstr ""
 "Внутренний идентификатор сертификата. Допускаются только буквенно-цифровые "
 "символы, \"_\" и \"-\"."
 
+msgid "Invalid dataset."
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr "Неверное регулярное выражение фильтра"
 
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
+"like <samp>256k</samp> or <samp>1G</samp>."
+msgstr ""
+
+msgid ""
+"Invalid value. Valid values are numbers followed by optional unit letters, "
 "like <samp>256k</samp> or <samp>1G</samp>."
 msgstr ""
 
@@ -5913,6 +5991,12 @@ msgid ""
 msgstr ""
 "Jail'ы нельзя создавать или управлять ими, пока не будет создан пул для их "
 "хранения. Пожалуйста, сначала создайте пул"
+
+msgid "Jails failed to start"
+msgstr ""
+
+msgid "Jails started."
+msgstr ""
 
 msgid "KDC"
 msgstr "KDC"
@@ -6098,9 +6182,6 @@ msgstr "Вспомогательные параметры Libdefaults"
 msgid "License"
 msgstr "Лицензия"
 
-msgid "License has been updated."
-msgstr "Лицензия была обновлена."
-
 msgid "Lifetime"
 msgstr "Время жизни"
 
@@ -6117,6 +6198,9 @@ msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
 "Список системных служб, которые нужно перезапустить, когда пул "
 "разблокирован."
+
+msgid "Load Previous Replication Task"
+msgstr ""
 
 msgid "Local"
 msgstr "Локальный"
@@ -6159,9 +6243,6 @@ msgstr "Войти"
 
 msgid "Log in as root with password"
 msgstr "Вход в систему как root с паролем"
-
-msgid "Log in to Legacy User Interface?"
-msgstr "Войти в старый интерфейс пользователя?"
 
 msgid "Log mountd(8) requests"
 msgstr "Журналировать запросы mountd(8)"
@@ -6280,14 +6361,10 @@ msgid "Maximum SysV message queue size in bytes for the jail."
 msgstr "Максимальный размер очереди сообщений SysV в байтах для jail."
 
 msgid ""
-"Maximum Transmission Unit, the largest protocol data unit that can be "
-"communicated. The largest workable MTU size varies with network interfaces "
-"and equipment. *1500* and *9000* are standard Ethernet MTU sizes."
+"Maximum Transmission Unit, the largest protocol data  unit that can be "
+"communicated. The largest workable MTU size varies  with network interfaces "
+"and equipment. *1500* and *9000* are standard  Ethernet MTU sizes."
 msgstr ""
-"Maximum Transmission Unit, самый большой протокольный блок данных, который "
-"может быть передан. Наибольший работоспособный размер MTU зависит от "
-"сетевых интерфейсов и оборудования. *1500* и *9000* - это стандартные "
-"размеры Ethernet MTU."
 
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
@@ -6386,6 +6463,9 @@ msgstr ""
 
 msgid "Memory"
 msgstr "Память"
+
+msgid "Memory Size"
+msgstr ""
 
 msgid "Memory Size (MiB)"
 msgstr "Объем памяти (МиБ)"
@@ -6518,14 +6598,6 @@ msgid "Multipaths"
 msgstr ""
 
 msgid ""
-"Multiple critical interfaces are combined into a single failover group. A "
-"failover is triggered if all of the interfaces in the group fail."
-msgstr ""
-"Несколько критических интерфейсов объединяются в одну группу аварийного "
-"переключения. Аварийное переключение инициируется, если все интерфейсы в "
-"группе выходят из строя."
-
-msgid ""
 "Must match Peer Secret (Confirm) and be between 12 and 16 characters in "
 "length. Cannot be the same as Secret."
 msgstr ""
@@ -6592,6 +6664,9 @@ msgstr "Назовите Jail и выберите релиз FreeBSD"
 
 msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr "Имя и схема именования не могут быть предоставлены одновременно."
+
+msgid "Name and Options"
+msgstr ""
 
 msgid "Name of NIS domain."
 msgstr "Имя домена NIS."
@@ -6660,6 +6735,9 @@ msgstr "Сервера имен"
 msgid "Naming Schema"
 msgstr "Схема именования"
 
+msgid "Navigation"
+msgstr ""
+
 msgid "NetBIOS Alias"
 msgstr "Псевдоним NetBIOS"
 
@@ -6711,6 +6789,12 @@ msgstr ""
 "Трансляция сетевых адресов (NAT). Преобразует IP-адреса локальной сети в "
 "один IP-адрес. Установите, когда jail будет совместно использовать одно "
 "подключение к Интернету с другими системами в сети."
+
+msgid ""
+"Network Address Translation (NAT). When set, the jail  is given an internal "
+"IP address and connections are forwarded from  the host to the jail. When "
+"<i>NAT</i> is set,  <i>Berkeley Packet Filter</i> cannot be set."
+msgstr ""
 
 msgid "Network Changes Made Permanent"
 msgstr "Изменения в сети сделаны постоянными"
@@ -6828,9 +6912,6 @@ msgid "Not run since last boot"
 msgstr ""
 
 msgid "Note"
-msgstr ""
-
-msgid "Note: Legacy jails created before FreeNAS 11.2 must be managed from the"
 msgstr ""
 
 msgid "Notes"
@@ -7060,10 +7141,19 @@ msgstr "Подразделение"
 msgid "Organizational unit of the entity."
 msgstr ""
 
+msgid "Other"
+msgstr ""
+
+msgid "Other Options"
+msgstr ""
+
 msgid "Outgoing Mail Server"
 msgstr ""
 
 msgid "Overcommit Memory?"
+msgstr ""
+
+msgid "Owner"
 msgstr ""
 
 msgid "Owner of the jail. Can be any string."
@@ -7079,6 +7169,9 @@ msgid ""
 msgstr ""
 
 msgid "POST INSTALL NOTES"
+msgstr ""
+
+msgid "PROCEED"
 msgstr ""
 
 msgid "PagerDuty client name."
@@ -7165,6 +7258,9 @@ msgstr "Пользователь напарника"
 msgid "Pending Network Changes"
 msgstr ""
 
+msgid "Pending Upgrade"
+msgstr ""
+
 msgid "Perform Reverse DNS Lookups"
 msgstr "Выполнять обратное преобразование DNS"
 
@@ -7184,6 +7280,9 @@ msgid "Permit Sudo"
 msgstr "Разрешить sudo"
 
 msgid "Phone"
+msgstr ""
+
+msgid "Phone Number"
 msgstr ""
 
 msgid "Physical interface of the selected member."
@@ -7388,6 +7487,9 @@ msgid ""
 "versions of FreeNAS: "
 msgstr ""
 
+msgid "Production status successfully updated"
+msgstr ""
+
 msgid "Promote Dataset"
 msgstr ""
 
@@ -7467,6 +7569,9 @@ msgstr ""
 msgid "Raw filesize"
 msgstr ""
 
+msgid "Read"
+msgstr ""
+
 msgid "Read Only"
 msgstr "Только чтение"
 
@@ -7521,10 +7626,25 @@ msgstr "Рекурсивно"
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
 
+msgid "Refresh"
+msgstr ""
+
+msgid "Region"
+msgstr ""
+
 msgid "Release"
 msgstr ""
 
 msgid "Release Notes"
+msgstr ""
+
+msgid "Reload now"
+msgstr ""
+
+msgid "Reload the page"
+msgstr ""
+
+msgid "Reload the page for the license to take effect."
 msgstr ""
 
 msgid "Remote Encryption"
@@ -7575,10 +7695,16 @@ msgstr ""
 msgid "Renew Certificate Days"
 msgstr ""
 
+msgid "Replace"
+msgstr ""
+
 msgid "Replacing disk..."
 msgstr ""
 
 msgid "Replicate <i>"
+msgstr ""
+
+msgid "Replicate Custom Snapshots"
 msgstr ""
 
 msgid ""
@@ -7595,7 +7721,7 @@ msgstr "Репликация"
 msgid "Replication <i>"
 msgstr ""
 
-msgid "Replication Performance"
+msgid "Replication Schedule"
 msgstr ""
 
 msgid "Replication Tasks"
@@ -7716,6 +7842,9 @@ msgstr ""
 
 msgid "Resilver Priority"
 msgstr "Приоритет восстановления"
+
+msgid "Resilvering"
+msgstr ""
 
 msgid "Resolution"
 msgstr "Разрешение"
@@ -7863,14 +7992,14 @@ msgstr "SSH соединения"
 msgid "SSH Host to connect to."
 msgstr "SSH хост для подключения."
 
-msgid "SSH Keypair/Connection"
-msgstr "SSH ключи/соединения"
-
 msgid "SSH Keypairs"
 msgstr "SSH ключи"
 
 msgid "SSH Public Key"
 msgstr "Открытый ключ SSH"
+
+msgid "SSH Transfer Security"
+msgstr ""
 
 msgid "SSH Username."
 msgstr ""
@@ -7947,6 +8076,9 @@ msgid ""
 "only snapshots taken at those times are replicated."
 msgstr ""
 
+msgid "Scheduling"
+msgstr ""
+
 msgid "Schema"
 msgstr ""
 
@@ -7973,6 +8105,19 @@ msgstr "Задачи проверки"
 
 msgid "Scrub complete on pool <i>"
 msgstr "Завершена проверка пула <i>"
+
+msgid ""
+"Search the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
+"target=\"_blank\">FreeNAS issue tracker</a>    to ensure the issue has not "
+"already been reported before    filing a bug report or feature request. If "
+"an issue has    already been created, add a comment to the existing issue.  "
+"  Please visit the <a href=\"http://www.ixsystems.com/storage/\" "
+"target=\"_blank\">    iXsystems storage page</a>    for enterprise-grade "
+"storage solutions and support."
+msgstr ""
+
+msgid "Secondary Contact"
+msgstr ""
 
 msgid "Secondary Contact (optional)"
 msgstr ""
@@ -8498,6 +8643,12 @@ msgid ""
 "to iXsystems."
 msgstr ""
 
+msgid "Send initial debug"
+msgstr ""
+
+msgid "Send initial debug."
+msgstr ""
+
 msgid "Serial"
 msgstr "Серийный номер"
 
@@ -8556,6 +8707,9 @@ msgid ""
 "target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
+msgid "Set default options on this ACL."
+msgstr ""
+
 msgid ""
 "Set enable sending messages to the address defined in the <b>Email</b> "
 "field."
@@ -8610,6 +8764,9 @@ msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
 "target=\"_blank\">getrlimit(2)</a> utility."
+msgstr ""
+
+msgid "Set system production state and optionally send initial debug."
 msgstr ""
 
 msgid ""
@@ -9179,6 +9336,13 @@ msgid ""
 "fashion."
 msgstr ""
 
+msgid ""
+"Set to use the Berkeley Packet Filter (<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=bpf\" "
+"target=\"_blank\">BPF(4)</a>) to data link layers in a protocol independent "
+"fashion. Cannot be set when <i>NAT</i> is set."
+msgstr ""
+
 msgid "Set up Users and Groups."
 msgstr ""
 
@@ -9257,6 +9421,9 @@ msgstr ""
 msgid ""
 "Setting this option will result in timeouts if <b>identd</b> is not running "
 "on the client."
+msgstr ""
+
+msgid "Settings"
 msgstr ""
 
 msgid "Settings saved."
@@ -9361,6 +9528,14 @@ msgstr "Удостоверяющий центр"
 
 msgid "Signing Request"
 msgstr "Запрос подписи"
+
+msgid ""
+"Silver / Gold Coverage Customers can enable iXsystems Proactive Support. "
+"This  automatically emails iXsystems when certain conditions occur on this "
+"TrueNAS system. The iX Support  Team will promptly communicate with the "
+"Contacts saved below to quickly resolve any issue that may  have occurred "
+"on the system."
+msgstr ""
 
 msgid "Site Name"
 msgstr "Имя Сайта"
@@ -9608,6 +9783,9 @@ msgstr ""
 msgid "Successfully reset encryption for pool: "
 msgstr ""
 
+msgid "Successfully saved proactive support settings."
+msgstr ""
+
 msgid "Successfully updated."
 msgstr ""
 
@@ -9772,10 +9950,19 @@ msgstr "Псевдоним цели"
 msgid "Target Dataset"
 msgstr ""
 
+msgid "Target Mode"
+msgstr ""
+
 msgid "Target Name"
 msgstr "Имя цели"
 
 msgid "Targets"
+msgstr ""
+
+msgid "Task Manager"
+msgstr ""
+
+msgid "Task Name"
 msgstr ""
 
 msgid "Tasks"
@@ -9806,6 +9993,9 @@ msgid ""
 "enforced. Mounting <b>devfs</b> inside a jail is only possible when the "
 "<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are enabled and "
 "<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
+msgstr ""
+
+msgid "The <i><b>"
 msgstr ""
 
 msgid ""
@@ -10024,6 +10214,11 @@ msgid "The specified permissions of that user are used by all clients."
 msgstr ""
 
 msgid ""
+"The standby controller has finished upgrading. To complete the update "
+"process,                failover to the standby controller."
+msgstr ""
+
+msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
 "capacity. Set to force creation of the zvol (<b>NOT Recommended</b>)."
 msgstr ""
@@ -10069,9 +10264,15 @@ msgstr ""
 msgid "There are unsaved network interface settings.  Review them now?"
 msgstr ""
 
+msgid "There is an upgrade waiting to finish."
+msgstr ""
+
 msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\">rclone</a>."
+msgstr ""
+
+msgid "These items will be <b>"
 msgstr ""
 
 msgid ""
@@ -10090,6 +10291,12 @@ msgstr ""
 msgid "This Controller"
 msgstr ""
 
+msgid "This Dataset"
+msgstr ""
+
+msgid "This Dataset and Child Datasets"
+msgstr ""
+
 msgid ""
 "This dataset has ACLs that are too complex to be edited with                "
 "     the permissions editor.  Open in ACL editor instead?"
@@ -10102,6 +10309,9 @@ msgid ""
 "This field remains empty until a valid <b>Username</b> and <b>Password</b> "
 "is entered. Choose the category that best describes the bug or feature "
 "being reported."
+msgstr ""
+
+msgid "This is a production system"
 msgstr ""
 
 msgid "This is the FreeBSD device name for the disk."
@@ -10122,6 +10332,12 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr ""
 
+msgid "This system will restart when the update completes."
+msgstr ""
+
+msgid "This type of VDEV requires at least "
+msgstr ""
+
 msgid "Threshold days"
 msgstr "Порог дней"
 
@@ -10138,9 +10354,6 @@ msgid "Time Machine Quota"
 msgstr ""
 
 msgid "Time remaining until changes reverted:"
-msgstr ""
-
-msgid "TimeZone"
 msgstr ""
 
 msgid "Timeout"
@@ -10161,7 +10374,10 @@ msgstr ""
 msgid "To delete the <b>"
 msgstr ""
 
-msgid "To delete the <i>"
+msgid "Toggle Collapse"
+msgstr ""
+
+msgid "Toggle Hide/Open"
 msgstr ""
 
 msgid ""
@@ -10225,6 +10441,12 @@ msgstr ""
 msgid "UPDATE"
 msgstr ""
 
+msgid "UPDATE IN PROGRESS"
+msgstr ""
+
+msgid "UPDATE LICENSE"
+msgstr ""
+
 msgid "UPS Mode"
 msgstr "Режим ИБП"
 
@@ -10251,6 +10473,13 @@ msgid "Unencrypted pools can be imported directly."
 msgstr ""
 
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
+msgstr ""
+
+msgid ""
+"Unique Virtual Host ID on the broadcast  segment of the network. "
+"Configuring multiple Virtual IP addresses  requires a separate VHID for "
+"each address. Numbers greater than  <i>20</i> are recommended, but any "
+"unused number between <i>1</i> and  <i>255</i> is allowed."
 msgstr ""
 
 msgid ""
@@ -10283,7 +10512,7 @@ msgstr ""
 msgid "Unset to disable the configuration without deleting it."
 msgstr ""
 
-msgid "Unset to disable the scheduled scrub without                 deleting it."
+msgid "Unset to disable the scheduled scrub  without deleting it."
 msgstr ""
 
 msgid "Unset to disable this service without deleting it."
@@ -10334,6 +10563,12 @@ msgstr ""
 msgid "Update Period"
 msgstr ""
 
+msgid "Update Status"
+msgstr ""
+
+msgid "Update in Progress"
+msgstr ""
+
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr ""
 
@@ -10366,6 +10601,20 @@ msgstr "Обновить пул"
 
 msgid "Upgraded"
 msgstr "Обновлен"
+
+msgid ""
+"Upgrades both controllers. Files will be downloaded in the Active "
+"Controller                         and then transferred to the Standby "
+"Controller. Upgrade process will start concurrently on both nodes.          "
+"               Continue with download?"
+msgstr ""
+
+msgid ""
+"Upgrades both controllers. Files will be downloaded in the Active "
+"Controller                    and then transferred to the Standby "
+"Controller. Upgrade process will start concurrently on both nodes.          "
+"          Continue with download?"
+msgstr ""
 
 msgid "Upgrading Jail"
 msgstr ""
@@ -10622,9 +10871,6 @@ msgstr "Показать корпус"
 msgid "Virtual CPUs"
 msgstr ""
 
-msgid "Virtual Host ID for the failover interface."
-msgstr ""
-
 msgid "Virtual IP Address"
 msgstr ""
 
@@ -10709,6 +10955,9 @@ msgid "Webdav SSL Certificate"
 msgstr "WebDAV SSL сертификат"
 
 msgid "Webhook URL"
+msgstr ""
+
+msgid "What and Where"
 msgstr ""
 
 msgid "What are you using this for"
@@ -10804,6 +11053,9 @@ msgstr "Диск стирается..."
 msgid "Workgroup"
 msgstr "Рабочая группа"
 
+msgid "Write"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
 
@@ -10818,6 +11070,9 @@ msgstr ""
 
 msgid "Yes"
 msgstr "Да"
+
+msgid "Yes I understand the risks"
+msgstr ""
 
 msgid "Yes, decrypt the disks"
 msgstr "Да, расшифровать диски"
@@ -11025,9 +11280,6 @@ msgstr ""
 
 msgid "jail_zfs_mountpoint"
 msgstr ""
-
-msgid "legacy web interface"
-msgstr "старый web интерфейс"
 
 msgid "list"
 msgstr ""

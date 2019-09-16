@@ -38,9 +38,20 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
    
   public scrollContainer: HTMLElement;
   public system: SystemProfiler;
-  public system_product;
   public selectedEnclosure: any;
   public views: ViewConfig[] = [];
+  public spinner: boolean = true;
+
+  private _system_product;
+  get system_product(){
+    return this._system_product;
+  }
+  set system_product(value){
+    if(!this._system_product){
+      this._system_product = value;
+      this.core.emit({name: 'EnclosureDataRequest', sender: this});
+    }
+  }
 
   changeView(id){
     this.currentView = this.views[id];
@@ -59,6 +70,10 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           this.extractVisualizations();
           break;
         case "EnclosureCanvas":
+          if(!this.nav){
+            console.warn("No navigation UI detected")
+            return;
+          }
           let el = this.nav.nativeElement.querySelector(".enclosure-" + evt.data.profile.enclosureKey);
           evt.data.canvas.setAttribute('style', 'width: 80% ;');
           el.appendChild(evt.data.canvas);
@@ -78,14 +93,26 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
 
-    core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
-      this.system.diskData = evt.data;
+    core.register({observerClass: this, eventName: 'SensorData'}).subscribe((evt:CoreEvent) => {
+      this.system.sensorData = evt.data;
       core.emit({name: 'PoolDataRequest', sender: this});
     });
 
+    core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
+      this.system.diskData = evt.data;
+      //core.emit({name: 'PoolDataRequest', sender: this});
+      core.emit({name: 'SensorDataRequest', sender: this});
+      setTimeout(() => {
+        this.spinner = false;
+      }, 1500);
+    });
+
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      this.system_product = evt.data.license.model;
-      core.emit({name: 'EnclosureDataRequest', sender: this});
+      if(!this.system_product){
+        this.system_product = evt.data.license.model;
+      } else {
+        return;
+      }
     });
 
     core.emit({name: 'SysInfoRequest', sender: this});

@@ -3,7 +3,8 @@ import { Subject } from 'rxjs';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService, CoreEvent } from './core.service';
-import {  DialogService } from '../../services';
+import { DialogService } from '../../services';
+//import { DataService } from './data.service';
 
 interface ApiCall {
   namespace: string; // namespace for ws and path for rest
@@ -269,7 +270,6 @@ export class ApiService {
         errorResponseEvent: "VmStopFailure"
       },
       postProcessor(res,callArgs){
-        //DEBUG: console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0]} // res:boolean
         return cloneRes;
@@ -329,16 +329,6 @@ export class ApiService {
         errorResponseEvent: "VmDeleteFailure",
         responseEvent:"VmProfiles",
       },
-    },
-
-    SysInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"system.info",
-        args:[],
-        responseEvent:"SysInfo"
-      }
     },
     // Used by stats service!!
     StatsRequest:{
@@ -575,9 +565,24 @@ export class ApiService {
         responseEvent: "DisksInfo"
       }
     },
+    SensorDataRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"sensor.query",
+        args: [],
+        responseEvent: "SensorData"
+      }
+    },
   } 
 
-  constructor(protected core: CoreService, protected ws: WebSocketService,protected rest: RestService, private dialog:DialogService) {
+  constructor(
+    protected core: CoreService, 
+    protected ws: WebSocketService,
+    protected rest: RestService, 
+    private dialog:DialogService, 
+    //protected cache: DataService
+  ) {
     this.ws.authStatus.subscribe((evt:any) =>{
       this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]]});
       this.core.emit({name:"Authenticated",data:evt,sender:this});

@@ -54,6 +54,7 @@ _pycache_
 *.pyc
 .cache
 .pytest_cache
+tests/debugtest/*.py
 config.py
 auto_config.py
 geckodriver.log
@@ -64,7 +65,7 @@ vm_config
 /src/assets/i18n/*.json
 
 # generated screenshot files
-/tests/screenshot/*.png
+tests/screenshot/*.png
 .vs/slnx.sqlite
 
 # generated polyfills

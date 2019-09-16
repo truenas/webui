@@ -33,7 +33,7 @@ dataset_permissions_dialog_warning_message: T('Changing dataset permission mode 
  affect existing permissions, particularly when going from Windows to Unix permissions.'),
 
 heading_dataset_path: T('Dataset Path'),
-heading_who: T('Who'),
+heading_owner: T('Owner'),
 heading_access: T('Access'),
 heading_advanced: T('Advanced')
 }

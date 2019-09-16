@@ -25,7 +25,7 @@ export class RsyncListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: T('Path'), prop: 'path' },
+    { name: T('Path'), prop: 'path', always_display: true },
     { name: T('Remote Host'), prop: 'remotehost' },
     { name: T('Remote SSH Port'), prop: 'remoteport', hidden: true },
     { name: T('Remote Module Name'), prop: 'remotemodule' },
@@ -37,6 +37,7 @@ export class RsyncListComponent {
     { name: T('Delay Updates'), prop: 'delayupdates', hidden: true },
     { name: T('Enabled'), prop: 'enabled', hidden: true },
   ];
+  public rowIdentifier = 'path';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

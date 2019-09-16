@@ -66,12 +66,17 @@ def test_01_nav_store_pool(browser):
 
 
 def test_02_create_a_pool(browser):
-    test_name = sys._getframe().f_code.co_name
     time.sleep(1)
     # Click create new pool option
     browser.find_element_by_xpath(xpaths['addAction']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['forwardButton'])
+    assert wait, f'Loading pool page timeout'
     # Click create Pool Button
     browser.find_element_by_xpath(xpaths['forwardButton']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['newpoolName'])
+    assert wait, f'Loading pool page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool1)
     # Select the disk
@@ -85,35 +90,41 @@ def test_02_create_a_pool(browser):
     # Click Ok Button
     browser.find_element_by_xpath(xpaths['createpoolButton']).click()
     xpath = xpaths['addAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Creating the new pool {pool1} timeout'
+    wait = wait_on_element(browser, xpath)
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Creating the new pool {pool1} timeout'
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
 def test_03_looking_if_the_new_pool_exist(browser):
-    test_name = sys._getframe().f_code.co_name
     xpath = xpaths['pool1Table']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath)
     assert wait, 'Loading pool table timeout'
     # get the ui element
     ui_element = browser.find_element_by_xpath(xpaths['pool1Table'])
     element_text = ui_element.text
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(browser, script_name, test_name)
     # assert response
     assert pool1 in element_text, element_text
-    # taking screenshot
-    take_screenshot(browser, script_name, test_name)
 
 
 def test_04_create_newpool2(browser):
-    test_name = sys._getframe().f_code.co_name
     time.sleep(1)
     # Click create new pool option
     browser.find_element_by_xpath(xpaths['addAction']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['forwardButton'])
+    assert wait, f'Loading pool page timeout'
     # Click create Pool Button
     browser.find_element_by_xpath(xpaths['forwardButton']).click()
+    # wait on the page to load
+    wait = wait_on_element(browser, xpaths['newpoolName'])
+    assert wait, f'Loading pool page timeout'
     # Enter User Full name
     browser.find_element_by_xpath(xpaths['newpoolName']).send_keys(pool2)
     # Select the 2 disks
@@ -128,26 +139,27 @@ def test_04_create_newpool2(browser):
     # Click OK Button
     browser.find_element_by_xpath(xpaths['createpoolButton']).click()
     xpath = xpaths['addAction']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
-    assert wait, f'Creating the new pool {pool2} timeout'
+    wait = wait_on_element(browser, xpath)
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
+    assert wait, f'Creating the new pool {pool2} timeout'
     no_error = error_check(browser)
     assert no_error['result'], no_error['traceback']
 
 
 def test_05_looking_if_the_new_pool_exist(browser):
-    test_name = sys._getframe().f_code.co_name
     xpath = xpaths['pool2Table']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath)
     assert wait, 'Loading pool table timeout'
     # get the ui element
     ui_element = browser.find_element_by_xpath(xpaths['pool2Table'])
     element_text = ui_element.text
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
+    take_screenshot(browser, script_name, test_name)
     # assert response
     assert pool2 in element_text, element_text
-    # taking screenshot
-    take_screenshot(browser, script_name, test_name)
 
 
 def test_06_return_to_dashboard(browser):

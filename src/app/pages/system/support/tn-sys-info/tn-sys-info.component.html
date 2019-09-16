@@ -1,0 +1,21 @@
+<div id="TN-sys-info-wrapper">
+  <p class="support-title"><i class="material-icons">info</i>License Information</p>
+  <div id="tn-sys-info" class="container" fxLayout="row">
+    <div id=tn-sys-col1 fxFlex="50%">
+        <div class="tn-sys-info-line"><h4>Customer Name:</h4> {{customer_name}}</div>
+        <div class="tn-sys-info-line"><h4>Features:</h4> {{features}}</div>
+        <div class="tn-sys-info-line"><h4>Contract Type:</h4> {{contract_type}}</div>
+        <div class="tn-sys-info-line"><h4>Expiration Date:</h4> {{expiration_date}}
+          <span *ngIf="daysLeftinContract"> (expires in {{daysLeftinContract}} days)</span>
+        </div>
+    </div>
+    <div id=tn-sys-col2 fxFlex="50%">
+        <div class="tn-sys-info-line"><h4>Model:</h4> {{model}}</div>
+        <div class="tn-sys-info-line"><h4>System Serial:</h4> {{sys_serial}}</div>
+        <div class="tn-sys-info-line"><h4>Additional Hardware:</h4> {{add_hardware}}</div>
+        <div><button mat-flat-button id="update-license-btn" (click)="updateLicense()">{{"UPDATE LICENSE" | translate}}</button></div>
+    </div>
+  </div>
+  <div id="tn-sys-info" class="container" fxLayout="row">
+  </div>
+</div>

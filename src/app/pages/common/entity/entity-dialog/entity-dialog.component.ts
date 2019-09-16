@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Component, Input, OnInit } from '@angular/core';
 
 import { EntityFormService } from '../entity-form//services/entity-form.service';
+import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { FormGroup } from '@angular/forms';
 import { RestService } from '../../../../services/rest.service';
@@ -17,7 +18,7 @@ import { DatePipe } from '@angular/common';
   selector: 'app-entity-dialog',
   templateUrl: './entity-dialog.component.html',
   styles: [],
-  providers: [EntityFormService, DatePipe]
+  providers: [EntityFormService, DatePipe, FieldRelationService]
 })
 export class EntityDialogComponent implements OnInit {
 
@@ -45,16 +46,19 @@ export class EntityDialogComponent implements OnInit {
     protected loader: AppLoaderService,
     public mdDialog: MatDialog,
     public snackBar: MatSnackBar,
-    public datePipe: DatePipe) {}
+    public datePipe: DatePipe,
+    protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit() {
-    this.title = this.conf.title;
+    this.translate.get(this.conf.title).subscribe(title => {
+      this.title = title;
+    });
+
     this.fieldConfig = this.conf.fieldConfig;
     
     if(this.conf.parent) {
       this.parent = this.conf.parent;
     }
-   
 
     if (this.conf.preInit) {
       this.conf.preInit(this);
@@ -67,6 +71,14 @@ export class EntityDialogComponent implements OnInit {
       this.cancelButtonText = this.conf.cancelButtonText;
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
+    for (const i in this.fieldConfig) {
+      const config = this.fieldConfig[i];
+      if (config.relation.length > 0) {
+        this.fieldRelationService.setRelation(config, this.formGroup, this.fieldConfig);
+      }
+    }
+
     if(this.conf.afterInit) {
       this.conf.afterInit(this);
     }

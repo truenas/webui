@@ -18,6 +18,7 @@ export class SmartListComponent {
     { name: helptext.smartlist_column_description, prop: 'desc' },
     { name: helptext.smartlist_column_schedule, prop: 'schedule' }
   ];
+  public rowIdentifier = 'type';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

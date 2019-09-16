@@ -12,27 +12,21 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector: 'app-manualupdate',
   template: `<entity-form [conf]="this"></entity-form>`,
   providers : [ MessageService, SystemGeneralService ]
 })
-export class ManualUpdateComponent {
+export class ManualUpdateComponent extends ViewControllerComponent {
   public formGroup: FormGroup;
   public route_success: string[] = ['system','update'];
   protected dialogRef: any;
   public fileLocation: any;
   public subs: any;
-  // public custActions: Array<any> = [
-  //   {
-  //     id : 'save_config',
-  //     name : T('Save Config'),
-  //     function : () => {
-  //       this.dialogservice.dialogForm(this.saveConfigFormConf);
-  //     }
-  //   }
-  // ];
+  public isHA = false;
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
@@ -54,13 +48,11 @@ export class ManualUpdateComponent {
       name: 'filename',
       placeholder: helptext.filename.placeholder,
       tooltip: helptext.filename.tooltip,
-      // validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      // required: true,
       hideButton: true,
     },
     {
@@ -68,7 +60,8 @@ export class ManualUpdateComponent {
       name: 'rebootAfterManualUpdate',
       placeholder: helptext.rebootAfterManualUpdate.placeholder,
       tooltip: helptext.rebootAfterManualUpdate.tooltip,
-      value: false
+      value: false,
+      isHidden: true
     }
   ];
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -103,13 +96,29 @@ export class ManualUpdateComponent {
     private loader: AppLoaderService,
     private systemService: SystemGeneralService,
   ) {
-    this.systemService.getSysInfo().subscribe(
-      (res) => {
-        _.find(this.fieldConfig, {name: 'version'}).paraText += res.version;
-      })
+    super();
+    
+    this.core.register({
+     observerClass: this,
+     eventName: "SysInfo"
+    }).subscribe((evt: CoreEvent) => {
+       _.find(this.fieldConfig, {name: 'version'}).paraText += evt.data.version;
+    });
+ 
+    this.core.emit({name: "SysInfoRequest", sender:this});
   }
 
   preInit(entityForm: any) {
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        if (is_ha) {
+          this.isHA = true;
+        } else {
+          _.find(this.fieldConfig, {name : "rebootAfterManualUpdate"})['isHidden'] = false;
+        }
+      })
+    }
+
     this.ws.call('pool.query').subscribe((pools)=>{
       if(pools){
         pools.forEach(pool => {
@@ -149,25 +158,30 @@ export class ManualUpdateComponent {
     });
     entityForm.submitFunction = this.customSubmit;
   }
+
+
   customSubmit(entityForm: any) {
+    this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Manual Update" }, disableClose: true });
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.subscribe((succ)=>{
         this.dialogRef.close(false);
-        if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
-          this.router.navigate(['/others/reboot']);
-        } else {
-          this.translate.get('Restart').subscribe((reboot: string) => {
-            this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
-              this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
-                if (reboot_res) {
-                  this.router.navigate(['/others/reboot']);
-                }
+        if (!this.isHA) {
+          if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
+            this.router.navigate(['/others/reboot']);
+          } else {
+            this.translate.get('Restart').subscribe((reboot: string) => {
+              this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+                this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
+                  if (reboot_res) {
+                    this.router.navigate(['/others/reboot']);
+                  }
+                });
               });
             });
-          });
-        };
+          };
+        } 
       })
       this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
         this.dialogRef.close(false);
@@ -178,10 +192,7 @@ export class ManualUpdateComponent {
         this.dialogRef.close(false);
         this.dialogService.errorReport(failure.error,failure.state,failure.exception)
       })
-
     })
-
-
   }
 
 updater(file: any, parent: any){
@@ -189,10 +200,16 @@ updater(file: any, parent: any){
   if (fileBrowser.files && fileBrowser.files[0]) {
     parent.save_button_enabled = true;
     const formData: FormData = new FormData();
-    formData.append('data', JSON.stringify({
-      "method": "update.file",
-      "params": [{"destination":this.fileLocation}]
-    }));
+    if (parent.isHA) {
+      formData.append('data', JSON.stringify({
+        "method": 'failover.upgrade'
+      }));
+    } else {
+      formData.append('data', JSON.stringify({
+        "method": 'update.file',
+        "params": [{"destination":this.fileLocation}]
+      }));
+    }
     formData.append('file', fileBrowser.files[0]);
     parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
   } else {

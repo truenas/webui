@@ -1,4 +1,4 @@
-<h1 mat-dialog-title> {{ title | translate }} </h1>
+<h1 mat-dialog-title [innerHTML]="title"></h1>
 
 <div mat-dialog-content>
   <span [innerHTML]="conf.message"></span>

@@ -2,6 +2,34 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_support = {
+  proactive: {
+    title: T('Proactive Support'),
+    instructions: T('Silver / Gold Coverage Customers can enable iXsystems Proactive Support. This \
+ automatically emails iXsystems when certain conditions occur on this TrueNAS system. The iX Support \
+ Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may \
+ have occurred on the system.'),
+    primary_contact: T('Primary Contact'),
+    pc_name_placeholder: T('Name'),
+    pc_title_placeholder: T('Title'),
+    pc_email_placeholder: T('Email'),
+    pc_phone_placeholder: T('Phone Number'),
+    pc_validation: [Validators.required],
+    pc_email_validation: [Validators. required, Validators.email],
+
+    secondary_contact: T('Secondary Contact'),
+    sec_name_placeholder: T('Name'),
+    sec_title_placeholder: T('Title'),
+    sec_email_placeholder: T('Email'),
+    sec_phone_placeholder: T('Phone Number'),
+    sec_email_validation: [Validators. required, Validators.email],
+
+    enable_checkbox_placeholder: T('Enable iXsystems Proactive Support'),
+    save_button: T('Save'),
+    snackbar_mesage: T('Successfully saved proactive support settings.'),
+    snackbar_action: T('Close'),
+    dialog_err: T('Error Saving Proactive Support Settings')
+  },
+
   username: {
     placeholder: T("Username"),
     tooltip: T(
@@ -28,19 +56,19 @@ export const helptext_system_support = {
 
   name: {
     placeholder: T("Name"),
-    tooltip: T("Enter the name of the contact person."), //DRAFT TOOLTIP
+    tooltip: T("Enter the name of the contact person."),
     validation: [Validators.required]
   },
 
   email: {
     placeholder: T("Email"),
-    tooltip: T("Enter the email of the contact person."), //DRAFT TOOLTIP
+    tooltip: T("Enter the email of the contact person."),
     validation: [Validators.required, Validators.email]
   },
 
   phone: {
     placeholder: T("Phone"),
-    tooltip: T("Enter the phone number of the contact person."), //DRAFT TOOLTIP
+    tooltip: T("Enter the phone number of the contact person."),
     validation: [Validators.required]
   },
 
@@ -105,8 +133,48 @@ export const helptext_system_support = {
     dialog_title: T('Update License'),
     license_placeholder: T('License'),
     save_button: T('Save License'),
-    success_message: T('License has been updated.'),
+    reload_dialog_title: T('Reload the page'),
+    reload_dialog_message: T('Reload the page for the license to take effect.'),
+    reload_dialog_action: T('Reload now'),
     error_dialog_title: T('Error Unlocking'),
-    snackbar_action: T('close')
-  }
+    snackbar_action: T('Close')
+  },
+
+  is_production_checkbox: {
+    placeholder: T('This is a production system'),
+    tooltip: T('Set system production state and optionally send initial debug.')
+  },
+
+  is_production_debug: {
+    placeholder: T('Send initial debug'),
+    tooltip: T('Send initial debug.')
+  },
+
+  is_production_submit: T('Update Status'),
+
+  is_production_error_dialog: {
+    title: T('Error Updating Production Status'),
+  },
+
+  is_production_snackbar: {
+    message: T('Production status successfully updated'),
+    action: T('Close')
+  },
+
+  FN_instructions: T('Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
+   target="_blank">FreeNAS issue tracker</a> \
+   to ensure the issue has not already been reported before \
+   filing a bug report or feature request. If an issue has \
+   already been created, add a comment to the existing issue. \
+   Please visit the <a href="http://www.ixsystems.com/storage/" target="_blank"> \
+   iXsystems storage page</a> \
+   for enterprise-grade storage solutions and support.'),
+
+  FN_Jira_message: T('<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank">\
+   Create a Jira account</a> to file an issue. Use a valid \
+   email address when registering to receive issue status updates.'),
+
+   submitBtn: T('Submit'),
+  
+   contactUs: T('Contact Support')
 };

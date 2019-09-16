@@ -1,18 +1,18 @@
-
 import {interval as observableInterval,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService, Theme } from '../../../services/theme/theme.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { SystemGeneralService } from '../../../services/system-general.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
+import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
 import { TranslateService } from '@ngx-translate/core';
@@ -21,14 +21,15 @@ import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/topbar';
 
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector: 'topbar',
-//  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
-styleUrls: ['./topbar.component.css'],
-templateUrl: './topbar.template.html'
+  styleUrls: ['./topbar.component.css'],
+  templateUrl: './topbar.template.html'
 })
-export class TopbarComponent implements OnInit, OnDestroy {
+export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy {
 
   @Input() sidenav;
   @Input() notificPanel;
@@ -55,18 +56,24 @@ export class TopbarComponent implements OnInit, OnDestroy {
   dirServicesStatus = [];
   showDirServicesIcon = false;
   exposeLegacyUI = false;
-
   ha_status_text: string;
   ha_disabled_reasons = [];
   ha_pending = false;
   is_ha = false;
+  upgradeWaitingToFinish = false;
+  pendingUpgradeChecked = false;
   sysName: string = 'FreeNAS';
   hostname: string;
+  public updateIsRunning = false;
+  public updateNotificationSent = false;
   private user_check_in_prompted = false;
+  public mat_tooltips = helptext.mat_tooltips;
+
+  protected dialogRef: any;
 
   constructor(
     public themeService: ThemeService,
-    public core: CoreService,
+    /*public core: CoreService,*/
     private router: Router,
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
@@ -74,11 +81,19 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private rest: RestService,
     public language: LanguageService,
     private dialogService: DialogService,
+    public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {}
+    protected loader: AppLoaderService, ) {
+      super();
+      this.sysGenService.updateRunningNoticeSent.subscribe(() => {
+        this.updateNotificationSent = true;
+        setTimeout(() => {
+          this.updateNotificationSent = false;
+        }, 900000);
+      });
+    }
 
   ngOnInit() {
     if (window.localStorage.getItem('is_freenas') === 'false') {
@@ -87,11 +102,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
+        this.isUpdateRunning();
       });
       this.sysName = 'TrueNAS';
     } else {
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
+      this.isUpdateRunning();
     }
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
@@ -117,7 +134,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
-
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
       if (this.is_ha) {
@@ -126,6 +142,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
       this.getDirServicesStatus();
+      this.isUpdateRunning();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -142,9 +159,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
     }, 2500);
 
-    this.ws.call('system.info').subscribe((res) => {
-      this.hostname = res.hostname;
+    this.core.register({
+     observerClass: this,
+     eventName: "SysInfo"
+    }).subscribe((evt: CoreEvent) => {
+      this.hostname = evt.data.hostname;
     });
+ 
+    this.core.emit({name: "SysInfoRequest", sender:this});
   }
 
   checkLegacyUISetting() {
@@ -162,6 +184,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
 
     this.continuosStreaming.unsubscribe();
+
+    this.core.unregister({observerClass:this});
   }
 
   setLang(lang) {
@@ -309,7 +333,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     }, err => {
-      console.log(err);
+      console.error(err);
     })
   }
 
@@ -388,6 +412,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.ha_status_text = helptext.ha_status_text_disabled;
       } else {
         this.ha_status_text = helptext.ha_status_text_enabled;
+        if (!this.pendingUpgradeChecked) {
+          this.checkUpgradePending();
+        }
       }
     });
   }
@@ -416,6 +443,38 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
   }
 
+  checkUpgradePending() {
+    this.ws.call('failover.upgrade_pending').subscribe((res) => {
+     this.pendingUpgradeChecked = true;
+      this.upgradeWaitingToFinish = res;
+      if(res) {
+        this.upgradePendingDialog();
+      };
+    });
+  }
+
+  upgradePendingDialog() {
+    this.dialogService.confirm(
+      T("Pending Upgrade"),
+      T("There is an upgrade waiting to finish."),
+      true, T('Continue')).subscribe(res => {
+        if (res) {
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+          this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+          this.dialogRef.componentInstance.disableProgressValue(true);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((success) => {
+            this.dialogRef.close(false);
+            console.info('success', success);
+            this.upgradeWaitingToFinish = false
+          });
+          this.dialogRef.componentInstance.failure.subscribe((failure) => {
+            this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+          });
+        }
+      });
+  }
+
   getDirServicesStatus() {
     let counter = 0;
     this.ws.call('activedirectory.get_state').subscribe((res) => {
@@ -435,5 +494,35 @@ export class TopbarComponent implements OnInit, OnDestroy {
         });
       });
     });
-  }
+  };
+
+  isUpdateRunning() {
+    let method;
+    this.is_ha ? method = 'failover.upgrade' : method = 'update.update';
+    this.ws.call('core.get_jobs', [[["method", "=", method], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res && res.length > 0) {
+          this.sysGenService.updateRunning.emit('true');
+          this.updateIsRunning = true;
+          if (!this.updateNotificationSent) {
+            this.showUpdateDialog();
+            this.updateNotificationSent = true;
+            setTimeout(() => {
+              this.updateNotificationSent = false;
+            }, 600000);
+          }      
+        } else {
+          this.sysGenService.updateRunning.emit('false');
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
+  };
+
+  showUpdateDialog() {
+    this.dialogService.confirm(helptext.updateRunning_dialog.title, 
+      helptext.updateRunning_dialog.message,
+      true, T('Close'), false, '', '', '', '', true);
+  };
 }

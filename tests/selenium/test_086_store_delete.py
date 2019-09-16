@@ -37,9 +37,8 @@ xpaths = {
 
 
 def test_01_nav_store_pool(browser):
-    test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
-    wait_on_element(browser, xpaths['navStorage'], script_name, test_name)
+    wait_on_element(browser, xpaths['navStorage'])
     # Click Storage menu
     browser.find_element_by_xpath(xpaths['navStorage']).click()
     # Click Pool submenu
@@ -57,13 +56,13 @@ def test_01_nav_store_pool(browser):
     # assert response
     assert "Pools" in element_text, element_text
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
 
 
 def test_02_wait_for_pool1_to_appear(browser):
-    test_name = sys._getframe().f_code.co_name
     xpath = xpaths['foldPoolTable']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath)
     assert wait, 'Loading pool table timeout'
     # get the ui element
     ui_element = browser.find_element_by_xpath(xpaths['foldPoolTable'])
@@ -71,11 +70,11 @@ def test_02_wait_for_pool1_to_appear(browser):
     # assert response
     assert pool1 in element_text, element_text
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
 
 
 def test_03_click_on_pool1_operation(browser):
-    test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
     element_present = is_element_present(browser, xpaths['poolID'])
     assert element_present, f'XPath Not Found: {xpaths["poolID"]}'
@@ -83,53 +82,47 @@ def test_03_click_on_pool1_operation(browser):
     element_present = is_element_present(browser, pool_xpath)
     assert element_present, f'XPath Not Found: {pool_xpath}'
     browser.find_element_by_xpath(pool_xpath).click()
-    wait_on_element(browser, xpaths['disconnectPool1'], script_name, test_name)
+    wait_on_element(browser, xpaths['disconnectPool1'])
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
     element_present = is_element_present(browser, pool_xpath)
     assert element_present, f'XPath Not Found: {xpaths["disconnectPool1"]}'
 
 
 def test_04_click_disconect_pool(browser):
-    test_name = sys._getframe().f_code.co_name
     browser.find_element_by_xpath(xpaths['disconnectPool1']).click()
-    wait = wait_on_element(
-        browser,
-        xpaths['pooldestroyCheckbox'],
-        script_name,
-        test_name
-    )
+    wait = wait_on_element(browser, xpaths['pooldestroyCheckbox'])
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
     assert wait is True, f'XPath Not Found: {xpaths["pooldestroyCheckbox"]}'
 
 
 def test_05_set_destroy_data_and_Confirm_press_export_disconnect(browser):
-    test_name = sys._getframe().f_code.co_name
     browser.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     browser.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
     element_present = is_element_present(browser, xpaths['confirmButton'])
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
     assert element_present, f'XPath Not Found: {xpaths["confirmButton"]}'
     browser.find_element_by_xpath(xpaths['confirmButton']).click()
 
 
 def test_06_close_disconnect_pool1_window(browser):
-    test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
-    wait = wait_on_element(
-        browser,
-        xpaths['closeButton'],
-        script_name,
-        test_name
-    )
+    wait = wait_on_element(browser, xpaths['closeButton'])
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
     assert wait is True, f'XPath Not Found: {xpaths["closeButton"]}'
     browser.find_element_by_xpath(xpaths['closeButton']).click()
 
 
 def test_07_looking_for_pool2(browser):
-    test_name = sys._getframe().f_code.co_name
     xpath = xpaths['topPoolTable']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath)
     assert wait, 'Loading pool table timeout'
     # get the ui element
     ui_element = browser.find_element_by_xpath(xpaths['topPoolTable'])
@@ -137,11 +130,11 @@ def test_07_looking_for_pool2(browser):
     # assert response
     assert pool2 in element_text, element_text
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
 
 
 def test_08_click_on_pool2_operation(browser):
-    test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
     element_present = is_element_present(browser, xpaths['poolID'])
     assert element_present, f'XPath Not Found: {xpaths["poolID"]}'
@@ -149,53 +142,47 @@ def test_08_click_on_pool2_operation(browser):
     element_present = is_element_present(browser, pool_xpath)
     assert element_present, f'XPath Not Found: {pool_xpath}'
     browser.find_element_by_xpath(pool_xpath).click()
-    wait_on_element(browser, xpaths['disconnectPool2'], script_name, test_name)
+    wait_on_element(browser, xpaths['disconnectPool2'])
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
     element_present = is_element_present(browser, pool_xpath)
     assert element_present, f'XPath Not Found: {xpaths["disconnectPool2"]}'
 
 
 def test_09_click_disconect_pool(browser):
-    test_name = sys._getframe().f_code.co_name
     browser.find_element_by_xpath(xpaths['disconnectPool2']).click()
-    wait = wait_on_element(
-        browser,
-        xpaths['pooldestroyCheckbox'],
-        script_name,
-        test_name
-    )
+    wait = wait_on_element(browser, xpaths['pooldestroyCheckbox'])
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
     assert wait is True, f'XPath Not Found: {xpaths["pooldestroyCheckbox"]}'
 
 
 def test_10_set_destroy_data_and_Confirm_press_export_disconnect(browser):
-    test_name = sys._getframe().f_code.co_name
     browser.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     browser.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
     element_present = is_element_present(browser, xpaths['confirmButton'])
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
     assert element_present, f'XPath Not Found: {xpaths["confirmButton"]}'
     browser.find_element_by_xpath(xpaths['confirmButton']).click()
 
 
 def test_11_close_disconect_pool2_window(browser):
-    test_name = sys._getframe().f_code.co_name
     # Wait for xpath to be available
-    wait = wait_on_element(
-        browser,
-        xpaths['closeButton'],
-        script_name,
-        test_name
-    )
+    wait = wait_on_element(browser, xpaths['closeButton'])
+    # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
     assert wait is True, f'XPath Not Found: {xpaths["closeButton"]}'
     browser.find_element_by_xpath(xpaths['closeButton']).click()
 
 
 def test_12_verify_that_there_is_no_pool(browser):
-    test_name = sys._getframe().f_code.co_name
     xpath = xpaths['noPool']
-    wait = wait_on_element(browser, xpath, script_name, test_name)
+    wait = wait_on_element(browser, xpath)
     assert wait, 'Loading pool table timeout'
     # get the ui element
     ui_element = browser.find_element_by_xpath(xpaths['noPool'])
@@ -203,11 +190,14 @@ def test_12_verify_that_there_is_no_pool(browser):
     # assert response
     assert 'No pools' in element_text, element_text
     # taking screenshot
+    test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
 
 
 def test_13_close_navStorage(browser):
     browser.find_element_by_xpath(xpaths['navStorage']).click()
+    test_name = sys._getframe().f_code.co_name
+    # taking screenshot
     test_name = sys._getframe().f_code.co_name
     take_screenshot(browser, script_name, test_name)
 

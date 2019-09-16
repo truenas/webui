@@ -124,6 +124,26 @@ export class CloudCredentialsFormComponent {
       ]
     },
     {
+      type: 'input',
+      name: 'region-S3',
+      placeholder: helptext.region_s3.placeholder,
+      tooltip: helptext.region_s3.tooltip,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          connective: 'AND',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }, {
+            name: 'advanced-S3',
+            value: true,
+           }]
+        }
+      ]
+    },
+    {
       type: 'checkbox',
       name: 'skip_region-S3',
       placeholder: helptext.skip_region_s3.placeholder,

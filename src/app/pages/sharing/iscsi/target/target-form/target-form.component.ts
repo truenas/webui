@@ -45,6 +45,28 @@ export class TargetFormComponent {
       tooltip: helptext_sharing_iscsi.target_form_tooltip_alias,
     },
     {
+      type: 'select',
+      name : 'mode',
+      placeholder : helptext_sharing_iscsi.target_form_placeholder_mode,
+      tooltip: helptext_sharing_iscsi.target_form_tooltip_mode,
+      options: [
+        {
+          label: 'iSCSI',
+          value: 'ISCSI'
+        },
+        {
+          label: 'Fibre Channel',
+          value: 'FC'
+        },
+        {
+          label: 'Both',
+          value: 'BOTH'
+        }
+      ],
+      value: 'ISCSI',
+      isHidden: true,
+    },
+    {
       type: 'array',
       name : "groups",
       initialCount : 1,
@@ -138,7 +160,15 @@ export class TargetFormComponent {
               protected entityFormService: EntityFormService,
               protected loader: AppLoaderService,
               public translate: TranslateService,
-              protected ws: WebSocketService) {}
+              protected ws: WebSocketService) {
+    this.ws.call('system.info').subscribe(
+      (res) => {
+        if (res.license && res.license.features.indexOf('FIBRECHANNEL') > -1) {
+          _.find(this.fieldConfig, {name: 'mode'}).isHidden = false;
+        }
+      }
+    )
+  }
 
   preInit() {
     this.arrayControl = _.find(this.fieldConfig,{'name' : 'groups'});
