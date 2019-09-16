@@ -57,14 +57,14 @@ export const helptext_system_cloudcredentials = {
  target="_blank">Simple Storage Service Website Endpoints</a>.'
     )
   },
+
   region_s3: {
     placeholder: T("Region"),
-    tooltip: T('Collection of AWS resources in a geographic area. Enter a \
+    tooltip: T('<a href="https://docs.aws.amazon.com/general/latest/gr/rande-manage.html" \
+ target="_blank">AWS resources in a geographic area</a>. Enter a \
  <a href="https://rclone.org/s3/#s3-region" target="_blank">region name</a> \
  for the credential to find Amazon buckets created in that region. Leave \
- empty to use the default <i>us-east-1</i> region. See the \
- <a href="https://docs.aws.amazon.com/general/latest/gr/rande-manage.html" target="_blank">Amazon Regions documentation</a> \
- for more details.'),
+ empty to use the default <i>us-east-1</i> region.'),
   },
 
   skip_region_s3: {
