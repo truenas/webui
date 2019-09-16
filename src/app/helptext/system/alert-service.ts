@@ -191,7 +191,12 @@ export default {
  target="_blank">http://snmplabs.com/</a>'),
 
     SNMPTrap_community_placeholder: T('SNMP Community'),
-    SNMPTrap_community_tooltip: T(''),
+    SNMPTrap_community_tooltip: T('Enter the network community string. \
+ The community string acts like a user ID or password. A user with \
+ the correct community string has access to network information. The \
+ default is <i>public</i>. For more information, see \
+ <a href="https://community.helpsystems.com/knowledge-base/intermapper/snmp/snmp-community-strings/" \
+ target="_blank">What is an SNMP Community String?</a>.'),
 
     VictorOps_api_key_placeholder: T('API Key'),
     VictorOps_api_key_tooltip: T('Enter or paste the <a\
