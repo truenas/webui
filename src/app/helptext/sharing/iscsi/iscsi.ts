@@ -172,8 +172,7 @@ export const helptext_sharing_iscsi = {
   extent_placeholder_disk: T("Device"),
   extent_tooltip_disk: T(
     "Only appears if <i>Device</i> is selected. Select the\
- unformatted disk, controller, zvol snapshot, or\
- HAST device."
+ unformatted disk, controller, or zvol snapshot"
   ),
   extent_validators_disk: [Validators.required],
 
