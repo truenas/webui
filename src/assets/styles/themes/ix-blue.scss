@@ -1270,12 +1270,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
-
-
   app-tn-sys-info {
     .tn-sys-info-line {
       margin-top: 10px;
-      height: 40px;
 
       h4 {
         margin-bottom: 3px;
@@ -1299,10 +1296,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
-  @media screen and (min-width: 601px) and (max-width: 750px)  {
+  @media screen and (min-width: 600px) and (max-width: 749px)  {
     .tn-sys-image {
       position: relative;
-      left: 25px;
+      left: 35px;
+      // max-width: 75%;
     }
   }
 
@@ -1327,6 +1325,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @media screen and (max-width: 599px) {
       .mat-card {
         top: 25px;
+        width: auto;
       }
     }
   }
