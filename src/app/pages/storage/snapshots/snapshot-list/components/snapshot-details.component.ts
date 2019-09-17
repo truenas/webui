@@ -1,5 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
+import * as moment from 'moment';
 import helptext from "app/helptext/storage/snapshots/snapshots";
 import {
   EntityAction,
@@ -18,6 +19,7 @@ import { SnapshotListComponent } from "../snapshot-list.component";
 })
 export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string }> {
   public readonly entityName: "snapshot";
+  public locale: string;
 
   @Input() public config: { name: string };
   @Input() public parent: EntityTableComponent & { conf: SnapshotListComponent };
@@ -28,16 +30,20 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
   constructor(private _ws: WebSocketService, private _router: Router) {}
 
   public ngOnInit(): void {
-    this._ws
+    this._ws.call('system.general.config').subscribe((res) => {
+      this.locale = res.language;
+      moment.locale(this.locale);
+
+      this._ws
       .call("zfs.snapshot.query", [[["id", "=", this.config.name]]])
       .pipe(
         map(response => ({
           ...response[0].properties,
           name: this.config.name,
-          creation:  new Date(response[0].properties.creation.parsed.$date).toLocaleString()
+          creation:  moment(response[0].properties.creation.parsed.$date).format('LLL')
         }))
       )
-      .subscribe(snapshot => {
+      .subscribe(snapshot => { console.log(snapshot)
         this.details = [
           {
             label: "Date created",
@@ -53,6 +59,8 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
           }
         ];
       });
+    });
+
 
     this.actions = this.parent.conf.getActions();
   }

@@ -39,6 +39,7 @@ export class BootEnvironmentListComponent {
   public header: string;
   public scrub_msg: string;
   public scrub_interval: number;
+  public locale: string;
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name', always_display: true},
@@ -103,6 +104,10 @@ export class BootEnvironmentListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
+    this.ws.call('system.general.config').subscribe((res) => {
+      this.locale = res.language;
+      moment.locale(this.locale);
+    });
   }
 
   isActionVisible(actionId: string, row: any) {
@@ -204,7 +209,7 @@ export class BootEnvironmentListComponent {
   updateBootState(): void {
     this.ws.call("boot.get_state").subscribe(wres => {
       if (wres.scan.end_time) {
-        this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
+        this.scrub_msg = moment(wres.scan.end_time.$date).format("LL, LTS");
       } else {
         this.scrub_msg = "Never";
       }
