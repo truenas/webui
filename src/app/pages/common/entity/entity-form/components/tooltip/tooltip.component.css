@@ -123,27 +123,53 @@ div.tooltiptext.right{
   min-height:64px;
 }
 
-div.tooltiptext.above{
+div.tooltiptext.above-left{
+  bottom:42px !important;
+  right:-42px !important;
+  min-height:64px;
+}
+
+div.tooltiptext.above,
+div.tooltiptext.above-right{
   bottom:42px !important;
   left:-42px !important;
   min-height:64px;
 }
 
-div.tooltiptext.below{
+div.tooltiptext.below-left{
+  top:16px !important;
+  right:-42px !important;
+  min-height:64px;
+}
+
+div.tooltiptext.below,
+div.tooltiptext.below-right{
   top:16px !important;
   left:-42px !important;
   min-height:64px;
 }
 
 /* Arrow */
+div.tooltiptext.above-right:before,
 div.tooltiptext.above:before{
   bottom: -8px;
-  left: 42px; /*calc(50% - 10px);*/
+  left: 42px; 
 }
 
-div.tooltiptext.below:before{
+div.tooltiptext.above-left:before{
+  bottom: -8px;
+  right: 42px; 
+}
+
+div.tooltiptext.below:before,
+div.tooltiptext.below-right:before{
   top: -8px;
-  left: 42px; /*calc(50% - 10px);*/
+  left: 42px; 
+}
+
+div.tooltiptext.below-left:before{
+  top: -8px;
+  right: 42px; 
 }
 
 div.tooltiptext.left:before{
@@ -160,6 +186,10 @@ div.tooltiptext.right:before{
   display:none;
 }
 
+div.tooltiptext:before{
+  z-index: -1;
+}
+
 .tooltip-container{
   position:relative;
   filter: drop-shadow(0 4px 4px rgba(0,0,0, 0.5));
@@ -170,4 +200,8 @@ div.tooltiptext.right:before{
   position:fixed;
 }
 
-
+.tooltip-message{
+  z-index: 3;
+  position: relative;
+  background: var(--primary);
+}
