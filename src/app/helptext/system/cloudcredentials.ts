@@ -62,9 +62,11 @@ export const helptext_system_cloudcredentials = {
     placeholder: T("Region"),
     tooltip: T('<a href="https://docs.aws.amazon.com/general/latest/gr/rande-manage.html" \
  target="_blank">AWS resources in a geographic area</a>. Leave empty to \
- automatically detect the correct public region for the bucket. Enter a \
- private region name to allow the credential to find Amazon buckets \
- created in that region.'),
+ automatically detect the correct public region for the bucket. Entering \
+ a private region name allows interacting with Amazon buckets created in \
+ that region. For example, discovering buckets created in the eastern \
+ <a href="https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/whatis.html" target="_blank">AWS GovCloud</a> \
+ requires entering <i>us-gov-east-1</i> for the <i>Region</i>.'),
   },
 
   skip_region_s3: {
