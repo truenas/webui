@@ -1,28 +1,22 @@
-<mat-card class="p-0">
-  <mat-card-title class="mat-bg-primary m-0">
-  	 <div class="card-title-text">
-  	 	{{"Shell" | translate}}
-  	 </div>
-  </mat-card-title>
+<div
+  id="terminal"
+  [ngStyle]="{'font-size' : font_size+'px'}"
+  #terminal
+  (window:resize)="onResize($event)"
+  (contextmenu)="onRightClick()"
+  ></div>
 
-	<div
-		id="terminal"
-		[ngStyle]="{'font-size' : font_size+'px'}"
-		#terminal
-		(window:resize)="onResize($event)"
-		(contextmenu)="onRightClick()"
-	></div>
-
-	<mat-card-content *ngIf="shellConnected; else Reconnect">
-		<!-- <mat-divider class="mb-1"></mat-divider> -->
-		{{"Set font size" | translate}}:
-		<mat-slider min="10" max="20" step="1" [(ngModel)]="font_size"></mat-slider>
-		<button mat-button class="mat-basic" (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Restore default" | translate}}</button>
-		<tooltip class="shellTooltip" position="left" [message]=usage_tooltip></tooltip>
-	</mat-card-content>
-	<ng-template #Reconnect>
-		<mat-card-content>
-			<button mat-button color="primary" (click)="reconnect()">{{"Reconnect" | translate}}</button>
-		</mat-card-content>
-	</ng-template>
+<mat-card class="shell p-0">
+  <mat-card-content *ngIf="shellConnected; else Reconnect">
+    <!-- <mat-divider class="mb-1"></mat-divider> -->
+    {{"Set font size" | translate}}:
+    <mat-slider min="10" max="20" step="1" [(ngModel)]="font_size"></mat-slider>
+    <button mat-button class="mat-basic" (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Restore default" | translate}}</button>
+    <tooltip class="shellTooltip" position="top" [message]=usage_tooltip></tooltip>
+  </mat-card-content>
+  <ng-template #Reconnect>
+    <mat-card-content>
+      <button mat-button color="primary" (click)="reconnect()">{{"Reconnect" | translate}}</button>
+    </mat-card-content>
+  </ng-template>
 </mat-card>

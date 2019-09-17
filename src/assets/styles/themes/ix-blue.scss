@@ -1551,4 +1551,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     padding-left: 15px;
   }
 
+  //Make terminal inherit colors from parent
+  .terminal, .terminal .xterm-viewport{
+    background-color: inherit;
+    color: inherit;
+    height: inherit;
+  }
+
+  .terminal:not(.focus) .terminal-cursor{
+    @include variable(outline-color, --primary, $primary);
+  }
+
+  .terminal.xterm-cursor-style-block.focus:not(.xterm-cursor-blink-on) .terminal-cursor{ 
+    @include variable(background-color, --primary, $primary);
+  }
+
  } // end of ix theme

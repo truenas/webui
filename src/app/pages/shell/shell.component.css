@@ -1,13 +1,44 @@
 .shellTooltip {
   position: absolute !important;
+  top: calc(50% - 10px);
   right: 20px;
 }
 
-#terminal {
-  margin-bottom: 10px;
+#terminal { 
   overflow: hidden;
+  width: calc(100% - 16px);
+  height:calc(100vh - 88px - 120px); /* viewport - topbar&breadcrumb - toolbar */
+  position: absolute;
+  top: 88px;
+  right:0;
+  background-color: var(--bg1);
+  color: var(--fg1);
 }
 
-mat-card {
-  min-width: 700px;
+.has-footer #terminal{
+  height:calc(100vh - 104px - 120px - 45px); /* viewport - topbar&breadcrumb - footer */
 }
+
+.shell.mat-card {
+  min-width: 700px;
+  min-height:64px;
+  width:calc(100% - 64px);
+  margin: 32px;
+  position:absolute;
+  bottom:0;
+}
+
+.has-footer .shell.mat-card {
+  bottom:px;
+}
+
+.shell.mat-card .mat-card-content{
+  padding:8px 16px;
+}
+
+.mat-card #terminal .terminal,
+.mat-card #terminal .terminal .xterm-viewport{
+  background-color: var(--bg1) !important;
+  color: var(--fg2) !important;
+}
+

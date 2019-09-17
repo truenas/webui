@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from "@angular/core";
+import { Component, ElementRef, Input, OnChanges, OnDestroy, AfterViewInit, SimpleChange, ViewChild } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import { TranslateService } from "@ngx-translate/core";
 import { ShellService, WebSocketService } from "../../services/";
@@ -11,7 +11,7 @@ import { CopyPasteMessageComponent } from "./copy-paste-message.component";
   styleUrls: ['./shell.component.css'],
   providers: [ShellService],
 })
-export class ShellComponent implements OnInit, OnChanges, OnDestroy {
+export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
   //xter container
@@ -30,7 +30,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   clearLine = "\u001b[2K\r"
   public shellConnected: boolean = false;
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
@@ -40,6 +40,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       });
       this.initializeTerminal();
     });
+    this.overflowParent('hidden');
   }
 
   ngOnDestroy() {
@@ -49,10 +50,16 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     if(this.shellSubscription){
       this.shellSubscription.unsubscribe();
     }
+    this.overflowParent('auto');
   }
 
   onResize(event) {
-    // this.resizeTerm();
+    this.fitTerm();
+  }
+
+  overflowParent(rule: string){
+    let target:HTMLElement = document.querySelector('.rightside-content-hold');
+    target.style['overflow-y'] = rule;
   }
 
   resetDefault() {
@@ -62,12 +69,14 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
   }) {
+    //this.fitTerm();
+    //this.xterm.fit();
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
       // reprint prompt
       if (propName === 'prompt' && this.xterm != null) {
-        this.xterm.write(this.clearLine + this.prompt)
+        this.xterm.write(this.clearLine + this.prompt);
       }
     }
   }
@@ -79,42 +88,30 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   initializeTerminal() {
-    const domHeight = document.body.offsetHeight;
-    const domWidth = document.body.offsetWidth;
-    let colNum = (domWidth * 0.75 - 104) / 10;
-    if (colNum < 80) {
-      colNum = 80;
-    }
-    let rowNum = (domHeight * 0.75 - 104) / 21;
-    if (rowNum < 10) {
-      rowNum = 10;
-    }
-
     this.xterm = new (<any>window).Terminal({
-      'cursorBlink': false,
+      'cursorBlink': true,
       'tabStopWidth': 8,
-      // 'cols': parseInt(colNum.toFixed(),10),
-      // 'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement, true);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
+    this.fitTerm();
   }
 
-  resizeTerm(){
-    const domHeight = document.body.offsetHeight;
-    const domWidth = document.body.offsetWidth;
-    let colNum = (domWidth * 0.75 - 104) / 10;
-    if (colNum < 80) {
-      colNum = 80;
-    }
-    let rowNum = (domHeight * 0.75 - 104) / 21;
-    if (rowNum < 10) {
-      rowNum = 10;
-    }
-    this.xterm.resize(colNum,rowNum);
-    return true;
+  getTermDimensions(){
+    const target:HTMLElement = document.querySelector('#terminal'); 
+    return {width: target.offsetWidth, height: target.offsetHeight};
+  }
+
+  fitTerm(){
+    const dimensions = this.getTermDimensions();
+    const vp:HTMLElement = document.querySelector('.terminal .xterm-viewport'); 
+    const sel:HTMLElement = document.querySelector('.terminal .xterm-selection'); 
+
+    this.xterm.fit();
+    sel.style.height = dimensions.height.toString() + 'px';
+    vp.style.height = dimensions.height.toString() + 'px';
   }
 
   initializeWebShell(res: string) {
