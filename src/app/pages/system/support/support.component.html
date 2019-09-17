@@ -1,5 +1,5 @@
 <mat-card class="form-card">
-  <div class="mat-content">
+  <div class="mat-content" fxLayout="column">
     <div id="top-row" class="container" fxLayout="row">
       <div id="top-left" fxFlex="50%">
           <app-fn-sys-info
@@ -35,10 +35,10 @@
         </div>
       </div>
     </div>
-    <div *ngIf="!is_freenas">
+    <div *ngIf="!is_freenas" fxLayout="row">
       <app-proactive></app-proactive>
     </div>
-    <div>
+    <div fxLayout="row">
       <app-fn-support *ngIf="is_freenas; else TNsupport"></app-fn-support>
       <ng-template #TNsupport>
         <app-tn-support></app-tn-support>
