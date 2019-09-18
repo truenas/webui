@@ -43,7 +43,7 @@
           <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="isCustActionVisible" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
         </span>
       </mat-card-actions>
-      <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error_reason"></div></mat-error>
+      <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
     </div>
   </form>
 </mat-card>
