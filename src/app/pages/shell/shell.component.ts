@@ -40,19 +40,6 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (value !== undefined) {
           this.xterm.write(value);
         } 
-
-        //Counteract bizarre resize after exiting vi
-        let dimensions = this.getTermDimensions();
-        if(dimensions.height !== this.lastHeight){
-          this.fitTerm();
-          let currentRowCount = this.getRowCount() - 2; // Leave a couple of rows for the prompt
-          if(this.xterm && this.xterm.parser._terminal.buffer.scrollBottom < currentRowCount){
-            this.xterm.parser._terminal.buffer.scrollBottom = currentRowCount
-            this.xterm.write(this.prompt);
-          }
-
-        }
-
       });
       this.initializeTerminal();
     });
@@ -85,7 +72,6 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
   }){
-    this.fitTerm();
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
@@ -116,6 +102,15 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.xterm._initialized = true;
     this.fitTerm();
     this.rowCount = this.getRowCount(); 
+    this.xterm.on('key',(key, e) =>{
+      //console.log(e);
+
+      if(e.key == "Enter"){
+        this.resetScrollBottom();
+      } else {
+      }
+
+    });
   }
 
   getRowCount(){
@@ -123,11 +118,9 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
     return rows.length;
   }
 
-  resetDimensions(){
-    this.fitTerm();
-    
-    this.xterm.write('stty rows ' + this.rows + ' cols ' + this.cols + ' 150');
-    this.xterm.write(this.clearLine + this.prompt);
+  resetScrollBottom(){
+    this.xterm.parser._terminal.buffer.scrollBottom = this.getRowCount() - 2;
+    this.xterm.write(this.prompt);
   }
 
   getTermDimensions(){
@@ -158,6 +151,7 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   fitTerm(){
+    console.log("Fitting to parent...");
     const dimensions = this.getTermParentDimensions();
     const vp:HTMLElement = document.querySelector('.terminal .xterm-viewport'); 
     const sel:HTMLElement = document.querySelector('.terminal .xterm-selection'); 
