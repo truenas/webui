@@ -17,13 +17,16 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   //xter container
   @ViewChild('terminal', { static: true}) container: ElementRef;
   // xterm variables
-  cols: string;
-  rows: string;
+  cols: number;
+  rows: number;
+  rowCount: number;
   font_size = 14;
   public token: any;
   public xterm: any;
   public resize_terminal = true;
   private shellSubscription: any;
+  public lastWidth: number;
+  public lastHeight: number;
 
   public usage_tooltip = helptext.usage_tooltip;
 
@@ -36,7 +39,20 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
         if (value !== undefined) {
           this.xterm.write(value);
+        } 
+
+        //Counteract bizarre resize after exiting vi
+        let dimensions = this.getTermDimensions();
+        if(dimensions.height !== this.lastHeight){
+          this.fitTerm();
+          let currentRowCount = this.getRowCount() - 2; // Leave a couple of rows for the prompt
+          if(this.xterm && this.xterm.parser._terminal.buffer.scrollBottom < currentRowCount){
+            this.xterm.parser._terminal.buffer.scrollBottom = currentRowCount
+            this.xterm.write(this.prompt);
+          }
+
         }
+
       });
       this.initializeTerminal();
     });
@@ -68,9 +84,8 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
-  }) {
-    //this.fitTerm();
-    //this.xterm.fit();
+  }){
+    this.fitTerm();
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
@@ -88,24 +103,62 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   initializeTerminal() {
+    this.setTermDimensions();
     this.xterm = new (<any>window).Terminal({
       'cursorBlink': true,
       'tabStopWidth': 8,
-      'focus': true
+      'focus': true,
+      'cols': this.cols,
+      'rows': this.rows
     });
     this.xterm.open(this.container.nativeElement, true);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
     this.fitTerm();
+    this.rowCount = this.getRowCount(); 
+  }
+
+  getRowCount(){
+    const rows = document.querySelectorAll('.terminal .xterm-rows > div'); 
+    return rows.length;
+  }
+
+  resetDimensions(){
+    this.fitTerm();
+    
+    this.xterm.write('stty rows ' + this.rows + ' cols ' + this.cols + ' 150');
+    this.xterm.write(this.clearLine + this.prompt);
   }
 
   getTermDimensions(){
+    const target:HTMLElement = document.querySelector('.terminal .xterm-viewport'); 
+    return {width: target.offsetWidth, height: target.offsetHeight};
+  }
+
+  getTermParentDimensions(){
     const target:HTMLElement = document.querySelector('#terminal'); 
     return {width: target.offsetWidth, height: target.offsetHeight};
   }
 
+  setTermDimensions(c?: number, r?: number){
+    if(!c || !r){
+      let dimensions = this.getTermParentDimensions();
+      const cols = Math.floor(dimensions.width / (this.font_size / 2));
+      const rows = Math.floor(dimensions.height / this.font_size);
+      this.cols = cols;
+      this.rows = rows;
+    } else {
+      this.cols = c;
+      this.rows = r;
+    }
+
+    if(this.xterm){
+      this.xterm.resize(this.cols, this.rows);
+    }
+  }
+
   fitTerm(){
-    const dimensions = this.getTermDimensions();
+    const dimensions = this.getTermParentDimensions();
     const vp:HTMLElement = document.querySelector('.terminal .xterm-viewport'); 
     const sel:HTMLElement = document.querySelector('.terminal .xterm-selection'); 
 
