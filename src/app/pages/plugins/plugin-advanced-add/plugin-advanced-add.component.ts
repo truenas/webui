@@ -1120,10 +1120,34 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
             }
           }
         }
+        this.getPluginDefaults();
       },
       (res) => {
         new EntityUtils().handleError(this, res);
       });
+  }
+
+  getPluginDefaults() {
+    // get defaults of plugin
+    this.ws.call('plugin.defaults', [{
+      plugin: this.plugin_name,
+      plugin_repository: this.pluginRepository,
+      refresh: false
+    }]).subscribe((defaults) => {
+      for (let i in defaults.properties) {
+        if (this.formGroup.controls[i]) {
+          if (_.indexOf(this.TFfields, i) > -1) {
+            defaults.properties[i] = defaults.properties[i] == '1' ? true : false;
+          }
+          if (_.indexOf(this.OFfields, i) > -1) {
+            defaults.properties[i] = defaults.properties[i] == 'on' ? true : false;
+          }
+          this.formGroup.controls[i].setValue(defaults.properties[i]);
+        }
+      }
+    }, (err) => {
+      console.log(err);
+    });
   }
 
   ngAfterViewInit() {
