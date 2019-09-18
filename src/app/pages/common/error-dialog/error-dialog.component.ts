@@ -37,7 +37,9 @@ export class ErrorDialog {
       messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
       btPanel.setAttribute('style', 'width: 750px; max-height: 400px');
       btPanel.style.height = tracebackHeight;
-      txtarea.style.height = tracebackHeight;
+      setTimeout(() => {
+        txtarea.style.height = tracebackHeight;
+      }, 300);
     } else {
       dialog[dialog.length-1].removeAttribute('style');
       title.removeAttribute('style');
