@@ -1148,33 +1148,28 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       this.updateInterface();
     });
 
-    this.ws.call("jail.query", [
-      [
-        ["host_hostuuid", "=", "default"]
-      ]
-    ]).subscribe(
+    this.jailService.getDefaultConfiguration().subscribe(
     (res) => {
-      for (let i in res[0]) {
+      for (let i in res) {
         if (this.formGroup.controls[i]) {
-          if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
-            // this.formGroup.controls[i].setValue('');
+          if ((i == 'ip4_addr' || i == 'ip6_addr') && res[i] == 'none') {
             continue;
           }
           if (_.indexOf(this.TFfields, i) > -1) {
-            if (res[0][i] == '1') {
-              res[0][i] = true;
+            if (res[i] == '1') {
+              res[i] = true;
             } else {
-              res[0][i] = false;
+              res[i] = false;
             }
           }
           if (_.indexOf(this.OFfields, i) > -1) {
-            if (res[0][i] == 'on') {
-              res[0][i] = true;
+            if (res[i] == 'on') {
+              res[i] = true;
             } else {
-              res[0][i] = false;
+              res[i] = false;
             }
           }
-          this.formGroup.controls[i].setValue(res[0][i]);
+          this.formGroup.controls[i].setValue(res[i]);
         }
       }
     },
