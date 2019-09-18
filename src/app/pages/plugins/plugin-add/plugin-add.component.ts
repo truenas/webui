@@ -62,7 +62,7 @@ export class PluginAddComponent implements OnInit {
       name: 'nat',
       placeholder: helptext.nat_placeholder,
       tooltip: helptext.nat_tooltip,
-      value: true,
+      value: false,
     },
     {
       type: 'select',
@@ -378,6 +378,9 @@ export class PluginAddComponent implements OnInit {
             }
             this.formGroup.controls[i].setValue(defaults.properties[i]);
           }
+        }
+        if (!defaults.properties.hasOwnProperty('dhcp') && !defaults.properties.hasOwnProperty('nat')) {
+          this.formGroup.controls['nat'].setValue(true);
         }
       }, (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);
