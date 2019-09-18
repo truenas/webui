@@ -179,9 +179,9 @@ export default {
     SNMPTrap_v3_authprotocol_placeholder: T('Authentication Protocol'),
     SNMPTrap_v3_authprotocol_tooltip: T('Authentication protocol \
  used to authenticate messages sent on behalf of the specified \
- <i>Username</i>. Supported authentication protocols are shown at \
+ <i>Username</i>. Here is a \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
- target="_blank">http://snmplabs.com/</a>.'),
+ target="_blank">list of supported authentication protocols</a>.'),
 
     SNMPTrap_v3_privprotocol_placeholder: T('Encryption Protocol'),
     SNMPTrap_v3_privprotocol_tooltip: T('Encryption protocol \
