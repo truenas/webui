@@ -151,7 +151,6 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   fitTerm(){
-    console.log("Fitting to parent...");
     const dimensions = this.getTermParentDimensions();
     const vp:HTMLElement = document.querySelector('.terminal .xterm-viewport'); 
     const sel:HTMLElement = document.querySelector('.terminal .xterm-selection'); 
