@@ -1,11 +1,18 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2019-09-19 19:52+0000\n"
+"Last-Translator: Weblate Admin <yifeiding@theunspeakble.com>\n"
+"Language-Team: Chinese (Simplified) <https://www.theunspeakble.com/weblate/"
+"projects/freenas-webui/master/zh_Hans/>\n"
+"Language: zh-hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 3.8\n"
 
 msgid " Dataset"
-msgstr ""
+msgstr " 数据集"
 
 msgid " First vdev has "
 msgstr ""
@@ -1603,7 +1610,7 @@ msgid "Browse to the keytab file to upload."
 msgstr ""
 
 msgid "Browse to the operating system installer image file."
-msgstr "浏览操作系统安装镜像文件"
+msgstr "浏览操作系统安装镜像文件。"
 
 msgid ""
 "Browse to the path to be copied. Path lengths cannot                be "
@@ -1877,7 +1884,7 @@ msgid "Choices are <i>Minimum, Normal, or Debug</i>."
 msgstr "可以从<i>最小，正常，或 Debug</i>中选择。"
 
 msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
-msgstr "可以从<i>无，自动，CHAP，</i> 或 <i>Mutual CHAP</i>中选择"
+msgstr "可以从<i>无，自动，CHAP，</i> 或 <i>Mutual CHAP</i>中选择。"
 
 msgid ""
 "Choose <a                 href=\"--docurl--/tasks.html#rsync-module-mode\"  "
@@ -1919,7 +1926,7 @@ msgid "Choose a DNS provider and configure any required authenticator attributes
 msgstr ""
 
 msgid "Choose a color scheme."
-msgstr "选择颜色主题"
+msgstr "选择颜色主题。"
 
 msgid ""
 "Choose a dataset on the destination system where snapshots are stored. "
@@ -2049,7 +2056,7 @@ msgid ""
 msgstr "选择用于Jail操作系统的FreeBSD发行版。已下载的发行版会被标注为<b>(fetched)</b>。"
 
 msgid "Choose the VM operating system type."
-msgstr "选择虚拟机操作系统类型"
+msgstr "选择虚拟机操作系统类型。"
 
 msgid ""
 "Choose the account type: <i>PERSONAL</i>, <i>BUSINESS</i>, or  <a "
@@ -2102,11 +2109,10 @@ msgid ""
 "  take disks offline. Avoid scheduling S.M.A.R.T. tests                "
 "simultaneously with scrub or resilver operations."
 msgstr ""
-"选择测试类型。See <a                "
-"href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
-"in\"                target=\"_blank\">smartctl(8)</a> for descriptions of   "
-"             each type. 一些类型会降低性能或使磁盘下线。避免安排S.M.A.R.T. "
-"测试和数据清理或resliver操作同时运行"
+"选择测试类型。See <a                href=\"https://www.smartmontools.org/browser/"
+"trunk/smartmontools/smartctl.8.in\"                target=\"_blank\""
+">smartctl(8)</a> for descriptions of                each type. "
+"一些类型会降低性能或使磁盘下线。避免安排S.M.A.R.T. 测试和数据清理或resliver操作同时运行。"
 
 msgid ""
 "Choose the type of filesystem on the disk. Refer to the guide section on <a "
@@ -2187,7 +2193,7 @@ msgid "Cloud Sync Tasks"
 msgstr "云同步任务"
 
 msgid "Cloud sync has started."
-msgstr "云同步已启动"
+msgstr "云同步已启动。"
 
 msgid "Cloud sync stopped."
 msgstr ""
@@ -2265,13 +2271,13 @@ msgid ""
 msgstr ""
 
 msgid "Commands to run in the system environment after a jail is stopped."
-msgstr "在一个Jail被停止后运行于系统环境中的命令"
+msgstr "在一个Jail被停止后运行于系统环境中的命令。"
 
 msgid "Commands to run in the system environment before a jail is started."
-msgstr "在一个Jail被启动前运行于系统环境中的命令"
+msgstr "在一个Jail被启动前运行于系统环境中的命令。"
 
 msgid "Commands to run in the system environment before a jail is stopped."
-msgstr "在一个Jail被停止前运行于系统环境中的命令"
+msgstr "在一个Jail被停止前运行于系统环境中的命令。"
 
 msgid "Comment"
 msgstr "评论"
@@ -2549,10 +2555,10 @@ msgid "Create or Choose Block Device"
 msgstr ""
 
 msgid "Create or Import Pool"
-msgstr "创建或导入存储池。"
+msgstr "创建或导入存储池"
 
 msgid "Create or Import pool"
-msgstr "创建或导入存储池。"
+msgstr "创建或导入存储池"
 
 msgid ""
 "Creates dataset snapshots when there are no changes. Set to support "
@@ -2891,10 +2897,10 @@ msgid "Description (optional)."
 msgstr ""
 
 msgid "Description of the VLAN."
-msgstr "VLAN描述"
+msgstr "VLAN描述。"
 
 msgid "Description of the lagg interface."
-msgstr "链路聚合接口描述"
+msgstr "链路聚合接口描述。"
 
 msgid "Destination"
 msgstr "目标"
@@ -3162,7 +3168,7 @@ msgid "EDIT ACL"
 msgstr ""
 
 msgid "EULA"
-msgstr ""
+msgstr "最终用户许可协议"
 
 msgid "Edit"
 msgstr "编辑"
@@ -3261,7 +3267,7 @@ msgid "Enable TPC"
 msgstr "启用TPC"
 
 msgid "Enable Time Machine backups on this share."
-msgstr "在这个共享上启用时间机器备份"
+msgstr "在这个共享上启用时间机器备份。"
 
 msgid ""
 "Enable Unix privileges supported by OSX 10.5 and higher. Do not enable this "
@@ -3613,7 +3619,7 @@ msgid "Enter a password for the User. Must be between 12 and 16 characters."
 msgstr ""
 
 msgid "Enter a password of at least eight characters."
-msgstr "输入一个最低八位字符的密码"
+msgstr "输入一个最低八位字符的密码。"
 
 msgid ""
 "Enter a port to bind <a "
@@ -3745,10 +3751,10 @@ msgid ""
 msgstr ""
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
-msgstr "输入IPv4地址。覆盖DHCP分配的默认网关"
+msgstr "输入IPv4地址。这将会覆盖DHCP分配的默认网关。"
 
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
-msgstr "输入IPv6地址。覆盖DHCP分配的默认网关"
+msgstr "输入一个IPv6地址。这将会覆盖DHCP分配的默认网关。"
 
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
@@ -3919,7 +3925,7 @@ msgid ""
 msgstr ""
 
 msgid "Enter the IP address of the gateway."
-msgstr "输入网关的IP地址"
+msgstr "输入网关的IP地址。"
 
 msgid "Enter the IP address or hostname for SNMP UPS."
 msgstr "输入用于SNMP UPS的IP地址或域名。"
@@ -3958,7 +3964,7 @@ msgid ""
 msgstr ""
 
 msgid "Enter the S3 username."
-msgstr "输入S3的用户名"
+msgstr "输入S3的用户名。"
 
 msgid "Enter the SSH Port of the remote system."
 msgstr "输入远程系统的SSH端口。"
@@ -3967,7 +3973,7 @@ msgid "Enter the TCP port which provides the S3 service."
 msgstr ""
 
 msgid "Enter the administrator account password."
-msgstr "输入管理员账户密码"
+msgstr "输入管理员账户密码。"
 
 msgid "Enter the administrator password to authorize this operation."
 msgstr ""
@@ -4202,7 +4208,7 @@ msgid "Error Upgrading Pool "
 msgstr "升级存储池错误 "
 
 msgid "Error checking for updates."
-msgstr "检查更新错误"
+msgstr "检查更新时出错。"
 
 msgid "Error creating VM."
 msgstr "创建虚拟机错误。"
@@ -4247,7 +4253,7 @@ msgid "Error rolling back snapshot"
 msgstr ""
 
 msgid "Error saving ZVOL."
-msgstr "ZVOL保存错误"
+msgstr "保存ZVOL时出现错误。"
 
 msgid "Error starting service "
 msgstr "启动服务错误 "
@@ -4370,7 +4376,7 @@ msgid "Failed"
 msgstr "失败"
 
 msgid "Failover"
-msgstr ""
+msgstr "故障转移"
 
 msgid "Failover Group"
 msgstr ""
@@ -4824,7 +4830,7 @@ msgid "IP Address"
 msgstr "IP 地址"
 
 msgid "IP Addresses"
-msgstr ""
+msgstr "IP地址"
 
 msgid ""
 "IP address of the remote system with <i>UPS Mode</i> set as <i>Master</i>. "
@@ -4840,7 +4846,7 @@ msgid "IPMI"
 msgstr "IPMI"
 
 msgid "IPv4"
-msgstr ""
+msgstr "IPv4"
 
 msgid "IPv4 Address"
 msgstr "IPv4 地址"
@@ -4858,7 +4864,7 @@ msgid "IPv4 Netmask"
 msgstr "IPv4 子网掩码"
 
 msgid "IPv4 address for the jail."
-msgstr "Jail的IPv4地址"
+msgstr "Jail的IPv4地址。"
 
 msgid ""
 "IPv4 address to use for the failover interface. Set a manual IP address "
@@ -4869,13 +4875,13 @@ msgid "IPv4 interface"
 msgstr "IPv4 接口"
 
 msgid "IPv4 interface for the jail."
-msgstr "Jail的IPv4接口"
+msgstr "Jail的IPv4接口。"
 
 msgid "IPv4 netmask for the jail."
-msgstr "Jail的IPv4子网掩码"
+msgstr "Jail的IPv4子网掩码。"
 
 msgid "IPv6"
-msgstr ""
+msgstr "IPv6"
 
 msgid "IPv6 Address"
 msgstr "IPv6 地址"
@@ -4899,13 +4905,13 @@ msgid "IPv6 Prefix Length"
 msgstr "IPv6 前缀长度"
 
 msgid "IPv6 address for the jail."
-msgstr "Jail的IPv6地址"
+msgstr "Jail的IPv6地址。"
 
 msgid "IPv6 interface for the jail."
-msgstr "Jail的IPv6接口"
+msgstr "Jail的IPv6接口。"
 
 msgid "IPv6 prefix for the jail."
-msgstr "Jail的IPv6前缀"
+msgstr "Jail的IPv6前缀。"
 
 msgid "ISNS Servers"
 msgstr "ISNS 服务器"
@@ -5500,7 +5506,7 @@ msgid "MSDOSFS locale"
 msgstr ""
 
 msgid "MTU"
-msgstr ""
+msgstr "MTU"
 
 msgid "Mac Address"
 msgstr "MAC地址"
@@ -6047,16 +6053,16 @@ msgstr ""
 msgid ""
 "No pools exist. Jails cannot be created or managed until a pool is present "
 "for storing them. Please create a pool first."
-msgstr "没有存储池被创建。Jails不能被创建或管理直到一个保存它们的存储池被设定。请先创建一个存储池"
+msgstr "不存在存储池。Jails不能被创建或管理直到一个保存它们的存储池被设定。请先创建一个存储池。"
 
 msgid "No snapshots sent yet"
 msgstr ""
 
 msgid "No update found."
-msgstr "未找到更新"
+msgstr "没有找到更新。"
 
 msgid "No updates available."
-msgstr "没有可用更新"
+msgstr "没有可用更新。"
 
 msgid "No, continue with import"
 msgstr "否，继续导入"
@@ -6274,7 +6280,7 @@ msgid "Optional description. Portals are automatically assigned a numeric group.
 msgstr ""
 
 msgid "Optional user-friendly name."
-msgstr "可选用户友好别名"
+msgstr "可选的用户友好名称。"
 
 msgid "Optional."
 msgstr "可选的。"
@@ -6301,7 +6307,7 @@ msgid "Organization"
 msgstr "组织"
 
 msgid "Organizational Unit"
-msgstr ""
+msgstr "组织单位"
 
 msgid "Organizational unit of the entity."
 msgstr ""
@@ -6355,7 +6361,7 @@ msgid "Password for the Bind DN."
 msgstr ""
 
 msgid "Password for the SSH Username account."
-msgstr "SSH用户名的密码"
+msgstr "SSH用户名的密码。"
 
 msgid "Password for the user account."
 msgstr ""
@@ -6385,7 +6391,7 @@ msgid ""
 msgstr ""
 
 msgid "Paste the certificate for the CA."
-msgstr "粘贴CA证书"
+msgstr "粘贴CA的证书。"
 
 msgid "Paste the contents of your Certificate Signing Request here."
 msgstr ""
@@ -6441,7 +6447,7 @@ msgid "Physical interface of the selected member."
 msgstr "选择成员的物理接口。"
 
 msgid "Platform"
-msgstr ""
+msgstr "平台"
 
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr ""
@@ -6519,7 +6525,7 @@ msgid "Port or Hostname"
 msgstr "端口或主机名"
 
 msgid "Portal"
-msgstr ""
+msgstr "门户"
 
 msgid "Portal Group ID"
 msgstr "Portal 组 ID"
@@ -6595,7 +6601,7 @@ msgid "Primary Contact"
 msgstr ""
 
 msgid "Primary DNS server."
-msgstr "主要DNS服务器"
+msgstr "主要DNS服务器。"
 
 msgid "Primary Group"
 msgstr "主用户组"
@@ -6665,7 +6671,7 @@ msgid ""
 msgstr "公网IP地址或域名Set if FTP clients cannot connect through a NAT device."
 
 msgid "Public Key"
-msgstr ""
+msgstr "公钥"
 
 msgid "Quick"
 msgstr "快"
@@ -6697,7 +6703,7 @@ msgid "REGISTER"
 msgstr ""
 
 msgid "RESTART"
-msgstr ""
+msgstr "重新启动"
 
 msgid "Raid-z"
 msgstr ""
@@ -6826,7 +6832,7 @@ msgid "Remove passphrase"
 msgstr ""
 
 msgid "Rename the existing boot environment."
-msgstr "重命名现有启动环境"
+msgstr "重命名现有的引导环境。"
 
 msgid "Renew Certificate Days"
 msgstr ""
@@ -6846,7 +6852,7 @@ msgid "Replicate from scratch if incremental is not possible"
 msgstr ""
 
 msgid "Replication"
-msgstr ""
+msgstr "复制"
 
 msgid "Replication <i>"
 msgstr ""
@@ -7253,7 +7259,7 @@ msgid "Secondary Contact (optional)"
 msgstr ""
 
 msgid "Secondary DNS server."
-msgstr "第二DNS服务器"
+msgstr "第二DNS服务器。"
 
 msgid "Secret"
 msgstr "密码"
@@ -7377,7 +7383,7 @@ msgid "Select a key before decrypting the disks."
 msgstr "在解密一个磁盘前选择密钥。"
 
 msgid "Select a keyboard layout."
-msgstr "选择键盘布局"
+msgstr "选择键盘布局。"
 
 msgid "Select a language localization."
 msgstr "选择一个本地化语言。"
@@ -7392,7 +7398,7 @@ msgid "Select a pool, dataset, or zvol."
 msgstr "选择一个存储池，数据集，或zvol。"
 
 msgid "Select a power management profile from the menu."
-msgstr "从菜单中选择一个电源管理"
+msgstr "从菜单中选择一个电源管理配置文件。"
 
 msgid ""
 "Select a preset schedule or choose <i>Custom</i> to use the advanced "
@@ -8399,7 +8405,7 @@ msgid "Set to prohibit users from writing to this share."
 msgstr ""
 
 msgid "Set to prohibit writes to this share"
-msgstr "设置来禁止对这个共享的写入。"
+msgstr "设置来禁止对这个共享的写入"
 
 msgid "Set to prohibit writing to the share."
 msgstr "设置来禁止对这个共享的写入。"
@@ -8607,7 +8613,7 @@ msgid "Setup Method"
 msgstr ""
 
 msgid "Setup Users and Groups."
-msgstr "配置用户和群组"
+msgstr "配置用户和用户组。"
 
 msgid ""
 "Several providers are supported. If a provider is not listed, select "
@@ -8873,7 +8879,7 @@ msgid "State"
 msgstr "状态"
 
 msgid "Static IPv4 address of the IPMI web interface."
-msgstr "IPMI 网络接口静态IPv4地址"
+msgstr "IPMI 网络接口的静态IPv4地址。"
 
 msgid "Static Routes"
 msgstr "静态路由"
@@ -9221,11 +9227,9 @@ msgid ""
 "href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>."
 msgstr ""
-"The base name is automatically prepended if the target name does not start "
-"with <i>iqn</i>. 允许字母数字、“.”、“-”, 和“:”。查看 <a "
-"href=\"https://tools.ietf.org/html/rfc3721.html\" "
-"target=\"_blank\">RFC3721</a>的<i>Constructing iSCSI names using the "
-"iqn.format</i>章节。"
+"如果目标名称不以<i>iqn</i>开头，则会自动添加基本名称。允许字母数字、“.”、“-”, 和“:”。查看 <a href=\""
+"https://tools.ietf.org/html/rfc3721.html\" target=\"_blank\">RFC3721</a>的<i>"
+"Constructing iSCSI names using the iqn.format</i>章节。"
 
 msgid ""
 "The beginning UID/GID for which this system is authoritative. Any UID/GID "
@@ -9486,7 +9490,7 @@ msgid ""
 msgstr ""
 
 msgid "This field is required"
-msgstr "此区域为必填。"
+msgstr "此字段为必需项"
 
 msgid ""
 "This field remains empty until a valid <b>Username</b> and <b>Password</b> "
@@ -9504,7 +9508,7 @@ msgid "This is the boot environment to be cloned."
 msgstr "这是将会被克隆的启动环境。"
 
 msgid "This is the serial number of the disk."
-msgstr "磁盘的序列号"
+msgstr "这是磁盘的序列号。"
 
 msgid ""
 "This number selects the routing table (<a "
@@ -9911,7 +9915,7 @@ msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
 msgstr ""
 
 msgid "User password. Must be at least 12 and no more than 16 characters long."
-msgstr ""
+msgstr "用户密码。最短必须有12个字符，最长不超过16个字符。"
 
 msgid ""
 "User who controls the dataset. This user always has permissions to read or "
@@ -10503,7 +10507,7 @@ msgid "pseudoterminals"
 msgstr ""
 
 msgid "resolver"
-msgstr ""
+msgstr "解析程式"
 
 msgid "rlimits"
 msgstr ""
