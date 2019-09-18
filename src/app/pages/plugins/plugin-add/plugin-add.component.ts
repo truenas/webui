@@ -202,6 +202,68 @@ export class PluginAddComponent implements OnInit {
     }
   ];
 
+   // fields only accepted by ws with value 0/1
+   protected TFfields: any = [
+    'bpf',
+    'template',
+    'host_time',
+    'dhcp',
+    'vnet',
+    'rtsold',
+    'jail_zfs',
+    'hostid_strict_check',
+    'boot',
+    'exec_clean',
+    'mount_linprocfs',
+    'mount_procfs',
+    'allow_vmm',
+    'allow_tun',
+    'allow_socket_af',
+    'allow_quotas',
+    'allow_mount_zfs',
+    'allow_mount_tmpfs',
+    'allow_mount_procfs',
+    'allow_mount_nullfs',
+    'allow_mount_fusefs',
+    'allow_mount_devfs',
+    'allow_mount',
+    'allow_mlock',
+    'allow_chflags',
+    'allow_raw_sockets',
+    'allow_sysvipc',
+    'allow_set_hostname',
+    'mount_fdescfs',
+    'mount_devfs',
+    'ip6_saddrsel',
+    'ip4_saddrsel',
+    'ip_hostname',
+    'assign_localhost',
+    'nat',
+  ];
+  // fields only accepted by ws with value on/off
+  protected OFfields: any = [
+    'cpuset',
+    'rlimits',
+    'memorylocked',
+    'vmemoryuse',
+    'maxproc',
+    'cputime',
+    'datasize',
+    'stacksize',
+    'coredumpsize',
+    'openfiles',
+    'pseudoterminals',
+    'swapuse',
+    'nthr',
+    'msgqqueued',
+    'msgqsize',
+    'nmsgq',
+    'nsemop',
+    'nshm',
+    'shmsize',
+    'wallclock',
+  ];
+
   protected pluginName: any;
   protected pluginRepository: any;
   public formGroup: any;
@@ -301,6 +363,25 @@ export class PluginAddComponent implements OnInit {
       this.pluginName = params['name'];
       this.pluginRepository =  params['plugin_repository'];
       this.formGroup.controls['plugin_name'].setValue(this.pluginName);
+      this.ws.call('plugin.defaults', [{
+        plugin: this.pluginName,
+        plugin_repository: this.pluginRepository,
+        refresh: false
+      }]).subscribe((defaults) => {
+        for (let i in defaults.properties) {
+          if (this.formGroup.controls[i]) {
+            if (_.indexOf(this.TFfields, i) > -1) {
+              defaults.properties[i] = defaults.properties[i] == '1' ? true : false;
+            }
+            if (_.indexOf(this.OFfields, i) > -1) {
+              defaults.properties[i] = defaults.properties[i] == 'on' ? true : false;
+            }
+            this.formGroup.controls[i].setValue(defaults.properties[i]);
+          }
+        }
+      }, (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      });
     });
   }
 

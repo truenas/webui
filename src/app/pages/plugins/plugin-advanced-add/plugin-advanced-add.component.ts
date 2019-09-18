@@ -1146,7 +1146,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
         }
       }
     }, (err) => {
-      console.log(err);
+      new EntityUtils().handleWSError(this, err, this.dialog);
     });
   }
 
