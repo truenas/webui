@@ -191,7 +191,7 @@ export default {
  target="_blank">http://snmplabs.com/</a>'),
 
     SNMPTrap_community_placeholder: T('SNMP Community'),
-    SNMPTrap_community_tooltip: T('Enter the network community string. \
+    SNMPTrap_community_tooltip: T('Network community string. \
  The community string acts like a user ID or password. A user with \
  the correct community string has access to network information. The \
  default is <i>public</i>. For more information, see \
