@@ -1,33 +1,33 @@
 .notification-sidenav {
   min-width: 350px;
-	width: 400px;
-	max-width: 30%;
+  width: 400px;
+  max-width: 30%;
 }
 .app-logo, .app-logo-text {
-	position: relative;
-	top: 13px;
+  position: relative;
+  top: 13px;
 }
 
 .tn-logo {
-	width: 40px;
+  width: 40px;
 }
 
 .tn-logo-txt {
-	width: 111px;
+  width: 111px;
 }
 
 .tn-logo, .tn-logo-txt {
-	position: relative;
-	top: 12px;
+  position: relative;
+  top: 12px;
 }
 
 /* To get rid of VScroll on entity tables */
 .rightside-content-hold {
-	padding-bottom: 5px;
+  padding-bottom: 5px;
 }
 
 .hostname-label {
-	text-align: center;
-	font-size: smaller;
-	margin: auto;
+  text-align: center;
+  font-size: smaller;
+  margin: auto;
 }

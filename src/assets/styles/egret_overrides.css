@@ -52,7 +52,8 @@ app-breadcrumb{
 }
 
 .rightside-content-hold.has-footer {
-  padding: 104px .03rem 10%;
+  padding: 104px .03rem 0;
+  height: calc(100vh - 30px);
 }
 
 @-webkit-keyframes silde_to_top {
