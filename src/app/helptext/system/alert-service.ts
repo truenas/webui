@@ -160,7 +160,7 @@ export default {
 
     SNMPTrap_v3_authkey_placeholder: T('Secret Authentication Key'),
     SNMPTrap_v3_authkey_tooltip: T('Initial secret authentication key. \
- If an authentication key is not set, no <i>Authentication Protocol</i> is \
+ When an authentication key is not set, no <i>Authentication Protocol</i> is \
  used. If an authentication key is set and an \
  <i>Authentication Protocol</i> is not specified, \
  <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmHMACMD5AuthProtocol" \
