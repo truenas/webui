@@ -7043,7 +7043,7 @@ msgid "Samba Schema"
 msgstr ""
 
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 msgid "Save Config"
 msgstr ""

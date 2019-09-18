@@ -10,6 +10,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { DialogService } from '../../../../services/dialog.service';
 @Component({
   selector : 'app-device-edit',
   templateUrl : './device-edit.component.html',
@@ -35,7 +36,7 @@ export class DeviceEditComponent implements OnInit {
   public rootpwd: any;
   public vminfo: any;
   public boot: any;
-  public error_reason: string;
+  public error: string;
 
   public custActions: any[];
 
@@ -291,6 +292,7 @@ export class DeviceEditComponent implements OnInit {
               protected loader: AppLoaderService,
               protected systemGeneralService: SystemGeneralService,
               protected networkService: NetworkService,
+              protected dialogService: DialogService,
               private core:CoreService) {}
 
 
@@ -464,9 +466,8 @@ export class DeviceEditComponent implements OnInit {
           this.router.navigate(new Array('/').concat(this.route_success));
         },
         (e_res) => {
-          this.error_reason = e_res.reason;
           this.loader.close();
-          new EntityUtils().handleError(this, e_res);
+          new EntityUtils().handleWSError(this, e_res, this.dialogService);
         }
       );
     });
