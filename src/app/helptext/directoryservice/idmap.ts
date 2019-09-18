@@ -75,18 +75,18 @@ idmap_ldap_range_high_placeholder : T('Range High'),
 idmap_ldap_range_high_tooltip : T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
-idmap_ldap_basedn_name: 'base_dn',
+idmap_ldap_basedn_name: 'ldap_base_dn',
 idmap_ldap_basedn_placeholder: T('Base DN'),
 idmap_ldap_basedn_tooltip: T('The directory base suffix to use for SID/uid/gid\
  mapping entries. Example: dc=test,dc=org. When undefined, idmap_ldap defaults to using the ldap idmap\
  suffix option from <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
  target="_blank">smb.conf</a>.'),
 
-idmap_ldap_userdn_name : 'user_dn',
+idmap_ldap_userdn_name : 'ldap_user_dn',
 idmap_ldap_userdn_placeholder: T('User DN'),
 idmap_ldap_userdn_tooltip: T('User Distinguished Name (DN) to use for authentication.'),
 
-idmap_ldap_url_name : 'url',
+idmap_ldap_url_name : 'ldap_url',
 idmap_ldap_url_placeholder: T('URL'),
 idmap_ldap_url_tooltip: T('LDAP server to use for SID/uid/gid map entries. When\
  undefined, idmap_ldap uses *ldap://localhost/*.\

@@ -8,7 +8,6 @@ import { WebSocketService, RestService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 
-import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 
