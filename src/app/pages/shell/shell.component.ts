@@ -42,7 +42,6 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
         } 
       });
       this.initializeTerminal();
-      console.log(this.xterm);
     });
     this.overflowParent('hidden');
   }
