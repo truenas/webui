@@ -37,7 +37,8 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-        if (value !== undefined) {
+        if (value !== undefined || value.startsWith('stty rows')) {
+          console.log(value);
           this.xterm.write(value);
         } 
       });
@@ -146,6 +147,7 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     if(this.xterm){
       this.xterm.resize(this.cols, this.rows);
+      this.ss.configTTY(this.rows, this.cols, this.xterm);
     }
 
   }

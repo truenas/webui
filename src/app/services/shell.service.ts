@@ -124,4 +124,13 @@ export class ShellService {
     });
   }
 
+  configTTY(rows:number, cols:number, xterm?: any){
+    //EXAMPLE
+    //this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
+    //this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
+    //this.xterm.send('\r');
+
+    this.send('stty rows ' + rows + ' cols ' + cols + ' \n');
+    //console.log(xterm);
+  }
 }
