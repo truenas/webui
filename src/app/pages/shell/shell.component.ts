@@ -5,109 +5,111 @@ import { ShellService, WebSocketService } from "../../services/";
 import helptext from "./../../helptext/shell/shell";
 import { CopyPasteMessageComponent } from "./copy-paste-message.component";
 
-@Component({
-  selector: 'app-shell',
-  templateUrl: './shell.component.html',
-  styleUrls: ['./shell.component.css'],
-  providers: [ShellService],
-})
-export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
-  // sets the shell prompt
-  @Input() prompt = '';
-  //xter container
-  @ViewChild('terminal', { static: true}) container: ElementRef;
-  // xterm variables
-  cols: number;
-  rows: number;
-  rowCount: number;
-  font_size = 14;
-  public token: any;
-  public xterm: any;
-  public resize_terminal = true;
-  private shellSubscription: any;
-  public lastWidth: number;
-  public lastHeight: number;
+  @Component({
+    selector: 'app-shell',
+    templateUrl: './shell.component.html',
+    styleUrls: ['./shell.component.css'],
+    providers: [ShellService],
+  })
+  export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
+    // sets the shell prompt
+    @Input() prompt = '';
+    //xter container
+    @ViewChild('terminal', { static: true}) container: ElementRef;
+    // xterm variables
+    cols: number;
+    rows: number;
+    rowCount: number;
+    font_size = 14;
+    public token: any;
+    public xterm: any;
+    public resize_terminal = true;
+    private shellSubscription: any;
+    public lastWidth: number;
+    public lastHeight: number;
 
-  public usage_tooltip = helptext.usage_tooltip;
+    public usage_tooltip = helptext.usage_tooltip;
 
-  clearLine = "\u001b[2K\r"
-  public shellConnected: boolean = false;
+    clearLine = "\u001b[2K\r";
+    public shellConnected: boolean = false;
 
-  ngAfterViewInit() {
-    this.getAuthToken().subscribe((res) => {
-      this.initializeWebShell(res);
-      this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-        if (value !== undefined) {
-          this.xterm.write(value);
-        } 
+    ngAfterViewInit() {
+      this.getAuthToken().subscribe((res) => {
+        this.initializeWebShell(res);
+        this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+          if (value !== undefined && !value.startsWith('stty rows')) {
+            this.xterm.write(value);
+          } 
+        });
+        this.initializeTerminal();
+        console.log(this.xterm);
       });
-      this.initializeTerminal();
-    });
-    this.overflowParent('hidden');
-  }
-
-  ngOnDestroy() {
-    if (this.ss.connected){
-      this.ss.socket.close();
+      this.overflowParent('hidden');
     }
-    if(this.shellSubscription){
-      this.shellSubscription.unsubscribe();
+
+    ngOnDestroy() {
+      if (this.ss.connected){
+        this.ss.socket.close();
+      }
+      if(this.shellSubscription){
+        this.shellSubscription.unsubscribe();
+      }
+      this.overflowParent('auto');
     }
-    this.overflowParent('auto');
-  }
 
-  onResize(event) {
-    this.fitTerm();
-  }
+    onResize(event) {
+      this.setTermDimensions();
+      this.fitTerm();
+    }
 
-  overflowParent(rule: string){
-    let target:HTMLElement = document.querySelector('.rightside-content-hold');
-    target.style['overflow-y'] = rule;
-  }
+    overflowParent(rule: string){
+      let target:HTMLElement = document.querySelector('.rightside-content-hold');
+      target.style['overflow-y'] = rule;
+    }
 
-  resetDefault() {
-    this.font_size = 14;
-  }
+    resetDefault() {
+      this.font_size = 14;
+    }
 
-  ngOnChanges(changes: {
-    [propKey: string]: SimpleChange
-  }){
-    const log: string[] = [];
-    for (const propName in changes) {
-      const changedProp = changes[propName];
-      // reprint prompt
-      if (propName === 'prompt' && this.xterm != null) {
-        this.xterm.write(this.clearLine + this.prompt);
+    ngOnChanges(changes: {
+      [propKey: string]: SimpleChange
+    }){
+      const log: string[] = [];
+      for (const propName in changes) {
+        const changedProp = changes[propName];
+        // reprint prompt
+        if (propName === 'prompt' && this.xterm != null) {
+          this.xterm.write(this.clearLine + this.prompt);
+        }
       }
     }
-  }
 
-  onRightClick(): false {
-    this._snackbar.openFromComponent(CopyPasteMessageComponent);
+    onRightClick(): false {
+      this._snackbar.openFromComponent(CopyPasteMessageComponent);
 
-    return false;
-  }
+      return false;
+    }
 
-  initializeTerminal() {
-    this.setTermDimensions();
-    this.xterm = new (<any>window).Terminal({
-      'cursorBlink': true,
-      'tabStopWidth': 8,
-      'focus': true,
-      'cols': this.cols,
-      'rows': this.rows
-    });
-    this.xterm.open(this.container.nativeElement, true);
-    this.xterm.attach(this.ss);
-    this.xterm._initialized = true;
-    this.fitTerm();
-    this.rowCount = this.getRowCount(); 
-    this.xterm.on('key',(key, e) =>{
-      //console.log(e);
+    initializeTerminal() {
+      this.setTermDimensions();
+      this.xterm = new (<any>window).Terminal({
+        'cursorBlink': true,
+        'tabStopWidth': 8,
+        'focus': true,
+        'cols': this.cols,
+        'rows': this.rows
+      });
+      this.xterm.open(this.container.nativeElement, true);
+      this.xterm.attach(this.ss);
+      this.xterm._initialized = true;
+      this.fitTerm();
+      this.rowCount = this.getRowCount(); 
+      this.xterm.on('key',(key, e) =>{
+        //console.log(e);
 
-      if(e.key == "Enter"){
-        this.resetScrollBottom();
-      } else {
+        if(e.key == "Enter"){
+          this.resetScrollBottom();
+          //console.log(e);
       }
 
     });
@@ -137,7 +139,7 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
     if(!c || !r){
       let dimensions = this.getTermParentDimensions();
       const cols = Math.floor(dimensions.width / (this.font_size / 2));
-      const rows = Math.floor(dimensions.height / this.font_size);
+      const rows = Math.floor((dimensions.height / this.font_size) - 4);
       this.cols = cols;
       this.rows = rows;
     } else {

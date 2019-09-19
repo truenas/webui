@@ -8,7 +8,6 @@
 
 <mat-card class="shell p-0">
   <mat-card-content *ngIf="shellConnected; else Reconnect">
-    <!-- <mat-divider class="mb-1"></mat-divider> -->
     {{"Set font size" | translate}}:
     <mat-slider min="10" max="20" step="1" [(ngModel)]="font_size"></mat-slider>
     <button mat-button class="mat-basic" (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Restore default" | translate}}</button>

@@ -13,7 +13,6 @@ import { Display,DisplayContainer } from 'app/core/components/display/display.co
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
-//import { C3ChartComponent } from 'app/core/components/c3chart/c3chart.component';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
@@ -71,7 +70,6 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     Display,
     DisplayContainer,
     ViewButtonComponent,
-    //C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartPieComponent,
@@ -124,6 +122,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     WidgetMemoryComponent,
     WidgetNoteComponent,
     WidgetNotesCollectionComponent,
+    TextLimiterDirective,
     TextLimiterTooltipComponent,
     WidgetPoolComponent,
     WidgetControllerComponent,
@@ -135,7 +134,6 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     CopyPasteMessageComponent,
     DisplayContainer,
     ViewComponent,
-    //C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
