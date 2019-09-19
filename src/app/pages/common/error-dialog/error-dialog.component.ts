@@ -39,7 +39,7 @@ export class ErrorDialog {
       btPanel.style.height = tracebackHeight;
       setTimeout(() => {
         txtarea.style.height = tracebackHeight;
-      }, 300);
+      }, 215);
     } else {
       dialog[dialog.length-1].removeAttribute('style');
       title.removeAttribute('style');
