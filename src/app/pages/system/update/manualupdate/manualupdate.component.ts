@@ -18,7 +18,7 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 @Component({
   selector: 'app-manualupdate',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers : [ MessageService, SystemGeneralService ]
+  providers : [ MessageService ]
 })
 export class ManualUpdateComponent extends ViewControllerComponent {
   public formGroup: FormGroup;
@@ -163,7 +163,10 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   customSubmit(entityForm: any) {
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Manual Update" }, disableClose: true });
+      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.manual_update_action }, disableClose: true });
+      if (this.isHA) {
+        this.dialogRef.componentInstance.disableProgressValue(true);
+      };
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.subscribe((succ)=>{
         this.dialogRef.close(false);
@@ -172,7 +175,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
             this.router.navigate(['/others/reboot']);
           } else {
             this.translate.get('Restart').subscribe((reboot: string) => {
-              this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+              this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).subscribe((reboot_prompt: string) => {
                 this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
                   if (reboot_res) {
                     this.router.navigate(['/others/reboot']);
@@ -181,7 +184,14 @@ export class ManualUpdateComponent extends ViewControllerComponent {
               });
             });
           };
-        } 
+        } else  {
+          this.dialogService.closeAllDialogs();
+          this.router.navigate(['/']); 
+          this.dialogService.confirm(helptext.ha_update.complete_title, 
+            helptext.ha_update.complete_msg, true, 
+            helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
+            });
+        }
       })
       this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
         this.dialogRef.close(false);
