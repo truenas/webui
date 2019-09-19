@@ -228,6 +228,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
+      console.log(preferredCols)
       if (preferredCols.length > 0) {
         preferredCols.forEach((i) => {
           // If preferred columns have been set for THIS table...
@@ -235,6 +236,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.conf.columns = i.cols;
           }
         });
+        this.conf.columns = this.dropLargestMaxWidth();
       }
     }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 2000 : 0)
 
@@ -304,6 +306,28 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     };        
   }
 
+  dropLargestMaxWidth() {
+        let tempArr = [];
+        for (const i of this.conf.columns) {
+          if (tempArr.length === 0) {
+            tempArr.push(i);
+          } else {
+            if (i.maxWidth > tempArr[0].maxWidth ) {
+              tempArr.pop();
+              tempArr.push(i)
+            }
+          }
+        }
+        this.conf.columns.forEach((column) => {
+          if (column.name === tempArr[0].name) {
+            delete column.maxWidth;
+          }
+        })
+        // console.log(tempArr)
+        // console.log(this.conf.columns)
+        return this.conf.columns;
+  }
+ 
   setTableHeight() {
     let rowNum = 6, n, addRows = 4;
     if (this.title === 'Boot Environments') {
@@ -917,6 +941,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     preferredCols.push(obj);
     this.prefService.savePreferences(this.prefService.preferences);
+    this.conf.columns = this.dropLargestMaxWidth();
   }
 
   // resets col view to the default set in the table's component
