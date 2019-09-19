@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-09-19 19:52+0000\n"
+"PO-Revision-Date: 2019-09-19 22:54+0000\n"
 "Last-Translator: Weblate Admin <yifeiding@theunspeakble.com>\n"
 "Language-Team: Chinese (Simplified) <https://www.theunspeakble.com/weblate/"
 "projects/freenas-webui/master/zh_Hans/>\n"
@@ -1961,7 +1961,7 @@ msgid "Choose a DNS provider and configure any required authenticator attributes
 msgstr ""
 
 msgid "Choose a color scheme."
-msgstr "选择颜色主题。"
+msgstr "选择一个配色方案。"
 
 msgid ""
 "Choose a dataset on the destination system where snapshots are stored. "
@@ -2134,7 +2134,6 @@ msgstr ""
 msgid "Choose the speed in bps used by the serial port."
 msgstr ""
 
-#, fuzzy
 msgid ""
 "Choose the test type. See <a                "
 "href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
@@ -2143,9 +2142,8 @@ msgid ""
 "  take disks offline. Avoid scheduling S.M.A.R.T. tests                "
 "simultaneously with scrub or resilver operations."
 msgstr ""
-"选择测试类型。See <a                href=\"https://www.smartmontools.org/browser/"
-"trunk/smartmontools/smartctl.8.in\"                target=\"_blank\""
-">smartctl(8)</a> for descriptions of                each type. "
+"选择测试类型。有关每种类型的说明，请参见<a href=\"https://www.smartmontools.org/browser/trunk/"
+"smartmontools/smartctl.8.in\" target=\"_blank\">smartctl(8)</a>。 "
 "一些类型会降低性能或使磁盘下线。避免安排S.M.A.R.T. 测试和数据清理或resliver操作同时运行。"
 
 msgid ""
