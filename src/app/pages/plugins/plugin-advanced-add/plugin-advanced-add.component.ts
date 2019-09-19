@@ -645,13 +645,29 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       tooltip: helptext.vnet3_mac_tooltip,
     },
     {
-      type: 'list',
-      name: 'nat_forwards',
+      type: 'checkbox',
+      name: 'nat_forwards_checkbox',
       placeholder: 'nat_forwards',
       relation: [{
         action: "SHOW",
         when: [{
           name: "nat",
+          value: true,
+        }]
+      }],
+    },
+    {
+      type: 'list',
+      name: 'nat_forwards',
+      placeholder: 'nat_forwards',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "nat",
+          value: true,
+        }, {
+          name: 'nat_forwards_checkbox',
           value: true,
         }]
       }],
@@ -1219,7 +1235,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+        activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
         .forEach(control => {
@@ -1229,25 +1247,33 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setDisabled(name: string, disable: boolean) {
-    if (this.formGroup.controls[name]) {
-      const method = disable ? 'disable' : 'enable';
-      this.formGroup.controls[name][method]();
-      return;
+  setDisabled(name: string, disable: boolean, hide?: boolean) {
+    if (hide) {
+      disable = hide;
+    } else {
+      hide = false;
     }
 
     this.formFields = this.formFields.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
+        item['isHidden'] = hide;
       }
       return item;
     });
+    if (this.formGroup.controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      this.formGroup.controls[name][method]();
+      return;
+    }
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, this.formGroup);
-    this.setDisabled(config.name, tobeDisabled);
+    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+      activations, this.formGroup);
+    this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 
   goBack() {
@@ -1364,8 +1390,10 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
 
   deparseNatForwards(value) {
     if (value == 'none') {
+      this.formGroup.controls['nat_forwards_checkbox'].setValue(false);
       return;
     }
+    this.formGroup.controls['nat_forwards_checkbox'].setValue(true);
     value = value.split(',');
     for (let i = 0; i < value.length; i++) {
       const nat_forward = value[i].split(new RegExp('[(:)]'));
@@ -1382,15 +1410,18 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
   }
 
   parseNatForwards(value) {
-    if (value['nat_forwards'] != undefined) {
+    if (value['nat_forwards_checkbox'] === true) {
       const multi_nat_forwards = [];
       for (let i = 0; i < value['nat_forwards'].length; i++) {
         const subNatForward = value['nat_forwards'][i];
-        multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ':' + subNatForward['host_port'] + ')');
+        if (Object.values(subNatForward).every(item => item != undefined && item != '')) {
+          multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ':' + subNatForward['host_port'] + ')');
+        }
       }
-      value['nat_forwards'] = multi_nat_forwards.join(',');
+      value['nat_forwards'] = multi_nat_forwards.length > 0 ? multi_nat_forwards.join(',') : 'none';
     } else {
-      console.log(value['nat_forwards']);
+      value['nat_forwards'] = 'none';
     }
+    delete value['nat_forwards_checkbox'];
   }
 }
