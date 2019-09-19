@@ -75,14 +75,12 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'nat',
       placeholder: helptext.nat_placeholder,
       tooltip: helptext.nat_tooltip,
-      value: true,
     },
     {
       type: 'checkbox',
       name: 'vnet',
       placeholder: helptext.vnet_placeholder,
       tooltip: helptext.vnet_tooltip,
-      value: true,
     },
     {
       type: 'checkbox',
@@ -646,6 +644,54 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       placeholder: helptext.vnet3_mac_placeholder,
       tooltip: helptext.vnet3_mac_tooltip,
     },
+    {
+      type: 'list',
+      name: 'nat_forwards',
+      placeholder: 'nat_forwards',
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "nat",
+          value: true,
+        }]
+      }],
+      templateListField: [
+        {
+          type: 'select',
+          name: 'protocol',
+          placeholder: helptext.protocol_placeholder,
+          tooltip: helptext.protocol_tooltip,
+          options: [{
+            label: 'udp',
+            value: 'udp',
+          }, {
+            label: 'tcp',
+            value: 'tcp',
+          }],
+          class: 'inline',
+          width: '30%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'jail_port',
+          placeholder: helptext.jail_port_placeholder,
+          tooltip: helptext.jail_port_tooltip,
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'host_port',
+          placeholder: helptext.host_port_placeholder,
+          tooltip: helptext.host_port_tooltip,
+          class: 'inline',
+          width: '20%',
+        }
+      ],
+      listFields: []
+    },
   ];
   public customConfig: FieldConfig[] = [
     {
@@ -1089,41 +1135,39 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       this.updateInterface();
     });
 
-    this.ws.call("jail.query", [
-      [
-        ["host_hostuuid", "=", "default"]
-      ]
-    ]).subscribe(
+    this.jailService.getDefaultConfiguration().subscribe(
       (res) => {
-        for (let i in res[0]) {
+        for (let i in res) {
           if (this.formGroup.controls[i]) {
-            if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
+            if ((i == 'ip4_addr' || i == 'ip6_addr') && res[i] == 'none') {
               // this.formGroup.controls[i].setValue('');
               continue;
             }
             if (_.indexOf(this.TFfields, i) > -1) {
-              if (res[0][i] == '1') {
-                res[0][i] = true;
+              if (res[i] == '1') {
+                res[i] = true;
               } else {
-                res[0][i] = false;
+                res[i] = false;
               }
             }
             if (_.indexOf(this.OFfields, i) > -1) {
-              if (res[0][i] == 'on') {
-                res[0][i] = true;
+              if (res[i] == 'on') {
+                res[i] = true;
               } else {
-                res[0][i] = false;
+                res[i] = false;
               }
             }
-            if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf' && i !== 'nat' && i !== 'plugin_name') {
-              this.formGroup.controls[i].setValue(res[0][i]);
+            if (i === 'nat_forwards') {
+              this.deparseNatForwards(res[i]);
+            } else if (i !== 'dhcp' && i !== 'vnet' && i !== 'bpf' && i !== 'nat' && i !== 'plugin_name') {
+              this.formGroup.controls[i].setValue(res[i]);
             }
           }
         }
         this.getPluginDefaults();
       },
-      (res) => {
-        new EntityUtils().handleError(this, res);
+      (err) => {
+        new EntityUtils().handleError(this, err);
       });
   }
 
@@ -1136,6 +1180,10 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     }]).subscribe((defaults) => {
       for (let i in defaults.properties) {
         if (this.formGroup.controls[i]) {
+          if (i === 'nat_forwards') {
+            this.deparseNatForwards(defaults.properties[i]);
+            continue;
+          }
           if (_.indexOf(this.TFfields, i) > -1) {
             defaults.properties[i] = defaults.properties[i] == '1' ? true : false;
           }
@@ -1144,6 +1192,9 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
           }
           this.formGroup.controls[i].setValue(defaults.properties[i]);
         }
+      }
+      if (!defaults.properties.hasOwnProperty('dhcp') && !defaults.properties.hasOwnProperty('nat')) {
+        this.formGroup.controls['nat'].setValue(true);
       }
     }, (err) => {
       new EntityUtils().handleWSError(this, err, this.dialog);
@@ -1241,6 +1292,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     let value = _.cloneDeep(this.formGroup.value);
 
     this.parseIpaddr(value);
+    this.parseNatForwards(value);
 
     if (value['auto_configure_ip6']) {
       value['ip6_addr'] = "vnet0|accept_rtadv";
@@ -1310,4 +1362,35 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     this.step--;
   }
 
+  deparseNatForwards(value) {
+    if (value == 'none') {
+      return;
+    }
+    value = value.split(',');
+    for (let i = 0; i < value.length; i++) {
+      const nat_forward = value[i].split(new RegExp('[(:)]'));
+      if (this.formGroup.controls['nat_forwards'].controls[i] == undefined) {
+        // add controls;
+        const templateListField = _.cloneDeep(_.find(this.basicfieldConfig, {'name': 'nat_forwards'}).templateListField);
+        this.formGroup.controls['nat_forwards'].push(this.entityFormService.createFormGroup(templateListField));
+        _.find(this.basicfieldConfig, {'name': 'nat_forwards'}).listFields.push(templateListField);
+      }
+      this.formGroup.controls['nat_forwards'].controls[i].controls['protocol'].setValue(nat_forward[0]);
+      this.formGroup.controls['nat_forwards'].controls[i].controls['jail_port'].setValue(nat_forward[1]);
+      this.formGroup.controls['nat_forwards'].controls[i].controls['host_port'].setValue(nat_forward[2]);
+    }
+  }
+
+  parseNatForwards(value) {
+    if (value['nat_forwards'] != undefined) {
+      const multi_nat_forwards = [];
+      for (let i = 0; i < value['nat_forwards'].length; i++) {
+        const subNatForward = value['nat_forwards'][i];
+        multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ':' + subNatForward['host_port'] + ')');
+      }
+      value['nat_forwards'] = multi_nat_forwards.join(',');
+    } else {
+      console.log(value['nat_forwards']);
+    }
+  }
 }
