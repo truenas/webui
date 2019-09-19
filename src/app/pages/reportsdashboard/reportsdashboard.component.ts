@@ -112,13 +112,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
         this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
 
-        this.otherReports = allReports.filter((report) => !report.name.startsWith('disk') /*&& name !== 'df' && report.name !== 'uptime'*/);
+        this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
        
         this.activateTabFromUrl();
-      }
+}
     });
 
-    this.core.emit({name:"ReportingGraphsRequest"});
+    this.ws.call('disk.query').subscribe((res) => {
+      this.parseDisks(res);
+      this.core.emit({name:"ReportingGraphsRequest", sender: this});
+    });
 
   }
 
@@ -139,8 +142,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   }
 
   getBatch(lastSeen: string){
-    // Do Stuff
-    console.log("getBatch Method");
     return this.visibleReports;
   }
 
@@ -164,7 +165,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   activateTabFromUrl (){ 
     let subpath = this.router.url.split("/reportsdashboard/"); 
     let tabFound = this.allTabs.find((tab) =>{
-      //return tab.path === subpath[1];
       return tab.value === subpath[1];
     });
     this.updateActiveTab(tabFound);
@@ -306,7 +306,6 @@ diskReportBuilderSetup(){
             label: 'Devices',
             disabled:false,
             options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-            //tooltip:'Choose a device for your report.',
           },
           {
             type: 'multimenu',
@@ -314,7 +313,6 @@ diskReportBuilderSetup(){
             label: 'Metrics',
             disabled: false,
             options: this.diskMetrics ? this.diskMetrics.map((v) => v) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-            //tooltip:'Choose a metric to display.',
           }
     ]
 
@@ -343,7 +341,6 @@ diskReportBuilderSetup(){
             width:'calc(50% - 16px)',
             placeholder: 'Choose a metric',
             options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-            //value:[this.diskMetrics[0]],
             required: true,
             multiple: true,
             tooltip:'Choose a metric to display.',
@@ -357,15 +354,9 @@ diskReportBuilderSetup(){
   }
 
   generateValues(){
-    let devices = [];  
     let metrics = [];
 
-    this.diskReports[0].identifiers.forEach((item) => {
-      devices.push({label: item, value: item});
-    });
-
     this.diskReports.forEach((item) => {
-      //if(item.name == 'disk'){ devices = item.identifiers }
       let formatted = item.title.replace(/ \(.*\)/, '');// remove placeholders for identifiers eg. '({identifier})'
       formatted = formatted.replace(/identifier/, '');
       formatted = formatted.replace(/[{][}]/, '');
@@ -373,9 +364,7 @@ diskReportBuilderSetup(){
       metrics.push({label: formatted, value: item.name});
     });
 
-    this.diskDevices = devices;
     this.diskMetrics = metrics;
-
   }
 
   generateFieldConfig(){
@@ -431,6 +420,29 @@ diskReportBuilderSetup(){
 
     this.visibleReports = visible;
 
+  }
+
+  parseDisks(res){
+
+    let uniqueNames = [];
+    let multipathDisks = [];
+
+    res.forEach((disk) => {
+      const devname = disk.multipath_name ? disk.multipath_member + ' (multipath: ' + disk.multipath_name + ')': disk.devname;
+      if(uniqueNames.indexOf(devname) == -1){ 
+        uniqueNames.push(devname);
+      }
+
+      if(disk.devname.startsWith('multipath/')){
+        multipathDisks.push(disk.devname.replace('multipath/', '') + ' = ' + disk.multipath_member);
+      }
+    });
+
+    this.diskDevices = uniqueNames.map((devname) => {
+      let spl = devname.split(' ');
+      let obj = {label: devname, value: spl[0]};
+      return obj;
+    });
   }
 
 }
