@@ -112,13 +112,19 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
         this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
 
-        this.otherReports = allReports.filter((report) => !report.name.startsWith('disk') /*&& name !== 'df' && report.name !== 'uptime'*/);
+        this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
        
         this.activateTabFromUrl();
+
+        console.log("REPORTS");
+        console.log(this.diskReports);
       }
     });
 
-    this.core.emit({name:"ReportingGraphsRequest"});
+    this.ws.call('disk.query').subscribe((res) => {
+      this.parseDisks(res);
+      this.core.emit({name:"ReportingGraphsRequest", sender: this});
+    });
 
   }
 
@@ -357,15 +363,9 @@ diskReportBuilderSetup(){
   }
 
   generateValues(){
-    let devices = [];  
     let metrics = [];
 
-    this.diskReports[0].identifiers.forEach((item) => {
-      devices.push({label: item, value: item});
-    });
-
     this.diskReports.forEach((item) => {
-      //if(item.name == 'disk'){ devices = item.identifiers }
       let formatted = item.title.replace(/ \(.*\)/, '');// remove placeholders for identifiers eg. '({identifier})'
       formatted = formatted.replace(/identifier/, '');
       formatted = formatted.replace(/[{][}]/, '');
@@ -373,9 +373,9 @@ diskReportBuilderSetup(){
       metrics.push({label: formatted, value: item.name});
     });
 
-    this.diskDevices = devices;
     this.diskMetrics = metrics;
-
+    console.log("DISKDEVICES");
+    console.log(this.diskDevices);
   }
 
   generateFieldConfig(){
@@ -431,6 +431,33 @@ diskReportBuilderSetup(){
 
     this.visibleReports = visible;
 
+  }
+
+  parseDisks(res){
+    console.log("DISK.QUERY");
+    console.log(res);
+
+    let uniqueNames = [];
+    let multipathDisks = [];
+
+    res.forEach((disk) => {
+      const devname = disk.multipath_name ? disk.multipath_member + ' (multipath: ' + disk.multipath_name + ')': disk.devname;
+      if(uniqueNames.indexOf(devname) == -1){ 
+        uniqueNames.push(devname);
+      }
+
+      if(disk.devname.startsWith('multipath/')){
+        multipathDisks.push(disk.devname.replace('multipath/', '') + ' = ' + disk.multipath_member);
+      }
+    });
+
+    console.log(multipathDisks);
+
+    this.diskDevices = uniqueNames.map((devname) => {
+      let spl = devname.split(' ');
+      let obj = {label: devname, value: spl[0]};
+      return obj;
+    });
   }
 
 }
