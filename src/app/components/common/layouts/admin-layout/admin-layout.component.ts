@@ -1,6 +1,6 @@
 import { RestService, WebSocketService, AppLoaderService } from '../../../../services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -22,6 +22,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile;
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
+  sidenavMode: string = 'over';
   isShowFooterConsole: Boolean = false;
   isSidenotOpen: Boolean = false;
   consoleMsg: String = "";
@@ -37,8 +38,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   freenasThemes;
 
+  get sidenavWidth(){
+    return this.getSidenavWidth();
+  }
+
   constructor(private router: Router,
     public core: CoreService,
+    public cd: ChangeDetectorRef,
     public themeService: ThemeService,
     private media: MediaObserver,
     protected rest: RestService,
@@ -60,6 +66,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.screenSizeWatcher = media.media$.subscribe((change: MediaChange) => {
       this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
       this.updateSidenav();
+      core.emit({name:"MediaChange", data: change, sender: this});
     });
 
     // Translator init
@@ -82,6 +89,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       eventName:"SysInfo", 
     }).subscribe((evt:CoreEvent)=>{
       this.hostname = evt.data.hostname;
+    });
+
+    core.register({
+      observerClass:this, 
+      eventName:"ForceSidenav", 
+    }).subscribe((evt:CoreEvent)=>{
+      this.updateSidenav(evt.data);
     });
   }
 
@@ -110,19 +124,32 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.scrollToBottomOnFooterBar();
   }
 
-  updateSidenav() {
-    let self = this;
-
-    setTimeout(() => {
-      self.isSidenavOpen = !self.isMobile;
-      self.isSidenotOpen = false;
-      self.sideNave.mode = self.isMobile ? 'over' : 'side';
-      if (self.isMobile) {
+  updateSidenav(force?:string) {
+    if(force){
+      this.isSidenavOpen = force == 'open' ? true : false;
+      this.isSidenotOpen = force == 'open' ? false : true;
+      if (force == 'close') {
         domHelper.removeClass(document.body, 'collapsed-menu');
-      }
+      } 
+      return;
+    }
 
-    }, -1);
+    this.isSidenavOpen = !this.isMobile;
+    this.isSidenotOpen = false;
+    this.sidenavMode = this.isMobile ? 'over' : 'side';
+    if (this.isMobile) {
+      domHelper.removeClass(document.body, 'collapsed-menu');
+    }
+    this.cd.detectChanges();
+  }
 
+  getSidenavWidth(): string{
+    let iconified =  domHelper.hasClass(document.body, 'collapsed-menu')
+    if(iconified){
+      return '48px';
+    } else {
+      return '240px';
+    }
   }
 
   scrollToBottomOnFooterBar(): void {

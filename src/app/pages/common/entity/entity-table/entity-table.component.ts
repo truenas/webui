@@ -45,6 +45,7 @@ export interface InputTableConf {
   cardHeaderComponent?: any;
   asyncView?: boolean;
   wsDelete?: string;
+  wsDeleteParams?(row, id): any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -148,7 +149,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public selected = [];
 
   private interval: any;
+  private excuteDeletion = false;
 
+  protected toDeleteRow: any;
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   public getRowDetailHeight = () => 
@@ -444,7 +447,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPaginationInfo();
       this.showDefaults = true;
     }
-    if ((this.expandedRows == 0 || !this.asyncView) && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion) && this.filter.nativeElement.value === '') {
+      this.excuteDeletion = false;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
@@ -646,10 +650,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           // double confirm: input delete item's name to confirm deletion
           this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
             if (doubleConfirmDialog) {
+              this.toDeleteRow = item;
               this.delete(id);
             }
           });
         } else {
+          this.toDeleteRow = item;
           this.delete(id);
         }
       }
@@ -661,17 +667,21 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loaderOpen = true;
     const data = {};
     if (this.conf.wsDelete) {
-      this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
-        (resinner) => { this.getData() },
+      this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
+        (resinner) => {
+          this.getData();
+          this.excuteDeletion = true;
+        },
         (resinner) => {
           new EntityUtils().handleWSError(this, resinner, this.dialogService);
           this.loader.close();
         }
-      );
+      ) 
     } else {
       this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
         (resinner) => {
           this.getData();
+          this.excuteDeletion = true;
         },
         (resinner) => {
           new EntityUtils().handleError(this, resinner);

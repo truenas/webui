@@ -18,6 +18,7 @@ nav.view-nav-bar{
 
 .view-card{
   max-width:960px;
+  min-width:700px;
   margin: 0 auto;
   min-height:480px;
   padding:0;
@@ -272,4 +273,46 @@ div.vdev-disk {
 .semibold{
   font-weight:500;
 }
+
+.disks-overview-wrapper{
+  background:#000;
+}
+
+/* lt-lg */
+.view-card.md{
+  width:750px;
+}
+
+.view-card.sm
+.view-card.xs{
+  width:640px;
+}
+
+.view-card #disks-overview svg,
+.view-card #disks-overview canvas{
+  position:relative;
+}
+
+.view-card .dom-overlay#visualizer{
+  z-index:2;
+  width:auto;
+}
+
+.view-card.md .dom-overlay.stage-left, .view-card.md .dom-overlay.stage-right,
+.view-card.md .dom-overlay .visualizer{
+  transform: scale3D(0.9, 0.9, 1); 
+}
+
+.view-card.xs .dom-overlay.stage-left, .view-card.xs .dom-overlay.stage-right,
+.view-card.sm .dom-overlay.stage-left, .view-card.sm .dom-overlay.stage-right,
+.view-card.xs .dom-overlay .visualizer, .view-card.sm .dom-overlay .visualizer{
+  transform: scale3D(0.9, 0.9, 1); 
+}
+
+.view-card.gt-md .dom-overlay.stage-left,
+.view-card.gt-md .dom-overlay.stage-right,
+.view-card.gt-md .dom-overlay .visualizer{
+  transform: scale3D(1, 1, 1); 
+}
+
 

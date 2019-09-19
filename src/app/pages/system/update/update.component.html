@@ -23,7 +23,7 @@
     <ng-template #trainName>
       <div class="train-card-row train-select-row">
         <div id="single-train-name">Current Train: {{ train }} - {{ singleDescription }}</div>
-        <button mat-mini-fab color="primary" id="single-train-refresh-button" matTooltip="Refresh" (click)="check()">
+        <button mat-mini-fab color="primary" [disabled]="isUpdateRunning" id="single-train-refresh-button" matTooltip="Refresh" (click)="check()">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -94,16 +94,28 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="updates_available && pre_release_train" id="stable-warning-card">
+<mat-card *ngIf="updates_available && pre_release_train && isfreenas" id="stable-warning-card">
   <div class="stable-warning"><i class="material-icons" id="update-info">info</i><strong>This is not a production release, and should only be used for testing.</strong></div>
   <div class="stable-warning" id="stable_warning_line_2">Before updating, please read the
     <a href='https://www.ixsystems.com/blog/library/freenas-11-2-rc1' target="new">release notes</a>.
   </div>
 </mat-card>
 
-<mat-card *ngIf="updates_available && release_train" id="stable-warning-card">
+<mat-card *ngIf="updates_available && release_train && isfreenas" id="stable-warning-card">
   <div class="stable-warning"><i class="material-icons" id="update-info">info</i>Before updating, please read the
     <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest=true' target="new">release notes</a>.
+  </div>
+</mat-card>
+
+<mat-card *ngIf="updates_available && pre_release_train && !isfreenas" id="stable-warning-card">
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>Before updating, please read the
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">release notes</a>.
+  </div>
+</mat-card>
+
+<mat-card *ngIf="updates_available && release_train && !isfreenas" id="stable-warning-card">
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>Before updating, please read the
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">release notes</a>.
   </div>
 </mat-card>
 
@@ -113,13 +125,21 @@
   </div>
 </mat-card>
 
-<mat-card id="button-card">
+<mat-card id="button-card" *ngIf="!isUpdateRunning">
   <div class="row">
     <div class="col-md-12">
       <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
       <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="ApplyPendingUpdate()">{{"Apply Pending update" | translate}}</button>
       <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()" >{{"Install Manual Update File" | translate}}</button>
+      <!-- <button mat-button class="btn btn-success update-button red-warning-button" *ngIf="failover_upgrade_pending" (click)="applyFailoverUpgrade()">{{"Apply Failover Upgrade" | translate}}</button> -->
       <p><font color ="red">{{general_update_error}}</font></p>
+    </div>
+  </div>
+</mat-card>
+<mat-card id="update-in-progress-card" *ngIf="isUpdateRunning">
+  <div class="row">
+    <div class="col-md-12">
+      <p><i class="material-icons">warning</i><span id="update-running-msg">{{sysUpdateMessage}}</span></p>
     </div>
   </div>
 </mat-card>

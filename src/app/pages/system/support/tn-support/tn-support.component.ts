@@ -166,44 +166,6 @@ export class TnSupportComponent implements OnInit {
     this.entityEdit = entityEdit;
     this.custActions = [
       {
-        id : 'update_license',
-        name : helptext.update_license.open_dialog_button,
-        function : () => {
-          const localLoader = this.loader;
-          const localWS = this.ws;
-          const localSnackbar = this.snackbar;
-          const localDialogService = this.dialogService;
-
-          const licenseForm: DialogFormConfiguration = {
-            title: helptext.update_license.dialog_title,
-            fieldConfig: [
-              {
-                type: 'textarea',
-                name: 'license',
-                placeholder: helptext.update_license.license_placeholder
-              }
-            ],
-            saveButtonText: helptext.update_license.save_button,
-            customSubmit: function (entityDialog) {
-              const value = entityDialog.formValue.license;
-              localLoader.open();
-              localWS.call('system.license_update', [value]).subscribe((res) => {
-                entityDialog.dialogRef.close(true);
-                localLoader.close();
-                localSnackbar.open(helptext.update_license.success_message,
-                  helptext.update_license.snackbar_action, { duration: 5000 });
-              },
-              (err) => {
-                localLoader.close();
-                entityDialog.dialogRef.close(true);
-                localDialogService.errorReport((helptext.update_license.error_dialog_title), err.reason, err.trace.formatted);
-              });
-            }
-
-          }
-          this.dialogService.dialogForm(licenseForm);
-        }
-      },{
         id : 'userguide',
         name: helptext.update_license.user_guide_button,
         function : () => {

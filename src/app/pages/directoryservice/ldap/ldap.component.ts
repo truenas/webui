@@ -266,7 +266,7 @@ export class LdapComponent {
       });
     });
 
-    this.systemGeneralService.getCA().subscribe((res) => {
+    this.systemGeneralService.getCertificates().subscribe((res) => {
       this.ldapCertificate =
           _.find(this.fieldConfig, {name : 'ldap_certificate'});
       res.forEach((item) => {

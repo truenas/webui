@@ -154,5 +154,8 @@ dataset_acl_stripacl_dialog_warning_message: T('Stripping the ACL resets\
 dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can\
  prevent users from accessing data in child datasets.'),
 
-dataset_acl_add_item_btn: T('Add ACL Item')
+dataset_acl_add_item_btn: T('Add ACL Item'),
+
+acl_defaults_placeholder: T('Default ACL Options'),
+acl_defaults_tooltip: T('Set default options on this ACL.')
 }

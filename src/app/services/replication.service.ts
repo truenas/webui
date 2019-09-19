@@ -60,4 +60,8 @@ export class ReplicationService {
             }
         );
     }
+
+    getReplicationTasks() {
+        return this.ws.call('replication.query');
+    }
 }

@@ -11,9 +11,6 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 3.8\n"
 
-msgid " Dataset"
-msgstr " 数据集"
-
 msgid " First vdev has "
 msgstr " 第一个vdev有 "
 
@@ -42,6 +39,9 @@ msgstr " 和所有它的快照？"
 
 msgid " but datastore "
 msgstr " 但数据存储 "
+
+msgid " disks"
+msgstr ""
 
 msgid " disks, new vdev has "
 msgstr " 磁盘，新的vdev有 "
@@ -113,13 +113,14 @@ msgid ""
 "of the plugin to confirm:"
 msgstr ""
 
-msgid ""
-"</i> dataset and all snapshots stored with it, please type the name of the "
-"dataset to confirm:"
+msgid "</b> with the keypair"
 msgstr ""
 
 msgid "</i> has started."
 msgstr "</i>已经开始。"
+
+msgid "</i> keypair?</p>"
+msgstr ""
 
 msgid "</i> now?"
 msgstr "</i>现在？"
@@ -442,6 +443,9 @@ msgid ""
 "Please enter a different share name."
 msgstr "<i>global</i>是保留名称，不能用作共享名称。请输入一个不同的共享名称。"
 
+msgid "<p>Delete the <i>"
+msgstr ""
+
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
@@ -466,6 +470,9 @@ msgid ""
 "target=\"_blank\">access token</a> enables Box to verify a request  belongs "
 "to an authorized session. Example token:  "
 "<i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>."
+msgstr ""
+
+msgid "A failover might cause temporary service interruption."
 msgstr ""
 
 msgid ""
@@ -997,6 +1004,9 @@ msgstr "警告服务"
 msgid "Alert Settings"
 msgstr "警告设置"
 
+msgid "Alerts"
+msgstr ""
+
 msgid "Aliases"
 msgstr ""
 
@@ -1006,11 +1016,11 @@ msgstr "所有磁盘"
 msgid "All dirs"
 msgstr "所有文件夹"
 
+msgid "Allocate RAM for the VM"
+msgstr ""
+
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr "分配新的zvol容量（GiB）。"
-
-msgid "Allocate a number of megabytes of RAM for the VM."
-msgstr "分配虚拟机内存容量（MiB）。"
 
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "分配指定MiB的内存给VM。"
@@ -1266,6 +1276,9 @@ msgid ""
 msgstr ""
 
 msgid "Apple Shares (AFP)"
+msgstr ""
+
+msgid "Apply Failover Upgrade"
 msgstr ""
 
 msgid "Apply Network Changes"
@@ -2036,13 +2049,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
-"on this dataset."
+"Choose how often to run the scrub task.  Choices are *Hourly*, *Daily*, "
+"*Weekly*, *Monthly*, or *Custom*. Select  *Custom* to open a visual "
+"scheduler for selecting minutes, hours, days,  month, and days of week. "
+"Spaces are not allowed in :guilabel:`Minutes`,  :guilabel:`Hours`, or "
+":guilabel:`Days` of the custom scheduler."
 msgstr ""
 
 msgid ""
-"Choose one of the convenient presets      or choose <b>Custom</b> to "
-"trigger the advanced scheduler UI"
+"Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
+"on this dataset."
 msgstr ""
 
 msgid ""
@@ -2065,11 +2081,6 @@ msgstr ""
 msgid ""
 "Choose the <a href=\"--docurl--/system.html#ssh-connection\" "
 "target=\"_blank\">SSH connection</a>."
-msgstr ""
-
-msgid ""
-"Choose the FreeBSD release or template to use as the jail operating system. "
-"Releases already downloaded show <b>(fetched)</b>."
 msgstr ""
 
 msgid ""
@@ -2230,6 +2241,15 @@ msgstr ""
 msgid "Com Port"
 msgstr ""
 
+msgid ""
+"Combine multiple, critical-for-failover  interfaces into a group. Groups "
+"apply to single systems. A failover  occurs when every interface in the "
+"group fails. Groups with a single  interface trigger a failover when that "
+"interface fails. Configuring the  system to failover when any interface "
+"fails requires marking each  interface as critical and placing them in "
+"separate groups."
+msgstr ""
+
 msgid "Comma-, space-, or tab-delimited list of allowed hostnames or IP addresses."
 msgstr ""
 
@@ -2316,6 +2336,9 @@ msgstr "通用名"
 
 msgid "Community"
 msgstr "团体"
+
+msgid "Complete the Upgrade"
+msgstr ""
 
 msgid "Compress"
 msgstr "压缩"
@@ -2550,6 +2573,9 @@ msgstr "创建密码短语"
 msgid "Create Pool"
 msgstr "创建存储池"
 
+msgid "Create SSH Connection"
+msgstr ""
+
 msgid "Create Snapshot"
 msgstr "创建快照"
 
@@ -2635,6 +2661,9 @@ msgstr ""
 msgid "DELETE"
 msgstr ""
 
+msgid "DELETE DATASET"
+msgstr ""
+
 msgid "DHCP"
 msgstr "DHCP"
 
@@ -2668,6 +2697,13 @@ msgstr ""
 msgid "Data collection frequency, in seconds."
 msgstr ""
 
+msgid ""
+"Data transfer security. The connection is authenticated with SSH, then data "
+"can either be encrypted during transfer to maximise protection or left "
+"unencrypted to maximise transfer speed. Transferring data without "
+"encryption is only recommended for secure networks."
+msgstr ""
+
 msgid "Database"
 msgstr ""
 
@@ -2692,6 +2728,15 @@ msgstr "日期"
 msgid "Day of Week"
 msgstr "星期"
 
+msgid ""
+"Days before a completed scrub is allowed  to run again. This controls the "
+"task schedule. For example, scheduling  a scrub to run daily and setting "
+":guilabel:`Threshold days` to *7*  means the scrub attempts to run daily. "
+"When the scrub is successful, it  continues to check daily but does not run "
+"again until seven days have  elapsed. Using a multiple of seven ensures the "
+"scrub always occurs on  the same weekday."
+msgstr ""
+
 msgid "Days of the Week"
 msgstr "星期"
 
@@ -2706,6 +2751,9 @@ msgid ""
 "destination system must also support deduplicated streams. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
 "target=\"_blank\">zfs(8)</a>."
+msgstr ""
+
+msgid "Default ACL Options"
 msgstr ""
 
 msgid "Default Permissions"
@@ -2806,15 +2854,6 @@ msgstr ""
 "Define the number of UIDS/GIDS available per domain range. "
 "最小值是<i>2000</i>，推荐默认是<i>100000</i>。"
 
-msgid ""
-"Define the number of days to prevent a scrub from                running "
-"after the last has completed. This ignores any                other "
-"calendar schedule. The default is a multiple of                7 to ensure "
-"the scrub always occurs on the same                weekday."
-msgstr ""
-"Define the number of days to prevent a scrub from                running "
-"after the last has completed. 忽略任何其他的计划日历。默认是一个7的倍数以保证Scrub总是在一周里的同一天发生。"
-
 msgid "Define the server where all changes to the database are performed."
 msgstr ""
 
@@ -2823,6 +2862,9 @@ msgstr ""
 
 msgid "Define the size of the raw file in GiB."
 msgstr "定义原始文件大小，以GiB为单位。"
+
+msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
+msgstr ""
 
 msgid "Delay Updates"
 msgstr "延迟更新"
@@ -2838,6 +2880,9 @@ msgstr "删除 "
 
 msgid "Delete Dataset"
 msgstr "删除数据集"
+
+msgid "Delete Dataset <i><b>"
+msgstr ""
 
 msgid "Delete Device"
 msgstr "删除设备"
@@ -2870,9 +2915,6 @@ msgstr "删除选中项目"
 
 msgid "Delete snapshot "
 msgstr "删除快照 "
-
-msgid "Delete the dataset "
-msgstr "删除数据集 "
 
 msgid ""
 "Delete the passphrase from  the encryption key. Invalidates an existing "
@@ -2928,8 +2970,14 @@ msgstr "链路聚合接口描述。"
 msgid "Destination"
 msgstr "目标"
 
+msgid "Destination Datasets"
+msgstr ""
+
 msgid "Destination Path"
 msgstr "目标路径"
+
+msgid "Destination Snapshot Lifetime"
+msgstr ""
 
 msgid ""
 "Destination hostname or IP address for collectd data sent by the Graphite "
@@ -2950,6 +2998,9 @@ msgstr "分离"
 
 msgid "Detach Pool"
 msgstr "分离存储池"
+
+msgid "Detach disk "
+msgstr ""
 
 msgid "Details"
 msgstr "详情"
@@ -3033,6 +3084,9 @@ msgstr "目录权限"
 
 msgid "Directory Services"
 msgstr "目录服务"
+
+msgid "Directory Services Monitor"
+msgstr ""
 
 msgid "Directory/Files"
 msgstr "目录/文件"
@@ -3188,6 +3242,9 @@ msgid "EC Curve"
 msgstr ""
 
 msgid "EDIT ACL"
+msgstr ""
+
+msgid "ERROR: Not Enough Memory"
 msgstr ""
 
 msgid "EULA"
@@ -3788,13 +3845,6 @@ msgid "Enter an alphanumeric name for the virtual machine."
 msgstr "输入一个用于虚拟机的字母数字名称。"
 
 msgid ""
-"Enter an email address to receive <a "
-"href=\"--docurl--/services.html#s-m-a-r-t\" "
-"target=\"_blank\">S.M.A.R.T.</a> alerts; use a space to  separate multiple "
-"email addresses."
-msgstr ""
-
-msgid ""
 "Enter an email address to receive messages from the <a "
 "href=\"--docurl--/services.html#snmp\" target=\"_blank\">SNMP service</a>."
 msgstr ""
@@ -4326,6 +4376,9 @@ msgstr ""
 msgid "Exec"
 msgstr ""
 
+msgid "Execute"
+msgstr ""
+
 msgid "Export Certificate"
 msgstr "导出证书"
 
@@ -4463,6 +4516,9 @@ msgstr "文件系统类型"
 msgid "Filter"
 msgstr "过滤器"
 
+msgid "Finish Upgrade?"
+msgstr ""
+
 msgid "Fix Credential"
 msgstr "修复凭据"
 
@@ -4527,6 +4583,12 @@ msgid ""
 msgstr ""
 
 msgid "Form Invalid"
+msgstr ""
+
+msgid ""
+"FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
+"versions up to the same version as the host  system. Newer releases are not "
+"shown."
 msgstr ""
 
 msgid "FreeNAS URL"
@@ -4865,6 +4927,9 @@ msgid ""
 "<i>0.0.0.0</i>."
 msgstr ""
 
+msgid "IP address to use for  administrative access to the array."
+msgstr ""
+
 msgid "IPMI"
 msgstr "IPMI"
 
@@ -4890,7 +4955,7 @@ msgid "IPv4 address for the jail."
 msgstr "Jail的IPv4地址。"
 
 msgid ""
-"IPv4 address to use for the failover interface. Set a manual IP address "
+"IPv4 address to use for the failover  interface. Set a manual IP address "
 "here if DHCP is not used."
 msgstr ""
 
@@ -5082,11 +5147,6 @@ msgstr "启动/关机脚本"
 msgid "Initiate Failover"
 msgstr ""
 
-msgid ""
-"Initiating failover will temporarily disable services while failing over.  "
-"Failover now?"
-msgstr ""
-
 msgid "Initiator"
 msgstr ""
 
@@ -5166,6 +5226,11 @@ msgstr ""
 
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
+"like <samp>256k</samp> or <samp>1G</samp>."
+msgstr ""
+
+msgid ""
+"Invalid value. Valid values are numbers followed by optional unit letters, "
 "like <samp>256k</samp> or <samp>1G</samp>."
 msgstr ""
 
@@ -5422,9 +5487,6 @@ msgstr ""
 msgid "License"
 msgstr "许可"
 
-msgid "License has been updated."
-msgstr ""
-
 msgid "Lifetime"
 msgstr "有效期(天)"
 
@@ -5438,6 +5500,9 @@ msgid "Link State"
 msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
+msgstr ""
+
+msgid "Load Previous Replication Task"
 msgstr ""
 
 msgid "Local"
@@ -5597,9 +5662,9 @@ msgid "Maximum SysV message queue size in bytes for the jail."
 msgstr ""
 
 msgid ""
-"Maximum Transmission Unit, the largest protocol data unit that can be "
-"communicated. The largest workable MTU size varies with network interfaces "
-"and equipment. *1500* and *9000* are standard Ethernet MTU sizes."
+"Maximum Transmission Unit, the largest protocol data  unit that can be "
+"communicated. The largest workable MTU size varies  with network interfaces "
+"and equipment. *1500* and *9000* are standard  Ethernet MTU sizes."
 msgstr ""
 
 msgid ""
@@ -5680,6 +5745,9 @@ msgstr ""
 
 msgid "Memory"
 msgstr "内存"
+
+msgid "Memory Size"
+msgstr ""
 
 msgid "Memory Size (MiB)"
 msgstr "内存大小(MiB)"
@@ -5797,11 +5865,6 @@ msgid "Multipaths"
 msgstr "多路径"
 
 msgid ""
-"Multiple critical interfaces are combined into a single failover group. A "
-"failover is triggered if all of the interfaces in the group fail."
-msgstr ""
-
-msgid ""
 "Must match Peer Secret (Confirm) and be between 12 and 16 characters in "
 "length. Cannot be the same as Secret."
 msgstr ""
@@ -5859,6 +5922,9 @@ msgid "Name Jail and Choose FreeBSD Release"
 msgstr ""
 
 msgid "Name and Naming Schema cannot be provided at the same time."
+msgstr ""
+
+msgid "Name and Options"
 msgstr ""
 
 msgid "Name of NIS domain."
@@ -5976,6 +6042,12 @@ msgid ""
 "Network Address Translation (NAT). Transforms local network IP addresses "
 "into a single IP address. Set when the jail will share a single connection "
 "to the Internet with other systems on the network."
+msgstr ""
+
+msgid ""
+"Network Address Translation (NAT). When set, the jail  is given an internal "
+"IP address and connections are forwarded from  the host to the jail. When "
+"<i>NAT</i> is set,  <i>Berkeley Packet Filter</i> cannot be set."
 msgstr ""
 
 msgid "Network Changes Made Permanent"
@@ -6335,10 +6407,19 @@ msgstr "组织单位"
 msgid "Organizational unit of the entity."
 msgstr ""
 
+msgid "Other"
+msgstr ""
+
+msgid "Other Options"
+msgstr ""
+
 msgid "Outgoing Mail Server"
 msgstr ""
 
 msgid "Overcommit Memory?"
+msgstr ""
+
+msgid "Owner"
 msgstr ""
 
 msgid "Owner of the jail. Can be any string."
@@ -6354,6 +6435,9 @@ msgid ""
 msgstr ""
 
 msgid "POST INSTALL NOTES"
+msgstr ""
+
+msgid "PROCEED"
 msgstr ""
 
 msgid "PagerDuty client name."
@@ -6440,6 +6524,9 @@ msgid "Peer User"
 msgstr "对端用户"
 
 msgid "Pending Network Changes"
+msgstr ""
+
+msgid "Pending Upgrade"
 msgstr ""
 
 msgid "Perform Reverse DNS Lookups"
@@ -6752,6 +6839,9 @@ msgstr "原始文件"
 msgid "Raw filesize"
 msgstr "原始文件大小"
 
+msgid "Read"
+msgstr ""
+
 msgid "Read Only"
 msgstr "只读"
 
@@ -6806,11 +6896,26 @@ msgstr "循环"
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr "重定向到下载。确认浏览器的弹出窗口被启用。"
 
+msgid "Refresh"
+msgstr ""
+
+msgid "Region"
+msgstr ""
+
 msgid "Release"
 msgstr "发行"
 
 msgid "Release Notes"
 msgstr "发行备注"
+
+msgid "Reload now"
+msgstr ""
+
+msgid "Reload the page"
+msgstr ""
+
+msgid "Reload the page for the license to take effect."
+msgstr ""
 
 msgid "Remote Encryption"
 msgstr "远程加密"
@@ -6860,10 +6965,16 @@ msgstr "重命名现有的引导环境。"
 msgid "Renew Certificate Days"
 msgstr ""
 
+msgid "Replace"
+msgstr ""
+
 msgid "Replacing disk..."
 msgstr ""
 
 msgid "Replicate <i>"
+msgstr ""
+
+msgid "Replicate Custom Snapshots"
 msgstr ""
 
 msgid ""
@@ -6880,7 +6991,7 @@ msgstr "复制"
 msgid "Replication <i>"
 msgstr ""
 
-msgid "Replication Performance"
+msgid "Replication Schedule"
 msgstr ""
 
 msgid "Replication Tasks"
@@ -7004,6 +7115,9 @@ msgstr ""
 
 msgid "Resilver Priority"
 msgstr "Resilver 优先级"
+
+msgid "Resilvering"
+msgstr ""
 
 msgid "Resolution"
 msgstr "分辨率"
@@ -7154,14 +7268,14 @@ msgstr ""
 msgid "SSH Host to connect to."
 msgstr "连接的SSH主机。"
 
-msgid "SSH Keypair/Connection"
-msgstr ""
-
 msgid "SSH Keypairs"
 msgstr ""
 
 msgid "SSH Public Key"
 msgstr "SSH公钥"
+
+msgid "SSH Transfer Security"
+msgstr ""
 
 msgid "SSH Username."
 msgstr "SSH用户名."
@@ -7236,6 +7350,9 @@ msgid ""
 "periodic snapshot task takes a snapshot every hour, but only every other "
 "snapshot is needed for replication. The scheduler is set to even hours and "
 "only snapshots taken at those times are replicated."
+msgstr ""
+
+msgid "Scheduling"
 msgstr ""
 
 msgid "Schema"
@@ -7876,6 +7993,9 @@ msgid ""
 "Set by default if the disk supports S.M.A.R.T. Unset to disable any "
 "configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
+msgstr ""
+
+msgid "Set default options on this ACL."
 msgstr ""
 
 msgid ""
@@ -8544,6 +8664,13 @@ msgid ""
 "fashion."
 msgstr ""
 
+msgid ""
+"Set to use the Berkeley Packet Filter (<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=bpf\" "
+"target=\"_blank\">BPF(4)</a>) to data link layers in a protocol independent "
+"fashion. Cannot be set when <i>NAT</i> is set."
+msgstr ""
+
 msgid "Set up Users and Groups."
 msgstr "配置用户和群组。"
 
@@ -8627,6 +8754,9 @@ msgstr ""
 msgid ""
 "Setting this option will result in timeouts if <b>identd</b> is not running "
 "on the client."
+msgstr ""
+
+msgid "Settings"
 msgstr ""
 
 msgid "Settings saved."
@@ -9168,6 +9298,12 @@ msgstr "目标名称"
 msgid "Targets"
 msgstr ""
 
+msgid "Task Manager"
+msgstr ""
+
+msgid "Task Name"
+msgstr ""
+
 msgid "Tasks"
 msgstr "任务"
 
@@ -9196,6 +9332,9 @@ msgid ""
 "enforced. Mounting <b>devfs</b> inside a jail is only possible when the "
 "<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are enabled and "
 "<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
+msgstr ""
+
+msgid "The <i><b>"
 msgstr ""
 
 msgid ""
@@ -9432,6 +9571,11 @@ msgid "The specified permissions of that user are used by all clients."
 msgstr ""
 
 msgid ""
+"The standby controller has finished upgrading. To complete the update "
+"process,                failover to the standby controller."
+msgstr ""
+
+msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
 "capacity. Set to force creation of the zvol (<b>NOT Recommended</b>)."
 msgstr ""
@@ -9486,9 +9630,15 @@ msgstr ""
 msgid "There are unsaved network interface settings.  Review them now?"
 msgstr ""
 
+msgid "There is an upgrade waiting to finish."
+msgstr ""
+
 msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\">rclone</a>."
+msgstr ""
+
+msgid "These items will be <b>"
 msgstr ""
 
 msgid ""
@@ -9505,6 +9655,12 @@ msgid ""
 msgstr ""
 
 msgid "This Controller"
+msgstr ""
+
+msgid "This Dataset"
+msgstr ""
+
+msgid "This Dataset and Child Datasets"
 msgstr ""
 
 msgid ""
@@ -9542,6 +9698,12 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr "这项操作可能会需要很长时间。继续？"
 
+msgid "This system will restart when the update completes."
+msgstr ""
+
+msgid "This type of VDEV requires at least "
+msgstr ""
+
 msgid "Threshold days"
 msgstr "阈值天数"
 
@@ -9578,7 +9740,10 @@ msgstr ""
 msgid "To delete the <b>"
 msgstr ""
 
-msgid "To delete the <i>"
+msgid "Toggle Collapse"
+msgstr ""
+
+msgid "Toggle Hide/Open"
 msgstr ""
 
 msgid ""
@@ -9644,6 +9809,9 @@ msgstr "UNIX 字符集"
 msgid "UPDATE"
 msgstr ""
 
+msgid "UPDATE IN PROGRESS"
+msgstr ""
+
 msgid "UPDATE LICENSE"
 msgstr ""
 
@@ -9676,6 +9844,13 @@ msgid "Unique LUN ID. The default is generated from the MAC address of the syste
 msgstr "独特的LUN ID。The default is generated from the MAC address of the system."
 
 msgid ""
+"Unique Virtual Host ID on the broadcast  segment of the network. "
+"Configuring multiple Virtual IP addresses  requires a separate VHID for "
+"each address. Numbers greater than  <i>20</i> are recommended, but any "
+"unused number between <i>1</i> and  <i>255</i> is allowed."
+msgstr ""
+
+msgid ""
 "Unique drive identifier. Log in to the  <a "
 "href=\"https://onedrive.live.com\" target=\"_blank\">OneDrive account</a>  "
 "and copy the string that appears in the browser address bar after  "
@@ -9705,7 +9880,7 @@ msgstr ""
 msgid "Unset to disable the configuration without deleting it."
 msgstr ""
 
-msgid "Unset to disable the scheduled scrub without                 deleting it."
+msgid "Unset to disable the scheduled scrub  without deleting it."
 msgstr ""
 
 msgid "Unset to disable this service without deleting it."
@@ -9759,6 +9934,9 @@ msgstr "更新周期"
 msgid "Update Status"
 msgstr ""
 
+msgid "Update in Progress"
+msgstr ""
+
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr "更新成功。请重启以便更新生效。现在重启？"
 
@@ -9791,6 +9969,20 @@ msgstr "升级存储池"
 
 msgid "Upgraded"
 msgstr "已升级"
+
+msgid ""
+"Upgrades both controllers. Files will be downloaded in the Active "
+"Controller                         and then transferred to the Standby "
+"Controller. Upgrade process will start concurrently on both nodes.          "
+"               Continue with download?"
+msgstr ""
+
+msgid ""
+"Upgrades both controllers. Files will be downloaded in the Active "
+"Controller                    and then transferred to the Standby "
+"Controller. Upgrade process will start concurrently on both nodes.          "
+"          Continue with download?"
+msgstr ""
 
 msgid "Upgrading Jail"
 msgstr "升级Jail"
@@ -10047,9 +10239,6 @@ msgstr ""
 msgid "Virtual CPUs"
 msgstr "虚拟处理器"
 
-msgid "Virtual Host ID for the failover interface."
-msgstr ""
-
 msgid "Virtual IP Address"
 msgstr ""
 
@@ -10134,6 +10323,9 @@ msgid "Webdav SSL Certificate"
 msgstr "WebDav SSL证书"
 
 msgid "Webhook URL"
+msgstr ""
+
+msgid "What and Where"
 msgstr ""
 
 msgid "What are you using this for"
@@ -10229,6 +10421,9 @@ msgstr "擦除磁盘中..."
 msgid "Workgroup"
 msgstr "工作组"
 
+msgid "Write"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr "输入单个处理器核心的占用百分比限制。"
 
@@ -10243,6 +10438,9 @@ msgstr ""
 
 msgid "Yes"
 msgstr "是"
+
+msgid "Yes I understand the risks"
+msgstr ""
 
 msgid "Yes, decrypt the disks"
 msgstr "是，解密磁盘"

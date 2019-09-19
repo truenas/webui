@@ -133,7 +133,9 @@ export const helptext_system_support = {
     dialog_title: T('Update License'),
     license_placeholder: T('License'),
     save_button: T('Save License'),
-    success_message: T('License has been updated.'),
+    reload_dialog_title: T('Reload the page'),
+    reload_dialog_message: T('Reload the page for the license to take effect.'),
+    reload_dialog_action: T('Reload now'),
     error_dialog_title: T('Error Unlocking'),
     snackbar_action: T('Close')
   },

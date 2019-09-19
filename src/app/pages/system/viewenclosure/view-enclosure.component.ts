@@ -70,6 +70,10 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           this.extractVisualizations();
           break;
         case "EnclosureCanvas":
+          if(!this.nav){
+            console.warn("No navigation UI detected")
+            return;
+          }
           let el = this.nav.nativeElement.querySelector(".enclosure-" + evt.data.profile.enclosureKey);
           evt.data.canvas.setAttribute('style', 'width: 80% ;');
           el.appendChild(evt.data.canvas);
@@ -89,9 +93,15 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
 
+    core.register({observerClass: this, eventName: 'SensorData'}).subscribe((evt:CoreEvent) => {
+      this.system.sensorData = evt.data;
+      core.emit({name: 'PoolDataRequest', sender: this});
+    });
+
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
       this.system.diskData = evt.data;
-      core.emit({name: 'PoolDataRequest', sender: this});
+      //core.emit({name: 'PoolDataRequest', sender: this});
+      core.emit({name: 'SensorDataRequest', sender: this});
       setTimeout(() => {
         this.spinner = false;
       }, 1500);
