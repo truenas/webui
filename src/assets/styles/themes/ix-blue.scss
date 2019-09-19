@@ -1197,7 +1197,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-support {
     .mat-card {
       padding-bottom: 60px;
-      // min-width: 720px;
+      min-width: 320px;
     }
     #top-row {
       margin: 0 15px;
@@ -1249,6 +1249,15 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @media screen and (max-width: 400px) {
       app-sys-image img {
         max-width: 80%;
+      }
+      .mat-card {
+        margin-left: -10px;
+      }
+    }
+
+    @media screen and (max-width: 350px) {
+      .mat-card {
+        margin-left: -20px;
       }
     }
   }
@@ -1328,6 +1337,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         width: auto;
       }
     }
+
+    @media screen and (max-width: 460px) {
+      .mat-card {
+        top: 25px;
+        height: auto;
+      }
+      .mat-card-actions {
+        position: relative;
+        top: unset;
+        left: unset;
+      }
+    }
   }
 
   app-proactive {
@@ -1359,6 +1380,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @media screen and (max-width: 599px) {
       .mat-card {
         top: -35px;
+      }
+    }
+
+    @media screen and (max-width: 460px) {
+      .mat-card-actions {
+        top: 25px;
+        height: auto;
+        position: relative;
+        left: unset;
+        height: auto;
+        top: unset;
       }
     }
   }
