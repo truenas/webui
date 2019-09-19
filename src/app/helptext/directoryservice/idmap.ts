@@ -53,18 +53,6 @@ idmap_autorid_ignore_builtin_placeholder : T('Ignore Builtin'),
 idmap_autorid_ignore_builtin_tooltip : T('Set to ignore mapping requests for the <i>BUILTIN</i>\
  domain.'),
 
-///// Not in API
-idmap_fruit_range_low_name : 'idmap_fruit_range_low',
-idmap_fruit_range_low_placeholder : T('Range Low'),
-idmap_fruit_range_low_tooltip: T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_fruit_range_high_name : 'idmap_fruit_range_high',
-idmap_fruit_range_high_placeholder : T('Range High'),
-idmap_fruit_range_high_tooltip: T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-///
-
 idmap_ldap_range_low_name : 'range_low',
 idmap_ldap_range_low_placeholder : T('Range Low'),
 idmap_ldap_range_low_tooltip: T('Beginning UID/GID number for which this system is\
@@ -134,66 +122,65 @@ idmap_rfc2307_range_high_placeholder: T('Range High'),
 idmap_rfc2307_range_high_tooltip: T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
- //// Not in API for idmap.rfc2307.update
-idmap_rfc2307_ldap_server_name : 'idmap_rfc2307_ldap_server',
+idmap_rfc2307_ldap_server_name : 'ldap_server',
 idmap_rfc2307_ldap_server_placeholder: T('LDAP Server'),
 idmap_rfc2307_ldap_server_tooltip: T('Select the type of LDAP server to use. This can be the\
  LDAP server provided by the Active Directory server or a stand-alone LDAP server.'),
 
-idmap_rfc2307_bpuser_name : 'idmap_rfc2307_bind_path_user',
+idmap_rfc2307_bpuser_name : 'bind_path_user',
 idmap_rfc2307_bpuser_placeholder: T('User Bind Path'),
 idmap_rfc2307_bpuser_tooltip: T('The search base where user objects can be found in the\
  LDAP server.'),
 
-idmap_rfc2307_bpgroup_name : 'idmap_rfc2307_bind_path_group',
+idmap_rfc2307_bpgroup_name : 'bind_path_group',
 idmap_rfc2307_bpgroup_placeholder: T('Group Bind Path'),
 idmap_rfc2307_bpgroup_tooltip: T('The search base where group objects can be found in\
  the LDAP server.'),
 
-idmap_rfc2307_user_cn_name : 'idmap_rfc2307_user_cn',
+idmap_rfc2307_user_cn_name : 'user_cn',
 idmap_rfc2307_user_cn_placeholder: T('User CN'),
 idmap_rfc2307_user_cn_tooltip: T('Set to query the cn instead of uid attribute for the user name in LDAP.'),
 
-idmap_rfc2307_cn_realm_name : 'idmap_rfc2307_cn_realm',
+idmap_rfc2307_cn_realm_name : 'cn_realm',
 idmap_rfc2307_cn_realm_placeholder: T('CN Realm'),
 idmap_rfc2307_cn_realm_tooltip: T('Append <i>@realm</i> to <i>cn</i> in LDAP queries for\
  both groups and users when User CN is set).'),
 
-idmap_rfc2307_ldap_domain_name : 'idmap_rfc2307_ldap_domain',
+idmap_rfc2307_ldap_domain_name : 'ldap_domain',
 idmap_rfc2307_ldap_domain_placeholder: T('LDAP Domain'),
 idmap_rfc2307_ldap_domain_tooltip: T('The domain to access the Active Directory server when\
  using the LDAP server inside the Active Directory server.'),
 
-idmap_rfc2307_ldap_url_name : 'idmap_rfc2307_ldap_url',
+idmap_rfc2307_ldap_url_name : 'ldap_url',
 idmap_rfc2307_ldap_url_placeholder: T('LDAP URL'),
 idmap_rfc2307_ldap_url_tooltip: T('The LDAP URL for accessing the LDAP server when using\
  a stand-alone LDAP server.'),
 
-idmap_rfc2307_ldap_user_dn_name : 'idmap_rfc2307_ldap_user_dn',
+idmap_rfc2307_ldap_user_dn_name : 'ldap_user_dn',
 idmap_rfc2307_ldap_user_dn_placeholder: T('LDAP User DN'),
 idmap_rfc2307_ldap_user_dn_tooltip: T('User Distinguished Name to use for authentication.'),
 
-idmap_rfc2307_ldap_user_dn_pw_name : 'idmap_rfc2307_ldap_user_dn_password',
+idmap_rfc2307_ldap_user_dn_pw_name : 'ldap_user_dn_password',
 idmap_rfc2307_ldap_user_dn_pw_placeholder: T('LDAP User DN Password'),
 idmap_rfc2307_ldap_user_dn_pw_tooltip: T('Password associated with the LDAP User DN.'),
 
-idmap_rfc2307_ldap_realm_name : 'idmap_rfc2307_ldap_realm',
+idmap_rfc2307_ldap_realm_name : 'ldap_realm',
 idmap_rfc2307_ldap_realm_placeholder: T('LDAP Realm'),
 idmap_rfc2307_ldap_realm_tooltip: T('Performs authentication from an LDAP server.'),
 
-idmap_rfc2307_ssl_name : 'idmap_rfc2307_ssl',
+idmap_rfc2307_ssl_name : 'ssl',
 idmap_rfc2307_ssl_placeholder: T('Encryption Mode'),
 idmap_rfc2307_ssl_tooltip: T('Choose an encryption mode.'),
 idmap_rfc2307_ssl_options:
 [{
 label: 'Off',
-value: 'off',
+value: 'OFF',
 }, {
 label: 'SSL',
-value: 'ssl',
+value: 'ON',
 }, {
-label: 'TLS',
-value: 'tls',
+label: 'STARTTLS',
+value: 'START_TLS',
 }],
 
 idmap_rfc2307_cert_name : '',
@@ -202,8 +189,6 @@ idmap_rfc2307_cert_tooltip: T('Select the certificate of the Active Directory se
  if SSL connections are used. When no certificates are available, move to the Active Directory server and\
  create a Certificate Authority and Certificate. Import the certificate to this system using the\
  System/Certificates menu.'),
-/////
-
 
 idmap_rid_range_low_name : 'range_low',
 idmap_rid_range_low_placeholder: T('Range Low'),
@@ -240,23 +225,6 @@ idmap_tdb_range_high_name : 'range_high',
 idmap_tdb_range_high_placeholder: T('Range High'),
 idmap_tdb_range_high_tooltip: T('Ending UID/GID number for which this system is\
  authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_tdb2_range_low_name : 'idmap_tdb2_range_low',
-idmap_tdb2_range_low_placeholder: T('Range Low'),
-idmap_tdb2_range_low_tooltip: T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_tdb2_range_high_name: 'idmap_tdb2_range_high',
-idmap_tdb2_range_high_placeholder: T('Range High'),
-idmap_tdb2_range_high_tooltip: T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_tdb2_script_name : 'idmap_tdb2_script',
-idmap_tdb2_script_placeholder: T('Script'),
-idmap_tdb2_script_tooltip: T('Configure an external program for ID mapping instead of\
- using the <i>tdb</i> counter. Mappings are stored in the\
- <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_tdb2.8.html"\
- target="_blank">idmap_tdb2</a> database'),
 
 idmap_error_dialog_title: T('Error')
 }

@@ -81,19 +81,6 @@ export class IdmapComponent implements OnInit {
       placeholder: helptext.idmap_autorid_ignore_builtin_placeholder,
       tooltip: helptext.idmap_autorid_ignore_builtin_tooltip,
     }];
-  public fruitFieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: helptext.idmap_fruit_range_low_name,
-      placeholder: helptext.idmap_fruit_range_low_placeholder,
-      tooltip: helptext.idmap_fruit_range_low_tooltip,
-    },
-    {
-      type: 'input',
-      name: helptext.idmap_fruit_range_high_name,
-      placeholder: helptext.idmap_fruit_range_high_placeholder,
-      tooltip: helptext.idmap_fruit_range_high_tooltip,
-    }];
   public ldapFieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -285,25 +272,6 @@ export class IdmapComponent implements OnInit {
       placeholder: helptext.idmap_tdb_range_high_placeholder,
       tooltip: helptext.idmap_tdb_range_high_tooltip,
     }];
-  public tdb2FieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: helptext.idmap_tdb2_range_low_name,
-      placeholder: helptext.idmap_tdb2_range_low_placeholder,
-      tooltip: helptext.idmap_tdb2_range_low_tooltip,
-    },
-    {
-      type: 'input',
-      name: helptext.idmap_tdb2_range_high_name,
-      placeholder: helptext.idmap_tdb2_range_high_placeholder,
-      tooltip: helptext.idmap_tdb2_range_high_tooltip,
-    },
-    {
-      type: 'input',
-      name: helptext.idmap_tdb2_script_name,
-      placeholder: helptext.idmap_tdb2_script_placeholder,
-      tooltip: helptext.idmap_tdb2_script_tooltip,
-    }];
 
   protected props: any;
   public step: any = 0;
@@ -344,8 +312,6 @@ export class IdmapComponent implements OnInit {
       this.formGroup = this.entityFormService.createFormGroup(this.adFieldConfig);
     } else if (this.idmap_type === 'autorid') {
       this.formGroup = this.entityFormService.createFormGroup(this.autoridFieldConfig);
-    } else if (this.idmap_type === 'fruit') {
-      this.formGroup = this.entityFormService.createFormGroup(this.fruitFieldConfig);
     } else if (this.idmap_type === 'ldap') {
       this.formGroup = this.entityFormService.createFormGroup(this.ldapFieldConfig);
     } else if (this.idmap_type === 'nss') {
@@ -358,19 +324,17 @@ export class IdmapComponent implements OnInit {
       this.formGroup = this.entityFormService.createFormGroup(this.scriptFieldConfig);
     } else if (this.idmap_type === 'tdb') {
       this.formGroup = this.entityFormService.createFormGroup(this.tdbFieldConfig);
-    } else if (this.idmap_type === 'tdb2') {
-      this.formGroup = this.entityFormService.createFormGroup(this.tdb2FieldConfig);
     }
                                          
     this.ws.call('idmap.get_or_create_idmap_by_domain', [this.idmap_domain_name]).subscribe((res) => {
       if (res && res['id']) {
         this.idmapID = res['id'];
         for (let i in this.formGroup.controls) {
-          this.formGroup.controls[i].setValue(res[i]); // but incoming values don't all match - ldap for example
+          this.formGroup.controls[i].setValue(res[i]);
         }
       } else {
         // no idmap config find in datastore
-        if (this.idmap_type === 'tdb' || this.idmap_type === 'tdb2' || this.idmap_type === 'script') {
+        if (this.idmap_type === 'tdb' || this.idmap_type === 'script') {
           for (let i in this.formGroup.controls) {
             if(_.endsWith(i, 'range_low')) {
               this.formGroup.controls[i].setValue('90000001');
@@ -389,7 +353,6 @@ export class IdmapComponent implements OnInit {
         }
       }
     });
-
   }
 
   goBack() {
@@ -398,7 +361,7 @@ export class IdmapComponent implements OnInit {
 
   onSubmit() {
     this.error = null;
-    let value = _.cloneDeep(this.formGroup.value); // values in form should all match API required names
+    let value = _.cloneDeep(this.formGroup.value);
     this.loader.open();
     this.ws.call(`idmap.${this.idmap_type}.update`, [this.idmapID, 
         value]).subscribe(
