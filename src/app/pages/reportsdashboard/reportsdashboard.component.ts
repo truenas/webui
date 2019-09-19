@@ -115,10 +115,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
        
         this.activateTabFromUrl();
-
-        console.log("REPORTS");
-        console.log(this.diskReports);
-      }
+}
     });
 
     this.ws.call('disk.query').subscribe((res) => {
@@ -145,8 +142,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   }
 
   getBatch(lastSeen: string){
-    // Do Stuff
-    console.log("getBatch Method");
     return this.visibleReports;
   }
 
@@ -170,7 +165,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   activateTabFromUrl (){ 
     let subpath = this.router.url.split("/reportsdashboard/"); 
     let tabFound = this.allTabs.find((tab) =>{
-      //return tab.path === subpath[1];
       return tab.value === subpath[1];
     });
     this.updateActiveTab(tabFound);
@@ -312,7 +306,6 @@ diskReportBuilderSetup(){
             label: 'Devices',
             disabled:false,
             options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-            //tooltip:'Choose a device for your report.',
           },
           {
             type: 'multimenu',
@@ -320,7 +313,6 @@ diskReportBuilderSetup(){
             label: 'Metrics',
             disabled: false,
             options: this.diskMetrics ? this.diskMetrics.map((v) => v) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-            //tooltip:'Choose a metric to display.',
           }
     ]
 
@@ -349,7 +341,6 @@ diskReportBuilderSetup(){
             width:'calc(50% - 16px)',
             placeholder: 'Choose a metric',
             options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-            //value:[this.diskMetrics[0]],
             required: true,
             multiple: true,
             tooltip:'Choose a metric to display.',
@@ -374,8 +365,6 @@ diskReportBuilderSetup(){
     });
 
     this.diskMetrics = metrics;
-    console.log("DISKDEVICES");
-    console.log(this.diskDevices);
   }
 
   generateFieldConfig(){
@@ -434,8 +423,6 @@ diskReportBuilderSetup(){
   }
 
   parseDisks(res){
-    console.log("DISK.QUERY");
-    console.log(res);
 
     let uniqueNames = [];
     let multipathDisks = [];
@@ -450,8 +437,6 @@ diskReportBuilderSetup(){
         multipathDisks.push(disk.devname.replace('multipath/', '') + ' = ' + disk.multipath_member);
       }
     });
-
-    console.log(multipathDisks);
 
     this.diskDevices = uniqueNames.map((devname) => {
       let spl = devname.split(' ');
