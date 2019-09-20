@@ -12,6 +12,7 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 
 @NgModule({
   imports: [CommonModule, FormsModule, EntityModule, routing, MaterialModule, TranslateModule, CoreComponents],
-  declarations: [ShellComponent]
+  declarations: [ShellComponent],
+  exports: [ShellComponent]
 })
 export class ShellModule {}

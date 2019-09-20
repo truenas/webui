@@ -24,10 +24,14 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   public token: any;
   public xterm: any;
   public resize_terminal = true;
-  private shellSubscription: any;
+  protected shellSubscription: any;
   public lastWidth: number;
   public lastHeight: number;
 
+  protected ws: WebSocketService;
+  protected ss: ShellService;
+  protected translate: TranslateService;
+  protected snackbar: MatSnackBar;
   public usage_tooltip = helptext.usage_tooltip;
 
   clearLine = "\u001b[2K\r";
@@ -84,7 +88,7 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   onRightClick(): false {
-    this._snackbar.openFromComponent(CopyPasteMessageComponent);
+    this.snackbar.openFromComponent(CopyPasteMessageComponent);
 
     return false;
   }
@@ -183,6 +187,10 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private _snackbar: MatSnackBar) {
+  constructor(protected _ws: WebSocketService, protected _ss: ShellService, protected _translate: TranslateService, protected _snackbar: MatSnackBar) {
+    this.ws = _ws;
+    this.ss = _ss;
+    this.translate = _translate;
+    this.snackbar = _snackbar
   }
 }
