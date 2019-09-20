@@ -640,26 +640,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       dialog.title = dialog.buildTitle(item);
     }
 
-    this.dialogService.confirm(
-        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
-        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
-        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
-        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
-      if (res) {
-        if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
-          // double confirm: input delete item's name to confirm deletion
-          this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
-            if (doubleConfirmDialog) {
-              this.toDeleteRow = item;
-              this.delete(id);
-            }
-          });
-        } else {
+    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
+      // double confirm: input delete item's name to confirm deletion
+      this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
+        if (doubleConfirmDialog) {
           this.toDeleteRow = item;
           this.delete(id);
         }
-      }
-    })
+      });
+    } else {
+      this.dialogService.confirm(
+        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
+        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
+        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false,
+        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
+          if (res) {
+            this.toDeleteRow = item;
+            this.delete(id);
+          }
+        });
+    }
   }
 
   delete(id) {
