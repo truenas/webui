@@ -137,6 +137,7 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   getTermParentDimensions(){
     const target:HTMLElement = document.querySelector('#terminal'); 
+    console.log(target.offsetWidth);
     return {width: target.offsetWidth, height: target.offsetHeight};
   }
 
@@ -151,11 +152,6 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.cols = c;
       this.rows = r;
     }
-
-    if(this.xterm){
-      this.xterm.resize(this.cols, this.rows);
-    }
-
   }
 
   forceDimensions(){
