@@ -534,9 +534,9 @@ export class CloudsyncFormComponent implements OnInit {
                   this.loader.close();
                   this.setDisabled('bucket', true, true);
                   this.setDisabled('bucket_input', false, false);
-                  this.dialog.confirm(T('Error: ') + err.error, err.reason, true, T('Fix Credential')).subscribe(
-                    (res) => {
-                      if (res) {
+                  this.dialog.confirm(err.extra ? err.extra.excerpt : (T('Error: ') + err.error) , err.reason, true, T('Fix Credential')).subscribe(
+                    (dialog_res) => {
+                      if (dialog_res) {
                         this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', item.id]));
                       }
                     })
