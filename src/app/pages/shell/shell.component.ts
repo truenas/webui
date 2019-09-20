@@ -102,11 +102,13 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
       'cols': this.cols,
       'rows': this.rows
     });
+
     this.xterm.open(this.container.nativeElement, true);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
     this.fitTerm();
     this.rowCount = this.getRowCount(); 
+
     this.xterm.on('key',(key, e) =>{
 
       if(e.key == "Enter"){
@@ -114,6 +116,8 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
       }
 
     });
+
+    this.forceDimensions();
   }
 
   getRowCount(){
