@@ -36,6 +36,15 @@
   padding:8px 16px;
 }
 
+.shell.mat-card .mat-card-content > * {
+  margin: 0 8px;
+}
+
+.shell.mat-card .mat-card-content > div {
+  max-width: 250px;
+  display: inline-block;
+}
+
 .mat-card #terminal .terminal,
 .mat-card #terminal .terminal .xterm-viewport{
   background-color: var(--bg1) !important;

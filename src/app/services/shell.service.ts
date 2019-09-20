@@ -63,6 +63,7 @@ export class ShellService {
   addEventListener() {}
 
   onclose(event) {
+    console.warn("Shell Service Disconnecting...");
     this.connected = false;
     this.onCloseSubject.next(true);
     this.shellConnected.emit(this.connected);
@@ -125,12 +126,17 @@ export class ShellService {
   }
 
   configTTY(rows:number, cols:number, xterm?: any){
-    //EXAMPLE
-    //this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
-    //this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
-    //this.xterm.send('\r');
+    const cmd = 'stty rows ' + rows + ' cols ' + cols + ' \n';
 
-    this.send('stty rows ' + rows + ' cols ' + cols + ' \n');
-    //console.log(xterm);
+    const str= "\e[8;" + rows + ";" + cols + "t";
+    const cmd2 = this.convertToBytes(str);
+
+    this.send(cmd);
+  }
+
+  convertToBytes(str:string):ArrayBuffer{
+    const textEncoder = new TextEncoder()
+    const encoded = textEncoder.encode(str);
+    return encoded.buffer;
   }
 }
