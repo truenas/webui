@@ -49,34 +49,6 @@ export class JailShellComponent extends ShellComponent implements AfterViewInit 
     });
   }
 
-  /*initializeTerminal() {
-
-    this.xterm = new (<any>window).Terminal({
-      'cursorBlink': true,
-      'tabStopWidth': 8,
-      'cols': this.cols,
-      'rows': this.rows,
-      'focus': true
-    });
-
-    this.xterm.open(this.container.nativeElement, true);
-    this.xterm.attach(this.ss);
-    this.xterm._initialized = true;
-    this.fitTerm();
-    this.rowCount = this.getRowCount();
-
-    this.xterm.on('key', (e) => {
-      if(e.key == "Enter"){
-        this.resetScrollBottom();
-      }
-    });
-
-    //this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
-    this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
-    this.xterm.send('\r');
-    this.forceDimensions();
-  }*/
-
   initializeWebShell(res: string) {
     this.ss.token = res;
     this.ss.jailId = this.pk;

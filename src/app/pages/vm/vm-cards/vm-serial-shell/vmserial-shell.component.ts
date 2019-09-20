@@ -64,7 +64,6 @@ export class VMSerialShellComponent extends ShellComponent implements AfterViewI
       }
     });
 
-    //this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
     this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
     this.xterm.send('\r');
     this.forceDimensions();
