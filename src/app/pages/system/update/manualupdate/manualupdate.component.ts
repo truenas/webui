@@ -14,6 +14,7 @@ import { MessageService } from '../../../common/entity/entity-form/services/mess
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { EntityUtils } from '../../../../pages/common/entity/utils';
 
 @Component({
   selector: 'app-manualupdate',
@@ -27,6 +28,8 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   public fileLocation: any;
   public subs: any;
   public isHA = false;
+  public isUpdateRunning = false;
+  public updateMethod: string = 'update.update';
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
@@ -113,9 +116,11 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.isHA = true;
+          this.updateMethod = 'failover.upgrade';
         } else {
           _.find(this.fieldConfig, {name : "rebootAfterManualUpdate"})['isHidden'] = false;
         }
+        this.checkForUpdateRunning();
       })
     }
 
@@ -256,7 +261,35 @@ saveCofigSubmit(entityDialog) {
           });
         }
       );
-  });
-}
+    });
+  }
+
+  showRunningUpdate(jobId) {
+      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+      if (this.isHA) {
+        this.dialogRef.componentInstance.disableProgressValue(true);
+      };
+      this.dialogRef.componentInstance.jobId = jobId;
+      this.dialogRef.componentInstance.wsshow();
+      this.dialogRef.componentInstance.success.subscribe((res) => {
+        this.router.navigate(['/others/reboot']);
+      });
+      this.dialogRef.componentInstance.failure.subscribe((err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      });
+  }
+
+  checkForUpdateRunning() {
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res && res.length > 0) {
+          this.isUpdateRunning = true;
+          this.showRunningUpdate(res[0].id);
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
+  }
 
 }

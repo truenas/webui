@@ -354,6 +354,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   showRunningUpdate(jobId) {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+    if (this.is_ha) {
+      this.dialogRef.componentInstance.disableProgressValue(true);
+    };
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.subscribe((res) => {
