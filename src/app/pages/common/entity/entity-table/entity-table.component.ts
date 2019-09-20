@@ -119,6 +119,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
   public originalConfColumns = []; // The 'factory setting
+  public colMaxWidths = [];
 
   public startingHeight: number;
   public expandedRows = 0;
@@ -219,6 +220,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
 
+    this.filterColumns.forEach((column) => {
+      let tempObj = {};
+      tempObj['name'] = column.name;
+      tempObj['maxWidth'] = column.maxWidth;
+      this.colMaxWidths.push(tempObj)
+    })
+
     for (let item of this.allColumns) {
       if (!item.hidden) {
         this.originalConfColumns.push(item);
@@ -228,7 +236,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
-      console.log(preferredCols)
       if (preferredCols.length > 0) {
         preferredCols.forEach((i) => {
           // If preferred columns have been set for THIS table...
@@ -236,7 +243,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.conf.columns = i.cols;
           }
         });
-        this.conf.columns = this.dropLargestMaxWidth();
+        if (this.title === 'Users') {
+          this.conf.columns = this.dropLargestMaxWidth();
+        }
       }
     }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 2000 : 0)
 
@@ -307,25 +316,27 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   dropLargestMaxWidth() {
-        let tempArr = [];
-        for (const i of this.conf.columns) {
-          if (tempArr.length === 0) {
-            tempArr.push(i);
-          } else {
-            if (i.maxWidth > tempArr[0].maxWidth ) {
-              tempArr.pop();
-              tempArr.push(i)
-            }
-          }
+    this.conf.columns.forEach((column) => {
+      column['maxWidth'] = (this.colMaxWidths.find(({name}) => name === column.name)).maxWidth;
+    })
+
+    let tempArr = [];
+    for (const i of this.conf.columns) {
+      if (tempArr.length === 0) {
+        tempArr.push(i);
+      } else {
+        if (i.maxWidth > tempArr[0].maxWidth ) {
+          tempArr.pop();
+          tempArr.push(i)
         }
-        this.conf.columns.forEach((column) => {
-          if (column.name === tempArr[0].name) {
-            delete column.maxWidth;
-          }
-        })
-        // console.log(tempArr)
-        // console.log(this.conf.columns)
-        return this.conf.columns;
+      }
+    }
+    this.conf.columns.forEach((column) => {
+      if (column.name === tempArr[0].name) {
+        delete column.maxWidth;
+      } 
+    })
+    return this.conf.columns;
   }
  
   setTableHeight() {
@@ -941,7 +952,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     preferredCols.push(obj);
     this.prefService.savePreferences(this.prefService.preferences);
-    this.conf.columns = this.dropLargestMaxWidth();
+    if (this.title === 'Users') {
+      this.conf.columns = this.dropLargestMaxWidth();
+    }
   }
 
   // resets col view to the default set in the table's component
