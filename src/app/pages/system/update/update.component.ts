@@ -441,8 +441,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
                 });
                 } else {
                   this.ds  = this.dialogService.confirm(
-                    T("Download Update"), T("Upgrades both controllers. Files will be downloaded in the Active Controller\
-                      and then transferred to the Standby Controller. Upgrade process will start concurrently on both nodes.\
+                    T("Download Update"), T("Upgrades both controllers. Files are downloaded to the Active Controller\
+                      and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
                       Continue with download?"),true).subscribe((res) =>  {
                       if (res) {
                         this.update()
