@@ -13,7 +13,7 @@
       <mat-slider min="10" max="20" step="1" [(ngModel)]="font_size"></mat-slider>
     </div>
     <button mat-button class="mat-basic" (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Restore default" | translate}}</button>
-    <button mat-button class="mat-basic" (click)="forceDimensions()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Resize" | translate}}</button>
+    <button mat-button class="mat-basic" (click)="forceDimensions()" matTooltip="{{'Manually update the shell with the proper rows and column sizes.' | translate }}">{{"Resize" | translate}}</button>
     <tooltip class="shellTooltip" position="above-left" [message]=usage_tooltip></tooltip>
   </mat-card-content>
   <ng-template #Reconnect>
