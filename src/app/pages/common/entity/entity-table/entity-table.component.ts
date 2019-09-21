@@ -422,13 +422,24 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         data: res
       };
     }
+
     if (res.data) {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
+        for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
+          if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
+            res.data.map(row => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          }
+        }
       }
     } else {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res = this.conf.resourceTransformIncomingRestData(res);
+        for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
+          if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
+            res.map(row => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          }
+        }
       }
     }
 
