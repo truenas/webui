@@ -33,6 +33,7 @@ export class VMSerialShellComponent extends ShellComponent implements AfterViewI
         this.initializeWebShell(res);
         this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
           if (value !== undefined) {
+            if(this.filteredValue(value)){ return; }
             this.xterm.write(value);
           }
         });
@@ -58,11 +59,12 @@ export class VMSerialShellComponent extends ShellComponent implements AfterViewI
     this.fitTerm();
     this.rowCount = this.getRowCount();
 
-    this.xterm.on('key', (e) => {
+    /*this.xterm.on('key', (e) => {
       if(e.key == "Enter"){
         this.resetScrollBottom();
       }
-    });
+    });*/
+    this.setupListeners();
 
     this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
     this.xterm.send('\r');

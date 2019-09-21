@@ -126,17 +126,8 @@ export class ShellService {
   }
 
   configTTY(rows:number, cols:number, xterm?: any){
-    const cmd = 'stty rows ' + rows + ' cols ' + cols + ' \n';
-
-    const str= "\e[8;" + rows + ";" + cols + "t";
-    const cmd2 = this.convertToBytes(str);
-
-    this.send(cmd);
-  }
-
-  convertToBytes(str:string):ArrayBuffer{
-    const textEncoder = new TextEncoder()
-    const encoded = textEncoder.encode(str);
-    return encoded.buffer;
+    const cmd = 'stty rows ' + rows + ' cols ' + cols;
+    const str= '1[8;' + rows + ';' + cols + 't';
+    this.send(cmd + ' \n'); 
   }
 }

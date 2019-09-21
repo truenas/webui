@@ -42,16 +42,16 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
         if (value !== undefined){
-          this.xterm.write(value);
+          if(this.filteredValue(value)){ return; }
+
+          this.xterm.write(value); 
         } 
-      });
-      this.initializeTerminal();
-    });
-    this.overflowParent('hidden');
+      }); 
+      this.initializeTerminal(); });
+      this.overflowParent('hidden'); 
   }
 
-  ngOnDestroy() {
-    if (this.ss.connected){
+  ngOnDestroy() { if (this.ss.connected){
       this.ss.socket.close();
     }
     if(this.shellSubscription){
@@ -80,6 +80,7 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
+      console.log(changedProp);
       // reprint prompt
       if (propName === 'prompt' && this.xterm != null) {
         this.xterm.write(this.clearLine + this.prompt);
@@ -100,7 +101,8 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
       'tabStopWidth': 8,
       'focus': true,
       'cols': this.cols,
-      'rows': this.rows
+      'rows': this.rows,
+      'convertEol': true,
     });
 
     this.xterm.open(this.container.nativeElement, true);
@@ -109,6 +111,12 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.fitTerm();
     this.rowCount = this.getRowCount(); 
 
+    this.setupListeners();
+
+    this.forceDimensions();
+  }
+
+  setupListeners(){
     this.xterm.on('key',(key, e) =>{
 
       if(e.key == "Enter"){
@@ -116,8 +124,21 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
       }
 
     });
+  }
 
-    this.forceDimensions();
+  filteredValue(value){
+    let filtered = false;
+    const cc = [
+      value.charCodeAt(0),
+      value.charCodeAt(1),
+      value.charCodeAt(2),
+      value.charCodeAt(3)
+    ]
+
+    if(cc[0] == 27 && cc[1] == 91 && cc[2] == 49 && cc[3] == 109){
+      filtered = true;
+    } 
+    return filtered;
   }
 
   getRowCount(){
@@ -135,17 +156,25 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
     return {width: target.offsetWidth, height: target.offsetHeight};
   }
 
+  getCursorDimensions(){
+    const target:HTMLElement = document.querySelector('.terminal .terminal-cursor'); 
+    return {
+      width: target ? target.offsetWidth : this.font_size * 0.45 , 
+      height: target ? target.offsetHeight : this.font_size
+    };
+  }
+
   getTermParentDimensions(){
     const target:HTMLElement = document.querySelector('#terminal'); 
-    console.log(target.offsetWidth);
     return {width: target.offsetWidth, height: target.offsetHeight};
   }
 
   setTermDimensions(c?: number, r?: number){
     if(!c || !r){
       let dimensions = this.getTermParentDimensions();
-      const cols = Math.floor(dimensions.width / (this.font_size / 2));
-      const rows = Math.floor((dimensions.height / this.font_size) - 4);
+      const cursor = this.getCursorDimensions();
+      const cols = Math.floor(dimensions.width / (cursor.width));
+      const rows = Math.floor((dimensions.height / cursor.height) - 3);
       this.cols = cols;
       this.rows = rows;
     } else {
@@ -155,6 +184,7 @@ export class ShellComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   forceDimensions(){
+    this.setTermDimensions();
     this.ss.configTTY(this.rows, this.cols, this.xterm);
   }
 
