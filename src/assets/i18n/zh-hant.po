@@ -479,6 +479,9 @@ msgstr ""
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
+msgid "A system update is in progress. "
+msgstr ""
+
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
 "are named after the object that generated the keypair with \" Key\" "
@@ -1826,6 +1829,9 @@ msgid ""
 "can result in significant performance gains."
 msgstr ""
 
+msgid "Choose Theme"
+msgstr ""
+
 msgid ""
 "Choose a <i>Stripe</i>, <i>Mirror</i>, or <i>Raid-Z</i> configuration for "
 "the chosen disk layout. See the <a "
@@ -1868,6 +1874,9 @@ msgid ""
 "dataset. The /iocage   dataset might not be visible until after   the first "
 "jail is created. iocage uses   this dataset to store FreeBSD releases   and "
 "all other jail data."
+msgstr ""
+
+msgid "Choose a preferred theme."
 msgstr ""
 
 msgid "Choose a privacy protocol."
@@ -2246,13 +2255,6 @@ msgstr ""
 
 msgid "Configure Networking"
 msgstr "設定網路"
-
-msgid ""
-"Configure an external program for ID mapping instead of using the "
-"<i>tdb</i> counter. Mappings are stored in the <a "
-"href=\"http://samba.org.ru/samba/docs/man/manpages/idmap_tdb2.8.html\" "
-"target=\"_blank\">idmap_tdb2</a> database"
-msgstr ""
 
 msgid ""
 "Configure an external program to perform ID mapping. See <a "
@@ -3151,6 +3153,9 @@ msgstr ""
 
 msgid "Enable NFSv4"
 msgstr "啟用 NFSv4"
+
+msgid "Enable Password Toggle"
+msgstr ""
 
 msgid "Enable S.M.A.R.T."
 msgstr "啟用 S.M.A.R.T."
@@ -4418,6 +4423,9 @@ msgstr "閘道"
 msgid "General"
 msgstr "一般"
 
+msgid "General Preferences"
+msgstr ""
+
 msgid "Generate Debug File"
 msgstr "產生偵錯檔"
 
@@ -5381,6 +5389,9 @@ msgstr ""
 
 msgid "Mail Server Port"
 msgstr "郵件伺服器埠號"
+
+msgid "Manual Update"
+msgstr ""
 
 msgid "Manycast"
 msgstr "多點廣播"
@@ -6441,6 +6452,9 @@ msgstr ""
 msgid "Prefer"
 msgstr ""
 
+msgid "Prefer buttons with icons only"
+msgstr ""
+
 msgid "Preferences"
 msgstr "喜好設定"
 
@@ -6448,6 +6462,9 @@ msgid "Preserve extended attributes"
 msgstr ""
 
 msgid "Preserve permissions"
+msgstr ""
+
+msgid "Preserve screen space with icons and tooltips instead of text labels."
 msgstr ""
 
 msgid ""
@@ -6882,6 +6899,9 @@ msgstr "重新啟動 Web 服務"
 
 msgid "Restart the system?"
 msgstr "重新啟動系統？"
+
+msgid "Restarting Jail"
+msgstr ""
 
 msgid "Restore default"
 msgstr "回復預設值"
@@ -8509,12 +8529,6 @@ msgstr "顯示主控台訊息"
 msgid "Show only entries that contain this text"
 msgstr ""
 
-msgid ""
-"Show or hide a dialog to save the system                        "
-"configuration file. This dialog appears                        after "
-"choosing to upgrade the system."
-msgstr ""
-
 msgid "Show tracebacks in case of fatal error"
 msgstr "發生嚴重錯誤時顯示追蹤資訊"
 
@@ -8708,6 +8722,9 @@ msgstr ""
 msgid "Start time for the replication task."
 msgstr ""
 
+msgid "Starting Jail"
+msgstr ""
+
 msgid "Starting job..."
 msgstr "作業正在開始..."
 
@@ -8736,6 +8753,9 @@ msgid "Stop this cloud sync?"
 msgstr "停止雲端同步嗎？"
 
 msgid "Stopped the scrub on pool <i>"
+msgstr ""
+
+msgid "Stopping Jail"
 msgstr ""
 
 msgid "Stopping scrub on pool <i>"
@@ -9237,7 +9257,7 @@ msgstr ""
 
 msgid ""
 "The standby controller has finished upgrading. To complete the update "
-"process,                failover to the standby controller."
+"process,  failover to the standby controller."
 msgstr ""
 
 msgid ""
@@ -9353,6 +9373,9 @@ msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "這個作業需要花點時間，繼續進行嗎？"
+
+msgid "This option enables/disables a password toggle button."
+msgstr ""
 
 msgid "This system will restart when the update completes."
 msgstr ""
@@ -9585,6 +9608,9 @@ msgstr ""
 msgid "Update Period"
 msgstr ""
 
+msgid "Update Settings"
+msgstr ""
+
 msgid "Update Status"
 msgstr ""
 
@@ -9625,16 +9651,9 @@ msgid "Upgraded"
 msgstr "已升級"
 
 msgid ""
-"Upgrades both controllers. Files will be downloaded in the Active "
-"Controller                         and then transferred to the Standby "
-"Controller. Upgrade process will start concurrently on both nodes.          "
-"               Continue with download?"
-msgstr ""
-
-msgid ""
-"Upgrades both controllers. Files will be downloaded in the Active "
-"Controller                    and then transferred to the Standby "
-"Controller. Upgrade process will start concurrently on both nodes.          "
+"Upgrades both controllers. Files are downloaded to the Active Controller    "
+"                  and then transferred to the Standby Controller. The "
+"upgrade process starts concurrently on both TrueNAS Controllers.            "
 "          Continue with download?"
 msgstr ""
 
@@ -10267,6 +10286,9 @@ msgstr ""
 msgid "host_hostname"
 msgstr ""
 
+msgid "host_port"
+msgstr ""
+
 msgid "host_time"
 msgstr ""
 
@@ -10292,6 +10314,9 @@ msgid "ip6.saddrsel"
 msgstr ""
 
 msgid "ip_hostname"
+msgstr ""
+
+msgid "jail_port"
 msgstr ""
 
 msgid "jail_zfs"
@@ -10373,6 +10398,9 @@ msgid "pcpu"
 msgstr ""
 
 msgid "priority"
+msgstr ""
+
+msgid "protocol"
 msgstr ""
 
 msgid "pseudoterminals"
