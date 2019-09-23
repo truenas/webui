@@ -101,7 +101,7 @@ failover_alias_address_tooltip: T('IPv4 address to use for the failover \
 failover_virtual_alias_address_placeholder: T('Virtual IP Address'),
 failover_virtual_alias_address_tooltip: T('IP address to use for \
  administrative access to the system. The netmask <i>32</i> is \
- reserved for this value and cannot be changed.'),
+ required for this value and cannot be changed.'),
 
 vlan_pint_placeholder: T('Parent Interface'),
 vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
