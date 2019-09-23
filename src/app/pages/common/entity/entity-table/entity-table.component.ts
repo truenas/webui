@@ -422,13 +422,24 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         data: res
       };
     }
+
     if (res.data) {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
+        for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
+          if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
+            res.data.map(row => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          }
+        }
       }
     } else {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res = this.conf.resourceTransformIncomingRestData(res);
+        for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
+          if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
+            res.map(row => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          }
+        }
       }
     }
 
@@ -640,26 +651,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       dialog.title = dialog.buildTitle(item);
     }
 
-    this.dialogService.confirm(
-        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
-        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
-        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
-        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
-      if (res) {
-        if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
-          // double confirm: input delete item's name to confirm deletion
-          this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
-            if (doubleConfirmDialog) {
-              this.toDeleteRow = item;
-              this.delete(id);
-            }
-          });
-        } else {
+    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
+      // double confirm: input delete item's name to confirm deletion
+      this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
+        if (doubleConfirmDialog) {
           this.toDeleteRow = item;
           this.delete(id);
         }
-      }
-    })
+      });
+    } else {
+      this.dialogService.confirm(
+        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
+        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
+        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false,
+        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
+          if (res) {
+            this.toDeleteRow = item;
+            this.delete(id);
+          }
+        });
+    }
   }
 
   delete(id) {
