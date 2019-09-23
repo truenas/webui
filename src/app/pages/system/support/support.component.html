@@ -1,7 +1,7 @@
 <mat-card class="form-card">
   <div class="mat-content" fxLayout="column">
-    <div id="top-row" class="container" fxLayout="row">
-      <div id="top-left" fxFlex="50%">
+    <div id="top-row" class="container" fxLayout="row wrap">
+      <div id="top-left" fxFlex="55%" fxFlex.xs="100">
           <app-fn-sys-info
           *ngIf="is_freenas; else TNsysinfo"
           [FN_version]='FN_version'
@@ -10,6 +10,7 @@
           [FN_serial]="FN_serial"
           [FN_instructions]="FN_instructions"
           ></app-fn-sys-info>
+          <div id="fn-spacer" *ngIf="is_freenas"></div>
         <ng-template #TNsysinfo>
           <app-tn-sys-info
             [customer_name]='customer_name'
@@ -23,14 +24,15 @@
           >
           </app-tn-sys-info>
         </ng-template>
-        <div id="production-status-wrapper" [style.max-width.px]="375">
+        <div id="production-status-wrapper">
           <app-production-status *ngIf="!is_freenas"></app-production-status>
         </div>
       </div>
-      <div id="top-right" fxFlex="50%">
+      <div id="top-right" fxFlex="45%" fxFlex.xs="100">
         <div class="sys-image">
             <app-sys-image
             [product_image]="product_image"
+            [ngClass]="[is_freenas ? 'fn-sys-image' : 'tn-sys-image']"
           ></app-sys-image>
         </div>
       </div>

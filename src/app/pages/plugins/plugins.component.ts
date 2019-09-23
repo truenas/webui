@@ -59,7 +59,8 @@ export class PluginsComponent {
         return this.dialogService.doubleConfirm(
           T('Verify Deletion of ') + item.name + T(' Plugin'),
           T('To delete the <b>') + item.name + T('</b> plugin and all data and snapshots stored with it, please type the name of the plugin to confirm:'),
-          item.name
+          item.name,
+          true,
         );
       },
     },

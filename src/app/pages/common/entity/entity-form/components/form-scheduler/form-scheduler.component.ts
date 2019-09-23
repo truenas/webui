@@ -10,6 +10,7 @@ import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
 import * as moment from 'moment';
 import * as parser from 'cron-parser';
+import { EntityUtils } from '../../../utils';
 
 interface CronPreset {
   label:string;
@@ -271,6 +272,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this.crontab = evt;
     });
     if (this.control.value) {
+      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
       this.crontab = this.control.value;
     }
   }
