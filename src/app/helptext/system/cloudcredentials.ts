@@ -64,9 +64,10 @@ export const helptext_system_cloudcredentials = {
  target="_blank">AWS resources in a geographic area</a>. Leave empty to \
  automatically detect the correct public region for the bucket. Entering \
  a private region name allows interacting with Amazon buckets created in \
- that region. For example, discovering buckets created in the eastern \
+ that region. For example, enter <i>us-gov-east-1</i> to discover buckets \
+ created in the eastern \
  <a href="https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/whatis.html" target="_blank">AWS GovCloud</a> \
- requires entering <i>us-gov-east-1</i> for the <i>Region</i>.'),
+ region.'),
   },
 
   skip_region_s3: {
