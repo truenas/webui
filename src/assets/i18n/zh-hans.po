@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-09-22 19:06+0000\n"
+"PO-Revision-Date: 2019-09-23 16:43+0000\n"
 "Last-Translator: Yifei Ding <yifeiding@theunspeakble.com>\n"
 "Language-Team: Chinese (Simplified) <https://www.theunspeakble.com/weblate/projects/freenas-webui/11_2_stable/zh_Hans/>\n"
 "Language: zh-hans\n"
@@ -75,7 +75,7 @@ msgid ", new vdev is "
 msgstr "，新的vdev是 "
 
 msgid ". All data on that pool was destroyed."
-msgstr ". 所有此存储池的数据已被销毁。"
+msgstr "。所有此存储池的数据已被销毁。"
 
 msgid "20 characters is the maximum length."
 msgstr "20个字符是极限长度。"
@@ -102,23 +102,18 @@ msgstr ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\" "
 "target=\"_blank\">pCloud访问令牌</a>。这些令牌会失效并需要延期。"
 
+#, fuzzy
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
 "      target=\"_blank\">Extended attributes</a> are                "
 "preserved, but must be supported by both systems."
-msgstr ""
-"<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
-"      target=\"_blank\">Extended attributes</a> are preserved, but must be "
-"supported by both systems."
+msgstr "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"                target=\"_blank\">Extended attributes</a> are preserved, but must be supported by both systems."
 
 msgid ""
 "<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
 "target=\"_blank\">Email encryption</a> type. Choices are <i>Plain (No "
 "Encryption)</i>, <i>SSL (Implicit TLS)</i>, or <i>TLS (STARTTLS)</i>."
-msgstr ""
-"<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
-"target=\"_blank\">邮件加密</a>类型。选择有<i>明文（不加密）</i>, <i>SSL (Implicit TLS)</i>, "
-"或<i>TLS (STARTTLS)</i>。"
+msgstr "<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" target=\"_blank\">邮件加密</a>类型。可以选择<i>明文（不加密）</i>, <i>SSL (Implicit TLS)</i>, 或<i>TLS (STARTTLS)</i>。"
 
 msgid ""
 "<a "
@@ -934,7 +929,7 @@ msgid ""
 ".1-RELEASE+and+Ports\"target=\"_blank\">hostname(1)</a> or <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname&manpath="
 "FreeBSD+11.1-RELEASE+and+Ports\"target=\"_blank\">sethostname(3)</a>."
-msgstr ""
+msgstr "允许使用<a href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11.1-RELEASE+and+Ports\"target=\"_blank\">hostname（1）</a>或<a href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname&manpath=FreeBSD+11.1-RELEASE+and+Ports\"target=\"_blank\">sethostname（3）</a>更改jail主机名。"
 
 msgid ""
 "Allows different groups to be configured with different authentication "
@@ -1002,7 +997,7 @@ msgstr "Appdefaults辅助参数"
 msgid ""
 "Append <i>@realm</i> to <i>cn</i> in LDAP queries for both groups and users "
 "when User CN is set)."
-msgstr ""
+msgstr "在设置用户CN时，在LDAP查询<i>中将@realm</i>附加到<i>cn</i>用于组和用户）。"
 
 msgid "Apple (AFP) Shares"
 msgstr "苹果(AFP)共享"
@@ -1046,14 +1041,14 @@ msgid ""
 "previous permissions.                                              Creating "
 "a separate dataset for Minio is strongly                                    "
 "          recommended."
-msgstr ""
+msgstr "为Minio分配目录会将该目录及其中的每个目录的权限更改为minio：minio并覆盖以前的任何权限"
 
 msgid ""
 "At least one module must be defined in <a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
 "target=\"_blank\">rsyncd.conf(5)</a> of the rsync                server or "
 "in the <b>Rsync Modules</b> of another                system."
-msgstr ""
+msgstr "必须在rsync服务器的<a                href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                target=\"_blank\">rsyncd.conf（5）</a>或另一个系统的<b>Rsync模块</b>中定义至少一个模块。"
 
 msgid "Attach Debug"
 msgstr "附加调试"
@@ -1107,7 +1102,7 @@ msgstr ""
 msgid ""
 "Automatically populated with the original hostname of the system. This name "
 "is limited to 15 characters and cannot be the <b>Workgroup</b> name."
-msgstr ""
+msgstr "自动填充系统的原始主机名"
 
 msgid "Automatically reboot the system after the update is applied."
 msgstr "在更新被应用后自动重启系统。"
@@ -1196,7 +1191,7 @@ msgstr "开始时间"
 msgid ""
 "Beginning UID/GID number for which this system is authoritative. UID/GID "
 "values below Range Low or higher than Range High are ignored."
-msgstr ""
+msgstr "开始此系统具有权威性的UID / GID编号"
 
 msgid "Berkeley Packet Filter"
 msgstr "伯克利包过滤器"
@@ -1252,7 +1247,7 @@ msgstr "浏览一个在系统存储上的CD-ROM文件。"
 msgid ""
 "Browse to a storage location and add the name of the new raw file on the "
 "end of the path."
-msgstr ""
+msgstr "浏览到存储位置，并在路径末尾添加新原始文件的名称。"
 
 msgid ""
 "Browse to an <b>existing</b> directory to use for storage. Some devices can "
@@ -1291,7 +1286,7 @@ msgstr "浏览到S3文件系统的目录。"
 msgid ""
 "Browse to the directory on the system which will be accessed by the jail. "
 "This directory <b>must</b> be separate from the jail pool or dataset."
-msgstr ""
+msgstr "浏览到将由jail访问的系统上的目录"
 
 msgid ""
 "Browse to the existing path on the remote host to                sync with. "
@@ -1309,7 +1304,7 @@ msgstr "浏览操作系统安装镜像文件。"
 msgid ""
 "Browse to the path to be copied. Path lengths cannot                be "
 "greater than 255 characters."
-msgstr ""
+msgstr "浏览到要复制的路径"
 
 msgid "Browse to the pool or dataset to share."
 msgstr "浏览存储池或数据集来共享。"
@@ -1333,7 +1328,7 @@ msgid ""
 "only disks added after the change. Does not affect log or cache devices as "
 "they are created without swap. Setting to <i>0</i> disables swap creation "
 "completely. <b>STRONGLY DISCOURAGED</b>"
-msgstr ""
+msgstr "默认情况下，将使用指定的交换量创建所有数据磁盘"
 
 msgid ""
 "By default, the VM receives an auto-generated random MAC address. Enter a "
@@ -1344,7 +1339,7 @@ msgstr ""
 "添加一个随机MAC地址到这个区域。"
 
 msgid "CA ID"
-msgstr ""
+msgstr "CA ID"
 
 msgid "CAs"
 msgstr "CA机构"
@@ -3689,7 +3684,7 @@ msgid "Error Deleting zvol "
 msgstr "删除zvol错误 "
 
 msgid "Error Promoting dataset "
-msgstr ""
+msgstr "发生错误提升数据集 "
 
 msgid "Error Unlocking"
 msgstr "解锁错误"
@@ -3941,7 +3936,7 @@ msgid "Full with zeros"
 msgstr "用0进行填充"
 
 msgid "GID"
-msgstr ""
+msgstr "GID"
 
 msgid "GUI SSL Certificate"
 msgstr "GUI SSL证书"
@@ -4922,7 +4917,7 @@ msgid "NO"
 msgstr "否"
 
 msgid "NTLMv1 Auth"
-msgstr ""
+msgstr "NTLMv1认证"
 
 msgid "NTP Servers"
 msgstr "网络授时服务器(NTP)列表"
@@ -5035,7 +5030,7 @@ msgid "Next"
 msgstr "下一步"
 
 msgid "Nic to attach:"
-msgstr ""
+msgstr "Nic附加："
 
 msgid "No"
 msgstr "否"
@@ -6034,7 +6029,7 @@ msgid "SUDO Suffix"
 msgstr "SUDO 后缀"
 
 msgid "Samba Schema"
-msgstr ""
+msgstr "Samba Schema"
 
 msgid "Save"
 msgstr "保存"
@@ -8514,7 +8509,7 @@ msgid ""
 msgstr "警告： Adding data vdevs with different numbers of disks is not recommended."
 
 msgid "WARNING: Based on the pool topology, "
-msgstr ""
+msgstr "警告：基于存储池拓扑， "
 
 msgid "WARNING: Exporting/disconnecting '"
 msgstr "警告：导出/断开”"
@@ -8698,49 +8693,49 @@ msgid "Zeroconf share discovery"
 msgstr "Zeroconf 共享发现"
 
 msgid "allow_chflags"
-msgstr ""
+msgstr "allow_chflags"
 
 msgid "allow_mlock"
-msgstr ""
+msgstr "allow_mlock"
 
 msgid "allow_mount"
-msgstr ""
+msgstr "allow_mount"
 
 msgid "allow_mount_devfs"
-msgstr ""
+msgstr "allow_mount_devfs"
 
 msgid "allow_mount_nullfs"
-msgstr ""
+msgstr "allow_mount_nullfs"
 
 msgid "allow_mount_procfs"
-msgstr ""
+msgstr "allow_mount_procfs"
 
 msgid "allow_mount_tmpfs"
-msgstr ""
+msgstr "allow_mount_tmpfs"
 
 msgid "allow_mount_zfs"
-msgstr ""
+msgstr "allow_mount_zfs"
 
 msgid "allow_quotas"
-msgstr ""
+msgstr "allow_quotas"
 
 msgid "allow_raw_sockets"
-msgstr ""
+msgstr "allow_raw_sockets"
 
 msgid "allow_set_hostname"
-msgstr ""
+msgstr "allow_set_hostname"
 
 msgid "allow_socket_af"
-msgstr ""
+msgstr "allow_socket_af"
 
 msgid "allow_tun"
-msgstr ""
+msgstr "allow_tun"
 
 msgid "boot"
 msgstr ""
 
 msgid "children_max"
-msgstr ""
+msgstr "children_max"
 
 msgid "close"
 msgstr "关闭"
@@ -8749,10 +8744,10 @@ msgid "comment"
 msgstr "评论"
 
 msgid "coredumpsize"
-msgstr ""
+msgstr "coredumpsize"
 
 msgid "cpuset"
-msgstr ""
+msgstr "cpuset"
 
 msgid "cputime"
 msgstr ""
@@ -8767,64 +8762,64 @@ msgid "destroy"
 msgstr ""
 
 msgid "devfs_ruleset"
-msgstr ""
+msgstr "devfs_ruleset"
 
 msgid "enforce_statfs"
-msgstr ""
+msgstr "enforce_statfs"
 
 msgid "exec_clean"
-msgstr ""
+msgstr "exec_clean"
 
 msgid "exec_fib"
-msgstr ""
+msgstr "exec_fib"
 
 msgid "exec_jail_user"
 msgstr ""
 
 msgid "exec_poststart"
-msgstr ""
+msgstr "exec_poststart"
 
 msgid "exec_poststop"
-msgstr ""
+msgstr "exec_poststop"
 
 msgid "exec_prestart"
-msgstr ""
+msgstr "exec_prestart"
 
 msgid "exec_prestop"
-msgstr ""
+msgstr "exec_prestop"
 
 msgid "exec_start"
-msgstr ""
+msgstr "exec_start"
 
 msgid "exec_stop"
-msgstr ""
+msgstr "exec_stop"
 
 msgid "exec_system_jail_user"
-msgstr ""
+msgstr "exec_system_jail_user"
 
 msgid "exec_system_user"
-msgstr ""
+msgstr "exec_system_user"
 
 msgid "exec_timeout"
-msgstr ""
+msgstr "exec_timeout"
 
 msgid "group"
 msgstr "群组"
 
 msgid "host_domainname"
-msgstr ""
+msgstr "host_domainname"
 
 msgid "host_hostname"
 msgstr ""
 
 msgid "host_time"
-msgstr ""
+msgstr "host_time"
 
 msgid "hostid"
 msgstr ""
 
 msgid "hostid_strict_check"
-msgstr ""
+msgstr "hostid_strict_check"
 
 msgid "interfaces"
 msgstr "接口"
@@ -8842,13 +8837,13 @@ msgid "ip6_saddrsel"
 msgstr ""
 
 msgid "jail_zfs"
-msgstr ""
+msgstr "jail_zfs"
 
 msgid "jail_zfs_dataset"
-msgstr ""
+msgstr "jail_zfs_dataset"
 
 msgid "jail_zfs_mountpoint"
-msgstr ""
+msgstr "jail_zfs_mountpoint"
 
 msgid "legacy web interface"
 msgstr ""
@@ -8857,10 +8852,10 @@ msgid "list"
 msgstr ""
 
 msgid "login_flags"
-msgstr ""
+msgstr "login_flags"
 
 msgid "mac_prefix"
-msgstr ""
+msgstr "mac_prefix"
 
 msgid "maxproc"
 msgstr ""
@@ -8872,43 +8867,43 @@ msgid "memoryuse"
 msgstr ""
 
 msgid "mount_devfs"
-msgstr ""
+msgstr "mount_devfs"
 
 msgid "mount_fdescfs"
-msgstr ""
+msgstr "mount_fdescfs"
 
 msgid "mount_linprocfs"
-msgstr ""
+msgstr "mount_linprocfs"
 
 msgid "mount_procfs"
-msgstr ""
+msgstr "mount_procfs"
 
 msgid "mountd(8) bind port"
 msgstr "mountd(8) 绑定端口"
 
 msgid "msgqqueued"
-msgstr ""
+msgstr "msgqqueued"
 
 msgid "msgqsize"
-msgstr ""
+msgstr "msgqsize"
 
 msgid "name"
 msgstr ""
 
 msgid "nmsgq"
-msgstr ""
+msgstr "nmsgq"
 
 msgid "no"
 msgstr "否"
 
 msgid "nsemop"
-msgstr ""
+msgstr "nsemop"
 
 msgid "nshm"
 msgstr ""
 
 msgid "nthr"
-msgstr ""
+msgstr "nthr"
 
 msgid "openfiles"
 msgstr ""
@@ -8933,7 +8928,7 @@ msgid "resolver"
 msgstr "解析程式"
 
 msgid "rlimits"
-msgstr ""
+msgstr "rlimits"
 
 msgid "rpc.lockd(8) bind port"
 msgstr "rpc.lockd(8) 绑定端口"
@@ -8951,7 +8946,7 @@ msgid "service failed to stop."
 msgstr "服务停止失败。"
 
 msgid "shmsize"
-msgstr ""
+msgstr "shmsize"
 
 msgid "stacksize"
 msgstr ""
@@ -8960,10 +8955,10 @@ msgid "stop_timeout"
 msgstr ""
 
 msgid "swapuse"
-msgstr ""
+msgstr "swapuse"
 
 msgid "sysvmsg"
-msgstr ""
+msgstr "sysvmsg"
 
 msgid "sysvsem"
 msgstr ""
@@ -8975,25 +8970,25 @@ msgid "template"
 msgstr ""
 
 msgid "vmemoryuse"
-msgstr ""
+msgstr "vmemoryuse"
 
 msgid "vnet0_mac"
-msgstr ""
+msgstr "vnet0_mac"
 
 msgid "vnet1_mac"
-msgstr ""
+msgstr "vnet1_mac"
 
 msgid "vnet2_mac"
-msgstr ""
+msgstr "vnet2_mac"
 
 msgid "vnet3_mac"
-msgstr ""
+msgstr "vnet3_mac"
 
 msgid "vnet_default_interface"
-msgstr ""
+msgstr "vnet_default_interface"
 
 msgid "vnet_interfaces"
-msgstr ""
+msgstr "vnet_interfaces"
 
 msgid "wallclock"
 msgstr ""
