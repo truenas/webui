@@ -5,7 +5,7 @@ import { T } from '../../../translate-marker';
 export default {
     rsync_path_placeholder: T('Path'),
     rsync_path_tooltip: T('Browse to the path to be copied. The \
-                <a href="https://www.ixsystems.com/documentation/freenas/11.2-U6/intro.html#path-and-name-lengths" \
+                <a href="--docurl--/intro.html#path-and-name-lengths" \
                 target="_blank">FreeBSD file path limits</a> apply.'),
     rsync_path_validation : [ Validators.required ],
 
