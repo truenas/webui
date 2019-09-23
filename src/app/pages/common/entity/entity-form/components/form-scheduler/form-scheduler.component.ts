@@ -36,14 +36,9 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public disablePrevious:boolean;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
-  @ViewChild('calendar', { static: true}) calendarComp:MatMonthView<any>;
+  @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
   @ViewChild('trigger', { static: false}) trigger: ElementRef;
   @ViewChild('preview', { static: false, read:ElementRef}) schedulePreview: ElementRef;
-
-  // Popup Controls
-  /*public minutesCtl = new FormControl('', [Validators.required, Validators.pattern]);
-  public hoursCtl = new FormControl('', [Validators.required, Validators.pattern]);
-  public daysCtl = new FormControl('', [Validators.required, Validators.pattern]);*/
 
   private control: any;
 
@@ -350,7 +345,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       return ;
     }
     this.minDate = this.getMinDate(newDate);
-    //this.minDate = moment(newDate).startOf('month');;
     this.maxDate = moment(newDate).endOf('month');
 
     this.calendarComp.activeDate = moment(newDate).toDate();
@@ -390,7 +384,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     };
 
     let interval = parser.parseExpression(this.crontab, options);
-    //console.log(interval);
     if(!nextSubset){ 
       this.generatedScheduleSubset = 0;
     }
@@ -410,7 +403,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
         //console.log(parseCounter)
         parseCounter++
       } catch (e) {
-        //console.warn(e);
+        console.warn(e);
         break;
       }
     }
