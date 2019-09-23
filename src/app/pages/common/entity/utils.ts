@@ -150,4 +150,18 @@ export class EntityUtils {
   array1DToLabelValuePair(arr: any[]): { label: string, value: any }[] {
     return arr.map(value => ({ label: value.toString(), value }))
   }
+
+   /**
+   * make cron time dow consistence
+   */
+  parseDOW(cron) {
+    const dowOptions = ["sun","mon","tue","wed","thu","fri","sat","sun"];
+    const cronArray = cron.replace(/00/g, '0').split(' ');
+    if (cronArray[cronArray.length - 1] !== '*') {
+      cronArray[cronArray.length - 1] = cronArray[cronArray.length - 1]
+      .split(',')
+      .map(element => dowOptions[element] || element).join(',');
+    }
+    return cronArray.join(' ');
+  }
 }

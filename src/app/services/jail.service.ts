@@ -36,4 +36,8 @@ export class JailService {
   getInterfaceChoice() {
     return this.ws.call('jail.interface_choices');
   }
+
+  getDefaultConfiguration() {
+    return this.ws.call('jail.default_configuration');
+  }
 }

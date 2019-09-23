@@ -22,7 +22,6 @@ interface UserPreferences {
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
 }
    
-
 @Component({
   selector : 'general-preferences-form',
   template:`<entity-form-embedded fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
@@ -31,56 +30,43 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
 
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
-  public saveSubmitText = "Update Settings";
+  public saveSubmitText = T("Update Settings");
   protected isEntity: boolean = true; // was true
-  private colorOptions: any[] = [];
   private themeOptions: any[] = [];
-  private favoriteFields: any[] = []
   public fieldConfig:FieldConfig[] = [];
   public showTooltips:boolean = this.prefs.preferences.showTooltips;
   public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;;
-  public enableWarning:boolean = this.prefs.preferences.enableWarning;
   public preferIconsOnly: boolean = this.prefs.preferences.preferIconsOnly;
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
-        name:'General Preferences',
+        name:T('General Preferences'),
         class:'preferences',
         label:true,
         config:[
           {
             type: 'select',
             name: 'userTheme',
-            placeholder: 'Choose Theme',
+            placeholder: T('Choose Theme'),
             options: this.themeOptions,
             value:this.prefs.preferences.userTheme,
-            tooltip:'Choose a preferred theme.',
+            tooltip:T('Choose a preferred theme.'),
             class:'inline'
           },
           {
             type: 'checkbox',
             name: 'preferIconsOnly',
-            placeholder: 'Prefer buttons with icons only',
+            placeholder: T('Prefer buttons with icons only'),
             value:this.preferIconsOnly,
-            tooltip: 'Preserve screen space with icons and tooltips instead of text labels.',
+            tooltip: T('Preserve screen space with icons and tooltips instead of text labels.'),
             class:'inline'
           },
           {
             type: 'checkbox',
             name: 'allowPwToggle',
-            placeholder: 'Enable Password Toggle',
+            placeholder: T('Enable Password Toggle'),
             value:this.allowPwToggle,
-            tooltip: 'This option enables/disables a password toggle button.',
-            class:'inline'
-          },
-          {
-            type: 'checkbox',
-            name: 'enableWarning',
-            placeholder: 'Enable "Save Configuration" Dialog Before Upgrade',
-            value:this.enableWarning,
-            tooltip: T('Show or hide a dialog to save the system\
-                        configuration file. This dialog appears\
-                        after choosing to upgrade the system.'),
+            tooltip: T('This option enables/disables a password toggle button.'),
             class:'inline'
           }
         ]
@@ -154,7 +140,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
      processSubmission(obj:any){}
 
      loadValues(themeName?:string){
-       this.enableWarning = this.prefs.preferences.enableWarning
        this.allowPwToggle = this.prefs.preferences.allowPwToggle
        this.showTooltips = true; //this.prefs.preferences.showTooltips
        this.preferIconsOnly = this.prefs.preferences.preferIconsOnly;
