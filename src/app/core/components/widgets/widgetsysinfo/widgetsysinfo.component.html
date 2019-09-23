@@ -39,11 +39,16 @@
               </div>
             </div>
 
-            <div fxHide.xs fxFlex="18" class="update-action">
-              <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-              <simple-failover-button *ngIf="isPassive"></simple-failover-button>
+            <div *ngIf="isUpdateRunning; else noUpdateRunning">
+                <p id="update-in-progress" class="">{{'UPDATE IN PROGRESS' | translate}}</p>
             </div>
-  
+
+            <ng-template #noUpdateRunning>
+              <div fxHide.xs fxFlex="18" class="update-action">
+                <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+                <simple-failover-button *ngIf="isPassive"></simple-failover-button>
+              </div>
+            </ng-template>  
           </div>
   
           <!-- Details Section -->

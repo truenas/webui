@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { EntityTableAction, EntityTableComponent } from '../entity-table.component';
+import cronstrue from 'cronstrue';
 
 @Component({
   selector: 'app-entity-table-row-details',
@@ -24,8 +25,9 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     this.actions = this.getActions();
   }
 
-  getPropValue(prop) {
-    return _.get(this.config, prop.split('.')) || 'N/A';
+  getPropValue(prop, isCronTime = false) {
+    const val =  _.get(this.config, prop.split('.')) || 'N/A';
+    return isCronTime ? (val !== 'N/A' ? cronstrue.toString(val) : val) : val;
   }
 
   buildColumns(): void {

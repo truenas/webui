@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RestService, WebSocketService, SystemGeneralService, NetworkService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../../services/dialog.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
 
 @Component({
@@ -35,7 +36,7 @@ export class DeviceAddComponent implements OnInit {
   public vminfo: any;
   public boot: any;
   public custActions: any[];
-  public error_reason: string;
+  public error: string;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -286,6 +287,7 @@ export class DeviceAddComponent implements OnInit {
               public translate: TranslateService,
               protected loader: AppLoaderService,
               protected systemGeneralService: SystemGeneralService,
+              protected dialogService: DialogService,
               protected networkService: NetworkService) {}
 
 
@@ -434,6 +436,7 @@ export class DeviceAddComponent implements OnInit {
   }
 
   onSubmit(event: Event) {
+    this.error = '';
     this.aroute.params.subscribe(params => {
       const device = _.cloneDeep(this.formGroup.value);
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
@@ -453,9 +456,9 @@ export class DeviceAddComponent implements OnInit {
           this.router.navigate(new Array('/').concat(this.route_success));
         },
         (e_res) => {
-          this.error_reason = e_res.reason;
           this.loader.close();
-          new EntityUtils().handleError(this, e_res);
+          console.log(e_res);
+          new EntityUtils().handleWSError(this, e_res, this.dialogService);
         }
       );
     });

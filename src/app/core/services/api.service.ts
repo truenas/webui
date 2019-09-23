@@ -270,7 +270,6 @@ export class ApiService {
         errorResponseEvent: "VmStopFailure"
       },
       postProcessor(res,callArgs){
-        //DEBUG: console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0]} // res:boolean
         return cloneRes;
@@ -564,6 +563,15 @@ export class ApiService {
         namespace:"disk.query",
         args: [],
         responseEvent: "DisksInfo"
+      }
+    },
+    SensorDataRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"sensor.query",
+        args: [],
+        responseEvent: "SensorData"
       }
     },
   } 

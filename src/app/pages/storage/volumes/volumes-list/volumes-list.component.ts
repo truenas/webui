@@ -163,9 +163,13 @@ export class VolumesListTableConfig implements InputTableConf {
                       localLoader.close();
                       localParentVolumesList.repaintMe();
                   }, (res) => {
-                    entityDialog.dialogRef.close(true);
                     localLoader.close();
-                    localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+                    if (res.message) {
+                      localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+                    }
+                    else {
+                      new EntityUtils().handleError(this, res);
+                    }
                   });
                 }
               }
@@ -669,48 +673,46 @@ export class VolumesListTableConfig implements InputTableConf {
           name: 'Delete Dataset',
           label: T("Delete Dataset"),
           onClick: (row1) => {
-            this.dialogService.confirm(T("Delete"),
-              T("Delete the dataset ") + "<i>" + row1.path + "</i>"+  T(" and all snapshots of it?")
-              , false, T('Delete Dataset')).subscribe((confirmed) => {
-                if (confirmed) {
-                  this.dialogService.doubleConfirm(
-                    T('Verify Deletion of ') + row1.path + T(' Dataset'),
-                    T('To delete the <i>') + row1.path + T('</i> dataset and all snapshots stored with it, please type the name of the dataset to confirm:'),
-                    row1.path
-                  ).subscribe((doubleConfirmDialog)=> {
-                    if (doubleConfirmDialog) {
-                      this.loader.open();
-                      this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true}]).subscribe((wsResp) => {
-                        this.loader.close();
-                        this.parentVolumesListComponent.repaintMe();
-                      }, (e_res) => {
-                        this.loader.close();
-                        if (e_res.reason.indexOf('Device busy') > -1) {
-                          this.dialogService.confirm(T('Device Busy'), T('Force deletion of dataset ') + "<i>" + row1.path + "</i>?", false, T('Force Delete')).subscribe(
-                            (res) => {
-                              if (res) {
-                                this.loader.open();
-                                this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true, "force": true}]).subscribe(
-                                  (wsres) => {
-                                    this.loader.close();
-                                    this.parentVolumesListComponent.repaintMe();
-                                  },
-                                  (err) => {
-                                    this.loader.close();
-                                    this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.path + "</i>.", err.reason, err.stack);
-                                  }
-                                );
+            this.dialogService.doubleConfirm(
+              T('Delete Dataset <i><b>') + row1.name + '</b></i>',
+              T('The <i><b>') + row1.name + "</b></i> dataset and all snapshots stored with it <b>will be permanently deleted<b>.",
+              row1.name,
+              true,
+              T("DELETE DATASET")
+            ).subscribe((doubleConfirmDialog) => {
+              if (doubleConfirmDialog) {
+                this.loader.open();
+                this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true}]).subscribe(
+                  (wsResp) => {
+                    this.loader.close();
+                    this.parentVolumesListComponent.repaintMe();
+                  },
+                  (e_res) => {
+                    this.loader.close();
+                    if (e_res.reason.indexOf('Device busy') > -1) {
+                      this.dialogService.confirm(T('Device Busy'), T('Force deletion of dataset ') + "<i>" + row1.name + "</i>?", false, T('Force Delete')).subscribe(
+                        (res) => {
+                          if (res) {
+                            this.loader.open();
+                            this.ws.call('pool.dataset.delete', [row1.path, {"recursive": true, "force": true}]).subscribe(
+                              (wsres) => {
+                                this.loader.close();
+                                this.parentVolumesListComponent.repaintMe();
+                              },
+                              (err) => {
+                                this.loader.close();
+                                this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.name + "</i>.", err.reason, err.stack);
                               }
-                            }
-                          )
-                        } else {
-                          this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.path + "</i>.", e_res.reason, e_res.stack);
+                            );
+                          }
                         }
-                      });
+                      )
+                    } else {
+                      this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.name + "</i>.", e_res.reason, e_res.stack);
                     }
-                  });
-                }
-              });
+                });
+              }
+            });
           }
         });
 

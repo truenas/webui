@@ -153,7 +153,7 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public doubleConfirm(title: string, message: string, name: string): any {
+    public doubleConfirm(title: string, message: string, name: string, confirmBox?: boolean, buttonMsg?: string): any {
         const conf = {
             title: title,
             message: message,
@@ -162,12 +162,21 @@ export class DialogService {
                 type: 'input',
                 name: 'name',
                 required: true,
+              },
+              {
+                  type: 'checkbox',
+                  name: 'confirm',
+                  placeholder: 'Confirm',
+                  isHidden: !confirmBox,
               }
             ],
-            saveButtonText: T("DELETE"),
+            saveButtonText: buttonMsg ? buttonMsg : T("DELETE"),
             afterInit: function(entityDialog) {
                 entityDialog.formGroup.controls['name'].valueChanges.subscribe((res) => {
-                    entityDialog.submitEnabled = res === name;
+                    entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
+                })
+                entityDialog.formGroup.controls['confirm'].valueChanges.subscribe((res) => {
+                    entityDialog.submitEnabled = res && (entityDialog.formGroup.controls['name'].value === name);
                 })
             },
             customSubmit: function (entityDialog) {

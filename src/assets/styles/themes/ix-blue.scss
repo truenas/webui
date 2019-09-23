@@ -1197,16 +1197,22 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-support {
     .mat-card {
       padding-bottom: 60px;
-      min-width: 720px;
+      min-width: 320px;
     }
     #top-row {
       margin: 0 15px;
     }
+
     .sys-image {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 350px;
+
+      div {
+        display: flex;
+        justify-content: center;
+      }
     }
 
     .lowerme {
@@ -1233,6 +1239,27 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       top: -20px;
       right: 45%;
     }
+
+    @media screen and (max-width: 1025px) {
+      #fn-spacer {
+        height: 80px;
+      }
+    }  
+
+    @media screen and (max-width: 400px) {
+      app-sys-image img {
+        max-width: 80%;
+      }
+      .mat-card {
+        margin-left: -10px;
+      }
+    }
+
+    @media screen and (max-width: 350px) {
+      .mat-card {
+        margin-left: -20px;
+      }
+    }
   }
 
   app-fn-sys-info {
@@ -1255,7 +1282,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-tn-sys-info {
     .tn-sys-info-line {
       margin-top: 10px;
-      height: 40px;
 
       h4 {
         margin-bottom: 3px;
@@ -1267,32 +1293,67 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       top: 13px;
     }
 
+    #tn-sys-col1 {
+      min-width: 184px;
+    }
   }
 
-  app-sys-image img {
-    max-width: 90%;
-    height: auto;
+  app-sys-image {
+    img {
+      max-width: 90%;
+      height: auto;
+    }
+  }
+
+  @media screen and (min-width: 600px) and (max-width: 749px)  {
+    .tn-sys-image {
+      position: relative;
+      left: 35px;
+      // max-width: 75%;
+    }
   }
 
   app-production-status {
     .mat-card {
-        top: 12px;
+        top: 25px;
         background-color: rgba(127,127,127,0.1);
-        max-width: 460px !important;
-        min-width: 300px;
+        width: 400px;
+        height: 100px;
+        margin: 0 !important;
     }
     .mat-card-actions {
-      top: 5px;
-      position: relative;
+      top: 25px;
+      position: absolute;
+      left: 240px;
+      width: unset;
     }
     .temp {
       height: 0 !important;
+    }
+
+    @media screen and (max-width: 599px) {
+      .mat-card {
+        top: 25px;
+        width: auto;
+      }
+    }
+
+    @media screen and (max-width: 460px) {
+      .mat-card {
+        top: 25px;
+        height: auto;
+      }
+      .mat-card-actions {
+        position: relative;
+        top: unset;
+        left: unset;
+      }
     }
   }
 
   app-proactive {
     .mat-card {
-      top: 25px;
+      top: 37px;
       background-color: rgba(127,127,127,0.1);
       margin: 0 15px !important;
     }
@@ -1315,6 +1376,23 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-bottom: 20px;
 
     }
+
+    @media screen and (max-width: 599px) {
+      .mat-card {
+        top: -35px;
+      }
+    }
+
+    @media screen and (max-width: 460px) {
+      .mat-card-actions {
+        top: 25px;
+        height: auto;
+        position: relative;
+        left: unset;
+        height: auto;
+        top: unset;
+      }
+    }
   }
 
   app-fn-support {
@@ -1331,11 +1409,24 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     form {
       margin-bottom: -40px;
     }
+
+    @media screen and (max-width: 599px) {
+      .mat-card-actions {
+        top: 0;
+      }
+      .lowerme {
+        margin-top: 0 !important;
+      }
+      form {
+        margin-bottom: 4px;
+      }
+    }
+      
   }
 
   app-tn-support {
     .mat-card {
-      top: 45px;
+      top: 50px;
       background-color: rgba(127,127,127,0.1);
       margin: 0 15px !important;
     }
@@ -1343,6 +1434,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       height: 0px;
       top: -55px;
       position: relative;
+    }
+
+    @media screen and (max-width: 599px) {
+      .mat-card-actions {
+        top: 0;
+        height: 25px !important;
+      }
+      .lowerme {
+        margin-top: 0 !important;
+      }
+      .mat-card {
+        top: -15px;
+      }
     }
   }
 // End support section //////////////
@@ -1537,11 +1641,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-dataset-acl #aces0 {
     position: absolute;
     left: 15px;
-    top: 200px;
+    top: 250px;
 
     @media screen and ( max-width: 599px) {
       position: relative;
-      top: -380px;
+      top: -435px;
       left: 60px;
     }
   }

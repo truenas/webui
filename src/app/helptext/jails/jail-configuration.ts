@@ -406,6 +406,15 @@ mac_prefix_placeholder: T('mac_prefix'),
 mac_prefix_tooltip: T('Enter a valid MAC address vendor prefix.\
  <b>Example:</b> <i>E4F4C6</i>'),
 
+protocol_placeholder: T('protocol'),
+protocol_tooltip: T(''),
+
+jail_port_placeholder: T('jail_port'),
+jail_port_tooltip: T(''),
+
+host_port_placeholder: T('host_port'),
+host_port_tooltip: T(''),
+
 vnet_default_interface_placeholder: T('vnet_default_interface'),
 vnet_default_interface_tooltip: T('Set the default VNET interface. Only\
  takes effect when <i>VNET</i> is set. Choose a specific interface or\

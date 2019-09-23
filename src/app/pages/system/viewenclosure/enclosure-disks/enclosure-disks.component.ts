@@ -30,6 +30,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
   private mediaObs;
+  public mqAlias: string;
   @ViewChild('visualizer', { static: true}) visualizer: ElementRef;
   @ViewChild('disksoverview', { static: true}) overview: ElementRef;
   @ViewChild('diskdetails', { static: false}) details: ElementRef;
@@ -103,9 +104,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   constructor(public el:ElementRef, private core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
 
-    this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
+    //this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
+    core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
+      this.mqAlias = evt.data.mqAlias;
      
-      if(evt.mqAlias == 'xs' || evt.mqAlias == 'sm' || evt.mqAlias == 'md'){
+      if(evt.data.mqAlias == 'xs' || evt.data.mqAlias == 'sm' || evt.data.mqAlias == 'md'){
         core.emit({name: 'ForceSidenav', data: 'close', sender: this});
         this.resizeView();
       } else {
@@ -238,7 +241,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
     this.app.destroy(true, true); 
-    this.mediaObs.unsubscribe();
+    //this.mediaObs.unsubscribe();
   }
 
   pixiInit(){
@@ -453,7 +456,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     
     switch(opt){
       case 'pools':
-        //this.setDisksDisabled();
         this.container.alpha = 1;
         this.setDisksPoolState();
       break
@@ -738,7 +740,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       const elementBorder = value({borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => btn.set({
         boxShadow: `0 0 0 ${borderWidth}px ${borderColor}` 
-        //border: `solid ${borderWidth} ${borderColor}px`
       }));
 
       // Convert color to rgb value
@@ -781,6 +782,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
+  onResize(evt){
+    this.resizeView();
+  }
+
   resizeView(override?: string){
     const visualizer = this.overview.nativeElement.querySelector('#visualizer');
     const left = this.cardWidth < 960 ? ((960 - this.cardWidth) / 2 * -1) : 0;
@@ -788,7 +793,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     setTimeout(() => {
       visualizer.style.left = left.toString() + 'px';
       this.cdr.detectChanges(); // Force change detection
-    }, 250);
+    }, 50);
   }
 
 }

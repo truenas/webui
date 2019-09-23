@@ -45,6 +45,7 @@ export interface InputTableConf {
   cardHeaderComponent?: any;
   asyncView?: boolean;
   wsDelete?: string;
+  wsDeleteParams?(row, id): any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -150,6 +151,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private interval: any;
   private excuteDeletion = false;
 
+  protected toDeleteRow: any;
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   public getRowDetailHeight = () => 
@@ -420,13 +422,24 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         data: res
       };
     }
+
     if (res.data) {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
+        for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
+          if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
+            res.data.map(row => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          }
+        }
       }
     } else {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res = this.conf.resourceTransformIncomingRestData(res);
+        for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
+          if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
+            res.map(row => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          }
+        }
       }
     }
 
@@ -638,24 +651,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       dialog.title = dialog.buildTitle(item);
     }
 
-    this.dialogService.confirm(
-        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
-        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
-        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
-        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
-      if (res) {
-        if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
-          // double confirm: input delete item's name to confirm deletion
-          this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
-            if (doubleConfirmDialog) {
-              this.delete(id);
-            }
-          });
-        } else {
+    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
+      // double confirm: input delete item's name to confirm deletion
+      this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
+        if (doubleConfirmDialog) {
+          this.toDeleteRow = item;
           this.delete(id);
         }
-      }
-    })
+      });
+    } else {
+      this.dialogService.confirm(
+        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
+        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
+        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false,
+        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
+          if (res) {
+            this.toDeleteRow = item;
+            this.delete(id);
+          }
+        });
+    }
   }
 
   delete(id) {
@@ -663,7 +678,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loaderOpen = true;
     const data = {};
     if (this.conf.wsDelete) {
-      this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
+      this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
         (resinner) => {
           this.getData();
           this.excuteDeletion = true;
@@ -672,7 +687,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           new EntityUtils().handleWSError(this, resinner, this.dialogService);
           this.loader.close();
         }
-      );
+      ) 
     } else {
       this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
         (resinner) => {

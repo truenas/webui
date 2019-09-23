@@ -113,6 +113,14 @@ mat-card {
     padding: 20px;
 }
 
+#update-running-msg {
+    margin-left: 10px;
+    font-size: larger;
+    font-weight: 500;
+    position: relative;
+    bottom: 3px;
+}
+
 .updatecheckTooltip {
     position: relative;
     top: 5px;

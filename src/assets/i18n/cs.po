@@ -4,9 +4,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid " Dataset"
-msgstr ""
-
 msgid " First vdev has "
 msgstr ""
 
@@ -32,6 +29,9 @@ msgid " and all snapshots of it?"
 msgstr ""
 
 msgid " but datastore "
+msgstr ""
+
+msgid " disks"
 msgstr ""
 
 msgid " disks, new vdev has "
@@ -104,12 +104,13 @@ msgid ""
 "of the plugin to confirm:"
 msgstr ""
 
-msgid ""
-"</i> dataset and all snapshots stored with it, please type the name of the "
-"dataset to confirm:"
+msgid "</b> with the keypair"
 msgstr ""
 
 msgid "</i> has started."
+msgstr ""
+
+msgid "</i> keypair?</p>"
 msgstr ""
 
 msgid "</i> now?"
@@ -401,6 +402,9 @@ msgid ""
 "Please enter a different share name."
 msgstr ""
 
+msgid "<p>Delete the <i>"
+msgstr ""
+
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
@@ -421,6 +425,9 @@ msgid ""
 "target=\"_blank\">access token</a> enables Box to verify a request  belongs "
 "to an authorized session. Example token:  "
 "<i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>."
+msgstr ""
+
+msgid "A failover might cause temporary service interruption."
 msgstr ""
 
 msgid ""
@@ -908,6 +915,9 @@ msgstr ""
 msgid "Alert Settings"
 msgstr ""
 
+msgid "Alerts"
+msgstr ""
+
 msgid "Aliases"
 msgstr ""
 
@@ -917,10 +927,10 @@ msgstr ""
 msgid "All dirs"
 msgstr "Všechny složky"
 
-msgid "Allocate a number of gigabytes of space for the new zvol."
+msgid "Allocate RAM for the VM"
 msgstr ""
 
-msgid "Allocate a number of megabytes of RAM for the VM."
+msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
@@ -1155,6 +1165,9 @@ msgid ""
 msgstr ""
 
 msgid "Apple Shares (AFP)"
+msgstr ""
+
+msgid "Apply Failover Upgrade"
 msgstr ""
 
 msgid "Apply Network Changes"
@@ -1900,13 +1913,16 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
-"on this dataset."
+"Choose how often to run the scrub task.  Choices are *Hourly*, *Daily*, "
+"*Weekly*, *Monthly*, or *Custom*. Select  *Custom* to open a visual "
+"scheduler for selecting minutes, hours, days,  month, and days of week. "
+"Spaces are not allowed in :guilabel:`Minutes`,  :guilabel:`Hours`, or "
+":guilabel:`Days` of the custom scheduler."
 msgstr ""
 
 msgid ""
-"Choose one of the convenient presets      or choose <b>Custom</b> to "
-"trigger the advanced scheduler UI"
+"Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
+"on this dataset."
 msgstr ""
 
 msgid ""
@@ -1929,11 +1945,6 @@ msgstr ""
 msgid ""
 "Choose the <a href=\"--docurl--/system.html#ssh-connection\" "
 "target=\"_blank\">SSH connection</a>."
-msgstr ""
-
-msgid ""
-"Choose the FreeBSD release or template to use as the jail operating system. "
-"Releases already downloaded show <b>(fetched)</b>."
 msgstr ""
 
 msgid ""
@@ -2087,6 +2098,15 @@ msgstr ""
 msgid "Com Port"
 msgstr ""
 
+msgid ""
+"Combine multiple, critical-for-failover  interfaces into a group. Groups "
+"apply to single systems. A failover  occurs when every interface in the "
+"group fails. Groups with a single  interface trigger a failover when that "
+"interface fails. Configuring the  system to failover when any interface "
+"fails requires marking each  interface as critical and placing them in "
+"separate groups."
+msgstr ""
+
 msgid "Comma-, space-, or tab-delimited list of allowed hostnames or IP addresses."
 msgstr ""
 
@@ -2166,6 +2186,9 @@ msgstr ""
 
 msgid "Community"
 msgstr "Komunita"
+
+msgid "Complete the Upgrade"
+msgstr ""
 
 msgid "Compress"
 msgstr "Komprimovat"
@@ -2380,6 +2403,9 @@ msgstr ""
 msgid "Create Pool"
 msgstr "Vytvořit fond"
 
+msgid "Create SSH Connection"
+msgstr ""
+
 msgid "Create Snapshot"
 msgstr ""
 
@@ -2462,6 +2488,9 @@ msgstr ""
 msgid "DELETE"
 msgstr ""
 
+msgid "DELETE DATASET"
+msgstr ""
+
 msgid "DHCP"
 msgstr "DHCP"
 
@@ -2495,6 +2524,13 @@ msgstr ""
 msgid "Data collection frequency, in seconds."
 msgstr ""
 
+msgid ""
+"Data transfer security. The connection is authenticated with SSH, then data "
+"can either be encrypted during transfer to maximise protection or left "
+"unencrypted to maximise transfer speed. Transferring data without "
+"encryption is only recommended for secure networks."
+msgstr ""
+
 msgid "Database"
 msgstr ""
 
@@ -2519,6 +2555,15 @@ msgstr ""
 msgid "Day of Week"
 msgstr ""
 
+msgid ""
+"Days before a completed scrub is allowed  to run again. This controls the "
+"task schedule. For example, scheduling  a scrub to run daily and setting "
+":guilabel:`Threshold days` to *7*  means the scrub attempts to run daily. "
+"When the scrub is successful, it  continues to check daily but does not run "
+"again until seven days have  elapsed. Using a multiple of seven ensures the "
+"scrub always occurs on  the same weekday."
+msgstr ""
+
 msgid "Days of the Week"
 msgstr ""
 
@@ -2533,6 +2578,9 @@ msgid ""
 "destination system must also support deduplicated streams. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
 "target=\"_blank\">zfs(8)</a>."
+msgstr ""
+
+msgid "Default ACL Options"
 msgstr ""
 
 msgid "Default Permissions"
@@ -2626,13 +2674,6 @@ msgid ""
 "<i>2000</i> and the recommended default is <i>100000</i>."
 msgstr ""
 
-msgid ""
-"Define the number of days to prevent a scrub from                running "
-"after the last has completed. This ignores any                other "
-"calendar schedule. The default is a multiple of                7 to ensure "
-"the scrub always occurs on the same                weekday."
-msgstr ""
-
 msgid "Define the server where all changes to the database are performed."
 msgstr ""
 
@@ -2640,6 +2681,9 @@ msgid "Define the server where all password changes are performed."
 msgstr ""
 
 msgid "Define the size of the raw file in GiB."
+msgstr ""
+
+msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr ""
 
 msgid "Delay Updates"
@@ -2656,6 +2700,9 @@ msgstr ""
 
 msgid "Delete Dataset"
 msgstr "Smazat datovou sadu"
+
+msgid "Delete Dataset <i><b>"
+msgstr ""
 
 msgid "Delete Device"
 msgstr ""
@@ -2688,9 +2735,6 @@ msgstr "Smazat výběry"
 
 msgid "Delete snapshot "
 msgstr "Smazat zachycený stav "
-
-msgid "Delete the dataset "
-msgstr "Smazat datovou sadu "
 
 msgid ""
 "Delete the passphrase from  the encryption key. Invalidates an existing "
@@ -2744,8 +2788,14 @@ msgstr ""
 msgid "Destination"
 msgstr "Cíl"
 
+msgid "Destination Datasets"
+msgstr ""
+
 msgid "Destination Path"
 msgstr "Cílové umístění"
+
+msgid "Destination Snapshot Lifetime"
+msgstr ""
 
 msgid ""
 "Destination hostname or IP address for collectd data sent by the Graphite "
@@ -2766,6 +2816,9 @@ msgstr "Odpojit"
 
 msgid "Detach Pool"
 msgstr "Odpojit fond"
+
+msgid "Detach disk "
+msgstr ""
 
 msgid "Details"
 msgstr "Podrobnosti"
@@ -2849,6 +2902,9 @@ msgstr "Oprávnění složky"
 
 msgid "Directory Services"
 msgstr "Adresářové služby"
+
+msgid "Directory Services Monitor"
+msgstr ""
 
 msgid "Directory/Files"
 msgstr "Složka/soubory"
@@ -3005,6 +3061,9 @@ msgstr ""
 
 msgid "EDIT ACL"
 msgstr "UPRAVIT ACL"
+
+msgid "ERROR: Not Enough Memory"
+msgstr ""
 
 msgid "EULA"
 msgstr ""
@@ -3582,13 +3641,6 @@ msgid "Enter an alphanumeric name for the virtual machine."
 msgstr "Zadejte název (písmeny a číslicemi) virtuálního stroje."
 
 msgid ""
-"Enter an email address to receive <a "
-"href=\"--docurl--/services.html#s-m-a-r-t\" "
-"target=\"_blank\">S.M.A.R.T.</a> alerts; use a space to  separate multiple "
-"email addresses."
-msgstr ""
-
-msgid ""
 "Enter an email address to receive messages from the <a "
 "href=\"--docurl--/services.html#snmp\" target=\"_blank\">SNMP service</a>."
 msgstr ""
@@ -4121,6 +4173,9 @@ msgstr ""
 msgid "Exec"
 msgstr "Spustit"
 
+msgid "Execute"
+msgstr ""
+
 msgid "Export Certificate"
 msgstr "Exportovat certifikát"
 
@@ -4258,6 +4313,9 @@ msgstr "Typ souborového systému"
 msgid "Filter"
 msgstr ""
 
+msgid "Finish Upgrade?"
+msgstr ""
+
 msgid "Fix Credential"
 msgstr ""
 
@@ -4322,6 +4380,12 @@ msgid ""
 msgstr ""
 
 msgid "Form Invalid"
+msgstr ""
+
+msgid ""
+"FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
+"versions up to the same version as the host  system. Newer releases are not "
+"shown."
 msgstr ""
 
 msgid "FreeNAS URL"
@@ -4662,6 +4726,9 @@ msgid ""
 "<i>0.0.0.0</i>."
 msgstr ""
 
+msgid "IP address to use for  administrative access to the array."
+msgstr ""
+
 msgid "IPMI"
 msgstr "IPMI"
 
@@ -4687,7 +4754,7 @@ msgid "IPv4 address for the jail."
 msgstr "IPv4 adresa pro ohrazené prostředí."
 
 msgid ""
-"IPv4 address to use for the failover interface. Set a manual IP address "
+"IPv4 address to use for the failover  interface. Set a manual IP address "
 "here if DHCP is not used."
 msgstr ""
 
@@ -4881,11 +4948,6 @@ msgstr "Skripty pro inicializaci/vypnutí"
 msgid "Initiate Failover"
 msgstr "Zahájit převzetí v případě výpadku"
 
-msgid ""
-"Initiating failover will temporarily disable services while failing over.  "
-"Failover now?"
-msgstr ""
-
 msgid "Initiator"
 msgstr "Iniciátor"
 
@@ -4965,6 +5027,11 @@ msgstr "Neplatný filtr regulárních výrazů"
 
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
+"like <samp>256k</samp> or <samp>1G</samp>."
+msgstr ""
+
+msgid ""
+"Invalid value. Valid values are numbers followed by optional unit letters, "
 "like <samp>256k</samp> or <samp>1G</samp>."
 msgstr ""
 
@@ -5217,9 +5284,6 @@ msgstr "Pomocné parametry pro libdefaults"
 msgid "License"
 msgstr "Licence"
 
-msgid "License has been updated."
-msgstr ""
-
 msgid "Lifetime"
 msgstr "Žívotnosti"
 
@@ -5234,6 +5298,9 @@ msgstr "Stav linky"
 
 msgid "List of system services to restart when the pool is unlocked."
 msgstr "Seznam systémových služeb které při odemčení fondu restartovat."
+
+msgid "Load Previous Replication Task"
+msgstr ""
 
 msgid "Local"
 msgstr ""
@@ -5388,9 +5455,9 @@ msgid "Maximum SysV message queue size in bytes for the jail."
 msgstr ""
 
 msgid ""
-"Maximum Transmission Unit, the largest protocol data unit that can be "
-"communicated. The largest workable MTU size varies with network interfaces "
-"and equipment. *1500* and *9000* are standard Ethernet MTU sizes."
+"Maximum Transmission Unit, the largest protocol data  unit that can be "
+"communicated. The largest workable MTU size varies  with network interfaces "
+"and equipment. *1500* and *9000* are standard  Ethernet MTU sizes."
 msgstr ""
 
 msgid ""
@@ -5467,6 +5534,9 @@ msgstr ""
 
 msgid "Memory"
 msgstr "Operační paměť"
+
+msgid "Memory Size"
+msgstr ""
 
 msgid "Memory Size (MiB)"
 msgstr "Velikost operační paměti (MiB)"
@@ -5581,11 +5651,6 @@ msgid "Multipaths"
 msgstr ""
 
 msgid ""
-"Multiple critical interfaces are combined into a single failover group. A "
-"failover is triggered if all of the interfaces in the group fail."
-msgstr ""
-
-msgid ""
 "Must match Peer Secret (Confirm) and be between 12 and 16 characters in "
 "length. Cannot be the same as Secret."
 msgstr ""
@@ -5643,6 +5708,9 @@ msgid "Name Jail and Choose FreeBSD Release"
 msgstr "Nazvěte ohraničené prostředí a zvolte vydání FreeBSD"
 
 msgid "Name and Naming Schema cannot be provided at the same time."
+msgstr ""
+
+msgid "Name and Options"
 msgstr ""
 
 msgid "Name of NIS domain."
@@ -5758,6 +5826,12 @@ msgid ""
 "Network Address Translation (NAT). Transforms local network IP addresses "
 "into a single IP address. Set when the jail will share a single connection "
 "to the Internet with other systems on the network."
+msgstr ""
+
+msgid ""
+"Network Address Translation (NAT). When set, the jail  is given an internal "
+"IP address and connections are forwarded from  the host to the jail. When "
+"<i>NAT</i> is set,  <i>Berkeley Packet Filter</i> cannot be set."
 msgstr ""
 
 msgid "Network Changes Made Permanent"
@@ -6105,11 +6179,20 @@ msgstr "Organizační jednotka"
 msgid "Organizational unit of the entity."
 msgstr "Organizační jednotka entity"
 
+msgid "Other"
+msgstr ""
+
+msgid "Other Options"
+msgstr ""
+
 msgid "Outgoing Mail Server"
 msgstr "Server odchozí pošty"
 
 msgid "Overcommit Memory?"
 msgstr "Přidělit víc paměti, než je ve skutečnosti k dispozici?"
+
+msgid "Owner"
+msgstr ""
 
 msgid "Owner of the jail. Can be any string."
 msgstr "Vlastník ohraničeného prostředí. Může být libovolný řetězec."
@@ -6124,6 +6207,9 @@ msgid ""
 msgstr ""
 
 msgid "POST INSTALL NOTES"
+msgstr ""
+
+msgid "PROCEED"
 msgstr ""
 
 msgid "PagerDuty client name."
@@ -6209,6 +6295,9 @@ msgstr "Uživatel na protějšku"
 
 msgid "Pending Network Changes"
 msgstr "Čekající změny sítě"
+
+msgid "Pending Upgrade"
+msgstr ""
 
 msgid "Perform Reverse DNS Lookups"
 msgstr ""
@@ -6518,6 +6607,9 @@ msgstr ""
 msgid "Raw filesize"
 msgstr ""
 
+msgid "Read"
+msgstr ""
+
 msgid "Read Only"
 msgstr "Pouze pro čtení"
 
@@ -6572,11 +6664,26 @@ msgstr "Rekurzivní"
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
 
+msgid "Refresh"
+msgstr ""
+
+msgid "Region"
+msgstr ""
+
 msgid "Release"
 msgstr "Vydání"
 
 msgid "Release Notes"
 msgstr "Poznámky k vydání"
+
+msgid "Reload now"
+msgstr ""
+
+msgid "Reload the page"
+msgstr ""
+
+msgid "Reload the page for the license to take effect."
+msgstr ""
 
 msgid "Remote Encryption"
 msgstr ""
@@ -6626,11 +6733,17 @@ msgstr "Přejmenovat existující zaváděcí prostředí."
 msgid "Renew Certificate Days"
 msgstr ""
 
+msgid "Replace"
+msgstr ""
+
 msgid "Replacing disk..."
 msgstr "Nahrazování disku…"
 
 msgid "Replicate <i>"
 msgstr "Replikovat <i>"
+
+msgid "Replicate Custom Snapshots"
+msgstr ""
 
 msgid ""
 "Replicate all child dataset snapshots. Set to make <b>Exclude Child "
@@ -6646,8 +6759,8 @@ msgstr "Replikace"
 msgid "Replication <i>"
 msgstr "Replikace <i>"
 
-msgid "Replication Performance"
-msgstr "Výkonost replikace"
+msgid "Replication Schedule"
+msgstr ""
 
 msgid "Replication Tasks"
 msgstr "Replikační úlohy"
@@ -6766,6 +6879,9 @@ msgid ""
 msgstr ""
 
 msgid "Resilver Priority"
+msgstr ""
+
+msgid "Resilvering"
 msgstr ""
 
 msgid "Resolution"
@@ -6914,14 +7030,14 @@ msgstr "SSH spojení"
 msgid "SSH Host to connect to."
 msgstr "SSH hostitel ke kterému se připojit."
 
-msgid "SSH Keypair/Connection"
-msgstr ""
-
 msgid "SSH Keypairs"
 msgstr ""
 
 msgid "SSH Public Key"
 msgstr "Veřejná část SSH klíče"
+
+msgid "SSH Transfer Security"
+msgstr ""
 
 msgid "SSH Username."
 msgstr "Uživatelské jméno pro SSH."
@@ -6996,6 +7112,9 @@ msgid ""
 "periodic snapshot task takes a snapshot every hour, but only every other "
 "snapshot is needed for replication. The scheduler is set to even hours and "
 "only snapshots taken at those times are replicated."
+msgstr ""
+
+msgid "Scheduling"
 msgstr ""
 
 msgid "Schema"
@@ -7626,6 +7745,9 @@ msgid ""
 "target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
+msgid "Set default options on this ACL."
+msgstr ""
+
 msgid ""
 "Set enable sending messages to the address defined in the <b>Email</b> "
 "field."
@@ -8252,6 +8374,13 @@ msgid ""
 "fashion."
 msgstr ""
 
+msgid ""
+"Set to use the Berkeley Packet Filter (<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=bpf\" "
+"target=\"_blank\">BPF(4)</a>) to data link layers in a protocol independent "
+"fashion. Cannot be set when <i>NAT</i> is set."
+msgstr ""
+
 msgid "Set up Users and Groups."
 msgstr "Nastavit uživatele a skupiny."
 
@@ -8330,6 +8459,9 @@ msgstr ""
 msgid ""
 "Setting this option will result in timeouts if <b>identd</b> is not running "
 "on the client."
+msgstr ""
+
+msgid "Settings"
 msgstr ""
 
 msgid "Settings saved."
@@ -8865,6 +8997,12 @@ msgstr "Název cíle"
 msgid "Targets"
 msgstr ""
 
+msgid "Task Manager"
+msgstr ""
+
+msgid "Task Name"
+msgstr ""
+
 msgid "Tasks"
 msgstr "Úkoly"
 
@@ -8893,6 +9031,9 @@ msgid ""
 "enforced. Mounting <b>devfs</b> inside a jail is only possible when the "
 "<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are enabled and "
 "<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
+msgstr ""
+
+msgid "The <i><b>"
 msgstr ""
 
 msgid ""
@@ -9111,6 +9252,11 @@ msgid "The specified permissions of that user are used by all clients."
 msgstr ""
 
 msgid ""
+"The standby controller has finished upgrading. To complete the update "
+"process,                failover to the standby controller."
+msgstr ""
+
+msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
 "capacity. Set to force creation of the zvol (<b>NOT Recommended</b>)."
 msgstr ""
@@ -9156,9 +9302,15 @@ msgstr ""
 msgid "There are unsaved network interface settings.  Review them now?"
 msgstr ""
 
+msgid "There is an upgrade waiting to finish."
+msgstr ""
+
 msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\">rclone</a>."
+msgstr ""
+
+msgid "These items will be <b>"
 msgstr ""
 
 msgid ""
@@ -9175,6 +9327,12 @@ msgid ""
 msgstr ""
 
 msgid "This Controller"
+msgstr ""
+
+msgid "This Dataset"
+msgstr ""
+
+msgid "This Dataset and Child Datasets"
 msgstr ""
 
 msgid ""
@@ -9210,6 +9368,12 @@ msgid ""
 msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
+msgstr ""
+
+msgid "This system will restart when the update completes."
+msgstr ""
+
+msgid "This type of VDEV requires at least "
 msgstr ""
 
 msgid "Threshold days"
@@ -9248,7 +9412,10 @@ msgstr ""
 msgid "To delete the <b>"
 msgstr ""
 
-msgid "To delete the <i>"
+msgid "Toggle Collapse"
+msgstr ""
+
+msgid "Toggle Hide/Open"
 msgstr ""
 
 msgid ""
@@ -9312,6 +9479,9 @@ msgstr "Unixová znaková sada"
 msgid "UPDATE"
 msgstr ""
 
+msgid "UPDATE IN PROGRESS"
+msgstr ""
+
 msgid "UPDATE LICENSE"
 msgstr ""
 
@@ -9344,6 +9514,13 @@ msgid "Unique LUN ID. The default is generated from the MAC address of the syste
 msgstr ""
 
 msgid ""
+"Unique Virtual Host ID on the broadcast  segment of the network. "
+"Configuring multiple Virtual IP addresses  requires a separate VHID for "
+"each address. Numbers greater than  <i>20</i> are recommended, but any "
+"unused number between <i>1</i> and  <i>255</i> is allowed."
+msgstr ""
+
+msgid ""
 "Unique drive identifier. Log in to the  <a "
 "href=\"https://onedrive.live.com\" target=\"_blank\">OneDrive account</a>  "
 "and copy the string that appears in the browser address bar after  "
@@ -9373,7 +9550,7 @@ msgstr ""
 msgid "Unset to disable the configuration without deleting it."
 msgstr ""
 
-msgid "Unset to disable the scheduled scrub without                 deleting it."
+msgid "Unset to disable the scheduled scrub  without deleting it."
 msgstr ""
 
 msgid "Unset to disable this service without deleting it."
@@ -9427,6 +9604,9 @@ msgstr "Období aktualizace"
 msgid "Update Status"
 msgstr ""
 
+msgid "Update in Progress"
+msgstr ""
+
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr ""
 
@@ -9459,6 +9639,20 @@ msgstr "Převést fond na novější verzi"
 
 msgid "Upgraded"
 msgstr "Převedeno na novější verzi"
+
+msgid ""
+"Upgrades both controllers. Files will be downloaded in the Active "
+"Controller                         and then transferred to the Standby "
+"Controller. Upgrade process will start concurrently on both nodes.          "
+"               Continue with download?"
+msgstr ""
+
+msgid ""
+"Upgrades both controllers. Files will be downloaded in the Active "
+"Controller                    and then transferred to the Standby "
+"Controller. Upgrade process will start concurrently on both nodes.          "
+"          Continue with download?"
+msgstr ""
 
 msgid "Upgrading Jail"
 msgstr ""
@@ -9715,9 +9909,6 @@ msgstr ""
 msgid "Virtual CPUs"
 msgstr "Virtuální procesory"
 
-msgid "Virtual Host ID for the failover interface."
-msgstr ""
-
 msgid "Virtual IP Address"
 msgstr "Virtuální IP adresa"
 
@@ -9802,6 +9993,9 @@ msgid "Webdav SSL Certificate"
 msgstr ""
 
 msgid "Webhook URL"
+msgstr ""
+
+msgid "What and Where"
 msgstr ""
 
 msgid "What are you using this for"
@@ -9897,6 +10091,9 @@ msgstr "Přemazávání disku…"
 msgid "Workgroup"
 msgstr ""
 
+msgid "Write"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
 
@@ -9911,6 +10108,9 @@ msgstr ""
 
 msgid "Yes"
 msgstr "Ano"
+
+msgid "Yes I understand the risks"
+msgstr ""
 
 msgid "Yes, decrypt the disks"
 msgstr "Ano, dešifrovat disky"

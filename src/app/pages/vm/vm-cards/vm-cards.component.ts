@@ -127,30 +127,10 @@ export class VmCardsComponent  implements OnDestroy {
         label: T("Start"),
         onClick: start_row => {
           const eventName = "VmStart";
-          const args = [start_row.id];
-          const overcommit = [{ overcommit: false }];
-          const dialogText = T(
-            "Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution."
-          );
-          const startDialog = this.dialog.confirm(
-            T("Power"),
-            undefined,
-            true,
-            T("Power On"),
-            true,
-            T("Overcommit Memory?"),
-            undefined,
-            overcommit,
-            dialogText
-          );
-          startDialog.afterClosed().subscribe(res => {
-            if (res) {
-              const checkbox = startDialog.componentInstance.data[0].overcommit;
-              args.push({ overcommit: checkbox });
-              this.core.emit({ name: eventName, data: args });
-              this.setTransitionState("STARTING", start_row);
-            }
-          });
+          let args = [row.id];
+          let overcommit = [{'overcommit':false}];
+          this.core.emit({name: eventName, data:args});
+          this.setTransitionState("STARTING", row);
         }
       });
     }
@@ -246,28 +226,38 @@ export class VmCardsComponent  implements OnDestroy {
   afterInit(entityTable: EntityTableComponent) {
     this.entityTable = entityTable;
     this.core.emit({name: "VmProfilesRequest"});
-     this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
-       this.entityTable.getData();
-       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
-     })
-     this.core.register({observerClass:this,eventName:"VmStopFailure"}).subscribe((evt:CoreEvent) => {
+
+    this.core.register({observerClass:this,eventName:"VmStartFailure"}).subscribe((evt:CoreEvent) => {
+      if(evt.data.error == 12){
+        this.onMemoryError(evt.data.id[0]);
+        return;
+      }
       this.entityTable.getData();
       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
-    })
+    });
+
+    this.core.register({observerClass:this,eventName:"VmStopFailure"}).subscribe((evt:CoreEvent) => {
+      this.entityTable.getData();
+      this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
+    });
+
     this.core.register({observerClass:this,eventName:"VmCloneFailure"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
-    })
+    });
+
     this.core.register({observerClass:this,eventName:"VmDeleteFailure"}).subscribe((evt:CoreEvent) => {
       this.entityTable.getData();
       this.dialog.errorReport(T("Error"),evt.data.reason,evt.data.trace.formatted);
-    })
+    });
+
     this.core.register({observerClass:this,eventName:"VmProfiles"}).subscribe((evt:CoreEvent) => {
-      this.entityTable.getData();
+      setTimeout(() => {
+        this.entityTable.getData();
+      }, 3000)
     });
 
     this.controlEvents.subscribe((evt:CoreEvent) => {
-      console.log(evt);
     });
   }
 
@@ -287,7 +277,7 @@ export class VmCardsComponent  implements OnDestroy {
   }
 
   setTransitionState(str:string, vm:any){
-    let index = this.table.rows.indexOf(vm);
+    const index  = this.table.rows.findIndex((v) => v.id == vm.id);
     this.table.rows[index].state = str;
   }
 
@@ -319,23 +309,35 @@ export class VmCardsComponent  implements OnDestroy {
   onSliderChange(row) {
     if(row['status']['state'] === "RUNNING") {
       const eventName = "VmStop";
-      this.core.emit({name: eventName, data:[row.id]});
       this.setTransitionState("STOPPING", row)
+      this.core.emit({name: eventName, data:[row.id]});
     } else {
       const eventName = "VmStart";
       let args = [row.id];
       let overcommit = [{'overcommit':false}];
-      const dialogText = T("Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution.")
-      let startDialog = this.dialog.confirm(T("Power"), undefined, true, T("Power On"), true, T('Overcommit Memory?'), undefined, overcommit, dialogText)
-      startDialog.afterClosed().subscribe((res) => {
-        if (res) {
-          let checkbox = startDialog.componentInstance.data[0].overcommit;
-          args.push({"overcommit": checkbox});
-          this.core.emit({name: eventName, data:args});
-          this.setTransitionState("STARTING", row);
-        } 
-      });
+      this.core.emit({name: eventName, data:args});
+      this.setTransitionState("STARTING", row);
     }
+  }
+
+  onMemoryError(id){
+    const row = this.table.rows.find((r) => r.id == id);
+    
+    const eventName = "VmStart";
+    let args = [id];
+    let overcommit = [{'overcommit':false}];
+    const dialogText = T("Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution.")
+    const dialogMessage = "The VM could not start because the current configuration could potentially require more RAM than is available on the system.  Would you like to overcommit memory? ";
+    let startDialog = this.dialog.confirm(T("ERROR: Not Enough Memory"), dialogMessage, true, T("PROCEED"), true, T('Yes I understand the risks'), undefined, overcommit, dialogText)
+    startDialog.afterClosed().subscribe((res) => {
+      if (res) {
+        let checkbox = startDialog.componentInstance.data[0].overcommit;
+        args.push({"overcommit": checkbox});
+        this.setTransitionState("STARTING", row);
+        this.core.emit({name: eventName, data:args});
+      } 
+    });
+    
   }
 
   ngOnDestroy(){
