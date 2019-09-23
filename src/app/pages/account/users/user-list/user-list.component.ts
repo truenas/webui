@@ -27,7 +27,7 @@ export class UserListComponent implements OnInit {
   protected hasDetails = true;
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username', always_display: true, minWidth: 150, maxWidth: 250 },
+    { name: 'Username', prop: 'bsdusr_username', always_display: true, minWidth: 150},
     { name: 'UID', prop: 'bsdusr_uid', hidden: false, maxWidth: 100 },
     { name: 'GID', prop: 'bsdusr_gid', hidden: true, maxWidth: 100 },
     { name: 'Home directory', prop: 'bsdusr_home', hidden: true, maxWidth: 250 },

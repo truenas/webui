@@ -220,6 +220,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
 
+    // Makes a list of the table's column maxWidths
     this.filterColumns.forEach((column) => {
       let tempObj = {};
       tempObj['name'] = column.name;
@@ -244,7 +245,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
         if (this.title === 'Users') {
-          this.conf.columns = this.dropLargestMaxWidth();
+          this.conf.columns = this.dropLastMaxWidth();
         }
       }
     }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 2000 : 0)
@@ -315,27 +316,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     };        
   }
 
-  dropLargestMaxWidth() {
+  dropLastMaxWidth() {
+    // Reset all column maxWidths
     this.conf.columns.forEach((column) => {
       column['maxWidth'] = (this.colMaxWidths.find(({name}) => name === column.name)).maxWidth;
     })
-
-    let tempArr = [];
-    for (const i of this.conf.columns) {
-      if (tempArr.length === 0) {
-        tempArr.push(i);
-      } else {
-        if (i.maxWidth > tempArr[0].maxWidth ) {
-          tempArr.pop();
-          tempArr.push(i)
-        }
-      }
-    }
-    this.conf.columns.forEach((column) => {
-      if (column.name === tempArr[0].name) {
-        delete column.maxWidth;
-      } 
-    })
+    // Delete maXwidth on last col displayed (prevents a display glitch)
+    delete (this.conf.columns[Object.keys(this.conf.columns).length-1]).maxWidth;
     return this.conf.columns;
   }
  
@@ -953,7 +940,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     preferredCols.push(obj);
     this.prefService.savePreferences(this.prefService.preferences);
     if (this.title === 'Users') {
-      this.conf.columns = this.dropLargestMaxWidth();
+      this.conf.columns = this.dropLastMaxWidth();
     }
   }
 
