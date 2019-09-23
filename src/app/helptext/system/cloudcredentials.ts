@@ -98,7 +98,11 @@ Copy the application <i>keyID</i> string to this field.'),
 
   key_b2: {
     placeholder: T("Application Key"),
-    tooltip: T(''),
+    tooltip: T('<a href="https://www.backblaze.com/b2/cloud-storage.html" \
+target="_blank">Backblaze B2</a> Application Key. To generate \
+a new application key, log in to the Backblaze account, go to the \
+<i>App Keys</i> page, and add a new application key. Copy the \
+<i>applicationKey</i> string to this field.'),
   },
 
   token_box: {
