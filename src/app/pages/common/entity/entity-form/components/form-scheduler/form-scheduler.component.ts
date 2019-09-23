@@ -35,8 +35,9 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public fieldShow: string;
   public disablePrevious:boolean;
 
-  @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
-  @ViewChild('calendar', { static: true}) calendarComp:MatMonthView<any>;
+  public calendarDays: any; // tr from DOM
+  //@ViewChild('calendarParent', { static: true, read:ElementRef}) calendar: ElementRef;
+  @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
   @ViewChild('trigger', { static: false}) trigger: ElementRef;
   @ViewChild('preview', { static: false, read:ElementRef}) schedulePreview: ElementRef;
 
@@ -353,6 +354,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     //this.minDate = moment(newDate).startOf('month');;
     this.maxDate = moment(newDate).endOf('month');
 
+    console.log(this.calendarComp);
+    console.log(this.activeDate);
     this.calendarComp.activeDate = moment(newDate).toDate();
     this.generateSchedule();
   }
@@ -390,7 +393,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     };
 
     let interval = parser.parseExpression(this.crontab, options);
-    //console.log(interval);
+    console.log(this.crontab);
     if(!nextSubset){ 
       this.generatedScheduleSubset = 0;
     }
@@ -464,7 +467,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   }
 
   private getCalendarCells(){
-    let rows = this.calendar.nativeElement.children[0].children[1].children;
+    let selector = ".calendar-wrapper table.mat-calendar-table tr"
+    let rows = this.calendarDays ? this.calendarDays : document.querySelectorAll(selector);
+    if(!this.calendarDays && rows){ 
+      this.calendarDays = rows;
+    }
     let cells = [];
     
     for(let i = 0; i < rows.length; i++){
