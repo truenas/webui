@@ -42,6 +42,7 @@ export interface InputTableConf {
   checkbox_confirm_show?: any;
   hasDetails?:boolean;
   rowDetailComponent?: any;
+  detailRowHeight?: any;
   cardHeaderComponent?: any;
   asyncView?: boolean;
   wsDelete?: string;
@@ -158,7 +159,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public getRowDetailHeight = () => 
      this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
-      : 100;
+      : this.conf.detailRowHeight || 100;
   
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
