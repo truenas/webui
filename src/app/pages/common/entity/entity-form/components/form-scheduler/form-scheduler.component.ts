@@ -35,16 +35,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public fieldShow: string;
   public disablePrevious:boolean;
 
-  public calendarDays: any; // tr from DOM
-  //@ViewChild('calendarParent', { static: true, read:ElementRef}) calendar: ElementRef;
+  @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
   @ViewChild('trigger', { static: false}) trigger: ElementRef;
   @ViewChild('preview', { static: false, read:ElementRef}) schedulePreview: ElementRef;
-
-  // Popup Controls
-  /*public minutesCtl = new FormControl('', [Validators.required, Validators.pattern]);
-  public hoursCtl = new FormControl('', [Validators.required, Validators.pattern]);
-  public daysCtl = new FormControl('', [Validators.required, Validators.pattern]);*/
 
   private control: any;
 
@@ -351,11 +345,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       return ;
     }
     this.minDate = this.getMinDate(newDate);
-    //this.minDate = moment(newDate).startOf('month');;
     this.maxDate = moment(newDate).endOf('month');
 
-    console.log(this.calendarComp);
-    console.log(this.activeDate);
     this.calendarComp.activeDate = moment(newDate).toDate();
     this.generateSchedule();
   }
@@ -393,7 +384,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     };
 
     let interval = parser.parseExpression(this.crontab, options);
-    console.log(this.crontab);
     if(!nextSubset){ 
       this.generatedScheduleSubset = 0;
     }
@@ -413,7 +403,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
         //console.log(parseCounter)
         parseCounter++
       } catch (e) {
-        //console.warn(e);
+        console.warn(e);
         break;
       }
     }
@@ -467,11 +457,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   }
 
   private getCalendarCells(){
-    let selector = ".calendar-wrapper table.mat-calendar-table tr"
-    let rows = this.calendarDays ? this.calendarDays : document.querySelectorAll(selector);
-    if(!this.calendarDays && rows){ 
-      this.calendarDays = rows;
-    }
+    let rows = this.calendar.nativeElement.children[0].children[1].children;
     let cells = [];
     
     for(let i = 0; i < rows.length; i++){
