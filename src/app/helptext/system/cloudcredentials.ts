@@ -88,7 +88,12 @@ export const helptext_system_cloudcredentials = {
 
   account_b2: {
     placeholder: T("Key ID"),
-    tooltip: T(''),
+    tooltip: T('Alphanumeric
+<a href="https://www.backblaze.com/b2/cloud-storage.html" \
+target="_blank">Backblaze B2</a> Application Key ID. To \
+generate a new application key, log in to the Backblaze account, \
+go to the <i>App Keys</i> page, and add a new application key. \
+Copy the application <i>keyID</i> string to this field.'),
   },
 
   key_b2: {
