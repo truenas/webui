@@ -220,14 +220,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
 
-    // Makes a list of the table's column maxWidths
-    this.filterColumns.forEach((column) => {
-      let tempObj = {};
-      tempObj['name'] = column.name;
-      tempObj['maxWidth'] = column.maxWidth;
-      this.colMaxWidths.push(tempObj)
-    })
-
     for (let item of this.allColumns) {
       if (!item.hidden) {
         this.originalConfColumns.push(item);
@@ -245,6 +237,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
         if (this.title === 'Users') {
+          // Makes a list of the table's column maxWidths
+          this.filterColumns.forEach((column) => {
+            let tempObj = {};
+            tempObj['name'] = column.name;
+            tempObj['maxWidth'] = column.maxWidth;
+            this.colMaxWidths.push(tempObj)
+          });
           this.conf.columns = this.dropLastMaxWidth();
         }
       }
