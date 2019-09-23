@@ -177,18 +177,14 @@ export default {
  Must be at least 8 and at most 32 octets long.'),
 
     SNMPTrap_v3_authprotocol_placeholder: T('Authentication Protocol'),
-    SNMPTrap_v3_authprotocol_tooltip: T('Authentication protocol \
- used to authenticate messages sent on behalf of the specified \
- <i>Username</i>. Here is a \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
- target="_blank">list of supported authentication protocols</a>.'),
+    SNMPTrap_v3_authprotocol_tooltip: T('<a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
+ target="_blank">Authentication protocol</a> used to authenticate \
+ messages sent on behalf of the specified <i>Username</i>.'),
 
     SNMPTrap_v3_privprotocol_placeholder: T('Encryption Protocol'),
-    SNMPTrap_v3_privprotocol_tooltip: T('Encryption protocol \
- used to encrypt messages sent on behalf of the specified \
- <i>Username</i>. Supported encryption protocols are shown at \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoPrivProtocol" \
- target="_blank">http://snmplabs.com/</a>'),
+    SNMPTrap_v3_privprotocol_tooltip: T('<a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoPrivProtocol" \
+ target="_blank">Encryption protocol</a> used to encrypt messages \
+ sent on behalf of the specified <i>Username</i>.'),
 
     SNMPTrap_community_placeholder: T('SNMP Community'),
     SNMPTrap_community_tooltip: T('Network community string. \
