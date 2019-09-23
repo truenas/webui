@@ -119,6 +119,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
   public originalConfColumns = []; // The 'factory setting
+  public colMaxWidths = [];
 
   public startingHeight: number;
   public expandedRows = 0;
@@ -235,6 +236,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.conf.columns = i.cols;
           }
         });
+        if (this.title === 'Users') {
+          // Makes a list of the table's column maxWidths
+          this.filterColumns.forEach((column) => {
+            let tempObj = {};
+            tempObj['name'] = column.name;
+            tempObj['maxWidth'] = column.maxWidth;
+            this.colMaxWidths.push(tempObj)
+          });
+          this.conf.columns = this.dropLastMaxWidth();
+        }
       }
     }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 2000 : 0)
 
@@ -304,6 +315,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     };        
   }
 
+  dropLastMaxWidth() {
+    // Reset all column maxWidths
+    this.conf.columns.forEach((column) => {
+      column['maxWidth'] = (this.colMaxWidths.find(({name}) => name === column.name)).maxWidth;
+    })
+    // Delete maXwidth on last col displayed (prevents a display glitch)
+    delete (this.conf.columns[Object.keys(this.conf.columns).length-1]).maxWidth;
+    return this.conf.columns;
+  }
+ 
   setTableHeight() {
     let rowNum = 6, n, addRows = 4;
     if (this.title === 'Boot Environments') {
@@ -928,6 +949,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     preferredCols.push(obj);
     this.prefService.savePreferences(this.prefService.preferences);
+    if (this.title === 'Users') {
+      this.conf.columns = this.dropLastMaxWidth();
+    }
   }
 
   // resets col view to the default set in the table's component
