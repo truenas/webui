@@ -64,7 +64,7 @@ export class PortalFormComponent {
       name : 'discovery_authgroup',
       placeholder : helptext_sharing_iscsi.portal_form_placeholder_discovery_authgroup,
       tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authgroup,
-      options : [],
+      options : [{label : '---', value : null}],
       value: null,
     },
     {
@@ -155,7 +155,6 @@ export class PortalFormComponent {
 
     this.authgroup_field = _.find(this.fieldConfig,{'name' : 'discovery_authgroup'});
     this.iscsiService.getAuth().subscribe((res) => {
-      this.authgroup_field.options.push({label : 'None', value : null});
       for (let i = 0; i < res.length; i++) {
         this.authgroup_field.options.push({label: res[i].tag, value: res[i].tag});
       }
