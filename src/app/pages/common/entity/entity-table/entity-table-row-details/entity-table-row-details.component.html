@@ -9,7 +9,7 @@
             fxLayoutAlign="start center"
             fxLayoutGap="4px"
         >
-            <ng-container *ngIf="column?.widget?.component">
+            <ng-container *ngIf="column?.widget?.component; else notScheduleList">
                 <mat-icon
                     class="widget-icon"
                     [matMenuTriggerFor]="widget"
@@ -28,8 +28,11 @@
                         ></app-task-schedule-list>
                     </ng-container>
                 </mat-menu>
+                <p>{{ getPropValue(column.prop, true) }}</p>
             </ng-container>
-            <p>{{ getPropValue(column.prop) }}</p>
+            <ng-template #notScheduleList>
+                <p>{{ getPropValue(column.prop) }}</p>
+            </ng-template>
         </div>
     </div>
 </section>

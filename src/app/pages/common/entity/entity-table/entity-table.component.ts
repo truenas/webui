@@ -42,6 +42,7 @@ export interface InputTableConf {
   checkbox_confirm_show?: any;
   hasDetails?:boolean;
   rowDetailComponent?: any;
+  detailRowHeight?: any;
   cardHeaderComponent?: any;
   asyncView?: boolean;
   wsDelete?: string;
@@ -119,6 +120,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
   public originalConfColumns = []; // The 'factory setting
+  public colMaxWidths = [];
 
   public startingHeight: number;
   public expandedRows = 0;
@@ -157,7 +159,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public getRowDetailHeight = () => 
      this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
-      : 100;
+      : this.conf.detailRowHeight || 100;
   
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
@@ -235,6 +237,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.conf.columns = i.cols;
           }
         });
+        if (this.title === 'Users') {
+          // Makes a list of the table's column maxWidths
+          this.filterColumns.forEach((column) => {
+            let tempObj = {};
+            tempObj['name'] = column.name;
+            tempObj['maxWidth'] = column.maxWidth;
+            this.colMaxWidths.push(tempObj)
+          });
+          this.conf.columns = this.dropLastMaxWidth();
+        }
       }
     }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 2000 : 0)
 
@@ -304,6 +316,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     };        
   }
 
+  dropLastMaxWidth() {
+    // Reset all column maxWidths
+    this.conf.columns.forEach((column) => {
+      column['maxWidth'] = (this.colMaxWidths.find(({name}) => name === column.name)).maxWidth;
+    })
+    // Delete maXwidth on last col displayed (prevents a display glitch)
+    delete (this.conf.columns[Object.keys(this.conf.columns).length-1]).maxWidth;
+    return this.conf.columns;
+  }
+ 
   setTableHeight() {
     let rowNum = 6, n, addRows = 4;
     if (this.title === 'Boot Environments') {
@@ -422,13 +444,24 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         data: res
       };
     }
+
     if (res.data) {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
+        for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
+          if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
+            res.data.map(row => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          }
+        }
       }
     } else {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res = this.conf.resourceTransformIncomingRestData(res);
+        for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
+          if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
+            res.map(row => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          }
+        }
       }
     }
 
@@ -640,26 +673,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       dialog.title = dialog.buildTitle(item);
     }
 
-    this.dialogService.confirm(
-        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
-        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
-        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
-        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
-      if (res) {
-        if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
-          // double confirm: input delete item's name to confirm deletion
-          this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
-            if (doubleConfirmDialog) {
-              this.toDeleteRow = item;
-              this.delete(id);
-            }
-          });
-        } else {
+    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
+      // double confirm: input delete item's name to confirm deletion
+      this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
+        if (doubleConfirmDialog) {
           this.toDeleteRow = item;
           this.delete(id);
         }
-      }
-    })
+      });
+    } else {
+      this.dialogService.confirm(
+        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
+        dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
+        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false,
+        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
+          if (res) {
+            this.toDeleteRow = item;
+            this.delete(id);
+          }
+        });
+    }
   }
 
   delete(id) {
@@ -917,6 +950,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     preferredCols.push(obj);
     this.prefService.savePreferences(this.prefService.preferences);
+    if (this.title === 'Users') {
+      this.conf.columns = this.dropLastMaxWidth();
+    }
   }
 
   // resets col view to the default set in the table's component
