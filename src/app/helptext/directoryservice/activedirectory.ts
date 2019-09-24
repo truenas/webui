@@ -48,6 +48,9 @@ activedirectory_certificate_tooltip: T('Select the certificate of the Active Dir
  <a href="--docurl--/system.html#certificates" target="_blank">Certificates</a>\
  menu.'),
 
+ad_validate_certificates_placeholder: T('Validate Certificates'),
+ad_validate_certificates_tooltip: T('Check server certificates in a TLS session.'),
+
 activedirectory_verbose_logging_name: 'verbose_logging',
 activedirectory_verbose_logging_placeholder : T('Verbose logging'),
 activedirectory_verbose_logging_tooltip : T('Set to log attempts to join the domain to\
@@ -153,6 +156,7 @@ activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can
  activedirectory_advanced_fields: [
 'ssl',
 'certificate',
+'validate_certificates',
 'verbose_logging',
 'unix_extensions',
 'allow_trusted_doms',
