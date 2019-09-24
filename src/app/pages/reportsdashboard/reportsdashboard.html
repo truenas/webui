@@ -22,7 +22,6 @@
 
 <!-- Report builder was 632px wide -->
 <ng-container *ngIf="activeTab == 'Disk'">
-  <!--<entity-form-embedded fxFlex="100" fxFlex.gt-xs="632px" [target]="target" [data]="values" [conf]="this" ></entity-form-embedded>-->
   <entity-toolbar fxFlex [target]="target" [conf]="toolbarConfig"></entity-toolbar>
 </ng-container>
 
@@ -31,13 +30,6 @@
 <div *ngIf="visibleReports && activeReports" class="master-container" [ngClass]="{'with-footer-console': isFooterConsoleOpen}" lazyViewer view=".report" fxLayout="row wrap" fxLayoutAlign="space-evenly"> 
   
     <div fxFlex="48px" class="">
-      <!-- GLOBAL CONTROLS -->
-      <!--<mat-slider style="position:fixed; left:16px; top:160px;" 
-        vertical
-        invert
-        thumbLabel
-        min="0"
-        [max]="activeReports.length"></mat-slider>-->
     </div>
 
     <!-- Cards Container -->
@@ -55,18 +47,6 @@
     <!-- /Cards Container -->
     
     
-    <!--<div class="reports-navigation-spacer" fxFlex="282px"></div>
-    <div fxFlex="100" class="reports-navigation">
-      <mat-list>
-      <ng-container *ngFor="let report of activeReports; let key=index">
-        <mat-list-item [ngClass]="{'onscreen': key == scrolledIndex }">
-          {{report.title}}
-        </mat-list-item>
-      </ng-container>
-      </mat-list>
-      </div>-->
-    
-
     <div [style.height.px]="30" *ngIf="isFooterConsoleOpen"></div>
 </div>
 

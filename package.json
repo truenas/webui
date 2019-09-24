@@ -64,6 +64,7 @@
     "classlist.js": "1.1.20150312",
     "core-js": "2.6.0",
     "cron-parser": "2.7.3",
+    "cronstrue": "1.83.0",
     "d3": "4.12.2",
     "d3-transition": "1.2.0",
     "date-fns": "1.30.1",
