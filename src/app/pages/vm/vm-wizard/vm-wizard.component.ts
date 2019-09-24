@@ -126,7 +126,7 @@ export class VMWizardComponent {
         {
           type: 'paragraph',
           name: 'memory_limitation',
-          paraText: helptext.memory_limitation + ' 0 MB'
+          paraText: helptext.memory_limitation + ' 0 bytes'
         },
         {
           type: 'input',
@@ -333,10 +333,11 @@ export class VMWizardComponent {
       .pipe(filter(availableMemory => typeof availableMemory === "number" && availableMemory > 0))
       .subscribe(
         availableMemory => {
+          let available = this.storageService.convertBytestoHumanReadable(availableMemory, 2);
           this.wizardConfig
             .find(step => step.label === helptext.vcpus_label)
             .fieldConfig.find(config => config.type === "paragraph").paraText =
-              helptext.memory_limitation + `: ${(window as any).filesize(availableMemory, { exponent: 2 })}`;
+              helptext.memory_limitation + `: ${available}`;
         },
         error => new EntityUtils().handleWSError(this, error, this.dialogService)
       );
@@ -699,6 +700,5 @@ async customSubmit(value) {
         this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);
       });
     }
-}
-
+  }
 }
