@@ -66,6 +66,13 @@ export class ReplicationFormComponent {
                 }
             ],
             value: 'PUSH',
+            relation: [{
+                action: "HIDE",
+                when: [{
+                    name: "transport",
+                    value: 'LOCAL'
+                  }]
+            }]
         }, {
             type: 'select',
             name: 'transport',
@@ -854,6 +861,12 @@ export class ReplicationFormComponent {
                         entityForm.formGroup.controls['retention_policy'].setValue('NONE');
                     }
                 }
+
+                if (res === 'LOCAL') {
+                    entityForm.formGroup.controls['direction'].setValue('PUSH');
+                    entityForm.setDisabled('target_dataset_PUSH', true, true);
+                    entityForm.setDisabled('target_dataset_PULL', false, false);
+                }
             }
         )
 
@@ -962,7 +975,11 @@ export class ReplicationFormComponent {
         if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
             data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
         }
-
+        if (data['transport'] === 'LOCAL') {
+            data['direction'] = 'PUSH';
+            data['target_dataset_PUSH'] = data['target_dataset_PULL'];
+            delete data['target_dataset_PULL'];
+        }
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
