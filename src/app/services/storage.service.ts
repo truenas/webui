@@ -345,14 +345,19 @@ export class StorageService {
   };
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(bytes) {
+  convertBytestoHumanReadable(bytes, decimalPlaces?) { 
     let i = -1;
-    const units = [' KiB', ' MiB', ' GiB', ' TiB', 'PiB'];
-    do {
+    let dec, units;
+    decimalPlaces ? dec = decimalPlaces : dec = 2;
+    if (bytes => 1024) {
+      do {
         bytes = bytes / 1024;
         i++;
-    } while (bytes > 1024);
-  
-    return Math.max(bytes, 0.1).toFixed(2) + units[i];
+      } while (bytes > 1024);
+      units = this.IECUnits[i];
+    } else {
+      units = 'bytes';
+    }
+    return `${Math.max(bytes, 0.1).toFixed(dec)} ${units}`;
   };
 }
