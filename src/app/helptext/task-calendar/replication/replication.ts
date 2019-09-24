@@ -8,7 +8,7 @@ export default {
     direction_tooltip: T('Direction of travel. <i>Push</i> sends \
  snapshots from the local system to a remote system, or to another \
  dataset on the local system. <i>Pull</i> takes snapshots from a remote \
- system and stores them on the local system. <i>Pull</i> requires \
+ system and stores them on the local system. <i>Pull</i> requires a \
  snapshot <i>Naming Schema</i> to identify which snapshots to replicate.'),
 
     transport_placeholder: T('Transport'),
