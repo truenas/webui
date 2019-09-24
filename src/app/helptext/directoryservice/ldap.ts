@@ -73,7 +73,6 @@ ldap_certificate_tooltip: T('Select the LDAP CA certificate. The certificate for
 
 ldap_validate_certificates_placeholder: T('Validate Certificates'),
 ldap_validate_certificates_tooltip: T('Check server certificates in a TLS session.'),
- Turn off in cases where LDAPs is used.'),
 
 ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
 ldap_disable_fn_cache_placeholder : T('Disable LDAP User/Group Cache'),
