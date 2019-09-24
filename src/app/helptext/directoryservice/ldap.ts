@@ -48,30 +48,6 @@ ldap_anonbind_placeholder: T('Allow Anonymous Binding'),
 ldap_anonbind_tooltip : T('Set for the LDAP server to disable authentication and\
  allow read and write access to any client.'),
 
-ldap_usersuffix_name : 'ldap_usersuffix',
-ldap_usersuffix_placeholder : T('User Suffix'),
-ldap_usersuffix_tooltip: T('Suffix to add to a name when the user account is added\
- to the LDAP directory.'),
-
-ldap_groupsuffix_name : 'ldap_groupsuffix',
-ldap_groupsuffix_placeholder : T('Group Suffix'),
-ldap_groupsuffix_tooltip: T('Suffix to add to a name when the group is added to the\
- LDAP directory.'),
-
-ldap_passwordsuffix_name : 'ldap_passwordsuffix',
-ldap_passwordsuffix_placeholder : T('Password Suffix'),
-ldap_passwordsuffix_tooltip: T('Suffix to add to the password when it is added to the\
- LDAP directory.'),
-
-ldap_machinesuffix_name : 'ldap_machinesuffix',
-ldap_machinesuffix_placeholder : T('Machine Suffix'),
-ldap_machinesuffix_tooltip: T('Suffix to add to the system name when it is added to\
- the LDAP directory.'),
-
-ldap_sudosuffix_name : 'ldap_sudosuffix',
-ldap_sudosuffix_placeholder : T('SUDO Suffix'),
-ldap_sudosuffix_tooltip: T('Suffix for LDAP-based users that need superuser access.'),
-
 ldap_kerberos_realm_name : 'ldap_kerberos_realm',
 ldap_kerberos_realm_placeholder : T('Kerberos Realm'),
 ldap_kerberos_realm_tooltip: T('Select the realm created using the instructions in <a\
@@ -94,6 +70,10 @@ ldap_certificate_name : 'ldap_certificate',
 ldap_certificate_placeholder : T('Certificate'),
 ldap_certificate_tooltip: T('Select the LDAP CA certificate. The certificate for the\
  LDAP server CA must first be imported using the System/Certificates menu.'),
+
+ldap_validate_certificates_placeholder: T('Validate Certificates'),
+ldap_validate_certificates_tooltip: T('Default value is <samp>True</samp>. Checks server certificates in a TLS session. \
+ Turn off in cases where LDAPs is used.'),
 
 ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
 ldap_disable_fn_cache_placeholder : T('Disable LDAP User/Group Cache'),
@@ -148,6 +128,7 @@ ldap_advanced_fields :
 'ldap_kerberos_principal',
 'ldap_ssl',
 'ldap_certificate',
+'ldap_validate_certificates',
 'ldap_timeout',
 'ldap_dns_timeout',
 'ldap_idmap_backend',
