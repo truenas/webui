@@ -6,11 +6,10 @@ export default {
 
     direction_placeholder: T('Direction'),
     direction_tooltip: T('Direction of travel. <i>Push</i> sends \
- snapshots from the local system to either another dataset on the local \
- system or to a dataset on a remote system. <i>Pull</i> takes snapshots \
- from a remote system and stores them on the local system. <i>Pull</i> \
- requires snapshot <i>Naming Schema</i> to identify which snapshots to \
- replicate.'),
+ snapshots from the local system to a remote system, or to another \
+ dataset on the local system. <i>Pull</i> takes snapshots from a remote \
+ system and stores them on the local system. <i>Pull</i> requires \
+ snapshot <i>Naming Schema</i> to identify which snapshots to replicate.'),
 
     transport_placeholder: T('Transport'),
     transport_tooltip: T('Method of snapshot transfer:<ul> \
@@ -97,16 +96,18 @@ export default {
  schedule removes the <b>Schedule</b> field.'),
 
     naming_schema_placeholder: T('Naming Schema'),
-    naming_schema_tooltip: T('Custom snapshots to be replicated. Enter \
- the name and <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
+    naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
+ replicated. Enter the name and \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
  target="_blank">strftime(3)</a> <i>%Y</i>, <i>%m</i>, <i>%d</i>, \
  <i>%H</i>, and <i>%M</i> strings that match the snapshots to include in \
  the replication.'),
 
     also_include_naming_schema_placeholder: T('Also Include Naming Schema'),
-    also_include_naming_schema_tooltip: T('Additional snapshots to \
- include in the replication with the periodic snapshot schedule. Enter \
- the <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
+    also_include_naming_schema_tooltip: T('Pattern of naming custom \
+ snapshots to include in the replication with the periodic snapshot \
+ schedule. Enter the \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
  target="_blank">strftime(3)</a> strings that match the snapshots to \
  include in the replication.<br><br> \
  When a periodic snapshot is not linked to the replication, enter the \
@@ -118,12 +119,11 @@ export default {
 
     auto_placeholder: T('Run Automatically'),
     auto_tooltip: T('Set to either start this replication task \
- immediately after the linked periodic snapshot task completes or see \
- options to create a separate <b>Schedule</b> for this replication.'),
+ immediately after the linked periodic snapshot task completes or \
+ continue to create a separate <b>Schedule</b> for this replication.'),
 
     schedule_placeholder: T('Schedule'),
-    schedule_tooltip: T('Define a specific time to start the replication \
- task.'),
+    schedule_tooltip: T('Start time for the replication task.'),
 
     schedule_picker_tooltip: T('Select a preset schedule or choose \
  <i>Custom</i> to use the advanced scheduler.'),
@@ -204,7 +204,6 @@ export default {
     speed_limit_errors: T('Invalid value. Valid values are numbers \
  followed by optional unit letters, like <samp>256k</samp> or \
  <samp>1G</samp>.'),
-
 
     dedup_placeholder: T('Send Deduplicated Stream'),
     dedup_tooltip: T('Deduplicate the stream to avoid sending redundant \
