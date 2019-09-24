@@ -8,12 +8,12 @@
 
         <div id="box2">
             <mat-form-field class="full-width" id="formexinput">
-                <tooltip style="float: right;" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
                 <textarea matInput *ngIf="config.multiple; else textInput" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"></textarea>
                 <ng-template #textInput>
                     <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
                 </ng-template>
             </mat-form-field>
+            <tooltip class="formexinput-tooltip" style="float: right;" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
         </div>
 
         <tree-root #tree id="form-ex-input" *ngIf="treeVisible && !config.disabled" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)">
