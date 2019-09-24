@@ -72,7 +72,7 @@ ldap_certificate_tooltip: T('Select the LDAP CA certificate. The certificate for
  LDAP server CA must first be imported using the System/Certificates menu.'),
 
 ldap_validate_certificates_placeholder: T('Validate Certificates'),
-ldap_validate_certificates_tooltip: T('Default value is <samp>True</samp>. Checks server certificates in a TLS session. \
+ldap_validate_certificates_tooltip: T('Check server certificates in a TLS session.'),
  Turn off in cases where LDAPs is used.'),
 
 ldap_disable_fn_cache_name : 'ldap_disable_freenas_cache',
