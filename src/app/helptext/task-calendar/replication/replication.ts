@@ -2,14 +2,15 @@ import { T } from '../../../translate-marker';
 
 export default {
     name_placeholder: T('Name'),
-    name_tooltip: T('Descriptive name for the replication. Replication \
- task names must be unique.'),
+    name_tooltip: T('Descriptive name for the replication.'),
 
     direction_placeholder: T('Direction'),
     direction_tooltip: T('Direction of travel. <i>Push</i> sends \
- snapshots to a destination system. <i>Pull</i> receives snapshots from \
- a destination system. Choosing <i>Pull</i> requires entering a snapshot \
- <i>Naming Schema</i> to identify snapshots to replicate.'),
+ snapshots from the local system to either another dataset on the local \
+ system or to a dataset on a remote system. <i>Pull</i> takes snapshots \
+ from a remote system and stores them on the local system. <i>Pull</i> \
+ requires snapshot <i>Naming Schema</i> to identify which snapshots to \
+ replicate.'),
 
     transport_placeholder: T('Transport'),
     transport_tooltip: T('Method of snapshot transfer:<ul> \
@@ -22,8 +23,8 @@ export default {
  target="_blank">py-libzfs</a> to send an unencrypted data stream for \
  higher transfer speeds. This only works when replicating to a FreeNAS, \
  TrueNAS, or other system with <i>py-libzfs</i> installed.</li> \
- <li><i>LOCAL</i> replicates snapshots to another dataset on the same \
- system.</li> \
+ <li><i>LOCAL</i> efficiently replicates snapshots to another dataset on \
+ the same system without using the network.</li> \
  <li><i>LEGACY</i> uses the legacy replication engine from FreeNAS 11.2 \
  and earlier.</li></ul>'),
 
@@ -33,9 +34,10 @@ export default {
  target="_blank">SSH connection</a>.'),
 
     netcat_active_side_placeholder: T('Netcat Active Side'),
-    netcat_active_side_tooltip: T('Choose a system (<i>LOCAL</i> or \
- <i>REMOTE</i>) to open TCP ports and allow the connection between both \
- systems.'),
+    netcat_active_side_tooltip: T('Establishing a connection requires \
+ that one of the connection systems has open TCP ports. Choose which \
+ system (<i>LOCAL</i> or <i>REMOTE</i>) will open ports. Consult your IT \
+ department to determine which systems are allowed to open ports.'),
 
     netcat_active_side_listen_address_placeholder: T('Netcat Active Side Listen Address'),
     netcat_active_side_listen_address_tooltip: T('IP address on which\
@@ -58,11 +60,11 @@ export default {
  SSH connection hostname.'),
 
     source_datasets_placeholder: T('Source Datasets'),
-    source_datasets_tooltip: T('Choose one or more datasets on the \
- source system to be replicated. Each dataset must have an associated \
- periodic snapshot task or previously-created snapshots for a one-time \
- replication. A valid SSH connection must be selected when the source \
- datasets are on a remote system.'),
+    source_datasets_tooltip: T('Choose datasets on the source system to \
+ be replicated. Each dataset must have an associated periodic snapshot \
+ task, or previously-created snapshots for a one-time replication. \
+ Replicating snapshots from remote source datasets requires an SSH \
+ connection.'),
 
     target_dataset_placeholder: T('Target Dataset'),
     target_dataset_tooltip: T('Choose a dataset on the destination \
