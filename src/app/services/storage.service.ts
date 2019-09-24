@@ -344,6 +344,7 @@ export class StorageService {
       return num * this.convertUnitToNum(unit);
   };
 
+  // Converts a number from bytes to the most natural human readable format
   convertBytestoHumanReadable(bytes) {
     let i = -1;
     const units = [' KiB', ' MiB', ' GiB', ' TiB', 'PiB'];
