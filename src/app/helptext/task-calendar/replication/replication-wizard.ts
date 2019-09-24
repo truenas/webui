@@ -7,12 +7,11 @@ export default {
     exist_replication_tooltip: T('Use settings from a saved replication.'),
 
     source_datasets_from_placeholder: T('Source Datasets'),
-    source_datasets_from_tooltip: T('Location of datasets with snapshots \
- to replicate.'),
+    source_datasets_from_tooltip: T('Datasets with snapshots to replicate.'),
 
     target_dataset_from_placeholder: T('Destination Dataset'),
-    target_dataset_from_tooltip: T('Location of the dataset that will \
- store replicated snapshots.'),
+    target_dataset_from_tooltip: T('Dataset which will store replicated \
+ snapshots.'),
 
     ssh_credentials_source_placeholder: T('SSH Connections'),
     ssh_credentials_source_tooltip: T('Select an existing SSH connection \
@@ -53,7 +52,7 @@ export default {
     encryption_tooltip: T('Data transfer security. The connection is \
  authenticated with SSH. Data can be encrypted during transfer for \
  security or left unencrypted to maximize transfer speed. Encryption is \
- recommended, but can be disabled for increased speek on secure networks.'),
+ recommended, but can be disabled for increased speed on secure networks.'),
 
     name_placeholder: T('Task Name'),
     name_tooltip: T('Name of this replication configuration.'),
