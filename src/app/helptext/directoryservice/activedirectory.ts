@@ -49,7 +49,7 @@ activedirectory_certificate_tooltip: T('Select the certificate of the Active Dir
  menu.'),
 
 ad_validate_certificates_placeholder: T('Validate Certificates'),
-ad_validate_certificates_tooltip: T('Default value is <samp>True</samp>. Checks server certificates in a TLS session. \
+ad_validate_certificates_tooltip: T('Check server certificates in a TLS session.'),
 
 activedirectory_verbose_logging_name: 'verbose_logging',
 activedirectory_verbose_logging_placeholder : T('Verbose logging'),
