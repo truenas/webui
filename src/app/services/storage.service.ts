@@ -342,5 +342,16 @@ export class StorageService {
 
       this.humanReadable = num.toString() + spacer + unit;
       return num * this.convertUnitToNum(unit);
-  }
+  };
+
+  convertBytestoHumanReadable(bytes) {
+    let i = -1;
+    const units = [' KiB', ' MiB', ' GiB', ' TiB', 'PiB'];
+    do {
+        bytes = bytes / 1024;
+        i++;
+    } while (bytes > 1024);
+  
+    return Math.max(bytes, 0.1).toFixed(2) + units[i];
+  };
 }
