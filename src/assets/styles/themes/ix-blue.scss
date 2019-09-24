@@ -625,6 +625,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-bottom: 15px;
   }
 
+  app-volumeimport-wizard #key tooltip {
+    position: relative;
+    left: 5px;
+    top: -4px;
+  }
+
   #cust_button_download_key {
     @include variable(background-color, --red, $red);
     color: white;
@@ -1470,10 +1476,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: -1px;
   }
 
-  mat-radio-group .tooltip .material-icons,
-  mat-radio-group .tooltip .material-icons {
+  mat-radio-group .radio-option-tooltip {
     position: relative;
-    top: 4px;
+    left: 5px;
   }
 
   .navigation-hold#scroll-area .ps__scrollbar-y-rail {

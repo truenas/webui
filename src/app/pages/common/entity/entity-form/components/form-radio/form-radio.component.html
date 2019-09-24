@@ -4,10 +4,12 @@
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   </div>
   <mat-radio-group [formControlName]="config.name">
-    <mat-radio-button *ngFor="let option of config.options" [value]="option.value" [attr.name]="option.name" [attr.id]="option.id" >
-      {{ option.label | translate }} 
-      <tooltip *ngIf="option.tooltip" [header]="config.placeholder" [message]="option.tooltip"></tooltip>
-    </mat-radio-button>
+    <div *ngFor="let option of config.options" fxLayout="row">
+        <mat-radio-button  [value]="option.value" [attr.name]="option.name" [attr.id]="option.id">
+            {{ option.label | translate }} 
+        </mat-radio-button>
+        <tooltip class="radio-option-tooltip" *ngIf="option.tooltip" [header]="config.placeholder" [message]="option.tooltip"></tooltip>
+    </div>
   </mat-radio-group>
   <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>
