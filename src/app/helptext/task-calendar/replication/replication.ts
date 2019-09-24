@@ -61,21 +61,20 @@ export default {
 
     source_datasets_placeholder: T('Source Datasets'),
     source_datasets_tooltip: T('Choose datasets on the source system to \
- be replicated. Each dataset must have an associated periodic snapshot \
- task, or previously-created snapshots for a one-time replication. \
- Replicating snapshots from remote source datasets requires an SSH \
- connection.'),
+ be replicated. Click the <i class="material-icons">folder</i> to see \
+ all datasets on the source system. Each dataset must have an associated \
+ periodic snapshot task, or previously-created snapshots for a one-time \
+ replication.'),
 
     target_dataset_placeholder: T('Target Dataset'),
     target_dataset_tooltip: T('Choose a dataset on the destination \
- system where snapshots are stored. Click the <b>Folder icon</b> to see \
- all datasets on the destination system and click on a dataset to set it \
- as the target. An <i>SSH connection</i> must be selected for the browser \
- to display datasets from a remote system.'),
+ system where snapshots are stored. Click the \
+ <i class="material-icons">folder</i> to see all datasets on the \
+ destination system. Click a dataset to set it as the target.'),
 
     recursive_placeholder: T('Recursive'),
-    recursive_tooltip: T('Replicate all child dataset snapshots. Set to \
- make <b>Exclude Child Datasets</b> visible.'),
+    recursive_tooltip: T('Replicate all child dataset snapshots. When \
+ set, <b>Exclude Child Datasets</b> becomes available.'),
 
     exclude_placeholder: T('Exclude Child Datasets'),
     exclude_tooltip: T('Exclude specific child dataset snapshots from \
@@ -95,7 +94,7 @@ export default {
  target="_blank">Periodic Snapshot Tasks</a>. This replication task must \
  have the same <b>Recursive</b> and <b>Exclude Child Datasets</b> values \
  as the chosen periodic snapshot task. Selecting a periodic snapshot \
- schedule hides the <b>Schedule</b> field.'),
+ schedule removes the <b>Schedule</b> field.'),
 
     naming_schema_placeholder: T('Naming Schema'),
     naming_schema_tooltip: T('Custom snapshots to be replicated. Enter \
@@ -127,38 +126,37 @@ export default {
  task.'),
 
     schedule_picker_tooltip: T('Select a preset schedule or choose \
- <i>Custom</i> to use the advanced scheduler. Spaces are not allowed in \
- <b>Minutes</b>, <b>Hours</b>, or <b>Days</b> of the custom scheduler.'),
+ <i>Custom</i> to use the advanced scheduler.'),
 
     schedule_begin_placeholder: T('Begin'),
     schedule_begin_tooltip: T('Start time for the replication task.'),
 
     schedule_end_placeholder: T('End'),
     schedule_end_tooltip: T('End time for the replication task. A \
- replication that is in progress can continue to run past this time.'),
+ replication that is already in progress can continue to run past this \
+ time.'),
 
     restrict_schedule_placeholder: T('Snapshot Replication Schedule'),
-    restrict_schedule_tooltip: T('Schedule which periodic snapshots are \
- replicated. All snapshots are replicated by default. To choose which \
- snapshots are replicated, set the checkbox and select a schedule from \
- the drop-down menu. For example, the periodic snapshot task takes a \
- snapshot every hour, but only every other snapshot is needed for \
- replication. The scheduler is set to even hours and only snapshots \
+    restrict_schedule_tooltip: T('Schedule which periodic snapshots will \
+ be replicated. All snapshots will be replicated by default. To choose \
+ which snapshots are replicated, set the checkbox and select a schedule \
+ from the drop-down menu.<br> \
+ For example, there is a system that takes a snapshot every hour, but \
+ the administrator has decided that only every other snapshot is needed \
+ for replication. The scheduler is set to even hours and only snapshots \
  taken at those times are replicated.'),
 
     restrict_schedule_picker_tooltip: T('Select a preset schedule or \
- choose <i>Custom</i> to use the advanced scheduler. Spaces are not \
- allowed in <b>Minutes</b>, <b>Hours</b>, or <b>Days</b> of the custom \
- scheduler.'),
+ choose <i>Custom</i> to use the advanced scheduler.'),
 
     restrict_schedule_begin_placeholder: T('Begin'),
-    restrict_schedule_begin_tooltip: T('Define a starting time when the \
- replication cannot run. A replication that is in progress can continue \
- to run past this time.'),
+    restrict_schedule_begin_tooltip: T('Set a starting time when the \
+ replication is not allowed to start. A replication that is already in \
+ progress can continue to run past this time.'),
 
     restrict_schedule_end_placeholder: T('End'),
-    restrict_schedule_end_tooltip: T('Define an ending time for the \
- restriction on activating replication schedules.'),
+    restrict_schedule_end_tooltip: T('Set an ending time for when \
+ replications are not allowed to start.'),
 
     only_matching_schedule_placeholder: T('Only Replicate Snapshots Matching Schedule'),
     only_matching_schedule_tooltip: T('Set to either use the \
@@ -181,8 +179,8 @@ export default {
     retention_policy_placeholder: T('Snapshot Retention Policy'),
     retention_policy_tooltip: T('When replicated snapshots are deleted \
  from the destination system:<ul> \
- <li><i>Same as Source</i>: duplicate the <b>Snapshot Lifetime</b> \
- setting from the source system.</li> \
+ <li><i>Same as Source</i>: use the <b>Snapshot Lifetime</b> \
+ from from the source periodic snapshot task.</li> \
  <li><i>Custom</i>: define a <b>Snapshot Lifetime</b> for the \
  destination system.</li> \
  <li><i>None</i>: never delete snapshots from the destination \
@@ -197,8 +195,8 @@ export default {
     lifetime_unit_tooltip: T(''),
 
     compression_placeholder: T('Stream Compression'),
-    compression_tooltip: T('Select a compression algorithm to reduce the \
- size of the data being replicated.'),
+    compression_tooltip: T('Select a compression algorithm to use on the \
+ data being replicated.'),
 
     speed_limit_placeholder: T('Limit (Ex. 500 KiB/s, 500M, 2 TB)'),
     speed_limit_tooltip: T('Limit replication speed to this number of \
@@ -215,8 +213,8 @@ export default {
  target="_blank">zfs(8)</a>.'),
 
     large_block_placeholder: T('Allow Blocks Larger than 128KB'),
-    large_block_tooltip: T('Enable the stream to send large data blocks. \
- The destination system must also support large blocks. See \
+    large_block_tooltip: T('Allow sending large data blocks. The \
+ destination system must also support large blocks. See \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" \
  target="_blank">zfs(8)</a>.'),
 
