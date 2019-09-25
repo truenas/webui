@@ -126,8 +126,27 @@ export class ShellService {
   }
 
   configTTY(rows:number, cols:number, xterm?: any){
-    const cmd = 'stty rows ' + rows + ' cols ' + cols;
-    const str= '1[8;' + rows + ';' + cols + 't';
-    this.send(cmd + ' \n'); 
+    console.log(xterm);
+    /*const cmd = 'stty rows ' + rows + ' cols ' + cols;
+    this.send(cmd + ' \n');*/
+
+    // EXAMPLES: 
+    // \e[8;50;100t
+    // \u1b[8;51;100t
+
+    //const str= '\e[8;' + rows + ';' + cols + 't';
+    //const str= '\u1b[8;' + rows + ';' + cols + 't'
+    //const cmd2 = this.convertToBytes(str);
+    //this.send(cmd2);
+
+    const str = '\x1b[8;' + rows + ';' + cols + 't';
+    const cmd3 = this.convertToBytes(str);
+    this.send(str)
+  }
+
+  convertToBytes(str:string):ArrayBuffer{	
+    const textEncoder = new TextEncoder()	
+    const encoded = textEncoder.encode(str);	
+    return encoded.buffer;	
   }
 }
