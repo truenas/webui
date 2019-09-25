@@ -167,8 +167,17 @@ export class VMWizardComponent {
         {
           type: 'radio',
           name: 'disk_radio',
-          tooltip: helptext.disk_radio_tooltip,
-          options: helptext.disk_radio_options,
+          options: [
+            {
+              label: helptext.disk_radio_options_new_label, 
+              value: true,
+              tooltip: helptext.disk_radio_tooltip
+            },
+            {
+              label: helptext.disk_radio_options_existing_label, 
+              value: false
+            }
+          ],          
           value: true,
         },
         {
