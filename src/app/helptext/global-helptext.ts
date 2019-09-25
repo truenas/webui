@@ -19,6 +19,6 @@ export default {
  human_readable_input_error: T('Invalid value. Valid values are numbers followed by optional unit letters, \
 like <samp>256k</samp> or <samp>1G</samp>.'),
 
- closed_job_message: T('See task manager for continued progress.'),
+ closed_job_message: T('See task manager for progress updates.'),
 
 }
