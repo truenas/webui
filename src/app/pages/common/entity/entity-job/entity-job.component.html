@@ -10,11 +10,8 @@
 		<label *ngIf="!hideProgressValue">
 			{{ progressTotalPercent | number: '1.2-2'}}%
 		</label>
-    </div>
-    <div>
-		<span *ngIf="description" [innerHTML]="description | translate"></span>
-    </div>
-	<div *ngIf="!description">
+	</div>
+	<div *ngIf="description === 'Uploading file...'">
 		<mat-progress-bar class="example-margin"
 			color="primary"
 			mode="indeterminate"
@@ -22,6 +19,9 @@
 			bufferValue="bufferValue">
 		</mat-progress-bar>
 	</div>
+    <div>
+		<span *ngIf="description" [innerHTML]="description | translate"></span>
+    </div>
 	<div>
 		<span *ngIf="!description">{{ "Starting job..." | translate }}</span>
 	</div>
