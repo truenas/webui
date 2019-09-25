@@ -111,7 +111,12 @@ export class ReplicationListComponent {
 
     stateButton(row) {
         if (row.state.error) {
-            this.dialog.errorReport(row.state.state, row.state.error);
+            this.dialog.confirm(row.state.state,row.state.error,true, T('VIEW LOGS')).subscribe(
+                (res) => {
+                    if (res) {
+                        this.job.showLogs(row.state.job.id);
+                    }
+                })
         } else if (row.state.job) {
             this.job.showLogs(row.state.job.id);
         }
