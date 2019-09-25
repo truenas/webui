@@ -29,10 +29,11 @@
         <!-- expanded row -->
         <ng-container matColumnDef="expandedDetail">
             <mat-cell *matCellDef="let element">
-                <span>Status: {{element.state}}</span>
-                <span *ngIf="element.error != null">Error: {{element.error}}</span>
-                <span *ngIf="element.logs_path != null">Logs Path: {{element.logs_path}}</span>
-                <span *ngIf="element.time_started != null">Date: {{getReadableDate(element.time_started)}}</span>
+                <span><b>Status:</b> {{element.state}}</span>
+                <span *ngIf="element.time_started != null"><b>Start Time:</b> {{getReadableDate(element.time_started)}}</span>
+                <span *ngIf="element.time_finished != null"><b>Finished Time:</b> {{getReadableDate(element.time_finished)}}</span>
+                <span *ngIf="element.error != null"><b>Error:</b> {{element.error}}</span>
+                <span *ngIf="element.logs_path != null"><button mat-flat-button color="primary" (click)="showLogs(element)">View Logs</button></span>
             </mat-cell>
         </ng-container>
 

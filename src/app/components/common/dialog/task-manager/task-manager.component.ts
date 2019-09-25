@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
-import { WebSocketService } from '../../../../services/';
+import { WebSocketService, JobService } from '../../../../services/';
 
 @Component({
   selector: 'task-manager',
@@ -32,7 +32,8 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   constructor(
     public dialogRef: MatDialogRef<TaskManagerComponent>,
     private ws: WebSocketService,
-    protected translate: TranslateService) {
+    protected translate: TranslateService,
+    protected job: JobService) {
       this.dataSource = new MatTableDataSource<any>([]);
     }
 
@@ -89,5 +90,9 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
       return new Date(data.$date);
     }
     return;
+  }
+
+  showLogs(element) {
+    this.job.showLogs(element.id);
   }
 }
