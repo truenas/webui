@@ -42,7 +42,9 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
         for (const i in res) {
           res[i].percent = res[i].progress.percent ? res[i].progress.percent : 0;
         }
-        this.dataSource.data = res;
+        this.dataSource.data = res.sort(function(a, b) {
+          return b.time_started.$date - a.time_started.$date;
+        });
         this.dataSource.sort = this.sort;
       },
       (err)=> {
