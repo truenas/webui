@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
@@ -10,6 +10,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
+import { Options } from 'selenium-webdriver/opera';
 
 @Component({
   selector: 'app-general',
@@ -17,7 +18,7 @@ import { T } from '../../../translate-marker';
   styleUrls: ['./general.component.css'],
   providers: [SnackbarService]
 })
-export class GeneralComponent {
+export class GeneralComponent implements OnDestroy {
 
   //protected resource_name: string = 'system/settings';
   protected queryCall = 'system.general.config';
@@ -74,13 +75,11 @@ export class GeneralComponent {
       tooltip: helptext.stg_guihttpsredirect.tooltip,
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'language',
       placeholder: helptext.stg_language.placeholder,
       tooltip: helptext.stg_language.tooltip,
-      options: [
-        { label: '---', value: null }
-      ]
+      options: []
     },
     {
       type: 'select',
@@ -226,6 +225,9 @@ export class GeneralComponent {
   private https_port: any;
   private redirect: any;
   private guicertificate: any;
+  private languages = {};
+  private language_value: any;
+  private language_subscription: any;
   //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
   private dialogRef: any;
@@ -243,6 +245,7 @@ export class GeneralComponent {
     this.guicertificate = value['ui_certificate'];
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
+    this.language_value = value['language'];
     return value;
   }
 
@@ -290,9 +293,19 @@ export class GeneralComponent {
 
     entityEdit.ws.call('notifier.gui_languages').subscribe((res) => {
       this.language_fc = _.find(this.fieldConfig, { 'name': 'language' });
+      const options = [];
       res.forEach((item) => {
-        this.language_fc.options.push({ label: item[1], value: item[0] });
+        options.push({ label: item[1], value: item[0] });
+        this.languages[item[0]] = item[1];
       });
+      this.language_fc.options = _.sortBy(options, ["label"]);
+    });
+
+    this.language_subscription = entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {;
+      this.language_value = this.getKeyByValue(this.languages, res);
+      if (this.languages[res]) {
+        entityEdit.formGroup.controls['language'].setValue(this.languages[res]);
+      }
     });
 
     entityEdit.ws.call('notifier.choices', ['KBDMAP_CHOICES'])
@@ -320,6 +333,10 @@ export class GeneralComponent {
           this.sysloglevel.options.push({ label: item[1], value: item[0] });
         });
       });
+  }
+  
+  beforeSubmit(value) {
+    value.language = this.language_value;
   }
 
   afterSubmit(value) {
@@ -457,5 +474,13 @@ export class GeneralComponent {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
+  }
+
+  getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }
+
+  ngOnDestroy() {
+    this.language_subscription.unsubscribe();
   }
 }
