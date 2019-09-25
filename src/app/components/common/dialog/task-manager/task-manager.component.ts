@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatDialogRef, MatSort, MatTableDataSource, MatDialogTitle, MatTable } from '@angular/material';
+import { MatDialogRef, MatSort, MatTableDataSource, MatTable } from '@angular/material';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs/Rx';
