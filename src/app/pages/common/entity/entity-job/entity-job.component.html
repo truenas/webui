@@ -19,5 +19,5 @@
     </div>
 </mat-dialog-content>
 <div mat-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">
-    <button mat-button mat-dialog-close="close">{{"Close" | translate}}</button>
+    <button mat-button mat-dialog-close="close" (click)="close()">{{"Close" | translate}}</button>
 </div>
