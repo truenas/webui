@@ -28,8 +28,12 @@ export const helptext_system_update = {
   rebootAfterManualUpdate: {
     placeholder: T("Reboot After Update"),
     tooltip: T("Automatically reboot the system after the update\
- is applied.")
+ is applied."),
+ 
+  manual_reboot_msg: T('Update successful. Please reboot for the update to take effect. Reboot now?')
   },
+
+  manual_update_action: T('Manual Update'),
 
   secretseed: {
     placeholder: T("Include Password Secret Seed")
@@ -43,6 +47,13 @@ export const helptext_system_update = {
     message: T('Error submitting file')
   },
 
-  sysUpdateMessage: globalHelptext.sys_update_message
+  sysUpdateMessage: globalHelptext.sys_update_message,
+
+  ha_update: {
+    complete_title: T('Complete the Upgrade'),
+    complete_msg: T('The standby controller has finished upgrading. To complete the update process, \
+ failover to the standby controller.'),
+    complete_action: T('Close')
+  }
   
 };

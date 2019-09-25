@@ -512,7 +512,9 @@ msgstr "A space-delimited list of network interfaces attached to a VNET-enabled 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr "使用为0的swap大小是极不推荐的。"
 
-#, fuzzy
+msgid "A system update is in progress. "
+msgstr ""
+
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
 "are named after the object that generated the keypair with \" Key\" "
@@ -1953,7 +1955,9 @@ msgid ""
 "can result in significant performance gains."
 msgstr "选择<i>ON</i>在文件访问被读取时更新访问时间。选择<i>Off</i>避免读取文件时产生日志流量。这可以带来明显性能提升。"
 
-#, fuzzy
+msgid "Choose Theme"
+msgstr ""
+
 msgid ""
 "Choose a <i>Stripe</i>, <i>Mirror</i>, or <i>Raid-Z</i> configuration for "
 "the chosen disk layout. See the <a "
@@ -2000,6 +2004,9 @@ msgid ""
 "jail is created. iocage uses   this dataset to store FreeBSD releases   and "
 "all other jail data."
 msgstr "选择iocage jail manager可以创建/ iocage数据集的池"
+
+msgid "Choose a preferred theme."
+msgstr ""
 
 msgid "Choose a privacy protocol."
 msgstr "选择一个隐私协议。"
@@ -2440,14 +2447,6 @@ msgstr ""
 
 msgid "Configure Networking"
 msgstr "配置网络"
-
-#, fuzzy
-msgid ""
-"Configure an external program for ID mapping instead of using the "
-"<i>tdb</i> counter. Mappings are stored in the <a "
-"href=\"http://samba.org.ru/samba/docs/man/manpages/idmap_tdb2.8.html\" "
-"target=\"_blank\">idmap_tdb2</a> database"
-msgstr "配置ID映射的外部程序，而不是使用<i>tdb</i>计数器"
 
 #, fuzzy
 msgid ""
@@ -3394,6 +3393,9 @@ msgstr "经典用户界面"
 
 msgid "Enable NFSv4"
 msgstr "启用NFSv4"
+
+msgid "Enable Password Toggle"
+msgstr ""
 
 msgid "Enable S.M.A.R.T."
 msgstr "启用S.M.A.R.T."
@@ -4739,6 +4741,9 @@ msgstr "网关"
 msgid "General"
 msgstr "常规"
 
+msgid "General Preferences"
+msgstr ""
+
 msgid "Generate Debug File"
 msgstr "生成调试文件"
 
@@ -5745,6 +5750,9 @@ msgstr "设备后缀"
 
 msgid "Mail Server Port"
 msgstr "邮件服务器端口"
+
+msgid "Manual Update"
+msgstr ""
 
 msgid "Manycast"
 msgstr "多播"
@@ -6863,6 +6871,9 @@ msgstr "脚本"
 msgid "Prefer"
 msgstr "首选"
 
+msgid "Prefer buttons with icons only"
+msgstr ""
+
 msgid "Preferences"
 msgstr "偏好"
 
@@ -6871,6 +6882,9 @@ msgstr "保留扩展属性"
 
 msgid "Preserve permissions"
 msgstr "保留权限"
+
+msgid "Preserve screen space with icons and tooltips instead of text labels."
+msgstr ""
 
 msgid ""
 "Prevent source system snapshots that have failed replication from being "
@@ -7315,6 +7329,9 @@ msgstr "重启网络服务"
 
 msgid "Restart the system?"
 msgstr "重启系统？"
+
+msgid "Restarting Jail"
+msgstr ""
 
 msgid "Restore default"
 msgstr "重置为默认"
@@ -9022,12 +9039,6 @@ msgstr "显示控制台消息"
 msgid "Show only entries that contain this text"
 msgstr "仅显示包含此文本的条目"
 
-msgid ""
-"Show or hide a dialog to save the system                        "
-"configuration file. This dialog appears                        after "
-"choosing to upgrade the system."
-msgstr "显示或隐藏用于保存系统配置文件的对话框"
-
 msgid "Show tracebacks in case of fatal error"
 msgstr "出现致命错误时显示追溯"
 
@@ -9227,6 +9238,9 @@ msgstr "启动数据校验在存储池<i>"
 msgid "Start time for the replication task."
 msgstr "复制任务的开始时间。"
 
+msgid "Starting Jail"
+msgstr ""
+
 msgid "Starting job..."
 msgstr "开始任务..."
 
@@ -9256,6 +9270,9 @@ msgstr "现在运行这个云同步？"
 
 msgid "Stopped the scrub on pool <i>"
 msgstr "已停止数据校验在存储池<i>"
+
+msgid "Stopping Jail"
+msgstr ""
 
 msgid "Stopping scrub on pool <i>"
 msgstr "正在停止数据校验在存储池 <i>"
@@ -9774,8 +9791,8 @@ msgstr "所有客户端都使用该用户的指定权限。"
 
 msgid ""
 "The standby controller has finished upgrading. To complete the update "
-"process,                failover to the standby controller."
-msgstr "备用控制器已完成升级"
+"process,  failover to the standby controller."
+msgstr ""
 
 msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
@@ -9899,6 +9916,9 @@ msgstr "此数字选择在jail中运行命令时使用的路由表（ <a href=\"
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "这项操作可能会需要很长时间。继续？"
+
+msgid "This option enables/disables a password toggle button."
+msgstr ""
 
 msgid "This system will restart when the update completes."
 msgstr "更新完成后，此系统将重新启动。"
@@ -10133,6 +10153,9 @@ msgstr "更新许可证"
 msgid "Update Period"
 msgstr "更新周期"
 
+msgid "Update Settings"
+msgstr ""
+
 msgid "Update Status"
 msgstr "更新状态"
 
@@ -10174,17 +10197,9 @@ msgstr "已升级"
 
 #, fuzzy
 msgid ""
-"Upgrades both controllers. Files will be downloaded in the Active "
-"Controller                         and then transferred to the Standby "
-"Controller. Upgrade process will start concurrently on both nodes.          "
-"               Continue with download?"
-msgstr "升级两个控制器。文件将会被下载到"
-
-#, fuzzy
-msgid ""
-"Upgrades both controllers. Files will be downloaded in the Active "
-"Controller                    and then transferred to the Standby "
-"Controller. Upgrade process will start concurrently on both nodes.          "
+"Upgrades both controllers. Files are downloaded to the Active Controller    "
+"                  and then transferred to the Standby Controller. The "
+"upgrade process starts concurrently on both TrueNAS Controllers.            "
 "          Continue with download?"
 msgstr "升级两个控制器。"
 
@@ -10820,6 +10835,9 @@ msgstr "host_domainname"
 msgid "host_hostname"
 msgstr "host_hostname"
 
+msgid "host_port"
+msgstr ""
+
 msgid "host_time"
 msgstr "host_time"
 
@@ -10846,6 +10864,9 @@ msgstr "ip6.saddrsel"
 
 msgid "ip_hostname"
 msgstr "ip_hostname"
+
+msgid "jail_port"
+msgstr ""
 
 msgid "jail_zfs"
 msgstr "jail_zfs"
@@ -10927,6 +10948,9 @@ msgstr "PCPU"
 
 msgid "priority"
 msgstr "重点"
+
+msgid "protocol"
+msgstr ""
 
 msgid "pseudoterminals"
 msgstr "虚拟终端"

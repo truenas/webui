@@ -12,7 +12,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityUtils } from '../../../pages/common/entity/utils';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { helptext_system_update } from 'app/helptext/system/update';
+import { helptext_system_update as helptext } from 'app/helptext/system/update';
 
 @Component({
   selector: 'app-update',
@@ -62,7 +62,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   private checkChangesSubscription: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
-  sysUpdateMessage = ('A system update is in progress. ') + helptext_system_update.sysUpdateMessage;
+  sysUpdateMessage = T('A system update is in progress. ') + helptext.sysUpdateMessage;
   public updatecheck_tooltip = T('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
@@ -354,6 +354,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   showRunningUpdate(jobId) {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+    if (this.is_ha) {
+      this.dialogRef.componentInstance.disableProgressValue(true);
+    };
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.subscribe((res) => {
@@ -501,10 +504,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
           } else  {
             this.dialogService.closeAllDialogs();
             this.router.navigate(['/']); 
-            this.dialogService.confirm(T('Complete the Upgrade'), 
-              T('The standby controller has finished upgrading. To complete the update process, \
-               failover to the standby controller.'), true, 
-              T('Close'),false, '','','','', true).subscribe(() => {
+            this.dialogService.confirm(helptext.ha_update.complete_title, 
+              helptext.ha_update.complete_msg, true, 
+              helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
               });
           }
         });

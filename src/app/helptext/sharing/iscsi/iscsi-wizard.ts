@@ -19,7 +19,7 @@ export default {
  enter the size of the file to create."),
 
     disk_placeholder: T("Device"),
-    disk_tooltip: T("Select the unformatted disk, controller, zvol, zvol snapshot, or HAST device. Select\
+    disk_tooltip: T("Select the unformatted disk, controller, zvol, or zvol snapshot. Select\
  <i>Create New</i> for options to create a new zvol."),
 
     dataset_placeholder: T("Pool/Dataset"),

@@ -342,5 +342,22 @@ export class StorageService {
 
       this.humanReadable = num.toString() + spacer + unit;
       return num * this.convertUnitToNum(unit);
-  }
+  };
+
+  // Converts a number from bytes to the most natural human readable format
+  convertBytestoHumanReadable(bytes, decimalPlaces?) { 
+    let i = -1;
+    let dec, units;
+    decimalPlaces ? dec = decimalPlaces : dec = 2;
+    if (bytes => 1024) {
+      do {
+        bytes = bytes / 1024;
+        i++;
+      } while (bytes > 1024);
+      units = this.IECUnits[i];
+    } else {
+      units = 'bytes';
+    }
+    return `${Math.max(bytes, 0.1).toFixed(dec)} ${units}`;
+  };
 }

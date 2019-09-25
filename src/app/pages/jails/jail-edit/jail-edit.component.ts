@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { JailService, DialogService, NetworkService, WebSocketService, AppLoaderService } from '../../../services/';
 
-import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
@@ -39,7 +38,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
   public custActions: any;
   public pk: any;
 
-  protected formFileds: FieldConfig[];
+  protected formFields: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -711,6 +710,71 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       tooltip: helptext.vnet3_mac_tooltip,
       disabled: false,
     },
+    {
+      type: 'checkbox',
+      name: 'nat_forwards_checkbox',
+      placeholder: 'nat_forwards',
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "nat",
+          value: true,
+        }]
+      }],
+    },
+    {
+      type: 'list',
+      name: 'nat_forwards',
+      placeholder: 'nat_forwards',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "nat",
+          value: true,
+        }, {
+          name: 'nat_forwards_checkbox',
+          value: true,
+        }]
+      }],
+      templateListField: [
+        {
+          type: 'select',
+          name: 'protocol',
+          placeholder: helptext.protocol_placeholder,
+          tooltip: helptext.protocol_tooltip,
+          options: [{
+            label: 'udp',
+            value: 'udp',
+          }, {
+            label: 'tcp',
+            value: 'tcp',
+          }],
+          class: 'inline',
+          width: '30%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'jail_port',
+          placeholder: helptext.jail_port_placeholder,
+          tooltip: helptext.jail_port_tooltip,
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'host_port',
+          placeholder: helptext.host_port_placeholder,
+          tooltip: helptext.host_port_tooltip,
+          class: 'inline',
+          width: '20%',
+        }
+      ],
+      listFields: [],
+      disabled: true,
+    },
   ];
   public customConfig: FieldConfig[] = [
     {
@@ -1147,11 +1211,11 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       }
     );
 
-    this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
-    this.formGroup = this.entityFormService.createFormGroup(this.formFileds);
+    this.formFields = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
+    this.formGroup = this.entityFormService.createFormGroup(this.formFields);
 
-    for (const i in this.formFileds) {
-      const config = this.formFileds[i];
+    for (const i in this.formFields) {
+      const config = this.formFields[i];
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
@@ -1181,6 +1245,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         this.formGroup.controls['vnet'].setValue(true);
       }
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+      // this.setDisabled('nat_forwards', !res);
     });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
       if (((this.formGroup.controls['dhcp'].value || this.formGroup.controls['nat'].value) || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
@@ -1231,8 +1296,8 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         if (res[0] && res[0].state == 'up') {
           this.save_button_enabled = false;
           this.error = T("Jails cannot be changed while running.");
-          for (let i = 0; i < this.formFileds.length; i++) {
-            this.setDisabled(this.formFileds[i].name, true);
+          for (let i = 0; i < this.formFields.length; i++) {
+            this.setDisabled(this.formFields[i].name, true);
           }
         } else {
           this.save_button_enabled = true;
@@ -1249,7 +1314,10 @@ export class JailEditComponent implements OnInit, AfterViewInit {
               this.deparseIpaddr(res[0][i], i.split('_')[0]);
               continue;
             }
-
+            if (i === 'nat_forwards') {
+              this.deparseNatForwards(res[0][i]);
+              continue;
+            }
             if (i == 'release') {
               _.find(this.basicfieldConfig, { 'name': 'release' }).options.push({ label: res[0][i], value: res[0][i] });
               this.currentReleaseVersion = Number(_.split(res[0][i], '-')[0]);
@@ -1314,7 +1382,9 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
           activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+        activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
           .forEach(control => {
@@ -1324,26 +1394,34 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setDisabled(name: string, disable: boolean) {
+  setDisabled(name: string, disable: boolean, hide?: boolean) {
+    if (hide) {
+      disable = hide;
+    } else {
+      hide = false;
+    }
+
+    this.formFields = this.formFields.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+        item['isHidden'] = hide;
+      }
+      return item;
+    });
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
       return;
     }
-
-    this.formFileds = this.formFileds.map((item) => {
-      if (item.name === name) {
-        item.disabled = disable;
-      }
-      return item;
-    });
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
     if (this.save_button_enabled) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+        activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled, tobeHide);
     }
   }
 
@@ -1390,6 +1468,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     let value = _.cloneDeep(this.formGroup.value);
 
     this.parseIpaddr(value);
+    this.parseNatForwards(value);
 
     if (value['auto_configure_ip6']) {
       value['ip6_addr'] = "vnet0|accept_rtadv";
@@ -1474,4 +1553,40 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     this.step--;
   }
 
+  deparseNatForwards(value) {
+    if (value == 'none') {
+      this.formGroup.controls['nat_forwards_checkbox'].setValue(false);
+      return;
+    }
+    this.formGroup.controls['nat_forwards_checkbox'].setValue(true);
+    value = value.split(',');
+    for (let i = 0; i < value.length; i++) {
+      const nat_forward = value[i].split(new RegExp('[(:)]'));
+      if (this.formGroup.controls['nat_forwards'].controls[i] == undefined) {
+        // add controls;
+        const templateListField = _.cloneDeep(_.find(this.networkfieldConfig, {'name': 'nat_forwards'}).templateListField);
+        this.formGroup.controls['nat_forwards'].push(this.entityFormService.createFormGroup(templateListField));
+        _.find(this.networkfieldConfig, {'name': 'nat_forwards'}).listFields.push(templateListField);
+      }
+      this.formGroup.controls['nat_forwards'].controls[i].controls['protocol'].setValue(nat_forward[0]);
+      this.formGroup.controls['nat_forwards'].controls[i].controls['jail_port'].setValue(nat_forward[1]);
+      this.formGroup.controls['nat_forwards'].controls[i].controls['host_port'].setValue(nat_forward[2]);
+    }
+  }
+
+  parseNatForwards(value) {
+    if (value['nat_forwards_checkbox'] === true) {
+      const multi_nat_forwards = [];
+      for (let i = 0; i < value['nat_forwards'].length; i++) {
+        const subNatForward = value['nat_forwards'][i];
+        if (Object.values(subNatForward).every(item => item != undefined && item != '')) {
+          multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ':' + subNatForward['host_port'] + ')');
+        }
+      }
+      value['nat_forwards'] = multi_nat_forwards.length > 0 ? multi_nat_forwards.join(',') : 'none';
+    } else {
+      value['nat_forwards'] = 'none';
+    }
+    delete value['nat_forwards_checkbox'];
+  }
 }

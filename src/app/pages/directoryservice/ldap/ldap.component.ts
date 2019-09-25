@@ -103,36 +103,6 @@ export class LdapComponent {
       tooltip: helptext.ldap_anonbind_tooltip
     },
     {
-      type : 'input',
-      name : helptext.ldap_usersuffix_name,
-      placeholder : helptext.ldap_usersuffix_placeholder,
-      tooltip: helptext.ldap_usersuffix_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_groupsuffix_name,
-      placeholder : helptext.ldap_groupsuffix_placeholder,
-      tooltip: helptext.ldap_groupsuffix_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_passwordsuffix_name,
-      placeholder : helptext.ldap_passwordsuffix_placeholder,
-      tooltip: helptext.ldap_passwordsuffix_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_machinesuffix_name,
-      placeholder : helptext.ldap_machinesuffix_placeholder,
-      tooltip: helptext.ldap_machinesuffix_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_sudosuffix_name,
-      placeholder : helptext.ldap_sudosuffix_placeholder,
-      tooltip: helptext.ldap_sudosuffix_tooltip
-    },
-    {
       type : 'select',
       name : helptext.ldap_kerberos_realm_name,
       placeholder : helptext.ldap_kerberos_realm_placeholder,
@@ -159,6 +129,12 @@ export class LdapComponent {
       placeholder : helptext.ldap_certificate_placeholder,
       tooltip: helptext.ldap_certificate_tooltip,
       options : []
+    },
+    {
+      type : 'checkbox',
+      name : 'ldap_validate_certificates',
+      placeholder : helptext.ldap_validate_certificates_placeholder,
+      tooltip : helptext.ldap_validate_certificates_tooltip,
     },
     {
       type : 'checkbox',

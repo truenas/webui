@@ -81,7 +81,7 @@ volsize_tooltip: T('Allocate a number of gigabytes of space for the\
 volsize_validation: [Validators.required, Validators.min(1)],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
-datastore_placeholder: T('Zvol Dataset Location'),
+datastore_placeholder: T('Zvol Location'),
 
 hdd_type_placeholder: T('Select Disk Type'),
 hdd_type_tooltip: T('Select desired disk type.'),
