@@ -25,7 +25,7 @@ export class EntityJobComponent implements OnInit {
   public jobId: Number;
   public progressNumberType;
   public hideProgressValue = false;
-  public altMessage = T('Starting job...');
+  public altMessage: string;
 
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();

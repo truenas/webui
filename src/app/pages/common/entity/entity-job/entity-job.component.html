@@ -21,7 +21,8 @@
 		</mat-progress-bar>
 	</div>
 	<div *ngIf="!description">
-		<span [innerHTML]="altMessage"></span>
+		<span *ngIf="altMessage" [innerHTML]="altMessage"></span>
+		<span *ngIf="!altMessage">{{ "Starting job..." | translate }}</span>
 	</div>
 </mat-dialog-content>
 <div mat-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">
