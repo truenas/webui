@@ -41,6 +41,7 @@ import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.co
 import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcontroller.component';
+import { ConvertPipe } from './pipes/convert.pipe';
 
 /*
  *
@@ -92,6 +93,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
+    ConvertPipe,
   ],
   exports: [ // Modules and Components here
     CommonModule,
