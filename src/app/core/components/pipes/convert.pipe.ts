@@ -25,10 +25,10 @@ export class ConvertPipe implements PipeTransform {
         result = value / 1024 / 1024 / 1024;
         break;
       case 'B TO TB':
-        result = value / 1024 / 1024 / 1024;
+        result = value / 1024 / 1024 / 1024 / 1024;
         break;
       case 'B TO PB':
-        result = value / 1024 / 1024 / 1024 / 1024;
+        result = value / 1024 / 1024 / 1024 / 1024 / 1024;
         break;
       default:
         result = 0.00;
