@@ -134,7 +134,7 @@ export class ReplicationWizardComponent {
                     type: 'explorer',
                     name: 'source_datasets',
                     placeholder: helptext.source_datasets_placeholder,
-                    tooltip: helptext.source_datasets_placeholder,
+                    tooltip: helptext.source_datasets_tooltip,
                     initial: '',
                     explorerType: 'directory',
                     multiple: true,
@@ -169,7 +169,7 @@ export class ReplicationWizardComponent {
                     type: 'explorer',
                     name: 'target_dataset',
                     placeholder: helptext.target_dataset_placeholder,
-                    tooltip: helptext.target_dataset_placeholder,
+                    tooltip: helptext.target_dataset_tooltip,
                     initial: '',
                     explorerType: 'directory',
                     customTemplateStringOptions: {
