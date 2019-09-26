@@ -26,6 +26,7 @@ export class EntityJobComponent implements OnInit {
   public jobId: Number;
   public progressNumberType;
   public hideProgressValue = false;
+  public altMessage: string;
 
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
@@ -64,6 +65,10 @@ export class EntityJobComponent implements OnInit {
 
   setTitle(title: string) {
     this.title = title;
+  }
+
+  changeAltMessage(msg: string) {
+    this.altMessage = msg;
   }
 
   disableProgressValue(hide: boolean) {
