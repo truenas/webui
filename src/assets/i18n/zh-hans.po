@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-09-26 16:18+0000\n"
-"Last-Translator: dingyifei <yifeiding@theunspeakble.com>\n"
+"PO-Revision-Date: 2019-09-26 16:22+0000\n"
+"Last-Translator: Yifei Ding <yifeiding@theunspeakble.com>\n"
 "Language-Team: Chinese (Simplified) <https://www.theunspeakble.com/weblate/projects/freenas-webui/master/zh_Hans/>\n"
 "Language: zh-hans\n"
 "MIME-Version: 1.0\n"
@@ -3082,7 +3082,7 @@ msgid "Device"
 msgstr "设备"
 
 msgid "Device Busy"
-msgstr "设备"
+msgstr "设备忙"
 
 msgid "Device Order"
 msgstr "设备顺序"
