@@ -2951,79 +2951,79 @@ msgstr ""
 "\">idmap_script(8)</a> pour plus de détails."
 
 msgid "Configure now"
-msgstr ""
+msgstr "Configurer maintenant"
 
 msgid "Configure permissions for this share's dataset now?"
-msgstr ""
+msgstr "Configurez les permissions pour ce dataset partagé maintenant ?"
 
 msgid "Configure the root user email address."
-msgstr ""
+msgstr "Configurez l'adresse e-mail de l'utilisateur root."
 
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmer"
 
 msgid "Confirm Export/Disconnect"
-msgstr ""
+msgstr "Confirmer Exporter/Déconnecter"
 
 msgid "Confirm Options"
-msgstr ""
+msgstr "Confirmer les options"
 
 msgid "Confirm Passphrase"
-msgstr ""
+msgstr "Confirmer la passphrase"
 
 msgid "Confirm Password"
-msgstr ""
+msgstr "Confirmer le mot de passe"
 
 msgid "Confirm Privacy Passphrase"
-msgstr ""
+msgstr "Confirmer la passphrase de confidentialité"
 
 msgid "Confirm RRD Destroy"
-msgstr ""
+msgstr "Confirmez la destruction du RRD"
 
 msgid "Confirm SED Password"
-msgstr ""
+msgstr "Confirmer le mot de passe SED"
 
 msgid "Confirm Secret Key"
-msgstr ""
+msgstr "Confirmer la clé secrète"
 
 msgid "Confirm detach"
-msgstr ""
+msgstr "Confirmer le détachement"
 
 msgid "Confirm it is okay to proceed with Detach."
-msgstr ""
+msgstr "Confirmer qu'il est possible de procéder au détachement."
 
 msgid "Confirm password"
-msgstr ""
+msgstr "Confirmer le mot de passe"
 
 msgid "Confirm these settings."
-msgstr ""
+msgstr "Confirmez ces réglages."
 
 msgid "Connect Timeout"
-msgstr ""
+msgstr "Délai d'attente de connexion"
 
 msgid "Connected Initiators"
-msgstr ""
+msgstr "Initiateurs connectés"
 
 msgid "Connecting to "
-msgstr ""
+msgstr "Connexion à"
 
 msgid "Connections"
-msgstr ""
+msgstr "Connexions"
 
 msgid "Console Keyboard Map"
 msgstr ""
 
 msgid "Contact"
-msgstr ""
+msgstr "Contact"
 
 msgid "Contact Support"
-msgstr ""
+msgstr "Contacter le support"
 
 msgid "Container"
-msgstr ""
+msgstr "Conteneur"
 
 msgid "Contents of the uploaded Service Account JSON file."
-msgstr ""
+msgstr "Contenu du fichier JSON du compte de service envoyé."
 
 msgid ""
 "Context menu copy and paste operations     are disabled in the Shell. Copy "
@@ -3031,18 +3031,22 @@ msgid ""
 "<i>Command+v</i>. For most operating     systems, use <i>Ctrl+Insert</i> to "
 "copy and     <i>Shift+Insert</i> to paste."
 msgstr ""
+"Les opérations de copier-coller du menu contextuel sont désactivées dans le shell. "
+"Les raccourcis Copier et coller pour Mac sont <i>Command+c</i> et <i>Command+v.</i> "
+"Pour la plupart des systèmes d'exploitation, utilisez <i>Ctrl+Insérer</i> pour "
+"copier et <i>Maj+Insérer</i> pour coller."
 
 msgid "Continue"
-msgstr ""
+msgstr "Continuer"
 
 msgid "Continue to Legacy UI"
-msgstr ""
+msgstr "Continuer vers l'ancienne interface utilisateur (Legacy UI)"
 
 msgid "Continue with download?"
-msgstr ""
+msgstr "Continuer avec le téléchargement?"
 
 msgid "Control left sidebar's display style."
-msgstr ""
+msgstr "Contrôlez le style d'affichage de la barre latérale gauche."
 
 msgid ""
 "Control the availability of IPv4 addresses. <br><b>Inherit</b>: Allow "
@@ -3050,6 +3054,10 @@ msgid ""
 "addresses with <b>ip4_addr</b>. <br><b>Disable</b>: Stop the jail from "
 "using IPv4 entirely."
 msgstr ""
+"Contrôlez la disponibilité des adresses IPv4. <br><b>Hériter</b> : Autoriser "
+"l'accès sans restriction à toutes les adresses système. <br><b>Nouveau</b> : "
+"Restreindre les adresses avec <b>ip4_addr</b>. <br><b>Désactiver</b> : Empêcher le "
+"jail d'utiliser entièrement IPv4."
 
 msgid ""
 "Control the availability of IPv4 addresses.<br> <b>Inherit</b>: Allow "
@@ -3057,6 +3065,10 @@ msgid ""
 "addresses with <b>ip4_addr</b>.<br> <b>Disable</b>: Stop the jail from "
 "using IPv4 entirely."
 msgstr ""
+"Contrôlez la disponibilité des adresses IPv4. <br><b>Hériter</b> : Autoriser "
+"l'accès sans restriction à toutes les adresses système. <br><b>Nouveau</b> : "
+"Restreindre les adresses avec <b>ip4_addr</b>. <br><b>Désactiver</b> : Empêcher le "
+"jail d'utiliser entièrement IPv4."
 
 msgid ""
 "Control the availability of IPv6 addresses. <br><b>Inherit</b>: Allow "
@@ -3064,6 +3076,10 @@ msgid ""
 "addresses with <b>ip6_addr</b>. <br><b>Disable</b>: Stop the jail from "
 "using IPv4 entirely."
 msgstr ""
+"Contrôlez la disponibilité des adresses IPv4. <br><b>Hériter</b> : Autoriser "
+"l'accès sans restriction à toutes les adresses système. <br><b>Nouveau</b> : "
+"Restreindre les adresses avec <b>ip4_addr</b>. <br><b>Désactiver</b> : Empêcher le "
+"jail d'utiliser entièrement IPv4."
 
 msgid ""
 "Control the availability of IPv6 addresses.<br> <b>Inherit</b>: Allow "
@@ -3071,90 +3087,97 @@ msgid ""
 "addresses with <b>ip6_addr</b>.<br> <b>Disable</b>: Stop the jail from "
 "using IPv6 entirely."
 msgstr ""
+"Contrôler la disponibilité des adresses IPv6.<br><b> Hériter</b> : Autoriser "
+"l'accès sans restriction à toutes les adresses système.<br><b>Nouveau</b> : "
+"Restreindre les adresses avec <b>ip6_addr</b>.<br><b>Désactiver</b> : Empêcher le "
+"jail d'utiliser entièrement IPv6."
 
 msgid "Copies"
-msgstr ""
+msgstr "Exemplaires"
 
 msgid "Could not delete boot environment."
-msgstr ""
+msgstr "Impossible de supprimer l'environnement de démarrage."
 
 msgid "Country"
-msgstr ""
+msgstr "Pays"
 
 msgid "Country Code"
-msgstr ""
+msgstr "Code du pays"
 
 msgid "Crash reporting"
-msgstr ""
+msgstr "Rapport d'accident"
 
 msgid "Create"
-msgstr ""
+msgstr "Créer"
 
 msgid "Create ACME Certificate"
-msgstr ""
+msgstr "Créer un certificat ACME"
 
 msgid "Create CA"
-msgstr ""
+msgstr "Créer CA"
 
 msgid "Create Certificate"
-msgstr ""
+msgstr "Créer un certificat"
 
 msgid "Create Passphrase"
-msgstr ""
+msgstr "Créer une passphrase"
 
 msgid "Create Pool"
-msgstr ""
+msgstr "Créer un volume"
 
 msgid "Create SSH Connection"
-msgstr ""
+msgstr "Créer une connexion SSH"
 
 msgid "Create Snapshot"
-msgstr ""
+msgstr "Créer un instantané"
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "Créez un nouveau volume."
 
 msgid "Create a new, empty pool."
-msgstr ""
+msgstr "Créez un nouveau volume vide."
 
 msgid "Create a pool:"
-msgstr ""
+msgstr "Créez un volume :"
 
 msgid "Create a recommended formation of vdevs in a pool."
-msgstr ""
+msgstr "Créer une formation recommandée de vdevs dans un volume."
 
 msgid "Create new Pool"
-msgstr ""
+msgstr "Créer un nouveau volume"
 
 msgid "Create new disk image"
-msgstr ""
+msgstr "Créer une nouvelle image disque"
 
 msgid "Create new pool"
-msgstr ""
+msgstr "Créer un nouveau volume"
 
 msgid "Create or Choose Block Device"
-msgstr ""
+msgstr "Créer ou sélectionner un périphérique bloc (Block Device)"
 
 msgid "Create or Import Pool"
-msgstr ""
+msgstr "Créer ou importer un volume"
 
 msgid "Create or Import pool"
-msgstr ""
+msgstr "Créer ou importer un volume"
 
 msgid ""
 "Creates dataset snapshots when there are no changes. Set to support "
 "periodic snapshot schedules and replications created in version 11.2 and "
 "earlier."
 msgstr ""
+"Crée des instantanés du dataset lorsqu'il n'y a aucun changement. Configuré pour "
+"prendre en charge les tâches d'instantanés périodiques et les réplications "
+"créés dans les versions 11.2 et antérieures."
 
 msgid "Creating"
-msgstr ""
+msgstr "Création de"
 
 msgid "Creating Jail"
-msgstr ""
+msgstr "Création d'un jail"
 
 msgid "Creating Jail..."
-msgstr ""
+msgstr "Création d'un jail"
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -3162,69 +3185,75 @@ msgid ""
 "<i>rc.conf</i> tunables. Configured tunables remain in effect until deleted "
 "or Enabled is unset."
 msgstr ""
+"La création ou l'édition d'un <i>sysctl</i> met immédiatement à jour la variable à "
+"la valeur configurée. Un redémarrage est nécessaire pour appliquer les paramètres "
+"du <i>loader</i> ou du fichier <i>rc.conf</i>. Les paramètres configurés restent en "
+"vigueur jusqu'à ce qu'ils soient supprimés ou désactivés."
 
 msgid "Credential"
 msgstr ""
 
 msgid "Critical"
-msgstr ""
+msgstr "Critique"
 
 msgid "Criticality"
-msgstr ""
+msgstr "Criticité"
 
 msgid "Cron Jobs"
-msgstr ""
+msgstr "Tâches Cron"
 
 msgid "Current Password"
-msgstr ""
+msgstr "Mot de passe actuel"
 
 msgid "Custom Path"
-msgstr ""
+msgstr "Chemin personnalisé"
 
 msgid "Custom Properties"
-msgstr ""
+msgstr "Propriétés personnalisées"
 
 msgid "Custom Server"
-msgstr ""
+msgstr "Serveur personnalisé"
 
 msgid "DELETE"
-msgstr ""
+msgstr "SUPPRIMER"
 
 msgid "DELETE DATASET"
-msgstr ""
+msgstr "SUPPRIMER DATASET"
 
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr ""
 
 msgid "DISCARD CHANGES"
-msgstr ""
+msgstr "REJETER LES CHANGEMENTS"
 
 msgid "DNS Forwarder"
 msgstr ""
 
 msgid "DNS Timeout"
-msgstr ""
+msgstr "Délai d'attente DNS"
 
 msgid "DNS timeout"
-msgstr ""
+msgstr "Délai d'attente DNS"
 
 msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
+"Délai d'attente DNS en secondes. Augmentez cette valeur si le délai d'attente des "
+"requêtes DNS est dépassé."
 
 msgid "DOCUMENTATION"
 msgstr ""
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Tableau de bord"
 
 msgid "Data VDevs"
-msgstr ""
+msgstr "Données VDevs"
 
 msgid "Data collection frequency, in seconds."
-msgstr ""
+msgstr "Fréquence de collecte des données, en secondes."
 
 msgid ""
 "Data transfer security. The connection is authenticated with SSH, then data "
@@ -3232,30 +3261,35 @@ msgid ""
 "unencrypted to maximise transfer speed. Transferring data without "
 "encryption is only recommended for secure networks."
 msgstr ""
+"Sécurité du transfert des données. La connexion est authentifiée avec SSH, alors "
+"les données peuvent être soit chiffrées pendant le transfert pour maximiser la "
+"protection, soit laissées non chiffrées pour maximiser la vitesse de transfert. Le "
+"transfert de données sans chiffrement n'est recommandé que pour les réseaux "
+"sécurisés."
 
 msgid "Database"
-msgstr ""
+msgstr "Base de données"
 
 msgid "Database Path"
-msgstr ""
+msgstr "Chemin de la base de données"
 
 msgid "Dataset"
-msgstr ""
+msgstr "Dataset"
 
 msgid "Dataset Path"
-msgstr ""
+msgstr "Chemin du dataset"
 
 msgid "Dataset has complex ACLs"
-msgstr ""
+msgstr "Le dataset possède des ACLs complexes"
 
 msgid "Datastore"
-msgstr ""
+msgstr "Magasin de données"
 
 msgid "Day of Month"
-msgstr ""
+msgstr "Jour du Mois"
 
 msgid "Day of Week"
-msgstr ""
+msgstr "Jour de la semaine"
 
 msgid ""
 "Days before a completed scrub is allowed  to run again. This controls the "
