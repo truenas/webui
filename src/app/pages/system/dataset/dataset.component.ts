@@ -75,17 +75,17 @@ export class DatasetComponent implements OnInit{
             T('Continue')
           ).subscribe((confirmed) => {
             if (confirmed) {
-              this.doUpdate(value, true);
+              this.doUpdate(value);
             }
           });
         } else {
-          this.doUpdate(value, false);
+          this.doUpdate(value);
         }
       }
     );
   }
 
-  doUpdate(value, restartSMB) {
+  doUpdate(value) {
     this.loader.open();
     this.ws.job('systemdataset.update', [value]).subscribe(
       (res) => {
@@ -97,21 +97,7 @@ export class DatasetComponent implements OnInit{
           new EntityUtils().handleWSError(this, res);
         }
         if (res.state === 'SUCCESS') {
-          if (restartSMB) {
-            this.ws.call('service.restart', ['cifs']).subscribe(
-              (restart) => {
-                this.loader.close();
-                this.snackbarService.open(T("Settings saved and SMB service restarted."), T('Close'), { duration: 5000 });
-              },
-              (restartError) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, restartError, this.dialogService);
-              }
-            )
-          } else {
-            this.loader.close();
             this.snackbarService.open(T("Settings saved."), T('Close'), { duration: 5000 });
-          }
         }
       },
       (err) => {
