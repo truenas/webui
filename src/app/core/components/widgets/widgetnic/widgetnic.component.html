@@ -60,8 +60,8 @@
                     <mat-icon *ngIf="nicState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
 
                   <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
-                    <div><strong>In: </strong><span class="stat">{{traffic["KB/s in"]}}</span> KB/s</div>
-                    <div><strong>Out: </strong><span class="stat">{{traffic["KB/s out"]}}</span> KB/s</div>
+                    <div *ngIf="traffic.received_bytes_last || traffic.received_bytes_last.toString() == '0'"><strong>In: </strong><span class="stat">{{traffic["received_bytes_last"] | convert:'B to KB'}}</span> KB/s</div>
+                    <div *ngIf="traffic.sent_bytes_last || traffic.sent_bytes_last.toString() == '0'"><strong>Out: </strong><span class="stat">{{traffic["sent_bytes_last"] | convert:'B to KB'}}</span> KB/s</div>
                   </div>
 
                   <div *ngIf="!traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic-gathering">
