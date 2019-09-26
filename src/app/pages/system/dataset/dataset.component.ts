@@ -70,7 +70,7 @@ export class DatasetComponent implements OnInit{
         if (smbShare.state === 'RUNNING') {
           this.dialogService.confirm(
             T('Restart SMB Service'),
-            T('The SMB service must be restarted after update systemdataset, causing a temporary outage of any active SMB connections. Do you want to continue?'),
+            T('The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.'),
             false,
             T('Continue')
           ).subscribe((confirmed) => {
