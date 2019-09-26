@@ -11,19 +11,17 @@
 			{{ progressTotalPercent | number: '1.2-2'}}%
 		</label>
 	</div>
-	<div *ngIf="description === 'Uploading file...'">
-		<mat-progress-bar class="example-margin"
-			color="primary"
-			mode="indeterminate"
-			[value]="progressTotalPercent"
-			bufferValue="bufferValue">
-		</mat-progress-bar>
-	</div>
     <div>
 		<span *ngIf="description" [innerHTML]="description | translate"></span>
-    </div>
-	<div>
-		<span *ngIf="!description">{{ "Starting job..." | translate }}</span>
+	</div>
+	<div *ngIf="!description">
+		<mat-progress-bar class="example-margin"
+			color="primary"
+			mode="indeterminate">
+		</mat-progress-bar>
+	</div>
+	<div *ngIf="!description">
+		<span [innerHTML]="altMessage"></span>
 	</div>
 </mat-dialog-content>
 <div mat-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">

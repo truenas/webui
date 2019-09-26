@@ -4,6 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import { Http } from '@angular/http';
+import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 
 @Component({
@@ -24,6 +25,7 @@ export class EntityJobComponent implements OnInit {
   public jobId: Number;
   public progressNumberType;
   public hideProgressValue = false;
+  public altMessage = T('Starting job...');
 
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
@@ -62,6 +64,10 @@ export class EntityJobComponent implements OnInit {
 
   setTitle(title: string) {
     this.title = title;
+  }
+
+  changeAltMessage(msg: string) {
+    this.altMessage = msg;
   }
 
   disableProgressValue(hide: boolean) {
