@@ -205,7 +205,6 @@ export class BootEnvironmentListComponent {
 
   updateBootState(): void {
     this.ws.call("boot.get_state").subscribe(wres => {
-      console.log(wres);
       if (wres.scan.end_time) {
         this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
       } else {
