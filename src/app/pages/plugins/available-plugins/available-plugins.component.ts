@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { WebSocketService, JailService } from '../../../services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
+import { T } from '../../../translate-marker';
 
 @Component({
     selector: 'app-plugins-list',
@@ -92,7 +93,23 @@ export class AvailablePluginsComponent implements OnInit {
     }
 
     install(plugin) {
-        this.router.navigate(new Array('').concat(["plugins", "add", plugin, {'plugin_repository': this.selectedRepo}]));
+        if (!plugin.official) {
+            this.parent.dialogService.confirm(
+                T('Warning'),
+                T('This is an unofficial plugin not produced or supported by iXsystems. iXsystems does\
+ not provide support in configuration, diagnosis, or use of this unofficial plugin regardless of the current\
+ support level. Thorough research is strongly recommended before installing or using an unofficial plugin.'),
+                true, T('Continue')
+            ).subscribe(
+                (res) => {
+                    if (res) {
+                        this.router.navigate(new Array('').concat(["plugins", "add", plugin.plugin, {'plugin_repository': this.selectedRepo}]));
+                    }
+                }
+            )
+        } else {
+            this.router.navigate(new Array('').concat(["plugins", "add", plugin.plugin, {'plugin_repository': this.selectedRepo}]));
+        }
     }
 
 }

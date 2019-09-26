@@ -28,7 +28,7 @@
                 <p>Version: {{selectedPlugin.version}} Revision: {{selectedPlugin.revision}}</p>
                 <p>Installed Instances: {{installedPlugins[selectedPlugin.plugin] || 0}}</p>
             </div>
-            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);" class="plugin-button">
+            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin);" class="plugin-button">
                 {{ "INSTALL" | translate }}
             </button>
         </div>
