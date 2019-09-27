@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-09-27 18:07+0000\n"
+"PO-Revision-Date: 2019-09-28 21:07+0000\n"
 "Last-Translator: Yifei Ding <yifeiding@theunspeakble.com>\n"
 "Language-Team: Chinese (Simplified) <https://www.theunspeakble.com/weblate/projects/freenas-webui/11_2_stable/zh_Hans/>\n"
 "Language: zh-hans\n"
@@ -3009,9 +3009,11 @@ msgstr "输入这个可调参数的描述。"
 msgid "Enter a descriptive title for the new issue."
 msgstr "输入这个描述这个问题的标题。"
 
+#, fuzzy
 msgid "Enter a fully qualified domain name. Example: <b>yourname.dyndns.org</b>"
 msgstr "Enter a fully qualified domain name. 例子：<b>yourname.dyndns.org</b>"
 
+#, fuzzy
 msgid ""
 "Enter a list of allowed hostnames or IP addresses. Separate entries with a "
 "comma, space, or tab."
