@@ -38,7 +38,7 @@ export class CloudsyncListComponent implements InputTableConf {
     { name: T('Day of Month'), prop: 'dom', hidden: true },
     { name: T('Month'), prop: 'month', hidden: true },
     { name: T('Day of Week'), prop: 'dow', hidden: true },
-    { name: T('Status'), prop: 'status', state: 'state'},
+    { name: T('Status'), prop: 'state', state: 'state'},
     { name: T('Enabled'), prop: 'enabled' },
   ];
   public rowIdentifier = 'description';
@@ -79,22 +79,11 @@ export class CloudsyncListComponent implements InputTableConf {
       }).value._date.fromNow();
 
       if (task.job == null) {
-        task.status = T("Not run since last boot");
+        task.state = T("PENDING");
       } else {
         task.state = task.job.state;
-        task.status = task.job.state;
-        if (task.job.error) {
-          task.status += ":" + task.job.error;
-        }
         this.job.getJobStatus(task.job.id).subscribe((t) => {
           t.state = t.job.state;
-          t.status = t.state;
-          if (t.error) {
-            t.status += ":" + t.error;
-          }
-          if (t.progress.description && t.state !== 'SUCCESS') {
-            t.status += ':' + t.progress.description;
-          }
         });
       }
 
@@ -120,13 +109,6 @@ export class CloudsyncListComponent implements InputTableConf {
                 this.job.getJobStatus(res).subscribe((task) => {
                   row.state = task.state;
                   row.job = task;
-                  row.status = task.state;
-                  if (task.error) {
-                    row.status += ":" + task.error;
-                  }
-                  if (task.progress.description && task.state != 'SUCCESS') {
-                    row.status += ':' + task.progress.description;
-                  }
                 });
               },
               (err) => {
