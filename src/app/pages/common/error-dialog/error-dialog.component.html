@@ -17,4 +17,5 @@
   &nbsp;
   <span fxFlex></span>
   <button mat-button class="mat-button mat-accent" (click)="dialogRef.close(true)">{{"Close" | translate}}</button>
+  <button mat-button class="mat-button mat-accent" *ngIf="logs" (click)="downloadLogs()">{{"Download Logs" | translate}}</button>
 </div>
