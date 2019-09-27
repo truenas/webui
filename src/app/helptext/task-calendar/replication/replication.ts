@@ -195,8 +195,9 @@ export default {
     lifetime_unit_tooltip: T(''),
 
     compression_placeholder: T('Stream Compression'),
-    compression_tooltip: T('Select a compression algorithm to use on the \
- data being replicated.'),
+    compression_tooltip: T('Select a compression algorithm to reduce the\
+ size of the data being replicated. Only appears when <i>SSH</i> is \
+ chosen for <i>Transport</i> type.'),
 
     speed_limit_placeholder: T('Limit (Ex. 500 KiB/s, 500M, 2 TB)'),
     speed_limit_tooltip: T('Limit replication speed to this number of \
