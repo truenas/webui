@@ -1028,4 +1028,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       default: return 'fn-theme-primary';
     }
   }
+
+  stateClickable(value, colConfig) {
+    if (colConfig.infoStates) {
+      return _.indexOf(colConfig.infoStates, value) < 0;
+    } else {
+      return value !== 'PENDING';
+    }
+  }
 }

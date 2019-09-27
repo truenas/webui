@@ -38,7 +38,7 @@ export class CloudsyncListComponent implements InputTableConf {
     { name: T('Day of Month'), prop: 'dom', hidden: true },
     { name: T('Month'), prop: 'month', hidden: true },
     { name: T('Day of Week'), prop: 'dow', hidden: true },
-    { name: T('Status'), prop: 'state', state: 'state'},
+    { name: T('Status'), prop: 'state', state: 'state', infoStates: ['NOT RUN SINCE LAST BOOT']},
     { name: T('Enabled'), prop: 'enabled' },
   ];
   public rowIdentifier = 'description';
