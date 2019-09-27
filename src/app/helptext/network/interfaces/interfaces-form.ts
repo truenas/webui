@@ -90,9 +90,7 @@ failover_group_tooltip: T('Combine multiple, critical-for-failover \
 failover_vhid_placeholder: T('Failover VHID'),
 failover_vhid_tooltip: T('Unique Virtual Host ID on the broadcast \
  segment of the network. Configuring multiple Virtual IP addresses \
- requires a separate VHID for each address. Numbers greater than \
- <i>20</i> are recommended, but any unused number between <i>1</i> and \
- <i>255</i> is allowed.'),
+ requires a separate VHID for each address.'),
 
 failover_alias_address_placeholder: T('Failover IP Address'),
 failover_alias_address_tooltip: T('IPv4 address to use for the failover \
