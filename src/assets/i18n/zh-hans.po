@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-09-26 16:47+0000\n"
+"PO-Revision-Date: 2019-09-28 20:07+0000\n"
 "Last-Translator: Yifei Ding <yifeiding@theunspeakble.com>\n"
 "Language-Team: Chinese (Simplified) <https://www.theunspeakble.com/weblate/projects/freenas-webui/master/zh_Hans/>\n"
 "Language: zh-hans\n"
@@ -3644,6 +3644,7 @@ msgstr "输入这个可调参数的描述。"
 msgid "Enter a descriptive title for the new issue."
 msgstr "输入这个描述这个问题的标题。"
 
+#, fuzzy
 msgid "Enter a fully qualified domain name. Example: <b>yourname.dyndns.org</b>"
 msgstr "Enter a fully qualified domain name. 例子：<b>yourname.dyndns.org</b>"
 
@@ -3654,6 +3655,7 @@ msgid ""
 "optional). Netdata uses the first working destination."
 msgstr "输入以行或空格分隔的目标列表，其中包含要收集的度量标准的目标"
 
+#, fuzzy
 msgid ""
 "Enter a list of allowed hostnames or IP addresses. Separate entries with a "
 "comma, space, or tab."
@@ -3664,17 +3666,14 @@ msgid ""
 "comma, space, or tab."
 msgstr "输入一个拒绝的域名或IP地址列表。使用逗号，空格，或制表符分隔。"
 
+#, fuzzy
 msgid ""
 "Enter a long string of random characters for use as <a "
 "href=\"https://searchsecurity.techtarget.com/definition/salt\" "
 "target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b> "
 "Save and back up the encryption salt value. Losing the salt value can "
 "result in data loss."
-msgstr ""
-"Enter a long string of random characters for use as <a "
-"href=\"https://searchsecurity.techtarget.com/definition/salt\" "
-"target=\"_blank\">salt</a> for the encryption password. "
-"<b>警告：</b>请保存并备份加密Salt。Losing the salt value can result in data loss."
+msgstr "Enter a long string of random characters for use as <a href=\"https://searchsecurity.techtarget.com/definition/salt\" target=\"_blank\">salt</a> for the encryption password. <b>警告：</b>请保存并备份加密Salt。Losing the salt value can result in data loss."
 
 msgid "Enter a name for the VM."
 msgstr "给这个虚拟机取个名字。"
