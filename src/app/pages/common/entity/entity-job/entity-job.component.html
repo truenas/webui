@@ -10,13 +10,20 @@
 		<label *ngIf="!hideProgressValue">
 			{{ progressTotalPercent | number: '1.2-2'}}%
 		</label>
-    </div>
+	</div>
     <div>
 		<span *ngIf="description" [innerHTML]="description | translate"></span>
-    </div>
-    <div>
-		<span *ngIf="!description">{{ "Starting job..." | translate }}</span>
-    </div>
+	</div>
+	<div *ngIf="!description">
+		<mat-progress-bar class="example-margin"
+			color="primary"
+			mode="indeterminate">
+		</mat-progress-bar>
+	</div>
+	<div *ngIf="!description">
+		<span *ngIf="altMessage" [innerHTML]="altMessage"></span>
+		<span *ngIf="!altMessage">{{ "Starting job..." | translate }}</span>
+	</div>
 </mat-dialog-content>
 <div mat-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">
     <button mat-button mat-dialog-close="close" (click)="close()">{{"Close" | translate}}</button>

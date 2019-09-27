@@ -44,3 +44,7 @@ mat-cell.mat-column-expandedDetail {
 .element-row.expanded {
     border-bottom-color: transparent;
 }
+
+mat-row.detail-row {
+    padding-bottom: 12px;
+}

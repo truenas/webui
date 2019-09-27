@@ -172,6 +172,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       if (this.isHA) {
         this.dialogRef.componentInstance.disableProgressValue(true);
       };
+      this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.subscribe((succ)=>{
         this.dialogRef.close(false);

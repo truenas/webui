@@ -35,7 +35,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public statsDataEvents:Subject<CoreEvent>;
   private statsEvents: any;
-  private statsEventsTC: any;
   public tcStats: any;
 
   public isFooterConsoleOpen: boolean;
@@ -173,7 +172,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(){
     // unsubscribe from middleware
     this.statsEvents.complete();
-    this.statsEventsTC.complete();
 
     // close out subscribers
     this.statsDataEvents.complete();
@@ -193,14 +191,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if(evt.virtual_memory){
         this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
       }
-    });
-
-    this.statsEventsTC = this.ws.sub("trueview.stats:10").subscribe((evt)=>{
-      if(evt.virtual_memory){return;}// TC and MW subscriptions leak into each other.
-        
-      evt.network_usage.forEach((item, index) => {
-        this.statsDataEvents.next({name:"NetTraffic_" + item.name, data:item});
-      });
+      if(evt.interfaces){
+        const keys = Object.keys(evt.interfaces);
+        keys.forEach((key, index) => {
+          const data = evt.interfaces[key];
+          this.statsDataEvents.next({name:"NetTraffic_" + key, data: data});
+        });
+      }
     });
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {

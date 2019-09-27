@@ -1466,8 +1466,16 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       const multi_nat_forwards = [];
       for (let i = 0; i < value['nat_forwards'].length; i++) {
         const subNatForward = value['nat_forwards'][i];
-        if (Object.values(subNatForward).every(item => item != undefined && item != '')) {
-          multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ':' + subNatForward['host_port'] + ')');
+        if (subNatForward['host_port'] === undefined || subNatForward['host_port'].trim() === '') {
+          delete subNatForward['host_port'];
+        }
+        if (Object.values(subNatForward).every(item => item !== undefined && String(item).trim() !== '')) {
+          const length = Object.keys(subNatForward).length;
+          if (length === 3 ) {
+            multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ':' + subNatForward['host_port'] + ')');
+          } else if (length === 2) {
+            multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ')');
+          }
         }
       }
       value['nat_forwards'] = multi_nat_forwards.length > 0 ? multi_nat_forwards.join(',') : 'none';
