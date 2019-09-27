@@ -69,7 +69,8 @@ export const helptext_system_general = {
 
   stg_language: {
     placeholder: T("Language"),
-    tooltip: T("Select a language localization.")
+    tooltip: T("Select a language by typing in the field or selecting \
+ it from the dop-down menu.")
   },
 
   stg_kbdmap: {
