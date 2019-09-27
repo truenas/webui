@@ -78,7 +78,7 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public errorReport(title: string, message: string, backtrace: string = ''): Observable<boolean> {
+    public errorReport(title: string, message: string, backtrace: string = '', logs?: any): Observable<boolean> {
 
         let dialogRef: MatDialogRef<ErrorDialog>;
 
@@ -87,6 +87,9 @@ export class DialogService {
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
         dialogRef.componentInstance.backtrace = backtrace;
+        if (logs) {
+            dialogRef.componentInstance.logs = logs;
+        }
 
         return dialogRef.afterClosed();
     }

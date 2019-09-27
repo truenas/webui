@@ -303,7 +303,7 @@
               <button mat-button 
                 [ngClass]="getButtonClass(row[col.prop])"
                 [style.width.px]="93"
-                *ngIf="col.state && row[col.prop]!=='PENDING'; else colInfo" 
+                *ngIf="col.state && stateClickable(row[col.prop], col); else colInfo"
                 (click)="conf.stateButton(row)">
                   {{convertDisplayValue(row[col.prop])}}
               </button>
