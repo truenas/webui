@@ -79,7 +79,7 @@ export class CloudsyncListComponent implements InputTableConf {
       }).value._date.fromNow();
 
       if (task.job == null) {
-        task.state = T("PENDING");
+        task.state = T("NOT RUN SINCE LAST BOOT");
       } else {
         task.state = task.job.state;
         this.job.getJobStatus(task.job.id).subscribe((t) => {
