@@ -3299,15 +3299,22 @@ msgid ""
 "again until seven days have  elapsed. Using a multiple of seven ensures the "
 "scrub always occurs on  the same weekday."
 msgstr ""
+"Quelques jours avant qu'un nettoyage terminé ne soit à nouveau autorisé à être "
+"lancé. Ceci contrôle la planification des tâches. Par exemple, programmer "
+"l'exécution quotidienne d'un nettoyage et définir :guilabel:``Threshold days`` à "
+"*7* signifie que le nettoyage tente de s'exécuter quotidiennement. Lorsque le "
+"nettoyage est réussi, il continue à être contrôlé tous les jours, mais ne "
+"recommence à fonctionner qu'après sept jours. L'utilisation d'un multiple de sept "
+"assure que le nettoyage a toujours lieu le même jour de la semaine."
 
 msgid "Days of the Week"
-msgstr ""
+msgstr "Jours de la Semaine"
 
 msgid "Deactivate the recovery key for this pool?"
-msgstr ""
+msgstr "Désactiver la clé de récupération pour ce volume ?"
 
 msgid "Decrypt pool"
-msgstr ""
+msgstr "Déchiffrer le volume"
 
 msgid ""
 "Deduplicate the stream to avoid sending redundant data blocks. The "
@@ -3315,39 +3322,48 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
+"Dédupliquez le flux pour éviter d'envoyer des blocs de données redondants. Le "
+"système de destination doit également prendre en charge les flux dédupliqués. Voir "
+"<a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" target=\"_blank\">zfs(8)</"
+"a>."
 
 msgid "Default ACL Options"
-msgstr ""
+msgstr "Options ACL par défaut"
 
 msgid "Default Permissions"
-msgstr ""
+msgstr "Permissions par défaut"
 
 msgid "Default Router For IPv4"
-msgstr ""
+msgstr "Routeur par défaut pour IPv4"
 
 msgid "Default Router For IPv6"
-msgstr ""
+msgstr "Routeur par défaut pour IPv6"
 
 msgid "Default Routes"
-msgstr ""
+msgstr "Routes par défaut"
 
 msgid "Default directory permissions"
-msgstr ""
+msgstr "Permissions des répertoires par défaut"
 
 msgid "Default file permissions"
-msgstr ""
+msgstr "Permissions des fichiers par défaut"
 
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr ""
+"La valeur par défaut est UTF-8, qui prend en charge tous les caractères dans toutes "
+"les langues."
 
 msgid "Default umask"
-msgstr ""
+msgstr "Umask par défaut"
 
 msgid ""
 "Define a length of time to retain the snapshot on this system. After the "
 "time expires, the snapshot is removed. Snapshots which have been replicated "
 "to other systems are not affected."
 msgstr ""
+"Définissez une durée pour conserver l'instantané (snapshot) sur ce système. Une "
+"fois le temps écoulé, l'instantané est supprimé. Les instantanés qui ont été "
+"répliqués sur d'autres systèmes ne sont pas affectés."
 
 msgid ""
 "Define a number of minutes for <a "
@@ -3355,21 +3371,31 @@ msgid ""
 "-RELEASE+and+Ports\" target=\"_blank\">smartd</a> to wake up and check if "
 "any tests are configured to run."
 msgstr ""
+"Définissez un nombre de minutes pour que <a href=\"https://www.freebsd.org/cgi/man."
+"cgi?query=smartd&manpath=FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">smartd</"
+"a> se réveille et vérifiez si des tests sont configurés pour être exécutés."
 
 msgid ""
 "Define a starting time when the replication cannot run. A replication that "
 "is in progress can continue to run past this time."
 msgstr ""
+"Définissez une heure de début lorsque la réplication ne peut pas être exécutée. Une "
+"réplication en cours peut se poursuivre au-delà de cette période."
 
 msgid ""
 "Define an <i>IP address or hostname:optional_port_number</i> to send logs. "
 "When set, log entries write to both the console and remote server."
 msgstr ""
+"Définissez une <i>adresse IP ou un nom d'hôte :port_optionnel</i> pour envoyer les "
+"logs. Lorsqu'elles sont définies, les entrées du log s'écrivent à la fois sur la "
+"console et sur le serveur distant."
 
 msgid ""
 "Define an ending time for the restriction on activating replication "
 "schedules."
 msgstr ""
+"Définissez une heure de fin pour la restriction de l'activation des tâches de "
+"réplication."
 
 msgid ""
 "Define any additional settings for use by some Kerberos applications. The "
@@ -3378,6 +3404,10 @@ msgid ""
 "html#appdefaults\" target=\"_blank\">appdefaults section of "
 "krb.conf(5).</a>."
 msgstr ""
+"Définissez tous les paramètres supplémentaires à utiliser par certaines "
+"applications Kerberos. Les paramètres et la syntaxe disponibles sont listés dans la "
+"<a href=\"http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf."
+"html#appdefaults\" target=\"_blank\">section appdefaults de krb.conf(5)</a>."
 
 msgid ""
 "Define any settings used by the Kerberos library. The available settings "
@@ -3386,183 +3416,219 @@ msgid ""
 "html#libdefaults\" target=\"_blank\">libdefaults section of "
 "krb.conf(5).</a>."
 msgstr ""
+"Définissez tous les paramètres utilisés par la bibliothèque Kerberos. Les "
+"paramètres disponibles et leur syntaxe sont listés dans la <a href=\"http://web.mit."
+"edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html#libdefaults\" target="
+"\"_blank\">section libdefaults de krb.conf(5)</a>."
 
 msgid ""
 "Define other sections and their key/value pairs. Enclose each section name "
 "in square brackets, and put each key/value pair on a new line. Example: "
 "<br> [system.intr]<br>  history=86400<br>  enabled=yes"
 msgstr ""
+"Définissez d'autres sections et leurs combinaisons clé/valeur. Mettez chaque nom de "
+"section entre crochets et placez chaque paire clé/valeur sur une nouvelle ligne. "
+"Exemple: <br> [system.intr]<br>  history=86400<br>  enabled=yes"
 
 msgid ""
 "Define specific times to start snapshotting the <b>Source Datasets</b>. "
 "Disables running the replication immediately after the periodic snapshot "
 "task. Adds the <b>Begin</b> and <b>End</b> fields."
 msgstr ""
+"Définissez des heures spécifiques pour commencer la prise d'instantanés des "
+"<b>datasets sources</b>. Désactive l'exécution de la réplication immédiatement "
+"après la tâche d'instantané périodique. Ajoute les champs <b>Begin</b> et <b>End</"
+"b>."
 
 msgid ""
 "Define the dataset to be jailed and fully handed over to a jail. Enter a "
 "ZFS filesystem name <i>without</i> a pool name. <b>jail_zfs</b> must be set "
 "for this option to work."
 msgstr ""
+"Définir le dataset à intégrer dans le jail et à remettre entièrement au jail. "
+"Entrez un nom de système de fichiers ZFS <i>sans</i> un nom de volume. <b>jail_zfs</"
+"b> doit être défini pour que cette option fonctionne."
 
 msgid ""
 "Define the number of UIDS/GIDS available per domain range. The minimum is "
 "<i>2000</i> and the recommended default is <i>100000</i>."
 msgstr ""
+"Définir le nombre d'UIDS/GIDS disponibles par plage de domaines. Le minimum est "
+"<i>2000</i> et la valeur par défaut recommandée est <i>100000</i>."
 
 msgid "Define the server where all changes to the database are performed."
 msgstr ""
+"Définissez le serveur sur lequel toutes les modifications de la base de données "
+"sont effectuées."
 
 msgid "Define the server where all password changes are performed."
 msgstr ""
+"Définissez le serveur sur lequel tous les changements de mot de passe sont "
+"effectués."
 
 msgid "Define the size of the raw file in GiB."
-msgstr ""
+msgstr "Définir la taille du fichier brut (raw) en GiB."
 
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
-msgstr ""
+msgstr "Définissez la cible comme *iSCSI*, *Fibre Channel* ou *Both*."
 
 msgid "Delay Updates"
-msgstr ""
+msgstr "Retarder les mises à jour"
 
 msgid "Delay VM Boot Until VNC Connects"
-msgstr ""
+msgstr "Délai de démarrage de la VM jusqu'à ce que la VNC se connecte"
 
 msgid "Delete"
-msgstr ""
+msgstr "Supprimer"
 
 msgid "Delete "
-msgstr ""
+msgstr "Supprimer "
 
 msgid "Delete Dataset"
-msgstr ""
+msgstr "Supprimer Dataset"
 
 msgid "Delete Dataset <i><b>"
-msgstr ""
+msgstr "Supprimer le dataset <i><b>"
 
 msgid "Delete Device"
-msgstr ""
+msgstr "Supprimer le périphérique"
 
 msgid "Delete Key"
-msgstr ""
+msgstr "Supprimer la clé"
 
 msgid "Delete Mount Point"
-msgstr ""
+msgstr "Supprimer l point de montage"
 
 msgid "Delete Path"
-msgstr ""
+msgstr "Supprimer le chemin"
 
 msgid "Delete Zvol"
-msgstr ""
+msgstr "Supprimer le Zvol"
 
 msgid "Delete all users with this primary group?"
-msgstr ""
+msgstr "Supprimer tous les utilisateurs de ce groupe primaire ?"
 
 msgid "Delete configuration of shares that used this pool?"
-msgstr ""
+msgstr "Supprimer la configuration des partages qui ont utilisé ce volume ?"
 
 msgid ""
 "Delete files in the destination directory                that do not exist "
 "in the source directory."
 msgstr ""
+"Supprimer les fichiers du répertoire de destination qui n'existent pas dans le "
+"répertoire source."
 
 msgid "Delete selections"
-msgstr ""
+msgstr "Supprimer les sélections"
 
 msgid "Delete snapshot "
-msgstr ""
+msgstr "Supprimer l'instantané "
 
 msgid ""
 "Delete the passphrase from  the encryption key. Invalidates an existing "
 "pool recovery key file. A  dialog prompts to back up the encryption key."
 msgstr ""
+"Supprimez la passphrase de la clé de chiffrement. Invalide un fichier de clé de "
+"récupération de volume existant. Une boîte de dialogue vous invite à sauvegarder la "
+"clé de chiffrement."
 
 msgid "Delete the zvol "
-msgstr ""
+msgstr "Supprimer le zvol "
 
 msgid "Delete this device?"
-msgstr ""
+msgstr "Supprimer ce périphérique ?"
 
 msgid "Delete this path."
-msgstr ""
+msgstr "Supprimer ce chemin."
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
-msgstr ""
+msgstr "La suppression d'interfaces lorsque HA est activé n'est pas autorisée."
 
 msgid "Deny list"
-msgstr ""
+msgstr "Refuser la liste"
 
 msgid ""
 "Describe the UPS device. It can contain alphanumeric, period, comma, "
 "hyphen, and underscore characters."
 msgstr ""
+"Décrire l'onduleur. Il peut contenir des caractères alphanumériques, point, "
+"virgule, tiret et soulignement."
 
 msgid "Describe the VM or its purpose."
-msgstr ""
+msgstr "Décrivez la VM ou ce qu'elle propose."
 
 msgid "Describe the scrub task."
-msgstr ""
+msgstr "Décrivez la tâche de nettoyage."
 
 msgid "Describe this service."
-msgstr ""
+msgstr "Décrivez ce service."
 
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 msgid "Description (max. 25 characters)"
-msgstr ""
+msgstr "Description (max. 25 caractères)"
 
 msgid "Description (optional)."
-msgstr ""
+msgstr "Description (facultatif)."
 
 msgid "Description of the VLAN."
-msgstr ""
+msgstr "Description du VLAN."
 
 msgid "Description of the lagg interface."
-msgstr ""
+msgstr "Description de l'interface lagg."
 
 msgid "Destination"
-msgstr ""
+msgstr "Destination"
 
 msgid "Destination Datasets"
-msgstr ""
+msgstr "Datasets de destination"
 
 msgid "Destination Path"
-msgstr ""
+msgstr "Chemin de destination"
 
 msgid "Destination Snapshot Lifetime"
-msgstr ""
+msgstr "Chemin de destination de l'instantané"
 
 msgid ""
 "Destination hostname or IP address for collectd data sent by the Graphite "
 "plugin."
 msgstr ""
+"Nom d'hôte de destination ou adresse IP pour les données collectées envoyées par le "
+"plugin Graphite."
 
 msgid "Destroy data on this pool?"
-msgstr ""
+msgstr "Détruire les données de ce volume ?"
 
 msgid ""
 "Destroy the reporting database. Only  appears when <i>Graph Age</i> or "
 "<i>Graph Points</i> are  changed. Required for changes to <i>Graph Age</i> "
 "or  <i>Graph Points</i> to take effect."
 msgstr ""
+"Détruisez la base de données des rapports. N'apparaît que lorsque l'<i>âge du "
+"graphique</i> ou les <i>points du graphique</i> sont modifiés. Nécessaire pour que "
+"les modifications apportées à l'<i>âge</i> ou aux <i>points du graphique</i> "
+"prennent effet."
 
 msgid "Detach"
-msgstr ""
+msgstr "Détacher"
 
 msgid "Detach Pool"
-msgstr ""
+msgstr "Détacher le volume"
 
 msgid "Detach disk "
-msgstr ""
+msgstr "Détacher le disque "
 
 msgid "Details"
-msgstr ""
+msgstr "Details"
 
 msgid ""
 "Determine whether this share name is included when browsing shares. Home "
 "shares are only visible to the owner regardless of this setting."
 msgstr ""
+"Déterminez si ce nom de partage est inclus lors de la navigation dans les partages. "
+"Les partages utilisateurs (home shares) ne sont visibles que par le propriétaire "
+"indépendamment de ce paramètre."
 
 msgid ""
 "Determine which information the processes in a jail are able to obtain "
@@ -3580,6 +3646,18 @@ msgid ""
 "directory are available. <br>Set to <i>2</i> (default): Only mounts point "
 "where the jail chroot directory is located are available."
 msgstr ""
+"Déterminer quelles informations les processus d'un environnement jail peuvent "
+"obtenir sur les points de montage. Le comportement de plusieurs syscalls multiples "
+"est affecté. <a href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" target="
+"\"_blank\">statfs(2)</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs"
+"\" target=\"_blank\">fstatfs(2)</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?"
+"query=getfsstat\" target=\"_blank\">getfsstat(2)</a>, <a href=\"https://www.freebsd."
+"org/cgi/man.cgi?query=fhstatfs\" target=\"_blank\">fhstatfs(2), fhstatfs(2)</a> et "
+"autres syscalls de compatibilité similaires. <br> Réglé sur <i>0</i> : Tous les "
+"points de montage sont disponibles sans restriction. <br>Réglé à <i>1</i> : Seuls "
+"les points de montage sous le répertoire chroot de l'environnement jail sont "
+"disponibles. <br>Réglé sur <i>2</i> (par défaut) : Seuls les points de montage où "
+"se trouve le répertoire chroot de l'environnement jail sont disponibles."
 
 msgid ""
 "Determine which information the processes in a jail are able to obtain "
@@ -3597,256 +3675,287 @@ msgid ""
 "directory to be available. Set to <i>2</i> (default) for mounts that point "
 "to the jail <i>chroot</i> directory to be available."
 msgstr ""
+"Déterminer quelles informations les processus d'un environnement jail peuvent "
+"obtenir sur les points de montage. Le comportement de plusieurs syscalls multiples "
+"est affecté. <a href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" target="
+"\"_blank\">statfs(2)</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs"
+"\" target=\"_blank\">fstatfs(2)</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?"
+"query=getfsstat\" target=\"_blank\">getfsstat(2)</a>, <a href=\"https://www.freebsd."
+"org/cgi/man.cgi?query=fhstatfs\" target=\"_blank\">fhstatfs(2), fhstatfs(2)</a> et "
+"autres syscalls de compatibilité similaires.<br> Réglez à <i>0</i> pour que tous "
+"les points de montage soient disponibles sans restriction. Définissez à <i>1</i> "
+"pour que les points de montage sous le répertoire <i>chroot de</i> l'environnement "
+"jail soient disponibles. Réglez à <i>2</i> (par défaut) pour les montages qui "
+"pointent vers le répertoire <i>chroot</i> de l'environnement jail pour être "
+"disponibles."
 
 msgid "Device"
-msgstr ""
+msgstr "Périphérique"
 
 msgid "Device Busy"
-msgstr ""
+msgstr "Périphérique occupé"
 
 msgid "Device Order"
-msgstr ""
+msgstr "Ordre du périphérique"
 
 msgid "Devices"
-msgstr ""
+msgstr "Périphériques"
 
 msgid "Difference"
-msgstr ""
+msgstr "Différence"
 
 msgid "Digest Algorithm"
-msgstr ""
+msgstr "Algorithme Digest"
 
 msgid "Direct the flow of data to the remote host."
-msgstr ""
+msgstr "Diriger le flux de données vers l'hôte distant."
 
 msgid "Direction"
-msgstr ""
+msgstr "Direction"
 
 msgid ""
 "Direction of travel. <i>Push</i> sends snapshots to a destination system. "
 "<i>Pull</i> receives snapshots from a destination system."
 msgstr ""
+"Sens d'avancement. <i>Push</i> envoie des snapshots à un système de destination. "
+"<i>Pull</i> reçoit des instantanés d'un système de destination."
 
 msgid "Directories & Permissions"
-msgstr ""
+msgstr "Répertoires et permissions"
 
 msgid "Directory"
-msgstr ""
+msgstr "Répertoire"
 
 msgid "Directory Permission"
-msgstr ""
+msgstr "Permission du répertoire"
 
 msgid "Directory Services"
-msgstr ""
+msgstr "Services d'annuaire"
 
 msgid "Directory Services Monitor"
-msgstr ""
+msgstr "Moniteur des services d'annuaire"
 
 msgid "Directory/Files"
-msgstr ""
+msgstr "Répertoire/Fichiers"
 
 msgid "Disable Endpoint Region"
-msgstr ""
+msgstr "Désactiver la région du noeud final"
 
 msgid "Disable Failover"
-msgstr ""
+msgstr "Désactiver le basculement (failover)"
 
 msgid "Disable FreeNAS Cache"
-msgstr ""
+msgstr "Désactiver le cache FreeNAS"
 
 msgid ""
 "Disable IPv4 source address selection for  the jail in favor of the primary "
 "IPv4 address of the jail.  Only available when the jail is not configured "
 "to use VNET."
 msgstr ""
+"Désactivez la sélection de l'adresse source IPv4 pour l'environnement jail en "
+"faveur de l'adresse IPv4 primaire de l'environnement jail.  Disponible uniquement "
+"lorsque l'environnement jail n'est pas configuré pour utiliser VNET."
 
 msgid ""
 "Disable IPv6 source address selection for  the jail in favor of the primary "
 "IPv6 address of the jail.  Only available when the jail is not configured "
 "to use VNET."
 msgstr ""
+"Désactivez la sélection de l'adresse source IPv6 pour l'environnement jail en "
+"faveur de l'adresse IPv6 primaire de l'environnement jail.  Disponible uniquement "
+"lorsque l'environnement jail n'est pas configuré pour utiliser VNET."
 
 msgid "Disable LDAP User/Group Cache"
-msgstr ""
+msgstr "Désactiver le cache utilisateur/groupe LDAP"
 
 msgid ""
 "Disable caching LDAP users and groups in large LDAP environments.  When "
 "caching is disabled, LDAP users and groups do not appear in dropdown  "
 "menus, but are still accepted when manually entered."
 msgstr ""
+"Désactivez la mise en cache des utilisateurs et des groupes LDAP dans les grands "
+"environnements LDAP.  Lorsque la mise en cache est désactivée, les utilisateurs et "
+"groupes LDAP n'apparaissent pas dans les menus déroulants, mais sont toujours "
+"acceptés lorsqu'ils sont saisis manuellement."
 
 msgid "Disable physical block size reporting"
-msgstr ""
+msgstr "Désactiver le rapport sur la taille physique des blocs"
 
 msgid "Disabled"
-msgstr ""
+msgstr "Désactivé"
 
 msgid "Discard"
-msgstr ""
+msgstr "Rejeter"
 
 msgid "Discard Network Changes"
-msgstr ""
+msgstr "Rejeter les modifications du réseau"
 
 msgid "Discard unapplied network changes?"
-msgstr ""
+msgstr "Supprimer les modifications non appliquées du réseau ?"
 
 msgid "Discover Remote Host Key"
-msgstr ""
+msgstr "Découvrez la clé hôte distante"
 
 msgid "Discovery Auth Group"
-msgstr ""
+msgstr "Découverte du groupe d'authentification"
 
 msgid "Discovery Auth Method"
-msgstr ""
+msgstr "Découverte de la méthode d'authentification"
 
 msgid "Disk"
-msgstr ""
+msgstr "Disque"
 
 msgid "Disk Imported: Log Summary"
-msgstr ""
+msgstr "Disque importé : Résumé du log"
 
 msgid "Disk Selection Required"
-msgstr ""
+msgstr "Sélection du disque requise"
 
 msgid "Disk Size"
-msgstr ""
+msgstr "Taille du disque"
 
 msgid "Disk Type"
-msgstr ""
+msgstr "Type de disque"
 
 msgid "Disk sector size"
-msgstr ""
+msgstr "Taille du secteur du disque"
 
 msgid "Disk to wipe."
-msgstr ""
+msgstr "Disque à effacer."
 
 msgid "Disks"
-msgstr ""
+msgstr "Disques"
 
 msgid "Dismiss"
-msgstr ""
+msgstr "Rejeter"
 
 msgid "Display Login"
-msgstr ""
+msgstr "Afficher le Login"
 
 msgid "Display System Processes"
-msgstr ""
+msgstr "Afficher les processus du système"
 
 msgid "Display console messages in real time at the bottom of the browser."
-msgstr ""
+msgstr "Affichage des messages de la console en temps réel en bas du navigateur."
 
 msgid "Distinguished Name"
-msgstr ""
+msgstr "Nom distinctif"
 
 msgid ""
 "Do <b>NOT</b> change this setting when using Windows as the initiator. Only "
 "needs to be changed in large environments where the number of systems using "
 "a specific RPM is needed for accurate reporting statistics."
 msgstr ""
+"<b>Ne</b> modifiez <b>PAS</b> ce paramètre lorsque vous utilisez Windows comme "
+"initiateur. N'a besoin d'être modifié que dans les grands environnements où le "
+"nombre de systèmes utilisant un RPM spécifique est nécessaire pour obtenir des "
+"statistiques de reporting précises."
 
 msgid "Do not set this if the Serial Port is disabled."
-msgstr ""
+msgstr "Ne réglez pas ce paramètre si le port série est désactivé."
 
 msgid "Docker Host"
-msgstr ""
+msgstr "Docker Hôte"
 
 msgid "Domain"
-msgstr ""
+msgstr "Domaine"
 
 msgid "Domain Account Name"
-msgstr ""
+msgstr "Nom de compte de domaine"
 
 msgid "Domain Account Password"
-msgstr ""
+msgstr "Mot de passe du compte de domaine"
 
 msgid "Domain Forest Level"
-msgstr ""
+msgstr "Niveau de la forêt du domaine"
 
 msgid "Domain Name"
-msgstr ""
+msgstr "Nom de domaine"
 
 msgid "Domain name"
-msgstr ""
+msgstr "Nom de domaine"
 
 msgid "Done"
-msgstr ""
+msgstr "Terminé"
 
 msgid "Download Logs"
-msgstr ""
+msgstr "Télécharger les logs"
 
 msgid "Download Recovery Key"
-msgstr ""
+msgstr "Télécharger la clé de récupération"
 
 msgid "Download Sucessful"
-msgstr ""
+msgstr "Téléchargement réussi"
 
 msgid "Download Update"
-msgstr ""
+msgstr "Télécharger la mise à jour"
 
 msgid "Drive Account Type"
-msgstr ""
+msgstr "Type de compte du disque dur"
 
 msgid "Drive ID"
-msgstr ""
+msgstr "ID du lecteur"
 
 msgid "Driver"
-msgstr ""
+msgstr "Pilote"
 
 msgid "EC Curve"
-msgstr ""
+msgstr "Courbe CE"
 
 msgid "EDIT ACL"
-msgstr ""
+msgstr "MODIFIER L'ACL"
 
 msgid "ERROR: Not Enough Memory"
-msgstr ""
+msgstr "ERREUR : Pas assez de mémoire"
 
 msgid "EULA"
-msgstr ""
+msgstr "EULA"
 
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
 
 msgid "Edit ACL"
-msgstr ""
+msgstr "Modifier l'ACL"
 
 msgid "Edit Disk(s)"
-msgstr ""
+msgstr "Modifier le(s) disque(s)"
 
 msgid "Edit Idmap"
-msgstr ""
+msgstr "Modifier l'Idmap"
 
 msgid "Edit Note"
-msgstr ""
+msgstr "Modifier la note"
 
 msgid "Edit Options"
-msgstr ""
+msgstr "Modifier les options"
 
 msgid "Edit Permissions"
-msgstr ""
+msgstr "Modifier les permissions"
 
 msgid "Edit Zvol"
-msgstr ""
+msgstr "Modifier le Zvol"
 
 msgid "Editing interfaces while HA is enabled is not allowed."
-msgstr ""
+msgstr "La modification des interfaces lorsque HA est activée n'est pas autorisée."
 
 msgid "Editing the following disks:"
-msgstr ""
+msgstr "Modification des disques suivants :"
 
 msgid ""
 "Editing top-level datasets can prevent users from accessing data in child "
 "datasets."
 msgstr ""
+"La modification des instantanés de niveau supérieur peut empêcher les utilisateurs "
+"d'accéder aux données des datasets enfant."
 
 msgid "Email"
-msgstr ""
+msgstr "Courriel"
 
 msgid "Email Address"
-msgstr ""
+msgstr "Adresse du courriel"
 
 msgid "Email Subject"
-msgstr ""
+msgstr "Sujet du courriel"
 
 msgid ""
 "Emulating an <i>Intel e82545 (e1000)</i> Ethernet card provides "
@@ -3854,109 +3963,125 @@ msgid ""
 "provide better performance on systems with VirtIO paravirtualized network "
 "driver support."
 msgstr ""
+"L'émulation d'une carte Ethernet <i>Intel e82545 (e1000)</i> assure la "
+"compatibilité avec la plupart des systèmes d'exploitation. Passez à <i>VirtIO</i> "
+"pour offrir de meilleures performances sur les systèmes supportant les pilotes "
+"réseau paravirtualisés VirtIO."
 
 msgid "Enable"
-msgstr ""
+msgstr "Activer"
 
 msgid "Enable Atime"
-msgstr ""
+msgstr "Activer Atime"
 
 msgid "Enable Browser"
-msgstr ""
+msgstr "Activer le navigateur"
 
 msgid "Enable Debug Kernel"
-msgstr ""
+msgstr "Activer le noyau de débogage"
 
 msgid "Enable FXP"
-msgstr ""
+msgstr "Activer FXP"
 
 msgid "Enable Legacy User Interface"
-msgstr ""
+msgstr "Activer l'ancienne interface utilisateur"
 
 msgid "Enable NFSv4"
-msgstr ""
+msgstr "Activer NFSv4"
 
 msgid "Enable Password Toggle"
-msgstr ""
+msgstr "Activer le changement de mot de passe"
 
 msgid "Enable S.M.A.R.T."
-msgstr ""
+msgstr "Activer S.M.A.A.R.T."
 
 msgid "Enable SMB1 support"
-msgstr ""
+msgstr "Activer le support SMB1"
 
 msgid "Enable Serial Console"
-msgstr ""
+msgstr "Activer la console série"
 
 msgid "Enable Service"
-msgstr ""
+msgstr "Activer le service"
 
 msgid "Enable Shadow Copies"
-msgstr ""
+msgstr "Activer les clichés instantanés"
 
 msgid "Enable TLS"
-msgstr ""
+msgstr "Activer TLS"
 
 msgid "Enable TPC"
-msgstr ""
+msgstr "Activer TPC"
 
 msgid "Enable Time Machine backups on this share."
-msgstr ""
+msgstr "Activez les sauvegardes Time Machine sur ce partage."
 
 msgid ""
 "Enable Unix privileges supported by OSX 10.5 and higher. Do not enable this "
 "if the network contains Mac OSX 10.4 clients or lower as they do not "
 "support this feature."
 msgstr ""
+"Activer les privilèges Unix pris en charge par OSX 10.5 et supérieur. Ne l'activez "
+"pas si le réseau contient des clients Mac OSX 10.4 ou moins car ils ne prennent pas "
+"en charge cette fonctionnalité."
 
 msgid "Enable VNC"
-msgstr ""
+msgstr "Activer VNC"
 
 msgid ""
 "Enable a VNC (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
 msgstr ""
+"Activer une connexion à distance VNC (Virtual Network Computing). Nécessite un "
+"démarrage <i>UEFI</i>."
 
 msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr ""
+"Activer les alertes automatique pour le support iXsystems (Silver/Gold uniquement)"
 
 msgid "Enable autotune"
-msgstr ""
+msgstr "Activer l'autocalibrage (autotune)"
 
 msgid "Enable iSCSI ALUA"
-msgstr ""
+msgstr "Activer iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
-msgstr ""
+msgstr "Activer le support proactif d'iXsystems"
 
 msgid "Enable if Mac clients will be connecting to the SMB share."
-msgstr ""
+msgstr "Activer si les clients Mac se connecteront au partage SMB."
 
 msgid "Enable netwait feature"
-msgstr ""
+msgstr "Activer la fonction netwait"
 
 msgid "Enable password login"
-msgstr ""
+msgstr "Activer la connexion par mot de passe"
 
 msgid ""
 "Enable password logins and authentication to SMB shares. Selecting "
 "<b>No</b> removes the <b>Lock User</b> and <b>Permit Sudo</b> options."
 msgstr ""
+"Activer les connexions par mot de passe et l'authentification aux partages SMB. "
+"Sélectionner <b>Non</b> supprime les options <b>Verrouiller utilisateur</b> et "
+"<b>Autoriser Sudo</b>."
 
 msgid ""
 "Enable running services that require <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=mlock\" "
 "target=\"_blank\">mlock(2)</a> in a jail."
 msgstr ""
+"Activez les services d'exécution qui nécessitent <a href=\"https://www.freebsd.org/"
+"cgi/man.cgi?query=mlock\" target=\"_blank\">mlock(2)</a> dans un environnement jail."
 
 msgid "Enable running services that require mlock() in a jail."
 msgstr ""
+"Activez les services d'exécution qui nécessitent mlock() dans un environnement jail."
 
 msgid "Enable sending anonymous usage statistics to iXsystems"
-msgstr ""
+msgstr "Activer l'envoi de statistiques d'utilisation anonymes à iXsystems"
 
 msgid "Enable service"
-msgstr ""
+msgstr "Activer le service"
 
 msgid ""
 "Enable the stream to send large data blocks. The destination system must "
@@ -3964,33 +4089,40 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
+"Activez le flux pour envoyer des blocs de données volumineux. Le système de "
+"destination doit également supporter de grands blocs. Voir <a href=\"https://www."
+"freebsd.org/cgi/man.cgi?query=zfs\" target=\"_blank\">zfs(8)</a>."
 
 msgid ""
 "Enable this Cloud Sync Task. Unset to disable this Cloud Sync Task without "
 "deleting it."
 msgstr ""
+"Activez cette tâche de synchronisation Cloud. Désactiver pour la désactiver sans la "
+"supprimer."
 
 msgid ""
 "Enable this cron job. When unset, disable the                cron job "
 "without deleting it."
-msgstr ""
+msgstr "Activez cette tâche cron. Désactiver pour la désactiver sans la supprimer."
 
 msgid ""
 "Enable this rsync task. Unset to disable this                rsync task "
 "without deleting it."
-msgstr ""
+msgstr "Activez cette tâche rsync. Désactiver pour la désactiver sans la supprimer."
 
 msgid "Enable this service?"
-msgstr ""
+msgstr "Activer ce service ?"
 
 msgid "Enable this task. Unset to disable the task     without deleting it."
-msgstr ""
+msgstr "Activez cette tâche. Désactiver pour la désactiver sans la supprimer."
 
 msgid "Enable this tunable. Unset to disable this tunable without deleting it."
 msgstr ""
+"Activez ce calibrage (tunable) . Désactiver pour le désactiver sans le supprimer."
 
 msgid "Enable when the device number is inconstant across a reboot."
 msgstr ""
+"Activé lorsque le numéro du périphérique est inconstant lors d'un redémarrage."
 
 msgid ""
 "Enable/disable <a "
@@ -3998,9 +4130,12 @@ msgid ""
 "target=\"_blank\">SMTP AUTH</a> using PLAIN SASL. Enter the required "
 "Username and Password if set."
 msgstr ""
+"Activer/désactiver <a href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\" "
+"target=\"_blank\">SMTP AUTH</a> en utilisant PLAIN SASL. Entrez le nom "
+"d'utilisateur et le mot de passe requis, s'il y a lieu."
 
 msgid "Enabled"
-msgstr ""
+msgstr "Activé"
 
 msgid ""
 "Enables the autotune script which attempts to optimize the system depending "
@@ -4009,53 +4144,62 @@ msgid ""
 "See the <a href=\"--docurl--/system.html#autotune\" "
 "target=\"_blank\">Autotune section</a> of the guide for more information."
 msgstr ""
+"Active le script d'autocalibrage (autotune) qui tente d'optimiser le système en "
+"fonction du matériel installé. <b>Avertissement :</b> L'auto-optimisation n'est "
+"utilisée qu'à titre de mesure temporaire et n'est pas une solution permanente aux "
+"problèmes matériels du système. Voir la <a href=\"--docurl--/system.html#autotune\" "
+"target=\"_blank\">section Autotune</a> du guide pour plus d'informations."
 
 msgid ""
 "Enabling this option is <b>not</b> recommended as it bypasses a security "
 "mechanism."
 msgstr ""
+"L'activation de cette option n'est <b>pas</b> recommandée car elle contourne un "
+"mécanisme de sécurité."
 
 msgid "Enabling this option may have performance implications on your pools."
 msgstr ""
+"L'activation de cette option peut avoir des répercussions sur les performances de "
+"vos volumes."
 
 msgid "Enclosure"
-msgstr ""
+msgstr "Enceinte"
 
 msgid "Encrypted pool disks must be decrypted prior to import."
-msgstr ""
+msgstr "Les disques de volume chiffrés doivent être déchiffrés avant l'importation."
 
 msgid "Encryption"
-msgstr ""
+msgstr "Chiffrement"
 
 msgid "Encryption Key"
-msgstr ""
+msgstr "Clé de chiffrement"
 
 msgid "Encryption Key Passphrase"
-msgstr ""
+msgstr "Passphrase de la clé de chiffrement"
 
 msgid "Encryption Key Required"
-msgstr ""
+msgstr "Clé de chiffrement requise"
 
 msgid "Encryption Key for Pool "
-msgstr ""
+msgstr "Clé de chiffrement pour le volume "
 
 msgid "Encryption Key/Passphrase"
-msgstr ""
+msgstr "Clé de chiffrement/Passphrase"
 
 msgid "Encryption Mode"
-msgstr ""
+msgstr "Mode de chiffrement"
 
 msgid "Encryption Password"
-msgstr ""
+msgstr "Mot de passe de chiffrement"
 
 msgid "Encryption Salt"
-msgstr ""
+msgstr "Sel de chiffremment"
 
 msgid "Encryption protocol"
-msgstr ""
+msgstr "Protocole de chiffrement"
 
 msgid "End"
-msgstr ""
+msgstr "Fin"
 
 msgid "End Time"
 msgstr ""
