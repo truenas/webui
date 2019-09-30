@@ -9728,19 +9728,19 @@ msgid "Timezone"
 msgstr "时区"
 
 msgid "Title"
-msgstr ""
+msgstr "标题"
 
 msgid "Title "
-msgstr ""
+msgstr "标题"
 
 msgid "To delete the <b>"
-msgstr ""
+msgstr "删除<b>"
 
 msgid "Toggle Collapse"
-msgstr ""
+msgstr "切换折叠"
 
 msgid "Toggle Hide/Open"
-msgstr ""
+msgstr "切换隐藏/打开"
 
 msgid ""
 "Token created with  <a "
@@ -9773,22 +9773,22 @@ msgid "Transfers"
 msgstr "传输"
 
 msgid "Transport"
-msgstr ""
+msgstr "传输"
 
 msgid "Traverse"
-msgstr ""
+msgstr "通过"
 
 msgid "TrueNAS Controller"
-msgstr ""
+msgstr "TrueNAS控制器"
 
 msgid "TrueNAS Controllers"
-msgstr ""
+msgstr "TrueNAS控制器"
 
 msgid "TrueNAS controller"
-msgstr ""
+msgstr "TrueNAS控制器"
 
 msgid "TrueNAS controllers"
-msgstr ""
+msgstr "TrueNAS控制器"
 
 msgid "Tunables"
 msgstr "微调"
@@ -9797,19 +9797,19 @@ msgid "Type"
 msgstr "类型"
 
 msgid "UNINSTALL"
-msgstr ""
+msgstr "卸载"
 
 msgid "UNIX Charset"
 msgstr "UNIX 字符集"
 
 msgid "UPDATE"
-msgstr ""
+msgstr "更新"
 
 msgid "UPDATE IN PROGRESS"
-msgstr ""
+msgstr "正在更新"
 
 msgid "UPDATE LICENSE"
-msgstr ""
+msgstr "更新许可"
 
 msgid "UPS Mode"
 msgstr "UPS 模式"
@@ -9818,26 +9818,30 @@ msgid ""
 "URI of the ACME Server Directory. Choose a preconfigured URI or enter a "
 "custom URI."
 msgstr ""
+"ACME服务器目录的URI。选择预配置的URI或输入"
+"自定义URI。"
 
 msgid "URL"
 msgstr "URL"
 
 msgid "URL of the HTTP host to connect to."
-msgstr ""
+msgstr "要连接的HTTP主机的URL。"
 
 msgid ""
 "URL to an image to use for notification icons. This overrides the incoming "
 "webhook setting."
 msgstr ""
+"图像的URL，用于通知图标。这将覆盖传入的"
+"Webhook设置。"
 
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 msgid "Unencrypted pools can be imported directly."
-msgstr "未加密存储池可以被直接导入。"
+msgstr "可以直接导入未加密的池。"
 
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
-msgstr "独特的LUN ID。The default is generated from the MAC address of the system."
+msgstr "唯一的LUN ID。默认由系统的MAC地址生成。"
 
 msgid ""
 "Unique Virtual Host ID on the broadcast  segment of the network. "
@@ -9845,6 +9849,10 @@ msgid ""
 "each address. Numbers greater than  <i>20</i> are recommended, but any "
 "unused number between <i>1</i> and  <i>255</i> is allowed."
 msgstr ""
+"在网络上的广播段唯一的虚拟主机ID。"
+"配置多个虚拟IP地址需要一个单独的VHID用于"
+"每个地址。建议使用大于<i> 20 </ i>的数字，但允许"
+"任何在<i>1</i>到<i>255</i>之间未使用的数字。"
 
 msgid ""
 "Unique drive identifier. Log in to the  <a "
@@ -9855,7 +9863,7 @@ msgid ""
 msgstr ""
 
 msgid "Unix Shares (NFS)"
-msgstr ""
+msgstr "Unix共享（NFS）"
 
 msgid "Unlock"
 msgstr "解锁"
@@ -9864,26 +9872,30 @@ msgid ""
 "Unlock the pool with a recovery  key file instead of a passphrase. Select a "
 "recovery key file to upload  from the local system."
 msgstr ""
+"使用恢复密钥文件而不是密码来解锁池。选择"
+"要从本地上传的恢复密钥文件。"
 
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
 "read, write, and execute)."
-msgstr "Unmask is used for newly created files. 默认是<i>000</i>（所有人可读写和运行）。"
+msgstr ""
+"Unmask用于新创建的文件。默认是<i>000</i>（所有人可"
+"读写和运行）。"
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
-msgstr ""
+msgstr "在显示控制台菜单之前，取消设置以向系统添加登录提示。"
 
 msgid "Unset to disable the configuration without deleting it."
-msgstr ""
+msgstr "取消设置以禁用配置而不删除它。"
 
 msgid "Unset to disable the scheduled scrub  without deleting it."
-msgstr ""
+msgstr "取消设置以禁用计划的清理而不删除它。"
 
 msgid "Unset to disable this service without deleting it."
-msgstr ""
+msgstr "取消设置以禁用此服务而不删除它。"
 
 msgid "Unset to disable this task without deleting it."
-msgstr ""
+msgstr "取消设置以禁用此任务而不删除它。"
 
 msgid ""
 "Unset to prepend the domain name to the username. Unset to prevent name "
@@ -9898,7 +9910,7 @@ msgid ""
 msgstr ""
 
 msgid "Unshare"
-msgstr ""
+msgstr "取消共享"
 
 msgid "Until"
 msgstr "直到"
@@ -9907,7 +9919,7 @@ msgid "Unused"
 msgstr "未使用"
 
 msgid "Upcoming tasks"
-msgstr ""
+msgstr "即将完成的任务"
 
 msgid "Update"
 msgstr "更新"
@@ -9919,22 +9931,22 @@ msgid "Update File Temporary Storage Location"
 msgstr "更新文件临时存储位置"
 
 msgid "Update Frequency"
-msgstr ""
+msgstr "更新频率"
 
 msgid "Update License"
-msgstr ""
+msgstr "更新许可证"
 
 msgid "Update Period"
 msgstr "更新周期"
 
 msgid "Update Settings"
-msgstr ""
+msgstr "更新设置"
 
 msgid "Update Status"
-msgstr ""
+msgstr "更新状态"
 
 msgid "Update in Progress"
-msgstr ""
+msgstr "正在更新"
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr "更新成功。请重启以便更新生效。现在重启？"
@@ -9946,22 +9958,22 @@ msgid "Updates successfully downloaded"
 msgstr "更新下载成功"
 
 msgid "Updating Jail"
-msgstr ""
+msgstr "更新监狱"
 
 msgid "Updating Plugin"
-msgstr ""
+msgstr "更新插件"
 
 msgid "Updating group members"
 msgstr "更新群组成员"
 
 msgid "Updating selected jails failed."
-msgstr ""
+msgstr "更新选定的监狱失败。"
 
 msgid "Updating selected plugins failed."
-msgstr ""
+msgstr "更新所选插件失败。"
 
 msgid "Updating selected plugins."
-msgstr ""
+msgstr "更新所选插件。"
 
 msgid "Upgrade Pool"
 msgstr "升级存储池"
@@ -9975,6 +9987,10 @@ msgid ""
 "upgrade process starts concurrently on both TrueNAS Controllers.            "
 "          Continue with download?"
 msgstr ""
+"升级两个控制器。文件下载到活动控制器    "
+"                  然后转移到备用控制器。该 "
+"升级过程中在两个TrueNAS控制器同时启动。            "
+"          是否继续下载？"
 
 msgid "Upgrading Jail"
 msgstr "升级Jail"
@@ -9983,10 +9999,10 @@ msgid "Upload"
 msgstr "上传"
 
 msgid "Upload Chunk Size (MiB)"
-msgstr ""
+msgstr "上传块大小（MiB）"
 
 msgid "Upload Config"
-msgstr "上传设置"
+msgstr "上传配置"
 
 msgid ""
 "Upload a Google  <a "
@@ -10008,10 +10024,10 @@ msgid "Uptime"
 msgstr "运行时间"
 
 msgid "Usage collection"
-msgstr ""
+msgstr "使用情况集合"
 
 msgid "Use --fast-list"
-msgstr "使用 --fast-list"
+msgstr "使用 --快速-列表"
 
 msgid ""
 "Use <a href=\"https://www.freebsd.org/cgi/man.cgi?query=rtsold\" "
@@ -10020,16 +10036,16 @@ msgid ""
 msgstr ""
 
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
-msgstr "使用DHCP. Unset to manually configure a static IPv4 connection."
+msgstr "使用DHCP. 取消设置以手动配置静态IPv4连接。"
 
 msgid "Use Default Domain"
 msgstr "使用默认域"
 
 msgid "Use FQDN for logging"
-msgstr ""
+msgstr "使用FQDN进行日志记录"
 
 msgid "Use Signature Version 2"
-msgstr ""
+msgstr "使用签名版本2"
 
 msgid "Use all disk space"
 msgstr "使用所有的磁盘空间"
@@ -10043,32 +10059,41 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
+"使用压缩的WRITE记录可以使流更有效。该"
+"目标系统还必须支持压缩的WRITE记录。见<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
+"target=\"_blank\">zfs(8)</a>."
 
 msgid "Use encrypted connection for increased security (preferred)."
-msgstr ""
+msgstr "使用加密连接可提高安全性（首选）。"
 
 msgid "Use existing disk image"
 msgstr "使用已有磁盘映像"
 
 msgid "Use syslog only"
-msgstr ""
+msgstr "仅使用系统日志"
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
-msgstr ""
+msgstr "使用<i>A.B.C.D/E</i>格式，其中<i>E</i>是CIDR掩码。"
 
 msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
 "that SMB1 is being deprecated and it is advised to upgrade clients to "
 "operating system versions that support modern versions of the SMB protocol."
 msgstr ""
+"使用此选项可允许旧 SMB 客户端连接到服务器。注意"
+"SMB1 正在弃用，建议将客户端升级到"
+"支持最新版本 SMB 协议的操作系统版本。"
 
 msgid "Use unencrypted connection."
-msgstr ""
+msgstr "使用未加密的连接。"
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
 "1023."
 msgstr ""
+"由客户端在 PASV 模式下使用。默认值 <i>0</i> 表示上述任何端口"
+"1023."
 
 msgid ""
 "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" "
@@ -10085,19 +10110,19 @@ msgid "User CN"
 msgstr "用户 CN"
 
 msgid "User Controls"
-msgstr ""
+msgstr "用户控件"
 
 msgid "User DN"
 msgstr "用户 DN"
 
 msgid "User Distinguished Name (DN) to use for authentication."
-msgstr ""
+msgstr "用于身份验证的用户专有名称（DN）。"
 
 msgid "User Distinguished Name to use for authentication."
-msgstr ""
+msgstr "用于身份验证的用户专有名称。"
 
 msgid "User Guide"
-msgstr ""
+msgstr "用户指南"
 
 msgid "User ID"
 msgstr "用户 ID"
@@ -10109,20 +10134,24 @@ msgid ""
 "User account to create for CHAP authentication with the user on the remote "
 "system. Many initiators use the initiator name as the user name."
 msgstr ""
+"用于与远程用户进行CHAP身份验证的用户帐户"
+"系统。许多启动器使用启动器名称作为用户名。"
 
 msgid "User account to which this ACL entry applies."
-msgstr ""
+msgstr "该ACL条目适用的用户帐户。"
 
 msgid ""
 "User accounts have an ID greater than 1000 and system accounts have an ID "
 "equal to the default port number used by the service."
 msgstr ""
+"用户帐户的ID大于1000和系统帐户具有的ID"
+"等于服务使用的默认端口号。"
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
 msgstr ""
 
 msgid "User password. Must be at least 12 and no more than 16 characters long."
-msgstr ""
+msgstr "用户密码。至少12个字符且不超过16个字符。"
 
 msgid ""
 "User who controls the dataset. This user always has permissions to read or "
@@ -10134,13 +10163,16 @@ msgid "Username"
 msgstr "用户名"
 
 msgid "Username for this service."
-msgstr ""
+msgstr "该服务的用户名。"
 
 msgid ""
 "Usernames can be up to 16 characters long. When using NIS or other legacy "
 "software with limited username lengths, keep usernames to eight characters "
 "or less for compatibility."
 msgstr ""
+"用户名最长为16个字符。使用NIS或其他旧版时"
+"用户名长度受限的软件，用户名不得超过8个字符"
+"或更少的兼容性。"
 
 msgid ""
 "Usernames can be up to 16 characters long. When using NIS or other legacy "
@@ -10164,16 +10196,16 @@ msgid "VLAN ID"
 msgstr "VLAN ID"
 
 msgid "VLAN Parent Interface"
-msgstr ""
+msgstr "VLAN父接口"
 
 msgid "VLAN Tag"
-msgstr ""
+msgstr "VLAN标签"
 
 msgid "VM Snapshot"
 msgstr "虚拟机快照"
 
 msgid "VM system time. Default is <i>Local</i>."
-msgstr ""
+msgstr "VM系统时间。默认值为<i>本地</i>。"
 
 msgid "VMWare Sync"
 msgstr "VMWare 同步"
@@ -10182,21 +10214,23 @@ msgid "VMware-Snapshots"
 msgstr "VMWare 快照"
 
 msgid "VNC"
-msgstr ""
+msgstr "VNC"
 
 msgid "VNC Port"
-msgstr ""
+msgstr "VNC 端口"
 
 msgid ""
 "VNC network interface IP address. The primary interface IP address is the "
 "default. A different interface IP address can be chosen."
 msgstr ""
+"VNC 网络接口IP地址。主接口IP地址是"
+"默认。可以选择不同的接口IP地址。"
 
 msgid "VNET"
-msgstr ""
+msgstr "VNET"
 
 msgid "VNET Virtual Networking"
-msgstr ""
+msgstr "VNET虚拟网络"
 
 msgid "Validate Remote Path"
 msgstr "验证远程路径"
@@ -10214,31 +10248,31 @@ msgid "Verify Credential"
 msgstr "验证凭据"
 
 msgid "Verify Deletion of "
-msgstr ""
+msgstr "验证缺失"
 
 msgid "Verify passphrase"
 msgstr "确认密码"
 
 msgid "Version"
-msgstr ""
+msgstr "版本"
 
 msgid "View"
 msgstr "查看"
 
 msgid "View Enclosure"
-msgstr ""
+msgstr "查看机箱"
 
 msgid "Virtual CPUs"
 msgstr "虚拟处理器"
 
 msgid "Virtual IP Address"
-msgstr ""
+msgstr "虚拟IP地址"
 
 msgid "Virtual Interface"
 msgstr "虚拟接口"
 
 msgid "Virtual Machine (VM) Wizard type."
-msgstr ""
+msgstr "虚拟机（VM）向导类型。"
 
 msgid "Virtual Machines"
 msgstr "虚拟机"
@@ -10247,30 +10281,32 @@ msgid "Virtualization"
 msgstr "虚拟化"
 
 msgid "Vlan Tag"
-msgstr "VLAN 标签"
+msgstr "VLAN标签"
 
 msgid "WARNING"
-msgstr ""
+msgstr "警告"
 
 msgid "WARNING: "
-msgstr ""
+msgstr "警告："
 
 msgid ""
 "WARNING: Adding data vdevs with different numbers of disks is not "
 "recommended."
-msgstr "警告： Adding data vdevs with different numbers of disks is not recommended."
+msgstr ""
+"不能添加具有不同数量磁盘的数据vdev"
+"推荐使用。"
 
 msgid "WARNING: Based on the pool topology, "
-msgstr ""
+msgstr "警告：基于池的拓扑结构，"
 
 msgid "WARNING: Exporting/disconnecting pool <i>"
-msgstr ""
+msgstr "警告：导出/断开池 <i>"
 
 msgid "Wait to start VM until VNC client connects."
-msgstr ""
+msgstr "等待启动VM，直到VNC客户端连接为止。"
 
 msgid "Wallclock time in seconds."
-msgstr ""
+msgstr "以秒为单位的Wallclock时间。"
 
 msgid "Warning"
 msgstr "警告"
@@ -10387,7 +10423,7 @@ msgid ""
 msgstr ""
 
 msgid "Who"
-msgstr ""
+msgstr "谁"
 
 msgid "Widget Base Class"
 msgstr ""
@@ -10396,7 +10432,7 @@ msgid "Winbind NSS Info"
 msgstr "Winbind NSS 信息"
 
 msgid "Windows Shares (SMB)"
-msgstr ""
+msgstr "Windows共享（SMB）"
 
 msgid "Wipe"
 msgstr "擦除"
@@ -10414,7 +10450,7 @@ msgid "Workgroup"
 msgstr "工作组"
 
 msgid "Write"
-msgstr ""
+msgstr "写"
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr "输入单个处理器核心的占用百分比限制。"
