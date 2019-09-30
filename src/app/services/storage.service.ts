@@ -305,7 +305,7 @@ export class StorageService {
   // '12.4k'     ''               NaN
   // ' 10G'      '10 GiB'         10*1024**3 (10,737,418,240)
 
-  convertHumanStringToNum(hstr) {
+  convertHumanStringToNum(hstr, dec=false) {
 
       const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
 
@@ -322,8 +322,14 @@ export class StorageService {
       hstr = hstr.replace(/\s+/g, '');
 
       // get leading number
-      if ( num = hstr.match(/^(\d+)/) ) {
-          num = num[1];
+      let match = [];
+      if (dec) {
+        match = hstr.match(/^(\d+(\.\d+)?)/);
+      } else {
+        match = hstr.match(/^(\d+)/);
+      }
+      if ( match && match.length > 1 ) {
+          num = match[1];
       } else {
           // leading number is required
           this.humanReadable = '';
