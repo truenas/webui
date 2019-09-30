@@ -34,10 +34,10 @@ msgid " but datastore "
 msgstr ""
 
 msgid " disks"
-msgstr ""
+msgstr "磁盘"
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr "磁盘，新的vdev具有"
 
 msgid " is "
 msgstr ""
@@ -51,10 +51,10 @@ msgid " seconds unless kept permanently. Adjust this amount to allow for testing
 msgstr ""
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr "系统已开机并连接到网络。"
 
 msgid " updated."
-msgstr ""
+msgstr "已更新。"
 
 msgid "% of all cores"
 msgstr "%所有核心"
@@ -70,27 +70,29 @@ msgid ""
 "'%h' will be replaced with your hostname and '%i' will be replaced with "
 "your IP address."
 msgstr ""
+"'%h' 将被替换为您的主机名，而 '%i' 将被替换为"
+"您的IP地址。"
 
 msgid "'. All data on that pool was destroyed."
 msgstr "’。所有此存储池的数据已被销毁。"
 
 msgid "(No description)"
-msgstr ""
+msgstr "（无描述）"
 
 msgid "*allow_sysvipc"
 msgstr ""
 
 msgid ", new vdev is "
-msgstr ""
+msgstr "，新的vdev是"
 
 msgid ". All data on that pool was destroyed."
 msgstr ". 所有此存储池的数据已被销毁。"
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr "。这是正确的吗？"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "...确保"
 
 msgid "0=Disabled, blank=inherit"
 msgstr "0=禁用， 留空=继承"
@@ -105,18 +107,20 @@ msgid ""
 "</b> plugin and all data and snapshots stored with it, please type the name "
 "of the plugin to confirm:"
 msgstr ""
+"</b> 插件以及与其一起存储的所有数据和快照，请输入确认的"
+"插件名称："
 
 msgid "</b> with the keypair"
-msgstr ""
+msgstr "</b> 与密钥对"
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> 已启动。"
 
 msgid "</i> keypair?</p>"
-msgstr ""
+msgstr "</i> 密钥对？</p>"
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> 现在？"
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
@@ -279,7 +283,7 @@ msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> 在此端口侦听。"
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
-msgstr ""
+msgstr "<br><b>警告：磁盘无法在加密池中联机。</b></br>"
 
 msgid "<br><br>Roll back to snapshot <i>"
 msgstr "<br><br>回滚到快照<i>"
@@ -550,7 +554,7 @@ msgid ""
 msgstr ""
 
 msgid "ACL Mode"
-msgstr ""
+msgstr "ACL模式"
 
 msgid "ACL Type"
 msgstr "ACL类型"
@@ -559,7 +563,7 @@ msgid "ACME DNS"
 msgstr ""
 
 msgid "ACME Server Directory URI"
-msgstr ""
+msgstr "ACME服务器目录URI"
 
 msgid "AD Timeout"
 msgstr "AD超时"
@@ -568,13 +572,13 @@ msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 权限"
 
 msgid "API Key"
-msgstr ""
+msgstr "API密钥"
 
 msgid "API URL"
 msgstr ""
 
 msgid "APPLY CHANGES"
-msgstr ""
+msgstr "应用更改"
 
 msgid "ARN"
 msgstr ""
@@ -589,7 +593,7 @@ msgid "About"
 msgstr "关于"
 
 msgid "Access"
-msgstr ""
+msgstr "访问"
 
 msgid "Access Based Share Enumeration"
 msgstr ""
