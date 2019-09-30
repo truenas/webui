@@ -11,7 +11,7 @@ msgid " First vdev is a "
 msgstr ""
 
 msgid " Plugin"
-msgstr ""
+msgstr "插件"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -51,10 +51,10 @@ msgid " seconds unless kept permanently. Adjust this amount to allow for testing
 msgstr ""
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr "系统已启动并连接到网络。"
 
 msgid " updated."
-msgstr ""
+msgstr "更新。"
 
 msgid "% of all cores"
 msgstr "%所有核心"
@@ -75,22 +75,22 @@ msgid "'. All data on that pool was destroyed."
 msgstr "’。所有此存储池的数据已被销毁。"
 
 msgid "(No description)"
-msgstr ""
+msgstr "（没有描述）"
 
 msgid "*allow_sysvipc"
 msgstr ""
 
 msgid ", new vdev is "
-msgstr ""
+msgstr "，新的vdev是"
 
 msgid ". All data on that pool was destroyed."
-msgstr ". 所有此存储池的数据已被销毁。"
+msgstr ". 该池中的所有数据均已销毁。"
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". 是否正确？"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... 确保"
 
 msgid "0=Disabled, blank=inherit"
 msgstr "0=禁用， 留空=继承"
@@ -424,7 +424,7 @@ msgid ""
 msgstr ""
 
 msgid "<p>Delete the <i>"
-msgstr ""
+msgstr "<p>删除 <i>"
 
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
@@ -451,7 +451,7 @@ msgid ""
 msgstr ""
 
 msgid "A failover might cause temporary service interruption."
-msgstr ""
+msgstr "故障转移可能会临时导致服务中断。"
 
 msgid ""
 "A list of simple patterns matching the IPs of the servers that will be "
@@ -500,7 +500,7 @@ msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr "使用为0的swap大小是极不推荐的。"
 
 msgid "A system update is in progress. "
-msgstr ""
+msgstr "系统更新正在进行中。"
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -550,7 +550,7 @@ msgid ""
 msgstr ""
 
 msgid "ACL Mode"
-msgstr ""
+msgstr "ACL模式"
 
 msgid "ACL Type"
 msgstr "ACL类型"
@@ -559,7 +559,7 @@ msgid "ACME DNS"
 msgstr ""
 
 msgid "ACME Server Directory URI"
-msgstr ""
+msgstr "ACME服务器目录URI"
 
 msgid "AD Timeout"
 msgstr "AD超时"
@@ -583,19 +583,19 @@ msgid "ATA Security User"
 msgstr "ATA安全用户"
 
 msgid "AWS Region"
-msgstr ""
+msgstr "AWS地区"
 
 msgid "About"
 msgstr "关于"
 
 msgid "Access"
-msgstr ""
+msgstr "访问"
 
 msgid "Access Based Share Enumeration"
-msgstr ""
+msgstr "基于访问的共享枚举"
 
 msgid "Access Control Entries"
-msgstr ""
+msgstr "访问控制项"
 
 msgid ""
 "Access Control Entry (ACE) user or group. Select a specific <i>User</i> or "
@@ -607,10 +607,10 @@ msgid ""
 msgstr ""
 
 msgid "Access Control List"
-msgstr ""
+msgstr "访问控制列表"
 
 msgid "Access ID Key"
-msgstr ""
+msgstr "访问ID密钥"
 
 msgid "Access Key"
 msgstr "访问密钥"
@@ -619,10 +619,10 @@ msgid "Access Key ID"
 msgstr "访问密钥ID"
 
 msgid "Access Key ID for the linked AWS account."
-msgstr ""
+msgstr "链接的AWS账户的访问密钥ID。"
 
 msgid "Access Mode"
-msgstr ""
+msgstr "访问模式"
 
 msgid "Access Token"
 msgstr "访问令牌"
@@ -662,13 +662,13 @@ msgid "Accounts"
 msgstr "账户"
 
 msgid "Acoustic Level"
-msgstr "声学等级"
+msgstr "声音等级"
 
 msgid "Activate"
 msgstr "启用"
 
 msgid "Activate Pool for Jail Manager"
-msgstr ""
+msgstr "激活池的监狱管理"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -684,7 +684,7 @@ msgid ""
 msgstr ""
 
 msgid "Activates the replication schedule."
-msgstr ""
+msgstr "激活复制计划。"
 
 msgid "Active Directory"
 msgstr "活动目录"
@@ -693,10 +693,10 @@ msgid "Active Directory IDMAP change!"
 msgstr "活动目录IDMAP发生变化！"
 
 msgid "Active Media Subtype"
-msgstr ""
+msgstr "活动媒体子类型"
 
 msgid "Active Media Type"
-msgstr ""
+msgstr "活动媒体类型"
 
 msgid "Adapter Type"
 msgstr "适配器类型"
@@ -705,10 +705,10 @@ msgid "Adapter Type:"
 msgstr "适配器类型："
 
 msgid "Add"
-msgstr ""
+msgstr "添加"
 
 msgid "Add ACL Item"
-msgstr ""
+msgstr "添加ACL项"
 
 msgid "Add Additional Path"
 msgstr "添加额外路径"
@@ -750,6 +750,8 @@ msgid ""
 "Add a passphrase to the new  encryption key. This is used to lock and "
 "unlock the pool."
 msgstr ""
+"将密码短语添加到新的加密密钥。这用于锁定和"
+"解锁池。"
 
 msgid ""
 "Add an <a href=\"--docurl--/system.html#certificates\" "
@@ -810,7 +812,7 @@ msgid ""
 msgstr "添加的磁盘被擦除，然后存储池将被扩展到新磁盘使用选择的拓扑。在存储池上的现有数据依旧被保留。"
 
 msgid "Adding data vdevs of different types is not supported."
-msgstr ""
+msgstr "不支持添加不同类型的数据vdev。"
 
 msgid ""
 "Additional <a                   "
@@ -936,10 +938,10 @@ msgid "Administrator Password"
 msgstr "管理员密码"
 
 msgid "Administrator password"
-msgstr ""
+msgstr "管理员密码"
 
 msgid "Administrators Group"
-msgstr ""
+msgstr "管理员组"
 
 msgid "Adv. Power Management"
 msgstr "高级电源管理"
@@ -965,7 +967,7 @@ msgid ""
 msgstr "在输入<b>域名，用户名</b>，和<b>密码</b>后，点击<b>获取数据存储区</b>并选择同步的数据存储区。"
 
 msgid "Alarms"
-msgstr ""
+msgstr "警报"
 
 msgid "Alert"
 msgstr "警告"
@@ -977,19 +979,19 @@ msgid "Alert Settings"
 msgstr "警告设置"
 
 msgid "Alerts"
-msgstr ""
+msgstr "警告"
 
 msgid "Aliases"
-msgstr ""
+msgstr "别名"
 
 msgid "All Disks"
-msgstr ""
+msgstr "所有磁盘"
 
 msgid "All dirs"
 msgstr "所有文件夹"
 
 msgid "Allocate RAM for the VM"
-msgstr ""
+msgstr "为VM分配RAM"
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr "分配新的zvol容量（GiB）。"
@@ -1004,10 +1006,10 @@ msgid "Allow Anonymous Login"
 msgstr "允许匿名登录"
 
 msgid "Allow Blocks Larger than 128KB"
-msgstr ""
+msgstr "允许大于128KB的块"
 
 msgid "Allow Compressed WRITE Records"
-msgstr ""
+msgstr "允许压缩的写记录"
 
 msgid "Allow DNS updates"
 msgstr "允许DNS更新"
@@ -1031,7 +1033,7 @@ msgid "Allow TCP port forwarding"
 msgstr "允许TCP端口转发"
 
 msgid "Allow Taking Empty Snapshots"
-msgstr ""
+msgstr "允许创建空快照"
 
 msgid "Allow Transfer Resumption"
 msgstr "启用断点续传"
@@ -1059,7 +1061,7 @@ msgid ""
 msgstr "允许不同的群组配置不同的验证配置文件。例子：所有有着群组ID<i>1</i>的用户将会继承群组<i>1</i>的验证配置文件。"
 
 msgid "Allow from"
-msgstr ""
+msgstr "允许来自"
 
 msgid ""
 "Allow group members to use <a "
@@ -1222,7 +1224,7 @@ msgid ""
 msgstr ""
 
 msgid "Amount of locked memory in bytes for the jail."
-msgstr ""
+msgstr "以字节为单位的监狱锁定内存量。"
 
 msgid "An update is already applied. Please reboot the system."
 msgstr "一个更新已经被应用。请重启系统。"
@@ -1245,44 +1247,48 @@ msgid ""
 msgstr ""
 
 msgid "Apple Shares (AFP)"
-msgstr ""
+msgstr "苹果共享 (AFP)"
 
 msgid "Apply Failover Upgrade"
-msgstr ""
+msgstr "应用故障转移升级"
 
 msgid "Apply Network Changes"
-msgstr ""
+msgstr "应用网络更改"
 
 msgid "Apply Pending Updates"
-msgstr "应用待决更新"
+msgstr "应用待处理的更新"
 
 msgid "Apply Pending update"
-msgstr "应用待决更新"
+msgstr "应用待处理的更新"
 
 msgid "Apply Permissions Recursively"
-msgstr ""
+msgstr "应用递归权限"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
-msgstr ""
+msgstr "是否应用网络更改？网络连接将中断。"
 
 msgid "Apply permissions recursively"
-msgstr "递归的应用权限"
+msgstr "应用递归权限"
 
 msgid "Apply permissions recursively to all child datasets of the current dataset."
-msgstr ""
+msgstr "以递归方式将权限应用于当前数据集的所有子数据集。"
 
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
 "dataset."
 msgstr ""
+"将权限递归应用于当前目录中的所有目录和文件"
+"数据集。"
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset."
 msgstr ""
+"将权限递归应用于"
+"当前数据集。"
 
 msgid "Apply permissions to child datasets"
-msgstr ""
+msgstr "将权限应用于子数据集"
 
 msgid "Apply updates and reboot system after downloading."
 msgstr "在下载后应用更新并重启。"
@@ -1297,7 +1303,7 @@ msgid "Are you sure you want to sync to peer?"
 msgstr ""
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "确定吗？"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
