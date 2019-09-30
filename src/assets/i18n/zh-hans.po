@@ -19,8 +19,7 @@ msgid ""
 "<i>3493</i>."
 msgstr ""
 "当<b>UPS模式</b>设置为<i>slave</i>时。输入UPS"
-"<i>主</i>系统的开放网络端口号。默认端口为"
-"<i>3493</i>。"
+"<i>主</i>系统的开放网络端口号。默认端口为<i>3493</i>。"
 
 msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a "
@@ -54,10 +53,10 @@ msgid " seconds unless kept permanently. Adjust this amount to allow for testing
 msgstr " 秒，除非永久保存。调整这个数值以便进行测试。"
 
 msgid " system is powered on and connected to the network."
-msgstr "系统已开机并连接到网络。"
+msgstr "系统已启动并连接到网络。"
 
 msgid " updated."
-msgstr "已更新。"
+msgstr "更新。"
 
 msgid "% of all cores"
 msgstr "%所有核心"
@@ -80,7 +79,7 @@ msgid "'. All data on that pool was destroyed."
 msgstr "’。所有此存储池的数据已被销毁。"
 
 msgid "(No description)"
-msgstr "（无描述）"
+msgstr "（没有描述）"
 
 msgid "*allow_sysvipc"
 msgstr "*允许_sysvipc"
@@ -92,10 +91,10 @@ msgid ". All data on that pool was destroyed."
 msgstr ". 所有此存储池的数据已被销毁。"
 
 msgid ". Is this correct?"
-msgstr "。这是正确的吗？"
+msgstr ". 是否正确？"
 
 msgid "... Make sure the "
-msgstr "...确保"
+msgstr "... 确保"
 
 msgid "0=Disabled, blank=inherit"
 msgstr "0=禁用， 留空=继承"
@@ -471,7 +470,7 @@ msgstr ""
 "请输入其他共享名。"
 
 msgid "<p>Delete the <i>"
-msgstr "<p>删除<i>"
+msgstr "<p>删除 <i>"
 
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
@@ -505,7 +504,7 @@ msgstr ""
 "<i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>."
 
 msgid "A failover might cause temporary service interruption."
-msgstr "故障转移可能会导致临时服务中断。"
+msgstr "故障转移可能会临时导致服务中断。"
 
 msgid ""
 "A list of simple patterns matching the IPs of the servers that will be "
@@ -647,7 +646,7 @@ msgid "ATA Security User"
 msgstr "ATA安全用户"
 
 msgid "AWS Region"
-msgstr "AWS 区域"
+msgstr "AWS地区"
 
 msgid "About"
 msgstr "关于"
@@ -744,7 +743,7 @@ msgid "Activate"
 msgstr "启用"
 
 msgid "Activate Pool for Jail Manager"
-msgstr "激活池的Jail管理"
+msgstr "激活池的监狱管理"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -828,7 +827,9 @@ msgstr "为新的快照添加命名架构"
 msgid ""
 "Add a passphrase to the new  encryption key. This is used to lock and "
 "unlock the pool."
-msgstr "向新的加密密钥添加密码。用于锁定和解锁池。"
+msgstr ""
+"将密码短语添加到新的加密密钥。这用于锁定和"
+"解锁池。"
 
 msgid ""
 "Add an <a href=\"--docurl--/system.html#certificates\" "
@@ -1082,7 +1083,7 @@ msgid "Alert Settings"
 msgstr "警告设置"
 
 msgid "Alerts"
-msgstr "Alerts"
+msgstr "警告"
 
 msgid "Aliases"
 msgstr "别名"
@@ -1112,7 +1113,7 @@ msgid "Allow Blocks Larger than 128KB"
 msgstr "允许大于128KB的块"
 
 msgid "Allow Compressed WRITE Records"
-msgstr "允许压缩写入记录"
+msgstr "允许压缩的写记录"
 
 msgid "Allow DNS updates"
 msgstr "允许DNS更新"
@@ -1136,7 +1137,7 @@ msgid "Allow TCP port forwarding"
 msgstr "允许TCP端口转发"
 
 msgid "Allow Taking Empty Snapshots"
-msgstr "允许拍摄空快照"
+msgstr "允许创建空快照"
 
 msgid "Allow Transfer Resumption"
 msgstr "启用断点续传"
@@ -1339,7 +1340,7 @@ msgstr ""
 "并创建一个新的密钥对。"
 
 msgid "Amount of locked memory in bytes for the jail."
-msgstr "Jail的锁定内存量（以字节为单位）。"
+msgstr "以字节为单位的监狱锁定内存量。"
 
 msgid "An update is already applied. Please reboot the system."
 msgstr "一个更新已经被应用。请重启系统。"
@@ -1362,7 +1363,7 @@ msgid ""
 msgstr "在设置用户 CN 时，在 LDAP 查询中为组和用户追加<i>@realm</i>到<i>cn</i>。"
 
 msgid "Apple Shares (AFP)"
-msgstr "Apple共享 (AFP)"
+msgstr "苹果共享 (AFP)"
 
 msgid "Apply Failover Upgrade"
 msgstr "应用故障转移升级"
@@ -1377,26 +1378,30 @@ msgid "Apply Pending update"
 msgstr "应用待处理的更新"
 
 msgid "Apply Permissions Recursively"
-msgstr "递归应用权限"
+msgstr "应用递归权限"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr "是否应用网络更改？网络连接将中断。"
 
 msgid "Apply permissions recursively"
-msgstr "递归应用权限"
+msgstr "应用递归权限"
 
 msgid "Apply permissions recursively to all child datasets of the current dataset."
-msgstr "将权限递归应用于当前数据集中的所有子数据集。"
+msgstr "以递归方式将权限应用于当前数据集的所有子数据集。"
 
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
 "dataset."
-msgstr "将权限递归应用于当前数据集中的所有目录和文件。"
+msgstr ""
+"将权限递归应用于当前目录中的所有目录和文件"
+"数据集。"
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset."
-msgstr "将权限递归应用于当前数据集中的所有目录和文件。"
+msgstr ""
+"将权限递归应用于"
+"当前数据集。"
 
 msgid "Apply permissions to child datasets"
 msgstr "将权限应用于子数据集"
@@ -1414,7 +1419,7 @@ msgid "Are you sure you want to sync to peer?"
 msgstr "是否确定要同步到对等体？"
 
 msgid "Are you sure?"
-msgstr "是否确定？"
+msgstr "确定吗？"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
