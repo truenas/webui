@@ -3,9 +3,9 @@
     <label>{{ config.placeholder | translate }}</label>
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [style.margin-left.px]="5"></tooltip>
   </div>
-  <mat-radio-group [formControlName]="config.name">
+  <mat-radio-group [formControlName]="config.name" id="{{config.name}}_radiogroup">
     <div *ngFor="let option of config.options" fxLayout="row">
-        <mat-radio-button  [value]="option.value" [attr.name]="option.name" [attr.id]="option.id">
+        <mat-radio-button  [value]="option.value" [attr.name]="option.name" [attr.id]="option.id" id="{{option.name}}_radiobutton">
             {{ option.label | translate }} 
         </mat-radio-button>
         <tooltip class="radio-option-tooltip" *ngIf="option.tooltip" [header]="config.placeholder" [message]="option.tooltip"></tooltip>

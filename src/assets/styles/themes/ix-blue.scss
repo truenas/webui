@@ -1653,4 +1653,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     padding-left: 15px;
   }
 
+  app-general {
+    #language_sort, #language_sort_radiogroup {
+      display: inline-flex;
+    }
+    mat-radio-button {
+      margin-left: 10px;
+    }
+  }
+
  } // end of ix theme
