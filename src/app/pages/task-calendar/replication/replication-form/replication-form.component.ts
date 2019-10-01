@@ -955,6 +955,7 @@ export class ReplicationFormComponent {
             wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
             wsResponse['restrict_schedule'] = true;
         }
+        wsResponse['speed_limit'] = this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0);
         return wsResponse;
     }
 
