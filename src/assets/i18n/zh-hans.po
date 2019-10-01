@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-09-28 21:07+0000\n"
+"PO-Revision-Date: 2019-10-02 16:23+0000\n"
 "Last-Translator: Yifei Ding <yifeiding@theunspeakble.com>\n"
 "Language-Team: Chinese (Simplified) <https://www.theunspeakble.com/weblate/projects/freenas-webui/11_2_stable/zh_Hans/>\n"
 "Language: zh-hans\n"
@@ -2691,8 +2691,9 @@ msgid ""
 "enabled."
 msgstr ""
 
+#, fuzzy
 msgid "Domain Forest Level"
-msgstr "域树级别"
+msgstr "Domain Forest Level"
 
 msgid "Domain Logons"
 msgstr "域登陆"
@@ -2962,6 +2963,7 @@ msgid ""
 "target=\"_blank\">NIS Domain name</a> for the jail."
 msgstr "输入jail的<a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" target=\"_blank\">NIS域名</a> 。"
 
+#, fuzzy
 msgid ""
 "Enter a VNC password to automatically pass to the VNC session. Passwords "
 "cannot be longer than 8 characters."
@@ -3051,21 +3053,19 @@ msgid "Enter a name for this Keytab."
 msgstr "给这个Keytab取个名字。"
 
 msgid "Enter a netmask."
-msgstr "输入一个子网掩码。"
+msgstr "输入子网掩码。"
 
+#, fuzzy
 msgid ""
 "Enter a number of degrees in Celsius. SMART reports if the temperature of a "
 "drive has changed by N degrees Celsius since the last report."
-msgstr ""
-"输入一个摄氏度的数字。SMART reports if the temperature of a drive has changed by N "
-"degrees Celsius since the last report."
+msgstr "输入一个摄氏度的数字。SMART reports if the temperature of a drive has changed by N degrees Celsius since the last report."
 
+#, fuzzy
 msgid ""
 "Enter a number of seconds to wait before alerting that the service cannot "
 "reach any UPS. Warnings continue until the situation is fixed."
-msgstr ""
-"Enter a number of seconds to wait before alerting that the service cannot "
-"reach any UPS. 警告持续直到问题被解决。"
+msgstr "Enter a number of seconds to wait before alerting that the service cannot reach any UPS. 警告持续直到问题被解决。"
 
 msgid ""
 "Enter a number of times to attempt reconnecting to the Active directory "
@@ -3074,13 +3074,12 @@ msgstr ""
 "Enter a number of times to attempt reconnecting to the Active directory "
 "server. 在设置为<i>0</i>时持续尝试。"
 
+#, fuzzy
 msgid ""
 "Enter a number of virtual CPUs to allocate to the VM. The maximum is 16 "
 "unless the host CPU also limits the maximum. The VM operating system can "
 "also have operational or licensing restrictions on the number of CPUs."
-msgstr ""
-"输入分配给虚拟机的虚拟处理器数量。最大值是16除非主机CPU限制了最大值。The VM operating system can also have "
-"operational or licensing restrictions on the number of CPUs."
+msgstr "输入分配给虚拟机的虚拟处理器数量。最大值是16除非主机CPU限制了最大值。The VM operating system can also have operational or licensing restrictions on the number of CPUs."
 
 msgid "Enter a number to define the maximum number of processes for the jail."
 msgstr ""
@@ -3089,7 +3088,7 @@ msgid "Enter a numeric value for the number of PTYs available to the jail."
 msgstr ""
 
 msgid "Enter a numeric value for the number of threads the jail can use."
-msgstr "输入jail可以使用的线程数的数值。"
+msgstr "输入jail可以使用的线程数。"
 
 msgid "Enter a numeric value to define the file descriptor table size."
 msgstr ""
@@ -3097,12 +3096,11 @@ msgstr ""
 msgid "Enter a numeric value to define the maximum swap use for the jail."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Enter a one to three paragraph summary of the issue. Describe the problem "
 "and provide any steps to replicate the issue."
-msgstr ""
-"输入一个一到三段的问题描述。Describe the problem and provide any steps to replicate the "
-"issue."
+msgstr "输入一个一到三段的问题描述。Describe the problem and provide any steps to replicate the issue."
 
 msgid "Enter a password for <b>User</b>. Must be between 12 and 16 characters."
 msgstr ""
@@ -3138,15 +3136,13 @@ msgid ""
 "left empty."
 msgstr "输入单独的隐私密码。在留空时则使用<b>密码</b>。"
 
+#, fuzzy
 msgid ""
 "Enter a space-delimited list of IP addresses to <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
 "target=\"_blank\">ping(8)</a>. Each address is tried until one is "
 "successful or the list is exhausted. Leave empty to use the default gateway."
-msgstr ""
-"Enter a space-delimited list of IP addresses to <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
-"target=\"_blank\">ping(8)</a>. 尝试每一个地址直到成功或列表内的地址被耗尽。留空来使用默认网关。"
+msgstr "Enter a space-delimited list of IP addresses to <a href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" target=\"_blank\">ping(8)</a>. 尝试每一个地址直到成功或列表内的地址被耗尽。留空来使用默认网关。"
 
 msgid "Enter a static IPv4 address. Example: <i>10.0.0.2</i>."
 msgstr "输入一个静态IPv4地址 例子：<i>10.0.0.2</i>."
@@ -3164,20 +3160,18 @@ msgid ""
 "<i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>."
 msgstr "输入一个静态IPv6地址例子：<i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>."
 
+#, fuzzy
 msgid ""
 "Enter a threshold temperature in Celsius. SMART will message with a log "
 "level of LOG_CRIT and send an email if the temperature is higher than the "
 "threshold."
-msgstr ""
-"输入一个以摄氏度为单位的阈值温度。SMART will message with a log level of LOG_CRIT and send "
-"an email if the temperature is higher than the threshold."
+msgstr "输入一个以摄氏度为单位的阈值温度。SMART will message with a log level of LOG_CRIT and send an email if the temperature is higher than the threshold."
 
+#, fuzzy
 msgid ""
 "Enter a threshold temperature in Celsius. SMART will message with a log "
 "level of LOG_INFO if the temperature is higher than the threshold."
-msgstr ""
-"输入一个以摄氏度为单位的阈值温度。SMART will message with a log level of LOG_INFO if the "
-"temperature is higher than the threshold."
+msgstr "输入一个以摄氏度为单位的阈值温度。SMART will message with a log level of LOG_INFO if the temperature is higher than the threshold."
 
 msgid ""
 "Enter a unique IPv4 address that is in the local network and not already in "
@@ -3212,6 +3206,7 @@ msgstr "输入一个用于VNET3接口的有效MAC地址。"
 msgid "Enter a valid MAC address for the VNET3 interface."
 msgstr "输入一个用于VNET3接口的有效MAC地址。"
 
+#, fuzzy
 msgid "Enter a valid MAC address vendor prefix. <b>Example:</b> <i>E4F4C6</i>"
 msgstr "Enter a valid MAC address vendor prefix. <b>例子：</b> <i>E4F4C6</i>"
 
@@ -3221,14 +3216,13 @@ msgid ""
 "target=\"_blank\">FreeNAS bug tracking system</a>"
 msgstr "输入<a href=\"https://jira.ixsystems.com/projects/NAS/issues/\" target=\"_blank\">FreeNAS错误跟踪系统</a>的有效用户名"
 
+#, fuzzy
 msgid ""
 "Enter a value in seconds for the the UPS to wait before initiating "
 "shutdown. Shutdown will not occur if power is restored while the timer is "
 "counting down. This value only applies when <b>Shutdown mode</b> is set to "
 "<i>UPS goes on battery</i>."
-msgstr ""
-"Enter a value in seconds for the the UPS to wait before initiating "
-"shutdown. 关机不会在当计时器倒数电源恢复时发生。这个值仅在<b>关机模式</b>设置为<i>UPS切换到电池</i>时有效。"
+msgstr "Enter a value in seconds for the the UPS to wait before initiating shutdown. 关机不会在当计时器倒数电源恢复时发生。这个值仅在<b>关机模式</b>设置为<i>UPS切换到电池</i>时有效。"
 
 msgid ""
 "Enter a value to use for the <a "
@@ -3238,22 +3232,21 @@ msgid ""
 "configtuning-sysctl.html\" target=\"_blank\">sysctl</a>, or <a "
 "href=\"https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/config-"
 "tuning.html\" target=\"_blank\">rc.conf</a> variable."
-msgstr ""
+msgstr "输入要用于<a href=\"https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/boot-introduction.html#boot-loader-commands\" target=\"_blank\">loader</a> ， <a href=\"https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/configtuning-sysctl.html\" target=\"_blank\">sysctl</a>或<a href=\"https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/config-tuning.html\" target=\"_blank\">rc.conf</a>变量的值。"
 
+#, fuzzy
 msgid ""
 "Enter accounts that have administrative access. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=upsd.users\" "
 "target=\"_blank\">upsd.users(5)</a> for examples."
-msgstr ""
+msgstr "Enter accounts that have administrative access. See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=upsd.users\" target=\"_blank\">upsd.users(5)</a> for examples."
 
+#, fuzzy
 msgid ""
 "Enter additional <b>smb.conf</b> options. See the <a "
 "href=\"http://www.oreilly.com/openbook/samba/book/appb_02.html\" "
 "target=\"_blank\">Samba Guide</a> for more information on these settings."
-msgstr ""
-"编辑额外<b>smb.conf</b>参数。See the <a "
-"href=\"http://www.oreilly.com/openbook/samba/book/appb_02.html\" "
-"target=\"_blank\">Samba Guide</a> for more information on these settings."
+msgstr "编辑额外<b>smb.conf</b>参数。See the <a href=\"http://www.oreilly.com/openbook/samba/book/appb_02.html\" target=\"_blank\">Samba Guide</a> for more information on these settings."
 
 msgid ""
 "Enter additional space-delimited parameters from <a "
@@ -3270,6 +3263,7 @@ msgstr "输入一个IPv6地址。这将会覆盖DHCP分配的默认网关。"
 msgid "Enter an alias. Limited to 15 characters."
 msgstr "输入一个别名。限制15个字符。"
 
+#, fuzzy
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
 "(-) characters are allowed."
@@ -3305,11 +3299,12 @@ msgid ""
 "target=\"_blank\">snmpd.conf(5)</a> options. Add one option for each line."
 msgstr "输入任何其他<a href=\"http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html\" target=\"_blank\">snmpd.conf（5）</a>选项"
 
+#, fuzzy
 msgid ""
 "Enter any additional parameters from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a>."
-msgstr ""
+msgstr "Enter any additional parameters from <a href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" target=\"_blank\">rsyncd.conf(5)</a>."
 
 msgid ""
 "Enter any email addresses to receive status updates. Separate multiple "
@@ -3320,13 +3315,13 @@ msgid ""
 "Enter any extra options from <a "
 "href=\"http://networkupstools.org/docs/man/ups.conf.html\" "
 "target=\"_blank\">UPS.CONF(5)</a>."
-msgstr ""
+msgstr "输入<a href=\"http://networkupstools.org/docs/man/ups.conf.html\" target=\"_blank\">UPS.CONF（5）的</a>任何其他选项。"
 
 msgid ""
 "Enter any extra options from <a "
 "href=\"http://networkupstools.org/docs/man/upsd.conf.html\" "
 "target=\"_blank\">UPSD.CONF(5)</a>."
-msgstr ""
+msgstr "输入<a href=\"http://networkupstools.org/docs/man/upsd.conf.html\" target=\"_blank\">UPSD.CONF（5）的</a>任何额外选项。"
 
 msgid "Enter any notes about the jail here."
 msgstr "此处输入这个Jail的备注。"
@@ -3343,6 +3338,7 @@ msgstr "输入备注。"
 msgid "Enter comments about the jail."
 msgstr "输入Jail的注释。"
 
+#, fuzzy
 msgid ""
 "Enter either <i>root</i> or another valid <i>username</i>. Inside the jail, "
 "commands run as this user."
@@ -3383,7 +3379,7 @@ msgstr "输入Active Directory管理员帐户名称。"
 msgid ""
 "Enter the Active Directory domain (<i>example.com</i>) or child domain "
 "(<i>sales.example.com</i>)."
-msgstr ""
+msgstr "输入Active Directory域（ <i>example.com</i> ）或子域（ <i>sales.example.com</i> ）。"
 
 msgid ""
 "Enter the FreeBSD device name of the interface. This cannot change after "
@@ -3411,7 +3407,7 @@ msgid "Enter the IP address or hostname for SNMP UPS."
 msgstr "输入用于SNMP UPS的IP地址或域名。"
 
 msgid "Enter the IP address or hostname of a remote server running Graphite."
-msgstr ""
+msgstr "输入运行Graphite的远程服务器的IP地址或主机名。"
 
 #, fuzzy
 msgid ""
@@ -3440,7 +3436,7 @@ msgid "Enter the SSH Port of the remote system."
 msgstr "输入远程系统的SSH端口。"
 
 msgid "Enter the TCP port which provides the S3 service."
-msgstr ""
+msgstr "输入提供S3服务的TCP端口。"
 
 msgid ""
 "Enter the ZFS pool/dataset on the remote or                 destination "
@@ -3463,19 +3459,19 @@ msgid "Enter the decryption passphrase."
 msgstr "输入解密密码短语。"
 
 msgid "Enter the default gateway of the IPv4 connection."
-msgstr "输入IPv4默认网关。"
+msgstr "输入IPv4连接的默认网关。"
 
 msgid ""
 "Enter the desired address into the field to override the randomized MAC "
 "address."
-msgstr ""
+msgstr "在字段中输入期望的地址以覆盖随机化的MAC地址。"
 
 #, fuzzy
 msgid "Enter the email address of the new user."
 msgstr "输入网关的IP地址。"
 
 msgid "Enter the email address of the person responsible for the CA."
-msgstr ""
+msgstr "输入负责CA的人员的电子邮件地址。"
 
 msgid ""
 "Enter the extent name. The name cannot be an existing file within the pool "
@@ -3483,16 +3479,16 @@ msgid ""
 msgstr ""
 
 msgid "Enter the filesystem to snapshot."
-msgstr ""
+msgstr "输入要快照的文件系统。"
 
 msgid "Enter the full path to the command or script to                be run."
-msgstr ""
+msgstr "输入要运行的命令或脚本的完整路径。"
 
 msgid "Enter the hostname or IP address of the <b>NTP</b>   server."
-msgstr ""
+msgstr "输入<b>NTP</b>服务器的主机名或IP地址。"
 
 msgid "Enter the hostname or IP address of the <b>NTP</b> server."
-msgstr ""
+msgstr "输入<b>NTP</b>服务器的主机名或IP地址。"
 
 msgid ""
 "Enter the hostnames or IP addresses of the ISNS servers to be registered "
@@ -3504,8 +3500,9 @@ msgstr ""
 msgid "Enter the location of the organization. For example, the city."
 msgstr "输入组织的位置"
 
+#, fuzzy
 msgid "Enter the location of the system."
-msgstr ""
+msgstr "Enter the location of the system."
 
 #, fuzzy
 msgid ""
@@ -3513,34 +3510,32 @@ msgid ""
 "Increase this if users are prone to typos."
 msgstr "输入客户端断开连接之前的最大尝试次数"
 
+#, fuzzy
 msgid ""
 "Enter the mountpoint for the <b>jail_zfs_dataset</b>. <b>Example:</b> "
 "<i>/data example-dataset-name</i>"
-msgstr ""
-"Enter the mountpoint for the <b>jail_zfs_dataset</b>. <b>例子：</b> <i>/data "
-"example-dataset-name</i>"
+msgstr "Enter the mountpoint for the <b>jail_zfs_dataset</b>. <b>例子：</b> <i>/data example-dataset-name</i>"
 
 msgid ""
 "Enter the mutual secret password which <b>must be different than the "
 "<i>Secret</i></b>. Required if <b>Peer User</b> is set."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Enter the name and port of the server that reports the external IP address. "
 "Example: <b>server.name.org:port</b>."
-msgstr ""
-"Enter the name and port of the server that reports the external IP address. "
-"例子：<b>server.name.org:端口</b>."
+msgstr "Enter the name and port of the server that reports the external IP address. 例子：<b>server.name.org:端口</b>."
 
+#, fuzzy
 msgid "Enter the name of the Key Distribution Center."
-msgstr ""
+msgstr "Enter the name of the Key Distribution Center."
 
+#, fuzzy
 msgid ""
 "Enter the name of the Virtual Interface. Use the format <i>vlanX</i> where "
 "<i>X</i> is a number representing a non-parent VLAN interface."
-msgstr ""
-"输入虚拟接口名称。Use the format <i>vlanX</i> where <i>X</i> is a number "
-"representing a non-parent VLAN interface."
+msgstr "输入虚拟接口名称。Use the format <i>vlanX</i> where <i>X</i> is a number representing a non-parent VLAN interface."
 
 msgid "Enter the name of the boot entry."
 msgstr "输入启动入口名称。"
@@ -3561,26 +3556,28 @@ msgid ""
 "system is running and generally take effect immediately."
 msgstr "输入要配置的加载程序，sysctl或rc.conf变量的名称"
 
+#, fuzzy
 msgid "Enter the name of the realm."
-msgstr ""
+msgstr "Enter the name of the realm."
 
 msgid "Enter the number of SysV shared memory segments."
 msgstr ""
 
 msgid "Enter the numeric tag configured in the switched network."
-msgstr ""
+msgstr "输入交换网络中配置的数字标签。"
 
 msgid "Enter the passphrase for the Private Key."
-msgstr ""
+msgstr "输入私钥的密码。"
 
 msgid "Enter the password associated with <b>Username</b>."
-msgstr ""
+msgstr "输入与<b>用户名</b>关联的密码。"
 
 msgid "Enter the password if the SMTP server requires authentication."
 msgstr ""
 
+#, fuzzy
 msgid "Enter the password that must be used by connecting S3 systems."
-msgstr ""
+msgstr "Enter the password that must be used by connecting S3 systems."
 
 msgid ""
 "Enter the password to be used for the <a "
@@ -3598,15 +3595,15 @@ msgid "Enter the password to submit settings changes."
 msgstr ""
 
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
-msgstr ""
+msgstr "输入用于从Web浏览器连接到IPMI界面的密码。"
 
 msgid "Enter the password used to log in to the provider and update the record."
-msgstr ""
+msgstr "输入用于登录提供程序的密码并更新记录。"
 
 msgid ""
 "Enter the path requested by the <b>CheckIP Server</b> to determine the user "
 "IP address."
-msgstr ""
+msgstr "输入<b>CheckIP服务器</b>请求的路径以确定用户IP地址。"
 
 msgid ""
 "Enter the percentage of free space to remain in the pool. When this "
@@ -3624,10 +3621,11 @@ msgid ""
 "<i>http://user:password@my.proxy.server:3128</i>"
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Enter the relative distinguished name of the site object in the Active "
 "Directory."
-msgstr ""
+msgstr "Enter the relative distinguished name of the site object in the Active Directory."
 
 msgid "Enter the root password to authorize this operation."
 msgstr "输入Root密码来批准这个操作。"
@@ -3635,8 +3633,9 @@ msgstr "输入Root密码来批准这个操作。"
 msgid "Enter the root password."
 msgstr "输入Root密码。"
 
+#, fuzzy
 msgid "Enter the state or province of the organization."
-msgstr ""
+msgstr "Enter the state or province of the organization."
 
 msgid "Enter the subject for status emails."
 msgstr "输入状态邮件的主题。"
@@ -3644,10 +3643,10 @@ msgstr "输入状态邮件的主题。"
 msgid ""
 "Enter the user on the VMware host with permission to snapshot virtual "
 "machines."
-msgstr ""
+msgstr "在具有快照虚拟机权限的VMware主机上输入用户。"
 
 msgid "Enter the username if the SMTP server requires authentication."
-msgstr ""
+msgstr "如果SMTP服务器需要身份验证，请输入用户名。"
 
 msgid "Enter the username used to log in to the provider and update the record."
 msgstr "输入用于登录提供程序的用户名并更新记录。"
@@ -3703,7 +3702,7 @@ msgid "Error decrypting disks"
 msgstr "解密磁盘错误"
 
 msgid "Error deleting dataset "
-msgstr ""
+msgstr "删除zvol错误 "
 
 msgid "Error detaching pool"
 msgstr "分离存储池错误"
@@ -3720,14 +3719,15 @@ msgstr "获取locales时出错"
 msgid "Error getting pool data."
 msgstr "获取存储池数据错误。"
 
+#, fuzzy
 msgid "Error getting pool or dataset data."
-msgstr ""
+msgstr "Error getting pool or dataset data."
 
 msgid "Error importing pool"
 msgstr "导入存储池错误"
 
 msgid "Error locking pool."
-msgstr "锁定存储池时出错"
+msgstr "锁定存储池时出现错误。"
 
 msgid "Error re-keying pool"
 msgstr ""
@@ -3736,7 +3736,7 @@ msgid "Error restarting web service"
 msgstr "重启网络服务错误"
 
 msgid "Error rolling back snapshot"
-msgstr ""
+msgstr "回滚快照时出错"
 
 msgid "Error saving ZVOL."
 msgstr "保存ZVOL时出现错误。"
@@ -3760,7 +3760,7 @@ msgid "Error: Fetching remote release choices failed."
 msgstr ""
 
 msgid "Estimated data capacity available after extension."
-msgstr ""
+msgstr "扩展后可用的估计数据容量。"
 
 msgid "Estimated raw capacity:"
 msgstr "估计原始容量："
@@ -3775,7 +3775,7 @@ msgid "Export Certificate"
 msgstr "导出证书"
 
 msgid "Export Password Secret Seed"
-msgstr ""
+msgstr "导出密码秘密种子"
 
 msgid "Export Private Key"
 msgstr "导出私钥"
@@ -3799,26 +3799,31 @@ msgid "Extend Pool"
 msgstr "扩展存储池"
 
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
-msgstr ""
+msgstr "扩展加密池会重置密码和恢复密钥！"
 
+#, fuzzy
 msgid "Extent"
-msgstr "扩展"
+msgstr "Extent"
 
+#, fuzzy
 msgid "Extent name"
-msgstr ""
+msgstr "Extent name"
 
+#, fuzzy
 msgid "Extent size"
-msgstr "Extent 尺寸"
+msgstr "Extent size"
 
+#, fuzzy
 msgid "Extent type"
-msgstr ""
+msgstr "Extent type"
 
 msgid "Extra Users"
-msgstr ""
+msgstr "额外用户"
 
 msgid "Extra options"
 msgstr "额外选项"
 
+#, fuzzy
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr "FTP Host to connect to. 例子：<i>ftp.example.com</i>."
 
@@ -3829,7 +3834,7 @@ msgid "Failed"
 msgstr "失败"
 
 msgid "Fetch and Install Updates"
-msgstr ""
+msgstr "获取并安装更新"
 
 msgid "File Mask"
 msgstr ""
@@ -3895,15 +3900,15 @@ msgstr ""
 msgid ""
 "Forces the addition of the <b>NTP</b> server,   even if it is currently "
 "unreachable."
-msgstr ""
+msgstr "强制添加<b>NTP</b>服务器，即使它当前无法访问。"
 
 msgid ""
 "Forces the addition of the <b>NTP</b> server, even if it is currently "
 "unreachable."
-msgstr ""
+msgstr "强制添加<b>NTP</b>服务器，即使它当前无法访问。"
 
 msgid "Form Invalid"
-msgstr ""
+msgstr "无效"
 
 msgid "From"
 msgstr "来自"
@@ -3944,7 +3949,7 @@ msgstr "生成调试文件"
 msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
 "target=\"_blank\">sudo</a>."
-msgstr ""
+msgstr "授予此用户使用<a href=\"https://www.sudo.ws/\" target=\"_blank\">sudo的</a>权限。"
 
 #, fuzzy
 msgid ""
@@ -3962,14 +3967,16 @@ msgid "Global auxiliary parameters"
 msgstr "全局附加参数"
 
 msgid "Global password to unlock SEDs."
-msgstr ""
+msgstr "解锁SED的全局密码。"
 
+#, fuzzy
 msgid "Go Back to Jails"
-msgstr ""
+msgstr "Go Back to Jails"
 
 msgid "Group"
 msgstr "群组"
 
+#, fuzzy
 msgid "Group Bind Path"
 msgstr "用户组 Bind 路径"
 
@@ -4027,11 +4034,13 @@ msgstr "隐藏标准错误"
 msgid "Hide Standard Output"
 msgstr "隐藏标准输出"
 
+#, fuzzy
 msgid "Hide Stderr"
-msgstr "隐藏标准错误输出（Stderr）"
+msgstr "Hide Stderr"
 
+#, fuzzy
 msgid "Hide Stdout"
-msgstr "隐藏标准输出（Stdout）"
+msgstr "Hide Stdout"
 
 #, fuzzy
 msgid ""
@@ -4066,7 +4075,7 @@ msgid "Hostname"
 msgstr "主机名"
 
 msgid "Hostname or IP address of SMTP server to use for sending this email."
-msgstr ""
+msgstr "用于发送此电子邮件的SMTP服务器的主机名或IP地址。"
 
 msgid "Hostnames Lookups"
 msgstr ""
@@ -4080,20 +4089,22 @@ msgstr "禁止主机"
 msgid "Hour"
 msgstr "小时"
 
+#, fuzzy
 msgid "Hover to expand"
-msgstr ""
+msgstr "Hover to expand"
 
 msgid "How often the IP is checked in seconds."
-msgstr ""
+msgstr "在一秒钟内检查IP的频率。"
 
 msgid "I Understand"
 msgstr "我理解"
 
+#, fuzzy
 msgid "IBurst"
 msgstr "IBurst"
 
 msgid "ID & Groups"
-msgstr ""
+msgstr "用户与群组"
 
 msgid "IP Address"
 msgstr "IP 地址"
@@ -4177,7 +4188,7 @@ msgid "ISNS Servers"
 msgstr "ISNS 服务器"
 
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 msgid "Identifier"
 msgstr "标识"
@@ -4189,10 +4200,10 @@ msgid "Idmap backend"
 msgstr "Idmap后端"
 
 msgid "If selected, sets several environment variables."
-msgstr ""
+msgstr "如果选中，则设置多个环境变量。"
 
 msgid "If set when troubleshooting a connection, logs more verbosely."
-msgstr ""
+msgstr "如果在对连接进行故障排除时设置，会更详细的记录日志。"
 
 #, fuzzy
 msgid ""
@@ -4203,15 +4214,15 @@ msgstr "如果设置，则AFP在枚举池列表时不会统计池路径"
 msgid ""
 "If set, the DNS name of the client must resolve to its IP address and the "
 "cert must contain the same DNS name."
-msgstr ""
+msgstr "如果设置，则客户端的DNS名称必须解析为其IP地址，并且证书必须包含相同的DNS名称。"
 
 msgid ""
 "If set, the client certificate must contain the IP address that matches the "
 "IP address of the client."
-msgstr ""
+msgstr "如果设置，则客户端证书必须包含与客户端的IP地址匹配的IP地址。"
 
 msgid "If set, the password of the user can be sent unencrypted."
-msgstr ""
+msgstr "如果设置，则可以未加密的方式发送用户的密码。"
 
 #, fuzzy
 msgid ""
@@ -4228,7 +4239,7 @@ msgstr ""
 msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
-msgstr ""
+msgstr "如果IPMI带外管理接口与管理网络位于不同的VLAN，请输入IPMI VLAN。"
 
 msgid ""
 "If the size is specified as <i>0</i>, the file must already exist and the "
@@ -4246,7 +4257,7 @@ msgid "Import Disk"
 msgstr "导入磁盘"
 
 msgid "Import a pool that exists but is not connected."
-msgstr "导入一个已知但未被导入的存储池。"
+msgstr "导入一个已知但未被连接的存储池。"
 
 msgid "Import an existing pool"
 msgstr "导入一个现有存储池"
@@ -4261,8 +4272,9 @@ msgstr "导入磁盘中..."
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr "KiB/s"
 
+#, fuzzy
 msgid "Include Password Secret Seed"
-msgstr ""
+msgstr "Include Password Secret Seed"
 
 msgid ""
 "Include snapshots of child datasets from the                 primary "
@@ -4301,23 +4313,25 @@ msgid ""
 "demonstrates how to determine if a drive has spun down."
 msgstr ""
 
+#, fuzzy
 msgid "Informational"
-msgstr "信息报告"
+msgstr "Informational"
 
 msgid "Init/Shutdown Scripts"
 msgstr "启动/关机脚本"
 
 msgid "Initiator Group ID"
-msgstr "Initiator 组 ID"
+msgstr "发起人组 ID"
 
+#, fuzzy
 msgid "Initiators"
-msgstr "Initiator"
+msgstr "Initiators"
 
 msgid "Input the pre-defined S3 bucket to use."
-msgstr ""
+msgstr "输入要使用的预定义S3存储桶。"
 
 msgid "Input the pre-defined container to use."
-msgstr ""
+msgstr "输入要使用的预定义容器。"
 
 msgid "Install"
 msgstr "安装"
@@ -4359,27 +4373,26 @@ msgid "Invalid password"
 msgstr "密码错误"
 
 msgid "Invalid regex filter"
-msgstr ""
+msgstr "无效的正则表达式过滤器"
 
 msgid "Is the pool encrypted?"
-msgstr ""
+msgstr "池加密了吗？"
 
+#, fuzzy
 msgid "Issuer"
-msgstr "发行者"
+msgstr "Issuer"
 
+#, fuzzy
 msgid ""
 "It is not recommended to create a pool with vdevs containing different "
 "numbers of disks. Continue?"
-msgstr ""
-"It is not recommended to create a pool with vdevs containing different "
-"numbers of disks. 继续？"
+msgstr "It is not recommended to create a pool with vdevs containing different numbers of disks. 继续？"
 
+#, fuzzy
 msgid ""
 "It is not recommended to extend a pool with one or more vdevs containing "
 "different numbers of disks. Continue?"
-msgstr ""
-"It is not recommended to extend a pool with one or more vdevs containing "
-"different numbers of disks. 继续？"
+msgstr "It is not recommended to extend a pool with one or more vdevs containing different numbers of disks. 继续？"
 
 msgid "Jail"
 msgstr "Jail"
@@ -4387,12 +4400,11 @@ msgstr "Jail"
 msgid "Jail "
 msgstr "Jail "
 
+#, fuzzy
 msgid ""
 "Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, "
 "separated by commas (,). <b>Example:</b> <i>1,2,3,4</i>"
-msgstr ""
-"Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, "
-"separated by commas (,). <b>样例：</b> <i>1,2,3,4</i>"
+msgstr "Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, separated by commas (,). <b>样例：</b> <i>1,2,3,4</i>"
 
 msgid "Jail Name"
 msgstr "Jail名称"
@@ -4401,16 +4413,16 @@ msgid "Jail Properties"
 msgstr "Jail属性"
 
 msgid "Jail Update Failed"
-msgstr ""
+msgstr "Jail更新失败"
 
 msgid "Jail core dump size in bytes."
 msgstr "Jail核心转储大小(bytes)。"
 
 msgid "Jail data size in bytes."
-msgstr ""
+msgstr "Jail核心转储大小(bytes)。"
 
 msgid "Jail stack size in bytes."
-msgstr ""
+msgstr "Jail核心转储大小(bytes)。"
 
 msgid "Jails"
 msgstr "Jails"
@@ -4429,18 +4441,22 @@ msgstr "保持zvol名称简短。使用一个长于63个字符的zvol名称会�
 msgid "Keep user primary group"
 msgstr "保留用户主组"
 
+#, fuzzy
 msgid "Kerberos Keytab"
-msgstr ""
+msgstr "Kerberos Keytab"
 
+#, fuzzy
 msgid "Kerberos Keytabs"
-msgstr ""
+msgstr "Kerberos 设置"
 
+#, fuzzy
 msgid "Kerberos Principal"
-msgstr ""
+msgstr "Kerberos Principal"
 
 msgid "Kerberos Realm"
 msgstr "Kerberos域"
 
+#, fuzzy
 msgid "Kerberos Realms"
 msgstr "Kerberos Realm"
 
@@ -4451,13 +4467,14 @@ msgid "Key Length"
 msgstr "密钥长度"
 
 msgid "LDAP"
-msgstr ""
+msgstr "LDAP"
 
 msgid "LDAP Domain"
-msgstr ""
+msgstr "LDAP域名"
 
+#, fuzzy
 msgid "LDAP Realm"
-msgstr ""
+msgstr "LDAP Realm"
 
 msgid "LDAP Server"
 msgstr "LDAP 服务器"
@@ -4465,27 +4482,29 @@ msgstr "LDAP 服务器"
 msgid "LDAP URL"
 msgstr "LDAP URL"
 
+#, fuzzy
 msgid "LDAP User DN"
 msgstr "LDAP 用户 DN"
 
+#, fuzzy
 msgid "LDAP User DN Password"
 msgstr "LDAP 用户 DN 密码"
 
+#, fuzzy
 msgid ""
 "LDAP server to use for SID/uid/gid map entries. When undefined, idmap_ldap "
 "uses *ldap://localhost/*. Example: "
 "<i>ldap://ldap.netscape.com/o=Airius.com</i>."
-msgstr ""
-"LDAP server to use for SID/uid/gid map entries. When undefined, idmap_ldap "
-"uses *ldap://localhost/*. 例子：<i>ldap://ldap.netscape.com/o=Airius.com</i>."
+msgstr "LDAP server to use for SID/uid/gid map entries. When undefined, idmap_ldap uses *ldap://localhost/*. 例子：<i>ldap://ldap.netscape.com/o=Airius.com</i>."
 
 msgid "LDAP timeout"
 msgstr "LDAP超时"
 
+#, fuzzy
 msgid ""
 "LDAP timeout in seconds. Increase this value if a Kerberos ticket timeout "
 "occurs."
-msgstr ""
+msgstr "DNS超时（秒）。Increase this value if DNS queries timeout."
 
 msgid "LEGACY WEB INTERFACE"
 msgstr "经典用户界面"
@@ -4494,7 +4513,7 @@ msgid "LUN ID"
 msgstr "LUN ID"
 
 msgid "LUN RPM"
-msgstr ""
+msgstr "LUN RPM"
 
 msgid "Lagg Interface"
 msgstr "链路聚合接口"
@@ -4529,8 +4548,9 @@ msgid ""
 "Endpoints</a>."
 msgstr ""
 
+#, fuzzy
 msgid "Leave empty or select number of existing portal to use."
-msgstr ""
+msgstr "Leave empty or select number of existing portal to use."
 
 #, fuzzy
 msgid ""
@@ -4548,8 +4568,9 @@ msgstr "Appdefaults辅助参数"
 msgid "License"
 msgstr "许可"
 
+#, fuzzy
 msgid "Lifetime"
-msgstr "有效期(天)"
+msgstr "Lifetime"
 
 msgid "Limit (kpbs)"
 msgstr "限制 (kpbs)"
@@ -4568,7 +4589,7 @@ msgid "Link Aggregations"
 msgstr "链路聚合"
 
 msgid "List of system services to restart when the pool is unlocked."
-msgstr ""
+msgstr "池解锁时要重新启动的系统服务列表。"
 
 msgid ""
 "List up to four interface configurations in the format "
@@ -4580,8 +4601,9 @@ msgstr ""
 msgid "Load Average"
 msgstr "平均负载"
 
+#, fuzzy
 msgid "Local Master"
-msgstr ""
+msgstr "Local Master"
 
 msgid "Local User Download Bandwidth"
 msgstr "本地用户下载带宽"
@@ -4613,8 +4635,9 @@ msgstr "日志级别"
 msgid "Log Out"
 msgstr "登出"
 
+#, fuzzy
 msgid "Log VDev"
-msgstr ""
+msgstr "Log VDev"
 
 msgid "Log in"
 msgstr "登录"
@@ -4640,16 +4663,13 @@ msgstr "登录尝试"
 msgid "Logs"
 msgstr "日志"
 
+#, fuzzy
 msgid ""
 "Lowercase alphanumeric characters plus dot (.), dash (-), and colon (:) are "
 "allowed. See the <i>Constructing iSCSI names using the iqn.format</i> "
 "section of <a href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>."
-msgstr ""
-"允许字母数字、“.”、“-”, 和“:”。查看 <a "
-"href=\"https://tools.ietf.org/html/rfc3721.html\" "
-"target=\"_blank\">RFC3721</a>的<i>Constructing iSCSI names using the "
-"iqn.format</i>章节。"
+msgstr "允许字母数字、“.”、“-”, 和“:”。查看 <a href=\"https://tools.ietf.org/html/rfc3721.html\" target=\"_blank\">RFC3721</a>的<i>Constructing iSCSI names using the iqn.format</i>章节。"
 
 msgid "MAC Address"
 msgstr "MAC地址"
@@ -4658,7 +4678,7 @@ msgid "MOTD Banner"
 msgstr "MOTD横幅"
 
 msgid "MSDOSFS locale"
-msgstr ""
+msgstr "MSDOSFS语言环境"
 
 msgid "Mac Address"
 msgstr "MAC地址"
@@ -4675,8 +4695,9 @@ msgstr "管理"
 msgid "Manycast"
 msgstr "多播"
 
+#, fuzzy
 msgid "Map ACLs"
-msgstr ""
+msgstr "Map ACLs"
 
 msgid "Mapall Group"
 msgstr "Mapall组"
@@ -4694,7 +4715,7 @@ msgid "Masquerade Address"
 msgstr "地址伪装"
 
 msgid "Master Application Key or Application Key"
-msgstr ""
+msgstr "主应用密钥或应用密钥"
 
 msgid ""
 "Matching the fixed size of data, as in a database, may result in better "
@@ -4708,17 +4729,16 @@ msgid "Max. Poll"
 msgstr "最大Poll"
 
 msgid "Maximum Passive Port"
-msgstr ""
+msgstr "最大被动端口"
 
 msgid "Maximum SysV message queue size in bytes for the jail."
-msgstr ""
+msgstr "jail的最大SysV消息队列大小（以字节为单位）。"
 
+#, fuzzy
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
 "terminates processes exceeding the specified limit."
-msgstr ""
-"Jail进程最大可使用的CPU时间。The kernel terminates processes exceeding the specified "
-"limit."
+msgstr "Jail进程最大可使用的CPU时间。The kernel terminates processes exceeding the specified limit."
 
 msgid ""
 "Maximum amount of time in seconds to wait for a command to complete. A jail "
@@ -4728,12 +4748,11 @@ msgstr ""
 "等待一个命令运行完毕的最长等待时间。A jail cannot be created or removed when a command is "
 "still running after the allotted time."
 
+#, fuzzy
 msgid ""
 "Maximum amount of time in seconds to wait for a command to complete. If a "
 "command is still running after the allotted time, the jail is terminated."
-msgstr ""
-"等待一个命令运行完毕的最长等待时间。If a command is still running after the allotted time, "
-"the jail is terminated."
+msgstr "等待一个命令运行完毕的最长等待时间。If a command is still running after the allotted time, the jail is terminated."
 
 msgid ""
 "Maximum amount of time in seconds to wait for jail processes to exit after "
@@ -4758,14 +4777,16 @@ msgid ""
 msgstr "发送SIGTERM信号后等待jail进程退出的最长时间（以秒为单位）"
 
 msgid "Maximum client idle time in seconds before client is disconnected."
-msgstr ""
+msgstr "断开客户端之前的最大客户端空闲时间（秒）。"
 
 msgid "Maximum number of SysV message queues."
-msgstr ""
+msgstr "SysV消息队列的最大数量。"
 
+#, fuzzy
 msgid "Maximum number of processes for the jail."
-msgstr ""
+msgstr "Maximum number of processes for the jail."
 
+#, fuzzy
 msgid ""
 "Maximum number of simultaneous connections permitted via AFP. The default "
 "limit is 50."
@@ -4783,8 +4804,9 @@ msgstr "成员磁盘"
 msgid "Members"
 msgstr "成员"
 
+#, fuzzy
 msgid "Members of"
-msgstr ""
+msgstr "Members of"
 
 msgid "Memory"
 msgstr "内存"
@@ -4815,7 +4837,7 @@ msgid "Min. Poll"
 msgstr "最小Poll"
 
 msgid "Minimum Passive Port"
-msgstr ""
+msgstr "最小被动端口"
 
 msgid "Minute"
 msgstr "分钟"
@@ -4833,7 +4855,7 @@ msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>."
-msgstr ""
+msgstr "修改具有<a href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" target=\"_blank\">AAM</a>的磁盘。"
 
 msgid "Monitor Password"
 msgstr "监察员密码"
@@ -4876,14 +4898,12 @@ msgstr ""
 msgid "Mount points"
 msgstr "挂载点"
 
+#, fuzzy
 msgid ""
 "Multi-domain support. Enter additional domains to secure, separated by "
 "spaces. For example, if the primary domain is example.com, entering "
 "www.example.com will secure both addresses."
-msgstr ""
-"多域名支持。Enter additional domains to secure, separated by spaces. For example, "
-"if the primary domain is example.com, entering www.example.com will secure "
-"both addresses."
+msgstr "多域名支持。Enter additional domains to secure, separated by spaces. For example, if the primary domain is example.com, entering www.example.com will secure both addresses."
 
 msgid "Multipaths"
 msgstr "多路径"
@@ -4900,13 +4920,14 @@ msgid "N/A"
 msgstr "不可用"
 
 msgid "NFSv3 ownership model for NFSv4"
-msgstr ""
+msgstr "NFSv4的NFSv3所有权模型"
 
 msgid "NIC"
 msgstr "网卡"
 
+#, fuzzy
 msgid "NIS"
-msgstr "网卡"
+msgstr "NIS"
 
 msgid "NIS domain"
 msgstr "NIS 域"
@@ -4921,22 +4942,22 @@ msgid "NTLMv1 Auth"
 msgstr "NTLMv1认证"
 
 msgid "NTP Servers"
-msgstr "网络授时服务器(NTP)列表"
+msgstr "网络授时服务器(NTP)"
 
 msgid "Name"
 msgstr "名称"
 
 msgid "Name & Contact"
-msgstr ""
+msgstr "姓名和联系方式"
 
 msgid "Name Jail and Choose FreeBSD Release"
-msgstr ""
+msgstr "命名Jail并选择FreeBSD发行版本"
 
 msgid "Name Servers"
 msgstr "域名服务器"
 
 msgid "Name of NIS domain."
-msgstr ""
+msgstr "NIS域名。"
 
 msgid ""
 "Name of a <a "
@@ -4945,7 +4966,7 @@ msgid ""
 msgstr ""
 
 msgid "Name of the WebDAV site, service, or software being used."
-msgstr ""
+msgstr "正在使用的WebDAV站点，服务或软件的名称。"
 
 msgid "Name the new raw file."
 msgstr ""
@@ -4980,12 +5001,11 @@ msgstr "NetBIOS 别名"
 msgid "Netbios Name"
 msgstr "NetBIOS 名称"
 
+#, fuzzy
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
 "name and be no greater than 15 characters."
-msgstr ""
-"这个NAS的Netbios名称。This name must differ from the <i>Workgroup</i> name and be "
-"no greater than 15 characters."
+msgstr "这个NAS的Netbios名称。This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters."
 
 msgid "Netwait IP list"
 msgstr "Netwait IP列表"
@@ -5031,6 +5051,7 @@ msgstr "如果<i>wheel</i>是其主要组，则不向新用户授予<b>su</b>权
 msgid "Next"
 msgstr "下一步"
 
+#, fuzzy
 msgid "Nic to attach:"
 msgstr "Nic附加："
 
@@ -5038,7 +5059,7 @@ msgid "No"
 msgstr "否"
 
 msgid "No Communication Warning Time"
-msgstr ""
+msgstr "没有通讯警告时间"
 
 msgid "No Stat"
 msgstr "没有数据"
@@ -5061,7 +5082,7 @@ msgid "No, continue with import"
 msgstr "否，继续导入"
 
 msgid "Not run since last boot"
-msgstr ""
+msgstr "自上次启动后未运行"
 
 msgid "Note"
 msgstr "备注"
@@ -5078,17 +5099,18 @@ msgstr "备注"
 msgid "Number of CPUs"
 msgstr "处理器数量"
 
+#, fuzzy
 msgid ""
 "Number of SysV semaphores modified in a single <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=semop\" "
 "target=\"_blank\">semop(2)</a> call."
-msgstr ""
+msgstr "Number of SysV semaphores modified in a single <a href=\"https://www.freebsd.org/cgi/man.cgi?query=semop\" target=\"_blank\">semop(2)</a> call."
 
 msgid "Number of SysV shared memory segments in bytes."
-msgstr ""
+msgstr "SysV共享内存段的数量，以字节为单位。"
 
 msgid "Number of SysV shared memory segments."
-msgstr ""
+msgstr "SysV共享内存段的数量。"
 
 #, fuzzy
 msgid ""
@@ -5109,12 +5131,13 @@ msgid ""
 msgstr ""
 
 msgid "Number of queued SysV messages allowed for the jail."
-msgstr ""
+msgstr "允许jail的排队SysV消息数。"
 
+#, fuzzy
 msgid ""
 "Number of seconds before a timeout. Increase this value if AD DNS queries "
 "time out."
-msgstr ""
+msgstr "DNS超时（秒）。Increase this value if DNS queries timeout."
 
 #, fuzzy
 msgid ""
@@ -5125,28 +5148,25 @@ msgstr "超时前的秒数"
 msgid "Number of servers"
 msgstr "服务器数量"
 
+#, fuzzy
 msgid ""
 "Number of virtual CPUs to allocate to the virtual machine. The maximum is "
 "16, or fewer if the host CPU limits the maximum. The VM operating system "
 "might also have operational or licensing restrictions on the number of CPUs."
-msgstr ""
-"分配给虚拟机的虚拟处理器数量最大是16或更少，如果主机处理器限制了最大。The VM operating system might also have "
-"operational or licensing restrictions on the number of CPUs."
+msgstr "分配给虚拟机的虚拟处理器数量最大是16或更少，如果主机处理器限制了最大。The VM operating system might also have operational or licensing restrictions on the number of CPUs."
 
+#, fuzzy
 msgid ""
 "Numeric start priority for the jail at boot time. Valid priorities are "
 "between 1 and 99. <b>Smaller</b> values are <b>higher</b> priority. At "
 "system shutdown the priority is reversed. <br> <b>Example:</b> <i>99</i>"
-msgstr ""
-"Numeric start priority for the jail at boot time. Valid priorities are "
-"between 1 and 99. <b>Smaller</b> values are <b>higher</b> priority. At "
-"system shutdown the priority is reversed. <br> <b>样例：</b> <i>99</i>"
+msgstr "Numeric start priority for the jail at boot time. Valid priorities are between 1 and 99. <b>Smaller</b> values are <b>higher</b> priority. At system shutdown the priority is reversed. <br> <b>样例：</b> <i>99</i>"
 
 msgid "Numeric value for the number of PTYs available to the jail."
-msgstr ""
+msgstr "jail可用的PTY数量的数值。"
 
 msgid "Numeric value to set the file descriptor table size."
-msgstr ""
+msgstr "用于设置文件描述符表大小的数值。"
 
 msgid "OK"
 msgstr "是"
@@ -5157,6 +5177,7 @@ msgstr "系统版本"
 msgid "Obey Pam Restrictions"
 msgstr "服从 pam 管制"
 
+#, fuzzy
 msgid ""
 "Off by default. When set, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" "
@@ -5164,12 +5185,7 @@ msgid ""
 "insecure and vulnerable NTLMv1 encryption. This setting allows backward "
 "compatibility with older versions of Windows, but is not recommended and "
 "should not be used on untrusted networks."
-msgstr ""
-"默认为关闭。When set, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" "
-"target=\"_blank\">smbd(8)</a> attempts to authenticate users with the "
-"insecure and vulnerable NTLMv1 encryption. This setting allows backward "
-"compatibility with older versions of Windows, but is not recommended and "
-"should not be used on untrusted networks."
+msgstr "默认为关闭。When set, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" target=\"_blank\">smbd(8)</a> attempts to authenticate users with the insecure and vulnerable NTLMv1 encryption. This setting allows backward compatibility with older versions of Windows, but is not recommended and should not be used on untrusted networks."
 
 msgid "Official"
 msgstr ""
@@ -5192,12 +5208,11 @@ msgstr "在线"
 msgid "Only Allow Guest Access"
 msgstr "仅允许访客访问"
 
+#, fuzzy
 msgid ""
 "Only appears if <i>Device</i> is selected. Select the unformatted disk, "
 "controller, zvol snapshot, or HAST device."
-msgstr ""
-"只有在<i>Device</i>被选择时出现。Select the unformatted disk, controller, zvol "
-"snapshot, or HAST device."
+msgstr "只有在<i>Device</i>被选择时出现。Select the unformatted disk, controller, zvol snapshot, or HAST device."
 
 msgid ""
 "Only appears if a <i>File</i> or zvol is selected. When the specified "
@@ -5234,12 +5249,12 @@ msgid ""
 msgstr ""
 
 msgid "Only override the default if the initiator requires a different block size."
-msgstr ""
+msgstr "如果initiator需要不同的块大小，则仅覆盖缺省值。"
 
 msgid ""
 "Only set LDAP authentication for SMB shares is required and the LDAP server "
 "is already configured with Samba attributes."
-msgstr ""
+msgstr "仅需要为SMB共享设置LDAP身份验证，并且已使用Samba属性配置LDAP服务器。"
 
 msgid ""
 "Only set if the AD server is explicitly configured to  map permissions for "
@@ -5253,11 +5268,13 @@ msgid ""
 "with the selected permissions."
 msgstr "仅适用于Unix ACL"
 
+#, fuzzy
 msgid ""
 "Only works with Unix ACLs. New files created on the share are set with the "
 "selected permissions."
-msgstr "仅适用于Unix ACL"
+msgstr "仅适用于Unix ACL。New files created on the share are set with the selected permissions."
 
+#, fuzzy
 msgid "Opening download window. Make sure pop-ups are enabled in the browser."
 msgstr "Opening download window. 确认浏览器的弹出窗口被启用。"
 
@@ -5265,7 +5282,7 @@ msgid "Operating System"
 msgstr "操作系统"
 
 msgid "Operation"
-msgstr ""
+msgstr "操作"
 
 msgid "Optional comment."
 msgstr "可选评论。"
@@ -5283,7 +5300,7 @@ msgid "Optional."
 msgstr "可选的。"
 
 msgid "Optional. Enter a server description."
-msgstr "可选的。输入服务器说明。"
+msgstr "可选。输入服务器说明。"
 
 msgid "Optional: Choose installation media image"
 msgstr "可选：选择安装介质映像"
@@ -5302,7 +5319,7 @@ msgid "Organization"
 msgstr "组织"
 
 msgid "Outgoing Mail Server"
-msgstr ""
+msgstr "邮件发送服务器"
 
 msgid ""
 "Overrides default directory creation mask of <i>0777</i> which grants "
@@ -5314,8 +5331,9 @@ msgid ""
 "with read and write access for everybody."
 msgstr ""
 
+#, fuzzy
 msgid "Owner of the jail. Can be any string."
-msgstr ""
+msgstr "jail所有人。可以是任何string。"
 
 msgid "PEM-encoded private key file path"
 msgstr ""
@@ -5345,18 +5363,19 @@ msgid "Password Suffix"
 msgstr "密码后缀"
 
 msgid "Password associated with the LDAP User DN."
-msgstr ""
+msgstr "与LDAP用户DN关联的密码。"
 
 msgid "Password for SED"
-msgstr ""
+msgstr "SED密码"
 
 msgid ""
 "Password for the <a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> "
 "account."
 msgstr ""
 
+#, fuzzy
 msgid "Password for the Bind DN."
-msgstr ""
+msgstr "Password for the Bind DN."
 
 msgid "Password for the SSH Username account."
 msgstr "SSH用户名的密码。"
@@ -5364,13 +5383,12 @@ msgstr "SSH用户名的密码。"
 msgid "Password for the username."
 msgstr "用户名密码。"
 
+#, fuzzy
 msgid ""
 "Passwords cannot contain a <b>?</b>. Passwords should be at least eight "
 "characters and contain a mix of lower and upper case, numbers, and special "
 "characters."
-msgstr ""
-"密码不能包含 <b>?</b>。Passwords should be at least eight characters and contain a "
-"mix of lower and upper case, numbers, and special characters."
+msgstr "密码不能包含 <b>?</b>。Passwords should be at least eight characters and contain a mix of lower and upper case, numbers, and special characters."
 
 msgid "Passwords do not match"
 msgstr "密码不匹配"
@@ -5385,10 +5403,11 @@ msgid ""
 "system."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Paste the private key associated with the Certificate when available. "
 "Please provide a key at least 1024 bits long."
-msgstr ""
+msgstr "粘贴与证书关联的私钥（如果可用）。 Please provide a key at least 1024 bits long."
 
 msgid "Path"
 msgstr "路径"
@@ -5400,6 +5419,7 @@ msgid ""
 "<i>/home/$USER/.ssh/id_rsa</i>. Leave blank to use <i>ssh-agent</i>."
 msgstr ""
 
+#, fuzzy
 msgid "Path to the extent"
 msgstr "Extent 路径"
 
@@ -5416,7 +5436,7 @@ msgid "Perform Reverse DNS Lookups"
 msgstr "执行 DNS 反向解析"
 
 msgid "Performs authentication from an LDAP server."
-msgstr ""
+msgstr "从LDAP服务器执行身份验证。"
 
 msgid "Periodic Notification User"
 msgstr "定期通知用户"
@@ -5468,7 +5488,7 @@ msgid "Please wait"
 msgstr "请等待"
 
 msgid "Plugin "
-msgstr "Plugin "
+msgstr "插件 "
 
 msgid "Plugin Installed Successfully"
 msgstr "插件安装成功"
@@ -5476,8 +5496,9 @@ msgstr "插件安装成功"
 msgid "Plugin Name"
 msgstr "插件名"
 
+#, fuzzy
 msgid "Plugin Update Failed"
-msgstr ""
+msgstr "更新插件失败"
 
 msgid "Plugin installed successfully"
 msgstr "插件安装成功"
@@ -5515,6 +5536,7 @@ msgstr "端口"
 msgid "Port or Hostname"
 msgstr "端口或主机名"
 
+#, fuzzy
 msgid "Portal Group ID"
 msgstr "Portal 组 ID"
 
@@ -5524,25 +5546,29 @@ msgstr "电源模式"
 msgid "Power Off UPS"
 msgstr "关闭 UPS"
 
+#, fuzzy
 msgid ""
 "Power of 2 in seconds; cannot be higher than 17 or   lower than <i>Min. "
 "Poll</i>."
-msgstr ""
+msgstr "Power of 2 in seconds; cannot be higher than 17 or   lower than <i>Min. Poll</i>."
 
+#, fuzzy
 msgid ""
 "Power of 2 in seconds; cannot be higher than 17 or lower than <i>Min. "
 "Poll</i>."
-msgstr ""
+msgstr "Power of 2 in seconds; cannot be higher than 17 or lower than <i>Min. Poll</i>."
 
+#, fuzzy
 msgid ""
 "Power of 2 in seconds; cannot be lower than 4 or   higher than <i>Max. "
 "Poll</i>."
-msgstr ""
+msgstr "Power of 2 in seconds; cannot be lower than 4 or   higher than <i>Max. Poll</i>."
 
+#, fuzzy
 msgid ""
 "Power of 2 in seconds; cannot be lower than 4 or higher than <i>Max. "
 "Poll</i>."
-msgstr ""
+msgstr "Power of 2 in seconds; cannot be lower than 4 or higher than <i>Max. Poll</i>."
 
 msgid "Prefer"
 msgstr "首选"
@@ -5557,7 +5583,7 @@ msgid "Preserve permissions"
 msgstr "保留权限"
 
 msgid "Preview JSON Service Account Key"
-msgstr ""
+msgstr "预览JSON服务帐户密钥"
 
 msgid "Previous"
 msgstr "上一步"
@@ -5571,8 +5597,9 @@ msgstr "主用户组"
 msgid "Primary NIC"
 msgstr "主要网卡"
 
+#, fuzzy
 msgid "Priority Code Point"
-msgstr ""
+msgstr "Priority Code Point"
 
 msgid "Privacy Passphrase"
 msgstr "隐私密码短语"
@@ -5586,19 +5613,19 @@ msgstr "私钥"
 msgid "Proceed"
 msgstr "继续"
 
+#, fuzzy
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
 "versions of FreeNAS: "
-msgstr ""
-"继续并升级存储池？警告: Upgrading a pool is a one-way operation that might make some "
-"features of the pool incompatible with older versions of FreeNAS: "
+msgstr "继续并升级存储池？警告: Upgrading a pool is a one-way operation that might make some features of the pool incompatible with older versions of FreeNAS: "
 
 msgid "Processor"
 msgstr "处理器"
 
+#, fuzzy
 msgid "Promote Dataset"
-msgstr ""
+msgstr "Promote Dataset"
 
 msgid "Protocol"
 msgstr "协议"
@@ -5607,12 +5634,13 @@ msgid "Provider"
 msgstr "提供者"
 
 msgid "Provides a pop-up window of diagnostic information if a fatal error occurs."
-msgstr ""
+msgstr "如果发生致命错误，则提供诊断信息的弹出窗口。"
 
+#, fuzzy
 msgid ""
 "Public IP address or hostname. Set if FTP clients cannot connect through a "
 "NAT device."
-msgstr "公网IP地址或域名Set if FTP clients cannot connect through a NAT device."
+msgstr "公网IP地址或域名。Set if FTP clients cannot connect through a NAT device."
 
 msgid "Quick"
 msgstr "快"
@@ -5620,32 +5648,37 @@ msgstr "快"
 msgid "Quiet"
 msgstr "静默"
 
+#, fuzzy
 msgid ""
 "Quota for each Time Machine backup on this share (in GiB). Note that this "
 "change will be applied only after share re-mount."
-msgstr ""
+msgstr "此共享上每个Time Machine备份的配额（在GiB中）。Note that this change will be applied only after share re-mount."
 
+#, fuzzy
 msgid "Quota for this dataset"
-msgstr "压缩率"
+msgstr "Quota for this dataset"
 
+#, fuzzy
 msgid "RCTL Limits"
-msgstr ""
+msgstr "RCTL Limits"
 
 msgid "RRDTool load5"
 msgstr ""
 
 msgid "Raid-z"
-msgstr ""
+msgstr "Raid-z"
 
 msgid "Raid-z2"
-msgstr ""
+msgstr "Raid-z2"
 
 msgid "Raid-z3"
-msgstr ""
+msgstr "Raid-z3"
 
+#, fuzzy
 msgid "Range High"
 msgstr "Range High"
 
+#, fuzzy
 msgid "Range Low"
 msgstr "Range Low"
 
@@ -5686,7 +5719,7 @@ msgid "Read Only"
 msgstr "只读"
 
 msgid "Read Only Access"
-msgstr "只读权限"
+msgstr "只读访问"
 
 msgid "Read-Only"
 msgstr "只读"
@@ -5697,6 +5730,7 @@ msgstr "只读"
 msgid "Read/Write Access"
 msgstr "读/写权限"
 
+#, fuzzy
 msgid "Realm"
 msgstr "Realm"
 
@@ -5735,8 +5769,9 @@ msgstr "恢复密钥"
 msgid "Recovery key added to pool "
 msgstr "恢复密钥已被加入到存储池 "
 
+#, fuzzy
 msgid "Recursive"
-msgstr "循环"
+msgstr "Recursive"
 
 msgid "Recursively Replicate Child Dataset Snapshots"
 msgstr ""
@@ -5748,16 +5783,16 @@ msgid "Register"
 msgstr "注册"
 
 msgid "Release"
-msgstr "发行"
+msgstr "发行版"
 
 msgid "Release Notes"
-msgstr "发行备注"
+msgstr "发行笔记"
 
 msgid "Remote Auth Token"
 msgstr "远程认证令牌"
 
 msgid "Remote Graphite Server Hostname"
-msgstr ""
+msgstr "远程Graphite服务器主机名"
 
 msgid "Remote HTTP/HTTPS Port"
 msgstr "远程HTTP/HTTPS端口"
@@ -5808,7 +5843,7 @@ msgid "Remove Additional Path"
 msgstr "移除额外路径"
 
 msgid "Remove Keep Flag"
-msgstr "移除保持标志"
+msgstr "移除保留标志"
 
 msgid "Rename the existing boot environment."
 msgstr "重命名现有的引导环境。"
@@ -5816,8 +5851,9 @@ msgstr "重命名现有的引导环境。"
 msgid "Replication Stream Compression"
 msgstr "Replication 流压缩"
 
+#, fuzzy
 msgid "Replication Tasks"
-msgstr "Replication 任务"
+msgstr "Replication Tasks"
 
 msgid "Report CPU usage in percentage"
 msgstr "以百分比显示处理器使用率"
@@ -5834,6 +5870,7 @@ msgstr "报告"
 msgid "Require IDENT Authentication"
 msgstr "要求 IDENT 认证"
 
+#, fuzzy
 msgid "Require Kerberos for NFSv4"
 msgstr "NFSv4 需要 Kerberos"
 
@@ -5895,14 +5932,12 @@ msgstr "重置设置"
 msgid "Reset font size to default value"
 msgstr "重置字体大小到默认值"
 
+#, fuzzy
 msgid ""
 "Resident set size in bytes. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=rctl\" "
 "target=\"_blank\">RCTL(8)</a> for more details."
-msgstr ""
-"Resident set size in bytes. 查看<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=rctl\" "
-"target=\"_blank\">RCTL(8)</a>获得更多信息。"
+msgstr "Resident set size in bytes. 查看<a href=\"https://www.freebsd.org/cgi/man.cgi?query=rctl\" target=\"_blank\">RCTL(8)</a>获得更多信息。"
 
 msgid "Resilver Priority"
 msgstr "Resilver 优先级"
@@ -5925,14 +5960,12 @@ msgstr "重启系统？"
 msgid "Restore default"
 msgstr "重置为默认"
 
+#, fuzzy
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
 "See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=_blank>smb.conf(5)</a>."
-msgstr ""
-"Restrict share visibility to users with read or write access to the share. "
-"查看<a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=_blank>smb.conf(5)</a>。"
+msgstr "Restrict share visibility to users with read or write access to the share. 查看<a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" target=_blank>smb.conf(5)</a>。"
 
 #, fuzzy
 msgid ""
@@ -5953,26 +5986,28 @@ msgid "Rsync Tasks"
 msgstr "Rsync 任务"
 
 msgid "Rsync mode"
-msgstr ""
+msgstr "Rsync 模式"
 
 msgid "Run As User"
-msgstr ""
+msgstr "以用户身份运行"
 
 msgid "Run Now"
 msgstr "现在运行"
 
+#, fuzzy
 msgid ""
 "Run commands in a clean environment. The current environment is discarded "
 "except for $HOME, $SHELL, $TERM, and $USER. <br>$HOME and $SHELL are set to "
 "the target login. $USER is set to the target login. $TERM is imported from "
 "the current environment. The environment variables from the login class "
 "capability database for the target login are also set."
-msgstr ""
+msgstr "Run commands in a clean environment. The current environment is discarded except for $HOME, $SHELL, $TERM, and $USER. <br>$HOME and $SHELL are set to the target login. $USER is set to the target login. $TERM is imported from the current environment. The environment variables from the login class capability database for the target login are also set."
 
+#, fuzzy
 msgid ""
 "Run commands in the jail as this user. By default, commands are run as the "
 "current user."
-msgstr ""
+msgstr "以此用户身份在jail中运行命令。 By default, commands are run as the current user."
 
 msgid "Run this cloud sync now?"
 msgstr "现在运行这个云同步？"
@@ -6013,6 +6048,7 @@ msgstr "SFTP日志级别"
 msgid "SMTP Authentication"
 msgstr "SMTP认证"
 
+#, fuzzy
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
 "(submission)."
@@ -6022,7 +6058,7 @@ msgid "SNMP v3 Support"
 msgstr "SNMP v3支持"
 
 msgid "SSH Host to connect to."
-msgstr "连接的SSH主机。"
+msgstr "连接到的SSH主机。"
 
 msgid "SSH Public Key"
 msgstr "SSH公钥"
@@ -6030,11 +6066,12 @@ msgstr "SSH公钥"
 msgid "SSH Username."
 msgstr "SSH用户名."
 
+#, fuzzy
 msgid "SSH port number. Leave empty to use the default port <i>22</i>."
-msgstr "SSH端口号留空来使用默认端口<i>22</i>。"
+msgstr "SSH port number. Leave empty to use the default port <i>22</i>."
 
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 msgid "SUDO Suffix"
 msgstr "SUDO 后缀"
@@ -6067,14 +6104,16 @@ msgid "Schedule the Rsync Task"
 msgstr "安排Rsync任务"
 
 msgid "Schedule the S.M.A.R.T. Test"
-msgstr "安排S.M.A.R.T。测试"
+msgstr "安排S.M.A.R.T. 测试"
 
 msgid "Schedule the Scrub Task"
 msgstr "安排数据校验任务"
 
+#, fuzzy
 msgid "Schema"
-msgstr ""
+msgstr "Schema"
 
+#, fuzzy
 msgid "Schema mode"
 msgstr "Schema模式"
 
@@ -6115,7 +6154,7 @@ msgid ""
 "See the <a href=\"http://networkupstools.org/stable-hcl.html\" "
 "target=\"_blank\">Network UPS Tools compatibility list</a> for a list of "
 "supported UPS devices."
-msgstr ""
+msgstr "有关支持的UPS设备列表，请参阅<a href=\"http://networkupstools.org/stable-hcl.html\" target=\"_blank\">网络UPS工具兼容性列表</a> 。"
 
 msgid ""
 "Select <b>UEFI</b> for newer operating systems, or <b>UEFI-CSM</b> "
@@ -6126,7 +6165,7 @@ msgstr "选择<b>UEFI</b>用于较新的操作系统，<b>UEFI-CSM</b>（兼容�
 msgid ""
 "Select <i>Bug</i> when reporting an issue or <i>Feature</i> when requesting "
 "new functionality."
-msgstr "在回报一个问题的时候选择<i>Bug</i>或选择<i>Feature</i>请求新的特性。"
+msgstr "在汇报一个问题的时候选择<i>Bug</i>或在请求新特性时选择<i>Feature</i>。"
 
 #, fuzzy
 msgid ""
@@ -6134,20 +6173,18 @@ msgid ""
 "executable script."
 msgstr "选择"
 
+#, fuzzy
 msgid ""
 "Select <i>Create new disk image</i> to create a new zvol on an existing "
 "dataset. This is used as a virtual hard drive for the VM. Select <i>Use "
 "existing disk image</i> to use an existing zvol or file for the VM."
-msgstr ""
-"Select <i>Create new disk image</i> to create a new zvol on an existing "
-"dataset. 这会被虚拟机作为虚拟硬盘。选择<i>使用已存在的磁盘映像</i>来使用一个已知的zvol或文件作为虚拟机磁盘。"
+msgstr "Select <i>Create new disk image</i> to create a new zvol on an existing dataset. 这会被虚拟机作为虚拟硬盘。选择<i>使用已存在的磁盘映像</i>来使用一个已知的zvol或文件作为虚拟机磁盘。"
 
+#, fuzzy
 msgid ""
 "Select <i>None</i> or an integer. This value represents the number of "
 "existing authorized accesses."
-msgstr ""
-"选择<i>None</i>或一个整数。This value represents the number of existing authorized "
-"accesses."
+msgstr "选择<i>None</i>或一个整数。This value represents the number of existing authorized accesses."
 
 msgid ""
 "Select <i>UEFI</i> for newer operating systems or <i>UEFI-CSM</i> "
@@ -6164,13 +6201,14 @@ msgstr "选择磁盘类型"
 msgid "Select Existing zvol"
 msgstr "选择现有的zvol"
 
+#, fuzzy
 msgid ""
 "Select IP addresses to listen to for NFS requests. Leave empty for NFS to "
 "listen to all available addresses."
 msgstr "选择IP地址来监听NFS请求。Leave empty for NFS to listen to all available addresses."
 
 msgid "Select VM wizard type"
-msgstr ""
+msgstr "选择VM向导类型"
 
 msgid ""
 "Select a compression algorithm to reduce the size                 of the "
@@ -6187,7 +6225,7 @@ msgid "Select a language localization."
 msgstr "选择一个本地化语言。"
 
 msgid "Select a physical interface to associate with the VM."
-msgstr "选贼一个物理接口来与虚拟机关联。"
+msgstr "选择一个物理接口来与虚拟机关联。"
 
 msgid "Select a pool to import."
 msgstr "选择一个存储池来导入。"
@@ -6206,19 +6244,21 @@ msgstr ""
 msgid ""
 "Select a schedule preset or choose <i>Custom</i>                to open the "
 "advanced scheduler."
-msgstr ""
+msgstr "选择计划预设或选择“ <i>自定义”</i>以打开高级计划程序。"
 
 msgid ""
 "Select a schedule preset or choose <i>Custom</i> to open                the "
 "advanced scheduler."
 msgstr ""
 
+#, fuzzy
 msgid "Select a schema when Samba Schema is set."
-msgstr ""
+msgstr "设置Samba Schema时选择架构。"
 
 msgid "Select a screen resolution to use for VNC sessions."
 msgstr "选择一个用于VNC会话的分辨率。"
 
+#, fuzzy
 msgid ""
 "Select a sector size in bytes. <i>Default</i> leaves the leaves the sector "
 "size unset."
@@ -6227,12 +6267,11 @@ msgstr "选择一个扇区尺寸（bytes）。<i>Default</i> leaves the leaves t
 msgid "Select a time zone."
 msgstr "选择一个时区。"
 
+#, fuzzy
 msgid ""
 "Select a user account to run the command. The                user must have "
 "permissions allowing them to run                the command or script."
-msgstr ""
-"选择一个用户账户来运行命令。The                user must have permissions allowing them "
-"to run                the command or script."
+msgstr "选择一个用户账户来运行命令。The                user must have permissions allowing them to run                the command or script."
 
 msgid ""
 "Select a user created in <b>Authorized Access</b> if the <b>Discovery Auth "
@@ -6249,37 +6288,36 @@ msgstr ""
 msgid "Select an IP address to use for VNC sessions."
 msgstr "选择一个用于VNC会话的IP地址。"
 
+#, fuzzy
 msgid ""
 "Select an account to use for guest access. This account must have "
 "permissions to the shared pool or dataset. The privileges given to this "
 "user are also available to any client connecting to the guest service. This "
 "user must  exist in the password file, but does not require a valid login. "
 "The root user cannot be used as guest account."
-msgstr ""
-"选择一个用于访客访问的账户。这个账户必须对共享存储池或数据集有权限。The privileges given to this user are "
-"also available to any client connecting to the guest service. This user "
-"must  exist in the password file, but does not require a valid login. "
-"Root账户不能被用于访客账户。"
+msgstr "选择一个用于访客访问的账户。这个账户必须对共享存储池或数据集有权限。The privileges given to this user are also available to any client connecting to the guest service. This user must  exist in the password file, but does not require a valid login. Root账户不能被用于访客账户。"
 
+#, fuzzy
 msgid "Select an existing ZFS pool, dataset, or zvol."
 msgstr "选择一个ZFS存储池，数据集，或zvol。"
 
 msgid "Select an existing extent."
-msgstr ""
+msgstr "选择一个现有范围。"
 
 msgid "Select an existing target."
-msgstr ""
+msgstr "选择现有目标。"
 
 msgid "Select desired disk type."
-msgstr ""
+msgstr "选择所需的磁盘类型。"
 
 msgid "Select from <i>File</i> or <i>Device</i>."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Select interfaces for SSH to listen on. Leave all options unselected for "
 "SSH to listen on all interfaces."
-msgstr ""
+msgstr "选择要侦听的SSH接口。 Leave all options unselected for SSH to listen on all interfaces."
 
 #, fuzzy
 msgid ""
@@ -6288,7 +6326,7 @@ msgid ""
 msgstr "选择已通过身份验证的用户的权限映射"
 
 msgid "Select pool to import"
-msgstr "选择存储池来导入"
+msgstr "选择导入的存储池"
 
 msgid "Select pool, dataset, or directory to share."
 msgstr "选择存储池，数据集，或目录来共享。"
@@ -6307,20 +6345,22 @@ msgid ""
 "target=\"_blank\">SSL certificate</a> to use for encrypted connections."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Select the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=syslog\" "
 "target=\"_blank\">syslog(3)</a> facility of the SFTP server."
-msgstr ""
+msgstr "Select the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=syslog\" target=\"_blank\">syslog(3)</a> facility of the SFTP server."
 
+#, fuzzy
 msgid ""
 "Select the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=syslog\" "
 "target=\"_blank\">syslog(3)</a> level of the SFTP server."
-msgstr ""
+msgstr "Select the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=syslog\" target=\"_blank\">syslog(3)</a> level of the SFTP server."
 
 msgid ""
 "Select the Certificate Signing Request to sign the Certificate Authority "
 "with."
-msgstr ""
+msgstr "选择证书签名请求以签署证书颁发机构。"
 
 #, fuzzy
 msgid ""
@@ -6338,24 +6378,26 @@ msgstr ""
 msgid ""
 "Select the IP address associated with an interface or the wildcard address "
 "of <i>0.0.0.0</i> (any interface)."
-msgstr ""
+msgstr "选择与接口关联的IP地址或通配符地址<i>0.0.0.0</i> （任何接口）。"
 
 msgid "Select the IP addresses SMB will listen for."
-msgstr ""
+msgstr "选择SMB将侦听的IP地址。"
 
+#, fuzzy
 msgid ""
 "Select the LDAP CA certificate. The certificate for the LDAP server CA must "
 "first be imported using the System/Certificates menu."
-msgstr ""
+msgstr "Select the LDAP CA certificate. The certificate for the LDAP server CA must first be imported using the System/Certificates menu."
 
+#, fuzzy
 msgid ""
 "Select the VLAN Parent Interface. Usually an Ethernet card connected to a "
 "configured switch port. Newly created link aggregations will not be "
 "available until the system is rebooted."
-msgstr ""
+msgstr "选择VLAN父接口. Usually an Ethernet card connected to a configured switch port. Newly created link aggregations will not be available until the system is rebooted."
 
 msgid "Select the Virtual Machine (VM) Wizard type."
-msgstr ""
+msgstr "选择虚拟机（VM）向导类型。"
 
 #, fuzzy
 msgid ""
@@ -6373,12 +6415,13 @@ msgid ""
 "target=\"_blank\">Certificates</a> menu."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Select the certificate of the Active Directory server if SSL connections "
 "are used. When no certificates are available, move to the Active Directory "
 "server and create a Certificate Authority and Certificate. Import the "
 "certificate to this system using the System/Certificates menu."
-msgstr ""
+msgstr "Select the certificate of the Active Directory server if SSL connections are used. When no certificates are available, move to the Active Directory server and create a Certificate Authority and Certificate. Import the certificate to this system using the System/Certificates menu."
 
 msgid ""
 "Select the cloud storage provider credentials from the                list "
@@ -6386,13 +6429,13 @@ msgid ""
 msgstr ""
 
 msgid "Select the country of the organization."
-msgstr ""
+msgstr "选择组织的国家/地区。"
 
 msgid "Select the days to run resilver tasks."
-msgstr ""
+msgstr "选择运行重新同步任务的日期。"
 
 msgid "Select the device to attach."
-msgstr ""
+msgstr "选择要附加的设备。"
 
 msgid ""
 "Select the directories or files to be sent to the cloud                for "
@@ -6401,18 +6444,18 @@ msgid ""
 "overwriting existing files."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Select the disk to import. The import will copy the data from the chosen "
 "disk to an existing ZFS dataset. Only one disk can be imported at a time."
-msgstr ""
-"选择磁盘来导入。The import will copy the data from the chosen disk to an existing "
-"ZFS dataset. 每次只能导入一个磁盘。"
+msgstr "选择磁盘来导入。The import will copy the data from the chosen disk to an existing ZFS dataset. 每次只能导入一个磁盘。"
 
 msgid "Select the disks to decrypt."
 msgstr "选择磁盘来解密。"
 
+#, fuzzy
 msgid "Select the disks to monitor."
-msgstr ""
+msgstr "Select the disks to monitor."
 
 msgid ""
 "Select the group to control the pool/dataset. Groups manually created or "
@@ -6422,7 +6465,7 @@ msgstr ""
 msgid ""
 "Select the interfaces to use in the aggregation.<br> Warning: Lagg creation "
 "fails if any of the selected interfaces have been manually configured."
-msgstr ""
+msgstr "选择要在聚合中使用的接口。 <br>警告：如果已手动配置任何所选接口，则链路聚合创建将失败。"
 
 msgid ""
 "Select the keytab created in <a "
@@ -6433,7 +6476,7 @@ msgstr ""
 msgid ""
 "Select the locale for the MSDOSFS device to see files of that locale "
 "properly"
-msgstr ""
+msgstr "选择MSDOSFS设备的locale设置以正确查看该区域设置的文件"
 
 msgid ""
 "Select the location of the principal in the keytab created as described in "
@@ -6449,16 +6492,16 @@ msgid "Select the physical network interface to associatewith the virtual machin
 msgstr ""
 
 msgid "Select the pool to contain the system dataset."
-msgstr ""
+msgstr "选择要包含系统数据集的池。"
 
 msgid "Select the pre-defined S3 bucket to use."
-msgstr ""
+msgstr "选择要使用的预定义S3存储桶。"
 
 msgid "Select the pre-defined container to use."
-msgstr ""
+msgstr "选择要使用的预定义容器。"
 
 msgid "Select the prefix length used on the network."
-msgstr ""
+msgstr "选择网络上使用的前缀长度。"
 
 msgid ""
 "Select the realm created in <a "
@@ -6476,15 +6519,16 @@ msgid "Select the script from an existing pool."
 msgstr ""
 
 msgid "Select the serial port address in hex."
-msgstr ""
+msgstr "选择十六进制的串行端口地址。"
 
 msgid "Select the shell to use for local and SSH logins."
-msgstr ""
+msgstr "选择用于本地和SSH登录的shell。"
 
+#, fuzzy
 msgid ""
 "Select the type of LDAP server to use. This can be the LDAP server provided "
 "by the Active Directory server or a stand-alone LDAP server."
-msgstr ""
+msgstr "Select the type of LDAP server to use. This can be the LDAP server provided by the Active Directory server or a stand-alone LDAP server."
 
 msgid "Select the type that matches the type of client accessing the pool/dataset."
 msgstr ""
@@ -6576,7 +6620,7 @@ msgid "Service failed to stop"
 msgstr "服务停止失败"
 
 msgid "Service started"
-msgstr "服务启动"
+msgstr "服务已启动"
 
 msgid "Services"
 msgstr "服务"
@@ -6615,18 +6659,19 @@ msgstr "设置<a href=\"https://kb.iu.edu/d/adov\" target=\"_blank\">DHCP</a>来
 msgid ""
 "Set for the LDAP server to disable authentication and allow read and write "
 "access to any client."
-msgstr ""
+msgstr "设置LDAP服务器以禁用身份验证并允许对任何客户端进行读写访问。"
 
 msgid "Set for the UPS to power off after shutting down the system."
-msgstr ""
+msgstr "设置为关闭系统后UPS关闭电源。"
 
+#, fuzzy
 msgid ""
 "Set for the default configuration to listen on all interfaces using the "
 "known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
-msgstr ""
+msgstr "Set for the default configuration to listen on all interfaces using the known values of user: <i>upsmon</i> and password: <i>fixmepass</i>."
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
-msgstr ""
+msgstr "设置为ypbind绑定到响应速度最快的服务器。"
 
 msgid "Set if NFS clients need to use UDP."
 msgstr "设置如果NFS客户端需要使用UDP。"
@@ -6636,15 +6681,16 @@ msgid ""
 "clients."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "Set if the client cannot connect, and it is suspected the client is poorly "
 "handling the server certificate request."
-msgstr ""
+msgstr "Set if the client cannot connect, and it is suspected the client is poorly handling the server certificate request."
 
 msgid ""
 "Set if the initiator does not support physical block size values over 4K "
 "(MS SQL)."
-msgstr ""
+msgstr "设置如果启动器不支持4K上的物理块大小值（MS SQL）。"
 
 msgid "Set new root account password:"
 msgstr "设置新root账户密码："
@@ -6675,6 +6721,7 @@ msgstr ""
 "设置默认VNET接口。只在<i>VNET</i>设置时有效。选择一个指定的接口或设置为<i>auto</i>来使用有默认路由的接口。选择<i>none<"
 "/i>来不配置默认VNET接口。"
 
+#, fuzzy
 msgid "Set the jail hostname. Defaults to the jail UUID."
 msgstr "设置jail主机名。Defaults to the jail UUID."
 
@@ -7653,8 +7700,9 @@ msgstr ""
 "在系统数据集上存储报表信息。When unset, reporting information is stored to a RAM disk to "
 "avoid filling /var."
 
+#, fuzzy
 msgid "Stripe"
-msgstr ""
+msgstr "Stripe"
 
 msgid "Subject"
 msgstr "主题"
