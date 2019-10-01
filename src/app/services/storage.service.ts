@@ -348,7 +348,7 @@ export class StorageService {
   convertBytestoHumanReadable(bytes, decimalPlaces?) { 
     let i = -1;
     let dec, units;
-    decimalPlaces ? dec = decimalPlaces : dec = 2;
+    decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
     if (bytes => 1024) {
       do {
         bytes = bytes / 1024;
