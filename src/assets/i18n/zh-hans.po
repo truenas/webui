@@ -8457,22 +8457,22 @@ msgid "Select which existing initiator group has access to the target."
 msgstr ""
 
 msgid "Selected jails updated."
-msgstr ""
+msgstr "所选jails已更新。"
 
 msgid "Selected plugins updated."
-msgstr ""
+msgstr "所选插件已更新。"
 
 msgid "Send Deduplicated Stream"
-msgstr ""
+msgstr "发送重复数据删除流"
 
 msgid "Send Email Status Updates"
 msgstr "状态更新时发送邮件"
 
 msgid "Send Test Mail"
-msgstr ""
+msgstr "发送测试邮件"
 
 msgid "Send dataset properties along with snapshots."
-msgstr ""
+msgstr "发送数据集属性和快照。"
 
 msgid ""
 "Send failed HTTP request data which can include client and server IP "
