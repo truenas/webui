@@ -212,10 +212,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
         // On page load, make sure we are working with train of the current OS
         this.train = res.current;
         this.selectedTrain = res.current;
-        this.ws.call('update.set_train', [res.current]).subscribe(() => {},
-        (err) => {
-          console.error(err);
-        });
   
         if (this.autoCheck) {
           this.check();
@@ -370,7 +366,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   startUpdate() {
     this.error = null;
     this.loader.open();
-    this.ws.call('update.check_available', [{ train: this.train }])
+    this.ws.call('update.check_available')
       .subscribe(
         (res) => {
           this.loader.close();
@@ -551,7 +547,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
-    this.ws.call('update.check_available', [{ train: this.train }])
+    this.ws.call('update.check_available')
       .subscribe(
         (res) => {
           this.status = res.status;
