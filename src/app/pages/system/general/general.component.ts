@@ -23,7 +23,7 @@ export class GeneralComponent implements OnDestroy {
   //protected resource_name: string = 'system/settings';
   protected queryCall = 'system.general.config';
   protected updateCall = 'system.general.update';
-  public sortLanguagesByName = false;
+  public sortLanguagesByName = true;
   public languageList: any;
 
   public fieldConfig: FieldConfig[] = []
@@ -276,8 +276,8 @@ export class GeneralComponent implements OnDestroy {
   private redirect: any;
   private guicertificate: any;
   private languages = {};
-  private language_value: any;
-  private language_subscription: any;
+  // private language_value: any;
+  // private language_subscription: any;
   //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
   private dialogRef: any;
@@ -295,7 +295,7 @@ export class GeneralComponent implements OnDestroy {
     this.guicertificate = value['ui_certificate'];
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
-    this.language_value = value['language'];
+    // this.language_value = value['language'];
     return value;
   }
 
@@ -346,12 +346,12 @@ export class GeneralComponent implements OnDestroy {
       this.makeLanguageList();
     });
 
-    this.language_subscription = entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {;
-      this.language_value = this.getKeyByValue(this.languages, res);
-      if (this.languages[res]) {
-        entityEdit.formGroup.controls['language'].setValue(this.languages[res]);
-      }
-    });
+    // this.language_subscription = entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {;
+    //   this.language_value = this.getKeyByValue(this.languages, res);
+    //   if (this.languages[res]) {
+    //     entityEdit.formGroup.controls['language'].setValue(this.languages[res]);
+    //   }
+    // });
 
     entityEdit.ws.call('notifier.choices', ['KBDMAP_CHOICES'])
       .subscribe((res) => {
@@ -402,7 +402,8 @@ export class GeneralComponent implements OnDestroy {
   }
    
   beforeSubmit(value) {
-    value.language = this.language_value;
+    delete value.language_sort;
+    // value.language = this.language_value;
   }
 
   afterSubmit(value) {
@@ -547,6 +548,6 @@ export class GeneralComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.language_subscription.unsubscribe();
+    // this.language_subscription.unsubscribe();
   }
 }
