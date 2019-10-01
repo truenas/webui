@@ -2960,7 +2960,7 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
-对流进行重复数据删除，以避免发送冗余数据块。 目标系统还必须支持重复数据删除流。 请查阅<a "
+"对流进行重复数据删除，以避免发送冗余数据块。目标系统还必须支持重复数据删除流。请查阅<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
 "target=\"_blank\">zfs(8)</a>。"
 
