@@ -1057,7 +1057,7 @@ export class ReplicationWizardComponent {
                 }
             }
         }
-        this.dialogService.dialogForm(conf);
+        this.dialogService.dialogForm(conf, true);
     }
 
     getRemoteHostKey(value) {
