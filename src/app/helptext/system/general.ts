@@ -69,9 +69,12 @@ export const helptext_system_general = {
 
   stg_language: {
     placeholder: T("Language"),
-    tooltip: T("Select a language by typing in the field or selecting \
- it from the dop-down menu.")
+    tooltip: T("Select a language from the drop-down menu.")
   },
+
+  stg_language_sort_label: T('Sort languages by:'),
+  stg_language_sort_name: T('Name:'),
+  stg_language_sort_code: T('Language code:'),
 
   stg_kbdmap: {
     placeholder: T("Console Keyboard Map"),
@@ -124,6 +127,7 @@ export const helptext_system_general = {
 
 
   save_config_form: {
+    title: T('Save Configuration'),
     message: T(
       "<b>WARNING:</b> This configuration file contains system\
  passwords and other sensitive data.<br>"
@@ -142,7 +146,9 @@ export const helptext_system_general = {
   upload_config: { placeholder: T("Select Configuration File") },
 
   upload_config_form: {
+    title: T('Upload Config'),
     button_text: T("Upload"),
+    tooltip: T('Browse to the locally saved configuration file.'),
     message: T(
       '<p>The system will reboot to perform this operation!</p>\
  <p><font color="red">All passwords are reset when the \
@@ -160,6 +166,7 @@ export const helptext_system_general = {
   reset_config_placeholder: T('Confirm'),
 
   reset_config_form: {
+    title: T('Reset Configuration'),
     button_text: T("Reset Config"),
     message: T('Reset system configuration to default settings. The system \
  will restart to complete this operation. You will be required to reset your password.'),

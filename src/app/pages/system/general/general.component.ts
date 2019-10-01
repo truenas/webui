@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
@@ -18,7 +18,7 @@ import { T } from '../../../translate-marker';
   styleUrls: ['./general.component.css'],
   providers: [SnackbarService]
 })
-export class GeneralComponent implements OnDestroy {
+export class GeneralComponent {
 
   //protected resource_name: string = 'system/settings';
   protected queryCall = 'system.general.config';
@@ -112,12 +112,12 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'radio',
       name: 'language_sort',
-      placeholder: 'Sort languages by:',
+      placeholder: helptext.stg_language_sort_label,
       options: [
-        {label: 'Name',
+        {label: helptext.stg_language_sort_name,
          name: 'language_name',
          value: true},
-        {label: 'Code',
+        {label: helptext.stg_language_sort_code,
          name: 'language_code',
          value: false},
       ],
@@ -190,7 +190,7 @@ export class GeneralComponent implements OnDestroy {
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Save Configuration",
+    title: helptext.save_config_form.title,
     message: helptext.save_config_form.message,
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
@@ -205,7 +205,7 @@ export class GeneralComponent implements OnDestroy {
       type: 'upload',
       name: 'upload_config',
       placeholder : helptext.upload_config.placeholder,
-      tooltip: 'Browse to the locally saved configuration file.',
+      tooltip: helptext.upload_config_form.tooltip,
       fileLocation: '',
       updater: this.updater,
       parent: this,
@@ -213,7 +213,7 @@ export class GeneralComponent implements OnDestroy {
     }
   ];
   public uploadConfigFormConf: DialogFormConfiguration = {
-    title: "Upload Config",
+    title: helptext.upload_config_form.title,
     fieldConfig: this.uploadConfigFieldConf,
     method_ws: 'config.upload',
     saveButtonText: helptext.upload_config_form.button_text,
@@ -231,7 +231,7 @@ export class GeneralComponent implements OnDestroy {
   ]
 
   public resetConfigFormConf: DialogFormConfiguration = {
-    title: "Reset Configuration",
+    title: helptext.reset_config_form.title,
     message: helptext.reset_config_form.message,
     fieldConfig: this.resetConfigFieldConf,
     method_ws: 'config.reset',
@@ -275,10 +275,6 @@ export class GeneralComponent implements OnDestroy {
   private https_port: any;
   private redirect: any;
   private guicertificate: any;
-  private languages = {};
-  // private language_value: any;
-  // private language_subscription: any;
-  //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
   private dialogRef: any;
 
@@ -295,7 +291,6 @@ export class GeneralComponent implements OnDestroy {
     this.guicertificate = value['ui_certificate'];
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
-    // this.language_value = value['language'];
     return value;
   }
 
@@ -346,13 +341,6 @@ export class GeneralComponent implements OnDestroy {
       this.makeLanguageList();
     });
 
-    // this.language_subscription = entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {;
-    //   this.language_value = this.getKeyByValue(this.languages, res);
-    //   if (this.languages[res]) {
-    //     entityEdit.formGroup.controls['language'].setValue(this.languages[res]);
-    //   }
-    // });
-
     entityEdit.ws.call('notifier.choices', ['KBDMAP_CHOICES'])
       .subscribe((res) => {
         this.kbdmap = _.find(this.fieldConfig, { 'name': 'kbdmap' });
@@ -396,14 +384,12 @@ export class GeneralComponent implements OnDestroy {
       } else {
         options.push({ label: item[0] + ' (' + item[1] + ')', value: item[0] });
       }
-      this.languages[item[0]] = item[1];
     });
     this.language_fc.options = _.sortBy(options, [sort]);
   }
    
   beforeSubmit(value) {
     delete value.language_sort;
-    // value.language = this.language_value;
   }
 
   afterSubmit(value) {
@@ -545,9 +531,5 @@ export class GeneralComponent implements OnDestroy {
 
   getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
-  }
-
-  ngOnDestroy() {
-    // this.language_subscription.unsubscribe();
   }
 }
