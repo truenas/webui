@@ -6205,7 +6205,7 @@ msgstr ""
 "target=\"_blank\">py-libzfs</a>来进行操作，发送未加密的数据流以提高传输速度。仅当复制到"
 "安装了<i>py-libzfs</i>的FreeNAS，TrueNAS或其他系统上时，此方法才有效。</li> "
 "<li><i>LOCAL</i>将快照复制到同一目录中的另一个数据集</li> <li><i>LEGACY</i>使用"
-FreeNAS 11.2和更早版本的旧版复制引擎。</li></ul>"
+"FreeNAS 11.2和更早版本的旧版复制引擎。</li></ul>"
 
 msgid "Microsoft Account"
 msgstr "微软账户"
