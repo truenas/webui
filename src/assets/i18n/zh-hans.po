@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-10-02 20:46+0000\n"
-"Last-Translator: Yifei Ding <yifeiding@theunspeakble.com>\n"
+"PO-Revision-Date: 2019-10-02 20:51+0000\n"
+"Last-Translator: Yifei Ding <dingyifeiair@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://www.theunspeakble.com/weblate/"
 "projects/freenas-webui/master/zh_Hans/>\n"
 "Language: zh-hans\n"
@@ -40,7 +40,7 @@ msgid " and all snapshots of it?"
 msgstr " 和所有它的快照？"
 
 msgid " but datastore "
-msgstr "但数据存储"
+msgstr " 但数据存储 "
 
 msgid " disks"
 msgstr "磁盘"
