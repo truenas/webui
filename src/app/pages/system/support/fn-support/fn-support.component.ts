@@ -143,7 +143,6 @@ export class FnSupportComponent {
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    console.log(entityEdit)
   }
 
   blurEvent(parent){
@@ -166,10 +165,12 @@ export class FnSupportComponent {
           parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
             this.category.isLoading = false;
             parent.entityEdit.setDisabled('category', false);
+            let options = [];
             for (const property in res) {
               if (res.hasOwnProperty(property)) {
-                this.category.options.push({label : property, value : res[property]});
+                options.push({label : property, value : res[property]});
               }
+              this.category.options = _.sortBy(options, ['label']);
             }},(error)=>{
               if (error.reason[0] === '[') {
                 while (error.reason[0] !== ' ') {
