@@ -56,8 +56,9 @@ export class JobService {
                   );
                 }
               });
-          }
-          else if (res[i].error) {
+          } else if (res[i].logs_path) {
+            this.dialog.errorReport(T('Error'), res[i].error, res[i].exception, res[i]);
+          } else if (res[i].error) {
             this.dialog.errorReport(T('Error'), res[i].error, res[i].exception);
           } 
         }

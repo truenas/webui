@@ -1017,4 +1017,23 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 0);
   }
+
+  getButtonClass(prop) {
+    switch(prop) {
+      case 'RUNNING' : return 'fn-theme-orange';
+      case 'FINISHED' : return 'fn-theme-green';
+      case 'SUCCESS' : return 'fn-theme-green';
+      case 'ERROR' : return 'fn-theme-red';
+      case 'FAILED' : return 'fn-theme-red';
+      default: return 'fn-theme-primary';
+    }
+  }
+
+  stateClickable(value, colConfig) {
+    if (colConfig.infoStates) {
+      return _.indexOf(colConfig.infoStates, value) < 0;
+    } else {
+      return value !== 'PENDING';
+    }
+  }
 }

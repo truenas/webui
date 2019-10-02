@@ -300,8 +300,12 @@
                 [checked]="row[col.prop]" 
                 (change)="conf.onCheckboxChange(row)"
               ></mat-checkbox>
-              <button mat-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
-                {{convertDisplayValue(row[col.prop])}}
+              <button mat-button 
+                [ngClass]="getButtonClass(row[col.prop])"
+                [style.width.px]="93"
+                *ngIf="col.state && stateClickable(row[col.prop], col); else colInfo"
+                (click)="conf.stateButton(row)">
+                  {{convertDisplayValue(row[col.prop])}}
               </button>
               <ng-template #colInfo>
                 <span *ngIf="!col.selectable">{{convertDisplayValue(row[col.prop])}}</span>

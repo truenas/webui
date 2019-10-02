@@ -34,6 +34,7 @@ export const helptext_system_update = {
   },
 
   manual_update_action: T('Manual Update'),
+  manual_update_description: T('Uploading file...'),
 
   secretseed: {
     placeholder: T("Include Password Secret Seed")

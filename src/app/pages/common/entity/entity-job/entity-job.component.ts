@@ -1,10 +1,12 @@
 import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DecimalPipe } from '@angular/common';
-import { WebSocketService, RestService } from '../../../../services/';
+import { WebSocketService, RestService, SnackbarService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import { Http } from '@angular/http';
 import * as _ from 'lodash';
+import globalHelptext from '../../../../helptext/global-helptext';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'entity-job',
@@ -24,13 +26,14 @@ export class EntityJobComponent implements OnInit {
   public jobId: Number;
   public progressNumberType;
   public hideProgressValue = false;
+  public altMessage: string;
 
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
   @Output() failure = new EventEmitter();
   @Output() prefailure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
-    private ws: WebSocketService, public rest: RestService,
+    private ws: WebSocketService, public rest: RestService, public snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: Http) {}
 
   ngOnInit() {
@@ -64,6 +67,10 @@ export class EntityJobComponent implements OnInit {
     this.title = title;
   }
 
+  changeAltMessage(msg: string) {
+    this.altMessage = msg;
+  }
+
   disableProgressValue(hide: boolean) {
     this.hideProgressValue = hide;
   }
@@ -90,6 +97,12 @@ export class EntityJobComponent implements OnInit {
     job.error = _.replace(job.error, '>', ' >');
 
     this.description = '<b>Error:</b> ' + job.error;
+  }
+
+  public close() {
+    if (this.job.state && this.job.state === "RUNNING") {
+      this.snackbar.open(globalHelptext.closed_job_message, T("OK"));
+    }
   }
 
   public show() {

@@ -202,7 +202,21 @@
 }
 
 .nic-traffic{
-  /*font-size: 150%;*/
+  display:table;
+  margin-left:8px;
+}
+
+.nic-traffic .tr{
+  display:table-row;
+}
+
+.nic-traffic .td{
+  display:table-cell;
+  text-align:left;
+}
+
+.nic-traffic .td.label{
+  text-align:right;
 }
 
 .stat{
@@ -249,4 +263,8 @@
 
 .xs.widget .overview .right .list-subheader{
   margin-top: 0;
+}
+
+.xs.widget .nic-traffic{
+  margin-left: 4px;
 }

@@ -46,7 +46,7 @@ export class SshConnectionsFormComponent {
                     value: 'semiautomatic',
                 }
             ],
-            value: 'manual',
+            value: 'semiautomatic',
             isHidden: false,
         }, {
             type: 'input',

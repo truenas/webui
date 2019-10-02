@@ -627,7 +627,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-volumeimport-wizard #key tooltip {
     position: relative;
-    left: 5px;
     top: -4px;
   }
 
@@ -641,12 +640,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // For some items on VM Wizard Hard Disks page
   #disk_radio {
     max-width: 220px;
-  }
-
-  #disk_radio tooltip {
-    position: relative;
-    top: 30px;
-    left: 180px;
   }
   // ---------------
 
@@ -1658,6 +1651,15 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .styled-list-for-dialogs {
     list-style: disc inside;
     padding-left: 15px;
+  }
+
+  app-general {
+    #language_sort, #language_sort_radiogroup {
+      display: inline-flex;
+    }
+    mat-radio-button {
+      margin-left: 10px;
+    }
   }
 
  } // end of ix theme

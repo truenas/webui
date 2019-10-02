@@ -134,6 +134,10 @@
     min-width: 460px;
 }
 
+.datatable-icon-right:focus, .datatable-icon-down:focus {
+    outline: none;
+}
+
 @media (max-width: 600px) {
     .entity-table-controls {
         width: 300px;
