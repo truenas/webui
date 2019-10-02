@@ -189,6 +189,11 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       saveButtonText: T("Duplicate"),
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue;
+        const origVdevs = self.vdevComponents.toArray();
+        // handle case of extending with zero vdevs filled out
+        if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {
+          self.removeVdev(origVdevs[0]);
+        }
         for (let i = 0; i < value.vdevs; i++) {
           const vdev_values = {disks:[], type:self.first_data_vdev_type};
           for (let j = 0; j < self.first_data_vdev_disknum; j++) {
@@ -229,11 +234,22 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           this.first_data_vdev_disknum = res[0].topology.data[0].children.length;
 
+          let first_disk;
           if (this.first_data_vdev_disknum === 0 &&
               this.first_data_vdev_type === 'disk') {
             this.first_data_vdev_disknum = 1;
             this.first_data_vdev_type = 'stripe';
+            first_disk = res[0].topology.data[0];
+          } else {
+            first_disk = res[0].topology.data[0].children[0];
           }
+          this.ws.call('disk.query', [[["name", "=", first_disk.disk]]]).subscribe(disk => {
+            if (disk[0]) {
+              this.first_data_vdev_disksize = disk[0].size;
+              this.first_data_vdev_disktype = disk[0].type;
+            }
+            this.getDuplicableDisks();
+          });
         }
       },
       (err) => {
@@ -324,6 +340,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       this. can_suggest = this.suggestable_disks.length < 11;
 
       this.temp = [...this.disks];
+      this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
       new EntityUtils().handleWSError(this, err, this.dialog)
@@ -431,6 +448,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.size = (<any>window).filesize(size_estimate, {standard : "iec"});
 
+    this.getDuplicableDisks();
+  }
+
+  getDuplicableDisks() {
     this.duplicable_disks = [];
     for (let i = 0; i < this.disks.length; i++) {
       const disk = this.disks[i];
@@ -440,6 +461,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (!this.first_data_vdev_disknum || this.duplicable_disks.length < this.first_data_vdev_disknum) {
       this.canDuplicate = false;
+    } else {
+      this.canDuplicate = true;
     }
   }
 
