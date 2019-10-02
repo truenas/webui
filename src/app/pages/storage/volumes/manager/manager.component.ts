@@ -99,9 +99,11 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public diskExtendWarning = helptext.manager_diskExtendWarning;
 
   first_data_vdev_type: string;
-  first_data_vdev_disknum: number;
+  first_data_vdev_disknum = 0;
   first_data_vdev_disksize: number;
   first_data_vdev_disktype: string;
+
+  private duplicable_disks = [];
 
   public canDuplicate = false;
 
@@ -162,16 +164,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   duplicate() {
-    const usable_disks = [];
-    for (let i = 0; i < this.disks.length; i++) {
-      const disk = this.disks[i];
-      if (disk.size === this.first_data_vdev_disksize && disk.type === this.first_data_vdev_disktype) {
-        usable_disks.push(disk);
-      }
-    }
+    const duplicable_disks = this.duplicable_disks;
     let maxVdevs = 0;
-    if (this.first_data_vdev_disknum > 0) {
-      maxVdevs = usable_disks.length / this.first_data_vdev_disknum;
+    if (this.first_data_vdev_disknum && this.first_data_vdev_disknum > 0) {
+      maxVdevs = this.duplicable_disks.length / this.first_data_vdev_disknum;
     }
     const vdevs_options = [];
     for (let i = 0; i <= maxVdevs; i++) {
@@ -193,6 +189,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       saveButtonText: T("Duplicate"),
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue;
+        for (let i = 0; i < value.vdevs; i++) {
+          const vdev_values = {disks:[], type:self.first_data_vdev_type};
+          for (let j = 0; j < self.first_data_vdev_disknum; j++) {
+            const disk = duplicable_disks.shift();
+            vdev_values['disks'].push(disk);
+          }
+          self.addVdev('data', vdev_values);
+        }
         entityDialog.dialogRef.close(true);
       }
     };
@@ -336,9 +340,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     //this.dragulaService.destroy("pool-vdev");
   }
 
-  addVdev(group) {
+  addVdev(group, initial_values={}) {
     this.dirty = true;
-    this.vdevs[group].push({});
+    this.vdevs[group].push(initial_values);
     this.getCurrentLayout();
   }
 
@@ -426,6 +430,17 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     this.size = (<any>window).filesize(size_estimate, {standard : "iec"});
+
+    this.duplicable_disks = [];
+    for (let i = 0; i < this.disks.length; i++) {
+      const disk = this.disks[i];
+      if (disk.size === this.first_data_vdev_disksize && disk.type === this.first_data_vdev_disktype) {
+        this.duplicable_disks.push(disk);
+      }
+    }
+    if (!this.first_data_vdev_disknum || this.duplicable_disks.length < this.first_data_vdev_disknum) {
+      this.canDuplicate = false;
+    }
   }
 
   canSave() {
