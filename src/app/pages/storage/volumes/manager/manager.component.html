@@ -132,8 +132,10 @@
         </div>
         <div class="pool">
           <div>
-            <h4 class="vdev-h4">{{"Data VDevs" | translate}}</h4>
-            <button id="pool-manager__create-data-vdevs-button" mat-button class="btn btn-accent" [disabled]="!canDuplicate" (click)="duplicate()">{{"Duplicate" | translate}}</button>
+            <div class="data-div">
+              <div class="data-title"><h4 class="vdev-h4">{{"Data VDevs" | translate}}</h4></div>
+              <div class="duplicate-button"><button id="pool-manager__create-data-vdevs-button" mat-button class="btn btn-accent" [disabled]="!canDuplicate" (click)="duplicate()">{{"Duplicate" | translate}}</button></div>
+            </div>
             <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i" [initial_values]="vdev"></app-vdev>
           </div>
           <div *ngIf="vdevs.cache.length > 0">
