@@ -1,6 +1,6 @@
-<mat-card class="m-0 ml-1 mr-1 p-0">
+<mat-card class="m-0 ml-1 mr-1 p-0" id="create-pool-card">
   <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">{{"Pool Manager" | translate}}</div>
+    <div class="mat-card-title-text pool-manager-title">{{"Pool Manager" | translate}}</div>
   </div>
   <div class="mat-content p-1">
     <div class="manager">
@@ -21,8 +21,8 @@
           <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
           <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
           <div>
-            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
-            <button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
+            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
+            <button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
             <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
           </div>
         </div>
@@ -32,13 +32,13 @@
           </mat-form-field>
           <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
           <div>
-            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
+            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
           </div>
         </ng-template>
       </div>
       <div class="wrapper">
         <div class="disks">
-            <h4>{{"Available Disks" | translate }}</h4>
+            <h4 id="avail-disks-title">{{"Available Disks" | translate }}</h4>
               <ngx-datatable
                 id="pool-manager__disks-table"
                 #table
@@ -110,7 +110,8 @@
                   </ng-template>
                 </ngx-datatable-column>
               </ngx-datatable>
-              <mat-form-field>
+              <div id="filter-wrapper">
+                <mat-form-field fxFlex="1 1 40%">
                   <input matInput
                     id="pool-manager__nameFilter"
                     type='text'
@@ -119,7 +120,8 @@
                     (keyup)='updateFilter($event)'
                   />
                 </mat-form-field>
-                <mat-form-field>
+                <div fxFlex="5%"></div>
+                <mat-form-field fxFlex="1 1 40%">
                   <input matInput
                     id="pool-manager__capacityFilter"
                     type='text'
@@ -129,12 +131,13 @@
                   />
                 </mat-form-field>
                 <mat-error *ngIf="re_has_errors">{{"Invalid regex filter" | translate}}</mat-error>
+              </div>
         </div>
         <div class="pool">
           <div>
             <div class="data-div">
               <div class="data-title"><h4 class="vdev-h4">{{"Data VDevs" | translate}}</h4></div>
-              <div class="duplicate-button"><button id="pool-manager__create-data-vdevs-button" mat-button class="btn btn-accent" [disabled]="!canDuplicate" (click)="duplicate()">{{"Duplicate" | translate}}</button></div>
+              <div class="duplicate-button"><button id="pool-manager__create-data-vdevs-button" mat-button class="btn btn-accent mat-accent" [disabled]="!canDuplicate" (click)="duplicate()">{{"Duplicate" | translate}}</button></div>
             </div>
             <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i" [initial_values]="vdev"></app-vdev>
           </div>
