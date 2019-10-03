@@ -168,7 +168,7 @@ export class PortalFormComponent {
 
     this.iscsiService.getIpChoices().subscribe((res) => {
       for (const item in res) {
-        this.arrayModel.options.push({label : item, value : res[item]});
+        this.arrayModel.options.push({label : res[item], value : item});
       };
     });
   }

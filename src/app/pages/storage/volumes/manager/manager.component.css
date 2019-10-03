@@ -74,6 +74,20 @@ h4 {
 	margin-bottom: 0;
 }
 
+.data-div {
+	display: flex;
+	padding:0;
+    margin:0;
+}
+
+.data-title {
+	flex: 1;
+}
+
+.duplicate-button {
+	width: 100px;
+}
+
 #pool-manager__encryption-checkbox {
 	margin-left: 10px;
 }

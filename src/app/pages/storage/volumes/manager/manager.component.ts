@@ -23,6 +23,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/manager/manager';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 
 @Component({
@@ -98,7 +99,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public diskExtendWarning = helptext.manager_diskExtendWarning;
 
   first_data_vdev_type: string;
-  first_data_vdev_disknum: number;
+  first_data_vdev_disknum = 0;
+  first_data_vdev_disksize: number;
+  first_data_vdev_disktype: string;
+
+  private duplicable_disks = [];
+
+  public canDuplicate = false;
 
   public busy: Subscription;
 
@@ -156,6 +163,52 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     dragulaService.out.subscribe((value) => { console.log(value); }); */
   }
 
+  duplicate() {
+    const duplicable_disks = this.duplicable_disks;
+    let maxVdevs = 0;
+    if (this.first_data_vdev_disknum && this.first_data_vdev_disknum > 0) {
+      maxVdevs = this.duplicable_disks.length / this.first_data_vdev_disknum;
+    }
+    const vdevs_options = [];
+    for (let i = 1; i <= maxVdevs; i++) {
+      vdevs_options.push({label: i, value: i});
+    }
+    const self = this;
+    const conf: DialogFormConfiguration = {
+      title: helptext.manager_duplicate_title,
+      fieldConfig: [
+        {
+          type: 'select',
+          name: 'vdevs',
+          value: 1,
+          placeholder: helptext.manager_duplicate_vdevs_placeholder,
+          tooltip: helptext.manager_duplicate_vdevs_tooltip,
+          options: vdevs_options 
+        }
+      ],
+
+      saveButtonText: helptext.manager_duplicate_button,
+      customSubmit: function (entityDialog) {
+        const value = entityDialog.formValue;
+        const origVdevs = self.vdevComponents.toArray();
+        // handle case of extending with zero vdevs filled out
+        if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {
+          self.removeVdev(origVdevs[0]);
+        }
+        for (let i = 0; i < value.vdevs; i++) {
+          const vdev_values = {disks:[], type:self.first_data_vdev_type};
+          for (let j = 0; j < self.first_data_vdev_disknum; j++) {
+            const disk = duplicable_disks.shift();
+            vdev_values['disks'].push(disk);
+          }
+          self.addVdev('data', vdev_values);
+        }
+        entityDialog.dialogRef.close(true);
+      }
+    };
+    this.dialog.dialogForm(conf);
+ }
+
   getDiskNumErrorMsg(disks) {
     this.translate.get(this.disknumErrorMessage).subscribe((errorMessage) => {
       this.disknumError = errorMessage + T(' First vdev has ') + this.first_data_vdev_disknum + T(' disks, new vdev has ') + disks + '.';
@@ -182,11 +235,22 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           this.first_data_vdev_disknum = res[0].topology.data[0].children.length;
 
+          let first_disk;
           if (this.first_data_vdev_disknum === 0 &&
               this.first_data_vdev_type === 'disk') {
             this.first_data_vdev_disknum = 1;
             this.first_data_vdev_type = 'stripe';
+            first_disk = res[0].topology.data[0];
+          } else {
+            first_disk = res[0].topology.data[0].children[0];
           }
+          this.ws.call('disk.query', [[["name", "=", first_disk.disk]]]).subscribe(disk => {
+            if (disk[0]) {
+              this.first_data_vdev_disksize = disk[0].size;
+              this.first_data_vdev_disktype = disk[0].type;
+            }
+            this.getDuplicableDisks();
+          });
         }
       },
       (err) => {
@@ -277,6 +341,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       this. can_suggest = this.suggestable_disks.length < 11;
 
       this.temp = [...this.disks];
+      this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
       new EntityUtils().handleWSError(this, err, this.dialog)
@@ -293,9 +358,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     //this.dragulaService.destroy("pool-vdev");
   }
 
-  addVdev(group) {
+  addVdev(group, initial_values={}) {
     this.dirty = true;
-    this.vdevs[group].push({});
+    this.vdevs[group].push(initial_values);
     this.getCurrentLayout();
   }
 
@@ -336,8 +401,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           data_vdev_type = vdev.type;
           if (vdev.disks.length > 0) {
             this.first_data_vdev_disknum = vdev.disks.length;
+            this.first_data_vdev_disksize = vdev.disks[0].size;
+            this.first_data_vdev_disktype = vdev.disks[0].type;
+            this.canDuplicate = true;
           } else {
             this.first_data_vdev_disknum = 0;
+            this.first_data_vdev_disksize = null;
+            this.first_data_vdev_disktype = null;
+            this.canDuplicate = false;
           }
         }
         if (vdev.disks.length > 0) {
@@ -377,6 +448,23 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     this.size = (<any>window).filesize(size_estimate, {standard : "iec"});
+
+    this.getDuplicableDisks();
+  }
+
+  getDuplicableDisks() {
+    this.duplicable_disks = [];
+    for (let i = 0; i < this.disks.length; i++) {
+      const disk = this.disks[i];
+      if (disk.size === this.first_data_vdev_disksize && disk.type === this.first_data_vdev_disktype) {
+        this.duplicable_disks.push(disk);
+      }
+    }
+    if (!this.first_data_vdev_disknum || this.duplicable_disks.length < this.first_data_vdev_disknum) {
+      this.canDuplicate = false;
+    } else {
+      this.canDuplicate = true;
+    }
   }
 
   canSave() {
