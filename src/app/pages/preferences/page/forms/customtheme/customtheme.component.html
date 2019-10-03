@@ -1,126 +1,128 @@
-<!-- FLOATING REGION -->
-<div class="floating-region">
+<div id="page-content" fxLayout="row" fxLayoutAlign="space-between start">
+  <!-- FLOATING REGION -->
+  <div fxFlex="calc(400px + 32px)" class="floating-region">
 
-  <!-- FORM -->
-  <mat-card id="custom-theme-form" fxLayout="column" fxLayoutAlign="space-between stretch">
-    <mat-toolbar-row fxFlex style="margin-bottom:16px;">
-      <h4>Create Theme</h4>
-      <span class="spacer"></span>
-      <div>
-        <mat-form-field>
-          <mat-select placeholder="Load Colors from Existing Theme"  [(value)]="baseTheme">
-            <mat-option *ngFor="let theme of baseThemes" value="{{theme.name}}">
-              {{ theme.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <mat-divider fxFlex></mat-divider>
-    </mat-toolbar-row>
+    <!-- FORM -->
+    <mat-card id="custom-theme-form" fxLayout="column" fxLayoutAlign="space-between stretch">
+      <mat-toolbar-row fxFlex style="margin-bottom:16px;">
+        <h4>Create Theme</h4>
+        <span class="spacer"></span>
+        <div>
+          <mat-form-field>
+            <mat-select placeholder="Load Colors from Existing Theme"  [(value)]="baseTheme">
+              <mat-option *ngFor="let theme of baseThemes" value="{{theme.name}}">
+                {{ theme.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <mat-divider fxFlex></mat-divider>
+      </mat-toolbar-row>
 
-    <div class="tabs" fxFlex="100" fxLayout="row" fxLayoutAlign="space-around center">
+      <div class="tabs" fxFlex="100" fxLayout="row" fxLayoutAlign="space-around center">
         <div fxFlex="50" class="tab"><a alt="General tab" (click)="hideFieldSet('Colors')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'General'}">GENERAL</span></a></div>
         <div fxFlex="50" class="tab"><a alt="Colors tab" (click)="hideFieldSet('General')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Colors'}">COLORS</span></a></div>
         <div fxFlex="50" class="tab"><a alt="Preview Options tab" (click)="hideFieldSet('All')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Preview'}">PREVIEW</span></a></div>
-    </div>
-
-    <mat-card-content fxFlex fxLayout="row wrap" fxLayoutAlign="space-between stretch">
-
-      <div class="preview-controls" [ngClass]="{'hidden': currentTab !== 'Preview'}">
-        <mat-slide-toggle [checked]="" [(ngModel)]="globalPreview">Global Preview</mat-slide-toggle>
       </div>
 
-      <div class="embedded-form"  [ngClass]="{'hidden': currentTab == 'Preview'}" >
-        <entity-form-embedded [data]="values" [target]="customThemeForm" [hiddenFieldSets]="hiddenFieldSets" [conf]="this" fxFlex="100" fxFlex.gt-md="100"></entity-form-embedded>
-      </div>
+      <mat-card-content fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between stretch">
 
-    </mat-card-content>
-  </mat-card>
+        <div class="preview-controls" [ngClass]="{'hidden': currentTab !== 'Preview'}">
+          <mat-slide-toggle [checked]="" [(ngModel)]="globalPreview">Global Preview</mat-slide-toggle>
+        </div>
 
-</div>
+        <div class="embedded-form"  [ngClass]="{'hidden': currentTab == 'Preview'}" >
+          <entity-form-embedded [data]="values" [target]="customThemeForm" [hiddenFieldSets]="hiddenFieldSets" [conf]="this" fxFlex="100" fxFlex.gt-md="100"></entity-form-embedded>
+        </div>
 
-<!-- PREVIEW -->
-<div id="theme-preview" fxLayout="row" fxFlex="100">
-  <div fxLayout="column" fxFlex.sm="0" fxFlex.gt-sm="calc(100% - 600px)"></div>
-      <mat-card fxLayout="column" fxFlex.sm="100" fxFlex.gt-sm="600px)">
+      </mat-card-content>
+    </mat-card>
 
-        <mat-toolbar-row color="primary">
-        </mat-toolbar-row>
+  </div>
 
-        <mat-tab-group dynamicHeight="true">
-          <mat-tab label="Buttons">
+  <!-- PREVIEW -->
+  <div id="theme-preview" fxHide.lt-md fxFlex="calc(100% - 432px)" fxLayout="row" fxLayoutAlign="space-around center">
+    <div fxLayout="column" fxFlex.sm="0"></div>
+    <mat-card fxLayout="column" fxFlex="100">
 
-            <h4>Basic Buttons</h4>
-            <div class="button-row">
-              <button mat-button>Basic</button>
-              <button mat-button color="primary">Primary</button>
-              <button mat-button color="accent">Accent</button>
-              <button mat-button color="warn">Warn</button>
-              <button mat-button disabled>Disabled</button>
-              <a mat-button routerLink=".">Link</a>
-            </div>
+      <mat-toolbar-row color="primary">
+        <h4>Preview</h4>
+      </mat-toolbar-row>
 
-            <h4>Raised Buttons</h4>
-            <div class="button-row">
-              <button mat-raised-button>Basic</button>
-              <button mat-raised-button color="primary">Primary</button>
-              <button mat-raised-button color="accent">Accent</button>
-              <button mat-raised-button color="warn">Warn</button>
-              <button mat-raised-button disabled>Disabled</button>
-              <a mat-raised-button routerLink=".">Link</a>
-            </div>
+      <mat-tab-group dynamicHeight="true">
+        <mat-tab label="Buttons">
 
-            <h4>Icon Buttons</h4>
-            <div class="button-row">
-              <button mat-icon-button>
-                <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
-              </button>
-              <button mat-icon-button color="primary">
-                <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
-              </button>
-              <button mat-icon-button color="accent">
-                <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
-              </button>
-              <button mat-icon-button color="warn">
-                <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
-              </button>
-              <button mat-icon-button disabled>
-                <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
-              </button>
-            </div>
+          <h4>Basic Buttons</h4>
+          <div class="button-row">
+            <button mat-button>Basic</button>
+            <button mat-button color="primary">Primary</button>
+            <button mat-button color="accent">Accent</button>
+            <button mat-button color="warn">Warn</button>
+            <button mat-button disabled>Disabled</button>
+            <a mat-button routerLink=".">Link</a>
+          </div>
 
-            <h4>Fab Buttons</h4>
-            <div class="button-row">
-              <button mat-fab>Basic</button>
-              <button mat-fab color="primary">Primary</button>
-              <button mat-fab color="accent">Accent</button>
-              <button mat-fab color="warn">Warn</button>
-              <button mat-fab disabled>Disabled</button>
-              <button mat-fab>
-                <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
-              </button>
-              <a mat-fab routerLink=".">Link</a>
-            </div>
+          <h4>Raised Buttons</h4>
+          <div class="button-row">
+            <button mat-raised-button>Basic</button>
+            <button mat-raised-button color="primary">Primary</button>
+            <button mat-raised-button color="accent">Accent</button>
+            <button mat-raised-button color="warn">Warn</button>
+            <button mat-raised-button disabled>Disabled</button>
+            <a mat-raised-button routerLink=".">Link</a>
+          </div>
 
-            <h4>Mini Fab Buttons</h4>
-            <div class="button-row">
-              <button mat-mini-fab>Basic</button>
-              <button mat-mini-fab color="primary">Primary</button>
-              <button mat-mini-fab color="accent">Accent</button>
-              <button mat-mini-fab color="warn">Warn</button>
-              <button mat-mini-fab disabled>Disabled</button>
-              <button mat-mini-fab>
-                <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
-              </button>
-              <a mat-mini-fab routerLink=".">Link</a>
-            </div>
+          <h4>Icon Buttons</h4>
+          <div class="button-row">
+            <button mat-icon-button>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+            </button>
+            <button mat-icon-button color="primary">
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+            </button>
+            <button mat-icon-button color="accent">
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+            </button>
+            <button mat-icon-button color="warn">
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+            </button>
+            <button mat-icon-button disabled>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+            </button>
+          </div>
 
-          </mat-tab>
+          <h4>Fab Buttons</h4>
+          <div class="button-row">
+            <button mat-fab>Basic</button>
+            <button mat-fab color="primary">Primary</button>
+            <button mat-fab color="accent">Accent</button>
+            <button mat-fab color="warn">Warn</button>
+            <button mat-fab disabled>Disabled</button>
+            <button mat-fab>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+            </button>
+            <a mat-fab routerLink=".">Link</a>
+          </div>
+
+          <h4>Mini Fab Buttons</h4>
+          <div class="button-row">
+            <button mat-mini-fab>Basic</button>
+            <button mat-mini-fab color="primary">Primary</button>
+            <button mat-mini-fab color="accent">Accent</button>
+            <button mat-mini-fab color="warn">Warn</button>
+            <button mat-mini-fab disabled>Disabled</button>
+            <button mat-mini-fab>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+            </button>
+            <a mat-mini-fab routerLink=".">Link</a>
+          </div>
+
+        </mat-tab>
 
 
-          <mat-tab label="Forms" fxLayout="row wrap" fxLayoutAlign="spaceBetween start">
+        <mat-tab label="Forms" fxLayout="row wrap" fxLayoutAlign="spaceBetween start">
 
-            <div fxFlex="200px">
+          <div fxFlex="200px">
             <mat-checkbox>Check me!</mat-checkbox>
 
             <div>
@@ -142,7 +144,7 @@
                 <textarea matInput placeholder="Textarea"></textarea>
               </mat-form-field>
             </div>
-            </div>
+          </div>
 
           <div fxFlex="200px">
             <div>
@@ -168,13 +170,15 @@
               <mat-slider></mat-slider><br>
               <mat-slide-toggle>Slide me!</mat-slide-toggle>
             </div>
-            </div>
+          </div>
 
-          </mat-tab>
+        </mat-tab>
 
 
-        </mat-tab-group>
-      </mat-card>
-    </div>
-    
+      </mat-tab-group>
+    </mat-card>
+  </div>
 
+</div>
+
+<div class="background" style="background-color: snapshot.theme.bg1"></div>

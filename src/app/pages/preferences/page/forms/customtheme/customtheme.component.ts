@@ -35,6 +35,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
   protected isEntity: boolean = true; // was true
   public hiddenFieldSets: string[] = ['Colors'];
   public currentTab:string = 'General';
+  public scrollContainer: HTMLElement;
 
   // EXAMPLE THEME
   public values:Theme = {
@@ -382,6 +383,8 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
     ) {}
 
     ngOnInit(){
+      this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
+      this.scrollContainer.style.overflow = 'hidden';
       this.init();
     }
 
@@ -396,6 +399,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
       this.core.unregister({observerClass:this});
       this.globalPreview = true;
       this.updateGlobal();
+      this.scrollContainer.style.overflow = 'auto';
     }
 
     init(){

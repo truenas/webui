@@ -1,5 +1,13 @@
-#theme-preview{
-    background-color: var(--bg1);
+.background{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  z-index:-10;
+}
+
+/*#page-content{ 
     padding:32px;
     z-index: 0;
     position:absolute;
@@ -8,15 +16,7 @@
     top:88px;
     overflow:auto;
 
-}
-#theme-preview.fullscreen{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10000;
-}
+}*/
 
 :host ::ng-deep #theme-preview div.mat-tab-body-content{
   padding:16px 16px 64px;
@@ -28,15 +28,6 @@
 
 .preview-controls{
   min-height: 60vh;
-}
-
-.floating-region{
-  position:absolute;
-  display:block !important;
-  z-index:2;
-  /*max-height:80%;
-  overflow-y: auto;
-  overflow-x: hidden;*/
 }
 
 .tabs{
@@ -72,4 +63,13 @@
 
 .hidden{
   display:none;
+}
+
+.embedded-form, .preview-controls{
+  width:100%;
+}
+
+#theme-preview .mat-card{
+  height:75vh;
+  overflow:auto;
 }
