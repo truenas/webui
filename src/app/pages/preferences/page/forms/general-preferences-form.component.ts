@@ -122,7 +122,6 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
         if(!this.embeddedForm){ return; }
         
         let theme = this.prefs.preferences.userTheme;
-        console.log(theme);
         this.embeddedForm.setValue('userTheme', theme);
       });
 

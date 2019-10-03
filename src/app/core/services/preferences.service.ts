@@ -112,8 +112,8 @@ export class PreferencesService {
         let newTheme:Theme;
         newTheme = evt.data;
         this.preferences.customThemes.push(newTheme);
+        this.preferences.userTheme = evt.data.name;
         this.core.emit({name:"UserDataUpdate", data:this.preferences  });
-        //console.log(this.preferences);
     });
 
     this.core.register({observerClass:this, eventName:"ReplaceCustomThemePreference"}).subscribe((evt:CoreEvent) => {
