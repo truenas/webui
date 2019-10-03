@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector, OnInit, OnChanges, OnDestroy } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnInit, AfterViewInit, OnChanges, OnDestroy } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -22,7 +22,7 @@ interface FormSnapshot {
   templateUrl : './customtheme.component.html',
   styleUrls: ['./customtheme.component.css'],
 })
-export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
+export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
   public saveSubmitText = "Save Custom Theme";
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
@@ -385,11 +385,18 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       this.init();
     }
 
+    ngAfterViewInit(){
+      this.globalPreview = true;
+      this.updateGlobal();
+    }
+
     ngOnChanges(changes){
     }
 
     ngOnDestroy(){
       this.core.unregister({observerClass:this});
+      this.globalPreview = true;
+      this.updateGlobal();
     }
 
     init(){
@@ -565,6 +572,12 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     hideFieldSet(name:string){
+      if(name == 'All'){
+        this.currentTab = 'Preview';
+        this.hiddenFieldSets = ['General', 'Colors'];
+        return;
+      }
+
       this.hiddenFieldSets = [name];
       this.currentTab = name == 'Colors' ? 'General' : 'Colors' ;
     }

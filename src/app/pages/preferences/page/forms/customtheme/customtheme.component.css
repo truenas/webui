@@ -24,6 +24,13 @@
 
 .mat-card#custom-theme-form{
   width:400px;
+}
+
+.preview-controls{
+  min-height: 60vh;
+}
+
+.floating-region{
   position:absolute;
   display:block !important;
   z-index:2;
@@ -61,4 +68,8 @@
 .tab .mat-button-wrapper.active{
   font-weight: 500;
   border-bottom: var(--primary) 2px solid;
+}
+
+.hidden{
+  display:none;
 }
