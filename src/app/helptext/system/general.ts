@@ -73,8 +73,8 @@ export const helptext_system_general = {
   },
 
   stg_language_sort_label: T('Sort languages by:'),
-  stg_language_sort_name: T('Name:'),
-  stg_language_sort_code: T('Language code:'),
+  stg_language_sort_name: T('Name'),
+  stg_language_sort_code: T('Language code'),
 
   stg_kbdmap: {
     placeholder: T("Console Keyboard Map"),
