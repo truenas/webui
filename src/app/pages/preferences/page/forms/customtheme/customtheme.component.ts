@@ -33,6 +33,8 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
   public snapshot:FormSnapshot;
   customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in
   protected isEntity: boolean = true; // was true
+  public hiddenFieldSets: string[] = ['Colors'];
+  public currentTab:string = 'General';
 
   // EXAMPLE THEME
   public values:Theme = {
@@ -91,7 +93,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
   public fieldSets: FieldSet[] = [
     {
       name:'General',
-      label: true,
+      label: false,
       class:'general',
       width:'300px',
       config:[
@@ -165,7 +167,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     {
       name:'Colors',
       class:'color-palette',
-      label: true,
+      label: false,
       width:'calc(100% - 300px)',
       config:[
         {
@@ -562,4 +564,8 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       })
     }
 
+    hideFieldSet(name:string){
+      this.hiddenFieldSets = [name];
+      this.currentTab = name == 'Colors' ? 'General' : 'Colors' ;
+    }
 }

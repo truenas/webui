@@ -2,6 +2,12 @@
     background-color: var(--bg1);
     padding:32px;
     z-index: 0;
+    position:absolute;
+    width:100%;
+    height:calc(100vh - 100px);
+    top:88px;
+    overflow:auto;
+
 }
 #theme-preview.fullscreen{
     position: fixed;
@@ -14,4 +20,45 @@
 
 :host ::ng-deep #theme-preview div.mat-tab-body-content{
   padding:16px 16px 64px;
+}
+
+.mat-card#custom-theme-form{
+  width:400px;
+  position:absolute;
+  display:block !important;
+  z-index:2;
+  /*max-height:80%;
+  overflow-y: auto;
+  overflow-x: hidden;*/
+}
+
+.tabs{
+  padding: 8px;
+  /*border-top: solid var(--fg2) 1px;
+  border-bottom: solid 1px var(--bg1);*/
+  margin-bottom: 16px;
+}
+
+#custom-theme-form .mat-divider{
+  position: absolute;
+  top: 74px;
+  background-color: var(--fg2);
+  opacity: 0.1;
+  z-index: 2;
+}
+
+.tab{
+  text-align:center;
+  user-select: none;
+}
+
+.tab .mat-button-wrapper{
+  font-weight: 500;
+  padding:8px 16px;
+  cursor:pointer;
+}
+
+.tab .mat-button-wrapper.active{
+  font-weight: 500;
+  border-bottom: var(--primary) 2px solid;
 }

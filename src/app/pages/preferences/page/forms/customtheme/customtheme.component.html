@@ -1,6 +1,6 @@
-<mat-card>
-  <mat-toolbar-row style="margin-bottom:16px;">
-    <h4>Create Custom Theme</h4>
+<mat-card id="custom-theme-form" fxLayout="column" fxLayoutAlign="space-between stretch">
+  <mat-toolbar-row fxFlex style="margin-bottom:16px;">
+    <h4>Create Theme</h4>
     <span class="spacer"></span>
     <div>
       <mat-form-field>
@@ -10,16 +10,24 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <!--<button mat-button (click)="loadValues(baseTheme)">Load</button>-->
-
     </div>
+    <mat-divider fxFlex></mat-divider>
   </mat-toolbar-row>
-  <mat-divider></mat-divider>
-  <mat-card-content style="margin-top:64px;" fxLayout="row wrap" fxLayoutAlign="space-between stretch">
-    <entity-form-embedded [data]="values" [target]="customThemeForm" [conf]="this" fxFlex="100" fxFlex.gt-md="50"></entity-form-embedded>
-    <!--<ng-template>-->
-    <div id="theme-preview" fxFlex="100" fxFlex.gt-md="50">
-      <mat-card>
+  <div class="tabs" fxFlex="100" fxLayout="row" fxLayoutAlign="space-around center">
+    <!--<div fxFlex="50" class="tab"><button mat-button color="default" (click)="hideFieldSet('Colors')">General</button></div>
+      <div fxFlex="50" class="tab"><button mat-button color="default" (click)="hideFieldSet('General')">Colors</button></div>-->
+      <div fxFlex="50" class="tab"><a alt="General tab" (click)="hideFieldSet('Colors')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'General'}">GENERAL</span></a></div>
+      <div fxFlex="50" class="tab"><a alt="General tab" (click)="hideFieldSet('General')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Colors'}">COLORS</span></a></div>
+  </div>
+  <mat-card-content fxFlex fxLayout="row wrap" fxLayoutAlign="space-between stretch">
+    <entity-form-embedded [data]="values" [target]="customThemeForm" [hiddenFieldSets]="hiddenFieldSets" [conf]="this" fxFlex="100" fxFlex.gt-md="100"></entity-form-embedded>
+    
+  </mat-card-content>
+</mat-card>
+
+<div id="theme-preview" fxLayout="row" fxFlex="100">
+  <div fxLayout="column" fxFlex.sm="0" fxFlex.gt-sm="calc(100% - 600px)"></div>
+      <mat-card fxLayout="column" fxFlex.sm="100" fxFlex.gt-sm="600px)">
 
         <mat-toolbar-row color="primary">
           <h4>Theme Preview</h4>
@@ -156,7 +164,5 @@
         </mat-tab-group>
       </mat-card>
     </div>
-    <!--</ng-template>-->
-  </mat-card-content>
-</mat-card>
+    
 

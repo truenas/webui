@@ -93,7 +93,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   @Input('conf') conf: FormConfig;
   @Input() data:any;
-  //@Input()  args: string;
+  @Input() hiddenFieldSets: string[] = [];
   @Input() target: Subject<CoreEvent>;
 
   public formGroup: FormGroup;
@@ -152,6 +152,16 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.init(/*this.args*/);
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
+    }
+
+    if(this.target){
+      this.target.subscribe((evt:CoreEvent) => {
+        switch(evt.name){
+          case "SetHiddenFieldsets":
+            this.setHiddenFieldSets(evt.data);
+            break;
+        }
+      });
     }
   }
 
@@ -388,5 +398,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if(this.sub){
       this.sub.unsubscribe(); 
     }
+  }
+
+  setHiddenFieldSets(fs: string[]){
+    this.hiddenFieldSets = fs;
   }
 }
