@@ -45,3 +45,9 @@
 .datainfo {
     margin-left: 16px;
 }
+
+@media screen and (max-width: 1399px) {
+	.vdev-wrapper {
+		margin-left: 1rem;
+	}
+}

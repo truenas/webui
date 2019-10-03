@@ -39,7 +39,7 @@
 	flex-grow: 1;
 	min-width: 520px;
 	max-width: 580px;
-	top: -20px;
+	top: -10px;
     position: relative;
 }
 
@@ -64,12 +64,16 @@ h4 {
 	text-align: center;
 }
 
+#avail-disks-title {
+	margin-bottom: 25px;
+}
+
 .volumeTooltip {
 	display: auto;
 }
 
 .sizeMessage {
-	padding: 10px;
+	margin: 1rem;
 }
 
 .vdev-h4 {
@@ -100,6 +104,19 @@ h4 {
 #pool-manager__suggest-layout-button:disabled {
 	color: var(--fg2);
 	opacity: .38;
+}
+
+.pool-manager-title {
+	margin: 16px !important;
+}
+.fields {
+	margin: 3rem 3rem 3rem 1rem !important;
+}
+#filter-wrapper, #pool-manager__button-group {
+	margin-left: 1rem;
+}
+#create-pool-card {
+	min-width: 660px !important;
 }
 
 @media screen and (max-width: 1399px) {

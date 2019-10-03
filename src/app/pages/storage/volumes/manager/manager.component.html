@@ -1,6 +1,6 @@
-<mat-card class="m-0 ml-1 mr-1 p-0">
+<mat-card class="m-0 ml-1 mr-1 p-0" id="create-pool-card">
   <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">{{"Pool Manager" | translate}}</div>
+    <div class="mat-card-title-text pool-manager-title">{{"Pool Manager" | translate}}</div>
   </div>
   <div class="mat-content p-1">
     <div class="manager">
@@ -38,7 +38,7 @@
       </div>
       <div class="wrapper">
         <div class="disks">
-            <h4>{{"Available Disks" | translate }}</h4>
+            <h4 id="avail-disks-title">{{"Available Disks" | translate }}</h4>
               <ngx-datatable
                 id="pool-manager__disks-table"
                 #table
@@ -110,7 +110,8 @@
                   </ng-template>
                 </ngx-datatable-column>
               </ngx-datatable>
-              <mat-form-field>
+              <div id="filter-wrapper">
+                <mat-form-field fxFlex="1 1 40%">
                   <input matInput
                     id="pool-manager__nameFilter"
                     type='text'
@@ -119,7 +120,8 @@
                     (keyup)='updateFilter($event)'
                   />
                 </mat-form-field>
-                <mat-form-field>
+                <div fxFlex="5%"></div>
+                <mat-form-field fxFlex="1 1 40%">
                   <input matInput
                     id="pool-manager__capacityFilter"
                     type='text'
@@ -129,6 +131,7 @@
                   />
                 </mat-form-field>
                 <mat-error *ngIf="re_has_errors">{{"Invalid regex filter" | translate}}</mat-error>
+              </div>
         </div>
         <div class="pool">
           <div>
