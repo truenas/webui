@@ -28,7 +28,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
   public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target
   private _baseTheme:any; //= this.themeService.activeTheme;
-  private _globalPreview:boolean = false;
+  private _globalPreview:boolean = true;
   public baseThemes: Theme[];
   public snapshot:FormSnapshot;
   customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in
@@ -386,7 +386,6 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     ngAfterViewInit(){
-      this.globalPreview = true;
       this.updateGlobal();
     }
 

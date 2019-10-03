@@ -329,8 +329,6 @@ export class ThemeService {
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
-      console.log("GlobalPreview callback")
-      //this.globalPreview = !this.globalPreview;
       if(evt.data){
         this.globalPreview = true;
       } else {
@@ -350,12 +348,10 @@ export class ThemeService {
         this.customThemes = evt.data.customThemes;
       }
 
-      //if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
         this.setCssVars(this.findTheme(this.activeTheme, true));
         this.userThemeLoaded = true;
         this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
-      //}
 
       if(evt.data.allowPwToggle){
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop","inline");
