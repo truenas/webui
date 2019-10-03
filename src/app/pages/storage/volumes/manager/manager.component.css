@@ -39,6 +39,8 @@
 	flex-grow: 1;
 	min-width: 520px;
 	max-width: 580px;
+	top: -20px;
+    position: relative;
 }
 
 .fields {
@@ -77,7 +79,9 @@ h4 {
 .data-div {
 	display: flex;
 	padding:0;
-    margin:0;
+	margin-left: 80px;
+	width: 477px;
+	align-items: center;
 }
 
 .data-title {
@@ -96,4 +100,11 @@ h4 {
 #pool-manager__suggest-layout-button:disabled {
 	color: var(--fg2);
 	opacity: .38;
+}
+
+@media screen and (max-width: 1399px) {
+	.pool {
+		top: 40px;
+		margin-bottom: 50px;
+	}
 }
