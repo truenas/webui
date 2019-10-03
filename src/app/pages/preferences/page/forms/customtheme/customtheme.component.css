@@ -62,7 +62,12 @@
 }
 
 .hidden{
-  display:none;
+  display:none !important;
+}
+
+.theme-preview.hidden{
+  position:absolute;
+  z-index:-20;
 }
 
 .embedded-form, .preview-controls{

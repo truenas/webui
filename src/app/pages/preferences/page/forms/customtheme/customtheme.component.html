@@ -1,6 +1,6 @@
 <div id="page-content" fxLayout="row" fxLayoutAlign="space-between start">
   <!-- FLOATING REGION -->
-  <div fxFlex="calc(400px + 32px)" class="floating-region">
+  <div [fxFlex]="flexForm" class="floating-region">
 
     <!-- FORM -->
     <mat-card id="custom-theme-form" fxLayout="column" fxLayoutAlign="space-between stretch">
@@ -41,7 +41,7 @@
   </div>
 
   <!-- PREVIEW -->
-  <div id="theme-preview" fxHide.lt-md fxFlex="calc(100% - 432px)" fxLayout="row" fxLayoutAlign="space-around center">
+  <div [ngClass]="{ 'hidden': !globalPreview}" class="theme-preview" id="theme-preview" fxHide.lt-md fxFlex="calc(100% - 432px)" fxLayout="row" fxLayoutAlign="space-around center">
     <div fxLayout="column" fxFlex.sm="0"></div>
     <mat-card fxLayout="column" fxFlex="100">
 

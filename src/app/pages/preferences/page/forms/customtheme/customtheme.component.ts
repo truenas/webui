@@ -37,6 +37,10 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
   public currentTab:string = 'General';
   public scrollContainer: HTMLElement;
 
+  get flexForm(){
+    return this._globalPreview ? '432px' : '100%';
+  }
+
   // EXAMPLE THEME
   public values:Theme = {
     name:'New Theme',
@@ -418,6 +422,8 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
 
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.baseThemes = this.themeService.allThemes;
+        let theme = this.themeService.currentTheme();
+        this.baseTheme = theme.name;
       });
 
       this.customThemeForm.subscribe((evt:CoreEvent) => {
@@ -584,4 +590,5 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
       this.hiddenFieldSets = [name];
       this.currentTab = name == 'Colors' ? 'General' : 'Colors' ;
     }
+
 }
