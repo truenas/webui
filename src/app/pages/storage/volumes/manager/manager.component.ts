@@ -193,7 +193,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         const origVdevs = self.vdevComponents.toArray();
         // handle case of extending with zero vdevs filled out
         if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {
-          self.removeVdev(origVdevs[0]);
+          const vdev = origVdevs[0];
+          value.vdevs = value.vdevs - 1;
+          for (let i = 0; i < self.first_data_vdev_disknum; i++) {
+            const disk = duplicable_disks.shift();
+            vdev.addDisk(disk);
+            self.removeDisk(disk);
+          }
         }
         for (let i = 0; i < value.vdevs; i++) {
           const vdev_values = {disks:[], type:self.first_data_vdev_type};
