@@ -20,6 +20,7 @@ export class VdevComponent implements OnInit {
   @Input() index: any;
   @Input() group: string;
   @Input() manager: any;
+  @Input() initial_values = {};
   @ViewChild('dnd', { static: true}) dnd;
   @ViewChild(DatatableComponent, { static: false}) table: DatatableComponent;
   public type: string;
@@ -55,6 +56,16 @@ export class VdevComponent implements OnInit {
       }
     } else {
       this.type = this.group;
+    }
+    if (this.initial_values['disks']) {
+      for (let i = 0; i < this.initial_values['disks'].length; i++) {
+        this.addDisk(this.initial_values['disks'][i]);
+        this.manager.removeDisk(this.initial_values['disks'][i]);
+      }
+      this.initial_values['disks'] = [];
+    }
+    if (this.initial_values['type']) {
+      this.type = this.initial_values['type'];
     }
   }
 

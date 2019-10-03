@@ -70,7 +70,7 @@
 
                   <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                     <div>
-                      <mat-checkbox id="pool-manager__disks-{{disks[rowIndex].devname}}" name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+                      <mat-checkbox *ngIf="disks[rowIndex]" id="pool-manager__disks-{{disks[rowIndex].devname}}" name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
                     </div>
                   </ng-template>
                 </ngx-datatable-column>
@@ -132,8 +132,11 @@
         </div>
         <div class="pool">
           <div>
-            <h4 class="vdev-h4">{{"Data VDevs" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i"></app-vdev>
+            <div class="data-div">
+              <div class="data-title"><h4 class="vdev-h4">{{"Data VDevs" | translate}}</h4></div>
+              <div class="duplicate-button"><button id="pool-manager__create-data-vdevs-button" mat-button class="btn btn-accent" [disabled]="!canDuplicate" (click)="duplicate()">{{"Duplicate" | translate}}</button></div>
+            </div>
+            <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i" [initial_values]="vdev"></app-vdev>
           </div>
           <div *ngIf="vdevs.cache.length > 0">
             <h4 class="vdev-h4">{{"Cache VDev" | translate}}</h4>
