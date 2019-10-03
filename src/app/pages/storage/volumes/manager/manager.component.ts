@@ -180,13 +180,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           type: 'select',
           name: 'vdevs',
+          value: 1,
           placeholder: helptext.manager_duplicate_vdevs_placeholder,
           tooltip: helptext.manager_duplicate_vdevs_tooltip,
           options: vdevs_options 
         }
       ],
 
-      saveButtonText: T("Duplicate"),
+      saveButtonText: helptext.manager_duplicate_button,
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue;
         const origVdevs = self.vdevComponents.toArray();
