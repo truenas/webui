@@ -252,19 +252,15 @@ export class JailListComponent implements OnInit {
         name: "start",
         label: T("Start"),
         onClick: (row) => {
-          this.entityList.busy =
-            this.loader.open();
-            this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
-              (res) => {
-                row.state = 'up';
-                this.updateRow(row);
-                this.updateMultiAction([row]);
-                this.loader.close();
-              },
-              (res) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-              });
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Starting Jail") }, disableClose: true });
+          dialogRef.componentInstance.setCall('jail.start', [row.host_hostuuid]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            row.state = 'up';
+            this.updateRow(row);
+            this.updateMultiAction([row]);
+          });
         }
       },
       {
@@ -273,20 +269,15 @@ export class JailListComponent implements OnInit {
         name: "restart",
         label: T("Restart"),
         onClick: (row) => {
-          this.entityList.busy =
-            this.loader.open();
-            row.state = 'restarting';
-            this.ws.call('jail.restart', [row.host_hostuuid]).subscribe(
-              (res) => {
-                row.state = 'up';
-                this.updateRow(row);
-                this.updateMultiAction([row]);
-                this.loader.close();
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
-              });
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Restarting Jail") }, disableClose: true });
+          dialogRef.componentInstance.setCall('jail.restart', [row.host_hostuuid]);
+          dialogRef.componentInstance.submit();
+          dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.close(true);
+            row.state = 'up';
+            this.updateRow(row);
+            this.updateMultiAction([row]);
+          });
         }
       },
       {
@@ -296,23 +287,17 @@ export class JailListComponent implements OnInit {
         label: T("Stop"),
         onClick: (row) => {
           let dialog = {};
-          this.dialogService.confirm("Stop", "Stop the selected jails?", 
+          this.dialogService.confirm("Stop", "Stop the selected jail?", 
             dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((res) => {
-            if (res) {
-              this.loader.open();
-              this.entityList.busy =
-                this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
-                  (res) => {
-                    row.state = 'down';
-                    this.updateRow(row);
-                    this.updateMultiAction([row]);
-                    this.loader.close();
-                  },
-                  (res) => {
-                    this.loader.close();
-                    new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-                  });
-            }
+              const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stopping Jail") }, disableClose: true });
+              dialogRef.componentInstance.setCall('jail.stop', [row.host_hostuuid]);
+              dialogRef.componentInstance.submit();
+              dialogRef.componentInstance.success.subscribe((res) => {
+                dialogRef.close(true);
+                row.state = 'down';
+                this.updateRow(row);
+                this.updateMultiAction([row]);
+              });
           })
         }
       },

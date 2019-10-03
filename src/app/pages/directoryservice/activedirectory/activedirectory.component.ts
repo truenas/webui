@@ -105,6 +105,12 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'checkbox',
+      name : 'validate_certificates',
+      placeholder : helptext.ad_validate_certificates_placeholder,
+      tooltip : helptext.ad_validate_certificates_tooltip,
+    },
+    {
+      type : 'checkbox',
       name : helptext.activedirectory_verbose_logging_name,
       placeholder : helptext.activedirectory_verbose_logging_placeholder,
       tooltip : helptext.activedirectory_verbose_logging_tooltip,

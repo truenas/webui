@@ -11,7 +11,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
+import { StorageService } from '../../../../services/storage.service';
 import { EntityUtils } from '../../../common/entity/utils';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-bootenv-list',
@@ -99,7 +101,7 @@ export class BootEnvironmentListComponent {
   }
 
   constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService, 
-    private dialog: DialogService, protected loader: AppLoaderService,
+    private dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
     public snackBar: MatSnackBar ) {}
 
   afterInit(entityList: any) {
@@ -121,7 +123,7 @@ export class BootEnvironmentListComponent {
     const actions = [];
     if (row.active === '-'){
       actions.push({
-        label: "Delete",
+        label: T("Delete"),
         id: "delete",
         onClick: row =>
           this.entityList.doDeleteJob(row).subscribe(
@@ -143,7 +145,7 @@ export class BootEnvironmentListComponent {
       });
     }
     actions.push({
-      label : "Clone",
+      label : T("Clone"),
       id: "clone",
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
@@ -151,7 +153,7 @@ export class BootEnvironmentListComponent {
       }
     });
     actions.push({
-      label : "Rename",
+      label : T("Rename"),
       id: "rename",
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
@@ -159,7 +161,7 @@ export class BootEnvironmentListComponent {
       }
     });
     actions.push({
-      label : "Activate",
+      label : T("Activate"),
       id: "activate",
       onClick : (row) => {
         this.doActivate(row.id);
@@ -167,7 +169,7 @@ export class BootEnvironmentListComponent {
     });
     if (row.keep === true){
       actions.push({
-        label : "Unkeep",
+        label : T("Unkeep"),
         id: "keep",
         onClick : (row) => {
           this.toggleKeep(row.id, row.keep);
@@ -176,7 +178,7 @@ export class BootEnvironmentListComponent {
 
     } else {
       actions.push({
-        label : "Keep",
+        label : T("Keep"),
         id: "keep",
         onClick : (row) => {
           this.toggleKeep(row.id, row.keep);
@@ -213,12 +215,12 @@ export class BootEnvironmentListComponent {
       } else {
         this.scrub_msg = "Never";
       }
-      this.size_consumed = wres.properties.allocated.value;
+      this.size_consumed = this.storage.convertBytestoHumanReadable(wres.properties.allocated.parsed);
       this.condition = wres.properties.health.value;
       if (this.condition === "DEGRADED") {
         this.condition = this.condition + ` Check Notifications for more details.`;
       }
-      this.size_boot = wres.properties.size.value;
+      this.size_boot = this.storage.convertBytestoHumanReadable(wres.properties.size.parsed);
       this.percentange = wres.properties.capacity.value;
     });
   }

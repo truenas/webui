@@ -875,7 +875,7 @@ export class CloudCredentialsFormComponent {
             if (res.valid) {
               this.snackBar.open(T('The Credential is valid.'), T('Close'), { duration: 5000 });
             } else {
-              this.dialog.errorReport('Error', res.error);
+              this.dialog.errorReport('Error', res.excerpt, res.error);
             }
           },
           (err) => {

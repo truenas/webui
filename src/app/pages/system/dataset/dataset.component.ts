@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { RestService, WebSocketService, SnackbarService } from '../../../services/';
+import { RestService, WebSocketService, SnackbarService, DialogService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_dataset } from 'app/helptext/system/dataset';
 import { EntityUtils } from '../../common/entity/utils';
@@ -41,9 +41,9 @@ export class DatasetComponent implements OnInit{
 
   private pool: any;
   private syslog: any;
-  private rrd: any;
   constructor(private rest: RestService, private ws: WebSocketService,
-              private loader: AppLoaderService, private snackbarService: SnackbarService) {}
+              private loader: AppLoaderService, private snackbarService: SnackbarService,
+              private dialogService: DialogService) {}
 
   ngOnInit() {
     this.rest.get(this.volume_name, {}).subscribe( res => {
@@ -60,30 +60,49 @@ export class DatasetComponent implements OnInit{
     this.ws.call('systemdataset.config').subscribe(res => {
       entityForm.formGroup.controls['pool'].setValue(res.pool);
       entityForm.formGroup.controls['syslog'].setValue(res.syslog);
-      entityForm.formGroup.controls['rrd'].setValue(res.rrd);
     });
   }
 
   customSubmit(value) {
+    this.ws.call("service.query").subscribe(
+      (services) => {
+        const smbShare = _.find(services, {'service': "cifs"});
+        if (smbShare.state === 'RUNNING') {
+          this.dialogService.confirm(
+            T('Restart SMB Service'),
+            T('The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.'),
+            false,
+            T('Continue')
+          ).subscribe((confirmed) => {
+            if (confirmed) {
+              this.doUpdate(value);
+            }
+          });
+        } else {
+          this.doUpdate(value);
+        }
+      }
+    );
+  }
+
+  doUpdate(value) {
     this.loader.open();
     this.ws.job('systemdataset.update', [value]).subscribe(
       (res) => {
-        this.loader.close();
         if (res.error) {
+          this.loader.close();
           if (res.exc_info && res.exc_info.extra) {
             res.extra = res.exc_info.extra;
           }
           new EntityUtils().handleWSError(this, res);
         }
         if (res.state === 'SUCCESS') {
-          this.snackbarService.open(T("Settings saved."), T('Close'), { duration: 5000 })
+            this.snackbarService.open(T("Settings saved."), T('Close'), { duration: 5000 });
         }
       },
       (err) => {
-        this.loader.close();
         new EntityUtils().handleWSError(this, err);
       }
     );
-
   }
 }

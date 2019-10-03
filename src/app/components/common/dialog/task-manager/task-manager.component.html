@@ -6,7 +6,7 @@
 
     <mat-table #taskTable [dataSource]="dataSource" multiTemplateDataRows matSort>
         <ng-container matColumnDef="state">
-            <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="74px"> State </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="74px"> {{ 'State' | translate }} </mat-header-cell>
             <mat-cell *matCellDef="let element" fxFlex="74px">
                 <mat-icon *ngIf="element.state == 'SUCCESS'" class="state-success">check_circle_outline</mat-icon>
                 <mat-icon *ngIf="element.state == 'FAILED'" class="state-failed">highlight_off</mat-icon>
@@ -15,11 +15,11 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="method">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Method </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Method' | translate }} </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.method}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="percent" class="task-manager-percent">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Progress' | translate }} </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <span *ngIf="element.progress.percent != null"> {{element.progress.percent | number: '1.2-2'}}% </span>
                 <mat-progress-bar [mode]="element.state == 'RUNNING' ? 'buffer' : 'determinate'" [value]="element.progress.percent"></mat-progress-bar>
@@ -29,10 +29,11 @@
         <!-- expanded row -->
         <ng-container matColumnDef="expandedDetail">
             <mat-cell *matCellDef="let element">
-                <span>Status: {{element.state}}</span>
-                <span *ngIf="element.error != null">Error: {{element.error}}</span>
-                <span *ngIf="element.logs_path != null">Logs Path: {{element.logs_path}}</span>
-                <span *ngIf="element.time_started != null">Date: {{getReadableDate(element.time_started)}}</span>
+                <span><b>{{ 'Status:' | translate}}</b> {{element.state}}</span>
+                <span *ngIf="element.time_started != null"><b>{{ 'Start Time:' | translate }}</b> {{getReadableDate(element.time_started)}}</span>
+                <span *ngIf="element.time_finished != null"><b>{{ 'Finished Time:' | translate }}</b> {{getReadableDate(element.time_finished)}}</span>
+                <span *ngIf="element.error != null"><b>{{ 'Error:' | translate }}</b> {{element.error}}</span>
+                <span *ngIf="element.logs_excerpt != null && element.logs_path != null"><button mat-flat-button color="primary" (click)="showLogs(element)">{{ 'View Logs' | translate }}</button></span>
             </mat-cell>
         </ng-container>
 
@@ -43,5 +44,5 @@
     </mat-table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close class="task-manager-action-button">Close</button>
+    <button mat-button mat-dialog-close class="task-manager-action-button"> {{ 'Close' | translate }}</button>
 </mat-dialog-actions>

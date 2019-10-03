@@ -72,8 +72,8 @@ disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
  virtual hard drive for the VM. Select <i>Use\
  existing disk image</i> to use an existing zvol or\
  file for the VM.'),
-disk_radio_options:[{label:T("Create new disk image"), value: true},
-{label:T("Use existing disk image"), value: false}],
+disk_radio_options_new_label: T("Create new disk image"),
+disk_radio_options_existing_label: T("Use existing disk image"),
 
 volsize_placeholder : T('Size (GiB)'),
 volsize_tooltip: T('Allocate a number of gigabytes of space for the\
@@ -81,7 +81,7 @@ volsize_tooltip: T('Allocate a number of gigabytes of space for the\
 volsize_validation: [Validators.required, Validators.min(1)],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
-datastore_placeholder: T('Zvol Dataset Location'),
+datastore_placeholder: T('Zvol Location'),
 
 hdd_type_placeholder: T('Select Disk Type'),
 hdd_type_tooltip: T('Select desired disk type.'),

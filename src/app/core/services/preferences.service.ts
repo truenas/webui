@@ -14,7 +14,6 @@ export interface UserPreferences {
   showTooltips?:boolean; // Form Tooltips on/off // Deprecated, remove in v12!
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
   allowPwToggle:boolean;
-  enableWarning:boolean;
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
   tableDisplayedColumns:any;
@@ -35,7 +34,6 @@ export class PreferencesService {
     "showTooltips":true,
     "metaphor":"auto",
     "allowPwToggle":true,
-    "enableWarning": true,
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
     "tableDisplayedColumns":[],

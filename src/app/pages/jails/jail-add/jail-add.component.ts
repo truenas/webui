@@ -1,27 +1,21 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { T } from '../../../translate-marker'
 import { TranslateService } from '@ngx-translate/core'
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 
-import { MatDialog, MatDialogRef } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { JailService } from '../../../services/';
+import { JailService, WebSocketService, AppLoaderService, DialogService, NetworkService } from '../../../services/';
 
-import { WebSocketService } from '../../../services/';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-
-import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
-import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import helptext from '../../../helptext/jails/jail-configuration';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'jail-add',
@@ -40,7 +34,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
   public busy: Subscription;
 
   protected dialogRef: any;
-  protected formFileds: FieldConfig[];
+  protected formFields: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -678,6 +672,71 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       placeholder: helptext.vnet3_mac_placeholder,
       tooltip: helptext.vnet3_mac_tooltip,
     },
+    {
+      type: 'checkbox',
+      name: 'nat_forwards_checkbox',
+      placeholder: 'nat_forwards',
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "nat",
+          value: true,
+        }]
+      }],
+    },
+    {
+      type: 'list',
+      name: 'nat_forwards',
+      placeholder: 'nat_forwards',
+      relation: [{
+        action: "SHOW",
+        connective: 'AND',
+        when: [{
+          name: "nat",
+          value: true,
+        }, {
+          name: 'nat_forwards_checkbox',
+          value: true,
+        }]
+      }],
+      templateListField: [
+        {
+          type: 'select',
+          name: 'protocol',
+          placeholder: helptext.protocol_placeholder,
+          tooltip: helptext.protocol_tooltip,
+          options: [{
+            label: 'udp',
+            value: 'udp',
+          }, {
+            label: 'tcp',
+            value: 'tcp',
+          }],
+          class: 'inline',
+          width: '30%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'jail_port',
+          placeholder: helptext.jail_port_placeholder,
+          tooltip: helptext.jail_port_tooltip,
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'host_port',
+          placeholder: helptext.host_port_placeholder,
+          tooltip: helptext.host_port_tooltip,
+          class: 'inline',
+          width: '20%',
+        }
+      ],
+      listFields: [],
+      disabled: true,
+    },
   ];
   public customConfig: FieldConfig[] = [
     {
@@ -1072,17 +1131,17 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       }
     );
 
-    this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
-    this.formGroup = this.entityFormService.createFormGroup(this.formFileds);
+    this.formFields = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
+    this.formGroup = this.entityFormService.createFormGroup(this.formFields);
 
-    for (const i in this.formFileds) {
-      const config = this.formFileds[i];
+    for (const i in this.formFields) {
+      const config = this.formFields[i];
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
     }
 
-    const httpsField =  _.find(this.formFileds, {'name': 'https'});
+    const httpsField =  _.find(this.formFields, {'name': 'https'});
     this.formGroup.controls['release'].valueChanges.subscribe((res) => {
       httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
     });
@@ -1148,33 +1207,32 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       this.updateInterface();
     });
 
-    this.ws.call("jail.query", [
-      [
-        ["host_hostuuid", "=", "default"]
-      ]
-    ]).subscribe(
+    this.jailService.getDefaultConfiguration().subscribe(
     (res) => {
-      for (let i in res[0]) {
+      for (let i in res) {
         if (this.formGroup.controls[i]) {
-          if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
-            // this.formGroup.controls[i].setValue('');
+          if ((i == 'ip4_addr' || i == 'ip6_addr') && res[i] == 'none') {
             continue;
           }
           if (_.indexOf(this.TFfields, i) > -1) {
-            if (res[0][i] == '1') {
-              res[0][i] = true;
+            if (res[i] == '1') {
+              res[i] = true;
             } else {
-              res[0][i] = false;
+              res[i] = false;
             }
           }
           if (_.indexOf(this.OFfields, i) > -1) {
-            if (res[0][i] == 'on') {
-              res[0][i] = true;
+            if (res[i] == 'on') {
+              res[i] = true;
             } else {
-              res[0][i] = false;
+              res[i] = false;
             }
           }
-          this.formGroup.controls[i].setValue(res[0][i]);
+          if (i === 'nat_forwards') {
+            this.deparseNatForwards(res[i]);
+          } else {
+            this.formGroup.controls[i].setValue(res[i]);
+          }
         }
       }
     },
@@ -1199,7 +1257,9 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
           activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+        activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
           .forEach(control => {
@@ -1209,25 +1269,33 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setDisabled(name: string, disable: boolean) {
+  setDisabled(name: string, disable: boolean, hide?: boolean) {
+    if (hide) {
+      disable = hide;
+    } else {
+      hide = false;
+    }
+
+    this.formFields = this.formFields.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+        item['isHidden'] = hide;
+      }
+      return item;
+    });
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
       return;
     }
-
-    this.formFileds = this.formFileds.map((item) => {
-      if (item.name === name) {
-        item.disabled = disable;
-      }
-      return item;
-    });
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup);
-    this.setDisabled(config.name, tobeDisabled);
+    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+      activations, this.formGroup);
+    this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 
   goBack() {
@@ -1277,6 +1345,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     delete value['jailtype'];
 
     this.parseIpaddr(value);
+    this.parseNatForwards(value);
 
     if (value['auto_configure_ip6']) {
       value['ip6_addr'] = "vnet0|accept_rtadv";
@@ -1332,7 +1401,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         res.error = res.error.substring(9).split(':');
         const field = res.error[0];
         const error = res.error[1];
-        const fc = _.find(this.formFileds, {'name' : field});
+        const fc = _.find(this.formFields, {'name' : field});
         if (fc && !fc['isHidden']) {
           fc['hasErrors'] = true;
           fc['errors'] = error;
@@ -1359,15 +1428,60 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     const jail_name = parent.formGroup.value.uuid;
     parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
       if(jail_wizard_res.length > 0){
-        _.find(parent.formFileds, {'name' : 'uuid'})['hasErrors'] = true;
-        _.find(parent.formFileds, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
+        _.find(parent.formFields, {'name' : 'uuid'})['hasErrors'] = true;
+        _.find(parent.formFields, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
         parent.formGroup.controls.uuid.setValue("");
   
       } else {
-        _.find(parent.formFileds, {'name' : 'uuid'})['hasErrors'] = false;
-        _.find(parent.formFileds, {'name' : 'uuid'})['errors'] = '';
+        _.find(parent.formFields, {'name' : 'uuid'})['hasErrors'] = false;
+        _.find(parent.formFields, {'name' : 'uuid'})['errors'] = '';
 
       }
     })
+  }
+
+  deparseNatForwards(value) {
+    if (value == 'none') {
+      this.formGroup.controls['nat_forwards_checkbox'].setValue(false);
+      return;
+    }
+    this.formGroup.controls['nat_forwards_checkbox'].setValue(true);
+    value = value.split(',');
+    for (let i = 0; i < value.length; i++) {
+      const nat_forward = value[i].split(new RegExp('[(:)]'));
+      if (this.formGroup.controls['nat_forwards'].controls[i] == undefined) {
+        // add controls;
+        const templateListField = _.cloneDeep(_.find(this.networkfieldConfig, {'name': 'nat_forwards'}).templateListField);
+        this.formGroup.controls['nat_forwards'].push(this.entityFormService.createFormGroup(templateListField));
+        _.find(this.networkfieldConfig, {'name': 'nat_forwards'}).listFields.push(templateListField);
+      }
+      this.formGroup.controls['nat_forwards'].controls[i].controls['protocol'].setValue(nat_forward[0]);
+      this.formGroup.controls['nat_forwards'].controls[i].controls['jail_port'].setValue(nat_forward[1]);
+      this.formGroup.controls['nat_forwards'].controls[i].controls['host_port'].setValue(nat_forward[2]);
+    }
+  }
+
+  parseNatForwards(value) {
+    if (value['nat_forwards_checkbox'] === true) {
+      const multi_nat_forwards = [];
+      for (let i = 0; i < value['nat_forwards'].length; i++) {
+        const subNatForward = value['nat_forwards'][i];
+        if (subNatForward['host_port'] === undefined || subNatForward['host_port'].trim() === '') {
+          delete subNatForward['host_port'];
+        }
+        if (Object.values(subNatForward).every(item => item !== undefined && String(item).trim() !== '')) {
+          const length = Object.keys(subNatForward).length;
+          if (length === 3 ) {
+            multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ':' + subNatForward['host_port'] + ')');
+          } else if (length === 2) {
+            multi_nat_forwards.push(subNatForward['protocol'] + '(' + subNatForward['jail_port'] + ')');
+          }
+        }
+      }
+      value['nat_forwards'] = multi_nat_forwards.length > 0 ? multi_nat_forwards.join(',') : 'none';
+    } else {
+      value['nat_forwards'] = 'none';
+    }
+    delete value['nat_forwards_checkbox'];
   }
 }

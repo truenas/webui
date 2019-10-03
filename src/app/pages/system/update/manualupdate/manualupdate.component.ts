@@ -14,11 +14,12 @@ import { MessageService } from '../../../common/entity/entity-form/services/mess
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { EntityUtils } from '../../../../pages/common/entity/utils';
 
 @Component({
   selector: 'app-manualupdate',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers : [ MessageService, SystemGeneralService ]
+  providers : [ MessageService ]
 })
 export class ManualUpdateComponent extends ViewControllerComponent {
   public formGroup: FormGroup;
@@ -27,6 +28,8 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   public fileLocation: any;
   public subs: any;
   public isHA = false;
+  public isUpdateRunning = false;
+  public updateMethod: string = 'update.update';
   public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
@@ -113,9 +116,11 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.isHA = true;
+          this.updateMethod = 'failover.upgrade';
         } else {
           _.find(this.fieldConfig, {name : "rebootAfterManualUpdate"})['isHidden'] = false;
         }
+        this.checkForUpdateRunning();
       })
     }
 
@@ -163,7 +168,11 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   customSubmit(entityForm: any) {
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
-      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Manual Update" }, disableClose: true });
+      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.manual_update_action }, disableClose: true });
+      if (this.isHA) {
+        this.dialogRef.componentInstance.disableProgressValue(true);
+      };
+      this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.subscribe((succ)=>{
         this.dialogRef.close(false);
@@ -172,7 +181,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
             this.router.navigate(['/others/reboot']);
           } else {
             this.translate.get('Restart').subscribe((reboot: string) => {
-              this.translate.get('Update successful. Please reboot for the update to take effect. Reboot now?').subscribe((reboot_prompt: string) => {
+              this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).subscribe((reboot_prompt: string) => {
                 this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
                   if (reboot_res) {
                     this.router.navigate(['/others/reboot']);
@@ -181,7 +190,14 @@ export class ManualUpdateComponent extends ViewControllerComponent {
               });
             });
           };
-        } 
+        } else  {
+          this.dialogService.closeAllDialogs();
+          this.router.navigate(['/']); 
+          this.dialogService.confirm(helptext.ha_update.complete_title, 
+            helptext.ha_update.complete_msg, true, 
+            helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
+            });
+        }
       })
       this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
         this.dialogRef.close(false);
@@ -246,7 +262,35 @@ saveCofigSubmit(entityDialog) {
           });
         }
       );
-  });
-}
+    });
+  }
+
+  showRunningUpdate(jobId) {
+      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+      if (this.isHA) {
+        this.dialogRef.componentInstance.disableProgressValue(true);
+      };
+      this.dialogRef.componentInstance.jobId = jobId;
+      this.dialogRef.componentInstance.wsshow();
+      this.dialogRef.componentInstance.success.subscribe((res) => {
+        this.router.navigate(['/others/reboot']);
+      });
+      this.dialogRef.componentInstance.failure.subscribe((err) => {
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      });
+  }
+
+  checkForUpdateRunning() {
+    this.ws.call('core.get_jobs', [[["method", "=", this.updateMethod], ["state", "=", "RUNNING"]]]).subscribe(
+      (res) => {
+        if (res && res.length > 0) {
+          this.isUpdateRunning = true;
+          this.showRunningUpdate(res[0].id);
+        }
+      },
+      (err) => {
+        console.error(err);
+      });
+  }
 
 }

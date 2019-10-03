@@ -78,7 +78,7 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public errorReport(title: string, message: string, backtrace: string = ''): Observable<boolean> {
+    public errorReport(title: string, message: string, backtrace: string = '', logs?: any): Observable<boolean> {
 
         let dialogRef: MatDialogRef<ErrorDialog>;
 
@@ -87,6 +87,9 @@ export class DialogService {
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
         dialogRef.componentInstance.backtrace = backtrace;
+        if (logs) {
+            dialogRef.componentInstance.logs = logs;
+        }
 
         return dialogRef.afterClosed();
     }
@@ -135,10 +138,10 @@ export class DialogService {
 
     }
 
-    public dialogForm(conf: any): Observable<boolean> {
+    public dialogForm(conf: any, disableClose: boolean = false): Observable<boolean> {
         let dialogRef: MatDialogRef<EntityDialogComponent>;
 
-        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '420px'});
+        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '420px', disableClose: disableClose});
         dialogRef.componentInstance.conf = conf;
 
         return dialogRef.afterClosed();

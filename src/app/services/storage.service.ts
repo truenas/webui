@@ -305,7 +305,7 @@ export class StorageService {
   // '12.4k'     ''               NaN
   // ' 10G'      '10 GiB'         10*1024**3 (10,737,418,240)
 
-  convertHumanStringToNum(hstr) {
+  convertHumanStringToNum(hstr, dec=false) {
 
       const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
 
@@ -322,8 +322,14 @@ export class StorageService {
       hstr = hstr.replace(/\s+/g, '');
 
       // get leading number
-      if ( num = hstr.match(/^(\d+)/) ) {
-          num = num[1];
+      let match = [];
+      if (dec) {
+        match = hstr.match(/^(\d+(\.\d+)?)/);
+      } else {
+        match = hstr.match(/^(\d+)/);
+      }
+      if ( match && match.length > 1 ) {
+          num = match[1];
       } else {
           // leading number is required
           this.humanReadable = '';
@@ -342,5 +348,22 @@ export class StorageService {
 
       this.humanReadable = num.toString() + spacer + unit;
       return num * this.convertUnitToNum(unit);
-  }
+  };
+
+  // Converts a number from bytes to the most natural human readable format
+  convertBytestoHumanReadable(bytes, decimalPlaces?) { 
+    let i = -1;
+    let dec, units;
+    decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
+    if (bytes => 1024) {
+      do {
+        bytes = bytes / 1024;
+        i++;
+      } while (bytes > 1024);
+      units = this.IECUnits[i];
+    } else {
+      units = 'bytes';
+    }
+    return `${Math.max(bytes, 0.1).toFixed(dec)} ${units}`;
+  };
 }

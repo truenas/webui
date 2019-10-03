@@ -1,6 +1,9 @@
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef, MatSnackBar } from '@angular/material';
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { WebSocketService } from '../../../services/ws.service';
+import { T } from '../../../translate-marker';
+import { EntityUtils } from '../../../pages/common/entity/utils';
 
 @Component({
   selector: 'error-dialog',
@@ -13,8 +16,11 @@ export class ErrorDialog {
   public message: string;
   public backtrace: string;
   public isCloseMoreInfo: Boolean = true;
+  public logs;
 
-  constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService ) {}
+  constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
+    private ws: WebSocketService,
+    private snackBar: MatSnackBar ) {}
 
   public toggleOpen () {
     const messageWrapper = document.getElementById('err-message-wrapper');
@@ -37,7 +43,9 @@ export class ErrorDialog {
       messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
       btPanel.setAttribute('style', 'width: 750px; max-height: 400px');
       btPanel.style.height = tracebackHeight;
-      txtarea.style.height = tracebackHeight;
+      setTimeout(() => {
+        txtarea.style.height = tracebackHeight;
+      }, 215);
     } else {
       dialog[dialog.length-1].removeAttribute('style');
       title.removeAttribute('style');
@@ -48,4 +56,18 @@ export class ErrorDialog {
     }
   }
 
+  downloadLogs() {
+    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], this.logs.id + '.log']).subscribe(
+      (snack_res) => {
+        this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+          duration: 5000
+        });
+        window.open(snack_res[1]);
+        this.dialogRef.close(true);
+      },
+      (snack_res) => {
+        new EntityUtils().handleWSError(this, snack_res);
+      }
+    );
+  }
 }

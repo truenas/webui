@@ -58,7 +58,7 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(entity: any, res: any, dialogService?: any) {
+  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any) {
     let dialog;
     if (dialogService) {
       dialog = dialogService;
@@ -68,11 +68,12 @@ export class EntityUtils {
       }
     }
 
-    if (res.extra && (entity.fieldConfig || entity.wizardConfig)) {
+    if (res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
       for (let i = 0; i < res.extra.length; i++) {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];
+
         let fc = _.find(entity.fieldConfig, {'name' : field}) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         let stepIndex;
         if (entity.wizardConfig) {
@@ -81,6 +82,9 @@ export class EntityUtils {
               fc = _.find(step.fieldConfig, {'name' : field});
               return fc;
             });
+        }
+        if (targetFieldConfig) {
+          fc = _.find(targetFieldConfig, {'name' : field}) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         }
 
         if (fc && !fc['isHidden']) {
@@ -149,5 +153,19 @@ export class EntityUtils {
 
   array1DToLabelValuePair(arr: any[]): { label: string, value: any }[] {
     return arr.map(value => ({ label: value.toString(), value }))
+  }
+
+   /**
+   * make cron time dow consistence
+   */
+  parseDOW(cron) {
+    const dowOptions = ["sun","mon","tue","wed","thu","fri","sat","sun"];
+    const cronArray = cron.replace(/00/g, '0').split(' ');
+    if (cronArray[cronArray.length - 1] !== '*') {
+      cronArray[cronArray.length - 1] = cronArray[cronArray.length - 1]
+      .split(',')
+      .map(element => dowOptions[element] || element).join(',');
+    }
+    return cronArray.join(' ');
   }
 }

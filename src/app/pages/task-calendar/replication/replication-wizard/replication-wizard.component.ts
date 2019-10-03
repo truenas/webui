@@ -134,7 +134,7 @@ export class ReplicationWizardComponent {
                     type: 'explorer',
                     name: 'source_datasets',
                     placeholder: helptext.source_datasets_placeholder,
-                    tooltip: helptext.source_datasets_placeholder,
+                    tooltip: helptext.source_datasets_tooltip,
                     initial: '',
                     explorerType: 'directory',
                     multiple: true,
@@ -169,7 +169,7 @@ export class ReplicationWizardComponent {
                     type: 'explorer',
                     name: 'target_dataset',
                     placeholder: helptext.target_dataset_placeholder,
-                    tooltip: helptext.target_dataset_placeholder,
+                    tooltip: helptext.target_dataset_tooltip,
                     initial: '',
                     explorerType: 'directory',
                     customTemplateStringOptions: {
@@ -1024,7 +1024,7 @@ export class ReplicationWizardComponent {
                     private_key: null,
                     ssh_credentials: null,
                 }
-
+                let hasError = false;
                 for (const item in createdItems) {
                     if (!((item === 'private_key' && value['private_key'] !== 'NEW'))) {
                         await self.doCreate(value, item).then(
@@ -1042,19 +1042,22 @@ export class ReplicationWizardComponent {
                                     ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
                                     self.entityWizard.formArray.controls[0].controls[activedField].setValue(res.id)
                                 }
-                                entityDialog.dialogRef.close(true);
                             },
                             (err) => {
-                                new EntityUtils().handleWSError(this, err, this.dialogService);
-                                this.rollBack(createdItems);
+                                hasError = true;
+                                self.rollBack(createdItems);
+                                new EntityUtils().handleWSError(self, err, self.dialogService, self.dialogFieldConfig);
                             }
                         )
                     }
                 }
                 self.entityWizard.loader.close();
+                if (!hasError) {
+                    entityDialog.dialogRef.close(true);
+                }
             }
         }
-        this.dialogService.dialogForm(conf);
+        this.dialogService.dialogForm(conf, true);
     }
 
     getRemoteHostKey(value) {
