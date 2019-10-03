@@ -301,7 +301,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     this.loader.open();
     this.loaderOpen = true;
-    this.ws.call("disk.get_unused", [true]).subscribe((res) => {
+    this.ws.call("disk.get_unused",[]).subscribe((res) => {
       this.loader.close();
       this.loaderOpen = false;
       this.disks = [];
