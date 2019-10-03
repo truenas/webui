@@ -170,18 +170,18 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       maxVdevs = this.duplicable_disks.length / this.first_data_vdev_disknum;
     }
     const vdevs_options = [];
-    for (let i = 0; i <= maxVdevs; i++) {
+    for (let i = 1; i <= maxVdevs; i++) {
       vdevs_options.push({label: i, value: i});
     }
     const self = this;
     const conf: DialogFormConfiguration = {
-      title: "Duplicate Data VDev",
+      title: helptext.manager_duplicate_title,
       fieldConfig: [
         {
           type: 'select',
           name: 'vdevs',
-          placeholder: "Number of VDevs",
-          tooltip: "Select the number of VDevs you would like to create.",
+          placeholder: helptext.manager_duplicate_vdevs_placeholder,
+          tooltip: helptext.manager_duplicate_vdevs_tooltip,
           options: vdevs_options 
         }
       ],
