@@ -7,16 +7,15 @@
   z-index:-10;
 }
 
-/*#page-content{ 
-    padding:32px;
-    z-index: 0;
-    position:absolute;
-    width:100%;
-    height:calc(100vh - 100px);
-    top:88px;
-    overflow:auto;
-
-}*/
+#page-content{ 
+  padding:32px;
+  z-index: 0;
+  position:absolute;
+  width:100%;
+  height:calc(100vh - 83px);
+  top:88px;
+  overflow:auto;
+}
 
 :host ::ng-deep #theme-preview div.mat-tab-body-content{
   padding:16px 16px 64px;
@@ -32,8 +31,6 @@
 
 .tabs{
   padding: 8px;
-  /*border-top: solid var(--fg2) 1px;
-  border-bottom: solid 1px var(--bg1);*/
   margin-bottom: 16px;
 }
 
