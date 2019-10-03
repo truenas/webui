@@ -5,6 +5,8 @@ import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 import { DialogService, LanguageService, RestService, WebSocketService, SnackbarService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { LocaleService } from 'app/services/locale.service';
+
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -80,6 +82,15 @@ export class GeneralComponent {
       tooltip: helptext.stg_language.tooltip,
       options: [
         { label: '---', value: null }
+      ]
+    },
+    {
+      type: 'select',
+      name: 'date_format',
+      placeholder: 'Date Format',
+      tooltip: 'As I said, Date Format',
+      options: [
+        { label: '---', value: null },    
       ]
     },
     {
@@ -233,7 +244,8 @@ export class GeneralComponent {
   constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
     protected dialog: DialogService, protected loader: AppLoaderService,
-    public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog) {}
+    public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog,
+    public localeService: LocaleService) {}
 
   resourceTransformIncomingRestData(value) {
     this.http_port = value['ui_port'];
@@ -320,6 +332,12 @@ export class GeneralComponent {
           this.sysloglevel.options.push({ label: item[1], value: item[0] });
         });
       });
+
+      let dateFormat = _.find(this.fieldConfig, { 'name': 'date_format' });
+      this.localeService.getDateFormatOptions().forEach((item) => {
+        dateFormat.options.push({ label: item.label, value: item.value })
+      });
+      this.entityForm.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
   }
 
   afterSubmit(value) {
@@ -448,6 +466,8 @@ export class GeneralComponent {
   }
 
   public customSubmit(body) {
+    this.localeService.saveDateFormat(body.date_format);
+    delete body.date_format;
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();

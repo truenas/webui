@@ -18,6 +18,7 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
   tableDisplayedColumns:any;
+  dateFormat:string;
 }
 
 @Injectable()
@@ -37,7 +38,8 @@ export class PreferencesService {
     "enableWarning": true,
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
-    "tableDisplayedColumns":[]
+    "tableDisplayedColumns":[],
+    "dateFormat": 'D MMM YYYY'
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
