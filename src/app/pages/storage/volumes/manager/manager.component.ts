@@ -170,7 +170,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       maxVdevs = this.duplicable_disks.length / this.first_data_vdev_disknum;
     }
     const vdevs_options = [];
-    for (let i = 1; i <= maxVdevs; i++) {
+    for (let i = maxVdevs; i > 0; i--) {
       vdevs_options.push({label: i, value: i});
     }
     const self = this;
@@ -180,10 +180,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           type: 'select',
           name: 'vdevs',
-          value: 1,
+          value: maxVdevs,
           placeholder: helptext.manager_duplicate_vdevs_placeholder,
           tooltip: helptext.manager_duplicate_vdevs_tooltip,
-          options: vdevs_options 
+          options: vdevs_options
         }
       ],
 
@@ -696,7 +696,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkPoolName() {
     if(_.find(this.existing_pools, {"name": this.name as any})) {
-      this.poolError = T("A pool with this name already exists."); 
+      this.poolError = T("A pool with this name already exists.");
     } else {
       this.poolError = null;
     }
@@ -712,7 +712,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     //console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }  
+    }
     this.table.rowDetail.toggleExpandRow(row);
     setTimeout(() => {
       this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
@@ -720,6 +720,5 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100)
-    
   }
 }
