@@ -1,4 +1,10 @@
 <div id="{{config.name}}" class="dynamic-field form-checkbox" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+		<mat-spinner
+			diameter='40'
+			class="form-checkbox-spinner"
+			id="{{config.name}}_form-select-spinner"
+			*ngIf="config.isLoading">
+		</mat-spinner>
 		<mat-checkbox *ngIf="!config.updater" [formControlName]="config.name" [required]="config.required">
 			{{ config.placeholder | translate }}
 		</mat-checkbox>

@@ -11,7 +11,6 @@ export interface UserPreferences {
   customThemes?: Theme[]; 
   favoriteThemes?: string[]; // Theme Names
   showGuide:boolean; // Guided Tour on/off
-  showTooltips?:boolean; // Form Tooltips on/off // Deprecated, remove in v12!
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
   allowPwToggle:boolean;
   preferIconsOnly:boolean;
@@ -30,7 +29,6 @@ export class PreferencesService {
     "customThemes": [], // Theme Objects
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
-    "showTooltips":true,
     "metaphor":"auto",
     "allowPwToggle":true,
     "preferIconsOnly": false,

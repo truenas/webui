@@ -1662,4 +1662,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+  general-preferences-form #allowPwToggle_form-select-spinner {
+    top: 160px;
+    left: 70px;
+  }
+
  } // end of ix theme
