@@ -25,55 +25,27 @@ interface UserPreferences {
    
 @Component({
   selector : 'general-preferences-form',
-  template:`<entity-form-embedded #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
 export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
   @ViewChild('embeddedForm', {static: false}) embeddedForm: EntityFormEmbeddedComponent;
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
+  public preferences: any;
   public saveSubmitText = T("Update Settings");
   protected isEntity: boolean = true; // was true
   private themeOptions: any[] = [];
   public fieldConfig:FieldConfig[] = [];
-  public showTooltips:boolean = this.prefs.preferences.showTooltips;
-  public allowPwToggle:boolean = this.prefs.preferences.allowPwToggle;;
-  public preferIconsOnly: boolean = this.prefs.preferences.preferIconsOnly;
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
-    public fieldSets: FieldSet[] = [
-      {
-        name:T('General Preferences'),
-        class:'preferences',
-        label:true,
-        config:[
-          {
-            type: 'select',
-            name: 'userTheme',
-            placeholder: T('Choose Theme'),
-            options: this.themeOptions,
-            value:this.prefs.preferences.userTheme,
-            tooltip:T('Choose a preferred theme.'),
-            class:'inline'
-          },
-          {
-            type: 'checkbox',
-            name: 'preferIconsOnly',
-            placeholder: T('Prefer buttons with icons only'),
-            value:this.preferIconsOnly,
-            tooltip: T('Preserve screen space with icons and tooltips instead of text labels.'),
-            class:'inline'
-          },
-          {
-            type: 'checkbox',
-            name: 'allowPwToggle',
-            placeholder: T('Enable Password Toggle'),
-            value:this.allowPwToggle,
-            tooltip: T('This option enables/disables a password toggle button.'),
-            class:'inline'
-          }
-        ]
-      }
-    ]
+  public fieldSets: FieldSet[] = [
+    {
+      name:T('General Preferences'),
+      class:'preferences',
+      label:true,
+      config: []
+    }
+  ]
 
     constructor(
       protected router: Router,
@@ -82,14 +54,18 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
       public themeService:ThemeService,
-      public prefs:PreferencesService,
       public snackBar: MatSnackBar,
       private core:CoreService
-    ) {}
+    ) {
+    }
 
     ngOnInit(){
-      // Get current preferences so for form values
-      this.init();
+      this.core.emit({name:"UserPreferencesRequest", sender:this});
+      this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+        this.preferences = evt.data;
+        this.onPreferences(evt.data);
+        this.init();
+      });
     }
 
     ngAfterViewInit(){
@@ -113,19 +89,14 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     init(){
       this.setThemeOptions();
 
-      this.core.register({observerClass:this,eventName:"PreferencesChanged"}).subscribe((evt:CoreEvent) => {
-        console.log(evt);
-      });
-
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.setThemeOptions();
         if(!this.embeddedForm){ return; }
         
-        let theme = this.prefs.preferences.userTheme;
+        let theme = this.preferences.userTheme;
         this.embeddedForm.setValue('userTheme', theme);
       });
 
-      this.loadValues();
       this.target.subscribe((evt:CoreEvent) => {
         switch(evt.name){
         case "FormSubmitted":
@@ -147,13 +118,35 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
        }
      }
 
-     processSubmission(obj:any){}
-
-     loadValues(themeName?:string){
-       this.allowPwToggle = this.prefs.preferences.allowPwToggle
-       this.showTooltips = true; 
-       this.preferIconsOnly = this.prefs.preferences.preferIconsOnly;
-     }
+     onPreferences(prefs){
+      this.fieldSets[0].config = [
+        {
+          type: 'select',
+          name: 'userTheme',
+          placeholder: T('Choose Theme'),
+          options: this.themeOptions,
+          value:prefs.userTheme,
+          tooltip:T('Choose a preferred theme.'),
+          class:'inline'
+        },
+        {
+          type: 'checkbox',
+          name: 'preferIconsOnly',
+          placeholder: T('Prefer buttons with icons only'),
+          value:prefs.preferIconsOnly,
+          tooltip: T('Preserve screen space with icons and tooltips instead of text labels.'),
+          class:'inline'
+        },
+        {
+          type: 'checkbox',
+          name: 'allowPwToggle',
+          placeholder: T('Enable Password Toggle'),
+          value:prefs.allowPwToggle,
+          tooltip: T('This option enables/disables a password toggle button.'),
+          class:'inline'
+        }
+      ]
+    }
 
      generateFieldConfig(){
        for(let i in this.fieldSets){
