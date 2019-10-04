@@ -10,8 +10,8 @@
     <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm" class="form-wrap">
       <div *ngIf="fieldSets && fieldSets.length > 0" class="fieldset-container fieldset-display-{{ fieldSetDisplay }}">
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
-          <div [ngClass]="fieldSet.class" class="fieldset"
-                                          fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
+          <div [ngClass]="{'hidden': hiddenFieldSets.indexOf(fieldSet.name) !== -1}" class="fieldset {{fieldSet.class}}" 
+            fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
             <h4 *ngIf="fieldSet.label" class="fieldset-label">{{fieldSet.name}}</h4>
             <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)"
               [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">

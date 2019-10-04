@@ -1,6 +1,7 @@
-import { ApplicationRef, Component, Injector, OnInit, OnChanges, OnDestroy } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnInit, AfterViewInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
+import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {RestService, WebSocketService} from 'app/services/';
@@ -24,10 +25,11 @@ interface UserPreferences {
    
 @Component({
   selector : 'general-preferences-form',
-  template:`<entity-form-embedded fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<entity-form-embedded #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
-export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDestroy {
+export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
+  @ViewChild('embeddedForm', {static: false}) embeddedForm: EntityFormEmbeddedComponent;
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
   public saveSubmitText = T("Update Settings");
@@ -89,10 +91,12 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
       // Get current preferences so for form values
       this.init();
     }
+
+    ngAfterViewInit(){
+    }
     
     afterInit(entity: any) {
       entity.formGroup.controls['userTheme'].valueChanges.subscribe((theme) => {
-        this.themeService.changeTheme(theme);
       })
     }
 
@@ -108,18 +112,24 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
 
     init(){
       this.setThemeOptions();
+
+      this.core.register({observerClass:this,eventName:"PreferencesChanged"}).subscribe((evt:CoreEvent) => {
+        console.log(evt);
+      });
+
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.setThemeOptions();
+        if(!this.embeddedForm){ return; }
+        
+        let theme = this.prefs.preferences.userTheme;
+        this.embeddedForm.setValue('userTheme', theme);
       });
-      //this.setFavoriteFields();
+
       this.loadValues();
       this.target.subscribe((evt:CoreEvent) => {
         switch(evt.name){
         case "FormSubmitted":
           this.core.emit({name:"ChangePreferences",data:evt.data});
-          this.snackBar.open(T('Changes Submitted'), T('close'), {
-            duration: 3000
-          });
           break;
         case "CreateTheme":
           this.router.navigate(new Array('').concat(['ui-preferences', 'create-theme']));
@@ -141,7 +151,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges, OnDes
 
      loadValues(themeName?:string){
        this.allowPwToggle = this.prefs.preferences.allowPwToggle
-       this.showTooltips = true; //this.prefs.preferences.showTooltips
+       this.showTooltips = true; 
        this.preferIconsOnly = this.prefs.preferences.preferIconsOnly;
      }
 

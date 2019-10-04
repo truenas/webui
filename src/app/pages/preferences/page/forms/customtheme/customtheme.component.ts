@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector, OnInit, OnChanges, OnDestroy } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnInit, AfterViewInit, OnChanges, OnDestroy } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -22,17 +22,24 @@ interface FormSnapshot {
   templateUrl : './customtheme.component.html',
   styleUrls: ['./customtheme.component.css'],
 })
-export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
+export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
   public saveSubmitText = "Save Custom Theme";
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
   public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target
   private _baseTheme:any; //= this.themeService.activeTheme;
-  private _globalPreview:boolean = false;
+  private _globalPreview:boolean = true;
   public baseThemes: Theme[];
   public snapshot:FormSnapshot;
   customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in
   protected isEntity: boolean = true; // was true
+  public hiddenFieldSets: string[] = ['Colors'];
+  public currentTab:string = 'General';
+  public scrollContainer: HTMLElement;
+
+  get flexForm(){
+    return this._globalPreview ? '432px' : '100%';
+  }
 
   // EXAMPLE THEME
   public values:Theme = {
@@ -91,7 +98,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
   public fieldSets: FieldSet[] = [
     {
       name:'General',
-      label: true,
+      label: false,
       class:'general',
       width:'300px',
       config:[
@@ -165,7 +172,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     {
       name:'Colors',
       class:'color-palette',
-      label: true,
+      label: false,
       width:'calc(100% - 300px)',
       config:[
         {
@@ -380,7 +387,13 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     ) {}
 
     ngOnInit(){
+      this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
+      this.scrollContainer.style.overflow = 'hidden';
       this.init();
+    }
+
+    ngAfterViewInit(){
+      this.updateGlobal();
     }
 
     ngOnChanges(changes){
@@ -388,6 +401,9 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
 
     ngOnDestroy(){
       this.core.unregister({observerClass:this});
+      this.globalPreview = true;
+      this.updateGlobal();
+      this.scrollContainer.style.overflow = 'auto';
     }
 
     init(){
@@ -406,6 +422,8 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
 
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.baseThemes = this.themeService.allThemes;
+        let theme = this.themeService.currentTheme();
+        this.baseTheme = theme.name;
       });
 
       this.customThemeForm.subscribe((evt:CoreEvent) => {
@@ -560,6 +578,17 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       this.dialog.Info(T("Form Invalid"), T(message)).subscribe((res) => {
         //console.log(res);
       })
+    }
+
+    hideFieldSet(name:string){
+      if(name == 'All'){
+        this.currentTab = 'Preview';
+        this.hiddenFieldSets = ['General', 'Colors'];
+        return;
+      }
+
+      this.hiddenFieldSets = [name];
+      this.currentTab = name == 'Colors' ? 'General' : 'Colors' ;
     }
 
 }
