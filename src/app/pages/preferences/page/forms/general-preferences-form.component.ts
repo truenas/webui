@@ -89,10 +89,6 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     init(){
       this.setThemeOptions();
 
-      this.core.register({observerClass:this,eventName:"PreferencesChanged"}).subscribe((evt:CoreEvent) => {
-        console.log(evt);
-      });
-
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.setThemeOptions();
         if(!this.embeddedForm){ return; }
