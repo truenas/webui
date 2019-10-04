@@ -399,7 +399,7 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] =
           isNaN(this.storageService.convertHumanStringToNum(memory))
-            ? '0 MB'
+            ? '0 MiB'
             : Math.ceil(this.storageService.convertHumanStringToNum(memory) / 1024**2) + ' MiB' ;
       });
 
@@ -413,7 +413,7 @@ export class VMWizardComponent {
           delete this.summary[T('Hard Disk Size')];
         }
         if(disk_radio) {
-          this.summary[T('Hard Disk Size')] = ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value + ' Gib';
+          this.summary[T('Hard Disk Size')] = ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value + ' GiB';
             ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
               this.summary[T('Hard Disk Size')] = volsize + ' GiB';
             });
@@ -476,12 +476,12 @@ export class VMWizardComponent {
           this.res = res;
           if (res === 'Windows') {
             ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4096MB');
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4096 MiB');
             ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
           }
           else {
             ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512MB');
+            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512 MiB');
             ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
           }
 
@@ -583,16 +583,17 @@ blurEvent(parent){
 }
 
 blurEvent2(parent){
-  const vm_memory_requested = parent.entityWizard.formGroup.value.formArray[2].memory
+  parent.entityWizard.formArray.get([1]).get('memory').setValue(parent.storageService.humanReadable);
+  const vm_memory_requested = parent.storageService.convertHumanStringToNum(parent.entityWizard.formGroup.value.formArray[1].memory)
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
   parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
     if( vm_memory_requested *1048576> vm_memory_available){
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${vm_memory_requested} Mib to virtual machine: ${vm_name}.`;
+      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${vm_memory_requested} Mib to virtual machine: ${vm_name}.`;
       parent.entityWizard.formArray.get([1]).get('memory').setValue(0);
     } else{
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
-      _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'memory'})['errors'] = '';
+      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
+      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = '';
     }
   })
 }
