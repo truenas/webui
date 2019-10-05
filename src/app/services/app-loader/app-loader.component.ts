@@ -5,6 +5,7 @@ import { Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, take } from "rxjs/operators";
 import { RestService } from "../rest.service";
 import { WebSocketService } from "../ws.service";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-app-loader",
@@ -29,7 +30,8 @@ export class AppLoaderComponent {
     public dialogRef: MatDialogRef<AppLoaderComponent>,
     private _rest: RestService,
     private _dialog: MatDialog,
-    private _ws: WebSocketService
+    private _ws: WebSocketService,
+    private translate: TranslateService,
   ) {
     this.isShowConsole$
       .pipe(
