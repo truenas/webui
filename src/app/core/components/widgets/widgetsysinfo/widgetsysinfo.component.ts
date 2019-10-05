@@ -92,13 +92,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.core.emit({name:"UpdateCheck"});
       
     }
-    this.ws.call('failover.licensed').subscribe((res) => {
-      if (res) {
-        this.updateMethod = 'failover.upgrade';
-        this.is_ha = true;
-      };
-      this.checkForRunningUpdate();
-    });
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((res) => {
+        if (res) {
+          this.updateMethod = 'failover.upgrade';
+          this.is_ha = true;
+        };
+        this.checkForRunningUpdate();
+      });
+    }
   }
 
   ngOnInit(){
