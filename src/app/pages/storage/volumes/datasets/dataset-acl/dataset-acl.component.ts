@@ -135,7 +135,6 @@ export class DatasetAclComponent implements OnDestroy {
               updateLocal: true,
               options: [],
               searchOptions: [],
-              parent: this,
               updater: this.updateUserSearchOptions,
               isHidden: true,
               required: true,
@@ -148,7 +147,6 @@ export class DatasetAclComponent implements OnDestroy {
               updateLocal: true,
               options: [],
               searchOptions: [],
-              parent: this,
               updater: this.updateGroupSearchOptions,
               isHidden: true,
               required: true,
@@ -363,8 +361,14 @@ export class DatasetAclComponent implements OnDestroy {
             if (user_fc.options === undefined || user_fc.options.length === 0) {
               user_fc.options = this.userOptions;
             }
+            if (!user_fc['parent']) {
+              user_fc.parent = this;
+            }
             if (group_fc.options === undefined || group_fc.options.length === 0) {
               group_fc.options = this.groupOptions;
+            }
+            if (!group_fc['parent']) {
+              group_fc.parent = this;
             }
             if (res[i].tag === 'USER') {
               user_fc.isHidden = false;
