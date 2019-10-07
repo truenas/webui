@@ -210,8 +210,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.fullTrainList = res.trains;
   
         // On page load, make sure we are working with train of the current OS
-        this.train = res.current;
-        this.selectedTrain = res.current;
+        this.train = res.selected;
+        this.selectedTrain = res.selected;
   
         if (this.autoCheck) {
           this.check();
@@ -229,11 +229,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
         }
         this.singleDescription = this.trains[0].description;
   
-        if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
+        if (this.fullTrainList[res.selected].description.toLowerCase().includes('[nightly]')) {
           this.currentTrainDescription = '[nightly]';
-        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
+        } else if (this.fullTrainList[res.selected].description.toLowerCase().includes('[release]')) {
           this.currentTrainDescription = '[release]';
-        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
+        } else if (this.fullTrainList[res.selected].description.toLowerCase().includes('[prerelease]')) {
           this.currentTrainDescription = '[prerelease]';
         } else {
           this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
