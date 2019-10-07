@@ -61,10 +61,11 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
 
-memory_limitation: T('Available memory'),
 memory_placeholder: T('Memory Size'),
 memory_validation : [Validators.required],
 memory_tooltip: T('Allocate RAM for the VM'),
+memory_warning: T('Caution: Allocating too much memory can slow the \
+ system or prevent VMs from running.'),
 
 disks_label: T('Hard Disks'),
 disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
