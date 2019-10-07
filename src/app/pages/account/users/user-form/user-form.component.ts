@@ -272,8 +272,8 @@ export class UserFormComponent {
     if (!entityForm.isNew) {
       _.find(this.fieldConfig, {name : "password_edit"})['isHidden'] = false;
       _.find(this.fieldConfig, {name : "password_conf_edit"})['isHidden'] = false;
-      _.find(this.fieldConfig, {name : "password"})['isHidden'] = true;
-      _.find(this.fieldConfig, {name : "password_conf"})['isHidden'] = true;
+      entityForm.setDisabled('password', true, true);
+      entityForm.setDisabled('password_conf', true, true);
       this.password_disabled.valueChanges.subscribe((password_disabled)=>{
         if(password_disabled){
           _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
@@ -291,8 +291,8 @@ export class UserFormComponent {
       });
 
     } else {
-      _.find(this.fieldConfig, {name : "password_edit"})['isHidden'] = true;
-      _.find(this.fieldConfig, {name : "password_conf_edit"})['isHidden'] = true;
+      entityForm.setDisabled('password_edit', true, true);
+      entityForm.setDisabled('password_conf_edit', true, true);
       _.find(this.fieldConfig, {name : "password"})['isHidden'] = false;
       _.find(this.fieldConfig, {name : "password_conf"})['isHidden'] = false;
       this.password_disabled.valueChanges.subscribe((password_disabled)=>{
