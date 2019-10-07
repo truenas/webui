@@ -178,34 +178,33 @@ export class JailListComponent implements OnInit {
     public snackBar: MatSnackBar, public sorter: StorageService, public dialog: MatDialog,) {}
 
 
-  ngOnInit(){
-    this.getActivatedPool();
-    this.getAvailablePools();
+  async ngOnInit(){
+    await this.ws.call('pool.query').toPromise().then(
+      (res)=> {
+      this.availablePools = res;
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+      }
+    );
+    if (this.availablePools && this.availablePools.length > 0) {
+      this.ws.call('jail.get_activated_pool').subscribe(
+        (res)=>{
+          if (res != null && res != "") {
+            this.activatedPool = res;
+            this.selectedPool = res;
+            this.isPoolActivated = true;
+          } else {
+            this.isPoolActivated = false;
+          }
+        },
+        (err)=>{
+          new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+        })
+    }
   }
   afterInit(entityList: any) {
     this.entityList = entityList;
-  }
-
-  getActivatedPool(){
-    this.ws.call('jail.get_activated_pool').subscribe(
-      (res)=>{
-        if (res != null && res != "") {
-          this.activatedPool = res;
-          this.selectedPool = res;
-          this.isPoolActivated = true;
-        } else {
-          this.isPoolActivated = false;
-        }
-      },
-      (err)=>{
-        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
-      })
-  }
-
-  getAvailablePools(){
-    this.ws.call('pool.query').subscribe( (res)=> {
-      this.availablePools = res;
-    })
   }
 
   activatePool(event: Event){
