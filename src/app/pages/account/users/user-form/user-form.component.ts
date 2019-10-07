@@ -11,6 +11,7 @@ import {
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/account/user-form';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector : 'app-user-form',
@@ -57,9 +58,11 @@ export class UserFormComponent {
         },
         {
           type : 'input',
+          inputType: 'email',
           name : helptext.user_form_email_name,
           placeholder : helptext.user_form_email_placeholder,
-          tooltip : helptext.user_form_email_tooltip
+          tooltip : helptext.user_form_email_tooltip,
+          validation: [Validators.email]
         },
         {
           type : 'input',
@@ -418,6 +421,8 @@ export class UserFormComponent {
   }
 
   beforeSubmit(entityForm: any){
+    entityForm.email = entityForm.email === '' ? null : entityForm.email;
+
     if (this.isNew){
       const home_user = entityForm.home.substr(
         entityForm.home.length - entityForm.username.length
