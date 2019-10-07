@@ -220,7 +220,14 @@ export class PluginsComponent {
       T('No Pool Exist'),
       T('Jails cannot be created or managed untill a pool is present for storing them. Please create a pool first'),
       true,
-      T('Create Pool'));
+      T('Create Pool'),
+      false,
+      '',
+      '',
+      '',
+      '',
+      true);
+
       dialogRef.subscribe((res) => {
         if (res) {
           this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
