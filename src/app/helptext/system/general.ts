@@ -130,8 +130,8 @@ export const helptext_system_general = {
     title: T('Save Configuration'),
     message: T(
       "<b>WARNING:</b> This configuration file contains system\
- passwords and other sensitive data.<br /><br /><b>WARNING:</b> Host keys \
- are <b>NOT</b> backed up by this operation.<br />"
+ passwords and other sensitive data.<br /><br /><b>WARNING:</b> SSH keys \
+ in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
     ),
     button_text: T("Save"),
     warning: T(
