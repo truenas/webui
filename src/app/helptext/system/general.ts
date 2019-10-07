@@ -130,7 +130,8 @@ export const helptext_system_general = {
     title: T('Save Configuration'),
     message: T(
       "<b>WARNING:</b> This configuration file contains system\
- passwords and other sensitive data.<br>"
+ passwords and other sensitive data.<br /><br /><b>WARNING:</b> Host keys \
+ are <b>NOT</b> backed up by this operation.<br />"
     ),
     button_text: T("Save"),
     warning: T(
@@ -138,10 +139,12 @@ export const helptext_system_general = {
  configuration file with a new boot device. This also\
  decrypts all system passwords for reuse when the\
  configuration file is uploaded.</p>\
- <b>Keep the configuration file safe and protect it\
+ <br /><b>Keep the configuration file safe and protect it\
  from unauthorized access!</b>"
-    )
+    ),
+    host_key_warning: T(''),
   },
+
 
   upload_config: { placeholder: T("Select Configuration File") },
 
