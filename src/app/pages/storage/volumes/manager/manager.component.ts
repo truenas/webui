@@ -184,7 +184,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           placeholder: helptext.manager_duplicate_vdevs_placeholder,
           tooltip: helptext.manager_duplicate_vdevs_tooltip,
           options: vdevs_options
-        }
+        },
+        {
+          type: 'paragraph',
+          name: 'copy_desc',
+          paraText: '',
+        },
       ],
 
       saveButtonText: helptext.manager_duplicate_button,
@@ -210,6 +215,25 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           self.addVdev('data', vdev_values);
         }
         entityDialog.dialogRef.close(true);
+      },
+      parent: this,
+      afterInit: function(entityDialog) {
+        const copy_desc = _.find(this.fieldConfig, {'name':'copy_desc'});
+        const parent = entityDialog.parent;
+        const setParatext = function(vdevs) {
+          const used = parent.first_data_vdev_disknum * vdevs;
+          const remaining = parent.duplicable_disks.length - used;
+          const size = (<any>window).filesize(parent.first_data_vdev_disksize, {standard : "iec"});
+          const type = parent.first_data_vdev_disktype;
+          const vdev_type = parent.first_data_vdev_type;
+          const paraText = "Create " + vdevs + " new " + vdev_type + " data vdevs using " + used +
+            " (" + size + ") " + type + "s and leaving " + remaining + " of those drives unused."
+          copy_desc.paraText = paraText;
+        }
+        setParatext(entityDialog.formGroup.controls['vdevs'].value);
+        entityDialog.formGroup.controls['vdevs'].valueChanges.subscribe((vdevs) => {
+          setParatext(vdevs);
+        });
       }
     };
     this.dialog.dialogForm(conf);
