@@ -124,11 +124,6 @@ export class VMWizardComponent {
           tooltip: helptext.vcpus_tooltip,
         },
         {
-          type: 'paragraph',
-          name: 'memory_limitation',
-          paraText: helptext.memory_limitation + ' 0 bytes'
-        },
-        {
           type: 'input',
           name: 'memory',
           placeholder: helptext.memory_placeholder,
@@ -158,6 +153,11 @@ export class VMWizardComponent {
           blurEvent: this.blurEvent2,
           parent: this,
           tooltip: helptext.memory_tooltip,
+        },
+        {
+          type: 'paragraph',
+          name: 'memory_warning',
+          paraText: helptext.memory_warning
         },
       ]
     },
@@ -335,21 +335,6 @@ export class VMWizardComponent {
       .subscribe(options => {
         this.wizardConfig[2].fieldConfig.find(config => config.name === "datastore").options = options;
       });
-
-    /* Patch memory paraText with machine's available memory */
-    this.ws
-      .call("vm.get_available_memory", [])
-      .pipe(filter(availableMemory => typeof availableMemory === "number" && availableMemory > 0))
-      .subscribe(
-        availableMemory => {
-          let available = this.storageService.convertBytestoHumanReadable(availableMemory, 2);
-          this.wizardConfig
-            .find(step => step.label === helptext.vcpus_label)
-            .fieldConfig.find(config => config.type === "paragraph").paraText =
-              helptext.memory_limitation + `: ${available}`;
-        },
-        error => new EntityUtils().handleWSError(this, error, this.dialogService)
-      );
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {

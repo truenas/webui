@@ -62,11 +62,13 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
 
-memory_limitation: T('Available memory'),
 memory_placeholder: T('Memory Size'),
 memory_validation : [Validators.required],
 memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
 memory_size_err: T('Allocate at least 256 MiB.'),
+memory_warning: T('Caution: Allocating too much memory can slow the \
+ system or prevent VMs from running.'),
+vm_mem_title: T('Available Memory:'),
 
 disks_label: T('Hard Disks'),
 disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
@@ -133,4 +135,5 @@ upload_iso_path_validation: [],
 upload_iso_placeholder : 'ISO upload location',
 upload_iso_tooltip: 'Browse to the installer image file and click <b>Upload</b>.',
 upload_iso_validation : [  ],
+
 }
