@@ -333,7 +333,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else if (this.title === 'Jails') {
       n = 4;
     } else if (this.title === 'Virtual Machines') {
-      n = 6;
+      n = 1;
     } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
       n = 3;
     } else {
