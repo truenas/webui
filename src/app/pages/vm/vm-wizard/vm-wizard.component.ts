@@ -585,13 +585,17 @@ blurEvent(parent){
 blurEvent2(parent){
   parent.entityWizard.formArray.get([1]).get('memory').setValue(parent.storageService.humanReadable);
   const vm_memory_requested = parent.storageService.convertHumanStringToNum(parent.entityWizard.formGroup.value.formArray[1].memory)
-  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  const vm_name = parent.entityWizard.formGroup.value.formArray[0].name
   parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
-    if( vm_memory_requested > vm_memory_available){
+    if( vm_memory_requested > vm_memory_available){ console.log(parent.storageService.convertBytestoHumanReadable(vm_memory_requested))
       // parent.entityWizard.formArray.get([1]).get('memory').setValue(0);
       _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${parent.storageService.convertBytestoHumanReadable(vm_memory_requested)} to virtual machine: ${vm_name}.`;
-    } else{
+      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = 
+        `Cannot allocate ${parent.storageService.convertBytestoHumanReadable(vm_memory_requested)} to virtual machine: ${vm_name}.`;
+    } else if (vm_memory_requested < 268400000) {
+      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = helptext.memory_size_err;
+    } else {
       _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
       _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = '';
     }

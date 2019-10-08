@@ -359,7 +359,7 @@ export class StorageService {
       do {
         bytes = bytes / 1024;
         i++;
-      } while (bytes > 1024);
+      } while (bytes > 1024 && i < 4);
       units = this.IECUnits[i];
     } else {
       units = 'bytes';
