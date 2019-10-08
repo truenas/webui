@@ -32,6 +32,7 @@ description_tooltip : T('Description (optional).'),
 time_placeholder : T('System clock'),
 time_tooltip: T('VM system time. Default is <i>Local</i>.'),
 time_local_text: T('Local'),
+time_utc_text: T('UTC'),
 
 bootloader_placeholder : T('Boot Method'),
 bootloader_tooltip : T('Select <i>UEFI</i> for newer operating systems or\
