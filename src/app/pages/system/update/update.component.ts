@@ -210,8 +210,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.fullTrainList = res.trains;
   
         // On page load, make sure we are working with train of the current OS
-        this.train = res.selected;
-        this.selectedTrain = res.selected;
+        this.train = res.current;
+        this.selectedTrain = res.current;
   
         if (this.autoCheck) {
           this.check();
@@ -229,11 +229,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
         }
         this.singleDescription = this.trains[0].description;
   
-        if (this.fullTrainList[res.selected].description.toLowerCase().includes('[nightly]')) {
+        if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
           this.currentTrainDescription = '[nightly]';
-        } else if (this.fullTrainList[res.selected].description.toLowerCase().includes('[release]')) {
+        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
           this.currentTrainDescription = '[release]';
-        } else if (this.fullTrainList[res.selected].description.toLowerCase().includes('[prerelease]')) {
+        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
           this.currentTrainDescription = '[prerelease]';
         } else {
           this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
@@ -304,13 +304,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   onTrainChanged(event) {
     // For the case when the user switches away, then BACK to the train of the current OS
-    if (event.value === this.selectedTrain) {
+    if (event === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
-      this.check();
+      this.setTrainAndCheck();
       return;
     }
 
-    const compare = this.compareTrains(this.selectedTrain, event.value);
+    const compare = this.compareTrains(this.selectedTrain, event);
     if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
       this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
         this.train = this.selectedTrain;
@@ -318,9 +318,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
     } else if(compare === "NIGHTLY_UPGRADE"){
         this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
           if (res){
-            this.train = event.value;
+            this.train = event;
             this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
-            this.check();
+            this.setTrainAndCheck();
           } else {
             this.train = this.selectedTrain;
             this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
@@ -329,9 +329,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
     } else if (compare === "ALLOWED" || compare === "MINOR_UPGRADE" || compare === "MAJOR_UPGRADE") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
-          this.train = event.value;
+          this.train = event;
           this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
-          this.check();
+          this.setTrainAndCheck();
         }
       })
     }
@@ -536,6 +536,19 @@ export class UpdateComponent implements OnInit, OnDestroy {
       if(pending.length !== 0){
         this.update_downloaded = true;
       }
+    });
+  }
+
+  setTrainAndCheck() {
+    this.showSpinner = true;
+    this.ws.call('update.set_train', [this.train]).subscribe(() => { 
+      this.check();
+    },(err) => {
+      new EntityUtils().handleWSError(this, err, this.dialogService);
+      this.showSpinner = false;
+    },
+    () => {
+      this.showSpinner = false;
     });
   }
 
