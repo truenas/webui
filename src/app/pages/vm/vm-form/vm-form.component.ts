@@ -81,13 +81,13 @@ export class VmFormComponent {
   }
 
   resourceTransformIncomingRestData(wsResponse) {
-    wsResponse['memory'] = this.storageService.convertBytestoHumanReadable(wsResponse['memory'], 0);
+    wsResponse['memory'] = this.storageService.convertBytestoHumanReadable(wsResponse['memory']*1049000, 0);
     return wsResponse;
   }
 
   beforeSubmit(data) {
     if (data['memory'] !== undefined && data['memory'] !== null) {
-        data['memory'] = this.storageService.convertHumanStringToNum(data['memory']);
+    data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'])/1049000);
     }
   }
 
