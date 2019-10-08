@@ -32,5 +32,8 @@ export const helptext_system_failover = {
   timeout_placeholder: T('Timeout'),
   timeout_tooltip: T(''),
 
+  master_dialog_title: T('Switch Master'),
+  master_dialog_warning: T(`Forcing the other ${globalHelptext.ctrlr} to become master will require a failover with temporary service disruption.`)
+
 
 };
