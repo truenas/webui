@@ -167,7 +167,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     const duplicable_disks = this.duplicable_disks;
     let maxVdevs = 0;
     if (this.first_data_vdev_disknum && this.first_data_vdev_disknum > 0) {
-      maxVdevs = this.duplicable_disks.length / this.first_data_vdev_disknum;
+      maxVdevs = Math.floor(this.duplicable_disks.length / this.first_data_vdev_disknum);
     }
     const vdevs_options = [];
     for (let i = maxVdevs; i > 0; i--) {
@@ -211,6 +211,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           for (let j = 0; j < self.first_data_vdev_disknum; j++) {
             const disk = duplicable_disks.shift();
             vdev_values['disks'].push(disk);
+            // remove disk from selected
+            self.selected = _.remove(self.selected, function(d) {
+              return d.devname !== disk.devname;
+            });
           }
           self.addVdev('data', vdev_values);
         }
