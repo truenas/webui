@@ -101,7 +101,7 @@ export class BootEnvironmentListComponent {
     return row[attr];
   }
 
-  constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService, 
+  constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService,
     private dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
     public snackBar: MatSnackBar ) {}
 
@@ -140,6 +140,8 @@ export class BootEnvironmentListComponent {
             }
           )
       });
+    } else {
+      row.hideCheckbox = true;
     }
     actions.push({
       label : T("Clone"),
@@ -186,6 +188,7 @@ export class BootEnvironmentListComponent {
     return actions;
   }
 
+  // tslint:disable-next-line: member-ordering
   public multiActions: Array < any > = [{
     id: "mdelete",
     label: T("Delete"),
