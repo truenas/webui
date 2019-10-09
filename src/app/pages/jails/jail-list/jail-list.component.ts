@@ -181,7 +181,11 @@ export class JailListComponent implements OnInit {
   async ngOnInit(){
     await this.ws.call('pool.query').toPromise().then(
       (res)=> {
-      this.availablePools = res;
+        this.availablePools = res;
+        if (this.availablePools.length === 0) {
+          this.noPoolDialog();
+          this.toActivatePool = true;
+        }
       },
       (err) => {
         new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
@@ -203,6 +207,21 @@ export class JailListComponent implements OnInit {
         })
     }
   }
+
+  noPoolDialog() {
+    const dialogRef = this.dialogService.confirm(
+      T('No Pools'),
+      T('Jails cannot be created or managed until a pool is present for storing them.'),
+      true,
+      T('Create Pool'));
+
+      dialogRef.subscribe((res) => {
+        if (res) {
+          this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
+        }
+    })
+  }
+
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
