@@ -1,10 +1,10 @@
 <mat-card *ngIf="availablePools != undefined">
     <form (ngSubmit)="activatePool($event)">
-      <h4>Activated Pool for Jail Manager: {{activatedPool}}</h4>
+      <h4>{{ "Activated Pool for Jail Manager:" | translate}} {{ activatedPool }}</h4>
       <div class="dynamic-field form-select has-tooltip" *ngIf="toActivatePool">
         <mat-form-field class="form-control full-width">
           <mat-select placeholder="{{ 'Choose a pool or dataset for jail storage' | translate }}" required [(ngModel)]="selectedPool" name="Pool">
-            <mat-option *ngFor="let pool of availablePools" [value]="pool.name">{{pool.name}}</mat-option>
+            <mat-option *ngFor="let pool of availablePools" [value]="pool.name">{{ pool.name }}</mat-option>
           </mat-select>
         </mat-form-field>
         <tooltip [message]=tooltipMsg></tooltip>
