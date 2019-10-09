@@ -28,7 +28,8 @@ export class BootEnvironmentListComponent {
   protected queryCall = 'bootenv.query';
   protected route_add: string[] = ['system', 'boot', 'create']
   protected route_delete: string[] = [ 'system', 'boot', 'delete' ];
-  protected wsDelete = 'bootenv.delete'
+  protected wsDelete = 'bootenv.delete';
+  protected wsMultiDelete = 'core.bulk';
   protected entityList: EntityTableComponent;
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
@@ -52,6 +53,7 @@ export class BootEnvironmentListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true,
     deleteMsg: {
       title: 'Boot Environment',
       key_props: ['name']
@@ -182,6 +184,39 @@ export class BootEnvironmentListComponent {
     }
 
     return actions;
+  }
+
+  public multiActions: Array < any > = [{
+    id: "mdelete",
+    label: T("Delete"),
+    icon: "delete",
+    enable: true,
+    ttpos: "above",
+    onClick: (selected) => {
+      selected.forEach((item) => {
+        if (item.active === '-') {
+          selected.splice(item, 1)
+        }
+      })
+      console.log(selected)
+      this.entityList.doMultiDelete(selected);
+    }
+  }];
+
+  getSelectedNames(selectedBootenvs)  {
+    let selected: any = [];
+    for (let i in selectedBootenvs) {
+      if (selectedBootenvs[i].active !=='Now/Reboot') {
+        selected.push([selectedBootenvs[i].id]);
+      }
+    }
+    return selected;
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = ['bootenv.do_delete'];
+    params.push(this.getSelectedNames(selected));
+    return params;
   }
 
   doActivate(id) {

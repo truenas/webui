@@ -221,6 +221,7 @@
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
           <div>
             <mat-checkbox 
+              *ngIf="row.active!=='Now/Reboot' && row.active!=='Now' && row.active!=='Reboot'"
               ix-datatable-cell="multi-checkbox"
               [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
               [checked]="isSelected"
