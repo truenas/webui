@@ -91,8 +91,8 @@ export class UserListComponent implements OnInit {
 
       actions.push({
         id: row.bsdusr_username,
-        icon: 'edit',
-        name: 'edit',
+        icon: 'delete',
+        name: 'delete',
         label : helptext.user_list_actions_delete_label,
         onClick : (users_edit) => {
           this.entityList.doDelete(users_edit);
