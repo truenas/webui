@@ -135,7 +135,6 @@ export class DatasetAclComponent implements OnDestroy {
               updateLocal: true,
               options: [],
               searchOptions: [],
-              parent: this,
               updater: this.updateUserSearchOptions,
               isHidden: true,
               required: true,
@@ -148,7 +147,6 @@ export class DatasetAclComponent implements OnDestroy {
               updateLocal: true,
               options: [],
               searchOptions: [],
-              parent: this,
               updater: this.updateGroupSearchOptions,
               isHidden: true,
               required: true,
@@ -363,24 +361,24 @@ export class DatasetAclComponent implements OnDestroy {
             if (user_fc.options === undefined || user_fc.options.length === 0) {
               user_fc.options = this.userOptions;
             }
+            if (!user_fc['parent']) {
+              user_fc.parent = this;
+            }
             if (group_fc.options === undefined || group_fc.options.length === 0) {
               group_fc.options = this.groupOptions;
             }
+            if (!group_fc['parent']) {
+              group_fc.parent = this;
+            }
             if (res[i].tag === 'USER') {
-              user_fc.isHidden = false;
-              user_fc.disabled = false;
-              group_fc.isHidden = true;
-              group_fc.disabled = true;
+              this.setDisabled(user_fc, this.aces.controls[i].controls['user'], false, false);
+              this.setDisabled(group_fc, this.aces.controls[i].controls['group'], true, true);
             } else if (res[i].tag === 'GROUP') {
-              user_fc.isHidden = true;
-              user_fc.disabled = true;
-              group_fc.isHidden = false;
-              group_fc.disabled = false;
+              this.setDisabled(user_fc, this.aces.controls[i].controls['user'], true, true);
+              this.setDisabled(group_fc, this.aces.controls[i].controls['group'], false, false);
             } else {
-              user_fc.isHidden = true;
-              user_fc.disabled = true;
-              group_fc.isHidden = true;
-              group_fc.disabled = true;
+              this.setDisabled(user_fc, this.aces.controls[i].controls['user'], true, true);
+              this.setDisabled(group_fc, this.aces.controls[i].controls['group'], true, true);
             }
             adv_perms_fc = _.find(controls, {"name": "advanced_perms"});
             basic_perms_fc = _.find(controls, {"name": "basic_perms"});
@@ -429,6 +427,16 @@ export class DatasetAclComponent implements OnDestroy {
         this.dataHandler(this.entityForm, res);
       });
     });
+  }
+
+  setDisabled(fieldConfig, formControl, disable, hide) {
+    fieldConfig.disabled = disable;
+    fieldConfig['isHidden'] = hide;
+    if (formControl && formControl.disabled !== disable) {
+      const method = disable ? 'disable' : 'enable';
+      formControl[method]();
+      return;
+    }
   }
 
   resourceTransformIncomingRestData(data) {
