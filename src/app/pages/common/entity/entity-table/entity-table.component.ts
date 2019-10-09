@@ -149,6 +149,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected loaderOpen = false;
   public selected = [];
+  public removeFromSelectedTotal = 0;
 
   private interval: any;
   private excuteDeletion = false;
@@ -487,6 +488,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPaginationInfo();
     }
 
+    if (this.title === 'Boot Environments') {
+      this.rows.forEach((row) => {
+        if (row.active !== '-') {
+          row.hideCheckbox = true;
+        }
+      })
+    }
     return res;
 
   }
@@ -911,6 +919,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSelect({ selected }) {
+    this.removeFromSelectedTotal = 0;
+    if (this.title === 'Boot Environments') {
+      let counter = 0;
+      for(let i = selected.length -1; i >= 0 ; i--) {
+        selected[i].active !== '-' ? this.removeFromSelectedTotal++ : counter++;
+      };
+      if (counter === 0) {
+        for(let i = selected.length -1; i >= 0 ; i--) {
+          selected.splice(i, 1);
+        };
+      };
+    };
     this.setTableHeight();
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);

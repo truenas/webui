@@ -193,12 +193,11 @@ export class BootEnvironmentListComponent {
     enable: true,
     ttpos: "above",
     onClick: (selected) => {
-      selected.forEach((item) => {
-        if (item.active === '-') {
-          selected.splice(item, 1)
+      for(let i = selected.length -1; i >= 0 ; i--) {
+        if(selected[i].active !== '-') {
+           selected.splice(i, 1);
         }
-      })
-      console.log(selected)
+      }
       this.entityList.doMultiDelete(selected);
     }
   }];

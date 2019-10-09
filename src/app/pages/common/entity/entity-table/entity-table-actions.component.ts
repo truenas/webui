@@ -41,17 +41,17 @@ export class EntityTableActionsComponent implements OnInit {
     }
     this.actions = this.entity.getActions(this.row);
     
-    // interval(5000).subscribe((val) => {
-    //   this.actions = this.entity.getActions(this.row);
-    //   const removeIds = [];
-    //   for (let i = 0; i < this.actions.length; i++) {
-    //     if (this.entity.conf.isActionVisible) {
-    //       this.actions[i].visible = this.entity.conf.isActionVisible.bind(
-    //           this.entity.conf)(this.actions[i].id, this.row);
-    //     } else {
-    //       this.actions[i].visible = true;
-    //     }
-    //   }
-    //  });
+    interval(5000).subscribe((val) => {
+      this.actions = this.entity.getActions(this.row);
+      const removeIds = [];
+      for (let i = 0; i < this.actions.length; i++) {
+        if (this.entity.conf.isActionVisible) {
+          this.actions[i].visible = this.entity.conf.isActionVisible.bind(
+              this.entity.conf)(this.actions[i].id, this.row);
+        } else {
+          this.actions[i].visible = true;
+        }
+      }
+     });
   }
 }
