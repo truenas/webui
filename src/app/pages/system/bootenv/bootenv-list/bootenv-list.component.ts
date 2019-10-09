@@ -205,7 +205,7 @@ export class BootEnvironmentListComponent {
   getSelectedNames(selectedBootenvs)  {
     let selected: any = [];
     for (let i in selectedBootenvs) {
-      if (selectedBootenvs[i].active !=='Now/Reboot') {
+      if (selectedBootenvs[i].active ==='-') {
         selected.push([selectedBootenvs[i].id]);
       }
     }
