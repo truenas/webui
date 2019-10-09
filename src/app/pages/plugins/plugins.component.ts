@@ -217,16 +217,10 @@ export class PluginsComponent {
 
   noPoolDialog() {
     const dialogRef = this.dialogService.confirm(
-      T('No Pool Exist'),
-      T('Jails cannot be created or managed untill a pool is present for storing them. Please create a pool first'),
+      T('No Pools'),
+      T('Jails cannot be created or managed until a pool is present for storing them.'),
       true,
-      T('Create Pool'),
-      false,
-      '',
-      '',
-      '',
-      '',
-      true);
+      T('Create Pool'));
 
       dialogRef.subscribe((res) => {
         if (res) {
@@ -245,7 +239,7 @@ export class PluginsComponent {
           type: 'select',
           name: 'selectedPool',
           placeholder: T('Choose a pool or dataset for jail storage'),
-          options: this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}),
+          options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}) : [],
           value: this.activatedPool
         }
       ],
@@ -268,7 +262,9 @@ export class PluginsComponent {
           });
       }
     }
-    this.dialogService.dialogForm(conf);
+    if (this.availablePools) {
+      this.dialogService.dialogForm(conf);
+    }
   }
 
   afterInit(entityList: any) {
