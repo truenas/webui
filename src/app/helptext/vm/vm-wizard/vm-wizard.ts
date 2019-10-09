@@ -32,6 +32,7 @@ description_tooltip : T('Description (optional).'),
 time_placeholder : T('System clock'),
 time_tooltip: T('VM system time. Default is <i>Local</i>.'),
 time_local_text: T('Local'),
+time_utc_text: T('UTC'),
 
 bootloader_placeholder : T('Boot Method'),
 bootloader_tooltip : T('Select <i>UEFI</i> for newer operating systems or\
@@ -63,7 +64,8 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
 
 memory_placeholder: T('Memory Size'),
 memory_validation : [Validators.required],
-memory_tooltip: T('Allocate RAM for the VM'),
+memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
+memory_size_err: T('Allocate at least 256 MiB.'),
 memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),
 vm_mem_title: T('Available Memory:'),

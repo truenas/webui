@@ -9,7 +9,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Subject } from 'rxjs/Subject';
 import globalHelptext from '../../../helptext/global-helptext';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, StorageService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
 import { T } from '../../../translate-marker';
@@ -46,7 +46,7 @@ export class VmCardsComponent  implements OnDestroy {
     {name : T('State'), prop : 'state', always_display: true, toggle: true },
     {name : T('Autostart'), prop : 'autostart',hidden: false, selectable: true},
     { name: T("Virtual CPUs"), prop: 'vcpus', hidden: true },
-    { name: T("Memory Size (MiB)"), prop: 'memory', hidden: true },
+    { name: T("Memory Size"), prop: 'memory', hidden: true },
     { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
     {name : 'System Clock', prop : 'time', hidden: true},
     { name: T("VNC Port"), prop: 'port', hidden: true },
@@ -64,7 +64,7 @@ export class VmCardsComponent  implements OnDestroy {
 
   constructor(public router: Router, protected rest: RestService, public ws: WebSocketService,
               public core:CoreService,public dialog: DialogService,protected loader: AppLoaderService,
-              protected matdialog: MatDialog
+              protected matdialog: MatDialog, public storageService: StorageService
               ) {}
 
   resourceTransformIncomingRestData(vms) {
@@ -78,6 +78,7 @@ export class VmCardsComponent  implements OnDestroy {
       if (vms[vm_index]['vm_type'] === "Container Provider") 
         vms[vm_index]['vm_type'] = globalHelptext.dockerhost;
       };
+      vms[vm_index]['memory'] = this.storageService.convertBytestoHumanReadable(vms[vm_index]['memory']*1048576, 2);
     }
     return vms;
   }
