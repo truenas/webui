@@ -921,14 +921,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   onSelect({ selected }) {
     this.removeFromSelectedTotal = 0;
     if (this.title === 'Boot Environments') {
-      let counter = 0;
-      for(let i = selected.length -1; i >= 0 ; i--) {
-        selected[i].active !== '-' ? this.removeFromSelectedTotal++ : counter++;
-      };
-      if (counter === 0) {
-        for(let i = selected.length -1; i >= 0 ; i--) {
-          selected.splice(i, 1);
-        };
+      let checkable = 0;
+      selected.forEach((i) => {
+        i.active !== '-' ? this.removeFromSelectedTotal++ : checkable++;
+      });
+      if (checkable === 0) {
+        selected.length = 0;
       };
     };
     this.setTableHeight();
