@@ -67,6 +67,13 @@ export class AvailablePluginsComponent implements OnInit {
                 if (res.result) {
                     this.plugins = res.result;
                     this.selectedPlugin = res.result[0];
+                    let revision = this.selectedPlugin['revision'];
+                    if (revision !== 'N/A' && revision !== '0' ) {
+                        revision = '_' + revision;
+                    } else {
+                        revision = '';
+                    }
+                    this.selectedPlugin['version'] = this.selectedPlugin['version'] + revision;
                     this.parent.cardHeaderReady = true;
                 }
                 if (res.error) {

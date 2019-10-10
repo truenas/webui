@@ -44,7 +44,6 @@ export class PluginsComponent {
     { name: T('Plugin'), prop: 'plugin', hidden: true },
     { name: T('Release'), prop: 'release', hidden: true },
     { name: T('Boot'), prop: 'boot', hidden: true },
-    { name: T('Revision'), prop: 'revision', hidden: true },
     { name: T('Collection'), prop: 'plugin_repository', hidden: true },
   ];
   public config: any = {
@@ -270,6 +269,13 @@ export class PluginsComponent {
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
+      let revision = entityList.rows[i]['revision'];
+      if (revision !== 'N/A' && revision !== '0' ) {
+        revision = '_' + revision;
+      } else {
+        revision = '';
+      }
+      entityList.rows[i]['version'] = entityList.rows[i]['version'] + revision;
       for (const ipType of ['ip4', 'ip6']) {
         if (entityList.rows[i][ipType] != null) {
           entityList.rows[i][ipType] = entityList.rows[i][ipType]
