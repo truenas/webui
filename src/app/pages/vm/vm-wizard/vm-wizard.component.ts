@@ -594,7 +594,7 @@ blurEvent3(parent){
     if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
     parent.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).subscribe((stat)=> {
       if (stat.free_bytes < volsize ) {
-        parent.entityWizard.formArray.get([2]).get('volsize').setValue('');
+        parent.entityWizard.formArray.get([2]).get('volsize').setValue(0);
         _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = true;
         _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = `Cannot allocate ${volsize / (1073741824)} Gib to for storage virtual machine: ${vm_name}.`;
        } else {
