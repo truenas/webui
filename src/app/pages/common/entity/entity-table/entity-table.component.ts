@@ -149,6 +149,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected loaderOpen = false;
   public selected = [];
+  public removeFromSelectedTotal = 0;
 
   private interval: any;
   private excuteDeletion = false;
@@ -156,20 +157,20 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   protected toDeleteRow: any;
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
-  public getRowDetailHeight = () => 
+  public getRowDetailHeight = () =>
      this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
       : this.conf.detailRowHeight || 100;
-  
+
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
+    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
-    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService) { 
+    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService) {
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
-      this.core.emit({name:"UserPreferencesRequest"}); 
+      this.core.emit({name:"UserPreferencesRequest"});
   }
 
   ngOnDestroy(){
@@ -179,7 +180,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
-    this.setTableHeight(); 
+    this.setTableHeight();
 
     setTimeout(async() => {
       if (this.conf.prerequisite) {
@@ -263,7 +264,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => { this.setShowSpinner(); }, 500);
 
 
-      // End of layout section ------------                 
+      // End of layout section ------------
 
     this.erdService.attachResizeEventToElement("entity-table-component");
   }
@@ -308,12 +309,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
           newData = this.rows;
         }
-        
+
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
-      });      
-    };        
+      });
+    };
   }
 
   dropLastMaxWidth() {
@@ -325,7 +326,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     delete (this.conf.columns[Object.keys(this.conf.columns).length-1]).maxWidth;
     return this.conf.columns;
   }
- 
+
   setTableHeight() {
     let rowNum = 6, n, addRows = 4;
     if (this.title === 'Boot Environments') {
@@ -656,7 +657,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
         ? ''
         : this.getDeleteMessage(item);
-    
+
     let id;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
       id = item[this.conf.config.deleteMsg.id_prop];
@@ -709,7 +710,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           new EntityUtils().handleWSError(this, resinner, this.dialogService);
           this.loader.close();
         }
-      ) 
+      )
     } else {
       this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
         (resinner) => {
@@ -777,7 +778,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   paginationUpdate($pageEvent: any) {
     this.paginationPageEvent = $pageEvent;
-    this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
+    this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" )
     ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
     this.paginationPageSize = this.paginationPageEvent.pageSize;
     this.setPaginationInfo();
@@ -802,8 +803,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.tableHeight = (this.currentRows.length * this.rowHeight) + 110;
     } else {
       this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
-    } 
-    
+    }
+
     // Displays an accurate number for some edge cases
     if (this.paginationPageSize > this.currentRows.length) {
       this.paginationPageSize = this.currentRows.length;
@@ -911,6 +912,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSelect({ selected }) {
+    this.removeFromSelectedTotal = 0;
+    let checkable = 0;
+    selected.forEach((i) => {
+      i.hideCheckbox ? this.removeFromSelectedTotal++ : checkable++;
+    });
+    if (checkable === 0) {
+      selected.length = 0;
+    };
     this.setTableHeight();
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
@@ -941,11 +950,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     let obj = {};
     obj['title'] = this.title;
     obj['cols'] = this.conf.columns;
-  
+
     let preferredCols = this.prefService.preferences.tableDisplayedColumns;
     preferredCols.forEach((i) => {
       if (i.title === this.title) {
-        preferredCols.splice(preferredCols.indexOf(i), 1); 
+        preferredCols.splice(preferredCols.indexOf(i), 1);
       }
     });
     preferredCols.push(obj);
@@ -983,13 +992,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Used by the select all checkbox to determine whether it should be checked
-  checkLength() { 
+  checkLength() {
     if (this.allColumns && this.conf.columns) {
       return this.conf.columns.length === this.allColumns.length;
     }
   }
   // End checkbox section -----------------------
-  
+
   toggleLabels(){
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
