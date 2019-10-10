@@ -1,6 +1,7 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
+import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
 wizard_type_label: T('Select VM wizard type'),
@@ -82,7 +83,7 @@ disk_radio_options_existing_label: T("Use existing disk image"),
 volsize_placeholder : T('Size (GiB)'),
 volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
-volsize_validation: [Validators.required, Validators.min(1)],
+volsize_validation: [Validators.required, rangeValidator(1)],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
 datastore_placeholder: T('Zvol Location'),
