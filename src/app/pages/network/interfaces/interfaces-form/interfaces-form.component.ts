@@ -390,13 +390,13 @@ export class InterfacesFormComponent implements OnDestroy {
     if (type === "LINK_AGGREGATION") {
       this.networkService.getLaggPortsChoices(id).subscribe((res) => {
         for (const key in res) {
-          this.lag_ports.options.push({label: key, value: res[key]});
+          this.lag_ports.options.push({label: res[key], value: key});
         }
       });
     } else if (type === "BRIDGE") {
       this.networkService.getBridgeMembersChoices(id).subscribe((res) => {
         for (const key in res) {
-          this.bridge_members.options.push({label: key, value: res[key]});
+          this.bridge_members.options.push({label: res[key], value: key});
         }
       });
     } else if (type === "VLAN") {
