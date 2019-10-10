@@ -82,6 +82,14 @@ export class BootEnvironmentListComponent {
     });
   }
 
+  dataHandler(entityList: any) {
+    entityList.rows.forEach((row) => {
+      if (row.active !== '-') {
+        row.hideCheckbox = true;
+      }
+    })
+  }
+
 
   rowValue(row, attr) {
     if (attr === 'created'){
@@ -140,9 +148,8 @@ export class BootEnvironmentListComponent {
             }
           )
       });
-    } else {
-      row.hideCheckbox = true;
     }
+
     actions.push({
       label : T("Clone"),
       id: "clone",
