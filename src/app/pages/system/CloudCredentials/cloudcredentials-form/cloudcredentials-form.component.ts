@@ -3,8 +3,9 @@ import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import * as _ from 'lodash';
-import { CloudCredentialService, WebSocketService } from '../../../../services/';
+import { CloudCredentialService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-cloudcredentials-form',
@@ -23,6 +24,8 @@ export class CloudCredentialsFormComponent {
   protected pk: any;
 
   protected selectedProvider: string = 'AMAZON_CLOUD_DRIVE';
+  protected credentialsOauth = false;
+  protected oauthURL: any;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -790,16 +793,66 @@ export class CloudCredentialsFormComponent {
         }
       ]
     },
+    {
+      type: 'input',
+      name: 'client_id',
+      placeholder: helptext.client_id.placeholder,
+      tooltip: helptext.client_id.tooltip,
+      isHidden: true,
+    },
+    {
+      type: 'input',
+      name: 'client_secret',
+      placeholder: helptext.client_secret.placeholder,
+      tooltip: helptext.client_secret.tooltip,
+      isHidden: true,
+    },
   ];
 
 
   protected providers: Array<any>;
   protected providerField: any;
+  protected entityForm: any;
+  protected oauthClentIdField: any;
+  protected oauthClentSecretField: any;
+
+  public custActions: Array<any> = [
+    {
+      id: 'authenticate',
+      name: T('Authenticate'),
+      function: () => {
+        window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
+        const controls = this.entityForm.formGroup.controls;
+        const selectedProvider = this.selectedProvider;
+        const dialogService = this.dialog;
+
+         window.addEventListener("message", doAuth, false);
+
+         function doAuth(message) {
+          if (message.data.oauth_portal) {
+            if (message.data.error) {
+              dialogService.errorReport(T('Error'), message.data.error);
+            } else {
+              for (const prop in message.data.result) {
+                let targetProp = prop;
+                if (prop != 'client_id' && prop != 'client_secret') {
+                  targetProp += '-' + selectedProvider;
+                }
+                controls[targetProp].setValue(message.data.result[prop]);
+              }
+            }
+          }
+          window.removeEventListener("message", doAuth);
+        }
+      }
+    }
+  ];
 
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,
               protected ws: WebSocketService,
-              protected cloudcredentialService: CloudCredentialService) {
+              protected cloudcredentialService: CloudCredentialService,
+              protected dialog: DialogService,) {
     this.providerField = _.find(this.fieldConfig, {'name': 'provider'});
     this.cloudcredentialService.getProviders().subscribe(
       (res) => {
@@ -816,7 +869,17 @@ export class CloudCredentialsFormComponent {
     );
   }
 
+  isCustActionVisible(actionname: string) {
+    if (actionname === 'authenticate' && this.credentialsOauth === false) {
+      return false;
+    }
+    return true;
+  }
+
   preInit() {
+    this.oauthClentIdField = _.find(this.fieldConfig, {'name': 'client_id'});
+    this.oauthClentSecretField = _.find(this.fieldConfig, {'name': 'client_secret'});
+
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(params['pk']);
@@ -840,10 +903,18 @@ export class CloudCredentialsFormComponent {
   }
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     entityForm.submitFunction = this.submitFunction;
 
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
       this.selectedProvider = res;
+
+      this.oauthURL = _.find(this.providers, {'name': res}).credentials_oauth;
+      this.credentialsOauth = this.oauthURL == null ? false : true;
+
+      entityForm.setDisabled(this.oauthClentIdField.name, !this.credentialsOauth, !this.credentialsOauth);
+      entityForm.setDisabled(this.oauthClentSecretField.name, !this.credentialsOauth, !this.credentialsOauth);
+
     });
     // preview service_account_credentials
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
@@ -894,7 +965,10 @@ export class CloudCredentialsFormComponent {
       entityForm.formGroup.controls['advanced-S3'].setValue(true);
     }
     for (let i in entityForm.wsResponseIdx) {
-      let field_name = i + '-' + provider;
+      let field_name = i;
+      if (field_name != 'client_id' && field_name != 'client_secret') {
+        field_name += '-' + provider;
+      }
       entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
     }
   }
