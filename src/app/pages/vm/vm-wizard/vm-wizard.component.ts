@@ -191,7 +191,6 @@ export class VMWizardComponent {
         {
           type: 'input',
           name: 'volsize',
-          inputType: 'number',
           placeholder : helptext.volsize_placeholder,
           tooltip: helptext.volsize_tooltip,
           isHidden: false,
