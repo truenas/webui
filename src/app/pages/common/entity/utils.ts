@@ -106,7 +106,17 @@ export class EntityUtils {
             entity.entityWizard.stepper.selectedIndex = stepIndex;
           }
         } else {
-          entity.error = error;
+          if (entity.error) {
+            entity.error = error;
+          } else if (dialog) {
+            if (res.trace && res.trace.formatted) {
+              dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
+            } else if (res.state && res.error && res.exception) {
+              dialog.errorReport(res.state, res.error, res.exception);
+            }
+          } else {
+            console.log(error);
+          }
         }
       }
     } else {
