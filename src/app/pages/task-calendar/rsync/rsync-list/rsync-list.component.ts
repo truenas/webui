@@ -22,6 +22,7 @@ export class RsyncListComponent {
   protected route_add_tooltip = "Add Rsync Task";
   protected route_edit: string[] = ['tasks', 'rsync', 'edit'];
   protected entityList: any;
+  protected asyncView = true;
 
   public columns: Array < any > = [
     { name: T('Path'), prop: 'path', always_display: true },
@@ -63,8 +64,13 @@ export class RsyncListComponent {
       onClick : (members) => {
         this.dialog.confirm(T("Run Now"), T("Run this rsync now?"), true).subscribe((run) => {
           if (run) {
+            row.state = 'RUNNING';
             this.ws.call('rsynctask.run', [row.id] ).subscribe((res) => {
               this.snackBar.open(T('Rsync task started.'), T('CLOSE'), { duration: 5000 });
+              this.job.getJobStatus(res).subscribe((task) => {
+                row.state = task.state;
+                row.job = task;
+              });
             }, (err) => {
               new EntityUtils().handleWSError(this, err);
             });
@@ -110,7 +116,7 @@ export class RsyncListComponent {
       } else {
         task.state = task.job.state;
         this.job.getJobStatus(task.job.id).subscribe((t) => {
-          t.state = t.job.state;
+          t.state = t.job ? t.job.state : null;
         });
       }
       return task;
