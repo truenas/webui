@@ -1,17 +1,16 @@
-import { WebSocketService, DialogService, SnackbarService } from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
-import { TaskService } from '../../../../services/';
+import { WebSocketService, DialogService, SnackbarService, TaskService, JobService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-rsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [TaskService, SnackbarService]
+  providers: [TaskService, SnackbarService, JobService]
 })
 export class RsyncListComponent {
 
@@ -35,6 +34,7 @@ export class RsyncListComponent {
     { name: T('Short Description'), prop: 'desc', hidden: true },
     { name: T('User'), prop: 'user' },
     { name: T('Delay Updates'), prop: 'delayupdates', hidden: true },
+    { name: T('Status'), prop: 'state', state: 'state'},
     { name: T('Enabled'), prop: 'enabled', hidden: true },
   ];
   public rowIdentifier = 'path';
@@ -48,7 +48,8 @@ export class RsyncListComponent {
   };
 
   constructor(protected router: Router, protected ws: WebSocketService, protected taskService: TaskService,
-              protected dialog: DialogService, protected translate: TranslateService, protected snackBar: SnackbarService) {}
+              protected dialog: DialogService, protected translate: TranslateService, protected snackBar: SnackbarService,
+              protected job: JobService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
 
@@ -103,7 +104,31 @@ export class RsyncListComponent {
       task.dow = task.schedule['dow'];
 
       task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
+
+      if (task.job == null) {
+        task.state = T("PENDING");
+      } else {
+        task.state = task.job.state;
+        this.job.getJobStatus(task.job.id).subscribe((t) => {
+          t.state = t.job.state;
+        });
+      }
       return task;
     })
+  }
+
+  stateButton(row) {
+    if (row.job) {
+      if (row.job.error) {
+        this.dialog.confirm(row.job.state,row.job.error,true, T('VIEW LOGS')).subscribe(
+          (res) => {
+              if (res) {
+                  this.job.showLogs(row.job.id);
+              }
+          })
+      } else {
+        this.job.showLogs(row.job.id);
+      }
+    }
   }
 }
