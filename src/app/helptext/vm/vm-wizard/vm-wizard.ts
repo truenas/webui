@@ -69,7 +69,7 @@ memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),
 vm_mem_title: T('Available Memory:'),
 
-disks_label: T('Hard Disks'),
+disks_label: T('Disks'),
 disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
  zvol on an existing dataset. This is used as a\
  virtual hard drive for the VM. Select <i>Use\
