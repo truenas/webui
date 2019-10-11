@@ -161,6 +161,7 @@ export class DialogService {
             title: title,
             message: message,
             name: name,
+            confirmInstructions: true,
             fieldConfig: [
               {
                 type: 'input',
