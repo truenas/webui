@@ -160,16 +160,17 @@ export class DialogService {
         const conf = {
             title: title,
             message: message,
+            name: name,
             fieldConfig: [
               {
                 type: 'input',
                 name: 'name',
-                required: true,
+                required: true
               },
               {
                   type: 'checkbox',
                   name: 'confirm',
-                  placeholder: 'Confirm',
+                  placeholder: T('Confirm'),
                   isHidden: !confirmBox,
               }
             ],
