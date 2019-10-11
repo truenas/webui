@@ -6,12 +6,15 @@ import {
   RestService,
   WebSocketService,
   StorageService,
-  AppLoaderService
+  AppLoaderService,
+  UserService,
 } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/account/user-form';
 import { Validators } from '@angular/forms';
+import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-user-form',
@@ -25,6 +28,7 @@ export class UserFormComponent {
   protected isEntity  = true;
   protected isNew: boolean;
   public entityForm: any;
+  protected namesInUse = [];
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldConfig: FieldConfig[] = [];
@@ -51,7 +55,12 @@ export class UserFormComponent {
           placeholder : helptext.user_form_username_placeholder,
           tooltip : helptext.user_form_username_tooltip,
           required: true,
-          validation : helptext.user_form_username_validation,
+          validation: [
+            Validators.required,
+            Validators.pattern(UserService.VALIDATOR_NAME),
+            Validators.maxLength(16),
+            forbiddenValues(this.namesInUse)
+          ],
           blurStatus : true,
           blurEvent: this.blurEvent2,
           parent: this
@@ -260,7 +269,13 @@ export class UserFormComponent {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
               public loader: AppLoaderService
-              ) {}
+              ) {
+      this.ws.call('user.query').subscribe(
+        (res)=>{
+          this.namesInUse.push(...res.map(user => user.username));
+        }
+      );
+    };
 
    afterInit(entityForm: any) {
     this.loader.callStarted.emit();
@@ -410,6 +425,15 @@ export class UserFormComponent {
       entityForm.submitFunction = this.submitFunction;
     }
 
+    entityForm.formGroup.controls['username'].valueChanges.subscribe((value) => {
+      const field = _.find(this.fieldConfig, {name: "username"});
+      field['hasErrors'] = false;
+      field['errors'] = '';
+      if (this.namesInUse.includes(value)) {
+        field['hasErrors'] = true;
+        field['errors'] = T(`The name <em>${value}</em> is already in use.`);
+      }
+    })
   }
 
   clean_uid(value) {
