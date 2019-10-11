@@ -108,26 +108,24 @@ export class EntityUtils {
         } else {
           if (entity.error) {
             entity.error = error;
-          } else if (dialog) {
-            if (res.trace && res.trace.formatted) {
-              dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
-            } else if (res.state && res.error && res.exception) {
-              dialog.errorReport(res.state, res.error, res.exception);
-            }
           } else {
-            console.log(error);
+            this.errorReport(res, dialog);
           }
         }
       }
     } else {
-      if (res.trace && res.trace.formatted && dialog) {
-        dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
-      } else if (res.state && res.error && res.exception && dialog) {
-        dialog.errorReport(res.state, res.error, res.exception);
-      } else {
-        // if it can't print the error at least put it on the console.
-        console.log(res);
-      }
+      this.errorReport(res, dialog);
+    }
+  }
+
+  errorReport(res, dialog) {
+    if (res.trace && res.trace.formatted && dialog) {
+      dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
+    } else if (res.state && res.error && res.exception && dialog) {
+      dialog.errorReport(res.state, res.error, res.exception);
+    } else {
+      // if it can't print the error at least put it on the console.
+      console.log(res);
     }
   }
 
