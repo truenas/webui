@@ -429,7 +429,7 @@ export class UserFormComponent {
       const field = _.find(this.fieldConfig, {name: "username"});
       field['hasErrors'] = false;
       field['errors'] = '';
-      if (this.namesInUse.includes(value)) {
+      if (this.namesInUse.includes(value) && this.entityForm.isNew) {
         field['hasErrors'] = true;
         field['errors'] = T(`The name <em>${value}</em> is already in use.`);
       }
@@ -478,7 +478,7 @@ export class UserFormComponent {
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
   blurEvent(parent){
-    if(parent.entityForm) {
+    if(parent.entityForm && parent.entityForm.isNew) {
       let username: string
       const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
       if(fullname.length === 1){
