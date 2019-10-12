@@ -325,6 +325,7 @@ export class ReplicationWizardComponent {
                     name: 'schedule_picker',
                     placeholder: helptext.schedule_placeholder,
                     tooltip: helptext.schedule_tooltip,
+                    value: "0 0 * * *",
                     class: 'inline',
                     width: '50%',
                     relation: [{
