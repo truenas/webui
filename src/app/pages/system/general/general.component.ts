@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
+import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 import { DialogService, LanguageService, RestService, WebSocketService, SnackbarService } from '../../../services/';
@@ -11,6 +12,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
+
 
 @Component({
   selector: 'app-general',
@@ -51,7 +53,8 @@ export class GeneralComponent {
         placeholder: helptext.stg_guiaddress.placeholder,
         tooltip: helptext.stg_guiaddress.tooltip,
         required: true,
-        options: []
+        options: [],
+        validation: [this.IPValidator('ui_address', '0.0.0.0')]
       },
       {
         type: 'select',
@@ -60,7 +63,8 @@ export class GeneralComponent {
         placeholder: helptext.stg_guiv6address.placeholder,
         tooltip: helptext.stg_guiv6address.tooltip,
         required: true,
-        options: []
+        options: [],
+        validation: [this.IPValidator('ui_v6address', '::')]
       },
       {
         type: 'input',
@@ -285,6 +289,27 @@ export class GeneralComponent {
     protected dialog: DialogService, protected loader: AppLoaderService,
     public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog) {}
 
+  IPValidator(name: string, wildcard: string) {
+    const self = this;
+    return function validIPs(control: FormControl) {
+      const config = self.fieldConfig.find(c => c.name === name);
+      
+      const errors = control.value && control.value.length > 1 && _.indexOf(control.value, wildcard) !== -1
+        ? { validIPs : true }
+        : null;
+    
+        if (errors) {
+          config.hasErrors = true;
+          config.errors = helptext.validation_errors[name];
+        } else {
+          config.hasErrors = false;
+          config.errors = '';
+        }
+
+        return errors;
+    }
+  }
+
   resourceTransformIncomingRestData(value) {
     this.http_port = value['ui_port'];
     this.https_port = value['ui_httpsport'];
@@ -333,9 +358,16 @@ export class GeneralComponent {
       .subscribe((res) => {
         this.ui_v6address =
           _.find(this.fieldConfig, { 'name': 'ui_v6address' });
+        let wildcard_found = false;
         res.forEach((item) => {
+          if (item[0] === '::' && !wildcard_found) {
+            wildcard_found = true;
+          }
           this.ui_v6address.options.push({ label: item[1], value: item[0] });
         });
+        if (!wildcard_found) {
+          this.ui_v6address.options.unshift({ label: '::', value: '::' });
+        }
       });
 
     entityEdit.ws.call('notifier.gui_languages').subscribe((res) => {

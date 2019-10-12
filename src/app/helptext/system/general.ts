@@ -188,5 +188,10 @@ export const helptext_system_general = {
   snackbar_download_success: {
     title: T("Download Sucessful"),
     action: T("Success")
+  },
+
+  validation_errors: {
+    ui_address: T("When 0.0.0.0 has been selected, selection of other addresses is not allowed."),
+    ui_v6address: T("When :: has been selected, selection of other addresses is not allowed.")
   }
 };
