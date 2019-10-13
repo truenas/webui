@@ -332,10 +332,9 @@ msgstr ""
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br>"
+"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
+"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
 msgstr ""
-"<b>ВНИМАНИЕ:</b> Этот файл конфигурации содержит системные пароли и другие "
-"конфиденциальные данные.<br>"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> слушает на этом порту."
@@ -522,14 +521,9 @@ msgstr ""
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
-"when the configuration file is uploaded.</p> <b>Keep the configuration file "
-"safe and protect it from unauthorized access!</b>"
+"when the configuration file is uploaded.</p> <br /><b>Keep the "
+"configuration file safe and protect it from unauthorized access!</b>"
 msgstr ""
-"<p>Включение секретного пароля позволяет использовать этот файл "
-"конфигурации с новым загрузочным устройством. Это также расшифровывает все "
-"системные пароли для использования при загрузке файла конфигурации.</p> "
-"<b>Храните файл конфигурации в безопасности и защищайте его от "
-"несанкционированного доступа!</b>"
 
 msgid ""
 "<p>The system will reboot to perform this operation!</p> <p><font "
@@ -797,6 +791,9 @@ msgstr "Активировать"
 
 msgid "Activate Pool for Jail Manager"
 msgstr "Активировать пул для Менеджера Jail"
+
+msgid "Activated Pool for Jail Manager:"
+msgstr ""
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -1138,7 +1135,7 @@ msgstr "Все диски"
 msgid "All dirs"
 msgstr "Все каталоги"
 
-msgid "Allocate RAM for the VM"
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
 msgstr ""
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
@@ -1146,6 +1143,9 @@ msgstr "Выделить число гигабайт пространства д
 
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "Выделить число мегабайт оперативной памяти ВМ."
+
+msgid "Allocate at least 256 MiB."
+msgstr ""
 
 msgid "Allow Anonymous Binding"
 msgstr "Разрешить анонимную привязку"
@@ -1655,11 +1655,11 @@ msgstr "Вспомогательные параметры"
 msgid "Available Disks"
 msgstr "Доступные диски"
 
+msgid "Available Memory:"
+msgstr ""
+
 msgid "Available Themes"
 msgstr "Доступные темы"
-
-msgid "Available memory"
-msgstr ""
 
 msgid "Available space threshold (%)"
 msgstr "Порог свободного пространства (%)"
@@ -1975,6 +1975,11 @@ msgstr "Чувствительность к регистру"
 
 msgid "Category"
 msgstr "Категория"
+
+msgid ""
+"Caution: Allocating too much memory can slow the  system or prevent VMs "
+"from running."
+msgstr ""
 
 msgid "Certificate"
 msgstr "Сертификат"
@@ -5961,7 +5966,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Invalid value. Valid values are numbers followed by optional unit letters, "
+"Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
 msgstr ""
 
@@ -6034,12 +6039,8 @@ msgstr "Jail"
 msgid "Jails cannot be changed while running."
 msgstr "Jail'ы не могут быть изменены во время работы."
 
-msgid ""
-"Jails cannot be created or managed untill a pool is present for storing "
-"them. Please create a pool first"
+msgid "Jails cannot be created or managed until a pool is present for storing them."
 msgstr ""
-"Jail'ы нельзя создавать или управлять ими, пока не будет создан пул для их "
-"хранения. Пожалуйста, сначала создайте пул"
 
 msgid "Jails failed to start"
 msgstr ""
@@ -6946,7 +6947,7 @@ msgstr "Нет"
 msgid "No Communication Warning Time"
 msgstr ""
 
-msgid "No Pool Exist"
+msgid "No Pools"
 msgstr ""
 
 msgid "No Stat"
@@ -6959,11 +6960,6 @@ msgid "No pools"
 msgstr ""
 
 msgid "No pools are configured."
-msgstr ""
-
-msgid ""
-"No pools exist. Jails cannot be created or managed until a pool is present "
-"for storing them. Please create a pool first."
 msgstr ""
 
 msgid "No snapshots sent yet"
@@ -7233,6 +7229,9 @@ msgid ""
 "to their original owners. This operation  cannot be undone! If unset, "
 "ownership of files to be accessed through  WebDAV must be manually set to "
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
+msgstr ""
+
+msgid "PENDING"
 msgstr ""
 
 msgid "POST INSTALL NOTES"
@@ -8001,9 +8000,6 @@ msgstr ""
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
-msgstr ""
-
-msgid "Revision"
 msgstr ""
 
 msgid "Rollback"
@@ -10647,6 +10643,9 @@ msgstr ""
 msgid ""
 "URL to an image to use for notification icons. This overrides the incoming "
 "webhook setting."
+msgstr ""
+
+msgid "UTC"
 msgstr ""
 
 msgid "UUID"

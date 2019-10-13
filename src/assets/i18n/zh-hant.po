@@ -294,7 +294,8 @@ msgstr ""
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br>"
+"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
+"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
 msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
@@ -438,11 +439,9 @@ msgstr ""
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
-"when the configuration file is uploaded.</p> <b>Keep the configuration file "
-"safe and protect it from unauthorized access!</b>"
+"when the configuration file is uploaded.</p> <br /><b>Keep the "
+"configuration file safe and protect it from unauthorized access!</b>"
 msgstr ""
-"<p></p> <b>Keep the configuration file safe and protect it from "
-"unauthorized access!</b>"
 
 msgid ""
 "<p>The system will reboot to perform this operation!</p> <p><font "
@@ -667,6 +666,9 @@ msgid "Activate"
 msgstr "啟用"
 
 msgid "Activate Pool for Jail Manager"
+msgstr ""
+
+msgid "Activated Pool for Jail Manager:"
 msgstr ""
 
 msgid ""
@@ -951,13 +953,16 @@ msgstr "所有磁碟"
 msgid "All dirs"
 msgstr "所有資料夾"
 
-msgid "Allocate RAM for the VM"
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
 msgstr ""
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
+msgstr ""
+
+msgid "Allocate at least 256 MiB."
 msgstr ""
 
 msgid "Allow Anonymous Binding"
@@ -1373,11 +1378,11 @@ msgstr "附屬參數"
 msgid "Available Disks"
 msgstr "可用磁碟"
 
+msgid "Available Memory:"
+msgstr ""
+
 msgid "Available Themes"
 msgstr "可用佈景主題"
-
-msgid "Available memory"
-msgstr ""
 
 msgid "Available space threshold (%)"
 msgstr "可用空間臨界值 (%)"
@@ -1654,6 +1659,11 @@ msgstr "區分大小寫"
 
 msgid "Category"
 msgstr "目錄"
+
+msgid ""
+"Caution: Allocating too much memory can slow the  system or prevent VMs "
+"from running."
+msgstr ""
 
 msgid "Certificate"
 msgstr "憑證"
@@ -5076,7 +5086,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Invalid value. Valid values are numbers followed by optional unit letters, "
+"Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
 msgstr ""
 
@@ -5143,9 +5153,7 @@ msgstr ""
 msgid "Jails cannot be changed while running."
 msgstr "當 Jail 執行中無法進行變更。"
 
-msgid ""
-"Jails cannot be created or managed untill a pool is present for storing "
-"them. Please create a pool first"
+msgid "Jails cannot be created or managed until a pool is present for storing them."
 msgstr ""
 
 msgid "Jails failed to start"
@@ -5976,7 +5984,7 @@ msgstr "否"
 msgid "No Communication Warning Time"
 msgstr ""
 
-msgid "No Pool Exist"
+msgid "No Pools"
 msgstr ""
 
 msgid "No Stat"
@@ -5989,11 +5997,6 @@ msgid "No pools"
 msgstr "沒有儲存集區"
 
 msgid "No pools are configured."
-msgstr ""
-
-msgid ""
-"No pools exist. Jails cannot be created or managed until a pool is present "
-"for storing them. Please create a pool first."
 msgstr ""
 
 msgid "No snapshots sent yet"
@@ -6263,6 +6266,9 @@ msgid ""
 "to their original owners. This operation  cannot be undone! If unset, "
 "ownership of files to be accessed through  WebDAV must be manually set to "
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
+msgstr ""
+
+msgid "PENDING"
 msgstr ""
 
 msgid "POST INSTALL NOTES"
@@ -7031,9 +7037,6 @@ msgstr ""
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
-msgstr ""
-
-msgid "Revision"
 msgstr ""
 
 msgid "Rollback"
@@ -9677,6 +9680,9 @@ msgstr ""
 msgid ""
 "URL to an image to use for notification icons. This overrides the incoming "
 "webhook setting."
+msgstr ""
+
+msgid "UTC"
 msgstr ""
 
 msgid "UUID"

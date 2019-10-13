@@ -340,8 +340,9 @@ msgstr "<b>警告：</b> 这个配置文件包含系统密码以及其他系统�
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br>"
-msgstr "<b>警告：</b> 这个配置文件包含系统密码以及其他系统敏感信息。<br>"
+"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
+"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
+msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> 在此端口侦听。"
@@ -524,11 +525,9 @@ msgstr "<p>删除 <i>"
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
-"when the configuration file is uploaded.</p> <b>Keep the configuration file "
-"safe and protect it from unauthorized access!</b>"
+"when the configuration file is uploaded.</p> <br /><b>Keep the "
+"configuration file safe and protect it from unauthorized access!</b>"
 msgstr ""
-"<p>包括密码种子在内，可以将此配置文件与新的引导设备一起使用。上传配置文件时，还会解密所有系统密码，以供重复使用。</p> "
-"<b>请妥善保管配置文件，防止未经授权的访问！</b>"
 
 msgid ""
 "<p>The system will reboot to perform this operation!</p> <p><font "
@@ -791,6 +790,9 @@ msgstr "启用"
 
 msgid "Activate Pool for Jail Manager"
 msgstr "为jail管理器激活存储池"
+
+msgid "Activated Pool for Jail Manager:"
+msgstr ""
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -1111,14 +1113,17 @@ msgstr "所有磁盘"
 msgid "All dirs"
 msgstr "所有文件夹"
 
-msgid "Allocate RAM for the VM"
-msgstr "为VM分配RAM"
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
+msgstr ""
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr "分配新的zvol容量（GiB）。"
 
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "分配指定MiB的内存给VM。"
+
+msgid "Allocate at least 256 MiB."
+msgstr ""
 
 msgid "Allow Anonymous Binding"
 msgstr "允许匿名绑定"
@@ -1590,11 +1595,11 @@ msgstr "附加参数"
 msgid "Available Disks"
 msgstr "可用磁盘"
 
+msgid "Available Memory:"
+msgstr ""
+
 msgid "Available Themes"
 msgstr "可用主题"
-
-msgid "Available memory"
-msgstr "可用内存"
 
 msgid "Available space threshold (%)"
 msgstr "可用空间阈值 (%)"
@@ -1883,6 +1888,11 @@ msgstr "大小写敏感"
 
 msgid "Category"
 msgstr "类别"
+
+msgid ""
+"Caution: Allocating too much memory can slow the  system or prevent VMs "
+"from running."
+msgstr ""
 
 msgid "Certificate"
 msgstr "证书"
@@ -5568,7 +5578,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Invalid value. Valid values are numbers followed by optional unit letters, "
+"Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
 msgstr ""
 
@@ -5641,10 +5651,8 @@ msgstr "Jails"
 msgid "Jails cannot be changed while running."
 msgstr "Jails不能在运行时被修改。"
 
-msgid ""
-"Jails cannot be created or managed untill a pool is present for storing "
-"them. Please create a pool first"
-msgstr "Jails不能被创建或管理直到一个保存它们的存储池被设定。请先创建一个存储池"
+msgid "Jails cannot be created or managed until a pool is present for storing them."
+msgstr ""
 
 msgid "Jails failed to start"
 msgstr "Jail启动失败"
@@ -6526,8 +6534,8 @@ msgstr "否"
 msgid "No Communication Warning Time"
 msgstr "没有通讯警告时间"
 
-msgid "No Pool Exist"
-msgstr "没有存储池存在"
+msgid "No Pools"
+msgstr ""
 
 msgid "No Stat"
 msgstr "没有数据"
@@ -6540,11 +6548,6 @@ msgstr "没有存储池"
 
 msgid "No pools are configured."
 msgstr "没有配置的存储池。"
-
-msgid ""
-"No pools exist. Jails cannot be created or managed until a pool is present "
-"for storing them. Please create a pool first."
-msgstr "不存在存储池。Jails不能被创建或管理直到一个保存它们的存储池被设定。请先创建一个存储池。"
 
 msgid "No snapshots sent yet"
 msgstr "尚未发送快照"
@@ -6829,6 +6832,9 @@ msgid ""
 "ownership of files to be accessed through  WebDAV must be manually set to "
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
 msgstr "共享中所有文件的所有权将更改为用户<samp>webdav</samp>和组<samp>webdav</samp>"
+
+msgid "PENDING"
+msgstr ""
 
 msgid "POST INSTALL NOTES"
 msgstr "安装后注意事项"
@@ -7629,9 +7635,6 @@ msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
 msgstr "使用单独的devfs规则集显示jail的<i>tun</i>设备"
-
-msgid "Revision"
-msgstr "修订"
 
 msgid "Rollback"
 msgstr "回滚"
@@ -10514,6 +10517,9 @@ msgid ""
 "URL to an image to use for notification icons. This overrides the incoming "
 "webhook setting."
 msgstr "用于通知图标的图像的URL"
+
+msgid "UTC"
+msgstr ""
 
 msgid "UUID"
 msgstr "UUID"
