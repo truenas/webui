@@ -30,7 +30,7 @@ export const helptext_system_bootenv = {
   rename_name_placeholder: T("Name"),
   rename_name_tooltip: T(
     "Rename the existing boot environment.\
-  Names may include alphanumeric characters as well as\
+  Allowed characters are alphanumeric, as well as\
   dashes (*-*), underscores (*_*), and periods (*.*)"
   ),
 
