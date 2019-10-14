@@ -221,9 +221,13 @@ export class ReplicationWizardComponent {
                     paraText: '',
                     relation: [{
                         action: 'SHOW',
+                        connective: 'OR',
                         when: [{
                             name: 'source_datasets_from',
                             value: 'remote',
+                        }, {
+                            name: 'source_datasets_from',
+                            value: 'local',
                         }]
                     }],
                 },
@@ -235,9 +239,13 @@ export class ReplicationWizardComponent {
                     value: false,
                     relation: [{
                         action: 'SHOW',
+                        connective: 'OR',
                         when: [{
                             name: 'source_datasets_from',
                             value: 'remote',
+                        }, {
+                            name: 'source_datasets_from',
+                            value: 'local',
                         }]
                     }],
                 },
@@ -252,9 +260,6 @@ export class ReplicationWizardComponent {
                         when: [{
                             name: 'custom_snapshots',
                             value: true,
-                        }, {
-                            name: 'source_datasets_from',
-                            value: 'remote',
                         }]
                     }],
                     parent: this,
@@ -278,7 +283,6 @@ export class ReplicationWizardComponent {
                             value: 'SSH+NETCAT',
                         }
                     ],
-                    value: 'SSH',
                     relation: [{
                         action: 'SHOW',
                         connective: 'OR',
@@ -639,9 +643,7 @@ export class ReplicationWizardComponent {
         });
         this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.subscribe((value) => {
             this.genTaskName();
-            if (this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'remote') {
-                this.getSnapshots();
-            }
+            this.getSnapshots();
         });
         this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.subscribe((value) => {
             this.genTaskName();
@@ -1082,14 +1084,16 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
+        console.log('getsnapshots');
+        const transport = this.entityWizard.formArray.controls[0].controls['transport'].value === undefined ? 'LOCAL' : this.entityWizard.formArray.controls[0].controls['transport'].value;
         let payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
             (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : ['auto-%Y-%m-%d_%H-%M'],
-            this.entityWizard.formArray.controls[0].controls['transport'].value,
-            this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
+            transport,
+            transport === 'LOCAL' ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
         ];
 
-        if (payload[0].length > 0 && payload[3] != undefined && payload[3] != '') {
+        if (payload[0].length > 0) {
             this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
                 (res) => {
                     this.snapshotsCountField.paraText = res.eligible + ' snapshots found';
