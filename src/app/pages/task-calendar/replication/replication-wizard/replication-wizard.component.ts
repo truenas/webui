@@ -9,7 +9,7 @@ import { Wizard } from '../../../common/entity/entity-form/models/wizard.interfa
 import helptext from '../../../../helptext/task-calendar/replication/replication-wizard';
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
 
-import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
+import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService, SnackbarService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -576,7 +576,8 @@ export class ReplicationWizardComponent {
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
         private taskService: TaskService, private storageService: StorageService,
-        private datePipe: DatePipe, private entityFormService: EntityFormService) {
+        private datePipe: DatePipe, private entityFormService: EntityFormService,
+        private snackbarService: SnackbarService) {
         this.ws.call('replication.query').subscribe(
             (res) => {
                 this.namesInUse.push(...res.map(replication => replication.name));
@@ -925,8 +926,12 @@ export class ReplicationWizardComponent {
                     payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
                 }
             } else {
-                payload['also_include_naming_schema'] = []; //default?
                 payload['auto'] = false;
+                if (payload['direction'] === 'PULL') {
+                    payload['naming_schema'] = ['auto-%Y-%m-%d_%H-%M'];
+                } else {
+                    payload['also_include_naming_schema'] = ['auto-%Y-%m-%d_%H-%M'];
+                }
             }
 
             if (data['retention_policy'] === 'CUSTOM') {
@@ -969,6 +974,14 @@ export class ReplicationWizardComponent {
                     )
                 }
             }
+        }
+
+        if (value['schedule_method'] === 'once' && createdItems['replication'] != undefined) {
+            await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
+                (res) => {
+                    this.snackbarService.open(T('Replication <i>') + value['name'] + T('</i> has started.'), T('close'), { duration: 5000 });
+                }
+            )
         }
 
         this.loader.close();
