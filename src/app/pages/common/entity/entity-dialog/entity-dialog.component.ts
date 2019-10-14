@@ -145,8 +145,4 @@ export class EntityDialogComponent implements OnInit {
     }
     this.showPassword = !this.showPassword;
   }
-
-  copyToClipboard() {
-    navigator.clipboard.writeText(this.conf['name'])
-  }
 }
