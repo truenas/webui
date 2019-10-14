@@ -44,7 +44,6 @@ export class PluginsComponent {
     { name: T('Plugin'), prop: 'plugin', hidden: true },
     { name: T('Release'), prop: 'release', hidden: true },
     { name: T('Boot'), prop: 'boot', hidden: true },
-    { name: T('Revision'), prop: 'revision', hidden: true },
     { name: T('Collection'), prop: 'plugin_repository', hidden: true },
   ];
   public config: any = {
@@ -217,10 +216,11 @@ export class PluginsComponent {
 
   noPoolDialog() {
     const dialogRef = this.dialogService.confirm(
-      T('No Pool Exist'),
-      T('Jails cannot be created or managed untill a pool is present for storing them. Please create a pool first'),
+      T('No Pools'),
+      T('Jails cannot be created or managed until a pool is present for storing them.'),
       true,
       T('Create Pool'));
+
       dialogRef.subscribe((res) => {
         if (res) {
           this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
@@ -238,7 +238,7 @@ export class PluginsComponent {
           type: 'select',
           name: 'selectedPool',
           placeholder: T('Choose a pool or dataset for jail storage'),
-          options: this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}),
+          options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}) : [],
           value: this.activatedPool
         }
       ],
@@ -261,7 +261,9 @@ export class PluginsComponent {
           });
       }
     }
-    this.dialogService.dialogForm(conf);
+    if (this.availablePools) {
+      this.dialogService.dialogForm(conf);
+    }
   }
 
   afterInit(entityList: any) {
@@ -270,6 +272,13 @@ export class PluginsComponent {
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
+      let revision = entityList.rows[i]['revision'];
+      if (revision !== 'N/A' && revision !== '0' ) {
+        revision = '_' + revision;
+      } else {
+        revision = '';
+      }
+      entityList.rows[i]['version'] = entityList.rows[i]['version'] + revision;
       for (const ipType of ['ip4', 'ip6']) {
         if (entityList.rows[i][ipType] != null) {
           entityList.rows[i][ipType] = entityList.rows[i][ipType]

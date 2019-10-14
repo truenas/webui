@@ -815,7 +815,7 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
-        if (this.entityForm.formGroup.controls['speed_limit'].value) {
+        if (this.entityForm.formGroup.controls['speed_limit'].value) { 
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
         }
@@ -910,7 +910,7 @@ export class ReplicationFormComponent {
             speedLimitField['errors'] = '';
                 if (isNaN(filteredValue)) {
                     speedLimitField['hasErrors'] = true;
-                    speedLimitField['errors'] = globalHelptext.human_readable_input_error;
+                    speedLimitField['errors'] = globalHelptext.human_readable.input_error;
                 };
         });
     }

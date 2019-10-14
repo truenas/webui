@@ -28,7 +28,8 @@ export class BootEnvironmentListComponent {
   protected queryCall = 'bootenv.query';
   protected route_add: string[] = ['system', 'boot', 'create']
   protected route_delete: string[] = [ 'system', 'boot', 'delete' ];
-  protected wsDelete = 'bootenv.delete'
+  protected wsDelete = 'bootenv.delete';
+  protected wsMultiDelete = 'core.bulk';
   protected entityList: EntityTableComponent;
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
@@ -52,6 +53,7 @@ export class BootEnvironmentListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true,
     deleteMsg: {
       title: 'Boot Environment',
       key_props: ['name']
@@ -80,6 +82,14 @@ export class BootEnvironmentListComponent {
     });
   }
 
+  dataHandler(entityList: any) {
+    entityList.rows.forEach((row) => {
+      if (row.active !== '-') {
+        row.hideCheckbox = true;
+      }
+    })
+  }
+
 
   rowValue(row, attr) {
     if (attr === 'created'){
@@ -99,7 +109,7 @@ export class BootEnvironmentListComponent {
     return row[attr];
   }
 
-  constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService, 
+  constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService,
     private dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
     public snackBar: MatSnackBar ) {}
 
@@ -139,6 +149,7 @@ export class BootEnvironmentListComponent {
           )
       });
     }
+
     actions.push({
       label : T("Clone"),
       id: "clone",
@@ -182,6 +193,39 @@ export class BootEnvironmentListComponent {
     }
 
     return actions;
+  }
+
+  // tslint:disable-next-line: member-ordering
+  public multiActions: Array < any > = [{
+    id: "mdelete",
+    label: T("Delete"),
+    icon: "delete",
+    enable: true,
+    ttpos: "above",
+    onClick: (selected) => {
+      for(let i = selected.length -1; i >= 0 ; i--) {
+        if(selected[i].active !== '-') {
+           selected.splice(i, 1);
+        }
+      }
+      this.entityList.doMultiDelete(selected);
+    }
+  }];
+
+  getSelectedNames(selectedBootenvs)  {
+    let selected: any = [];
+    for (let i in selectedBootenvs) {
+      if (selectedBootenvs[i].active ==='-') {
+        selected.push([selectedBootenvs[i].id]);
+      }
+    }
+    return selected;
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = ['bootenv.do_delete'];
+    params.push(this.getSelectedNames(selected));
+    return params;
   }
 
   doActivate(id) {

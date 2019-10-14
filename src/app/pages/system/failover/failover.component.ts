@@ -28,6 +28,9 @@ export class FailoverComponent implements OnDestroy {
     message: T(""),
     hideCheckbox: false
   }
+  public masterSubscription: any;
+  public master_fg: any;
+
   public custActions: Array < any > = [
     {
       id: 'sync_to_peer',
@@ -91,6 +94,7 @@ export class FailoverComponent implements OnDestroy {
     name: 'master',
     placeholder: helptext_system_failover.master_placeholder,
     tooltip: helptext_system_failover.master_tooltip,
+    value: true,
     relation: [
       {
         action : 'DISABLE',
@@ -123,6 +127,17 @@ export class FailoverComponent implements OnDestroy {
       this.entityForm.formGroup.controls['disabled'].valueChanges.subscribe(res => {
         this.confirmSubmit = res;
       });
+    this.master_fg = this.entityForm.formGroup.controls['master']
+    this.masterSubscription = 
+      this.master_fg.valueChanges.subscribe(res => {
+      if (!res) {
+        this.dialog.confirm(helptext_system_failover.master_dialog_title, helptext_system_failover.master_dialog_warning).subscribe(confirm => {
+          if (!confirm) {
+            this.master_fg.setValue(true);
+          }
+        });
+      }
+    });
   }
 
   public customSubmit(body) {

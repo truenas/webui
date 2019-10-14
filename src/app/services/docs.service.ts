@@ -15,8 +15,10 @@ export class DocsService {
         const running_version = window.localStorage.getItem('running_version');
         const web_version = "?runningversion=" + running_version;
         const version = running_version.split('-');
+        version.shift();
+        const doc_version = version.join('-');
         if (version && version.length > 1) {
-            message = message.replace(/--version--/g, version[1]);
+            message = message.replace(/--version--/g, doc_version);
         }
         if (web_version) {
             message = message.replace(/--webversion--/g, web_version);

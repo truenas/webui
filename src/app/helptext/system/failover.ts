@@ -32,5 +32,8 @@ export const helptext_system_failover = {
   timeout_placeholder: T('Timeout'),
   timeout_tooltip: T(''),
 
+  master_dialog_title: T('Failover'),
+  master_dialog_warning: T(`Forcing the other ${globalHelptext.ctrlr} to become active will require a failover with temporary service disruption.`)
+
 
 };

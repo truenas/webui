@@ -141,16 +141,16 @@
 
   <!-- DATATABLE START -->
   <div class="no-padding">
-    <ngx-datatable *ngIf="showDefaults" class='material expandable' 
-      [rows]='currentRows' 
-      [columns]="conf.columns" 
-      [columnMode]="'force'" 
+    <ngx-datatable *ngIf="showDefaults" class='material expandable'
+      [rows]='currentRows'
+      [columns]="conf.columns"
+      [columnMode]="'force'"
       [columnWidth]="'auto'"
-      [headerHeight]="'50'" 
-      [footerHeight]="'50'" 
-      [rowHeight]="50" 
+      [headerHeight]="'50'"
+      [footerHeight]="'50'"
+      [rowHeight]="50"
       [reorderable]="true"
-      [limit]="paginationPageSize" 
+      [limit]="paginationPageSize"
       [externalPaging]="true"
       [count]="currentRows.length || 1"
       [offset]="paginationPageIndex"
@@ -176,8 +176,8 @@
       </ngx-datatable-row-detail>
 
       <ngx-datatable-footer>
-          <ng-template 
-            ngx-datatable-footer-template 
+          <ng-template
+            ngx-datatable-footer-template
             let-rowCount="rowCount"
             let-selectedCount="selectedCount"
             let-pageSize="pageSize"
@@ -186,10 +186,10 @@
             >
             <div id="footer">
               <div id="footer-text" *ngIf="currentRows.length > 0">
-                {{rowCount > 0 ? offset * pageSize + 1 : 0}} - 
-                {{rowCount < (pageSize * curPage) ? rowCount : (pageSize * curPage)}} 
-                of {{rowCount}} 
-                <span *ngIf="selectedCount > 0"> | {{selectedCount}} selected</span>
+                {{rowCount > 0 ? offset * pageSize + 1 : 0}} -
+                {{rowCount < (pageSize * curPage) ? rowCount : (pageSize * curPage)}}
+                of {{rowCount}}
+                <span *ngIf="selectedCount > 0"> | {{selectedCount - removeFromSelectedTotal}} selected</span>
               </div>
             </div>
             <datatable-pager
@@ -220,7 +220,8 @@
 
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
           <div>
-            <mat-checkbox 
+            <mat-checkbox
+              *ngIf="!row.hideCheckbox"
               ix-datatable-cell="multi-checkbox"
               [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
               [checked]="isSelected"
@@ -236,25 +237,26 @@
           [minWidth]="col.minWidth"
           [maxWidth]="col.maxWidth">
           <ng-template let-row="row" ngx-datatable-cell-template>
-            <mat-spinner [diameter]='40' 
+            <mat-spinner [diameter]='40'
               color="primary"
-              *ngIf="col.toggle && (row[col.prop]==='STOPPING' || row[col.prop]==='STARTING')"
+              *ngIf="col.toggle && (row[col.prop]==='STOPPING' || row[col.prop]==='STARTING' 
+                || row[col.prop]==='DELETING' || row[col.prop]==='RESTARTING')"
             ></mat-spinner>
-            <div class="clickable" 
+            <div class="clickable"
               *ngIf="col.toggle"
               id="{{row.name}}_{{col.name}}-overlay"
               (click)="conf.onSliderChange(row)"
               matTooltip="{{row[col.prop]}}"
             >
             </div>
-            <mat-slide-toggle 
+            <mat-slide-toggle
               *ngIf="col.toggle"
-              color="accent" 
-              id="{{row.name}}_{{col.name}}-slidetoggle" 
+              color="accent"
+              id="{{row.name}}_{{col.name}}-slidetoggle"
               [checked]="row[col.prop]==='RUNNING'"
             ></mat-slide-toggle>
-            <div id="{{col.prop}}_{{row[col.prop]}}" 
-                 title="{{convertDisplayValue(row[col.prop])}}" 
+            <div id="{{col.prop}}_{{row[col.prop]}}"
+                 title="{{convertDisplayValue(row[col.prop])}}"
                  [ix-datatable-cell]="col?.name"
                  [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']">
               {{convertDisplayValue(row[col.prop])}}
@@ -292,15 +294,15 @@
                   </ng-container>
                 </mat-menu>
             </ng-container>
-            <div id="{{col.prop}}_{{row[col.prop]}}" 
+            <div id="{{col.prop}}_{{row[col.prop]}}"
                  title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
               <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-              <mat-checkbox id="{{row.name}}_{{col.name}}-checkbox" 
-                *ngIf="col.selectable" 
-                [checked]="row[col.prop]" 
+              <mat-checkbox id="{{row.name}}_{{col.name}}-checkbox"
+                *ngIf="col.selectable"
+                [checked]="row[col.prop]"
                 (change)="conf.onCheckboxChange(row)"
               ></mat-checkbox>
-              <button mat-button 
+              <button mat-button
                 [ngClass]="getButtonClass(row[col.prop])"
                 [style.width.px]="93"
                 *ngIf="col.state && stateClickable(row[col.prop], col); else colInfo"

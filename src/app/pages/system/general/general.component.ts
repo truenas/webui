@@ -50,6 +50,7 @@ export class GeneralComponent {
         multiple: true,
         placeholder: helptext.stg_guiaddress.placeholder,
         tooltip: helptext.stg_guiaddress.tooltip,
+        required: true,
         options: []
       },
       {
@@ -58,6 +59,7 @@ export class GeneralComponent {
         multiple: true,
         placeholder: helptext.stg_guiv6address.placeholder,
         tooltip: helptext.stg_guiv6address.tooltip,
+        required: true,
         options: []
       },
       {

@@ -178,34 +178,52 @@ export class JailListComponent implements OnInit {
     public snackBar: MatSnackBar, public sorter: StorageService, public dialog: MatDialog,) {}
 
 
-  ngOnInit(){
-    this.getActivatedPool();
-    this.getAvailablePools();
-  }
-  afterInit(entityList: any) {
-    this.entityList = entityList;
-  }
-
-  getActivatedPool(){
-    this.ws.call('jail.get_activated_pool').subscribe(
-      (res)=>{
-        if (res != null && res != "") {
-          this.activatedPool = res;
-          this.selectedPool = res;
-          this.isPoolActivated = true;
-        } else {
-          this.isPoolActivated = false;
+  async ngOnInit(){
+    await this.ws.call('pool.query').toPromise().then(
+      (res)=> {
+        this.availablePools = res;
+        if (this.availablePools.length === 0) {
+          this.noPoolDialog();
+          this.toActivatePool = true;
         }
       },
-      (err)=>{
+      (err) => {
         new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
-      })
+      }
+    );
+    if (this.availablePools && this.availablePools.length > 0) {
+      this.ws.call('jail.get_activated_pool').subscribe(
+        (res)=>{
+          if (res != null && res != "") {
+            this.activatedPool = res;
+            this.selectedPool = res;
+            this.isPoolActivated = true;
+          } else {
+            this.isPoolActivated = false;
+          }
+        },
+        (err)=>{
+          new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+        })
+    }
   }
 
-  getAvailablePools(){
-    this.ws.call('pool.query').subscribe( (res)=> {
-      this.availablePools = res;
+  noPoolDialog() {
+    const dialogRef = this.dialogService.confirm(
+      T('No Pools'),
+      T('Jails cannot be created or managed until a pool is present for storing them.'),
+      true,
+      T('Create Pool'));
+
+      dialogRef.subscribe((res) => {
+        if (res) {
+          this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
+        }
     })
+  }
+
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 
   activatePool(event: Event){

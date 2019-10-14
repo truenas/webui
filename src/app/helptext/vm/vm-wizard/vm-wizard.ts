@@ -1,6 +1,7 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
+import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
 wizard_type_label: T('Select VM wizard type'),
@@ -32,6 +33,7 @@ description_tooltip : T('Description (optional).'),
 time_placeholder : T('System clock'),
 time_tooltip: T('VM system time. Default is <i>Local</i>.'),
 time_local_text: T('Local'),
+time_utc_text: T('UTC'),
 
 bootloader_placeholder : T('Boot Method'),
 bootloader_tooltip : T('Select <i>UEFI</i> for newer operating systems or\
@@ -63,7 +65,7 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
 
 memory_placeholder: T('Memory Size'),
 memory_validation : [Validators.required],
-memory_tooltip: T('Allocate RAM for the VM.  Minimum value is 256 MiB.'),
+memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
 memory_size_err: T('Allocate at least 256 MiB.'),
 memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),
@@ -81,7 +83,7 @@ disk_radio_options_existing_label: T("Use existing disk image"),
 volsize_placeholder : T('Size (GiB)'),
 volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
-volsize_validation: [Validators.required, Validators.min(1)],
+volsize_validation: [Validators.required, rangeValidator(1)],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
 datastore_placeholder: T('Zvol Location'),

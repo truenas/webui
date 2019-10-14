@@ -21,3 +21,4 @@ export * from './docs.service';
 export * from './snackbar.service';
 export * from './keychaincredential.services';
 export * from './replication.service';
+export * from './services.service';
