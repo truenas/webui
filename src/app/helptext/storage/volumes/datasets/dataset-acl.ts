@@ -157,5 +157,8 @@ dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can\
 dataset_acl_add_item_btn: T('Add ACL Item'),
 
 acl_defaults_placeholder: T('Default ACL Options'),
-acl_defaults_tooltip: T('Set default options on this ACL.')
+acl_defaults_tooltip: T('Set default options on this ACL.'),
+
+user_not_found: T('User name could not be resolved.'),
+group_not_found: T('Group name could not be resolved.')
 }
