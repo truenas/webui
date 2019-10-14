@@ -57,7 +57,7 @@ export class PluginsComponent {
       doubleConfirm: (item) => {
         return this.dialogService.doubleConfirm(
           T('Verify Deletion of ') + item.name + T(' Plugin'),
-          T('Deleting the<b>') + item.name + T('</b> plugin deletes all data and snapshots stored with it.'),
+          T('Deleting the <b>') + item.name + T('</b> plugin deletes all data and snapshots stored with it.'),
           item.name,
           true,
         );
