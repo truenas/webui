@@ -22,7 +22,7 @@ export const helptext_system_bootenv = {
   create_name_placeholder: T("Name"),
   create_name_tooltip: T(
     "Enter the name of the boot entry.\
- Names may include alphanumeric characters as well as\
+ Allowed characters are alphanumeric, as well as\
  dashes (*-*), underscores (*_*), and periods (*.*)"
  ),
 
