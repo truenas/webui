@@ -197,7 +197,25 @@ export class VMWizardComponent {
           blurStatus: true,
           blurEvent: this.blurEvent3,
           parent: this,
-          validation: helptext.volsize_validation,
+          validation : [
+            ...helptext.volsize_validation,
+            (control: FormControl): ValidationErrors => {
+              const config = this.wizardConfig.find(c => c.label === helptext.disks_label).fieldConfig.find(c => c.name === 'volsize');
+              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value))
+                ? { invalid_byte_string: true }
+                : null
+
+              if (errors) {
+                config.hasErrors = true;
+                config.errors = globalHelptext.human_readable.input_error;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
+
+              return errors;
+            }
+          ],
           required: true
         },
         {
@@ -311,6 +329,7 @@ export class VMWizardComponent {
   preInit(entityWizard: EntityWizardComponent){
     this.entityWizard = entityWizard;
   }
+  
   afterInit(entityWizard: EntityWizardComponent) {
 
     this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
@@ -414,12 +433,12 @@ export class VMWizardComponent {
         if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).hasErrors = false;
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).errors = null;
-        const volsize = ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value * 1073741824;
+        const volsize = this.storageService.convertHumanStringToNum(( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value) * 1073741824;
         this.ws.call('filesystem.statfs',[`/mnt/${datastore}`]).subscribe((stat)=> {
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = '';
          if (stat.free_bytes < volsize ) {
-          ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1073741824)));
+          ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(Math.floor(stat.free_bytes / (1073741824)).toString());
          } else if (stat.free_bytes > 40*1073741824) {
               const vm_os = ( < FormGroup > entityWizard.formArray.get([0]).get('os')).value;
               if (vm_os === "Windows"){
@@ -429,7 +448,7 @@ export class VMWizardComponent {
               };
         } else if (stat.free_bytes > 10*1073741824) {
               const vm_os = ( < FormGroup > entityWizard.formArray.get([0]).get('os')).value;
-              ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(volsize/1073741824);
+              ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue((volsize/1073741824).toString());
           };
         });
       } else {
@@ -460,12 +479,12 @@ export class VMWizardComponent {
       if (res === 'Windows') {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4 GiB');
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('40 GiB');
       }
       else {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512 MiB');
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('10 GiB');
       }
     });
     ( < FormGroup > entityWizard.formArray.get([2]).get('disk_radio')).valueChanges.subscribe((res) => {
@@ -563,25 +582,26 @@ blurEvent2(parent){
     }
 }
 blurEvent3(parent){
-  if(parent.entityWizard.formArray.controls[2].value.volsize > 0 ) {
-    const volsize = parent.entityWizard.formArray.controls[2].value.volsize * 1073741824;
+  let volsizeInBytes = parent.storageService.convertHumanStringToNum(parent.entityWizard.formArray.controls[2].value.volsize);
+  if(volsizeInBytes > 0 ) {
+    const volsize = volsizeInBytes;
     const datastore = parent.entityWizard.formArray.controls[2].value.datastore;
     const vm_name = parent.entityWizard.formGroup.value.formArray[0].name;
     if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
     parent.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).subscribe((stat)=> {
-      if (stat.free_bytes < volsize ) {
-        parent.entityWizard.formArray.get([2]).get('volsize').setValue(0);
+      if (stat.free_bytes < volsize ) { console.log('yes')
+        parent.entityWizard.formArray.get([2]).get('volsize').setValue('0');
         _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = true;
         _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = `Cannot allocate ${volsize / (1073741824)} Gib to for storage virtual machine: ${vm_name}.`;
-       } else {
+       } else { console.log('no'); console.log(volsize)
         _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
         _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = '';
-        const vm_os = parent.entityWizard.formArray.controls[1].os;
-        if (vm_os === "Windows"){
-          parent.entityWizard.formArray.get([2]).get('volsize').setValue(volsize/1073741824);
-        } else {
-          parent.entityWizard.formArray.get([2]).get('volsize').setValue(volsize/1073741824);
-        };
+        // const vm_os = parent.entityWizard.formArray.controls[0].os;
+        // if (vm_os === "Windows"){ console.log(volsize)
+        //   parent.entityWizard.formArray.get([2]).get('volsize').setValue((volsize/1073741824).toString());
+        // } else {
+        //   parent.entityWizard.formArray.get([2]).get('volsize').setValue((volsize/1073741824).toString());
+        // };
        }
     })
   }

@@ -2,6 +2,7 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
 import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
+import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
 wizard_type_label: T('Select VM wizard type'),
@@ -63,7 +64,7 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
 
-memory_placeholder: T('Memory Size'),
+memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
 memory_validation : [Validators.required],
 memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
 memory_size_err: T('Allocate at least 256 MiB.'),
@@ -83,7 +84,7 @@ disk_radio_options_existing_label: T("Use existing disk image"),
 volsize_placeholder : T('Size (GiB)'),
 volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
-volsize_validation: [Validators.required, rangeValidator(1)],
+volsize_validation: [Validators.required],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
 datastore_placeholder: T('Zvol Location'),

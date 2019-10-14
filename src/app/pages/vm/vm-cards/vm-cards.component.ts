@@ -67,6 +67,19 @@ export class VmCardsComponent  implements OnDestroy {
               protected matdialog: MatDialog, public storageService: StorageService
               ) {}
 
+  preInit(entityTable: EntityTableComponent) {
+    this.ws.call('pool.query').subscribe((res) => {
+      if (res.length === 0)
+      this.dialog.confirm("No Pools",'Virtual Machines cannot be created or managed until a pool is present for storing them.',
+        true, 'Create Pool', false)
+        .subscribe((res) => {
+          if(res) {
+            this.router.navigate(new Array('').concat(['storage', 'pools', 'manager']));
+          }
+        })
+    })
+  }
+
   resourceTransformIncomingRestData(vms) {
     for (let vm_index = 0; vm_index<vms.length; vm_index++){
       vms[vm_index]['state'] = vms[vm_index]['status']['state'];
