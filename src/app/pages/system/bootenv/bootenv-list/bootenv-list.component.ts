@@ -250,7 +250,7 @@ export class BootEnvironmentListComponent {
   updateBootState(): void {
     this.ws.call("boot.get_state").subscribe(wres => {
       if (wres.scan.end_time) {
-        this.scrub_msg = moment(wres.scan.endhttps://jira.ixsystems.com/browse/NAS-103467_time.$date).format("MMMM Do YYYY, h:mm:ss a");
+        this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
       } else {
         this.scrub_msg = "Never";
       }
