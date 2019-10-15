@@ -563,6 +563,7 @@ export class ReplicationWizardComponent {
         ssh_credentials_manual: 'keychaincredential.create',
         periodic_snapshot_tasks: 'pool.snapshottask.create',
         replication: 'replication.create',
+        snapshot: 'zfs.snapshot.create',
     }
 
     protected deleteCalls = {
@@ -574,6 +575,7 @@ export class ReplicationWizardComponent {
 
     protected snapshotsCountField;
     private existSnapshotTasks = [];
+    private eligibleSnapshots = 0;
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -915,6 +917,15 @@ export class ReplicationWizardComponent {
             }
             return Promise.all(snapshotPromises);
         }
+
+        if (item === 'snapshot') {
+            payload = {
+                dataset: data['source_datasets'][0],
+                naming_schema: 'auto-%Y-%m-%d_%H-%M',
+            }
+            return this.ws.call(this.createCalls[item], [payload]).toPromise();
+        }
+
         if (item === 'replication') {
             payload = {
                 name: data['name'],
@@ -963,19 +974,25 @@ export class ReplicationWizardComponent {
 
         const createdItems = {
             periodic_snapshot_tasks: null,
+            snapshot: null,
             replication: null,
         }
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== 'cron' || value['source_datasets_from'] !== 'local'))) {
+                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== 'cron' || value['source_datasets_from'] !== 'local')) &&
+                !(item === 'snapshot' && this.eligibleSnapshots > 0)) {
                     await this.doCreate(value, item).then(
                         (res) => {
-                            value[item] = res.id || res.map(snapshot => snapshot.id);
-                            if (item === 'periodic_snapshot_tasks' && this.existSnapshotTasks.length !== 0) {
-                                value[item].push(...this.existSnapshotTasks);
+                            if (item === 'snapshot') {
+                                createdItems[item] = res;
+                            } else {
+                                value[item] = res.id || res.map(snapshot => snapshot.id);
+                                if (item === 'periodic_snapshot_tasks' && this.existSnapshotTasks.length !== 0) {
+                                    value[item].push(...this.existSnapshotTasks);
+                                }
+                                createdItems[item] = res.id || res.map(snapshot => snapshot.id);
                             }
-                            createdItems[item] = res.id || res.map(snapshot => snapshot.id);
                         },
                         (err) => {
                             new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -1119,14 +1136,17 @@ export class ReplicationWizardComponent {
         if (payload[0].length > 0) {
             this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
                 (res) => {
+                    this.eligibleSnapshots = res.eligible;
                     this.snapshotsCountField.paraText = res.eligible + ' snapshots found';
                 },
                 (err) => {
+                    this.eligibleSnapshots = 0;
                     this.snapshotsCountField.paraText = '';
                     new EntityUtils().handleWSError(this, err);
                 }
             )
         } else {
+            this.eligibleSnapshots = 0;
             this.snapshotsCountField.paraText = '';
         }
     }
