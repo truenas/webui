@@ -192,6 +192,6 @@ export const helptext_system_general = {
 
   validation_errors: {
     ui_address: T("Select <samp>0.0.0.0</samp> to include all addresses. When this has been chosen, additional addresses cannot be selected."),
-    ui_v6address: T("When all addresses have been selected by choosing ::, additional addresses cannot be chosen.")
+    ui_v6address: T("Select <samp>::</samp> to include all addresses. When this has been chosen, additional addresses cannot be selected.")
   }
 };
