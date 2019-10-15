@@ -919,11 +919,15 @@ export class ReplicationWizardComponent {
         }
 
         if (item === 'snapshot') {
-            payload = {
-                dataset: data['source_datasets'][0],
-                naming_schema: 'auto-%Y-%m-%d_%H-%M',
+            const snapshotPromises = [];
+            for (const dataset of data['source_datasets']) {
+                payload = {
+                    dataset: dataset,
+                    naming_schema: 'auto-%Y-%m-%d_%H-%M',
+                }
+                snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
             }
-            return this.ws.call(this.createCalls[item], [payload]).toPromise();
+            return Promise.all(snapshotPromises);
         }
 
         if (item === 'replication') {
@@ -981,7 +985,7 @@ export class ReplicationWizardComponent {
         for (const item in createdItems) {
             if (!toStop) {
                 if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== 'cron' || value['source_datasets_from'] !== 'local')) &&
-                !(item === 'snapshot' && this.eligibleSnapshots > 0)) {
+                !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== 'local'))) {
                     await this.doCreate(value, item).then(
                         (res) => {
                             if (item === 'snapshot') {
