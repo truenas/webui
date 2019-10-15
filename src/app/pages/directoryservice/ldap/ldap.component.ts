@@ -107,14 +107,14 @@ export class LdapComponent {
       name : helptext.ldap_kerberos_realm_name,
       placeholder : helptext.ldap_kerberos_realm_placeholder,
       tooltip: helptext.ldap_kerberos_realm_tooltip,
-      options : []
+      options : [{label: '----', value: null}]
     },
     {
       type : 'select',
       name : helptext.ldap_kerberos_principal_name,
       placeholder : helptext.ldap_kerberos_principal_placeholder,
       tooltip: helptext.ldap_kerberos_principal_tooltip,
-      options : []
+      options : [{label: '----', value: ''}]
     },
     {
       type : 'select',
