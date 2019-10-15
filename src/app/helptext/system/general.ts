@@ -191,7 +191,7 @@ export const helptext_system_general = {
   },
 
   validation_errors: {
-    ui_address: T("When 0.0.0.0 has been selected, selection of other addresses is not allowed."),
-    ui_v6address: T("When :: has been selected, selection of other addresses is not allowed.")
+    ui_address: T("When all addresses have been selected by choosing 0.0.0.0, additional addresses cannot be chosen."),
+    ui_v6address: T("When all addresses have been selected by choosing ::, additional addresses cannot be chosen.")
   }
 };
