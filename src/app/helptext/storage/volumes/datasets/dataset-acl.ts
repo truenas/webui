@@ -160,5 +160,5 @@ acl_defaults_placeholder: T('Default ACL Options'),
 acl_defaults_tooltip: T('Set default options on this ACL.'),
 
 user_not_found: T('Could not find a user name for this user ID.'),
-group_not_found: T('Group name could not be resolved.')
+group_not_found: T('Could not find a group name for this group ID.')
 }
