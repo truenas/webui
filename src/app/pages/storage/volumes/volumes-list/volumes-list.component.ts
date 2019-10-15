@@ -106,20 +106,16 @@ export class VolumesListTableConfig implements InputTableConf {
     protected translate: TranslateService,
     protected snackBar: MatSnackBar,
     protected snackbarService: SnackbarService,
-    protected storageService: StorageService
+    protected storageService: StorageService,
+    protected volumeData: Object
   ) {
 
-    if (typeof (this._classId) !== "undefined" && this._classId !== "") {
+    if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData) {
       const resource_name = this.resource_name + "/" + this._classId;
-
-      this.rest.get(resource_name, {}).subscribe((res) => {
-        this.tableData = [];
-        for (let i = 0; i < res.data.children.length; i++) {
-          this.tableData.push(this.dataHandler(res.data.children[i]));
-        }
-      }, (res) => {
-        this.dialogService.errorReport(T("Error getting pool or dataset data."), res.message, res.stack);
-      });
+      this.tableData = [];
+      for (let i = 0; i < volumeData['children'].length; i++) {
+        this.tableData.push(this.dataHandler(volumeData['children'][i]));
+      }
     }
   }
 
@@ -917,20 +913,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {});
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {})
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {})
   };
 
   expanded = false;
@@ -961,7 +957,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
       this.rest.get("storage/volume", {}).subscribe((res) => {
         res.data.forEach((volume: ZfsPoolData) => {
-          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage);
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, volume);
           volume.type = 'zpool';
 
           if (volume.children && volume.children[0]) {
