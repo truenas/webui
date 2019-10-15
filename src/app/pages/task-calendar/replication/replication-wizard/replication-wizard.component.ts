@@ -283,6 +283,7 @@ export class ReplicationWizardComponent {
                             value: 'SSH+NETCAT',
                         }
                     ],
+                    value: 'SSH',
                     relation: [{
                         action: 'SHOW',
                         connective: 'OR',
@@ -424,6 +425,8 @@ export class ReplicationWizardComponent {
             name: 'name',
             placeholder: sshConnectionsHelptex.name_placeholder,
             tooltip: sshConnectionsHelptex.name_tooltip,
+            required: true,
+            validation: [Validators.required],
         },
         {
             type: 'select',
@@ -654,7 +657,6 @@ export class ReplicationWizardComponent {
             const credentialName = 'ssh_credentials_' + i;
             const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
             const datasetFrom = datasetName + '_from';
-
             this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.subscribe((value) => {
                 if (value === 'remote') {
                     if (datasetFrom === 'source_datasets_from') {
@@ -674,6 +676,7 @@ export class ReplicationWizardComponent {
             this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value) => {
                 if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === 'remote') {
                     this.createSSHConnection(credentialName);
+                    this.setDisable(datasetName, false, false, 0);
                 } else {
                     const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, { name: datasetName }).customTemplateStringOptions.explorerComponent;
                     if (explorerComponent) {
@@ -731,6 +734,9 @@ export class ReplicationWizardComponent {
                 resolve(this.entityFormService.getPoolDatasets());
             });
         } else {
+            if (sshCredentials === 'NEW') {
+                return this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].setErrors({});
+            }
             return new Promise((resolve, reject) => {
                 this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
                     (res) => {
@@ -751,6 +757,9 @@ export class ReplicationWizardComponent {
                 resolve(this.entityFormService.getPoolDatasets());
             });
         } else {
+            if (sshCredentials === 'NEW') {
+                return this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].setErrors({});
+            }
             return new Promise((resolve, reject) => {
                 this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
                     (res) => {
@@ -1097,9 +1106,8 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
-        console.log('getsnapshots');
         const transport = this.entityWizard.formArray.controls[0].controls['transport'].value === undefined ? 'LOCAL' : this.entityWizard.formArray.controls[0].controls['transport'].value;
-        let payload = [
+        const payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
             (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : ['auto-%Y-%m-%d_%H-%M'],
             transport,
@@ -1131,4 +1139,5 @@ export class ReplicationWizardComponent {
             ["schedule.dow", "=", payload['schedule']['dow']]
         ]]).toPromise();
     }
+
 }
