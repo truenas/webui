@@ -110,7 +110,7 @@ export class VolumesListTableConfig implements InputTableConf {
     protected volumeData: Object
   ) {
 
-    if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData) {
+    if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
       const resource_name = this.resource_name + "/" + this._classId;
       this.tableData = [];
       for (let i = 0; i < volumeData['children'].length; i++) {
