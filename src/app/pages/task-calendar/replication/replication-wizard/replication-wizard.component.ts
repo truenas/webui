@@ -799,7 +799,7 @@ export class ReplicationWizardComponent {
             }
         }
 
-        if (task.schedule || task.periodic_snapshot_tasks) {
+        if (task.schedule || task.periodic_snapshot_tasks.length > 0) {
             const scheduleData = task.periodic_snapshot_tasks[0] || task;
             task['schedule_method'] = 'cron';
             task['schedule_picker'] = scheduleData.schedule ?
@@ -816,6 +816,8 @@ export class ReplicationWizardComponent {
                 task['lifetime_unit'] = scheduleData['lifetime_unit'];
                 task['retention_policy'] = task.schedule !== null ? 'CUSTOM' : 'SOURCE';
             }
+        } else {
+            task['schedule_method'] = 'once';
         }
         // periodic_snapshot_tasks
         for (let i of ['schedule_method', 'schedule_picker', 'retention_policy', 'lifetime_value', 'lifetime_unit']) {
@@ -1106,7 +1108,7 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
-        const transport = this.entityWizard.formArray.controls[0].controls['transport'].value === undefined ? 'LOCAL' : this.entityWizard.formArray.controls[0].controls['transport'].value;
+        const transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
         const payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
             (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : ['auto-%Y-%m-%d_%H-%M'],
