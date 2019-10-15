@@ -1141,7 +1141,7 @@ export class ReplicationWizardComponent {
             this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
                 (res) => {
                     this.eligibleSnapshots = res.eligible;
-                    this.snapshotsCountField.paraText = res.eligible + ' snapshots found';
+                    this.snapshotsCountField.paraText = '<span class="' + (res.eligible == 0 ? 'warnning-paragraph' : 'info-paragraph' )+'"><b>' + res.eligible + '</b> snapshots found</span>';
                 },
                 (err) => {
                     this.eligibleSnapshots = 0;
