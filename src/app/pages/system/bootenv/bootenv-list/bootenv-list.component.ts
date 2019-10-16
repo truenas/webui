@@ -9,11 +9,13 @@ import * as moment from 'moment';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { StorageService } from '../../../../services/storage.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector : 'app-bootenv-list',
@@ -42,6 +44,21 @@ export class BootEnvironmentListComponent {
   public header: string;
   public scrub_msg: string;
   public scrub_interval: number;
+
+  public statusConfigFieldConf: FieldConfig[] = [];
+  public statusSettings: DialogFormConfiguration = {
+    title: 'Status/Settings',
+    message: `<b>Boot Pool Condition:</b> ${this.condition}<br />
+      <b>Size:</b> ${this.size_boot}<br />
+      <b>Used:</b> ${this.size_consumed}<br />
+      <b>Last Scrub Run:</b> ${this.scrub_msg}<br />
+      <b>Automatic Scrub Interval:</b> ${this.scrub_interval} days<br />`,
+    fieldConfig: this.statusConfigFieldConf,
+    saveButtonText: 'Save Whatevs',
+    // customSubmit: this.saveConfigSubmit,
+    // parent: this,
+    // warning: helptext.save_config_form.warning,
+  }
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name', always_display: true},
@@ -89,7 +106,6 @@ export class BootEnvironmentListComponent {
       }
     })
   }
-
 
   rowValue(row, attr) {
     if (attr === 'created'){
@@ -248,7 +264,7 @@ export class BootEnvironmentListComponent {
   }
 
   updateBootState(): void {
-    this.ws.call("boot.get_state").subscribe(wres => {
+    this.ws.call("boot.get_state").subscribe(wres => { console.log(wres)
       if (wres.scan.end_time) {
         this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
       } else {
@@ -304,6 +320,28 @@ export class BootEnvironmentListComponent {
 
   }
 
+  getAddActions() {
+    return [{
+        label: "Stats/Settings",
+        onClick: () => {
+          console.log(this.condition)
+          this.dialog.dialogForm(this.statusSettings)
+        }
+      },{
+        label: "Boot Pool Status",
+        onClick: () => {
+          this.goToStatus();
+        }
+      },
+      {
+        label: "Scrub Boot Pool",
+        onClick: () => {
+          this.scrub();
+        }
+      }
+    ]
+  }
+
   goToStatus() {
     this._router.navigate(new Array('').concat(
       [ "system", "boot", "status" ]));
@@ -327,4 +365,5 @@ export class BootEnvironmentListComponent {
       }
     })
   }
+
 }
