@@ -77,7 +77,7 @@ export class BootEnvironmentListComponent {
     {name: 'Name', prop: 'name', always_display: true},
     {name: 'Active', prop: 'active'},
     {name: 'Created', prop: 'created'},
-    {name: 'Space', prop: 'space'},
+    {name: 'Space', prop: 'rawspace'},
     {name: 'Keep', prop: 'keep'},
   ];
   public config: any = {
@@ -117,6 +117,8 @@ export class BootEnvironmentListComponent {
       if (row.active !== '-') {
         row.hideCheckbox = true;
       }
+      row.rawspace = this.storage.convertBytestoHumanReadable(row.rawspace);
+
     })
   }
 
