@@ -576,6 +576,7 @@ export class ReplicationWizardComponent {
     protected snapshotsCountField;
     private existSnapshotTasks = [];
     private eligibleSnapshots = 0;
+    protected defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -902,7 +903,7 @@ export class ReplicationWizardComponent {
                     schedule: this.parsePickerTime(data['schedule_picker']),
                     lifetime_value: 2,
                     lifetime_unit: 'WEEK',
-                    naming_schema: 'auto-%Y-%m-%d_%H-%M',
+                    naming_schema: this.defaultNamingSchema,
                     enabled: true,
                 };
                 await this.isSnapshotTaskExist(payload).then(
@@ -923,7 +924,7 @@ export class ReplicationWizardComponent {
             for (const dataset of data['source_datasets']) {
                 payload = {
                     dataset: dataset,
-                    naming_schema: 'auto-%Y-%m-%d_%H-%M',
+                    naming_schema: this.defaultNamingSchema,
                 }
                 snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
             }
@@ -947,16 +948,16 @@ export class ReplicationWizardComponent {
                 payload['auto'] = true;
                 if (payload['direction'] === 'PULL') {
                     payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-                    payload['naming_schema'] = ['auto-%Y-%m-%d_%H-%M']; //default?
+                    payload['naming_schema'] = [this.defaultNamingSchema]; //default?
                 } else {
                     payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
                 }
             } else {
                 payload['auto'] = false;
                 if (payload['direction'] === 'PULL') {
-                    payload['naming_schema'] = ['auto-%Y-%m-%d_%H-%M'];
+                    payload['naming_schema'] = [this.defaultNamingSchema];
                 } else {
-                    payload['also_include_naming_schema'] = ['auto-%Y-%m-%d_%H-%M'];
+                    payload['also_include_naming_schema'] = [this.defaultNamingSchema];
                 }
             }
 
@@ -1132,7 +1133,7 @@ export class ReplicationWizardComponent {
         const transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
         const payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
-            (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : ['auto-%Y-%m-%d_%H-%M'],
+            (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : [this.defaultNamingSchema],
             transport,
             transport === 'LOCAL' ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
         ];
