@@ -5,8 +5,9 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
-import { IscsiService, WebSocketService } from '../../../../services/';
+import { IscsiService, WebSocketService, NetworkService } from '../../../../services/';
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { CloudCredentialService } from '../../../../services/cloudcredential.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -15,7 +16,7 @@ import { DialogService } from '../../../../services/';
 @Component({
     selector: 'app-iscsi-wizard',
     template: '<entity-wizard [conf]="this"></entity-wizard>',
-    providers: [IscsiService, CloudCredentialService]
+    providers: [IscsiService, CloudCredentialService, NetworkService]
 })
 export class IscsiWizardComponent {
 
@@ -376,6 +377,23 @@ export class IscsiWizardComponent {
                     tooltip: helptext.auth_network_tooltip,
                     value: '',
                     inputType: 'textarea',
+                },
+                {
+                  type: 'list',
+                  name: 'ip_list',
+                  placeholder: 'IPs',
+                  label: 'IPs',
+                  templateListField: [
+                      {
+                        name: 'address',
+                        placeholder: 'IP Address',
+                        tooltip: 'Enter the right IP Address',
+                        type: 'ipwithnetmask',
+                        width: '55%',
+                        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
+                      }
+                  ],
+                  listFields: []
                 }
             ]
         }
@@ -489,6 +507,7 @@ export class IscsiWizardComponent {
         private cloudcredentialService: CloudCredentialService,
         private dialogService: DialogService,
         private loader: AppLoaderService,
+        private networkService: NetworkService,
         private router: Router) {
 
     }
@@ -731,6 +750,14 @@ export class IscsiWizardComponent {
     }
 
     async customSubmit(value) {
+        const ipListArray = [];
+        value.ip_list.forEach((item) => {
+          if (item.address) {
+            ipListArray.push(item.address);
+          }
+        });
+        console.log(ipListArray);
+
         this.loader.open();
         let toStop = false;
         const createdItems = {
