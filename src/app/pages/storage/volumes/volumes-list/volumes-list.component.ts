@@ -23,6 +23,7 @@ import helptext from '../../../../helptext/storage/volumes/volume-list';
 
 import { CoreService } from 'app/core/services/core.service';
 import { SnackbarService } from '../../../../services/snackbar.service';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 
@@ -954,9 +955,13 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
-    this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
-      this.rest.get("storage/volume", {}).subscribe((res) => {
-        res.data.forEach((volume: ZfsPoolData) => {
+    Observable
+    .zip(this.ws.call('pool.dataset.query', []), this.rest.get("storage/volume", {})).subscribe(res => {
+      const datasetData = res[0];
+      if (res[1] && res[1].data) {
+      const volumeData = res[1].data;
+        for (let i = 0; i < volumeData.length; i++) {
+          const volume = volumeData[i];
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, volume);
           volume.type = 'zpool';
 
@@ -976,26 +981,19 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
 
           this.zfsPoolRows.push(volume);
-        });
-
-        this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
-
-        if (this.zfsPoolRows.length === 1) {
-          this.expanded = true;
         }
+      }
 
-        this.paintMe = true;
+      this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
 
-        this.showDefaults = true;
-        this.showSpinner = false;
+      if (this.zfsPoolRows.length === 1) {
+        this.expanded = true;
+      }
 
+      this.paintMe = true;
 
-      }, (res) => {
-        this.showDefaults = true;
-        this.showSpinner = false;
-
-        this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
-      });
+      this.showDefaults = true;
+      this.showSpinner = false;
     }, (res) => {
       this.showDefaults = true;
       this.showSpinner = false;
