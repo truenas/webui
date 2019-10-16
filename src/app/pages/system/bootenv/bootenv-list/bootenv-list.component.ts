@@ -19,7 +19,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 
 @Component({
   selector : 'app-bootenv-list',
-  templateUrl : './bootenv-list.component.html'
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class BootEnvironmentListComponent {
 
@@ -45,7 +45,20 @@ export class BootEnvironmentListComponent {
   public scrub_msg: string;
   public scrub_interval: number;
 
-  public statusConfigFieldConf: FieldConfig[] = [];
+  public statusConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'paragraph',
+      name: 'condition',
+      paraText: `<b>Boot Pool Condition:</b> ${this.condition}`
+    },
+    {
+      type: 'input',
+      name: 'scrub_interval',
+      placeholder: 'Scrub interval (in days)',
+      inputType: 'number',
+      value: this.scrub_interval
+    },
+  ];
   public statusSettings: DialogFormConfiguration = {
     title: 'Status/Settings',
     message: `<b>Boot Pool Condition:</b> ${this.condition}<br />
