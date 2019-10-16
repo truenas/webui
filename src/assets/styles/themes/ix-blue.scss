@@ -1668,12 +1668,4 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
-  app-iscsi-wizard #ip_list {
-    max-width: 800px;
-  }
-
-  app-iscsi-wizard #ip_list .mat-select {
-    width: 70px !important;
-  }
-
  } // end of ix theme

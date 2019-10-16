@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
 import { IscsiService, WebSocketService, NetworkService } from '../../../../services/';
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
-import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { CloudCredentialService } from '../../../../services/cloudcredential.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -376,24 +375,11 @@ export class IscsiWizardComponent {
                     placeholder: helptext.auth_network_placeholder,
                     tooltip: helptext.auth_network_tooltip,
                     value: '',
+                    errors: helptext.auth_network_error,
                     inputType: 'textarea',
-                },
-                {
-                  type: 'list',
-                  name: 'ip_list',
-                  placeholder: 'IPs',
-                  label: 'IPs',
-                  templateListField: [
-                      {
-                        name: 'address',
-                        placeholder: 'IP Address',
-                        tooltip: 'Enter the right IP Address',
-                        type: 'ipwithnetmask',
-                        width: '55%',
-                        validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
-                      }
-                  ],
-                  listFields: []
+                    blurStatus : true,
+                    blurEvent : this.blurEvent,
+                    parent : this
                 }
             ]
         }
@@ -750,14 +736,6 @@ export class IscsiWizardComponent {
     }
 
     async customSubmit(value) {
-        const ipListArray = [];
-        value.ip_list.forEach((item) => {
-          if (item.address) {
-            ipListArray.push(item.address);
-          }
-        });
-        console.log(ipListArray);
-
         this.loader.open();
         let toStop = false;
         const createdItems = {
@@ -886,4 +864,16 @@ export class IscsiWizardComponent {
             }
         }
     }
+
+    blurEvent(parent){
+        const authNetworks = _.find(parent.wizardConfig[2].fieldConfig, { 'name': 'auth_network' });
+        let arr = (parent.entityWizard.formArray.controls[2].controls['auth_network'].value).match(/\S+/g);
+        let counter = 0;
+        if (arr) {
+            arr.forEach((item) => {
+                if (!parent.networkService.authNetworkValidator(item, parent.networkService.ipv4_or_ipv6_cidr)) counter++;
+            });
+            counter > 0 ? authNetworks.hasErrors = true : authNetworks.hasErrors = false;
+        }
+    };
 }

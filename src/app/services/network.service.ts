@@ -82,4 +82,11 @@ export class NetworkService {
           return {label : String((33 - i) * 4), value : String((33 - i) * 4)};
         });
   }
+
+  authNetworkValidator(str, regex) {
+    if (str.match(regex)) {
+      return true;
+    }
+    return false;
+  }
 }
