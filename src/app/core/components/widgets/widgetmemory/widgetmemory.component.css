@@ -147,6 +147,21 @@ h1.memory-used span.memory-used-units{
   display:inline-block;
 }
 
+.primary-stat-wrapper{
+  padding-bottom:48px;
+}
+
+#memory-usage-chart{
+  height:260px;
+  padding:16px;
+  position: relative;
+}
+
+#memory-usage-chart canvas{
+  height:200px;
+  width:calc(100% - 32px);
+}
+
 /*:host ::ng-deep .c3-axis-y g:nth-child(2n){
   visibility:hidden;
 }*/

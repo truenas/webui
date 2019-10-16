@@ -15,9 +15,8 @@
               <widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
               <widget-sysinfo *ngSwitchCase="'system information(standby)'" id="passive" fxFlex="600px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
               
-
               <widget-cpu *ngSwitchCase="'cpu'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
-  
+              
               <widget-memory *ngSwitchCase="'memory'" fxFlex="600px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [widgetSize]="medium"   configurable="false"></widget-memory>
               
               <widget-pool *ngSwitchCase="'pool'" fxFlex="600px" fxFlex.xs="100" [poolState]="dataFromConfig(widget)" [volumeData]="volumeDataFromConfig(widget)" [widgetSize]="medium" configurable="false"></widget-pool>
