@@ -969,7 +969,21 @@ export class ReplicationWizardComponent {
             if (payload['transport'] === 'SSH+NETCAT') {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
-            return this.ws.call(this.createCalls[item], [payload]).toPromise();
+            
+            this.ws.call('replication.target_unmatched_snapshots', [
+                payload['direction'],
+                payload['source_datasets'],
+                payload['target_dataset'],
+                payload['transport'],
+                payload['ssh_credentials'],
+            ]).subscribe(
+                (res) => {
+                    console.log(res);
+                    
+                }
+            )
+
+            // return this.ws.call(this.createCalls[item], [payload]).toPromise();
         }
     }
 
