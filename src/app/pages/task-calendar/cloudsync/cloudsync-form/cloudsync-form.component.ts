@@ -425,11 +425,12 @@ export class CloudsyncFormComponent implements OnInit {
         return children;
       },
       (err) => {
-        if (err.extra && err.extra[0][0].split('.').pop() == 'bucket') {
+        if (err.extra && err.extra[0] && err.extra[0][0].split('.').pop() == 'bucket') {
           this.setBucketError(err.extra[0][1]);
         } else {
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWSError(this, err, this.dialog);
         }
+        node.collapse();
       });
   }
 
