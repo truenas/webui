@@ -11,7 +11,6 @@ import Chart from 'chart.js';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
-//import * as c3 from 'c3';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -243,6 +242,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         onHover: (e) => {
           if(e.type == "mouseout"){ 
             this.legendData = null; 
+            this.legendIndex = null
           }
         },
         tooltips:{
@@ -251,6 +251,12 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           intersect: true,
           callbacks: {
             label: (tt, data) => {
+              if(this.screenType.toLowerCase() == 'mobile'){
+                this.legendData = null;
+                this.legendIndex = null
+                return;
+              }
+
               this.legendData = data.datasets;
               this.legendIndex = tt.index;
               
@@ -276,6 +282,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         },
         scales: {
           xAxes: [{
+            maxBarThickness: 16,
             type: 'category',
             labels: this.labels
           }],

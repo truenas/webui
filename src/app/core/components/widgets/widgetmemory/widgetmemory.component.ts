@@ -11,11 +11,9 @@ import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import Chart from 'chart.js';
-//import 'chartjs-plugin-crosshair';
 
 // Deprecated
 import * as d3 from 'd3';
-//import * as c3 from 'c3';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
