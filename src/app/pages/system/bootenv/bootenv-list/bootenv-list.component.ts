@@ -45,15 +45,39 @@ export class BootEnvironmentListComponent {
   public scrub_msg: string;
   public scrub_interval: number;
 
+  constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
+    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
+    public snackBar: MatSnackBar ) {}
+
   public statusConfigFieldConf: FieldConfig[] = [
     {
       type: 'paragraph',
       name: 'condition',
-      paraText: `<b>Boot Pool Condition:</b> ${this.condition}`
+      paraText: `<b>Boot Pool Condition:</b> ${this.condition}`,
+    },
+    {
+      type: 'paragraph',
+      name: 'size_boot',
+      paraText: `<b>Size:</b> ${this.size_boot}`
+    },
+    {
+      type: 'paragraph',
+      name: 'size_consumed',
+      paraText: `<b>Used:</b> ${this.size_consumed}`
+    },
+    {
+      type: 'paragraph',
+      name: 'scrub_msg',
+      paraText: `<b>Last Scrub Run:</b> ${this.scrub_msg}`
+    },
+    {
+      type: 'paragraph',
+      name: 'scrub_interval',
+      paraText: `<b>Automatic Scrub Interval:</b> ${this.scrub_interval}<br /><br />`
     },
     {
       type: 'input',
-      name: 'scrub_interval',
+      name: 'new_scrub_interval',
       placeholder: 'Scrub interval (in days)',
       inputType: 'number',
       value: this.scrub_interval
@@ -61,16 +85,10 @@ export class BootEnvironmentListComponent {
   ];
   public statusSettings: DialogFormConfiguration = {
     title: 'Status/Settings',
-    message: `<b>Boot Pool Condition:</b> ${this.condition}<br />
-      <b>Size:</b> ${this.size_boot}<br />
-      <b>Used:</b> ${this.size_consumed}<br />
-      <b>Last Scrub Run:</b> ${this.scrub_msg}<br />
-      <b>Automatic Scrub Interval:</b> ${this.scrub_interval} days<br />`,
     fieldConfig: this.statusConfigFieldConf,
     saveButtonText: 'Save Whatevs',
-    // customSubmit: this.saveConfigSubmit,
     // parent: this,
-    // warning: helptext.save_config_form.warning,
+    customSubmit: this.meSubmit,
   }
 
   public columns: Array<any> = [
@@ -90,7 +108,24 @@ export class BootEnvironmentListComponent {
     },
   };
 
+  meSubmit(entityDialog: any) {
+    console.log(this.ws)
+    // console.log(entityDialog.formValue.new_scrub_interval)
+    const scrubIntervalValue: number = parseInt(entityDialog.formValue.new_scrub_interval);
+    if( scrubIntervalValue > -1){
+      console.log(scrubIntervalValue)
+      this.ws.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
+        console.log(res);
+      })
+
+    }
+    else {
+      this.dialog.Info('Enter valid value', scrubIntervalValue+' is not a valid number of days.')
+    }
+  }
+
   preInit() {
+    console.log(this.ws)
     this._rest.get('system/advanced/',{}).subscribe(res=>{
       this.scrub_interval = res.data.adv_boot_scrub;
       this.updateBootState();
@@ -140,9 +175,7 @@ export class BootEnvironmentListComponent {
     return row[attr];
   }
 
-  constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService,
-    private dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
-    public snackBar: MatSnackBar ) {}
+
 
   afterInit(entityList: any) {
     this.entityList = entityList;
