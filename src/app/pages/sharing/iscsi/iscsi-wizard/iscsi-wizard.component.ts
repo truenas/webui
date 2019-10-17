@@ -11,6 +11,7 @@ import { CloudCredentialService } from '../../../../services/cloudcredential.ser
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/';
+import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 
 @Component({
     selector: 'app-iscsi-wizard',
@@ -44,6 +45,7 @@ export class IscsiWizardComponent {
         'comment': null,
     };
     public summary: any;
+    protected namesInUse = [];
 
     protected wizardConfig: Wizard[] = [
         {
@@ -55,6 +57,10 @@ export class IscsiWizardComponent {
                     placeholder: helptext.name_placeholder,
                     tooltip: helptext.name_tooltip,
                     required: true,
+                    validation: [
+                        Validators.required,
+                        forbiddenValues(this.namesInUse)
+                    ],
                 },
                 {
                     type: 'select',
@@ -490,7 +496,16 @@ export class IscsiWizardComponent {
         private dialogService: DialogService,
         private loader: AppLoaderService,
         private router: Router) {
-
+        this.iscsiService.getExtents().subscribe(
+            (res) => {
+                this.namesInUse.push(...res.map(extent => extent.name));
+            }
+        )
+        this.iscsiService.getTargets().subscribe(
+            (res) => {
+                this.namesInUse.push(...res.map(target => target.name));
+            }
+        )
     }
 
     afterInit(entityWizard) {
@@ -749,7 +764,7 @@ export class IscsiWizardComponent {
                     await this.doCreate(value, item).then(
                         (res) => {
                             if (item === 'zvol') {
-                                value['disk'] = res.id;
+                                value['disk'] = 'zvol/' + res.id;
                             } else {
                                 value[item] = res.id;
                             }

@@ -58,6 +58,9 @@ export class DatasetAclComponent implements OnDestroy {
   protected route_success: string[] = [ 'storage', 'pools' ];
   public save_button_enabled = true;
 
+  protected uid_fc: any;
+  protected gid_fc: any;
+
   public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -286,8 +289,7 @@ export class DatasetAclComponent implements OnDestroy {
       }
       this.userOptions = users;
 
-      const uid_fc = _.find(this.fieldConfig, {"name": "uid"});
-      uid_fc.options = this.userOptions;
+      this.uid_fc.options = this.userOptions;
     });
 
     this.userService.groupQueryDSCache().subscribe(items => {
@@ -297,8 +299,7 @@ export class DatasetAclComponent implements OnDestroy {
       }
       this.groupOptions = groups;
 
-      const gid_fc = _.find(this.fieldConfig, {"name": "gid"});
-      gid_fc.options = this.groupOptions;
+      this.gid_fc.options = this.groupOptions;
     });
     this.ws.call('filesystem.default_acl_choices').subscribe((res) => {
       this.defaults = _.find(this.fieldConfig, {"name": "default_acl_choices"});
@@ -445,6 +446,8 @@ export class DatasetAclComponent implements OnDestroy {
 
   async dataHandler(entityForm, defaults?) {
     entityForm.formGroup.controls['aces'].reset();
+    this.gid_fc = _.find(this.fieldConfig, {"name": "gid"});
+    this.uid_fc = _.find(this.fieldConfig, {"name": "uid"});
 
     this.loader.open();
     const res = entityForm.queryResponse;
@@ -454,10 +457,16 @@ export class DatasetAclComponent implements OnDestroy {
     const user = await this.userService.getUserObject(res.uid);
     if (user && user.pw_name) {
       entityForm.formGroup.controls['uid'].setValue(user.pw_name);
+    } else {
+      entityForm.formGroup.controls['uid'].setValue(res.uid);
+      this.uid_fc.warnings = helptext.user_not_found;
     }
     const group = await this.userService.getGroupObject(res.gid);
     if (group && group.gr_name) {
       entityForm.formGroup.controls['gid'].setValue(group.gr_name);
+    } else {
+      entityForm.formGroup.controls['gid'].setValue(res.gid);
+      this.gid_fc.warnings = helptext.group_not_found;
     }
     let data = res.acl;
     let acl;
@@ -473,11 +482,17 @@ export class DatasetAclComponent implements OnDestroy {
         const usr = await this.userService.getUserObject(data[i].id);
         if (usr && usr.pw_name) {
           acl.user = usr.pw_name;
+        } else {
+          acl.user = data[i].id;
+          acl['user_not_found'] = true;
         }
       } else if (acl.tag === 'GROUP') {
         const grp = await this.userService.getGroupObject(data[i].id);
         if (grp && grp.gr_name) {
           acl.group = grp.gr_name;
+        } else {
+          acl.group = data[i].id;
+          acl['group_not_found'] = true;
         }
       }
       if (data[i].flags['BASIC']) {
@@ -523,6 +538,14 @@ export class DatasetAclComponent implements OnDestroy {
                 this.aces_fc.listFields[i], {"name": prop}
                 )['options'], {value: "OTHER"}
               )['hiddenFromDisplay'] = false;
+          }
+          if (prop === "user" && acl['user_not_found']) {
+            delete(acl['user_not_found']);
+            _.find(this.aces_fc.listFields[i], {"name": prop})['warnings'] = helptext.user_not_found;
+          }
+          if (prop === "group" && acl['group_not_found']) {
+            delete(acl['group_not_found']);
+            _.find(this.aces_fc.listFields[i], {"name": prop})['warnings'] = helptext.group_not_found;
           }
           aces_fg.controls[i].controls[prop].setValue(acl[prop]);
         }

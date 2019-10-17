@@ -136,6 +136,16 @@ export class BootEnvironmentListComponent {
     });
   }
 
+    if (!row.active.includes('Reboot')) {
+      actions.push({
+        label : T("Activate"),
+        id: "activate",
+        onClick : (row) => {
+          this.doActivate(row.id);
+        }
+      });
+     } 
+
     actions.push({
       label : T("Clone"),
       id: "clone",
@@ -144,6 +154,7 @@ export class BootEnvironmentListComponent {
             [ "system", "boot", "clone", row.id ]));
       }
     });
+
     actions.push({
       label : T("Rename"),
       id: "rename",
@@ -152,6 +163,7 @@ export class BootEnvironmentListComponent {
             [ "system", "boot", "rename", row.id ]));
       }
     });
+    
       actions.push({
         label: T("Delete"),
         id: "delete",
@@ -173,6 +185,8 @@ export class BootEnvironmentListComponent {
             }
           )
       });
+    }
+
     if (row.keep === true){
       actions.push({
         label : T("Unkeep"),

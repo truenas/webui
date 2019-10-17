@@ -22,11 +22,11 @@ export class DialogService {
     }
 
     public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, 
-        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string): any {
+        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string, disableClose: boolean = false): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
-        dialogRef = this.dialog.open(ConfirmDialog);
+        dialogRef = this.dialog.open(ConfirmDialog, {disableClose: disableClose});
 
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
@@ -160,16 +160,18 @@ export class DialogService {
         const conf = {
             title: title,
             message: message,
+            name: name,
+            confirmInstructions: true,
             fieldConfig: [
               {
                 type: 'input',
                 name: 'name',
-                required: true,
+                required: true
               },
               {
                   type: 'checkbox',
                   name: 'confirm',
-                  placeholder: 'Confirm',
+                  placeholder: T('Confirm'),
                   isHidden: !confirmBox,
               }
             ],

@@ -22,11 +22,11 @@ export default {
     ssh_credentials_target_tooltip: T('Select a saved remote system SSH \
  connection or choose <i>Create New</i> to create a new SSH connection.'),
 
-    source_datasets_placeholder: T(''),
+    source_datasets_placeholder: T('Source Datasets'),
     source_datasets_tooltip: T('Select dataset snapshots to replicate. \
  Multiple datasets can be selected.'),
 
-    target_dataset_placeholder: T(''),
+    target_dataset_placeholder: T('Destination Dataset'),
     target_dataset_tooltip: T('Select the dataset that will store \
  replicated snapshots.'),
 
