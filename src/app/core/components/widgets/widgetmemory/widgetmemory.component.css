@@ -36,8 +36,15 @@
   text-align:center;
 }
 
+#cpu-load-cores-legend-values{
+  width:100%;
+  margin:16px 0 16px 16px;
+}
+
 #cpu-load-cores-legend .legend-item{
   text-align:left;
+  padding-left:15%;
+  width:85%;
 }
 
 #cpu-load-cores-legend .legend-item .label{
@@ -147,6 +154,25 @@ h1.memory-used span.memory-used-units{
   display:inline-block;
 }
 
+.primary-stat-wrapper{
+  padding-bottom:48px;
+}
+
+.xs .primary-stat-wrapper{
+  padding-bottom:0px;
+}
+
+#memory-usage-chart{
+  height:260px;
+  padding:16px;
+  position: relative;
+}
+
+#memory-usage-chart canvas{
+  height:200px;
+  width:calc(100% - 32px);
+}
+
 /*:host ::ng-deep .c3-axis-y g:nth-child(2n){
   visibility:hidden;
 }*/
@@ -195,4 +221,7 @@ h1.memory-used span.memory-used-units{
   font-weight:500;
 }
 
+.xs #cpu-load-cores-legend .legend-item{
+  padding-left:0;
+}
 
