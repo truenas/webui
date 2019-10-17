@@ -26,7 +26,7 @@
             <mat-card-actions class="wizard-action">
               <button id="secondary_cancel_button" color="accent" class="btn  btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
               <button id="noconfirm_button" mat-button matStepperPrevious color="accent">{{"Back" | translate}}</button>
-              <button id="confirm_button" mat-button color="primary" (click)="onSubmit()">{{saveSubmitText | translate}}</button>
+              <button id="confirm_button" mat-button color="primary" (click)="onSubmit()" [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
             </mat-card-actions>
           </ng-template>
         </mat-step>
@@ -55,7 +55,7 @@
         <mat-card-actions class="wizard-action">
           <button id="secondary_cancel_button" color="accent" class="btn  btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
           <button id="noconfirm_button" mat-button matStepperPrevious color="accent">{{"Back" | translate}}</button>
-          <button id="confirm_button" mat-button color="primary" (click)="onSubmit()">{{saveSubmitText | translate}}</button>
+          <button id="confirm_button" mat-button color="primary" (click)="onSubmit()"  [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
         </mat-card-actions>
       </mat-step>
     </mat-horizontal-stepper>

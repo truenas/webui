@@ -20,7 +20,6 @@ bsdgrp_group_tooltip: T('Group name cannot begin with a hyphen\
  (<i>-</i>) or contain a space, tab, or these characters:\
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used\
  as the last character of the username.'),
-bsdgrp_group_validation: [ Validators.required, Validators.pattern(UserService.VALIDATOR_NAME) ],
 
 bsdgrp_sudo_placeholder: T('Permit Sudo'),
 bsdgrp_sudo_tooltip: T('Allow group members to use <a\

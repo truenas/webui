@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 
-import { IdmapService, IscsiService, RestService, WebSocketService, UserService } from '../../../../services/';
+import { IdmapService, ServicesService, RestService, WebSocketService, UserService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -12,7 +12,7 @@ import helptext from '../../../../helptext/services/components/service-smb';
 @Component({
   selector: 'smb-edit',
   template: ` <entity-form [conf]="this"></entity-form>`,
-  providers: [IscsiService, IdmapService],
+  providers: [ServicesService, IdmapService],
 })
 
 export class ServiceSMBComponent {
@@ -181,7 +181,7 @@ export class ServiceSMBComponent {
         this.cifs_srv_unixcharset.options.push({label: values[i], value: values[i]});
       }
     });
-    this.iscsiService.getIpChoices().subscribe((res) => {
+    this.servicesService.getSmbBindIPChoices().subscribe((res) => {
       this.cifs_srv_bindip =
         _.find(this.fieldConfig, { 'name': 'cifs_srv_bindip' });
         for (let key in res) {
@@ -214,7 +214,7 @@ export class ServiceSMBComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected iscsiService: IscsiService,
+    protected servicesService: ServicesService,
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 

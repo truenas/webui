@@ -9,7 +9,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Subject } from 'rxjs/Subject';
 import globalHelptext from '../../../helptext/global-helptext';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, StorageService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
 import { T } from '../../../translate-marker';
@@ -46,7 +46,7 @@ export class VmCardsComponent  implements OnDestroy {
     {name : T('State'), prop : 'state', always_display: true, toggle: true },
     {name : T('Autostart'), prop : 'autostart',hidden: false, selectable: true},
     { name: T("Virtual CPUs"), prop: 'vcpus', hidden: true },
-    { name: T("Memory Size (MiB)"), prop: 'memory', hidden: true },
+    { name: T("Memory Size"), prop: 'memory', hidden: true },
     { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
     {name : 'System Clock', prop : 'time', hidden: true},
     { name: T("VNC Port"), prop: 'port', hidden: true },
@@ -64,7 +64,7 @@ export class VmCardsComponent  implements OnDestroy {
 
   constructor(public router: Router, protected rest: RestService, public ws: WebSocketService,
               public core:CoreService,public dialog: DialogService,protected loader: AppLoaderService,
-              protected matdialog: MatDialog
+              protected matdialog: MatDialog, public storageService: StorageService
               ) {}
 
   resourceTransformIncomingRestData(vms) {
@@ -78,6 +78,7 @@ export class VmCardsComponent  implements OnDestroy {
       if (vms[vm_index]['vm_type'] === "Container Provider") 
         vms[vm_index]['vm_type'] = globalHelptext.dockerhost;
       };
+      vms[vm_index]['memory'] = this.storageService.convertBytestoHumanReadable(vms[vm_index]['memory']*1048576, 2);
     }
     return vms;
   }
@@ -87,8 +88,8 @@ export class VmCardsComponent  implements OnDestroy {
     const localCore = this.core;
     if (row["status"]["state"] === "RUNNING") {
       actions.push({
-        name: this.config.name,
-        id: "poweroff",
+        name: row.name,
+        id: "POWER_OFF",
         icon: "power_settings_new",
         label: T("Power Off"),
         onClick: power_off_row => {
@@ -98,8 +99,8 @@ export class VmCardsComponent  implements OnDestroy {
         }
       });
       actions.push({
-        name: this.config.name,
-        id: "stop",
+        name: row.name,
+        id: "STOP",
         icon: "stop",
         label: T("Stop"),
         onClick: power_stop_row => {
@@ -109,8 +110,8 @@ export class VmCardsComponent  implements OnDestroy {
         }
       });
       actions.push({
-        name: this.config.name,
-        id: "restart",
+        name: row.name,
+        id: "RESTART",
         icon: "replay",
         label: T("Restart"),
         onClick: power_restart_row => {
@@ -121,8 +122,8 @@ export class VmCardsComponent  implements OnDestroy {
       });
     } else {
       actions.push({
-        name: this.config.name,
-        id: "start",
+        name: row.name,
+        id: "START",
         icon: "play_arrow",
         label: T("Start"),
         onClick: start_row => {
@@ -135,17 +136,19 @@ export class VmCardsComponent  implements OnDestroy {
       });
     }
     actions.push({
-      name: this.config.name,
+      name: row.name,
       label: T("Edit"),
       icon: "edit",
+      id: 'EDIT',
       onClick: edit_row => {
         this.router.navigate(new Array("").concat(["vm", "edit", edit_row.id]));
       }
     });
     actions.push({
-      name: this.config.name,
+      name: row.name,
       label: T("Delete"),
       icon: "delete",
+      id: 'DELETE',
       onClick: delete_row => {
         const eventName = "VmDelete";
         const args = [delete_row.id];
@@ -159,16 +162,18 @@ export class VmCardsComponent  implements OnDestroy {
       }
     });
     actions.push({
-      name: this.config.name,
+      name: row.name,
       label: T("Devices"),
       icon: "device_hub",
+      id: 'DEVICES',
       onClick: devices_row => {
         this.router.navigate(new Array("").concat(["vm", devices_row.id, "devices", devices_row.name]));
       }
     });
     actions.push({
-      name: this.config.name,
+      name: row.name,
       label: T("Clone"),
+      id: 'CLONE',
       icon: "filter_none",
       onClick: clone_row => {
         const conf: DialogFormConfiguration = {
@@ -198,8 +203,9 @@ export class VmCardsComponent  implements OnDestroy {
     if (row["status"]["state"] === "RUNNING") {
       if (this.checkVnc(row)) {
         actions.push({
-          name: this.config.name,
+          name: row.name,
           label: T("VNC"),
+          id: 'VNC',
           icon: "settings_ethernet",
           onClick: vnc_vm => {
             this.ws.call("vm.get_vnc_web", [vnc_vm.id]).subscribe(res => {
@@ -211,9 +217,10 @@ export class VmCardsComponent  implements OnDestroy {
         });
       }
       actions.push({
-        name: this.config.name,
+        name: row.name,
         label: T("Serial"),
         icon: "keyboard_arrow_right",
+        id: 'SERIAL',
         onClick: vm => {
           this.router.navigate(new Array("").concat(["vm", "serial", vm.id]));
         }

@@ -59,12 +59,7 @@ export class ReplicationListComponent {
         return tasks.map(task => {
             task.task_state = task.state.state;
             task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
-            if (task.state.job && task.state.job.time_finished) {
-                const d = moment(task.state.job.time_finished.$date);
-                task.task_last_snapshot = d.format('MM/D/YYYY h:mma') + ` (${d.fromNow()})`;
-            } else {
-                task.task_last_snapshot = T('No snapshots sent yet');
-            }
+            task.task_last_snapshot = task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet');
             return task;
         });
     }

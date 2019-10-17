@@ -27,3 +27,13 @@
   font-size: 16px;
   margin-bottom: 16px;
 }
+
+:host >>> span.warnning-paragraph {
+  background-color: var(--red) !important;
+  padding: 2px;
+}
+
+:host >>> span.info-paragraph {
+  background-color: var(--primary) !important;
+  padding: 2px;
+}

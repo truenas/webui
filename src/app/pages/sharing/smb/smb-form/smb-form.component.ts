@@ -173,14 +173,14 @@ export class SMBFormComponent {
     const datasetId = sharePath.replace('/mnt/', '');
 
     /**
-     * If share does not have trivial ACL, check if user wants to edit dataset permissions. If not,
+     * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
      */
     const promptUserACLEdit = () =>
       this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
         switchMap((isTrivialACL: boolean) =>
-          /* If share has trivial ACL, move on. Otherwise, perform some async data-gathering operations */
-          isTrivialACL
+          /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
+          !isTrivialACL
             ? combineLatest(of(false), of({}))
             : combineLatest(
                 /* Check if user wants to edit the share's ACL */

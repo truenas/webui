@@ -195,7 +195,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
             if (errors) {
               config.hasErrors = true;
-              config.errors = globalHelptext.human_readable_input_error;
+              config.errors = globalHelptext.human_readable.input_error;
             } else {
               config.hasErrors = false;
               config.errors = '';
@@ -250,7 +250,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
             if (errors) {
               config.hasErrors = true;
-              config.errors = globalHelptext.human_readable_input_error;
+              config.errors = globalHelptext.human_readable.input_error;
             } else {
               config.hasErrors = false;
               config.errors = '';
@@ -288,7 +288,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
             if (errors) {
               config.hasErrors = true;
-              config.errors = globalHelptext.human_readable_input_error;
+              config.errors = globalHelptext.human_readable.input_error;
             } else {
               config.hasErrors = false;
               config.errors = '';
@@ -343,7 +343,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
             if (errors) {
               config.hasErrors = true;
-              config.errors = globalHelptext.human_readable_input_error;
+              config.errors = globalHelptext.human_readable.input_error;
             } else {
               config.hasErrors = false;
               config.errors = '';

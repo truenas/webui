@@ -130,7 +130,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     const v2 = this.parseTrainName(t2);
 
     try {
-      if(v1[0] !== v2[0] ) {
+      if(v1[0] !== v2[0] || v1[1] !== v2[1]) {
 
         const version1 = v1[0].split('.');
         const version2 = v2[0].split('.');
@@ -153,6 +153,10 @@ export class UpdateComponent implements OnInit, OnDestroy {
         if (version1[0] === version2[0]){
           // comparing '11' .1 with '11' .2
           if(version1[1] && version2[1]){
+            if (version1[1] === version2[1]) {
+              //upgrading to train of same version;
+              return "ALLOWED";
+            }
             //comparing '.1' with '.2'
             return version1[1] > version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
           }
@@ -210,8 +214,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.fullTrainList = res.trains;
   
         // On page load, make sure we are working with train of the current OS
-        this.train = res.selected;
-        this.selectedTrain = res.selected;
+        this.train = res.current;
+        this.selectedTrain = res.current;
   
         if (this.autoCheck) {
           this.check();
@@ -228,15 +232,19 @@ export class UpdateComponent implements OnInit, OnDestroy {
           }
         }
         this.singleDescription = this.trains[0].description;
-  
-        if (this.fullTrainList[res.selected].description.toLowerCase().includes('[nightly]')) {
-          this.currentTrainDescription = '[nightly]';
-        } else if (this.fullTrainList[res.selected].description.toLowerCase().includes('[release]')) {
-          this.currentTrainDescription = '[release]';
-        } else if (this.fullTrainList[res.selected].description.toLowerCase().includes('[prerelease]')) {
-          this.currentTrainDescription = '[prerelease]';
-        } else {
-          this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
+        
+        if (this.fullTrainList[res.current]) {
+          if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
+            this.currentTrainDescription = '[nightly]';
+          } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
+            this.currentTrainDescription = '[release]';
+          } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
+            this.currentTrainDescription = '[prerelease]';
+          } else {
+            this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
+          }
+        } else { 
+            this.currentTrainDescription = '';
         }
         // To remember train descrip if user switches away and then switches back
         this.trainDescriptionOnPageLoad = this.currentTrainDescription;
@@ -304,13 +312,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   onTrainChanged(event) {
     // For the case when the user switches away, then BACK to the train of the current OS
-    if (event.value === this.selectedTrain) {
+    if (event === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
-      this.check();
+      this.setTrainAndCheck();
       return;
     }
 
-    const compare = this.compareTrains(this.selectedTrain, event.value);
+    const compare = this.compareTrains(this.selectedTrain, event);
     if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
       this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
         this.train = this.selectedTrain;
@@ -318,22 +326,30 @@ export class UpdateComponent implements OnInit, OnDestroy {
     } else if(compare === "NIGHTLY_UPGRADE"){
         this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
           if (res){
-            this.train = event.value;
-            this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
-            this.check();
+            this.train = event;
+            this.setTrainDescription();
+            this.setTrainAndCheck();
           } else {
             this.train = this.selectedTrain;
-            this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+            this.setTrainDescription();
           }
         })
     } else if (compare === "ALLOWED" || compare === "MINOR_UPGRADE" || compare === "MAJOR_UPGRADE") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
-          this.train = event.value;
-          this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
-          this.check();
+          this.train = event;
+          this.setTrainDescription();
+          this.setTrainAndCheck();
         }
       })
+    }
+  }
+
+  setTrainDescription() {
+    if (this.fullTrainList[this.train]) {
+      this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+    } else {
+      this.currentTrainDescription = '';
     }
   }
 
@@ -539,6 +555,19 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
+  setTrainAndCheck() {
+    this.showSpinner = true;
+    this.ws.call('update.set_train', [this.train]).subscribe(() => { 
+      this.check();
+    },(err) => {
+      new EntityUtils().handleWSError(this, err, this.dialogService);
+      this.showSpinner = false;
+    },
+    () => {
+      this.showSpinner = false;
+    });
+  }
+
   check() {
     // Reset the template
     this.updates_available = false; 
@@ -604,6 +633,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.pre_release_train = false;
             this.nightly_train = true;
           }
+          this.showSpinner = false;
         },
         (err) => {
           this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.");
