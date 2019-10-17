@@ -318,7 +318,7 @@ export class VolumesListTableConfig implements InputTableConf {
           localDialogService = this.dialogService,
           localDialog = this.mdDialog
 
-          if (rowData.is_decrypted) {
+          if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
