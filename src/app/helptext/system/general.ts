@@ -67,7 +67,7 @@ export const helptext_system_general = {
  this also sets the <a \
  href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security" \
  target="_blank">HTTP Strict Transport Security (HSTS)</a> maximum age \
- to <i>31536000</i> seconds /(one year/). This means that after a \
+ to <i>31536000</i> seconds (one year). This means that after a \
  browser connects to the web interface for the first time, the browser \
  continues to use HTTPS and renews this setting every year.'
     )
