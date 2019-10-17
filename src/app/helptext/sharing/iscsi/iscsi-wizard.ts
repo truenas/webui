@@ -78,7 +78,7 @@ export default {
 
     auth_network: {
        placeholder: T("Authorized Networks"),
-       tooltip: T("Network addresses that can use this initiator. Leave blank for to allow all networks or list network addresses with\
+       tooltip: T("Network addresses allowed to use this initiator. Leave blank to allow all networks or list network addresses with\
        a CIDR mask. Separate multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."),
        error: T('Invalid list. Check for typos, missing CIDR masks and be sure addresses are separated with a space.')
     }
