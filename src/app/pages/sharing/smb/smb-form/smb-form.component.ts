@@ -172,14 +172,15 @@ export class SMBFormComponent {
 
   afterSave(entityForm) {
     if (entityForm.formGroup.controls['cifs_timemachine'].value && !this.isTimeMachineOn) {
-      this.dialog.confirm('Restart SMB Service?', 'Enabling Time Machine on SMB share \
-        requires a restart of the SMB service. Restart now?',true, 'Restart Now', false,
-        '','','','',false, 'I Will Restart Later').subscribe((res) => {
+      this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, helptext_sharing_smb.restart_smb_dialog.message,
+        true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
+        helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
           if (res) {
             this.loader.open();
             this.ws.call('service.restart', ['cifs']).subscribe((res) => {
               this.loader.close();
-              this.snackbar.open('SMB service has been restarted', 'Close', {duration: 4000})
+              this.snackbar.open(helptext_sharing_smb.restart_smb_snackbar.message, 
+                helptext_sharing_smb.restart_smb_snackbar.action, {duration: 4000});
               this.checkACLactions(entityForm);
             })
           } else {
