@@ -119,5 +119,16 @@ export const helptext_sharing_smb = {
     dialog_edit_acl_button: T("Configure now"),
     
     snackbar_close: T('close'),
-    snackbar_service_started: T("Service started")
+    snackbar_service_started: T("Service started"),
+
+    restart_smb_dialog: {
+       title: T('Restart SMB Service?'),
+       message: T('Enabling <em>Time Machine</em> on an SMB share requires a restart of the SMB service.'),
+       action_btn: T('Save and Restart SMB Now'),
+       cancel_btn: T('Save Without Restarting')
+    },
+    restart_smb_snackbar: {
+       message: T('SMB service has been restarted'),
+       action: T('Close')
+    }
 };

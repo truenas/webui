@@ -6,7 +6,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { DialogService, RestService, WebSocketService } from '../../../../services/';
+import { DialogService, RestService, WebSocketService, AppLoaderService, SnackbarService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
@@ -19,6 +19,7 @@ export class SMBFormComponent {
   protected route_success: string[] = [ 'sharing', 'smb' ];
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
+  public isTimeMachineOn = false;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -157,7 +158,8 @@ export class SMBFormComponent {
   ];
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, private dialog:DialogService ) {}
+              protected ws: WebSocketService, private dialog:DialogService,
+              protected loader: AppLoaderService, public snackbar: SnackbarService ) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -169,6 +171,32 @@ export class SMBFormComponent {
   }
 
   afterSave(entityForm) {
+    if (entityForm.formGroup.controls['cifs_timemachine'].value && !this.isTimeMachineOn) {
+      this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, helptext_sharing_smb.restart_smb_dialog.message,
+        true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
+        helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
+          if (res) {
+            this.loader.open();
+            this.ws.call('service.restart', ['cifs']).subscribe(() => {
+              this.loader.close();
+              this.snackbar.open(helptext_sharing_smb.restart_smb_snackbar.message, 
+                helptext_sharing_smb.restart_smb_snackbar.action, {duration: 4000});
+              this.checkACLactions(entityForm);
+            }, (err) => { 
+              this.loader.close();
+              this.dialog.errorReport('Error', err.err, err.backtrace);
+            }
+            )
+          } else {
+            this.checkACLactions(entityForm);
+          }
+        });
+    } else {
+      this.checkACLactions(entityForm);   
+    }
+  }
+
+  checkACLactions(entityForm) {
     const sharePath: string = entityForm.formGroup.get('cifs_path').value;
     const datasetId = sharePath.replace('/mnt/', '');
 
@@ -202,7 +230,6 @@ export class SMBFormComponent {
             : this.router.navigate(['/'].concat(this.route_success))
         )
       );
-      
 
     this.ws
       .call("service.query", [])
@@ -273,6 +300,9 @@ export class SMBFormComponent {
       let target = _.find(this.fieldConfig, {'name' : 'cifs_name'});
       res === 'INVALID' ? target.hasErrors = true : target.hasErrors = false;
     })
+    setTimeout(() => {
+      if (entityForm.formGroup.controls['cifs_timemachine'].value) { this.isTimeMachineOn = true };
+    }, 700)
   }
 
   forbiddenNameValidator(control: FormControl): {[key: string]: boolean} {
