@@ -77,6 +77,8 @@ export default {
     initiators_tooltip: T("Enter <i>ALL</i> or a list of initiator hostnames separated by spaces."),
 
     auth_network_placeholder: T("Authorized Networks"),
-    auth_network_tooltip: T("Network addresses that can use this initiator. Enter <i>ALL</i> or list network addresses with\
- a CIDR mask. Separate multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."),
+    auth_network_tooltip: T("Network addresses that can use this \
+ initiator. List network addresses with a CIDR mask. Separate multiple \
+ addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>. To allow \
+ all network addresses, leave this field empty."),
 }
