@@ -171,11 +171,6 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.advancedmode_placeholder,
     tooltip: helptext_system_advanced.advancedmode_tooltip
   }, {
-    type: 'input',
-    name: 'graphite',
-    placeholder: helptext_system_advanced.graphite_placeholder,
-    tooltip: helptext_system_advanced.graphite_tooltip
-  }, {
     type: 'checkbox',
     name: 'fqdn_syslog',
     placeholder: helptext_system_advanced.fqdn_placeholder,
