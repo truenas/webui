@@ -216,7 +216,7 @@ export class BootEnvironmentListComponent {
   }
 
   doActivate(id) {
-    this.dialog.confirm("Activate", "Activate this Boot Environment?", false, helptext_system_bootenv.list_dialog_activate_action).subscribe((res) => {
+    this.dialog.confirm(T("Activate"), T("Activate this Boot Environment?"), false, helptext_system_bootenv.list_dialog_activate_action).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -239,12 +239,12 @@ export class BootEnvironmentListComponent {
       if (wres.scan.end_time) {
         this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
       } else {
-        this.scrub_msg = "Never";
+        this.scrub_msg = T("Never");
       }
       this.size_consumed = this.storage.convertBytestoHumanReadable(wres.properties.allocated.parsed);
       this.condition = wres.properties.health.value;
       if (this.condition === "DEGRADED") {
-        this.condition = this.condition + ` Check Notifications for more details.`;
+        this.condition = this.condition + T(` Check Notifications for more details.`);
       }
       this.size_boot = this.storage.convertBytestoHumanReadable(wres.properties.size.parsed);
       this.percentange = wres.properties.capacity.value;
@@ -253,7 +253,7 @@ export class BootEnvironmentListComponent {
 
   toggleKeep(id, status) {
     if (!status){
-      this.dialog.confirm("Keep", "Keep this Boot Environment?", false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res) => {
+      this.dialog.confirm(T("Keep"), T("Keep this Boot Environment?"), false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -270,7 +270,7 @@ export class BootEnvironmentListComponent {
         }
       })
     } else {
-      this.dialog.confirm("Unkeep", "No longer keep this Boot Environment?", false, helptext_system_bootenv.list_dialog_unkeep_action).subscribe((res) => {
+      this.dialog.confirm(T("Unkeep"), T("No longer keep this Boot Environment?"), false, helptext_system_bootenv.list_dialog_unkeep_action).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -293,74 +293,79 @@ export class BootEnvironmentListComponent {
 
   getAddActions() {
     return [{
-        label: "Stats/Settings",
+        label: T("Stats/Settings"),
         onClick: () => {
-          let localWS = this.ws,
-          localSnackBar = this.snackBar,
-          localDialog = this.dialog;
-          let statusConfigFieldConf: FieldConfig[] = [
-            {
-              type: 'paragraph',
-              name: 'condition',
-              paraText: `<b>Boot Pool Condition:</b> ${this.condition}`,
-            },
-            {
-              type: 'paragraph',
-              name: 'size_boot',
-              paraText: `<b>Size:</b> ${this.size_boot}`
-            },
-            {
-              type: 'paragraph',
-              name: 'size_consumed',
-              paraText: `<b>Used:</b> ${this.size_consumed}`
-            },
-            {
-              type: 'paragraph',
-              name: 'scrub_msg',
-              paraText: `<b>Last Scrub Run:</b> ${this.scrub_msg}`
-            },
-            {
-              type: 'paragraph',
-              name: 'scrub_interval',
-              paraText: `<b>Automatic Scrub Interval:</b> ${this.scrub_interval}<br /><br />`
-            },
-            {
-              type: 'input',
-              name: 'new_scrub_interval',
-              placeholder: 'Scrub interval (in days)',
-              inputType: 'number',
-              value: this.scrub_interval
-            },
-          ];
-          let statusSettings: DialogFormConfiguration = {
-            title: 'Status/Settings',
-            fieldConfig: statusConfigFieldConf,
-            saveButtonText: 'Save Whatevs',
-            parent: this,
-            customSubmit: function(entityDialog) {
-              const scrubIntervalValue: number = parseInt(entityDialog.formValue.new_scrub_interval);
-              if( scrubIntervalValue > 0){
-                localWS.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
-                  localSnackBar.open(`Scrub interval set to ${scrubIntervalValue} days`, 'Close', { duration: 4000});
-                  localDialog.closeAllDialogs();
-                })
+          this._rest.get('system/advanced/',{}).subscribe(res=>{
+            this.scrub_interval = res.data.adv_boot_scrub;
+            let localWS = this.ws,
+            localSnackBar = this.snackBar,
+            localDialog = this.dialog;
+            let statusConfigFieldConf: FieldConfig[] = [
+              {
+                type: 'paragraph',
+                name: 'condition',
+                paraText: T(`<b>Boot Pool Condition:</b> ${this.condition}`),
+              },
+              {
+                type: 'paragraph',
+                name: 'size_boot',
+                paraText: T(`<b>Size:</b> ${this.size_boot}`)
+              },
+              {
+                type: 'paragraph',
+                name: 'size_consumed',
+                paraText: T(`<b>Used:</b> ${this.size_consumed}`)
+              },
+              {
+                type: 'paragraph',
+                name: 'scrub_msg',
+                paraText: T(`<b>Last Scrub Run:</b> ${this.scrub_msg}`)
+              },
+              {
+                type: 'paragraph',
+                name: 'scrub_interval',
+                paraText: T(`<b>Automatic Scrub Interval:</b> ${this.scrub_interval}<br /><br />`)
+              },
+              {
+                type: 'input',
+                name: 'new_scrub_interval',
+                placeholder: T('Set new scrub interval (in days)'),
+                inputType: 'number',
+                required: true
+              },
+            ];
           
-              }
-              else {
-                localDialog.Info('Enter valid value', scrubIntervalValue+' is not a valid number of days.')
+            let statusSettings: DialogFormConfiguration = {
+              title: T('Stats/Settings'),
+              fieldConfig: statusConfigFieldConf,
+              saveButtonText: T('Update Interval'),
+              cancelButtonText: T('Close'),
+              parent: this,
+              customSubmit: function(entityDialog) {
+                const scrubIntervalValue: number = parseInt(entityDialog.formValue.new_scrub_interval);
+                if( scrubIntervalValue > 0){
+                  localWS.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
+                    localSnackBar.open(T(`Scrub interval set to ${scrubIntervalValue} days`), ('Close'), { duration: 4000});
+                    localDialog.closeAllDialogs();
+                  })
+            
+                }
+                else {
+                  localDialog.Info(T('Enter valid value'), T(scrubIntervalValue+' is not a valid number of days.'))
+                }
               }
             }
-          }
-          this.dialog.dialogForm(statusSettings)
+            this.dialog.dialogForm(statusSettings)
+          })
         }
       },{
-        label: "Boot Pool Status",
+        label: T("Boot Pool Status"),
         onClick: () => {
           this.goToStatus();
         }
       },
       {
-        label: "Scrub Boot Pool",
+        label: T("Scrub Boot Pool"),
         onClick: () => {
           this.scrub();
         }
@@ -374,14 +379,14 @@ export class BootEnvironmentListComponent {
   }
 
   scrub() {
-    this.dialog.confirm("Scrub", "Start the scrub now?", false, helptext_system_bootenv.list_dialog_scrub_action).subscribe((res) => {
+    this.dialog.confirm(T("Scrub"), T("Start the scrub now?"), false, helptext_system_bootenv.list_dialog_scrub_action).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
         this.busy = this.ws.call('boot.scrub').subscribe((res) => {
           this.loader.close();
-          this.snackBar.open('Scrub started',"close", {duration: 5000});
+          this.snackBar.open(T('Scrub started'), T("Close"), {duration: 5000});
           },
           (res) => {
             this.dialog.errorReport(res.error, res.reason, res);
