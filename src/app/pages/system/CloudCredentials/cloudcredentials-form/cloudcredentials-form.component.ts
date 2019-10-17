@@ -861,7 +861,9 @@ export class CloudCredentialsFormComponent {
             }
             if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3') {
               attr_name = item.split("-")[0];
-              attributes[attr_name] = value[item];
+              if (value[item] != '' && value[item] != undefined) {
+                attributes[attr_name] = value[item];
+              }
             }
             delete value[item];
           }
