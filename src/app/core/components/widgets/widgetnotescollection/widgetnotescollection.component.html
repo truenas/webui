@@ -1,5 +1,0 @@
-<div class="widget-collection" *ngIf="notes.length > 0 && widgetFlex" fxLayout="collectionLayout" fxLayoutAlign="space-around center" fxLayoutWrap>
-  <ng-container *ngFor="let note of notes; let i=index">
-    <widget-note [noteData]="notes[i]" [fxFlex]="widgetFlex" [widgetSize]="widgetSize"></widget-note>
-  </ng-container>
-</div>
