@@ -85,15 +85,15 @@
               
             <div [ngClass]="{ 'mobile': screenType == 'Desktop'}" fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
                 <div *ngIf="legendData; else noLegend" id="cpu-load-cores-legend-values" fxFlex fxLayout="row wrap" fxLayoutAlign="space-around center">
-  
-                  <div fxFlex="26" fxFlex.xs="calc(100% - 16px)" class="legend-item core-number"><span class="label">Thread number:</span> {{legendData[0].index}}</div>
+                  
+                  <div fxFlex="26" fxFlex.xs="calc(100% - 16px)" class="legend-item core-number"><span class="label">Thread number:</span> {{legendIndex}}</div>
 
                   <div fxFlex="26" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
-                    <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].name}}:</span> {{legendData[0].value}}%
+                    <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].label}}:</span> {{legendData[0].data[legendIndex]}}%
                   </div>
 
                   <div fxFlex="26" fxFlex.xs="calc(50% - 16px)" *ngIf="legendData[1]" class="legend-item temperature">
-                    <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{legendData[1].name}}:</span> {{legendData[1].value}}°C
+                    <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{legendData[1].label}}:</span> {{legendData[1].data[legendIndex]}}°C
                   </div>
                 
                 </div>
@@ -115,7 +115,9 @@
                 </div>
               </ng-template>
   
-            <div fxFlex="100" id="cpu-cores-chart" class="bar-chart"></div>
+            <div fxFlex="100" id="cpu-cores-chart" class="bar-chart">
+              <canvas></canvas>
+            </div>
           </div> <!-- End Cores Wrapper -->
         
         <!-- DETAILS -->
