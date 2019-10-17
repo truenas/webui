@@ -764,7 +764,7 @@ export class IscsiWizardComponent {
                     await this.doCreate(value, item).then(
                         (res) => {
                             if (item === 'zvol') {
-                                value['disk'] = res.id;
+                                value['disk'] = 'zvol/' + res.id;
                             } else {
                                 value[item] = res.id;
                             }
