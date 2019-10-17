@@ -372,14 +372,12 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'auth_network',
-                    placeholder: helptext.auth_network_placeholder,
-                    tooltip: helptext.auth_network_tooltip,
+                    placeholder: helptext.auth_network.placeholder,
+                    tooltip: helptext.auth_network.tooltip,
                     value: '',
-                    errors: helptext.auth_network_error,
+                    hasErrors: false,
                     inputType: 'textarea',
-                    blurStatus : true,
-                    blurEvent : this.blurEvent,
-                    parent : this
+                    validation: [this.IPValidator('auth_network')]
                 }
             ]
         }
@@ -865,15 +863,31 @@ export class IscsiWizardComponent {
         }
     }
 
-    blurEvent(parent){
-        const authNetworks = _.find(parent.wizardConfig[2].fieldConfig, { 'name': 'auth_network' });
-        let arr = (parent.entityWizard.formArray.controls[2].controls['auth_network'].value).match(/\S+/g);
-        let counter = 0;
-        if (arr) {
-            arr.forEach((item) => {
-                if (!parent.networkService.authNetworkValidator(item, parent.networkService.ipv4_or_ipv6_cidr)) counter++;
-            });
-            counter > 0 ? authNetworks.hasErrors = true : authNetworks.hasErrors = false;
+    IPValidator(name: string) {
+        const self = this;
+        return function validIPs(control: FormControl) {
+            const config = self.wizardConfig[2].fieldConfig.find(c => c.name === name);
+            let arr = (control.value).match(/\S+/g);
+            let counter = 0;
+            if (arr) {
+                arr.forEach((item) => {
+                    if (!self.networkService.authNetworkValidator(item, self.networkService.ipv4_or_ipv6_cidr)) counter++;
+                });
+            }
+
+            const errors = control.value && control.value.length > 0 && counter > 0
+            ? { validIPs : true }
+            : null;
+        
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = helptext[name].error;
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+    
+            return errors;
         }
     };
 }
