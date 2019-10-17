@@ -170,8 +170,8 @@ export class SMBFormComponent {
     return true;
   }
 
-  afterSave(entityForm) { 
-    if (entityForm.formGroup.controls['cifs_timemachine'].value && this.isTimeMachineOn) {
+  afterSave(entityForm) {
+    if (entityForm.formGroup.controls['cifs_timemachine'].value && !this.isTimeMachineOn) {
       this.dialog.confirm('Restart SMB Service?', 'Enabling Time Machine on SMB share \
         requires a restart of the SMB service. Restart now?',true, 'Restart Now', false,
         '','','','',false, 'I Will Restart Later').subscribe((res) => {
@@ -186,6 +186,8 @@ export class SMBFormComponent {
             this.checkACLactions(entityForm);
           }
         });
+    } else {
+      this.checkACLactions(entityForm);   
     }
   }
 
@@ -273,10 +275,6 @@ export class SMBFormComponent {
       .subscribe(() => {}, error => new EntityUtils().handleWSError(this, error, this.dialog));
   }
 
-  resourceTransformIncomingRestData(data) {
-     if (data.cifs_timemachine) { this.isTimeMachineOn = true };
-  }
-
   afterInit(entityForm: any) {
     entityForm.ws.call('sharing.smb.vfsobjects_choices', [])
         .subscribe((res) => {
@@ -297,6 +295,9 @@ export class SMBFormComponent {
       let target = _.find(this.fieldConfig, {'name' : 'cifs_name'});
       res === 'INVALID' ? target.hasErrors = true : target.hasErrors = false;
     })
+    setTimeout(() => {
+      if (entityForm.formGroup.controls['cifs_timemachine'].value) { this.isTimeMachineOn = true };
+    }, 700)
   }
 
   forbiddenNameValidator(control: FormControl): {[key: string]: boolean} {
