@@ -88,21 +88,17 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   constructor(public router: Router, public translate: TranslateService, private sanitizer:DomSanitizer, public mediaObserver: MediaObserver, private el: ElementRef){
     super(translate);
     mediaObserver.media$.subscribe((evt) =>{
-      this.screenType = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
-      //if(this.chart && this.ctx){ this.chart.update();}
+      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      this.screenType = st;
     });
   }
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
-    
-    if(this.chart && this.ctx){
-      this.chart.destroy();
-    }
   }
 
   ngAfterViewInit(){
-
+ 
     this.data.subscribe((evt:CoreEvent) => {
       if(evt.name == "MemoryStats"){
         if(evt.data.used){
@@ -111,6 +107,9 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       }
     });
 
+    if(this.chart){
+      this.renderChart();
+    }
   }
 
   bytesToGigabytes(value){
