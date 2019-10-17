@@ -7,7 +7,6 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { DialogService } from 'app/services';
 import * as moment from 'moment';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { RestService } from '../../../../services/rest.service';
@@ -49,48 +48,6 @@ export class BootEnvironmentListComponent {
     public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
     public snackBar: MatSnackBar ) {}
 
-  public statusConfigFieldConf: FieldConfig[] = [
-    {
-      type: 'paragraph',
-      name: 'condition',
-      paraText: `<b>Boot Pool Condition:</b> ${this.condition}`,
-    },
-    {
-      type: 'paragraph',
-      name: 'size_boot',
-      paraText: `<b>Size:</b> ${this.size_boot}`
-    },
-    {
-      type: 'paragraph',
-      name: 'size_consumed',
-      paraText: `<b>Used:</b> ${this.size_consumed}`
-    },
-    {
-      type: 'paragraph',
-      name: 'scrub_msg',
-      paraText: `<b>Last Scrub Run:</b> ${this.scrub_msg}`
-    },
-    {
-      type: 'paragraph',
-      name: 'scrub_interval',
-      paraText: `<b>Automatic Scrub Interval:</b> ${this.scrub_interval}<br /><br />`
-    },
-    {
-      type: 'input',
-      name: 'new_scrub_interval',
-      placeholder: 'Scrub interval (in days)',
-      inputType: 'number',
-      value: this.scrub_interval
-    },
-  ];
-  public statusSettings: DialogFormConfiguration = {
-    title: 'Status/Settings',
-    fieldConfig: this.statusConfigFieldConf,
-    saveButtonText: 'Save Whatevs',
-    // parent: this,
-    customSubmit: this.meSubmit,
-  }
-
   public columns: Array<any> = [
     {name: 'Name', prop: 'name', always_display: true},
     {name: 'Active', prop: 'active'},
@@ -108,42 +65,10 @@ export class BootEnvironmentListComponent {
     },
   };
 
-  meSubmit(entityDialog: any) {
-    console.log(this.ws)
-    // console.log(entityDialog.formValue.new_scrub_interval)
-    const scrubIntervalValue: number = parseInt(entityDialog.formValue.new_scrub_interval);
-    if( scrubIntervalValue > -1){
-      console.log(scrubIntervalValue)
-      this.ws.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
-        console.log(res);
-      })
-
-    }
-    else {
-      this.dialog.Info('Enter valid value', scrubIntervalValue+' is not a valid number of days.')
-    }
-  }
-
   preInit() {
-    console.log(this.ws)
     this._rest.get('system/advanced/',{}).subscribe(res=>{
       this.scrub_interval = res.data.adv_boot_scrub;
       this.updateBootState();
-    });
-  }
-
-  changeEvent(){
-    observableFromEvent(this.scrubIntervalEvent.nativeElement, 'keyup').pipe(debounceTime(150),distinctUntilChanged(),)
-    .subscribe(() => {
-      const scrubIntervalValue: number = this.scrubIntervalEvent.nativeElement.value;
-      if( scrubIntervalValue > -1){
-        this.ws.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
-        })
-
-      }
-      else {
-        this.dialog.Info('Enter valid value', scrubIntervalValue+' is not a valid number of days.')
-      }
     });
   }
 
@@ -174,8 +99,6 @@ export class BootEnvironmentListComponent {
     }
     return row[attr];
   }
-
-
 
   afterInit(entityList: any) {
     this.entityList = entityList;
@@ -312,7 +235,7 @@ export class BootEnvironmentListComponent {
   }
 
   updateBootState(): void {
-    this.ws.call("boot.get_state").subscribe(wres => { console.log(wres)
+    this.ws.call("boot.get_state").subscribe(wres => {
       if (wres.scan.end_time) {
         this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
       } else {
@@ -372,8 +295,63 @@ export class BootEnvironmentListComponent {
     return [{
         label: "Stats/Settings",
         onClick: () => {
-          console.log(this.condition)
-          this.dialog.dialogForm(this.statusSettings)
+          let localWS = this.ws,
+          localSnackBar = this.snackBar,
+          localDialog = this.dialog;
+          let statusConfigFieldConf: FieldConfig[] = [
+            {
+              type: 'paragraph',
+              name: 'condition',
+              paraText: `<b>Boot Pool Condition:</b> ${this.condition}`,
+            },
+            {
+              type: 'paragraph',
+              name: 'size_boot',
+              paraText: `<b>Size:</b> ${this.size_boot}`
+            },
+            {
+              type: 'paragraph',
+              name: 'size_consumed',
+              paraText: `<b>Used:</b> ${this.size_consumed}`
+            },
+            {
+              type: 'paragraph',
+              name: 'scrub_msg',
+              paraText: `<b>Last Scrub Run:</b> ${this.scrub_msg}`
+            },
+            {
+              type: 'paragraph',
+              name: 'scrub_interval',
+              paraText: `<b>Automatic Scrub Interval:</b> ${this.scrub_interval}<br /><br />`
+            },
+            {
+              type: 'input',
+              name: 'new_scrub_interval',
+              placeholder: 'Scrub interval (in days)',
+              inputType: 'number',
+              value: this.scrub_interval
+            },
+          ];
+          let statusSettings: DialogFormConfiguration = {
+            title: 'Status/Settings',
+            fieldConfig: statusConfigFieldConf,
+            saveButtonText: 'Save Whatevs',
+            parent: this,
+            customSubmit: function(entityDialog) {
+              const scrubIntervalValue: number = parseInt(entityDialog.formValue.new_scrub_interval);
+              if( scrubIntervalValue > 0){
+                localWS.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
+                  localSnackBar.open(`Scrub interval set to ${scrubIntervalValue} days`, 'Close', { duration: 4000});
+                  localDialog.closeAllDialogs();
+                })
+          
+              }
+              else {
+                localDialog.Info('Enter valid value', scrubIntervalValue+' is not a valid number of days.')
+              }
+            }
+          }
+          this.dialog.dialogForm(statusSettings)
         }
       },{
         label: "Boot Pool Status",
