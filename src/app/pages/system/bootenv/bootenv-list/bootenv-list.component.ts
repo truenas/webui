@@ -326,10 +326,11 @@ export class BootEnvironmentListComponent {
                 name: 'new_scrub_interval',
                 placeholder: T('Scrub interval (in days)'),
                 inputType: 'number',
-                value: this.scrub_interval
+                value: this.scrub_interval,
+                required: true
               },
             ];
-          
+
             let statusSettings: DialogFormConfiguration = {
               title: T('Stats/Settings'),
               fieldConfig: statusConfigFieldConf,
@@ -343,7 +344,7 @@ export class BootEnvironmentListComponent {
                     localSnackBar.open(T(`Scrub interval set to ${scrubIntervalValue} days`), ('Close'), { duration: 4000});
                     localDialog.closeAllDialogs();
                   })
-            
+
                 }
                 else {
                   localDialog.Info(T('Enter valid value'), T(scrubIntervalValue+' is not a valid number of days.'))
