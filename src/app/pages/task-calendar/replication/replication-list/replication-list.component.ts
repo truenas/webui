@@ -115,7 +115,7 @@ export class ReplicationListComponent {
         } else if (row.state.job) {
             this.job.showLogs(row.state.job.id);
         } else {
-            this.snackbarService.open(T('No Logs.'), 'close',  { duration: 1000 });
+            this.snackbarService.open(T('No Logs.'), T('close'),  { duration: 1000 });
         }
     }
 }

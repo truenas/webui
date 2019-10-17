@@ -136,7 +136,7 @@ export class RsyncListComponent {
         this.job.showLogs(row.job.id);
       }
     } else {
-      this.snackBar.open(T('No Logs.'), 'close',  { duration: 1000 });
+      this.snackBar.open(T('No Logs.'), T('close'),  { duration: 1000 });
     }
   }
 }
