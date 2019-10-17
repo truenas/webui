@@ -99,10 +99,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   ngAfterViewInit(){
 
-    /*this.core.register({observerClass: this, eventName:"SysInfo"}).subscribe((evt: CoreEvent) => {
-      this.cpuModel = evt.data.model;
-    });*/
-
     this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
       d3.select('#grad1 .begin')
         .style('stop-color', this.getHighlightColor(0))
@@ -113,7 +109,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     this.data.subscribe((evt:CoreEvent) => {
       if(evt.name == "CpuStats"){
-        //this.cpuData = evt.data;
         if(evt.data.average){
           this.setCpuLoadData(['Load', parseInt(evt.data.average.usage.toFixed(1))]);
           this.setCpuData(evt.data);
@@ -197,10 +192,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     } else {
       this.coresChartUpdate();
     }
-    //console.log(config);
   }
 
-  setCpuLoadData(/*chart,*/ data){
+  setCpuLoadData(data){
     let config: any = {}
     config.title = data[0];
     config.units = "%";
@@ -295,13 +289,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       .attr('class', 'begin')
       .attr('offset', '0%')
       .style('stop-color', this.getHighlightColor(0))
-      //.style('stop-color', 'rgba(255,255,255,0)')
 
     def.append('stop')
       .attr('class', 'end')
       .attr('offset', '100%')
       .style('stop-color', this.getHighlightColor(0.15))
-      //.style('stop-color', 'rgba(255,255,255,0.15)')
 
     let g = d3.select('#cpu-cores-chart svg g.c3-chart')
     g.insert('rect', ':first-child')
