@@ -6,6 +6,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { Subject } from 'rxjs';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
@@ -81,16 +82,21 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   public legendColors: string[];
   private legendIndex: number;
   public labels:string[] = ['Free', 'ZFS Cache', 'Services'];
+  
+  public screenType:string = 'Desktop';
 
-
-  constructor(public router: Router, public translate: TranslateService, private sanitizer:DomSanitizer, private el: ElementRef){
+  constructor(public router: Router, public translate: TranslateService, private sanitizer:DomSanitizer, public mediaObserver: MediaObserver, private el: ElementRef){
     super(translate);
+    mediaObserver.media$.subscribe((evt) =>{
+      this.screenType = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      //if(this.chart && this.ctx){ this.chart.update();}
+    });
   }
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
     
-    if(this.chart){
+    if(this.chart && this.ctx){
       this.chart.destroy();
     }
   }
@@ -144,11 +150,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     this.memData = config;
     this.memChartInit();
     
-    /*if(!this.chart){
-      this.memChartInit();
-    } else {
-      this.memChartInit();
-    }*/
   }
 
   memChartInit(){
@@ -181,7 +182,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       }
 
       let options = {
-        cutoutPercentage:80,
+        //cutoutPercentage:85,
         tooltips:{
           enabled: false,
         },
