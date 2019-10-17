@@ -319,19 +319,14 @@ export class BootEnvironmentListComponent {
               {
                 type: 'paragraph',
                 name: 'scrub_msg',
-                paraText: T(`<b>Last Scrub Run:</b> ${this.scrub_msg}`)
-              },
-              {
-                type: 'paragraph',
-                name: 'scrub_interval',
-                paraText: T(`<b>Automatic Scrub Interval:</b> ${this.scrub_interval}<br /><br />`)
+                paraText: T(`<b>Last Scrub Run:</b> ${this.scrub_msg}<br /><br />`)
               },
               {
                 type: 'input',
                 name: 'new_scrub_interval',
-                placeholder: T('Set new scrub interval (in days)'),
+                placeholder: T('Scrub interval (in days)'),
                 inputType: 'number',
-                required: true
+                value: this.scrub_interval
               },
             ];
           
