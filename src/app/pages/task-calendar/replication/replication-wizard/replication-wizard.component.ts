@@ -970,20 +970,37 @@ export class ReplicationWizardComponent {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
             
-            this.ws.call('replication.target_unmatched_snapshots', [
+            return this.ws.call('replication.target_unmatched_snapshots', [
                 payload['direction'],
                 payload['source_datasets'],
                 payload['target_dataset'],
                 payload['transport'],
                 payload['ssh_credentials'],
-            ]).subscribe(
+            ]).toPromise().then(
                 (res) => {
-                    console.log(res);
-                    
+                    let hasBadSnapshots = false;
+                    for (const ds in res) {
+                        if (res[ds].length > 0) {
+                            hasBadSnapshots = true;
+                            break;
+                        }
+                    }
+                    if (hasBadSnapshots) {
+                        return this.dialogService.confirm('Clear bad snapshots', T('Target dataset has snapshots that do not match source. Do you want to clear it?')).toPromise().then(
+                            (dialog_res) => {
+                                payload['allow_from_scratch'] = dialog_res;
+                                return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                            }
+                        )
+                    } else {
+                        return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                    }
+                },
+                (err) => {
+                    // show error ?
+                    return this.ws.call(this.createCalls[item], [payload]).toPromise();
                 }
-            )
-
-            // return this.ws.call(this.createCalls[item], [payload]).toPromise();
+            );
         }
     }
 
