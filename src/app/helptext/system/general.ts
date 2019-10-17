@@ -62,8 +62,14 @@ export const helptext_system_general = {
   stg_guihttpsredirect: {
     placeholder: T("WebGUI HTTP -> HTTPS Redirect"),
     tooltip: T(
-      "Check this to redirect <i>HTTP</i> connections to\
- <i>HTTPS</i>. A <i>GUI SSL Certificate</i> must be selected."
+      'Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A \
+ <i>GUI SSL Certificate</i> is required for <i>HTTPS</i>. Activating \
+ this also sets the <a \
+ href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security" \
+ target="_blank">HTTP Strict Transport Security (HSTS)</a> maximum age \
+ to <i>31536000</i> seconds (one year). This means that after a \
+ browser connects to the web interface for the first time, the browser \
+ continues to use HTTPS and renews this setting every year.'
     )
   },
 
