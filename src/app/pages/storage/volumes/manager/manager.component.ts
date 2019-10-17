@@ -94,6 +94,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
   public vdevdisksError = false;
+  public vdevdisksSizeError = false;
 
   public diskAddWarning = helptext.manager_diskAddWarning;
   public diskExtendWarning = helptext.manager_diskExtendWarning;
@@ -427,6 +428,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.disknumError = null;
     this.vdevtypeError = null;
     this.vdevdisksError = false;
+    this.vdevdisksSizeError = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
@@ -469,6 +471,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (vdev.vdev_disks_error) {
         this.vdevdisksError = true;
+      }
+      if (vdev.vdev_disks_size_error) {
+        this.vdevdisksSizeError = true;
       }
 
     });
@@ -515,6 +520,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     if (this.vdevdisksError) {
+      return false;
+    }
+    if (this.vdevdisksSizeError) {
       return false;
     }
     return true;
