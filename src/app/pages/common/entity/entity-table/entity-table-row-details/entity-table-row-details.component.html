@@ -48,7 +48,7 @@
         <button
             *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.name, this.config)"
             mat-button
-            id="action_button_{{ action?.name }}__{{action.id}}"
+            id="action_button_{{ action?.label | uppercase }}__{{action.id}}"
             (click)="action.onClick(this.config)"
         >
             <div

@@ -10,7 +10,7 @@
   </mat-icon>
   <mat-menu #appMenu="matMenu">
     <span *ngFor="let action of actions">
-			<button id="action_button_{{ action?.name }}__{{action.id}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
+			<button id="action_button_{{ action?.label }}__{{action.id}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
 						|| entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);">
 				<span>{{ action?.label | translate }}</span>
     </button>
