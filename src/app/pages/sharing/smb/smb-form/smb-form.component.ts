@@ -177,12 +177,16 @@ export class SMBFormComponent {
         helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
           if (res) {
             this.loader.open();
-            this.ws.call('service.restart', ['cifs']).subscribe((res) => {
+            this.ws.call('service.restart', ['cifs']).subscribe(() => {
               this.loader.close();
               this.snackbar.open(helptext_sharing_smb.restart_smb_snackbar.message, 
                 helptext_sharing_smb.restart_smb_snackbar.action, {duration: 4000});
               this.checkACLactions(entityForm);
-            })
+            }, (err) => { 
+              this.loader.close();
+              this.dialog.errorReport('Error', err.err, err.backtrace);
+            }
+            )
           } else {
             this.checkACLactions(entityForm);
           }
