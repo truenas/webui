@@ -986,7 +986,11 @@ export class ReplicationWizardComponent {
                         }
                     }
                     if (hasBadSnapshots) {
-                        return this.dialogService.confirm('Clear bad snapshots', T('Target dataset has snapshots that do not match source. Do you want to clear it?')).toPromise().then(
+                        return this.dialogService.confirm(
+                            T('Destination Snapshots Are Not Related to Replicated Snapshots'),
+                            T('Destination dataset does not contain any snapshots that can be used as a basis for the incremental \
+                            changes in the snapshots being sent. The snapshots in the destination dataset will be deleted and the \
+                            replication will begin with a complete initial copy.')).toPromise().then(
                             (dialog_res) => {
                                 payload['allow_from_scratch'] = dialog_res;
                                 return this.ws.call(this.createCalls[item], [payload]).toPromise();
