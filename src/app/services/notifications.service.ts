@@ -47,7 +47,7 @@ export class NotificationsService {
           this.subject.next(this.notifications);
       });
 
-      this.ws.sub('alert.list').subscribe((res) => { // DAAMMIIAANNNNN
+      this.ws.sub('alert.list').subscribe((res) => {
         const notification  = this.alertsArrivedHandler([res])[0];
         this.notifications.push(notification);
         this.subject.next(this.notifications);
