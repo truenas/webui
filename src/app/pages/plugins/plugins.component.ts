@@ -43,7 +43,7 @@ export class PluginsComponent {
     { name: T('Version'), prop: 'version', hidden: true },
     { name: T('Plugin'), prop: 'plugin', hidden: true },
     { name: T('Release'), prop: 'release', hidden: true },
-    { name: T('Boot'), prop: 'boot', hidden: true },
+    { name: T('Boot'), prop: 'boot', selectable: true},
     { name: T('Collection'), prop: 'plugin_repository', hidden: true },
   ];
   public config: any = {
@@ -523,5 +523,29 @@ export class PluginsComponent {
 
   wsDeleteParams(row, id) {
     return row.state === 'up' ? [id, {force: true}] : [id];
+  }
+
+  resourceTransformIncomingRestData(data) {
+    return data.map(plugin =>  {
+      plugin['boot'] = plugin['boot'] === 'on' ? true : false;
+      return plugin;
+    });
+  }
+
+  onCheckboxChange(row) {
+    this.loader.open();
+    row.boot = !row.boot;
+    this.ws.call('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}] )
+    .subscribe(
+      (res) => {
+        if (!res) {
+          row.boot = !row.boot;
+        }
+        this.loader.close();
+      },
+      (err) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      });
   }
 }
