@@ -567,16 +567,20 @@ blurEvent(parent){
 
 blurEvent2(parent){
   const enteredVal = parent.entityWizard.formGroup.value.formArray[1].memory;
-  const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal)
-    if( vm_memory_requested < 268435456) {
-      parent.entityWizard.formArray.get([1]).get('memory').setValue(enteredVal + '*');
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = helptext.memory_size_err;
-    } else{
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = '';
-    }
+  const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
+  if (isNaN(vm_memory_requested)) {
+    console.error(vm_memory_requested) // leaves form in previous error state
+  } else if(vm_memory_requested < 268435456) {
+    parent.entityWizard.formArray.get([1]).get('memory').setValue(enteredVal + '*');
+    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = helptext.memory_size_err;
+  } else {
+    parent.entityWizard.formArray.get([1]).get('memory').setValue(parent.storageService.humanReadable);
+    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
+    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = '';
+  }
 }
+
 blurEvent3(parent){
   if(parent.entityWizard.formArray.controls[2].value.volsize > 0 ) {
     const volsize = parent.entityWizard.formArray.controls[2].value.volsize * 1073741824;
@@ -618,7 +622,7 @@ async customSubmit(value) {
     zvol_payload["zvol_name"] = hdd
     zvol_payload["zvol_volsize"] = value.volsize * 1024 * 1000 * 1000;
 
-    vm_payload["memory"]= value.memory;
+    vm_payload["memory"]= (value.memory);
     vm_payload["name"] = value.name;
     vm_payload["description"] = value.description;
     vm_payload["time"]= value.time;
