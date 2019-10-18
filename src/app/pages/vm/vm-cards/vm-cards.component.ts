@@ -70,11 +70,12 @@ export class VmCardsComponent  implements OnDestroy {
   preInit(entityTable: EntityTableComponent) {
     this.ws.call('pool.query').subscribe((res) => {
       if (res.length === 0)
-      this.dialog.confirm("No Pools",'Virtual Machines cannot be created or managed until a pool is present for storing them.',
-        true, 'Create Pool', false)
+      this.dialog.confirm(T("No Pools"), T('Existing Virtual Machines cannot be run and new \
+      Virtual Machines cannot be created until a pool is present for storing them.'),
+        true, T('Create Pool'), false)
         .subscribe((res) => {
           if(res) {
-            this.router.navigate(new Array('').concat(['storage', 'pools', 'manager']));
+            this.router.navigate(new Array('').concat(['storage', 'pools', 'import']));
           }
         })
     })
