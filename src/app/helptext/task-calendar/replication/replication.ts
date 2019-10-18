@@ -5,11 +5,9 @@ export default {
     name_tooltip: T('Descriptive name for the replication.'),
 
     direction_placeholder: T('Direction'),
-    direction_tooltip: T('Direction of travel. <i>Push</i> sends \
- snapshots from the local system to a remote system, or to another \
- dataset on the local system. <i>Pull</i> takes snapshots from a remote \
- system and stores them on the local system. <i>Pull</i> requires a \
- snapshot <i>Naming Schema</i> to identify which snapshots to replicate.'),
+    direction_tooltip: T('Direction of travel. <i>PUSH</i> sends \
+ snapshots to a destination system. <i>PULL</i> connects to a remote \
+ system and receives snapshots matching a <b>Naming Schema</b>.'),
 
     transport_placeholder: T('Transport'),
     transport_tooltip: T('Method of snapshot transfer:<ul> \
