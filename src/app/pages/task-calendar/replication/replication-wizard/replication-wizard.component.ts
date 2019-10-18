@@ -734,7 +734,7 @@ export class ReplicationWizardComponent {
 
         if (fromLocal) {
             return new Promise((resolve, reject) => {
-                resolve(this.entityFormService.getPoolDatasets());
+                resolve(this.entityFormService.getPoolDatasets([["FILESYSTEM"]]));
             });
         } else {
             if (sshCredentials === 'NEW') {
@@ -757,7 +757,7 @@ export class ReplicationWizardComponent {
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
         if (fromLocal) {
             return new Promise((resolve, reject) => {
-                resolve(this.entityFormService.getPoolDatasets());
+                resolve(this.entityFormService.getPoolDatasets([["FILESYSTEM"]]));
             });
         } else {
             if (sshCredentials === 'NEW') {
