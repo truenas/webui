@@ -8,6 +8,7 @@ import { DialogService, JobService, TaskService, WebSocketService, SnackbarServi
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -171,7 +172,7 @@ export class CloudsyncListComponent implements InputTableConf {
     if (row.job) {
       this.job.showLogs(row.job.id);
     } else {
-      this.snackbarService.open(T('No Logs.'), T('close'),  { duration: 1000 });
+      this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
     }
   }
 }
