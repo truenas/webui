@@ -70,6 +70,9 @@ export class EntityUtils {
 
     if (res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
+      if (res.extra.excerpt) {
+        this.errorReport(res, dialog);
+      }
       for (let i = 0; i < res.extra.length; i++) {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];

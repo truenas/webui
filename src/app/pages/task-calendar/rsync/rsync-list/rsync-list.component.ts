@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { WebSocketService, DialogService, SnackbarService, TaskService, JobService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-rsync-list',
@@ -135,6 +136,8 @@ export class RsyncListComponent {
       } else {
         this.job.showLogs(row.job.id);
       }
+    } else {
+      this.snackBar.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
     }
   }
 }

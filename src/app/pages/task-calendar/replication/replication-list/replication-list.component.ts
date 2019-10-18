@@ -4,6 +4,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import * as moment from 'moment';
 import { DialogService, JobService, SnackbarService, WebSocketService } from '../../../../services';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
     selector: 'app-replication-list',
@@ -59,12 +60,7 @@ export class ReplicationListComponent {
         return tasks.map(task => {
             task.task_state = task.state.state;
             task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
-            if (task.state.job && task.state.job.time_finished) {
-                const d = moment(task.state.job.time_finished.$date);
-                task.task_last_snapshot = d.format('MM/D/YYYY h:mma') + ` (${d.fromNow()})`;
-            } else {
-                task.task_last_snapshot = T('No snapshots sent yet');
-            }
+            task.task_last_snapshot = task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet');
             return task;
         });
     }
@@ -119,6 +115,8 @@ export class ReplicationListComponent {
                 })
         } else if (row.state.job) {
             this.job.showLogs(row.state.job.id);
+        } else {
+            this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
         }
     }
 }

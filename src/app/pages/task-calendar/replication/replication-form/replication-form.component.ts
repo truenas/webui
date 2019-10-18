@@ -905,10 +905,10 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
             const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
-            const filteredValue = this.storageService.convertHumanStringToNum(value);
+            const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
             speedLimitField['hasErrors'] = false;
             speedLimitField['errors'] = '';
-                if (isNaN(filteredValue)) {
+                if (filteredValue !== undefined && isNaN(filteredValue)) {
                     speedLimitField['hasErrors'] = true;
                     speedLimitField['errors'] = globalHelptext.human_readable.input_error;
                 };
@@ -955,7 +955,7 @@ export class ReplicationFormComponent {
             wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
             wsResponse['restrict_schedule'] = true;
         }
-        wsResponse['speed_limit'] = this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0);
+        wsResponse['speed_limit'] = wsResponse['speed_limit'] ? this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0) : undefined;
         return wsResponse;
     }
 

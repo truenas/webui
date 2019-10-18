@@ -40,7 +40,7 @@ export class JobService {
           if (res[i].logs_path && res[i].logs_excerpt) {
             let target_job = res[i];
             this.dialog.confirm(dialog_title, `<pre>${res[i].logs_excerpt}</pre>`, true, T('Download Logs'),
-              false, '', '', '', '', false, cancelButtonMsg).subscribe(
+              false, '', '', '', '', false, cancelButtonMsg, true).subscribe(
               (dialog_res) => {
                 if (dialog_res) {
                   this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(

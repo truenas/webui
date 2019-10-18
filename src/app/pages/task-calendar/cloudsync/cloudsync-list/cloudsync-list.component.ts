@@ -4,10 +4,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
-import { DialogService, JobService, TaskService, WebSocketService } from '../../../../services';
+import { DialogService, JobService, TaskService, WebSocketService, SnackbarService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -55,7 +56,8 @@ export class CloudsyncListComponent implements InputTableConf {
               protected ws: WebSocketService,
               protected translateService: TranslateService,
               protected dialog: DialogService,
-              protected job: JobService) {
+              protected job: JobService,
+              protected snackbarService: SnackbarService) {
               }
 
   afterInit(entityList: any) {
@@ -167,6 +169,10 @@ export class CloudsyncListComponent implements InputTableConf {
   }
 
   stateButton(row) {
-    this.job.showLogs(row.job.id);
+    if (row.job) {
+      this.job.showLogs(row.job.id);
+    } else {
+      this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
+    }
   }
 }

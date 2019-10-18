@@ -156,7 +156,9 @@ export class PortalFormComponent {
     this.authgroup_field = _.find(this.fieldConfig,{'name' : 'discovery_authgroup'});
     this.iscsiService.getAuth().subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
-        this.authgroup_field.options.push({label: res[i].tag, value: res[i].tag});
+        if (_.find(this.authgroup_field.options, {value: res[i].tag}) == undefined) {
+          this.authgroup_field.options.push({label: res[i].tag, value: res[i].tag});
+        }
       }
     })
   }

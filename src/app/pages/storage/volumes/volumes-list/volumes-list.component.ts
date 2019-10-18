@@ -23,6 +23,7 @@ import helptext from '../../../../helptext/storage/volumes/volume-list';
 
 import { CoreService } from 'app/core/services/core.service';
 import { SnackbarService } from '../../../../services/snackbar.service';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 
@@ -106,20 +107,16 @@ export class VolumesListTableConfig implements InputTableConf {
     protected translate: TranslateService,
     protected snackBar: MatSnackBar,
     protected snackbarService: SnackbarService,
-    protected storageService: StorageService
+    protected storageService: StorageService,
+    protected volumeData: Object
   ) {
 
-    if (typeof (this._classId) !== "undefined" && this._classId !== "") {
+    if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
       const resource_name = this.resource_name + "/" + this._classId;
-
-      this.rest.get(resource_name, {}).subscribe((res) => {
-        this.tableData = [];
-        for (let i = 0; i < res.data.children.length; i++) {
-          this.tableData.push(this.dataHandler(res.data.children[i]));
-        }
-      }, (res) => {
-        this.dialogService.errorReport(T("Error getting pool or dataset data."), res.message, res.stack);
-      });
+      this.tableData = [];
+      for (let i = 0; i < volumeData['children'].length; i++) {
+        this.tableData.push(this.dataHandler(volumeData['children'][i]));
+      }
     }
   }
 
@@ -321,7 +318,7 @@ export class VolumesListTableConfig implements InputTableConf {
           localDialogService = this.dialogService,
           localDialog = this.mdDialog
 
-          if (rowData.is_decrypted) {
+          if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
@@ -726,9 +723,9 @@ export class VolumesListTableConfig implements InputTableConf {
         name: 'Delete Zvol',
         label: T("Delete Zvol"),
         onClick: (row1) => {
-          this.dialogService.confirm(T("Delete "),
-            T("Delete the zvol ") + "<i>" + row1.path + "</i>"+ T(" and all snapshots of it?")
-            , false, T('Delete Zvol')).subscribe((confirmed) => {
+          this.dialogService.doubleConfirm(T("Delete "), 
+            T("Delete the zvol ") + "<b><i>" + row1.name + "</i></b>"+ T(" and all snapshots of it?"), row1.name,
+            true, T('Delete Zvol')).subscribe((confirmed) => {
             if (confirmed === true) {
               this.loader.open();
 
@@ -917,20 +914,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {});
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {})
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {})
   };
 
   expanded = false;
@@ -958,10 +955,14 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
-    this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
-      this.rest.get("storage/volume", {}).subscribe((res) => {
-        res.data.forEach((volume: ZfsPoolData) => {
-          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage);
+    Observable
+    .zip(this.ws.call('pool.dataset.query', []), this.rest.get("storage/volume", {})).subscribe(res => {
+      const datasetData = res[0];
+      if (res[1] && res[1].data) {
+      const volumeData = res[1].data;
+        for (let i = 0; i < volumeData.length; i++) {
+          const volume = volumeData[i];
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, volume);
           volume.type = 'zpool';
 
           if (volume.children && volume.children[0]) {
@@ -980,26 +981,19 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
 
           this.zfsPoolRows.push(volume);
-        });
-
-        this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
-
-        if (this.zfsPoolRows.length === 1) {
-          this.expanded = true;
         }
+      }
 
-        this.paintMe = true;
+      this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
 
-        this.showDefaults = true;
-        this.showSpinner = false;
+      if (this.zfsPoolRows.length === 1) {
+        this.expanded = true;
+      }
 
+      this.paintMe = true;
 
-      }, (res) => {
-        this.showDefaults = true;
-        this.showSpinner = false;
-
-        this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
-      });
+      this.showDefaults = true;
+      this.showSpinner = false;
     }, (res) => {
       this.showDefaults = true;
       this.showSpinner = false;
