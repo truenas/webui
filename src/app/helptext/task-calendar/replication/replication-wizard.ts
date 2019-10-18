@@ -86,4 +86,9 @@ export default {
     // dialog
     cipher_placeholder: T('Cipher'),
     cipher_tooltip: T(''),
+
+    clearSnapshotDialog_title: T('Destination Snapshots Are Not Related to Replicated Snapshots'),
+    clearSnapshotDialog_content: T('Destination dataset does not contain any snapshots that can be used as a basis for the incremental\
+ changes in the snapshots being sent. The snapshots in the destination dataset will be deleted and the\
+ replication will begin with a complete initial copy.'),
 }

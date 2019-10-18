@@ -969,7 +969,40 @@ export class ReplicationWizardComponent {
             if (payload['transport'] === 'SSH+NETCAT') {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
-            return this.ws.call(this.createCalls[item], [payload]).toPromise();
+            
+            return this.ws.call('replication.target_unmatched_snapshots', [
+                payload['direction'],
+                payload['source_datasets'],
+                payload['target_dataset'],
+                payload['transport'],
+                payload['ssh_credentials'],
+            ]).toPromise().then(
+                (res) => {
+                    let hasBadSnapshots = false;
+                    for (const ds in res) {
+                        if (res[ds].length > 0) {
+                            hasBadSnapshots = true;
+                            break;
+                        }
+                    }
+                    if (hasBadSnapshots) {
+                        return this.dialogService.confirm(
+                            helptext.clearSnapshotDialog_title,
+                            helptext.clearSnapshotDialog_title).toPromise().then(
+                            (dialog_res) => {
+                                payload['allow_from_scratch'] = dialog_res;
+                                return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                            }
+                        )
+                    } else {
+                        return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                    }
+                },
+                (err) => {
+                    // show error ?
+                    return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                }
+            );
         }
     }
 
