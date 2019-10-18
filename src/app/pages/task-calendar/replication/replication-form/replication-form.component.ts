@@ -189,6 +189,7 @@ export class ReplicationFormComponent {
             type: 'explorer',
             initial: '',
             explorerType: 'dataset',
+            explorerParam: [['FILESYSTEM']],
             multiple: true,
             tristate: false,
             name: 'source_datasets_PUSH',
