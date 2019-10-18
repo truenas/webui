@@ -9,6 +9,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Subject } from 'rxjs/Subject';
 import globalHelptext from '../../../helptext/global-helptext';
+import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import { RestService, WebSocketService, StorageService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
@@ -38,6 +39,8 @@ export class VmCardsComponent  implements OnDestroy {
   public controlEvents:Subject<CoreEvent> = new Subject();
   public actions = [];
   public showSpinner = true;
+  public poolsExist: boolean = true;
+  public previousUrl = '';
 
   protected entityTable: EntityTableComponent;
 
@@ -69,16 +72,25 @@ export class VmCardsComponent  implements OnDestroy {
 
   preInit(entityTable: EntityTableComponent) {
     this.ws.call('pool.query').subscribe((res) => {
-      if (res.length === 0)
-      this.dialog.confirm(T("No Pools"), T('Existing Virtual Machines cannot be run and new \
-      Virtual Machines cannot be created until a pool is present for storing them.'),
-        true, T('Create Pool'), false)
+      if (res.length === 0) {
+        this.poolsExist = false;
+        this.dialog.confirm(T(helptext.no_pools_dialog.title), helptext.no_pools_dialog.msg,
+        true, helptext.no_pools_dialog.action, false)
         .subscribe((res) => {
           if(res) {
             this.router.navigate(new Array('').concat(['storage', 'pools', 'import']));
           }
         })
+      }
     })
+  }
+
+  dataHandler(entityList: any) {
+    if (!this.poolsExist) {
+      entityList.rows.forEach((row) => {
+        row.disableSlider = true;
+      })
+    }
   }
 
   resourceTransformIncomingRestData(vms) {
@@ -140,6 +152,7 @@ export class VmCardsComponent  implements OnDestroy {
         id: "START",
         icon: "play_arrow",
         label: T("Start"),
+        disabled: !this.poolsExist,
         onClick: start_row => {
           const eventName = "VmStart";
           let args = [row.id];

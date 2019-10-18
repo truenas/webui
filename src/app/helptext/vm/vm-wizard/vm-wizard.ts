@@ -5,6 +5,12 @@ import { rangeValidator } from '../../../pages/common/entity/entity-form/validat
 import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
+no_pools_dialog: {
+  title: T('No Pools'),
+  msg: T('Virtual Machines cannot be created or run unless a pool is present for storing them.'),
+  action: T('Create Pool')
+},
+
 wizard_type_label: T('Select VM wizard type'),
 wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
 wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
@@ -84,7 +90,7 @@ disk_radio_options_existing_label: T("Use existing disk image"),
 volsize_placeholder : T('Size (GiB)'),
 volsize_tooltip: T('Allocate a number of gigabytes of space for the\
  new zvol.'),
-volsize_validation: [Validators.required],
+volsize_validation: [Validators.required, rangeValidator(1)],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
 datastore_placeholder: T('Zvol Location'),

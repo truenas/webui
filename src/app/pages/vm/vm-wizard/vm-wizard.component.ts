@@ -312,14 +312,13 @@ export class VMWizardComponent {
     this.entityWizard = entityWizard;
     this.ws.call('pool.query').subscribe((res) => {
       if (res.length === 0)
-      this.dialogService.confirm(T("No Pools"), T('New Virtual Machines cannot be created \
-       until a pool is present for storing them.'),
-        true, T('Create Pool'), false)
+      this.dialogService.confirm(T(helptext.no_pools_dialog.title), helptext.no_pools_dialog.msg,
+        true, T(helptext.no_pools_dialog.action), false)
         .subscribe((res) => {
           if(res) {
             this.router.navigate(new Array('').concat(['storage', 'pools', 'import']));
           } else {
-            this.router.navigate(['vm'],);
+            this.router.navigate(['vm']);
           }
         })
     })
