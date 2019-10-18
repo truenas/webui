@@ -757,7 +757,7 @@ export class ReplicationWizardComponent {
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
         if (fromLocal) {
             return new Promise((resolve, reject) => {
-                resolve(this.entityFormService.getPoolDatasets([["FILESYSTEM"]]));
+                resolve(this.entityFormService.getPoolDatasets());
             });
         } else {
             if (sshCredentials === 'NEW') {
