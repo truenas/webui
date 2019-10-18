@@ -10,13 +10,14 @@ import { regexValidator } from '../../../common/entity/entity-form/validators/re
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 import { CoreService } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
   selector : 'app-interfaces-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class InterfacesFormComponent implements OnDestroy {
+export class InterfacesFormComponent extends ViewControllerComponent implements OnDestroy {
   protected queryCall = 'interface.query';
   protected addCall = 'interface.create';
   protected editCall = 'interface.update';
@@ -234,7 +235,9 @@ export class InterfacesFormComponent implements OnDestroy {
               protected rest: RestService, protected entityFormService: EntityFormService,
               protected networkService: NetworkService, protected dialog: DialogService,
               protected ws: WebSocketService, protected translate: TranslateService,
-              protected core: CoreService) {}
+              /*public core: CoreService*/) {
+    super();
+  }
 
   setType(type: string) {
     const is_physical = (type === "PHYSICAL");

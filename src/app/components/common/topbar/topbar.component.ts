@@ -135,6 +135,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
     this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
       if (evt && evt.data.commit) {
         this.checkNetworkCheckinWaiting();
       } else {
