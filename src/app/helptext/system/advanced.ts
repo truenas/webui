@@ -69,10 +69,6 @@ export const helptext_system_advanced = {
   advancedmode_placeholder: T('Show advanced fields by default'),
   advancedmode_tooltip: T('Set to always show advanced fields, when available.'),
 
-  graphite_placeholder: T('Remote Graphite Server Hostname'),
-  graphite_tooltip: T('Enter the IP address or hostname of a remote server\
- running Graphite.'),
-
   fqdn_placeholder: T('Use FQDN for logging'),
   fqdn_tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
  in logs to precisely identify systems with similar\
