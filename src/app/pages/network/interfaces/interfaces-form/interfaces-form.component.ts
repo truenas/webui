@@ -9,6 +9,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
+import { CoreService } from 'app/core/services/core.service';
 import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
@@ -232,7 +233,8 @@ export class InterfacesFormComponent implements OnDestroy {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
               protected networkService: NetworkService, protected dialog: DialogService,
-              protected ws: WebSocketService, protected translate: TranslateService) {}
+              protected ws: WebSocketService, protected translate: TranslateService,
+              protected core: CoreService) {}
 
   setType(type: string) {
     const is_physical = (type === "PHYSICAL");
@@ -432,6 +434,12 @@ export class InterfacesFormComponent implements OnDestroy {
         })
       }
     }
+  }
+
+  afterSave() {
+    this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false}, sender:this});
+    this.router.navigate(new Array('/').concat(
+      this.route_success));
   }
 
   ngOnDestroy() {

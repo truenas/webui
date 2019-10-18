@@ -7,6 +7,7 @@ import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
 import helptext from '../../../../helptext/network/interfaces/interfaces-list';
 import { EntityUtils } from '../../../common/entity/utils';
+import { CoreService } from 'app/core/services/core.service';
 
 @Component({
   selector : 'app-interfaces-list',
@@ -27,7 +28,6 @@ export class InterfacesListComponent implements OnDestroy {
   }
   protected hasDetails = true;
   protected entityList: any;
-  protected checkChangesSubscription: any;
   public hasPendingChanges = false;
   public checkinWaiting = false;
   pending_changes_text: string;
@@ -67,7 +67,7 @@ export class InterfacesListComponent implements OnDestroy {
   };
 
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
-              private snackBar: MatSnackBar, private dialog: DialogService) {}
+              private snackBar: MatSnackBar, private dialog: DialogService, private core:CoreService) {}
 
   dataHandler(res) {
     const rows = res.rows;
@@ -148,10 +148,7 @@ export class InterfacesListComponent implements OnDestroy {
     this.entityList = entityList;
 
     this.checkPendingChanges();
-    this.checkChangesSubscription = interval(10000).subscribe(x => {
-      this.checkPendingChanges();
-      this.checkWaitingCheckin();
-    });
+    this.checkWaitingCheckin();
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
@@ -208,9 +205,11 @@ export class InterfacesListComponent implements OnDestroy {
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
             this.hasPendingChanges = false;
+            this.checkWaitingCheckin();
             this.snackBar.open(helptext.changes_saved_successfully, T("Ok"));
           }, err => {
             this.entityList.loader.close();
@@ -230,6 +229,7 @@ export class InterfacesListComponent implements OnDestroy {
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.checkin').subscribe((success) => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true}, sender:this});
             this.entityList.loader.close();
             this.entityList.dialogService.Info(
               helptext.checkin_complete_title,
@@ -256,6 +256,7 @@ export class InterfacesListComponent implements OnDestroy {
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.rollback').subscribe(res => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
             this.hasPendingChanges = false;
@@ -286,6 +287,5 @@ export class InterfacesListComponent implements OnDestroy {
   }
   
   ngOnDestroy() {
-    this.checkChangesSubscription.unsubscribe();
   }
 }
