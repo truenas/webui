@@ -4,6 +4,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import * as moment from 'moment';
 import { DialogService, JobService, SnackbarService, WebSocketService } from '../../../../services';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
     selector: 'app-replication-list',
@@ -114,6 +115,8 @@ export class ReplicationListComponent {
                 })
         } else if (row.state.job) {
             this.job.showLogs(row.state.job.id);
+        } else {
+            this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
         }
     }
 }
