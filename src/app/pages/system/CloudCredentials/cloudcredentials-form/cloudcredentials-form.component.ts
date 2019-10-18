@@ -982,6 +982,19 @@ export class CloudCredentialsFormComponent {
         this.setFieldRequired('pass-SFTP', required, entityForm);
       }
     });
+
+    entityForm.formGroup.controls['token-ONEDRIVE'].valueChanges.subscribe((res) => {
+      console.log(res);
+      if (res) {
+        this.ws.call('cloudsync.onedrive_list_drives', [{
+          // client_id: '',
+          // client_secret: '',
+          token: res,
+        }]).subscribe((drives) => {
+          console.log(drives);
+        })
+      }
+    });
   }
 
   beforeSubmit(value) {
