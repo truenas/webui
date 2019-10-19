@@ -14,8 +14,8 @@ export const helptext_system_bootenv = {
   clone_name_placeholder: T("Name"),
   clone_name_tooltip: T(
     "Enter a name for the clone of this boot environment.\
- Allowed characters are alphanumeric, as well as\
- dashes (*-*), underscores (*_*), and periods (*.*)"
+ Alphanumeric characters, dashes (*-*), underscores (*_*),\
+ and periods (*.*) are allowed.)"
   ),
   
   clone_source_placeholder: T("Source"),
