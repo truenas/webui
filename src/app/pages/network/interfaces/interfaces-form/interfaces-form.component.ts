@@ -234,8 +234,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
               protected networkService: NetworkService, protected dialog: DialogService,
-              protected ws: WebSocketService, protected translate: TranslateService,
-              /*public core: CoreService*/) {
+              protected ws: WebSocketService, protected translate: TranslateService) {
     super();
   }
 

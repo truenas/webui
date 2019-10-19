@@ -8,13 +8,14 @@ import { MatSnackBar } from '@angular/material';
 import helptext from '../../../../helptext/network/interfaces/interfaces-list';
 import { EntityUtils } from '../../../common/entity/utils';
 import { CoreService } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector : 'app-interfaces-list',
   templateUrl : './interfaces-list.component.html',
   styleUrls : [ './interfaces-list.component.css' ],
 })
-export class InterfacesListComponent implements OnDestroy {
+export class InterfacesListComponent extends ViewControllerComponent implements OnDestroy {
 
   public title = "Interfaces";
   //protected resource_name: string = 'network/interface/';
@@ -67,7 +68,9 @@ export class InterfacesListComponent implements OnDestroy {
   };
 
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
-              private snackBar: MatSnackBar, private dialog: DialogService, private core:CoreService) {}
+              private snackBar: MatSnackBar, private dialog: DialogService) {
+                super();
+              }
 
   dataHandler(res) {
     const rows = res.rows;
@@ -208,9 +211,8 @@ export class InterfacesListComponent implements OnDestroy {
             this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
-            this.hasPendingChanges = false;
-            this.checkWaitingCheckin();
             this.snackBar.open(helptext.changes_saved_successfully, T("Ok"));
+            this.checkWaitingCheckin();
           }, err => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;

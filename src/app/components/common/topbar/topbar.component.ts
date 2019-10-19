@@ -137,6 +137,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
       if (evt && evt.data.commit) {
+        this.pendingNetworkChanges = false;
         this.checkNetworkCheckinWaiting();
       } else {
         this.checkNetworkChangesPending();
