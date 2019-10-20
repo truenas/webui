@@ -4,6 +4,9 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid " Check Notifications for more details."
+msgstr ""
+
 msgid " First vdev has "
 msgstr ""
 
@@ -64,11 +67,6 @@ msgid ""
 "passphrase for it."
 msgstr ""
 
-msgid ""
-"'%h' will be replaced with your hostname and '%i' will be replaced with "
-"your IP address."
-msgstr ""
-
 msgid "'. All data on that pool was destroyed."
 msgstr "'. Alle Daten in diesem Pool wurden vernichtet."
 
@@ -101,9 +99,7 @@ msgstr ""
 "Die automatische Update-Überprüfung ist fehlgeschlagen, bitte überprüfen "
 "Sie die Netzwerkeinstellungen ihres Systems."
 
-msgid ""
-"</b> plugin and all data and snapshots stored with it, please type the name "
-"of the plugin to confirm:"
+msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr ""
 
 msgid "</b> with the keypair"
@@ -293,10 +289,9 @@ msgstr ""
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br>"
+"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
+"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
 msgstr ""
-"<b>ACHTUNG:</b> Die Konfigurationsdatei enthält Systemkennwörter und andere "
-"sensible Daten.<br>"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr ""
@@ -443,8 +438,8 @@ msgstr ""
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
-"when the configuration file is uploaded.</p> <b>Keep the configuration file "
-"safe and protect it from unauthorized access!</b>"
+"when the configuration file is uploaded.</p> <br /><b>Keep the "
+"configuration file safe and protect it from unauthorized access!</b>"
 msgstr ""
 
 msgid ""
@@ -670,6 +665,12 @@ msgid "Activate"
 msgstr "Aktivieren"
 
 msgid "Activate Pool for Jail Manager"
+msgstr ""
+
+msgid "Activate this Boot Environment?"
+msgstr ""
+
+msgid "Activated Pool for Jail Manager:"
 msgstr ""
 
 msgid ""
@@ -949,13 +950,16 @@ msgstr ""
 msgid "All dirs"
 msgstr ""
 
-msgid "Allocate RAM for the VM"
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
 msgstr ""
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
+msgstr ""
+
+msgid "Allocate at least 256 MiB."
 msgstr ""
 
 msgid "Allow Anonymous Binding"
@@ -1371,10 +1375,10 @@ msgstr ""
 msgid "Available Disks"
 msgstr ""
 
-msgid "Available Themes"
+msgid "Available Memory:"
 msgstr ""
 
-msgid "Available memory"
+msgid "Available Themes"
 msgstr ""
 
 msgid "Available space threshold (%)"
@@ -1653,6 +1657,11 @@ msgstr ""
 msgid "Category"
 msgstr "Kategorie"
 
+msgid ""
+"Caution: Allocating too much memory can slow the  system or prevent VMs "
+"from running."
+msgstr ""
+
 msgid "Certificate"
 msgstr "Zertifikat"
 
@@ -1784,11 +1793,6 @@ msgstr ""
 msgid ""
 "Check this box if importing a certificate for which a CSR exists on this "
 "system"
-msgstr ""
-
-msgid ""
-"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. A <i>GUI "
-"SSL Certificate</i> must be selected."
 msgstr ""
 
 msgid "Check-in"
@@ -2405,6 +2409,12 @@ msgstr ""
 msgid "Could not delete boot environment."
 msgstr ""
 
+msgid "Could not find a group name for this group ID."
+msgstr ""
+
+msgid "Could not find a user name for this user ID."
+msgstr ""
+
 msgid "Country"
 msgstr ""
 
@@ -2515,6 +2525,20 @@ msgid "Custom Properties"
 msgstr ""
 
 msgid "Custom Server"
+msgstr ""
+
+msgid ""
+"DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
+"similar to dyndns.org."
+msgstr ""
+
+msgid ""
+"DDNS server path. Path syntax varies by  provider and must be obtained from "
+"that provider. For example,  <i>/update?hostname=</i> is a simple path for "
+"the  <i>update.twodns.de</i> <b>Custom Server</b>. The hostname is  "
+"automatically appended by default. More examples are in the  <a "
+"href=\"https://github.com/troglobit/inadyn#custom-ddns-providers\" "
+"target=\"_blank\">In-A-Dyn documentation</a>."
 msgstr ""
 
 msgid "DELETE"
@@ -2775,6 +2799,9 @@ msgstr ""
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
+msgid "Deleting the <b>"
+msgstr ""
+
 msgid "Deny list"
 msgstr ""
 
@@ -2820,6 +2847,16 @@ msgid "Destination Path"
 msgstr ""
 
 msgid "Destination Snapshot Lifetime"
+msgstr ""
+
+msgid "Destination Snapshots Are Not Related to Replicated Snapshots"
+msgstr ""
+
+msgid ""
+"Destination dataset does not contain any snapshots that can be used as a "
+"basis for the incremental changes in the snapshots being sent. The "
+"snapshots in the destination dataset will be deleted and the replication "
+"will begin with a complete initial copy."
 msgstr ""
 
 msgid ""
@@ -3108,9 +3145,6 @@ msgstr ""
 msgid "Edit Idmap"
 msgstr ""
 
-msgid "Edit Note"
-msgstr ""
-
 msgid "Edit Options"
 msgstr ""
 
@@ -3299,6 +3333,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Enabling <em>Time Machine</em> on an SMB share requires a restart of the "
+"SMB service."
+msgstr ""
+
+msgid ""
 "Enabling this option is <b>not</b> recommended as it bypasses a security "
 "mechanism."
 msgstr ""
@@ -3430,9 +3469,6 @@ msgid "Enter a description of the tunable."
 msgstr ""
 
 msgid "Enter a descriptive title for the new issue."
-msgstr ""
-
-msgid "Enter a fully qualified domain name. Example: <b>yourname.dyndns.org</b>"
 msgstr ""
 
 msgid ""
@@ -3812,9 +3848,6 @@ msgstr ""
 msgid "Enter the IP address or hostname for SNMP UPS."
 msgstr ""
 
-msgid "Enter the IP address or hostname of a remote server running Graphite."
-msgstr ""
-
 msgid ""
 "Enter the IP address or hostname of the VMware host. When clustering, this "
 "is the vCenter server for the cluster."
@@ -3914,11 +3947,6 @@ msgid ""
 "<i>/data example-dataset-name</i>"
 msgstr ""
 
-msgid ""
-"Enter the name and port of the server that reports the external IP address. "
-"Example: <b>server.name.org:port</b>."
-msgstr ""
-
 msgid "Enter the name of the Key Distribution Center."
 msgstr ""
 
@@ -3986,14 +4014,6 @@ msgstr ""
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
 msgstr ""
 
-msgid "Enter the password used to log in to the provider and update the record."
-msgstr ""
-
-msgid ""
-"Enter the path requested by the <b>CheckIP Server</b> to determine the user "
-"IP address."
-msgstr ""
-
 msgid ""
 "Enter the percentage of free space to remain in the pool. When this "
 "percentage is reached, the system issues an alert, but only if zvols are "
@@ -4032,9 +4052,6 @@ msgstr ""
 msgid "Enter the username if the SMTP server requires authentication."
 msgstr ""
 
-msgid "Enter the username used to log in to the provider and update the record."
-msgstr ""
-
 msgid ""
 "Enter up to four interface configurations in the format "
 "<i>interface:bridge</i>, separated by a comma (,). The left value is the "
@@ -4050,6 +4067,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
+msgstr ""
+
+msgid "Enter valid value"
 msgstr ""
 
 msgid ""
@@ -4109,9 +4129,6 @@ msgid "Error getting locales"
 msgstr ""
 
 msgid "Error getting pool data."
-msgstr ""
-
-msgid "Error getting pool or dataset data."
 msgstr ""
 
 msgid "Error importing pool"
@@ -4431,6 +4448,12 @@ msgstr ""
 msgid "Full with zeros"
 msgstr ""
 
+msgid ""
+"Fully qualified domain name of the host with the  dynamic IP address. "
+"Separate multiple domains with a space, comma  (,), or semicolon (;). "
+"Example:  <i>myname.dyndns.org; myothername.dyndns.org</i>."
+msgstr ""
+
 msgid "GID"
 msgstr ""
 
@@ -4650,9 +4673,6 @@ msgid "Hostname"
 msgstr ""
 
 msgid "Hostname (Virtual)"
-msgstr ""
-
-msgid "Hostname for your custom DDNS provider"
 msgstr ""
 
 msgid ""
@@ -5065,6 +5085,11 @@ msgstr ""
 msgid "Invalid dataset."
 msgstr ""
 
+msgid ""
+"Invalid network address list. Check for typos or missing CIDR netmasks and "
+"separate addresses with a space."
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr ""
 
@@ -5074,7 +5099,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Invalid value. Valid values are numbers followed by optional unit letters, "
+"Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
 msgstr ""
 
@@ -5141,9 +5166,7 @@ msgstr ""
 msgid "Jails cannot be changed while running."
 msgstr ""
 
-msgid ""
-"Jails cannot be created or managed untill a pool is present for storing "
-"them. Please create a pool first"
+msgid "Jails cannot be created or managed until a pool is present for storing them."
 msgstr ""
 
 msgid "Jails failed to start"
@@ -5175,6 +5198,9 @@ msgstr ""
 msgid ""
 "Keep the zvol name short. Using a zvol name longer than 63 characters can "
 "prevent accessing the zvol as a device."
+msgstr ""
+
+msgid "Keep this Boot Environment?"
 msgstr ""
 
 msgid "Keep user primary group"
@@ -5633,7 +5659,7 @@ msgstr ""
 msgid "Mirror"
 msgstr ""
 
-msgid "Mixing disks of different sizes in a VDEV is not recommended."
+msgid "Mixing disks of different sizes in a VDEV is not allowed."
 msgstr ""
 
 msgid "Mode"
@@ -5759,6 +5785,14 @@ msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
 msgid "Name and Options"
+msgstr ""
+
+msgid ""
+"Name and port of the server that reports the  external IP address. For "
+"example, entering <i>checkip.dyndns.org:80</i>  uses  <a "
+"href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" "
+"target=\"_blank\">Dyn IP detection</a>.  to discover the remote socket IP "
+"address."
 msgstr ""
 
 msgid "Name of NIS domain."
@@ -5898,17 +5932,17 @@ msgid "Network Summary"
 msgstr ""
 
 msgid ""
+"Network addresses allowed to use this initiator. Leave blank to allow all "
+"networks or list network addresses with       a CIDR mask. Separate "
+"multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."
+msgstr ""
+
+msgid ""
 "Network addresses allowed use this initiator. Each address can include an "
 "optional <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
 "target=\"_blank\">CIDR</a> netmask. Click <i>+</i> to add the network "
 "address to the list. Example: <i>192.168.2.0/24</i>."
-msgstr ""
-
-msgid ""
-"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
-"network addresses with a CIDR mask. Separate multiple addresses with a "
-"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
 msgstr ""
 
 msgid "Network changes applied successfully."
@@ -5943,6 +5977,9 @@ msgstr ""
 msgid "Network interfaces to include in the bridge."
 msgstr ""
 
+msgid "Never"
+msgstr ""
+
 msgid "New Password"
 msgstr ""
 
@@ -5974,7 +6011,10 @@ msgstr ""
 msgid "No Communication Warning Time"
 msgstr ""
 
-msgid "No Pool Exist"
+msgid "No Logs"
+msgstr ""
+
+msgid "No Pools"
 msgstr ""
 
 msgid "No Stat"
@@ -5983,15 +6023,13 @@ msgstr ""
 msgid "No interfaces configured with Virtual IP."
 msgstr ""
 
+msgid "No longer keep this Boot Environment?"
+msgstr ""
+
 msgid "No pools"
 msgstr ""
 
 msgid "No pools are configured."
-msgstr ""
-
-msgid ""
-"No pools exist. Jails cannot be created or managed until a pool is present "
-"for storing them. Please create a pool first."
 msgstr ""
 
 msgid "No snapshots sent yet"
@@ -6004,9 +6042,6 @@ msgid "No updates available."
 msgstr ""
 
 msgid "No, continue with import"
-msgstr ""
-
-msgid "Note"
 msgstr ""
 
 msgid "Notes"
@@ -6263,6 +6298,9 @@ msgid ""
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
 msgstr ""
 
+msgid "PENDING"
+msgstr ""
+
 msgid "POST INSTALL NOTES"
 msgstr ""
 
@@ -6288,6 +6326,9 @@ msgid "Password associated with the LDAP User DN."
 msgstr ""
 
 msgid "Password for SED"
+msgstr ""
+
+msgid "Password for logging in to the provider and  updating the record."
 msgstr ""
 
 msgid "Password for the Bind DN."
@@ -6333,6 +6374,12 @@ msgid ""
 msgstr ""
 
 msgid "Path"
+msgstr ""
+
+msgid ""
+"Path to the <b>CheckIP Server</b>. For example,  <i>no-ip.com</i> uses a "
+"<b>CheckIP Server</b> of  <i>dynamic.zoneedit.com</i> and <b>CheckIP "
+"Path</b> of  <i>/checkip.html</i>."
 msgstr ""
 
 msgid "Path to the extent"
@@ -6753,6 +6800,17 @@ msgstr ""
 msgid "Recursive"
 msgstr ""
 
+msgid ""
+"Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
+"Certificate</i> is required for <i>HTTPS</i>. Activating  this also sets "
+"the <a  "
+"href=\"https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security\"  "
+"target=\"_blank\">HTTP Strict Transport Security (HSTS)</a> maximum age  to "
+"<i>31536000</i> seconds (one year). This means that after a  browser "
+"connects to the web interface for the first time, the browser  continues to "
+"use HTTPS and renews this setting every year."
+msgstr ""
+
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
 
@@ -6778,9 +6836,6 @@ msgid "Reload the page for the license to take effect."
 msgstr ""
 
 msgid "Remote Encryption"
-msgstr ""
-
-msgid "Remote Graphite Server Hostname"
 msgstr ""
 
 msgid "Remote Host"
@@ -7002,6 +7057,9 @@ msgstr ""
 msgid "Restart SMB Service"
 msgstr ""
 
+msgid "Restart SMB Service?"
+msgstr ""
+
 msgid "Restart Services"
 msgstr ""
 
@@ -7029,9 +7087,6 @@ msgstr ""
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
-msgstr ""
-
-msgid "Revision"
 msgstr ""
 
 msgid "Rollback"
@@ -7119,6 +7174,9 @@ msgstr ""
 msgid "SFTP log level"
 msgstr ""
 
+msgid "SMB service has been restarted"
+msgstr ""
+
 msgid "SMTP Authentication"
 msgstr ""
 
@@ -7187,6 +7245,12 @@ msgstr ""
 msgid "Save Network Interface Changes"
 msgstr ""
 
+msgid "Save Without Restarting"
+msgstr ""
+
+msgid "Save and Restart SMB Now"
+msgstr ""
+
 msgid "Save configuration settings from this machine before updating?"
 msgstr ""
 
@@ -7248,6 +7312,9 @@ msgstr ""
 msgid "Script to execute before running sync."
 msgstr ""
 
+msgid "Scrub"
+msgstr ""
+
 msgid "Scrub Boot Pool"
 msgstr ""
 
@@ -7258,6 +7325,12 @@ msgid "Scrub Tasks"
 msgstr ""
 
 msgid "Scrub complete on pool <i>"
+msgstr ""
+
+msgid "Scrub interval (in days)"
+msgstr ""
+
+msgid "Scrub started"
 msgstr ""
 
 msgid ""
@@ -7361,6 +7434,16 @@ msgid ""
 "(Compatibility Support Mode) for older operating systems that only support "
 "BIOS booting. <i>Grub</i> is not recommended but can be used when the other "
 "options do not work."
+msgstr ""
+
+msgid ""
+"Select <samp>0.0.0.0</samp> to include all addresses. When this has been "
+"chosen, additional addresses cannot be selected."
+msgstr ""
+
+msgid ""
+"Select <samp>::</samp> to include all addresses. When this has been chosen, "
+"additional addresses cannot be selected."
 msgstr ""
 
 msgid "Select Authenticator"
@@ -8516,14 +8599,6 @@ msgid ""
 "target=\"_blank\">jail(8)</a>."
 msgstr ""
 
-msgid "Set to use HTTPS for the connection to the <b>CheckIP Server</b>."
-msgstr ""
-
-msgid ""
-"Set to use HTTPS for the connection to the server that updates the DNS "
-"record."
-msgstr ""
-
 msgid ""
 "Set to use SLAAC (Stateless Address Auto Configuration) to autoconfigure "
 "IPv6 in the jail."
@@ -8636,8 +8711,8 @@ msgid "Setup Users and Groups."
 msgstr ""
 
 msgid ""
-"Several providers are supported. If a provider is not listed, select "
-"<i>Custom Provider</i> and enter the information in the <i>Custom "
+"Several providers are supported. If a specific  provider is not listed, "
+"select <i>Custom Provider</i> and enter the  information in the <i>Custom "
 "Server</i> and <i>Custom Path</i> fields."
 msgstr ""
 
@@ -8888,6 +8963,9 @@ msgstr ""
 msgid "Start scrub on pool <i>"
 msgstr ""
 
+msgid "Start the scrub now?"
+msgstr ""
+
 msgid "Start time for the replication task."
 msgstr ""
 
@@ -8910,6 +8988,9 @@ msgid ""
 msgstr ""
 
 msgid "Static Routes"
+msgstr ""
+
+msgid "Stats/Settings"
 msgstr ""
 
 msgid "Status"
@@ -9582,9 +9663,6 @@ msgstr ""
 msgid "Title "
 msgstr ""
 
-msgid "To delete the <b>"
-msgstr ""
-
 msgid "Toggle Collapse"
 msgstr ""
 
@@ -9675,6 +9753,9 @@ msgstr ""
 msgid ""
 "URL to an image to use for notification icons. This overrides the incoming "
 "webhook setting."
+msgstr ""
+
+msgid "UTC"
 msgstr ""
 
 msgid "UUID"
@@ -9771,6 +9852,9 @@ msgid "Update File Temporary Storage Location"
 msgstr ""
 
 msgid "Update Frequency"
+msgstr ""
+
+msgid "Update Interval"
 msgstr ""
 
 msgid "Update License"
@@ -9883,6 +9967,12 @@ msgstr ""
 msgid "Use FQDN for logging"
 msgstr ""
 
+msgid "Use HTTPS for the connection to the  <b>CheckIP Server</b>."
+msgstr ""
+
+msgid "Use HTTPS for the connection to the server that updates  the DNS record."
+msgstr ""
+
 msgid "Use Signature Version 2"
 msgstr ""
 
@@ -9986,6 +10076,9 @@ msgid ""
 msgstr ""
 
 msgid "Username"
+msgstr ""
+
+msgid "Username for logging in to the provider and  updating the record."
 msgstr ""
 
 msgid "Username for this service."
