@@ -94,9 +94,7 @@ export class SigninComponent implements OnInit {
   ngOnInit() {
     if (!this.logo_ready) {
       this.interval = setInterval(() => {
-        if (!this.logo_ready) {
-          this.checkSystemType();
-        }
+        this.checkSystemType();
       }, 5000);
     }
     
