@@ -135,7 +135,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
     this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       if (evt && evt.data.commit) {
         this.pendingNetworkChanges = false;
         this.checkNetworkCheckinWaiting();
@@ -301,6 +300,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           this.user_check_in_prompted = false;
           this.loader.open();
           this.ws.call('interface.checkin').subscribe((success) => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
             this.loader.close();
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,

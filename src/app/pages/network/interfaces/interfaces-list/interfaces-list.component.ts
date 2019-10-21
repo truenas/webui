@@ -7,7 +7,7 @@ import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
 import helptext from '../../../../helptext/network/interfaces/interfaces-list';
 import { EntityUtils } from '../../../common/entity/utils';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
@@ -152,6 +152,16 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
 
     this.checkPendingChanges();
     this.checkWaitingCheckin();
+    this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
+      if (evt && evt.data.checkin) {
+        this.checkin_remaining = null;
+        this.checkinWaiting = false;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
+        this.hasPendingChanges = false;
+      }
+    });
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
@@ -208,7 +218,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true}, sender:this});
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
             this.snackBar.open(helptext.changes_saved_successfully, T("Ok"));
@@ -231,7 +241,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.checkin').subscribe((success) => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true}, sender:this});
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
             this.entityList.loader.close();
             this.entityList.dialogService.Info(
               helptext.checkin_complete_title,
@@ -289,5 +299,6 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   }
   
   ngOnDestroy() {
+    this.core.unregister({observerClass:this});
   }
 }
