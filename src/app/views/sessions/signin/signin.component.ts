@@ -32,7 +32,6 @@ export class SigninComponent implements OnInit {
   public checking_status = false;
   public copyrightYear = globalHelptext.copyright_year;
   private interval: any;
-  private token_interval: any;
   public exposeLegacyUI = false;
 
   signinData = {
@@ -103,13 +102,6 @@ export class SigninComponent implements OnInit {
     
     if (this.canLogin()) {
         this.loginToken();
-    } else {
-      this.token_interval = setInterval(() => {
-        if (this.canLogin()) {
-          this.loginToken();
-          clearInterval(this.token_interval);
-        }
-      }, 5000);
     }
 
     this.ws.call('user.has_root_password').subscribe((res) => {
@@ -200,6 +192,9 @@ export class SigninComponent implements OnInit {
               this.ha_status_text = T('HA is reconnecting.');
             } else {
               this.ha_status_text = T('HA is disabled.');
+            }
+            if (this.canLogin()) {
+              this.loginToken();
             }
           }, err => {
             this.checking_status = false;
