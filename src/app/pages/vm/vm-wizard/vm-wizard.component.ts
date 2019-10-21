@@ -609,7 +609,7 @@ async customSubmit(value) {
     zvol_payload["zvol_name"] = hdd
     zvol_payload["zvol_volsize"] = value.volsize * 1024 * 1000 * 1000;
 
-    vm_payload["memory"]= (value.memory);
+    vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;
     vm_payload["description"] = value.description;
     vm_payload["time"]= value.time;
