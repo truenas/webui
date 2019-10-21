@@ -215,7 +215,7 @@ export class InterfacesListComponent implements OnDestroy {
           }, err => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
-            new EntityUtils().handleWSError(this.entityList, err);
+            new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
           });
         }
       });
@@ -240,7 +240,7 @@ export class InterfacesListComponent implements OnDestroy {
             this.checkin_remaining = null;
           }, (err) => {
             this.entityList.loader.close();
-            new EntityUtils().handleWSError(this.entityList, err);
+            new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
           });
         }
       }
