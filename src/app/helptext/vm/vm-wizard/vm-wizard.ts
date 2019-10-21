@@ -87,10 +87,9 @@ disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
 disk_radio_options_new_label: T("Create new disk image"),
 disk_radio_options_existing_label: T("Use existing disk image"),
 
-volsize_placeholder : T('Size (GiB)'),
-volsize_tooltip: T('Allocate a number of gigabytes of space for the\
- new zvol.'),
-volsize_validation: [Validators.required, rangeValidator(1)],
+volsize_placeholder : T(`Size ${globalHelptext.human_readable.suggestion_label}`),
+volsize_tooltip: T(`Allocate space for the new zvol ${globalHelptext.human_readable.suggestion_label}.`),
+volsize_validation: [Validators.required],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
 datastore_placeholder: T('Zvol Location'),
