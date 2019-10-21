@@ -22,18 +22,21 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   constructor(private ws: WebSocketService, ) {}
 
   ngOnInit() {
-    const tempArr = [];
-    this.ws.call('activedirectory.get_state').subscribe((res) => {
-      tempArr.push({name: 'Active Directory', state: res});
-
-      this.ws.call('ldap.get_state').subscribe((res) => {
-        tempArr.push({name: 'LDAP', state: res});
-
-        this.ws.call('nis.get_state').subscribe((res) => {
-          tempArr.push({name: 'NIS', state: res});
-          this.dataSource = tempArr;
-        });
-      });
+    let tempArray = [];
+    this.ws.call('directoryservices.get_state').subscribe((res) => {
+      tempArray.push({name: 'Active Directory', state: res.activedirectory});
+      tempArray.push({name: 'LDAP', state: res.ldap});
+      tempArray.push({name: 'NIS', state: res.nis});
+      this.dataSource = tempArray;
     });
+    this.ws.subscribe('directoryservices.status').subscribe((res) => {
+      let tempArray = [];
+      if (res) {
+        tempArray.push({name: 'Active Directory', state: res.fields.activedirectory});
+        tempArray.push({name: 'LDAP', state: res.fields.ldap});
+        tempArray.push({name: 'NIS', state: res.fields.nis});
+        this.dataSource = tempArray;
+      }
+    })
   }
 }

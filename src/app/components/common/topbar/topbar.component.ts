@@ -141,7 +141,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
-      this.getDirServicesStatus();
       this.isUpdateRunning();
     });
 
@@ -475,26 +474,35 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       });
   }
 
-  getDirServicesStatus() {
-    let counter = 0;
-    this.ws.call('activedirectory.get_state').subscribe((res) => {
-      this.dirServicesStatus.push({name: 'Active Directory', state: res});
-
-      this.ws.call('ldap.get_state').subscribe((res) => {
-        this.dirServicesStatus.push({name: 'LDAP', state: res});
-
-        this.ws.call('nis.get_state').subscribe((res) => {
-          this.dirServicesStatus.push({name: 'NIS', state: res});
-          this.dirServicesStatus.forEach((item) => {
-            if (item.state !== 'DISABLED') {
-              counter ++;
-            }
-          });
-          counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
-        });
-      });
-    });
+  getDirServicesStatus() { 
+    console.log('getting status')
+    this.ws.call('directoryservices.get_state').subscribe((res) => {
+      this.dirServicesStatus.push({name: 'Active Directory', state: res.activedirectory});
+      this.dirServicesStatus.push({name: 'LDAP', state: res.ldap});
+      this.dirServicesStatus.push({name: 'NIS', state: res.nis});
+      this.showDSIcon();
+    })
+    this.ws.subscribe('directoryservices.status').subscribe((res) => {
+      if (res) {
+        this.dirServicesStatus.push({name: 'Active Directory', state: res.fields.activedirectory});
+        this.dirServicesStatus.push({name: 'LDAP', state: res.fields.ldap});
+        this.dirServicesStatus.push({name: 'NIS', state: res.fields.nis});
+        this.showDSIcon();
+      }
+    })
   };
+
+  showDSIcon() {
+    let counter = 0;
+    this.dirServicesStatus.forEach((item) => {
+      console.log(item)
+      if (item.state !== 'DISABLED') {
+        counter ++;
+      }
+    });
+    console.log(counter)
+    counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
+  }
 
   isUpdateRunning() {
     let method;
