@@ -82,6 +82,10 @@ export class SigninComponent implements OnInit {
           setInterval(() => {
             this.getHAStatus();
           }, 6000);
+        } else {
+          if (this.canLogin()) {
+            this.loginToken();
+          }
         }
         window.localStorage.setItem('is_freenas', res);
         if (!this.is_freenas && window.localStorage.exposeLegacyUI === 'true') {
