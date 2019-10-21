@@ -40,7 +40,7 @@ export class VmCardsComponent  implements OnDestroy {
   public actions = [];
   public showSpinner = true;
   public poolsExist: boolean = true;
-  public previousUrl = '';
+  public addBtnDisabled = false;
 
   protected entityTable: EntityTableComponent;
 
@@ -73,6 +73,7 @@ export class VmCardsComponent  implements OnDestroy {
   preInit(entityTable: EntityTableComponent) {
     this.ws.call('pool.query').subscribe((res) => {
       if (res.length === 0) {
+        this.addBtnDisabled = true;
         this.poolsExist = false;
         this.dialog.confirm(T(helptext.no_pools_dialog.title), helptext.no_pools_dialog.msg,
         true, helptext.no_pools_dialog.action, false)
