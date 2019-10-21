@@ -94,13 +94,33 @@ export class SigninComponent implements OnInit {
   ngOnInit() {
     if (!this.logo_ready) {
       this.interval = setInterval(() => {
-        this.checkSystemType();
+        if (!this.logo_ready) {
+          this.checkSystemType();
+        }
       }, 5000);
     }
+    
+    if (this.canLogin()) {
+        this.loginToken();
+    } else {
+      this.interval = setInterval(() => {
+        if (this.canLogin()) {
+          this.loginToken();
+        }
+      }, 5000);
+    }
+
     this.ws.call('user.has_root_password').subscribe((res) => {
       this.has_root_password = res;
     })
 
+    this.setPasswordFormGroup = this.fb.group({
+      password: new FormControl('', [Validators.required]),
+      password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
+    })
+  }
+
+  loginToken() {
     let middleware_token;
     if (window['MIDDLEWARE_TOKEN']) {
       middleware_token = window['MIDDLEWARE_TOKEN'];
@@ -144,10 +164,17 @@ export class SigninComponent implements OnInit {
       this.ws.login_token(this.ws.token)
                        .subscribe((result) => { this.loginCallback(result); });
     }
-    this.setPasswordFormGroup = this.fb.group({
-      password: new FormControl('', [Validators.required]),
-      password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
-    })
+  }
+
+  canLogin() {
+    if (this.logo_ready && this.connected &&
+       (this.failover_status === 'SINGLE' ||
+        this.failover_status === 'MASTER' || 
+        this.is_freenas )) {
+          return true;
+    } else {
+      return false;
+    }
   }
 
   getHAStatus() {
