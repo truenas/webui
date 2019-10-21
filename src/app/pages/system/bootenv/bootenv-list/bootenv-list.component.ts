@@ -185,7 +185,6 @@ export class BootEnvironmentListComponent {
             }
           )
       });
-    }
 
     if (row.keep === true){
       actions.push({
