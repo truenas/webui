@@ -522,6 +522,14 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'select',
+      name: 'drives-ONEDRIVE',
+      placeholder: helptext.drives_onedrive.placeholder,
+      tooltip: helptext.drives_onedrive.tooltip,
+      options: [],
+      isHidden: true,
+    },
+    {
+      type: 'select',
       name: 'drive_type-ONEDRIVE',
       placeholder: helptext.drive_type_onedrive.placeholder,
       tooltip: helptext.drive_type_onedrive.tooltip,
@@ -822,6 +830,7 @@ export class CloudCredentialsFormComponent {
         const controls = this.entityForm.formGroup.controls;
         const selectedProvider = this.selectedProvider;
         const dialogService = this.dialog;
+        const getOnedriveList = this.getOnedriveList.bind(this);
 
         window.addEventListener("message", doAuth, false);
 
@@ -837,6 +846,9 @@ export class CloudCredentialsFormComponent {
                 }
                 controls[targetProp].setValue(message.data.result[prop]);
               }
+            }
+            if (selectedProvider === 'ONEDRIVE') {
+              getOnedriveList(message.data);
             }
           }
           window.removeEventListener("message", doAuth);
@@ -983,16 +995,12 @@ export class CloudCredentialsFormComponent {
       }
     });
 
-    entityForm.formGroup.controls['token-ONEDRIVE'].valueChanges.subscribe((res) => {
-      console.log(res);
+    const driveTypeCtrl = entityForm.formGroup.controls['drive_type-ONEDRIVE'];
+    const driveIdCtrl = entityForm.formGroup.controls['drive_id-ONEDRIVE'];
+    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.subscribe((res) => {
       if (res) {
-        this.ws.call('cloudsync.onedrive_list_drives', [{
-          // client_id: '',
-          // client_secret: '',
-          token: res,
-        }]).subscribe((drives) => {
-          console.log(drives);
-        })
+        driveTypeCtrl.setValue(res.drive_type);
+        driveIdCtrl.setValue(res.drive_id);
       }
     });
   }
@@ -1040,5 +1048,29 @@ export class CloudCredentialsFormComponent {
       }
       entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
     }
+  }
+
+  getOnedriveList(data) {
+    if (data.error) {
+      this.entityForm.setDisabled('drives-ONEDRIVE', true, true);
+      return;
+    }
+    data = data.result;
+    const drivesConfig = _.find(this.fieldConfig, {name: 'drives-ONEDRIVE'});
+    this.entityForm.setDisabled('drives-ONEDRIVE', false, false);
+    drivesConfig.options = [];
+    this.ws.call('cloudsync.onedrive_list_drives', [{
+      client_id: data.client_id,
+      client_secret: data.client_secret,
+      token: data.token,
+    }]).subscribe(
+      (drives) => {
+        for (let i = 0; i < drives.length; i++) {
+          drivesConfig.options.push({label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i]});
+        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      })
   }
 }

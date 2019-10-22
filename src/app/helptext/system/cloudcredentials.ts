@@ -249,6 +249,11 @@ export const helptext_system_cloudcredentials = {
     )
   },
 
+  drives_onedrive: {
+    placeholder: T("Drives List"),
+    tooltip: T('')
+  },
+
   drive_type_onedrive: {
     placeholder: T("Drive Account Type"),
     tooltip: T(
