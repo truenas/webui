@@ -6,21 +6,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
-import { CloudCredentialService, DialogService, WebSocketService } from '../../../../services/';
+import { CloudCredentialService, DialogService, WebSocketService, ReplicationService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-cloudcredentials-form',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [ CloudCredentialService ],
+  providers: [ CloudCredentialService, ReplicationService ],
 })
 export class CloudCredentialsFormComponent {
 
   protected isEntity = true;
   protected addCall = 'cloudsync.credentials.create';
   protected queryCall = 'cloudsync.credentials.query';
+  protected editCall = 'cloudsync.credentials.update';
   protected queryCallOption: Array<any> = [['id', '=']];
   protected route_success: string[] = ['system', 'cloudcredentials'];
   protected formGroup: FormGroup;
@@ -667,6 +667,10 @@ export class CloudCredentialsFormComponent {
         {
           label: '---------',
           value: '',
+        },
+        {
+          label: 'Generate New',
+          value: 'NEW',
         }
       ],
       value: '',
@@ -893,7 +897,8 @@ export class CloudCredentialsFormComponent {
               protected ws: WebSocketService,
               protected cloudcredentialService: CloudCredentialService,
               protected dialog: DialogService,
-              public snackBar: MatSnackBar) {
+              public snackBar: MatSnackBar,
+              protected replicationService: ReplicationService) {
     this.providerField = _.find(this.fieldConfig, {'name': 'provider'});
     this.cloudcredentialService.getProviders().subscribe(
       (res) => {
@@ -953,7 +958,6 @@ export class CloudCredentialsFormComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-    entityForm.submitFunction = this.submitFunction;
 
     const providerField = _.find(this.fieldConfig, {'name' : 'provider'});
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
@@ -993,10 +997,32 @@ export class CloudCredentialsFormComponent {
     }
   }
 
-  submitFunction(value) {
+  async customSubmit(value) {
+    this.entityForm.loader.open();
     const attributes = {};
     let attr_name: string;
-
+    if (value['private_key-SFTP'] === 'NEW') {
+      await this.replicationService.genSSHKeypair().then(
+        async (res) => {
+          const payload = {
+            name: value['name'] + ' Key',
+            type: 'SSH_KEY_PAIR',
+            attributes: res,
+          };
+          await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
+            (sshKey) => {
+              value['private_key-SFTP'] = sshKey.id;
+            },
+            (sshKey_err) => {
+              this.entityForm.loader.close();
+              new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
+            });
+        },
+        (err) => {
+          this.entityForm.loader.close();
+          new EntityUtils().handleWSError(this, err, this.dialog);
+        });
+    }
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && value[item] != '') {
@@ -1008,11 +1034,19 @@ export class CloudCredentialsFormComponent {
     }
     value['attributes'] = attributes;
 
-    if (!this.pk) {
-      return this.ws.call('cloudsync.credentials.create', [value]);
-    } else {
-      return this.ws.call('cloudsync.credentials.update', [this.pk, value]);
-    }
+    this.entityForm.submitFunction(value).subscribe(
+      (res) => {
+          this.entityForm.loader.close();
+          this.entityForm.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (err) => {
+          this.entityForm.loader.close();
+          if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
+              new EntityUtils().handleWSError(this, err, this.dialog);
+          } else {
+              new EntityUtils().handleError(this, err);
+          }
+      });
   }
 
   dataAttributeHandler(entityForm: any) {
