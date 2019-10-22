@@ -955,7 +955,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     obj['cols'] = this.conf.columns;
 
     let preferredCols = this.prefService.preferences.tableDisplayedColumns;
-    console.log(preferredCols)
     if (preferredCols.length > 0) {
       preferredCols.forEach((i) => {
         if (i.title === this.title) {
