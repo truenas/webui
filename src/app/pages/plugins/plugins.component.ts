@@ -272,7 +272,6 @@ export class PluginsComponent {
   }
 
   dataHandler(entityList: any) {
-    console.log(entityList)
     for (let i = 0; i < entityList.rows.length; i++) {
       let revision = entityList.rows[i]['revision'];
       if (revision !== 'N/A' && revision !== '0' ) {
