@@ -150,7 +150,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
           name: 'tableDisplayedColumns',
           placeholder: T('Reset Table Columns to Default'),
           value: false,
-          tooltip: T('This option resets all tables to diplay default columns. Previously selected columns will be overwritten.'),
+          tooltip: T('Reset all tables to display default columns.'),
           class:'inline'
         }
       ]
