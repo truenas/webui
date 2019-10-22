@@ -38,8 +38,9 @@ export class PluginsComponent {
   public columns: Array<any> = [
     { name: T('Jail'), prop: 'name', always_display: true },
     { name: T('Status'), prop: 'state' },
-    { name: T('IPv4 Address'), prop: 'ip4' },
-    { name: T('IPv6 Address'), prop: 'ip6' },
+    { name: T('Admin Portal'), prop: 'admin_portal'},
+    { name: T('IPv4 Address'), prop: 'ip4', hidden: true },
+    { name: T('IPv6 Address'), prop: 'ip6', hidden: true },
     { name: T('Version'), prop: 'version', hidden: true },
     { name: T('Plugin'), prop: 'plugin', hidden: true },
     { name: T('Release'), prop: 'release', hidden: true },
@@ -271,6 +272,7 @@ export class PluginsComponent {
   }
 
   dataHandler(entityList: any) {
+    console.log(entityList)
     for (let i = 0; i < entityList.rows.length; i++) {
       let revision = entityList.rows[i]['revision'];
       if (revision !== 'N/A' && revision !== '0' ) {
