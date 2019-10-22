@@ -65,6 +65,7 @@ export interface FormConfig {
   customFilter?:any[];
   
   beforeSubmit?;
+  afterSubmit?;
   customSubmit?;
   clean?;
   errorReport?;
@@ -292,8 +293,18 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     //console.log(value);
     if(!eventName){
       this.target.next({name:"FormSubmitted", data:value, sender:this.conf});
+      this.after(value);
     } else {
       this.target.next({name:eventName, data:value, sender:this.conf});
+      this.after(value);
+
+    }
+
+  }
+
+  after(value) {
+    if (this.conf.afterSubmit) {
+      this.conf.afterSubmit(value);
     }
   }
 

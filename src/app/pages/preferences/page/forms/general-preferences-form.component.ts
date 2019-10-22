@@ -144,6 +144,14 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
           value:prefs.allowPwToggle,
           tooltip: T('This option enables/disables a password toggle button.'),
           class:'inline'
+        },
+        {
+          type: 'checkbox',
+          name: 'tableDisplayedColumns',
+          placeholder: T('Reset Table Columns to Default'),
+          value: false,
+          tooltip: T('This option resets all tables to diplay default columns. Previously selected columns will be overwritten.'),
+          class:'inline'
         }
       ]
     }
@@ -154,5 +162,13 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
            this.fieldConfig.push(this.fieldSets[i].config[ii]);
          }
        }
+     }
+
+     beforeSubmit(data) {
+       data.tableDisplayedColumns ? data.tableDisplayedColumns = [] : delete(data.tableDisplayedColumns);
+     }
+
+     afterSubmit() {
+      this.snackBar.open(T('Changes submitted'), T('Close'), { duration: 4000 });
      }
 }
