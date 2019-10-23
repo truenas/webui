@@ -476,27 +476,26 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   getDirServicesStatus() { 
     this.ws.call('directoryservices.get_state').subscribe((res) => {
-      this.dirServicesStatus.push({name: 'Active Directory', state: res.activedirectory});
-      this.dirServicesStatus.push({name: 'LDAP', state: res.ldap});
-      this.dirServicesStatus.push({name: 'NIS', state: res.nis});
+      for (let i in res) {
+        this.dirServicesStatus.push(res[i])
+      }
       this.showDSIcon();
     })
     this.ws.subscribe('directoryservices.status').subscribe((res) => {
       this.dirServicesStatus = [];
-      if (res) {
-        this.dirServicesStatus.push({name: 'Active Directory', state: res.fields.activedirectory});
-        this.dirServicesStatus.push({name: 'LDAP', state: res.fields.ldap});
-        this.dirServicesStatus.push({name: 'NIS', state: res.fields.nis});
-        this.showDSIcon();
+      for (let i in res.fields) {
+        this.dirServicesStatus.push(res.fields[i])
       }
+      this.showDSIcon()
     })
   };
 
   showDSIcon() {
-    let counter = 0;
+    this.showDirServicesIcon = false;
     this.dirServicesStatus.forEach((item) => {
-      if (item.state !== 'DISABLED') { counter ++;  }
-      counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
+      if (item !== 'DISABLED') { 
+        this.showDirServicesIcon = true; 
+      };
     });
   }
 
