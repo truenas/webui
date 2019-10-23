@@ -25,7 +25,7 @@ interface UserPreferences {
    
 @Component({
   selector : 'general-preferences-form',
-  template:`<entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<div><button (click)="test()">Trigger</button></div><br><entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
 export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
@@ -154,5 +154,9 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
            this.fieldConfig.push(this.fieldSets[i].config[ii]);
          }
        }
+     }
+
+     test(){
+      console.log("Clicked!");
      }
 }
