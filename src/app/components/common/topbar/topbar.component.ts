@@ -475,7 +475,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   getDirServicesStatus() { 
-    console.log('getting status')
     this.ws.call('directoryservices.get_state').subscribe((res) => {
       this.dirServicesStatus.push({name: 'Active Directory', state: res.activedirectory});
       this.dirServicesStatus.push({name: 'LDAP', state: res.ldap});
@@ -483,6 +482,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.showDSIcon();
     })
     this.ws.subscribe('directoryservices.status').subscribe((res) => {
+      this.dirServicesStatus = [];
       if (res) {
         this.dirServicesStatus.push({name: 'Active Directory', state: res.fields.activedirectory});
         this.dirServicesStatus.push({name: 'LDAP', state: res.fields.ldap});
@@ -495,13 +495,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showDSIcon() {
     let counter = 0;
     this.dirServicesStatus.forEach((item) => {
-      console.log(item)
-      if (item.state !== 'DISABLED') {
-        counter ++;
-      }
+      if (item.state !== 'DISABLED') { counter ++;  }
+      counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
     });
-    console.log(counter)
-    counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
   }
 
   isUpdateRunning() {

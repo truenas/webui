@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { WebSocketService } from '../../../../services/';
 
@@ -12,31 +13,29 @@ import { WebSocketService } from '../../../../services/';
       state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
       transition('expanded <=> void', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
-    ]),
+    ])
   ]
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
   displayedColumns: string[] = ['icon', 'name', 'state'];
   dataSource = [];
+  showSpinner = false;
 
-  constructor(private ws: WebSocketService, ) {}
+  constructor(private ws: WebSocketService, private router: Router ) {}
 
   ngOnInit() {
     let tempArray = [];
+    this.showSpinner = true;
     this.ws.call('directoryservices.get_state').subscribe((res) => {
+      this.showSpinner = false;
       tempArray.push({name: 'Active Directory', state: res.activedirectory});
       tempArray.push({name: 'LDAP', state: res.ldap});
       tempArray.push({name: 'NIS', state: res.nis});
       this.dataSource = tempArray;
     });
-    this.ws.subscribe('directoryservices.status').subscribe((res) => {
-      let tempArray = [];
-      if (res) {
-        tempArray.push({name: 'Active Directory', state: res.fields.activedirectory});
-        tempArray.push({name: 'LDAP', state: res.fields.ldap});
-        tempArray.push({name: 'NIS', state: res.fields.nis});
-        this.dataSource = tempArray;
-      }
-    })
+  }
+
+  goTo(el) {
+    this.router.navigate([`/directoryservice/${el.replace(/\s/g, '').toLowerCase()}`])
   }
 }

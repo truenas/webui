@@ -41,3 +41,11 @@ mat-icon.state-disabled {
 .table-row:hover {
   background: #f5f5f5;
 }
+mat-spinner {
+  position: absolute;
+  top: 55px;
+  left: 160px;
+}
+.clickable {
+  cursor: pointer;
+}
