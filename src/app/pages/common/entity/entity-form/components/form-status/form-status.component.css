@@ -1,0 +1,93 @@
+.status{
+  color: var(--fg2);
+  display:inline-block;
+  width: 32px;
+  height: auto;
+  position: relative;
+  top: 12px;
+  left: 8px;
+}
+
+.status,
+.status svg{
+}
+
+
+/* Misc Vars */
+--curve: cubic-bezier(0.650, 0.000, 0.450, 1.000);
+
+body {
+  /*width: 100vw;
+  height: 100vh;
+  display: flex;*/
+  align-items: center;
+  justify-content: center;
+}
+
+.checkmark {
+  width: 32px;
+  height: auto;
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  top: -32px;
+  stroke-width: 2;
+  stroke: #fff;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px var(--green);
+  animation: fill .4s ease-in-out .44s forwards, scale .3s ease-in-out .9s both;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: var(--green);
+  fill: none;
+}
+
+.checkmark__circle {
+  animation: stroke .6s var(--curve) forwards;
+}
+
+/*.checkmark__circle {
+  animation: var(--curve) .8s forwards, spin .5s inifinite;
+}*/
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke: var(--green-txt);
+  /*stroke-dasharray: 48;*/
+  stroke-dashoffset: 48;
+  animation: stroke .3s var(--curve) .8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0.25;
+    stroke-dasharray: 0;
+  }
+}
+
+@keyframes scale {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px var(--green);
+  }
+}
+
+/*@keyframes spin {
+  100% {
+    stroke-dashoffset: 0.25;
+    transform:rotate(360deg);
+  }
+}*/

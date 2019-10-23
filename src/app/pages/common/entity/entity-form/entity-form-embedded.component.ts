@@ -79,9 +79,8 @@ export interface FormConfig {
 
   goBack?();
   onSuccess?(res);
+  multiStateSubmit?:boolean;
 }
-
-
 
 @Component({
   selector : 'entity-form-embedded',
@@ -102,6 +101,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   public fieldConfig: FieldConfig[];
   public hasConf = true;
   public saveSubmitText = "Save";
+  public saveSubmitStatus:string = ""; 
   public actionButtonsAlign = "center";
 
   get controls() {
@@ -158,6 +158,20 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
         switch(evt.name){
           case "SetHiddenFieldsets":
             this.setHiddenFieldSets(evt.data);
+            break;
+          case "UpdateSaveButtonText":
+            this.saveSubmitText = evt.data;
+            break;
+          case "ResetSaveButtonText":
+            this.saveSubmitText = this.conf.saveSubmitText;
+            break;
+          case "SubmitStart":
+            console.log(evt.name);
+            this.saveSubmitStatus = '';
+            break;
+          case "SubmitComplete":
+            console.log(evt.name);
+            this.saveSubmitStatus = 'checkmark';
             break;
         }
       });

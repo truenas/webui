@@ -79,6 +79,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { DataTableCellDirective } from './entity-table/data-table-cell.directive';
+import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 
 @NgModule({
   imports: [
@@ -139,7 +140,8 @@ import { DataTableCellDirective } from './entity-table/data-table-cell.directive
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
-    DataTableCellDirective
+    DataTableCellDirective,
+    FormStatusComponent
   ],
   exports: [
     EntityTemplateDirective,
