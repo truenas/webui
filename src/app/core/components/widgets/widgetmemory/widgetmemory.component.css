@@ -114,13 +114,9 @@ h1.memory-used span.memory-used-units{
   font-size:50%;
 }
 
-/*.reports-btn{
-  position:absolute;
-  right:16px;
-  bottom:16px;
-  font-weight:500;
-  text-transform:capitalize;
-}*/
+.spinner-wrapper{
+  text-align:center;
+}
 
 .chart-wrapper{
   position:relative;
