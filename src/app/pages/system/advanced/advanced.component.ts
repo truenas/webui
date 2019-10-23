@@ -51,21 +51,28 @@ export class AdvancedComponent implements OnDestroy {
               (res) => {
                 const url = res[1];
                 const mimetype = 'application/gzip';
+                let failed = false;
                 this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
                   this.storage.downloadBlob(file, fileName);
                 }, err => {
-                  this.dialog.errorReport("Error Downloading File", "Debug could not be downloaded", err);
+                  failed = true;
+                  if (this.dialogRef) {
+                    this.dialogRef.close();
+                  }
+                  this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
                 });
-                this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
-                this.dialogRef.componentInstance.jobId = res[0];
-                this.dialogRef.componentInstance.wsshow();
-                this.dialogRef.componentInstance.success.subscribe((save_debug) => {
-                  this.dialogRef.close();
-                });
-                this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
-                  this.dialogRef.close();
-                  this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
-                });
+                if (!failed) {
+                  this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
+                  this.dialogRef.componentInstance.jobId = res[0];
+                  this.dialogRef.componentInstance.wsshow();
+                  this.dialogRef.componentInstance.success.subscribe((save_debug) => {
+                    this.dialogRef.close();
+                  });
+                  this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
+                    this.dialogRef.close();
+                    this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
+                  });
+                }
               },
               (err) => {
                 new EntityUtils().handleWSError(this, err, this.dialog);
