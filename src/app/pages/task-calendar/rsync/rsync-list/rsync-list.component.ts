@@ -134,7 +134,11 @@ export class RsyncListComponent {
               }
           })
       } else {
-        this.job.showLogs(row.job.id);
+        if (row.state === 'RUNNING') {
+          this.entityList.runningStateButton(row.job.id);
+        } else {
+          this.job.showLogs(row.job.id);
+        }
       }
     } else {
       this.snackBar.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });

@@ -114,7 +114,11 @@ export class ReplicationListComponent {
                     }
                 })
         } else if (row.state.job) {
-            this.job.showLogs(row.state.job.id);
+            if (row.state.state === 'RUNNING') {
+                this.entityList.runningStateButton(row.state.job.id);
+            } else {
+                this.job.showLogs(row.state.job.id);
+            }
         } else {
             this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
         }
