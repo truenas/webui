@@ -34,7 +34,7 @@ export class EntityUtils {
           const element = document.getElementById(i);
           if (element) {
             if (entity.conf && entity.conf.advanced_field && 
-              _.indexOf(entity.conf.advanced_field, i) > 0 &&
+              _.indexOf(entity.conf.advanced_field, i) > -1 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
               }
@@ -94,7 +94,7 @@ export class EntityUtils {
           const element = document.getElementById(field);
           if (element) {
             if (entity.conf && entity.conf.advanced_field && 
-              _.indexOf(entity.conf.advanced_field, field) > 0 &&
+              _.indexOf(entity.conf.advanced_field, field) > -1 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
               }
