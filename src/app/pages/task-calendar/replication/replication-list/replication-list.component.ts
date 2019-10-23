@@ -107,12 +107,16 @@ export class ReplicationListComponent {
 
     stateButton(row) {
         if (row.state.error) {
-            this.dialog.confirm(row.state.state,row.state.error,true, T('VIEW LOGS')).subscribe(
-                (res) => {
-                    if (res) {
-                        this.job.showLogs(row.state.job.id);
-                    }
-                })
+            if (row.state.job) {
+                this.dialog.confirm(row.state.state,row.state.error,true, T('VIEW LOGS')).subscribe(
+                    (res) => {
+                        if (res) {
+                            this.job.showLogs(row.state.job.id);
+                        }
+                    });
+            } else {
+                this.dialog.errorReport(row.state.state, row.state.error);
+            }
         } else if (row.state.job) {
             if (row.state.state === 'RUNNING') {
                 this.entityList.runningStateButton(row.state.job.id);
@@ -120,7 +124,7 @@ export class ReplicationListComponent {
                 this.job.showLogs(row.state.job.id);
             }
         } else {
-            this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
+            this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
         }
     }
 }

@@ -177,7 +177,7 @@ export class CloudsyncListComponent implements InputTableConf {
         this.job.showLogs(row.job.id);
       }
     } else {
-      this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
+      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 }

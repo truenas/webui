@@ -25,5 +25,9 @@ human_readable: {
 
 closed_job_message: T('See task manager for progress updates.'),
 
-noLogMessage: T('No Logs'),
+noLogDilaog: {
+    title: T('No Logs'),
+    message: T('No logs are available for this task.'),
+}
+
 }
