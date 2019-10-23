@@ -12,7 +12,6 @@ export class FormStatusComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.warn("PING");
   }
 
 }
