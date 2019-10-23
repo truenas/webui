@@ -17,14 +17,12 @@
 --curve: cubic-bezier(0.650, 0.000, 0.450, 1.000);
 
 body {
-  /*width: 100vw;
-  height: 100vh;
-  display: flex;*/
   align-items: center;
   justify-content: center;
 }
 
 .checkmark {
+  opacity:0;
   width: 32px;
   height: auto;
   border-radius: 50%;
@@ -35,7 +33,7 @@ body {
   stroke: #fff;
   stroke-miterlimit: 10;
   box-shadow: inset 0px 0px 0px var(--green);
-  animation: fill .4s ease-in-out .44s forwards, scale .3s ease-in-out .9s both;
+  animation: fadein 0.1s ease-in 0s forwards, /*fill .4s ease-in-out .4s forwards,*/ scale .2s ease-in-out 0s both, fadeout 1s linear 2s forwards ;
 }
 
 .checkmark__circle {
@@ -44,29 +42,20 @@ body {
   stroke-width: 2;
   stroke-miterlimit: 10;
   stroke: var(--green);
-  fill: none;
+  /*fill: none;*/
+  fill:var(--green);
 }
-
-.checkmark__circle {
-  animation: stroke .6s var(--curve) forwards;
-}
-
-/*.checkmark__circle {
-  animation: var(--curve) .8s forwards, spin .5s inifinite;
-}*/
 
 .checkmark__check {
   transform-origin: 50% 50%;
   stroke: var(--green-txt);
-  /*stroke-dasharray: 48;*/
   stroke-dashoffset: 48;
-  animation: stroke .3s var(--curve) .8s forwards;
 }
 
 @keyframes stroke {
+  0% { stroke-opacity:1;}
   100% {
     stroke-dashoffset: 0.25;
-    stroke-dasharray: 0;
   }
 }
 
@@ -85,9 +74,12 @@ body {
   }
 }
 
-/*@keyframes spin {
-  100% {
-    stroke-dashoffset: 0.25;
-    transform:rotate(360deg);
-  }
-}*/
+@keyframes fadein {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+@keyframes fadeout {
+  0% {opacity: 1;}
+  100% {opacity: 0;}
+}

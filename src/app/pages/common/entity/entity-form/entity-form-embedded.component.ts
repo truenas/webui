@@ -166,11 +166,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
             this.saveSubmitText = this.conf.saveSubmitText;
             break;
           case "SubmitStart":
-            console.log(evt.name);
             this.saveSubmitStatus = '';
             break;
           case "SubmitComplete":
-            console.log(evt.name);
             this.saveSubmitStatus = 'checkmark';
             break;
         }
