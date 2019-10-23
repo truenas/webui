@@ -6,11 +6,13 @@ import { DialogService } from "../../../services/dialog.service";
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, StorageService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { Http } from '@angular/http';
+import { HttpHeaders } from '@angular/common/http'
 
 
 @Component({
@@ -48,12 +50,13 @@ export class AdvancedComponent implements OnDestroy {
           if (ires) {
             this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
               (res) => {
-                if (window.navigator.userAgent.search("Firefox") > 0) {
-                  window.open(res[1]);
-                } else {
-                  window.location.href = res[1];
-                }
-
+                const url = res[1];
+                const mimetype = 'application/gzip';
+                this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                  this.storage.downloadBlob(file, fileName);
+                }, err => {
+                  this.dialog.errorReport("Error Downloading File", "Debug could not be downloaded", err);
+                });
                 this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
                 this.dialogRef.componentInstance.jobId = res[0];
                 this.dialogRef.componentInstance.wsshow();
@@ -224,7 +227,9 @@ export class AdvancedComponent implements OnDestroy {
     public adminLayout: AdminLayoutComponent,
     public snackBar: MatSnackBar,
     protected matDialog: MatDialog,
-    public datePipe: DatePipe) {}
+    public datePipe: DatePipe,
+    public http: Http,
+    public storage: StorageService) {}
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
