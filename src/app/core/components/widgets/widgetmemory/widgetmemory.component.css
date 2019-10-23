@@ -116,6 +116,9 @@ h1.memory-used span.memory-used-units{
 
 .spinner-wrapper{
   text-align:center;
+  top: 48px;
+  position: absolute;
+  width: 100%;
 }
 
 .chart-wrapper{
