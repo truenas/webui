@@ -74,7 +74,7 @@ export default {
     step3_label: T("Initiator"),
 
     initiators_placeholder: T("Initiators"),
-    initiators_tooltip: T("Enter <i>ALL</i> or a list of initiator hostnames separated by spaces."),
+    initiators_tooltip: T("Leave blank to allow all or enter a list of initiator hostnames separated by spaces."),
 
     auth_network: {
        placeholder: T("Authorized Networks"),
