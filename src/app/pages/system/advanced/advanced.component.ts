@@ -12,7 +12,6 @@ import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { Http } from '@angular/http';
-import { HttpHeaders } from '@angular/common/http'
 
 
 @Component({
