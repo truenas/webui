@@ -8,6 +8,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityUtils } from '../../../common/entity/utils';
 import { WebSocketService, DialogService } from '../../../../services';
 import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
+import { ValueValidator } from '../../../common/entity/entity-form/validators/value-validation';
 
 @Component({
     selector: 'app-ssh-keypairs-form',
@@ -39,7 +40,8 @@ export class SshKeypairsFormComponent {
             type: 'textarea',
             name: 'private_key',
             placeholder: helptext.private_key_placeholder,
-            tooltip: helptext.private_key_tooltip
+            tooltip: helptext.private_key_tooltip,
+            validation: [ValueValidator()]
         }, {
             type: 'textarea',
             name: 'public_key',
