@@ -9,6 +9,7 @@ import {
   OnInit,
   QueryList,
   TemplateRef,
+  ViewChild,
   ViewChildren,
   OnChanges,
   AfterViewInit
@@ -108,6 +109,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     return this.fieldConfig.filter(({type}) => type !== 'button');
   }
   get changes() { return this.formGroup.valueChanges; }
+  get statusChanges() { return this.formGroup.statusChanges; }
+  get dirty() { return this.entityForm ? this.entityForm.dirty : false; }
   get valid() { return this.formGroup.valid; }
   get value() { return this.formGroup.value; }
 
@@ -116,6 +119,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   templates: QueryList<EntityTemplateDirective>;
 
   @ViewChildren('component') components;
+  @ViewChild('entityForm', {static: false}) entityForm;
 
   public busy: Subscription;
 
@@ -170,6 +174,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
             break;
           case "SubmitComplete":
             this.saveSubmitStatus = 'checkmark';
+            this.entityForm.form.markAsPristine();
             break;
         }
       });
@@ -220,6 +225,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if(changes.data){
       this.init();
       this.onFormGroupChanged();
+      if(this.entityForm){
+        this.entityForm.form.markAsPristine();
+      }
     }
   }
 
