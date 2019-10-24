@@ -49,3 +49,10 @@ mat-spinner {
 .clickable {
   cursor: pointer;
 }
+.header h4 {
+  left: 10px;
+}
+#refresh-icon {
+  top: 5px;
+  right: 17px;
+}

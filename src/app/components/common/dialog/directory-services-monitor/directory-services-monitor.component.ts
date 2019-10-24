@@ -24,18 +24,22 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   constructor(private ws: WebSocketService, private router: Router ) {}
 
   ngOnInit() {
+    this.getStatus();
+  }
+
+  getStatus() {
     let tempArray = [];
     this.showSpinner = true;
     this.ws.call('directoryservices.get_state').subscribe((res) => {
       this.showSpinner = false;
-      tempArray.push({name: 'Active Directory', state: res.activedirectory});
-      tempArray.push({name: 'LDAP', state: res.ldap});
-      tempArray.push({name: 'NIS', state: res.nis});
+      tempArray.push({name: 'Active Directory', state: res.activedirectory, id: 'activedirectory'});
+      tempArray.push({name: 'LDAP', state: res.ldap, id: 'ldap'});
+      tempArray.push({name: 'NIS', state: res.nis, id: 'nis'});
       this.dataSource = tempArray;
     });
   }
 
   goTo(el) {
-    this.router.navigate([`/directoryservice/${el.replace(/\s/g, '').toLowerCase()}`])
+    this.router.navigate([`/directoryservice/${el}`])
   }
 }
