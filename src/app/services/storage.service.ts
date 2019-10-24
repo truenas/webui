@@ -307,8 +307,8 @@ export class StorageService {
 
   // hstr = the human string from the form; 
   // dec = allow decimals; 
-  // allowedUnits should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
-  // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass allowedUnits,
+  // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
+  // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
     convertHumanStringToNum(hstr, dec=false, allowedUnits?: string) {
 
@@ -343,19 +343,17 @@ export class StorageService {
 
       // get optional unit
       unit = hstr.replace(num, '');
-      console.log(unit[0])
       if (!unit && allowedUnits) {
         unit = allowedUnits[0];
       };
-      if (unit && allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())) {
-        console.log('yes')
+      // error when unit is present and...
+      if ( (unit) && 
+          // ...allowedUnits are passed in but unit is not in allowed Units
+          (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase()) || 
+          // ...when allowedUnits are not passed in and unit is not recognized
+          !(unit = this.normalizeUnit(unit))) ) {
         this.humanReadable = '';
         return NaN;
-      }
-      if ( (unit) && !(unit = this.normalizeUnit(unit)) ) {
-          // error when unit is present but not recognized
-          this.humanReadable = '';
-          return NaN;
       }
 
       let spacer = (unit) ? ' ' : '';

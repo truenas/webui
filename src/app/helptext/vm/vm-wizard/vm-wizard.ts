@@ -91,6 +91,7 @@ volsize_placeholder : T(`Size ${globalHelptext.human_readable.suggestion_label}`
 volsize_tooltip: T(`Allocate space for the new zvol. ${globalHelptext.human_readable.suggestion_tooltip} MiB. Units \
  smaller than MiB are not allowed.`),
 volsize_validation: [Validators.required],
+volsize_min_err: T('Minimum size is 1 MiB'),
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
 datastore_placeholder: T('Zvol Location'),
