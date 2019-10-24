@@ -105,8 +105,12 @@ export class EntityUtils {
           }
           fc['hasErrors'] = true;
           fc['errors'] = error;
+          if (entity.formGroup && entity.formGroup.controls[field]) {
+            entity.formGroup.controls[field].setErrors({'invalidValue': true});
+          }
           if (entity.wizardConfig && entity.entityWizard) {
             entity.entityWizard.stepper.selectedIndex = stepIndex;
+            entity.entityWizard.formGroup.controls.formArray.controls[stepIndex].controls[field].setErrors({'invalidValue': true});
           }
         } else {
           if (entity.error) {
