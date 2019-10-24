@@ -72,7 +72,7 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
 
 memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
 memory_validation : [Validators.required],
-memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
+memory_tooltip: T(`Allocate RAM for the VM. Minimum value is 256 MiB. ${globalHelptext.human_readable.suggestion_tooltip} bytes.`),
 memory_size_err: T('Allocate at least 256 MiB.'),
 memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),
@@ -88,7 +88,8 @@ disk_radio_options_new_label: T("Create new disk image"),
 disk_radio_options_existing_label: T("Use existing disk image"),
 
 volsize_placeholder : T(`Size ${globalHelptext.human_readable.suggestion_label}`),
-volsize_tooltip: T(`Allocate space for the new zvol ${globalHelptext.human_readable.suggestion_label}.`),
+volsize_tooltip: T(`Allocate space for the new zvol. ${globalHelptext.human_readable.suggestion_tooltip} MiB. Units \
+ smaller than MiB are not allowed.`),
 volsize_validation: [Validators.required],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),

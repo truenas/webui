@@ -202,7 +202,7 @@ export class VMWizardComponent {
             ...helptext.volsize_validation,
             (control: FormControl): ValidationErrors => {
               const config = this.wizardConfig.find(c => c.label === helptext.disks_label).fieldConfig.find(c => c.name === 'volsize');
-              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value))
+              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
                 ? { invalid_byte_string: true }
                 : null
 
@@ -588,24 +588,25 @@ blurEvent2(parent){
 }
 
 blurEvent3(parent){
-  const volsize = parent.storageService.convertHumanStringToNum(parent.entityWizard.formArray.controls[2].value.volsize);
-  if (volsize > 0 ) {
+  const volsize = parent.storageService.convertHumanStringToNum(parent.entityWizard.formArray.controls[2].value.volsize, false, 'mgtp');
+  console.log(volsize)
+  if (volsize >= 1048576 ) {
     const datastore = parent.entityWizard.formArray.controls[2].value.datastore;
     const vm_name = parent.entityWizard.formGroup.value.formArray[0].name;
     if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
-    parent.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).subscribe((stat)=> {
-      if (stat.free_bytes < volsize ) {
-        parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.convertBytestoHumanReadable(volsize, 0) + '*');
-        _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = true;
-        _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = `Cannot allocate ${parent.storageService.convertBytestoHumanReadable(volsize, 0)} to for storage virtual machine: ${vm_name}.`;
-       } else {
-        parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.humanReadable);
-        _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
-        _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = '';
-       }
-    })
+      parent.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).subscribe((stat)=> {
+        if (stat.free_bytes < volsize ) {
+          parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.convertBytestoHumanReadable(volsize, 0) + '*');
+          _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = true;
+          _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = `Cannot allocate ${parent.storageService.convertBytestoHumanReadable(volsize, 0)} to for storage virtual machine: ${vm_name}.`;
+        } else {
+          parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.humanReadable);
+          _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
+          _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = '';
+        }
+      })
+    }
   }
-}
 }
 
 async customSubmit(value) {

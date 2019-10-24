@@ -305,7 +305,12 @@ export class StorageService {
   // '12.4k'     ''               NaN
   // ' 10G'      '10 GiB'         10*1024**3 (10,737,418,240)
 
-  convertHumanStringToNum(hstr, dec=false) {
+  // hstr = the human string from the form; 
+  // dec = allow decimals; 
+  // allowedUnits should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
+  // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass allowedUnits,
+  // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
+    convertHumanStringToNum(hstr, dec=false, allowedUnits?: string) {
 
       const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
 
@@ -338,6 +343,15 @@ export class StorageService {
 
       // get optional unit
       unit = hstr.replace(num, '');
+      console.log(unit[0])
+      if (!unit && allowedUnits) {
+        unit = allowedUnits[0];
+      };
+      if (unit && allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())) {
+        console.log('yes')
+        this.humanReadable = '';
+        return NaN;
+      }
       if ( (unit) && !(unit = this.normalizeUnit(unit)) ) {
           // error when unit is present but not recognized
           this.humanReadable = '';
