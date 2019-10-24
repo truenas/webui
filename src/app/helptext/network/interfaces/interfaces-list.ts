@@ -5,13 +5,15 @@ import { rangeValidator } from '../../../pages/common/entity/entity-form/validat
 export default {
 pending_changes_text : T('There are unapplied network changes. Apply them now?\
  Unapplied changes will be lost.'),
-pending_checkin_text : T('Network changes have been applied. Keep changes permanently?\
+pending_checkin_dialog_text : T('Network changes have been applied. Keep changes permanently?\
  Changes will be automatically discarded if they are not permanently applied.'),
-pending_checkin_text_2 : T('Time remaining until changes reverted:'),
+pending_checkin_text : T('Network settings have been temporarily changed. They will be automatically discarded after'),
+pending_checkin_text_2 : T('seconds unless KEEP CHANGES is chosen to make them permanent.'),
 commit_changes_title: T("Apply Network Changes"),
 commit_changes_warning: T("Apply network changes? Network connectivity will be interrupted."),
 changes_saved_successfully: T("Network changes applied successfully."),
 commit_button: T("APPLY CHANGES"),
+keep_button: T("KEEP CHANGES"),
 rollback_button: T("DISCARD CHANGES"),
 rollback_changes_title: T("Discard Network Changes"),
 rollback_changes_warning: T("Discard unapplied network changes?"),
@@ -31,4 +33,12 @@ ha_enabled_edit_msg: T("Editing interfaces while HA is enabled is not allowed.")
 
 ha_enabled_delete_title: T("Cannot Delete while HA is Enabled"),
 ha_enabled_delete_msg: T("Deleting interfaces while HA is enabled is not allowed."),
+
+checkin_text: T("Once applied, changes will revert after "),
+checkin_text_2: T(" seconds unless kept permanently. Adjust this amount to allow for testing."),
+
+ha_enabled_text: T("Cannot edit while HA is enabled."),
+go_to_ha: T("Go to HA settings"),
+
+delete_dialog_text: T("Network connectivity will be interrupted. ")
 }
