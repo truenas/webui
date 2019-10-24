@@ -18,8 +18,11 @@ export class SshConnectionsFormComponent {
 
     protected queryCall = 'keychaincredential.query';
     protected queryCallOption = [["id", "="]];
-    protected addCall = 'keychaincredential.create';
-    protected semiautomaticAddCall = 'keychaincredential.remote_ssh_semiautomatic_setup';
+    protected sshCalls = {
+        manual: 'keychaincredential.create',
+        semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
+    }
+    protected addCall = this.sshCalls['manual'];
     protected editCall = 'keychaincredential.update';
     protected route_success: string[] = ['system', 'sshconnections'];
     protected isEntity = true;
@@ -242,9 +245,12 @@ export class SshConnectionsFormComponent {
     afterInit(entityForm) {
         this.entityForm = entityForm;
         if (this.entityForm.isNew) {
+            this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value];
             this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res) => {
-                this.addCall = res === 'semiautomatic' ? this.semiautomaticAddCall : this.addCall;
+                this.addCall = this.sshCalls[res];
             });
+        } else {
+            this.entityForm.formGroup.controls['setup_method'].setValue('manual');
         }
     }
 
