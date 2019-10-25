@@ -16,6 +16,7 @@ import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
 import { filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from './../../../helptext/global-helptext';
 
 @Component({
@@ -33,6 +34,8 @@ export class VMWizardComponent {
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = "VM Summary";
+  public namesInUse = [];
+  public statSize: any;
 
   entityWizard: any;
   public res;
@@ -54,11 +57,8 @@ export class VMWizardComponent {
         name : 'name',
         placeholder : helptext.name_placeholder,
         tooltip : helptext.name_tooltip,
-        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9\_]*$')],
-        required: true,
-        blurStatus: true,
-        blurEvent: this.blurEvent,
-        parent: this
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9\_]*$'), this.nameValidator('name')],
+        required: true
       },
       { type: 'input',
         name : 'description',
@@ -130,6 +130,7 @@ export class VMWizardComponent {
           inputType: 'text',
           validation : [
             ...helptext.memory_validation,
+            this.memoryValidator('memory'),
             (control: FormControl): ValidationErrors => {
               const config = this.wizardConfig.find(c => c.label === helptext.vcpus_label).fieldConfig.find(c => c.name === 'memory');
               const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value))
@@ -212,6 +213,7 @@ export class VMWizardComponent {
           parent: this,
           validation : [
             ...helptext.volsize_validation,
+            this.volSizeValidator('volsize'),
             (control: FormControl): ValidationErrors => {
               const config = this.wizardConfig.find(c => c.label === helptext.disks_label).fieldConfig.find(c => c.name === 'volsize');
               const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
@@ -341,6 +343,9 @@ export class VMWizardComponent {
   }
   
   afterInit(entityWizard: EntityWizardComponent) {
+    this.ws.call('vm.query').subscribe((res) => {
+      res.forEach(i => this.namesInUse.push(i.name));
+    })
 
     this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
         if(res && Object.keys(res).length > 0) {
@@ -374,6 +379,7 @@ export class VMWizardComponent {
         );
       });
     });
+
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(bootloader === "UEFI_CSM"){
@@ -445,6 +451,7 @@ export class VMWizardComponent {
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).errors = null;
         const volsize = this.storageService.convertHumanStringToNum(( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value.toString());
         this.ws.call('filesystem.statfs',[`/mnt/${datastore}`]).subscribe((stat)=> {
+          this.statSize = stat;
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = '';
          if (stat.free_bytes < volsize ) {
@@ -566,29 +573,80 @@ export class VMWizardComponent {
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
-blurEvent(parent){
-  const vm_name = parent.entityWizard.formGroup.value.formArray[0].name
-  parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
-    if(vm_wizard_res.length > 0){
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = T(`Virtual machine ${vm_wizard_res[0].name} already exists.`);
-      parent.entityWizard.formArray.get([0]).get('name').setValue(vm_name + "*");
+
+nameValidator(name: string) {
+  const self = this;
+  return function validNames(control: FormControl) {
+    const config = self.wizardConfig[0].fieldConfig.find(c => c.name === name);
+
+    const errors = self.namesInUse.includes(control.value)
+    ? { validNames : true }
+    : null;
+
+    if (errors) {
+      config.hasErrors = true;
+      config.warnings = T(`Virtual machine <i>${control.value}</i> already exists.`);
     } else {
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = false;
-      _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = '';
+      config.hasErrors = false;
+      config.warnings = '';
     }
-  })
-}
+
+    return errors;
+  }
+};
+
+memoryValidator(name: string) {
+  const self = this;
+  return function validMem(control: FormControl) {
+    const config = self.wizardConfig[1].fieldConfig.find(c => c.name === name);
+
+    const errors = self.storageService.convertHumanStringToNum(control.value) < 268435456
+    ? { validMem : true }
+    : null;
+
+    if (errors) {
+      config.hasErrors = true;
+      config.warnings = helptext.memory_size_err;
+    } else {
+      config.hasErrors = false;
+      config.warnings = '';
+    }
+
+    return errors;
+  }
+};
+
+volSizeValidator(name: string) {
+  const self = this;
+  return function validStorage(control: FormControl) {
+    const config = self.wizardConfig[2].fieldConfig.find(c => c.name === name);
+
+    if (control.value && self.statSize) {
+      const requestedSize = self.storageService.convertHumanStringToNum(control.value);
+      const errors = self.statSize.free_bytes < requestedSize
+      ? { validStorage : true }
+      : null;
+    
+
+
+    if (errors) {
+      config.hasErrors = true;
+      config.warnings = T(`Cannot allocate ${self.storageService.humanReadable} to storage for this virtual machine.`);
+    } else {
+      config.hasErrors = false;
+      config.warnings = '';
+    }
+
+    return errors;
+  }
+  }
+};
 
 blurEvent2(parent){
   const enteredVal = parent.entityWizard.formGroup.value.formArray[1].memory;
   const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
   if (isNaN(vm_memory_requested)) {
     console.error(vm_memory_requested) // leaves form in previous error state
-  } else if(vm_memory_requested < 268435456) {
-    parent.entityWizard.formArray.get([1]).get('memory').setValue(enteredVal + '*');
-    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
-    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = helptext.memory_size_err;
   } else {
     parent.entityWizard.formArray.get([1]).get('memory').setValue(parent.storageService.humanReadable);
     _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
@@ -600,28 +658,13 @@ blurEvent3(parent){
   const enteredVal = parent.entityWizard.formArray.controls[2].value.volsize;
   const volsize = parent.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
   if (volsize >= 1048576 ) {
-    const datastore = parent.entityWizard.formArray.controls[2].value.datastore;
-    const vm_name = parent.entityWizard.formGroup.value.formArray[0].name;
-    if(datastore !== undefined && datastore !== "" && datastore !== "/mnt"){
-      parent.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).subscribe((stat)=> {
-        if (stat.free_bytes < volsize ) {
-          parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.convertBytestoHumanReadable(volsize, 0) + '*');
-          _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = true;
-          _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = 
-            T(`Cannot allocate ${parent.storageService.convertBytestoHumanReadable(volsize, 0)} to storage for virtual machine: ${vm_name}.`);
-        } else {
-          parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.humanReadable);
-          _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
-          _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = '';
-        }
-      })
-    }
+    parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.humanReadable);
+    _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = false;
+    _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = '';
   } else if (isNaN(volsize)) {
     console.error(volsize) // leaves form in previous error state
   } else {
-    parent.entityWizard.formArray.get([2]).get('volsize').setValue(enteredVal + '*');
-    _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['hasErrors'] = true;
-    _.find(parent.wizardConfig[2].fieldConfig, {'name' : 'volsize'})['errors'] = helptext.volsize_min_err;
+    parent.entityWizard.formArray.get([2]).get('volsize').setValue('1 MiB');
   }
 }
 
