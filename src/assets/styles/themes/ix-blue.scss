@@ -1668,15 +1668,4 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
-  app-entity-dialog {
-    #typeName {
-      margin-bottom: -20px;
-    }
-    #nameMask {
-      top: 35px;
-      position: relative;
-      opacity: .38;
-    }
-  }
-
  } // end of ix theme

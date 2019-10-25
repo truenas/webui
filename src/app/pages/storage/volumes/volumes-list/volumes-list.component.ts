@@ -409,36 +409,11 @@ export class VolumesListTableConfig implements InputTableConf {
               value: true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
             },{
-              type: 'paragraph',
-              name: 'typeName',
-              paraText: T(`Enter <b>${row1.name}</b> below to confirm.`),
-              relation : [
-                {
-                  action : 'HIDE',
-                  when : [ {
-                    name : 'destroy',
-                    value : false,
-                  } ]
-                },
-              ]
-            },
-            {
-              type: 'paragraph',
-              name: 'nameMask',
-              paraText: row1.name,
-              relation : [
-                {
-                  action : 'HIDE',
-                  when : [ {
-                    name : 'destroy',
-                    value : false,
-                  } ]
-                },
-              ]
-            },{
               type: 'input',
               name: 'nameInput',
               required: true,
+              isDoubleConfirm: true,
+              maskValue: row1.name,
               validation: [Validators.pattern(row1.name)],
               relation : [
                 {
