@@ -150,7 +150,7 @@ export class DialogService {
     public dialogFormWide(conf: any): Observable<boolean> {
         let dialogRef: MatDialogRef<EntityDialogComponent>;
 
-        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '490px', minWidth: '490px'});
+        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '490px', minWidth: '490px', disableClose: true});
         dialogRef.componentInstance.conf = conf;
 
         return dialogRef.afterClosed();

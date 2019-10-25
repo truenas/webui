@@ -26,6 +26,7 @@ import { SnackbarService } from '../../../../services/snackbar.service';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { Validators } from '@angular/forms';
 
 export interface ZfsPoolData {
   avail?: number;
@@ -407,6 +408,20 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'cascade',
               value: true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
+            },{
+              type: 'paragraph',
+              name: 'typeName',
+              paraText: 'Enter the name of the pool below to confirm.'
+            },
+            {
+              type: 'paragraph',
+              name: 'nameMask',
+              paraText: row1.name
+            },{
+              type: 'input',
+              name: 'nameInput',
+              required: true,
+              validation: [Validators.pattern(row1.name)]
             },{
               type: 'checkbox',
               name: 'confirm',
