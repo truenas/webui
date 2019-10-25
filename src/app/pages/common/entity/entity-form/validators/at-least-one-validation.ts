@@ -28,7 +28,7 @@ export function atLeastOne(otherControlName: string) {
       }
   
       if (!otherControl.value && !thisControl.value) {
-        return {matchOther : true};
+        return {atLeastOne: true};
       }
   
       return null;
