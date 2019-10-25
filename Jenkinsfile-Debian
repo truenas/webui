@@ -1,0 +1,45 @@
+pipeline {
+  agent {
+    node {
+       label 'FreeNAS-webui'
+    }
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        dir('src') {
+           checkout scm
+        }
+      }
+    }
+    stage('Cleanup') {
+      steps {
+        sh 'cd src ; rm -rf node_modules ; rm -f package-lock.json'
+        sh 'rm truenas-webui* || true'
+        sh 'rm src/debian/files || true'
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'cd src && sh mk-deb.sh 92B8B783F95A684C0A3B643073CF445610D143A1'
+      }
+    }
+    stage('Lint') {
+      steps {
+        sh "lintian --suppress-tags bad-distribution-in-changes-file truenas-webui*.changes"
+      }
+    }
+    stage('Push to buildd') {
+      steps {
+        withCredentials([file(credentialsId: 'dput.cf', variable: 'dputcfg')]) {
+          sh "dput -c \"${dputcfg}\" mini-buildd-mini-buildd-host truenas-webui*.changes"
+        }
+      }
+    }
+  }
+  post {  
+    failure {  
+      mail bcc: '', body: "<b>Jenkins: WebUI Build Failure</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "ERROR CI: Project name -> ${env.JOB_NAME}", to: "kris@ixsystems.com";
+     }  
+  }
+}

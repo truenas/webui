@@ -1,0 +1,5 @@
+truenas-webui (1.0.0~truenas+1) bullseye-truenas-unstable; urgency=medium
+
+  * Initial upload for testing
+
+ -- Kris Moore <kris@ixsystems.com>  Fri, 26 Jul 2019 18:31:15 -0400
