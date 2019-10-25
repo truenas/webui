@@ -388,7 +388,7 @@ export class VolumesListTableConfig implements InputTableConf {
               paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
                 helptext.detachDialog_pool_detach_warning_paratext_b,
               isHidden: false
-            }, {
+            },{
               type: 'paragraph',
               name: 'pool_processes',
               paraText: p1,
@@ -411,17 +411,44 @@ export class VolumesListTableConfig implements InputTableConf {
             },{
               type: 'paragraph',
               name: 'typeName',
-              paraText: 'Enter the name of the pool below to confirm.'
+              paraText: T(`Enter <b>${row1.name}</b> below to confirm.`),
+              relation : [
+                {
+                  action : 'HIDE',
+                  when : [ {
+                    name : 'destroy',
+                    value : false,
+                  } ]
+                },
+              ]
             },
             {
               type: 'paragraph',
               name: 'nameMask',
-              paraText: row1.name
+              paraText: row1.name,
+              relation : [
+                {
+                  action : 'HIDE',
+                  when : [ {
+                    name : 'destroy',
+                    value : false,
+                  } ]
+                },
+              ]
             },{
               type: 'input',
               name: 'nameInput',
               required: true,
-              validation: [Validators.pattern(row1.name)]
+              validation: [Validators.pattern(row1.name)],
+              relation : [
+                {
+                  action : 'HIDE',
+                  when : [ {
+                    name : 'destroy',
+                    value : false,
+                  } ]
+                },
+              ]
             },{
               type: 'checkbox',
               name: 'confirm',
