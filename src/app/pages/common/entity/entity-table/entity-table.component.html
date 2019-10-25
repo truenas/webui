@@ -255,7 +255,7 @@
               id="{{row.name}}_{{col.name}}-slidetoggle"
               [checked]="row[col.prop]==='RUNNING'"
             ></mat-slide-toggle>
-            <div id="{{col.prop}}_{{row[col.prop]}}"
+            <div id="{{row[conf.rowIdentifier]}}_{{col.name}}"
                  title="{{convertDisplayValue(row[col.prop])}}"
                  [ix-datatable-cell]="col?.name"
                  [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']">
@@ -294,7 +294,7 @@
                   </ng-container>
                 </mat-menu>
             </ng-container>
-            <div id="{{col.prop}}_{{row[col.prop]}}"
+            <div id="{{row[conf.rowIdentifier]}}_{{col.name}}"
                  title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
               <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
               <mat-checkbox id="{{row.name}}_{{col.name}}-checkbox"
