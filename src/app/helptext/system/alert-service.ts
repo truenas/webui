@@ -52,7 +52,7 @@ export default {
 
     InfluxDB_host_placeholder: T('Host'),
     InfluxDB_host_tooltip: T('Enter the <a\
- href="https://docs.influxdata.com/influxdb/v1.7/introduction/getting-started/"\
+ href="https://docs.influxdata.com/influxdb/"\
  target="_blank">InfluxDB</a> hostname.'),
 
     InfluxDB_username_placeholder: T('Username'),
