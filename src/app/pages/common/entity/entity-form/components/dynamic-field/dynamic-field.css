@@ -38,7 +38,7 @@
   padding: 2px;
 }
 
-mat-error {
+.margin-for-error {
   position: relative;
   top: -12px;
 }
