@@ -4,7 +4,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {DeviceEditComponent} from './devices/device-edit/';
 import {DeviceListComponent} from './devices/device-list/';
 import {VmFormComponent} from './vm-form/';
-import {VmListComponent} from './vm-list/';
+import { VMListComponent } from './vm-list/vm-list.component';
 import {VMWizardComponent} from './vm-wizard/';
 import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
 import { DeviceAddComponent } from './devices/device-add2';
@@ -30,7 +30,7 @@ export const routes: Routes = [
     {
       path: '',
       data: {title: 'Virtual Machines', breadcrumb:'Virtual Machines'},
-      component : VmListComponent,
+      component : VMListComponent,
     },
     {
       path : 'edit/:pk', component : VmFormComponent,

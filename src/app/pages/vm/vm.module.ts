@@ -16,7 +16,7 @@ import {EntityModule} from '../common/entity/entity.module';
 import {DeviceEditComponent} from './devices/device-edit/';
 import {DeviceListComponent} from './devices/device-list';
 import {VmFormComponent} from './vm-form/';
-import {VmListComponent} from './vm-list/';
+import { VMListComponent } from './vm-list/vm-list.component';
 import {VmCardsComponent} from './vm-cards/vm-cards.component';
 import {VmCardEditComponent} from './vm-cards/vm-card-edit.component';
 import {VmTableComponent} from './vm-cards/vm-table.component';
@@ -35,7 +35,7 @@ import { VmDetailsComponent } from './vm-cards/vm-details.component';
 	  ReactiveFormsModule, routing, MaterialModule, NgxDatatableModule, FlexLayoutModule//, BrowserModule
   ],
   declarations : [
-    VmListComponent,
+    VMListComponent,
     VmCardsComponent,
     VmCardEditComponent,
     VmTableComponent,
