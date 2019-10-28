@@ -547,6 +547,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return newRows.concat(rows);
     }
+    console.log(rows)
     return rows;
   }
 

@@ -39,7 +39,7 @@
       <span class="datatable-header-cell-label">Start Automatically</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-      <mat-checkbox id="{{row.label}}_StartAutomatically_checkbox" class="checkbox" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"></mat-checkbox>
+      <mat-checkbox id="{{row.label}}_Start Automatically_checkbox" class="checkbox" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"></mat-checkbox>
     </ng-template>
   </ngx-datatable-column>
   <ngx-datatable-column name="Actions" [flexGrow]="2">
