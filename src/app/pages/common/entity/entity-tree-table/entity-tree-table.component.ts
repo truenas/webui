@@ -22,6 +22,7 @@ export class EntityTreeTableComponent implements OnInit {
 		private dialogService: DialogService) { }
 
 	ngOnInit() {
+		console.log(this.conf.columns)
 		if (this.conf.queryCall) {
 			this.getData();
 		} else if (this.conf.tableData && this.expandRootNodes) {

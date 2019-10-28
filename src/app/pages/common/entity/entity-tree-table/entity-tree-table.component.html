@@ -10,7 +10,7 @@
 	</ng-template>
 	<ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
 		<tr>
-			<td *ngFor="let col of columns; let i = index" id="tbody__{{col.prop}}_{{rowData[col.prop]}}">
+			<td *ngFor="let col of columns; let i = index" id="tbody__{{col.prop}}_{{rowData[columns[0].prop]}}">
 				<p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"></p-treeTableToggler>
 				{{col.filesizePipe ? (rowData[col.prop] | filesize : {standard : "iec"}) : rowData[col.prop]}}
 			</td>
