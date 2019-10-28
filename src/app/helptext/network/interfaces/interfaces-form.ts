@@ -50,7 +50,7 @@ int_options_tooltip : T('Enter additional space-delimited parameters from <a\
 
 alias_address_placeholder: T('IP Address'),
 alias_address_tooltip: T('Static IPv4 or IPv6 address and subnet mask. \
- Example: <i>10.0.0.3</i> and <i>24</i>. Click <i>ADD</i> to add another \
+ Example: <i>10.0.0.3</i> and <i>/24</i>. Click <i>ADD</i> to add another \
  IP address. Clicking <i>DELETE</i> removes that IP address.'),
 
 alias_netmaskbit_placeholder: T('Netmask'),
