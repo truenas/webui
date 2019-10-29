@@ -31,5 +31,11 @@ export class AlertServiceListComponent {
   };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute) { }
-
+  
+  isActionVisible(actionId: string, row: any) {
+    if (actionId === 'edit' && row.type === "HipChat") {
+      return false;
+    }
+    return true;
+  }
 }
