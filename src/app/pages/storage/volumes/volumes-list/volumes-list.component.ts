@@ -413,7 +413,6 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'cascade',
               value: true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
-              isHidden: rowData.status === 'UNKNOWN' ? true : false
             },{
               type: 'checkbox',
               name: 'confirm',
@@ -443,6 +442,7 @@ export class VolumesListTableConfig implements InputTableConf {
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
               let dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
+              dialogRef.updateSize('300px');
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
               dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: localRestartServices }]);
               dialogRef.componentInstance.submit();
