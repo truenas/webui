@@ -150,7 +150,7 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_kerberos_realm_name,
       placeholder : helptext.activedirectory_kerberos_realm_placeholder,
       tooltip : helptext.activedirectory_kerberos_realm_tooltip,
-      options : []
+      options : [{label: '---', value: null}]
     },
     {
       type : 'select',
@@ -252,6 +252,7 @@ export class ActiveDirectoryComponent {
               private dialogservice: DialogService) {}
 
   resourceTransformIncomingRestData(data) {
+    console.log(data)
     if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
       data['kerberos_realm'] = data['kerberos_realm'].id;
     }
@@ -361,6 +362,7 @@ export class ActiveDirectoryComponent {
   }
 
   beforeSubmit(data){
+    console.log(data)
     data.netbiosalias = data.netbiosalias.trim();
     if (data.netbiosalias.length > 0) {
       data.netbiosalias = data.netbiosalias.split(" ");
