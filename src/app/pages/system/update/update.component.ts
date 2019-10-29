@@ -429,7 +429,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
               if (!this.is_ha) {
                 this.ds  = this.dialogService.confirm(
-                  T("Download Update"), T("Continue with download?"),true,"Download",true,
+                  T("Download Update"), T("Continue with download?"),true,T("Download"),true,
                     T("Apply updates and reboot system after downloading."),
                     'update.update',[{ train: this.train, reboot: false }]
                 )
