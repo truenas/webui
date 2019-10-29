@@ -30,10 +30,12 @@ export class AlertServiceListComponent {
     },
   };
 
+  private providerList = ['AWSSNS','Mail','InfluxDB','Mattermost','OpsGenie','PagerDuty', 'Slack','SNMPTrap', 'VictorOps'];
+
   constructor(protected router: Router, protected aroute: ActivatedRoute) { }
   
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'edit' && row.type === "HipChat") {
+    if (actionId === 'edit' && this.providerList.indexOf(row.type) === -1) {
       return false;
     }
     return true;
