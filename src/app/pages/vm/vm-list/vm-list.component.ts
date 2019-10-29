@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 
-import { WebSocketService, StorageService } from '../../../services/';
+import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
 import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
+import helptext from '../../../helptext/vm/vm-list';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
     selector: 'vm-list',
@@ -24,7 +26,7 @@ export class VMListComponent {
         { name: T("Virtual CPUs"), prop: 'vcpus', hidden: true },
         { name: T("Memory Size"), prop: 'memory', hidden: true },
         { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
-        { name: 'System Clock', prop: 'time', hidden: true },
+        { name: T('System Clock'), prop: 'time', hidden: true },
         { name: T("VNC Port"), prop: 'port', hidden: true },
         { name: T("Com Port"), prop: 'com_port', hidden: true },
         { name: T("Description"), prop: 'description', hidden: true }
@@ -38,7 +40,19 @@ export class VMListComponent {
         },
     };
 
-    constructor(private ws: WebSocketService, private storageService: StorageService) { }
+    protected startVM = "vm.start";
+    protected stopVM = "vm.stop";
+    protected updateVM = "vm.update";
+
+    constructor(
+        private ws: WebSocketService,
+        private storageService: StorageService,
+        private loader: AppLoaderService,
+        private dialogService: DialogService) { }
+
+    afterInit(entityList) {
+        this.entityList = entityList;
+    }
 
     resourceTransformIncomingRestData(vms) {
         for (let vm_index = 0; vm_index < vms.length; vm_index++) {
@@ -85,5 +99,57 @@ export class VMListComponent {
                 return devices[i].attributes.vnc_port;
             }
         }
+    }
+
+    onSliderChange(row) {
+        const method = row['status']['state'] === "RUNNING" ? this.stopVM : this.startVM;
+        this.doRowAction(row, method);
+    }
+
+    onMemoryError(row) {
+        const memoryDialog = this.dialogService.confirm(
+            helptext.memory_dialog.title,
+            helptext.memory_dialog.message,
+            true,
+            helptext.memory_dialog.buttonMsg,
+            true,
+            helptext.memory_dialog.secondaryCheckBoxMsg,
+            undefined,
+            [{ 'overcommit': false }],
+            helptext.memory_dialog.tooltip);
+
+        memoryDialog.componentInstance.switchSelectionEmitter.subscribe((res) => {
+            memoryDialog.componentInstance.isSubmitEnabled = !memoryDialog.componentInstance.isSubmitEnabled;
+        });
+
+        memoryDialog.afterClosed().subscribe((dialogRes) => {
+            if (dialogRes) {
+                this.doRowAction(row, this.startVM, [row.id, { "overcommit": true }]);
+            }
+        });
+    }
+
+    doRowAction(row, method, params = [row.id]) {
+        this.loader.open();
+        this.ws.call(method, params).subscribe(
+            (res) => {
+                this.entityList.getData();
+                this.loader.close();
+            },
+            (err) => {
+                this.entityList.getData();
+                this.loader.close();
+                if (method === this.startVM && err.error === 12) {
+                    this.onMemoryError(row);
+                    return;
+                }
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+            }
+        )
+    }
+
+    onCheckboxChange(row) {
+        row.autostart = !row.autostart;
+        this.doRowAction(row, this.updateVM, [row.id, { 'autostart': row.autostart }]);
     }
 }
