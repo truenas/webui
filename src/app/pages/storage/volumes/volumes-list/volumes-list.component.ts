@@ -386,8 +386,13 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'pool_detach_warning',
               paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
                 helptext.detachDialog_pool_detach_warning_paratext_b,
-              isHidden: false
+              isHidden: rowData.status === 'UNKNOWN' ? true : false
             }, {
+              type: 'paragraph',
+              name: 'unknown_status_detach_warning',
+              paraText: `${helptext.detachWarningForUnknownState.message_a} ${row1.name} ${helptext.detachWarningForUnknownState.message_b}`,
+              isHidden: rowData.status === 'UNKNOWN' ? false : true
+            },{
               type: 'paragraph',
               name: 'pool_processes',
               paraText: p1,
@@ -402,15 +407,19 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'destroy',
               value: false,
               placeholder: helptext.detachDialog_pool_detach_destroy_checkbox_placeholder,
+              isHidden: rowData.status === 'UNKNOWN' ? true : false
             }, {
               type: 'checkbox',
               name: 'cascade',
               value: true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
+              isHidden: rowData.status === 'UNKNOWN' ? true : false
             },{
               type: 'checkbox',
               name: 'confirm',
-              placeholder: helptext.detachDialog_pool_detach_confim_checkbox_placeholder,
+              placeholder: rowData.status === 'UNKNOWN' ? 
+                `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder} ${helptext.unknown_status_alt_text}` :
+                `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder}`,
               required: true
             }],
             isCustActionVisible(actionId: string) {
