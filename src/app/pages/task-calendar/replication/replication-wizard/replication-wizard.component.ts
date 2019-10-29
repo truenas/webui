@@ -734,7 +734,7 @@ export class ReplicationWizardComponent {
 
         if (fromLocal) {
             return new Promise((resolve, reject) => {
-                resolve(this.entityFormService.getPoolDatasets([["FILESYSTEM"]]));
+                resolve(this.entityFormService.getPoolDatasets());
             });
         } else {
             if (sshCredentials === 'NEW') {
