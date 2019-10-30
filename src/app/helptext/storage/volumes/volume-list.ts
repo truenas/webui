@@ -41,6 +41,10 @@ detachDialog_pool_detach_confim_checkbox_placeholder: T("Confirm Export/Disconne
 
 upgradePoolDialog_warning: T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
- the pool incompatible with older versions of FreeNAS: ")
+ the pool incompatible with older versions of FreeNAS: "),
+
+pool_lock_warning_paratext_a: T("WARNING: Locking pool <i>"),
+pool_lock_warning_paratext_b: T("</i>.\
+ Data on the pool will not be available after locking.")
 
 }
