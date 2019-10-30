@@ -351,8 +351,8 @@ export class PluginsComponent {
 
   getActions(parentrow) {
     const actions = [{
-      id: parentrow.name,
-      name: "start",
+      name: parentrow.name,
+      id: "start",
       label: T("START"),
       icon: 'play_arrow',
       onClick: (row) => {
@@ -370,8 +370,8 @@ export class PluginsComponent {
       }
     },
     {
-      id: parentrow.name,
-      name: "restart",
+      name: parentrow.name,
+      id: "restart",
       label: T("RESTART"),
       icon: 'replay',
       onClick: (row) => {
@@ -389,8 +389,8 @@ export class PluginsComponent {
       }
     },
     {
-      id: parentrow.name,
-      name: "stop",
+      name: parentrow.name,
+      id: "stop",
       label: T("STOP"),
       icon: 'stop',
       onClick: (row) => {
@@ -408,8 +408,8 @@ export class PluginsComponent {
       }
     },
     {
-      id: parentrow.name,
-      name: "update",
+      name: parentrow.name,
+      id: "update",
       label: T("UPDATE"),
       icon: 'update',
       onClick: (row) => {
@@ -424,8 +424,8 @@ export class PluginsComponent {
       }
     },
     {
-      id: parentrow.name,
-      name: "management",
+      name: parentrow.name,
+      id: "management",
       label: T("MANAGE"),
       icon: 'settings',
       onClick: (row) => {
@@ -433,8 +433,8 @@ export class PluginsComponent {
       }
     },
     {
-      id: parentrow.name,
-      name: "delete",
+      name: parentrow.name,
+      id: "delete",
       label: T("UNINSTALL"),
       icon: 'delete',
       onClick: (row) => {
@@ -444,8 +444,8 @@ export class PluginsComponent {
 
     if (parentrow.plugin === 'asigra') {
       actions.push({
-        id: parentrow.name,
-        name: "register",
+        name: parentrow.name,
+        id: "register",
         label: T('REGISTER'),
         icon: 'assignment',
         onClick: (row) => {
@@ -455,8 +455,8 @@ export class PluginsComponent {
     }
     if (parentrow.plugin_info) {
       actions.push({
-        id: parentrow.name,
-        name: "postinstall",
+        name: parentrow.name,
+        id: "postinstall",
         label: T('POST INSTALL NOTES'),
         icon: 'description',
         onClick: (row) => {
@@ -470,8 +470,8 @@ export class PluginsComponent {
     }
     if (parentrow.doc_url) {
       actions.push({
-        id: parentrow.name,
-        name: "docurl",
+        name: parentrow.name,
+        id: "docurl",
         label: T('DOCUMENTATION'),
         icon: 'info',
         onClick: (row) => {
