@@ -411,7 +411,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }, {
               type: 'checkbox',
               name: 'cascade',
-              value: true,
+              value: rowData.status === 'UNKNOWN' ? false : true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
             },{
               type: 'checkbox',

@@ -44,7 +44,7 @@ detachDialog_pool_detach_warning__encrypted_paratext: T("' is encrypted! If the 
 detachDialog_pool_detach_destroy_checkbox_placeholder: T("Destroy data on this pool?"),
 detachDialog_pool_detach_cascade_checkbox_placeholder: T("Delete configuration of shares that used this pool?"),
 detachDialog_pool_detach_confim_checkbox_placeholder: T("Confirm Export/Disconnect"),
-unknown_status_alt_text: T('(removes pool from database)'),
+unknown_status_alt_text: T('(Remove pool from database)'),
 
 upgradePoolDialog_warning: T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
