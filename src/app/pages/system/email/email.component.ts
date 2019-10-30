@@ -29,12 +29,19 @@ export class EmailComponent implements OnDestroy {
     function: () => {
       if (this.rootEmail){
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
-        const mailObj = {
+        let mailObj = {
           "subject" : "FreeNAS Test Message",
           "text" : "This is a test message from FreeNAS.",
         };
+        const mailObjTruenas = {
+          "subject" : "TrueNAS Test Message",
+          "text" : "This is a test message from TrueNAS.",
+        }
         this.ws.call('system.info').subscribe(sysInfo => {
           value.pass = value.pass || this.entityEdit.data.pass
+          if (window.localStorage.getItem('is_freenas') === 'false') {
+            mailObj = mailObjTruenas;
+          }
           mailObj['subject'] += " hostname: " + sysInfo['hostname'];
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
