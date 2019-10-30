@@ -8,6 +8,7 @@ import { combineLatest, of } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { DialogService, RestService, WebSocketService, AppLoaderService, SnackbarService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { helptext } from 'app/helptext/system/reporting';
 
 @Component({
   selector : 'app-smb-form',
@@ -46,6 +47,12 @@ export class SMBFormComponent {
       name: 'cifs_home',
       placeholder: helptext_sharing_smb.placeholder_home,
       tooltip: helptext_sharing_smb.tooltip_home,
+    },
+    {
+      type: 'input',
+      name: 'cifs_comment',
+      placeholder: helptext_sharing_smb.placeholder_comment,
+      tooltip: helptext_sharing_smb.tooltip_comment,
     },
     {
       type: 'checkbox',

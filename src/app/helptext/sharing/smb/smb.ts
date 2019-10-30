@@ -4,6 +4,7 @@ import { Validators } from "@angular/forms";
 export const helptext_sharing_smb = {
     column_name: T('Name'),
     column_path: T('Path'),
+    column_comment: T('Comment'),
 
     placeholder_path: T('Path'),
     tooltip_path: T('Select pool, dataset, or directory to share.'),
@@ -13,6 +14,11 @@ export const helptext_sharing_smb = {
 
     placeholder_name: T('Name'),
     tooltip_name: T('Enter a name for the share.'),
+
+    placeholder_comment: T("Comment"),
+    tooltip_comment: T(
+      "Set the share comment."
+    ),
 
     placeholder_home: T('Use as home share'),
     tooltip_home: T('Set to allow this share to hold user home\
