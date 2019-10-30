@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
 import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
 import helptext from '../../../helptext/vm/vm-list';
 import { EntityUtils } from '../../common/entity/utils';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
     selector: 'vm-list',
@@ -48,7 +50,8 @@ export class VMListComponent {
         private ws: WebSocketService,
         private storageService: StorageService,
         private loader: AppLoaderService,
-        private dialogService: DialogService) { }
+        private dialogService: DialogService,
+        private router: Router) { }
 
     afterInit(entityList) {
         this.entityList = entityList;
@@ -151,5 +154,153 @@ export class VMListComponent {
     onCheckboxChange(row) {
         row.autostart = !row.autostart;
         this.doRowAction(row, this.updateVM, [row.id, { 'autostart': row.autostart }]);
+    }
+
+    getActions(row) {
+        return [{
+            name: row.name,
+            label: T("Edit"),
+            icon: "edit",
+            id: 'EDIT',
+            onClick: edit_row => {
+                this.router.navigate(new Array("").concat(["vm", "edit", edit_row.id]));
+            }
+        },
+        {
+            name: row.name,
+            label: T("Delete"),
+            icon: "delete",
+            id: 'DELETE',
+            onClick: delete_row => {
+                this.entityList.doDelete(delete_row);
+            }
+        },
+        {
+            name: row.name,
+            label: T("Devices"),
+            icon: "device_hub",
+            id: 'DEVICES',
+            onClick: devices_row => {
+                this.router.navigate(new Array("").concat(["vm", devices_row.id, "devices", devices_row.name]));
+            }
+        },
+        {
+            name: row.name,
+            label: T("Clone"),
+            id: 'CLONE',
+            icon: "filter_none",
+            onClick: clone_row => {
+                const conf: DialogFormConfiguration = {
+                    title: T("Name"),
+                    fieldConfig: [
+                        {
+                            type: "input",
+                            inputType: "text",
+                            name: "name",
+                            placeholder: T("Enter a Name (optional)"),
+                            required: false
+                        }
+                    ],
+                    saveButtonText: T("Clone"),
+                    customSubmit: function (entityDialog) {
+                        const params = [clone_row.id];
+                        if (entityDialog.formValue.name) {
+                            params.push(entityDialog.formValue.name);
+                        }
+                        this.ws.call('vm.clone', params).subscribe(
+                            (res) => {
+
+                            },
+                            (err) => {
+
+                            }
+                        )
+                    }
+                };
+                this.dialogService.dialogForm(conf);
+            }
+        },
+        {
+            name: row.name,
+            id: "START",
+            icon: "play_arrow",
+            label: T("Start"),
+            onClick: start_row => {
+                this.ws.call('vm.start', [start_row.id]).subscribe(
+                    (res) => {
+
+                    },
+                    (err) => {
+
+                    }
+                )
+            }
+        },
+        {
+            name: row.name,
+            id: "RESTART",
+            icon: "replay",
+            label: T("Restart"),
+            onClick: power_restart_row => {
+                this.ws.call('vm.restart', [power_restart_row.id]).subscribe(
+                    (res) => {
+
+                    },
+                    (err) => {
+
+                    }
+                )
+            }
+        },
+        {
+            name: row.name,
+            id: "STOP",
+            icon: "stop",
+            label: T("Stop"),
+            onClick: power_stop_row => {
+                this.ws.call('vm.stop', [power_stop_row.id]).subscribe(
+                    (res) => {
+
+                    },
+                    (err) => {
+
+                    }
+                )
+            }
+        },
+        {
+            name: row.name,
+            label: T("Serial"),
+            icon: "keyboard_arrow_right",
+            id: 'SERIAL',
+            onClick: vm => {
+                this.router.navigate(new Array("").concat(["vm", "serial", vm.id]));
+            }
+        },
+        {
+            name: row.name,
+            label: T("VNC"),
+            id: 'VNC',
+            icon: "settings_ethernet",
+            onClick: vnc_vm => {
+                this.ws.call("vm.get_vnc_web", [vnc_vm.id]).subscribe(res => {
+                    for (const vnc_port in res) {
+                        window.open(res[vnc_port]);
+                    }
+                });
+            }
+        }
+        ];
+    }
+
+    isActionVisible(actionId: string, row: any) {
+        if (actionId === 'VNC' && (row["status"]["state"] !== "RUNNING" || !this.checkVnc(row))) {
+            return false;
+        } else if ((actionId === 'STOP' || actionId === 'RESTART' || actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
+            return false;
+        } else if (actionId === 'START' && row["status"]["state"] === "RUNNING") {
+            return false;
+        }
+        return true;
     }
 }
