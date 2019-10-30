@@ -212,7 +212,7 @@
             <mat-checkbox
               [checked]="allRowsSelected"
               (change)="selectFn(!allRowsSelected)"
-              ix-auto="multi-checkbox-all"
+              ix-auto=""
               ix-auto-type="checkbox"
               [ix-auto-identifier]="title"
             ></mat-checkbox>
@@ -223,7 +223,7 @@
           <div>
             <mat-checkbox
               *ngIf="!row.hideCheckbox"
-              ix-auto="multi-checkbox"
+              ix-auto=""
               ix-auto-type="checkbox"
               [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               [checked]="isSelected"
@@ -348,7 +348,7 @@
             [class.datatable-icon-down]="expanded"
             title="Expand/Collapse Row"
             (click)="toggleExpandRow(row)"
-            ix-auto="expander"
+            ix-auto=""
             ix-auto-type="expander"
             [ix-auto-identifier]="row[conf.rowIdentifier || 'name']">
           </a>
