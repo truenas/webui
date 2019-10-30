@@ -49,7 +49,7 @@
             *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.name, this.config)"
             mat-button
             id="action_button_{{ action?.name }}__{{action.id}}"
-            [ix-auto]=""
+            [ix-auto-colname]=""
             ix-auto-type="button"
             ix-auto-identifier="{{ action?.name | uppercase }}_{{action.id}}"
             (click)="action.onClick(this.config)"

@@ -2,12 +2,12 @@ import { Directive, ElementRef, Input, OnChanges } from '@angular/core';
 
 @Directive({
   // tslint:disable-next-line: directive-selector
-  selector: '[ix-auto]'
+  selector: '[ix-auto-colname]'
 })
 export class DataTableCellDirective implements OnChanges {
   public static readonly ATTRIBUTE = 'ix-auto';
 
-  @Input('ix-auto') public column: string;
+  @Input('ix-auto-colname') public column: string;
   @Input('ix-auto-type') public type: string;
 
   // tslint:disable-next-line: no-input-rename
