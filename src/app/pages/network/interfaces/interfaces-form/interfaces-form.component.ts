@@ -26,6 +26,7 @@ export class InterfacesFormComponent implements OnDestroy {
   private aliases_fc: any;
   protected ipPlaceholder: string;
   protected failoverPlaceholder: string;
+  protected saveSubmitText = helptext.int_save_button;
 
   public fieldConfig: FieldConfig[] = [
     {

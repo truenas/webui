@@ -148,5 +148,7 @@ mtu_tooltip: T('Maximum Transmission Unit, the largest protocol data \
 mtu_validation: [rangeValidator(68, 9000)],
 
 alias_list_placeholder: T('Aliases'),
-alias_list_label: T('Aliases')
+alias_list_label: T('Aliases'),
+
+int_save_button: T('Apply')
 }
