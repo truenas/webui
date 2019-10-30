@@ -5,13 +5,19 @@ import { WebSocketService, StorageService, AppLoaderService, DialogService } fro
 import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
 import helptext from '../../../helptext/vm/vm-list';
+import wizardHelptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'vm-list',
-    template: `<entity-table [title]='title' [conf]='this'></entity-table>`
+    template: `
+    <div class="vm-summary">
+        <p *ngIf="availMem"><strong>{{memTitle | translate}}</strong> {{availMem}} - {{memWarning | translate}}</p>
+    </div>
+    <entity-table [title]='title' [conf]='this'></entity-table>`,
+    styleUrls: ['./vm-list.component.css']
 })
 export class VMListComponent {
 
@@ -49,7 +55,12 @@ export class VMListComponent {
         stop: "vm.stop",
         update: "vm.update",
         clone: "vm.clone",
+        getAvailableMemory: "vm.get_available_memory",
     };
+
+    public availMem: string;
+    public memTitle = wizardHelptext.vm_mem_title;
+    public memWarning = wizardHelptext.memory_warning;
 
     constructor(
         private ws: WebSocketService,
@@ -59,6 +70,7 @@ export class VMListComponent {
         private router: Router) { }
 
     afterInit(entityList) {
+        this.checkMemory();
         this.entityList = entityList;
     }
 
@@ -149,6 +161,7 @@ export class VMListComponent {
                         this.loader.close();
                     });
                 }
+                this.checkMemory();
             },
             (err) => {
                 this.loader.close();
@@ -310,5 +323,11 @@ export class VMListComponent {
             return false;
         }
         return true;
+    }
+
+    checkMemory() {
+        this.ws.call(this.wsMethods.getAvailableMemory).subscribe((res) => {
+            this.availMem = this.storageService.convertBytestoHumanReadable(res);
+        });
     }
 }
