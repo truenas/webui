@@ -35,7 +35,7 @@ ha_enabled_delete_title: T("Cannot Delete while HA is Enabled"),
 ha_enabled_delete_msg: T("Deleting interfaces while HA is enabled is not allowed."),
 
 checkin_text: T("Changes that have been applied will revert after "),
-checkin_text_2: T(" seconds unless kept permanently. Adjust this amount to allow for testing."),
+checkin_text_2: T(" seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow for testing."),
 
 ha_enabled_text: T("Cannot edit while HA is enabled."),
 go_to_ha: T("Go to HA settings"),
