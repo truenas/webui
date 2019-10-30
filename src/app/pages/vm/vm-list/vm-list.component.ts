@@ -7,6 +7,7 @@ import globalHelptext from '../../../helptext/global-helptext';
 import helptext from '../../../helptext/vm/vm-list';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'vm-list',
@@ -42,9 +43,13 @@ export class VMListComponent {
         },
     };
 
-    protected startVM = "vm.start";
-    protected stopVM = "vm.stop";
-    protected updateVM = "vm.update";
+    protected wsMethods = {
+        start: "vm.start",
+        restart: "vm.restart",
+        stop: "vm.stop",
+        update: "vm.update",
+        clone: "vm.clone",
+    };
 
     constructor(
         private ws: WebSocketService,
@@ -105,7 +110,7 @@ export class VMListComponent {
     }
 
     onSliderChange(row) {
-        const method = row['status']['state'] === "RUNNING" ? this.stopVM : this.startVM;
+        const method = row['status']['state'] === "RUNNING" ? this.wsMethods.stop : this.wsMethods.start;
         this.doRowAction(row, method);
     }
 
@@ -127,69 +132,129 @@ export class VMListComponent {
 
         memoryDialog.afterClosed().subscribe((dialogRes) => {
             if (dialogRes) {
-                this.doRowAction(row, this.startVM, [row.id, { "overcommit": true }]);
+                this.doRowAction(row, this.wsMethods.start, [row.id, { "overcommit": true }]);
             }
         });
     }
 
-    doRowAction(row, method, params = [row.id]) {
+    doRowAction(row, method, params = [row.id], updateTable = false) {
         this.loader.open();
         this.ws.call(method, params).subscribe(
             (res) => {
-                this.entityList.getData();
-                this.loader.close();
+                if (updateTable) {
+                    this.entityList.getData();
+                    this.loader.close();
+                } else {
+                    this.updateRows([row]).then(() => {
+                        this.loader.close();
+                    });
+                }
             },
             (err) => {
-                this.entityList.getData();
                 this.loader.close();
-                if (method === this.startVM && err.error === 12) {
+                if (method === this.wsMethods.start && err.error === 12) {
                     this.onMemoryError(row);
                     return;
+                } else if (method === this.wsMethods.update) {
+                    row.autostart = !row.autostart;
                 }
                 new EntityUtils().handleWSError(this, err, this.dialogService);
             }
         )
     }
 
+    updateRows(rows: Array<any>): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.ws.call(this.queryCall).subscribe(
+                (res) => {
+                    for (const row of rows) {
+                        const targetIndex = _.findIndex(res, function (o) { return o['id'] === row.id });
+                        if (targetIndex === -1) {
+                            reject(false);
+                        }
+                        for (const i in row) {
+                            row[i] = res[targetIndex][i];
+                        }
+                    }
+                    this.resourceTransformIncomingRestData(rows);
+                    resolve(true);
+                },
+                (err) => {
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
+                    reject(err);
+                }
+            )
+        });
+    };
+
     onCheckboxChange(row) {
         row.autostart = !row.autostart;
-        this.doRowAction(row, this.updateVM, [row.id, { 'autostart': row.autostart }]);
+        this.doRowAction(row, this.wsMethods.update, [row.id, { 'autostart': row.autostart }]);
     }
 
     getActions(row) {
         return [{
-            name: row.name,
-            label: T("Edit"),
-            icon: "edit",
+            id: "START",
+            icon: "play_arrow",
+            label: T("Start"),
+            onClick: start_row => {
+                this.onSliderChange(start_row);
+            }
+        },
+        {
+            id: "RESTART",
+            icon: "replay",
+            label: T("Restart"),
+            onClick: restart_row => {
+                this.doRowAction(restart_row, this.wsMethods.restart);
+            }
+        },
+        {
+            id: "POWER_OFF",
+            icon: "power_settings_new",
+            label: T("Power Off"),
+            onClick: power_off_row => {
+                this.doRowAction(row, this.wsMethods.stop, [power_off_row.id, true]);
+            }
+        },
+        {
+            id: "STOP",
+            icon: "stop",
+            label: T("Stop"),
+            onClick: stop_row => {
+                this.onSliderChange(stop_row);
+            }
+        },
+        {
             id: 'EDIT',
+            icon: "edit",
+            label: T("Edit"),
             onClick: edit_row => {
                 this.router.navigate(new Array("").concat(["vm", "edit", edit_row.id]));
             }
         },
         {
-            name: row.name,
-            label: T("Delete"),
-            icon: "delete",
             id: 'DELETE',
+            icon: "delete",
+            label: T("Delete"),
             onClick: delete_row => {
                 this.entityList.doDelete(delete_row);
             }
         },
         {
-            name: row.name,
-            label: T("Devices"),
-            icon: "device_hub",
             id: 'DEVICES',
+            icon: "device_hub",
+            label: T("Devices"),
             onClick: devices_row => {
                 this.router.navigate(new Array("").concat(["vm", devices_row.id, "devices", devices_row.name]));
             }
         },
         {
-            name: row.name,
-            label: T("Clone"),
             id: 'CLONE',
             icon: "filter_none",
+            label: T("Clone"),
             onClick: clone_row => {
+                const parent = this;
                 const conf: DialogFormConfiguration = {
                     title: T("Name"),
                     fieldConfig: [
@@ -203,85 +268,21 @@ export class VMListComponent {
                     ],
                     saveButtonText: T("Clone"),
                     customSubmit: function (entityDialog) {
+                        entityDialog.dialogRef.close(true);
                         const params = [clone_row.id];
                         if (entityDialog.formValue.name) {
                             params.push(entityDialog.formValue.name);
                         }
-                        this.ws.call('vm.clone', params).subscribe(
-                            (res) => {
-
-                            },
-                            (err) => {
-
-                            }
-                        )
+                        parent.doRowAction(clone_row, parent.wsMethods.clone, params, true);
                     }
                 };
                 this.dialogService.dialogForm(conf);
             }
         },
         {
-            name: row.name,
-            id: "START",
-            icon: "play_arrow",
-            label: T("Start"),
-            onClick: start_row => {
-                this.ws.call('vm.start', [start_row.id]).subscribe(
-                    (res) => {
-
-                    },
-                    (err) => {
-
-                    }
-                )
-            }
-        },
-        {
-            name: row.name,
-            id: "RESTART",
-            icon: "replay",
-            label: T("Restart"),
-            onClick: power_restart_row => {
-                this.ws.call('vm.restart', [power_restart_row.id]).subscribe(
-                    (res) => {
-
-                    },
-                    (err) => {
-
-                    }
-                )
-            }
-        },
-        {
-            name: row.name,
-            id: "STOP",
-            icon: "stop",
-            label: T("Stop"),
-            onClick: power_stop_row => {
-                this.ws.call('vm.stop', [power_stop_row.id]).subscribe(
-                    (res) => {
-
-                    },
-                    (err) => {
-
-                    }
-                )
-            }
-        },
-        {
-            name: row.name,
-            label: T("Serial"),
-            icon: "keyboard_arrow_right",
-            id: 'SERIAL',
-            onClick: vm => {
-                this.router.navigate(new Array("").concat(["vm", "serial", vm.id]));
-            }
-        },
-        {
-            name: row.name,
-            label: T("VNC"),
             id: 'VNC',
             icon: "settings_ethernet",
+            label: T("VNC"),
             onClick: vnc_vm => {
                 this.ws.call("vm.get_vnc_web", [vnc_vm.id]).subscribe(res => {
                     for (const vnc_port in res) {
@@ -289,14 +290,21 @@ export class VMListComponent {
                     }
                 });
             }
-        }
-        ];
+        },
+        {
+            id: 'SERIAL',
+            icon: "keyboard_arrow_right",
+            label: T("Serial"),
+            onClick: vm => {
+                this.router.navigate(new Array("").concat(["vm", "serial", vm.id]));
+            }
+        }];
     }
 
     isActionVisible(actionId: string, row: any) {
         if (actionId === 'VNC' && (row["status"]["state"] !== "RUNNING" || !this.checkVnc(row))) {
             return false;
-        } else if ((actionId === 'STOP' || actionId === 'RESTART' || actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
+        } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' || actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
             return false;
         } else if (actionId === 'START' && row["status"]["state"] === "RUNNING") {
             return false;
