@@ -8,21 +8,30 @@
       <div id="filter">
         <mat-icon>search</mat-icon>
         <mat-form-field floatPlaceholder="never">
-          <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
+          <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}"
+          ix-auto
+          ix-auto-type="input"
+          ix-auto-identifier="Filter {{conf.title}}">
         </mat-form-field>
         <!--<tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>-->
       </div>
 
       <!-- START MultiMenu-->
       <div *ngIf="columnFilter && allColumns && allColumns.length > 0">
-        <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle">
+        <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
+          ix-auto
+          ix-auto-type="button"
+          ix-auto-identifier="{{conf.title}}_COLUMNS">
           <span>Columns <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
         </button>
         <mat-menu #menu="matMenu" multiple overlapTrigger="false">
 
           <!-- SELECT ALL -->
           <div (click)="$event.stopPropagation()">
-            <button mat-menu-item (click)="checkAll()" id="check-all">
+            <button mat-menu-item (click)="checkAll()" id="check-all"
+            ix-auto
+            ix-auto-type="action"
+            ix-auto-identifier="COLUMNS_SELECT">
               <span>
                 <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
                 <mat-icon *ngIf="!checkLength()">remove</mat-icon>
@@ -34,7 +43,10 @@
 
           <!-- INDIVIDUAL COLUMNS-->
           <div (click)="$event.stopPropagation()">
-            <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name">
+            <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name"
+              ix-auto
+              ix-auto-type="action"
+              ix-auto-identifier="COLUMNS_{{col.name}}">
               <span>
                 <mat-icon *ngIf="isChecked(col)">check_circle</mat-icon>
                 <mat-icon *ngIf="!isChecked(col)">remove</mat-icon>
@@ -44,7 +56,10 @@
           </div>
 
           <div (click)="$event.stopPropagation()">
-            <button mat-menu-item (click)="resetColViewToDefaults()" id="reset_col_view">
+            <button mat-menu-item (click)="resetColViewToDefaults()" id="reset_col_view"
+              ix-auto
+              ix-auto-type="action"
+              ix-auto-identifier="COLUMNS_Reset to Defaults">
               <span>
                 <mat-icon>undo</mat-icon>
               </span>
@@ -201,7 +216,10 @@
                 [size]="pageSize"
                 [count]="rowCount"
                 [hidden]="!((rowCount / pageSize) > 1)"
-                (change)="entityTable.onFooterPage($event)">
+                (change)="entityTable.onFooterPage($event)"
+                ix-auto
+                ix-auto-type="pager"
+                ix-auto-identifier="{{conf.title}}-table_pager">
             </datatable-pager>
           </ng-template>
         </ngx-datatable-footer>

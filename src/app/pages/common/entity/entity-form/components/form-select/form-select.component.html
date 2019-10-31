@@ -35,7 +35,10 @@
       <div *ngIf="formReady">
         <ng-container *ngFor="let option of config.options; let i=index">
           <!-- if disabled -->
-          <mat-option *ngIf="option.disable && !option.hiddenFromDisplay" [value]="option.value" disabled style="opacity:0.5">
+          <mat-option *ngIf="option.disable && !option.hiddenFromDisplay" [value]="option.value" disabled style="opacity:0.5"
+            ix-auto
+            ix-auto-type="option"
+            ix-auto-identifier="{{config.placeholder}}_{{option.label}}">
               <span *ngIf="config.multiple">
                 <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
                 <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
@@ -44,7 +47,10 @@
           </mat-option>
 
           <!-- else -->
-          <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onToggleSelect(option, i)">
+          <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onToggleSelect(option, i)"
+            ix-auto
+            ix-auto-type="option"
+            ix-auto-identifier="{{config.placeholder}}_{{option.label}}">
               <span *ngIf="config.multiple">
                 <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
                 <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>

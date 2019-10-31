@@ -1,5 +1,8 @@
 <div #tooltip class="tooltip" > 
-  <i class="material-icons tooltip-icon" (click)="toggleVis(!isLockTooltip ? 'lock' : '')" >help_outline</i>
+  <i class="material-icons tooltip-icon" (click)="toggleVis(!isLockTooltip ? 'lock' : '')" 
+    ix-auto
+    ix-auto-type="tooltip-icon"
+    ix-auto-identifier="{{header}}">help_outline</i>
 
   <div class="tooltip-container fn-theme-primary" [ngClass]="{'wizard': isWizard, 'moved': isMoved}">
     <div cdkDrag 
@@ -14,7 +17,10 @@
           <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close"></mat-icon>
           </div>
 
-      <div class="tooltip-message" [innerHTML]="message | translate | docreplace"></div>
+      <div class="tooltip-message" [innerHTML]="message | translate | docreplace"
+        ix-auto
+        ix-auto-type="tooltip-message"
+        ix-auto-identifier="{{header}}"></div>
 
     </div>
   </div>
