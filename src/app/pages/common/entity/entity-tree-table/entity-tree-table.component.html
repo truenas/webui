@@ -15,10 +15,16 @@
 				{{col.filesizePipe ? (rowData[col.prop] | filesize : {standard : "iec"}) : rowData[col.prop]}}
 			</td>
 			<td *ngIf="showActions && rowData.actions">
-				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}">more_vert</mat-icon>
+				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}"
+				ix-auto
+				ix-auto-type="options"
+				ix-auto-identifier="{{rowData.name}}">more_vert</mat-icon>
 				<mat-menu #appMenu="matMenu">
 					<span *ngFor="let action of rowData.actions" id="action_button__{{rowData.name}}_{{action.label}}">
-						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);">
+						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);"
+						ix-auto
+						ix-auto-type="action"
+						ix-auto-identifier="{{rowData.name}}_{{action.label}}">
 							<span>{{action.label}}</span>
 						</button>
 					</span>

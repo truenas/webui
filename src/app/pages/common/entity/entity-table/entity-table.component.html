@@ -212,7 +212,7 @@
             <mat-checkbox
               [checked]="allRowsSelected"
               (change)="selectFn(!allRowsSelected)"
-              ix-auto-colname=""
+              ix-auto
               ix-auto-type="checkbox"
               [ix-auto-identifier]="title"
             ></mat-checkbox>
@@ -223,7 +223,7 @@
           <div>
             <mat-checkbox
               *ngIf="!row.hideCheckbox"
-              ix-auto-colname=""
+              ix-auto
               ix-auto-type="checkbox"
               [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               [checked]="isSelected"
@@ -247,7 +247,7 @@
             <div class="clickable"
               *ngIf="col.toggle"
               id="{{row.name}}_{{col.name}}-overlay"
-              [ix-auto-colname]="col?.name"
+              [ix-auto]="col?.name"
               ix-auto-type="clickable-overlay"
               [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               (click)="conf.onSliderChange(row)"
@@ -258,14 +258,14 @@
               *ngIf="col.toggle"
               color="accent"
               id="{{row.name}}_{{col.name}}-slidetoggle"
-              [ix-auto-colname]="col?.name"
+              [ix-auto]="col?.name"
               ix-auto-type="toggle"
               [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               [checked]="row[col.prop]==='RUNNING'"
             ></mat-slide-toggle>
             <div id="{{col.prop}}_{{row[col.prop]}}"
                  title="{{convertDisplayValue(row[col.prop])}}"
-                 [ix-auto-colname]="col?.name"
+                 [ix-auto]="col?.name"
                  ix-auto-type="value"
                  [ix-auto-identifier]="row[conf.rowIdentifier || 'name']">
               {{convertDisplayValue(row[col.prop])}}
@@ -283,13 +283,13 @@
           <div
             fxLayoutAlign="start center"
             fxLayoutGap="4px"
-            [ix-auto-colname]="col?.name"
+            [ix-auto]="col?.name"
             ix-auto-type="value"
             [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
           >
             <ng-container *ngIf="col?.widget?.component">
                 <mat-icon
-                  [ix-auto-colname]="col?.name + '_widget'"
+                  [ix-auto]="col?.name + '_widget'"
                   [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
                   [matMenuTriggerFor]="widget"
                   class="widget-icon"
@@ -311,7 +311,7 @@
                 *ngIf="col.selectable"
                 [checked]="row[col.prop]"
                 (change)="conf.onCheckboxChange(row)"
-                [ix-auto-colname]="col?.name"
+                [ix-auto]="col?.name"
                 ix-auto-type="checkbox"
                 [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               ></mat-checkbox>
@@ -319,7 +319,7 @@
                 [ngClass]="getButtonClass(row[col.prop])"
                 [style.width.px]="93"
                 *ngIf="col.state && stateClickable(row[col.prop], col); else colInfo"
-                [ix-auto-colname]="col?.name"
+                [ix-auto]="col?.name"
                 ix-auto-type="button"
                 [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
                 (click)="conf.stateButton(row)">
@@ -348,7 +348,7 @@
             [class.datatable-icon-down]="expanded"
             title="Expand/Collapse Row"
             (click)="toggleExpandRow(row)"
-            ix-auto-colname=""
+            ix-auto
             ix-auto-type="expander"
             [ix-auto-identifier]="row[conf.rowIdentifier || 'name']">
           </a>

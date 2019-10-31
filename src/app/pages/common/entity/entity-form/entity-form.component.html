@@ -28,7 +28,7 @@
                   <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)"
                     [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">
                     <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'"
-                      [ix-auto-colname]=""
+                      ix-auto
                       ix-auto-type="form-{{field.type}}"
                       ix-auto-identifier="{{field.name}}"
                     ></div>
@@ -38,12 +38,12 @@
             </ng-container>
             <mat-card-actions class="buttons">
                 <button id="save_button" class="btn btn-block btn-warning mat-primary" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid || !conf.save_button_enabled"
-                  [ix-auto-colname]=""
+                  ix-auto
                   ix-auto-type="button"
                   ix-auto-identifier="{{saveSubmitText | uppercase}}"
                 >{{saveSubmitText | translate}}</button>
                 <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-lg mat-accent" type="button" (click)="goBack()" mat-button color="accent"
-                  [ix-auto-colname]=""
+                  ix-auto
                   ix-auto-type="button"
                   ix-auto-identifier="CANCEL"
                 >{{"Cancel" | translate}}</button>
@@ -51,12 +51,12 @@
                 <!-- <div class="btn-group btn-group-justified"> -->
                 <span *ngFor="let custBtn of conf.custActions">
                   <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" [disabled]="custBtn.disabled" type="button" (click)="custBtn['function']()"
-                    [ix-auto-colname]=""
+                    ix-auto
                     ix-auto-type="button"
                     ix-auto-identifier="{{custBtn.name | uppercase}}">{{custBtn.name | translate}}</button>
                 </span>
                 <button mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()"
-                  [ix-auto-colname]=""
+                  ix-auto
                   ix-auto-type="button"
                   ix-auto-identifier="DELETE"
                 >{{"Delete" | translate}}</button>

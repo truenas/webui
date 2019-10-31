@@ -1,6 +1,6 @@
 <div class="panel_container">
   <mat-icon
-    [ix-auto-colname]=""
+    ix-auto
     ix-auto-type="options"
     ix-auto-identifier="{{row[key_prop]}}"
     id="table_actions_menu_button__{{key_prop}}_{{row[key_prop]}}"
@@ -13,7 +13,7 @@
     <span *ngFor="let action of actions">
 			<button id="action_button_{{ action?.name }}__{{action.id}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
             || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);"
-            [ix-auto-colname]=""
+            ix-auto
             ix-auto-type="action"
             ix-auto-identifier="{{action.id}}_{{action.label}}"
             >

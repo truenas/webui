@@ -23,18 +23,18 @@
   <span fxFlex></span>
   <span *ngFor="let custBtn of conf.custActions">
     <button id="cust_button_{{custBtn.id}}" mat-button class="mat-button"
-      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button"\  [ix-auto-colname]=""
+      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button"\  ix-auto
       ix-auto-type="button"
       ix-auto-identifier="{{custBtn.name | uppercase}}"
       (click)="custBtn['function']()" [name]="custBtn.name + '_button'">{{custBtn.name | translate}}</button>
   </span>
   <button mat-button class="mat-flat-button mat-accent" (click)="cancel()" [name]="cancelButtonText + '_button'"
-    [ix-auto-colname]=""
+    ix-auto
     ix-auto-type="button"
     ix-auto-identifier="{{cancelButtonText | uppercase}}"
   >{{cancelButtonText | translate}}</button>
   <button mat-button class="mat-flat-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid || !submitEnabled"
-    [ix-auto-colname]=""
+    ix-auto
     ix-auto-type="button"
     ix-auto-identifier="{{saveButtonText | uppercase}}"
     *ngIf="saveButtonText" [name]="saveButtonText + '_button'">{{saveButtonText | translate}}</button>
