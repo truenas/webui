@@ -38,6 +38,6 @@ export class ConfirmDialog {
     if (!this.hideCheckBox) {
       return !this.isSubmitEnabled && !this.hideCheckBox;
     }
-    return !this.isSubmitEnabled;
+    return this.secondaryCheckBox ? !this.isSubmitEnabled : false;
   }
 }
