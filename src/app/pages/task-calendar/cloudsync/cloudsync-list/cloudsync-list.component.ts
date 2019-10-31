@@ -95,8 +95,8 @@ export class CloudsyncListComponent implements InputTableConf {
 
   getActions(parentrow) {
     return [{
-      id: parentrow.description,
-      actionName: 'run_now',
+      actionName: parentrow.description,
+      id: 'run_now',
       label: T("Run Now"),
       icon: 'play_arrow',
       onClick: (row) => {
@@ -120,8 +120,8 @@ export class CloudsyncListComponent implements InputTableConf {
         });
       },
     }, {
-      id: parentrow.description,
-      actionName: 'stop',
+      actionName: parentrow.description,
+      id: 'stop',
       label: T("Stop"),
       icon: 'stop',
       onClick: (row) => {
@@ -140,8 +140,8 @@ export class CloudsyncListComponent implements InputTableConf {
         });
       },
     }, {
-      actionName: "edit",
-      id: parentrow.description,
+      id: "edit",
+      actionName: parentrow.description,
       icon: 'edit',
       label: T("Edit"),
       onClick: (row) => {
@@ -149,8 +149,8 @@ export class CloudsyncListComponent implements InputTableConf {
         this.router.navigate(this.route_edit);
       },
     }, {
-      id: parentrow.description,
-      actionName: "delete",
+      actionName: parentrow.description,
+      id: "delete",
       label: T("Delete"),
       icon: 'delete',
       onClick: (row) => {
@@ -162,7 +162,7 @@ export class CloudsyncListComponent implements InputTableConf {
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'start' && row.job && row.job.state === 'RUNNING') {
       return false;
-    } else if (actionId === 'stop' && row.job && row.job.state !== 'RUNNING') {
+    } else if (actionId === 'stop' && (row.job? (row.job && row.job.state !== 'RUNNING') : true)) {
       return false;
     }
     return true;
