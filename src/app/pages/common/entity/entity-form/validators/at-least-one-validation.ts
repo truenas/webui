@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms'
 
-export function atLeastOne(otherControlName: string) {
+export function atLeastOne(otherControlName: string, fieldPlacehoders: [string, string]) {
 
     let thisControl: FormControl;
     let otherControl: FormControl;
@@ -26,9 +26,9 @@ export function atLeastOne(otherControlName: string) {
       if (!otherControl) {
         return null;
       }
-  
+
       if (!otherControl.value && !thisControl.value) {
-        return {atLeastOne: true};
+        return {atLeastOne: true, fields: fieldPlacehoders};
       }
   
       return null;

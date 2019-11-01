@@ -1,6 +1,6 @@
 import {FormControl} from '@angular/forms'
 
-export function greaterThan(otherControlName: string) {
+export function greaterThan(otherControlName: string, fieldPlaceholers: [string]) {
 
   let thisControl: FormControl;
   let otherControl: FormControl;
@@ -28,7 +28,7 @@ export function greaterThan(otherControlName: string) {
     }
 
     if (otherControl.value > thisControl.value) {
-      return {greaterThan: true};
+      return {greaterThan: true, fields: fieldPlaceholers};
     }
 
     return null;
