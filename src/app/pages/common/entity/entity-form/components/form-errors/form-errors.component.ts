@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { FieldConfig } from '../../models/field-config.interface';
 
@@ -6,12 +6,7 @@ import { FieldConfig } from '../../models/field-config.interface';
     selector: 'form-errors',
     templateUrl: './form-errors.component.html',
 })
-export class FormErrorsComponent implements OnInit{
+export class FormErrorsComponent{
     @Input()control: FormControl;
     @Input()config: FieldConfig;
-
-    constructor(){}
-    ngOnInit() {
-        console.log(this.control, this.config);
-    }
 }

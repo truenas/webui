@@ -3,10 +3,10 @@
         {{ config.placeholder }} {{ " is required" | translate }}
     </mat-error>
     <mat-error *ngIf="control.hasError('atLeastOne')">
-        {{ "At leaset one is required" | translate }}
+        {{control.errors.fields[0] + " and " + control.errors.fields[1] + ". At leaset one is required" | translate }}
     </mat-error>
     <mat-error *ngIf="control.hasError('greaterThan')">
-        {{ "Should greater than" | translate }}
+        {{ "Should greater than " + control.errors.fields[0] | translate }}
     </mat-error>
     <mat-error *ngIf="control.hasError('forbidden')">
         {{ "This name is in used" | translate }}
