@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { helptext_sharing_afp } from 'app/helptext/sharing';
+import { T } from "app/translate-marker";
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { DialogService, RestService, WebSocketService, AppLoaderService, SnackbarService } from '../../../../services/';
+import { DialogService, RestService, WebSocketService, AppLoaderService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
@@ -159,7 +161,7 @@ export class SMBFormComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, private dialog:DialogService,
-              protected loader: AppLoaderService, public snackbar: SnackbarService ) {}
+              protected loader: AppLoaderService ) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -179,9 +181,10 @@ export class SMBFormComponent {
             this.loader.open();
             this.ws.call('service.restart', ['cifs']).subscribe(() => {
               this.loader.close();
-              this.snackbar.open(helptext_sharing_smb.restart_smb_snackbar.message, 
-                helptext_sharing_smb.restart_smb_snackbar.action, {duration: 4000});
-              this.checkACLactions(entityForm);
+              this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
+                helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
+                  this.checkACLactions(entityForm);
+                })
             }, (err) => { 
               this.loader.close();
               this.dialog.errorReport('Error', err.err, err.backtrace);
@@ -259,10 +262,8 @@ export class SMBFormComponent {
                     switchMap(() => this.ws.call("service.start", [cifsService.service])),
                     tap(() => {
                       entityForm.loader.close();
-                      entityForm.snackBar.open(
-                        helptext_sharing_smb.snackbar_service_started,
-                        helptext_sharing_smb.snackbar_close
-                      );
+                      this.dialog.Info(T('SMB') + helptext_sharing_afp.shared.dialog_started_title, 
+                      T('The SMB') + helptext_sharing_afp.shared.dialog_started_message, '250px');
                     }),
                     catchError(error => {
                       entityForm.loader.close();

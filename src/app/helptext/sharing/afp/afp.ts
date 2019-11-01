@@ -138,6 +138,9 @@ export const helptext_sharing_afp = {
   dialog_message: T("Enable this service?"),
   dialog_button: T("Enable Service"),
 
-  snackbar_message: T("Service started"),
-  snackbar_close: T("close")
+  shared: {
+    dialog_started_title: T(' Service'),
+    dialog_started_message: T(' service has been enabled and started.')
+  }
+
 };
