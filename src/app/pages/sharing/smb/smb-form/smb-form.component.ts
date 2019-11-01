@@ -261,9 +261,12 @@ export class SMBFormComponent {
                     switchMap(() => this.ws.call("service.start", [cifsService.service])),
                     tap(() => {
                       entityForm.loader.close();
-                      this.dialog.Info(T('SMB') + shared.dialog_started_title, 
-                      T('The SMB') + shared.dialog_started_message, '250px');
                     }),
+                    switchMap(() => 
+                    this.dialog.Info(T('SMB') + shared.dialog_started_title, 
+                      T('The SMB') + shared.dialog_started_message, '250px')
+                    ),
+
                     catchError(error => {
                       entityForm.loader.close();
                       this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
