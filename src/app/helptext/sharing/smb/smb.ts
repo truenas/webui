@@ -17,7 +17,7 @@ export const helptext_sharing_smb = {
 
     placeholder_comment: T("Comment"),
     tooltip_comment: T(
-      "Set the share comment."
+      "Description of the share or notes on how it is used."
     ),
 
     placeholder_home: T('Use as home share'),
