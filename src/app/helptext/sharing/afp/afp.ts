@@ -132,15 +132,6 @@ export const helptext_sharing_afp = {
   ),
 
   actions_basic_mode: T("Basic Mode"),
-  actions_advanced_mode: T("Advanced Mode"),
-
-  dialog_title: T("Enable service"),
-  dialog_message: T("Enable this service?"),
-  dialog_button: T("Enable Service"),
-
-  shared: {
-    dialog_started_title: T(' Service'),
-    dialog_started_message: T(' service has been enabled and started.')
-  }
+  actions_advanced_mode: T("Advanced Mode")
 
 };

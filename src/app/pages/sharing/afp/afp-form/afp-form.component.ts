@@ -4,7 +4,7 @@ import { WebSocketService, DialogService } from '../../../../services/';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { helptext_sharing_afp } from 'app/helptext/sharing';
+import { shared, helptext_sharing_afp } from 'app/helptext/sharing';
 import { T } from "app/translate-marker";
 
 @Component({
@@ -217,16 +217,15 @@ export class AFPFormComponent implements OnDestroy {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(helptext_sharing_afp.dialog_title,
-          helptext_sharing_afp.dialog_message,
-          true, helptext_sharing_afp.dialog_button).subscribe((dialogRes) => {
+          this.dialog.confirm(shared.dialog_title,
+          shared.dialog_message, true, shared.dialog_button).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
-                  this.dialog.Info(T('AFP') + helptext_sharing_afp.shared.dialog_started_title, 
-                    T('The AFP') + helptext_sharing_afp.shared.dialog_started_message, '250px').subscribe(() => {
+                  this.dialog.Info(T('AFP') + shared.dialog_started_title, 
+                    T('The AFP') + shared.dialog_started_message, '250px').subscribe(() => {
                       this.router.navigate(new Array('/').concat(
                         this.route_success));
                   })

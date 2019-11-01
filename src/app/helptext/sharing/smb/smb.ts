@@ -108,9 +108,6 @@ export const helptext_sharing_smb = {
 
     action_edit_acl: T('Edit ACL'),
 
-    dialog_enable_service_title: T("Enable service"),
-    dialog_enable_service_message: T("Enable this service?"),
-    dialog_enable_service_button: T("Enable Service"),
     dialog_warning: T('Warning'),
     dialog_warning_message: T("Setting default permissions will reset the permissions of this share and any others within its path."),
 

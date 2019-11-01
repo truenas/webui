@@ -7,8 +7,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { RestService, WebSocketService, DialogService, NetworkService } from '../../../../services/';
-import { helptext_sharing_nfs } from 'app/helptext/sharing';
-import { helptext_sharing_afp } from 'app/helptext/sharing';
+import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { T } from "app/translate-marker";
 
 @Component({
@@ -357,16 +356,15 @@ export class NFSFormComponent {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(helptext_sharing_nfs.dialog_enable_service_title,
-          helptext_sharing_nfs.dialog_enable_service_message,
-          true, helptext_sharing_nfs.dialog_enable_service_button).subscribe((dialogRes) => {
+          this.dialog.confirm(shared.dialog_title, shared.dialog_message,
+          true, shared.dialog_button).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
-                  this.dialog.Info(T('NFS') + helptext_sharing_afp.shared.dialog_started_title, 
-                  T('The NFS') + helptext_sharing_afp.shared.dialog_started_message, '250px').subscribe(() => {
+                  this.dialog.Info(T('NFS') + shared.dialog_started_title, 
+                  T('The NFS') + shared.dialog_started_message, '250px').subscribe(() => {
                     this.router.navigate(new Array('/').concat(
                       this.route_success));
                 })

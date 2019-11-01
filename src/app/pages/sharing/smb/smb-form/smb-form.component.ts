@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { helptext_sharing_smb } from 'app/helptext/sharing';
-import { helptext_sharing_afp } from 'app/helptext/sharing';
+import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import { T } from "app/translate-marker";
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
@@ -249,10 +248,10 @@ export class SMBFormComponent {
            */
           return this.dialog
             .confirm(
-              helptext_sharing_smb.dialog_enable_service_title,
-              helptext_sharing_smb.dialog_enable_service_message,
+              shared.dialog_title,
+              shared.dialog_message,
               true,
-              helptext_sharing_smb.dialog_enable_service_button
+              shared.dialog_button
             )
             .pipe(
               switchMap(doEnableService => {
@@ -262,8 +261,8 @@ export class SMBFormComponent {
                     switchMap(() => this.ws.call("service.start", [cifsService.service])),
                     tap(() => {
                       entityForm.loader.close();
-                      this.dialog.Info(T('SMB') + helptext_sharing_afp.shared.dialog_started_title, 
-                      T('The SMB') + helptext_sharing_afp.shared.dialog_started_message, '250px');
+                      this.dialog.Info(T('SMB') + shared.dialog_started_title, 
+                      T('The SMB') + shared.dialog_started_message, '250px');
                     }),
                     catchError(error => {
                       entityForm.loader.close();

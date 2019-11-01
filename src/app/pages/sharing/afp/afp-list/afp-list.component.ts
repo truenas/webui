@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { delete_share_message } from 'app/helptext/sharing';
+import { shared } from 'app/helptext/sharing';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -31,7 +31,7 @@ export class AFPListComponent {
   };
 
   public confirmDeleteDialog = {
-    message: delete_share_message,
+    message: shared.delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
     buildTitle: share => `${T('Unshare')} ${share.name}`
