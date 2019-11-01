@@ -262,15 +262,13 @@ export class SMBFormComponent {
                     tap(() => {
                       entityForm.loader.close();
                     }),
-                    switchMap(() => 
-                    this.dialog.Info(T('SMB') + shared.dialog_started_title, 
+                    switchMap(() => {
+                    return this.dialog.Info(T('SMB') + shared.dialog_started_title, 
                       T('The SMB') + shared.dialog_started_message, '250px')
-                    ),
-
+                    }),
                     catchError(error => {
                       entityForm.loader.close();
-                      this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
-                      return of(error);
+                      return this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
                     })
                   );
                 }
