@@ -8,7 +8,6 @@ import { combineLatest, of } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { DialogService, RestService, WebSocketService, AppLoaderService, SnackbarService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { helptext } from 'app/helptext/system/reporting';
 
 @Component({
   selector : 'app-smb-form',
