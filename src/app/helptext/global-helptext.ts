@@ -18,9 +18,9 @@ sys_update_message: T('This system will restart when the update completes.'),
 
 human_readable: {
     input_error: T('Invalid value. Valid values are numbers followed by optional unit letters, \
- like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>.'),
+ like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>.'),
 
- suggestion_label: '(Ex. 500 KiB/s, 500M, 2 TB)',
+ suggestion_label: '(Ex. 500 KiBs, 500M, 2 TB)',
 },
 
 closed_job_message: T('See task manager for progress updates.'),
