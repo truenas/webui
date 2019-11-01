@@ -1,8 +1,11 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Validators } from "@angular/forms";
+
 import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntpservers';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
 
 @Component({
   selector : 'app-ntpserver-add',
@@ -52,7 +55,11 @@ export class NTPServerAddComponent {
       placeholder : helptext.add.maxpoll.placeholder,
       tooltip: helptext.add.maxpoll.tooltip,
       value : 10,
-      validation: helptext.add.maxpoll.validation
+      validation: [
+        Validators.max(17),
+        greaterThan("ntp_minpoll", [helptext.add.minpoll.placeholder]),
+        Validators.required
+      ]
     },
     {
       type : 'checkbox',

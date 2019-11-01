@@ -1,5 +1,4 @@
 import { Validators } from "@angular/forms";
-import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
 import { T } from "app/translate-marker";
 
 export const helptext_system_ntpservers = {
@@ -50,12 +49,7 @@ export const helptext_system_ntpservers = {
       tooltip: T(
         "Power of 2 in seconds; cannot be higher than 17 or\
  lower than <i>Min. Poll</i>."
-      ),
-      validation: [
-        Validators.max(17),
-        greaterThan("ntp_minpoll"),
-        Validators.required
-      ]
+      )
     },
 
     force: {
@@ -116,12 +110,7 @@ export const helptext_system_ntpservers = {
       tooltip: T(
         "Power of 2 in seconds; cannot be higher than 17 or\
    lower than <i>Min. Poll</i>."
-      ),
-      validation: [
-        Validators.max(17),
-        greaterThan("ntp_minpoll"),
-        Validators.required
-      ]
+      )
     },
 
     force: {

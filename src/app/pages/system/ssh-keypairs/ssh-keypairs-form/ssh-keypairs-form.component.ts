@@ -45,7 +45,7 @@ export class SshKeypairsFormComponent {
             name: 'public_key',
             placeholder: helptext.public_key_placeholder,
             tooltip: helptext.public_key_tooltip,
-            validation: [atLeastOne('private_key')]
+            validation: [atLeastOne('private_key', [helptext.private_key_placeholder, helptext.public_key_placeholder])]
         }
     ]
 

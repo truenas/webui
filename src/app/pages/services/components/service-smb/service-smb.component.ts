@@ -8,6 +8,8 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import helptext from '../../../../helptext/services/components/service-smb';
+import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector: 'smb-edit',
@@ -144,7 +146,7 @@ export class ServiceSMBComponent {
       type: 'input',
       name: 'idmap_tdb_range_low',
       inputType: 'number',
-      placeholder: helptext .idmap_tdb_range_low_placeholder,
+      placeholder: helptext.idmap_tdb_range_low_placeholder,
       tooltip: helptext.idmap_tdb_range_low_tooltip,
     },
     {
@@ -153,7 +155,7 @@ export class ServiceSMBComponent {
       inputType: 'number',
       placeholder: helptext.idmap_tdb_range_high_placeholder,
       tooltip: helptext.idmap_tdb_range_high_tooltip,
-      validation: helptext.idmap_tdb_range_high_validation
+      validation: [greaterThan('idmap_tdb_range_low', [helptext.idmap_tdb_range_low_placeholder]), regexValidator(/^\d+$/)],
     }
   ];
 
