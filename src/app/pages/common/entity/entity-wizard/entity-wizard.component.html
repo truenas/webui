@@ -14,10 +14,10 @@
             </ng-container>
           </div>
           <mat-card-actions class="wizard-action" *ngIf="conf.summary || i !== (conf.wizardConfig.length - 1); else lastStepAction">
-            <button id="cancel_button" color="accent" class="btn btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
-            <button id="goback_button" mat-button matStepperPrevious *ngIf="i == 0 ? false : true" color="accent">{{"Back" | translate}}</button>
-            <button id="goforward_button" *ngIf="!conf.customNext" mat-button matStepperNext color="primary" >{{"Next" | translate}}</button>
-            <button id="custom_button" *ngIf="conf.customNext" (click)="conf.customNext(stepper)" mat-button color="primary">{{customNextText | translate}}</button>
+            <button id="cancel_button_{{i}}" color="accent" class="btn btn-block btn-lg btn-primary" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
+            <button id="goback_button_{{i}}" mat-button matStepperPrevious *ngIf="i == 0 ? false : true" color="accent">{{"Back" | translate}}</button>
+            <button id="goforward_button_{{i}}" *ngIf="!conf.customNext" mat-button matStepperNext color="primary" >{{"Next" | translate}}</button>
+            <button id="custom_button_{{i}}" *ngIf="conf.customNext" (click)="conf.customNext(stepper)" mat-button color="primary">{{customNextText | translate}}</button>
             <span *ngFor="let custBtn of conf.custActions">
               <button id="cust_button_{{custBtn.name}}" mat-button color="primary" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id, i)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
             </span>
