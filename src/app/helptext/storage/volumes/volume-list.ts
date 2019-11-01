@@ -45,6 +45,6 @@ upgradePoolDialog_warning: T("Proceed with upgrading the pool? WARNING: Upgradin
 
 pool_lock_warning_paratext_a: T("WARNING: Locking pool <i>"),
 pool_lock_warning_paratext_b: T("</i>.\
- Data on the pool will not be available after locking.")
+ Data on the pool will not be accessible until the pool is unlocked.")
 
 }
