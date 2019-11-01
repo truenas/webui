@@ -1175,7 +1175,12 @@ export class ReplicationWizardComponent {
             this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
                 (res) => {
                     this.eligibleSnapshots = res.eligible;
-                    this.snapshotsCountField.paraText = '<span class="' + (res.eligible == 0 ? 'warnning-paragraph' : 'info-paragraph' )+'"><b>' + res.eligible + '</b> snapshots found</span>';
+                    const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local';
+                    this.snapshotsCountField.paraText = '<span class="' +
+                    (res.eligible == 0 ? (isPush ? 'info-paragraph' : 'warnning-paragraph') : 'info-paragraph' ) +
+                    '"><b>' + res.eligible + '</b> snapshots found. ' +
+                    ((res.eligible === 0 && isPush) ? 'Snapshots will be created automatically.' : '') +
+                    '</span>';
                 },
                 (err) => {
                     this.eligibleSnapshots = 0;
