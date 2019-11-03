@@ -4,6 +4,9 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid " Check Notifications for more details."
+msgstr ""
+
 msgid " First vdev has "
 msgstr ""
 
@@ -64,11 +67,6 @@ msgid ""
 "passphrase for it."
 msgstr ""
 
-msgid ""
-"'%h' will be replaced with your hostname and '%i' will be replaced with "
-"your IP address."
-msgstr ""
-
 msgid "'. All data on that pool was destroyed."
 msgstr ""
 
@@ -99,9 +97,7 @@ msgstr "最多 20 個字元。"
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
 
-msgid ""
-"</b> plugin and all data and snapshots stored with it, please type the name "
-"of the plugin to confirm:"
+msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr ""
 
 msgid "</b> with the keypair"
@@ -294,7 +290,8 @@ msgstr ""
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br>"
+"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
+"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
 msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
@@ -438,11 +435,9 @@ msgstr ""
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
-"when the configuration file is uploaded.</p> <b>Keep the configuration file "
-"safe and protect it from unauthorized access!</b>"
+"when the configuration file is uploaded.</p> <br /><b>Keep the "
+"configuration file safe and protect it from unauthorized access!</b>"
 msgstr ""
-"<p></p> <b>Keep the configuration file safe and protect it from "
-"unauthorized access!</b>"
 
 msgid ""
 "<p>The system will reboot to perform this operation!</p> <p><font "
@@ -667,6 +662,12 @@ msgid "Activate"
 msgstr "啟用"
 
 msgid "Activate Pool for Jail Manager"
+msgstr ""
+
+msgid "Activate this Boot Environment?"
+msgstr ""
+
+msgid "Activated Pool for Jail Manager:"
 msgstr ""
 
 msgid ""
@@ -951,13 +952,16 @@ msgstr "所有磁碟"
 msgid "All dirs"
 msgstr "所有資料夾"
 
-msgid "Allocate RAM for the VM"
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
 msgstr ""
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
+msgstr ""
+
+msgid "Allocate at least 256 MiB."
 msgstr ""
 
 msgid "Allow Anonymous Binding"
@@ -1373,11 +1377,11 @@ msgstr "附屬參數"
 msgid "Available Disks"
 msgstr "可用磁碟"
 
+msgid "Available Memory:"
+msgstr ""
+
 msgid "Available Themes"
 msgstr "可用佈景主題"
-
-msgid "Available memory"
-msgstr ""
 
 msgid "Available space threshold (%)"
 msgstr "可用空間臨界值 (%)"
@@ -1655,6 +1659,11 @@ msgstr "區分大小寫"
 msgid "Category"
 msgstr "目錄"
 
+msgid ""
+"Caution: Allocating too much memory can slow the  system or prevent VMs "
+"from running."
+msgstr ""
+
 msgid "Certificate"
 msgstr "憑證"
 
@@ -1786,11 +1795,6 @@ msgstr ""
 msgid ""
 "Check this box if importing a certificate for which a CSR exists on this "
 "system"
-msgstr ""
-
-msgid ""
-"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. A <i>GUI "
-"SSL Certificate</i> must be selected."
 msgstr ""
 
 msgid "Check-in"
@@ -2407,6 +2411,12 @@ msgstr "複本數量"
 msgid "Could not delete boot environment."
 msgstr "無法刪除開機環境。"
 
+msgid "Could not find a group name for this group ID."
+msgstr ""
+
+msgid "Could not find a user name for this user ID."
+msgstr ""
+
 msgid "Country"
 msgstr "國家"
 
@@ -2519,6 +2529,20 @@ msgstr "客製化屬性"
 msgid "Custom Server"
 msgstr "自訂伺服器"
 
+msgid ""
+"DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
+"similar to dyndns.org."
+msgstr ""
+
+msgid ""
+"DDNS server path. Path syntax varies by  provider and must be obtained from "
+"that provider. For example,  <i>/update?hostname=</i> is a simple path for "
+"the  <i>update.twodns.de</i> <b>Custom Server</b>. The hostname is  "
+"automatically appended by default. More examples are in the  <a "
+"href=\"https://github.com/troglobit/inadyn#custom-ddns-providers\" "
+"target=\"_blank\">In-A-Dyn documentation</a>."
+msgstr ""
+
 msgid "DELETE"
 msgstr "刪除"
 
@@ -2608,6 +2632,9 @@ msgid "Days of the Week"
 msgstr "每週啟用日"
 
 msgid "Deactivate the recovery key for this pool?"
+msgstr ""
+
+msgid "Debug could not be downloaded"
 msgstr ""
 
 msgid "Decrypt pool"
@@ -2777,6 +2804,9 @@ msgstr "刪除這個路徑。"
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
+msgid "Deleting the <b>"
+msgstr ""
+
 msgid "Deny list"
 msgstr "拒絕清單"
 
@@ -2822,6 +2852,16 @@ msgid "Destination Path"
 msgstr "目的路徑"
 
 msgid "Destination Snapshot Lifetime"
+msgstr ""
+
+msgid "Destination Snapshots Are Not Related to Replicated Snapshots"
+msgstr ""
+
+msgid ""
+"Destination dataset does not contain any snapshots that can be used as a "
+"basis for the incremental changes in the snapshots being sent. The "
+"snapshots in the destination dataset will be deleted and the replication "
+"will begin with a complete initial copy."
 msgstr ""
 
 msgid ""
@@ -3110,9 +3150,6 @@ msgstr "編輯磁碟"
 msgid "Edit Idmap"
 msgstr "編輯 Idmap"
 
-msgid "Edit Note"
-msgstr "編輯備註"
-
 msgid "Edit Options"
 msgstr "編輯選項"
 
@@ -3301,6 +3338,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Enabling <em>Time Machine</em> on an SMB share requires a restart of the "
+"SMB service."
+msgstr ""
+
+msgid ""
 "Enabling this option is <b>not</b> recommended as it bypasses a security "
 "mechanism."
 msgstr ""
@@ -3377,9 +3419,6 @@ msgid ""
 "communicate with the Kerberos Domain Controller before setting."
 msgstr ""
 
-msgid "Enter <i>ALL</i> or a list of initiator hostnames separated by spaces."
-msgstr ""
-
 msgid ""
 "Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
 "target=\"_blank\">NIS Domain name</a> for the jail."
@@ -3432,9 +3471,6 @@ msgid "Enter a description of the tunable."
 msgstr ""
 
 msgid "Enter a descriptive title for the new issue."
-msgstr ""
-
-msgid "Enter a fully qualified domain name. Example: <b>yourname.dyndns.org</b>"
 msgstr ""
 
 msgid ""
@@ -3814,9 +3850,6 @@ msgstr ""
 msgid "Enter the IP address or hostname for SNMP UPS."
 msgstr ""
 
-msgid "Enter the IP address or hostname of a remote server running Graphite."
-msgstr ""
-
 msgid ""
 "Enter the IP address or hostname of the VMware host. When clustering, this "
 "is the vCenter server for the cluster."
@@ -3916,11 +3949,6 @@ msgid ""
 "<i>/data example-dataset-name</i>"
 msgstr ""
 
-msgid ""
-"Enter the name and port of the server that reports the external IP address. "
-"Example: <b>server.name.org:port</b>."
-msgstr ""
-
 msgid "Enter the name of the Key Distribution Center."
 msgstr ""
 
@@ -3988,14 +4016,6 @@ msgstr ""
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
 msgstr ""
 
-msgid "Enter the password used to log in to the provider and update the record."
-msgstr ""
-
-msgid ""
-"Enter the path requested by the <b>CheckIP Server</b> to determine the user "
-"IP address."
-msgstr ""
-
 msgid ""
 "Enter the percentage of free space to remain in the pool. When this "
 "percentage is reached, the system issues an alert, but only if zvols are "
@@ -4034,9 +4054,6 @@ msgstr ""
 msgid "Enter the username if the SMTP server requires authentication."
 msgstr ""
 
-msgid "Enter the username used to log in to the provider and update the record."
-msgstr ""
-
 msgid ""
 "Enter up to four interface configurations in the format "
 "<i>interface:bridge</i>, separated by a comma (,). The left value is the "
@@ -4054,6 +4071,9 @@ msgstr ""
 msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
 msgstr ""
 
+msgid "Enter valid value"
+msgstr ""
+
 msgid ""
 "Entering <i>0</i> uses the actual file size and requires that the file "
 "already exists. Otherwise, specify the file size for the new file."
@@ -4066,6 +4086,9 @@ msgid "Error"
 msgstr "錯誤"
 
 msgid "Error Deleting zvol "
+msgstr ""
+
+msgid "Error Downloading File"
 msgstr ""
 
 msgid "Error Promoting dataset "
@@ -4111,9 +4134,6 @@ msgid "Error getting locales"
 msgstr ""
 
 msgid "Error getting pool data."
-msgstr ""
-
-msgid "Error getting pool or dataset data."
 msgstr ""
 
 msgid "Error importing pool"
@@ -4433,6 +4453,12 @@ msgstr "填入亂數資料"
 msgid "Full with zeros"
 msgstr "填零"
 
+msgid ""
+"Fully qualified domain name of the host with the  dynamic IP address. "
+"Separate multiple domains with a space, comma  (,), or semicolon (;). "
+"Example:  <i>myname.dyndns.org; myothername.dyndns.org</i>."
+msgstr ""
+
 msgid "GID"
 msgstr ""
 
@@ -4653,9 +4679,6 @@ msgstr "主機名稱"
 
 msgid "Hostname (Virtual)"
 msgstr "主機名稱 (虛擬)"
-
-msgid "Hostname for your custom DDNS provider"
-msgstr ""
 
 msgid ""
 "Hostname or IP  address used to connect to the active side system. When the "
@@ -5067,6 +5090,11 @@ msgstr ""
 msgid "Invalid dataset."
 msgstr ""
 
+msgid ""
+"Invalid network address list. Check for typos or missing CIDR netmasks and "
+"separate addresses with a space."
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr ""
 
@@ -5076,7 +5104,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Invalid value. Valid values are numbers followed by optional unit letters, "
+"Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
 msgstr ""
 
@@ -5143,9 +5171,7 @@ msgstr ""
 msgid "Jails cannot be changed while running."
 msgstr "當 Jail 執行中無法進行變更。"
 
-msgid ""
-"Jails cannot be created or managed untill a pool is present for storing "
-"them. Please create a pool first"
+msgid "Jails cannot be created or managed until a pool is present for storing them."
 msgstr ""
 
 msgid "Jails failed to start"
@@ -5177,6 +5203,9 @@ msgstr ""
 msgid ""
 "Keep the zvol name short. Using a zvol name longer than 63 characters can "
 "prevent accessing the zvol as a device."
+msgstr ""
+
+msgid "Keep this Boot Environment?"
 msgstr ""
 
 msgid "Keep user primary group"
@@ -5303,6 +5332,11 @@ msgstr ""
 msgid ""
 "Leave at the default of 512 unless the initiator requires a different block "
 "size."
+msgstr ""
+
+msgid ""
+"Leave blank to allow all or enter a list of initiator hostnames separated "
+"by spaces."
 msgstr ""
 
 msgid ""
@@ -5635,7 +5669,7 @@ msgstr "分"
 msgid "Mirror"
 msgstr ""
 
-msgid "Mixing disks of different sizes in a VDEV is not recommended."
+msgid "Mixing disks of different sizes in a VDEV is not allowed."
 msgstr ""
 
 msgid "Mode"
@@ -5761,6 +5795,14 @@ msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
 msgid "Name and Options"
+msgstr ""
+
+msgid ""
+"Name and port of the server that reports the  external IP address. For "
+"example, entering <i>checkip.dyndns.org:80</i>  uses  <a "
+"href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" "
+"target=\"_blank\">Dyn IP detection</a>.  to discover the remote socket IP "
+"address."
 msgstr ""
 
 msgid "Name of NIS domain."
@@ -5900,17 +5942,17 @@ msgid "Network Summary"
 msgstr "網路摘要"
 
 msgid ""
+"Network addresses allowed to use this initiator. Leave blank to allow all "
+"networks or list network addresses with       a CIDR mask. Separate "
+"multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."
+msgstr ""
+
+msgid ""
 "Network addresses allowed use this initiator. Each address can include an "
 "optional <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
 "target=\"_blank\">CIDR</a> netmask. Click <i>+</i> to add the network "
 "address to the list. Example: <i>192.168.2.0/24</i>."
-msgstr ""
-
-msgid ""
-"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
-"network addresses with a CIDR mask. Separate multiple addresses with a "
-"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
 msgstr ""
 
 msgid "Network changes applied successfully."
@@ -5945,6 +5987,9 @@ msgstr ""
 msgid "Network interfaces to include in the bridge."
 msgstr ""
 
+msgid "Never"
+msgstr ""
+
 msgid "New Password"
 msgstr "新密碼"
 
@@ -5976,7 +6021,10 @@ msgstr "否"
 msgid "No Communication Warning Time"
 msgstr ""
 
-msgid "No Pool Exist"
+msgid "No Logs"
+msgstr ""
+
+msgid "No Pools"
 msgstr ""
 
 msgid "No Stat"
@@ -5985,15 +6033,13 @@ msgstr ""
 msgid "No interfaces configured with Virtual IP."
 msgstr ""
 
+msgid "No longer keep this Boot Environment?"
+msgstr ""
+
 msgid "No pools"
 msgstr "沒有儲存集區"
 
 msgid "No pools are configured."
-msgstr ""
-
-msgid ""
-"No pools exist. Jails cannot be created or managed until a pool is present "
-"for storing them. Please create a pool first."
 msgstr ""
 
 msgid "No snapshots sent yet"
@@ -6007,9 +6053,6 @@ msgstr "沒有可用更新。"
 
 msgid "No, continue with import"
 msgstr "不，繼續並匯入"
-
-msgid "Note"
-msgstr "備註"
 
 msgid "Notes"
 msgstr "備註"
@@ -6265,6 +6308,9 @@ msgid ""
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
 msgstr ""
 
+msgid "PENDING"
+msgstr ""
+
 msgid "POST INSTALL NOTES"
 msgstr ""
 
@@ -6291,6 +6337,9 @@ msgstr ""
 
 msgid "Password for SED"
 msgstr "SED 密碼"
+
+msgid "Password for logging in to the provider and  updating the record."
+msgstr ""
 
 msgid "Password for the Bind DN."
 msgstr ""
@@ -6336,6 +6385,12 @@ msgstr ""
 
 msgid "Path"
 msgstr "路徑"
+
+msgid ""
+"Path to the <b>CheckIP Server</b>. For example,  <i>no-ip.com</i> uses a "
+"<b>CheckIP Server</b> of  <i>dynamic.zoneedit.com</i> and <b>CheckIP "
+"Path</b> of  <i>/checkip.html</i>."
+msgstr ""
 
 msgid "Path to the extent"
 msgstr ""
@@ -6755,6 +6810,17 @@ msgstr ""
 msgid "Recursive"
 msgstr "遞迴"
 
+msgid ""
+"Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
+"Certificate</i> is required for <i>HTTPS</i>. Activating  this also sets "
+"the <a  "
+"href=\"https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security\"  "
+"target=\"_blank\">HTTP Strict Transport Security (HSTS)</a> maximum age  to "
+"<i>31536000</i> seconds (one year). This means that after a  browser "
+"connects to the web interface for the first time, the browser  continues to "
+"use HTTPS and renews this setting every year."
+msgstr ""
+
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
 
@@ -6781,9 +6847,6 @@ msgstr ""
 
 msgid "Remote Encryption"
 msgstr "遠端加密"
-
-msgid "Remote Graphite Server Hostname"
-msgstr "遠端 Graphite Server 主機名稱"
 
 msgid "Remote Host"
 msgstr "遠端主機"
@@ -7004,6 +7067,9 @@ msgstr "重新啟動"
 msgid "Restart SMB Service"
 msgstr ""
 
+msgid "Restart SMB Service?"
+msgstr ""
+
 msgid "Restart Services"
 msgstr "重新啟動服務"
 
@@ -7031,9 +7097,6 @@ msgstr ""
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
-msgstr ""
-
-msgid "Revision"
 msgstr ""
 
 msgid "Rollback"
@@ -7121,6 +7184,9 @@ msgstr ""
 msgid "SFTP log level"
 msgstr "SFTP 記錄層級"
 
+msgid "SMB service has been restarted"
+msgstr ""
+
 msgid "SMTP Authentication"
 msgstr "SMTP 驗證"
 
@@ -7189,6 +7255,12 @@ msgstr ""
 msgid "Save Network Interface Changes"
 msgstr "儲存網路介面的修改"
 
+msgid "Save Without Restarting"
+msgstr ""
+
+msgid "Save and Restart SMB Now"
+msgstr ""
+
 msgid "Save configuration settings from this machine before updating?"
 msgstr "要在系統更新之前，下載設定另存嗎？"
 
@@ -7250,6 +7322,9 @@ msgstr ""
 msgid "Script to execute before running sync."
 msgstr ""
 
+msgid "Scrub"
+msgstr ""
+
 msgid "Scrub Boot Pool"
 msgstr "Scrub 開機儲存集區"
 
@@ -7260,6 +7335,12 @@ msgid "Scrub Tasks"
 msgstr "Scrub 作業"
 
 msgid "Scrub complete on pool <i>"
+msgstr ""
+
+msgid "Scrub interval (in days)"
+msgstr ""
+
+msgid "Scrub started"
 msgstr ""
 
 msgid ""
@@ -7363,6 +7444,16 @@ msgid ""
 "(Compatibility Support Mode) for older operating systems that only support "
 "BIOS booting. <i>Grub</i> is not recommended but can be used when the other "
 "options do not work."
+msgstr ""
+
+msgid ""
+"Select <samp>0.0.0.0</samp> to include all addresses. When this has been "
+"chosen, additional addresses cannot be selected."
+msgstr ""
+
+msgid ""
+"Select <samp>::</samp> to include all addresses. When this has been chosen, "
+"additional addresses cannot be selected."
 msgstr ""
 
 msgid "Select Authenticator"
@@ -8518,14 +8609,6 @@ msgid ""
 "target=\"_blank\">jail(8)</a>."
 msgstr ""
 
-msgid "Set to use HTTPS for the connection to the <b>CheckIP Server</b>."
-msgstr ""
-
-msgid ""
-"Set to use HTTPS for the connection to the server that updates the DNS "
-"record."
-msgstr ""
-
 msgid ""
 "Set to use SLAAC (Stateless Address Auto Configuration) to autoconfigure "
 "IPv6 in the jail."
@@ -8638,8 +8721,8 @@ msgid "Setup Users and Groups."
 msgstr "設定使用者與群組。"
 
 msgid ""
-"Several providers are supported. If a provider is not listed, select "
-"<i>Custom Provider</i> and enter the information in the <i>Custom "
+"Several providers are supported. If a specific  provider is not listed, "
+"select <i>Custom Provider</i> and enter the  information in the <i>Custom "
 "Server</i> and <i>Custom Path</i> fields."
 msgstr ""
 
@@ -8890,6 +8973,9 @@ msgstr "開機時啟動"
 msgid "Start scrub on pool <i>"
 msgstr ""
 
+msgid "Start the scrub now?"
+msgstr ""
+
 msgid "Start time for the replication task."
 msgstr ""
 
@@ -8913,6 +8999,9 @@ msgstr ""
 
 msgid "Static Routes"
 msgstr "靜態路由"
+
+msgid "Stats/Settings"
+msgstr ""
 
 msgid "Status"
 msgstr "狀態"
@@ -9584,9 +9673,6 @@ msgstr ""
 msgid "Title "
 msgstr ""
 
-msgid "To delete the <b>"
-msgstr ""
-
 msgid "Toggle Collapse"
 msgstr ""
 
@@ -9677,6 +9763,9 @@ msgstr ""
 msgid ""
 "URL to an image to use for notification icons. This overrides the incoming "
 "webhook setting."
+msgstr ""
+
+msgid "UTC"
 msgstr ""
 
 msgid "UUID"
@@ -9773,6 +9862,9 @@ msgid "Update File Temporary Storage Location"
 msgstr ""
 
 msgid "Update Frequency"
+msgstr ""
+
+msgid "Update Interval"
 msgstr ""
 
 msgid "Update License"
@@ -9885,6 +9977,12 @@ msgstr "使用預設網域"
 msgid "Use FQDN for logging"
 msgstr "記錄使用 FQDN"
 
+msgid "Use HTTPS for the connection to the  <b>CheckIP Server</b>."
+msgstr ""
+
+msgid "Use HTTPS for the connection to the server that updates  the DNS record."
+msgstr ""
+
 msgid "Use Signature Version 2"
 msgstr ""
 
@@ -9989,6 +10087,9 @@ msgstr ""
 
 msgid "Username"
 msgstr "使用者名稱"
+
+msgid "Username for logging in to the provider and  updating the record."
+msgstr ""
 
 msgid "Username for this service."
 msgstr ""
