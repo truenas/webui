@@ -37,3 +37,9 @@
   background-color: var(--primary) !important;
   padding: 2px;
 }
+
+.paratext-tooltip {
+  position: relative;
+  right: 3px;
+  top: -2px;
+}
