@@ -156,9 +156,9 @@ export const helptext_system_support = {
     title: T('Error Updating Production Status'),
   },
 
-  is_production_snackbar: {
-    message: T('Production status successfully updated'),
-    action: T('Close')
+  is_production_dialog: {
+    title: T('Status updated'),
+    message: T('Production status successfully updated')
   },
 
   FN_instructions: T('Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
