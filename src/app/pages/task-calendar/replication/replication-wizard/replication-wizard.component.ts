@@ -1176,11 +1176,16 @@ export class ReplicationWizardComponent {
                 (res) => {
                     this.eligibleSnapshots = res.eligible;
                     const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local';
-                    this.snapshotsCountField.paraText = '<span class="' +
-                    (res.eligible == 0 ? (isPush ? 'info-paragraph' : 'warnning-paragraph') : 'info-paragraph' ) +
-                    '"><b>' + res.eligible + '</b> snapshots found. ' +
-                    ((res.eligible === 0 && isPush) ? 'Snapshots will be created automatically.' : '') +
-                    '</span>';
+                    let spanClass = 'info-paragraph';
+                    let snapexpl = '';
+                    if (res.eligible === 0) {
+                        if (isPush) {
+                            snapexpl = 'Snapshots will be created automatically.';
+                        } else {
+                            spanClass = 'warning-paragraph';
+                        }
+                    }
+                    this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${res.eligible}</b> snapshots found. ${snapexpl}</span>`;
                 },
                 (err) => {
                     this.eligibleSnapshots = 0;
