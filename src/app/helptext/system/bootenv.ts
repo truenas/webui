@@ -32,6 +32,14 @@ export const helptext_system_bootenv = {
 
   replace_name_placeholder: T("Member Disk"),
 
-  snackbar_delete_failure_message: T("Could not delete boot environment."),
-  snackbar_action_dismiss: T("Dismiss")
+  attach_dialog: {
+    title: T('Device Attached'),
+    message: T('was successfully attached.')
+  },
+
+  delete_failure_dialog: {
+    title: T('Error'),
+    message: T("Could not delete boot environment."),
+  }
+
 };
