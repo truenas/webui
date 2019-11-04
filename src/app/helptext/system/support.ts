@@ -25,8 +25,8 @@ export const helptext_system_support = {
 
     enable_checkbox_placeholder: T('Enable iXsystems Proactive Support'),
     save_button: T('Save'),
-    snackbar_mesage: T('Successfully saved proactive support settings.'),
-    snackbar_action: T('Close'),
+    dialog_title: T('Settings saved'),
+    dialog_mesage: T('Successfully saved proactive support settings.'),
     dialog_err: T('Error Saving Proactive Support Settings')
   },
 
