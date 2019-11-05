@@ -55,10 +55,7 @@ export class AlertServiceComponent {
       }, {
         label: 'E-Mail',
         value: 'Mail',
-      }, {
-        label: 'HipChat',
-        value: 'HipChat',
-      }, {
+      },{
         label: 'InfluxDB',
         value: 'InfluxDB',
       }, {
@@ -173,74 +170,6 @@ export class AlertServiceComponent {
           value: 'Mail',
         }]
       }]
-    },
-    // HtpChat
-    {
-      type: 'input',
-      name: 'HipChat-hfrom',
-      placeholder: helptext.HipChat_hfrom_placeholder,
-      tooltip: helptext.HipChat_hfrom_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'HipChat-cluster_name',
-      placeholder: helptext.HipChat_cluster_name_placeholder,
-      tooltip: helptext.HipChat_cluster_name_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'HipChat-base_url',
-      placeholder: helptext.HipChat_base_url_placeholder,
-      tooltip: helptext.HipChat_base_url_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'HipChat-room_id',
-      placeholder: helptext.HipChat_room_id_placeholder,
-      tooltip: helptext.HipChat_room_id_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'HipChat-auth_token',
-      placeholder: helptext.HipChat_auth_token_placeholder,
-      tooltip: helptext.HipChat_auth_token_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
     },
     // InfluxDB
     {
