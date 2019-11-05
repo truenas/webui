@@ -9,7 +9,7 @@ export const helptext_system_advanced = {
   dialog_button_ok: T('Proceed'),
 
   debug_dialog: {
-    failure_msg: T("Failed to generate debug file. Check the network connection."),
+    failure_msg: T("Failed to generate debug file."),
     failure_title: T("Failed")
   },
 
