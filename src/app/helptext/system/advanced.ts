@@ -102,6 +102,6 @@ export const helptext_system_advanced = {
 
   submit_dialog: {
     title: T('Success'), 
-    message: T('Settings have been saved.')
+    message: T('Settings saved.')
   }
 };
