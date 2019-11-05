@@ -275,7 +275,7 @@ export class VolumesListTableConfig implements InputTableConf {
               entityDialog.dialogRef.close(true);
               localLoader.close();
               localParentVol.repaintMe();
-              localDialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "report_problem", true);
+              localDialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
             }, (res) => {
               localLoader.close();
               localDialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
@@ -509,7 +509,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
                         (res) => {
                           this.loader.close();
-                          this.dialogService.Info(T("Stop Scrub"), T('Stopping scrub on pool <i>') + row1.name + '</i>.', '300px', "report_problem", true);
+                          this.dialogService.Info(T("Stop Scrub"), T('Stopping scrub on pool <i>') + row1.name + '</i>.', '300px', "info", true);
                         },
                         (err) => {
                           this.loader.close();
@@ -529,9 +529,9 @@ export class VolumesListTableConfig implements InputTableConf {
                         (jobres) => {
                           this.dialogRef.close(false);
                           if (jobres.progress.percent == 100) {
-                            this.dialogService.Info(T('Scrub Complete'), T('Scrub complete on pool <i>') + row1.name + "</i>.", '300px', "report_problem", true);
+                            this.dialogService.Info(T('Scrub Complete'), T('Scrub complete on pool <i>') + row1.name + "</i>.", '300px', "info", true);
                           } else {
-                            this.dialogService.Info(T('Stop Scrub'), T('Stopped the scrub on pool <i>') + row1.name + "</i>.", '300px', "report_problem", true);
+                            this.dialogService.Info(T('Stop Scrub'), T('Stopped the scrub on pool <i>') + row1.name + "</i>.", '300px', "info", true);
                           }
                         }
                       );
