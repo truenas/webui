@@ -9,6 +9,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/map';
 import { Subject } from 'rxjs/Subject';
 import globalHelptext from '../../../helptext/global-helptext';
+import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import { RestService, WebSocketService, StorageService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
@@ -38,6 +39,8 @@ export class VmCardsComponent  implements OnDestroy {
   public controlEvents:Subject<CoreEvent> = new Subject();
   public actions = [];
   public showSpinner = true;
+  public poolsExist: boolean = true;
+  public addBtnDisabled = false;
 
   protected entityTable: EntityTableComponent;
 
@@ -66,6 +69,30 @@ export class VmCardsComponent  implements OnDestroy {
               public core:CoreService,public dialog: DialogService,protected loader: AppLoaderService,
               protected matdialog: MatDialog, public storageService: StorageService
               ) {}
+
+  preInit(entityTable: EntityTableComponent) {
+    this.ws.call('pool.query').subscribe((res) => {
+      if (res.length === 0) {
+        this.addBtnDisabled = true;
+        this.poolsExist = false;
+        this.dialog.confirm(T(helptext.no_pools_dialog.title), helptext.no_pools_dialog.msg,
+        true, helptext.no_pools_dialog.action, false)
+        .subscribe((res) => {
+          if(res) {
+            this.router.navigate(new Array('').concat(['storage', 'pools', 'import']));
+          }
+        })
+      }
+    })
+  }
+
+  dataHandler(entityList: any) {
+    if (!this.poolsExist) {
+      entityList.rows.forEach((row) => {
+        row.disableSlider = true;
+      })
+    }
+  }
 
   resourceTransformIncomingRestData(vms) {
     for (let vm_index = 0; vm_index<vms.length; vm_index++){
@@ -126,6 +153,7 @@ export class VmCardsComponent  implements OnDestroy {
         id: "START",
         icon: "play_arrow",
         label: T("Start"),
+        disabled: !this.poolsExist,
         onClick: start_row => {
           const eventName = "VmStart";
           let args = [row.id];
