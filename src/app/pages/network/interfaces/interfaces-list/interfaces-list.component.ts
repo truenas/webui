@@ -25,21 +25,18 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
   protected confirmDeleteDialog = {
-    message: T("Network connectivity will be interrupted. "),
+    message: helptext.delete_dialog_text,
   }
   protected hasDetails = true;
   protected entityList: any;
   public hasPendingChanges = false;
   public checkinWaiting = false;
-  pending_changes_text: string;
-  pending_checkin_text: string;
-  checkin_text: string = T("Once applied, changes will revert after ");
-  checkin_text_2: string = T(" seconds unless kept permanently. Adjust this amount to allow for testing.");
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
   public checkin_remaining = null;
   checkin_interval;
   public ha_enabled = false;
+  public helptext = helptext
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name', always_display: true },
@@ -146,8 +143,6 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   }
 
   preInit(entityList) {
-    this.pending_changes_text = helptext.pending_changes_text;
-    this.pending_checkin_text = helptext.pending_checkin_text + " " + helptext.pending_checkin_text_2;
     this.entityList = entityList;
 
     this.checkPendingChanges();

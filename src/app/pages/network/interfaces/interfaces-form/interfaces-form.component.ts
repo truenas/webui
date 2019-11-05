@@ -28,6 +28,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private aliases_fc: any;
   protected ipPlaceholder: string;
   protected failoverPlaceholder: string;
+  protected saveSubmitText = helptext.int_save_button;
 
   public fieldConfig: FieldConfig[] = [
     {

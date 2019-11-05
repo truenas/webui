@@ -300,7 +300,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showNetworkCheckinWaiting() {
     this.dialogService.confirm(
       network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.pending_checkin_text,
+      network_interfaces_helptext.pending_checkin_dialog_text,
       true, network_interfaces_helptext.checkin_button).subscribe(res => {
         if (res) {
           this.user_check_in_prompted = false;
