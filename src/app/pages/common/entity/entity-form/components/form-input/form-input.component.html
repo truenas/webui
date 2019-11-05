@@ -10,6 +10,10 @@
 			id="{{config.name}}_form-input-spinner"
 			*ngIf="config.isLoading">
 		</mat-spinner>
+		<div *ngIf="config.isDoubleConfirm">
+			<p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
+			<p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
+		</div> 
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder | translate"
 			[attr.value]="config.value"

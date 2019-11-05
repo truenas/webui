@@ -26,6 +26,7 @@ import { SnackbarService } from '../../../../services/snackbar.service';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { Validators } from '@angular/forms';
 
 export interface ZfsPoolData {
   avail?: number;
@@ -387,7 +388,7 @@ export class VolumesListTableConfig implements InputTableConf {
               paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
                 helptext.detachDialog_pool_detach_warning_paratext_b,
               isHidden: false
-            }, {
+            },{
               type: 'paragraph',
               name: 'pool_processes',
               paraText: p1,
@@ -407,6 +408,22 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'cascade',
               value: true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
+            },{
+              type: 'input',
+              name: 'nameInput',
+              required: true,
+              isDoubleConfirm: true,
+              maskValue: row1.name,
+              validation: [Validators.pattern(row1.name)],
+              relation : [
+                {
+                  action : 'HIDE',
+                  when : [ {
+                    name : 'destroy',
+                    value : false,
+                  } ]
+                },
+              ]
             },{
               type: 'checkbox',
               name: 'confirm',
