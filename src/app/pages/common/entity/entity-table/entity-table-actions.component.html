@@ -1,9 +1,9 @@
 <div class="panel_container">
   <mat-icon
     ix-auto
-    ix-auto-type="options"
+    ix-auto-type="{{action ? action : 'options'}}"
     ix-auto-identifier="{{row[key_prop]}}"
-    id="table_actions_menu_button__{{key_prop}}_{{row[key_prop]}}"
+    id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
     [matMenuTriggerFor]="appMenu"
     [style.cursor]="'pointer'"
   >

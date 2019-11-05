@@ -19,6 +19,7 @@ export class EntityTableActionsComponent implements OnInit {
   @Input('entity') entity: EntityTableComponent & { conf: any };
   @Input('row') row: any;
   @Input('icon_name') icon_name = "more_vert";
+  @Input('action') action: any;
 
   public actions: any[];
   public showMenu = true;
