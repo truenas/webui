@@ -94,6 +94,8 @@ export const helptext_sharing_iscsi = {
  the <i>Connected Initiators</i> list.'
   ),
 
+  all_placeholder_initiators: T("Allow All Initiators"),
+
   initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
   initiator_form_tooltip_initiators: T(
     'Initiators allowed access to this system. Enter an\

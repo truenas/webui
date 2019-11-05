@@ -23,16 +23,16 @@ export class AssociatedTargetListComponent {
 
   public columns: Array<any> = [
     {
-      name : 'Target',
+      name : T('Target'),
       prop : 'target',
       always_display: true
     },
     {
-      name : 'LUN ID',
+      name : T('LUN ID'),
       prop : 'lunid',
     },
     {
-      name : 'Extent',
+      name : T('Extent'),
       prop : 'extent',
     }
   ];
@@ -71,13 +71,13 @@ export class AssociatedTargetListComponent {
       id: row.target,
       name: 'edit',
       icon: 'edit',
-      label: "Edit",
+      label: T("Edit"),
       onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.target,
       name: 'delete',
       icon: 'delete',
-      label: "Delete",
+      label: T("Delete"),
       onClick: (rowinner) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().subscribe(
