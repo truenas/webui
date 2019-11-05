@@ -98,8 +98,8 @@ export class CertificateAuthorityListComponent {
                       helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
                   });
                 },
-                (res) => {
-                  new EntityUtils().handleError(this, res);
+                (err) => {
+                  new EntityUtils().handleWSError(this, err, this.dialog);
                 }
               );
             }
@@ -124,8 +124,8 @@ export class CertificateAuthorityListComponent {
                       helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
                   });
                 },
-                (res) => {
-                  new EntityUtils().handleError(this, res);
+                (err) => {
+                  new EntityUtils().handleWSError(this, err, this.dialog);
                 }
               );
             }
