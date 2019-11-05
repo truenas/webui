@@ -263,7 +263,13 @@ export class ActiveDirectoryComponent {
   preInit(entityForm: any) {
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
-        entityForm.setDisabled('netbiosname_b', !is_ha, !is_ha);
+        if (is_ha) {
+          this.ws.call('smb.get_smb_ha_mode').subscribe((ha_mode) => {
+            if (ha_mode === 'LEGACY') {
+              entityForm.setDisabled('netbiosname_b', false, false);
+            }
+          })
+        }
       });
     }
   }
