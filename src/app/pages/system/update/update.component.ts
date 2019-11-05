@@ -158,7 +158,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
               return "ALLOWED";
             }
             //comparing '.1' with '.2'
-            return version1[1] > version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
+            return version1[1] < version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
           }
           if(version1[1]){
             //handling a case where '.1' is compared with 'undefined'
