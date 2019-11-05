@@ -60,6 +60,8 @@ export class EmailComponent implements OnDestroy {
       name : 'fromemail',
       placeholder : helptext_system_email.fromemail.placeholder,
       tooltip : helptext_system_email.fromemail.tooltip,
+      validation: helptext_system_email.fromemail.validation,
+      required: true
     },
     {
       type : 'input',
@@ -76,8 +78,11 @@ export class EmailComponent implements OnDestroy {
     {
       type : 'input',
       name : 'port',
+      inputType: 'number',
+      validation: helptext_system_email.port.validation,
+      required: true,
       placeholder : helptext_system_email.port.placeholder,
-      tooltip : helptext_system_email.port.tooltip,
+      tooltip : helptext_system_email.port.tooltip
     },
     {
       type : 'select',
@@ -178,7 +183,10 @@ export class EmailComponent implements OnDestroy {
       .call(this.updateCall, [emailConfig])
       .subscribe(
         () => {},
-        error => new EntityUtils().handleWSError(this, error, this.dialogservice),
+        error => {
+          this.loader.close();
+          new EntityUtils().handleWSError(this, error, this.dialogservice)
+        },
         () => this.loader.close()
       );
   }
