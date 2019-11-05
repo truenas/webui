@@ -202,6 +202,12 @@ export const helptext_system_certificates = {
       snackbar_open_window_message: T("Opening download window. Make sure pop-ups are enabled in the browser."),
       snackbar_open_window_action: T("Success"),
 
+      download_error_dialog: {
+        title: T('Error'),
+        cert_message: T('Error exporting the certificate'),
+        key_message: T('Error exporting the Private Key')
+      },
+
       action_delete: T("Delete")
   },
 
