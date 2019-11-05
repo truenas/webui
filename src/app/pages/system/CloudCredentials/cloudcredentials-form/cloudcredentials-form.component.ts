@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
@@ -891,7 +890,7 @@ export class CloudCredentialsFormComponent {
           (res) => {
             this.entityForm.loader.close();
             if (res.valid) {
-              this.snackBar.open(T('The Credential is valid.'), T('Close'), { duration: 5000 });
+              this.dialog.Info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
             } else {
               this.dialog.errorReport('Error', res.excerpt, res.error);
             }
@@ -909,7 +908,6 @@ export class CloudCredentialsFormComponent {
               protected ws: WebSocketService,
               protected cloudcredentialService: CloudCredentialService,
               protected dialog: DialogService,
-              public snackBar: MatSnackBar,
               protected replicationService: ReplicationService) {
     this.providerField = _.find(this.fieldConfig, {'name': 'provider'});
     this.cloudcredentialService.getProviders().subscribe(

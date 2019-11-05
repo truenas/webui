@@ -3,10 +3,9 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { WebSocketService, AppLoaderService } from '../../../../services/';
+import { WebSocketService, AppLoaderService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/system/alert-service';
@@ -716,9 +715,9 @@ export class AlertServiceComponent {
           (res) => {
             this.loader.close();
             if (res) {
-              this.snackBar.open('Test alert sent!', 'close', { duration: 5000 });
+              this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
-              this.snackBar.open('Failed sending test alert!', 'close', { duration: 5000 });
+              this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
             }
           },
           (err) => {
@@ -735,7 +734,7 @@ export class AlertServiceComponent {
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    protected snackBar: MatSnackBar) { }
+    protected dialogService: DialogService) { }
 
   preInit() {
     this.aroute.params.subscribe(params => {
