@@ -47,7 +47,7 @@ export const helptext_sharing_iscsi = {
 
   target_form_placeholder_delete: T("Delete"),
 
-  portal_form_placeholder_comment: T("Comment"),
+  portal_form_placeholder_comment: T("Description"),
   portal_form_tooltip_comment: T(
     "Optional description. Portals are automatically assigned a numeric\
  group."
@@ -112,7 +112,7 @@ export const helptext_sharing_iscsi = {
  address to the list. Example: <i>192.168.2.0/24</i>.'
   ),
 
-  initiator_form_placeholder_comment: T("Comment"),
+  initiator_form_placeholder_comment: T("Description"),
   initiator_form_tooltip_comment: T("Any notes about initiators."),
 
   globalconf_placeholder_basename: T("Base Name"),
@@ -218,7 +218,7 @@ export const helptext_sharing_iscsi = {
  target="_blank">VAAI</a> Threshold Warning.'
   ),
 
-  extent_placeholder_comment: T("Comment"),
+  extent_placeholder_comment: T("Description"),
   extent_tooltip_comment: T("Notes about this extent."),
 
   extent_placeholder_insecure_tpc: T("Enable TPC"),

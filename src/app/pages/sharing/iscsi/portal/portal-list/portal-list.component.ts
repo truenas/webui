@@ -26,7 +26,7 @@ export class PortalListComponent {
       prop : 'listen',
     },
     {
-      name : 'Comment',
+      name : 'Description',
       prop : 'comment',
     },
     {

@@ -30,7 +30,7 @@ export class InitiatorListComponent {
       prop : 'auth_network',
     },
     {
-      name : 'Comment',
+      name : 'Description',
       prop : 'comment',
     },
   ];
