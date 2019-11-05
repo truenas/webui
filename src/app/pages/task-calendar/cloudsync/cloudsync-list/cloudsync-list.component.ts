@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
@@ -170,9 +171,13 @@ export class CloudsyncListComponent implements InputTableConf {
 
   stateButton(row) {
     if (row.job) {
-      this.job.showLogs(row.job.id);
+      if (row.state === 'RUNNING') {
+        this.entityList.runningStateButton(row.job.id);
+      } else {
+        this.job.showLogs(row.job.id);
+      }
     } else {
-      this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
+      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 }

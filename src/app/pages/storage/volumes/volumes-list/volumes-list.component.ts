@@ -939,7 +939,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar, protected snackbarService: SnackbarService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService) {
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter, job, pref);
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter, job, pref, mdDialog);
   }
 
   public repaintMe() {
