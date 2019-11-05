@@ -105,8 +105,6 @@ export class VolumesListTableConfig implements InputTableConf {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected translate: TranslateService,
-    protected snackBar: MatSnackBar,
-    protected snackbarService: SnackbarService,
     protected storageService: StorageService,
     protected volumeData: Object
   ) {
@@ -230,8 +228,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const localLoader = this.loader,
     localRest = this.rest,
     localParentVol = this.parentVolumesListComponent,
-    localDialogService = this.dialogService,
-    localSnackBar = this.snackBar
+    localDialogService = this.dialogService
 
     this.storageService.poolUnlockServiceChoices().pipe(
       map(serviceChoices => {
@@ -278,7 +275,7 @@ export class VolumesListTableConfig implements InputTableConf {
               entityDialog.dialogRef.close(true);
               localLoader.close();
               localParentVol.repaintMe();
-              localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
+              localDialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "report_problem", true);
             }, (res) => {
               localLoader.close();
               localDialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
@@ -512,7 +509,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
                         (res) => {
                           this.loader.close();
-                          this.snackbarService.open(T('Stopping scrub on pool <i>') + row1.name + '</i>.', T('close'), { duration: 5000 })
+                          this.dialogService.Info(T("Stop Scrub"), T('Stopping scrub on pool <i>') + row1.name + '</i>.', '300px', "report_problem", true);
                         },
                         (err) => {
                           this.loader.close();
@@ -532,9 +529,9 @@ export class VolumesListTableConfig implements InputTableConf {
                         (jobres) => {
                           this.dialogRef.close(false);
                           if (jobres.progress.percent == 100) {
-                            this.snackbarService.open(T('Scrub complete on pool <i>') + row1.name + "</i>.", T('close'), { duration: 5000 });
+                            this.dialogService.Info(T('Scrub Complete'), T('Scrub complete on pool <i>') + row1.name + "</i>.", '300px', "report_problem", true);
                           } else {
-                            this.snackbarService.open(T('Stopped the scrub on pool <i>') + row1.name + "</i>.", T('close'), { duration: 5000 });
+                            this.dialogService.Info(T('Stop Scrub'), T('Stopped the scrub on pool <i>') + row1.name + "</i>.", '300px', "report_problem", true);
                           }
                         }
                       );
@@ -806,7 +803,7 @@ export class VolumesListTableConfig implements InputTableConf {
           }
           this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
             if (res) {
-              this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
+              this.dialogService.Info(T("Create Snapshot"), T("Snapshot successfully taken."));
             }
           });
         }
@@ -908,26 +905,26 @@ export class VolumesListTableConfig implements InputTableConf {
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.css'],
   templateUrl: './volumes-list.component.html',
-  providers: [SnackbarService]
+  providers: []
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit {
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {});
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {});
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {})
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {})
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {})
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {})
   };
 
   expanded = false;
@@ -962,7 +959,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       const volumeData = res[1].data;
         for (let i = 0; i < volumeData.length; i++) {
           const volume = volumeData[i];
-          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, volume);
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, volume);
           volume.type = 'zpool';
 
           if (volume.children && volume.children[0]) {
