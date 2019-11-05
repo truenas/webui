@@ -1,4 +1,5 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+ix-auto ix-auto-type="form-combobox" ix-auto-identifier="{{config.placeholder}}">
   <div>
     <mat-form-field *ngIf="config.inputType != 'file' else elseBlock">
       <input matInput [type]="config.inputType ? config.inputType : 'text'"

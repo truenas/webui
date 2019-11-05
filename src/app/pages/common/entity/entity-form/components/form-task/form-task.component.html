@@ -1,4 +1,5 @@
-<div id="{{config.name}}" class="form-task" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="form-task" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']"
+ix-auto ix-auto-type="form-task" ix-auto-identifier="{{config.placeholder}}">
   <label class="form-task-label">{{ config.placeholder | translate }}</label>
   <br>
   <mat-card>

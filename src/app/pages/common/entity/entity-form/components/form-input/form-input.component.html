@@ -19,7 +19,10 @@
 			[max]="config.max"
 			[min]="config.min"
 			(blur)="blurEvent()"
-			autocomplete="new-password">
+			autocomplete="new-password"
+			ix-auto
+			ix-auto-type="form-input"
+			ix-auto-identifier="{{config.placeholder}}">
 	</mat-form-field>
 	<ng-template #elseBlock>
 		<span>{{config.placeholder | translate}}</span>

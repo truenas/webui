@@ -1,4 +1,5 @@
-<div id="{{config.name}}" class="toggle-button" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="toggle-button" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']"
+  ix-auto ix-auto-type="form-toggle-button" ix-auto-identifier="{{config.placeholder}}">
   <label>{{ config.placeholder | translate }}</label>
   <br>
   <mat-button-toggle-group multiple class="toggle-button-wrap toggle-button-group">

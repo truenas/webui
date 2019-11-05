@@ -1,4 +1,5 @@
-<div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+	ix-auto ix-auto-type="form-array" ix-auto-identifier="{{config.placeholder}}">
 	<mat-form-field style="display:none">
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder"

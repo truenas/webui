@@ -13,7 +13,8 @@
       [multiple]="config.multiple" 
       [required]="config.required" 
       [placeholder]="config.placeholder | translate" 
-      (selectionChange)="onChangeOption($event)">
+      (selectionChange)="onChangeOption($event)"
+      ix-auto ix-auto-type="form-select" ix-auto-identifier="{{config.placeholder}}">
 
      
       <mat-select-trigger *ngIf="config.multiple">

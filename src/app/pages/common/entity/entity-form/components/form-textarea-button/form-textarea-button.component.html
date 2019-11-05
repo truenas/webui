@@ -1,4 +1,5 @@
-<div id="{{config.name}}" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+ix-auto ix-auto-type="form-textarea-button" ix-auto-identifier="{{config.placeholder}}">
   <mat-form-field class="full-width">
     <input type="text" #textAreaSSH matInput [placeholder]="config.placeholder | translate" [formControlName]="config.name" [ngClass]="config.class" [required]="config.required" />
   </mat-form-field>

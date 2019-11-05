@@ -1,4 +1,5 @@
-<div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+        ix-auto ix-auto-type="form-colorpicker" ix-auto-identifier="{{config.placeholder}}">
         <div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>
 	<mat-form-field class="full-width">
                 <input matInput

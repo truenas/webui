@@ -8,11 +8,7 @@
           <div class="form-wrap">
             <ng-container *ngFor="let field of step.fieldConfig; let j = index">
               <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{j}}" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)">
-                <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formArray?.get([i])" [fieldShow]="isShow(field.name) ? 'show' :'hide'"
-                ix-auto
-                ix-auto-type="form-{{field.type}}"
-                ix-auto-identifier="{{field.placeholder}}"
-                >
+                <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formArray?.get([i])" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
                 </div>
               </div>
             </ng-container>
