@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
-import { DialogService, LanguageService, RestService, WebSocketService, SnackbarService } from '../../../services/';
+import { DialogService, LanguageService, RestService, WebSocketService, StorageService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -18,7 +18,7 @@ import { T } from '../../../translate-marker';
   selector: 'app-general',
   template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: ['./general.component.css'],
-  providers: [SnackbarService]
+  providers: []
 })
 export class GeneralComponent {
 
@@ -287,7 +287,7 @@ export class GeneralComponent {
   constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
     protected dialog: DialogService, protected loader: AppLoaderService,
-    public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog) {}
+    public http: Http, protected storage: StorageService,  private mdDialog: MatDialog) {}
 
   IPValidator(name: string, wildcard: string) {
     const self = this;
@@ -477,15 +477,19 @@ export class GeneralComponent {
 
   saveConfigSubmit(entityDialog) {
     parent = entityDialog.parent;
+    entityDialog.loader.open();
     entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
+      let mimetype;
       if (res) {
         let hostname = res.hostname.split('.')[0];
         let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
         fileName = hostname + '-' + res.version + '-' + date;
         if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
+          mimetype = 'application/x-tar';
           fileName += '.tar';
         } else {
+          mimetype = 'application/x-sqlite3';
           fileName += '.db';
         }
       }
@@ -494,24 +498,29 @@ export class GeneralComponent {
                                                                'pool_keys': entityDialog.formValue['pool_keys'] }],
                                                                fileName])
         .subscribe(
-          (res) => {
-            parent['snackBar'].open(helptext.snackbar_download_success.title, helptext.snackbar_download_success.action, {
-              duration: 5000
+          (download) => {
+            const url = download[1];
+            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe(file => {
+              entityDialog.loader.close();
+              entityDialog.dialogRef.close();
+              entityDialog.parent.storage.downloadBlob(file, fileName);
+            }, err => {
+              entityDialog.loader.close();
+              entityDialog.dialogRef.close();
+              entityDialog.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
             });
-            if (window.navigator.userAgent.search("Firefox")>0) {
-              window.open(res[1]);
-          }
-            else {
-              window.location.href = res[1];
-            }
-            entityDialog.dialogRef.close();
           },
           (err) => {
-            parent['snackBar'].open(T("Check the network connection."), T("Failed") , {
-              duration: 5000
-            });
+            entityDialog.loader.close();
+            entityDialog.dialogRef.close();
+            new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
           }
         );
+    },
+    (err) => {
+      entityDialog.loader.close();
+      entityDialog.dialogRef.close();
+      new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
     });
   }
 
@@ -555,7 +564,7 @@ export class GeneralComponent {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
-      this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 });
+      this.dialog.Info(T("Settings saved."), '', '300px', 'info', true);
       this.afterSubmit(body);
     }, (res) => {
       this.loader.close();

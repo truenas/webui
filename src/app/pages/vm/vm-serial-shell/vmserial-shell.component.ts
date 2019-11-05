@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
@@ -32,7 +32,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
               public ss: ShellService,
               protected aroute: ActivatedRoute,
               public translate: TranslateService,
-              private snackbar: MatSnackBar) {
+              private dialog: MatDialog) {
               }
 
 
@@ -107,8 +107,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onShellRightClick(): false {
-    this.snackbar.openFromComponent(CopyPasteMessageComponent);
-    
+    this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
 }
