@@ -150,7 +150,7 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_kerberos_realm_name,
       placeholder : helptext.activedirectory_kerberos_realm_placeholder,
       tooltip : helptext.activedirectory_kerberos_realm_tooltip,
-      options : []
+      options : [{label: '---', value: null}]
     },
     {
       type : 'select',
