@@ -31,9 +31,11 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
 
   @ViewChild('embeddedForm', {static: false}) embeddedForm: EntityFormEmbeddedComponent;
   public target: Subject<CoreEvent> = new Subject();
+  public isWaiting: boolean = false;
   public values = [];
   public preferences: any;
   public saveSubmitText = T("Update Settings");
+  public multiStateSubmit = true;
   protected isEntity: boolean = true; // was true
   private themeOptions: any[] = [];
   public fieldConfig:FieldConfig[] = [];
@@ -62,10 +64,16 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     ngOnInit(){
       this.core.emit({name:"UserPreferencesRequest", sender:this});
       this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+        if(this.isWaiting){
+          this.target.next({name:"SubmitComplete", sender: this});
+          this.isWaiting = false;
+        }
         this.preferences = evt.data;
         this.onPreferences(evt.data);
-        this.init();
+        this.init(true);
       });
+
+      this.init();
     }
 
     ngAfterViewInit(){
@@ -86,9 +94,15 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
       this.core.unregister({observerClass:this});
     }
 
-    init(){
+    init(updating?:boolean){
       this.setThemeOptions();
+      if(!updating){
+        this.startSubscriptions();
+      }
+      this.generateFieldConfig();
+    }
 
+    startSubscriptions(){
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.setThemeOptions();
         if(!this.embeddedForm){ return; }
@@ -101,13 +115,15 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
         switch(evt.name){
         case "FormSubmitted":
           this.core.emit({name:"ChangePreferences",data:evt.data});
+          this.target.next({name:"SubmitStart", sender: this});
+          this.isWaiting = true;
           break;
         case "CreateTheme":
           this.router.navigate(new Array('').concat(['ui-preferences', 'create-theme']));
           break;
         }
       });
-      this.generateFieldConfig();
+
     }
 
      setThemeOptions(){
@@ -155,4 +171,5 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
          }
        }
      }
+
 }

@@ -26,6 +26,7 @@ import { SnackbarService } from '../../../../services/snackbar.service';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { Validators } from '@angular/forms';
 
 export interface ZfsPoolData {
   avail?: number;
@@ -139,9 +140,84 @@ export class VolumesListTableConfig implements InputTableConf {
           actions.push({
             label: T("Lock"),
             onClick: (row1) => {
-              const conf: DialogFormConfiguration = {
+              let p1 = '';
+              const self = this;
+              this.loader.open();
+              this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
+                if (res.length > 0) {
+                  p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is locked:`;
+                  res.forEach((item) => {
+                    p1 += `<br><br>${item.type}:`;
+                    item.attachments.forEach((i) => {
+                      const tempArr = i.split(',');
+                      tempArr.forEach((i) => {
+                        p1 += `<br> - ${i}`
+                      })
+                    })
+  
+                  })
+                }
+                this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
+                  const running_processes = [];
+                  const running_unknown_processes = [];
+                  if (res.length > 0) {
+                    res.forEach((item) => {
+                      if (!item.service) {
+                        if (item.name && item.name !== '') {
+                          running_processes.push(item);
+                        } else {
+                          running_unknown_processes.push(item);
+                        }
+                      }
+                    });
+                    if (running_processes.length > 0) {
+                      p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
+                      running_processes.forEach((process) =>  {
+                        if (process.name) {
+                          p1 += `<br> - ${process.name}`
+                        }
+  
+                      });
+                    };
+                    if (running_unknown_processes.length > 0) {
+                      p1 += '<br><br>These unknown processes are using this pool:';
+                      running_unknown_processes.forEach((process) => {
+                        if (process.pid) {
+                          p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
+                        }
+                      });
+                      p1 += `<br><br>WARNING: These unknown processes will be terminated while locking the pool.`;
+                    }
+                  };
+                  this.loader.close();
+                  doLock();
+                },
+                (err) => {
+                  this.loader.close();
+                  new EntityUtils().handleWSError(T("Error gathering data on pool."), err, this.dialogService);
+                });
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(T("Error gathering data on pool."), err, this.dialogService);
+              });
+              function doLock() {
+                const conf: DialogFormConfiguration = {
                 title: T("Enter passphrase to lock pool ") + row1.name + '.',
                 fieldConfig: [
+                  {
+                    type: 'paragraph',
+                    name: 'pool_lock_warning',
+                    paraText: helptext.pool_lock_warning_paratext_a + row1.name +
+                      helptext.pool_lock_warning_paratext_b,
+                    isHidden: false
+                  },
+                  {
+                    type: 'paragraph',
+                    name: 'pool_processes',
+                    paraText: p1,
+                    isHidden: p1 === '' ? true : false
+                  },
                   {
                     type: 'input',
                     inputType: 'password',
@@ -170,9 +246,9 @@ export class VolumesListTableConfig implements InputTableConf {
                   });
                 }
               }
-              this.dialogService.dialogForm(conf);
+              self.dialogService.dialogForm(conf);
             }
-          });
+          }});
         }
       } else {
         actions.push({
@@ -387,7 +463,7 @@ export class VolumesListTableConfig implements InputTableConf {
               paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
                 helptext.detachDialog_pool_detach_warning_paratext_b,
               isHidden: false
-            }, {
+            },{
               type: 'paragraph',
               name: 'pool_processes',
               paraText: p1,
@@ -407,6 +483,22 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'cascade',
               value: true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
+            },{
+              type: 'input',
+              name: 'nameInput',
+              required: true,
+              isDoubleConfirm: true,
+              maskValue: row1.name,
+              validation: [Validators.pattern(row1.name)],
+              relation : [
+                {
+                  action : 'HIDE',
+                  when : [ {
+                    name : 'destroy',
+                    value : false,
+                  } ]
+                },
+              ]
             },{
               type: 'checkbox',
               name: 'confirm',
@@ -939,7 +1031,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar, protected snackbarService: SnackbarService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService) {
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter, job, pref);
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter, job, pref, mdDialog);
   }
 
   public repaintMe() {

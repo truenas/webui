@@ -48,6 +48,7 @@
         <button
             *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
             mat-button
+            [disabled]="action.disabled"
             id="action_button_{{ action?.name }}__{{action.id}}"
             (click)="action.onClick(this.config)"
         >
