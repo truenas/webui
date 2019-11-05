@@ -3,12 +3,11 @@ import * as _ from 'lodash';
 import { WebSocketService } from '../../../services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
-import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector : 'app-support',
   templateUrl: './support.component.html',
-  providers: [SnackbarService]
+  providers: []
 })
 export class SupportComponent implements OnInit {
   public is_freenas: boolean;
