@@ -20,7 +20,6 @@ export class CertificateListComponent {
   protected route_success: string[] = [ 'system', 'certificates' ];
 
   protected entityList: any;
-  protected dialogRef: any;
 
   public columns: Array < any > = [
     { name: helptext_system_certificates.list.column_name, prop: 'name', always_display: true },
@@ -91,9 +90,6 @@ export class CertificateListComponent {
                   this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
                     this.storage.downloadBlob(file, fileName);
                   }, err => {
-                    if (this.dialogRef) {
-                      this.dialogRef.close();
-                    }
                     this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
                       helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
                   });
@@ -120,9 +116,6 @@ export class CertificateListComponent {
                   this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
                     this.storage.downloadBlob(file, fileName);
                   }, err => {
-                    if (this.dialogRef) {
-                      this.dialogRef.close();
-                    }
                     this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
                       helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
                   });
