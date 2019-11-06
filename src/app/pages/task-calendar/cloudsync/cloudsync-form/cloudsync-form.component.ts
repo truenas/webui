@@ -205,9 +205,13 @@ export class CloudsyncFormComponent implements OnInit {
     relation: [
       {
         action: 'HIDE',
+        connective: 'OR',
         when: [{
           name: 'direction',
           value: 'PULL',
+        }, {
+          name: 'transfer_mode',
+          value: 'SYNC',
         }]
       }
     ],
