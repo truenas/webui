@@ -20,7 +20,10 @@ human_readable: {
     input_error: T('Invalid value. Valid values are numbers followed by optional unit letters, \
  like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>.'),
 
- suggestion_label: '(Examples: 500 KiB, 500M, 2 TB)',
+  suggestion_tooltip: T(`This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB). \
+  If units are not specified, the value defaults to`),
+  
+  suggestion_label: '(Examples: 500 KiB, 500M, 2 TB)',
 },
 
 closed_job_message: T('See task manager for progress updates.'),
