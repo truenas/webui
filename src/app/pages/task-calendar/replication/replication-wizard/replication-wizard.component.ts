@@ -987,7 +987,7 @@ export class ReplicationWizardComponent {
                     if (hasBadSnapshots) {
                         return this.dialogService.confirm(
                             helptext.clearSnapshotDialog_title,
-                            helptext.clearSnapshotDialog_title).toPromise().then(
+                            helptext.clearSnapshotDialog_content).toPromise().then(
                             (dialog_res) => {
                                 payload['allow_from_scratch'] = dialog_res;
                                 return this.ws.call(this.createCalls[item], [payload]).toPromise();
