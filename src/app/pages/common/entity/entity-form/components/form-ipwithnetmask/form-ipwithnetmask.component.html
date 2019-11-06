@@ -1,5 +1,5 @@
 <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-	ix-auto ix-auto-type="form-array" ix-auto-identifier="{{config.placeholder}}">
+	ix-auto ix-auto-type="ipwithnetmask" ix-auto-identifier="{{config.placeholder}}">
 	<mat-form-field style="display:none">
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder"
@@ -16,14 +16,17 @@
 			[required]="config.required"
 			(blur)="setAddress($event)"
 			[pattern]="network.ipv4_or_ipv6_cidr_optional"
+			ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
 			>
 	</mat-form-field>/
 	<mat-select *ngIf="!config.netmaskPreset" style="width: 15%"
 		[value]="netmask"
 		[placeholder]="Netmask | translate"
 		(selectionChange)="setNetmask($event)"
+		ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}"
 		>
-		<mat-option *ngFor="let option of netmaskOptions" [value]="option.value">
+		<mat-option *ngFor="let option of netmaskOptions" [value]="option.value"
+			ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
 			{{option.label}}
 		</mat-option>
 	</mat-select>
@@ -31,6 +34,7 @@
 		class="disabled-select"
 		[value]="config.netmaskPreset"
 		disabled
+		ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}"
 		>
 		<mat-option [value]="config.netmaskPreset">
 			{{config.netmaskPreset}}

@@ -1,5 +1,5 @@
 <div id="{{config.name}}" class="dynamic-field form-readfile" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-    ix-auto ix-auto-type="form-readfile" ix-auto-identifier="{{config.placeholder}}">
+    ix-auto ix-auto-type="readfile" ix-auto-identifier="{{config.placeholder}}">
     <input type="file" id="input" (change)="changeListener($event)">
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>

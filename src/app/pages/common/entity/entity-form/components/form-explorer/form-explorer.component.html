@@ -1,5 +1,5 @@
 <div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-    ix-auto ix-auto-type="form-explorer" ix-auto-identifier='{{config.placeholder}}'>
+    ix-auto ix-auto-type="explorer" ix-auto-identifier='{{config.placeholder}}'>
     <div class="form-ex-flex-container" id="form-ex-flex-container">
         <div id="box1">
             <button mat-icon-button aria-label="Toggle Tree" type="button" (click)="toggleTree()" [disabled]="config.disabled"

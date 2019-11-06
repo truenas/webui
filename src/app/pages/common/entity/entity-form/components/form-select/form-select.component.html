@@ -14,7 +14,7 @@
       [required]="config.required" 
       [placeholder]="config.placeholder | translate" 
       (selectionChange)="onChangeOption($event)"
-      ix-auto ix-auto-type="form-select" ix-auto-identifier="{{config.placeholder}}">
+      ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}">
 
      
       <mat-select-trigger *ngIf="config.multiple">
@@ -64,7 +64,10 @@
 
       <div *ngIf="!formReady || config.options.length == 0">
         <ng-container>
-          <mat-option disabled style="opacity:0.5">
+          <mat-option disabled style="opacity:0.5"
+          ix-auto
+          ix-auto-type="option"
+          ix-auto-identifier="{{config.placeholder}}_zeroState">
             {{config.zeroStateMessage ? config.zeroStateMessage : '--'}}
           </mat-option>
         </ng-container>
