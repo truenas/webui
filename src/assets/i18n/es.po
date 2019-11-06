@@ -4,6 +4,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid " Check Notifications for more details."
+msgstr ""
+
+msgid " Download Updates"
+msgstr ""
+
 msgid " First vdev has "
 msgstr " El primer vdev tiene "
 
@@ -37,6 +43,9 @@ msgstr ""
 msgid " disks, new vdev has "
 msgstr " disco, el nuevo vdev tiene "
 
+msgid " has been unlocked."
+msgstr ""
+
 msgid " is "
 msgstr ""
 
@@ -47,7 +56,9 @@ msgstr ""
 " es el mínimo espacio de grabación recomendado. Elegir un tamaño mas "
 "pequeño puede reducir el rendimiento del sistema."
 
-msgid " seconds unless kept permanently. Adjust this amount to allow for testing."
+msgid ""
+" seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
+"for testing."
 msgstr ""
 
 msgid " system is powered on and connected to the network."
@@ -64,11 +75,6 @@ msgid ""
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
 "encrypted pools, download and safely store the encryption key and any "
 "passphrase for it."
-msgstr ""
-
-msgid ""
-"'%h' will be replaced with your hostname and '%i' will be replaced with "
-"your IP address."
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
@@ -101,9 +107,7 @@ msgstr ""
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
 
-msgid ""
-"</b> plugin and all data and snapshots stored with it, please type the name "
-"of the plugin to confirm:"
+msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr ""
 
 msgid "</b> with the keypair"
@@ -116,6 +120,9 @@ msgid "</i> keypair?</p>"
 msgstr ""
 
 msgid "</i> now?"
+msgstr ""
+
+msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr ""
 
 msgid ""
@@ -199,6 +206,14 @@ msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  username
 msgstr ""
 
 msgid ""
+"<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
+"target=\"_blank\">Backblaze B2</a> Application Key. To generate a new "
+"application key, log in to the Backblaze account, go to the <i>App Keys</i> "
+"page, and add a new application key. Copy the <i>applicationKey</i> string "
+"to this field."
+msgstr ""
+
+msgid ""
 "<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
 "target=\"_blank\">Email encryption</a> type. Choices are <i>Plain (No "
 "Encryption)</i>, <i>SSL (Implicit TLS)</i>, or <i>TLS (STARTTLS)</i>."
@@ -225,19 +240,6 @@ msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
-msgstr ""
-
-msgid ""
-"<b>Ctrl+C</b> kills a foreground process.<br>                            "
-"Many utilities are built-in:<br> <b>Iperf</b>,                            "
-"<b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,                            "
-"<b>tw_cli</b>, <br><b>MegaCli</b>,                            "
-"<b>freenas-debug</b>, <b>tmux</b>,                            "
-"<b>Dmidecode</b>.<br> Refer to the <a                            "
-"href=\"--docurl--/cli.html\"                            "
-"target=\"_blank\">Command Line Utilities</a>                            "
-"chapter in the guide for usage information                            and "
-"examples."
 msgstr ""
 
 msgid ""
@@ -291,7 +293,8 @@ msgstr ""
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br>"
+"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
+"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
 msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
@@ -435,8 +438,8 @@ msgstr ""
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
 "with a new boot device. This also decrypts all system passwords for reuse "
-"when the configuration file is uploaded.</p> <b>Keep the configuration file "
-"safe and protect it from unauthorized access!</b>"
+"when the configuration file is uploaded.</p> <br /><b>Keep the "
+"configuration file safe and protect it from unauthorized access!</b>"
 msgstr ""
 
 msgid ""
@@ -637,9 +640,6 @@ msgstr ""
 msgid "Account"
 msgstr "Cuenta"
 
-msgid "Account ID or Application Key ID"
-msgstr ""
-
 msgid "Account Key"
 msgstr ""
 
@@ -662,6 +662,12 @@ msgid "Activate"
 msgstr ""
 
 msgid "Activate Pool for Jail Manager"
+msgstr ""
+
+msgid "Activate this Boot Environment?"
+msgstr ""
+
+msgid "Activated Pool for Jail Manager:"
 msgstr ""
 
 msgid ""
@@ -877,6 +883,9 @@ msgstr ""
 msgid "Adjust the file permissions using the checkboxes."
 msgstr ""
 
+msgid "Admin Portal"
+msgstr ""
+
 msgid "Admin Server"
 msgstr ""
 
@@ -941,13 +950,19 @@ msgstr ""
 msgid "All dirs"
 msgstr ""
 
-msgid "Allocate RAM for the VM"
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
 msgstr ""
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
+msgstr ""
+
+msgid "Allocate at least 256 MiB."
+msgstr ""
+
+msgid "Allow All Initiators"
 msgstr ""
 
 msgid "Allow Anonymous Binding"
@@ -1124,13 +1139,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Alphanumeric  <a href=\"https://www.backblaze.com/b2/cloud-storage.html\"  "
-"target=\"_blank\">Backblaze B2</a> ID. Find an Account ID or  "
-"applicationKeyID by logging in to the account, clicking <i>Buckets</i>,  "
-"and clicking <i>Show Account ID and Application Key</i>. Enter the  "
-"<i>Account ID</i> to associate the entire account or generate a new  "
-"<i>Application Key</i>. The <i>keyID</i> replaces the Account ID and  the "
-"key string is used in place of the <i>Master Application Key</i>."
+"Alphanumeric <a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
+"target=\"_blank\">Backblaze B2</a> Application Key ID. To generate a new "
+"application key, log in to the Backblaze account, go to the <i>App Keys</i> "
+"page, and add a new application key. Copy the application <i>keyID</i> "
+"string to this field."
 msgstr ""
 
 msgid "Also Include Naming Schema"
@@ -1186,6 +1199,12 @@ msgid ""
 msgstr ""
 
 msgid "Apple Shares (AFP)"
+msgstr ""
+
+msgid "Application Key"
+msgstr ""
+
+msgid "Apply"
 msgstr ""
 
 msgid "Apply Failover Upgrade"
@@ -1363,10 +1382,10 @@ msgstr ""
 msgid "Available Disks"
 msgstr ""
 
-msgid "Available Themes"
+msgid "Available Memory:"
 msgstr ""
 
-msgid "Available memory"
+msgid "Available Themes"
 msgstr ""
 
 msgid "Available space threshold (%)"
@@ -1379,16 +1398,6 @@ msgid "Back"
 msgstr "Volver"
 
 msgid "Back to Support"
-msgstr ""
-
-msgid ""
-"Backblaze B2 Application Key. Log in to the B2 account and  generate a key "
-"on the Buckets page.  <a "
-"href=\"https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-"
-"find-my-Account-ID-and-Application-Key-\"  target=\"_blank\">Generating a "
-"new Master Application Key</a> invalidates  the existing Master key and "
-"requires updating this field. Using a  limited permissions Application Key "
-"also requires changing the  <i>Account ID</i> to the new <i>keyID</i>."
 msgstr ""
 
 msgid ""
@@ -1639,10 +1648,18 @@ msgstr ""
 msgid "Cannot Edit while HA is Enabled"
 msgstr ""
 
+msgid "Cannot edit while HA is enabled."
+msgstr ""
+
 msgid "Case Sensitivity"
 msgstr ""
 
 msgid "Category"
+msgstr ""
+
+msgid ""
+"Caution: Allocating too much memory can slow the  system or prevent VMs "
+"from running."
 msgstr ""
 
 msgid "Certificate"
@@ -1685,6 +1702,9 @@ msgstr ""
 msgid ""
 "Change the default password to improve system security. The new password "
 "cannot contain a space or <b>#</b>."
+msgstr ""
+
+msgid "Changes that have been applied will revert after "
 msgstr ""
 
 msgid "Changing"
@@ -1776,14 +1796,6 @@ msgstr ""
 msgid ""
 "Check this box if importing a certificate for which a CSR exists on this "
 "system"
-msgstr ""
-
-msgid ""
-"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. A <i>GUI "
-"SSL Certificate</i> must be selected."
-msgstr ""
-
-msgid "Check-in"
 msgstr ""
 
 msgid "CheckIP Path"
@@ -2203,9 +2215,6 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-msgid "Commit"
-msgstr ""
-
 msgid "Common Name"
 msgstr ""
 
@@ -2231,6 +2240,9 @@ msgid "Config"
 msgstr ""
 
 msgid "Config Pool for Jail Manager"
+msgstr ""
+
+msgid "Config could not be downloaded"
 msgstr ""
 
 msgid "Configure ACL"
@@ -2394,7 +2406,16 @@ msgstr ""
 msgid "Copies"
 msgstr ""
 
+msgid "Copy and Paste"
+msgstr ""
+
 msgid "Could not delete boot environment."
+msgstr ""
+
+msgid "Could not find a group name for this group ID."
+msgstr ""
+
+msgid "Could not find a user name for this user ID."
 msgstr ""
 
 msgid "Country"
@@ -2509,6 +2530,20 @@ msgstr ""
 msgid "Custom Server"
 msgstr ""
 
+msgid ""
+"DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
+"similar to dyndns.org."
+msgstr ""
+
+msgid ""
+"DDNS server path. Path syntax varies by  provider and must be obtained from "
+"that provider. For example,  <i>/update?hostname=</i> is a simple path for "
+"the  <i>update.twodns.de</i> <b>Custom Server</b>. The hostname is  "
+"automatically appended by default. More examples are in the  <a "
+"href=\"https://github.com/troglobit/inadyn#custom-ddns-providers\" "
+"target=\"_blank\">In-A-Dyn documentation</a>."
+msgstr ""
+
 msgid "DELETE"
 msgstr ""
 
@@ -2598,6 +2633,9 @@ msgid "Days of the Week"
 msgstr ""
 
 msgid "Deactivate the recovery key for this pool?"
+msgstr ""
+
+msgid "Debug could not be downloaded"
 msgstr ""
 
 msgid "Decrypt pool"
@@ -2767,6 +2805,9 @@ msgstr ""
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
+msgid "Deleting the <b>"
+msgstr ""
+
 msgid "Deny list"
 msgstr ""
 
@@ -2799,6 +2840,9 @@ msgstr ""
 msgid "Description of the lagg interface."
 msgstr ""
 
+msgid "Description of the share or notes on how it is used."
+msgstr ""
+
 msgid "Descriptive name for the replication."
 msgstr ""
 
@@ -2812,6 +2856,16 @@ msgid "Destination Path"
 msgstr ""
 
 msgid "Destination Snapshot Lifetime"
+msgstr ""
+
+msgid "Destination Snapshots Are Not Related to Replicated Snapshots"
+msgstr ""
+
+msgid ""
+"Destination dataset does not contain any snapshots that can be used as a "
+"basis for the incremental changes in the snapshots being sent. The "
+"snapshots in the destination dataset will be deleted and the replication "
+"will begin with a complete initial copy."
 msgstr ""
 
 msgid ""
@@ -2965,9 +3019,6 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-msgid "Discard"
-msgstr ""
-
 msgid "Discard Network Changes"
 msgstr ""
 
@@ -3055,6 +3106,12 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
+msgid "Download"
+msgstr ""
+
+msgid "Download Key"
+msgstr ""
+
 msgid "Download Logs"
 msgstr ""
 
@@ -3074,6 +3131,9 @@ msgid "Drive ID"
 msgstr ""
 
 msgid "Driver"
+msgstr ""
+
+msgid "Drives List"
 msgstr ""
 
 msgid "EC Curve"
@@ -3098,9 +3158,6 @@ msgid "Edit Disk(s)"
 msgstr ""
 
 msgid "Edit Idmap"
-msgstr ""
-
-msgid "Edit Note"
 msgstr ""
 
 msgid "Edit Options"
@@ -3291,6 +3348,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Enabling <em>Time Machine</em> on an SMB share requires a restart of the "
+"SMB service."
+msgstr ""
+
+msgid ""
 "Enabling this option is <b>not</b> recommended as it bypasses a security "
 "mechanism."
 msgstr ""
@@ -3367,7 +3429,7 @@ msgid ""
 "communicate with the Kerberos Domain Controller before setting."
 msgstr ""
 
-msgid "Enter <i>ALL</i> or a list of initiator hostnames separated by spaces."
+msgid "Enter"
 msgstr ""
 
 msgid ""
@@ -3424,9 +3486,6 @@ msgstr ""
 msgid "Enter a descriptive title for the new issue."
 msgstr ""
 
-msgid "Enter a fully qualified domain name. Example: <b>yourname.dyndns.org</b>"
-msgstr ""
-
 msgid ""
 "Enter a line- or space-separated list of destinations where the collected "
 "metrics are to be sent. Use the format <samp>HOST:PORT</samp> (port is "
@@ -3454,7 +3513,9 @@ msgstr ""
 msgid "Enter a name for the VM."
 msgstr ""
 
-msgid "Enter a name for the clone of this boot environment."
+msgid ""
+"Enter a name for the clone of this boot environment. Alphanumeric "
+"characters, dashes (*-*), underscores (*_*), and periods (*.*) are allowed.)"
 msgstr ""
 
 msgid "Enter a name for the cloned snapshot."
@@ -3769,9 +3830,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter the <a "
-"href=\"https://docs.influxdata.com/influxdb/v1.5/introduction/getting-"
-"started/\" target=\"_blank\">InfluxDB</a> hostname."
+"Enter the <a href=\"https://docs.influxdata.com/influxdb/\" "
+"target=\"_blank\">InfluxDB</a> hostname."
 msgstr ""
 
 msgid ""
@@ -3802,9 +3862,6 @@ msgid "Enter the IP address of the gateway."
 msgstr ""
 
 msgid "Enter the IP address or hostname for SNMP UPS."
-msgstr ""
-
-msgid "Enter the IP address or hostname of a remote server running Graphite."
 msgstr ""
 
 msgid ""
@@ -3906,11 +3963,6 @@ msgid ""
 "<i>/data example-dataset-name</i>"
 msgstr ""
 
-msgid ""
-"Enter the name and port of the server that reports the external IP address. "
-"Example: <b>server.name.org:port</b>."
-msgstr ""
-
 msgid "Enter the name of the Key Distribution Center."
 msgstr ""
 
@@ -3919,7 +3971,9 @@ msgid ""
 "<i>X</i> is a number representing a non-parent VLAN interface."
 msgstr ""
 
-msgid "Enter the name of the boot entry."
+msgid ""
+"Enter the name of the boot entry. Alphanumeric characters, dashes (*-*), "
+"underscores (*_*), and periods (*.*) are allowed.)"
 msgstr ""
 
 msgid "Enter the name of the company or organization."
@@ -3978,14 +4032,6 @@ msgstr ""
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
 msgstr ""
 
-msgid "Enter the password used to log in to the provider and update the record."
-msgstr ""
-
-msgid ""
-"Enter the path requested by the <b>CheckIP Server</b> to determine the user "
-"IP address."
-msgstr ""
-
 msgid ""
 "Enter the percentage of free space to remain in the pool. When this "
 "percentage is reached, the system issues an alert, but only if zvols are "
@@ -4024,9 +4070,6 @@ msgstr ""
 msgid "Enter the username if the SMTP server requires authentication."
 msgstr ""
 
-msgid "Enter the username used to log in to the provider and update the record."
-msgstr ""
-
 msgid ""
 "Enter up to four interface configurations in the format "
 "<i>interface:bridge</i>, separated by a comma (,). The left value is the "
@@ -4044,6 +4087,9 @@ msgstr ""
 msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
 msgstr ""
 
+msgid "Enter valid value"
+msgstr ""
+
 msgid ""
 "Entering <i>0</i> uses the actual file size and requires that the file "
 "already exists. Otherwise, specify the file size for the new file."
@@ -4056,6 +4102,9 @@ msgid "Error"
 msgstr ""
 
 msgid "Error Deleting zvol "
+msgstr ""
+
+msgid "Error Downloading File"
 msgstr ""
 
 msgid "Error Promoting dataset "
@@ -4094,6 +4143,9 @@ msgstr ""
 msgid "Error exporting/disconnecting pool."
 msgstr ""
 
+msgid "Error gathering data on pool."
+msgstr ""
+
 msgid "Error getting disk data"
 msgstr ""
 
@@ -4101,9 +4153,6 @@ msgid "Error getting locales"
 msgstr ""
 
 msgid "Error getting pool data."
-msgstr ""
-
-msgid "Error getting pool or dataset data."
 msgstr ""
 
 msgid "Error importing pool"
@@ -4230,6 +4279,9 @@ msgstr ""
 msgid "Extent"
 msgstr ""
 
+msgid "Extent Name"
+msgstr ""
+
 msgid "Extent name"
 msgstr ""
 
@@ -4254,6 +4306,9 @@ msgstr ""
 msgid "Failed"
 msgstr ""
 
+msgid "Failed sending test alert!"
+msgstr ""
+
 msgid "Failover"
 msgstr ""
 
@@ -4273,9 +4328,6 @@ msgid "Failover is in an error state."
 msgstr ""
 
 msgid "Fetch Method"
-msgstr ""
-
-msgid "Fetch and Install Updates"
 msgstr ""
 
 msgid "File"
@@ -4423,6 +4475,12 @@ msgstr ""
 msgid "Full with zeros"
 msgstr ""
 
+msgid ""
+"Fully qualified domain name of the host with the  dynamic IP address. "
+"Separate multiple domains with a space, comma  (,), or semicolon (;). "
+"Example:  <i>myname.dyndns.org; myothername.dyndns.org</i>."
+msgstr ""
+
 msgid "GID"
 msgstr ""
 
@@ -4474,6 +4532,9 @@ msgid "Global password to unlock SEDs."
 msgstr ""
 
 msgid "Go Back to Jails"
+msgstr ""
+
+msgid "Go to HA settings"
 msgstr ""
 
 msgid "Graph Age"
@@ -4560,15 +4621,6 @@ msgstr ""
 msgid "HTTPS Port"
 msgstr ""
 
-msgid "Hard Disk"
-msgstr ""
-
-msgid "Hard Disk Size"
-msgstr ""
-
-msgid "Hard Disks"
-msgstr ""
-
 msgid "Hide Config"
 msgstr ""
 
@@ -4642,9 +4694,6 @@ msgid "Hostname"
 msgstr ""
 
 msgid "Hostname (Virtual)"
-msgstr ""
-
-msgid "Hostname for your custom DDNS provider"
 msgstr ""
 
 msgid ""
@@ -4742,7 +4791,7 @@ msgstr ""
 
 msgid ""
 "IP address to use for  administrative access to the system. The netmask "
-"<i>32</i> is  required for this value and cannot be changed."
+"<i>/32</i> is  required for this value and cannot be changed."
 msgstr ""
 
 msgid "IPMI"
@@ -5057,6 +5106,11 @@ msgstr ""
 msgid "Invalid dataset."
 msgstr ""
 
+msgid ""
+"Invalid network address list. Check for typos or missing CIDR netmasks and "
+"separate addresses with a space."
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr ""
 
@@ -5066,7 +5120,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Invalid value. Valid values are numbers followed by optional unit letters, "
+"Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
 msgstr ""
 
@@ -5133,9 +5187,7 @@ msgstr ""
 msgid "Jails cannot be changed while running."
 msgstr ""
 
-msgid ""
-"Jails cannot be created or managed untill a pool is present for storing "
-"them. Please create a pool first"
+msgid "Jails cannot be created or managed until a pool is present for storing them."
 msgstr ""
 
 msgid "Jails failed to start"
@@ -5145,6 +5197,9 @@ msgid "Jails started."
 msgstr ""
 
 msgid "KDC"
+msgstr ""
+
+msgid "KEEP CHANGES"
 msgstr ""
 
 msgid "KEEP NETWORK CHANGES PERMANENTLY"
@@ -5167,6 +5222,9 @@ msgstr ""
 msgid ""
 "Keep the zvol name short. Using a zvol name longer than 63 characters can "
 "prevent accessing the zvol as a device."
+msgstr ""
+
+msgid "Keep this Boot Environment?"
 msgstr ""
 
 msgid "Keep user primary group"
@@ -5296,6 +5354,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Leave blank to allow all or enter a list of initiator hostnames separated "
+"by spaces."
+msgstr ""
+
+msgid ""
 "Leave empty for default (<a href=\"https://api.opsgenie.com\" "
 "target=\"_blank\">OpsGenie API</a>)"
 msgstr ""
@@ -5324,9 +5387,6 @@ msgstr ""
 msgid "Lifetime"
 msgstr ""
 
-msgid "Limit (Ex. 500 KiB/s, 500M, 2 TB)"
-msgstr ""
-
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr ""
 
@@ -5334,6 +5394,9 @@ msgid "Link State"
 msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
+msgstr ""
+
+msgid "Listen"
 msgstr ""
 
 msgid "Load Previous Replication Task"
@@ -5457,9 +5520,6 @@ msgid "Masquerade Address"
 msgstr ""
 
 msgid "Master"
-msgstr ""
-
-msgid "Master Application Key or Application Key"
 msgstr ""
 
 msgid ""
@@ -5625,7 +5685,7 @@ msgstr ""
 msgid "Mirror"
 msgstr ""
 
-msgid "Mixing disks of different sizes in a VDEV is not recommended."
+msgid "Mixing disks of different sizes in a VDEV is not allowed."
 msgstr ""
 
 msgid "Mode"
@@ -5705,6 +5765,9 @@ msgid ""
 "than the <i>Secret</i>."
 msgstr ""
 
+msgid "NAA"
+msgstr ""
+
 msgid "NAT"
 msgstr ""
 
@@ -5751,6 +5814,14 @@ msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
 msgid "Name and Options"
+msgstr ""
+
+msgid ""
+"Name and port of the server that reports the  external IP address. For "
+"example, entering <i>checkip.dyndns.org:80</i>  uses  <a "
+"href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" "
+"target=\"_blank\">Dyn IP detection</a>.  to discover the remote socket IP "
+"address."
 msgstr ""
 
 msgid "Name of NIS domain."
@@ -5890,17 +5961,17 @@ msgid "Network Summary"
 msgstr ""
 
 msgid ""
+"Network addresses allowed to use this initiator. Leave blank to allow all "
+"networks or list network addresses with       a CIDR mask. Separate "
+"multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."
+msgstr ""
+
+msgid ""
 "Network addresses allowed use this initiator. Each address can include an "
 "optional <a "
 "href=\"https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing\" "
 "target=\"_blank\">CIDR</a> netmask. Click <i>+</i> to add the network "
 "address to the list. Example: <i>192.168.2.0/24</i>."
-msgstr ""
-
-msgid ""
-"Network addresses that can use this initiator. Enter <i>ALL</i> or list "
-"network addresses with a CIDR mask. Separate multiple addresses with a "
-"space: <i>192.168.2.0/24 192.168.2.1/12</i>."
 msgstr ""
 
 msgid "Network changes applied successfully."
@@ -5935,6 +6006,14 @@ msgstr ""
 msgid "Network interfaces to include in the bridge."
 msgstr ""
 
+msgid ""
+"Network settings have been temporarily changed. They will be automatically "
+"discarded after"
+msgstr ""
+
+msgid "Never"
+msgstr ""
+
 msgid "New Password"
 msgstr ""
 
@@ -5966,7 +6045,10 @@ msgstr ""
 msgid "No Communication Warning Time"
 msgstr ""
 
-msgid "No Pool Exist"
+msgid "No Logs"
+msgstr ""
+
+msgid "No Pools"
 msgstr ""
 
 msgid "No Stat"
@@ -5975,15 +6057,16 @@ msgstr ""
 msgid "No interfaces configured with Virtual IP."
 msgstr ""
 
+msgid "No logs are available for this task."
+msgstr ""
+
+msgid "No longer keep this Boot Environment?"
+msgstr ""
+
 msgid "No pools"
 msgstr ""
 
 msgid "No pools are configured."
-msgstr ""
-
-msgid ""
-"No pools exist. Jails cannot be created or managed until a pool is present "
-"for storing them. Please create a pool first."
 msgstr ""
 
 msgid "No snapshots sent yet"
@@ -5996,9 +6079,6 @@ msgid "No updates available."
 msgstr ""
 
 msgid "No, continue with import"
-msgstr ""
-
-msgid "Note"
 msgstr ""
 
 msgid "Notes"
@@ -6113,9 +6193,6 @@ msgstr ""
 msgid "Ok"
 msgstr "Bueno"
 
-msgid "Once applied, changes will revert after "
-msgstr ""
-
 msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr ""
 
@@ -6189,7 +6266,7 @@ msgstr ""
 msgid "Operation"
 msgstr ""
 
-msgid "Optional comment."
+msgid "Optional description."
 msgstr ""
 
 msgid "Optional description. Portals are automatically assigned a numeric group."
@@ -6237,9 +6314,6 @@ msgstr ""
 msgid "Outgoing Mail Server"
 msgstr ""
 
-msgid "Overcommit Memory?"
-msgstr ""
-
 msgid "Owner"
 msgstr ""
 
@@ -6253,6 +6327,9 @@ msgid ""
 "to their original owners. This operation  cannot be undone! If unset, "
 "ownership of files to be accessed through  WebDAV must be manually set to "
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
+msgstr ""
+
+msgid "PENDING"
 msgstr ""
 
 msgid "POST INSTALL NOTES"
@@ -6280,6 +6357,9 @@ msgid "Password associated with the LDAP User DN."
 msgstr ""
 
 msgid "Password for SED"
+msgstr ""
+
+msgid "Password for logging in to the provider and  updating the record."
 msgstr ""
 
 msgid "Password for the Bind DN."
@@ -6325,6 +6405,12 @@ msgid ""
 msgstr ""
 
 msgid "Path"
+msgstr ""
+
+msgid ""
+"Path to the <b>CheckIP Server</b>. For example,  <i>no-ip.com</i> uses a "
+"<b>CheckIP Server</b> of  <i>dynamic.zoneedit.com</i> and <b>CheckIP "
+"Path</b> of  <i>/checkip.html</i>."
 msgstr ""
 
 msgid "Path to the extent"
@@ -6501,9 +6587,6 @@ msgid "Power Off"
 msgstr ""
 
 msgid "Power Off UPS"
-msgstr ""
-
-msgid "Power On"
 msgstr ""
 
 msgid ""
@@ -6745,6 +6828,17 @@ msgstr ""
 msgid "Recursive"
 msgstr ""
 
+msgid ""
+"Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
+"Certificate</i> is required for <i>HTTPS</i>. Activating  this also sets "
+"the <a  "
+"href=\"https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security\"  "
+"target=\"_blank\">HTTP Strict Transport Security (HSTS)</a> maximum age  to "
+"<i>31536000</i> seconds (one year). This means that after a  browser "
+"connects to the web interface for the first time, the browser  continues to "
+"use HTTPS and renews this setting every year."
+msgstr ""
+
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
 
@@ -6770,9 +6864,6 @@ msgid "Reload the page for the license to take effect."
 msgstr ""
 
 msgid "Remote Encryption"
-msgstr ""
-
-msgid "Remote Graphite Server Hostname"
 msgstr ""
 
 msgid "Remote Host"
@@ -6814,7 +6905,9 @@ msgstr ""
 msgid "Rename"
 msgstr ""
 
-msgid "Rename the existing boot environment."
+msgid ""
+"Rename the existing boot environment. Alphanumeric characters, dashes "
+"(*-*), underscores (*_*), and periods (*.*) are allowed.)"
 msgstr ""
 
 msgid "Renew Certificate Days"
@@ -6898,14 +6991,6 @@ msgid ""
 "Required for <a href=\"--docurl--/services.html#lldp\" "
 "target=\"_blank\">LLDP</a> location support. Enter a two-letter ISO 3166 "
 "country code."
-msgstr ""
-
-msgid ""
-"Required for <i>HTTPS</i>. Browse to the location of the certificate to use "
-"for encrypted connections. If there are no certificates, create a <a "
-"href=\"--docurl--/system.html#cas\" target=\"_blank\">Certificate Authority "
-"(CA)</a> then the <a href=\"--docurl--/system.html#certificates\" "
-"target=\"_blank\">Certificate</a>."
 msgstr ""
 
 msgid "Required if <b>Anonymous Login</b> is disabled."
@@ -6994,6 +7079,9 @@ msgstr ""
 msgid "Restart SMB Service"
 msgstr ""
 
+msgid "Restart SMB Service?"
+msgstr ""
+
 msgid "Restart Services"
 msgstr ""
 
@@ -7021,9 +7109,6 @@ msgstr ""
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
-msgstr ""
-
-msgid "Revision"
 msgstr ""
 
 msgid "Rollback"
@@ -7111,6 +7196,9 @@ msgstr ""
 msgid "SFTP log level"
 msgstr ""
 
+msgid "SMB service has been restarted"
+msgstr ""
+
 msgid "SMTP Authentication"
 msgstr ""
 
@@ -7179,6 +7267,12 @@ msgstr ""
 msgid "Save Network Interface Changes"
 msgstr ""
 
+msgid "Save Without Restarting"
+msgstr ""
+
+msgid "Save and Restart SMB Now"
+msgstr ""
+
 msgid "Save configuration settings from this machine before updating?"
 msgstr ""
 
@@ -7240,7 +7334,13 @@ msgstr ""
 msgid "Script to execute before running sync."
 msgstr ""
 
+msgid "Scrub"
+msgstr ""
+
 msgid "Scrub Boot Pool"
+msgstr ""
+
+msgid "Scrub Complete"
 msgstr ""
 
 msgid "Scrub Pool"
@@ -7250,6 +7350,12 @@ msgid "Scrub Tasks"
 msgstr ""
 
 msgid "Scrub complete on pool <i>"
+msgstr ""
+
+msgid "Scrub interval (in days)"
+msgstr ""
+
+msgid "Scrub started"
 msgstr ""
 
 msgid ""
@@ -7353,6 +7459,16 @@ msgid ""
 "(Compatibility Support Mode) for older operating systems that only support "
 "BIOS booting. <i>Grub</i> is not recommended but can be used when the other "
 "options do not work."
+msgstr ""
+
+msgid ""
+"Select <samp>0.0.0.0</samp> to include all addresses. When this has been "
+"chosen, additional addresses cannot be selected."
+msgstr ""
+
+msgid ""
+"Select <samp>::</samp> to include all addresses. When this has been chosen, "
+"additional addresses cannot be selected."
 msgstr ""
 
 msgid "Select Authenticator"
@@ -7859,6 +7975,9 @@ msgid "Services"
 msgstr ""
 
 msgid "Set Keep Flag"
+msgstr ""
+
+msgid "Set Passphrase"
 msgstr ""
 
 msgid ""
@@ -8466,7 +8585,7 @@ msgstr ""
 msgid "Set to switch from NFSv3 to NFSv4."
 msgstr ""
 
-msgid "Set to take a snapshot of the dataset before a <i>PUSH</i> or <i>PULL</i>."
+msgid "Set to take a snapshot of the dataset before a <i>PUSH</i>."
 msgstr ""
 
 msgid ""
@@ -8506,14 +8625,6 @@ msgid ""
 "and apply the first open IPv4 and IPv6 addresses. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=jail\" "
 "target=\"_blank\">jail(8)</a>."
-msgstr ""
-
-msgid "Set to use HTTPS for the connection to the <b>CheckIP Server</b>."
-msgstr ""
-
-msgid ""
-"Set to use HTTPS for the connection to the server that updates the DNS "
-"record."
 msgstr ""
 
 msgid ""
@@ -8618,6 +8729,9 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
+msgid "Settings saved"
+msgstr ""
+
 msgid "Settings saved."
 msgstr ""
 
@@ -8628,8 +8742,8 @@ msgid "Setup Users and Groups."
 msgstr ""
 
 msgid ""
-"Several providers are supported. If a provider is not listed, select "
-"<i>Custom Provider</i> and enter the information in the <i>Custom "
+"Several providers are supported. If a specific  provider is not listed, "
+"select <i>Custom Provider</i> and enter the  information in the <i>Custom "
 "Server</i> and <i>Custom Path</i> fields."
 msgstr ""
 
@@ -8880,6 +8994,9 @@ msgstr ""
 msgid "Start scrub on pool <i>"
 msgstr ""
 
+msgid "Start the scrub now?"
+msgstr ""
+
 msgid "Start time for the replication task."
 msgstr ""
 
@@ -8897,14 +9014,20 @@ msgstr ""
 
 msgid ""
 "Static IPv4 or IPv6 address and subnet mask.  Example: <i>10.0.0.3</i> and "
-"<i>24</i>. Click <i>ADD</i> to add another  IP address. Clicking "
+"<i>/24</i>. Click <i>ADD</i> to add another  IP address. Clicking "
 "<i>DELETE</i> removes that IP address."
 msgstr ""
 
 msgid "Static Routes"
 msgstr ""
 
+msgid "Stats/Settings"
+msgstr ""
+
 msgid "Status"
+msgstr ""
+
+msgid "Status updated"
 msgstr ""
 
 msgid "Status:"
@@ -8977,6 +9100,9 @@ msgstr ""
 msgid "Subnet mask of the IPv4 address."
 msgstr ""
 
+msgid "Succeeded"
+msgstr ""
+
 msgid "Success"
 msgstr ""
 
@@ -9025,13 +9151,13 @@ msgstr ""
 msgid "Sync from Peer"
 msgstr ""
 
-msgid "Sync from Peer: Success!"
+msgid "Sync from peer succeeded."
 msgstr ""
 
 msgid "Sync to Peer"
 msgstr ""
 
-msgid "Sync to Peer: Success!"
+msgid "Sync to peer succeeded."
 msgstr ""
 
 msgid "Syslog"
@@ -9045,6 +9171,9 @@ msgstr ""
 
 msgid "System"
 msgstr "Sistema"
+
+msgid "System Clock"
+msgstr ""
 
 msgid "System Dataset"
 msgstr ""
@@ -9160,6 +9289,12 @@ msgstr ""
 msgid "Task Name"
 msgstr ""
 
+msgid "Task is running"
+msgstr ""
+
+msgid "Task started"
+msgstr ""
+
 msgid "Tasks"
 msgstr ""
 
@@ -9173,6 +9308,9 @@ msgid "Template"
 msgstr ""
 
 msgid "Terms of Service"
+msgstr ""
+
+msgid "Test alert sent!"
 msgstr ""
 
 msgid "Test email sent!"
@@ -9229,6 +9367,12 @@ msgid ""
 msgstr ""
 
 msgid "The UDP port number that listens for TFTP requests. Example: 8050"
+msgstr ""
+
+msgid ""
+"The VM could not start because the current configuration could potentially "
+"require more RAM than is available on the system.  Would you like to "
+"overcommit memory? "
 msgstr ""
 
 msgid "The active controller cannot be detected."
@@ -9424,6 +9568,14 @@ msgid ""
 msgstr ""
 
 msgid ""
+"The system uses a self-signed  <a "
+"href=\"--docurl--/system.html#certificates\" "
+"target=\"_blank\">certificate</a>  to enable encrypted web interface "
+"connections. To change the default  certificate, select a different created "
+"or imported certificate."
+msgstr ""
+
+msgid ""
 "The system will reboot and be briefly unavailable while applying updates. "
 "Apply updates and reboot?"
 msgstr ""
@@ -9556,9 +9708,6 @@ msgstr ""
 msgid "Time Machine Quota"
 msgstr ""
 
-msgid "Time remaining until changes reverted:"
-msgstr ""
-
 msgid "Timeout"
 msgstr ""
 
@@ -9572,9 +9721,6 @@ msgid "Title"
 msgstr ""
 
 msgid "Title "
-msgstr ""
-
-msgid "To delete the <b>"
 msgstr ""
 
 msgid "Toggle Collapse"
@@ -9669,7 +9815,13 @@ msgid ""
 "webhook setting."
 msgstr ""
 
+msgid "UTC"
+msgstr ""
+
 msgid "UUID"
+msgstr ""
+
+msgid "Unable to download key, check network connection."
 msgstr ""
 
 msgid "Unencrypted pools can be imported directly."
@@ -9763,6 +9915,9 @@ msgid "Update File Temporary Storage Location"
 msgstr ""
 
 msgid "Update Frequency"
+msgstr ""
+
+msgid "Update Interval"
 msgstr ""
 
 msgid "Update License"
@@ -9875,6 +10030,12 @@ msgstr ""
 msgid "Use FQDN for logging"
 msgstr ""
 
+msgid "Use HTTPS for the connection to the  <b>CheckIP Server</b>."
+msgstr ""
+
+msgid "Use HTTPS for the connection to the server that updates  the DNS record."
+msgstr ""
+
 msgid "Use Signature Version 2"
 msgstr ""
 
@@ -9980,6 +10141,9 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
+msgid "Username for logging in to the provider and  updating the record."
+msgstr ""
+
 msgid "Username for this service."
 msgstr ""
 
@@ -10054,6 +10218,9 @@ msgstr ""
 msgid "VNET Virtual Networking"
 msgstr ""
 
+msgid "Valid"
+msgstr ""
+
 msgid "Validate Certificates"
 msgstr ""
 
@@ -10105,6 +10272,9 @@ msgstr ""
 msgid "Virtual Machines"
 msgstr ""
 
+msgid "Virtual Machines cannot be created or started without a pool to store them."
+msgstr ""
+
 msgid "Virtualization"
 msgstr ""
 
@@ -10129,6 +10299,9 @@ msgid "WARNING: Based on the pool topology, "
 msgstr ""
 
 msgid "WARNING: Exporting/disconnecting pool <i>"
+msgstr ""
+
+msgid "WARNING: Locking pool <i>"
 msgstr ""
 
 msgid "Wait to start VM until VNC client connects."
@@ -10392,6 +10565,9 @@ msgstr ""
 msgid "assign_localhost"
 msgstr ""
 
+msgid "below to confirm."
+msgstr ""
+
 msgid "boot"
 msgstr ""
 
@@ -10609,6 +10785,9 @@ msgid "rpc.lockd(8) bind port"
 msgstr ""
 
 msgid "rpc.statd(8) bind port"
+msgstr ""
+
+msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
 msgstr ""
 
 msgid "securelevel"
