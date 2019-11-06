@@ -9,7 +9,7 @@ import { EntityFormService } from '../../services/entity-form.service';
 @Component({
   selector: 'entity-form-list',
   templateUrl: './form-list.component.html',
-  styleUrls: ['./form-list.component.css'],
+  styleUrls: ['./form-list.component.css', '../dynamic-field/dynamic-field.css'],
 })
 export class FormListComponent implements Field, OnInit {
   config: FieldConfig;
