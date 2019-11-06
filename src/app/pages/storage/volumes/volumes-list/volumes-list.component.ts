@@ -459,7 +459,12 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'pool_detach_warning',
               paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
                 helptext.detachDialog_pool_detach_warning_paratext_b,
-              isHidden: false
+              isHidden: rowData.status === 'UNKNOWN' ? true : false
+            }, {
+              type: 'paragraph',
+              name: 'unknown_status_detach_warning',
+              paraText: `${helptext.detachWarningForUnknownState.message_a} ${row1.name} ${helptext.detachWarningForUnknownState.message_b}`,
+              isHidden: rowData.status === 'UNKNOWN' ? false : true
             },{
               type: 'paragraph',
               name: 'pool_processes',
@@ -475,10 +480,11 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'destroy',
               value: false,
               placeholder: helptext.detachDialog_pool_detach_destroy_checkbox_placeholder,
+              isHidden: rowData.status === 'UNKNOWN' ? true : false
             }, {
               type: 'checkbox',
               name: 'cascade',
-              value: true,
+              value: rowData.status === 'UNKNOWN' ? false : true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
             },{
               type: 'input',
@@ -499,7 +505,9 @@ export class VolumesListTableConfig implements InputTableConf {
             },{
               type: 'checkbox',
               name: 'confirm',
-              placeholder: helptext.detachDialog_pool_detach_confim_checkbox_placeholder,
+              placeholder: rowData.status === 'UNKNOWN' ? 
+                `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder} ${helptext.unknown_status_alt_text}` :
+                `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder}`,
               required: true
             }],
             isCustActionVisible(actionId: string) {
@@ -523,6 +531,7 @@ export class VolumesListTableConfig implements InputTableConf {
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
               let dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
+              dialogRef.updateSize('300px');
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
               dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: localRestartServices }]);
               dialogRef.componentInstance.submit();
