@@ -31,8 +31,8 @@ ix-auto ix-auto-type="form-combobox" ix-auto-identifier="{{config.placeholder}}"
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   </div>
   <div class="error-div">
-    <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
-    <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
+    <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+    <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
   </div>
 
 </div>

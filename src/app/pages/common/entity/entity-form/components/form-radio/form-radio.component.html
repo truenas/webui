@@ -15,5 +15,6 @@ ix-auto ix-auto-type="form-radio" ix-auto-identifier="{{config.placeholder}}">
         <tooltip class="radio-option-tooltip" *ngIf="option.tooltip" [header]="config.placeholder" [message]="option.tooltip"></tooltip>
     </div>
   </mat-radio-group>
-  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+	<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+	<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
 </div>

@@ -42,7 +42,8 @@
       ix-auto
       ix-auto-type="button"
       ix-auto-identifier="{{entity.conf.title}}_ADD">ADD</button>
-    <button id="add_action_button_{{action?.label}}" 
+    <button id="add_action_button_{{action?.label}}"
+      [disabled]="entity.conf.addBtnDisabled" 
       mat-button color="primary" 
       *ngIf="!this.entity.conf.route_add && this.actions== 1" 
       (click)="this.actions[0].onClick()"  
@@ -53,5 +54,9 @@
       <span>{{this.actions[0].label | translate }}</span> 
       <span> &nbsp; {{this.actions.length}}</span>
     </button>
+    <button id="add_action_button_{{action?.label}}" mat-button color="primary" *ngIf="!this.entity.conf.route_add && this.actions== 1" (click)="this.actions[0].onClick()"  matTooltip="{{action.label | translate}}">
+    <span>{{this.actions[0].label | translate }}</span> 
+    <span> &nbsp; {{this.actions.length}}</span>
+  </button>
   </ng-template>
 </div>

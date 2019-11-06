@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { T } from 'app/translate-marker';
+
 @Component({
   selector : 'app-iscsi-authorizedaccess-list',
   template : `
@@ -17,16 +19,16 @@ export class AuthorizedAccessListComponent {
 
   public columns: Array<any> = [
     {
-      name : 'Group ID',
+      name : T('Group ID'),
       prop : 'tag',
       always_display: true
     },
     {
-      name : 'User',
+      name : T('User'),
       prop : 'user',
     },
     {
-      name : 'Peer User',
+      name : T('Peer User'),
       prop : 'peeruser',
     },
   ];

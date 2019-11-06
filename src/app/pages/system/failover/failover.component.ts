@@ -5,7 +5,7 @@ import { DialogService } from "../../../services/dialog.service";
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { EntityUtils } from '../../common/entity/utils';
-import { WebSocketService, SnackbarService } from '../../../services/';
+import { WebSocketService } from '../../../services/';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_failover } from 'app/helptext/system/failover';
@@ -14,7 +14,7 @@ import { helptext_system_failover } from 'app/helptext/system/failover';
   selector: 'app-system-failover',
   template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: [],
-  providers : [ SnackbarService ],
+  providers : [],
 })
 
 export class FailoverComponent implements OnDestroy {
@@ -51,8 +51,8 @@ export class FailoverComponent implements OnDestroy {
             this.ws.call(
               ds.componentInstance.method,ds.componentInstance.data).subscribe((res) => {
                 this.load.close();
-                this.snackBar.open(helptext_system_failover.snackbar_sync_to_peer_message_success,
-                                   helptext_system_failover.snackbar_sync_to_peer_success_action);
+                this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
+                                   helptext_system_failover.confirm_dialogs.sync_to_message, '', 'info', true);
               }, (err) => {
                 this.load.close();
                 new EntityUtils().handleWSError(this.entityForm, err);
@@ -72,8 +72,8 @@ export class FailoverComponent implements OnDestroy {
             this.load.open();
             this.ws.call('failover.sync_from_peer').subscribe((res) => {
               this.load.close();
-              this.snackBar.open(helptext_system_failover.snackbar_sync_to_peer_message_success,
-                                 helptext_system_failover.snackbar_sync_to_peer_success_action);
+              this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
+                                 helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
             }, (err) => {
               this.load.close();
               new EntityUtils().handleWSError(this.entityForm, err);
@@ -117,7 +117,6 @@ export class FailoverComponent implements OnDestroy {
     private load: AppLoaderService,
     private dialog: DialogService,
     private ws: WebSocketService,
-    public snackBar: SnackbarService,
     protected matDialog: MatDialog,
     private router: Router) {}
 
@@ -144,7 +143,7 @@ export class FailoverComponent implements OnDestroy {
     this.load.open();
     return this.ws.call('failover.update', [body]).subscribe((res) => {
       this.load.close();
-      this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 })
+      this.dialog.Info(T("Settings saved."), '', '300px', 'info', true);
     }, (res) => {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);

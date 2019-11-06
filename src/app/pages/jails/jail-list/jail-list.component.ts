@@ -244,9 +244,9 @@ export class JailListComponent implements OnInit {
   }
   getActions(parentRow) {
     return [{
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'edit',
-        name: "edit",
+        id: "edit",
         label: T("Edit"),
         onClick: (row) => {
           this.router.navigate(
@@ -254,9 +254,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'device_hub',
-        name: "mount",
+        id: "mount",
         label: T("Mount points"),
         onClick: (row) => {
           this.router.navigate(
@@ -265,9 +265,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'play_arrow',
-        name: "start",
+        id: "start",
         label: T("Start"),
         onClick: (row) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Starting Jail") }, disableClose: true });
@@ -282,9 +282,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'cached',
-        name: "restart",
+        id: "restart",
         label: T("Restart"),
         onClick: (row) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Restarting Jail") }, disableClose: true });
@@ -299,9 +299,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'stop',
-        name: "stop",
+        id: "stop",
         label: T("Stop"),
         onClick: (row) => {
           let dialog = {};
@@ -320,9 +320,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'update',
-        name: "update",
+        id: "update",
         label: T("Update"),
         onClick: (row) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
@@ -335,9 +335,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'keyboard_arrow_right',
-        name: "shell",
+        id: "shell",
         label: T("Shell"),
         onClick: (row) => {
           this.router.navigate(
@@ -345,9 +345,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'delete',
-        name: "delete",
+        id: "delete",
         label: T("Delete"),
         onClick: (row) => {
           this.entityList.doDelete(row);

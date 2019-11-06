@@ -269,11 +269,13 @@
               ix-auto-type="clickable-overlay"
               [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               (click)="conf.onSliderChange(row)"
+              (click)="!row.disableSlider ? conf.onSliderChange(row) : null"
               matTooltip="{{row[col.prop]}}"
             >
             </div>
             <mat-slide-toggle
               *ngIf="col.toggle"
+              [disabled]="row.disableSlider"
               color="accent"
               id="{{row.name}}_{{col.name}}-slidetoggle"
               [ix-auto]="col?.name"

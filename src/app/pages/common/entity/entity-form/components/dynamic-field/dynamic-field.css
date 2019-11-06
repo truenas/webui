@@ -37,3 +37,8 @@
   background-color: var(--primary) !important;
   padding: 2px;
 }
+
+.margin-for-error {
+  position: relative;
+  top: -12px;
+}

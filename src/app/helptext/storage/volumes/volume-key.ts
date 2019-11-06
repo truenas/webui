@@ -25,6 +25,9 @@ add_key_custom_cancel: T('Cancel'),
 add_key_password_tooltip: T('Enter the administrator password to authorize this operation.'),
 add_key_password_validation: [Validators.required],
 
+addkey_download_failed_title: T('Download Key'),
+addkey_download_failed_message: T('Unable to download key, check network connection.'),
+
 // Change key form
 changekey_adminpw_placeholder: T('Administrator Password'),
 changekey_adminpw_tooltip: T('Enter the administrator password to authorize this operation.'),

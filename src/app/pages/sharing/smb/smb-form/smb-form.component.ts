@@ -48,6 +48,12 @@ export class SMBFormComponent {
       tooltip: helptext_sharing_smb.tooltip_home,
     },
     {
+      type: 'input',
+      name: 'cifs_comment',
+      placeholder: helptext_sharing_smb.placeholder_comment,
+      tooltip: helptext_sharing_smb.tooltip_comment,
+    },
+    {
       type: 'checkbox',
       name: 'cifs_timemachine',
       placeholder: helptext_sharing_smb.placeholder_timemachine,
