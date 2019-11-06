@@ -30,6 +30,7 @@ export class FailoverComponent implements OnDestroy {
   }
   public masterSubscription: any;
   public master_fg: any;
+  public warned = false;
 
   public custActions: Array < any > = [
     {
@@ -129,10 +130,12 @@ export class FailoverComponent implements OnDestroy {
     this.master_fg = this.entityForm.formGroup.controls['master']
     this.masterSubscription = 
       this.master_fg.valueChanges.subscribe(res => {
-      if (!res) {
-        this.dialog.confirm(helptext_system_failover.master_dialog_title, helptext_system_failover.master_dialog_warning).subscribe(confirm => {
+      if (!res && !this.warned) {
+        this.dialog.confirm(helptext_system_failover.master_dialog_title, helptext_system_failover.master_dialog_warning, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe(confirm => {
           if (!confirm) {
             this.master_fg.setValue(true);
+          } else {
+            this.warned = true;
           }
         });
       }
@@ -143,11 +146,20 @@ export class FailoverComponent implements OnDestroy {
     this.load.open();
     return this.ws.call('failover.update', [body]).subscribe((res) => {
       this.load.close();
-      this.dialog.Info(T("Settings saved."), '', '300px', 'info', true);
+      this.dialog.Info(T("Settings saved."), '', '300px', 'info', true).subscribe(saved => {
+        if (body.disabled && !body.master) {
+          this.ws.logout();
+        }
+      });
     }, (res) => {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
+  }
+
+  resourceTransformIncomingRestData(value) {
+    value['master'] = true;
+    return value;
   }
 
   ngOnDestroy() {
