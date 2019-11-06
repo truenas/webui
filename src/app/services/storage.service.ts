@@ -5,6 +5,7 @@ import { RestService } from './rest.service';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Http, ResponseContentType } from '@angular/http';
 
 @Injectable()
 export class StorageService {
@@ -44,6 +45,10 @@ export class StorageService {
 
     let blob = new Blob([byteArray], {type: mime_type});
 
+    this.downloadBlob(blob, filename);
+  }
+
+  downloadBlob(blob, filename) {
     let dlink = document.createElement('a');
     document.body.appendChild(dlink);
     dlink.download = filename;
@@ -58,6 +63,16 @@ export class StorageService {
 
     dlink.click();
     dlink.remove();
+  }
+
+  streamDownloadFile(http:Http, url:string, filename:string, mime_type:string): Observable<any>{
+    return http.post(url, '',
+    { responseType: ResponseContentType.Blob })
+    .map(
+      (res) => {
+            const blob = new Blob([res.blob()], {type: mime_type} );
+            return blob;
+      });
   }
 
   // Handles sorting for entity tables and some other ngx datatables 

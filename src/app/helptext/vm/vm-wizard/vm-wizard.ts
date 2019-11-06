@@ -7,7 +7,7 @@ import globalHelptext from './../../../helptext/global-helptext';
 export default {
 no_pools_dialog: {
   title: T('No Pools'),
-  msg: T('Virtual Machines cannot be created or run unless a pool is present for storing them.'),
+  msg: T('Virtual Machines cannot be created or started without a pool to store them.'),
   action: T('Create Pool')
 },
 

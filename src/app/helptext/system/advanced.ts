@@ -92,4 +92,7 @@ export const helptext_system_advanced = {
   sed_passwd2_validation: [ matchOtherValidator('sed_passwd') ],
 
   swapondrive_warning: T("A swap size of 0 is STRONGLY DISCOURAGED."),
+
+  debug_download_failed_title: T("Error Downloading File"),
+  debug_download_failed_message: T("Debug could not be downloaded")
 };
