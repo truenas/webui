@@ -1,12 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {Subscription} from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService} from '../../../../services/rest.service';
-
 import {EntityTableComponent} from './entity-table.component';
-import { interval } from 'rxjs';
 import * as _ from 'lodash';
 
 @Component({
@@ -41,18 +36,5 @@ export class EntityTableActionsComponent implements OnInit {
       this.key_prop = this.entity.filterColumns[0].prop;
     }
     this.actions = this.entity.getActions(this.row);
-    
-    // interval(5000).subscribe((val) => {
-    //   this.actions = this.entity.getActions(this.row);
-    //   const removeIds = [];
-    //   for (let i = 0; i < this.actions.length; i++) {
-    //     if (this.entity.conf.isActionVisible) {
-    //       this.actions[i].visible = this.entity.conf.isActionVisible.bind(
-    //           this.entity.conf)(this.actions[i].id, this.row);
-    //     } else {
-    //       this.actions[i].visible = true;
-    //     }
-    //   }
-    //  });
   }
 }
