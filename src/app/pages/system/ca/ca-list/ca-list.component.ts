@@ -90,7 +90,7 @@ export class CertificateAuthorityListComponent {
               this.ws.call('core.download', ['filesystem.get', [res[0].certificate_path], fileName]).subscribe(
                 (res) => {
                   const url = res[1];
-                  const mimetype = 'application/gzip';
+                  const mimetype = 'application/x-x509-ca-cert';
                   this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
                     this.storage.downloadBlob(file, fileName);
                   }, err => {
@@ -116,7 +116,7 @@ export class CertificateAuthorityListComponent {
               this.ws.call('core.download', ['filesystem.get', [res[0].privatekey_path], fileName]).subscribe(
                 (res) => {
                   const url = res[1];
-                  const mimetype = 'application/gzip';
+                  const mimetype = 'text/plain';
                   this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
                     this.storage.downloadBlob(file, fileName);
                   }, err => {
