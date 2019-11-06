@@ -8,7 +8,6 @@ import { WebSocketService, TaskService, KeychainCredentialService, ReplicationSe
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
-import globalHelptext from './../../../../helptext/global-helptext';
 
 @Component({
     selector: 'app-replication-list',
@@ -910,7 +909,7 @@ export class ReplicationFormComponent {
             speedLimitField['errors'] = '';
                 if (filteredValue !== undefined && isNaN(filteredValue)) {
                     speedLimitField['hasErrors'] = true;
-                    speedLimitField['errors'] = globalHelptext.human_readable.input_error;
+                    speedLimitField['errors'] = helptext.speed_limit_errors;
                 };
         });
     }
