@@ -25,8 +25,8 @@ export const helptext_system_support = {
 
     enable_checkbox_placeholder: T('Enable iXsystems Proactive Support'),
     save_button: T('Save'),
-    snackbar_mesage: T('Successfully saved proactive support settings.'),
-    snackbar_action: T('Close'),
+    dialog_title: T('Settings saved'),
+    dialog_mesage: T('Successfully saved proactive support settings.'),
     dialog_err: T('Error Saving Proactive Support Settings')
   },
 
@@ -156,9 +156,9 @@ export const helptext_system_support = {
     title: T('Error Updating Production Status'),
   },
 
-  is_production_snackbar: {
-    message: T('Production status successfully updated'),
-    action: T('Close')
+  is_production_dialog: {
+    title: T('Status updated'),
+    message: T('Production status successfully updated')
   },
 
   FN_instructions: T('Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \

@@ -1,4 +1,5 @@
 import { T } from '../../../translate-marker';
+import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
     name_placeholder: T('Name'),
@@ -199,7 +200,7 @@ export default {
  size of the data being replicated. Only appears when <i>SSH</i> is \
  chosen for <i>Transport</i> type.'),
 
-    speed_limit_placeholder: T('Limit (Ex. 500 KiB/s, 500M, 2 TB)'),
+    speed_limit_placeholder: T(`Limit ${globalHelptext.human_readable.suggestion_label}`),
     speed_limit_tooltip: T('Limit replication speed to this number of \
  bytes per second.'),
     speed_limit_errors: T('Invalid value. Valid values are numbers \
