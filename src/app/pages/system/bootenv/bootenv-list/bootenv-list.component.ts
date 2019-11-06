@@ -111,6 +111,34 @@ export class BootEnvironmentListComponent {
 
   getActions(row) {
     const actions = [];
+    if (!row.active.includes('Reboot')) {
+      actions.push({
+        label : T("Activate"),
+        id: "activate",
+        onClick : (row) => {
+          this.doActivate(row.id);
+        }
+      });
+     } 
+
+    actions.push({
+      label : T("Clone"),
+      id: "clone",
+      onClick : (row) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "boot", "clone", row.id ]));
+      }
+    });
+
+    actions.push({
+      label : T("Rename"),
+      id: "rename",
+      onClick : (row) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "boot", "rename", row.id ]));
+      }
+    });
+    
     if (row.active === '-'){
       actions.push({
         label: T("Delete"),
@@ -133,32 +161,6 @@ export class BootEnvironmentListComponent {
           )
       });
     }
-    if (!row.active.includes('Reboot')) {
-      actions.push({
-        label : T("Activate"),
-        id: "activate",
-        onClick : (row) => {
-          this.doActivate(row.id);
-        }
-      }); 
-    }
-
-    actions.push({
-      label : T("Clone"),
-      id: "clone",
-      onClick : (row) => {
-        this._router.navigate(new Array('').concat(
-            [ "system", "boot", "clone", row.id ]));
-      }
-    });
-    actions.push({
-      label : T("Rename"),
-      id: "rename",
-      onClick : (row) => {
-        this._router.navigate(new Array('').concat(
-            [ "system", "boot", "rename", row.id ]));
-      }
-    });
 
     if (row.keep === true){
       actions.push({

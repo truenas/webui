@@ -44,7 +44,7 @@
 
   <ng-template #elseBlock>
     <!--When there is no route_add -->
-    <button mat-button color="primary" (click)="this.entity.doAdd()" *ngIf="this.entity.conf.route_add" matTooltip="{{this.entity.conf.route_addd_tooltip | translate}}" id="add_action_button">ADD</button>
+    <button [disabled]="entity.conf.addBtnDisabled" mat-button color="primary" (click)="this.entity.doAdd()" *ngIf="this.entity.conf.route_add" matTooltip="{{this.entity.conf.route_addd_tooltip | translate}}" id="add_action_button">ADD</button>
 
     <button id="add_action_button_{{action?.label}}" mat-button color="primary" *ngIf="!this.entity.conf.route_add && this.actions== 1" (click)="this.actions[0].onClick()"  matTooltip="{{action.label | translate}}">
     <span>{{this.actions[0].label | translate }}</span> 

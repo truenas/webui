@@ -30,7 +30,7 @@ export class InitiatorFormComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'all',
-      placeholder: 'Allow All Initiators',
+      placeholder: helptext_sharing_iscsi.all_placeholder_initiators,
       tooltip: '',
     },
     {
