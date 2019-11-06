@@ -197,7 +197,7 @@ export class VMWizardComponent {
           blurStatus: true,
           blurEvent: this.blurEvent3,
           parent: this,
-          validation: helptext.volsize_validation,
+          validation : helptext.volsize_validation,
           required: true
         },
         {
@@ -311,6 +311,7 @@ export class VMWizardComponent {
   preInit(entityWizard: EntityWizardComponent){
     this.entityWizard = entityWizard;
   }
+  
   afterInit(entityWizard: EntityWizardComponent) {
 
     this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
@@ -384,28 +385,28 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] =
           isNaN(this.storageService.convertHumanStringToNum(memory))
-            ? '0 MB'
-            : Math.ceil(this.storageService.convertHumanStringToNum(memory) / 1024**2) + ' MiB' ;
+            ? '0 MiB'
+            : this.storageService.humanReadable;
       });
 
       ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
-        this.summary[T('Hard Disk Size')] = volsize + ' GiB';
+        this.summary[T('Disk Size')] = volsize + ' GiB';
       });
 
       ( < FormGroup > entityWizard.formArray.get([2])).get('disk_radio').valueChanges.subscribe((disk_radio)=>{
-        if(this.summary[T('Hard Disk')] || this.summary[T('Hard Disk Size')]){
-          delete this.summary[T('Hard Disk')];
-          delete this.summary[T('Hard Disk Size')];
+        if(this.summary[T('Disk')] || this.summary[T('Disk Size')]){
+          delete this.summary[T('Disk')];
+          delete this.summary[T('Disk Size')];
         }
         if(disk_radio) {
-          this.summary[T('Hard Disk Size')] = ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value + ' Gib';
+          this.summary[T('Disk Size')] = ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].value + ' Gib';
             ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
-              this.summary[T('Hard Disk Size')] = volsize + ' GiB';
+              this.summary[T('Disk Size')] = volsize + ' GiB';
             });
         } else {
-          this.summary[T('Hard Disk')] = ( < FormGroup > entityWizard.formArray.get([2])).controls['hdd_path'].value;
+          this.summary[T('Disk')] = ( < FormGroup > entityWizard.formArray.get([2])).controls['hdd_path'].value;
             ( < FormGroup > entityWizard.formArray.get([2])).get('hdd_path').valueChanges.subscribe((existing_hdd_path)=>{
-              this.summary[T('Hard Disk')] = existing_hdd_path;
+              this.summary[T('Disk')] = existing_hdd_path;
             })
         }
       });
@@ -429,7 +430,7 @@ export class VMWizardComponent {
               };
         } else if (stat.free_bytes > 10*1073741824) {
               const vm_os = ( < FormGroup > entityWizard.formArray.get([0]).get('os')).value;
-              ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(volsize/1073741824);
+              ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue((volsize/1073741824));
           };
         });
       } else {
@@ -456,35 +457,17 @@ export class VMWizardComponent {
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).setValue(message);
       })
-      this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
-        if (available_memory > 512 * 1048576) {
-          this.res = res;
-          if (res === 'Windows') {
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4096MB');
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
-          }
-          else {
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512MB');
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
-          }
-
-        } else {
-          if (res === 'Windows') {
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(0);
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
-          }
-          else {
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
-            ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(0);
-            ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
-          }
-
-        }
-      })
-
+      this.res = res;
+      if (res === 'Windows') {
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4 GiB');
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
+      }
+      else {
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512 MiB');
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
+      }
     });
     ( < FormGroup > entityWizard.formArray.get([2]).get('disk_radio')).valueChanges.subscribe((res) => {
       if (res){
@@ -561,7 +544,7 @@ blurEvent(parent){
     if(vm_wizard_res.length > 0){
       _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = true;
       _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = `Virtual machine ${vm_wizard_res[0].name} already exists.`;
-      parent.entityWizard.formArray.get([0]).get('name').setValue("");
+      parent.entityWizard.formArray.get([0]).get('name').setValue(vm_name + "*");
     } else {
       _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['hasErrors'] = false;
       _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'name'})['errors'] = '';
@@ -570,21 +553,21 @@ blurEvent(parent){
 }
 
 blurEvent2(parent){
-  const vm_memory_requested = parent.entityWizard.formGroup.value.formArray[1].memory
-  const vm_name = parent.entityWizard.formGroup.value.formArray[0].name
-  parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
-    if( vm_memory_requested *1048576> vm_memory_available){
-      parent.entityWizard.formArray.get([1]).get('memory').setValue('');
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = `Cannot allocate ${vm_memory_requested} Mib to virtual machine: ${vm_name}.`;
-      
-
-    } else{
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
-      _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = '';
-    }
-  })
+  const enteredVal = parent.entityWizard.formGroup.value.formArray[1].memory;
+  const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
+  if (isNaN(vm_memory_requested)) {
+    console.error(vm_memory_requested) // leaves form in previous error state
+  } else if(vm_memory_requested < 268435456) {
+    parent.entityWizard.formArray.get([1]).get('memory').setValue(enteredVal + '*');
+    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = true;
+    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = helptext.memory_size_err;
+  } else {
+    parent.entityWizard.formArray.get([1]).get('memory').setValue(parent.storageService.humanReadable);
+    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
+    _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['errors'] = '';
+  }
 }
+
 blurEvent3(parent){
   if(parent.entityWizard.formArray.controls[2].value.volsize > 0 ) {
     const volsize = parent.entityWizard.formArray.controls[2].value.volsize * 1073741824;
