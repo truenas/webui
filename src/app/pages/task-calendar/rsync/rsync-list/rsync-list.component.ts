@@ -127,17 +127,25 @@ export class RsyncListComponent {
   stateButton(row) {
     if (row.job) {
       if (row.job.error) {
-        this.dialog.confirm(row.job.state,row.job.error,true, T('VIEW LOGS')).subscribe(
-          (res) => {
-              if (res) {
-                  this.job.showLogs(row.job.id);
-              }
-          })
+        if (row.job.id) {
+          this.dialog.confirm(row.job.state,row.job.error,true, T('VIEW LOGS')).subscribe(
+            (res) => {
+                if (res) {
+                    this.job.showLogs(row.job.id);
+                }
+            })
+        } else {
+          this.dialog.errorReport(row.job.state, row.job.error);
+        }
       } else {
-        this.job.showLogs(row.job.id);
+        if (row.state === 'RUNNING') {
+          this.entityList.runningStateButton(row.job.id);
+        } else {
+          this.job.showLogs(row.job.id);
+        }
       }
     } else {
-      this.snackBar.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
+      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 }
