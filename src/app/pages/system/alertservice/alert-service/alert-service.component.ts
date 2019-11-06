@@ -3,10 +3,9 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { WebSocketService, AppLoaderService } from '../../../../services/';
+import { WebSocketService, AppLoaderService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/system/alert-service';
@@ -55,10 +54,7 @@ export class AlertServiceComponent {
       }, {
         label: 'E-Mail',
         value: 'Mail',
-      }, {
-        label: 'HipChat',
-        value: 'HipChat',
-      }, {
+      },{
         label: 'InfluxDB',
         value: 'InfluxDB',
       }, {
@@ -173,74 +169,6 @@ export class AlertServiceComponent {
           value: 'Mail',
         }]
       }]
-    },
-    // HtpChat
-    {
-      type: 'input',
-      name: 'HipChat-hfrom',
-      placeholder: helptext.HipChat_hfrom_placeholder,
-      tooltip: helptext.HipChat_hfrom_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'HipChat-cluster_name',
-      placeholder: helptext.HipChat_cluster_name_placeholder,
-      tooltip: helptext.HipChat_cluster_name_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'HipChat-base_url',
-      placeholder: helptext.HipChat_base_url_placeholder,
-      tooltip: helptext.HipChat_base_url_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'HipChat-room_id',
-      placeholder: helptext.HipChat_room_id_placeholder,
-      tooltip: helptext.HipChat_room_id_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'HipChat-auth_token',
-      placeholder: helptext.HipChat_auth_token_placeholder,
-      tooltip: helptext.HipChat_auth_token_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
     },
     // InfluxDB
     {
@@ -787,9 +715,9 @@ export class AlertServiceComponent {
           (res) => {
             this.loader.close();
             if (res) {
-              this.snackBar.open('Test alert sent!', 'close', { duration: 5000 });
+              this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
-              this.snackBar.open('Failed sending test alert!', 'close', { duration: 5000 });
+              this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
             }
           },
           (err) => {
@@ -806,7 +734,7 @@ export class AlertServiceComponent {
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    protected snackBar: MatSnackBar) { }
+    protected dialogService: DialogService) { }
 
   preInit() {
     this.aroute.params.subscribe(params => {

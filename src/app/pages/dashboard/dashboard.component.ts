@@ -328,8 +328,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      this.systemInformation = evt.data;
-      this.core.emit({name: 'PoolDataRequest', sender: this});
+      if(typeof this.systemInformation == 'undefined'){
+        this.systemInformation = evt.data;
+        this.core.emit({name: 'PoolDataRequest', sender: this});
+      }
     });
 
     this.core.emit({name: 'SysInfoRequest', sender: this});

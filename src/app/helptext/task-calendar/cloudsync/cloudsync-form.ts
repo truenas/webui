@@ -69,8 +69,8 @@ transfer_mode_warning_move: T('<b>MOVE</b>: After files are <i><u>copied</u></i>
  <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.'),
 
 snapshot_placeholder: T('Take Snapshot'),
-snapshot_tooltip: T('Set to take a snapshot of the dataset before a\
- <i>PUSH</i>.'),
+snapshot_tooltip: T('Set to take a snapshot of the dataset before a <i>PUSH</i>.'),
+
 
 pre_script_placeholder: T('Pre-script'),
 pre_script_tooltip: T('Script to execute before running sync.'),
