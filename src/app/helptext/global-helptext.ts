@@ -20,10 +20,14 @@ human_readable: {
     input_error: T('Invalid value. Valid values are numbers followed by optional unit letters, \
  like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>.'),
 
- suggestion_label: '(Ex. 500 KiBs, 500M, 2 TB)',
+ suggestion_label: '(Examples: 500 KiB, 500M, 2 TB)',
 },
 
 closed_job_message: T('See task manager for progress updates.'),
 
-noLogMessage: T('No Logs'),
+noLogDilaog: {
+    title: T('No Logs'),
+    message: T('No logs are available for this task.'),
+}
+
 }

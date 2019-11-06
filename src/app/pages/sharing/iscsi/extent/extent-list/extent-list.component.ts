@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { T } from 'app/translate-marker';
+
 @Component({
   selector : 'app-iscsi-extent-list',
   template : `
@@ -17,16 +19,16 @@ export class ExtentListComponent {
 
   public columns: Array<any> = [
     {
-      name : 'Extent Name',
+      name : T('Extent Name'),
       prop : 'name',
       always_display: true
     },
     {
-      name : 'Serial',
+      name : T('Serial'),
       prop : 'serial',
     },
     {
-      name: 'NAA',
+      name: T('NAA'),
       prop: 'naa',
     }
   ];

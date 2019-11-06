@@ -4174,7 +4174,7 @@ msgid ""
 msgstr ""
 "Activer les connexions par mot de passe et l'authentification aux partages "
 "SMB. Sélectionner <b>Non</b> supprime les options <b>Verrouiller "
-"utilisateur</b> et <b>Autoriser Sudo</b>."
+"utilisateur</b> et <b>Autoriser sudo</b>."
 
 msgid ""
 "Enable running services that require <a "
@@ -6894,7 +6894,7 @@ msgid "Max. Connections"
 msgstr "Connexions maximum"
 
 msgid "Max. Poll"
-msgstr "Poll Max."
+msgstr "Poll Max"
 
 msgid "Maximum Passive Port"
 msgstr "Port passif maximum"
@@ -7078,7 +7078,7 @@ msgstr ""
 "started/authentication\"  target=\"_blank\">Jeton d'accès</a> Microsoft Onedrive."
 
 msgid "Min. Poll"
-msgstr "Poll Min."
+msgstr "Poll Min"
 
 msgid "Minimum Passive Port"
 msgstr "Port passif minimum"
@@ -8027,7 +8027,7 @@ msgid "Permissions Type"
 msgstr "Type d'autorisations"
 
 msgid "Permit Sudo"
-msgstr "Autoriser Sudo"
+msgstr "Autoriser sudo"
 
 msgid "Phone"
 msgstr "Téléphone"
@@ -8192,34 +8192,34 @@ msgid ""
 msgstr ""
 
 msgid "Preview JSON Service Account Key"
-msgstr ""
+msgstr "Prévisualiser la clé du compte de service JSON"
 
 msgid "Previous"
-msgstr ""
+msgstr "Précédent"
 
 msgid "Primary Contact"
-msgstr ""
+msgstr "Contact Primaire"
 
 msgid "Primary DNS server."
-msgstr ""
+msgstr "Serveur DNS primaire."
 
 msgid "Primary Group"
-msgstr ""
+msgstr "Groupe primaire"
 
 msgid "Priority Code Point"
-msgstr ""
+msgstr "Point de code de priorité"
 
 msgid "Privacy Passphrase"
-msgstr ""
+msgstr "Passphrase confidentielle"
 
 msgid "Privacy Protocol"
-msgstr ""
+msgstr "Protocole sur la protection de la vie privée"
 
 msgid "Private Key"
-msgstr ""
+msgstr "Clé privée"
 
 msgid "Private Key ID"
-msgstr ""
+msgstr "ID de clé privée"
 
 msgid ""
 "Privileges are the same as the guest account. Guest access is disabled by "
@@ -8227,132 +8227,144 @@ msgid ""
 "Additional client-side configuration is required to provide guest access to "
 "these clients."
 msgstr ""
+"Les privilèges sont les mêmes que pour le compte invité. L'accès invité est désactivé par "
+"défaut sous Windows 10 version 1709 et Windows Server version 1903. Une configuration "
+"supplémentaire côté client est nécessaire pour fournir un accès invité à ces clients."
 
 msgid "Proactive Support"
-msgstr ""
+msgstr "Support proactif"
 
 msgid ""
 "Proactive Support can notify iXsystems by email when TrueNAS hardware "
 "conditions require attention."
 msgstr ""
+"Le support proactif peut avertir iXsystems par courriel lorsque les conditions matérielles de "
+"TrueNAS requièrent une attention particulière."
 
 msgid "Proceed"
-msgstr ""
+msgstr "Procéder"
 
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
 "versions of FreeNAS: "
 msgstr ""
+"Procéder à la mise à niveau du volume ? ATTENTION : La mise à jour d'un volume est une "
+"opération à sens unique qui peut rendre certaines fonctionnalités du volume incompatibles "
+"avec les anciennes versions de FreeNAS: "
 
 msgid "Production status successfully updated"
-msgstr ""
+msgstr "Statut de production mis à jour avec succès"
 
 msgid "Progress"
-msgstr ""
+msgstr "Progression"
 
 msgid "Promote Dataset"
-msgstr ""
+msgstr "Promouvoir le dataset"
 
 msgid "Properties"
-msgstr ""
+msgstr "Propriétés"
 
 msgid "Protocol"
-msgstr ""
+msgstr "Protocole"
 
 msgid "Provider"
-msgstr ""
+msgstr "Fournisseur"
 
 msgid "Provides a pop-up window of diagnostic information if a fatal error occurs."
-msgstr ""
+msgstr "Fournit un pop-up d'informations de diagnostic en cas d'erreur fatale."
 
 msgid ""
 "Public IP address or hostname. Set if FTP clients cannot connect through a "
 "NAT device."
 msgstr ""
+"Adresse IP publique ou nom d'hôte. Définissez si les clients FTP ne peuvent pas se connecter "
+"via un périphérique NAT."
 
 msgid "Public Key"
-msgstr ""
+msgstr "Clé publique"
 
 msgid "Quick"
-msgstr ""
+msgstr "Rapide"
 
 msgid "Quiet"
-msgstr ""
+msgstr "Silencieux"
 
 msgid "Quota critical alert at, %"
-msgstr ""
+msgstr "Quota d'alerte critique à, %"
 
 msgid ""
 "Quota for each Time Machine backup on this share (in GiB). Note that this "
 "change will be applied only after share re-mount."
 msgstr ""
+"Quota pour chaque sauvegarde Time Machine sur ce partage (en GiB). Notez que ce changement ne "
+"sera appliqué qu'après le rechargement de la configuration."
 
 msgid "Quota for this dataset"
-msgstr ""
+msgstr "Quota pour ce dataset"
 
 msgid "Quota warning alert at, %"
-msgstr ""
+msgstr "Alerte d'avertissement de quota à, %"
 
 msgid "RCTL Limits"
-msgstr ""
+msgstr "Limites RCTL"
 
 msgid "REFRESH INDEX"
-msgstr ""
+msgstr "RAFRAÎCHIR L'INDEX"
 
 msgid "REGISTER"
-msgstr ""
+msgstr "INSCRIPTION"
 
 msgid "RESTART"
-msgstr ""
+msgstr "REDÉMARRER"
 
 msgid "Raid-z"
-msgstr ""
+msgstr "Raid-z"
 
 msgid "Raid-z2"
-msgstr ""
+msgstr "Raid-z2"
 
 msgid "Raid-z3"
-msgstr ""
+msgstr "Raid-z3"
 
 msgid "Range High"
-msgstr ""
+msgstr "Intervalle haute"
 
 msgid "Range Low"
-msgstr ""
+msgstr "Intervalle basse"
 
 msgid "Range Size"
-msgstr ""
+msgstr "Taille de l'intervalle"
 
 msgid "Raw File"
-msgstr ""
+msgstr "Fichier brut"
 
 msgid "Raw filesize"
-msgstr ""
+msgstr "Taille du fichier brut"
 
 msgid "Read"
-msgstr ""
+msgstr "Lire"
 
 msgid "Read Only"
-msgstr ""
+msgstr "Lecture seule"
 
 msgid "Read Only Access"
-msgstr ""
+msgstr "Accès en lecture seule"
 
 msgid "Read-Only"
-msgstr ""
+msgstr "Lecture seule"
 
 msgid "Read-only"
-msgstr ""
+msgstr "Lecture seule"
 
 msgid "Read/Write Access"
-msgstr ""
+msgstr "Accès en lecture/écriture"
 
 msgid "Realm"
-msgstr ""
+msgstr "Realm"
 
 msgid "Reboot After Update"
-msgstr ""
+msgstr "Redémarrer après la mise à jour"
 
 msgid "Rebuild Directory Service Cache"
 msgstr ""
@@ -8362,108 +8374,116 @@ msgid ""
 "personal NTP servers or those   under direct control. <b>Do not</b> enable "
 "when using   public NTP servers."
 msgstr ""
+"Recommandé lorsque <i>Poll Max.</i> est supérieur à 10. N'utiliser que sur des serveurs NTP "
+"personnels ou sous contrôle direct. <b>Ne pas</b> activer lors de l'utilisation de serveurs "
+"NTP publics."
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater than 10. Only use on personal "
 "NTP servers or those under direct control. <b>Do not</b> enable when using "
 "public NTP servers."
 msgstr ""
+"Recommandé lorsque <i>Poll Max.</i> est supérieur à 10. N'utiliser que sur des serveurs NTP "
+"personnels ou sous contrôle direct. <b>Ne pas</b> activer lors de l'utilisation de serveurs "
+"NTP publics."
 
 msgid "Reconnect"
-msgstr ""
+msgstr "Se reconnecter"
 
 msgid "Record Size"
-msgstr ""
+msgstr "Taille de l'enregistrement"
 
 msgid "Recovery Key"
-msgstr ""
+msgstr "Clé de récupération"
 
 msgid "Recovery Key for Pool "
-msgstr ""
+msgstr "Clé de récupération pour le volume "
 
 msgid "Recursive"
-msgstr ""
+msgstr "Récursif"
 
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
+"Redirection vers le téléchargement. Assurez-vous que les pop-up sont activées dans le "
+"navigateur."
 
 msgid "Refresh"
-msgstr ""
+msgstr "Actualiser"
 
 msgid "Region"
-msgstr ""
+msgstr "Région"
 
 msgid "Release"
-msgstr ""
+msgstr "Distribution"
 
 msgid "Release Notes"
-msgstr ""
+msgstr "Notes de version"
 
 msgid "Reload now"
-msgstr ""
+msgstr "Recharger maintenant"
 
 msgid "Reload the page"
-msgstr ""
+msgstr "Recharger la page"
 
 msgid "Reload the page for the license to take effect."
-msgstr ""
+msgstr "Rechargez la page pour que la licence prenne effet."
 
 msgid "Remote Encryption"
-msgstr ""
+msgstr "Chiffrage à distance"
 
 msgid "Remote Graphite Server Hostname"
-msgstr ""
+msgstr "Nom d'hôte du serveur graphique distant"
 
 msgid "Remote Host"
-msgstr ""
+msgstr "Hôte Distant"
 
 msgid "Remote Host Key"
-msgstr ""
+msgstr "Clé hôte distante"
 
 msgid "Remote Module Name"
-msgstr ""
+msgstr "Nom du module distant"
 
 msgid "Remote Monitor"
-msgstr ""
+msgstr "Moniteur à distance"
 
 msgid "Remote Path"
-msgstr ""
+msgstr "Chemin d'accès distant"
 
 msgid "Remote Port"
-msgstr ""
+msgstr "Port distant"
 
 msgid "Remote SSH Port"
-msgstr ""
+msgstr "Port SSH distant"
 
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
 msgid "Remove Additional Path"
-msgstr ""
+msgstr "Supprimer le chemin d'accès supplémentaire"
 
 msgid "Remove Keep Flag"
 msgstr ""
 
 msgid "Remove Recovery Key"
-msgstr ""
+msgstr "Supprimer la clé de récupération"
 
 msgid "Remove passphrase"
-msgstr ""
+msgstr "Supprimer la passphrase"
 
 msgid "Rename"
-msgstr ""
+msgstr "Renommer"
 
 msgid "Rename the existing boot environment."
-msgstr ""
+msgstr "Renommez l'environnement de démarrage existant."
 
 msgid "Renew Certificate Days"
-msgstr ""
+msgstr "Renouveler les jours du certificat"
 
 msgid "Repeat"
-msgstr ""
+msgstr "Répéter"
 
 msgid "Repeat Data VDev"
-msgstr ""
+msgstr "Répéter les données VDev"
 
 msgid "Repeat Vdev"
 msgstr ""
