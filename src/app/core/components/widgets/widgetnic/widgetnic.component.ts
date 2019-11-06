@@ -127,16 +127,6 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   }
 
   ngOnInit(){
-
-    this.core.emit({name:"NetInfoRequest"});
-    
-    //Get Network info and determine Primary interface
-    this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
-    });
-
-    this.core.register({observerClass:this, eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
-    });
-
   }
 
   ngAfterViewInit(){

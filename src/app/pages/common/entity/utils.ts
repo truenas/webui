@@ -34,7 +34,7 @@ export class EntityUtils {
           const element = document.getElementById(i);
           if (element) {
             if (entity.conf && entity.conf.advanced_field && 
-              _.indexOf(entity.conf.advanced_field, i) > 0 &&
+              _.indexOf(entity.conf.advanced_field, i) > -1 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
               }
@@ -70,6 +70,9 @@ export class EntityUtils {
 
     if (res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
+      if (res.extra.excerpt) {
+        this.errorReport(res, dialog);
+      }
       for (let i = 0; i < res.extra.length; i++) {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];
@@ -91,7 +94,7 @@ export class EntityUtils {
           const element = document.getElementById(field);
           if (element) {
             if (entity.conf && entity.conf.advanced_field && 
-              _.indexOf(entity.conf.advanced_field, field) > 0 &&
+              _.indexOf(entity.conf.advanced_field, field) > -1 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
               }
@@ -102,8 +105,12 @@ export class EntityUtils {
           }
           fc['hasErrors'] = true;
           fc['errors'] = error;
+          if (entity.formGroup && entity.formGroup.controls[field]) {
+            entity.formGroup.controls[field].setErrors({'invalidValue': true});
+          }
           if (entity.wizardConfig && entity.entityWizard) {
             entity.entityWizard.stepper.selectedIndex = stepIndex;
+            entity.entityWizard.formGroup.controls.formArray.controls[stepIndex].controls[field].setErrors({'invalidValue': true});
           }
         } else {
           if (entity.error) {

@@ -6,13 +6,13 @@ export default {
 location_placeholder : T('Location'),
 location_tooltip: T('Enter the location of the system.'),
 location_label : 'Location',
-location_validation : [ Validators.required ],
+location_validation : [  ],
 
 contact_placeholder : T('Contact'),
 contact_tooltip: T('Enter an email address to receive messages from the\
  <a href="--docurl--/services.html#snmp"\
  target="_blank">SNMP service</a>.'),
-contact_validation: [Validators.required, Validators.email],
+contact_validation: [Validators.email],
 
 community_placeholder : T('Community'),
 community_tooltip: T('Change from <i>public</i> to increase system security.\

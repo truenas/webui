@@ -9,7 +9,7 @@ import { Wizard } from '../../../common/entity/entity-form/models/wizard.interfa
 import helptext from '../../../../helptext/task-calendar/replication/replication-wizard';
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
 
-import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService, SnackbarService } from '../../../../services';
+import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -582,8 +582,7 @@ export class ReplicationWizardComponent {
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
         private taskService: TaskService, private storageService: StorageService,
-        private datePipe: DatePipe, private entityFormService: EntityFormService,
-        private snackbarService: SnackbarService) {
+        private datePipe: DatePipe, private entityFormService: EntityFormService) {
         this.ws.call('replication.query').subscribe(
             (res) => {
                 this.namesInUse.push(...res.map(replication => replication.name));
@@ -969,7 +968,40 @@ export class ReplicationWizardComponent {
             if (payload['transport'] === 'SSH+NETCAT') {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
-            return this.ws.call(this.createCalls[item], [payload]).toPromise();
+            
+            return this.ws.call('replication.target_unmatched_snapshots', [
+                payload['direction'],
+                payload['source_datasets'],
+                payload['target_dataset'],
+                payload['transport'],
+                payload['ssh_credentials'],
+            ]).toPromise().then(
+                (res) => {
+                    let hasBadSnapshots = false;
+                    for (const ds in res) {
+                        if (res[ds].length > 0) {
+                            hasBadSnapshots = true;
+                            break;
+                        }
+                    }
+                    if (hasBadSnapshots) {
+                        return this.dialogService.confirm(
+                            helptext.clearSnapshotDialog_title,
+                            helptext.clearSnapshotDialog_title).toPromise().then(
+                            (dialog_res) => {
+                                payload['allow_from_scratch'] = dialog_res;
+                                return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                            }
+                        )
+                    } else {
+                        return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                    }
+                },
+                (err) => {
+                    // show error ?
+                    return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                }
+            );
         }
     }
 
@@ -1012,7 +1044,7 @@ export class ReplicationWizardComponent {
         if (value['schedule_method'] === 'once' && createdItems['replication'] != undefined) {
             await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
                 (res) => {
-                    this.snackbarService.open(T('Replication <i>') + value['name'] + T('</i> has started.'), T('close'), { duration: 5000 });
+                    this.dialogService.Info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
                 }
             )
         }

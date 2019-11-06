@@ -122,7 +122,7 @@ msgid ""
 "</b> plugin and all data and snapshots stored with it, please type the name "
 "of the plugin to confirm:"
 msgstr ""
-"</b> et toutes les données et snapshots stockés avec lui, veuillez saisir "
+"</b> et toutes les données et instantanés stockés avec lui, veuillez saisir "
 "le nom du plugin pour confirmer :"
 
 msgid "</b> with the keypair"
@@ -399,7 +399,7 @@ msgid ""
 msgstr ""
 "<b>AVERTISSEMENT :</b> Si vous revenez à cet instantané, les instantanés "
 "ultérieurs de cet ensemble de données seront définitivement supprimés. Ne "
-"revenez pas en arrière tant que tous les snapshots souhaités n'ont pas été "
+"revenez pas en arrière tant que tous les instantanés souhaités n'ont pas été "
 "sauvegardés !"
 
 msgid ""
@@ -559,7 +559,7 @@ msgid ""
 "individual file."
 msgstr ""
 "Les<i> périphériques</i> fournissent un accès de stockage virtuel aux "
-"zvols, aux snapshots zvol ou aux périphériques physiques. <i>File</i> "
+"zvols, aux instantanés zvol ou aux périphériques physiques. <i>File</i> "
 "fournit un accès de stockage virtuel à un fichier individuel."
 
 msgid ""
@@ -1173,7 +1173,7 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hosts\" "
 "target=\"_blank\">hosts(5)</a> for additional information."
 msgstr ""
-"D'autres hôtes doivent être ajoutés à <i>/etc/hosts</i>. Chaque entrée "
+"Hôtes supplémentaires devant être ajoutés à <i>/etc/hosts</i>. Chaque entrée "
 "d'hôte est une ligne unique avec une adresse IP, un nom d'hôte et des alias "
 "séparés par des espaces blancs. Les hôtes définis ici sont toujours "
 "accessibles par nom même lorsque le DNS n'est pas disponible. Voir <a "
@@ -2477,7 +2477,7 @@ msgid ""
 "Click the  <i class=\"material-icons\">folder</i> to see all datasets on "
 "the  destination system. Click a dataset to set it as the target."
 msgstr ""
-"Choisissez un dataset sur le système de destination où les snapshots sont stockés. "
+"Choisissez un dataset sur le système de destination où les instantanés sont stockés. "
 "Cliquez sur le <i class=\"material-icons\">dossier</i> pour afficher tous les "
 "datasets du système de destination. Cliquez sur un dataset pour le définir comme "
 "cible."
@@ -2836,7 +2836,7 @@ msgid "Cloud Credentials"
 msgstr "Identifiants Cloud"
 
 msgid "Cloud Sync Tasks"
-msgstr "Tâches de synchronisation Cloud"
+msgstr "Synchronisation Cloud"
 
 msgid "Cloud sync has started."
 msgstr "La synchronisation dans le Cloud a commencé."
@@ -3319,7 +3319,7 @@ msgid "Criticality"
 msgstr "Criticité"
 
 msgid "Cron Jobs"
-msgstr "Tâches Cron"
+msgstr "Cron"
 
 msgid "Current Password"
 msgstr "Mot de passe actuel"
@@ -3397,10 +3397,10 @@ msgid "Dataset has complex ACLs"
 msgstr "Le dataset possède des ACLs complexes"
 
 msgid "Dataset which will store replicated  snapshots."
-msgstr "Dataset qui stockera les snapshots répliqués."
+msgstr "Dataset qui stockera les instantanés répliqués."
 
 msgid "Datasets with snapshots to replicate."
-msgstr "Datasets avec snapshots à répliquer."
+msgstr "Datasets avec instantanés à répliquer."
 
 msgid "Datastore"
 msgstr "Magasin de données"
@@ -4088,7 +4088,7 @@ msgid "Enable Browser"
 msgstr "Activer le navigateur"
 
 msgid "Enable Debug Kernel"
-msgstr "Activer le noyau de débogage"
+msgstr "Activer Kernel Debug"
 
 msgid "Enable FXP"
 msgstr "Activer FXP"
@@ -4174,7 +4174,7 @@ msgid ""
 msgstr ""
 "Activer les connexions par mot de passe et l'authentification aux partages "
 "SMB. Sélectionner <b>Non</b> supprime les options <b>Verrouiller "
-"utilisateur</b> et <b>Autoriser Sudo</b>."
+"utilisateur</b> et <b>Autoriser sudo</b>."
 
 msgid ""
 "Enable running services that require <a "
@@ -5030,7 +5030,7 @@ msgid "Enter the email of the contact person."
 msgstr "Entrez le courriel de la personne à contacter."
 
 msgid "Enter the filesystem to snapshot."
-msgstr "Entrez le système de fichiers à capturer (snapshot)."
+msgstr "Entrez le système de fichiers à capturer (réalisation d'un instantané)."
 
 msgid "Enter the full path to the command or script to                be run."
 msgstr "Entrez le chemin complet de la commande ou du script à exécuter."
@@ -5206,7 +5206,7 @@ msgid ""
 "Enter the user on the VMware host with permission to snapshot virtual "
 "machines."
 msgstr ""
-"Entrez l'utilisateur sur l'hôte VMware avec l'autorisation d'effectuer un snapshot "
+"Entrez l'utilisateur sur l'hôte VMware avec l'autorisation d'effectuer un instantané "
 "des machines virtuelles."
 
 msgid "Enter the username if the SMTP server requires authentication."
@@ -5733,10 +5733,10 @@ msgid "Go Back to Jails"
 msgstr "Retour aux Jails"
 
 msgid "Graph Age"
-msgstr ""
+msgstr "Durée maximale de stockage d'un graphique"
 
 msgid "Graph Points"
-msgstr ""
+msgstr "Nombre de points pour chaque graphique"
 
 msgid "Graphite Server"
 msgstr "Serveur Graphite"
@@ -6894,7 +6894,7 @@ msgid "Max. Connections"
 msgstr "Connexions maximum"
 
 msgid "Max. Poll"
-msgstr "Volume maximum"
+msgstr "Poll Max"
 
 msgid "Maximum Passive Port"
 msgstr "Port passif maximum"
@@ -7078,7 +7078,7 @@ msgstr ""
 "started/authentication\"  target=\"_blank\">Jeton d'accès</a> Microsoft Onedrive."
 
 msgid "Min. Poll"
-msgstr "Volume minimum"
+msgstr "Poll Min"
 
 msgid "Minimum Passive Port"
 msgstr "Port passif minimum"
@@ -7311,13 +7311,13 @@ msgid "Name or Naming Schema must be provided."
 msgstr "Le nom ou le schéma de nommage doit être fourni."
 
 msgid "Nameserver 1"
-msgstr "Nom du serveur 1"
+msgstr "Serveur de noms 1 (DNS)"
 
 msgid "Nameserver 2"
-msgstr "Nom du serveur 2"
+msgstr "Serveur de noms 2 (DNS)"
 
 msgid "Nameserver 3"
-msgstr "Nom du serveur 3"
+msgstr "Serveur de noms 3 (DNS)"
 
 msgid "Nameservers"
 msgstr "Nom des serveurs"
@@ -7448,15 +7448,15 @@ msgid ""
 "snmp-community-strings/\"  target=\"_blank\">What is an SNMP Community "
 "String?</a>."
 msgstr ""
-"Chaîne de communauté réseau.  La chaîne communautaire agit comme un nom "
-"d'utilisateur ou un mot de passe. Un utilisateur possédant la chaîne de communauté "
-"correcte a accès aux informations réseau. La valeur par défaut est <i>public</i>. "
-"Pour plus d'informations, voir <a href=\"https://community.helpsystems.com/knowledge-"
-"base/intermapper/snmp/snmp-community-strings/\"  target=\"_blank\">Qu'est-ce qu'une "
-"chaîne de communauté SNMP ?</a>"
+"Chaîne de communauté réseau.  La chaîne communautaire agit comme un nom d'utilisateur "
+"ou un mot de passe. Un utilisateur possédant la chaîne de communauté correcte a accès "
+"aux informations réseau. La valeur par défaut est <i>public</i>. Pour plus "
+"d'informations, voir <a href=\"https://community.helpsystems.com/knowledge-base/"
+"intermapper/snmp/snmp-community-strings/\"  target=\"_blank\">Qu'est-ce qu'une chaîne "
+"de communauté SNMP ?</a>."
 
 msgid "Network connectivity will be interrupted. "
-msgstr "La connectivité réseau sera interrompue"
+msgstr "La connectivité réseau sera interrompue. "
 
 msgid "Network connectivity will be interrupted. Proceed?"
 msgstr "La connectivité réseau sera interrompue. Poursuivre ?"
@@ -7684,7 +7684,7 @@ msgid "Ok"
 msgstr "Ok"
 
 msgid "Once applied, changes will revert after "
-msgstr "Une fois appliquées, les modifications seront rétablies après"
+msgstr "Une fois appliquées, les modifications seront rétablies après "
 
 msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr "Une ou plusieurs adresses IP auxquelles lier le service Netdata."
@@ -7711,112 +7711,140 @@ msgid ""
 "href=\"--docurl--/vaai.html#vaai\" target=\"_blank\">VAAI</a> Threshold "
 "Warning."
 msgstr ""
+"N'apparaît que si un <i>fichier</i> ou un zvol est sélectionné. Lorsque le pourcentage "
+"d'espace libre spécifié est atteint, le système émet une alerte. Voir l'avertissement "
+"de seuil <a href=\"--docurl--/vaai.html#vaai\" target=\"_blank\">VAAI</a>."
 
 msgid ""
 "Only available when the jail is not configured to use VNET. Disables IPv4 "
 "source address selection for the jail in favor of the primary IPv4 address "
 "of the jail."
 msgstr ""
+"Disponible uniquement lorsque l'environnement jail n'est pas configuré pour utiliser "
+"VNET. Désactive la sélection de l'adresse source IPv4 pour le jail en faveur de "
+"l'adresse IPv4 primaire du jail."
 
 msgid ""
 "Only available when the jail is not configured to use VNET. Disables IPv6 "
 "source address selection for the jail in favor of the primary IPv6 address "
 "of the jail."
 msgstr ""
+"Disponible uniquement lorsque l'environnement jail n'est pas configuré pour utiliser "
+"VNET. Désactive la sélection de l'adresse source IPv6 pour l'environnement jail en "
+"faveur de l'adresse IPv6 primaire de l'environnement jail."
 
 msgid ""
 "Only entered when configuring mutual CHAP. Usually the same value as "
 "<i>User</i>."
 msgstr ""
+"Saisie uniquement lors de la configuration du CHAP mutuel. Habituellement la même "
+"valeur que l'<i>utilisateur</i>."
 
 msgid ""
 "Only needed when connecting to a Team Drive. The ID of the top  level "
 "folder of the Team Drive."
 msgstr ""
+"Nécessaire uniquement lors de la connexion à un Team Drive. L'ID du dossier de niveau "
+"supérieur du Team Drive."
 
 msgid "Only override the default if the initiator requires a different block size."
 msgstr ""
+"Ne remplacez la valeur par défaut que si l'initiateur a besoin d'une taille de bloc "
+"différente."
 
 msgid ""
 "Only set LDAP authentication for SMB shares is required and the LDAP server "
 "is already configured with Samba attributes."
 msgstr ""
+"Seule l'authentification LDAP définie pour les partages SMB est requise et le serveur "
+"LDAP est déjà configuré avec les attributs Samba."
 
 msgid ""
 "Only works with Unix ACLs. New directories created on the share are set "
 "with the selected permissions."
 msgstr ""
+"Fonctionne uniquement avec les ACL Unix. Les nouveaux répertoires créés sur le partage "
+"sont définis avec les autorisations sélectionnées."
 
 msgid ""
 "Only works with Unix ACLs. New files created on the share are set with the "
 "selected permissions."
 msgstr ""
+"Fonctionne uniquement avec les ACL Unix. Les nouveaux fichiers créés sur le partage "
+"sont définis avec les autorisations sélectionnées."
 
 msgid "Opening download window. Make sure pop-ups are enabled in the browser."
 msgstr ""
+"Ouverture de la fenêtre de téléchargement. Assurez-vous que les pop-ups sont activés "
+"dans le navigateur."
 
 msgid "Operating System"
-msgstr ""
+msgstr "Système d'exploitation"
 
 msgid "Operation"
-msgstr ""
+msgstr "Opération"
 
 msgid "Optional comment."
-msgstr ""
+msgstr "Commentaire facultatif."
 
 msgid "Optional description. Portals are automatically assigned a numeric group."
 msgstr ""
+"Description facultative. Les portails se voient automatiquement attribuer un groupe "
+"numérique."
 
 msgid "Optional user-friendly name."
-msgstr ""
+msgstr "Nom user-friendly en option."
 
 msgid "Optional."
-msgstr ""
+msgstr "Optionnel."
 
 msgid "Optional. Enter a server description."
-msgstr ""
+msgstr "Facultatif. Saisissez une description du serveur."
 
 msgid "Optional: Add passphrase and recovery key"
-msgstr ""
+msgstr "Facultatif : Ajout d'une passphrase et d'une clé de récupération"
 
 msgid "Optional: Choose installation media image"
-msgstr ""
+msgstr "Facultatif : Choisir l'image du support d'installation"
 
 msgid "Options"
-msgstr ""
+msgstr "Options"
 
 msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
 "the master interface to <i>0</i> and the other interfaces to <i>1</i>, "
 "<i>2</i>, etc."
 msgstr ""
+"Ordre de l'interface sélectionnée dans le lagg. Configurez un basculement (failover) "
+"pour mettre l'interface maître à <i>0</i> et les autres interfaces à <i>1</i>, <i>2</"
+"i>, etc."
 
 msgid "Organization"
-msgstr ""
+msgstr "Organisation"
 
 msgid "Organizational Unit"
-msgstr ""
+msgstr "Unité organisationnelle"
 
 msgid "Organizational unit of the entity."
-msgstr ""
+msgstr "Unité organisationnelle de l'entité."
 
 msgid "Other"
-msgstr ""
+msgstr "Autre"
 
 msgid "Other Options"
-msgstr ""
+msgstr "Autres options"
 
 msgid "Outgoing Mail Server"
-msgstr ""
+msgstr "Serveur de courrier sortant"
 
 msgid "Overcommit Memory?"
-msgstr ""
+msgstr "Mémoire surchargée ?"
 
 msgid "Owner"
-msgstr ""
+msgstr "Propriétaire"
 
 msgid "Owner of the jail. Can be any string."
-msgstr ""
+msgstr "Propriétaire du jail. Peut être n'importe quelle chaîne de caractère."
 
 msgid ""
 "Ownership of all files in the share will  be changed to user "
@@ -7826,51 +7854,60 @@ msgid ""
 "ownership of files to be accessed through  WebDAV must be manually set to "
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
 msgstr ""
+"La propriété de tous les fichiers du partage sera transférée à l'utilisateur "
+"<samp>webdav</samp> et au groupe <samp>webdav</samp>.  Les autorisations existantes ne "
+"seront pas modifiées, mais le changement de propriétaire pourrait rendre les fichiers "
+"inaccessibles à leurs propriétaires originaux. Cette opération est irréversible ! Si "
+"cette option n'est pas activée, la propriété des fichiers accessibles via WebDAV doit "
+"être définie manuellement sur l'utilisateur/le groupe <samp>webdav</samp> ou <samp>www</samp>."
 
 msgid "POST INSTALL NOTES"
-msgstr ""
+msgstr "NOTES POST-INSTALLATION"
 
 msgid "PROCEED"
-msgstr ""
+msgstr "PROCÉDER"
 
 msgid "PagerDuty client name."
-msgstr ""
+msgstr "Nom de client PagerDuty."
 
 msgid "Parent Interface"
-msgstr ""
+msgstr "Interface parent"
 
 msgid "Passphrase"
-msgstr ""
+msgstr "Passphrase"
 
 msgid "Password"
-msgstr ""
+msgstr "Mot de passe"
 
 msgid "Password Server"
-msgstr ""
+msgstr "Serveur de mots de passe"
 
 msgid "Password associated with the LDAP User DN."
-msgstr ""
+msgstr "Mot de passe associé au nom d'utilisateur LDAP (User DN)"
 
 msgid "Password for SED"
-msgstr ""
+msgstr "Mot de passe pour SED"
 
 msgid "Password for the Bind DN."
-msgstr ""
+msgstr "Mot de passe pour le Bind DN."
 
 msgid "Password for the SSH Username account."
-msgstr ""
+msgstr "Mot de passe pour le compte SSH de l'utilisateur."
 
 msgid "Password for the user account."
-msgstr ""
+msgstr "Mot de passe pour le compte utilisateur."
 
 msgid ""
 "Passwords cannot contain a <b>?</b>. Passwords should be at least eight "
 "characters and contain a mix of lower and upper case, numbers, and special "
 "characters."
 msgstr ""
+"Les mots de passe ne peuvent pas contenir un <b>?</b>. Les mots de passe doivent "
+"comporter au moins huit caractères et contenir un mélange de minuscules et de "
+"majuscules, de chiffres et de caractères spéciaux."
 
 msgid "Passwords do not match"
-msgstr ""
+msgstr "Les mots de passe ne correspondent pas"
 
 msgid ""
 "Paste either or both public and private keys. If only a public key is "
@@ -7879,28 +7916,38 @@ msgid ""
 "field.  Click <b>Generate Keypair</b> to create a new keypair.  Encrypted "
 "keypairs or keypairs with passphrases are not supported."
 msgstr ""
+"Coller l'une ou l'autre des clés publiques et privées ou les deux. Si seule une clé "
+"publique est entrée, elle sera stockée seule. Si seule une clé privée est collée, la "
+"clé publique sera automatiquement calculée et saisie dans le champ clé publique.  "
+"Cliquez sur <b>Générer une paire de clés</b> pour créer une nouvelle paire de clés.  "
+"Les paires de clés chiffrées ou les paires de clés avec des passphrases ne sont pas "
+"prises en charge."
 
 msgid ""
 "Paste the <a href=\"https://api.slack.com/incoming-webhooks\" "
 "target=\"_blank\">incoming webhook</a> URL associated with this service."
 msgstr ""
+"Collez l'URL du <a href=\"https://api.slack.com/incoming-webhooks\" target=\"_blank"
+"\">webhook entrant</a> associé à ce service."
 
 msgid "Paste the certificate for the CA."
-msgstr ""
+msgstr "Collez le certificat pour le CA."
 
 msgid "Paste the contents of your Certificate Signing Request here."
-msgstr ""
+msgstr "Collez ici le contenu de votre demande de signature de certificat."
 
 msgid ""
 "Paste the private key associated with the Certificate when available. "
 "Please provide a key at least 1024 bits long."
 msgstr ""
+"Collez la clé privée associée au certificat lorsqu'elle est disponible. Veuillez "
+"fournir une clé d'au moins 1024 bits."
 
 msgid "Path"
-msgstr ""
+msgstr "Chemin"
 
 msgid "Path to the extent"
-msgstr ""
+msgstr "Le chemin pour l'étendue"
 
 msgid ""
 "Pattern of naming custom  snapshots to include in the replication with the "
@@ -7914,6 +7961,15 @@ msgid ""
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
 "target=\"_blank\">periodic snapshot task."
 msgstr ""
+"Modèle de nommage des snapshots personnalisés à inclure dans la réplication avec le "
+"calendrier des snapshots périodiques. Entrez les chaînes <a href=\"https://www.freebsd."
+"org/cgi/man.cgi?query=strftime\"  target=\"_blank\">strftime(3)</a> qui correspondent "
+"aux snapshots à inclure dans la réplication.<br><br>  Lorsqu'un snapshot périodique "
+"n'est pas lié à la réplication, saisissez le schéma de nommage des snapshots créés "
+"manuellement. Possède les mêmes exigences de chaînes de caractères <i>%Y</i>, <i>%m</"
+"i>, <i>%d</i>, <i>%H</i> et <i>%M</i> que le <b>schéma de nommage</b> dans une <a href="
+"\"--docurl--/tasks.html#periodic-snapshot-tasks\"  target=\"_blank\">tâche de snapshot "
+"périodique</a>."
 
 msgid ""
 "Pattern of naming custom snapshots to be  replicated. Enter the name and  "
@@ -7922,6 +7978,10 @@ msgid ""
 "<i>%H</i>, and <i>%M</i> strings that match the snapshots to include in  "
 "the replication."
 msgstr ""
+"Modèle de nommage des instantanés personnalisés à répliquer. Entrez le nom et les chaînes "
+"<a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\"  target=\"_blank"
+"\">strftime(3)</a> <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i> et <i>%M</i> qui "
+"correspondent aux instantanés à inclure dans la réplication."
 
 msgid ""
 "Pattern of naming custom snapshots to be  replicated. Enter the name and  "
@@ -7930,6 +7990,11 @@ msgid ""
 "<i>%H</i>, and <i>%M</i> strings that  match the snapshots to include in "
 "the replication. The number of  snapshots matching that pattern is shown."
 msgstr ""
+"Modèle de nommage des instantanés personnalisés à répliquer. Entrez le nom et les chaînes "
+"<a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" target=\"_blank"
+"\">strftime(3)</a> <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i> et <i>%M</i> qui "
+"correspondent aux instantanés à inclure dans la réplication. Le nombre d'instantanés "
+"correspondant à ce motif est affiché."
 
 msgid "Peer Secret"
 msgstr ""
@@ -7941,142 +8006,144 @@ msgid "Peer User"
 msgstr ""
 
 msgid "Pending Network Changes"
-msgstr ""
+msgstr "Modifications réseau en attente"
 
 msgid "Pending Upgrade"
-msgstr ""
+msgstr "Mise à niveau en attente"
 
 msgid "Perform Reverse DNS Lookups"
-msgstr ""
+msgstr "Effectuer des recherches DNS inversées"
 
 msgid "Performs authentication from an LDAP server."
-msgstr ""
+msgstr "Effectue l'authentification à partir d'un serveur LDAP."
 
 msgid "Periodic Snapshot Tasks"
-msgstr ""
+msgstr "Instantanées périodiques"
 
 msgid "Permissions"
-msgstr ""
+msgstr "Autorisations"
 
 msgid "Permissions Type"
-msgstr ""
+msgstr "Type d'autorisations"
 
 msgid "Permit Sudo"
-msgstr ""
+msgstr "Autoriser sudo"
 
 msgid "Phone"
-msgstr ""
+msgstr "Téléphone"
 
 msgid "Phone Number"
-msgstr ""
+msgstr "Numéro de téléphone"
 
 msgid "Physical interface of the selected member."
-msgstr ""
+msgstr "Interface physique du membre sélectionné."
 
 msgid "Platform"
-msgstr ""
+msgstr "Plateforme"
 
 msgid "Please accept the terms of service for the given ACME Server."
-msgstr ""
+msgstr "Veuillez accepter les conditions d'utilisation du serveur ACME donné."
 
 msgid "Please enter your password"
-msgstr ""
+msgstr "Veuillez saisir votre mot de passe"
 
 msgid "Please enter your password again"
-msgstr ""
+msgstr "Veuillez saisir à nouveau votre mot de passe"
 
 msgid "Please enter your username"
-msgstr ""
+msgstr "Veuillez saisir votre nom d'utilisateur"
 
 msgid "Please enter your username again"
-msgstr ""
+msgstr "Veuillez saisir à nouveau votre nom d'utilisateur"
 
 msgid ""
 "Please read about <a href=\"--docurl--/storage.html#deduplication\" "
 "target=\"_blank\">deduplication</a> before considering changing this "
 "setting."
 msgstr ""
+"Veuillez lire le à propos de la <a href=\"--docurl--/storage.html#deduplication\" "
+"target=\"_blank\">déduplication</a> avant d'envisager de modifier ce paramètre."
 
 msgid "Please wait"
-msgstr ""
+msgstr "Veuillez patienter"
 
 msgid "Plugin"
-msgstr ""
+msgstr "Plugin"
 
 msgid "Plugin "
-msgstr ""
+msgstr "Plugin "
 
 msgid "Plugin Installed Successfully"
-msgstr ""
+msgstr "Plugin installé avec succès"
 
 msgid "Plugin Name"
-msgstr ""
+msgstr "Nom du Plugin"
 
 msgid "Plugin Update Failed"
-msgstr ""
+msgstr "Echec de la mise à jour du plugin"
 
 msgid "Plugin installed successfully"
-msgstr ""
+msgstr "Plugin installé avec succès"
 
 msgid "Plugins"
-msgstr ""
+msgstr "Plugins"
 
 msgid "Pool"
-msgstr ""
+msgstr "Volume"
 
 msgid "Pool Available Space Threshold (%)"
-msgstr ""
+msgstr "Seuil d'espace disponible dans le volume (%)"
 
 msgid "Pool Manager"
-msgstr ""
+msgstr "Gestionnaire de volume"
 
 msgid "Pool Status"
-msgstr ""
+msgstr "État du volume"
 
 msgid "Pool to import"
-msgstr ""
+msgstr "Volume à importer"
 
 msgid "Pool/Dataset"
-msgstr ""
+msgstr "Volume/Dataset"
 
 msgid "Pools"
-msgstr ""
+msgstr "Volumes"
 
 msgid "Pools & Snapshots"
-msgstr ""
+msgstr "Volumes et instantanés"
 
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 msgid "Port or Hostname"
-msgstr ""
+msgstr "Port ou nom d'hôte"
 
 msgid "Portal"
-msgstr ""
+msgstr "Portail"
 
 msgid "Portal Group ID"
-msgstr ""
+msgstr "ID de groupe du portail"
 
 msgid "Post Install Notes"
-msgstr ""
+msgstr "Notes post-installation"
 
 msgid "Post-script"
-msgstr ""
+msgstr "Post-script"
 
 msgid "Power"
-msgstr ""
+msgstr "Alimentation"
 
 msgid "Power Mode"
-msgstr ""
+msgstr "Mode d'alimentation"
 
 msgid "Power Off"
-msgstr ""
+msgstr "Éteindre"
 
 msgid "Power Off UPS"
-msgstr ""
+msgstr "Mettre l'onduleur hors tension"
 
 msgid "Power On"
-msgstr ""
+msgstr "Mise sous tension"
 
 msgid ""
 "Power of 2 in seconds; cannot be higher than 17 or   lower than <i>Min. "
@@ -8125,34 +8192,34 @@ msgid ""
 msgstr ""
 
 msgid "Preview JSON Service Account Key"
-msgstr ""
+msgstr "Prévisualiser la clé du compte de service JSON"
 
 msgid "Previous"
-msgstr ""
+msgstr "Précédent"
 
 msgid "Primary Contact"
-msgstr ""
+msgstr "Contact Primaire"
 
 msgid "Primary DNS server."
-msgstr ""
+msgstr "Serveur DNS primaire."
 
 msgid "Primary Group"
-msgstr ""
+msgstr "Groupe primaire"
 
 msgid "Priority Code Point"
-msgstr ""
+msgstr "Point de code de priorité"
 
 msgid "Privacy Passphrase"
-msgstr ""
+msgstr "Passphrase confidentielle"
 
 msgid "Privacy Protocol"
-msgstr ""
+msgstr "Protocole sur la protection de la vie privée"
 
 msgid "Private Key"
-msgstr ""
+msgstr "Clé privée"
 
 msgid "Private Key ID"
-msgstr ""
+msgstr "ID de clé privée"
 
 msgid ""
 "Privileges are the same as the guest account. Guest access is disabled by "
@@ -8160,132 +8227,144 @@ msgid ""
 "Additional client-side configuration is required to provide guest access to "
 "these clients."
 msgstr ""
+"Les privilèges sont les mêmes que pour le compte invité. L'accès invité est désactivé par "
+"défaut sous Windows 10 version 1709 et Windows Server version 1903. Une configuration "
+"supplémentaire côté client est nécessaire pour fournir un accès invité à ces clients."
 
 msgid "Proactive Support"
-msgstr ""
+msgstr "Support proactif"
 
 msgid ""
 "Proactive Support can notify iXsystems by email when TrueNAS hardware "
 "conditions require attention."
 msgstr ""
+"Le support proactif peut avertir iXsystems par courriel lorsque les conditions matérielles de "
+"TrueNAS requièrent une attention particulière."
 
 msgid "Proceed"
-msgstr ""
+msgstr "Procéder"
 
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
 "versions of FreeNAS: "
 msgstr ""
+"Procéder à la mise à niveau du volume ? ATTENTION : La mise à jour d'un volume est une "
+"opération à sens unique qui peut rendre certaines fonctionnalités du volume incompatibles "
+"avec les anciennes versions de FreeNAS: "
 
 msgid "Production status successfully updated"
-msgstr ""
+msgstr "Statut de production mis à jour avec succès"
 
 msgid "Progress"
-msgstr ""
+msgstr "Progression"
 
 msgid "Promote Dataset"
-msgstr ""
+msgstr "Promouvoir le dataset"
 
 msgid "Properties"
-msgstr ""
+msgstr "Propriétés"
 
 msgid "Protocol"
-msgstr ""
+msgstr "Protocole"
 
 msgid "Provider"
-msgstr ""
+msgstr "Fournisseur"
 
 msgid "Provides a pop-up window of diagnostic information if a fatal error occurs."
-msgstr ""
+msgstr "Fournit un pop-up d'informations de diagnostic en cas d'erreur fatale."
 
 msgid ""
 "Public IP address or hostname. Set if FTP clients cannot connect through a "
 "NAT device."
 msgstr ""
+"Adresse IP publique ou nom d'hôte. Définissez si les clients FTP ne peuvent pas se connecter "
+"via un périphérique NAT."
 
 msgid "Public Key"
-msgstr ""
+msgstr "Clé publique"
 
 msgid "Quick"
-msgstr ""
+msgstr "Rapide"
 
 msgid "Quiet"
-msgstr ""
+msgstr "Silencieux"
 
 msgid "Quota critical alert at, %"
-msgstr ""
+msgstr "Quota d'alerte critique à, %"
 
 msgid ""
 "Quota for each Time Machine backup on this share (in GiB). Note that this "
 "change will be applied only after share re-mount."
 msgstr ""
+"Quota pour chaque sauvegarde Time Machine sur ce partage (en GiB). Notez que ce changement ne "
+"sera appliqué qu'après le rechargement de la configuration."
 
 msgid "Quota for this dataset"
-msgstr ""
+msgstr "Quota pour ce dataset"
 
 msgid "Quota warning alert at, %"
-msgstr ""
+msgstr "Alerte d'avertissement de quota à, %"
 
 msgid "RCTL Limits"
-msgstr ""
+msgstr "Limites RCTL"
 
 msgid "REFRESH INDEX"
-msgstr ""
+msgstr "RAFRAÎCHIR L'INDEX"
 
 msgid "REGISTER"
-msgstr ""
+msgstr "INSCRIPTION"
 
 msgid "RESTART"
-msgstr ""
+msgstr "REDÉMARRER"
 
 msgid "Raid-z"
-msgstr ""
+msgstr "Raid-z"
 
 msgid "Raid-z2"
-msgstr ""
+msgstr "Raid-z2"
 
 msgid "Raid-z3"
-msgstr ""
+msgstr "Raid-z3"
 
 msgid "Range High"
-msgstr ""
+msgstr "Intervalle haute"
 
 msgid "Range Low"
-msgstr ""
+msgstr "Intervalle basse"
 
 msgid "Range Size"
-msgstr ""
+msgstr "Taille de l'intervalle"
 
 msgid "Raw File"
-msgstr ""
+msgstr "Fichier brut"
 
 msgid "Raw filesize"
-msgstr ""
+msgstr "Taille du fichier brut"
 
 msgid "Read"
-msgstr ""
+msgstr "Lire"
 
 msgid "Read Only"
-msgstr ""
+msgstr "Lecture seule"
 
 msgid "Read Only Access"
-msgstr ""
+msgstr "Accès en lecture seule"
 
 msgid "Read-Only"
-msgstr ""
+msgstr "Lecture seule"
 
 msgid "Read-only"
-msgstr ""
+msgstr "Lecture seule"
 
 msgid "Read/Write Access"
-msgstr ""
+msgstr "Accès en lecture/écriture"
 
 msgid "Realm"
-msgstr ""
+msgstr "Realm"
 
 msgid "Reboot After Update"
-msgstr ""
+msgstr "Redémarrer après la mise à jour"
 
 msgid "Rebuild Directory Service Cache"
 msgstr ""
@@ -8295,108 +8374,116 @@ msgid ""
 "personal NTP servers or those   under direct control. <b>Do not</b> enable "
 "when using   public NTP servers."
 msgstr ""
+"Recommandé lorsque <i>Poll Max.</i> est supérieur à 10. N'utiliser que sur des serveurs NTP "
+"personnels ou sous contrôle direct. <b>Ne pas</b> activer lors de l'utilisation de serveurs "
+"NTP publics."
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater than 10. Only use on personal "
 "NTP servers or those under direct control. <b>Do not</b> enable when using "
 "public NTP servers."
 msgstr ""
+"Recommandé lorsque <i>Poll Max.</i> est supérieur à 10. N'utiliser que sur des serveurs NTP "
+"personnels ou sous contrôle direct. <b>Ne pas</b> activer lors de l'utilisation de serveurs "
+"NTP publics."
 
 msgid "Reconnect"
-msgstr ""
+msgstr "Se reconnecter"
 
 msgid "Record Size"
-msgstr ""
+msgstr "Taille de l'enregistrement"
 
 msgid "Recovery Key"
-msgstr ""
+msgstr "Clé de récupération"
 
 msgid "Recovery Key for Pool "
-msgstr ""
+msgstr "Clé de récupération pour le volume "
 
 msgid "Recursive"
-msgstr ""
+msgstr "Récursif"
 
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
+"Redirection vers le téléchargement. Assurez-vous que les pop-up sont activées dans le "
+"navigateur."
 
 msgid "Refresh"
-msgstr ""
+msgstr "Actualiser"
 
 msgid "Region"
-msgstr ""
+msgstr "Région"
 
 msgid "Release"
-msgstr ""
+msgstr "Distribution"
 
 msgid "Release Notes"
-msgstr ""
+msgstr "Notes de version"
 
 msgid "Reload now"
-msgstr ""
+msgstr "Recharger maintenant"
 
 msgid "Reload the page"
-msgstr ""
+msgstr "Recharger la page"
 
 msgid "Reload the page for the license to take effect."
-msgstr ""
+msgstr "Rechargez la page pour que la licence prenne effet."
 
 msgid "Remote Encryption"
-msgstr ""
+msgstr "Chiffrage à distance"
 
 msgid "Remote Graphite Server Hostname"
-msgstr ""
+msgstr "Nom d'hôte du serveur graphique distant"
 
 msgid "Remote Host"
-msgstr ""
+msgstr "Hôte Distant"
 
 msgid "Remote Host Key"
-msgstr ""
+msgstr "Clé hôte distante"
 
 msgid "Remote Module Name"
-msgstr ""
+msgstr "Nom du module distant"
 
 msgid "Remote Monitor"
-msgstr ""
+msgstr "Moniteur à distance"
 
 msgid "Remote Path"
-msgstr ""
+msgstr "Chemin d'accès distant"
 
 msgid "Remote Port"
-msgstr ""
+msgstr "Port distant"
 
 msgid "Remote SSH Port"
-msgstr ""
+msgstr "Port SSH distant"
 
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
 msgid "Remove Additional Path"
-msgstr ""
+msgstr "Supprimer le chemin d'accès supplémentaire"
 
 msgid "Remove Keep Flag"
 msgstr ""
 
 msgid "Remove Recovery Key"
-msgstr ""
+msgstr "Supprimer la clé de récupération"
 
 msgid "Remove passphrase"
-msgstr ""
+msgstr "Supprimer la passphrase"
 
 msgid "Rename"
-msgstr ""
+msgstr "Renommer"
 
 msgid "Rename the existing boot environment."
-msgstr ""
+msgstr "Renommez l'environnement de démarrage existant."
 
 msgid "Renew Certificate Days"
-msgstr ""
+msgstr "Renouveler les jours du certificat"
 
 msgid "Repeat"
-msgstr ""
+msgstr "Répéter"
 
 msgid "Repeat Data VDev"
-msgstr ""
+msgstr "Répéter les données VDev"
 
 msgid "Repeat Vdev"
 msgstr ""

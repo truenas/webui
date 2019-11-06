@@ -46,9 +46,10 @@
 >
     <ng-container *ngFor="let action of actions">
         <button
-            *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.name, this.config)"
+            *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
             mat-button
             id="action_button_{{ action?.label }}"
+            [disabled]="action.disabled"
             (click)="action.onClick(this.config)"
         >
             <div

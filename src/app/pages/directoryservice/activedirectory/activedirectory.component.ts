@@ -150,7 +150,7 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_kerberos_realm_name,
       placeholder : helptext.activedirectory_kerberos_realm_placeholder,
       tooltip : helptext.activedirectory_kerberos_realm_tooltip,
-      options : []
+      options : [{label: '---', value: null}]
     },
     {
       type : 'select',
@@ -263,7 +263,13 @@ export class ActiveDirectoryComponent {
   preInit(entityForm: any) {
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
-        entityForm.setDisabled('netbiosname_b', !is_ha, !is_ha);
+        if (is_ha) {
+          this.ws.call('smb.get_smb_ha_mode').subscribe((ha_mode) => {
+            if (ha_mode === 'LEGACY') {
+              entityForm.setDisabled('netbiosname_b', false, false);
+            }
+          })
+        }
       });
     }
   }

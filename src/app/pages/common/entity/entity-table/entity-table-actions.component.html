@@ -10,12 +10,9 @@
   </mat-icon>
   <mat-menu #appMenu="matMenu">
     <span *ngFor="let action of actions">
-      <button 
-        id="action_button_{{ action?.label }}_{{row[entity?.conf?.rowIdentifier || 'name']}}" 
-        mat-menu-item 
-        *ngIf="!entity.conf.isActionVisible
-            || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" 
-        (click)="action.onClick(this.row);">
+			<button id="action_button_{{ action?.name }}__{{action.id}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
+            || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);"
+            [disabled]="action.disabled">
 				<span>{{ action?.label | translate }}</span>
       </button>
     </span>

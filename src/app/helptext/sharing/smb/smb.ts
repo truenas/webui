@@ -4,6 +4,7 @@ import { Validators } from "@angular/forms";
 export const helptext_sharing_smb = {
     column_name: T('Name'),
     column_path: T('Path'),
+    column_comment: T('Description'),
 
     placeholder_path: T('Path'),
     tooltip_path: T('Select pool, dataset, or directory to share.'),
@@ -13,6 +14,11 @@ export const helptext_sharing_smb = {
 
     placeholder_name: T('Name'),
     tooltip_name: T('Enter a name for the share.'),
+
+    placeholder_comment: T("Description"),
+    tooltip_comment: T(
+      "Description of the share or notes on how it is used."
+    ),
 
     placeholder_home: T('Use as home share'),
     tooltip_home: T('Set to allow this share to hold user home\
@@ -119,5 +125,16 @@ export const helptext_sharing_smb = {
     dialog_edit_acl_button: T("Configure now"),
     
     snackbar_close: T('close'),
-    snackbar_service_started: T("Service started")
+    snackbar_service_started: T("Service started"),
+
+    restart_smb_dialog: {
+       title: T('Restart SMB Service?'),
+       message: T('Enabling <em>Time Machine</em> on an SMB share requires a restart of the SMB service.'),
+       action_btn: T('Save and Restart SMB Now'),
+       cancel_btn: T('Save Without Restarting')
+    },
+    restart_smb_snackbar: {
+       message: T('SMB service has been restarted'),
+       action: T('Close')
+    }
 };

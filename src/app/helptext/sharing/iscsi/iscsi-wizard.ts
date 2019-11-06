@@ -74,9 +74,12 @@ export default {
     step3_label: T("Initiator"),
 
     initiators_placeholder: T("Initiators"),
-    initiators_tooltip: T("Enter <i>ALL</i> or a list of initiator hostnames separated by spaces."),
+    initiators_tooltip: T("Leave blank to allow all or enter a list of initiator hostnames separated by spaces."),
 
-    auth_network_placeholder: T("Authorized Networks"),
-    auth_network_tooltip: T("Network addresses that can use this initiator. Enter <i>ALL</i> or list network addresses with\
- a CIDR mask. Separate multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."),
+    auth_network: {
+       placeholder: T("Authorized Networks"),
+       tooltip: T("Network addresses allowed to use this initiator. Leave blank to allow all networks or list network addresses with\
+       a CIDR mask. Separate multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."),
+       error: T('Invalid network address list. Check for typos or missing CIDR netmasks and separate addresses with a space.')
+    }
 }

@@ -247,12 +247,13 @@
             <div class="clickable"
               *ngIf="col.toggle"
               id="{{row.name}}_{{col.name}}-overlay"
-              (click)="conf.onSliderChange(row)"
+              (click)="!row.disableSlider ? conf.onSliderChange(row) : null"
               matTooltip="{{row[col.prop]}}"
             >
             </div>
             <mat-slide-toggle
               *ngIf="col.toggle"
+              [disabled]="row.disableSlider"
               color="accent"
               id="{{row.name}}_{{col.name}}-slidetoggle"
               [checked]="row[col.prop]==='RUNNING'"

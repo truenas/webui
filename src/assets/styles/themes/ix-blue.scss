@@ -1191,7 +1191,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   #acme_directory_uri mat-form-field {
     width: 50%;
   }
-  
+
   // Support Section ////////////////////////
   app-support {
     .mat-card {
@@ -1243,7 +1243,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       #fn-spacer {
         height: 80px;
       }
-    }  
+    }
 
     @media screen and (max-width: 400px) {
       app-sys-image img {
@@ -1420,7 +1420,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         margin-bottom: 4px;
       }
     }
-      
+
   }
 
   app-tn-support {
@@ -1640,8 +1640,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #aces0 {
       position: absolute;
       left: 15px;
-      top: 290px;
-  
+      top: 310px;
+
       @media screen and ( max-width: 599px) {
         position: relative;
         top: -435px;

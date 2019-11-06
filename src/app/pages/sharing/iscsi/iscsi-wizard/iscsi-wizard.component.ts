@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
-import { IscsiService, WebSocketService } from '../../../../services/';
+import { IscsiService, WebSocketService, NetworkService } from '../../../../services/';
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { CloudCredentialService } from '../../../../services/cloudcredential.service';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -16,7 +16,7 @@ import { forbiddenValues } from '../../../common/entity/entity-form/validators/f
 @Component({
     selector: 'app-iscsi-wizard',
     template: '<entity-wizard [conf]="this"></entity-wizard>',
-    providers: [IscsiService, CloudCredentialService]
+    providers: [IscsiService, CloudCredentialService, NetworkService]
 })
 export class IscsiWizardComponent {
 
@@ -378,10 +378,12 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'auth_network',
-                    placeholder: helptext.auth_network_placeholder,
-                    tooltip: helptext.auth_network_tooltip,
+                    placeholder: helptext.auth_network.placeholder,
+                    tooltip: helptext.auth_network.tooltip,
                     value: '',
+                    hasErrors: false,
                     inputType: 'textarea',
+                    validation: [this.IPValidator('auth_network')]
                 }
             ]
         }
@@ -495,6 +497,7 @@ export class IscsiWizardComponent {
         private cloudcredentialService: CloudCredentialService,
         private dialogService: DialogService,
         private loader: AppLoaderService,
+        private networkService: NetworkService,
         private router: Router) {
         this.iscsiService.getExtents().subscribe(
             (res) => {
@@ -562,7 +565,9 @@ export class IscsiWizardComponent {
 
         this.iscsiService.getAuth().subscribe((res) => {
             for (let i = 0; i < res.length; i++) {
-                authGroupField.options.push({ label: res[i].tag, value: res[i].tag });
+                if (_.find(authGroupField.options, {value: res[i].tag}) == undefined) {
+                    authGroupField.options.push({ label: res[i].tag, value: res[i].tag });
+                }
             }
         });
 
@@ -874,4 +879,32 @@ export class IscsiWizardComponent {
             }
         }
     }
+
+    IPValidator(name: string) {
+        const self = this;
+        return function validIPs(control: FormControl) {
+            const config = self.wizardConfig[2].fieldConfig.find(c => c.name === name);
+            let arr = (control.value).match(/\S+/g);
+            let counter = 0;
+            if (arr) {
+                arr.forEach((item) => {
+                    if (!self.networkService.authNetworkValidator(item, self.networkService.ipv4_or_ipv6_cidr)) counter++;
+                });
+            }
+
+            const errors = control.value && control.value.length > 0 && counter > 0
+            ? { validIPs : true }
+            : null;
+        
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = helptext[name].error;
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+    
+            return errors;
+        }
+    };
 }

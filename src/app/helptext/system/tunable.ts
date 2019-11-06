@@ -43,8 +43,8 @@ export const helptext_system_tunable = {
     )
   },
 
-  comment: {
-    placeholder: T("Comment"),
+  description: {
+    placeholder: T("Description"),
     tooltip: T("Enter a description of the tunable.")
   },
 
