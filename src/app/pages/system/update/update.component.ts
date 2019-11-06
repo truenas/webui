@@ -158,7 +158,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
               return "ALLOWED";
             }
             //comparing '.1' with '.2'
-            return version1[1] > version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
+            return version1[1] < version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
           }
           if(version1[1]){
             //handling a case where '.1' is compared with 'undefined'
@@ -429,7 +429,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
               if (!this.is_ha) {
                 this.ds  = this.dialogService.confirm(
-                  T("Download Update"), T("Continue with download?"),true,"",true,
+                  T("Download Update"), T("Continue with download?"),true,T("Download"),true,
                     T("Apply updates and reboot system after downloading."),
                     'update.update',[{ train: this.train, reboot: false }]
                 )

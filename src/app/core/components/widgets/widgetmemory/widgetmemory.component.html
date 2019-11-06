@@ -27,7 +27,7 @@
 
         <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
          
-        <mat-spinner [diameter]="40" *ngIf="!memData" style="margin: 0 auto;"></mat-spinner>
+          <div class="spinner-wrapper"><mat-spinner [diameter]="40" *ngIf="!memData" style="margin: 0 auto;"></mat-spinner></div>
         
         <div class="primary-stat-wrapper" fxFlex.gt-xs="40" fxFlex.xs="100">
           <h1 class="memory-used">

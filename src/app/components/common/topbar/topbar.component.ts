@@ -102,14 +102,21 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
-        this.isUpdateRunning();
       });
       this.sysName = 'TrueNAS';
     } else {
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
-      this.isUpdateRunning();
     }
+    this.ws.subscribe('core.get_jobs').subscribe((res) => {
+      if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
+        this.updateIsRunning = true;
+        if (!this.updateNotificationSent) {
+          this.updateInProgress();
+          this.updateNotificationSent = true;
+        }      
+      }
+    })
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
@@ -134,6 +141,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
+    this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
+      if (evt && evt.data.commit) {
+        this.pendingNetworkChanges = false;
+        this.checkNetworkCheckinWaiting();
+      } else {
+        this.checkNetworkChangesPending();
+      }
+    });
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
       if (this.is_ha) {
@@ -287,12 +302,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showNetworkCheckinWaiting() {
     this.dialogService.confirm(
       network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.pending_checkin_text,
+      network_interfaces_helptext.pending_checkin_dialog_text,
       true, network_interfaces_helptext.checkin_button).subscribe(res => {
         if (res) {
           this.user_check_in_prompted = false;
           this.loader.open();
           this.ws.call('interface.checkin').subscribe((success) => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
             this.loader.close();
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
@@ -499,28 +515,15 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
-  isUpdateRunning() {
-    let method;
-    this.is_ha ? method = 'failover.upgrade' : method = 'update.update';
-    this.ws.call('core.get_jobs', [[["method", "=", method], ["state", "=", "RUNNING"]]]).subscribe(
-      (res) => {
-        if (res && res.length > 0) {
-          this.sysGenService.updateRunning.emit('true');
-          this.updateIsRunning = true;
-          if (!this.updateNotificationSent) {
-            this.showUpdateDialog();
-            this.updateNotificationSent = true;
-            setTimeout(() => {
-              this.updateNotificationSent = false;
-            }, 600000);
-          }      
-        } else {
-          this.sysGenService.updateRunning.emit('false');
-        }
-      },
-      (err) => {
-        console.error(err);
-      });
+  updateInProgress() {
+    this.sysGenService.updateRunning.emit('true');
+    if (!this.updateNotificationSent) {
+      this.showUpdateDialog();
+      this.updateNotificationSent = true;
+      setTimeout(() => {
+        this.updateNotificationSent = false;
+      }, 600000);
+    }      
   };
 
   showUpdateDialog() {
