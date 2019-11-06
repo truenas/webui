@@ -156,7 +156,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
-      this.isUpdateRunning();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
