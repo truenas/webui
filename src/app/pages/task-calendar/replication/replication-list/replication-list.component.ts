@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import * as moment from 'moment';
-import { DialogService, JobService, SnackbarService, WebSocketService } from '../../../../services';
+import { DialogService, JobService, WebSocketService } from '../../../../services';
 import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-table [title]='title' [conf]='this'></entity-table>`,
-    providers: [SnackbarService, JobService]
+    providers: [JobService]
 })
 export class ReplicationListComponent {
 
@@ -49,7 +49,6 @@ export class ReplicationListComponent {
         private router: Router,
         private ws: WebSocketService,
         private dialog: DialogService,
-        private snackbarService: SnackbarService,
         protected job: JobService) { }
 
     afterInit(entityList: any) {
@@ -76,8 +75,8 @@ export class ReplicationListComponent {
                     if (res) {
                         row.state = 'RUNNING';
                         this.ws.call('replication.run', [row.id]).subscribe(
-                            (res) => {
-                                this.snackbarService.open(T('Replication <i>') + row.name + T('</i> has started.'), T('close'), { duration: 5000 });
+                            (ws_res) => {
+                                this.dialog.Info(T('Task started'), T('Replication <i>') + row.name + T('</i> has started.'), '500px', 'info', true);
                             },
                             (err) => {
                                 new EntityUtils().handleWSError(this.entityList, err);
