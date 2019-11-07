@@ -156,8 +156,10 @@ export const helptext_sharing_iscsi = {
   globalconf_dialog_message: T("Enable this service?"),
   globalconf_dialog_button: T("Enable Service"),
 
-  globalconf_snackbar_message: T("Service started"),
-  globalconf_snackbar_close: T("close"),
+  globalconf_start_service_dialog: {
+    titlle: T('Service started'),
+    content: T('iSCSI service started'),
+  },
 
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(

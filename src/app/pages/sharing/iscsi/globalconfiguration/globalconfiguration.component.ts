@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
 import * as _ from 'lodash';
-import { MatSnackBar } from '@angular/material';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
@@ -48,7 +47,7 @@ export class GlobalconfigurationComponent {
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected dialogService: DialogService,
-              protected ws: WebSocketService, protected snackBar: MatSnackBar, protected loader: AppLoaderService) {}
+              protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
   afterInit(entityForm) {
     entityForm.submitFunction = entityForm.editCall;
@@ -83,7 +82,7 @@ export class GlobalconfigurationComponent {
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   this.loader.close();
-                  this.snackBar.open(helptext_sharing_iscsi.globalconf_snackbar_message, helptext_sharing_iscsi.globalconf_snackbar_close);
+                  this.dialogService.Info(helptext_sharing_iscsi.globalconf_start_service_dialog.titlle, helptext_sharing_iscsi.globalconf_start_service_dialog.content);
                 }, (err) => {
                   this.loader.close();
                   this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
