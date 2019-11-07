@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { RestService, WebSocketService, StorageService } from '../../../services/';
@@ -70,7 +70,8 @@ export class AdvancedComponent implements OnDestroy {
                   });
                   this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
                     this.dialogRef.close();
-                    this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
+                    this.dialog.errorReport(helptext_system_advanced.debug_dialog.failure_title, 
+                      helptext_system_advanced.debug_dialog.failure_msg);
                   });
                 }
               },
@@ -188,13 +189,7 @@ export class AdvancedComponent implements OnDestroy {
     type: 'paragraph',
     name: 'sed_options_message',
     paraText: helptext_system_advanced.sed_options_message_paragraph,
-// This tooltip wraps to the next line when uncommented.
-// Erin said it's more than likely the CSS. Commented out for now and
-// linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="--docurl--/system.html#self-encrypting-drives"\
-//                target="_blank"> Self Encrypting Drives</a> section of\
-//                the user guide for more information.'),
-//
+    tooltip: helptext_system_advanced.sed_options_tooltip
   },
   {
     type: 'select',
@@ -231,17 +226,10 @@ export class AdvancedComponent implements OnDestroy {
     private dialog: DialogService,
     private ws: WebSocketService,
     public adminLayout: AdminLayoutComponent,
-    public snackBar: MatSnackBar,
     protected matDialog: MatDialog,
     public datePipe: DatePipe,
     public http: Http,
     public storage: StorageService) {}
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000
-    });
-  }
 
   ngOnDestroy() {
     this.swapondrive_subscription.unsubscribe();
@@ -308,7 +296,8 @@ export class AdvancedComponent implements OnDestroy {
     this.load.open();
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
       this.load.close();
-      this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
+      this.dialog.Info(helptext_system_advanced.submit_dialog.title, 
+        helptext_system_advanced.submit_dialog.message, '300px', 'info', true)
       this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
     }, (res) => {
       this.load.close();

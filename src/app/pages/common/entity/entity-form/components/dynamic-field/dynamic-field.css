@@ -38,6 +38,12 @@
   padding: 2px;
 }
 
+.paratext-tooltip {
+  position: relative;
+  right: 3px;
+  top: -2px;
+}
+  
 .margin-for-error {
   position: relative;
   top: -12px;
