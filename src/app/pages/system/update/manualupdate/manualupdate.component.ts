@@ -79,7 +79,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
     saveButtonText: helptext.save_config_form.button_text,
-    customSubmit: this.saveCofigSubmit,
+    customSubmit: this.saveConfigSubmit,
     parent: this
   }
   public save_button_enabled = false;
@@ -232,7 +232,7 @@ updater(file: any, parent: any){
   }
 }
 
-saveCofigSubmit(entityDialog) {
+saveConfigSubmit(entityDialog) {
   parent = entityDialog.parent;
   entityDialog.ws.call('system.info', []).subscribe((res) => {
     let fileName = "";
