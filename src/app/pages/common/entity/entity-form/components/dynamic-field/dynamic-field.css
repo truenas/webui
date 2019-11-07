@@ -28,7 +28,7 @@
   margin-bottom: 16px;
 }
 
-:host >>> span.warnning-paragraph {
+:host >>> span.warning-paragraph {
   background-color: var(--red) !important;
   padding: 2px;
 }
