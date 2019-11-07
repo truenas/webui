@@ -205,12 +205,6 @@ export const helptext_system_certificates = {
         key_message: T('Error exporting the Private Key')
       }, 
 
-      download_error_dialog: {
-        title: T('Error'),
-        cert_message: T('Error exporting the certificate'),
-        key_message: T('Error exporting the Private Key')
-      },
-
       action_delete: T("Delete")
   },
 
