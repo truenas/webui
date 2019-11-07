@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { NgxWebstorageModule } from 'ngx-webstorage';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { MaterialModule} from './appMaterial.module'; //customized MaterialModule
 import { rootRouterConfig } from './app.routes';
@@ -79,6 +80,7 @@ export function createTranslateLoader(http: HttpClient) {
     FormsModule,
     ReactiveFormsModule,
     EntityModule,
+    CommonDirectivesModule,
     NgxWebstorageModule.forRoot(),
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TaskManagerComponent, DirectoryServicesMonitorComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
