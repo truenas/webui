@@ -351,16 +351,12 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showReplicationDetails(){
-    this.translate.get('Replication Status').subscribe((title: string) => {
-      this.dialogService.Info(title, this.replicationDetails.repl_status.toString());
-    });
+    this.dialogService.Info(T('Replication Status',), this.replicationDetails.repl_status.toString());
   }
 
   showResilveringDetails() {
-    this.translate.get('Resilvering Status').subscribe((title: string) => {
-      this.dialogService.Info(title, 
-        `Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`);
-    });
+    this.dialogService.Info(T('Resilvering Status'), 
+      `Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`);
   }
 
   onGoToLegacy() {
