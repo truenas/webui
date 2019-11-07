@@ -211,7 +211,7 @@ export class CloudsyncFormComponent implements OnInit {
           value: 'PULL',
         }, {
           name: 'transfer_mode',
-          value: 'SYNC',
+          value: 'MOVE',
         }]
       }
     ],
