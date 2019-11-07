@@ -675,7 +675,8 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     {
       type: 'checkbox',
       name: 'nat_forwards_checkbox',
-      placeholder: 'nat_forwards',
+      placeholder: helptext.nat_forwards_placeholder,
+      tooltip: helptext.nat_forwards_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
