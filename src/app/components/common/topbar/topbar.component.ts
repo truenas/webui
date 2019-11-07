@@ -11,7 +11,7 @@ import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
@@ -83,7 +83,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     private dialogService: DialogService,
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar,
     public translate: TranslateService,
     protected loader: AppLoaderService, ) {
       super();
@@ -268,9 +267,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.ws.call('truenas.get_eula').subscribe(eula => {
           this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true, T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
             if (accept_eula) {
-              this.ws.call('truenas.accept_eula').subscribe(accepted => {
-                this.snackBar.open(T("End User License Agreement Accepted"),T("OK"));
-              });
+              this.ws.call('truenas.accept_eula')
+                .subscribe(),
+                err => { console.error(err)};
             }
           });
         });
@@ -352,14 +351,15 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showReplicationDetails(){
-    this.translate.get('Ok').subscribe((ok: string) => {
-      this.snackBar.open(this.replicationDetails.repl_status.toString(), ok);
+    this.translate.get('Replication Status').subscribe((title: string) => {
+      this.dialogService.Info(title, this.replicationDetails.repl_status.toString());
     });
   }
 
   showResilveringDetails() {
-    this.translate.get('Ok').subscribe((ok: string) => {
-      this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, ok);
+    this.translate.get('Resilvering Status').subscribe((title: string) => {
+      this.dialogService.Info(title, 
+        `Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`);
     });
   }
 
