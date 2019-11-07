@@ -1,6 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
@@ -80,6 +80,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     method_ws: 'core.download',
     saveButtonText: helptext.save_config_form.button_text,
     customSubmit: this.saveCofigSubmit,
+    parent: this
   }
   public save_button_enabled = false;
 
@@ -92,8 +93,6 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     protected _appRef: ApplicationRef,
     public messageService: MessageService,
     protected dialog: MatDialog,
-    protected dialogservice: DialogService,
-    public snackBar: MatSnackBar,
     public translate: TranslateService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
@@ -234,6 +233,7 @@ updater(file: any, parent: any){
 }
 
 saveCofigSubmit(entityDialog) {
+  parent = entityDialog.parent;
   entityDialog.ws.call('system.info', []).subscribe((res) => {
     let fileName = "";
     if (res) {
@@ -250,16 +250,11 @@ saveCofigSubmit(entityDialog) {
     entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
       .subscribe(
         (succ) => {
-          entityDialog.snackBar.open("Opening download window. Make sure pop-ups are enabled in the browser.", "Success" , {
-            duration: 5000
-          });
           window.open(succ[1]);
           entityDialog.dialogRef.close();
         },
         (err) => {
-          entityDialog.snackBar.open("Check the network connection", "Failed" , {
-            duration: 5000
-          });
+          entityDialog.parent.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
         }
       );
     });

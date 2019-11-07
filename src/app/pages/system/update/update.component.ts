@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -90,10 +90,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
     customSubmit: this.saveConfigSubmit,
+    parent: this
   };
 
   protected dialogRef: any;
-  constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
+  constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
       this.sysGenService.updateRunning.subscribe((res) => { 
@@ -441,7 +442,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                       this.dialogRef.componentInstance.submit();
                       this.dialogRef.componentInstance.success.subscribe((succ) => {
                         this.dialogRef.close(false);
-                        this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                        this.dialogService.Info(T("Updates successfully downloaded"),'', '450px', 'info', true);
                         this.pendingupdates();
 
                       });
@@ -645,6 +646,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   async saveConfigSubmit(entityDialog) {
+    parent = entityDialog.parent;
     await entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
       if (res) {
@@ -670,9 +672,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             entityDialog.dialogRef.close();
           },
           (err) => {
-            entityDialog.snackBar.open(T("Check the network connection"), T("Failed") , {
-              duration: 5000
-            });
+            entityDialog.parent.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
           }
         );
     });
