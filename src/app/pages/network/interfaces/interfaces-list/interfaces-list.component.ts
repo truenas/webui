@@ -4,7 +4,6 @@ import {interval} from 'rxjs';
 
 import { WebSocketService, NetworkService, DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
-import { MatSnackBar } from '@angular/material';
 import helptext from '../../../../helptext/network/interfaces/interfaces-list';
 import { EntityUtils } from '../../../common/entity/utils';
 import { CoreEvent } from 'app/core/services/core.service';
@@ -65,7 +64,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   };
 
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
-              private snackBar: MatSnackBar, private dialog: DialogService) {
+              private dialog: DialogService) {
                 super();
               }
 
@@ -216,7 +215,8 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
             this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
-            this.snackBar.open(helptext.changes_saved_successfully, T("Ok"));
+            // can't decide if this is worth keeping since the checkin happens intantaneously
+            //this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
             this.checkWaitingCheckin();
           }, err => {
             this.entityList.loader.close();
@@ -268,7 +268,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
             this.entityList.loaderOpen = false;
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
-            this.snackBar.open(helptext.changes_rolled_back, T("Ok"));
+            this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '300px', "info", true);
           }, err => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
@@ -278,17 +278,6 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       });
   }
 
-  /*doAdd() {
-    this.networkService.getInterfaceNicChoices().subscribe(
-      (res)=>{
-        if (res.length == 0) {
-          this.snackBar.open("All interfaces are already in use.", 'close', { duration: 5000 });
-        } else {
-          this.router.navigate(new Array('/').concat(this.route_add));
-        }
-      }
-    )
-  }*/
   goToHA() {
     this.router.navigate(new Array('/').concat('system', 'failover'));
   }

@@ -177,7 +177,7 @@ export class IPMIComponent {
     this.loader.open();
     return call.subscribe((res) => {
       this.loader.close();
-      this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 });
+      this.dialog.Info(T("Settings saved."), '', '300px', 'info', true);
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityEdit, res);
