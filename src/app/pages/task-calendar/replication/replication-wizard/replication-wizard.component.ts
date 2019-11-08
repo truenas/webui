@@ -42,6 +42,7 @@ export class ReplicationWizardComponent {
     ];
 
     protected namesInUse = [];
+    protected defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
 
     protected wizardConfig: Wizard[] = [
         {
@@ -239,11 +240,7 @@ export class ReplicationWizardComponent {
                     value: false,
                     relation: [{
                         action: 'SHOW',
-                        connective: 'OR',
                         when: [{
-                            name: 'source_datasets_from',
-                            value: 'remote',
-                        }, {
                             name: 'source_datasets_from',
                             value: 'local',
                         }]
@@ -254,12 +251,16 @@ export class ReplicationWizardComponent {
                     name: 'naming_schema',
                     placeholder: helptext.naming_schema_placeholder,
                     tooltip: helptext.naming_schema_tooltip,
+                    value: this.defaultNamingSchema,
                     relation: [{
                         action: 'SHOW',
-                        connective: 'AND',
+                        connective: 'OR',
                         when: [{
                             name: 'custom_snapshots',
                             value: true,
+                        }, {
+                            name: 'source_datasets_from',
+                            value: 'remote',
                         }]
                     }],
                     parent: this,
@@ -576,7 +577,6 @@ export class ReplicationWizardComponent {
     protected snapshotsCountField;
     private existSnapshotTasks = [];
     private eligibleSnapshots = 0;
-    protected defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
