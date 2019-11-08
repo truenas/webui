@@ -236,21 +236,32 @@ saveConfigSubmit(entityDialog) {
   parent = entityDialog.parent;
   entityDialog.ws.call('system.info', []).subscribe((res) => {
     let fileName = "";
+    let mimetype;
     if (res) {
       const hostname = res.hostname.split('.')[0];
       const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
       fileName = hostname + '-' + res.version + '-' + date;
       if (entityDialog.formValue['secretseed']) {
         fileName += '.tar';
+        mimetype = 'application/x-tar';
       } else {
         fileName += '.db';
+        mimetype = 'application/x-sqlite3';
       }
     }
 
     entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
       .subscribe(
         (succ) => {
-          window.open(succ[1]);
+          const url = succ[1];
+          entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
+          .subscribe(file => {
+            entityDialog.dialogRef.close();
+            entityDialog.parent.storage.downloadBlob(file, fileName);
+          }, err => {
+            entityDialog.dialogRef.close();
+            entityDialog.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
+          })
           entityDialog.dialogRef.close();
         },
         (err) => {
