@@ -114,9 +114,6 @@ export const helptext_sharing_smb = {
 
     action_edit_acl: T('Edit ACL'),
 
-    dialog_enable_service_title: T("Enable service"),
-    dialog_enable_service_message: T("Enable this service?"),
-    dialog_enable_service_button: T("Enable Service"),
     dialog_warning: T('Warning'),
     dialog_warning_message: T("Setting default permissions will reset the permissions of this share and any others within its path."),
 
@@ -124,17 +121,14 @@ export const helptext_sharing_smb = {
     dialog_edit_acl_message: T("Configure permissions for this share's dataset now?"),
     dialog_edit_acl_button: T("Configure now"),
     
-    snackbar_close: T('close'),
-    snackbar_service_started: T("Service started"),
-
     restart_smb_dialog: {
        title: T('Restart SMB Service?'),
        message: T('Enabling <em>Time Machine</em> on an SMB share requires a restart of the SMB service.'),
        action_btn: T('Save and Restart SMB Now'),
        cancel_btn: T('Save Without Restarting')
     },
-    restart_smb_snackbar: {
-       message: T('SMB service has been restarted'),
-       action: T('Close')
+    restarted_smb_dialog: {
+       title: T('SMB Service'),
+       message: T('The SMB service has been restarted.')
     }
 };

@@ -4,7 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
 import * as _ from 'lodash';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { T } from "app/translate-marker";
 
 @Component({
   selector: 'app-iscsi-globalconfiguration',
@@ -74,15 +75,15 @@ export class GlobalconfigurationComponent {
     this.ws.call('service.query', [[]]).subscribe((service_res) => {
       const service = _.find(service_res, {"service": "iscsitarget"});
       if (!service['enable']) {
-        this.dialogService.confirm(helptext_sharing_iscsi.globalconf_dialog_title,
-          helptext_sharing_iscsi.globalconf_dialog_message,
-          true, helptext_sharing_iscsi.globalconf_dialog_button).subscribe((dialogRes) => {
+        this.dialogService.confirm(shared.dialog_title, shared.dialog_message,
+          true, shared.dialog_button).subscribe((dialogRes) => {
             if (dialogRes) {
               this.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   this.loader.close();
-                  this.dialogService.Info(helptext_sharing_iscsi.globalconf_start_service_dialog.title, helptext_sharing_iscsi.globalconf_start_service_dialog.content);
+                  this.dialogService.Info(T('iSCSI') + shared.dialog_started_title, 
+                  T('The iSCSI') + shared.dialog_started_message, '250px');
                 }, (err) => {
                   this.loader.close();
                   this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);

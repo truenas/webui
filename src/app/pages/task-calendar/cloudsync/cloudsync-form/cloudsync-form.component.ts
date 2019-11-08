@@ -211,7 +211,7 @@ export class CloudsyncFormComponent implements OnInit {
           value: 'PULL',
         }, {
           name: 'transfer_mode',
-          value: 'SYNC',
+          value: 'MOVE',
         }]
       }
     ],
@@ -587,7 +587,10 @@ export class CloudsyncFormComponent implements OnInit {
     this.formGroup
       .get('direction')
       .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== 'COPY'))
-      .subscribe(() => this.formGroup.get('transfer_mode').setValue('COPY'));
+      .subscribe(() => {
+        this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
+        this.formGroup.get('transfer_mode').setValue('COPY');
+      });
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.subscribe(mode => {
