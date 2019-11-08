@@ -11,7 +11,7 @@ import helptext from "../../helptext/shell/shell";
       <div mat-dialog-actions>
         <span fxFlex></span>
         <button class="mat-button mat-primary" (click)="dialogRef.close(true)"
-        ix-auto ="button__CLOSE"
+        ix-auto="CLOSE"
         >{{"Close" | translate}}</button>
       </div>
   `
