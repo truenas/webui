@@ -6,9 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
@@ -67,21 +65,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       isHidden: true
     }
   ];
-  protected saveConfigFieldConf: FieldConfig[] = [
-    {
-      type: 'checkbox',
-      name: 'secretseed',
-      placeholder: helptext.secretseed.placeholder
-    }
-  ];
-  public saveConfigFormConf: DialogFormConfiguration = {
-    title: "Save Config",
-    fieldConfig: this.saveConfigFieldConf,
-    method_ws: 'core.download',
-    saveButtonText: helptext.save_config_form.button_text,
-    customSubmit: this.saveConfigSubmit,
-    parent: this
-  }
+
   public save_button_enabled = false;
 
   constructor(
@@ -95,7 +79,6 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     protected dialog: MatDialog,
     public translate: TranslateService,
     private dialogService: DialogService,
-    private loader: AppLoaderService,
     private systemService: SystemGeneralService,
   ) {
     super();
@@ -231,45 +214,6 @@ updater(file: any, parent: any){
     parent.save_button_enabled = false;
   }
 }
-
-saveConfigSubmit(entityDialog) {
-  parent = entityDialog.parent;
-  entityDialog.ws.call('system.info', []).subscribe((res) => {
-    let fileName = "";
-    let mimetype;
-    if (res) {
-      const hostname = res.hostname.split('.')[0];
-      const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
-      fileName = hostname + '-' + res.version + '-' + date;
-      if (entityDialog.formValue['secretseed']) {
-        fileName += '.tar';
-        mimetype = 'application/x-tar';
-      } else {
-        fileName += '.db';
-        mimetype = 'application/x-sqlite3';
-      }
-    }
-
-    entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
-      .subscribe(
-        (succ) => {
-          const url = succ[1];
-          entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
-          .subscribe(file => {
-            entityDialog.dialogRef.close();
-            entityDialog.parent.storage.downloadBlob(file, fileName);
-          }, err => {
-            entityDialog.dialogRef.close();
-            entityDialog.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
-          })
-          entityDialog.dialogRef.close();
-        },
-        (err) => {
-          entityDialog.parent.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
-        }
-      );
-    });
-  }
 
   showRunningUpdate(jobId) {
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
