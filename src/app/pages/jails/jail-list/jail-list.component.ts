@@ -235,7 +235,7 @@ export class JailListComponent implements OnInit {
         if (this.toActivatePool) {
           this.entityList.getData();
         }
-        this.entityList.dialogService.Info(T('Jail Activated'), "Poll <i>" + this.selectedPool + "</i> is active", '500px', 'info', true);
+        this.entityList.dialogService.Info(T('Jail Activated'), "Pool <i>" + this.selectedPool + "</i> is active", '500px', 'info', true);
       },
       (res) => {
         new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
