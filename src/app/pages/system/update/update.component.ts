@@ -433,6 +433,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                     T("Apply updates and reboot system after downloading."),
                     'update.update',[{ train: this.train, reboot: false }]
                 )
+                this.ds.componentInstance.isSubmitEnabled = true;
                 this.ds.afterClosed().subscribe((status)=>{
                   if(status){
                     if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
