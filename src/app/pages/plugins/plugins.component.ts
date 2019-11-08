@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 
 import * as myIP from 'what-is-my-ip-address';
@@ -11,6 +11,7 @@ import { T } from '../../translate-marker';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
+import helptext from '../../helptext/plugins/plugins';
 
 @Component({
   selector: 'app-plugins-ui',
@@ -130,8 +131,7 @@ export class PluginsComponent {
       ttpos: "above",
       onClick: (selected) => {
         const selectedJails = this.getSelectedNames(selected);
-
-        this.snackBar.open(T('Updating selected plugins.'), 'close', { duration: 5000 });
+        this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content);
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
@@ -143,14 +143,13 @@ export class PluginsComponent {
               }
               if (message === "") {
                 this.entityList.table.rowDetail.collapseAllRows();
-                this.snackBar.open(T('Selected plugins updated.'), 'close', { duration: 5000 });
+                this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.succeed);
               } else {
                 message = '<ul>' + message + '</ul>';
                 this.dialogService.errorReport(T('Plugin Update Failed'), message);
               }
             },
             (res) => {
-              this.snackBar.open(T('Updating selected plugins failed.'), 'close', { duration: 5000 });
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
@@ -173,7 +172,6 @@ export class PluginsComponent {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private snackBar: MatSnackBar,
     private router: Router,
     protected matDialog: MatDialog) {
       myIP.v4().then((pubIp) => {
@@ -253,8 +251,7 @@ export class PluginsComponent {
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
             self.entityList.getData();
-
-            self.snackBar.open("Successfully activate pool " + value['selectedPool'] , 'close', { duration: 5000 });
+            self.dialogService.Info(T('Pool Actived'), T("Successfully activated pool ") + value['selectedPool']);
           },
           (res) => {
             self.entityList.loader.close();
@@ -420,7 +417,7 @@ export class PluginsComponent {
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {
           dialogRef.close(true);
-          this.snackBar.open(T("Plugin ") + row.name + T(" updated."), T('Close'), { duration: 5000 });
+          this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
         });
       }
     },

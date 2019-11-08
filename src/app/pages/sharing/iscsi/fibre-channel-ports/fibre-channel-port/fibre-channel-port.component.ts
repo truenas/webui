@@ -8,6 +8,7 @@ import { EntityFormService } from '../../../../common/entity/entity-form/service
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from '../../../../../helptext/sharing';
+import { T } from "app/translate-marker";
 
 @Component({
     selector: 'app-iscsi-fibre-channel-port',
@@ -142,9 +143,7 @@ export class FibreChannelPortComponent implements OnInit {
         this.ws.call('fcport.update', [this.config.id, value]).subscribe(
             (res) => {
                 this.parent.loader.close();
-                this.parent.dialogService.Info(helptext_sharing_iscsi.fc_update_dialog.title, 
-                    helptext_sharing_iscsi.fc_update_dialog.text + 
-                    this.config.name + helptext_sharing_iscsi.fc_update_dialog.msg, '300px');
+                this.parent.dialogService.Info(T('Updated'), T('Fibre Channel Port ') + this.config.name + ' update successful.');
             },
             (err) => {
                 this.parent.loader.close();
