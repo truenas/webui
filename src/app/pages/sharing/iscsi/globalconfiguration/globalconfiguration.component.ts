@@ -82,7 +82,7 @@ export class GlobalconfigurationComponent {
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   this.loader.close();
-                  this.dialogService.Info(helptext_sharing_iscsi.globalconf_start_service_dialog.titlle, helptext_sharing_iscsi.globalconf_start_service_dialog.content);
+                  this.dialogService.Info(helptext_sharing_iscsi.globalconf_start_service_dialog.title, helptext_sharing_iscsi.globalconf_start_service_dialog.content);
                 }, (err) => {
                   this.loader.close();
                   this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);

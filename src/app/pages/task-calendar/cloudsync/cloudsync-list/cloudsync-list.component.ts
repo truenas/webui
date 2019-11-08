@@ -105,7 +105,7 @@ export class CloudsyncListComponent implements InputTableConf {
             row.state = 'RUNNING';
             this.ws.call('cloudsync.sync', [row.id]).subscribe(
               (res) => {
-                this.dialog.Info(T('Task started'), T('Cloud sync <i>') + row.description + T('</i> has started.'), '500px', 'info', true);
+                this.dialog.Info(T('Task Started'), T('Cloud sync <i>') + row.description + T('</i> has started.'), '500px', 'info', true);
                 this.job.getJobStatus(res).subscribe((task) => {
                   row.state = task.state;
                   row.job = task;
@@ -127,7 +127,7 @@ export class CloudsyncListComponent implements InputTableConf {
           if (res) {
             this.ws.call('cloudsync.abort', [row.id]).subscribe(
               (wsRes) => {
-                  this.dialog.Info(T('Task Stoped'), T('Cloud sync <i>') + row.description + T('</i> stopped.'), '500px', 'info', true);
+                  this.dialog.Info(T('Task Stopped'), T('Cloud sync <i>') + row.description + T('</i> stopped.'), '500px', 'info', true);
               },
               (wsErr) => {
                 new EntityUtils().handleWSError(this.entityList, wsErr);
