@@ -6,7 +6,8 @@
   </mat-spinner> 
   <div class="header">
     <h4 fxFlex="90%">Directory Services Monitor</h4>
-    <button fxFlex="10%" mat-icon-button id="refresh-icon" (click)="getStatus()">
+    <button fxFlex="10%" mat-icon-button id="refresh-icon" (click)="getStatus()"
+      ix-auto ix-auto-type="button" ix-auto-identifier="refresh">
       <mat-icon>refresh</mat-icon>
     </button>
   </div>
@@ -37,5 +38,6 @@
   </mat-table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close class="dir-services-monitor-action-button">Close</button>
+  <button mat-button mat-dialog-close class="dir-services-monitor-action-button"
+    ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">Close</button>
 </mat-dialog-actions>

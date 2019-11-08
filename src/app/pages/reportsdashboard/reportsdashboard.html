@@ -4,13 +4,15 @@
 <div class="reports-dash-global-controls" fxFlex="120px" fxLayout="row wrap" fxLayoutAlign="start center">
   <!-- START TAB REPLACEMENT-->
   <div *ngIf="activeTab">
-    <button mat-button [matMenuTriggerFor]="categoryMenu" color="default" class="menu-toggle" style="color:var(--fg2);">
+    <button mat-button [matMenuTriggerFor]="categoryMenu" color="default" class="menu-toggle" style="color:var(--fg2);"
+      ix-auto ix-auto-type="button" ix-auto-identifier="tab-selector">
       <span>{{ activeTabVerified ? activeTab : ''}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
     </button>
   
     <mat-menu #categoryMenu="matMenu" overlapTrigger="false"> 
       <div>
-        <button mat-menu-item *ngFor="let tab of allTabs" (click)="navigateToTab(tab.value);">
+        <button mat-menu-item *ngFor="let tab of allTabs" (click)="navigateToTab(tab.value);"
+          ix-auto ix-auto-type="option" ix-auto-identifier="{{tab.label}}">
           <span>{{tab.label}}</span>
         </button>
       </div>

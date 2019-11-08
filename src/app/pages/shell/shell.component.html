@@ -16,13 +16,16 @@
 	<mat-card-content *ngIf="shellConnected; else Reconnect">
 		<!-- <mat-divider class="mb-1"></mat-divider> -->
 		{{"Set font size" | translate}}:
-		<mat-slider min="10" max="20" step="1" [(ngModel)]="font_size"></mat-slider>
-		<button mat-button class="mat-basic" (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}">{{"Restore default" | translate}}</button>
-		<tooltip class="shellTooltip" position="left" [message]=usage_tooltip></tooltip>
+		<mat-slider min="10" max="20" step="1" [(ngModel)]="font_size"
+			ix-auto ="slider__Set font size"></mat-slider>
+		<button mat-button class="mat-basic" (click)="resetDefault()" matTooltip="{{'Reset font size to default value' | translate }}"
+			ix-auto="button__RESTORE DEFAULT">{{"Restore default" | translate}}</button>
+		<tooltip class="shellTooltip" position="left" [message]=usage_tooltip ix-auto="tooltip-icon__shell"></tooltip>
 	</mat-card-content>
 	<ng-template #Reconnect>
 		<mat-card-content>
-			<button mat-button color="primary" (click)="reconnect()">{{"Reconnect" | translate}}</button>
+			<button mat-button color="primary" (click)="reconnect()" ix-auto="button__RECONNECT"
+			>{{"Reconnect" | translate}}</button>
 		</mat-card-content>
 	</ng-template>
 </mat-card>
