@@ -142,7 +142,9 @@ export class FibreChannelPortComponent implements OnInit {
         this.ws.call('fcport.update', [this.config.id, value]).subscribe(
             (res) => {
                 this.parent.loader.close();
-                this.parent.snackBar.open("Fiber Channel Port " + this.config.name + " update successful.", 'close', { duration: 5000 });
+                this.parent.dialogService.Info(helptext_sharing_iscsi.fc_update_dialog.title, 
+                    helptext_sharing_iscsi.fc_update_dialog.text + 
+                    this.config.name + helptext_sharing_iscsi.fc_update_dialog.msg, '300px');
             },
             (err) => {
                 this.parent.loader.close();
