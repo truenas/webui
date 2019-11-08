@@ -142,7 +142,7 @@ export class JailListComponent implements OnInit {
                 }
               }
               if (message === "") {
-                this.dialogService.Info(T('Jail Updated'), T('Selected jails updated.'));
+                this.dialogService.Info('', T('Selected jails updated.'), '500px', 'info', true);
               } else {
                 message = '<ul>' + message + '</ul>';
                 this.dialogService.errorReport(T('Jail Update Failed'), message);
