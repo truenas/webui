@@ -19,6 +19,9 @@ msgstr ""
 msgid " Plugin"
 msgstr ""
 
+msgid " Service"
+msgstr ""
+
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
@@ -59,7 +62,13 @@ msgid ""
 "for testing."
 msgstr ""
 
+msgid " service has been enabled."
+msgstr ""
+
 msgid " system is powered on and connected to the network."
+msgstr ""
+
+msgid " update successful"
 msgstr ""
 
 msgid " updated."
@@ -79,6 +88,9 @@ msgid "'. All data on that pool was destroyed."
 msgstr ""
 
 msgid "(No description)"
+msgstr ""
+
+msgid "(Remove pool from database)"
 msgstr ""
 
 msgid "*allow_sysvipc"
@@ -111,6 +123,9 @@ msgstr ""
 msgid "</b> with the keypair"
 msgstr ""
 
+msgid "</i> cannot be running when deleting a mountpoint."
+msgstr ""
+
 msgid "</i> has started."
 msgstr ""
 
@@ -120,6 +135,12 @@ msgstr ""
 msgid "</i> now?"
 msgstr ""
 
+msgid "</i> stopped."
+msgstr ""
+
+msgid "</i> updated."
+msgstr ""
+
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr ""
 
@@ -127,6 +148,11 @@ msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
 "disks can be destroyed by setting the <b>Destroy data</b> option. Back up "
 "critical data <b>before</b> exporting/disconnecting the pool."
+msgstr ""
+
+msgid ""
+"</i>is in the database but not connected to the machine. If it was exported "
+"by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
 msgstr ""
 
 msgid ""
@@ -267,9 +293,7 @@ msgid ""
 "href=\"--docurl--/accounts.html#users\" target=\"_blank\">Users</a>."
 msgstr ""
 
-msgid ""
-"<b>SED (<a href=\"--docurl--/system.html#self-encrypting-drives\" "
-"target=\"_blank\">Self-Encrypting Drives</a>) Options</b>"
+msgid "<b>SED (Self-Encrypting Drives) Options</b>"
 msgstr ""
 
 msgid ""
@@ -559,6 +583,9 @@ msgstr ""
 msgid "AD Timeout"
 msgstr ""
 
+msgid "AFP"
+msgstr ""
+
 msgid "AFP3 Unix Privs"
 msgstr ""
 
@@ -724,6 +751,9 @@ msgid "Add Dataset"
 msgstr ""
 
 msgid "Add Log"
+msgstr ""
+
+msgid "Add Mountpoint"
 msgstr ""
 
 msgid "Add Recovery Key"
@@ -946,12 +976,6 @@ msgid "All Disks"
 msgstr ""
 
 msgid "All dirs"
-msgstr ""
-
-msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
-msgstr ""
-
-msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
@@ -1271,6 +1295,9 @@ msgid ""
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
 "target=\"_blank\">rsyncd.conf(5)</a> of the rsync                server or "
 "in the <b>Rsync Modules</b> of another                system."
+msgstr ""
+
+msgid "Attach"
 msgstr ""
 
 msgid "Attach Debug"
@@ -1608,9 +1635,6 @@ msgstr ""
 msgid "CD-ROM Path"
 msgstr ""
 
-msgid "CLOSE"
-msgstr ""
-
 msgid "CN Realm"
 msgstr ""
 
@@ -1664,6 +1688,9 @@ msgid "Certificate"
 msgstr ""
 
 msgid "Certificates"
+msgstr ""
+
+msgid "Change Administrator Password"
 msgstr ""
 
 msgid "Change Device Order"
@@ -1774,9 +1801,6 @@ msgstr ""
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
 "do not start the jail."
-msgstr ""
-
-msgid "Check the network connection"
 msgstr ""
 
 msgid "Check the network connection."
@@ -2118,10 +2142,7 @@ msgstr ""
 msgid "Cloud Sync Tasks"
 msgstr ""
 
-msgid "Cloud sync has started."
-msgstr ""
-
-msgid "Cloud sync stopped."
+msgid "Cloud sync <i>"
 msgstr ""
 
 msgid "Cluster Name"
@@ -2633,7 +2654,7 @@ msgstr ""
 msgid "Deactivate the recovery key for this pool?"
 msgstr ""
 
-msgid "Debug could not be downloaded"
+msgid "Debug could not be downloaded."
 msgstr ""
 
 msgid "Decrypt pool"
@@ -2761,6 +2782,9 @@ msgid "Delete Key"
 msgstr ""
 
 msgid "Delete Mount Point"
+msgstr ""
+
+msgid "Delete Mountpoint"
 msgstr ""
 
 msgid "Delete Path"
@@ -2934,10 +2958,16 @@ msgstr ""
 msgid "Device"
 msgstr ""
 
+msgid "Device Attached"
+msgstr ""
+
 msgid "Device Busy"
 msgstr ""
 
 msgid "Device Order"
+msgstr ""
+
+msgid "Device detached "
 msgstr ""
 
 msgid "Devices"
@@ -3315,7 +3345,7 @@ msgid ""
 "without deleting it."
 msgstr ""
 
-msgid "Enable this service?"
+msgid "Enable this service to start automatically."
 msgstr ""
 
 msgid "Enable this task. Unset to disable the task     without deleting it."
@@ -3401,9 +3431,6 @@ msgid "End Time"
 msgstr ""
 
 msgid "End User License Agreement - TrueNAS"
-msgstr ""
-
-msgid "End User License Agreement Accepted"
 msgstr ""
 
 msgid ""
@@ -4138,6 +4165,12 @@ msgstr ""
 msgid "Error detaching pool"
 msgstr ""
 
+msgid "Error exporting the Private Key"
+msgstr ""
+
+msgid "Error exporting the certificate"
+msgstr ""
+
 msgid "Error exporting/disconnecting pool."
 msgstr ""
 
@@ -4307,6 +4340,9 @@ msgstr ""
 msgid "Failed sending test alert!"
 msgstr ""
 
+msgid "Failed to generate debug file."
+msgstr ""
+
 msgid "Failover"
 msgstr ""
 
@@ -4326,6 +4362,12 @@ msgid "Failover is in an error state."
 msgstr ""
 
 msgid "Fetch Method"
+msgstr ""
+
+msgid "Fibre Channel "
+msgstr ""
+
+msgid "Fibre Channel Port "
 msgstr ""
 
 msgid "File"
@@ -4974,6 +5016,9 @@ msgid ""
 "file safe and protect it from unauthorized access!</b>"
 msgstr ""
 
+msgid "Incorrect Password"
+msgstr ""
+
 msgid ""
 "Indicates how to handle Access Control Lists. <b>Ignore:</b> ignores "
 "requests and gives the parent directory ACL inheritance full control over "
@@ -5113,13 +5158,8 @@ msgid "Invalid regex filter"
 msgstr ""
 
 msgid ""
-"Invalid value. Valid values are numbers  followed by optional unit letters, "
-"like <samp>256k</samp> or  <samp>1G</samp>."
-msgstr ""
-
-msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
-"like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
+"like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>."
 msgstr ""
 
 msgid "Invalidate Existing Key"
@@ -5150,7 +5190,10 @@ msgstr ""
 msgid "Jail"
 msgstr ""
 
-msgid "Jail "
+msgid "Jail <i>"
+msgstr ""
+
+msgid "Jail Activated"
 msgstr ""
 
 msgid ""
@@ -5167,7 +5210,13 @@ msgstr ""
 msgid "Jail Type"
 msgstr ""
 
+msgid "Jail Update"
+msgstr ""
+
 msgid "Jail Update Failed"
+msgstr ""
+
+msgid "Jail Updated"
 msgstr ""
 
 msgid "Jail core dump size in bytes."
@@ -5180,6 +5229,9 @@ msgid "Jail stack size in bytes."
 msgstr ""
 
 msgid "Jails"
+msgstr ""
+
+msgid "Jails Started"
 msgstr ""
 
 msgid "Jails cannot be changed while running."
@@ -5677,6 +5729,9 @@ msgstr ""
 msgid "Minimum Passive Port"
 msgstr ""
 
+msgid "Minimum size is 1 MiB"
+msgstr ""
+
 msgid "Minute"
 msgstr ""
 
@@ -5770,6 +5825,9 @@ msgid "NAT"
 msgstr ""
 
 msgid "NAT Autoconfigure IPv4"
+msgstr ""
+
+msgid "NFS"
 msgstr ""
 
 msgid "NFSv3 ownership model for NFSv4"
@@ -6255,9 +6313,6 @@ msgid ""
 "selected permissions."
 msgstr ""
 
-msgid "Opening download window. Make sure pop-ups are enabled in the browser."
-msgstr ""
-
 msgid "Operating System"
 msgstr ""
 
@@ -6367,6 +6422,9 @@ msgid "Password for the SSH Username account."
 msgstr ""
 
 msgid "Password for the user account."
+msgstr ""
+
+msgid "Password updated."
 msgstr ""
 
 msgid ""
@@ -6509,6 +6567,9 @@ msgid ""
 "setting."
 msgstr ""
 
+msgid "Please select a valid path"
+msgstr ""
+
 msgid "Please wait"
 msgstr ""
 
@@ -6527,6 +6588,9 @@ msgstr ""
 msgid "Plugin Update Failed"
 msgstr ""
 
+msgid "Plugin Updated"
+msgstr ""
+
 msgid "Plugin installed successfully"
 msgstr ""
 
@@ -6534,6 +6598,9 @@ msgid "Plugins"
 msgstr ""
 
 msgid "Pool"
+msgstr ""
+
+msgid "Pool Actived"
 msgstr ""
 
 msgid "Pool Available Space Threshold (%)"
@@ -6837,9 +6904,6 @@ msgid ""
 "use HTTPS and renews this setting every year."
 msgstr ""
 
-msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
-msgstr ""
-
 msgid "Refresh"
 msgstr ""
 
@@ -6923,6 +6987,9 @@ msgstr ""
 msgid "Replace"
 msgstr ""
 
+msgid "Replacing Disk"
+msgstr ""
+
 msgid "Replacing disk..."
 msgstr ""
 
@@ -6952,6 +7019,9 @@ msgid "Replication <i>"
 msgstr ""
 
 msgid "Replication Schedule"
+msgstr ""
+
+msgid "Replication Status"
 msgstr ""
 
 msgid "Replication Tasks"
@@ -7068,6 +7138,9 @@ msgstr ""
 msgid "Resilvering"
 msgstr ""
 
+msgid "Resilvering Status"
+msgstr ""
+
 msgid "Resolution"
 msgstr ""
 
@@ -7133,9 +7206,6 @@ msgstr ""
 msgid "Rsync mode"
 msgstr ""
 
-msgid "Rsync task started."
-msgstr ""
-
 msgid "Run As User"
 msgstr ""
 
@@ -7194,7 +7264,10 @@ msgstr ""
 msgid "SFTP log level"
 msgstr ""
 
-msgid "SMB service has been restarted"
+msgid "SMB"
+msgstr ""
+
+msgid "SMB Service"
 msgstr ""
 
 msgid "SMTP Authentication"
@@ -7341,7 +7414,13 @@ msgstr ""
 msgid "Scrub Complete"
 msgstr ""
 
+msgid "Scrub Interval Set"
+msgstr ""
+
 msgid "Scrub Pool"
+msgstr ""
+
+msgid "Scrub Started"
 msgstr ""
 
 msgid "Scrub Tasks"
@@ -7351,9 +7430,6 @@ msgid "Scrub complete on pool <i>"
 msgstr ""
 
 msgid "Scrub interval (in days)"
-msgstr ""
-
-msgid "Scrub started"
 msgstr ""
 
 msgid ""
@@ -7417,6 +7493,12 @@ msgid ""
 msgstr ""
 
 msgid "See task manager for progress updates."
+msgstr ""
+
+msgid ""
+"See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
+"target=\"_blank\"> Self Encrypting Drives</a> section of the user guide for "
+"more information."
 msgstr ""
 
 msgid ""
@@ -7964,9 +8046,6 @@ msgid "Service failed to start"
 msgstr ""
 
 msgid "Service failed to stop"
-msgstr ""
-
-msgid "Service started"
 msgstr ""
 
 msgid "Services"
@@ -8846,9 +8925,6 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-msgid "Size (GiB)"
-msgstr ""
-
 msgid "Size for this zvol"
 msgstr ""
 
@@ -9110,10 +9186,16 @@ msgstr ""
 msgid "Successfully Upgraded "
 msgstr ""
 
+msgid "Successfully activated pool "
+msgstr ""
+
 msgid "Successfully detached pool "
 msgstr ""
 
 msgid "Successfully exported/disconnected '"
+msgstr ""
+
+msgid "Successfully replaced disk "
 msgstr ""
 
 msgid "Successfully reset encryption for pool: "
@@ -9189,6 +9271,9 @@ msgid "System clock"
 msgstr ""
 
 msgid "System domain name, like <i>example.com</i>"
+msgstr ""
+
+msgid "System failed to save configuration settings. Check the network connection."
 msgstr ""
 
 msgid "System host time to synchronize the time between jail and host."
@@ -9287,6 +9372,12 @@ msgstr ""
 msgid "Task Name"
 msgstr ""
 
+msgid "Task Started"
+msgstr ""
+
+msgid "Task Stopped"
+msgstr ""
+
 msgid "Task is running"
 msgstr ""
 
@@ -9329,6 +9420,9 @@ msgstr ""
 msgid "The <i><b>"
 msgstr ""
 
+msgid "The AFP"
+msgstr ""
+
 msgid ""
 "The API_KEY to use as the sender. This must be a valid UUID. It can be "
 "generated from the command line by typing <samp>uuidgen</samp>."
@@ -9349,6 +9443,9 @@ msgid ""
 "server."
 msgstr ""
 
+msgid "The NFS"
+msgstr ""
+
 msgid ""
 "The OU in which new computer accounts are created.  The OU string is read "
 "from top to bottom without RDNs. Slashes (\"/\") are used as  delimiters, "
@@ -9357,6 +9454,12 @@ msgid ""
 "multiple levels and might require doubling or even quadrupling to take "
 "effect.  When this field is blank, new computer accounts are created in the "
 "Active Directory  default OU."
+msgstr ""
+
+msgid "The SMB"
+msgstr ""
+
+msgid "The SMB service has been restarted."
 msgstr ""
 
 msgid ""
@@ -9374,6 +9477,9 @@ msgid ""
 msgstr ""
 
 msgid "The active controller cannot be detected."
+msgstr ""
+
+msgid "The administrator password is incorrect."
 msgstr ""
 
 msgid ""
@@ -9454,6 +9560,9 @@ msgstr ""
 msgid "The hostname or IP address of the LDAP server."
 msgstr ""
 
+msgid "The iSCSI"
+msgstr ""
+
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
 "through the new user interface."
@@ -9499,6 +9608,9 @@ msgstr ""
 msgid "The only server role available is the domain controller for a new domain."
 msgstr ""
 
+msgid "The pool <i>"
+msgstr ""
+
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
 "computer."
@@ -9540,8 +9652,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The sharing configuration will be removed. Data in the share dataset will "
-"not be affected."
+"The sharing configuration will be removed.    Data in the share dataset "
+"will not be affected."
 msgstr ""
 
 msgid "The specified permissions of that group are used by all clients."
@@ -9652,6 +9764,11 @@ msgid ""
 "     the permissions editor.  Open in ACL editor instead?"
 msgstr ""
 
+msgid ""
+"This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
+"units are not specified, the value defaults to"
+msgstr ""
+
 msgid "This field is required"
 msgstr ""
 
@@ -9750,6 +9867,12 @@ msgid "Train"
 msgstr ""
 
 msgid "Transfer Mode"
+msgstr ""
+
+msgid "Transfer Mode Reset"
+msgstr ""
+
+msgid "Transfer Mode has been reset to <i>COPY</i>."
 msgstr ""
 
 msgid "Transfers"
@@ -9924,6 +10047,9 @@ msgstr ""
 msgid "Update Period"
 msgstr ""
 
+msgid "Update Plugins"
+msgstr ""
+
 msgid "Update Settings"
 msgstr ""
 
@@ -9934,6 +10060,9 @@ msgid "Update in Progress"
 msgstr ""
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
+msgstr ""
+
+msgid "Updated"
 msgstr ""
 
 msgid "Updates Available"
@@ -9949,12 +10078,6 @@ msgid "Updating Plugin"
 msgstr ""
 
 msgid "Updating group members"
-msgstr ""
-
-msgid "Updating selected jails failed."
-msgstr ""
-
-msgid "Updating selected plugins failed."
 msgstr ""
 
 msgid "Updating selected plugins."
@@ -10665,6 +10788,9 @@ msgstr ""
 msgid "hostid_strict_check"
 msgstr ""
 
+msgid "iSCSI"
+msgstr ""
+
 msgid "interfaces"
 msgstr ""
 
@@ -10843,6 +10969,9 @@ msgid "vnet_interfaces"
 msgstr ""
 
 msgid "wallclock"
+msgstr ""
+
+msgid "was successfully attached."
 msgstr ""
 
 msgid "yes"

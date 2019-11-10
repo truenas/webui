@@ -19,6 +19,9 @@ msgstr " 第一个vdev是一个 "
 msgid " Plugin"
 msgstr " 插件"
 
+msgid " Service"
+msgstr ""
+
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
@@ -59,8 +62,14 @@ msgid ""
 "for testing."
 msgstr " 除非选择永久保持，否则为秒。 调整延迟时间以进行测试。"
 
+msgid " service has been enabled."
+msgstr ""
+
 msgid " system is powered on and connected to the network."
 msgstr "系统已启动并连接到网络。"
+
+msgid " update successful"
+msgstr ""
 
 msgid " updated."
 msgstr "更新。"
@@ -80,6 +89,9 @@ msgstr "'。所有此存储池的数据已被销毁。"
 
 msgid "(No description)"
 msgstr "（没有描述）"
+
+msgid "(Remove pool from database)"
+msgstr ""
 
 msgid "*allow_sysvipc"
 msgstr "*允许_sysvipc"
@@ -111,6 +123,9 @@ msgstr "</b> 插件会删除所有与其一起存储的数据和快照。"
 msgid "</b> with the keypair"
 msgstr "</b> 与密钥对"
 
+msgid "</i> cannot be running when deleting a mountpoint."
+msgstr ""
+
 msgid "</i> has started."
 msgstr "</i> 已启动。"
 
@@ -120,6 +135,12 @@ msgstr "</i> 密钥对？</p>"
 msgid "</i> now?"
 msgstr "</i> 现在？"
 
+msgid "</i> stopped."
+msgstr ""
+
+msgid "</i> updated."
+msgstr ""
+
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr "</i>。除非解锁池，否则无法访问池中的数据。"
 
@@ -128,6 +149,11 @@ msgid ""
 "disks can be destroyed by setting the <b>Destroy data</b> option. Back up "
 "critical data <b>before</b> exporting/disconnecting the pool."
 msgstr "</i>。导出后，池中的数据将不可用。可以通过设置<b>销毁数据</b>选项来销毁池磁盘上的数据。 在导出/断开连接池<b>之前</b>备份关键数据。"
+
+msgid ""
+"</i>is in the database but not connected to the machine. If it was exported "
+"by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
+msgstr ""
 
 msgid ""
 "<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
@@ -143,7 +169,10 @@ msgid ""
 "href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
 "usmNoAuthProtocol\"  target=\"_blank\">Authentication protocol</a> used to "
 "authenticate  messages sent on behalf of the specified <i>Username</i>."
-msgstr "<a href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol\"  target=\"_blank\">身份验证协议</a>用于验证代表指定的<i>用户名</i>发送的消息。"
+msgstr ""
+"<a "
+"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
+"usmNoAuthProtocol\"  target=\"_blank\">身份验证协议</a>用于验证代表指定的<i>用户名</i>发送的消息。"
 
 msgid ""
 "<a "
@@ -151,7 +180,9 @@ msgid ""
 "usmNoPrivProtocol\"  target=\"_blank\">Encryption protocol</a> used to "
 "encrypt messages  sent on behalf of the specified <i>Username</i>."
 msgstr ""
-"<a href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoPrivProtocol\" target=\"_blank\">加密协议</a>用于加密代表指定的<i>用户名</i>发送的消息。"
+"<a "
+"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
+"usmNoPrivProtocol\" target=\"_blank\">加密协议</a>用于加密代表指定的<i>用户名</i>发送的消息。"
 
 msgid ""
 "<a "
@@ -233,7 +264,10 @@ msgid ""
 "application key, log in to the Backblaze account, go to the <i>App Keys</i> "
 "page, and add a new application key. Copy the <i>applicationKey</i> string "
 "to this field."
-msgstr "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" target=\"_blank\"> Backblaze B2 </a>应用程序密钥。要生成新的应用程序密钥，请登录Backblaze帐户，进入<i> App Keys </i>页面，然后添加一个新的应用程序密钥。将<i> applicationKey </i>字符串复制到此字段。"
+msgstr ""
+"<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
+"target=\"_blank\"> Backblaze B2 </a>应用程序密钥。要生成新的应用程序密钥，请登录Backblaze帐户，进入<i> "
+"App Keys </i>页面，然后添加一个新的应用程序密钥。将<i> applicationKey </i>字符串复制到此字段。"
 
 msgid ""
 "<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
@@ -312,12 +346,8 @@ msgstr ""
 "href=\"--docurl--/accounts.html#users\" target=\"_blank\">用户</a>中为<i> root "
 "</i>用户设置密码。"
 
-msgid ""
-"<b>SED (<a href=\"--docurl--/system.html#self-encrypting-drives\" "
-"target=\"_blank\">Self-Encrypting Drives</a>) Options</b>"
+msgid "<b>SED (Self-Encrypting Drives) Options</b>"
 msgstr ""
-"<b>SED (<a href=\"--docurl--/system.html#self-encrypting-drives\" "
-"target=\"_blank\">自加密驱动器</a>) 选项</b>"
 
 msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
@@ -342,8 +372,9 @@ msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
 "sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
 "<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
-msgstr "<b>警告：</b>此配置文件包含系统密码和其他敏感数据。<br /> <br /> <b>警告：</b> 
-此操作<b>不会</b>备份 <samp>/root/.ssh</samp> 中的SSH密钥 。<br />"
+msgstr ""
+"<b>警告：</b>此配置文件包含系统密码和其他敏感数据。<br /> <br /> <b>警告：</b> \n"
+"此操作<b>不会</b>备份 <samp>/root/.ssh</samp> 中的SSH密钥 。<br />"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> 在此端口侦听。"
@@ -525,7 +556,9 @@ msgid ""
 "with a new boot device. This also decrypts all system passwords for reuse "
 "when the configuration file is uploaded.</p> <br /><b>Keep the "
 "configuration file safe and protect it from unauthorized access!</b>"
-msgstr "<p>包括密码种子在内，可以将此配置文件与新的引导设备一起使用。上传配置文件时，会解密所有系统密码以供重复使用。</p> <br /> <b>请保管好配置文件并保护好它，其免受未经授权的访问！</b>"
+msgstr ""
+"<p>包括密码种子在内，可以将此配置文件与新的引导设备一起使用。上传配置文件时，会解密所有系统密码以供重复使用。</p> <br /> "
+"<b>请保管好配置文件并保护好它，其免受未经授权的访问！</b>"
 
 msgid ""
 "<p>The system will reboot to perform this operation!</p> <p><font "
@@ -670,6 +703,9 @@ msgstr "ACME服务器目录URI"
 
 msgid "AD Timeout"
 msgstr "AD超时"
+
+msgid "AFP"
+msgstr ""
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 权限"
@@ -852,6 +888,9 @@ msgstr "添加数据集"
 
 msgid "Add Log"
 msgstr "添加日志"
+
+msgid "Add Mountpoint"
+msgstr ""
 
 msgid "Add Recovery Key"
 msgstr "添加恢复密钥"
@@ -1112,12 +1151,6 @@ msgstr "所有磁盘"
 msgid "All dirs"
 msgstr "所有目录"
 
-msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
-msgstr "为虚拟机分配RAM。最小值是256 MiB。"
-
-msgid "Allocate a number of gigabytes of space for the new zvol."
-msgstr "分配新的zvol容量（GiB）。"
-
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "分配指定MiB的内存给VM。"
 
@@ -1349,7 +1382,11 @@ msgid ""
 "application key, log in to the Backblaze account, go to the <i>App Keys</i> "
 "page, and add a new application key. Copy the application <i>keyID</i> "
 "string to this field."
-msgstr "字母数字的<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" target=\"_blank\"> Backblaze B2 </a>应用程序密钥ID。要生成新的应用程序密钥，请登录Backblaze帐户，进入<i> App Keys </i>页面，然后添加一个新的应用程序密钥。将应用程序<i> keyID </i>字符串复制到此字段。"
+msgstr ""
+"字母数字的<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
+"target=\"_blank\"> Backblaze B2 "
+"</a>应用程序密钥ID。要生成新的应用程序密钥，请登录Backblaze帐户，进入<i> App Keys "
+"</i>页面，然后添加一个新的应用程序密钥。将应用程序<i> keyID </i>字符串复制到此字段。"
 
 msgid "Also Include Naming Schema"
 msgstr "包括命名方案"
@@ -1485,6 +1522,9 @@ msgstr ""
 "必须在<a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
 "target=\"_blank\">rsyncd.conf(5)</a>中定义至少一个模块或另一个系统的<b>Rsync模块</b>中定义一个模块。"
+
+msgid "Attach"
+msgstr ""
 
 msgid "Attach Debug"
 msgstr "附加调试"
@@ -1832,9 +1872,6 @@ msgstr "认证机构"
 msgid "CD-ROM Path"
 msgstr "CD-ROM 路径"
 
-msgid "CLOSE"
-msgstr "关闭"
-
 msgid "CN Realm"
 msgstr "CN Realm"
 
@@ -1889,6 +1926,9 @@ msgstr "证书"
 
 msgid "Certificates"
 msgstr "证书"
+
+msgid "Change Administrator Password"
+msgstr ""
 
 msgid "Change Device Order"
 msgstr "修改设备顺序"
@@ -2001,9 +2041,6 @@ msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
 "do not start the jail."
 msgstr "检查Jail的<i>hostid</i>设置。如果与主机不同，请不要启动Jail。"
-
-msgid "Check the network connection"
-msgstr "检查网络连接"
 
 msgid "Check the network connection."
 msgstr "检查网络连接。"
@@ -2404,11 +2441,8 @@ msgstr "云凭据"
 msgid "Cloud Sync Tasks"
 msgstr "云同步任务"
 
-msgid "Cloud sync has started."
-msgstr "云同步已启动。"
-
-msgid "Cloud sync stopped."
-msgstr "云同步已停止。"
+msgid "Cloud sync <i>"
+msgstr ""
 
 msgid "Cluster Name"
 msgstr "集群名称"
@@ -2875,7 +2909,11 @@ msgid ""
 "automatically appended by default. More examples are in the  <a "
 "href=\"https://github.com/troglobit/inadyn#custom-ddns-providers\" "
 "target=\"_blank\">In-A-Dyn documentation</a>."
-msgstr "DDNS服务器路径。路径语法因提供程序而异，必须从该提供程序获取。例如，<i>/update?hostname=</i>是<i>update.twodns.de</i> <b>自定义服务器</b>的简单路径。默认情况下，主机名会自动附加。更多示例在<a href=\"https://github.com/troglobit/inadyn#custom-ddns-providers\" target=\"_blank\"> In-A-Dyn文档</a>中。"
+msgstr ""
+"DDNS服务器路径。路径语法因提供程序而异，必须从该提供程序获取。例如，<i>/update?hostname=</i>是<i>update."
+"twodns.de</i> <b>自定义服务器</b>的简单路径。默认情况下，主机名会自动附加。更多示例在<a "
+"href=\"https://github.com/troglobit/inadyn#custom-ddns-providers\" "
+"target=\"_blank\"> In-A-Dyn文档</a>中。"
 
 msgid "DELETE"
 msgstr "删除"
@@ -2972,8 +3010,8 @@ msgstr "星期"
 msgid "Deactivate the recovery key for this pool?"
 msgstr "是否停用该池的恢复密钥？"
 
-msgid "Debug could not be downloaded"
-msgstr "调试无法下载"
+msgid "Debug could not be downloaded."
+msgstr ""
 
 msgid "Decrypt pool"
 msgstr "解密存储池"
@@ -3117,6 +3155,9 @@ msgstr "删除密钥"
 
 msgid "Delete Mount Point"
 msgstr "删除挂载点"
+
+msgid "Delete Mountpoint"
+msgstr ""
 
 msgid "Delete Path"
 msgstr "删除路径"
@@ -3313,11 +3354,17 @@ msgstr ""
 msgid "Device"
 msgstr "设备"
 
+msgid "Device Attached"
+msgstr ""
+
 msgid "Device Busy"
 msgstr "设备繁忙"
 
 msgid "Device Order"
 msgstr "设备顺序"
+
+msgid "Device detached "
+msgstr ""
 
 msgid "Devices"
 msgstr "设备"
@@ -3702,8 +3749,8 @@ msgid ""
 "without deleting it."
 msgstr "启用这个rsync任务。取消设置以禁用此rsync任务而不删除它。"
 
-msgid "Enable this service?"
-msgstr "启用这个服务？"
+msgid "Enable this service to start automatically."
+msgstr ""
 
 msgid "Enable this task. Unset to disable the task     without deleting it."
 msgstr "启用这个任务。取消设置以禁用任务而不删除它。"
@@ -3794,9 +3841,6 @@ msgstr "结束时间"
 
 msgid "End User License Agreement - TrueNAS"
 msgstr "最终用户许可协议 - TrueNAS"
-
-msgid "End User License Agreement Accepted"
-msgstr "接受最终用户许可协议"
 
 msgid ""
 "End time for the replication task. A  replication that is already in "
@@ -4290,7 +4334,9 @@ msgstr ""
 msgid ""
 "Enter the <a href=\"https://docs.influxdata.com/influxdb/\" "
 "target=\"_blank\">InfluxDB</a> hostname."
-msgstr "输入<a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\">InfluxDB</a>主机名。"
+msgstr ""
+"输入<a href=\"https://docs.influxdata.com/influxdb/\" "
+"target=\"_blank\">InfluxDB</a>主机名。"
 
 msgid ""
 "Enter the <a href=\"https://kb.iu.edu/d/aiuv\" "
@@ -4621,6 +4667,12 @@ msgstr "删除zvol错误 "
 msgid "Error detaching pool"
 msgstr "分离存储池错误"
 
+msgid "Error exporting the Private Key"
+msgstr ""
+
+msgid "Error exporting the certificate"
+msgstr ""
+
 msgid "Error exporting/disconnecting pool."
 msgstr "导出/断开存储池错误。"
 
@@ -4799,6 +4851,9 @@ msgstr "失败"
 msgid "Failed sending test alert!"
 msgstr "发送测试警报失败！"
 
+msgid "Failed to generate debug file."
+msgstr ""
+
 msgid "Failover"
 msgstr "故障转移"
 
@@ -4819,6 +4874,12 @@ msgstr "故障转移处于错误状态。"
 
 msgid "Fetch Method"
 msgstr "获取方法"
+
+msgid "Fibre Channel "
+msgstr ""
+
+msgid "Fibre Channel Port "
+msgstr ""
 
 msgid "File"
 msgstr "文件"
@@ -4981,7 +5042,9 @@ msgid ""
 "Fully qualified domain name of the host with the  dynamic IP address. "
 "Separate multiple domains with a space, comma  (,), or semicolon (;). "
 "Example:  <i>myname.dyndns.org; myothername.dyndns.org</i>."
-msgstr "具有动态IP地址的主机的全限定域名。用空格，逗号（,）或分号（;）分隔多个域。示例：<i> myname.dyndns.org; myothername.dyndns.org </i>。"
+msgstr ""
+"具有动态IP地址的主机的全限定域名。用空格，逗号（,）或分号（;）分隔多个域。示例：<i> myname.dyndns.org; "
+"myothername.dyndns.org </i>。"
 
 msgid "GID"
 msgstr "GID"
@@ -5489,6 +5552,9 @@ msgid ""
 "file safe and protect it from unauthorized access!</b>"
 msgstr "包括密码种子在内，允许将此配置文件与新的引导设备一起使用。它还会解密此系统上使用的所有密码。<b>请妥善保管配置文件并防止未经授权的访问！</b>"
 
+msgid "Incorrect Password"
+msgstr ""
+
 msgid ""
 "Indicates how to handle Access Control Lists. <b>Ignore:</b> ignores "
 "requests and gives the parent directory ACL inheritance full control over "
@@ -5651,14 +5717,9 @@ msgid "Invalid regex filter"
 msgstr "无效的正则表达式过滤器"
 
 msgid ""
-"Invalid value. Valid values are numbers  followed by optional unit letters, "
-"like <samp>256k</samp> or  <samp>1G</samp>."
-msgstr "无效值。有效值是数字，后跟可选的单位字母，例如<samp> 256k </samp>或<samp> 1G </samp>。"
-
-msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
-"like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
-msgstr "无效值。有效值是数字，后跟可选的单位字母，例如<samp>256k</samp> 或 <samp>1 G</samp> 或 <samp>2 MiB</samp>。"
+"like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>."
+msgstr ""
 
 msgid "Invalidate Existing Key"
 msgstr "使现有密钥失效"
@@ -5688,13 +5749,18 @@ msgstr "JID"
 msgid "Jail"
 msgstr "Jail"
 
-msgid "Jail "
-msgstr "Jail "
+msgid "Jail <i>"
+msgstr ""
+
+msgid "Jail Activated"
+msgstr ""
 
 msgid ""
 "Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, "
 "separated by commas (,). <b>Example:</b> <i>1,2,3,4</i>"
-msgstr "Jail CPU的关联。选项为<i> off </i>或<i> 1-4 </i>的组合，以逗号（,）分隔。<b>示例：</b> <i> 1,2,3,4 </i>"
+msgstr ""
+"Jail CPU的关联。选项为<i> off </i>或<i> 1-4 </i>的组合，以逗号（,）分隔。<b>示例：</b> <i> 1,2,3,4 "
+"</i>"
 
 msgid "Jail Name"
 msgstr "Jail名称"
@@ -5705,8 +5771,14 @@ msgstr "Jail属性"
 msgid "Jail Type"
 msgstr "Jail类型"
 
+msgid "Jail Update"
+msgstr ""
+
 msgid "Jail Update Failed"
 msgstr "Jail更新失败"
+
+msgid "Jail Updated"
+msgstr ""
 
 msgid "Jail core dump size in bytes."
 msgstr "Jail核心转储大小(bytes)。"
@@ -5719,6 +5791,9 @@ msgstr "Jail核心转储大小(bytes)。"
 
 msgid "Jails"
 msgstr "Jails"
+
+msgid "Jails Started"
+msgstr ""
 
 msgid "Jails cannot be changed while running."
 msgstr "Jails不能在运行时被修改。"
@@ -6250,6 +6325,9 @@ msgstr "最小Poll"
 msgid "Minimum Passive Port"
 msgstr "最小被动端口"
 
+msgid "Minimum size is 1 MiB"
+msgstr ""
+
 msgid "Minute"
 msgstr "分钟"
 
@@ -6365,6 +6443,9 @@ msgstr "NAT"
 msgid "NAT Autoconfigure IPv4"
 msgstr "NAT自动配置IPv4"
 
+msgid "NFS"
+msgstr ""
+
 msgid "NFSv3 ownership model for NFSv4"
 msgstr "NFSv4的NFSv3所有权模型"
 
@@ -6413,7 +6494,10 @@ msgid ""
 "href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" "
 "target=\"_blank\">Dyn IP detection</a>.  to discover the remote socket IP "
 "address."
-msgstr "报告外部IP地址的服务器的名称和端口。 例如，输入<i>checkip.dyndns.org:80</i>使用<a href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" target=\"_blank\">动态IP检测</a>。查找远程套接字IP地址。"
+msgstr ""
+"报告外部IP地址的服务器的名称和端口。 例如，输入<i>checkip.dyndns.org:80</i>使用<a "
+"href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" "
+"target=\"_blank\">动态IP检测</a>。查找远程套接字IP地址。"
 
 msgid "Name of NIS domain."
 msgstr "NIS域名。"
@@ -6564,7 +6648,9 @@ msgid ""
 "Network addresses allowed to use this initiator. Leave blank to allow all "
 "networks or list network addresses with       a CIDR mask. Separate "
 "multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."
-msgstr "允许使用此启动器的网络地址。保留空白以允许所有网络或使用CIDR掩码列出网络地址。用空格分隔多个地址：<i>192.168.2.0/24 192.168.2.1/12</i>。"
+msgstr ""
+"允许使用此启动器的网络地址。保留空白以允许所有网络或使用CIDR掩码列出网络地址。用空格分隔多个地址：<i>192.168.2.0/24 "
+"192.168.2.1/12</i>。"
 
 msgid ""
 "Network addresses allowed use this initiator. Each address can include an "
@@ -6884,9 +6970,6 @@ msgid ""
 "selected permissions."
 msgstr "仅适用于Unix ACL。在共享上创建的新文件将使用选定的权限进行设置。"
 
-msgid "Opening download window. Make sure pop-ups are enabled in the browser."
-msgstr "打开下载窗口。确认浏览器的弹出窗口被启用。"
-
 msgid "Operating System"
 msgstr "操作系统"
 
@@ -7002,6 +7085,9 @@ msgstr "SSH用户名的密码。"
 msgid "Password for the user account."
 msgstr "SSH用户名的密码。"
 
+msgid "Password updated."
+msgstr ""
+
 msgid ""
 "Passwords cannot contain a <b>?</b>. Passwords should be at least eight "
 "characters and contain a mix of lower and upper case, numbers, and special "
@@ -7046,7 +7132,9 @@ msgid ""
 "Path to the <b>CheckIP Server</b>. For example,  <i>no-ip.com</i> uses a "
 "<b>CheckIP Server</b> of  <i>dynamic.zoneedit.com</i> and <b>CheckIP "
 "Path</b> of  <i>/checkip.html</i>."
-msgstr "<b> CheckIP服务器</b>的路径。例如，<i>no-ip.com</i> 使用 <i>dynamic.zoneedit.com</i> 的  <b>CheckIP服务器</b> 和 <i>/checkip.html</i> 的 <b>CheckIP路径</b> 。"
+msgstr ""
+"<b> CheckIP服务器</b>的路径。例如，<i>no-ip.com</i> 使用 <i>dynamic.zoneedit.com</i> 的  "
+"<b>CheckIP服务器</b> 和 <i>/checkip.html</i> 的 <b>CheckIP路径</b> 。"
 
 msgid "Path to the extent"
 msgstr "Extent 路径"
@@ -7165,6 +7253,9 @@ msgstr ""
 "在考虑更改此设置之前，请阅读<a href=\"--docurl--/storage.html#deduplication\" "
 "target=\"_blank\">重复</a>章节 。"
 
+msgid "Please select a valid path"
+msgstr ""
+
 msgid "Please wait"
 msgstr "请等待"
 
@@ -7183,6 +7274,9 @@ msgstr "插件名"
 msgid "Plugin Update Failed"
 msgstr "更新插件失败"
 
+msgid "Plugin Updated"
+msgstr ""
+
 msgid "Plugin installed successfully"
 msgstr "插件安装成功"
 
@@ -7191,6 +7285,9 @@ msgstr "插件"
 
 msgid "Pool"
 msgstr "存储池"
+
+msgid "Pool Actived"
+msgstr ""
 
 msgid "Pool Available Space Threshold (%)"
 msgstr "存储池可用空间阈值 (%)"
@@ -7493,10 +7590,13 @@ msgid ""
 "<i>31536000</i> seconds (one year). This means that after a  browser "
 "connects to the web interface for the first time, the browser  continues to "
 "use HTTPS and renews this setting every year."
-msgstr "将<i> HTTP </i>连接重定向到<i> HTTPS </i>。<i> HTTPS </i>需要<i> GUI SSL证书</i>。激活它还会将<a  href=\"https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security\"  target=\"_blank\"> HTTP严格传输安全性（HSTS）</a>的最大年龄设置为<i>31536000</i>秒（一年）。这意味着在浏览器首次连接到Web界面后，浏览器将继续使用HTTPS并每年更新此设置。"
-
-msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
-msgstr "重定向到下载。确认浏览器的弹出窗口被启用。"
+msgstr ""
+"将<i> HTTP </i>连接重定向到<i> HTTPS </i>。<i> HTTPS </i>需要<i> GUI "
+"SSL证书</i>。激活它还会将<a  "
+"href=\"https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security\"  "
+"target=\"_blank\"> "
+"HTTP严格传输安全性（HSTS）</a>的最大年龄设置为<i>31536000</i>"
+"秒（一年）。这意味着在浏览器首次连接到Web界面后，浏览器将继续使用HTTPS并每年更新此设置。"
 
 msgid "Refresh"
 msgstr "刷新"
@@ -7581,6 +7681,9 @@ msgstr "重复Vdev"
 msgid "Replace"
 msgstr "替换"
 
+msgid "Replacing Disk"
+msgstr ""
+
 msgid "Replacing disk..."
 msgstr "替换磁盘中..."
 
@@ -7611,6 +7714,9 @@ msgstr "复制 <i>"
 
 msgid "Replication Schedule"
 msgstr "复制计划"
+
+msgid "Replication Status"
+msgstr ""
 
 msgid "Replication Tasks"
 msgstr "复制任务"
@@ -7733,6 +7839,9 @@ msgstr "重新同步优先级"
 msgid "Resilvering"
 msgstr "重新同步"
 
+msgid "Resilvering Status"
+msgstr ""
+
 msgid "Resolution"
 msgstr "分辨率"
 
@@ -7801,9 +7910,6 @@ msgstr "Rsync 任务"
 msgid "Rsync mode"
 msgstr "Rsync 模式"
 
-msgid "Rsync task started."
-msgstr "Rsync任务已启动。"
-
 msgid "Run As User"
 msgstr "以用户身份运行"
 
@@ -7864,8 +7970,11 @@ msgstr "SFTP日志设备"
 msgid "SFTP log level"
 msgstr "SFTP日志级别"
 
-msgid "SMB service has been restarted"
-msgstr "SMB服务已重新启动"
+msgid "SMB"
+msgstr ""
+
+msgid "SMB Service"
+msgstr ""
 
 msgid "SMTP Authentication"
 msgstr "SMTP认证"
@@ -8013,8 +8122,14 @@ msgstr "清理启动池"
 msgid "Scrub Complete"
 msgstr "清理完成"
 
+msgid "Scrub Interval Set"
+msgstr ""
+
 msgid "Scrub Pool"
 msgstr "清理存储池"
+
+msgid "Scrub Started"
+msgstr ""
 
 msgid "Scrub Tasks"
 msgstr "清理任务"
@@ -8024,9 +8139,6 @@ msgstr "存储池完成清理<i>"
 
 msgid "Scrub interval (in days)"
 msgstr "清理间隔（天）"
-
-msgid "Scrub started"
-msgstr "开始清理"
 
 msgid ""
 "Search the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
@@ -8098,6 +8210,12 @@ msgstr ""
 
 msgid "See task manager for progress updates."
 msgstr "请参阅任务管理器以获取进度更新。"
+
+msgid ""
+"See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
+"target=\"_blank\"> Self Encrypting Drives</a> section of the user guide for "
+"more information."
+msgstr ""
 
 msgid ""
 "See the <a href=\"http://networkupstools.org/stable-hcl.html\" "
@@ -8689,9 +8807,6 @@ msgstr "服务启动失败"
 
 msgid "Service failed to stop"
 msgstr "服务停止失败"
-
-msgid "Service started"
-msgstr "服务已启动"
 
 msgid "Services"
 msgstr "服务"
@@ -9678,9 +9793,6 @@ msgstr "站点名称"
 msgid "Size"
 msgstr "容量"
 
-msgid "Size (GiB)"
-msgstr "容量 (GiB)"
-
 msgid "Size for this zvol"
 msgstr "此zvol的容量"
 
@@ -9858,7 +9970,9 @@ msgid ""
 "Static IPv4 or IPv6 address and subnet mask.  Example: <i>10.0.0.3</i> and "
 "<i>/24</i>. Click <i>ADD</i> to add another  IP address. Clicking "
 "<i>DELETE</i> removes that IP address."
-msgstr "静态IPv4或IPv6地址和子网掩码。例如：<i>10.0.0.3</i>和<i>/24</i>。单击<i>ADD</i>添加另一个IP地址。单击<i>删除</ i>会删除该IP地址。"
+msgstr ""
+"静态IPv4或IPv6地址和子网掩码。例如：<i>10.0.0.3</i>和<i>/24</i>。单击<i>ADD</i>添加另一个IP地址。单击<i>"
+"删除</ i>会删除该IP地址。"
 
 msgid "Static Routes"
 msgstr "静态路由"
@@ -9954,11 +10068,17 @@ msgstr "成功升级 "
 msgid "Successfully Upgraded "
 msgstr "成功升级 "
 
+msgid "Successfully activated pool "
+msgstr ""
+
 msgid "Successfully detached pool "
 msgstr "成功分离存储池 "
 
 msgid "Successfully exported/disconnected '"
 msgstr "成功导出/断开'"
+
+msgid "Successfully replaced disk "
+msgstr ""
 
 msgid "Successfully reset encryption for pool: "
 msgstr "成功重置存储池的加密： "
@@ -10034,6 +10154,9 @@ msgstr "系统时钟"
 
 msgid "System domain name, like <i>example.com</i>"
 msgstr "系统域名，例如<i>example.com</i>"
+
+msgid "System failed to save configuration settings. Check the network connection."
+msgstr ""
 
 msgid "System host time to synchronize the time between jail and host."
 msgstr "系统主机时间来同步jail和主机之间的时间。"
@@ -10131,6 +10254,12 @@ msgstr "任务管理器"
 msgid "Task Name"
 msgstr "任务名称"
 
+msgid "Task Started"
+msgstr ""
+
+msgid "Task Stopped"
+msgstr ""
+
 msgid "Task is running"
 msgstr "任务正在运行"
 
@@ -10177,6 +10306,9 @@ msgstr ""
 msgid "The <i><b>"
 msgstr "该 <i><b>"
 
+msgid "The AFP"
+msgstr ""
+
 msgid ""
 "The API_KEY to use as the sender. This must be a valid UUID. It can be "
 "generated from the command line by typing <samp>uuidgen</samp>."
@@ -10197,6 +10329,9 @@ msgid ""
 "server."
 msgstr "用于在使用独立LDAP服务器时访问LDAP服务器的LDAP URL。"
 
+msgid "The NFS"
+msgstr ""
+
 msgid ""
 "The OU in which new computer accounts are created.  The OU string is read "
 "from top to bottom without RDNs. Slashes (\"/\") are used as  delimiters, "
@@ -10210,6 +10345,12 @@ msgstr ""
 "NAS</samp>。反斜杠（\"\\\""
 "）用于转义字符，但不能用作分隔符。反斜杠在多个级别进行解释，可能需要加倍甚至四倍才能生效。如果此字段为空，则在ActiveDirectory默认OU中创"
 "建新的计算机帐户。"
+
+msgid "The SMB"
+msgstr ""
+
+msgid "The SMB service has been restarted."
+msgstr ""
 
 msgid ""
 "The SSL certificate to be used for TLS FTP connections. To create a "
@@ -10227,6 +10368,9 @@ msgstr "VM无法启动，因为当前配置可能需要比系统上可用的RAM�
 
 msgid "The active controller cannot be detected."
 msgstr "无法检测到活动控制器。"
+
+msgid "The administrator password is incorrect."
+msgstr ""
 
 msgid ""
 "The base name is automatically prepended if the target name does not start "
@@ -10315,6 +10459,9 @@ msgstr "控制数据集的组。该组具有与授予<i> group @ </i> <i> Who </
 msgid "The hostname or IP address of the LDAP server."
 msgstr "LDAP服务器的主机名或IP地址。"
 
+msgid "The iSCSI"
+msgstr ""
+
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
 "through the new user interface."
@@ -10363,6 +10510,9 @@ msgstr "数字<i>UUID</i>或jail的<i>自定义名称</i> 。"
 
 msgid "The only server role available is the domain controller for a new domain."
 msgstr "唯一可用的服务器角色是新域的域控制器。"
+
+msgid "The pool <i>"
+msgstr ""
 
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
@@ -10413,9 +10563,9 @@ msgstr ""
 "/>"
 
 msgid ""
-"The sharing configuration will be removed. Data in the share dataset will "
-"not be affected."
-msgstr "共享配置将被删除。共享数据集中的数据将不受影响。"
+"The sharing configuration will be removed.    Data in the share dataset "
+"will not be affected."
+msgstr ""
 
 msgid "The specified permissions of that group are used by all clients."
 msgstr "所有客户端都使用该组的指定权限。"
@@ -10444,7 +10594,9 @@ msgid ""
 "target=\"_blank\">certificate</a>  to enable encrypted web interface "
 "connections. To change the default  certificate, select a different created "
 "or imported certificate."
-msgstr "系统使用自签名<a href=\"--docurl--/system.html#certificates\" target=\"_blank\">证书</a>启用加密的Web界面连接。要更改默认证书，请选择其他创建或导入的证书。"
+msgstr ""
+"系统使用自签名<a href=\"--docurl--/system.html#certificates\" "
+"target=\"_blank\">证书</a>启用加密的Web界面连接。要更改默认证书，请选择其他创建或导入的证书。"
 
 msgid ""
 "The system will reboot and be briefly unavailable while applying updates. "
@@ -10527,6 +10679,11 @@ msgid ""
 "This dataset has ACLs that are too complex to be edited with                "
 "     the permissions editor.  Open in ACL editor instead?"
 msgstr "此数据集的ACL过于复杂，无法使用权限编辑器进行编辑。在ALC编辑器中打开？"
+
+msgid ""
+"This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
+"units are not specified, the value defaults to"
+msgstr ""
 
 msgid "This field is required"
 msgstr "此字段为必需项"
@@ -10635,6 +10792,12 @@ msgstr "分支"
 
 msgid "Transfer Mode"
 msgstr "传输模式"
+
+msgid "Transfer Mode Reset"
+msgstr ""
+
+msgid "Transfer Mode has been reset to <i>COPY</i>."
+msgstr ""
 
 msgid "Transfers"
 msgstr "传输"
@@ -10814,6 +10977,9 @@ msgstr "更新许可证"
 msgid "Update Period"
 msgstr "更新周期"
 
+msgid "Update Plugins"
+msgstr ""
+
 msgid "Update Settings"
 msgstr "更新设置"
 
@@ -10825,6 +10991,9 @@ msgstr "正在升级"
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr "更新成功。请重启以便更新生效。现在重启？"
+
+msgid "Updated"
+msgstr ""
 
 msgid "Updates Available"
 msgstr "可用更新"
@@ -10840,12 +11009,6 @@ msgstr "更新插件"
 
 msgid "Updating group members"
 msgstr "更新群组成员"
-
-msgid "Updating selected jails failed."
-msgstr "更新选定的jails失败。"
-
-msgid "Updating selected plugins failed."
-msgstr "更新所选插件失败。"
 
 msgid "Updating selected plugins."
 msgstr "更新选定的插件。"
@@ -11586,6 +11749,9 @@ msgstr "主机标识"
 msgid "hostid_strict_check"
 msgstr "hostid_strict_check"
 
+msgid "iSCSI"
+msgstr ""
+
 msgid "interfaces"
 msgstr "接口"
 
@@ -11765,6 +11931,9 @@ msgstr "vnet_interfaces"
 
 msgid "wallclock"
 msgstr "挂钟"
+
+msgid "was successfully attached."
+msgstr ""
 
 msgid "yes"
 msgstr "是"
