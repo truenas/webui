@@ -81,6 +81,15 @@ export class ServiceFTPComponent implements OnInit {
       name : 'anonpath',
       placeholder : helptext.anonpath_placeholder,
       tooltip: helptext.anonpath_tooltip,
+      required: true,
+      relation: [
+        {
+          action: 'HIDE',
+          when: [{
+            name: 'onlyanonymous',
+            value: false,
+          }]
+        }],
     },
     {
       type : 'checkbox',
