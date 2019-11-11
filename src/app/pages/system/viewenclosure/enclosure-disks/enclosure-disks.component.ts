@@ -127,6 +127,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
 
     core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
+      if(this.theme == evt.data){ return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
       if(this.labels && this.labels.events){
