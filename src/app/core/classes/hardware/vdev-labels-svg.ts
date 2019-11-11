@@ -59,6 +59,7 @@ export class VDevLabelsSVG {
     let tiles;
     this.events = new Subject<CoreEvent>();
     this.events.subscribe((evt:CoreEvent) => {
+      //console.log(evt.name);
       switch(evt.name){
         case "ThemeChanged":
           let theme = evt.data;
@@ -76,19 +77,22 @@ export class VDevLabelsSVG {
         case "HidePath":
         break;
         case 'EnableHighlightMode':
-          tiles = this.getParent().querySelectorAll('rect.tile');
-          this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname])
+          //tiles = this.getParent().querySelectorAll('rect.tile');
+          //this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname])
         break;
         case 'DisableHighlightMode':
           tiles = this.getParent().querySelectorAll('rect.tile')
           this.showAllTiles(tiles);
         break;
         case 'HighlightDisk':
+          tiles = this.getParent().querySelectorAll('rect.tile');
+          this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname]);
+
           this.highlightedDiskName = evt.data.devname;
           this.showTile(evt.data.devname);
         break;
         case 'UnhighlightDisk':
-          this.hideTile(evt.data.devname);
+          //this.hideTile(evt.data.devname);
         break;
       }
     });

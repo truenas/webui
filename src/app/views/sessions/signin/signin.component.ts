@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
@@ -7,6 +7,7 @@ import { matchOtherValidator } from '../../../pages/common/entity/entity-form/va
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
 import productText from '../../../helptext/product';
+import { Observable, Subscription } from 'rxjs';
 
 import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
@@ -19,7 +20,7 @@ import { ApiService } from 'app/core/services/api.service';
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss']
 })
-export class SigninComponent implements OnInit {
+export class SigninComponent implements OnInit, OnDestroy {
   @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
   @ViewChild(MatButton, { static: false}) submitButton: MatButton;
 
@@ -33,6 +34,7 @@ export class SigninComponent implements OnInit {
   public copyrightYear = globalHelptext.copyright_year;
   private interval: any;
   public exposeLegacyUI = false;
+  public tokenObservable:Subscription;
 
   signinData = {
     username: '',
@@ -62,11 +64,6 @@ export class SigninComponent implements OnInit {
     private http:Http) {
     this.ws = ws;
     this.checkSystemType();
-    this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
-      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
-        this.redirect();
-      }
-    })
    }
 
   checkSystemType() {
@@ -96,6 +93,11 @@ export class SigninComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
+      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
+        this.redirect();
+      }
+    });
     if (!this.logo_ready) {
       this.interval = setInterval(() => {
         this.checkSystemType();
@@ -114,6 +116,13 @@ export class SigninComponent implements OnInit {
       password: new FormControl('', [Validators.required]),
       password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
     })
+  }
+
+  ngOnDestroy() {
+      this.core.unregister({observerClass:this});
+      if(this.tokenObservable){
+        this.tokenObservable.unsubscribe();
+      }
   }
 
   loginToken() {
@@ -256,15 +265,15 @@ export class SigninComponent implements OnInit {
       } else {
         this.router.navigate([ '/dashboard' ]);
       }
-      this.core.unregister({observerClass:this});
+      this.tokenObservable.unsubscribe(); 
     }
   }
   successLogin() {
     this.snackBar.dismiss();
-    this.ws.call('auth.generate_token', [300]).subscribe((result) => {
+    this.tokenObservable = this.ws.call('auth.generate_token', [300]).subscribe((result) => {
       if (result) {
         this.ws.token = result;
-        this.redirect()
+        this.redirect();
       }
     });
   }
