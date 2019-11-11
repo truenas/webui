@@ -4,7 +4,8 @@ ix-auto ix-auto-type="task" ix-auto-identifier="{{config.placeholder}}">
   <br>
   <mat-card>
     <mat-tab-group #tabGroup (selectChange)="onSelectChange($event)">
-      <mat-tab *ngFor="let field of config.tabs;" label="{{field.tabName | translate}}">
+      <mat-tab *ngFor="let field of config.tabs;" label="{{field.tabName | translate}}"
+        ix-auto ix-auto-type="tab" ix-auto-identifier="{{field.tabName}}">
         <ng-container dynamicField [config]="field" [group]="tabFormGroup" [fieldShow]="'show'">
         </ng-container>
       </mat-tab>
