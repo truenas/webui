@@ -6,9 +6,10 @@ export default {
     name_tooltip: T('Descriptive name for the replication.'),
 
     direction_placeholder: T('Direction'),
-    direction_tooltip: T('Direction of travel. <i>PUSH</i> sends \
- snapshots to a destination system. <i>PULL</i> connects to a remote \
- system and receives snapshots matching a <b>Naming Schema</b>.'),
+    direction_tooltip: T('<i>PUSH</i> sends snapshots to a destination \
+ system.<br><br> \
+ <i>PULL</i> connects to a remote system and retrieves snapshots \
+ matching a <b>Naming Schema</b>.'),
 
     transport_placeholder: T('Transport'),
     transport_tooltip: T('Method of snapshot transfer:<ul> \
