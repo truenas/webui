@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { WebSocketService } from 'app/services/';
-import { SnackbarService } from 'app/services/snackbar.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -48,8 +47,8 @@ export class ProductionStatusComponent {
     }
   ]
 
-  constructor(public ws: WebSocketService, public snackBar: SnackbarService,
-    protected dialogService: DialogService, protected loader: AppLoaderService) { }
+  constructor(public ws: WebSocketService, protected dialogService: DialogService, 
+    protected loader: AppLoaderService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -69,8 +68,8 @@ export class ProductionStatusComponent {
     this.loader.open();
     this.ws.call('truenas.set_production', [data.production, data.send_debug]).subscribe(() => {
       this.loader.close();
-      this.snackBar.open(helptext.is_production_snackbar.message, 
-        helptext.is_production_snackbar.action, {duration: 4000});
+      this.dialogService.Info(helptext.is_production_dialog.title, 
+        helptext.is_production_dialog.message, '300px', 'info', true);
     },
     (err) => {
       this.loader.close();

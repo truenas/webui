@@ -26,6 +26,7 @@ import { SnackbarService } from '../../../../services/snackbar.service';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { Validators } from '@angular/forms';
 
 export interface ZfsPoolData {
   avail?: number;
@@ -105,8 +106,6 @@ export class VolumesListTableConfig implements InputTableConf {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected translate: TranslateService,
-    protected snackBar: MatSnackBar,
-    protected snackbarService: SnackbarService,
     protected storageService: StorageService,
     protected volumeData: Object
   ) {
@@ -139,9 +138,84 @@ export class VolumesListTableConfig implements InputTableConf {
           actions.push({
             label: T("Lock"),
             onClick: (row1) => {
-              const conf: DialogFormConfiguration = {
+              let p1 = '';
+              const self = this;
+              this.loader.open();
+              this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
+                if (res.length > 0) {
+                  p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is locked:`;
+                  res.forEach((item) => {
+                    p1 += `<br><br>${item.type}:`;
+                    item.attachments.forEach((i) => {
+                      const tempArr = i.split(',');
+                      tempArr.forEach((i) => {
+                        p1 += `<br> - ${i}`
+                      })
+                    })
+  
+                  })
+                }
+                this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
+                  const running_processes = [];
+                  const running_unknown_processes = [];
+                  if (res.length > 0) {
+                    res.forEach((item) => {
+                      if (!item.service) {
+                        if (item.name && item.name !== '') {
+                          running_processes.push(item);
+                        } else {
+                          running_unknown_processes.push(item);
+                        }
+                      }
+                    });
+                    if (running_processes.length > 0) {
+                      p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
+                      running_processes.forEach((process) =>  {
+                        if (process.name) {
+                          p1 += `<br> - ${process.name}`
+                        }
+  
+                      });
+                    };
+                    if (running_unknown_processes.length > 0) {
+                      p1 += '<br><br>These unknown processes are using this pool:';
+                      running_unknown_processes.forEach((process) => {
+                        if (process.pid) {
+                          p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
+                        }
+                      });
+                      p1 += `<br><br>WARNING: These unknown processes will be terminated while locking the pool.`;
+                    }
+                  };
+                  this.loader.close();
+                  doLock();
+                },
+                (err) => {
+                  this.loader.close();
+                  new EntityUtils().handleWSError(T("Error gathering data on pool."), err, this.dialogService);
+                });
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(T("Error gathering data on pool."), err, this.dialogService);
+              });
+              function doLock() {
+                const conf: DialogFormConfiguration = {
                 title: T("Enter passphrase to lock pool ") + row1.name + '.',
                 fieldConfig: [
+                  {
+                    type: 'paragraph',
+                    name: 'pool_lock_warning',
+                    paraText: helptext.pool_lock_warning_paratext_a + row1.name +
+                      helptext.pool_lock_warning_paratext_b,
+                    isHidden: false
+                  },
+                  {
+                    type: 'paragraph',
+                    name: 'pool_processes',
+                    paraText: p1,
+                    isHidden: p1 === '' ? true : false
+                  },
                   {
                     type: 'input',
                     inputType: 'password',
@@ -170,9 +244,9 @@ export class VolumesListTableConfig implements InputTableConf {
                   });
                 }
               }
-              this.dialogService.dialogForm(conf);
+              self.dialogService.dialogForm(conf);
             }
-          });
+          }});
         }
       } else {
         actions.push({
@@ -230,8 +304,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const localLoader = this.loader,
     localRest = this.rest,
     localParentVol = this.parentVolumesListComponent,
-    localDialogService = this.dialogService,
-    localSnackBar = this.snackBar
+    localDialogService = this.dialogService
 
     this.storageService.poolUnlockServiceChoices().pipe(
       map(serviceChoices => {
@@ -278,7 +351,7 @@ export class VolumesListTableConfig implements InputTableConf {
               entityDialog.dialogRef.close(true);
               localLoader.close();
               localParentVol.repaintMe();
-              localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
+              localDialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
             }, (res) => {
               localLoader.close();
               localDialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
@@ -386,8 +459,13 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'pool_detach_warning',
               paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
                 helptext.detachDialog_pool_detach_warning_paratext_b,
-              isHidden: false
+              isHidden: rowData.status === 'UNKNOWN' ? true : false
             }, {
+              type: 'paragraph',
+              name: 'unknown_status_detach_warning',
+              paraText: `${helptext.detachWarningForUnknownState.message_a} ${row1.name} ${helptext.detachWarningForUnknownState.message_b}`,
+              isHidden: rowData.status === 'UNKNOWN' ? false : true
+            },{
               type: 'paragraph',
               name: 'pool_processes',
               paraText: p1,
@@ -402,15 +480,34 @@ export class VolumesListTableConfig implements InputTableConf {
               name: 'destroy',
               value: false,
               placeholder: helptext.detachDialog_pool_detach_destroy_checkbox_placeholder,
+              isHidden: rowData.status === 'UNKNOWN' ? true : false
             }, {
               type: 'checkbox',
               name: 'cascade',
-              value: true,
+              value: rowData.status === 'UNKNOWN' ? false : true,
               placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
+            },{
+              type: 'input',
+              name: 'nameInput',
+              required: true,
+              isDoubleConfirm: true,
+              maskValue: row1.name,
+              validation: [Validators.pattern(row1.name)],
+              relation : [
+                {
+                  action : 'HIDE',
+                  when : [ {
+                    name : 'destroy',
+                    value : false,
+                  } ]
+                },
+              ]
             },{
               type: 'checkbox',
               name: 'confirm',
-              placeholder: helptext.detachDialog_pool_detach_confim_checkbox_placeholder,
+              placeholder: rowData.status === 'UNKNOWN' ? 
+                `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder} ${helptext.unknown_status_alt_text}` :
+                `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder}`,
               required: true
             }],
             isCustActionVisible(actionId: string) {
@@ -434,6 +531,7 @@ export class VolumesListTableConfig implements InputTableConf {
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
               let dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
+              dialogRef.updateSize('300px');
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
               dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: localRestartServices }]);
               dialogRef.componentInstance.submit();
@@ -512,7 +610,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
                         (res) => {
                           this.loader.close();
-                          this.snackbarService.open(T('Stopping scrub on pool <i>') + row1.name + '</i>.', T('close'), { duration: 5000 })
+                          this.dialogService.Info(T("Stop Scrub"), T('Stopping scrub on pool <i>') + row1.name + '</i>.', '300px', "info", true);
                         },
                         (err) => {
                           this.loader.close();
@@ -532,9 +630,9 @@ export class VolumesListTableConfig implements InputTableConf {
                         (jobres) => {
                           this.dialogRef.close(false);
                           if (jobres.progress.percent == 100) {
-                            this.snackbarService.open(T('Scrub complete on pool <i>') + row1.name + "</i>.", T('close'), { duration: 5000 });
+                            this.dialogService.Info(T('Scrub Complete'), T('Scrub complete on pool <i>') + row1.name + "</i>.", '300px', "info", true);
                           } else {
-                            this.snackbarService.open(T('Stopped the scrub on pool <i>') + row1.name + "</i>.", T('close'), { duration: 5000 });
+                            this.dialogService.Info(T('Stop Scrub'), T('Stopped the scrub on pool <i>') + row1.name + "</i>.", '300px', "info", true);
                           }
                         }
                       );
@@ -806,7 +904,7 @@ export class VolumesListTableConfig implements InputTableConf {
           }
           this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
             if (res) {
-              this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
+              this.dialogService.Info(T("Create Snapshot"), T("Snapshot successfully taken."));
             }
           });
         }
@@ -908,26 +1006,26 @@ export class VolumesListTableConfig implements InputTableConf {
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.css'],
   templateUrl: './volumes-list.component.html',
-  providers: [SnackbarService]
+  providers: []
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit {
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {});
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {});
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {})
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {})
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, {})
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {})
   };
 
   expanded = false;
@@ -939,7 +1037,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar, protected snackbarService: SnackbarService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService) {
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter, job, pref);
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar, sorter, job, pref, mdDialog);
   }
 
   public repaintMe() {
@@ -962,7 +1060,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       const volumeData = res[1].data;
         for (let i = 0; i < volumeData.length; i++) {
           const volume = volumeData[i];
-          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar, this.snackbarService, this.storage, volume);
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, volume);
           volume.type = 'zpool';
 
           if (volume.children && volume.children[0]) {

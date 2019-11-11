@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {EntityModule} from '../common/entity/entity.module';
 import {NetworkService} from '../../services';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
+import { CoreService } from 'app/core/services/core.service';
 
 import {StaticRouteFormComponent} from './staticroutes/staticroute-form/';
 import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
@@ -33,7 +34,7 @@ import {routing} from './network.routing';
     IPMIComponent,
     NetworkSummaryComponent,
   ],
-  providers : [NetworkService, EntityFormService]
+  providers : [NetworkService, EntityFormService, CoreService]
 })
 export class NetworkModule {
 }

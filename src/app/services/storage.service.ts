@@ -5,6 +5,7 @@ import { RestService } from './rest.service';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Http, ResponseContentType } from '@angular/http';
 
 @Injectable()
 export class StorageService {
@@ -44,6 +45,10 @@ export class StorageService {
 
     let blob = new Blob([byteArray], {type: mime_type});
 
+    this.downloadBlob(blob, filename);
+  }
+
+  downloadBlob(blob, filename) {
     let dlink = document.createElement('a');
     document.body.appendChild(dlink);
     dlink.download = filename;
@@ -58,6 +63,16 @@ export class StorageService {
 
     dlink.click();
     dlink.remove();
+  }
+
+  streamDownloadFile(http:Http, url:string, filename:string, mime_type:string): Observable<any>{
+    return http.post(url, '',
+    { responseType: ResponseContentType.Blob })
+    .map(
+      (res) => {
+            const blob = new Blob([res.blob()], {type: mime_type} );
+            return blob;
+      });
   }
 
   // Handles sorting for entity tables and some other ngx datatables 
@@ -305,7 +320,12 @@ export class StorageService {
   // '12.4k'     ''               NaN
   // ' 10G'      '10 GiB'         10*1024**3 (10,737,418,240)
 
-  convertHumanStringToNum(hstr, dec=false) {
+  // hstr = the human string from the form; 
+  // dec = allow decimals; 
+  // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
+  // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
+  // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
+    convertHumanStringToNum(hstr, dec=false, allowedUnits?: string) {
 
       const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
 
@@ -338,10 +358,17 @@ export class StorageService {
 
       // get optional unit
       unit = hstr.replace(num, '');
-      if ( (unit) && !(unit = this.normalizeUnit(unit)) ) {
-          // error when unit is present but not recognized
-          this.humanReadable = '';
-          return NaN;
+      if (!unit && allowedUnits) {
+        unit = allowedUnits[0];
+      };
+      // error when unit is present and...
+      if ( (unit) && 
+          // ...allowedUnits are passed in but unit is not in allowed Units
+          (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase()) || 
+          // ...when allowedUnits are not passed in and unit is not recognized
+          !(unit = this.normalizeUnit(unit))) ) {
+        this.humanReadable = '';
+        return NaN;
       }
 
       let spacer = (unit) ? ' ' : '';
@@ -359,7 +386,7 @@ export class StorageService {
       do {
         bytes = bytes / 1024;
         i++;
-      } while (bytes > 1024);
+      } while (bytes > 1024 && i < 4);
       units = this.IECUnits[i];
     } else {
       units = 'bytes';

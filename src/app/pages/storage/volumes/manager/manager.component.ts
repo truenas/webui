@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
-import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -127,7 +127,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
 //    private dragulaService: DragulaService,
     private dialog:DialogService,
-    public snackBar: MatSnackBar,
     private loader:AppLoaderService,
     protected route: ActivatedRoute,
     public mdDialog: MatDialog,
@@ -614,12 +613,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   goBack() {
     this.router.navigate(['/', 'storage', 'pools']);
-  }
-
-  openSnackBar() {
-    this.snackBar.open(this.encryption_message, T("Warning"), {
-      duration: 5000,
-    });
   }
 
   openDialog() {

@@ -83,6 +83,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(){
+    window.onblur = () => {
+      this.stopListeners();
+    } 
+
+    window.onfocus = () => {
+      this.startListeners();
+    }
   }
 
   onMobileLaunch(evt: DashConfigItem) {
@@ -170,11 +177,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(){
-    // unsubscribe from middleware
-    this.statsEvents.complete();
-
-    // close out subscribers
-    this.statsDataEvents.complete();
+    
+    this.stopListeners();
     this.core.unregister({observerClass:this});
 
     // Restore top level scrolling 
@@ -184,21 +188,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   init(){
 
-    this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
-      if(evt.cpu){
-        this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
-      }
-      if(evt.virtual_memory){
-        this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
-      }
-      if(evt.interfaces){
-        const keys = Object.keys(evt.interfaces);
-        keys.forEach((key, index) => {
-          const data = evt.interfaces[key];
-          this.statsDataEvents.next({name:"NetTraffic_" + key, data: data});
-        });
-      }
-    });
+    this.startListeners();
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
       let clone = Object.assign([],evt.data);
@@ -268,6 +258,34 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
   }
 
+  startListeners(){
+
+    this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
+      
+      if(evt.cpu){
+        this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
+      }
+      if(evt.virtual_memory){
+        this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
+      }
+      if(evt.interfaces){
+        const keys = Object.keys(evt.interfaces);
+        keys.forEach((key, index) => {
+          const data = evt.interfaces[key];
+          this.statsDataEvents.next({name:"NetTraffic_" + key, data: data});
+        });
+      }
+    });
+
+  }
+
+  stopListeners(){
+    if(!this.statsEvents){ return; }
+
+    // unsubscribe from middleware
+    this.statsEvents.complete();
+  }
+
   setVolumeData(evt:CoreEvent){
     let vd = {};
 
@@ -310,8 +328,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
-      this.systemInformation = evt.data;
-      this.core.emit({name: 'PoolDataRequest', sender: this});
+      if(typeof this.systemInformation == 'undefined'){
+        this.systemInformation = evt.data;
+        this.core.emit({name: 'PoolDataRequest', sender: this});
+      }
     });
 
     this.core.emit({name: 'SysInfoRequest', sender: this});
@@ -398,5 +418,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.shake= true;
     }
   }
+
 
 }

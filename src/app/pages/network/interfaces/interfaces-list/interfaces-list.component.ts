@@ -4,16 +4,17 @@ import {interval} from 'rxjs';
 
 import { WebSocketService, NetworkService, DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
-import { MatSnackBar } from '@angular/material';
 import helptext from '../../../../helptext/network/interfaces/interfaces-list';
 import { EntityUtils } from '../../../common/entity/utils';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector : 'app-interfaces-list',
   templateUrl : './interfaces-list.component.html',
   styleUrls : [ './interfaces-list.component.css' ],
 })
-export class InterfacesListComponent implements OnDestroy {
+export class InterfacesListComponent extends ViewControllerComponent implements OnDestroy {
 
   public title = "Interfaces";
   //protected resource_name: string = 'network/interface/';
@@ -23,22 +24,18 @@ export class InterfacesListComponent implements OnDestroy {
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
   protected confirmDeleteDialog = {
-    message: T("Network connectivity will be interrupted. "),
+    message: helptext.delete_dialog_text,
   }
   protected hasDetails = true;
   protected entityList: any;
-  protected checkChangesSubscription: any;
   public hasPendingChanges = false;
   public checkinWaiting = false;
-  pending_changes_text: string;
-  pending_checkin_text: string;
-  checkin_text: string = T("Once applied, changes will revert after ");
-  checkin_text_2: string = T(" seconds unless kept permanently. Adjust this amount to allow for testing.");
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
   public checkin_remaining = null;
   checkin_interval;
   public ha_enabled = false;
+  public helptext = helptext
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name', always_display: true },
@@ -67,7 +64,9 @@ export class InterfacesListComponent implements OnDestroy {
   };
 
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
-              private snackBar: MatSnackBar, private dialog: DialogService) {}
+              private dialog: DialogService) {
+                super();
+              }
 
   dataHandler(res) {
     const rows = res.rows;
@@ -143,14 +142,19 @@ export class InterfacesListComponent implements OnDestroy {
   }
 
   preInit(entityList) {
-    this.pending_changes_text = helptext.pending_changes_text;
-    this.pending_checkin_text = helptext.pending_checkin_text + " " + helptext.pending_checkin_text_2;
     this.entityList = entityList;
 
     this.checkPendingChanges();
-    this.checkChangesSubscription = interval(10000).subscribe(x => {
-      this.checkPendingChanges();
-      this.checkWaitingCheckin();
+    this.checkWaitingCheckin();
+    this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
+      if (evt && evt.data.checkin) {
+        this.checkin_remaining = null;
+        this.checkinWaiting = false;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
+        this.hasPendingChanges = false;
+      }
     });
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
@@ -208,14 +212,16 @@ export class InterfacesListComponent implements OnDestroy {
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
-            this.hasPendingChanges = false;
-            this.snackBar.open(helptext.changes_saved_successfully, T("Ok"));
+            // can't decide if this is worth keeping since the checkin happens intantaneously
+            //this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
+            this.checkWaitingCheckin();
           }, err => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
-            new EntityUtils().handleWSError(this.entityList, err);
+            new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
           });
         }
       });
@@ -230,6 +236,7 @@ export class InterfacesListComponent implements OnDestroy {
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.checkin').subscribe((success) => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
             this.entityList.loader.close();
             this.entityList.dialogService.Info(
               helptext.checkin_complete_title,
@@ -240,7 +247,7 @@ export class InterfacesListComponent implements OnDestroy {
             this.checkin_remaining = null;
           }, (err) => {
             this.entityList.loader.close();
-            new EntityUtils().handleWSError(this.entityList, err);
+            new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
           });
         }
       }
@@ -256,11 +263,12 @@ export class InterfacesListComponent implements OnDestroy {
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.rollback').subscribe(res => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
-            this.snackBar.open(helptext.changes_rolled_back, T("Ok"));
+            this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '300px', "info", true);
           }, err => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
@@ -270,22 +278,11 @@ export class InterfacesListComponent implements OnDestroy {
       });
   }
 
-  /*doAdd() {
-    this.networkService.getInterfaceNicChoices().subscribe(
-      (res)=>{
-        if (res.length == 0) {
-          this.snackBar.open("All interfaces are already in use.", 'close', { duration: 5000 });
-        } else {
-          this.router.navigate(new Array('/').concat(this.route_add));
-        }
-      }
-    )
-  }*/
   goToHA() {
     this.router.navigate(new Array('/').concat('system', 'failover'));
   }
   
   ngOnDestroy() {
-    this.checkChangesSubscription.unsubscribe();
+    this.core.unregister({observerClass:this});
   }
 }
