@@ -1,6 +1,6 @@
 
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
@@ -166,7 +166,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
+    protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService,
     protected matDialog: MatDialog) {
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
@@ -893,7 +893,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                   }
                   if (message === "") {
-                    this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
+                    this.dialogService.Info(T("Items deleted"), '', '300px', 'info', true);
                   } else {
                     message = '<ul>' + message + '</ul>';
                     this.dialogService.errorReport(T('Items Delete Failed'), message);
