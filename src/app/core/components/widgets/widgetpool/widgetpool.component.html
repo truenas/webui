@@ -5,12 +5,15 @@
         <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}">
 
           <!-- Mobile Only: Exit widget -->
-          <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default" >
+          <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default" 
+            ix-auto ix-auto-type="button" ix-auto-identifier="goBack">
             <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
           </button>
 
           <!-- Back to previous slide -->
-          <button class="mat-card-title-text primary-nav" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+          <button class="mat-card-title-text primary-nav" *ngIf="currentSlide !== '0'" mat-icon-button color="default" 
+            (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
+            ix-auto ix-auto-type="button" ix-auto-identifier="previousSlide">
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
           <span class="mat-card-title-text primary-nav">
@@ -20,7 +23,8 @@
           </span>
 
             <div class="controls">
-              <button mat-icon-button class="" (click)="router.navigate(['storage/pools/status/' + poolState.id.toString()])">
+              <button mat-icon-button class="" (click)="router.navigate(['storage/pools/status/' + poolState.id.toString()])"
+                [ix-auto]="poolState.name" ix-auto-type="button" ix-auto-identifier="poolStatus">
                 <mat-icon role="img"
                   matTooltip="Pool Status"
                   matTooltipPosition="above"
@@ -29,7 +33,8 @@
                 </mat-icon>
               </button>
 
-              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/disk'])">
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/disk'])"
+                ix-auto ix-auto-type="button" ix-auto-identifier="diskReports">
                 <mat-icon role="img"
                   matTooltip="Disk Reports"
                   matTooltipPosition="above"
@@ -114,22 +119,26 @@
                   
                   <mat-list-item (click)="updateSlide('data', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
                     <strong>Data: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
-                    <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide">chevron_right</mat-icon>
+                    <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide"
+                      ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, { children: poolState.topology.cache})" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
                     <strong>Caches: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
-                    <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide">chevron_right</mat-icon>
+                    <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide"
+                      ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, {children: poolState.topology.spare})" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
                     <strong>Spares: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
-                    <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide">chevron_right</mat-icon>
+                    <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide"
+                      ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.log.length > 0, 1, 0, {children: poolState.topology.log})" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
                     <strong>Logs: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
-                    <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide">chevron_right</mat-icon>
+                    <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide"
+                      ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
                 </mat-list>
@@ -152,7 +161,7 @@
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                   </span>
 
-                <mat-icon class="next-slide">chevron_right</mat-icon>
+                <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
             <!--</div>-->
@@ -172,7 +181,7 @@
                 <span *ngIf="disk.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
-                <mat-icon class="next-slide">chevron_right</mat-icon>
+                <mat-icon class="next-slide" [ix-auto]="disk.disk" ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>
               
             </mat-list>
@@ -186,7 +195,7 @@
                 <span *ngIf="path[2].dataSource.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
-                <mat-icon class="next-slide">chevron_right</mat-icon>
+                <mat-icon class="next-slide" [ix-auto]="path[2].dataSource.disk" ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
 
