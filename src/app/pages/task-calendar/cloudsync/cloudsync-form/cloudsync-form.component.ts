@@ -647,15 +647,14 @@ export class CloudsyncFormComponent implements OnInit {
           if (this.data.credentials) {
             this.formGroup.controls['credentials'].setValue(this.data.credentials.id);
           }
-          if(this.data.attributes) {
-            if (this.formGroup.controls['bucket']) {
-              this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
+          for (let attr in this.data.attributes) {
+            if (this.formGroup.controls[attr]) {
+              this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
+              if (attr === 'bucket' && this.formGroup.controls['bucket_input']) {
+                this.formGroup.controls['bucket_input'].setValue(this.data.attributes[attr]);
+              }
             }
-            if (this.formGroup.controls['bucket_input']) {
-              this.formGroup.controls['bucket_input'].setValue(this.data.attributes.bucket);
-            }
-            this.formGroup.controls['folder'].setValue(this.data.attributes.folder);
-          }
+          };
         }
       });
     }
