@@ -655,7 +655,7 @@ export class CloudsyncFormComponent implements OnInit {
                   this.formGroup.controls['bucket_input'].setValue(this.data.attributes[attr]);
                 }
               }
-            };
+            }
           }
         }
       });
