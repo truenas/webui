@@ -421,14 +421,14 @@ protocol_tooltip: T('The type of connection the port uses. Choose \
 jail_port_placeholder: T('Jail Port Number'),
 jail_port_tooltip: T('Port to assign to this jail. Avoid using a port \
  that is already in use by another jail or system service. For a list \
- of commonly used ports, see this \
+ of commonly-used ports, see this \
  <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml" \
  target="_blank">Internet Assigned Numbers Authority \(IANA\) registry</a>.'),
 
 host_port_placeholder: T('Host Port Number'),
 host_port_tooltip: T('The port on the host system that forwards data to \
  the jail.  Avoid using a port that is already in use by another system \
- service. For a list of commonly used ports, see this \
+ service. For a list of commonly-used ports, see this \
  <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml" \
  target="_blank">Internet Assigned Numbers Authority \(IANA\) registry</a>.'),
 
