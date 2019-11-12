@@ -325,7 +325,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       column['maxWidth'] = (this.colMaxWidths.find(({name}) => name === column.name)).maxWidth;
     })
     // Delete maXwidth on last col displayed (prevents a display glitch)
-    delete (this.conf.columns[Object.keys(this.conf.columns).length-1]).maxWidth;
+    if (this.conf.columns.length > 0) {
+      delete (this.conf.columns[Object.keys(this.conf.columns).length-1]).maxWidth;
+    }
     return this.conf.columns;
   }
 
@@ -969,9 +971,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // resets col view to the default set in the table's component
   resetColViewToDefaults() {
-    this.conf.columns = this.originalConfColumns;
-    this.updateTableHeightAfterDetailToggle();
-    this.selectColumnsToShowOrHide();
+    if (!(this.conf.columns.length === this.originalConfColumns.length && 
+        this.conf.columns.length === this.allColumns.length)) {
+      this.conf.columns = this.originalConfColumns;
+      this.updateTableHeightAfterDetailToggle();
+      this.selectColumnsToShowOrHide();
+    }
   }
 
   isChecked(col:any) {
