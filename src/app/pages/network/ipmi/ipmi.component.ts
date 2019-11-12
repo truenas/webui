@@ -168,6 +168,10 @@ export class IPMIComponent {
     })
   }
 
+  beforeSubmit(data) {
+    delete data.conf_password;
+  }
+
   customSubmit(payload){
     let call = this.ws.call('ipmi.update', [ this.selectedValue, payload ]);
     if (this.remoteController) {
