@@ -16,7 +16,7 @@
       <!-- START MultiMenu-->
       <div *ngIf="columnFilter && allColumns && allColumns.length > 0">
         <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle">
-          <span>Columns <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
+          <span>{{"Columns" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
         </button>
         <mat-menu #menu="matMenu" multiple overlapTrigger="false">
 
@@ -27,8 +27,8 @@
                 <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
                 <mat-icon *ngIf="!checkLength()">remove</mat-icon>
               </span>
-              <span *ngIf="!checkLength()">Select All</span>
-              <span *ngIf="checkLength()">Unselect All</span>
+              <span *ngIf="!checkLength()">{{"Select All" | translate}}</span>
+              <span *ngIf="checkLength()">{{"Unselect All" | translate}}</span>
             </button>
           </div>
 
@@ -48,7 +48,7 @@
               <span>
                 <mat-icon>undo</mat-icon>
               </span>
-              <span>Reset to Defaults</span>
+              <span>{{"Reset to Defaults" | translate}}</span>
             </button>
           </div>
         </mat-menu>
@@ -94,7 +94,7 @@
     [style.display]="selected.length > 0 ? 'block' : 'none'">
     <div>
       <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
-        <strong>Batch Operations</strong>
+        <strong>{{"Batch Operations" | translate}}</strong>
       </div>
       <!-- -->
       <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
@@ -122,7 +122,7 @@
           <!-- With Labels -->
           <ng-container>
             <button mat-button (click)="doMultiDelete(this.selected);">
-              <mat-icon>delete</mat-icon><br><span>DELETE</span>
+              <mat-icon>delete</mat-icon><br><span>{{"Delete" | translate}}</span>
             </button>
           </ng-container>
 
