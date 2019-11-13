@@ -940,6 +940,13 @@ export class CloudCredentialsFormComponent {
     return true;
   }
 
+  isCustActionDisabled(actionId: string) {
+    if (actionId === 'validCredential') {
+      return this.entityForm.formGroup.invalid;
+    }
+    return false;
+  }
+
   preInit() {
     this.oauthClentIdField = _.find(this.fieldConfig, {'name': 'client_id'});
     this.oauthClentSecretField = _.find(this.fieldConfig, {'name': 'client_secret'});
