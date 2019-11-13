@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
@@ -7,6 +7,7 @@ import { matchOtherValidator } from '../../../pages/common/entity/entity-form/va
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
 import productText from '../../../helptext/product';
+import { Observable, Subscription } from 'rxjs';
 
 import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
@@ -19,7 +20,7 @@ import { ApiService } from 'app/core/services/api.service';
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss']
 })
-export class SigninComponent implements OnInit {
+export class SigninComponent implements OnInit, OnDestroy {
   @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
   @ViewChild(MatButton, { static: false}) submitButton: MatButton;
 
@@ -33,6 +34,7 @@ export class SigninComponent implements OnInit {
   public copyrightYear = globalHelptext.copyright_year;
   private interval: any;
   public exposeLegacyUI = false;
+  public tokenObservable:Subscription;
 
   signinData = {
     username: '',
@@ -62,11 +64,6 @@ export class SigninComponent implements OnInit {
     private http:Http) {
     this.ws = ws;
     this.checkSystemType();
-    this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
-      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
-        this.redirect();
-      }
-    })
    }
 
   checkSystemType() {
@@ -82,6 +79,10 @@ export class SigninComponent implements OnInit {
           setInterval(() => {
             this.getHAStatus();
           }, 6000);
+        } else {
+          if (this.canLogin()) {
+            this.loginToken();
+          }
         }
         window.localStorage.setItem('is_freenas', res);
         if (!this.is_freenas && window.localStorage.exposeLegacyUI === 'true') {
@@ -92,15 +93,39 @@ export class SigninComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
+      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
+        this.redirect();
+      }
+    });
     if (!this.logo_ready) {
       this.interval = setInterval(() => {
         this.checkSystemType();
       }, 5000);
     }
+    
+    if (this.canLogin()) {
+        this.loginToken();
+    }
+
     this.ws.call('user.has_root_password').subscribe((res) => {
       this.has_root_password = res;
     })
 
+    this.setPasswordFormGroup = this.fb.group({
+      password: new FormControl('', [Validators.required]),
+      password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
+    })
+  }
+
+  ngOnDestroy() {
+      this.core.unregister({observerClass:this});
+      if(this.tokenObservable){
+        this.tokenObservable.unsubscribe();
+      }
+  }
+
+  loginToken() {
     let middleware_token;
     if (window['MIDDLEWARE_TOKEN']) {
       middleware_token = window['MIDDLEWARE_TOKEN'];
@@ -144,10 +169,17 @@ export class SigninComponent implements OnInit {
       this.ws.login_token(this.ws.token)
                        .subscribe((result) => { this.loginCallback(result); });
     }
-    this.setPasswordFormGroup = this.fb.group({
-      password: new FormControl('', [Validators.required]),
-      password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
-    })
+  }
+
+  canLogin() {
+    if (this.logo_ready && this.connected &&
+       (this.failover_status === 'SINGLE' ||
+        this.failover_status === 'MASTER' || 
+        this.is_freenas )) {
+          return true;
+    } else {
+      return false;
+    }
   }
 
   getHAStatus() {
@@ -171,6 +203,9 @@ export class SigninComponent implements OnInit {
               this.ha_status_text = T('HA is reconnecting.');
             } else {
               this.ha_status_text = T('HA is disabled.');
+            }
+            if (this.canLogin()) {
+              this.loginToken();
             }
           }, err => {
             this.checking_status = false;
@@ -230,15 +265,15 @@ export class SigninComponent implements OnInit {
       } else {
         this.router.navigate([ '/dashboard' ]);
       }
-      this.core.unregister({observerClass:this});
+      this.tokenObservable.unsubscribe(); 
     }
   }
   successLogin() {
     this.snackBar.dismiss();
-    this.ws.call('auth.generate_token', [300]).subscribe((result) => {
+    this.tokenObservable = this.ws.call('auth.generate_token', [300]).subscribe((result) => {
       if (result) {
         this.ws.token = result;
-        this.redirect()
+        this.redirect();
       }
     });
   }

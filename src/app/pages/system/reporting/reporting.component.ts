@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
-import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../services/';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext } from 'app/helptext/system/reporting';
@@ -18,7 +17,7 @@ export class ReportingComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
   public entityForm: any;
-  private settings_saved = T("Settings saved.");
+  private settings_saved = T("Settings saved");
   public rrd_checkbox: any;
   custActions: any[] = [
     {
@@ -74,8 +73,7 @@ export class ReportingComponent {
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
-    private ws: WebSocketService,
-    public snackBar: MatSnackBar,
+    private ws: WebSocketService, public dialog: DialogService
   ) {}
 
   afterInit(entityEdit: any) {
@@ -111,7 +109,7 @@ export class ReportingComponent {
       this.load.close();
       this.rrd_checkbox['isHidden'] = true;
       this.entityForm.formGroup.controls['confirm_rrd_destroy'].setValue(false)
-      this.snackBar.open(this.settings_saved, T('close'), { duration: 5000 });
+      this.dialog.Info(this.settings_saved, '', '300px', 'info', true);
     }, (res) => {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);

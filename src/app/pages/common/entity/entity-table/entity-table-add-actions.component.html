@@ -26,11 +26,11 @@
 
   <button style="height:37px; margin-top:-1px;" mat-button color="primary" [matMenuTriggerFor]="menu" class="menu-toggle" *ngIf="this.totalActions> 1; else elseBlock"  matTooltip="{{ this.menuTriggerMessage | translate}}">
     <!--<button mat-button [matMenuTriggerFor]="menu">-->
-    <span>ACTIONS <mat-icon class="menu-caret ">arrow_drop_down</mat-icon></span>
+    <span>{{"Actions" | translate}} <mat-icon class="menu-caret ">arrow_drop_down</mat-icon></span>
   </button>
   <mat-menu #menu="matMenu" overlapTrigger="false">
     <button mat-menu-item (click)="this.entity.doAdd()" *ngIf="this.entity.conf.route_add" id="add_action_button">
-    <span>Add</span>
+    <span>{{"Add" | translate }}</span>
     <span>{{this.entity.conf.route_add_tooltip | translate}}</span>
   </button>
   <button id="add_action_button_{{action?.label}}" *ngFor="let action of actions" mat-menu-item (click)="action.onClick()">
@@ -44,8 +44,7 @@
 
   <ng-template #elseBlock>
     <!--When there is no route_add -->
-    <button mat-button color="primary" (click)="this.entity.doAdd()" *ngIf="this.entity.conf.route_add" matTooltip="{{this.entity.conf.route_addd_tooltip | translate}}" id="add_action_button">ADD</button>
-
+    <button [disabled]="entity.conf.addBtnDisabled" mat-button color="primary" (click)="this.entity.doAdd()" *ngIf="this.entity.conf.route_add" matTooltip="{{this.entity.conf.route_addd_tooltip | translate}}" id="add_action_button">{{"Add" | translate}}</button>
     <button id="add_action_button_{{action?.label}}" mat-button color="primary" *ngIf="!this.entity.conf.route_add && this.actions== 1" (click)="this.actions[0].onClick()"  matTooltip="{{action.label | translate}}">
     <span>{{this.actions[0].label | translate }}</span> 
     <span> &nbsp; {{this.actions.length}}</span>

@@ -9,6 +9,7 @@ import {
   OnInit,
   QueryList,
   TemplateRef,
+  ViewChild,
   ViewChildren,
   OnChanges,
   AfterViewInit
@@ -79,9 +80,8 @@ export interface FormConfig {
 
   goBack?();
   onSuccess?(res);
+  multiStateSubmit?:boolean;
 }
-
-
 
 @Component({
   selector : 'entity-form-embedded',
@@ -102,12 +102,15 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   public fieldConfig: FieldConfig[];
   public hasConf = true;
   public saveSubmitText = "Save";
+  public saveSubmitStatus:string = ""; 
   public actionButtonsAlign = "center";
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
   }
   get changes() { return this.formGroup.valueChanges; }
+  get statusChanges() { return this.formGroup.statusChanges; }
+  get dirty() { return this.entityForm ? this.entityForm.dirty : false; }
   get valid() { return this.formGroup.valid; }
   get value() { return this.formGroup.value; }
 
@@ -116,13 +119,13 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   templates: QueryList<EntityTemplateDirective>;
 
   @ViewChildren('component') components;
+  @ViewChild('entityForm', {static: false}) entityForm;
 
   public busy: Subscription;
 
   public sub: any;
   public error: string;
   public success = false;
-  //public data: Object = {};
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -149,7 +152,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
-    this.init(/*this.args*/);
+    this.init();
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
@@ -160,12 +163,25 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
           case "SetHiddenFieldsets":
             this.setHiddenFieldSets(evt.data);
             break;
+          case "UpdateSaveButtonText":
+            this.saveSubmitText = evt.data;
+            break;
+          case "ResetSaveButtonText":
+            this.saveSubmitText = this.conf.saveSubmitText;
+            break;
+          case "SubmitStart":
+            this.saveSubmitStatus = '';
+            break;
+          case "SubmitComplete":
+            this.saveSubmitStatus = 'checkmark';
+            this.entityForm.form.markAsPristine();
+            break;
         }
       });
     }
   }
 
-  init(/*params*/){
+  init(){
 
     // Setup Fields
     this.fieldConfig = this.conf.fieldConfig;
@@ -184,12 +200,6 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
     if (this.conf.values) {
       // We are no longer responsible for API calls.
-      // this.data is now provided by parent component.
-        //this.data = this.conf.values;
-        //console.warn(this.data);
-	if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
-	  //this.data = this.conf.resourceTransformIncomingRestData(this.data);
-	}
 	for (let i in this.data) {
 	  let fg = this.formGroup.controls[i];
 	  if (fg) {
@@ -213,31 +223,26 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
 
     if(changes.data){
-      //console.log("ENTITY FORM EMBEDDED: values changed!!!");
-      //this.ngOnInit();
       this.init();
       this.onFormGroupChanged();
+      if(this.entityForm){
+        this.entityForm.form.markAsPristine();
+      }
     }
   }
 
   setControlChangeDetection(){ 
-    //console.log(this.formGroup);
     this.formGroup.valueChanges.subscribe((evt) => {
-        //console.log("******** FormGroupValueChanged ********");
         this.target.next({name:"FormGroupValueChanged",data:evt,sender:this.formGroup});
     });
     let fg = Object.keys(this.formGroup.controls);
     fg.forEach((control) => {
-      //console.log(control);
       this.formGroup.controls[control].valueChanges.subscribe((evt) => { 
-        //console.log("******** ControlValueChanged ********");
-        //this.target.next({name:"ControlValueChanged",data:evt,sender:control});
       });
     });
   }
 
   onFormGroupChanged(){
-      //console.warn(this.formGroup.controls);
       const controls = Object.keys(this.formGroup.controls);
       const configControls = this.controls.map((item) => item.name);
 
@@ -251,11 +256,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	  this.formGroup.addControl(name, this.createControl(config));
 	});
 
-      //console.warn(this.formGroup.controls);
-      // Data must be replaced instead of mutated
-      // or changedetection won't fire on control components
       let fg = Object.assign({}, this.formGroup);
-      //this.formGroup = fg;
   }
 
   goBack() {
@@ -288,8 +289,6 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       this.conf.beforeSubmit(value);
     }
 
-    //this.loader.open();
-    //console.log(value);
     if(!eventName){
       this.target.next({name:"FormSubmitted", data:value, sender:this.conf});
     } else {
@@ -322,7 +321,6 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   createControl(config: FieldConfig) {
-    //console.log("******** CREATING CONTROL!! ********")
     const {disabled, validation, value} = config;
     return this.fb.control({disabled, value}, validation);
   }
