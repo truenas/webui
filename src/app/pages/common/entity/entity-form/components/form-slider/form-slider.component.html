@@ -1,5 +1,4 @@
-<div id="{{config.name}}" class="entity-slider" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']"
-  ix-auto ix-auto-type="slider" ix-auto-identifier="{{config.placeholder}}">
+<div id="{{config.name}}" class="entity-slider" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']">
   <label>{{ config.placeholder | translate }}</label>
   <mat-slider class="full-width" thumbLabel [min]="config.min" [max]="config.max" [formControlName]="config.name" (change)="updateValue($event)" MatSliderChange>
   </mat-slider>

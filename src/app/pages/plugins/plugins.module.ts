@@ -3,7 +3,6 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgUploaderModule} from 'ngx-uploader';
 import { MaterialModule } from '../../appMaterial.module';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -19,7 +18,7 @@ import { AvailablePluginsComponent } from './available-plugins/available-plugins
   imports : [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing, MaterialModule, TranslateModule,
-    FlexLayoutModule, CommonDirectivesModule
+    FlexLayoutModule
   ],
   declarations : [
   	PluginAddComponent,

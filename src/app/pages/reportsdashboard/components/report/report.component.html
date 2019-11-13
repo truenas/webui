@@ -6,23 +6,19 @@
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
           <div class="line-chart-tools" *ngIf="localControls"> 
-            <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" (click)="timeZoomIn()"
-                ix-auto ix-auto-type="button" ix-auto-identifier="{{reportTitle}}_zoomIn">
+            <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" (click)="timeZoomIn()">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-plus" ></mat-icon>
                   </button>
                 
-                  <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex <= 0" (click)="timeZoomOut()"
-                    ix-auto ix-auto-type="button" ix-auto-identifier="{{reportTitle}}_zoomOut">
+                  <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex <= 0" (click)="timeZoomOut()">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-magnify-minus"></mat-icon>
                   </button>
                 
-                  <button class="tool-icon" mat-icon-button (click)="stepBack()"
-                    ix-auto ix-auto-type="button" ix-auto-identifier="{{reportTitle}}_stepBack">
+                  <button class="tool-icon" mat-icon-button (click)="stepBack()">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-rewind" ></mat-icon>
                   </button>
                 
-                  <button class="tool-icon" mat-icon-button (click)="stepForward()" [disabled]="stepForwardDisabled"
-                    ix-auto ix-auto-type="button" ix-auto-identifier="{{reportTitle}}_stepForward">
+                  <button class="tool-icon" mat-icon-button (click)="stepForward()" [disabled]="stepForwardDisabled">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-fast-forward"></mat-icon>
                   </button>
           </div>

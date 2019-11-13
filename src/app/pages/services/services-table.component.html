@@ -12,8 +12,7 @@
       <span class="datatable-header-cell-label">Name</span>
     </ng-template>
     <ng-template let-value="value" ngx-datatable-cell-template>
-      <div id="row-name__{{value}}"
-      ix-auto ix-auto-type="value" ix-auto-identifier="{{value}}">{{value}}</div>
+      <div id="row-name__{{value}}">{{value}}</div>
     </ng-template>
   </ngx-datatable-column>
   <ngx-datatable-column name="State">
@@ -24,15 +23,13 @@
       <mat-spinner [diameter]='40' *ngIf="row['onChanging']; else actionButtons"></mat-spinner>
       <ng-template #actionButtons>
         <div class="clickable" 
-          id="overlay__{{row.label}}"
-          ix-auto ix-auto-type="overlay" ix-auto-identifier="{{row.label}}_Running"
+        id="overlay__{{row.label}}"
           (click)="this.conf.toggle(row)" 
           matTooltip="{{value}}" matTooltipPosition="right">
         </div>
         <mat-slide-toggle
           [checked]="value === 'RUNNING' ? true : false"
-          id="slide-toggle__{{row.label}}"
-          ix-auto ix-auto-type="slider" ix-auto-identifier="{{row.label}}_Running">
+          id="slide-toggle__{{row.label}}">
         </mat-slide-toggle>
       </ng-template>
     </ng-template>
@@ -42,8 +39,7 @@
       <span class="datatable-header-cell-label">Start Automatically</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-      <mat-checkbox id="checkbox__{{row.label}}" class="checkbox" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"
-      ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{row.label}}_Start Automatically"></mat-checkbox>
+      <mat-checkbox id="checkbox__{{row.label}}" class="checkbox" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"></mat-checkbox>
     </ng-template>
   </ngx-datatable-column>
   <ngx-datatable-column name="Actions" [flexGrow]="2">
@@ -51,8 +47,7 @@
       <span class="datatable-header-cell-label">Actions</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-      <button mat-icon-button id="action-button__{{row.label}}" (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Configure" matTooltipPosition="right" 
-      ix-auto ix-auto-type="button" ix-auto-identifier="{{row.label}}_Actions">
+      <button mat-icon-button id="action-button__{{row.label}}" (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Configure" matTooltipPosition="right" >
         <mat-icon>edit</mat-icon>
       </button>
       <button mat-icon-button (click)="this.conf.openNetdataPortal()" style="position: relative;bottom:3px;left:35px"  matTooltip="Launch" matTooltipPosition="right" *ngIf="row.title == 'netdata' && row.state == 'RUNNING'">

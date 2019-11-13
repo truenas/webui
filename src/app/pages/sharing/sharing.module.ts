@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { JailService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
@@ -48,8 +47,7 @@ import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-cha
     EntityModule,
     MaterialModule,
     TranslateModule,
-    FlexLayoutModule,
-    CommonDirectivesModule
+    FlexLayoutModule
   ],
   declarations : [
     AFPListComponent,
