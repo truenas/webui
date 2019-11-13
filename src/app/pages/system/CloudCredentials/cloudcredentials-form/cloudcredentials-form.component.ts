@@ -874,7 +874,7 @@ export class CloudCredentialsFormComponent {
             if (!this.entityForm.formGroup.controls[item].valid) {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
-            if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3') {
+            if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3' && item !== 'drives-ONEDRIVE') {
               attr_name = item.split("-")[0];
               if (value[item] != '' && value[item] != undefined) {
                 attributes[attr_name] = value[item];
@@ -1051,7 +1051,7 @@ export class CloudCredentialsFormComponent {
     }
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
-        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && value[item] != '') {
+        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
           attr_name = item.split("-")[0];
           attributes[attr_name] = value[item];
         }
