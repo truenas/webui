@@ -9,8 +9,10 @@
         <span class="spacer"></span>
         <div>
           <mat-form-field>
-            <mat-select placeholder="Load Colors from Existing Theme"  [(value)]="baseTheme">
-              <mat-option *ngFor="let theme of baseThemes" value="{{theme.name}}">
+            <mat-select placeholder="Load Colors from Existing Theme"  [(value)]="baseTheme"
+            ix-auto ix-auto-type="select" ix-auto-identifier="themeFilter">
+              <mat-option *ngFor="let theme of baseThemes" value="{{theme.name}}"
+              ix-auto ix-auto-type="option" ix-auto-identifier="{{theme.name}}">
                 {{ theme.name }}
               </mat-option>
             </mat-select>
@@ -20,15 +22,15 @@
       </mat-toolbar-row>
 
       <div class="tabs" fxFlex="100" fxLayout="row" fxLayoutAlign="space-around center">
-        <div fxFlex="50" class="tab"><a alt="General tab" (click)="hideFieldSet('Colors')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'General'}">GENERAL</span></a></div>
-        <div fxFlex="50" class="tab"><a alt="Colors tab" (click)="hideFieldSet('General')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Colors'}">COLORS</span></a></div>
-        <div fxFlex="50" class="tab"><a alt="Preview Options tab" (click)="hideFieldSet('All')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Preview'}">PREVIEW</span></a></div>
+        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="GENERAL"><a alt="General tab" (click)="hideFieldSet('Colors')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'General'}">GENERAL</span></a></div>
+        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="COLORS"><a alt="Colors tab" (click)="hideFieldSet('General')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Colors'}">COLORS</span></a></div>
+        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="PREVIEW"><a alt="Preview Options tab" (click)="hideFieldSet('All')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Preview'}">PREVIEW</span></a></div>
       </div>
 
       <mat-card-content fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between stretch">
 
         <div class="preview-controls" [ngClass]="{'hidden': currentTab !== 'Preview'}">
-          <mat-slide-toggle [checked]="" [(ngModel)]="globalPreview">Global Preview</mat-slide-toggle>
+          <mat-slide-toggle [checked]="" [(ngModel)]="globalPreview" ix-auto ix-auto-type="slider" ix-auto-identifier="Global Preview">Global Preview</mat-slide-toggle>
         </div>
 
         <div class="embedded-form"  [ngClass]="{'hidden': currentTab == 'Preview'}" >

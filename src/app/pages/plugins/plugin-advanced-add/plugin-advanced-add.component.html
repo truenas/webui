@@ -1,7 +1,8 @@
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <mat-card>
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
-    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
+    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" 
+      ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="Basic Properties">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{"Basic Properties" | translate}}
@@ -16,10 +17,12 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()" 
+          ix-auto ix-auto-type="button" ix-auto-identifier="basic_NEXT">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)">
+    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" 
+      ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="Jail Properties">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{"Jail Properties" | translate}}
@@ -30,11 +33,14 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
-        <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
+        <button mat-button color="warn" type="button" (click)="prevStep()" 
+          ix-auto ix-auto-type="button" ix-auto-identifier="jail_PREVIOUS">{{ "Previous" | translate }}</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()" 
+          ix-auto ix-auto-type="button" ix-auto-identifier="jail_NEXT">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)">
+    <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" 
+      ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="Network Properties">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{"Network Properties" | translate}}
@@ -45,11 +51,14 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
-        <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
+        <button mat-button color="warn" type="button" (click)="prevStep()" 
+          ix-auto ix-auto-type="button" ix-auto-identifier="network_PREVIOUS">{{ "Previous" | translate }}</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()" 
+          ix-auto ix-auto-type="button" ix-auto-identifier="network_NEXT">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)">
+    <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)" 
+      ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="Custom Properties">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{"Custom Properties" | translate}}
@@ -60,11 +69,13 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
+        <button mat-button color="warn" type="button" (click)="prevStep()" 
+          ix-auto ix-auto-type="button" ix-auto-identifier="custom_PREVIOUS">{{ "Previous" | translate }}</button>
         <!-- <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button> -->
       </mat-action-row>
     </mat-expansion-panel>
-<!--     <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
+<!--     <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)" 
+    ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="RCTL Limits">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{"RCTL Limits" | translate}}
@@ -75,12 +86,15 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
+        <button mat-button color="warn" type="button" (click)="prevStep()" 
+          ix-auto ix-auto-type="button" ix-auto-identifier="rctl_PREVIOUS">{{ "Previous" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel> -->
     <mat-card-actions>
-      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid" >{{ "Save" | translate }}</button>
-      <button *ngIf="route_success" (click)="goBack()" mat-button color="accent" type="button">{{ "Cancel" | translate }}</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid" 
+        ix-auto ix-auto-type="button" ix-auto-identifier="SAVE">{{ "Save" | translate }}</button>
+      <button *ngIf="route_success" (click)="goBack()" mat-button color="accent" type="button"
+        ix-auto ix-auto-type="button" ix-auto-identifier="CANCEL">{{ "Cancel" | translate }}</button>
     </mat-card-actions>
   </form>
 </mat-card>
