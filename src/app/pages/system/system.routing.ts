@@ -18,6 +18,7 @@ import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
+import {ManualUpdateConfigSaveComponent} from './update/manualupdate/manualupdateconfig-save/'
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
@@ -154,6 +155,11 @@ export const routes: Routes = [
               path:'',
               component: ManualUpdateComponent,
               data: { title: 'Manual Update', breadcrumb: 'Manual Update' },
+            },
+            {
+              path:'saveconfig',
+              component: ManualUpdateConfigSaveComponent,
+              data: {title:'Save Config', breadcrumb: 'config'}
             }
           ]
         },

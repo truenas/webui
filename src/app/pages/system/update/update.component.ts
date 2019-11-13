@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Http } from '@angular/http';
 import { Subscription } from 'rxjs';
-import { RestService, WebSocketService, SystemGeneralService, StorageService } from '../../../services/';
+import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -91,14 +90,12 @@ export class UpdateComponent implements OnInit, OnDestroy {
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
     customSubmit: this.saveConfigSubmit,
-    parent: this
   };
 
   protected dialogRef: any;
-  constructor(protected router: Router, protected route: ActivatedRoute,
+  constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
-    protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
-    protected storage: StorageService, protected http: Http) {
+    protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
       this.sysGenService.updateRunning.subscribe((res) => { 
         res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }
@@ -161,7 +158,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
               return "ALLOWED";
             }
             //comparing '.1' with '.2'
-            return version1[1] < version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
+            return version1[1] > version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
           }
           if(version1[1]){
             //handling a case where '.1' is compared with 'undefined'
@@ -432,11 +429,10 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
               if (!this.is_ha) {
                 this.ds  = this.dialogService.confirm(
-                  T("Download Update"), T("Continue with download?"),true,T("Download"),true,
+                  T("Download Update"), T("Continue with download?"),true,"",true,
                     T("Apply updates and reboot system after downloading."),
                     'update.update',[{ train: this.train, reboot: false }]
                 )
-                this.ds.componentInstance.isSubmitEnabled = true;
                 this.ds.afterClosed().subscribe((status)=>{
                   if(status){
                     if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
@@ -445,7 +441,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                       this.dialogRef.componentInstance.submit();
                       this.dialogRef.componentInstance.success.subscribe((succ) => {
                         this.dialogRef.close(false);
-                        this.dialogService.Info(T("Updates successfully downloaded"),'', '450px', 'info', true);
+                        this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
                         this.pendingupdates();
 
                       });
@@ -649,39 +645,34 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   async saveConfigSubmit(entityDialog) {
-    parent = entityDialog.parent;
     await entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
-      let mimetype;
       if (res) {
         const hostname = res.hostname.split('.')[0];
         const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
         fileName = hostname + '-' + date;
         if (entityDialog.formValue['secretseed']) {
           fileName += '.tar';
-          mimetype = 'application/x-tar';
         } else {
           fileName += '.db';
-          mimetype = 'application/x-sqlite3';
         }
       }
 
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (succ) => {
-            const url = succ[1];
-            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
-            .subscribe(file => {
-              entityDialog.dialogRef.close();
-              entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, err => {
-              entityDialog.dialogRef.close();
-              entityDialog.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
-            })
+            if (window.navigator.userAgent.search("Firefox")>0) {
+              window.open(succ[1]);
+          }
+            else {
+              window.location.href = succ[1];
+            } 
             entityDialog.dialogRef.close();
           },
           (err) => {
-            entityDialog.parent.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
+            entityDialog.snackBar.open(T("Check the network connection"), T("Failed") , {
+              duration: 5000
+            });
           }
         );
     });

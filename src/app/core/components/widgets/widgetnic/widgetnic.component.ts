@@ -41,15 +41,9 @@ interface NetIfInfo {
 }
 
 interface NetTraffic {
-  sent: string;
-  sentUnits: string;
-  received: string;
-  receivedUnits: string;
-}
-
-interface Converted {
-  value: string;
-  units: string;
+  "KB/s in": string;
+  "KB/s out": string;
+  name: string;
 }
 
 interface Slide {
@@ -130,26 +124,25 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     if(changes.nicState ){
       this.title = this.currentSlide == "0" ? "Interface" : this.nicState.name;
     }
-
   }
 
   ngOnInit(){
+
+    this.core.emit({name:"NetInfoRequest"});
+    
+    //Get Network info and determine Primary interface
+    this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
+    });
+
+    this.core.register({observerClass:this, eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
+    });
+
   }
 
   ngAfterViewInit(){
     this.stats.subscribe((evt:CoreEvent) => {
       if(evt.name == "NetTraffic_" + this.nicState.name){
-        const sent: Converted = this.convert(evt.data.sent_bytes_last);
-        const received: Converted = this.convert(evt.data.received_bytes_last);
-
-        let t = {
-          sent: sent.value,
-          sentUnits: sent.units,
-          received: received.value,
-          receivedUnits: received.units
-        }
-
-        this.traffic = t; //evt.data;
+        this.traffic = evt.data;
       }
     })
   }
@@ -210,55 +203,6 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
       return -1;
     }
     
-  }
-
-  convert(value): Converted{
-    let result;
-    let units;
-
-    // uppercase so we handle bits and bytes...
-    switch(this.optimizeUnits(value)){
-      case 'KB':
-        units = 'KiB';
-        result = value / 1024;
-        break;
-      case 'MB':
-        units = 'MiB';
-        result = value / 1024 / 1024;
-        break;
-      case 'GB':
-        units = 'GiB';
-        result = value / 1024 / 1024 / 1024;
-        break;
-      case 'TB':
-        units = 'TiB';
-        result = value / 1024 / 1024 / 1024 / 1024;
-        break;
-      case 'PB':
-        units = 'PiB';
-        result = value / 1024 / 1024 / 1024 / 1024 / 1024;
-        break;
-      default:
-        units = 'KiB';
-        result = 0.00;
-    }
-
-    return result ? { value: result.toFixed(2), units: units } : { value: '0.00', units: units };
-  }
-
-  optimizeUnits(value){
-    let units: string = 'B';
-    if(value > 1024 && value < (1024 * 1024)){
-      units = 'KB';
-    } else if (value >= (1024 * 1024) && value < (1024 * 1024 * 1024)){
-      units = 'MB'
-    } else if (value >= (1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024)){
-      units = 'GB'
-    } else if (value >= (1024 * 1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024 * 1024)){
-      units = 'TB'
-    }
-
-    return units;
   }
 
 }

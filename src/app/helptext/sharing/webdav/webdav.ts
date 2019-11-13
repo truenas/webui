@@ -6,7 +6,7 @@ export const helptext_sharing_webdav = {
     tooltip_name: T('Enter a name for the share.'),
     validator_name: [ Validators.required ],
 
-    placeholder_comment: T('Description'),
+    placeholder_comment: T('Comment'),
     tooltip_comment: T('Optional.'),
 
     placeholder_path: T('Path'),
@@ -23,7 +23,7 @@ export const helptext_sharing_webdav = {
  to the <samp>webdav</samp> or <samp>www</samp> user/group.'),
 
     column_name: T('Share Name'),
-    column_comment: T('Description'),
+    column_comment: T('Comment'),
     column_path: T('Path'),
     column_ro: T('Read Only'),
     column_perm: T('Change User and Group Ownership'),

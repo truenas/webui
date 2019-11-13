@@ -11,8 +11,7 @@
   <mat-menu #appMenu="matMenu">
     <span *ngFor="let action of actions">
 			<button id="action_button_{{ action?.name }}__{{action.id}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
-            || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);"
-            [disabled]="action.disabled">
+						|| entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);">
 				<span>{{ action?.label | translate }}</span>
     </button>
     </span>

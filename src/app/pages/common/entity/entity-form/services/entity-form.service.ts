@@ -128,9 +128,9 @@ export class EntityFormService {
     });
   }
 
-  getPoolDatasets(param = []) {
+  getPoolDatasets() {
     const nodes = [];
-    return this.ws.call('pool.filesystem_choices', param).toPromise().then((res)=> {
+    return this.ws.call('pool.filesystem_choices').toPromise().then((res)=> {
       for (let i = 0; i < res.length; i++) {
         const pathArr = res[i].split('/');
         if (pathArr.length === 1) {

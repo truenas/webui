@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material';
 import { TreeNode } from 'primeng/api';
 import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
 
@@ -9,7 +10,6 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { DialogService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
 
 interface PoolDiskInfo {
   name: any,
@@ -46,7 +46,7 @@ export class BootStatusListComponent implements OnInit {
   public boot_pool: any;
 
   constructor(_rest: RestService, private _router: Router, private ws: WebSocketService,
-    private dialog:DialogService, protected loader: AppLoaderService, protected aroute: ActivatedRoute) {
+    private dialog:DialogService, protected loader: AppLoaderService, public snackBar: MatSnackBar, protected aroute: ActivatedRoute) {
 
     }
 
@@ -73,6 +73,11 @@ export class BootStatusListComponent implements OnInit {
       });
     }
 
+    openSnackBar(message: string, action: string) {
+      this.snackBar.open(message, action , {
+        duration: 5000
+      });
+    }
     detach(disk:any){
       disk = disk.substring(5, disk.length);
       this.loader.open();
@@ -82,7 +87,7 @@ export class BootStatusListComponent implements OnInit {
           this._router.navigate(
             new Array('').concat('system','boot')
           );
-          this.dialog.Info(T(`Device detached `), T(`<i>${disk}</i> has been detached.`), '300px', 'info', true);
+          this.openSnackBar("Device detached.", "Success");
         },
         (res) => {
           this.loader.close();
@@ -119,7 +124,7 @@ export class BootStatusListComponent implements OnInit {
 
       if (data.name && data.name === 'freenas-boot') {
         item.actions = [{
-          label: T("Attach"),
+          label: "Attach",
           onClick: (row) => {
             this._router.navigate(new Array('').concat([ "system", "boot", "attach", row.name ]));
           },
@@ -128,14 +133,14 @@ export class BootStatusListComponent implements OnInit {
       }
       if (data.type && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
         item.actions = [{
-          label: T("Detach"),
+          label: "Detach",
           onClick: (row) => {
             this.detach(row.name)
           },
           isHidden: false,
         },
         {
-          label: T("Replace"),
+          label: "Replace",
           onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
           },
           isHidden: false,
@@ -144,7 +149,7 @@ export class BootStatusListComponent implements OnInit {
       if(data.type && boot_pool_data && boot_pool_data.type === 'disk' && data.path){
         item.actions = [
         {
-          label: T("Replace"),
+          label: "Replace",
           onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
           },
           isHidden: false,

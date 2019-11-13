@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
-import { MatStepper } from '@angular/material';
+import { MatSnackBar, MatStepper } from '@angular/material';
 import { DialogService } from '../../../../services/';
 import { EntityUtils } from '../utils';
 
@@ -38,7 +38,7 @@ export class EntityWizardComponent implements OnInit {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private formBuilder: FormBuilder, private entityFormService: EntityFormService,
     protected loader: AppLoaderService, protected fieldRelationService: FieldRelationService,
-    protected router: Router, protected aroute: ActivatedRoute,
+    public snackBar: MatSnackBar, protected router: Router, protected aroute: ActivatedRoute,
     private dialog: DialogService, protected translate: TranslateService) {
 
   }
@@ -163,7 +163,7 @@ export class EntityWizardComponent implements OnInit {
             if (this.conf.route_success) {
               this.router.navigate(new Array('/').concat(this.conf.route_success));
             } else {
-              this.dialog.Info(T("Settings saved"), '', '300px', 'info', true);
+              this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
             }
           }
         },

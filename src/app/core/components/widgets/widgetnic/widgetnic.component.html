@@ -62,11 +62,11 @@
                   <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
                     <div class="tr">
                       <div class="td label"><strong>In: &nbsp;</strong></div>
-                      <div class="td value"><span class="stat">{{traffic.received}}</span> {{traffic.receivedUnits}}/s</div>
+                      <div class="td value"><span class="stat">{{traffic["received_bytes_last"] | convert:'B to KB'}}</span> KB/s</div>
                     </div>
                     <div class="tr">
                       <div class="td label"><strong>Out: </strong>&nbsp;</div>
-                      <div class="td value"><span class="stat">{{traffic.sent}}</span> {{traffic.sentUnits}}/s</div>
+                      <div class="td value"><span class="stat">{{traffic["sent_bytes_last"] | convert:'B to KB'}}</span> KB/s</div>
                     </div>
                   </div>
 

@@ -24,7 +24,6 @@ xpaths = {
     'poolID': '//mat-expansion-panel-header/span[2]',
     'poolDetach': "//button[@id='action_button_Export/Disconnect__name_",
     'pooldestroyCheckbox': '//*[@id="destroy"]/mat-checkbox/label/div',
-    'confirmInput': '//div[@id="nameInput"]/mat-form-field/div/div/div/input',
     'poolconfirmCheckbox': '//*[@id="confirm"]/mat-checkbox/label/div',
     'confirmButton': '//div[3]/button[2]/span',
     'closeButton': '//div[2]/button/span',
@@ -103,8 +102,6 @@ def test_04_click_disconect_pool(browser):
 def test_05_set_destroy_data_and_Confirm_press_export_disconnect(browser):
     browser.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     browser.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
-    wait_on_element(browser, xpaths['confirmInput'])
-    browser.find_element_by_xpath(xpaths['confirmInput']).send_keys(pool1)
     element_present = is_element_present(browser, xpaths['confirmButton'])
     # taking screenshot
     test_name = sys._getframe().f_code.co_name
@@ -165,8 +162,6 @@ def test_09_click_disconect_pool(browser):
 def test_10_set_destroy_data_and_Confirm_press_export_disconnect(browser):
     browser.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     browser.find_element_by_xpath(xpaths['poolconfirmCheckbox']).click()
-    wait_on_element(browser, xpaths['confirmInput'])
-    browser.find_element_by_xpath(xpaths['confirmInput']).send_keys(pool2)
     element_present = is_element_present(browser, xpaths['confirmButton'])
     # taking screenshot
     test_name = sys._getframe().f_code.co_name

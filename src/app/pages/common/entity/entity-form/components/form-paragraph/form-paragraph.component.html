@@ -2,8 +2,8 @@
     <div fxLayoutAlign="start start" fxLayoutGap="8px">
         <mat-icon class="paragraph-icon" *ngIf="config.paragraphIcon">{{ config.paragraphIcon }}</mat-icon>
         <p [class.large]="config.isLargeText" [innerHTML]="config.paraText | translate | docreplace"></p>
-        <tooltip class="paratext-tooltip" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     </div>
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
     <mat-form-field class="full-width" style="display:none">
       <input matInput [type]="config.inputType ? config.inputType : 'text'"

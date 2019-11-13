@@ -334,8 +334,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 const current_field = this.fieldConfig.find((control) => control.name === i);
                 if (current_field.type === "array") {
                     this.setArrayValue(this.wsResponse[i], this.wsfg, i);
-                } else if (current_field.type === "list") {
-                  this.setObjectListValue(this.wsResponse[i], this.wsfg, i)
                 } else {
                   if (this.conf.dataHandler) {
                     this.conf.dataHandler(this);
@@ -649,20 +647,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
       formArray.insert(index, formGroup);
     });
-  }
-
-  setObjectListValue(listValue: object[], formArray: FormArray, fieldName: string) {
-    for (let i = 0; i < listValue.length; i++) {
-      if (formArray.controls[i] == undefined) {
-        const templateListField = _.cloneDeep(_.find(this.conf.fieldConfig, {'name': fieldName}).templateListField);
-        formArray.controls.push(this.entityFormService.createFormGroup(templateListField));
-        _.find(this.conf.fieldConfig, {'name': fieldName}).listFields.push(templateListField);
-      }
-
-      for (const [key, value] of Object.entries(listValue[i])) {
-        (<FormGroup>formArray.controls[i]).controls[key].setValue(value);
-      }
-    }
   }
 
   setRelation(config: FieldConfig) {

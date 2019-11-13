@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { MatDialog } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 
 import * as myIP from 'what-is-my-ip-address';
@@ -11,7 +11,6 @@ import { T } from '../../translate-marker';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
-import helptext from '../../helptext/plugins/plugins';
 
 @Component({
   selector: 'app-plugins-ui',
@@ -39,9 +38,8 @@ export class PluginsComponent {
   public columns: Array<any> = [
     { name: T('Jail'), prop: 'name', always_display: true },
     { name: T('Status'), prop: 'state' },
-    { name: T('Admin Portal'), prop: 'admin_portal'},
-    { name: T('IPv4 Address'), prop: 'ip4', hidden: true },
-    { name: T('IPv6 Address'), prop: 'ip6', hidden: true },
+    { name: T('IPv4 Address'), prop: 'ip4' },
+    { name: T('IPv6 Address'), prop: 'ip6' },
     { name: T('Version'), prop: 'version', hidden: true },
     { name: T('Plugin'), prop: 'plugin', hidden: true },
     { name: T('Release'), prop: 'release', hidden: true },
@@ -131,7 +129,8 @@ export class PluginsComponent {
       ttpos: "above",
       onClick: (selected) => {
         const selectedJails = this.getSelectedNames(selected);
-        this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content);
+
+        this.snackBar.open(T('Updating selected plugins.'), 'close', { duration: 5000 });
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
@@ -143,13 +142,14 @@ export class PluginsComponent {
               }
               if (message === "") {
                 this.entityList.table.rowDetail.collapseAllRows();
-                this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.succeed);
+                this.snackBar.open(T('Selected plugins updated.'), 'close', { duration: 5000 });
               } else {
                 message = '<ul>' + message + '</ul>';
                 this.dialogService.errorReport(T('Plugin Update Failed'), message);
               }
             },
             (res) => {
+              this.snackBar.open(T('Updating selected plugins failed.'), 'close', { duration: 5000 });
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
@@ -172,6 +172,7 @@ export class PluginsComponent {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private dialogService: DialogService,
+    private snackBar: MatSnackBar,
     private router: Router,
     protected matDialog: MatDialog) {
       myIP.v4().then((pubIp) => {
@@ -251,7 +252,8 @@ export class PluginsComponent {
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
             self.entityList.getData();
-            self.dialogService.Info(T('Pool Actived'), T("Successfully activated pool ") + value['selectedPool']);
+
+            self.snackBar.open("Successfully activate pool " + value['selectedPool'] , 'close', { duration: 5000 });
           },
           (res) => {
             self.entityList.loader.close();
@@ -349,8 +351,8 @@ export class PluginsComponent {
 
   getActions(parentrow) {
     const actions = [{
-      name: parentrow.name,
-      id: "start",
+      id: parentrow.name,
+      name: "start",
       label: T("START"),
       icon: 'play_arrow',
       onClick: (row) => {
@@ -368,8 +370,8 @@ export class PluginsComponent {
       }
     },
     {
-      name: parentrow.name,
-      id: "restart",
+      id: parentrow.name,
+      name: "restart",
       label: T("RESTART"),
       icon: 'replay',
       onClick: (row) => {
@@ -387,8 +389,8 @@ export class PluginsComponent {
       }
     },
     {
-      name: parentrow.name,
-      id: "stop",
+      id: parentrow.name,
+      name: "stop",
       label: T("STOP"),
       icon: 'stop',
       onClick: (row) => {
@@ -406,8 +408,8 @@ export class PluginsComponent {
       }
     },
     {
-      name: parentrow.name,
-      id: "update",
+      id: parentrow.name,
+      name: "update",
       label: T("UPDATE"),
       icon: 'update',
       onClick: (row) => {
@@ -417,13 +419,13 @@ export class PluginsComponent {
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {
           dialogRef.close(true);
-          this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
+          this.snackBar.open(T("Plugin ") + row.name + T(" updated."), T('Close'), { duration: 5000 });
         });
       }
     },
     {
-      name: parentrow.name,
-      id: "management",
+      id: parentrow.name,
+      name: "management",
       label: T("MANAGE"),
       icon: 'settings',
       onClick: (row) => {
@@ -431,8 +433,8 @@ export class PluginsComponent {
       }
     },
     {
-      name: parentrow.name,
-      id: "delete",
+      id: parentrow.name,
+      name: "delete",
       label: T("UNINSTALL"),
       icon: 'delete',
       onClick: (row) => {
@@ -442,8 +444,8 @@ export class PluginsComponent {
 
     if (parentrow.plugin === 'asigra') {
       actions.push({
-        name: parentrow.name,
-        id: "register",
+        id: parentrow.name,
+        name: "register",
         label: T('REGISTER'),
         icon: 'assignment',
         onClick: (row) => {
@@ -453,8 +455,8 @@ export class PluginsComponent {
     }
     if (parentrow.plugin_info) {
       actions.push({
-        name: parentrow.name,
-        id: "postinstall",
+        id: parentrow.name,
+        name: "postinstall",
         label: T('POST INSTALL NOTES'),
         icon: 'description',
         onClick: (row) => {
@@ -468,8 +470,8 @@ export class PluginsComponent {
     }
     if (parentrow.doc_url) {
       actions.push({
-        name: parentrow.name,
-        id: "docurl",
+        id: parentrow.name,
+        name: "docurl",
         label: T('DOCUMENTATION'),
         icon: 'info',
         onClick: (row) => {

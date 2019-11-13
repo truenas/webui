@@ -3,10 +3,11 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { RestService, WebSocketService, DialogService } from '../../../services/';
+import { RestService, WebSocketService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
+import { MatSnackBar } from '@angular/material';
 import { T } from '../../../translate-marker';
 import { FormGroup } from '@angular/forms';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -35,7 +36,8 @@ export class AlertConfigComponent implements OnInit {
 
   constructor(private rest: RestService, private ws: WebSocketService,
     private entityFormService: EntityFormService,
-    protected loader: AppLoaderService, public dialog: DialogService) {}
+    protected loader: AppLoaderService,
+    public snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.fieldSets = [{
@@ -95,7 +97,7 @@ export class AlertConfigComponent implements OnInit {
     this.ws.call(this.editCall, [payload]).subscribe(
       (res) => {
         this.loader.close();
-        this.dialog.Info(T("Settings saved"), '', '300px', 'info', true)
+        this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
       },
       (res) => {
         this.loader.close();

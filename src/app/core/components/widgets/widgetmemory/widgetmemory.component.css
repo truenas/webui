@@ -114,12 +114,13 @@ h1.memory-used span.memory-used-units{
   font-size:50%;
 }
 
-.spinner-wrapper{
-  text-align:center;
-  top: 48px;
-  position: absolute;
-  width: 100%;
-}
+/*.reports-btn{
+  position:absolute;
+  right:16px;
+  bottom:16px;
+  font-weight:500;
+  text-transform:capitalize;
+}*/
 
 .chart-wrapper{
   position:relative;

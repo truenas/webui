@@ -4,17 +4,16 @@ import {interval} from 'rxjs';
 
 import { WebSocketService, NetworkService, DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
+import { MatSnackBar } from '@angular/material';
 import helptext from '../../../../helptext/network/interfaces/interfaces-list';
 import { EntityUtils } from '../../../common/entity/utils';
-import { CoreEvent } from 'app/core/services/core.service';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 @Component({
   selector : 'app-interfaces-list',
   templateUrl : './interfaces-list.component.html',
   styleUrls : [ './interfaces-list.component.css' ],
 })
-export class InterfacesListComponent extends ViewControllerComponent implements OnDestroy {
+export class InterfacesListComponent implements OnDestroy {
 
   public title = "Interfaces";
   //protected resource_name: string = 'network/interface/';
@@ -24,18 +23,22 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
   protected confirmDeleteDialog = {
-    message: helptext.delete_dialog_text,
+    message: T("Network connectivity will be interrupted. "),
   }
   protected hasDetails = true;
   protected entityList: any;
+  protected checkChangesSubscription: any;
   public hasPendingChanges = false;
   public checkinWaiting = false;
+  pending_changes_text: string;
+  pending_checkin_text: string;
+  checkin_text: string = T("Once applied, changes will revert after ");
+  checkin_text_2: string = T(" seconds unless kept permanently. Adjust this amount to allow for testing.");
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
   public checkin_remaining = null;
   checkin_interval;
   public ha_enabled = false;
-  public helptext = helptext
 
   public columns: Array<any> = [
     {name : T('Name'), prop : 'name', always_display: true },
@@ -64,9 +67,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   };
 
   constructor(private ws: WebSocketService, private router: Router, private networkService: NetworkService,
-              private dialog: DialogService) {
-                super();
-              }
+              private snackBar: MatSnackBar, private dialog: DialogService) {}
 
   dataHandler(res) {
     const rows = res.rows;
@@ -142,19 +143,14 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   }
 
   preInit(entityList) {
+    this.pending_changes_text = helptext.pending_changes_text;
+    this.pending_checkin_text = helptext.pending_checkin_text + " " + helptext.pending_checkin_text_2;
     this.entityList = entityList;
 
     this.checkPendingChanges();
-    this.checkWaitingCheckin();
-    this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
-      if (evt && evt.data.checkin) {
-        this.checkin_remaining = null;
-        this.checkinWaiting = false;
-        if (this.checkin_interval) {
-          clearInterval(this.checkin_interval);
-        }
-        this.hasPendingChanges = false;
-      }
+    this.checkChangesSubscription = interval(10000).subscribe(x => {
+      this.checkPendingChanges();
+      this.checkWaitingCheckin();
     });
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
@@ -212,12 +208,10 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
-            // can't decide if this is worth keeping since the checkin happens intantaneously
-            //this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
-            this.checkWaitingCheckin();
+            this.hasPendingChanges = false;
+            this.snackBar.open(helptext.changes_saved_successfully, T("Ok"));
           }, err => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
@@ -236,7 +230,6 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.checkin').subscribe((success) => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
             this.entityList.loader.close();
             this.entityList.dialogService.Info(
               helptext.checkin_complete_title,
@@ -263,12 +256,11 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.loader.open();
           this.entityList.loaderOpen = true;
           this.ws.call('interface.rollback').subscribe(res => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false}, sender:this});
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
-            this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '300px', "info", true);
+            this.snackBar.open(helptext.changes_rolled_back, T("Ok"));
           }, err => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
@@ -278,11 +270,22 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       });
   }
 
+  /*doAdd() {
+    this.networkService.getInterfaceNicChoices().subscribe(
+      (res)=>{
+        if (res.length == 0) {
+          this.snackBar.open("All interfaces are already in use.", 'close', { duration: 5000 });
+        } else {
+          this.router.navigate(new Array('/').concat(this.route_add));
+        }
+      }
+    )
+  }*/
   goToHA() {
     this.router.navigate(new Array('/').concat('system', 'failover'));
   }
   
   ngOnDestroy() {
-    this.core.unregister({observerClass:this});
+    this.checkChangesSubscription.unsubscribe();
   }
 }

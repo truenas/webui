@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { shared, helptext_sharing_afp } from 'app/helptext/sharing';
+import { delete_share_message } from 'app/helptext/sharing';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -17,9 +17,8 @@ export class AFPListComponent {
   protected route_delete: string[] = [ 'sharing', 'afp', 'delete' ];
 
   public columns: any[] = [
-    {name: helptext_sharing_afp.column_name, prop: 'name', always_display: true },
-    {name: helptext_sharing_afp.column_path, prop: 'path'},
-    {name: helptext_sharing_afp.column_comment, prop: 'comment'}
+    {name : T('Name'), prop : 'name', always_display: true},
+    {name : T('Path'), prop : 'path'},
   ];
   public rowIdentifier = 'afp_name';
   public config: any = {
@@ -32,7 +31,7 @@ export class AFPListComponent {
   };
 
   public confirmDeleteDialog = {
-    message: shared.delete_share_message,
+    message: delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
     buildTitle: share => `${T('Unshare')} ${share.name}`

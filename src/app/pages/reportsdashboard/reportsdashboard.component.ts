@@ -86,6 +86,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   ngOnInit() { 
     this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
+    
+    this.generateTabs();
 
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
@@ -111,11 +113,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
 
         this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
-
-        this.generateTabs();
        
         this.activateTabFromUrl();
-      }
+}
     });
 
     this.ws.call('disk.query').subscribe((res) => {
@@ -155,15 +155,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
 
   generateTabs(){
-      let labels = ['CPU', 'Disk', 'Memory', 'Network', 'NFS', 'Partition', 'System', 'Target', 'ZFS'];
-      let UPS = this.otherReports.find((report) => {
-        return report.title.startsWith('UPS');
-      });
-
-      if(UPS){
-        labels.splice(8,0,'UPS');
-      }
-
+      let labels = ['CPU', 'Disk', 'Memory', 'Network', 'NFS', 'Partition', 'System', 'Target', 'UPS', 'ZFS'];
       labels.forEach((item) =>{
         this.allTabs.push({label:item, value:item.toLowerCase()});
       })

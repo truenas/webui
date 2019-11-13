@@ -25,7 +25,7 @@ interface CronDate {
 @Component({
   selector : 'form-scheduler',
   templateUrl : './form-scheduler.component.html',
-  styleUrls:['./form-scheduler.component.css', '../dynamic-field/dynamic-field.css'] 
+  styleUrls:['./form-scheduler.component.css'] 
 })
 export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterViewInit, AfterViewChecked{
 

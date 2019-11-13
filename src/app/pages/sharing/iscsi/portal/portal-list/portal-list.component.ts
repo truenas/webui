@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-iscsi-portal-list',
@@ -18,24 +17,24 @@ export class PortalListComponent {
 
   public columns: Array<any> = [
     {
-      name : T('Portal Group ID'),
+      name : 'Portal Group ID',
       prop : 'tag',
       always_display: true
     },
     {
-      name : T('Listen'),
+      name : 'Listen',
       prop : 'listen',
     },
     {
-      name : T('Description'),
+      name : 'Comment',
       prop : 'comment',
     },
     {
-      name : T('Discovery Auth Method'),
+      name : 'Discovery Auth Method',
       prop : 'discovery_authmethod',
     },
     {
-      name : T('Discovery Auth Group'),
+      name : 'Discovery Auth Group',
       prop : 'discovery_authgroup',
     },
   ];

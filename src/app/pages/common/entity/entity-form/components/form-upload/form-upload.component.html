@@ -10,8 +10,7 @@
             <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name" multiple>
           </ng-template>
       </mat-card-content>
-      <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-      <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+      <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   </div>
   <ng-template #showButton>
       <mat-card-content>
@@ -20,7 +19,6 @@
       <mat-card-actions class="buttons">
           <button mat-button type="button" color="primary" (click)="upload(config.fileLocation)">Upload</button>
       </mat-card-actions>
-      <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-      <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+      <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
   </ng-template>
 </div>

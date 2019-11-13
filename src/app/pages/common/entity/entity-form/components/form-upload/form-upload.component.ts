@@ -6,8 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from '../../models/field-config.interface';
 import { WebSocketService } from '../../../../../../services/';
 import { AppLoaderService } from '../../../../../../services/app-loader/app-loader.service';
+import { MatSnackBar } from '@angular/material';
 import { DialogService } from '../../../../../../services/';
-import { T } from '../../../../../../translate-marker';
+
 
 @Component({
   selector: 'app-form-upload',
@@ -28,7 +29,7 @@ export class FormUploadComponent {
   
   constructor(
     protected ws: WebSocketService,protected http: HttpClient, private loader: AppLoaderService,
-    public dialog: DialogService, public translate: TranslateService) {}
+    public dialog: DialogService, public snackBar: MatSnackBar, public translate: TranslateService) {}
 
   upload(location = "/tmp/") {
     if(this.config.updater && this.config.parent ){
@@ -58,12 +59,12 @@ export class FormUploadComponent {
         if(event.statusText==="OK") {
           this.newMessage(location + '/' + fileBrowser.files[0].name);
           this.loader.close();
-          this.dialog.Info(T("File upload complete"), '', '300px', 'info', true);
+          this.snackBar.open("File upload complete.", 'close', { duration: 5000 });
         }
       };
     },(error)=> {
       this.loader.close();
-      this.dialog.errorReport(T("Error"),error.statusText, error.message);
+      this.dialog.errorReport("Error",error.statusText, error.message);
 
     });
 

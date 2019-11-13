@@ -1,6 +1,6 @@
 
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
@@ -17,7 +17,6 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
-import { EntityJobComponent } from '../entity-job/entity-job.component';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -166,9 +165,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService,
-    protected matDialog: MatDialog) {
+    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar,
+    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService) {
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
@@ -325,9 +323,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       column['maxWidth'] = (this.colMaxWidths.find(({name}) => name === column.name)).maxWidth;
     })
     // Delete maXwidth on last col displayed (prevents a display glitch)
-    if (this.conf.columns.length > 0) {
-      delete (this.conf.columns[Object.keys(this.conf.columns).length-1]).maxWidth;
-    }
+    delete (this.conf.columns[Object.keys(this.conf.columns).length-1]).maxWidth;
     return this.conf.columns;
   }
 
@@ -895,7 +891,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                   }
                   if (message === "") {
-                    this.dialogService.Info(T("Items deleted"), '', '300px', 'info', true);
+                    this.snackBar.open("Items deleted.", 'close', { duration: 5000 });
                   } else {
                     message = '<ul>' + message + '</ul>';
                     this.dialogService.errorReport(T('Items Delete Failed'), message);
@@ -971,12 +967,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // resets col view to the default set in the table's component
   resetColViewToDefaults() {
-    if (!(this.conf.columns.length === this.originalConfColumns.length && 
-        this.conf.columns.length === this.allColumns.length)) {
-      this.conf.columns = this.originalConfColumns;
-      this.updateTableHeightAfterDetailToggle();
-      this.selectColumnsToShowOrHide();
-    }
+    this.conf.columns = this.originalConfColumns;
+    this.updateTableHeightAfterDetailToggle();
+    this.selectColumnsToShowOrHide();
   }
 
   isChecked(col:any) {
@@ -1052,17 +1045,5 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       return value !== 'PENDING';
     }
-  }
-
-  runningStateButton(jobid) {
-      const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Task is running") }, disableClose: false });
-      dialogRef.componentInstance.jobId = jobid;
-      dialogRef.componentInstance.wsshow();
-      dialogRef.componentInstance.success.subscribe((res) => {
-        dialogRef.close();
-      });
-      dialogRef.componentInstance.failure.subscribe((err) => {
-        dialogRef.close();
-      });
   }
 }

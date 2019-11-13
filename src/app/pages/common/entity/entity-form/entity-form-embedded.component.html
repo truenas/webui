@@ -21,14 +21,15 @@
           </div>
         </ng-container>
       </div>
+      <!-- <div class="btn-group btn-group-justified"> -->
       <mat-card-actions style.text-align="{{actionButtonsAlign}}">
-        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-button class="mat-primary" color="primary" [disabled]="entityForm.dirty === false || !entityForm.form.valid">{{saveSubmitText | translate}}</button>
-        <form-status *ngIf="conf.multiStateSubmit" [statusIcon]="saveSubmitStatus"></form-status>
+        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-button class="mat-primary" color="primary" [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
         <button *ngIf="conf.goBack" id="goback_button" class="btn btn-block btn-lg btn-primary mat-accent" type="button" (click)="goBack()" mat-button color="accent">Cancel</button>
         <span *ngFor="let custBtn of conf.custActions">
           <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="submit" (click)="onSubmit($event,custBtn.eventName)">{{custBtn.name | translate}}</button>
         </span>
         <button id="delete_button" mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
+        <!-- </div> -->
       </mat-card-actions>
     </form>
   </div>

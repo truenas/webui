@@ -23,6 +23,7 @@ export class ServiceSNMPComponent {
       placeholder : helptext.location_placeholder,
       tooltip: helptext.location_tooltip,
       label : helptext.location_label,
+      required: true,
       validation : helptext.location_validation
     },
     {
@@ -30,6 +31,7 @@ export class ServiceSNMPComponent {
       name : 'contact',
       placeholder : helptext.contact_placeholder,
       tooltip: helptext.contact_tooltip,
+      required: true,
       validation: helptext.contact_validation
     },
     {

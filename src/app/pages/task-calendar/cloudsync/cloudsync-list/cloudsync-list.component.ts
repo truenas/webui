@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
-import { DialogService, JobService, TaskService, WebSocketService } from '../../../../services';
+import { DialogService, JobService, TaskService, WebSocketService, SnackbarService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
@@ -57,7 +56,8 @@ export class CloudsyncListComponent implements InputTableConf {
               protected ws: WebSocketService,
               protected translateService: TranslateService,
               protected dialog: DialogService,
-              protected job: JobService) {
+              protected job: JobService,
+              protected snackbarService: SnackbarService) {
               }
 
   afterInit(entityList: any) {
@@ -95,8 +95,8 @@ export class CloudsyncListComponent implements InputTableConf {
 
   getActions(parentrow) {
     return [{
-      actionName: parentrow.description,
-      id: 'run_now',
+      id: parentrow.description,
+      actionName: 'run_now',
       label: T("Run Now"),
       icon: 'play_arrow',
       onClick: (row) => {
@@ -105,7 +105,9 @@ export class CloudsyncListComponent implements InputTableConf {
             row.state = 'RUNNING';
             this.ws.call('cloudsync.sync', [row.id]).subscribe(
               (res) => {
-                this.dialog.Info(T('Task Started'), T('Cloud sync <i>') + row.description + T('</i> has started.'), '500px', 'info', true);
+                this.translateService.get("close").subscribe((close) => {
+                  this.entityList.snackBar.open(T('Cloud sync has started.'), close, { duration: 5000 });
+                });
                 this.job.getJobStatus(res).subscribe((task) => {
                   row.state = task.state;
                   row.job = task;
@@ -118,8 +120,8 @@ export class CloudsyncListComponent implements InputTableConf {
         });
       },
     }, {
-      actionName: parentrow.description,
-      id: 'stop',
+      id: parentrow.description,
+      actionName: 'stop',
       label: T("Stop"),
       icon: 'stop',
       onClick: (row) => {
@@ -127,7 +129,9 @@ export class CloudsyncListComponent implements InputTableConf {
           if (res) {
             this.ws.call('cloudsync.abort', [row.id]).subscribe(
               (wsRes) => {
-                  this.dialog.Info(T('Task Stopped'), T('Cloud sync <i>') + row.description + T('</i> stopped.'), '500px', 'info', true);
+                this.translateService.get("close").subscribe((close) => {
+                  this.entityList.snackBar.open(T('Cloud sync stopped.'), close, { duration: 5000 });
+                });
               },
               (wsErr) => {
                 new EntityUtils().handleWSError(this.entityList, wsErr);
@@ -136,8 +140,8 @@ export class CloudsyncListComponent implements InputTableConf {
         });
       },
     }, {
-      id: "edit",
-      actionName: parentrow.description,
+      actionName: "edit",
+      id: parentrow.description,
       icon: 'edit',
       label: T("Edit"),
       onClick: (row) => {
@@ -145,8 +149,8 @@ export class CloudsyncListComponent implements InputTableConf {
         this.router.navigate(this.route_edit);
       },
     }, {
-      actionName: parentrow.description,
-      id: "delete",
+      id: parentrow.description,
+      actionName: "delete",
       label: T("Delete"),
       icon: 'delete',
       onClick: (row) => {
@@ -156,9 +160,9 @@ export class CloudsyncListComponent implements InputTableConf {
   }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'run_now' && row.job && row.job.state === 'RUNNING') {
+    if (actionId === 'start' && row.job && row.job.state === 'RUNNING') {
       return false;
-    } else if (actionId === 'stop' && (row.job? (row.job && row.job.state !== 'RUNNING') : true)) {
+    } else if (actionId === 'stop' && row.job && row.job.state !== 'RUNNING') {
       return false;
     }
     return true;
@@ -166,13 +170,9 @@ export class CloudsyncListComponent implements InputTableConf {
 
   stateButton(row) {
     if (row.job) {
-      if (row.state === 'RUNNING') {
-        this.entityList.runningStateButton(row.job.id);
-      } else {
-        this.job.showLogs(row.job.id);
-      }
+      this.job.showLogs(row.job.id);
     } else {
-      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
     }
   }
 }

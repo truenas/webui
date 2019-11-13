@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
+import { SnackbarService } from 'app/services/snackbar.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
@@ -21,7 +22,7 @@ export class TnSysInfoComponent implements OnInit {
   @Input() daysLeftinContract;
 
   constructor(protected ws: WebSocketService, protected dialogService: DialogService,
-    protected loader: AppLoaderService) { }
+    protected snackbar: SnackbarService, protected loader: AppLoaderService) { }
 
   ngOnInit() {
     window.localStorage['is_freenas'] === 'true' ? this.is_freenas = true : this.is_freenas = false;
@@ -30,6 +31,7 @@ export class TnSysInfoComponent implements OnInit {
   updateLicense() {
     const localLoader = this.loader;
     const localWS = this.ws;
+    const localSnackbar = this.snackbar;
     const localDialogService = this.dialogService;
 
     const licenseForm: DialogFormConfiguration = {

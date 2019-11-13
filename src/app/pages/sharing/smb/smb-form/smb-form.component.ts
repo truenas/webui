@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
-import { T } from "app/translate-marker";
+import { helptext_sharing_smb } from 'app/helptext/sharing';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { DialogService, RestService, WebSocketService, AppLoaderService } from '../../../../services/';
+import { DialogService, RestService, WebSocketService, AppLoaderService, SnackbarService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
@@ -47,12 +46,6 @@ export class SMBFormComponent {
       name: 'cifs_home',
       placeholder: helptext_sharing_smb.placeholder_home,
       tooltip: helptext_sharing_smb.tooltip_home,
-    },
-    {
-      type: 'input',
-      name: 'cifs_comment',
-      placeholder: helptext_sharing_smb.placeholder_comment,
-      tooltip: helptext_sharing_smb.tooltip_comment,
     },
     {
       type: 'checkbox',
@@ -166,7 +159,7 @@ export class SMBFormComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, private dialog:DialogService,
-              protected loader: AppLoaderService ) {}
+              protected loader: AppLoaderService, public snackbar: SnackbarService ) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -186,10 +179,9 @@ export class SMBFormComponent {
             this.loader.open();
             this.ws.call('service.restart', ['cifs']).subscribe(() => {
               this.loader.close();
-              this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
-                helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
-                  this.checkACLactions(entityForm);
-                })
+              this.snackbar.open(helptext_sharing_smb.restart_smb_snackbar.message, 
+                helptext_sharing_smb.restart_smb_snackbar.action, {duration: 4000});
+              this.checkACLactions(entityForm);
             }, (err) => { 
               this.loader.close();
               this.dialog.errorReport('Error', err.err, err.backtrace);
@@ -254,10 +246,10 @@ export class SMBFormComponent {
            */
           return this.dialog
             .confirm(
-              shared.dialog_title,
-              shared.dialog_message,
+              helptext_sharing_smb.dialog_enable_service_title,
+              helptext_sharing_smb.dialog_enable_service_message,
               true,
-              shared.dialog_button
+              helptext_sharing_smb.dialog_enable_service_button
             )
             .pipe(
               switchMap(doEnableService => {
@@ -267,14 +259,15 @@ export class SMBFormComponent {
                     switchMap(() => this.ws.call("service.start", [cifsService.service])),
                     tap(() => {
                       entityForm.loader.close();
-                    }),
-                    switchMap(() => {
-                    return this.dialog.Info(T('SMB') + shared.dialog_started_title, 
-                      T('The SMB') + shared.dialog_started_message, '250px')
+                      entityForm.snackBar.open(
+                        helptext_sharing_smb.snackbar_service_started,
+                        helptext_sharing_smb.snackbar_close
+                      );
                     }),
                     catchError(error => {
                       entityForm.loader.close();
-                      return this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
+                      this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
+                      return of(error);
                     })
                   );
                 }

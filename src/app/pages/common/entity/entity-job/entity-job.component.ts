@@ -89,7 +89,6 @@ export class EntityJobComponent implements OnInit {
         this.progressTotalPercent = progress.percent;
       }
     }
-    this.disableProgressValue(progress.percent == null);
   }
 
   @HostListener('failure', ['$event'])
@@ -219,7 +218,7 @@ export class EntityJobComponent implements OnInit {
     else if(job.fields && job.fields.state === 'SUCCESS'){
       this.success.emit(this.job.fields);
     }
-    else if (job.fields && ((job.fields.state === 'FAILED') || job.fields.error)) {
+    else if (job.fields && job.fields.state === 'FAILED') {
       this.failure.emit(this.job.fields);
     }
   }

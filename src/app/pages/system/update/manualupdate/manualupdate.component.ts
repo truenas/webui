@@ -1,12 +1,14 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
@@ -65,7 +67,20 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       isHidden: true
     }
   ];
-
+  protected saveConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'secretseed',
+      placeholder: helptext.secretseed.placeholder
+    }
+  ];
+  public saveConfigFormConf: DialogFormConfiguration = {
+    title: "Save Config",
+    fieldConfig: this.saveConfigFieldConf,
+    method_ws: 'core.download',
+    saveButtonText: helptext.save_config_form.button_text,
+    customSubmit: this.saveCofigSubmit,
+  }
   public save_button_enabled = false;
 
   constructor(
@@ -77,8 +92,11 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     protected _appRef: ApplicationRef,
     public messageService: MessageService,
     protected dialog: MatDialog,
+    protected dialogservice: DialogService,
+    public snackBar: MatSnackBar,
     public translate: TranslateService,
     private dialogService: DialogService,
+    private loader: AppLoaderService,
     private systemService: SystemGeneralService,
   ) {
     super();
@@ -214,6 +232,38 @@ updater(file: any, parent: any){
     parent.save_button_enabled = false;
   }
 }
+
+saveCofigSubmit(entityDialog) {
+  entityDialog.ws.call('system.info', []).subscribe((res) => {
+    let fileName = "";
+    if (res) {
+      const hostname = res.hostname.split('.')[0];
+      const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+      fileName = hostname + '-' + res.version + '-' + date;
+      if (entityDialog.formValue['secretseed']) {
+        fileName += '.tar';
+      } else {
+        fileName += '.db';
+      }
+    }
+
+    entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
+      .subscribe(
+        (succ) => {
+          entityDialog.snackBar.open("Opening download window. Make sure pop-ups are enabled in the browser.", "Success" , {
+            duration: 5000
+          });
+          window.open(succ[1]);
+          entityDialog.dialogRef.close();
+        },
+        (err) => {
+          entityDialog.snackBar.open("Check the network connection", "Failed" , {
+            duration: 5000
+          });
+        }
+      );
+    });
+  }
 
   showRunningUpdate(jobId) {
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });

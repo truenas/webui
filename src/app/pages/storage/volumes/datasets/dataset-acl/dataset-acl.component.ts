@@ -161,7 +161,6 @@ export class DatasetAclComponent implements OnDestroy {
               tooltip: helptext.dataset_acl_type_tooltip,
               options: helptext.dataset_acl_type_options,
               required: true,
-              value: 'ALLOW'
             },
             {
               type: 'select',
@@ -179,7 +178,6 @@ export class DatasetAclComponent implements OnDestroy {
               placeholder: helptext.dataset_acl_perms_placeholder,
               tooltip: helptext.dataset_acl_perms_tooltip,
               options: helptext.dataset_acl_basic_perms_options,
-              value: 'MODIFY'
             },
             {
               type: 'select',
@@ -198,15 +196,15 @@ export class DatasetAclComponent implements OnDestroy {
               placeholder: helptext.dataset_acl_flags_type_placeholder,
               tooltip: helptext.dataset_acl_flags_type_tooltip,
               options: helptext.dataset_acl_flags_type_options,
-              value: 'BASIC'
             },
             {
               type: 'select',
               name: 'basic_flags',
+              required: true,
+              isHidden: true,
               placeholder: helptext.dataset_acl_flags_placeholder,
               tooltip: helptext.dataset_acl_flags_tooltip,
               options: helptext.dataset_acl_basic_flags_options,
-              value: 'INHERIT'
             },
             {
               type: 'select',

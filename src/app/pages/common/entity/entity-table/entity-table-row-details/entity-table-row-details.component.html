@@ -4,7 +4,7 @@
         fxLayoutAlign="start center"
         fxLayoutGap="16px"
     >
-        <h4>{{ column.name | translate}}:</h4>
+        <h4>{{ column.name }}:</h4>
         <div
             fxLayoutAlign="start center"
             fxLayoutGap="4px"
@@ -46,9 +46,8 @@
 >
     <ng-container *ngFor="let action of actions">
         <button
-            *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
+            *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.name, this.config)"
             mat-button
-            [disabled]="action.disabled"
             id="action_button_{{ action?.name }}__{{action.id}}"
             (click)="action.onClick(this.config)"
         >
@@ -57,7 +56,7 @@
                 fxLayoutGap="8px"
             >
                 <mat-icon>{{ action.icon }}</mat-icon>
-                <p>{{ action.label | translate}}</p>
+                <p>{{ action.label }}</p>
             </div>
         </button>
     </ng-container>

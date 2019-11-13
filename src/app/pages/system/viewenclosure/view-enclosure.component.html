@@ -1,5 +1,5 @@
 
-<div *ngIf="system && system.enclosures && system_manufacturer && system_manufacturer == 'ixsystems'" class="page-viewport" fxLayout="row wrap" >
+<div *ngIf="system && system.enclosures" class="page-viewport" fxLayout="row wrap" >
   
   <div fxFlex="100">
     <nav class="view-nav-bar" >
@@ -33,7 +33,8 @@
 <!-- Enclosure Selector -->
 <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector" [ngClass.lt-lg]="lt-lg">
   <div *ngFor="let enclosure of system.enclosures; let i = index" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
-    <div>{{enclosure.model}} ({{i}})</div>
+    <div *ngIf="i < 1">{{system.platform}} ({{i}})</div>
+    <div *ngIf="i > 0">{{enclosure.model}} ({{i}})</div>
   </div>
 </div>
 </div>

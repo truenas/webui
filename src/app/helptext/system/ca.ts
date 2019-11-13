@@ -190,7 +190,12 @@ export const helptext_system_ca = {
     action_sign: T("Sign CSR"),
     action_export_certificate: T("Export Certificate"),
     action_export_private_key: T("Export Private Key"),
-    
+
+    snackbar_open_window_message: T(
+      "Opening download window. Make sure pop-ups are enabled in the browser."
+    ),
+    snackbar_open_window_action: T("Success"),
+
     action_delete: T("Delete")
   },
 

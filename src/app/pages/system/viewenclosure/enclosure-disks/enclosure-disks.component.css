@@ -231,7 +231,7 @@ nav.view-nav-bar{
 div.vdev-disk {
   /*border-left: solid 2px var(--blue);*/
   padding:0 8px 0 0;
-  margin:0;
+  margin:2px 0;
 }
 
 .view-card .dom-overlay.stage-right.list > div{

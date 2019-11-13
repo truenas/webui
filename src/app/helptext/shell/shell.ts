@@ -14,8 +14,6 @@ export default {
     and examples.'
   ),
 
-  dialog_title: T('Copy and Paste'),
-
   copy_paste_message: T(
     "Context menu copy and paste operations \
     are disabled in the Shell. Copy and paste \

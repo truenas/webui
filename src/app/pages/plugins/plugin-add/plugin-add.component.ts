@@ -15,7 +15,7 @@ import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from '../../common/entity/entity-job';
-import { MatDialog } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import helptext from '../../../helptext/plugins/plugins';
 
 @Component({
@@ -283,6 +283,7 @@ export class PluginAddComponent implements OnInit {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected networkService: NetworkService,
+    protected snackBar: MatSnackBar,
     protected matdialog: MatDialog,
     protected translate: TranslateService) {}
 

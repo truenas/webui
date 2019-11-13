@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
+import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
-import { WebSocketService, StorageService, DialogService } from '../../../../services/';
+import { WebSocketService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -39,8 +39,7 @@ export class CertificateListComponent {
   }
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-    protected ws: WebSocketService, public storage: StorageService,
-    public dialog: DialogService, public http: Http) {
+    protected ws: WebSocketService, public snackBar: MatSnackBar) {
   }
 
   afterInit(entityList: any) {
@@ -81,21 +80,16 @@ export class CertificateListComponent {
         label: helptext_system_certificates.list.action_export_certificate,
         onClick: (row) => {
           this.ws.call('certificate.query', [[["id", "=", row.id]]]).subscribe((res) => {
-            const fileName = res[0].name + '.crt';
             if (res[0]) {
-              this.ws.call('core.download', ['filesystem.get', [res[0].certificate_path], fileName]).subscribe(
+              this.ws.call('core.download', ['filesystem.get', [res[0].certificate_path], res[0].name + '.crt']).subscribe(
                 (res) => {
-                  const url = res[1];
-                  const mimetype = 'application/x-x509-user-cert';
-                  this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
-                    this.storage.downloadBlob(file, fileName);
-                  }, err => {
-                    this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
-                      helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                  this.snackBar.open(helptext_system_certificates.list.snackbar_open_window_message, helptext_system_certificates.list.snackbar_open_window_action, {
+                    duration: 5000
                   });
+                  window.open(res[1]);
                 },
-                (err) => {
-                  new EntityUtils().handleWSError(this, err, this.dialog);
+                (res) => {
+                  new EntityUtils().handleError(this, res);
                 }
               );
             }
@@ -107,21 +101,16 @@ export class CertificateListComponent {
         label: helptext_system_certificates.list.action_export_private_key,
         onClick: (row) => {
           this.ws.call('certificate.query', [[["id", "=", row.id]]]).subscribe((res) => {
-            const fileName = res[0].name + '.key';
             if (res[0]) {
-              this.ws.call('core.download', ['filesystem.get', [res[0].privatekey_path], fileName]).subscribe(
+              this.ws.call('core.download', ['filesystem.get', [res[0].privatekey_path], res[0].name + '.key']).subscribe(
                 (res) => {
-                  const url = res[1];
-                  const mimetype = 'text/plain';
-                  this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
-                    this.storage.downloadBlob(file, fileName);
-                  }, err => {
-                    this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
-                      helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                  this.snackBar.open(helptext_system_certificates.list.snackbar_open_window_message, helptext_system_certificates.list.snackbar_open_window_action, {
+                    duration: 5000
                   });
+                  window.open(res[1]);
                 },
-                (err) => {
-                  new EntityUtils().handleWSError(this, err, this.dialog);
+                (res) => {
+                  new EntityUtils().handleError(this, res);
                 }
               );
             }
@@ -133,6 +122,7 @@ export class CertificateListComponent {
         label: helptext_system_certificates.list.action_create_acme_certificate,
         onClick: (row) => {
           this.router.navigate(new Array('').concat(["system", "certificates", "addacme", row.id]))
+          // console.log(row)
         }
       },
       {

@@ -1,5 +1,6 @@
 
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
@@ -44,7 +45,8 @@ export class BootEnvironmentListComponent {
   public scrub_interval: number;
 
   constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
-    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService) {}
+    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
+    public snackBar: MatSnackBar ) {}
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name', always_display: true},
@@ -111,34 +113,6 @@ export class BootEnvironmentListComponent {
 
   getActions(row) {
     const actions = [];
-    if (!row.active.includes('Reboot')) {
-      actions.push({
-        label : T("Activate"),
-        id: "activate",
-        onClick : (row) => {
-          this.doActivate(row.id);
-        }
-      });
-     } 
-
-    actions.push({
-      label : T("Clone"),
-      id: "clone",
-      onClick : (row) => {
-        this._router.navigate(new Array('').concat(
-            [ "system", "boot", "clone", row.id ]));
-      }
-    });
-
-    actions.push({
-      label : T("Rename"),
-      id: "rename",
-      onClick : (row) => {
-        this._router.navigate(new Array('').concat(
-            [ "system", "boot", "rename", row.id ]));
-      }
-    });
-    
     if (row.active === '-'){
       actions.push({
         label: T("Delete"),
@@ -147,9 +121,10 @@ export class BootEnvironmentListComponent {
           this.entityList.doDeleteJob(row).subscribe(
             success => {
               if (!success) {
-                this.dialog.errorReport(
-                  helptext_system_bootenv.delete_failure_dialog.title,
-                  helptext_system_bootenv.delete_failure_dialog.message
+                this.snackBar.open(
+                  helptext_system_bootenv.snackbar_delete_failure_message,
+                  helptext_system_bootenv.snackbar_action_dismiss,
+                  { duration: 2000 }
                 );
               }
             },
@@ -161,6 +136,32 @@ export class BootEnvironmentListComponent {
           )
       });
     }
+    if (!row.active.includes('Reboot')) {
+      actions.push({
+        label : T("Activate"),
+        id: "activate",
+        onClick : (row) => {
+          this.doActivate(row.id);
+        }
+      }); 
+    }
+
+    actions.push({
+      label : T("Clone"),
+      id: "clone",
+      onClick : (row) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "boot", "clone", row.id ]));
+      }
+    });
+    actions.push({
+      label : T("Rename"),
+      id: "rename",
+      onClick : (row) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "boot", "rename", row.id ]));
+      }
+    });
 
     if (row.keep === true){
       actions.push({
@@ -300,6 +301,7 @@ export class BootEnvironmentListComponent {
           this._rest.get('system/advanced/',{}).subscribe(res=>{
             this.scrub_interval = res.data.adv_boot_scrub;
             let localWS = this.ws,
+            localSnackBar = this.snackBar,
             localDialog = this.dialog;
             let statusConfigFieldConf: FieldConfig[] = [
               {
@@ -342,9 +344,10 @@ export class BootEnvironmentListComponent {
                 const scrubIntervalValue: number = parseInt(entityDialog.formValue.new_scrub_interval);
                 if( scrubIntervalValue > 0){
                   localWS.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
+                    localSnackBar.open(T(`Scrub interval set to ${scrubIntervalValue} days`), ('Close'), { duration: 4000});
                     localDialog.closeAllDialogs();
-                    localDialog.Info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
                   })
+
                 }
                 else {
                   localDialog.Info(T('Enter valid value'), T(scrubIntervalValue+' is not a valid number of days.'))
@@ -379,9 +382,10 @@ export class BootEnvironmentListComponent {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
+        let data = {};
         this.busy = this.ws.call('boot.scrub').subscribe((res) => {
           this.loader.close();
-          this.dialog.Info(T('Scrub Started'), T(''), '300px', 'info', true);
+          this.snackBar.open(T('Scrub started'), T("Close"), {duration: 5000});
           },
           (res) => {
             this.dialog.errorReport(res.error, res.reason, res);

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
+import { delete_share_message, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { T } from 'app/translate-marker';
 
 @Component({
@@ -31,7 +31,7 @@ export class NFSListComponent {
   };
 
   public confirmDeleteDialog = {
-    message: shared.delete_share_message,
+    message: delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
     buildTitle: share => `${T('Unshare')} ${share.paths.join(', ')}`

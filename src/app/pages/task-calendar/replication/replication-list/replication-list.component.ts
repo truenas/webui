@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import * as moment from 'moment';
-import { DialogService, JobService, WebSocketService } from '../../../../services';
+import { DialogService, JobService, SnackbarService, WebSocketService } from '../../../../services';
 import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
     selector: 'app-replication-list',
     template: `<entity-table [title]='title' [conf]='this'></entity-table>`,
-    providers: [JobService]
+    providers: [SnackbarService, JobService]
 })
 export class ReplicationListComponent {
 
@@ -49,6 +49,7 @@ export class ReplicationListComponent {
         private router: Router,
         private ws: WebSocketService,
         private dialog: DialogService,
+        private snackbarService: SnackbarService,
         protected job: JobService) { }
 
     afterInit(entityList: any) {
@@ -75,8 +76,8 @@ export class ReplicationListComponent {
                     if (res) {
                         row.state = 'RUNNING';
                         this.ws.call('replication.run', [row.id]).subscribe(
-                            (ws_res) => {
-                                this.dialog.Info(T('Task started'), T('Replication <i>') + row.name + T('</i> has started.'), '500px', 'info', true);
+                            (res) => {
+                                this.snackbarService.open(T('Replication <i>') + row.name + T('</i> has started.'), T('close'), { duration: 5000 });
                             },
                             (err) => {
                                 new EntityUtils().handleWSError(this.entityList, err);
@@ -106,24 +107,16 @@ export class ReplicationListComponent {
 
     stateButton(row) {
         if (row.state.error) {
-            if (row.state.job) {
-                this.dialog.confirm(row.state.state,row.state.error,true, T('VIEW LOGS')).subscribe(
-                    (res) => {
-                        if (res) {
-                            this.job.showLogs(row.state.job.id);
-                        }
-                    });
-            } else {
-                this.dialog.errorReport(row.state.state, row.state.error);
-            }
+            this.dialog.confirm(row.state.state,row.state.error,true, T('VIEW LOGS')).subscribe(
+                (res) => {
+                    if (res) {
+                        this.job.showLogs(row.state.job.id);
+                    }
+                })
         } else if (row.state.job) {
-            if (row.state.state === 'RUNNING') {
-                this.entityList.runningStateButton(row.state.job.id);
-            } else {
-                this.job.showLogs(row.state.job.id);
-            }
+            this.job.showLogs(row.state.job.id);
         } else {
-            this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+            this.snackbarService.open(globalHelptext.noLogMessage, T('close'),  { duration: 1000 });
         }
     }
 }

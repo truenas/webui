@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import {  DialogService, RestService, TooltipsService, WebSocketService, NetworkService, SnackbarService } from '../../../services/';
 import { FormGroup } from '@angular/forms';
-import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../helptext/network/ipmi/ipmi';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -108,27 +108,18 @@ export class IPMIComponent {
       name : 'ipaddress',
       placeholder : helptext.ipaddress_placeholder,
       tooltip : helptext.ipaddress_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      errors: helptext.ip_error,
-      hasErrors: false
     },
     {
       type : 'input',
       name : 'netmask',
       placeholder : helptext.netmask_placeholder,
       tooltip : helptext.netmask_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      errors: helptext.ip_error,
-      hasErrors: false
     },
     {
       type : 'input',
       name : 'gateway',
       placeholder : helptext.gateway_placeholder,
       tooltip : helptext.gateway_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      errors: helptext.ip_error,
-      hasErrors: false
     },
     {
       type : 'input',
@@ -172,29 +163,9 @@ export class IPMIComponent {
     this.entityEdit = entityEdit;
     this.loadData();
 
-    entityEdit.formGroup.controls['password'].statusChanges.subscribe((status) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, {name: "password"}));
+    entityEdit.formGroup.controls['password'].statusChanges.subscribe((res) => {
+      res === 'INVALID' ? _.find(this.fieldConfig)['hasErrors'] = true : _.find(this.fieldConfig)['hasErrors'] = false;
     })
-
-    entityEdit.formGroup.controls['ipaddress'].statusChanges.subscribe((status) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, {name: "ipaddress"}));
-     })
-
-     entityEdit.formGroup.controls['netmask'].statusChanges.subscribe((status) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, {name: "netmask"}));
-     })
-
-     entityEdit.formGroup.controls['gateway'].statusChanges.subscribe((status) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, {name: "gateway"}));
-     })
-  }
-
-  setErrorStatus(status, field) {
-    status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
-  }
-
-  beforeSubmit(data) {
-    delete data.conf_password;
   }
 
   customSubmit(payload){
@@ -206,7 +177,7 @@ export class IPMIComponent {
     this.loader.open();
     return call.subscribe((res) => {
       this.loader.close();
-      this.dialog.Info(T("Settings saved."), '', '300px', 'info', true);
+      this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 });
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityEdit, res);

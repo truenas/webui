@@ -122,7 +122,7 @@ export class FormExplorerComponent implements Field, OnInit {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
       }
       else if (this.config.explorerType === "dataset") {
-        resolve(this.entityFormService.getPoolDatasets(this.config.explorerParam ? this.config.explorerParam : []));
+        resolve(this.entityFormService.getPoolDatasets());
       }
       else {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));

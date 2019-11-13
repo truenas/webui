@@ -1,0 +1,100 @@
+    <ngx-datatable #datatable
+      class='material'
+      [style.height.px]="tableHeight"
+      [rows]='data'
+      [columnMode]="'force'"
+      [rowHeight]="50"
+      [headerHeight]="50"
+      [footerHeight]="50"
+      [scrollbarV]="true">
+
+      <ngx-datatable-column name="State">
+	<ng-template let-column="column" ngx-datatable-header-template>
+	  {{column.name}}
+	</ng-template>
+	<ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+	  <button mat-icon-button (click)="onPower(row)" style="position:absolute;bottom:6px;"><mat-icon [style.color]="value == 'running' ? '#41bd45' : '#900'">power_settings_new</mat-icon></button>
+	  <!--<span> {{value}} </span>-->
+	</ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Name" [minWidth]="100">
+	<ng-template let-column="column" ngx-datatable-header-template>
+	  {{column.name}}
+	</ng-template>
+	<ng-template let-value="value" ngx-datatable-cell-template>
+	  <div><strong>{{value}}</strong></div>
+	</ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Description">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="vCPUs" [flexGrow]="1">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Memory" [flexGrow]="2">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Bootloader" [flexGrow]="2">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Connect" [flexGrow]="2">
+        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+        <button *ngIf="row.vm_type === 'Bhyve'" mat-button color="primary" [disabled]="(row.state == 'stopped')" [matMenuTriggerFor]="appMenu">Connect</button>
+        <mat-menu #appMenu="matMenu">
+          <button  mat-menu-item color="primary" [disabled]="(!row.vnc || row.state === 'stopped')" (click)="vnc(row.id)">VNC</button>
+          <button  mat-menu-item color="primary" [disabled]="(row.state === 'stopped')" (click)="serial(row.id)">Serial</button>
+        </mat-menu>
+      <button *ngIf="row.vm_type === 'Container Provider'" mat-button color="primary" [disabled]="(row.state == 'stopped')" [matMenuTriggerFor]="appMenu2">Connect</button>
+        <mat-menu  #appMenu2="matMenu">
+          <button mat-menu-item color="primary" [disabled]="(row.state === 'stopped')" (click)="serial(row.id)">Serial</button>
+        </mat-menu>
+      </ng-template>
+      </ngx-datatable-column>
+  
+      <ngx-datatable-column name="Actions" [flexGrow]="2">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+	 <button mat-icon-button [matMenuTriggerFor]="menu" style="position:absolute;bottom:6px;">
+	  <mat-icon>more_vert</mat-icon>
+	 </button>
+	 <mat-menu #menu="matMenu">
+      <button *ngIf="row.state != 'stopped'" mat-menu-item (click)="onPower(row)">Stop</button>
+      <button *ngIf="row.state == 'stopped'"mat-menu-item (click)="onPower(row)">Start</button>
+      <button mat-menu-item (click)="onPower(row, true)" [disabled]="row.state == 'stopped'">Power Off</button>
+	    <button mat-menu-item (click)="onRestart(row)" *ngIf="row.state == 'running'">Restart</button>
+	    <button mat-menu-item (click)="editRow(row)" [disabled]="row.state !== 'stopped'">Edit</button>
+	    <button mat-menu-item (click)="goToDevices(row)" [disabled]="row.state !== 'stopped'">Devices</button>
+	    <button mat-menu-item (click)="deleteRow(row)">Delete</button>
+	  </mat-menu>
+        </ng-template>
+      </ngx-datatable-column>
+
+    </ngx-datatable>

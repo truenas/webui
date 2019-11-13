@@ -28,7 +28,7 @@
   margin-bottom: 16px;
 }
 
-:host >>> span.warning-paragraph {
+:host >>> span.warnning-paragraph {
   background-color: var(--red) !important;
   padding: 2px;
 }
@@ -36,15 +36,4 @@
 :host >>> span.info-paragraph {
   background-color: var(--primary) !important;
   padding: 2px;
-}
-
-.paratext-tooltip {
-  position: relative;
-  right: 3px;
-  top: -2px;
-}
-  
-.margin-for-error {
-  position: relative;
-  top: -12px;
 }

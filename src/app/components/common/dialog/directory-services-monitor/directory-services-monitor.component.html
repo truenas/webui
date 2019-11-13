@@ -1,20 +1,12 @@
 <mat-dialog-content class="dir-service-monitor-dialog">
-  <mat-spinner 
-    [diameter]='40' 
-    id="dir-service-monitor-spinner"
-    *ngIf="showSpinner">
-  </mat-spinner> 
   <div class="header">
-    <h4 fxFlex="90%">Directory Services Monitor</h4>
-    <button fxFlex="10%" mat-icon-button id="refresh-icon" (click)="getStatus()">
-      <mat-icon>refresh</mat-icon>
-    </button>
+    <h4>Directory Services Monitor</h4>
   </div>
   <mat-table #dirServiceTable [dataSource]="dataSource" class="mat-elevation-z8">
     <!-- Icon Column -->
     <ng-container matColumnDef="icon">
       <mat-header-cell *matHeaderCellDef fxFlex="74px"></mat-header-cell>
-      <mat-cell *matCellDef="let element" fxFlex="74px" (click)="goTo(element.id)" class="clickable">
+      <mat-cell *matCellDef="let element" fxFlex="74px">
         <mat-icon *ngIf="element.state == 'HEALTHY'" class="state-healthy">check_circle</mat-icon>
         <mat-icon *ngIf="element.state == 'FAULTED'" class="state-faulted">highlight_off</mat-icon>
         <mat-icon *ngIf="element.state == 'LEAVING'" class="state-leaving">arrow_back</mat-icon>
@@ -25,12 +17,12 @@
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-      <mat-cell *matCellDef="let element" (click)="goTo(element.id)" class="clickable"> {{element.name}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
     </ng-container>
     <!-- State Column -->
     <ng-container matColumnDef="state">
       <mat-header-cell *matHeaderCellDef> State </mat-header-cell>
-      <mat-cell *matCellDef="let element" (click)="goTo(element.id)" class="clickable"> {{element.state}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.state}} </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></mat-row>

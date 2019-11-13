@@ -39,7 +39,7 @@ export class SshKeypairsFormComponent {
             type: 'textarea',
             name: 'private_key',
             placeholder: helptext.private_key_placeholder,
-            tooltip: helptext.private_key_tooltip,
+            tooltip: helptext.private_key_tooltip
         }, {
             type: 'textarea',
             name: 'public_key',

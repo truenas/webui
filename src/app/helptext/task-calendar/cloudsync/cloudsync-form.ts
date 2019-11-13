@@ -69,8 +69,8 @@ transfer_mode_warning_move: T('<b>MOVE</b>: After files are <i><u>copied</u></i>
  <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.'),
 
 snapshot_placeholder: T('Take Snapshot'),
-snapshot_tooltip: T('Set to take a snapshot of the dataset before a <i>PUSH</i>.'),
-
+snapshot_tooltip: T('Set to take a snapshot of the dataset before a\
+ <i>PUSH</i> or <i>PULL</i>.'),
 
 pre_script_placeholder: T('Pre-script'),
 pre_script_tooltip: T('Script to execute before running sync.'),
@@ -131,8 +131,4 @@ exclude_placeholder: T('Exclude'),
 exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\
  See https://rclone.org/filtering/ for more details on --exclude option.'),
 
-resetTransferModeDialog: {
-    title: T('Transfer Mode Reset'),
-    content: T('Transfer Mode has been reset to <i>COPY</i>.'),
-}
 }

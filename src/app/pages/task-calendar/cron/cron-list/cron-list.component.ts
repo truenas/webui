@@ -72,9 +72,10 @@ export class CronListComponent {
               )
             )
             .subscribe(
-              res => {
-                this.dialog.Info(T("Run Now"), res.data, '500px', 'info', true);
-              },
+              res =>
+                this.translate.get("close").subscribe(close => {
+                  this.entityList.snackBar.open(res.data, close, { duration: 5000 });
+                }),
               err => new EntityUtils().handleError(this, err)
             )
       },

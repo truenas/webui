@@ -10,7 +10,6 @@ interface VDev {
   pool: string;
   type: string;
   disks?: any; // {devname: index} Only for mirrors and RAIDZ
-  diskEnclosures?: any; // {devname: index} Only for mirrors and RAIDZ
   poolIndex: number;
   vdevIndex: number;
   topology: string;
@@ -245,7 +244,6 @@ export class SystemProfiler {
   getVdevInfo(diskName){
     // Returns vdev with slot info
     let enclosure = this.profile[this.getEnclosureNumber(diskName)];
-
     let disk = enclosure.disks[enclosure.diskKeys[diskName]];    
     
     if(!disk.vdev){
@@ -257,24 +255,13 @@ export class SystemProfiler {
       }
     }
 
-    let slots: any = Object.assign({}, disk.vdev.disks);
+    let slots = Object.assign({}, disk.vdev.disks);
     
     let vdev = Object.assign({}, disk.vdev);
-    vdev.diskEnclosures = {};
     let keys = Object.keys(slots);
     keys.forEach((d, index) => {
-      let e = this.getEnclosureNumber(d);
-
-      // is the disk on the current enclosure?
-      const diskObj = enclosure.disks[enclosure.diskKeys[d]]
-      if(!diskObj){
-        delete slots[d];
-      } else {
-        let s = diskObj.enclosure.slot;
-        slots[d] = s; 
-      }
-      vdev.diskEnclosures[d] = e; 
-
+      let s = enclosure.disks[enclosure.diskKeys[d]].enclosure.slot;
+      slots[d] = s; //enclosure.disks[enclosure.diskKeys[d]].enclosure.slot;
     });
 
     vdev.selectedDisk = diskName;

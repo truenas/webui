@@ -199,11 +199,8 @@ export const helptext_system_certificates = {
 
       action_create_acme_certificate: T("Create ACME Certificate"),
 
-      download_error_dialog: {
-        title: T('Error'),
-        cert_message: T('Error exporting the certificate'),
-        key_message: T('Error exporting the Private Key')
-      }, 
+      snackbar_open_window_message: T("Opening download window. Make sure pop-ups are enabled in the browser."),
+      snackbar_open_window_action: T("Success"),
 
       action_delete: T("Delete")
   },

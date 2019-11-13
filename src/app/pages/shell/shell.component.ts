@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from "@angular/core";
+import { MatSnackBar } from "@angular/material";
 import { TranslateService } from "@ngx-translate/core";
-import { MatDialog } from '@angular/material';
 import { ShellService, WebSocketService } from "../../services/";
 import helptext from "./../../helptext/shell/shell";
 import { CopyPasteMessageComponent } from "./copy-paste-message.component";
@@ -73,7 +73,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onRightClick(): false {
-    this.dialog.open(CopyPasteMessageComponent);
+    this._snackbar.openFromComponent(CopyPasteMessageComponent);
+
     return false;
   }
 
@@ -133,6 +134,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private dialog: MatDialog) {
+  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private _snackbar: MatSnackBar) {
   }
 }

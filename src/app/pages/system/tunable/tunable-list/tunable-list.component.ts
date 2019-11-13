@@ -30,7 +30,7 @@ export class TunableListComponent {
     { name: 'Variable', prop: 'tun_var', always_display: true },
     { name: 'Value', prop: 'tun_value' },
     { name: 'Type', prop: 'tun_type' },
-    { name: 'Description', prop: 'tun_comment' },
+    { name: 'Comment', prop: 'tun_comment' },
     { name: 'Enabled', prop: 'tun_enabled' },
   ];
   public rowIdentifier = 'tun_var';

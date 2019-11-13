@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 
 import { WebSocketService } from "../../../../services/ws.service";
@@ -51,6 +51,7 @@ export class DiskWipeComponent implements OnInit {
               private activatedRoute: ActivatedRoute,
               protected entityFormService: EntityFormService,
               protected loader: AppLoaderService,
+              public snackBar: MatSnackBar,
               protected dialog: MatDialog,
               private dialogService: DialogService) {
   }
@@ -58,6 +59,12 @@ export class DiskWipeComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.preInit();
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action , {
+      duration: 5000
+    });
   }
 
   preInit() {

@@ -127,7 +127,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
 
     core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
-      if(this.theme == evt.data){ return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
       if(this.labels && this.labels.events){
@@ -153,6 +152,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
     });
 
+    console.log(this.system);
     this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations

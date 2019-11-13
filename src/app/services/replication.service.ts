@@ -23,7 +23,7 @@ export class ReplicationService {
     }
 
     getRemoteDataset(transport, sshCredentials, parentComponent) {
-        return this.ws.call('replication.list_datasets', [transport, sshCredentials]).toPromise().then(
+        return this.ws.call('zettarepl.list_datasets', [transport, sshCredentials]).toPromise().then(
             (res) => {
                 const nodes = [];
                 for (let i = 0; i < res.length; i++) {

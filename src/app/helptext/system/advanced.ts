@@ -8,10 +8,8 @@ export const helptext_system_advanced = {
   dialog_generate_debug_message: T("This operation might take a long time. Proceed?"),
   dialog_button_ok: T('Proceed'),
 
-  debug_dialog: {
-    failure_msg: T("Failed to generate debug file."),
-    failure_title: T("Failed")
-  },
+  snackbar_generate_debug_message_failure: T("Check the network connection."),
+  snackbar_generate_debug_action: T("Failed"),
 
   snackbar_network_error_message: T("Check the network connection."),
   snackbar_network_error_action: T("Failed"),
@@ -79,10 +77,8 @@ export const helptext_system_advanced = {
   cpu_in_percentage_placeholder: T('Report CPU usage in percentage'),
   cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
-  sed_options_message_paragraph: T('<b>SED (Self-Encrypting Drives) Options</b>'),
-  sed_options_tooltip: T('See the <a href="--docurl--/system.html#self-encrypting-drives"\
- target="_blank"> Self Encrypting Drives</a> section of\
- the user guide for more information.'),
+  sed_options_message_paragraph: T('<b>SED (<a href="--docurl--/system.html#self-encrypting-drives"\
+ target="_blank">Self-Encrypting Drives</a>) Options</b>'),
 
   sed_user_placeholder: T('ATA Security User'),
   sed_user_tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
@@ -98,10 +94,5 @@ export const helptext_system_advanced = {
   swapondrive_warning: T("A swap size of 0 is STRONGLY DISCOURAGED."),
 
   debug_download_failed_title: T("Error Downloading File"),
-  debug_download_failed_message: T("Debug could not be downloaded."),
-
-  submit_dialog: {
-    title: T('Success'), 
-    message: T('Settings saved.')
-  }
+  debug_download_failed_message: T("Debug could not be downloaded")
 };

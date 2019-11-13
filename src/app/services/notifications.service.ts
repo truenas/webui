@@ -56,7 +56,7 @@ export class NotificationsService {
       this.ws.subscribe('alert.list').subscribe((res) => {
         if (res && res.msg === "changed" && res.cleared) {
           this.notifications = _.remove(this.notifications, function(n) {
-            return n.id !== res.id;
+            return n.id === res.id;
           });
           this.subject.next(this.notifications);
         }

@@ -1,12 +1,10 @@
 import { MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 import {
-  WebSocketService,
-  StorageService
+  WebSocketService
 } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Http } from '@angular/http';
 
 @Component({
   selector: 'downloadkey-dialog',
@@ -23,9 +21,11 @@ export class DownloadKeyModalDialog {
     protected translate: TranslateService,
     public dialogRef: MatDialogRef<DownloadKeyModalDialog>,
     private ws: WebSocketService,
-    private storage: StorageService,
-    private http: Http,
     private loader:AppLoaderService) { }
+
+  ngOnInit() {
+
+  }
 
   downloadKey() {
     this.loader.open();
@@ -33,15 +33,12 @@ export class DownloadKeyModalDialog {
     if (this.fileName !== undefined) {
       payload.push(this.fileName);
     }
-    const mimetype = 'application/octet-stream';
     this.ws.call("pool.download_encryption_key", payload).subscribe((res) => {
       this.loader.close();
-      this.storage.streamDownloadFile(this.http, res, this.fileName, mimetype).subscribe(file => {
-        if(res !== null && res !== "") {
-          this.storage.downloadBlob(file, this.fileName);
-          this.isDownloaded = true;
-        }
-      });
+      if(res !== null && res !== "") {
+        window.open(res);
+        this.isDownloaded = true;
+      }
     }, (resError)=>{
       this.isDownloaded = true;
       this.loader.close();

@@ -1,11 +1,10 @@
 import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation'
+import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 
 export const helptext_system_email = {
   fromemail: {
     placeholder: T("From E-mail"),
-    validation: [Validators.required, Validators.email],
     tooltip: T('The user account <i>Email</i> address to use for the \
  envelope <i>From</i> email address. The user account <i>Email</i> in \
  <b>Accounts > Users > Edit</b> must be configured first.')
@@ -27,7 +26,6 @@ export const helptext_system_email = {
 
   port: {
     placeholder: T("Mail Server Port"),
-    validation: [Validators.required, rangeValidator(0, 65535)],
     tooltip: T(
       "SMTP port number. Typically <i>25,465</i>\
  (secure SMTP), or <i>587</i> (submission)."

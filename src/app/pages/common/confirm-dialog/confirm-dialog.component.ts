@@ -34,10 +34,4 @@ export class ConfirmDialog {
     this.switchSelectionEmitter.emit(this.secondaryCheckBox);
 
   }
-  isDisabled() {
-    if (!this.hideCheckBox) {
-      return !this.isSubmitEnabled && !this.hideCheckBox;
-    }
-    return this.secondaryCheckBox ? !this.isSubmitEnabled : false;
-  }
 }

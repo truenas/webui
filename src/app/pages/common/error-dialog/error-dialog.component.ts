@@ -1,10 +1,8 @@
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef, MatSnackBar } from '@angular/material';
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Http } from '@angular/http';
-
 import { WebSocketService } from '../../../services/ws.service';
-import { StorageService } from '../../../services/storage.service';
+import { T } from '../../../translate-marker';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 
 @Component({
@@ -21,7 +19,8 @@ export class ErrorDialog {
   public logs;
 
   constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
-    private ws: WebSocketService, public http: Http, public storage: StorageService) {}
+    private ws: WebSocketService,
+    private snackBar: MatSnackBar ) {}
 
   public toggleOpen () {
     const messageWrapper = document.getElementById('err-message-wrapper');
@@ -59,25 +58,15 @@ export class ErrorDialog {
 
   downloadLogs() {
     this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], this.logs.id + '.log']).subscribe(
-      (res) => {
-        const url = res[1];
-        const mimetype = 'text/plain';
-        let failed = false;
-        this.storage.streamDownloadFile(this.http, url, this.logs.id + '.log', mimetype).subscribe(file => {
-          this.storage.downloadBlob(file, this.logs.id + '.log');
-          if (this.dialogRef) {
-            this.dialogRef.close();
-          };
-        }, err => {
-          failed = true;
-          if (this.dialogRef) {
-            this.dialogRef.close();
-          }
-          new EntityUtils().handleWSError(this, err);
+      (snack_res) => {
+        this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+          duration: 5000
         });
+        window.open(snack_res[1]);
+        this.dialogRef.close(true);
       },
-      (err) => {
-        new EntityUtils().handleWSError(this, err);
+      (snack_res) => {
+        new EntityUtils().handleWSError(this, snack_res);
       }
     );
   }

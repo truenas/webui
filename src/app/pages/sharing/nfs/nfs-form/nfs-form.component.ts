@@ -7,8 +7,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { RestService, WebSocketService, DialogService, NetworkService } from '../../../../services/';
-import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
-import { T } from "app/translate-marker";
+import { helptext_sharing_nfs } from 'app/helptext/sharing';
 
 @Component({
   selector : 'app-nfs-form',
@@ -356,18 +355,17 @@ export class NFSFormComponent {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).subscribe((dialogRes) => {
+          this.dialog.confirm(helptext_sharing_nfs.dialog_enable_service_title,
+          helptext_sharing_nfs.dialog_enable_service_message,
+          true, helptext_sharing_nfs.dialog_enable_service_button).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
-                  this.dialog.Info(T('NFS') + shared.dialog_started_title, 
-                  T('The NFS') + shared.dialog_started_message, '250px').subscribe(() => {
-                    this.router.navigate(new Array('/').concat(
-                      this.route_success));
-                })
+                  entityForm.snackBar.open(helptext_sharing_nfs.snackbar_service_started, helptext_sharing_nfs.snackbar_close);
+                  this.router.navigate(new Array('/').concat(
+                   this.route_success));
                 }, (err) => {
                   entityForm.loader.close();
                   this.dialog.errorReport(err.error, err.reason, err.trace.formatted);

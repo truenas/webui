@@ -2,15 +2,8 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
 import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
-import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
-no_pools_dialog: {
-  title: T('No Pools'),
-  msg: T('Virtual Machines cannot be created or started without a pool to store them.'),
-  action: T('Create Pool')
-},
-
 wizard_type_label: T('Select VM wizard type'),
 wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
 wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
@@ -70,15 +63,15 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
 
-memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
+memory_placeholder: T('Memory Size'),
 memory_validation : [Validators.required],
-memory_tooltip: T(`Allocate RAM for the VM. Minimum value is 256 MiB. ${globalHelptext.human_readable.suggestion_tooltip} bytes.`),
+memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
 memory_size_err: T('Allocate at least 256 MiB.'),
 memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),
 vm_mem_title: T('Available Memory:'),
 
-disks_label: T('Disks'),
+disks_label: T('Hard Disks'),
 disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
  zvol on an existing dataset. This is used as a\
  virtual hard drive for the VM. Select <i>Use\
@@ -87,11 +80,10 @@ disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
 disk_radio_options_new_label: T("Create new disk image"),
 disk_radio_options_existing_label: T("Use existing disk image"),
 
-volsize_placeholder : T(`Size ${globalHelptext.human_readable.suggestion_label}`),
-volsize_tooltip: T(`Allocate space for the new zvol. ${globalHelptext.human_readable.suggestion_tooltip} MiB. Units \
- smaller than MiB are not allowed.`),
-volsize_validation: [Validators.required],
-volsize_min_err: T('Minimum size is 1 MiB'),
+volsize_placeholder : T('Size (GiB)'),
+volsize_tooltip: T('Allocate a number of gigabytes of space for the\
+ new zvol.'),
+volsize_validation: [Validators.required, rangeValidator(1)],
 
 datastore_tooltip: T('Select a dataset for the new zvol.'),
 datastore_placeholder: T('Zvol Location'),

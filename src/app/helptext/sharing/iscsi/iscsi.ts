@@ -47,7 +47,7 @@ export const helptext_sharing_iscsi = {
 
   target_form_placeholder_delete: T("Delete"),
 
-  portal_form_placeholder_comment: T("Description"),
+  portal_form_placeholder_comment: T("Comment"),
   portal_form_tooltip_comment: T(
     "Optional description. Portals are automatically assigned a numeric\
  group."
@@ -94,8 +94,6 @@ export const helptext_sharing_iscsi = {
  the <i>Connected Initiators</i> list.'
   ),
 
-  all_placeholder_initiators: T("Allow All Initiators"),
-
   initiator_form_placeholder_initiators: T("Allowed Initiators (IQN)"),
   initiator_form_tooltip_initiators: T(
     'Initiators allowed access to this system. Enter an\
@@ -114,7 +112,7 @@ export const helptext_sharing_iscsi = {
  address to the list. Example: <i>192.168.2.0/24</i>.'
   ),
 
-  initiator_form_placeholder_comment: T("Description"),
+  initiator_form_placeholder_comment: T("Comment"),
   initiator_form_tooltip_comment: T("Any notes about initiators."),
 
   globalconf_placeholder_basename: T("Base Name"),
@@ -151,6 +149,13 @@ export const helptext_sharing_iscsi = {
   globalconf_tooltip_alua: T(`Allow initiator to discover paths to both\
  ${globalHelptext.ctrlrs} on the target and increase storage traffic\
  efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
+
+  globalconf_dialog_title: T("Enable service"),
+  globalconf_dialog_message: T("Enable this service?"),
+  globalconf_dialog_button: T("Enable Service"),
+
+  globalconf_snackbar_message: T("Service started"),
+  globalconf_snackbar_close: T("close"),
 
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(
@@ -213,7 +218,7 @@ export const helptext_sharing_iscsi = {
  target="_blank">VAAI</a> Threshold Warning.'
   ),
 
-  extent_placeholder_comment: T("Description"),
+  extent_placeholder_comment: T("Comment"),
   extent_tooltip_comment: T("Notes about this extent."),
 
   extent_placeholder_insecure_tpc: T("Enable TPC"),
@@ -314,10 +319,4 @@ export const helptext_sharing_iscsi = {
 
   fc_initiators_placeholder: T('Connected Initiators'),
   fc_initiators_tooltip: T(''),
-
-  fc_update_dialog: {
-    title: T('Updated'),
-    text: T('Fibre Channel '),
-    msg: T(' update successful')
-  }
 };

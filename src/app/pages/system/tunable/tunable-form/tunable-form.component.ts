@@ -44,8 +44,8 @@ export class TunableFormComponent {
     {
       type: 'input',
       name: 'tun_comment',
-      placeholder: helptext.description.placeholder,
-      tooltip: helptext.description.tooltip,
+      placeholder: helptext.comment.placeholder,
+      tooltip: helptext.comment.tooltip,
     },
     {
       type: 'checkbox',

@@ -17,11 +17,11 @@ export const helptext_system_failover = {
   dialog_sync_from_peer_title: T("Sync from Peer"),
   dialog_sync_from_peer_message: T("Are you sure you want to sync from peer?"),
 
-  confirm_dialogs: {
-    sync_title: T('Success'),
-    sync_from_message: T("Sync from peer succeeded."),
-    sync_to_message: T("Sync to peer succeeded."),
-  },
+  snackbar_sync_from_peer_message_success: T("Sync from Peer: Success!"),
+  snackbar_sync_from_peer_success_action: T("Ok"),
+
+  snackbar_sync_to_peer_message_success: T("Sync to Peer: Success!"),
+  snackbar_sync_to_peer_success_action: T("Ok"),
 
   disabled_placeholder: T('Disabled'),
   disabled_tooltip: T(''),

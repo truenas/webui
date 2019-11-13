@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { T } from "app/translate-marker";
-
 @Component({
   selector : 'app-iscsi-initiator-list',
   template : `
@@ -19,20 +17,20 @@ export class InitiatorListComponent {
 
   public columns: Array<any> = [
     {
-      name : T('Group ID'),
+      name : 'Group ID',
       prop : 'id',
       always_display: true
     },
     {
-      name : T('Initiators'),
+      name : 'Initiators',
       prop : 'initiators',
     },
     {
-      name : T('Authorized Networks'),
+      name : 'Authorized Networks',
       prop : 'auth_network',
     },
     {
-      name : T('Description'),
+      name : 'Comment',
       prop : 'comment',
     },
   ];
