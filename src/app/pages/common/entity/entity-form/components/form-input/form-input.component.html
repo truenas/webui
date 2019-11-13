@@ -23,19 +23,13 @@
 			[max]="config.max"
 			[min]="config.min"
 			(blur)="blurEvent()"
-			autocomplete="new-password"
-			ix-auto
-			ix-auto-type="input"
-			ix-auto-identifier="{{config.placeholder}}">
+			autocomplete="new-password">
 	</mat-form-field>
 	<ng-template #elseBlock>
 		<span>{{config.placeholder | translate}}</span>
 		<input type="file" id="fileInput" (change)="changeListener($event)"/>
 	</ng-template>
-	<button mat-icon-button type="button" *ngIf="config.inputType === 'password' && config.togglePw" id="toggle_pw" (click)="togglePW()"
-		ix-auto
-		ix-auto-type="button"
-		ix-auto-identifier="{{config.name}}_toggle-pw">
+	<button mat-icon-button type="button" *ngIf="config.inputType === 'password' && config.togglePw" id="toggle_pw" (click)="togglePW()">
 		<i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
         <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
 	</button>

@@ -8,12 +8,9 @@
   <mat-card-content>
     <mat-divider class="mb-1"></mat-divider>
     {{ "Set font size" | translate }}
-    <mat-slider min="10" max="20" step="1" value="14" [(ngModel)]="font_size"
-      ix-auto ix-auto-type="slider" ix-auto-identifier="Set font size"></mat-slider>
-    <button mat-button (click)="resetDefault()" matTooltip="Reset font size to default value"
-      ix-auto ix-auto-type="button" ix-auto-identifier="RESTORE DEFAULT">
+    <mat-slider min="10" max="20" step="1" value="14" [(ngModel)]="font_size"></mat-slider>
+    <button mat-button (click)="resetDefault()" matTooltip="Reset font size to default value">
     {{ "Restore default" | translate }} </button>
-    <tooltip class="shellTooltip" [message]=shell_tooltip
-      ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="jailshell-tooltip"></tooltip>
+    <tooltip class="shellTooltip" [message]=shell_tooltip></tooltip>
   </mat-card-content>
 </mat-card>

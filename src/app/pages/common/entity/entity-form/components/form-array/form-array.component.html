@@ -1,5 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-array" [formGroup]="group.controls[config.name]"
-	ix-auto ix-auto-type="array" ix-auto-identifier="{{config.placeholder}}">
+<div id="{{config.name}}" class="dynamic-field form-array" [formGroup]="group.controls[config.name]">
 	<fieldset class="formarray-fieldset" *ngFor="let array of group.controls[config.name]['controls']; let i = index ">
 		<ng-container *ngFor="let field of config.formarray" dynamicField [config]="field" [group]="group.controls[config.name].controls[i]">
 		</ng-container>

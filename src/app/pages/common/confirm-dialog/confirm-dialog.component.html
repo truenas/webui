@@ -1,34 +1,26 @@
-  <h1 mat-dialog-title>{{ title | translate }}</h1>
-  <div mat-dialog-content id="confirm-msg">
-    <span *ngIf="secondaryCheckBox">
-        <mat-checkbox id="confirm-dialog__secondary-checkbox" class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)"
-         ix-auto
-         ix-auto-type="checkbox"
-         ix-auto-identifier="{{secondaryCheckBoxMsg | uppercase}}">
-        <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span> </mat-checkbox>
-        <!-- <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip> -->
-        <tooltip *ngIf="tooltip" [message]="tooltip"></tooltip>
-        <br><br>
-    </span>
-    <div class="message-content">
-      <span [innerHTML]="message"></span>
-    </div>
-  </div>
-  
-  <div mat-dialog-actions>
-    <mat-checkbox id="confirm-dialog__confirm-checkbox" name="confirm_checkbox" class="confirm-checkbox" *ngIf="!hideCheckBox" (change)="toggleSubmit($event)"
-      ix-auto
-      ix-auto-type="checkbox"
-      ix-auto-identifier="CONFIRM">{{"Confirm" | translate}}</mat-checkbox>
-    <span fxFlex></span>
-    <button *ngIf="!hideCancel" id="confirm-dialog__cancel-button" mat-button name="cancel_button" class="mat-button mat-accent" (click)="dialogRef.close(false)"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="{{cancelMsg | uppercase}}">{{cancelMsg | translate | uppercase}}</button>
-    <button id="confirm-dialog__action-button" mat-button name="ok_button" class="mat-button mat-primary" [disabled]="isDisabled()" (click)="dialogRef.close(true)"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="{{buttonMsg | uppercase}}">{{buttonMsg | translate | uppercase}}
-    </button>
-  </div>
+<h1 mat-dialog-title>{{ title | translate }}</h1>
 
+
+
+
+<div mat-dialog-content id="confirm-msg">
+  <span *ngIf="secondaryCheckBox">
+      <mat-checkbox id="confirm-dialog__secondary-checkbox" class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)">
+      <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span> </mat-checkbox>
+      <!-- <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip> -->
+      <tooltip *ngIf="tooltip" [message]="tooltip"></tooltip>
+      <br><br>
+  </span>
+  <div class="message-content">
+    <span [innerHTML]="message"></span>
+  </div>
+</div>
+
+
+<div mat-dialog-actions>
+  <mat-checkbox id="confirm-dialog__confirm-checkbox" name="confirm_checkbox" class="confirm-checkbox" *ngIf="!hideCheckBox" (change)="toggleSubmit($event)">{{"Confirm" | translate}}</mat-checkbox>
+  <span fxFlex></span>
+  <button *ngIf="!hideCancel" id="confirm-dialog__cancel-button" mat-button name="cancel_button" class="mat-button mat-accent" (click)="dialogRef.close(false)">{{cancelMsg | translate | uppercase}}</button>
+  <button id="confirm-dialog__action-button" mat-button name="ok_button" class="mat-button mat-primary" [disabled]="isDisabled()" (click)="dialogRef.close(true)">{{buttonMsg | translate | uppercase}}
+  </button>
+</div>

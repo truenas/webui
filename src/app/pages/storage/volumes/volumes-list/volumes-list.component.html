@@ -8,8 +8,7 @@
   </div>
   <div *ngIf="zfsPoolRows.length > 0">
     <mat-accordion [multi]="true">
-      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="true" id="expansionpanel_zfs_{{row.name}}"
-      ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
+      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="true" id="expansionpanel_zfs_{{row.name}}">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <div *ngIf="row.vol_encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
@@ -33,7 +32,7 @@
         </mat-expansion-panel-header>
         <div fxLayoutAlign="end start" class="icon-row">
           <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
-            <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row" [action]="'settings'"></app-entity-table-actions>
+            <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row"></app-entity-table-actions>
           </div>
           <div *ngIf="row.vol_encrypt > 0 && row.is_decrypted" 
             class="global_volume_based_action_menu pool-icon" 
@@ -41,7 +40,7 @@
             name="lock"
             id="volume_lock_icon__{{row.name}}"
             >
-            <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row" [action]="'lock'"></app-entity-table-actions>
+            <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row"></app-entity-table-actions>
           </div>
           <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" 
               class="encryption_icon pool-icon" 
