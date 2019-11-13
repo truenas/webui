@@ -269,7 +269,7 @@
               *ngIf="col.toggle"
               id="{{row.name}}_{{col.name}}-overlay"
               [ix-auto]="col?.name"
-              ix-auto-type="clickable-overlay"
+              ix-auto-type="overlay"
               [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               (click)="conf.onSliderChange(row)"
               (click)="!row.disableSlider ? conf.onSliderChange(row) : null"
