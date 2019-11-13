@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { WebSocketService, JailService } from '../../../services';
+import { WebSocketService, JailService, DialogService } from '../../../services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
+import { T } from '../../../translate-marker';
 
 @Component({
     selector: 'app-plugins-list',
@@ -16,9 +17,7 @@ export class AvailablePluginsComponent implements OnInit {
     @Input() parent: any;
 
     protected queryCall = 'plugin.available';
-    protected queryCallOption = {
-        'plugin_repository': window.localStorage.getItem('is_freenas') === 'true' ? 'https://github.com/freenas/iocage-ix-plugins.git' : 'https://github.com/truenas/iocage-ix-plugins.git'
-    };
+    protected queryCallOption = {};
 
     public plugins: any;
     public selectedPlugin: any;
@@ -28,13 +27,18 @@ export class AvailablePluginsComponent implements OnInit {
     public installedPlugins: any = {};
 
     constructor(private ws: WebSocketService, protected jailService: JailService,
-                private router: Router) {
+                private router: Router, protected dialogService: DialogService) {
         this.ws.call('plugin.official_repositories').subscribe(
             (res) => {
                 for (const repo in res) {
                     this.availableRepo.push(res[repo]);
                 }
-                this.selectedRepo = this.availableRepo[0].git_repository;
+                if (this.availableRepo.length === 0) {
+                    this.dialogService.Info(T('No Repositories'), T('No repositories is found.'), '500px', 'info', true);
+                } else {
+                    const officialRepo = this.availableRepo.filter(repo => repo.name === 'iXsystems');
+                    this.selectedRepo = officialRepo.length > 0 ? officialRepo[0]['git_repository'] : this.availableRepo[0]['git_repository'];
+                }
             },
             (err) => {
                 new EntityUtils().handleWSError(this.parent, err, this.parent.dialogService);
@@ -62,6 +66,7 @@ export class AvailablePluginsComponent implements OnInit {
 
     getPlugin(cache = true) {
         this.parent.cardHeaderReady = false;
+        this.queryCallOption['plugin_repository'] = this.selectedRepo;
         this.queryCallOption['cache'] = cache;
 
         this.ws.job(this.queryCall, [this.queryCallOption]).subscribe(
@@ -98,7 +103,7 @@ export class AvailablePluginsComponent implements OnInit {
     switchRepo(event) {
         this.parent.loader.open();
         this.parent.loaderOpen = true;
-        this.queryCallOption.plugin_repository = this.selectedRepo;
+        this.queryCallOption['plugin_repository'] = this.selectedRepo;
         this.getPlugin();
     }
 
