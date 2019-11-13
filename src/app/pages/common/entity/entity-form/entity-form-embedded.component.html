@@ -1,7 +1,8 @@
 <div id="entity-form-embedded.component_html">
   <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
   <p *ngIf="!hasConf">
-    Please <button id="click_here_setup_configuration_button" mat-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to set up configuration first.
+    Please <button id="click_here_setup_configuration_button" mat-button color="primary" class="btn btn-link" type="button" (click)="goConf()"
+      ix-auto ix-auto-type="button" ix-auto-identifier="CLICK HERE">Click here</button> to set up configuration first.
   </p>
   <p *ngIf="success" type="success">{{"Successfully updated." | translate}}</p>
   <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
@@ -21,15 +22,18 @@
           </div>
         </ng-container>
       </div>
-      <!-- <div class="btn-group btn-group-justified"> -->
       <mat-card-actions style.text-align="{{actionButtonsAlign}}">
-        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-button class="mat-primary" color="primary" [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
-        <button *ngIf="conf.goBack" id="goback_button" class="btn btn-block btn-lg btn-primary mat-accent" type="button" (click)="goBack()" mat-button color="accent">Cancel</button>
+        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-button class="mat-primary" color="primary" [disabled]="entityForm.dirty === false || !entityForm.form.valid"
+          ix-auto ix-auto-type="button" ix-auto-identifier="{{saveSubmitText | uppercase}}">{{saveSubmitText | translate}}</button>
+        <form-status *ngIf="conf.multiStateSubmit" [statusIcon]="saveSubmitStatus"></form-status>
+        <button *ngIf="conf.goBack" id="goback_button" class="btn btn-block btn-lg btn-primary mat-accent" type="button" (click)="goBack()" mat-button color="accent"
+          ix-auto ix-auto-type="button" ix-auto-identifier="CANCEL">Cancel</button>
         <span *ngFor="let custBtn of conf.custActions">
-          <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="submit" (click)="onSubmit($event,custBtn.eventName)">{{custBtn.name | translate}}</button>
+          <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="submit" (click)="onSubmit($event,custBtn.eventName)"
+            ix-auto ix-auto-type="button" ix-auto-identifier="{{custBtn.name | uppercase}}">{{custBtn.name | translate}}</button>
         </span>
-        <button id="delete_button" mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
-        <!-- </div> -->
+        <button id="delete_button" mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()"
+          ix-auto ix-auto-type="button" ix-auto-identifier="DELETE">{{"Delete" | translate}}</button>
       </mat-card-actions>
     </form>
   </div>

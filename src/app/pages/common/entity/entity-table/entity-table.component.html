@@ -8,33 +8,45 @@
       <div id="filter">
         <mat-icon>search</mat-icon>
         <mat-form-field floatPlaceholder="never">
-          <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
+          <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}"
+          ix-auto
+          ix-auto-type="input"
+          ix-auto-identifier="Filter {{conf.title}}">
         </mat-form-field>
         <!--<tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>-->
       </div>
 
       <!-- START MultiMenu-->
       <div *ngIf="columnFilter && allColumns && allColumns.length > 0">
-        <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle">
-          <span>Columns <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
+        <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
+          ix-auto
+          ix-auto-type="button"
+          ix-auto-identifier="{{conf.title}}_COLUMNS">
+          <span>{{"Columns" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
         </button>
         <mat-menu #menu="matMenu" multiple overlapTrigger="false">
 
           <!-- SELECT ALL -->
           <div (click)="$event.stopPropagation()">
-            <button mat-menu-item (click)="checkAll()" id="check-all">
+            <button mat-menu-item (click)="checkAll()" id="check-all"
+            ix-auto
+            ix-auto-type="action"
+            ix-auto-identifier="COLUMNS_SELECT">
               <span>
                 <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
                 <mat-icon *ngIf="!checkLength()">remove</mat-icon>
               </span>
-              <span *ngIf="!checkLength()">Select All</span>
-              <span *ngIf="checkLength()">Unselect All</span>
+              <span *ngIf="!checkLength()">{{"Select All" | translate}}</span>
+              <span *ngIf="checkLength()">{{"Unselect All" | translate}}</span>
             </button>
           </div>
 
           <!-- INDIVIDUAL COLUMNS-->
           <div (click)="$event.stopPropagation()">
-            <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name">
+            <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name"
+              ix-auto
+              ix-auto-type="action"
+              ix-auto-identifier="COLUMNS_{{col.name}}">
               <span>
                 <mat-icon *ngIf="isChecked(col)">check_circle</mat-icon>
                 <mat-icon *ngIf="!isChecked(col)">remove</mat-icon>
@@ -44,11 +56,14 @@
           </div>
 
           <div (click)="$event.stopPropagation()">
-            <button mat-menu-item (click)="resetColViewToDefaults()" id="reset_col_view">
+            <button mat-menu-item (click)="resetColViewToDefaults()" id="reset_col_view"
+              ix-auto
+              ix-auto-type="action"
+              ix-auto-identifier="COLUMNS_Reset to Defaults">
               <span>
                 <mat-icon>undo</mat-icon>
               </span>
-              <span>Reset to Defaults</span>
+              <span>{{"Reset to Defaults" | translate}}</span>
             </button>
           </div>
         </mat-menu>
@@ -75,7 +90,8 @@
       </ng-container>
 
       <div id='config' *ngIf="conf.globalConfig">
-        <button mat-icon-button id="{{ conf.globalConfig.id }}" [matTooltip]="conf.globalConfig.tooltip" (click)="conf.globalConfig.onClick()">
+        <button mat-icon-button id="{{ conf.globalConfig.id }}" [matTooltip]="conf.globalConfig.tooltip" (click)="conf.globalConfig.onClick()"
+          ix-auto ix-auto-type="settings" ix-auto-identifier="{{title}}">
           <mat-icon>settings</mat-icon>
         </button>
       </div>
@@ -94,7 +110,7 @@
     [style.display]="selected.length > 0 ? 'block' : 'none'">
     <div>
       <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
-        <strong>Batch Operations</strong>
+        <strong>{{"Batch Operations" | translate}}</strong>
       </div>
       <!-- -->
       <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
@@ -122,7 +138,7 @@
           <!-- With Labels -->
           <ng-container>
             <button mat-button (click)="doMultiDelete(this.selected);">
-              <mat-icon>delete</mat-icon><br><span>DELETE</span>
+              <mat-icon>delete</mat-icon><br><span>{{"Delete" | translate}}</span>
             </button>
           </ng-container>
 
@@ -201,7 +217,10 @@
                 [size]="pageSize"
                 [count]="rowCount"
                 [hidden]="!((rowCount / pageSize) > 1)"
-                (change)="entityTable.onFooterPage($event)">
+                (change)="entityTable.onFooterPage($event)"
+                ix-auto
+                ix-auto-type="pager"
+                ix-auto-identifier="{{conf.title}}-table_pager">
             </datatable-pager>
           </ng-template>
         </ngx-datatable-footer>
@@ -212,8 +231,10 @@
             <mat-checkbox
               [checked]="allRowsSelected"
               (change)="selectFn(!allRowsSelected)"
-              ix-datatable-cell="multi-checkbox-all"
-              [ix-datatable-cell-identifier]="title"
+              ix-auto
+              ix-auto-type="checkbox"
+              [ix-auto-identifier]="title"
+              id="{{title}}_multi-checkbox-all"
             ></mat-checkbox>
           </div>
         </ng-template>
@@ -222,8 +243,10 @@
           <div>
             <mat-checkbox
               *ngIf="!row.hideCheckbox"
-              ix-datatable-cell="multi-checkbox"
-              [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
+              id="{{row[conf.rowIdentifier || 'name' ]}}_multi-checkbox"
+              ix-auto
+              ix-auto-type="checkbox"
+              [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               [checked]="isSelected"
               (change)="onCheckboxChangeFn($event)"
             ></mat-checkbox>
@@ -245,20 +268,29 @@
             <div class="clickable"
               *ngIf="col.toggle"
               id="{{row.name}}_{{col.name}}-overlay"
+              [ix-auto]="col?.name"
+              ix-auto-type="overlay"
+              [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               (click)="conf.onSliderChange(row)"
+              (click)="!row.disableSlider ? conf.onSliderChange(row) : null"
               matTooltip="{{row[col.prop]}}"
             >
             </div>
             <mat-slide-toggle
               *ngIf="col.toggle"
+              [disabled]="row.disableSlider"
               color="accent"
               id="{{row.name}}_{{col.name}}-slidetoggle"
+              [ix-auto]="col?.name"
+              ix-auto-type="toggle"
+              [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               [checked]="row[col.prop]==='RUNNING'"
             ></mat-slide-toggle>
-            <div id="{{col.prop}}_{{row[col.prop]}}"
+            <div id="{{row[conf.rowIdentifier || 'name' ]}}_{{col.name}}"
                  title="{{convertDisplayValue(row[col.prop])}}"
-                 [ix-datatable-cell]="col?.name"
-                 [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']">
+                 [ix-auto]="col?.name"
+                 ix-auto-type="value"
+                 [ix-auto-identifier]="row[conf.rowIdentifier || 'name']">
               {{convertDisplayValue(row[col.prop])}}
             </div>
           </ng-template>
@@ -274,13 +306,15 @@
           <div
             fxLayoutAlign="start center"
             fxLayoutGap="4px"
-            [ix-datatable-cell]="col?.name"
-            [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
+            [ix-auto]="col?.name"
+            ix-auto-type="value"
+            [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
           >
             <ng-container *ngIf="col?.widget?.component">
                 <mat-icon
-                  [ix-datatable-cell]="col?.name + '_widget'"
-                  [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']"
+                  [ix-auto]="col?.name + '_widget'"
+                  [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
+                  id="{{row[conf.rowIdentifier || 'name' ]}}_{{col.name}}_widget"
                   [matMenuTriggerFor]="widget"
                   class="widget-icon"
                   role="img"
@@ -294,18 +328,24 @@
                   </ng-container>
                 </mat-menu>
             </ng-container>
-            <div id="{{col.prop}}_{{row[col.prop]}}"
+            <div id="{{row[conf.rowIdentifier || 'name']}}_{{col.name}}"
                  title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
               <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-              <mat-checkbox id="{{row.name}}_{{col.name}}-checkbox"
+              <mat-checkbox id="{{row[conf.rowIdentifier || 'name']}}_{{col.name}}-checkbox"
                 *ngIf="col.selectable"
                 [checked]="row[col.prop]"
                 (change)="conf.onCheckboxChange(row)"
+                [ix-auto]="col?.name"
+                ix-auto-type="checkbox"
+                [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               ></mat-checkbox>
               <button mat-button
                 [ngClass]="getButtonClass(row[col.prop])"
                 [style.width.px]="93"
                 *ngIf="col.state && stateClickable(row[col.prop], col); else colInfo"
+                [ix-auto]="col?.name"
+                ix-auto-type="button"
+                [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
                 (click)="conf.stateButton(row)">
                   {{convertDisplayValue(row[col.prop])}}
               </button>
@@ -332,8 +372,9 @@
             [class.datatable-icon-down]="expanded"
             title="Expand/Collapse Row"
             (click)="toggleExpandRow(row)"
-            ix-datatable-cell="expander"
-            [ix-datatable-cell-identifier]="row[conf.rowIdentifier || 'name']">
+            ix-auto
+            ix-auto-type="expander"
+            [ix-auto-identifier]="row[conf.rowIdentifier || 'name']">
           </a>
           <ng-template #threeDot>
             <app-entity-table-actions [entity]="this" [row]="row"></app-entity-table-actions>

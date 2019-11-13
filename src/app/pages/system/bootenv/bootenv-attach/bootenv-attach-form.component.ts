@@ -1,9 +1,9 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
@@ -44,7 +44,7 @@ export class BootEnvAttachFormComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected dialog: MatDialog, public snackBar: MatSnackBar,) {}
+              protected dialog: MatDialog, protected dialogService: DialogService) {}
 
 preInit(entityForm: any) {
   this.route.params.subscribe(params => {
@@ -67,11 +67,7 @@ preInit(entityForm: any) {
     });
 
   }
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action , {
-      duration: 5000
-    });
-  }
+
   customSubmit(entityForm){
     const payload = {};
     payload['expand'] = entityForm.expand;
@@ -80,12 +76,15 @@ preInit(entityForm: any) {
     this.dialogRef.componentInstance.setDescription("Attaching Device...");
     this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, payload]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialogRef.close(false);
-      this.openSnackBar("Device attached.", "Success");
-      this.router.navigate(
-        new Array('').concat('system','boot')
-      );
+    this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogRef.close(true);
+      this.dialogService.Info(helptext_system_bootenv.attach_dialog.title, 
+        `<i>${entityForm.dev}</i> ${helptext_system_bootenv.attach_dialog.message}`, '300px', 'info', true)
+        .subscribe(() => {
+          this.router.navigate(
+            new Array('').concat('system','boot')
+          );
+        })
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogRef.componentInstance.setDescription(res.error);

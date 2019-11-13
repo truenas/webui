@@ -1,4 +1,5 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" >
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" 
+  ix-auto ix-auto-type="scheduler" ix-auto-identifier="{{config.placeholder}}">
   <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
     <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
       <mat-option *ngFor="let preset of presets" [value]="preset.value">
@@ -10,8 +11,10 @@
       </mat-select>
     </mat-form-field>
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
-    <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
-    <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+    <div class="margin-for-error">
+      <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+      <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+    </div>
 </div>
 
 <ng-template (backdropClick)="backdropClicked($event)"

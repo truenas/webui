@@ -1,19 +1,25 @@
 import { Component } from "@angular/core";
-import { MatSnackBar } from "@angular/material";
+import { MatDialogRef } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 import helptext from "../../helptext/shell/shell";
 
 @Component({
   selector: "app-copy-paste-message",
   template: `
-    <section fxLayoutAlign="space-between center" fxLayoutGap="8px">
-      <p [innerHtml]="messageHtml"></p>
-      <button mat-button color="accent" fxFlex="88px" (click)="snackBar.dismiss()">{{ action }}</button>
-    </section>
+      <h1 mat-dialog-title> {{title | translate}}</h1> 
+      <div mat-dialog-content [innerHtml]="messageHtml"></div>
+      <div mat-dialog-actions>
+        <span fxFlex></span>
+        <button class="mat-button mat-primary" (click)="dialogRef.close(true)"
+        ix-auto="CLOSE"
+        >{{"Close" | translate}}</button>
+      </div>
   `
 })
 export class CopyPasteMessageComponent {
+  public title = helptext.dialog_title; 
   public messageHtml = helptext.copy_paste_message;
-  public action = helptext.action_dismiss;
 
-  constructor(public snackBar: MatSnackBar) {}
+  constructor(public dialogRef: MatDialogRef<CopyPasteMessageComponent>,
+    protected translate: TranslateService) {}
 }

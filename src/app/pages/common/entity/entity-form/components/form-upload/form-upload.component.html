@@ -1,4 +1,5 @@
- <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+ <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+  ix-auto ix-auto-type="file-uploader" ix-auto-identifier="{{config.placeholder}}">
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [style.margin-left.px]="5"></tooltip>
@@ -10,15 +11,18 @@
             <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name" multiple>
           </ng-template>
       </mat-card-content>
-      <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+      <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+      <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
   </div>
   <ng-template #showButton>
       <mat-card-content>
           <input type="file" #fileInput accept="{{config.acceptedFiles}}" [formControlName]="config.name">
       </mat-card-content>
       <mat-card-actions class="buttons">
-          <button mat-button type="button" color="primary" (click)="upload(config.fileLocation)">Upload</button>
+          <button mat-button type="button" color="primary" (click)="upload(config.fileLocation)"
+            ix-auto ix-auto-type="button" ix-auto-identifier="UPLOAD">Upload</button>
       </mat-card-actions>
-      <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+      <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+      <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
   </ng-template>
 </div>

@@ -3,22 +3,37 @@
 		<tr>
 			<th *ngFor="let col of columns" [ttSortableColumn]="col.prop" id="theader_{{col.prop}}" ttResizableColumn>
 				{{col.name}}
-				<p-treeTableSortIcon [field]="col.prop"></p-treeTableSortIcon>
+				<p-treeTableSortIcon [field]="col.prop"
+					ix-auto
+					ix-auto-type="sorter"
+					ix-auto-identifier="{{col.name}}"></p-treeTableSortIcon>
 			</th>
 			<th *ngIf="showActions"></th>
 		</tr>
 	</ng-template>
 	<ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
 		<tr>
-			<td *ngFor="let col of columns; let i = index" id="tbody__{{col.prop}}_{{rowData[col.prop]}}">
-				<p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"></p-treeTableToggler>
+			<td *ngFor="let col of columns; let i = index" id="tbody__{{col.prop}}_{{rowData[columns[0].prop]}}"
+			[ix-auto]="col.prop"
+			ix-auto-type="value"
+			ix-auto-identifier="{{rowData.name}}">
+				<p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"
+				ix-auto
+				ix-auto-type="expander"
+				ix-auto-identifier="{{rowData.name}}"></p-treeTableToggler>
 				{{col.filesizePipe ? (rowData[col.prop] | filesize : {standard : "iec"}) : rowData[col.prop]}}
 			</td>
 			<td *ngIf="showActions && rowData.actions">
-				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}">more_vert</mat-icon>
+				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}"
+				ix-auto
+				ix-auto-type="options"
+				ix-auto-identifier="{{rowData.name}}">more_vert</mat-icon>
 				<mat-menu #appMenu="matMenu">
 					<span *ngFor="let action of rowData.actions" id="action_button__{{rowData.name}}_{{action.label}}">
-						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);">
+						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);"
+						ix-auto
+						ix-auto-type="action"
+						ix-auto-identifier="{{rowData.name}}_{{action.label}}">
 							<span>{{action.label}}</span>
 						</button>
 					</span>

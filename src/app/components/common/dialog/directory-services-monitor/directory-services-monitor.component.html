@@ -1,6 +1,15 @@
 <mat-dialog-content class="dir-service-monitor-dialog">
+  <mat-spinner 
+    [diameter]='40' 
+    id="dir-service-monitor-spinner"
+    *ngIf="showSpinner">
+  </mat-spinner> 
   <div class="header">
-    <h4>Directory Services Monitor</h4>
+    <h4 fxFlex="90%">Directory Services Monitor</h4>
+    <button fxFlex="10%" mat-icon-button id="refresh-icon" (click)="getStatus()"
+      ix-auto ix-auto-type="button" ix-auto-identifier="refresh">
+      <mat-icon>refresh</mat-icon>
+    </button>
   </div>
   <mat-table #dirServiceTable [dataSource]="dataSource" class="mat-elevation-z8">
     <!-- Icon Column -->
@@ -25,9 +34,11 @@
       <mat-cell *matCellDef="let element"> {{element.state}} </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row clickable" (click)="goTo(row.id)"
+      ix-auto ix-auto-type="action" ix-auto-identifier="{{row.name}}"></mat-row>
   </mat-table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close class="dir-services-monitor-action-button">Close</button>
+  <button mat-button mat-dialog-close class="dir-services-monitor-action-button"
+    ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">Close</button>
 </mat-dialog-actions>

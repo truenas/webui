@@ -5,12 +5,14 @@
         <mat-toolbar-row class="view-{{currentSlideName}}">
 
           <!-- Mobile Only: Exit Widget -->
-          <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+          <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
+            ix-auto ix-auto-type="button" ix-auto-identifier="goBack">
             <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
           </button>
 
           <!-- Back to previous slide -->
-          <button class="mat-card-title-text primary-nav" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+          <button class="mat-card-title-text primary-nav" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
+            ix-auto ix-auto-type="button" ix-auto-identifier="previousSlide">
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
 
@@ -22,7 +24,8 @@
 
             <div class="controls">
 
-              <button mat-icon-button class="" (click)="router.navigate(['network/interfaces/edit/'+nicState.name])">
+              <button mat-icon-button class="" (click)="router.navigate(['network/interfaces/edit/'+nicState.name])"
+                [ix-auto]="nicState.name" ix-auto-type="button" ix-auto-identifier="configure">
                 <mat-icon role="img"
                           matTooltip="Configure {{nicState.name}}"
                   matTooltipPosition="above"
@@ -31,7 +34,8 @@
                 </mat-icon>
               </button>
 
-              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])">
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])"
+                [ix-auto]="nicState.name" ix-auto-type="button" ix-auto-identifier="networkReports">
                 <mat-icon role="img"
                   matTooltip="Network Reports"
                   matTooltipPosition="above"
@@ -62,11 +66,11 @@
                   <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
                     <div class="tr">
                       <div class="td label"><strong>In: &nbsp;</strong></div>
-                      <div class="td value"><span class="stat">{{traffic["received_bytes_last"] | convert:'B to KB'}}</span> KB/s</div>
+                      <div class="td value"><span class="stat">{{traffic.received}}</span> {{traffic.receivedUnits}}/s</div>
                     </div>
                     <div class="tr">
                       <div class="td label"><strong>Out: </strong>&nbsp;</div>
-                      <div class="td value"><span class="stat">{{traffic["sent_bytes_last"] | convert:'B to KB'}}</span> KB/s</div>
+                      <div class="td value"><span class="stat">{{traffic.sent}}</span> {{traffic.sentUnits}}/s</div>
                     </div>
                   </div>
 
@@ -91,15 +95,15 @@
                   <mat-list-item><strong>Media Subtype: </strong>&nbsp;&nbsp;{{nicState.active_media_subtype}}</mat-list-item>
                   <mat-list-item (click)="updateSlide('addresses', ipAddresses.length > 1, 1)" [ngClass]="{'clickable': ipAddresses.length > 1}">
                     <strong>IP Addresses: </strong>&nbsp;&nbsp;  {{ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length}}<span *ngIf="ipAddresses.length > 0">/{{ipAddresses[0].netmask}}</span> &nbsp;&nbsp;<span class="more-addresses" *ngIf="ipAddresses.length > 1">({{ipAddresses.length - 1}} more)</span>
-                      <mat-icon *ngIf="ipAddresses.length > 1" class="next-slide">chevron_right</mat-icon>
+                      <mat-icon *ngIf="ipAddresses.length > 1" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
                   <mat-list-item (click)="updateSlide('vlans', nicState.vlans.length > 0, 1)" [ngClass]="{'clickable': nicState.vlans.length > 0}">
                       <strong>VLANs: </strong>&nbsp;&nbsp;  {{nicState.vlans.length}}
-                      <mat-icon *ngIf="nicState.vlans.length > 0" class="next-slide">chevron_right</mat-icon>
+                      <mat-icon *ngIf="nicState.vlans.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
                   <mat-list-item *ngIf="nicState.lagg_ports" (click)="updateSlide('interfaces',nicState.lagg_ports.length > 0, 1)" [ngClass]="{'clickable': nicState.lagg_ports.length > 0}">
                       <strong>Interfaces: </strong>&nbsp;&nbsp;  {{nicState.lagg_ports.length}}
-                      <mat-icon *ngIf="nicState.lagg_ports.length > 0" class="next-slide">chevron_right</mat-icon>
+                      <mat-icon *ngIf="nicState.lagg_ports.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
                 </mat-list>
               </div>
@@ -127,7 +131,7 @@
                 [ngClass]="{'clickable': vlan.aliases.length > 0}">
                 
                 <strong>{{vlan.name}}:</strong>&nbsp;&nbsp; {{vlanAliases(i).length}} addresses
-                <mat-icon *ngIf="vlan.aliases.length > 0" class="next-slide">chevron_right</mat-icon>
+                <mat-icon *ngIf="vlan.aliases.length > 0" class="next-slide" [ix-auto]="vlan.name" ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               
               </mat-list-item>
             </mat-list>

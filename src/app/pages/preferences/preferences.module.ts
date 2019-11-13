@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { routing } from './preferences.routing';
 import { MaterialModule } from 'app/appMaterial.module';
+import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
@@ -18,6 +19,7 @@ import { GeneralPreferencesFormComponent } from './page/forms/general-preference
     ReactiveFormsModule,
     EntityModule,
     MaterialModule,
+    CommonDirectivesModule,
     CoreComponents,
     routing
   ],

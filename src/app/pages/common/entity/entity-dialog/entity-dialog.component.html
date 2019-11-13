@@ -1,6 +1,6 @@
 <h1 mat-dialog-title [innerHTML]="title"></h1>
 
-<div mat-dialog-content>
+<div mat-dialog-content ix-auto ix-auto-type="dialog" ix-auto-identifier="title">
   <span [innerHTML]="conf.message"></span>
   <br>
   <div *ngIf="conf['confirmInstructions']" >
@@ -8,7 +8,10 @@
     <div id="double-confirm-mask" [ngStyle]="{opacity: '.38', position: 'relative', top: '35px'}">{{conf['name']}}</div>
   </div>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
-    <button mat-icon-button type="button" *ngIf="field.hideButton===false" (click)="togglePW()">
+    <button mat-icon-button type="button" *ngIf="field.hideButton===false" (click)="togglePW()"
+      ix-auto
+      ix-auto-type="button"
+      ix-auto-identifier="{{config.placeholder}}_toggle-pw">
       <mat-icon matTooltip="Hide" *ngIf="showPassword">visibility</mat-icon>
       <mat-icon matTooltip="Show" *ngIf="!showPassword">visibility_off</mat-icon>
     </button>
@@ -23,10 +26,19 @@
   <span fxFlex></span>
   <span *ngFor="let custBtn of conf.custActions">
     <button id="cust_button_{{custBtn.id}}" mat-button class="mat-button"
-      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button"
+      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button"\  ix-auto
+      ix-auto-type="button"
+      ix-auto-identifier="{{custBtn.name | uppercase}}"
       (click)="custBtn['function']()" [name]="custBtn.name + '_button'">{{custBtn.name | translate}}</button>
   </span>
-  <button mat-button class="mat-flat-button mat-accent" (click)="cancel()" [name]="cancelButtonText + '_button'">{{cancelButtonText | translate}}</button>
+  <button mat-button class="mat-flat-button mat-accent" (click)="cancel()" [name]="cancelButtonText + '_button'"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="{{cancelButtonText | uppercase}}"
+  >{{cancelButtonText | translate}}</button>
   <button mat-button class="mat-flat-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid || !submitEnabled"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="{{saveButtonText | uppercase}}"
     *ngIf="saveButtonText" [name]="saveButtonText + '_button'">{{saveButtonText | translate}}</button>
 </div>

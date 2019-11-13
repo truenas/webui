@@ -1,7 +1,11 @@
-<div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+    ix-auto ix-auto-type="explorer" ix-auto-identifier='{{config.placeholder}}'>
     <div class="form-ex-flex-container" id="form-ex-flex-container">
         <div id="box1">
-            <button mat-icon-button aria-label="Toggle Tree" type="button" (click)="toggleTree()" [disabled]="config.disabled">
+            <button mat-icon-button aria-label="Toggle Tree" type="button" (click)="toggleTree()" [disabled]="config.disabled"
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier='main-folder'>
                 <mat-icon class="explorer-folder">folder</mat-icon>
             </button>
         </div>
@@ -10,7 +14,10 @@
             <mat-form-field class="full-width" id="formexinput">
                 <textarea matInput *ngIf="config.multiple; else textInput" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"></textarea>
                 <ng-template #textInput>
-                    <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
+                    <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"
+                    ix-auto
+                    ix-auto-type="input"
+                    ix-auto-identifier="{{config.name}}">
                 </ng-template>
             </mat-form-field>
             <tooltip class="formexinput-tooltip" style="float: right;" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
@@ -28,7 +35,7 @@
             </ng-template>
         </tree-root>
     </div>
-	<form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
-    <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
-    <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
+    <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+	<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+	<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
 </div>

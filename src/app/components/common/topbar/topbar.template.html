@@ -1,11 +1,13 @@
 <mat-toolbar class="topbar lola">
   <mat-toolbar-row>
     <!-- Sidenav toggle button -->
-    <button mat-icon-button id="sidenavToggle" (click)="toggleSidenav()" [matTooltip]="mat_tooltips.toggle_hide" matTooltipPosition="right">
+    <button mat-icon-button id="sidenavToggle" (click)="toggleSidenav()" [matTooltip]="mat_tooltips.toggle_hide" matTooltipPosition="right"
+      ix-auto ix-auto-type="button" ix-auto-identifier="sidenavToggle">
       <mat-icon>menu</mat-icon>
     </button>
     <!-- Sidenav toggle collapse -->
-    <button *ngIf="sidenav.opened" mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" [matTooltip]="mat_tooltips.toggle_collapse" class="toggle-collapsed">
+    <button *ngIf="sidenav.opened" mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" [matTooltip]="mat_tooltips.toggle_collapse" class="toggle-collapsed"
+      ix-auto ix-auto-type="button" ix-auto-identifier="collapseToggle">
       <mat-icon>chevron_left</mat-icon>
     </button>
     <!-- Search form
@@ -20,28 +22,35 @@
       </div -->
       <span fxFlex></span>
       <!-- finish update -->
-      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" matTooltip="Upgrade waiting to finish" (click)="upgradePendingDialog()" class="topbar-button-right">
+      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" matTooltip="Upgrade waiting to finish" (click)="upgradePendingDialog()" class="topbar-button-right"
+        ix-auto ix-auto-type="button" ix-auto-identifier="upgradeWaiting">
         <mat-icon class="movement">update</mat-icon>
       </button>
       <!--loading icon-->
-      <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="mat_tooltips.update" (click)="showUpdateDialog()" class="topbar-button-right">
+      <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="mat_tooltips.update" (click)="showUpdateDialog()" class="topbar-button-right"
+        ix-auto ix-auto-type="button" ix-auto-identifier="updateRunning">
         <mat-icon class="movement">system_update_alt</mat-icon>
       </button>
-      <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" [matTooltip]="mat_tooltips.pending_network_changes" (click)="showNetworkChangesPending()" class="topbar-button-right">
+      <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" [matTooltip]="mat_tooltips.pending_network_changes" (click)="showNetworkChangesPending()" class="topbar-button-right"
+        ix-auto ix-auto-type="button" ix-auto-identifier="networkPending">
         <mat-icon class="movement">device_hub</mat-icon>
       </button>
-      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
+      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering" (click)="showResilveringDetails()" class="topbar-button-right"
+        ix-auto ix-auto-type="button" ix-auto-identifier="resilvering">
         <mat-icon class="fa-spin">autorenew</mat-icon>
       </button>
-      <button *ngIf="showReplication" mat-icon-button id="replication" [matTooltip]="mat_tooltips.replication" (click)="showReplicationDetails()" class="topbar-button-right">
+      <button *ngIf="showReplication" mat-icon-button id="replication" [matTooltip]="mat_tooltips.replication" (click)="showReplicationDetails()" class="topbar-button-right"
+        ix-auto ix-auto-type="button" ix-auto-identifier="replication">
         <mat-icon class="movement">content_copy</mat-icon>
       </button>
       <!-- HA Status -->
       <span *ngIf="is_ha && ha_status_text">
-      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
+      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()"
+        ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
         <mat-icon svgIcon="ha_enabled"></mat-icon>
       </button>
-      <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
+      <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()"
+          ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
         <mat-icon *ngIf="ha_disabled_reasons[0] === 'NO_SYSTEM_READY';else HADisabled" svgIcon="ha_reconnecting"></mat-icon>
         <ng-template #HADisabled>
           <mat-icon svgIcon="ha_disabled"></mat-icon>
@@ -49,20 +58,24 @@
       </button>
       </span>
       <!-- Directory Services Monitor -->
-      <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager" [matTooltip]="mat_tooltips.directory_services_monitor" (click)="onShowDirServicesMonitor()" >
+      <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager" [matTooltip]="mat_tooltips.directory_services_monitor" (click)="onShowDirServicesMonitor()" 
+        ix-auto ix-auto-type="button" ix-auto-identifier="dirServices">
         <mat-icon>info</mat-icon>
       </button>
       <!-- Task Manager -->
-      <button mat-icon-button id="task-manager" [matTooltip]="mat_tooltips.task_manager" (click)="onShowTaskManager()" >
+      <button mat-icon-button id="task-manager" [matTooltip]="mat_tooltips.task_manager" (click)="onShowTaskManager()" 
+        ix-auto ix-auto-type="button" ix-auto-identifier="taskManager">
         <mat-icon>assignment</mat-icon>
       </button>
       <!-- Notification toggle button -->
-      <button mat-icon-button [matTooltip]="mat_tooltips.alerts" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
+      <button mat-icon-button [matTooltip]="mat_tooltips.alerts" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right"
+        ix-auto ix-auto-type="button" ix-auto-identifier="notifications">
         <mat-icon>notifications</mat-icon>
         <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
       </button>
       <!-- User and UI menu -->
-      <button name="Settings" mat-icon-button [matTooltip]="mat_tooltips.settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right" (click)="checkLegacyUISetting()">
+      <button name="Settings" mat-icon-button [matTooltip]="mat_tooltips.settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right" (click)="checkLegacyUISetting()"
+        ix-auto ix-auto-type="button" ix-auto-identifier="settings">
           <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #accountMenu="matMenu">
@@ -73,15 +86,18 @@
           </ng-container>
         </button-->
         <button class="hidden-button" mat-menu-item></button>
-        <button name="settings-account" mat-menu-item [routerLink]="['/account/users/edit/1']">
+        <button name="settings-account" mat-menu-item [routerLink]="['/account/users/edit/1']"
+          ix-auto ix-auto-type="option" ix-auto-identifier="Account">
           <mat-icon>account_box</mat-icon>
           <span>{{'Account' | translate}}</span>
         </button>
-        <button name="settings-change-password" mat-menu-item [routerLink]="['/account/users/change-password']">
+        <button name="settings-change-password" mat-menu-item [routerLink]="['/account/users/change-password']"
+          ix-auto ix-auto-type="option" ix-auto-identifier="Change Password">
           <mat-icon>dialpad</mat-icon>
           <span>{{'Change Password' | translate}}</span>
         </button>
-        <button name="settings-preferences" mat-menu-item [routerLink]="['/ui-preferences']">
+        <button name="settings-preferences" mat-menu-item [routerLink]="['/ui-preferences']"
+          ix-auto ix-auto-type="option" ix-auto-identifier="Preferences">
           <mat-icon>settings_applications</mat-icon>
           <span>{{'Preferences' | translate}}</span>
         </button>
@@ -89,30 +105,36 @@
           <mat-icon>notifications_off</mat-icon>
           <span>Disable alerts</span>
         </button -->
-        <button name="settings-about" mat-menu-item (click)="onShowAbout()">
+        <button name="settings-about" mat-menu-item (click)="onShowAbout()"
+          ix-auto ix-auto-type="option" ix-auto-identifier="About">
           <mat-icon>info_outline</mat-icon>
           <span>{{'About' | translate}}</span>
         </button>
-        <button *ngIf="exposeLegacyUI" name="settings-legacy-ui" mat-menu-item (click)="onGoToLegacy()">
+        <button *ngIf="exposeLegacyUI" name="settings-legacy-ui" mat-menu-item (click)="onGoToLegacy()"
+        ix-auto ix-auto-type="option" ix-auto-identifier="Legacy Web Interface">
           <mat-icon>keyboard_return</mat-icon>
           <span>{{'Legacy Web Interface' | translate}}</span>
         </button>
       </mat-menu>
       <!-- Top right power menu -->
-      <button name="Power" mat-icon-button [matTooltip]="mat_tooltips.power" [matMenuTriggerFor]="runMenu" class="topbar-button-right">
+      <button name="Power" mat-icon-button [matTooltip]="mat_tooltips.power" [matMenuTriggerFor]="runMenu" class="topbar-button-right"
+      ix-auto ix-auto-type="button" ix-auto-identifier="power">
           <mat-icon>power_settings_new</mat-icon>
         </button>
         <mat-menu #runMenu="matMenu">
             <button class="hidden-button" mat-menu-item></button>
-            <button name="power-log-out" mat-menu-item (click)="signOut()">
+            <button name="power-log-out" mat-menu-item (click)="signOut()"
+              ix-auto ix-auto-type="option" ix-auto-identifier="Log Out">
               <mat-icon>exit_to_app</mat-icon>
               <span>{{'Log Out' | translate}}</span>
             </button>
-            <button name="power-restart" mat-menu-item (click)="onReboot()">
+            <button name="power-restart" mat-menu-item (click)="onReboot()"
+              ix-auto ix-auto-type="option" ix-auto-identifier="Restart">
               <mat-icon>replay</mat-icon>
               <span>{{'Restart' | translate}}</span>
             </button>
-            <button name="power-shut-down" mat-menu-item (click)="onShutdown()">
+            <button name="power-shut-down" mat-menu-item (click)="onShutdown()"
+              ix-auto ix-auto-type="option" ix-auto-identifier="Shut Down">
               <mat-icon>power_settings_new</mat-icon>
               <span>{{'Shut Down' | translate}}</span>
             </button>

@@ -19,6 +19,7 @@ import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { TreeTableModule } from 'primeng/treetable';
 import { FileSizeModule } from 'ngx-filesize';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
@@ -79,14 +80,14 @@ import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/t
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
-import { DataTableCellDirective } from './entity-table/data-table-cell.directive';
+import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
-    OverlayModule, A11yModule, TreeTableModule, FileSizeModule
+    OverlayModule, A11yModule, TreeTableModule, FileSizeModule, CommonDirectivesModule
   ],
   declarations: [
     TaskScheduleListComponent,
@@ -141,7 +142,7 @@ import { DataTableCellDirective } from './entity-table/data-table-cell.directive
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
-    DataTableCellDirective
+    FormStatusComponent
   ],
   exports: [
     EntityTemplateDirective,
@@ -169,7 +170,6 @@ import { DataTableCellDirective } from './entity-table/data-table-cell.directive
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
-    DataTableCellDirective
   ],
   entryComponents: [
     FormButtonComponent,

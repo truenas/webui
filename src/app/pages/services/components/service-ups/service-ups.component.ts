@@ -116,8 +116,6 @@ export class ServiceUPSComponent {
       name : 'ups_shutdowncmd',
       placeholder : helptext.ups_shutdowncmd_placeholder,
       tooltip : helptext.ups_shutdowncmd_tooltip,
-      required: true,
-      validation : helptext.ups_shutdowncmd_validation
     },
     {
       type: 'input',
