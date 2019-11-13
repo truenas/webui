@@ -9,7 +9,7 @@
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="{{entity.conf.title}}_ACTIONS">
-    <span>ACTIONS <mat-icon class="menu-caret ">arrow_drop_down</mat-icon></span>
+    <span>{{"Actions" | translate}} <mat-icon class="menu-caret ">arrow_drop_down</mat-icon></span>
   </button>
   <mat-menu #menu="matMenu" overlapTrigger="false">
     <button mat-menu-item 
@@ -19,7 +19,7 @@
       ix-auto
       ix-auto-type="button"
       ix-auto-identifier="{{entity.conf.title}}_ADD">
-      <span>Add</span>
+      <span>{{"Add" | translate }}</span>
       <span>{{this.entity.conf.route_add_tooltip | translate}}</span>
     </button>
     <button id="add_action_button_{{action?.label}}" 
@@ -41,7 +41,7 @@
       id="add_action_button"
       ix-auto
       ix-auto-type="button"
-      ix-auto-identifier="{{entity.conf.title}}_ADD">ADD</button>
+      ix-auto-identifier="{{entity.conf.title}}_ADD">{{"Add" | translate}}</button>
     <button id="add_action_button_{{action?.label}}"
       [disabled]="entity.conf.addBtnDisabled" 
       mat-button color="primary" 

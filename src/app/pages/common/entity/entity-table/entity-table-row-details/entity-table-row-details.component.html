@@ -4,7 +4,7 @@
         fxLayoutAlign="start center"
         fxLayoutGap="16px"
     >
-        <h4>{{ column.name }}:</h4>
+        <h4>{{ column.name | translate}}:</h4>
         <div
             fxLayoutAlign="start center"
             fxLayoutGap="4px"
@@ -60,7 +60,7 @@
                 fxLayoutGap="8px"
             >
                 <mat-icon>{{ action.icon }}</mat-icon>
-                <p>{{ action.label }}</p>
+                <p>{{ action.label | translate}}</p>
             </div>
         </button>
     </ng-container>

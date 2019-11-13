@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { delete_share_message, helptext_sharing_smb } from 'app/helptext/sharing';
+import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
@@ -38,7 +38,7 @@ export class SMBListComponent {
   };
 
   public confirmDeleteDialog = {
-    message: delete_share_message,
+    message: shared.delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
     buildTitle: share => `${T('Unshare')} ${share.name}`

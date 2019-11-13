@@ -211,7 +211,7 @@ export class CloudsyncFormComponent implements OnInit {
           value: 'PULL',
         }, {
           name: 'transfer_mode',
-          value: 'SYNC',
+          value: 'MOVE',
         }]
       }
     ],
@@ -587,7 +587,10 @@ export class CloudsyncFormComponent implements OnInit {
     this.formGroup
       .get('direction')
       .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== 'COPY'))
-      .subscribe(() => this.formGroup.get('transfer_mode').setValue('COPY'));
+      .subscribe(() => {
+        this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
+        this.formGroup.get('transfer_mode').setValue('COPY');
+      });
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.subscribe(mode => {
@@ -644,14 +647,15 @@ export class CloudsyncFormComponent implements OnInit {
           if (this.data.credentials) {
             this.formGroup.controls['credentials'].setValue(this.data.credentials.id);
           }
-          if(this.data.attributes) {
-            if (this.formGroup.controls['bucket']) {
-              this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
+          if (this.data.attributes) {
+            for (let attr in this.data.attributes) {
+              if (this.formGroup.controls[attr]) {
+                this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
+                if (attr === 'bucket' && this.formGroup.controls['bucket_input']) {
+                  this.formGroup.controls['bucket_input'].setValue(this.data.attributes[attr]);
+                }
+              }
             }
-            if (this.formGroup.controls['bucket_input']) {
-              this.formGroup.controls['bucket_input'].setValue(this.data.attributes.bucket);
-            }
-            this.formGroup.controls['folder'].setValue(this.data.attributes.folder);
           }
         }
       });

@@ -131,4 +131,8 @@ exclude_placeholder: T('Exclude'),
 exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\
  See https://rclone.org/filtering/ for more details on --exclude option.'),
 
+resetTransferModeDialog: {
+    title: T('Transfer Mode Reset'),
+    content: T('Transfer Mode has been reset to <i>COPY</i>.'),
+}
 }

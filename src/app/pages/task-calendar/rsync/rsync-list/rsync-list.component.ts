@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
-import { WebSocketService, DialogService, SnackbarService, TaskService, JobService } from '../../../../services';
+import { WebSocketService, DialogService, TaskService, JobService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import globalHelptext from '../../../../helptext/global-helptext';
@@ -11,7 +11,7 @@ import globalHelptext from '../../../../helptext/global-helptext';
 @Component({
   selector: 'app-rsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [TaskService, SnackbarService, JobService]
+  providers: [TaskService, JobService]
 })
 export class RsyncListComponent {
 
@@ -50,8 +50,7 @@ export class RsyncListComponent {
   };
 
   constructor(protected router: Router, protected ws: WebSocketService, protected taskService: TaskService,
-              protected dialog: DialogService, protected translate: TranslateService, protected snackBar: SnackbarService,
-              protected job: JobService) {}
+              protected dialog: DialogService, protected translate: TranslateService, protected job: JobService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
 
@@ -67,7 +66,7 @@ export class RsyncListComponent {
           if (run) {
             row.state = 'RUNNING';
             this.ws.call('rsynctask.run', [row.id] ).subscribe((res) => {
-              this.snackBar.open(T('Rsync task started.'), T('CLOSE'), { duration: 5000 });
+              this.dialog.Info(T('Task Started'), 'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.', '500px', 'info', true);
               this.job.getJobStatus(res).subscribe((task) => {
                 row.state = task.state;
                 row.job = task;

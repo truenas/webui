@@ -150,7 +150,6 @@
 
 
           <ng-template #data>
-            <!--<div class="slide topology" *ngIf="path[currentSlideIndex].name == 'topology'" fxFlex="100">-->
             <div class="list-subheader"><span class="capitalize">{{currentSlideName}}</span></div>
             <mat-list *ngIf="poolState && poolState.topology.data">
               <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology.data; let i=index"
@@ -159,16 +158,24 @@
                   <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
                   <span *ngIf="vdev.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                    &nbsp;&nbsp;
+                  </span>
+
+                  <span *ngIf="vdev.children.length <= 4;" class="vdev" >
+                    <span *ngFor="let device of vdev.children; let child = index">{{device.disk}}<span *ngIf="child < 4 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
+                  </span>
+
+                  <span *ngIf="vdev.children.length > 4;" class="vdev">
+                    <span *ngFor="let device of vdev.children; let child = index" [ngClass]="{'hidden': child >= 4}">{{device.disk}}<span *ngIf="child < 4 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
+                    <span>&nbsp;&nbsp; ({{vdev.children.length - 4}} more)</span>
                   </span>
 
                 <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
-            <!--</div>-->
           </ng-template>
 
           <ng-template #disks>
-            <!--<div #disks class="slide disks" *ngIf="path[currentSlideIndex].name == 'disks'; else emptySlide"  fxFlex="100">-->
             <div class="list-subheader"><span class="capitalize">Disks</span></div>
 
             <mat-list *ngIf="!path[currentSlideIndex].dataSource.type || path[currentSlideIndex].dataSource.type !== 'DISK'">
@@ -199,15 +206,11 @@
               </mat-list-item>
             </mat-list>
 
-            <!--</div>-->
           </ng-template>
 
 
           <ng-template #disk_details>
-            <!--<div #disk_details class="slide disk-details" *ngIf="path[currentSlideIndex].name == 'disk details'; else emptySlide"  fxFlex="100">-->
             <div class="list-subheader"><span class="capitalize">Disk Details</span></div>
-            <!--<div *ngIf="!currentMultipathDetails" class="list-subheader"><span class="capitalize">Details</span> for {{path[currentSlideIndex].dataSource.disk}}</div>
-              <div *ngIf="currentMultipathDetails" class="list-subheader"><span class="capitalize">Details</span> for multipath device {{checkMultipathLabel(path[currentSlideIndex].dataSource.disk)}} &nbsp;&nbsp;</div>-->
             <mat-list >
               <mat-list-item *ngIf="!currentMultipathDetails" role="listitem">
                 <strong> Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
@@ -237,14 +240,6 @@
               </mat-list-item>
             </mat-list>
             
-            <!-- Multipath disk details-->
-            <!--<div *ngIf="currentMultipathDetails" class="list-subheader">Multipath Details</div>
-            <mat-list *ngIf="currentMultipathDetails">
-              <mat-list-item *ngFor="let child of currentMultipathDetails.children" role="listitem">
-                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> Disk:</strong>&nbsp;&nbsp; {{child.name}}
-              </mat-list-item>
-              </mat-list>-->
-            
             <!-- Dynamic disk details-->
             <div class="list-subheader">Advanced Details</div>
             <mat-list>
@@ -254,14 +249,11 @@
                 </mat-list-item>
               </ng-container>
             </mat-list>
-            <!--</div>-->
           </ng-template>
 
 
           <ng-template #empty>
             <div class="empty"></div>
-            <!--<div class="slide empty" fxFlex="100">
-              </div>-->
           </ng-template>
 
         </div>

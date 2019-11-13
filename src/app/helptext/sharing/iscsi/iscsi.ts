@@ -152,13 +152,6 @@ export const helptext_sharing_iscsi = {
  ${globalHelptext.ctrlrs} on the target and increase storage traffic\
  efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
 
-  globalconf_dialog_title: T("Enable service"),
-  globalconf_dialog_message: T("Enable this service?"),
-  globalconf_dialog_button: T("Enable Service"),
-
-  globalconf_snackbar_message: T("Service started"),
-  globalconf_snackbar_close: T("close"),
-
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(
     "Name of the extent. If the <i>Extent size</i> is not <i>0</i>,\
@@ -321,4 +314,10 @@ export const helptext_sharing_iscsi = {
 
   fc_initiators_placeholder: T('Connected Initiators'),
   fc_initiators_tooltip: T(''),
+
+  fc_update_dialog: {
+    title: T('Updated'),
+    text: T('Fibre Channel '),
+    msg: T(' update successful')
+  }
 };

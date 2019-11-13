@@ -42,8 +42,8 @@ export class VDevLabelsSVG {
 
   constructor(chassis, app, theme, disk){
     this.selectedDisk = disk;
-    this.color = 'var(--blue)';//theme.blue;
-    this.selectedDiskColor = 'var(--cyan)';//theme.cyan;
+    this.color = 'var(--blue)';
+    this.selectedDiskColor = 'var(--cyan)';
     this.highlightColor = theme.yellow;
 
     this.onInit(chassis, app);
@@ -76,19 +76,19 @@ export class VDevLabelsSVG {
         case "HidePath":
         break;
         case 'EnableHighlightMode':
-          tiles = this.getParent().querySelectorAll('rect.tile');
-          this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname])
         break;
         case 'DisableHighlightMode':
           tiles = this.getParent().querySelectorAll('rect.tile')
           this.showAllTiles(tiles);
         break;
         case 'HighlightDisk':
+          tiles = this.getParent().querySelectorAll('rect.tile');
+          this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname]);
+
           this.highlightedDiskName = evt.data.devname;
           this.showTile(evt.data.devname);
         break;
         case 'UnhighlightDisk':
-          this.hideTile(evt.data.devname);
         break;
       }
     });
