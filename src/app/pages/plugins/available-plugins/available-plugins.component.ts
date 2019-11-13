@@ -16,7 +16,9 @@ export class AvailablePluginsComponent implements OnInit {
     @Input() parent: any;
 
     protected queryCall = 'plugin.available';
-    protected queryCallOption = {'plugin_repository': 'https://github.com/freenas/iocage-ix-plugins.git'};
+    protected queryCallOption = {
+        'plugin_repository': window.localStorage.getItem('is_freenas') === 'true' ? 'https://github.com/freenas/iocage-ix-plugins.git' : 'https://github.com/truenas/iocage-ix-plugins.git'
+    };
 
     public plugins: any;
     public selectedPlugin: any;
