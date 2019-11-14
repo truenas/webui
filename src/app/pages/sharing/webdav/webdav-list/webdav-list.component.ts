@@ -13,6 +13,7 @@ export class WebdavListComponent {
 
     public title = "WebDAV";
     protected queryCall: string = 'sharing.webdav.query';
+    protected wsDelete: string = 'sharing.webdav.delete';
     public busy: Subscription;
     public sub: Subscription;
 
