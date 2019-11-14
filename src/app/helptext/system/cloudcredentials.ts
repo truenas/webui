@@ -33,8 +33,7 @@ export const helptext_system_cloudcredentials = {
       'Amazon Web Services Key ID. This is found on \
  <a href="https://aws.amazon.com/" target="_blank">Amazon AWS</a> by \
  going through <i>My account -> Security Credentials -> Access Keys \
- (Access Key ID and Secret Access Key)</i>. Must be alphanumeric and \
- between 5 and 20 characters.'
+ (Access Key ID and Secret Access Key)</i>.'
     )
   },
 
@@ -43,8 +42,7 @@ export const helptext_system_cloudcredentials = {
     tooltip: T(
       "Amazon Web Services password. If the Secret Access Key cannot be \
  found or remembered, go to <i>My Account -> Security Credentials -> \
- Access Keys</i> and create a new key pair. Must be alphanumeric and \
- between 8 and 40 characters."
+ Access Keys</i> and create a new key pair."
     )
   },
 

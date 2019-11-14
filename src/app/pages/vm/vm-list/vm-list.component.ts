@@ -297,9 +297,7 @@ export class VMListComponent {
             icon: "settings_ethernet",
             label: T("VNC"),
             onClick: vnc_vm => {
-                const vnc = vnc_vm.devices.find(o => o.dtype === 'VNC');
-                const bind = vnc.attributes.vnc_bind;
-                this.ws.call("vm.get_vnc_web", [vnc_vm.id], bind).subscribe(res => {
+                this.ws.call("vm.get_vnc_web", [vnc_vm.id]).subscribe(res => {
                     for (const vnc_port in res) {
                         window.open(res[vnc_port]);
                     }

@@ -20,10 +20,6 @@ export class CloudCredentialService {
   	return this.ws.call(this.credentialProviders, []);
   }
 
-  getCloudsyncCredentials() {
-    return this.ws.call('cloudsync.credentials.query', {}).toPromise();
-  }
-
   getByte(data: string): any {
       let unit = 'K'; // default unit
       let index = -1;

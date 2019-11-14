@@ -406,31 +406,14 @@ mac_prefix_placeholder: T('mac_prefix'),
 mac_prefix_tooltip: T('Enter a valid MAC address vendor prefix.\
  <b>Example:</b> <i>E4F4C6</i>'),
 
-nat_forwards_placeholder: T('NAT Port Forwarding'),
-nat_forwards_tooltip: T('Configure the ports that allow remote access to \
- the jail. Required to override the default settings or when installing \
- duplicate plugins.'),
+protocol_placeholder: T('protocol'),
+protocol_tooltip: T(''),
 
-protocol_placeholder: T('Protocol'),
-protocol_tooltip: T('The type of connection the port uses. Choose \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=tcp" target="_blank">TCP</a> \
- for a reliable two-way transmission of data or \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=udp" target="_blank">UDP</a> \
- for an unreliable and unordered one-way data transmission.'),
+jail_port_placeholder: T('jail_port'),
+jail_port_tooltip: T(''),
 
-jail_port_placeholder: T('Jail Port Number'),
-jail_port_tooltip: T('Port to assign to this jail. Avoid using a port \
- that is already in use by another jail or system service. For a list \
- of commonly-used ports, see this \
- <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml" \
- target="_blank">Internet Assigned Numbers Authority \(IANA\) registry</a>.'),
-
-host_port_placeholder: T('Host Port Number'),
-host_port_tooltip: T('The port on the host system that forwards data to \
- the jail.  Avoid using a port that is already in use by another system \
- service. For a list of commonly-used ports, see this \
- <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml" \
- target="_blank">Internet Assigned Numbers Authority \(IANA\) registry</a>.'),
+host_port_placeholder: T('host_port'),
+host_port_tooltip: T(''),
 
 vnet_default_interface_placeholder: T('vnet_default_interface'),
 vnet_default_interface_tooltip: T('Set the default VNET interface. Only\

@@ -79,6 +79,7 @@ ups_shutdowntimer_tooltip : T('Enter a value in seconds for the the UPS to wait\
 ups_shutdowncmd_placeholder : T('Shutdown Command'),
 ups_shutdowncmd_tooltip : T('Enter a command to shut down the system when either\
  battery power is low or the shutdown timer ends.'),
+ups_shutdowncmd_validation : [ Validators.required ],
 
 ups_nocommwarntime_placeholder: T('No Communication Warning Time'),
 ups_nocommwarntime_tooltip: T('Enter a number of seconds to wait before alerting that\

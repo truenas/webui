@@ -125,7 +125,7 @@ export const helptext_system_general = {
 
   usage_collection: {
     placeholder: T("Usage collection"),
-    tooltip: T("Enable sending anonymous usage statistics to iXsystems.")
+    tooltip: T("Enable sending anonymous usage statistics to iXsystems")
   },
 
 

@@ -345,6 +345,7 @@ export class CloudsyncFormComponent implements OnInit {
   public isNew: boolean = false;
   protected data: any;
   protected pid: any;
+  protected cloudcredential_query = 'cloudsync.credentials.query';
 
   protected providers: any;
   protected taskSchemas = ['encryption', 'fast_list', 'b2-chunk-size', 'storage_class'];
@@ -483,7 +484,7 @@ export class CloudsyncFormComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
     this.bucket_input_field = _.find(this.fieldConfig, {'name': 'bucket_input'});
@@ -496,16 +497,6 @@ export class CloudsyncFormComponent implements OnInit {
         this.setRelation(config);
       }
     }
-
-    await this.cloudcredentialService.getCloudsyncCredentials().then(
-      (res) => {
-        res.forEach((item) => {
-          this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
-          this.credentials_list.push(item);
-        });
-      }
-    )
-
     this.folder_field = _.find(this.fieldConfig, { "name": "folder"});
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
       // reset folder tree view
@@ -617,6 +608,14 @@ export class CloudsyncFormComponent implements OnInit {
           paragraph.paraText = helptext.transfer_mode_warning_copy;
           paragraph.paragraphIcon = 'add_to_photos';
       }
+    });
+
+    // get cloud credentials
+    this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
+      res.forEach((item) => {
+        this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
+        this.credentials_list.push(item);
+      });
     });
 
     this.aroute.params.subscribe(params => {
