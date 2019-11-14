@@ -9,7 +9,6 @@ import { MaterialModule } from '../../appMaterial.module';
 import { MarkdownModule } from 'ngx-markdown';
 import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { GeneralComponent } from './general/general.component';
 import { AdvancedComponent } from './advanced/';
@@ -69,7 +68,7 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
-    EnclosureModule, CommonDirectivesModule
+    EnclosureModule
   ],
   declarations: [
     GeneralComponent,

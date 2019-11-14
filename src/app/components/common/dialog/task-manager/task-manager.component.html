@@ -1,14 +1,12 @@
 <mat-dialog-content class="task-manager-dialog-content">
     <span class="task-manager-search">
         <mat-icon>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter"
-            ix-auto ix-auto-type="input" ix-auto-identifier="tm-filter">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </span>
 
     <mat-table #taskTable [dataSource]="dataSource" multiTemplateDataRows matSort>
         <ng-container matColumnDef="state">
-            <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="74px"
-                ix-auto ix-auto-type="tab" ix-auto-identifier="State"> {{ 'State' | translate }} </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="74px"> {{ 'State' | translate }} </mat-header-cell>
             <mat-cell *matCellDef="let element" fxFlex="74px">
                 <mat-icon *ngIf="element.state == 'SUCCESS'" class="state-success">check_circle_outline</mat-icon>
                 <mat-icon *ngIf="element.state == 'FAILED'" class="state-failed">highlight_off</mat-icon>
@@ -17,13 +15,11 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="method">
-            <mat-header-cell *matHeaderCellDef mat-sort-header
-                ix-auto ix-auto-type="tab" ix-auto-identifier="Method"> {{ 'Method' | translate }} </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Method' | translate }} </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.method}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="percent" class="task-manager-percent">
-            <mat-header-cell *matHeaderCellDef mat-sort-header
-                ix-auto ix-auto-type="tab" ix-auto-identifier="Progress"> {{ 'Progress' | translate }} </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Progress' | translate }} </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <span *ngIf="element.progress.percent != null"> {{element.progress.percent | number: '1.2-2'}}% </span>
                 <mat-progress-bar [mode]="element.state == 'RUNNING' ? 'buffer' : 'determinate'" [value]="element.progress.percent"></mat-progress-bar>
@@ -42,12 +38,11 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" (click)="logRow(row)" [class.expanded]="expandedElement == row"
-            (click)="expandedElement = expandedElement === row ? null : row" ix-auto ix-auto-type="expander" ix-auto-identifier="{{row.method}}"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" [class.expanded]="expandedElement == row"
+            (click)="expandedElement = expandedElement === row ? null : row"></mat-row>
         <mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" [@detailExpand]="row == expandedElement ? 'expanded' : 'collapsed'"></mat-row>
     </mat-table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close class="task-manager-action-button"
-    ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE"> {{ 'Close' | translate }}</button>
+    <button mat-button mat-dialog-close class="task-manager-action-button"> {{ 'Close' | translate }}</button>
 </mat-dialog-actions>

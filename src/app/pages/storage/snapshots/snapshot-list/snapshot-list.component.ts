@@ -30,7 +30,7 @@ export class SnapshotListComponent {
     {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
     {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355},
   ];
-  public rowIdentifier = 'dataset';
+  public rowIdentifier = 'snapshot';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

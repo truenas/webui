@@ -1,5 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-	ix-auto ix-auto-type="permissions" ix-auto-identifier="{{config.placeholder}}">
+<div id="{{config.name}}" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
 	<div class="top">
 		<label>{{ config.placeholder | translate }}</label>
 		<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
@@ -8,7 +7,6 @@
 				[placeholder]="config.placeholder"
 				[attr.value]="config.value"
 				[formControlName]="config.name"
-				ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
 				>
 		</mat-form-field>
 	</div>
@@ -24,24 +22,15 @@
 					{{"Read" | translate}}
 				</td>
 				<td>
-					<mat-checkbox [checked]="ownerRead" (change)="toggleOwnerRead()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_ownerRead">
+					<mat-checkbox [checked]="ownerRead" (change)="toggleOwnerRead()">
 					</mat-checkbox>
 				</td>
 				<td>
-					<mat-checkbox [checked]="groupRead" (change)="toggleGroupRead()"
-					ix-auto
-					ix-auto-type="checkbox"
-					ix-auto-identifier="{{config.name}}_groupRead">
+					<mat-checkbox [checked]="groupRead" (change)="toggleGroupRead()">
 					</mat-checkbox>
 				</td>
 				<td>
-					<mat-checkbox [checked]="otherRead" (change)="toggleOtherRead()"
-					ix-auto
-					ix-auto-type="checkbox"
-					ix-auto-identifier="{{config.name}}_otherRead">
+					<mat-checkbox [checked]="otherRead" (change)="toggleOtherRead()">
 					</mat-checkbox><br/>
 				</td>
 			</tr>
@@ -50,24 +39,15 @@
 					{{"Write" | translate}}
 				</td>
 				<td>
-					<mat-checkbox [checked]="ownerWrite" (change)="toggleOwnerWrite()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_ownerWrite">
+					<mat-checkbox [checked]="ownerWrite" (change)="toggleOwnerWrite()">
 					</mat-checkbox>
 				</td>
 				<td>
-					<mat-checkbox [checked]="groupWrite" (change)="toggleGroupWrite()"
-					ix-auto
-					ix-auto-type="checkbox"
-					ix-auto-identifier="{{config.name}}_groupWrite">
+					<mat-checkbox [checked]="groupWrite" (change)="toggleGroupWrite()">
 					</mat-checkbox>
 				</td>
 				<td>
-					<mat-checkbox [checked]="otherWrite" (change)="toggleOtherWrite()"
-					ix-auto
-					ix-auto-type="checkbox"
-					ix-auto-identifier="{{config.name}}_otherWrite">
+					<mat-checkbox [checked]="otherWrite" (change)="toggleOtherWrite()">
 					</mat-checkbox><br/>
 				</td>
 			</tr>
@@ -76,24 +56,15 @@
 					{{"Execute" | translate}}
 				</td>
 				<td>
-					<mat-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_ownerExec">
+					<mat-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()">
 					</mat-checkbox>
 				</td>
 				<td>
-					<mat-checkbox [checked]="groupExec" (change)="toggleGroupExec()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_groupExec">
+					<mat-checkbox [checked]="groupExec" (change)="toggleGroupExec()">
 					</mat-checkbox>
 				</td>
 				<td>
-					<mat-checkbox [checked]="otherExec" (change)="toggleOtherExec()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_otherExec">
+					<mat-checkbox [checked]="otherExec" (change)="toggleOtherExec()">
 					</mat-checkbox>
 				</td>
 			</tr>

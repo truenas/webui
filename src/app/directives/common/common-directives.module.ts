@@ -6,7 +6,6 @@ import { SideNavAccordionDirective } from './sidenav-accordion.directive';
 import { AppAccordionDirective } from './app-accordion.directive';
 import { FontSizeDirective } from './font-size.directive';
 import { LazyViewerDirective } from './lazy-viewer/lazy-viewer.directive';
-import { IXAutoDirective } from './ix-auto.directive';
 
 @NgModule({
   imports: [
@@ -17,16 +16,14 @@ import { IXAutoDirective } from './ix-auto.directive';
     SideNavAccordionDirective,
     AppAccordionDirective,
     FontSizeDirective,
-    LazyViewerDirective, 
-    IXAutoDirective
+    LazyViewerDirective
   ],
   exports: [
     EqualValidatorDirective,
     SideNavAccordionDirective,
     AppAccordionDirective,
     FontSizeDirective,
-    LazyViewerDirective,
-    IXAutoDirective
+    LazyViewerDirective
   ]
 })
 export class CommonDirectivesModule { }

@@ -1,5 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
   <div>
     <mat-form-field *ngIf="config.inputType != 'file' else elseBlock">
       <input matInput [type]="config.inputType ? config.inputType : 'text'"
@@ -13,20 +12,17 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
         [matAutocomplete]="autoComplete"
         >
        <mat-autocomplete #autoComplete="matAutocomplete">
-         <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"
-          ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+         <mat-option *ngFor="let option of config.searchOptions" [value]="option.value">
            <span>{{ option.label }}</span>
          </mat-option>
        </mat-autocomplete>
     </mat-form-field>
-    <mat-button mat-icon-button id="{{config.name}}-select" type="button" [matMenuTriggerFor]="options"
-      ix-auto ix-auto-type="button" ix-auto-identifier="{{config.name}}">
+    <mat-button mat-icon-button id="{{config.name}}-select" type="button" [matMenuTriggerFor]="options">
       <mat-icon>arrow_drop_down</mat-icon>
     </mat-button>
     <mat-menu #options [class]="'combo-box-menu'">
       <ng-container *ngFor="let option of config.options">
-        <button mat-menu-item (click)="onChangeOption(option.value)"
-          ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+        <button mat-menu-item (click)="onChangeOption(option.value)">
           <span>{{ option.label }}</span>
         </button>
       </ng-container>

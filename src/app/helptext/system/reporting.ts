@@ -3,7 +3,8 @@ import { regexValidator } from '../../pages/common/entity/entity-form/validators
 
 export const helptext = {
 cpu_in_percentage_placeholder: T('Report CPU usage in percent'),
-cpu_in_percentage_tooltip: T('When set, report CPU usage in percent instead of jiffies.'),
+cpu_in_percentage_tooltip: T('When set, report CPU usage in percent \
+ instead of units of kernel time.'),
 
 graphite_placeholder: T('Graphite Server'),
 graphite_tooltip: T('Destination hostname or IP address for collectd data sent\

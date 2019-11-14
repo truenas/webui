@@ -2,16 +2,13 @@
     <section>
         <mat-form-field>
             <mat-label fxFlex>{{ "Browse a Collection" | translate}}</mat-label>
-            <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)" 
-                ix-auto ix-auto-type="select" ix-auto-identifier="Browse a Collection">
-                <mat-option *ngFor="let repo of availableRepo" [value]="repo.git_repository"
-                ix-auto ix-auto-type="option" ix-auto-identifier="{{repo.name}}">
+            <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)">
+                <mat-option *ngFor="let repo of availableRepo" [value]="repo.git_repository">
                     {{repo.name}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <button mat-flat-button id="plugin-refresh-button" (click)="getPlugin(false)" class="plugin-button"
-        ix-auto ix-auto-type="button" ix-auto-identifier="REFRESH INDEX">
+        <button mat-flat-button id="plugin-refresh-button" (click)="getPlugin(false)" class="plugin-button">
             <mat-icon>refresh</mat-icon>
             {{ "REFRESH INDEX" | translate }}
         </button>
@@ -31,8 +28,7 @@
                 <p>Version: {{selectedPlugin.version}}</p>
                 <p>Installed Instances: {{installedPlugins[selectedPlugin.plugin] || 0}}</p>
             </div>
-            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);" class="plugin-button" [disabled]="!parent.conf.activatedPool"
-            ix-auto ix-auto-type="button" ix-auto-identifier="INSTALL" >
+            <button mat-flat-button id="plugin-install-button" (click)="install(selectedPlugin.plugin);" class="plugin-button" [disabled]="!parent.conf.activatedPool" >
                 {{ "INSTALL" | translate }}
             </button>
         </div>
@@ -40,7 +36,7 @@
 </mat-card-content>
 <mat-button-toggle-group class="plugin-buttons" [(ngModel)]='selectedPlugin'>
     <ng-container *ngFor="let plugin of plugins; let index">
-        <mat-button-toggle [value]='plugin' ix-auto ix-auto-type="button" ix-auto-identifier="{{plugin.name}}">
+        <mat-button-toggle [value]='plugin'>
             <figure>
                 <img class="plugin-img" height="40" [src]="plugin.icon" alt="{{plugin.plugin}} icon" />
                 <figcaption>{{plugin.name}}</figcaption>

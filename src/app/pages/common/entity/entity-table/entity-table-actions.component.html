@@ -1,9 +1,8 @@
 <div class="panel_container">
   <mat-icon
-    ix-auto
-    ix-auto-type="{{action ? action : 'options'}}"
-    ix-auto-identifier="{{row[key_prop]}}"
-    id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+    ix-datatable-cell="three-dot"
+    [ix-datatable-cell-identifier]="row[entity?.conf?.rowIdentifier || 'name']"
+    id="table_actions_menu_button__{{key_prop}}_{{row[key_prop]}}"
     [matMenuTriggerFor]="appMenu"
     [style.cursor]="'pointer'"
   >
@@ -12,11 +11,8 @@
   <mat-menu #appMenu="matMenu">
     <span *ngFor="let action of actions">
 			<button id="action_button_{{ action?.name }}__{{action.id}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
-        || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);"
-        ix-auto
-        ix-auto-type="action"
-        ix-auto-identifier="{{action.id}}_{{action.label}}"
-        [disabled]="action.disabled">
+            || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);"
+            [disabled]="action.disabled">
 				<span>{{ action?.label | translate }}</span>
     </button>
     </span>

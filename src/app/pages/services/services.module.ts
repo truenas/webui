@@ -6,7 +6,6 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import {EntityModule} from '../common/entity/entity.module';
 import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import {ServiceAFPComponent} from './components/service-afp';
 import {ServiceDDNSComponent} from './components/service-dynamicdns';
@@ -33,7 +32,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UserService } from '../../services/user.service';
 
 @NgModule({
-  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule, CommonDirectivesModule ],
+  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule ],
   declarations : [
     Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceFTPComponent, ServiceLLDPComponent,

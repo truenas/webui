@@ -3,8 +3,7 @@
       <button mat-button color="primary" id="iscsi_wizard_action_button" (click)="gotoWizard()">Wizard</button>
     </div>
   <nav mat-tab-nav-bar>
-    <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive"
-      ix-auto ix-auto-type="tab" ix-auto-identifier="{{link.label}}">
+    <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
     {{link.label}}
   </a>
   </nav>
