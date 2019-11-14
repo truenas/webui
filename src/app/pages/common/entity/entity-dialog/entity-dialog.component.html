@@ -26,7 +26,7 @@
   <span fxFlex></span>
   <span *ngFor="let custBtn of conf.custActions">
     <button id="cust_button_{{custBtn.id}}" mat-button class="mat-button"
-      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button"\  ix-auto
+      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" ix-auto
       ix-auto-type="button"
       ix-auto-identifier="{{custBtn.name | uppercase}}"
       (click)="custBtn['function']()" [name]="custBtn.name + '_button'">{{custBtn.name | translate}}</button>
