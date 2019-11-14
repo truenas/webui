@@ -257,7 +257,11 @@ export class VMwareSnapshotFormComponent {
         (error)=>{
           this.datastore.options.length = 0;
           parent.loader.close();
-          parent.dialogService.errorReport(error.error,error.reason, error.trace.formatted);
+          if (error.reason.includes('[ETIMEDOUT]')) {
+            parent.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg, '');
+          } else {
+            parent.dialogService.errorReport(error.error,error.reason, error.trace.formatted);
+          }
         });
       }
     }
