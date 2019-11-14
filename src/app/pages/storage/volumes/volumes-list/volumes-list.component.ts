@@ -126,13 +126,10 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getEncryptedActions(rowData: any) {
-    const actions = [],
-    localLoader = this.loader, localRest = this.rest, localDialogService = this.dialogService,
-      localResourceName = this.resource_name, localParentVolumesList = this.parentVolumesListComponent;
-
+    const actions = [], self = this;
     if (rowData.vol_encrypt === 2) {
       if (rowData.is_decrypted) {
-        if (localParentVolumesList.systemdatasetPool != rowData.name) {
+        if (self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
           actions.push({
             label: T("Lock"),
             onClick: (row1) => {
@@ -225,16 +222,16 @@ export class VolumesListTableConfig implements InputTableConf {
                 saveButtonText: T("Lock Pool"),
                 customSubmit: function (entityDialog) {
                   const value = entityDialog.formValue;
-                  localLoader.open();
-                  localRest.post(localResourceName + "/" + row1.name + "/lock/",
+                  self.loader.open();
+                  self.rest.post(self.resource_name + "/" + row1.name + "/lock/",
                     { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
                       entityDialog.dialogRef.close(true);
-                      localLoader.close();
-                      localParentVolumesList.repaintMe();
+                      self.loader.close();
+                      self.parentVolumesListComponent.repaintMe();
                   }, (res) => {
-                    localLoader.close();
+                    self.loader.close();
                     if (res.message) {
-                      localDialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+                      self.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
                     }
                     else {
                       new EntityUtils().handleError(this, res);
@@ -265,7 +262,7 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
-    } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted && localParentVolumesList.systemdatasetPool != rowData.name) {
+    } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
       actions.push({
         label: T("Encryption Key"),
         onClick: (row1) => {
@@ -299,11 +296,7 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   unlockAction(row1) {
-    const localLoader = this.loader,
-    localRest = this.rest,
-    localParentVol = this.parentVolumesListComponent,
-    localDialogService = this.dialogService
-
+    const self = this;
     this.storageService.poolUnlockServiceChoices().pipe(
       map(serviceChoices => {
         return {
@@ -338,8 +331,8 @@ export class VolumesListTableConfig implements InputTableConf {
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
             const value = entityDialog.formValue;
-            localLoader.open();
-            return localRest.post("storage/volume/" + row1.name + "/unlock/",
+            self.loader.open();
+            return self.rest.post("storage/volume/" + row1.name + "/unlock/",
               { body: JSON.stringify({
                 passphrase: value.passphrase,
                 recovery_key: value.recovery_key,
@@ -347,12 +340,12 @@ export class VolumesListTableConfig implements InputTableConf {
                 })
               }).subscribe((restPostResp) => {
               entityDialog.dialogRef.close(true);
-              localLoader.close();
-              localParentVol.repaintMe();
-              localDialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
+              self.loader.close();
+              self.parentVolumesListComponent.repaintMe();
+              self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
             }, (res) => {
-              localLoader.close();
-              localDialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
+              self.loader.close();
+              self.dialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
             });
           }
         };
@@ -371,7 +364,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getActions(rowData: any) {
     let rowDataPathSplit = [];
-    let localRestartServices = this.restartServices;
+    const self = this;
     if (rowData.path) {
       rowDataPathSplit = rowData.path.split('/');
     }
@@ -385,10 +378,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Export/Disconnect"),
         onClick: (row1) => {
           let encryptedStatus = row1.vol_encryptkey,
-          localParentVol = this.parentVolumesListComponent,
-          localDialogService = this.dialogService,
-          localDialog = this.mdDialog
-
+          self = this;
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
@@ -521,32 +511,33 @@ export class VolumesListTableConfig implements InputTableConf {
                 id: 'download_key',
                 name: 'Download Key',
                 function: () => {
-                  const dialogRef = localDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                  const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
                   dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
                 }
               }],
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
-              let dialogRef = localDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
+              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
               dialogRef.updateSize('300px');
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
-              dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: localRestartServices }]);
+              dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: self.restartServices }]);
               dialogRef.componentInstance.submit();
               dialogRef.componentInstance.success.subscribe(res=>{
                 entityDialog.dialogRef.close(true);
                 if (!value.destroy) {
-                  localDialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name + "'");
+                  self.dialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name + "'");
                 } else {
-                  localDialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name +
+                  self.dialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name +
                   T("'. All data on that pool was destroyed."));
                 }
                 dialogRef.close(true);
-                localParentVol.repaintMe();
+                self.parentVolumesListComponent.repaintMe();
               }),
               dialogRef.componentInstance.failure.subscribe((res) => {
+                console.log(res)
                 let conditionalErrMessage = '';
-                if (res.reason.includes('EBUSY')) {
+                if (res.error.includes('EBUSY')) {
                   if (res.extra && res.extra['code'] === 'services_restart') {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
@@ -554,11 +545,11 @@ export class VolumesListTableConfig implements InputTableConf {
                     `Warning: These services must be restarted to export the pool:
                       ${res.extra['services']}
                       <br><br>Exporting/disconnecting will continue after services have been restarted.`;
-                      localDialogService.confirm(T("Error exporting/disconnecting pool."),
+                      self.dialogService.confirm(T("Error exporting/disconnecting pool."),
                         conditionalErrMessage, true, 'Restart Services and Continue')
                           .subscribe((res) => {
                             if (res) {
-                              localRestartServices = true;
+                              self.restartServices = true;
                               this.customSubmit(entityDialog);
                             }
                         })
@@ -568,17 +559,21 @@ export class VolumesListTableConfig implements InputTableConf {
                     conditionalErrMessage =
                     `Unable to terminate processes which are using this pool: ${res.extra['processes']}`;
                     dialogRef.close(true);
-                    localDialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
+                    self.dialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
+                  } else {
+                    entityDialog.dialogRef.close(true);
+                    dialogRef.close(true);
+                    self.dialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);                    
                   }
                 } else {
                   entityDialog.dialogRef.close(true);
                   dialogRef.close(true);
-                  localDialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
+                  self.dialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
                 };
               });
             }
           }
-          localDialogService.dialogFormWide(conf);
+          self.dialogService.dialogFormWide(conf);
         }
       }
     });
