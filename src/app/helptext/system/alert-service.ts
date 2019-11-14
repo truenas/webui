@@ -67,11 +67,6 @@ export default {
     InfluxDB_series_name_placeholder: T('Series'),
     InfluxDB_series_name_tooltip: T('InfluxDB time series name for collected points.'),
 
-    Mattermost_cluster_name_placeholder: T('Cluster Name'),
-    Mattermost_cluster_name_tooltip: T('Name of the <a\
- href="https://docs.mattermost.com/overview/index.html"\
- target="_blank">Mattermost</a> cluster to join.'),
-
     Mattermost_url_placeholder: T('Webhook URL'),
     Mattermost_url_tooltip: T('Enter or paste the <a\
  href="https://docs.mattermost.com/developer/webhooks-incoming.html"\
@@ -81,14 +76,6 @@ export default {
     Mattermost_username_placeholder: T('Username'),
     Mattermost_username_tooltip: T('Mattermost username.'),
 
-    Mattermost_password_placeholder: T('Password'),
-    Mattermost_password_tooltip: T('Mattermost password.'),
-
-    Mattermost_team_placeholder: T('Team'),
-    Mattermost_team_tooltip: T('Mattermost <a\
- href="https://docs.mattermost.com/help/getting-started/creating-teams.html"\
- target="_blank">team name</a>.'),
-
     Mattermost_channel_placeholder: T('Channel'),
     Mattermost_channel_tooltip: T('Name of the <a\
  href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
@@ -96,13 +83,8 @@ export default {
  This overrides the default channel in the incoming\
  webhook settings.'),
 
-    OpsGenie_cluster_name_placeholder: T('Cluster Name'),
-    OpsGenie_cluster_name_tooltip: T('Name of the <a\
- href="https://docs.opsgenie.com/docs"\
- target="_blank">OpsGenie</a> cluster. Find the Cluster\
- Name by signing into the OpsGenie web interface and\
- going to Integrations/Configured Integrations. Click the\
- desired integration, Settings, and read the Name field.'),
+    Mattermost_icon_url_placeholder: T('Icon URL'),
+    Mattermost_icon_url_tooltip: T(''),
 
     OpsGenie_api_key_placeholder: T('API Key'),
     OpsGenie_api_key_tooltip: T('Enter or paste the <a\
@@ -124,25 +106,11 @@ export default {
     PagerDuty_client_name_placeholder: T('Client Name'),
     PagerDuty_client_name_tooltip: T('PagerDuty client name.'),
 
-    Slack_cluster_name_placeholder: T('Cluster Name'),
-    Slack_cluster_name_tooltip: T('Name of the cluster.'),
-
     Slack_url_placeholder: T('Webhook URL'),
     Slack_url_tooltip: T('Paste the <a\
  href="https://api.slack.com/incoming-webhooks"\
  target="_blank">incoming webhook</a> URL associated with\
  this service.'),
-
-    Slack_channel_placeholder: T('Channel'),
-    Slack_channel_tooltip: T('Slack channel name. The service will post all\
- messages to this channel.'),
-
-    Slack_username_placeholder: T('Username'),
-    Slack_username_tooltip: T('Slack username for this service.'),
-
-    Slack_icon_url_placeholder: T('Icon URL'),
-    Slack_icon_url_tooltip: T('URL to an image to use for notification icons.\
- This overrides the incoming webhook setting.'),
 
     SNMPTrap_host_placeholder: T('Hostname'),
     SNMPTrap_host_tooltip: T(''),
