@@ -91,7 +91,8 @@ export class GroupFormComponent {
       });
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdgrp_gid', true);
-        entityForm.setDisabled('allow', true);
+        entityForm.formGroup.controls['allow'].setValue(true);
+        _.find(this.fieldConfig, { name: 'allow' }).isHidden = true;
       } else {
         this.ws.call('group.get_next_gid').subscribe((res)=>{
           entityForm.formGroup.controls['bsdgrp_gid'].setValue(res);
