@@ -6,9 +6,9 @@ cpu_in_percentage_placeholder: T('Report CPU usage in percent'),
 cpu_in_percentage_tooltip: T('When set, report CPU usage in percent \
  instead of units of kernel time.'),
 
-graphite_placeholder: T('Graphite Server'),
-graphite_tooltip: T('Destination hostname or IP address for collectd data sent\
- by the Graphite plugin.'),
+graphite_placeholder: T('Remote Graphite Server Hostname'),
+graphite_tooltip: T('IP address or hostname of a remote server running \
+ <a href="http://graphiteapp.org/" target="_blank">Graphite</a>.'),
 
 graph_age_placeholder: T('Graph Age'),
 graph_age_tooltip: T('Maximum time a graph is stored in months. \
