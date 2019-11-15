@@ -537,14 +537,17 @@ export class VolumesListTableConfig implements InputTableConf {
               dialogRef.componentInstance.failure.subscribe((res) => {
                 console.log(res)
                 let conditionalErrMessage = '';
-                if (res.error.includes('EBUSY')) {
-                  if (res.extra && res.extra['code'] === 'services_restart') {
+                if (res.error && res.error.includes('EBUSY')) {
+                  if (res.exc_info.extra && res.exc_info.extra['code'] === 'services_restart') {
+                    console.log(res.exc_info.extra.code)
+                    console.log(self.dialogService)
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    conditionalErrMessage =
-                    `Warning: These services must be restarted to export the pool:
-                      ${res.extra['services']}
-                      <br><br>Exporting/disconnecting will continue after services have been restarted.`;
+                    conditionalErrMessage = 'Warning: These services must be restarted to export the pool:';
+                    res.exc_info.extra.services.forEach((item) => {
+                      conditionalErrMessage += `<br><br>- ${item}`;
+                    })
+                    conditionalErrMessage += '<br><br>Exporting/disconnecting will continue after services have been restarted.<br><br>';
                       self.dialogService.confirm(T("Error exporting/disconnecting pool."),
                         conditionalErrMessage, true, 'Restart Services and Continue')
                           .subscribe((res) => {
