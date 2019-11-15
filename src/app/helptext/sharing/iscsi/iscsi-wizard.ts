@@ -54,9 +54,6 @@ export default {
     port_placeholder: T("Port"),
     port_tooltip: T("TCP port used to access the iSCSI target. Default is 3260."),
 
-    auth_placeholder: T('Authorized Access'),
-    auth_tooltip: T("Select an existing user configuration or <i>Create New</i> to view options for a new user configuration."),
-
     tag_placeholder: T("Group ID"),
     tag_tooltip: T("Allows different groups to be configured with different authentication profiles. Example: all users with\
  a group ID of 1 will inherit the authentication profile associated with Group 1."),
