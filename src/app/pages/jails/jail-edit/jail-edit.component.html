@@ -1,4 +1,5 @@
 <mat-card>
+  <mat-spinner class="jail-spinner" [diameter]='40' *ngIf="showSpinner"></mat-spinner>
   <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
     <mat-expansion-panel [expanded]="step === 0 && isReady" (opened)="setStep(0)" #basic>
       <mat-expansion-panel-header>

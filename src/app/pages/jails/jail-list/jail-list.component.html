@@ -1,4 +1,5 @@
 <mat-card *ngIf="availablePools != undefined">
+    <mat-spinner class="jail-spinner" [diameter]='40' *ngIf="showSpinner"></mat-spinner>
     <form (ngSubmit)="activatePool($event)">
       <h4>{{ "Activated Pool for Jail Manager:" | translate}} {{ activatedPool }}</h4>
       <div class="dynamic-field form-select has-tooltip" *ngIf="toActivatePool">
@@ -12,7 +13,7 @@
       <button mat-button color="primary" type="submit" [disabled]="!selectedPool" *ngIf="toActivatePool">{{ "Activate" | translate }}</button>
       <button mat-button color="primary" type="button" *ngIf="toActivatePool && availablePools.length === 0"
       (click)="router.navigate(['/storage', 'pools', 'manager'])">{{ "Create Pool" | translate }}</button>
-      <button mat-button color="primary" type="button" (click)="toActivatePool = !toActivatePool">
+      <button mat-button color="primary" type="button" (click)="toActivatePool = !toActivatePool" [disabled]="showSpinner">
         <label *ngIf="!toActivatePool">{{ "Config" | translate }}</label>
         <label *ngIf="toActivatePool">{{ "Hide Config" | translate }}</label>
       </button>

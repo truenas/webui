@@ -172,6 +172,8 @@ export class JailListComponent implements OnInit {
   this dataset to store FreeBSD releases \
   and all other jail data.");
 
+  public showSpinner = true;
+
   constructor(public router: Router, protected rest: RestService, public ws: WebSocketService, 
     public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
     public sorter: StorageService, public dialog: MatDialog,) {}
@@ -182,11 +184,13 @@ export class JailListComponent implements OnInit {
       (res)=> {
         this.availablePools = res;
         if (this.availablePools.length === 0) {
+          this.showSpinner = false;
           this.noPoolDialog();
           this.toActivatePool = true;
         }
       },
       (err) => {
+        this.showSpinner = false;
         new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       }
     );
@@ -200,8 +204,10 @@ export class JailListComponent implements OnInit {
           } else {
             this.isPoolActivated = false;
           }
+          this.showSpinner = false;
         },
         (err)=>{
+          this.showSpinner = false;
           new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
         })
     }
