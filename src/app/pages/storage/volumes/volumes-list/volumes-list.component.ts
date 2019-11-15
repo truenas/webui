@@ -720,10 +720,15 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       if (rowDataPathSplit[1] !== "iocage") {
+        let optionDisabled;
+        rowData.path.includes('/') ? optionDisabled = false : optionDisabled = true;
         actions.push({
           id: rowData.name,
           name: 'Edit Permissions',
           label: T("Edit Permissions"),
+          disabled: optionDisabled,
+          matTooltip: helptext.permissions_edit_msg,
+          ttposition: 'left',
           onClick: (row1) => {
             this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.path]).subscribe(acl_is_trivial => {
               if (acl_is_trivial) {
@@ -750,6 +755,9 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: 'Edit ACL',
           label: T("Edit ACL"),
+          disabled: optionDisabled,
+          matTooltip: helptext.acl_edit_msg,
+          ttposition: 'left',
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
               "storage", "pools", "id", row1.path.split('/')[0], "dataset",

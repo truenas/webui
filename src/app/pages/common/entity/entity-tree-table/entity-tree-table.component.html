@@ -17,8 +17,12 @@
 			<td *ngIf="showActions && rowData.actions">
 				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}">more_vert</mat-icon>
 				<mat-menu #appMenu="matMenu">
-					<span *ngFor="let action of rowData.actions" id="action_button__{{rowData.name}}_{{action.label}}">
-						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);">
+					<span *ngFor="let action of rowData.actions" 
+						id="action_button__{{rowData.name}}_{{action.label}}" 
+						[matTooltip]="action.matTooltip" 
+						[matTooltipDisabled]="!action.disabled"
+						[matTooltipPosition]="action.ttposition ? action.ttposition : 'below'">
+						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);" [disabled]="action.disabled">
 							<span>{{action.label}}</span>
 						</button>
 					</span>
