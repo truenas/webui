@@ -2839,7 +2839,7 @@ msgid "Clone"
 msgstr "Clone"
 
 msgid "Close"
-msgstr "Clone"
+msgstr "Fermer"
 
 msgid "Cloud Credentials"
 msgstr "Identifiants Cloud"
