@@ -1,6 +1,6 @@
 <div id="volumes-list.component_html" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" fxLayoutAlign="space-between center">
-    <div class="mat-card-title-text" fxFlex="300px">{{ title }}
+    <div class="mat-card-title-text" fxFlex="300px">{{ title | translate }}
       <mat-spinner *ngIf="showSpinner" [diameter]='40' id="pools-spinner">
       </mat-spinner>
     </div>
