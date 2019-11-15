@@ -57,7 +57,11 @@
                 fxLayoutGap="8px"
             >
                 <mat-icon>{{ action.icon }}</mat-icon>
-                <p>{{ action.label | translate}}</p>
+                <p
+                    [matTooltip]="action.matTooltip" 
+                    [matTooltipDisabled]="!action.disabled"
+                    [matTooltipPosition]="action.ttposition ? action.ttposition : 'below'"
+                >{{ action.label | translate}}</p>
             </div>
         </button>
     </ng-container>

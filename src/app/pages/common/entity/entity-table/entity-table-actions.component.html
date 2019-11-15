@@ -9,7 +9,10 @@
     {{icon_name}}
   </mat-icon>
   <mat-menu #appMenu="matMenu">
-    <span *ngFor="let action of actions">
+    <span *ngFor="let action of actions"
+      [matTooltip]="action.matTooltip" 
+      [matTooltipDisabled]="!action.disabled"
+      [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'">
 			<button id="action_button_{{ action?.name }}__{{action.id}}" mat-menu-item *ngIf="!entity.conf.isActionVisible
             || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);"
             [disabled]="action.disabled">
