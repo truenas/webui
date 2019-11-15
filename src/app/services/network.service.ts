@@ -18,6 +18,7 @@ export class NetworkService {
   public ipv4_or_ipv6 = new RegExp("(" + this.ipv6_regex.source + ")|(" + this.ipv4_regex.source + ")");
   public ipv4_or_ipv6_cidr = new RegExp("(" + this.ipv6_cidr_regex.source + ")|(" + this.ipv4_cidr_regex.source + ")");
   public ipv4_or_ipv6_cidr_optional = new RegExp("(" + this.ipv6_cidr_optional_regex.source + ")|(" + this.ipv4_cidr_optional_regex.source + ")");
+  public ipv4_or_ipv6_cidr_or_none = new RegExp("("+ this.ipv4_or_ipv6_cidr + ")?");
 
   public hostname_regex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
 
