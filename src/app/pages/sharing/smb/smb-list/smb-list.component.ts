@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
+import vol_helptext  from 'app/helptext/storage/volumes/volume-list';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
@@ -51,6 +52,9 @@ export class SMBListComponent {
   }
 
   getActions(row): any[] {
+    let rowName = row.path.replace("/mnt/", "");
+    let optionDisabled;
+    rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
     return [
       {
         id: row.name,
@@ -63,9 +67,11 @@ export class SMBListComponent {
         id: row.name,
         icon: 'security',
         name: "edit_acl",
+        disabled: optionDisabled,
+        matTooltip: vol_helptext.acl_edit_msg,
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
-          const datasetId = row.path.replace("/mnt/", "");
+          const datasetId = rowName;
           this.ws
             .call("pool.dataset.query", [[["id", "=", datasetId]]])
             .pipe(map(datasets => datasets[0]))
