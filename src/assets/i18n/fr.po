@@ -11836,7 +11836,7 @@ msgid ""
 msgstr ""
 "La VM ne pouvait pas démarrer parce que la configuration actuelle pourrait "
 "nécessiter plus de RAM que ce qui est disponible sur le système.  Aimeriez-vous "
-"surcharger la mémoire ?"
+"surcharger la mémoire ? "
 
 msgid "The active controller cannot be detected."
 msgstr "Le contrôleur actif ne peut pas être détecté."
@@ -12276,7 +12276,7 @@ msgid "This system will restart when the update completes."
 msgstr "Ce système redémarrera lorsque la mise à jour sera terminée."
 
 msgid "This type of VDEV requires at least "
-msgstr "Ce type de VDEV nécessite au moins"
+msgstr "Ce type de VDEV nécessite au moins "
 
 msgid "Threshold days"
 msgstr ""
@@ -12924,7 +12924,7 @@ msgid "Verify Credential"
 msgstr "Vérifier les informations d'identification"
 
 msgid "Verify Deletion of "
-msgstr "Vérifier la suppression de"
+msgstr "Vérifier la suppression de "
 
 msgid "Verify passphrase"
 msgstr "Vérifier la passphrase"
@@ -12987,89 +12987,99 @@ msgid "WARNING: Based on the pool topology, "
 msgstr "ATTENTION : D'après la topologie du volume, "
 
 msgid "WARNING: Exporting/disconnecting pool <i>"
-msgstr ""
+msgstr "ATTENTION : Exportation/déconnexion du volume <i>"
 
 msgid "WARNING: Locking pool <i>"
-msgstr ""
+msgstr "ATTENTION : Verrouillage du volume <i>"
 
 msgid "Wait to start VM until VNC client connects."
-msgstr ""
+msgstr "Attendez de démarrer VM jusqu'à ce que le client VNC se connecte."
 
 msgid "Wallclock time in seconds."
-msgstr ""
+msgstr "Durée de l'horloge murale en secondes."
 
 msgid "Warning"
-msgstr ""
+msgstr "Attention"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
-msgstr ""
+msgstr "Attention : La cible iSCSI  est déjà utilisé.</font><br>"
 
 msgid "Web Interface"
-msgstr ""
+msgstr "Interface Web legacy"
 
 msgid "WebDAV Shares"
-msgstr ""
+msgstr "Partages WebDAV"
 
 msgid "WebDAV account password."
-msgstr ""
+msgstr "Mot de passe du compte WebDAV."
 
 msgid "WebDAV account username."
-msgstr ""
+msgstr "Nom d'utilisateur du compte WebDAV."
 
 msgid "WebDAV service"
-msgstr ""
+msgstr "Service WebDAV"
 
 msgid "WebGUI HTTP -> HTTPS Redirect"
-msgstr ""
+msgstr "WebGUI HTTP -> Redirection HTTPS"
 
 msgid "WebGUI HTTP Port"
-msgstr ""
+msgstr "Port HTTP WebGUI"
 
 msgid "WebGUI HTTPS Port"
-msgstr ""
+msgstr "Port HTTPS WebGUI"
 
 msgid "WebGUI IPv4 Address"
-msgstr ""
+msgstr "WebGUI Adresse IPv4"
 
 msgid "WebGUI IPv6 Address"
-msgstr ""
+msgstr "WebGUI Adresse IPv6"
 
 msgid "Webdav Password"
-msgstr ""
+msgstr "Mot de passe Webdav"
 
 msgid "Webdav SSL Certificate"
-msgstr ""
+msgstr "Certificat SSL Webdav"
 
 msgid "Webhook URL"
-msgstr ""
+msgstr "URL Webhook"
 
 msgid "What and Where"
-msgstr ""
+msgstr "Quoi et où"
 
 msgid "What are you using this for"
-msgstr ""
+msgstr "Pourquoi l'utilisez-vous pour"
 
 msgid "When"
-msgstr ""
+msgstr "Quand"
 
 msgid "When Syslog server is defined, only logs matching this level are sent."
 msgstr ""
+"Lorsque le serveur Syslog est défini, seuls les logs correspondant à ce niveau "
+"sont envoyés."
 
 msgid ""
 "When a group is selected, the <i>root</i> user is also limited to the "
 "permissions of that group."
 msgstr ""
+"Lorsqu'un groupe est sélectionné, l'utilisateur <i>root</i> est également limité "
+"aux autorisations de ce groupe."
 
 msgid ""
 "When a user is selected, the <i>root</i> user is limited to the permissions "
 "of that user."
 msgstr ""
+"Lorsqu'un utilisateur est sélectionné, l'utilisateur <i>root</i> est limité aux "
+"autorisations de cet utilisateur."
 
 msgid ""
 "When enabled, the ACLs grant read and write access for owner or group and "
 "read-only for others. <b>Only</b> leave unset when creating a share on a "
 "system that already has custom ACLs configured."
 msgstr ""
+"Lorsqu'elles sont activées, les ACLs accordent un accès en lecture et en écriture "
+"au propriétaire ou au groupe et en lecture seule aux autres. <b>Ne désactivez</b> "
+"cette option que lorsque vous créez un partage sur un système sur lequel des ACLs "
+"personnalisées sont déjà configurées."
 
 msgid ""
 "When replicated snapshots are deleted  from the destination system: <br>  "
@@ -13079,6 +13089,13 @@ msgid ""
 "a how long a snapshot remains on the destination  system. Enter a number "
 "and choose a measure of time from the drop-down."
 msgstr ""
+"Lorsque des instantanés répliqués sont supprimés du système de destination :  "
+"<br><i> Identique à la source</i> : utilisez la valeur <i>Durée des instantanés</"
+"i> configurée de la tâche d'instantanés périodiques du dataset source.</br>. "
+"<br><i>Jamais supprimer</i> : ne supprimez jamais de instantanés du système de "
+"destination.<br><i> Personnalisé</i> : définit la durée pendant laquelle un "
+"instantané reste sur le système de destination. Entrez un nombre et choisissez une "
+"mesure de temps dans la liste déroulante."
 
 msgid ""
 "When replicated snapshots are deleted  from the destination system:<ul>  "
@@ -13087,14 +13104,24 @@ msgid ""
 "<b>Snapshot Lifetime</b> for the  destination system.</li>  "
 "<li><i>None</i>: never delete snapshots from the destination  system.</li>"
 msgstr ""
+"Lorsque des instantanés répliqués sont supprimés du système de destination :<ul>  "
+"<li><i>Identique à la source</i> : utilisez la fonction <b>Durée des instantanés</"
+"b> configurée de la tâche d'instantanés périodiques.</li>  <li><i>Personnalisé</"
+"i> : définit une <b>durée de vie de l'instantané</b> pour le système de "
+"destination.</li>  <li><i>Aucun</i> : ne supprime jamais les instantanés du "
+"système de destination.</li>"
 
 msgid ""
 "When set, a local user is only allowed access to their home directory if "
 "they are a member of the <i>wheel</i> group."
 msgstr ""
+"Lorsqu'il est défini, un utilisateur local n'est autorisé à accéder à son "
+"répertoire personnel que s'il est membre du groupe <i>wheel</i>."
 
 msgid "When set, report CPU usage in percent instead of jiffies."
 msgstr ""
+"Lorsque cette option est activée, indiquez l'utilisation du CPU en pourcentage au "
+"lieu de jiffies."
 
 msgid ""
 "When set, rsync is run recursively, preserving                symlinks, "
@@ -13103,11 +13130,18 @@ msgid ""
 "also preserved.                Equivalent to passing the flags "
 "<i>-rlptgoD</i> to                rsync."
 msgstr ""
+"Lorsqu'il est défini, rsync est exécuté de manière récursive, en préservant les "
+"liens symboliques, les autorisations, les temps de modification, les groupes et "
+"les fichiers spéciaux. Lorsqu'ils sont exécutés en tant que root, les fichiers "
+"propriétaires, les fichiers périphériques et les fichiers spéciaux sont également "
+"préservés.                Equivalent à passer les flags <i>-rlptgoD</i> à rsync."
 
 msgid ""
 "When set, the common name in the certificate must match the FQDN of the "
 "host."
 msgstr ""
+"Lorsqu'il est défini, le nom commun dans le certificat doit correspondre au FQDN "
+"de l'hôte."
 
 msgid ""
 "When set, usernames do not include a domain name. Unset to force domain "
@@ -13115,428 +13149,444 @@ msgid ""
 "value is to prevent username collisions when Allow Trusted Domains is set "
 "and there are identical usernames in more than one domain."
 msgstr ""
+"Lorsqu'ils sont définis, les noms d'utilisateur n'incluent pas de nom de domaine. "
+"Désactiver pour forcer les noms de domaine à être ajoutés aux noms d'utilisateur. "
+"Une raison possible de désactiver cette valeur est d'éviter les collisions de noms "
+"d'utilisateur lorsque Allow Trusted Domains est défini et qu'il y a des noms "
+"d'utilisateur identiques dans plus d'un domaine."
 
 msgid ""
 "When the file already exists, enter a size of 0 to use the actual file "
 "size. For new files, enter the size of the file to create."
 msgstr ""
+"Lorsque le fichier existe déjà, entrez une taille de 0 pour utiliser la taille "
+"réelle du fichier. Pour les nouveaux fichiers, entrez la taille du fichier à créer."
 
 msgid "Who"
-msgstr ""
+msgstr "Qui"
 
 msgid "Widget Base Class"
-msgstr ""
+msgstr "Classe de base du widget"
 
 msgid "Winbind NSS Info"
-msgstr ""
+msgstr "Winbind NSS Info"
 
 msgid "Windows Shares (SMB)"
-msgstr ""
+msgstr "Partages Windows (SMB)"
 
 msgid "Wipe"
-msgstr ""
+msgstr "Effacement "
 
 msgid "Wipe Disk"
-msgstr ""
+msgstr "Disque à effacer."
 
 msgid "Wipe this disk?"
-msgstr ""
+msgstr "Effacer ce disque ?"
 
 msgid "Wiping Disk..."
-msgstr ""
+msgstr "Effacement du disque..."
 
 msgid "Workgroup"
-msgstr ""
+msgstr "Groupe de travail"
 
 msgid "Write"
-msgstr ""
+msgstr "Écrire"
 
 msgid "Write a percentage limit of a single CPU core."
-msgstr ""
+msgstr "Écrivez une limite de pourcentage pour un seul cœur de processeur."
 
 msgid "Xen initiator compat mode"
-msgstr ""
+msgstr "Mode compat d'initiateur Xen"
 
 msgid ""
 "Yandex  <a "
 "href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
 "\"  target=\"_blank\">Access Token</a>."
 msgstr ""
+"Yandex <a href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-"
+"docpage/\"  target=\"_blank\">Access Token</a>."
 
 msgid "Yes"
-msgstr ""
+msgstr "Oui"
 
 msgid "Yes I understand the risks"
-msgstr ""
+msgstr "Oui, je comprends les risques"
 
 msgid "Yes, decrypt the disks"
-msgstr ""
+msgstr "Oui, déchiffrer les disques"
 
 msgid "ZFS Deduplication"
-msgstr ""
+msgstr "Déduplication ZFS"
 
 msgid "ZFS Filesystem"
-msgstr ""
+msgstr "Système de fichiers ZFS"
 
 msgid "ZFS deduplication"
-msgstr ""
+msgstr "Déduplication ZFS"
 
 msgid ""
 "ZFS pools must conform to strict naming <a "
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
 "target=\"_blank\">conventions</a>. Choose a memorable name."
 msgstr ""
+"Les volumes ZFS doivent se conformer à des <a href=\"https://docs.oracle.com/cd/"
+"E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventions</a> "
+"d'appellation strictes. Choisissez un nom mémorable."
 
 msgid "Zero Device Numbers"
 msgstr ""
 
 msgid "Zeroconf share discovery"
-msgstr ""
+msgstr "Découverte de partage Zeroconf"
 
 msgid "Zvol Location"
-msgstr ""
+msgstr "Emplacement zvol"
 
 msgid ""
 "[Use fewer transactions in exchange for more "
 "RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow "
 "down the transfer."
 msgstr ""
+"[Utilisez moins de transactions en échange de plus de RAM](https://rclone.org/docs/"
+"#fast-list) Cela peut aussi accélérer ou ralentir le transfert."
 
 msgid "allow_chflags"
-msgstr ""
+msgstr "allow_chflags"
 
 msgid "allow_mlock"
-msgstr ""
+msgstr "allow_mlock"
 
 msgid "allow_mount"
-msgstr ""
+msgstr "allow_mount"
 
 msgid "allow_mount_devfs"
-msgstr ""
+msgstr "allow_mount_devfs"
 
 msgid "allow_mount_fusefs"
-msgstr ""
+msgstr "allow_mount_fusefs"
 
 msgid "allow_mount_nullfs"
-msgstr ""
+msgstr "allow_mount_nullfs"
 
 msgid "allow_mount_procfs"
-msgstr ""
+msgstr "allow_mount_procfs_procfs"
 
 msgid "allow_mount_tmpfs"
-msgstr ""
+msgstr "allow_mount_tmpfs_tmpfs"
 
 msgid "allow_mount_zfs"
-msgstr ""
+msgstr "allow_mount_zfs"
 
 msgid "allow_quotas"
-msgstr ""
+msgstr "allow_quotas"
 
 msgid "allow_raw_sockets"
-msgstr ""
+msgstr "allow_raw_sockets"
 
 msgid "allow_set_hostname"
-msgstr ""
+msgstr "allow_set_set_hostname"
 
 msgid "allow_socket_af"
-msgstr ""
+msgstr "allow_socket_af"
 
 msgid "allow_sysvipc"
-msgstr ""
+msgstr "allow_sysvipc"
 
 msgid "allow_tun"
-msgstr ""
+msgstr "allow_tun"
 
 msgid "allow_vmm"
-msgstr ""
+msgstr "allow_vmm"
 
 msgid "assign_localhost"
-msgstr ""
+msgstr "assign_localhost"
 
 msgid "below to confirm."
-msgstr ""
+msgstr "ci-dessous pour confirmer."
 
 msgid "boot"
-msgstr ""
+msgstr "Boot"
 
 msgid "children_max"
-msgstr ""
+msgstr "children_max"
 
 msgid "close"
-msgstr ""
+msgstr "fermer"
 
 msgid "comment"
-msgstr ""
+msgstr "commentaire"
 
 msgid "coredumpsize"
-msgstr ""
+msgstr "coredumpsize"
 
 msgid "cpuset"
-msgstr ""
+msgstr "cpuset"
 
 msgid "cputime"
-msgstr ""
+msgstr "cputime"
 
 msgid "createcomputer"
-msgstr ""
+msgstr "createcomputer"
 
 msgid "datasize"
-msgstr ""
+msgstr "createcomputer"
 
 msgid "depends"
-msgstr ""
+msgstr "dépend"
 
 msgid "destroy"
-msgstr ""
+msgstr "Détruire"
 
 msgid "devfs_ruleset"
-msgstr ""
+msgstr "devfs_ruleset"
 
 msgid "email"
-msgstr ""
+msgstr "courriel"
 
 msgid "enforce_statfs"
-msgstr ""
+msgstr "enforce_statfs"
 
 msgid "exec_clean"
-msgstr ""
+msgstr "exec_clean"
 
 msgid "exec_fib"
-msgstr ""
+msgstr "exec_fib"
 
 msgid "exec_jail_user"
-msgstr ""
+msgstr "exec_jail_user"
 
 msgid "exec_poststart"
-msgstr ""
+msgstr "exec_poststart"
 
 msgid "exec_poststop"
-msgstr ""
+msgstr "exec_poststop"
 
 msgid "exec_prestart"
-msgstr ""
+msgstr "exec_prestart"
 
 msgid "exec_prestop"
-msgstr ""
+msgstr "exec_prestop"
 
 msgid "exec_start"
-msgstr ""
+msgstr "exec_start"
 
 msgid "exec_stop"
-msgstr ""
+msgstr "exec_stop"
 
 msgid "exec_system_jail_user"
-msgstr ""
+msgstr "exec_system_jail_user"
 
 msgid "exec_system_user"
-msgstr ""
+msgstr "exec_system_user"
 
 msgid "exec_timeout"
-msgstr ""
+msgstr "exec_timeout"
 
 msgid "group"
-msgstr ""
+msgstr "groupe"
 
 msgid "host_domainname"
-msgstr ""
+msgstr "host_domainname"
 
 msgid "host_hostname"
-msgstr ""
+msgstr "host_hostname"
 
 msgid "host_port"
-msgstr ""
+msgstr "host_port"
 
 msgid "host_time"
-msgstr ""
+msgstr "host_time"
 
 msgid "hostid"
-msgstr ""
+msgstr "hostid"
 
 msgid "hostid_strict_check"
-msgstr ""
+msgstr "hostid_strict_check"
 
 msgid "interfaces"
-msgstr ""
+msgstr "interfaces"
 
 msgid "ip4"
-msgstr ""
+msgstr "ip4"
 
 msgid "ip4.saddrsel"
-msgstr ""
+msgstr "ip4.saddrsel"
 
 msgid "ip6"
-msgstr ""
+msgstr "ip6"
 
 msgid "ip6.saddrsel"
-msgstr ""
+msgstr "ip6.saddrsel"
 
 msgid "ip_hostname"
-msgstr ""
+msgstr "ip_hostname"
 
 msgid "jail_port"
-msgstr ""
+msgstr "jail_port"
 
 msgid "jail_zfs"
-msgstr ""
+msgstr "jail_zfs"
 
 msgid "jail_zfs_dataset"
-msgstr ""
+msgstr "jail_zfs_dataset"
 
 msgid "jail_zfs_mountpoint"
-msgstr ""
+msgstr "jail_zfs_mountpoint"
 
 msgid "list"
-msgstr ""
+msgstr "liste"
 
 msgid "login_flags"
-msgstr ""
+msgstr "login_flags"
 
 msgid "mac_prefix"
-msgstr ""
+msgstr "mac_prefix"
 
 msgid "maxproc"
-msgstr ""
+msgstr "maxproc"
 
 msgid "memorylocked"
-msgstr ""
+msgstr "memorylocked"
 
 msgid "memoryuse"
-msgstr ""
+msgstr "memoryuse"
 
 msgid "mount_devfs"
-msgstr ""
+msgstr "mount_devfs"
 
 msgid "mount_fdescfs"
-msgstr ""
+msgstr "mount_fdescfs"
 
 msgid "mount_linprocfs"
-msgstr ""
+msgstr "mount_linprocfs"
 
 msgid "mount_procfs"
-msgstr ""
+msgstr "mount_procfs"
 
 msgid "mountd(8) bind port"
-msgstr ""
+msgstr "mountd(8) bind port"
 
 msgid "msgqqueued"
-msgstr ""
+msgstr "msgqqueued"
 
 msgid "msgqsize"
-msgstr ""
+msgstr "msgqsize"
 
 msgid "name"
-msgstr ""
+msgstr "nom"
 
 msgid "nmsgq"
-msgstr ""
+msgstr "nmsgq"
 
 msgid "no"
-msgstr ""
+msgstr "non"
 
 msgid "nsemop"
-msgstr ""
+msgstr "nsemop"
 
 msgid "nshm"
-msgstr ""
+msgstr "nshm"
 
 msgid "nthr"
-msgstr ""
+msgstr "nthr"
 
 msgid "openfiles"
-msgstr ""
+msgstr "openfiles"
 
 msgid "owner"
-msgstr ""
+msgstr "propriétaire"
 
 msgid "password"
-msgstr ""
+msgstr "mot de passe"
 
 msgid "pcpu"
-msgstr ""
+msgstr "pcpu"
 
 msgid "priority"
-msgstr ""
+msgstr "priorité"
 
 msgid "protocol"
-msgstr ""
+msgstr "protocole"
 
 msgid "pseudoterminals"
-msgstr ""
+msgstr "pseudoterminals"
 
 msgid "resolver"
-msgstr ""
+msgstr "résolveur"
 
 msgid "rlimits"
-msgstr ""
+msgstr "rlimits"
 
 msgid "rpc.lockd(8) bind port"
-msgstr ""
+msgstr "rpc.lockd(8) port bind"
 
 msgid "rpc.statd(8) bind port"
-msgstr ""
+msgstr "mountd(8) bind port"
 
 msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
 msgstr ""
+"secondes à moins que GARDER LES CHANGEMENTS ne soit choisi pour les rendre "
+"permanentes."
 
 msgid "securelevel"
-msgstr ""
+msgstr "securelevel"
 
 msgid "service failed to start."
-msgstr ""
+msgstr "Le service n'a pas pu démarrer."
 
 msgid "service failed to stop."
-msgstr ""
+msgstr "Le service n'a pas réussi à s'arrêter"
 
 msgid "shmsize"
-msgstr ""
+msgstr "shmsize"
 
 msgid "stacksize"
-msgstr ""
+msgstr "stacksize"
 
 msgid "stop_timeout"
-msgstr ""
+msgstr "stop_timeout"
 
 msgid "swapuse"
-msgstr ""
+msgstr "swapuse"
 
 msgid "sysvmsg"
-msgstr ""
+msgstr "sysvmsg"
 
 msgid "sysvsem"
-msgstr ""
+msgstr "sysvsem"
 
 msgid "sysvshm"
-msgstr ""
+msgstr "sysvshm"
 
 msgid "template"
-msgstr ""
+msgstr "template"
 
 msgid "vmemoryuse"
-msgstr ""
+msgstr "vmemoryuse"
 
 msgid "vnet0_mac"
-msgstr ""
+msgstr "vnet0_mac"
 
 msgid "vnet1_mac"
-msgstr ""
+msgstr "vnet1_mac"
 
 msgid "vnet2_mac"
-msgstr ""
+msgstr "vnet2_mac"
 
 msgid "vnet3_mac"
-msgstr ""
+msgstr "vnet3_mac"
 
 msgid "vnet_default_interface"
-msgstr ""
+msgstr "vnet_default_interface"
 
 msgid "vnet_interfaces"
-msgstr ""
+msgstr "vnet_interfaces"
 
 msgid "wallclock"
-msgstr ""
+msgstr "wallclock"
 
 msgid "yes"
-msgstr ""
+msgstr "oui"
 
 msgid "zvol name:"
-msgstr ""
+msgstr "nom zvol :"
