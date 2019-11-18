@@ -179,7 +179,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
             tooltip: helptext.alias_address_tooltip,
             type: 'ipwithnetmask',
             width: '55%',
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
           },
           {
             name: 'failover_address',
@@ -189,8 +189,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
             isHidden: true,
             type: 'ipwithnetmask',
             width: '55%',
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
-
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
           },
           {
             name: 'failover_virtual_address',
@@ -201,7 +200,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
             type: 'ipwithnetmask',
             width: '55%',
             netmaskPreset: 32,
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr) ],
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
 
           }
       ],
@@ -348,17 +347,23 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       if (!data.aliases[i]['delete'] &&
           !!data.aliases[i]['address']) {
         const strings = data.aliases[i]['address'].split('/');
-        aliases.push({address:strings[0],
-                      netmask:parseInt(strings[1],10)});
+        if (strings[0]) {
+          aliases.push({address:strings[0],
+                        netmask:parseInt(strings[1],10)});
+        }
         if (!!data.aliases[i]['failover_address'] &&
             !!data.aliases[i]['failover_virtual_address']) {
           const f_strings = data.aliases[i]['failover_address'].split('/');
-          failover_aliases.push({address:f_strings[0],
-                        netmask:parseInt(f_strings[1],10)});
-          const fv_strings = data.aliases[i]['failover_virtual_address'].split('/');
-          failover_virtual_aliases.push({address:fv_strings[0],
-                        netmask:parseInt(fv_strings[1],10)});
+          if (f_strings[0]) {
+            failover_aliases.push({address:f_strings[0],
+                          netmask:parseInt(f_strings[1],10)});
           }
+          const fv_strings = data.aliases[i]['failover_virtual_address'].split('/');
+          if (fv_strings[0]) {
+            failover_virtual_aliases.push({address:fv_strings[0],
+                          netmask:parseInt(fv_strings[1],10)});
+          }
+        }
       }
     }
 
