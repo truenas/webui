@@ -1,0 +1,4 @@
+export declare const camelToDash: (str: string) => string;
+export declare const setDomAttrs: (element: Element, attrs: {
+    [key: string]: any;
+}) => void;

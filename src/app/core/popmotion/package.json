@@ -1,0 +1,118 @@
+{
+  "_from": "popmotion@8.3.3",
+  "_id": "popmotion@8.3.3",
+  "_inBundle": false,
+  "_integrity": "sha1-r4fU8mDzI/CkfDauoyoYtWhkC7A=",
+  "_location": "/popmotion",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "popmotion@8.3.3",
+    "name": "popmotion",
+    "escapedName": "popmotion",
+    "rawSpec": "8.3.3",
+    "saveSpec": null,
+    "fetchSpec": "8.3.3"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/popmotion/-/popmotion-8.3.3.tgz",
+  "_shasum": "af87d4f260f323f0a47c36aea32a18b568640bb0",
+  "_spec": "popmotion@8.3.3",
+  "_where": "/home/erin/devel/webui-stable",
+  "analyze": true,
+  "author": {
+    "name": "Matt Perry"
+  },
+  "bugs": {
+    "url": "https://github.com/Popmotion/popmotion/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "framesync": "^3.1.9",
+    "hey-listen": "^1.0.5",
+    "style-value-types": "3.0.3",
+    "stylefire": "^2.0.6",
+    "tslib": "^1.9.1"
+  },
+  "deprecated": false,
+  "description": "A functional, reactive motion library.",
+  "devDependencies": {
+    "@types/jest": "^23.1.1",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-annotate-pure-calls": "^0.2.2",
+    "jest": "^23.1.0",
+    "jest-cli": "^23.1.0",
+    "rollup": "^0.59.1",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-typescript2": "^0.14.0",
+    "rollup-plugin-uglify": "^3.0.0",
+    "ts-jest": "^21.2.4",
+    "tslint-circular-dependencies": "^0.1.0",
+    "typescript": "2.8.1"
+  },
+  "homepage": "https://popmotion.io",
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "moduleNameMapper": {
+      "style-value-types": "<rootDir>/../../style-value-types/lib"
+    },
+    "transform": {
+      "\\.(ts)$": "../../../node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "/_tests/.*\\.(ts|js)$",
+    "rootDir": "src"
+  },
+  "jsnext:main": "dist/popmotion.es.js",
+  "keywords": [
+    "animation",
+    "ux",
+    "ui",
+    "popmotion",
+    "canvas animation",
+    "dom animation",
+    "dom",
+    "pointer tracking",
+    "mouse",
+    "mouse tracking",
+    "touch",
+    "touch tracking",
+    "physics",
+    "interaction",
+    "interface",
+    "svg"
+  ],
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "module": "dist/popmotion.es.js",
+  "name": "popmotion",
+  "prettier": {
+    "parser": "typescript",
+    "singleQuote": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Popmotion/popmotion/tree/master/packages/popmotion"
+  },
+  "scripts": {
+    "build": "rollup -c && npm run measure",
+    "clean": "git clean -fd -e node_modules/ -e lib/ src/ -x .",
+    "measure": "gzip -c $npm_package_unpkg | wc -c",
+    "postbuild": "babel $npm_package_module --out-file $npm_package_module --no-babelrc --plugins annotate-pure-calls",
+    "postpublish": "npm run clean",
+    "prepublishOnly": "npm run test && tsc --module commonjs && npm run build",
+    "publish-beta": "npm publish --tag beta",
+    "test": "jest",
+    "watch": "rollup -c -w"
+  },
+  "types": "./lib/index.d.ts",
+  "unpkg": "./dist/popmotion.global.min.js",
+  "version": "8.3.3"
+}

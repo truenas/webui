@@ -1,0 +1,3 @@
+import { Dimensions, SVGState } from './types';
+declare const build: (state: SVGState, dimensions: Dimensions, isPath: boolean, pathLength?: number) => SVGState;
+export default build;

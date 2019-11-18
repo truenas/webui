@@ -1,0 +1,3 @@
+import { ValueType } from 'style-value-types';
+declare const _default: (key: string) => ValueType;
+export default _default;
