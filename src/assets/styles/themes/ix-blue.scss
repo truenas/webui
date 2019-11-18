@@ -1527,7 +1527,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     text-decoration: underline;
   }
 
-  app-entity-dialog #pool_processes p {
+  app-entity-dialog #pool_processes p,
+  confirm-dialog .warning-box {
     max-height: 170px;
     overflow-y: auto;
     width: 100%;
