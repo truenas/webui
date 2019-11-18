@@ -1012,6 +1012,9 @@ export class CloudCredentialsFormComponent {
       if (res) {
         driveTypeCtrl.setValue(res.drive_type);
         driveIdCtrl.setValue(res.drive_id);
+      } else {
+        driveTypeCtrl.setValue('PERSONAL');
+        driveIdCtrl.setValue(null);
       }
     });
   }
@@ -1099,7 +1102,12 @@ export class CloudCredentialsFormComponent {
     data = data.result;
     const drivesConfig = _.find(this.fieldConfig, {name: 'drives-ONEDRIVE'});
     this.entityForm.setDisabled('drives-ONEDRIVE', false, false);
-    drivesConfig.options = [];
+    drivesConfig.options = [
+      {
+        label: '---------',
+        value: '',
+      }
+    ];
     this.ws.call('cloudsync.onedrive_list_drives', [{
       client_id: data.client_id,
       client_secret: data.client_secret,
