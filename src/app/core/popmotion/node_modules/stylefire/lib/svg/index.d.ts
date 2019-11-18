@@ -1,0 +1,3 @@
+import { Styler } from '../styler/types';
+declare const _default: (element: SVGElement | SVGPathElement) => Styler;
+export default _default;

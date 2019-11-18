@@ -17,7 +17,7 @@ import {
   transform,
   //transformMap,
   //clamp
-  } from 'popmotion';
+  } from '../popmotion';
 
   const transformMap = transform.transformMap;
   const { clamp } = transform

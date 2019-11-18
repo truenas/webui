@@ -14,7 +14,7 @@ import {
   multicast,
   action,
   transform,
-} from 'popmotion';
+} from '../popmotion';
 
 const transformMap = transform.transformMap;
 const { clamp } = transform
