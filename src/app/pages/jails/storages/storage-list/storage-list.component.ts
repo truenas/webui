@@ -18,7 +18,6 @@ export class StorageListComponent {
   protected queryCallOption = [];
   protected queryRes: any = [];
   protected route_add: string[] = ['jails', 'storage'];
-  protected route_add_tooltip: string = "Add Mount Point";
   protected route_delete: string[] = ['jails', 'storage'];
   protected route_edit: string[] = ['jails', 'storage'];
 
@@ -118,7 +117,6 @@ export class StorageListComponent {
   getAddActions() {
     return [{
       label: T("Go Back to Jails"),
-      icon: "reply",
       onClick: () => {
         this.router.navigate(new Array('').concat(['jails']));
       }
