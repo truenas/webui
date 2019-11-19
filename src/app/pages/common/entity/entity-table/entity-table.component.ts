@@ -322,7 +322,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   dropLastMaxWidth() {
     // Reset all column maxWidths
     this.conf.columns.forEach((column) => {
-      column['maxWidth'] = (this.colMaxWidths.find(({name}) => name === column.name)).maxWidth;
+      if (this.colMaxWidths.length > 0) {
+        column['maxWidth'] = (this.colMaxWidths.find(({name}) => name === column.name)).maxWidth;
+      }
     })
     // Delete maXwidth on last col displayed (prevents a display glitch)
     if (this.conf.columns.length > 0) {
@@ -957,11 +959,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     obj['cols'] = this.conf.columns;
 
     let preferredCols = this.prefService.preferences.tableDisplayedColumns;
-    preferredCols.forEach((i) => {
-      if (i.title === this.title) {
-        preferredCols.splice(preferredCols.indexOf(i), 1);
-      }
-    });
+    if (preferredCols.length > 0) {
+      preferredCols.forEach((i) => {
+        if (i.title === this.title) {
+          preferredCols.splice(preferredCols.indexOf(i), 1);
+        }
+      });
+    }
     preferredCols.push(obj);
     this.prefService.savePreferences(this.prefService.preferences);
     if (this.title === 'Users') {
