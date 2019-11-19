@@ -31,10 +31,9 @@
   <mat-menu #menu="matMenu" overlapTrigger="false">
     <button mat-menu-item (click)="this.entity.doAdd()" *ngIf="this.entity.conf.route_add" id="add_action_button">
     <span>{{"Add" | translate }}</span>
-    <span>{{this.entity.conf.route_add_tooltip | translate}}</span>
   </button>
   <button id="add_action_button_{{action?.label}}" *ngFor="let action of actions" mat-menu-item (click)="action.onClick()">
-    <mat-icon *ngIf="action.icon">{{action.icon}}</mat-icon><span>{{action.label | translate}}</span>
+    <span>{{action.label | translate}}</span>
   </button>
     <!--<button mat-menu-item>
       <mat-icon>dialpad</mat-icon>
