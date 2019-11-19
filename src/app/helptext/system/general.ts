@@ -100,9 +100,12 @@ export const helptext_system_general = {
   stg_syslogserver: {
     placeholder: T("Syslog server"),
     tooltip: T(
-      "Define an <i>IP address or hostname:optional_port_number</i>\
- to send logs. When set, log entries write to both the\
- console and remote server."
+      "Remote syslog server DNS hostname or IP address.\
+ Nonstandard port numbers can be used by adding\
+ a colon and the port number to the hostname, like\
+ <samp>mysyslogserver:1928</samp>. Log entries\
+ are written to local logs and sent to the remote\
+ syslog server."
     )
   },
 
