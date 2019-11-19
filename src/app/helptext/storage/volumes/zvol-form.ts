@@ -2,7 +2,7 @@ import {Validators} from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 export default {
-zvol_name_placeholder: T('zvol name:'),
+zvol_name_placeholder: T('Zvol name'),
 zvol_name_tooltip: T('Keep the zvol name short. Using a zvol name longer\
  than 63 characters can prevent accessing the zvol as a device.'),
 
