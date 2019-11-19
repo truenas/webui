@@ -4,6 +4,7 @@ import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../../entity/utils';
 import { EntityTreeTable } from './entity-tree-table.model';
 import { EntityTreeTableService } from './entity-tree-table.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'entity-tree-table',
@@ -19,7 +20,8 @@ export class EntityTreeTableComponent implements OnInit {
 
 	constructor(private ws: WebSocketService,
 		private treeTableService: EntityTreeTableService,
-		private dialogService: DialogService) { }
+		private dialogService: DialogService,
+		protected translate: TranslateService) { }
 
 	ngOnInit() {
 		if (this.conf.queryCall) {

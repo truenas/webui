@@ -25,6 +25,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { Validators } from '@angular/forms';
+import { inherits } from 'util';
 
 export interface ZfsPoolData {
   avail?: number;
@@ -969,35 +970,37 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getMoreDatasetInfo(dataObj) {
     const dataset_data2 = this.datasetData;
-    for (const k in dataset_data2) {
-      if (dataset_data2[k].id === dataObj.path) {
-        if (dataset_data2[k].compression) {
-          dataset_data2[k].compression.source !== "INHERITED"
-            ? dataObj.compression = (dataset_data2[k].compression.parsed)
-            : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
-        }
-        if (dataset_data2[k].compressratio) {
-          dataset_data2[k].compressratio.source !== "INHERITED"
-            ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
-            : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
-        }
-        if (dataset_data2[k].readonly) {
-          dataset_data2[k].readonly.source !== "INHERITED"
-            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
-            : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
-        }
-        if (dataset_data2[k].deduplication) {
-          dataset_data2[k].deduplication.source !== "INHERITED"
-            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
-            : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
-        }
-        if (dataset_data2[k].comments) {
-          dataset_data2[k].comments.source !== "INHERITED"
-            ? dataObj.comments = (dataset_data2[k].comments.parsed)
-            : dataObj.comments = ("");
+    this.translate.get(T("Inherits")).subscribe(inherits => {
+      for (const k in dataset_data2) {
+        if (dataset_data2[k].id === dataObj.path) {
+          if (dataset_data2[k].compression) {
+            dataset_data2[k].compression.source !== "INHERITED"
+              ? dataObj.compression = (dataset_data2[k].compression.parsed)
+              : dataObj.compression = (inherits + " (" + dataset_data2[k].compression.parsed + ")");
+          }
+          if (dataset_data2[k].compressratio) {
+            dataset_data2[k].compressratio.source !== "INHERITED"
+              ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+              : dataObj.compressratio = (inherits + " (" + dataset_data2[k].compressratio.parsed + ")");
+          } 
+          if (dataset_data2[k].readonly) {
+            dataset_data2[k].readonly.source !== "INHERITED"
+              ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+              : dataObj.readonly = (inherits + " (" + dataset_data2[k].readonly.parsed + ")");
+          }
+          if (dataset_data2[k].deduplication) {
+            dataset_data2[k].deduplication.source !== "INHERITED"
+              ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+              : dataObj.dedup = (inherits + " (" + dataset_data2[k].deduplication.parsed + ")");
+          }
+          if (dataset_data2[k].comments) {
+            dataset_data2[k].comments.source !== "INHERITED"
+              ? dataObj.comments = (dataset_data2[k].comments.parsed)
+              : dataObj.comments = ("");
+          }
         }
       }
-    }
+    });
   }
 
 }
