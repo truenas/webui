@@ -125,23 +125,10 @@ export class RsyncListComponent {
 
   stateButton(row) {
     if (row.job) {
-      if (row.job.error) {
-        if (row.job.id) {
-          this.dialog.confirm(row.job.state,row.job.error,true, T('VIEW LOGS')).subscribe(
-            (res) => {
-                if (res) {
-                    this.job.showLogs(row.job.id);
-                }
-            })
-        } else {
-          this.dialog.errorReport(row.job.state, row.job.error);
-        }
+      if (row.state === 'RUNNING') {
+        this.entityList.runningStateButton(row.job.id);
       } else {
-        if (row.state === 'RUNNING') {
-          this.entityList.runningStateButton(row.job.id);
-        } else {
-          this.job.showLogs(row.job.id);
-        }
+        this.job.showLogs(row.job.id);
       }
     } else {
       this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
