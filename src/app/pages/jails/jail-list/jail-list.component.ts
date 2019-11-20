@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,14 +10,14 @@ import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector: 'app-jail-list',
-  templateUrl: './jail-list.component.html',
-  styleUrls: ['jail-list.component.css'],
+  template: `<entity-table [title]="title" [conf]="this" ></entity-table>`,
   providers: [DialogService, StorageService]
 })
-export class JailListComponent implements OnInit {
+export class JailListComponent {
 
   public isPoolActivated: boolean;
   public selectedPool;
@@ -174,44 +174,21 @@ export class JailListComponent implements OnInit {
 
   public showSpinner = true;
 
+  protected globalConfig = {
+    id: "config",
+    tooltip: T("Config Pool for Jail Manager"),
+    onClick: () => {
+      this.prerequisite().then((res)=>{
+        this.activatePool();
+      })
+    }
+  };
+
+  protected addBtnDisabled = true;
+
   constructor(public router: Router, protected rest: RestService, public ws: WebSocketService, 
     public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
     public sorter: StorageService, public dialog: MatDialog,) {}
-
-
-  async ngOnInit(){
-    await this.ws.call('pool.query').toPromise().then(
-      (res)=> {
-        this.availablePools = res;
-        if (this.availablePools.length === 0) {
-          this.showSpinner = false;
-          this.noPoolDialog();
-          this.toActivatePool = true;
-        }
-      },
-      (err) => {
-        this.showSpinner = false;
-        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
-      }
-    );
-    if (this.availablePools && this.availablePools.length > 0) {
-      this.ws.call('jail.get_activated_pool').subscribe(
-        (res)=>{
-          if (res != null && res != "") {
-            this.activatedPool = res;
-            this.selectedPool = res;
-            this.isPoolActivated = true;
-          } else {
-            this.isPoolActivated = false;
-          }
-          this.showSpinner = false;
-        },
-        (err)=>{
-          this.showSpinner = false;
-          new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
-        })
-    }
-  }
 
   noPoolDialog() {
     const dialogRef = this.dialogService.confirm(
@@ -227,26 +204,79 @@ export class JailListComponent implements OnInit {
     })
   }
 
+  prerequisite(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      await this.ws.call('pool.query').toPromise().then((res) => {
+        if (res.length === 0) {
+          resolve(false);
+          this.noPoolDialog();
+          return;
+        }
+        this.availablePools = res
+      }, (err) => {
+        resolve(false);
+        new EntityUtils().handleWSError(this.entityList, err);
+      });
+
+      if (this.availablePools !== undefined) {
+        this.ws.call('jail.get_activated_pool').toPromise().then((res) => {
+          if (res != null) {
+            this.activatedPool = res;
+            this.addBtnDisabled = false;
+            resolve(true);
+          } else {
+            resolve(false);
+            this.activatePool();
+          }
+        }, (err) => {
+          resolve(false);
+          new EntityUtils().handleWSError(this.entityList, err);
+        })
+      }
+    });
+  }
+
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
 
-  activatePool(event: Event){
-    this.loader.open();
-    this.ws.call('jail.activate', [this.selectedPool]).subscribe(
-      (res)=>{
-        this.loader.close();
-        this.isPoolActivated = true;
-        this.activatedPool = this.selectedPool;
-        if (this.toActivatePool) {
-          this.entityList.getData();
+  activatePool() {
+    const self = this;
+
+    const conf: DialogFormConfiguration = {
+      title: T("Activate Pool for Jail Manager"),
+      fieldConfig: [
+        {
+          type: 'select',
+          name: 'selectedPool',
+          placeholder: T('Choose a pool or dataset for jail storage'),
+          options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}) : [],
+          value: this.activatedPool
         }
-        this.entityList.dialogService.Info(T('Jail Activated'), "Pool <i>" + this.selectedPool + "</i> is active", '500px', 'info', true);
-      },
-      (res) => {
-        new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-      });
+      ],
+      saveButtonText: T("Activate"),
+      customSubmit: function (entityDialog) {
+        const value = entityDialog.formValue;
+        self.entityList.loader.open();
+        self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
+          (res)=>{
+            self.activatedPool = value['selectedPool'];
+            entityDialog.dialogRef.close(true);
+            self.entityList.loaderOpen = true;
+            self.entityList.getData();
+            self.dialogService.Info(T('Pool Actived'), T("Successfully activated pool ") + value['selectedPool'], '500px', 'info', true);
+          },
+          (res) => {
+            self.entityList.loader.close();
+            new EntityUtils().handleWSError(this.entityList, res);
+          });
+      }
+    }
+    if (this.availablePools) {
+      this.dialogService.dialogForm(conf);
+    }
   }
+
   getActions(parentRow) {
     return [{
         name: parentRow.host_hostuuid,

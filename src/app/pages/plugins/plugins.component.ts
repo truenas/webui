@@ -251,7 +251,7 @@ export class PluginsComponent {
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
             self.entityList.getData();
-            self.dialogService.Info(T('Pool Actived'), T("Successfully activated pool ") + value['selectedPool']);
+            self.dialogService.Info(T('Pool Actived'), T("Successfully activated pool ") + value['selectedPool'], '500px', 'info', true);
           },
           (res) => {
             self.entityList.loader.close();
