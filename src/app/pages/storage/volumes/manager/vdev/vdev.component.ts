@@ -120,7 +120,7 @@ export class VdevComponent implements OnInit {
     let stripeSize = 0;
     let smallestdisk = 0;
     let estimate = 0;
-    const swapsize = 2 * 1024 * 1024 * 1024;
+    const swapsize = this.manager.swapondrive * 1024 * 1024 * 1024;
     this.vdev_disks_size_error = false;
     for (let i = 0; i < this.disks.length; i++) {
       const size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
