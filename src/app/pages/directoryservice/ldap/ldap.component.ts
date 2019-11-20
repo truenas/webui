@@ -20,6 +20,7 @@ import helptext from '../../../helptext/directoryservice/ldap';
 
 export class LdapComponent {
   protected resource_name = 'directoryservice/ldap';
+  protected updateCall: string = 'ldap.update';
   protected isBasicMode = true;
   protected idmapBacked: any;
   protected ldap_kerberos_realm: any;
@@ -234,11 +235,11 @@ export class LdapComponent {
       });
     });
 
-    this.ws.call('notifier.choices', ['LDAP_SSL_CHOICES']).subscribe((res) => {
+    this.ws.call('ldap.ssl_choices').subscribe((res) => {
       this.ldap_ssl = _.find(this.fieldConfig, {name : 'ldap_ssl'});
       res.forEach((item) => {
         this.ldap_ssl.options.push(
-          {label : item[1], value : item[0]});
+          {label : item, value : item});
       });
     });
 
@@ -256,19 +257,19 @@ export class LdapComponent {
       }
     });
 
-    this.ws.call('notifier.choices', ['IDMAP_CHOICES']).subscribe((res) => {
+    this.ws.call('ldap.idmap_backend_choices').subscribe((res) => {
       this.ldap_idmap_backend = _.find(this.fieldConfig, {name : 'ldap_idmap_backend'});
       res.forEach((item) => {
         this.ldap_idmap_backend.options.push(
-          {label : item[1], value : item[0]});
+          {label : item, value : item});
       });
     });
 
-    this.ws.call('notifier.choices', ['LDAP_SCHEMA_CHOICES']).subscribe((res) => {
+    this.ws.call('ldap.schema_choices').subscribe((res) => {
       this.ldap_schema = _.find(this.fieldConfig, {name: 'ldap_schema'});
       res.forEach((item => {
         this.ldap_schema.options.push(
-          {label : item[1], value : item[0]});
+          {label : item, value : item});
       }));
     });
 
@@ -290,7 +291,7 @@ export class LdapComponent {
       
     })
   }
-  beforeSubmit(data){
+  beforeSubmit(data){ console.log(data)
     if(data["ldap_enable"]){
       data["ldap_hostname_noreq"] = data["ldap_hostname"];
     } else {
