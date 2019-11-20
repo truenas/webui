@@ -72,7 +72,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public namesInUse = [];
   public nameIsCaseInsensitive = false;
 
-  public humanReadable = {'quota': '0', 'refquota': '0', 'reservation': '0', 'refreservation': '0'}
+  public humanReadable = {'quota': '', 'refquota': '', 'reservation': '', 'refreservation': ''}
 
   private quota_subscription;
   private refquota_subscription;
@@ -181,7 +181,6 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_refquota_tooltip,
         class: 'inline',
         width: '70%',
-        value: '0',
         blurEvent:this.blurEventRefQuota,
         blurStatus: true,
         parent: this,
@@ -189,7 +188,7 @@ export class DatasetFormComponent implements Formconfiguration{
           (control: FormControl): ValidationErrors => {
             const config = this.fieldConfig.find(c => c.name === 'refquota');
             
-            const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'refquota'))
+            const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'refquota')) 
               ? { invalid_byte_string: true }
               : null
 
@@ -213,7 +212,6 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_refquota_warning_tooltip,
         class: 'inline',
         width: '70%',
-        value: 0,
         min: 0,
         validation: helptext.dataset_form_refquota_warning_validation
       },
@@ -225,7 +223,6 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_refquota_critical_tooltip,
         class: 'inline',
         width: '70%',
-        value: 0,
         min: 0,
         validation: helptext.dataset_form_refquota_critical_validation
       },
@@ -236,7 +233,6 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_refreservation_tooltip,
         class: 'inline',
         width: '70%',
-        value: '0',
         blurEvent: this.blurEventRefReservation,
         blurStatus: true,
         parent: this,
@@ -274,7 +270,6 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_quota_tooltip,
         class: 'inline',
         width: '70%',
-        value: '0',
         blurEvent: this.blurEventQuota,
         blurStatus: true,
         parent: this,
@@ -306,7 +301,6 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_quota_warning_tooltip,
         class: 'inline',
         width: '70%',
-        value: 0,
         min: 0,
         validation: helptext.dataset_form_quota_warning_validation
       },
@@ -318,7 +312,6 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_quota_critical_tooltip,
         class: 'inline',
         width: '70%',
-        value: 0,
         min: 0,
         validation: helptext.dataset_form_quota_critical_validation
       },
@@ -329,7 +322,6 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_reservation_tooltip,
         class: 'inline',
         width: '70%',
-        value: '0',
         blurEvent: this.blurEventReservation,
         blurStatus: true,
         parent: this,
@@ -533,7 +525,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
     // empty value is evaluated as zero
     if (!hstr) {
-        this.humanReadable[field] = '0';
+        this.humanReadable[field] = null;
         return 0;
     }
 
@@ -567,7 +559,7 @@ export class DatasetFormComponent implements Formconfiguration{
     return num * this.storageService.convertUnitToNum(unit);
 }
 
-  public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
+  public sendAsBasicOrAdvanced(data: any): DatasetFormData {
 
     if( this.isNew === false ) {
         delete data.name;
@@ -884,10 +876,10 @@ export class DatasetFormComponent implements Formconfiguration{
   }
 
   resourceTransformIncomingRestData(wsResponse): any {
-     const quota_warning = this.getFieldValueOrRaw(wsResponse.quota_warning);
-     const quota_critical = this.getFieldValueOrRaw(wsResponse.quota_critical);
-     const refquota_warning = this.getFieldValueOrRaw(wsResponse.refquota_warning);
-     const refquota_critical = this.getFieldValueOrRaw(wsResponse.refquota_critical);
+    const quota_warning = wsResponse.quota_warning.value;
+    const quota_critical = wsResponse.quota_critical.value;
+    const refquota_warning = wsResponse.refquota_warning.value;
+    const refquota_critical = wsResponse.refquota_critical.value;
     const sizeValues = {};
     for (let i = 0; i < this.size_fields.length; i++) {
       const field = this.size_fields[i];
@@ -940,18 +932,6 @@ export class DatasetFormComponent implements Formconfiguration{
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota === 0) {
-      data.quota = null;
-    }
-    if (data.refquota === 0) {
-      data.refquota = null;
-    }
-    // if (data.refreservation === 0) {
-    //   data.refreservation = null;
-    // }
-    // if (data.reservation === 0) {
-    //   data.reservation = null;
-    // }
     if (data.recordsize === "1M") {
       data.recordsize = "1024K";
     }
@@ -960,18 +940,6 @@ export class DatasetFormComponent implements Formconfiguration{
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota === 0) {
-      delete data.quota;
-    }
-    if (data.refquota === 0) {
-      delete data.refquota;
-    }
-    if (data.refreservation === 0) {
-      delete data.refreservation;
-    }
-    if (data.reservation === 0) {
-      delete data.reservation;
-    }
     if (data.recordsize === 'INHERIT') {
       delete(data.recordsize);
     }
