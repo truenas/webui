@@ -12,7 +12,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { WebSocketService, NetworkService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
-import { DialogService } from '../../../services/dialog.service';
+import { DialogService, JailService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from '../../common/entity/entity-job';
 import { MatDialog } from '@angular/material';
@@ -22,7 +22,7 @@ import helptext from '../../../helptext/plugins/plugins';
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
-  providers: [EntityFormService, FieldRelationService, NetworkService, TranslateService],
+  providers: [EntityFormService, FieldRelationService, NetworkService, TranslateService, JailService],
 })
 export class PluginAddComponent implements OnInit {
 
@@ -41,7 +41,7 @@ export class PluginAddComponent implements OnInit {
       name: 'jail_name',
       placeholder: helptext.jail_name_placeholder,
       required: true,
-      validation: [ Validators.required ]
+      validation: [ Validators.required, regexValidator(this.jailService.jailNameRegex) ]
     },
     {
       type: 'checkbox',
@@ -284,7 +284,8 @@ export class PluginAddComponent implements OnInit {
     protected dialog: DialogService,
     protected networkService: NetworkService,
     protected matdialog: MatDialog,
-    protected translate: TranslateService) {}
+    protected translate: TranslateService,
+    protected jailService: JailService) {}
 
   updateIpValidation() {
     const ip4AddrField = _.find(this.fieldConfig, {'name': 'ip4_addr'});
