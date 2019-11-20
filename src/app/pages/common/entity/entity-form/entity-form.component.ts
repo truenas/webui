@@ -290,12 +290,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         }
         this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
       }
-      console.log(this.isNew);
 
       if (!this.isNew) {
-        console.log("foo");
         this.getFunction.subscribe((res) => {
-          console.log(res);
           if (res.data){
             this.data = res.data;
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
