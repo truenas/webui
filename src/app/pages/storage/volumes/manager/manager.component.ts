@@ -120,6 +120,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public startingHeight: any;
   public expandedRows: any;
+  public swapondrive = 2;
 
   constructor(
     private rest: RestService,
@@ -303,6 +304,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.ws.call('system.advanced.config').subscribe(res => {
+      this.swapondrive = res.swapondrive;
+    });
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.pk = parseInt(params['pk']);
