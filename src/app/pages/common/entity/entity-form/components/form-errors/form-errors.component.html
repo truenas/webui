@@ -6,18 +6,18 @@
         {{control.errors.fields[0]}} {{" and " | translate}} {{control.errors.fields[1]}} {{". At least one is required." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('greaterThan')">
-        {{"Value should be greater than " | translate}} {{control.errors.fields[0]}}.
+        {{"Value must be greater than " | translate}} {{control.errors.fields[0]}}.
     </mat-error>
     <mat-error *ngIf="control.hasError('forbidden')">
-        {{"This name is in used." | translate}}
+        {{"This name has already been used." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('matchOther')">
         {{"The passwords do not match." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('range')">
-        {{"The value is out of range, enter a value between " | translate}} {{control.errors.rangeValue.min}} {{" and " | translate }} {{control.errors.rangeValue.max}}.
+        {{"The value is out of range. Enter a value between " | translate}} {{control.errors.rangeValue.min}} {{" and " | translate }} {{control.errors.rangeValue.max}}.
     </mat-error>
     <mat-error *ngIf="control.hasError('regex')">
-        {{"Invalid format or include invalid character." | translate}}
+        {{"Invalid format or character." | translate}}
     </mat-error>
 </div>
