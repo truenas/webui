@@ -291,7 +291,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       if (!this.isNew) {
-        this.getFunction.subscribe((res) => {
+        this.getFunction.subscribe((res) => { console.log(res)
           if (res.data){
             this.data = res.data;
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
@@ -427,7 +427,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.rest.put(resource, {body}, this.conf.route_usebaseUrl);
   }
 
-  editCall(body: any) {
+  editCall(body: any) { console.log('here', body)
     const payload = [body];
     if (this.pk) {
       payload.unshift(this.pk);

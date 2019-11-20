@@ -20,6 +20,7 @@ import helptext from '../../../helptext/directoryservice/ldap';
 
 export class LdapComponent {
   protected resource_name = 'directoryservice/ldap';
+  protected isEntity = true;
   protected queryCall: string = 'ldap.config';
   protected editCall: string = 'ldap.update';
   protected isBasicMode = true;
@@ -209,8 +210,19 @@ export class LdapComponent {
               protected systemGeneralService: SystemGeneralService,
               private dialogservice: DialogService) {}
 
+  resourceTransformIncomingRestData(data) {
+    console.log(data)
+    delete data['bindpw'];
+    data['hostname'] = data['hostname'].join(',');
+    data['hostname_noreq'] = data['hostname'];
+    console.log(data)
+    return data;
+  }
+  
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    console.log(this.entityForm)
+
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
       res.data.forEach((item) => {
