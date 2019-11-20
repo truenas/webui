@@ -291,13 +291,29 @@ export class LdapComponent {
       
     })
   }
-  beforeSubmit(data){ console.log(data)
+  beforeSubmit(data){
     if(data["ldap_enable"]){
       data["ldap_hostname_noreq"] = data["ldap_hostname"];
     } else {
       data["ldap_hostname"] = data["ldap_hostname_noreq"];
     }
     delete(data['ldap_hostname_noreq']);
+    let templist = data['ldap_hostname'].split(',');
+    delete data['ldap_hostname'];
+
+    for (let i in data) {
+      data[i.slice(5)] = data[i];
+      delete data[i]
+
+    }
+    data['hostname'] = templist;
+  }
+
+  customSubmit(data) {
+    this.ws.call('ldap.update', [data]).subscribe((res) => {
+      console.log(res);
+    },
+    err => {console.log(err)})
   }
 
 }
