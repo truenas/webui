@@ -90,6 +90,7 @@ export interface Formconfiguration {
   preHandler?;
   initialCount?
   initialCount_default?;
+  customDataHandler?;
 
   goBack?();
   onSuccess?(res);
@@ -289,9 +290,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         }
         this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
       }
+      console.log(this.isNew);
 
       if (!this.isNew) {
+        console.log("foo");
         this.getFunction.subscribe((res) => {
+          console.log(res);
           if (res.data){
             this.data = res.data;
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
@@ -330,6 +334,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             for (const i in this.wsResponse){
               this.wsfg = this.formGroup.controls[i];
               this.wsResponseIdx = this.wsResponse[i];
+              if ( this.conf.customDataHandler) {
+                this.conf.customDataHandler(this);
+              }
               if (this.wsfg) {
                 const current_field = this.fieldConfig.find((control) => control.name === i);
                 if (current_field.type === "array") {

@@ -427,7 +427,7 @@ export class DatasetAclComponent implements OnDestroy {
         this.aces.removeAt(num)
       }
       this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
-        this.dataHandler(this.entityForm, res);
+        this.customDataHandler(this.entityForm, res);
       });
     });
   }
@@ -446,7 +446,7 @@ export class DatasetAclComponent implements OnDestroy {
     return {"aces": []}; // stupid hacky thing that gets around entityForm's treatment of data
   }
 
-  async dataHandler(entityForm, defaults?) {
+  async customDataHandler(entityForm, defaults?) {
     entityForm.formGroup.controls['aces'].reset();
     this.gid_fc = _.find(this.fieldConfig, {"name": "gid"});
     this.uid_fc = _.find(this.fieldConfig, {"name": "uid"});
