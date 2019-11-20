@@ -326,28 +326,25 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
             }
-
-            for (const i in this.wsResponse){
-              this.wsfg = this.formGroup.controls[i];
-              this.wsResponseIdx = this.wsResponse[i];
-              if (this.wsfg) {
-                const current_field = this.fieldConfig.find((control) => control.name === i);
-                if (current_field.type === "array") {
-                    this.setArrayValue(this.wsResponse[i], this.wsfg, i);
-                } else if (current_field.type === "list") {
-                  this.setObjectListValue(this.wsResponse[i], this.wsfg, i)
-                } else {
-                  if (this.conf.dataHandler) {
-                    this.conf.dataHandler(this);
-                  }
-                  else {
+            if (this.conf.dataHandler) {
+              this.conf.dataHandler(this);
+            } else {
+              for (const i in this.wsResponse){
+                this.wsfg = this.formGroup.controls[i];
+                this.wsResponseIdx = this.wsResponse[i];
+                if (this.wsfg) {
+                  const current_field = this.fieldConfig.find((control) => control.name === i);
+                  if (current_field.type === "array") {
+                      this.setArrayValue(this.wsResponse[i], this.wsfg, i);
+                  } else if (current_field.type === "list") {
+                    this.setObjectListValue(this.wsResponse[i], this.wsfg, i)
+                  } else {
                     this.wsfg.setValue(this.wsResponse[i]);
                   }
-                }
-
-              } else {
-                if (this.conf.dataAttributeHandler) {
-                  this.conf.dataAttributeHandler(this);
+                } else {
+                  if (this.conf.dataAttributeHandler) {
+                    this.conf.dataAttributeHandler(this);
+                  }
                 }
               }
             }
