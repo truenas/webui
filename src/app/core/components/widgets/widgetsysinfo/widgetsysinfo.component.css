@@ -232,11 +232,15 @@ span.passive{
 }
 
 .freenas .mat-icon.generic{
-  width:50%;
+  width:calc(240px * 0.5);
   height:auto;
 }
 
 img.platform-logo{
+  width: 10rem;
+}
+
+.xs.carousel img.platform-logo{
   width: 70%;
 }
 
