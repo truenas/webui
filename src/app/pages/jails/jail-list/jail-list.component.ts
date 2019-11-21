@@ -165,18 +165,17 @@ export class JailListComponent {
     },
   ];
 
-  public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
-  can create the /iocage dataset. The /iocage \
-  dataset might not be visible until after \
-  the first jail is created. iocage uses \
-  this dataset to store FreeBSD releases \
-  and all other jail data.");
+  public tooltipMsg: any = T("Choose a pool for jail storage. \
+  The jail manager creates an <samp>/iocage</samp> dataset on \
+  that pool. The dataset might not be visible until the first \
+  jail is created. The jail manager uses this dataset for all \
+  jail data.");
 
   public showSpinner = true;
 
   protected globalConfig = {
     id: "config",
-    tooltip: T("Config Pool for Jail Manager"),
+    tooltip: T("Choose Pool for Jail Manager"),
     onClick: () => {
       this.prerequisite().then((res)=>{
         this.activatePool();
@@ -186,7 +185,7 @@ export class JailListComponent {
 
   protected addBtnDisabled = true;
 
-  constructor(public router: Router, protected rest: RestService, public ws: WebSocketService, 
+  constructor(public router: Router, protected rest: RestService, public ws: WebSocketService,
     public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
     public sorter: StorageService, public dialog: MatDialog,) {}
 
@@ -244,17 +243,17 @@ export class JailListComponent {
     const self = this;
 
     const conf: DialogFormConfiguration = {
-      title: T("Activate Pool for Jail Manager"),
+      title: T("Choose Pool for Jail Storage"),
       fieldConfig: [
         {
           type: 'select',
           name: 'selectedPool',
-          placeholder: T('Choose a pool or dataset for jail storage'),
+          placeholder: T('Choose a pool for jail storage.'),
           options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}) : [],
           value: this.activatedPool
         }
       ],
-      saveButtonText: T("Activate"),
+      saveButtonText: T("Choose"),
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
@@ -264,7 +263,7 @@ export class JailListComponent {
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
             self.entityList.getData();
-            self.dialogService.Info(T('Pool Actived'), T("Successfully activated pool ") + value['selectedPool'], '500px', 'info', true);
+            self.dialogService.Info(T('Pool Chosen'), T("Using pool ") + value['selectedPool'], '500px', 'info', true);
           },
           (res) => {
             self.entityList.loader.close();
