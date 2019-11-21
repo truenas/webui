@@ -206,8 +206,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   beforeSubmit(data) {
-    this.ws.call('pool.dataset.query', [[["id", "=", "planet_of_fitness/this_dataset"]]]).subscribe((res) => {
-    })
     if (data.user === this.userOnLoad) {
       delete data.user;
     };
