@@ -28,7 +28,7 @@
             </ng-template>
         </tree-root>
     </div>
-
+    <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
 	<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
 	<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
 </div>

@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Validators } from "@angular/forms";
+
 import { RestService } from '../../../../services/rest.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntpservers';
+import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
 
 @Component({
   selector: 'app-ntpserver-edit',
@@ -51,7 +54,11 @@ export class NTPServerEditComponent {
       name: 'ntp_maxpoll',
       placeholder: helptext.edit.maxpoll.placeholder,
       inputType: 'number',
-      validation: helptext.edit.maxpoll.validation,
+      validation: [
+        Validators.max(17),
+        greaterThan("ntp_minpoll", [helptext.edit.minpoll.placeholder]),
+        Validators.required
+      ],
       tooltip: helptext.edit.maxpoll.tooltip,
     },
     {

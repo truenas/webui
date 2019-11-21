@@ -1,6 +1,5 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
-import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
 import globalHelptext from '../../../helptext/global-helptext';
 
@@ -103,7 +102,7 @@ idmap_tdb_range_high_tooltip: T('The ending UID/GID for which this system is aut
  Any UID/GID higher than this value is ignored.\
  This avoids accidental UID/GID overlaps between local\
  and remotely defined IDs.'),
- idmap_tdb_range_high_validation: [greaterThan('idmap_tdb_range_low'), regexValidator(/^\d+$/)], 
+
 
 cifs_srv_enable_smb1_placeholder: T('Enable SMB1 support'),
 cifs_srv_enable_smb1_tooltip: T('Use this option to allow legacy SMB clients to connect to the\

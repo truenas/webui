@@ -37,6 +37,7 @@ import { FormParagraphComponent } from './entity-form/components/form-paragraph/
 import { FormSchedulerComponent } from './entity-form/components/form-scheduler/form-scheduler.component';
 import { FormIpWithNetmaskComponent } from './entity-form/components/form-ipwithnetmask/form-ipwithnetmask.component';
 import { FormListComponent } from './entity-form/components/form-list/form-list.component';
+import { FormErrorsComponent } from './entity-form/components/form-errors/form-errors.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -114,6 +115,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     FormDatepickerComponent,
     FormSchedulerComponent,
     FormListComponent,
+    FormErrorsComponent,
     FormColorpickerComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
@@ -182,6 +184,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     FormDatepickerComponent,
     FormSchedulerComponent,
     FormListComponent,
+    FormErrorsComponent,
     FormColorpickerComponent,
     FormPermissionsComponent,
     FormArrayComponent,
