@@ -20,6 +20,9 @@ import helptext from '../../../helptext/directoryservice/ldap';
 
 export class LdapComponent {
   protected resource_name = 'directoryservice/ldap';
+  protected isEntity = false;
+  protected queryCall: string = 'ldap.config';
+  protected upodateCall: string = 'ldap.update';
   protected isBasicMode = true;
   protected idmapBacked: any;
   protected ldap_kerberos_realm: any;
@@ -132,7 +135,7 @@ export class LdapComponent {
     },
     {
       type : 'checkbox',
-      name : 'ldap_validate_certificates',
+      name : 'validate_certificates',
       placeholder : helptext.ldap_validate_certificates_placeholder,
       tooltip : helptext.ldap_validate_certificates_tooltip,
     },
@@ -201,9 +204,6 @@ export class LdapComponent {
     return true;
   }
 
-
-
-
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
@@ -211,15 +211,17 @@ export class LdapComponent {
               private dialogservice: DialogService) {}
 
   resourceTransformIncomingRestData(data) {
-    delete data['ldap_bindpw'];
-    data['ldap_hostname_noreq'] = data['ldap_hostname'];
+    delete data['bindpw'];
+    data['hostname'] = data['hostname'].join(' ');
+    data['hostname_noreq'] = data['hostname'];
     return data;
   }
-
+  
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
-      this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'ldap_kerberos_realm'});
+      this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
       res.data.forEach((item) => {
         this.ldap_kerberos_realm.options.push(
           {label : item.krb_realm, value : item.id});
@@ -227,24 +229,24 @@ export class LdapComponent {
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
-      this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'ldap_kerberos_principal'});
+      this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});
       res.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
           {label : item, value : item});
       });
     });
 
-    this.ws.call('notifier.choices', ['LDAP_SSL_CHOICES']).subscribe((res) => {
-      this.ldap_ssl = _.find(this.fieldConfig, {name : 'ldap_ssl'});
+    this.ws.call('ldap.ssl_choices').subscribe((res) => {
+      this.ldap_ssl = _.find(this.fieldConfig, {name : 'ssl'});
       res.forEach((item) => {
         this.ldap_ssl.options.push(
-          {label : item[1], value : item[0]});
+          {label : item, value : item});
       });
     });
 
     this.systemGeneralService.getCertificates().subscribe((res) => {
       this.ldapCertificate =
-          _.find(this.fieldConfig, {name : 'ldap_certificate'});
+          _.find(this.fieldConfig, {name : 'certificate'});
       res.forEach((item) => {
         this.ldapCertificate.options.push(
           {label : item.name, value : item.id});
@@ -256,47 +258,53 @@ export class LdapComponent {
       }
     });
 
-    this.ws.call('notifier.choices', ['IDMAP_CHOICES']).subscribe((res) => {
-      this.ldap_idmap_backend = _.find(this.fieldConfig, {name : 'ldap_idmap_backend'});
+    this.ws.call('ldap.idmap_backend_choices').subscribe((res) => {
+      this.ldap_idmap_backend = _.find(this.fieldConfig, {name : 'idmap_backend'});
       res.forEach((item) => {
         this.ldap_idmap_backend.options.push(
-          {label : item[1], value : item[0]});
+          {label : item, value : item});
       });
     });
 
-    this.ws.call('notifier.choices', ['LDAP_SCHEMA_CHOICES']).subscribe((res) => {
-      this.ldap_schema = _.find(this.fieldConfig, {name: 'ldap_schema'});
+    this.ws.call('ldap.schema_choices').subscribe((res) => {
+      this.ldap_schema = _.find(this.fieldConfig, {name: 'schema'});
       res.forEach((item => {
         this.ldap_schema.options.push(
-          {label : item[1], value : item[0]});
+          {label : item, value : item});
       }));
     });
 
-    entityEdit.formGroup.controls['ldap_idmap_backend'].valueChanges.subscribe((res)=> {
+    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((res)=> {
       this.idmapBacked = res;
     })
-    const enabled = entityEdit.formGroup.controls['ldap_enable'].value;
-    this.entityForm.setDisabled('ldap_hostname', !enabled, !enabled);
-    this.entityForm.setDisabled('ldap_hostname_noreq', enabled, enabled);
-    entityEdit.formGroup.controls['ldap_enable'].valueChanges.subscribe((res)=> {
-      this.entityForm.setDisabled('ldap_hostname', !res, !res);
-      this.entityForm.setDisabled('ldap_hostname_noreq', res, res);
+    const enabled = entityEdit.formGroup.controls['enable'].value;
+    this.entityForm.setDisabled('hostname', !enabled, !enabled);
+    this.entityForm.setDisabled('hostname_noreq', enabled, enabled);
+    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res)=> {
+      this.entityForm.setDisabled('hostname', !res, !res);
+      this.entityForm.setDisabled('hostname_noreq', res, res);
       if(!res){
-        this.entityForm.formGroup.controls['ldap_hostname_noreq'].setValue(this.entityForm.formGroup.controls['ldap_hostname'].value);
+        this.entityForm.formGroup.controls['hostname_noreq'].setValue(this.entityForm.formGroup.controls['hostname'].value);
       }
       else{
-        this.entityForm.formGroup.controls['ldap_hostname'].setValue(this.entityForm.formGroup.controls['ldap_hostname_noreq'].value);
+        this.entityForm.formGroup.controls['hostname'].setValue(this.entityForm.formGroup.controls['hostname_noreq'].value);
       }
       
     })
+    entityEdit.submitFunction = this.submitFunction;
   }
   beforeSubmit(data){
-    if(data["ldap_enable"]){
-      data["ldap_hostname_noreq"] = data["ldap_hostname"];
+    if(data["enable"]){
+      data["hostname_noreq"] = data["hostname"];
     } else {
-      data["ldap_hostname"] = data["ldap_hostname_noreq"];
+      data["hostname"] = data["hostname_noreq"];
     }
-    delete(data['ldap_hostname_noreq']);
+    delete(data['hostname_noreq']);
+    data['hostname'] = data['hostname'].split(' ');
+  }
+
+  submitFunction(body: any) {
+    return this.ws.call('ldap.update', [body]);
   }
 
 }

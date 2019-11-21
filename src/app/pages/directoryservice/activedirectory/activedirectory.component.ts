@@ -299,35 +299,35 @@ export class ActiveDirectoryComponent {
       });
     });
 
-    this.ws.call('notifier.choices', ['LDAP_SSL_CHOICES']).subscribe((res) => {
+    this.ws.call('activedirectory.ssl_choices').subscribe((res) => {
       this.ssl = _.find(this.fieldConfig, {name : 'ssl'});
       res.forEach((item) => {
         this.ssl.options.push(
-            {label : item[1], value : item[0]});
+            {label : item, value : item});
       });
     });
 
-    this.ws.call('notifier.choices', ['IDMAP_CHOICES']).subscribe((res) => {
+    this.ws.call('activedirectory.idmap_backend_choices').subscribe((res) => {
       this.idmap_backend = _.find(this.fieldConfig, {name : 'idmap_backend'});
       res.forEach((item) => {
         this.idmap_backend.options.push(
-            {label : item[1], value : item[0]});
+            {label : item, value : item});
       });
     });
 
-    this.ws.call('notifier.choices', ['NSS_INFO_CHOICES']).subscribe((res) => {
+    this.ws.call('activedirectory.nss_info_choices').subscribe((res) => {
       this.nss_info = _.find(this.fieldConfig, {name : 'nss_info'});
       res.forEach((item) => {
         this.nss_info.options.push(
-            {label : item[1], value : item[0]});
+            {label : item, value : item});
       });
     });
 
-    this.ws.call('notifier.choices', ['LDAP_SASL_WRAPPING_CHOICES']).subscribe((res) => {
+    this.ws.call('activedirectory.sasl_wrapping_choices').subscribe((res) => {
       this.ldap_sasl_wrapping = _.find(this.fieldConfig, {name : 'ldap_sasl_wrapping'});
       res.forEach((item) => {
         this.ldap_sasl_wrapping.options.push(
-            {label : item[1], value : item[0]});
+            {label : item, value : item});
       });
     });
 
