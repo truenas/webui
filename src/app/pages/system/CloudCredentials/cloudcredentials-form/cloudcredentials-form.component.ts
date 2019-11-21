@@ -1102,18 +1102,19 @@ export class CloudCredentialsFormComponent {
     data = data.result;
     const drivesConfig = _.find(this.fieldConfig, {name: 'drives-ONEDRIVE'});
     this.entityForm.setDisabled('drives-ONEDRIVE', false, false);
-    drivesConfig.options = [
-      {
-        label: '---------',
-        value: '',
-      }
-    ];
     this.ws.call('cloudsync.onedrive_list_drives', [{
       client_id: data.client_id,
       client_secret: data.client_secret,
       token: data.token,
     }]).subscribe(
       (drives) => {
+        drivesConfig.options = [
+          {
+            label: '---------',
+            value: '',
+          }
+        ];
+
         for (let i = 0; i < drives.length; i++) {
           drivesConfig.options.push({label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i]});
         }
