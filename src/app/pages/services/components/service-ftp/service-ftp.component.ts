@@ -2,9 +2,10 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { RestService, SystemGeneralService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-ftp';
+import { T } from '../../../../translate-marker';
 
 
 @Component({
@@ -20,6 +21,11 @@ export class ServiceFTPComponent implements OnInit {
   protected route_success: string[] = [ 'services' ];
 
   protected isBasicMode: boolean = true;
+
+  protected rootlogin_fg: any;
+  protected rootloginSubscription: any;
+  protected warned = false;
+  protected rootlogin: boolean;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -354,7 +360,7 @@ export class ServiceFTPComponent implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-
+              protected dialog: DialogService,
               protected systemGeneralService: SystemGeneralService) {}
 
   ngOnInit() {
@@ -372,9 +378,26 @@ export class ServiceFTPComponent implements OnInit {
 
   afterInit(entityEdit: any) {
     entityEdit.submitFunction = this.submitFunction;
+    this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
+    this.rootloginSubscription = 
+      this.rootlogin_fg.valueChanges.subscribe(res => {
+      if (res && !this.warned && !this.rootlogin) {
+        this.dialog.confirm(helptext.rootlogin_dialog_title, helptext.rootlogin_dialog_message, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe(confirm => {
+          if (!confirm) {
+            this.rootlogin_fg.setValue(false);
+          } else {
+            this.warned = true;
+          }
+        });
+      }
+      if (!res && !this.warned && this.rootlogin) {
+        this.rootlogin = res;
+      }
+    });
   }
 
   resourceTransformIncomingRestData(data) {
+    this.rootlogin = data['rootlogin'];
     const certificate = data['ssltls_certificate'];
     if (certificate && certificate.id) {
       data['ssltls_certificate'] = certificate.id;
@@ -415,5 +438,9 @@ export class ServiceFTPComponent implements OnInit {
 
   submitFunction(this: any, body: any){
     return this.ws.call('ftp.update', [body]);
+  }
+
+  ngOnDestroy() {
+    this.rootloginSubscription.unsubscribe();
   }
 }
