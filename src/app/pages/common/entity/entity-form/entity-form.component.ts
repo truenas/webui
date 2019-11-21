@@ -427,7 +427,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.rest.put(resource, {body}, this.conf.route_usebaseUrl);
   }
 
-  editCall(body: any) { console.log('here', body)
+  editCall(body: any) {
     const payload = [body];
     if (this.pk) {
       payload.unshift(this.pk);

@@ -366,7 +366,7 @@ export class ActiveDirectoryComponent {
     entityEdit.submitFunction = this.submitFunction;
   }
 
-  beforeSubmit(data){ console.log(data)
+  beforeSubmit(data){
     data.netbiosalias = data.netbiosalias.trim();
     if (data.netbiosalias.length > 0) {
       data.netbiosalias = data.netbiosalias.split(" ");
