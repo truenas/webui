@@ -12,6 +12,7 @@ import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
 import helptext from '../../helptext/plugins/plugins';
+import jailHelptext from '../../helptext/jails/jails-list';
 
 @Component({
   selector: 'app-plugins-ui',
@@ -21,7 +22,7 @@ export class PluginsComponent {
   public title = "Plugins";
   protected globalConfig = {
     id: "config",
-    tooltip: T("Config Pool for Jail Manager"),
+    tooltip: jailHelptext.globalConfig.tooltip,
     onClick: () => {
       this.prerequisite().then((res)=>{
         this.activatePool();
@@ -215,10 +216,10 @@ export class PluginsComponent {
 
   noPoolDialog() {
     const dialogRef = this.dialogService.confirm(
-      T('No Pools'),
-      T('Jails cannot be created or managed until a pool is present for storing them.'),
+      jailHelptext.noPoolDialog.title,
+      jailHelptext.noPoolDialog.message,
       true,
-      T('Create Pool'));
+      jailHelptext.noPoolDialog.buttonMsg);
 
       dialogRef.subscribe((res) => {
         if (res) {
@@ -231,17 +232,17 @@ export class PluginsComponent {
     const self = this;
 
     const conf: DialogFormConfiguration = {
-      title: T("Activate Pool for Jail Manager"),
+      title: jailHelptext.activatePoolDialog.title,
       fieldConfig: [
         {
           type: 'select',
           name: 'selectedPool',
-          placeholder: T('Choose a pool or dataset for jail storage'),
+          placeholder: jailHelptext.activatePoolDialog.selectedPool_placeholder,
           options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}) : [],
           value: this.activatedPool
         }
       ],
-      saveButtonText: T("Activate"),
+      saveButtonText: jailHelptext.activatePoolDialog.saveButtonText,
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
@@ -251,7 +252,10 @@ export class PluginsComponent {
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
             self.entityList.getData();
-            self.dialogService.Info(T('Pool Actived'), T("Successfully activated pool ") + value['selectedPool'], '500px', 'info', true);
+            self.dialogService.Info(
+              jailHelptext.activatePoolDialog.successInfoDialog.title,
+              jailHelptext.activatePoolDialog.successInfoDialog.message + value['selectedPool'],
+              '500px', 'info', true);
           },
           (res) => {
             self.entityList.loader.close();
