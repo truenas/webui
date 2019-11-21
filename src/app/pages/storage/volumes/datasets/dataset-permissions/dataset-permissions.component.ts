@@ -18,6 +18,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
 
   protected updateCall = 'pool.dataset.permission';
   protected datasetPath: string;
+  protected datasetId: string;
   protected recursive: any;
   protected recursive_subscription: any;
   public formGroup: FormGroup;
@@ -132,7 +133,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   preInit(entityEdit: any) {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
     this.aroute.params.subscribe(params => {
-      this.datasetPath = '/mnt/' + params['pk'];
+      this.datasetId = params['pk'];
+      this.datasetPath = '/mnt/' + this.datasetId;
       const idField = _.find(this.fieldSets.find(set => set.name === helptext.heading_dataset_path).config, { name: 'id' });
       idField.value = this.datasetPath;
     });
@@ -204,6 +206,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   beforeSubmit(data) {
+    this.ws.call('pool.dataset.query', [[["id", "=", "planet_of_fitness/this_dataset"]]]).subscribe((res) => {
+    })
     if (data.user === this.userOnLoad) {
       delete data.user;
     };
@@ -224,13 +228,13 @@ export class DatasetPermissionsComponent implements OnDestroy {
       delete data['mode'];
       data['options']['stripacl'] = false;
     }
-    
+
   }
 
   customSubmit(data) {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T("Saving Permissions") }});
     this.dialogRef.componentInstance.setDescription(T("Saving Permissions..."));
-    this.dialogRef.componentInstance.setCall(this.updateCall, [data]);
+    this.dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
