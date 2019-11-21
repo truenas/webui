@@ -1,10 +1,12 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-permissions';
 import { DialogService, StorageService, WebSocketService, UserService } from '../../../../../services/';
+import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import { T } from '../../../../../translate-marker';
 import * as _ from 'lodash';
 
@@ -14,7 +16,7 @@ import * as _ from 'lodash';
 })
 export class DatasetPermissionsComponent implements OnDestroy {
 
-  protected editCall = 'pool.dataset.permission';
+  protected updateCall = 'pool.dataset.permission';
   protected datasetPath: string;
   protected recursive: any;
   protected recursive_subscription: any;
@@ -24,6 +26,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected isEntity = true;
   protected userOnLoad: string;
   protected groupOnLoad: string;
+  protected dialogRef: any;
+  private entityForm: any;
 
   public fieldSets: FieldSet[] = [
     {
@@ -121,7 +125,9 @@ export class DatasetPermissionsComponent implements OnDestroy {
     protected ws: WebSocketService,
     protected userService: UserService,
     protected storageService: StorageService,
-    protected dialog: DialogService) { }
+    protected mdDialog: MatDialog,
+    protected dialog: DialogService,
+    protected router: Router) { }
 
   preInit(entityEdit: any) {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
@@ -151,6 +157,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
     this.storageService.filesystemStat(this.datasetPath).subscribe(res => {
       this.userOnLoad = res.user;
       this.groupOnLoad = res.group;
@@ -217,5 +224,22 @@ export class DatasetPermissionsComponent implements OnDestroy {
       delete data['mode'];
       data['options']['stripacl'] = false;
     }
+    
+  }
+
+  customSubmit(data) {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T("Saving Permissions") }});
+    this.dialogRef.componentInstance.setDescription(T("Saving Permissions..."));
+    this.dialogRef.componentInstance.setCall(this.updateCall, [data]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.entityForm.success = true;
+      this.dialogRef.close();
+      this.router.navigate(new Array('/').concat(
+        this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      console.error(err)
+    });
   }
 }
