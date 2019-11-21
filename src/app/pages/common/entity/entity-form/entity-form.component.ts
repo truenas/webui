@@ -291,7 +291,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       if (!this.isNew) {
-        this.getFunction.subscribe((res) => { console.log(res)
+        this.getFunction.subscribe((res) => {
           if (res.data){
             this.data = res.data;
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {

@@ -20,9 +20,9 @@ import helptext from '../../../helptext/directoryservice/ldap';
 
 export class LdapComponent {
   protected resource_name = 'directoryservice/ldap';
-  protected isEntity = true;
+  protected isEntity = false;
   protected queryCall: string = 'ldap.config';
-  protected editCall: string = 'ldap.update';
+  protected upodateCall: string = 'ldap.update';
   protected isBasicMode = true;
   protected idmapBacked: any;
   protected ldap_kerberos_realm: any;
@@ -135,7 +135,7 @@ export class LdapComponent {
     },
     {
       type : 'checkbox',
-      name : 'ldap_validate_certificates',
+      name : 'validate_certificates',
       placeholder : helptext.ldap_validate_certificates_placeholder,
       tooltip : helptext.ldap_validate_certificates_tooltip,
     },
@@ -211,17 +211,14 @@ export class LdapComponent {
               private dialogservice: DialogService) {}
 
   resourceTransformIncomingRestData(data) {
-    console.log(data)
     delete data['bindpw'];
-    data['hostname'] = data['hostname'].join(',');
+    data['hostname'] = data['hostname'].join(' ');
     data['hostname_noreq'] = data['hostname'];
-    console.log(data)
     return data;
   }
   
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    console.log(this.entityForm)
 
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
@@ -294,6 +291,7 @@ export class LdapComponent {
       }
       
     })
+    entityEdit.submitFunction = this.submitFunction;
   }
   beforeSubmit(data){
     if(data["enable"]){
@@ -302,7 +300,11 @@ export class LdapComponent {
       data["hostname"] = data["hostname_noreq"];
     }
     delete(data['hostname_noreq']);
-    data['hostname'] = data['hostname'].replace(/\s/g, '').split(',');
-    console.log(data);
+    data['hostname'] = data['hostname'].split(' ');
   }
+
+  submitFunction(body: any) {
+    return this.ws.call('ldap.update', [body]);
+  }
+
 }
