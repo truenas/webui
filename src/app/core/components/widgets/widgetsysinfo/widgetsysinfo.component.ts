@@ -8,6 +8,7 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
 import { WebSocketService, SystemGeneralService } from '../../../../services/';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
 
 import filesize from 'filesize';
@@ -52,13 +53,19 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public isUpdateRunning = false;
   public is_ha: boolean;
   public updateMethod = 'update.update';
+  public screenType: string = 'Desktop';
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
-    public sysGenService: SystemGeneralService){
+    public sysGenService: SystemGeneralService,  public mediaObserver: MediaObserver){
     super(translate);
     this.configurable = false;
     this.sysGenService.updateRunning.subscribe((res) => { 
       res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+    });
+
+    mediaObserver.media$.subscribe((evt) =>{
+      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      this.screenType = st;
     });
   }
 
