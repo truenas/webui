@@ -247,18 +247,6 @@ export class AlertServiceComponent {
     // Mattermost
     {
       type: 'input',
-      name: 'Mattermost-cluster_name',
-      placeholder: helptext.Mattermost_cluster_name_placeholder,
-      tooltip: helptext.Mattermost_cluster_name_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Mattermost',
-        }]
-      }]
-    }, {
-      type: 'input',
       name: 'Mattermost-url',
       placeholder: helptext.Mattermost_url_placeholder,
       tooltip: helptext.Mattermost_url_tooltip,
@@ -287,32 +275,6 @@ export class AlertServiceComponent {
       validation: [Validators.required],
     }, {
       type: 'input',
-      inputType: 'password',
-      name: 'Mattermost-password',
-      placeholder: helptext.Mattermost_password_placeholder,
-      togglePw: true,
-      tooltip: helptext.Mattermost_password_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Mattermost',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'Mattermost-team',
-      placeholder: helptext.Mattermost_team_placeholder,
-      tooltip: helptext.Mattermost_team_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Mattermost',
-        }]
-      }]
-    }, {
-      type: 'input',
       name: 'Mattermost-channel',
       placeholder: helptext.Mattermost_channel_placeholder,
       tooltip: helptext.Mattermost_channel_tooltip,
@@ -323,23 +285,21 @@ export class AlertServiceComponent {
           value: 'Mattermost',
         }]
       }],
-      required: true,
-      validation: [Validators.required],
-    },
-    // OpsGenie
-    {
+    }, {
       type: 'input',
-      name: 'OpsGenie-cluster_name',
-      placeholder: helptext.OpsGenie_cluster_name_placeholder,
-      tooltip: helptext.OpsGenie_cluster_name_tooltip,
+      name: 'Mattermost-icon_url',
+      placeholder: helptext.Mattermost_icon_url_placeholder,
+      tooltip: helptext.Mattermost_icon_url_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
           name: "type",
-          value: 'OpsGenie',
+          value: 'Mattermost',
         }]
-      }]
-    }, {
+      }],
+    },
+    // OpsGenie
+    {
       type: 'input',
       name: 'OpsGenie-api_key',
       placeholder: helptext.OpsGenie_api_key_placeholder,
@@ -399,18 +359,6 @@ export class AlertServiceComponent {
     // Slack
     {
       type: 'input',
-      name: 'Slack-cluster_name',
-      placeholder: helptext.Slack_cluster_name_placeholder,
-      tooltip: helptext.Slack_cluster_name_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Slack',
-        }]
-      }]
-    }, {
-      type: 'input',
       name: 'Slack-url',
       placeholder: helptext.Slack_url_placeholder,
       tooltip: helptext.Slack_url_tooltip,
@@ -423,42 +371,6 @@ export class AlertServiceComponent {
       }],
       required: true,
       validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'Slack-channel',
-      placeholder: helptext.Slack_channel_placeholder,
-      tooltip: helptext.Slack_channel_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Slack',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'Slack-username',
-      placeholder: helptext.Slack_username_placeholder,
-      tooltip: helptext.Slack_username_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Slack',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'Slack-icon_url',
-      placeholder: helptext.Slack_icon_url_placeholder,
-      tooltip: helptext.Slack_icon_url_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Slack',
-        }]
-      }]
     },
     // SNMPTrap
     {
