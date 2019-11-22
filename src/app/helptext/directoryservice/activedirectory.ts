@@ -15,6 +15,15 @@ activedirectory_custactions_clearcache_dialog_title: T("Active Directory"),
 activedirectory_custactions_clearcache_dialog_message: T("The cache is being rebuilt."),
 activedirectory_custactions_leave_domain: T("Leave Domain"),
 
+ad_leave_domain_dialog: {
+    message: T('Leaving the domain requires sufficient privileges. Enter your credentials below.'),
+    username: T('Username'),
+    pw: T('Password'),
+    error: T('Error'),
+    success: T('Success'),
+    success_msg: T('You have left the domain.')
+},
+
 activedirectory_domainname_name: 'domainname',
 activedirectory_domainname_placeholder: T('Domain Name'),
 activedirectory_domainname_tooltip: T('Enter the Active Directory domain (<i>example.com</i>)\
