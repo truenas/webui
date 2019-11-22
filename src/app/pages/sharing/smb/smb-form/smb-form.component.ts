@@ -207,7 +207,7 @@ export class SMBFormComponent {
   checkACLactions(entityForm) {
     const sharePath: string = entityForm.formGroup.get('cifs_path').value;
     const datasetId = sharePath.replace('/mnt/', '');
-
+    const poolName = datasetId.split('/')[0];
     /**
      * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
@@ -226,14 +226,12 @@ export class SMBFormComponent {
                   true,
                   helptext_sharing_smb.dialog_edit_acl_button
                 ),
-                /* Fetch more info about the dataset (we need its pool ID) */
-                this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(map(datasets => datasets[0]))
               )
         ),
         tap(([doConfigureACL, dataset]) =>
           doConfigureACL
             ? this.router.navigate(
-                ['/'].concat(['storage', 'pools', 'id', dataset.pool, 'dataset', 'acl', datasetId])
+                ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId])
               )
             : this.router.navigate(['/'].concat(this.route_success))
         )
