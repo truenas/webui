@@ -13,6 +13,7 @@ activedirectory_custactions_clearcache_id: 'ds_clearcache',
 activedirectory_custactions_clearcache_name: T('Rebuild Directory Service Cache'),
 activedirectory_custactions_clearcache_dialog_title: T("Active Directory"),
 activedirectory_custactions_clearcache_dialog_message: T("The cache is being rebuilt."),
+activedirectory_custactions_leave_domain: T("Leave Domain"),
 
 activedirectory_domainname_name: 'domainname',
 activedirectory_domainname_placeholder: T('Domain Name'),
