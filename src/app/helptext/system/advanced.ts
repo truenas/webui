@@ -98,10 +98,5 @@ export const helptext_system_advanced = {
   swapondrive_warning: T("A swap size of 0 is STRONGLY DISCOURAGED."),
 
   debug_download_failed_title: T("Error Downloading File"),
-  debug_download_failed_message: T("Debug could not be downloaded."),
-
-  submit_dialog: {
-    title: T('Success'), 
-    message: T('Settings saved.')
-  }
+  debug_download_failed_message: T("Debug could not be downloaded."),  
 };

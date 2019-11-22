@@ -15,7 +15,6 @@ import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angul
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Rx';
-import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 import {RestService, WebSocketService} from '../../../../services/';
@@ -122,6 +121,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public saveSubmitText = "Save";
   public showPassword = false;
   public isFooterConsoleOpen: boolean;
+  public successMessage = T('Settings saved.')
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -151,7 +151,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               protected entityFormService: EntityFormService,
               protected fieldRelationService: FieldRelationService,
               protected loader: AppLoaderService,
-              public snackBar: MatSnackBar,
               public adminLayout: AdminLayoutComponent,
               private dialog:DialogService,
               public translate: TranslateService) {
@@ -505,8 +504,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                               this.router.navigate(new Array('/').concat(
                                   this.conf.route_success));
                             } else {
-                              this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
                               this.success = true;
+                              this.formGroup.markAsPristine();
                             }
 
                             if (this.conf.afterSubmit) {

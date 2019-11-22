@@ -1,13 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
-import {WebSocketService, DialogService} from "../../../../services/";
-import {AppLoaderService} from "../../../../services/app-loader/app-loader.service";
-import {MatSnackBar} from "@angular/material";
+import { Component } from '@angular/core';
+import { Router } from "@angular/router";
+import { WebSocketService, DialogService } from "../../../../services/";
+import { AppLoaderService } from "../../../../services/app-loader/app-loader.service";
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/account/user-change-pw';
 import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
 
 @Component({
   template: `<entity-form [conf]="this"></entity-form>`,
@@ -53,8 +51,7 @@ export class ChangePasswordComponent {
   }]
 
   constructor(protected ws: WebSocketService, protected router: Router,
-              protected loader: AppLoaderService, protected dialog: DialogService,
-              public snackBar: MatSnackBar) {
+              protected loader: AppLoaderService, protected dialog: DialogService) {
   }
 
   preInit(entityForm) {
@@ -69,7 +66,9 @@ export class ChangePasswordComponent {
         delete body.curr_password;
         this.ws.call('user.update', [1, body]).subscribe((res) => {
           this.loader.close();
-          this.dialog.Info(helptext.pw_updated_title, '', '300px', 'info', true);
+          this.entityForm.success = true;
+          this.entityForm.successMessage = helptext.pw_updated;
+          this.entityForm.formGroup.markAsPristine();
         }, (res) => {
           this.loader.close();
           new EntityUtils().handleWSError(this.entityForm, res);

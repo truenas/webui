@@ -189,7 +189,10 @@ export class EmailComponent implements OnDestroy {
     this.ws
       .call(this.updateCall, [emailConfig])
       .subscribe(
-        () => {},
+        () => {
+          this.entityEdit.success = true;
+          this.entityEdit.formGroup.markAsPristine();
+        },
         error => {
           this.loader.close();
           new EntityUtils().handleWSError(this, error, this.dialogservice)

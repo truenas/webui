@@ -16,5 +16,5 @@ pw_confirm_pw_placeholder : T('Confirm Password'),
 pw_confirm_pw_validation : [ matchOtherValidator('password') ],
 pw_invalid_title: T('Incorrect Password'),
 pw_invalid_msg: T('The administrator password is incorrect.'),
-pw_updated_title: T("Password updated.")
+pw_updated: T("Password updated.")
 }

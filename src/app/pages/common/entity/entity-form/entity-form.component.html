@@ -45,8 +45,8 @@
             </mat-card-actions>
           </div>
             <!-- <div class="btn-group btn-group-justified"> -->
+          <p *ngIf="success && entityForm.form.dirty === false" type="success" id="successfully_updated">{{successMessage | translate}}</p>
         </form>
-        <p *ngIf="success" type="success" id="successfully_updated">{{"Successfully updated." | translate}}</p>
         <span *ngIf="conf.form_message" id="form_message" class="form-message" [ngClass]="conf.form_message.type" [innerHTML]="conf.form_message.content"></span>
         <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
     </div>
