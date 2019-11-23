@@ -53,6 +53,7 @@ export class SMBListComponent {
 
   getActions(row): any[] {
     let rowName = row.path.replace("/mnt/", "");
+    let poolName = rowName.split('/')[0];
     let optionDisabled;
     rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
     return [
@@ -72,16 +73,8 @@ export class SMBListComponent {
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
           const datasetId = rowName;
-          this.ws
-            .call("pool.dataset.query", [[["id", "=", datasetId]]])
-            .pipe(map(datasets => datasets[0]))
-            .subscribe(
-              dataset =>
-                this.router.navigate(
-                  ["/"].concat(["storage", "pools", "id", dataset.pool, "dataset", "acl", datasetId])
-                ),
-              error => new EntityUtils().handleWSError(this, error, this.dialogService)
-            );
+          this.router.navigate(
+            ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
         }
       },
       {
