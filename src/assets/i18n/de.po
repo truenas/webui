@@ -5,10 +5,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Check Notifications for more details."
-msgstr ""
+msgstr " Überprüfen Sie Benachrichtigungen für mehr Details."
 
 msgid " Download Updates"
-msgstr ""
+msgstr " Aktualisierungen herunterladen"
 
 msgid " First vdev has "
 msgstr ""
@@ -17,7 +17,7 @@ msgid " First vdev is a "
 msgstr ""
 
 msgid " Plugin"
-msgstr ""
+msgstr " Plugin"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -38,16 +38,16 @@ msgid " but datastore "
 msgstr ""
 
 msgid " disks"
-msgstr ""
+msgstr " Festplatten"
 
 msgid " disks, new vdev has "
 msgstr ""
 
 msgid " has been unlocked."
-msgstr ""
+msgstr " wurde entsperrt."
 
 msgid " is "
-msgstr ""
+msgstr " ist"
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
@@ -63,10 +63,10 @@ msgid " system is powered on and connected to the network."
 msgstr ""
 
 msgid " updated."
-msgstr ""
+msgstr " aktualisiert."
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% aller Kerne"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
@@ -79,7 +79,7 @@ msgid "'. All data on that pool was destroyed."
 msgstr "'. Alle Daten in diesem Pool wurden vernichtet."
 
 msgid "(No description)"
-msgstr ""
+msgstr "(Keine Beschreibung)"
 
 msgid "*allow_sysvipc"
 msgstr ""
@@ -91,10 +91,10 @@ msgid ". All data on that pool was destroyed."
 msgstr ". Alle Daten in diesem Pool wurden vernichtet."
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". Ist das richtig?"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... stellen Sie sicher, dass"
 
 msgid "0=Disabled, blank=inherit"
 msgstr "0=deaktiviert, leer=erben"
@@ -120,10 +120,10 @@ msgid "</i> keypair?</p>"
 msgstr ""
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> jetzt?"
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr ""
+msgstr "</i>. Auf Daten im Pool kann erst zugegriffen werden, nachdem der Pool entsperrt wurde."
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
@@ -203,7 +203,7 @@ msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password
 msgstr ""
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  username."
-msgstr ""
+msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> Account  Benutzername."
 
 msgid ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
@@ -252,7 +252,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Current Version:</b> "
-msgstr ""
+msgstr "Aktuelle Version:"
 
 msgid ""
 "<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the "
@@ -262,7 +262,7 @@ msgstr ""
 
 msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
 msgstr ""
-"<b>Nicht empfohlen.</b> Mehrere Gruppen dürfen dieselbe Gruppen-ID "
+"<b>Nicht empfohlen.</b> Mehrere Gruppen dürfen die gleich Gruppen-ID "
 "verwenden."
 
 msgid ""
@@ -291,7 +291,8 @@ msgstr ""
 msgid ""
 "<b>WARNING:</b> This configuration file contains system              "
 "passwords and other sensitive data.<br>"
-msgstr ""
+msgstr " Die Konfigurationsdatei enthält Systempasswörter"
+"und andere vertrauliche Daten."
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system passwords and other "
@@ -300,7 +301,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
-msgstr ""
+msgstr "<b>rsyncd</b> lauscht auf diesem Port."
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
 msgstr ""
@@ -482,7 +483,7 @@ msgid ""
 msgstr ""
 
 msgid "A pool with this name already exists."
-msgstr ""
+msgstr "Ein Pool mit diesem Namen existiert bereits."
 
 msgid ""
 "A single bandwidth limit or bandwidth limit schedule in rclone format. "
@@ -509,7 +510,7 @@ msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
 msgid "A system update is in progress. "
-msgstr ""
+msgstr "Eine Systemaktualisierung wird gerade durchgeführt. "
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -520,7 +521,8 @@ msgstr ""
 msgid ""
 "A username on the FTP Host system. This user must already exist  on the FTP "
 "Host."
-msgstr ""
+msgstr "Ein Benutzername auf dem FTP Hostsystem. Der Benutzer muss bereits "
+"auf dem Host existieren."
 
 msgid ""
 "A valid IPv4 address to use as the default route. <br>Enter <b>none</b> to "
@@ -553,46 +555,46 @@ msgid ""
 msgstr ""
 
 msgid "ACL Mode"
-msgstr ""
+msgstr "ACL Modus"
 
 msgid "ACL Type"
-msgstr ""
+msgstr "ACL Typ"
 
 msgid "ACME DNS"
-msgstr ""
+msgstr "ACME DNS"
 
 msgid "ACME Server Directory URI"
-msgstr ""
+msgstr "ACME Server Verzeichnis URI"
 
 msgid "AD Timeout"
-msgstr ""
+msgstr "AD Zeitüberschreitung"
 
 msgid "AFP3 Unix Privs"
-msgstr ""
+msgstr "AFP3 Unix Privs"
 
 msgid "API Key"
-msgstr ""
+msgstr "API Schlüssel"
 
 msgid "API URL"
-msgstr ""
+msgstr "API URL"
 
 msgid "APPLY CHANGES"
-msgstr ""
+msgstr "Änderungen übernehmen"
 
 msgid "ARN"
-msgstr ""
+msgstr "ARN"
 
 msgid "ATA Security User"
 msgstr ""
 
 msgid "AWS Region"
-msgstr ""
+msgstr "AWS Region"
 
 msgid "About"
-msgstr ""
+msgstr "Über"
 
 msgid "Access"
-msgstr ""
+msgstr "Zugang"
 
 msgid "Access Based Share Enumeration"
 msgstr ""
@@ -613,22 +615,22 @@ msgid "Access Control List"
 msgstr ""
 
 msgid "Access ID Key"
-msgstr ""
+msgstr "Zugangs-ID-Schlüssel"
 
 msgid "Access Key"
-msgstr ""
+msgstr "Zugangschlüssel"
 
 msgid "Access Key ID"
-msgstr ""
+msgstr "Zugangs-ID-Schlüssel"
 
 msgid "Access Key ID for the linked AWS account."
 msgstr ""
 
 msgid "Access Mode"
-msgstr ""
+msgstr "Zugangsmodues"
 
 msgid "Access Token"
-msgstr ""
+msgstr "Zugangstoken"
 
 msgid ""
 "Access Token <a href=\"https://api.hubic.com/sandbox/\"  "
@@ -668,18 +670,19 @@ msgid "Activate"
 msgstr "Aktivieren"
 
 msgid "Activate Pool for Jail Manager"
-msgstr ""
+msgstr "Pool für den Jail-Manager aktivieren"
 
 msgid "Activate this Boot Environment?"
 msgstr ""
 
 msgid "Activated Pool for Jail Manager:"
-msgstr ""
+msgstr "Aktivierte Pool für den Jail-Manager"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
 "deleting it."
-msgstr ""
+msgstr "Aktiviert die Konfiugration. Deaktivieren Sie diese Option, um die "
+"Konfiguration zu deaktivieren, ohne sie zu löschen."
 
 msgid ""
 "Activates the process for ZFS to transparently reuse a single copy of "
@@ -690,10 +693,10 @@ msgid ""
 msgstr ""
 
 msgid "Activates the replication schedule."
-msgstr ""
+msgstr "Aktiviert den Replikationszeitplan."
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directory"
 
 msgid "Active Directory IDMAP change!"
 msgstr ""
@@ -720,36 +723,37 @@ msgid "Add Additional Path"
 msgstr ""
 
 msgid "Add Cache"
-msgstr ""
+msgstr "Cache hinzufügen"
 
 msgid "Add Cloud Credential"
 msgstr ""
 
 msgid "Add Data"
-msgstr ""
+msgstr "Daten hinzufügen"
 
 msgid "Add Dataset"
-msgstr ""
+msgstr "Datenset hinzufügen"
 
 msgid "Add Log"
-msgstr ""
+msgstr "Protokoll hinzufügen"
 
 msgid "Add Recovery Key"
-msgstr ""
+msgstr "Wiederherstellungsschlüssel hinzufügen"
 
 msgid "Add Spare"
-msgstr ""
+msgstr "Spare hinzufügen"
 
 msgid "Add Zvol"
-msgstr ""
+msgstr "Zvol hinzufügen"
 
 msgid "Add a name for the new snapshot."
-msgstr ""
+msgstr "Fügen Sie einen Namen für den Schnappsschuss hinzu"
 
 msgid ""
-"Add a passphrase to the new  encryption key. This is used to lock and "
+"Add a passphrase to the new encryption key. This is used to lock and "
 "unlock the pool."
-msgstr ""
+msgstr "Fügen Sie dem neuen Verschlüsselungsschlüssel eine Passphrase "
+"hinzu. Dies wird zum Sperren und Entsperren des Pools verwendet."
 
 msgid ""
 "Add an <a href=\"--docurl--/system.html#certificates\" "
@@ -765,7 +769,7 @@ msgid ""
 msgstr ""
 
 msgid "Add any notes about this zvol."
-msgstr ""
+msgstr "Fügen Sie Anmerkungen zu diesem Zvol hinzu."
 
 msgid ""
 "Add lines to the jail <b>resolv.conf</b>. <b>Example:</b> <i>nameserver "
@@ -788,13 +792,15 @@ msgid ""
 msgstr ""
 
 msgid "Add one or more disks to be used for data."
-msgstr ""
+msgstr "Fügen Sie eine oder mehrere Festplatten hinzu, "
+"die für Daten verwendet werden sollen."
 
 msgid "Add one or more disks to extend the pool."
-msgstr ""
+msgstr "Fügen Sie eine oder mehrere Festplatten "
+"hinzu, um den Pool zu erweitern."
 
 msgid "Add this user to additional groups."
-msgstr ""
+msgstr "Füge diesem Nutzer zu weiteren Gruppen hinzu."
 
 msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
@@ -844,10 +850,10 @@ msgid "Additional Data VDevs to Create"
 msgstr ""
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "Zusätzliche Domains"
 
 msgid "Additional Parameters"
-msgstr ""
+msgstr "Zusätzliche Parameter"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
@@ -876,10 +882,10 @@ msgid ""
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Addresse"
 
 msgid "Address space limit in bytes for the jail."
-msgstr ""
+msgstr "Adressraum Limit in Bytes für den Jail."
 
 msgid ""
 "Adds <a href=\"--docurl--/sharing.html#avail-vfs-modules-tab\" "
@@ -890,10 +896,10 @@ msgid "Adjust the file permissions using the checkboxes."
 msgstr ""
 
 msgid "Admin Portal"
-msgstr ""
+msgstr "Administrator Portal"
 
 msgid "Admin Server"
-msgstr ""
+msgstr "Adminstrator Server"
 
 msgid ""
 "Administrative account name on the LDAP server. Example: "
@@ -904,7 +910,7 @@ msgid "Administrator Password"
 msgstr "Administrator Passwort"
 
 msgid "Administrator password"
-msgstr ""
+msgstr "Administrator Passwort"
 
 msgid "Administrators Group"
 msgstr "Administratoren Gruppe"
@@ -933,31 +939,31 @@ msgid ""
 msgstr ""
 
 msgid "Alarms"
-msgstr ""
+msgstr "Alarme"
 
 msgid "Alert"
 msgstr "Benachrichtigung"
 
 msgid "Alert Services"
-msgstr "Benachrichtigungs Service"
+msgstr "Benachrichtigungsservice"
 
 msgid "Alert Settings"
-msgstr "Benachrichtigungs Einstellungen"
+msgstr "Benachrichtigungseinstellungen"
 
 msgid "Alerts"
-msgstr ""
+msgstr "Alarme"
 
 msgid "Aliases"
-msgstr ""
+msgstr "Aliase"
 
 msgid "All Disks"
-msgstr ""
+msgstr "Alle Festplatten"
 
 msgid "All dirs"
-msgstr ""
+msgstr "Alle Verzeichnisse"
 
 msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
-msgstr ""
+msgstr "Ordnen Sie der VM RAM zu, der Mindestwert beträgt 256 MiB."
 
 msgid "Allocate a number of gigabytes of space for the new zvol."
 msgstr ""
@@ -966,7 +972,7 @@ msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr ""
 
 msgid "Allocate at least 256 MiB."
-msgstr ""
+msgstr "Ordnen Sie mindestens 256 MiB zu."
 
 msgid "Allow All Initiators"
 msgstr ""
@@ -984,10 +990,10 @@ msgid "Allow Compressed WRITE Records"
 msgstr ""
 
 msgid "Allow DNS updates"
-msgstr ""
+msgstr "DNS Aktualisierungen zulassen"
 
 msgid "Allow Guest Access"
-msgstr ""
+msgstr "Aktiviere Gastzugang"
 
 msgid "Allow Kerberos authentication"
 msgstr ""
@@ -1002,7 +1008,7 @@ msgid "Allow Root Login"
 msgstr ""
 
 msgid "Allow TCP port forwarding"
-msgstr ""
+msgstr "TCP-Portweiterleitung erlauben"
 
 msgid "Allow Taking Empty Snapshots"
 msgstr ""
@@ -1263,7 +1269,7 @@ msgid "Are you sure you want to sync to peer?"
 msgstr ""
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Sind Sie sich sicher?"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -1291,19 +1297,19 @@ msgid "Attach screenshots."
 msgstr ""
 
 msgid "Auth Method"
-msgstr ""
+msgstr "Auth Methode"
 
 msgid "Auth Token"
-msgstr ""
+msgstr "Auth Token"
 
 msgid "Authentication Group number"
 msgstr ""
 
 msgid "Authentication Protocol"
-msgstr ""
+msgstr "Authentifizierungsprotokoll"
 
 msgid "Authentication Type"
-msgstr ""
+msgstr "Authentifizierungsart"
 
 msgid ""
 "Authentication only functions when a Certificate is selected with either "
@@ -1322,7 +1328,7 @@ msgid ""
 msgstr ""
 
 msgid "Authorized Access"
-msgstr ""
+msgstr "Authorisierter Zugriff"
 
 msgid "Authorized Hosts and IP addresses"
 msgstr "Autorisierte Hosts und IP-Adressen"
@@ -1404,7 +1410,7 @@ msgid "Back"
 msgstr "Zurück"
 
 msgid "Back to Support"
-msgstr ""
+msgstr "Zurück zum Support"
 
 msgid ""
 "Backend used to map Windows security identifiers (SIDs) to UNIX UIDs and "
@@ -1427,16 +1433,16 @@ msgid "Basejail"
 msgstr ""
 
 msgid "Basic Mode"
-msgstr ""
+msgstr "Basismodus"
 
 msgid "Basic Properties"
 msgstr ""
 
 msgid "Begin"
-msgstr ""
+msgstr "Anfang"
 
 msgid "Begin Time"
-msgstr ""
+msgstr "Anfangszeit"
 
 msgid ""
 "Beginning UID/GID number for which this system is authoritative. UID/GID "
@@ -1444,7 +1450,7 @@ msgid ""
 msgstr ""
 
 msgid "Berkeley Packet Filter"
-msgstr ""
+msgstr "Berkeley Packet Filter"
 
 msgid "Bind"
 msgstr ""
@@ -1474,25 +1480,25 @@ msgid "Block Shares (iSCSI)"
 msgstr ""
 
 msgid "Block Size"
-msgstr ""
+msgstr "Blockgröße"
 
 msgid "Block size"
-msgstr ""
+msgstr "Blockgröße"
 
 msgid "Boot"
-msgstr ""
+msgstr "Boot"
 
 msgid "Boot Loader Type"
-msgstr ""
+msgstr "Bootloadertyp"
 
 msgid "Boot Method"
-msgstr ""
+msgstr "Moot Methode"
 
 msgid "Boot Pool"
-msgstr ""
+msgstr "Boot Pool"
 
 msgid "Boot Pool Status"
-msgstr ""
+msgstr "Boot Pool Status"
 
 msgid ""
 "Brainpool curves can be more secure, while secp curves can be faster. See "
@@ -1608,16 +1614,16 @@ msgid ""
 msgstr ""
 
 msgid "CA ID"
-msgstr ""
+msgstr "CA ID"
 
 msgid "CAs"
-msgstr ""
+msgstr "CAs"
 
 msgid "CD-ROM Path"
-msgstr ""
+msgstr "CD-ROM Pfad"
 
 msgid "CLOSE"
-msgstr ""
+msgstr "SCHLIEßen"
 
 msgid "CN Realm"
 msgstr ""
@@ -1638,7 +1644,7 @@ msgid "CSRs"
 msgstr "CSRs"
 
 msgid "Cache VDev"
-msgstr ""
+msgstr "Cache VDev"
 
 msgid ""
 "Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
@@ -1678,10 +1684,10 @@ msgid "Change Device Order"
 msgstr ""
 
 msgid "Change Passphrase"
-msgstr ""
+msgstr "Passphrase ändern"
 
 msgid "Change Password"
-msgstr ""
+msgstr "Passwort ändern"
 
 msgid "Change User & Group Ownership"
 msgstr ""
@@ -1754,7 +1760,7 @@ msgid ""
 msgstr ""
 
 msgid "Channel"
-msgstr ""
+msgstr "Kanal"
 
 msgid "Check Interval"
 msgstr ""
@@ -1817,7 +1823,7 @@ msgid "Checking HA status"
 msgstr ""
 
 msgid "Chmod Request"
-msgstr ""
+msgstr "Chmod anfrage"
 
 msgid ""
 "Choices are <i>2000, 2003, 2008, 2008_R2, 2012,</i> or <i>2012_R2</i>. "
@@ -1858,7 +1864,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose Theme"
-msgstr ""
+msgstr "Thema wählen"
 
 msgid ""
 "Choose a <i>Stripe</i>, <i>Mirror</i>, or <i>Raid-Z</i> configuration for "
@@ -2127,19 +2133,19 @@ msgid "Cloud Sync Tasks"
 msgstr ""
 
 msgid "Cloud sync has started."
-msgstr ""
+msgstr "Cloudsynchronisation wurde gestartet."
 
 msgid "Cloud sync stopped."
-msgstr ""
+msgstr "Cloudsynchronisation wurde gestoppt"
 
 msgid "Cluster Name"
-msgstr ""
+msgstr "Clustername"
 
 msgid "Collection"
-msgstr ""
+msgstr "Sammlung"
 
 msgid "Com Port"
-msgstr ""
+msgstr "COM Port"
 
 msgid ""
 "Combine multiple, critical-for-failover  interfaces into a group. Groups "
@@ -2179,7 +2185,7 @@ msgid ""
 msgstr ""
 
 msgid "Command"
-msgstr ""
+msgstr "Befehl"
 
 msgid ""
 "Commands to run in the jail environment before the jail is removed and "
@@ -2216,10 +2222,10 @@ msgid "Commands to run in the system environment before a jail is stopped."
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 msgid "Comments"
-msgstr ""
+msgstr "Kommentare"
 
 msgid "Common Name"
 msgstr ""
@@ -2237,22 +2243,22 @@ msgid "Compress connections"
 msgstr ""
 
 msgid "Compression level"
-msgstr ""
+msgstr "Kompressionslevel"
 
 msgid "Computer Account OU"
 msgstr ""
 
 msgid "Config"
-msgstr ""
+msgstr "Konfiguration"
 
 msgid "Config Pool for Jail Manager"
-msgstr ""
+msgstr "Konfiguration Pool für den Jail-Manager"
 
 msgid "Config could not be downloaded"
-msgstr ""
+msgstr "Die Konfiguration konnte nicht heruntergeladen werden"
 
 msgid "Configure ACL"
-msgstr ""
+msgstr "Konfiguriere AVL"
 
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
@@ -2276,7 +2282,7 @@ msgid ""
 msgstr ""
 
 msgid "Configure Networking"
-msgstr ""
+msgstr "Netzwerkkonfiguration"
 
 msgid ""
 "Configure an external program to perform ID mapping. See <a "
@@ -2291,16 +2297,16 @@ msgid "Configure permissions for this share's dataset now?"
 msgstr ""
 
 msgid "Configure the root user email address."
-msgstr ""
+msgstr "Root-Benutzer konfigurieren"
 
 msgid "Confirm"
-msgstr ""
+msgstr "Zustimmen"
 
 msgid "Confirm Export/Disconnect"
 msgstr ""
 
 msgid "Confirm Options"
-msgstr ""
+msgstr "Zustimmungsoptionen"
 
 msgid "Confirm Passphrase"
 msgstr ""
@@ -2357,7 +2363,7 @@ msgid "Contact Support"
 msgstr ""
 
 msgid "Container"
-msgstr ""
+msgstr "Container"
 
 msgid "Contents of the uploaded Service Account JSON file."
 msgstr ""
@@ -2370,13 +2376,13 @@ msgid ""
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "Fortfahren"
 
 msgid "Continue to Legacy UI"
 msgstr ""
 
 msgid "Continue with download?"
-msgstr ""
+msgstr "Mit dem Download fortfahren"
 
 msgid "Control left sidebar's display style."
 msgstr ""
@@ -2410,10 +2416,10 @@ msgid ""
 msgstr ""
 
 msgid "Copies"
-msgstr ""
+msgstr "Kopien"
 
 msgid "Copy and Paste"
-msgstr ""
+msgstr "Kopieren und Einfügen"
 
 msgid "Could not delete boot environment."
 msgstr ""
@@ -2425,46 +2431,46 @@ msgid "Could not find a user name for this user ID."
 msgstr ""
 
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 msgid "Country Code"
-msgstr ""
+msgstr "Ländercode"
 
 msgid "Crash reporting"
 msgstr ""
 
 msgid "Create"
-msgstr ""
+msgstr "Erstelle"
 
 msgid "Create ACME Certificate"
-msgstr ""
+msgstr "ACME Zertifikat erstellen"
 
 msgid "Create CA"
-msgstr ""
+msgstr "CA erstellen"
 
 msgid "Create Certificate"
-msgstr ""
+msgstr "Zertifikat erstellen"
 
 msgid "Create Passphrase"
-msgstr ""
+msgstr "Passphrase erstellen"
 
 msgid "Create Pool"
-msgstr ""
+msgstr "Pool erstellen"
 
 msgid "Create SSH Connection"
-msgstr ""
+msgstr "SSH-Verbindung erstellen"
 
 msgid "Create Snapshot"
-msgstr ""
+msgstr "Snapshot erstellen"
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "Einen neuen Pool erstellen"
 
 msgid "Create a new, empty pool."
-msgstr ""
+msgstr "Einen neuen, leeren Pool erstellen."
 
 msgid "Create a pool:"
-msgstr ""
+msgstr "Pool erstellen:"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
@@ -2473,13 +2479,13 @@ msgid "Create more data vdevs like the first."
 msgstr ""
 
 msgid "Create new Pool"
-msgstr ""
+msgstr "Neuen Pool erstellen"
 
 msgid "Create new disk image"
 msgstr ""
 
 msgid "Create new pool"
-msgstr ""
+msgstr "Neuen Prool erstellen"
 
 msgid "Create or Choose Block Device"
 msgstr ""
@@ -2497,13 +2503,13 @@ msgid ""
 msgstr ""
 
 msgid "Creating"
-msgstr ""
+msgstr "Erstelle"
 
 msgid "Creating Jail"
-msgstr ""
+msgstr "Erstelle Jail"
 
 msgid "Creating Jail..."
-msgstr ""
+msgstr "Erstelle Jail"
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2516,13 +2522,13 @@ msgid "Credential"
 msgstr ""
 
 msgid "Critical"
-msgstr ""
+msgstr "Kritisch"
 
 msgid "Criticality"
 msgstr ""
 
 msgid "Cron Jobs"
-msgstr ""
+msgstr "Cron Jobs"
 
 msgid "Current Password"
 msgstr ""
@@ -2551,19 +2557,19 @@ msgid ""
 msgstr ""
 
 msgid "DELETE"
-msgstr ""
+msgstr "LÖSCHEN"
 
 msgid "DELETE DATASET"
-msgstr ""
+msgstr "DATASET LÖSCHEN"
 
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
-msgstr ""
+msgstr "DHCP Autokonfiguration IPv4"
 
 msgid "DISCARD CHANGES"
-msgstr ""
+msgstr "Änderungen Verwerfen"
 
 msgid "DNS Forwarder"
 msgstr ""
@@ -2578,13 +2584,13 @@ msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
 
 msgid "DOCUMENTATION"
-msgstr ""
+msgstr "DOKUMENTATION"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Dashboard"
 
 msgid "Data VDevs"
-msgstr ""
+msgstr "Daten VDecs"
 
 msgid "Data collection frequency, in seconds."
 msgstr ""
