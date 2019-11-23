@@ -566,7 +566,8 @@ export class GeneralComponent {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
-      this.dialog.Info(T("Settings saved."), '', '300px', 'info', true);
+      this.entityForm.success = true;
+      this.entityForm.formGroup.markAsPristine();
       this.afterSubmit(body);
     }, (res) => {
       this.loader.close();

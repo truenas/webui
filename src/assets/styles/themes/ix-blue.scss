@@ -1670,4 +1670,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+  app-active-directory #successfully_updated {
+    position: relative;
+    top: 12px;
+  }
+
  } // end of ix theme

@@ -296,8 +296,8 @@ export class AdvancedComponent implements OnDestroy {
     this.load.open();
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
       this.load.close();
-      this.dialog.Info(helptext_system_advanced.submit_dialog.title, 
-        helptext_system_advanced.submit_dialog.message, '300px', 'info', true)
+      this.entityForm.success = true;
+      this.entityForm.formGroup.markAsPristine();
       this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
     }, (res) => {
       this.load.close();
