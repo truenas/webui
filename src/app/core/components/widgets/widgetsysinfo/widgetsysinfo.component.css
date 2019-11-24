@@ -297,6 +297,10 @@ img.platform-logo{
   margin: 21% 0 8px;
 }
 
+.xs.widget .product-image.truenas img#X10{
+  margin: 8% 0 5%;
+}
+
 .xs.widget img.platform-logo{
     width: auto;
     height: 48px;
@@ -337,7 +341,7 @@ img.platform-logo{
   margin-top:50%;
 }
 
-.xs.widget .product-image.freenas .mat-icon.certified{
+.xs.widget.generic-hardware .product-image.freenas .mat-icon{
   margin-top:48px;
 }
 

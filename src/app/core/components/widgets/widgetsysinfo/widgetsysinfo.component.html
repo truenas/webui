@@ -27,7 +27,7 @@
                 <img *ngIf="!isFN" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">
               </div>
 
-            <div class="content-left" fxFlex="60" fxLayout="column" fxLayoutAlign="center center">
+            <div class="content-left" [fxFlex.xs]="!isFN && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
 
               <div class="product-image {{!isFN ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                 <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
