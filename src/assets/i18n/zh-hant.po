@@ -19,6 +19,9 @@ msgstr ""
 msgid " Plugin"
 msgstr " 外掛"
 
+msgid " Service"
+msgstr ""
+
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
@@ -29,6 +32,9 @@ msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a "
 "backup of the existing encryption key  without making any changes, click "
 "<b>DOWNLOAD ENCRYPTION KEY</b>."
+msgstr ""
+
+msgid " and "
 msgstr ""
 
 msgid " and all snapshots of it?"
@@ -49,6 +55,9 @@ msgstr ""
 msgid " is "
 msgstr ""
 
+msgid " is required."
+msgstr ""
+
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
@@ -59,7 +68,13 @@ msgid ""
 "for testing."
 msgstr ""
 
+msgid " service has been enabled."
+msgstr ""
+
 msgid " system is powered on and connected to the network."
+msgstr ""
+
+msgid " update successful"
 msgstr ""
 
 msgid " updated."
@@ -81,6 +96,9 @@ msgstr ""
 msgid "(No description)"
 msgstr ""
 
+msgid "(Remove pool from database)"
+msgstr ""
+
 msgid "*allow_sysvipc"
 msgstr ""
 
@@ -89,6 +107,9 @@ msgstr ""
 
 msgid ". All data on that pool was destroyed."
 msgstr ". 在資料集區上的所有資料已經銷毀。"
+
+msgid ". At least one is required."
+msgstr ""
 
 msgid ". Is this correct?"
 msgstr ". 這是正確的嗎？"
@@ -111,6 +132,9 @@ msgstr ""
 msgid "</b> with the keypair"
 msgstr ""
 
+msgid "</i> cannot be running when deleting a mountpoint."
+msgstr ""
+
 msgid "</i> has started."
 msgstr "</i> 已經開始。"
 
@@ -120,6 +144,12 @@ msgstr ""
 msgid "</i> now?"
 msgstr "</i> 現在嗎？"
 
+msgid "</i> stopped."
+msgstr ""
+
+msgid "</i> updated."
+msgstr ""
+
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr ""
 
@@ -127,6 +157,11 @@ msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
 "disks can be destroyed by setting the <b>Destroy data</b> option. Back up "
 "critical data <b>before</b> exporting/disconnecting the pool."
+msgstr ""
+
+msgid ""
+"</i>is in the database but not connected to the machine. If it was exported "
+"by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
 msgstr ""
 
 msgid ""
@@ -261,7 +296,9 @@ msgid ""
 "same names on the destination are <i><u>overwritten</u></i>."
 msgstr ""
 
-msgid "<b>Not recommended.</b> Allow multiple groups to share the same group ID."
+msgid ""
+"<b>Not recommended.</b> Allow more than one group to  have the same group "
+"ID."
 msgstr ""
 
 msgid ""
@@ -270,12 +307,8 @@ msgid ""
 "href=\"--docurl--/accounts.html#users\" target=\"_blank\">Users</a>."
 msgstr ""
 
-msgid ""
-"<b>SED (<a href=\"--docurl--/system.html#self-encrypting-drives\" "
-"target=\"_blank\">Self-Encrypting Drives</a>) Options</b>"
+msgid "<b>SED (Self-Encrypting Drives) Options</b>"
 msgstr ""
-"<b>SED (<a href=\"--docurl--/system.html#self-encrypting-drives\" "
-"target=\"_blank\">自我加密磁碟</a>) 選項</b>"
 
 msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
@@ -404,6 +437,12 @@ msgid ""
 "provides compatibility with most operating systems. <i>VirtIO</i> provides "
 "better performance when the operating system installed in the VM supports "
 "VirtIO paravirtualized network drivers."
+msgstr ""
+
+msgid ""
+"<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
+"connects to a remote system and retrieves snapshots  matching a <b>Naming "
+"Schema</b>."
 msgstr ""
 
 msgid ""
@@ -564,6 +603,9 @@ msgstr ""
 msgid "AD Timeout"
 msgstr "AD 逾時"
 
+msgid "AFP"
+msgstr ""
+
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 權限"
 
@@ -661,16 +703,13 @@ msgstr "帳戶"
 msgid "Acoustic Level"
 msgstr "噪音位準"
 
+msgid "Actions"
+msgstr ""
+
 msgid "Activate"
 msgstr "啟用"
 
-msgid "Activate Pool for Jail Manager"
-msgstr ""
-
 msgid "Activate this Boot Environment?"
-msgstr ""
-
-msgid "Activated Pool for Jail Manager:"
 msgstr ""
 
 msgid ""
@@ -730,6 +769,9 @@ msgstr "新增資料集"
 
 msgid "Add Log"
 msgstr "新增日誌"
+
+msgid "Add Mountpoint"
+msgstr ""
 
 msgid "Add Recovery Key"
 msgstr "新增回復密鑰"
@@ -958,12 +1000,6 @@ msgstr "所有磁碟"
 msgid "All dirs"
 msgstr "所有資料夾"
 
-msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
-msgstr ""
-
-msgid "Allocate a number of gigabytes of space for the new zvol."
-msgstr ""
-
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr ""
 
@@ -987,6 +1023,9 @@ msgstr ""
 
 msgid "Allow DNS updates"
 msgstr "允許 DNS 更新"
+
+msgid "Allow Duplicate GIDs"
+msgstr ""
 
 msgid "Allow Guest Access"
 msgstr "允許訪客存取"
@@ -1104,9 +1143,6 @@ msgstr ""
 msgid "Allow password authentication"
 msgstr "允許密碼驗證"
 
-msgid "Allow repeated GIDs"
-msgstr "允許重複 GID"
-
 msgid ""
 "Allow sending large data blocks. The  destination system must also support "
 "large blocks. See  <a "
@@ -1174,13 +1210,15 @@ msgid ""
 "Amazon Web Services Key ID. This is found on  <a "
 "href=\"https://aws.amazon.com/\" target=\"_blank\">Amazon AWS</a> by  going "
 "through <i>My account -> Security Credentials -> Access Keys  (Access Key "
-"ID and Secret Access Key)</i>."
+"ID and Secret Access Key)</i>. Must be alphanumeric and  between 5 and 20 "
+"characters."
 msgstr ""
 
 msgid ""
 "Amazon Web Services password. If the Secret Access Key cannot be  found or "
 "remembered, go to <i>My Account -> Security Credentials ->  Access Keys</i> "
-"and create a new key pair."
+"and create a new key pair. Must be alphanumeric and  between 8 and 40 "
+"characters."
 msgstr ""
 
 msgid "Amount of locked memory in bytes for the jail."
@@ -1283,6 +1321,9 @@ msgid ""
 "in the <b>Rsync Modules</b> of another                system."
 msgstr ""
 
+msgid "Attach"
+msgstr ""
+
 msgid "Attach Debug"
 msgstr "附加偵錯資訊"
 
@@ -1322,9 +1363,6 @@ msgid ""
 "Authenticator to validate the Domain. Choose a previously configured ACME "
 "DNS authenticator."
 msgstr ""
-
-msgid "Authorized Access"
-msgstr "授權存取"
 
 msgid "Authorized Hosts and IP addresses"
 msgstr "已授權主機與 IP 位址"
@@ -1433,6 +1471,9 @@ msgstr "基本模式"
 
 msgid "Basic Properties"
 msgstr "基本屬性"
+
+msgid "Batch Operations"
+msgstr ""
 
 msgid "Begin"
 msgstr "開始"
@@ -1618,9 +1659,6 @@ msgstr "憑證授權中心 (CA)"
 msgid "CD-ROM Path"
 msgstr "CD-ROM 路徑"
 
-msgid "CLOSE"
-msgstr ""
-
 msgid "CN Realm"
 msgstr ""
 
@@ -1656,6 +1694,9 @@ msgstr ""
 msgid "Cannot Edit while HA is Enabled"
 msgstr ""
 
+msgid "Cannot create plugins or jails until a pool is present for storing them."
+msgstr ""
+
 msgid "Cannot edit while HA is enabled."
 msgstr ""
 
@@ -1675,6 +1716,9 @@ msgstr "憑證"
 
 msgid "Certificates"
 msgstr "憑證"
+
+msgid "Change Administrator Password"
+msgstr ""
 
 msgid "Change Device Order"
 msgstr "變更裝置順序"
@@ -1786,9 +1830,6 @@ msgid ""
 "do not start the jail."
 msgstr ""
 
-msgid "Check the network connection"
-msgstr "檢查網路連線"
-
 msgid "Check the network connection."
 msgstr "檢查網路連線。"
 
@@ -1835,6 +1876,9 @@ msgstr ""
 msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr "選項為 <i>None, Auto, CHAP,</i> 或是 <i>雙向式交互驗證 (Mutual CHAP)</i>."
 
+msgid "Choose"
+msgstr ""
+
 msgid ""
 "Choose <a                 href=\"--docurl--/tasks.html#rsync-module-mode\"  "
 "              target=\"_blank\">rsync module mode</a> or <a                 "
@@ -1857,6 +1901,12 @@ msgid ""
 "Choose <i>ON</i> to update the access time for files when they are read. "
 "Choose <i>Off</i> to prevent producing log traffic when reading files. This "
 "can result in significant performance gains."
+msgstr ""
+
+msgid "Choose Pool for Plugin and Jail Manager"
+msgstr ""
+
+msgid "Choose Pool for Plugin and Jail Storage"
 msgstr ""
 
 msgid "Choose Theme"
@@ -1892,18 +1942,11 @@ msgid ""
 "editing a user."
 msgstr ""
 
-msgid "Choose a pool or dataset for jail storage"
-msgstr "選擇要用來存放 Jail 的儲存集區或資料集"
+msgid "Choose a pool for plugin and jail storage."
+msgstr ""
 
 msgid "Choose a pool to scrub."
 msgstr "選擇資料集區進行 Scrub。"
-
-msgid ""
-"Choose a pool where the iocage jail manager   can create the /iocage "
-"dataset. The /iocage   dataset might not be visible until after   the first "
-"jail is created. iocage uses   this dataset to store FreeBSD releases   and "
-"all other jail data."
-msgstr ""
 
 msgid "Choose a preferred theme."
 msgstr ""
@@ -1923,6 +1966,11 @@ msgid ""
 "administrative GUI. The built-in HTTP server binds to the wildcard address "
 "of <i>0.0.0.0</i> (any address) and issues an alert if the specified "
 "address becomes unavailable."
+msgstr ""
+
+msgid ""
+"Choose a saved SSH Keypair or select  <i>Generate New</i> to create a new "
+"keypair and use it for this  connection."
 msgstr ""
 
 msgid "Choose an alert service to display options for that service."
@@ -2119,6 +2167,9 @@ msgstr "客戶端"
 msgid "Clone"
 msgstr "再製"
 
+msgid "Clone to New Dataset"
+msgstr ""
+
 msgid "Close"
 msgstr "關閉"
 
@@ -2128,16 +2179,16 @@ msgstr "雲端憑證"
 msgid "Cloud Sync Tasks"
 msgstr "雲端同步作業"
 
-msgid "Cloud sync has started."
-msgstr "雲端同步已開始。"
-
-msgid "Cloud sync stopped."
-msgstr "雲端同步已停止。"
+msgid "Cloud sync <i>"
+msgstr ""
 
 msgid "Cluster Name"
 msgstr ""
 
 msgid "Collection"
+msgstr ""
+
+msgid "Columns"
 msgstr ""
 
 msgid "Com Port"
@@ -2244,12 +2295,6 @@ msgstr "壓縮層級"
 msgid "Computer Account OU"
 msgstr ""
 
-msgid "Config"
-msgstr "設定"
-
-msgid "Config Pool for Jail Manager"
-msgstr "設定 Jail 管理器所用資料集區"
-
 msgid "Config could not be downloaded"
 msgstr ""
 
@@ -2290,6 +2335,11 @@ msgid "Configure now"
 msgstr ""
 
 msgid "Configure permissions for this share's dataset now?"
+msgstr ""
+
+msgid ""
+"Configure the ports that allow remote access to  the jail. Required to "
+"override the default settings or when installing  duplicate plugins."
 msgstr ""
 
 msgid "Configure the root user email address."
@@ -2342,6 +2392,19 @@ msgstr ""
 
 msgid "Connecting to "
 msgstr "正在連線至 "
+
+msgid "Connection Error"
+msgstr ""
+
+msgid ""
+"Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but "
+"has the greatest impact on  connection speed.</li><br>  <li><i>Fast</i> is "
+"less secure than <i>Standard</i> but can give  reasonable transfer rates "
+"for devices with limited cryptographic speed.</li><br>  <li><i>Disabled</i> "
+"removes all security in favor of maximizing  connection speed. Disabling "
+"the security should only be used within a  secure, trusted "
+"network.</li></ul>"
+msgstr ""
 
 msgid "Connections"
 msgstr "連線數"
@@ -2643,7 +2706,7 @@ msgstr "每週啟用日"
 msgid "Deactivate the recovery key for this pool?"
 msgstr ""
 
-msgid "Debug could not be downloaded"
+msgid "Debug could not be downloaded."
 msgstr ""
 
 msgid "Decrypt pool"
@@ -2694,11 +2757,6 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1"
 "-RELEASE+and+Ports\" target=\"_blank\">smartd</a> to wake up and check if "
 "any tests are configured to run."
-msgstr ""
-
-msgid ""
-"Define an <i>IP address or hostname:optional_port_number</i> to send logs. "
-"When set, log entries write to both the console and remote server."
 msgstr ""
 
 msgid ""
@@ -2772,6 +2830,9 @@ msgstr ""
 
 msgid "Delete Mount Point"
 msgstr "刪除掛接點"
+
+msgid "Delete Mountpoint"
+msgstr ""
 
 msgid "Delete Path"
 msgstr "刪除路徑"
@@ -2876,11 +2937,6 @@ msgid ""
 "will begin with a complete initial copy."
 msgstr ""
 
-msgid ""
-"Destination hostname or IP address for collectd data sent by the Graphite "
-"plugin."
-msgstr ""
-
 msgid "Destroy data on this pool?"
 msgstr "銷毀這個儲存集區上的資料？"
 
@@ -2944,11 +3000,17 @@ msgstr ""
 msgid "Device"
 msgstr "裝置"
 
+msgid "Device Attached"
+msgstr ""
+
 msgid "Device Busy"
 msgstr "裝置忙碌"
 
 msgid "Device Order"
 msgstr "裝置順序"
+
+msgid "Device detached "
+msgstr ""
 
 msgid "Devices"
 msgstr "裝置"
@@ -2964,14 +3026,6 @@ msgstr ""
 
 msgid "Direction"
 msgstr "方向"
-
-msgid ""
-"Direction of travel. <i>Push</i> sends  snapshots from the local system to "
-"a remote system, or to another  dataset on the local system. <i>Pull</i> "
-"takes snapshots from a remote  system and stores them on the local system. "
-"<i>Pull</i> requires a  snapshot <i>Naming Schema</i> to identify which "
-"snapshots to replicate."
-msgstr ""
 
 msgid "Directories & Permissions"
 msgstr "目錄與權限"
@@ -3301,7 +3355,7 @@ msgstr ""
 msgid "Enable running services that require mlock() in a jail."
 msgstr ""
 
-msgid "Enable sending anonymous usage statistics to iXsystems"
+msgid "Enable sending anonymous usage statistics to iXsystems."
 msgstr ""
 
 msgid "Enable service"
@@ -3325,8 +3379,8 @@ msgid ""
 "without deleting it."
 msgstr ""
 
-msgid "Enable this service?"
-msgstr "啟用這個服務？"
+msgid "Enable this service to start automatically."
+msgstr ""
 
 msgid "Enable this task. Unset to disable the task     without deleting it."
 msgstr ""
@@ -3358,6 +3412,11 @@ msgstr ""
 msgid ""
 "Enabling <em>Time Machine</em> on an SMB share requires a restart of the "
 "SMB service."
+msgstr ""
+
+msgid ""
+"Enabling this option can expose administrator credentials and is not "
+"recommended."
 msgstr ""
 
 msgid ""
@@ -3411,9 +3470,6 @@ msgid "End Time"
 msgstr "結束時間"
 
 msgid "End User License Agreement - TrueNAS"
-msgstr ""
-
-msgid "End User License Agreement Accepted"
 msgstr ""
 
 msgid ""
@@ -3525,9 +3581,6 @@ msgid ""
 "Enter a name for the clone of this boot environment. Alphanumeric "
 "characters, dashes (*-*), underscores (*_*), and periods (*.*) are allowed.)"
 msgstr ""
-
-msgid "Enter a name for the cloned snapshot."
-msgstr "輸入快照複製名稱。"
 
 msgid ""
 "Enter a name for the interface. Use the format <samp>lagg<i>X</i></samp>, "
@@ -3651,6 +3704,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter a username to register with this service."
+msgstr ""
+
+msgid "Enter a valid IPv4 address."
 msgstr ""
 
 msgid "Enter a valid MAC address vendor prefix. <b>Example:</b> <i>E4F4C6</i>"
@@ -4148,6 +4204,12 @@ msgstr ""
 msgid "Error detaching pool"
 msgstr "中斷儲存集區連結時發生"
 
+msgid "Error exporting the Private Key"
+msgstr ""
+
+msgid "Error exporting the certificate"
+msgstr ""
+
 msgid "Error exporting/disconnecting pool."
 msgstr ""
 
@@ -4317,6 +4379,9 @@ msgstr "失敗"
 msgid "Failed sending test alert!"
 msgstr ""
 
+msgid "Failed to generate debug file."
+msgstr ""
+
 msgid "Failover"
 msgstr "容錯移轉"
 
@@ -4338,6 +4403,12 @@ msgstr ""
 msgid "Fetch Method"
 msgstr ""
 
+msgid "Fibre Channel "
+msgstr ""
+
+msgid "Fibre Channel Port "
+msgstr ""
+
 msgid "File"
 msgstr "檔案"
 
@@ -4349,6 +4420,9 @@ msgstr "檔案權限"
 
 msgid "File Permissions"
 msgstr "檔案權限"
+
+msgid "File upload complete"
+msgstr ""
 
 msgid "Filename Encryption"
 msgstr "檔名加密"
@@ -4451,13 +4525,16 @@ msgstr ""
 msgid "Form Invalid"
 msgstr ""
 
+msgid "Free"
+msgstr ""
+
 msgid ""
 "FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
 "versions up to the same version as the host  system. Newer releases are not "
 "shown."
 msgstr ""
 
-msgid "FreeNAS URL"
+msgid "FreeNAS/TrueNAS URL"
 msgstr ""
 
 msgid "From"
@@ -4551,9 +4628,6 @@ msgstr ""
 msgid "Graph Points"
 msgstr ""
 
-msgid "Graphite Server"
-msgstr "Graphite 伺服器"
-
 msgid "Group"
 msgstr "群組"
 
@@ -4629,9 +4703,6 @@ msgstr ""
 msgid "HTTPS Port"
 msgstr "HTTPS 連接埠"
 
-msgid "Hide Config"
-msgstr "隱藏設定"
-
 msgid "Hide Standard Error"
 msgstr "隱藏標準錯誤"
 
@@ -4689,6 +4760,9 @@ msgstr "允許主機"
 msgid "Host Deny"
 msgstr "拒絕主機"
 
+msgid "Host Port Number"
+msgstr ""
+
 msgid "Host Sync"
 msgstr "主機同步"
 
@@ -4712,6 +4786,19 @@ msgid ""
 msgstr ""
 
 msgid "Hostname or IP address of SMTP server to use for sending this email."
+msgstr ""
+
+msgid ""
+"Hostname or IP address of a remote   <a href=\"http://graphiteapp.org/\" "
+"target=\"_blank\">Graphite</a> server."
+msgstr ""
+
+msgid "Hostname or IP address of the remote system."
+msgstr ""
+
+msgid ""
+"Hostname or IP address of the remote system. A  valid URL scheme is "
+"required. Example:  <b>https://<i>10.231.3.76</i></b>"
 msgstr ""
 
 msgid ""
@@ -4761,6 +4848,16 @@ msgid ""
 "href=\"--docurl--/storage.html#ace-inheritance-flags\" "
 "target=\"_blank\">inheritance flags list</a> for descriptions of Advanced "
 "inheritance flags."
+msgstr ""
+
+msgid ""
+"How to configure the connection:<br><br>  <i>Manual</i> requires "
+"configuring authentication on the remote system.  This can include copying "
+"SSH keys and modifying the <i>root</i> user  account on that "
+"system.<br><br>  <i>Semi-automatic</i> only works when configuring an SSH "
+"connection  with a remote FreeNAS or TrueNAS system. This method uses the "
+"URL and  login credentials of the remote system to connect and exchange SSH "
+" keys."
 msgstr ""
 
 msgid "I Agree"
@@ -4984,6 +5081,9 @@ msgid ""
 "file safe and protect it from unauthorized access!</b>"
 msgstr ""
 
+msgid "Incorrect Password"
+msgstr ""
+
 msgid ""
 "Indicates how to handle Access Control Lists. <b>Ignore:</b> ignores "
 "requests and gives the parent directory ACL inheritance full control over "
@@ -5014,6 +5114,9 @@ msgid "InfluxDB time series name for collected points."
 msgstr ""
 
 msgid "Informational"
+msgstr ""
+
+msgid "Inherits"
 msgstr ""
 
 msgid "Init/Shutdown Scripts"
@@ -5114,6 +5217,9 @@ msgstr ""
 msgid "Invalid dataset."
 msgstr ""
 
+msgid "Invalid format or character."
+msgstr ""
+
 msgid ""
 "Invalid network address list. Check for typos or missing CIDR netmasks and "
 "separate addresses with a space."
@@ -5123,13 +5229,8 @@ msgid "Invalid regex filter"
 msgstr ""
 
 msgid ""
-"Invalid value. Valid values are numbers  followed by optional unit letters, "
-"like <samp>256k</samp> or  <samp>1G</samp>."
-msgstr ""
-
-msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
-"like <samp>256k</samp> or <samp>1 G</samp> or <samp>2 MiB</samp>."
+"like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>."
 msgstr ""
 
 msgid "Invalidate Existing Key"
@@ -5154,13 +5255,16 @@ msgstr ""
 msgid "Items Delete Failed"
 msgstr ""
 
+msgid "Items deleted"
+msgstr ""
+
 msgid "JID"
 msgstr ""
 
 msgid "Jail"
 msgstr ""
 
-msgid "Jail "
+msgid "Jail <i>"
 msgstr ""
 
 msgid ""
@@ -5171,13 +5275,22 @@ msgstr ""
 msgid "Jail Name"
 msgstr "Jail 名稱"
 
+msgid "Jail Port Number"
+msgstr ""
+
 msgid "Jail Properties"
 msgstr "Jail 屬性"
 
 msgid "Jail Type"
 msgstr "Jail 類型"
 
+msgid "Jail Update"
+msgstr ""
+
 msgid "Jail Update Failed"
+msgstr ""
+
+msgid "Jail Updated"
 msgstr ""
 
 msgid "Jail core dump size in bytes."
@@ -5192,11 +5305,11 @@ msgstr ""
 msgid "Jails"
 msgstr ""
 
+msgid "Jails Started"
+msgstr ""
+
 msgid "Jails cannot be changed while running."
 msgstr "當 Jail 執行中無法進行變更。"
-
-msgid "Jails cannot be created or managed until a pool is present for storing them."
-msgstr ""
 
 msgid "Jails failed to start"
 msgstr ""
@@ -5535,15 +5648,6 @@ msgid ""
 "performance."
 msgstr ""
 
-msgid ""
-"Mattermost <a "
-"href=\"https://docs.mattermost.com/help/getting-started/creating-teams.html\""
-" target=\"_blank\">team name</a>."
-msgstr ""
-
-msgid "Mattermost password."
-msgstr ""
-
 msgid "Mattermost username."
 msgstr ""
 
@@ -5687,6 +5791,9 @@ msgstr ""
 msgid "Minimum Passive Port"
 msgstr ""
 
+msgid "Minimum size is 1 MiB"
+msgstr ""
+
 msgid "Minute"
 msgstr "分"
 
@@ -5782,6 +5889,12 @@ msgstr ""
 msgid "NAT Autoconfigure IPv4"
 msgstr ""
 
+msgid "NAT Port Forwarding"
+msgstr ""
+
+msgid "NFS"
+msgstr ""
+
 msgid "NFSv3 ownership model for NFSv4"
 msgstr ""
 
@@ -5843,26 +5956,10 @@ msgid ""
 "webhook settings."
 msgstr ""
 
-msgid ""
-"Name of the <a href=\"https://docs.mattermost.com/overview/index.html\" "
-"target=\"_blank\">Mattermost</a> cluster to join."
-msgstr ""
-
-msgid ""
-"Name of the <a href=\"https://docs.opsgenie.com/docs\" "
-"target=\"_blank\">OpsGenie</a> cluster. Find the Cluster Name by signing "
-"into the OpsGenie web interface and going to Integrations/Configured "
-"Integrations. Click the desired integration, Settings, and read the Name "
-"field."
-msgstr ""
-
 msgid "Name of the InfluxDB database."
 msgstr ""
 
 msgid "Name of the WebDAV site, service, or software being used."
-msgstr ""
-
-msgid "Name of the cluster."
 msgstr ""
 
 msgid ""
@@ -5873,7 +5970,13 @@ msgstr ""
 msgid "Name of the new alert service."
 msgstr ""
 
+msgid "Name of the new dataset created from the cloned snapshot."
+msgstr ""
+
 msgid "Name of the room."
+msgstr ""
+
+msgid "Name of this SSH connection. SSH connection names  must be unique."
 msgstr ""
 
 msgid "Name of this replication configuration."
@@ -6059,6 +6162,9 @@ msgstr ""
 msgid "No Pools"
 msgstr ""
 
+msgid "No Repositories"
+msgstr ""
+
 msgid "No Stat"
 msgstr ""
 
@@ -6075,6 +6181,9 @@ msgid "No pools"
 msgstr "沒有儲存集區"
 
 msgid "No pools are configured."
+msgstr ""
+
+msgid "No repositories is found."
 msgstr ""
 
 msgid "No snapshots sent yet"
@@ -6265,9 +6374,6 @@ msgid ""
 "selected permissions."
 msgstr ""
 
-msgid "Opening download window. Make sure pop-ups are enabled in the browser."
-msgstr ""
-
 msgid "Operating System"
 msgstr "作業系統"
 
@@ -6377,6 +6483,9 @@ msgid "Password for the SSH Username account."
 msgstr ""
 
 msgid "Password for the user account."
+msgstr ""
+
+msgid "Password updated."
 msgstr ""
 
 msgid ""
@@ -6519,6 +6628,9 @@ msgid ""
 "setting."
 msgstr ""
 
+msgid "Please select a valid path"
+msgstr ""
+
 msgid "Please wait"
 msgstr "請稍候"
 
@@ -6537,6 +6649,9 @@ msgstr "外掛名稱"
 msgid "Plugin Update Failed"
 msgstr "外掛更新失敗"
 
+msgid "Plugin Updated"
+msgstr ""
+
 msgid "Plugin installed successfully"
 msgstr "外掛已經安裝成功"
 
@@ -6548,6 +6663,9 @@ msgstr "儲存集區"
 
 msgid "Pool Available Space Threshold (%)"
 msgstr "儲存集區可用空間臨界值 (%)"
+
+msgid "Pool Chosen"
+msgstr ""
 
 msgid "Pool Manager"
 msgstr "儲存集區管理"
@@ -6570,8 +6688,20 @@ msgstr "儲存集區與快照"
 msgid "Port"
 msgstr "連接埠"
 
+msgid "Port number on the remote system to use for the SSH  connection."
+msgstr ""
+
 msgid "Port or Hostname"
 msgstr "連接埠或主機名稱"
+
+msgid ""
+"Port to assign to this jail. Avoid using a port  that is already in use by "
+"another jail or system service. For a list  of commonly-used ports, see "
+"this  <a "
+"href=\"https://www.iana.org/assignments/service-names-port-numbers/service-"
+"names-port-numbers.xhtml\"  target=\"_blank\">Internet Assigned Numbers "
+"Authority (IANA) registry</a>."
+msgstr ""
 
 msgid "Portal"
 msgstr "入口"
@@ -6847,9 +6977,6 @@ msgid ""
 "use HTTPS and renews this setting every year."
 msgstr ""
 
-msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
-msgstr ""
-
 msgid "Refresh"
 msgstr ""
 
@@ -6874,6 +7001,9 @@ msgstr ""
 msgid "Remote Encryption"
 msgstr "遠端加密"
 
+msgid "Remote Graphite Server Hostname"
+msgstr ""
+
 msgid "Remote Host"
 msgstr "遠端主機"
 
@@ -6894,6 +7024,19 @@ msgstr "遠端埠號"
 
 msgid "Remote SSH Port"
 msgstr "遠端 SSH 埠號"
+
+msgid ""
+"Remote syslog server DNS hostname or IP address. Nonstandard port numbers "
+"can be used by adding a colon and the port number to the hostname, like "
+"<samp>mysyslogserver:1928</samp>. Log entries are written to local logs and "
+"sent to the remote syslog server."
+msgstr ""
+
+msgid ""
+"Remote system SSH key for this system to  authenticate the connection. When "
+"all other fields are properly  configured, click <b>DISCOVER REMOTE HOST "
+"KEY</b> to query the remote  system and automatically populate this field."
+msgstr ""
 
 msgid "Remove"
 msgstr "移除"
@@ -6933,6 +7076,9 @@ msgstr ""
 msgid "Replace"
 msgstr ""
 
+msgid "Replacing Disk"
+msgstr ""
+
 msgid "Replacing disk..."
 msgstr "正在替換磁碟..."
 
@@ -6962,6 +7108,9 @@ msgid "Replication <i>"
 msgstr "複寫 <i>"
 
 msgid "Replication Schedule"
+msgstr ""
+
+msgid "Replication Status"
 msgstr ""
 
 msgid "Replication Tasks"
@@ -7048,6 +7197,12 @@ msgstr ""
 msgid "Reset Layout"
 msgstr "重設版面配置"
 
+msgid "Reset Table Columns to Default"
+msgstr ""
+
+msgid "Reset all tables to display default columns."
+msgstr ""
+
 msgid "Reset font size to default value"
 msgstr "重置字型大小為預設值"
 
@@ -7063,6 +7218,9 @@ msgid ""
 "prompts to download a backup of the new key."
 msgstr ""
 
+msgid "Reset to Defaults"
+msgstr ""
+
 msgid "Resetting system configuration to default settings. The system will restart."
 msgstr ""
 
@@ -7076,6 +7234,9 @@ msgid "Resilver Priority"
 msgstr "Resilver 優先權"
 
 msgid "Resilvering"
+msgstr ""
+
+msgid "Resilvering Status"
 msgstr ""
 
 msgid "Resolution"
@@ -7125,6 +7286,12 @@ msgstr "倒回"
 msgid "Room"
 msgstr ""
 
+msgid "Root dataset ACL cannot be edited."
+msgstr ""
+
+msgid "Root dataset permissions cannot be edited."
+msgstr ""
+
 msgid "Root node is not a valid value"
 msgstr ""
 
@@ -7142,9 +7309,6 @@ msgstr "Rsync 作業"
 
 msgid "Rsync mode"
 msgstr "Rsync 模式"
-
-msgid "Rsync task started."
-msgstr ""
 
 msgid "Run As User"
 msgstr ""
@@ -7204,7 +7368,10 @@ msgstr ""
 msgid "SFTP log level"
 msgstr "SFTP 記錄層級"
 
-msgid "SMB service has been restarted"
+msgid "SMB"
+msgstr ""
+
+msgid "SMB Service"
 msgstr ""
 
 msgid "SMTP Authentication"
@@ -7293,6 +7460,12 @@ msgstr "正在儲存 ACL..."
 msgid "Saving Debug"
 msgstr ""
 
+msgid "Saving Permissions"
+msgstr ""
+
+msgid "Saving Permissions..."
+msgstr ""
+
 msgid "Schedule"
 msgstr "排程"
 
@@ -7351,8 +7524,14 @@ msgstr "Scrub 開機儲存集區"
 msgid "Scrub Complete"
 msgstr ""
 
+msgid "Scrub Interval Set"
+msgstr ""
+
 msgid "Scrub Pool"
 msgstr "Scrub 儲存集區"
+
+msgid "Scrub Started"
+msgstr ""
 
 msgid "Scrub Tasks"
 msgstr "Scrub 作業"
@@ -7361,9 +7540,6 @@ msgid "Scrub complete on pool <i>"
 msgstr ""
 
 msgid "Scrub interval (in days)"
-msgstr ""
-
-msgid "Scrub started"
 msgstr ""
 
 msgid ""
@@ -7430,6 +7606,12 @@ msgid "See task manager for progress updates."
 msgstr ""
 
 msgid ""
+"See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
+"target=\"_blank\"> Self Encrypting Drives</a> section of the user guide for "
+"more information."
+msgstr ""
+
+msgid ""
 "See the <a href=\"http://networkupstools.org/stable-hcl.html\" "
 "target=\"_blank\">Network UPS Tools compatibility list</a> for a list of "
 "supported UPS devices."
@@ -7477,6 +7659,9 @@ msgstr ""
 msgid ""
 "Select <samp>::</samp> to include all addresses. When this has been chosen, "
 "additional addresses cannot be selected."
+msgstr ""
+
+msgid "Select All"
 msgstr ""
 
 msgid "Select Authenticator"
@@ -7619,11 +7804,6 @@ msgid ""
 msgstr ""
 
 msgid "Select an existing target."
-msgstr ""
-
-msgid ""
-"Select an existing user configuration or <i>Create New</i> to view options "
-"for a new user configuration."
 msgstr ""
 
 msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
@@ -7975,9 +8155,6 @@ msgstr "服務啟動失敗"
 
 msgid "Service failed to stop"
 msgstr "服務停止失敗"
-
-msgid "Service started"
-msgstr "服務已啟動"
 
 msgid "Services"
 msgstr "服務"
@@ -8856,21 +9033,12 @@ msgstr "站台名稱"
 msgid "Size"
 msgstr "大小"
 
-msgid "Size (GiB)"
-msgstr "大小 (GiB)"
-
 msgid "Size for this zvol"
 msgstr "zvol 大小"
 
 msgid ""
 "Skip automatic detection of the Endpoint URL region. Set this  when "
 "configuring a custom Endpoint URL."
-msgstr ""
-
-msgid "Slack channel name. The service will post all messages to this channel."
-msgstr ""
-
-msgid "Slack username for this service."
 msgstr ""
 
 msgid "Snapshot Lifetime"
@@ -9126,6 +9294,9 @@ msgstr ""
 msgid "Successfully exported/disconnected '"
 msgstr ""
 
+msgid "Successfully replaced disk "
+msgstr ""
+
 msgid "Successfully reset encryption for pool: "
 msgstr ""
 
@@ -9200,6 +9371,9 @@ msgstr "系統時鐘"
 
 msgid "System domain name, like <i>example.com</i>"
 msgstr "系統網域名稱，例如  <i>example.com</i>"
+
+msgid "System failed to save configuration settings. Check the network connection."
+msgstr ""
 
 msgid "System host time to synchronize the time between jail and host."
 msgstr ""
@@ -9297,6 +9471,12 @@ msgstr ""
 msgid "Task Name"
 msgstr ""
 
+msgid "Task Started"
+msgstr ""
+
+msgid "Task Stopped"
+msgstr ""
+
 msgid "Task is running"
 msgstr ""
 
@@ -9305,9 +9485,6 @@ msgstr ""
 
 msgid "Tasks"
 msgstr "作業"
-
-msgid "Team"
-msgstr ""
 
 msgid "Team Drive ID"
 msgstr ""
@@ -9339,6 +9516,9 @@ msgstr ""
 msgid "The <i><b>"
 msgstr ""
 
+msgid "The AFP"
+msgstr ""
+
 msgid ""
 "The API_KEY to use as the sender. This must be a valid UUID. It can be "
 "generated from the command line by typing <samp>uuidgen</samp>."
@@ -9359,6 +9539,9 @@ msgid ""
 "server."
 msgstr ""
 
+msgid "The NFS"
+msgstr ""
+
 msgid ""
 "The OU in which new computer accounts are created.  The OU string is read "
 "from top to bottom without RDNs. Slashes (\"/\") are used as  delimiters, "
@@ -9367,6 +9550,12 @@ msgid ""
 "multiple levels and might require doubling or even quadrupling to take "
 "effect.  When this field is blank, new computer accounts are created in the "
 "Active Directory  default OU."
+msgstr ""
+
+msgid "The SMB"
+msgstr ""
+
+msgid "The SMB service has been restarted."
 msgstr ""
 
 msgid ""
@@ -9384,6 +9573,9 @@ msgid ""
 msgstr ""
 
 msgid "The active controller cannot be detected."
+msgstr ""
+
+msgid "The administrator password is incorrect."
 msgstr ""
 
 msgid ""
@@ -9464,6 +9656,9 @@ msgstr ""
 msgid "The hostname or IP address of the LDAP server."
 msgstr ""
 
+msgid "The iSCSI"
+msgstr ""
+
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
 "through the new user interface."
@@ -9510,8 +9705,28 @@ msgid "The only server role available is the domain controller for a new domain.
 msgstr ""
 
 msgid ""
+"The operation timed out. The requested resource might be offline. Check the "
+"network connection."
+msgstr ""
+
+msgid "The passwords do not match."
+msgstr ""
+
+msgid "The pool <i>"
+msgstr ""
+
+msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
 "computer."
+msgstr ""
+
+msgid ""
+"The port on the host system that forwards data to  the jail.  Avoid using a "
+"port that is already in use by another system  service. For a list of "
+"commonly-used ports, see this  <a "
+"href=\"https://www.iana.org/assignments/service-names-port-numbers/service-"
+"names-port-numbers.xhtml\"  target=\"_blank\">Internet Assigned Numbers "
+"Authority (IANA) registry</a>."
 msgstr ""
 
 msgid ""
@@ -9550,8 +9765,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The sharing configuration will be removed. Data in the share dataset will "
-"not be affected."
+"The sharing configuration will be removed.    Data in the share dataset "
+"will not be affected."
 msgstr ""
 
 msgid "The specified permissions of that group are used by all clients."
@@ -9588,6 +9803,15 @@ msgid ""
 "Apply updates and reboot?"
 msgstr ""
 
+msgid ""
+"The type of connection the port uses. Choose  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=tcp\" "
+"target=\"_blank\">TCP</a>  for a reliable two-way transmission of data or  "
+"<a href=\"https://www.freebsd.org/cgi/man.cgi?query=udp\" "
+"target=\"_blank\">UDP</a>  for an unreliable and unordered one-way data "
+"transmission."
+msgstr ""
+
 msgid "The update file is temporarily stored here before being applied."
 msgstr ""
 
@@ -9595,6 +9819,9 @@ msgid ""
 "The user account <i>Email</i> address to use for the  envelope <i>From</i> "
 "email address. The user account <i>Email</i> in  <b>Accounts > Users > "
 "Edit</b> must be configured first."
+msgstr ""
+
+msgid "The value is out of range. Enter a value between "
 msgstr ""
 
 msgid ""
@@ -9662,6 +9889,11 @@ msgid ""
 "     the permissions editor.  Open in ACL editor instead?"
 msgstr ""
 
+msgid ""
+"This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
+"units are not specified, the value defaults to"
+msgstr ""
+
 msgid "This field is required"
 msgstr "此為必填欄位"
 
@@ -9681,6 +9913,9 @@ msgid "This is the boot environment to be cloned."
 msgstr ""
 
 msgid "This is the serial number of the disk."
+msgstr ""
+
+msgid "This name has already been used."
 msgstr ""
 
 msgid ""
@@ -9708,6 +9943,11 @@ msgid ""
 "Threshold temperature in Celsius. If the drive temperature is higher than "
 "this value, a LOG_CRIT level log entry is created and an email is sent. "
 "<i>0</i> disables this check."
+msgstr ""
+
+msgid ""
+"Time (in seconds) before the system  stops attempting to establish a "
+"connection with the remote system."
 msgstr ""
 
 msgid "Time Machine"
@@ -9761,6 +10001,12 @@ msgstr ""
 
 msgid "Transfer Mode"
 msgstr "傳輸模式"
+
+msgid "Transfer Mode Reset"
+msgstr ""
+
+msgid "Transfer Mode has been reset to <i>COPY</i>."
+msgstr ""
 
 msgid "Transfers"
 msgstr "同時連線數"
@@ -9818,11 +10064,6 @@ msgstr ""
 msgid "URL of the HTTP host to connect to."
 msgstr ""
 
-msgid ""
-"URL to an image to use for notification icons. This overrides the incoming "
-"webhook setting."
-msgstr ""
-
 msgid "UTC"
 msgstr ""
 
@@ -9872,6 +10113,9 @@ msgstr ""
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
 "read, write, and execute)."
+msgstr ""
+
+msgid "Unselect All"
 msgstr ""
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
@@ -9934,6 +10178,9 @@ msgstr ""
 msgid "Update Period"
 msgstr ""
 
+msgid "Update Plugins"
+msgstr ""
+
 msgid "Update Settings"
 msgstr ""
 
@@ -9944,6 +10191,9 @@ msgid "Update in Progress"
 msgstr ""
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
+msgstr ""
+
+msgid "Updated"
 msgstr ""
 
 msgid "Updates Available"
@@ -9960,12 +10210,6 @@ msgstr "正在更新外掛"
 
 msgid "Updating group members"
 msgstr "正在更新群組成員"
-
-msgid "Updating selected jails failed."
-msgstr ""
-
-msgid "Updating selected plugins failed."
-msgstr ""
 
 msgid "Updating selected plugins."
 msgstr ""
@@ -10084,6 +10328,9 @@ msgstr ""
 msgid "Use unencrypted connection."
 msgstr ""
 
+msgid "Used"
+msgstr ""
+
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
 "1023."
@@ -10121,6 +10368,9 @@ msgstr ""
 msgid "User ID"
 msgstr "使用者 ID"
 
+msgid "User account password for logging into the  remote system."
+msgstr ""
+
 msgid ""
 "User account to create for CHAP authentication with the user on the remote "
 "system. Many initiators use the initiator name as the user name."
@@ -10150,6 +10400,9 @@ msgid "Username"
 msgstr "使用者名稱"
 
 msgid "Username for logging in to the provider and  updating the record."
+msgstr ""
+
+msgid "Username for logging in to the remote system."
 msgstr ""
 
 msgid "Username for this service."
@@ -10182,11 +10435,11 @@ msgstr "使用者"
 msgid "Users & Groups"
 msgstr "使用者與群組"
 
+msgid "Using pool "
+msgstr ""
+
 msgid "VFS Objects"
 msgstr "VFS 物件"
-
-msgid "VIEW LOGS"
-msgstr ""
 
 msgid "VLAN ID"
 msgstr ""
@@ -10237,6 +10490,9 @@ msgstr "驗證遠端路徑"
 
 msgid "Value"
 msgstr "數值"
+
+msgid "Value must be greater than "
+msgstr ""
 
 msgid "Variable"
 msgstr "變數"
@@ -10413,7 +10669,7 @@ msgid ""
 "they are a member of the <i>wheel</i> group."
 msgstr ""
 
-msgid "When set, report CPU usage in percent instead of jiffies."
+msgid "When set, report CPU usage in percent  instead of units of kernel time."
 msgstr ""
 
 msgid ""
@@ -10514,6 +10770,9 @@ msgid "Zeroconf share discovery"
 msgstr ""
 
 msgid "Zvol Location"
+msgstr ""
+
+msgid "Zvol name"
 msgstr ""
 
 msgid ""
@@ -10663,9 +10922,6 @@ msgstr ""
 msgid "host_hostname"
 msgstr ""
 
-msgid "host_port"
-msgstr ""
-
 msgid "host_time"
 msgstr ""
 
@@ -10673,6 +10929,9 @@ msgid "hostid"
 msgstr ""
 
 msgid "hostid_strict_check"
+msgstr ""
+
+msgid "iSCSI"
 msgstr ""
 
 msgid "interfaces"
@@ -10691,9 +10950,6 @@ msgid "ip6.saddrsel"
 msgstr ""
 
 msgid "ip_hostname"
-msgstr ""
-
-msgid "jail_port"
 msgstr ""
 
 msgid "jail_zfs"
@@ -10777,9 +11033,6 @@ msgstr ""
 msgid "priority"
 msgstr ""
 
-msgid "protocol"
-msgstr ""
-
 msgid "pseudoterminals"
 msgstr ""
 
@@ -10855,8 +11108,8 @@ msgstr ""
 msgid "wallclock"
 msgstr ""
 
-msgid "yes"
+msgid "was successfully attached."
 msgstr ""
 
-msgid "zvol name:"
-msgstr "zvol 名稱："
+msgid "yes"
+msgstr ""
