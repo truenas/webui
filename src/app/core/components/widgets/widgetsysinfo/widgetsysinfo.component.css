@@ -336,6 +336,11 @@ img.platform-logo{
 .xs.widget.generic-hardware .product-image.freenas{
   margin-top:50%;
 }
+
+.xs.widget .product-image.freenas .mat-icon.certified{
+  margin-top:48px;
+}
+
 .xs.widget.generic-hardware .product-image.freenas .certified-badge{
   bottom:-40%;
   height:25%;
@@ -351,5 +356,6 @@ img.platform-logo{
   left:16px;
   z-index:2;
 }
+
 
 
