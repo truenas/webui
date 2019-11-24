@@ -32,9 +32,10 @@
               <div class="product-image {{!isFN ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                 <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
-                    <mat-icon *ngIf="isFN" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="isFN && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="isFN && certified" class="generic" svgIcon="freenas_certified"></mat-icon>
                   </ng-template>
-                  <img class="certified-badge" *ngIf="certified" src="assets/images/freenas_certified.svg">
+                  <!--<img class="certified-badge" *ngIf="certified" src="assets/images/freenas_certified.svg">-->
                   <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" }})</div>
               </div>
             </div>
