@@ -43,6 +43,7 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       // evt.data: boolean = authentication status
       if(evt.data){
+        console.log(evt);
         this.core.emit({name:"UserPreferencesRequest"});
       }
     });
@@ -58,6 +59,7 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
+
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
 
@@ -126,8 +128,7 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
-      //console.log("ChangePreferences");
-      //console.log(evt.data);
+      
       let prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
@@ -140,7 +141,6 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-      //console.log("UPDATING LOCAL PREFERENCES");
       this.preferences = data;
 
       //Notify Guided Tour & Theme Service
