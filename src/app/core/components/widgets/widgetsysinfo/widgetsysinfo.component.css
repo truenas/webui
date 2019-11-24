@@ -232,11 +232,15 @@ span.passive{
 }
 
 .freenas .mat-icon.generic{
-  width:50%;
+  width:calc(240px * 0.5);
   height:auto;
 }
 
 img.platform-logo{
+  width: 10rem;
+}
+
+.xs.carousel img.platform-logo{
   width: 70%;
 }
 
@@ -293,6 +297,10 @@ img.platform-logo{
   margin: 21% 0 8px;
 }
 
+.xs.widget .product-image.truenas img#X10{
+  margin: 8% 0 5%;
+}
+
 .xs.widget img.platform-logo{
     width: auto;
     height: 48px;
@@ -332,6 +340,11 @@ img.platform-logo{
 .xs.widget.generic-hardware .product-image.freenas{
   margin-top:50%;
 }
+
+.xs.widget.generic-hardware .product-image.freenas .mat-icon{
+  margin-top:48px;
+}
+
 .xs.widget.generic-hardware .product-image.freenas .certified-badge{
   bottom:-40%;
   height:25%;
@@ -347,5 +360,6 @@ img.platform-logo{
   left:16px;
   z-index:2;
 }
+
 
 
