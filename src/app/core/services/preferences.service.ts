@@ -43,7 +43,6 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       // evt.data: boolean = authentication status
       if(evt.data){
-        console.log(evt);
         this.core.emit({name:"UserPreferencesRequest"});
       }
     });
