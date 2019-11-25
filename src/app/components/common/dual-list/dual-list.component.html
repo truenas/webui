@@ -1,8 +1,13 @@
 <div class="container-dualListBox">
-  <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight">
+  <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
+    cdkDropList
+    #userList="cdkDropList"
+    [cdkDropListData]="availableItems.totalItems"
+    [cdkDropListConnectedTo]="[memberList]"
+    (cdkDropListDropped)="drop($event)">
    <div class="list-title" *ngIf="title1">{{title1}}</div>
-   <div *ngFor="let item of availableItems.totalItems" [ngClass]="{ choosed: availableItems.isSelected(item,1) }" (click)="availableItems.select(item)">
-      <mat-list *ngIf="templateItem;else noTemplateItem">
+   <div *ngFor="let item of availableItems.totalItems" cdkDrag [ngClass]="{ choosed: availableItems.isSelected(item,1) }" (click)="availableItems.select(item)">
+      <mat-list *ngIf="templateItem;else noTemplateItem" >
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
       </mat-list>
       <ng-template #noTemplateItem>
@@ -30,9 +35,14 @@
       </ng-template>
     </div>
   </div>
-  <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight">
+  <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
+    cdkDropList
+    #memberList="cdkDropList"
+    [cdkDropListData]="selectedItems.totalItems"
+    [cdkDropListConnectedTo]="[userList]"
+    (cdkDropListDropped)="drop($event)">
     <div class="list-title" *ngIf="title2">{{title2}}</div>
-    <div *ngFor="let item of selectedItems.totalItems" [ngClass]="{ choosed: selectedItems.isSelected(item,2) }"  (click)="selectedItems.select(item)">
+    <div *ngFor="let item of selectedItems.totalItems" cdkDrag [ngClass]="{ choosed: selectedItems.isSelected(item,2) }"  (click)="selectedItems.select(item)">
       <mat-list *ngIf="templateItem;else noTemplateItem">
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
       </mat-list>
