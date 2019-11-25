@@ -66,7 +66,7 @@ export class SupportComponent implements OnInit {
     this.FN_instructions = helptext.FN_instructions;
   }
 
-  getTNSysInfo(res) { console.log(res)
+  getTNSysInfo(res) {
     this.model = res.system_product;
     if (res.license) {
       this.customer_name = res.license.customer_name;
