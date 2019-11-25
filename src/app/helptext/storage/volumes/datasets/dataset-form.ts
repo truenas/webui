@@ -101,5 +101,7 @@ dataset_form_aclmode_tooltip: T(''),
 dataset_form_dataset_section_placeholder: T("This Dataset and Child Datasets"),
 dataset_form_refdataset_section_placeholder: T("This Dataset"),
 dataset_form_name_section_placeholder: T("Name and Options"),
-dataset_form_other_section_placeholder: T("Other Options")
+dataset_form_other_section_placeholder: T("Other Options"),
+
+dataset_form_inherit: T('Inherit')
 }
