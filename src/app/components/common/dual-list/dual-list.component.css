@@ -51,3 +51,9 @@
   background: #91949c;
   color: white;
 }
+
+.list-title {
+  position: absolute;
+  top: 43px;
+  font-size: small;
+}

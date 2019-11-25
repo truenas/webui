@@ -16,6 +16,8 @@ export class DualListboxComponent implements OnInit {
 
   @Input() minHeight = '200px';
   @Input() maxHeight = '300px';
+  @Input() title1: string;
+  @Input() title2: string;
 
   @ContentChild('templateItem', { static: true}) templateItem: TemplateRef<any>;
   @ContentChild('templateArrowLeft', { static: true}) templateArrowLeft: TemplateRef<any>;

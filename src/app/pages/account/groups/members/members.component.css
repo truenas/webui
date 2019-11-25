@@ -31,5 +31,9 @@
 .button-container {
   position: relative;
   bottom: 15px;
-  left: 31px;
+  left: 23px;
+}
+
+mat-card-title {
+  margin-left: 15px;
 }

@@ -1,6 +1,7 @@
 <div class="container-dualListBox">
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight">
-    <div *ngFor="let item of availableItems.totalItems" [ngClass]="{ choosed: availableItems.isSelected(item,1) }" (click)="availableItems.select(item)">
+   <div class="list-title" *ngIf="title1">{{title1}}</div>
+   <div *ngFor="let item of availableItems.totalItems" [ngClass]="{ choosed: availableItems.isSelected(item,1) }" (click)="availableItems.select(item)">
       <mat-list *ngIf="templateItem;else noTemplateItem">
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
       </mat-list>
@@ -30,6 +31,7 @@
     </div>
   </div>
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight">
+    <div class="list-title" *ngIf="title2">{{title2}}</div>
     <div *ngFor="let item of selectedItems.totalItems" [ngClass]="{ choosed: selectedItems.isSelected(item,2) }"  (click)="selectedItems.select(item)">
       <mat-list *ngIf="templateItem;else noTemplateItem">
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>

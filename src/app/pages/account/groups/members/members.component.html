@@ -1,5 +1,5 @@
 <mat-card>
-  <mat-card-title *ngIf="groupName">{{'Members of' | translate}} {{groupName}} {{'group' | translate}}</mat-card-title>
+  <mat-card-title *ngIf="groupName">{{'Manage members of' | translate}} {{groupName}} {{'group' | translate}}</mat-card-title>
     <mat-spinner 
       [diameter]='40' 
       id="group-member-spinner"
@@ -7,7 +7,12 @@
     </mat-spinner> 
   <mat-card-content>
     <div class="padding-16" *ngIf="members.length > 0">
-      <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers">
+      <app-dual-listbox 
+        [items]="members" 
+        [(selectedItems)]="selectedMembers" 
+        minHeight="300px" 
+        title1="{{'All users' | translate}}"
+        title2="{{'Group members' | translate}}">
         <ng-template #templateItem let-item="data">
           <mat-list-item class="pointer">{{item.username}}</mat-list-item>
         </ng-template>
