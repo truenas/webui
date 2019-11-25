@@ -91,27 +91,25 @@ export class DatasetFormComponent implements Formconfiguration{
   protected OrigSize = {};
   protected OrigHuman = {};
 
+  protected warning = 80;
+  protected critical = 95;
+
   public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: T('Basic Mode'),
       function: () => { 
-        this.isBasicMode = !this.isBasicMode;
-        _.find(this.fieldSets, {class:"dataset"}).label = false;
-        _.find(this.fieldSets, {class:"refdataset"}).label = false;
+        this.setBasicMode(true);
       }
     },
     {
       id: 'advanced_mode',
       name: T('Advanced Mode'),
       function: () => { 
-        this.isBasicMode = !this.isBasicMode;
-        _.find(this.fieldSets, {class:"dataset"}).label = true;
-        _.find(this.fieldSets, {class:"refdataset"}).label = true;
+        this.setBasicMode(false);
       }
     }
   ];
-
 
   public fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -216,6 +214,7 @@ export class DatasetFormComponent implements Formconfiguration{
         class: 'inline',
         width: '50%',
         min: 0,
+        value: this.warning,
         validation: helptext.dataset_form_refquota_warning_validation,
         relation: [
           {
@@ -242,6 +241,7 @@ export class DatasetFormComponent implements Formconfiguration{
         placeholder: helptext.dataset_form_refquota_critical_placeholder,
         class: 'inline',
         width: '50%',
+        value: this.critical,
         min: 0,
         validation: helptext.dataset_form_refquota_critical_validation,
         relation: [
@@ -337,6 +337,7 @@ export class DatasetFormComponent implements Formconfiguration{
         class: 'inline',
         width: '50%',
         min: 0,
+        value: this.warning,
         validation: helptext.dataset_form_quota_warning_validation,
         relation: [
           {
@@ -364,6 +365,7 @@ export class DatasetFormComponent implements Formconfiguration{
         class: 'inline',
         width: '50%',
         min: 0,
+        value: this.critical,
         validation: helptext.dataset_form_quota_critical_validation,
         relation: [
           {
@@ -588,6 +590,12 @@ export class DatasetFormComponent implements Formconfiguration{
     '1M':'1048576'
   };
 
+  setBasicMode(basic_mode) {
+    this.isBasicMode = basic_mode;
+    _.find(this.fieldSets, {class:"dataset"}).label = !basic_mode;
+    _.find(this.fieldSets, {class:"refdataset"}).label = !basic_mode;
+  }
+
   convertHumanStringToNum(hstr, field) {
 
     const IECUnitLetters = this.storageService.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
@@ -595,10 +603,10 @@ export class DatasetFormComponent implements Formconfiguration{
     let num = 0;
     let unit = '';
 
-    // empty value is evaluated as zero
+    // empty value is evaluated as null 
     if (!hstr) {
         this.humanReadable[field] = null;
-        return 0;
+        return null;
     }
 
     if (typeof hstr === 'number') {
@@ -653,6 +661,8 @@ export class DatasetFormComponent implements Formconfiguration{
         const field = this.size_fields[i];
         if (this.OrigHuman[field] !== data[field]) {
           data[field] = Math.round(this.convertHumanStringToNum(data[field], field));
+        } else if (data[field] === null) {
+          delete data[field];
         } else {
           data[field] = this.OrigSize[field];
         }
@@ -770,6 +780,7 @@ export class DatasetFormComponent implements Formconfiguration{
         }
       }
     });
+    this.setBasicMode(this.isBasicMode);
   }
 
   preInit(entityForm: EntityFormComponent) {
@@ -831,7 +842,18 @@ export class DatasetFormComponent implements Formconfiguration{
         const readonly_inherit = [{label:`Inherit (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT'}];
         const atime_inherit = [{label:`Inherit (${pk_dataset[0].atime.rawvalue})`, value: 'INHERIT'}];
         const recordsize_inherit = [{label:`Inherit (${pk_dataset[0].recordsize.value})`, value: 'INHERIT'}];
-
+        if (pk_dataset[0].refquota_critical && pk_dataset[0].refquota_critical.value) {
+          entityForm.formGroup.controls['refquota_critical'].setValue(pk_dataset[0].refquota_critical.value);
+        }
+        if (pk_dataset[0].refquota_warning && pk_dataset[0].refquota_warning.value) {
+          entityForm.formGroup.controls['refquota_warning'].setValue(pk_dataset[0].refquota_warning.value);
+        }
+        if (pk_dataset[0].refquota_critical && pk_dataset[0].refquota_critical.value) {
+          entityForm.formGroup.controls['quota_critical'].setValue(pk_dataset[0].quota_critical.value);
+        }
+        if (pk_dataset[0].refquota_critical && pk_dataset[0].refquota_critical.value) {
+          entityForm.formGroup.controls['quota_warning'].setValue(pk_dataset[0].quota_warning.value);
+        }
 
         sync.options = sync_inherit.concat(sync.options);
         compression.options = compression_inherit.concat(compression.options);
@@ -961,14 +983,18 @@ export class DatasetFormComponent implements Formconfiguration{
   }
 
   resourceTransformIncomingRestData(wsResponse): any {
-    const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning);
-    const quota_warning_inherit = (wsResponse.quota_warning && wsResponse.quota_warning.source === 'INHERITED') ? true: false;
-    const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical);
-    const quota_critical_inherit = (wsResponse.quota_critical && wsResponse.quota_critical.source === 'INHERITED') ? true: false;
-    const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning);
-    const refquota_warning_inherit = (wsResponse.refquota_warning && wsResponse.refquota_warning.source === 'INHERITED') ? true: false;
-    const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical);
-    const refquota_critical_inherit = (wsResponse.refquota_critical && wsResponse.refquota_critical.source === 'INHERITED') ? true: false;
+    const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning) ? this.getFieldValueOrNone(wsResponse.quota_warning) : this.warning;
+    const quota_warning_inherit = (wsResponse.quota_warning && 
+      (wsResponse.quota_warning.source === 'INHERITED' || wsResponse.quota_warning.source === 'DEFAULT')) ? true: false;
+    const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical) ? this.getFieldValueOrNone(wsResponse.quota_critical) : this.critical;
+    const quota_critical_inherit = (wsResponse.quota_critical && 
+      (wsResponse.quota_critical.source === 'INHERITED' || wsResponse.quota_critical.source === 'DEFAULT')) ? true: false;
+    const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning) ? this.getFieldValueOrNone(wsResponse.refquota_warning) : this.warning;
+    const refquota_warning_inherit = (wsResponse.refquota_warning && 
+      (wsResponse.refquota_warning.source === 'INHERITED' || wsResponse.refquota_warning.source === 'DEFAULT')) ? true: false;
+    const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical) ? this.getFieldValueOrNone(wsResponse.refquota_critical) : this.critical;
+    const refquota_critical_inherit = (wsResponse.refquota_critical &&
+      (wsResponse.refquota_critical.source === 'INHERITED' || wsResponse.refquota_critical.source === 'DEFAULT')) ? true: false;
     const sizeValues = {};
     for (let i = 0; i < this.size_fields.length; i++) {
       const field = this.size_fields[i];
@@ -1016,7 +1042,8 @@ export class DatasetFormComponent implements Formconfiguration{
     //  }
 
      if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation'] ||
-      quota_warning ||quota_critical ||refquota_warning||refquota_critical) {
+      !quota_warning_inherit || !quota_critical_inherit || !refquota_warning_inherit|| !refquota_critical_inherit ||
+      quota_warning !== this.warning || quota_critical !== this.critical || refquota_critical !== this.critical || refquota_warning !== this.warning) {
        this.isBasicMode = false;
      }
 
@@ -1042,6 +1069,18 @@ export class DatasetFormComponent implements Formconfiguration{
     delete(data.quota_critical_inherit);
     delete(data.refquota_warning_inherit);
     delete(data.refquota_critical_inherit);
+    if (!data.quota_warning || data.quota_warning === this.warning) {
+      delete data.quota_warning;
+    }
+    if (!data.quota_critical || data.quota_critical === this.critical) {
+      delete data.quota_critical;
+    }
+    if (!data.refquota_warning || data.refquota_warning === this.warning) {
+      delete data.refquota_warning;
+    }
+    if (!data.refquota_critical || data.refquota_critical === this.critical) {
+      delete data.refquota_critical;
+    }
 
     if (data.recordsize === "1M") {
       data.recordsize = "1024K";
