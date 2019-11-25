@@ -46,10 +46,21 @@
   text-align: center;
 }
 
-.choosed {
+.draggable {
+  width: 100%;
+}
+
+.choosed, .draggable:active {
   width: 100%;
   background: #91949c;
   color: white;
+}
+
+.cdk-drag-placeholder {
+  background: rgba(145,148,156, 0.1);
+  opacity: .5;
+  border: 1px dashed var(--fg1);
+  width: 100%;
 }
 
 .list-title {

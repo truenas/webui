@@ -1,6 +1,6 @@
 import {Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
 import {difference, ListSelection, ListSelectionImpl} from './models';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-dual-listbox',
@@ -26,6 +26,7 @@ export class DualListboxComponent implements OnInit {
 
   availableItems: ListSelection;
   selectedItems: ListSelection;
+  dragging = false;
 
   ngOnInit() {
     this.availableItems = new ListSelectionImpl(
@@ -39,7 +40,6 @@ export class DualListboxComponent implements OnInit {
     this.availableItems = from;
     this.selectedItems = to;
     this.selectedItemsChange.emit(this.selectedItems.totalItems);
-    console.log(this.availableItems.totalItems, this.selectedItems.totalItems)
   }
 
   return() {
@@ -58,6 +58,11 @@ export class DualListboxComponent implements OnInit {
                         event.previousIndex,
                         event.currentIndex);
     }
+    this.dragging = false;
+  }
+
+  public onDragStart(event: CdkDragStart<string[]>) {
+    this.dragging = true;
   }
 }
 
