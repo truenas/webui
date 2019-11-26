@@ -103,5 +103,6 @@ dataset_form_refdataset_section_placeholder: T("This Dataset"),
 dataset_form_name_section_placeholder: T("Name and Options"),
 dataset_form_other_section_placeholder: T("Other Options"),
 
-dataset_form_inherit: T('Inherit')
+dataset_form_inherit: T('Inherit'),
+dataset_form_default: T('Default')
 }

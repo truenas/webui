@@ -716,10 +716,10 @@ export class DatasetFormComponent implements Formconfiguration{
   afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
     if (!this.parent){
-      this.entityForm.setDisabled('quota_warning_inherit', true, false);
-      this.entityForm.setDisabled('quota_critical_inherit', true, false);
-      this.entityForm.setDisabled('refquota_warning_inherit', true, false);
-      this.entityForm.setDisabled('refquota_critical_inherit', true, false);
+      _.find(this.fieldConfig, {name:'quota_warning_inherit'}).placeholder = helptext.dataset_form_default;
+      _.find(this.fieldConfig, {name:'quota_critical_inherit'}).placeholder = helptext.dataset_form_default;
+      _.find(this.fieldConfig, {name:'refquota_warning_inherit'}).placeholder = helptext.dataset_form_default;
+      _.find(this.fieldConfig, {name:'refquota_critical_inherit'}).placeholder = helptext.dataset_form_default;
     }
     if(!entityForm.isNew){
       entityForm.setDisabled('casesensitivity',true);
@@ -984,17 +984,21 @@ export class DatasetFormComponent implements Formconfiguration{
 
   resourceTransformIncomingRestData(wsResponse): any {
     const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning) ? this.getFieldValueOrNone(wsResponse.quota_warning) : this.warning;
-    const quota_warning_inherit = (wsResponse.quota_warning && 
-      (wsResponse.quota_warning.source === 'INHERITED' || wsResponse.quota_warning.source === 'DEFAULT')) ? true: false;
+    const quota_warning_inherit = ((!wsResponse.quota_warning && !quota_warning) ||
+      wsResponse.quota_warning.source === 'INHERITED' ||
+      wsResponse.quota_warning.source === 'DEFAULT') ? true: false;
     const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical) ? this.getFieldValueOrNone(wsResponse.quota_critical) : this.critical;
-    const quota_critical_inherit = (wsResponse.quota_critical && 
-      (wsResponse.quota_critical.source === 'INHERITED' || wsResponse.quota_critical.source === 'DEFAULT')) ? true: false;
+    const quota_critical_inherit = ((!wsResponse.quota_critical && !quota_critical) ||
+      wsResponse.quota_critical.source === 'INHERITED' ||
+      wsResponse.quota_critical.source === 'DEFAULT') ? true: false;
     const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning) ? this.getFieldValueOrNone(wsResponse.refquota_warning) : this.warning;
-    const refquota_warning_inherit = (wsResponse.refquota_warning && 
-      (wsResponse.refquota_warning.source === 'INHERITED' || wsResponse.refquota_warning.source === 'DEFAULT')) ? true: false;
+    const refquota_warning_inherit = ((!wsResponse.refquota_warning && !refquota_warning) ||
+      wsResponse.refquota_warning.source === 'INHERITED' ||
+      wsResponse.refquota_warning.source === 'DEFAULT') ? true: false;
     const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical) ? this.getFieldValueOrNone(wsResponse.refquota_critical) : this.critical;
-    const refquota_critical_inherit = (wsResponse.refquota_critical &&
-      (wsResponse.refquota_critical.source === 'INHERITED' || wsResponse.refquota_critical.source === 'DEFAULT')) ? true: false;
+    const refquota_critical_inherit = ((!wsResponse.refquota_critical && !refquota_critical) ||
+      wsResponse.refquota_critical.source === 'INHERITED' ||
+      wsResponse.refquota_critical.source === 'DEFAULT') ? true: false;
     const sizeValues = {};
     for (let i = 0; i < this.size_fields.length; i++) {
       const field = this.size_fields[i];
@@ -1069,16 +1073,16 @@ export class DatasetFormComponent implements Formconfiguration{
     delete(data.quota_critical_inherit);
     delete(data.refquota_warning_inherit);
     delete(data.refquota_critical_inherit);
-    if (!data.quota_warning || data.quota_warning === this.warning) {
+    if (!data.quota_warning) {
       delete data.quota_warning;
     }
-    if (!data.quota_critical || data.quota_critical === this.critical) {
+    if (!data.quota_critical) {
       delete data.quota_critical;
     }
-    if (!data.refquota_warning || data.refquota_warning === this.warning) {
+    if (!data.refquota_warning) {
       delete data.refquota_warning;
     }
-    if (!data.refquota_critical || data.refquota_critical === this.critical) {
+    if (!data.refquota_critical) {
       delete data.refquota_critical;
     }
 
