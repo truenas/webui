@@ -42,6 +42,7 @@ export class ReplicationWizardComponent {
     ];
 
     protected namesInUse = [];
+    protected defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
 
     protected wizardConfig: Wizard[] = [
         {
@@ -221,9 +222,13 @@ export class ReplicationWizardComponent {
                     paraText: '',
                     relation: [{
                         action: 'SHOW',
+                        connective: 'OR',
                         when: [{
                             name: 'source_datasets_from',
                             value: 'remote',
+                        }, {
+                            name: 'source_datasets_from',
+                            value: 'local',
                         }]
                     }],
                 },
@@ -237,7 +242,7 @@ export class ReplicationWizardComponent {
                         action: 'SHOW',
                         when: [{
                             name: 'source_datasets_from',
-                            value: 'remote',
+                            value: 'local',
                         }]
                     }],
                 },
@@ -246,9 +251,10 @@ export class ReplicationWizardComponent {
                     name: 'naming_schema',
                     placeholder: helptext.naming_schema_placeholder,
                     tooltip: helptext.naming_schema_tooltip,
+                    value: this.defaultNamingSchema,
                     relation: [{
                         action: 'SHOW',
-                        connective: 'AND',
+                        connective: 'OR',
                         when: [{
                             name: 'custom_snapshots',
                             value: true,
@@ -325,6 +331,7 @@ export class ReplicationWizardComponent {
                     name: 'schedule_picker',
                     placeholder: helptext.schedule_placeholder,
                     tooltip: helptext.schedule_tooltip,
+                    value: "0 0 * * *",
                     class: 'inline',
                     width: '50%',
                     relation: [{
@@ -419,6 +426,8 @@ export class ReplicationWizardComponent {
             name: 'name',
             placeholder: sshConnectionsHelptex.name_placeholder,
             tooltip: sshConnectionsHelptex.name_tooltip,
+            required: true,
+            validation: [Validators.required],
         },
         {
             type: 'select',
@@ -555,6 +564,7 @@ export class ReplicationWizardComponent {
         ssh_credentials_manual: 'keychaincredential.create',
         periodic_snapshot_tasks: 'pool.snapshottask.create',
         replication: 'replication.create',
+        snapshot: 'zfs.snapshot.create',
     }
 
     protected deleteCalls = {
@@ -566,6 +576,7 @@ export class ReplicationWizardComponent {
 
     protected snapshotsCountField;
     private existSnapshotTasks = [];
+    private eligibleSnapshots = 0;
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -638,9 +649,7 @@ export class ReplicationWizardComponent {
         });
         this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.subscribe((value) => {
             this.genTaskName();
-            if (this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'remote') {
-                this.getSnapshots();
-            }
+            this.getSnapshots();
         });
         this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.subscribe((value) => {
             this.genTaskName();
@@ -650,7 +659,6 @@ export class ReplicationWizardComponent {
             const credentialName = 'ssh_credentials_' + i;
             const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
             const datasetFrom = datasetName + '_from';
-
             this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.subscribe((value) => {
                 if (value === 'remote') {
                     if (datasetFrom === 'source_datasets_from') {
@@ -670,6 +678,7 @@ export class ReplicationWizardComponent {
             this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value) => {
                 if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === 'remote') {
                     this.createSSHConnection(credentialName);
+                    this.setDisable(datasetName, false, false, 0);
                 } else {
                     const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, { name: datasetName }).customTemplateStringOptions.explorerComponent;
                     if (explorerComponent) {
@@ -727,6 +736,9 @@ export class ReplicationWizardComponent {
                 resolve(this.entityFormService.getPoolDatasets());
             });
         } else {
+            if (sshCredentials === 'NEW') {
+                return this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].setErrors({});
+            }
             return new Promise((resolve, reject) => {
                 this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
                     (res) => {
@@ -747,6 +759,9 @@ export class ReplicationWizardComponent {
                 resolve(this.entityFormService.getPoolDatasets());
             });
         } else {
+            if (sshCredentials === 'NEW') {
+                return this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].setErrors({});
+            }
             return new Promise((resolve, reject) => {
                 this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
                     (res) => {
@@ -786,7 +801,7 @@ export class ReplicationWizardComponent {
             }
         }
 
-        if (task.schedule || task.periodic_snapshot_tasks) {
+        if (task.schedule || task.periodic_snapshot_tasks.length > 0) {
             const scheduleData = task.periodic_snapshot_tasks[0] || task;
             task['schedule_method'] = 'cron';
             task['schedule_picker'] = scheduleData.schedule ?
@@ -803,6 +818,8 @@ export class ReplicationWizardComponent {
                 task['lifetime_unit'] = scheduleData['lifetime_unit'];
                 task['retention_policy'] = task.schedule !== null ? 'CUSTOM' : 'SOURCE';
             }
+        } else {
+            task['schedule_method'] = 'once';
         }
         // periodic_snapshot_tasks
         for (let i of ['schedule_method', 'schedule_picker', 'retention_policy', 'lifetime_value', 'lifetime_unit']) {
@@ -885,7 +902,7 @@ export class ReplicationWizardComponent {
                     schedule: this.parsePickerTime(data['schedule_picker']),
                     lifetime_value: 2,
                     lifetime_unit: 'WEEK',
-                    naming_schema: 'auto-%Y-%m-%d_%H-%M',
+                    naming_schema: this.defaultNamingSchema,
                     enabled: true,
                 };
                 await this.isSnapshotTaskExist(payload).then(
@@ -900,6 +917,19 @@ export class ReplicationWizardComponent {
             }
             return Promise.all(snapshotPromises);
         }
+
+        if (item === 'snapshot') {
+            const snapshotPromises = [];
+            for (const dataset of data['source_datasets']) {
+                payload = {
+                    dataset: dataset,
+                    naming_schema: this.defaultNamingSchema,
+                }
+                snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
+            }
+            return Promise.all(snapshotPromises);
+        }
+
         if (item === 'replication') {
             payload = {
                 name: data['name'],
@@ -917,13 +947,17 @@ export class ReplicationWizardComponent {
                 payload['auto'] = true;
                 if (payload['direction'] === 'PULL') {
                     payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-                    payload['naming_schema'] = ['auto-%Y-%m-%d_%H-%M']; //default?
+                    payload['naming_schema'] = [this.defaultNamingSchema]; //default?
                 } else {
                     payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
                 }
             } else {
-                payload['also_include_naming_schema'] = []; //default?
                 payload['auto'] = false;
+                if (payload['direction'] === 'PULL') {
+                    payload['naming_schema'] = [this.defaultNamingSchema];
+                } else {
+                    payload['also_include_naming_schema'] = [this.defaultNamingSchema];
+                }
             }
 
             if (data['retention_policy'] === 'CUSTOM') {
@@ -934,7 +968,40 @@ export class ReplicationWizardComponent {
             if (payload['transport'] === 'SSH+NETCAT') {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
-            return this.ws.call(this.createCalls[item], [payload]).toPromise();
+            
+            return this.ws.call('replication.target_unmatched_snapshots', [
+                payload['direction'],
+                payload['source_datasets'],
+                payload['target_dataset'],
+                payload['transport'],
+                payload['ssh_credentials'],
+            ]).toPromise().then(
+                (res) => {
+                    let hasBadSnapshots = false;
+                    for (const ds in res) {
+                        if (res[ds].length > 0) {
+                            hasBadSnapshots = true;
+                            break;
+                        }
+                    }
+                    if (hasBadSnapshots) {
+                        return this.dialogService.confirm(
+                            helptext.clearSnapshotDialog_title,
+                            helptext.clearSnapshotDialog_content).toPromise().then(
+                            (dialog_res) => {
+                                payload['allow_from_scratch'] = dialog_res;
+                                return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                            }
+                        )
+                    } else {
+                        return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                    }
+                },
+                (err) => {
+                    // show error ?
+                    return this.ws.call(this.createCalls[item], [payload]).toPromise();
+                }
+            );
         }
     }
 
@@ -944,19 +1011,25 @@ export class ReplicationWizardComponent {
 
         const createdItems = {
             periodic_snapshot_tasks: null,
+            snapshot: null,
             replication: null,
         }
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== 'cron' || value['source_datasets_from'] !== 'local'))) {
+                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== 'cron' || value['source_datasets_from'] !== 'local')) &&
+                !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== 'local'))) {
                     await this.doCreate(value, item).then(
                         (res) => {
-                            value[item] = res.id || res.map(snapshot => snapshot.id);
-                            if (item === 'periodic_snapshot_tasks' && this.existSnapshotTasks.length !== 0) {
-                                value[item].push(...this.existSnapshotTasks);
+                            if (item === 'snapshot') {
+                                createdItems[item] = res;
+                            } else {
+                                value[item] = res.id || res.map(snapshot => snapshot.id);
+                                if (item === 'periodic_snapshot_tasks' && this.existSnapshotTasks.length !== 0) {
+                                    value[item].push(...this.existSnapshotTasks);
+                                }
+                                createdItems[item] = res.id || res.map(snapshot => snapshot.id);
                             }
-                            createdItems[item] = res.id || res.map(snapshot => snapshot.id);
                         },
                         (err) => {
                             new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -966,6 +1039,14 @@ export class ReplicationWizardComponent {
                     )
                 }
             }
+        }
+
+        if (value['schedule_method'] === 'once' && createdItems['replication'] != undefined) {
+            await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
+                (res) => {
+                    this.dialogService.Info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
+                }
+            )
         }
 
         this.loader.close();
@@ -1057,7 +1138,7 @@ export class ReplicationWizardComponent {
                 }
             }
         }
-        this.dialogService.dialogForm(conf);
+        this.dialogService.dialogForm(conf, true);
     }
 
     getRemoteHostKey(value) {
@@ -1081,24 +1162,38 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
-        let payload = [
+        const transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
+        const payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
-            (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : ['auto-%Y-%m-%d_%H-%M'],
-            this.entityWizard.formArray.controls[0].controls['transport'].value,
-            this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
+            (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : [this.defaultNamingSchema],
+            transport,
+            transport === 'LOCAL' ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
         ];
 
-        if (payload[0].length > 0 && payload[3] != undefined && payload[3] != '') {
+        if (payload[0].length > 0) {
             this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
                 (res) => {
-                    this.snapshotsCountField.paraText = res.eligible + ' snapshots found';
+                    this.eligibleSnapshots = res.eligible;
+                    const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local';
+                    let spanClass = 'info-paragraph';
+                    let snapexpl = '';
+                    if (res.eligible === 0) {
+                        if (isPush) {
+                            snapexpl = 'Snapshots will be created automatically.';
+                        } else {
+                            spanClass = 'warning-paragraph';
+                        }
+                    }
+                    this.snapshotsCountField.paraText = `<span class="${spanClass}"><b>${res.eligible}</b> snapshots found. ${snapexpl}</span>`;
                 },
                 (err) => {
+                    this.eligibleSnapshots = 0;
                     this.snapshotsCountField.paraText = '';
                     new EntityUtils().handleWSError(this, err);
                 }
             )
         } else {
+            this.eligibleSnapshots = 0;
             this.snapshotsCountField.paraText = '';
         }
     }
@@ -1113,4 +1208,5 @@ export class ReplicationWizardComponent {
             ["schedule.dow", "=", payload['schedule']['dow']]
         ]]).toPromise();
     }
+
 }

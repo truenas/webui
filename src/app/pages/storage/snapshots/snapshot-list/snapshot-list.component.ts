@@ -19,7 +19,7 @@ export class SnapshotListComponent {
   protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
-  protected wsDelete = 'zfs.snapshot.remove';
+  protected wsDelete = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: any;
   protected hasDetails = true;
@@ -123,15 +123,6 @@ export class SnapshotListComponent {
     });
   }
 
-  getSelectedNames(selectedSnapshots) {
-    let selected: any = [];
-    for (let i in selectedSnapshots) {
-      let snapshot = selectedSnapshots[i].name.split('@');
-      selected.push([{"dataset": snapshot[0], "name": snapshot[1]}]);
-    }
-    return selected;
-  }
-
   dataHandler(list: { rows: { name: string, dataset: string, snapshot: string }[] }): void {
     list.rows = list.rows.map(ss => {
       const [datasetName, snapshotName] = ss.name.split('@');
@@ -142,8 +133,12 @@ export class SnapshotListComponent {
   }
 
   wsMultiDeleteParams(selected: any) {
-    let params: Array<any> = ['zfs.snapshot.remove'];
-    params.push(this.getSelectedNames(selected));
+    let params: Array<any> = ['zfs.snapshot.delete'];
+    let selectedId = [];
+    for (const i in selected) {
+     selectedId.push([selected[i].name]);
+    }
+    params.push(selectedId);
     return params;
   }
 
@@ -153,8 +148,7 @@ export class SnapshotListComponent {
       if (res) {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
-        let snapshot = item.name.split('@');
-        this.ws.call(this.wsDelete, [{ "dataset": snapshot[0], "name": snapshot[1]}]).subscribe(
+        this.ws.call(this.wsDelete, [item.name]).subscribe(
           (res) => { this.entityList.getData() },
           (res) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);

@@ -50,7 +50,7 @@ int_options_tooltip : T('Enter additional space-delimited parameters from <a\
 
 alias_address_placeholder: T('IP Address'),
 alias_address_tooltip: T('Static IPv4 or IPv6 address and subnet mask. \
- Example: <i>10.0.0.3</i> and <i>24</i>. Click <i>ADD</i> to add another \
+ Example: <i>10.0.0.3</i> and <i>/24</i>. Click <i>ADD</i> to add another \
  IP address. Clicking <i>DELETE</i> removes that IP address.'),
 
 alias_netmaskbit_placeholder: T('Netmask'),
@@ -90,9 +90,7 @@ failover_group_tooltip: T('Combine multiple, critical-for-failover \
 failover_vhid_placeholder: T('Failover VHID'),
 failover_vhid_tooltip: T('Unique Virtual Host ID on the broadcast \
  segment of the network. Configuring multiple Virtual IP addresses \
- requires a separate VHID for each address. Numbers greater than \
- <i>20</i> are recommended, but any unused number between <i>1</i> and \
- <i>255</i> is allowed.'),
+ requires a separate VHID for each address.'),
 
 failover_alias_address_placeholder: T('Failover IP Address'),
 failover_alias_address_tooltip: T('IPv4 address to use for the failover \
@@ -100,7 +98,7 @@ failover_alias_address_tooltip: T('IPv4 address to use for the failover \
 
 failover_virtual_alias_address_placeholder: T('Virtual IP Address'),
 failover_virtual_alias_address_tooltip: T('IP address to use for \
- administrative access to the system. The netmask <i>32</i> is \
+ administrative access to the system. The netmask <i>/32</i> is \
  required for this value and cannot be changed.'),
 
 vlan_pint_placeholder: T('Parent Interface'),
@@ -150,5 +148,7 @@ mtu_tooltip: T('Maximum Transmission Unit, the largest protocol data \
 mtu_validation: [rangeValidator(68, 9000)],
 
 alias_list_placeholder: T('Aliases'),
-alias_list_label: T('Aliases')
+alias_list_label: T('Aliases'),
+
+int_save_button: T('Apply')
 }

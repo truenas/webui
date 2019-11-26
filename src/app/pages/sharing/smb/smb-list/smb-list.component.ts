@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { delete_share_message, helptext_sharing_smb } from 'app/helptext/sharing';
+import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
+import vol_helptext  from 'app/helptext/storage/volumes/volume-list';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
@@ -25,6 +26,7 @@ export class SMBListComponent {
   public columns: any[] = [
     {name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
     {name: helptext_sharing_smb.column_path, prop: 'path'},
+    {name: helptext_sharing_smb.column_comment, prop: 'comment'}
   ];
   public rowIdentifier = 'cifs_name';
   public config: any = {
@@ -37,7 +39,7 @@ export class SMBListComponent {
   };
 
   public confirmDeleteDialog = {
-    message: delete_share_message,
+    message: shared.delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
     buildTitle: share => `${T('Unshare')} ${share.name}`
@@ -50,6 +52,10 @@ export class SMBListComponent {
   }
 
   getActions(row): any[] {
+    let rowName = row.path.replace("/mnt/", "");
+    let poolName = rowName.split('/')[0];
+    let optionDisabled;
+    rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
     return [
       {
         id: row.name,
@@ -62,19 +68,13 @@ export class SMBListComponent {
         id: row.name,
         icon: 'security',
         name: "edit_acl",
+        disabled: optionDisabled,
+        matTooltip: vol_helptext.acl_edit_msg,
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
-          const datasetId = row.path.replace("/mnt/", "");
-          this.ws
-            .call("pool.dataset.query", [[["id", "=", datasetId]]])
-            .pipe(map(datasets => datasets[0]))
-            .subscribe(
-              dataset =>
-                this.router.navigate(
-                  ["/"].concat(["storage", "pools", "id", dataset.pool, "dataset", "acl", datasetId])
-                ),
-              error => new EntityUtils().handleWSError(this, error, this.dialogService)
-            );
+          const datasetId = rowName;
+          this.router.navigate(
+            ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
         }
       },
       {

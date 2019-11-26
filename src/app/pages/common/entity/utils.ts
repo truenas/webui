@@ -34,7 +34,7 @@ export class EntityUtils {
           const element = document.getElementById(i);
           if (element) {
             if (entity.conf && entity.conf.advanced_field && 
-              _.indexOf(entity.conf.advanced_field, i) > 0 &&
+              _.indexOf(entity.conf.advanced_field, i) > -1 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
               }
@@ -70,6 +70,9 @@ export class EntityUtils {
 
     if (res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
+      if (res.extra.excerpt) {
+        this.errorReport(res, dialog);
+      }
       for (let i = 0; i < res.extra.length; i++) {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];
@@ -91,7 +94,7 @@ export class EntityUtils {
           const element = document.getElementById(field);
           if (element) {
             if (entity.conf && entity.conf.advanced_field && 
-              _.indexOf(entity.conf.advanced_field, field) > 0 &&
+              _.indexOf(entity.conf.advanced_field, field) > -1 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
               }
@@ -102,22 +105,34 @@ export class EntityUtils {
           }
           fc['hasErrors'] = true;
           fc['errors'] = error;
+          if (entity.formGroup && entity.formGroup.controls[field]) {
+            entity.formGroup.controls[field].setErrors({'invalidValue': true});
+          }
           if (entity.wizardConfig && entity.entityWizard) {
             entity.entityWizard.stepper.selectedIndex = stepIndex;
+            entity.entityWizard.formGroup.controls.formArray.controls[stepIndex].controls[field].setErrors({'invalidValue': true});
           }
         } else {
-          entity.error = error;
+          if (entity.error) {
+            entity.error = error;
+          } else {
+            this.errorReport(res, dialog);
+          }
         }
       }
     } else {
-      if (res.trace && res.trace.formatted && dialog) {
-        dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
-      } else if (res.state && res.error && res.exception && dialog) {
-        dialog.errorReport(res.state, res.error, res.exception);
-      } else {
-        // if it can't print the error at least put it on the console.
-        console.log(res);
-      }
+      this.errorReport(res, dialog);
+    }
+  }
+
+  errorReport(res, dialog) {
+    if (res.trace && res.trace.formatted && dialog) {
+      dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
+    } else if (res.state && res.error && res.exception && dialog) {
+      dialog.errorReport(res.state, res.error, res.exception);
+    } else {
+      // if it can't print the error at least put it on the console.
+      console.log(res);
     }
   }
 

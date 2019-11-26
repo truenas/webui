@@ -11,7 +11,7 @@ import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
@@ -83,7 +83,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     private dialogService: DialogService,
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar,
     public translate: TranslateService,
     protected loader: AppLoaderService, ) {
       super();
@@ -102,14 +101,21 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
-        this.isUpdateRunning();
       });
       this.sysName = 'TrueNAS';
     } else {
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
-      this.isUpdateRunning();
     }
+    this.ws.subscribe('core.get_jobs').subscribe((res) => {
+      if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
+        this.updateIsRunning = true;
+        if (!this.updateNotificationSent) {
+          this.updateInProgress();
+          this.updateNotificationSent = true;
+        }      
+      }
+    })
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
@@ -134,6 +140,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
+    this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
+      if (evt && evt.data.commit) {
+        this.pendingNetworkChanges = false;
+        this.checkNetworkCheckinWaiting();
+      } else {
+        this.checkNetworkChangesPending();
+      }
+    });
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
       this.showReplicationStatus();
       if (this.is_ha) {
@@ -141,8 +155,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
       this.checkNetworkCheckinWaiting();
       this.checkNetworkChangesPending();
-      this.getDirServicesStatus();
-      this.isUpdateRunning();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -255,9 +267,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.ws.call('truenas.get_eula').subscribe(eula => {
           this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true, T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
             if (accept_eula) {
-              this.ws.call('truenas.accept_eula').subscribe(accepted => {
-                this.snackBar.open(T("End User License Agreement Accepted"),T("OK"));
-              });
+              this.ws.call('truenas.accept_eula')
+                .subscribe(),
+                err => { console.error(err)};
             }
           });
         });
@@ -288,12 +300,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showNetworkCheckinWaiting() {
     this.dialogService.confirm(
       network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.pending_checkin_text,
+      network_interfaces_helptext.pending_checkin_dialog_text,
       true, network_interfaces_helptext.checkin_button).subscribe(res => {
         if (res) {
           this.user_check_in_prompted = false;
           this.loader.open();
           this.ws.call('interface.checkin').subscribe((success) => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
             this.loader.close();
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
@@ -338,15 +351,12 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showReplicationDetails(){
-    this.translate.get('Ok').subscribe((ok: string) => {
-      this.snackBar.open(this.replicationDetails.repl_status.toString(), ok);
-    });
+    this.dialogService.Info(T('Replication Status',), this.replicationDetails.repl_status.toString());
   }
 
   showResilveringDetails() {
-    this.translate.get('Ok').subscribe((ok: string) => {
-      this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, ok);
-    });
+    this.dialogService.Info(T('Resilvering Status'), 
+      `Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`);
   }
 
   onGoToLegacy() {
@@ -475,49 +485,40 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       });
   }
 
-  getDirServicesStatus() {
-    let counter = 0;
-    this.ws.call('activedirectory.get_state').subscribe((res) => {
-      this.dirServicesStatus.push({name: 'Active Directory', state: res});
-
-      this.ws.call('ldap.get_state').subscribe((res) => {
-        this.dirServicesStatus.push({name: 'LDAP', state: res});
-
-        this.ws.call('nis.get_state').subscribe((res) => {
-          this.dirServicesStatus.push({name: 'NIS', state: res});
-          this.dirServicesStatus.forEach((item) => {
-            if (item.state !== 'DISABLED') {
-              counter ++;
-            }
-          });
-          counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
-        });
-      });
-    });
+  getDirServicesStatus() { 
+    this.ws.call('directoryservices.get_state').subscribe((res) => {
+      for (let i in res) {
+        this.dirServicesStatus.push(res[i])
+      }
+      this.showDSIcon();
+    })
+    this.ws.subscribe('directoryservices.status').subscribe((res) => {
+      this.dirServicesStatus = [];
+      for (let i in res.fields) {
+        this.dirServicesStatus.push(res.fields[i])
+      }
+      this.showDSIcon()
+    })
   };
 
-  isUpdateRunning() {
-    let method;
-    this.is_ha ? method = 'failover.upgrade' : method = 'update.update';
-    this.ws.call('core.get_jobs', [[["method", "=", method], ["state", "=", "RUNNING"]]]).subscribe(
-      (res) => {
-        if (res && res.length > 0) {
-          this.sysGenService.updateRunning.emit('true');
-          this.updateIsRunning = true;
-          if (!this.updateNotificationSent) {
-            this.showUpdateDialog();
-            this.updateNotificationSent = true;
-            setTimeout(() => {
-              this.updateNotificationSent = false;
-            }, 600000);
-          }      
-        } else {
-          this.sysGenService.updateRunning.emit('false');
-        }
-      },
-      (err) => {
-        console.error(err);
-      });
+  showDSIcon() {
+    this.showDirServicesIcon = false;
+    this.dirServicesStatus.forEach((item) => {
+      if (item !== 'DISABLED') { 
+        this.showDirServicesIcon = true; 
+      };
+    });
+  }
+
+  updateInProgress() {
+    this.sysGenService.updateRunning.emit('true');
+    if (!this.updateNotificationSent) {
+      this.showUpdateDialog();
+      this.updateNotificationSent = true;
+      setTimeout(() => {
+        this.updateNotificationSent = false;
+      }, 600000);
+    }      
   };
 
   showUpdateDialog() {

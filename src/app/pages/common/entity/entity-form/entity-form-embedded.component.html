@@ -10,8 +10,8 @@
     <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm" class="form-wrap">
       <div *ngIf="fieldSets && fieldSets.length > 0" class="fieldset-container fieldset-display-{{ fieldSetDisplay }}">
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
-          <div [ngClass]="fieldSet.class" class="fieldset"
-                                          fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
+          <div [ngClass]="{'hidden': hiddenFieldSets.indexOf(fieldSet.name) !== -1}" class="fieldset {{fieldSet.class}}" 
+            fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
             <h4 *ngIf="fieldSet.label" class="fieldset-label">{{fieldSet.name}}</h4>
             <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)"
               [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">
@@ -21,15 +21,14 @@
           </div>
         </ng-container>
       </div>
-      <!-- <div class="btn-group btn-group-justified"> -->
       <mat-card-actions style.text-align="{{actionButtonsAlign}}">
-        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-button class="mat-primary" color="primary" [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
+        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-button class="mat-primary" color="primary" [disabled]="entityForm.dirty === false || !entityForm.form.valid">{{saveSubmitText | translate}}</button>
+        <form-status *ngIf="conf.multiStateSubmit" [statusIcon]="saveSubmitStatus"></form-status>
         <button *ngIf="conf.goBack" id="goback_button" class="btn btn-block btn-lg btn-primary mat-accent" type="button" (click)="goBack()" mat-button color="accent">Cancel</button>
         <span *ngFor="let custBtn of conf.custActions">
           <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="submit" (click)="onSubmit($event,custBtn.eventName)">{{custBtn.name | translate}}</button>
         </span>
         <button id="delete_button" mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
-        <!-- </div> -->
       </mat-card-actions>
     </form>
   </div>

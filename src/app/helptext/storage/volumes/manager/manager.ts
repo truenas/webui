@@ -34,4 +34,9 @@ manager_encryption_message : T("Always back up the key! Losing the key\
  will also lose all data on the disks with\
  no chance of recovery."),
 
+manager_duplicate_title: T("Repeat Data VDev"),
+manager_duplicate_vdevs_tooltip: T("Create more data vdevs like the first."),
+manager_duplicate_vdevs_placeholder: T("Additional Data VDevs to Create"),
+manager_duplicate_button: T("Repeat Vdev")
+
 }

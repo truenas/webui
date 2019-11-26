@@ -58,6 +58,7 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
+
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
 
@@ -112,8 +113,8 @@ export class PreferencesService {
         let newTheme:Theme;
         newTheme = evt.data;
         this.preferences.customThemes.push(newTheme);
+        this.preferences.userTheme = evt.data.name;
         this.core.emit({name:"UserDataUpdate", data:this.preferences  });
-        //console.log(this.preferences);
     });
 
     this.core.register({observerClass:this, eventName:"ReplaceCustomThemePreference"}).subscribe((evt:CoreEvent) => {
@@ -126,8 +127,7 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
-      //console.log("ChangePreferences");
-      //console.log(evt.data);
+      
       let prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
@@ -140,7 +140,6 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-      //console.log("UPDATING LOCAL PREFERENCES");
       this.preferences = data;
 
       //Notify Guided Tour & Theme Service

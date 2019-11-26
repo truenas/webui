@@ -6,11 +6,14 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { Subject } from 'rxjs';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
+import Chart from 'chart.js';
+
+// Deprecated
 import * as d3 from 'd3';
-import * as c3 from 'c3';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -28,6 +31,15 @@ interface DataPoint {
   coreNumber: number;
 }
 
+// For Chart.js
+interface DataSet {
+  label: string[];
+  data: number[];
+  backgroundColor: string[];
+  borderColor: string[];
+  borderWidth: number;
+}
+
 @Component({
   selector: 'widget-memory',
   templateUrl:'./widgetmemory.component.html',
@@ -39,7 +51,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   @ViewChild('memorygauge', {static: true}) cpuLoad: ViewChartGaugeComponent;
   @ViewChild('cores',{static: true}) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
-  public chart: any;// c3 chart with per core data
+  public chart: any;// chart instance
+  public ctx: any; // canvas context for chart.js
   private _memData: any;
   get memData() { return this._memData}
   set memData(value){
@@ -62,13 +75,20 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   public memTotal: number;
   public legendData: any;
   public colorPattern:string[];
+  public currentTheme;
 
   public legendColors: string[];
   private legendIndex: number;
+  public labels:string[] = ['Free', 'ZFS Cache', 'Services'];
+  
+  public screenType:string = 'Desktop';
 
-
-  constructor(public router: Router, public translate: TranslateService, private sanitizer:DomSanitizer, private el: ElementRef){
+  constructor(public router: Router, public translate: TranslateService, private sanitizer:DomSanitizer, public mediaObserver: MediaObserver, private el: ElementRef){
     super(translate);
+    mediaObserver.media$.subscribe((evt) =>{
+      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      this.screenType = st;
+    });
   }
 
   ngOnDestroy(){
@@ -76,7 +96,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   ngAfterViewInit(){
-
+ 
     this.data.subscribe((evt:CoreEvent) => {
       if(evt.name == "MemoryStats"){
         if(evt.data.used){
@@ -85,6 +105,9 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       }
     });
 
+    if(this.chart){
+      this.renderChart();
+    }
   }
 
   bytesToGigabytes(value){
@@ -106,7 +129,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       [ "Services", this.bytesToGigabytes(services).toFixed(1)]
     ];
 
-    return  columns
+    return columns;
   }
 
   aggregate(data){
@@ -122,98 +145,113 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     config.max = this.bytesToGigabytes(data.total).toFixed(1);
     config.data = this.parseMemData(data);
     this.memData = config;
-    if(!this.chart){
-      this.memChartInit();
-    } else {
-      this.memChartUpdate();
-    }
-  }
-
-  setUsageData( data){
-    const keys = Object.keys(data);
-    let clone = Object.assign({}, data);
-
-    keys.forEach((item, index) => {
-      let converted = this.bytesToGigabytes(data[item]);
-      //clone[item] = parseInt(converted.toFixed(1));
-      clone[item] = converted.toFixed(1);
-    });
-
-    let config: any = {};
-    config.title = "Used";
-    config.units = "GiB";
-    config.diameter = 136;
-    config.fontSize = 24;
-    config.max = 100;
-    config.data = ["Used",clone.used];
-    this.usage = config;
-    console.log(clone);
-    console.log(this.usage);
-  }
-
-
-  setPreferences(form:NgForm){
-    let filtered: string[] = [];
-    for(let i in form.value){
-      if(form.value[i]){
-        filtered.push(i);
-      }
-    }
+    this.memChartInit();
+    
   }
 
   memChartInit(){
 
-    let currentTheme = this.themeService.currentTheme();
-    this.colorPattern = ["var(--green)", "var(--primary)", "var(--accent)"];
+    this.currentTheme = this.themeService.currentTheme();
+    this.colorPattern = this.processThemeColors(this.currentTheme);
     let startW = this.el.nativeElement.querySelector('#memory-usage-chart');
 
-    let conf = {
-      bindto: '#memory-usage-chart',
-      size: {
-        width: 350, //400,
-        height:64
-      },
-      tooltip:{
-        show: false,
-      },
-      legend:{
-        show:false
-      },
-      color:{
-        pattern: this.colorPattern
-      },
-      data: {
-        colors: {
-          Usage: 'var(--primary)',
-          Temperature: 'var(--accent)',
-        },
-        columns: this.memData.data,
-        type: 'bar',
-        groups: [
-          ["Free", "ZFS Cache", "Services"]
-        ]
-      },
-      axis: {
-        rotated:true,
-        x:{ show: false },
-        y:{ show: false }
-      },
-    }
-
     this.isReady = true;
-
-    this.chart = c3.generate(conf);
+    this.renderChart();
       
   }
 
-  memChartUpdate(){
-    this.chart.load({
-        columns: this.memData.data,
-    });
+  trustedSecurity(style) {
+     return this.sanitizer.bypassSecurityTrustStyle(style);
   }
 
-   trustedSecurity(style) {
-      return this.sanitizer.bypassSecurityTrustStyle(style);
-   }
+  // chart.js renderer
+  renderChart(){
+    if(!this.ctx){
+      const el = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
+      if(!el){ return; }
+
+      const ds = this.makeDatasets(this.memData.data);
+      this.ctx = el.getContext('2d');
+
+      let data = {
+        labels: this.labels,
+        datasets: ds ,
+      }
+
+      let options = {
+        //cutoutPercentage:85,
+        tooltips:{
+          enabled: false,
+        },
+        responsive:true,
+        maintainAspectRatio: false,
+        legend: {
+          display: false
+        },
+        responsiveAnimationDuration: 0,
+        animation: {
+          duration: 1000,
+          animateRotate: true,
+          animateScale: true
+        },
+        hover: {
+          animationDuration: 0 
+        },
+      }
+      
+      this.chart = new Chart(this.ctx, {
+        type: 'doughnut',
+        data:data,
+        options: options
+      });
+
+    } else {
+
+      const ds = this.makeDatasets(this.memData.data);
+ 
+      this.chart.data.datasets[0].data = ds[0].data
+      this.chart.update();
+    }
+  }
+
+  protected makeDatasets(data:any): DataSet[]{
+
+    let datasets = [];
+
+    let ds:DataSet = {
+      label: this.labels, 
+      data: data.map(x => { return x[1]}),
+      backgroundColor: [], 
+      borderColor: [], 
+      borderWidth: 1,
+    }
+
+
+    // Create the data...
+    data.forEach((item, index) => {
+      const bgRGB = this.themeService.hexToRGB(this.colorPattern[index]).rgb;
+      const borderRGB = this.themeService.hexToRGB(this.currentTheme.bg2).rgb;
+
+      ds.backgroundColor.push(this.rgbToString(bgRGB, 0.85));
+      ds.borderColor.push(this.rgbToString(bgRGB));
+    });
+
+    datasets.push(ds);
+
+    return datasets
+  }
+
+  private processThemeColors(theme):string[]{
+    let colors: string[] = [];
+    theme.accentColors.map((color) => {
+      colors.push(theme[color]);
+    }); 
+    return colors;
+  }
+
+  rgbToString(rgb:string[], alpha?:number){
+    const a = alpha ? alpha.toString() : '1';
+    return 'rgba(' + rgb.join(',') + ',' + a + ')';
+  }
 
 }

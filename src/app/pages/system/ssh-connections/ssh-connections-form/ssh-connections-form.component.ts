@@ -8,6 +8,7 @@ import { KeychainCredentialService, WebSocketService, DialogService, Replication
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
+import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 
 @Component({
     selector: 'app-ssh-connections-form',
@@ -18,11 +19,16 @@ export class SshConnectionsFormComponent {
 
     protected queryCall = 'keychaincredential.query';
     protected queryCallOption = [["id", "="]];
-    protected addCall = 'keychaincredential.create';
-    protected semiautomaticAddCall = 'keychaincredential.remote_ssh_semiautomatic_setup';
+    protected sshCalls = {
+        manual: 'keychaincredential.create',
+        semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
+    }
+    protected addCall = this.sshCalls['manual'];
     protected editCall = 'keychaincredential.update';
     protected route_success: string[] = ['system', 'sshconnections'];
     protected isEntity = true;
+    protected namesInUseConnection = [];
+    protected namesInUse = [];
 
     protected fieldConfig: FieldConfig[] = [
         {
@@ -31,7 +37,7 @@ export class SshConnectionsFormComponent {
             placeholder: helptext.name_placeholder,
             tooltip: helptext.name_tooltip,
             required: true,
-            validation: [Validators.required]
+            validation: [Validators.required, forbiddenValues(this.namesInUseConnection)]
         }, {
             type: 'select',
             name: 'setup_method',
@@ -46,7 +52,7 @@ export class SshConnectionsFormComponent {
                     value: 'semiautomatic',
                 }
             ],
-            value: 'manual',
+            value: 'semiautomatic',
             isHidden: false,
         }, {
             type: 'input',
@@ -208,9 +214,18 @@ export class SshConnectionsFormComponent {
         private loader: AppLoaderService,
         private dialogService: DialogService,
         private replicationService: ReplicationService) {
+        this.keychainCredentialService.getSSHConnections().subscribe(
+            (res) => {
+                const sshConnections = res.map(sshConnection => sshConnection.name);
+                this.namesInUse.push(...sshConnections);
+                this.namesInUseConnection.push(...sshConnections);
+            }
+        )
         const privateKeyField = _.find(this.fieldConfig, { name: 'private_key' });
         this.keychainCredentialService.getSSHKeys().subscribe(
             (res) => {
+                this.namesInUse.push(...res.filter(sshKey => sshKey.name.endsWith(' Key')).map(sshKey =>
+                    sshKey.name.substring(0, sshKey.name.length - 4)));
                 for (const i in res) {
                     privateKeyField.options.push({ label: res[i].name, value: res[i].id });
                 }
@@ -242,10 +257,26 @@ export class SshConnectionsFormComponent {
     afterInit(entityForm) {
         this.entityForm = entityForm;
         if (this.entityForm.isNew) {
+            this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value];
             this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res) => {
-                this.addCall = res === 'semiautomatic' ? this.semiautomaticAddCall : this.addCall;
+                this.addCall = this.sshCalls[res];
             });
+        } else {
+            this.entityForm.formGroup.controls['setup_method'].setValue('manual');
         }
+
+        const nameCtrl = this.entityForm.formGroup.controls['name'];
+        let preValue =  this.entityForm.formGroup.controls['private_key'].value;
+        this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res) => {
+            if (res === 'NEW') {
+                nameCtrl.setValidators([Validators.required, forbiddenValues(this.namesInUse)]);
+                nameCtrl.updateValueAndValidity();
+            } else if (preValue === 'NEW') {
+                nameCtrl.setValidators([Validators.required, forbiddenValues(this.namesInUseConnection)]);
+                nameCtrl.updateValueAndValidity();
+            }
+            preValue = res;
+        });
     }
 
     resourceTransformIncomingRestData(wsResponse) {

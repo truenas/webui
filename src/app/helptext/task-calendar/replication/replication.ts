@@ -1,15 +1,15 @@
 import { T } from '../../../translate-marker';
+import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
     name_placeholder: T('Name'),
     name_tooltip: T('Descriptive name for the replication.'),
 
     direction_placeholder: T('Direction'),
-    direction_tooltip: T('Direction of travel. <i>Push</i> sends \
- snapshots from the local system to a remote system, or to another \
- dataset on the local system. <i>Pull</i> takes snapshots from a remote \
- system and stores them on the local system. <i>Pull</i> requires a \
- snapshot <i>Naming Schema</i> to identify which snapshots to replicate.'),
+    direction_tooltip: T('<i>PUSH</i> sends snapshots to a destination \
+ system.<br><br> \
+ <i>PULL</i> connects to a remote system and retrieves snapshots \
+ matching a <b>Naming Schema</b>.'),
 
     transport_placeholder: T('Transport'),
     transport_tooltip: T('Method of snapshot transfer:<ul> \
@@ -195,15 +195,14 @@ export default {
     lifetime_unit_tooltip: T(''),
 
     compression_placeholder: T('Stream Compression'),
-    compression_tooltip: T('Select a compression algorithm to use on the \
- data being replicated.'),
+    compression_tooltip: T('Select a compression algorithm to reduce the\
+ size of the data being replicated. Only appears when <i>SSH</i> is \
+ chosen for <i>Transport</i> type.'),
 
-    speed_limit_placeholder: T('Limit (Ex. 500 KiB/s, 500M, 2 TB)'),
+    speed_limit_placeholder: T(`Limit ${globalHelptext.human_readable.suggestion_label}`),
     speed_limit_tooltip: T('Limit replication speed to this number of \
  bytes per second.'),
-    speed_limit_errors: T('Invalid value. Valid values are numbers \
- followed by optional unit letters, like <samp>256k</samp> or \
- <samp>1G</samp>.'),
+    speed_limit_errors: globalHelptext.human_readable.input_error,
 
     dedup_placeholder: T('Send Deduplicated Stream'),
     dedup_tooltip: T('Deduplicate the stream to avoid sending redundant \

@@ -37,6 +37,7 @@ import { FormParagraphComponent } from './entity-form/components/form-paragraph/
 import { FormSchedulerComponent } from './entity-form/components/form-scheduler/form-scheduler.component';
 import { FormIpWithNetmaskComponent } from './entity-form/components/form-ipwithnetmask/form-ipwithnetmask.component';
 import { FormListComponent } from './entity-form/components/form-list/form-list.component';
+import { FormErrorsComponent } from './entity-form/components/form-errors/form-errors.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -79,6 +80,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { DataTableCellDirective } from './entity-table/data-table-cell.directive';
+import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 
 @NgModule({
   imports: [
@@ -113,6 +115,7 @@ import { DataTableCellDirective } from './entity-table/data-table-cell.directive
     FormDatepickerComponent,
     FormSchedulerComponent,
     FormListComponent,
+    FormErrorsComponent,
     FormColorpickerComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
@@ -139,7 +142,8 @@ import { DataTableCellDirective } from './entity-table/data-table-cell.directive
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
-    DataTableCellDirective
+    DataTableCellDirective,
+    FormStatusComponent
   ],
   exports: [
     EntityTemplateDirective,
@@ -180,6 +184,7 @@ import { DataTableCellDirective } from './entity-table/data-table-cell.directive
     FormDatepickerComponent,
     FormSchedulerComponent,
     FormListComponent,
+    FormErrorsComponent,
     FormColorpickerComponent,
     FormPermissionsComponent,
     FormArrayComponent,

@@ -2,7 +2,7 @@ import {Validators} from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 export default {
-zvol_name_placeholder: T('zvol name:'),
+zvol_name_placeholder: T('Zvol name'),
 zvol_name_tooltip: T('Keep the zvol name short. Using a zvol name longer\
  than 63 characters can prevent accessing the zvol as a device.'),
 
@@ -50,4 +50,7 @@ zvol_volblocksize_placeholder: T('Block size'),
 zvol_volblocksize_tooltip: T('The zvol default block size is automatically chosen\
  based on the number of the disks in the pool for a\
  general use case.'),
+
+zvol_volsize_zero_error: T('Volume size cannot be zero.'),
+zvol_volsize_shrink_error: T('Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.')
 }

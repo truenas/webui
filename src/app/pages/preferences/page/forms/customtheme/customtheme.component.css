@@ -1,17 +1,77 @@
-#theme-preview{
-    background-color: var(--bg1);
-    padding:32px;
-    z-index: 0;
+.background{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  z-index:-10;
 }
-#theme-preview.fullscreen{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10000;
+
+#page-content{ 
+  padding:32px;
+  z-index: 0;
+  position:absolute;
+  width:100%;
+  height:calc(100vh - 83px);
+  top:88px;
+  overflow:auto;
 }
 
 :host ::ng-deep #theme-preview div.mat-tab-body-content{
   padding:16px 16px 64px;
+}
+
+.mat-card#custom-theme-form{
+  width:400px;
+}
+
+.preview-controls{
+  min-height: 60vh;
+}
+
+.tabs{
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+#custom-theme-form .mat-divider{
+  position: absolute;
+  top: 74px;
+  background-color: var(--fg2);
+  opacity: 0.1;
+  z-index: 2;
+}
+
+.tab{
+  text-align:center;
+  user-select: none;
+}
+
+.tab .mat-button-wrapper{
+  font-weight: 500;
+  padding:8px 16px;
+  cursor:pointer;
+}
+
+.tab .mat-button-wrapper.active{
+  font-weight: 500;
+  border-bottom: var(--primary) 2px solid;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.theme-preview.hidden{
+  position:absolute;
+  z-index:-20;
+}
+
+.embedded-form, .preview-controls{
+  width:100%;
+}
+
+#theme-preview .mat-card{
+  height:75vh;
+  overflow:auto;
 }

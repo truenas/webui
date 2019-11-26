@@ -22,11 +22,11 @@ export class DialogService {
     }
 
     public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, 
-        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string): any {
+        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string, disableClose: boolean = false): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
-        dialogRef = this.dialog.open(ConfirmDialog);
+        dialogRef = this.dialog.open(ConfirmDialog, {disableClose: disableClose});
 
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
@@ -61,8 +61,8 @@ export class DialogService {
                 if(data[1] && data[1].hasOwnProperty('delete_users')){
                     data[1].delete_users = !data[1].delete_users;
                 }
-                if(data[1] && data[1].hasOwnProperty('delete_groups')){
-                    data[1].delete_groups = !data[1].delete_groups;
+                if(data[1] && data[1].hasOwnProperty('delete_group')){
+                    data[1].delete_group = !data[1].delete_group;
                 }
                 if(data[0] && data[0].hasOwnProperty('reboot')){
                     data[0].reboot = !data[0].reboot;
@@ -78,7 +78,7 @@ export class DialogService {
         return dialogRef.afterClosed();
     }
 
-    public errorReport(title: string, message: string, backtrace: string = ''): Observable<boolean> {
+    public errorReport(title: string, message: string, backtrace: string = '', logs?: any): Observable<boolean> {
 
         let dialogRef: MatDialogRef<ErrorDialog>;
 
@@ -87,6 +87,9 @@ export class DialogService {
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
         dialogRef.componentInstance.backtrace = backtrace;
+        if (logs) {
+            dialogRef.componentInstance.logs = logs;
+        }
 
         return dialogRef.afterClosed();
     }
@@ -135,10 +138,10 @@ export class DialogService {
 
     }
 
-    public dialogForm(conf: any): Observable<boolean> {
+    public dialogForm(conf: any, disableClose: boolean = false): Observable<boolean> {
         let dialogRef: MatDialogRef<EntityDialogComponent>;
 
-        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '420px'});
+        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '420px', disableClose: disableClose});
         dialogRef.componentInstance.conf = conf;
 
         return dialogRef.afterClosed();
@@ -147,7 +150,7 @@ export class DialogService {
     public dialogFormWide(conf: any): Observable<boolean> {
         let dialogRef: MatDialogRef<EntityDialogComponent>;
 
-        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '490px', minWidth: '490px'});
+        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '490px', minWidth: '490px', disableClose: true});
         dialogRef.componentInstance.conf = conf;
 
         return dialogRef.afterClosed();
@@ -157,16 +160,18 @@ export class DialogService {
         const conf = {
             title: title,
             message: message,
+            name: name,
+            confirmInstructions: true,
             fieldConfig: [
               {
                 type: 'input',
                 name: 'name',
-                required: true,
+                required: true
               },
               {
                   type: 'checkbox',
                   name: 'confirm',
-                  placeholder: 'Confirm',
+                  placeholder: T('Confirm'),
                   isHidden: !confirmBox,
               }
             ],

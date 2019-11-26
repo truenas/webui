@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../../services/';
+import { RestService, WebSocketService, StorageService } from '../../../../../services/';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
@@ -14,6 +14,7 @@ import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { EntityUtils } from '../../../../common/entity/utils';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import globalHelptext from '../../../../../helptext/global-helptext';
 
 interface ZvolFormData {
   name: string;
@@ -57,8 +58,7 @@ export class ZvolFormComponent {
   public namesInUse = [];
 
   protected origVolSize;
-  protected origVolSizeUnit;
-  protected origVolSizeDec;
+  protected origHuman;
 
   public custActions: Array<any> = [
     {
@@ -113,35 +113,43 @@ export class ZvolFormComponent {
     {
       type: 'input',
       name: 'volsize',
-      inputType: 'number',
       placeholder: helptext.zvol_volsize_placeholder,
       tooltip : helptext.zvol_volsize_tooltip,
-      validation: [Validators.required, Validators.min(0)],
       required: true,
-      class: 'inline',
-      width: '70%',
-      value: 0,
-      min: 0,
-    },
-    {
-      type: 'select',
-      name: 'volsize_unit',
-      options: [ {
-        label: 'KiB',
-        value: 'K',
-      }, {
-        label: 'MiB',
-        value: 'M',
-      }, {
-        label: 'GiB',
-        value: 'G',
-      },{
-        label: 'TiB',
-        value: 'T',
-      }],
-      value: 'G',
-      class: 'inline',
-      width: '30%',
+      value: "0 GiB",
+      blurEvent:this.blurVolsize,
+      blurStatus: true,
+      parent: this,
+      validation: [
+        (control: FormControl): ValidationErrors => {
+          const config = this.fieldConfig.find(c => c.name === 'volsize');
+
+          const size = this.storageService.convertHumanStringToNum(control.value, true);
+          const humanSize = control.value;
+          
+          let errors = control.value && isNaN(size)
+            ? { invalid_byte_string: true }
+            : null
+
+          if (errors) {
+            config.hasErrors = true;
+            config.errors = globalHelptext.human_readable.input_error;
+          } else if (size === 0) {
+            config.hasErrors = true;
+            config.errors = helptext.zvol_volsize_zero_error;
+            errors = { invalid_byte_string: true };
+          } else if (this.origHuman && humanSize < this.origHuman){
+            config.hasErrors = true;
+            config.errors = helptext.zvol_volsize_shrink_error;
+            errors = { invalid_byte_string: true };
+          } else {
+            config.hasErrors = false;
+            config.errors = '';
+          }
+
+          return errors;
+        }
+      ],
     },
     {
       type: 'checkbox',
@@ -240,19 +248,19 @@ export class ZvolFormComponent {
     if( this.isBasicMode === true ) {
 
     }
-    if (this.origVolSizeDec !== data.volsize || this.origVolSizeUnit !== data.volsize_unit) {
-      data.volsize = data.volsize * this.byteMap[data.volsize_unit];
+    if (this.origHuman !== data.volsize) {
+      data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
     } else { 
       data.volsize = this.origVolSize;
     }
-    delete data.volsize_unit;
     return data;
   }
 
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
-              protected loader: AppLoaderService, protected dialogService: DialogService
+              protected loader: AppLoaderService, protected dialogService: DialogService,
+              protected storageService: StorageService
               ) {}
 
 
@@ -316,16 +324,14 @@ export class ZvolFormComponent {
           let compression_collection = [{label:pk_dataset[0].compression.value, value: pk_dataset[0].compression.value}];
           let deduplication_collection = [{label:pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value}];
 
-          let volumesize = pk_dataset[0].volsize.parsed;
-          const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[1];
+          const volumesize = pk_dataset[0].volsize.parsed;
 
           // keep track of original volume size data so we can check to see if the user intended to change since
           // decimal has to be truncated to three decimal places
           this.origVolSize = volumesize;
-          volumesize = volumesize/this.byteMap[volumeunit];
-          volumesize = volumesize.toFixed(3)
-          this.origVolSizeDec = volumesize;
-          this.origVolSizeUnit = volumeunit;
+
+          const humansize = this.storageService.convertBytestoHumanReadable(volumesize);
+          this.origHuman = humansize;
 
           entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
           if(pk_dataset[0].comments){
@@ -335,10 +341,7 @@ export class ZvolFormComponent {
             entityForm.formGroup.controls['comments'].setValue('');
           }
 
-          entityForm.formGroup.controls['volsize'].setValue(volumesize);
-
-          entityForm.formGroup.controls['volsize_unit'].setValue(volumeunit);
-
+          entityForm.formGroup.controls['volsize'].setValue(humansize);
 
           if (pk_dataset[0].sync.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT" ){
             sync_collection = [{label:`Inherit (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value}];
@@ -419,6 +422,12 @@ export class ZvolFormComponent {
         field['errors'] = T(`The name <em>${value}</em> is already in use.`)
       }
     })
+  }
+
+  blurVolsize(parent){
+    if (parent.entityForm) {
+        parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
+    }
   }
 
   addSubmit(body: any) {

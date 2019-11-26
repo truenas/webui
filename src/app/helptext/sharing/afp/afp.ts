@@ -2,6 +2,10 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_sharing_afp = {
+  column_name: T('Name'),
+  column_path: T('Path'),
+  column_comment: T('Description'),
+
   placeholder_path: T("Path"),
   tooltip_path: T(
     "Browse to the pool or dataset to share. Netatalk\
@@ -16,8 +20,8 @@ export const helptext_sharing_afp = {
  <b>connect to server</b> dialog of the computer."
   ),
 
-  placeholder_comment: T("Comment"),
-  tooltip_comment: T("Optional comment."),
+  placeholder_comment: T("Description"),
+  tooltip_comment: T("Optional description."),
 
   placeholder_allow: T("Allow list"),
   tooltip_allow: T(
@@ -132,12 +136,6 @@ export const helptext_sharing_afp = {
   ),
 
   actions_basic_mode: T("Basic Mode"),
-  actions_advanced_mode: T("Advanced Mode"),
+  actions_advanced_mode: T("Advanced Mode")
 
-  dialog_title: T("Enable service"),
-  dialog_message: T("Enable this service?"),
-  dialog_button: T("Enable Service"),
-
-  snackbar_message: T("Service started"),
-  snackbar_close: T("close")
 };

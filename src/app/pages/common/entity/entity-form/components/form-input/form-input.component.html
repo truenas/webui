@@ -10,6 +10,10 @@
 			id="{{config.name}}_form-input-spinner"
 			*ngIf="config.isLoading">
 		</mat-spinner>
+		<div *ngIf="config.isDoubleConfirm">
+			<p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
+			<p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
+		</div> 
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder | translate"
 			[attr.value]="config.value"
@@ -30,6 +34,9 @@
         <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
 	</button>
 	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
-	<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-	<mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
+	<div class="margin-for-error">
+		<form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+		<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+		<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+	</div>
 </div>
