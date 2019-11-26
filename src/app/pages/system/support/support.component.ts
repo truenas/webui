@@ -71,20 +71,21 @@ export class SupportComponent implements OnInit {
       this.customer_name = res.license.customer_name;
       res.license.features.length === 0 ? this.features = 'NONE' : this.features = res.license.features.join(', ');
       this.contract_type = res.license.contract_type;
-      this.expiration_date =res.license.contract_end.$value;
+      let expDateConverted = new Date(res.license.contract_end.$value);
+      this.expiration_date = res.license.contract_end.$value;
       res.license.system_serial_ha ?
           this.sys_serial = res.license.system_serial + ' / ' + res.license.system_serial_ha :
           this.sys_serial = res.license.system_serial;
       res.license.addhw.length === 0 ? this.add_hardware = 'NONE' : this.add_hardware = res.license.addhw.join(', ');
-      const now = new Date();
-      const then = new Date(res.license.contract_end.$value);
+      const now = new Date(res.datetime.$date);
+      const then = expDateConverted;
       this.daysLeftinContract = this.daysTillExpiration(now, then);
     };
   }
 
   daysTillExpiration(now, then) {
     const oneDay = 24*60*60*1000; // milliseconds in a day
-    return Math.round(Math.abs((now.getTime() - then.getTime())/(oneDay)));
+    return Math.round((then.getTime() - now.getTime())/(oneDay))
   }
 
   getTrueNASImage(sys_product) {
