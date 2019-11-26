@@ -123,7 +123,7 @@ export default {
 
     SNMPTrap_v3_username_placeholder: T('Username'),
     SNMPTrap_v3_username_tooltip: T('Username of the SNMP \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#user-based" \
+ <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.UsmUserData" \
  target="_blank">User-based Security Model (USM)</a> user.'),
 
     SNMPTrap_v3_authkey_placeholder: T('Secret Authentication Key'),
@@ -131,7 +131,7 @@ export default {
  When an authentication key is not set, no <i>Authentication Protocol</i> is \
  used. If an authentication key is set and an \
  <i>Authentication Protocol</i> is not specified, \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmHMACMD5AuthProtocol" \
+ <a href="https://en.wikipedia.org/wiki/MD5" \
  target="_blank">MD5</a> is used as the default.<br> \
  Must be at least 8 and at most 32 octets long.'),
 
@@ -140,17 +140,17 @@ export default {
  If an encryption key is not set, no <i>Encryption Protocol</i> is used. \
  If an encryption key is set and an <i>Encryption Protocol</i> is \
  not specified, \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmDESPrivProtocol" \
+ <a href="https://en.wikipedia.org/wiki/Data_Encryption_Standard" \
  target="_blank">DES</a> is used as the default.<br> \
  Must be at least 8 and at most 32 octets long.'),
 
     SNMPTrap_v3_authprotocol_placeholder: T('Authentication Protocol'),
-    SNMPTrap_v3_authprotocol_tooltip: T('<a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
+    SNMPTrap_v3_authprotocol_tooltip: T('<a href="https://en.wikipedia.org/wiki/Authentication_protocol" \
  target="_blank">Authentication protocol</a> used to authenticate \
  messages sent on behalf of the specified <i>Username</i>.'),
 
     SNMPTrap_v3_privprotocol_placeholder: T('Encryption Protocol'),
-    SNMPTrap_v3_privprotocol_tooltip: T('<a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoPrivProtocol" \
+    SNMPTrap_v3_privprotocol_tooltip: T('<a href="https://en.wikipedia.org/wiki/Cryptographic_protocol" \
  target="_blank">Encryption protocol</a> used to encrypt messages \
  sent on behalf of the specified <i>Username</i>.'),
 
