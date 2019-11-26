@@ -21,7 +21,6 @@ export class AvailablePluginsComponent implements OnInit {
 
     public plugins: any;
     public selectedPlugin: any;
-    public isSelectedOffical = true;
     public availableRepo = [];
     public selectedRepo: any;
     public installedPlugins: any = {};
