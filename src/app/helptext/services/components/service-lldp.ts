@@ -1,5 +1,4 @@
 import { T } from '../../../translate-marker';
-import { Validators } from '@angular/forms';
 
 export default {
 lldp_intdesc_placeholder : T('Interface Description'),
