@@ -32,6 +32,7 @@ export class BootStatusListComponent implements OnInit {
   public busy: Subscription;
   protected pk: number;
   public poolScan: any;
+  public oneDisk = false;
   public expandRows: Array < number > = [1];
   public treeTableConfig: EntityTreeTable = {
     tableData: [],
@@ -53,7 +54,9 @@ export class BootStatusListComponent implements OnInit {
     getData() {
       this.ws.call('boot.get_state').subscribe(
         (res) => {
-
+          if (res.groups.data[0].type === 'disk') {
+            this.oneDisk = true;
+          }
           if (res) {
 
             // this.poolScan = res.scan;
@@ -117,15 +120,6 @@ export class BootStatusListComponent implements OnInit {
         path: data.path,
       };
 
-      if (data.name && data.name === 'freenas-boot') {
-        item.actions = [{
-          label: T("Attach"),
-          onClick: (row) => {
-            this._router.navigate(new Array('').concat([ "system", "boot", "attach", row.name ]));
-          },
-          isHidden: false,
-        }];
-      }
       if (data.type && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
         item.actions = [{
           label: T("Detach"),
@@ -141,7 +135,8 @@ export class BootStatusListComponent implements OnInit {
           isHidden: false,
         }];
       }
-      if(data.type && boot_pool_data && boot_pool_data.type === 'disk' && data.path){
+
+      if(data.type && boot_pool_data && boot_pool_data.type === 'disk' && data.path && !this.oneDisk){
         item.actions = [
         {
           label: T("Replace"),
@@ -150,6 +145,18 @@ export class BootStatusListComponent implements OnInit {
           isHidden: false,
         }];
       }
+
+      if(data.type && boot_pool_data && boot_pool_data.type === 'disk' && data.path && this.oneDisk){
+        item.actions = [
+        {
+          label: T("Attach"),
+          onClick: (row) => {
+            this._router.navigate(new Array('').concat([ "system", "boot", "attach", row.name ]));
+          },
+          isHidden: false,
+        }];
+      }
+
       return item;
     }
 
