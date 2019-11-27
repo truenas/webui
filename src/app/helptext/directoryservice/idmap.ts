@@ -1,6 +1,7 @@
 import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { greaterThan } from 'app/pages/common/entity/entity-form/validators/compare-validation'; 
 
 export default {
 idmap_ad_range_low_name : 'range_low',
@@ -229,8 +230,7 @@ idmap_tdb_range_high_tooltip: T('Ending UID/GID number for which this system is\
 
 idmap_error_dialog_title: T('Error'),
 
-// idmap_range_validator: [rangeValidator(1000, 2147483647), Validators.required],
-
-idmap_range_validator: [Validators.min(1000), Validators.max(2147483647), Validators.required],
-
+idmap_range_low_validator: [rangeValidator(1000, 2147483647), Validators.required],
+idmap_range_high_validator: [rangeValidator(1000, 2147483647), 
+    greaterThan('range_low', ['Range Low']), Validators.required]
 }
