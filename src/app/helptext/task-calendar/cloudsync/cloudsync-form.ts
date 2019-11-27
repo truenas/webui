@@ -97,8 +97,8 @@ filename_encryption_placeholder: T('Filename Encryption'),
 filename_encryption_tooltip: T('Encrypt (<i>PUSH</i>) or decrypt \
  (<i>PULL</i>) file names with the rclone \
  <a href="https://rclone.org/crypt/#file-name-encryption-modes" target="_blank">"Standard" file name encryption mode</a>. \
- The original directory structure is preserved. Identical file names \
- remain identical after encryption.<br><br> \
+ The original directory structure is preserved. A filename with the same \
+ name always has the same encrypted filename.<br><br> \
  <i>PULL</i> tasks that have <b>Filename Encryption</b> enabled and an \
  incorrect <b>Encryption Password</b> or <b>Encryption Salt</b> will not \
  transfer any files but still report that the task was successful. To \
@@ -108,14 +108,14 @@ filename_encryption_tooltip: T('Encrypt (<i>PUSH</i>) or decrypt \
 encryption_password_placeholder: T('Encryption Password'),
 encryption_password_tooltip: T('Password to encrypt and decrypt remote \
  data. <b>Warning:</b> Always securely back up this password! Losing the \
- encryption password can result in data loss.'),
+ encryption password will result in data loss.'),
 
 encryption_salt_placeholder: T('Encryption Salt'),
 encryption_salt_tooltip: T('Enter a long string of random characters for \
  use as <a href="https://searchsecurity.techtarget.com/definition/salt" \
  target="_blank">salt</a> for the encryption password. <b>Warning:</b> \
  Always securely back up the encryption salt value! Losing the salt \
- value can result in data loss.'),
+ value will result in data loss.'),
 
 args_placeholder: T('Auxiliary Arguments'),
 args_tooltip: T('These arguments are passed to <a href="https://rclone.org/docs/" target="_blank">rclone</a>.'),
