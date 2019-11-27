@@ -154,6 +154,12 @@ export class BootStatusListComponent implements OnInit {
             this._router.navigate(new Array('').concat([ "system", "boot", "attach", row.name ]));
           },
           isHidden: false,
+        },
+        {
+          label: T("Replace"),
+          onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
+          },
+          isHidden: false,
         }];
       }
 
