@@ -202,7 +202,7 @@ export class JailListComponent {
     return new Promise(async (resolve, reject) => {
       await this.ws.call('pool.query').toPromise().then((res) => {
         if (res.length === 0) {
-          resolve(false);
+          resolve(true);
           this.noPoolDialog();
           return;
         }
@@ -214,12 +214,11 @@ export class JailListComponent {
 
       if (this.availablePools !== undefined) {
         this.ws.call('jail.get_activated_pool').toPromise().then((res) => {
+          resolve(true);
           if (res != null) {
             this.activatedPool = res;
             this.addBtnDisabled = false;
-            resolve(true);
           } else {
-            resolve(false);
             this.activatePool();
           }
         }, (err) => {
