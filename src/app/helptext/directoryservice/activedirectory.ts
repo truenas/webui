@@ -28,7 +28,6 @@ activedirectory_bindname_validation: [ Validators.required ],
 activedirectory_bindpw_name: 'bindpw',
 activedirectory_bindpw_placeholder: T('Domain Account Password'),
 activedirectory_bindpw_tooltip: T('Enter the administrator account password.'),
-activedirectory_bindpw_validation: [ Validators.required ],
 
 activedirectory_ssl_name: 'ssl',
 activedirectory_ssl_placeholder: T('Encryption Mode'),
