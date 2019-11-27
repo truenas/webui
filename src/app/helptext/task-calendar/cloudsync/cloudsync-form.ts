@@ -8,7 +8,7 @@ description_tooltip: T('Enter a description of the Cloud Sync Task.'),
 description_validation : [ Validators.required ],
 
 direction_placeholder: T('Direction'),
-direction_tooltip: T('<i>Push</i> sends data to cloud storage. <i>Pull</i>\
+direction_tooltip: T('<i>PUSH</i> sends data to cloud storage. <i>PULL</i> \
  receives data from cloud storage.'),
 direction_validation : [ Validators.required ],
 
@@ -79,25 +79,43 @@ post_script_placeholder: T('Post-script'),
 post_script_tooltip: T('Script to execute after running sync.'),
 
 remote_encryption_placeholder: T('Remote Encryption'),
-remote_encryption_tooltip: T('Set to encrypt files before transfer and store the\
- encrypted files on the remote system.\
- <a href="https://rclone.org/crypt/"\
- target="_blank">rclone Crypt</a> is used.'),
+remote_encryption_tooltip: T('Use \
+ <a href="https://rclone.org/crypt/" target="_blank">rclone crypt</a> \
+ to manage data encryption during <i>PUSH</i> or <i>PULL</i> transfers:<br><br> \
+ <i>PUSH:</i> Encrypt files before transfer and store the encrypted \
+ files on the remote system. Files are encrypted using the \
+ <b>Encryption Password</b> and <b>Encryption Salt</b> values.<br><br> \
+ <i>PULL:</i> Decrypt files that are being stored on the remote system \
+ before the transfer. Transferring the encrypted files requires entering \
+ the same <b>Encryption Password</b> and <b>Encryption Salt</b> that was \
+ used to encrypt the files.<br><br> \
+ Additional details about the encryption algorithm and key derivation \
+ are available in the \
+ <a href="https://rclone.org/crypt/#file-formats" target="_blank">rclone crypt File formats documentation</a>.'),
 
 filename_encryption_placeholder: T('Filename Encryption'),
-filename_encryption_tooltip: T('Set to encrypt the shared file names.'),
+filename_encryption_tooltip: T('Encrypt (<i>PUSH</i>) or decrypt \
+ (<i>PULL</i>) file names with the rclone \
+ <a href="https://rclone.org/crypt/#file-name-encryption-modes" target="_blank">"Standard" file name encryption mode</a>. \
+ The original directory structure is preserved. A filename with the same \
+ name always has the same encrypted filename.<br><br> \
+ <i>PULL</i> tasks that have <b>Filename Encryption</b> enabled and an \
+ incorrect <b>Encryption Password</b> or <b>Encryption Salt</b> will not \
+ transfer any files but still report that the task was successful. To \
+ verify that files were transferred successfully, click the finished \
+ task status to see a list of transferred files.'),
 
 encryption_password_placeholder: T('Encryption Password'),
-encryption_password_tooltip: T('Enter the password to encrypt and decrypt remote data.\
- <b>Warning</b>: Always save and back up this password.\
- Losing the encryption password can result in data loss.'),
+encryption_password_tooltip: T('Password to encrypt and decrypt remote \
+ data. <b>Warning:</b> Always securely back up this password! Losing the \
+ encryption password will result in data loss.'),
 
 encryption_salt_placeholder: T('Encryption Salt'),
-encryption_salt_tooltip: T('Enter a long string of random characters for use as\
- <a href="https://searchsecurity.techtarget.com/definition/salt"\
- target="_blank">salt</a> for the encryption password.\
- <b>Warning:</b> Save and back up the encryption salt\
- value. Losing the salt value can result in data loss.'),
+encryption_salt_tooltip: T('Enter a long string of random characters for \
+ use as <a href="https://searchsecurity.techtarget.com/definition/salt" \
+ target="_blank">salt</a> for the encryption password. <b>Warning:</b> \
+ Always securely back up the encryption salt value! Losing the salt \
+ value will result in data loss.'),
 
 args_placeholder: T('Auxiliary Arguments'),
 args_tooltip: T('These arguments are passed to <a href="https://rclone.org/docs/" target="_blank">rclone</a>.'),
