@@ -43,6 +43,9 @@ int_ipv6auto_tooltip : T('Set to automatically configure the IPv6 address with\
  target="_blank">rtsol(8)</a>. Only one interface can\
  be configured this way.'),
 
+disable_offload_capabilities_placeholder: T('Disable offload capabilities'),
+disable_offload_capabilities_tooltip: T('Set to disable NIC capabilities when using a Jail or VM.'),
+
 int_options_placeholder : T('Options'),
 int_options_tooltip : T('Enter additional space-delimited parameters from <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig"\
