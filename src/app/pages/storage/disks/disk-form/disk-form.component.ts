@@ -81,6 +81,8 @@ export class DiskFormComponent {
       name: 'critical',
       placeholder: helptext.disk_form_critical_placeholder,
       tooltip: helptext.disk_form_critical_tooltip,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -97,6 +99,8 @@ export class DiskFormComponent {
       name: 'informational',
       placeholder: helptext.disk_form_informational_placeholder,
       tooltip: helptext.disk_form_informational_tooltip,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
