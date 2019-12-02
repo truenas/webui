@@ -80,7 +80,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
           if (window.localStorage.getItem('is_freenas') === 'false') {
             // Feature detection
 
-            if (evt.data.license.features.indexOf('JAILS') === -1) {
+            if (evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) {
               _.find(menuItem, {state : "plugins"}).disabled = true;
               _.find(menuItem, {state : "jails"}).disabled = true;
             }
