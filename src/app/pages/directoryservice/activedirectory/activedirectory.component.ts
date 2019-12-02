@@ -27,6 +27,7 @@ export class ActiveDirectoryComponent {
   protected nss_info: any;
   protected ldap_sasl_wrapping: any;
   public adStatus = false;
+  entityEdit: any;
 
   public custActions: Array<any> = [
     {
@@ -61,6 +62,7 @@ export class ActiveDirectoryComponent {
       'name' : helptext.activedirectory_custactions_leave_domain,
       function : () => { 
         const that = this;
+        console.log(that)
         this.dialogservice.dialogForm(
           {
             title: helptext.activedirectory_custactions_leave_domain,
@@ -94,12 +96,16 @@ export class ActiveDirectoryComponent {
                 .subscribe((res) => {
                   self.loader.close();
                   self.dialogRef.close(true);
+                  _.find(that.fieldConfig, {'name' : 'enable'})['value'] = false;
+                  that.entityEdit.formGroup.controls['enable'].setValue(false);
+                  that.adStatus = false;
+                  that.isCustActionVisible('leave_domain');
                   that.dialogservice.Info(helptext.ad_leave_domain_dialog.success, 
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
                 err => {
                   self.loader.close();
-                  self.dialogRef.close(true);
+                  // self.dialogRef.close(true);
                   new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, that.dialogservice);
                 });
             }
@@ -333,6 +339,7 @@ export class ActiveDirectoryComponent {
   }
 
   afterInit(entityEdit: any) { 
+    this.entityEdit = entityEdit;
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
       res.data.forEach((item) => {
@@ -444,5 +451,11 @@ export class ActiveDirectoryComponent {
 
   submitFunction(body: any) {
     return this.ws.call('activedirectory.update', [body]);
+  }
+
+  afterSubmit(value) {
+    if (value.enable) {
+      this.adStatus = true;
+    }
   }
 }
