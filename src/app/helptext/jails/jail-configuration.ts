@@ -406,8 +406,11 @@ mac_prefix_placeholder: T('mac_prefix'),
 mac_prefix_tooltip: T('Enter a valid MAC address vendor prefix.\
  <b>Example:</b> <i>E4F4C6</i>'),
 
-nat_interface_placeholder: T('nat_interface'),
-nat_interface_tooltip: T(''),
+nat_interface_placeholder: T('NAT Interface'),
+nat_interface_tooltip: T('System network interface that remaps jail \
+ network addresses into a different IP address space. To override using \
+ the default system network interface, enter the name of a network \
+ interface to use for NAT.'),
 
 nat_forwards_placeholder: T('NAT Port Forwarding'),
 nat_forwards_tooltip: T('Configure the ports that allow remote access to \
