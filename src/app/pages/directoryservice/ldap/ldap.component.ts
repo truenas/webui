@@ -3,7 +3,6 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 
 import {
-  RestService,
   SystemGeneralService,
   WebSocketService
 } from '../../../services/';
@@ -205,10 +204,9 @@ export class LdapComponent {
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
+              protected ws: WebSocketService, private dialogservice: DialogService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected systemGeneralService: SystemGeneralService,
-              private dialogservice: DialogService) {}
+              protected systemGeneralService: SystemGeneralService) {}
 
   resourceTransformIncomingRestData(data) {
     delete data['bindpw'];
@@ -220,13 +218,13 @@ export class LdapComponent {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
 
-    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
+    this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.ldap_kerberos_realm.options.push(
-          {label : item.krb_realm, value : item.id});
-      });
-    });
+          {label : item.realm, value : item.id});        
+      })
+    })
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});
