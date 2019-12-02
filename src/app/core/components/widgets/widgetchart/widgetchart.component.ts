@@ -8,8 +8,6 @@ import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
-import * as c3 from 'c3';
-
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -80,79 +78,6 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
 
   //Override this method in subclasses
   chartSetup(){
-    // Generate Regions
-    /*let generatedRegions = [];
-     for(let i = 0; i < 100; i++){
-       let vent = i % 20;
-       if(vent == 0){
-         generatedRegions.push({axis: 'y', start: i+10, end: i + 20, class: 'regionEven'})
-       }
-     }*/
-
-     this.chart = c3.generate({
-       bindto: '#' + this.chartId,
-       size: {
-         height:176
-       },
-       data: {
-         x: "x",
-         columns: [
-           ['x'],
-           ['user']
-         ],
-         type: 'spline',
-         colors: {
-           user: this.widgetColorCssVar
-         },
-         onmouseout: (d) => {
-           this.showLegendValues = false;
-         }
-       },
-       axis: {
-         x: {
-           show:false,
-           type: 'timeseries',
-           tick: {
-             count: 2,
-             fit:true,
-             format: '%HH:%M:%S'
-           }
-         },
-         y: {
-           show:true,
-           inner:true,
-           max: 100,
-           tick: {
-             count:3,
-             values: [25, 50, 75, 100],
-             format: (y) => { return y + "%" }
-           }
-         }
-       },
-       legend: {
-         show: false
-       },
-       grid: {
-         x: {
-           show: true
-         },
-         y: {
-           show: true
-         }
-       },
-       tooltip: {
-         //show: false,
-         contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
-           if(!this.showLegendValues){
-             this.showLegendValues = true;
-           }
-           this.altTitle = "CPU " + raw[0].value + "%";
-           this.altSubtitle = raw[0].x;
-
-           return '<div style="display:none">' + raw[0].x + '</div>';
-         }
-       }
-     });
   }
 
   setChartData(evt:CoreEvent){

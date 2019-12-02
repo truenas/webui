@@ -39,13 +39,13 @@ export class SshKeypairsFormComponent {
             type: 'textarea',
             name: 'private_key',
             placeholder: helptext.private_key_placeholder,
-            tooltip: helptext.private_key_tooltip
+            tooltip: helptext.private_key_tooltip,
         }, {
             type: 'textarea',
             name: 'public_key',
             placeholder: helptext.public_key_placeholder,
             tooltip: helptext.public_key_tooltip,
-            validation: [atLeastOne('private_key')]
+            validation: [atLeastOne('private_key', [helptext.private_key_placeholder, helptext.public_key_placeholder])]
         }
     ]
 

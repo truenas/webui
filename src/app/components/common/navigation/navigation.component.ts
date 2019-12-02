@@ -55,6 +55,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             _.find(menuItem, { state: "vm" }).disabled = true;
           });
 
+        // hide acme for truenas
+        _.find(_.find(menuItem, { state: 'system' }).sub, { state : 'acmedns'}).disabled = true;
+
         for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
           const targetMenu = this.navService.turenasFeatures[i];
           _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;

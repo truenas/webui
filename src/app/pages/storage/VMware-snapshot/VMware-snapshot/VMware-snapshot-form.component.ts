@@ -15,6 +15,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/storage/VMware-snapshot/VMware-snapshot';
 import { first } from 'rxjs/operators';
+import { EntityUtils } from '../../../../pages/common/entity/utils';
 
 @Component({
   selector: 'app-vmware-snapshot-form',
@@ -257,7 +258,11 @@ export class VMwareSnapshotFormComponent {
         (error)=>{
           this.datastore.options.length = 0;
           parent.loader.close();
-          parent.dialogService.errorReport(error.error,error.reason, error.trace.formatted);
+          if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
+            parent.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg, '');
+          } else {
+            new EntityUtils().handleWSError(this, error, this.dialogService);
+          }
         });
       }
     }

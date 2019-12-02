@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
+import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
-import { DialogService, LanguageService, RestService, WebSocketService, SnackbarService } from '../../../services/';
+import { DialogService, LanguageService, RestService, WebSocketService, StorageService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -12,11 +13,12 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 
+
 @Component({
   selector: 'app-general',
   template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: ['./general.component.css'],
-  providers: [SnackbarService]
+  providers: []
 })
 export class GeneralComponent {
 
@@ -50,7 +52,9 @@ export class GeneralComponent {
         multiple: true,
         placeholder: helptext.stg_guiaddress.placeholder,
         tooltip: helptext.stg_guiaddress.tooltip,
-        options: []
+        required: true,
+        options: [],
+        validation: [this.IPValidator('ui_address', '0.0.0.0')]
       },
       {
         type: 'select',
@@ -58,7 +62,9 @@ export class GeneralComponent {
         multiple: true,
         placeholder: helptext.stg_guiv6address.placeholder,
         tooltip: helptext.stg_guiv6address.tooltip,
-        options: []
+        required: true,
+        options: [],
+        validation: [this.IPValidator('ui_v6address', '::')]
       },
       {
         type: 'input',
@@ -281,14 +287,37 @@ export class GeneralComponent {
   constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
     protected dialog: DialogService, protected loader: AppLoaderService,
-    public http: Http, protected snackBar: SnackbarService,  private mdDialog: MatDialog) {}
+    public http: Http, protected storage: StorageService,  private mdDialog: MatDialog) {}
+
+  IPValidator(name: string, wildcard: string) {
+    const self = this;
+    return function validIPs(control: FormControl) {
+      const config = self.fieldConfig.find(c => c.name === name);
+      
+      const errors = control.value && control.value.length > 1 && _.indexOf(control.value, wildcard) !== -1
+        ? { validIPs : true }
+        : null;
+    
+        if (errors) {
+          config.hasErrors = true;
+          config.errors = helptext.validation_errors[name];
+        } else {
+          config.hasErrors = false;
+          config.errors = '';
+        }
+
+        return errors;
+    }
+  }
 
   resourceTransformIncomingRestData(value) {
     this.http_port = value['ui_port'];
     this.https_port = value['ui_httpsport'];
     this.redirect = value['ui_httpsredirect'];
-    value['ui_certificate'] = value['ui_certificate'].id.toString();
-    this.guicertificate = value['ui_certificate'];
+    if (value['ui_certificate'] && value['ui_certificate'].id) {
+      value['ui_certificate'] = value['ui_certificate'].id.toString();
+      this.guicertificate = value['ui_certificate'];
+    }
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
     return value;
@@ -331,9 +360,16 @@ export class GeneralComponent {
       .subscribe((res) => {
         this.ui_v6address =
           _.find(this.fieldConfig, { 'name': 'ui_v6address' });
+        let wildcard_found = false;
         res.forEach((item) => {
+          if (item[0] === '::' && !wildcard_found) {
+            wildcard_found = true;
+          }
           this.ui_v6address.options.push({ label: item[1], value: item[0] });
         });
+        if (!wildcard_found) {
+          this.ui_v6address.options.unshift({ label: '::', value: '::' });
+        }
       });
 
     entityEdit.ws.call('notifier.gui_languages').subscribe((res) => {
@@ -443,15 +479,19 @@ export class GeneralComponent {
 
   saveConfigSubmit(entityDialog) {
     parent = entityDialog.parent;
+    entityDialog.loader.open();
     entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
+      let mimetype;
       if (res) {
         let hostname = res.hostname.split('.')[0];
         let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
         fileName = hostname + '-' + res.version + '-' + date;
         if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
+          mimetype = 'application/x-tar';
           fileName += '.tar';
         } else {
+          mimetype = 'application/x-sqlite3';
           fileName += '.db';
         }
       }
@@ -460,24 +500,29 @@ export class GeneralComponent {
                                                                'pool_keys': entityDialog.formValue['pool_keys'] }],
                                                                fileName])
         .subscribe(
-          (res) => {
-            parent['snackBar'].open(helptext.snackbar_download_success.title, helptext.snackbar_download_success.action, {
-              duration: 5000
+          (download) => {
+            const url = download[1];
+            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe(file => {
+              entityDialog.loader.close();
+              entityDialog.dialogRef.close();
+              entityDialog.parent.storage.downloadBlob(file, fileName);
+            }, err => {
+              entityDialog.loader.close();
+              entityDialog.dialogRef.close();
+              entityDialog.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
             });
-            if (window.navigator.userAgent.search("Firefox")>0) {
-              window.open(res[1]);
-          }
-            else {
-              window.location.href = res[1];
-            }
-            entityDialog.dialogRef.close();
           },
           (err) => {
-            parent['snackBar'].open(T("Check the network connection."), T("Failed") , {
-              duration: 5000
-            });
+            entityDialog.loader.close();
+            entityDialog.dialogRef.close();
+            new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
           }
         );
+    },
+    (err) => {
+      entityDialog.loader.close();
+      entityDialog.dialogRef.close();
+      new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
     });
   }
 
@@ -521,7 +566,8 @@ export class GeneralComponent {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
-      this.snackBar.open(T("Settings saved."), T('close'), { duration: 5000 });
+      this.entityForm.success = true;
+      this.entityForm.formGroup.markAsPristine();
       this.afterSubmit(body);
     }, (res) => {
       this.loader.close();

@@ -181,4 +181,7 @@ tls_opt_ip_address_required_tooltip: T('If set, the client certificate must cont
 options_placeholder : T('Auxiliary Parameters'),
 options_tooltip: T('Used to add additional <a href="https://linux.die.net/man/8/proftpd"\
  target="_blank">proftpd(8)</a> parameters.'),
+
+rootlogin_dialog_title : T('Allow Root Login'),
+rootlogin_dialog_message : T('Enabling this option can expose administrator credentials and is not recommended.')
 }

@@ -205,9 +205,13 @@ export class CloudsyncFormComponent implements OnInit {
     relation: [
       {
         action: 'HIDE',
+        connective: 'OR',
         when: [{
           name: 'direction',
           value: 'PULL',
+        }, {
+          name: 'transfer_mode',
+          value: 'MOVE',
         }]
       }
     ],
@@ -341,7 +345,6 @@ export class CloudsyncFormComponent implements OnInit {
   public isNew: boolean = false;
   protected data: any;
   protected pid: any;
-  protected cloudcredential_query = 'cloudsync.credentials.query';
 
   protected providers: any;
   protected taskSchemas = ['encryption', 'fast_list', 'b2-chunk-size', 'storage_class'];
@@ -425,11 +428,12 @@ export class CloudsyncFormComponent implements OnInit {
         return children;
       },
       (err) => {
-        if (err.extra && err.extra[0][0].split('.').pop() == 'bucket') {
+        if (err.extra && err.extra[0] && err.extra[0][0].split('.').pop() == 'bucket') {
           this.setBucketError(err.extra[0][1]);
         } else {
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWSError(this, err, this.dialog);
         }
+        node.collapse();
       });
   }
 
@@ -479,7 +483,7 @@ export class CloudsyncFormComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
     this.bucket_input_field = _.find(this.fieldConfig, {'name': 'bucket_input'});
@@ -492,6 +496,16 @@ export class CloudsyncFormComponent implements OnInit {
         this.setRelation(config);
       }
     }
+
+    await this.cloudcredentialService.getCloudsyncCredentials().then(
+      (res) => {
+        res.forEach((item) => {
+          this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
+          this.credentials_list.push(item);
+        });
+      }
+    )
+
     this.folder_field = _.find(this.fieldConfig, { "name": "folder"});
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
       // reset folder tree view
@@ -582,7 +596,10 @@ export class CloudsyncFormComponent implements OnInit {
     this.formGroup
       .get('direction')
       .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== 'COPY'))
-      .subscribe(() => this.formGroup.get('transfer_mode').setValue('COPY'));
+      .subscribe(() => {
+        this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
+        this.formGroup.get('transfer_mode').setValue('COPY');
+      });
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.subscribe(mode => {
@@ -600,14 +617,6 @@ export class CloudsyncFormComponent implements OnInit {
           paragraph.paraText = helptext.transfer_mode_warning_copy;
           paragraph.paragraphIcon = 'add_to_photos';
       }
-    });
-
-    // get cloud credentials
-    this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
-      res.forEach((item) => {
-        this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
-        this.credentials_list.push(item);
-      });
     });
 
     this.aroute.params.subscribe(params => {
@@ -639,14 +648,15 @@ export class CloudsyncFormComponent implements OnInit {
           if (this.data.credentials) {
             this.formGroup.controls['credentials'].setValue(this.data.credentials.id);
           }
-          if(this.data.attributes) {
-            if (this.formGroup.controls['bucket']) {
-              this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
+          if (this.data.attributes) {
+            for (let attr in this.data.attributes) {
+              if (this.formGroup.controls[attr]) {
+                this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
+                if (attr === 'bucket' && this.formGroup.controls['bucket_input']) {
+                  this.formGroup.controls['bucket_input'].setValue(this.data.attributes[attr]);
+                }
+              }
             }
-            if (this.formGroup.controls['bucket_input']) {
-              this.formGroup.controls['bucket_input'].setValue(this.data.attributes.bucket);
-            }
-            this.formGroup.controls['folder'].setValue(this.data.attributes.folder);
           }
         }
       });

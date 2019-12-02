@@ -5,11 +5,12 @@
   </div>
   <mat-radio-group [formControlName]="config.name" id="{{config.name}}_radiogroup">
     <div *ngFor="let option of config.options" fxLayout="row">
-        <mat-radio-button  [value]="option.value" [attr.name]="option.name" [attr.id]="option.id" id="{{option.name}}_radiobutton">
+        <mat-radio-button  [value]="option.value" id="{{config.name}}_{{option.value}}_radiobutton">
             {{ option.label | translate }} 
         </mat-radio-button>
         <tooltip class="radio-option-tooltip" *ngIf="option.tooltip" [header]="config.placeholder" [message]="option.tooltip"></tooltip>
     </div>
   </mat-radio-group>
-  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+	<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+	<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
 </div>

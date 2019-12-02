@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ShellService, WebSocketService } from '../../services/';
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 
@@ -72,11 +72,10 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   }
 
   onShellRightClick(): false {
-    this.snackbar.openFromComponent(CopyPasteMessageComponent);
-
+    this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, private snackbar: MatSnackBar) {
+  constructor(private ws: WebSocketService, public ss: ShellService, private dialog: MatDialog) {
   }
 }

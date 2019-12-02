@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
+import { T } from "app/translate-marker";
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { DialogService, RestService, WebSocketService } from '../../../../services/';
+import { DialogService, RestService, WebSocketService, AppLoaderService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
@@ -19,6 +20,7 @@ export class SMBFormComponent {
   protected route_success: string[] = [ 'sharing', 'smb' ];
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
+  public isTimeMachineOn = false;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -45,6 +47,12 @@ export class SMBFormComponent {
       name: 'cifs_home',
       placeholder: helptext_sharing_smb.placeholder_home,
       tooltip: helptext_sharing_smb.tooltip_home,
+    },
+    {
+      type: 'input',
+      name: 'cifs_comment',
+      placeholder: helptext_sharing_smb.placeholder_comment,
+      tooltip: helptext_sharing_smb.tooltip_comment,
     },
     {
       type: 'checkbox',
@@ -157,7 +165,8 @@ export class SMBFormComponent {
   ];
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, private dialog:DialogService ) {}
+              protected ws: WebSocketService, private dialog:DialogService,
+              protected loader: AppLoaderService ) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -169,18 +178,45 @@ export class SMBFormComponent {
   }
 
   afterSave(entityForm) {
+    if (entityForm.formGroup.controls['cifs_timemachine'].value && !this.isTimeMachineOn) {
+      this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, helptext_sharing_smb.restart_smb_dialog.message,
+        true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
+        helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
+          if (res) {
+            this.loader.open();
+            this.ws.call('service.restart', ['cifs']).subscribe(() => {
+              this.loader.close();
+              this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
+                helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
+                  this.checkACLactions(entityForm);
+                })
+            }, (err) => { 
+              this.loader.close();
+              this.dialog.errorReport('Error', err.err, err.backtrace);
+            }
+            )
+          } else {
+            this.checkACLactions(entityForm);
+          }
+        });
+    } else {
+      this.checkACLactions(entityForm);   
+    }
+  }
+
+  checkACLactions(entityForm) {
     const sharePath: string = entityForm.formGroup.get('cifs_path').value;
     const datasetId = sharePath.replace('/mnt/', '');
-
+    const poolName = datasetId.split('/')[0];
     /**
-     * If share does not have trivial ACL, check if user wants to edit dataset permissions. If not,
+     * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
      */
-    const promptUserACLEdit = () =>
+    const promptUserACLEdit = () => 
       this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
         switchMap((isTrivialACL: boolean) =>
-          /* If share has trivial ACL, move on. Otherwise, perform some async data-gathering operations */
-          isTrivialACL
+          /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
+          !isTrivialACL || !datasetId.includes('/')
             ? combineLatest(of(false), of({}))
             : combineLatest(
                 /* Check if user wants to edit the share's ACL */
@@ -190,19 +226,16 @@ export class SMBFormComponent {
                   true,
                   helptext_sharing_smb.dialog_edit_acl_button
                 ),
-                /* Fetch more info about the dataset (we need its pool ID) */
-                this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(map(datasets => datasets[0]))
               )
         ),
         tap(([doConfigureACL, dataset]) =>
           doConfigureACL
             ? this.router.navigate(
-                ['/'].concat(['storage', 'pools', 'id', dataset.pool, 'dataset', 'acl', datasetId])
+                ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId])
               )
             : this.router.navigate(['/'].concat(this.route_success))
         )
       );
-      
 
     this.ws
       .call("service.query", [])
@@ -219,10 +252,10 @@ export class SMBFormComponent {
            */
           return this.dialog
             .confirm(
-              helptext_sharing_smb.dialog_enable_service_title,
-              helptext_sharing_smb.dialog_enable_service_message,
+              shared.dialog_title,
+              shared.dialog_message,
               true,
-              helptext_sharing_smb.dialog_enable_service_button
+              shared.dialog_button
             )
             .pipe(
               switchMap(doEnableService => {
@@ -232,15 +265,14 @@ export class SMBFormComponent {
                     switchMap(() => this.ws.call("service.start", [cifsService.service])),
                     tap(() => {
                       entityForm.loader.close();
-                      entityForm.snackBar.open(
-                        helptext_sharing_smb.snackbar_service_started,
-                        helptext_sharing_smb.snackbar_close
-                      );
+                    }),
+                    switchMap(() => {
+                    return this.dialog.Info(T('SMB') + shared.dialog_started_title, 
+                      T('The SMB') + shared.dialog_started_message, '250px')
                     }),
                     catchError(error => {
                       entityForm.loader.close();
-                      this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
-                      return of(error);
+                      return this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
                     })
                   );
                 }
@@ -273,6 +305,9 @@ export class SMBFormComponent {
       let target = _.find(this.fieldConfig, {'name' : 'cifs_name'});
       res === 'INVALID' ? target.hasErrors = true : target.hasErrors = false;
     })
+    setTimeout(() => {
+      if (entityForm.formGroup.controls['cifs_timemachine'].value) { this.isTimeMachineOn = true };
+    }, 700)
   }
 
   forbiddenNameValidator(control: FormControl): {[key: string]: boolean} {

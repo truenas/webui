@@ -133,7 +133,7 @@ export class ZvolFormComponent {
 
           if (errors) {
             config.hasErrors = true;
-            config.errors = globalHelptext.human_readable_input_error;
+            config.errors = globalHelptext.human_readable.input_error;
           } else if (size === 0) {
             config.hasErrors = true;
             config.errors = helptext.zvol_volsize_zero_error;

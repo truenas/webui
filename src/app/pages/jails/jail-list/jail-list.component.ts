@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -10,14 +10,15 @@ import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import helptext from '../../../helptext/jails/jails-list';
 
 @Component({
   selector: 'app-jail-list',
-  templateUrl: './jail-list.component.html',
-  styleUrls: ['jail-list.component.css'],
+  template: `<entity-table [title]="title" [conf]="this" ></entity-table>`,
   providers: [DialogService, StorageService]
 })
-export class JailListComponent implements OnInit {
+export class JailListComponent {
 
   public isPoolActivated: boolean;
   public selectedPool;
@@ -80,7 +81,7 @@ export class JailListComponent implements OnInit {
                 }
               }
               if (message === "") {
-                this.snackBar.open(T("Jails started."), 'close', { duration: 5000 });
+                this.dialogService.Info(T('Jails Started'), T("Jails started."));
               } else {
                 message = '<ul>' + message + '</ul>';
                 this.dialogService.errorReport(T('Jails failed to start'), message);
@@ -131,7 +132,7 @@ export class JailListComponent implements OnInit {
       ttpos: "above",
       onClick: (selected) => {
         const selectedJails = this.getSelectedNames(selected);
-        this.snackBar.open(T('Updating selected plugins.'), 'close', { duration: 5000 });
+        this.dialogService.Info(T('Jail Update'), T('Updating selected plugins.'));
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
@@ -142,14 +143,13 @@ export class JailListComponent implements OnInit {
                 }
               }
               if (message === "") {
-                this.snackBar.open(T('Selected jails updated.'), 'close', { duration: 5000 });
+                this.dialogService.Info('', T('Selected jails updated.'), '500px', 'info', true);
               } else {
                 message = '<ul>' + message + '</ul>';
                 this.dialogService.errorReport(T('Jail Update Failed'), message);
               }
             },
             (res) => {
-              this.snackBar.open(T('Updating selected jails failed.'), 'close', { duration: 5000 });
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
             });
       }
@@ -166,69 +166,119 @@ export class JailListComponent implements OnInit {
     },
   ];
 
-  public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
-  can create the /iocage dataset. The /iocage \
-  dataset might not be visible until after \
-  the first jail is created. iocage uses \
-  this dataset to store FreeBSD releases \
-  and all other jail data.");
+  public showSpinner = true;
 
-  constructor(public router: Router, protected rest: RestService, public ws: WebSocketService, 
+  protected globalConfig = {
+    id: "config",
+    tooltip: helptext.globalConfig.tooltip,
+    onClick: () => {
+      this.prerequisite().then((res)=>{
+        this.activatePool();
+      })
+    }
+  };
+
+  protected addBtnDisabled = true;
+
+  constructor(public router: Router, protected rest: RestService, public ws: WebSocketService,
     public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
-    public snackBar: MatSnackBar, public sorter: StorageService, public dialog: MatDialog,) {}
+    public sorter: StorageService, public dialog: MatDialog,) {}
 
+  noPoolDialog() {
+    const dialogRef = this.dialogService.confirm(
+      helptext.noPoolDialog.title,
+      helptext.noPoolDialog.message,
+      true,
+      helptext.noPoolDialog.buttonMsg);
 
-  ngOnInit(){
-    this.getActivatedPool();
-    this.getAvailablePools();
+      dialogRef.subscribe((res) => {
+        if (res) {
+          this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
+        }
+    })
   }
+
+  prerequisite(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      await this.ws.call('pool.query').toPromise().then((res) => {
+        if (res.length === 0) {
+          resolve(false);
+          this.noPoolDialog();
+          return;
+        }
+        this.availablePools = res
+      }, (err) => {
+        resolve(false);
+        new EntityUtils().handleWSError(this.entityList, err);
+      });
+
+      if (this.availablePools !== undefined) {
+        this.ws.call('jail.get_activated_pool').toPromise().then((res) => {
+          if (res != null) {
+            this.activatedPool = res;
+            this.addBtnDisabled = false;
+            resolve(true);
+          } else {
+            resolve(false);
+            this.activatePool();
+          }
+        }, (err) => {
+          resolve(false);
+          new EntityUtils().handleWSError(this.entityList, err);
+        })
+      }
+    });
+  }
+
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
 
-  getActivatedPool(){
-    this.ws.call('jail.get_activated_pool').subscribe(
-      (res)=>{
-        if (res != null && res != "") {
-          this.activatedPool = res;
-          this.selectedPool = res;
-          this.isPoolActivated = true;
-        } else {
-          this.isPoolActivated = false;
+  activatePool() {
+    const self = this;
+
+    const conf: DialogFormConfiguration = {
+      title: helptext.activatePoolDialog.title,
+      fieldConfig: [
+        {
+          type: 'select',
+          name: 'selectedPool',
+          placeholder: helptext.activatePoolDialog.selectedPool_placeholder,
+          options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}) : [],
+          value: this.activatedPool
         }
-      },
-      (err)=>{
-        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
-      })
+      ],
+      saveButtonText: helptext.activatePoolDialog.saveButtonText,
+      customSubmit: function (entityDialog) {
+        const value = entityDialog.formValue;
+        self.entityList.loader.open();
+        self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
+          (res)=>{
+            self.activatedPool = value['selectedPool'];
+            entityDialog.dialogRef.close(true);
+            self.entityList.loaderOpen = true;
+            self.entityList.getData();
+            self.dialogService.Info(
+              helptext.activatePoolDialog.successInfoDialog.title,
+              helptext.activatePoolDialog.successInfoDialog.message + value['selectedPool'],
+              '500px', 'info', true);
+          },
+          (res) => {
+            self.entityList.loader.close();
+            new EntityUtils().handleWSError(this.entityList, res);
+          });
+      }
+    }
+    if (this.availablePools) {
+      this.dialogService.dialogForm(conf);
+    }
   }
 
-  getAvailablePools(){
-    this.ws.call('pool.query').subscribe( (res)=> {
-      this.availablePools = res;
-    })
-  }
-
-  activatePool(event: Event){
-    this.loader.open();
-    this.ws.call('jail.activate', [this.selectedPool]).subscribe(
-      (res)=>{
-        this.loader.close();
-        this.isPoolActivated = true;
-        this.activatedPool = this.selectedPool;
-        if (this.toActivatePool) {
-          this.entityList.getData();
-        }
-        this.entityList.snackBar.open("Successfully activate pool " + this.selectedPool , 'close', { duration: 5000 });
-      },
-      (res) => {
-        new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-      });
-  }
   getActions(parentRow) {
     return [{
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'edit',
-        name: "edit",
+        id: "edit",
         label: T("Edit"),
         onClick: (row) => {
           this.router.navigate(
@@ -236,9 +286,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'device_hub',
-        name: "mount",
+        id: "mount",
         label: T("Mount points"),
         onClick: (row) => {
           this.router.navigate(
@@ -247,9 +297,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'play_arrow',
-        name: "start",
+        id: "start",
         label: T("Start"),
         onClick: (row) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Starting Jail") }, disableClose: true });
@@ -264,9 +314,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'cached',
-        name: "restart",
+        id: "restart",
         label: T("Restart"),
         onClick: (row) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Restarting Jail") }, disableClose: true });
@@ -281,9 +331,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'stop',
-        name: "stop",
+        id: "stop",
         label: T("Stop"),
         onClick: (row) => {
           let dialog = {};
@@ -302,9 +352,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'update',
-        name: "update",
+        id: "update",
         label: T("Update"),
         onClick: (row) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
@@ -312,14 +362,14 @@ export class JailListComponent implements OnInit {
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
             dialogRef.close(true);
-            this.snackBar.open(T("Jail ") + row.host_hostuuid + T(" updated."), T('Close'), { duration: 5000 });
+            this.dialogService.Info(T('Jail Updated'), T("Jail <i>") + row.host_hostuuid + T("</i> updated."), '500px', 'info', true);
           });
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'keyboard_arrow_right',
-        name: "shell",
+        id: "shell",
         label: T("Shell"),
         onClick: (row) => {
           this.router.navigate(
@@ -327,9 +377,9 @@ export class JailListComponent implements OnInit {
         }
       },
       {
-        id: parentRow.host_hostuuid,
+        name: parentRow.host_hostuuid,
         icon: 'delete',
-        name: "delete",
+        id: "delete",
         label: T("Delete"),
         onClick: (row) => {
           this.entityList.doDelete(row);

@@ -4,7 +4,7 @@ import { Validators } from "@angular/forms";
 export const helptext_sharing_nfs = {
   // NFSListComponent
   column_path: T("Path"),
-  column_comment: T("Comment"),
+  column_comment: T("Description"),
 
   // NFSFormComponent
   placeholder_path: T("Path"),
@@ -18,7 +18,7 @@ export const helptext_sharing_nfs = {
   placeholder_delete: T("Delete Path"),
   tooltip_delete: T("Delete this path."),
 
-  placeholder_comment: T("Comment"),
+  placeholder_comment: T("Description"),
   tooltip_comment: T(
     "Set the share name. If left empty, share name is the\
  list of selected <b>Path</b> entries."
@@ -88,10 +88,4 @@ export const helptext_sharing_nfs = {
   actions_basic_mode: T("Basic Mode"),
   actions_advanced_mode: T("Advanced Mode"),
 
-  dialog_enable_service_title: T("Enable service"),
-  dialog_enable_service_message: T("Enable this service?"),
-  dialog_enable_service_button: T("Enable Service"),
-
-  snackbar_service_started: T("Service started"),
-  snackbar_close: T("close")
 };

@@ -1,18 +1,21 @@
 <div id="TN-sys-info-wrapper">
-  <p class="support-title"><i class="material-icons">info</i>License Information</p>
+  <p class="support-title"><i class="material-icons">info</i>{{'License Information' | translate}}</p>
   <div id="tn-sys-info" class="container" fxLayout="row">
     <div id=tn-sys-col1 fxFlex="50%">
-        <div class="tn-sys-info-line"><h4>Customer Name:</h4> <span class="sys-info-text">{{customer_name}}</span></div>
-        <div class="tn-sys-info-line"><h4>Features:</h4> <span class="sys-info-text">{{features}}</span></div>
-        <div class="tn-sys-info-line"><h4>Contract Type:</h4> <span class="sys-info-text">{{contract_type}}</span></div>
-        <div class="tn-sys-info-line"><h4>Expiration Date:</h4> <span class="sys-info-text">{{expiration_date}}</span>
-          <span *ngIf="daysLeftinContract" class="sys-info-text"> (expires in {{daysLeftinContract}} days)</span>
+        <div class="tn-sys-info-line"><h4>{{'Customer Name' | translate}}:</h4> <span class="sys-info-text">{{customer_name}}</span></div>
+        <div class="tn-sys-info-line"><h4>{{'Features' | translate}}:</h4> <span class="sys-info-text">{{features}}</span></div>
+        <div class="tn-sys-info-line"><h4>{{'Contract Type' | translate}}:</h4> <span class="sys-info-text">{{contract_type}}</span></div>
+        <div class="tn-sys-info-line"><h4>{{'Expiration Date' | translate}}:</h4> <span class="sys-info-text">{{expiration_date}}</span>
+          <span *ngIf="daysLeftinContract && daysLeftinContract > 0" class="sys-info-text"> 
+            ({{'expires in' | translate}} {{daysLeftinContract}} {{daysLeftinContract==1 ? 'day' : 'days' | translate}})</span>
+          <span *ngIf="daysLeftinContract==0" class="sys-info-text"> ({{'EXPIRES TODAY  ' | translate}})</span>
+          <span *ngIf="daysLeftinContract < 0 " class="sys-info-text"> ({{'EXPIRED' | translate}})</span>
         </div>
     </div>
     <div id=tn-sys-col2 fxFlex="50%">
-        <div class="tn-sys-info-line"><h4>Model:</h4> <span class="sys-info-text">{{model}}</span></div>
-        <div class="tn-sys-info-line"><h4>System Serial:</h4> <span class="sys-info-text">{{sys_serial}}</span></div>
-        <div class="tn-sys-info-line"><h4>Additional Hardware:</h4> <span class="sys-info-text">{{add_hardware}}</span></div>
+        <div class="tn-sys-info-line"><h4>{{'Model' | translate}}:</h4> <span class="sys-info-text">{{model}}</span></div>
+        <div class="tn-sys-info-line"><h4>{{'System Serial' | translate}}:</h4> <span class="sys-info-text">{{sys_serial}}</span></div>
+        <div class="tn-sys-info-line"><h4>{{'Additional Hardware' | translate}}:</h4> <span class="sys-info-text">{{add_hardware}}</span></div>
         <div><button mat-flat-button id="update-license-btn" (click)="updateLicense()">{{"UPDATE LICENSE" | translate}}</button></div>
     </div>
   </div>

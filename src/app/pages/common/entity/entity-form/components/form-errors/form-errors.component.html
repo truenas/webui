@@ -1,0 +1,23 @@
+<div class="form-error" *ngIf="control.dirty || control.touched">
+    <mat-error *ngIf="control.hasError('required')">
+        {{config.placeholder}} {{" is required." | translate}}
+    </mat-error>
+    <mat-error *ngIf="control.hasError('atLeastOne')">
+        {{control.errors.fields[0]}} {{" and " | translate}} {{control.errors.fields[1]}} {{". At least one is required." | translate}}
+    </mat-error>
+    <mat-error *ngIf="control.hasError('greaterThan')">
+        {{"Value must be greater than " | translate}} {{control.errors.fields[0]}}.
+    </mat-error>
+    <mat-error *ngIf="control.hasError('forbidden')">
+        {{"This name has already been used." | translate}}
+    </mat-error>
+    <mat-error *ngIf="control.hasError('matchOther')">
+        {{"The passwords do not match." | translate}}
+    </mat-error>
+    <mat-error *ngIf="control.hasError('range')">
+        {{"The value is out of range. Enter a value between " | translate}} {{control.errors.rangeValue.min}} {{" and " | translate }} {{control.errors.rangeValue.max}}.
+    </mat-error>
+    <mat-error *ngIf="control.hasError('regex')">
+        {{"Invalid format or character." | translate}}
+    </mat-error>
+</div>

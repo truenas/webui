@@ -5,13 +5,10 @@ export const helptext_system_general = {
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
-    tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
- the certificate to use for encrypted connections. If\
- there are no certificates, create a <a\
- href="--docurl--/system.html#cas"\
- target="_blank">Certificate Authority (CA)</a> then\
- the <a href="--docurl--/system.html#certificates"\
- target="_blank">Certificate</a>.'
+    tooltip: T('The system uses a self-signed \
+ <a href="--docurl--/system.html#certificates" target="_blank">certificate</a> \
+ to enable encrypted web interface connections. To change the default \
+ certificate, select a different created or imported certificate.'
     ),
     validation: [Validators.required]
   },
@@ -62,8 +59,14 @@ export const helptext_system_general = {
   stg_guihttpsredirect: {
     placeholder: T("WebGUI HTTP -> HTTPS Redirect"),
     tooltip: T(
-      "Check this to redirect <i>HTTP</i> connections to\
- <i>HTTPS</i>. A <i>GUI SSL Certificate</i> must be selected."
+      'Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A \
+ <i>GUI SSL Certificate</i> is required for <i>HTTPS</i>. Activating \
+ this also sets the <a \
+ href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security" \
+ target="_blank">HTTP Strict Transport Security (HSTS)</a> maximum age \
+ to <i>31536000</i> seconds (one year). This means that after a \
+ browser connects to the web interface for the first time, the browser \
+ continues to use HTTPS and renews this setting every year.'
     )
   },
 
@@ -97,9 +100,12 @@ export const helptext_system_general = {
   stg_syslogserver: {
     placeholder: T("Syslog server"),
     tooltip: T(
-      "Define an <i>IP address or hostname:optional_port_number</i>\
- to send logs. When set, log entries write to both the\
- console and remote server."
+      "Remote syslog server DNS hostname or IP address.\
+ Nonstandard port numbers can be used by adding\
+ a colon and the port number to the hostname, like\
+ <samp>mysyslogserver:1928</samp>. Log entries\
+ are written to local logs and sent to the remote\
+ syslog server."
     )
   },
 
@@ -122,7 +128,7 @@ export const helptext_system_general = {
 
   usage_collection: {
     placeholder: T("Usage collection"),
-    tooltip: T("Enable sending anonymous usage statistics to iXsystems")
+    tooltip: T("Enable sending anonymous usage statistics to iXsystems.")
   },
 
 
@@ -130,7 +136,8 @@ export const helptext_system_general = {
     title: T('Save Configuration'),
     message: T(
       "<b>WARNING:</b> This configuration file contains system\
- passwords and other sensitive data.<br>"
+ passwords and other sensitive data.<br /><br /><b>WARNING:</b> SSH keys \
+ in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
     ),
     button_text: T("Save"),
     warning: T(
@@ -138,10 +145,12 @@ export const helptext_system_general = {
  configuration file with a new boot device. This also\
  decrypts all system passwords for reuse when the\
  configuration file is uploaded.</p>\
- <b>Keep the configuration file safe and protect it\
+ <br /><b>Keep the configuration file safe and protect it\
  from unauthorized access!</b>"
-    )
+    ),
+    host_key_warning: T(''),
   },
+
 
   upload_config: { placeholder: T("Select Configuration File") },
 
@@ -185,5 +194,15 @@ export const helptext_system_general = {
   snackbar_download_success: {
     title: T("Download Sucessful"),
     action: T("Success")
+  },
+
+  validation_errors: {
+    ui_address: T("Select <samp>0.0.0.0</samp> to include all addresses. When this has been chosen, additional addresses cannot be selected."),
+    ui_v6address: T("Select <samp>::</samp> to include all addresses. When this has been chosen, additional addresses cannot be selected.")
+  },
+
+  config_download: {
+    failed_title: T("Error Downloading File"),
+    failed_message: T("Config could not be downloaded")
   }
 };

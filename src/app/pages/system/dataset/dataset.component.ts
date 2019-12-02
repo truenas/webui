@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { RestService, WebSocketService, SnackbarService, DialogService } from '../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_dataset } from 'app/helptext/system/dataset';
 import { EntityUtils } from '../../common/entity/utils';
@@ -12,13 +12,14 @@ import { T } from '../../../translate-marker';
 @Component({
   selector: 'app-system-dataset',
   template : `<entity-form [conf]="this"></entity-form>`,
-  providers: [SnackbarService]
+  providers: []
 })
 export class DatasetComponent implements OnInit{
 
   protected resource_name: string = 'storage/dataset';
   protected volume_name: string = 'storage/volume';
   public formGroup: FormGroup;
+  public entityForm: any;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -42,8 +43,7 @@ export class DatasetComponent implements OnInit{
   private pool: any;
   private syslog: any;
   constructor(private rest: RestService, private ws: WebSocketService,
-              private loader: AppLoaderService, private snackbarService: SnackbarService,
-              private dialogService: DialogService) {}
+              private loader: AppLoaderService, private dialogService: DialogService) {}
 
   ngOnInit() {
     this.rest.get(this.volume_name, {}).subscribe( res => {
@@ -57,6 +57,7 @@ export class DatasetComponent implements OnInit{
   }
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     this.ws.call('systemdataset.config').subscribe(res => {
       entityForm.formGroup.controls['pool'].setValue(res.pool);
       entityForm.formGroup.controls['syslog'].setValue(res.syslog);
@@ -97,7 +98,9 @@ export class DatasetComponent implements OnInit{
           new EntityUtils().handleWSError(this, res);
         }
         if (res.state === 'SUCCESS') {
-            this.snackbarService.open(T("Settings saved."), T('Close'), { duration: 5000 });
+          this.loader.close()
+          this.entityForm.success = true;
+          this.entityForm.formGroup.markAsPristine();
         }
       },
       (err) => {

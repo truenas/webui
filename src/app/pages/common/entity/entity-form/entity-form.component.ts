@@ -15,7 +15,6 @@ import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angul
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Rx';
-import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 import {RestService, WebSocketService} from '../../../../services/';
@@ -122,6 +121,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public saveSubmitText = "Save";
   public showPassword = false;
   public isFooterConsoleOpen: boolean;
+  public successMessage = T('Settings saved.')
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -151,7 +151,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               protected entityFormService: EntityFormService,
               protected fieldRelationService: FieldRelationService,
               protected loader: AppLoaderService,
-              public snackBar: MatSnackBar,
               public adminLayout: AdminLayoutComponent,
               private dialog:DialogService,
               public translate: TranslateService) {
@@ -326,26 +325,25 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
             }
-
-            for (const i in this.wsResponse){
-              this.wsfg = this.formGroup.controls[i];
-              this.wsResponseIdx = this.wsResponse[i];
-              if (this.wsfg) {
-                const current_field = this.fieldConfig.find((control) => control.name === i);
-                if (current_field.type === "array") {
-                    this.setArrayValue(this.wsResponse[i], this.wsfg, i);
-                } else {
-                  if (this.conf.dataHandler) {
-                    this.conf.dataHandler(this);
-                  }
-                  else {
+            if (this.conf.dataHandler) {
+              this.conf.dataHandler(this);
+            } else {
+              for (const i in this.wsResponse){
+                this.wsfg = this.formGroup.controls[i];
+                this.wsResponseIdx = this.wsResponse[i];
+                if (this.wsfg) {
+                  const current_field = this.fieldConfig.find((control) => control.name === i);
+                  if (current_field.type === "array") {
+                      this.setArrayValue(this.wsResponse[i], this.wsfg, i);
+                  } else if (current_field.type === "list") {
+                    this.setObjectListValue(this.wsResponse[i], this.wsfg, i)
+                  } else {
                     this.wsfg.setValue(this.wsResponse[i]);
                   }
-                }
-
-              } else {
-                if (this.conf.dataAttributeHandler) {
-                  this.conf.dataAttributeHandler(this);
+                } else {
+                  if (this.conf.dataAttributeHandler) {
+                    this.conf.dataAttributeHandler(this);
+                  }
                 }
               }
             }
@@ -506,8 +504,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                               this.router.navigate(new Array('/').concat(
                                   this.conf.route_success));
                             } else {
-                              this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
                               this.success = true;
+                              this.formGroup.markAsPristine();
                             }
 
                             if (this.conf.afterSubmit) {
@@ -647,6 +645,20 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
       formArray.insert(index, formGroup);
     });
+  }
+
+  setObjectListValue(listValue: object[], formArray: FormArray, fieldName: string) {
+    for (let i = 0; i < listValue.length; i++) {
+      if (formArray.controls[i] == undefined) {
+        const templateListField = _.cloneDeep(_.find(this.conf.fieldConfig, {'name': fieldName}).templateListField);
+        formArray.controls.push(this.entityFormService.createFormGroup(templateListField));
+        _.find(this.conf.fieldConfig, {'name': fieldName}).listFields.push(templateListField);
+      }
+
+      for (const [key, value] of Object.entries(listValue[i])) {
+        (<FormGroup>formArray.controls[i]).controls[key].setValue(value);
+      }
+    }
   }
 
   setRelation(config: FieldConfig) {

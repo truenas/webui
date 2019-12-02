@@ -3,10 +3,9 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { WebSocketService, AppLoaderService } from '../../../../services/';
+import { WebSocketService, AppLoaderService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/system/alert-service';
@@ -55,10 +54,7 @@ export class AlertServiceComponent {
       }, {
         label: 'E-Mail',
         value: 'Mail',
-      }, {
-        label: 'HipChat',
-        value: 'HipChat',
-      }, {
+      },{
         label: 'InfluxDB',
         value: 'InfluxDB',
       }, {
@@ -174,74 +170,6 @@ export class AlertServiceComponent {
         }]
       }]
     },
-    // HtpChat
-    {
-      type: 'input',
-      name: 'HipChat-hfrom',
-      placeholder: helptext.HipChat_hfrom_placeholder,
-      tooltip: helptext.HipChat_hfrom_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'HipChat-cluster_name',
-      placeholder: helptext.HipChat_cluster_name_placeholder,
-      tooltip: helptext.HipChat_cluster_name_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'HipChat-base_url',
-      placeholder: helptext.HipChat_base_url_placeholder,
-      tooltip: helptext.HipChat_base_url_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'HipChat-room_id',
-      placeholder: helptext.HipChat_room_id_placeholder,
-      tooltip: helptext.HipChat_room_id_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'HipChat-auth_token',
-      placeholder: helptext.HipChat_auth_token_placeholder,
-      tooltip: helptext.HipChat_auth_token_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'HipChat',
-        }]
-      }],
-      required: true,
-      validation: [Validators.required],
-    },
     // InfluxDB
     {
       type: 'input',
@@ -319,18 +247,6 @@ export class AlertServiceComponent {
     // Mattermost
     {
       type: 'input',
-      name: 'Mattermost-cluster_name',
-      placeholder: helptext.Mattermost_cluster_name_placeholder,
-      tooltip: helptext.Mattermost_cluster_name_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Mattermost',
-        }]
-      }]
-    }, {
-      type: 'input',
       name: 'Mattermost-url',
       placeholder: helptext.Mattermost_url_placeholder,
       tooltip: helptext.Mattermost_url_tooltip,
@@ -359,32 +275,6 @@ export class AlertServiceComponent {
       validation: [Validators.required],
     }, {
       type: 'input',
-      inputType: 'password',
-      name: 'Mattermost-password',
-      placeholder: helptext.Mattermost_password_placeholder,
-      togglePw: true,
-      tooltip: helptext.Mattermost_password_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Mattermost',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'Mattermost-team',
-      placeholder: helptext.Mattermost_team_placeholder,
-      tooltip: helptext.Mattermost_team_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Mattermost',
-        }]
-      }]
-    }, {
-      type: 'input',
       name: 'Mattermost-channel',
       placeholder: helptext.Mattermost_channel_placeholder,
       tooltip: helptext.Mattermost_channel_tooltip,
@@ -395,23 +285,21 @@ export class AlertServiceComponent {
           value: 'Mattermost',
         }]
       }],
-      required: true,
-      validation: [Validators.required],
-    },
-    // OpsGenie
-    {
+    }, {
       type: 'input',
-      name: 'OpsGenie-cluster_name',
-      placeholder: helptext.OpsGenie_cluster_name_placeholder,
-      tooltip: helptext.OpsGenie_cluster_name_tooltip,
+      name: 'Mattermost-icon_url',
+      placeholder: helptext.Mattermost_icon_url_placeholder,
+      tooltip: helptext.Mattermost_icon_url_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
           name: "type",
-          value: 'OpsGenie',
+          value: 'Mattermost',
         }]
-      }]
-    }, {
+      }],
+    },
+    // OpsGenie
+    {
       type: 'input',
       name: 'OpsGenie-api_key',
       placeholder: helptext.OpsGenie_api_key_placeholder,
@@ -471,18 +359,6 @@ export class AlertServiceComponent {
     // Slack
     {
       type: 'input',
-      name: 'Slack-cluster_name',
-      placeholder: helptext.Slack_cluster_name_placeholder,
-      tooltip: helptext.Slack_cluster_name_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Slack',
-        }]
-      }]
-    }, {
-      type: 'input',
       name: 'Slack-url',
       placeholder: helptext.Slack_url_placeholder,
       tooltip: helptext.Slack_url_tooltip,
@@ -495,42 +371,6 @@ export class AlertServiceComponent {
       }],
       required: true,
       validation: [Validators.required],
-    }, {
-      type: 'input',
-      name: 'Slack-channel',
-      placeholder: helptext.Slack_channel_placeholder,
-      tooltip: helptext.Slack_channel_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Slack',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'Slack-username',
-      placeholder: helptext.Slack_username_placeholder,
-      tooltip: helptext.Slack_username_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Slack',
-        }]
-      }]
-    }, {
-      type: 'input',
-      name: 'Slack-icon_url',
-      placeholder: helptext.Slack_icon_url_placeholder,
-      tooltip: helptext.Slack_icon_url_tooltip,
-      relation: [{
-        action: "SHOW",
-        when: [{
-          name: "type",
-          value: 'Slack',
-        }]
-      }]
     },
     // SNMPTrap
     {
@@ -787,9 +627,9 @@ export class AlertServiceComponent {
           (res) => {
             this.loader.close();
             if (res) {
-              this.snackBar.open('Test alert sent!', 'close', { duration: 5000 });
+              this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
-              this.snackBar.open('Failed sending test alert!', 'close', { duration: 5000 });
+              this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
             }
           },
           (err) => {
@@ -806,7 +646,7 @@ export class AlertServiceComponent {
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    protected snackBar: MatSnackBar) { }
+    protected dialogService: DialogService) { }
 
   preInit() {
     this.aroute.params.subscribe(params => {

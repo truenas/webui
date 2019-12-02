@@ -6,5 +6,6 @@
     <button mat-button color="primary" (click)="customEventMethod($event)">{{config.customEventActionLabel}}</button>
   </mat-card-actions>
 	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
-  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+	<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+	<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
 </div>

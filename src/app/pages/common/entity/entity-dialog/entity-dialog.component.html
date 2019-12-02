@@ -3,12 +3,15 @@
 <div mat-dialog-content>
   <span [innerHTML]="conf.message"></span>
   <br>
+  <div *ngIf="conf['confirmInstructions']" >
+    <div [innerHTML]="instructions" [ngStyle]="{marginTop:'10px', marginBottom: '-1rem'}"></div>
+    <div id="double-confirm-mask" [ngStyle]="{opacity: '.38', position: 'relative', top: '35px'}">{{conf['name']}}</div>
+  </div>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
     <button mat-icon-button type="button" *ngIf="field.hideButton===false" (click)="togglePW()">
       <mat-icon matTooltip="Hide" *ngIf="showPassword">visibility</mat-icon>
       <mat-icon matTooltip="Show" *ngIf="!showPassword">visibility_off</mat-icon>
-  </button>
-
+    </button>
   </ng-container>
   <span [innerHTML]="conf.warning"></span>
 </div>

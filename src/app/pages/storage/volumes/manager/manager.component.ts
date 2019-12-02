@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
-import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -94,6 +94,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
   public vdevdisksError = false;
+  public vdevdisksSizeError = false;
 
   public diskAddWarning = helptext.manager_diskAddWarning;
   public diskExtendWarning = helptext.manager_diskExtendWarning;
@@ -119,6 +120,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public startingHeight: any;
   public expandedRows: any;
+  public swapondrive = 2;
 
   constructor(
     private rest: RestService,
@@ -126,7 +128,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
 //    private dragulaService: DragulaService,
     private dialog:DialogService,
-    public snackBar: MatSnackBar,
     private loader:AppLoaderService,
     protected route: ActivatedRoute,
     public mdDialog: MatDialog,
@@ -167,7 +168,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     const duplicable_disks = this.duplicable_disks;
     let maxVdevs = 0;
     if (this.first_data_vdev_disknum && this.first_data_vdev_disknum > 0) {
-      maxVdevs = this.duplicable_disks.length / this.first_data_vdev_disknum;
+      maxVdevs = Math.floor(this.duplicable_disks.length / this.first_data_vdev_disknum);
     }
     const vdevs_options = [];
     for (let i = maxVdevs; i > 0; i--) {
@@ -184,7 +185,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           placeholder: helptext.manager_duplicate_vdevs_placeholder,
           tooltip: helptext.manager_duplicate_vdevs_tooltip,
           options: vdevs_options
-        }
+        },
+        {
+          type: 'paragraph',
+          name: 'copy_desc',
+          paraText: '',
+        },
       ],
 
       saveButtonText: helptext.manager_duplicate_button,
@@ -206,10 +212,33 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           for (let j = 0; j < self.first_data_vdev_disknum; j++) {
             const disk = duplicable_disks.shift();
             vdev_values['disks'].push(disk);
+            // remove disk from selected
+            self.selected = _.remove(self.selected, function(d) {
+              return d.devname !== disk.devname;
+            });
           }
           self.addVdev('data', vdev_values);
         }
         entityDialog.dialogRef.close(true);
+      },
+      parent: this,
+      afterInit: function(entityDialog) {
+        const copy_desc = _.find(this.fieldConfig, {'name':'copy_desc'});
+        const parent = entityDialog.parent;
+        const setParatext = function(vdevs) {
+          const used = parent.first_data_vdev_disknum * vdevs;
+          const remaining = parent.duplicable_disks.length - used;
+          const size = (<any>window).filesize(parent.first_data_vdev_disksize, {standard : "iec"});
+          const type = parent.first_data_vdev_disktype;
+          const vdev_type = parent.first_data_vdev_type;
+          const paraText = "Create " + vdevs + " new " + vdev_type + " data vdevs using " + used +
+            " (" + size + ") " + type + "s and leaving " + remaining + " of those drives unused."
+          copy_desc.paraText = paraText;
+        }
+        setParatext(entityDialog.formGroup.controls['vdevs'].value);
+        entityDialog.formGroup.controls['vdevs'].valueChanges.subscribe((vdevs) => {
+          setParatext(vdevs);
+        });
       }
     };
     this.dialog.dialogForm(conf);
@@ -275,6 +304,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.ws.call('system.advanced.config').subscribe(res => {
+      this.swapondrive = res.swapondrive;
+    });
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.pk = parseInt(params['pk']);
@@ -399,6 +431,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.disknumError = null;
     this.vdevtypeError = null;
     this.vdevdisksError = false;
+    this.vdevdisksSizeError = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
@@ -441,6 +474,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (vdev.vdev_disks_error) {
         this.vdevdisksError = true;
+      }
+      if (vdev.vdev_disks_size_error) {
+        this.vdevdisksSizeError = true;
       }
 
     });
@@ -487,6 +523,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     if (this.vdevdisksError) {
+      return false;
+    }
+    if (this.vdevdisksSizeError) {
       return false;
     }
     return true;
@@ -578,12 +617,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   goBack() {
     this.router.navigate(['/', 'storage', 'pools']);
-  }
-
-  openSnackBar() {
-    this.snackBar.open(this.encryption_message, T("Warning"), {
-      duration: 5000,
-    });
   }
 
   openDialog() {

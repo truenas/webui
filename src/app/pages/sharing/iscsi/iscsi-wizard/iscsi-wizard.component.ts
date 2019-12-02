@@ -5,17 +5,18 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
-import { IscsiService, WebSocketService } from '../../../../services/';
+import { IscsiService, WebSocketService, NetworkService } from '../../../../services/';
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { CloudCredentialService } from '../../../../services/cloudcredential.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/';
+import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 
 @Component({
     selector: 'app-iscsi-wizard',
     template: '<entity-wizard [conf]="this"></entity-wizard>',
-    providers: [IscsiService, CloudCredentialService]
+    providers: [IscsiService, CloudCredentialService, NetworkService]
 })
 export class IscsiWizardComponent {
 
@@ -36,7 +37,6 @@ export class IscsiWizardComponent {
         'discovery_authmethod': null,
         'discovery_authgroup': null,
         'listen': null,
-        'auth': null,
         'tag': null,
         'user': null,
         'initiators': null,
@@ -44,6 +44,7 @@ export class IscsiWizardComponent {
         'comment': null,
     };
     public summary: any;
+    protected namesInUse = [];
 
     protected wizardConfig: Wizard[] = [
         {
@@ -55,6 +56,10 @@ export class IscsiWizardComponent {
                     placeholder: helptext.name_placeholder,
                     tooltip: helptext.name_tooltip,
                     required: true,
+                    validation: [
+                        Validators.required,
+                        forbiddenValues(this.namesInUse)
+                    ],
                 },
                 {
                     type: 'select',
@@ -260,54 +265,13 @@ export class IscsiWizardComponent {
                         {
                             label: 'None',
                             value: '',
-                        }
-                    ],
-                    value: '',
-                    isHidden: true,
-                    disabled: true,
-                },
-                {
-                    type: 'list',
-                    name: 'listen',
-                    templateListField: [
-                        {
-                            type: 'select',
-                            name: 'ip',
-                            placeholder: helptext.ip_placeholder,
-                            tooltip: helptext.ip_tooltip,
-                            options: [],
-                            class: 'inline',
-                            width: '60%',
-                            required: true,
-                            validation : [ Validators.required ],
                         },
-                        {
-                            type: 'input',
-                            name: 'port',
-                            placeholder: helptext.port_placeholder,
-                            tooltip: helptext.port_tooltip,
-                            value: '3260',
-                            class: 'inline',
-                            width: '30%',
-                        }
-                    ],
-                    listFields: [],
-                    isHidden: true,
-                    disabled: true,
-                },
-                // athorized access
-                {
-                    type: 'select',
-                    name: 'auth',
-                    placeholder: helptext.auth_placeholder,
-                    tooltip: helptext.auth_tooltip,
-                    options: [
                         {
                             label: 'Create New',
                             value: 'NEW'
                         }
                     ],
-                    required: true,
+                    value: '',
                     isHidden: true,
                     disabled: true,
                 },
@@ -356,6 +320,36 @@ export class IscsiWizardComponent {
                     isHidden: true,
                     disabled: true,
                 },
+                {
+                    type: 'list',
+                    name: 'listen',
+                    templateListField: [
+                        {
+                            type: 'select',
+                            name: 'ip',
+                            placeholder: helptext.ip_placeholder,
+                            tooltip: helptext.ip_tooltip,
+                            options: [],
+                            class: 'inline',
+                            width: '60%',
+                            required: true,
+                            validation : [ Validators.required ],
+                        },
+                        {
+                            type: 'input',
+                            name: 'port',
+                            placeholder: helptext.port_placeholder,
+                            tooltip: helptext.port_tooltip,
+                            value: '3260',
+                            class: 'inline',
+                            width: '30%',
+                        }
+                    ],
+                    listFields: [],
+                    isHidden: true,
+                    disabled: true,
+                },
+
             ]
         },
         {
@@ -372,10 +366,12 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'auth_network',
-                    placeholder: helptext.auth_network_placeholder,
-                    tooltip: helptext.auth_network_tooltip,
+                    placeholder: helptext.auth_network.placeholder,
+                    tooltip: helptext.auth_network.tooltip,
                     value: '',
+                    hasErrors: false,
                     inputType: 'textarea',
+                    validation: [this.IPValidator('auth_network')]
                 }
             ]
         }
@@ -489,8 +485,18 @@ export class IscsiWizardComponent {
         private cloudcredentialService: CloudCredentialService,
         private dialogService: DialogService,
         private loader: AppLoaderService,
+        private networkService: NetworkService,
         private router: Router) {
-
+        this.iscsiService.getExtents().subscribe(
+            (res) => {
+                this.namesInUse.push(...res.map(extent => extent.name));
+            }
+        )
+        this.iscsiService.getTargets().subscribe(
+            (res) => {
+                this.namesInUse.push(...res.map(target => target.name));
+            }
+        )
     }
 
     afterInit(entityWizard) {
@@ -547,7 +553,9 @@ export class IscsiWizardComponent {
 
         this.iscsiService.getAuth().subscribe((res) => {
             for (let i = 0; i < res.length; i++) {
-                authGroupField.options.push({ label: res[i].tag, value: res[i].tag });
+                if (_.find(authGroupField.options, {value: res[i].tag}) == undefined) {
+                    authGroupField.options.push({ label: res[i].tag, value: res[i].tag });
+                }
             }
         });
 
@@ -563,16 +571,6 @@ export class IscsiWizardComponent {
             }
         });
 
-        this.iscsiService.getAuth().subscribe((res) => {
-            const field = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'auth' });
-            for (let i = 0; i < res.length; i++) {
-                const option = { label: res[i].tag, value: res[i].tag };
-                if (field.options.findIndex(item => item.label === option.label) < 0) {
-                    field.options.push(option);
-                }
-            }
-        })
-
         this.entityWizard.formArray.controls[1].controls['portal'].valueChanges.subscribe((value) => {
             this.disablePortalGroup = value === 'NEW' ? false : true;
             this.disablefieldGroup(this.portalFieldGroup, this.disablePortalGroup, 1);
@@ -580,7 +578,6 @@ export class IscsiWizardComponent {
 
         this.entityWizard.formArray.controls[1].controls['discovery_authmethod'].valueChanges.subscribe((value) => {
             this.disableAuth = ((value === 'CHAP' || value === 'CHAP_MUTUAL') && !this.disablePortalGroup) ? false : true;
-            this.disablefieldGroup(['auth'], this.disableAuth, 1);
 
             authGroupField.required = !this.disableAuth;
             if (this.disableAuth) {
@@ -591,8 +588,8 @@ export class IscsiWizardComponent {
             this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].updateValueAndValidity();
         });
 
-        this.entityWizard.formArray.controls[1].controls['auth'].valueChanges.subscribe((value) => {
-            this.disableAuthGroup = (value === 'NEW' && !this.disableAuth) ? false : true;
+        this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].valueChanges.subscribe((value) => {
+            this.disableAuthGroup = value === 'NEW' ? false : true;
             this.disablefieldGroup(this.authAccessFieldGroup, this.disableAuthGroup, 1);
         });
     }
@@ -633,10 +630,10 @@ export class IscsiWizardComponent {
             'Portal': this.summaryObj.portal,
             'New Portal': {
                 'Discovery Auth Method': this.summaryObj.discovery_authmethod,
-                'Discovery Auth Group': this.summaryObj.discovery_authgroup,
+                'Discovery Auth Group': this.summaryObj.discovery_authgroup === 'NEW' ? `${this.summaryObj.tag} (New Create)` : this.summaryObj.discovery_authgroup,
                 'Listen': this.summaryObj.listen === null ? null : this.summaryObj.listen.map(listen => listen.ip + ':' + listen.port),
             },
-            'Authorized Access': this.summaryObj.auth,
+            'Authorized Access': this.summaryObj.discovery_authgroup,
             'New Authorized Access': {
                 'Group ID': this.summaryObj.tag,
                 'User': this.summaryObj.user,
@@ -656,7 +653,7 @@ export class IscsiWizardComponent {
         }
 
         this.summaryObj.portal === 'Create New' ? delete summary['Portal'] : delete summary['New Portal'];
-        this.summaryObj.auth === 'NEW' ? delete summary['Authorized Access'] : delete summary['New Authorized Access'];
+        this.summaryObj.discovery_authgroup === 'NEW' ? delete summary['Authorized Access'] : delete summary['New Authorized Access'];
 
         if (!this.summaryObj.initiators && !this.summaryObj.auth_network && !this.summaryObj.comment) {
             delete summary['Initiator'];
@@ -736,8 +733,8 @@ export class IscsiWizardComponent {
         const createdItems = {
             zvol: null,
             extent: null,
-            portal: null,
             auth: null,
+            portal: null,
             initiator: null,
             target: null,
             associateTarget: null,
@@ -745,11 +742,13 @@ export class IscsiWizardComponent {
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!((item === 'zvol' && value['disk'] !== 'NEW') || ((item === 'portal' || item === 'auth') && value[item] !== 'NEW'))) {
+                if (!((item === 'zvol' && value['disk'] !== 'NEW') || (item === 'auth' && value['discovery_authgroup'] !== 'NEW') || (item === 'portal' && value[item] !== 'NEW'))) {
                     await this.doCreate(value, item).then(
                         (res) => {
                             if (item === 'zvol') {
-                                value['disk'] = res.id;
+                                value['disk'] = 'zvol/' + res.id;
+                            } else if (item ==='auth') {
+                                value['discovery_authgroup'] = res.tag;
                             } else {
                                 value[item] = res.id;
                             }
@@ -859,4 +858,32 @@ export class IscsiWizardComponent {
             }
         }
     }
+
+    IPValidator(name: string) {
+        const self = this;
+        return function validIPs(control: FormControl) {
+            const config = self.wizardConfig[2].fieldConfig.find(c => c.name === name);
+            let arr = (control.value).match(/\S+/g);
+            let counter = 0;
+            if (arr) {
+                arr.forEach((item) => {
+                    if (!self.networkService.authNetworkValidator(item, self.networkService.ipv4_or_ipv6_cidr)) counter++;
+                });
+            }
+
+            const errors = control.value && control.value.length > 0 && counter > 0
+            ? { validIPs : true }
+            : null;
+        
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = helptext[name].error;
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+    
+            return errors;
+        }
+    };
 }

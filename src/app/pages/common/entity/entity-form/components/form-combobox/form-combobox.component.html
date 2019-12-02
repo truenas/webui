@@ -29,5 +29,10 @@
     </mat-menu>
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   </div>
-  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+  <div class="error-div">
+    <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+    <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+    <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+  </div>
+
 </div>

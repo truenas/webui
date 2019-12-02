@@ -24,10 +24,10 @@ snapshot_add_recursive_tooltip: T('Set to include child datasets of the \
 
 // storage/snapshots/snapshot-clone
 snapshot_clone_name_placeholder: T('Name'),
-snapshot_clone_name_tooltip: T('Enter a name for the cloned snapshot.'),
+snapshot_clone_name_tooltip: T('Name of the new dataset created from the cloned snapshot.'),
 snapshot_clone_name_validation : [ Validators.required ],
 
-label_clone: T('Clone'),
+label_clone: T('Clone to New Dataset'),
 label_delete: T('Delete'),
 label_rollback: T('Rollback')
 

@@ -3,14 +3,15 @@ import { DatePipe } from '@angular/common';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, StorageService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { Http } from '@angular/http';
 
 
 @Component({
@@ -48,22 +49,31 @@ export class AdvancedComponent implements OnDestroy {
           if (ires) {
             this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
               (res) => {
-                if (window.navigator.userAgent.search("Firefox") > 0) {
-                  window.open(res[1]);
-                } else {
-                  window.location.href = res[1];
+                const url = res[1];
+                const mimetype = 'application/gzip';
+                let failed = false;
+                this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                  this.storage.downloadBlob(file, fileName);
+                }, err => {
+                  failed = true;
+                  if (this.dialogRef) {
+                    this.dialogRef.close();
+                  }
+                  this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
+                });
+                if (!failed) {
+                  this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
+                  this.dialogRef.componentInstance.jobId = res[0];
+                  this.dialogRef.componentInstance.wsshow();
+                  this.dialogRef.componentInstance.success.subscribe((save_debug) => {
+                    this.dialogRef.close();
+                  });
+                  this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
+                    this.dialogRef.close();
+                    this.dialog.errorReport(helptext_system_advanced.debug_dialog.failure_title, 
+                      helptext_system_advanced.debug_dialog.failure_msg);
+                  });
                 }
-
-                this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
-                this.dialogRef.componentInstance.jobId = res[0];
-                this.dialogRef.componentInstance.wsshow();
-                this.dialogRef.componentInstance.success.subscribe((save_debug) => {
-                  this.dialogRef.close();
-                });
-                this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
-                  this.dialogRef.close();
-                  this.openSnackBar(helptext_system_advanced.snackbar_generate_debug_message_failure, helptext_system_advanced.snackbar_generate_debug_action);
-                });
               },
               (err) => {
                 new EntityUtils().handleWSError(this, err, this.dialog);
@@ -171,11 +181,6 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.advancedmode_placeholder,
     tooltip: helptext_system_advanced.advancedmode_tooltip
   }, {
-    type: 'input',
-    name: 'graphite',
-    placeholder: helptext_system_advanced.graphite_placeholder,
-    tooltip: helptext_system_advanced.graphite_tooltip
-  }, {
     type: 'checkbox',
     name: 'fqdn_syslog',
     placeholder: helptext_system_advanced.fqdn_placeholder,
@@ -184,13 +189,7 @@ export class AdvancedComponent implements OnDestroy {
     type: 'paragraph',
     name: 'sed_options_message',
     paraText: helptext_system_advanced.sed_options_message_paragraph,
-// This tooltip wraps to the next line when uncommented.
-// Erin said it's more than likely the CSS. Commented out for now and
-// linking to the user guide from the test instead.
-//  tooltip: T('See the <a href="--docurl--/system.html#self-encrypting-drives"\
-//                target="_blank"> Self Encrypting Drives</a> section of\
-//                the user guide for more information.'),
-//
+    tooltip: helptext_system_advanced.sed_options_tooltip
   },
   {
     type: 'select',
@@ -227,15 +226,10 @@ export class AdvancedComponent implements OnDestroy {
     private dialog: DialogService,
     private ws: WebSocketService,
     public adminLayout: AdminLayoutComponent,
-    public snackBar: MatSnackBar,
     protected matDialog: MatDialog,
-    public datePipe: DatePipe) {}
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000
-    });
-  }
+    public datePipe: DatePipe,
+    public http: Http,
+    public storage: StorageService) {}
 
   ngOnDestroy() {
     this.swapondrive_subscription.unsubscribe();
@@ -302,7 +296,8 @@ export class AdvancedComponent implements OnDestroy {
     this.load.open();
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
       this.load.close();
-      this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
+      this.entityForm.success = true;
+      this.entityForm.formGroup.markAsPristine();
       this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
     }, (res) => {
       this.load.close();
