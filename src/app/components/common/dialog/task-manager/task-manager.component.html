@@ -1,7 +1,9 @@
 <mat-dialog-content class="task-manager-dialog-content">
     <span class="task-manager-search">
         <mat-icon>search</mat-icon>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="{{'Filter' | translate}}">
+        </mat-form-field>
     </span>
 
     <mat-table #taskTable [dataSource]="dataSource" multiTemplateDataRows matSort>
