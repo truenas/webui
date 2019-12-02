@@ -42,8 +42,8 @@ export class VDevLabelsSVG {
 
   constructor(chassis, app, theme, disk){
     this.selectedDisk = disk;
-    this.color = 'var(--blue)';//theme.blue;
-    this.selectedDiskColor = 'var(--cyan)';//theme.cyan;
+    this.color = 'var(--blue)';
+    this.selectedDiskColor = 'var(--cyan)';
     this.highlightColor = theme.yellow;
 
     this.onInit(chassis, app);
@@ -76,19 +76,19 @@ export class VDevLabelsSVG {
         case "HidePath":
         break;
         case 'EnableHighlightMode':
-          tiles = this.getParent().querySelectorAll('rect.tile');
-          this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname])
         break;
         case 'DisableHighlightMode':
           tiles = this.getParent().querySelectorAll('rect.tile')
           this.showAllTiles(tiles);
         break;
         case 'HighlightDisk':
+          tiles = this.getParent().querySelectorAll('rect.tile');
+          this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname]);
+
           this.highlightedDiskName = evt.data.devname;
           this.showTile(evt.data.devname);
         break;
         case 'UnhighlightDisk':
-          this.hideTile(evt.data.devname);
         break;
       }
     });
@@ -96,12 +96,10 @@ export class VDevLabelsSVG {
   }
 
   onDestroy(){
-    console.log("Clean up after yourself");
   }
 
   // Animate into view
   enter(){
-    console.log("Animate into view...");
   }
 
   // Animate out of view
@@ -122,7 +120,7 @@ export class VDevLabelsSVG {
       .attr("height", op.offsetHeight)
       .attr("style", "position:absolute; top:0; left:0;");
 
-    let clickpad = d3.select('#' + op.id).append("canvas") // This element will capture for PIXI
+    let clickpad = d3.select('#' + op.id).append("canvas") // This element will capture pointer for PIXI
       .attr('class', 'clickpad')
       .attr("width", op.offsetWidth)
       .attr("height", op.offsetHeight)
@@ -160,10 +158,10 @@ export class VDevLabelsSVG {
     let gap = 3;
 
     disks.forEach((disk, index) => {
-      let present = false; // Is the disk in this enclosure?
+      let present = vdev.slots && vdev.slots[disk] ? true : false; // Is the disk in this enclosure?
       let slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
 
-        present = true;
+      if(slot){
         // Create tile if the disk is in the current enclosure
         let src = this.chassis.driveTrayObjects[slot - 1].container;
         let tray = src.getGlobalPosition();
@@ -171,7 +169,7 @@ export class VDevLabelsSVG {
         let tileClass = "tile tile_" + disk;
         this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y, tileClass, disk);
         this.trays[ disk ] = {x: tray.x, y: tray.y, width: src.width * this.chassis.container.scale.x, height: src.height * this.chassis.container.scale.y};
-      
+      } 
     });
 
   }
@@ -279,12 +277,16 @@ export class VDevLabelsSVG {
 
   showTile(devname){
     let targetEl = this.getParent().querySelector('rect.tile_' + devname);
-    targetEl.style.opacity = 1;
+    if(targetEl){
+      targetEl.style.opacity = 1;
+    }
   }
 
   hideTile(devname){
     let targetEl = this.getParent().querySelector('rect.tile_' + devname);
-    targetEl.style.opacity = 0;
+    if(targetEl){
+      targetEl.style.opacity = 0;
+    }
   }
 
   hideAllTiles(tiles, exceptions?:string[]){

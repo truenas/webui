@@ -83,7 +83,7 @@ h4 {
 .data-div {
 	display: flex;
 	padding:0;
-	margin-left: 80px;
+	margin-left: 102px;
 	width: 477px;
 	align-items: center;
 }
@@ -93,7 +93,7 @@ h4 {
 }
 
 .duplicate-button {
-	width: 100px;
+	width: 60px;
 }
 
 #pool-manager__encryption-checkbox {
@@ -123,5 +123,8 @@ h4 {
 	.pool {
 		top: 40px;
 		margin-bottom: 50px;
+	}
+	.data-div {
+		margin-left: 118px;
 	}
 }

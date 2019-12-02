@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Http } from '@angular/http';
 import { Subscription } from 'rxjs';
-import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
+import { RestService, WebSocketService, SystemGeneralService, StorageService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -90,12 +91,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
     customSubmit: this.saveConfigSubmit,
+    parent: this
   };
 
   protected dialogRef: any;
-  constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
+  constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
-    protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
+    protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
+    protected storage: StorageService, protected http: Http) {
       this.sysGenService.updateRunning.subscribe((res) => { 
         res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }
@@ -130,7 +133,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     const v2 = this.parseTrainName(t2);
 
     try {
-      if(v1[0] !== v2[0] ) {
+      if(v1[0] !== v2[0] || v1[1] !== v2[1]) {
 
         const version1 = v1[0].split('.');
         const version2 = v2[0].split('.');
@@ -153,8 +156,12 @@ export class UpdateComponent implements OnInit, OnDestroy {
         if (version1[0] === version2[0]){
           // comparing '11' .1 with '11' .2
           if(version1[1] && version2[1]){
+            if (version1[1] === version2[1]) {
+              //upgrading to train of same version;
+              return "ALLOWED";
+            }
             //comparing '.1' with '.2'
-            return version1[1] > version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
+            return version1[1] < version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
           }
           if(version1[1]){
             //handling a case where '.1' is compared with 'undefined'
@@ -228,15 +235,19 @@ export class UpdateComponent implements OnInit, OnDestroy {
           }
         }
         this.singleDescription = this.trains[0].description;
-  
-        if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
-          this.currentTrainDescription = '[nightly]';
-        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
-          this.currentTrainDescription = '[release]';
-        } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
-          this.currentTrainDescription = '[prerelease]';
-        } else {
-          this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
+        
+        if (this.fullTrainList[res.current]) {
+          if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
+            this.currentTrainDescription = '[nightly]';
+          } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[release]')) {
+            this.currentTrainDescription = '[release]';
+          } else if (this.fullTrainList[res.current].description.toLowerCase().includes('[prerelease]')) {
+            this.currentTrainDescription = '[prerelease]';
+          } else {
+            this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
+          }
+        } else { 
+            this.currentTrainDescription = '';
         }
         // To remember train descrip if user switches away and then switches back
         this.trainDescriptionOnPageLoad = this.currentTrainDescription;
@@ -304,13 +315,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   onTrainChanged(event) {
     // For the case when the user switches away, then BACK to the train of the current OS
-    if (event.value === this.selectedTrain) {
+    if (event === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
-      this.check();
+      this.setTrainAndCheck();
       return;
     }
 
-    const compare = this.compareTrains(this.selectedTrain, event.value);
+    const compare = this.compareTrains(this.selectedTrain, event);
     if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
       this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
         this.train = this.selectedTrain;
@@ -318,22 +329,30 @@ export class UpdateComponent implements OnInit, OnDestroy {
     } else if(compare === "NIGHTLY_UPGRADE"){
         this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
           if (res){
-            this.train = event.value;
-            this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
-            this.check();
+            this.train = event;
+            this.setTrainDescription();
+            this.setTrainAndCheck();
           } else {
             this.train = this.selectedTrain;
-            this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+            this.setTrainDescription();
           }
         })
     } else if (compare === "ALLOWED" || compare === "MINOR_UPGRADE" || compare === "MAJOR_UPGRADE") {
       this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
-          this.train = event.value;
-          this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
-          this.check();
+          this.train = event;
+          this.setTrainDescription();
+          this.setTrainAndCheck();
         }
       })
+    }
+  }
+
+  setTrainDescription() {
+    if (this.fullTrainList[this.train]) {
+      this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
+    } else {
+      this.currentTrainDescription = '';
     }
   }
 
@@ -413,10 +432,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
               if (!this.is_ha) {
                 this.ds  = this.dialogService.confirm(
-                  T("Download Update"), T("Continue with download?"),true,"",true,
+                  T("Download Update"), T("Continue with download?"),true,T("Download"),true,
                     T("Apply updates and reboot system after downloading."),
                     'update.update',[{ train: this.train, reboot: false }]
                 )
+                this.ds.componentInstance.isSubmitEnabled = true;
                 this.ds.afterClosed().subscribe((status)=>{
                   if(status){
                     if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
@@ -425,7 +445,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                       this.dialogRef.componentInstance.submit();
                       this.dialogRef.componentInstance.success.subscribe((succ) => {
                         this.dialogRef.close(false);
-                        this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
+                        this.dialogService.Info(T("Updates successfully downloaded"),'', '450px', 'info', true);
                         this.pendingupdates();
 
                       });
@@ -539,6 +559,19 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
+  setTrainAndCheck() {
+    this.showSpinner = true;
+    this.ws.call('update.set_train', [this.train]).subscribe(() => { 
+      this.check();
+    },(err) => {
+      new EntityUtils().handleWSError(this, err, this.dialogService);
+      this.showSpinner = false;
+    },
+    () => {
+      this.showSpinner = false;
+    });
+  }
+
   check() {
     // Reset the template
     this.updates_available = false; 
@@ -604,6 +637,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.pre_release_train = false;
             this.nightly_train = true;
           }
+          this.showSpinner = false;
         },
         (err) => {
           this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(": Automatic update check failed. Please check system network settings.");
@@ -615,34 +649,39 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   async saveConfigSubmit(entityDialog) {
+    parent = entityDialog.parent;
     await entityDialog.ws.call('system.info', []).subscribe((res) => {
       let fileName = "";
+      let mimetype;
       if (res) {
         const hostname = res.hostname.split('.')[0];
         const date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
         fileName = hostname + '-' + date;
         if (entityDialog.formValue['secretseed']) {
           fileName += '.tar';
+          mimetype = 'application/x-tar';
         } else {
           fileName += '.db';
+          mimetype = 'application/x-sqlite3';
         }
       }
 
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (succ) => {
-            if (window.navigator.userAgent.search("Firefox")>0) {
-              window.open(succ[1]);
-          }
-            else {
-              window.location.href = succ[1];
-            } 
+            const url = succ[1];
+            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
+            .subscribe(file => {
+              entityDialog.dialogRef.close();
+              entityDialog.parent.storage.downloadBlob(file, fileName);
+            }, err => {
+              entityDialog.dialogRef.close();
+              entityDialog.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
+            })
             entityDialog.dialogRef.close();
           },
           (err) => {
-            entityDialog.snackBar.open(T("Check the network connection"), T("Failed") , {
-              duration: 5000
-            });
+            entityDialog.parent.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
           }
         );
     });

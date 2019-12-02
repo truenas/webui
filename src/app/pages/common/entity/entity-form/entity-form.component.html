@@ -38,15 +38,15 @@
                 <!-- </div> -->
                 <!-- <div class="btn-group btn-group-justified"> -->
                 <span *ngFor="let custBtn of conf.custActions">
-                  <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" [disabled]="custBtn.disabled" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+                  <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" [disabled]="conf.isCustActionDisabled !== undefined ? conf.isCustActionDisabled(custBtn.id) : custBtn.disabled" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
                 </span>
                 <button mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
                 <!-- </div> -->
             </mat-card-actions>
           </div>
             <!-- <div class="btn-group btn-group-justified"> -->
+          <p *ngIf="success && entityForm.form.dirty === false" type="success" id="successfully_updated">{{successMessage | translate}}</p>
         </form>
-        <p *ngIf="success" type="success" id="successfully_updated">{{"Successfully updated." | translate}}</p>
         <span *ngIf="conf.form_message" id="form_message" class="form-message" [ngClass]="conf.form_message.type" [innerHTML]="conf.form_message.content"></span>
         <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
     </div>

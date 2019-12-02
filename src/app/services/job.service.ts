@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
+import { Http } from '@angular/http';
 
 import { EntityUtils } from '../pages/common/entity/utils'
 import { WebSocketService } from './ws.service';
 import { DialogService } from './dialog.service';
+import { StorageService } from './storage.service';
 import { T } from '../translate-marker';
-import { MatSnackBar } from '@angular/material';
+import globalHelptext from '../helptext/global-helptext';
 
 @Injectable()
 export class JobService {
@@ -14,7 +16,7 @@ export class JobService {
   protected accountAllUsersResource: string = 'account/all_users/';
   protected accountAllGroupsResource: string = 'account/all_groups/';
 
-  constructor(protected ws: WebSocketService, protected dialog: DialogService, protected snackBar: MatSnackBar) {};
+  constructor(protected ws: WebSocketService, protected dialog: DialogService, protected storage: StorageService, protected http: Http) {};
 
   getJobStatus(job_id): Observable<any> {
     let source = Observable.create((observer) => {
@@ -35,32 +37,43 @@ export class JobService {
     title ? dialog_title = title : dialog_title = T("Logs");
     cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Cancel');
     this.ws.call("core.get_jobs").subscribe((res) => {
-      for(var i = 0; i < res.length; i++) {
-        if (res[i].id == job_id) {
-          if (res[i].logs_path && res[i].logs_excerpt) {
-            let target_job = res[i];
-            this.dialog.confirm(dialog_title, `<pre>${res[i].logs_excerpt}</pre>`, true, T('Download Logs'),
-              false, '', '', '', '', false, cancelButtonMsg).subscribe(
-              (dialog_res) => {
-                if (dialog_res) {
-                  this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(
-                    (snack_res) => {
-                      this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
-                        duration: 5000
-                      });
-                      window.open(snack_res[1]);
-                    },
-                    (snack_res) => {
-                      new EntityUtils().handleWSError(this, snack_res);
-                    }
-                  );
-                }
-              });
-          } else if (res[i].logs_path) {
-            this.dialog.errorReport(T('Error'), res[i].error, res[i].exception, res[i]);
-          } else if (res[i].error) {
-            this.dialog.errorReport(T('Error'), res[i].error, res[i].exception);
-          } 
+      for(let i = 0; i < res.length; i++) {
+        if (res[i].id === job_id) {
+          if (res[i].error) {
+            if (res[i].logs_path) {
+              this.dialog.errorReport(T('Error'), res[i].error, res[i].exception, res[i]);
+            } else {
+              this.dialog.errorReport(T('Error'), res[i].error, res[i].exception);
+            }
+          } else {
+            if (res[i].logs_excerpt === '') {
+              this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+            } else {
+              const target_job = res[i];
+              this.dialog.confirm(dialog_title, `<pre>${res[i].logs_excerpt}</pre>`, true, T('Download Logs'),
+                false, '', '', '', '', false, cancelButtonMsg, true).subscribe(
+                (dialog_res) => {
+                  if (dialog_res) {
+                    this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(
+                      (snack_res) => {
+                        const url = snack_res[1];
+                        const mimetype = 'text/plain';
+                        let failed = false;
+                        this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).subscribe(file => {
+                          this.storage.downloadBlob(file, target_job.id + '.log');
+                        }, err => {
+                          failed = true;
+                          new EntityUtils().handleWSError(this, err);
+                        });
+                      },
+                      (snack_res) => {
+                        new EntityUtils().handleWSError(this, snack_res);
+                      }
+                    );
+                  }
+                });
+            }
+          }
         }
       }
     });

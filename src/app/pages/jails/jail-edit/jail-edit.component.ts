@@ -20,7 +20,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 @Component({
   selector: 'jail-edit',
   templateUrl: './jail-edit.component.html',
-  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss', '../jail-list/jail-list.component.css'],
   providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
 export class JailEditComponent implements OnInit, AfterViewInit {
@@ -1131,6 +1131,8 @@ export class JailEditComponent implements OnInit, AfterViewInit {
   public error: any;
   protected isPlugin = false;
 
+  public showSpinner = true;
+
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected jailService: JailService,
@@ -1292,6 +1294,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         ]
       ]).subscribe(
       (res) => {
+        this.showSpinner = false;
         this.wsResponse = res[0];
         if (res[0] && res[0].state == 'up') {
           this.save_button_enabled = false;

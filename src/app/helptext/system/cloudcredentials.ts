@@ -33,7 +33,8 @@ export const helptext_system_cloudcredentials = {
       'Amazon Web Services Key ID. This is found on \
  <a href="https://aws.amazon.com/" target="_blank">Amazon AWS</a> by \
  going through <i>My account -> Security Credentials -> Access Keys \
- (Access Key ID and Secret Access Key)</i>.'
+ (Access Key ID and Secret Access Key)</i>. Must be alphanumeric and \
+ between 5 and 20 characters.'
     )
   },
 
@@ -42,7 +43,8 @@ export const helptext_system_cloudcredentials = {
     tooltip: T(
       "Amazon Web Services password. If the Secret Access Key cannot be \
  found or remembered, go to <i>My Account -> Security Credentials -> \
- Access Keys</i> and create a new key pair."
+ Access Keys</i> and create a new key pair. Must be alphanumeric and \
+ between 8 and 40 characters."
     )
   },
 
@@ -89,30 +91,22 @@ export const helptext_system_cloudcredentials = {
   },
 
   account_b2: {
-    placeholder: T("Account ID or Application Key ID"),
-    tooltip: T(
-      'Alphanumeric \
- <a href="https://www.backblaze.com/b2/cloud-storage.html" \
- target="_blank">Backblaze B2</a> ID. Find an Account ID or \
- applicationKeyID by logging in to the account, clicking <i>Buckets</i>, \
- and clicking <i>Show Account ID and Application Key</i>. Enter the \
- <i>Account ID</i> to associate the entire account or generate a new \
- <i>Application Key</i>. The <i>keyID</i> replaces the Account ID and \
- the key string is used in place of the <i>Master Application Key</i>.'
-    )
+    placeholder: T("Key ID"),
+    tooltip: T('Alphanumeric \
+<a href="https://www.backblaze.com/b2/cloud-storage.html" \
+target="_blank">Backblaze B2</a> Application Key ID. To \
+generate a new application key, log in to the Backblaze account, \
+go to the <i>App Keys</i> page, and add a new application key. \
+Copy the application <i>keyID</i> string to this field.'),
   },
 
   key_b2: {
-    placeholder: T("Master Application Key or Application Key"),
-    tooltip: T(
-      'Backblaze B2 Application Key. Log in to the B2 account and \
- generate a key on the Buckets page. \
- <a href="https://help.backblaze.com/hc/en-us/articles/224991568-Where-can-I-find-my-Account-ID-and-Application-Key-" \
- target="_blank">Generating a new Master Application Key</a> invalidates \
- the existing Master key and requires updating this field. Using a \
- limited permissions Application Key also requires changing the \
- <i>Account ID</i> to the new <i>keyID</i>.'
-    )
+    placeholder: T("Application Key"),
+    tooltip: T('<a href="https://www.backblaze.com/b2/cloud-storage.html" \
+target="_blank">Backblaze B2</a> Application Key. To generate \
+a new application key, log in to the Backblaze account, go to the \
+<i>App Keys</i> page, and add a new application key. Copy the \
+<i>applicationKey</i> string to this field.'),
   },
 
   token_box: {
@@ -247,6 +241,11 @@ export const helptext_system_cloudcredentials = {
  <a href="https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/authentication" \
  target="_blank">Access Token</a>.'
     )
+  },
+
+  drives_onedrive: {
+    placeholder: T("Drives List"),
+    tooltip: T('')
   },
 
   drive_type_onedrive: {

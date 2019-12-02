@@ -8,7 +8,6 @@ import { WebSocketService, TaskService, KeychainCredentialService, ReplicationSe
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
-import globalHelptext from './../../../../helptext/global-helptext';
 
 @Component({
     selector: 'app-replication-list',
@@ -815,7 +814,7 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
-        if (this.entityForm.formGroup.controls['speed_limit'].value) {
+        if (this.entityForm.formGroup.controls['speed_limit'].value) { 
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
         }
@@ -905,12 +904,12 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
             const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
-            const filteredValue = this.storageService.convertHumanStringToNum(value);
+            const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
             speedLimitField['hasErrors'] = false;
             speedLimitField['errors'] = '';
-                if (isNaN(filteredValue)) {
+                if (filteredValue !== undefined && isNaN(filteredValue)) {
                     speedLimitField['hasErrors'] = true;
-                    speedLimitField['errors'] = globalHelptext.human_readable_input_error;
+                    speedLimitField['errors'] = helptext.speed_limit_errors;
                 };
         });
     }
@@ -955,7 +954,7 @@ export class ReplicationFormComponent {
             wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
             wsResponse['restrict_schedule'] = true;
         }
-        wsResponse['speed_limit'] = this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0);
+        wsResponse['speed_limit'] = wsResponse['speed_limit'] ? this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0) : undefined;
         return wsResponse;
     }
 
@@ -1052,7 +1051,7 @@ export class ReplicationFormComponent {
                 if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
                     data[prop] = false;
                 }
-                if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && data[prop] === undefined) {
+                if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && prop !== 'job' && data[prop] === undefined) {
                     data[prop] = Array.isArray(this.queryRes[prop]) ? [] :  null;
                 }
             }

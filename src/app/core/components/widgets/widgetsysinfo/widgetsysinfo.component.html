@@ -1,4 +1,4 @@
-<div class="widget" ngClass.xs="double-height xs {{!product_image ? 'generic-hardware' : 'ix-hardware'}}" >
+<div class="widget" [ngClass]="{'double-height': true,'xs': screenType == 'Mobile', 'generic-hardware': !product_image, 'ix-hardware': product_image}" >
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
@@ -27,14 +27,15 @@
                 <img *ngIf="!isFN" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">
               </div>
 
-            <div class="content-left" fxFlex="60" fxLayout="column" fxLayoutAlign="center center">
+            <div class="content-left" [fxFlex.xs]="!isFN && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
 
               <div class="product-image {{!isFN ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                 <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
-                    <mat-icon *ngIf="isFN" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="isFN && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="isFN && certified" class="generic certified" svgIcon="freenas_certified"></mat-icon>
                   </ng-template>
-                  <img class="certified-badge" *ngIf="certified" src="assets/images/freenas_certified.svg">
+                  <!--<img class="certified-badge" *ngIf="certified" src="assets/images/freenas_certified.svg">-->
                   <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" }})</div>
               </div>
             </div>

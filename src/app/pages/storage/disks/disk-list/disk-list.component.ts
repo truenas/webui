@@ -152,7 +152,7 @@ export class DiskListComponent {
 				label: T("Wipe"),
 				onClick: (row) => {
 					this.router.navigate(new Array('/').concat([
-					"storage", "disks", "wipe", row.name
+					"storage", "disks", "wipe", row.devname
 					]));
 				}
 			})

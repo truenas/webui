@@ -13,7 +13,7 @@
     </div>
     <div class="train-card-row train-select-row" *ngIf="trains.length > 1; else trainName">
       <mat-label id="train-label">{{"Train" | translate}}</mat-label>
-      <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (change)="onTrainChanged($event)">
+      <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (ngModelChange)="onTrainChanged($event)">
         <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }} - {{ train.description }}</mat-option>
       </mat-select>
       <button mat-mini-fab color="primary" id="refresh-button" matTooltip="Refresh" (click)="check()">
@@ -128,7 +128,7 @@
 <mat-card id="button-card" *ngIf="!isUpdateRunning">
   <div class="row">
     <div class="col-md-12">
-      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
+      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{" Download Updates" | translate}}</button>
       <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="ApplyPendingUpdate()">{{"Apply Pending update" | translate}}</button>
       <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()" >{{"Install Manual Update File" | translate}}</button>
       <!-- <button mat-button class="btn btn-success update-button red-warning-button" *ngIf="failover_upgrade_pending" (click)="applyFailoverUpgrade()">{{"Apply Failover Upgrade" | translate}}</button> -->

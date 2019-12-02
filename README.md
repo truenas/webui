@@ -77,3 +77,7 @@ To extract all of the strings from the project to be translated run:
 
 This will update all of the PO files located in the directory src/assets/i18n.
 These can be edited with any PO editor.
+
+
+Stock images used on the dashboard UI are courtesy of Pixabay.com and are subject to the Simplified Pixabay License. 
+Full license details can be found at https://pixabay.com/service/license/.

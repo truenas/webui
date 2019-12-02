@@ -8,6 +8,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
 import {RestService, WebSocketService} from '../../../../services/';
 
@@ -29,7 +30,23 @@ export class SnapshotCloneComponent {
   protected isEntity: boolean = true;
   protected isNew: boolean = true;
 
-  public fieldConfig: FieldConfig[];
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
+    {
+      name: helptext.label_clone,
+      class: 'clone',
+      label:true,
+      config: [
+        {
+          type: 'input',
+          name: 'name',
+          placeholder: helptext.snapshot_clone_name_placeholder,
+          tooltip: helptext.snapshot_clone_name_tooltip,
+          required: true,
+          validation : helptext.snapshot_clone_name_validation
+        }
+      ]
+    }];
 
   get custom_add_query(): string {
     return this.resource_name + '/' + this.pk + '/clone/'
@@ -44,19 +61,11 @@ export class SnapshotCloneComponent {
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
-      this.fieldConfig =
-        [
-          {
-            type: 'input',
-            name: 'name',
-            placeholder: helptext.snapshot_clone_name_placeholder,
-            tooltip: helptext.snapshot_clone_name_tooltip,
-            value: this.setName(this.pk),
-            required: true,
-            validation : helptext.snapshot_clone_name_validation
-          }
-        ];
     });
+  }
+
+  afterInit(entityForm: any) {
+    entityForm.formGroup.controls['name'].setValue(this.setName(this.pk));
   }
 
   setName(name) {

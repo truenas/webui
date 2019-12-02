@@ -39,6 +39,6 @@ export function rangeValidator(min: number, max?: number) {
       }
     }
 
-    return {range : true};
+    return {range: true, rangeValue:{min: min, max: max}};
   }
 }

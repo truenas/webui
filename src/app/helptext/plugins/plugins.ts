@@ -40,4 +40,9 @@ network and not already in use.'),
 ip6_prefix_placeholder: T('IPv6 Prefix'),
 ip6_prefix_tooltip: T('IPv6 prefix for the jail.'),
 
+multi_update_dialog: {
+    title: T('Update Plugins'),
+    content: T('Updating selected plugins.'),
+    succeed: T('Selected plugins updated.'),
+},
 }

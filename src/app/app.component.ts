@@ -87,6 +87,10 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo.svg")
     );
     this.matIconRegistry.addSvgIcon(
+      "freenas_certified",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo_certified.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "freenas_logotype",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-text.svg")
     );
