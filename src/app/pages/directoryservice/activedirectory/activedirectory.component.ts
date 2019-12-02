@@ -105,7 +105,6 @@ export class ActiveDirectoryComponent {
                 },
                 err => {
                   self.loader.close();
-                  // self.dialogRef.close(true);
                   new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, that.dialogservice);
                 });
             }
