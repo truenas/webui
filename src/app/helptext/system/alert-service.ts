@@ -84,7 +84,9 @@ export default {
  webhook settings.'),
 
     Mattermost_icon_url_placeholder: T('Icon URL'),
-    Mattermost_icon_url_tooltip: T(''),
+    Mattermost_icon_url_tooltip: T('Icon file to use as the profile \
+ picture for new messages. Example: \
+ <i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.'),
 
     OpsGenie_api_key_placeholder: T('API Key'),
     OpsGenie_api_key_tooltip: T('Enter or paste the <a\
@@ -113,10 +115,12 @@ export default {
  this service.'),
 
     SNMPTrap_host_placeholder: T('Hostname'),
-    SNMPTrap_host_tooltip: T(''),
+    SNMPTrap_host_tooltip: T('Hostname or IP address of the system that \
+ will receive SNMP trap notifications.'),
 
     SNMPTrap_port_placeholder: T('Port'),
-    SNMPTrap_port_tooltip: T(''),
+    SNMPTrap_port_tooltip: T('UDP port number on the system receiving \
+ SNMP trap notifications. Example: <i>162</i>'),
 
     SNMPTrap_v3_placeholder: T('SNMPv3 Security Model'),
     SNMPTrap_v3_tooltip: T('Enable the SNMPv3 security model.'),
