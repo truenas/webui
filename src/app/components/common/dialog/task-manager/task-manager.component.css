@@ -25,6 +25,9 @@ mat-icon.state-running {
 mat-icon.state-waiting {
     color: var(--accent);
 }
+mat-icon.state-aborted {
+    color: var(--orange);
+}
 
 mat-cell.mat-column-percent {
     display: inline-grid;

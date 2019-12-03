@@ -12,6 +12,7 @@
                 <mat-icon *ngIf="element.state == 'FAILED'" class="state-failed">highlight_off</mat-icon>
                 <mat-icon *ngIf="element.state == 'RUNNING'" class="state-running">cached</mat-icon>
                 <mat-icon *ngIf="element.state == 'WAITING'" class="state-waiting">schedule</mat-icon>
+                <mat-icon *ngIf="element.state == 'ABORTED'" class="state-aborted">report</mat-icon>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="method">
