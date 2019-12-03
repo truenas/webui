@@ -2,7 +2,6 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService } from 'app/services';
 import { Subscription } from 'rxjs';
-import { RestService } from '../../../../services/rest.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
@@ -56,7 +55,7 @@ export class SnapshotListComponent {
   ];
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+    protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) { }
 
   resourceTransformIncomingRestData(rows: any) {
@@ -168,16 +167,14 @@ export class SnapshotListComponent {
       if (res) {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
-        this.rest
-        .post('storage/snapshot' + '/' + item.name + '/rollback/', {
-          body : JSON.stringify(data),
-        })
+        this.ws
+        .call('zfs.snapshot.rollback', [item.name, data])
         .subscribe(
           (res) => { this.entityList.getData() },
-          (res) => {
+          (err) => {
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
-            this.entityList.dialogService.errorReport(T("Error rolling back snapshot"), res.error);
+            new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
           },
         );
       }
