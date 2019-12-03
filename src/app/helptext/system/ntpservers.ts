@@ -38,8 +38,10 @@ export const helptext_system_ntpservers = {
     minpoll: {
       placeholder: T("Min. Poll"),
       tooltip: T(
-        "Power of 2 in seconds; cannot be lower than 4 or\
- higher than <i>Max. Poll</i>."
+        "Calculated in powers of 2. Enter the exponent to be \
+ calculated. For example, if the <i>Min. Poll</i> is 6, the \
+ calculation is 2^6. Cannot be lower than 4 or higher than \
+ <i>Max. Poll</i>."
       ),
       validation: [Validators.min(4), Validators.required]
     },
@@ -47,8 +49,9 @@ export const helptext_system_ntpservers = {
     maxpoll: {
       placeholder: T("Max. Poll"),
       tooltip: T(
-        "Power of 2 in seconds; cannot be higher than 17 or\
- lower than <i>Min. Poll</i>."
+        "Calculated in powers of 2. Enter the exponent to be \
+ calculated. For example, if the <i>Max. Poll</i> is 10, the \
+ calculation is 2^10. Cannot be lower than <i>Min. Poll</i>."
       )
     },
 
