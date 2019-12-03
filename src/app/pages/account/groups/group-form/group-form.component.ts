@@ -19,6 +19,7 @@ export class GroupFormComponent {
   protected route_success: string[] = ['account', 'groups'];
   protected isEntity: boolean = true;
   protected namesInUse = [];
+  protected queryCall = 'group.query';
 
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
