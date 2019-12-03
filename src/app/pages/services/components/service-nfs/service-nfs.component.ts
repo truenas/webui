@@ -18,7 +18,7 @@ export class ServiceNFSComponent {
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
-      name: 'General Options',
+      name: helptext.nfs_srv_fieldset_general,
       label: true,
       config: [
         {
@@ -44,7 +44,7 @@ export class ServiceNFSComponent {
       divider: true
     },
     {
-      name: 'NFSv4',
+      name: helptext.nfs_srv_fieldset_v4,
       label: true,
       width: '50%',
       config: [
@@ -71,7 +71,7 @@ export class ServiceNFSComponent {
       ]
     },
     {
-      name: 'Ports',
+      name: helptext.nfs_srv_fieldset_ports,
       label: true,
       width: '50%',
       config: [
@@ -100,7 +100,7 @@ export class ServiceNFSComponent {
       divider: true
     },
     {
-      name: 'Other Options',
+      name: helptext.nfs_srv_fieldset_other,
       label: true,
       config: [
         {
@@ -152,7 +152,8 @@ export class ServiceNFSComponent {
     entityForm.submitFunction = body => this.ws.call('nfs.update', [body]);
 
     this.ws.call('notifier.choices', ['IPChoices']).subscribe((res) => {
-      this.nfs_srv_bindip = _.find(this.fieldConfig, { name: 'bindip' });
+      this.nfs_srv_bindip =
+        _.find(this.fieldSets, { name: helptext.nfs_srv_fieldset_general }).config.find(config => config.name === 'bindip');
       for (const item of res) {
         this.nfs_srv_bindip.options.push({ label: item[0], value: item[1] });
       }

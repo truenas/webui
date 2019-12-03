@@ -2,6 +2,11 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+nfs_srv_fieldset_general: T('General Options'),
+nfs_srv_fieldset_v4: T('NFSv4'),
+nfs_srv_fieldset_ports: T('Ports'),
+nfs_srv_fieldset_other: T('Other Options'),
+
 nfs_srv_servers_placeholder: T('Number of servers'),
 nfs_srv_servers_tooltip: T('Specify how many servers to create. Increase if NFS\
  client responses are slow. Keep this less than or\
