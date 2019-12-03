@@ -1,22 +1,23 @@
 import { Component } from '@angular/core';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { Validators, FormControl } from '@angular/forms';
+import { Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
-import { IscsiService, WebSocketService, NetworkService } from '../../../../services/';
+import { IscsiService, WebSocketService, NetworkService, StorageService } from '../../../../services/';
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { CloudCredentialService } from '../../../../services/cloudcredential.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import globalHelptext from 'app/helptext/global-helptext';
 
 @Component({
     selector: 'app-iscsi-wizard',
     template: '<entity-wizard [conf]="this"></entity-wizard>',
-    providers: [IscsiService, CloudCredentialService, NetworkService]
+    providers: [IscsiService, CloudCredentialService, NetworkService, StorageService]
 })
 export class IscsiWizardComponent {
 
@@ -98,8 +99,30 @@ export class IscsiWizardComponent {
                     isHidden: false,
                     disabled: false,
                     required: true,
+                    blurEvent:this.blurFilesize,
+                    blurStatus: true,
+                    parent: this,
                     value: 0,
-                    validation: [Validators.required],
+                    validation: [Validators.required,
+                        (control: FormControl): ValidationErrors => {
+                          const config = this.wizardConfig[0].fieldConfig.find(c => c.name === 'filesize');
+                          const size = this.storageService.convertHumanStringToNum(control.value, true);
+
+                          let errors = control.value && isNaN(size)
+                            ? { invalid_byte_string: true }
+                            : null
+
+                          if (errors) {
+                            config.hasErrors = true;
+                            config.errors = globalHelptext.human_readable.input_error;
+                          } else {
+                            config.hasErrors = false;
+                            config.errors = '';
+                          }
+
+                          return errors;
+                        }
+                    ],
                 },
                 // device options
                 {
@@ -486,7 +509,8 @@ export class IscsiWizardComponent {
         private dialogService: DialogService,
         private loader: AppLoaderService,
         private networkService: NetworkService,
-        private router: Router) {
+        private router: Router,
+        private storageService: StorageService) {
         this.iscsiService.getExtents().subscribe(
             (res) => {
                 this.namesInUse.push(...res.map(extent => extent.name));
@@ -811,7 +835,12 @@ export class IscsiWizardComponent {
             }
             if (payload.type === 'FILE') {
                 this.fileFieldGroup.forEach((field) => {
-                    payload[field] = value[field];
+                    if (field === 'filesize') {
+                        value[field] = this.storageService.convertHumanStringToNum(value[field], true);
+                        payload[field] = value[field] == 0 ? value[field] : (value[field] + (512 - value[field]%512));
+                    } else {
+                        payload[field] = value[field];
+                    }
                 });
             } else if (payload.type === 'DISK') {
                 payload['disk'] = value['disk'];
@@ -886,4 +915,10 @@ export class IscsiWizardComponent {
             return errors;
         }
     };
+
+    blurFilesize(parent){
+        if (parent.entityWizard) {
+            parent.entityWizard.formArray.controls[0].controls['filesize'].setValue(parent.storageService.humanReadable);
+        }
+    }
 }
