@@ -115,12 +115,12 @@ export default {
  this service.'),
 
     SNMPTrap_host_placeholder: T('Hostname'),
-    SNMPTrap_host_tooltip: T('Hostname or IP address of the system that \
- will receive SNMP trap notifications.'),
+    SNMPTrap_host_tooltip: T('Hostname or IP address of the system to \
+ receive SNMP trap notifications.'),
 
     SNMPTrap_port_placeholder: T('Port'),
     SNMPTrap_port_tooltip: T('UDP port number on the system receiving \
- SNMP trap notifications. Example: <i>162</i>'),
+ SNMP trap notifications. The default is <i>162</i>.'),
 
     SNMPTrap_v3_placeholder: T('SNMPv3 Security Model'),
     SNMPTrap_v3_tooltip: T('Enable the SNMPv3 security model.'),
