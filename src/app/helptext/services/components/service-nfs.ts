@@ -36,7 +36,7 @@ nfs_srv_v4_v3owner_relation: [
 {
 action: 'DISABLE',
 when: [{
-name: 'nfs_srv_v4',
+name: 'v4',
 value: false,
 }]
 }],
@@ -68,10 +68,10 @@ nfs_srv_16_relation: [{
   action: 'DISABLE',
   connective: 'AND',
   when: [{
-    name: 'nfs_srv_v4',
+    name: 'v4',
     value: true,
     }, {
-    name: 'nfs_srv_v4_v3owner',
+    name: 'v4_v3owner',
     value: true,
   }]
 }],
