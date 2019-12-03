@@ -166,7 +166,7 @@ export class ServiceNFSComponent {
             entityForm.formGroup.controls['v4_v3owner'].disable();
           }
         } else {
-          if (entityForm.formGroup.controls['nfs_srv_v4_v3owner'].disabled) {
+          if (entityForm.formGroup.controls['v4_v3owner'].disabled) {
             entityForm.formGroup.controls['v4_v3owner'].enable();
           }
         }
