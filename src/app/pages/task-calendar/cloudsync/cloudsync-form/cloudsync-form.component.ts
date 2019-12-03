@@ -678,14 +678,15 @@ export class CloudsyncFormComponent implements OnInit {
     if (data.bwlimit) {
       let bwlimit_str = "";
       for (let i = 0; i < data.bwlimit.length; i++) {
+        let sub_bwlimit = data.bwlimit[i].time + ",off";
         if (data.bwlimit[i].bandwidth != null) {
           const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
-          const sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
-          if (bwlimit_str != "") {
-            bwlimit_str += " " + sub_bwlimit;
-          } else {
-            bwlimit_str += sub_bwlimit;
-          }
+          sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
+        }
+        if (bwlimit_str != "") {
+          bwlimit_str += " " + sub_bwlimit;
+        } else {
+          bwlimit_str += sub_bwlimit;
         }
       }
       data.bwlimit = bwlimit_str;
