@@ -2,6 +2,7 @@ import {ApplicationRef, Component, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {  DialogService } from '../../../services/';
+import { DirservicesService } from '../../../services/dir-services.service';
 import helptext from '../../../helptext/directoryservice/nis';
 
 import {
@@ -26,7 +27,7 @@ export class NISComponent {
       'id' : helptext.nis_custactions_clearcache_id,
       'name' : helptext.nis_custactions_clearcache_name,
        function : async () => {
-         this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+         this.dirServices.refreshDirServicesCache().subscribe((cache_status)=>{
           this.dialogservice.Info(helptext.nis_custactions_clearcache_dialog_title, 
             helptext.nis_custactions_clearcache_dialog_message);
         })
@@ -73,7 +74,7 @@ export class NISComponent {
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService,
-              private dialogservice: DialogService) {}
+              private dialogservice: DialogService, private dirServices: DirservicesService) {}
   
   resourceTransformIncomingRestData(data) {
     data.servers = data.servers.join(',');
