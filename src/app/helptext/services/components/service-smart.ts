@@ -2,6 +2,8 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+smart_fieldset_general: T('General Options'),
+
 smart_interval_placeholder : T('Check Interval'),
 smart_interval_tooltip: T('Define a number of minutes for <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
