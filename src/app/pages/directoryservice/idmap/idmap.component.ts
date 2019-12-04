@@ -33,14 +33,14 @@ export class IdmapComponent implements OnInit {
   public adFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: helptext.idmap_ad_range_low_name,
-      placeholder: helptext.idmap_ad_range_low_placeholder,
+      name: 'range_low',
+      placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
-      name: helptext.idmap_ad_range_high_name,
-      placeholder: helptext.idmap_ad_range_high_placeholder,
+      name: 'range_high',
+      placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
@@ -53,14 +53,14 @@ export class IdmapComponent implements OnInit {
   public autoridFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: helptext.idmap_autorid_range_low_name,
-      placeholder: helptext.idmap_autorid_range_low_placeholder,
+      name: 'range_low',
+      placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
-      name: helptext.idmap_autorid_range_high_name,
-      placeholder: helptext.idmap_autorid_range_high_placeholder,
+      name: 'range_high',
+      placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
@@ -84,14 +84,14 @@ export class IdmapComponent implements OnInit {
   public ldapFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: helptext.idmap_ldap_range_low_name,
-      placeholder: helptext.idmap_ldap_range_low_placeholder,
+      name: 'range_low',
+      placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
-      name: helptext.idmap_ldap_range_high_name,
-      placeholder: helptext.idmap_ldap_range_high_placeholder,
+      name: 'range_high',
+      placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
@@ -129,27 +129,27 @@ export class IdmapComponent implements OnInit {
   public nssFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: helptext.idmap_nss_range_low_name,
-      placeholder: helptext.idmap_nss_range_low_name,
+      name: 'range_low',
+      placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
-      name: helptext.idmap_nss_range_high_name,
-      placeholder: helptext.idmap_nss_range_high_placeholder,
+      name: 'range_high',
+      placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     }];
   public rfcFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: helptext.idmap_rfc2307_range_low_name,
-      placeholder: helptext.idmap_rfc2307_range_low_placeholder,
+      name: 'range_low',
+      placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
-      name: helptext.idmap_rfc2307_range_high_name,
-      placeholder: helptext.idmap_rfc2307_range_high_placeholder,
+      name: 'range_high',
+      placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
@@ -230,29 +230,29 @@ export class IdmapComponent implements OnInit {
   public ridFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: helptext.idmap_rid_range_low_name,
-      placeholder: helptext.idmap_rid_range_low_placeholder,
+      name: 'range_low',
+      placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
-      name: helptext.idmap_rid_range_high_name,
-      placeholder: helptext.idmap_rid_range_high_placeholder,
+      name: 'range_high',
+      placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
-    }];
+    },];
   public scriptFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: helptext.idmap_script_range_low_name,
-      placeholder: helptext.idmap_script_range_low_placeholder,
+      name: 'range_low',
+      placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
-      name: helptext.idmap_script_range_high_name,
-      placeholder: helptext.idmap_script_range_high_placeholder,
+      name: 'range_high',
+      placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
-    },
+    },,
     {
       type: 'input',
       name: helptext.idmap_script_name,
@@ -262,14 +262,14 @@ export class IdmapComponent implements OnInit {
   public tdbFieldConfig: FieldConfig[] = [
     {
       type: 'input',
-      name: helptext.idmap_tdb_range_low_name,
-      placeholder: helptext.idmap_tdb_range_low_placeholder,
+      name: 'range_low',
+      placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
-      name: helptext.idmap_tdb_range_high_name,
-      placeholder: helptext.idmap_tdb_range_high_placeholder,
+      name: 'range_high',
+      placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
     }];
 
