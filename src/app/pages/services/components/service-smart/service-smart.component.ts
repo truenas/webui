@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-smart';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector : 'smart-edit',
@@ -14,13 +15,13 @@ import helptext from '../../../../helptext/services/components/service-smart';
 
 export class ServiceSMARTComponent {
 
-  protected resource_name: string = 'services/smart';
+  protected queryCall = 'smart.config';
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'smart_interval',
+      name : 'interval',
       placeholder : helptext.smart_interval_placeholder,
       tooltip: helptext.smart_interval_tooltip,
       required: true,
@@ -28,7 +29,7 @@ export class ServiceSMARTComponent {
     },
     {
       type : 'select',
-      name : 'smart_powermode',
+      name : 'powermode',
       placeholder : helptext.smart_powermode_placeholder,
       tooltip: helptext.smart_powermode_tooltip,
       options : helptext.smart_powermode_options,
@@ -37,7 +38,7 @@ export class ServiceSMARTComponent {
     },
     {
       type : 'input',
-      name : 'smart_difference',
+      name : 'difference',
       placeholder : helptext.smart_difference_placeholder,
       tooltip: helptext.smart_difference_tooltip,
       required: true,
@@ -45,7 +46,7 @@ export class ServiceSMARTComponent {
     },
     {
       type : 'input',
-      name : 'smart_informational',
+      name : 'informational',
       placeholder : helptext.smart_informational_placeholder,
       tooltip: helptext.smart_informational_tooltip,
       required: true,
@@ -53,7 +54,7 @@ export class ServiceSMARTComponent {
     },
     {
       type : 'input',
-      name : 'smart_critical',
+      name : 'critical',
       placeholder : helptext.smart_critical_placeholder,
       tooltip: helptext.smart_critical_tooltip,
       required: true,
@@ -65,4 +66,8 @@ export class ServiceSMARTComponent {
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
+
+  afterInit(entityEdit: EntityFormComponent) {
+    entityEdit.submitFunction = body => this.ws.call('smart.update', [body]);
+  }
 }

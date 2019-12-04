@@ -13,10 +13,10 @@ smart_powermode_placeholder : T('Power Mode'),
 smart_powermode_tooltip: T('Tests are not performed when the system enters the\
  selected power mode.'),
 smart_powermode_options : [
-  {label : 'Never', value : 'never'},
-  {label : 'Sleep', value : 'sleep'},
-  {label : 'Standby', value : 'standby'},
-  {label : 'Idle', value : 'idle'},
+  {label : 'Never', value : 'NEVER'},
+  {label : 'Sleep', value : 'SLEEP'},
+  {label : 'Standby', value : 'STANDBY'},
+  {label : 'Idle', value : 'IDLE'},
 ],
 smart_powermode_validation : [ Validators.required ],
 
