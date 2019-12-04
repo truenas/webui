@@ -29,6 +29,15 @@ snapshot_clone_name_validation : [ Validators.required ],
 
 label_clone: T('Clone to New Dataset'),
 label_delete: T('Delete'),
-label_rollback: T('Rollback')
+label_rollback: T('Rollback'),
 
+rollback_snapshot_placeholder: T('Snapshot'),
+rollback_recursive_placeholder: T('Destroy newer snapshots'),
+rollback_recursive_tooltip: T('Setting this will destroy any snapshots and bookmarks more recent than this one'),
+rollback_recursive_clones_placeholder: T('Destroy newer cloned datasets'),
+rollback_recursive_clones_tooltip: T('Setting this will also destroy any datasets cloned from snapshots that are more recent than this one'),
+rollback_warning: T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset.\
+ Do not roll back until all desired snapshots have been backed up!"),
+rollback_title: ('Rollback Snapshot'),
+rollback_confirm: T('Confirm')
 }

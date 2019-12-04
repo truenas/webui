@@ -6,6 +6,8 @@ import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
 import helptext from './../../../../helptext/storage/snapshots/snapshots';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface'
 
 @Component({
   selector: 'app-snapshot-list',
@@ -23,6 +25,7 @@ export class SnapshotListComponent {
   protected entityList: any;
   protected hasDetails = true;
   protected rowDetailComponent = SnapshotDetailsComponent;
+  protected rollback: any;
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
@@ -53,6 +56,47 @@ export class SnapshotListComponent {
       }
     }
   ];
+
+  protected rollbackFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'recursive',
+      placeholder: helptext.rollback_recursive_placeholder,
+      tooltip: helptext.rollback_recursive_tooltip,
+      value: false,
+    },
+    {
+      type: 'checkbox',
+      name: 'recursive_clones',
+      placeholder: helptext.rollback_recursive_clones_placeholder,
+      tooltip: helptext.rollback_recursive_clones_tooltip,
+      isHidden: true,
+      value: false,
+      relation: [{
+        action: 'HIDE',
+        when: [{
+          name: 'recursive',
+          value: false,
+        }]
+      }]
+    },
+    {
+      type: 'checkbox',
+      name: 'confirm',
+      placeholder: helptext.rollback_confirm,
+      required: true
+    }
+  ];
+  public rollbackFormConf: DialogFormConfiguration = {
+    title: helptext.rollback_title,
+    message: '',
+    fieldConfig: this.rollbackFieldConf,
+    method_ws: 'zfs.snapshot.rollback',
+    saveButtonText: helptext.label_rollback,
+    customSubmit: this.rollbackSubmit,
+    parent: this,
+    warning: helptext.rollback_warning,
+  }
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
     protected ws: WebSocketService,
@@ -159,26 +203,46 @@ export class SnapshotListComponent {
   }
 
   doRollback(item) {
-    const warningMsg = T("<b>WARNING:</b> Rolling back to this snapshot will permanently delete later snapshots of this dataset. Do not roll back until all desired snapshots have been backed up!");
-    const msg = T("<br><br>Roll back to snapshot <i>") + item.name + '</i> from ' + item.creation + '?';
+    this.entityList.loader.open();
+    this.entityList.loaderOpen = true;
+    this.ws.call(this.queryCall, [[["id","=",item.name]]]).subscribe(res => {
+      const snapshot = res[0];
+      this.entityList.loader.close();
+      this.entityList.loaderOpen = false;
+      const msg = T("<br><br>Roll back to snapshot <i>") + snapshot.name + T('</i> from ') + 
+        new Date(snapshot.properties.creation.parsed.$date).toLocaleString() + '?';
+      this.rollbackFormConf.message = msg;
+      this.rollback = snapshot;
+      this.entityList.dialogService.dialogForm(this.rollbackFormConf);
+    }, err => {
+      this.entityList.loader.close();
+      this.entityList.loaderOpen = false;
+      new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
+    });
+  }
 
-    this.entityList.dialogService.confirm(T("Warning"), warningMsg + msg, false, T('Rollback')).subscribe(res => {
-      let data = {"force" : true};
-      if (res) {
-        this.entityList.loader.open();
-        this.entityList.loaderOpen = true;
-        this.ws
+  rollbackSubmit(entityDialog) {
+    const parent = entityDialog.parent;
+    const item = entityDialog.parent.rollback;
+      const data = entityDialog.formValue;
+      data["force"] = true;
+      delete data.confirm;
+      parent.entityList.loader.open();
+      parent.entityList.loaderOpen = true;
+      parent.ws
         .call('zfs.snapshot.rollback', [item.name, data])
         .subscribe(
-          (res) => { this.entityList.getData() },
-          (err) => {
-            this.entityList.loaderOpen = false;
-            this.entityList.loader.close();
-            new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
+          (res) => {
+            entityDialog.dialogRef.close();
+            parent.entityList.getData();
           },
+          (err) => {
+            parent.entityList.loaderOpen = false;
+            parent.entityList.loader.close();
+            entityDialog.dialogRef.close();
+            new EntityUtils().handleWSError(parent.entityList, err, parent.entityList.dialogService);
+          }
         );
-      }
-    });
   }
 
 }
