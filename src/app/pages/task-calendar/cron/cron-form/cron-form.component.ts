@@ -20,7 +20,7 @@ import helptext from '../../../../helptext/task-calendar/cron/cron-form';
 })
 export class CronFormComponent {
 
-   protected resource_name: string = 'tasks/cronjob';
+   protected queryCall = 'cronjob.query';
    public route_success: string[] = ['tasks', 'cron'];
 
    public formGroup: any;
@@ -31,7 +31,7 @@ export class CronFormComponent {
    protected user_field: any;
 
    public saveSubmitText = "Save Cron Job";
-   protected isEntity: boolean = true; // was true
+   protected isEntity: boolean = true;
    public fieldConfig:FieldConfig[] = [];
    public fieldSetDisplay:string = 'no-margins';
 
@@ -97,6 +97,12 @@ export class CronFormComponent {
            placeholder: helptext.cron_enabled_placeholder,
            tooltip: helptext.cron_enabled_tooltip,
            value: true,
+         },
+         {
+           type:'input',
+           name: 'cron_id',
+           isHidden:true,
+           value:'0'
          }
        ]
      }
@@ -104,26 +110,27 @@ export class CronFormComponent {
 
    @ViewChild('form', { static: true}) form:EntityFormComponent;
 
-   constructor(
-     protected userService: UserService,
-     protected router: Router,
-     protected rest: RestService,
-     protected ws: WebSocketService,
-     protected aroute: ActivatedRoute,
-     protected loader: AppLoaderService,
-     private core:CoreService
-   ){}
+  constructor(
+    protected userService: UserService,
+    protected router: Router,
+    protected ws: WebSocketService,
+    protected aroute: ActivatedRoute,
+    protected loader: AppLoaderService,
+    private core:CoreService
+  ){}
 
-   preInit(entityForm){
-     // Setup user field options
-     this.user_field = _.find(this.fieldSets[0].config, {'name': 'cron_user'});
-     this.userService.userQueryDSCache().subscribe((items) => {
-      for (let i = 0; i < items.length; i++) {
-         this.user_field.options.push({label: items[i].username, value: items[i].username});
-       }
-     });
+  preInit(entityForm){
 
-    }
+
+    // Setup user field options
+    this.user_field = _.find(this.fieldSets[0].config, {'name': 'cron_user'});
+    this.userService.userQueryDSCache().subscribe((items) => {
+     for (let i = 0; i < items.length; i++) {
+        this.user_field.options.push({label: items[i].username, value: items[i].username});
+      }
+    });
+
+  }
 
   updateUserSearchOptions(value = "", parent) {
     parent.userService.userQueryDSCache(value).subscribe(items => {
@@ -147,6 +154,58 @@ export class CronFormComponent {
 
 
    afterInit(entityForm){
+
+     this.aroute.params.subscribe(params => {
+ 
+       let opt = params.pk ? [{'title':params.pk}] : [];
+       if(params.pk){
+         this.ws.call('cronjob.query').subscribe((res)=>{
+           const task = res.filter(v => v.id == params.pk)[0];
+ 
+           entityForm.formGroup.controls['cron_user'].setValue(task.user);
+           entityForm.formGroup.controls['cron_description'].setValue(task.description);
+           entityForm.formGroup.controls['cron_command'].setValue(task.command);
+           entityForm.formGroup.controls['cron_stdout'].setValue(task.stdout);
+           entityForm.formGroup.controls['cron_stderr'].setValue(task.stderr);
+           entityForm.formGroup.controls['cron_enabled'].setValue(task.enabled);
+           entityForm.formGroup.controls['cron_id'].setValue(params.pk);
+ 
+           const schedule = task.schedule.minute + ' ' + task.schedule.hour + ' ' + task.schedule.dom + ' ' + task.schedule.month + ' ' + task.schedule.dow;
+           entityForm.formGroup.controls['cron_picker'].setValue(schedule);
+         });
+       }
+ 
+     });
+
+     let call = (name: string, form: any) => {
+       
+       let args = {
+         enabled: form.cron_enabled,
+         stderr: form.cron_stderr,
+         stdout: form.cron_stdout,
+         user:form.cron_user,
+         command: form.cron_command,
+         description: form.cron_description, 
+         schedule:{
+           minute: form.cron_minute,
+           hour: form.cron_hour,
+           dom: form.cron_daymonth,
+           month: form.cron_month,
+           dow: form.cron_dayweek
+         }
+       }
+ 
+       const params = form.cron_id !== '0' ? [form.cron_id, args] : [args]
+       const sub = this.ws.call(name, params);
+     
+       return sub;
+     }
+
+     if (!entityForm.isNew) {
+       entityForm.submitFunction = submission => call('cronjob.update', submission);
+     } else {
+       entityForm.submitFunction = submission => call('cronjob.create', submission);
+     }
    }
 
    beforeSubmit(value){
