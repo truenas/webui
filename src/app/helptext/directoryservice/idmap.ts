@@ -2,6 +2,8 @@ import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+idmap_range_tooltip: T('Coming soon...'),
+
 idmap_ad_range_low_name : 'range_low',
 idmap_ad_range_low_placeholder : T('Range Low'),
 idmap_ad_range_low_tooltip : T('Beginning UID/GID number for which this system is\

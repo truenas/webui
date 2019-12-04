@@ -35,13 +35,13 @@ export class IdmapComponent implements OnInit {
       type: 'input',
       name: helptext.idmap_ad_range_low_name,
       placeholder: helptext.idmap_ad_range_low_placeholder,
-      tooltip: helptext.idmap_ad_range_low_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
       name: helptext.idmap_ad_range_high_name,
       placeholder: helptext.idmap_ad_range_high_placeholder,
-      tooltip: helptext.idmap_ad_range_high_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'select',
@@ -55,13 +55,13 @@ export class IdmapComponent implements OnInit {
       type: 'input',
       name: helptext.idmap_autorid_range_low_name,
       placeholder: helptext.idmap_autorid_range_low_placeholder,
-      tooltip: helptext.idmap_autorid_range_low_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
       name: helptext.idmap_autorid_range_high_name,
       placeholder: helptext.idmap_autorid_range_high_placeholder,
-      tooltip: helptext.idmap_autorid_range_high_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
@@ -86,13 +86,13 @@ export class IdmapComponent implements OnInit {
       type: 'input',
       name: helptext.idmap_ldap_range_low_name,
       placeholder: helptext.idmap_ldap_range_low_placeholder,
-      tooltip: helptext.idmap_ldap_range_low_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
       name: helptext.idmap_ldap_range_high_name,
       placeholder: helptext.idmap_ldap_range_high_placeholder,
-      tooltip: helptext.idmap_ldap_range_high_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
@@ -131,26 +131,26 @@ export class IdmapComponent implements OnInit {
       type: 'input',
       name: helptext.idmap_nss_range_low_name,
       placeholder: helptext.idmap_nss_range_low_name,
-      tooltip: helptext.idmap_nss_range_low_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
       name: helptext.idmap_nss_range_high_name,
       placeholder: helptext.idmap_nss_range_high_placeholder,
-      tooltip: helptext.idmap_nss_range_high_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     }];
   public rfcFieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: helptext.idmap_rfc2307_range_low_name,
       placeholder: helptext.idmap_rfc2307_range_low_placeholder,
-      tooltip: helptext.idmap_rfc2307_range_low_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
       name: helptext.idmap_rfc2307_range_high_name,
       placeholder: helptext.idmap_rfc2307_range_high_placeholder,
-      tooltip: helptext.idmap_rfc2307_range_high_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'select',
@@ -232,26 +232,26 @@ export class IdmapComponent implements OnInit {
       type: 'input',
       name: helptext.idmap_rid_range_low_name,
       placeholder: helptext.idmap_rid_range_low_placeholder,
-      tooltip: helptext.idmap_rid_range_low_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
       name: helptext.idmap_rid_range_high_name,
       placeholder: helptext.idmap_rid_range_high_placeholder,
-      tooltip: helptext.idmap_rid_range_high_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     }];
   public scriptFieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: helptext.idmap_script_range_low_name,
       placeholder: helptext.idmap_script_range_low_placeholder,
-      tooltip: helptext.idmap_script_range_low_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
       name: helptext.idmap_script_range_high_name,
       placeholder: helptext.idmap_script_range_high_placeholder,
-      tooltip: helptext.idmap_script_range_high_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
@@ -264,13 +264,13 @@ export class IdmapComponent implements OnInit {
       type: 'input',
       name: helptext.idmap_tdb_range_low_name,
       placeholder: helptext.idmap_tdb_range_low_placeholder,
-      tooltip: helptext.idmap_tdb_range_low_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     },
     {
       type: 'input',
       name: helptext.idmap_tdb_range_high_name,
       placeholder: helptext.idmap_tdb_range_high_placeholder,
-      tooltip: helptext.idmap_tdb_range_high_tooltip,
+      tooltip: helptext.idmap_range_tooltip,
     }];
 
   protected props: any;
