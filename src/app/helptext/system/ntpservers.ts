@@ -36,7 +36,7 @@ export const helptext_system_ntpservers = {
     },
 
     minpoll: {
-      placeholder: T("Min. Poll"),
+      placeholder: T("Min Poll"),
       tooltip: T(
         "Calculated in powers of 2. Enter the exponent to be \
  calculated. For example, if the <i>Min. Poll</i> is 6, the \
