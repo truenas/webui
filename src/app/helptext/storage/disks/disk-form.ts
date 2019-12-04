@@ -17,14 +17,42 @@ disk_form_hddstandby_tooltip : T('Indicates the time of inactivity in minutes be
  target="_blank">forum post</a> demonstrates how to\
  determine if a drive has spun down. Temperature monitoring is \
  disabled if the disk is set to enter standby.'),
+disk_form_hddstandby_options: [
+ {label:T('Always On'), value:'ALWAYS ON'},
+ {label:'5', value: '5'},
+ {label:'10', value: '10'},
+ {label:'20', value: '20'},
+ {label:'30', value: '30'},
+ {label:'60', value: '60'},
+ {label:'120', value: '120'},
+ {label:'180', value: '180'},
+ {label:'240', value: '240'},
+ {label:'300', value: '300'},
+ {label:'330', value: '330'},
+],
 
 disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
 disk_form_advpowermgmt_tooltip : T('Select a power management profile from the menu.'),
+disk_form_advpowermgmt_options: [
+ {label:T('Disabled'), value: 'DISABLED'},
+ {label:'1', value: '1'},
+ {label:'64', value: '64'},
+ {label:'127', value: '127'},
+ {label:'128', value: '128'},
+ {label:'192', value: '192'},
+ {label:'254', value: '254'},
+],
 
 disk_form_acousticlevel_placeholder: T('Acoustic Level'),
 disk_form_acousticlevel_tooltip : T('Modify for disks that understand <a\
  href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
  target="_blank">AAM</a>.'),
+disk_form_acousticlevel_options: [
+ {label:T('Disabled'), value: 'DISABLED'},
+ {label:T('Minimum'), value: 'MINIMUM'},
+ {label:T('Medium'), value: 'MEDIUM'},
+ {label:T('Maximum'), value: 'MAXIMUM'},
+],
 
 disk_form_togglesmart_placeholder : T('Enable S.M.A.R.T.'),
 disk_form_togglesmart_tooltip : T('Set by default if the disk supports S.M.A.R.T.\
