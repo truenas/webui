@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService } from "../../../../../../services/ws.service";
-import { RestService } from "../../../../../../services/rest.service";
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import helptext from '../../../../../../helptext/services/components/service-rsync';
+import { RestService } from "../../../../../../services/rest.service";
+import { WebSocketService } from "../../../../../../services/ws.service";
+import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
+
 
 @Component({
   selector : 'app-configure-rsync',
@@ -12,20 +13,21 @@ import helptext from '../../../../../../helptext/services/components/service-rsy
 })
 
 export class CconfigureRYSNCComponent {
-  protected resource_name = 'services/rsyncd';
+  protected queryCall = 'rsyncd.config';
+
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'rsyncd_port',
+      name : 'port',
       placeholder : helptext.rsyncd_port_placeholder,
       tooltip: helptext.rsyncd_port_tooltip,
       value: helptext.rsyncd_port_value
     },
     {
       type : 'textarea',
-      name : 'rsyncd_auxiliary',
+      name : 'auxiliary',
       placeholder : helptext.rsyncd_auxiliary_placeholder,
       tooltip: helptext.rsyncd_auxiliary_tooltip
     },
@@ -35,5 +37,7 @@ export class CconfigureRYSNCComponent {
               protected rest: RestService, protected ws: WebSocketService,
               ) {}
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityEdit: EntityFormComponent) {
+    entityEdit.submitFunction = body => this.ws.call('rsyncd.update', [body]);
+  }
 }
