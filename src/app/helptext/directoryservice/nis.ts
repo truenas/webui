@@ -2,6 +2,7 @@ import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+nis_label: T('Network Information Service (NIS)'),
 nis_custactions_clearcache_id: 'ds_clearcache',
 nis_custactions_clearcache_name: T('Rebuild Directory Service Cache'),
 nis_custactions_clearcache_dialog_title: T("NIS"),

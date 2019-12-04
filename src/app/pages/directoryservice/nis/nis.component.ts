@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {  DialogService } from '../../../services/';
 import { DirservicesService } from '../../../services/dir-services.service';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../helptext/directoryservice/nis';
 
 import {
@@ -35,40 +36,47 @@ export class NISComponent {
     }
   ];
 
-  public fieldConfig: FieldConfig[] = [
-    {
-      type : 'input',
-      name : 'domain',
-      placeholder : helptext.nis_domain_placeholder,
-      tooltip: helptext.nis_domain_tooltip,
-      required: true,
-      validation : helptext.nis_domain_validation
-    },
-    {
-      type : 'input',
-      name : 'servers',
-      placeholder : helptext.nis_servers_placeholder,
-      tooltip : helptext.nis_servers_tooltip
-    },
-    {
-      type : 'checkbox',
-      name : 'secure_mode',
-      placeholder : helptext.nis_secure_mode_placeholder,
-      tooltip : helptext.nis_secure_mode_tooltip
-    },
-    {
-      type : 'checkbox',
-      name : 'manycast',
-      placeholder : helptext.nis_manycast_placeholder,
-      tooltip : helptext.nis_manycast_tooltip
-    },
-    {
-      type : 'checkbox',
-      name : 'enable',
-      placeholder : helptext.nis_enable_placeholder,
-      tooltip : helptext.nis_enable_tooltip
-    },
-  ];
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
+    { 
+      name: helptext.nis_label,
+      class: 'nis',
+      label: true,   
+      config: [
+        {
+          type : 'input',
+          name : 'domain',
+          placeholder : helptext.nis_domain_placeholder,
+          tooltip: helptext.nis_domain_tooltip,
+          required: true,
+          validation : helptext.nis_domain_validation
+        },
+        {
+          type : 'input',
+          name : 'servers',
+          placeholder : helptext.nis_servers_placeholder,
+          tooltip : helptext.nis_servers_tooltip
+        },
+        {
+          type : 'checkbox',
+          name : 'secure_mode',
+          placeholder : helptext.nis_secure_mode_placeholder,
+          tooltip : helptext.nis_secure_mode_tooltip
+        },
+        {
+          type : 'checkbox',
+          name : 'manycast',
+          placeholder : helptext.nis_manycast_placeholder,
+          tooltip : helptext.nis_manycast_tooltip
+        },
+        {
+          type : 'checkbox',
+          name : 'enable',
+          placeholder : helptext.nis_enable_placeholder,
+          tooltip : helptext.nis_enable_tooltip
+        }
+      ]
+    }];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
