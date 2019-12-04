@@ -27,7 +27,7 @@ export class GroupFormComponent {
   public fieldSetDisplay  = 'default';
   protected fieldSets: FieldSet[] = [
     {
-      name: 'Group Configuration',
+      name: helptext.fieldset_name,
       class: 'group-configuration-form',
       label:true,
       config: [
