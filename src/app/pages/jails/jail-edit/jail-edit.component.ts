@@ -1042,33 +1042,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  updateInterfaceValidation() {
-    let dhcp_ctrl = this.formGroup.controls['dhcp'];
-    let vnet_ctrl = this.formGroup.controls['vnet'];
-    let ip4_addr_ctrl = this.formGroup.controls['ip4_addr'];
-    let ip6_addr_ctrl = this.formGroup.controls['ip6_addr'];
-
-    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip4_addr_ctrl.value != undefined && ip4_addr_ctrl.value != '') {
-      this.ip4_interfaceField.required = true;
-      this.formGroup.controls['ip4_interface'].setValidators([Validators.required]);
-      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
-    } else {
-      this.ip4_interfaceField.required = false;
-      this.formGroup.controls['ip4_interface'].clearValidators();
-      this.formGroup.controls['ip4_interface'].updateValueAndValidity();
-    }
-
-    if (dhcp_ctrl.value != true && vnet_ctrl.value == true && ip6_addr_ctrl.value != undefined && ip6_addr_ctrl.value != '') {
-      this.ip6_interfaceField.required = true;
-      this.formGroup.controls['ip6_interface'].setValidators([Validators.required]);
-      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
-    } else {
-      this.ip6_interfaceField.required = false;
-      this.formGroup.controls['ip6_interface'].clearValidators();
-      this.formGroup.controls['ip6_interface'].updateValueAndValidity();
-    }
-  }
-
   ngAfterViewInit(){
     setTimeout(() => {
       //this.basicPanel.open();
@@ -1170,8 +1143,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
       }
-
-      this.updateInterfaceValidation();
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
@@ -1191,12 +1162,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       }
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
       this.formGroup.controls['ip6_addr'].markAsTouched();
-    });
-    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      this.updateInterfaceValidation();
-    });
-    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      this.updateInterfaceValidation();
     });
 
     this.aroute.params.subscribe(params => {
