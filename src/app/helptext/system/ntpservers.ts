@@ -47,7 +47,7 @@ export const helptext_system_ntpservers = {
     },
 
     maxpoll: {
-      placeholder: T("Max. Poll"),
+      placeholder: T("Max Poll"),
       tooltip: T(
         "Calculated in powers of 2. Enter the exponent to be \
  calculated. For example, if the <i>Max. Poll</i> is 10, the \
