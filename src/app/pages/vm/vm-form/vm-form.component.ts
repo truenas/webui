@@ -7,7 +7,7 @@ import {
 
 import helptext from './../../../helptext/vm/vm-wizard/vm-wizard';
 import globalHelptext from './../../../helptext/global-helptext';
-import {RestService, WebSocketService, StorageService} from '../../../services/';
+import {RestService, WebSocketService, StorageService, VmService} from '../../../services/';
 
 @Component({
   selector : 'app-vm',
@@ -51,15 +51,15 @@ export class VmFormComponent {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected vmService: VmService
               ) {}
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-    entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-      this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
-      for (let item of res){
-        this.bootloader.options.push({label : item[1], value : item[0]})
-      }
+
+    this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
+    this.vmService.getBootloaderOptions().forEach((item) => {
+      this.bootloader.options.push({label : item[1], value : item[0]})
     });
 
     entityForm.formGroup.controls['memory'].valueChanges.subscribe((value) => {
