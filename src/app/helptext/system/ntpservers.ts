@@ -38,10 +38,9 @@ export const helptext_system_ntpservers = {
     minpoll: {
       placeholder: T("Min Poll"),
       tooltip: T(
-        "Calculated in powers of 2. Enter the exponent to be \
- calculated. For example, if the <i>Min. Poll</i> is 6, the \
- calculation is 2^6. Cannot be lower than 4 or higher than \
- <i>Max. Poll</i>."
+        "The minimum polling interval, in seconds, as a power of 2. \
+ For example, <i>6</i> means 2^6, or 64 seconds. The default is 6, \
+ minimum value is 4."
       ),
       validation: [Validators.min(4), Validators.required]
     },
@@ -49,9 +48,9 @@ export const helptext_system_ntpservers = {
     maxpoll: {
       placeholder: T("Max Poll"),
       tooltip: T(
-        "Calculated in powers of 2. Enter the exponent to be \
- calculated. For example, if the <i>Max. Poll</i> is 10, the \
- calculation is 2^10. Cannot be lower than <i>Min. Poll</i>."
+        "The maximum polling interval, in seconds, as a power of 2. \
+ For example, <i>10</i> means 2^10, or 1,024 seconds. The default is \
+ 10, maximum value is 17."
       )
     },
 
