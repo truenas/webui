@@ -26,8 +26,9 @@ export function greaterThan(otherControlName: string, fieldPlaceholers: [string]
     if (!otherControl) {
       return null;
     }
-
-    if (otherControl.value > thisControl.value) {
+    let otherVal = parseFloat(otherControl.value);
+    let thisVal =  parseFloat(thisControl.value);
+    if (otherVal > thisVal) {
       return {greaterThan: true, fields: fieldPlaceholers};
     }
 
