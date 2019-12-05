@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
@@ -24,6 +24,7 @@ export class RsyncFormComponent implements OnDestroy {
   protected queryKey = 'id';
   protected route_success: string[] = ['tasks', 'rsync'];
   protected entityForm: EntityFormComponent;
+  protected pk: any;
   protected isEntity: boolean = true;
 
   protected preTaskName: string = 'rsync';
@@ -194,11 +195,15 @@ export class RsyncFormComponent implements OnDestroy {
   protected mode_subscription: any;
 
   constructor(protected router: Router,
+    protected aroute: ActivatedRoute,
     protected taskService: TaskService,
     protected userService: UserService,
     protected entityFormService: EntityFormService) {}
 
   preInit() {
+    this.aroute.params.subscribe(params => {
+      this.pk = parseInt(params['pk'], 10);
+    });
     this.user_field = _.find(this.fieldSets[0].config, { 'name': 'user' });
     
     this.userService.userQueryDSCache().subscribe((items) => {
