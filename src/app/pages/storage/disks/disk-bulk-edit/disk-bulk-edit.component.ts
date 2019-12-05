@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
@@ -19,71 +20,86 @@ export class DiskBulkEditComponent {
   protected route_success: string[] = ['storage', 'disks'];
   protected isEntity = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  protected fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'input',
-      name: 'disk_name',
-      placeholder: T('Editing the following disks:'),
-      tooltip : T('This is the FreeBSD device name for the disk.'),
-      value: [this.diskBucket.diskNames],
-      readonly: true
-    },    {
-      type: 'input',
-      name: 'disk_serial',
-      placeholder: T('Serial'),
-      tooltip : T('This is the serial number of the disk.'),
-      value: [this.diskBucket.ids],
-      readonly: true,
-      isHidden: true
-    },
-    {
-      type: 'select',
-      name: 'disk_hddstandby',
-      value: this.diskBucket.hddStandby,
-      placeholder: T('HDD Standby'),
-      tooltip : T('Indicates the time of inactivity in minutes before\
-                   the drive enters standby mode. This <a\
-                   href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
-                   target="_blank">forum post</a> demonstrates how to\
-                   determine if a drive has spun down.'),
-      options: helptext.disk_form_hddstandby_options,
-    },
-    {
-      type: 'select',
-      name: 'disk_advpowermgmt',
-      placeholder: T('Advanced Power Management'),
-      value: this.diskBucket.advPowerMgt,
-      tooltip : T('Select a power management profile from the menu.'),
-      options: helptext.disk_form_advpowermgmt_options,
-    },
-    {
-      type: 'select',
-      name: 'disk_acousticlevel',
-      placeholder: T('Acoustic Level'),
-      value: this.diskBucket.acousticLevel,
-      tooltip : T('Modify for disks that understand <a\
-                   href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
-                   target="_blank">AAM</a>.'),
-      options: helptext.disk_form_acousticlevel_options,
-    },
-    {
-      type : 'checkbox',
-      name : 'disk_togglesmart',
-      placeholder : T('Enable S.M.A.R.T.'),
-      value: this.diskBucket.diskToggleStatus,
-      tooltip : T('Set by default if the disk supports S.M.A.R.T.\
-                   Unset to disable any configured <a\
-                   href="--docurl--/tasks.html#s-m-a-r-t-tests"\
-                   target="_blank">S.M.A.R.T. tests</a>.'),
-    },
-    {
-      type: 'input',
-      name: 'disk_smartoptions',
-      placeholder: T('S.M.A.R.T. extra options'),
-      value: this.diskBucket.SMARToptions,
-      tooltip : T('Additional <a\
-                   href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
-                   target="_blank">smartctl(8)</a> options.'),
+      name: 'Disks',
+      class: 'disks',
+      label:true,
+      config:[
+        {
+          type: 'input',
+          name: 'disk_name',
+          placeholder: T('Editing the following disks:'),
+          tooltip : T('This is the FreeBSD device name for the disk.'),
+          value: [this.diskBucket.diskNames],
+          readonly: true
+        }
+      ]
+    }, {
+      name: 'Settings',
+      class: 'settings',
+      label:true,
+      config:[
+        {
+          type: 'input',
+          name: 'disk_serial',
+          placeholder: T('Serial'),
+          tooltip : T('This is the serial number of the disk.'),
+          value: [this.diskBucket.ids],
+          readonly: true,
+          isHidden: true
+        },
+        {
+          type: 'select',
+          name: 'disk_hddstandby',
+          value: this.diskBucket.hddStandby,
+          placeholder: T('HDD Standby'),
+          tooltip : T('Indicates the time of inactivity in minutes before\
+                      the drive enters standby mode. This <a\
+                      href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
+                      target="_blank">forum post</a> demonstrates how to\
+                      determine if a drive has spun down.'),
+          options: helptext.disk_form_hddstandby_options,
+        },
+        {
+          type: 'select',
+          name: 'disk_advpowermgmt',
+          placeholder: T('Advanced Power Management'),
+          value: this.diskBucket.advPowerMgt,
+          tooltip : T('Select a power management profile from the menu.'),
+          options: helptext.disk_form_advpowermgmt_options,
+        },
+        {
+          type: 'select',
+          name: 'disk_acousticlevel',
+          placeholder: T('Acoustic Level'),
+          value: this.diskBucket.acousticLevel,
+          tooltip : T('Modify for disks that understand <a\
+                      href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
+                      target="_blank">AAM</a>.'),
+          options: helptext.disk_form_acousticlevel_options,
+        },
+        {
+          type : 'checkbox',
+          name : 'disk_togglesmart',
+          placeholder : T('Enable S.M.A.R.T.'),
+          value: this.diskBucket.diskToggleStatus,
+          tooltip : T('Set by default if the disk supports S.M.A.R.T.\
+                      Unset to disable any configured <a\
+                      href="--docurl--/tasks.html#s-m-a-r-t-tests"\
+                      target="_blank">S.M.A.R.T. tests</a>.'),
+        },
+        {
+          type: 'input',
+          name: 'disk_smartoptions',
+          placeholder: T('S.M.A.R.T. extra options'),
+          value: this.diskBucket.SMARToptions,
+          tooltip : T('Additional <a\
+                      href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
+                      target="_blank">smartctl(8)</a> options.'),
+        }
+      ]
     }
   ];
 
