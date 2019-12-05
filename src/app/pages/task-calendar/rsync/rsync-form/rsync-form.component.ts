@@ -21,6 +21,7 @@ export class RsyncFormComponent implements OnDestroy {
   protected addCall = 'rsynctask.create';
   protected editCall = 'rsynctask.update';
   protected queryCall = 'rsynctask.query';
+  protected queryKey = 'id';
   protected route_success: string[] = ['tasks', 'rsync'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
@@ -228,6 +229,7 @@ export class RsyncFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
+    console.log(data);
     data['rsync_picker'] = data.schedule.minute + " " +
                           data.schedule.hour + " " +
                           data.schedule.dom + " " +
