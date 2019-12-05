@@ -176,7 +176,7 @@ activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can
 'ldap_sasl_wrapping',
 'netbiosname',
 'netbiosname_b',
-'netbiosalias',
+'netbiosalias'
 ],
 
 activedirectory_idmap_change_dialog_title: T("Active Directory IDMAP change!"),
