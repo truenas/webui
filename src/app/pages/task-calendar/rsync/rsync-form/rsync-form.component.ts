@@ -229,7 +229,6 @@ export class RsyncFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data);
     data['rsync_picker'] = data.schedule.minute + " " +
                           data.schedule.hour + " " +
                           data.schedule.dom + " " +
