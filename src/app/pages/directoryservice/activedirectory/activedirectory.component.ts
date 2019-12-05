@@ -2,9 +2,10 @@ import {ApplicationRef, Component, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 
-import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
+import { SystemGeneralService, WebSocketService } from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
 
@@ -51,7 +52,7 @@ export class ActiveDirectoryComponent {
       'id' : helptext.activedirectory_custactions_clearcache_id,
       'name' : helptext.activedirectory_custactions_clearcache_name,
        function : async () => {
-         this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+         this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status)=>{
           this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title, 
             helptext.activedirectory_custactions_clearcache_dialog_message);
         })
@@ -114,7 +115,13 @@ export class ActiveDirectoryComponent {
     },
   ];
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = []
+  public fieldSets: FieldSet[] = [
+    {
+      name: 'Section 1',
+      class: 'section_one',
+      label:true,
+      config:[
     {
       type : 'input',
       name : helptext.activedirectory_domainname_name,
@@ -143,6 +150,18 @@ export class ActiveDirectoryComponent {
       disabled: false,
       isHidden:false
     },
+    {
+      type : 'checkbox',
+      name : helptext.activedirectory_enable_name,
+      placeholder : helptext.activedirectory_enable_placeholder,
+      tooltip : helptext.activedirectory_enable_tooltip,
+    },
+  ]},
+  {
+    name: 'Section Two',
+    class: 'section_two',
+    label:true,
+    config:[
     {
       type : 'select',
       name : helptext.activedirectory_ssl_name,
@@ -194,7 +213,18 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_disable_fn_cache_name,
       placeholder : helptext.activedirectory_disable_fn_cache_placeholder,
       tooltip : helptext.activedirectory_disable_fn_cache_tooltip,
+    }
+    ]},
+    {
+      name:'divider',
+      divider:true
     },
+    {
+      name: 'Section Three',
+      class: 'section_three',
+      label:true,
+      width: '48%',
+      config:[
     {
       type : 'input',
       name : helptext.activedirectory_site_name,
@@ -234,7 +264,20 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_dns_timeout_name,
       placeholder : helptext.activedirectory_dns_timeout_placeholder,
       tooltip : helptext.activedirectory_dns_timeout_tooltip,
-    },
+    }
+      ]},
+      {
+        name: 'Section 3.5',
+        class: 'section_three-five',
+        label:false,
+        width: '4%',
+        config:[]},
+      {
+        name: 'Section Four',
+        class: 'section_four',
+        label:true,
+        width: '48%',
+        config:[
     {
       type : 'select',
       name : helptext.activedirectory_idmap_backend_name,
@@ -255,12 +298,6 @@ export class ActiveDirectoryComponent {
       placeholder : helptext.activedirectory_sasl_wrapping_placeholder,
       tooltip : helptext.activedirectory_sasl_wrapping_tooltip,
       options : []
-    },
-    {
-      type : 'checkbox',
-      name : helptext.activedirectory_enable_name,
-      placeholder : helptext.activedirectory_enable_placeholder,
-      tooltip : helptext.activedirectory_enable_tooltip,
     },
     {
       type : 'input',
@@ -286,6 +323,7 @@ export class ActiveDirectoryComponent {
       placeholder : helptext.activedirectory_netbiosalias_placeholder,
       tooltip : helptext.activedirectory_netbiosalias_tooltip,
     }
+      ]}
   ];
 
   protected advanced_field: Array<any> = helptext.activedirectory_advanced_fields;
@@ -304,7 +342,7 @@ export class ActiveDirectoryComponent {
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
+              protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService,
               protected dialogservice: DialogService) {}
@@ -337,11 +375,11 @@ export class ActiveDirectoryComponent {
 
   afterInit(entityEdit: any) { 
     this.entityEdit = entityEdit;
-    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
+    this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.kerberos_realm.options.push(
-            {label : item.krb_realm, value : item.id});
+            {label : item.realm, value : item.id});
       });
     });
 
