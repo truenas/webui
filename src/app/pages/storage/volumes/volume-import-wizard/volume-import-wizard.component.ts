@@ -100,6 +100,7 @@ export class VolumeImportWizardComponent {
           updater: this.updater,
           parent: this,
           isHidden: true,
+          hideButton: true,
           relation: [{
             action: 'DISABLE',
             when: [{
