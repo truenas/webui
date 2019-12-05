@@ -375,7 +375,8 @@ export class JailWizardComponent {
       } else {
         let full_address = ip4_address_control.value;
         if (ip4_interface_control.value != '') {
-          full_address = ip4_interface_control.value + '|' + ip4_address_control.value;
+          const validInterface = _.find(this.ip4_interfaceField.options, {value: ip4_interface_control.value}) !== undefined;
+          full_address = validInterface ? ip4_interface_control.value + '|' + ip4_address_control.value : ip4_address_control.value;
         }
         if (ip4_netmask_control.value != '') {
           full_address += '/' + ip4_netmask_control.value;
@@ -509,6 +510,9 @@ export class JailWizardComponent {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
+
+      this.updateIpAddress(entityWizard, 'ipv4');
+      this.updateIpAddress(entityWizard, 'ipv6');
     });
   }
 
