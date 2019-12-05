@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
-import { StorageService } from '../../../../services/storage.service'
+import { StorageService } from '../../../../services/storage.service';
+import helptext from '../../../../helptext/storage/disks/disk-form';
 
 @Component({
   selector: 'app-disk-bulk-edit',
@@ -16,7 +17,6 @@ import { StorageService } from '../../../../services/storage.service'
 export class DiskBulkEditComponent {
 
   protected route_success: string[] = ['storage', 'disks'];
-  protected resource_name: string = 'storage/disk/';
   protected isEntity = true;
 
   protected fieldConfig: FieldConfig[] = [
@@ -46,7 +46,7 @@ export class DiskBulkEditComponent {
                    href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
                    target="_blank">forum post</a> demonstrates how to\
                    determine if a drive has spun down.'),
-      options: [],
+      options: helptext.disk_form_hddstandby_options,
     },
     {
       type: 'select',
@@ -54,7 +54,7 @@ export class DiskBulkEditComponent {
       placeholder: T('Advanced Power Management'),
       value: this.diskBucket.advPowerMgt,
       tooltip : T('Select a power management profile from the menu.'),
-      options: [],
+      options: helptext.disk_form_advpowermgmt_options,
     },
     {
       type: 'select',
@@ -64,7 +64,7 @@ export class DiskBulkEditComponent {
       tooltip : T('Modify for disks that understand <a\
                    href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
                    target="_blank">AAM</a>.'),
-      options: [],
+      options: helptext.disk_form_acousticlevel_options,
     },
     {
       type : 'checkbox',
@@ -95,7 +95,6 @@ export class DiskBulkEditComponent {
   constructor(
     private _router: Router,
     private dialogService: DialogService,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
@@ -110,33 +109,8 @@ export class DiskBulkEditComponent {
 
   afterInit(entityEdit: any) {
     if (!this.diskBucket.ids) {
-      this._router.navigate(new Array('/').concat([
-        "storage", "disks"]));
+      this._router.navigate(this.route_success);
     }
-
-    this.ws.call('notifier.choices', ['HDDSTANDBY_CHOICES']).subscribe((res) => {
-      this.disk_hddstandby = _.find(this.fieldConfig, {name : 'disk_hddstandby'});
-      res.forEach((item) => {
-        this.disk_hddstandby.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
-
-    this.ws.call('notifier.choices', ['ADVPOWERMGMT_CHOICES']).subscribe((res) => {
-      this.disk_advpowermgmt = _.find(this.fieldConfig, {name : 'disk_advpowermgmt'});
-      res.forEach((item) => {
-        this.disk_advpowermgmt.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
-
-    this.ws.call('notifier.choices', ['ACOUSTICLVL_CHOICES']).subscribe((res) => {
-      this.disk_acousticlevel = _.find(this.fieldConfig, {name : 'disk_acousticlevel'});
-      res.forEach((item) => {
-        this.disk_acousticlevel.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
   }
 
   customSubmit(event) {
@@ -172,7 +146,7 @@ export class DiskBulkEditComponent {
               }
             }
             if (success_state) {
-              this._router.navigate(new Array('/').concat(["storage", "disks"]));
+              this._router.navigate(this.route_success);
             }
           }
         },
