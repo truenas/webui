@@ -26,7 +26,6 @@ export class ActiveDirectoryComponent {
   protected idmap_backend: any;
   protected nss_info: any;
   protected ldap_sasl_wrapping: any;
-  public sectionLabels = ['Section Two', 'Section Three', 'Section Four'];
 
   public custActions: Array<any> = [
     {
@@ -34,9 +33,8 @@ export class ActiveDirectoryComponent {
       'name' : helptext.activedirectory_custactions_basic_name,
       function : () => { 
         this.isBasicMode = !this.isBasicMode; 
-        this.sectionLabels.forEach((label) => {
-          this.fieldSets.find(set => set.name === label).label = false;
-        });
+        this.fieldSets.find(set => set.name === helptext.ad_section_headers.adv).label = false;
+        this.fieldSets.find(set => set.name === 'divider').divider = false;
       }
     },
     {
@@ -44,9 +42,9 @@ export class ActiveDirectoryComponent {
       'name' : helptext.activedirectory_custactions_advanced_name,
       function : () => { 
         this.isBasicMode = !this.isBasicMode; 
-        this.sectionLabels.forEach((label) => {
-          this.fieldSets.find(set => set.name === label).label = true;
-        });     
+        this.fieldSets.find(set => set.name === helptext.ad_section_headers.adv).label = true;
+        this.fieldSets.find(set => set.name === 'divider').divider = true;
+
       }
     },
     {
@@ -75,210 +73,218 @@ export class ActiveDirectoryComponent {
       class: 'section_header',
       label:true,
       config:[
-    {
-      type : 'input',
-      name : helptext.activedirectory_domainname_name,
-      placeholder : helptext.activedirectory_domainname_placeholder,
-      tooltip : helptext.activedirectory_domainname_tooltip,
-      required: true,
-      validation : helptext.activedirectory_domainname_validation
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_bindname_name,
-      placeholder : helptext.activedirectory_bindname_placeholder,
-      tooltip : helptext.activedirectory_bindname_tooltip,
-      required: true,
-      validation : helptext.activedirectory_bindname_validation,
-      disabled: false,
-      isHidden:true
-    },
-    {
-      type : 'input',
-      inputType : 'password',
-      name : helptext.activedirectory_bindpw_name,
-      placeholder : helptext.activedirectory_bindpw_placeholder,
-      tooltip : helptext.activedirectory_bindpw_tooltip,
-      validation : helptext.activedirectory_bindpw_validation,
-      required: true,
-      togglePw: true,
-      disabled: false,
-      isHidden:false
-    },
-    {
-      type : 'checkbox',
-      name : helptext.activedirectory_enable_name,
-      placeholder : helptext.activedirectory_enable_placeholder,
-      tooltip : helptext.activedirectory_enable_tooltip,
-    },
-  ]},
-  {
-    name: 'Section Two',
-    class: 'section_header_basic',
-    label:false,
-    config:[
-    {
-      type : 'select',
-      name : helptext.activedirectory_ssl_name,
-      placeholder : helptext.activedirectory_ssl_placeholder,
-      tooltip : helptext.activedirectory_ssl_tooltip,
-      options : []
-    },
-    {
-      type : 'select',
-      name : helptext.activedirectory_certificate_name,
-      placeholder : helptext.activedirectory_certificate_placeholder,
-      tooltip : helptext.activedirectory_certificate_tooltip,
-      options : [
-        {label : '---', value : ""},
+        {
+          type : 'input',
+          name : helptext.activedirectory_domainname_name,
+          placeholder : helptext.activedirectory_domainname_placeholder,
+          tooltip : helptext.activedirectory_domainname_tooltip,
+          required: true,
+          validation : helptext.activedirectory_domainname_validation
+        },
+        {
+          type : 'input',
+          name : helptext.activedirectory_bindname_name,
+          placeholder : helptext.activedirectory_bindname_placeholder,
+          tooltip : helptext.activedirectory_bindname_tooltip,
+          required: true,
+          validation : helptext.activedirectory_bindname_validation,
+          disabled: false,
+          isHidden:true
+        },
+        {
+          type : 'input',
+          inputType : 'password',
+          name : helptext.activedirectory_bindpw_name,
+          placeholder : helptext.activedirectory_bindpw_placeholder,
+          tooltip : helptext.activedirectory_bindpw_tooltip,
+          validation : helptext.activedirectory_bindpw_validation,
+          required: true,
+          togglePw: true,
+          disabled: false,
+          isHidden:false
+        },
+        {
+          type : 'checkbox',
+          name : helptext.activedirectory_enable_name,
+          placeholder : helptext.activedirectory_enable_placeholder,
+          tooltip : helptext.activedirectory_enable_tooltip,
+        },
       ]
     },
     {
-      type : 'checkbox',
-      name : 'validate_certificates',
-      placeholder : helptext.ad_validate_certificates_placeholder,
-      tooltip : helptext.ad_validate_certificates_tooltip,
+      name:'divider',
+      divider:false
     },
     {
-      type : 'checkbox',
-      name : helptext.activedirectory_verbose_logging_name,
-      placeholder : helptext.activedirectory_verbose_logging_placeholder,
-      tooltip : helptext.activedirectory_verbose_logging_tooltip,
+      name: helptext.ad_section_headers.adv,
+      class: 'section_header',
+      label:false,
+      config:[
+        {
+          type : 'select',
+          name : helptext.activedirectory_ssl_name,
+          placeholder : helptext.activedirectory_ssl_placeholder,
+          tooltip : helptext.activedirectory_ssl_tooltip,
+          options : []
+        },
+        {
+          type : 'select',
+          name : helptext.activedirectory_certificate_name,
+          placeholder : helptext.activedirectory_certificate_placeholder,
+          tooltip : helptext.activedirectory_certificate_tooltip,
+          options : [
+            {label : '---', value : ""},
+          ]
+        },
+        {
+          type : 'checkbox',
+          name : 'validate_certificates',
+          placeholder : helptext.ad_validate_certificates_placeholder,
+          tooltip : helptext.ad_validate_certificates_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : helptext.activedirectory_verbose_logging_name,
+          placeholder : helptext.activedirectory_verbose_logging_placeholder,
+          tooltip : helptext.activedirectory_verbose_logging_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : helptext.activedirectory_trusted_doms_name,
+          placeholder : helptext.activedirectory_trusted_doms_placeholder,
+          tooltip : helptext.activedirectory_trusted_doms_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : helptext.activedirectory_default_dom_name,
+          placeholder : helptext.activedirectory_default_dom_placeholder,
+          tooltip : helptext.activedirectory_default_dom_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : helptext.activedirectory_dns_updates_name,
+          placeholder : helptext.activedirectory_dns_updates_placeholder,
+          tooltip : helptext.activedirectory_dns_updates_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : helptext.activedirectory_disable_fn_cache_name,
+          placeholder : helptext.activedirectory_disable_fn_cache_placeholder,
+          tooltip : helptext.activedirectory_disable_fn_cache_tooltip,
+        }
+      ]
     },
-    {
-      type : 'checkbox',
-      name : helptext.activedirectory_trusted_doms_name,
-      placeholder : helptext.activedirectory_trusted_doms_placeholder,
-      tooltip : helptext.activedirectory_trusted_doms_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : helptext.activedirectory_default_dom_name,
-      placeholder : helptext.activedirectory_default_dom_placeholder,
-      tooltip : helptext.activedirectory_default_dom_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : helptext.activedirectory_dns_updates_name,
-      placeholder : helptext.activedirectory_dns_updates_placeholder,
-      tooltip : helptext.activedirectory_dns_updates_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : helptext.activedirectory_disable_fn_cache_name,
-      placeholder : helptext.activedirectory_disable_fn_cache_placeholder,
-      tooltip : helptext.activedirectory_disable_fn_cache_tooltip,
-    }
-    ]},
     {
       name:'divider',
       divider:true
     },
     {
-      name: 'Section Three',
+      name: 'section_three',
       class: 'section_header',
       label:false,
       width: '48%',
       config:[
-    {
-      type : 'input',
-      name : helptext.activedirectory_site_name,
-      placeholder : helptext.activedirectory_site_placeholder,
-      tooltip : helptext.activedirectory_site_tooltip,
-    },
-    {
-      type : 'select',
-      name : helptext.activedirectory_kerberos_realm_name,
-      placeholder : helptext.activedirectory_kerberos_realm_placeholder,
-      tooltip : helptext.activedirectory_kerberos_realm_tooltip,
-      options : [{label: '---', value: null}]
-    },
-    {
-      type : 'select',
-      name : helptext.activedirectory_kerberos_principal_name,
-      placeholder : helptext.activedirectory_kerberos_principal_placeholder,
-      tooltip : helptext.activedirectory_kerberos_principal_tooltip,
-      options : [
-        {label : '---', value : ""},
+        {
+          type : 'input',
+          name : helptext.activedirectory_site_name,
+          placeholder : helptext.activedirectory_site_placeholder,
+          tooltip : helptext.activedirectory_site_tooltip,
+        },
+        {
+          type : 'select',
+          name : helptext.activedirectory_kerberos_realm_name,
+          placeholder : helptext.activedirectory_kerberos_realm_placeholder,
+          tooltip : helptext.activedirectory_kerberos_realm_tooltip,
+          options : [{label: '---', value: null}]
+        },
+        {
+          type : 'select',
+          name : helptext.activedirectory_kerberos_principal_name,
+          placeholder : helptext.activedirectory_kerberos_principal_placeholder,
+          tooltip : helptext.activedirectory_kerberos_principal_tooltip,
+          options : [
+            {label : '---', value : ""},
+          ]
+        },
+        {
+          type : 'input',
+          name : helptext.computer_account_OU_name,
+          placeholder : helptext.computer_account_OU_placeholder,
+          tooltip : helptext.computer_account_OU_tooltip,
+        },
+        {
+          type : 'input',
+          name : helptext.activedirectory_timeout_name,
+          placeholder : helptext.activedirectory_timeout_placeholder,
+          tooltip : helptext.activedirectory_timeout_tooltip,
+        },
+        {
+          type : 'input',
+          name : helptext.activedirectory_dns_timeout_name,
+          placeholder : helptext.activedirectory_dns_timeout_placeholder,
+          tooltip : helptext.activedirectory_dns_timeout_tooltip,
+        }
       ]
     },
     {
-      type : 'input',
-      name : helptext.computer_account_OU_name,
-      placeholder : helptext.computer_account_OU_placeholder,
-      tooltip : helptext.computer_account_OU_tooltip,
-    },
+      name: 'section_3.5',
+      class: 'section',
+      label:false,
+      width: '4%',
+      config:[]},
     {
-      type : 'input',
-      name : helptext.activedirectory_timeout_name,
-      placeholder : helptext.activedirectory_timeout_placeholder,
-      tooltip : helptext.activedirectory_timeout_tooltip,
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_dns_timeout_name,
-      placeholder : helptext.activedirectory_dns_timeout_placeholder,
-      tooltip : helptext.activedirectory_dns_timeout_tooltip,
+      name: 'section_four',
+      class: 'section',
+      label:false,
+      width: '48%',
+      config:[
+        {
+          type : 'select',
+          name : helptext.activedirectory_idmap_backend_name,
+          placeholder : helptext.activedirectory_idmap_backend_placeholder,
+          tooltip : helptext.activedirectory_idmap_backend_tooltip,
+          options : []
+        },
+        {
+          type : 'select',
+          name : helptext.activedirectory_nss_info_name,
+          placeholder : helptext.activedirectory_nss_info_placeholder,
+          tooltip : helptext.activedirectory_nss_info_tooltip,
+          options : []
+        },
+        {
+          type : 'select',
+          name : helptext.activedirectory_sasl_wrapping_name,
+          placeholder : helptext.activedirectory_sasl_wrapping_placeholder,
+          tooltip : helptext.activedirectory_sasl_wrapping_tooltip,
+          options : []
+        },
+        {
+          type : 'input',
+          name : helptext.activedirectory_netbiosname_a_name,
+          placeholder : helptext.activedirectory_netbiosname_a_placeholder,
+          tooltip : helptext.activedirectory_netbiosname_a_tooltip,
+          validation : helptext.activedirectory_netbiosname_a_validation,
+          required : true
+        },
+        {
+          type : 'input',
+          name : helptext.activedirectory_netbiosname_b_name,
+          placeholder : helptext.activedirectory_netbiosname_b_placeholder,
+          tooltip : helptext.activedirectory_netbiosname_b_tooltip,
+          validation : helptext.activedirectory_netbiosname_b_validation,
+          required : true,
+          isHidden: true,
+          disabled: true
+        },
+        {
+          type : 'input',
+          name : helptext.activedirectory_netbiosalias_name,
+          placeholder : helptext.activedirectory_netbiosalias_placeholder,
+          tooltip : helptext.activedirectory_netbiosalias_tooltip,
+        }
+      ]
     }
-      ]},
-      {
-        name: 'Section 3.5',
-        class: 'section_three-five',
-        label:false,
-        width: '4%',
-        config:[]},
-      {
-        name: 'Section Four',
-        class: 'section_header',
-        label:false,
-        width: '48%',
-        config:[
-    {
-      type : 'select',
-      name : helptext.activedirectory_idmap_backend_name,
-      placeholder : helptext.activedirectory_idmap_backend_placeholder,
-      tooltip : helptext.activedirectory_idmap_backend_tooltip,
-      options : []
-    },
-    {
-      type : 'select',
-      name : helptext.activedirectory_nss_info_name,
-      placeholder : helptext.activedirectory_nss_info_placeholder,
-      tooltip : helptext.activedirectory_nss_info_tooltip,
-      options : []
-    },
-    {
-      type : 'select',
-      name : helptext.activedirectory_sasl_wrapping_name,
-      placeholder : helptext.activedirectory_sasl_wrapping_placeholder,
-      tooltip : helptext.activedirectory_sasl_wrapping_tooltip,
-      options : []
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_netbiosname_a_name,
-      placeholder : helptext.activedirectory_netbiosname_a_placeholder,
-      tooltip : helptext.activedirectory_netbiosname_a_tooltip,
-      validation : helptext.activedirectory_netbiosname_a_validation,
-      required : true
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_netbiosname_b_name,
-      placeholder : helptext.activedirectory_netbiosname_b_placeholder,
-      tooltip : helptext.activedirectory_netbiosname_b_tooltip,
-      validation : helptext.activedirectory_netbiosname_b_validation,
-      required : true,
-      isHidden: true,
-      disabled: true
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_netbiosalias_name,
-      placeholder : helptext.activedirectory_netbiosalias_placeholder,
-      tooltip : helptext.activedirectory_netbiosalias_tooltip,
-    }
-      ]}
   ];
 
   protected advanced_field: Array<any> = helptext.activedirectory_advanced_fields;

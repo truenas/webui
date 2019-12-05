@@ -15,7 +15,8 @@ activedirectory_custactions_clearcache_dialog_title: T("Active Directory"),
 activedirectory_custactions_clearcache_dialog_message: T("The cache is being rebuilt."),
 
 ad_section_headers: {
-    dc: T('Domain Credentials')
+    dc: T('Domain Credentials'),
+    adv: T('Advanced Settings')
 },
 
 activedirectory_domainname_name: 'domainname',
