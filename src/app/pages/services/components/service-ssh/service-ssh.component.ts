@@ -21,7 +21,6 @@ export class ServiceSSHComponent implements OnInit {
     {
       name: globalHelptext.fieldset_general_options,
       label: true,
-      width: '50%',
       config: [
         {
           type : 'input',
@@ -55,10 +54,10 @@ export class ServiceSSHComponent implements OnInit {
         }
       ]
     },
+    { name: 'divider', divider: false },
     {
       name: globalHelptext.fieldset_other_options,
       label: false,
-      width: '50%',
       config: [
         {
           type : 'select',
@@ -113,6 +112,7 @@ export class ServiceSSHComponent implements OnInit {
       name : 'Basic Mode',
       function : () => {
         this.fieldSets.find(set => set.name === globalHelptext.fieldset_other_options).label = false;
+        this.fieldSets.find(set => set.name === 'divider').divider = false;
         this.isBasicMode = !this.isBasicMode;
       }
     },
@@ -121,6 +121,7 @@ export class ServiceSSHComponent implements OnInit {
       name : 'Advanced Mode',
       function : () => {
         this.fieldSets.find(set => set.name === globalHelptext.fieldset_other_options).label = true;
+        this.fieldSets.find(set => set.name === 'divider').divider = true;
         this.isBasicMode = !this.isBasicMode;
       }
     }
