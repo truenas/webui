@@ -26,17 +26,28 @@ export class ActiveDirectoryComponent {
   protected idmap_backend: any;
   protected nss_info: any;
   protected ldap_sasl_wrapping: any;
+  public sectionLabels = ['Section Two', 'Section Three', 'Section Four'];
 
   public custActions: Array<any> = [
     {
       'id' : helptext.activedirectory_custactions_basic_id,
       'name' : helptext.activedirectory_custactions_basic_name,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      function : () => { 
+        this.isBasicMode = !this.isBasicMode; 
+        this.sectionLabels.forEach((label) => {
+          this.fieldSets.find(set => set.name === label).label = false;
+        });
+      }
     },
     {
       'id' : helptext.activedirectory_custactions_advanced_id,
       'name' : helptext.activedirectory_custactions_advanced_name,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      function : () => { 
+        this.isBasicMode = !this.isBasicMode; 
+        this.sectionLabels.forEach((label) => {
+          this.fieldSets.find(set => set.name === label).label = true;
+        });     
+      }
     },
     {
       'id' : helptext.activedirectory_custactions_edit_imap_id,
@@ -60,8 +71,8 @@ export class ActiveDirectoryComponent {
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
-      name: 'Section 1',
-      class: 'section_one',
+      name: helptext.ad_section_headers.dc,
+      class: 'section_header',
       label:true,
       config:[
     {
@@ -103,8 +114,8 @@ export class ActiveDirectoryComponent {
   ]},
   {
     name: 'Section Two',
-    class: 'section_two',
-    label:true,
+    class: 'section_header_basic',
+    label:false,
     config:[
     {
       type : 'select',
@@ -165,8 +176,8 @@ export class ActiveDirectoryComponent {
     },
     {
       name: 'Section Three',
-      class: 'section_three',
-      label:true,
+      class: 'section_header',
+      label:false,
       width: '48%',
       config:[
     {
@@ -218,8 +229,8 @@ export class ActiveDirectoryComponent {
         config:[]},
       {
         name: 'Section Four',
-        class: 'section_four',
-        label:true,
+        class: 'section_header',
+        label:false,
         width: '48%',
         config:[
     {

@@ -14,6 +14,10 @@ activedirectory_custactions_clearcache_name: T('Rebuild Directory Service Cache'
 activedirectory_custactions_clearcache_dialog_title: T("Active Directory"),
 activedirectory_custactions_clearcache_dialog_message: T("The cache is being rebuilt."),
 
+ad_section_headers: {
+    dc: T('Domain Credentials')
+},
+
 activedirectory_domainname_name: 'domainname',
 activedirectory_domainname_placeholder: T('Domain Name'),
 activedirectory_domainname_tooltip: T('Enter the Active Directory domain (<i>example.com</i>)\
