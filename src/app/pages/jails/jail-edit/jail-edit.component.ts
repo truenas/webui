@@ -38,6 +38,31 @@ export class JailEditComponent implements OnInit, AfterViewInit {
   public custActions: any;
   public pk: any;
 
+  protected interfaces = {
+    vnetEnabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+    vnetDisabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+    vnetDefaultInterface: [
+      {
+        label: 'none',
+        value: 'none',
+      },
+      {
+        label: 'auto',
+        value: 'auto',
+      }
+    ]
+  }
+
   protected formFields: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
     {
@@ -121,10 +146,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           name: 'ip4_interface',
           placeholder: helptext.ip4_interface_placeholder,
           tooltip: helptext.ip4_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           value: '',
           class: 'inline',
           width: '30%',
@@ -196,10 +218,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           name: 'ip6_interface',
           placeholder: helptext.ip6_interface_placeholder,
           tooltip: helptext.ip6_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           value: '',
           class: 'inline',
           width: '30%',
@@ -670,16 +689,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       name: 'vnet_default_interface',
       placeholder: helptext.vnet_default_interface_placeholder,
       tooltip: helptext.vnet_default_interface_tooltip,
-      options: [
-        {
-          label: 'none',
-          value: 'none',
-        },
-        {
-          label: 'auto',
-          value: 'auto',
-        }
-      ],
+      options: this.interfaces.vnetDefaultInterface,
       disabled: false,
     },
     {
@@ -1152,17 +1162,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  updateInterfaceOptions(interfaceField, addVnet) {
-    if (addVnet != undefined) {
-      const index = _.findIndex(interfaceField.options as any, { 'label': 'vnet0'});
-      if (addVnet && index == -1) {
-        interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-      } else if (!addVnet && index > -1){
-        interfaceField.options.splice(index, 1);
-      }
-    }
-  }
-
   updateInterface(addVnet?) {
     for (const ipType of ['ip4', 'ip6']) {
       const targetPropName = ipType + '_addr';
@@ -1171,7 +1170,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         const subipInterfaceField = _.find(_.find(this.basicfieldConfig, {'name': targetPropName}).listFields[i], {'name': ipType + '_interface'});
 
         if (addVnet != undefined) {
-          this.updateInterfaceOptions(subipInterfaceField, addVnet);
+          subipInterfaceField.options = addVnet ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
         }
       }
     }
@@ -1203,9 +1202,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.vnet_default_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{
@@ -1257,7 +1254,8 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
-
+      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
+      this.ip6_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
       this.updateInterface(res);
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
@@ -1308,6 +1306,13 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         }
 
         for (let i in res[0]) {
+          if (i === 'interfaces') {
+            const ventInterfaces = res[0]['interfaces'].split(',');
+            for (const item of ventInterfaces) {
+              this.interfaces.vnetEnabled.push({ label: item, value: item});
+              this.interfaces.vnetDefaultInterface.push({ label: item, value: item});
+            }
+          }
           if (i == 'type' && res[0][i] == 'pluginv2') {
             this.setDisabled("host_hostuuid", true);
             this.isPlugin = true;
