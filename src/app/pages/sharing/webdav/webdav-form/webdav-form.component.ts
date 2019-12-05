@@ -10,6 +10,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 
 export class WebdavFormComponent {
     protected queryCall = 'sharing.webdav.query';
+    protected queryKey = 'id';
     protected addCall = 'sharing.webdav.create';
     protected editCall = 'sharing.webdav.update';
     protected route_success: string[] = [ 'sharing', 'webdav' ];
