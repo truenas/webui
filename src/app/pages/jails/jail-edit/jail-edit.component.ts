@@ -1437,10 +1437,11 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     this.router.navigate(new Array('').concat(this.route_success));
   }
 
-  getFullIP(ipInterface: string, ip: string, netmask: string) {
+  getFullIP(type: string, ipInterface: string, ip: string, netmask: string) {
     let full_address = ip;
     if (ipInterface != '') {
-      full_address = ipInterface + '|' + ip;
+      const validInterface = _.find(type === 'ip4' ? this.ip4_interfaceField.options : this.ip6_interfaceField.options, {value: ipInterface}) !== undefined;
+      full_address = validInterface ? ipInterface + '|' + ip : ip;
     }
     if (netmask != '') {
       full_address += '/' + netmask;
@@ -1456,7 +1457,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < value[propName].length; i++) {
           const subAddr = value[propName][i];
           if (subAddr[propName] != '' && subAddr[propName] != undefined) {
-            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')]));
+            multi_ipaddr.push(this.getFullIP(ipType, subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')]));
           }
         }
         value[propName] = multi_ipaddr.join(',');
