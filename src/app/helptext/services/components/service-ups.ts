@@ -2,6 +2,12 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+ups_fieldset_general: T('General Options'),
+ups_fieldset_monitor: T('Monitor'),
+ups_fieldset_shutdown: T('Shutdown'),
+ups_fieldset_email: T('Email'),
+ups_fieldset_other: T('Other Options'),
+
 ups_mode_placeholder : T('UPS Mode'),
 ups_mode_tooltip : T('Choose <i>Master</i> if the UPS is plugged directly\
  into the system serial port. The UPS will remain the\
@@ -10,8 +16,8 @@ ups_mode_tooltip : T('Choose <i>Master</i> if the UPS is plugged directly\
  <a href="http://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client"\
  target="_blank">Network UPS Tools Overview</a>.'),
 ups_mode_options : [
-    {label : 'Master', value : 'master'},
-    {label : 'Slave', value : 'slave'},
+    {label : 'Master', value : 'MASTER'},
+    {label : 'Slave', value : 'SLAVE'},
 ],
 
 ups_identifier_placeholder : T('Identifier'),
@@ -65,8 +71,8 @@ ups_description_tooltip : T('Describe this service.'),
 ups_shutdown_placeholder : T('Shutdown Mode'),
 ups_shutdown_tooltip : T('Choose when the UPS initiates shutdown.'),
 ups_shutdown_options : [
-{label : 'UPS reaches low battery', value : 'lowbatt'},
-{label : 'UPS goes on battery', value : 'batt'},
+{label : 'UPS reaches low battery', value : 'LOWBATT'},
+{label : 'UPS goes on battery', value : 'BATT'},
 ],
 
 ups_shutdowntimer_placeholder : T('Shutdown Timer'),
