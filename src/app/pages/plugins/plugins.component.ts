@@ -239,7 +239,7 @@ export class PluginsComponent {
           type: 'select',
           name: 'selectedPool',
           placeholder: jailHelptext.activatePoolDialog.selectedPool_placeholder,
-          options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}) : [],
+          options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name + (pool.is_decrypted ? '' : ' (Locked)'), value: pool.name, disable: !pool.is_decrypted}}) : [],
           value: this.activatedPool
         }
       ],
