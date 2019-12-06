@@ -173,7 +173,9 @@ export class JailListComponent {
     tooltip: helptext.globalConfig.tooltip,
     onClick: () => {
       this.prerequisite().then((res)=>{
-        this.activatePool();
+        if (res && this.activatedPool !== undefined) {
+          this.activatePool();
+        }
       })
     }
   };
@@ -202,7 +204,7 @@ export class JailListComponent {
     return new Promise(async (resolve, reject) => {
       await this.ws.call('pool.query').toPromise().then((res) => {
         if (res.length === 0) {
-          resolve(false);
+          resolve(true);
           this.noPoolDialog();
           return;
         }
@@ -214,12 +216,11 @@ export class JailListComponent {
 
       if (this.availablePools !== undefined) {
         this.ws.call('jail.get_activated_pool').toPromise().then((res) => {
+          resolve(true);
           if (res != null) {
             this.activatedPool = res;
             this.addBtnDisabled = false;
-            resolve(true);
           } else {
-            resolve(false);
             this.activatePool();
           }
         }, (err) => {
@@ -265,7 +266,7 @@ export class JailListComponent {
           },
           (res) => {
             self.entityList.loader.close();
-            new EntityUtils().handleWSError(this.entityList, res);
+            new EntityUtils().handleWSError(self.entityList, res, self.dialogService);
           });
       }
     }
