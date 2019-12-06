@@ -35,6 +35,10 @@ export class SystemGeneralService {
     return this.ws.call('system.info', []);
   }
 
+  refreshDirServicesCache() {
+    return this.ws.call('directoryservices.cache_refresh');
+  }
+  
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
 }
