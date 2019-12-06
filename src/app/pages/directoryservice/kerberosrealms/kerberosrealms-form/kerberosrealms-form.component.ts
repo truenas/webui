@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-
 import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
 
 @Component({
@@ -14,7 +12,11 @@ import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-
 export class KerberosRealmsFormComponent {
 
   protected route_success: string[] = ['directoryservice', 'kerberosrealms'];
-  protected resource_name = 'directoryservice/kerberosrealm';
+  protected addCall = 'kerberos.realm.create';
+  protected editCall = 'kerberos.realm.update';
+  protected queryCall = 'kerberos.realm.query';
+  protected pk: any;
+  protected queryKey = 'id';
   protected isEntity = true;
   protected isBasicMode = true;
 
@@ -60,7 +62,7 @@ export class KerberosRealmsFormComponent {
     }
   ];
 
-  constructor(protected rest: RestService, private router: Router) {}
+  constructor(private router: Router) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {

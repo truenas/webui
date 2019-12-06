@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/';
 
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
@@ -12,18 +11,19 @@ import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-
 export class KerberosRealmsListComponent {
 
   public title = "Kerberos Realms";
-  protected resource_name: string = 'directoryservice/kerberosrealm';
+  protected queryCall = 'kerberos.realm.query';
+  protected wsDelete = 'kerberos.realm.delete';
   protected route_add: string[] = ['directoryservice', 'kerberosrealms', 'add'];
   protected route_add_tooltip: string = "Add Kerberos Realm";
   protected route_edit: string[] = ['directoryservice', 'kerberosrealms', 'edit'];
 
   public columns: Array < any > = [
-    { name: T('Realm'), prop: 'krb_realm', always_display: true },
-    { name: T('KDC'), prop: 'krb_kdc' },
-    { name: T('Admin Server'), prop: 'krb_admin_server' },
-    { name: T('Password Server'), prop: 'krb_kpasswd_server' },
+    { name: T('Realm'), prop: 'realm', always_display: true },
+    { name: T('KDC'), prop: 'kdc' },
+    { name: T('Admin Server'), prop: 'admin_server' },
+    { name: T('Password Server'), prop: 'kpasswd_server' },
   ];
-  public rowIdentifier = 'krb_realm';
+  public rowIdentifier = 'realm';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
@@ -33,5 +33,5 @@ export class KerberosRealmsListComponent {
     },
   };
 
-  constructor(protected rest: RestService, private router: Router){}
+  constructor(private router: Router){}
 }
