@@ -98,6 +98,14 @@ export class ServiceTFTPComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected userService: UserService) {}
 
+  resourceTransformIncomingRestData(data: any) {
+    return invertUMask(data);
+  }
+
+  beforeSubmit(data: any) {
+    return invertUMask(data);
+  }
+
   preInit(entityEdit: any) {
     this.userService.userQueryDSCache().subscribe(items => {
       const users = [];
@@ -124,4 +132,20 @@ export class ServiceTFTPComponent {
       parent.tftp_username.searchOptions = users;
     });
   }
+}
+
+/**
+ * Need to invert the umask prop on the way in/out.
+ * The 'permissions' FieldConfig and the MW expect opposite values.
+ */
+function invertUMask(data: { umask: string }): { umask: string } {
+  const perm = parseInt(data['umask'], 8);
+  // tslint:disable-next-line: no-bitwise
+  let mask = (~perm & 0o666).toString(8);
+  while (mask.length < 3) {
+    mask = '0' + mask;
+  }
+  data['umask'] = mask;
+
+  return data;
 }
