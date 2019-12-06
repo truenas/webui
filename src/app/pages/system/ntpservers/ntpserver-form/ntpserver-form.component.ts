@@ -25,7 +25,7 @@ export class NTPServerFormComponent {
   protected fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     { 
-      name: 'Me Fieldset',
+      name: helptext.header,
       class: 'ntp',
       label: true,
       config: [
