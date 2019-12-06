@@ -18,8 +18,7 @@ import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
-import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
-import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
+import { NTPServerFormComponent } from './ntpservers/ntpserver-form';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
@@ -168,12 +167,12 @@ export const routes: Routes = [
           data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
         }, {
           path: 'add',
-          component: NTPServerAddComponent,
+          component: NTPServerFormComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
         },
         {
           path: 'edit/:pk',
-          component: NTPServerEditComponent,
+          component: NTPServerFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
         }
       ]
