@@ -302,6 +302,13 @@ export class ReplicationFormComponent {
             placeholder: helptext.properties_placeholder,
             tooltip: helptext.properties_tooltip,
             value: true,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
         }, {
             type: 'select',
             multiple: true,
