@@ -173,7 +173,9 @@ export class JailListComponent {
     tooltip: helptext.globalConfig.tooltip,
     onClick: () => {
       this.prerequisite().then((res)=>{
-        this.activatePool();
+        if (res && this.activatedPool !== undefined) {
+          this.activatePool();
+        }
       })
     }
   };
@@ -264,7 +266,7 @@ export class JailListComponent {
           },
           (res) => {
             self.entityList.loader.close();
-            new EntityUtils().handleWSError(this.entityList, res);
+            new EntityUtils().handleWSError(self.entityList, res, self.dialogService);
           });
       }
     }
