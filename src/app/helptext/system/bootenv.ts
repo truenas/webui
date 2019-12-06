@@ -11,6 +11,8 @@ export const helptext_system_bootenv = {
  the new device."
   ),
 
+  clone_fieldset: T("Clone Boot Environment"),
+
   clone_name_placeholder: T("Name"),
   clone_name_tooltip: T(
     "Enter a name for the clone of this boot environment.\
