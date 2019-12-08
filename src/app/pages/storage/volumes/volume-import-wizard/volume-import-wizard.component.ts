@@ -277,8 +277,10 @@ export class VolumeImportWizardComponent {
   customSubmit(value) {
     if (value.encrypted) {
       const formData: FormData = new FormData();
-      let params = {"guid": value.guid,
-                    "passphrase": value.passphrase ? value.passphrase: null };
+      const params = {"guid": value.guid};
+      if (value.passphrase && value.passphrase != null) {
+        params['passphrase'] = value.passphrase;
+      }
       formData.append('data', JSON.stringify({
         "method": "pool.import_pool",
         "params": [params]

@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import * as _ from 'lodash';
 import { FormGroup, Validators } from '@angular/forms';
-import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, RestService } from '../../../../../../services';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import * as _ from 'lodash';
 import helptext from '../../../../../../helptext/services/components/service-rsync';
+import { RestService, WebSocketService } from '../../../../../../services';
+import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector : 'app-rsync-configuration-form',
@@ -12,92 +13,117 @@ import helptext from '../../../../../../helptext/services/components/service-rsy
 })
 
 export class RYSNCConfigurationFormComponent {
-    protected resource_name = 'services/rsyncmod/';
+    protected queryCall = 'rsyncmod.query';
     protected route_success: string[] = [ 'services','rsync','rsync-module' ];
     protected isEntity = true;
     public formGroup: FormGroup;
     protected pk: any;
     protected addCall = 'rsyncmod.create';
     protected isNew: boolean;
-    public fieldConfig: FieldConfig[] = [
-    {
-        type: 'input',
-        name: 'name',
-        placeholder: helptext.rsyncmod_name_placeholder,
-        tooltip: helptext.rsyncmod_name_tooltip,
-        validation: Validators.required,
-        required: true
-    },
-    {
-        type: 'input',
-        name: 'comment',
-        placeholder: helptext.rsyncmod_comment_placeholder,
-        tooltip: helptext.rsyncmod_comment_tooltip
-    },
-    {
-        type : 'explorer',
-        initial: '/mnt',
-        explorerType: 'directory',
-        placeholder: helptext.rsyncmod_path_placeholder,
-        name: 'path',
-        tooltip: helptext.rsyncmod_path_tooltip,
-        validation: helptext.rsyncmod_path_validation,
-        required: true
-    },
-    {
-        type: 'select',
-        name: 'mode',
-        placeholder: helptext.rsyncmod_mode_placeholder,
-        options: helptext.rsyncmod_mode_options,
-        tooltip: helptext.rsyncmod_mode_tooltip,
-        required: true
-    },
-    {
-        type: 'input',
-        name: 'maxconn',
-        placeholder: helptext.rsyncmod_maxconn_placeholder,
-        inputType: 'number',
-        value: 0,
-        validation: helptext.rsyncmod_maxconn_validation,
-        tooltip: helptext.rsyncmod_maxconn_tooltip,
-    },
-    {
-        type: 'select',
-        name: 'user',
-        placeholder: helptext.rsyncmod_user_placeholder,
-        tooltip: helptext.rsyncmod_user_tooltip,
-        options: []
-    },
-    {
-        type: 'select',
-        name: 'group',
-        placeholder: helptext.rsyncmod_group_placeholder,
-        tooltip: helptext.rsyncmod_group_tooltip,
-        options: []
-    },
-    {
-        type: 'textarea',
-        name: 'hostsallow',
-        placeholder: helptext.rsyncmod_hostsallow_placeholder,
-        tooltip: helptext.rsyncmod_hostsallow_tooltip,
-        value: '',
-      },
-      {
-        type: 'textarea',
-        name: 'hostsdeny',
-        placeholder: helptext.rsyncmod_hostsdeny_placeholder,
-        tooltip: helptext.rsyncmod_hostsdeny_tooltip,
-        value: '',
-      },
-      {
-        type: 'textarea',
-        name: 'auxiliary',
-        placeholder: helptext.rsyncd_auxiliary_placeholder,
-        tooltip: helptext.rsyncd_auxiliary_tooltip,
-        value: '',
-      },
-
+    public fieldConfig: FieldConfig[] = [];
+    public fieldSets: FieldSet[] = [
+        {
+            name: helptext.rsyncd_fieldset_name, 
+            label: true,
+            config: [{
+                type: 'input',
+                name: 'name',
+                placeholder: helptext.rsyncmod_name_placeholder,
+                tooltip: helptext.rsyncmod_name_tooltip,
+                validation: Validators.required,
+                required: true
+            }]
+        },
+        { name: 'divider', divider: true },
+        {
+            name: helptext.rsyncd_fieldset_path, 
+            label: true,
+            config: [{
+                    type : 'explorer',
+                    initial: '/mnt',
+                    explorerType: 'directory',
+                    placeholder: helptext.rsyncmod_path_placeholder,
+                    name: 'path',
+                    tooltip: helptext.rsyncmod_path_tooltip,
+                    validation: helptext.rsyncmod_path_validation,
+                    required: true
+            }]
+        },
+        { name: 'divider', divider: true },
+        {
+            name: helptext.rsyncd_fieldset_access,
+            label: true,
+            config: [
+                {
+                    type: 'select',
+                    name: 'mode',
+                    placeholder: helptext.rsyncmod_mode_placeholder,
+                    options: helptext.rsyncmod_mode_options,
+                    tooltip: helptext.rsyncmod_mode_tooltip,
+                    required: true
+                },
+                {
+                    type: 'input',
+                    name: 'maxconn',
+                    placeholder: helptext.rsyncmod_maxconn_placeholder,
+                    inputType: 'number',
+                    value: 0,
+                    validation: helptext.rsyncmod_maxconn_validation,
+                    tooltip: helptext.rsyncmod_maxconn_tooltip,
+                },
+                {
+                    type: 'select',
+                    name: 'user',
+                    placeholder: helptext.rsyncmod_user_placeholder,
+                    tooltip: helptext.rsyncmod_user_tooltip,
+                    options: []
+                },
+                {
+                    type: 'select',
+                    name: 'group',
+                    placeholder: helptext.rsyncmod_group_placeholder,
+                    tooltip: helptext.rsyncmod_group_tooltip,
+                    options: []
+                },
+                {
+                    type: 'textarea',
+                    name: 'hostsallow',
+                    placeholder: helptext.rsyncmod_hostsallow_placeholder,
+                    tooltip: helptext.rsyncmod_hostsallow_tooltip,
+                    value: '',
+                },
+                {
+                    type: 'textarea',
+                    name: 'hostsdeny',
+                    placeholder: helptext.rsyncmod_hostsdeny_placeholder,
+                    tooltip: helptext.rsyncmod_hostsdeny_tooltip,
+                    value: '',
+                }
+            ]
+        },
+        { name: 'divider', divider: true },
+        {
+            name: helptext.rsyncd_fieldset_other,
+            label: true,
+            config: [
+                {
+                    type: 'input',
+                    name: 'comment',
+                    placeholder: helptext.rsyncmod_comment_placeholder,
+                    tooltip: helptext.rsyncmod_comment_tooltip
+                },
+                {
+                    type: 'textarea',
+                    name: 'auxiliary',
+                    placeholder: helptext.rsyncd_auxiliary_placeholder,
+                    tooltip: helptext.rsyncd_auxiliary_tooltip,
+                    value: '',
+                }
+            ]
+        },
+        { name: 'divider', divider: true }
     ];
+
     private rsyncmod_group: any;
     private rsyncmod_user: any;
     protected entityForm: any;
@@ -110,13 +136,16 @@ export class RYSNCConfigurationFormComponent {
         this.entityForm = entityForm;
         this.isNew = entityForm.isNew;
 
-        this.rsyncmod_user = _.find(this.fieldConfig, {name : "user"});
+        const accessSet = _.find(this.fieldSets, { name : helptext.rsyncd_fieldset_access });
+
+        this.rsyncmod_user = accessSet.config.find(config => config.name === 'user');
         entityForm.ws.call('user.query').subscribe((users) => {
             users.forEach((user) => {
                 this.rsyncmod_user.options.push({label : user.username, value : user.username})
             });
         });
-        this.rsyncmod_group = _.find(this.fieldConfig, {name : "group"});
+
+        this.rsyncmod_group = accessSet.config.find(config => config.name === 'group');
         entityForm.ws.call('group.query').subscribe((groups) => {
             groups.forEach((group) => {
                 this.rsyncmod_group.options.push({label : group.group, value : group.group})
@@ -129,7 +158,7 @@ export class RYSNCConfigurationFormComponent {
 
         this.route.params.subscribe(params => {
             if (params['pk']) {
-              this.pk = parseInt(params['pk']);
+              this.pk = parseInt(params['pk'], 10);
               this.ws.call('rsyncmod.query', [
                 [
                   ["id", "=", this.pk]
