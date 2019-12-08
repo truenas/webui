@@ -175,20 +175,6 @@ msgstr ""
 
 msgid ""
 "<a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmNoAuthProtocol\"  target=\"_blank\">Authentication protocol</a> used to "
-"authenticate  messages sent on behalf of the specified <i>Username</i>."
-msgstr ""
-
-msgid ""
-"<a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmNoPrivProtocol\"  target=\"_blank\">Encryption protocol</a> used to "
-"encrypt messages  sent on behalf of the specified <i>Username</i>."
-msgstr ""
-
-msgid ""
-"<a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
 "html\"  target=\"_blank\">S3 API endpoint URL</a>. When using AWS, the "
 "endpoint  field can be empty to use the default endpoint for the region, "
@@ -220,6 +206,18 @@ msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
 "target=\"_blank\">pCloud Access Token</a>. These tokens can expire and  "
 "require extension."
+msgstr ""
+
+msgid ""
+"<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
+"target=\"_blank\">Authentication protocol</a> used to authenticate  "
+"messages sent on behalf of the specified <i>Username</i>."
+msgstr ""
+
+msgid ""
+"<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
+"target=\"_blank\">Encryption protocol</a> used to encrypt messages  sent on "
+"behalf of the specified <i>Username</i>."
 msgstr ""
 
 msgid ""
@@ -439,14 +437,14 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
-"connects to a remote system and retrieves snapshots  matching a <b>Naming "
-"Schema</b>."
+"<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
+"cloud storage."
 msgstr ""
 
 msgid ""
-"<i>Push</i> sends data to cloud storage. <i>Pull</i> receives data from "
-"cloud storage."
+"<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
+"connects to a remote system and retrieves snapshots  matching a <b>Naming "
+"Schema</b>."
 msgstr ""
 
 msgid ""
@@ -882,6 +880,9 @@ msgid "Additional Data VDevs to Create"
 msgstr ""
 
 msgid "Additional Domains"
+msgstr ""
+
+msgid "Additional Hardware"
 msgstr ""
 
 msgid "Additional Parameters"
@@ -2437,6 +2438,9 @@ msgstr ""
 msgid "Continue with download?"
 msgstr ""
 
+msgid "Contract Type"
+msgstr ""
+
 msgid "Control left sidebar's display style."
 msgstr ""
 
@@ -2595,6 +2599,9 @@ msgstr ""
 msgid "Custom Server"
 msgstr ""
 
+msgid "Customer Name"
+msgstr ""
+
 msgid ""
 "DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
 "similar to dyndns.org."
@@ -2700,6 +2707,9 @@ msgstr ""
 msgid "Deactivate the recovery key for this pool?"
 msgstr ""
 
+msgid "Debug"
+msgstr ""
+
 msgid "Debug could not be downloaded."
 msgstr ""
 
@@ -2711,6 +2721,9 @@ msgid ""
 "destination system must also support deduplicated  streams. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
+msgstr ""
+
+msgid "Default"
 msgstr ""
 
 msgid "Default ACL Options"
@@ -3069,6 +3082,9 @@ msgid ""
 "menus, but are still accepted when manually entered."
 msgstr ""
 
+msgid "Disable offload capabilities"
+msgstr ""
+
 msgid "Disable physical block size reporting"
 msgstr ""
 
@@ -3204,6 +3220,12 @@ msgstr ""
 msgid "EULA"
 msgstr ""
 
+msgid "EXPIRED"
+msgstr ""
+
+msgid "EXPIRES TODAY  "
+msgstr ""
+
 msgid "Edit"
 msgstr "Editar"
 
@@ -3243,6 +3265,9 @@ msgid "Email Address"
 msgstr ""
 
 msgid "Email Subject"
+msgstr ""
+
+msgid "Emergency"
 msgstr ""
 
 msgid ""
@@ -3424,6 +3449,19 @@ msgstr ""
 msgid "Enclosure"
 msgstr ""
 
+msgid ""
+"Encrypt (<i>PUSH</i>) or decrypt  (<i>PULL</i>) file names with the rclone  "
+"<a href=\"https://rclone.org/crypt/#file-name-encryption-modes\" "
+"target=\"_blank\">\"Standard\" file name encryption mode</a>.  The original "
+"directory structure is preserved. A filename with the same  name always has "
+"the same encrypted filename.<br><br>  <i>PULL</i> tasks that have "
+"<b>Filename Encryption</b> enabled and an  incorrect <b>Encryption "
+"Password</b> or <b>Encryption Salt</b> will not  transfer any files but "
+"still report that the task was successful. To  verify that files were "
+"transferred successfully, click the finished  task status to see a list of "
+"transferred files."
+msgstr ""
+
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr ""
 
@@ -3561,11 +3599,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter a long string of random characters for use as <a "
-"href=\"https://searchsecurity.techtarget.com/definition/salt\" "
-"target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b> "
-"Save and back up the encryption salt value. Losing the salt value can "
-"result in data loss."
+"Enter a long string of random characters for  use as <a "
+"href=\"https://searchsecurity.techtarget.com/definition/salt\"  "
+"target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b>  "
+"Always securely back up the encryption salt value! Losing the salt  value "
+"will result in data loss."
 msgstr ""
 
 msgid "Enter a name for the VM."
@@ -4081,12 +4119,6 @@ msgid ""
 "target=”_blank”>Active Directory</a> administrator account."
 msgstr ""
 
-msgid ""
-"Enter the password to encrypt and decrypt remote data. <b>Warning</b>: "
-"Always save and back up this password. Losing the encryption password can "
-"result in data loss."
-msgstr ""
-
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
 msgstr ""
 
@@ -4295,6 +4327,9 @@ msgstr ""
 msgid "Execute"
 msgstr ""
 
+msgid "Expiration Date"
+msgstr ""
+
 msgid "Export Certificate"
 msgstr ""
 
@@ -4392,6 +4427,9 @@ msgid "Failover is administratively disabled."
 msgstr ""
 
 msgid "Failover is in an error state."
+msgstr ""
+
+msgid "Features"
 msgstr ""
 
 msgid "Fetch Method"
@@ -5107,7 +5145,13 @@ msgstr ""
 msgid "InfluxDB time series name for collected points."
 msgstr ""
 
+msgid "Info"
+msgstr ""
+
 msgid "Informational"
+msgstr ""
+
+msgid "Inherit"
 msgstr ""
 
 msgid "Inherits"
@@ -5120,18 +5164,17 @@ msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
 "no <i>Authentication Protocol</i> is  used. If an authentication key is set "
 "and an  <i>Authentication Protocol</i> is not specified,  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmHMACMD5AuthProtocol\"  target=\"_blank\">MD5</a> is used as the "
-"default.<br>  Must be at least 8 and at most 32 octets long."
+"href=\"https://en.wikipedia.org/wiki/MD5\"  target=\"_blank\">MD5</a> is "
+"used as the default.<br>  Must be at least 8 and at most 32 octets long."
 msgstr ""
 
 msgid ""
 "Initial secret encryption key.  If an encryption key is not set, no "
 "<i>Encryption Protocol</i> is used.  If an encryption key is set and an "
 "<i>Encryption Protocol</i> is  not specified,  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmDESPrivProtocol\"  target=\"_blank\">DES</a> is used as the default.<br> "
-" Must be at least 8 and at most 32 octets long."
+"href=\"https://en.wikipedia.org/wiki/Data_Encryption_Standard\"  "
+"target=\"_blank\">DES</a> is used as the default.<br>  Must be at least 8 "
+"and at most 32 octets long."
 msgstr ""
 
 msgid "Initiate Failover"
@@ -5228,6 +5271,9 @@ msgid ""
 msgstr ""
 
 msgid "Invalidate Existing Key"
+msgstr ""
+
+msgid "Is Debug"
 msgstr ""
 
 msgid "Is the pool encrypted?"
@@ -5497,6 +5543,9 @@ msgid "Libdefaults Auxiliary Parameters"
 msgstr ""
 
 msgid "License"
+msgstr ""
+
+msgid "License Information"
 msgstr ""
 
 msgid "Lifetime"
@@ -6198,6 +6247,9 @@ msgstr ""
 msgid "Notes about this extent."
 msgstr ""
 
+msgid "Notice"
+msgstr ""
+
 msgid "Number of CPUs"
 msgstr ""
 
@@ -6477,6 +6529,12 @@ msgid "Password for the SSH Username account."
 msgstr ""
 
 msgid "Password for the user account."
+msgstr ""
+
+msgid ""
+"Password to encrypt and decrypt remote  data. <b>Warning:</b> Always "
+"securely back up this password! Losing the  encryption password will result "
+"in data loss."
 msgstr ""
 
 msgid "Password updated."
@@ -6798,10 +6856,16 @@ msgid "Private Key ID"
 msgstr ""
 
 msgid ""
-"Privileges are the same as the guest account. Guest access is disabled by "
-"default in Windows 10 version 1709 and Windows Server version 1903. "
-"Additional client-side configuration is required to provide guest access to "
-"these clients."
+"Privileges are the same as the guest account.  Guest access is disabled by "
+"default in Windows 10 version 1709 and  Windows Server version 1903. "
+"Additional client-side configuration is  required to provide guest access "
+"to these clients.<br><br>  <i>MacOS clients:</i> Attempting to connect as a "
+"user that does not  exist in FreeNAS <i>does not</i> automatically connect "
+"as the guest  account. The <b>Connect As:</b> <i>Guest</i> option must be  "
+"specifically chosen in MacOS to log in as the guest account. See the  <a "
+"href=\"https://support.apple.com/guide/mac-help/connect-mac-shared-"
+"computers-servers-mchlp1140/\" target=\"_blank\">Apple documentation</a>  "
+"for more details."
 msgstr ""
 
 msgid "Proactive Support"
@@ -8511,6 +8575,9 @@ msgid ""
 "Windows 7 machines are present."
 msgstr ""
 
+msgid "Set to disable NIC capabilities when using a Jail or VM."
+msgstr ""
+
 msgid ""
 "Set to disable caching AD users and groups. This can help when unable to "
 "bind to a domain with a large number of users or groups."
@@ -8584,15 +8651,6 @@ msgid ""
 msgstr ""
 
 msgid "Set to enable the S3 web user interface."
-msgstr ""
-
-msgid ""
-"Set to encrypt files before transfer and store the encrypted files on the "
-"remote system. <a href=\"https://rclone.org/crypt/\" "
-"target=\"_blank\">rclone Crypt</a> is used."
-msgstr ""
-
-msgid "Set to encrypt the shared file names."
 msgstr ""
 
 msgid "Set to export the certificate environment variables."
@@ -9360,6 +9418,9 @@ msgstr ""
 msgid "System Processes"
 msgstr ""
 
+msgid "System Serial"
+msgstr ""
+
 msgid "System clock"
 msgstr ""
 
@@ -9900,6 +9961,14 @@ msgstr ""
 msgid "This is a production system"
 msgstr ""
 
+msgid ""
+"This is an unofficial plugin not produced or supported by iXsystems. "
+"iXsystems does not provide support in configuration, diagnosis, or use of "
+"this unofficial plugin regardless of the current support level. Thorough "
+"research is strongly recommended before installing or using an unofficial "
+"plugin."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -10258,6 +10327,21 @@ msgstr ""
 msgid "Usage collection"
 msgstr ""
 
+msgid ""
+"Use  <a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone "
+"crypt</a>  to manage data encryption during <i>PUSH</i> or <i>PULL</i> "
+"transfers:<br><br>  <i>PUSH:</i> Encrypt files before transfer and store "
+"the encrypted  files on the remote system. Files are encrypted using the  "
+"<b>Encryption Password</b> and <b>Encryption Salt</b> values.<br><br>  "
+"<i>PULL:</i> Decrypt files that are being stored on the remote system  "
+"before the transfer. Transferring the encrypted files requires entering  "
+"the same <b>Encryption Password</b> and <b>Encryption Salt</b> that was  "
+"used to encrypt the files.<br><br>  Additional details about the encryption "
+"algorithm and key derivation  are available in the  <a "
+"href=\"https://rclone.org/crypt/#file-formats\" target=\"_blank\">rclone "
+"crypt File formats documentation</a>."
+msgstr ""
+
 msgid "Use --fast-list"
 msgstr ""
 
@@ -10404,8 +10488,8 @@ msgstr ""
 
 msgid ""
 "Username of the SNMP  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#user-based\"  "
-"target=\"_blank\">User-based Security Model (USM)</a> user."
+"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
+"UsmUserData\"  target=\"_blank\">User-based Security Model (USM)</a> user."
 msgstr ""
 
 msgid ""
@@ -10856,6 +10940,9 @@ msgstr ""
 msgid "datasize"
 msgstr ""
 
+msgid "days"
+msgstr ""
+
 msgid "depends"
 msgstr ""
 
@@ -10905,6 +10992,9 @@ msgid "exec_system_user"
 msgstr ""
 
 msgid "exec_timeout"
+msgstr ""
+
+msgid "expires in"
 msgstr ""
 
 msgid "group"
