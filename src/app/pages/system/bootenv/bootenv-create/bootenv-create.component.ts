@@ -32,7 +32,7 @@ export class BootEnvironmentCreateComponent {
           type: 'input',
           name: 'name',
           placeholder: helptext_system_bootenv.create_name_placeholder,
-          tooltip: helptext_system_bootenv.create_name_tooltip,
+          tooltip: `${helptext_system_bootenv.create_name_tooltip} ${helptext_system_bootenv.allowedCharacters}`,
           validation : [ regexValidator(this.bootEnvService.bootenv_name_regex)],
           required: true
         },

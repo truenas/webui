@@ -1,8 +1,5 @@
 import { T } from "app/translate-marker";
 
-const allowedCharacters = T('Alphanumeric characters, dashes (-), underscores (_), \
-and periods (.) are allowed.');
-
 export const helptext_system_bootenv = {
   dev_placeholder: T("Member Disk"),
   dev_tooltip: T("Select the device to attach."),
@@ -13,10 +10,12 @@ export const helptext_system_bootenv = {
  available to ZFS. Set to use the entire capacity of\
  the new device."
   ),
+  allowedCharacters : T('Alphanumeric characters, dashes (-), underscores (_), \
+   and periods (.) are allowed.'),
 
   clone_name_placeholder: T("Name"),
   clone_name_tooltip: T(
-    `Enter a name for the clone of this boot environment. ${allowedCharacters}`
+    `Enter a name for the clone of this boot environment.`
   ),
   
   clone_source_placeholder: T("Source"),
@@ -24,7 +23,7 @@ export const helptext_system_bootenv = {
 
   create_name_placeholder: T("Name"),
   create_name_tooltip: T(
-    `Enter the name of the boot entry. ${allowedCharacters}`
+    `Enter the name of the boot entry.`
  ),
 
   list_dialog_activate_action: T("Activate"),
@@ -34,7 +33,7 @@ export const helptext_system_bootenv = {
 
   rename_name_placeholder: T("Name"),
   rename_name_tooltip: T(
-    `Rename the existing boot environment. ${allowedCharacters}`
+    `Rename the existing boot environment.`
   ),
 
   replace_name_placeholder: T("Member Disk"),
