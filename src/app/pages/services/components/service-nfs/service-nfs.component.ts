@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import helptext from '../../../../helptext/services/components/service-nfs';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { map } from 'rxjs/operators';
+import helptext from '../../../../helptext/services/components/service-nfs';
+import { RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'nfs-edit',
@@ -143,7 +143,13 @@ export class ServiceNFSComponent {
     }
   ];
 
-  private nfs_srv_bindip: any;
+  private ipChoices$ = this.ws.call('nfs.bindip_choices', [])
+    .pipe(
+      map((ips: { [ip: string]: string }) =>
+        Object.keys(ips || {}).map(key => ({ label: key, value: key }))
+      )
+    );
+
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
   ) {}
@@ -151,12 +157,10 @@ export class ServiceNFSComponent {
   afterInit(entityForm: EntityFormComponent) {
     entityForm.submitFunction = body => this.ws.call('nfs.update', [body]);
 
-    this.ws.call('notifier.choices', ['IPChoices']).subscribe((res) => {
-      this.nfs_srv_bindip =
-        _.find(this.fieldSets, { name: helptext.nfs_srv_fieldset_general }).config.find(config => config.name === 'bindip');
-      for (const item of res) {
-        this.nfs_srv_bindip.options.push({ label: item[0], value: item[1] });
-      }
+    this.ipChoices$.subscribe(ipChoices => {
+      this.fieldSets
+        .find(set => set.name === helptext.nfs_srv_fieldset_general)
+        .config.find(config => config.name === 'bindip').options = ipChoices;
     });
 
     entityForm.formGroup.controls['userd_manage_gids'].valueChanges.subscribe((res)=> {
