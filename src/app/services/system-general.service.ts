@@ -10,7 +10,7 @@ export class SystemGeneralService {
 
   protected certificateList = 'certificate.query';
   protected caList = 'certificateauthority.query';
-
+  
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
 
@@ -86,5 +86,9 @@ export class SystemGeneralService {
         }))
       )
     );
+  }
+
+  refreshDirServicesCache() {
+    return this.ws.call('directoryservices.cache_refresh');
   }
 }
