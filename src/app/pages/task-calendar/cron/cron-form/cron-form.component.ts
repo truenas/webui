@@ -34,14 +34,13 @@ export class CronFormComponent {
    protected data: any;
    protected user_field: any;
 
-   public saveSubmitText = "Save Cron Job";
    protected isEntity: boolean = true;
    public fieldConfig:FieldConfig[] = [];
    public fieldSetDisplay:string = 'no-margins';
 
    public fieldSets: FieldSet[] = [
      {
-       name:'Cron Job',
+       name:helptext.cron_job,
        class:'add-cron',
        label:true,
        width:'300px',
