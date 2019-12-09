@@ -1,5 +1,4 @@
-import { Component, Injector } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component } from '@angular/core';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../helptext/directoryservice/kerberossettings';
@@ -11,7 +10,10 @@ import helptext from '../../../helptext/directoryservice/kerberossettings';
 
 export class KerberosSettingsComponent {
 
-  protected resource_name: string = 'directoryservice/kerberossettings/';
+  protected queryCall = 'kerberos.config';
+  protected addCall = 'kerberos.update';
+  protected editCall = 'kerberos.update';
+  protected isEntity =  true;
 
   public fieldConfig: FieldConfig[] = [{
       type: 'textarea',
