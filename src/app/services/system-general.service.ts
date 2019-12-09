@@ -1,17 +1,18 @@
 
 
-import {Injectable, EventEmitter} from '@angular/core';
-import {Http} from '@angular/http';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
-
-import {RestService} from './rest.service';
-import {WebSocketService} from './ws.service';
+import { EventEmitter, Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { RestService } from './rest.service';
+import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root'})
 export class SystemGeneralService {
 
-  protected certificateList: string = 'certificate.query';
-  protected caList: string = 'certificateauthority.query';
+  protected certificateList = 'certificate.query';
+  protected caList = 'certificateauthority.query';
+
+  updateRunning = new EventEmitter<string>();
+  updateRunningNoticeSent = new EventEmitter<string>();
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -39,6 +40,51 @@ export class SystemGeneralService {
     return this.ws.call('system.info', []);
   }
 
-  updateRunning = new EventEmitter<string>();
-  updateRunningNoticeSent = new EventEmitter<string>();
+  ipChoicesv4() {
+    return this.ws.call("system.general.ui_address_choices", []).pipe(
+      map(response =>
+        Object.keys(response || {}).map(key => ({
+          label: response[key],
+          value: response[key]
+        }))
+      )
+    );
+  }
+
+  ipChoicesv6() {
+    return this.ws.call("system.general.ui_v6address_choices", []).pipe(
+      map(response =>
+        Object.keys(response || {}).map(key => ({
+          label: response[key],
+          value: response[key]
+        }))
+      )
+    );
+  }
+
+  kbdMapChoices() {
+    return this.ws.call("system.general.kbdmap_choices", []).pipe(
+      map(response =>
+        Object.keys(response || {}).map(key => ({
+          label: `${response[key]} (${key})`,
+          value: key
+        }))
+      )
+    );
+  }
+
+  languageChoices() {
+    return this.ws.call("system.general.language_choices");
+  }
+
+  timezoneChoices() {
+    return this.ws.call("system.general.timezone_choices", []).pipe(
+      map(response =>
+        Object.keys(response || {}).map(key => ({
+          label: response[key],
+          value: key
+        }))
+      )
+    );
+  }
 }
