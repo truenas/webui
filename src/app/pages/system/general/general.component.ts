@@ -326,7 +326,7 @@ export class GeneralComponent {
 
     this.sysGeneralService
       .ipChoicesv4()
-      .subscribe((ips: { label: string; value: string }[]) => {
+      .subscribe(ips => {
         this.fieldSets
           .find(set => set.name === helptext.stg_fieldset_gui)
           .config.find(config => config.name === "ui_address").options = ips;
@@ -334,7 +334,7 @@ export class GeneralComponent {
 
     this.sysGeneralService
       .ipChoicesv6()
-      .subscribe((v6Ips: { label: string; value: string }[]) => {
+      .subscribe(v6Ips => {
         this.fieldSets
           .find(set => set.name === helptext.stg_fieldset_gui)
           .config.find(config => config.name === "ui_v6address").options = v6Ips;
