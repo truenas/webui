@@ -1,6 +1,11 @@
 import { T } from '../../../translate-marker';
 
 export default {
+tftp_fieldset_path: T('Path'),
+tftp_fieldset_conn: T('Connection'),
+tftp_fieldset_access: T('Access'),
+tftp_fieldset_other: T('Other Options'),
+
 tftp_directory_placeholder : T('Directory'),
 tftp_directory_tooltip : T('Browse to an <b>existing</b> directory to use for\
  storage. Some devices can require a specific\
