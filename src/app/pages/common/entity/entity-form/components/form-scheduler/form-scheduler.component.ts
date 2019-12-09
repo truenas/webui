@@ -29,24 +29,42 @@ interface CronDate {
 })
 export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterViewInit, AfterViewChecked{
 
+  private debug: boolean = false;
+
   // Basic form-select props
   public config:FieldConfig;
   public group: FormGroup;
   public fieldShow: string;
   public disablePrevious:boolean;
 
+  //@ViewChild('customOption', { static: false}) customOption:MatOption;
+  @ViewChild('selectForm', { static: false}) selectForm;
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
   @ViewChild('trigger', { static: false}) trigger: ElementRef;
   @ViewChild('preview', { static: false, read:ElementRef}) schedulePreview: ElementRef;
 
-  private control: any;
+  //private control: any;
 
   public isOpen:boolean = false;
   formControl = new FormControl();
   private _currentValue:string;
   get currentValue(){
-    return this.group.controls[this.config.name].value;
+    //return this._currentValue; 
+    //return this.group.controls[this.config.name].value;
+    return this._currentValue ? this._currentValue : this.group.controls[this.config.name].value;
+  }
+
+  set currentValue(value){
+    this._currentValue = value;
+    const isPreset = this.presets.filter((p) => p.label !== 'Custom' && p.value == value);
+    if(isPreset.length == 0){
+      this.presets[4].value = value;
+      //this.group.controls[this.config.name].setValue(this.crontab);
+      //console.warn(this.presets[4])
+      //console.log("Updating Custom");
+    }
+    //console.warn('value = ' + value + ' && matches found ==' + isPreset.length)
   }
 
   private _minutes:string = "0";
@@ -184,8 +202,20 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public generatedScheduleSubset:number = 0;
   public picker:boolean = false;
   private _textInput:string = '';
-  public crontab:string = "custom";
-  private _preset:CronPreset;// = { label:"Custom", value:"* * * * *"}; 
+
+  //public crontab:string = "0 0 * * mon";
+  private _crontab:string = "0 0 * * mon";
+  get crontab(){
+    return this._crontab;
+  }
+  set crontab(value){
+    this._crontab = value;
+    if(this.group){
+      //this.group.controls[this.config.name].setValue(value);
+    }
+  }
+
+  private _preset:CronPreset;
   public presets: CronPreset[] = [
     {
       label: "Hourly",
@@ -202,8 +232,14 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     {
       label: "Monthly",
       value: "0 0 1 * *"
+    },
+    {
+      label: "Custom",
+      value: this.crontab
     }
   ];
+
+  public popupPresets = this.presets.filter((p) => p.label !== 'Custom');
 
   get textInput(){
     return this._textInput;
@@ -236,7 +272,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this._preset = p;
     }
     
-    if(this.minDate && this.maxDate){
+    if(this.minDate && this.maxDate && this.isOpen){
       this.generateSchedule();
     }
   }
@@ -262,14 +298,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   }
 
   ngOnInit(){
-    this.control = this.group.controls[this.config.name];
-    this.control.valueChanges.subscribe((evt) => {
-      this.crontab = evt;
+
+    this.group.controls[this.config.name].valueChanges.subscribe((evt) => {
+      this.currentValue = evt;
+      console.log(evt);
     });
-    if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
-      this.crontab = this.control.value;
-    }
   }
 
   ngAfterViewInit(){
@@ -284,9 +317,14 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   }
 
   onChangeOption($event) {
+    console.warn($event);
     if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
       this.config.onChangeOption({ event: $event });
     }
+  }
+
+  compare(opt1,opt2){
+    return opt1.label == opt2.label; //opt2.value;
   }
 
   validPopup(){
@@ -301,7 +339,16 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   onPopupSave(){
     this.togglePopup();
     if(this.formControl){
+      //this.currentValue = this.crontab;
+      this.cd.detectChanges();
+      console.log(this.selectForm);
+      //this.preset = this.presets[4];
       this.group.controls[this.config.name].setValue(this.crontab);
+      let opt = this.selectForm.options.last;
+      opt.active = true;
+      //const control = this.group.controls[this.config.name];
+      //control.setValue(this.crontab);
+      //this.presets[4].value = this.currentValue;
     }
   }
 
@@ -313,7 +360,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.isOpen = !this.isOpen;
     if(this.isOpen){
         setTimeout(() => {
-          this.convertPreset(this.crontab); // <-- Test
+          this.convertPreset(this.presets[4].value); // <-- Test
           this.generateSchedule();
           let popup = this.schedulePreview.nativeElement//.querySelector('ul.schedule-preview');
           popup.addEventListener('scroll', this.onScroll.bind(this))
@@ -403,7 +450,9 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
         //console.log(parseCounter)
         parseCounter++
       } catch (e) {
-        console.warn(e);
+        if(this.debug){
+          console.warn(e);
+        }
         break;
       }
     }
@@ -673,5 +722,12 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     // Days of Week
     this.updateDaysOfWeekFields(arr[4]);
     this._daysOfWeek = arr[4];
+  }
+
+  TESTME(){
+    const label = 'TESTING';
+    const value = '1 2 3 4 fri';
+    this.presets[1].label = label;
+    //this.group.controls[this.config.name].setValue(value);
   }
 }

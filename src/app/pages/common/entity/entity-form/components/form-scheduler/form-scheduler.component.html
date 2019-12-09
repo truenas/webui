@@ -1,15 +1,18 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" >
   <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
-    <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
-      <mat-option *ngFor="let preset of presets" [value]="preset.value">
+    <mat-select [(value)]="currentValue" #selectForm  [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (selectionChange)="onChangeOption($event)">
+
+      <mat-option *ngFor="let preset of presets" [value]="preset.value"
+        #trigger="cdkOverlayOrigin"
+        cdkOverlayOrigin
+        (click)="preset.label == 'Custom' ? togglePopup() : null">
+      
         {{ preset.label }} <em class="crontab">({{preset.value}})</em>
       </mat-option>
-      <mat-option #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="togglePopup()" [value]="crontab">
-        Custom <em class="crontab">({{crontab}})</em>
-      </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+    </mat-select>
+
+  </mat-form-field>
+  <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     <div class="margin-for-error">
       <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
       <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
@@ -52,7 +55,7 @@
         <h4 class="preview-label">Presets</h4>
         <mat-form-field class="cron-presets">
           <mat-select placeholder="Choose a preset" [(ngModel)]="preset" [ngModelOptions]="{standalone: true}">
-            <mat-option *ngFor="let preset of presets" [value]="preset">
+            <mat-option *ngFor="let preset of popupPresets" [value]="preset">
               {{ preset.label }}
             </mat-option>
           </mat-select>
