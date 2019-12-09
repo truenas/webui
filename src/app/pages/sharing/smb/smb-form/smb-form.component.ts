@@ -18,6 +18,8 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 })
 export class SMBFormComponent {
   protected queryCall = 'sharing.smb.query';
+  protected addCall = 'sharing.smb.create';
+  protected editCall = 'sharing.smb.update'
   protected pk: number;
   protected queryKey = 'id';
   protected route_success: string[] = [ 'sharing', 'smb' ];
@@ -356,23 +358,6 @@ export class SMBFormComponent {
   }
 
   afterInit(entityForm: EntityFormComponent) {
-    this.activatedRoute.paramMap
-      .pipe(
-        take(1),
-        map(paramMap => paramMap.get("pk"))
-      )
-      .subscribe(res => {
-        const pk = parseInt(res, 10);
-        if (pk) {
-          entityForm.submitFunction = body =>
-            this.ws.call("sharing.smb.update", [pk, body]);
-          return;
-        }
-
-        entityForm.submitFunction = body =>
-          this.ws.call("sharing.smb.create", [body]);
-      });
-
     this.ws.call('sharing.smb.vfsobjects_choices', [])
         .subscribe((res) => {
           this.cifs_vfsobjects = this.fieldSets
