@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
@@ -16,6 +16,7 @@ export class KerberosRealmsListComponent {
   protected route_add: string[] = ['directoryservice', 'kerberosrealms', 'add'];
   protected route_add_tooltip: string = "Add Kerberos Realm";
   protected route_edit: string[] = ['directoryservice', 'kerberosrealms', 'edit'];
+  public keyList = ['admin_server', 'kdc', 'kpasswd_server'];
 
   public columns: Array < any > = [
     { name: T('Realm'), prop: 'realm', always_display: true },
@@ -34,4 +35,16 @@ export class KerberosRealmsListComponent {
   };
 
   constructor(private router: Router){}
+
+  resourceTransformIncomingRestData(data) {
+    data.forEach((row) => {
+      this.keyList.forEach((key) => {
+        if (row.hasOwnProperty(key)) {
+          row[key] = (row[key].join(' '));
+        }
+      })
+      
+    })
+    return data;
+  }
 }

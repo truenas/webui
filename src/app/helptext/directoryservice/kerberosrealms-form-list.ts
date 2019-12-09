@@ -4,11 +4,14 @@ import { Validators } from '@angular/forms';
 export default {
 
 // For Kerberos Realms form
+kerb_form_heading: T('Kerberos Realm'),
+
 krbrealm_form_realm_name: 'realm',
 krbrealm_form_realm_placeholder: T('Realm'),
 krbrealm_form_realm_tooltip: T('Enter the name of the realm.'),
 krbrealm_form_realm_validation : [ Validators.required ],
 
+multiple_values: T('Separate multiple values with a space.'),
 krbrealm_form_kdc_name: 'kdc',
 krbrealm_form_kdc_placeholder: T('KDC'),
 krbrealm_form_kdc_tooltip: T('Enter the name of the Key Distribution Center.'),
