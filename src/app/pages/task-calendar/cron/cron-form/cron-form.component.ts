@@ -21,7 +21,9 @@ import helptext from '../../../../helptext/task-calendar/cron/cron-form';
 export class CronFormComponent {
 
    protected queryCall = 'cronjob.query';
-   protected queryCallOption;
+   protected queryKey = 'id';
+   protected editCall = 'cronjob.update';
+   protected addCall = 'cronjob.create';
    //protected entityForm;
    public route_success: string[] = ['tasks', 'cron'];
 
@@ -46,13 +48,13 @@ export class CronFormComponent {
        config: [
          {
           type: 'input',
-          name: 'cron_description',
+          name: 'description',
           placeholder: helptext.cron_description_placeholder,
           tooltip: helptext.cron_description_tooltip
          },
          {
           type: 'input',
-          name: 'cron_command',
+          name: 'command',
           placeholder: helptext.cron_command_placeholder,
           required: true,
           validation : helptext.cron_command_validation,
@@ -60,7 +62,7 @@ export class CronFormComponent {
          },
          {
            type: 'combobox',
-           name: 'cron_user',
+           name: 'user',
            placeholder: helptext.cron_user_placeholder,
            tooltip: helptext.cron_user_tooltip,
            options: [],
@@ -81,31 +83,25 @@ export class CronFormComponent {
          },
          {
            type: 'checkbox',
-           name: 'cron_stdout',
+           name: 'stdout',
            placeholder: helptext.cron_stdout_placeholder,
            tooltip: helptext.cron_stdout_tooltip,
            value: true,
          },
          {
            type: 'checkbox',
-           name: 'cron_stderr',
+           name: 'stderr',
            placeholder: helptext.cron_stderr_placeholder,
            tooltip: helptext.cron_stderr_tooltip,
            value: false,
          },
          {
            type: 'checkbox',
-           name: 'cron_enabled',
+           name: 'enabled',
            placeholder: helptext.cron_enabled_placeholder,
            tooltip: helptext.cron_enabled_tooltip,
            value: true,
          },
-         {
-           type:'input',
-           name: 'cron_id',
-           isHidden:true,
-           value:'0'
-         }
        ]
      }
    ];
@@ -133,9 +129,14 @@ export class CronFormComponent {
 
   preInit(entityForm){
     //this.entityForm = entityForm;
+    this.aroute.params.subscribe(params => {
+      if (params.pk) {
+        this.pk = params.pk;
+      }
+    });
 
     // Setup user field options
-    this.user_field = _.find(this.fieldSets[0].config, {'name': 'cron_user'});
+    this.user_field = _.find(this.fieldSets[0].config, {'name': 'user'});
     this.userService.userQueryDSCache().subscribe((items) => {
      for (let i = 0; i < items.length; i++) {
         this.user_field.options.push({label: items[i].username, value: items[i].username});
@@ -144,60 +145,6 @@ export class CronFormComponent {
   }
 
    afterInit(entityForm){
-     // AfterInit? 
-     this.aroute.params.subscribe(params => {
- 
-       let opt = params.pk ? [{'title':params.pk}] : [];
-       if(params.pk){
-         //this.queryCallOption = opt[0];
-         this.ws.call('cronjob.query').subscribe((res)=>{
-           const task = res.filter(v => v.id == params.pk)[0];
-
-           entityForm.formGroup.controls['cron_user'].setValue(task.user);
-           entityForm.formGroup.controls['cron_description'].setValue(task.description);
-           entityForm.formGroup.controls['cron_command'].setValue(task.command);
-           entityForm.formGroup.controls['cron_stdout'].setValue(task.stdout);
-           entityForm.formGroup.controls['cron_stderr'].setValue(task.stderr);
-           entityForm.formGroup.controls['cron_enabled'].setValue(task.enabled);
-           entityForm.formGroup.controls['cron_id'].setValue(params.pk);
-
-           //setTimeout(() => {
-           const schedule = task.schedule.minute + ' ' + task.schedule.hour + ' ' + task.schedule.dom + ' ' + task.schedule.month + ' ' + task.schedule.dow;
-           entityForm.formGroup.controls['cron_picker'].setValue(schedule);
-           //}, 2000);
-          
-        });
-       }
- 
-     });
-
-     let call = (name: string, form: any) => {
-       let args = {
-         enabled: form.cron_enabled,
-         stderr: form.cron_stderr,
-         stdout: form.cron_stdout,
-         user:form.cron_user,
-         command: form.cron_command,
-         description: form.cron_description, 
-         schedule:{
-           minute: form.cron_minute,
-           hour: form.cron_hour,
-           dom: form.cron_daymonth,
-           month: form.cron_month,
-           dow: form.cron_dayweek
-         }
-       }
- 
-       const params = form.cron_id !== '0' ? [form.cron_id, args] : [args]
-       const sub = this.ws.call(name, params);
-       return sub
-     }
-
-     if (!entityForm.isNew) {
-       entityForm.submitFunction = submission => call('cronjob.update', submission);
-     } else {
-       entityForm.submitFunction = submission => call('cronjob.create', submission);
-     }
    }
 
    
@@ -205,11 +152,13 @@ export class CronFormComponent {
    beforeSubmit(value){
      let spl = value.cron_picker.split(" ");
      delete value.cron_picker;
-     value['cron_minute'] = spl[0];
-     value['cron_hour'] = spl[1];
-     value['cron_daymonth'] = spl[2];
-     value['cron_month'] = spl[3];
-     value['cron_dayweek'] = spl[4];
+     const schedule = {}
+     schedule['minute'] = spl[0];
+     schedule['hour'] = spl[1];
+     schedule['dom'] = spl[2];
+     schedule['month'] = spl[3];
+     schedule['dow'] = spl[4];
+     value['schedule'] = schedule;
    }
 
 }
