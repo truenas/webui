@@ -59,26 +59,28 @@ export class SnapshotListComponent {
 
   protected rollbackFieldConf: FieldConfig[] = [
     {
-      type: 'checkbox',
+      type: 'radio',
       name: 'recursive',
-      placeholder: helptext.rollback_recursive_placeholder,
-      tooltip: helptext.rollback_recursive_tooltip,
-      value: false,
-    },
-    {
-      type: 'checkbox',
-      name: 'recursive_clones',
-      placeholder: helptext.rollback_recursive_clones_placeholder,
-      tooltip: helptext.rollback_recursive_clones_tooltip,
-      isHidden: true,
-      value: false,
-      relation: [{
-        action: 'HIDE',
-        when: [{
-          name: 'recursive',
-          value: false,
-        }]
-      }]
+      options: [
+        {
+          value: null,
+          label: helptext.rollback_dataset_placeholder,
+          tooltip: helptext.rollback_dataset_placeholder
+        },
+        {
+          value: 'recursive',
+          label: helptext.rollback_recursive_placeholder,
+          tooltip: helptext.rollback_recursive_tooltip
+        },
+        {
+          value: 'recursive_clones', 
+          label: helptext.rollback_recursive_clones_placeholder,
+          tooltip: helptext.rollback_recursive_clones_tooltip
+        }
+      ],
+      placeholder: helptext.rollback_recursive_radio_placeholder,
+      tooltip: helptext.rollback_recursive_radio_tooltip,
+      value: null,
     },
     {
       type: 'checkbox',
@@ -224,25 +226,28 @@ export class SnapshotListComponent {
   rollbackSubmit(entityDialog) {
     const parent = entityDialog.parent;
     const item = entityDialog.parent.rollback;
-      const data = entityDialog.formValue;
-      data["force"] = true;
-      delete data.confirm;
-      parent.entityList.loader.open();
-      parent.entityList.loaderOpen = true;
-      parent.ws
-        .call('zfs.snapshot.rollback', [item.name, data])
-        .subscribe(
-          (res) => {
-            entityDialog.dialogRef.close();
-            parent.entityList.getData();
-          },
-          (err) => {
-            parent.entityList.loaderOpen = false;
-            parent.entityList.loader.close();
-            entityDialog.dialogRef.close();
-            new EntityUtils().handleWSError(parent.entityList, err, parent.entityList.dialogService);
-          }
-        );
+    const recursive = entityDialog.formValue.recursive;
+    const data = {};
+    if (recursive !== null) {
+      data[recursive] = true;
+    }
+    data["force"] = true;
+    parent.entityList.loader.open();
+    parent.entityList.loaderOpen = true;
+    console.log(data);
+    parent.ws
+      .call('zfs.snapshot.rollback', [item.name, data])
+      .subscribe(
+        (res) => {
+          entityDialog.dialogRef.close();
+          parent.entityList.getData();
+        },
+        (err) => {
+          parent.entityList.loaderOpen = false;
+          parent.entityList.loader.close();
+          entityDialog.dialogRef.close();
+          new EntityUtils().handleWSError(parent.entityList, err, parent.entityList.dialogService);
+        });
   }
 
 }
