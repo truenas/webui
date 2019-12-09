@@ -21,11 +21,17 @@
 					<label mat-line class="mr-1"><strong>Uptime:</strong></label>
 					<p mat-line>{{info.uptime}} </p>
 				</mat-list-item>
-				<mat-list-item *ngFor="let ip of ipAddress">
+				<mat-list-item *ngFor="let ip of ipv4Choices">
 					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
 					<span class="cdk-visually-hidden mr-1">Label Icon</span>
-					<label mat-line class="mr-1"><strong>IP:</strong></label>
-					<p mat-line>{{ip}} </p>
+					<label mat-line class="mr-1"><strong>IPv4:</strong></label>
+					<p mat-line>{{ip.label}} </p>
+				</mat-list-item>
+				<mat-list-item *ngFor="let ip of ipv6Choices">
+					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+					<span class="cdk-visually-hidden mr-1">Label Icon</span>
+					<label mat-line class="mr-1"><strong>IPv6:</strong></label>
+					<p mat-line>{{ip.label}} </p>
 				</mat-list-item>
 				<mat-list-item>
 					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
