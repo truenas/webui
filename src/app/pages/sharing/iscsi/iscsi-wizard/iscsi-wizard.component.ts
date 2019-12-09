@@ -561,7 +561,7 @@ export class IscsiWizardComponent {
 
         this.iscsiService.getIpChoices().subscribe((ips) => {
             for (const ip in ips) {
-                listenIpField.options.push({ label: ip, value: ips[ip] });
+                listenIpField.options.push({ label: ips[ip], value: ip });
             }
 
             const listenListFields = _.find(this.wizardConfig[1].fieldConfig, { 'name': 'listen' }).listFields;
