@@ -85,4 +85,21 @@ disk_form_passwd_tooltip: T('Password for SED'),
 
 disk_form_passwd2_placeholder: T('Confirm SED Password'),
 disk_form_passwd2_tooltip: T(''),
+
+bulk_edit: {
+    title: T('Disks'),
+    label: T('Settings'),
+    disks : {
+        placeholder: T('Editing the following disks:'),
+        tooltip : T('These are the FreeBSD device names for each disk.'),
+    },
+    serial : {
+        placeholder: T('Serial'),
+        tooltip : T('These are the serial numbers for each disk.')
+    }
+
+}, 
+dialog_error: T('Error updating disks')
+
 }
+
