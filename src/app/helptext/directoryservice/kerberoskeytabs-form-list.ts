@@ -18,6 +18,4 @@ kkt_ktfile_validation : [ Validators.required ],
 kkt_list_delmsg_title: T('Kerberos Keytab'),
 kkt_list_delmsgkey_props: ['name'],
 
-kkt_list_actions_delete_id: "delete",
-kkt_list_actions_delete_label: T("Delete")
 }
