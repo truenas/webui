@@ -4,7 +4,7 @@ import { matchOtherValidator } from '../../pages/common/entity/entity-form/valid
 import { UserService } from 'app/services';
 
 export default {
-user_form_title_name: T('Name & Contact'),
+user_form_title_name: T('Identification'),
 user_form_title_class:'name-and-contact',
 user_form_full_name_name: 'full_name',
 user_form_full_name_placeholder : T('Full Name'),
@@ -40,7 +40,7 @@ user_form_password_edit_confirm_name: 'password_conf_edit',
 user_form_password_edit_confirm_placeholder : T('Confirm Password'),
 user_form_password_edit_confirm_validation : [ matchOtherValidator('password_edit'), Validators.pattern('^[^?]*$') ],
 
-user_form_ids_groups_title: T('ID & Groups'),
+user_form_ids_groups_title: T('User ID and Groups'),
 user_form_ids_groups_title_class: 'id-and-groups',
 user_form_uid_name: 'uid',
 user_form_uid_placeholder : T('User ID'),
@@ -60,7 +60,7 @@ user_form_aux_groups_name : 'groups',
 user_form_aux_groups_placeholder : T('Auxiliary Groups'),
 user_form_aux_groups_tooltip : T('Add this user to additional groups.'),
 
-user_form_dirs_title_name: T('Directories & Permissions'),
+user_form_dirs_title_name: T('Directories and Permissions'),
 user_form_dirs_title_class:'directories-and-permissions',
 user_form_dirs_explorer_name: 'home',
 user_form_dirs_explorer_class: 'meExplorer',

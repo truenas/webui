@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Http } from '@angular/http';
 import { Subscription } from 'rxjs';
-import { RestService, WebSocketService, SystemGeneralService, StorageService } from '../../../services/';
+import { WebSocketService, SystemGeneralService, StorageService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
@@ -96,7 +96,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
+    protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
     protected storage: StorageService, protected http: Http) {
       this.sysGenService.updateRunning.subscribe((res) => { 
@@ -210,8 +210,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
   ngOnInit() {
     window.localStorage.getItem('is_freenas') === 'true' ? this.isfreenas = true : this.isfreenas = false;
 
-    this.busy = this.rest.get('system/update', {}).subscribe((res) => {
-      this.autoCheck = res.data.upd_autocheck;
+    this.busy = this.ws.call('update.get_auto_download').subscribe((res) => {
+      this.autoCheck = res;
 
       this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
         this.fullTrainList = res.trains;
@@ -357,14 +357,12 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   toggleAutoCheck() {
-    this.busy =
-      this.rest
-      .put('system/update', { body: JSON.stringify({ upd_autocheck: this.autoCheck }) })
-      .subscribe((res) => {
-        if(res.data.upd_autocheck === true) {
+    this.autoCheck === !this.autoCheck;
+      this.ws.call('update.set_auto_download', [this.autoCheck]).subscribe(() => {
+        if (this.autoCheck) {
           this.check();
         }
-      });
+      })
   }
 
   showRunningUpdate(jobId) {

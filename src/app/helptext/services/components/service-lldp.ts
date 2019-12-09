@@ -1,6 +1,8 @@
 import { T } from '../../../translate-marker';
 
 export default {
+lldp_fieldset_general: T('General Options'),
+
 lldp_intdesc_placeholder : T('Interface Description'),
 lldp_intdesc_tooltip: T('Set to enable <i>receive</i> mode. Any received peer\
  information is saved in interface descriptions.'),

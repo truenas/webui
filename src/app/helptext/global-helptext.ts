@@ -31,6 +31,8 @@ closed_job_message: T('See task manager for progress updates.'),
 noLogDilaog: {
     title: T('No Logs'),
     message: T('No logs are available for this task.'),
-}
+},
 
+fieldset_general_options: T('General Options'),
+fieldset_other_options: T('Other Options')
 }
