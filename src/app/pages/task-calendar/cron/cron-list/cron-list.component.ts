@@ -18,6 +18,7 @@ import { TaskScheduleListComponent } from '../../components/task-schedule-list/t
 export class CronListComponent {
 
   public title = "Cron Jobs";
+  protected wsDelete = "cronjob.delete";
   public queryCall:string = 'cronjob.query';
   protected route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = "Add Cron Job";
@@ -39,13 +40,13 @@ export class CronListComponent {
     { name: T('Hide Stdout'), prop: 'stdout', hidden: true },
     { name: T('Hide Stderr'), prop: 'stderr', hidden: true }
   ];
-  public rowIdentifier = 'cron_user';
+  public rowIdentifier = 'user';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Cron Job',
-      key_props: ['cron_user', 'cron_command', 'cron_description']
+      key_props: ['user', 'command', 'description']
     },
   };
 
@@ -53,67 +54,69 @@ export class CronListComponent {
   constructor(public router: Router, protected ws:WebSocketService, public translate: TranslateService,
     protected taskService: TaskService, public dialog: DialogService) {}
 
-  afterInit(entityList: any) { this.entityList = entityList; }
+    afterInit(entityList: any) { this.entityList = entityList; }
 
-  getActions() {
-    return [
-      {
-        name: this.config.name,
-        label: T("Run Now"),
-        id: "run",
-        icon: "play_arrow",
-        onClick: row =>
-          this.dialog
-            .confirm(T("Run Now"), T("Run this job now?"), true)
-            .pipe(
-              filter(run => !!run),
-              switchMap(() =>
-                this.ws.call('cronjob.run',[row.id])
+      getActions(tableRow) {
+        return [
+          {
+            name: this.config.name,
+            label: T("Run Now"),
+            id: "run",
+            icon: "play_arrow",
+            onClick: row =>
+            this.dialog.confirm(T("Run Now"), T("Run this job now?"), true)
+              .pipe(
+                filter(run => !!run),
+                switchMap(() =>
+                  this.ws.call('cronjob.run',[row.id])
+                )
+              ).subscribe(
+                res => {
+                  const message = row.enabled == true ? 'This job is scheduled to run again ' + row.next_run + '.' : ''; 
+                  this.dialog.Info(T("Job " + row.description + ' Completed Successfully'), message, '500px', 'info', true);
+                },
+                err => new EntityUtils().handleError(this, err)
               )
-            )
-            .subscribe(
-              res => {
-                const message = row.enabled ? 'This job is scheduled to run again ' + row.next_run + '.' : ''; 
-                this.dialog.Info(T("Job " + row.description + ' Completed Successfully'), message, '500px', 'info', true);
-              },
-              err => new EntityUtils().handleError(this, err)
-            )
-      },
-      {
-        name: this.config.name,
-        label: T("Edit"),
-        icon: "edit",
-        id: "edit",
-        onClick: row => this.router.navigate(new Array("/").concat(["tasks", "cron", "edit", row.id]))
-      },
-      {
-        id: "delete",
-        name: this.config.name,
-        icon: "delete",
-        label: T("Delete"),
-        onClick: row => this.entityList.doDelete(row)
+          },
+          {
+            name: this.config.name,
+            label: T("Edit"),
+            icon: "edit",
+            id: "edit",
+            onClick: row => this.router.navigate(new Array("/").concat(["tasks", "cron", "edit", row.id]))
+          },
+          {
+            id: tableRow.id,
+            name: this.config.name,
+            icon: "delete",
+            label: T("Delete"),
+            onClick: (row) => {
+              //console.log(row);
+              this.entityList.doDelete(row);
+            }
+          }
+        ];
       }
-    ];
-  }
 
-  resourceTransformIncomingRestData(data: any): any {
-    for (const job of data){
+      resourceTransformIncomingRestData(data: any): any {
+        for (const job of data){
 
-      // Avoid 'N/A' when value should be presented as false
-      const keys = Object.keys(job);
-      keys.forEach((key, index) => {
-        if(job[key].toString() == 'false'){
-          job[key] = job[key].toString();
+          // Avoid 'N/A' when value should be presented as false
+          const keys = Object.keys(job);
+          keys.forEach((key, index) => {
+            if(job[key].toString() == 'false'){
+              job[key] = job[key].toString();
+            }
+          });
+
+          job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+
+          /* Weird type assertions are due to a type definition error in the cron-parser library */
+          job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
+            value: { _date: Moment };
+          }).value._date.fromNow();
         }
-      });
+        return data;
+      }
 
-      job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
-
-      /* Weird type assertions are due to a type definition error in the cron-parser library */
-      job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
-        value: { _date: Moment };
-      }).value._date.fromNow();
-    }
-    return data;
-  }
 }
