@@ -158,7 +158,7 @@ export class GeneralComponent {
         name: 'sysloglevel',
         placeholder: helptext.stg_sysloglevel.placeholder,
         tooltip: helptext.stg_sysloglevel.tooltip,
-        options: []
+        options: helptext.stg_sysloglevel.options 
       },
       {
         type: 'input',
@@ -391,15 +391,6 @@ export class GeneralComponent {
           _.find(this.fieldConfig, { 'name': 'timezone' });
         res.forEach((item) => {
           this.timezone.options.push({ label: item[1], value: item[0] });
-        });
-      });
-
-    entityEdit.ws.call('notifier.choices', ['SYS_LOG_LEVEL'])
-      .subscribe((res) => {
-        this.sysloglevel =
-          _.find(this.fieldConfig, { 'name': 'sysloglevel' });
-        res.forEach((item) => {
-          this.sysloglevel.options.push({ label: item[1], value: item[0] });
         });
       });
 

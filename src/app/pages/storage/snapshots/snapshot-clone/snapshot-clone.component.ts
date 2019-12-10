@@ -23,9 +23,9 @@ import helptext from '../../../../helptext/storage/snapshots/snapshots';
 
 export class SnapshotCloneComponent {
 
-  protected resource_name: string = 'storage/snapshot';
   protected route_success: string[] = [ 'storage', 'pools' ];
   protected route_cancel: string[] = [ 'storage', 'snapshots' ];
+  protected addCall = 'zfs.snapshot.clone';
   protected pk: any;
   protected isEntity: boolean = true;
   protected isNew: boolean = true;
@@ -39,7 +39,13 @@ export class SnapshotCloneComponent {
       config: [
         {
           type: 'input',
-          name: 'name',
+          name: 'snapshot',
+          placeholder: '',
+          isHidden: true
+        },
+        {
+          type: 'input',
+          name: 'dataset_dst',
           placeholder: helptext.snapshot_clone_name_placeholder,
           tooltip: helptext.snapshot_clone_name_tooltip,
           required: true,
@@ -47,12 +53,6 @@ export class SnapshotCloneComponent {
         }
       ]
     }];
-
-  get custom_add_query(): string {
-    return this.resource_name + '/' + this.pk + '/clone/'
-  }
-
-  @ViewChildren('component') components;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -65,7 +65,8 @@ export class SnapshotCloneComponent {
   }
 
   afterInit(entityForm: any) {
-    entityForm.formGroup.controls['name'].setValue(this.setName(this.pk));
+    entityForm.formGroup.controls['dataset_dst'].setValue(this.setName(this.pk));
+    entityForm.formGroup.controls['snapshot'].setValue(this.pk);
   }
 
   setName(name) {

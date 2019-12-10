@@ -27,6 +27,10 @@ export class SystemGeneralService {
     return this.ws.call(this.caList, [[["privatekey", "!=", null]]]);
   }
 
+  getCertificateCountryChoices() {
+    return this.ws.call('certificate.country_choices');
+  }
+ 
   getIPChoices() {
     return this.ws.call('notifier.choices', [ 'IPChoices', [ true, false ] ]);
   }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -15,7 +14,6 @@ import helptext from '../../../../helptext/account/user-list';
 export class UserListComponent implements OnInit {
 
   public title = "Users";
-  protected resource_name = 'account/users';
   protected route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip = "Add User";
   protected route_edit: string[] = ['account', 'users', 'edit'];
@@ -25,20 +23,21 @@ export class UserListComponent implements OnInit {
   protected usr_lst = [];
   protected grp_lst = [];
   protected hasDetails = true;
+  protected queryCall = 'user.query';
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username', always_display: true, minWidth: 150},
-    { name: 'UID', prop: 'bsdusr_uid', hidden: false, maxWidth: 100 },
-    { name: 'GID', prop: 'bsdusr_gid', hidden: true, maxWidth: 100 },
-    { name: 'Home directory', prop: 'bsdusr_home', hidden: true  },
-    { name: 'Shell', prop: 'bsdusr_shell', hidden: true, minWidth: 150  },
-    { name: 'Builtin', prop: 'bsdusr_builtin', hidden: false  },
-    { name: 'Full Name', prop: 'bsdusr_full_name', hidden: false, minWidth: 250 },
-    { name: 'Email', prop: 'bsdusr_email', hidden: true, maxWidth: 250 },
-    { name: 'Disable Password Login', prop: 'bsdusr_password_disabled', hidden: true, minWidth: 200 },
-    { name: 'Lock User', prop: 'bsdusr_locked', hidden: true },
-    { name: 'Permit Sudo', prop: 'bsdusr_sudo', hidden: true  },
-    { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account', hidden: true, minWidth: 170 },
+    { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
+    { name: 'UID', prop: 'uid', hidden: false, maxWidth: 100 },
+    { name: 'GID', prop: 'gid', hidden: true, maxWidth: 100 },
+    { name: 'Home directory', prop: 'home', hidden: true  },
+    { name: 'Shell', prop: 'shell', hidden: true, minWidth: 150  },
+    { name: 'Builtin', prop: 'builtin', hidden: false  },
+    { name: 'Full Name', prop: 'full_name', hidden: false, minWidth: 250 },
+    { name: 'Email', prop: 'email', hidden: true, maxWidth: 250 },
+    { name: 'Disable Password Login', prop: 'password_disabled', hidden: true, minWidth: 200 },
+    { name: 'Lock User', prop: 'locked', hidden: true },
+    { name: 'Permit Sudo', prop: 'sudo', hidden: true  },
+    { name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170 },
   ];
   public rowIdentifier = 'bsdusr_username';
   public config: any = {
@@ -57,13 +56,8 @@ export class UserListComponent implements OnInit {
     return true;
   }
 
-  getUserList() {
-    this.rest.get(this.resource_name, {}).subscribe((res) => {})
-  }
-
-  constructor(protected rest: RestService, private router: Router,
+  constructor(private router: Router,
               protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService){
-    this.getUserList()
   }
 
   ngOnInit() {
@@ -130,6 +124,7 @@ export class UserListComponent implements OnInit {
     }
   );
   };
+
   checkbox_confirm_show(id: any){
     let user: any
     let group_users: any
@@ -140,21 +135,26 @@ export class UserListComponent implements OnInit {
     };
     return false
   }
-  resourceTransformIncomingRestData(data) {
+
+  resourceTransformIncomingRestData(d) {
+    let data = Object.assign([], d);
+    
     this.ws.call('group.query').subscribe((res)=>{
       data.forEach(user => {
-        const group = _.find(res, {"id" : user.bsdusr_group});
-        user['bsdusr_gid'] = group['gid'];
+        const group = _.find(res, {"gid" : user.group.bsdgrp_gid});
+        //user.group.bsdgrp_gid = group['gid'];
+        user.gid = group['gid'];
       });
       let rows = data;
       for (let i=0; i<rows.length; i++) {
         rows[i].details = []
-        rows[i].details.push({label:T("GID"), value:rows[i]['bsdusr_gid']},
-                             {label:T("Home Directory"), value:rows[i]['bsdusr_home']},
-                             {label:T("Shell"), value:rows[i]['bsdusr_shell']},
-                             {label:T("Email"), value:rows[i]['bsdusr_email']});
+        rows[i].details.push({label:T("GID"), value:rows[i].group['bsdgrp_gid']},
+                             {label:T("Home Directory"), value:rows[i].home},
+                             {label:T("Shell"), value:rows[i].shell},
+                             {label:T("Email"), value:rows[i].email});
       };
+      
     })
     return data;
-  }  
+  }
 }
