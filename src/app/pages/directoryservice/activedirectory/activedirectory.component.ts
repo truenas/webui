@@ -81,8 +81,6 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_bindpw_name,
       placeholder : helptext.activedirectory_bindpw_placeholder,
       tooltip : helptext.activedirectory_bindpw_tooltip,
-      validation : helptext.activedirectory_bindpw_validation,
-      required: true,
       togglePw: true,
       disabled: false,
       isHidden:false
@@ -345,6 +343,10 @@ export class ActiveDirectoryComponent {
       } else {
         this.idmapBacked = res;
       }
+    });
+
+    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res)=> {
+      _.find(this.fieldConfig, {'name' : 'bindpw'})['required'] = res;
     });
 
     entityEdit.formGroup.controls['kerberos_principal'].valueChanges.subscribe((res)=>{
