@@ -15,15 +15,15 @@ export const helptext_system_bootenv = {
 
   clone_name_placeholder: T("Name"),
   clone_name_tooltip: T(
-    `Enter a name for the clone of this boot environment.`
+    `Name of the new cloned boot environment.`
   ),
   
   clone_source_placeholder: T("Source"),
-  clone_source_tooltip: T("This is the boot environment to be cloned."),
+  clone_source_tooltip: T("Boot environment to be cloned."),
 
   create_name_placeholder: T("Name"),
   create_name_tooltip: T(
-    `Enter the name of the boot entry.`
+    `Boot environment name.`
  ),
 
   list_dialog_activate_action: T("Activate"),
@@ -32,9 +32,6 @@ export const helptext_system_bootenv = {
   list_dialog_scrub_action: T("Start Scrub"),
 
   rename_name_placeholder: T("Name"),
-  rename_name_tooltip: T(
-    `Rename the existing boot environment.`
-  ),
 
   replace_name_placeholder: T("Member Disk"),
 

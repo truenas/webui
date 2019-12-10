@@ -32,7 +32,7 @@ export class BootEnvironmentRenameComponent {
           type: 'input',
           name: 'name',
           placeholder: helptext_system_bootenv.rename_name_placeholder,
-          tooltip: `${helptext_system_bootenv.rename_name_tooltip} ${helptext_system_bootenv.allowedCharacters}`,
+          tooltip: `${helptext_system_bootenv.create_name_tooltip} ${helptext_system_bootenv.allowedCharacters}`,
           validation : [ regexValidator(this.bootEnvService.bootenv_name_regex)],
           required: true
         },
