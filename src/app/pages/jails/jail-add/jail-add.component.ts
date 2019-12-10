@@ -33,6 +33,31 @@ export class JailAddComponent implements OnInit, AfterViewInit {
   public error: string;
   public busy: Subscription;
 
+  protected interfaces = {
+    vnetEnabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+    vnetDisabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+    vnetDefaultInterface: [
+      {
+        label: 'none',
+        value: 'none',
+      },
+      {
+        label: 'auto',
+        value: 'auto',
+      }
+    ]
+  }
+
   protected dialogRef: any;
   protected formFields: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
@@ -144,10 +169,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
           name: 'ip4_interface',
           placeholder: helptext.ip4_interface_placeholder,
           tooltip: helptext.ip4_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           value: '',
           class: 'inline',
           width: '30%',
@@ -217,10 +239,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
           name: 'ip6_interface',
           placeholder: helptext.ip6_interface_placeholder,
           tooltip: helptext.ip6_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           value: '',
           class: 'inline',
           width: '30%',
@@ -637,16 +656,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       name: 'vnet_default_interface',
       placeholder: helptext.vnet_default_interface_placeholder,
       tooltip: helptext.vnet_default_interface_tooltip,
-      options: [
-        {
-          label: 'none',
-          value: 'none',
-        },
-        {
-          label: 'auto',
-          value: 'auto',
-        }
-      ]
+      options: this.interfaces.vnetDefaultInterface,
     },
     {
       type: 'input',
@@ -1076,17 +1086,6 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     protected dialogService: DialogService,
     protected networkService: NetworkService) {}
 
-  updateInterfaceOptions(interfaceField, addVnet) {
-    if (addVnet != undefined) {
-      const index = _.findIndex(interfaceField.options as any, { 'label': 'vnet0'});
-      if (addVnet && index == -1) {
-        interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-      } else if (!addVnet && index > -1){
-        interfaceField.options.splice(index, 1);
-      }
-    }
-  }
-
   updateInterface(addVnet?) {
     for (const ipType of ['ip4', 'ip6']) {
       const targetPropName = ipType + '_addr';
@@ -1095,7 +1094,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         const subipInterfaceField = _.find(_.find(this.basicfieldConfig, {'name': targetPropName}).listFields[i], {'name': ipType + '_interface'});
 
         if (addVnet != undefined) {
-          this.updateInterfaceOptions(subipInterfaceField, addVnet);
+          subipInterfaceField.options = addVnet ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
         }
       }
     }
@@ -1135,9 +1134,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.vnet_default_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{
@@ -1193,6 +1190,8 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
+      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
+      this.ip6_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
       this.updateInterface(res);
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
@@ -1224,6 +1223,13 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     this.jailService.getDefaultConfiguration().subscribe(
     (res) => {
       for (let i in res) {
+        if (i === 'interfaces') {
+          const ventInterfaces = res['interfaces'].split(',');
+          for (const item of ventInterfaces) {
+            this.interfaces.vnetEnabled.push({ label: item, value: item});
+            this.interfaces.vnetDefaultInterface.push({ label: item, value: item});
+          }
+        }
         if (this.formGroup.controls[i]) {
           if ((i == 'ip4_addr' || i == 'ip6_addr') && res[i] == 'none') {
             continue;
@@ -1316,10 +1322,11 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     this.router.navigate(new Array('').concat(this.route_success));
   }
 
-  getFullIP(ipInterface: string, ip: string, netmask: string) {
+  getFullIP(type: string, ipInterface: string, ip: string, netmask: string) {
     let full_address = ip;
     if (ipInterface != '') {
-      full_address = ipInterface + '|' + ip;
+      const validInterface = _.find(type === 'ip4' ? this.ip4_interfaceField.options : this.ip6_interfaceField.options, {value: ipInterface}) !== undefined;
+      full_address = validInterface ? ipInterface + '|' + ip : ip;
     }
     if (netmask != '') {
       full_address += '/' + netmask;
@@ -1335,7 +1342,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < value[propName].length; i++) {
           const subAddr = value[propName][i];
           if (subAddr[propName] != '' && subAddr[propName] != undefined) {
-            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')]));
+            multi_ipaddr.push(this.getFullIP(ipType, subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')]));
           }
         }
         value[propName] = multi_ipaddr.join(',');
