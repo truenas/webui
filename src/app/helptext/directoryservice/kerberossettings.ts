@@ -1,6 +1,7 @@
 import { T } from '../../translate-marker';
 
 export default {
+ks_label: T('Kerberos Settings'),
 ks_appdefaults_name: 'appdefaults_aux',
 ks_appdefaults_placeholder: T('Appdefaults Auxiliary Parameters'),
 ks_appdefaults_tooltip: T('Define any additional settings for use by some Kerberos\
