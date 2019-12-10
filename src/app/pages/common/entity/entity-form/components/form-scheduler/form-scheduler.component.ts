@@ -301,7 +301,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
     this.group.controls[this.config.name].valueChanges.subscribe((evt) => {
       this.currentValue = evt;
-      console.log(evt);
     });
   }
 
@@ -317,14 +316,13 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   }
 
   onChangeOption($event) {
-    console.warn($event);
     if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
       this.config.onChangeOption({ event: $event });
     }
   }
 
   compare(opt1,opt2){
-    return opt1.label == opt2.label; //opt2.value;
+    return opt1.label == opt2.label; 
   }
 
   validPopup(){
@@ -341,14 +339,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     if(this.formControl){
       this.currentValue = this.crontab;
       this.cd.detectChanges();
-      console.log(this.selectForm);
-      //this.preset = this.presets[4];
       this.group.controls[this.config.name].setValue(this.crontab);
-      //let opt = this.selectForm.options.last;
-      //opt.active = true;
-      //const control = this.group.controls[this.config.name];
-      //control.setValue(this.crontab);
-      //this.presets[4].value = this.currentValue;
     }
   }
 
@@ -360,13 +351,13 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.isOpen = !this.isOpen;
     if(this.isOpen){
         setTimeout(() => {
-          this.convertPreset(this.presets[4].value); // <-- Test
+          this.convertPreset(this.presets[4].value); 
           this.generateSchedule();
-          let popup = this.schedulePreview.nativeElement//.querySelector('ul.schedule-preview');
+          let popup = this.schedulePreview.nativeElement
           popup.addEventListener('scroll', this.onScroll.bind(this))
         },200);
     } else {
-      let popup = this.schedulePreview.nativeElement//.querySelector('ul.schedule-preview');
+      let popup = this.schedulePreview.nativeElement
       popup.removeEventListener('scroll', this.onScroll);
     }
   }
@@ -426,7 +417,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
     let options = {
       currentDate: adjusted,
-      endDate: this.maxDate,//max
+      endDate: this.maxDate,
       iterator: true
     };
 
@@ -445,9 +436,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
         if(parseCounter >= this.generatedScheduleSubset && parseCounter < subsetEnd){
           let obj:any = interval.next();
           newSchedule.push(obj.value);
-          //console.log(obj.value);
         }
-        //console.log(parseCounter)
         parseCounter++
       } catch (e) {
         if(this.debug){
@@ -722,12 +711,5 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     // Days of Week
     this.updateDaysOfWeekFields(arr[4]);
     this._daysOfWeek = arr[4];
-  }
-
-  TESTME(){
-    const label = 'TESTING';
-    const value = '1 2 3 4 fri';
-    this.presets[1].label = label;
-    //this.group.controls[this.config.name].setValue(value);
   }
 }
