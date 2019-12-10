@@ -339,13 +339,13 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   onPopupSave(){
     this.togglePopup();
     if(this.formControl){
-      //this.currentValue = this.crontab;
+      this.currentValue = this.crontab;
       this.cd.detectChanges();
       console.log(this.selectForm);
       //this.preset = this.presets[4];
       this.group.controls[this.config.name].setValue(this.crontab);
-      let opt = this.selectForm.options.last;
-      opt.active = true;
+      //let opt = this.selectForm.options.last;
+      //opt.active = true;
       //const control = this.group.controls[this.config.name];
       //control.setValue(this.crontab);
       //this.presets[4].value = this.currentValue;
