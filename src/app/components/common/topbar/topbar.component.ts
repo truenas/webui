@@ -153,8 +153,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       if (this.is_ha) {
         this.getHAStatus();
       }
-      this.checkNetworkCheckinWaiting();
-      this.checkNetworkChangesPending();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
