@@ -20,7 +20,7 @@ msgid " Plugin"
 msgstr " 插件"
 
 msgid " Service"
-msgstr ""
+msgstr " 服务"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -35,7 +35,7 @@ msgid ""
 msgstr "口令将使现有池恢复密钥文件无效。要保存备份现有加密密钥而不进行任何更改，单击<b>下载加密密钥</b>."
 
 msgid " and "
-msgstr ""
+msgstr " 和 "
 
 msgid " and all snapshots of it?"
 msgstr " 以及它的所有快照吗？"
@@ -56,7 +56,7 @@ msgid " is "
 msgstr " 是 "
 
 msgid " is required."
-msgstr ""
+msgstr " 是必须的。"
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
@@ -69,13 +69,13 @@ msgid ""
 msgstr " 除非选择永久保持，否则为秒。调整延迟时间以进行测试。"
 
 msgid " service has been enabled."
-msgstr ""
+msgstr " 服务已启用。"
 
 msgid " system is powered on and connected to the network."
 msgstr " 系统已启动并连接到网络。"
 
 msgid " update successful"
-msgstr ""
+msgstr " 更新成功"
 
 msgid " updated."
 msgstr " 已更新。"
@@ -97,7 +97,7 @@ msgid "(No description)"
 msgstr "（没有描述）"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "（从数据库中删除池）"
 
 msgid "*allow_sysvipc"
 msgstr "*允许_sysvipc"
@@ -109,7 +109,7 @@ msgid ". All data on that pool was destroyed."
 msgstr ". 该存储池中的所有数据均已销毁。"
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". 至少需要一个。"
 
 msgid ". Is this correct?"
 msgstr ". 是否正确？"
@@ -118,7 +118,7 @@ msgid "... Make sure the "
 msgstr "... 确保"
 
 msgid "0=Disabled, blank=inherit"
-msgstr "0=禁用， 留空=继承"
+msgstr "0=禁用，留空=继承"
 
 msgid "20 characters is the maximum length."
 msgstr "最大长度为20个字符。"
@@ -133,7 +133,7 @@ msgid "</b> with the keypair"
 msgstr "</b> 与密钥对"
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr ""
+msgstr "删除挂载点时</i>无法运行。"
 
 msgid "</i> has started."
 msgstr "</i> 已启动。"
@@ -145,10 +145,10 @@ msgid "</i> now?"
 msgstr "</i> 现在？"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i>已停止。"
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i>已更新。"
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr "</i>。除非解锁存储池，否则无法访问存储池中的数据。"
@@ -164,7 +164,7 @@ msgstr ""
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
 "by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
-msgstr ""
+msgstr "</i>位于数据库中，但未连接到计算机。 如果错误导出，请重新连接硬件并使用<b>导入池</b>。<br /><br />"
 
 msgid ""
 "<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
@@ -348,7 +348,7 @@ msgstr ""
 msgid ""
 "<b>Not recommended.</b> Allow more than one group to  have the same group "
 "ID."
-msgstr ""
+msgstr "<b>不推荐。</b>允许多个组具有相同的组ID。"
 
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
@@ -360,7 +360,7 @@ msgstr ""
 "</i>用户设置密码。"
 
 msgid "<b>SED (Self-Encrypting Drives) Options</b>"
-msgstr ""
+msgstr "<b> SED（自加密驱动器）选项</b>"
 
 msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
@@ -534,7 +534,7 @@ msgid ""
 "<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
 "connects to a remote system and retrieves snapshots  matching a <b>Naming "
 "Schema</b>."
-msgstr ""
+msgstr "<i> 推送 </i>将快照发送到目标系统。<br><br> <i> 推送 </i>连接到远程系统并检索与<b>命名惯例</b>匹配的快照。"
 
 msgid ""
 "<i>Push</i> sends data to cloud storage. <i>Pull</i> receives data from "
@@ -612,14 +612,14 @@ msgid ""
 "A new jail hostid, if desired. <br><b>Example hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 msgstr ""
-"如果需要，使用新的jail hostid。<br><b>示例 hostid:</b> "
+"如果需要，使用新的Jail hostid。<br><b>示例 hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 
 msgid ""
 "A new jail hostid, if desired.<br> <b>Example hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 msgstr ""
-"如果需要，使用新的jail hostid。<br><b>示例 hostid:</b> "
+"如果需要，使用新的Jail hostid。<br><b>示例 hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 
 msgid "A pool with this name already exists."
@@ -643,13 +643,13 @@ msgid ""
 "A space-delimited list of network interfaces attached to a <b>VNET</b> "
 "enabled jail after it is created. Interfaces are automatically released "
 "when the jail is removed."
-msgstr "创建连接到启用<b>VNET</b>的jail网络接口分隔列表。删除监狱后，接口会自动释放。"
+msgstr "创建连接到启用<b>VNET</b>的Jail网络接口分隔列表。删除监狱后，接口会自动释放。"
 
 msgid ""
 "A space-delimited list of network interfaces attached to a VNET-enabled "
 "jail after it is created. Interfaces are automatically released when the "
 "jail is removed."
-msgstr "创建启用VNET的jail后，网络接口分隔列表。删除jail后，接口会自动释放。"
+msgstr "创建启用VNET的Jail后，网络接口分隔列表。删除jail后，接口会自动释放。"
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr "强烈反对使用为0的swap大小！"
@@ -724,7 +724,7 @@ msgid "AD Timeout"
 msgstr "AD超时"
 
 msgid "AFP"
-msgstr ""
+msgstr "AFP"
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 权限"
@@ -836,7 +836,7 @@ msgid "Acoustic Level"
 msgstr "噪音等级"
 
 msgid "Actions"
-msgstr ""
+msgstr "动作"
 
 msgid "Activate"
 msgstr "启用"
@@ -906,7 +906,7 @@ msgid "Add Log"
 msgstr "添加日志"
 
 msgid "Add Mountpoint"
-msgstr ""
+msgstr "添加挂载点"
 
 msgid "Add Recovery Key"
 msgstr "添加恢复密钥"
@@ -1192,7 +1192,7 @@ msgid "Allow DNS updates"
 msgstr "允许DNS更新"
 
 msgid "Allow Duplicate GIDs"
-msgstr ""
+msgstr "允许重复的GID"
 
 msgid "Allow Guest Access"
 msgstr "允许访客访问"
@@ -1405,7 +1405,7 @@ msgstr ""
 "</i>页面，然后添加一个新的应用程序密钥。将应用程序<i> keyID </i>字符串复制到此字段。"
 
 msgid "Also Include Naming Schema"
-msgstr "包括命名方案"
+msgstr "包括命名惯例"
 
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
@@ -1426,14 +1426,14 @@ msgid ""
 "through <i>My account -> Security Credentials -> Access Keys  (Access Key "
 "ID and Secret Access Key)</i>. Must be alphanumeric and  between 5 and 20 "
 "characters."
-msgstr ""
+msgstr "Amazon Web Services密钥ID。在<a href=\"https://aws.amazon.com/\" target=\"_blank\">Amazon AWS</a>中通过<i>我的帐户->安全凭证->访问密钥（访问密钥ID和秘密访问密钥）</i>上找到。必须为字母数字，且介于5到20个字符之间。"
 
 msgid ""
 "Amazon Web Services password. If the Secret Access Key cannot be  found or "
 "remembered, go to <i>My Account -> Security Credentials ->  Access Keys</i> "
 "and create a new key pair. Must be alphanumeric and  between 8 and 40 "
 "characters."
-msgstr ""
+msgstr "Amazon Web Services密码。如果找不到或记住密钥，请转到<i>我的帐户->安全凭据->访问密钥</i>并创建一个新的密钥对。必须为字母数字，且介于8到40个字符之间。"
 
 msgid "Amount of locked memory in bytes for the jail."
 msgstr "Jail的锁定内存量（以bytes为单位）"
@@ -1494,12 +1494,12 @@ msgstr "以递归方式将权限应用于当前数据集的所有子数据集。
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
 "dataset."
-msgstr "将权限递归应用于当前目录中的所有目录和文件数据集。"
+msgstr "递归地将权限应用于当前数据集中的所有目录和文件。"
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset."
-msgstr "将权限递归应用于当前数据集。"
+msgstr "递归地将权限应用于当前数据集中的所有目录和文件。"
 
 msgid "Apply permissions to child datasets"
 msgstr "将权限应用于子数据集"
@@ -1539,7 +1539,7 @@ msgstr ""
 "target=\"_blank\">rsyncd.conf(5)</a>中定义至少一个模块或另一个系统的<b>Rsync模块</b>中定义一个模块。"
 
 msgid "Attach"
-msgstr ""
+msgstr "附加"
 
 msgid "Attach Debug"
 msgstr "附加调试"
@@ -1692,7 +1692,7 @@ msgid "Basic Properties"
 msgstr "基本属性"
 
 msgid "Batch Operations"
-msgstr ""
+msgstr "批处理"
 
 msgid "Begin"
 msgstr "开始"
@@ -1923,7 +1923,7 @@ msgid "Cannot Edit while HA is Enabled"
 msgstr "启用 HA 时无法编辑"
 
 msgid "Cannot create plugins or jails until a pool is present for storing them."
-msgstr ""
+msgstr "在存在用于存储插件或Jail的存储池之前，无法创建插件或Jail。"
 
 msgid "Cannot edit while HA is enabled."
 msgstr "启用 HA 时无法编辑"
@@ -1946,7 +1946,7 @@ msgid "Certificates"
 msgstr "证书"
 
 msgid "Change Administrator Password"
-msgstr ""
+msgstr "修改管理员密码"
 
 msgid "Change Device Order"
 msgstr "更改设备顺序"
@@ -1996,7 +1996,7 @@ msgid ""
 "Changing SDK version is not a supported operation. Activate an existing "
 "boot environment that uses the desired train and boot into it to switch to "
 "that train."
-msgstr "不支持更改SDK版本。在现有引导环境激活所需的train，然后引导进入该环境以切换到该train。"
+msgstr "不支持更改SDK版本。在现有引导环境激活所需的分支，然后引导进入该环境以切换到该分支。"
 
 msgid ""
 "Changing away from the nightly train is considered a downgrade and not a "
@@ -2111,7 +2111,7 @@ msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr "可以从<i>无，自动，CHAP，</i> 或 <i>Mutual CHAP</i>中选择。"
 
 msgid "Choose"
-msgstr ""
+msgstr "选择"
 
 msgid ""
 "Choose <a                 href=\"--docurl--/tasks.html#rsync-module-mode\"  "
@@ -2146,10 +2146,10 @@ msgid ""
 msgstr "选择<i>ON</i>来更新读取文件时的访问时间。选择<i>Off</i>可以防止在读取文件时产生日志流量。这可以带来明显性能提升。"
 
 msgid "Choose Pool for Plugin and Jail Manager"
-msgstr ""
+msgstr "选择用于插件和Jail管理器的存储池"
 
 msgid "Choose Pool for Plugin and Jail Storage"
-msgstr ""
+msgstr "选择用于存储插件和Jail的存储池"
 
 msgid "Choose Theme"
 msgstr "选择主题"
@@ -2191,7 +2191,7 @@ msgstr ""
 "此处显示用户主目录的完整路径。"
 
 msgid "Choose a pool for plugin and jail storage."
-msgstr ""
+msgstr "选择一个用于存储插件和Jail的存储池。"
 
 msgid "Choose a pool to scrub."
 msgstr "选择要清理的存储池。"
@@ -2223,7 +2223,7 @@ msgstr ""
 msgid ""
 "Choose a saved SSH Keypair or select  <i>Generate New</i> to create a new "
 "keypair and use it for this  connection."
-msgstr ""
+msgstr "选择一个已保存的SSH密钥对或选择<i> 新建 </i>来创建一个新的密钥对并将其用于此连接。"
 
 msgid "Choose an alert service to display options for that service."
 msgstr "选择警报服务以显示该服务的选项。"
@@ -2455,7 +2455,7 @@ msgid "Clone"
 msgstr "克隆"
 
 msgid "Clone to New Dataset"
-msgstr ""
+msgstr "克隆到新数据集"
 
 msgid "Close"
 msgstr "关闭"
@@ -2467,7 +2467,7 @@ msgid "Cloud Sync Tasks"
 msgstr "云同步任务"
 
 msgid "Cloud sync <i>"
-msgstr ""
+msgstr "云同步<i>"
 
 msgid "Cluster Name"
 msgstr "集群名称"
@@ -2476,7 +2476,7 @@ msgid "Collection"
 msgstr "集"
 
 msgid "Columns"
-msgstr ""
+msgstr "列"
 
 msgid "Com Port"
 msgstr "COM端口"
@@ -2656,7 +2656,7 @@ msgstr "现在配置此共享的数据集的权限？"
 msgid ""
 "Configure the ports that allow remote access to  the jail. Required to "
 "override the default settings or when installing  duplicate plugins."
-msgstr ""
+msgstr "配置允许远程访问Jail的端口。覆盖默认设置或安装重复插件时需要。"
 
 msgid "Configure the root user email address."
 msgstr "配置root用户的电子邮件地址。"
@@ -2710,7 +2710,7 @@ msgid "Connecting to "
 msgstr "正在连接"
 
 msgid "Connection Error"
-msgstr ""
+msgstr "连接错误"
 
 msgid ""
 "Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but "
@@ -2720,7 +2720,7 @@ msgid ""
 "removes all security in favor of maximizing  connection speed. Disabling "
 "the security should only be used within a  secure, trusted "
 "network.</li></ul>"
-msgstr ""
+msgstr "连接安全级别：<br> <ul> <li> <i>标准</i>最安全，但是对连接速度的影响最大。</li> <br> <li> <i>快速</i>的安全性低于<i> 标准 </i>，但可以为加密速度有限的设备提供合理的传输速率。</li> <br> <li> <i>禁用</i>删除了所有安全性，以最大程度地提高连接速度。禁用安全性只能在安全，可信任的网络内使用。</li> </ul>"
 
 msgid "Connections"
 msgstr "连接"
@@ -3051,7 +3051,7 @@ msgid "Deactivate the recovery key for this pool?"
 msgstr "停用此池的恢复密钥？"
 
 msgid "Debug could not be downloaded."
-msgstr ""
+msgstr "调试无法下载。"
 
 msgid "Decrypt pool"
 msgstr "解密存储池"
@@ -3192,7 +3192,7 @@ msgid "Delete Mount Point"
 msgstr "删除挂载点"
 
 msgid "Delete Mountpoint"
-msgstr ""
+msgstr "删除挂载点"
 
 msgid "Delete Path"
 msgstr "删除路径"
@@ -3385,7 +3385,7 @@ msgid "Device"
 msgstr "设备"
 
 msgid "Device Attached"
-msgstr ""
+msgstr "设备已连接"
 
 msgid "Device Busy"
 msgstr "设备正忙"
@@ -3394,7 +3394,7 @@ msgid "Device Order"
 msgstr "设备顺序"
 
 msgid "Device detached "
-msgstr ""
+msgstr "设备已分离 "
 
 msgid "Devices"
 msgstr "设备"
@@ -3746,7 +3746,7 @@ msgid "Enable running services that require mlock() in a jail."
 msgstr "在Jail中启用需要mlock()来运行的服务。"
 
 msgid "Enable sending anonymous usage statistics to iXsystems."
-msgstr ""
+msgstr "启用向iXsystems发送匿名使用情况统计信息。"
 
 msgid "Enable service"
 msgstr "启用服务"
@@ -3770,7 +3770,7 @@ msgid ""
 msgstr "启用这个rsync任务。取消设置以禁用此rsync任务而不删除它。"
 
 msgid "Enable this service to start automatically."
-msgstr ""
+msgstr "启用此服务以自动启动。"
 
 msgid "Enable this task. Unset to disable the task     without deleting it."
 msgstr "启用这个任务。取消设置以禁用任务而不删除它。"
@@ -3813,7 +3813,7 @@ msgstr "在SMB共享上启用<em> Time Machine </em>要求重新启动SMB服务�
 msgid ""
 "Enabling this option can expose administrator credentials and is not "
 "recommended."
-msgstr ""
+msgstr "启用此选项可以公开管理员凭据，因此不建议这样做。"
 
 msgid ""
 "Enabling this option is <b>not</b> recommended as it bypasses a security "
@@ -4125,7 +4125,7 @@ msgid "Enter a username to register with this service."
 msgstr "输入用户名来注册这个服务。"
 
 msgid "Enter a valid IPv4 address."
-msgstr ""
+msgstr "输入有效的IPv4地址。"
 
 msgid "Enter a valid MAC address vendor prefix. <b>Example:</b> <i>E4F4C6</i>"
 msgstr "输入有效的MAC地址供应商前缀。<b>例如：</b> <i>E4F4C6</i>"
@@ -4696,10 +4696,10 @@ msgid "Error detaching pool"
 msgstr "分离存储池时出错"
 
 msgid "Error exporting the Private Key"
-msgstr ""
+msgstr "导出私钥时出错"
 
 msgid "Error exporting the certificate"
-msgstr ""
+msgstr "导出证书时出错"
 
 msgid "Error exporting/disconnecting pool."
 msgstr "导出/断开存储池时出错。"
@@ -4880,7 +4880,7 @@ msgid "Failed sending test alert!"
 msgstr "发送测试警报失败！"
 
 msgid "Failed to generate debug file."
-msgstr ""
+msgstr "无法生成调试文件。"
 
 msgid "Failover"
 msgstr "故障转移"
@@ -4904,10 +4904,10 @@ msgid "Fetch Method"
 msgstr "获取方法"
 
 msgid "Fibre Channel "
-msgstr ""
+msgstr "光纤通道 "
 
 msgid "Fibre Channel Port "
-msgstr ""
+msgstr "光纤通道端口 "
 
 msgid "File"
 msgstr "文件"
@@ -4922,7 +4922,7 @@ msgid "File Permissions"
 msgstr "文件权限"
 
 msgid "File upload complete"
-msgstr ""
+msgstr "文件上传完成"
 
 msgid "Filename Encryption"
 msgstr "文件名加密"
@@ -5038,16 +5038,16 @@ msgid "Form Invalid"
 msgstr "表单无效"
 
 msgid "Free"
-msgstr ""
+msgstr "自由"
 
 msgid ""
 "FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
 "versions up to the same version as the host  system. Newer releases are not "
 "shown."
-msgstr "FreeBSD发行版用作jail操作系统。Jails可以运行与主机系统相同版本的FreeBSD版本。 没有显示较新的版本。"
+msgstr "FreeBSD发行版用作Jail操作系统。Jails可以运行与主机系统相同版本的FreeBSD版本。 没有显示较新的版本。"
 
 msgid "FreeNAS/TrueNAS URL"
-msgstr ""
+msgstr "FreeNAS/TrueNAS URL"
 
 msgid "From"
 msgstr "来自"
@@ -5108,7 +5108,7 @@ msgid ""
 "the snapshot to be replicated. Cannot be used with a <i>Name</i>."
 msgstr ""
 "从先前创建的<a href=\"--docurl--/tasks.html#periodic-snapshot-tasks\" "
-"target=\"_blank\">定期快照任务</a>命名架构中为快照生成名称 。这样可以复制快照。不能与<i>名称</i>一起使用。"
+"target=\"_blank\">定期快照任务</a>命名惯例中为快照生成名称。这样可以复制快照。不能与<i>名称</i>一起使用。"
 
 msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
@@ -5258,7 +5258,7 @@ msgid "HipChat cluster name."
 msgstr "HipChat集群名称。"
 
 msgid "History"
-msgstr ""
+msgstr "历史"
 
 msgid "Hold Pending Snapshots"
 msgstr "暂挂快照"
@@ -5279,7 +5279,7 @@ msgid "Host Deny"
 msgstr "禁止主机"
 
 msgid "Host Port Number"
-msgstr ""
+msgstr "主机端口号"
 
 msgid "Host Sync"
 msgstr "同步主机"
@@ -5311,15 +5311,15 @@ msgstr "用于发送此电子邮件的SMTP服务器的主机名或IP地址。"
 msgid ""
 "Hostname or IP address of a remote   <a href=\"http://graphiteapp.org/\" "
 "target=\"_blank\">Graphite</a> server."
-msgstr ""
+msgstr "远程<a href=\"http://graphiteapp.org/\" target=\"_blank\">Graphite</a>服务器的主机名或IP地址。"
 
 msgid "Hostname or IP address of the remote system."
-msgstr ""
+msgstr "远程系统的主机名或IP地址。"
 
 msgid ""
 "Hostname or IP address of the remote system. A  valid URL scheme is "
 "required. Example:  <b>https://<i>10.231.3.76</i></b>"
-msgstr ""
+msgstr "远程系统的主机名或IP地址。必须使用有效的URL方案。例如：<b>https://<i>10.231.3.76</i></b>"
 
 msgid ""
 "Hostnames or IP addresses of the ISNS servers to be registered with the "
@@ -5381,7 +5381,7 @@ msgid ""
 "connection  with a remote FreeNAS or TrueNAS system. This method uses the "
 "URL and  login credentials of the remote system to connect and exchange SSH "
 " keys."
-msgstr ""
+msgstr "如何配置连接：<br> <br> <i>手册</i>需要在远程系统上配置身份验证。这可以包括复制SSH密钥和修改该系统上的<i> root </i>用户帐户。<br><br><i>半自动</i>仅在配置与远程FreeNAS或TrueNAS系统的SSH连接时起作用。此方法使用远程系统的URL和登录凭据来连接和交换SSH密钥。"
 
 msgid "I Agree"
 msgstr "我同意"
@@ -5607,7 +5607,7 @@ msgid ""
 msgstr "包括密码种子在内，允许将此配置文件与新的引导设备一起使用。它还会解密此系统上使用的所有密码。<b>请妥善保管配置文件并防止未经授权的访问！</b>"
 
 msgid "Incorrect Password"
-msgstr ""
+msgstr "密码错误"
 
 msgid ""
 "Indicates how to handle Access Control Lists. <b>Ignore:</b> ignores "
@@ -5652,7 +5652,7 @@ msgid "Informational"
 msgstr "信息化"
 
 msgid "Inherits"
-msgstr ""
+msgstr "继承"
 
 msgid "Init/Shutdown Scripts"
 msgstr "初始化/关闭脚本"
@@ -5766,7 +5766,7 @@ msgid "Invalid dataset."
 msgstr "无效的数据集。"
 
 msgid "Invalid format or character."
-msgstr ""
+msgstr "格式或字符无效。"
 
 msgid ""
 "Invalid network address list. Check for typos or missing CIDR netmasks and "
@@ -5779,7 +5779,7 @@ msgstr "无效的正则表达式过滤器"
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>."
-msgstr ""
+msgstr "无效值。有效值是数字，后跟可选的单位字母，例如<code>256k</code>或<code>1 G</code>或<code>2 MiB</code>。"
 
 msgid "Invalidate Existing Key"
 msgstr "使现有密钥失效"
@@ -5804,7 +5804,7 @@ msgid "Items Delete Failed"
 msgstr "项目删除失败"
 
 msgid "Items deleted"
-msgstr ""
+msgstr "项目已删除"
 
 msgid "JID"
 msgstr "JID"
@@ -5813,7 +5813,7 @@ msgid "Jail"
 msgstr "Jail"
 
 msgid "Jail <i>"
-msgstr ""
+msgstr "Jail <i>"
 
 msgid ""
 "Jail CPU affinity. Options are <i>off</i> or a combination of <i>1-4</i>, "
@@ -5826,7 +5826,7 @@ msgid "Jail Name"
 msgstr "Jail名称"
 
 msgid "Jail Port Number"
-msgstr ""
+msgstr "Jail端口号"
 
 msgid "Jail Properties"
 msgstr "Jail属性"
@@ -5835,13 +5835,13 @@ msgid "Jail Type"
 msgstr "Jail类型"
 
 msgid "Jail Update"
-msgstr ""
+msgstr "Jail更新"
 
 msgid "Jail Update Failed"
 msgstr "Jail更新失败"
 
 msgid "Jail Updated"
-msgstr ""
+msgstr "Jail已更新"
 
 msgid "Jail core dump size in bytes."
 msgstr "Jail核心转储大小(bytes)。"
@@ -5856,7 +5856,7 @@ msgid "Jails"
 msgstr "Jails"
 
 msgid "Jails Started"
-msgstr ""
+msgstr "Jail已启动"
 
 msgid "Jails cannot be changed while running."
 msgstr "运行时无法更改Jail。"
@@ -5994,7 +5994,7 @@ msgid "LEGACY WEB INTERFACE"
 msgstr "旧版Web界面"
 
 msgid "LOGIN TO PROVIDER"
-msgstr "登录提供商"
+msgstr "登录到提供商"
 
 msgid "LUN ID"
 msgstr "LUN ID"
@@ -6373,7 +6373,7 @@ msgid "Minimum Passive Port"
 msgstr "最小被动端口"
 
 msgid "Minimum size is 1 MiB"
-msgstr ""
+msgstr "最小大小为1 MiB"
 
 msgid "Minute"
 msgstr "分钟"
@@ -6491,10 +6491,10 @@ msgid "NAT Autoconfigure IPv4"
 msgstr "NAT自动配置IPv4"
 
 msgid "NAT Port Forwarding"
-msgstr ""
+msgstr "NAT端口转发"
 
 msgid "NFS"
-msgstr ""
+msgstr "NFS"
 
 msgid "NFSv3 ownership model for NFSv4"
 msgstr "NFSv4的NFSv3所有权模型"
@@ -6506,10 +6506,10 @@ msgid "NIS"
 msgstr "NIS"
 
 msgid "NIS domain"
-msgstr "NIS 域"
+msgstr "NIS域"
 
 msgid "NIS servers"
-msgstr "NIS 服务器"
+msgstr "NIS服务器"
 
 msgid "NO"
 msgstr "否"
@@ -6533,7 +6533,7 @@ msgid "Name Jail and Choose FreeBSD Release"
 msgstr "命名Jail并选择FreeBSD发行版本"
 
 msgid "Name and Naming Schema cannot be provided at the same time."
-msgstr "不能同时提供名称和命名方案。"
+msgstr "不能同时提供名称和命名惯例。"
 
 msgid "Name and Options"
 msgstr "名称和选项"
@@ -6572,28 +6572,28 @@ msgstr "正在使用的WebDAV站点，服务或软件的名称。"
 msgid ""
 "Name of the extent. If the <i>Extent size</i> is not <i>0</i>, it cannot be "
 "an existing file within the pool or dataset."
-msgstr "Extent的名称。 如果<i>扩展大小</i>不是<i> 0 </i>，则它不能是池或数据集中的现有文件。"
+msgstr "Extent的名称。如果<i>扩展大小</i>不是<i> 0 </i>，则它不能是池或数据集中的现有文件。"
 
 msgid "Name of the new alert service."
 msgstr "新的警报服务的名称。"
 
 msgid "Name of the new dataset created from the cloned snapshot."
-msgstr ""
+msgstr "从克隆快照创建的新数据集的名称。"
 
 msgid "Name of the room."
 msgstr "房间名称。"
 
 msgid "Name of this SSH connection. SSH connection names  must be unique."
-msgstr ""
+msgstr "此SSH连接的名称。SSH连接名称必须唯一。"
 
 msgid "Name of this replication configuration."
 msgstr "此复制配置的名称。"
 
 msgid "Name or Naming Schema is required. Only one field can be used at a time."
-msgstr "名称或命名方案是必需的。一次只能使用一个字段。"
+msgstr "名称或命名惯例是必需的。一次只能使用一个字段。"
 
 msgid "Name or Naming Schema must be provided."
-msgstr "必须提供名称或命名方案。"
+msgstr "必须提供名称或命名惯例。"
 
 msgid "Nameserver 1"
 msgstr "域名服务器 1"
@@ -6608,7 +6608,7 @@ msgid "Nameservers"
 msgstr "域名服务器"
 
 msgid "Naming Schema"
-msgstr "命名方案"
+msgstr "命名惯例"
 
 msgid "Navigation"
 msgstr "导航"
@@ -6784,7 +6784,7 @@ msgid "No Pools"
 msgstr "没有存储池"
 
 msgid "No Repositories"
-msgstr ""
+msgstr "没有资料库"
 
 msgid "No Stat"
 msgstr "无状态"
@@ -6805,7 +6805,7 @@ msgid "No pools are configured."
 msgstr "未配置存储池。"
 
 msgid "No repositories is found."
-msgstr ""
+msgstr "找不到存储库。"
 
 msgid "No snapshots sent yet"
 msgstr "尚未发送快照"
@@ -7128,7 +7128,7 @@ msgid "Password for the user account."
 msgstr "用户帐户的密码。"
 
 msgid "Password updated."
-msgstr ""
+msgstr "密码已更新。"
 
 msgid ""
 "Passwords cannot contain a <b>?</b>. Passwords should be at least eight "
@@ -7179,7 +7179,7 @@ msgstr ""
 "<b>CheckIP服务器</b> 和 <i>/checkip.html</i> 的 <b>CheckIP路径</b> 。"
 
 msgid "Path to the extent"
-msgstr "Extent 路径"
+msgstr "Extent路径"
 
 msgid ""
 "Pattern of naming custom  snapshots to include in the replication with the "
@@ -7199,7 +7199,7 @@ msgstr ""
 "<br>当定期快照未链接到复制时，请为手动创建的快照输入命名架构。具有相同的<i>%Y</i>，<i>%m</i>，<i>%d</i>，<i>%H</"
 "i>，和<i>%M</i>字符串要求作为<a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\" "
-"target=\"_blank\">定期中的<b>命名架构</b> 快照任务。"
+"target=\"_blank\">定期中的<b>命名惯例</b> 快照任务。"
 
 msgid ""
 "Pattern of naming custom snapshots to be  replicated. Enter the name and  "
@@ -7296,7 +7296,7 @@ msgstr ""
 "target=\"_blank\">重复数据删除</a>章节 。"
 
 msgid "Please select a valid path"
-msgstr ""
+msgstr "请选择一个有效的路径"
 
 msgid "Please wait"
 msgstr "请稍后"
@@ -7317,7 +7317,7 @@ msgid "Plugin Update Failed"
 msgstr "插件更新失败"
 
 msgid "Plugin Updated"
-msgstr ""
+msgstr "插件已更新"
 
 msgid "Plugin installed successfully"
 msgstr "插件安装成功"
@@ -7332,7 +7332,7 @@ msgid "Pool Available Space Threshold (%)"
 msgstr "存储池可用空间阈值 (%)"
 
 msgid "Pool Chosen"
-msgstr ""
+msgstr "选择存储池"
 
 msgid "Pool Manager"
 msgstr "存储池管理器"
@@ -7356,7 +7356,7 @@ msgid "Port"
 msgstr "端口"
 
 msgid "Port number on the remote system to use for the SSH  connection."
-msgstr ""
+msgstr "远程系统上用于SSH连接的端口号。"
 
 msgid "Port or Hostname"
 msgstr "端口或主机名"
@@ -7368,7 +7368,7 @@ msgid ""
 "href=\"https://www.iana.org/assignments/service-names-port-numbers/service-"
 "names-port-numbers.xhtml\"  target=\"_blank\">Internet Assigned Numbers "
 "Authority (IANA) registry</a>."
-msgstr ""
+msgstr "分配给该Jail的端口。避免使用另一个Jail或系统服务已在使用的端口。有关常用端口的列表，请参见<a href=\"https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml\"  target=\"_blank\">Internet Assigned Numbers Authority (IANA) registry</a>。"
 
 msgid "Portal"
 msgstr "门户"
@@ -7677,7 +7677,7 @@ msgid "Remote Encryption"
 msgstr "远程加密"
 
 msgid "Remote Graphite Server Hostname"
-msgstr ""
+msgstr "远程Graphite服务器主机名"
 
 msgid "Remote Host"
 msgstr "远程主机"
@@ -7705,13 +7705,13 @@ msgid ""
 "can be used by adding a colon and the port number to the hostname, like "
 "<samp>mysyslogserver:1928</samp>. Log entries are written to local logs and "
 "sent to the remote syslog server."
-msgstr ""
+msgstr "远程系统日志服务器DNS主机名或IP地址。可以通过在主机名上添加冒号和端口号来使用非标准端口号，例如<samp>mysyslogserver:1928</samp>。 日志条目将写入本地日志，然后发送到远程syslog服务器。"
 
 msgid ""
 "Remote system SSH key for this system to  authenticate the connection. When "
 "all other fields are properly  configured, click <b>DISCOVER REMOTE HOST "
 "KEY</b> to query the remote  system and automatically populate this field."
-msgstr ""
+msgstr "该系统用于验证连接的远程系统SSH密钥。正确配置所有其他字段后，单击<b>发现远程主机密钥</b>以查询远程系统并自动填充此字段。"
 
 msgid "Remove"
 msgstr "删除"
@@ -7749,13 +7749,13 @@ msgid "Repeat Vdev"
 msgstr "重复Vdev"
 
 msgid "Replace"
-msgstr "替换"
+msgstr "更换"
 
 msgid "Replacing Disk"
-msgstr ""
+msgstr "更换磁盘"
 
 msgid "Replacing disk..."
-msgstr "正在替换磁盘..."
+msgstr "正在更换磁盘..."
 
 msgid "Replicate <i>"
 msgstr "复制 <i>"
@@ -7774,7 +7774,7 @@ msgstr "如果无法进行增量复制，则从头开始复制"
 msgid ""
 "Replicate snapshots that have not been  created by an automated snapshot "
 "task. Requires setting a naming schema  for the custom snapshots."
-msgstr "复制尚未由自动快照任务创建的快照。需要为自定义快照设置命名方案。"
+msgstr "复制尚未由自动快照任务创建的快照。需要为自定义快照设置命名惯例。"
 
 msgid "Replication"
 msgstr "复制"
@@ -7786,7 +7786,7 @@ msgid "Replication Schedule"
 msgstr "复制计划"
 
 msgid "Replication Status"
-msgstr ""
+msgstr "复制状态"
 
 msgid "Replication Tasks"
 msgstr "复制任务"
@@ -7875,10 +7875,10 @@ msgid "Reset Layout"
 msgstr "重置布局"
 
 msgid "Reset Table Columns to Default"
-msgstr ""
+msgstr "将表列重置为默认值"
 
 msgid "Reset all tables to display default columns."
-msgstr ""
+msgstr "重置所有表以显示默认列。"
 
 msgid "Reset font size to default value"
 msgstr "重置字体大小到默认值"
@@ -7898,7 +7898,7 @@ msgstr ""
 "</b>会生成一个新的加密密钥，并提示下载新密钥的备份。"
 
 msgid "Reset to Defaults"
-msgstr ""
+msgstr "重置为默认值"
 
 msgid "Resetting system configuration to default settings. The system will restart."
 msgstr "将系统配置重置为默认设置。系统将重新启动。"
@@ -7919,7 +7919,7 @@ msgid "Resilvering"
 msgstr "重新同步"
 
 msgid "Resilvering Status"
-msgstr ""
+msgstr "重新同步状态"
 
 msgid "Resolution"
 msgstr "分辨率"
@@ -7972,10 +7972,10 @@ msgid "Room"
 msgstr "Room"
 
 msgid "Root dataset ACL cannot be edited."
-msgstr ""
+msgstr "根数据集ACL无法编辑。"
 
 msgid "Root dataset permissions cannot be edited."
-msgstr ""
+msgstr "根数据集权限无法编辑。"
 
 msgid "Root node is not a valid value"
 msgstr "根节点无效"
@@ -7990,10 +7990,10 @@ msgid "Routing Key"
 msgstr "路由键"
 
 msgid "Rsync Tasks"
-msgstr "Rsync 任务"
+msgstr "Rsync任务"
 
 msgid "Rsync mode"
-msgstr "Rsync 模式"
+msgstr "Rsync模式"
 
 msgid "Run As User"
 msgstr "以用户身份运行"
@@ -8020,25 +8020,25 @@ msgid ""
 msgstr "以此用户身份在Jail中运行命令。默认情况下，命令以当前用户身份运行。"
 
 msgid "Run this cloud sync now?"
-msgstr "现在运行这个云同步？"
+msgstr "现在运行此云同步？"
 
 msgid "Run this cron job now?"
-msgstr "现在运行这个计划任务？"
+msgstr "现在运行此计划任务？"
 
 msgid "Run this rsync now?"
-msgstr "现在运行这个Rsync？"
+msgstr "现在运行此Rsync？"
 
 msgid "S.M.A.R.T. Test"
-msgstr "S.M.A.R.T. 测试"
+msgstr "S.M.A.R.T.测试"
 
 msgid "S.M.A.R.T. Tests"
-msgstr "S.M.A.R.T. 测试"
+msgstr "S.M.A.R.T.测试"
 
 msgid "S.M.A.R.T. extra options"
-msgstr "S.M.A.R.T. 附加选项"
+msgstr "S.M.A.R.T.附加选项"
 
 msgid "SASL wrapping"
-msgstr "SASL 封装"
+msgstr "SASL封装"
 
 msgid "SAVE CONFIGURATION"
 msgstr "保存配置"
@@ -8056,10 +8056,10 @@ msgid "SFTP log level"
 msgstr "SFTP日志级别"
 
 msgid "SMB"
-msgstr ""
+msgstr "SMB"
 
 msgid "SMB Service"
-msgstr ""
+msgstr "SMB服务"
 
 msgid "SMTP Authentication"
 msgstr "SMTP认证"
@@ -8112,7 +8112,7 @@ msgid "STOP"
 msgstr "停止"
 
 msgid "Samba Schema"
-msgstr "Samba Schema"
+msgstr "Samba架构"
 
 msgid "Save"
 msgstr "保存"
@@ -8148,10 +8148,10 @@ msgid "Saving Debug"
 msgstr "保存调试"
 
 msgid "Saving Permissions"
-msgstr ""
+msgstr "保存权限"
 
 msgid "Saving Permissions..."
-msgstr ""
+msgstr "正在保存权限..."
 
 msgid "Schedule"
 msgstr "安排"
@@ -8190,10 +8190,10 @@ msgid "Scheduling"
 msgstr "排程"
 
 msgid "Schema"
-msgstr "Schema"
+msgstr "架构"
 
 msgid "Schema mode"
-msgstr "Schema模式"
+msgstr "架构模型"
 
 msgid "Script"
 msgstr "脚本"
@@ -8214,13 +8214,13 @@ msgid "Scrub Complete"
 msgstr "清理完成"
 
 msgid "Scrub Interval Set"
-msgstr ""
+msgstr "清理时间间隔设置"
 
 msgid "Scrub Pool"
 msgstr "清理存储池"
 
 msgid "Scrub Started"
-msgstr ""
+msgstr "开始清理"
 
 msgid "Scrub Tasks"
 msgstr "清理任务"
@@ -8306,7 +8306,7 @@ msgid ""
 "See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
 "target=\"_blank\"> Self Encrypting Drives</a> section of the user guide for "
 "more information."
-msgstr ""
+msgstr "有关更多信息，请参见用户指南的<a href=\"--docurl--/system.html#self-encrypting-drives\" target=\"_blank\">自加密驱动器</a>部分。"
 
 msgid ""
 "See the <a href=\"http://networkupstools.org/stable-hcl.html\" "
@@ -8363,7 +8363,7 @@ msgid ""
 msgstr "选择<samp>::</samp>以包括所有地址。选择此项后，将无法选择其他地址。"
 
 msgid "Select All"
-msgstr ""
+msgstr "全选"
 
 msgid "Select Authenticator"
 msgstr "选择身份验证器"
@@ -8454,7 +8454,7 @@ msgid ""
 msgstr "选择计划预设或选择<i>“自定义”</i>以打开高级计划程序。"
 
 msgid "Select a schema when Samba Schema is set."
-msgstr "设置Samba Schema时选择架构。"
+msgstr "设置Samba架构时选择架构。"
 
 msgid "Select a screen resolution to use for VNC sessions."
 msgstr "选择一个用于VNC会话的分辨率。"
@@ -9231,9 +9231,9 @@ msgid ""
 "lower case username."
 msgstr ""
 "设置为允许此共享保留用户主目录。家庭共享只能是一个共享。注意：强烈建议使用用户主目录的小写字母名称，因为Samba会将用户名映射为所有小写字母。例如，用"
-"户名John将映射到名为john的主目录。如果家庭共享的<i>路径</i>包含大写的用户名，请删除现有用户，然后在<i> Accounts-> "
-"Users </i>中使用小写的<i> Username < /i>。返回到<i>共享-> SMB "
-"</i>以创建主共享，然后选择包含新的小写用户名的</ i> Path </i>。"
+"户名John将映射到名为john的主目录。如果家庭共享的<i>路径</i>包含大写的用户名，请删除现有用户，然后在<i> 账户-> "
+"用户 </i>中使用小写的<i> 用户名 < /i>。返回到<i>共享-> SMB "
+"</i>以创建主共享，然后选择包含新的小写用户名的</ i> 路径 </i>。"
 
 msgid ""
 "Set to allow users to bypass firewall restrictions using the SSH port <a "
@@ -9918,7 +9918,7 @@ msgstr ""
 "</i>。必须包含字符串<i>％Y</i>，<i>％m</i>，<i>％d</i>，<i>％H</i>和<i>％M</i>，用<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
 "target=\"_blank\">strftime(3)</a>"
-"中定义的四位数的年，月，日，小时和分钟替换。显示快照生存期的字符串会附加到名称中。例如，命名模式为<i> "
+"中定义的四位数的年，月，日，小时和分钟替换。显示快照生存期的字符串会附加到名称中。例如，命名惯例为<i> "
 "customsnap-%Y%m%d.%H%M</i>且其生存期为两周的<i> pool1 "
 "</i>快照的名称类似于<i>pool1@customsnap-20190315.0527-2w</i>。"
 
@@ -10039,10 +10039,10 @@ msgid "Start time for the replication task."
 msgstr "复制任务的开始时间。"
 
 msgid "Starting Jail"
-msgstr "启动Jail"
+msgstr "正在启动Jail"
 
 msgid "Starting job..."
-msgstr "开始任务..."
+msgstr "正在开始任务..."
 
 msgid "State"
 msgstr "状态"
@@ -10159,7 +10159,7 @@ msgid "Successfully exported/disconnected '"
 msgstr "成功导出/断开'"
 
 msgid "Successfully replaced disk "
-msgstr ""
+msgstr "成功更换磁盘 "
 
 msgid "Successfully reset encryption for pool: "
 msgstr "成功重置存储池的加密： "
@@ -10237,7 +10237,7 @@ msgid "System domain name, like <i>example.com</i>"
 msgstr "系统域名，例如<i>example.com</i>"
 
 msgid "System failed to save configuration settings. Check the network connection."
-msgstr ""
+msgstr "系统无法保存配置设置。检查网络连接。"
 
 msgid "System host time to synchronize the time between jail and host."
 msgstr "系统主机时间，用于同步Jail和主机之间的时间。"
@@ -10336,10 +10336,10 @@ msgid "Task Name"
 msgstr "任务名称"
 
 msgid "Task Started"
-msgstr ""
+msgstr "任务已开始"
 
 msgid "Task Stopped"
-msgstr ""
+msgstr "任务已停止"
 
 msgid "Task is running"
 msgstr "任务正在运行"
@@ -10385,7 +10385,7 @@ msgid "The <i><b>"
 msgstr "该 <i><b>"
 
 msgid "The AFP"
-msgstr ""
+msgstr "AFP"
 
 msgid ""
 "The API_KEY to use as the sender. This must be a valid UUID. It can be "
@@ -10408,7 +10408,7 @@ msgid ""
 msgstr "用于在使用独立LDAP服务器时访问LDAP服务器的LDAP URL。"
 
 msgid "The NFS"
-msgstr ""
+msgstr "NFS"
 
 msgid ""
 "The OU in which new computer accounts are created.  The OU string is read "
@@ -10425,10 +10425,10 @@ msgstr ""
 "建新的计算机帐户。"
 
 msgid "The SMB"
-msgstr ""
+msgstr "SMB"
 
 msgid "The SMB service has been restarted."
-msgstr ""
+msgstr "SMB服务已重新启动。"
 
 msgid ""
 "The SSL certificate to be used for TLS FTP connections. To create a "
@@ -10448,7 +10448,7 @@ msgid "The active controller cannot be detected."
 msgstr "无法检测到活动控制器。"
 
 msgid "The administrator password is incorrect."
-msgstr ""
+msgstr "管理员密码错误。"
 
 msgid ""
 "The base name is automatically prepended if the target name does not start "
@@ -10538,7 +10538,7 @@ msgid "The hostname or IP address of the LDAP server."
 msgstr "LDAP服务器的主机名或IP地址。"
 
 msgid "The iSCSI"
-msgstr ""
+msgstr "iSCSI"
 
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
@@ -10592,13 +10592,13 @@ msgstr "唯一可用的服务器角色是新域的域控制器。"
 msgid ""
 "The operation timed out. The requested resource might be offline. Check the "
 "network connection."
-msgstr ""
+msgstr "操作超时。请求的资源可能处于脱机状态。检查网络连接。"
 
 msgid "The passwords do not match."
-msgstr ""
+msgstr "密码不匹配。"
 
 msgid "The pool <i>"
-msgstr ""
+msgstr "存储池<i>"
 
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
@@ -10612,7 +10612,7 @@ msgid ""
 "href=\"https://www.iana.org/assignments/service-names-port-numbers/service-"
 "names-port-numbers.xhtml\"  target=\"_blank\">Internet Assigned Numbers "
 "Authority (IANA) registry</a>."
-msgstr ""
+msgstr "主机系统上将数据转发到Jail的端口。避免使用另一个系统服务已在使用的端口。有关常用端口的列表，请参见<a href=\"https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml\"  target=\"_blank\">Internet Assigned Numbers Authority (IANA) registry</a>部分。"
 
 msgid ""
 "The recovery key is an additional key file that  can be used to decrypt the "
@@ -10660,7 +10660,7 @@ msgstr ""
 msgid ""
 "The sharing configuration will be removed.    Data in the share dataset "
 "will not be affected."
-msgstr ""
+msgstr "共享配置将被删除。共享数据集中的数据不受影响。"
 
 msgid "The specified permissions of that group are used by all clients."
 msgstr "所有客户端都使用该组的指定权限。"
@@ -10705,7 +10705,7 @@ msgid ""
 "<a href=\"https://www.freebsd.org/cgi/man.cgi?query=udp\" "
 "target=\"_blank\">UDP</a>  for an unreliable and unordered one-way data "
 "transmission."
-msgstr ""
+msgstr "端口使用的连接类型。选择<a href=\"https://www.freebsd.org/cgi/man.cgi?query=tcp\" target=\"_blank\"> TCP </a>进行可靠的双向数据传输。或选择<a href=\"https://www.freebsd.org/cgi/man.cgi?query=udp\" target=\"_blank\"> UDP </a>进行不可靠且无序的单向数据传输。"
 
 msgid "The update file is temporarily stored here before being applied."
 msgstr "更新文件在应用之前会暂时存储在此处。"
@@ -10717,7 +10717,7 @@ msgid ""
 msgstr "<i>从</i>电子邮件地址使用用户帐户的<i>电子邮件</i>地址发信。必须首先配置<b>帐户>用户>编辑</b>中的<i>电子邮件</i>用户帐户。"
 
 msgid "The value is out of range. Enter a value between "
-msgstr ""
+msgstr "该值超出范围。输入一个介于 "
 
 msgid ""
 "The value of the jail <a "
@@ -10729,7 +10729,7 @@ msgid ""
 msgstr ""
 "jail的值<a href=\"https://www.freebsd.org/doc/faq/security.html#idp60202568\" "
 "target=\"_blank\">securelevel</a> sysctl. "
-"jail的安全级别永远不会低于主机系统。设置此参数可以提高安全级别。如果更改了主机系统安全级别，则jail安全级别至少会同样安全。"
+"Jail的安全级别永远不会低于主机系统。设置此参数可以提高安全级别。如果更改了主机系统安全级别，则jail安全级别至少会同样安全。"
 
 msgid ""
 "The web service must restart  for the protocol changes to take effect. The "
@@ -10790,7 +10790,7 @@ msgstr "此数据集的ACL过于复杂，无法使用权限编辑器进行编辑
 msgid ""
 "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
 "units are not specified, the value defaults to"
-msgstr ""
+msgstr "该字段接受人类可读的输入（例如50 GiB，500M，2 TB）。如果未指定单位，则默认值为"
 
 msgid "This field is required"
 msgstr "这是必填栏"
@@ -10814,7 +10814,7 @@ msgid "This is the serial number of the disk."
 msgstr "这是磁盘的序列号。"
 
 msgid "This name has already been used."
-msgstr ""
+msgstr "此名称已被使用。"
 
 msgid ""
 "This number selects the routing table (<a "
@@ -10849,7 +10849,7 @@ msgstr "阈值温度（摄氏度）。如果驱动器温度高于此温度，则
 msgid ""
 "Time (in seconds) before the system  stops attempting to establish a "
 "connection with the remote system."
-msgstr ""
+msgstr "系统停止尝试与远程系统建立连接之前的时间（以秒为单位）。"
 
 msgid "Time Machine"
 msgstr "时间机器"
@@ -10909,10 +10909,10 @@ msgid "Transfer Mode"
 msgstr "传输模式"
 
 msgid "Transfer Mode Reset"
-msgstr ""
+msgstr "重置传输模式"
 
 msgid "Transfer Mode has been reset to <i>COPY</i>."
-msgstr ""
+msgstr "传输模式已重设为<i> COPY </i>。"
 
 msgid "Transfers"
 msgstr "转移"
@@ -11003,7 +11003,7 @@ msgstr ""
 "</i>。例如：https://onedrive.live.com/?id=root&cid=<i>12A34567B89C10D1</i>。"
 
 msgid "Unique snapshot name. Cannot be used with  a <i>Naming Schema</i>."
-msgstr "唯一的快照名称。不能与<i>命名方案</i>一起使用。"
+msgstr "唯一的快照名称。不能与<i>命名惯例</i>一起使用。"
 
 msgid "Unix Shares (NFS)"
 msgstr "Unix共享（NFS）"
@@ -11025,7 +11025,7 @@ msgid ""
 msgstr "Unmask用于新创建的文件。默认是<i>000</i>（所有人可读写和运行）。"
 
 msgid "Unselect All"
-msgstr ""
+msgstr "取消全选"
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr "在显示控制台菜单之前，取消设置为系统添加登录提示。"
@@ -11091,7 +11091,7 @@ msgid "Update Period"
 msgstr "更新周期"
 
 msgid "Update Plugins"
-msgstr ""
+msgstr "更新插件"
 
 msgid "Update Settings"
 msgstr "更新设置"
@@ -11106,7 +11106,7 @@ msgid "Update successful. Please reboot for the update to take effect. Reboot no
 msgstr "更新成功。请重启以便更新生效。现在重启？"
 
 msgid "Updated"
-msgstr ""
+msgstr "已更新"
 
 msgid "Updates Available"
 msgstr "有可用的更新"
@@ -11249,7 +11249,7 @@ msgid "Use unencrypted connection."
 msgstr "使用未加密的连接。"
 
 msgid "Used"
-msgstr ""
+msgstr "已使用"
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
@@ -11270,13 +11270,13 @@ msgid "User Bind Path"
 msgstr "用户绑定路径"
 
 msgid "User CN"
-msgstr "用户 CN"
+msgstr "用户CN"
 
 msgid "User Controls"
 msgstr "用户控制"
 
 msgid "User DN"
-msgstr "用户 DN"
+msgstr "用户DN"
 
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr "用于身份验证的用户可分辨名称（DN）。"
@@ -11288,10 +11288,10 @@ msgid "User Guide"
 msgstr "用户指南"
 
 msgid "User ID"
-msgstr "用户 ID"
+msgstr "用户ID"
 
 msgid "User account password for logging into the  remote system."
-msgstr ""
+msgstr "登录到远程系统的用户帐户密码。"
 
 msgid ""
 "User account to create for CHAP authentication with the user on the remote "
@@ -11325,7 +11325,7 @@ msgid "Username for logging in to the provider and  updating the record."
 msgstr "登录提供者并更新记录的用户名。"
 
 msgid "Username for logging in to the remote system."
-msgstr ""
+msgstr "登录远程系统的用户名。"
 
 msgid "Username for this service."
 msgstr "此服务的用户名。"
@@ -11364,10 +11364,10 @@ msgid "Users & Groups"
 msgstr "用户与群组"
 
 msgid "Using pool "
-msgstr ""
+msgstr "正在使用存储池"
 
 msgid "VFS Objects"
-msgstr "VFS 对像"
+msgstr "VFS 对象"
 
 msgid "VLAN ID"
 msgstr "虚拟局域网ID"
@@ -11420,7 +11420,7 @@ msgid "Value"
 msgstr "值"
 
 msgid "Value must be greater than "
-msgstr ""
+msgstr "值必须大于 "
 
 msgid "Variable"
 msgstr "变量"
@@ -11605,7 +11605,7 @@ msgid ""
 msgstr "设置后，如果本地用户是<i>wheel</i>组的成员，则只允许访问其主目录。"
 
 msgid "When set, report CPU usage in percent  instead of units of kernel time."
-msgstr ""
+msgstr "设置后，以百分比而不是内核时间为单位报告CPU使用率。"
 
 msgid ""
 "When set, rsync is run recursively, preserving                symlinks, "
@@ -11718,7 +11718,7 @@ msgid "Zvol Location"
 msgstr "Zvol位置"
 
 msgid "Zvol name"
-msgstr ""
+msgstr "Zvol名称"
 
 msgid ""
 "[Use fewer transactions in exchange for more "
@@ -11877,7 +11877,7 @@ msgid "hostid_strict_check"
 msgstr "hostid_strict_check"
 
 msgid "iSCSI"
-msgstr ""
+msgstr "iSCSI"
 
 msgid "interfaces"
 msgstr "接口"
@@ -12015,7 +12015,7 @@ msgid "stop_timeout"
 msgstr "STOP_TIMEOUT"
 
 msgid "swapuse"
-msgstr "交换使用"
+msgstr "swapuse"
 
 msgid "sysvmsg"
 msgstr "sysvmsg"
@@ -12054,7 +12054,7 @@ msgid "wallclock"
 msgstr "挂钟"
 
 msgid "was successfully attached."
-msgstr ""
+msgstr "已成功附加。"
 
 msgid "yes"
 msgstr "是"

@@ -711,6 +711,19 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       disabled: false,
     },
     {
+      type: 'input',
+      name: 'nat_interface',
+      placeholder: helptext.nat_interface_placeholder,
+      tooltip: helptext.nat_interface_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "nat",
+          value: true,
+        }]
+      }],
+    },
+    {
       type: 'checkbox',
       name: 'nat_forwards_checkbox',
       placeholder: 'nat_forwards',
