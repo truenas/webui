@@ -47,13 +47,16 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
           return b.time_started.$date - a.time_started.$date;
         });
         this.dataSource.sort = this.sort;
+        this.dataSource.data.forEach((i) => {
+          delete i.exception;
+        })
       },
       (err)=> {
 
       });
 
       this.getData().subscribe(
-        (res) => {
+        (res) => { 
           res.percent = res.progress.percent;
           const targetRow = _.findIndex(this.dataSource.data, {'id': res.id});
           if (targetRow === -1) {
