@@ -10,21 +10,19 @@ export const helptext_system_bootenv = {
  available to ZFS. Set to use the entire capacity of\
  the new device."
   ),
-  allowedCharacters : T('Alphanumeric characters, dashes (-), underscores (_), \
-   and periods (.) are allowed.'),
 
   clone_name_placeholder: T("Name"),
   clone_name_tooltip: T(
-    `Name of the new cloned boot environment.`
-  ),
+    `Name of the new cloned boot environment. Alphanumeric characters, dashes (-), underscores (_), \
+    and periods (.) are allowed.`),
   
   clone_source_placeholder: T("Source"),
   clone_source_tooltip: T("Boot environment to be cloned."),
 
   create_name_placeholder: T("Name"),
   create_name_tooltip: T(
-    `Boot environment name.`
- ),
+    `Boot environment name. Alphanumeric characters, dashes (-), underscores (_), \
+    and periods (.) are allowed.`),
 
   list_dialog_activate_action: T("Activate"),
   list_dialog_keep_action: T("Set Keep Flag"),

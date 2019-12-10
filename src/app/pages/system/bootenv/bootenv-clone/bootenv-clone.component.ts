@@ -31,7 +31,7 @@ export class BootEnvironmentCloneComponent {
           type: 'input',
           name: 'name',
           placeholder: helptext_system_bootenv.clone_name_placeholder,
-          tooltip: `${helptext_system_bootenv.clone_name_tooltip} ${helptext_system_bootenv.allowedCharacters}`,
+          tooltip: helptext_system_bootenv.clone_name_tooltip,
           validation : [ regexValidator(this.bootEnvService.bootenv_name_regex)],
           required: true
         },
