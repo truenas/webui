@@ -72,7 +72,7 @@ export class CronListComponent {
                 )
               ).subscribe(
                 res => {
-                  const message = row.enabled == true ? 'This job is scheduled to run again ' + row.next_run + '.' : ''; 
+                  const message = row.enabled == true ? T('This job is scheduled to run again ' + row.next_run + '.') : T('This job will not run again until it is enabled.'); 
                   this.dialog.Info(T("Job " + row.description + ' Completed Successfully'), message, '500px', 'info', true);
                 },
                 err => new EntityUtils().handleError(this, err)
