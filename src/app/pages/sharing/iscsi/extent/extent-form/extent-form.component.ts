@@ -155,7 +155,32 @@ export class ExtentFormComponent {
       name: 'rpm',
       placeholder: helptext_sharing_iscsi.extent_placeholder_rpm,
       tooltip: helptext_sharing_iscsi.extent_tooltip_rpm,
-      options: [],
+      options: [
+        {
+          label: 'UNKNOWN',
+          value: 'UNKNOWN',
+        },
+        {
+          label: 'SSD',
+          value: 'SSD',
+        },
+        {
+          label: '5400',
+          value: '5400',
+        },
+        {
+          label: '7200',
+          value: '7200',
+        },
+        {
+          label: '10000',
+          value: '10000',
+        },
+        {
+          label: '15000',
+          value: '15000',
+        },
+      ],
       value: 'SSD',
     },
     {
@@ -165,8 +190,6 @@ export class ExtentFormComponent {
       tooltip: helptext_sharing_iscsi.extent_tooltip_ro,
     },
   ];
-
-  protected rpm_control: any;
   protected deviceFieldGroup: any[] = [
     'disk',
   ];
@@ -204,14 +227,6 @@ export class ExtentFormComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-
-    this.rpm_control = _.find(this.fieldConfig, {'name' : 'rpm'});
-    this.iscsiService.getRPMChoices().subscribe((res) => {
-      res.forEach((item) => {
-        this.rpm_control.options.push({label : item[1], value : item[0]});
-      });
-    });
-
     let extent_disk_field = _.find(this.fieldConfig, {'name' : 'disk'});
     //get device options
     this.iscsiService.getExtentDevices().subscribe((res) => {
