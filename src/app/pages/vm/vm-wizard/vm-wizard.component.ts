@@ -550,25 +550,23 @@ export class VMWizardComponent {
       });
 
     });
-    this.ws.call('notifier.choices', [ 'VM_NICTYPES' ]).subscribe((res) => {
-          this.nicType = _.find(this.wizardConfig[3].fieldConfig, {name : "NIC_type"});
-          res.forEach((item) => {
-            this.nicType.options.push({label : item[1], value : item[0]});
-          });
+        this.nicType = _.find(this.wizardConfig[3].fieldConfig, {name : "NIC_type"});
+        this.vmService.getNICTypes().forEach((item) => {
+          this.nicType.options.push({label : item[1], value : item[0]});
+        });
+        
         ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type'].setValue(
           this.nicType.options[0].value
         )
-        });
 
-      this.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-        this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
-        res.forEach((item) => {
-          this.bootloader.options.push({label : item[1], value : item[0]})
-        });
+      this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
+      this.vmService.getBootloaderOptions().forEach((item) => {
+        this.bootloader.options.push({label : item[1], value : item[0]})
+      });
+
       ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
         this.bootloader.options[0].value
       )
-      });
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
