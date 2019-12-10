@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
-import { catchError, map, switchMap, tap, take, filter } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap, filter } from 'rxjs/operators';
 import { AppLoaderService, DialogService, RestService, WebSocketService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector : 'app-smb-form',
@@ -26,6 +26,7 @@ export class SMBFormComponent {
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
   public isTimeMachineOn = false;
+  public namesInUse: string[] = [];
 
   protected fieldSets: FieldSet[] = [
     {
@@ -43,13 +44,16 @@ export class SMBFormComponent {
           validation : helptext_sharing_smb.validators_path
         },
         {
-          type: 'input',
-          name: 'name',
+          type: "input",
+          name: "name",
           placeholder: helptext_sharing_smb.placeholder_name,
           tooltip: helptext_sharing_smb.tooltip_name,
-          validation: this.forbiddenNameValidator.bind(this),
+          validation: [forbiddenValues(this.namesInUse), Validators.required],
           hasErrors: false,
-          errors: helptext_sharing_smb.errormsg_name
+          errors: helptext_sharing_smb.errormsg_name,
+          blurStatus: true,
+          blurEvent: this.blurEventName,
+          parent: this
         },
         {
           type: 'checkbox',
@@ -199,6 +203,8 @@ export class SMBFormComponent {
     }
   ];
 
+  public entityForm: EntityFormComponent;
+
   constructor(
     protected router: Router,
     protected rest: RestService,
@@ -206,7 +212,23 @@ export class SMBFormComponent {
     private dialog: DialogService,
     protected loader: AppLoaderService,
     private activatedRoute: ActivatedRoute
-  ) {}
+  ) {
+    combineLatest(
+      this.ws.call("sharing.smb.query", []),
+      this.activatedRoute.paramMap
+    )
+      .pipe(
+        map(([shares, pm]) => {
+          const pk = parseInt(pm.get("pk"), 10);
+          return shares
+            .filter(share => isNaN(pk) || share.id !== pk)
+            .map(share => share.name);
+        })
+      )
+      .subscribe(shareNames => {
+        ["global", ...shareNames].forEach(n => this.namesInUse.push(n));
+      });
+  }
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -232,21 +254,20 @@ export class SMBFormComponent {
       });
   }
 
-  toggleFieldsets(isAdvanced = false): void {
+  /* Show/hide advanced fieldsets */
+  toggleFieldsets(isShow = false): void {
     this.fieldSets
       .filter(
         set =>
           set.name !== helptext_sharing_smb.fieldset_general &&
           set.name !== "divider" &&
-          set.name !== 'spacer'
+          set.name !== "spacer"
       )
-      .forEach(set => (set.label = isAdvanced));
+      .forEach(set => { set.label = isShow; });
 
     const divSets = this.fieldSets.filter(set => set.name === "divider");
-
-    divSets
-      .filter((_, index) => index < divSets.length - 1)
-      .forEach(set => (set.divider = isAdvanced));
+    divSets.pop(); /* Always show last divider */
+    divSets.forEach(set => { set.divider = isShow; });
   }
 
   afterSave(entityForm) {
@@ -358,6 +379,7 @@ export class SMBFormComponent {
   }
 
   afterInit(entityForm: EntityFormComponent) {
+    this.entityForm = entityForm;
     this.ws.call('sharing.smb.vfsobjects_choices', [])
         .subscribe((res) => {
           this.cifs_vfsobjects = this.fieldSets
@@ -374,21 +396,26 @@ export class SMBFormComponent {
       entityForm.formGroup.controls['browsable'].setValue(true);
     }
 
-    entityForm.formGroup.controls['name'].statusChanges.subscribe((res) => {
-      const target = this.fieldSets
-        .find(set => set.name === helptext_sharing_smb.fieldset_general)
-        .config.find(config => config.name === "name");
-      res === 'INVALID' ? target.hasErrors = true : target.hasErrors = false;
-    })
+    /*  If name is empty, auto-populate after path selection */
+    entityForm.formGroup.controls['path'].valueChanges.subscribe(path => {
+      const nameControl = entityForm.formGroup.controls['name'];
+      if (path && !nameControl.value) {
+        const v = path.split('/').pop();
+        nameControl.setValue(v);
+      }
+    });
+
     setTimeout(() => {
       if (entityForm.formGroup.controls['timemachine'].value) { this.isTimeMachineOn = true };
     }, 700)
   }
 
-  forbiddenNameValidator(control: FormControl): {[key: string]: boolean} {
-    if (control.value === 'global') {
-      return {'nameIsForbidden': true}
+  /* If user blurs name field with empty value, try to auto-populate based on path */
+  blurEventName(parent: { entityForm: EntityFormComponent }) {
+    const pathControl = parent.entityForm.formGroup.controls['path'];
+    const nameControl = parent.entityForm.formGroup.controls['name'];
+    if (pathControl.value && !nameControl.value) {
+      nameControl.setValue(pathControl.value.split('/').pop());
     }
-    return null;
   }
 }
