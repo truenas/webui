@@ -34,7 +34,7 @@ export class ServiceLLDPComponent {
           name : 'country',
           placeholder : helptext.lldp_country_placeholder,
           tooltip: helptext.lldp_country_tooltip,
-          validation: [this.countryValidator('lldp_country')],
+          validation: [this.countryValidator('country')],
         },
         {
           type : 'input',
