@@ -190,7 +190,6 @@ export const helptext_sharing_iscsi = {
     "Entering <i>0</i> uses the actual file size and requires that the\
  file already exists. Otherwise, specify the file size for the new file."
   ),
-  extent_validators_filesize: [Validators.required],
 
   extent_placeholder_blocksize: T("Logical block size"),
   extent_tooltip_blocksize: T(

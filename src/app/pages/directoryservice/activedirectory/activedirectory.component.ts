@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 
 import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
+import { EntityUtils } from '../../common/entity/utils';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
@@ -25,6 +26,8 @@ export class ActiveDirectoryComponent {
   protected idmap_backend: any;
   protected nss_info: any;
   protected ldap_sasl_wrapping: any;
+  public adStatus = false;
+  entityEdit: any;
 
   public custActions: Array<any> = [
     {
@@ -53,7 +56,62 @@ export class ActiveDirectoryComponent {
             helptext.activedirectory_custactions_clearcache_dialog_message);
         })
       }
-    }
+    },
+    {
+      'id' : 'leave_domain',
+      'name' : helptext.activedirectory_custactions_leave_domain,
+      function : () => { 
+        const that = this;
+        console.log(that)
+        this.dialogservice.dialogForm(
+          {
+            title: helptext.activedirectory_custactions_leave_domain,
+            fieldConfig: [
+              {
+                type: 'paragraph',
+                name: 'message',
+                paraText: helptext.ad_leave_domain_dialog.message,
+              },
+              {
+                type: 'input',
+                name: 'username',
+                placeholder: helptext.ad_leave_domain_dialog.username,
+                required: true
+              },
+              {
+                type: 'input',
+                name: 'password',
+                placeholder: helptext.ad_leave_domain_dialog.pw,
+                inputType : 'password',
+                togglePw: true,
+                required: true
+              },
+            ],
+            saveButtonText: helptext.activedirectory_custactions_leave_domain,
+            customSubmit: function (entityDialog) {
+              const value = entityDialog.formValue;
+              const self = entityDialog;
+              self.loader.open();
+              self.ws.call('activedirectory.leave', [{username: value.username, password: value.password}])
+                .subscribe((res) => {
+                  self.loader.close();
+                  self.dialogRef.close(true);
+                  _.find(that.fieldConfig, {'name' : 'enable'})['value'] = false;
+                  that.entityEdit.formGroup.controls['enable'].setValue(false);
+                  that.adStatus = false;
+                  that.isCustActionVisible('leave_domain');
+                  that.dialogservice.Info(helptext.ad_leave_domain_dialog.success, 
+                    helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
+                },
+                err => {
+                  self.loader.close();
+                  new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, that.dialogservice);
+                });
+            }
+          }
+        ); 
+      }
+    },
   ];
 
   public fieldConfig: FieldConfig[] = [
@@ -81,8 +139,6 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_bindpw_name,
       placeholder : helptext.activedirectory_bindpw_placeholder,
       tooltip : helptext.activedirectory_bindpw_tooltip,
-      validation : helptext.activedirectory_bindpw_validation,
-      required: true,
       togglePw: true,
       disabled: false,
       isHidden:false
@@ -239,7 +295,9 @@ export class ActiveDirectoryComponent {
       return false;
     } else if (actionname === 'basic_mode' && this.isBasicMode === true) {
       return false;
-    } else if (actionname === 'edit_idmap' && this.isBasicMode === true) {
+    } else if ((actionname === 'edit_idmap' || actionname === 'leave_domain') && this.isBasicMode === true) {
+      return false;
+    } else if (actionname === 'leave_domain' && this.adStatus === false) {
       return false;
     }
     return true;
@@ -249,7 +307,7 @@ export class ActiveDirectoryComponent {
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService,
-              private dialogservice: DialogService) {}
+              protected dialogservice: DialogService) {}
 
   resourceTransformIncomingRestData(data) {
     if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
@@ -272,9 +330,13 @@ export class ActiveDirectoryComponent {
         }
       });
     }
+    this.ws.call('directoryservices.get_state').subscribe((res) => {
+      res.activedirectory === 'HEALTHY' ? this.adStatus = true : this.adStatus = false;
+    });
   }
 
   afterInit(entityEdit: any) { 
+    this.entityEdit = entityEdit;
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
       res.data.forEach((item) => {
@@ -347,6 +409,10 @@ export class ActiveDirectoryComponent {
       }
     });
 
+    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res)=> {
+      _.find(this.fieldConfig, {'name' : 'bindpw'})['required'] = res;
+    });
+
     entityEdit.formGroup.controls['kerberos_principal'].valueChanges.subscribe((res)=>{
       if(res){
         entityEdit.setDisabled('bindname', true);
@@ -386,5 +452,11 @@ export class ActiveDirectoryComponent {
 
   submitFunction(body: any) {
     return this.ws.call('activedirectory.update', [body]);
+  }
+
+  afterSubmit(value) {
+    if (value.enable) {
+      this.adStatus = true;
+    }
   }
 }
