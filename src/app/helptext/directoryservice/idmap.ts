@@ -4,15 +4,11 @@ import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/r
 import { greaterThan } from 'app/pages/common/entity/entity-form/validators/compare-validation'; 
 
 export default {
-idmap_ad_range_low_name : 'range_low',
-idmap_ad_range_low_placeholder : T('Range Low'),
-idmap_ad_range_low_tooltip : T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_ad_range_high_name : 'range_high',
-idmap_ad_range_high_placeholder : T('Range High'),
-idmap_ad_range_high_tooltip : T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
+idmap_range_low_placeholder: T('Range Low'),
+idmap_range_high_placeholder: T('Range High'),
+idmap_range_tooltip: T('Range Low and Range High set the range of UID/GID numbers which this \
+ IDMap backend translates. If an external credential like a Windows SID maps to a UID or GID \
+ number outside this range, the external credential is ignored.'),
 
 idmap_ad_schema_mode_name : 'schema_mode',
 idmap_ad_schema_mode_placeholder : T('Schema mode'),
@@ -30,16 +26,6 @@ label: 'sfu20',
 value: 'SFU20',
 }],
 
-idmap_autorid_range_low_name : 'range_low',
-idmap_autorid_range_low_placeholder : T('Range Low'),
-idmap_autorid_range_low_tooltip : T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_autorid_range_high_name : 'range_high',
-idmap_autorid_range_high_placeholder : T('Range High'),
-idmap_autorid_range_high_tooltip : T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
 idmap_autorid_rangesize_name : 'rangesize',
 idmap_autorid_rangesize_placeholder : T('Range Size'),
 idmap_autorid_rangesize_tooltip : T('Define the number of UIDS/GIDS available per domain\
@@ -54,16 +40,6 @@ idmap_autorid_ignore_builtin_name : 'ignore_builtin',
 idmap_autorid_ignore_builtin_placeholder : T('Ignore Builtin'),
 idmap_autorid_ignore_builtin_tooltip : T('Set to ignore mapping requests for the <i>BUILTIN</i>\
  domain.'),
-
-idmap_ldap_range_low_name : 'range_low',
-idmap_ldap_range_low_placeholder : T('Range Low'),
-idmap_ldap_range_low_tooltip: T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_ldap_range_high_name : 'range_high',
-idmap_ldap_range_high_placeholder : T('Range High'),
-idmap_ldap_range_high_tooltip : T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
 idmap_ldap_basedn_name: 'ldap_base_dn',
 idmap_ldap_basedn_placeholder: T('Base DN'),
@@ -103,26 +79,6 @@ idmap_ldap_cert_tooltip: T('Select the certificate of the Active Directory serve
  if SSL connections are used. When no certificates are available, move to the Active Directory server and\
  create a Certificate Authority and Certificate. Import the certificate to this system using the\
  System/Certificates menu.'),
-
-idmap_nss_range_low_name : 'range_low',
-idmap_nss_range_low_placeholder: T('Range Low'),
-idmap_nss_range_low_tooltip: T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_nss_range_high_name : 'range_high',
-idmap_nss_range_high_placeholder: T('Range High'),
-idmap_nss_range_high_tooltip: T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_rfc2307_range_low_name : 'range_low',
-idmap_rfc2307_range_low_placeholder: T('Range Low'),
-idmap_rfc2307_range_low_tooltip: T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_rfc2307_range_high_name : 'range_high',
-idmap_rfc2307_range_high_placeholder: T('Range High'),
-idmap_rfc2307_range_high_tooltip: T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
 
 idmap_rfc2307_ldap_server_name : 'ldap_server',
 idmap_rfc2307_ldap_server_placeholder: T('LDAP Server'),
@@ -192,31 +148,12 @@ idmap_rfc2307_cert_tooltip: T('Select the certificate of the Active Directory se
  create a Certificate Authority and Certificate. Import the certificate to this system using the\
  System/Certificates menu.'),
 
-idmap_rid_range_low_name : 'range_low',
-idmap_rid_range_low_placeholder: T('Range Low'),
-idmap_rid_range_low_tooltip: T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_rid_range_high_name : 'range_high',
-idmap_rid_range_high_placeholder: T('Range High'),
-idmap_rid_range_high_tooltip: T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_script_range_low_name : 'range_low',
-idmap_script_range_low_placeholder: T('Range Low'),
-idmap_script_range_low_tooltip: T('Beginning UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
-idmap_script_range_high_name : 'range_high',
-idmap_script_range_high_placeholder: T('Range High'),
-idmap_script_range_high_tooltip: T('Ending UID/GID number for which this system is\
- authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
-
 idmap_script_name : 'script',
 idmap_script_placeholder: T('Script'),
 idmap_script_tooltip: T('Configure an external program to perform ID mapping. See\
  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html"\
  target="_blank">idmap_script(8)</a> for more details.'),
+
 
 idmap_tdb_range_low_name : 'range_low',
 idmap_tdb_range_low_placeholder: T('Range Low'),
@@ -232,6 +169,8 @@ idmap_error_dialog_title: T('Error'),
 
 idmap_range_low_validator: [rangeValidator(1000, 2147483647), Validators.required],
 idmap_range_high_validator: [rangeValidator(1000, 2147483647), 
-    greaterThan('range_low', ['Range Low']), Validators.required]
+    greaterThan('range_low', ['Range Low']), Validators.required],
 
+idmap_error_dialog_title: T('Error')
 }
+

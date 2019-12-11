@@ -66,6 +66,14 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       tooltip : helptext.int_ipv6auto_tooltip
     },
     {
+      type : 'checkbox',
+      name: 'disable_offload_capabilities',
+      placeholder : helptext.disable_offload_capabilities_placeholder,
+      tooltip : helptext.disable_offload_capabilities_tooltip,
+      isHidden: true,
+      disabled: true,
+    },
+    {
       type: 'select',
       name: 'bridge_members',
       placeholder: helptext.bridge_members_placeholder,
@@ -211,7 +219,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
   private lagg_fields = ['lag_protocol', 'lag_ports'];
   private bridge_fields = ['bridge_members'];
-  private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid'];
+  private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid', 'disable_offload_capabilities'];
   private vlan_pcp:any;
   private vlan_pint:any;
   private lag_ports: any;

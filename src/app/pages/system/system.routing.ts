@@ -38,13 +38,12 @@ import { CertificateAddComponent } from './certificates/certificate-add';
 import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
 import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
 import { SupportComponent } from './support/support.component';
-import {EmailComponent} from './email/';
+import { EmailComponent } from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
-import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './support/eula/eula.component';
 
@@ -345,16 +344,8 @@ export const routes: Routes = [
           data: { title: 'EULA', breadcrumb: 'EULA'}
         }
       ]
-    }, 
-    {
-      path: 'proactivesupport',
-      component: ProactiveSupportComponent,
-      data: {
-          title: 'Proactive Support',
-          breadcrumb: 'Proactive Support',
-          icon: 'perm_phone_msg',
-      }
-    }]
+    }
+    ]
   }
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

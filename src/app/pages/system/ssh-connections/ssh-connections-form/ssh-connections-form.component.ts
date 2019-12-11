@@ -214,23 +214,7 @@ export class SshConnectionsFormComponent {
         private loader: AppLoaderService,
         private dialogService: DialogService,
         private replicationService: ReplicationService) {
-        this.keychainCredentialService.getSSHConnections().subscribe(
-            (res) => {
-                const sshConnections = res.map(sshConnection => sshConnection.name);
-                this.namesInUse.push(...sshConnections);
-                this.namesInUseConnection.push(...sshConnections);
-            }
-        )
-        const privateKeyField = _.find(this.fieldConfig, { name: 'private_key' });
-        this.keychainCredentialService.getSSHKeys().subscribe(
-            (res) => {
-                this.namesInUse.push(...res.filter(sshKey => sshKey.name.endsWith(' Key')).map(sshKey =>
-                    sshKey.name.substring(0, sshKey.name.length - 4)));
-                for (const i in res) {
-                    privateKeyField.options.push({ label: res[i].name, value: res[i].id });
-                }
-            }
-        )
+
     }
 
     isCustActionVisible(actionId) {
@@ -240,9 +224,11 @@ export class SshConnectionsFormComponent {
         return false;
     }
 
-    preInit() {
-        this.aroute.params.subscribe(params => {
+    async preInit() {
+        let pk;
+        await this.aroute.params.subscribe(params => {
             if (params['pk']) {
+                pk = params['pk'];
                 this.queryCallOption[0].push(params['pk']);
                 _.find(this.fieldConfig, { name: 'setup_method' }).isHidden = true;
             } else {
@@ -252,6 +238,23 @@ export class SshConnectionsFormComponent {
                 });
             }
         });
+        this.keychainCredentialService.getSSHConnections().toPromise().then(
+            (res) => {
+                const sshConnections = res.filter(item => item.id != pk).map(sshConnection => sshConnection.name);
+                this.namesInUse.push(...sshConnections);
+                this.namesInUseConnection.push(...sshConnections);
+            }
+        )
+        const privateKeyField = _.find(this.fieldConfig, { name: 'private_key' });
+        this.keychainCredentialService.getSSHKeys().toPromise().then(
+            (res) => {
+                this.namesInUse.push(...res.filter(sshKey => sshKey.name.endsWith(' Key')).map(sshKey =>
+                    sshKey.name.substring(0, sshKey.name.length - 4)));
+                for (const i in res) {
+                    privateKeyField.options.push({ label: res[i].name, value: res[i].id });
+                }
+            }
+        )
     }
 
     afterInit(entityForm) {

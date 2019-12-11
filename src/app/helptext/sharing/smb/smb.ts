@@ -72,10 +72,16 @@ export const helptext_sharing_smb = {
  Existing files are not affected.'),
 
     placeholder_guestok: T('Allow Guest Access'),
-    tooltip_guestok: T('Privileges are the same as the guest account.\
- Guest access is disabled by default in Windows 10 version 1709 and\
- Windows Server version 1903. Additional client-side configuration is\
- required to provide guest access to these clients.'),
+    tooltip_guestok: T('Privileges are the same as the guest account. \
+ Guest access is disabled by default in Windows 10 version 1709 and \
+ Windows Server version 1903. Additional client-side configuration is \
+ required to provide guest access to these clients.<br><br> \
+ <i>MacOS clients:</i> Attempting to connect as a user that does not \
+ exist in FreeNAS <i>does not</i> automatically connect as the guest \
+ account. The <b>Connect As:</b> <i>Guest</i> option must be \
+ specifically chosen in MacOS to log in as the guest account. See the \
+ <a href="https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/" target="_blank">Apple documentation</a> \
+ for more details.'),
 
     placeholer_guestonly: T('Only Allow Guest Access'),
     tooltip_guestonly: T('Requires <b>Allow guest access</b> to also be set.\

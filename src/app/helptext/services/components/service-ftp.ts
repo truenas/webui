@@ -29,14 +29,15 @@ rootlogin_placeholder : T('Allow Root Login'),
 rootlogin_tooltip: T('Setting this option is discouraged as it increases security risk.'),
 
 onlyanonymous_placeholder : T('Allow Anonymous Login'),
-onlyanonymous_tooltip: T('Set to allow anonymous FTP logins with access to the\
+onlyanonymous_tooltip: T('Allow anonymous FTP logins with access to the \
  directory specified in <b>Path</b>.'),
 
 anonpath_placeholder : T('Path'),
 anonpath_tooltip: T('Set the root directory for anonymous FTP connections.'),
 
 onlylocal_placeholder : T('Allow Local User Login'),
-onlylocal_tooltip: T('Required if <b>Anonymous Login</b> is disabled.'),
+onlylocal_tooltip: T('Allow any local user to log in. By default, only \
+ members of the <i>ftp</i> group are allowed to log in.'),
 
 banner_placeholder : T('Display Login'),
 banner_tooltip: T('Specify the message displayed to local login users after\

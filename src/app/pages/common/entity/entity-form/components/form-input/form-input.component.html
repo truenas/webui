@@ -26,7 +26,7 @@
 			autocomplete="new-password">
 	</mat-form-field>
 	<ng-template #elseBlock>
-		<span>{{config.placeholder | translate}}</span>
+		<span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>
 		<input type="file" id="fileInput" (change)="changeListener($event)"/>
 	</ng-template>
 	<button mat-icon-button type="button" *ngIf="config.inputType === 'password' && config.togglePw" id="toggle_pw" (click)="togglePW()">

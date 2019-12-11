@@ -982,23 +982,25 @@ export class DatasetFormComponent implements Formconfiguration{
     return field.value;
   }
 
+  isInherited(field, value): boolean {
+    if (!field) {
+      return true;
+    }
+    if (!value || !field.source || field.source ==='INHERITED' || field.source === 'DEFAULT') {
+      return true;
+    }
+    return false;
+  }
+
   resourceTransformIncomingRestData(wsResponse): any {
     const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning) ? this.getFieldValueOrNone(wsResponse.quota_warning) : this.warning;
-    const quota_warning_inherit = ((!wsResponse.quota_warning && !quota_warning) ||
-      wsResponse.quota_warning.source === 'INHERITED' ||
-      wsResponse.quota_warning.source === 'DEFAULT') ? true: false;
+    const quota_warning_inherit = this.isInherited(wsResponse.quota_warning, quota_warning);
     const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical) ? this.getFieldValueOrNone(wsResponse.quota_critical) : this.critical;
-    const quota_critical_inherit = ((!wsResponse.quota_critical && !quota_critical) ||
-      wsResponse.quota_critical.source === 'INHERITED' ||
-      wsResponse.quota_critical.source === 'DEFAULT') ? true: false;
+    const quota_critical_inherit = this.isInherited(wsResponse.quota_critical, quota_critical);
     const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning) ? this.getFieldValueOrNone(wsResponse.refquota_warning) : this.warning;
-    const refquota_warning_inherit = ((!wsResponse.refquota_warning && !refquota_warning) ||
-      wsResponse.refquota_warning.source === 'INHERITED' ||
-      wsResponse.refquota_warning.source === 'DEFAULT') ? true: false;
+    const refquota_warning_inherit = this.isInherited(wsResponse.refquota_warning, refquota_warning);
     const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical) ? this.getFieldValueOrNone(wsResponse.refquota_critical) : this.critical;
-    const refquota_critical_inherit = ((!wsResponse.refquota_critical && !refquota_critical) ||
-      wsResponse.refquota_critical.source === 'INHERITED' ||
-      wsResponse.refquota_critical.source === 'DEFAULT') ? true: false;
+    const refquota_critical_inherit = this.isInherited(wsResponse.refquota_critical, refquota_critical);
     const sizeValues = {};
     for (let i = 0; i < this.size_fields.length; i++) {
       const field = this.size_fields[i];
