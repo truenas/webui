@@ -60,6 +60,9 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
           res.percent = res.progress.percent;
           const targetRow = _.findIndex(this.dataSource.data, {'id': res.id});
           if (targetRow === -1) {
+            if (res.exception) {
+              delete res.exception;
+            }
             this.dataSource.data.push(res);
           } else {
             for (const key in this.dataSource.data[targetRow]) {
