@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 
@@ -27,44 +28,58 @@ export class ScrubFormComponent {
   protected isEntity: boolean = true;
 
   protected preTaskName: string = 'scrub';
-  public fieldConfig: FieldConfig[] = [{
-      type: 'select',
-      name: 'pool',
-      placeholder: helptext.scrub_volume_placeholder,
-      tooltip : helptext.scrub_volume_tooltip,
-      options: [],
-      required: true,
-      validation : helptext.scrub_volume_validation,
-      value: '',
-    }, {
-      type: 'input',
-      inputType: 'number',
-      name: 'threshold',
-      placeholder: helptext.scrub_threshold_placeholder,
-      tooltip: helptext.scrub_threshold_tooltip,
-      value: 35,
-      min: 0,
-      required: true,
-      validation: helptext.scrub_threshold_validation
-    }, {
-      type: 'input',
-      name: 'description',
-      placeholder: helptext.scrub_description_placeholder,
-      tooltip : helptext.scrub_description_tooltip,
-    }, {
-      type: 'scheduler',
-      name: 'scrub_picker',
-      placeholder: helptext.scrub_picker_placeholder,
-      tooltip: helptext.scrub_picker_tooltip,
-      required: true,
-    }, {
-      type: 'checkbox',
-      name: 'enabled',
-      placeholder: helptext.scrub_enabled_placeholder,
-      tooltip : helptext.scrub_enabled_tooltip,
-      value: true,
-    }
-  ];
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
+    {
+      name:'Scrub Task',
+      class:'add-scrub',
+      label:true,
+      width:'300px',
+      config: [
+        {
+          type: 'select',
+          name: 'pool',
+          placeholder: helptext.scrub_volume_placeholder,
+          tooltip : helptext.scrub_volume_tooltip,
+          options: [],
+          required: true,
+          validation : helptext.scrub_volume_validation,
+          value: '',
+        }, {
+          type: 'input',
+          inputType: 'number',
+          name: 'threshold',
+          placeholder: helptext.scrub_threshold_placeholder,
+          tooltip: helptext.scrub_threshold_tooltip,
+          value: 35,
+          min: 0,
+          required: true,
+          validation: helptext.scrub_threshold_validation
+        }, {
+          type: 'input',
+          name: 'description',
+          placeholder: helptext.scrub_description_placeholder,
+          tooltip : helptext.scrub_description_tooltip,
+        }, {
+          type: 'scheduler',
+          name: 'scrub_picker',
+          placeholder: helptext.scrub_picker_placeholder,
+          tooltip: helptext.scrub_picker_tooltip,
+          required: true,
+        }, {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext.scrub_enabled_placeholder,
+          tooltip : helptext.scrub_enabled_tooltip,
+          value: true,
+        }
+      ]
+    },
+    {
+      name:'divider',
+      divider:true
+    },
+  ]
 
   protected volume_field: any;
   protected month_field: any;

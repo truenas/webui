@@ -102,7 +102,11 @@ export class CronFormComponent {
            value: true,
          },
        ]
-     }
+     },
+     {
+       name:'divider',
+       divider:true
+     },
    ];
 
    @ViewChild('form', { static: true}) form:EntityFormComponent;
