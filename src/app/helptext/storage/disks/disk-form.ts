@@ -17,19 +17,6 @@ disk_form_hddstandby_tooltip : T('Indicates the time of inactivity in minutes be
  target="_blank">forum post</a> demonstrates how to\
  determine if a drive has spun down. Temperature monitoring is \
  disabled if the disk is set to enter standby.'),
-disk_form_hddstandby_options: [
- {label:T('Always On'), value:'ALWAYS ON'},
- {label:'5', value: '5'},
- {label:'10', value: '10'},
- {label:'20', value: '20'},
- {label:'30', value: '30'},
- {label:'60', value: '60'},
- {label:'120', value: '120'},
- {label:'180', value: '180'},
- {label:'240', value: '240'},
- {label:'300', value: '300'},
- {label:'330', value: '330'},
-],
 
 disk_form_hddstandby_options: [
  {label:T('Always On'), value:'ALWAYS ON'},
