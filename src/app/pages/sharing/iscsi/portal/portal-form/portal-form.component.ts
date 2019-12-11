@@ -171,4 +171,17 @@ export class PortalFormComponent {
     data['listen'] = this.ip;
   }
 
+  resourceTransformIncomingRestData(data) {
+    const ports = new Map();
+    const groupedIp = [];
+    for (let i = 0; i < data['listen'].length; i++) {
+      if (ports[data['listen'][i].port] === undefined) {
+        ports[data['listen'][i].port] = [];
+        groupedIp.push({ip: ports[data['listen'][i].port], port:data['listen'][i].port});
+      }
+      ports[data['listen'][i].port].push(data['listen'][i]['ip']);
+    }
+    data['listen'] = groupedIp;
+    return data;
+  }
 }
