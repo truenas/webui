@@ -90,7 +90,7 @@ bulk_edit: {
     title: T('Disks'),
     label: T('Settings'),
     disks : {
-        placeholder: T('Editing the following disks:'),
+        placeholder: T('Disks to be edited:'),
         tooltip : T('These are the FreeBSD device names for each disk.'),
     },
     serial : {
@@ -102,4 +102,3 @@ bulk_edit: {
 dialog_error: T('Error updating disks')
 
 }
-
