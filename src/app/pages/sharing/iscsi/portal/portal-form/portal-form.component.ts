@@ -136,7 +136,7 @@ export class PortalFormComponent {
     });
 
     entityForm.formGroup.controls['listen'].valueChanges.subscribe((res) => {
-        this.genPortalAddress(res);
+      this.genPortalAddress(res);
     })
   }
 

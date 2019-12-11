@@ -23,7 +23,6 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all') {
             const regex = ipType === 'ipv4' ? ipv4_regex : ipv6_regex;
             const wildcard = ipType === 'ipv4' ? '0.0.0.0' : '::';
             if (_.indexOf(thisControl.value, wildcard) !== -1) {
-                console.log(thisControl.value)
                 for (let i = 0; i < thisControl.value.length; i++) {
                     if (thisControl.value[i] !== wildcard && regex.test(thisControl.value[i])) {
                         error = [ipType === 'ipv4' ? 'IPv4' : 'IPv6', wildcard, thisControl.value[i]];
