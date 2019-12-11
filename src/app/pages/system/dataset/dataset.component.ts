@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { RestService, WebSocketService, DialogService } from '../../../services/';
+import { WebSocketService, DialogService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_dataset } from 'app/helptext/system/dataset';
 import { EntityUtils } from '../../common/entity/utils';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -14,42 +15,55 @@ import { T } from '../../../translate-marker';
   template : `<entity-form [conf]="this"></entity-form>`,
   providers: []
 })
-export class DatasetComponent implements OnInit{
+export class DatasetComponent {
 
-  protected resource_name: string = 'storage/dataset';
   protected volume_name: string = 'storage/volume';
   public formGroup: FormGroup;
   public entityForm: any;
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'select',
-      name: 'pool',
-      placeholder: helptext_system_dataset.pool.placeholder,
-      tooltip: helptext_system_dataset.pool.tooltip,
-      options: [
-        {label: '---', value: null},
-        { label: 'freenas-boot', value: 'freenas-boot' },
+      name:T('Configure System Dataset'),
+      class:'edit-system-dataset',
+      label:true,
+      width:'300px',
+      config:[
+        {
+          type: 'select',
+          name: 'pool',
+          placeholder: helptext_system_dataset.pool.placeholder,
+          tooltip: helptext_system_dataset.pool.tooltip,
+          options: [
+            {label: '---', value: null},
+            { label: 'freenas-boot', value: 'freenas-boot' },
+          ]
+        },
+        {
+          type: 'checkbox',
+          name: 'syslog',
+          placeholder: helptext_system_dataset.syslog.placeholder,
+          tooltip : helptext_system_dataset.syslog.tooltip
+        }
       ]
     },
     {
-      type: 'checkbox',
-      name: 'syslog',
-      placeholder: helptext_system_dataset.syslog.placeholder,
-      tooltip : helptext_system_dataset.syslog.tooltip
-    }
-  ];
+      name:'divider',
+      divider:true
+    },
+  ]
 
   private pool: any;
   private syslog: any;
-  constructor(private rest: RestService, private ws: WebSocketService,
-              private loader: AppLoaderService, private dialogService: DialogService) {}
+  constructor(private ws: WebSocketService,
+    private loader: AppLoaderService, 
+    private dialogService: DialogService) {}
 
-  ngOnInit() {
-    this.rest.get(this.volume_name, {}).subscribe( res => {
+  preInit(EntityForm) {
+    this.ws.call('pool.query').subscribe( res => {
        if (res) {
          this.pool = _.find(this.fieldConfig, {'name': 'pool'});
-         res.data.forEach( x => {
+         res.forEach( x => {
            this.pool.options.push({ label: x.name, value: x.name});
          });
        }
