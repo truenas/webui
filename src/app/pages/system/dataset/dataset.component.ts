@@ -17,6 +17,10 @@ import { T } from '../../../translate-marker';
 })
 export class DatasetComponent {
 
+  protected queryCall: string = 'systemdataset.config';
+  protected updateCall: string = 'systemdataset.update';
+  public isEntity = false;
+
   public formGroup: FormGroup;
   public entityForm: any;
 
@@ -59,6 +63,7 @@ export class DatasetComponent {
     private dialogService: DialogService) {}
 
   preInit(EntityForm) {
+    
     this.ws.call('pool.query').subscribe( res => {
        if (res) {
          this.pool = _.find(this.fieldConfig, {'name': 'pool'});
@@ -71,10 +76,10 @@ export class DatasetComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-    this.ws.call('systemdataset.config').subscribe(res => {
+    /*this.ws.call('systemdataset.config').subscribe(res => {
       entityForm.formGroup.controls['pool'].setValue(res.pool);
       entityForm.formGroup.controls['syslog'].setValue(res.syslog);
-    });
+    });*/
   }
 
   customSubmit(value) {
