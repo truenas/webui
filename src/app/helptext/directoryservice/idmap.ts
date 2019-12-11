@@ -171,6 +171,5 @@ idmap_range_low_validator: [rangeValidator(1000, 2147483647), Validators.require
 idmap_range_high_validator: [rangeValidator(1000, 2147483647), 
     greaterThan('range_low', ['Range Low']), Validators.required],
 
-idmap_error_dialog_title: T('Error')
 }
 
