@@ -198,6 +198,7 @@ export class ProactiveComponent {
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const proactiveFields: Array<any> = [
+      'enabled',
       'name',
       'title',
       'email',
@@ -206,8 +207,7 @@ export class ProactiveComponent {
       'secondary_title',
       'secondary_email',
       'secondary_phone',
-      'TN_proactive_title',
-      'enabled'
+      'TN_proactive_title'
     ];
 
     const proactiveParatext: Array<any> = [

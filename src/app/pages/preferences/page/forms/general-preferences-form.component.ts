@@ -158,7 +158,8 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
           name: 'allowPwToggle',
           placeholder: T('Enable Password Toggle'),
           value:prefs.allowPwToggle,
-          tooltip: T('This option enables/disables a password toggle button.'),
+          tooltip: T('When set, an <i>eye</i> icon appears next to \
+ password fields. Clicking the icon reveals the password.'),
           class:'inline'
         },
         {

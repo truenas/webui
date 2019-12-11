@@ -14,7 +14,7 @@ export class EntityDashboardComponent implements OnInit {
 	public routeParts: any = [];
 	protected parent: string = "";
 
-	protected freenas_exclude = ['failover', 'proactivesupport', 'viewenclosure'];
+	protected freenas_exclude = ['failover', 'viewenclosure'];
 	protected truenas_exclude = ['acmedns'];
 	constructor(
 				protected ws: WebSocketService,
@@ -44,12 +44,6 @@ export class EntityDashboardComponent implements OnInit {
 			this.ws.call('failover.licensed').subscribe((is_ha) => {
 				if (!is_ha) { // allow failover
 					this.remove('failover');
-				}
-			});
-
-			this.ws.call('support.is_available').subscribe((res) => {
-				if (res !== true) { // allow proactive support
-					this.remove('proactivesupport');
 				}
 			});
 		} else { // if freenas

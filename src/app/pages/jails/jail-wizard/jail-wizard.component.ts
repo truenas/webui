@@ -40,6 +40,21 @@ export class JailWizardComponent {
     }
   }];
 
+  protected interfaces = {
+    vnetEnabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+    vnetDisabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+  }
+
   protected wizardConfig: Wizard[] = [{
       label: helptext.wizard_step1_label,
       fieldConfig: [{
@@ -129,10 +144,7 @@ export class JailWizardComponent {
           name: 'ip4_interface',
           placeholder: helptext.ip4_interface_placeholder,
           tooltip: helptext.ip4_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           relation: [{
             action: "ENABLE",
             connective: 'AND',
@@ -221,10 +233,7 @@ export class JailWizardComponent {
           name: 'ip6_interface',
           placeholder: helptext.ip6_interface_placeholder,
           tooltip: helptext.ip6_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           class: 'inline',
           width: '30%',
           value: '',
@@ -335,12 +344,23 @@ export class JailWizardComponent {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{
         new EntityUtils().handleError(this, res);
+      }
+    );
+
+    this.jailService.getDefaultConfiguration().subscribe(
+      (res) => {
+        const ventInterfaces = res['interfaces'].split(',');
+        for (const item of ventInterfaces) {
+          this.interfaces.vnetEnabled.push({ label: item, value: item});
+        }
+      },
+      (err) => {
+        new EntityUtils().handleError(this, err);
       }
     );
   }
@@ -355,7 +375,8 @@ export class JailWizardComponent {
       } else {
         let full_address = ip4_address_control.value;
         if (ip4_interface_control.value != '') {
-          full_address = ip4_interface_control.value + '|' + ip4_address_control.value;
+          const validInterface = _.find(this.ip4_interfaceField.options, {value: ip4_interface_control.value}) !== undefined;
+          full_address = validInterface ? ip4_interface_control.value + '|' + ip4_address_control.value : ip4_address_control.value;
         }
         if (ip4_netmask_control.value != '') {
           full_address += '/' + ip4_netmask_control.value;
@@ -477,17 +498,8 @@ export class JailWizardComponent {
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
       this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
-      if (res) {
-        if (!_.find(this.ip4_interfaceField.options, { label: 'vnet0'})) {
-          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-        }
-        if (!_.find(this.ip6_interfaceField.options, { label: 'vnet0'})) {
-          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-        }
-      } else {
-        this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
-        this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
-      }
+      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
+      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
 
       if (((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
            ( < FormGroup > entityWizard.formArray.get([1])).controls['nat'].value) ||
@@ -498,6 +510,9 @@ export class JailWizardComponent {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
+
+      this.updateIpAddress(entityWizard, 'ipv4');
+      this.updateIpAddress(entityWizard, 'ipv6');
     });
   }
 

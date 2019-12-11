@@ -13,6 +13,16 @@ activedirectory_custactions_clearcache_id: 'ds_clearcache',
 activedirectory_custactions_clearcache_name: T('Rebuild Directory Service Cache'),
 activedirectory_custactions_clearcache_dialog_title: T("Active Directory"),
 activedirectory_custactions_clearcache_dialog_message: T("The cache is being rebuilt."),
+activedirectory_custactions_leave_domain: T("Leave Domain"),
+
+ad_leave_domain_dialog: {
+    message: T('Leaving the domain requires sufficient privileges. Enter your credentials below.'),
+    username: T('Username'),
+    pw: T('Password'),
+    error: T('Error'),
+    success: T('Success'),
+    success_msg: T('You have left the domain.')
+},
 
 activedirectory_domainname_name: 'domainname',
 activedirectory_domainname_placeholder: T('Domain Name'),
@@ -28,7 +38,6 @@ activedirectory_bindname_validation: [ Validators.required ],
 activedirectory_bindpw_name: 'bindpw',
 activedirectory_bindpw_placeholder: T('Domain Account Password'),
 activedirectory_bindpw_tooltip: T('Enter the administrator account password.'),
-activedirectory_bindpw_validation: [ Validators.required ],
 
 activedirectory_ssl_name: 'ssl',
 activedirectory_ssl_placeholder: T('Encryption Mode'),
@@ -133,8 +142,9 @@ activedirectory_sasl_wrapping_tooltip : T('Choose how LDAP traffic is transmitte
  and newer can be configured to enforce signed LDAP connections.'),
 
 activedirectory_enable_name: 'enable',
-activedirectory_enable_placeholder : T('Enable'),
-activedirectory_enable_tooltip : T('Set to enable the Active Directory service.'),
+activedirectory_enable_placeholder : T('Enable (requires password'),
+activedirectory_enable_tooltip : T('Set to enable the Active Directory service.\
+ Selecting this option requires the Domain Account Password.'),
 
 activedirectory_netbiosname_a_name: 'netbiosname',
 activedirectory_netbiosname_a_placeholder : T('Netbios Name'),

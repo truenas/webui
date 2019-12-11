@@ -647,6 +647,9 @@ blurEvent2(parent){
   const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
   if (isNaN(vm_memory_requested)) {
     console.error(vm_memory_requested) // leaves form in previous error state
+  } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
+    parent.entityWizard.formArray.get([1]).get('memory')
+      .setValue(parent.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
   } else {
     parent.entityWizard.formArray.get([1]).get('memory').setValue(parent.storageService.humanReadable);
     _.find(parent.wizardConfig[1].fieldConfig, {'name' : 'memory'})['hasErrors'] = false;
