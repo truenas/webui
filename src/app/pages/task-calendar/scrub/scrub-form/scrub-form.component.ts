@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
@@ -17,7 +17,11 @@ import helptext from '../../../../helptext/task-calendar/scrub/scrub-form';
 })
 export class ScrubFormComponent {
 
-  protected resource_name: string = 'storage/scrub';
+  protected queryCall: string = 'pool.scrub.query';
+  protected queryKey = 'id';
+  protected pk;
+  protected editCall = 'pool.scrub.update';
+  protected addCall = 'pool.scrub.create';
   protected route_success: string[] = ['tasks', 'scrub'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
@@ -25,7 +29,7 @@ export class ScrubFormComponent {
   protected preTaskName: string = 'scrub';
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
-      name: 'scrub_volume',
+      name: 'pool',
       placeholder: helptext.scrub_volume_placeholder,
       tooltip : helptext.scrub_volume_tooltip,
       options: [],
@@ -35,7 +39,7 @@ export class ScrubFormComponent {
     }, {
       type: 'input',
       inputType: 'number',
-      name: 'scrub_threshold',
+      name: 'threshold',
       placeholder: helptext.scrub_threshold_placeholder,
       tooltip: helptext.scrub_threshold_tooltip,
       value: 35,
@@ -44,7 +48,7 @@ export class ScrubFormComponent {
       validation: helptext.scrub_threshold_validation
     }, {
       type: 'input',
-      name: 'scrub_description',
+      name: 'description',
       placeholder: helptext.scrub_description_placeholder,
       tooltip : helptext.scrub_description_tooltip,
     }, {
@@ -55,7 +59,7 @@ export class ScrubFormComponent {
       required: true,
     }, {
       type: 'checkbox',
-      name: 'scrub_enabled',
+      name: 'enabled',
       placeholder: helptext.scrub_enabled_placeholder,
       tooltip : helptext.scrub_enabled_tooltip,
       value: true,
@@ -65,30 +69,39 @@ export class ScrubFormComponent {
   protected volume_field: any;
   protected month_field: any;
   protected day_field: any;
-  protected mintue_field: any;
+  protected minute_field: any;
   protected hour_field: any;
   protected daymonth_field: any;
 
-  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService) {
+  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService,protected aroute: ActivatedRoute,) {
   }
 
-  preInit() {
-    this.volume_field = _.find(this.fieldConfig, { 'name': 'scrub_volume' });
+  preInit(entityForm) {
+    this.entityForm = entityForm;
+
+    this.aroute.params.subscribe(params => {
+      if (params.pk) {
+        this.pk = params.pk;
+      }
+    });
+
+    this.volume_field = _.find(this.fieldConfig, { 'name': 'pool' });
     this.taskService.getVolumeList().subscribe((res) => {
       for (let i in res.data) {
         this.volume_field.options.push({ label: res.data[i].vol_name, value: res.data[i].id });
       };
     });
+    
   }
 
 
   afterInit(entityForm) {
-    entityForm.formGroup.controls['scrub_volume'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['pool'].valueChanges.subscribe((res) => {
       if (!Number.isInteger(res)) {
         this.taskService.getVolumeList().subscribe((list) => {
           for (let i in list.data) {
             if (list.data[i].vol_name == res) {
-              entityForm.formGroup.controls['scrub_volume'].setValue(list.data[i].id);
+              entityForm.formGroup.controls['pool'].setValue(list.data[i].id);
             }
           }
         });
@@ -98,20 +111,27 @@ export class ScrubFormComponent {
 
   beforeSubmit(value){
     let spl = value.scrub_picker.split(" ");
+    value.schedule = {};
+    value.schedule['minute'] = spl[0];
+    value.schedule['hour'] = spl[1];
+    value.schedule['dom'] = spl[2];
+    value.schedule['month'] = spl[3];
+    value.schedule['dow'] = spl[4];
     delete value.scrub_picker;
-    value['scrub_minute'] = spl[0];
-    value['scrub_hour'] = spl[1];
-    value['scrub_daymonth'] = spl[2];
-    value['scrub_month'] = spl[3];
-    value['scrub_dayweek'] = spl[4];
   }
 
   resourceTransformIncomingRestData(data) {
-    data['scrub_picker'] = data.scrub_minute + " " + 
-                          data.scrub_hour + " " + 
-                          data.scrub_daymonth + " " + 
-                          data.scrub_month + " " + 
-                          data.scrub_dayweek;
+    console.log(data);
+    this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
+    this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
+    this.entityForm.formGroup.controls['description'].setValue(data.description);
+    this.entityForm.formGroup.controls['pool'].setValue(data.id);
+
+    data['scrub_picker'] = data.schedule.minute + " " + 
+                          data.schedule.hour + " " + 
+                          data.schedule.dom + " " + 
+                          data.schedule.month + " " + 
+                          data.schedule.dow;
     return data;
   }
 }
