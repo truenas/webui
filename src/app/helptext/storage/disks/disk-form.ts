@@ -91,7 +91,7 @@ bulk_edit: {
     label: T('Settings'),
     disks : {
         placeholder: T('Disks to be edited:'),
-        tooltip : T('These are the FreeBSD device names for each disk.'),
+        tooltip : T('FreeBSD device names of each disk being edited.'),
     },
     serial : {
         placeholder: T('Serial'),
