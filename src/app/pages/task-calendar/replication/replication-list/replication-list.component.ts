@@ -106,7 +106,7 @@ export class ReplicationListComponent {
 
     stateButton(row) {
         if (row.job) {
-            if (row.state === 'RUNNING') {
+            if (row.state.state === 'RUNNING') {
                 this.entityList.runningStateButton(row.job.id);
             } else {
                 this.job.showLogs(row.job.id);
