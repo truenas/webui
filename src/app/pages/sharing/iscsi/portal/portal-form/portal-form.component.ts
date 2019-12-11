@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Validators } from "@angular/forms";
 
 import * as _ from 'lodash';
 import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services/';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { ipValidator } from "app/pages/common/entity/entity-form/validators/ip-validation";
 
 @Component({
   selector: 'app-iscsi-portal-add',
@@ -63,6 +65,7 @@ export class PortalFormComponent {
       templateListField: [
         {
           type: 'select',
+          multiple: true,
           name: 'ip',
           placeholder: helptext_sharing_iscsi.portal_form_placeholder_ip,
           tooltip: helptext_sharing_iscsi.portal_form_placeholder_ip,
@@ -70,7 +73,7 @@ export class PortalFormComponent {
           class: 'inline',
           width: '60%',
           required: true,
-          validation: helptext_sharing_iscsi.portal_form_validators_ip,
+          validation: [Validators.required, ipValidator('all')]
         },
         {
           type: 'input',
@@ -90,6 +93,7 @@ export class PortalFormComponent {
   protected pk: any;
   protected authgroup_field: any;
   protected entityForm: any;
+  protected ip: any;
 
   constructor(protected router: Router,
     protected iscsiService: IscsiService,
@@ -130,6 +134,10 @@ export class PortalFormComponent {
         ipField.options = listenIpField.options;
       }
     });
+
+    entityForm.formGroup.controls['listen'].valueChanges.subscribe((res) => {
+        this.genPortalAddress(res);
+    })
   }
 
   customEditCall(value) {
@@ -144,6 +152,23 @@ export class PortalFormComponent {
         new EntityUtils().handleWSError(this.entityForm, res);
       }
     );
+  }
+
+  genPortalAddress(data) {
+    let ips = [];
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]['ip']) {
+        const samePortIps = data[i]['ip'].reduce(
+          (fullIps, currip) => fullIps.concat({ip:currip, port:data[i]['port']})
+        , []);
+        ips = ips.concat(samePortIps);
+      }
+    }
+    this.ip = ips;
+  }
+
+  beforeSubmit(data) {
+    data['listen'] = this.ip;
   }
 
 }
