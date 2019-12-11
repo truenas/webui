@@ -23,4 +23,7 @@
     <mat-error *ngIf="control.hasError('regex')">
         {{"Invalid format or character." | translate}}
     </mat-error>
+    <mat-error *ngIf="control.hasError('ip')">
+        {{"Select " | translate}} {{control.errors.info[1]}} {{" to include all " | translate}} {{control.errors.info[0] | translate}} {{" addresses. When this has been chosen, additional addresses cannot be selected." | translate}}
+    </mat-error>
 </div>
