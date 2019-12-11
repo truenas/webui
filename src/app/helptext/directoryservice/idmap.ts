@@ -1,4 +1,7 @@
 import { T } from '../../translate-marker';
+import { Validators } from '@angular/forms';
+import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { greaterThan } from 'app/pages/common/entity/entity-form/validators/compare-validation'; 
 
 export default {
 idmap_range_low_placeholder: T('Range Low'),
@@ -151,5 +154,22 @@ idmap_script_tooltip: T('Configure an external program to perform ID mapping. Se
  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html"\
  target="_blank">idmap_script(8)</a> for more details.'),
 
-idmap_error_dialog_title: T('Error')
+
+idmap_tdb_range_low_name : 'range_low',
+idmap_tdb_range_low_placeholder: T('Range Low'),
+idmap_tdb_range_low_tooltip: T('Beginning UID/GID number for which this system is\
+ authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
+
+idmap_tdb_range_high_name : 'range_high',
+idmap_tdb_range_high_placeholder: T('Range High'),
+idmap_tdb_range_high_tooltip: T('Ending UID/GID number for which this system is\
+ authoritative. UID/GID values below Range Low or higher than Range High are ignored.'),
+
+idmap_error_dialog_title: T('Error'),
+
+idmap_range_low_validator: [rangeValidator(1000, 2147483647), Validators.required],
+idmap_range_high_validator: [rangeValidator(1000, 2147483647), 
+    greaterThan('range_low', ['Range Low']), Validators.required],
+
 }
+
