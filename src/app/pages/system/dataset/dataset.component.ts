@@ -17,7 +17,6 @@ import { T } from '../../../translate-marker';
 })
 export class DatasetComponent {
 
-  protected volume_name: string = 'storage/volume';
   public formGroup: FormGroup;
   public entityForm: any;
 
