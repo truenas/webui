@@ -22,7 +22,7 @@ export class TunableFormComponent {
   protected fieldConfig: FieldConfig[] = [];
   protected fieldSets: FieldSet[] = [
     {
-      name: 'Tunable',
+      name: helptext.metadata.fieldsets[0],
       class:'add-cron',
       label:true,
       width:'300px',
