@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { Http } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
+import { EntityUtils } from '../../../common/entity/utils';
 
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -220,10 +221,19 @@ export class VolumeImportWizardComponent {
 
   getImportableDisks() {
     this.guid.options = [];
-    this.ws.call('pool.import_find').subscribe((res) => {
+    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Finding Disks") }, disableClose: true});
+    dialogRef.componentInstance.setDescription(T("Finding encrypted disks..."));
+    dialogRef.componentInstance.setCall('pool.import_find', []);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         this.guid.options.push({label:res[i].name + ' | ' + res[i].guid, value:res[i].guid});
       }
+      dialogRef.close(false);
+    });
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      new EntityUtils().handleWSError(this.entityWizard, res, this.dialogService);
+      dialogRef.close(false);
     });
   }
 
@@ -262,7 +272,6 @@ export class VolumeImportWizardComponent {
     });
 
     this.guid = _.find(this.wizardConfig[2].fieldConfig, {'name': 'guid'});
-    this.getImportableDisks();
     this.guid_subscription =
     ( < FormGroup > entityWizard.formArray.get([2]).get('guid'))
     .valueChanges.subscribe((res) => {
