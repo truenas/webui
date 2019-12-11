@@ -95,7 +95,7 @@ bulk_edit: {
     },
     serial : {
         placeholder: T('Serial'),
-        tooltip : T('These are the serial numbers for each disk.')
+        tooltip : T('Serial numbers of each disk being edited.')
     }
 
 }, 
