@@ -275,7 +275,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             filter = this.conf.customFilter;
           }
           if (this.conf.queryKey) {
-            filter = [[[this.conf.queryKey, '=', pk]]];
+            filter = [[[this.conf.queryKey, '=', parseInt(pk, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
           }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {

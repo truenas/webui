@@ -3,13 +3,13 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 
 import {
-  RestService,
   SystemGeneralService,
   WebSocketService
 } from '../../../services/';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/ldap';
 
@@ -19,7 +19,6 @@ import helptext from '../../../helptext/directoryservice/ldap';
 })
 
 export class LdapComponent {
-  protected resource_name = 'directoryservice/ldap';
   protected isEntity = false;
   protected queryCall: string = 'ldap.config';
   protected upodateCall: string = 'ldap.update';
@@ -37,12 +36,20 @@ export class LdapComponent {
     {
       id : helptext.ldap_custactions_basic_id,
       name : helptext.ldap_custactions_basic_name,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      function : () => { 
+        this.isBasicMode = !this.isBasicMode; 
+        this.fieldSets.find(set => set.name === helptext.ldap_advanced).label = false;
+        this.fieldSets.find(set => set.name === 'divider').divider = false;
+      }
     },
     {
       id : helptext.ldap_custactions_advanced_id,
       name : helptext.ldap_custactions_advanced_name,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      function : () => { 
+        this.isBasicMode = !this.isBasicMode; 
+        this.fieldSets.find(set => set.name === 'Advanced Settings').label = true;
+        this.fieldSets.find(set => set.name === 'divider').divider = true;
+      }
     },
     {
       id : helptext.ldap_custactions_edit_imap_id,
@@ -55,7 +62,7 @@ export class LdapComponent {
       'id' : helptext.ldap_custactions_clearcache_id,
       'name' : helptext.ldap_custactions_clearcache_name,
        function : async () => {
-         this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+        this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status)=>{
           this.dialogservice.Info(helptext.ldap_custactions_clearcache_dialog_title,
             helptext.ldap_custactions_clearcache_dialog_message);
 
@@ -64,130 +71,169 @@ export class LdapComponent {
     },
   ];
 
-  public fieldConfig: FieldConfig[] = [
-    {
-      type : 'input',
-      name : helptext.ldap_hostname_name,
-      placeholder : helptext.ldap_hostname_placeholder,
-      tooltip: helptext.ldap_hostname_tooltip,
-      required: true,
-      validation: helptext.ldap_hostname_validation
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
+    {      
+      name: helptext.ldap_server_creds,
+      class: 'section_header',
+      label:true,
+      config:[
+        {
+          type : 'input',
+          name : helptext.ldap_hostname_name,
+          placeholder : helptext.ldap_hostname_placeholder,
+          tooltip: helptext.ldap_hostname_tooltip,
+          required: true,
+          validation: helptext.ldap_hostname_validation
+        },
+        {
+          type : 'input',
+          name : helptext.ldap_hostname_noreq_name,
+          placeholder : helptext.ldap_hostname_noreq_placeholder,
+          tooltip: helptext.ldap_hostname_noreq_tooltip
+        },
+        {
+          type : 'input',
+          name : helptext.ldap_basedn_name,
+          placeholder : helptext.ldap_basedn_placeholder,
+          tooltip: helptext.ldap_basedn_tooltip
+        },
+        {
+          type : 'input',
+          name : helptext.ldap_binddn_name,
+          placeholder : helptext.ldap_binddn_placeholder,
+          tooltip: helptext.ldap_binddn_tooltip
+        },
+        {
+          type : 'input',
+          name : helptext.ldap_bindpw_name,
+          placeholder : helptext.ldap_bindpw_placeholder,
+          tooltip: helptext.ldap_bindpw_tooltip,
+          inputType : 'password',
+          togglePw : true
+        },
+        {
+          type : 'checkbox',
+          name : helptext.ldap_enable_name,
+          placeholder : helptext.ldap_enable_placeholder,
+          tooltip: helptext.ldap_enable_tooltip
+        }
+      ]
     },
-    {
-      type : 'input',
-      name : helptext.ldap_hostname_noreq_name,
-      placeholder : helptext.ldap_hostname_noreq_placeholder,
-      tooltip: helptext.ldap_hostname_noreq_tooltip
+    {      
+      name:'divider',
+      divider:false
     },
-    {
-      type : 'input',
-      name : helptext.ldap_basedn_name,
-      placeholder : helptext.ldap_basedn_placeholder,
-      tooltip: helptext.ldap_basedn_tooltip
+    {      
+      name: helptext.ldap_advanced,
+      class: 'section',
+      label:false,
+      config:[]},
+    {      
+      name: 'section_two',
+      class: 'section_header',
+      label:false,
+      width: '48%',
+      config:[
+        {
+          type : 'checkbox',
+          name : helptext.ldap_anonbind_name,
+          placeholder : helptext.ldap_anonbind_placeholder,
+          tooltip: helptext.ldap_anonbind_tooltip
+        },
+        {
+          type : 'select',
+          name : helptext.ldap_kerberos_realm_name,
+          placeholder : helptext.ldap_kerberos_realm_placeholder,
+          tooltip: helptext.ldap_kerberos_realm_tooltip,
+          options : [{label: '---', value: null}]
+        },
+        {
+          type : 'select',
+          name : helptext.ldap_kerberos_principal_name,
+          placeholder : helptext.ldap_kerberos_principal_placeholder,
+          tooltip: helptext.ldap_kerberos_principal_tooltip,
+          options : [{label: '---', value: ''}]
+        },
+        {
+          type : 'select',
+          name : helptext.ldap_ssl_name,
+          placeholder : helptext.ldap_ssl_placeholder,
+          tooltip: helptext.ldap_ssl_tooltip,
+          options : []
+        },
+        {
+          type : 'select',
+          name : helptext.ldap_certificate_name,
+          placeholder : helptext.ldap_certificate_placeholder,
+          tooltip: helptext.ldap_certificate_tooltip,
+          options : []
+        },
+        {
+          type : 'checkbox',
+          name : 'validate_certificates',
+          placeholder : helptext.ldap_validate_certificates_placeholder,
+          tooltip : helptext.ldap_validate_certificates_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : helptext.ldap_disable_fn_cache_name,
+          placeholder : helptext.ldap_disable_fn_cache_placeholder,
+          tooltip: helptext.ldap_disable_fn_cache_tooltip
+        }
+      ]
     },
-    {
-      type : 'input',
-      name : helptext.ldap_binddn_name,
-      placeholder : helptext.ldap_binddn_placeholder,
-      tooltip: helptext.ldap_binddn_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_bindpw_name,
-      placeholder : helptext.ldap_bindpw_placeholder,
-      tooltip: helptext.ldap_bindpw_tooltip,
-      inputType : 'password',
-      togglePw : true
-    },
-    {
-      type : 'checkbox',
-      name : helptext.ldap_anonbind_name,
-      placeholder : helptext.ldap_anonbind_placeholder,
-      tooltip: helptext.ldap_anonbind_tooltip
-    },
-    {
-      type : 'select',
-      name : helptext.ldap_kerberos_realm_name,
-      placeholder : helptext.ldap_kerberos_realm_placeholder,
-      tooltip: helptext.ldap_kerberos_realm_tooltip,
-      options : [{label: '---', value: null}]
-    },
-    {
-      type : 'select',
-      name : helptext.ldap_kerberos_principal_name,
-      placeholder : helptext.ldap_kerberos_principal_placeholder,
-      tooltip: helptext.ldap_kerberos_principal_tooltip,
-      options : [{label: '---', value: ''}]
-    },
-    {
-      type : 'select',
-      name : helptext.ldap_ssl_name,
-      placeholder : helptext.ldap_ssl_placeholder,
-      tooltip: helptext.ldap_ssl_tooltip,
-      options : []
-    },
-    {
-      type : 'select',
-      name : helptext.ldap_certificate_name,
-      placeholder : helptext.ldap_certificate_placeholder,
-      tooltip: helptext.ldap_certificate_tooltip,
-      options : []
-    },
-    {
-      type : 'checkbox',
-      name : 'validate_certificates',
-      placeholder : helptext.ldap_validate_certificates_placeholder,
-      tooltip : helptext.ldap_validate_certificates_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : helptext.ldap_disable_fn_cache_name,
-      placeholder : helptext.ldap_disable_fn_cache_placeholder,
-      tooltip: helptext.ldap_disable_fn_cache_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_timeout_name,
-      placeholder : helptext.ldap_timeout_placeholder,
-      tooltip: helptext.ldap_timeout_tooltip
-    },
-    {
-      type : 'input',
-      name : helptext.ldap_dns_timeout_name,
-      placeholder : helptext.ldap_dns_timeout_placeholder,
-      tooltip: helptext.ldap_dns_timeout_tooltip
-    },
-    {
-      type : 'select',
-      name : helptext.ldap_idmap_backend_name,
-      placeholder : helptext.ldap_idmap_backend_placeholder,
-      tooltip: helptext.ldap_idmap_backend_tooltip,
-      options : []
-    },
-    {
-      type : 'checkbox',
-      name : helptext.ldap_has_samba_schema_name,
-      placeholder : helptext.ldap_has_samba_schema_placeholder,
-      tooltip: helptext.ldap_has_samba_schema_tooltip
-    },
-    {
-      type : 'textarea',
-      name : helptext.ldap_auxiliary_parameters_name,
-      placeholder : helptext.ldap_auxiliary_parameters_placeholder,
-      tooltip: helptext.ldap_auxiliary_parameters_tooltip
-    },
-    {
-      type : 'select',
-      name : helptext.ldap_schema_name,
-      placeholder : helptext.ldap_schema_placeholder,
-      tooltip: helptext.ldap_schema_tooltip,
-      options : []
-    },
-    {
-      type : 'checkbox',
-      name : helptext.ldap_enable_name,
-      placeholder : helptext.ldap_enable_placeholder,
-      tooltip: helptext.ldap_enable_tooltip
+    {      
+    name: 'section_2.5',
+    class: 'section',
+    label:false,
+    width: '4%',
+    config:[]},
+    {      
+      name: 'section_three',
+      class: 'section_header',
+      label:false,
+      width: '48%',
+      config:[
+        {
+          type : 'input',
+          name : helptext.ldap_timeout_name,
+          placeholder : helptext.ldap_timeout_placeholder,
+          tooltip: helptext.ldap_timeout_tooltip
+        },
+        {
+          type : 'input',
+          name : helptext.ldap_dns_timeout_name,
+          placeholder : helptext.ldap_dns_timeout_placeholder,
+          tooltip: helptext.ldap_dns_timeout_tooltip
+        },
+        {
+          type : 'select',
+          name : helptext.ldap_idmap_backend_name,
+          placeholder : helptext.ldap_idmap_backend_placeholder,
+          tooltip: helptext.ldap_idmap_backend_tooltip,
+          options : []
+        },
+        {
+          type : 'checkbox',
+          name : helptext.ldap_has_samba_schema_name,
+          placeholder : helptext.ldap_has_samba_schema_placeholder,
+          tooltip: helptext.ldap_has_samba_schema_tooltip
+        },
+        {
+          type : 'textarea',
+          name : helptext.ldap_auxiliary_parameters_name,
+          placeholder : helptext.ldap_auxiliary_parameters_placeholder,
+          tooltip: helptext.ldap_auxiliary_parameters_tooltip
+        },
+        {
+          type : 'select',
+          name : helptext.ldap_schema_name,
+          placeholder : helptext.ldap_schema_placeholder,
+          tooltip: helptext.ldap_schema_tooltip,
+          options : []
+        }
+      ]
     }
   ];
 
@@ -205,10 +251,9 @@ export class LdapComponent {
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
+              protected ws: WebSocketService, private dialogservice: DialogService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected systemGeneralService: SystemGeneralService,
-              private dialogservice: DialogService) {}
+              protected systemGeneralService: SystemGeneralService) {}
 
   resourceTransformIncomingRestData(data) {
     delete data['bindpw'];
@@ -220,13 +265,13 @@ export class LdapComponent {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
 
-    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
+    this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.ldap_kerberos_realm.options.push(
-          {label : item.krb_realm, value : item.id});
-      });
-    });
+          {label : item.realm, value : item.id});        
+      })
+    })
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});

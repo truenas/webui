@@ -85,6 +85,12 @@ export class StorageService {
     arr.forEach((item) => {
       tempArr.push(item[key]);
     });
+
+    // If all values are the same, just return the array without sorting or flipping it
+    if (!tempArr.some( (val, i, arr) => val !== arr[0] )) {
+      return arr;
+    }
+
     // Handle an empty data field or empty column
     let n = 0;
     while (!tempArr[n] && n < tempArr.length) {

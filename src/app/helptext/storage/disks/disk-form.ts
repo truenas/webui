@@ -31,16 +31,30 @@ disk_form_hddstandby_options: [
  {label:'330', value: '330'},
 ],
 
+disk_form_hddstandby_options: [
+ {label:T('Always On'), value:'ALWAYS ON'},
+ {label:'5', value: '5'},
+ {label:'10', value: '10'},
+ {label:'20', value: '20'},
+ {label:'30', value: '30'},
+ {label:'60', value: '60'},
+ {label:'120', value: '120'},
+ {label:'180', value: '180'},
+ {label:'240', value: '240'},
+ {label:'300', value: '300'},
+ {label:'330', value: '330'},
+],
+
 disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
 disk_form_advpowermgmt_tooltip : T('Select a power management profile from the menu.'),
 disk_form_advpowermgmt_options: [
  {label:T('Disabled'), value: 'DISABLED'},
- {label:'1', value: '1'},
- {label:'64', value: '64'},
- {label:'127', value: '127'},
- {label:'128', value: '128'},
- {label:'192', value: '192'},
- {label:'254', value: '254'},
+ {label:T('Level 1 - Minimum power usage with Standby (spindown)'), value: '1'},
+ {label:T('Level 64 - Intermediate power usage with Standby'), value: '64'},
+ {label:T('Level 127 - Maximum power usage with Standby'), value: '127'},
+ {label:T('Level 128 - Minimum power usage without Standby (no spindown)'), value: '128'},
+ {label:T('Level 192 - Intermediate power usage without Standby'), value: '192'},
+ {label:T('Level 254 - Maximum performance, maximum power usage'), value: '254'},
 ],
 
 disk_form_acousticlevel_placeholder: T('Acoustic Level'),
@@ -84,4 +98,20 @@ disk_form_passwd_tooltip: T('Password for SED'),
 
 disk_form_passwd2_placeholder: T('Confirm SED Password'),
 disk_form_passwd2_tooltip: T(''),
+
+bulk_edit: {
+    title: T('Disks'),
+    label: T('Settings'),
+    disks : {
+        placeholder: T('Disks to be edited:'),
+        tooltip : T('FreeBSD device names of each disk being edited.'),
+    },
+    serial : {
+        placeholder: T('Serial'),
+        tooltip : T('Serial numbers of each disk being edited.')
+    }
+
+}, 
+dialog_error: T('Error updating disks')
+
 }

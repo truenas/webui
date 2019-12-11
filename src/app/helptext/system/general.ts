@@ -2,6 +2,9 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_general = {
+  stg_fieldset_gui: T('GUI'),
+  stg_fieldset_loc: T('Localization'),
+  stg_fieldset_other: T('Other Options'),
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
@@ -94,7 +97,18 @@ export const helptext_system_general = {
     tooltip: T(
       "When Syslog server is defined, only logs matching this\
  level are sent."
-    )
+    ),
+    options: [
+      {label:T('Emergency'), value:'F_EMERG'},
+      {label:T('Alert'), value:'F_ALERT'},
+      {label:T('Critical'), value:'F_CRIT'},
+      {label:T('Error'), value:'F_ERR'},
+      {label:T('Warning'), value:'F_WARNING'},
+      {label:T('Notice'), value:'F_NOTICE'},
+      {label:T('Info'), value:'F_INFO'},
+      {label:T('Debug'), value:'F_DEBUG'},
+      {label:T('Is Debug'), value:'F_IS_DEBUG'}
+    ]
   },
 
   stg_syslogserver: {

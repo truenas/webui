@@ -1,8 +1,8 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {ApplicationRef, Component, Injector} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 import {  DialogService } from '../../../services/';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../helptext/directoryservice/nis';
 
 import {
@@ -20,13 +20,14 @@ import {
 })
 
 export class NISComponent {
-  protected resource_name =  helptext.nis_resource_name;
+  public queryCall = 'nis.config';
+  protected addCall = 'nis.update';
   public custActions: Array<any> = [
     {
       'id' : helptext.nis_custactions_clearcache_id,
       'name' : helptext.nis_custactions_clearcache_name,
        function : async () => {
-         this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+         this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status)=>{
           this.dialogservice.Info(helptext.nis_custactions_clearcache_dialog_title, 
             helptext.nis_custactions_clearcache_dialog_message);
         })
@@ -34,44 +35,64 @@ export class NISComponent {
     }
   ];
 
-  public fieldConfig: FieldConfig[] = [
-    {
-      type : 'input',
-      name : helptext.nis_domain_name,
-      placeholder : helptext.nis_domain_placeholder,
-      tooltip: helptext.nis_domain_tooltip,
-      required: true,
-      validation : helptext.nis_domain_validation
-    },
-    {
-      type : 'input',
-      name : helptext.nis_servers_name,
-      placeholder : helptext.nis_servers_placeholder,
-      tooltip : helptext.nis_servers_tooltip
-    },
-    {
-      type : 'checkbox',
-      name : helptext.nis_secure_mode_name,
-      placeholder : helptext.nis_secure_mode_placeholder,
-      tooltip : helptext.nis_secure_mode_tooltip
-    },
-    {
-      type : 'checkbox',
-      name : helptext.nis_manycast_name,
-      placeholder : helptext.nis_manycast_placeholder,
-      tooltip : helptext.nis_manycast_tooltip
-    },
-    {
-      type : 'checkbox',
-      name : helptext.nis_enable_name,
-      placeholder : helptext.nis_enable_placeholder,
-      tooltip : helptext.nis_enable_tooltip
-    },
-  ];
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
+    { 
+      name: helptext.nis_label,
+      class: 'nis',
+      label: true,   
+      config: [
+        {
+          type : 'input',
+          name : 'domain',
+          placeholder : helptext.nis_domain_placeholder,
+          tooltip: helptext.nis_domain_tooltip,
+          required: true,
+          validation : helptext.nis_domain_validation
+        },
+        {
+          type : 'input',
+          name : 'servers',
+          placeholder : helptext.nis_servers_placeholder,
+          tooltip : helptext.nis_servers_tooltip
+        },
+        {
+          type : 'checkbox',
+          name : 'secure_mode',
+          placeholder : helptext.nis_secure_mode_placeholder,
+          tooltip : helptext.nis_secure_mode_tooltip
+        },
+        {
+          type : 'checkbox',
+          name : 'manycast',
+          placeholder : helptext.nis_manycast_placeholder,
+          tooltip : helptext.nis_manycast_tooltip
+        },
+        {
+          type : 'checkbox',
+          name : 'enable',
+          placeholder : helptext.nis_enable_placeholder,
+          tooltip : helptext.nis_enable_tooltip
+        }
+      ]
+    }];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService,
               private dialogservice: DialogService) {}
+  
+  resourceTransformIncomingRestData(data) {
+    data.servers = data.servers.join(',');
+    return data;
+  }
+
+  afterInit(entityForm: any) {
+    entityForm.submitFunction = body => this.ws.call(this.addCall, [body]);
+  }
+
+  beforeSubmit(data) {
+    data.servers = data.servers.replace(/\s/g, '').split(',');
+  }
 }

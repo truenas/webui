@@ -2,6 +2,8 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+smart_fieldset_general: T('General Options'),
+
 smart_interval_placeholder : T('Check Interval'),
 smart_interval_tooltip: T('Define a number of minutes for <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
@@ -13,10 +15,10 @@ smart_powermode_placeholder : T('Power Mode'),
 smart_powermode_tooltip: T('Tests are not performed when the system enters the\
  selected power mode.'),
 smart_powermode_options : [
-  {label : 'Never', value : 'never'},
-  {label : 'Sleep', value : 'sleep'},
-  {label : 'Standby', value : 'standby'},
-  {label : 'Idle', value : 'idle'},
+  {label : 'Never', value : 'NEVER'},
+  {label : 'Sleep', value : 'SLEEP'},
+  {label : 'Standby', value : 'STANDBY'},
+  {label : 'Idle', value : 'IDLE'},
 ],
 smart_powermode_validation : [ Validators.required ],
 

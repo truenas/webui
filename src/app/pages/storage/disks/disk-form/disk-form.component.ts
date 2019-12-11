@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/storage/disks/disk-form';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+
 
 @Component({
   selector : 'app-disk-form',
@@ -79,6 +81,8 @@ export class DiskFormComponent {
       name: 'critical',
       placeholder: helptext.disk_form_critical_placeholder,
       tooltip: helptext.disk_form_critical_tooltip,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -86,6 +90,8 @@ export class DiskFormComponent {
       name: 'difference',
       placeholder: helptext.disk_form_difference_placeholder,
       tooltip: helptext.disk_form_difference_tooltip,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -93,6 +99,8 @@ export class DiskFormComponent {
       name: 'informational',
       placeholder: helptext.disk_form_informational_placeholder,
       tooltip: helptext.disk_form_informational_tooltip,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
