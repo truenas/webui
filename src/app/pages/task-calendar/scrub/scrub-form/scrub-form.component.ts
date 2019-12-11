@@ -31,7 +31,7 @@ export class ScrubFormComponent {
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
-      name:'Scrub Task',
+      name:helptext.scrub_fieldsets[0],
       class:'add-scrub',
       label:true,
       width:'300px',

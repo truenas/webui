@@ -2,6 +2,7 @@ import {Validators} from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 export default {
+    scrub_fieldsets: [T('Scrub Task')],
     scrub_volume_placeholder: T('Pool'),
     scrub_volume_tooltip : T('Choose a pool to scrub.'),
     scrub_volume_validation : [ Validators.required ],
