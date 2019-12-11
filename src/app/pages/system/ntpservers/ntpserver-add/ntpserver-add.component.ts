@@ -34,6 +34,7 @@ export class NTPServerAddComponent {
       name : 'ntp_iburst',
       placeholder : helptext.add.iburst.placeholder,
       tooltip: helptext.add.iburst.tooltip,
+      value: true
     },
     {
       type : 'checkbox',

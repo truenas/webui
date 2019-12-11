@@ -173,20 +173,6 @@ msgstr ""
 
 msgid ""
 "<a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmNoAuthProtocol\"  target=\"_blank\">Authentication protocol</a> used to "
-"authenticate  messages sent on behalf of the specified <i>Username</i>."
-msgstr ""
-
-msgid ""
-"<a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmNoPrivProtocol\"  target=\"_blank\">Encryption protocol</a> used to "
-"encrypt messages  sent on behalf of the specified <i>Username</i>."
-msgstr ""
-
-msgid ""
-"<a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
 "html\"  target=\"_blank\">S3 API endpoint URL</a>. When using AWS, the "
 "endpoint  field can be empty to use the default endpoint for the region, "
@@ -218,6 +204,18 @@ msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
 "target=\"_blank\">pCloud Access Token</a>. These tokens can expire and  "
 "require extension."
+msgstr ""
+
+msgid ""
+"<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
+"target=\"_blank\">Authentication protocol</a> used to authenticate  "
+"messages sent on behalf of the specified <i>Username</i>."
+msgstr ""
+
+msgid ""
+"<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
+"target=\"_blank\">Encryption protocol</a> used to encrypt messages  sent on "
+"behalf of the specified <i>Username</i>."
 msgstr ""
 
 msgid ""
@@ -437,14 +435,14 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
-"connects to a remote system and retrieves snapshots  matching a <b>Naming "
-"Schema</b>."
+"<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
+"cloud storage."
 msgstr ""
 
 msgid ""
-"<i>Push</i> sends data to cloud storage. <i>Pull</i> receives data from "
-"cloud storage."
+"<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
+"connects to a remote system and retrieves snapshots  matching a <b>Naming "
+"Schema</b>."
 msgstr ""
 
 msgid ""
@@ -679,9 +677,6 @@ msgid ""
 "target=\"_blank\">Dropbox account</a>  before adding it here."
 msgstr ""
 
-msgid "Account"
-msgstr "Účet"
-
 msgid "Account Key"
 msgstr ""
 
@@ -882,6 +877,9 @@ msgstr ""
 msgid "Additional Domains"
 msgstr ""
 
+msgid "Additional Hardware"
+msgstr ""
+
 msgid "Additional Parameters"
 msgstr ""
 
@@ -1044,6 +1042,16 @@ msgid "Allow Transfer Resumption"
 msgstr ""
 
 msgid "Allow Trusted Domains"
+msgstr ""
+
+msgid ""
+"Allow anonymous FTP logins with access to the  directory specified in "
+"<b>Path</b>."
+msgstr ""
+
+msgid ""
+"Allow any local user to log in. By default, only  members of the <i>ftp</i> "
+"group are allowed to log in."
 msgstr ""
 
 msgid ""
@@ -1471,11 +1479,6 @@ msgid "Begin"
 msgstr ""
 
 msgid "Begin Time"
-msgstr ""
-
-msgid ""
-"Beginning UID/GID number for which this system is authoritative. UID/GID "
-"values below Range Low or higher than Range High are ignored."
 msgstr ""
 
 msgid "Berkeley Packet Filter"
@@ -2435,6 +2438,9 @@ msgstr ""
 msgid "Continue with download?"
 msgstr ""
 
+msgid "Contract Type"
+msgstr ""
+
 msgid "Control left sidebar's display style."
 msgstr ""
 
@@ -2486,6 +2492,12 @@ msgstr "Země"
 
 msgid "Country Code"
 msgstr "Kód země"
+
+msgid ""
+"Country Code must be blank or have a  valid two-letter <a  "
+"href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
+"3166-1 alpha-2 code</a>."
+msgstr ""
 
 msgid "Crash reporting"
 msgstr ""
@@ -2593,6 +2605,9 @@ msgstr "Uživatelem určené vlastnosti"
 msgid "Custom Server"
 msgstr ""
 
+msgid "Customer Name"
+msgstr ""
+
 msgid ""
 "DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
 "similar to dyndns.org."
@@ -2698,6 +2713,9 @@ msgstr ""
 msgid "Deactivate the recovery key for this pool?"
 msgstr ""
 
+msgid "Debug"
+msgstr ""
+
 msgid "Debug could not be downloaded."
 msgstr ""
 
@@ -2709,6 +2727,9 @@ msgid ""
 "destination system must also support deduplicated  streams. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
+msgstr ""
+
+msgid "Default"
 msgstr ""
 
 msgid "Default ACL Options"
@@ -3067,6 +3088,9 @@ msgid ""
 "menus, but are still accepted when manually entered."
 msgstr ""
 
+msgid "Disable offload capabilities"
+msgstr ""
+
 msgid "Disable physical block size reporting"
 msgstr "Nehlásit velikost fyzického bloku"
 
@@ -3202,6 +3226,12 @@ msgstr ""
 msgid "EULA"
 msgstr ""
 
+msgid "EXPIRED"
+msgstr ""
+
+msgid "EXPIRES TODAY  "
+msgstr ""
+
 msgid "Edit"
 msgstr "Upravit"
 
@@ -3243,6 +3273,9 @@ msgstr ""
 msgid "Email Subject"
 msgstr "Předmět e-mailu"
 
+msgid "Emergency"
+msgstr ""
+
 msgid ""
 "Emulating an <i>Intel e82545 (e1000)</i> Ethernet card provides "
 "compatibility with most operating systems. Change to <i>VirtIO</i> to "
@@ -3252,6 +3285,9 @@ msgstr ""
 
 msgid "Enable"
 msgstr "Zapnout"
+
+msgid "Enable (requires password"
+msgstr ""
 
 msgid "Enable Atime"
 msgstr ""
@@ -3394,6 +3430,11 @@ msgid "Enabled"
 msgstr "Zapnuto"
 
 msgid ""
+"Enables <i>receive</i> mode. Any received peer  information is saved in "
+"interface descriptions."
+msgstr ""
+
+msgid ""
 "Enables the autotune script which attempts to optimize the system depending "
 "on the installed hardware. <b>Warning:</b> Autotuning is only used as a "
 "temporary measure and is not a permanent fix for system hardware issues. "
@@ -3420,6 +3461,19 @@ msgid "Enabling this option may have performance implications on your pools."
 msgstr ""
 
 msgid "Enclosure"
+msgstr ""
+
+msgid ""
+"Encrypt (<i>PUSH</i>) or decrypt  (<i>PULL</i>) file names with the rclone  "
+"<a href=\"https://rclone.org/crypt/#file-name-encryption-modes\" "
+"target=\"_blank\">\"Standard\" file name encryption mode</a>.  The original "
+"directory structure is preserved. A filename with the same  name always has "
+"the same encrypted filename.<br><br>  <i>PULL</i> tasks that have "
+"<b>Filename Encryption</b> enabled and an  incorrect <b>Encryption "
+"Password</b> or <b>Encryption Salt</b> will not  transfer any files but "
+"still report that the task was successful. To  verify that files were "
+"transferred successfully, click the finished  task status to see a list of "
+"transferred files."
 msgstr ""
 
 msgid "Encrypted pool disks must be decrypted prior to import."
@@ -3467,11 +3521,6 @@ msgstr ""
 msgid ""
 "End time for the replication task. A  replication that is already in "
 "progress can continue to run past this  time."
-msgstr ""
-
-msgid ""
-"Ending UID/GID number for which this system is authoritative. UID/GID "
-"values below Range Low or higher than Range High are ignored."
 msgstr ""
 
 msgid "Endpoint URL"
@@ -3559,11 +3608,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter a long string of random characters for use as <a "
-"href=\"https://searchsecurity.techtarget.com/definition/salt\" "
-"target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b> "
-"Save and back up the encryption salt value. Losing the salt value can "
-"result in data loss."
+"Enter a long string of random characters for  use as <a "
+"href=\"https://searchsecurity.techtarget.com/definition/salt\"  "
+"target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b>  "
+"Always securely back up the encryption salt value! Losing the salt  value "
+"will result in data loss."
 msgstr ""
 
 msgid "Enter a name for the VM."
@@ -4097,12 +4146,6 @@ msgid ""
 "target=”_blank”>Active Directory</a> administrator account."
 msgstr ""
 
-msgid ""
-"Enter the password to encrypt and decrypt remote data. <b>Warning</b>: "
-"Always save and back up this password. Losing the encryption password can "
-"result in data loss."
-msgstr ""
-
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
 msgstr "Zadejte heslo sloužící pro připojení k IPMI rozhraní z webového prohlížeče."
 
@@ -4313,6 +4356,9 @@ msgstr "Spustit"
 msgid "Execute"
 msgstr ""
 
+msgid "Expiration Date"
+msgstr ""
+
 msgid "Export Certificate"
 msgstr "Exportovat certifikát"
 
@@ -4410,6 +4456,9 @@ msgid "Failover is administratively disabled."
 msgstr "Převzetí v případě výpadku je administrativně vypnuté."
 
 msgid "Failover is in an error state."
+msgstr ""
+
+msgid "Features"
 msgstr ""
 
 msgid "Fetch Method"
@@ -4815,6 +4864,9 @@ msgid ""
 "required. Example:  <b>https://<i>10.231.3.76</i></b>"
 msgstr ""
 
+msgid "Hostname or IP address of the system to  receive SNMP trap notifications."
+msgstr ""
+
 msgid ""
 "Hostnames or IP addresses of the ISNS servers to be registered with the "
 "iSCSI targets and portals of the system. Separate each entry with a space."
@@ -4990,6 +5042,11 @@ msgstr "ISNS servery"
 msgid "Icon URL"
 msgstr ""
 
+msgid ""
+"Icon file to use as the profile  picture for new messages. Example:  "
+"<i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>."
+msgstr ""
+
 msgid "Id"
 msgstr ""
 
@@ -5129,8 +5186,14 @@ msgstr ""
 msgid "InfluxDB time series name for collected points."
 msgstr ""
 
+msgid "Info"
+msgstr ""
+
 msgid "Informational"
 msgstr "Pro informaci"
+
+msgid "Inherit"
+msgstr ""
 
 msgid "Inherits"
 msgstr ""
@@ -5142,18 +5205,17 @@ msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
 "no <i>Authentication Protocol</i> is  used. If an authentication key is set "
 "and an  <i>Authentication Protocol</i> is not specified,  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmHMACMD5AuthProtocol\"  target=\"_blank\">MD5</a> is used as the "
-"default.<br>  Must be at least 8 and at most 32 octets long."
+"href=\"https://en.wikipedia.org/wiki/MD5\"  target=\"_blank\">MD5</a> is "
+"used as the default.<br>  Must be at least 8 and at most 32 octets long."
 msgstr ""
 
 msgid ""
 "Initial secret encryption key.  If an encryption key is not set, no "
 "<i>Encryption Protocol</i> is used.  If an encryption key is set and an "
 "<i>Encryption Protocol</i> is  not specified,  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmDESPrivProtocol\"  target=\"_blank\">DES</a> is used as the default.<br> "
-" Must be at least 8 and at most 32 octets long."
+"href=\"https://en.wikipedia.org/wiki/Data_Encryption_Standard\"  "
+"target=\"_blank\">DES</a> is used as the default.<br>  Must be at least 8 "
+"and at most 32 octets long."
 msgstr ""
 
 msgid "Initiate Failover"
@@ -5250,6 +5312,9 @@ msgid ""
 msgstr ""
 
 msgid "Invalidate Existing Key"
+msgstr ""
+
+msgid "Is Debug"
 msgstr ""
 
 msgid "Is the pool encrypted?"
@@ -5489,6 +5554,9 @@ msgstr "Jazyk"
 msgid "Language code"
 msgstr ""
 
+msgid "Leave Domain"
+msgstr ""
+
 msgid ""
 "Leave at the default of 512 unless the initiator requires a different block "
 "size."
@@ -5513,6 +5581,11 @@ msgid ""
 "to the host, a space, then the MAC address to be assigned to the jail."
 msgstr ""
 
+msgid ""
+"Leaving the domain requires sufficient privileges. Enter your credentials "
+"below."
+msgstr ""
+
 msgid "Legacy Web Interface"
 msgstr "Staré webové rozhraní"
 
@@ -5524,6 +5597,9 @@ msgstr "Pomocné parametry pro libdefaults"
 
 msgid "License"
 msgstr "Licence"
+
+msgid "License Information"
+msgstr ""
 
 msgid "Lifetime"
 msgstr "Žívotnosti"
@@ -5814,6 +5890,9 @@ msgstr "Nejnižší číslo pasivního portu"
 msgid "Minimum size is 1 MiB"
 msgstr ""
 
+msgid "Minimum value is "
+msgstr ""
+
 msgid "Minute"
 msgstr "Minuta"
 
@@ -5907,6 +5986,9 @@ msgid "NAT"
 msgstr ""
 
 msgid "NAT Autoconfigure IPv4"
+msgstr ""
+
+msgid "NAT Interface"
 msgstr ""
 
 msgid "NAT Port Forwarding"
@@ -6224,6 +6306,9 @@ msgstr "Poznámky"
 msgid "Notes about this extent."
 msgstr ""
 
+msgid "Notice"
+msgstr ""
+
 msgid "Number of CPUs"
 msgstr "Počet procersorů"
 
@@ -6503,6 +6588,12 @@ msgid "Password for the SSH Username account."
 msgstr ""
 
 msgid "Password for the user account."
+msgstr ""
+
+msgid ""
+"Password to encrypt and decrypt remote  data. <b>Warning:</b> Always "
+"securely back up this password! Losing the  encryption password will result "
+"in data loss."
 msgstr ""
 
 msgid "Password updated."
@@ -6824,10 +6915,16 @@ msgid "Private Key ID"
 msgstr "Identifikátor soukromého klíče"
 
 msgid ""
-"Privileges are the same as the guest account. Guest access is disabled by "
-"default in Windows 10 version 1709 and Windows Server version 1903. "
-"Additional client-side configuration is required to provide guest access to "
-"these clients."
+"Privileges are the same as the guest account.  Guest access is disabled by "
+"default in Windows 10 version 1709 and  Windows Server version 1903. "
+"Additional client-side configuration is  required to provide guest access "
+"to these clients.<br><br>  <i>MacOS clients:</i> Attempting to connect as a "
+"user that does not  exist in FreeNAS <i>does not</i> automatically connect "
+"as the guest  account. The <b>Connect As:</b> <i>Guest</i> option must be  "
+"specifically chosen in MacOS to log in as the guest account. See the  <a "
+"href=\"https://support.apple.com/guide/mac-help/connect-mac-shared-"
+"computers-servers-mchlp1140/\" target=\"_blank\">Apple documentation</a>  "
+"for more details."
 msgstr ""
 
 msgid "Proactive Support"
@@ -6921,6 +7018,12 @@ msgid "Range High"
 msgstr ""
 
 msgid "Range Low"
+msgstr ""
+
+msgid ""
+"Range Low and Range High set the range of UID/GID numbers which this  IDMap "
+"backend translates. If an external credential like a Windows SID maps to a "
+"UID or GID  number outside this range, the external credential is ignored."
 msgstr ""
 
 msgid "Range Size"
@@ -7162,15 +7265,6 @@ msgid "Require IDENT Authentication"
 msgstr ""
 
 msgid "Require Kerberos for NFSv4"
-msgstr ""
-
-msgid ""
-"Required for <a href=\"--docurl--/services.html#lldp\" "
-"target=\"_blank\">LLDP</a> location support. Enter a two-letter ISO 3166 "
-"country code."
-msgstr ""
-
-msgid "Required if <b>Anonymous Login</b> is disabled."
 msgstr ""
 
 msgid ""
@@ -8373,11 +8467,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to allow anonymous FTP logins with access to the directory specified in "
-"<b>Path</b>."
-msgstr ""
-
-msgid ""
 "Set to allow privileged users inside the jail to mount and unmount "
 "filesystem types marked as jail-friendly."
 msgstr ""
@@ -8537,6 +8626,9 @@ msgid ""
 "Windows 7 machines are present."
 msgstr ""
 
+msgid "Set to disable NIC capabilities when using a Jail or VM."
+msgstr ""
+
 msgid ""
 "Set to disable caching AD users and groups. This can help when unable to "
 "bind to a domain with a large number of users or groups."
@@ -8575,11 +8667,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to enable <i>receive</i> mode. Any received peer information is saved "
-"in interface descriptions."
-msgstr ""
-
-msgid ""
 "Set to enable DHCP. Leave unset to create a static IPv4 or IPv6 "
 "configuration. Only one interface can be configured for DHCP."
 msgstr ""
@@ -8601,8 +8688,10 @@ msgid ""
 "target=\"_blank\">Certificates</a>"
 msgstr ""
 
-msgid "Set to enable the Active Directory service."
-msgstr "Nastavte pro zapnutí služby Active Directory."
+msgid ""
+"Set to enable the Active Directory service. Selecting this option requires "
+"the Domain Account Password."
+msgstr ""
 
 msgid ""
 "Set to enable the File eXchange Protocol. This option makes the server "
@@ -8610,15 +8699,6 @@ msgid ""
 msgstr ""
 
 msgid "Set to enable the S3 web user interface."
-msgstr ""
-
-msgid ""
-"Set to encrypt files before transfer and store the encrypted files on the "
-"remote system. <a href=\"https://rclone.org/crypt/\" "
-"target=\"_blank\">rclone Crypt</a> is used."
-msgstr ""
-
-msgid "Set to encrypt the shared file names."
 msgstr ""
 
 msgid "Set to export the certificate environment variables."
@@ -9163,9 +9243,6 @@ msgid ""
 "Not displayed to anonymous login users."
 msgstr ""
 
-msgid "Specify the physical location of the host."
-msgstr ""
-
 msgid "Specify the size of the new zvol."
 msgstr ""
 
@@ -9386,6 +9463,9 @@ msgstr "Informace o systému"
 msgid "System Processes"
 msgstr "Systémové procesy"
 
+msgid "System Serial"
+msgstr ""
+
 msgid "System clock"
 msgstr ""
 
@@ -9409,6 +9489,12 @@ msgstr "Systém se restartuje…"
 
 msgid "System is shutting down..."
 msgstr "Systém se vypíná…"
+
+msgid ""
+"System network interface that remaps jail  network addresses into a "
+"different IP address space. To override using  the default system network "
+"interface, enter the name of a network  interface to use for NAT."
+msgstr ""
 
 msgid "TCP Port"
 msgstr "TCP port"
@@ -9732,6 +9818,9 @@ msgstr ""
 msgid "The passwords do not match."
 msgstr ""
 
+msgid "The physical location of the host."
+msgstr ""
+
 msgid "The pool <i>"
 msgstr ""
 
@@ -9926,6 +10015,14 @@ msgstr ""
 msgid "This is a production system"
 msgstr ""
 
+msgid ""
+"This is an unofficial plugin not produced or supported by iXsystems. "
+"iXsystems does not provide support in configuration, diagnosis, or use of "
+"this unofficial plugin regardless of the current support level. Thorough "
+"research is strongly recommended before installing or using an unofficial "
+"plugin."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -9945,9 +10042,6 @@ msgid ""
 msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
-msgstr ""
-
-msgid "This option enables/disables a password toggle button."
 msgstr ""
 
 msgid "This system will restart when the update completes."
@@ -10052,8 +10146,19 @@ msgstr ""
 msgid "Tunables"
 msgstr ""
 
+msgid ""
+"Two-letter <a  href=\"https://www.iso.org/obp/ui/#search/code/\" "
+"target=\"_blank\">ISO 3166-1 alpha-2 code</a>  used to enable LLDP location "
+"support."
+msgstr ""
+
 msgid "Type"
 msgstr "Typ"
+
+msgid ""
+"UDP port number on the system receiving  SNMP trap notifications. The "
+"default is <i>162</i>."
+msgstr ""
 
 msgid "UNINSTALL"
 msgstr ""
@@ -10284,6 +10389,21 @@ msgstr ""
 msgid "Usage collection"
 msgstr ""
 
+msgid ""
+"Use  <a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone "
+"crypt</a>  to manage data encryption during <i>PUSH</i> or <i>PULL</i> "
+"transfers:<br><br>  <i>PUSH:</i> Encrypt files before transfer and store "
+"the encrypted  files on the remote system. Files are encrypted using the  "
+"<b>Encryption Password</b> and <b>Encryption Salt</b> values.<br><br>  "
+"<i>PULL:</i> Decrypt files that are being stored on the remote system  "
+"before the transfer. Transferring the encrypted files requires entering  "
+"the same <b>Encryption Password</b> and <b>Encryption Salt</b> that was  "
+"used to encrypt the files.<br><br>  Additional details about the encryption "
+"algorithm and key derivation  are available in the  <a "
+"href=\"https://rclone.org/crypt/#file-formats\" target=\"_blank\">rclone "
+"crypt File formats documentation</a>."
+msgstr ""
+
 msgid "Use --fast-list"
 msgstr ""
 
@@ -10430,8 +10550,8 @@ msgstr ""
 
 msgid ""
 "Username of the SNMP  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#user-based\"  "
-"target=\"_blank\">User-based Security Model (USM)</a> user."
+"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
+"UsmUserData\"  target=\"_blank\">User-based Security Model (USM)</a> user."
 msgstr ""
 
 msgid ""
@@ -10689,6 +10809,11 @@ msgid ""
 "they are a member of the <i>wheel</i> group."
 msgstr ""
 
+msgid ""
+"When set, an <i>eye</i> icon appears next to  password fields. Clicking the "
+"icon reveals the password."
+msgstr ""
+
 msgid "When set, report CPU usage in percent  instead of units of kernel time."
 msgstr ""
 
@@ -10767,6 +10892,9 @@ msgstr ""
 
 msgid "Yes, decrypt the disks"
 msgstr "Ano, dešifrovat disky"
+
+msgid "You have left the domain."
+msgstr ""
 
 msgid "ZFS Deduplication"
 msgstr "ZFS deduplikace"
@@ -10882,6 +11010,9 @@ msgstr ""
 msgid "datasize"
 msgstr ""
 
+msgid "days"
+msgstr ""
+
 msgid "depends"
 msgstr "závisí"
 
@@ -10931,6 +11062,9 @@ msgid "exec_system_user"
 msgstr ""
 
 msgid "exec_timeout"
+msgstr ""
+
+msgid "expires in"
 msgstr ""
 
 msgid "group"

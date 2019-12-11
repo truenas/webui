@@ -121,7 +121,7 @@ export class PortalFormComponent {
     const listenIpField = _.find(this.fieldConfig, { 'name': 'listen' }).templateListField[0];
     this.iscsiService.getIpChoices().subscribe((ips) => {
       for (const ip in ips) {
-        listenIpField.options.push({ label: ip, value: ips[ip] });
+        listenIpField.options.push({ label: ips[ip], value: ip });
       }
 
       const listenListFields = _.find(this.fieldConfig, { 'name': 'listen' }).listFields;

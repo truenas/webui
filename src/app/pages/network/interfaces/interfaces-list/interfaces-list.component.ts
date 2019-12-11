@@ -43,7 +43,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
     {name : T('Link State'), prop : 'link_state'},
     {name : T('DHCP'), prop : 'ipv4_dhcp'},
     {name : T('IPv6 Auto Configure'), prop: 'ipv6_auto'},
-    {name : T('IP Addresses'), prop : 'addresses'},,
+    {name : T('IP Addresses'), prop : 'addresses'},
     {name : T('Description'), prop : 'description', hidden: true},
     {name : T('Active Media Type'), prop: 'active_media_type', hidden: true},
     {name : T('Active Media Subtype'), prop: 'active_media_subtype', hidden: true},
