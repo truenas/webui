@@ -42,8 +42,8 @@
 	    </ng-container>
 	</div>
     <mat-card-actions id="idmap-actions">
-      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary">Save</button>
-      <button *ngIf="route_success" (click)="goBack()" mat-button color="accent" type="button">Cancel</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid">{{'Save' | translate}}</button>
+      <button *ngIf="route_success" (click)="goBack()" mat-button color="accent" type="button">{{'Cancel' | translate}}</button>
     </mat-card-actions>
   </form>
 </mat-card>

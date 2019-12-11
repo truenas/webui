@@ -252,7 +252,7 @@ export class IdmapComponent implements OnInit {
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
-    },,
+    },
     {
       type: 'input',
       name: helptext.idmap_script_name,

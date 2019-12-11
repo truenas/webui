@@ -65,10 +65,12 @@ export class DatasetComponent implements OnInit{
   }
 
   customSubmit(value) {
+    this.loader.open();
     this.ws.call("service.query").subscribe(
       (services) => {
         const smbShare = _.find(services, {'service': "cifs"});
         if (smbShare.state === 'RUNNING') {
+          this.loader.close();
           this.dialogService.confirm(
             T('Restart SMB Service'),
             T('The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.'),
@@ -76,6 +78,7 @@ export class DatasetComponent implements OnInit{
             T('Continue')
           ).subscribe((confirmed) => {
             if (confirmed) {
+              this.loader.open();
               this.doUpdate(value);
             }
           });
@@ -87,7 +90,6 @@ export class DatasetComponent implements OnInit{
   }
 
   doUpdate(value) {
-    this.loader.open();
     this.ws.job('systemdataset.update', [value]).subscribe(
       (res) => {
         if (res.error) {
@@ -98,12 +100,13 @@ export class DatasetComponent implements OnInit{
           new EntityUtils().handleWSError(this, res);
         }
         if (res.state === 'SUCCESS') {
-          this.loader.close()
+          this.loader.close();
           this.entityForm.success = true;
           this.entityForm.formGroup.markAsPristine();
         }
       },
       (err) => {
+        this.loader.close();
         new EntityUtils().handleWSError(this, err);
       }
     );
