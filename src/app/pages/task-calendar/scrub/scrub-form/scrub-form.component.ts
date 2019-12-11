@@ -121,7 +121,6 @@ export class ScrubFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data);
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
     this.entityForm.formGroup.controls['description'].setValue(data.description);
