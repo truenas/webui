@@ -6,7 +6,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { TaskCalendarComponent } from './calendar/calendar.component';
 import { TaskCalendarRoutes } from "./task-calendar.routing";
 import { EntityModule } from '../common/entity/entity.module';
 import { TranslateModule } from '@ngx-translate/core';
@@ -46,7 +45,6 @@ import { ResilverComponent } from './resilver/resilver.component';
     TranslateModule
   ],
   declarations: [
-    TaskCalendarComponent,
     CronFormComponent,
     CronListComponent,
     InitshutdownListComponent,

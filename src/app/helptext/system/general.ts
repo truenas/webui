@@ -2,6 +2,9 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_general = {
+  stg_fieldset_gui: T('GUI'),
+  stg_fieldset_loc: T('Localization'),
+  stg_fieldset_other: T('Other Options'),
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),

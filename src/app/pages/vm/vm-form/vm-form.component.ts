@@ -4,10 +4,11 @@ import * as _ from 'lodash';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
 import helptext from './../../../helptext/vm/vm-wizard/vm-wizard';
 import globalHelptext from './../../../helptext/global-helptext';
-import {RestService, WebSocketService, StorageService} from '../../../services/';
+import {RestService, WebSocketService, StorageService, VmService} from '../../../services/';
 
 @Component({
   selector : 'app-vm',
@@ -23,43 +24,50 @@ export class VmFormComponent {
   protected entityForm: any;
   protected save_button_enabled: boolean;
 
-  public fieldConfig: FieldConfig[] = [
-    { type: 'input', name: 'name', placeholder: helptext.name_placeholder, tooltip: helptext.name_tooltip},
-    { type: 'input', name : 'description', placeholder : helptext.description_placeholder, tooltip: helptext.description_tooltip},
+  public fieldConfig: FieldConfig[] = []
+  public fieldSets: FieldSet[] = [
     {
-      name: 'time',
-      placeholder: helptext.time_placeholder,
-      tooltip: helptext.time_tooltip,
-      type: 'select',
-      options: [{ label: helptext.time_local_text, value: 'LOCAL'}, { label: helptext.time_utc_text, value: 'UTC' }]
-    },
-    { type : 'input', name: 'vcpus'  ,placeholder : helptext.vcpus_placeholder, tooltip: helptext.vcpus_tooltip},
-    { type: 'input', name : 'memory', 
-      placeholder : `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
-      tooltip: helptext.memory_tooltip,
-      blurStatus : true,
-      blurEvent : this.blurEvent,
-      parent : this
-    },
-    { type: 'select', name : 'bootloader', placeholder : helptext.bootloader_placeholder, tooltip: helptext.bootloader_tooltip,options: []},
-    { type: 'checkbox', name : 'autostart', placeholder : helptext.autostart_placeholder, tooltip: helptext.autostart_tooltip}
-
-  ];
+      name: helptext.vm_form_title,
+      class: 'vm_settings',
+      label:true,
+      config:[
+      { type: 'input', name: 'name', placeholder: helptext.name_placeholder, tooltip: helptext.name_tooltip},
+      { type: 'input', name : 'description', placeholder : helptext.description_placeholder, tooltip: helptext.description_tooltip},
+      {
+        name: 'time',
+        placeholder: helptext.time_placeholder,
+        tooltip: helptext.time_tooltip,
+        type: 'select',
+        options: [{ label: helptext.time_local_text, value: 'LOCAL'}, { label: helptext.time_utc_text, value: 'UTC' }]
+      },
+      { type : 'input', name: 'vcpus'  ,placeholder : helptext.vcpus_placeholder, tooltip: helptext.vcpus_tooltip},
+      { type: 'input', name : 'memory', 
+        placeholder : `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
+        tooltip: helptext.memory_tooltip,
+        blurStatus : true,
+        blurEvent : this.blurEvent,
+        parent : this
+      },
+      { type: 'select', name : 'bootloader', placeholder : helptext.bootloader_placeholder, tooltip: helptext.bootloader_tooltip,options: []},
+      { type: 'checkbox', name : 'autostart', placeholder : helptext.autostart_placeholder, tooltip: helptext.autostart_tooltip}
+    ]
+    }
+  ]
   private bootloader: any;
   public bootloader_type: any[];
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected vmService: VmService
               ) {}
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-    entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-      this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
-      for (let item of res){
-        this.bootloader.options.push({label : item[1], value : item[0]})
-      }
+
+    this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
+    this.vmService.getBootloaderOptions().forEach((item) => {
+      this.bootloader.options.push({label : item[1], value : item[0]})
     });
 
     entityForm.formGroup.controls['memory'].valueChanges.subscribe((value) => {

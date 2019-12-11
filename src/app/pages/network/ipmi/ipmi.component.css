@@ -2,6 +2,7 @@
   max-width:calc(960px - 32px);
   margin-left:auto;
   margin-right:auto;
+  padding-top: 0;
 }
 #ipmi_controller-spinner {
   position: absolute;

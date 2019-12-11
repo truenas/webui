@@ -2,6 +2,9 @@
     <mat-error *ngIf="control.hasError('required')">
         {{config.placeholder}} {{" is required." | translate}}
     </mat-error>
+    <mat-error *ngIf="control.hasError('min')">
+        {{"Minimum value is " | translate}} {{control.errors.min.min}}.
+    </mat-error>
     <mat-error *ngIf="control.hasError('atLeastOne')">
         {{control.errors.fields[0]}} {{" and " | translate}} {{control.errors.fields[1]}} {{". At least one is required." | translate}}
     </mat-error>
