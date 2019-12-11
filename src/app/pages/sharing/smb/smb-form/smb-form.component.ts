@@ -1,172 +1,234 @@
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
-import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
-import { T } from "app/translate-marker";
+import { ActivatedRoute, Router } from '@angular/router';
+import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { DialogService, RestService, WebSocketService, AppLoaderService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { catchError, map, switchMap, take, tap, filter } from 'rxjs/operators';
+import { AppLoaderService, DialogService, RestService, WebSocketService } from '../../../../services/';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector : 'app-smb-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class SMBFormComponent {
-
-  protected resource_name: string = 'sharing/cifs/';
+  protected queryCall = 'sharing.smb.query';
+  protected addCall = 'sharing.smb.create';
+  protected editCall = 'sharing.smb.update'
+  protected pk: number;
+  protected queryKey = 'id';
   protected route_success: string[] = [ 'sharing', 'smb' ];
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
   public isTimeMachineOn = false;
+  public namesInUse: string[] = [];
 
-  protected fieldConfig: FieldConfig[] = [
+  protected fieldSets: FieldSet[] = [
     {
-      type : 'explorer',
-      initial: '/mnt',
-      explorerType: 'directory',
-      name: 'cifs_path',
-      placeholder: helptext_sharing_smb.placeholder_path,
-      tooltip: helptext_sharing_smb.tooltip_path,
-      required: true,
-      validation : helptext_sharing_smb.validators_path
+      name: helptext_sharing_smb.fieldset_general,
+      label: true,
+      config: [
+        {
+          type : 'explorer',
+          initial: '/mnt',
+          explorerType: 'directory',
+          name: 'path',
+          placeholder: helptext_sharing_smb.placeholder_path,
+          tooltip: helptext_sharing_smb.tooltip_path,
+          required: true,
+          validation : helptext_sharing_smb.validators_path
+        },
+        {
+          type: "input",
+          name: "name",
+          placeholder: helptext_sharing_smb.placeholder_name,
+          tooltip: helptext_sharing_smb.tooltip_name,
+          validation: [forbiddenValues(this.namesInUse), Validators.required],
+          hasErrors: false,
+          errors: helptext_sharing_smb.errormsg_name,
+          blurStatus: true,
+          blurEvent: this.blurEventName,
+          parent: this
+        },
+        {
+          type: 'checkbox',
+          name: 'home',
+          placeholder: helptext_sharing_smb.placeholder_home,
+          tooltip: helptext_sharing_smb.tooltip_home,
+        },
+        {
+          type: 'input',
+          name: 'comment',
+          placeholder: helptext_sharing_smb.placeholder_comment,
+          tooltip: helptext_sharing_smb.tooltip_comment,
+        },
+        {
+          type: 'checkbox',
+          name: 'timemachine',
+          placeholder: helptext_sharing_smb.placeholder_timemachine,
+          tooltip: helptext_sharing_smb.tooltip_timemachine,
+        },
+        {
+          type: 'checkbox',
+          name: 'shadowcopy',
+          placeholder: helptext_sharing_smb.placeholder_shadowcopy,
+          tooltip: helptext_sharing_smb.tooltip_shadowcopy
+        }
+      ]
     },
+    { name: 'divider', divider: false },
     {
-      type: 'input',
-      name: 'cifs_name',
-      placeholder: helptext_sharing_smb.placeholder_name,
-      tooltip: helptext_sharing_smb.tooltip_name,
-      validation: this.forbiddenNameValidator.bind(this),
-      hasErrors: false,
-      errors: helptext_sharing_smb.errormsg_name
+      name: helptext_sharing_smb.fieldset_access,
+      label: false,
+      width: '49%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'ro',
+          placeholder: helptext_sharing_smb.placeholder_ro,
+          tooltip: helptext_sharing_smb.tooltip_ro
+        },
+        {
+          type: 'checkbox',
+          name: 'browsable',
+          placeholder: helptext_sharing_smb.placeholder_browsable,
+          tooltip: helptext_sharing_smb.tooltip_browsable,
+        },
+        {
+          type: 'checkbox',
+          name: 'guestok',
+          placeholder: helptext_sharing_smb.placeholder_guestok,
+          tooltip: helptext_sharing_smb.tooltip_guestok
+        },
+        {
+          type: 'checkbox',
+          name: 'guestonly',
+          placeholder: helptext_sharing_smb.placeholer_guestonly,
+          tooltip: helptext_sharing_smb.tooltip_guestonly
+        },
+        {
+          type: 'checkbox',
+          name: 'abe',
+          placeholder: helptext_sharing_smb.placeholder_abe,
+          tooltip: helptext_sharing_smb.tooltip_abe
+        },
+        {
+          type: 'textarea',
+          name: 'hostsallow',
+          placeholder: helptext_sharing_smb.placeholder_hostsallow,
+          tooltip: helptext_sharing_smb.tooltip_hostsallow
+        },
+        {
+          type: 'textarea',
+          name: 'hostsdeny',
+          placeholder: helptext_sharing_smb.placeholder_hostsdeny,
+          tooltip: helptext_sharing_smb.tooltip_hostsdeny
+        }
+      ]
     },
+    { name: 'spacer', label: false, width: '2%' },
     {
-      type: 'checkbox',
-      name: 'cifs_home',
-      placeholder: helptext_sharing_smb.placeholder_home,
-      tooltip: helptext_sharing_smb.tooltip_home,
+      name: helptext_sharing_smb.fieldset_other,
+      label: false,
+      width: '49%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'recyclebin',
+          placeholder: helptext_sharing_smb.placeholder_recyclebin,
+          tooltip: helptext_sharing_smb.tooltip_recyclebin
+        },
+        {
+          type: 'checkbox',
+          name: 'showhiddenfiles',
+          placeholder: helptext_sharing_smb.placeholder_showhiddenfiles,
+          tooltip: helptext_sharing_smb.tooltip_showhiddenfiles
+        },
+        {
+          type: 'select',
+          name: 'vfsobjects',
+          placeholder: helptext_sharing_smb.placeholder_vfsobjects,
+          tooltip: helptext_sharing_smb.tooltip_vfsobjects,
+          options: [],
+          multiple: true,
+        },
+        {
+          type: 'textarea',
+          name: 'auxsmbconf',
+          placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
+          tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
+        }
+      ]
     },
-    {
-      type: 'input',
-      name: 'cifs_comment',
-      placeholder: helptext_sharing_smb.placeholder_comment,
-      tooltip: helptext_sharing_smb.tooltip_comment,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_timemachine',
-      placeholder: helptext_sharing_smb.placeholder_timemachine,
-      tooltip: helptext_sharing_smb.tooltip_timemachine,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_ro',
-      placeholder: helptext_sharing_smb.placeholder_ro,
-      tooltip: helptext_sharing_smb.tooltip_ro
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_browsable',
-      placeholder: helptext_sharing_smb.placeholder_browsable,
-      tooltip: helptext_sharing_smb.tooltip_browsable,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_recyclebin',
-      placeholder: helptext_sharing_smb.placeholder_recyclebin,
-      tooltip: helptext_sharing_smb.tooltip_recyclebin
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_showhiddenfiles',
-      placeholder: helptext_sharing_smb.placeholder_showhiddenfiles,
-      tooltip: helptext_sharing_smb.tooltip_showhiddenfiles
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_guestok',
-      placeholder: helptext_sharing_smb.placeholder_guestok,
-      tooltip: helptext_sharing_smb.tooltip_guestok
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_guestonly',
-      placeholder: helptext_sharing_smb.placeholer_guestonly,
-      tooltip: helptext_sharing_smb.tooltip_guestonly
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_abe',
-      placeholder: helptext_sharing_smb.placeholder_abe,
-      tooltip: helptext_sharing_smb.tooltip_abe
-    },
-    {
-      type: 'textarea',
-      name: 'cifs_hostsallow',
-      placeholder: helptext_sharing_smb.placeholder_hostsallow,
-      tooltip: helptext_sharing_smb.tooltip_hostsallow
-    },
-    {
-      type: 'textarea',
-      name: 'cifs_hostsdeny',
-      placeholder: helptext_sharing_smb.placeholder_hostsdeny,
-      tooltip: helptext_sharing_smb.tooltip_hostsdeny
-    },
-    {
-      type: 'select',
-      name: 'cifs_vfsobjects',
-      placeholder: helptext_sharing_smb.placeholder_vfsobjects,
-      tooltip: helptext_sharing_smb.tooltip_vfsobjects,
-      options: [],
-      multiple: true,
-    },
-    {
-      type: 'checkbox',
-      name: 'cifs_shadowcopy',
-      placeholder: helptext_sharing_smb.placeholder_shadowcopy,
-      tooltip: helptext_sharing_smb.tooltip_shadowcopy
-    },
-    {
-      type: 'textarea',
-      name: 'cifs_auxsmbconf',
-      placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
-      tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
-    },
-  ];
+    { name: 'divider', divider: true }    
+  ]
 
   private cifs_vfsobjects: any;
 
   protected advanced_field: Array<any> = [
-    'cifs_auxsmbconf',
-    'cifs_vfsobjects',
-    'cifs_hostsdeny',
-    'cifs_hostsallow',
-    'cifs_guestonly',
-    'cifs_abe',
-    'cifs_showhiddenfiles',
-    'cifs_recyclebin',
-    'cifs_browsable',
-    'cifs_ro',
+    'auxsmbconf',
+    'vfsobjects',
+    'hostsdeny',
+    'hostsallow',
+    'guestok',
+    'guestonly',
+    'abe',
+    'showhiddenfiles',
+    'recyclebin',
+    'browsable',
+    'ro',
   ];
 
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
       name : helptext_sharing_smb.actions_basic_mode,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      function: () => {
+        this.isBasicMode = !this.isBasicMode;
+        this.toggleFieldsets(false);
+      }
     },
     {
-      'id' : 'advanced_mode',
+      id : 'advanced_mode',
       name : helptext_sharing_smb.actions_advanced_mode,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      function : () => {
+        this.isBasicMode = !this.isBasicMode;
+        this.toggleFieldsets(true);
+      }
     }
   ];
 
-  constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, private dialog:DialogService,
-              protected loader: AppLoaderService ) {}
+  public entityForm: EntityFormComponent;
+
+  constructor(
+    protected router: Router,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    private dialog: DialogService,
+    protected loader: AppLoaderService,
+    private activatedRoute: ActivatedRoute
+  ) {
+    combineLatest(
+      this.ws.call("sharing.smb.query", []),
+      this.activatedRoute.paramMap
+    )
+      .pipe(
+        map(([shares, pm]) => {
+          const pk = parseInt(pm.get("pk"), 10);
+          return shares
+            .filter(share => isNaN(pk) || share.id !== pk)
+            .map(share => share.name);
+        })
+      )
+      .subscribe(shareNames => {
+        ["global", ...shareNames].forEach(n => this.namesInUse.push(n));
+      });
+  }
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -177,8 +239,39 @@ export class SMBFormComponent {
     return true;
   }
 
+  preInit(entityForm: EntityFormComponent) {
+    this.activatedRoute.paramMap
+      .pipe(
+        take(1),
+        map(paramMap => paramMap.get("pk"))
+      )
+      .subscribe(res => {
+        const pk = parseInt(res, 10);
+        if (pk) {
+          this.pk = entityForm.pk = pk;
+          return;
+        }
+      });
+  }
+
+  /* Show/hide advanced fieldsets */
+  toggleFieldsets(isShow = false): void {
+    this.fieldSets
+      .filter(
+        set =>
+          set.name !== helptext_sharing_smb.fieldset_general &&
+          set.name !== "divider" &&
+          set.name !== "spacer"
+      )
+      .forEach(set => { set.label = isShow; });
+
+    const divSets = this.fieldSets.filter(set => set.name === "divider");
+    divSets.pop(); /* Always show last divider */
+    divSets.forEach(set => { set.divider = isShow; });
+  }
+
   afterSave(entityForm) {
-    if (entityForm.formGroup.controls['cifs_timemachine'].value && !this.isTimeMachineOn) {
+    if (entityForm.formGroup.controls['timemachine'].value && !this.isTimeMachineOn) {
       this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, helptext_sharing_smb.restart_smb_dialog.message,
         true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
         helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
@@ -205,7 +298,7 @@ export class SMBFormComponent {
   }
 
   checkACLactions(entityForm) {
-    const sharePath: string = entityForm.formGroup.get('cifs_path').value;
+    const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
     /**
@@ -285,11 +378,13 @@ export class SMBFormComponent {
       .subscribe(() => {}, error => new EntityUtils().handleWSError(this, error, this.dialog));
   }
 
-  afterInit(entityForm: any) {
-    entityForm.ws.call('sharing.smb.vfsobjects_choices', [])
+  afterInit(entityForm: EntityFormComponent) {
+    this.entityForm = entityForm;
+    this.ws.call('sharing.smb.vfsobjects_choices', [])
         .subscribe((res) => {
-          this.cifs_vfsobjects =
-              _.find(this.fieldConfig, {'name': "cifs_vfsobjects"});
+          this.cifs_vfsobjects = this.fieldSets
+            .find(set => set.name === helptext_sharing_smb.fieldset_other)
+            .config.find(config => config.name === "vfsobjects");
           const options = [];
           res.forEach((item) => {
             options.push({label : item, value : item});
@@ -297,23 +392,30 @@ export class SMBFormComponent {
           this.cifs_vfsobjects.options = _.sortBy(options, ['label']);
         });
     if (entityForm.isNew) {
-      entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['ixnas', 'streams_xattr']);
-      entityForm.formGroup.controls['cifs_browsable'].setValue(true);
+      entityForm.formGroup.controls['vfsobjects'].setValue(['ixnas', 'streams_xattr']);
+      entityForm.formGroup.controls['browsable'].setValue(true);
     }
 
-    entityForm.formGroup.controls['cifs_name'].statusChanges.subscribe((res) => {
-      let target = _.find(this.fieldConfig, {'name' : 'cifs_name'});
-      res === 'INVALID' ? target.hasErrors = true : target.hasErrors = false;
-    })
+    /*  If name is empty, auto-populate after path selection */
+    entityForm.formGroup.controls['path'].valueChanges.subscribe(path => {
+      const nameControl = entityForm.formGroup.controls['name'];
+      if (path && !nameControl.value) {
+        const v = path.split('/').pop();
+        nameControl.setValue(v);
+      }
+    });
+
     setTimeout(() => {
-      if (entityForm.formGroup.controls['cifs_timemachine'].value) { this.isTimeMachineOn = true };
+      if (entityForm.formGroup.controls['timemachine'].value) { this.isTimeMachineOn = true };
     }, 700)
   }
 
-  forbiddenNameValidator(control: FormControl): {[key: string]: boolean} {
-    if (control.value === 'global') {
-      return {'nameIsForbidden': true}
+  /* If user blurs name field with empty value, try to auto-populate based on path */
+  blurEventName(parent: { entityForm: EntityFormComponent }) {
+    const pathControl = parent.entityForm.formGroup.controls['path'];
+    const nameControl = parent.entityForm.formGroup.controls['name'];
+    if (pathControl.value && !nameControl.value) {
+      nameControl.setValue(pathControl.value.split('/').pop());
     }
-    return null;
   }
 }

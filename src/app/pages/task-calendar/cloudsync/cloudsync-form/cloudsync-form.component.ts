@@ -650,8 +650,13 @@ export class CloudsyncFormComponent implements OnInit {
           }
           if (this.data.attributes) {
             for (let attr in this.data.attributes) {
+              attr = attr === 'encryption' ? 'task_encryption' : attr;
               if (this.formGroup.controls[attr]) {
-                this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
+                if (attr === 'task_encryption') {
+                  this.formGroup.controls[attr].setValue(this.data.attributes['encryption'] == null ? '' : this.data.attributes['encryption']);
+                } else {
+                  this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
+                }
                 if (attr === 'bucket' && this.formGroup.controls['bucket_input']) {
                   this.formGroup.controls['bucket_input'].setValue(this.data.attributes[attr]);
                 }
@@ -678,14 +683,15 @@ export class CloudsyncFormComponent implements OnInit {
     if (data.bwlimit) {
       let bwlimit_str = "";
       for (let i = 0; i < data.bwlimit.length; i++) {
+        let sub_bwlimit = data.bwlimit[i].time + ",off";
         if (data.bwlimit[i].bandwidth != null) {
           const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
-          const sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
-          if (bwlimit_str != "") {
-            bwlimit_str += " " + sub_bwlimit;
-          } else {
-            bwlimit_str += sub_bwlimit;
-          }
+          sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
+        }
+        if (bwlimit_str != "") {
+          bwlimit_str += " " + sub_bwlimit;
+        } else {
+          bwlimit_str += sub_bwlimit;
         }
       }
       data.bwlimit = bwlimit_str;

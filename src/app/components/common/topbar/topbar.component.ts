@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subscription } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import * as domHelper from '../../../helpers/dom.helper';
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
 import helptext from '../../../helptext/topbar';
@@ -39,6 +39,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   interval: any;
 
   replicationStatusSub: Subscription;
+  continuousStreaming: Subscription
   showReplication = false;
   showResilvering = false;
   pendingNetworkChanges = false;
@@ -75,7 +76,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     private router: Router,
     private notificationsService: NotificationsService,
     private ws: WebSocketService,
-    private rest: RestService,
     public language: LanguageService,
     private dialogService: DialogService,
     public sysGenService: SystemGeneralService,
@@ -122,14 +122,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     const notifications = this.notificationsService.getNotificationList();
 
     notifications.forEach((notificationAlert: NotificationAlert) => {
-      if (notificationAlert.dismissed === false) {
+      if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
         this.notifications.push(notificationAlert);
       }
     });
     this.notificationsService.getNotifications().subscribe((notifications1) => {
       this.notifications = [];
       notifications1.forEach((notificationAlert: NotificationAlert) => {
-        if (notificationAlert.dismissed === false) {
+        if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
           this.notifications.push(notificationAlert);
         }
       });
@@ -145,6 +145,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.checkNetworkChangesPending();
       }
     });
+
     this.replicationStatusSub = this.ws
       .sub("replication.query")
       .subscribe(repStatus => {
@@ -158,12 +159,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             this.replicationDetails = x;
           }
         });
-        if (this.is_ha) {
-          this.getHAStatus();
-        }
-        this.checkNetworkCheckinWaiting();
-        this.checkNetworkChangesPending();
       });
+
+    this.continuousStreaming = interval(10000).subscribe(x => {
+      if (this.is_ha) {
+        this.getHAStatus();
+      }
+    });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
       if(res && res.fields.scan.function.indexOf('RESILVER') > -1 ) {
@@ -203,6 +205,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       clearInterval(this.interval);
     }
 
+    this.continuousStreaming.unsubscribe();
     this.replicationStatusSub.unsubscribe();
 
     this.core.unregister({observerClass:this});

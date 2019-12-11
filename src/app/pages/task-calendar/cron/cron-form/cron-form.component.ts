@@ -20,7 +20,11 @@ import helptext from '../../../../helptext/task-calendar/cron/cron-form';
 })
 export class CronFormComponent {
 
-   protected resource_name: string = 'tasks/cronjob';
+   protected queryCall = 'cronjob.query';
+   protected queryKey = 'id';
+   protected editCall = 'cronjob.update';
+   protected addCall = 'cronjob.create';
+   //protected entityForm;
    public route_success: string[] = ['tasks', 'cron'];
 
    public formGroup: any;
@@ -30,27 +34,26 @@ export class CronFormComponent {
    protected data: any;
    protected user_field: any;
 
-   public saveSubmitText = "Save Cron Job";
-   protected isEntity: boolean = true; // was true
+   protected isEntity: boolean = true;
    public fieldConfig:FieldConfig[] = [];
    public fieldSetDisplay:string = 'no-margins';
 
    public fieldSets: FieldSet[] = [
      {
-       name:'Cron Job',
+       name:helptext.cron_job,
        class:'add-cron',
        label:true,
        width:'300px',
        config: [
          {
           type: 'input',
-          name: 'cron_description',
+          name: 'description',
           placeholder: helptext.cron_description_placeholder,
           tooltip: helptext.cron_description_tooltip
          },
          {
           type: 'input',
-          name: 'cron_command',
+          name: 'command',
           placeholder: helptext.cron_command_placeholder,
           required: true,
           validation : helptext.cron_command_validation,
@@ -58,7 +61,7 @@ export class CronFormComponent {
          },
          {
            type: 'combobox',
-           name: 'cron_user',
+           name: 'user',
            placeholder: helptext.cron_user_placeholder,
            tooltip: helptext.cron_user_tooltip,
            options: [],
@@ -79,51 +82,39 @@ export class CronFormComponent {
          },
          {
            type: 'checkbox',
-           name: 'cron_stdout',
+           name: 'stdout',
            placeholder: helptext.cron_stdout_placeholder,
            tooltip: helptext.cron_stdout_tooltip,
            value: true,
          },
          {
            type: 'checkbox',
-           name: 'cron_stderr',
+           name: 'stderr',
            placeholder: helptext.cron_stderr_placeholder,
            tooltip: helptext.cron_stderr_tooltip,
            value: false,
          },
          {
            type: 'checkbox',
-           name: 'cron_enabled',
+           name: 'enabled',
            placeholder: helptext.cron_enabled_placeholder,
            tooltip: helptext.cron_enabled_tooltip,
            value: true,
-         }
+         },
        ]
      }
    ];
 
    @ViewChild('form', { static: true}) form:EntityFormComponent;
 
-   constructor(
-     protected userService: UserService,
-     protected router: Router,
-     protected rest: RestService,
-     protected ws: WebSocketService,
-     protected aroute: ActivatedRoute,
-     protected loader: AppLoaderService,
-     private core:CoreService
-   ){}
-
-   preInit(entityForm){
-     // Setup user field options
-     this.user_field = _.find(this.fieldSets[0].config, {'name': 'cron_user'});
-     this.userService.userQueryDSCache().subscribe((items) => {
-      for (let i = 0; i < items.length; i++) {
-         this.user_field.options.push({label: items[i].username, value: items[i].username});
-       }
-     });
-
-    }
+  constructor(
+    protected userService: UserService,
+    protected router: Router,
+    protected ws: WebSocketService,
+    protected aroute: ActivatedRoute,
+    protected loader: AppLoaderService,
+    private core:CoreService
+  ){}
 
   updateUserSearchOptions(value = "", parent) {
     parent.userService.userQueryDSCache(value).subscribe(items => {
@@ -135,28 +126,46 @@ export class CronFormComponent {
     });
   }
 
+  preInit(entityForm){
+    //this.entityForm = entityForm;
+    this.aroute.params.subscribe(params => {
+      if (params.pk) {
+        this.pk = params.pk;
+      }
+    });
 
-   resourceTransformIncomingRestData(data) {
-     data['cron_picker'] = data.cron_minute + " " +
-                           data.cron_hour + " " +
-                           data.cron_daymonth + " " +
-                           data.cron_month + " " +
-                           data.cron_dayweek;
-     return data;
-   }
-
+    // Setup user field options
+    this.user_field = _.find(this.fieldSets[0].config, {'name': 'user'});
+    this.userService.userQueryDSCache().subscribe((items) => {
+     for (let i = 0; i < items.length; i++) {
+        this.user_field.options.push({label: items[i].username, value: items[i].username});
+      }
+    });
+  }
 
    afterInit(entityForm){
+   }
+
+   resourceTransformIncomingRestData(data) {
+     const schedule = data['schedule']
+     data['cron_picker'] = schedule.minute + " " +
+                           schedule.hour + " " +
+                           schedule.dom + " " +
+                           schedule.month + " " +
+                           schedule.dow;
+     return data;
    }
 
    beforeSubmit(value){
      let spl = value.cron_picker.split(" ");
      delete value.cron_picker;
-     value['cron_minute'] = spl[0];
-     value['cron_hour'] = spl[1];
-     value['cron_daymonth'] = spl[2];
-     value['cron_month'] = spl[3];
-     value['cron_dayweek'] = spl[4];
+     const schedule = {}
+     schedule['minute'] = spl[0];
+     schedule['hour'] = spl[1];
+     schedule['dom'] = spl[2];
+     schedule['month'] = spl[3];
+     schedule['dow'] = spl[4];
+     value['schedule'] = schedule;
    }
 
 }
