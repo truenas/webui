@@ -40,7 +40,7 @@ export class CronFormComponent {
 
    public fieldSets: FieldSet[] = [
      {
-       name:helptext.cron_job,
+       name:helptext.cron_fieldsets[0],
        class:'add-cron',
        label:true,
        width:'300px',
