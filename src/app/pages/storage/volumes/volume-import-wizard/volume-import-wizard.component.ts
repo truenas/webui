@@ -185,6 +185,7 @@ export class VolumeImportWizardComponent {
         this.decryptDisks(stepper);
       } else {
         this.getImportableDisks();
+        stepper.next();
       }
     } else {
       stepper.next();
@@ -230,8 +231,11 @@ export class VolumeImportWizardComponent {
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.guid.options.push({label:res[i].name + ' | ' + res[i].guid, value:res[i].guid});
+      if (res && res.result) {
+        const result = res.result;
+        for (let i = 0; i < result.length; i++) {
+          this.guid.options.push({label:result[i].name + ' | ' + result[i].guid, value:result[i].guid});
+        }
       }
       dialogRef.close(false);
     });
