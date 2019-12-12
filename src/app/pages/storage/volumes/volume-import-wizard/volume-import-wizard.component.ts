@@ -180,8 +180,12 @@ export class VolumeImportWizardComponent {
     if (this.isNew) {
       this.router.navigate(new Array('/').concat(
         this.route_create));
-    } else if (this.encrypted.value && stepper._selectedIndex === 1) {
-      this.decryptDisks(stepper);
+    } else if (stepper._selectedIndex === 1) {
+      if (this.encrypted.value) {
+        this.decryptDisks(stepper);
+      } else {
+        this.getImportableDisks();
+      }
     } else {
       stepper.next();
     }
@@ -226,6 +230,7 @@ export class VolumeImportWizardComponent {
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe((res) => {
+      console.log("success");
       for (let i = 0; i < res.length; i++) {
         this.guid.options.push({label:res[i].name + ' | ' + res[i].guid, value:res[i].guid});
       }
