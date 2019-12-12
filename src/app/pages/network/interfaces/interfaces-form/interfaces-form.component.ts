@@ -157,7 +157,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       type: 'select',
       name: 'vlan_pcp',
       placeholder: helptext.vlan_pcp_placeholder,
-      options: [],
+      options: helptext.vlan_pcp_options,
       tooltip: helptext.vlan_pcp_tooltip,
       isHidden: true,
       disabled: true,
@@ -220,7 +220,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private lagg_fields = ['lag_protocol', 'lag_ports'];
   private bridge_fields = ['bridge_members'];
   private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid', 'disable_offload_capabilities'];
-  private vlan_pcp:any;
   private vlan_pint:any;
   private lag_ports: any;
   private bridge_members: any;
@@ -339,12 +338,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       entityForm.setDisabled('name', true);
       entityForm.setDisabled('type', true, true);
     }
-    this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
-      this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});
-      res.forEach((item) => {
-        this.vlan_pcp.options.push({label : item[1], value : item[0]});
-      });
-    });
   }
 
   clean(data) {
