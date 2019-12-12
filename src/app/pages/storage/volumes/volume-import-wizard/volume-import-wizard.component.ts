@@ -211,7 +211,7 @@ export class VolumeImportWizardComponent {
     }));
     formData.append('file', this.subs.file);
 
-    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Decrypting Disks"}, disableClose: true});
+    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.decrypt_disks_title}, disableClose: true});
     dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.subscribe(res=>{
       dialogRef.close(false);
@@ -226,8 +226,8 @@ export class VolumeImportWizardComponent {
 
   getImportableDisks() {
     this.guid.options = [];
-    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Finding Disks") }, disableClose: true});
-    dialogRef.componentInstance.setDescription(T("Finding encrypted disks..."));
+    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_encrypted_disks_title}, disableClose: true});
+    dialogRef.componentInstance.setDescription(helptext.find_encrypted_disks_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe((res) => {
