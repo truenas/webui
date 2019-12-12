@@ -226,7 +226,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       // Fallback if no fieldsets are defined
       if(this.conf.fieldSets){
         this.fieldConfig = [];
-        this.fieldSets = this.conf.fieldSets;
+        /* Temp patch to support both FieldSet approaches */
+        this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
         for(let i = 0; i < this.fieldSets.length; i++){
           let fieldset = this.fieldSets[i];
           if(fieldset.config){

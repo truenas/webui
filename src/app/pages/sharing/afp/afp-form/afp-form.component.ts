@@ -23,7 +23,7 @@ export class AFPFormComponent implements OnDestroy {
   public afp_timemachine_quota: any;
   public afp_timemachine_subscription: any;
 
-  private _fieldSets = new FieldSets([
+  private fieldSets = new FieldSets([
     {
       name: helptext_sharing_afp.fieldset_general,
       label: true,
@@ -165,7 +165,7 @@ export class AFPFormComponent implements OnDestroy {
     },
     { name: 'divider_last', divider: true },
   ]);
-  public fieldSets = this._fieldSets.list();
+
   protected advanced_field: Array<any> = [
     'comment',
     'upriv',
@@ -191,7 +191,7 @@ export class AFPFormComponent implements OnDestroy {
       name : helptext_sharing_afp.actions_basic_mode,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
-        this._fieldSets
+        this.fieldSets
           .toggleSets(this.advanced_sets)
           .toggleDividers(this.advanced_dividers);
       }
@@ -201,7 +201,7 @@ export class AFPFormComponent implements OnDestroy {
       name : helptext_sharing_afp.actions_advanced_mode,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
-        this._fieldSets
+        this.fieldSets
           .toggleSets(this.advanced_sets)
           .toggleDividers(this.advanced_dividers);
       }
@@ -223,9 +223,9 @@ export class AFPFormComponent implements OnDestroy {
   preInit(){
     const paramMap: any = (<any>this.aroute.params).getValue();
     if (paramMap['pk'] === undefined) {
-      this._fieldSets.config('umask').value = '000';
-      this._fieldSets.config('fperm').value = '644';
-      this._fieldSets.config('dperm').value = '755';
+      this.fieldSets.config('umask').value = '000';
+      this.fieldSets.config('fperm').value = '644';
+      this.fieldSets.config('dperm').value = '755';
     }
 
     this.pk = parseInt(paramMap['pk'], 10) || undefined;
@@ -235,7 +235,7 @@ export class AFPFormComponent implements OnDestroy {
     if (entityForm.isNew) {
       entityForm.formGroup.controls['upriv'].setValue(true);
     }
-    this.afp_timemachine_quota = this._fieldSets.config('timemachine_quota');
+    this.afp_timemachine_quota = this.fieldSets.config('timemachine_quota');
     this.afp_timemachine = entityForm.formGroup.controls['timemachine'];
     this.afp_timemachine_quota['isHidden'] = !this.afp_timemachine.value;
     this.afp_timemachine_subscription = this.afp_timemachine.valueChanges.subscribe((value) => {
