@@ -49,7 +49,7 @@ rollback_recursive_tooltip: T('Stops the rollback when the safety \
  check finds any related clone snapshots that are newer than the \
  rollback snapshot.'),
 
-rollback_recursive_clones_placeholder: T('No Safety Check (WARNING)'),
+rollback_recursive_clones_placeholder: T('No Safety Check (CAUTION)'),
 rollback_recursive_clones_tooltip: T('The rollback will destroy any \
  related intermediate, child dataset, and cloned snapshots that are \
  newer than the rollback snapshot.'),
