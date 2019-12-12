@@ -29,11 +29,11 @@ export class IdmapComponent implements OnInit {
   public custActions: any;
   public pk: any;
   public rangeLowValidation = [
-    ...helptext.idmap_range_low_validator, 
+    ...helptext.idmap_range_validator, 
     this.validationService.rangeValidator(1000, 2147483647)
   ];
   public rangeHighValidation = [
-    ...helptext.idmap_range_high_validator, 
+    ...helptext.idmap_range_validator, 
     this.validationService.rangeValidator(1000, 2147483647), 
     this.validationService.greaterThan('range_low', [helptext.idmap_range_low_placeholder])
   ];

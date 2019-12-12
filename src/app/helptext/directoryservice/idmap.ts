@@ -167,8 +167,7 @@ idmap_tdb_range_high_tooltip: T('Ending UID/GID number for which this system is\
 
 idmap_error_dialog_title: T('Error'),
 
-idmap_range_low_validator: [Validators.required],
-idmap_range_high_validator: [Validators.required],
+idmap_range_validator: [Validators.required]
 
 }
 
