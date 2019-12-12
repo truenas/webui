@@ -99,9 +99,7 @@ export class AdvancedComponent implements OnDestroy {
     type: 'select',
     name: 'serialport',
     placeholder: helptext_system_advanced.serialport_placeholder,
-    options: [
-      { label: '---', value: null},
-    ],
+    options: [],
     tooltip: helptext_system_advanced.serialport_tooltip,
     relation: [
     {
@@ -117,7 +115,6 @@ export class AdvancedComponent implements OnDestroy {
     name: 'serialspeed',
     placeholder: helptext_system_advanced.serialspeed_placeholder,
     options: [
-        { label: '---', value: null},
         { label: '9600', value: "9600" },
         { label: '19200', value: "19200" },
         { label: '38400', value: "38400" },
