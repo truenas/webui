@@ -12,7 +12,7 @@
         {{"Value must be greater than " | translate}} {{control.errors.fields[0]}}.
     </mat-error>
     <mat-error *ngIf="control.hasError('forbidden')">
-        {{"This name " | translate}} <i>{{control.errors.value}}</i> {{"is alreay in use." | translate}}
+        {{"The name " | translate}} <i>{{control.errors.value}}</i> {{"is already in use." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('matchOther')">
         {{"The passwords do not match." | translate}}
