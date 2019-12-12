@@ -3,22 +3,22 @@ import { FieldSet } from "../models/fieldset.interface";
 export class FieldSets {
   constructor(private readonly _fieldSets: FieldSet[] = []) {}
 
-  public config(configName: string) {
+  public config(configClass: string) {
     return this.list()
       .find(
         set =>
-          set.config && set.config.some(config => config.name === configName)
+          set.config && set.config.some(config => config.class === configClass)
       )
-      .config.find(config => config.name === configName);
+      .config.find(config => config.name === configClass);
   }
 
   public list(): FieldSet[] {
     return this._fieldSets;
   }
 
-  public toggleSets(setNames: string[] = []): this {
+  public toggleSets(setClasses: string[] = []): this {
     this._fieldSets
-      .filter(set => setNames.some(name => name === set.name))
+      .filter(set => setClasses.some(c => c === set.class))
       .forEach(set => (set.label = !set.label));
     return this;
   }

@@ -3,8 +3,17 @@ import { T } from "app/translate-marker";
 
 export const helptext_sharing_afp = {
   fieldset_general: T('General Options'),
-  fieldset_access: T('Access'),
+  fieldset_permissions: ('Permissions'),
+  fieldset_allow: T('Allow'),
+  fieldset_deny: T('Deny'),
+  fieldset_ro: T('Read Only'),
+  fieldset_rw: T('Read/Write'),
+  fieldset_hostsallow: T('Hosts Allow'),
+  fieldset_hostsdeny: T('Hosts Deny'),
   fieldset_other: T('Other Options'),
+
+  placeholder_user_or_group: T('User or Group'),
+  placeholder_host_or_ip: T('Hostname or IP address'),
 
   column_name: T('Name'),
   column_path: T('Path'),

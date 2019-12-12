@@ -26,6 +26,7 @@ export class AFPFormComponent implements OnDestroy {
   private fieldSets = new FieldSets([
     {
       name: helptext_sharing_afp.fieldset_general,
+      class: 'general',
       label: true,
       config: [
         {
@@ -60,51 +61,10 @@ export class AFPFormComponent implements OnDestroy {
     },
     { name: 'divider_access', divider: false },
     {
-      name: helptext_sharing_afp.fieldset_access,
+      name: helptext_sharing_afp.fieldset_permissions,
       label: false,
+      class: 'perms',
       config: [
-        {
-          type: 'input',
-          name: 'allow',
-          placeholder: helptext_sharing_afp.placeholder_allow,
-          tooltip: helptext_sharing_afp.tooltip_allow
-        },
-        {
-          type: 'input',
-          name: 'deny',
-          placeholder: helptext_sharing_afp.placeholder_deny,
-          tooltip: helptext_sharing_afp.tooltip_deny
-        },
-        {
-          type: 'input',
-          name: 'ro',
-          placeholder: helptext_sharing_afp.placeholder_ro,
-          tooltip: helptext_sharing_afp.tooltip_ro
-        },
-        {
-          type: 'input',
-          name: 'rw',
-          placeholder: helptext_sharing_afp.placeholder_rw,
-          tooltip: helptext_sharing_afp.tooltip_rw
-        },
-        {
-          type: 'checkbox',
-          name: 'upriv',
-          placeholder: helptext_sharing_afp.placeholder_upriv,
-          tooltip: helptext_sharing_afp.tooltip_upriv
-        },
-        {
-          type: 'permissions',
-          name: 'fperm',
-          placeholder: helptext_sharing_afp.placeholder_fperm,
-          tooltip: helptext_sharing_afp.tooltip_fperm
-        },
-        {
-          type: 'permissions',
-          name: 'dperm',
-          placeholder: helptext_sharing_afp.placeholder_dperm,
-          tooltip: helptext_sharing_afp.tooltip_dperm
-        },
         {
           type: 'input',
           name: 'umask',
@@ -112,23 +72,137 @@ export class AFPFormComponent implements OnDestroy {
           tooltip: helptext_sharing_afp.tooltip_umask
         },
         {
-          type: 'textarea',
-          name: 'hostsallow',
-          placeholder: helptext_sharing_afp.placeholder_hostsallow,
-          tooltip: helptext_sharing_afp.tooltip_hostsallow
+          type: 'permissions',
+          name: 'fperm',
+          placeholder: helptext_sharing_afp.placeholder_fperm,
+          tooltip: helptext_sharing_afp.tooltip_fperm,
+          width: '50%'
         },
         {
-          type: 'textarea',
-          name: 'hostsdeny',
-          placeholder: 'Hosts Deny',
-          tooltip: helptext_sharing_afp.tooltip_hostsdeny
+          type: 'permissions',
+          name: 'dperm',
+          placeholder: helptext_sharing_afp.placeholder_dperm,
+          tooltip: helptext_sharing_afp.tooltip_dperm,
+          width: '50%'
+        },
+        {
+          type: 'checkbox',
+          name: 'upriv',
+          placeholder: helptext_sharing_afp.placeholder_upriv,
+          tooltip: helptext_sharing_afp.tooltip_upriv
         }
       ]
+    },
+    {
+      name: helptext_sharing_afp.fieldset_allow,
+      label: false,
+      class: 'allow',
+      width: '49%',
+      config: [{
+        type: 'list',
+        name: 'allow',
+        templateListField: [{
+          name: 'name',
+          placeholder: helptext_sharing_afp.placeholder_user_or_group,
+          tooltip: helptext_sharing_afp.tooltip_allow,
+          type: 'input',
+        }],
+        listFields: []
+      }]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext_sharing_afp.fieldset_deny,
+      label: false,
+      class: 'deny',
+      width: '49%',
+      config: [{
+        type: 'list',
+        name: 'deny',
+        templateListField: [{
+          name: 'name',
+          placeholder: helptext_sharing_afp.placeholder_user_or_group,
+          tooltip: helptext_sharing_afp.tooltip_deny,
+          type: 'input'
+        }],
+        listFields: []
+      }]
+    },
+    {
+      name: helptext_sharing_afp.fieldset_ro,
+      label: false,
+      class: 'ro',
+      width: '49%',
+      config: [{
+        type: 'list',
+        name: 'ro',
+        templateListField: [{
+              name: 'name',
+              placeholder: helptext_sharing_afp.placeholder_user_or_group,
+              tooltip: helptext_sharing_afp.tooltip_allow,
+              type: 'input',
+        }],
+        listFields: []
+      }]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext_sharing_afp.fieldset_rw,
+      label: false,
+      class: 'rw',
+      width: '49%',
+      config: [{
+        type: 'list',
+        name: 'rw',
+        templateListField: [{
+          name: 'name',
+          placeholder: helptext_sharing_afp.placeholder_user_or_group,
+          tooltip: helptext_sharing_afp.tooltip_deny,
+          type: 'input'
+        }],
+        listFields: []
+      }]
+    },
+    {
+      name: helptext_sharing_afp.fieldset_hostsallow,
+      label: false,
+      class: 'hallow',
+      width: '49%',
+      config: [{
+        type: 'list',
+        name: 'hostsallow',
+        templateListField: [{
+          name: 'address',
+          placeholder: helptext_sharing_afp.placeholder_host_or_ip,
+          tooltip: helptext_sharing_afp.tooltip_hostsallow,
+          type: 'input'
+        }],
+        listFields: []
+      }]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext_sharing_afp.fieldset_hostsdeny,
+      label: false,
+      class: 'hdeny',
+      width: '49%',
+      config: [{
+        type: 'list',
+        name: 'hostsdeny',
+        templateListField: [{
+          name: 'address',
+          placeholder: helptext_sharing_afp.placeholder_host_or_ip,
+          tooltip: helptext_sharing_afp.tooltip_hostsdeny,
+          type: 'input'
+        }],
+        listFields: []
+      }]
     },
     { name: 'divider_other', divider: false },
     {
       name: helptext_sharing_afp.fieldset_other,
       label: false,
+      class: 'other',
       config: [
         {
           type: 'input',
@@ -183,7 +257,16 @@ export class AFPFormComponent implements OnDestroy {
     'deny',
     'timemachine_quota'
   ];
-  advanced_sets = [helptext_sharing_afp.fieldset_access, helptext_sharing_afp.fieldset_other];
+  advanced_sets = [
+    'perms',
+    'other',
+    'allow',
+    'deny',
+    'ro',
+    'rw',
+    'hallow',
+    'hdeny'
+  ];
   advanced_dividers = ['divider_access', 'divider_other'];
   public custActions: Array<any> = [
     {
@@ -234,6 +317,12 @@ export class AFPFormComponent implements OnDestroy {
   afterInit(entityForm: any) {
     if (entityForm.isNew) {
       entityForm.formGroup.controls['upriv'].setValue(true);
+      this.fieldSets.config('allow').initialCount =
+      this.fieldSets.config('deny').initialCount =
+      this.fieldSets.config('ro').initialCount =
+      this.fieldSets.config('rw').initialCount =
+      this.fieldSets.config('hostsallow').initialCount =
+      this.fieldSets.config('hostsdeny').initialCount = 1;
     }
     this.afp_timemachine_quota = this.fieldSets.config('timemachine_quota');
     this.afp_timemachine = entityForm.formGroup.controls['timemachine'];
@@ -245,6 +334,28 @@ export class AFPFormComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.afp_timemachine_subscription.unsubscribe();
+  }
+  
+  resourceTransformIncomingRestData(share) {
+    share.allow = share.allow.map(name => ({ name }));
+    share.deny = share.deny.map(name => ({ name }));
+    share.ro = share.ro.map(name => ({ name }));
+    share.rw = share.rw.map(name => ({ name }));
+    share.hostsallow = share.hostsallow.map(address => ({ address }));
+    share.hostsdeny = share.hostsdeny.map(address => ({ address }));
+
+    return share;
+  }
+
+  clean(share) {
+    share.allow = share.allow.filter(n => !!n.name).map(name => name.name);
+    share.deny = share.deny.filter(n => !!n.name).map(name => name.name);
+    share.ro = share.ro.filter(n => !!n.name).map(name => name.name);
+    share.rw = share.rw.filter(n => !!n.name).map(name => name.name);
+    share.hostsallow = share.hostsallow.filter(a => !!a.address).map(address => address.address);
+    share.hostsdeny = share.hostsdeny.filter(a => !!a.address).map(address => address.address);
+
+    return share;
   }
 
   afterSave(entityForm) {
