@@ -149,17 +149,5 @@ export class GroupFormComponent {
       }
 
     });
-    
-
-    entityForm.formGroup.controls['bsdgrp_group'].valueChanges.subscribe((value) => {
-      const field = _.find(this.fieldSets[0].config, {name: "bsdgrp_group"});
-      field['hasErrors'] = false;
-      field['errors'] = '';
-      if (this.namesInUse.includes(value)) {
-        field['hasErrors'] = true;
-        field['errors'] = T(`The name <em>${value}</em> is already in use.`);
-      }
-    })
-
   }
 }

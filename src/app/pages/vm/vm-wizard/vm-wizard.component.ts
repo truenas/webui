@@ -57,7 +57,7 @@ export class VMWizardComponent {
         name : 'name',
         placeholder : helptext.name_placeholder,
         tooltip : helptext.name_tooltip,
-        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9\_]*$'), this.nameValidator('name')],
+        validation : [Validators.required,Validators.pattern('^[a-zA-Z0-9\_]*$'), forbiddenValues(this.namesInUse)],
         required: true
       },
       { type: 'input',
@@ -571,27 +571,6 @@ export class VMWizardComponent {
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
-
-nameValidator(name: string) {
-  const self = this;
-  return function validNames(control: FormControl) {
-    const config = self.wizardConfig[0].fieldConfig.find(c => c.name === name);
-
-    const errors = self.namesInUse.includes(control.value)
-    ? { validNames : true }
-    : null;
-
-    if (errors) {
-      config.hasErrors = true;
-      config.warnings = T(`Virtual machine <i>${control.value}</i> already exists.`);
-    } else {
-      config.hasErrors = false;
-      config.warnings = '';
-    }
-
-    return errors;
-  }
-};
 
 memoryValidator(name: string) {
   const self = this;
