@@ -99,6 +99,11 @@ export class ScrubFormComponent {
         this.pk = params.pk;
       }
     });
+    
+  }
+
+
+  afterInit(entityForm) {
 
     this.volume_field = _.find(this.fieldConfig, { 'name': 'pool' });
     this.taskService.getVolumeList().subscribe((res) => {
@@ -106,11 +111,7 @@ export class ScrubFormComponent {
         this.volume_field.options.push({ label: res.data[i].vol_name, value: res.data[i].id });
       };
     });
-    
-  }
 
-
-  afterInit(entityForm) {
     entityForm.formGroup.controls['pool'].valueChanges.subscribe((res) => {
       if (!Number.isInteger(res)) {
         this.taskService.getVolumeList().subscribe((list) => {
@@ -122,6 +123,7 @@ export class ScrubFormComponent {
         });
       }
     });
+
   }
 
   beforeSubmit(value){
