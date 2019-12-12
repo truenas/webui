@@ -482,6 +482,7 @@ export class UserFormComponent {
       }
       if(username !=='') {
         parent.entityForm.formGroup.controls['username'].setValue(username.toLocaleLowerCase());
+        parent.entityForm.formGroup.controls['username'].markAsTouched();
       }
     };
   }
