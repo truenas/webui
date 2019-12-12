@@ -727,21 +727,6 @@ export class DatasetFormComponent implements Formconfiguration{
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     } else {
       entityForm.setDisabled('share_type', false, false);
-      entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
-        this.nameIsCaseInsensitive = this.nameIsCaseInsensitive;
-        const field = _.find(this.fieldConfig, {name: "name"});
-        field['hasErrors'] = false;
-        field['errors'] = '';
-        if (this.nameIsCaseInsensitive) {
-          value = value.toLowerCase();
-        }
-        if (this.namesInUse.includes(value)) {
-          let sensitivity;
-          this.nameIsCaseInsensitive ? sensitivity = '(This field is not case-sensitive).' : sensitivity = '';
-          field['hasErrors'] = true;
-          field['errors'] = T(`The name <em>${value}</em> is already in use. ${sensitivity}`);
-        }
-      })
     }
 
     entityForm.formGroup.get('share_type').valueChanges.pipe(filter(shareType => !!shareType && entityForm.isNew)).subscribe(shareType => {

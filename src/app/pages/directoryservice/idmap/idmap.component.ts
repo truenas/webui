@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { WebSocketService, RestService } from '../../../services/';
+import { WebSocketService, RestService, ValidationService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 
@@ -28,6 +28,15 @@ export class IdmapComponent implements OnInit {
   public busy: Subscription;
   public custActions: any;
   public pk: any;
+  public rangeLowValidation = [
+    ...helptext.idmap_range_validator, 
+    this.validationService.rangeValidator(1000, 2147483647)
+  ];
+  public rangeHighValidation = [
+    ...helptext.idmap_range_validator, 
+    this.validationService.rangeValidator(1000, 2147483647), 
+    this.validationService.greaterThan('range_low', [helptext.idmap_range_low_placeholder])
+  ];
 
   protected formFileds: FieldConfig[];
   public adFieldConfig: FieldConfig[] = [
@@ -36,12 +45,16 @@ export class IdmapComponent implements OnInit {
       name: 'range_low',
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeLowValidation
     },
     {
       type: 'input',
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeHighValidation
     },
     {
       type: 'select',
@@ -56,12 +69,16 @@ export class IdmapComponent implements OnInit {
       name: 'range_low',
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeLowValidation
     },
     {
       type: 'input',
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeHighValidation
     },
     {
       type: 'input',
@@ -87,12 +104,16 @@ export class IdmapComponent implements OnInit {
       name: 'range_low',
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeLowValidation
     },
     {
       type: 'input',
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeHighValidation
     },
     {
       type: 'input',
@@ -132,12 +153,16 @@ export class IdmapComponent implements OnInit {
       name: 'range_low',
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeLowValidation
     },
     {
       type: 'input',
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeHighValidation
     }];
   public rfcFieldConfig: FieldConfig[] = [
     {
@@ -145,12 +170,16 @@ export class IdmapComponent implements OnInit {
       name: 'range_low',
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeLowValidation
     },
     {
       type: 'input',
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeHighValidation
     },
     {
       type: 'select',
@@ -233,12 +262,16 @@ export class IdmapComponent implements OnInit {
       name: 'range_low',
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeLowValidation
     },
     {
       type: 'input',
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeHighValidation
     },];
   public scriptFieldConfig: FieldConfig[] = [
     {
@@ -246,12 +279,16 @@ export class IdmapComponent implements OnInit {
       name: 'range_low',
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeLowValidation
     },
     {
       type: 'input',
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeHighValidation
     },
     {
       type: 'input',
@@ -265,12 +302,16 @@ export class IdmapComponent implements OnInit {
       name: 'range_low',
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeLowValidation
     },
     {
       type: 'input',
       name: 'range_high',
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
+      inputType: 'number',
+      validation: this.rangeHighValidation
     }];
 
   protected props: any;
@@ -289,7 +330,8 @@ export class IdmapComponent implements OnInit {
     protected rest: RestService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    protected dialogService: DialogService) {}
+    protected dialogService: DialogService,
+    protected validationService: ValidationService) {}
 
   ngOnInit() {
     this.aroute.params.subscribe((res) => {

@@ -23,11 +23,11 @@ export function forbiddenValues(arrayOfValues: any, caseInsensitive?: boolean) {
         item = item.toLowerCase();
       })
       if (arrayOfValues.includes(thisControl.value.toLowerCase())) {
-        return {forbidden : true};
+        return {forbidden : true, value:thisControl.value};
       }
     } else {
       if (arrayOfValues.includes(thisControl.value)) {
-        return {forbidden : true};
+        return {forbidden : true, value:thisControl.value};
       }
     }
 
