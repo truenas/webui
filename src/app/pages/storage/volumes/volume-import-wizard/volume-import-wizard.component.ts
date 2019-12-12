@@ -230,7 +230,6 @@ export class VolumeImportWizardComponent {
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe((res) => {
-      console.log("success");
       for (let i = 0; i < res.length; i++) {
         this.guid.options.push({label:res[i].name + ' | ' + res[i].guid, value:res[i].guid});
       }
