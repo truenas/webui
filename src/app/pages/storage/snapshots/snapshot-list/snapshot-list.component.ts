@@ -65,7 +65,7 @@ export class SnapshotListComponent {
         {
           value: null,
           label: helptext.rollback_dataset_placeholder,
-          tooltip: helptext.rollback_dataset_placeholder
+          tooltip: helptext.rollback_dataset_tooltip
         },
         {
           value: 'recursive',
@@ -73,7 +73,7 @@ export class SnapshotListComponent {
           tooltip: helptext.rollback_recursive_tooltip
         },
         {
-          value: 'recursive_clones', 
+          value: 'recursive_clones',
           label: helptext.rollback_recursive_clones_placeholder,
           tooltip: helptext.rollback_recursive_clones_tooltip
         }
@@ -107,7 +107,7 @@ export class SnapshotListComponent {
   resourceTransformIncomingRestData(rows: any) {
     return rows;
   }
-  
+
   rowValue(row, attr) {
     switch (attr) {
       case 'used':
@@ -211,7 +211,7 @@ export class SnapshotListComponent {
       const snapshot = res[0];
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
-      const msg = T("<br><br>Roll back to snapshot <i>") + snapshot.name + T('</i> from ') + 
+      const msg = T(`Use snapshot <i>${item.snapshot}</i> to roll <b>${item.dataset}</b> back to `) + 
         new Date(snapshot.properties.creation.parsed.$date).toLocaleString() + '?';
       this.rollbackFormConf.message = msg;
       this.rollback = snapshot;
