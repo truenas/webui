@@ -206,13 +206,11 @@ export class EntityJobComponent implements OnInit {
   }
 
   wsjobUpdate(job) {
-    console.log(job);
     this.job = job;
     if (job.fields) {
       this.job.state = job.fields.state;
     }
     if (job.progress) {
-      console.log("progress");
       this.progress.emit(job.progress);
     }
     if (job.fields && job.fields.state === 'RUNNING') {
@@ -225,7 +223,6 @@ export class EntityJobComponent implements OnInit {
       this.failure.emit(this.job.fields);
     }
     if (job.state === 'SUCCESS') {
-      console.log("success");
       this.success.emit(this.job);
     } else if (job.state === 'FAILED') {
       this.failure.emit(this.job);
