@@ -15,7 +15,7 @@ export const helptext_system_bootenv = {
   clone_name_tooltip: T(
     "Enter a name for the clone of this boot environment.\
  Alphanumeric characters, dashes (*-*), underscores (*_*),\
- and periods (*.*) are allowed.)"
+ and periods (*.*) are allowed."
   ),
   
   clone_source_placeholder: T("Source"),
@@ -25,7 +25,7 @@ export const helptext_system_bootenv = {
   create_name_tooltip: T(
     "Enter the name of the boot entry.\
  Alphanumeric characters, dashes (*-*), underscores (*_*),\
- and periods (*.*) are allowed.)"
+ and periods (*.*) are allowed."
  ),
 
   list_dialog_activate_action: T("Activate"),
@@ -37,7 +37,7 @@ export const helptext_system_bootenv = {
   rename_name_tooltip: T(
     "Rename the existing boot environment.\
  Alphanumeric characters, dashes (*-*), underscores (*_*),\
- and periods (*.*) are allowed.)"
+ and periods (*.*) are allowed."
   ),
 
   replace_name_placeholder: T("Member Disk"),
