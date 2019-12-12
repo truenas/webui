@@ -1,5 +1,6 @@
 <!-- <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template> -->
 <mat-card>
+  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="showSpinner" #entityspinner></mat-spinner>
   <form [formGroup]="formGroup" #entityForm="ngForm" (keydown.enter)="$event.preventDefault()">
     <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray" #stepper>
       <div *ngFor="let step of conf.wizardConfig; let i = index">
