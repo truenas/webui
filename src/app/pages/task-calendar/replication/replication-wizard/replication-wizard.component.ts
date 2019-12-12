@@ -707,16 +707,6 @@ export class ReplicationWizardComponent {
                 this.getSnapshots();
             }
         });
-
-        this.entityWizard.formArray.controls[0].controls['name'].valueChanges.subscribe((value) => {
-            const field = _.find(this.wizardConfig[0].fieldConfig, { name: "name" });
-            field['hasErrors'] = false;
-            field['errors'] = '';
-            if (this.namesInUse.includes(value)) {
-                field['hasErrors'] = true;
-                field['errors'] = T(`The name <em>${value}</em> is already in use.`)
-            }
-        })
     }
 
     step1Init() {
