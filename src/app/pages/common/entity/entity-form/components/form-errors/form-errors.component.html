@@ -12,7 +12,7 @@
         {{"Value must be greater than " | translate}} {{control.errors.fields[0]}}.
     </mat-error>
     <mat-error *ngIf="control.hasError('forbidden')">
-        {{"This name has already been used." | translate}}
+        {{"The name " | translate}} <i>{{control.errors.value}}</i> {{"is already in use." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('range')">
         {{"The value is out of range. Enter a value between " | translate}} {{control.errors.rangeValue.min}} {{" and " | translate }} {{control.errors.rangeValue.max}}.
