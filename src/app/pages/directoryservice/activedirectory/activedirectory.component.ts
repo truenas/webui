@@ -29,27 +29,20 @@ export class ActiveDirectoryComponent {
   protected ldap_sasl_wrapping: any;
   public adStatus = false;
   entityEdit: any;
-  public sectionLabels = ['Section Two', 'Section Three', 'Section Four'];
 
   public custActions: Array<any> = [
     {
       'id' : helptext.activedirectory_custactions_basic_id,
       'name' : helptext.activedirectory_custactions_basic_name,
       function : () => { 
-        this.isBasicMode = !this.isBasicMode; 
-        this.sectionLabels.forEach((label) => {
-          this.fieldSets.find(set => set.name === label).label = false;
-        });
+        this.setBasicMode(true);
       }
     },
     {
       'id' : helptext.activedirectory_custactions_advanced_id,
       'name' : helptext.activedirectory_custactions_advanced_name,
       function : () => { 
-        this.isBasicMode = !this.isBasicMode; 
-        this.sectionLabels.forEach((label) => {
-          this.fieldSets.find(set => set.name === label).label = true;
-        });     
+        this.setBasicMode(false);   
       }
     },
     {
@@ -74,7 +67,6 @@ export class ActiveDirectoryComponent {
       'name' : helptext.activedirectory_custactions_leave_domain,
       function : () => { 
         const that = this;
-        console.log(that)
         this.dialogservice.dialogForm(
           {
             title: helptext.activedirectory_custactions_leave_domain,
@@ -169,8 +161,13 @@ export class ActiveDirectoryComponent {
     },
   ]},
   {
-    name: 'Section Two',
-    class: 'section_header_basic',
+    name:'divider1',
+    class: 'divider1',
+    divider:false
+  },
+  {
+    name: helptext.ad_section_headers.advanced_row,
+    class: 'adv_row',
     label:false,
     config:[
     {
@@ -227,12 +224,12 @@ export class ActiveDirectoryComponent {
     }
     ]},
     {
-      name:'divider',
+      name:'divider2',
       divider:true
     },
     {
-      name: 'Section Three',
-      class: 'section_header',
+      name: helptext.ad_section_headers.advanced_col1,
+      class: 'adv_column1',
       label:false,
       width: '48%',
       config:[
@@ -278,14 +275,14 @@ export class ActiveDirectoryComponent {
     }
       ]},
       {
-        name: 'Section 3.5',
-        class: 'section_three-five',
+        name: 'column_spacer',
+        class: 'column_spacer',
         label:false,
         width: '4%',
         config:[]},
       {
-        name: 'Section Four',
-        class: 'section_header',
+        name: helptext.ad_section_headers.advanced_col2,
+        class: 'adv_column2',
         label:false,
         width: '48%',
         config:[
@@ -479,6 +476,14 @@ export class ActiveDirectoryComponent {
     })
 
     entityEdit.submitFunction = this.submitFunction;
+  }
+
+  setBasicMode(basic_mode) {
+    this.isBasicMode = basic_mode;
+    _.find(this.fieldSets, {class:'adv_row'}).label = !basic_mode; 
+    _.find(this.fieldSets, {class:'adv_column1'}).label = !basic_mode; 
+    _.find(this.fieldSets, {class:'adv_column2'}).label = !basic_mode; 
+    _.find(this.fieldSets, {class:'divider1'}).divider = !basic_mode;
   }
 
   beforeSubmit(data){

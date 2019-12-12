@@ -25,7 +25,10 @@ ad_leave_domain_dialog: {
 },
 
 ad_section_headers: {
-    dc: T('Domain Credentials')
+    dc: T('Domain Credentials'),
+    advanced_row: T('Advanced Settings'),
+    advanced_col1: T(''),
+    advanced_col2: T('')
 },
 
 activedirectory_domainname_name: 'domainname',
@@ -146,7 +149,7 @@ activedirectory_sasl_wrapping_tooltip : T('Choose how LDAP traffic is transmitte
  and newer can be configured to enforce signed LDAP connections.'),
 
 activedirectory_enable_name: 'enable',
-activedirectory_enable_placeholder : T('Enable (requires password'),
+activedirectory_enable_placeholder : T('Enable (requires password)'),
 activedirectory_enable_tooltip : T('Set to enable the Active Directory service.\
  Selecting this option requires the Domain Account Password.'),
 
