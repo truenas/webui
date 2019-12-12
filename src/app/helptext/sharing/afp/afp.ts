@@ -2,6 +2,10 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_sharing_afp = {
+  fieldset_general: T('General Options'),
+  fieldset_access: T('Access'),
+  fieldset_other: T('Other Options'),
+
   column_name: T('Name'),
   column_path: T('Path'),
   column_comment: T('Description'),
