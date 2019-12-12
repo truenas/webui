@@ -6,13 +6,12 @@ import { DialogService } from "../../../services/dialog.service";
 import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService, StorageService } from '../../../services/';
+import { RestService, WebSocketService, StorageService, ValidationService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { Http } from '@angular/http';
-
 
 @Component({
   selector: 'app-system-advanced',
@@ -208,7 +207,7 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.sed_passwd_placeholder,
     tooltip: helptext_system_advanced.sed_passwd_tooltip,
     inputType: 'password',
-    togglePw: true,
+    togglePw: true
   },
   {
     type: 'input',
@@ -216,8 +215,7 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: helptext_system_advanced.sed_passwd2_placeholder,
     tooltip: helptext_system_advanced.sed_passwd2_tooltip,
     inputType: 'password',
-    validation : helptext_system_advanced.sed_passwd2_validation,
-
+    validation : this.validationService.matchOtherValidator('sed_passwd')
   },
 ];
 
@@ -229,7 +227,8 @@ export class AdvancedComponent implements OnDestroy {
     protected matDialog: MatDialog,
     public datePipe: DatePipe,
     public http: Http,
-    public storage: StorageService) {}
+    public storage: StorageService,
+    public validationService: ValidationService) {}
 
   ngOnDestroy() {
     this.swapondrive_subscription.unsubscribe();
