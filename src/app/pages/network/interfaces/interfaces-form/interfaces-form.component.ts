@@ -70,8 +70,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       name: 'disable_offload_capabilities',
       placeholder : helptext.disable_offload_capabilities_placeholder,
       tooltip : helptext.disable_offload_capabilities_tooltip,
-      isHidden: true,
-      disabled: true,
     },
     {
       type: 'select',
@@ -219,7 +217,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
   private lagg_fields = ['lag_protocol', 'lag_ports'];
   private bridge_fields = ['bridge_members'];
-  private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid', 'disable_offload_capabilities'];
+  private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid'];
+  private vlan_pcp:any;
   private vlan_pint:any;
   private lag_ports: any;
   private bridge_members: any;
