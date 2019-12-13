@@ -124,8 +124,17 @@ span.form-message.warning {
 }
 
 #success-msg-wrapper {
-  height: 1.1rem;
   margin-top: 5px;
-  margin-bottom: -18px;
+  margin-bottom: -10px;
+  padding-left: 3px;
+}
+
+#form_message {
+  margin-top: 8px;
+  margin-bottom: -4px;
+  padding-left: 3px;
+}
+#error_message {
+  margin-top: 4px;
   padding-left: 3px;
 }
