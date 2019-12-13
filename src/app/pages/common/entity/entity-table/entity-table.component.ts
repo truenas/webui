@@ -196,6 +196,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
               if (this.conf.afterInit) {
                 this.conf.afterInit(this);
               }
+            } else {
+              this.showSpinner = false;
             }
           }
         );
