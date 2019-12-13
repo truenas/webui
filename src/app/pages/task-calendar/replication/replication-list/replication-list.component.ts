@@ -105,7 +105,9 @@ export class ReplicationListComponent {
     }
 
     stateButton(row) {
-        if (row.job) {
+        if (row.state.state === 'HOLD') {
+            this.dialog.Info(T('Task is hold'), row.state.reason, '500px', 'info', true);
+        } else if (row.job) {
             if (row.state.state === 'RUNNING') {
                 this.entityList.runningStateButton(row.job.id);
             } else {
