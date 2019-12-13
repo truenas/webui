@@ -66,16 +66,25 @@ ldap_kerberos_principal_tooltip: T('Select the location of the principal in the 
 
 ldap_ssl_name : 'ssl',
 ldap_ssl_placeholder : T('Encryption Mode'),
-ldap_ssl_tooltip: T('Authentication only functions when a Certificate\
- is selected with either the <i>SSL</i> or <i>TLS</i> option.'),
+ldap_ssl_tooltip: T('Options for encrypting the LDAP connection: \
+ <ul> \
+ <li><i>OFF:</i> Do not encrypt the LDAP connection.</li> \
+ <li><i>ON:</i> <i>SSL</i> encrypts the LDAP connection and uses port \
+ <i>636</i>.</li> \
+ <li><i>START_TLS:</i> <i>STARTTLS</i> encrypts the LDAP connection and \
+ uses the default LDAP port <i>389</i>.</li> \
+ </ul>'),
 
 ldap_certificate_name : 'certificate',
 ldap_certificate_placeholder : T('Certificate'),
-ldap_certificate_tooltip: T('Select the LDAP CA certificate. The certificate for the\
- LDAP server CA must first be imported using the System/Certificates menu.'),
+ldap_certificate_tooltip: T('Certificate to use when performing LDAP \
+ certificate-based authentication. To configure LDAP certificate-based \
+ authentication, create a Certificate Signing Request for the LDAP \
+ provider to sign. A certificate is not required when using \
+ username/password or Kerberos authentication.'),
 
 ldap_validate_certificates_placeholder: T('Validate Certificates'),
-ldap_validate_certificates_tooltip: T('Check server certificates in a TLS session.'),
+ldap_validate_certificates_tooltip: T('Verify certificate authenticity.'),
 
 ldap_disable_fn_cache_name : 'disable_freenas_cache',
 ldap_disable_fn_cache_placeholder : T('Disable LDAP User/Group Cache'),
@@ -94,8 +103,9 @@ ldap_dns_timeout_tooltip: T('DNS timeout in seconds. Increase this value if DNS 
 
 ldap_idmap_backend_name : 'idmap_backend',
 ldap_idmap_backend_placeholder : T('Idmap Backend'),
-ldap_idmap_backend_tooltip: T('Backend used to map Windows security identifiers\
- (SIDs) to UNIX UIDs and GIDs. Click Edit to configure that backend'),
+ldap_idmap_backend_tooltip: T('Backend used to map Windows security \
+ identifiers (SIDs) to UNIX UIDs and GIDs. To configure the selected \
+ backend, click <i>EDIT IDMAP</i>.'),
 
 ldap_has_samba_schema_name : 'has_samba_schema',
 ldap_has_samba_schema_placeholder : T('Samba Schema'),

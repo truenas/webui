@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { Http } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
+import { EntityUtils } from '../../../common/entity/utils';
 
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -179,8 +180,13 @@ export class VolumeImportWizardComponent {
     if (this.isNew) {
       this.router.navigate(new Array('/').concat(
         this.route_create));
-    } else if (this.encrypted.value && stepper._selectedIndex === 1) {
-      this.decryptDisks(stepper);
+    } else if (stepper._selectedIndex === 1) {
+      if (this.encrypted.value) {
+        this.decryptDisks(stepper);
+      } else {
+        this.getImportableDisks();
+        stepper.next();
+      }
     } else {
       stepper.next();
     }
@@ -205,7 +211,7 @@ export class VolumeImportWizardComponent {
     }));
     formData.append('file', this.subs.file);
 
-    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Decrypting Disks"}, disableClose: true});
+    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.decrypt_disks_title}, disableClose: true});
     dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.subscribe(res=>{
       dialogRef.close(false);
@@ -220,10 +226,22 @@ export class VolumeImportWizardComponent {
 
   getImportableDisks() {
     this.guid.options = [];
-    this.ws.call('pool.import_find').subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.guid.options.push({label:res[i].name + ' | ' + res[i].guid, value:res[i].guid});
+    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_encrypted_disks_title}, disableClose: true});
+    dialogRef.componentInstance.setDescription(helptext.find_encrypted_disks_msg);
+    dialogRef.componentInstance.setCall('pool.import_find', []);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe((res) => {
+      if (res && res.result) {
+        const result = res.result;
+        for (let i = 0; i < result.length; i++) {
+          this.guid.options.push({label:result[i].name + ' | ' + result[i].guid, value:result[i].guid});
+        }
       }
+      dialogRef.close(false);
+    });
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      new EntityUtils().handleWSError(this.entityWizard, res, this.dialogService);
+      dialogRef.close(false);
     });
   }
 
@@ -262,7 +280,6 @@ export class VolumeImportWizardComponent {
     });
 
     this.guid = _.find(this.wizardConfig[2].fieldConfig, {'name': 'guid'});
-    this.getImportableDisks();
     this.guid_subscription =
     ( < FormGroup > entityWizard.formArray.get([2]).get('guid'))
     .valueChanges.subscribe((res) => {

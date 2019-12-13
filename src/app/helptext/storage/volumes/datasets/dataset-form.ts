@@ -36,11 +36,13 @@ dataset_form_refquota_tooltip: T('<i>0</i> disables quotas. Specify a maximum al
  space for this dataset.'),
 
 dataset_form_refquota_warning_placeholder: T('Quota warning alert at, %'),
-dataset_form_refquota_warning_tooltip: T('0=Disabled, blank=inherit'),
+dataset_form_refquota_warning_tooltip: T('Apply the same quota warning \
+ alert settings as the parent dataset.'),
 dataset_form_refquota_warning_validation: [Validators.min(0)],
 
 dataset_form_refquota_critical_placeholder: T('Quota critical alert at, %'),
-dataset_form_refquota_critical_tooltip: T('0=Disabled, blank=inherit'),
+dataset_form_refquota_critical_tooltip: T('Apply the same quota critical \
+ alert settings as the parent dataset.'),
 dataset_form_refquota_critical_validation: [Validators.min(0)],
 
 dataset_form_quota_placeholder: 'Quota for this dataset and all children',

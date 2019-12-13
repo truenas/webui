@@ -301,8 +301,8 @@ a new application key, log in to the Backblaze account, go to the \
 
   private_key_sftp: {
     placeholder: T("Private Key ID"),
-    tooltip: T('Import the private key from an existing SSH keypair. \
- Choose the name of the SSH keypair to use for this connection.')
+    tooltip: T('Import the private key from an existing SSH keypair or \
+ select <i>Generate New</i> to create a new SSH key for this credential.')
   },
 
   url_webdav: {

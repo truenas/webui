@@ -255,6 +255,7 @@ export class JailListComponent {
         self.entityList.loader.open();
         self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
           (res)=>{
+            self.addBtnDisabled = false;
             self.activatedPool = value['selectedPool'];
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
