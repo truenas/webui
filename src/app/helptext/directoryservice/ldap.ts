@@ -81,7 +81,7 @@ ldap_certificate_tooltip: T('Certificate to use when performing LDAP \
  username/password or Kerberos authentication.'),
 
 ldap_validate_certificates_placeholder: T('Validate Certificates'),
-ldap_validate_certificates_tooltip: T('Checks certificate authenticity.'),
+ldap_validate_certificates_tooltip: T('Verify certificate authenticity.'),
 
 ldap_disable_fn_cache_name : 'disable_freenas_cache',
 ldap_disable_fn_cache_placeholder : T('Disable LDAP User/Group Cache'),
