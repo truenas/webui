@@ -166,8 +166,6 @@ export class JailListComponent {
     },
   ];
 
-  public showSpinner = true;
-
   protected globalConfig = {
     id: "config",
     tooltip: helptext.globalConfig.tooltip,
@@ -211,7 +209,7 @@ export class JailListComponent {
         this.availablePools = res
       }, (err) => {
         resolve(false);
-        new EntityUtils().handleWSError(this.entityList, err);
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       });
 
       if (this.availablePools !== undefined) {
@@ -225,7 +223,7 @@ export class JailListComponent {
           }
         }, (err) => {
           resolve(false);
-          new EntityUtils().handleWSError(this.entityList, err);
+          new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
         })
       }
     });

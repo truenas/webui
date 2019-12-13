@@ -196,7 +196,7 @@ export class PluginsComponent {
         this.availablePools = res
       }, (err) => {
         resolve(false);
-        new EntityUtils().handleWSError(this.entityList, err);
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       });
 
       if (this.availablePools !== undefined) {
@@ -209,7 +209,7 @@ export class PluginsComponent {
           }
         }, (err) => {
           resolve(false);
-          new EntityUtils().handleWSError(this.entityList, err);
+          new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
         })
       }
     });
