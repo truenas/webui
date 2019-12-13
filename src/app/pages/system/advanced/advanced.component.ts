@@ -1,17 +1,16 @@
-import { Component, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import * as _ from 'lodash';
+import { Component, OnDestroy } from '@angular/core';
+import { Http } from '@angular/http';
+import { MatDialog } from '@angular/material';
+import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
+import { StorageService, ValidationService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MatDialog } from '@angular/material';
+import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService, StorageService, ValidationService } from '../../../services/';
-import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
-import { T } from '../../../translate-marker';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
-import { Http } from '@angular/http';
 
 @Component({
   selector: 'app-system-advanced',
@@ -19,7 +18,6 @@ import { Http } from '@angular/http';
   styleUrls: ['advanced.component.css'],
   providers: [DatePipe]
 })
-
 export class AdvancedComponent implements OnDestroy {
   //protected resource_name: string = 'system/advanced';
   public job: any = {};
@@ -81,142 +79,192 @@ export class AdvancedComponent implements OnDestroy {
         })
       })
     } 
-  }]
+  }];
 
-
-  public fieldConfig: FieldConfig[] = [{
-    type: 'checkbox',
-    name: 'consolemenu',
-    placeholder: helptext_system_advanced.consolemenu_placeholder,
-    tooltip: helptext_system_advanced.consolemenu_tooltip
-  }, {
-    type: 'checkbox',
-    name: 'serialconsole',
-    placeholder: helptext_system_advanced.serialconsole_placeholder,
-    tooltip: helptext_system_advanced.serialconsole_tooltip
-  }, {
-    type: 'select',
-    name: 'serialport',
-    placeholder: helptext_system_advanced.serialport_placeholder,
-    options: [],
-    tooltip: helptext_system_advanced.serialport_tooltip,
-    relation: [
+  public fieldSets = new FieldSets([
     {
-      action : 'DISABLE',
-      when : [{
-        name: 'serialconsole',
-        value: false
-      }]
-    }
-  ]
-  }, {
-    type: 'select',
-    name: 'serialspeed',
-    placeholder: helptext_system_advanced.serialspeed_placeholder,
-    options: [
-        { label: '9600', value: "9600" },
-        { label: '19200', value: "19200" },
-        { label: '38400', value: "38400" },
-        { label: '57600', value: "57600" },
-        { label: '115200', value: "115200" },
-    ],
-    tooltip: helptext_system_advanced.serialspeed_tooltip,
-    relation: [
-      {
-        action : 'DISABLE',
-        when : [{
+      name: helptext_system_advanced.fieldset_console,
+      label: true,
+      class: 'console',
+      width: '49%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'consolemenu',
+          placeholder: helptext_system_advanced.consolemenu_placeholder,
+          tooltip: helptext_system_advanced.consolemenu_tooltip
+        },
+        {
+          type: 'checkbox',
           name: 'serialconsole',
+          placeholder: helptext_system_advanced.serialconsole_placeholder,
+          tooltip: helptext_system_advanced.serialconsole_tooltip
+        },
+        {
+          type: 'select',
+          name: 'serialport',
+          placeholder: helptext_system_advanced.serialport_placeholder,
+          options: [],
+          tooltip: helptext_system_advanced.serialport_tooltip,
+          relation: [{
+            action : 'DISABLE',
+            when : [{
+              name: 'serialconsole',
+              value: false
+            }]
+          }]
+        },
+        {
+          type: 'select',
+          name: 'serialspeed',
+          placeholder: helptext_system_advanced.serialspeed_placeholder,
+          options: [
+              { label: '9600', value: "9600" },
+              { label: '19200', value: "19200" },
+              { label: '38400', value: "38400" },
+              { label: '57600', value: "57600" },
+              { label: '115200', value: "115200" },
+          ],
+          tooltip: helptext_system_advanced.serialspeed_tooltip,
+          relation: [{
+            action : 'DISABLE',
+            when : [{
+              name: 'serialconsole',
+              value: false
+            }]
+          }],
+        },
+        {
+          type: 'textarea',
+          name: 'motd',
+          placeholder: helptext_system_advanced.motd_placeholder,
+          tooltip: helptext_system_advanced.motd_tooltip
+        }
+      ]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext_system_advanced.fieldset_kernel,
+      label: true,
+      class: 'kernel',
+      width: '49%',
+      config: [
+        {
+          type: 'input',
+          name: 'swapondrive',
+          placeholder: helptext_system_advanced.swapondrive_placeholder,
+          tooltip: helptext_system_advanced.swapondrive_tooltip,
+          inputType: 'number',
+          validation : helptext_system_advanced.swapondrive_validation,
+          required: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'autotune',
+          placeholder: helptext_system_advanced.autotune_placeholder,
+          tooltip: helptext_system_advanced.autotune_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'debugkernel',
+          placeholder: helptext_system_advanced.debugkernel_placeholder,
+          tooltip: helptext_system_advanced.debugkernel_tooltip
+        },
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
+      name: helptext_system_advanced.fieldset_ui,
+      label: true,
+      class: 'gui',
+      width: '49%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'legacy_ui',
+          placeholder: helptext_system_advanced.enable_legacy_placeholder,
+          tooltip: helptext_system_advanced.enable_legacy_tooltip,
+          isHidden: true,
           value: false
-        }]
-      }
-    ],
-  },
-  {
-    type: 'input',
-    name: 'swapondrive',
-    placeholder: helptext_system_advanced.swapondrive_placeholder,
-    tooltip: helptext_system_advanced.swapondrive_tooltip,
-    inputType: 'number',
-    validation : helptext_system_advanced.swapondrive_validation,
-    required: true,
-  },{
-    type: 'checkbox',
-    name: 'legacy_ui',
-    placeholder: helptext_system_advanced.enable_legacy_placeholder,
-    tooltip: helptext_system_advanced.enable_legacy_tooltip,
-    isHidden: true,
-    value: false
-  }, {
-    type: 'checkbox',
-    name: 'autotune',
-    placeholder: helptext_system_advanced.autotune_placeholder,
-    tooltip: helptext_system_advanced.autotune_tooltip
-  }, {
-    type: 'checkbox',
-    name: 'debugkernel',
-    placeholder: helptext_system_advanced.debugkernel_placeholder,
-    tooltip: helptext_system_advanced.debugkernel_tooltip
-  }, {
-    type: 'checkbox',
-    name: 'consolemsg',
-    placeholder: helptext_system_advanced.consolemsg_placeholder,
-    tooltip: helptext_system_advanced.consolemsg_tooltip
-  }, {
-    type: 'textarea',
-    name: 'motd',
-    placeholder: helptext_system_advanced.motd_placeholder,
-    tooltip: helptext_system_advanced.motd_tooltip
-  }, {
-    type: 'checkbox',
-    name: 'traceback',
-    placeholder: helptext_system_advanced.traceback_placeholder,
-    tooltip: helptext_system_advanced.traceback_tooltip
-  }, {
-    type: 'checkbox',
-    name: 'advancedmode',
-    placeholder: helptext_system_advanced.advancedmode_placeholder,
-    tooltip: helptext_system_advanced.advancedmode_tooltip
-  }, {
-    type: 'checkbox',
-    name: 'fqdn_syslog',
-    placeholder: helptext_system_advanced.fqdn_placeholder,
-    tooltip: helptext_system_advanced.fqdn_tooltip
-  }, {
-    type: 'paragraph',
-    name: 'sed_options_message',
-    paraText: helptext_system_advanced.sed_options_message_paragraph,
-    tooltip: helptext_system_advanced.sed_options_tooltip
-  },
-  {
-    type: 'select',
-    name: 'sed_user',
-    placeholder: helptext_system_advanced.sed_user_placeholder,
-    tooltip: helptext_system_advanced.sed_user_tooltip,
-    options: [
-      {label:'user', value:'USER'},
-      {label:'master', value:'MASTER'}
-              ],
-    value : 'USER'
-  },
-  {
-    type: 'input',
-    name: 'sed_passwd',
-    placeholder: helptext_system_advanced.sed_passwd_placeholder,
-    tooltip: helptext_system_advanced.sed_passwd_tooltip,
-    inputType: 'password',
-    togglePw: true
-  },
-  {
-    type: 'input',
-    name: 'sed_passwd2',
-    placeholder: helptext_system_advanced.sed_passwd2_placeholder,
-    tooltip: helptext_system_advanced.sed_passwd2_tooltip,
-    inputType: 'password',
-    validation : this.validationService.matchOtherValidator('sed_passwd')
-  },
-];
+        },
+        {
+          type: 'checkbox',
+          name: 'consolemsg',
+          placeholder: helptext_system_advanced.consolemsg_placeholder,
+          tooltip: helptext_system_advanced.consolemsg_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'traceback',
+          placeholder: helptext_system_advanced.traceback_placeholder,
+          tooltip: helptext_system_advanced.traceback_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'advancedmode',
+          placeholder: helptext_system_advanced.advancedmode_placeholder,
+          tooltip: helptext_system_advanced.advancedmode_tooltip
+        }
+      ]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext_system_advanced.fieldset_sed,
+      label: true,
+      class: 'sed',
+      width: '49%',
+      config: [
+        {
+          type: 'paragraph',
+          name: 'sed_options_message',
+          paraText: helptext_system_advanced.sed_options_message_paragraph,
+          tooltip: helptext_system_advanced.sed_options_tooltip
+        },
+        {
+          type: 'select',
+          name: 'sed_user',
+          placeholder: helptext_system_advanced.sed_user_placeholder,
+          tooltip: helptext_system_advanced.sed_user_tooltip,
+          options: [
+            {label:'user', value:'USER'},
+            {label:'master', value:'MASTER'}
+          ],
+          value : 'USER'
+        },
+        {
+          type: 'input',
+          name: 'sed_passwd',
+          placeholder: helptext_system_advanced.sed_passwd_placeholder,
+          tooltip: helptext_system_advanced.sed_passwd_tooltip,
+          inputType: 'password',
+          togglePw: true
+        },
+        {
+          type: 'input',
+          name: 'sed_passwd2',
+          placeholder: helptext_system_advanced.sed_passwd2_placeholder,
+          tooltip: helptext_system_advanced.sed_passwd2_tooltip,
+          inputType: 'password',
+          validation : this.validationService.matchOtherValidator('sed_passwd')
+        }
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
+      name: helptext_system_advanced.fieldset_other,
+      label: true,
+      class: 'other',
+      config: [{
+        type: 'checkbox',
+        name: 'fqdn_syslog',
+        placeholder: helptext_system_advanced.fqdn_placeholder,
+        tooltip: helptext_system_advanced.fqdn_tooltip
+      }]
+    },
+    { name: 'divider', divider: true }
+  ]);
 
-  constructor(private rest: RestService,
+  constructor(
     private load: AppLoaderService,
     private dialog: DialogService,
     private ws: WebSocketService,
@@ -225,7 +273,8 @@ export class AdvancedComponent implements OnDestroy {
     public datePipe: DatePipe,
     public http: Http,
     public storage: StorageService,
-    public validationService: ValidationService) {}
+    public validationService: ValidationService
+  ) {}
 
   ngOnDestroy() {
     this.swapondrive_subscription.unsubscribe();
@@ -236,8 +285,8 @@ export class AdvancedComponent implements OnDestroy {
     this.entityForm = entityEdit;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.is_freenas = res;
-      _.find(this.fieldConfig, { 'name': 'legacy_ui' })['isHidden'] = this.is_freenas;
-      this.swapondrive = _.find(this.fieldConfig, { 'name': 'swapondrive' });
+      this.fieldSets.config('legacy_ui').isHidden = this.is_freenas;
+      this.swapondrive = this.fieldSets.config('swapondrive');
       this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
         if (parseInt(value) === 0) {
           this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
@@ -262,10 +311,8 @@ export class AdvancedComponent implements OnDestroy {
       this.ws.call(this.queryCall).subscribe((adv_values)=>{
         entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
       })
-      this.adv_serialport =
-      _.find(this.fieldConfig, { 'name': 'serialport' });
-      this.adv_serialspeed =
-      _.find(this.fieldConfig, { 'name': 'serialspeed' });
+      this.adv_serialport = this.fieldSets.config('serialport');
+      this.adv_serialspeed = this.fieldSets.config('serialspeed');
       this.adv_serialconsole =
       entityEdit.formGroup.controls['serialconsole'];
       this.adv_serialspeed['isHidden'] = !this.adv_serialconsole.value;
