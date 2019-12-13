@@ -31,7 +31,7 @@
 }
 
 .buttons {
-    margin-left: 1px;
+    margin-left: -1px;
 }
 
 :host .dataset-acl-editor {
@@ -121,4 +121,20 @@ span.form-message.info {
 }
 span.form-message.warning {
   color: var(--red);
+}
+
+#success-msg-wrapper {
+  margin-top: 5px;
+  margin-bottom: -10px;
+  padding-left: 3px;
+}
+
+#form_message {
+  margin-top: 8px;
+  margin-bottom: -4px;
+  padding-left: 3px;
+}
+#error_message {
+  margin-top: 4px;
+  padding-left: 3px;
 }
