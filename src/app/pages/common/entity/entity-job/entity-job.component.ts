@@ -230,5 +230,10 @@ export class EntityJobComponent implements OnInit {
         this.failure.emit(this.job);
       }
     }
+    if (job.state === 'SUCCESS') {
+      this.success.emit(this.job);
+    } else if (job.state === 'FAILED') {
+      this.failure.emit(this.job);
+    }
   }
 }
