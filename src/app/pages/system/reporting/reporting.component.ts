@@ -64,6 +64,7 @@ export class ReportingComponent {
     name: 'confirm_rrd_destroy',
     placeholder: helptext.confirm_rrd_destroy_placeholder,
     tooltip: helptext.confirm_rrd_destroy_tooltip,
+    required: true,
     isHidden: true,
     value: false
   }
@@ -102,6 +103,8 @@ export class ReportingComponent {
   }
 
   public customSubmit(body) {
+    this.entityForm.wsResponse['graph_age'] = body.graph_age;
+    this.entityForm.wsResponse['graph_points'] = body.graph_points;
     this.load.open();
     return this.ws.call('reporting.update', [body]).subscribe((res) => {
       this.load.close();
