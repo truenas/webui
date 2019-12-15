@@ -1621,6 +1621,12 @@ msgstr ""
 msgid "Apply permissions to child datasets"
 msgstr "Применить разрешения к дочерним наборам данных"
 
+msgid "Apply the same quota critical  alert settings as the parent dataset."
+msgstr ""
+
+msgid "Apply the same quota warning  alert settings as the parent dataset."
+msgstr ""
+
 msgid "Apply updates and reboot system after downloading."
 msgstr "Примените обновления и перезагрузите систему после загрузки."
 
@@ -1685,13 +1691,6 @@ msgstr "Протокол аутентификации"
 
 msgid "Authentication Type"
 msgstr "Тип аутентификации"
-
-msgid ""
-"Authentication only functions when a Certificate is selected with either "
-"the <i>SSL</i> or <i>TLS</i> option."
-msgstr ""
-"Аутентификация работает только в том случае, если сертификат выбран с "
-"опцией <i>SSL</i> или <i>TLS</i>."
 
 msgid "Authenticator"
 msgstr "Аутентификатор"
@@ -1796,11 +1795,9 @@ msgid "Back to Support"
 msgstr "Вернуться к Поддержке"
 
 msgid ""
-"Backend used to map Windows security identifiers (SIDs) to UNIX UIDs and "
-"GIDs. Click Edit to configure that backend"
+"Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
+"GIDs. To configure the selected  backend, click <i>EDIT IDMAP</i>."
 msgstr ""
-"Backend используемый для сопоставления идентификаторов безопасности Windows "
-"(SID) с UNIX UID и GID. Нажмите Edit, чтобы настроить этот backend"
 
 msgid "Bandwidth Limit"
 msgstr "Ограничение пропускной способности"
@@ -1831,6 +1828,11 @@ msgstr "Начать"
 
 msgid "Begin Time"
 msgstr "Время начала"
+
+msgid ""
+"Beginning UID/GID number for which this system is authoritative. UID/GID "
+"values below Range Low or higher than Range High are ignored."
+msgstr ""
 
 msgid "Berkeley Packet Filter"
 msgstr ""
@@ -2097,6 +2099,13 @@ msgstr ""
 
 msgid "Certificate"
 msgstr "Сертификат"
+
+msgid ""
+"Certificate to use when performing LDAP  certificate-based authentication. "
+"To configure LDAP certificate-based  authentication, create a Certificate "
+"Signing Request for the LDAP  provider to sign. A certificate is not "
+"required when using  username/password or Kerberos authentication."
+msgstr ""
 
 msgid "Certificates"
 msgstr "Сертификаты"
@@ -2679,6 +2688,11 @@ msgstr ""
 
 msgid "Choose your language."
 msgstr "Выберите ваш язык."
+
+msgid ""
+"Choosing an entry loads a preset ACL that is  configured to match general "
+"permissions situations."
+msgstr ""
 
 msgid "Cipher"
 msgstr "Шифр"
@@ -3351,6 +3365,9 @@ msgstr ""
 
 msgid "Decrypt pool"
 msgstr "Расшифровать пул"
+
+msgid "Decrypting Disks"
+msgstr ""
 
 msgid ""
 "Deduplicate the stream to avoid sending redundant  data blocks. The "
@@ -4273,6 +4290,11 @@ msgid ""
 msgstr ""
 "Время окончания задачи репликации. Выполняемая репликация может продолжать "
 "выполняться после этого времени."
+
+msgid ""
+"Ending UID/GID number for which this system is authoritative. UID/GID "
+"values below Range Low or higher than Range High are ignored."
+msgstr ""
 
 msgid "Endpoint URL"
 msgstr "URL конечной точки"
@@ -5295,8 +5317,8 @@ msgstr "Экспортировать сертификат"
 msgid "Export Password Secret Seed"
 msgstr "Экспорт секретное семя пароля"
 
-msgid "Export Pool Ecryption Keys"
-msgstr "Экспортировать ключи шифрования пула"
+msgid "Export Pool Encryption Keys"
+msgstr ""
 
 msgid "Export Private Key"
 msgstr "Экспортировать закрытый ключ"
@@ -5460,6 +5482,12 @@ msgstr "Тип файловой системы"
 
 msgid "Filter"
 msgstr "Фильтр"
+
+msgid "Finding Disks"
+msgstr ""
+
+msgid "Finding encrypted disks..."
+msgstr ""
 
 msgid "Finish Upgrade?"
 msgstr "Закончить обновление?"
@@ -6058,7 +6086,11 @@ msgstr ""
 
 msgid ""
 "Icon file to use as the profile  picture for new messages. Example:  "
-"<i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>."
+"<i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br>  "
+"Requires configuring Mattermost to <a  "
+"href=\"https://docs.mattermost.com/administration/config-settings.html#"
+"enable-integrations-to-override-profile-picture-icons\" "
+"target=\"_blank\">override profile picture icons</a>."
 msgstr ""
 
 msgid "Id"
@@ -6153,11 +6185,9 @@ msgid "Import an existing pool"
 msgstr "Импортировать существующий пул"
 
 msgid ""
-"Import the private key from an existing SSH keypair.  Choose the name of "
-"the SSH keypair to use for this connection."
+"Import the private key from an existing SSH keypair or  select <i>Generate "
+"New</i> to create a new SSH key for this credential."
 msgstr ""
-"Импорт закрытого ключа из существующей пары ключей SSH. Выберите имя пары "
-"ключей SSH, которая будет использоваться для этого соединения."
 
 msgid "Importing Disk"
 msgstr "Импорт диска"
@@ -7781,6 +7811,14 @@ msgstr "Необязательно: Выберите установочный о
 
 msgid "Options"
 msgstr "Параметры"
+
+msgid ""
+"Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> Do not "
+"encrypt the LDAP connection.</li>  <li><i>ON:</i> <i>SSL</i> encrypts the "
+"LDAP connection and uses port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
+"<i>STARTTLS</i> encrypts the LDAP connection and  uses the default LDAP "
+"port <i>389</i>.</li>  </ul>"
+msgstr ""
 
 msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
@@ -9433,13 +9471,6 @@ msgid "Select the IP addresses SMB will listen for."
 msgstr "Выберите IP-адреса, которые SMB будет прослушивать."
 
 msgid ""
-"Select the LDAP CA certificate. The certificate for the LDAP server CA must "
-"first be imported using the System/Certificates menu."
-msgstr ""
-"Выберите сертификат CA LDAP. Сертификат для ЦС сервера LDAP сначала "
-"необходимо импортировать с помощью меню Система/Сертификаты."
-
-msgid ""
 "Select the VLAN Parent Interface. Usually an Ethernet card connected to a "
 "configured switch port. Newly created link aggregations will not be "
 "available until the system is rebooted."
@@ -9770,9 +9801,6 @@ msgid ""
 "configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
-
-msgid "Set default options on this ACL."
-msgstr "Установите параметры по умолчанию для этого ACL."
 
 msgid ""
 "Set enable sending messages to the address defined in the <b>Email</b> "
@@ -11341,6 +11369,9 @@ msgstr "Пользовательский интерфейс для настро�
 msgid "The message to show when a user logs in with SSH."
 msgstr "Сообщение отображаемое когда пользователь входит в систему с помощью SSH."
 
+msgid "The name "
+msgstr ""
+
 msgid ""
 "The number of bits in the key used by the cryptographic algorithm. For "
 "security reasons, a minimum key length of <i>2048</i> is recommended."
@@ -11618,9 +11649,6 @@ msgstr "Это среда загрузки, которая будет клони
 
 msgid "This is the serial number of the disk."
 msgstr "Это серийный номер диска."
-
-msgid "This name has already been used."
-msgstr ""
 
 msgid ""
 "This number selects the routing table (<a "
@@ -12278,6 +12306,9 @@ msgstr "Подтвердите учетные данные"
 msgid "Verify Deletion of "
 msgstr "Подтвердите удаление "
 
+msgid "Verify certificate authenticity."
+msgstr ""
+
 msgid "Verify passphrase"
 msgstr "Подтвердите пароль"
 
@@ -12754,6 +12785,9 @@ msgid "ip6.saddrsel"
 msgstr ""
 
 msgid "ip_hostname"
+msgstr ""
+
+msgid "is already in use."
 msgstr ""
 
 msgid "jail_zfs"
