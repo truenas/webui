@@ -105,8 +105,8 @@ export class NFSFormComponent {
             name: 'host',
             placeholder: helptext_sharing_nfs.placeholder_hosts,
             tooltip: helptext_sharing_nfs.tooltip_hosts,
-            // blurStatus : true,
-            // blurEvent: this.nfs_hosts_event,
+            blurStatus : true,
+            blurEvent: this.nfs_hosts_event,
             parent: this,
             value: ''
           }],
