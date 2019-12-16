@@ -226,7 +226,9 @@ export class BootEnvironmentListComponent {
         this.busy = this.ws.call(this.wsActivate, [id]).subscribe(
           (res) => {
             this.entityList.getData();
-            this.loader.close(); },
+            this.loader.close();
+            this.entityList.selected = [];
+          },
           (res) => {
             new EntityUtils().handleError(this, res);
             this.loader.close();
@@ -263,6 +265,7 @@ export class BootEnvironmentListComponent {
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : true }]).subscribe(
             (res) => { this.entityList.getData();
               this.loader.close();
+              this.entityList.selected = [];
             },
             (res) => {
               new EntityUtils().handleError(this, res);
@@ -280,6 +283,7 @@ export class BootEnvironmentListComponent {
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : false }]).subscribe(
             (res) => { this.entityList.getData();
               this.loader.close();
+              this.entityList.selected = [];
             },
             (res) => {
               new EntityUtils().handleError(this, res);
