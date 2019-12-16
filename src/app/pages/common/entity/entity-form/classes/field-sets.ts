@@ -3,13 +3,13 @@ import { FieldSet } from "../models/fieldset.interface";
 export class FieldSets {
   constructor(private readonly _fieldSets: FieldSet[] = []) {}
 
-  public config(configClass: string) {
+  public config(configName: string) {
     return this.list()
       .find(
         set =>
-          set.config && set.config.some(config => config.class === configClass)
+          set.config && set.config.some(config => config.name === configName)
       )
-      .config.find(config => config.name === configClass);
+      .config.find(config => config.name === configName);
   }
 
   public list(): FieldSet[] {
