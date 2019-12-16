@@ -54,6 +54,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   public failover_ips = [];
   public ha_disabled_reasons =[];
   public ha_status_text = T('Checking HA status');
+  public ha_status = false;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -63,6 +64,10 @@ export class SigninComponent implements OnInit, OnDestroy {
     private api:ApiService,
     private http:Http) {
     this.ws = ws;
+    const ha_status = window.sessionStorage.getItem('ha_status');
+    if (ha_status && ha_status === 'true') {
+      this.ha_status = true;
+    }
     this.checkSystemType();
    }
 
@@ -199,11 +204,15 @@ export class SigninComponent implements OnInit, OnDestroy {
             this.ha_disabled_reasons = reason;
             if (reason.length === 0) {
               this.ha_status_text = T('HA is enabled.');
+              this.ha_status = true;
             } else if (reason.length === 1 && reason[0] === 'NO_SYSTEM_READY') {
               this.ha_status_text = T('HA is reconnecting.');
+              this.ha_status = false;
             } else {
               this.ha_status_text = T('HA is disabled.');
+              this.ha_status = false;
             }
+            window.sessionStorage.setItem('ha_status', this.ha_status.toString());
             if (this.canLogin()) {
               this.loginToken();
             }
