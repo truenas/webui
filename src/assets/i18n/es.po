@@ -1292,6 +1292,12 @@ msgstr ""
 msgid "Apply permissions to child datasets"
 msgstr ""
 
+msgid "Apply the same quota critical  alert settings as the parent dataset."
+msgstr ""
+
+msgid "Apply the same quota warning  alert settings as the parent dataset."
+msgstr ""
+
 msgid "Apply updates and reboot system after downloading."
 msgstr ""
 
@@ -1348,11 +1354,6 @@ msgid "Authentication Protocol"
 msgstr ""
 
 msgid "Authentication Type"
-msgstr ""
-
-msgid ""
-"Authentication only functions when a Certificate is selected with either "
-"the <i>SSL</i> or <i>TLS</i> option."
 msgstr ""
 
 msgid "Authenticator"
@@ -1449,8 +1450,8 @@ msgid "Back to Support"
 msgstr ""
 
 msgid ""
-"Backend used to map Windows security identifiers (SIDs) to UNIX UIDs and "
-"GIDs. Click Edit to configure that backend"
+"Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
+"GIDs. To configure the selected  backend, click <i>EDIT IDMAP</i>."
 msgstr ""
 
 msgid "Bandwidth Limit"
@@ -1481,6 +1482,11 @@ msgid "Begin"
 msgstr ""
 
 msgid "Begin Time"
+msgstr ""
+
+msgid ""
+"Beginning UID/GID number for which this system is authoritative. UID/GID "
+"values below Range Low or higher than Range High are ignored."
 msgstr ""
 
 msgid "Berkeley Packet Filter"
@@ -1709,6 +1715,13 @@ msgid ""
 msgstr ""
 
 msgid "Certificate"
+msgstr ""
+
+msgid ""
+"Certificate to use when performing LDAP  certificate-based authentication. "
+"To configure LDAP certificate-based  authentication, create a Certificate "
+"Signing Request for the LDAP  provider to sign. A certificate is not "
+"required when using  username/password or Kerberos authentication."
 msgstr ""
 
 msgid "Certificates"
@@ -2135,6 +2148,11 @@ msgid ""
 msgstr ""
 
 msgid "Choose your language."
+msgstr ""
+
+msgid ""
+"Choosing an entry loads a preset ACL that is  configured to match general "
+"permissions situations."
 msgstr ""
 
 msgid "Cipher"
@@ -2722,6 +2740,9 @@ msgid "Debug could not be downloaded."
 msgstr ""
 
 msgid "Decrypt pool"
+msgstr ""
+
+msgid "Decrypting Disks"
 msgstr ""
 
 msgid ""
@@ -3523,6 +3544,11 @@ msgstr ""
 msgid ""
 "End time for the replication task. A  replication that is already in "
 "progress can continue to run past this  time."
+msgstr ""
+
+msgid ""
+"Ending UID/GID number for which this system is authoritative. UID/GID "
+"values below Range Low or higher than Range High are ignored."
 msgstr ""
 
 msgid "Endpoint URL"
@@ -4347,7 +4373,7 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr ""
 
-msgid "Export Pool Ecryption Keys"
+msgid "Export Pool Encryption Keys"
 msgstr ""
 
 msgid "Export Private Key"
@@ -4494,6 +4520,12 @@ msgid "Filesystem type"
 msgstr ""
 
 msgid "Filter"
+msgstr ""
+
+msgid "Finding Disks"
+msgstr ""
+
+msgid "Finding encrypted disks..."
 msgstr ""
 
 msgid "Finish Upgrade?"
@@ -5024,7 +5056,11 @@ msgstr ""
 
 msgid ""
 "Icon file to use as the profile  picture for new messages. Example:  "
-"<i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>."
+"<i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br>  "
+"Requires configuring Mattermost to <a  "
+"href=\"https://docs.mattermost.com/administration/config-settings.html#"
+"enable-integrations-to-override-profile-picture-icons\" "
+"target=\"_blank\">override profile picture icons</a>."
 msgstr ""
 
 msgid "Id"
@@ -5097,8 +5133,8 @@ msgid "Import an existing pool"
 msgstr ""
 
 msgid ""
-"Import the private key from an existing SSH keypair.  Choose the name of "
-"the SSH keypair to use for this connection."
+"Import the private key from an existing SSH keypair or  select <i>Generate "
+"New</i> to create a new SSH key for this credential."
 msgstr ""
 
 msgid "Importing Disk"
@@ -6481,6 +6517,14 @@ msgid "Optional: Choose installation media image"
 msgstr ""
 
 msgid "Options"
+msgstr ""
+
+msgid ""
+"Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> Do not "
+"encrypt the LDAP connection.</li>  <li><i>ON:</i> <i>SSL</i> encrypts the "
+"LDAP connection and uses port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
+"<i>STARTTLS</i> encrypts the LDAP connection and  uses the default LDAP "
+"port <i>389</i>.</li>  </ul>"
 msgstr ""
 
 msgid ""
@@ -7985,11 +8029,6 @@ msgid "Select the IP addresses SMB will listen for."
 msgstr ""
 
 msgid ""
-"Select the LDAP CA certificate. The certificate for the LDAP server CA must "
-"first be imported using the System/Certificates menu."
-msgstr ""
-
-msgid ""
 "Select the VLAN Parent Interface. Usually an Ethernet card connected to a "
 "configured switch port. Newly created link aggregations will not be "
 "available until the system is rebooted."
@@ -8272,9 +8311,6 @@ msgid ""
 "Set by default if the disk supports S.M.A.R.T. Unset to disable any "
 "configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
-msgstr ""
-
-msgid "Set default options on this ACL."
 msgstr ""
 
 msgid ""
@@ -9759,6 +9795,9 @@ msgstr ""
 msgid "The message to show when a user logs in with SSH."
 msgstr ""
 
+msgid "The name "
+msgstr ""
+
 msgid ""
 "The number of bits in the key used by the cryptographic algorithm. For "
 "security reasons, a minimum key length of <i>2048</i> is recommended."
@@ -10004,9 +10043,6 @@ msgid "This is the boot environment to be cloned."
 msgstr ""
 
 msgid "This is the serial number of the disk."
-msgstr ""
-
-msgid "This name has already been used."
 msgstr ""
 
 msgid ""
@@ -10620,6 +10656,9 @@ msgstr ""
 msgid "Verify Deletion of "
 msgstr ""
 
+msgid "Verify certificate authenticity."
+msgstr ""
+
 msgid "Verify passphrase"
 msgstr ""
 
@@ -11078,6 +11117,9 @@ msgid "ip6.saddrsel"
 msgstr ""
 
 msgid "ip_hostname"
+msgstr ""
+
+msgid "is already in use."
 msgstr ""
 
 msgid "jail_zfs"
