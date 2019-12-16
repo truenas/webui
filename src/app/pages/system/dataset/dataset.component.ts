@@ -27,7 +27,7 @@ export class DatasetComponent {
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
-      name:T('Configure System Dataset'),
+      name: helptext_system_dataset.metadata.fieldsets[0],
       class:'edit-system-dataset',
       label:true,
       width:'300px',
