@@ -39,7 +39,6 @@ export class DatasetComponent {
           tooltip: helptext_system_dataset.pool.tooltip,
           options: [
             {label: '---', value: null},
-            { label: 'freenas-boot', value: 'freenas-boot' },
           ]
         },
         {
@@ -63,6 +62,11 @@ export class DatasetComponent {
     private dialogService: DialogService) {}
 
   preInit(EntityForm) {
+    
+    this.ws.call('boot.pool_name').subscribe( res => {
+      this.pool = _.find(this.fieldConfig, {'name': 'pool'});
+      this.pool.options.push({ label: res, value: res});
+    });
     
     this.ws.call('pool.query').subscribe( res => {
        if (res) {
