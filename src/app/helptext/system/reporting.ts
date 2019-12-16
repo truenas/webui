@@ -1,5 +1,6 @@
 import { T } from "app/translate-marker";
 import { regexValidator } from '../../pages/common/entity/entity-form/validators/regex-validation';
+import { rangeValidator } from '../../pages/common/entity/entity-form/validators/range-validation';
 
 export const helptext = {
 cpu_in_percentage_placeholder: T('Report CPU usage in percent'),
@@ -15,7 +16,7 @@ graph_age_tooltip: T('Maximum time a graph is stored in months. \
  Changing this value causes the <i>Confirm RRD Destroy</i> \
  checkbox to appear. Changes do not take effect until the existing \
  reporting database is destroyed.'),
-graph_age_validation: [regexValidator(/^\d+$/) ],
+graph_age_validation: [regexValidator(/^\d+$/), rangeValidator(1, 60 )  ],
 
 graph_points_placeholder: T('Graph Points'),
 graph_points_tooltip: T('Number of points for each hourly, daily, \
@@ -23,11 +24,13 @@ graph_points_tooltip: T('Number of points for each hourly, daily, \
  width of the graphs in pixels. Changing this value causes the \
  <i>Confirm RRD Destroy</i> checkbox to appear. Changes do not take \
  effect until the existing reporting database is destroyed.'),
-graph_points_validation: [regexValidator(/^\d+$/) ],
+graph_points_validation: [regexValidator(/^\d+$/), rangeValidator(1, 4096 ) ],
 
-confirm_rrd_destroy_placeholder: T('Confirm RRD Destroy'),
-confirm_rrd_destroy_tooltip: T('Destroy the reporting database. Only \
- appears when <i>Graph Age</i> or <i>Graph Points</i> are \
- changed. Required for changes to <i>Graph Age</i> or \
- <i>Graph Points</i> to take effect.')
+reset_button: T('Reset to Defaults'),
+dialog: {
+    title: T('Destroy the Reporting Database?'),
+    message: T('Changing the values of <i>Graph Age</i> or <i>Graph Points</i> requires destroying \
+ the reporting database.'),
+    action: T('Continue')
+}
 }
