@@ -29,6 +29,8 @@ export class ReportingComponent {
         this.entityForm.formGroup.controls['graphite'].setValue(this.entityForm.wsResponse['graphite']);
         this.entityForm.formGroup.controls['graph_age'].setValue(12);
         this.entityForm.formGroup.controls['graph_points'].setValue(1200);
+        this.entityForm.formGroup.markAsDirty();
+        console.log(this.entityForm.formGroup)
       }
     }
   ]
