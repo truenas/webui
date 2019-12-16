@@ -48,11 +48,13 @@ export class TunableFormComponent {
           name: 'type',
           placeholder: helptext.type.placeholder,
           tooltip: helptext.type.tooltip,
+          required: false,
           options: [
             { label: 'loader', value: 'LOADER' },
             { label: 'rc.conf', value: 'RC' },
             { label: 'sysctl', value: 'SYSCTL' },
-          ]
+          ],
+          value: 'SYSCTL'
         },
         {
           type: 'input',
