@@ -3,7 +3,8 @@ import globalHelptext from '../../helptext/global-helptext';
 
 export const helptext_system_failover = {
   dialog_initiate_failover_title: T("Initiate Failover"),
-  dialog_initiate_failover_message: T("A failover might cause temporary service interruption."),
+  dialog_initiate_failover_message: T("WARNING: A failover will \
+ temporarily interrupt system services."),
   dialog_initiate_failover_checkbox: T(`Confirm`),
   dialog_initiate_cancel: T('Cancel'),
   dialog_initiate_action: T('Failover'),
@@ -11,7 +12,7 @@ export const helptext_system_failover = {
   dialog_sync_to_peer_title: T("Sync to Peer"),
   dialog_sync_to_peer_message: T("Are you sure you want to sync to peer?"),
 
-  dialog_sync_to_peer_checkbox: T(`Reboot standby ${globalHelptext.ctrlr}?`),
+  dialog_sync_to_peer_checkbox: T(`Reboot standby ${globalHelptext.ctrlr}`),
   dialog_button_ok: T('Proceed'),
 
   dialog_sync_from_peer_title: T("Sync from Peer"),
@@ -23,17 +24,24 @@ export const helptext_system_failover = {
     sync_to_message: T("Sync to peer succeeded."),
   },
 
-  disabled_placeholder: T('Disabled'),
-  disabled_tooltip: T(''),
+  disabled_placeholder: T('Disable Failover'),
+  disabled_tooltip: T('Disable automatic failover.'),
 
-  master_placeholder: T('Master'),
-  master_tooltip: T(''),
+  master_placeholder: T(`Default ${globalHelptext.ctrlr}`),
+  master_tooltip: T(`Make the currently active ${globalHelptext.ctrlr} \
+ the default when both ${globalHelptext.ctrlr}s are online and HA is \
+ enabled. To change the default ${globalHelptext.ctrlr}, unset this \
+ option on the default ${globalHelptext.ctrlr} and allow the system to \
+ fail over. This briefly interrupts system services.`),
 
-  timeout_placeholder: T('Timeout'),
-  timeout_tooltip: T(''),
+  timeout_placeholder: T('Network Timeout Before Initiating Failover'),
+  timeout_tooltip: T('Number of seconds to wait after a network failure \
+ before triggering a failover. <i>0</i> means a failover occurs \
+ immediately, or after two seconds when the system is using a link \
+ aggregation.'),
 
   master_dialog_title: T('Failover'),
-  master_dialog_warning: T(`Forcing the other ${globalHelptext.ctrlr} to become active will require a failover with temporary service disruption.`)
-
-
+  master_dialog_warning: T(`Forcing the other ${globalHelptext.ctrlr} to \
+ become active requires a failover. This will temporarily interrupt \
+ system services.`)
 };
