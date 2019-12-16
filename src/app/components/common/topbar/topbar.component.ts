@@ -88,9 +88,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
-        setTimeout(() => {
-          this.updateNotificationSent = false;
-        }, 900000);
       });
     }
 
@@ -513,9 +510,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();
       this.updateNotificationSent = true;
-      setTimeout(() => {
-        this.updateNotificationSent = false;
-      }, 600000);
     }      
   };
 
