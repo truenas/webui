@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_afp, shared } from 'app/helptext/sharing';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { T } from "app/translate-marker";
@@ -173,7 +174,7 @@ export class AFPFormComponent implements OnDestroy {
         name: 'hostsallow',
         templateListField: [{
           name: 'address',
-          placeholder: helptext_sharing_afp.placeholder_host_or_ip,
+          placeholder: globalHelptext.hostname,
           tooltip: helptext_sharing_afp.tooltip_hostsallow,
           type: 'input'
         }],
@@ -191,7 +192,7 @@ export class AFPFormComponent implements OnDestroy {
         name: 'hostsdeny',
         templateListField: [{
           name: 'address',
-          placeholder: helptext_sharing_afp.placeholder_host_or_ip,
+          placeholder: globalHelptext.hostname,
           tooltip: helptext_sharing_afp.tooltip_hostsdeny,
           type: 'input'
         }],

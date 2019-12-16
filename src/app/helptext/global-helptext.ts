@@ -34,5 +34,7 @@ noLogDilaog: {
 },
 
 fieldset_general_options: T('General Options'),
-fieldset_other_options: T('Other Options')
+fieldset_other_options: T('Other Options'),
+
+hostname: T('Hostname')
 }
