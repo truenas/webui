@@ -5,6 +5,8 @@ export default {
 plugin_name_placeholder: T('Plugin Name'),
 
 jail_name_placeholder: T('Jail Name'),
+uuid_tooltip: T('Required. Can contain letters, numbers, periods (.), \
+ dashes (-), and underscores (_).'),
 
 https_placeholder: T('Fetch Method'),
 https_tooltip: T('Use encrypted connection for increased security (preferred).'),
