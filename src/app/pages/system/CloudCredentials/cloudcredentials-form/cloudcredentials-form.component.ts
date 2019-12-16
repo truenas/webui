@@ -43,6 +43,7 @@ export class CloudCredentialsFormComponent {
       type: 'select',
       name: 'provider',
       placeholder: helptext.provider.placeholder,
+      tooltip: helptext.provider.tooltip,
       options: [],
       value: this.selectedProvider,
       required: true,
