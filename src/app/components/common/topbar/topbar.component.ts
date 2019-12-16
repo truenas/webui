@@ -85,9 +85,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
-        setTimeout(() => {
-          this.updateNotificationSent = false;
-        }, 900000);
       });
     }
 
@@ -414,15 +411,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   getHAStatus() {
     this.ws.call('failover.disabled_reasons').subscribe(res => {
+      let ha_enabled = false;
       this.ha_disabled_reasons = res;
       if (res.length > 0) {
         this.ha_status_text = helptext.ha_status_text_disabled;
       } else {
+        ha_enabled = true;
         this.ha_status_text = helptext.ha_status_text_enabled;
         if (!this.pendingUpgradeChecked) {
           this.checkUpgradePending();
         }
       }
+      window.sessionStorage.setItem('ha_status', ha_enabled.toString());
     });
   }
 
@@ -512,9 +512,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();
       this.updateNotificationSent = true;
-      setTimeout(() => {
-        this.updateNotificationSent = false;
-      }, 600000);
     }      
   };
 

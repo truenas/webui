@@ -82,9 +82,10 @@ export class VolumeImportWizardComponent {
           tooltip: helptext.devices_tooltip,
           required: true,
           isHidden: true,
+          disabled: true,
           options: [],
           relation: [{
-            action: 'DISABLE',
+            action: 'HIDE',
             when: [{
               name: 'encrypted',
               value: false,
@@ -101,9 +102,10 @@ export class VolumeImportWizardComponent {
           updater: this.updater,
           parent: this,
           isHidden: true,
+          disabled: true,
           hideButton: true,
           relation: [{
-            action: 'DISABLE',
+            action: 'HIDE',
             when: [{
               name: 'encrypted',
               value: false,
@@ -118,8 +120,9 @@ export class VolumeImportWizardComponent {
           inputType: 'password',
           togglePw: true,
           isHidden: true,
+          disabled: true,
           relation: [{
-            action: 'DISABLE',
+            action: 'HIDE',
             when: [{
               name: 'encrypted',
               value: false,
@@ -157,7 +160,6 @@ export class VolumeImportWizardComponent {
   protected isNew = true;
   protected is_new_subscription;
   protected encrypted;
-  protected encrypted_subscription;
   protected devices;
   protected devices_fg;
   protected key;
@@ -267,11 +269,6 @@ export class VolumeImportWizardComponent {
     this.key_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('key'));
     this.passphrase = _.find(this.wizardConfig[1].fieldConfig, {'name': 'passphrase'});
     this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
-    this.encrypted_subscription = this.encrypted.valueChanges.subscribe((res) => {
-      this.devices['isHidden'] = !res;
-      this.key['isHidden'] = !res;
-      this.passphrase['isHidden'] = !res;
-    });
 
     this.ws.call('disk.get_encrypted', [{"unused": true}]).subscribe((res)=>{
       for (let i = 0; i < res.length; i++) {
@@ -343,7 +340,6 @@ export class VolumeImportWizardComponent {
   }
 
   ngOnDestroy() {
-    this.encrypted_subscription.unsubscribe();
     this.guid_subscription.unsubscribe();
     this.message_subscription.unsubscribe();
     this.is_new_subscription.unsubscribe();
