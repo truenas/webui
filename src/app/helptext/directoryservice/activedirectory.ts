@@ -37,7 +37,9 @@ activedirectory_bindname_validation: [ Validators.required ],
 
 activedirectory_bindpw_name: 'bindpw',
 activedirectory_bindpw_placeholder: T('Domain Account Password'),
-activedirectory_bindpw_tooltip: T('Enter the administrator account password.'),
+activedirectory_bindpw_tooltip: T('Password for the Active Directory administrator account. \
+ Required the first time a domain is configured. After initial configuration, the password \
+ is not needed to edit, start, or stop the service.'),
 
 activedirectory_ssl_name: 'ssl',
 activedirectory_ssl_placeholder: T('Encryption Mode'),
@@ -142,9 +144,9 @@ activedirectory_sasl_wrapping_tooltip : T('Choose how LDAP traffic is transmitte
  and newer can be configured to enforce signed LDAP connections.'),
 
 activedirectory_enable_name: 'enable',
-activedirectory_enable_placeholder : T('Enable (requires password'),
-activedirectory_enable_tooltip : T('Set to enable the Active Directory service.\
- Selecting this option requires the Domain Account Password.'),
+activedirectory_enable_placeholder : T('Enable (requires password)'),
+activedirectory_enable_tooltip : T('Enable the Active Directory service.\
+ The first time this option is set, the Domain Account Password must be entered.'),
 
 activedirectory_netbiosname_a_name: 'netbiosname',
 activedirectory_netbiosname_a_placeholder : T('Netbios Name'),
