@@ -3,7 +3,7 @@ import globalHelptext from '../../helptext/global-helptext';
 
 export const helptext_system_failover = {
   dialog_initiate_failover_title: T("Initiate Failover"),
-  dialog_initiate_failover_message: T("WARNING: A failover can \
+  dialog_initiate_failover_message: T("WARNING: A failover will \
  temporarily interrupt system services."),
   dialog_initiate_failover_checkbox: T(`Confirm`),
   dialog_initiate_cancel: T('Cancel'),
@@ -28,8 +28,8 @@ export const helptext_system_failover = {
   disabled_tooltip: T('Disable automatic failover.'),
 
   master_placeholder: T(`Default ${globalHelptext.ctrlr}`),
-  master_tooltip: T(`Mark the currently active ${globalHelptext.ctrlr} \
- as default when both ${globalHelptext.ctrlr}s are online and HA is \
+  master_tooltip: T(`Make the currently active ${globalHelptext.ctrlr} \
+ the default when both ${globalHelptext.ctrlr}s are online and HA is \
  enabled. To change the default ${globalHelptext.ctrlr}, unset this \
  option on the default ${globalHelptext.ctrlr} and allow the system to \
  fail over. This briefly interrupts system services.`),
