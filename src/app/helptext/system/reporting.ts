@@ -29,5 +29,12 @@ confirm_rrd_destroy_placeholder: T('Confirm RRD Destroy'),
 confirm_rrd_destroy_tooltip: T('Destroy the reporting database. Only \
  appears when <i>Graph Age</i> or <i>Graph Points</i> are \
  changed. Required for changes to <i>Graph Age</i> or \
- <i>Graph Points</i> to take effect.')
+ <i>Graph Points</i> to take effect.'),
+
+reset_button: T('Reset to Defaults'),
+error_dialog: {
+    title: T('Error'),
+    message: T('Changing the values of <i>Graph Age</i> or <i>Graph Points</i> requires destroying \
+ the reporting database. This action must be confirmed by checking <i>Confirm RRD Destroy</i>')
+}
 }
