@@ -1046,6 +1046,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'SUCCESS' : return 'fn-theme-green';
       case 'ERROR' : return 'fn-theme-red';
       case 'FAILED' : return 'fn-theme-red';
+      case 'HOLD' : return 'fn-theme-yellow';
       default: return 'fn-theme-primary';
     }
   }

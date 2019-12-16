@@ -93,10 +93,13 @@
         <ng-template #notconnected>
           <div class="disconnected" *ngIf="product">
             <div class="fake-icon">?</div>
-            <p>
+            <p *ngIf="!ha_status">
               {{"Connecting to " | translate}} {{product}}
               {{"... Make sure the " | translate}} {{product}}
               {{" system is powered on and connected to the network." | translate}}
+            </p>
+            <p *ngIf="ha_status">
+              {{"Waiting for Active TrueNAS controller to come up..." | translate}}
             </p>
           </div>
         </ng-template>
