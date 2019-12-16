@@ -167,7 +167,7 @@ export class LdapComponent {
           name : helptext.ldap_certificate_name,
           placeholder : helptext.ldap_certificate_placeholder,
           tooltip: helptext.ldap_certificate_tooltip,
-          options : []
+          options : [{label: '---', value: null}]
         },
         {
           type : 'checkbox',
