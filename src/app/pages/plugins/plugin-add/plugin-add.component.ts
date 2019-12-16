@@ -40,6 +40,7 @@ export class PluginAddComponent implements OnInit {
       type: 'input',
       name: 'jail_name',
       placeholder: helptext.jail_name_placeholder,
+      tooltip: helptext.uuid_tooltip,
       required: true,
       validation: [ Validators.required, regexValidator(this.jailService.jailNameRegex) ]
     },
