@@ -25,7 +25,7 @@ export class PluginsComponent {
     tooltip: jailHelptext.globalConfig.tooltip,
     onClick: () => {
       this.prerequisite().then((res)=>{
-        if (res && this.activatedPool !== undefined) {
+        if (this.availablePools !== undefined) {
           this.activatePool();
         }
       })
@@ -208,8 +208,10 @@ export class PluginsComponent {
             this.activatePool();
           }
         }, (err) => {
-          resolve(false);
-          new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
+            (res)=> {
+              resolve(false);
+            });
         })
       }
     });
@@ -267,6 +269,10 @@ export class PluginsComponent {
     if (this.availablePools) {
       this.dialogService.dialogForm(conf);
     }
+  }
+
+  prerequisiteFailedHandler(entityList) {
+    this.entityList = entityList;
   }
 
   afterInit(entityList: any) {
