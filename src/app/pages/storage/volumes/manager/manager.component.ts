@@ -220,6 +220,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           self.addVdev('data', vdev_values);
         }
         entityDialog.dialogRef.close(true);
+        setTimeout(function() {
+          self.getCurrentLayout();
+        }, 500);
       },
       parent: this,
       afterInit: function(entityDialog) {
