@@ -524,8 +524,21 @@ export class CloudCredentialsFormComponent {
       name: 'drives-ONEDRIVE',
       placeholder: helptext.drives_onedrive.placeholder,
       tooltip: helptext.drives_onedrive.tooltip,
-      options: [],
+      options: [{
+        label: '---------',
+        value: '',
+      }],
+      value: '',
       isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'ONEDRIVE',
+           }]
+        }
+      ]
     },
     {
       type: 'select',
@@ -1108,13 +1121,6 @@ export class CloudCredentialsFormComponent {
       token: data.token,
     }]).subscribe(
       (drives) => {
-        drivesConfig.options = [
-          {
-            label: '---------',
-            value: '',
-          }
-        ];
-
         for (let i = 0; i < drives.length; i++) {
           drivesConfig.options.push({label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i]});
         }
