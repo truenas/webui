@@ -25,25 +25,23 @@ export const helptext_system_failover = {
   },
 
   disabled_placeholder: T('Disable Failover'),
-  disabled_tooltip: T('Disables automatic failover and changes the \
- <i>HA Enabled</i> icon to <i>HA Disabled</i>.'),
+  disabled_tooltip: T('Disable automatic failover.'),
 
   master_placeholder: T(`Default ${globalHelptext.ctrlr}`),
-  master_tooltip: T(`Marks the currently active ${globalHelptext.ctrlr} \
- as the default active ${globalHelptext.ctrlr} when both \
- ${globalHelptext.ctrlr}s are online and HA is enabled. To change the \
- default ${globalHelptext.ctrlr}, unset this option on the default \
- ${globalHelptext.ctrlr} and allow the system to fail over. This briefly \
- interrupts system services.`),
+  master_tooltip: T(`Mark the currently active ${globalHelptext.ctrlr} \
+ as default when both ${globalHelptext.ctrlr}s are online and HA is \
+ enabled. To change the default ${globalHelptext.ctrlr}, unset this \
+ option on the default ${globalHelptext.ctrlr} and allow the system to \
+ fail over. This briefly interrupts system services.`),
 
   timeout_placeholder: T('Network Timeout Before Initiating Failover'),
   timeout_tooltip: T('Number of seconds to wait after a network failure \
- before triggering a failover. <i>0</i> means a failover either occurs \
- immediately or after two seconds when the system is using a link \
+ before triggering a failover. <i>0</i> means a failover occurs \
+ immediately, or after two seconds when the system is using a link \
  aggregation.'),
 
   master_dialog_title: T('Failover'),
   master_dialog_warning: T(`Forcing the other ${globalHelptext.ctrlr} to \
- become active requires a failover. This can termprarily interrupt \
+ become active requires a failover. This will temporarily interrupt \
  system services.`)
 };
