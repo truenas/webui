@@ -157,6 +157,7 @@ export class BootEnvironmentListComponent {
             () => {
               this.entityList.getData();
               this.updateBootState();
+              this.entityList.selected = [];
             }
           )
       });
