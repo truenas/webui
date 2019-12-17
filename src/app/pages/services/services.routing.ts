@@ -49,31 +49,35 @@ export const routes: Routes = [
   {
     data: { title: 'Rsync', breadcrumb: 'Rsync'},
     path : 'rsync',
-    component : ServiceRSYNCComponent,
     children: [
       {
         path: '',
-        redirectTo: 'configure',
-      },
-      {
-        path: 'configure',
-        component: CconfigureRYSNCComponent,
-        data: { title: 'Configure', breadcrumb: 'Configure' },
-      },
-      {
-        path: 'rsync-module',
-        component: RSYNCconfigurationListComponent,
-        data: { title: 'RSYNCModule', breadcrumb: 'RSYNCModule' },
-      },
-      {
-        path: 'rsync-module/add',
-        component: RYSNCConfigurationFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      },
-      {
-        path : 'rsync-module/edit/:pk', component : RYSNCConfigurationFormComponent,
-        data: {title: 'Edit', breadcrumb:'Edit' }
-      },
+        data: { title: 'Rsync', breadcrumb: 'Rsync'},
+        children: [
+          {
+            path: '',
+            redirectTo: 'configure',
+          },
+          {
+            path: ':pk',
+            component: ServiceRSYNCComponent,
+            data: { title: '', breadcrumb: ''},
+          },
+          {
+            path: 'rsync-module',
+            data: { title: '', breadcrumb: 'Rsync Module'},
+            children: [{
+              path: 'add',
+              component: RYSNCConfigurationFormComponent,
+              data: { title: 'Add', breadcrumb: 'Add' },
+            },{
+              path: 'edit/:pk',
+              component: RYSNCConfigurationFormComponent,
+              data: { title: 'Edit', breadcrumb: 'Edit' },
+            }]
+          },
+        ]
+      }
     ]
   },
   {
