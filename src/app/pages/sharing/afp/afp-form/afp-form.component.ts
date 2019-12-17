@@ -49,6 +49,7 @@ export class AFPFormComponent implements OnDestroy {
         {
           type: 'input',
           name: 'name',
+          required: true,
           placeholder: helptext_sharing_afp.placeholder_name,
           validation: [forbiddenValues(this.namesInUse), Validators.required],
           tooltip: helptext_sharing_afp.tooltip_name,
