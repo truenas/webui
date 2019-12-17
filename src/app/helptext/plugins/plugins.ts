@@ -50,7 +50,7 @@ multi_update_dialog: {
 
 portal_dialog: {
     title: T('Go to Admin Portal'),
-    admin_portal_placeholder: T('Select the admin portal'),
+    admin_portal_placeholder: T('Select the admin portal：'),
     saveButtonText: T('Go to Portal'),
 }
 
