@@ -45,4 +45,10 @@ multi_update_dialog: {
     content: T('Updating selected plugins.'),
     succeed: T('Selected plugins updated.'),
 },
+
+portal_dialog: {
+    title: T('Go to Admin Portal'),
+    admin_portal_placeholder: T('Select the admin portal'),
+    saveButtonText: T('Go to Portal'),
+}
 }

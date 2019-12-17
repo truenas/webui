@@ -434,17 +434,17 @@ export class PluginsComponent {
       onClick: (row) => {
         if (row.admin_portals.length > 1) {
           const conf: DialogFormConfiguration = {
-            title: 'Go to admin portal',
+            title: helptext.portal_dialog.title,
             fieldConfig: [
               {
                 type: 'select',
                 name: 'admin_portal',
-                placeholder: 'Please select the admin portal',
+                placeholder: helptext.portal_dialog.admin_portal_placeholder,
                 options: row.admin_portals ? row.admin_portals.map(item => {return {label: item, value: item}}) : [],
                 value: row.admin_portals[0]
               }
             ],
-            saveButtonText: 'Go to Portal',
+            saveButtonText: helptext.portal_dialog.saveButtonText,
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
               window.open(value.admin_portal);
