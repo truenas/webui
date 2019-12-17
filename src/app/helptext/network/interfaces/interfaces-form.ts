@@ -44,11 +44,11 @@ int_ipv6auto_tooltip : T('Set to automatically configure the IPv6 address with\
  be configured this way.'),
 
 disable_offload_capabilities_placeholder: T('Disable Hardware Offloading'),
-disable_offload_capabilities_tooltip: T('Disable using network hardware \
+disable_offload_capabilities_tooltip: T('Turn off hardware offloading \
  for network traffic processing. WARNING: disabling hardware offloading \
- can reduce system performance. Disabling hardware offloading is only \
- recommended when the interface is managing Jails or Virtual Machines \
- (VMs).'),
+ can reduce network performance. Disabling hardware offloading is only \
+ recommended when the interface is managing jails, plugins, or virtual \
+ machines.'),
 
 int_options_placeholder : T('Options'),
 int_options_tooltip : T('Enter additional space-delimited parameters from <a\
