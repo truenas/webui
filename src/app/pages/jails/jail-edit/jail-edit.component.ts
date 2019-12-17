@@ -27,7 +27,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
 
   @ViewChild('basic', { static: true}) basicPanel:any;
   public isReady: boolean =  false;
-  protected updateCall = 'jail.do_update';
+  protected updateCall = 'jail.update';
   protected upgradeCall = 'jail.upgrade';
   protected queryCall = 'jail.query';
   public route_success: string[] = ['jails'];

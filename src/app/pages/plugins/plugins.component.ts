@@ -32,7 +32,7 @@ export class PluginsComponent {
     }
   };
   protected queryCall = 'plugin.query';
-  protected wsDelete = 'jail.do_delete';
+  protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
@@ -346,7 +346,7 @@ export class PluginsComponent {
   };
 
   wsMultiDeleteParams(selected: any) {
-    const params: Array<any> = ['jail.do_delete'];
+    const params: Array<any> = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
