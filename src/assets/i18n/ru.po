@@ -5,10 +5,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Check Notifications for more details."
-msgstr ""
+msgstr " Проверьте уведомления для более подробной информации."
 
 msgid " Download Updates"
-msgstr ""
+msgstr " Скачать обновления"
 
 msgid " First vdev has "
 msgstr " Первый vdev имеет "
@@ -20,7 +20,7 @@ msgid " Plugin"
 msgstr " Плагин"
 
 msgid " Service"
-msgstr ""
+msgstr " Служба"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -41,7 +41,7 @@ msgstr ""
 "внесения каких-либо изменений, нажмите <b>ЗАГРУЗИТЬ КЛЮЧ ШИФРОВАНИЯ</b>."
 
 msgid " and "
-msgstr ""
+msgstr " и "
 
 msgid " and all snapshots of it?"
 msgstr " и все снимки этого?"
@@ -56,13 +56,13 @@ msgid " disks, new vdev has "
 msgstr " дисков, новый vdev имеет "
 
 msgid " has been unlocked."
-msgstr ""
+msgstr " был разблокирован."
 
 msgid " is "
 msgstr " - "
 
 msgid " is required."
-msgstr ""
+msgstr " требуется."
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
@@ -75,15 +75,17 @@ msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
 "for testing."
 msgstr ""
+" секунд, если не выбрано хранить вечно. Отрегулируйте время задержки, "
+"чтобы позволить тестирование."
 
 msgid " service has been enabled."
-msgstr ""
+msgstr " сервис был включен."
 
 msgid " system is powered on and connected to the network."
 msgstr " система включена и подключена к сети."
 
 msgid " update successful"
-msgstr ""
+msgstr " обновление успешно"
 
 msgid " updated."
 msgstr " обновлен."
@@ -109,7 +111,7 @@ msgid "(No description)"
 msgstr "(Нет описания)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(Удалить пул из базы данных)"
 
 msgid "*allow_sysvipc"
 msgstr ""
@@ -121,7 +123,7 @@ msgid ". All data on that pool was destroyed."
 msgstr ". Все данные на этом пуле были уничтожены."
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". Требуетмя по крайней мере один."
 
 msgid ". Is this correct?"
 msgstr ". Это верно?"
@@ -141,13 +143,13 @@ msgstr ""
 "настройки сети."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
-msgstr ""
+msgstr "</b> плагин удаляет все данные и снимки, сохраненные с ним."
 
 msgid "</b> with the keypair"
 msgstr "</b> с парой ключей"
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr ""
+msgstr "</i> не может быть запущен при удалении точки монтирования."
 
 msgid "</i> has started."
 msgstr "</i> начата."
@@ -159,13 +161,13 @@ msgid "</i> now?"
 msgstr "</i> сейчас?"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> остановлен."
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> обновлен."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr ""
+msgstr "</i>. Данные на пуле не будут доступны, пока пул не будет разблокирован."
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
@@ -180,6 +182,9 @@ msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
 "by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
 msgstr ""
+"</i>находится в базе данных, но не подключен к машине. Если он был "
+"экспортирован по ошибке, повторно подключите оборудование и используйте "
+"<b>Импорт пула</b>.<br /><br />"
 
 msgid ""
 "<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
@@ -361,6 +366,8 @@ msgid ""
 "<b>Not recommended.</b> Allow more than one group to  have the same group "
 "ID."
 msgstr ""
+"<b>Не рекомендуется.</b> Разрешить нескольким группам иметь одинаковый "
+"идентификатор группы."
 
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
@@ -372,7 +379,7 @@ msgstr ""
 "href=\"--docurl--/accounts.html#users\" target=\"_blank\">Пользователи</a>."
 
 msgid "<b>SED (Self-Encrypting Drives) Options</b>"
-msgstr ""
+msgstr "<b>Параметры SED (дисков с самошифрованием)</b>"
 
 msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
@@ -404,6 +411,9 @@ msgid ""
 "sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
 "<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
 msgstr ""
+"<b>ВНИМАНИЕ:</b> Этот файл конфигурации содержит системные пароли и другие "
+"конфиденциальные данные.<br /><br /><b>ВНИМАНИЕ:</b> SSH-ключи в <samp>"
+"/root/.ssh</samp><b>НЕ</b> сохраняются этой операцией.<br/>"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> слушает на этом порту."
@@ -552,12 +562,17 @@ msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
 "cloud storage."
 msgstr ""
+"<i>PUSH</i> отправляет данные в облачное хранилище. <i>PULL</i> получает "
+"данные из облачного хранилища."
 
 msgid ""
 "<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
 "connects to a remote system and retrieves snapshots  matching a <b>Naming "
 "Schema</b>."
 msgstr ""
+"<i>PUSH</i> отправляет снимки в целевую систему.<br><br>  <i>PULL</i> "
+"подключается к удаленной системе и получает снимки, соответствующие "
+"<b>схеме именования</b>."
 
 msgid ""
 "<i>Quick</i> erases only the partitioning information on a disk without "
@@ -873,13 +888,13 @@ msgid "Acoustic Level"
 msgstr "Уровень шума"
 
 msgid "Actions"
-msgstr ""
+msgstr "Действия"
 
 msgid "Activate"
 msgstr "Активировать"
 
 msgid "Activate this Boot Environment?"
-msgstr ""
+msgstr "Активировать эту загрузочную среду?"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -944,7 +959,7 @@ msgid "Add Log"
 msgstr "Добавить журнал"
 
 msgid "Add Mountpoint"
-msgstr ""
+msgstr "Добавить точку монтирования"
 
 msgid "Add Recovery Key"
 msgstr "Добавить ключ восстановления"
@@ -1098,7 +1113,7 @@ msgid "Additional Domains"
 msgstr "Дополнительные домены"
 
 msgid "Additional Hardware"
-msgstr ""
+msgstr "Дополнительное оборудование"
 
 msgid "Additional Parameters"
 msgstr "Дополнительные параметры"
@@ -1236,10 +1251,10 @@ msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "Выделить число мегабайт оперативной памяти ВМ."
 
 msgid "Allocate at least 256 MiB."
-msgstr ""
+msgstr "Выделить не менее 256 МиБ."
 
 msgid "Allow All Initiators"
-msgstr ""
+msgstr "Разрешить все инициаторы"
 
 msgid "Allow Anonymous Binding"
 msgstr "Разрешить анонимную привязку"
@@ -1257,7 +1272,7 @@ msgid "Allow DNS updates"
 msgstr "Разрешить обновления DNS"
 
 msgid "Allow Duplicate GIDs"
-msgstr ""
+msgstr "Разрешить дублирование GID"
 
 msgid "Allow Guest Access"
 msgstr "Разрешить гостевой доступ"
@@ -1573,13 +1588,13 @@ msgid "Apple Shares (AFP)"
 msgstr "Ресурсы Apple (AFP)"
 
 msgid "Application Key"
-msgstr ""
+msgstr "Ключ приложения"
 
 msgid "Apply"
-msgstr ""
+msgstr "Применить"
 
 msgid "Apply Failover Upgrade"
-msgstr ""
+msgstr "Применить отказоустойчивое обновление"
 
 msgid "Apply Network Changes"
 msgstr "Применить изменения сети"
@@ -1622,13 +1637,13 @@ msgid "Apply permissions to child datasets"
 msgstr "Применить разрешения к дочерним наборам данных"
 
 msgid "Apply the same quota critical  alert settings as the parent dataset."
-msgstr ""
+msgstr "Применить те же параметры оповещения о критических квотах, что и у родительского набора данных."
 
 msgid "Apply the same quota warning  alert settings as the parent dataset."
-msgstr ""
+msgstr "Применить те же параметры предупреждения о квоте, что и у родительского набора данных."
 
 msgid "Apply updates and reboot system after downloading."
-msgstr "Примените обновления и перезагрузите систему после загрузки."
+msgstr "Применить обновления и перезагрузить систему после загрузки."
 
 msgid "Archive"
 msgstr "Архив"
@@ -1666,7 +1681,7 @@ msgstr ""
 "Modules</b> другой системы."
 
 msgid "Attach"
-msgstr ""
+msgstr "Прикрепить"
 
 msgid "Attach Debug"
 msgstr "Прикрепить отладку"
@@ -1777,7 +1792,7 @@ msgid "Available Disks"
 msgstr "Доступные диски"
 
 msgid "Available Memory:"
-msgstr ""
+msgstr "Доступная память:"
 
 msgid "Available Themes"
 msgstr "Доступные темы"
@@ -1821,7 +1836,7 @@ msgid "Basic Properties"
 msgstr "Базовые свойства"
 
 msgid "Batch Operations"
-msgstr ""
+msgstr "Пакетные операции"
 
 msgid "Begin"
 msgstr "Начать"
@@ -2081,10 +2096,10 @@ msgid "Cannot Edit while HA is Enabled"
 msgstr "Невозможно редактировать, пока включена ВД"
 
 msgid "Cannot create plugins or jails until a pool is present for storing them."
-msgstr ""
+msgstr "Невозможно создать плагины или джейлы, пока нет пула для их хранения."
 
 msgid "Cannot edit while HA is enabled."
-msgstr ""
+msgstr "Невозможно редактировать, когда включена отказоустойчивость."
 
 msgid "Case Sensitivity"
 msgstr "Чувствительность к регистру"
@@ -2096,6 +2111,8 @@ msgid ""
 "Caution: Allocating too much memory can slow the  system or prevent VMs "
 "from running."
 msgstr ""
+"Внимание: выделение слишком большого объема памяти может замедлить работу "
+"системы или помешать работе виртуальных машин."
 
 msgid "Certificate"
 msgstr "Сертификат"
@@ -2111,7 +2128,7 @@ msgid "Certificates"
 msgstr "Сертификаты"
 
 msgid "Change Administrator Password"
-msgstr ""
+msgstr "Изменить пароль администратора"
 
 msgid "Change Device Order"
 msgstr "Изменить порядок устройств"
@@ -2160,7 +2177,7 @@ msgstr ""
 "пароль не может содержать пробелы или <b>#</b>."
 
 msgid "Changes that have been applied will revert after "
-msgstr ""
+msgstr "Примененные изменения будут отменены через "
 
 msgid "Changing"
 msgstr "Изменение"
@@ -2314,7 +2331,7 @@ msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr "Возможные варианты: <i>Нет, Авто, CHAP,</i> или <i>Взаимный CHAP</i>."
 
 msgid "Choose"
-msgstr ""
+msgstr "Выберите"
 
 msgid ""
 "Choose <a                 href=\"--docurl--/tasks.html#rsync-module-mode\"  "
@@ -2355,10 +2372,10 @@ msgstr ""
 "производительности."
 
 msgid "Choose Pool for Plugin and Jail Manager"
-msgstr ""
+msgstr "Выберите пул для менеджера плагинов и jail"
 
 msgid "Choose Pool for Plugin and Jail Storage"
-msgstr ""
+msgstr "Выберите пул для хранения плагинов и jail"
 
 msgid "Choose Theme"
 msgstr "Выберите тему"
@@ -2414,7 +2431,7 @@ msgstr ""
 "пользователя."
 
 msgid "Choose a pool for plugin and jail storage."
-msgstr ""
+msgstr "Выберите пул для хранения плагинов и джейлов."
 
 msgid "Choose a pool to scrub."
 msgstr "Выберите пул для проверки."
@@ -2693,6 +2710,8 @@ msgid ""
 "Choosing an entry loads a preset ACL that is  configured to match general "
 "permissions situations."
 msgstr ""
+"Выбор записи загружает предустановленные ACL, который настроен в "
+"соответствии с общими ситуациями разрешений."
 
 msgid "Cipher"
 msgstr "Шифр"
@@ -2728,7 +2747,7 @@ msgid "Clone"
 msgstr "Клонировать"
 
 msgid "Clone to New Dataset"
-msgstr ""
+msgstr "Клонировать в новый набор данных"
 
 msgid "Close"
 msgstr "Закрыть"
@@ -2740,7 +2759,7 @@ msgid "Cloud Sync Tasks"
 msgstr "Задачи облачной синхронизации"
 
 msgid "Cloud sync <i>"
-msgstr ""
+msgstr "Облачная синхронизация <i>"
 
 msgid "Cluster Name"
 msgstr "Имя кластера"
@@ -2749,7 +2768,7 @@ msgid "Collection"
 msgstr "Коллекция"
 
 msgid "Columns"
-msgstr ""
+msgstr "Столбцы"
 
 msgid "Com Port"
 msgstr "Com порт"
@@ -2889,7 +2908,7 @@ msgid "Computer Account OU"
 msgstr "Учетная запись компьютера OU"
 
 msgid "Config could not be downloaded"
-msgstr ""
+msgstr "Конфиг не может быть загружен"
 
 msgid "Configure ACL"
 msgstr "Настройте ACL"
@@ -2938,6 +2957,8 @@ msgid ""
 "Configure the ports that allow remote access to  the jail. Required to "
 "override the default settings or when installing  duplicate plugins."
 msgstr ""
+"Настройте порты, которые разрешают удаленный доступ к jail. Требуется для "
+"переопределения настроек по умолчанию или при установке дубликатов jail."
 
 msgid "Configure the root user email address."
 msgstr "Настройте адрес электронной почты пользователя root."
@@ -2991,7 +3012,7 @@ msgid "Connecting to "
 msgstr "Подключаюсь к "
 
 msgid "Connection Error"
-msgstr ""
+msgstr "Ошибка соединения"
 
 msgid ""
 "Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but "
@@ -3046,7 +3067,7 @@ msgid "Continue with download?"
 msgstr "Продолжить загрузку?"
 
 msgid "Contract Type"
-msgstr ""
+msgstr "Тип контракта"
 
 msgid "Control left sidebar's display style."
 msgstr "Управляйте стилем отображения левой боковой панели."
@@ -3099,16 +3120,16 @@ msgid "Copies"
 msgstr "Копии"
 
 msgid "Copy and Paste"
-msgstr ""
+msgstr "Скопировать и вставить"
 
 msgid "Could not delete boot environment."
 msgstr "Не удалось удалить загрузочное окрудение."
 
 msgid "Could not find a group name for this group ID."
-msgstr ""
+msgstr "Не удалось найти имя группы для этого идентификатора группы."
 
 msgid "Could not find a user name for this user ID."
-msgstr ""
+msgstr "Не удалось найти имя пользователя для этого идентификатора пользователя."
 
 msgid "Country"
 msgstr "Страна"
@@ -3237,7 +3258,7 @@ msgid "Custom Server"
 msgstr "Пользовательский сервер"
 
 msgid "Customer Name"
-msgstr ""
+msgstr "Имя Клиента"
 
 msgid ""
 "DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
@@ -3358,16 +3379,16 @@ msgid "Deactivate the recovery key for this pool?"
 msgstr "Деактивировать ключ восстановления для этого пула?"
 
 msgid "Debug"
-msgstr ""
+msgstr "Отладка"
 
 msgid "Debug could not be downloaded."
-msgstr ""
+msgstr "Не удалось загрузить отладку."
 
 msgid "Decrypt pool"
 msgstr "Расшифровать пул"
 
 msgid "Decrypting Disks"
-msgstr ""
+msgstr "Расшифровка дисков"
 
 msgid ""
 "Deduplicate the stream to avoid sending redundant  data blocks. The "
@@ -3377,14 +3398,10 @@ msgid ""
 msgstr ""
 
 msgid "Default"
-msgstr ""
+msgstr "По умолчанию"
 
 msgid "Default ACL Options"
-msgstr ""
-"Параметры ACL по умолчаниюОпределите время начала, когда репликация не "
-"может быть запущена. Выполняемая репликация может продолжать выполняться "
-"после этого времени.Определите время окончания для ограничения на активацию "
-"расписаний репликации."
+msgstr "Параметры ACL по умолчанию"
 
 msgid "Default Permissions"
 msgstr "Разрешения по умолчанию"
@@ -3523,7 +3540,7 @@ msgid "Delete Mount Point"
 msgstr "Удалить точку монтирования"
 
 msgid "Delete Mountpoint"
-msgstr ""
+msgstr "Удалить точку монтирования"
 
 msgid "Delete Path"
 msgstr "Удалить путь"
@@ -3571,7 +3588,7 @@ msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "Удаление интерфейсов при включенной ВД запрещено."
 
 msgid "Deleting the <b>"
-msgstr ""
+msgstr "Удаление <b>"
 
 msgid "Deny list"
 msgstr "Список запретов"
@@ -3608,7 +3625,7 @@ msgid "Description of the lagg interface."
 msgstr "Описание интерфейса lagg."
 
 msgid "Description of the share or notes on how it is used."
-msgstr ""
+msgstr "Описание ресурса или заметки о том, как он используется."
 
 msgid "Descriptive name for the replication."
 msgstr "Описательное имя для репликации."
@@ -3626,7 +3643,7 @@ msgid "Destination Snapshot Lifetime"
 msgstr "Время жизни снимка назначения"
 
 msgid "Destination Snapshots Are Not Related to Replicated Snapshots"
-msgstr ""
+msgstr "Снимки назначения не связаны с реплицированными снимками"
 
 msgid ""
 "Destination dataset does not contain any snapshots that can be used as a "
@@ -3734,7 +3751,7 @@ msgid "Device"
 msgstr "Устройство"
 
 msgid "Device Attached"
-msgstr ""
+msgstr "Устройство подключено"
 
 msgid "Device Busy"
 msgstr "Устройство занято"
@@ -3743,7 +3760,7 @@ msgid "Device Order"
 msgstr "Порядок устройств"
 
 msgid "Device detached "
-msgstr ""
+msgstr "Устройство отключено "
 
 msgid "Devices"
 msgstr "Устройства"
@@ -3816,7 +3833,7 @@ msgstr ""
 "раскрывающихся меню, но все же принимаются при вводе вручную."
 
 msgid "Disable offload capabilities"
-msgstr ""
+msgstr "Отключить возможности разгрузки"
 
 msgid "Disable physical block size reporting"
 msgstr "Отключить сообщение размера физического блока"
@@ -3918,10 +3935,10 @@ msgid "Done"
 msgstr "Готово"
 
 msgid "Download"
-msgstr ""
+msgstr "Скачать"
 
 msgid "Download Key"
-msgstr ""
+msgstr "Скачать ключ"
 
 msgid "Download Logs"
 msgstr "Скачать журналы"
@@ -3945,7 +3962,7 @@ msgid "Driver"
 msgstr "Драйвер"
 
 msgid "Drives List"
-msgstr ""
+msgstr "Список дисков"
 
 msgid "EC Curve"
 msgstr "Кривая EC"
@@ -3960,10 +3977,10 @@ msgid "EULA"
 msgstr "Лицензионное соглашение"
 
 msgid "EXPIRED"
-msgstr ""
+msgstr "ИСТЕК"
 
 msgid "EXPIRES TODAY  "
-msgstr ""
+msgstr "ИСТЕКАЕТ СЕГОДНЯ "
 
 msgid "Edit"
 msgstr "Изменить"
@@ -4026,7 +4043,7 @@ msgid "Enable"
 msgstr "Включено"
 
 msgid "Enable (requires password"
-msgstr ""
+msgstr "Включить (требует пароль"
 
 msgid "Enable Atime"
 msgstr "Включить atime"
@@ -4132,7 +4149,7 @@ msgid "Enable running services that require mlock() in a jail."
 msgstr "Включите запуск служб, которые требуют mlock() в jail."
 
 msgid "Enable sending anonymous usage statistics to iXsystems."
-msgstr ""
+msgstr "Включить отправку анонимной статистики использования в iXsystems."
 
 msgid "Enable service"
 msgstr "Включить службу"
@@ -4162,7 +4179,7 @@ msgstr ""
 "не удаляя его."
 
 msgid "Enable this service to start automatically."
-msgstr ""
+msgstr "Включить автоматический запуск этой службы."
 
 msgid "Enable this task. Unset to disable the task     without deleting it."
 msgstr "Включить эту задачу. Отключите, чтобы отключить задачу, не удаляя ее."
@@ -4313,7 +4330,7 @@ msgstr ""
 "контроллером домена Kerberos прежде чем устанавливать."
 
 msgid "Enter"
-msgstr ""
+msgstr "Введите"
 
 msgid ""
 "Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
@@ -4582,7 +4599,7 @@ msgid "Enter a username to register with this service."
 msgstr "Введите пользователя для регистрации на данном сервисе."
 
 msgid "Enter a valid IPv4 address."
-msgstr ""
+msgstr "Введите действительный адрес IPv4."
 
 msgid "Enter a valid MAC address vendor prefix. <b>Example:</b> <i>E4F4C6</i>"
 msgstr "Введите действительный префикс MAC адреса. <b>Пример:</b> <i>E4F4C6</i>"
@@ -5143,7 +5160,7 @@ msgstr ""
 "хранилищ данных."
 
 msgid "Enter valid value"
-msgstr ""
+msgstr "Введите действительное значение"
 
 msgid ""
 "Entering <i>0</i> uses the actual file size and requires that the file "
@@ -5162,7 +5179,7 @@ msgid "Error Deleting zvol "
 msgstr "Ошибка удаления zvol "
 
 msgid "Error Downloading File"
-msgstr ""
+msgstr "Ошибка при загрузке файла"
 
 msgid "Error Promoting dataset "
 msgstr "Ошибка продвижения набора данных "
@@ -5198,16 +5215,16 @@ msgid "Error detaching pool"
 msgstr "Ошибка отсоединения пула"
 
 msgid "Error exporting the Private Key"
-msgstr ""
+msgstr "Ошибка экспорта закрытого ключа"
 
 msgid "Error exporting the certificate"
-msgstr ""
+msgstr "Ошибка экспорта сертификата"
 
 msgid "Error exporting/disconnecting pool."
 msgstr "Ошибка экспорта/отключения пула."
 
 msgid "Error gathering data on pool."
-msgstr ""
+msgstr "Ошибка сбора данных в пуле."
 
 msgid "Error getting disk data"
 msgstr "Ошибка при получении данных на диске"
@@ -5309,16 +5326,16 @@ msgid "Execute"
 msgstr "Исполнить"
 
 msgid "Expiration Date"
-msgstr ""
+msgstr "Дата окончания срока"
 
 msgid "Export Certificate"
 msgstr "Экспортировать сертификат"
 
 msgid "Export Password Secret Seed"
-msgstr "Экспорт секретное семя пароля"
+msgstr "Экспортировать секретное семя пароля"
 
 msgid "Export Pool Encryption Keys"
-msgstr ""
+msgstr "Экспортировать ключи шифрования пула"
 
 msgid "Export Private Key"
 msgstr "Экспортировать закрытый ключ"
@@ -5363,7 +5380,7 @@ msgid "Extent"
 msgstr "Экстент"
 
 msgid "Extent Name"
-msgstr ""
+msgstr "Имя экстента"
 
 msgid "Extent name"
 msgstr "Имя экстента"
@@ -5392,10 +5409,10 @@ msgid "Failed"
 msgstr "Ошибка"
 
 msgid "Failed sending test alert!"
-msgstr ""
+msgstr "Не удалось отправить тестовое оповещение!"
 
 msgid "Failed to generate debug file."
-msgstr ""
+msgstr "Не удалось создать файл отладки."
 
 msgid "Failover"
 msgstr "Аварийное переключение"
@@ -5425,7 +5442,7 @@ msgid "Fibre Channel "
 msgstr ""
 
 msgid "Fibre Channel Port "
-msgstr ""
+msgstr "Порт Fibre Channel "
 
 msgid "File"
 msgstr "Файл"
@@ -5440,7 +5457,7 @@ msgid "File Permissions"
 msgstr "Права доступа к файлу"
 
 msgid "File upload complete"
-msgstr ""
+msgstr "Загрузка файла завершена"
 
 msgid "Filename Encryption"
 msgstr "Шифрование имени файла"
