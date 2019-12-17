@@ -9,7 +9,8 @@ description_validation : [ Validators.required ],
 
 direction_placeholder: T('Direction'),
 direction_tooltip: T('<i>PUSH</i> sends data to cloud storage. <i>PULL</i> \
- receives data from cloud storage.'),
+ receives data from cloud storage. Changing the direction resets the \
+ <i>Transfer Mode</i> to COPY.'),
 direction_validation : [ Validators.required ],
 
 credentials_placeholder: T('Credential'),

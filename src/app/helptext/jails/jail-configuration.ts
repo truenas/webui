@@ -9,8 +9,8 @@ wizard_step1_label: T('Name Jail and Choose FreeBSD Release'),
 plugin_name_placeholder: T('Plugin Name'),
 
 uuid_placeholder: T('Name'),
-uuid_tooltip: T('Required. Can only contain alphanumeric\
- characters (Aa-Zz 0-9), dashes (-), or underscores (_).'),
+uuid_tooltip: T('Required. Can contain letters, numbers, periods (.), \
+ dashes (-), and underscores (_).'),
 
 host_hostuuid_placeholder: T('UUID'),
 host_hostuuid_tooltip: T('The numeric <i>UUID</i> or <i>custom name</i>\
