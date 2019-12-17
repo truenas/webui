@@ -65,15 +65,15 @@ export const routes: Routes = [
           },
           {
             path: 'rsync-module',
-            data: { title: '', breadcrumb: 'Rsync Module'},
+            data: { title: 'Rsync Module', breadcrumb: 'Rsync Module'},
             children: [{
               path: 'add',
               component: RYSNCConfigurationFormComponent,
-              data: { breadcrumb: 'Add' },
+              data: { title: 'Add', breadcrumb: 'Add' },
             },{
               path: 'edit/:pk',
               component: RYSNCConfigurationFormComponent,
-              data: { breadcrumb: 'Edit' },
+              data: { title: 'Edit', breadcrumb: 'Edit' },
             }]
           },
         ]
