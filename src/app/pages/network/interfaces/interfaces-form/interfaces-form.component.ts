@@ -273,6 +273,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
+    this.route.params.subscribe(params => {
+      if (params['pk']) {
+        this.vlan_pint.type = 'input';
+      }
+    });
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.node').subscribe((node) => {
