@@ -1489,7 +1489,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     let updateRelease: boolean = false;
     let newRelease: any;
     let value = _.cloneDeep(this.formGroup.value);
-console.log(value);
 
     this.parseIpaddr(value);
     this.parseNatForwards(value);
@@ -1501,7 +1500,6 @@ console.log(value);
 
     for (let i in this.wsResponse) {
       if (value[i] == undefined && _.find(this.formFields, {name: i}) != undefined && i !== 'host_hostuuid' && i !== 'release') {
-        console.log(i, this.wsResponse[i]);
         if (this.wsResponse[i] === true) {
           value[i] = false;
         }
@@ -1511,7 +1509,7 @@ console.log(value);
           delete value[i];
         }
       }
-      
+
       if (value.hasOwnProperty(i)) {
         if (i == 'release') {
           // upgrade release
