@@ -1558,8 +1558,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       background-color: rgba(127,127,127,0.1);
       margin-bottom: 10px;
     }
-     #address, #failover_address, #failover_virtual_address {
+    #failover_address, #failover_virtual_address {
       width: 85%;
+    }
+    #address {
+      width: calc(100% - 72px);
     }
     .listBtn {
       bottom: 40px;

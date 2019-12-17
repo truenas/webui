@@ -7,6 +7,8 @@ import * as _ from 'lodash';
 import { DialogService, NetworkService, RestService, WebSocketService } from '../../../../services/';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector : 'app-nfs-form',
@@ -23,30 +25,36 @@ export class NFSFormComponent {
   protected queryKey = 'id';
   protected isEntity = true;
   protected isBasicMode = true;
-  public entityForm: any;
+  public entityForm: EntityFormComponent;
   public save_button_enabled = true;
 
   public fieldSets = new FieldSets([
     {
+      name: helptext_sharing_nfs.fieldset_paths,
+      label: true,
+      config: [{
+        type: 'list',
+        name : 'paths',
+        templateListField: [{
+          name: 'path',
+          placeholder: helptext_sharing_nfs.placeholder_path,
+          tooltip: helptext_sharing_nfs.tooltip_path,
+          type: 'explorer',
+          explorerType: 'directory',
+          initial: '/mnt',
+          required: true,
+          validation : helptext_sharing_nfs.validators_path
+        }],
+        listFields: []
+      }]
+    },
+    { name: 'divider_general', divider: true },
+    {
       name: helptext_sharing_nfs.fieldset_general,
       class: 'general',
       label: true,
+      width: '49%',
       config: [
-        {
-          type: 'list',
-          name : 'paths',
-          templateListField: [{
-            name: 'path',
-            placeholder: helptext_sharing_nfs.placeholder_path,
-            tooltip: helptext_sharing_nfs.tooltip_path,
-            type: 'explorer',
-            explorerType: 'directory',
-            initial: '/mnt',
-            required: true,
-            validation : helptext_sharing_nfs.validators_path
-          }],
-          listFields: []
-        },
         {
           type: 'input',
           name: 'comment',
@@ -61,30 +69,23 @@ export class NFSFormComponent {
         },
         {
           type: 'checkbox',
-          name: 'ro',
-          placeholder: helptext_sharing_nfs.placeholder_ro,
-          tooltip: helptext_sharing_nfs.tooltip_ro,
-        },
-        {
-          type: 'checkbox',
           name: 'quiet',
           placeholder: helptext_sharing_nfs.placeholder_quiet,
           tooltip: helptext_sharing_nfs.tooltip_quiet,
-        },
+        }
+      ]
+    },
+    { name: 'divider_access', divider: false },
+    {
+      name: helptext_sharing_nfs.fieldset_access,
+      label: false,
+      class: 'access',
+      config: [
         {
-          type: 'list',
-          name: 'networks',
-          templateListField: [{
-            type: 'input',
-            name: 'network',
-            placeholder: helptext_sharing_nfs.placeholder_network,
-            tooltip: helptext_sharing_nfs.tooltip_network,
-            blurStatus : true,
-            blurEvent: this.nfs_network_event,
-            parent: this,
-            value: ''
-          }],
-          listFields: []
+          type: 'checkbox',
+          name: 'ro',
+          placeholder: helptext_sharing_nfs.placeholder_ro,
+          tooltip: helptext_sharing_nfs.tooltip_ro,
         },
         {
           type: 'combobox',
@@ -96,21 +97,6 @@ export class NFSFormComponent {
           searchOptions: [],
           parent: this,
           updater: this.updateMapRootUserSearchOptions,
-        },
-        {
-          type: 'list',
-          name: 'hosts',
-          templateListField: [{
-            type: 'input',
-            name: 'host',
-            placeholder: helptext_sharing_nfs.placeholder_hosts,
-            tooltip: helptext_sharing_nfs.tooltip_hosts,
-            blurStatus : true,
-            blurEvent: this.nfs_hosts_event,
-            parent: this,
-            value: ''
-          }],
-          listFields: []
         },
         {
           type: 'combobox',
@@ -172,31 +158,48 @@ export class NFSFormComponent {
           value: []
         }
       ]
-    }
-  ]);
-
-  protected arrayControl: any;
-
-  public custActions: Array<any> = [
-    {
-      id : 'basic_mode',
-      name : helptext_sharing_nfs.actions_basic_mode,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
-      'id' : 'advanced_mode',
-      name : helptext_sharing_nfs.actions_advanced_mode,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
-    }
-  ];
-
-  private nfs_maproot_user: any;
-  private nfs_maproot_group: any;
-  private nfs_mapall_user: any;
-  private nfs_mapall_group: any;
+      name: helptext_sharing_nfs.fieldset_networks,
+      label: false,
+      class: 'networks',
+      width: '49%',
+      config: [{
+          type: 'list',
+          name: 'networks',
+          templateListField: [{
+            type: 'ipwithnetmask',
+            name: 'network',
+            placeholder: helptext_sharing_nfs.placeholder_network,
+            tooltip: helptext_sharing_nfs.tooltip_network,
+            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ]
+          }],
+          listFields: []
+      }]
+    },
+    { name: 'spacer', width: '2%' },
+    {
+      name: helptext_sharing_nfs.fieldset_hosts,
+      label: false,
+      class: 'hosts',
+      width: '49%',
+      config: [{
+          type: 'list',
+          name: 'hosts',
+          templateListField: [{
+            type: 'input',
+            name: 'host',
+            placeholder: helptext_sharing_nfs.placeholder_hosts,
+            tooltip: helptext_sharing_nfs.tooltip_hosts
+          }],
+          listFields: []
+      }]
+    },
+    { name: 'divider', divider: true }
+  ]);
 
   protected advanced_field: Array<any> = [
-    'quiet',
+    'ro',
     'networks',
     'hosts',
     'maproot_user',
@@ -205,6 +208,37 @@ export class NFSFormComponent {
     'mapall_group',
     'security',
   ];
+
+  protected advanced_sets = ['access', 'networks', 'hosts'];
+  protected advanced_dividers = ['divider_access'];
+
+  public custActions: Array<any> = [
+    {
+      id : 'basic_mode',
+      name : helptext_sharing_nfs.actions_basic_mode,
+      function : () => {
+        this.isBasicMode = !this.isBasicMode;
+        this.fieldSets
+          .toggleSets(this.advanced_sets)
+          .toggleDividers(this.advanced_dividers);
+      }
+    },
+    {
+      'id' : 'advanced_mode',
+      name : helptext_sharing_nfs.actions_advanced_mode,
+      function : () => {
+        this.isBasicMode = !this.isBasicMode;
+        this.fieldSets
+          .toggleSets(this.advanced_sets)
+          .toggleDividers(this.advanced_dividers);
+      }
+    }
+  ];
+
+  private nfs_maproot_user: any;
+  private nfs_maproot_group: any;
+  private nfs_mapall_user: any;
+  private nfs_mapall_group: any;
 
   constructor(protected router: Router,
               protected entityFormService: EntityFormService,
@@ -215,7 +249,6 @@ export class NFSFormComponent {
               public networkService: NetworkService) {}
 
   preInit(EntityForm: any) {
-    this.arrayControl = this.fieldSets.config('paths');
     this.route.params.subscribe(params => {
       if(params['pk']) {
         this.pk = parseInt(params['pk'], 10);
@@ -227,7 +260,7 @@ export class NFSFormComponent {
     });
   }
 
-  afterInit(EntityForm: any) {
+  afterInit(EntityForm: EntityFormComponent) {
     this.entityForm = EntityForm;
 
     this.userService.userQueryDSCache().subscribe(items => {
@@ -257,69 +290,8 @@ export class NFSFormComponent {
       this.nfs_maproot_group = this.fieldSets.config('maproot_group');
       this.nfs_maproot_group.options = groups;
     });
-  }
-  nfs_hosts_event(parent: any){
-      parent.fieldSets.config('hosts').warnings = null;
 
-      if(parent.entityForm) {
-        if(parent.entityForm.formGroup.controls['host'].value !=='') {
-        const network_string = parent.entityForm.formGroup.controls['host'].value.split(/[\s,]+/);
-        let error_msg = ""
-        let warning_flag = false
-        for (const ip of network_string) {
-          
-          const ValidIpAddressRegex = parent.networkService.ipv4_regex;
-          const ValidHostnameRegex = parent.networkService.hostname_regex;
-          const ValidIPV6Address = parent.networkService.ipv6_regex;
-
-          if (!ValidIpAddressRegex.test(ip)) {
-            if (!ValidHostnameRegex.test(ip)) {
-              if(!ValidIPV6Address.test(ip)){
-                error_msg = error_msg +`${ip} `;
-                warning_flag= true;
-              }
-            }
-          }
-        }
-        if (warning_flag && error_msg !==" ") {
-          parent.entityForm.fieldSets.config('hosts').warnings = `Following IP Address/hostname appears to be wrong ${error_msg}`
-          parent.save_button_enabled = false;
-  
-        } else {
-          parent.entityForm.fieldSets.config('hosts').warnings = null;
-          parent.save_button_enabled = true;
-        };
-      };
-    };
-  };
-  nfs_network_event(parent){
-    parent.fieldSets.config('network').warnings = false;
-    if(parent.entityForm) {
-      if(parent.entityForm.formGroup.controls['network'].value !=='') {
-        const network_string = parent.entityForm.formGroup.controls['network'].value.split(/[\s,]+/);
-        let error_msg = ""
-        let warning_flag = false
-        for (const ip of network_string) {
-          const ValidIpSubnetRegex = parent.networkService.ipv4_cidr_regex;
-          const ValidIPV6SubnetRegEx = parent.networkService.ipv6_cidr_regex;
-          if (!ValidIpSubnetRegex.test(ip)) {
-              if(!ValidIPV6SubnetRegEx.test(ip)){
-                error_msg = error_msg + ` ${ip}`;
-                warning_flag= true;
-              }
-            
-          }
-        }
-        if (warning_flag && error_msg !==" ") {
-          parent.entityForm.fieldSets.config('network').warnings = `Following Network appears to be wrong ${error_msg}`;
-          parent.save_button_enabled = false;
-        } else { 
-          parent.entityForm.fieldSets.config('network').warnings = null;
-          parent.save_button_enabled = true;
-        }
-
-      }
-    }
+    this.entityForm.formGroup.get('hosts').valueChanges.subscribe(console.log);
   }
 
   isCustActionVisible(actionId: string) {
@@ -331,14 +303,6 @@ export class NFSFormComponent {
     return true;
   }
 
-  // preHandler(data: any[]): any[] {
-  //   const paths = [];
-  //   for (let i = 0; i < data.length; i++) {
-  //     paths.push({path:data[i]});
-  //   }
-  //   return paths;
-  // }
-
   resourceTransformIncomingRestData(data) {
     const paths = [];
     for (let i = 0; i < data['paths'].length; i++) {
@@ -348,13 +312,13 @@ export class NFSFormComponent {
 
     const networks = [];
     for (let i = 0; i < data['networks'].length; i++) {
-      paths.push({'network':data['networks'][i]});
+      networks.push({'network':data['networks'][i]});
     }
     data['networks'] = networks;
 
     const hosts = [];
     for (let i = 0; i < data['hosts'].length; i++) {
-      paths.push({'host':data['hosts'][i]});
+      hosts.push({'host':data['hosts'][i]});
     }
     data['hosts'] = hosts;
 
@@ -362,15 +326,13 @@ export class NFSFormComponent {
     return data;
   }
 
-  beforeSubmit(data) {
-    const d = {
+  clean(data) {
+    return {
       ...data,
       paths: data.paths.filter(p => !!p.path).map(p => p.path),
       networks: data.networks.filter(n => !!n.network).map(n => n.network),
       hosts: data.hosts.filter(h => !!h.host).map(h => h.host)
     };
-    console.log({ in: d });
-    return d;
   }
 
   afterSave(entityForm) {
