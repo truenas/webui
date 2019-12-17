@@ -1489,6 +1489,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     let updateRelease: boolean = false;
     let newRelease: any;
     let value = _.cloneDeep(this.formGroup.value);
+console.log(value);
 
     this.parseIpaddr(value);
     this.parseNatForwards(value);
@@ -1498,11 +1499,19 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     }
     delete value['auto_configure_ip6'];
 
-    for (let i in value) {
-      // do not send value[i] if value[i] no change
-      if (value[i] == this.wsResponse[i]) {
-        delete value[i];
+    for (let i in this.wsResponse) {
+      if (value[i] == undefined && _.find(this.formFields, {name: i}) != undefined && i !== 'host_hostuuid' && i !== 'release') {
+        console.log(i, this.wsResponse[i]);
+        if (this.wsResponse[i] === true) {
+          value[i] = false;
+        }
+      } else {
+        // do not send value[i] if value[i] no change
+        if (value[i] == this.wsResponse[i]) {
+          delete value[i];
+        }
       }
+      
       if (value.hasOwnProperty(i)) {
         if (i == 'release') {
           // upgrade release
@@ -1512,9 +1521,9 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         }
         if (_.indexOf(this.TFfields, i) > -1) {
           if (value[i]) {
-            value[i] = '1';
+            value[i] = 1;
           } else {
-            value[i] = '0';
+            value[i] = 0;
           }
         } else if (_.indexOf(this.OFfields, i) > -1) {
           if (value[i]) {
