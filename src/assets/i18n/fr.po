@@ -3622,7 +3622,7 @@ msgid "Decrypt pool"
 msgstr "Déchiffrer le volume"
 
 msgid "Decrypting Disks"
-msgstr "Déchiffrer des disques"
+msgstr "Déchiffrement des disques"
 
 msgid ""
 "Deduplicate the stream to avoid sending redundant  data blocks. The "
@@ -10323,7 +10323,7 @@ msgid ""
 "Select the user to control the dataset. Users created manually or imported "
 "from a directory service appear in the drop-down menu."
 msgstr ""
-"Sélectionnez le groupe pour contrôler le dataset. Les groupes créés "
+"Sélectionnez l'utilisateur pour contrôler le dataset. Les utilisateurs créés "
 "manuellement ou importés à partir d'un service d'annuaire apparaissent dans "
 "le menu déroulant."
 
@@ -11113,10 +11113,10 @@ msgstr ""
 "Lorsqu'il est désactivé, seul le répertoire spécifié est inclus."
 
 msgid "Set to include child datasets of the  chosen dataset."
-msgstr "Définit pour inclure les dataset enfants du dataset sélectionné."
+msgstr "Définit pour inclure les datasets enfants du dataset sélectionné."
 
 msgid "Set to include child datasets of the chosen dataset."
-msgstr "Définit pour inclure les dataset enfants du dataset sélectionné."
+msgstr "Définit pour inclure les datasets enfants du dataset sélectionné."
 
 msgid ""
 "Set to include the Fully-Qualified Domain Name (FQDN) in logs to precisely "
