@@ -26,7 +26,7 @@ export class JailListComponent {
   public availablePools: any;
   public title = "Jails";
   protected queryCall = 'jail.query';
-  protected wsDelete = 'jail.do_delete';
+  protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
   public entityList;
   protected route_add = ["jails", "add", "wizard"];
@@ -446,7 +446,7 @@ export class JailListComponent {
   }
 
   wsMultiDeleteParams(selected: any) {
-    let params: Array<any> = ['jail.do_delete'];
+    let params: Array<any> = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
