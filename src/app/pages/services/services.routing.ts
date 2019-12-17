@@ -69,11 +69,11 @@ export const routes: Routes = [
             children: [{
               path: 'add',
               component: RYSNCConfigurationFormComponent,
-              data: { title: 'Add', breadcrumb: 'Add' },
+              data: { breadcrumb: 'Add' },
             },{
               path: 'edit/:pk',
               component: RYSNCConfigurationFormComponent,
-              data: { title: 'Edit', breadcrumb: 'Edit' },
+              data: { breadcrumb: 'Edit' },
             }]
           },
         ]
