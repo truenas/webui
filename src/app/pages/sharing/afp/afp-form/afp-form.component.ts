@@ -1,10 +1,15 @@
 import { Component, OnDestroy } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_afp, shared } from 'app/helptext/sharing';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { T } from "app/translate-marker";
 import * as _ from 'lodash';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { DialogService, WebSocketService } from '../../../../services/';
 
 @Component({
@@ -23,6 +28,7 @@ export class AFPFormComponent implements OnDestroy {
   public afp_timemachine: any;
   public afp_timemachine_quota: any;
   public afp_timemachine_subscription: any;
+  private namesInUse: string[] = [];
 
   private fieldSets = new FieldSets([
     {
@@ -44,7 +50,12 @@ export class AFPFormComponent implements OnDestroy {
           type: 'input',
           name: 'name',
           placeholder: helptext_sharing_afp.placeholder_name,
-          tooltip: helptext_sharing_afp.tooltip_name
+          validation: [forbiddenValues(this.namesInUse), Validators.required],
+          tooltip: helptext_sharing_afp.tooltip_name,
+          hasErrors: false,
+          blurStatus: true,
+          blurEvent: this.blurEventName,
+          parent: this
         },
         {
           type: 'checkbox',
@@ -292,8 +303,30 @@ export class AFPFormComponent implements OnDestroy {
     }
   ];
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected ws: WebSocketService, private dialog:DialogService) {}
+  private entityForm: EntityFormComponent;
+
+  constructor(
+    protected router: Router,
+    protected aroute: ActivatedRoute,
+    protected ws: WebSocketService,
+    private dialog: DialogService
+  ) {
+    combineLatest(
+      this.ws.call("sharing.afp.query", []),
+      this.aroute.paramMap
+    )
+      .pipe(
+        map(([shares, pm]) => {
+          const pk = parseInt(pm.get("pk"), 10);
+          return shares
+            .filter(share => isNaN(pk) || share.id !== pk)
+            .map(share => share.name);
+        })
+      )
+      .subscribe(shareNames => {
+        shareNames.forEach(n => this.namesInUse.push(n));
+      });
+  }
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -316,6 +349,7 @@ export class AFPFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     if (entityForm.isNew) {
       entityForm.formGroup.controls['upriv'].setValue(true);
       this.fieldSets.config('allow').initialCount =
@@ -330,6 +364,14 @@ export class AFPFormComponent implements OnDestroy {
     this.afp_timemachine_quota['isHidden'] = !this.afp_timemachine.value;
     this.afp_timemachine_subscription = this.afp_timemachine.valueChanges.subscribe((value) => {
       this.afp_timemachine_quota['isHidden'] = !value;
+    });
+
+    /*  If name is empty, auto-populate after path selection */
+    entityForm.formGroup.controls['path'].valueChanges.subscribe(path => {
+      const nameControl = entityForm.formGroup.controls['name'];
+      if (path && !nameControl.value) {
+        nameControl.setValue(path.split('/').pop());
+      }
     });
   }
 
@@ -398,5 +440,14 @@ export class AFPFormComponent implements OnDestroy {
       }
 
     });
+  }
+
+  /* If user blurs name field with empty value, try to auto-populate based on path */
+  blurEventName(parent: { entityForm: EntityFormComponent }) {
+    const pathControl = parent.entityForm.formGroup.controls['path'];
+    const nameControl = parent.entityForm.formGroup.controls['name'];
+    if (pathControl.value && !nameControl.value) {
+      nameControl.setValue(pathControl.value.split('/').pop());
+    }
   }
 }
