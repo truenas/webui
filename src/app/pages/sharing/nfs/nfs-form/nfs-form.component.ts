@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormArray } from '@angular/forms';
+import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { T } from "app/translate-marker";
 import * as _ from 'lodash';
-
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { DialogService, NetworkService, RestService, WebSocketService } from '../../../../services/';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { RestService, WebSocketService, DialogService, NetworkService } from '../../../../services/';
-import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
-import { T } from "app/translate-marker";
 
 @Component({
   selector : 'app-nfs-form',
@@ -18,150 +16,166 @@ import { T } from "app/translate-marker";
 export class NFSFormComponent {
 
   protected route_success: string[] = [ 'sharing', 'nfs' ];
-  protected resource_name = 'sharing/nfs/';
+  protected queryCall = 'sharing.nfs.query';
+  protected editCall = 'sharing.nfs.update';
+  protected addCall = 'sharing.nfs.create';
+  protected pk: number;
+  protected queryKey = 'id';
   protected isEntity = true;
-  protected formArray: FormArray;
   protected isBasicMode = true;
   public entityForm: any;
   public save_button_enabled = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldSets = new FieldSets([
     {
-      type: 'list',
-      name : 'nfs_paths',
-      initialCount: 1,
-      templateListField: [{
-        name: 'path',
-        placeholder: helptext_sharing_nfs.placeholder_path,
-        tooltip: helptext_sharing_nfs.tooltip_path,
-        type: 'explorer',
-        explorerType: 'directory',
-        initial: '/mnt',
-        required: true,
-        validation : helptext_sharing_nfs.validators_path
-      }],
-      listFields: []
-    },
-    {
-      type: 'input',
-      name: 'nfs_comment',
-      placeholder: helptext_sharing_nfs.placeholder_comment,
-      tooltip: helptext_sharing_nfs.tooltip_comment
-    },
-    {
-      type: 'checkbox',
-      name: 'nfs_alldirs',
-      placeholder: helptext_sharing_nfs.placeholder_alldirs,
-      tooltip: helptext_sharing_nfs.tooltip_alldirs
-    },
-    {
-      type: 'checkbox',
-      name: 'nfs_ro',
-      placeholder: helptext_sharing_nfs.placeholder_ro,
-      tooltip: helptext_sharing_nfs.tooltip_ro,
-    },
-    {
-      type: 'checkbox',
-      name: 'nfs_quiet',
-      placeholder: helptext_sharing_nfs.placeholder_quiet,
-      tooltip: helptext_sharing_nfs.tooltip_quiet,
-    },
-    {
-      type: 'textarea',
-      name: 'nfs_network',
-      placeholder: helptext_sharing_nfs.placeholder_network,
-      tooltip: helptext_sharing_nfs.tooltip_network,
-      blurStatus : true,
-      blurEvent: this.nfs_network_event,
-      parent: this,
-      value: ''
-    },
-    
-       {
-      type: 'textarea',
-      name: 'nfs_hosts',
-      placeholder: helptext_sharing_nfs.placeholder_hosts,
-      tooltip: helptext_sharing_nfs.tooltip_hosts,
-      blurStatus : true,
-      blurEvent: this.nfs_hosts_event,
-      parent: this,
-      value: ''
-    },
-    {
-      type: 'combobox',
-      name: 'nfs_maproot_user',
-      placeholder: helptext_sharing_nfs.placeholder_maproot_user,
-      tooltip: helptext_sharing_nfs.tooltip_maproot_user,
-      options: [],
-      value: '',
-      searchOptions: [],
-      parent: this,
-      updater: this.updateMapRootUserSearchOptions,
-    },
-    {
-      type: 'combobox',
-      name: 'nfs_maproot_group',
-      placeholder: helptext_sharing_nfs.placeholder_maproot_group,
-      tooltip: helptext_sharing_nfs.tooltip_maproot_group,
-      options: [],
-      value: '',
-      searchOptions: [],
-      parent: this,
-      updater: this.updateMapRootGroupSearchOptions,
-    },
-    {
-      type: 'combobox',
-      name: 'nfs_mapall_user',
-      placeholder: helptext_sharing_nfs.placeholder_mapall_user,
-      tooltip: helptext_sharing_nfs.tooltip_mapall_user,
-      options: [],
-      value: '',
-      searchOptions: [],
-      parent: this,
-      updater: this.updateMapAllUserSearchOptions,
-    },
-    {
-      type: 'combobox',
-      name: 'nfs_mapall_group',
-      placeholder: helptext_sharing_nfs.placeholder_mapall_group,
-      tooltip: helptext_sharing_nfs.tooltip_mapall_group,
-      options: [],
-      value: '',
-      searchOptions: [],
-      parent: this,
-      updater: this.updateMapAllGroupSearchOptions,
-    },
-    {
-      type: 'select',
-      multiple: true,
-      name: 'nfs_security',
-      placeholder: helptext_sharing_nfs.placeholder_security,
-      options: [
+      name: helptext_sharing_nfs.fieldset_general,
+      class: 'general',
+      label: true,
+      config: [
         {
-          label: 'sys',
-          value: 'sys',
+          type: 'list',
+          name : 'paths',
+          templateListField: [{
+            name: 'path',
+            placeholder: helptext_sharing_nfs.placeholder_path,
+            tooltip: helptext_sharing_nfs.tooltip_path,
+            type: 'explorer',
+            explorerType: 'directory',
+            initial: '/mnt',
+            required: true,
+            validation : helptext_sharing_nfs.validators_path
+          }],
+          listFields: []
         },
         {
-          label: 'krb5',
-          value: 'krb5',
+          type: 'input',
+          name: 'comment',
+          placeholder: helptext_sharing_nfs.placeholder_comment,
+          tooltip: helptext_sharing_nfs.tooltip_comment
         },
         {
-          label: 'krb5i',
-          value: 'krb5i',
+          type: 'checkbox',
+          name: 'alldirs',
+          placeholder: helptext_sharing_nfs.placeholder_alldirs,
+          tooltip: helptext_sharing_nfs.tooltip_alldirs
         },
         {
-          label: 'krb5p',
-          value: 'krb5p',
+          type: 'checkbox',
+          name: 'ro',
+          placeholder: helptext_sharing_nfs.placeholder_ro,
+          tooltip: helptext_sharing_nfs.tooltip_ro,
+        },
+        {
+          type: 'checkbox',
+          name: 'quiet',
+          placeholder: helptext_sharing_nfs.placeholder_quiet,
+          tooltip: helptext_sharing_nfs.tooltip_quiet,
+        },
+        {
+          type: 'list',
+          name: 'networks',
+          templateListField: [{
+            type: 'input',
+            name: 'network',
+            placeholder: helptext_sharing_nfs.placeholder_network,
+            tooltip: helptext_sharing_nfs.tooltip_network,
+            blurStatus : true,
+            blurEvent: this.nfs_network_event,
+            parent: this,
+            value: ''
+          }],
+          listFields: []
+        },
+        {
+          type: 'combobox',
+          name: 'maproot_user',
+          placeholder: helptext_sharing_nfs.placeholder_maproot_user,
+          tooltip: helptext_sharing_nfs.tooltip_maproot_user,
+          options: [],
+          value: '',
+          searchOptions: [],
+          parent: this,
+          updater: this.updateMapRootUserSearchOptions,
+        },
+        {
+          type: 'list',
+          name: 'hosts',
+          templateListField: [{
+            type: 'input',
+            name: 'host',
+            placeholder: helptext_sharing_nfs.placeholder_hosts,
+            tooltip: helptext_sharing_nfs.tooltip_hosts,
+            // blurStatus : true,
+            // blurEvent: this.nfs_hosts_event,
+            parent: this,
+            value: ''
+          }],
+          listFields: []
+        },
+        {
+          type: 'combobox',
+          name: 'maproot_group',
+          placeholder: helptext_sharing_nfs.placeholder_maproot_group,
+          tooltip: helptext_sharing_nfs.tooltip_maproot_group,
+          options: [],
+          value: '',
+          searchOptions: [],
+          parent: this,
+          updater: this.updateMapRootGroupSearchOptions,
+        },
+        {
+          type: 'combobox',
+          name: 'mapall_user',
+          placeholder: helptext_sharing_nfs.placeholder_mapall_user,
+          tooltip: helptext_sharing_nfs.tooltip_mapall_user,
+          options: [],
+          value: '',
+          searchOptions: [],
+          parent: this,
+          updater: this.updateMapAllUserSearchOptions,
+        },
+        {
+          type: 'combobox',
+          name: 'mapall_group',
+          placeholder: helptext_sharing_nfs.placeholder_mapall_group,
+          tooltip: helptext_sharing_nfs.tooltip_mapall_group,
+          options: [],
+          value: '',
+          searchOptions: [],
+          parent: this,
+          updater: this.updateMapAllGroupSearchOptions,
+        },
+        {
+          type: 'select',
+          multiple: true,
+          name: 'security',
+          placeholder: helptext_sharing_nfs.placeholder_security,
+          options: [
+            {
+              label: 'sys',
+              value: 'sys',
+            },
+            {
+              label: 'krb5',
+              value: 'krb5',
+            },
+            {
+              label: 'krb5i',
+              value: 'krb5i',
+            },
+            {
+              label: 'krb5p',
+              value: 'krb5p',
+            }
+          ],
+          isHidden: false,
+          value: []
         }
-      ],
-      isHidden: false,
-      value: []
+      ]
     }
-  ];
+  ]);
 
   protected arrayControl: any;
-  protected initialCount = 1;
-  protected initialCount_default = 1;
 
   public custActions: Array<any> = [
     {
@@ -182,14 +196,14 @@ export class NFSFormComponent {
   private nfs_mapall_group: any;
 
   protected advanced_field: Array<any> = [
-    'nfs_quiet',
-    'nfs_network',
-    'nfs_hosts',
-    'nfs_maproot_user',
-    'nfs_maproot_group',
-    'nfs_mapall_user',
-    'nfs_mapall_group',
-    'nfs_security',
+    'quiet',
+    'networks',
+    'hosts',
+    'maproot_user',
+    'maproot_group',
+    'mapall_user',
+    'mapall_group',
+    'security',
   ];
 
   constructor(protected router: Router,
@@ -201,27 +215,20 @@ export class NFSFormComponent {
               public networkService: NetworkService) {}
 
   preInit(EntityForm: any) {
-    this.arrayControl =
-      _.find(this.fieldConfig, {'name' : 'nfs_paths'});
+    this.arrayControl = this.fieldSets.config('paths');
     this.route.params.subscribe(params => {
       if(params['pk']) {
-        this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
+        this.pk = parseInt(params['pk'], 10);
       }
     });
 
-    this.rest.get('services/nfs', {}).subscribe((res) => {
-      if (res.data['nfs_srv_v4']) {
-        _.find(this.fieldConfig, {'name' : 'nfs_security'})['isHidden'] = false;
-      } else {
-        _.find(this.fieldConfig, {'name' : 'nfs_security'})['isHidden'] = true;
-      }
+    this.ws.call("nfs.config", []).subscribe(nfsConfig => {
+      this.fieldSets.config("security").isHidden = !nfsConfig.v4;
     });
-
   }
 
   afterInit(EntityForm: any) {
     this.entityForm = EntityForm;
-    this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
     this.userService.userQueryDSCache().subscribe(items => {
       const users = [{
@@ -231,9 +238,9 @@ export class NFSFormComponent {
       for (let i = 0; i < items.length; i++) {
         users.push({label: items[i].username, value: items[i].username});
       }
-      this.nfs_mapall_user = _.find(this.fieldConfig, {'name' : 'nfs_mapall_user'});
+      this.nfs_mapall_user = this.fieldSets.config('mapall_user');
       this.nfs_mapall_user.options = users;
-      this.nfs_maproot_user = _.find(this.fieldConfig, {'name' : 'nfs_maproot_user'});
+      this.nfs_maproot_user = this.fieldSets.config('maproot_user');
       this.nfs_maproot_user.options = users;
     });
 
@@ -245,18 +252,18 @@ export class NFSFormComponent {
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].group, value: items[i].group});
       }
-      this.nfs_mapall_group = _.find(this.fieldConfig, {'name' : 'nfs_mapall_group'});
+      this.nfs_mapall_group = this.fieldSets.config('mapall_group');
       this.nfs_mapall_group.options = groups;
-      this.nfs_maproot_group = _.find(this.fieldConfig, {'name' : 'nfs_maproot_group'});
+      this.nfs_maproot_group = this.fieldSets.config('maproot_group');
       this.nfs_maproot_group.options = groups;
     });
   }
-  nfs_hosts_event(parent){
-    _.find(parent.fieldConfig, {'name' : 'nfs_hosts'})['warnings'] = null;
-  
+  nfs_hosts_event(parent: any){
+      parent.fieldSets.config('hosts').warnings = null;
+
       if(parent.entityForm) {
-        if(parent.entityForm.formGroup.controls['nfs_hosts'].value !=='') {
-        const network_string = parent.entityForm.formGroup.controls['nfs_hosts'].value.split(/[\s,]+/);
+        if(parent.entityForm.formGroup.controls['host'].value !=='') {
+        const network_string = parent.entityForm.formGroup.controls['host'].value.split(/[\s,]+/);
         let error_msg = ""
         let warning_flag = false
         for (const ip of network_string) {
@@ -275,21 +282,21 @@ export class NFSFormComponent {
           }
         }
         if (warning_flag && error_msg !==" ") {
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' })['warnings'] = `Following IP Address/hostname appears to be wrong ${error_msg}`
+          parent.entityForm.fieldSets.config('hosts').warnings = `Following IP Address/hostname appears to be wrong ${error_msg}`
           parent.save_button_enabled = false;
   
         } else {
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_hosts' })['warnings'] = null;
+          parent.entityForm.fieldSets.config('hosts').warnings = null;
           parent.save_button_enabled = true;
         };
       };
     };
   };
   nfs_network_event(parent){
-    _.find(parent.fieldConfig, {'name' : 'nfs_network'})['warnings'] = false;
+    parent.fieldSets.config('network').warnings = false;
     if(parent.entityForm) {
-      if(parent.entityForm.formGroup.controls['nfs_network'].value !=='') {
-        const network_string = parent.entityForm.formGroup.controls['nfs_network'].value.split(/[\s,]+/);
+      if(parent.entityForm.formGroup.controls['network'].value !=='') {
+        const network_string = parent.entityForm.formGroup.controls['network'].value.split(/[\s,]+/);
         let error_msg = ""
         let warning_flag = false
         for (const ip of network_string) {
@@ -304,17 +311,14 @@ export class NFSFormComponent {
           }
         }
         if (warning_flag && error_msg !==" ") {
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' })['warnings'] = `Following Network appears to be wrong ${error_msg}`;
+          parent.entityForm.fieldSets.config('network').warnings = `Following Network appears to be wrong ${error_msg}`;
           parent.save_button_enabled = false;
-  
         } else { 
-          _.find(parent.entityForm.fieldConfig, { 'name': 'nfs_network' })['warnings'] = null;
+          parent.entityForm.fieldSets.config('network').warnings = null;
           parent.save_button_enabled = true;
         }
 
       }
-
- 
     }
   }
 
@@ -324,29 +328,49 @@ export class NFSFormComponent {
     } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
-    if (actionId === 'remove_path' && this.initialCount <= this.initialCount_default) {
-      return false;
-    }
     return true;
   }
 
-  preHandler(data: any[]): any[] {
+  // preHandler(data: any[]): any[] {
+  //   const paths = [];
+  //   for (let i = 0; i < data.length; i++) {
+  //     paths.push({path:data[i]});
+  //   }
+  //   return paths;
+  // }
+
+  resourceTransformIncomingRestData(data) {
     const paths = [];
-    for (let i = 0; i < data.length; i++) {
-      paths.push({path:data[i]});
+    for (let i = 0; i < data['paths'].length; i++) {
+      paths.push({'path':data['paths'][i]});
     }
-    return paths;
+    data['paths'] = paths;
+
+    const networks = [];
+    for (let i = 0; i < data['networks'].length; i++) {
+      paths.push({'network':data['networks'][i]});
+    }
+    data['networks'] = networks;
+
+    const hosts = [];
+    for (let i = 0; i < data['hosts'].length; i++) {
+      paths.push({'host':data['hosts'][i]});
+    }
+    data['hosts'] = hosts;
+
+    console.log({ in: data });
+    return data;
   }
 
-  clean(data) {
-    const paths = [];
-    for (let i = 0; i < data.nfs_paths.length; i++) {
-      if(!data.nfs_paths[i]['delete']) {
-        paths.push(data.nfs_paths[i]['path']);
-      }
-    }
-    data.nfs_paths = paths;
-    return data;
+  beforeSubmit(data) {
+    const d = {
+      ...data,
+      paths: data.paths.filter(p => !!p.path).map(p => p.path),
+      networks: data.networks.filter(n => !!n.network).map(n => n.network),
+      hosts: data.hosts.filter(h => !!h.host).map(h => h.host)
+    };
+    console.log({ in: d });
+    return d;
   }
 
   afterSave(entityForm) {
@@ -391,11 +415,11 @@ export class NFSFormComponent {
   }
 
   updateMapAllGroupSearchOptions(value = "", parent) {
-    parent.updateGroupSearchOptions(value, parent, 'nfs_mapall_group');
+    parent.updateGroupSearchOptions(value, parent, 'mapall_group');
   }
 
   updateMapRootGroupSearchOptions(value = "", parent) {
-    parent.updateGroupSearchOptions(value, parent, 'nfs_maproot_group');
+    parent.updateGroupSearchOptions(value, parent, 'maproot_group');
   }
 
   updateGroupSearchOptions(value = "", parent, field) {
@@ -409,11 +433,11 @@ export class NFSFormComponent {
   }
 
   updateMapAllUserSearchOptions(value = "", parent) {
-    parent.updateUserSearchOptions(value, parent, 'nfs_mapall_user');
+    parent.updateUserSearchOptions(value, parent, 'mapall_user');
   }
 
   updateMapRootUserSearchOptions(value = "", parent) {
-    parent.updateUserSearchOptions(value, parent, 'nfs_maproot_user');
+    parent.updateUserSearchOptions(value, parent, 'maproot_user');
   }
 
   updateUserSearchOptions(value = "", parent, field) {
