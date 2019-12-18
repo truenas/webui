@@ -1058,15 +1058,18 @@ export class CloudCredentialsFormComponent {
             // value['private_key-SFTP'] = sshKey.id;
             this.keyID = sshKey.id;
             const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
-            this.ws.call('keychaincredential.query', [[["type", "=", "SSH_KEY_PAIR"]]]).subscribe(
-              (res) => {
-                privateKeySFTPField.options = [];
-                for (let i = 0; i < res.length; i++) {
-                  privateKeySFTPField.options.push({ label: res[i].name, value: res[i].id});
-                }
-                this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
-              }
-            )
+            privateKeySFTPField.options.push({ label: payload.name, value: this.keyID});
+            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
+
+
+            // this.ws.call('keychaincredential.query', [[["type", "=", "SSH_KEY_PAIR"]]]).subscribe(
+            //   (res) => {
+            //     // privateKeySFTPField.options = [];
+            //     for (let i = 0; i < res.length; i++) {
+            //       privateKeySFTPField.options.push({ label: res[i].name, value: res[i].id});
+            //     }
+            //   }
+            // )
             
           },
           (sshKey_err) => {
