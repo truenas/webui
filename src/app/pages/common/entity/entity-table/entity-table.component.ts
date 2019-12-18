@@ -64,6 +64,7 @@ export interface InputTableConf {
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
   callGetFunction?(entity: EntityTableComponent): any;
+  prerequisiteFailedHandler?(entity: EntityTableComponent);
 }
 
 export interface EntityTableAction {
@@ -195,6 +196,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
               this.getData();
               if (this.conf.afterInit) {
                 this.conf.afterInit(this);
+              }
+            } else {
+              this.showSpinner = false;
+              if (this.conf.prerequisiteFailedHandler) {
+                this.conf.prerequisiteFailedHandler(this);
               }
             }
           }
