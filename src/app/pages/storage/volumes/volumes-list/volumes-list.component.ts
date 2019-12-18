@@ -135,7 +135,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getEncryptedActions(rowData: any) {
     const actions = [], self = this;
-    if (rowData.vol_encrypt === 2) {
+    if (rowData.encrypt === 2) {
       if (rowData.is_decrypted) {
         if (self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
           actions.push({
@@ -231,20 +231,19 @@ export class VolumesListTableConfig implements InputTableConf {
                 customSubmit: function (entityDialog) {
                   const value = entityDialog.formValue;
                   self.loader.open();
-                  // self.rest.post(self.resource_name + "/" + row1.name + "/lock/",
-                  //   { body: JSON.stringify({passphrase : value.passphrase}) }).subscribe((restPostResp) => {
-                  //     entityDialog.dialogRef.close(true);
-                  //     self.loader.close();
-                  //     self.parentVolumesListComponent.repaintMe();
-                  // }, (res) => {
-                  //   self.loader.close();
-                  //   if (res.message) {
-                  //     self.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
-                  //   }
-                  //   else {
-                  //     new EntityUtils().handleError(this, res);
-                  //   }
-                  // });
+                  self.ws.call('pool.lock', [{ id: row1.id, passphrase: value.passphrase }]).subscribe(() => {
+                      entityDialog.dialogRef.close(true);
+                      self.loader.close();
+                      self.parentVolumesListComponent.repaintMe();
+                  }, (res) => {
+                    self.loader.close();
+                    if (res.message) {
+                      self.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
+                    }
+                    else {
+                      new EntityUtils().handleError(this, res);
+                    }
+                  });
                 }
               }
               self.dialogService.dialogForm(conf);
