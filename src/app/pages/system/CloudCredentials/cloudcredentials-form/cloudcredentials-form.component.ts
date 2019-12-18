@@ -1030,7 +1030,6 @@ export class CloudCredentialsFormComponent {
 
   verifyCredentials(value) {
     delete value['name'];
-    console.log(value)
     this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
       (res) => {
         this.entityForm.loader.close();
@@ -1056,7 +1055,7 @@ export class CloudCredentialsFormComponent {
         };
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
-            value['private_key-SFTP'] = sshKey.id;
+            // value['private_key-SFTP'] = sshKey.id;
             this.keyID = sshKey.id;
             const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
             this.ws.call('keychaincredential.query', [[["type", "=", "SSH_KEY_PAIR"]]]).subscribe(
@@ -1092,28 +1091,6 @@ export class CloudCredentialsFormComponent {
     this.entityForm.loader.open();
     const attributes = {};
     let attr_name: string;
-    if (value['private_key-SFTP'] === 'NEW') {
-      await this.replicationService.genSSHKeypair().then(
-        async (res) => {
-          const payload = {
-            name: value['name'] + ' Key',
-            type: 'SSH_KEY_PAIR',
-            attributes: res,
-          };
-          await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
-            (sshKey) => {
-              value['private_key-SFTP'] = sshKey.id;
-            },
-            (sshKey_err) => {
-              this.entityForm.loader.close();
-              new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
-            });
-        },
-        (err) => {
-          this.entityForm.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialog);
-        });
-    }
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
