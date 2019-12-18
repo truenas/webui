@@ -170,7 +170,8 @@ export class AdvancedComponent implements OnDestroy {
     type: 'checkbox',
     name: 'traceback',
     placeholder: helptext_system_advanced.traceback_placeholder,
-    tooltip: helptext_system_advanced.traceback_tooltip
+    tooltip: helptext_system_advanced.traceback_tooltip,
+    isHidden: true
   }, {
     type: 'checkbox',
     name: 'advancedmode',
