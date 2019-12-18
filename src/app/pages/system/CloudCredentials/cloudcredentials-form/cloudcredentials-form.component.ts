@@ -1057,9 +1057,6 @@ export class CloudCredentialsFormComponent {
             const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
             privateKeySFTPField.options.push({ label: payload.name, value: this.keyID});
             this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
-            console.log(value)
-            
-            console.log(submitting)
             if (submitting) {
               value['private_key-SFTP'] = sshKey.id;
               this.finishSubmit(value)
