@@ -25,6 +25,7 @@ export class CloudCredentialsFormComponent {
   protected formGroup: FormGroup;
   protected id: any;
   protected pk: any;
+  protected keyID: number;
 
   protected selectedProvider: string = 'S3';
   protected credentialsOauth = false;
@@ -897,22 +898,16 @@ export class CloudCredentialsFormComponent {
             delete value[item];
           }
         }
-        delete value['name'];
         value['attributes'] = attributes;
 
-        this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
-          (res) => {
-            this.entityForm.loader.close();
-            if (res.valid) {
-              this.dialog.Info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
-            } else {
-              this.dialog.errorReport('Error', res.excerpt, res.error);
-            }
-          },
-          (err) => {
-            this.entityForm.loader.close();
-            new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
+        if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
+          this.makeNewKeyPair(value).then(() => {
+            value.attributes.private_key = this.keyID;
+            this.verifyCredentials(value);
           })
+        } else {
+        this.verifyCredentials(value);
+        }
       }
     }
   ];
@@ -1031,6 +1026,59 @@ export class CloudCredentialsFormComponent {
         driveIdCtrl.setValue(null);
       }
     });
+  }
+
+  verifyCredentials(value) {
+    delete value['name'];
+    console.log(value)
+    this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
+      (res) => {
+        this.entityForm.loader.close();
+        if (res.valid) {
+          this.dialog.Info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
+        } else {
+          this.dialog.errorReport('Error', res.excerpt, res.error);
+        }
+      },
+      (err) => {
+        this.entityForm.loader.close();
+        new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
+      })
+  }
+
+  async makeNewKeyPair(value) {
+    await this.replicationService.genSSHKeypair().then(
+      async (res) => {
+        const payload = {
+          name: value['name'] + ' Key',
+          type: 'SSH_KEY_PAIR',
+          attributes: res,
+        };
+        await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
+          (sshKey) => {
+            value['private_key-SFTP'] = sshKey.id;
+            this.keyID = sshKey.id;
+            const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
+            this.ws.call('keychaincredential.query', [[["type", "=", "SSH_KEY_PAIR"]]]).subscribe(
+              (res) => {
+                privateKeySFTPField.options = [];
+                for (let i = 0; i < res.length; i++) {
+                  privateKeySFTPField.options.push({ label: res[i].name, value: res[i].id});
+                }
+                this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
+              }
+            )
+            
+          },
+          (sshKey_err) => {
+            this.entityForm.loader.close();
+            new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
+          });
+      },
+      (err) => {
+        this.entityForm.loader.close();
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      });
   }
 
   beforeSubmit(value) {
