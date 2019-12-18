@@ -316,9 +316,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.isNew) {
       this.submitTitle = this.extendedSubmitTitle;
       this.sizeMessage = this.extendedSizeMessage;
-      this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
-        this.name = res.data.vol_name;
-        this.vol_encrypt = res.data.vol_encrypt;
+      this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe(res => {
+        const pool = res[0];
+        if (pool) {
+          this.name = pool.name;
+          this.vol_encrypt = pool.encrypt;
+        }
         if (this.vol_encrypt > 0) {
           this.isEncrypted = true;
         }

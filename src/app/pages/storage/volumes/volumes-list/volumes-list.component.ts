@@ -117,7 +117,6 @@ export class VolumesListTableConfig implements InputTableConf {
     protected volumeData: Object,
     protected messageService: MessageService
   ) {
-    console.log({ datasetData, volumeData })
     if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
       this.tableData = [];
       for (let i = 0; i < volumeData['children'].length; i++) {
@@ -681,30 +680,41 @@ export class VolumesListTableConfig implements InputTableConf {
         });
 
         if (rowData.is_upgraded === false) {
-
           actions.push({
             id: rowData.name,
             name: T('Upgrade Pool'),
             label: T("Upgrade Pool"),
             onClick: (row1) => {
-
-              this.dialogService.confirm(T("Upgrade Pool"), helptext.upgradePoolDialog_warning + row1.name).subscribe((confirmResult) => {
+              this.dialogService
+                .confirm(
+                  T("Upgrade Pool"),
+                  helptext.upgradePoolDialog_warning + row1.name
+                )
+                .subscribe(confirmResult => {
                   if (confirmResult === true) {
                     this.loader.open();
-
-                    // this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                    //   this.loader.close();
-
-                    //   this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
-                    //     this.parentVolumesListComponent.repaintMe();
-                    //   });
-                    // }, (res) => {
-                    //   this.loader.close();
-                    //   this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name, res.message, res.stack);
-                    // });
+                    this.ws.call("pool.upgrade", [rowData.id]).subscribe(
+                      res => {
+                        this.dialogService
+                          .Info(
+                            T("Upgraded"),
+                            T("Successfully Upgraded ") + row1.name
+                          )
+                          .subscribe(infoResult => {
+                            this.parentVolumesListComponent.repaintMe();
+                          });
+                      },
+                      res => {
+                        this.dialogService.errorReport(
+                          T("Error Upgrading Pool ") + row1.name,
+                          res.message,
+                          res.stack
+                        );
+                      },
+                      () => this.loader.close()
+                    );
                   }
                 });
-
             }
           });
         }
@@ -921,7 +931,13 @@ export class VolumesListTableConfig implements InputTableConf {
                 placeholder: helptext.snapshotDialog_recursive_placeholder,
                 tooltip: helptext.snapshotDialog_recursive_tooltip,
                 parent: this,
-                updater: this.updater
+                updater: parent => {
+                  parent.recursiveIsChecked = !parent.recursiveIsChecked;
+                  parent.ws.call('vmware.dataset_has_vms',[row.id, parent.recursiveIsChecked]).subscribe((vmware_res)=>{
+                    parent.vmware_res_status = vmware_res;
+                    _.find(parent.dialogConf.fieldConfig, {name : "vmware_sync"})['isHidden'] = !parent.vmware_res_status;
+                  });
+                }
               },
               {
                 type: 'checkbox',
@@ -931,7 +947,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 isHidden: !this.vmware_res_status
               }
             ],
-            method_rest: "storage/snapshot",
+            method_ws: "zfs.snapshot.create",
             saveButtonText: T("Create Snapshot"),
           }
           this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
@@ -966,14 +982,6 @@ export class VolumesListTableConfig implements InputTableConf {
       }
     }
     return actions;
-  }
-
-  updater(parent: any) {
-    parent.recursiveIsChecked = !parent.recursiveIsChecked;
-    parent.ws.call('vmware.dataset_has_vms',[parent.title, parent.recursiveIsChecked]).subscribe((vmware_res)=>{
-      parent.vmware_res_status = vmware_res;
-      _.find(parent.dialogConf.fieldConfig, {name : "vmware_sync"})['isHidden'] = !parent.vmware_res_status;
-    })
   }
 
   getTimestamp() {
@@ -1080,18 +1088,17 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.ngOnInit();
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.showSpinner = true;
 
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
 
-    this.ws.call('pool.query', []).subscribe(console.log);
-
-    combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(([pools, datasets]) => {
+    combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {
         for (const pool of pools) {
+          pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
           pool.children = [datasets.find(set => set.name === pool.name)];
           pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);
           pool.type = 'zpool';
