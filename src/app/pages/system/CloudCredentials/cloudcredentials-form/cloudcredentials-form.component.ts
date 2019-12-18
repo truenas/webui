@@ -901,9 +901,7 @@ export class CloudCredentialsFormComponent {
         value['attributes'] = attributes;
 
         if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
-          this.makeNewKeyPair(value).then(() => {
-            value.attributes.private_key = this.keyID;
-          })
+          this.makeNewKeyPair(value);
         } else {
         this.verifyCredentials(value);
         }
@@ -1044,7 +1042,7 @@ export class CloudCredentialsFormComponent {
       })
   }
 
-  async makeNewKeyPair(value) {
+  async makeNewKeyPair(value, submitting?: boolean) {
     await this.replicationService.genSSHKeypair().then(
       async (res) => {
         const payload = {
@@ -1054,12 +1052,21 @@ export class CloudCredentialsFormComponent {
         };
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
-            // value['private_key-SFTP'] = sshKey.id;
+            
             this.keyID = sshKey.id;
             const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
             privateKeySFTPField.options.push({ label: payload.name, value: this.keyID});
             this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
-            this.verifyCredentials(value);
+            console.log(value)
+            
+            console.log(submitting)
+            if (submitting) {
+              value['private_key-SFTP'] = sshKey.id;
+              this.finishSubmit(value)
+            } else  {
+              value.attributes.private_key = this.keyID;
+              this.verifyCredentials(value);
+            }
           },
           (sshKey_err) => {
             this.entityForm.loader.close();
@@ -1072,14 +1079,9 @@ export class CloudCredentialsFormComponent {
       });
   }
 
-  beforeSubmit(value) {
-    if (!this.credentialsOauth) {
-      delete value['client_id'];
-      delete value['client_secret'];
-    }
-  }
 
-  async customSubmit(value) {
+
+  finishSubmit(value) {
     this.entityForm.loader.open();
     const attributes = {};
     let attr_name: string;
@@ -1107,6 +1109,22 @@ export class CloudCredentialsFormComponent {
               new EntityUtils().handleError(this, err);
           }
       });
+  }
+
+
+  beforeSubmit(value) {
+    if (!this.credentialsOauth) {
+      delete value['client_id'];
+      delete value['client_secret'];
+    }
+  }
+
+  async customSubmit(value) {
+    if (value['private_key-SFTP'] === 'NEW') {
+      this.makeNewKeyPair(value, true);
+    } else {
+      this.finishSubmit(value);
+    }
   }
 
   dataAttributeHandler(entityForm: any) {
