@@ -56,7 +56,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public temp = [];
 
   public name: string;
-  public resource_name = 'storage/volume/';
+  public addCall = 'pool.create';
+  public editCall = 'pool.update';
+  public queryCall = 'pool.query';
   public pk: any;
   public isNew = true;
   public vol_encrypt: number = 0;
@@ -260,12 +262,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getPoolData() {
-    this.ws.call('pool.query', [
-      [
-        ["id", "=", this.pk]
-      ]
-    ]).subscribe(
-      (res) => {
+    this.ws.call('pool.query', [[["id", "=", this.pk]]]).subscribe((res) => {
         if (res[0]) {
           this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();
           if (this.first_data_vdev_type === 'raidz1') {
@@ -295,7 +292,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         new EntityUtils().handleWSError(this, err, this.dialog);
       }
     );
-    this.rest.get(this.resource_name + this.pk, {}).subscribe((res) => {
+    this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
       if (res && res.data) {
         this.extendedAvailable = res.data.avail;
         this.size = (<any>window).filesize(this.extendedAvailable, {standard : "iec"});
@@ -312,14 +309,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.route.params.subscribe(params => {
       if (params['pk']) {
-        this.pk = parseInt(params['pk']);
+        this.pk = parseInt(params['pk'], 10);
         this.isNew = false;
       }
     });
     if (!this.isNew) {
       this.submitTitle = this.extendedSubmitTitle;
       this.sizeMessage = this.extendedSizeMessage;
-      this.rest.get(this.resource_name + this.pk + '/', {}).subscribe((res) => {
+      this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
         this.name = res.data.vol_name;
         this.vol_encrypt = res.data.vol_encrypt;
         if (this.vol_encrypt > 0) {
@@ -570,22 +567,20 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           vdev.getDisks().forEach((disk) => {
             disks.push(disk.devname); });
           if (disks.length > 0) {
-            layout.push({ vdevtype: vdev.type, disks: disks });
+            layout.push({ type: vdev.type.toUpperCase(), disks: disks });
           }
         });
 
         let body = {};
         this.loader.open();
         if (this.isNew) {
-          body = {volume_name: this.name, encryption: this.isEncrypted, layout: layout };
+          body = {name: this.name, encryption: this.isEncrypted, topology: { data: layout } };
         } else {
-          body  = {volume_add: this.name, layout: layout };
+          body  = {name: this.name, topology: layout };
         }
         this.busy =
-          this.rest
-          .post(this.resource_name, {
-            body: JSON.stringify(body)
-          })
+          this.ws
+          .job(this.pk ? this.editCall : this.addCall, [body])
           .subscribe(
             (res) => {
               this.loader.close();
