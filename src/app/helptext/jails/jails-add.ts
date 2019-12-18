@@ -3,8 +3,8 @@ import { T } from '../../translate-marker';
 export default {
 
 uuid_placeholder: T('Name'),
-uuid_tooltip: T('Required. Can only contain alphanumeric characters \
-(Aa-Zz 0-9), dashes (-), or underscores (\_).'),
+uuid_tooltip: T('Required. Can contain letters, numbers, periods (.), \
+dashes (-), and underscores (_).'),
 
 jailtype_placeholder: T('Jail Type'),
 jailtype_tooltip: T('<i>Default (Clone Jail)</i> or <i>Basejail</i>. \

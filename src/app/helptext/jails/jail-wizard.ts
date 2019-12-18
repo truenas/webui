@@ -5,8 +5,8 @@ export default {
 step1_label: T('Name Jail and Choose FreeBSD Release'),
 
 uuid_placeholder: T('Jail Name'),
-uuid_tooltip: T('Required. Can only contain alphanumeric characters \
-Aa-Zz 0-9), dashes (-), or underscores (_).'),
+uuid_tooltip: T('Required. Can contain letters, numbers, \
+dashes (-), periods (.), or underscores (_).'),
 
 jailtype_placeholder: T('Jail Type'),
 jailtype_tooltip: T('<i>Default (Clone Jail)</i> or <i>Basejail</i>. \

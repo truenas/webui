@@ -11,7 +11,7 @@ export class ServiceRSYNCComponent implements OnInit {
 
   @ViewChild('tabGroup', { static: true}) tabGroup;
 
-  public activedTab = 'Configuration';
+  public activedTab = 'configure';
   public navLinks: Array < any > = [{
       label: 'Configure',
       path: '/services/rsync/configure',

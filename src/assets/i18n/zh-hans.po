@@ -231,13 +231,17 @@ msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
 "target=\"_blank\">Authentication protocol</a> used to authenticate  "
 "messages sent on behalf of the specified <i>Username</i>."
-msgstr "<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  target=\"_blank\">身份验证协议</a>用于验证指定<i> 用户名 </i>发送的消息。"
+msgstr ""
+"<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
+"target=\"_blank\">身份验证协议</a>用于验证指定<i> 用户名 </i>发送的消息。"
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
 "target=\"_blank\">Encryption protocol</a> used to encrypt messages  sent on "
 "behalf of the specified <i>Username</i>."
-msgstr "<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  target=\"_blank\">加密协议</a>用于加密指定<i> 用户名 </i>发送的消息。"
+msgstr ""
+"<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
+"target=\"_blank\">加密协议</a>用于加密指定<i> 用户名 </i>发送的消息。"
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
@@ -524,8 +528,9 @@ msgstr ""
 
 msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
-"cloud storage."
-msgstr "<i> 推送 </i>将数据发送到云存储。 <i> 拉取 </i>从云存储接收数据。"
+"cloud storage. Changing the direction resets the  <i>Transfer Mode</i> to "
+"COPY."
+msgstr ""
 
 msgid ""
 "<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
@@ -591,9 +596,6 @@ msgstr ""
 "</a>的用户访问令牌。<a href=\"https://developer.box.com/reference#token\"  "
 "target=\"_blank\">访问令牌</a>使Box能够验证请求是否属于授权会话。令牌示例：<i> "
 "T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl </i>。"
-
-msgid "A failover might cause temporary service interruption."
-msgstr "故障转移可能会临时导致服务中断。"
 
 msgid ""
 "A list of simple patterns matching the IPs of the servers that will be "
@@ -1512,8 +1514,17 @@ msgstr "递归地将权限应用于当前数据集中的所有目录和文件。
 msgid "Apply permissions to child datasets"
 msgstr "将权限应用于子数据集"
 
+msgid "Apply the same quota critical  alert settings as the parent dataset."
+msgstr ""
+
+msgid "Apply the same quota warning  alert settings as the parent dataset."
+msgstr ""
+
 msgid "Apply updates and reboot system after downloading."
 msgstr "下载后应用更新并重新启动系统。"
+
+msgid "Apr"
+msgstr ""
 
 msgid "Archive"
 msgstr "存档"
@@ -1558,6 +1569,9 @@ msgstr "附加网卡"
 msgid "Attach screenshots."
 msgstr "附加屏幕截图。"
 
+msgid "Aug"
+msgstr ""
+
 msgid "Auth Method"
 msgstr "验证方法"
 
@@ -1572,11 +1586,6 @@ msgstr "认证协议"
 
 msgid "Authentication Type"
 msgstr "认证类型"
-
-msgid ""
-"Authentication only functions when a Certificate is selected with either "
-"the <i>SSL</i> or <i>TLS</i> option."
-msgstr "仅当使用<i>SSL</i> 或 <i>TLS</i> 选项并选择了证书时，身份验证才起作用。"
 
 msgid "Authenticator"
 msgstr "身份验证器"
@@ -1674,9 +1683,9 @@ msgid "Back to Support"
 msgstr "返回支持"
 
 msgid ""
-"Backend used to map Windows security identifiers (SIDs) to UNIX UIDs and "
-"GIDs. Click Edit to configure that backend"
-msgstr "用于将 Windows 安全标识符 （SID） 映射到 UNIX UID 和 GID 的后端。单击“编辑”以配置该后端"
+"Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
+"GIDs. To configure the selected  backend, click <i>EDIT IDMAP</i>."
+msgstr ""
 
 msgid "Bandwidth Limit"
 msgstr "带宽限制"
@@ -1707,6 +1716,11 @@ msgstr "开始"
 
 msgid "Begin Time"
 msgstr "开始时间"
+
+msgid ""
+"Beginning UID/GID number for which this system is authoritative. UID/GID "
+"values below Range Low or higher than Range High are ignored."
+msgstr ""
 
 msgid "Berkeley Packet Filter"
 msgstr "Berkeley包过滤器"
@@ -1758,6 +1772,14 @@ msgstr "启动池"
 
 msgid "Boot Pool Status"
 msgstr "启动池状态"
+
+msgid ""
+"Boot environment name. Alphanumeric characters, dashes (-), underscores "
+"(_),     and periods (.) are allowed."
+msgstr ""
+
+msgid "Boot environment to be cloned."
+msgstr ""
 
 msgid ""
 "Brainpool curves can be more secure, while secp curves can be faster. See "
@@ -1945,6 +1967,13 @@ msgstr "注意：分配过多的内存可能会降低系统速度或阻止VM运�
 msgid "Certificate"
 msgstr "证书"
 
+msgid ""
+"Certificate to use when performing LDAP  certificate-based authentication. "
+"To configure LDAP certificate-based  authentication, create a Certificate "
+"Signing Request for the LDAP  provider to sign. A certificate is not "
+"required when using  username/password or Kerberos authentication."
+msgstr ""
+
 msgid "Certificates"
 msgstr "证书"
 
@@ -2026,6 +2055,11 @@ msgid ""
 "operation. Activate an existing boot environment that uses the desired "
 "train and boot into it to switch to that train."
 msgstr "从Nightly分支降级到其他分支是不被支持的操作。在现有引导环境激活所需分支，然后引导进入该环境以切换到该分支。"
+
+msgid ""
+"Changing the values of <i>Graph Age</i> or <i>Graph Points</i> requires "
+"destroying  the reporting database."
+msgstr ""
 
 msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
@@ -2316,15 +2350,6 @@ msgid "Choose the VM operating system type."
 msgstr "选择虚拟机操作系统类型。"
 
 msgid ""
-"Choose the account type: <i>PERSONAL</i>, <i>BUSINESS</i>, or  <a "
-"href=\"https://products.office.com/en-us/sharepoint/collaboration\" "
-"target=\"_blank\">SharePoint</a> <i>DOCUMENT_LIBRARY</i>."
-msgstr ""
-"选择帐户类型：<i>个人</i>, <i>商业</i>, 或者  <a "
-"href=\"https://products.office.com/en-us/sharepoint/collaboration\" "
-"target=\"_blank\">SharePoint</a> <i>DOCUMENT_LIBRARY</i>."
-
-msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
 "and GIDs. Click Edit to configure that backend."
 msgstr "选择后端以将 Windows 安全标识符 （SID） 映射到 UNIX UID 和 GID。单击“编辑”以配置该后端。"
@@ -2426,6 +2451,11 @@ msgstr ""
 
 msgid "Choose your language."
 msgstr "选择您的语言。"
+
+msgid ""
+"Choosing an entry loads a preset ACL that is  configured to match general "
+"permissions situations."
+msgstr ""
 
 msgid "Cipher"
 msgstr "密码"
@@ -2682,9 +2712,6 @@ msgstr "确认密码"
 msgid "Confirm Privacy Passphrase"
 msgstr "确认隐私密码"
 
-msgid "Confirm RRD Destroy"
-msgstr "确认RRD销毁"
-
 msgid "Confirm SED Password"
 msgstr "确认SED密码"
 
@@ -2842,7 +2869,10 @@ msgid ""
 "Country Code must be blank or have a  valid two-letter <a  "
 "href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
 "3166-1 alpha-2 code</a>."
-msgstr "国家/地区代码必须为空白或具有有效的两个字母的<a  href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\"> ISO 3166-1 alpha-2代码</a>。"
+msgstr ""
+"国家/地区代码必须为空白或具有有效的两个字母的<a  "
+"href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\"> ISO "
+"3166-1 alpha-2代码</a>。"
 
 msgid "Crash reporting"
 msgstr "崩溃报告"
@@ -2942,6 +2972,9 @@ msgstr "计划任务"
 
 msgid "Current Password"
 msgstr "当前密码"
+
+msgid "Custom"
+msgstr ""
 
 msgid "Custom Path"
 msgstr "自定义路径"
@@ -3051,6 +3084,9 @@ msgstr "每月的几号"
 msgid "Day of Week"
 msgstr "星期几"
 
+msgid "Days"
+msgstr ""
+
 msgid ""
 "Days before a completed scrub is allowed  to run again. This controls the "
 "task schedule. For example, scheduling  a scrub to run daily and setting "
@@ -3061,6 +3097,9 @@ msgid ""
 msgstr ""
 "完成擦洗的前几天允许再次运行。这可以控制任务计划。例如，安排每天运行一次清理并将<b>阈值天</b>设置为<i> 7 "
 "</i>表示每天尝试运行清理。清理成功后，它将继续每天检查一次，直到7天后才再次运行。使用7的倍数可确保擦洗总是在同一工作日进行。"
+
+msgid "Days of Week"
+msgstr ""
 
 msgid "Days of the Week"
 msgstr "星期几"
@@ -3074,8 +3113,14 @@ msgstr "调试"
 msgid "Debug could not be downloaded."
 msgstr "调试无法下载。"
 
+msgid "Dec"
+msgstr ""
+
 msgid "Decrypt pool"
 msgstr "解密存储池"
+
+msgid "Decrypting Disks"
+msgstr ""
 
 msgid ""
 "Deduplicate the stream to avoid sending redundant  data blocks. The "
@@ -3324,13 +3369,8 @@ msgstr "目标数据集不包含任何快照，这些快照可用作发送的快
 msgid "Destroy data on this pool?"
 msgstr "销毁这个存储池里的数据？"
 
-msgid ""
-"Destroy the reporting database. Only  appears when <i>Graph Age</i> or "
-"<i>Graph Points</i> are  changed. Required for changes to <i>Graph Age</i> "
-"or  <i>Graph Points</i> to take effect."
+msgid "Destroy the Reporting Database?"
 msgstr ""
-"销毁报告数据库。仅在更改<i>Graph Age</i> 或 <i>Graph Points</i>时出现。要使<i>Graph Age</i> "
-"或<i>Graph Points</i>生效，此操作是必需的。"
 
 msgid "Detach"
 msgstr "分离"
@@ -3477,6 +3517,9 @@ msgstr "禁用Jail的IPv6选择源地址，使Jail改用主要IPv6地址。仅�
 msgid "Disable LDAP User/Group Cache"
 msgstr "禁用LDAP用户/组缓存"
 
+msgid "Disable automatic failover."
+msgstr ""
+
 msgid ""
 "Disable caching LDAP users and groups in large LDAP environments.  When "
 "caching is disabled, LDAP users and groups do not appear in dropdown  "
@@ -3489,8 +3532,8 @@ msgstr "禁用卸载功能"
 msgid "Disable physical block size reporting"
 msgstr "禁用物理块大小报告"
 
-msgid "Disabled"
-msgstr "禁用"
+msgid "Disabled (Not encrypted)"
+msgstr ""
 
 msgid "Discard Network Changes"
 msgstr "放弃网络更改"
@@ -3611,6 +3654,11 @@ msgstr "驱动"
 msgid "Drives List"
 msgstr "驱动器列表"
 
+msgid ""
+"Drives and IDs registered to the Microsoft account.  Selecting a drive also "
+"fills the <i>Drive ID</i> field."
+msgstr ""
+
 msgid "EC Curve"
 msgstr "EC曲线"
 
@@ -3685,8 +3733,8 @@ msgstr ""
 msgid "Enable"
 msgstr "启用"
 
-msgid "Enable (requires password"
-msgstr "启用（需要密码"
+msgid "Enable (requires password)"
+msgstr ""
 
 msgid "Enable Atime"
 msgstr "启用Atime"
@@ -3790,6 +3838,11 @@ msgstr "启用向iXsystems发送匿名使用情况统计信息。"
 msgid "Enable service"
 msgstr "启用服务"
 
+msgid ""
+"Enable the Active Directory service. The first time this option is set, the "
+"Domain Account Password must be entered."
+msgstr ""
+
 msgid "Enable the SNMPv3 security model."
 msgstr "启用SNMPv3安全模型。"
 
@@ -3889,6 +3942,9 @@ msgstr "加密的存储池磁盘必须在导入之前解密。"
 msgid "Encryption"
 msgstr "加密"
 
+msgid "Encryption (more secure, but slower)"
+msgstr ""
+
 msgid "Encryption Key"
 msgstr "加密密钥"
 
@@ -3929,6 +3985,11 @@ msgid ""
 "End time for the replication task. A  replication that is already in "
 "progress can continue to run past this  time."
 msgstr "复制任务的结束时间。已经进行的复制可以继续运行到此时间为止。"
+
+msgid ""
+"Ending UID/GID number for which this system is authoritative. UID/GID "
+"values below Range Low or higher than Range High are ignored."
+msgstr ""
 
 msgid "Endpoint URL"
 msgstr "端点URL"
@@ -4032,11 +4093,6 @@ msgstr ""
 
 msgid "Enter a name for the VM."
 msgstr "输入虚拟机的名称。"
-
-msgid ""
-"Enter a name for the clone of this boot environment. Alphanumeric "
-"characters, dashes (*-*), underscores (*_*), and periods (*.*) are allowed.)"
-msgstr "输入此引导环境的克隆名称。允许使用字母数字字符，破折号（*-*），下划线（*_*）和句点（*.*）。）"
 
 msgid ""
 "Enter a name for the interface. Use the format <samp>lagg<i>X</i></samp>, "
@@ -4492,9 +4548,6 @@ msgstr "输入远程系统的SSH端口。"
 msgid "Enter the TCP port which provides the S3 service."
 msgstr "输入提供S3服务的TCP端口。"
 
-msgid "Enter the administrator account password."
-msgstr "输入管理员账户密码。"
-
 msgid "Enter the administrator password to authorize this operation."
 msgstr "输入管理员密码以授权此操作。"
 
@@ -4559,11 +4612,6 @@ msgid ""
 "Enter the name of the Virtual Interface. Use the format <i>vlanX</i> where "
 "<i>X</i> is a number representing a non-parent VLAN interface."
 msgstr "输入虚拟接口名称。使用格式<i> vlanX </i>，其中<i> X </i>是代表非父VLAN接口的数字。"
-
-msgid ""
-"Enter the name of the boot entry. Alphanumeric characters, dashes (*-*), "
-"underscores (*_*), and periods (*.*) are allowed.)"
-msgstr "输入启动项的名称。允许使用字母数字字符，破折号（*-*），下划线（*_*）和句点（*.*）。）"
 
 msgid "Enter the name of the company or organization."
 msgstr "输入公司或组织名。"
@@ -4850,8 +4898,8 @@ msgstr "导出证书"
 msgid "Export Password Secret Seed"
 msgstr "导出密码种子"
 
-msgid "Export Pool Ecryption Keys"
-msgstr "导出池加密密钥"
+msgid "Export Pool Encryption Keys"
+msgstr ""
 
 msgid "Export Private Key"
 msgstr "导出私钥"
@@ -4913,6 +4961,9 @@ msgstr "附加用户"
 msgid "Extra options"
 msgstr "附加选项"
 
+msgid "F"
+msgstr ""
+
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr "要连接的FTP主机。例如：<i> ftp.example.com </i>。"
 
@@ -4946,8 +4997,14 @@ msgstr "故障转移在管理上被禁用。"
 msgid "Failover is in an error state."
 msgstr "故障转移处于错误状态。"
 
+msgid "Fast (Less secure)"
+msgstr ""
+
 msgid "Features"
 msgstr "特征"
+
+msgid "Feb"
+msgstr ""
 
 msgid "Fetch Method"
 msgstr "获取方法"
@@ -5005,6 +5062,12 @@ msgstr "文件系统类型"
 
 msgid "Filter"
 msgstr "过滤器"
+
+msgid "Finding Disks"
+msgstr ""
+
+msgid "Finding encrypted disks..."
+msgstr ""
 
 msgid "Finish Upgrade?"
 msgstr "完成升级吗？"
@@ -5150,6 +5213,9 @@ msgstr "生成调试文件"
 msgid "Generate Keypair"
 msgstr "生成密钥对"
 
+msgid "Generate New"
+msgstr ""
+
 msgid ""
 "Generate a name for the snapshot  from a previously created  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
@@ -5269,6 +5335,9 @@ msgstr "HTTP主机地址。"
 
 msgid "HTTPS Port"
 msgstr "HTTPS端口"
+
+msgid "Help"
+msgstr ""
 
 msgid "Hide Standard Error"
 msgstr "隐藏标准错误"
@@ -5396,6 +5465,9 @@ msgid ""
 "Hour and minute the system must stop creating snapshots. Snapshots already "
 "in progress will continue until complete."
 msgstr "系统必须停止创建快照的时间和分钟。已经进行的快照任务将继续，直到完成。"
+
+msgid "Hours"
+msgstr ""
 
 msgid "Hover to expand"
 msgstr "悬停展开"
@@ -5558,8 +5630,12 @@ msgstr "图标URL"
 
 msgid ""
 "Icon file to use as the profile  picture for new messages. Example:  "
-"<i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>."
-msgstr "用作新消息的个人资料图片的图标文件。示例：<i> https://mattermost.org/wp-content/uploads/2016/04/icon.png </i>。"
+"<i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br>  "
+"Requires configuring Mattermost to <a  "
+"href=\"https://docs.mattermost.com/administration/config-settings.html#"
+"enable-integrations-to-override-profile-picture-icons\" "
+"target=\"_blank\">override profile picture icons</a>."
+msgstr ""
 
 msgid "Id"
 msgstr "Id"
@@ -5633,9 +5709,9 @@ msgid "Import an existing pool"
 msgstr "导入现有存储池"
 
 msgid ""
-"Import the private key from an existing SSH keypair.  Choose the name of "
-"the SSH keypair to use for this connection."
-msgstr "从现有SSH密钥对导入私钥。选择用于此连接的SSH密钥对的名称。"
+"Import the private key from an existing SSH keypair or  select <i>Generate "
+"New</i> to create a new SSH key for this credential."
+msgstr ""
 
 msgid "Importing Disk"
 msgstr "正在导入磁盘"
@@ -5731,7 +5807,10 @@ msgid ""
 "and an  <i>Authentication Protocol</i> is not specified,  <a "
 "href=\"https://en.wikipedia.org/wiki/MD5\"  target=\"_blank\">MD5</a> is "
 "used as the default.<br>  Must be at least 8 and at most 32 octets long."
-msgstr "初始身份验证密钥。未设置身份验证密钥时，不使用<i>身份验证协议</i>。如果设置了身份验证密钥，但未指定<i>身份验证协议</i>，则默认使用<a href=\"https://en.wikipedia.org/wiki/MD5\"  target=\"_blank\"> MD5 </a>。<br>至少8个字节，最多32个字节。"
+msgstr ""
+"初始身份验证密钥。未设置身份验证密钥时，不使用<i>身份验证协议</i>。如果设置了身份验证密钥，但未指定<i>身份验证协议</i>，则默认使用<a "
+"href=\"https://en.wikipedia.org/wiki/MD5\"  target=\"_blank\"> MD5 "
+"</a>。<br>至少8个字节，最多32个字节。"
 
 msgid ""
 "Initial secret encryption key.  If an encryption key is not set, no "
@@ -5740,7 +5819,10 @@ msgid ""
 "href=\"https://en.wikipedia.org/wiki/Data_Encryption_Standard\"  "
 "target=\"_blank\">DES</a> is used as the default.<br>  Must be at least 8 "
 "and at most 32 octets long."
-msgstr "初始加密密钥。如果未设置加密密钥，则不使用<i>加密协议</i>。如果设置了加密密钥，但未指定<i>加密协议</i>，则默认使用<a href=\"https://en.wikipedia.org/wiki/Data_Encryption_Standard\"  target=\"_blank\"> DES </a>。<br>至少为8个字节，最多为32个字节。"
+msgstr ""
+"初始加密密钥。如果未设置加密密钥，则不使用<i>加密协议</i>。如果设置了加密密钥，但未指定<i>加密协议</i>，则默认使用<a "
+"href=\"https://en.wikipedia.org/wiki/Data_Encryption_Standard\"  "
+"target=\"_blank\"> DES </a>。<br>至少为8个字节，最多为32个字节。"
 
 msgid "Initiate Failover"
 msgstr "启动故障转移"
@@ -5932,6 +6014,15 @@ msgstr "Jail启动失败"
 
 msgid "Jails started."
 msgstr "Jails已启动。"
+
+msgid "Jan"
+msgstr ""
+
+msgid "Jul"
+msgstr ""
+
+msgid "Jun"
+msgstr ""
 
 msgid "KDC"
 msgstr "KDC"
@@ -6236,6 +6327,9 @@ msgid ""
 "connections."
 msgstr "对连接开放的活动侧侦听地址的最低端口号。"
 
+msgid "M"
+msgstr ""
+
 msgid "MAC Address"
 msgstr "MAC地址"
 
@@ -6256,6 +6350,9 @@ msgstr "MAC地址"
 
 msgid "Mail Server Port"
 msgstr "邮件服务器端口"
+
+msgid "Manual"
+msgstr ""
 
 msgid "Manual Update"
 msgstr "手动更新"
@@ -6278,11 +6375,11 @@ msgstr "Maproot组"
 msgid "Maproot User"
 msgstr "Maproot用户"
 
+msgid "Mar"
+msgstr ""
+
 msgid "Masquerade Address"
 msgstr "地址伪装"
-
-msgid "Master"
-msgstr "主"
 
 msgid ""
 "Matching the fixed size of data, as in a database, may result in better "
@@ -6291,6 +6388,9 @@ msgstr "在数据库中匹配固定大小的数据可能会有更好的性能。
 
 msgid "Mattermost username."
 msgstr "Mattermost用户名。"
+
+msgid "Max Poll"
+msgstr ""
 
 msgid "Max. Connections"
 msgstr "最大连接数"
@@ -6373,6 +6473,9 @@ msgid ""
 "until the existing  reporting database is destroyed."
 msgstr "图表以月为单位存储的最长时间。更改此值将导致显示<i>确认RRD销毁</i>复选框。在销毁现有报告数据库之前，更改不会生效。"
 
+msgid "May"
+msgstr ""
+
 msgid "Member Disk"
 msgstr "成员磁盘"
 
@@ -6437,11 +6540,12 @@ msgstr "微软账户"
 msgid ""
 "Microsoft Onedrive  <a "
 "href=\"https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-"
-"started/authentication\"  target=\"_blank\">Access Token</a>."
+"started/authentication\"  target=\"_blank\">Access Token</a>. Log in to the "
+"Microsoft account to  add an access token."
 msgstr ""
-"Microsoft Onedrive <a "
-"href=\"https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-"
-"started/authentication\"  target=\"_blank\">访问令牌</a> 。"
+
+msgid "Min Poll"
+msgstr ""
 
 msgid "Min. Poll"
 msgstr "最小Poll"
@@ -6495,6 +6599,9 @@ msgstr "监控用户"
 
 msgid "Month"
 msgstr "月"
+
+msgid "Months"
+msgstr ""
 
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
@@ -6660,6 +6767,11 @@ msgstr "Extent的名称。如果<i>扩展大小</i>不是<i> 0 </i>，则它不�
 msgid "Name of the new alert service."
 msgstr "新的警报服务的名称。"
 
+msgid ""
+"Name of the new cloned boot environment. Alphanumeric characters, dashes "
+"(-), underscores (_),     and periods (.) are allowed."
+msgstr ""
+
 msgid "Name of the new dataset created from the cloned snapshot."
 msgstr "从克隆快照创建的新数据集的名称。"
 
@@ -6763,6 +6875,9 @@ msgstr "网络属性"
 msgid "Network Summary"
 msgstr "网络概要"
 
+msgid "Network Timeout Before Initiating Failover"
+msgstr ""
+
 msgid ""
 "Network addresses allowed to use this initiator. Leave blank to allow all "
 "networks or list network addresses with       a CIDR mask. Separate "
@@ -6827,6 +6942,9 @@ msgstr "网络设置已临时更改。它们将在之后自动丢弃"
 msgid "Never"
 msgstr "从不"
 
+msgid "Never Delete"
+msgstr ""
+
 msgid "New Password"
 msgstr "新密码"
 
@@ -6859,6 +6977,9 @@ msgstr "否"
 
 msgid "No Communication Warning Time"
 msgstr "没有通讯警告时间"
+
+msgid "No Encryption (less secure, but faster)"
+msgstr ""
 
 msgid "No Logs"
 msgstr "没有日志"
@@ -6910,6 +7031,9 @@ msgstr "有关此Extent的说明。"
 
 msgid "Notice"
 msgstr "注意"
+
+msgid "Nov"
+msgstr ""
 
 msgid "Number of CPUs"
 msgstr "处理器数量"
@@ -6967,6 +7091,12 @@ msgid ""
 "start after connecting to the domain, increase this value."
 msgstr "超时前的秒数。如果连接到域后AD服务没有立即启动，请增加此值。"
 
+msgid ""
+"Number of seconds to wait after a network failure  before triggering a "
+"failover. <i>0</i> means a failover occurs  immediately, or after two "
+"seconds when the system is using a link  aggregation."
+msgstr ""
+
 msgid "Number of servers"
 msgstr "服务器数量"
 
@@ -7014,6 +7144,9 @@ msgstr "Oauth Client 密钥"
 msgid "OK"
 msgstr "是"
 
+msgid "Oct"
+msgstr ""
+
 msgid ""
 "Off by default. When set, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" "
@@ -7031,6 +7164,12 @@ msgstr "离线"
 
 msgid "Ok"
 msgstr "是"
+
+msgid "On a Different System"
+msgstr ""
+
+msgid "On this System"
+msgstr ""
 
 msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr "要绑定Netdata服务的一个或多个IP地址。"
@@ -7129,6 +7268,14 @@ msgid "Options"
 msgstr "选项"
 
 msgid ""
+"Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> Do not "
+"encrypt the LDAP connection.</li>  <li><i>ON:</i> <i>SSL</i> encrypts the "
+"LDAP connection and uses port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
+"<i>STARTTLS</i> encrypts the LDAP connection and  uses the default LDAP "
+"port <i>389</i>.</li>  </ul>"
+msgstr ""
+
+msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
 "the master interface to <i>0</i> and the other interfaces to <i>1</i>, "
 "<i>2</i>, etc."
@@ -7203,6 +7350,12 @@ msgstr "SED密码"
 
 msgid "Password for logging in to the provider and  updating the record."
 msgstr "登录提供者和更新记录的密码。"
+
+msgid ""
+"Password for the Active Directory administrator account.  Required the "
+"first time a domain is configured. After initial configuration, the "
+"password  is not needed to edit, start, or stop the service."
+msgstr ""
 
 msgid "Password for the Bind DN."
 msgstr "绑定DN的密码。"
@@ -7496,17 +7649,7 @@ msgid ""
 msgstr "2 秒内的功率不能高于 17 或低于<i>Min. Poll</i>。"
 
 msgid ""
-"Power of 2 in seconds; cannot be higher than 17 or lower than <i>Min. "
-"Poll</i>."
-msgstr "2 秒内的功率不能高于 17 或低于 <i>Min. Poll</i>。"
-
-msgid ""
 "Power of 2 in seconds; cannot be lower than 4 or   higher than <i>Max. "
-"Poll</i>."
-msgstr "2 秒内的功率不能低于 4 或高于 <i>Max. Poll</i>。"
-
-msgid ""
-"Power of 2 in seconds; cannot be lower than 4 or higher than <i>Max. "
 "Poll</i>."
 msgstr "2 秒内的功率不能低于 4 或高于 <i>Max. Poll</i>。"
 
@@ -7530,6 +7673,9 @@ msgstr "保留权限"
 
 msgid "Preserve screen space with icons and tooltips instead of text labels."
 msgstr "使用图标和工具提示而不是文本标签来保留屏幕空间。"
+
+msgid "Presets"
+msgstr ""
 
 msgid ""
 "Prevent source system snapshots  that have failed replication from being "
@@ -7577,7 +7723,14 @@ msgid ""
 "href=\"https://support.apple.com/guide/mac-help/connect-mac-shared-"
 "computers-servers-mchlp1140/\" target=\"_blank\">Apple documentation</a>  "
 "for more details."
-msgstr "权限与来宾帐户相同。在Windows 10版本1709和Windows服务器版本1903中，默认情况下禁用来宾访问。需要其他客户端配置才能向这些客户端提供来宾访问。<br> <br> <i> MacOS客户端：</i> 以FreeNAS中不存在的用户身份进行连接<i>不会</i>自动以访客帐户身份进行连接。必须在MacOS中特别选择<b>连接为：</b> <i>访客</i>选项，以作为来宾帐户登录。请参阅<a href=\"https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/\" target=\"_blank\"> Apple文档</a>了解有关更多详细信息。"
+msgstr ""
+"权限与来宾帐户相同。在Windows "
+"10版本1709和Windows服务器版本1903中，默认情况下禁用来宾访问。需要其他客户端配置才能向这些客户端提供来宾访问。<br> <br> "
+"<i> MacOS客户端：</i> "
+"以FreeNAS中不存在的用户身份进行连接<i>不会</i>自动以访客帐户身份进行连接。必须在MacOS中特别选择<b>连接为：</b> "
+"<i>访客</i>选项，以作为来宾帐户登录。请参阅<a "
+"href=\"https://support.apple.com/guide/mac-help/connect-mac-shared-"
+"computers-servers-mchlp1140/\" target=\"_blank\"> Apple文档</a>了解有关更多详细信息。"
 
 msgid "Proactive Support"
 msgstr "主动支持"
@@ -7676,7 +7829,9 @@ msgid ""
 "Range Low and Range High set the range of UID/GID numbers which this  IDMap "
 "backend translates. If an external credential like a Windows SID maps to a "
 "UID or GID  number outside this range, the external credential is ignored."
-msgstr "范围下限和范围上限设置此IDMap后端转换的UID / GID号的范围。如果外部凭据（例如Windows SID）映射到此范围之外的UID或GID号，则将忽略该外部凭据。"
+msgstr ""
+"范围下限和范围上限设置此IDMap后端转换的UID / GID号的范围。如果外部凭据（例如Windows "
+"SID）映射到此范围之外的UID或GID号，则将忽略该外部凭据。"
 
 msgid "Range Size"
 msgstr "范围大小"
@@ -7839,11 +7994,6 @@ msgstr "删除密码"
 msgid "Rename"
 msgstr "重命名"
 
-msgid ""
-"Rename the existing boot environment. Alphanumeric characters, dashes "
-"(*-*), underscores (*_*), and periods (*.*) are allowed.)"
-msgstr "重命名现有的引导环境。允许使用字母数字字符，破折号（*-*），下划线（*_*）和句点（*.*）。）"
-
 msgid "Renew Certificate Days"
 msgstr "续签证书天数"
 
@@ -7933,14 +8083,19 @@ msgid ""
 msgstr "必须除非<b>启用密码登录</b>被设置为<i>否</i>。密码不能包含 <b>?</b>。"
 
 msgid ""
-"Required. Can only contain alphanumeric characters (Aa-Zz 0-9), dashes (-), "
-"or underscores (_)."
-msgstr "必须。只能包含大小写字母数字(Aa-Zz 0-9)，横杠 (-)，或下划线 (_)."
+"Required. Can contain letters, numbers, dashes (-), periods (.), or "
+"underscores (_)."
+msgstr ""
 
 msgid ""
-"Required. Can only contain alphanumeric characters Aa-Zz 0-9), dashes (-), "
-"or underscores (_)."
-msgstr "必须。只能包含大小写字母数字(Aa-Zz 0-9)，横杠 (-)，或下划线 (_)."
+"Required. Can contain letters, numbers, periods (.),  dashes (-), and "
+"underscores (_)."
+msgstr ""
+
+msgid ""
+"Required. Can contain letters, numbers, periods (.), dashes (-), and "
+"underscores (_)."
+msgstr ""
 
 msgid ""
 "Requires <b>Allow guest access</b> to also be set. Forces guest access for "
@@ -8101,6 +8256,12 @@ msgstr "自动运行"
 msgid "Run Now"
 msgstr "立即运行"
 
+msgid "Run On a Schedule"
+msgstr ""
+
+msgid "Run Once"
+msgstr ""
+
 msgid ""
 "Run commands in a clean environment. The current environment is discarded "
 "except for $HOME, $SHELL, $TERM, and $USER. <br>$HOME and $SHELL are set to "
@@ -8124,6 +8285,9 @@ msgstr "现在运行此计划任务？"
 
 msgid "Run this rsync now?"
 msgstr "现在运行此Rsync？"
+
+msgid "S"
+msgstr ""
 
 msgid "S.M.A.R.T. Test"
 msgstr "S.M.A.R.T.测试"
@@ -8211,6 +8375,9 @@ msgstr "停止"
 msgid "Samba Schema"
 msgstr "Samba架构"
 
+msgid "Same as Source"
+msgstr ""
+
 msgid "Save"
 msgstr "保存"
 
@@ -8252,6 +8419,9 @@ msgstr "正在保存权限..."
 
 msgid "Schedule"
 msgstr "安排"
+
+msgid "Schedule Preview"
+msgstr ""
 
 msgid "Schedule a Cron Job"
 msgstr "安排计划任务"
@@ -8714,11 +8884,6 @@ msgid "Select the IP addresses SMB will listen for."
 msgstr "选择SMB将侦听的IP地址。"
 
 msgid ""
-"Select the LDAP CA certificate. The certificate for the LDAP server CA must "
-"first be imported using the System/Certificates menu."
-msgstr "选择LDAP CA证书。必须首先使用“系统/证书”菜单导入LDAP服务器CA的证书。"
-
-msgid ""
 "Select the VLAN Parent Interface. Usually an Ethernet card connected to a "
 "configured switch port. Newly created link aggregations will not be "
 "available until the system is rebooted."
@@ -8940,6 +9105,9 @@ msgstr "所选Jail已更新。"
 msgid "Selected plugins updated."
 msgstr "所选插件已更新。"
 
+msgid "Semi-automatic (FreeNAS only)"
+msgstr ""
+
 msgid "Send Deduplicated Stream"
 msgstr "发送重复数据删除流"
 
@@ -8961,6 +9129,12 @@ msgstr "发送初始调试"
 msgid "Send initial debug."
 msgstr "发送初始调试。"
 
+msgid "Sep"
+msgstr ""
+
+msgid "Separate values with commas, and without spaces."
+msgstr ""
+
 msgid "Serial"
 msgstr "序列号"
 
@@ -8972,6 +9146,13 @@ msgstr "串行端口"
 
 msgid "Serial Speed"
 msgstr "串行速度"
+
+msgid ""
+"Serial or USB port connected to the UPS. To  automatically detect and "
+"manage the USB port settings, select  <i>auto</i>.<br><br> When an SNMP "
+"driver is selected, enter the IP  address or hostname of the SNMP UPS "
+"device."
+msgstr ""
 
 msgid "Series"
 msgstr "系列"
@@ -9032,9 +9213,6 @@ msgstr ""
 "如果磁盘支持S.M.A.R.T. 取消设置即可禁用任何已配置的<a "
 "href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" target=\"_blank\"> "
 "S.M.A.R.T. 测试</a>。"
-
-msgid "Set default options on this ACL."
-msgstr "在此ACL上设置默认选项。"
 
 msgid ""
 "Set enable sending messages to the address defined in the <b>Email</b> "
@@ -9474,11 +9652,6 @@ msgid ""
 msgstr ""
 "设置为启用加密连接。要求使用<a href=\"--docurl--/system.html#certificates\" "
 "target=\"_blank\">证书</a>创建或导入证书"
-
-msgid ""
-"Set to enable the Active Directory service. Selecting this option requires "
-"the Domain Account Password."
-msgstr "设置为启用活动目录服务。选择此选项需要域帐户密码。"
 
 msgid ""
 "Set to enable the File eXchange Protocol. This option makes the server "
@@ -10097,6 +10270,9 @@ msgstr "加速初始同步（秒而不是分钟）。"
 msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr "加速初始同步（秒而不是分钟）。"
 
+msgid "Standard (Secure)"
+msgstr ""
+
 msgid "Start"
 msgstr "开始"
 
@@ -10343,6 +10519,9 @@ msgid ""
 "interface, enter the name of a network  interface to use for NAT."
 msgstr "将Jail网络地址重新映射到其他IP地址空间的系统网络接口。要使用默认系统网络接口覆盖，请输入要用于NAT的网络接口的名称。"
 
+msgid "T"
+msgstr ""
+
 msgid "TCP Port"
 msgstr "TCP端口"
 
@@ -10429,6 +10608,9 @@ msgstr "任务已开始"
 
 msgid "Task Stopped"
 msgstr "任务已停止"
+
+msgid "Task is on hold"
+msgstr ""
 
 msgid "Task is running"
 msgstr "任务正在运行"
@@ -10643,11 +10825,25 @@ msgstr "挂起的连接队列的最大长度。默认值为100。"
 msgid "The maximum number of simultaneous clients."
 msgstr "并发客户端的最大数量。"
 
+msgid ""
+"The maximum polling interval, in seconds, as a power of 2.  For example, "
+"<i>10</i> means 2^10, or 1,024 seconds. The default is  10, maximum value "
+"is 17."
+msgstr ""
+
 msgid "The member interface to configure."
 msgstr "要配置的成员接口。"
 
 msgid "The message to show when a user logs in with SSH."
 msgstr "用户使用SSH登录时显示的消息。"
+
+msgid ""
+"The minimum polling interval, in seconds, as a power of 2.  For example, "
+"<i>6</i> means 2^6, or 64 seconds. The default is 6,  minimum value is 4."
+msgstr ""
+
+msgid "The name "
+msgstr ""
 
 msgid ""
 "The number of bits in the key used by the cryptographic algorithm. For "
@@ -10744,14 +10940,6 @@ msgstr ""
 "所选策略定义FTP会话的控制通道，数据通道，两个通道或两个通道是否必须通过SSL / TLS进行。在<a "
 "href=\"http://www.proftpd.org/docs/directives/linked/config_ref_TLSRequired."
 "html\" target=\"_blank\">此处</a>描述了这些策略。"
-
-msgid ""
-"The serial or USB port that the UPS is  using.<br /> <br /> "
-"<b>Hostname</b>: Enter the IP address or hostname of the SNMP UPS  "
-"device.<br /> <br />"
-msgstr ""
-"UPS正在使用的串行或USB端口。 <br /><br /> <b>主机名</b> ：输入SNMP UPS设备的IP地址或主机名。 <br /><br "
-"/>"
 
 msgid ""
 "The sharing configuration will be removed.    Data in the share dataset "
@@ -10910,19 +11098,15 @@ msgid ""
 "this unofficial plugin regardless of the current support level. Thorough "
 "research is strongly recommended before installing or using an unofficial "
 "plugin."
-msgstr "这是一个非官方的插件，没有由iXsystems生产或支持。无论当前支持级别如何，iXsystems都不支持配置、诊断或使用此非官方插件。在安装或使用非官方插件之前强烈建议进行彻底的研究。"
+msgstr ""
+"这是一个非官方的插件，没有由iXsystems生产或支持。无论当前支持级别如何，iXsystems都不支持配置、诊断或使用此非官方插件。在安装或使用非官"
+"方插件之前强烈建议进行彻底的研究。"
 
 msgid "This is the FreeBSD device name for the disk."
 msgstr "这是磁盘的FreeBSD设备名称。"
 
-msgid "This is the boot environment to be cloned."
-msgstr "这是要克隆的引导环境。"
-
 msgid "This is the serial number of the disk."
 msgstr "这是磁盘的序列号。"
-
-msgid "This name has already been used."
-msgstr "此名称已被使用。"
 
 msgid ""
 "This number selects the routing table (<a "
@@ -11047,10 +11231,17 @@ msgid ""
 "Two-letter <a  href=\"https://www.iso.org/obp/ui/#search/code/\" "
 "target=\"_blank\">ISO 3166-1 alpha-2 code</a>  used to enable LLDP location "
 "support."
-msgstr "两个字母的<a  href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\"> ISO 3166-1 alpha-2代码</a> 用于启用LLDP位置支持。"
+msgstr ""
+"两个字母的<a  href=\"https://www.iso.org/obp/ui/#search/code/\" "
+"target=\"_blank\"> ISO 3166-1 alpha-2代码</a> 用于启用LLDP位置支持。"
 
 msgid "Type"
 msgstr "类型"
+
+msgid ""
+"Type of Microsoft acount. Logging in to a Microsoft account  automatically "
+"chooses the correct account type."
+msgstr ""
 
 msgid ""
 "UDP port number on the system receiving  SNMP trap notifications. The "
@@ -11108,15 +11299,9 @@ msgid ""
 msgstr "网络广播段上的唯一虚拟主机ID。配置多个虚拟IP地址需要为每个地址使用单独的VHID。"
 
 msgid ""
-"Unique drive identifier. Log in to the  <a "
-"href=\"https://onedrive.live.com\" target=\"_blank\">OneDrive account</a>  "
-"and copy the string that appears in the browser address bar after  "
-"<i>cid=</i>. Example: "
-"https://onedrive.live.com/?id=root&cid=<i>12A34567B89C10D1</i>."
+"Unique drive identifier. Log in to a Microsoft account and choose  a drive "
+"from the <i>Drives List</i> drop-down to add a valid ID."
 msgstr ""
-"唯一的驱动器标识符。登录<a href=\"https://onedrive.live.com\" "
-"target=\"_blank\">OneDrive 账户</a>，然后复制<i>之后在浏览器地址栏中显示的字符串。cid = "
-"</i>。例如：https://onedrive.live.com/?id=root&cid=<i>12A34567B89C10D1</i>。"
 
 msgid "Unique snapshot name. Cannot be used with  a <i>Naming Schema</i>."
 msgstr "唯一的快照名称。不能与<i>命名惯例</i>一起使用。"
@@ -11308,7 +11493,15 @@ msgid ""
 "algorithm and key derivation  are available in the  <a "
 "href=\"https://rclone.org/crypt/#file-formats\" target=\"_blank\">rclone "
 "crypt File formats documentation</a>."
-msgstr "在<i>推送</i>或<i>拉取</i>期间使用<a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone crypt</a>管理数据加密传输：<br><br><i>推送：</i>在传输前先加密文件，然后将加密的文件存储在远程系统上。使用<b>加密密码</b>和<b>加密盐值</b>对文件进行加密。<br> <br><i>拉取：</i>在传输之前，解密存储在远程系统上的文件。传输加密文件需要输入用于加密文件的相同<b>加密密码</b>和<b>加密盐值</b>。<br> <br>有关加密算法和密钥的其他详细信息，请参见<a href=\"https://rclone.org/crypt/#file-formats\" target=\"_blank\">rclone crypt文件格式文档</a>。"
+msgstr ""
+"在<i>推送</i>或<i>拉取</i>期间使用<a href=\"https://rclone.org/crypt/\" "
+"target=\"_blank\">rclone "
+"crypt</a>管理数据加密传输：<br><br><i>推送：</i>在传输前先加密文件，然后将加密的文件存储在远程系统上。使用<b>加密密码</b>"
+"和<b>加密盐值</b>对文件进行加密。<br> "
+"<br><i>拉取：</i>在传输之前，解密存储在远程系统上的文件。传输加密文件需要输入用于加密文件的相同<b>加密密码</b>和<b>加密盐值</b>"
+"。<br> <br>有关加密算法和密钥的其他详细信息，请参见<a "
+"href=\"https://rclone.org/crypt/#file-formats\" target=\"_blank\">rclone "
+"crypt文件格式文档</a>。"
 
 msgid "Use --fast-list"
 msgstr "使用 --fast-list"
@@ -11562,6 +11755,9 @@ msgstr "验证凭据"
 msgid "Verify Deletion of "
 msgstr "验证删除 "
 
+msgid "Verify certificate authenticity."
+msgstr ""
+
 msgid "Verify passphrase"
 msgstr "确认密码"
 
@@ -11604,11 +11800,17 @@ msgstr "VLAN 标签"
 msgid "Volume size cannot be zero."
 msgstr "卷大小不能为零。"
 
+msgid "W"
+msgstr ""
+
 msgid "WARNING"
 msgstr "警告"
 
 msgid "WARNING: "
 msgstr "警告： "
+
+msgid "WARNING: A failover will  temporarily interrupt system services."
+msgstr ""
 
 msgid ""
 "WARNING: Adding data vdevs with different numbers of disks is not "
@@ -11626,6 +11828,12 @@ msgstr "警告：锁定池<i>"
 
 msgid "Wait to start VM until VNC client connects."
 msgstr "等待启动VM，直到VNC客户端连接。"
+
+msgid "Waiting for Active TrueNAS controller to come up..."
+msgstr ""
+
+msgid "Waiting for active TrueNAS controller to come up..."
+msgstr ""
 
 msgid "Wallclock time in seconds."
 msgstr "挂钟时间以秒为单位。"
@@ -11674,6 +11882,9 @@ msgstr "WebDav SSL证书"
 
 msgid "Webhook URL"
 msgstr "Webhook URL"
+
+msgid "Weeks"
+msgstr ""
 
 msgid "What and Where"
 msgstr "做什么和在哪里"
@@ -11813,6 +12024,9 @@ msgstr ""
 "Yandex <a "
 "href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
 "\"  target=\"_blank\">访问令牌</a> 。"
+
+msgid "Years"
+msgstr ""
 
 msgid "Yes"
 msgstr "是"
@@ -12038,6 +12252,9 @@ msgstr "ip6.saddrsel"
 
 msgid "ip_hostname"
 msgstr "ip_主机名"
+
+msgid "is already in use."
+msgstr ""
 
 msgid "jail_zfs"
 msgstr "jail_zfs"

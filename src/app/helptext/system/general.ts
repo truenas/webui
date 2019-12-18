@@ -129,7 +129,7 @@ export const helptext_system_general = {
   },
 
   poolkeys: {
-    placeholder: T("Export Pool Ecryption Keys"),
+    placeholder: T("Export Pool Encryption Keys"),
     tooltip: T('')
   },
 
