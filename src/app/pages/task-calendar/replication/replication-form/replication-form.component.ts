@@ -1025,6 +1025,8 @@ export class ReplicationFormComponent {
             delete data['restrict_schedule_picker'];
             delete data['restrict_schedule_begin'];
             delete data['restrict_schedule_end'];
+        } else {
+            delete data['restrict_schedule'];
         }
 
         if (data['compression'] === 'DISABLED') {

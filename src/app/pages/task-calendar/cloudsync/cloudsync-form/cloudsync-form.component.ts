@@ -322,7 +322,7 @@ export class CloudsyncFormComponent implements OnInit {
     tooltip: helptext.bwlimit_tooltip,
   },
   {
-    type: 'input',
+    type: 'textarea',
     name: 'exclude',
     placeholder: helptext.exclude_placeholder,
     tooltip: helptext.exclude_tooltip,
@@ -698,7 +698,7 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     if (data.exclude) {
-      data.exclude = _.join(data.exclude, ' ');
+      data.exclude = _.join(data.exclude, '\n');
     }
 
     return data;
@@ -782,7 +782,14 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     if (value.exclude !== undefined) {
-      value.exclude = value.exclude.trim() === '' ? [] : value.exclude.trim().split(" ");
+      const exclude = [];
+      value.exclude.split("\n").map(item => {
+        const trimmedItem = item.trim();
+        if (trimmedItem !== '') {
+          exclude.push(trimmedItem);
+        }
+      });
+      value.exclude = exclude;
     }
 
     if (!this.formGroup.valid) {
