@@ -903,7 +903,6 @@ export class CloudCredentialsFormComponent {
         if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
           this.makeNewKeyPair(value).then(() => {
             value.attributes.private_key = this.keyID;
-            this.verifyCredentials(value);
           })
         } else {
         this.verifyCredentials(value);
@@ -1059,7 +1058,8 @@ export class CloudCredentialsFormComponent {
             this.keyID = sshKey.id;
             const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
             privateKeySFTPField.options.push({ label: payload.name, value: this.keyID});
-            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);          
+            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
+            this.verifyCredentials(value);
           },
           (sshKey_err) => {
             this.entityForm.loader.close();
