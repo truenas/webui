@@ -65,10 +65,10 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.source_datasets_from_placeholder,
                     tooltip: helptext.source_datasets_from_tooltip,
                     options: [{
-                        label: 'On this System',
+                        label: T("On this System"),
                         value: 'local',
                     }, {
-                        label: 'On a Different System',
+                        label: T("On a Different System"),
                         value: 'remote',
                     }],
                     required: true,
@@ -82,10 +82,10 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.target_dataset_from_placeholder,
                     tooltip: helptext.target_dataset_from_tooltip,
                     options: [{
-                        label: 'On this System',
+                        label: T("On this System"),
                         value: 'local',
                     }, {
-                        label: 'On a Different System',
+                        label: T("On a Different System"),
                         value: 'remote',
                     }],
                     required: true,
@@ -276,11 +276,11 @@ export class ReplicationWizardComponent {
                     tooltip: helptext.encryption_tooltip,
                     options: [
                         {
-                            label: 'Encryption (more secure, but slower)',
+                            label: T("Encryption (more secure, but slower)"),
                             value: 'SSH',
                         },
                         {
-                            label: 'No Encryption (less secure, but faster)',
+                            label: T("No Encryption (less secure, but faster)"),
                             value: 'SSH+NETCAT',
                         }
                     ],
@@ -316,10 +316,10 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.schedule_method_placeholder,
                     tooltip: helptext.schedule_method_tooltip,
                     options: [{
-                        label: 'Run On a Schedule',
+                        label: T("Run On a Schedule"),
                         value: 'cron',
                     }, {
-                        label: 'Run Once',
+                        label: T("Run Once"),
                         value: 'once',
                     }],
                     value: 'cron',
@@ -350,13 +350,13 @@ export class ReplicationWizardComponent {
                     placeholder: helptext.retention_policy_placeholder,
                     tooltip: helptext.retention_policy_tooltip,
                     options: [{
-                        label: 'Same as Source',
+                        label: T("Same as Source"),
                         value: 'SOURCE',
                     }, {
-                        label: 'Never Delete',
+                        label: T("Never Delete"),
                         value: 'NONE',
                     }, {
-                        label: 'Custom',
+                        label: T("Custom"),
                         value: 'CUSTOM',
                     }],
                     value: 'SOURCE',
@@ -387,19 +387,19 @@ export class ReplicationWizardComponent {
                     name: 'lifetime_unit',
                     tooltip: helptext.lifetime_unit_tooltip,
                     options: [{
-                        label: 'Hours',
+                        label: T("Hours"),
                         value: 'HOUR',
                     }, {
-                        label: 'Days',
+                        label: T("Days"),
                         value: 'DAY',
                     }, {
-                        label: 'Weeks',
+                        label: T("Weeks"),
                         value: 'WEEK',
                     }, {
-                        label: 'Months',
+                        label: T("Months"),
                         value: 'MONTH',
                     }, {
-                        label: 'Years',
+                        label: T("Years"),
                         value: 'YEAR',
                     }],
                     value: 'WEEK',
@@ -436,10 +436,10 @@ export class ReplicationWizardComponent {
             tooltip: sshConnectionsHelptex.setup_method_tooltip,
             options: [
                 {
-                    label: 'Manual',
+                    label: T("Manual"),
                     value: 'manual',
                 }, {
-                    label: 'Semi-automatic (FreeNAS only)',
+                    label: T("Semi-automatic (FreeNAS only)"),
                     value: 'semiautomatic',
                 }
             ],
@@ -519,7 +519,7 @@ export class ReplicationWizardComponent {
             tooltip: sshConnectionsHelptex.private_key_tooltip,
             options: [
                 {
-                    label: 'Generate New',
+                    label: T("Generate New"),
                     value: 'NEW'
                 }
             ],
@@ -536,13 +536,13 @@ export class ReplicationWizardComponent {
             tooltip: helptext.cipher_tooltip,
             options: [
                 {
-                    label: 'Standard (Secure)',
+                    label: T("Standard (Secure)"),
                     value: 'STANDARD',
                 }, {
-                    label: 'Fast (Less secure)',
+                    label: T("Fast (Less secure)"),
                     value: 'FAST',
                 }, {
-                    label: 'Disabled (Not encrypted)',
+                    label: T("Disabled (Not encrypted)"),
                     value: 'DISABLED',
                 }
             ],
@@ -707,16 +707,6 @@ export class ReplicationWizardComponent {
                 this.getSnapshots();
             }
         });
-
-        this.entityWizard.formArray.controls[0].controls['name'].valueChanges.subscribe((value) => {
-            const field = _.find(this.wizardConfig[0].fieldConfig, { name: "name" });
-            field['hasErrors'] = false;
-            field['errors'] = '';
-            if (this.namesInUse.includes(value)) {
-                field['hasErrors'] = true;
-                field['errors'] = T(`The name <em>${value}</em> is already in use.`)
-            }
-        })
     }
 
     step1Init() {

@@ -32,7 +32,7 @@
                 <!--</ng-template>-->
               </div>
             </ng-container>
-            <mat-card-actions class="buttons">
+              <mat-card-actions class="buttons">
                 <button id="save_button" class="btn btn-block btn-warning mat-primary" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid || !conf.save_button_enabled" >{{saveSubmitText | translate}}</button>
                 <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-lg mat-accent" type="button" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
                 <!-- </div> -->
@@ -42,10 +42,12 @@
                 </span>
                 <button mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
                 <!-- </div> -->
+                <div id="success-msg-wrapper">
+                  <div *ngIf="success && entityForm.form.dirty === false" type="success" id="successfully_updated">{{successMessage | translate}}</div>
+                </div>
             </mat-card-actions>
-          </div>
+            </div>
             <!-- <div class="btn-group btn-group-justified"> -->
-          <p *ngIf="success && entityForm.form.dirty === false" type="success" id="successfully_updated">{{successMessage | translate}}</p>
         </form>
         <span *ngIf="conf.form_message" id="form_message" class="form-message" [ngClass]="conf.form_message.type" [innerHTML]="conf.form_message.content"></span>
         <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>

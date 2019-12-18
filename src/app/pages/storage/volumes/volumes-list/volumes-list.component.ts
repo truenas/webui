@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import {TreeNode} from 'primeng/api';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
@@ -92,6 +93,8 @@ export class VolumesListTableConfig implements InputTableConf {
   private vmware_res_status: boolean;
   public dialogConf: DialogFormConfiguration;
   public restartServices = false;
+  public subs: any;
+  public message_subscription: any;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -106,7 +109,8 @@ export class VolumesListTableConfig implements InputTableConf {
     protected loader: AppLoaderService,
     protected translate: TranslateService,
     protected storageService: StorageService,
-    protected volumeData: Object
+    protected volumeData: Object,
+    protected messageService: MessageService
   ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
@@ -296,9 +300,16 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
+  key_file_updater(file: any, parent: any){
+    const fileBrowser = file.fileInput.nativeElement;
+    if (fileBrowser.files && fileBrowser.files[0]) {
+      parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
+    }
+  }
+
   unlockAction(row1) {
     const self = this;
-    this.storageService.poolUnlockServiceChoices().pipe(
+    this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map(serviceChoices => {
         return {
           title: "Unlock " + row1.name,
@@ -311,16 +322,18 @@ export class VolumesListTableConfig implements InputTableConf {
               placeholder: helptext.unlockDialog_password_placeholder,
             },
             {
-              type: 'input',
-              name: 'recovery_key',
+              type: 'upload',
+              message: self.messageService,
+              updater: self.key_file_updater,
+              parent: self,
+              hideButton: true, 
+              name: 'key',
               placeholder: helptext.unlockDialog_recovery_key_placeholder,
               tooltip: helptext.unlockDialog_recovery_key_tooltip,
-              inputType: 'file',
-              fileType: 'binary'
             },
             {
               type: 'select',
-              name: 'services',
+              name: 'services_restart',
               placeholder: helptext.unlockDialog_services_placeholder,
               tooltip: helptext.unlockDialog_services_tooltip,
               multiple: true,
@@ -328,25 +341,38 @@ export class VolumesListTableConfig implements InputTableConf {
               options: serviceChoices
             }
           ],
-
+          afterInit: function(entityDialog) {
+                self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+                  entityDialog.formGroup.controls['key'].setValue(message);
+                });
+          },
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
             const value = entityDialog.formValue;
-            self.loader.open();
-            return self.rest.post("storage/volume/" + row1.name + "/unlock/",
-              { body: JSON.stringify({
-                passphrase: value.passphrase,
-                recovery_key: value.recovery_key,
-                services: value.services
-                })
-              }).subscribe((restPostResp) => {
+            const params = [row1.id, {passphrase: value.passphrase, services_restart: value.services_restart}]
+            let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Unlocking Pool"}, disableClose: true});
+            if(value.key) {
+              params[1]['recoverykey'] = true;
+              const formData: FormData = new FormData();
+              formData.append('data', JSON.stringify({
+                "method": "pool.unlock",
+                "params": params
+              }));
+              formData.append('file', self.subs.file);
+              dialogRef.componentInstance.wspost(self.subs.apiEndPoint, formData);
+            } else {
+              dialogRef.componentInstance.setCall('pool.unlock', params);
+              dialogRef.componentInstance.submit();
+            }
+            dialogRef.componentInstance.success.subscribe((res) => {
+              dialogRef.close(false);
               entityDialog.dialogRef.close(true);
-              self.loader.close();
               self.parentVolumesListComponent.repaintMe();
               self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
-            }, (res) => {
-              self.loader.close();
-              self.dialogService.errorReport(T("Error Unlocking"), res.error.error_message, res.error.traceback);
+            });
+            dialogRef.componentInstance.failure.subscribe((res) => {
+              dialogRef.close(false);
+              new EntityUtils().handleWSError(self, res ,self.dialogService);
             });
           }
         };
@@ -1016,20 +1042,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {});
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {})
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {})
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService)
   };
 
   expanded = false;
@@ -1040,7 +1066,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService) {
+    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService) {
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog);
   }
 
@@ -1064,7 +1090,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       const volumeData = res[1].data;
         for (let i = 0; i < volumeData.length; i++) {
           const volume = volumeData[i];
-          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, volume);
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.storage, volume, this.messageService);
           volume.type = 'zpool';
 
           if (volume.children && volume.children[0]) {

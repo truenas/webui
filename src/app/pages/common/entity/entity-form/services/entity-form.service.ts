@@ -85,6 +85,7 @@ export class EntityFormService {
             }
             if(res[i].name !== hideDirs) {
                 child['name'] = res[i].path;
+                child['acl'] = res[i].acl;
                 if(res[i].type === 'DIRECTORY') {
                   child['hasChildren'] = true;
                   }

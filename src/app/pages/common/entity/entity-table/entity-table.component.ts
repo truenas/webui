@@ -64,6 +64,7 @@ export interface InputTableConf {
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
   callGetFunction?(entity: EntityTableComponent): any;
+  prerequisiteFailedHandler?(entity: EntityTableComponent);
 }
 
 export interface EntityTableAction {
@@ -195,6 +196,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
               this.getData();
               if (this.conf.afterInit) {
                 this.conf.afterInit(this);
+              }
+            } else {
+              this.showSpinner = false;
+              if (this.conf.prerequisiteFailedHandler) {
+                this.conf.prerequisiteFailedHandler(this);
               }
             }
           }
@@ -1046,6 +1052,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'SUCCESS' : return 'fn-theme-green';
       case 'ERROR' : return 'fn-theme-red';
       case 'FAILED' : return 'fn-theme-red';
+      case 'HOLD' : return 'fn-theme-yellow';
       default: return 'fn-theme-primary';
     }
   }

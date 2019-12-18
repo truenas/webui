@@ -213,14 +213,22 @@ export class EntityJobComponent implements OnInit {
     if (job.progress) {
       this.progress.emit(job.progress);
     }
-    if (job.fields && job.fields.state === 'RUNNING') {
-      this.progress.emit(this.job.fields.progress);
-    }
-    else if(job.fields && job.fields.state === 'SUCCESS'){
-      this.success.emit(this.job.fields);
-    }
-    else if (job.fields && ((job.fields.state === 'FAILED') || job.fields.error)) {
-      this.failure.emit(this.job.fields);
+    if (job.fields) {
+      if (job.fields.state === 'RUNNING') {
+        this.progress.emit(this.job.fields.progress);
+      }
+      else if(job.fields.state === 'SUCCESS'){
+        this.success.emit(this.job.fields);
+      }
+      else if ((job.fields.state === 'FAILED') || job.fields.error) {
+        this.failure.emit(this.job.fields);
+      }
+    } else {
+      if (job.state === 'SUCCESS') {
+        this.success.emit(this.job);
+      } else if (job.state === 'FAILED') {
+        this.failure.emit(this.job);
+      }
     }
   }
 }

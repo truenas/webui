@@ -33,6 +33,6 @@ export class RoutePartsService {
         });
       }
     }
-    return routeParts.reverse();
+    return routeParts;
   }
 }

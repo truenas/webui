@@ -86,7 +86,9 @@ export default {
     Mattermost_icon_url_placeholder: T('Icon URL'),
     Mattermost_icon_url_tooltip: T('Icon file to use as the profile \
  picture for new messages. Example: \
- <i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.'),
+ <i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br> \
+ Requires configuring Mattermost to <a \
+ href="https://docs.mattermost.com/administration/config-settings.html#enable-integrations-to-override-profile-picture-icons" target="_blank">override profile picture icons</a>.'),
 
     OpsGenie_api_key_placeholder: T('API Key'),
     OpsGenie_api_key_tooltip: T('Enter or paste the <a\

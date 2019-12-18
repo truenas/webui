@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from '../../appMaterial.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { SystemGeneralService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
@@ -21,7 +22,7 @@ import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-
 @NgModule({
   imports: [
     CommonModule, EntityModule, FormsModule, ReactiveFormsModule,
-    NgUploaderModule, routing, MaterialModule
+    NgUploaderModule, routing, MaterialModule, TranslateModule
   ],
   declarations: [
     LdapComponent,
