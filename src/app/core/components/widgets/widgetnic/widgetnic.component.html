@@ -24,18 +24,18 @@
 
               <button mat-icon-button class="" (click)="router.navigate(['network/interfaces/edit/'+nicState.name])">
                 <mat-icon role="img"
-                          matTooltip="Configure {{nicState.name}}"
+                          matTooltip="{{Configure | translate}} {{nicState.name}}"
                   matTooltipPosition="above"
-                  aria-label="Configure Interface">
+                  aria-label="{{Configure Interface | translate}}">
                     settings
                 </mat-icon>
               </button>
 
               <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])">
                 <mat-icon role="img"
-                  matTooltip="Network Reports"
+                  matTooltip="{{Network Reports | translate}}"
                   matTooltipPosition="above"
-                  aria-label="Network Reports">
+                  aria-label="{{Network Reports | translate}}">
                     insert_chart
                 </mat-icon>
               </button>
@@ -61,11 +61,11 @@
 
                   <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
                     <div class="tr">
-                      <div class="td label"><strong>In: &nbsp;</strong></div>
+                      <div class="td label"><strong>{{In | translate}}: &nbsp;</strong></div>
                       <div class="td value"><span class="stat">{{traffic.received}}</span> {{traffic.receivedUnits}}/s</div>
                     </div>
                     <div class="tr">
-                      <div class="td label"><strong>Out: </strong>&nbsp;</div>
+                      <div class="td label"><strong>{{Out | translate}}: </strong>&nbsp;</div>
                       <div class="td value"><span class="stat">{{traffic.sent}}</span> {{traffic.sentUnits}}/s</div>
                     </div>
                   </div>
@@ -87,18 +87,18 @@
               <div fxFlex="100">
                 <div class="list-subheader">{{currentSlideName}}</div>
                 <mat-list>
-                  <mat-list-item><strong>Media Type: </strong>&nbsp;&nbsp;{{nicState.active_media_type}}</mat-list-item>
-                  <mat-list-item><strong>Media Subtype: </strong>&nbsp;&nbsp;{{nicState.active_media_subtype}}</mat-list-item>
+                  <mat-list-item><strong>{{Media Type | translate}}: </strong>&nbsp;&nbsp;{{nicState.active_media_type}}</mat-list-item>
+                  <mat-list-item><strong>{{Media Subtype | translate}}: </strong>&nbsp;&nbsp;{{nicState.active_media_subtype}}</mat-list-item>
                   <mat-list-item (click)="updateSlide('addresses', ipAddresses.length > 1, 1)" [ngClass]="{'clickable': ipAddresses.length > 1}">
-                    <strong>IP Addresses: </strong>&nbsp;&nbsp;  {{ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length}}<span *ngIf="ipAddresses.length > 0">/{{ipAddresses[0].netmask}}</span> &nbsp;&nbsp;<span class="more-addresses" *ngIf="ipAddresses.length > 1">({{ipAddresses.length - 1}} more)</span>
+                    <strong>{{IP Addresses | translate}}: </strong>&nbsp;&nbsp;  {{ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length}}<span *ngIf="ipAddresses.length > 0">/{{ipAddresses[0].netmask}}</span> &nbsp;&nbsp;<span class="more-addresses" *ngIf="ipAddresses.length > 1">({{ipAddresses.length - 1}} more)</span>
                       <mat-icon *ngIf="ipAddresses.length > 1" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
                   <mat-list-item (click)="updateSlide('vlans', nicState.vlans.length > 0, 1)" [ngClass]="{'clickable': nicState.vlans.length > 0}">
-                      <strong>VLANs: </strong>&nbsp;&nbsp;  {{nicState.vlans.length}}
+                      <strong>{{VLANs | translate}}: </strong>&nbsp;&nbsp;  {{nicState.vlans.length}}
                       <mat-icon *ngIf="nicState.vlans.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
                   <mat-list-item *ngIf="nicState.lagg_ports" (click)="updateSlide('interfaces',nicState.lagg_ports.length > 0, 1)" [ngClass]="{'clickable': nicState.lagg_ports.length > 0}">
-                      <strong>Interfaces: </strong>&nbsp;&nbsp;  {{nicState.lagg_ports.length}}
+                      <strong>{{Interfaces | translate}}: </strong>&nbsp;&nbsp;  {{nicState.lagg_ports.length}}
                       <mat-icon *ngIf="nicState.lagg_ports.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
                 </mat-list>
@@ -137,7 +137,7 @@
             <div class="list-subheader">{{currentSlideName}}</div>
             <mat-list> 
               <mat-list-item role="listitem" *ngFor="let port of nicState.lagg_ports;" >
-                <strong>Interface:</strong>&nbsp;&nbsp; {{port}}
+                <strong>{{Interface | translate}}:</strong>&nbsp;&nbsp; {{port}}
               </mat-list-item>
             </mat-list>
           </div>
