@@ -1,11 +1,11 @@
 <mat-card>
-  <p> <b>Boot Pool Condition :</b> {{condition}} </p>
-  <p> <b>Size:</b> {{size_boot}} </p>
-  <p><b>Used:</b> {{size_consumed}}({{percentange}})</p>
+  <p> <b>{{"Boot Pool Condition" | translate}} :</b> {{condition}} </p>
+  <p> <b>{{"Size" | translate}}:</b> {{size_boot}} </p>
+  <p><b>{{"Used" | translate}}:</b> {{size_consumed}}({{percentange}})</p>
   <div *ngIf="scrub_msg">
-    <p> Last Scrub Run on: {{scrub_msg}} </p>
+    <p> {{"Last Scrub Run on" | translate}}: {{scrub_msg}} </p>
   </div>
-  <p> Automatic scrub interval (in days)</p>
+  <p> {{"Automatic scrub interval (in days)" | translate}}</p>
   <mat-form-field floatPlaceholder="never">
     <input matInput [value]="scrub_interval" #scrubIntervalEvent>
   </mat-form-field>
