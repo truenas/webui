@@ -22,7 +22,7 @@
             <div class="controls">
               <button mat-icon-button class="" (click)="router.navigate(['storage/pools/status/' + poolState.id.toString()])">
                 <mat-icon role="img"
-                  matTooltip="Pool Status"
+                  matTooltip="{{'Pool Status' | translate}}"
                   matTooltipPosition="above"
                   aria-label="Configure Pools">
                     settings
@@ -31,7 +31,7 @@
 
               <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/disk'])">
                 <mat-icon role="img"
-                  matTooltip="Disk Reports"
+                  matTooltip="{{'Disk Reports' | translate}}"
                   matTooltipPosition="above"
                   aria-label="Disk Reports">
                     insert_chart
@@ -48,7 +48,7 @@
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock-alert"></mat-icon>
-              <h4>Data not available <span *ngIf="!poolState.is_decrypted"><br>while pool is encrypted</span>.</h4>
+              <h4>{{"Data not available" | translate}} <span *ngIf="!poolState.is_decrypted"><br>{{"while pool is encrypted" | translate}}</span>.</h4>
             </div>
           </ng-template>
 
@@ -98,14 +98,14 @@
               <div fxFlex="100" *ngIf="poolState.topology && poolState.topology.data; else locked;">
                 <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>
-                  <mat-list-item><strong>Path: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
+                  <mat-list-item><strong>{{"Path" | translate}}: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
 
                   <mat-list-item>
                     <strong>{{"Available Space" | translate}}: </strong>&nbsp;&nbsp; 
                     <span *ngIf="volumeData && volumeData.used_pct;else unavail">
-                      <span class="value">{{diskSize | translate}}</span>
-                      <span class="value-units">{{diskSizeLabel | translate}}</span>&nbsp;&nbsp;
-                      <span class="value-used">({{volumeData.used_pct | translate}} used)</span>&nbsp;&nbsp;
+                      <span class="value">{{diskSize}}</span>
+                      <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
+                      <span class="value-used">({{volumeData.used_pct}} {{"used" | translate}})</span>&nbsp;&nbsp;
                     </span>
                     <ng-template #unavail>
                       <span class="value">{{"Gathering data..." | translate}}</span>
@@ -113,22 +113,22 @@
                   </mat-list-item>
                   
                   <mat-list-item (click)="updateSlide('data', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
-                    <strong>Data: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
+                    <strong>{{"Data" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
                     <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, { children: poolState.topology.cache})" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
-                    <strong>Caches: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
+                    <strong>{{"Caches" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
                     <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, {children: poolState.topology.spare})" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
-                    <strong>Spares: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
+                    <strong>{{"Spares" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
                     <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.log.length > 0, 1, 0, {children: poolState.topology.log})" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
-                    <strong>Logs: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
+                    <strong>{{"Logs" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
                     <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 

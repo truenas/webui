@@ -24,7 +24,7 @@
 
               <button mat-icon-button class="" (click)="router.navigate(['network/interfaces/edit/'+nicState.name])">
                 <mat-icon role="img"
-                          matTooltip="Configure {{nicState.name}}"
+                          matTooltip="{{'Configure' | translate}} {{nicState.name}}"
                   matTooltipPosition="above"
                   aria-label="Configure Interface">
                     settings
@@ -33,7 +33,7 @@
 
               <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])">
                 <mat-icon role="img"
-                  matTooltip="Network Reports"
+                  matTooltip="{{'Network Reports' | translate}}"
                   matTooltipPosition="above"
                   aria-label="Network Reports">
                     insert_chart
@@ -61,11 +61,11 @@
 
                   <div *ngIf="traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic">
                     <div class="tr">
-                      <div class="td label"><strong>In: &nbsp;</strong></div>
+                      <div class="td label"><strong>{{"In" | translate}}: &nbsp;</strong></div>
                       <div class="td value"><span class="stat">{{traffic.received}}</span> {{traffic.receivedUnits}}/s</div>
                     </div>
                     <div class="tr">
-                      <div class="td label"><strong>Out: </strong>&nbsp;</div>
+                      <div class="td label"><strong>{{"Out" | translate}}: </strong>&nbsp;</div>
                       <div class="td value"><span class="stat">{{traffic.sent}}</span> {{traffic.sentUnits}}/s</div>
                     </div>
                   </div>

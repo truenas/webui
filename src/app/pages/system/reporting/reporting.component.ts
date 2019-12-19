@@ -49,7 +49,6 @@ export class ReportingComponent {
   {
     type: 'input',
     name: 'graph_age',
-    inputType: 'number',
     placeholder: helptext.graph_age_placeholder,
     tooltip: helptext.graph_age_tooltip,
     validation: helptext.graph_age_validation,
@@ -58,7 +57,6 @@ export class ReportingComponent {
   {
     type: 'input',
     name: 'graph_points',
-    inputType: 'number',
     placeholder: helptext.graph_points_placeholder,
     tooltip: helptext.graph_points_tooltip,
     validation: helptext.graph_points_validation,
