@@ -53,7 +53,7 @@ export class UpdateComponent implements OnInit {
   public showSpinner: boolean = false;
   public singleDescription: string;
   public updatecheck_tooltip = helptext.tooltip_update_check;
-  public train_version: null;
+  public train_version = null;
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
