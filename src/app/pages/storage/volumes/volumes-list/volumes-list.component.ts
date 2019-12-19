@@ -70,7 +70,6 @@ interface ZfsData {
 export class VolumesListTableConfig implements InputTableConf {
   public hideTopActions = true;
   public flattenedVolData: any;
-  public queryCall = 'pool.dataset.query';
   public tableData: TreeNode[] = [];
   public columns: Array < any > = [
     { name: 'Name', prop: 'name', always_display: true  },
@@ -1090,6 +1089,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   async ngOnInit(): Promise<void> {
     this.showSpinner = true;
 
+    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map(res => res.pool)).toPromise;
+
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
@@ -1098,8 +1099,13 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       if (pools.length > 0) {
         for (const pool of pools) {
           pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
-          pool.children = [datasets.find(set => set.name === pool.name)];
-          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);
+
+          /* Filter out system datasets */
+          const pChild = datasets.find(set => set.name === pool.name);
+          pChild.children = pChild.children.filter(child => child.name.indexOf(`${pool.name}/.system`) === -1);
+          pool.children = [pChild];
+
+          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);          
           pool.type = 'zpool';
 
           if (pool.children && pool.children[0]) {
@@ -1147,9 +1153,5 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
-
-    this.ws.call('systemdataset.config').subscribe((res) => {
-      this.systemdatasetPool = res.pool;
-    })
   }
 }

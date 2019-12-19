@@ -9,8 +9,7 @@ import {
 } from '@angular/core';
 import * as _ from 'lodash';
 import { Router, ActivatedRoute } from '@angular/router';
-// import { DragulaService } from 'ng2-dragula';
-import { Subscription } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
@@ -24,6 +23,8 @@ import { DownloadKeyModalDialog } from '../../../../components/common/dialog/dow
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/manager/manager';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { switchMap, tap, take } from 'rxjs/operators';
 
 
 @Component({
@@ -575,44 +576,65 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         let body = {};
-        this.loader.open();
         if (this.isNew) {
           body = {name: this.name, encryption: this.isEncrypted, topology: { data: layout } };
         } else {
           body  = {name: this.name, topology: layout };
         }
-        this.busy =
-          this.ws
-          .job(this.pk ? this.editCall : this.addCall, [body])
-          .subscribe(
-            (res) => {
-              this.loader.close();
-              if(this.isEncrypted) {
-                let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
 
-                dialogRef.componentInstance.volumeId = res.data.id;
-                dialogRef.componentInstance.fileName = 'pool_' + res.data.name + '_encryption.key';
-                dialogRef.afterClosed().subscribe(result => {
-                  this.goBack();
-                });
+        const dialogRef = this.mdDialog.open(EntityJobComponent, {
+          data: { title: T("Creating Pool"), disableClose: true }
+        });
+        dialogRef.componentInstance.setCall(this.pk ? this.editCall : this.addCall, [body]);
+        dialogRef.componentInstance.success
+          .pipe(
+            tap(res => console.log("success", res)),
+            switchMap((r: any) => {
+              if (this.isEncrypted) {
+                const downloadDialogRef = this.mdDialog.open(
+                  DownloadKeyModalDialog,
+                  { disableClose: true }
+                );
+                downloadDialogRef.componentInstance.volumeId = r.data.id;
+                downloadDialogRef.componentInstance.fileName =
+                  "pool_" + r.data.name + "_encryption.key";
+
+                return downloadDialogRef.afterClosed();
               }
-              else {
-                this.goBack();
-              }
-            },
-            (res) => {
-              this.loader.close();
-              if (res.code == 409) {
-                this.error = '';
-                for (let i in res.error) {
-                  res.error[i].forEach(
-                    (error) => { this.error += error + '<br />'; });
+
+              return of(true);
+            }),
+            take(1)
+          )
+          .subscribe(
+            () => {},
+            e => {
+              if (e.code === 409) {
+                this.error = "";
+                for (let i in e.error) {
+                  e.error[i].forEach(error => {
+                    this.error += error + "<br />";
+                  });
                 }
               } else {
-                this.dialog.errorReport(T('Error creating pool'), res.error.error_message, res.error.traceback);
+                this.dialog.errorReport(
+                  T("Error creating pool"),
+                  res.error.error_message,
+                  res.error.traceback
+                );
               }
-            });
-          }
+            },
+            () => {
+              dialogRef.close(false);
+              this.goBack();
+            }
+          );
+        dialogRef.componentInstance.failure.subscribe(error => {
+          dialogRef.close(false);
+          new EntityUtils().handleWSError(self, error, this.dialog);
+        });
+        dialogRef.componentInstance.submit();
+      }
     });
   }
 
