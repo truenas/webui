@@ -46,6 +46,7 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './support/eula/eula.component';
+import { T } from '../../translate-marker';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -197,11 +198,11 @@ export const routes: Routes = [
         }, {
           path: 'add',
           component: AlertServiceComponent,
-          data: { title: 'Add Alert Service', breadcrumb: 'Add Alert Service' },
+          data: { title: T('Add Alert Service'), breadcrumb: T('Add Alert Service') },
         }, {
           path: 'edit/:pk',
           component: AlertServiceComponent,
-          data: { title: 'Edit Alert Service', breadcrumb: 'Edit Alert Service' },
+          data: { title: T('Edit Alert Service'), breadcrumb: T('Edit Alert Service') },
         }
       ]
     },{
