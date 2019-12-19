@@ -1,45 +1,30 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-  AfterViewInit,
-} from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
 import * as _ from 'lodash';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Subscription, of } from 'rxjs';
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
+import { of, Subscription } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
+import helptext from '../../../../helptext/storage/volumes/manager/manager';
+import { DialogService, RestService, WebSocketService } from '../../../../services/';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { StorageService } from '../../../../services/storage.service';
+import { T } from '../../../../translate-marker';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityUtils } from '../../../common/entity/utils';
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { TranslateService } from '@ngx-translate/core';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { StorageService } from '../../../../services/storage.service'
-import { EntityUtils } from '../../../common/entity/utils';
-import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/manager/manager';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { switchMap, tap, take } from 'rxjs/operators';
-
 
 @Component({
   selector: 'app-manager',
   templateUrl: 'manager.component.html',
-  styleUrls: [
-    'manager.component.css',
-  ],
-  providers: [
-    RestService,
-    DialogService
-  ],
+  styleUrls: ['manager.component.css'],
+  providers: [RestService, DialogService],
 })
 export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
-
   public disks: Array < any > = [];
   public suggestable_disks: Array < any > = [];
   public can_suggest = false;
@@ -126,46 +111,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public swapondrive = 2;
 
   constructor(
-    private rest: RestService,
     private ws: WebSocketService,
     private router: Router,
-//    private dragulaService: DragulaService,
     private dialog:DialogService,
     private loader:AppLoaderService,
     protected route: ActivatedRoute,
     public mdDialog: MatDialog,
     public translate: TranslateService,
-    public sorter: StorageService ) {
-
-/*    dragulaService.setOptions('pool-vdev', {
-      accepts: (el, target, source, sibling) => { return true; },
-    });
-    dragulaService.drag.subscribe((value) => { console.log(value); });
-    dragulaService.drop.subscribe((value) => {
-      let [bucket, diskDom, destDom, srcDom, _] = value;
-      let disk, srcVdev, destVdev;
-      this.diskComponents.forEach((item) => {
-        if (diskDom == item.elementRef.nativeElement) {
-          disk = item;
-        }
-      });
-      this.vdevComponents.forEach((item) => {
-        if (destDom == item.dnd.nativeElement) {
-          destVdev = item;
-        } else if (srcDom == item.dnd.nativeElement) {
-          srcVdev = item;
-        }
-      });
-      if (srcVdev) {
-        srcVdev.removeDisk(disk);
-      }
-      if (destVdev) {
-        destVdev.addDisk(disk);
-      }
-    });
-    dragulaService.over.subscribe((value) => { console.log(value); });
-    dragulaService.out.subscribe((value) => { console.log(value); }); */
-  }
+    public sorter: StorageService) {}
 
   duplicate() {
     const duplicable_disks = this.duplicable_disks;
@@ -588,16 +541,11 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         dialogRef.componentInstance.setCall(this.pk ? this.editCall : this.addCall, [body]);
         dialogRef.componentInstance.success
           .pipe(
-            tap(res => console.log("success", res)),
             switchMap((r: any) => {
               if (this.isEncrypted) {
-                const downloadDialogRef = this.mdDialog.open(
-                  DownloadKeyModalDialog,
-                  { disableClose: true }
-                );
+                const downloadDialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                 downloadDialogRef.componentInstance.volumeId = r.data.id;
-                downloadDialogRef.componentInstance.fileName =
-                  "pool_" + r.data.name + "_encryption.key";
+                downloadDialogRef.componentInstance.fileName = "pool_" + r.data.name + "_encryption.key";
 
                 return downloadDialogRef.afterClosed();
               }
@@ -617,11 +565,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                   });
                 }
               } else {
-                this.dialog.errorReport(
-                  T("Error creating pool"),
-                  res.error.error_message,
-                  res.error.traceback
-                );
+                this.dialog.errorReport(T("Error creating pool"), res.error.error_message, res.error.traceback);
               }
             },
             () => {
