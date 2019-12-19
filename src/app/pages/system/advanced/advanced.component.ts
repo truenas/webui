@@ -35,7 +35,7 @@ export class AdvancedComponent implements OnDestroy {
   public is_freenas = false;
   public custActions: Array < any > = [{
     id: 'save_debug',
-    name: 'Save Debug',
+    name: T('Save Debug'),
     function: () => {
       this.ws.call('system.info', []).subscribe((res) => {
         let fileName = "";
