@@ -251,7 +251,38 @@ export class VMListComponent {
             icon: "delete",
             label: T("Delete"),
             onClick: delete_row => {
-                this.entityList.doDelete(delete_row);
+                const parent = this;
+                const conf: DialogFormConfiguration = {
+                    title: T('Delete Virtual Machine'),
+                    fieldConfig: [
+                        {
+                            type: 'checkbox',
+                            name: 'zvols',
+                            placeholder: T('Delete data too?'),
+                            value: false
+                        },
+                        {
+                            type: 'checkbox',
+                            name: 'force',
+                            placeholder: T('Force?'),
+                            value: false,
+                            tooltip: T('Some explanation here would be excellent.')
+                        }
+                    ],
+                    saveButtonText: T('Delete'),
+                    customSubmit: function (entityDialog) {
+                        entityDialog.dialogRef.close(true);
+                        const params = [delete_row.id];
+                        if (entityDialog.formValue.name) {
+                            params.push(entityDialog.formValue.name);
+                        }
+                        console.log(entityDialog.formValue)
+                        // parent.doRowAction(delete_row, parent.wsMethods.delete, params, true);
+                    }                  
+
+                }
+                this.dialogService.dialogForm(conf);
+                // this.entityList.doDelete(delete_row);
             }
         },
         {
