@@ -70,6 +70,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                                   one is available. Click \
                                   <i>APPLY PENDING UPDATE</i> to install \
                                   the downloaded update.');
+  public train_version = null;
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
@@ -583,6 +584,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.ws.call('update.check_available')
       .subscribe(
         (res) => {
+          if (res.version) {
+            this.train_version = res.version;
+          }
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
             this.updates_available = true;
