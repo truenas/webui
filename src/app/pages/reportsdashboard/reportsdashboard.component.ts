@@ -311,16 +311,16 @@ diskReportBuilderSetup(){
           {
             type: 'multimenu',
             name: 'devices',
-            label: 'Devices',
+            label: T('Devices'),
             disabled:false,
             options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
           },
           {
             type: 'multimenu',
             name: 'metrics',
-            label: 'Metrics',
+            label: T('Metrics'),
             disabled: false,
-            options: this.diskMetrics ? this.diskMetrics.map((v) => v) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
           }
     ]
 
@@ -334,7 +334,7 @@ diskReportBuilderSetup(){
         config:[
           {
             type: 'select',
-            name: T('devices'),
+            name: 'devices',
             width:'calc(50% - 16px)',
             placeholder: T('Choose a Device'),
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
@@ -345,7 +345,7 @@ diskReportBuilderSetup(){
           },
           {
             type: 'select',
-            name: T('metrics'),
+            name: 'metrics',
             width:'calc(50% - 16px)',
             placeholder: T('Choose a metric'),
             options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
