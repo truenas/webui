@@ -39,7 +39,7 @@
             </h1>
           <div class="memory-used-caption">
             <span *ngIf="memData">
-              total memory installed
+              {{"total memory installed" | translate}}
             </span>
           </div>
           <!-- Legend --> 
@@ -63,7 +63,7 @@
         <!-- Mobile Legend --> 
           <div *ngIf="screenType == 'Mobile'" fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
             <!-- Mobile -->
-            <div fxFlex="100" fxHide.gt-xs class="list-subheader">  <span>Legend</span></div>
+            <div fxFlex="100" fxHide.gt-xs class="list-subheader">  <span>{{"Legend" | translate}}</span></div>
             <mat-list *ngIf="memData; else noLegend" fxFlex="100" fxHide.gt-xs>
               <mat-list-item *ngFor="let listItem of memData.data; let i=index"  class="legend-item">
                 <div class="legend-swatch" [style.background-color]="trustedSecurity(colorPattern[i])"></div>
