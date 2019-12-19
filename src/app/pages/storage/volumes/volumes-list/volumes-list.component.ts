@@ -240,7 +240,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       self.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
                     }
                     else {
-                      new EntityUtils().handleError(this, res);
+                      new EntityUtils().handleWSError(this, res, this.dialog);
                     }
                   });
                 }

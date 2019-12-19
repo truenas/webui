@@ -253,7 +253,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     },
     (err) => {
-      new EntityUtils().handleError(this, err);
+      new EntityUtils().handleWSError(this, err, this.dialog);
     });
   }
 
@@ -556,18 +556,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           )
           .subscribe(
             () => {},
-            e => {
-              if (e.code === 409) {
-                this.error = "";
-                for (let i in e.error) {
-                  e.error[i].forEach(error => {
-                    this.error += error + "<br />";
-                  });
-                }
-              } else {
-                this.dialog.errorReport(T("Error creating pool"), res.error.error_message, res.error.traceback);
-              }
-            },
+            e => new EntityUtils().handleWSError(this, e, this.dialog),
             () => {
               dialogRef.close(false);
               this.goBack();
