@@ -272,17 +272,20 @@ export class VMListComponent {
                     saveButtonText: T('Delete'),
                     customSubmit: function (entityDialog) {
                         entityDialog.dialogRef.close(true);
-                        const params = [delete_row.id];
-                        if (entityDialog.formValue.name) {
-                            params.push(entityDialog.formValue.name);
-                        }
-                        console.log(entityDialog.formValue)
-                        // parent.doRowAction(delete_row, parent.wsMethods.delete, params, true);
+                        const params = [
+                            delete_row.id,
+                            {
+                                zvols: entityDialog.formValue.zvols,
+                                force: entityDialog.formValue.force
+                            }
+                        ];
+                        // won't work until v 12
+                        parent.doRowAction(delete_row, parent.wsDelete, params, true);
                     }                  
 
                 }
                 this.dialogService.dialogForm(conf);
-                // this.entityList.doDelete(delete_row);
+                // this.entityList.doDelete(delete_row); old method
             }
         },
         {
