@@ -53,6 +53,7 @@ export class UpdateComponent implements OnInit {
   public showSpinner: boolean = false;
   public singleDescription: string;
   public updatecheck_tooltip = helptext.tooltip_update_check;
+  public train_version: null;
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
@@ -488,6 +489,9 @@ export class UpdateComponent implements OnInit {
     this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
         (res) => {
+          if (res.version) {
+            this.train_version = res.version;
+          }
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
             this.updates_available = true;
