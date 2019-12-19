@@ -155,7 +155,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
 
   generateTabs(){
-      let labels = ['CPU', 'Disk', 'Memory', 'Network', 'NFS', 'Partition', 'System', 'Target', 'ZFS'];
+      let labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
       let UPS = this.otherReports.find((report) => {
         return report.title.startsWith('UPS');
       });
@@ -334,24 +334,24 @@ diskReportBuilderSetup(){
         config:[
           {
             type: 'select',
-            name: 'devices',
+            name: T('devices'),
             width:'calc(50% - 16px)',
-            placeholder: 'Choose a Device',
+            placeholder: T('Choose a Device'),
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
             required: true,
             multiple: true,
-            tooltip:'Choose a device for your report.',
+            tooltip:T('Choose a device for your report.'),
             class:'inline'
           },
           {
             type: 'select',
-            name: 'metrics',
+            name: T('metrics'),
             width:'calc(50% - 16px)',
-            placeholder: 'Choose a metric',
+            placeholder: T('Choose a metric'),
             options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
             required: true,
             multiple: true,
-            tooltip:'Choose a metric to display.',
+            tooltip:T('Choose a metric to display.'),
             class:'inline'
           }
         ]
