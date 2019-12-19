@@ -65,11 +65,11 @@ ldap_ssl_name : 'ssl',
 ldap_ssl_placeholder : T('Encryption Mode'),
 ldap_ssl_tooltip: T('Options for encrypting the LDAP connection: \
  <ul> \
- <li><i>OFF:</i> Do not encrypt the LDAP connection.</li> \
- <li><i>ON:</i> <i>SSL</i> encrypts the LDAP connection and uses port \
+ <li><i>OFF:</i> do not encrypt the LDAP connection.</li> \
+ <li><i>ON:</i> encrypt the LDAP connection with <i>SSL</i> on port \
  <i>636</i>.</li> \
- <li><i>START_TLS:</i> <i>STARTTLS</i> encrypts the LDAP connection and \
- uses the default LDAP port <i>389</i>.</li> \
+ <li><i>START_TLS:</i> encrypt the LDAP connection with <i>STARTTLS</i> \
+ on the default LDAP port <i>389</i>.</li> \
  </ul>'),
 
 ldap_certificate_name : 'certificate',
