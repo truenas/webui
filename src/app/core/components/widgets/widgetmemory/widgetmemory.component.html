@@ -14,7 +14,7 @@
             <div class="controls">
               <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/memory'])">
                 <mat-icon role="img"
-                  matTooltip="Memory Reports"
+                  matTooltip="{{'Memory Reports' | translate}}"
                   matTooltipPosition="above"
                   aria-label="Memory Reports">
                     insert_chart
@@ -39,7 +39,7 @@
             </h1>
           <div class="memory-used-caption">
             <span *ngIf="memData">
-              total memory installed
+              {{"total memory installed" | translate}}
             </span>
           </div>
           <!-- Legend --> 
