@@ -2,7 +2,6 @@
 // rc2 workaround
 import {ApplicationRef, enableProdMode, ErrorHandler} from '@angular/core';
 import {disableDebugTools, enableDebugTools} from '@angular/platform-browser';
-import * as Raven from 'raven-js';
 
 // Environment Providers
 let PROVIDERS: any[] = [
@@ -20,10 +19,6 @@ export const environment = {
 let _decorateModuleRef = function identity<T>(value: T): T { return value; };
 
 // Sentry Error handling for production mode
-
-export class RavenErrorHandler implements ErrorHandler {
-  handleError(err: any): void { Raven.captureException(err.originalError); }
-}
 
 _decorateModuleRef = (modRef: any) => {
   const appRef = modRef.injector.get(ApplicationRef);
