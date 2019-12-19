@@ -101,14 +101,14 @@
                   <mat-list-item><strong>Path: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
 
                   <mat-list-item>
-                    <strong>Available Space: </strong>&nbsp;&nbsp; 
+                    <strong>{{ "Available Space" | translate }}: </strong>&nbsp;&nbsp; 
                     <span *ngIf="volumeData && volumeData.used_pct;else unavail">
-                      <span class="value">{{diskSize}}</span>
-                      <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
-                      <span class="value-used">({{volumeData.used_pct}} used)</span>&nbsp;&nbsp;
+                      <span class="value">{{diskSize | translate}}</span>
+                      <span class="value-units">{{diskSizeLabel | translate}}</span>&nbsp;&nbsp;
+                      <span class="value-used">({{volumeData.used_pct | translate}} used)</span>&nbsp;&nbsp;
                     </span>
                     <ng-template #unavail>
-                      <span class="value">Gathering data...</span>
+                      <span class="value">{{"Gathering data" | translate}}...</span>
                     </ng-template>
                   </mat-list-item>
                   
@@ -175,7 +175,7 @@
                  (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, disk )" 
                  (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
                  [ngClass]="{'clickable': true}">
-                <strong>{{checkMultipathLabel(disk.disk)}}<span *ngIf="checkMultipath(disk.disk)">&nbsp;(multipath)</span>:</strong>&nbsp;&nbsp; {{disk.status}}
+                <strong>{{checkMultipathLabel(disk.disk)}}<span *ngIf="checkMultipath(disk.disk)">&nbsp;({{"multipath" | translate}})</span>:</strong>&nbsp;&nbsp; {{disk.status | translate}}
                 <span *ngIf="disk.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
@@ -189,7 +189,7 @@
                  (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, path[currentSlideIndex].dataSource)" 
                  (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk, checkMultipath(path[currentSlideIndex].dataSource.disk))" 
                  [ngClass]="{'clickable': true}">
-                <strong>{{path[2].dataSource.disk}}:</strong>&nbsp;&nbsp; {{path[2].dataSource.status}}
+                <strong>{{path[2].dataSource.disk}}:</strong>&nbsp;&nbsp; {{path[2].dataSource.status | translate}}
                 <span *ngIf="path[2].dataSource.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
@@ -201,19 +201,19 @@
 
 
           <ng-template #disk_details>
-            <div class="list-subheader"><span class="capitalize">Disk Details</span></div>
+            <div class="list-subheader"><span class="capitalize">{{"Disk Details" | translate}}</span></div>
             <mat-list >
               <mat-list-item *ngIf="!currentMultipathDetails" role="listitem">
-                <strong> Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+                <strong> {{"Name" | translate}}:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
               </mat-list-item>
 
             <ng-template [ngIf]="currentMultipathDetails">
               <mat-list-item role="listitem">
-                <strong> Multipath Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+                <strong> {{"Multipath Name" | translate}}:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
               </mat-list-item>
 
               <mat-list-item *ngFor="let child of currentMultipathDetails.children" role="listitem">
-                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> Disk:</strong>&nbsp;&nbsp; {{child.name}}
+                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> {{"Disk" | translate}}:</strong>&nbsp;&nbsp; {{child.name}}
               </mat-list-item>
             </ng-template>
 
@@ -221,18 +221,18 @@
                 <strong> GUID:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.guid}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Read Errors:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.read_errors}}
+                <strong> {{"Read Errors" | translate}}:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.read_errors}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Write Errors:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.write_errors}}
+                <strong> {{"Write Errors" | translate}}:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.write_errors}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Self Healed:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.self_healed}}
+                <strong> {{"Self Healed" | translate}}:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.self_healed}}
               </mat-list-item>
             </mat-list>
             
             <!-- Dynamic disk details-->
-            <div class="list-subheader">Advanced Details</div>
+            <div class="list-subheader">{{"Advanced Details" | translate}}</div>
             <mat-list>
               <ng-container *ngFor="let key of currentDiskDetailsKeys">
                 <mat-list-item *ngIf="currentDiskDetails[key]" role="listitem">
