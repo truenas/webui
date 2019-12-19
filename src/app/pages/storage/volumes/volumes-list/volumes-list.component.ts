@@ -234,14 +234,9 @@ export class VolumesListTableConfig implements InputTableConf {
                       entityDialog.dialogRef.close(true);
                       self.loader.close();
                       self.parentVolumesListComponent.repaintMe();
-                  }, (res) => {
+                  }, e => {
                     self.loader.close();
-                    if (res.message) {
-                      self.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
-                    }
-                    else {
-                      new EntityUtils().handleWSError(this, res, this.dialog);
-                    }
+                    new EntityUtils().handleWSError(this, e, this.dialog);
                   });
                 }
               }
