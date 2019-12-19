@@ -111,7 +111,7 @@
           <div class="slide addresses" *ngIf="path[1].name == 'addresses'" fxFlex="100">
             <div class="list-subheader">{{currentSlideName}}</div>
             <mat-list *ngIf="nicState && nicState.aliases.length > 0"> 
-              <mat-list-item role="listitem"*ngFor="let ip of nicState.aliases;" [ngClass]="{'hidden': ip.type !== 'INET'}">
+              <mat-list-item role="listitem"*ngFor="let ip of nicState.aliases;" [ngClass]="{'hidden': ip.type !== 'INET' && ip.type !== 'INET6'}">
                 <strong>{{ip.type}}:</strong>&nbsp;&nbsp; {{ip.address}}/{{ip.netmask}}
               </mat-list-item>
             </mat-list>
@@ -148,7 +148,7 @@
           <div class="slide vlan-addresses" *ngIf="path[2].name == 'vlan addresses'"  fxFlex="100">
             <div class="list-subheader">{{currentSlideName}}</div>
             <mat-list *ngIf="nicState && vlanAliases(path[2].index).length > 0"> 
-              <mat-list-item role="listitem"*ngFor="let ip of vlanAliases(path[2].index);" [ngClass]="{'hidden': ip.type !== 'INET'}">
+              <mat-list-item role="listitem"*ngFor="let ip of vlanAliases(path[2].index);" [ngClass]="{'hidden': ip.type !== 'INET' && ip.type !== 'INET6'}">
                 <strong>{{ip.type}}:</strong>&nbsp;&nbsp; {{ip.address}}/{{ip.netmask}}
               </mat-list-item>
             </mat-list>

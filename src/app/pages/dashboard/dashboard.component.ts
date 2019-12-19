@@ -243,7 +243,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone.splice(i, 1)
         } else {
           // Only keep INET addresses
-          clone[i].state.aliases = clone[i].state.aliases.filter(address => address.type == "INET");
+          clone[i].state.aliases = clone[i].state.aliases.filter(address => address.type == "INET" || address.type == 'INET6');
         }
       }
       

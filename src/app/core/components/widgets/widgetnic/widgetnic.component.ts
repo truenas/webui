@@ -92,7 +92,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     if(!this.nicState && !this.nicState.aliases){ return [];}
 
     let result = this.nicState.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6' ;
     });
     
     return result;
@@ -104,9 +104,8 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
 
     let vlan = this.nicState.vlans[ parseInt(this.path[2].index) ];
     let result = vlan.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6' ;
     });
-    console.log(vlan);
 
     return result;
   }
@@ -189,7 +188,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     if(typeof vlanIndex == 'string'){ vlanIndex = parseInt(vlanIndex); }
     let vlan = this.nicState.vlans[vlanIndex];
     let result = vlan.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6';
     });
     return result;
   }
