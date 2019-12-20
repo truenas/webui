@@ -8,7 +8,10 @@
     <div id="double-confirm-mask" [ngStyle]="{opacity: '.38', position: 'relative', top: '35px'}">{{conf['name']}}</div>
   </div>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
-    <button mat-icon-button type="button" *ngIf="field.hideButton===false" (click)="togglePW()">
+    <button mat-icon-button type="button" *ngIf="field.hideButton===false" (click)="togglePW()"
+      ix-auto
+      ix-auto-type="button"
+      ix-auto-identifier="{{config.placeholder}}_toggle-pw">
       <mat-icon matTooltip="Hide" *ngIf="showPassword">visibility</mat-icon>
       <mat-icon matTooltip="Show" *ngIf="!showPassword">visibility_off</mat-icon>
     </button>
