@@ -55,7 +55,7 @@
                 </div> 
 
                 <div class="link-state" [ngClass]="{'up': nicState.link_state == 'LINK_STATE_UP', 'down': nicState.link_state !== 'LINK_STATE_UP'}">
-                  {{linkState}}
+                  {{linkState | translate }}
                     <mat-icon *ngIf="nicState.link_state == 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                     <mat-icon *ngIf="nicState.link_state !== 'LINK_STATE_UP' " role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
 
@@ -71,7 +71,7 @@
                   </div>
 
                   <div *ngIf="!traffic && nicState.link_state == 'LINK_STATE_UP'" class="nic-traffic-gathering">
-                    Gathering data...
+                    {{ "Gathering data" | translate }}...
                   </div> 
 
                   <div *ngIf="nicState.link_state !== 'LINK_STATE_UP'" class="no-nic-traffic">
@@ -94,11 +94,11 @@
                       <mat-icon *ngIf="ipAddresses.length > 1" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
                   <mat-list-item (click)="updateSlide('vlans', nicState.vlans.length > 0, 1)" [ngClass]="{'clickable': nicState.vlans.length > 0}">
-                      <strong>{{"VLANs" | translate}}: </strong>&nbsp;&nbsp;  {{nicState.vlans.length}}
+                    <strong>{{"VLANs" | translate}}: </strong>&nbsp;&nbsp;  {{nicState.vlans.length}}
                       <mat-icon *ngIf="nicState.vlans.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
                   <mat-list-item *ngIf="nicState.lagg_ports" (click)="updateSlide('interfaces',nicState.lagg_ports.length > 0, 1)" [ngClass]="{'clickable': nicState.lagg_ports.length > 0}">
-                      <strong>{{"Interfaces" | translate}}: </strong>&nbsp;&nbsp;  {{nicState.lagg_ports.length}}
+                    <strong>{{"Interfaces" | translate}}: </strong>&nbsp;&nbsp;  {{nicState.lagg_ports.length}}
                       <mat-icon *ngIf="nicState.lagg_ports.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
                 </mat-list>
@@ -149,7 +149,7 @@
             <div class="list-subheader">{{currentSlideName}}</div>
             <mat-list *ngIf="nicState && vlanAliases(path[2].index).length > 0"> 
               <mat-list-item role="listitem"*ngFor="let ip of vlanAliases(path[2].index);" [ngClass]="{'hidden': ip.type !== 'INET' && ip.type !== 'INET6'}">
-                <strong>{{ip.type}}:</strong>&nbsp;&nbsp; {{ip.address}}/{{ip.netmask}}
+                <strong>{{ip.type | translate}}:</strong>&nbsp;&nbsp; {{ip.address}}/{{ip.netmask}}
               </mat-list-item>
             </mat-list>
           </div>
