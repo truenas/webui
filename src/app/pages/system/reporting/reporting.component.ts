@@ -16,7 +16,7 @@ export class ReportingComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
   public entityForm: any;
-  public rrd_checkbox: any;
+  public isCpuCheckboxChecked: boolean;
   public graphPoints: any;
   public graphAge: any;
 
@@ -73,6 +73,7 @@ export class ReportingComponent {
   resourceTransformIncomingRestData(data) {
     this.graphPoints = data.graph_points;
     this.graphAge = data.graph_age;
+    this.isCpuCheckboxChecked = data.cpu_in_percentage;
     return data;
   }
 
@@ -81,7 +82,8 @@ export class ReportingComponent {
   }
   
   public customSubmit(body) {
-    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints) {
+    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints || 
+      body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
       this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false, 
         helptext.dialog.action).subscribe((res) => {
         if (res) {
@@ -98,6 +100,7 @@ export class ReportingComponent {
   doSubmit(body) {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
+    this.isCpuCheckboxChecked = body.cpu_in_percentage;
     this.load.open();
     return this.ws.call('reporting.update', [body]).subscribe((res) => {
       this.load.close();

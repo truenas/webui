@@ -422,6 +422,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           this.checkUpgradePending();
         }
       }
+      
+      this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
       window.sessionStorage.setItem('ha_status', ha_enabled.toString());
     });
   }

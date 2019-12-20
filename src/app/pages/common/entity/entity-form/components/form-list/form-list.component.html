@@ -10,7 +10,7 @@
               <div *ngIf="config.deleteButtonOnFirst; else defaultButtons">
                     <button *ngIf="i === 0" mat-button color="primary" id="{{config.name+i}}" type="button"
                         (click)="add()" [disabled]="listsFromArray.controls[i].disabled">
-                        {{config.addBtnMessage}}
+                        {{config.addBtnMessage | translate}}
                     </button>
                     <button mat-button color="accent" class="listBtn" type="button"
                         (click)="delete(i)" [disabled]="listsFromArray.controls[i].disabled || listsFromArray.length === 1">
