@@ -49,7 +49,7 @@
             <ng-template #noUpdateRunning>
               <div fxHide.xs fxFlex="18" class="update-action">
                 <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-                <simple-failover-button *ngIf="isPassive"></simple-failover-button>
+                <simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></simple-failover-button>
               </div>
             </ng-template>  
           </div>
