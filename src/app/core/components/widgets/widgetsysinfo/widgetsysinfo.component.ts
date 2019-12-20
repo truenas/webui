@@ -52,6 +52,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public isFN: boolean = false;
   public isUpdateRunning = false;
   public is_ha: boolean;
+  public ha_status:string;
   public updateMethod = 'update.update';
   public screenType: string = 'Desktop';
 
@@ -75,20 +76,21 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   ngAfterViewInit(){
 
     this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
       if(evt.data.status == "AVAILABLE"){
         this.updateAvailable = true;
       }
     });
 
     if(this.isHA && this.isPassive){
-      // Delay query
-      setTimeout(() => {
-        this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
-          const evt = {name: 'SysInfoPassive', data:res};
-          this.processSysInfo(evt);
-        });
-      }, 500);
+      this.core.register({observerClass:this,eventName:"HA_Status"}).subscribe((evt:CoreEvent) => {
+        if(evt.data == "HA Enabled" && !this.data){
+          this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
+            const evt = {name: 'SysInfoPassive', data:res};
+            this.processSysInfo(evt);
+          });
+        } 
+        this.ha_status = evt.data;
+      });
     } else {
 
       this.ws.call('system.info').subscribe((res) => {

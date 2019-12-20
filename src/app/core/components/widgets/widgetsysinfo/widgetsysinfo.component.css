@@ -261,6 +261,29 @@ img.platform-logo{
   font-weight:500;
 }
 
+.right{
+  position:relative;
+}
+
+.ha-status .spinner-wrapper,
+.ha-status h3{
+  width: auto;
+  height: auto;
+  text-align: center;
+  top: 49%;
+  position: relative;
+}
+
+div.generic.alert {
+  text-align:center;
+}
+
+div.generic.alert .mat-icon{
+  width:auto;
+  height:auto;
+  font-size:48px;
+}
+
 .left.passive .product-image img {
   opacity: 0.5;
 }
