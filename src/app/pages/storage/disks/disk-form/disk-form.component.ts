@@ -185,7 +185,7 @@ export class DiskFormComponent {
   }
 
   beforeSubmit(value) {
-    if (value.passwd && value.passwd === '') {
+    if (value.passwd === '') {
       delete value.passwd;
     }
 
@@ -196,6 +196,8 @@ export class DiskFormComponent {
     delete value.clear_pw;
     delete value.name;
     delete value.serial;
+
+    console.log(value)
 
     value.critical = value.critical === '' ? null : value.critical;
     value.difference = value.difference === '' ? null : value.difference;
