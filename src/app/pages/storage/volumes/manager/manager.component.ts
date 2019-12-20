@@ -524,7 +524,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           vdev.getDisks().forEach((disk) => {
             disks.push(disk.devname); });
           if (disks.length > 0) {
-            layout.push({ type: vdev.type.toUpperCase(), disks: disks });
+            let type = vdev.type.toUpperCase();
+            type = type === 'RAIDZ' ? 'RAIDZ1' : type;
+            layout.push({ type, disks });
           }
         });
 
@@ -536,7 +538,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         const dialogRef = this.mdDialog.open(EntityJobComponent, {
-          data: { title: T("Creating Pool"), disableClose: true }
+          data: { title: confirmButton, disableClose: true }
         });
         dialogRef.componentInstance.setCall(this.pk ? this.editCall : this.addCall, [body]);
         dialogRef.componentInstance.success
