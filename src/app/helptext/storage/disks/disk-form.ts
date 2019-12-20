@@ -52,8 +52,11 @@ disk_form_informational_tooltip: T('Report if drive temperature is at or\
  above this temperature in Celsius. <i>0</i> disables the report.'),
 
 disk_form_passwd_placeholder: T('SED Password'),
-disk_form_passwd_tooltip: T('Password for SED'),
+disk_form_passwd_tooltip: T('Use this field to set or change the password for SED. Leave this field blank \
+ to keep a previously-set password.'),
 
-disk_form_passwd2_placeholder: T('Confirm SED Password'),
-disk_form_passwd2_tooltip: T(''),
+clear_pw: {
+    placeholder: T('Clear SED Password'),
+    tooltip: T('Checking this box clears a previously-set password.')
+}
 }
