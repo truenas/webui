@@ -27,9 +27,9 @@ graph_points_validation: [regexValidator(/^\d+$/), rangeValidator(1, 4096 ) ],
 
 reset_button: T('Reset to Defaults'),
 dialog: {
-    title: T('Destroy the Reporting Database?'),
-    message: T('Changing the values of <i>Graph Age</i> or <i>Graph Points</i> requires destroying \
- the reporting database.'),
+    title: T('Clear the Reporting Database?'),
+    message: T('Report history will be cleared when <i>CPU reporting</i>, <i>Graph Age</i>, \
+ or <i>Graph Points</i> are changed.'),
     action: T('Continue')
 }
 }
