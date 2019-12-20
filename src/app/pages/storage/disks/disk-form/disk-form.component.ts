@@ -197,8 +197,6 @@ export class DiskFormComponent {
     delete value.name;
     delete value.serial;
 
-    console.log(value)
-
     value.critical = value.critical === '' ? null : value.critical;
     value.difference = value.difference === '' ? null : value.difference;
     value.informational = value.informational === '' ? null : value.informational;
