@@ -64,10 +64,9 @@ export const helptext_sharing_iscsi = {
   ),
 
   portal_form_placeholder_discovery_authgroup: T("Discovery Auth Group"),
-  portal_form_tooltip_discovery_authgroup: T(
-    "Select a Group ID created in <b>Authorized Access</b> if the\
- <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
- <i>Mutual CHAP</i>."
+  portal_form_tooltip_discovery_authgroup: T("Group ID created in \
+ Authorized Access. Required when the Discovery Auth Method is set to \
+ CHAP or Mutual CHAP."
   ),
 
   portal_form_placeholder_ip: T("IP Address"),

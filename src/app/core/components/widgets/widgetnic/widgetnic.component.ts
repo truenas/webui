@@ -83,16 +83,16 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   public title: string = "Interface";
 
   path: Slide[] = [
-    { name: "overview"},
-    { name: "empty"},
-    { name: "empty"}
+    { name: T("overview")},
+    { name: T("empty")},
+    { name: T("empty")}
   ];
 
   get ipAddresses(){
     if(!this.nicState && !this.nicState.aliases){ return [];}
 
     let result = this.nicState.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6' ;
     });
     
     return result;
@@ -104,9 +104,8 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
 
     let vlan = this.nicState.vlans[ parseInt(this.path[2].index) ];
     let result = vlan.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6' ;
     });
-    console.log(vlan);
 
     return result;
   }
@@ -189,7 +188,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     if(typeof vlanIndex == 'string'){ vlanIndex = parseInt(vlanIndex); }
     let vlan = this.nicState.vlans[vlanIndex];
     let result = vlan.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6';
     });
     return result;
   }
@@ -219,27 +218,27 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     // uppercase so we handle bits and bytes...
     switch(this.optimizeUnits(value)){
       case 'KB':
-        units = 'KiB';
+        units = T('KiB');
         result = value / 1024;
         break;
       case 'MB':
-        units = 'MiB';
+        units = T('MiB');
         result = value / 1024 / 1024;
         break;
       case 'GB':
-        units = 'GiB';
+        units = T('GiB');
         result = value / 1024 / 1024 / 1024;
         break;
       case 'TB':
-        units = 'TiB';
+        units = T('TiB');
         result = value / 1024 / 1024 / 1024 / 1024;
         break;
       case 'PB':
-        units = 'PiB';
+        units = T('PiB');
         result = value / 1024 / 1024 / 1024 / 1024 / 1024;
         break;
       default:
-        units = 'KiB';
+        units = T('KiB');
         result = 0.00;
     }
 

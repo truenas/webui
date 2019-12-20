@@ -426,15 +426,6 @@ export class UserFormComponent {
       entityForm.submitFunction = this.submitFunction;
     }
 
-    entityForm.formGroup.controls['username'].valueChanges.subscribe((value) => {
-      const field = _.find(this.fieldConfig, {name: "username"});
-      field['hasErrors'] = false;
-      field['errors'] = '';
-      if (this.namesInUse.includes(value) && this.entityForm.isNew) {
-        field['hasErrors'] = true;
-        field['errors'] = T(`The name <em>${value}</em> is already in use.`);
-      }
-    })
   }
 
   clean_uid(value) {
@@ -492,6 +483,7 @@ export class UserFormComponent {
       }
       if(username !=='') {
         parent.entityForm.formGroup.controls['username'].setValue(username.toLocaleLowerCase());
+        parent.entityForm.formGroup.controls['username'].markAsTouched();
       }
     };
   }

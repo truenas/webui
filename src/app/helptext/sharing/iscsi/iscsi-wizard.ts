@@ -45,8 +45,9 @@ export default {
  discovery while CHAP and Mutual CHAP require authentication."),
 
     discovery_authgroup_placeholder: T("Discovery Auth Group"),
-    discovery_authgroup_tooltip: T("Select a user created in Authorized Access if the Discovery Auth Method is set to CHAP\
- or Mutual CHAP."),
+    discovery_authgroup_tooltip: T("Group ID created in Authorized \
+ Access. Required when the Discovery Auth Method is set to CHAP or \
+ Mutual CHAP."),
 
     ip_placeholder: T("IP"),
     ip_tooltip: T("Select the IP address associated with an interface or the wildcard address of 0.0.0.0 (any interface)."),

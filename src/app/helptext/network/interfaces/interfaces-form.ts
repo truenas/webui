@@ -46,6 +46,11 @@ int_ipv6auto_tooltip : T('Set to automatically configure the IPv6 address with\
 disable_offload_capabilities_placeholder: T('Disable offload capabilities'),
 disable_offload_capabilities_tooltip: T('Set to disable NIC capabilities when using a Jail or VM.'),
 
+disable_offload_capabilities_warning_title: T('Disable Hardware Offloading'),
+disable_offload_capabilities_warning_msg: T('Disabling hardware offloading can severely reduce\
+ network performance. Disabling this feature is only recommended when an interface is used for\
+ plugin, jail, or virtual machine networking.'),
+
 int_options_placeholder : T('Options'),
 int_options_tooltip : T('Enter additional space-delimited parameters from <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig"\
@@ -118,6 +123,16 @@ vlan_pcp_placeholder: T('Priority Code Point'),
 vlan_pcp_tooltip: T('Select the Class of Service. The available 802.1p\
  Class of Service ranges from <i>Best effort (default)</i> \
  to <i>Network control (highest)</i>.'),
+vlan_pcp_options: [
+    {value:0, label:T("Best effort (default)")},
+    {value:1, label:T("Background (lowest)")},
+    {value:2, label:T("Excellent effort")},
+    {value:3, label:T("Critical applications")},
+    {value:4, label:T("Video, < 100ms latency")},
+    {value:5, label:T("Video, < 10ms latency")},
+    {value:6, label:T("Internetwork control")}, 
+    {value:7, label:T("Network control (highest)")}
+],
 
 lagg_protocol_placeholder : T('Lagg Protocol'),
 lagg_protocol_tooltip : T('Select the <a\
@@ -153,5 +168,5 @@ mtu_validation: [rangeValidator(68, 9000)],
 alias_list_placeholder: T('Aliases'),
 alias_list_label: T('Aliases'),
 
-int_save_button: T('Apply')
+int_save_button: T('Apply'),
 }

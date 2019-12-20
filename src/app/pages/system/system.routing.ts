@@ -18,8 +18,7 @@ import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
-import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
-import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
+import { NTPServerFormComponent } from './ntpservers/ntpserver-form';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
@@ -46,6 +45,7 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './support/eula/eula.component';
+import { T } from '../../translate-marker';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -167,12 +167,12 @@ export const routes: Routes = [
           data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
         }, {
           path: 'add',
-          component: NTPServerAddComponent,
+          component: NTPServerFormComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
         },
         {
           path: 'edit/:pk',
-          component: NTPServerEditComponent,
+          component: NTPServerFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
         }
       ]
@@ -197,11 +197,11 @@ export const routes: Routes = [
         }, {
           path: 'add',
           component: AlertServiceComponent,
-          data: { title: 'Add Alert Service', breadcrumb: 'Add Alert Service' },
+          data: { title: T('Add Alert Service'), breadcrumb: T('Add Alert Service') },
         }, {
           path: 'edit/:pk',
           component: AlertServiceComponent,
-          data: { title: 'Edit Alert Service', breadcrumb: 'Edit Alert Service' },
+          data: { title: T('Edit Alert Service'), breadcrumb: T('Edit Alert Service') },
         }
       ]
     },{

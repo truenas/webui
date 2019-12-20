@@ -14,6 +14,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
 import helptext from '../../../helptext/jails/jail-configuration';
 import { T } from '../../../translate-marker';
 
@@ -32,6 +33,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
   public formGroup: any;
   public error: string;
   public busy: Subscription;
+  protected namesInUse = [];
 
   protected interfaces = {
     vnetEnabled: [
@@ -67,10 +69,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       placeholder: helptext.uuid_placeholder,
       tooltip: helptext.uuid_tooltip,
       required: true,
-      validation: [ regexValidator(this.jailService.jailNameRegex) ],
-      blurStatus: true,
-      blurEvent: this.blurEvent,
-      parent: this
+      validation: [ regexValidator(this.jailService.jailNameRegex), forbiddenValues(this.namesInUse)],
     },
     {
       type: 'select',
@@ -1074,6 +1073,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
   protected vnet_default_interfaceField:any;
   protected template_list: string[];
   protected unfetchedRelease = [];
+  public showSpinner = true;
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -1100,7 +1100,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
     this.template_list = new Array<string>();
     // get jail templates as release options
@@ -1151,6 +1151,11 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         this.setRelation(config);
       }
     }
+
+    await this.jailService.listJails().toPromise().then((res) => {
+      res.forEach(i => this.namesInUse.push(i.id));
+      this.showSpinner = false;
+    })
 
     const httpsField =  _.find(this.formFields, {'name': 'https'});
     this.formGroup.controls['release'].valueChanges.subscribe((res) => {
@@ -1443,22 +1448,6 @@ export class JailAddComponent implements OnInit, AfterViewInit {
 
   prevStep() {
     this.step--;
-  }
-  blurEvent(parent){
-    
-    const jail_name = parent.formGroup.value.uuid;
-    parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
-      if(jail_wizard_res.length > 0){
-        _.find(parent.formFields, {'name' : 'uuid'})['hasErrors'] = true;
-        _.find(parent.formFields, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
-        parent.formGroup.controls.uuid.setValue("");
-  
-      } else {
-        _.find(parent.formFields, {'name' : 'uuid'})['hasErrors'] = false;
-        _.find(parent.formFields, {'name' : 'uuid'})['errors'] = '';
-
-      }
-    })
   }
 
   deparseNatForwards(value) {

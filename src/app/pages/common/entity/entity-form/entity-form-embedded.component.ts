@@ -188,7 +188,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.fieldConfig = this.conf.fieldConfig;
     this.actionButtonsAlign = this.conf.actionButtonsAlign;
     this.fieldSetDisplay = this.conf.fieldSetDisplay;
-    this.fieldSets = this.conf.fieldSets;
+    if (this.conf.fieldSets) {
+      /* Temp patch to support both FieldSet approaches */
+      this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
+    }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.setControlChangeDetection();
 

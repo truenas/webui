@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { JailService, NetworkService, DialogService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
 import { T } from '../../../translate-marker'
 import helptext from '../../../helptext/jails/jail-configuration';
 
@@ -26,6 +27,7 @@ export class JailWizardComponent {
   summary_title = "Jail Summary";
   objectKeys = Object.keys;
   entityWizard: any;
+  protected namesInUse = [];
 
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -63,10 +65,7 @@ export class JailWizardComponent {
           required: true,
           placeholder: helptext.uuid_placeholder,
           tooltip: helptext.uuid_tooltip,
-          validation: [regexValidator(this.jailService.jailNameRegex)],
-          blurStatus: true,
-          blurEvent: this.blurEvent,
-          parent: this
+          validation: [regexValidator(this.jailService.jailNameRegex), forbiddenValues(this.namesInUse)],
         },
         {
           type: 'select',
@@ -300,6 +299,7 @@ export class JailWizardComponent {
   public ipv6: any;
   protected template_list: string[];
   protected unfetchedRelease = [];
+  protected showSpinner = true;
 
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
@@ -411,8 +411,13 @@ export class JailWizardComponent {
     }
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  async afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
+    await this.jailService.listJails().toPromise().then((res) => {
+      res.forEach(i => this.namesInUse.push(i.id));
+      this.entityWizard.showSpinner = false;
+    })
+
     const httpsField =  _.find(this.wizardConfig[0].fieldConfig, {'name': 'https'});
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
@@ -580,24 +585,6 @@ export class JailWizardComponent {
       this.dialogRef.close();
       new EntityUtils().handleWSError(this, res, this.dialogService);
     });
-  }
-
-  blurEvent(parent){
-    
-    const jail_name = parent.entityWizard.formGroup.value.formArray[0].uuid;
-    parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
-      if(jail_wizard_res.length > 0){
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['hasErrors'] = true;
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
-        parent.entityWizard.formGroup.controls.formArray.controls[0].controls.uuid.setValue("");
-
-  
-      } else {
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['hasErrors'] = false;
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['errors'] = '';
-
-      }
-    })
   }
 
   isCustActionVisible(id, stepperIndex) {

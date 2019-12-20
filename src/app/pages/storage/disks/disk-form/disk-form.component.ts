@@ -47,21 +47,21 @@ export class DiskFormComponent {
       name: 'hddstandby',
       placeholder: helptext.disk_form_hddstandby_placeholder,
       tooltip : helptext.disk_form_hddstandby_tooltip,
-      options: [],
+      options: helptext.disk_form_hddstandby_options,
     },
     {
       type: 'select',
       name: 'advpowermgmt',
       placeholder: helptext.disk_form_advpowermgmt_placeholder,
       tooltip : helptext.disk_form_advpowermgmt_tooltip,
-      options: [],
+      options: helptext.disk_form_advpowermgmt_options,
     },
     {
       type: 'select',
       name: 'acousticlevel',
       placeholder: helptext.disk_form_acousticlevel_placeholder,
       tooltip : helptext.disk_form_acousticlevel_tooltip,
-      options: [],
+      options: helptext.disk_form_acousticlevel_options,
     },
     {
       type : 'checkbox',
@@ -147,29 +147,6 @@ export class DiskFormComponent {
   }
 
   afterInit(entityEdit: any) {
-    this.ws.call('notifier.choices', ['HDDSTANDBY_CHOICES']).subscribe((res) => {
-      this.disk_hddstandby = _.find(this.fieldConfig, {name : 'hddstandby'});
-      res.forEach((item) => {
-        this.disk_hddstandby.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
-
-    this.ws.call('notifier.choices', ['ADVPOWERMGMT_CHOICES']).subscribe((res) => {
-      this.disk_advpowermgmt = _.find(this.fieldConfig, {name : 'advpowermgmt'});
-      res.forEach((item) => {
-        this.disk_advpowermgmt.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
-
-    this.ws.call('notifier.choices', ['ACOUSTICLVL_CHOICES']).subscribe((res) => {
-      this.disk_acousticlevel = _.find(this.fieldConfig, {name : 'acousticlevel'});
-      res.forEach((item) => {
-        this.disk_acousticlevel.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
   }
 
   beforeSubmit(value) {

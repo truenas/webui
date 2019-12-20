@@ -239,31 +239,30 @@ a new application key, log in to the Backblaze account, go to the \
     tooltip: T(
       'Microsoft Onedrive \
  <a href="https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/authentication" \
- target="_blank">Access Token</a>.'
+ target="_blank">Access Token</a>. Log in to the Microsoft account to \
+ add an access token.'
     )
   },
 
   drives_onedrive: {
     placeholder: T("Drives List"),
-    tooltip: T('')
+    tooltip: T('Drives and IDs registered to the Microsoft account. \
+ Selecting a drive also fills the <i>Drive ID</i> field.')
   },
 
   drive_type_onedrive: {
     placeholder: T("Drive Account Type"),
     tooltip: T(
-      'Choose the account type: <i>PERSONAL</i>, <i>BUSINESS</i>, or \
- <a href="https://products.office.com/en-us/sharepoint/collaboration"\
- target="_blank">SharePoint</a> <i>DOCUMENT_LIBRARY</i>.'
+      'Type of Microsoft acount. Logging in to a Microsoft account \
+ automatically chooses the correct account type.'
     )
   },
 
   drive_id_onedrive: {
     placeholder: T("Drive ID"),
     tooltip: T(
-      'Unique drive identifier. Log in to the \
- <a href="https://onedrive.live.com" target="_blank">OneDrive account</a> \
- and copy the string that appears in the browser address bar after \
- <i>cid=</i>. Example: https://onedrive.live.com/?id=root&cid=<i>12A34567B89C10D1</i>.'
+      'Unique drive identifier. Log in to a Microsoft account and choose \
+ a drive from the <i>Drives List</i> drop-down to add a valid ID.'
     )
   },
 
@@ -301,8 +300,8 @@ a new application key, log in to the Backblaze account, go to the \
 
   private_key_sftp: {
     placeholder: T("Private Key ID"),
-    tooltip: T('Import the private key from an existing SSH keypair. \
- Choose the name of the SSH keypair to use for this connection.')
+    tooltip: T('Import the private key from an existing SSH keypair or \
+ select <i>Generate New</i> to create a new SSH key for this credential.')
   },
 
   url_webdav: {

@@ -27,7 +27,7 @@ export class EntityWizardComponent implements OnInit {
   @ViewChild('stepper', {static: true}) stepper: MatStepper;
 
   public formGroup: FormGroup;
-
+  public showSpinner = false;
   public busy: Subscription;
 
   public saveSubmitText = T("Submit");
@@ -44,6 +44,9 @@ export class EntityWizardComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.conf.showSpinner) {
+      this.showSpinner = true;
+    }
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }

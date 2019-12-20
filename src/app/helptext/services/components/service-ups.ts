@@ -46,10 +46,10 @@ ups_driver_tooltip : T('See the <a\
 ups_driver_validation : [ Validators.required ],
 
 ups_port_placeholder : T('Port or Hostname'),
-ups_port_tooltip : T('The serial or USB port that the UPS is \
- using.<br /> <br />\
- <b>Hostname</b>: Enter the IP address or hostname of the SNMP UPS \
- device.<br /> <br />'),
+ups_port_tooltip : T('Serial or USB port connected to the UPS. To \
+ automatically detect and manage the USB port settings, select \
+ <i>auto</i>.<br><br> When an SNMP driver is selected, enter the IP \
+ address or hostname of the SNMP UPS device.'),
 ups_port_validation : [ Validators.required ],
 
 ups_hostname_placeholder: T('Hostname'),

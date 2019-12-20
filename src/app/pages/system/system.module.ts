@@ -24,8 +24,7 @@ import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
-import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
-import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
+import { NTPServerFormComponent } from './ntpservers/ntpserver-form/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
@@ -85,8 +84,7 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     UpdateComponent,
     ManualUpdateComponent,
     NTPServerListComponent,
-    NTPServerAddComponent,
-    NTPServerEditComponent,
+    NTPServerFormComponent,
     AlertServiceListComponent,
     CloudCredentialsListComponent,
     CloudCredentialsFormComponent,

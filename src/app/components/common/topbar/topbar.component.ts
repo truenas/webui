@@ -1,28 +1,27 @@
-import {interval as observableInterval,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import * as domHelper from '../../../helpers/dom.helper';
-import { ThemeService, Theme } from '../../../services/theme/theme.service';
-import { WebSocketService } from '../../../services/ws.service';
-import { DialogService } from '../../../services/dialog.service';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { SystemGeneralService } from '../../../services/system-general.service';
-import { AboutModalDialog } from '../dialog/about/about-dialog.component';
-import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
-import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
-import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
-import { RestService } from "../../../services/rest.service";
-import { LanguageService } from "../../../services/language.service"
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from '../../../pages/common/entity/utils';
-import { T } from '../../../translate-marker';
-import helptext from '../../../helptext/topbar';
-
-import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
-import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { Subscription, interval } from 'rxjs';
+import * as domHelper from '../../../helpers/dom.helper';
+import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
+import helptext from '../../../helptext/topbar';
+import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from '../../../pages/common/entity/utils';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../services/dialog.service';
+import { LanguageService } from "../../../services/language.service";
+import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
+import { RestService } from "../../../services/rest.service";
+import { SystemGeneralService } from '../../../services/system-general.service';
+import { Theme, ThemeService } from '../../../services/theme/theme.service';
+import { WebSocketService } from '../../../services/ws.service';
+import { T } from '../../../translate-marker';
+import { AboutModalDialog } from '../dialog/about/about-dialog.component';
+import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
+import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 
 @Component({
   selector: 'topbar',
@@ -39,7 +38,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   interval: any;
 
-  continuosStreaming: Subscription;
+  replicationStatusSub: Subscription;
+  continuousStreaming: Subscription
   showReplication = false;
   showResilvering = false;
   pendingNetworkChanges = false;
@@ -73,12 +73,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   constructor(
     public themeService: ThemeService,
-    /*public core: CoreService,*/
     private router: Router,
     private notificationsService: NotificationsService,
-    private activeRoute: ActivatedRoute,
     private ws: WebSocketService,
-    private rest: RestService,
     public language: LanguageService,
     private dialogService: DialogService,
     public sysGenService: SystemGeneralService,
@@ -88,9 +85,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
-        setTimeout(() => {
-          this.updateNotificationSent = false;
-        }, 900000);
       });
     }
 
@@ -148,8 +142,23 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.checkNetworkChangesPending();
       }
     });
-    this.continuosStreaming = observableInterval(10000).subscribe(x => {
-      this.showReplicationStatus();
+
+    this.replicationStatusSub = this.ws
+      .sub("replication.query")
+      .subscribe(repStatus => {
+        repStatus.data.forEach(x => {
+          if (
+            typeof x.repl_status === "string" &&
+            x.repl_status.indexOf("Sending") > -1 &&
+            x.repl_enabled
+          ) {
+            this.showReplication = true;
+            this.replicationDetails = x;
+          }
+        });
+      });
+
+    this.continuousStreaming = interval(10000).subscribe(x => {
       if (this.is_ha) {
         this.getHAStatus();
       }
@@ -193,7 +202,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       clearInterval(this.interval);
     }
 
-    this.continuosStreaming.unsubscribe();
+    this.continuousStreaming.unsubscribe();
+    this.replicationStatusSub.unsubscribe();
 
     this.core.unregister({observerClass:this});
   }
@@ -334,20 +344,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
   }
 
-  showReplicationStatus() {
-    this.rest.get('storage/replication/', {}).subscribe(res => {
-      let idx = res.data.forEach(x => {
-        if(typeof(x.repl_status) !== "undefined" &&
-            x.repl_status != null && x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
-          this.showReplication = true;
-          this.replicationDetails = x;
-        }
-      });
-    }, err => {
-      console.error(err);
-    })
-  }
-
   showReplicationDetails(){
     this.dialogService.Info(T('Replication Status',), this.replicationDetails.repl_status.toString());
   }
@@ -415,15 +411,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   getHAStatus() {
     this.ws.call('failover.disabled_reasons').subscribe(res => {
+      let ha_enabled = false;
       this.ha_disabled_reasons = res;
       if (res.length > 0) {
         this.ha_status_text = helptext.ha_status_text_disabled;
       } else {
+        ha_enabled = true;
         this.ha_status_text = helptext.ha_status_text_enabled;
         if (!this.pendingUpgradeChecked) {
           this.checkUpgradePending();
         }
       }
+      window.sessionStorage.setItem('ha_status', ha_enabled.toString());
     });
   }
 
@@ -513,9 +512,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();
       this.updateNotificationSent = true;
-      setTimeout(() => {
-        this.updateNotificationSent = false;
-      }, 600000);
     }      
   };
 

@@ -167,7 +167,7 @@ export class LdapComponent {
           name : helptext.ldap_certificate_name,
           placeholder : helptext.ldap_certificate_placeholder,
           tooltip: helptext.ldap_certificate_tooltip,
-          options : []
+          options : [{label: '---', value: null}]
         },
         {
           type : 'checkbox',
@@ -259,6 +259,7 @@ export class LdapComponent {
     delete data['bindpw'];
     data['hostname'] = data['hostname'].join(' ');
     data['hostname_noreq'] = data['hostname'];
+    this.ldap_hostname = data['hostname'];
     return data;
   }
   
@@ -337,7 +338,11 @@ export class LdapComponent {
       
     })
     entityEdit.submitFunction = this.submitFunction;
+    setTimeout(() => {
+      this.entityForm.formGroup.controls['hostname'].setValue(this.ldap_hostname);
+    }, 500)
   }
+
   beforeSubmit(data){
     if(data["enable"]){
       data["hostname_noreq"] = data["hostname"];
@@ -345,7 +350,7 @@ export class LdapComponent {
       data["hostname"] = data["hostname_noreq"];
     }
     delete(data['hostname_noreq']);
-    data['hostname'] = data['hostname'].split(' ');
+    data.hostname ? data['hostname'] = data['hostname'].split(' ') : data.hostname = [];
   }
 
   submitFunction(body: any) {
