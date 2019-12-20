@@ -29,6 +29,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected ipPlaceholder: string;
   protected failoverPlaceholder: string;
   protected saveSubmitText = helptext.int_save_button;
+  protected offload_warned = false;
+  protected offload_warning_sub: any;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -310,6 +312,18 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
       }
     this.aliases_fc = _.find(this.fieldConfig, {"name": "aliases"});
+
+    this.offload_warning_sub = entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.subscribe(res => {
+      if (res && !this.offload_warned) {
+        this.dialog.confirm(helptext.disable_offload_capabilities_warning_title, helptext.disable_offload_capabilities_warning_msg).subscribe(confirm => {
+          if (confirm) {
+            this.offload_warned = true;
+          } else {
+            entityForm.formGroup.controls['disable_offload_capabilities'].setValue(false);
+          }
+        });
+      }
+    });
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {

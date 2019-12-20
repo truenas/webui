@@ -758,9 +758,9 @@ export class VolumesListTableConfig implements InputTableConf {
                   "storage", "pools", "permissions", row1.path
                 ]));
               } else {
-                this.dialogService.confirm(T("Dataset has complex ACLs"),
-                  T("This dataset has ACLs that are too complex to be edited with \
-                    the permissions editor.  Open in ACL editor instead?"),
+                this.dialogService.confirm(T("Dataset Has Complex ACLs"),
+                  T("This dataset has an active ACL. Changes to permissions must be made with the ACL editor. \
+                  Open ACL editor?"),
                   true, T("EDIT ACL")).subscribe(edit_acl => {
                     if (edit_acl) {
                         this._router.navigate(new Array('/').concat([

@@ -23,7 +23,7 @@ export class BootEnvironmentListComponent {
 
   @ViewChild('scrubIntervalEvent', { static: true}) scrubIntervalEvent: ElementRef;
 
-  public title = "Boot Environments";
+  public title = T("Boot Environments");
   protected resource_name: string = 'system/bootenv';
   protected queryCall = 'bootenv.query';
   protected route_add: string[] = ['system', 'boot', 'create']
