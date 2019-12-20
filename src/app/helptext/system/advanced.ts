@@ -4,6 +4,12 @@ import { T } from "app/translate-marker";
 import global_helptext from '../global-helptext';
 
 export const helptext_system_advanced = {
+  fieldset_console: T('Console'),
+  fieldset_kernel: T('Kernel'),
+  fieldset_ui: T('GUI'),
+  fieldset_sed: T('SED'),
+  fieldset_other: T('Other Options'),
+
   dialog_generate_debug_title: T("Generate Debug File"),
   dialog_generate_debug_message: T("This operation might take a long time. Proceed?"),
   dialog_button_ok: T('Proceed'),
