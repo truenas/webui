@@ -365,6 +365,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   }
 
   clean(data) {
+    if (data['mtu'] === '') {
+      data['mtu'] = 1500;
+    }
     const aliases = [];
     const failover_aliases = [];
     const failover_virtual_aliases = [];
