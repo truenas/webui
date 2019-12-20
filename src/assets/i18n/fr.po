@@ -41,6 +41,11 @@ msgstr ""
 "sans effectuer aucune modification, cliquez sur <b>TÉLÉCHARGER LA CLE DE "
 "CHIFFREMENT</b>."
 
+msgid ""
+" addresses. When this has been chosen, additional addresses cannot be "
+"selected."
+msgstr ""
+
 msgid " and "
 msgstr " et "
 
@@ -84,6 +89,9 @@ msgstr " le service a été activé."
 
 msgid " system is powered on and connected to the network."
 msgstr " est mis sous tension et connecté au réseau."
+
+msgid " to include all "
+msgstr ""
 
 msgid " update successful"
 msgstr " mise à jour réussie"
@@ -633,9 +641,9 @@ msgid ""
 "cloud storage. Changing the direction resets the  <i>Transfer Mode</i> to "
 "COPY."
 msgstr ""
-"<i>PUSH</i> envoie les données vers le stockage cloud. <i>PULL</i> reçoit les "
-"données du stockage cloud. Changer de direction réinitialise le <i>mode de "
-"transfert</i> en <i>mode</i> COPY."
+"<i>PUSH</i> envoie les données vers le stockage cloud. <i>PULL</i> reçoit "
+"les données du stockage cloud. Changer de direction réinitialise le <i>mode "
+"de transfert</i> en <i>mode</i> COPY."
 
 msgid ""
 "<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
@@ -1011,6 +1019,9 @@ msgstr ""
 msgid "Activates the replication schedule."
 msgstr "Active le calendrier de réplication."
 
+msgid "Active"
+msgstr ""
+
 msgid "Active Directory"
 msgstr "Active Directory"
 
@@ -1037,6 +1048,9 @@ msgstr "Ajouter un élément ACL"
 
 msgid "Add Additional Path"
 msgstr "Ajouter un chemin supplémentaire"
+
+msgid "Add Alert Service"
+msgstr ""
 
 msgid "Add Cache"
 msgstr "Ajouter un cache"
@@ -1276,8 +1290,8 @@ msgstr ""
 msgid "Adjust the file permissions using the checkboxes."
 msgstr "Ajustez les permissions des fichiers à l'aide des cases à cocher."
 
-msgid "Admin Portal"
-msgstr "Portail d'administration"
+msgid "Admin Portals"
+msgstr ""
 
 msgid "Admin Server"
 msgstr "Serveur d'administration"
@@ -1303,6 +1317,9 @@ msgstr "Gestion avancée de l'alimentation"
 
 msgid "Advanced"
 msgstr "Avancé"
+
+msgid "Advanced Details"
+msgstr ""
 
 msgid "Advanced Mode"
 msgstr "Mode avancé"
@@ -1888,6 +1905,9 @@ msgstr "Autoconfigurer IPv6"
 msgid "Autoconfigure IPv6 with rtsold"
 msgstr "Autoconfigurer IPv6 avec rtsold"
 
+msgid "Automatic scrub interval (in days)"
+msgstr ""
+
 msgid ""
 "Automatically compress data written to the zvol. Choose a <a "
 "href=\"--docurl--/storage.html#compression\" target=\"_blank\">compression "
@@ -1939,6 +1959,9 @@ msgstr "Disques disponibles"
 
 msgid "Available Memory:"
 msgstr "Mémoire disponible :"
+
+msgid "Available Space"
+msgstr ""
 
 msgid "Available Themes"
 msgstr "Thèmes disponibles"
@@ -2039,6 +2062,9 @@ msgstr "Taille du bloc"
 msgid "Boot"
 msgstr "Boot"
 
+msgid "Boot Environments"
+msgstr ""
+
 msgid "Boot Loader Type"
 msgstr "Type de chargeur d'amorçage"
 
@@ -2048,6 +2074,9 @@ msgstr "Méthode de démarrage"
 msgid "Boot Pool"
 msgstr "Volume de démarrage"
 
+msgid "Boot Pool Condition"
+msgstr ""
+
 msgid "Boot Pool Status"
 msgstr "Statut du volume de démarrage"
 
@@ -2055,8 +2084,8 @@ msgid ""
 "Boot environment name. Alphanumeric characters, dashes (-), underscores "
 "(_),     and periods (.) are allowed."
 msgstr ""
-"Nom de l'environnement de démarrage. Les caractères alphanumériques, les tirets "
-"(-), les soulignés (_) et les points (.) sont autorisés."
+"Nom de l'environnement de démarrage. Les caractères alphanumériques, les "
+"tirets (-), les soulignés (_) et les points (.) sont autorisés."
 
 msgid "Boot environment to be cloned."
 msgstr "Environnement de boot à cloner."
@@ -2236,6 +2265,9 @@ msgstr "CN Realm"
 msgid "CPU"
 msgstr "CPU"
 
+msgid "CPU Details"
+msgstr ""
+
 msgid "CPU Usage"
 msgstr "Utilisation du CPU"
 
@@ -2250,6 +2282,9 @@ msgstr "CSRs"
 
 msgid "Cache VDev"
 msgstr "Cache VDev"
+
+msgid "Caches"
+msgstr ""
 
 msgid ""
 "Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
@@ -2318,6 +2353,9 @@ msgstr "Modifier la passphrase"
 
 msgid "Change Password"
 msgstr "Modifier le mot de passe"
+
+msgid "Change Settings and Clear Report History?"
+msgstr ""
 
 msgid "Change User & Group Ownership"
 msgstr "Modifier la propriété de l'utilisateur et du groupe"
@@ -2410,13 +2448,6 @@ msgstr ""
 "Changer la version mineure est considéré comme un downgrade et n'est pas "
 "une opération supportée. Activez un environnement de démarrage existant qui "
 "utilise le canal souhaité et démarrez-le pour passer à ce dernier."
-
-msgid ""
-"Changing the values of <i>Graph Age</i> or <i>Graph Points</i> requires "
-"destroying  the reporting database."
-msgstr ""
-"La modification des valeurs du <i>Graph Age</i> ou <i>Graph Points</i> nécessite "
-"la destruction de la base de données de reporting."
 
 msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
@@ -2586,6 +2617,9 @@ msgstr ""
 "Choisissez un fournisseur DNS et configurez tous les attributs "
 "d'authentification requis."
 
+msgid "Choose a Device"
+msgstr ""
+
 msgid "Choose a color scheme."
 msgstr "Choisissez un schéma de couleurs."
 
@@ -2599,10 +2633,19 @@ msgstr ""
 "afficher tous les datasets du système de destination. Cliquez sur un "
 "dataset pour le définir comme cible."
 
+msgid "Choose a device for your report."
+msgstr ""
+
 msgid "Choose a location to store the installer image file."
 msgstr ""
 "Choisissez un emplacement pour stocker le fichier image du programme "
 "d'installation."
+
+msgid "Choose a metric"
+msgstr ""
+
+msgid "Choose a metric to display."
+msgstr ""
 
 msgid ""
 "Choose a path to the user's home directory. If the directory exists and "
@@ -3118,6 +3161,9 @@ msgstr "Compte d'ordinateur OU"
 msgid "Config could not be downloaded"
 msgstr "La configuration n'a pas pu être téléchargée"
 
+msgid "Configure"
+msgstr ""
+
 msgid "Configure ACL"
 msgstr "Configurer ACL"
 
@@ -3349,6 +3395,9 @@ msgstr ""
 "<b>ip6_addr</b>.<br><b>Désactiver</b> : Empêcher le jail d'utiliser "
 "entièrement IPv6."
 
+msgid "Coolest"
+msgstr ""
+
 msgid "Copies"
 msgstr "Exemplaires"
 
@@ -3557,11 +3606,17 @@ msgstr "DOCUMENTATION"
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
+msgid "Data"
+msgstr ""
+
 msgid "Data VDevs"
 msgstr "Données VDevs"
 
 msgid "Data collection frequency, in seconds."
 msgstr "Fréquence de collecte des données, en secondes."
+
+msgid "Data not available"
+msgstr ""
 
 msgid ""
 "Data transfer security. The connection is  authenticated with SSH. Data can "
@@ -3584,11 +3639,11 @@ msgstr "Chemin de la base de données"
 msgid "Dataset"
 msgstr "Dataset"
 
+msgid "Dataset Has Complex ACLs"
+msgstr ""
+
 msgid "Dataset Path"
 msgstr "Chemin du dataset"
-
-msgid "Dataset has complex ACLs"
-msgstr "Le dataset possède des ACLs complexes"
 
 msgid "Dataset which will store replicated  snapshots."
 msgstr "Dataset qui stockera les instantanés répliqués."
@@ -3842,6 +3897,9 @@ msgstr ""
 "clé de récupération de volume existant. Une boîte de dialogue vous invite à "
 "sauvegarder la clé de chiffrement."
 
+msgid "Delete the selected item?"
+msgstr ""
+
 msgid "Delete the zvol "
 msgstr "Supprimer le zvol "
 
@@ -3925,9 +3983,6 @@ msgstr ""
 
 msgid "Destroy data on this pool?"
 msgstr "Détruire les données de ce volume ?"
-
-msgid "Destroy the Reporting Database?"
-msgstr "Détruire la base de données des rapports ?"
 
 msgid "Detach"
 msgstr "Détacher"
@@ -4074,6 +4129,9 @@ msgstr "Désactiver le basculement (failover)"
 msgid "Disable FreeNAS Cache"
 msgstr "Désactiver le cache FreeNAS"
 
+msgid "Disable Hardware Offloading"
+msgstr ""
+
 msgid ""
 "Disable IPv4 source address selection for  the jail in favor of the primary "
 "IPv4 address of the jail.  Only available when the jail is not configured "
@@ -4110,14 +4168,17 @@ msgstr ""
 "utilisateurs et groupes LDAP n'apparaissent pas dans les menus déroulants, "
 "mais sont toujours acceptés lorsqu'ils sont saisis manuellement."
 
-msgid "Disable offload capabilities"
-msgstr "Désactiver les capacités de déchargement"
-
 msgid "Disable physical block size reporting"
 msgstr "Désactiver le rapport sur la taille physique des blocs"
 
 msgid "Disabled (Not encrypted)"
 msgstr "Désactivé (Non chiffré)"
+
+msgid ""
+"Disabling hardware offloading can severely reduce network performance. "
+"Disabling this feature is only recommended when an interface is used for "
+"plugin, jail, or virtual machine networking."
+msgstr ""
 
 msgid "Discard Network Changes"
 msgstr "Rejeter les modifications du réseau"
@@ -4137,8 +4198,14 @@ msgstr "Découverte de la méthode d'authentification"
 msgid "Disk"
 msgstr "Disque"
 
+msgid "Disk Details"
+msgstr ""
+
 msgid "Disk Imported: Log Summary"
 msgstr "Disque importé : Résumé du log"
+
+msgid "Disk Reports"
+msgstr ""
 
 msgid "Disk Selection Required"
 msgstr "Sélection du disque requise"
@@ -4244,8 +4311,8 @@ msgid ""
 "Drives and IDs registered to the Microsoft account.  Selecting a drive also "
 "fills the <i>Drive ID</i> field."
 msgstr ""
-"Lecteurs et identifiants enregistrés sur le compte Microsoft.  La sélection d'un "
-"lecteur remplit également le champ <i>Drive ID</i>."
+"Lecteurs et identifiants enregistrés sur le compte Microsoft.  La sélection "
+"d'un lecteur remplit également le champ <i>Drive ID</i>."
 
 msgid "EC Curve"
 msgstr "Courbe CE"
@@ -4270,6 +4337,9 @@ msgstr "Modifier"
 
 msgid "Edit ACL"
 msgstr "Modifier ACL"
+
+msgid "Edit Alert Service"
+msgstr ""
 
 msgid "Edit Disk(s)"
 msgstr "Modifier le(s) disque(s)"
@@ -5760,9 +5830,6 @@ msgstr "Utilisateurs supplémentaires"
 msgid "Extra options"
 msgstr "Options supplémentaires"
 
-msgid "F"
-msgstr ""
-
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr "Hôte FTP auquel se connecter. Exemple: <i>ftp.exemple.com</i> ."
 
@@ -5982,6 +6049,9 @@ msgstr ""
 msgid "FreeNAS/TrueNAS URL"
 msgstr "URL FreeNAS/TrueNAS"
 
+msgid "Fri"
+msgstr ""
+
 msgid "From"
 msgstr "De"
 
@@ -6026,6 +6096,12 @@ msgstr "Certificat SSL GUI"
 msgid "Gateway"
 msgstr "Passerelle"
 
+msgid "Gathering data"
+msgstr ""
+
+msgid "Gathering data..."
+msgstr ""
+
 msgid "General"
 msgstr "Général"
 
@@ -6052,6 +6128,9 @@ msgstr ""
 "target=\"_blank\">tâche d'instantané périodique</a> précédemment créé. Cela "
 "permet à l'instantané d'être répliqué. Ne peut pas être utilisé avec un "
 "<i>nom</i> ."
+
+msgid "GiB"
+msgstr ""
 
 msgid ""
 "Give this user permission to use <a href=\"https://www.sudo.ws/\" "
@@ -6083,14 +6162,17 @@ msgstr "Mot de passe global pour déverrouiller les SED."
 msgid "Go Back to Jails"
 msgstr "Retour aux Jails"
 
+msgid "Go to Admin Portal"
+msgstr ""
+
 msgid "Go to HA settings"
 msgstr "Aller aux réglages HA"
 
-msgid "Graph Age"
-msgstr "Durée maximale de stockage d'un graphique"
+msgid "Go to Portal"
+msgstr ""
 
-msgid "Graph Points"
-msgstr "Nombre de points pour chaque graphique"
+msgid "Graph Age in Months"
+msgstr ""
 
 msgid "Group"
 msgstr "Groupe"
@@ -6100,6 +6182,16 @@ msgstr "Chemin de liaison de groupe"
 
 msgid "Group ID"
 msgstr "Identifiant (ID) du groupe"
+
+msgid ""
+"Group ID created in  Authorized Access. Required when the Discovery Auth "
+"Method is set to  CHAP or Mutual CHAP."
+msgstr ""
+
+msgid ""
+"Group ID created in Authorized  Access. Required when the Discovery Auth "
+"Method is set to CHAP or  Mutual CHAP."
+msgstr ""
 
 msgid ""
 "Group name cannot begin with a hyphen (<i>-</i>) or contain a space, tab, "
@@ -6203,6 +6295,9 @@ msgstr ""
 "Masquer la sortie standard (stdout) de la commande. Lorsqu'elle n'est pas "
 "définie, toute sortie standard est envoyée au compte utilisateur cron "
 "utilisé pour exécuter la commande."
+
+msgid "Highest Usage"
+msgstr ""
 
 msgid ""
 "Highest port number of the  active side listen address that is open to "
@@ -6308,6 +6403,9 @@ msgstr "Hôtes autorisés"
 
 msgid "Hosts Deny"
 msgstr "Hôtes refusés"
+
+msgid "Hottest"
+msgstr ""
 
 msgid "Hour"
 msgstr "Heure"
@@ -6631,6 +6729,9 @@ msgstr "Importer un volume..."
 msgid "Importing pools."
 msgstr "Importation des volumes."
 
+msgid "In"
+msgstr ""
+
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr "En KiB / s. Un défaut de <i>0</i> signifie illimité."
 
@@ -6802,6 +6903,9 @@ msgstr "Supports d'installation"
 
 msgid "Installing plugin..."
 msgstr "Installer le plugin...."
+
+msgid "Interface"
+msgstr ""
 
 msgid "Interface Description"
 msgstr "Description de l'interface"
@@ -7044,6 +7148,9 @@ msgstr ""
 "access-keys.html\" target=\"_blank\">documentation de la clé d'accès "
 "AWS</a> pour obtenir des instructions sur la génération de la clé."
 
+msgid "KiB"
+msgstr ""
+
 msgid "LAGG Ports"
 msgstr "Ports LAGG"
 
@@ -7138,6 +7245,9 @@ msgstr "Langue"
 msgid "Language code"
 msgstr "Code de la langue"
 
+msgid "Last Scrub Run on"
+msgstr ""
+
 msgid "Leave Domain"
 msgstr "Quitter le domaine"
 
@@ -7183,6 +7293,9 @@ msgstr ""
 
 msgid "Legacy Web Interface"
 msgstr "Interface Web legacy"
+
+msgid "Legend"
+msgstr ""
 
 msgid "Level"
 msgstr "Niveau"
@@ -7286,15 +7399,15 @@ msgstr ""
 "href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>."
 
+msgid "Lowest Usage"
+msgstr ""
+
 msgid ""
 "Lowest port number of the  active side listen address that is open to "
 "connections."
 msgstr ""
 "Numéro de port le plus bas de l'adresse d'écoute côté actif qui est ouverte "
 "aux connexions."
-
-msgid "M"
-msgstr ""
 
 msgid "MAC Address"
 msgstr "Adresse MAC"
@@ -7460,17 +7573,20 @@ msgid "Maximum swap space to use for the jail."
 msgstr "Maximum d'espace de swap à utiliser pour le jail."
 
 msgid ""
-"Maximum time a graph is stored in months.  Changing this value causes the "
-"<i>Confirm RRD Destroy</i>  checkbox to appear. Changes do not take effect "
-"until the existing  reporting database is destroyed."
+"Maximum time a graph is stored in months (allowed values are 1-60).  "
+"Changing this value causes the <i>Confirm RRD Destroy</i>  dialog to "
+"appear. Changes do not take effect until the existing  reporting database "
+"is destroyed."
 msgstr ""
-"Durée maximale de stockage d'un graphique en mois.  La modification de "
-"cette valeur fait apparaître la case à cocher <i>Confirmer la destruction "
-"RRD</i>. Les modifications n'entrent en vigueur que lorsque la base de "
-"données existante est détruite."
 
 msgid "May"
 msgstr "Mai"
+
+msgid "Media Subtype"
+msgstr ""
+
+msgid "Media Type"
+msgstr ""
 
 msgid "Member Disk"
 msgstr "Membre du disque"
@@ -7493,6 +7609,9 @@ msgstr ""
 
 msgid "Memory"
 msgstr "Mémoire"
+
+msgid "Memory Reports"
+msgstr ""
 
 msgid "Memory Size"
 msgstr "Taille de la mémoire"
@@ -7542,6 +7661,12 @@ msgstr ""
 "réseau.</li>  <li><i>LEGACY</i> utilise le moteur de réplication de FreeNAS "
 "11.2 et versions antérieures.</li></ul>"
 
+msgid "Metrics"
+msgstr ""
+
+msgid "MiB"
+msgstr ""
+
 msgid "Microsoft Account"
 msgstr "Compte Microsoft"
 
@@ -7551,9 +7676,10 @@ msgid ""
 "started/authentication\"  target=\"_blank\">Access Token</a>. Log in to the "
 "Microsoft account to  add an access token."
 msgstr ""
-"<a href=\"https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-"
-"started/authentication\"  target=\"_blank\">Jeton d'accès</a> Microsoft Onedrive. "
-"Connectez-vous au compte Microsoft pour ajouter un jeton d'accès."
+"<a "
+"href=\"https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-"
+"started/authentication\"  target=\"_blank\">Jeton d'accès</a> Microsoft "
+"Onedrive. Connectez-vous au compte Microsoft pour ajouter un jeton d'accès."
 
 msgid "Min Poll"
 msgstr "Poll Min"
@@ -7602,6 +7728,9 @@ msgstr ""
 "Modifier pour les disques qui comprennent <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>."
+
+msgid "Mon"
+msgstr ""
 
 msgid "Monitor Password"
 msgstr "Mot de passe du moniteur"
@@ -7659,6 +7788,9 @@ msgstr ""
 "Prise en charge de plusieurs domaines. Entrez des domaines supplémentaires "
 "à sécuriser, séparés par des espaces. Par exemple, si le domaine principal "
 "est exemple.com, la saisie de www.example.com sécurisera les deux adresses."
+
+msgid "Multipath Name"
+msgstr ""
 
 msgid "Multipaths"
 msgstr "Chemins multiples"
@@ -7801,8 +7933,8 @@ msgid ""
 "Name of the new cloned boot environment. Alphanumeric characters, dashes "
 "(-), underscores (_),     and periods (.) are allowed."
 msgstr ""
-"Nom du nouvel environnement de boot cloné. Les caractères alphanumériques, les "
-"tirets (-), les soulignés (_) et les points (.) sont autorisés."
+"Nom du nouvel environnement de boot cloné. Les caractères alphanumériques, "
+"les tirets (-), les soulignés (_) et les points (.) sont autorisés."
 
 msgid "Name of the new dataset created from the cloned snapshot."
 msgstr "Nom du nouveau dataset créé à partir de l'instantané cloné."
@@ -7912,6 +8044,9 @@ msgstr "Interface réseau"
 
 msgid "Network Properties"
 msgstr "Propriétés du réseau"
+
+msgid "Network Reports"
+msgstr ""
 
 msgid "Network Summary"
 msgstr "Résumé réseau"
@@ -8078,6 +8213,9 @@ msgstr "Aucune mise à jour disponible."
 msgid "No, continue with import"
 msgstr "Non, continuer avec l'importation"
 
+msgid "Not Available"
+msgstr ""
+
 msgid "Notes"
 msgstr "Notes"
 
@@ -8092,6 +8230,9 @@ msgstr "Nov"
 
 msgid "Number of CPUs"
 msgstr "Nombre de CPUs"
+
+msgid "Number of Graph Points"
+msgstr ""
 
 msgid ""
 "Number of SysV semaphores modified in a single <a "
@@ -8125,17 +8266,11 @@ msgid "Number of days to renew certificate before expiring."
 msgstr "Nombre de jours pour renouveler le certificat avant son expiration."
 
 msgid ""
-"Number of points for each hourly, daily,  weekly, monthly, or yearly graph. "
-"Do not set this less than the  width of the graphs in pixels. Changing this "
-"value causes the  <i>Confirm RRD Destroy</i> checkbox to appear. Changes do "
-"not take  effect until the existing reporting database is destroyed."
+"Number of points for each hourly, daily,  weekly, monthly, or yearly graph "
+"(allowed values are 1-4096). Changing this value causes the  <i>Confirm RRD "
+"Destroy</i> dialog to appear. Changes do not take  effect until the "
+"existing reporting database is destroyed."
 msgstr ""
-"Nombre de points pour chaque graphique horaire, journalier, hebdomadaire, "
-"mensuel ou annuel. Ne réglez pas ce paramètre à une valeur inférieure à la "
-"largeur des graphiques en pixels. La modification de cette valeur fait "
-"apparaître la case à cocher <i>Confirmer la destruction RRD</i>. Les "
-"modifications n'entrent en vigueur que lorsque la base de données existante "
-"est détruite."
 
 msgid "Number of queued SysV messages allowed for the jail."
 msgstr "Nombre de messages SysV en file d'attente autorisés pour le jail."
@@ -8162,9 +8297,10 @@ msgid ""
 "failover. <i>0</i> means a failover occurs  immediately, or after two "
 "seconds when the system is using a link  aggregation."
 msgstr ""
-"Nombre de secondes à attendre après une panne de réseau avant de déclencher un "
-"basculement. <i>0</i> signifie qu'un basculement se produit immédiatement ou après "
-"deux secondes lorsque le système utilise une agrégation de liens."
+"Nombre de secondes à attendre après une panne de réseau avant de déclencher "
+"un basculement. <i>0</i> signifie qu'un basculement se produit "
+"immédiatement ou après deux secondes lorsque le système utilise une "
+"agrégation de liens."
 
 msgid "Number of servers"
 msgstr "Nombre de serveurs"
@@ -8376,17 +8512,12 @@ msgid "Options"
 msgstr "Options"
 
 msgid ""
-"Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> Do not "
-"encrypt the LDAP connection.</li>  <li><i>ON:</i> <i>SSL</i> encrypts the "
-"LDAP connection and uses port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
-"<i>STARTTLS</i> encrypts the LDAP connection and  uses the default LDAP "
-"port <i>389</i>.</li>  </ul>"
+"Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> do not "
+"encrypt the LDAP connection.</li>  <li><i>ON:</i> encrypt the LDAP "
+"connection with <i>SSL</i> on port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
+"encrypt the LDAP connection with <i>STARTTLS</i>  on the default LDAP port "
+"<i>389</i>.</li>  </ul>"
 msgstr ""
-"Options de chiffrement de la connexion LDAP <ul>  <li><i>OFF :</i> Ne pas "
-"chiffrer la connexion LDAP.</li>  <li><i>ON :</i> <i>SSL</i> chiffre la "
-"connexion LDAP et utilise le port <i>636</i>.</li>  <li><i>START_TLS :</i> "
-"<i>STARTTLS</i> chiffre la connexion LDAP et utilise le port LDAP "
-"<i>389</i> par défaut.</li>  </ul>"
 
 msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
@@ -8411,6 +8542,9 @@ msgstr "Autre"
 
 msgid "Other Options"
 msgstr "Autres options"
+
+msgid "Out"
+msgstr ""
 
 msgid "Outgoing Mail Server"
 msgstr "Serveur de courrier sortant"
@@ -8453,6 +8587,9 @@ msgstr "Nom de client PagerDuty."
 msgid "Parent Interface"
 msgstr "Interface parent"
 
+msgid "Partition"
+msgstr ""
+
 msgid "Passphrase"
 msgstr "Passphrase"
 
@@ -8478,9 +8615,10 @@ msgid ""
 "first time a domain is configured. After initial configuration, the "
 "password  is not needed to edit, start, or stop the service."
 msgstr ""
-"Mot de passe pour le compte administrateur Active Directory.  Requis la première "
-"fois qu'un domaine est configuré. Après la configuration initiale, le mot de passe "
-"n'est pas nécessaire pour modifier, démarrer ou arrêter le service."
+"Mot de passe pour le compte administrateur Active Directory.  Requis la "
+"première fois qu'un domaine est configuré. Après la configuration initiale, "
+"le mot de passe n'est pas nécessaire pour modifier, démarrer ou arrêter le "
+"service."
 
 msgid "Password for the Bind DN."
 msgstr "Mot de passe pour le Bind DN."
@@ -8658,6 +8796,9 @@ msgstr "Numéro de téléphone"
 
 msgid "Physical interface of the selected member."
 msgstr "Interface physique du membre sélectionné."
+
+msgid "PiB"
+msgstr ""
 
 msgid "Platform"
 msgstr "Plateforme"
@@ -9021,6 +9162,9 @@ msgstr "Taille du fichier brut"
 msgid "Read"
 msgstr "Lire"
 
+msgid "Read Errors"
+msgstr ""
+
 msgid "Read Only"
 msgstr "Lecture seule"
 
@@ -9252,6 +9396,11 @@ msgid "Report CPU usage in percentage"
 msgstr "Rapporter l'utilisation du CPU en pourcentage"
 
 msgid ""
+"Report history is cleared when <i>CPU reporting</i>, <i>Graph Age</i>,  or "
+"<i>Graph Points</i> are changed."
+msgstr ""
+
+msgid ""
 "Report if drive temperature is at or above this temperature in Celsius. "
 "<i>0</i> disables the report."
 msgstr ""
@@ -9281,29 +9430,30 @@ msgid ""
 "Required unless <b>Enable password login</b> is <i>No</i>. Passwords cannot "
 "contain a <b>?</b>."
 msgstr ""
-"Requis sauf si <b>Activer la connexion par mot de passe</b> est positionné sur "
-"<i>No</i>. Les mots de passe ne peuvent pas contenir le caractère <b>?</b>."
+"Requis sauf si <b>Activer la connexion par mot de passe</b> est positionné "
+"sur <i>No</i>. Les mots de passe ne peuvent pas contenir le caractère "
+"<b>?</b>."
 
 msgid ""
 "Required. Can contain letters, numbers, dashes (-), periods (.), or "
 "underscores (_)."
 msgstr ""
-"Requis. Peut contenir des lettres, des chiffres, des tirets (-), des points (.) ou "
-"des traits de soulignement (_)."
+"Requis. Peut contenir des lettres, des chiffres, des tirets (-), des points "
+"(.) ou des traits de soulignement (_)."
 
 msgid ""
 "Required. Can contain letters, numbers, periods (.),  dashes (-), and "
 "underscores (_)."
 msgstr ""
-"Requis. Peut contenir des lettres, des chiffres, des points (.), des tirets (-) et "
-"des traits de soulignement (_)."
+"Requis. Peut contenir des lettres, des chiffres, des points (.), des tirets "
+"(-) et des traits de soulignement (_)."
 
 msgid ""
 "Required. Can contain letters, numbers, periods (.), dashes (-), and "
 "underscores (_)."
 msgstr ""
-"Requis. Peut contenir des lettres, des chiffres, des points (.), des tirets (-) et "
-"des traits de soulignement (_)."
+"Requis. Peut contenir des lettres, des chiffres, des points (.), des tirets "
+"(-) et des traits de soulignement (_)."
 
 msgid ""
 "Requires <b>Allow guest access</b> to also be set. Forces guest access for "
@@ -9514,9 +9664,6 @@ msgstr "Exécuter ce cron maintenant ?"
 msgid "Run this rsync now?"
 msgstr "Exécuter ce rsync maintenant ?"
 
-msgid "S"
-msgstr ""
-
 msgid "S.M.A.R.T. Test"
 msgstr "Test S.M.A.R.T"
 
@@ -9608,6 +9755,9 @@ msgstr "Schéma Samba"
 msgid "Same as Source"
 msgstr ""
 
+msgid "Sat"
+msgstr ""
+
 msgid "Save"
 msgstr "Sauvegarder"
 
@@ -9616,6 +9766,9 @@ msgstr "Sauvegarder la config"
 
 msgid "Save Configuration"
 msgstr "Sauvegarder la configuration"
+
+msgid "Save Debug"
+msgstr ""
 
 msgid "Save License"
 msgstr "Sauvegarder la licence"
@@ -9814,9 +9967,6 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ssh\" "
 "target=\"_blank\">SSH/Authentification</a>."
 
-msgid "See task manager for progress updates."
-msgstr "Voir le gestionnaire de tâches visualiser la progression des mises à jour."
-
 msgid ""
 "See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
 "target=\"_blank\"> Self Encrypting Drives</a> section of the user guide for "
@@ -9834,6 +9984,9 @@ msgstr ""
 "Reportez-vous à la <a href=\"http://networkupstools.org/stable-hcl.html\" "
 "target=\"_blank\">liste de compatibilité des Outils UPS réseau</a> pour "
 "obtenir la liste des périphériques UPS pris en charge."
+
+msgid "Select "
+msgstr ""
 
 msgid ""
 "Select <b>UEFI</b> for newer operating systems, or <b>UEFI-CSM</b> "
@@ -9927,14 +10080,6 @@ msgstr ""
 
 msgid "Select VM wizard type"
 msgstr "Sélectionner le type d'assistant VM"
-
-msgid ""
-"Select a Group ID created in <b>Authorized Access</b> if the <b>Discovery "
-"Auth Method</b> is set to <i>CHAP</i> or <i>Mutual CHAP</i>."
-msgstr ""
-"Sélectionnez un ID de groupe créé dans <b>Accès autorisé</b> si la "
-"<b>méthode Discovery Auth</b> est définie sur <i>CHAP</i> ou <i>Mutual "
-"CHAP</i>."
 
 msgid ""
 "Select a compression algorithm to reduce the size of the data being "
@@ -10042,13 +10187,6 @@ msgstr ""
 "Sélectionnez un compte utilisateur pour exécuter la commande. L'utilisateur "
 "doit avoir les autorisations lui permettant d'exécuter la commande ou le "
 "script."
-
-msgid ""
-"Select a user created in Authorized Access if the Discovery Auth Method is "
-"set to CHAP or Mutual CHAP."
-msgstr ""
-"Sélectionnez un utilisateur créé dans Accès autorisé si la méthode "
-"Discovery Auth est définie sur CHAP ou Mutual CHAP."
 
 msgid "Select an IP address to use for VNC sessions."
 msgstr "Sélectionnez une adresse IP à utiliser pour les sessions VNC."
@@ -10248,6 +10386,9 @@ msgid ""
 msgstr ""
 "Sélectionnez le compte à utiliser pour les requêtes TFTP. Ce compte doit "
 "avoir l'autorisation d'accéder à l'<b>annuaire</b>."
+
+msgid "Select the admin portal："
+msgstr ""
 
 msgid "Select the appropriate environment."
 msgstr "Sélectionnez l'environnement approprié."
@@ -10497,6 +10638,9 @@ msgstr "Les jails sélectionnés ont été mis à jour."
 msgid "Selected plugins updated."
 msgstr "Les plugins sélectionnés ont été mis à jour."
 
+msgid "Self Healed"
+msgstr ""
+
 msgid "Semi-automatic (FreeNAS only)"
 msgstr "Semi-automatique (FreeNAS uniquement)"
 
@@ -10548,10 +10692,10 @@ msgid ""
 "driver is selected, enter the IP  address or hostname of the SNMP UPS "
 "device."
 msgstr ""
-"Port série ou USB connecté à l'onduleur. Pour détecter et gérer automatiquement "
-"les paramètres du port USB, sélectionnez <i>Auto</i>.<br><br> Lorsqu'un pilote "
-"SNMP est sélectionné, entrez l'adresse IP ou le nom d'hôte du périphérique SNMP "
-"UPS."
+"Port série ou USB connecté à l'onduleur. Pour détecter et gérer "
+"automatiquement les paramètres du port USB, sélectionnez "
+"<i>Auto</i>.<br><br> Lorsqu'un pilote SNMP est sélectionné, entrez "
+"l'adresse IP ou le nom d'hôte du périphérique SNMP UPS."
 
 msgid "Series"
 msgstr "Séries"
@@ -11113,11 +11257,6 @@ msgstr ""
 "Réglé pour déterminer si le système participe à une sélection de "
 "navigateur. Laisser désactivé lorsque le réseau contient un serveur AD ou "
 "LDAP, ou lorsque des machines Vista ou Windows 7 sont présentes."
-
-msgid "Set to disable NIC capabilities when using a Jail or VM."
-msgstr ""
-"Définissez pour désactiver les capacités NIC lorsque vous utilisez un jail "
-"ou une VM."
 
 msgid ""
 "Set to disable caching AD users and groups. This can help when unable to "
@@ -11899,6 +12038,9 @@ msgstr "Des espaces sont autorisés."
 msgid "Spare VDev"
 msgstr "VDev de spare"
 
+msgid "Spares"
+msgstr ""
+
 msgid "Sparse"
 msgstr ""
 
@@ -11964,6 +12106,9 @@ msgstr "Accélère la synchronisation initiale (secondes au lieu de minutes)."
 msgid "Standard (Secure)"
 msgstr "Standard (Sécurisé)"
 
+msgid "Standby"
+msgstr ""
+
 msgid "Start"
 msgstr "Démarrer"
 
@@ -12009,6 +12154,9 @@ msgstr ""
 
 msgid "Static Routes"
 msgstr "Routes statiques"
+
+msgid "Stats Per Thread"
+msgstr ""
 
 msgid "Stats/Settings"
 msgstr "Stats/Paramètres"
@@ -12128,6 +12276,9 @@ msgstr "Mis à jour avec succès."
 msgid "Suggest Layout"
 msgstr "Suggérer une mise en page"
 
+msgid "Sun"
+msgstr ""
+
 msgid "Support"
 msgstr "Support"
 
@@ -12182,6 +12333,9 @@ msgstr "Volume du dataset système"
 msgid "System Info"
 msgstr "Info système"
 
+msgid "System Information"
+msgstr ""
+
 msgid "System Processes"
 msgstr "Processus du système"
 
@@ -12224,9 +12378,6 @@ msgstr ""
 "Interface réseau système qui redirige les adresses réseau du jail vers un "
 "espace d'adresse IP différent. Pour remplacer l'interface réseau du système "
 "par défaut, saisissez le nom d'une interface réseau à utiliser pour NAT."
-
-msgid "T"
-msgstr ""
 
 msgid "TCP Port"
 msgstr "Port TCP"
@@ -12333,6 +12484,9 @@ msgstr "Tâches"
 
 msgid "Team Drive ID"
 msgstr "Drive ID de l'équipe"
+
+msgid "Temperature"
+msgstr ""
 
 msgid "Template"
 msgstr "Modèle"
@@ -12598,9 +12752,9 @@ msgid ""
 "<i>10</i> means 2^10, or 1,024 seconds. The default is  10, maximum value "
 "is 17."
 msgstr ""
-"L'intervalle d'interrogation maximum, en secondes, comme une puissance de 2, par "
-"exemple <i>10</i> signifie 2^10, ou 1,024 secondes. La valeur par défaut est 10, "
-"la valeur maximale est 17."
+"L'intervalle d'interrogation maximum, en secondes, comme une puissance de "
+"2, par exemple <i>10</i> signifie 2^10, ou 1,024 secondes. La valeur par "
+"défaut est 10, la valeur maximale est 17."
 
 msgid "The member interface to configure."
 msgstr "L'interface membre à configurer."
@@ -12612,9 +12766,9 @@ msgid ""
 "The minimum polling interval, in seconds, as a power of 2.  For example, "
 "<i>6</i> means 2^6, or 64 seconds. The default is 6,  minimum value is 4."
 msgstr ""
-"L'intervalle d'interrogation minimum, en secondes, comme une puissance de 2, par "
-"exemple <i>6</i> signifie 2^6, ou 64 secondes. La valeur par défaut est 6, la "
-"valeur minimale est 4."
+"L'intervalle d'interrogation minimum, en secondes, comme une puissance de "
+"2, par exemple <i>6</i> signifie 2^6, ou 64 secondes. La valeur par défaut "
+"est 6, la valeur minimale est 4."
 
 msgid "The name "
 msgstr "Le nom "
@@ -12923,12 +13077,9 @@ msgid "This Dataset and Child Datasets"
 msgstr "Ce dataset et ses datasets enfants"
 
 msgid ""
-"This dataset has ACLs that are too complex to be edited with                "
-"     the permissions editor.  Open in ACL editor instead?"
+"This dataset has an active ACL. Changes to permissions must be made with "
+"the ACL editor.                   Open ACL editor?"
 msgstr ""
-"Ce dataset contient des listes de contrôle d'accès qui sont trop complexes "
-"pour être éditées avec l'éditeur d'autorisations. Ouvrir dans l'éditeur ACL "
-"à la place ?"
 
 msgid ""
 "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
@@ -13001,6 +13152,12 @@ msgstr ""
 "Température seuil en degrés Celsius. Si la température du variateur est "
 "supérieure à cette valeur, un journal de niveau LOG_CRIT est créé et un "
 "e-mail est envoyé. <i>0</i> désactive cette vérification."
+
+msgid "Thu"
+msgstr ""
+
+msgid "TiB"
+msgstr ""
 
 msgid ""
 "Time (in seconds) before the system  stops attempting to establish a "
@@ -13098,8 +13255,18 @@ msgstr "Contrôleur TrueNAS"
 msgid "TrueNAS controllers"
 msgstr "Contrôleurs TrueNAS"
 
+msgid "Tue"
+msgstr ""
+
 msgid "Tunables"
 msgstr "Réglables"
+
+msgid ""
+"Turn off hardware offloading  for network traffic processing. WARNING: "
+"disabling hardware offloading  can reduce network performance. Disabling "
+"hardware offloading is only  recommended when the interface is managing "
+"jails, plugins, or virtual  machines."
+msgstr ""
 
 msgid ""
 "Two-letter <a  href=\"https://www.iso.org/obp/ui/#search/code/\" "
@@ -13189,8 +13356,8 @@ msgid ""
 "from the <i>Drives List</i> drop-down to add a valid ID."
 msgstr ""
 "Identificateur unique du variateur. Connectez-vous à un compte Microsoft et "
-"choisissez un lecteur dans la <i>liste de lecteurs</i> déroulante pour ajouter un "
-"ID valide."
+"choisissez un lecteur dans la <i>liste de lecteurs</i> déroulante pour "
+"ajouter un ID valide."
 
 msgid "Unique snapshot name. Cannot be used with  a <i>Naming Schema</i>."
 msgstr ""
@@ -13391,6 +13558,9 @@ msgstr ""
 
 msgid "Uptime"
 msgstr "Durée de fonctionnement"
+
+msgid "Usage"
+msgstr ""
 
 msgid "Usage collection"
 msgstr "Collecte de l'utilisation"
@@ -13661,6 +13831,9 @@ msgstr "Interface parent VLAN"
 msgid "VLAN Tag"
 msgstr "Tag VLAN"
 
+msgid "VLANs"
+msgstr ""
+
 msgid "VM Snapshot"
 msgstr "Instantané VM"
 
@@ -13767,9 +13940,6 @@ msgstr "Tag VLAN"
 msgid "Volume size cannot be zero."
 msgstr "La taille du volume ne peut pas être nulle."
 
-msgid "W"
-msgstr ""
-
 msgid "WARNING"
 msgstr "ATTENTION"
 
@@ -13778,7 +13948,8 @@ msgstr "ATTENTION: "
 
 msgid "WARNING: A failover will  temporarily interrupt system services."
 msgstr ""
-"AVERTISSEMENT : Un basculement interrompt temporairement les services du système."
+"AVERTISSEMENT : Un basculement interrompt temporairement les services du "
+"système."
 
 msgid ""
 "WARNING: Adding data vdevs with different numbers of disks is not "
@@ -13852,6 +14023,9 @@ msgstr "Certificat SSL Webdav"
 
 msgid "Webhook URL"
 msgstr "URL Webhook"
+
+msgid "Wed"
+msgstr ""
 
 msgid "Weeks"
 msgstr "Semaines"
@@ -14015,6 +14189,9 @@ msgstr "Groupe de travail"
 msgid "Write"
 msgstr "Écrire"
 
+msgid "Write Errors"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr "Écrivez une limite de pourcentage pour un seul cœur de processeur."
 
@@ -14044,6 +14221,12 @@ msgstr "Oui, déchiffrer les disques"
 
 msgid "You have left the domain."
 msgstr "Vous avez quitté le domaine."
+
+msgid "ZFS"
+msgstr ""
+
+msgid "ZFS Cache"
+msgstr ""
 
 msgid "ZFS Deduplication"
 msgstr "Déduplication ZFS"
@@ -14181,8 +14364,14 @@ msgstr "devfs_ruleset"
 msgid "email"
 msgstr "courriel"
 
+msgid "empty"
+msgstr ""
+
 msgid "enforce_statfs"
 msgstr "enforce_statfs"
+
+msgid "error"
+msgstr ""
 
 msgid "exec_clean"
 msgstr "exec_clean"
@@ -14222,6 +14411,9 @@ msgstr "exec_timeout"
 
 msgid "expires in"
 msgstr "expire en"
+
+msgid "gathering info..."
+msgstr ""
 
 msgid "group"
 msgstr "groupe"
@@ -14313,6 +14505,9 @@ msgstr "msgqqueued"
 msgid "msgqsize"
 msgstr "msgqsize"
 
+msgid "multipath"
+msgstr ""
+
 msgid "name"
 msgstr "nom"
 
@@ -14333,6 +14528,9 @@ msgstr "nthr"
 
 msgid "openfiles"
 msgstr "openfiles"
+
+msgid "overview"
+msgstr ""
 
 msgid "owner"
 msgstr "propriétaire"
@@ -14360,6 +14558,9 @@ msgstr "rpc.lockd(8) port bind"
 
 msgid "rpc.statd(8) bind port"
 msgstr "mountd(8) bind port"
+
+msgid "safe"
+msgstr ""
 
 msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
 msgstr ""
@@ -14399,6 +14600,12 @@ msgstr "sysvshm"
 msgid "template"
 msgstr "template"
 
+msgid "total memory installed"
+msgstr ""
+
+msgid "used"
+msgstr ""
+
 msgid "vmemoryuse"
 msgstr "vmemoryuse"
 
@@ -14423,8 +14630,14 @@ msgstr "vnet_interfaces"
 msgid "wallclock"
 msgstr "wallclock"
 
+msgid "warn"
+msgstr ""
+
 msgid "was successfully attached."
 msgstr "a été attaché avec succès."
+
+msgid "while pool is encrypted"
+msgstr ""
 
 msgid "yes"
 msgstr "oui"
