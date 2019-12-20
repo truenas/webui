@@ -6,7 +6,7 @@
         <mat-toolbar-row fxHide.xs class="view-overview">
           <span fxHide.xs class="mat-card-title-text">
             <span class="card-title-text">
-              &nbsp;{{"System Information" | translate}}&nbsp;<span *ngIf="isPassive" class="passive">(Standby)</span>
+              &nbsp;{{"System Information" | translate}}&nbsp;<span *ngIf="isPassive" class="passive">({{"Standby" | translate}})</span>
             </span>
           </span>
         </mat-toolbar-row>
@@ -36,7 +36,7 @@
                     <mat-icon *ngIf="isFN && certified" class="generic certified" svgIcon="freenas_certified"></mat-icon>
                   </ng-template>
                   <!--<img class="certified-badge" *ngIf="certified" src="assets/images/freenas_certified.svg">-->
-                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" }})</div>
+                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" | translate }})</div>
               </div>
             </div>
 

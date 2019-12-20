@@ -185,7 +185,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     this.path = [
-      { name: "overview",template: this.overview},
+      { name: T("overview"),template: this.overview},
       { name: "empty", template: this.empty},
       { name: "empty", template: this.empty},
       { name: "empty", template: this.empty}
@@ -334,7 +334,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     
     this.currentSlide = value.toString();
     this.title = this.currentSlide == "0" ? "Pool" : this.poolState.name;
-    //console.log(this.path[this.currentSlideIndex].name);
     
   }
 
@@ -370,11 +369,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     if(this.poolHealth.errors.length > 0){
-      this.poolHealth.level = "error"
+      this.poolHealth.level = T("error");
     } else if(this.poolHealth.warnings.length > 0){
-      this.poolHealth.level = "warn"
+      this.poolHealth.level = T("warn");
     } else {
-      this.poolHealth.level = "safe"
+      this.poolHealth.level = T("safe");
     }
 
     if (condition === 'locked') {
