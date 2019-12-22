@@ -1917,6 +1917,9 @@ msgstr ""
 msgid "Checking HA status"
 msgstr ""
 
+msgid "Checking this box clears a previously-set password."
+msgstr ""
+
 msgid "Chmod Request"
 msgstr ""
 
@@ -2217,6 +2220,9 @@ msgid ""
 "case or performance requirements. See <a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
+msgstr ""
+
+msgid "Clear SED Password"
 msgstr ""
 
 msgid ""
@@ -6869,9 +6875,6 @@ msgstr ""
 msgid "Password associated with the LDAP User DN."
 msgstr ""
 
-msgid "Password for SED"
-msgstr "Heslo pro samošifrovací jednotku"
-
 msgid "Password for logging in to the provider and  updating the record."
 msgstr ""
 
@@ -10822,6 +10825,11 @@ msgid "Use syslog only"
 msgstr "Použít pouze syslog"
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
+msgstr ""
+
+msgid ""
+"Use this field to set or change the password for SED. Leave this field "
+"blank  to keep a previously-set password."
 msgstr ""
 
 msgid ""
