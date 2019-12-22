@@ -2384,6 +2384,9 @@ msgstr "SSL сервер CheckIP"
 msgid "Checking HA status"
 msgstr "Проверка статуса ВД"
 
+msgid "Checking this box clears a previously-set password."
+msgstr ""
+
 msgid "Chmod Request"
 msgstr "Запрос chmod"
 
@@ -2816,6 +2819,9 @@ msgstr ""
 "варианта использования или требований к производительности.  См. <a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> для информации."
+
+msgid "Clear SED Password"
+msgstr ""
 
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
@@ -8271,9 +8277,6 @@ msgstr "Сервер Паролей"
 msgid "Password associated with the LDAP User DN."
 msgstr "Пароль, связанный с DN пользователя LDAP."
 
-msgid "Password for SED"
-msgstr "Пароль для SED"
-
 msgid "Password for logging in to the provider and  updating the record."
 msgstr "Пароль для входа в провайдер и обновления записи."
 
@@ -12687,6 +12690,11 @@ msgstr "Использовать только syslog"
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "Используйте формат <i>A.B.C.D/E</i>, где <i>E</i> - маска CIDR."
+
+msgid ""
+"Use this field to set or change the password for SED. Leave this field "
+"blank  to keep a previously-set password."
+msgstr ""
 
 msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "

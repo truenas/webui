@@ -2161,6 +2161,9 @@ msgstr "CheckIP服务器SSL"
 msgid "Checking HA status"
 msgstr "正在检查HA状态"
 
+msgid "Checking this box clears a previously-set password."
+msgstr ""
+
 msgid "Chmod Request"
 msgstr "Chmod请求"
 
@@ -2516,6 +2519,9 @@ msgstr ""
 "每个S3对象的分类。根据特定的用例或性能要求选择一个类。请参见<a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
 "html\" target=\"_blank\">Amazon S3存储类</a>了解更多信息。"
+
+msgid "Clear SED Password"
+msgstr ""
 
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
@@ -7508,9 +7514,6 @@ msgstr "密码服务器"
 msgid "Password associated with the LDAP User DN."
 msgstr "与LDAP用户DN关联的密码。"
 
-msgid "Password for SED"
-msgstr "SED密码"
-
 msgid "Password for logging in to the provider and  updating the record."
 msgstr "登录提供者和更新记录的密码。"
 
@@ -11768,6 +11771,11 @@ msgstr "仅使用syslog"
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "使用格式<i>ABCD / E</i> ，其中<i>E</i>是CIDR掩码。"
+
+msgid ""
+"Use this field to set or change the password for SED. Leave this field "
+"blank  to keep a previously-set password."
+msgstr ""
 
 msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "

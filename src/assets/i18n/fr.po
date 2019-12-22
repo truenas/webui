@@ -2527,6 +2527,9 @@ msgstr "Serveur CheckIP SSL"
 msgid "Checking HA status"
 msgstr "Vérification de l'état du HA"
 
+msgid "Checking this box clears a previously-set password."
+msgstr ""
+
 msgid "Chmod Request"
 msgstr "Demande de Chmod"
 
@@ -2969,6 +2972,9 @@ msgstr ""
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> pour plus "
 "d'informations."
+
+msgid "Clear SED Password"
+msgstr ""
 
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
@@ -8602,9 +8608,6 @@ msgstr "Serveur de mots de passe"
 msgid "Password associated with the LDAP User DN."
 msgstr "Mot de passe associé au nom d'utilisateur LDAP (User DN)"
 
-msgid "Password for SED"
-msgstr "Mot de passe pour SED"
-
 msgid "Password for logging in to the provider and  updating the record."
 msgstr ""
 "Mot de passe pour se connecter au fournisseur et mettre à jour "
@@ -13661,6 +13664,11 @@ msgstr "Utiliser syslog uniquement"
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "Utiliser le format <i>A.B.C.C.D/E</i> où <i>E</i> est le masque CIDR."
+
+msgid ""
+"Use this field to set or change the password for SED. Leave this field "
+"blank  to keep a previously-set password."
+msgstr ""
 
 msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
