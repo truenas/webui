@@ -291,39 +291,47 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     for(let i in evt.data){
       let avail = null;
+      let used_pct = evt.data[i].used.parsed / (evt.data[i].used.parsed + evt.data[i].available.parsed);
+      
       if (evt.data[i].children && evt.data[i].children[0]) {
-        avail = evt.data[i].children[0].avail;
+        avail = evt.data[i].children[0].available.parsed;
       }
       let zvol = {
         avail: avail,
         id:evt.data[i].id,
-        is_decrypted:evt.data[i].is_decrypted,
-        is_upgraded:evt.data[i].is_upgraded,
-        mountpoint:evt.data[i].mountpoint,
+//        is_decrypted:evt.data[i].is_decrypted,
+//        is_upgraded:evt.data[i].is_upgraded,
+//        mountpoint:evt.data[i].mountpoint,
         name:evt.data[i].name,
-        status:evt.data[i].status, // RETURNS HEALTHY, LOCKED, UNKNOWN, DEGRADED, FAULTED, OFFLINE, REMOVED
-        used:evt.data[i].used,
-        used_pct:evt.data[i].used_pct,
-        vol_encrypt:evt.data[i].vol_encrypted,
-        vol_encryptkey:evt.data[i].vol_encryptkey,
-        vol_guid:evt.data[i].vol_guid,
-        vol_name:evt.data[i].vol_name
+//        status:evt.data[i].status, // RETURNS HEALTHY, LOCKED, UNKNOWN, DEGRADED, FAULTED, OFFLINE, REMOVED
+        used:evt.data[i].used.parsed,
+        used_pct: used_pct.toFixed(0) + '%'
+//        vol_encrypt:evt.data[i].vol_encrypted,
+//        vol_encryptkey:evt.data[i].vol_encryptkey,
+//        vol_guid:evt.data[i].vol_guid,
+//        vol_name:evt.data[i].vol_name
       }
       vd[zvol.id] = zvol;
+      //console.log(evt.data[i]);
     }
-    
+    console.log(vd);
     this.volumeData = vd;
   }
 
   getDisksData(){
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
       this.pools = evt.data;
       this.isDataReady();
     });
 
     this.core.register({observerClass: this, eventName: 'VolumeData'}).subscribe((evt:CoreEvent) => {
-      this.setVolumeData(evt);
+      const nonBootPools = evt.data.filter(v => v.id !== 'boot-pool');
+      let clone = Object.assign({}, evt);
+      clone.data = nonBootPools;
+      console.log(clone);
+      this.setVolumeData(clone);
       this.isDataReady();
     });
 
@@ -376,7 +384,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const value = spl[1];
     
     const pool = this.pools.filter(pool => pool[key] == value);
-    return this.volumeData && this.volumeData[pool[0].id] ? this.volumeData[pool[0].id] : console.warn('No volume data available!');; 
+    return this.volumeData && this.volumeData[pool[0].name] ? this.volumeData[pool[0].name] : console.warn('No volume data available!');; 
   }
 
   dataFromConfig(item:DashConfigItem){
