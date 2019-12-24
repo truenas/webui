@@ -5,6 +5,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { RestService, WebSocketService, DialogService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext } from 'app/helptext/system/reporting';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 
 @Component({
   selector: 'app-system-reporting',
@@ -34,35 +35,44 @@ export class ReportingComponent {
     }
   ]
 
-  public fieldConfig: FieldConfig[] = [{
-    type: 'checkbox',
-    name: 'cpu_in_percentage',
-    placeholder: helptext.cpu_in_percentage_placeholder,
-    tooltip: helptext.cpu_in_percentage_tooltip,
-  },
-  {
-    type: 'input',
-    name: 'graphite',
-    placeholder: helptext.graphite_placeholder,
-    tooltip: helptext.graphite_tooltip
-  },
-  {
-    type: 'input',
-    name: 'graph_age',
-    placeholder: helptext.graph_age_placeholder,
-    tooltip: helptext.graph_age_tooltip,
-    validation: helptext.graph_age_validation,
-    required: true
-  },
-  {
-    type: 'input',
-    name: 'graph_points',
-    placeholder: helptext.graph_points_placeholder,
-    tooltip: helptext.graph_points_tooltip,
-    validation: helptext.graph_points_validation,
-    required: true
-  },
-];
+  public fieldSets = new FieldSets([
+    {
+      name: helptext.fieldset_general,
+      class: 'general',
+      label: true,
+      config: [
+        {
+          type: "checkbox",
+          name: "cpu_in_percentage",
+          placeholder: helptext.cpu_in_percentage_placeholder,
+          tooltip: helptext.cpu_in_percentage_tooltip
+        },
+        {
+          type: "input",
+          name: "graphite",
+          placeholder: helptext.graphite_placeholder,
+          tooltip: helptext.graphite_tooltip
+        },
+        {
+          type: "input",
+          name: "graph_age",
+          placeholder: helptext.graph_age_placeholder,
+          tooltip: helptext.graph_age_tooltip,
+          validation: helptext.graph_age_validation,
+          required: true
+        },
+        {
+          type: "input",
+          name: "graph_points",
+          placeholder: helptext.graph_points_placeholder,
+          tooltip: helptext.graph_points_tooltip,
+          validation: helptext.graph_points_validation,
+          required: true
+        }
+      ]
+    },
+    { name: 'divider', divider: true }
+  ]);
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
