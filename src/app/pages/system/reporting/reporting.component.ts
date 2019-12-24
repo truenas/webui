@@ -1,18 +1,15 @@
 import { Component } from '@angular/core';
-import * as _ from 'lodash';
-import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
-import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService, DialogService } from '../../../services/';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext } from 'app/helptext/system/reporting';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { DialogService, RestService, WebSocketService } from '../../../services/';
+import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-system-reporting',
   templateUrl: 'reporting.component.html',
   styleUrls: ['reporting.component.css'],
 })
-
 export class ReportingComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
