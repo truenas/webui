@@ -1,38 +1,33 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
-import * as _ from 'lodash';
-
-import {
-  //RestService,
-  WebSocketService,
-  StorageService,
-  AppLoaderService,
-  UserService,
-} from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/account/user-form';
+import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import * as _ from 'lodash';
+import helptext from '../../../../helptext/account/user-form';
+import { AppLoaderService, StorageService, UserService, WebSocketService } from '../../../../services/';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
-import { T } from '../../../../translate-marker';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector : 'app-user-form',
-  template : `<entity-form [conf]="this"></entity-form>`
+  template : `<entity-form [conf]="this"></entity-form>`,
+  providers: [UserService]
 })
 export class UserFormComponent {
 
-  protected resource_name = 'account/users/';
+  protected queryCall = 'user.query';
   protected addCall = 'user.create';
+  protected editCall = 'user.update';
   protected route_success: string[] = ['account', 'users' ];
+  protected pk: number;
+  protected queryKey = 'id';
   protected isEntity  = true;
   protected isNew: boolean;
   public entityForm: any;
   protected namesInUse = [];
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  public fieldSets: FieldSets = new FieldSets([
     {
       name: helptext.user_form_title_name,
       class: helptext.user_form_title_class,
@@ -248,28 +243,19 @@ export class UserFormComponent {
       name:'divider',
       divider:true
     }
-  ]
+  ]);
 
-
-
-
-
-  private home: any;
-  private mode: any;
   private shells: any;
   private shell: any;
   private group: any;
   private groups: any;
-  private creategroup: any;
-  private group_create: any;
   private password_disabled: any;
-  private sudo: any;
-  private locked: any;
 
   constructor(protected router: Router, 
               protected ws: WebSocketService, 
               protected storageService: StorageService,
-              public loader: AppLoaderService
+              public loader: AppLoaderService,
+              private userService: UserService
               ) {
       this.ws.call('user.query').subscribe(
         (res)=>{
@@ -278,79 +264,67 @@ export class UserFormComponent {
       );
     };
 
-   afterInit(entityForm: any) {
+   afterInit(entityForm: EntityFormComponent) {
     this.loader.callStarted.emit();
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
     this.password_disabled = entityForm.formGroup.controls['password_disabled'];
-    this.sudo = entityForm.formGroup.controls['sudo'];
-    this.locked = entityForm.formGroup.controls['locked'];
     if (!entityForm.isNew) {
-      _.find(this.fieldConfig, {name : "password_edit"})['isHidden'] = false;
-      _.find(this.fieldConfig, {name : "password_conf_edit"})['isHidden'] = false;
+      this.fieldSets
+        .showConfig("password_edit")
+        .showConfig("password_conf_edit");
       entityForm.setDisabled('password', true, true);
       entityForm.setDisabled('password_conf', true, true);
       this.password_disabled.valueChanges.subscribe((password_disabled)=>{
-        if(password_disabled){
-          _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
-          _.find(this.fieldConfig, {name : "sudo"})['isHidden'] = password_disabled;
-          entityForm.setDisabled('password_edit', password_disabled);
-          entityForm.setDisabled('password_conf_edit', password_disabled);
-        } else{
+        if (!password_disabled) {
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
-          _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
-          _.find(this.fieldConfig, {name : "sudo"})['isHidden'] = password_disabled;
-          entityForm.setDisabled('password_edit', password_disabled);
-          entityForm.setDisabled('password_conf_edit', password_disabled);
-        };
+        }
+        this.fieldSets
+          .toggleConfigVisibility("locked", password_disabled)
+          .toggleConfigVisibility("sudo", password_disabled);
+        entityForm.setDisabled('password_edit', password_disabled);
+        entityForm.setDisabled('password_conf_edit', password_disabled);
       });
-
     } else {
       entityForm.setDisabled('password_edit', true, true);
       entityForm.setDisabled('password_conf_edit', true, true);
-      _.find(this.fieldConfig, {name : "password"})['isHidden'] = false;
-      _.find(this.fieldConfig, {name : "password_conf"})['isHidden'] = false;
+      this.fieldSets
+        .showConfig("password")
+        .showConfig("password_conf");
       this.password_disabled.valueChanges.subscribe((password_disabled)=>{
-        if(password_disabled){
-          _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
-          _.find(this.fieldConfig, {name : "sudo"})['isHidden'] = password_disabled;
-          entityForm.setDisabled('password', password_disabled);
-          entityForm.setDisabled('password_conf', password_disabled);
-        } else{
+        if (!password_disabled) {
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
-          _.find(this.fieldConfig, {name : "locked"})['isHidden'] = password_disabled;
-          _.find(this.fieldConfig, {name : "sudo"})['isHidden'] = password_disabled;
-          entityForm.setDisabled('password', password_disabled);
-          entityForm.setDisabled('password_conf', password_disabled);
-        };
+        }
+        this.fieldSets
+          .toggleConfigVisibility("locked", password_disabled)
+          .toggleConfigVisibility("sudo", password_disabled);
+        entityForm.setDisabled('password', password_disabled);
+        entityForm.setDisabled('password_conf', password_disabled);
       });
     }
 
 
     if (!entityForm.isNew) {
-      _.find(this.fieldConfig, {name : "group_create"})['isHidden'] = true;
+      this.fieldSets.hideConfig("group_create");
       entityForm.formGroup.controls['group_create'].setValue(false);
     }
-    /* list groups */
 
+    /* list groups */
     this.ws.call('group.query').subscribe((res) => {
       this.loader.callDone.emit(status);
-      this.group = _.find(this.fieldConfig, {name : "group"});
-      this.groups = _.find(this.fieldConfig, {name : "groups"});
+      this.group = this.fieldSets.config("group");
+      this.groups = this.fieldSets.config("groups");
       for (let i = 0; i < res.length; i++) {
         this.group.options.push({ label : res[i].group, value : res[i].id });
         this.groups.options.push({label : res[i].group, value : res[i].id})
-        }
-        
+      }  
     });
+
     /* list users */
-    const filter = [];
-    filter.push("id");
-    filter.push("=");
-    filter.push(parseInt(entityForm.pk,10));
-    this.ws.call('user.query',[[filter]]).subscribe((res) => {
+    const filter = ["id", "=", parseInt(entityForm.pk, 10)];
+    this.ws.call('user.query',[[filter]]).subscribe(async (res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe(stat => {
           entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2,5));
@@ -375,10 +349,13 @@ export class UserFormComponent {
         entityForm.formGroup.controls['shell'].setValue(res[0].shell);
         entityForm.setDisabled('password', true);
         entityForm.setDisabled('password_conf', true);
-        _.find(this.fieldConfig, {name : "password"})['isHidden'] = true;
-        _.find(this.fieldConfig, {name : "password_conf"})['isHidden'] = true;
-        _.find(this.fieldConfig, {name : "password_edit"})['isHidden'] = false;
-        _.find(this.fieldConfig, {name : "password_conf_edit"})['isHidden'] = false;
+
+        this.fieldSets
+          .hideConfig("password")
+          .hideConfig("password_conf")
+          .showConfig("password_edit")
+          .showConfig("password_conf_edit");
+
         if (res[0].builtin) {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('uid', true);
@@ -386,40 +363,62 @@ export class UserFormComponent {
           entityForm.setDisabled('group',true);
           entityForm.setDisabled('home',true);
           entityForm.setDisabled('home_mode',true);
-          _.find(this.fieldConfig, {name : "home_mode"})['isHidden'] = true;
+          this.fieldSets.hideConfig("home_mode");
         } else {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('group',false);
           entityForm.setValue('group',res[0].group.id);
           entityForm.formGroup.controls['shell'].setValue(res[0].shell);
-
         }
       } else {
         this.ws.call('user.get_next_uid').subscribe((next_uid)=>{
           entityForm.formGroup.controls['uid'].setValue(next_uid);
         })
       }
-      entityForm.ws.call('notifier.choices', [ 'SHELL_CHOICES' ]).subscribe((SHELL_CHOICES) => {
-        this.shell = _.find(this.fieldConfig, {name : "shell"});
-        this.shells = SHELL_CHOICES;
-        SHELL_CHOICES.forEach((item) => {
-        if (entityForm.isNew) {
-          if(item[1] !== "netcli.sh"){
-            this.shell.options.push({label : item[1], value : item[0]});
-            entityForm.formGroup.controls['shell'].setValue(
-            this.shells[1][0]);
-          };
-        }
-        else {
-          if(entityForm.data && !entityForm.data.bsdusr_builtin) {
-            if(item[1] !== "netcli.sh"){
-              this.shell.options.push({label : item[1], value : item[0]});
-            }
-          } else {
-            this.shell.options.push({label : item[1], value : item[0]});
-          } 
-        } 
+      this.userService.shellChoices().then(choices => {
+        this.shell = this.fieldSets.config("shell");
+
+        // Leaving this here for reference. Will delete after review/before merge.
+        // 
+        // choices.forEach((item) => {
+        //   if (entityForm.isNew) {
+        //     if(item[1] !== "netcli.sh"){
+        //       this.shell.options.push({label : item[1], value : item[0]});
+        //        entityForm.formGroup.controls['shell'].setValue(
+        //        this.shells[1][0]);
+        //     };
+        //   }
+        //   else {
+        //     if(entityForm.data && !entityForm.data.bsdusr_builtin) {
+        //       if(item[1] !== "netcli.sh"){
+        //         this.shell.options.push({label : item[1], value : item[0]});
+        //       }
+        //     } else {
+        //       this.shell.options.push({label : item[1], value : item[0]});
+        //     } 
+        //   } 
+        // });
+        this.shells = choices.filter(choice => {
+          if (entityForm.isNew && choice.label === "netcli.sh") {
+            return false;
+          }
+
+          if (
+            !entityForm.isNew &&
+            entityForm.data &&
+            !(entityForm.data as any).bsdusr_builtin &&
+            choice.label === "netcli.sh"
+          ) {
+            return false;
+          }
+
+          return true;
         });
+        this.shell.options = this.shells;
+
+        if (entityForm.isNew && Array.isArray(this.shells) && this.shells.length > 0) {
+          entityForm.formGroup.controls['shell'].setValue(this.shells[0].value);
+        }
       });
     });
     if (!entityForm.isNew){
@@ -487,16 +486,11 @@ export class UserFormComponent {
       }
     };
   }
-  blurEvent2(parent){
+  blurEvent2(parent: { fieldSets: FieldSets, entityForm: EntityFormComponent }) {
     if(parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
-      if(username.length > 8 ){
-        _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= helptext.user_form_blur_event2_warning;
-      } else {
-        _.find(parent.fieldConfig, { 'name': 'username' })['warnings']= null;
-
-
-      };
+      parent.fieldSets.config("username").warnings =
+        username.length > 8 ? helptext.user_form_blur_event2_warning : null;
     };
   }
 }

@@ -1,8 +1,9 @@
 
 
-import {Injectable} from '@angular/core';
-import {RestService} from './rest.service';
-import {WebSocketService} from './ws.service';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { RestService } from './rest.service';
+import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class UserService {
@@ -74,5 +75,19 @@ export class UserService {
       .toPromise()
       .then(g => (group = g), console.error);
     return group;
+  }
+
+  async shellChoices(): Promise<{ label: string, value: string}[]> {
+    return await this.ws
+      .call("user.shell_choices", [])
+      .pipe(
+        map(choices =>
+          Object.keys(choices || {}).map(key => ({
+            label: choices[key],
+            value: key
+          }))
+        )
+      )
+      .toPromise();
   }
 }
