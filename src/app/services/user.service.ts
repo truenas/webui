@@ -77,9 +77,9 @@ export class UserService {
     return group;
   }
 
-  async shellChoices(): Promise<{ label: string, value: string}[]> {
+  async shellChoices(userId?: number): Promise<{ label: string, value: string}[]> {
     return await this.ws
-      .call("user.shell_choices", [])
+      .call("user.shell_choices", userId ? [userId] : [])
       .pipe(
         map(choices =>
           Object.keys(choices || {}).map(key => ({

@@ -19,7 +19,7 @@ export class UserFormComponent {
   protected addCall = 'user.create';
   protected editCall = 'user.update';
   protected route_success: string[] = ['account', 'users' ];
-  protected pk: number;
+  protected pk: string;
   protected queryKey = 'id';
   protected isEntity  = true;
   protected isNew: boolean;
@@ -265,6 +265,7 @@ export class UserFormComponent {
     };
 
    afterInit(entityForm: EntityFormComponent) {
+    this.pk = entityForm.pk;
     this.loader.callStarted.emit();
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
@@ -323,7 +324,7 @@ export class UserFormComponent {
     });
 
     /* list users */
-    const filter = ["id", "=", parseInt(entityForm.pk, 10)];
+    const filter = ["id", "=", parseInt(this.pk, 10)];
     this.ws.call('user.query',[[filter]]).subscribe(async (res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe(stat => {
@@ -375,45 +376,9 @@ export class UserFormComponent {
           entityForm.formGroup.controls['uid'].setValue(next_uid);
         })
       }
-      this.userService.shellChoices().then(choices => {
+      this.userService.shellChoices(parseInt(this.pk, 10)).then(choices => {
+        this.shells = choices;
         this.shell = this.fieldSets.config("shell");
-
-        // Leaving this here for reference. Will delete after review/before merge.
-        // 
-        // choices.forEach((item) => {
-        //   if (entityForm.isNew) {
-        //     if(item[1] !== "netcli.sh"){
-        //       this.shell.options.push({label : item[1], value : item[0]});
-        //        entityForm.formGroup.controls['shell'].setValue(
-        //        this.shells[1][0]);
-        //     };
-        //   }
-        //   else {
-        //     if(entityForm.data && !entityForm.data.bsdusr_builtin) {
-        //       if(item[1] !== "netcli.sh"){
-        //         this.shell.options.push({label : item[1], value : item[0]});
-        //       }
-        //     } else {
-        //       this.shell.options.push({label : item[1], value : item[0]});
-        //     } 
-        //   } 
-        // });
-        this.shells = choices.filter(choice => {
-          if (entityForm.isNew && choice.label === "netcli.sh") {
-            return false;
-          }
-
-          if (
-            !entityForm.isNew &&
-            entityForm.data &&
-            !(entityForm.data as any).bsdusr_builtin &&
-            choice.label === "netcli.sh"
-          ) {
-            return false;
-          }
-
-          return true;
-        });
         this.shell.options = this.shells;
 
         if (entityForm.isNew && Array.isArray(this.shells) && this.shells.length > 0) {
