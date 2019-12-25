@@ -9,6 +9,8 @@ import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'custom-theme-manager-form',
@@ -29,11 +31,11 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
    */
 
   public themesExist:boolean = false;
-  public emptyMessage: string = "No custom themes. Click <b>Create New Theme</b> to create a new custom theme."
+  public emptyMessage: string = T("No custom themes. Click <b>Create New Theme</b> to create a new custom theme.")
 
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
-  public saveSubmitText = "Delete Selected";
+  public saveSubmitText = T("Delete Selected");
   protected isEntity: boolean = true; // was true
   private colorOptions: any[] = [];
   private customThemeOptions: any[] = [];
@@ -42,7 +44,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
-        name:'Manage Custom Themes',
+        name:T('Manage Custom Themes'),
         class:'theme-manager',
         width:'100%',
         label:true,
@@ -53,7 +55,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
     custActions: any[] = [
       {
         id: 'create-theme-link',
-        name: 'Create New Theme',
+        name: T('Create New Theme'),
         eventName:"CreateTheme"
       }
     ]

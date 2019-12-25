@@ -11,6 +11,8 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { RestService, WebSocketService } from 'app/services/';
 import helptext from '../../../../helptext/task-calendar/cron/cron-form';
+import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'cron-job-add',
@@ -30,7 +32,7 @@ export class CronFormComponent {
    protected data: any;
    protected user_field: any;
 
-   public saveSubmitText = "Save Cron Job";
+   public saveSubmitText = T("Save Cron Job");
    protected isEntity: boolean = true; // was true
    public fieldConfig:FieldConfig[] = [];
    public fieldSetDisplay:string = 'no-margins';
