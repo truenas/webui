@@ -69,7 +69,7 @@ export class IPMIComponent {
   public custActions: Array<any> = [
     {
       'id' : 'ipmi_identify',
-      'name' : 'Identify Light',
+      'name' : T('Identify Light'),
        function :  () => {
         this.dialog.select(
           'IPMI Identify',this.options,'IPMI flash duration','ipmi.identify','seconds', "IPMI identify command issued");

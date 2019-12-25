@@ -118,7 +118,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public wsfg;
   public wsResponseIdx;
   public queryResponse;
-  public saveSubmitText = "Save";
+  public saveSubmitText = T("Save");
   public showPassword = false;
   public isFooterConsoleOpen: boolean;
   public successMessage = T('Settings saved.')

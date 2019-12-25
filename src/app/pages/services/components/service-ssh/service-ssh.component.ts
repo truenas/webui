@@ -5,6 +5,8 @@ import * as _ from 'lodash';
 import { NetworkService, RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-ssh';
+import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'ssh-edit',
@@ -104,12 +106,12 @@ export class ServiceSSHComponent implements OnInit {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : 'Basic Mode',
+      name : T('Basic Mode'),
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id' : 'advanced_mode',
-      name : 'Advanced Mode',
+      name : T('Advanced Mode'),
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
