@@ -75,18 +75,10 @@ export class ApiService {
           ["name","~", "^[^\/]+$" ], // Root datasets only
         ];
 
-        /*const queryOptions = {
-          "select": []
-        }*/
-
-        const params = [queryFilters/*, queryOptions*/];
+        const params = [queryFilters];
         redef.args = params;
         return redef;
       },
-      /*postProcessor(res,callArgs,core){
-        let cloneRes = Object.assign({},res);
-        console.log(cloneRes);
-      }*/
     },
     DisksRequest:{
       apiCall:{
