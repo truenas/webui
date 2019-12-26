@@ -291,7 +291,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     for(let i in evt.data){
       let avail = null;
-      let used_pct = evt.data[i].used.parsed / (evt.data[i].used.parsed + evt.data[i].available.parsed);
+      const used_pct = evt.data[i].used.parsed / (evt.data[i].used.parsed + evt.data[i].available.parsed);
       
       if (evt.data[i].children && evt.data[i].children[0]) {
         avail = evt.data[i].children[0].available.parsed;

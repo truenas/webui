@@ -69,15 +69,11 @@ export class ApiService {
         responseEvent: "VolumeData"
       },
       preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
-
         const queryFilters = [
           ["name","~", "^[^\/]+$" ], // Root datasets only
         ];
 
-        const params = [queryFilters];
-        redef.args = params;
-        return redef;
+        return { args: [queryFilters], ...def };
       },
     },
     DisksRequest:{
@@ -721,7 +717,7 @@ export class ApiService {
       }
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
-      this.ws.call(call.namespace, call.args ? call.args : []).subscribe((res) => {
+      this.ws.call(call.namespace, call.args || []).subscribe((res) => {
         if(this.debug){
           console.log("*** API Response:");
           console.log(call);
