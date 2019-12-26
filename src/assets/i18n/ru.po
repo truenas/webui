@@ -2259,7 +2259,7 @@ msgid "Cannot Edit while HA is Enabled"
 msgstr "Невозможно редактировать, пока включена ВД"
 
 msgid "Cannot create plugins or jails until a pool is present for storing them."
-msgstr "Невозможно создать плагины или джейлы, пока нет пула для их хранения."
+msgstr "Невозможно создать плагины или jailы, пока нет пула для их хранения."
 
 msgid "Cannot edit while HA is enabled."
 msgstr "Невозможно редактировать, когда включена отказоустойчивость."
@@ -2617,7 +2617,7 @@ msgstr ""
 "пользователя."
 
 msgid "Choose a pool for plugin and jail storage."
-msgstr "Выберите пул для хранения плагинов и джейлов."
+msgstr "Выберите пул для хранения плагинов и jailов."
 
 msgid "Choose a pool to scrub."
 msgstr "Выберите пул для проверки."
@@ -6919,7 +6919,7 @@ msgid "Jail Update"
 msgstr "Обновление jail"
 
 msgid "Jail Update Failed"
-msgstr "Не удалось обновить джейл"
+msgstr "Не удалось обновить jail"
 
 msgid "Jail Updated"
 msgstr "Jail обновлен"
@@ -7411,7 +7411,7 @@ msgid ""
 msgstr ""
 "Максимальное время ожидания в секундах, в течение которого процессы jail "
 "завершаются после отправки сигнала SIGTERM. Это происходит после завершения "
-"любых команд <b>exec_stop</b>. По истечении указанного времени джейл "
+"любых команд <b>exec_stop</b>. По истечении указанного времени jail "
 "удаляется, убивая все оставшиеся процессы. Если установлено значение "
 "<i>0</i>, SIGTERM не отправляется и jail удаляется немедленно."
 
@@ -14364,7 +14364,7 @@ msgid "total memory installed"
 msgstr "установленная память"
 
 msgid "used"
-msgstr "исп."
+msgstr "занято"
 
 msgid "vmemoryuse"
 msgstr ""
