@@ -147,9 +147,6 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,callArgs){
-        //DEBUG: console.warn("POOLDISKS POSTPROCESSOR");
-        //DEBUG: console.log(res);
-        //DEBUG: console.log(callArgs);
         let cloneRes = Object.assign({},res);
         cloneRes = {callArgs:callArgs ,data: res}
         return cloneRes;

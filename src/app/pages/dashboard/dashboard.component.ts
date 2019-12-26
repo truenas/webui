@@ -314,14 +314,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       vd[zvol.id] = zvol;
       //console.log(evt.data[i]);
     }
-    console.log(vd);
     this.volumeData = vd;
   }
 
   getDisksData(){
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       this.pools = evt.data;
       this.isDataReady();
     });
@@ -330,7 +328,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const nonBootPools = evt.data.filter(v => v.id !== 'boot-pool');
       let clone = Object.assign({}, evt);
       clone.data = nonBootPools;
-      console.log(clone);
       this.setVolumeData(clone);
       this.isDataReady();
     });
