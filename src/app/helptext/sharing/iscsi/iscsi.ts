@@ -70,9 +70,10 @@ export const helptext_sharing_iscsi = {
   ),
 
   portal_form_placeholder_ip: T("IP Address"),
-  portal_form_tooltip_ip: T("Select the IP addresses associated with an \
- interface or the wildcard addresses 0.0.0.0 (all IPv4 addresses) and/or \
- :: (all IPv6 addresses)."
+  portal_form_tooltip_ip: T("Select the IP addresses to be listened on \
+ by the portal. Click ADD to add IP addresses with a different network \
+ port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
+ addresses, or <i>::</i> to listen on all IPv6 addresses."
   ),
   portal_form_validators_ip: [Validators.required],
 
