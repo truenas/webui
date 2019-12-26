@@ -166,7 +166,8 @@ mtu_placeholder: T('MTU'),
 mtu_tooltip: T('Maximum Transmission Unit, the largest protocol data \
  unit that can be communicated. The largest workable MTU size varies \
  with network interfaces and equipment. *1500* and *9000* are standard \
- Ethernet MTU sizes.'),
+ Ethernet MTU sizes. Leaving blank restores the field to the default \
+ value of *1500*.'),
 mtu_validation: [rangeValidator(68, 9000)],
 
 alias_list_placeholder: T('Aliases'),
