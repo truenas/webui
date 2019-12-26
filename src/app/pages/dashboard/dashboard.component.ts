@@ -299,20 +299,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       let zvol = {
         avail: avail,
         id:evt.data[i].id,
-//        is_decrypted:evt.data[i].is_decrypted,
-//        is_upgraded:evt.data[i].is_upgraded,
-//        mountpoint:evt.data[i].mountpoint,
         name:evt.data[i].name,
-//        status:evt.data[i].status, // RETURNS HEALTHY, LOCKED, UNKNOWN, DEGRADED, FAULTED, OFFLINE, REMOVED
         used:evt.data[i].used.parsed,
         used_pct: used_pct.toFixed(0) + '%'
-//        vol_encrypt:evt.data[i].vol_encrypted,
-//        vol_encryptkey:evt.data[i].vol_encryptkey,
-//        vol_guid:evt.data[i].vol_guid,
-//        vol_name:evt.data[i].vol_name
       }
       vd[zvol.id] = zvol;
-      //console.log(evt.data[i]);
     }
     this.volumeData = vd;
   }
