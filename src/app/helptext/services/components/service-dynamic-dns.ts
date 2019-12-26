@@ -3,6 +3,9 @@ import { Validators } from '@angular/forms';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 
 export default {
+fieldset_general: T('General Options'),
+fieldset_access: T('Access'),
+
 provider_placeholder : T('Provider'),
 provider_tooltip: T('Several providers are supported. If a specific \
  provider is not listed, select <i>Custom Provider</i> and enter the \

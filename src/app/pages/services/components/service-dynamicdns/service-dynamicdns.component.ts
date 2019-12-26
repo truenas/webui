@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-dynamic-dns';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 
 @Component({
   selector : 'dynamicdns-edit',
@@ -12,93 +13,108 @@ import helptext from '../../../../helptext/services/components/service-dynamic-d
 })
 
 export class ServiceDDNSComponent {
-  // protected resource_name = 'services/dynamicdns';
   protected addCall = 'dyndns.update';
   protected route_success: string[] = [ 'services' ];
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldSets = new FieldSets([
     {
-      type : 'select',
-      name : 'provider',
-      placeholder : helptext.provider_placeholder,
-      tooltip: helptext.provider_tooltip,
-      options : []
+      name: helptext.fieldset_general,
+      label: true,
+      width: '49%',
+      config: [
+        {
+          type : 'select',
+          name : 'provider',
+          placeholder : helptext.provider_placeholder,
+          tooltip: helptext.provider_tooltip,
+          options : []
+        },
+        {
+          type : 'checkbox',
+          name : 'checkip_ssl',
+          placeholder : helptext.checkip_ssl_placeholder,
+          tooltip: helptext.checkip_ssl_tooltip,
+        },
+        {
+          type : 'input',
+          name : 'checkip_server',
+          placeholder : helptext.checkip_server_placeholder,
+          tooltip: helptext.checkip_server_tooltip,
+        },
+        {
+          type : 'input',
+          name : 'checkip_path',
+          placeholder : helptext.checkip_path_placeholder,
+          tooltip: helptext.checkip_path_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : 'ssl',
+          placeholder : helptext.ssl_placeholder,
+          tooltip: helptext.ssl_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'custom_ddns_server',
+          placeholder: helptext.custom_ddns_server_placeholder,
+          tooltip: helptext.custom_ddns_server_tooltip,
+          disabled: true,
+          isHidden: true
+        },
+        {
+          type: 'input',
+          name: 'custom_ddns_path',
+          placeholder: helptext.custom_ddns_path_placeholder,
+          tooltip: helptext.custom_ddns_path_tooltip,
+          disabled: true,
+          isHidden: true
+        },
+        {
+          type : 'input',
+          name : 'domain',
+          placeholder : helptext.domain_placeholder,
+          tooltip: helptext.domain_tooltip,
+        },
+        {
+          type : 'input',
+          name : 'period',
+          placeholder : helptext.period_placeholder,
+          tooltip: helptext.period_tooltip,
+        }
+      ]
     },
+    { name: 'spacer', label: false, width: '2%' },
     {
-      type : 'checkbox',
-      name : 'checkip_ssl',
-      placeholder : helptext.checkip_ssl_placeholder,
-      tooltip: helptext.checkip_ssl_tooltip,
+      name: helptext.fieldset_access,
+      label: true,
+      width: '49%',
+      config: [
+        {
+          type : 'input',
+          name : 'username',
+          placeholder : helptext.username_placeholder,
+          tooltip: helptext.username_tooltip,
+          required: true
+        },
+        {
+          type : 'input',
+          name : 'password',
+          placeholder : helptext.password_placeholder,
+          tooltip: helptext.password_tooltip,
+          inputType : 'password',
+          togglePw: true,
+          validation : helptext.password_validation,
+        },
+        {
+          type : 'input',
+          name : 'password2',
+          placeholder : helptext.password2_placeholder,
+          inputType : 'password',
+        }
+      ]
     },
-    {
-      type : 'input',
-      name : 'checkip_server',
-      placeholder : helptext.checkip_server_placeholder,
-      tooltip: helptext.checkip_server_tooltip,
-    },
-    {
-      type : 'input',
-      name : 'checkip_path',
-      placeholder : helptext.checkip_path_placeholder,
-      tooltip: helptext.checkip_path_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : 'ssl',
-      placeholder : helptext.ssl_placeholder,
-      tooltip: helptext.ssl_tooltip,
-    },
-    {
-      type: 'input',
-      name: 'custom_ddns_server',
-      placeholder: helptext.custom_ddns_server_placeholder,
-      tooltip: helptext.custom_ddns_server_tooltip,
-      disabled: true,
-      isHidden: true
-    },
-    {
-      type: 'input',
-      name: 'custom_ddns_path',
-      placeholder: helptext.custom_ddns_path_placeholder,
-      tooltip: helptext.custom_ddns_path_tooltip,
-      disabled: true,
-      isHidden: true
-    },
-    {
-      type : 'input',
-      name : 'domain',
-      placeholder : helptext.domain_placeholder,
-      tooltip: helptext.domain_tooltip,
-    },
-    {
-      type : 'input',
-      name : 'username',
-      placeholder : helptext.username_placeholder,
-      tooltip: helptext.username_tooltip,
-      required: true
-    },
-    {
-      type : 'input',
-      name : 'password',
-      placeholder : helptext.password_placeholder,
-      tooltip: helptext.password_tooltip,
-      inputType : 'password',
-      togglePw: true,
-      validation : helptext.password_validation,
-    },
-    {
-      type : 'input',
-      name : 'password2',
-      placeholder : helptext.password2_placeholder,
-      inputType : 'password',
-    },
-    {
-      type : 'input',
-      name : 'period',
-      placeholder : helptext.period_placeholder,
-      tooltip: helptext.period_tooltip,
-    },
-  ];
+    { name: 'divider', divider: true }
+  ]);
 
   protected provider: any;
 
@@ -135,7 +151,7 @@ export class ServiceDDNSComponent {
         this.hideField('custom_ddns_path', true, entityForm);
        }
     });
-   }
+  }
 
   clean(value) {
     delete value['password2'];
@@ -155,7 +171,7 @@ export class ServiceDDNSComponent {
   }
 
   preInit(entityForm) {
-    this.provider = _.find(this.fieldConfig, {"name": "provider"});
+    this.provider = this.fieldSets.config("provider");
     this.ws.call("dyndns.provider_choices").subscribe(res => {
       for (const key in res) {
         this.provider.options.push({label: res[key], value:key});
@@ -165,9 +181,7 @@ export class ServiceDDNSComponent {
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
-    let target = _.find(this.fieldConfig, {'name' : fieldName});
-    target['isHidden'] = show;
+    this.fieldSets.config(fieldName).isHidden = show;
     entity.setDisabled(fieldName, show, show);
-  }
-  
+  }  
 }
