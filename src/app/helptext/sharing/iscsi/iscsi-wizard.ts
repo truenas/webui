@@ -50,7 +50,9 @@ export default {
  Mutual CHAP."),
 
     ip_placeholder: T("IP"),
-    ip_tooltip: T("Select the IP address associated with an interface or the wildcard address of 0.0.0.0 (any interface)."),
+    ip_tooltip: T("Select the IP addresses associated with an interface \
+ or the wildcard addresses 0.0.0.0 (all IPv4 addresses) and/or :: (all \
+ IPv6 addresses)."),
 
     port_placeholder: T("Port"),
     port_tooltip: T("TCP port used to access the iSCSI target. Default is 3260."),
