@@ -138,8 +138,8 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   ngAfterViewInit(){
     this.stats.subscribe((evt:CoreEvent) => {
       if(evt.name == "NetTraffic_" + this.nicState.name){
-        const sent: Converted = this.convert(evt.data.sent_bytes_last);
-        const received: Converted = this.convert(evt.data.received_bytes_last);
+        const sent: Converted = this.convert(evt.data.sent_bytes_rate);
+        const received: Converted = this.convert(evt.data.received_bytes_rate);
 
         let t = {
           sent: sent.value,
