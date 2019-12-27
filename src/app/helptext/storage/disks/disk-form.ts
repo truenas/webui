@@ -53,8 +53,7 @@ disk_form_informational_tooltip: T('Report if drive temperature is at or\
 
 disk_form_passwd_placeholder: T('SED Password'),
 disk_form_passwd_tooltip: T('Set or change the password of this SED. \
- This password is used instead of the global SED password in \
- <i>System -> Advanced</i>.'),
+ This password is used instead of the global SED password.'),
 
 clear_pw: {
     placeholder: T('Clear SED Password'),
