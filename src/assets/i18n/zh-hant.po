@@ -497,6 +497,9 @@ msgid ""
 "database file was saved  without the Password Secret Seed. </font></p>"
 msgstr ""
 
+msgid ">release notes</a>."
+msgstr ""
+
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -774,6 +777,9 @@ msgstr "新增資料"
 msgid "Add Dataset"
 msgstr "新增資料集"
 
+msgid "Add Extra ISCSI Group"
+msgstr ""
+
 msgid "Add Log"
 msgstr "新增日誌"
 
@@ -970,6 +976,9 @@ msgid "Advanced"
 msgstr "進階"
 
 msgid "Advanced Details"
+msgstr ""
+
+msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
@@ -1291,6 +1300,9 @@ msgstr "套用擱置中的更新"
 msgid "Apply Permissions Recursively"
 msgstr ""
 
+msgid "Apply Update"
+msgstr ""
+
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
 
@@ -1509,6 +1521,9 @@ msgid "Basic Properties"
 msgstr "基本屬性"
 
 msgid "Batch Operations"
+msgstr ""
+
+msgid "Before updating, please read the release notes."
 msgstr ""
 
 msgid "Begin"
@@ -2560,7 +2575,7 @@ msgid ""
 "using IPv6 entirely."
 msgstr ""
 
-msgid "Coolest"
+msgid "Coolest:"
 msgstr ""
 
 msgid "Copies"
@@ -2604,6 +2619,9 @@ msgstr "建立 CA"
 
 msgid "Create Certificate"
 msgstr "建立憑證"
+
+msgid "Create New Theme"
+msgstr ""
 
 msgid "Create Passphrase"
 msgstr "建立複雜密碼"
@@ -2686,6 +2704,9 @@ msgstr "例行作業 (Cron Jobs)"
 
 msgid "Current Password"
 msgstr "現行密碼"
+
+msgid "Current Train:"
+msgstr ""
 
 msgid "Custom"
 msgstr ""
@@ -2961,6 +2982,9 @@ msgstr ""
 
 msgid "Delete Path"
 msgstr "刪除路徑"
+
+msgid "Delete Selected"
+msgstr ""
 
 msgid "Delete Zvol"
 msgstr "刪除 Zvol"
@@ -3309,6 +3333,9 @@ msgid "Done"
 msgstr "完成"
 
 msgid "Download"
+msgstr ""
+
+msgid "Download Encryption Key"
 msgstr ""
 
 msgid "Download Key"
@@ -4579,6 +4606,9 @@ msgstr ""
 msgid "Feb"
 msgstr ""
 
+msgid "Fetch DataStores"
+msgstr ""
+
 msgid "Fetch Method"
 msgstr ""
 
@@ -4784,6 +4814,9 @@ msgstr ""
 msgid "Generate New"
 msgstr ""
 
+msgid "Generate Reports"
+msgstr ""
+
 msgid ""
 "Generate a name for the snapshot  from a previously created  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
@@ -4943,7 +4976,7 @@ msgid ""
 "to run the command."
 msgstr ""
 
-msgid "Highest Usage"
+msgid "Highest Usage:"
 msgstr ""
 
 msgid ""
@@ -5034,7 +5067,7 @@ msgstr "允許主機清單"
 msgid "Hosts Deny"
 msgstr "拒絕主機清單"
 
-msgid "Hottest"
+msgid "Hottest:"
 msgstr ""
 
 msgid "Hour"
@@ -5218,6 +5251,9 @@ msgstr ""
 
 msgid "Identifier"
 msgstr "識別名稱"
+
+msgid "Identify Light"
+msgstr ""
 
 msgid "Idmap Backend"
 msgstr ""
@@ -5699,6 +5735,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr "傳統 WEB 介面"
 
+msgid "LOAD"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr "登入到服務供應商"
 
@@ -5870,7 +5909,7 @@ msgid ""
 "target=\"_blank\">RFC3721</a>."
 msgstr ""
 
-msgid "Lowest Usage"
+msgid "Lowest Usage:"
 msgstr ""
 
 msgid ""
@@ -5898,6 +5937,9 @@ msgstr "Mac 位址"
 
 msgid "Mail Server Port"
 msgstr "郵件伺服器埠號"
+
+msgid "Manage Custom Themes"
+msgstr ""
 
 msgid "Manual"
 msgstr ""
@@ -6123,6 +6165,9 @@ msgstr "模式"
 
 msgid "Model"
 msgstr "型號"
+
+msgid "Model:"
+msgstr ""
 
 msgid ""
 "Modify for disks that understand <a                   "
@@ -6510,6 +6555,11 @@ msgid "No Repositories"
 msgstr ""
 
 msgid "No Stat"
+msgstr ""
+
+msgid ""
+"No custom themes. Click <b>Create New Theme</b> to create a new custom "
+"theme."
 msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
@@ -7449,6 +7499,9 @@ msgstr "移除"
 msgid "Remove Additional Path"
 msgstr "移除其它路徑"
 
+msgid "Remove Extra ISCSI Group"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr ""
 
@@ -7748,6 +7801,9 @@ msgstr ""
 msgid "Run this rsync now?"
 msgstr ""
 
+msgid "Running"
+msgstr ""
+
 msgid "S.M.A.R.T. Test"
 msgstr ""
 
@@ -7847,6 +7903,12 @@ msgid "Save Config"
 msgstr "下載設定"
 
 msgid "Save Configuration"
+msgstr ""
+
+msgid "Save Cron Job"
+msgstr ""
+
+msgid "Save Custom Theme"
 msgstr ""
 
 msgid "Save Debug"
@@ -9565,6 +9627,9 @@ msgstr ""
 msgid "Start"
 msgstr "開始"
 
+msgid "Start Automatically"
+msgstr ""
+
 msgid "Start Scrub"
 msgstr "開始 Scrub"
 
@@ -10356,6 +10421,9 @@ msgid ""
 "plugin."
 msgstr ""
 
+msgid "This is not a production release, and should only be used for testing."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -10375,6 +10443,15 @@ msgid "This system will restart when the update completes."
 msgstr ""
 
 msgid "This type of VDEV requires at least "
+msgstr ""
+
+msgid "Thread number:"
+msgstr ""
+
+msgid "Threads"
+msgstr ""
+
+msgid "Threads:"
 msgstr ""
 
 msgid "Threshold days"
@@ -10658,6 +10735,9 @@ msgid "Update Status"
 msgstr ""
 
 msgid "Update in Progress"
+msgstr ""
+
+msgid "Update is complete, please reboot the system."
 msgstr ""
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
