@@ -592,6 +592,9 @@ msgstr ""
 "<p>系统将重新启动以执行此操作！</p> <p> <font "
 "color=\"red\">在没有密码种子的情况下保存上传的配置数据库文件时，所有密码都会重置。</font> </p>"
 
+msgid ">release notes</a>."
+msgstr ""
+
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -907,6 +910,9 @@ msgstr "添加数据"
 msgid "Add Dataset"
 msgstr "添加数据集"
 
+msgid "Add Extra ISCSI Group"
+msgstr ""
+
 msgid "Add Log"
 msgstr "添加日志"
 
@@ -1135,6 +1141,9 @@ msgid "Advanced"
 msgstr "高级"
 
 msgid "Advanced Details"
+msgstr ""
+
+msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
@@ -1509,6 +1518,9 @@ msgstr "应用更新"
 msgid "Apply Permissions Recursively"
 msgstr "递归应用权限"
 
+msgid "Apply Update"
+msgstr ""
+
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr "是否应用网络更改？网络连接将中断。"
 
@@ -1733,6 +1745,9 @@ msgstr "基本属性"
 
 msgid "Batch Operations"
 msgstr "批处理"
+
+msgid "Before updating, please read the release notes."
+msgstr ""
 
 msgid "Begin"
 msgstr "开始"
@@ -2900,7 +2915,7 @@ msgstr ""
 "<br> <b>新建</ b>：使用<b> ip6_addr </ b>限制地址。\n"
 "<br> <b>禁用</ b>：完全禁止监狱使用IPv6。"
 
-msgid "Coolest"
+msgid "Coolest:"
 msgstr ""
 
 msgid "Copies"
@@ -2947,6 +2962,9 @@ msgstr "创建认证机构"
 
 msgid "Create Certificate"
 msgstr "创建证书"
+
+msgid "Create New Theme"
+msgstr ""
 
 msgid "Create Passphrase"
 msgstr "创建密码"
@@ -3031,6 +3049,9 @@ msgstr "计划任务"
 
 msgid "Current Password"
 msgstr "当前密码"
+
+msgid "Current Train:"
+msgstr ""
 
 msgid "Custom"
 msgstr "自定义"
@@ -3330,6 +3351,9 @@ msgstr "删除挂载点"
 
 msgid "Delete Path"
 msgstr "删除路径"
+
+msgid "Delete Selected"
+msgstr ""
 
 msgid "Delete Zvol"
 msgstr "删除Zvol"
@@ -3703,6 +3727,9 @@ msgstr "完成"
 
 msgid "Download"
 msgstr "下载"
+
+msgid "Download Encryption Key"
+msgstr ""
 
 msgid "Download Key"
 msgstr "下载密钥"
@@ -5086,6 +5113,9 @@ msgstr "特征"
 msgid "Feb"
 msgstr "二月"
 
+msgid "Fetch DataStores"
+msgstr ""
+
 msgid "Fetch Method"
 msgstr "获取方法"
 
@@ -5305,6 +5335,9 @@ msgstr "生成密钥对"
 msgid "Generate New"
 msgstr "新建"
 
+msgid "Generate Reports"
+msgstr ""
+
 msgid ""
 "Generate a name for the snapshot  from a previously created  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
@@ -5468,7 +5501,7 @@ msgid ""
 "to run the command."
 msgstr "隐藏命令中的标准输出（stdout）。取消设置后，所有标准输出都会邮寄到用于运行命令的用户帐户cron。"
 
-msgid "Highest Usage"
+msgid "Highest Usage:"
 msgstr ""
 
 msgid ""
@@ -5563,7 +5596,7 @@ msgstr "允许主机"
 msgid "Hosts Deny"
 msgstr "禁止主机"
 
-msgid "Hottest"
+msgid "Hottest:"
 msgstr ""
 
 msgid "Hour"
@@ -5758,6 +5791,9 @@ msgstr "Id"
 
 msgid "Identifier"
 msgstr "标识符"
+
+msgid "Identify Light"
+msgstr ""
 
 msgid "Idmap Backend"
 msgstr "Idmap后端"
@@ -6275,6 +6311,9 @@ msgstr "DNS超时（秒）。如果DNS查询超时，请增加此值。"
 msgid "LEGACY WEB INTERFACE"
 msgstr "旧版Web界面"
 
+msgid "LOAD"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr "登录到提供商"
 
@@ -6453,7 +6492,7 @@ msgstr ""
 "href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>的部分。"
 
-msgid "Lowest Usage"
+msgid "Lowest Usage:"
 msgstr ""
 
 msgid ""
@@ -6481,6 +6520,9 @@ msgstr "MAC地址"
 
 msgid "Mail Server Port"
 msgstr "邮件服务器端口"
+
+msgid "Manage Custom Themes"
+msgstr ""
 
 msgid "Manual"
 msgstr "手动"
@@ -6723,6 +6765,9 @@ msgstr "模式"
 
 msgid "Model"
 msgstr "型号"
+
+msgid "Model:"
+msgstr ""
 
 msgid ""
 "Modify for disks that understand <a                   "
@@ -7151,6 +7196,11 @@ msgstr "没有资料库"
 
 msgid "No Stat"
 msgstr "无状态"
+
+msgid ""
+"No custom themes. Click <b>Create New Theme</b> to create a new custom "
+"theme."
+msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
 msgstr "未使用虚拟IP配置接口。"
@@ -8154,6 +8204,9 @@ msgstr "删除"
 msgid "Remove Additional Path"
 msgstr "删除附加路径"
 
+msgid "Remove Extra ISCSI Group"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr "删除保留标志"
 
@@ -8463,6 +8516,9 @@ msgstr "现在运行此计划任务？"
 msgid "Run this rsync now?"
 msgstr "现在运行此Rsync？"
 
+msgid "Running"
+msgstr ""
+
 msgid "S.M.A.R.T. Test"
 msgstr "S.M.A.R.T.测试"
 
@@ -8563,6 +8619,12 @@ msgstr "保存设置"
 
 msgid "Save Configuration"
 msgstr "保存配置"
+
+msgid "Save Cron Job"
+msgstr ""
+
+msgid "Save Custom Theme"
+msgstr ""
 
 msgid "Save Debug"
 msgstr ""
@@ -10457,6 +10519,9 @@ msgstr ""
 msgid "Start"
 msgstr "开始"
 
+msgid "Start Automatically"
+msgstr ""
+
 msgid "Start Scrub"
 msgstr "开始清理"
 
@@ -11292,6 +11357,9 @@ msgstr ""
 "这是一个非官方的插件，没有由iXsystems生产或支持。无论当前支持级别如何，iXsystems都不支持配置、诊断或使用此非官方插件。在安装或使用非官"
 "方插件之前强烈建议进行彻底的研究。"
 
+msgid "This is not a production release, and should only be used for testing."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr "这是磁盘的FreeBSD设备名称。"
 
@@ -11315,6 +11383,15 @@ msgstr "更新完成后，该系统将重新启动。"
 
 msgid "This type of VDEV requires at least "
 msgstr "这种类型的VDEV至少需要 "
+
+msgid "Thread number:"
+msgstr ""
+
+msgid "Threads"
+msgstr ""
+
+msgid "Threads:"
+msgstr ""
 
 msgid "Threshold days"
 msgstr "阈值天数"
@@ -11608,6 +11685,9 @@ msgstr "更新状态"
 
 msgid "Update in Progress"
 msgstr "正在进行更新"
+
+msgid "Update is complete, please reboot the system."
+msgstr ""
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr "更新成功。请重启以便更新生效。现在重启？"

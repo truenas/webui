@@ -494,6 +494,9 @@ msgid ""
 "database file was saved  without the Password Secret Seed. </font></p>"
 msgstr ""
 
+msgid ">release notes</a>."
+msgstr ""
+
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -771,6 +774,9 @@ msgstr "Přidat data"
 msgid "Add Dataset"
 msgstr "Přidat datovou sadu"
 
+msgid "Add Extra ISCSI Group"
+msgstr ""
+
 msgid "Add Log"
 msgstr ""
 
@@ -962,6 +968,9 @@ msgid "Advanced"
 msgstr "Pokročilé"
 
 msgid "Advanced Details"
+msgstr ""
+
+msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
@@ -1283,6 +1292,9 @@ msgstr ""
 msgid "Apply Permissions Recursively"
 msgstr ""
 
+msgid "Apply Update"
+msgstr ""
+
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
 
@@ -1501,6 +1513,9 @@ msgid "Basic Properties"
 msgstr "Základní vlastnosti"
 
 msgid "Batch Operations"
+msgstr ""
+
+msgid "Before updating, please read the release notes."
 msgstr ""
 
 msgid "Begin"
@@ -2552,7 +2567,7 @@ msgid ""
 "using IPv6 entirely."
 msgstr ""
 
-msgid "Coolest"
+msgid "Coolest:"
 msgstr ""
 
 msgid "Copies"
@@ -2595,6 +2610,9 @@ msgid "Create CA"
 msgstr ""
 
 msgid "Create Certificate"
+msgstr ""
+
+msgid "Create New Theme"
 msgstr ""
 
 msgid "Create Passphrase"
@@ -2678,6 +2696,9 @@ msgstr "Naplánované (cron) úlohy"
 
 msgid "Current Password"
 msgstr "Stávající heslo"
+
+msgid "Current Train:"
+msgstr ""
 
 msgid "Custom"
 msgstr ""
@@ -2952,6 +2973,9 @@ msgid "Delete Mountpoint"
 msgstr ""
 
 msgid "Delete Path"
+msgstr ""
+
+msgid "Delete Selected"
 msgstr ""
 
 msgid "Delete Zvol"
@@ -3301,6 +3325,9 @@ msgid "Done"
 msgstr "Hotovo"
 
 msgid "Download"
+msgstr ""
+
+msgid "Download Encryption Key"
 msgstr ""
 
 msgid "Download Key"
@@ -4591,6 +4618,9 @@ msgstr ""
 msgid "Feb"
 msgstr ""
 
+msgid "Fetch DataStores"
+msgstr ""
+
 msgid "Fetch Method"
 msgstr ""
 
@@ -4796,6 +4826,9 @@ msgstr "Vytvořit dvojici klíčů"
 msgid "Generate New"
 msgstr ""
 
+msgid "Generate Reports"
+msgstr ""
+
 msgid ""
 "Generate a name for the snapshot  from a previously created  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
@@ -4955,7 +4988,7 @@ msgid ""
 "to run the command."
 msgstr ""
 
-msgid "Highest Usage"
+msgid "Highest Usage:"
 msgstr ""
 
 msgid ""
@@ -5048,7 +5081,7 @@ msgstr ""
 msgid "Hosts Deny"
 msgstr ""
 
-msgid "Hottest"
+msgid "Hottest:"
 msgstr ""
 
 msgid "Hour"
@@ -5232,6 +5265,9 @@ msgstr ""
 
 msgid "Identifier"
 msgstr "Identifikátor"
+
+msgid "Identify Light"
+msgstr ""
 
 msgid "Idmap Backend"
 msgstr ""
@@ -5719,6 +5755,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr "STARÉ WEBOVÉ ROZHRANÍ"
 
+msgid "LOAD"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr ""
 
@@ -5890,7 +5929,7 @@ msgid ""
 "target=\"_blank\">RFC3721</a>."
 msgstr ""
 
-msgid "Lowest Usage"
+msgid "Lowest Usage:"
 msgstr ""
 
 msgid ""
@@ -5918,6 +5957,9 @@ msgstr "MAC adresa"
 
 msgid "Mail Server Port"
 msgstr "Port e-mailového serveru"
+
+msgid "Manage Custom Themes"
+msgstr ""
 
 msgid "Manual"
 msgstr ""
@@ -6142,6 +6184,9 @@ msgid "Mode"
 msgstr "Režim"
 
 msgid "Model"
+msgstr ""
+
+msgid "Model:"
 msgstr ""
 
 msgid ""
@@ -6530,6 +6575,11 @@ msgid "No Repositories"
 msgstr ""
 
 msgid "No Stat"
+msgstr ""
+
+msgid ""
+"No custom themes. Click <b>Create New Theme</b> to create a new custom "
+"theme."
 msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
@@ -7469,6 +7519,9 @@ msgstr "Odebrat"
 msgid "Remove Additional Path"
 msgstr ""
 
+msgid "Remove Extra ISCSI Group"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr ""
 
@@ -7768,6 +7821,9 @@ msgstr ""
 msgid "Run this rsync now?"
 msgstr ""
 
+msgid "Running"
+msgstr ""
+
 msgid "S.M.A.R.T. Test"
 msgstr ""
 
@@ -7867,6 +7923,12 @@ msgid "Save Config"
 msgstr "Uložit nastavení"
 
 msgid "Save Configuration"
+msgstr ""
+
+msgid "Save Cron Job"
+msgstr ""
+
+msgid "Save Custom Theme"
 msgstr ""
 
 msgid "Save Debug"
@@ -9585,6 +9647,9 @@ msgstr ""
 msgid "Start"
 msgstr "Spustit"
 
+msgid "Start Automatically"
+msgstr ""
+
 msgid "Start Scrub"
 msgstr ""
 
@@ -10376,6 +10441,9 @@ msgid ""
 "plugin."
 msgstr ""
 
+msgid "This is not a production release, and should only be used for testing."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -10395,6 +10463,15 @@ msgid "This system will restart when the update completes."
 msgstr ""
 
 msgid "This type of VDEV requires at least "
+msgstr ""
+
+msgid "Thread number:"
+msgstr ""
+
+msgid "Threads"
+msgstr ""
+
+msgid "Threads:"
 msgstr ""
 
 msgid "Threshold days"
@@ -10678,6 +10755,9 @@ msgid "Update Status"
 msgstr ""
 
 msgid "Update in Progress"
+msgstr ""
+
+msgid "Update is complete, please reboot the system."
 msgstr ""
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
