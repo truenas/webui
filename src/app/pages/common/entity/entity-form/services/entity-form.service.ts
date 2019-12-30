@@ -72,17 +72,17 @@ export class EntityFormService {
 
   getFilesystemListdirChildren(node: any, explorerType?: string, hideDirs?:any, showHiddenFiles = false ) {
     const children = [];
+    let typeFilter;
+    explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', 'DIRECTORY']] : typeFilter = [];
 
-    return this.ws.call('filesystem.listdir', [node.data.name, [], {"order_by": ["name"]}] ).toPromise().then(res => {
+    return this.ws.call('filesystem.listdir', [node.data.name, typeFilter, 
+      {"order_by": ["name"], 'limit': 1000}] ).toPromise().then(res => {
       res = _.sortBy(res, function(o) { return o.name.toLowerCase(); });
 
       for (let i = 0; i < res.length; i++) {
         const child = {};
         if(!showHiddenFiles){
           if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
-            if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
-              continue;
-            }
             if(res[i].type === 'SYMLINK') {
               continue;
             }
@@ -100,9 +100,6 @@ export class EntityFormService {
         }
         else{
           if (res[i].hasOwnProperty('name')) {
-            if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
-              continue;
-            }
             if(res[i].type === 'SYMLINK') {
               continue;
             }
