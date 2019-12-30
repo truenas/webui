@@ -1,5 +1,5 @@
 <div id="{{config.name}}" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-	ix-auto ix-auto-type="form-permissions" ix-auto-identifier="{{config.placeholder}}">
+	ix-auto ix-auto-type="permissions" ix-auto-identifier="{{config.placeholder}}">
 	<div class="top">
 		<label>{{ config.placeholder | translate }}</label>
 		<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
@@ -8,6 +8,7 @@
 				[placeholder]="config.placeholder"
 				[attr.value]="config.value"
 				[formControlName]="config.name"
+				ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
 				>
 		</mat-form-field>
 	</div>

@@ -1,5 +1,5 @@
 <div id="{{config.name}}" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-  ix-auto ix-auto-type="form-textarea" ix-auto-identifier="{{config.placeholder}}">
+  ix-auto ix-auto-type="textarea" ix-auto-identifier="{{config.placeholder}}">
   <mat-form-field class="full-width">
     <textarea matInput 
       [placeholder]="config.placeholder | translate" 
