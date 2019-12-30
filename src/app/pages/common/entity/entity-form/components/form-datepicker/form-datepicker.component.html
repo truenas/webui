@@ -3,7 +3,10 @@
 		<input matInput [matDatepicker]="picker" 
 			[placeholder]="config.placeholder"
 			[value]="config.value"
-			[formControlName]="config.name">
+			[formControlName]="config.name"
+			ix-auto
+			ix-auto-type="form-datepicker"
+			ix-auto-identifier="{{config.placeholder}}">
 		<!-- <button matSuffix [matDatepickerToggle]="picker"></button> -->
 		<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 		<mat-datepicker #picker></mat-datepicker>
