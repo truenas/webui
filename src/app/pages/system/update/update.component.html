@@ -106,20 +106,26 @@
 </mat-card>
 
 <mat-card *ngIf="updates_available && release_train && isfreenas" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>{{"Before updating, please read the
-    <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest=true' target="new">release notes</a>." | translate}}
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest=true' target="new">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
   </div>
 </mat-card>
 
 <mat-card *ngIf="updates_available && pre_release_train && !isfreenas" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>{{"Before updating, please read the
-    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">release notes</a>." | translate}}
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
   </div>
 </mat-card>
 
 <mat-card *ngIf="updates_available && release_train && !isfreenas" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>{{"Before updating, please read the
-    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">release notes</a>." | translate}}
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
   </div>
 </mat-card>
 
