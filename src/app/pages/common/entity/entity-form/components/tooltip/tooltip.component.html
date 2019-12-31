@@ -14,7 +14,10 @@
       </div>
 
         <div class="pin" (click)="toggleVis(!isLockTooltip ? 'lock' : 'unlock')">
-          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close"></mat-icon>
+          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close"
+          ix-auto
+          ix-auto-type="tooltip-close"
+          ix-auto-identifier="{{header}}"></mat-icon>
           </div>
 
       <div class="tooltip-message" [innerHTML]="message | translate | docreplace"
