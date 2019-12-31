@@ -53,7 +53,7 @@
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
       <router-outlet></router-outlet>
     </div>
-    <div class="footer-console-bar" *ngIf="isShowFooterConsole">
+    <div class="footer-console-bar" *ngIf="isShowFooterConsole" ix-auto ix-auto-type="shell" ix-auto-identifier="footer-console">
       <pre #footerBarScroll class="message" (click)="onShowConsolePanel()">{{consoleMsg}}</pre>
     </div>
   </mat-sidenav-content>

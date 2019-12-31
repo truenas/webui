@@ -90,7 +90,8 @@
       </ng-container>
 
       <div id='config' *ngIf="conf.globalConfig">
-        <button mat-icon-button id="{{ conf.globalConfig.id }}" [matTooltip]="conf.globalConfig.tooltip" (click)="conf.globalConfig.onClick()">
+        <button mat-icon-button id="{{ conf.globalConfig.id }}" [matTooltip]="conf.globalConfig.tooltip" (click)="conf.globalConfig.onClick()"
+          ix-auto ix-auto-type="settings" ix-auto-identifier="{{title}}">
           <mat-icon>settings</mat-icon>
         </button>
       </div>
