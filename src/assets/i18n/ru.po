@@ -1056,7 +1056,7 @@ msgid "Add Dataset"
 msgstr "Добавить набор данных"
 
 msgid "Add Extra ISCSI Group"
-msgstr ""
+msgstr "Добавить группу iSCSI"
 
 msgid "Add Log"
 msgstr "Добавить журнал"
@@ -1310,7 +1310,7 @@ msgid "Advanced Details"
 msgstr "Расширенные детали"
 
 msgid "Advanced Jail Creation"
-msgstr ""
+msgstr "Расширенное cоздание jail"
 
 msgid "Advanced Mode"
 msgstr "Расширенный режим"
@@ -1737,7 +1737,7 @@ msgid "Apply Permissions Recursively"
 msgstr "Применить разрешения рекурсивно"
 
 msgid "Apply Update"
-msgstr ""
+msgstr "Применить обновление"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr "Применить сетевые изменения? Сетевое подключение будет прервано."
@@ -1989,7 +1989,7 @@ msgid "Batch Operations"
 msgstr "Пакетные операции"
 
 msgid "Before updating, please read the release notes."
-msgstr ""
+msgstr "Перед обновлением прочтите примечания к выпуску."
 
 msgid "Begin"
 msgstr "Начать"
@@ -3347,7 +3347,7 @@ msgstr ""
 "запретить jail использовать IPv6 полностью."
 
 msgid "Coolest:"
-msgstr ""
+msgstr "Самый холодный:"
 
 msgid "Copies"
 msgstr "Копии"
@@ -3395,7 +3395,7 @@ msgid "Create Certificate"
 msgstr "Создать сертификат"
 
 msgid "Create New Theme"
-msgstr ""
+msgstr "Создать новую тему"
 
 msgid "Create Passphrase"
 msgstr "Задать пароль"
@@ -3488,7 +3488,7 @@ msgid "Current Password"
 msgstr "Текущий пароль"
 
 msgid "Current Train:"
-msgstr ""
+msgstr "Текущий поезд:"
 
 msgid "Custom"
 msgstr "Пользовательский"
@@ -3819,7 +3819,7 @@ msgid "Delete Path"
 msgstr "Удалить путь"
 
 msgid "Delete Selected"
-msgstr ""
+msgstr "Удалить выбранные"
 
 msgid "Delete Zvol"
 msgstr "Удалить ZVol"
@@ -4230,7 +4230,7 @@ msgid "Download"
 msgstr "Скачать"
 
 msgid "Download Encryption Key"
-msgstr ""
+msgstr "Скачать ключ шифрования"
 
 msgid "Download Key"
 msgstr "Скачать ключ"
@@ -5792,7 +5792,7 @@ msgid "Feb"
 msgstr "Фев"
 
 msgid "Fetch DataStores"
-msgstr ""
+msgstr "Получить DataStore"
 
 msgid "Fetch Method"
 msgstr "Метод скачивания"
@@ -6038,7 +6038,7 @@ msgid "Generate New"
 msgstr "Создать новый"
 
 msgid "Generate Reports"
-msgstr ""
+msgstr "Генерировать отчеты"
 
 msgid ""
 "Generate a name for the snapshot  from a previously created  <a "
@@ -6224,7 +6224,7 @@ msgstr ""
 "запуска команды."
 
 msgid "Highest Usage:"
-msgstr ""
+msgstr "Самый занятый:"
 
 msgid ""
 "Highest port number of the  active side listen address that is open to "
@@ -6331,7 +6331,7 @@ msgid "Hosts Deny"
 msgstr "Запрещенные хосты"
 
 msgid "Hottest:"
-msgstr ""
+msgstr "Самый холодный:"
 
 msgid "Hour"
 msgstr "Час"
@@ -6552,7 +6552,7 @@ msgid "Identifier"
 msgstr "Идентификатор"
 
 msgid "Identify Light"
-msgstr ""
+msgstr "Подсветка идентификации"
 
 msgid "Idmap Backend"
 msgstr "Механизм idmap"
@@ -7138,7 +7138,7 @@ msgid "LEGACY WEB INTERFACE"
 msgstr "СТАРЫЙ WEB ИНТЕРФЕЙС"
 
 msgid "LOAD"
-msgstr ""
+msgstr "ЗАГРУЗКА"
 
 msgid "LOGIN TO PROVIDER"
 msgstr "ВОЙТИ К ПРОВАЙДЕРУ"
@@ -7330,7 +7330,7 @@ msgstr ""
 "target=\"_blank\">RFC3721</a>."
 
 msgid "Lowest Usage:"
-msgstr ""
+msgstr "Самый свободный:"
 
 msgid ""
 "Lowest port number of the  active side listen address that is open to "
@@ -7361,7 +7361,7 @@ msgid "Mail Server Port"
 msgstr "Порт почтового сервера"
 
 msgid "Manage Custom Themes"
-msgstr ""
+msgstr "Управление пользовательскими темами"
 
 msgid "Manual"
 msgstr "Вручную"
@@ -7654,7 +7654,7 @@ msgid "Model"
 msgstr "Модель"
 
 msgid "Model:"
-msgstr ""
+msgstr "Модель:"
 
 msgid ""
 "Modify for disks that understand <a                   "
@@ -7851,6 +7851,11 @@ msgid ""
 "receive notifications. This overrides the default channel in the incoming "
 "webhook settings."
 msgstr ""
+"Название <a "
+"href=\"https://docs.mattermost.com/help/getting-started/organizing-"
+"conversations.html#managing-channels\" target=\"_blank\">канала</a> для "
+"получения уведомлений. Это переопределяет канал по умолчанию в настройках "
+"входящего webhook."
 
 msgid "Name of the InfluxDB database."
 msgstr "Имя базы данных InfluxDB."
@@ -8125,6 +8130,8 @@ msgid ""
 "No custom themes. Click <b>Create New Theme</b> to create a new custom "
 "theme."
 msgstr ""
+"Нет пользовательских тем. Нажмите <b>Создать новую тему</b>, чтобы создать "
+"новую пользовательскую тему."
 
 msgid "No interfaces configured with Virtual IP."
 msgstr "Нет интерфейсов, настроенных с виртуальным IP."
@@ -9248,7 +9255,7 @@ msgid "Remove Additional Path"
 msgstr "Удалить дополнительный путь"
 
 msgid "Remove Extra ISCSI Group"
-msgstr ""
+msgstr "Удалить группу iSCSI"
 
 msgid "Remove Keep Flag"
 msgstr "Убрать флаг сохранения"
@@ -9595,7 +9602,7 @@ msgid "Run this rsync now?"
 msgstr "Запустить это задание rsync сейчас?"
 
 msgid "Running"
-msgstr ""
+msgstr "Запущена"
 
 msgid "S.M.A.R.T. Test"
 msgstr "Тест S.M.A.R.T."
@@ -9703,10 +9710,10 @@ msgid "Save Configuration"
 msgstr "Сохранить конфигурацию"
 
 msgid "Save Cron Job"
-msgstr ""
+msgstr "Сохранить задание Cron"
 
 msgid "Save Custom Theme"
-msgstr ""
+msgstr "Сохранить пользовательскую тему"
 
 msgid "Save Debug"
 msgstr "Сохранить отладку"
@@ -11999,7 +12006,7 @@ msgid "Start"
 msgstr "Запустить"
 
 msgid "Start Automatically"
-msgstr ""
+msgstr "Запускать автоматически"
 
 msgid "Start Scrub"
 msgstr "Запустить проверку"
@@ -12979,6 +12986,8 @@ msgstr ""
 
 msgid "This is not a production release, and should only be used for testing."
 msgstr ""
+"Это не промышленный выпуск, и его следует использовать только для "
+"тестирования."
 
 msgid "This is the FreeBSD device name for the disk."
 msgstr "Это имя устройства FreeBSD для диска."
@@ -13005,13 +13014,13 @@ msgid "This type of VDEV requires at least "
 msgstr "Этот тип VDEV требует как минимум "
 
 msgid "Thread number:"
-msgstr ""
+msgstr "Номер треда:"
 
 msgid "Threads"
-msgstr ""
+msgstr "Тредов"
 
 msgid "Threads:"
-msgstr ""
+msgstr "Тредов:"
 
 msgid "Threshold days"
 msgstr "Порог дней"
@@ -13344,7 +13353,7 @@ msgid "Update in Progress"
 msgstr "Производится обновление"
 
 msgid "Update is complete, please reboot the system."
-msgstr ""
+msgstr "Обновление завершено, пожалуйста, перезагрузите систему."
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr ""
