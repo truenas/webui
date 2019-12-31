@@ -85,6 +85,10 @@
           <mat-icon>notifications_off</mat-icon>
           <span>Disable alerts</span>
         </button -->
+        <button name="settings-api" mat-menu-item (click)="onShowAPI()">
+          <mat-icon>laptop</mat-icon>
+          <span>{{'API' | translate}}</span>
+        </button>
         <button name="settings-about" mat-menu-item (click)="onShowAbout()">
           <mat-icon>info_outline</mat-icon>
           <span>{{'About' | translate}}</span>
