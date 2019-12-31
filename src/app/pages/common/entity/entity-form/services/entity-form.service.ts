@@ -83,6 +83,9 @@ export class EntityFormService {
             if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
               continue;
             }
+            if(res[i].type === 'SYMLINK') {
+              continue;
+            }
             if(res[i].name !== hideDirs) {
                 child['name'] = res[i].path;
                 child['acl'] = res[i].acl;
@@ -98,6 +101,9 @@ export class EntityFormService {
         else{
           if (res[i].hasOwnProperty('name')) {
             if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
+              continue;
+            }
+            if(res[i].type === 'SYMLINK') {
               continue;
             }
             if(res[i].name !== hideDirs) {

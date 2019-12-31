@@ -12,7 +12,8 @@
 		<tr>
 			<td *ngFor="let col of columns; let i = index" id="tbody__{{col.prop}}_{{rowData[col.prop]}}">
 				<p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"></p-treeTableToggler>
-				{{col.filesizePipe ? (rowData[col.prop] | filesize : {standard : "iec"}) : rowData[col.prop] | translate}}
+				<span *ngIf="col.filesizePipe">{{ (rowData[col.prop] || 0) | filesize : {standard : "iec"} }}</span>
+				<span *ngIf="!col.filesizePipe">{{ rowData[col.prop]?.value || rowData[col.prop] }}</span>
 			</td>
 			<td *ngIf="showActions && rowData.actions">
 				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}"
