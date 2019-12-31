@@ -370,7 +370,7 @@ msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
 "those on the source. If a file does not exist on the source, it is also "
 "<i><u>deleted</u></i> from the destination."
-msgstr "" 
+msgstr ""
 "<b>同步</b>：对目标上的文件进行<i><u>更改</u></i>以匹配源上的文件。如果源上不存在文件，则还会从目标<i><u>删除</u></i>"
 "。"
 
@@ -2916,7 +2916,7 @@ msgstr ""
 "<br> <b>禁用</ b>：完全禁止监狱使用IPv6。"
 
 msgid "Coolest:"
-msgstr "凉爽："
+msgstr "最冷的："
 
 msgid "Copies"
 msgstr "副本"
@@ -5597,7 +5597,7 @@ msgid "Hosts Deny"
 msgstr "禁止主机"
 
 msgid "Hottest:"
-msgstr "最热门："
+msgstr "最热的："
 
 msgid "Hour"
 msgstr "小时"
