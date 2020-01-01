@@ -166,7 +166,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     //get system general setting
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
@@ -188,7 +188,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.saveSubmitText = this.conf.saveSubmitText;
     }
     if (this.conf.preInit) {
-      await this.conf.preInit(this);
+      this.conf.preInit(this);
     }
     this.sub = this.route.params.subscribe(params => {
       this.resourceName = this.conf.resource_name;

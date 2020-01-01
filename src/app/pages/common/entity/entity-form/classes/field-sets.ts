@@ -1,3 +1,4 @@
+import { FieldConfig } from "../models/field-config.interface";
 import { FieldSet } from "../models/fieldset.interface";
 
 export class FieldSets {
@@ -10,6 +11,12 @@ export class FieldSets {
           set.config && set.config.some(config => config.name === configName)
       )
       .config.find(config => config.name === configName);
+  }
+
+  public configs(): FieldConfig[] {
+    return this.list()
+      .reduce((configList, set) => configList.concat(set.config), [])
+      .filter(c => !!c);
   }
 
   public list(): FieldSet[] {
