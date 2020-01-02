@@ -1,6 +1,6 @@
 import {Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
 import {difference, ListSelection, ListSelectionImpl} from './models';
-import { CdkDragDrop, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-dual-listbox',
@@ -53,10 +53,7 @@ export class DualListboxComponent implements OnInit {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      transferArrayItem(event.previousContainer.data,
-                        event.container.data,
-                        event.previousIndex,
-                        event.currentIndex);
+      event.previousContainer.id === 'cdk-drop-list-0' ? this.select() : this.return();
     }
     this.dragging = false;
   }
@@ -65,7 +62,6 @@ export class DualListboxComponent implements OnInit {
     this.dragging = true;
   }
 }
-
 
 const transfer = (from: ListSelection, to: ListSelection) => {
   return {

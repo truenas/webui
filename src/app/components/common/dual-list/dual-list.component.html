@@ -11,7 +11,7 @@
     class="draggable"
     (cdkDragStarted)="onDragStart($event)" 
     [ngClass]="{ choosed: availableItems.isSelected(item,1) }" 
-    (mousedown)="availableItems.select(item)">
+    (mouseup)="availableItems.select(item)">
       <mat-list *ngIf="templateItem;else noTemplateItem" >
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
       </mat-list>
@@ -49,7 +49,7 @@
     <div class="list-title" *ngIf="title2">{{title2}}</div>
     <div *ngFor="let item of selectedItems.totalItems" cdkDrag 
       [ngClass]="{ choosed: selectedItems.isSelected(item,2) }"
-      (mousedown)="selectedItems.select(item)">
+      (mouseup)="selectedItems.select(item)">
       <mat-list *ngIf="templateItem;else noTemplateItem">
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
       </mat-list>
