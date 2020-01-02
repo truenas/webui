@@ -44,25 +44,16 @@ export class ApiService {
         protocol:"websocket",
         version:"2.0",
         namespace:"user.set_attribute",
-        args: [],// eg. [["id", "=", "foo"]]
-        //responseEvent: null
+        args: [],
       },
       preProcessor(def:ApiCall){
-        //console.log("USER DATA PREPROCESSOR");
         let uid:number = 1;
         let redef = Object.assign({}, def);
-        //console.log(def.args)
-        //Do some stuff here
-        // [1,{attributes:{usertheme:theme.name}}]
         redef.args =  [ uid, "preferences",def.args ] ;
         return redef;
       },
       postProcessor(res,callArgs,core){
-        //console.log("USER DATA POSTPROCESSOR");
-        //console.log(res);
-        //console.log(callArgs);
         let cloneRes = Object.assign({},res);
-        //cloneRes = {callArgs:callArgs ,data: res}
         if(res == 1){
           core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]] });
         }
@@ -71,12 +62,19 @@ export class ApiService {
     },
     VolumeDataRequest:{
       apiCall:{
-        protocol:"rest",
-        version:"1.0",
-        operation: "get",
-        namespace: "storage/volume/",
+        protocol:"websocket",
+        version:"2.0",
+        namespace: "pool.dataset.query",
+        args: [],
         responseEvent: "VolumeData"
-      }
+      },
+      preProcessor(def:ApiCall){
+        const queryFilters = [
+          ["name","~", "^[^\/]+$" ], // Root datasets only
+        ];
+
+        return { args: [queryFilters], ...def };
+      },
     },
     DisksRequest:{
       apiCall:{
@@ -137,9 +135,6 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,callArgs){
-        //DEBUG: console.warn("POOLDISKS POSTPROCESSOR");
-        //DEBUG: console.log(res);
-        //DEBUG: console.log(callArgs);
         let cloneRes = Object.assign({},res);
         cloneRes = {callArgs:callArgs ,data: res}
         return cloneRes;
@@ -722,7 +717,7 @@ export class ApiService {
       }
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
-      this.ws.call(call.namespace).subscribe((res) => {
+      this.ws.call(call.namespace, call.args || []).subscribe((res) => {
         if(this.debug){
           console.log("*** API Response:");
           console.log(call);

@@ -5,6 +5,8 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-ssh';
 import { NetworkService, RestService, WebSocketService } from '../../../../services/';
+import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'ssh-edit',
@@ -109,7 +111,7 @@ export class ServiceSSHComponent implements OnInit {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : 'Basic Mode',
+      name : T('Basic Mode'),
       function : () => {
         this.fieldSets.find(set => set.name === globalHelptext.fieldset_other_options).label = false;
         this.fieldSets.find(set => set.name === 'divider').divider = false;
@@ -118,7 +120,7 @@ export class ServiceSSHComponent implements OnInit {
     },
     {
       'id' : 'advanced_mode',
-      name : 'Advanced Mode',
+      name : T('Advanced Mode'),
       function : () => {
         this.fieldSets.find(set => set.name === globalHelptext.fieldset_other_options).label = true;
         this.fieldSets.find(set => set.name === 'divider').divider = true;
