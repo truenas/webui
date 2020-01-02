@@ -10,13 +10,14 @@ interface DialogData {
 
 @Component({
   selector: 'simple-failover-button',
-  template: `<button mat-button [color]="color" (click)="openDialog()"
+  template: `<button mat-button [style.opacity]="1" [color]="color" [disabled]="disabled" (click)="openDialog()"
     ix-auto ix-auto-type="button" ix-auto-identifier="INITIATE FAILOVER">INITIATE FAILOVER</button>`,
 })
 
 export class SimpleFailoverBtnComponent implements OnDestroy {
 
   @Input() color:string = 'default';
+  @Input() disabled?: boolean = false;
   constructor(
     private dialog: MatDialog,
     protected matDialog: MatDialog,
@@ -39,7 +40,6 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
     });
   }
  
-
   ngOnDestroy() { 
   }
 
