@@ -77,7 +77,8 @@ export class SMBFormComponent {
           type: 'checkbox',
           name: 'shadowcopy',
           placeholder: helptext_sharing_smb.placeholder_shadowcopy,
-          tooltip: helptext_sharing_smb.tooltip_shadowcopy
+          tooltip: helptext_sharing_smb.tooltip_shadowcopy,
+          value: true
         }
       ]
     },
