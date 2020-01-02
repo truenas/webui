@@ -87,10 +87,9 @@ export default {
  snapshots.'),
 
     replicate_placeholder: T('Full Filesystem Replication'),
-    replicate_tooltip: T('Send a replication stream package, which will replicate \
-the specified filesystem, and all descendent file systems. When received, all \
-properties, snapshots, descendent file systems, and clones are preserved. You \
-must have recursive set to true, exclude to empty list, properties to true. Disabled by default.'),
+    replicate_tooltip: T('Completely replicate the selected dataset. The target \
+dataset will have all of the properties, snapshots, child datasets, and clones \
+from the source dataset.'),
 
     periodic_snapshot_tasks_placeholder: T('Periodic Snapshot Tasks'),
     periodic_snapshot_tasks_tooltip: T('Snapshot schedule for this \
