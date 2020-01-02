@@ -50,7 +50,7 @@
   width: 100%;
 }
 
-.choosed, .draggable:active {
+.chosen, .draggable:active {
   width: 100%;
   background: #91949c;
   color: white;

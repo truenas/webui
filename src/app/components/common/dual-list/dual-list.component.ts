@@ -1,6 +1,6 @@
 import {Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
 import {difference, ListSelection, ListSelectionImpl} from './models';
-import { CdkDragDrop, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-dual-listbox',
@@ -51,7 +51,10 @@ export class DualListboxComponent implements OnInit {
   
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      let chosenItems = document.querySelectorAll('.chosen');
+      chosenItems.forEach((item) => {
+        item.classList.remove('cdk-drag-placeholder');
+      })
     } else {
       event.previousContainer.id === 'cdk-drop-list-0' ? this.select() : this.return();
     }
@@ -60,6 +63,13 @@ export class DualListboxComponent implements OnInit {
 
   public onDragStart(event: CdkDragStart<string[]>) {
     this.dragging = true;
+    console.log(document.querySelector('.draggable'))
+    let b = document.querySelector('.draggable:active')
+    b.innerHTML = "background-color";
+    let chosenItems = document.querySelectorAll('.chosen');
+    chosenItems.forEach((item) => {
+      item.classList.add('cdk-drag-placeholder');
+    })
   }
 }
 
