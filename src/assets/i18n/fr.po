@@ -717,6 +717,9 @@ msgstr ""
 "de base de données de configuration téléchargé a été enregistré sans le "
 "Password Secret Seed</font></p>"
 
+msgid ">release notes</a>."
+msgstr ""
+
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -1064,6 +1067,9 @@ msgstr "Ajouter des données"
 msgid "Add Dataset"
 msgstr "Ajouter un dataset"
 
+msgid "Add Extra ISCSI Group"
+msgstr ""
+
 msgid "Add Log"
 msgstr "Ajouter un log"
 
@@ -1319,6 +1325,9 @@ msgid "Advanced"
 msgstr "Avancé"
 
 msgid "Advanced Details"
+msgstr ""
+
+msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
@@ -1755,6 +1764,9 @@ msgstr "Appliquer les mises à jour en attente"
 msgid "Apply Permissions Recursively"
 msgstr "Appliquer les permissions de manière récursive"
 
+msgid "Apply Update"
+msgstr ""
+
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
 "Appliquer les changements de réseau ? La connectivité réseau sera "
@@ -2009,6 +2021,9 @@ msgstr "Propriétés de base"
 
 msgid "Batch Operations"
 msgstr "Opérations par lots (batch)"
+
+msgid "Before updating, please read the release notes."
+msgstr ""
 
 msgid "Begin"
 msgstr "Début"
@@ -2527,6 +2542,9 @@ msgstr "Serveur CheckIP SSL"
 msgid "Checking HA status"
 msgstr "Vérification de l'état du HA"
 
+msgid "Checking this box clears a previously-set password."
+msgstr ""
+
 msgid "Chmod Request"
 msgstr "Demande de Chmod"
 
@@ -2970,6 +2988,9 @@ msgstr ""
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> pour plus "
 "d'informations."
 
+msgid "Clear SED Password"
+msgstr ""
+
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
@@ -3395,7 +3416,7 @@ msgstr ""
 "<b>ip6_addr</b>.<br><b>Désactiver</b> : Empêcher le jail d'utiliser "
 "entièrement IPv6."
 
-msgid "Coolest"
+msgid "Coolest:"
 msgstr ""
 
 msgid "Copies"
@@ -3442,6 +3463,9 @@ msgstr "Créer CA"
 
 msgid "Create Certificate"
 msgstr "Créer un certificat"
+
+msgid "Create New Theme"
+msgstr ""
 
 msgid "Create Passphrase"
 msgstr "Créer une passphrase"
@@ -3532,6 +3556,9 @@ msgstr "Cron"
 
 msgid "Current Password"
 msgstr "Mot de passe actuel"
+
+msgid "Current Train:"
+msgstr ""
 
 msgid "Custom"
 msgstr "Personnalisé"
@@ -3866,6 +3893,9 @@ msgstr "Supprimer le point de montage"
 
 msgid "Delete Path"
 msgstr "Supprimer le chemin"
+
+msgid "Delete Selected"
+msgstr ""
 
 msgid "Delete Zvol"
 msgstr "Supprimer le Zvol"
@@ -4279,6 +4309,9 @@ msgstr "Terminé"
 
 msgid "Download"
 msgstr "Télécharger"
+
+msgid "Download Encryption Key"
+msgstr ""
 
 msgid "Download Key"
 msgstr "Télécharger la clé"
@@ -5874,6 +5907,9 @@ msgstr "Fonctionnalités"
 msgid "Feb"
 msgstr "Fév"
 
+msgid "Fetch DataStores"
+msgstr ""
+
 msgid "Fetch Method"
 msgstr "Méthode de récupération"
 
@@ -6117,6 +6153,9 @@ msgstr "Générer une paire de clés"
 msgid "Generate New"
 msgstr "Générer nouvelle"
 
+msgid "Generate Reports"
+msgstr ""
+
 msgid ""
 "Generate a name for the snapshot  from a previously created  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
@@ -6296,7 +6335,7 @@ msgstr ""
 "définie, toute sortie standard est envoyée au compte utilisateur cron "
 "utilisé pour exécuter la commande."
 
-msgid "Highest Usage"
+msgid "Highest Usage:"
 msgstr ""
 
 msgid ""
@@ -6404,7 +6443,7 @@ msgstr "Hôtes autorisés"
 msgid "Hosts Deny"
 msgstr "Hôtes refusés"
 
-msgid "Hottest"
+msgid "Hottest:"
 msgstr ""
 
 msgid "Hour"
@@ -6622,6 +6661,9 @@ msgstr "Id"
 
 msgid "Identifier"
 msgstr "Identificateur"
+
+msgid "Identify Light"
+msgstr ""
 
 msgid "Idmap Backend"
 msgstr "Backend Idmap"
@@ -7212,6 +7254,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr "INTERFACE WEB LEGACY"
 
+msgid "LOAD"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr "CONNEXION AU FOURNISSEUR"
 
@@ -7399,7 +7444,7 @@ msgstr ""
 "href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>."
 
-msgid "Lowest Usage"
+msgid "Lowest Usage:"
 msgstr ""
 
 msgid ""
@@ -7429,6 +7474,9 @@ msgstr "Adresse Mac"
 
 msgid "Mail Server Port"
 msgstr "Port du serveur de messagerie"
+
+msgid "Manage Custom Themes"
+msgstr ""
 
 msgid "Manual"
 msgstr "Manuel"
@@ -7710,6 +7758,9 @@ msgstr "Mode"
 
 msgid "Model"
 msgstr "Modèle"
+
+msgid "Model:"
+msgstr ""
 
 msgid ""
 "Modify for disks that understand <a                   "
@@ -8183,6 +8234,11 @@ msgstr "Pas de repositories"
 msgid "No Stat"
 msgstr "Aucune stat"
 
+msgid ""
+"No custom themes. Click <b>Create New Theme</b> to create a new custom "
+"theme."
+msgstr ""
+
 msgid "No interfaces configured with Virtual IP."
 msgstr "Aucune interface configurée avec Virtual IP."
 
@@ -8601,9 +8657,6 @@ msgstr "Serveur de mots de passe"
 
 msgid "Password associated with the LDAP User DN."
 msgstr "Mot de passe associé au nom d'utilisateur LDAP (User DN)"
-
-msgid "Password for SED"
-msgstr "Mot de passe pour SED"
 
 msgid "Password for logging in to the provider and  updating the record."
 msgstr ""
@@ -9317,6 +9370,9 @@ msgstr "Supprimer"
 msgid "Remove Additional Path"
 msgstr "Supprimer le chemin d'accès supplémentaire"
 
+msgid "Remove Extra ISCSI Group"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr "Supprimer le Keep Flag"
 
@@ -9664,6 +9720,9 @@ msgstr "Exécuter ce cron maintenant ?"
 msgid "Run this rsync now?"
 msgstr "Exécuter ce rsync maintenant ?"
 
+msgid "Running"
+msgstr ""
+
 msgid "S.M.A.R.T. Test"
 msgstr "Test S.M.A.R.T"
 
@@ -9766,6 +9825,12 @@ msgstr "Sauvegarder la config"
 
 msgid "Save Configuration"
 msgstr "Sauvegarder la configuration"
+
+msgid "Save Cron Job"
+msgstr ""
+
+msgid "Save Custom Theme"
+msgstr ""
 
 msgid "Save Debug"
 msgstr ""
@@ -12112,6 +12177,9 @@ msgstr ""
 msgid "Start"
 msgstr "Démarrer"
 
+msgid "Start Automatically"
+msgstr ""
+
 msgid "Start Scrub"
 msgstr "Démarrer Scrub"
 
@@ -13116,6 +13184,9 @@ msgstr ""
 "niveau de support actuel. Une recherche approfondie est fortement "
 "recommandée avant d'installer ou d'utiliser un plugin non officiel."
 
+msgid "This is not a production release, and should only be used for testing."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr "C'est le nom du périphérique FreeBSD pour le disque."
 
@@ -13140,6 +13211,15 @@ msgstr "Ce système redémarrera lorsque la mise à jour sera terminée."
 
 msgid "This type of VDEV requires at least "
 msgstr "Ce type de VDEV nécessite au moins "
+
+msgid "Thread number:"
+msgstr ""
+
+msgid "Threads"
+msgstr ""
+
+msgid "Threads:"
+msgstr ""
 
 msgid "Threshold days"
 msgstr "Jours-seuil"
@@ -13474,6 +13554,9 @@ msgstr "Mettre à jour le statut"
 msgid "Update in Progress"
 msgstr "Mise-à-jour en cours"
 
+msgid "Update is complete, please reboot the system."
+msgstr ""
+
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr ""
 "Mise à jour réussie. Veuillez redémarrer pour que la mise à jour prenne "
@@ -13661,6 +13744,11 @@ msgstr "Utiliser syslog uniquement"
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "Utiliser le format <i>A.B.C.C.D/E</i> où <i>E</i> est le masque CIDR."
+
+msgid ""
+"Use this field to set or change the password for SED. Leave this field "
+"blank  to keep a previously-set password."
+msgstr ""
 
 msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
