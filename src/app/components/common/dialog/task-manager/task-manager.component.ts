@@ -101,4 +101,8 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   showLogs(element) {
     this.job.showLogs(element.id);
   }
+
+  logRow(row) {
+    console.info(row)
+  }
 }
