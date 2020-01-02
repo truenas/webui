@@ -54,7 +54,7 @@ export class TunableFormComponent {
             { label: 'rc.conf', value: 'RC' },
             { label: 'sysctl', value: 'SYSCTL' },
           ],
-          value: 'SYSCTL'
+          value: 'LOADER'
         },
         {
           type: 'input',
@@ -85,6 +85,5 @@ export class TunableFormComponent {
 
   afterInit(entityForm: any) {
     entityForm.formGroup.controls['enabled'].setValue(true);
-    entityForm.formGroup.controls['type'].setValue('loader');
   }
 }
