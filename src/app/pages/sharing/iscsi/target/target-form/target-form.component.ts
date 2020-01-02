@@ -9,6 +9,7 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from 'app/translate-marker';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 
 @Component({
@@ -132,7 +133,7 @@ export class TargetFormComponent {
   public custActions: Array<any> = [
     {
       id : 'add_extra_iscsi_group',
-      name : 'Add Extra ISCSI Group',
+      name : T('Add Extra ISCSI Group'),
       function : () => {
         this.initialCount += 1;
         this.entityFormService.insertFormArrayGroup(this.initialCount, this.formArray, this.arrayControl.formarray);
@@ -140,7 +141,7 @@ export class TargetFormComponent {
     },
     {
       id : 'remove_extra_iscsi_group',
-      name : 'Remove Extra ISCSI Group',
+      name : T('Remove Extra ISCSI Group'),
       function : () => {
         this.initialCount -= 1;
         this.entityFormService.removeFormArrayGroup(this.initialCount, this.formArray);

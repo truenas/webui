@@ -34,7 +34,7 @@ export class JailWizardComponent {
   protected custActions: Array<any> = [
   {
     id: 'advanced_add',
-    name: "Advanced Jail Creation",
+    name: T("Advanced Jail Creation"),
     function: () => {
       this.router.navigate(
         new Array('').concat(["jails", "add", "advanced"])

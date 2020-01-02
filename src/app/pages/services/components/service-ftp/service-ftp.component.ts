@@ -336,12 +336,12 @@ export class ServiceFTPComponent implements OnInit {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : 'Basic Mode',
+      name : T('Basic Mode'),
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id' : 'advanced_mode',
-      name : 'Advanced Mode',
+      name : T('Advanced Mode'),
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
