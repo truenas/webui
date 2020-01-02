@@ -66,7 +66,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public diskMetrics = [];
   public categoryDevices = [];
   public categoryMetrics = [];
-  public saveSubmitText = "Generate Reports";
+  public saveSubmitText = T("Generate Reports");
   public actionButtonsAlign = "left";
   public fieldConfig:FieldConfig[] = [];
   public fieldSets: FieldSet[];
