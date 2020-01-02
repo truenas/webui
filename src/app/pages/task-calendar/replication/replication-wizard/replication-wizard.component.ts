@@ -892,7 +892,7 @@ export class ReplicationWizardComponent {
                     schedule: this.parsePickerTime(data['schedule_picker']),
                     lifetime_value: 2,
                     lifetime_unit: 'WEEK',
-                    naming_schema: this.defaultNamingSchema,
+                    naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
                     enabled: true,
                 };
                 await this.isSnapshotTaskExist(payload).then(
@@ -913,7 +913,7 @@ export class ReplicationWizardComponent {
             for (const dataset of data['source_datasets']) {
                 payload = {
                     dataset: dataset,
-                    naming_schema: this.defaultNamingSchema,
+                    naming_schema: data['naming_schema']? data['naming_schema'] : this.defaultNamingSchema,
                 }
                 snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
             }
@@ -937,16 +937,16 @@ export class ReplicationWizardComponent {
                 payload['auto'] = true;
                 if (payload['direction'] === 'PULL') {
                     payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-                    payload['naming_schema'] = [this.defaultNamingSchema]; //default?
+                    payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema]; //default?
                 } else {
                     payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
                 }
             } else {
                 payload['auto'] = false;
                 if (payload['direction'] === 'PULL') {
-                    payload['naming_schema'] = [this.defaultNamingSchema];
+                    payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
                 } else {
-                    payload['also_include_naming_schema'] = [this.defaultNamingSchema];
+                    payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
                 }
             }
 
@@ -1195,7 +1195,8 @@ export class ReplicationWizardComponent {
             ["schedule.hour", "=", payload['schedule']['hour']],
             ["schedule.dom", "=", payload['schedule']['dom']],
             ["schedule.month", "=", payload['schedule']['month']],
-            ["schedule.dow", "=", payload['schedule']['dow']]
+            ["schedule.dow", "=", payload['schedule']['dow']],
+            ["naming_schema", "=", payload['naming_schema'] ? payload['naming_schema'] : this.defaultNamingSchema]
         ]]).toPromise();
     }
 
