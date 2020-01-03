@@ -5,28 +5,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Check Notifications for more details."
-msgstr ""
+msgstr " Controlla le notifiche per maggiori dettagli."
 
 msgid " Download Updates"
-msgstr ""
+msgstr "S carica Aggiornamenti"
 
 msgid " First vdev has "
-msgstr ""
+msgstr " Il primo vdev ha "
 
 msgid " First vdev is a "
-msgstr ""
+msgstr " Il primo vdev è "
 
 msgid " Plugin"
-msgstr ""
+msgstr " Plugin"
 
 msgid " Service"
-msgstr ""
+msgstr " Servizi"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
 msgstr ""
+" Quando la <b>UPS Mode</b> è impostata su <i>slave</i>. Inserisci il numero della "
+"porta aperta del sistema UPS <i>Master</i>. La porta di default è "
+"<i>3493</i>."
 
 msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a "
@@ -38,35 +41,39 @@ msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
 "selected."
 msgstr ""
+" indirizzi. Quando selezionato, altri indirizzi non possono essere "
+"selected."
 
 msgid " and "
-msgstr ""
+msgstr " e "
 
 msgid " and all snapshots of it?"
-msgstr ""
+msgstr " e tutti i suoi snapshot?"
 
 msgid " but datastore "
 msgstr ""
 
 msgid " disks"
-msgstr ""
+msgstr " dischi"
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " dischi, nuovo vdev ha "
 
 msgid " has been unlocked."
-msgstr ""
+msgstr " è stato sbloccato."
 
 msgid " is "
-msgstr ""
+msgstr " è "
 
 msgid " is required."
-msgstr ""
+msgstr " è necessario."
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr ""
+" è la minima dimensione dei record consigliata. Scegliere una dimensione minore potrebbe ridurre "
+"le prestazioni del sistema."
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
@@ -74,22 +81,22 @@ msgid ""
 msgstr ""
 
 msgid " service has been enabled."
-msgstr ""
+msgstr " il servizio è stato abilitato"
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr " il sistema è acceso e connesso alla rete."
 
 msgid " to include all "
-msgstr ""
+msgstr " per includere tutto"
 
 msgid " update successful"
-msgstr ""
+msgstr " aggiornato con successo"
 
 msgid " updated."
-msgstr ""
+msgstr " aggiornato."
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% di tutti i core"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
@@ -99,73 +106,76 @@ msgid ""
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Tutti i dati su quella pool sono stati distrutti."
 
 msgid "(No description)"
-msgstr ""
+msgstr "(Nessuna descrizione)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(Rimuovi la pool dal database)"
 
 msgid "*allow_sysvipc"
-msgstr ""
+msgstr "*allow_sysvipc"
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", il nuovo vdev è "
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Tutti i dati su quella pool sono stati distrutti."
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". Almeno uno è richiesto."
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". È corretto?"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... Assicurati che sia "
 
 msgid "0=Disabled, blank=inherit"
-msgstr ""
+msgstr "0=Disabilitato, blank=ereditato"
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "la massima lunghezza consentita è di 20 caratteri."
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr ": Controllo automatico degli aggiornamenti fallito. Controlla le impostazioni di rete."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
-msgstr ""
+msgstr "</b> plugin cancella tutti i dati e gli snapshot salvati con esso."
 
 msgid "</b> with the keypair"
-msgstr ""
+msgstr "</b> con la coppia di chiavi"
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr ""
+msgstr "</i> non può essere attivo durante la cancellazione di un mountpoint."
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> è stato avviato."
 
 msgid "</i> keypair?</p>"
-msgstr ""
+msgstr "</i> coppia di chiavi?</p>"
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> adesso?"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> fermato."
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> aggiornato."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr ""
+msgstr "</i>. I dati della pool non saranno accessibili finchè la pool non verrà sbloccata."
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
 "disks can be destroyed by setting the <b>Destroy data</b> option. Back up "
 "critical data <b>before</b> exporting/disconnecting the pool."
 msgstr ""
+"</i>. I dati nella pool non saranno disponibili dopo l'esportazione. I dati nei dischi della "
+"pool potranno essere distrutti selezionando l'opzione <b>Elimina dati</b>. Salva "
+"i dati importanti <b>prima</b> di esportare o disconnettere la pool."
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
