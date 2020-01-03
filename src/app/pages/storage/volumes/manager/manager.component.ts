@@ -9,7 +9,7 @@ import { of, Subscription } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import helptext from '../../../../helptext/storage/volumes/manager/manager';
-import { DialogService, RestService, WebSocketService } from '../../../../services/';
+import { DialogService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
@@ -22,7 +22,7 @@ import { VdevComponent } from './vdev/';
   selector: 'app-manager',
   templateUrl: 'manager.component.html',
   styleUrls: ['manager.component.css'],
-  providers: [RestService, DialogService],
+  providers: [DialogService],
 })
 export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public disks: Array < any > = [];

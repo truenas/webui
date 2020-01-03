@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
-import { RestService, WebSocketService, StorageService } from '../../../../../services/';
+import { WebSocketService, StorageService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -707,7 +707,7 @@ export class DatasetFormComponent implements Formconfiguration{
   }
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+    protected ws: WebSocketService,
     protected loader: AppLoaderService, protected dialogService: DialogService,
     protected storageService: StorageService ) { }
 
