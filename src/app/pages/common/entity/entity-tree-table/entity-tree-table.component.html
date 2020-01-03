@@ -16,20 +16,14 @@
 				<span *ngIf="!col.filesizePipe">{{ rowData[col.prop]?.value || rowData[col.prop] }}</span>
 			</td>
 			<td *ngIf="showActions && rowData.actions">
-				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}"
-				ix-auto
-				ix-auto-type="options"
-				ix-auto-identifier="{{rowData.name}}">more_vert</mat-icon>
+				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}">more_vert</mat-icon>
 				<mat-menu #appMenu="matMenu">
 					<span *ngFor="let action of rowData.actions" 
 						id="action_button__{{rowData.name}}_{{action.label}}" 
 						[matTooltip]="action.matTooltip" 
 						[matTooltipDisabled]="!action.disabled"
 						[matTooltipPosition]="action.ttposition ? action.ttposition : 'below'">
-						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);" [disabled]="action.disabled"
-						ix-auto
-						ix-auto-type="action"
-						ix-auto-identifier="{{rowData.name}}_{{action.label}}">
+						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);" [disabled]="action.disabled">
 							<span>{{action.label | translate}}</span>
 						</button>
 					</span>

@@ -500,6 +500,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
     }
+
     return res;
 
   }
