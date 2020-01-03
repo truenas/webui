@@ -84,7 +84,11 @@ export default {
  webhook settings.'),
 
     Mattermost_icon_url_placeholder: T('Icon URL'),
-    Mattermost_icon_url_tooltip: T(''),
+    Mattermost_icon_url_tooltip: T('Icon file to use as the profile \
+ picture for new messages. Example: \
+ <i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br> \
+ Requires configuring Mattermost to <a \
+ href="https://docs.mattermost.com/administration/config-settings.html#enable-integrations-to-override-profile-picture-icons" target="_blank">override profile picture icons</a>.'),
 
     OpsGenie_api_key_placeholder: T('API Key'),
     OpsGenie_api_key_tooltip: T('Enter or paste the <a\
@@ -113,17 +117,19 @@ export default {
  this service.'),
 
     SNMPTrap_host_placeholder: T('Hostname'),
-    SNMPTrap_host_tooltip: T(''),
+    SNMPTrap_host_tooltip: T('Hostname or IP address of the system to \
+ receive SNMP trap notifications.'),
 
     SNMPTrap_port_placeholder: T('Port'),
-    SNMPTrap_port_tooltip: T(''),
+    SNMPTrap_port_tooltip: T('UDP port number on the system receiving \
+ SNMP trap notifications. The default is <i>162</i>.'),
 
     SNMPTrap_v3_placeholder: T('SNMPv3 Security Model'),
     SNMPTrap_v3_tooltip: T('Enable the SNMPv3 security model.'),
 
     SNMPTrap_v3_username_placeholder: T('Username'),
     SNMPTrap_v3_username_tooltip: T('Username of the SNMP \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#user-based" \
+ <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.UsmUserData" \
  target="_blank">User-based Security Model (USM)</a> user.'),
 
     SNMPTrap_v3_authkey_placeholder: T('Secret Authentication Key'),
@@ -131,7 +137,7 @@ export default {
  When an authentication key is not set, no <i>Authentication Protocol</i> is \
  used. If an authentication key is set and an \
  <i>Authentication Protocol</i> is not specified, \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmHMACMD5AuthProtocol" \
+ <a href="https://en.wikipedia.org/wiki/MD5" \
  target="_blank">MD5</a> is used as the default.<br> \
  Must be at least 8 and at most 32 octets long.'),
 
@@ -140,17 +146,17 @@ export default {
  If an encryption key is not set, no <i>Encryption Protocol</i> is used. \
  If an encryption key is set and an <i>Encryption Protocol</i> is \
  not specified, \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmDESPrivProtocol" \
+ <a href="https://en.wikipedia.org/wiki/Data_Encryption_Standard" \
  target="_blank">DES</a> is used as the default.<br> \
  Must be at least 8 and at most 32 octets long.'),
 
     SNMPTrap_v3_authprotocol_placeholder: T('Authentication Protocol'),
-    SNMPTrap_v3_authprotocol_tooltip: T('<a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
+    SNMPTrap_v3_authprotocol_tooltip: T('<a href="https://en.wikipedia.org/wiki/Authentication_protocol" \
  target="_blank">Authentication protocol</a> used to authenticate \
  messages sent on behalf of the specified <i>Username</i>.'),
 
     SNMPTrap_v3_privprotocol_placeholder: T('Encryption Protocol'),
-    SNMPTrap_v3_privprotocol_tooltip: T('<a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoPrivProtocol" \
+    SNMPTrap_v3_privprotocol_tooltip: T('<a href="https://en.wikipedia.org/wiki/Cryptographic_protocol" \
  target="_blank">Encryption protocol</a> used to encrypt messages \
  sent on behalf of the specified <i>Username</i>.'),
 

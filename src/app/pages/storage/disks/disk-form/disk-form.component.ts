@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/storage/disks/disk-form';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+
 
 @Component({
   selector : 'app-disk-form',
@@ -79,6 +81,8 @@ export class DiskFormComponent {
       name: 'critical',
       placeholder: helptext.disk_form_critical_placeholder,
       tooltip: helptext.disk_form_critical_tooltip,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -86,6 +90,8 @@ export class DiskFormComponent {
       name: 'difference',
       placeholder: helptext.disk_form_difference_placeholder,
       tooltip: helptext.disk_form_difference_tooltip,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -93,6 +99,8 @@ export class DiskFormComponent {
       name: 'informational',
       placeholder: helptext.disk_form_informational_placeholder,
       tooltip: helptext.disk_form_informational_tooltip,
+      min: 0,
+      validation: [Validators.min(0)]
     },
     {
       type: 'input',
@@ -101,17 +109,23 @@ export class DiskFormComponent {
       tooltip: helptext.disk_form_passwd_tooltip,
       inputType: 'password',
       value: '',
-      togglePw: true
+      togglePw: true,
+      relation: [
+        {
+          action : 'DISABLE',
+          when : [{
+            name: 'clear_pw',
+            value: true
+          }]
+        }
+      ],
     },
     {
-      type: 'input',
-      name: 'passwd2',
-      placeholder: helptext.disk_form_passwd2_placeholder,
-      tooltip: helptext.disk_form_passwd2_tooltip,
-      inputType: 'password',
-      value: '',
-      validation : [ matchOtherValidator('passwd') ]
-    },
+      type: 'checkbox',
+      name: 'clear_pw',
+      placeholder: helptext.clear_pw.placeholder,
+      tooltip: helptext.clear_pw.tooltip
+    }
   ];
 
   protected disk_hddstandby: any;
@@ -129,6 +143,12 @@ export class DiskFormComponent {
       }
     })
   }
+
+  resourceTransformIncomingRestData(data) {
+    delete data.passwd;
+    return data;
+  }
+
 
   preInit() {
     this.aroute.params.subscribe(params => {
@@ -165,9 +185,17 @@ export class DiskFormComponent {
   }
 
   beforeSubmit(value) {
+    if (value.passwd === '') {
+      delete value.passwd;
+    }
+
+    if (value.clear_pw) {
+      value.passwd= '';
+    }
+
+    delete value.clear_pw;
     delete value.name;
     delete value.serial;
-    delete value.passwd2;
 
     value.critical = value.critical === '' ? null : value.critical;
     value.difference = value.difference === '' ? null : value.difference;

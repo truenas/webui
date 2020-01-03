@@ -1433,6 +1433,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       height: 0px;
       top: -55px;
       position: relative;
+      width: 400px;
     }
 
     @media screen and (max-width: 599px) {
@@ -1673,6 +1674,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-active-directory #successfully_updated {
     position: relative;
     top: 12px;
+  }
+
+  mat-error a {
+    text-decoration: underline;
   }
 
  } // end of ix theme

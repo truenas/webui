@@ -9,8 +9,8 @@ wizard_step1_label: T('Name Jail and Choose FreeBSD Release'),
 plugin_name_placeholder: T('Plugin Name'),
 
 uuid_placeholder: T('Name'),
-uuid_tooltip: T('Required. Can only contain alphanumeric\
- characters (Aa-Zz 0-9), dashes (-), or underscores (_).'),
+uuid_tooltip: T('Required. Can contain letters, numbers, periods (.), \
+ dashes (-), and underscores (_).'),
 
 host_hostuuid_placeholder: T('UUID'),
 host_hostuuid_tooltip: T('The numeric <i>UUID</i> or <i>custom name</i>\
@@ -405,6 +405,12 @@ resolver_tooltip: T('Add lines to the jail <i>resolv.conf</i>.\
 mac_prefix_placeholder: T('mac_prefix'),
 mac_prefix_tooltip: T('Enter a valid MAC address vendor prefix.\
  <b>Example:</b> <i>E4F4C6</i>'),
+
+nat_interface_placeholder: T('NAT Interface'),
+nat_interface_tooltip: T('System network interface that remaps jail \
+ network addresses into a different IP address space. To override using \
+ the default system network interface, enter the name of a network \
+ interface to use for NAT.'),
 
 nat_forwards_placeholder: T('NAT Port Forwarding'),
 nat_forwards_tooltip: T('Configure the ports that allow remote access to \

@@ -2,7 +2,7 @@
     <div class="form-ex-flex-container" id="form-ex-flex-container">
         <div id="box1">
             <button mat-icon-button aria-label="Toggle Tree" type="button" (click)="toggleTree()" [disabled]="config.disabled">
-                <mat-icon class="explorer-folder">folder</mat-icon>
+                <mat-icon class="explorer-folder">create_new_folder</mat-icon>
             </button>
         </div>
 
@@ -24,7 +24,7 @@
             <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'dataset') || (config.explorerType == 'file') || !config.explorerType">
                 <mat-icon *ngIf="node.data.hasChildren || node.data.children; else fileIcon">folder</mat-icon>
                 <ng-template #fileIcon><mat-icon>insert_drive_file</mat-icon></ng-template>
-                <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
+                <span title="{{node.data.name}}">{{ node.data.subTitle }}<i *ngIf="node.data['acl']"> (ACL)</i></span>
             </ng-template>
         </tree-root>
     </div>

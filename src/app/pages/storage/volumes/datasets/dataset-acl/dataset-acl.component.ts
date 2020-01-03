@@ -448,6 +448,8 @@ export class DatasetAclComponent implements OnDestroy {
 
   async dataHandler(entityForm, defaults?) {
     entityForm.formGroup.controls['aces'].reset();
+    entityForm.formGroup.controls['aces'].controls = [];
+    this.aces_fc.listFields = [];
     this.gid_fc = _.find(this.fieldConfig, {"name": "gid"});
     this.uid_fc = _.find(this.fieldConfig, {"name": "uid"});
 

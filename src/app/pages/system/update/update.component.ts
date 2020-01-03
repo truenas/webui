@@ -70,6 +70,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                                   one is available. Click \
                                   <i>APPLY PENDING UPDATE</i> to install \
                                   the downloaded update.');
+  public train_version = null;
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
@@ -434,7 +435,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                 this.ds  = this.dialogService.confirm(
                   T("Download Update"), T("Continue with download?"),true,T("Download"),true,
                     T("Apply updates and reboot system after downloading."),
-                    'update.update',[{ train: this.train, reboot: false }]
+                    'update.update',[{ reboot: false }]
                 )
                 this.ds.componentInstance.isSubmitEnabled = true;
                 this.ds.afterClosed().subscribe((status)=>{
@@ -501,7 +502,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
     if (!this.is_ha) {
-      this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
+      this.dialogRef.componentInstance.setCall('update.update', [{ reboot: false }]);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.subscribe((res) => {
         this.router.navigate(['/others/reboot']);
@@ -583,6 +584,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.ws.call('update.check_available')
       .subscribe(
         (res) => {
+          if (res.version) {
+            this.train_version = res.version;
+          }
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
             this.updates_available = true;

@@ -126,7 +126,8 @@ export class SMBFormComponent {
       type: 'checkbox',
       name: 'cifs_shadowcopy',
       placeholder: helptext_sharing_smb.placeholder_shadowcopy,
-      tooltip: helptext_sharing_smb.tooltip_shadowcopy
+      tooltip: helptext_sharing_smb.tooltip_shadowcopy,
+      value: true
     },
     {
       type: 'textarea',

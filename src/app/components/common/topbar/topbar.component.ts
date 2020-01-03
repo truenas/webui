@@ -88,9 +88,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
-        setTimeout(() => {
-          this.updateNotificationSent = false;
-        }, 900000);
       });
     }
 
@@ -125,14 +122,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     const notifications = this.notificationsService.getNotificationList();
 
     notifications.forEach((notificationAlert: NotificationAlert) => {
-      if (notificationAlert.dismissed === false) {
+      if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
         this.notifications.push(notificationAlert);
       }
     });
     this.notificationsService.getNotifications().subscribe((notifications1) => {
       this.notifications = [];
       notifications1.forEach((notificationAlert: NotificationAlert) => {
-        if (notificationAlert.dismissed === false) {
+        if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
           this.notifications.push(notificationAlert);
         }
       });
@@ -153,8 +150,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       if (this.is_ha) {
         this.getHAStatus();
       }
-      this.checkNetworkCheckinWaiting();
-      this.checkNetworkChangesPending();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -231,6 +226,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     dialogRef.afterClosed().subscribe(result => {
       // The dialog was closed
     });
+  }
+
+  onShowAPI() {
+    window.open(window.location.origin + '/api/docs');
   }
 
   signOut() {
@@ -417,15 +416,20 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   getHAStatus() {
     this.ws.call('failover.disabled_reasons').subscribe(res => {
+      let ha_enabled = false;
       this.ha_disabled_reasons = res;
       if (res.length > 0) {
         this.ha_status_text = helptext.ha_status_text_disabled;
       } else {
+        ha_enabled = true;
         this.ha_status_text = helptext.ha_status_text_enabled;
         if (!this.pendingUpgradeChecked) {
           this.checkUpgradePending();
         }
       }
+      
+      this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
+      window.sessionStorage.setItem('ha_status', ha_enabled.toString());
     });
   }
 
@@ -515,9 +519,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();
       this.updateNotificationSent = true;
-      setTimeout(() => {
-        this.updateNotificationSent = false;
-      }, 600000);
     }      
   };
 

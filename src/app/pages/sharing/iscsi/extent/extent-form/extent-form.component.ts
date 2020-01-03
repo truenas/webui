@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Validators, FormControl, ValidationErrors } from "@angular/forms";
 import { Subscription } from 'rxjs/Subscription';
 
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { IscsiService, RestService, WebSocketService } from '../../../../../services/';
+import { IscsiService, RestService, WebSocketService, StorageService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import globalHelptext from 'app/helptext/global-helptext';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [ IscsiService ],
+  providers: [ IscsiService, StorageService ],
 })
 export class ExtentFormComponent {
 
@@ -28,6 +30,7 @@ export class ExtentFormComponent {
   protected entityForm: EntityFormComponent;
   protected isNew: boolean = false;
   public sub: Subscription;
+  protected originalFilesize;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -91,7 +94,29 @@ export class ExtentFormComponent {
       isHidden: false,
       disabled: false,
       required: true,
-      validation : helptext_sharing_iscsi.extent_validators_filesize
+      blurEvent:this.blurFilesize,
+      blurStatus: true,
+      parent: this,
+      validation: [Validators.required,
+        (control: FormControl): ValidationErrors => {
+          const config = this.fieldConfig.find(c => c.name === 'filesize');
+          const size = this.storageService.convertHumanStringToNum(control.value, true);
+
+          let errors = control.value && isNaN(size)
+            ? { invalid_byte_string: true }
+            : null
+
+          if (errors) {
+            config.hasErrors = true;
+            config.errors = globalHelptext.human_readable.input_error;
+          } else {
+            config.hasErrors = false;
+            config.errors = '';
+          }
+
+          return errors;
+        }
+      ],
     },
     {
       type: 'select',
@@ -184,7 +209,8 @@ export class ExtentFormComponent {
               protected iscsiService: IscsiService,
               protected rest: RestService,
               protected ws: WebSocketService,
-              protected loader: AppLoaderService) {}
+              protected loader: AppLoaderService,
+              protected storageService: StorageService) {}
 
   preInit() {
     this.sub = this.aroute.params.subscribe(params => {
@@ -197,7 +223,7 @@ export class ExtentFormComponent {
       } else {
         this.isNew = false;
         this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk']));
+        this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
     });
   }
@@ -271,11 +297,15 @@ export class ExtentFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
+    this.originalFilesize = parseInt(data.filesize, 10);
     if (data.type == 'DISK') {
       if (_.startsWith(data['path'], 'zvol')) {
         data['disk'] = data['path'];
       }
       delete data['path'];
+    }
+    if (data.filesize && data.filesize !== '0') {
+      data.filesize = this.storageService.convertBytestoHumanReadable(data.filesize);
     }
     return data;
   }
@@ -296,5 +326,18 @@ export class ExtentFormComponent {
       }
     );
 
+  }
+
+  beforeSubmit(data) {
+    data.filesize = this.storageService.convertHumanStringToNum(data.filesize, true);
+    if (this.pk === undefined || this.originalFilesize !== data.filesize) {
+      data.filesize = data.filesize == 0 ? data.filesize : (data.filesize + (data.blocksize - data.filesize%data.blocksize));
+    }
+  }
+
+  blurFilesize(parent){
+    if (parent.entityForm) {
+        parent.entityForm.formGroup.controls['filesize'].setValue(parent.storageService.humanReadable);
+    }
   }
 }

@@ -29,8 +29,6 @@ export class DiskListComponent {
 	  { name: T('Acoustic Level'), prop: 'acousticlevel', hidden: true },
 	  { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
 	  { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
-		{ name: T('Password for SED'), prop: 'passwd', hidden: true },
-		{ name: T('Enclosure'), prop: 'enclosure_parsed', hidden: true }
 	];
 	public config: any = {
 		paging: true,
@@ -165,7 +163,6 @@ export class DiskListComponent {
       for (const disk of entityList.rows) {
         disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
         disk.pool = this.disk_pool.get(disk.name) || this.disk_pool.get(disk.devname);
-        disk.enclosure_parsed = disk.enclosure ? disk.enclosure.number : undefined;
 	    }
     });
   }

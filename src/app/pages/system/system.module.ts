@@ -50,7 +50,6 @@ import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.compon
 import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
 import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
-import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
 import { EulaComponent } from './support/eula/eula.component';
@@ -110,7 +109,6 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     AcmednsFormComponent,
     CertificateAcmeAddComponent,
     FailoverComponent,
-    ProactiveSupportComponent,
     ReportingComponent,
     EulaComponent,
     TnSysInfoComponent,

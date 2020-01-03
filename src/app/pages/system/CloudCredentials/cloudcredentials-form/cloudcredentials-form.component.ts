@@ -25,6 +25,7 @@ export class CloudCredentialsFormComponent {
   protected formGroup: FormGroup;
   protected id: any;
   protected pk: any;
+  protected keyID: number;
 
   protected selectedProvider: string = 'S3';
   protected credentialsOauth = false;
@@ -43,6 +44,7 @@ export class CloudCredentialsFormComponent {
       type: 'select',
       name: 'provider',
       placeholder: helptext.provider.placeholder,
+      tooltip: helptext.provider.tooltip,
       options: [],
       value: this.selectedProvider,
       required: true,
@@ -524,8 +526,21 @@ export class CloudCredentialsFormComponent {
       name: 'drives-ONEDRIVE',
       placeholder: helptext.drives_onedrive.placeholder,
       tooltip: helptext.drives_onedrive.tooltip,
-      options: [],
+      options: [{
+        label: '---------',
+        value: '',
+      }],
+      value: '',
       isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'ONEDRIVE',
+           }]
+        }
+      ]
     },
     {
       type: 'select',
@@ -883,22 +898,13 @@ export class CloudCredentialsFormComponent {
             delete value[item];
           }
         }
-        delete value['name'];
         value['attributes'] = attributes;
 
-        this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
-          (res) => {
-            this.entityForm.loader.close();
-            if (res.valid) {
-              this.dialog.Info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
-            } else {
-              this.dialog.errorReport('Error', res.excerpt, res.error);
-            }
-          },
-          (err) => {
-            this.entityForm.loader.close();
-            new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
-          })
+        if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
+          this.makeNewKeyPair(value);
+        } else {
+        this.verifyCredentials(value);
+        }
       }
     }
   ];
@@ -1019,39 +1025,63 @@ export class CloudCredentialsFormComponent {
     });
   }
 
-  beforeSubmit(value) {
-    if (!this.credentialsOauth) {
-      delete value['client_id'];
-      delete value['client_secret'];
-    }
+  verifyCredentials(value) {
+    delete value['name'];
+    this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
+      (res) => {
+        this.entityForm.loader.close();
+        if (res.valid) {
+          this.dialog.Info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
+        } else {
+          this.dialog.errorReport('Error', res.excerpt, res.error);
+        }
+      },
+      (err) => {
+        this.entityForm.loader.close();
+        new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
+      })
   }
 
-  async customSubmit(value) {
+  async makeNewKeyPair(value, submitting?: boolean) {
+    await this.replicationService.genSSHKeypair().then(
+      async (res) => {
+        const payload = {
+          name: value['name'] + ' Key',
+          type: 'SSH_KEY_PAIR',
+          attributes: res,
+        };
+        await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
+          (sshKey) => {
+            
+            this.keyID = sshKey.id;
+            const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
+            privateKeySFTPField.options.push({ label: payload.name, value: this.keyID});
+            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
+            if (submitting) {
+              value['private_key-SFTP'] = sshKey.id;
+              this.finishSubmit(value)
+            } else  {
+              value.attributes.private_key = this.keyID;
+              this.verifyCredentials(value);
+            }
+          },
+          (sshKey_err) => {
+            this.entityForm.loader.close();
+            new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
+          });
+      },
+      (err) => {
+        this.entityForm.loader.close();
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      });
+  }
+
+
+
+  finishSubmit(value) {
     this.entityForm.loader.open();
     const attributes = {};
     let attr_name: string;
-    if (value['private_key-SFTP'] === 'NEW') {
-      await this.replicationService.genSSHKeypair().then(
-        async (res) => {
-          const payload = {
-            name: value['name'] + ' Key',
-            type: 'SSH_KEY_PAIR',
-            attributes: res,
-          };
-          await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
-            (sshKey) => {
-              value['private_key-SFTP'] = sshKey.id;
-            },
-            (sshKey_err) => {
-              this.entityForm.loader.close();
-              new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
-            });
-        },
-        (err) => {
-          this.entityForm.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialog);
-        });
-    }
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
@@ -1076,6 +1106,22 @@ export class CloudCredentialsFormComponent {
               new EntityUtils().handleError(this, err);
           }
       });
+  }
+
+
+  beforeSubmit(value) {
+    if (!this.credentialsOauth) {
+      delete value['client_id'];
+      delete value['client_secret'];
+    }
+  }
+
+  async customSubmit(value) {
+    if (value['private_key-SFTP'] === 'NEW') {
+      this.makeNewKeyPair(value, true);
+    } else {
+      this.finishSubmit(value);
+    }
   }
 
   dataAttributeHandler(entityForm: any) {
@@ -1108,13 +1154,6 @@ export class CloudCredentialsFormComponent {
       token: data.token,
     }]).subscribe(
       (drives) => {
-        drivesConfig.options = [
-          {
-            label: '---------',
-            value: '',
-          }
-        ];
-
         for (let i = 0; i < drives.length; i++) {
           drivesConfig.options.push({label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i]});
         }

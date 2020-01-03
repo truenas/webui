@@ -79,7 +79,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
   public legendColors: string[];
   private legendIndex: number;
-  public labels:string[] = ['Free', 'ZFS Cache', 'Services'];
+  public labels:string[] = [T('Free'), T('ZFS Cache'), T('Services')];
   
   public screenType:string = 'Desktop';
 

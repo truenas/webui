@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
@@ -28,7 +29,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   public isHA = false;
   public isUpdateRunning = false;
   public updateMethod: string = 'update.update';
-  public saveSubmitText ="Apply Update";
+  public saveSubmitText = T("Apply Update");
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'paragraph',

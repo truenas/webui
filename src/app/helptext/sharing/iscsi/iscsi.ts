@@ -64,10 +64,9 @@ export const helptext_sharing_iscsi = {
   ),
 
   portal_form_placeholder_discovery_authgroup: T("Discovery Auth Group"),
-  portal_form_tooltip_discovery_authgroup: T(
-    "Select a Group ID created in <b>Authorized Access</b> if the\
- <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
- <i>Mutual CHAP</i>."
+  portal_form_tooltip_discovery_authgroup: T("Group ID created in \
+ Authorized Access. Required when the Discovery Auth Method is set to \
+ CHAP or Mutual CHAP."
   ),
 
   portal_form_placeholder_ip: T("IP Address"),
@@ -190,7 +189,6 @@ export const helptext_sharing_iscsi = {
     "Entering <i>0</i> uses the actual file size and requires that the\
  file already exists. Otherwise, specify the file size for the new file."
   ),
-  extent_validators_filesize: [Validators.required],
 
   extent_placeholder_blocksize: T("Logical block size"),
   extent_tooltip_blocksize: T(

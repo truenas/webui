@@ -24,6 +24,10 @@ export class ExtentListComponent {
       always_display: true
     },
     {
+      name : T('Description'),
+      prop : 'comment',
+    },
+    {
       name : T('Serial'),
       prop : 'serial',
     },

@@ -90,7 +90,7 @@ export class VMwareSnapshotFormComponent {
   public custActions: Array<any> = [
     {
       id: 'FetchDataStores',
-      name: 'Fetch DataStores',
+      name: T('Fetch DataStores'),
       function: () => {
         this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });
         this.datastore.type = 'select';

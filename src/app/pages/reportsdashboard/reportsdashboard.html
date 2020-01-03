@@ -11,7 +11,7 @@
     <mat-menu #categoryMenu="matMenu" overlapTrigger="false"> 
       <div>
         <button mat-menu-item *ngFor="let tab of allTabs" (click)="navigateToTab(tab.value);">
-          <span>{{tab.label}}</span>
+          <span>{{tab.label | translate}}</span>
         </button>
       </div>
     </mat-menu>

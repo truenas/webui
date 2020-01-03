@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { helptext } from 'app/helptext/system/reporting';
 
@@ -16,19 +16,20 @@ export class ReportingComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
   public entityForm: any;
-  public rrd_checkbox: any;
+  public isCpuCheckboxChecked: boolean;
+  public graphPoints: any;
+  public graphAge: any;
+
   custActions: any[] = [
     {
       id:'reset',
-      name:'Reset',
+      name:helptext.reset_button,
       function : () => {
-        for (let i in this.entityForm.wsResponse) {
-          if (this.entityForm.formGroup.controls[i]) {
-            this.entityForm.formGroup.controls[i].setValue(this.entityForm.wsResponse[i]);
-          }
-        }
-        _.find(this.fieldConfig, {'name' : 'confirm_rrd_destroy'})['isHidden'] = true;
-        this.entityForm.formGroup.controls['confirm_rrd_destroy'].setValue(false);
+        this.entityForm.formGroup.controls['cpu_in_percentage'].setValue(false);
+        this.entityForm.formGroup.controls['graphite'].setValue(this.entityForm.wsResponse['graphite']);
+        this.entityForm.formGroup.controls['graph_age'].setValue(12);
+        this.entityForm.formGroup.controls['graph_points'].setValue(1200);
+        this.entityForm.formGroup.markAsDirty();
       }
     }
   ]
@@ -50,68 +51,64 @@ export class ReportingComponent {
     name: 'graph_age',
     placeholder: helptext.graph_age_placeholder,
     tooltip: helptext.graph_age_tooltip,
-    validation: helptext.graph_age_validation
+    validation: helptext.graph_age_validation,
+    required: true
   },
   {
     type: 'input',
     name: 'graph_points',
     placeholder: helptext.graph_points_placeholder,
     tooltip: helptext.graph_points_tooltip,
-    validation: helptext.graph_points_validation
+    validation: helptext.graph_points_validation,
+    required: true
   },
-  {
-    type: 'checkbox',
-    name: 'confirm_rrd_destroy',
-    placeholder: helptext.confirm_rrd_destroy_placeholder,
-    tooltip: helptext.confirm_rrd_destroy_tooltip,
-    isHidden: true,
-    value: false
-  }
 ];
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
-    private ws: WebSocketService
+    private ws: WebSocketService,
+    protected dialog: DialogService
   ) {}
+
+  resourceTransformIncomingRestData(data) {
+    this.graphPoints = data.graph_points;
+    this.graphAge = data.graph_age;
+    this.isCpuCheckboxChecked = data.cpu_in_percentage;
+    return data;
+  }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.rrd_checkbox = _.find(this.fieldConfig, {'name' : 'confirm_rrd_destroy'});
-    entityEdit.formGroup.controls['graph_age'].valueChanges.subscribe((res) => {
-      let graphPointsValue = parseInt(entityEdit.formGroup.controls['graph_points'].value);
-      if (parseInt(res) === entityEdit.wsResponse['graph_age'] 
-        && graphPointsValue === entityEdit.wsResponse['graph_points'] ) {
-        this.rrd_checkbox['isHidden'] = true;
-      } else {
-        this.rrd_checkbox['isHidden'] = false;
-      }
-    });
-      entityEdit.formGroup.controls['graph_points'].valueChanges.subscribe((res) => {
-        let graphAgeValue = parseInt(entityEdit.formGroup.controls['graph_age'].value);
-        if (parseInt(res) === entityEdit.wsResponse['graph_points'] 
-          && graphAgeValue === entityEdit.wsResponse['graph_age']) {
-          this.rrd_checkbox['isHidden'] = true;
-        } else {
-          this.rrd_checkbox['isHidden'] = false;
-        }
-      }); 
   }
-
-  resetForm() {
-    console.log('reset')
-  }
-
+  
   public customSubmit(body) {
+    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints || 
+      body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
+      this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false, 
+        helptext.dialog.action).subscribe((res) => {
+        if (res) {
+          body.confirm_rrd_destroy = true;
+          this.doSubmit(body)
+        }
+      })
+    } else {
+      this.doSubmit(body)
+    }
+
+  }
+
+  doSubmit(body) {
+    this.graphAge = body.graph_age;
+    this.graphPoints = body.graph_points;
+    this.isCpuCheckboxChecked = body.cpu_in_percentage;
     this.load.open();
     return this.ws.call('reporting.update', [body]).subscribe((res) => {
       this.load.close();
-      this.rrd_checkbox['isHidden'] = true;
-      this.entityForm.formGroup.controls['confirm_rrd_destroy'].setValue(false);
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
-    }, (res) => {
+    }, (err) => {
       this.load.close();
-      new EntityUtils().handleWSError(this.entityForm, res);
+      new EntityUtils().handleWSError(this.entityForm, err);
     });
   }
 }

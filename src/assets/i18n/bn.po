@@ -34,6 +34,11 @@ msgid ""
 "<b>DOWNLOAD ENCRYPTION KEY</b>."
 msgstr ""
 
+msgid ""
+" addresses. When this has been chosen, additional addresses cannot be "
+"selected."
+msgstr ""
+
 msgid " and "
 msgstr ""
 
@@ -72,6 +77,9 @@ msgid " service has been enabled."
 msgstr ""
 
 msgid " system is powered on and connected to the network."
+msgstr ""
+
+msgid " to include all "
 msgstr ""
 
 msgid " update successful"
@@ -173,20 +181,6 @@ msgstr ""
 
 msgid ""
 "<a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmNoAuthProtocol\"  target=\"_blank\">Authentication protocol</a> used to "
-"authenticate  messages sent on behalf of the specified <i>Username</i>."
-msgstr ""
-
-msgid ""
-"<a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmNoPrivProtocol\"  target=\"_blank\">Encryption protocol</a> used to "
-"encrypt messages  sent on behalf of the specified <i>Username</i>."
-msgstr ""
-
-msgid ""
-"<a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
 "html\"  target=\"_blank\">S3 API endpoint URL</a>. When using AWS, the "
 "endpoint  field can be empty to use the default endpoint for the region, "
@@ -218,6 +212,18 @@ msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
 "target=\"_blank\">pCloud Access Token</a>. These tokens can expire and  "
 "require extension."
+msgstr ""
+
+msgid ""
+"<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
+"target=\"_blank\">Authentication protocol</a> used to authenticate  "
+"messages sent on behalf of the specified <i>Username</i>."
+msgstr ""
+
+msgid ""
+"<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
+"target=\"_blank\">Encryption protocol</a> used to encrypt messages  sent on "
+"behalf of the specified <i>Username</i>."
 msgstr ""
 
 msgid ""
@@ -437,14 +443,15 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
-"connects to a remote system and retrieves snapshots  matching a <b>Naming "
-"Schema</b>."
+"<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
+"cloud storage. Changing the direction resets the  <i>Transfer Mode</i> to "
+"COPY."
 msgstr ""
 
 msgid ""
-"<i>Push</i> sends data to cloud storage. <i>Pull</i> receives data from "
-"cloud storage."
+"<i>PUSH</i> sends snapshots to a destination  system.<br><br>  <i>PULL</i> "
+"connects to a remote system and retrieves snapshots  matching a <b>Naming "
+"Schema</b>."
 msgstr ""
 
 msgid ""
@@ -487,6 +494,9 @@ msgid ""
 "database file was saved  without the Password Secret Seed. </font></p>"
 msgstr ""
 
+msgid ">release notes</a>."
+msgstr ""
+
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -494,9 +504,6 @@ msgid ""
 "target=\"_blank\">access token</a> enables Box to verify a request  belongs "
 "to an authorized session. Example token:  "
 "<i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>."
-msgstr ""
-
-msgid "A failover might cause temporary service interruption."
 msgstr ""
 
 msgid ""
@@ -679,9 +686,6 @@ msgid ""
 "target=\"_blank\">Dropbox account</a>  before adding it here."
 msgstr ""
 
-msgid "Account"
-msgstr ""
-
 msgid "Account Key"
 msgstr ""
 
@@ -725,6 +729,9 @@ msgstr ""
 msgid "Activates the replication schedule."
 msgstr ""
 
+msgid "Active"
+msgstr ""
+
 msgid "Active Directory"
 msgstr ""
 
@@ -752,6 +759,9 @@ msgstr ""
 msgid "Add Additional Path"
 msgstr ""
 
+msgid "Add Alert Service"
+msgstr ""
+
 msgid "Add Cache"
 msgstr ""
 
@@ -762,6 +772,9 @@ msgid "Add Data"
 msgstr ""
 
 msgid "Add Dataset"
+msgstr ""
+
+msgid "Add Extra ISCSI Group"
 msgstr ""
 
 msgid "Add Log"
@@ -882,6 +895,9 @@ msgstr ""
 msgid "Additional Domains"
 msgstr ""
 
+msgid "Additional Hardware"
+msgstr ""
+
 msgid "Additional Parameters"
 msgstr ""
 
@@ -925,7 +941,7 @@ msgstr ""
 msgid "Adjust the file permissions using the checkboxes."
 msgstr ""
 
-msgid "Admin Portal"
+msgid "Admin Portals"
 msgstr ""
 
 msgid "Admin Server"
@@ -949,6 +965,12 @@ msgid "Adv. Power Management"
 msgstr ""
 
 msgid "Advanced"
+msgstr ""
+
+msgid "Advanced Details"
+msgstr ""
+
+msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
@@ -1044,6 +1066,16 @@ msgid "Allow Transfer Resumption"
 msgstr ""
 
 msgid "Allow Trusted Domains"
+msgstr ""
+
+msgid ""
+"Allow anonymous FTP logins with access to the  directory specified in "
+"<b>Path</b>."
+msgstr ""
+
+msgid ""
+"Allow any local user to log in. By default, only  members of the <i>ftp</i> "
+"group are allowed to log in."
 msgstr ""
 
 msgid ""
@@ -1260,6 +1292,9 @@ msgstr ""
 msgid "Apply Permissions Recursively"
 msgstr ""
 
+msgid "Apply Update"
+msgstr ""
+
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
 
@@ -1282,7 +1317,16 @@ msgstr ""
 msgid "Apply permissions to child datasets"
 msgstr ""
 
+msgid "Apply the same quota critical  alert settings as the parent dataset."
+msgstr ""
+
+msgid "Apply the same quota warning  alert settings as the parent dataset."
+msgstr ""
+
 msgid "Apply updates and reboot system after downloading."
+msgstr ""
+
+msgid "Apr"
 msgstr ""
 
 msgid "Archive"
@@ -1325,6 +1369,9 @@ msgstr ""
 msgid "Attach screenshots."
 msgstr ""
 
+msgid "Aug"
+msgstr ""
+
 msgid "Auth Method"
 msgstr ""
 
@@ -1338,11 +1385,6 @@ msgid "Authentication Protocol"
 msgstr ""
 
 msgid "Authentication Type"
-msgstr ""
-
-msgid ""
-"Authentication only functions when a Certificate is selected with either "
-"the <i>SSL</i> or <i>TLS</i> option."
 msgstr ""
 
 msgid "Authenticator"
@@ -1377,6 +1419,9 @@ msgid "Autoconfigure IPv6"
 msgstr ""
 
 msgid "Autoconfigure IPv6 with rtsold"
+msgstr ""
+
+msgid "Automatic scrub interval (in days)"
 msgstr ""
 
 msgid ""
@@ -1423,6 +1468,9 @@ msgstr ""
 msgid "Available Memory:"
 msgstr ""
 
+msgid "Available Space"
+msgstr ""
+
 msgid "Available Themes"
 msgstr ""
 
@@ -1439,8 +1487,8 @@ msgid "Back to Support"
 msgstr ""
 
 msgid ""
-"Backend used to map Windows security identifiers (SIDs) to UNIX UIDs and "
-"GIDs. Click Edit to configure that backend"
+"Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
+"GIDs. To configure the selected  backend, click <i>EDIT IDMAP</i>."
 msgstr ""
 
 msgid "Bandwidth Limit"
@@ -1465,6 +1513,9 @@ msgid "Basic Properties"
 msgstr ""
 
 msgid "Batch Operations"
+msgstr ""
+
+msgid "Before updating, please read the release notes."
 msgstr ""
 
 msgid "Begin"
@@ -1517,6 +1568,9 @@ msgstr ""
 msgid "Boot"
 msgstr ""
 
+msgid "Boot Environments"
+msgstr ""
+
 msgid "Boot Loader Type"
 msgstr ""
 
@@ -1526,7 +1580,18 @@ msgstr ""
 msgid "Boot Pool"
 msgstr ""
 
+msgid "Boot Pool Condition"
+msgstr ""
+
 msgid "Boot Pool Status"
+msgstr ""
+
+msgid ""
+"Boot environment name. Alphanumeric characters, dashes (-), underscores "
+"(_),     and periods (.) are allowed."
+msgstr ""
+
+msgid "Boot environment to be cloned."
 msgstr ""
 
 msgid ""
@@ -1657,6 +1722,9 @@ msgstr ""
 msgid "CPU"
 msgstr ""
 
+msgid "CPU Details"
+msgstr ""
+
 msgid "CPU Usage"
 msgstr ""
 
@@ -1670,6 +1738,9 @@ msgid "CSRs"
 msgstr ""
 
 msgid "Cache VDev"
+msgstr ""
+
+msgid "Caches"
 msgstr ""
 
 msgid ""
@@ -1706,6 +1777,13 @@ msgstr ""
 msgid "Certificate"
 msgstr ""
 
+msgid ""
+"Certificate to use when performing LDAP  certificate-based authentication. "
+"To configure LDAP certificate-based  authentication, create a Certificate "
+"Signing Request for the LDAP  provider to sign. A certificate is not "
+"required when using  username/password or Kerberos authentication."
+msgstr ""
+
 msgid "Certificates"
 msgstr ""
 
@@ -1719,6 +1797,9 @@ msgid "Change Passphrase"
 msgstr ""
 
 msgid "Change Password"
+msgstr ""
+
+msgid "Change Settings and Clear Report History?"
 msgstr ""
 
 msgid "Change User & Group Ownership"
@@ -1851,6 +1932,9 @@ msgstr ""
 msgid "Checking HA status"
 msgstr ""
 
+msgid "Checking this box clears a previously-set password."
+msgstr ""
+
 msgid "Chmod Request"
 msgstr ""
 
@@ -1914,6 +1998,9 @@ msgstr ""
 msgid "Choose a DNS provider and configure any required authenticator attributes."
 msgstr ""
 
+msgid "Choose a Device"
+msgstr ""
+
 msgid "Choose a color scheme."
 msgstr ""
 
@@ -1923,7 +2010,16 @@ msgid ""
 "the  destination system. Click a dataset to set it as the target."
 msgstr ""
 
+msgid "Choose a device for your report."
+msgstr ""
+
 msgid "Choose a location to store the installer image file."
+msgstr ""
+
+msgid "Choose a metric"
+msgstr ""
+
+msgid "Choose a metric to display."
 msgstr ""
 
 msgid ""
@@ -2041,12 +2137,6 @@ msgid "Choose the VM operating system type."
 msgstr ""
 
 msgid ""
-"Choose the account type: <i>PERSONAL</i>, <i>BUSINESS</i>, or  <a "
-"href=\"https://products.office.com/en-us/sharepoint/collaboration\" "
-"target=\"_blank\">SharePoint</a> <i>DOCUMENT_LIBRARY</i>."
-msgstr ""
-
-msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
 "and GIDs. Click Edit to configure that backend."
 msgstr ""
@@ -2132,6 +2222,11 @@ msgstr ""
 msgid "Choose your language."
 msgstr ""
 
+msgid ""
+"Choosing an entry loads a preset ACL that is  configured to match general "
+"permissions situations."
+msgstr ""
+
 msgid "Cipher"
 msgstr ""
 
@@ -2140,6 +2235,9 @@ msgid ""
 "case or performance requirements. See <a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
+msgstr ""
+
+msgid "Clear SED Password"
 msgstr ""
 
 msgid ""
@@ -2290,6 +2388,9 @@ msgstr ""
 msgid "Config could not be downloaded"
 msgstr ""
 
+msgid "Configure"
+msgstr ""
+
 msgid "Configure ACL"
 msgstr ""
 
@@ -2353,9 +2454,6 @@ msgid "Confirm Password"
 msgstr ""
 
 msgid "Confirm Privacy Passphrase"
-msgstr ""
-
-msgid "Confirm RRD Destroy"
 msgstr ""
 
 msgid "Confirm SED Password"
@@ -2435,6 +2533,9 @@ msgstr ""
 msgid "Continue with download?"
 msgstr ""
 
+msgid "Contract Type"
+msgstr ""
+
 msgid "Control left sidebar's display style."
 msgstr ""
 
@@ -2466,6 +2567,9 @@ msgid ""
 "using IPv6 entirely."
 msgstr ""
 
+msgid "Coolest:"
+msgstr ""
+
 msgid "Copies"
 msgstr ""
 
@@ -2487,6 +2591,12 @@ msgstr ""
 msgid "Country Code"
 msgstr ""
 
+msgid ""
+"Country Code must be blank or have a  valid two-letter <a  "
+"href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
+"3166-1 alpha-2 code</a>."
+msgstr ""
+
 msgid "Crash reporting"
 msgstr ""
 
@@ -2500,6 +2610,9 @@ msgid "Create CA"
 msgstr ""
 
 msgid "Create Certificate"
+msgstr ""
+
+msgid "Create New Theme"
 msgstr ""
 
 msgid "Create Passphrase"
@@ -2584,6 +2697,12 @@ msgstr ""
 msgid "Current Password"
 msgstr ""
 
+msgid "Current Train:"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
 msgid "Custom Path"
 msgstr ""
 
@@ -2591,6 +2710,9 @@ msgid "Custom Properties"
 msgstr ""
 
 msgid "Custom Server"
+msgstr ""
+
+msgid "Customer Name"
 msgstr ""
 
 msgid ""
@@ -2640,10 +2762,16 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
+msgid "Data"
+msgstr ""
+
 msgid "Data VDevs"
 msgstr ""
 
 msgid "Data collection frequency, in seconds."
+msgstr ""
+
+msgid "Data not available"
 msgstr ""
 
 msgid ""
@@ -2662,10 +2790,10 @@ msgstr ""
 msgid "Dataset"
 msgstr ""
 
-msgid "Dataset Path"
+msgid "Dataset Has Complex ACLs"
 msgstr ""
 
-msgid "Dataset has complex ACLs"
+msgid "Dataset Path"
 msgstr ""
 
 msgid "Dataset which will store replicated  snapshots."
@@ -2683,6 +2811,9 @@ msgstr ""
 msgid "Day of Week"
 msgstr ""
 
+msgid "Days"
+msgstr ""
+
 msgid ""
 "Days before a completed scrub is allowed  to run again. This controls the "
 "task schedule. For example, scheduling  a scrub to run daily and setting "
@@ -2692,16 +2823,28 @@ msgid ""
 "scrub always occurs on  the same weekday."
 msgstr ""
 
+msgid "Days of Week"
+msgstr ""
+
 msgid "Days of the Week"
 msgstr ""
 
 msgid "Deactivate the recovery key for this pool?"
 msgstr ""
 
+msgid "Debug"
+msgstr ""
+
 msgid "Debug could not be downloaded."
 msgstr ""
 
+msgid "Dec"
+msgstr ""
+
 msgid "Decrypt pool"
+msgstr ""
+
+msgid "Decrypting Disks"
 msgstr ""
 
 msgid ""
@@ -2709,6 +2852,9 @@ msgid ""
 "destination system must also support deduplicated  streams. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
+msgstr ""
+
+msgid "Default"
 msgstr ""
 
 msgid "Default ACL Options"
@@ -2829,6 +2975,9 @@ msgstr ""
 msgid "Delete Path"
 msgstr ""
 
+msgid "Delete Selected"
+msgstr ""
+
 msgid "Delete Zvol"
 msgstr ""
 
@@ -2852,6 +3001,9 @@ msgstr ""
 msgid ""
 "Delete the passphrase from  the encryption key. Invalidates an existing "
 "pool recovery key file. A  dialog prompts to back up the encryption key."
+msgstr ""
+
+msgid "Delete the selected item?"
 msgstr ""
 
 msgid "Delete the zvol "
@@ -2930,12 +3082,6 @@ msgid ""
 msgstr ""
 
 msgid "Destroy data on this pool?"
-msgstr ""
-
-msgid ""
-"Destroy the reporting database. Only  appears when <i>Graph Age</i> or "
-"<i>Graph Points</i> are  changed. Required for changes to <i>Graph Age</i> "
-"or  <i>Graph Points</i> to take effect."
 msgstr ""
 
 msgid "Detach"
@@ -3046,6 +3192,9 @@ msgstr ""
 msgid "Disable FreeNAS Cache"
 msgstr ""
 
+msgid "Disable Hardware Offloading"
+msgstr ""
+
 msgid ""
 "Disable IPv4 source address selection for  the jail in favor of the primary "
 "IPv4 address of the jail.  Only available when the jail is not configured "
@@ -3061,6 +3210,9 @@ msgstr ""
 msgid "Disable LDAP User/Group Cache"
 msgstr ""
 
+msgid "Disable automatic failover."
+msgstr ""
+
 msgid ""
 "Disable caching LDAP users and groups in large LDAP environments.  When "
 "caching is disabled, LDAP users and groups do not appear in dropdown  "
@@ -3070,7 +3222,13 @@ msgstr ""
 msgid "Disable physical block size reporting"
 msgstr ""
 
-msgid "Disabled"
+msgid "Disabled (Not encrypted)"
+msgstr ""
+
+msgid ""
+"Disabling hardware offloading can severely reduce network performance. "
+"Disabling this feature is only recommended when an interface is used for "
+"plugin, jail, or virtual machine networking."
 msgstr ""
 
 msgid "Discard Network Changes"
@@ -3091,7 +3249,13 @@ msgstr ""
 msgid "Disk"
 msgstr ""
 
+msgid "Disk Details"
+msgstr ""
+
 msgid "Disk Imported: Log Summary"
+msgstr ""
+
+msgid "Disk Reports"
 msgstr ""
 
 msgid "Disk Selection Required"
@@ -3163,6 +3327,9 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
+msgid "Download Encryption Key"
+msgstr ""
+
 msgid "Download Key"
 msgstr ""
 
@@ -3190,6 +3357,11 @@ msgstr ""
 msgid "Drives List"
 msgstr ""
 
+msgid ""
+"Drives and IDs registered to the Microsoft account.  Selecting a drive also "
+"fills the <i>Drive ID</i> field."
+msgstr ""
+
 msgid "EC Curve"
 msgstr ""
 
@@ -3202,10 +3374,19 @@ msgstr ""
 msgid "EULA"
 msgstr ""
 
+msgid "EXPIRED"
+msgstr ""
+
+msgid "EXPIRES TODAY  "
+msgstr ""
+
 msgid "Edit"
 msgstr ""
 
 msgid "Edit ACL"
+msgstr ""
+
+msgid "Edit Alert Service"
 msgstr ""
 
 msgid "Edit Disk(s)"
@@ -3243,6 +3424,9 @@ msgstr ""
 msgid "Email Subject"
 msgstr ""
 
+msgid "Emergency"
+msgstr ""
+
 msgid ""
 "Emulating an <i>Intel e82545 (e1000)</i> Ethernet card provides "
 "compatibility with most operating systems. Change to <i>VirtIO</i> to "
@@ -3251,6 +3435,9 @@ msgid ""
 msgstr ""
 
 msgid "Enable"
+msgstr ""
+
+msgid "Enable (requires password)"
 msgstr ""
 
 msgid "Enable Atime"
@@ -3353,6 +3540,11 @@ msgstr ""
 msgid "Enable service"
 msgstr ""
 
+msgid ""
+"Enable the Active Directory service. The first time this option is set, the "
+"Domain Account Password must be entered."
+msgstr ""
+
 msgid "Enable the SNMPv3 security model."
 msgstr ""
 
@@ -3394,6 +3586,11 @@ msgid "Enabled"
 msgstr ""
 
 msgid ""
+"Enables <i>receive</i> mode. Any received peer  information is saved in "
+"interface descriptions."
+msgstr ""
+
+msgid ""
 "Enables the autotune script which attempts to optimize the system depending "
 "on the installed hardware. <b>Warning:</b> Autotuning is only used as a "
 "temporary measure and is not a permanent fix for system hardware issues. "
@@ -3422,10 +3619,26 @@ msgstr ""
 msgid "Enclosure"
 msgstr ""
 
+msgid ""
+"Encrypt (<i>PUSH</i>) or decrypt  (<i>PULL</i>) file names with the rclone  "
+"<a href=\"https://rclone.org/crypt/#file-name-encryption-modes\" "
+"target=\"_blank\">\"Standard\" file name encryption mode</a>.  The original "
+"directory structure is preserved. A filename with the same  name always has "
+"the same encrypted filename.<br><br>  <i>PULL</i> tasks that have "
+"<b>Filename Encryption</b> enabled and an  incorrect <b>Encryption "
+"Password</b> or <b>Encryption Salt</b> will not  transfer any files but "
+"still report that the task was successful. To  verify that files were "
+"transferred successfully, click the finished  task status to see a list of "
+"transferred files."
+msgstr ""
+
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr ""
 
 msgid "Encryption"
+msgstr ""
+
+msgid "Encryption (more secure, but slower)"
 msgstr ""
 
 msgid "Encryption Key"
@@ -3559,19 +3772,14 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter a long string of random characters for use as <a "
-"href=\"https://searchsecurity.techtarget.com/definition/salt\" "
-"target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b> "
-"Save and back up the encryption salt value. Losing the salt value can "
-"result in data loss."
+"Enter a long string of random characters for  use as <a "
+"href=\"https://searchsecurity.techtarget.com/definition/salt\"  "
+"target=\"_blank\">salt</a> for the encryption password. <b>Warning:</b>  "
+"Always securely back up the encryption salt value! Losing the salt  value "
+"will result in data loss."
 msgstr ""
 
 msgid "Enter a name for the VM."
-msgstr ""
-
-msgid ""
-"Enter a name for the clone of this boot environment. Alphanumeric "
-"characters, dashes (*-*), underscores (*_*), and periods (*.*) are allowed.)"
 msgstr ""
 
 msgid ""
@@ -3959,9 +4167,6 @@ msgstr ""
 msgid "Enter the TCP port which provides the S3 service."
 msgstr ""
 
-msgid "Enter the administrator account password."
-msgstr ""
-
 msgid "Enter the administrator password to authorize this operation."
 msgstr ""
 
@@ -4027,11 +4232,6 @@ msgid ""
 "<i>X</i> is a number representing a non-parent VLAN interface."
 msgstr ""
 
-msgid ""
-"Enter the name of the boot entry. Alphanumeric characters, dashes (*-*), "
-"underscores (*_*), and periods (*.*) are allowed.)"
-msgstr ""
-
 msgid "Enter the name of the company or organization."
 msgstr ""
 
@@ -4077,12 +4277,6 @@ msgid ""
 "Enter the password to be used for the <a "
 "href=\"--docurl--/directoryservices.html#active-directory\" "
 "target=”_blank”>Active Directory</a> administrator account."
-msgstr ""
-
-msgid ""
-"Enter the password to encrypt and decrypt remote data. <b>Warning</b>: "
-"Always save and back up this password. Losing the encryption password can "
-"result in data loss."
 msgstr ""
 
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
@@ -4293,13 +4487,16 @@ msgstr ""
 msgid "Execute"
 msgstr ""
 
+msgid "Expiration Date"
+msgstr ""
+
 msgid "Export Certificate"
 msgstr ""
 
 msgid "Export Password Secret Seed"
 msgstr ""
 
-msgid "Export Pool Ecryption Keys"
+msgid "Export Pool Encryption Keys"
 msgstr ""
 
 msgid "Export Private Key"
@@ -4392,6 +4589,18 @@ msgstr ""
 msgid "Failover is in an error state."
 msgstr ""
 
+msgid "Fast (Less secure)"
+msgstr ""
+
+msgid "Features"
+msgstr ""
+
+msgid "Feb"
+msgstr ""
+
+msgid "Fetch DataStores"
+msgstr ""
+
 msgid "Fetch Method"
 msgstr ""
 
@@ -4443,6 +4652,12 @@ msgid "Filesystem type"
 msgstr ""
 
 msgid "Filter"
+msgstr ""
+
+msgid "Finding Disks"
+msgstr ""
+
+msgid "Finding encrypted disks..."
 msgstr ""
 
 msgid "Finish Upgrade?"
@@ -4529,6 +4744,9 @@ msgstr ""
 msgid "FreeNAS/TrueNAS URL"
 msgstr ""
 
+msgid "Fri"
+msgstr ""
+
 msgid "From"
 msgstr ""
 
@@ -4567,6 +4785,12 @@ msgstr ""
 msgid "Gateway"
 msgstr ""
 
+msgid "Gathering data"
+msgstr ""
+
+msgid "Gathering data..."
+msgstr ""
+
 msgid "General"
 msgstr ""
 
@@ -4579,11 +4803,20 @@ msgstr ""
 msgid "Generate Keypair"
 msgstr ""
 
+msgid "Generate New"
+msgstr ""
+
+msgid "Generate Reports"
+msgstr ""
+
 msgid ""
 "Generate a name for the snapshot  from a previously created  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
 "target=\"_blank\">periodic snapshot task</a> naming schema. This allows  "
 "the snapshot to be replicated. Cannot be used with a <i>Name</i>."
+msgstr ""
+
+msgid "GiB"
 msgstr ""
 
 msgid ""
@@ -4611,13 +4844,16 @@ msgstr ""
 msgid "Go Back to Jails"
 msgstr ""
 
+msgid "Go to Admin Portal"
+msgstr ""
+
 msgid "Go to HA settings"
 msgstr ""
 
-msgid "Graph Age"
+msgid "Go to Portal"
 msgstr ""
 
-msgid "Graph Points"
+msgid "Graph Age in Months"
 msgstr ""
 
 msgid "Group"
@@ -4627,6 +4863,16 @@ msgid "Group Bind Path"
 msgstr ""
 
 msgid "Group ID"
+msgstr ""
+
+msgid ""
+"Group ID created in  Authorized Access. Required when the Discovery Auth "
+"Method is set to  CHAP or Mutual CHAP."
+msgstr ""
+
+msgid ""
+"Group ID created in Authorized  Access. Required when the Discovery Auth "
+"Method is set to CHAP or  Mutual CHAP."
 msgstr ""
 
 msgid ""
@@ -4695,6 +4941,9 @@ msgstr ""
 msgid "HTTPS Port"
 msgstr ""
 
+msgid "Help"
+msgstr ""
+
 msgid "Hide Standard Error"
 msgstr ""
 
@@ -4717,6 +4966,9 @@ msgid ""
 "Hide standard output (stdout) from the command.                When unset, "
 "any standard output is mailed to the user                account cron used "
 "to run the command."
+msgstr ""
+
+msgid "Highest Usage:"
 msgstr ""
 
 msgid ""
@@ -4793,6 +5045,9 @@ msgid ""
 "required. Example:  <b>https://<i>10.231.3.76</i></b>"
 msgstr ""
 
+msgid "Hostname or IP address of the system to  receive SNMP trap notifications."
+msgstr ""
+
 msgid ""
 "Hostnames or IP addresses of the ISNS servers to be registered with the "
 "iSCSI targets and portals of the system. Separate each entry with a space."
@@ -4804,6 +5059,9 @@ msgstr ""
 msgid "Hosts Deny"
 msgstr ""
 
+msgid "Hottest:"
+msgstr ""
+
 msgid "Hour"
 msgstr ""
 
@@ -4813,6 +5071,9 @@ msgstr ""
 msgid ""
 "Hour and minute the system must stop creating snapshots. Snapshots already "
 "in progress will continue until complete."
+msgstr ""
+
+msgid "Hours"
 msgstr ""
 
 msgid "Hover to expand"
@@ -4968,10 +5229,22 @@ msgstr ""
 msgid "Icon URL"
 msgstr ""
 
+msgid ""
+"Icon file to use as the profile  picture for new messages. Example:  "
+"<i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br>  "
+"Requires configuring Mattermost to <a  "
+"href=\"https://docs.mattermost.com/administration/config-settings.html#"
+"enable-integrations-to-override-profile-picture-icons\" "
+"target=\"_blank\">override profile picture icons</a>."
+msgstr ""
+
 msgid "Id"
 msgstr ""
 
 msgid "Identifier"
+msgstr ""
+
+msgid "Identify Light"
 msgstr ""
 
 msgid "Idmap Backend"
@@ -5038,8 +5311,8 @@ msgid "Import an existing pool"
 msgstr ""
 
 msgid ""
-"Import the private key from an existing SSH keypair.  Choose the name of "
-"the SSH keypair to use for this connection."
+"Import the private key from an existing SSH keypair or  select <i>Generate "
+"New</i> to create a new SSH key for this credential."
 msgstr ""
 
 msgid "Importing Disk"
@@ -5055,6 +5328,9 @@ msgid "Importing Pool..."
 msgstr ""
 
 msgid "Importing pools."
+msgstr ""
+
+msgid "In"
 msgstr ""
 
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
@@ -5105,7 +5381,13 @@ msgstr ""
 msgid "InfluxDB time series name for collected points."
 msgstr ""
 
+msgid "Info"
+msgstr ""
+
 msgid "Informational"
+msgstr ""
+
+msgid "Inherit"
 msgstr ""
 
 msgid "Inherits"
@@ -5118,18 +5400,17 @@ msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
 "no <i>Authentication Protocol</i> is  used. If an authentication key is set "
 "and an  <i>Authentication Protocol</i> is not specified,  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmHMACMD5AuthProtocol\"  target=\"_blank\">MD5</a> is used as the "
-"default.<br>  Must be at least 8 and at most 32 octets long."
+"href=\"https://en.wikipedia.org/wiki/MD5\"  target=\"_blank\">MD5</a> is "
+"used as the default.<br>  Must be at least 8 and at most 32 octets long."
 msgstr ""
 
 msgid ""
 "Initial secret encryption key.  If an encryption key is not set, no "
 "<i>Encryption Protocol</i> is used.  If an encryption key is set and an "
 "<i>Encryption Protocol</i> is  not specified,  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
-"usmDESPrivProtocol\"  target=\"_blank\">DES</a> is used as the default.<br> "
-" Must be at least 8 and at most 32 octets long."
+"href=\"https://en.wikipedia.org/wiki/Data_Encryption_Standard\"  "
+"target=\"_blank\">DES</a> is used as the default.<br>  Must be at least 8 "
+"and at most 32 octets long."
 msgstr ""
 
 msgid "Initiate Failover"
@@ -5175,6 +5456,9 @@ msgid "Installation Media"
 msgstr ""
 
 msgid "Installing plugin..."
+msgstr ""
+
+msgid "Interface"
 msgstr ""
 
 msgid "Interface Description"
@@ -5226,6 +5510,9 @@ msgid ""
 msgstr ""
 
 msgid "Invalidate Existing Key"
+msgstr ""
+
+msgid "Is Debug"
 msgstr ""
 
 msgid "Is the pool encrypted?"
@@ -5309,6 +5596,15 @@ msgstr ""
 msgid "Jails started."
 msgstr ""
 
+msgid "Jan"
+msgstr ""
+
+msgid "Jul"
+msgstr ""
+
+msgid "Jun"
+msgstr ""
+
 msgid "KDC"
 msgstr ""
 
@@ -5377,6 +5673,9 @@ msgid ""
 "instructions to generate the key."
 msgstr ""
 
+msgid "KiB"
+msgstr ""
+
 msgid "LAGG Ports"
 msgstr ""
 
@@ -5428,6 +5727,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr ""
 
+msgid "LOAD"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr ""
 
@@ -5461,6 +5763,12 @@ msgstr ""
 msgid "Language code"
 msgstr ""
 
+msgid "Last Scrub Run on"
+msgstr ""
+
+msgid "Leave Domain"
+msgstr ""
+
 msgid ""
 "Leave at the default of 512 unless the initiator requires a different block "
 "size."
@@ -5485,7 +5793,15 @@ msgid ""
 "to the host, a space, then the MAC address to be assigned to the jail."
 msgstr ""
 
+msgid ""
+"Leaving the domain requires sufficient privileges. Enter your credentials "
+"below."
+msgstr ""
+
 msgid "Legacy Web Interface"
+msgstr ""
+
+msgid "Legend"
 msgstr ""
 
 msgid "Level"
@@ -5495,6 +5811,9 @@ msgid "Libdefaults Auxiliary Parameters"
 msgstr ""
 
 msgid "License"
+msgstr ""
+
+msgid "License Information"
 msgstr ""
 
 msgid "Lifetime"
@@ -5582,6 +5901,9 @@ msgid ""
 "target=\"_blank\">RFC3721</a>."
 msgstr ""
 
+msgid "Lowest Usage:"
+msgstr ""
+
 msgid ""
 "Lowest port number of the  active side listen address that is open to "
 "connections."
@@ -5608,6 +5930,12 @@ msgstr ""
 msgid "Mail Server Port"
 msgstr ""
 
+msgid "Manage Custom Themes"
+msgstr ""
+
+msgid "Manual"
+msgstr ""
+
 msgid "Manual Update"
 msgstr ""
 
@@ -5629,10 +5957,10 @@ msgstr ""
 msgid "Maproot User"
 msgstr ""
 
-msgid "Masquerade Address"
+msgid "Mar"
 msgstr ""
 
-msgid "Master"
+msgid "Masquerade Address"
 msgstr ""
 
 msgid ""
@@ -5641,6 +5969,9 @@ msgid ""
 msgstr ""
 
 msgid "Mattermost username."
+msgstr ""
+
+msgid "Max Poll"
 msgstr ""
 
 msgid "Max. Connections"
@@ -5713,9 +6044,19 @@ msgid "Maximum swap space to use for the jail."
 msgstr ""
 
 msgid ""
-"Maximum time a graph is stored in months.  Changing this value causes the "
-"<i>Confirm RRD Destroy</i>  checkbox to appear. Changes do not take effect "
-"until the existing  reporting database is destroyed."
+"Maximum time a graph is stored in months (allowed values are 1-60).  "
+"Changing this value causes the <i>Confirm RRD Destroy</i>  dialog to "
+"appear. Changes do not take effect until the existing  reporting database "
+"is destroyed."
+msgstr ""
+
+msgid "May"
+msgstr ""
+
+msgid "Media Subtype"
+msgstr ""
+
+msgid "Media Type"
 msgstr ""
 
 msgid "Member Disk"
@@ -5734,6 +6075,9 @@ msgid ""
 msgstr ""
 
 msgid "Memory"
+msgstr ""
+
+msgid "Memory Reports"
 msgstr ""
 
 msgid "Memory Size"
@@ -5768,13 +6112,23 @@ msgid ""
 "legacy replication engine from FreeNAS 11.2  and earlier.</li></ul>"
 msgstr ""
 
+msgid "Metrics"
+msgstr ""
+
+msgid "MiB"
+msgstr ""
+
 msgid "Microsoft Account"
 msgstr ""
 
 msgid ""
 "Microsoft Onedrive  <a "
 "href=\"https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-"
-"started/authentication\"  target=\"_blank\">Access Token</a>."
+"started/authentication\"  target=\"_blank\">Access Token</a>. Log in to the "
+"Microsoft account to  add an access token."
+msgstr ""
+
+msgid "Min Poll"
 msgstr ""
 
 msgid "Min. Poll"
@@ -5784,6 +6138,9 @@ msgid "Minimum Passive Port"
 msgstr ""
 
 msgid "Minimum size is 1 MiB"
+msgstr ""
+
+msgid "Minimum value is "
 msgstr ""
 
 msgid "Minute"
@@ -5801,6 +6158,9 @@ msgstr ""
 msgid "Model"
 msgstr ""
 
+msgid "Model:"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a                   "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\"        "
@@ -5813,6 +6173,9 @@ msgid ""
 "target=\"_blank\">AAM</a>."
 msgstr ""
 
+msgid "Mon"
+msgstr ""
+
 msgid "Monitor Password"
 msgstr ""
 
@@ -5820,6 +6183,9 @@ msgid "Monitor User"
 msgstr ""
 
 msgid "Month"
+msgstr ""
+
+msgid "Months"
 msgstr ""
 
 msgid ""
@@ -5851,6 +6217,9 @@ msgid ""
 "www.example.com will secure both addresses."
 msgstr ""
 
+msgid "Multipath Name"
+msgstr ""
+
 msgid "Multipaths"
 msgstr ""
 
@@ -5879,6 +6248,9 @@ msgid "NAT"
 msgstr ""
 
 msgid "NAT Autoconfigure IPv4"
+msgstr ""
+
+msgid "NAT Interface"
 msgstr ""
 
 msgid "NAT Port Forwarding"
@@ -5960,6 +6332,11 @@ msgid ""
 msgstr ""
 
 msgid "Name of the new alert service."
+msgstr ""
+
+msgid ""
+"Name of the new cloned boot environment. Alphanumeric characters, dashes "
+"(-), underscores (_),     and periods (.) are allowed."
 msgstr ""
 
 msgid "Name of the new dataset created from the cloned snapshot."
@@ -6060,7 +6437,13 @@ msgstr ""
 msgid "Network Properties"
 msgstr ""
 
+msgid "Network Reports"
+msgstr ""
+
 msgid "Network Summary"
+msgstr ""
+
+msgid "Network Timeout Before Initiating Failover"
 msgstr ""
 
 msgid ""
@@ -6117,6 +6500,9 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
+msgid "Never Delete"
+msgstr ""
+
 msgid "New Password"
 msgstr ""
 
@@ -6148,6 +6534,9 @@ msgstr ""
 msgid "No Communication Warning Time"
 msgstr ""
 
+msgid "No Encryption (less secure, but faster)"
+msgstr ""
+
 msgid "No Logs"
 msgstr ""
 
@@ -6158,6 +6547,11 @@ msgid "No Repositories"
 msgstr ""
 
 msgid "No Stat"
+msgstr ""
+
+msgid ""
+"No custom themes. Click <b>Create New Theme</b> to create a new custom "
+"theme."
 msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
@@ -6190,13 +6584,25 @@ msgstr ""
 msgid "No, continue with import"
 msgstr ""
 
+msgid "Not Available"
+msgstr ""
+
 msgid "Notes"
 msgstr ""
 
 msgid "Notes about this extent."
 msgstr ""
 
+msgid "Notice"
+msgstr ""
+
+msgid "Nov"
+msgstr ""
+
 msgid "Number of CPUs"
+msgstr ""
+
+msgid "Number of Graph Points"
 msgstr ""
 
 msgid ""
@@ -6223,10 +6629,10 @@ msgid "Number of days to renew certificate before expiring."
 msgstr ""
 
 msgid ""
-"Number of points for each hourly, daily,  weekly, monthly, or yearly graph. "
-"Do not set this less than the  width of the graphs in pixels. Changing this "
-"value causes the  <i>Confirm RRD Destroy</i> checkbox to appear. Changes do "
-"not take  effect until the existing reporting database is destroyed."
+"Number of points for each hourly, daily,  weekly, monthly, or yearly graph "
+"(allowed values are 1-4096). Changing this value causes the  <i>Confirm RRD "
+"Destroy</i> dialog to appear. Changes do not take  effect until the "
+"existing reporting database is destroyed."
 msgstr ""
 
 msgid "Number of queued SysV messages allowed for the jail."
@@ -6243,6 +6649,12 @@ msgstr ""
 msgid ""
 "Number of seconds before timeout. If the AD service does not immediately "
 "start after connecting to the domain, increase this value."
+msgstr ""
+
+msgid ""
+"Number of seconds to wait after a network failure  before triggering a "
+"failover. <i>0</i> means a failover occurs  immediately, or after two "
+"seconds when the system is using a link  aggregation."
 msgstr ""
 
 msgid "Number of servers"
@@ -6287,6 +6699,9 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
+msgid "Oct"
+msgstr ""
+
 msgid ""
 "Off by default. When set, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" "
@@ -6300,6 +6715,12 @@ msgid "Offline"
 msgstr ""
 
 msgid "Ok"
+msgstr ""
+
+msgid "On a Different System"
+msgstr ""
+
+msgid "On this System"
 msgstr ""
 
 msgid "One or more IP addresses to which to bind the Netdata service."
@@ -6397,6 +6818,14 @@ msgid "Options"
 msgstr ""
 
 msgid ""
+"Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> do not "
+"encrypt the LDAP connection.</li>  <li><i>ON:</i> encrypt the LDAP "
+"connection with <i>SSL</i> on port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
+"encrypt the LDAP connection with <i>STARTTLS</i>  on the default LDAP port "
+"<i>389</i>.</li>  </ul>"
+msgstr ""
+
+msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
 "the master interface to <i>0</i> and the other interfaces to <i>1</i>, "
 "<i>2</i>, etc."
@@ -6415,6 +6844,9 @@ msgid "Other"
 msgstr ""
 
 msgid "Other Options"
+msgstr ""
+
+msgid "Out"
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -6450,6 +6882,9 @@ msgstr ""
 msgid "Parent Interface"
 msgstr ""
 
+msgid "Partition"
+msgstr ""
+
 msgid "Passphrase"
 msgstr ""
 
@@ -6462,10 +6897,13 @@ msgstr ""
 msgid "Password associated with the LDAP User DN."
 msgstr ""
 
-msgid "Password for SED"
+msgid "Password for logging in to the provider and  updating the record."
 msgstr ""
 
-msgid "Password for logging in to the provider and  updating the record."
+msgid ""
+"Password for the Active Directory administrator account.  Required the "
+"first time a domain is configured. After initial configuration, the "
+"password  is not needed to edit, start, or stop the service."
 msgstr ""
 
 msgid "Password for the Bind DN."
@@ -6475,6 +6913,12 @@ msgid "Password for the SSH Username account."
 msgstr ""
 
 msgid "Password for the user account."
+msgstr ""
+
+msgid ""
+"Password to encrypt and decrypt remote  data. <b>Warning:</b> Always "
+"securely back up this password! Losing the  encryption password will result "
+"in data loss."
 msgstr ""
 
 msgid "Password updated."
@@ -6594,6 +7038,9 @@ msgid "Phone Number"
 msgstr ""
 
 msgid "Physical interface of the selected member."
+msgstr ""
+
+msgid "PiB"
 msgstr ""
 
 msgid "Platform"
@@ -6725,17 +7172,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Power of 2 in seconds; cannot be higher than 17 or lower than <i>Min. "
-"Poll</i>."
-msgstr ""
-
-msgid ""
 "Power of 2 in seconds; cannot be lower than 4 or   higher than <i>Max. "
-"Poll</i>."
-msgstr ""
-
-msgid ""
-"Power of 2 in seconds; cannot be lower than 4 or higher than <i>Max. "
 "Poll</i>."
 msgstr ""
 
@@ -6758,6 +7195,9 @@ msgid "Preserve permissions"
 msgstr ""
 
 msgid "Preserve screen space with icons and tooltips instead of text labels."
+msgstr ""
+
+msgid "Presets"
 msgstr ""
 
 msgid ""
@@ -6796,10 +7236,16 @@ msgid "Private Key ID"
 msgstr ""
 
 msgid ""
-"Privileges are the same as the guest account. Guest access is disabled by "
-"default in Windows 10 version 1709 and Windows Server version 1903. "
-"Additional client-side configuration is required to provide guest access to "
-"these clients."
+"Privileges are the same as the guest account.  Guest access is disabled by "
+"default in Windows 10 version 1709 and  Windows Server version 1903. "
+"Additional client-side configuration is  required to provide guest access "
+"to these clients.<br><br>  <i>MacOS clients:</i> Attempting to connect as a "
+"user that does not  exist in FreeNAS <i>does not</i> automatically connect "
+"as the guest  account. The <b>Connect As:</b> <i>Guest</i> option must be  "
+"specifically chosen in MacOS to log in as the guest account. See the  <a "
+"href=\"https://support.apple.com/guide/mac-help/connect-mac-shared-"
+"computers-servers-mchlp1140/\" target=\"_blank\">Apple documentation</a>  "
+"for more details."
 msgstr ""
 
 msgid "Proactive Support"
@@ -6895,6 +7341,12 @@ msgstr ""
 msgid "Range Low"
 msgstr ""
 
+msgid ""
+"Range Low and Range High set the range of UID/GID numbers which this  IDMap "
+"backend translates. If an external credential like a Windows SID maps to a "
+"UID or GID  number outside this range, the external credential is ignored."
+msgstr ""
+
 msgid "Range Size"
 msgstr ""
 
@@ -6905,6 +7357,9 @@ msgid "Raw filesize"
 msgstr ""
 
 msgid "Read"
+msgstr ""
+
+msgid "Read Errors"
 msgstr ""
 
 msgid "Read Only"
@@ -7036,6 +7491,9 @@ msgstr ""
 msgid "Remove Additional Path"
 msgstr ""
 
+msgid "Remove Extra ISCSI Group"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr ""
 
@@ -7046,11 +7504,6 @@ msgid "Remove passphrase"
 msgstr ""
 
 msgid "Rename"
-msgstr ""
-
-msgid ""
-"Rename the existing boot environment. Alphanumeric characters, dashes "
-"(*-*), underscores (*_*), and periods (*.*) are allowed.)"
 msgstr ""
 
 msgid "Renew Certificate Days"
@@ -7115,6 +7568,11 @@ msgid "Report CPU usage in percentage"
 msgstr ""
 
 msgid ""
+"Report history is cleared when <i>CPU reporting</i>, <i>Graph Age</i>,  or "
+"<i>Graph Points</i> are changed."
+msgstr ""
+
+msgid ""
 "Report if drive temperature is at or above this temperature in Celsius. "
 "<i>0</i> disables the report."
 msgstr ""
@@ -7137,27 +7595,23 @@ msgid "Require Kerberos for NFSv4"
 msgstr ""
 
 msgid ""
-"Required for <a href=\"--docurl--/services.html#lldp\" "
-"target=\"_blank\">LLDP</a> location support. Enter a two-letter ISO 3166 "
-"country code."
-msgstr ""
-
-msgid "Required if <b>Anonymous Login</b> is disabled."
-msgstr ""
-
-msgid ""
 "Required unless <b>Enable password login</b> is <i>No</i>. Passwords cannot "
 "contain a <b>?</b>."
 msgstr ""
 
 msgid ""
-"Required. Can only contain alphanumeric characters (Aa-Zz 0-9), dashes (-), "
-"or underscores (_)."
+"Required. Can contain letters, numbers, dashes (-), periods (.), or "
+"underscores (_)."
 msgstr ""
 
 msgid ""
-"Required. Can only contain alphanumeric characters Aa-Zz 0-9), dashes (-), "
-"or underscores (_)."
+"Required. Can contain letters, numbers, periods (.),  dashes (-), and "
+"underscores (_)."
+msgstr ""
+
+msgid ""
+"Required. Can contain letters, numbers, periods (.), dashes (-), and "
+"underscores (_)."
 msgstr ""
 
 msgid ""
@@ -7311,6 +7765,12 @@ msgstr ""
 msgid "Run Now"
 msgstr ""
 
+msgid "Run On a Schedule"
+msgstr ""
+
+msgid "Run Once"
+msgstr ""
+
 msgid ""
 "Run commands in a clean environment. The current environment is discarded "
 "except for $HOME, $SHELL, $TERM, and $USER. <br>$HOME and $SHELL are set to "
@@ -7331,6 +7791,9 @@ msgid "Run this cron job now?"
 msgstr ""
 
 msgid "Run this rsync now?"
+msgstr ""
+
+msgid "Running"
 msgstr ""
 
 msgid "S.M.A.R.T. Test"
@@ -7419,6 +7882,12 @@ msgstr ""
 msgid "Samba Schema"
 msgstr ""
 
+msgid "Same as Source"
+msgstr ""
+
+msgid "Sat"
+msgstr ""
+
 msgid "Save"
 msgstr ""
 
@@ -7426,6 +7895,15 @@ msgid "Save Config"
 msgstr ""
 
 msgid "Save Configuration"
+msgstr ""
+
+msgid "Save Cron Job"
+msgstr ""
+
+msgid "Save Custom Theme"
+msgstr ""
+
+msgid "Save Debug"
 msgstr ""
 
 msgid "Save License"
@@ -7459,6 +7937,9 @@ msgid "Saving Permissions..."
 msgstr ""
 
 msgid "Schedule"
+msgstr ""
+
+msgid "Schedule Preview"
 msgstr ""
 
 msgid "Schedule a Cron Job"
@@ -7594,9 +8075,6 @@ msgid ""
 "target=\"_blank\">SSH/Authentication</a>."
 msgstr ""
 
-msgid "See task manager for progress updates."
-msgstr ""
-
 msgid ""
 "See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
 "target=\"_blank\"> Self Encrypting Drives</a> section of the user guide for "
@@ -7607,6 +8085,9 @@ msgid ""
 "See the <a href=\"http://networkupstools.org/stable-hcl.html\" "
 "target=\"_blank\">Network UPS Tools compatibility list</a> for a list of "
 "supported UPS devices."
+msgstr ""
+
+msgid "Select "
 msgstr ""
 
 msgid ""
@@ -7674,11 +8155,6 @@ msgid ""
 msgstr ""
 
 msgid "Select VM wizard type"
-msgstr ""
-
-msgid ""
-"Select a Group ID created in <b>Authorized Access</b> if the <b>Discovery "
-"Auth Method</b> is set to <i>CHAP</i> or <i>Mutual CHAP</i>."
 msgstr ""
 
 msgid ""
@@ -7764,11 +8240,6 @@ msgstr ""
 msgid ""
 "Select a user account to run the command. The                user must have "
 "permissions allowing them to run                the command or script."
-msgstr ""
-
-msgid ""
-"Select a user created in Authorized Access if the Discovery Auth Method is "
-"set to CHAP or Mutual CHAP."
 msgstr ""
 
 msgid "Select an IP address to use for VNC sessions."
@@ -7889,11 +8360,6 @@ msgid "Select the IP addresses SMB will listen for."
 msgstr ""
 
 msgid ""
-"Select the LDAP CA certificate. The certificate for the LDAP server CA must "
-"first be imported using the System/Certificates menu."
-msgstr ""
-
-msgid ""
 "Select the VLAN Parent Interface. Usually an Ethernet card connected to a "
 "configured switch port. Newly created link aggregations will not be "
 "available until the system is rebooted."
@@ -7911,6 +8377,9 @@ msgstr ""
 msgid ""
 "Select the account to use for TFTP requests. This account must have "
 "permission to the <b>Directory</b>."
+msgstr ""
+
+msgid "Select the admin portal："
 msgstr ""
 
 msgid "Select the appropriate environment."
@@ -8091,6 +8560,12 @@ msgstr ""
 msgid "Selected plugins updated."
 msgstr ""
 
+msgid "Self Healed"
+msgstr ""
+
+msgid "Semi-automatic (FreeNAS only)"
+msgstr ""
+
 msgid "Send Deduplicated Stream"
 msgstr ""
 
@@ -8112,6 +8587,12 @@ msgstr ""
 msgid "Send initial debug."
 msgstr ""
 
+msgid "Sep"
+msgstr ""
+
+msgid "Separate values with commas, and without spaces."
+msgstr ""
+
 msgid "Serial"
 msgstr ""
 
@@ -8122,6 +8603,13 @@ msgid "Serial Port"
 msgstr ""
 
 msgid "Serial Speed"
+msgstr ""
+
+msgid ""
+"Serial or USB port connected to the UPS. To  automatically detect and "
+"manage the USB port settings, select  <i>auto</i>.<br><br> When an SNMP "
+"driver is selected, enter the IP  address or hostname of the SNMP UPS "
+"device."
 msgstr ""
 
 msgid "Series"
@@ -8176,9 +8664,6 @@ msgid ""
 "Set by default if the disk supports S.M.A.R.T. Unset to disable any "
 "configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
-msgstr ""
-
-msgid "Set default options on this ACL."
 msgstr ""
 
 msgid ""
@@ -8342,11 +8827,6 @@ msgid ""
 "windows-server-2012-R2-and-2012/cc771254(v=ws.11)\" "
 "target=\"_blank\">xcopy</a> operations which are otherwise blocked by "
 "access control."
-msgstr ""
-
-msgid ""
-"Set to allow anonymous FTP logins with access to the directory specified in "
-"<b>Path</b>."
 msgstr ""
 
 msgid ""
@@ -8547,11 +9027,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to enable <i>receive</i> mode. Any received peer information is saved "
-"in interface descriptions."
-msgstr ""
-
-msgid ""
 "Set to enable DHCP. Leave unset to create a static IPv4 or IPv6 "
 "configuration. Only one interface can be configured for DHCP."
 msgstr ""
@@ -8573,24 +9048,12 @@ msgid ""
 "target=\"_blank\">Certificates</a>"
 msgstr ""
 
-msgid "Set to enable the Active Directory service."
-msgstr ""
-
 msgid ""
 "Set to enable the File eXchange Protocol. This option makes the server "
 "vulnerable to FTP bounce attacks so it is not recommended."
 msgstr ""
 
 msgid "Set to enable the S3 web user interface."
-msgstr ""
-
-msgid ""
-"Set to encrypt files before transfer and store the encrypted files on the "
-"remote system. <a href=\"https://rclone.org/crypt/\" "
-"target=\"_blank\">rclone Crypt</a> is used."
-msgstr ""
-
-msgid "Set to encrypt the shared file names."
 msgstr ""
 
 msgid "Set to export the certificate environment variables."
@@ -9097,6 +9560,9 @@ msgstr ""
 msgid "Spare VDev"
 msgstr ""
 
+msgid "Spares"
+msgstr ""
+
 msgid "Sparse"
 msgstr ""
 
@@ -9135,9 +9601,6 @@ msgid ""
 "Not displayed to anonymous login users."
 msgstr ""
 
-msgid "Specify the physical location of the host."
-msgstr ""
-
 msgid "Specify the size of the new zvol."
 msgstr ""
 
@@ -9147,7 +9610,16 @@ msgstr ""
 msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr ""
 
+msgid "Standard (Secure)"
+msgstr ""
+
+msgid "Standby"
+msgstr ""
+
 msgid "Start"
+msgstr ""
+
+msgid "Start Automatically"
 msgstr ""
 
 msgid "Start Scrub"
@@ -9187,6 +9659,9 @@ msgid ""
 msgstr ""
 
 msgid "Static Routes"
+msgstr ""
+
+msgid "Stats Per Thread"
 msgstr ""
 
 msgid "Stats/Settings"
@@ -9301,6 +9776,9 @@ msgstr ""
 msgid "Suggest Layout"
 msgstr ""
 
+msgid "Sun"
+msgstr ""
+
 msgid "Support"
 msgstr ""
 
@@ -9355,7 +9833,13 @@ msgstr ""
 msgid "System Info"
 msgstr ""
 
+msgid "System Information"
+msgstr ""
+
 msgid "System Processes"
+msgstr ""
+
+msgid "System Serial"
 msgstr ""
 
 msgid "System clock"
@@ -9380,6 +9864,12 @@ msgid "System is restarting..."
 msgstr ""
 
 msgid "System is shutting down..."
+msgstr ""
+
+msgid ""
+"System network interface that remaps jail  network addresses into a "
+"different IP address space. To override using  the default system network "
+"interface, enter the name of a network  interface to use for NAT."
 msgstr ""
 
 msgid "TCP Port"
@@ -9469,6 +9959,9 @@ msgstr ""
 msgid "Task Stopped"
 msgstr ""
 
+msgid "Task is on hold"
+msgstr ""
+
 msgid "Task is running"
 msgstr ""
 
@@ -9479,6 +9972,9 @@ msgid "Tasks"
 msgstr ""
 
 msgid "Team Drive ID"
+msgstr ""
+
+msgid "Temperature"
 msgstr ""
 
 msgid "Template"
@@ -9665,10 +10161,24 @@ msgstr ""
 msgid "The maximum number of simultaneous clients."
 msgstr ""
 
+msgid ""
+"The maximum polling interval, in seconds, as a power of 2.  For example, "
+"<i>10</i> means 2^10, or 1,024 seconds. The default is  10, maximum value "
+"is 17."
+msgstr ""
+
 msgid "The member interface to configure."
 msgstr ""
 
 msgid "The message to show when a user logs in with SSH."
+msgstr ""
+
+msgid ""
+"The minimum polling interval, in seconds, as a power of 2.  For example, "
+"<i>6</i> means 2^6, or 64 seconds. The default is 6,  minimum value is 4."
+msgstr ""
+
+msgid "The name "
 msgstr ""
 
 msgid ""
@@ -9702,6 +10212,9 @@ msgid ""
 msgstr ""
 
 msgid "The passwords do not match."
+msgstr ""
+
+msgid "The physical location of the host."
 msgstr ""
 
 msgid "The pool <i>"
@@ -9748,12 +10261,6 @@ msgid ""
 "policies are described <a "
 "href=\"http://www.proftpd.org/docs/directives/linked/config_ref_TLSRequired."
 "html\" target=\"_blank\">here</a>"
-msgstr ""
-
-msgid ""
-"The serial or USB port that the UPS is  using.<br /> <br /> "
-"<b>Hostname</b>: Enter the IP address or hostname of the SNMP UPS  "
-"device.<br /> <br />"
 msgstr ""
 
 msgid ""
@@ -9877,8 +10384,8 @@ msgid "This Dataset and Child Datasets"
 msgstr ""
 
 msgid ""
-"This dataset has ACLs that are too complex to be edited with                "
-"     the permissions editor.  Open in ACL editor instead?"
+"This dataset has an active ACL. Changes to permissions must be made with "
+"the ACL editor.                   Open ACL editor?"
 msgstr ""
 
 msgid ""
@@ -9898,16 +10405,21 @@ msgstr ""
 msgid "This is a production system"
 msgstr ""
 
+msgid ""
+"This is an unofficial plugin not produced or supported by iXsystems. "
+"iXsystems does not provide support in configuration, diagnosis, or use of "
+"this unofficial plugin regardless of the current support level. Thorough "
+"research is strongly recommended before installing or using an unofficial "
+"plugin."
+msgstr ""
+
+msgid "This is not a production release, and should only be used for testing."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
-msgid "This is the boot environment to be cloned."
-msgstr ""
-
 msgid "This is the serial number of the disk."
-msgstr ""
-
-msgid "This name has already been used."
 msgstr ""
 
 msgid ""
@@ -9919,13 +10431,19 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr ""
 
-msgid "This option enables/disables a password toggle button."
-msgstr ""
-
 msgid "This system will restart when the update completes."
 msgstr ""
 
 msgid "This type of VDEV requires at least "
+msgstr ""
+
+msgid "Thread number:"
+msgstr ""
+
+msgid "Threads"
+msgstr ""
+
+msgid "Threads:"
 msgstr ""
 
 msgid "Threshold days"
@@ -9935,6 +10453,12 @@ msgid ""
 "Threshold temperature in Celsius. If the drive temperature is higher than "
 "this value, a LOG_CRIT level log entry is created and an email is sent. "
 "<i>0</i> disables this check."
+msgstr ""
+
+msgid "Thu"
+msgstr ""
+
+msgid "TiB"
 msgstr ""
 
 msgid ""
@@ -10021,10 +10545,36 @@ msgstr ""
 msgid "TrueNAS controllers"
 msgstr ""
 
+msgid "Tue"
+msgstr ""
+
 msgid "Tunables"
 msgstr ""
 
+msgid ""
+"Turn off hardware offloading  for network traffic processing. WARNING: "
+"disabling hardware offloading  can reduce network performance. Disabling "
+"hardware offloading is only  recommended when the interface is managing "
+"jails, plugins, or virtual  machines."
+msgstr ""
+
+msgid ""
+"Two-letter <a  href=\"https://www.iso.org/obp/ui/#search/code/\" "
+"target=\"_blank\">ISO 3166-1 alpha-2 code</a>  used to enable LLDP location "
+"support."
+msgstr ""
+
 msgid "Type"
+msgstr ""
+
+msgid ""
+"Type of Microsoft acount. Logging in to a Microsoft account  automatically "
+"chooses the correct account type."
+msgstr ""
+
+msgid ""
+"UDP port number on the system receiving  SNMP trap notifications. The "
+"default is <i>162</i>."
 msgstr ""
 
 msgid "UNINSTALL"
@@ -10078,11 +10628,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Unique drive identifier. Log in to the  <a "
-"href=\"https://onedrive.live.com\" target=\"_blank\">OneDrive account</a>  "
-"and copy the string that appears in the browser address bar after  "
-"<i>cid=</i>. Example: "
-"https://onedrive.live.com/?id=root&cid=<i>12A34567B89C10D1</i>."
+"Unique drive identifier. Log in to a Microsoft account and choose  a drive "
+"from the <i>Drives List</i> drop-down to add a valid ID."
 msgstr ""
 
 msgid "Unique snapshot name. Cannot be used with  a <i>Naming Schema</i>."
@@ -10182,6 +10729,9 @@ msgstr ""
 msgid "Update in Progress"
 msgstr ""
 
+msgid "Update is complete, please reboot the system."
+msgstr ""
+
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr ""
 
@@ -10253,7 +10803,25 @@ msgstr ""
 msgid "Uptime"
 msgstr ""
 
+msgid "Usage"
+msgstr ""
+
 msgid "Usage collection"
+msgstr ""
+
+msgid ""
+"Use  <a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone "
+"crypt</a>  to manage data encryption during <i>PUSH</i> or <i>PULL</i> "
+"transfers:<br><br>  <i>PUSH:</i> Encrypt files before transfer and store "
+"the encrypted  files on the remote system. Files are encrypted using the  "
+"<b>Encryption Password</b> and <b>Encryption Salt</b> values.<br><br>  "
+"<i>PULL:</i> Decrypt files that are being stored on the remote system  "
+"before the transfer. Transferring the encrypted files requires entering  "
+"the same <b>Encryption Password</b> and <b>Encryption Salt</b> that was  "
+"used to encrypt the files.<br><br>  Additional details about the encryption "
+"algorithm and key derivation  are available in the  <a "
+"href=\"https://rclone.org/crypt/#file-formats\" target=\"_blank\">rclone "
+"crypt File formats documentation</a>."
 msgstr ""
 
 msgid "Use --fast-list"
@@ -10309,6 +10877,11 @@ msgid "Use syslog only"
 msgstr ""
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
+msgstr ""
+
+msgid ""
+"Use this field to set or change the password for SED. Leave this field "
+"blank  to keep a previously-set password."
 msgstr ""
 
 msgid ""
@@ -10402,8 +10975,8 @@ msgstr ""
 
 msgid ""
 "Username of the SNMP  <a "
-"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#user-based\"  "
-"target=\"_blank\">User-based Security Model (USM)</a> user."
+"href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
+"UsmUserData\"  target=\"_blank\">User-based Security Model (USM)</a> user."
 msgstr ""
 
 msgid ""
@@ -10440,6 +11013,9 @@ msgid "VLAN Parent Interface"
 msgstr ""
 
 msgid "VLAN Tag"
+msgstr ""
+
+msgid "VLANs"
 msgstr ""
 
 msgid "VM Snapshot"
@@ -10498,6 +11074,9 @@ msgstr ""
 msgid "Verify Deletion of "
 msgstr ""
 
+msgid "Verify certificate authenticity."
+msgstr ""
+
 msgid "Verify passphrase"
 msgstr ""
 
@@ -10546,6 +11125,9 @@ msgstr ""
 msgid "WARNING: "
 msgstr ""
 
+msgid "WARNING: A failover will  temporarily interrupt system services."
+msgstr ""
+
 msgid ""
 "WARNING: Adding data vdevs with different numbers of disks is not "
 "recommended."
@@ -10561,6 +11143,12 @@ msgid "WARNING: Locking pool <i>"
 msgstr ""
 
 msgid "Wait to start VM until VNC client connects."
+msgstr ""
+
+msgid "Waiting for Active TrueNAS controller to come up..."
+msgstr ""
+
+msgid "Waiting for active TrueNAS controller to come up..."
 msgstr ""
 
 msgid "Wallclock time in seconds."
@@ -10611,6 +11199,12 @@ msgstr ""
 msgid "Webhook URL"
 msgstr ""
 
+msgid "Wed"
+msgstr ""
+
+msgid "Weeks"
+msgstr ""
+
 msgid "What and Where"
 msgstr ""
 
@@ -10659,6 +11253,11 @@ msgstr ""
 msgid ""
 "When set, a local user is only allowed access to their home directory if "
 "they are a member of the <i>wheel</i> group."
+msgstr ""
+
+msgid ""
+"When set, an <i>eye</i> icon appears next to  password fields. Clicking the "
+"icon reveals the password."
 msgstr ""
 
 msgid "When set, report CPU usage in percent  instead of units of kernel time."
@@ -10719,6 +11318,9 @@ msgstr ""
 msgid "Write"
 msgstr ""
 
+msgid "Write Errors"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
 
@@ -10731,6 +11333,9 @@ msgid ""
 "\"  target=\"_blank\">Access Token</a>."
 msgstr ""
 
+msgid "Years"
+msgstr ""
+
 msgid "Yes"
 msgstr ""
 
@@ -10738,6 +11343,15 @@ msgid "Yes I understand the risks"
 msgstr ""
 
 msgid "Yes, decrypt the disks"
+msgstr ""
+
+msgid "You have left the domain."
+msgstr ""
+
+msgid "ZFS"
+msgstr ""
+
+msgid "ZFS Cache"
 msgstr ""
 
 msgid "ZFS Deduplication"
@@ -10854,6 +11468,9 @@ msgstr ""
 msgid "datasize"
 msgstr ""
 
+msgid "days"
+msgstr ""
+
 msgid "depends"
 msgstr ""
 
@@ -10866,7 +11483,13 @@ msgstr ""
 msgid "email"
 msgstr ""
 
+msgid "empty"
+msgstr ""
+
 msgid "enforce_statfs"
+msgstr ""
+
+msgid "error"
 msgstr ""
 
 msgid "exec_clean"
@@ -10903,6 +11526,12 @@ msgid "exec_system_user"
 msgstr ""
 
 msgid "exec_timeout"
+msgstr ""
+
+msgid "expires in"
+msgstr ""
+
+msgid "gathering info..."
 msgstr ""
 
 msgid "group"
@@ -10942,6 +11571,9 @@ msgid "ip6.saddrsel"
 msgstr ""
 
 msgid "ip_hostname"
+msgstr ""
+
+msgid "is already in use."
 msgstr ""
 
 msgid "jail_zfs"
@@ -10992,6 +11624,9 @@ msgstr ""
 msgid "msgqsize"
 msgstr ""
 
+msgid "multipath"
+msgstr ""
+
 msgid "name"
 msgstr ""
 
@@ -11011,6 +11646,9 @@ msgid "nthr"
 msgstr ""
 
 msgid "openfiles"
+msgstr ""
+
+msgid "overview"
 msgstr ""
 
 msgid "owner"
@@ -11038,6 +11676,9 @@ msgid "rpc.lockd(8) bind port"
 msgstr ""
 
 msgid "rpc.statd(8) bind port"
+msgstr ""
+
+msgid "safe"
 msgstr ""
 
 msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
@@ -11076,6 +11717,12 @@ msgstr ""
 msgid "template"
 msgstr ""
 
+msgid "total memory installed"
+msgstr ""
+
+msgid "used"
+msgstr ""
+
 msgid "vmemoryuse"
 msgstr ""
 
@@ -11100,7 +11747,13 @@ msgstr ""
 msgid "wallclock"
 msgstr ""
 
+msgid "warn"
+msgstr ""
+
 msgid "was successfully attached."
+msgstr ""
+
+msgid "while pool is encrypted"
 msgstr ""
 
 msgid "yes"

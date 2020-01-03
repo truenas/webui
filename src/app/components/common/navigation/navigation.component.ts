@@ -61,14 +61,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
           const targetMenu = this.navService.turenasFeatures[i];
           _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
-          // special case for proactive support
-          if (targetMenu.sub === 'proactivesupport') {
-            this.ws.call('support.is_available').subscribe((res) => {
-              if (res !== true) {
-                _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = true;
-              }
-            });
-          }
         }
       }
  
@@ -80,7 +72,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
           if (window.localStorage.getItem('is_freenas') === 'false') {
             // Feature detection
 
-            if (evt.data.license.features.indexOf('JAILS') === -1) {
+            if (evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) {
               _.find(menuItem, {state : "plugins"}).disabled = true;
               _.find(menuItem, {state : "jails"}).disabled = true;
             }

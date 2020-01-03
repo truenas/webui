@@ -1,5 +1,6 @@
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <mat-card>
+  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="showSpinner"></mat-spinner>
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
     <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
       <mat-expansion-panel-header>

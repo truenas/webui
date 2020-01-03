@@ -73,10 +73,6 @@
           </ng-container>
         </button-->
         <button class="hidden-button" mat-menu-item></button>
-        <button name="settings-account" mat-menu-item [routerLink]="['/account/users/edit/1']">
-          <mat-icon>account_box</mat-icon>
-          <span>{{'Account' | translate}}</span>
-        </button>
         <button name="settings-change-password" mat-menu-item [routerLink]="['/account/users/change-password']">
           <mat-icon>dialpad</mat-icon>
           <span>{{'Change Password' | translate}}</span>
@@ -89,6 +85,10 @@
           <mat-icon>notifications_off</mat-icon>
           <span>Disable alerts</span>
         </button -->
+        <button name="settings-api" mat-menu-item (click)="onShowAPI()">
+          <mat-icon>laptop</mat-icon>
+          <span>{{'API' | translate}}</span>
+        </button>
         <button name="settings-about" mat-menu-item (click)="onShowAbout()">
           <mat-icon>info_outline</mat-icon>
           <span>{{'About' | translate}}</span>

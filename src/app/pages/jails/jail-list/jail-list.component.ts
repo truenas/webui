@@ -26,7 +26,7 @@ export class JailListComponent {
   public availablePools: any;
   public title = "Jails";
   protected queryCall = 'jail.query';
-  protected wsDelete = 'jail.do_delete';
+  protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
   public entityList;
   protected route_add = ["jails", "add", "wizard"];
@@ -166,14 +166,14 @@ export class JailListComponent {
     },
   ];
 
-  public showSpinner = true;
-
   protected globalConfig = {
     id: "config",
     tooltip: helptext.globalConfig.tooltip,
     onClick: () => {
       this.prerequisite().then((res)=>{
-        this.activatePool();
+        if (this.availablePools !== undefined) {
+          this.activatePool();
+        }
       })
     }
   };
@@ -202,32 +202,36 @@ export class JailListComponent {
     return new Promise(async (resolve, reject) => {
       await this.ws.call('pool.query').toPromise().then((res) => {
         if (res.length === 0) {
-          resolve(false);
+          resolve(true);
           this.noPoolDialog();
           return;
         }
         this.availablePools = res
       }, (err) => {
         resolve(false);
-        new EntityUtils().handleWSError(this.entityList, err);
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       });
 
       if (this.availablePools !== undefined) {
         this.ws.call('jail.get_activated_pool').toPromise().then((res) => {
+          resolve(true);
           if (res != null) {
             this.activatedPool = res;
             this.addBtnDisabled = false;
-            resolve(true);
           } else {
-            resolve(false);
             this.activatePool();
           }
         }, (err) => {
-          resolve(false);
-          new EntityUtils().handleWSError(this.entityList, err);
+          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
+            (res)=> {
+              resolve(false);
+            });
         })
       }
     });
+  }
+  prerequisiteFailedHandler(entityList) {
+    this.entityList = entityList;
   }
 
   afterInit(entityList: any) {
@@ -244,7 +248,7 @@ export class JailListComponent {
           type: 'select',
           name: 'selectedPool',
           placeholder: helptext.activatePoolDialog.selectedPool_placeholder,
-          options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name, value: pool.name}}) : [],
+          options: this.availablePools ? this.availablePools.map(pool => {return {label: pool.name + (pool.is_decrypted ? '' : ' (Locked)'), value: pool.name, disable: !pool.is_decrypted}}) : [],
           value: this.activatedPool
         }
       ],
@@ -254,6 +258,7 @@ export class JailListComponent {
         self.entityList.loader.open();
         self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
           (res)=>{
+            self.addBtnDisabled = false;
             self.activatedPool = value['selectedPool'];
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
@@ -265,7 +270,7 @@ export class JailListComponent {
           },
           (res) => {
             self.entityList.loader.close();
-            new EntityUtils().handleWSError(this.entityList, res);
+            new EntityUtils().handleWSError(self.entityList, res, self.dialogService);
           });
       }
     }
@@ -441,7 +446,7 @@ export class JailListComponent {
   }
 
   wsMultiDeleteParams(selected: any) {
-    let params: Array<any> = ['jail.do_delete'];
+    let params: Array<any> = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }

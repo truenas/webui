@@ -411,17 +411,7 @@ export class ZvolFormComponent {
           _.find(this.fieldConfig, {name:'volblocksize'}).warnings = null;
         };
       };
-    }); 
-
-    entityForm.formGroup.controls['name'].valueChanges.subscribe((value) => {
-      const field = _.find(this.fieldConfig, {name: "name"});
-      field['hasErrors'] = false;
-      field['errors'] = '';
-      if (this.namesInUse.includes(value)) {
-        field['hasErrors'] = true;
-        field['errors'] = T(`The name <em>${value}</em> is already in use.`)
-      }
-    })
+    });
   }
 
   blurVolsize(parent){

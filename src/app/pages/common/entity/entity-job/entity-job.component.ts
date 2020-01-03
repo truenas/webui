@@ -1,12 +1,10 @@
 import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DecimalPipe } from '@angular/common';
-import { WebSocketService, RestService, SnackbarService } from '../../../../services/';
+import { WebSocketService, RestService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import { Http } from '@angular/http';
 import * as _ from 'lodash';
-import globalHelptext from '../../../../helptext/global-helptext';
-import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'entity-job',
@@ -33,7 +31,7 @@ export class EntityJobComponent implements OnInit {
   @Output() failure = new EventEmitter();
   @Output() prefailure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
-    private ws: WebSocketService, public rest: RestService, public snackbar: SnackbarService,
+    private ws: WebSocketService, public rest: RestService,
     @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: Http) {}
 
   ngOnInit() {
@@ -98,12 +96,6 @@ export class EntityJobComponent implements OnInit {
     job.error = _.replace(job.error, '>', ' >');
 
     this.description = '<b>Error:</b> ' + job.error;
-  }
-
-  public close() {
-    if (this.job.state && this.job.state === "RUNNING") {
-      this.snackbar.open(globalHelptext.closed_job_message, T("OK"));
-    }
   }
 
   public show() {
@@ -213,14 +205,22 @@ export class EntityJobComponent implements OnInit {
     if (job.progress) {
       this.progress.emit(job.progress);
     }
-    if (job.fields && job.fields.state === 'RUNNING') {
-      this.progress.emit(this.job.fields.progress);
-    }
-    else if(job.fields && job.fields.state === 'SUCCESS'){
-      this.success.emit(this.job.fields);
-    }
-    else if (job.fields && ((job.fields.state === 'FAILED') || job.fields.error)) {
-      this.failure.emit(this.job.fields);
+    if (job.fields) {
+      if (job.fields.state === 'RUNNING') {
+        this.progress.emit(this.job.fields.progress);
+      }
+      else if(job.fields.state === 'SUCCESS'){
+        this.success.emit(this.job.fields);
+      }
+      else if ((job.fields.state === 'FAILED') || job.fields.error) {
+        this.failure.emit(this.job.fields);
+      }
+    } else {
+      if (job.state === 'SUCCESS') {
+        this.success.emit(this.job);
+      } else if (job.state === 'FAILED') {
+        this.failure.emit(this.job);
+      }
     }
   }
 }

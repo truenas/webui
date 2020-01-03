@@ -43,7 +43,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
     {name : T('Link State'), prop : 'link_state'},
     {name : T('DHCP'), prop : 'ipv4_dhcp'},
     {name : T('IPv6 Auto Configure'), prop: 'ipv6_auto'},
-    {name : T('IP Addresses'), prop : 'addresses'},,
+    {name : T('IP Addresses'), prop : 'addresses'},
     {name : T('Description'), prop : 'description', hidden: true},
     {name : T('Active Media Type'), prop: 'active_media_type', hidden: true},
     {name : T('Active Media Subtype'), prop: 'active_media_subtype', hidden: true},
@@ -101,7 +101,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
         rows[i].active_media_subtype = rows[i]["state"]["active_media_subtype"];
       } else if (rows[i].type === "VLAN") {
         rows[i].vlan_tag = rows[i]["vlan_tag"];
-        rows[i].vlan_parent_interface = rows[i]["state"]["vlan_parent_interface"];
+        rows[i].vlan_parent_interface = rows[i]["vlan_parent_interface"];
       } else if (rows[i].type === "BRIDGE") {
         rows[i].bridge_members = rows[i]["bridge_members"];
       } else if (rows[i].type === "LINK_AGGREGATION") {
@@ -119,7 +119,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       icon: 'edit',
       name: "edit",
       label: T("Edit"),
-      onClick: (rowinner) => { 
+      onClick: (rowinner) => {
         if(this.ha_enabled) {
           this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
         } else {
@@ -281,7 +281,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   goToHA() {
     this.router.navigate(new Array('/').concat('system', 'failover'));
   }
-  
+
   ngOnDestroy() {
     this.core.unregister({observerClass:this});
   }

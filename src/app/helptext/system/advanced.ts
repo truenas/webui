@@ -93,7 +93,6 @@ export const helptext_system_advanced = {
 
   sed_passwd2_placeholder: T('Confirm SED Password'),
   sed_passwd2_tooltip: T(''),
-  sed_passwd2_validation: [ matchOtherValidator('sed_passwd') ],
 
   swapondrive_warning: T("A swap size of 0 is STRONGLY DISCOURAGED."),
 

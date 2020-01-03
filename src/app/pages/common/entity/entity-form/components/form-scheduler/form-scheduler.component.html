@@ -22,7 +22,7 @@
     [cdkConnectedOverlayOpen]="isOpen">
   <div  class="mat-card advanced-date-picker" role="dialog">
     <div class="mat-calendar-content">
-      <h4 class="preview-label">Schedule Preview
+      <h4 class="preview-label">{{"Schedule Preview" | translate}}
         <div class="controls">
           <button mat-icon-button [disabled]="disablePrevious" (click)="setCalendar('previous')">
             <mat-icon aria-label="Previous Month">keyboard_arrow_left</mat-icon>
@@ -49,7 +49,7 @@
     <div class="cron-fields">
 
       <section style="text-align:left;">
-        <h4 class="preview-label">Presets</h4>
+        <h4 class="preview-label">{{"Presets" | translate}}</h4>
         <mat-form-field class="cron-presets">
           <mat-select placeholder="Choose a preset" [(ngModel)]="preset" [ngModelOptions]="{standalone: true}">
             <mat-option *ngFor="let preset of presets" [value]="preset">
@@ -62,7 +62,7 @@
 
       <section style="text-align:left;" class="m-h-d">
         <h4 class="preview-label"><span *ngIf="!config.noMinutes">Minutes/</span>Hours/Days</h4>
-        <span id="no-spaces">Separate values with commas, and without spaces.</span>
+        <span id="no-spaces">{{"Separate values with commas, and without spaces." | translate}}</span>
         <!--<mat-form-field >
           <input matInput placeholder="Seconds">
           </mat-form-field>-->
@@ -81,17 +81,17 @@
 
       <!-- Months-->
       <section>
-        <h4 class="preview-label">Months</h4>
+        <h4 class="preview-label">{{"Months" | translate}}</h4>
         <table class="months jan-jun">
           <tbody>
             <tr>
               <!--<td>All</td>-->
-              <td>Jan</td>
-              <td>Feb</td>
-              <td>Mar</td>
-              <td>Apr</td>
-              <td>May</td>
-              <td>Jun</td>
+              <td>{{"Jan" | translate}}</td>
+              <td>{{"Feb" | translate}}</td>
+              <td>{{"Mar" | translate}}</td>
+              <td>{{"Apr" | translate}}</td>
+              <td>{{"May" | translate}}</td>
+              <td>{{"Jun" | translate}}</td>
             </tr>
             <tr>
               <!--<td><mat-checkbox class="month"></mat-checkbox></td>-->
@@ -108,12 +108,12 @@
           <tbody>
             <tr>
               <!--<td>All</td>-->
-              <td>Jul</td>
-              <td>Aug</td>
-              <td>Sep</td>
-              <td>Oct</td>
-              <td>Nov</td>
-              <td>Dec</td>
+              <td>{{"Jul" | translate}}</td>
+              <td>{{"Aug" | translate}}</td>
+              <td>{{"Sep" | translate}}</td>
+              <td>{{"Oct" | translate}}</td>
+              <td>{{"Nov" | translate}}</td>
+              <td>{{"Dec" | translate}}</td>
             </tr>
             <tr>
               <!--<td><mat-checkbox class="month"></mat-checkbox></td>-->
@@ -132,18 +132,18 @@
 
       <!-- Days of Week-->
       <section>
-        <h4 class="preview-label">Days of Week</h4>
+        <h4 class="preview-label">{{"Days of Week" | translate}}</h4>
         <table class="days-of-week">
           <tbody>
             <tr>
               <!--<td>All</td>-->
-              <td>S</td>
-              <td>M</td>
-              <td>T</td>
-              <td>W</td>
-              <td>T</td>
-              <td>F</td>
-              <td>S</td>
+              <td>{{"Sun" | translate}}</td>
+              <td>{{"Mon" | translate}}</td>
+              <td>{{"Tue" | translate}}</td>
+              <td>{{"Wed" | translate}}</td>
+              <td>{{"Thu" | translate}}</td>
+              <td>{{"Fri" | translate}}</td>
+              <td>{{"Sat" | translate}}</td>
             </tr>
             <tr>
               <!--<td><mat-checkbox class="weekday"></mat-checkbox></td>-->
@@ -161,7 +161,7 @@
 
       <mat-divider></mat-divider>
 
-      <button mat-button color="accent" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">Done</button>
+      <button mat-button color="accent" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">{{"Done" | translate}}</button>
     </div>
   </div>
 </ng-template>

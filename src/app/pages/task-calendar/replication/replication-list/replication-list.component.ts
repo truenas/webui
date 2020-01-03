@@ -105,12 +105,16 @@ export class ReplicationListComponent {
     }
 
     stateButton(row) {
-        if (row.job) {
-            if (row.state === 'RUNNING') {
+        if (row.state.state === 'HOLD') {
+            this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
+        } else if (row.job) {
+            if (row.state.state === 'RUNNING') {
                 this.entityList.runningStateButton(row.job.id);
             } else {
                 this.job.showLogs(row.job.id);
             }
+        } else if (row.state.state === 'ERROR') {
+            this.dialog.errorReport(row.state.state, row.state.error);
         } else {
             this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
         }

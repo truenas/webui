@@ -150,7 +150,7 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'input',
     inputType: 'number',
-    name: 'b2-chunk-size',
+    name: 'chunk_size',
     placeholder: helptext.b2_chunk_size_placeholder,
     tooltip: helptext.b2_chunk_size_tooltip,
     isHidden: true,
@@ -322,7 +322,7 @@ export class CloudsyncFormComponent implements OnInit {
     tooltip: helptext.bwlimit_tooltip,
   },
   {
-    type: 'input',
+    type: 'textarea',
     name: 'exclude',
     placeholder: helptext.exclude_placeholder,
     tooltip: helptext.exclude_tooltip,
@@ -347,7 +347,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected pid: any;
 
   protected providers: any;
-  protected taskSchemas = ['encryption', 'fast_list', 'b2-chunk-size', 'storage_class'];
+  protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -650,8 +650,13 @@ export class CloudsyncFormComponent implements OnInit {
           }
           if (this.data.attributes) {
             for (let attr in this.data.attributes) {
+              attr = attr === 'encryption' ? 'task_encryption' : attr;
               if (this.formGroup.controls[attr]) {
-                this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
+                if (attr === 'task_encryption') {
+                  this.formGroup.controls[attr].setValue(this.data.attributes['encryption'] == null ? '' : this.data.attributes['encryption']);
+                } else {
+                  this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
+                }
                 if (attr === 'bucket' && this.formGroup.controls['bucket_input']) {
                   this.formGroup.controls['bucket_input'].setValue(this.data.attributes[attr]);
                 }
@@ -678,21 +683,22 @@ export class CloudsyncFormComponent implements OnInit {
     if (data.bwlimit) {
       let bwlimit_str = "";
       for (let i = 0; i < data.bwlimit.length; i++) {
+        let sub_bwlimit = data.bwlimit[i].time + ",off";
         if (data.bwlimit[i].bandwidth != null) {
           const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
-          const sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
-          if (bwlimit_str != "") {
-            bwlimit_str += " " + sub_bwlimit;
-          } else {
-            bwlimit_str += sub_bwlimit;
-          }
+          sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
+        }
+        if (bwlimit_str != "") {
+          bwlimit_str += " " + sub_bwlimit;
+        } else {
+          bwlimit_str += sub_bwlimit;
         }
       }
       data.bwlimit = bwlimit_str;
     }
 
     if (data.exclude) {
-      data.exclude = _.join(data.exclude, ' ');
+      data.exclude = _.join(data.exclude, '\n');
     }
 
     return data;
@@ -754,9 +760,9 @@ export class CloudsyncFormComponent implements OnInit {
       attributes['fast_list'] = value.fast_list;
       delete value.fast_list;
     }
-    if (value['b2-chunk-size'] != undefined) {
-      attributes['b2-chunk-size'] = value['b2-chunk-size'];
-      delete value['b2-chunk-size'];
+    if (value['chunk_size'] != undefined) {
+      attributes['chunk_size'] = value['chunk_size'];
+      delete value['chunk_size'];
     }
 
     value['attributes'] = attributes;
@@ -776,7 +782,14 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     if (value.exclude !== undefined) {
-      value.exclude = value.exclude.trim() === '' ? [] : value.exclude.trim().split(" ");
+      const exclude = [];
+      value.exclude.split("\n").map(item => {
+        const trimmedItem = item.trim();
+        if (trimmedItem !== '') {
+          exclude.push(trimmedItem);
+        }
+      });
+      value.exclude = exclude;
     }
 
     if (!this.formGroup.valid) {

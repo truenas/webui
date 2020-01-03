@@ -21,9 +21,9 @@ import { T } from '../../../translate-marker';
     diameter='25'
     class="form-select-spinner"
     id="ipmi_controller-spinner"
-    *ngIf="!currentControllerLabel">
+    *ngIf="!currentControllerLabel && is_ha">
   </mat-spinner>
-  <mat-select *ngIf="is_ha" #storageController name="controller" placeholder="Controller" (selectionChange)="loadData()" [(ngModel)]="remoteController">
+  <mat-select *ngIf="is_ha" #storageController name="controller" placeholder="Controller" (selectionChange)="loadData()" [(ngModel)]="remoteController" [style.margin-top.px]="15">
 
     <mat-option [value]="false">Active: {{controllerName}} {{currentControllerLabel}}</mat-option>
     <mat-option [value]="true">Standby: {{controllerName}} {{failoverControllerLabel}}</mat-option>
@@ -69,7 +69,7 @@ export class IPMIComponent {
   public custActions: Array<any> = [
     {
       'id' : 'ipmi_identify',
-      'name' : 'Identify Light',
+      'name' : T('Identify Light'),
        function :  () => {
         this.dialog.select(
           'IPMI Identify',this.options,'IPMI flash duration','ipmi.identify','seconds', "IPMI identify command issued");

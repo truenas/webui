@@ -1,7 +1,7 @@
 import { T } from '../translate-marker';
 
 export default {
-    copyright_year: '2019',
+    copyright_year: '2020',
     dockerhost: T('Docker Host'),
 
     ctrlr: T('TrueNAS controller'),
@@ -26,11 +26,11 @@ human_readable: {
   suggestion_label: '(Examples: 500 KiB, 500M, 2 TB)',
 },
 
-closed_job_message: T('See task manager for progress updates.'),
-
 noLogDilaog: {
     title: T('No Logs'),
     message: T('No logs are available for this task.'),
-}
+},
+
+ha_connecting_text: T('Waiting for active TrueNAS controller to come up...')
 
 }

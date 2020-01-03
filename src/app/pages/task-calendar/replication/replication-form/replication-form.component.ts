@@ -302,6 +302,13 @@ export class ReplicationFormComponent {
             placeholder: helptext.properties_placeholder,
             tooltip: helptext.properties_tooltip,
             value: true,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }]
+            }],
         }, {
             type: 'select',
             multiple: true,
@@ -885,6 +892,7 @@ export class ReplicationFormComponent {
                 entityForm.setDisabled('schedule_begin', toDisable, toDisable);
                 entityForm.setDisabled('schedule_end', toDisable, toDisable);
             }
+            entityForm.setDisabled('only_matching_schedule', toDisable, toDisable);
         })
 
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
@@ -1017,6 +1025,8 @@ export class ReplicationFormComponent {
             delete data['restrict_schedule_picker'];
             delete data['restrict_schedule_begin'];
             delete data['restrict_schedule_end'];
+        } else {
+            delete data['restrict_schedule'];
         }
 
         if (data['compression'] === 'DISABLED') {
@@ -1048,11 +1058,15 @@ export class ReplicationFormComponent {
             }
 
             for (const prop in this.queryRes) {
-                if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
-                    data[prop] = false;
-                }
                 if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && prop !== 'job' && data[prop] === undefined) {
-                    data[prop] = Array.isArray(this.queryRes[prop]) ? [] :  null;
+                    if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
+                        data[prop] = false;
+                    } else {
+                        data[prop] = Array.isArray(this.queryRes[prop]) ? [] :  null;
+                    }
+                }
+                if (prop === 'schedule' && data[prop] === false) {
+                    data[prop] = null;
                 }
             }
         }

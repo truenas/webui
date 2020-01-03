@@ -105,6 +105,7 @@ export class FnSupportComponent {
           name : 'attach_debug',
           placeholder : helptext.attach_debug.placeholder,
           tooltip : helptext.attach_debug.tooltip,
+          value: false
         },
         {
           type : 'input',
@@ -190,10 +191,12 @@ export class FnSupportComponent {
     this.payload['username'] = entityEdit.username;
     this.payload['password'] = entityEdit.password;
     this.payload['category'] = entityEdit.category;
-    this.payload['attach_debug'] = entityEdit.attach_debug;
     this.payload['title'] = entityEdit.title;
     this.payload['body'] = entityEdit.body;
     this.payload['type'] = entityEdit.type;
+    if (entityEdit.attach_debug) {
+      this.payload['attach_debug'] = entityEdit.attach_debug;     
+    }
     this.openDialog();
   };
 
