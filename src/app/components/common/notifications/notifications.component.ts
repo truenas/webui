@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-notifications',
@@ -26,9 +27,13 @@ export class NotificationsComponent implements OnInit {
       setTimeout(()=>{
         notifications.forEach((notification: NotificationAlert) => {
           if (notification.dismissed === false) {
-            this.notifications.push(notification);
+            if (!_.find(this.notifications, {id:notification.id})) {
+              this.notifications.push(notification);
+            }
           } else {
-            this.dismissedNotifications.push(notification);
+            if (!_.find(this.dismissedNotifications, {id:notification.id})) {
+              this.dismissedNotifications.push(notification);
+            }
           }
         });
       }, -1);
