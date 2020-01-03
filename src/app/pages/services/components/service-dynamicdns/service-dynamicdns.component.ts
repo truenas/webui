@@ -72,6 +72,7 @@ export class ServiceDDNSComponent {
         {
           type : 'input',
           name : 'domain',
+          required: true,
           placeholder : helptext.domain_placeholder,
           tooltip: helptext.domain_tooltip,
         },
