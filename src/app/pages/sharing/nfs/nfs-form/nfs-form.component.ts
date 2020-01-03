@@ -290,8 +290,6 @@ export class NFSFormComponent {
       this.nfs_maproot_group = this.fieldSets.config('maproot_group');
       this.nfs_maproot_group.options = groups;
     });
-
-    this.entityForm.formGroup.get('hosts').valueChanges.subscribe(console.log);
   }
 
   isCustActionVisible(actionId: string) {
@@ -322,7 +320,6 @@ export class NFSFormComponent {
     }
     data['hosts'] = hosts;
 
-    console.log({ in: data });
     return data;
   }
 
