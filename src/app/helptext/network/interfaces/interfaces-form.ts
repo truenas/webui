@@ -155,8 +155,8 @@ lagg_interfaces_validation : [ Validators.required ],
 mtu_placeholder: T('MTU'),
 mtu_tooltip: T('Maximum Transmission Unit, the largest protocol data \
  unit that can be communicated. The largest workable MTU size varies \
- with network interfaces and equipment. *1500* and *9000* are standard \
- Ethernet MTU sizes.'),
+ with network interfaces and equipment. <i>1500</i> and <i>9000</i> \
+ are standard Ethernet MTU sizes.'),
 mtu_validation: [rangeValidator(68, 9000)],
 
 alias_list_placeholder: T('Aliases'),
