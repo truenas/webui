@@ -4,7 +4,7 @@ import { matchOtherValidator } from '../../../pages/common/entity/entity-form/va
 
 export default {
 fieldset_general: T('General Options'),
-fieldset_access: T('Access'),
+fieldset_access: T('Credentials'),
 
 provider_placeholder : T('Provider'),
 provider_tooltip: T('Several providers are supported. If a specific \
