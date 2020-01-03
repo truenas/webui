@@ -8,7 +8,7 @@ msgid " Check Notifications for more details."
 msgstr " Controlla le notifiche per maggiori dettagli."
 
 msgid " Download Updates"
-msgstr "S carica Aggiornamenti"
+msgstr " Scarica Aggiornamenti"
 
 msgid " First vdev has "
 msgstr " Il primo vdev ha "
