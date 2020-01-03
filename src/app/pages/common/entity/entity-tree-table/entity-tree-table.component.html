@@ -18,9 +18,9 @@
 				  ix-auto-type="value"
 				  ix-auto-identifier="{{rowData.name}}">
 				<p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"
-          ix-auto
+          			ix-auto
 					ix-auto-type="expander"
-					ix-auto-identifier="{{rowData.name}}"></p-treeTableToggle></p-treeTableToggler>
+					ix-auto-identifier="{{rowData.name}}"></p-treeTableToggler>
 				<span *ngIf="col.filesizePipe">{{ (rowData[col.prop] || 0) | filesize : {standard : "iec"} }}</span>
 				<span *ngIf="!col.filesizePipe">{{ rowData[col.prop]?.value || rowData[col.prop] }}</span>
 			</td>

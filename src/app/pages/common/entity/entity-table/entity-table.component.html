@@ -43,7 +43,7 @@
 
           <!-- INDIVIDUAL COLUMNS-->
           <div (click)="$event.stopPropagation()">
-            <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" [id]="col.name"
+            <button mat-menu-item *ngFor="let col of allColumns" (click)="toggle(col);" id="menu_option-{{col.name}}"
               ix-auto
               ix-auto-type="action"
               ix-auto-identifier="COLUMNS_{{col.name}}">
@@ -81,6 +81,7 @@
         <!--<div id="action-button-wrapper" *ngIf="conf && conf.custActions">-->
         <span *ngFor="let custBtn of conf.custActions">
           <button id="cust_button_{{custBtn.name}}" mat-button
+            ix-auto ix-auto-type="button" ix-auto-identifier="{{custBtn.name}}"
             *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" color="primary"
             (click)="custBtn['function']()">
             {{custBtn.name | translate}}
@@ -114,7 +115,7 @@
       </div>
       <!-- -->
       <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
-        <span *ngFor="let maction of conf.multiActions">
+        <span *ngFor="let maction of conf.multiActions" ix-auto ix-auto-type="button" ix-auto-identifier="{{maction?.id}}">
           <!-- DEFAULT -->
           <ng-container *ngIf="!multiActionsIconsOnly">
             <button id="{{ maction?.id }}" mat-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
@@ -134,7 +135,7 @@
       </div>
 
       <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
-        <span>
+        <span ix-auto ix-auto-type="button" ix-auto-identifier="mdelete">
           <!-- With Labels -->
           <ng-container>
             <button mat-button (click)="doMultiDelete(this.selected);">
@@ -149,7 +150,7 @@
               <mat-icon>delete</mat-icon>
             </button>
           </ng-container>
-        </span>
+        </span >
       </div>
 
     </div>
@@ -336,7 +337,7 @@
                 ix-auto-type="checkbox"
                 [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               ></mat-checkbox>
-              <button mat-button
+              <button mat-button id="{{row[conf.rowIdentifier || 'name']}}_{{col.name}}-button"
                 [ngClass]="getButtonClass(row[col.prop])"
                 [style.width.px]="93"
                 *ngIf="col.state && stateClickable(row[col.prop], col); else colInfo"
