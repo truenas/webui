@@ -39,13 +39,13 @@ export class UserListComponent implements OnInit {
     { name: 'Permit Sudo', prop: 'sudo', hidden: true  },
     { name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170 },
   ];
-  public rowIdentifier = 'bsdusr_username';
+  public rowIdentifier = 'username';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'User',
-      key_props: ['bsdusr_username']
+      key_props: ['username']
     }
   };
 
