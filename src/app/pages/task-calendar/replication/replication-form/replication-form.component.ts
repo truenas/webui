@@ -280,6 +280,13 @@ export class ReplicationFormComponent {
             placeholder: helptext.recursive_placeholder,
             tooltip: helptext.recursive_tooltip,
             value: false,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'replicate',
+                    value: true,
+                }]
+            }],
         }, {
             type: 'input',
             name: 'exclude',
@@ -294,6 +301,9 @@ export class ReplicationFormComponent {
                 }, {
                     name: 'transport',
                     value: 'LEGACY',
+                }, {
+                    name: 'replicate',
+                    value: true,
                 }]
             }],
         }, {
@@ -304,11 +314,20 @@ export class ReplicationFormComponent {
             value: true,
             relation: [{
                 action: 'HIDE',
+                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'LEGACY',
+                }, {
+                    name: 'replicate',
+                    value: true,
                 }]
             }],
+        }, {
+            type: 'checkbox',
+            name: 'replicate',
+            placeholder: helptext.replicate_placeholder,
+            tooltip: helptext.replicate_tooltip,
         }, {
             type: 'select',
             multiple: true,
@@ -980,6 +999,12 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
+        if (data['replicate']) {
+            data['recursive'] = true;
+            data['properties'] = true;
+            data['exclude'] = [];
+        }
+
         if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
             data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
         }
@@ -1025,6 +1050,8 @@ export class ReplicationFormComponent {
             delete data['restrict_schedule_picker'];
             delete data['restrict_schedule_begin'];
             delete data['restrict_schedule_end'];
+        } else {
+            delete data['restrict_schedule'];
         }
 
         if (data['compression'] === 'DISABLED') {

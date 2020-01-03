@@ -43,8 +43,17 @@ int_ipv6auto_tooltip : T('Set to automatically configure the IPv6 address with\
  target="_blank">rtsol(8)</a>. Only one interface can\
  be configured this way.'),
 
-disable_offload_capabilities_placeholder: T('Disable offload capabilities'),
-disable_offload_capabilities_tooltip: T('Set to disable NIC capabilities when using a Jail or VM.'),
+disable_offload_capabilities_placeholder: T('Disable Hardware Offloading'),
+disable_offload_capabilities_tooltip: T('Turn off hardware offloading \
+ for network traffic processing. WARNING: disabling hardware offloading \
+ can reduce network performance. Disabling hardware offloading is only \
+ recommended when the interface is managing jails, plugins, or virtual \
+ machines.'),
+
+disable_offload_capabilities_warning_title: T('Disable Hardware Offloading'),
+disable_offload_capabilities_warning_msg: T('Disabling hardware offloading can severely reduce\
+ network performance. Disabling this feature is only recommended when an interface is used for\
+ plugin, jail, or virtual machine networking.'),
 
 int_options_placeholder : T('Options'),
 int_options_tooltip : T('Enter additional space-delimited parameters from <a\
@@ -163,5 +172,5 @@ mtu_validation: [rangeValidator(68, 9000)],
 alias_list_placeholder: T('Aliases'),
 alias_list_label: T('Aliases'),
 
-int_save_button: T('Apply')
+int_save_button: T('Apply'),
 }

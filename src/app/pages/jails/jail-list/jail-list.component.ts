@@ -26,7 +26,7 @@ export class JailListComponent {
   public availablePools: any;
   public title = "Jails";
   protected queryCall = 'jail.query';
-  protected wsDelete = 'jail.do_delete';
+  protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
   public entityList;
   protected route_add = ["jails", "add", "wizard"];
@@ -166,14 +166,12 @@ export class JailListComponent {
     },
   ];
 
-  public showSpinner = true;
-
   protected globalConfig = {
     id: "config",
     tooltip: helptext.globalConfig.tooltip,
     onClick: () => {
       this.prerequisite().then((res)=>{
-        if (res && this.activatedPool !== undefined) {
+        if (this.availablePools !== undefined) {
           this.activatePool();
         }
       })
@@ -211,7 +209,7 @@ export class JailListComponent {
         this.availablePools = res
       }, (err) => {
         resolve(false);
-        new EntityUtils().handleWSError(this.entityList, err);
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       });
 
       if (this.availablePools !== undefined) {
@@ -224,11 +222,16 @@ export class JailListComponent {
             this.activatePool();
           }
         }, (err) => {
-          resolve(false);
-          new EntityUtils().handleWSError(this.entityList, err);
+          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
+            (res)=> {
+              resolve(false);
+            });
         })
       }
     });
+  }
+  prerequisiteFailedHandler(entityList) {
+    this.entityList = entityList;
   }
 
   afterInit(entityList: any) {
@@ -443,7 +446,7 @@ export class JailListComponent {
   }
 
   wsMultiDeleteParams(selected: any) {
-    let params: Array<any> = ['jail.do_delete'];
+    let params: Array<any> = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }

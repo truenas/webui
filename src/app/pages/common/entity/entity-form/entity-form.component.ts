@@ -118,7 +118,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public wsfg;
   public wsResponseIdx;
   public queryResponse;
-  public saveSubmitText = "Save";
+  public saveSubmitText = T("Save");
   public showPassword = false;
   public isFooterConsoleOpen: boolean;
   public successMessage = T('Settings saved.')
@@ -226,6 +226,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       // Fallback if no fieldsets are defined
       if(this.conf.fieldSets){
         this.fieldConfig = [];
+        /* Temp patch to support both FieldSet approaches */
         this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
         for(let i = 0; i < this.fieldSets.length; i++){
           let fieldset = this.fieldSets[i];
@@ -651,7 +652,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     for (let i = 0; i < listValue.length; i++) {
       if (formArray.controls[i] == undefined) {
         const templateListField = _.cloneDeep(_.find(this.conf.fieldConfig, {'name': fieldName}).templateListField);
-        formArray.controls.push(this.entityFormService.createFormGroup(templateListField));
+        const newfg =  this.entityFormService.createFormGroup(templateListField);
+        newfg.setParent(formArray);
+        formArray.controls.push(newfg);
         _.find(this.conf.fieldConfig, {'name': fieldName}).listFields.push(templateListField);
       }
 

@@ -25,14 +25,14 @@ export class PluginsComponent {
     tooltip: jailHelptext.globalConfig.tooltip,
     onClick: () => {
       this.prerequisite().then((res)=>{
-        if (res && this.activatedPool !== undefined) {
+        if (this.availablePools !== undefined) {
           this.activatePool();
         }
       })
     }
   };
   protected queryCall = 'plugin.query';
-  protected wsDelete = 'jail.do_delete';
+  protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
@@ -42,7 +42,7 @@ export class PluginsComponent {
   public columns: Array<any> = [
     { name: T('Jail'), prop: 'name', always_display: true },
     { name: T('Status'), prop: 'state' },
-    { name: T('Admin Portal'), prop: 'admin_portal'},
+    { name: T('Admin Portals'), prop: 'admin_portals'},
     { name: T('IPv4 Address'), prop: 'ip4', hidden: true },
     { name: T('IPv6 Address'), prop: 'ip6', hidden: true },
     { name: T('Version'), prop: 'version', hidden: true },
@@ -196,7 +196,7 @@ export class PluginsComponent {
         this.availablePools = res
       }, (err) => {
         resolve(false);
-        new EntityUtils().handleWSError(this.entityList, err);
+        new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       });
 
       if (this.availablePools !== undefined) {
@@ -208,8 +208,10 @@ export class PluginsComponent {
             this.activatePool();
           }
         }, (err) => {
-          resolve(false);
-          new EntityUtils().handleWSError(this.entityList, err);
+          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
+            (res)=> {
+              resolve(false);
+            });
         })
       }
     });
@@ -267,6 +269,10 @@ export class PluginsComponent {
     if (this.availablePools) {
       this.dialogService.dialogForm(conf);
     }
+  }
+
+  prerequisiteFailedHandler(entityList) {
+    this.entityList = entityList;
   }
 
   afterInit(entityList: any) {
@@ -346,7 +352,7 @@ export class PluginsComponent {
   };
 
   wsMultiDeleteParams(selected: any) {
-    const params: Array<any> = ['jail.do_delete'];
+    const params: Array<any> = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
@@ -432,7 +438,29 @@ export class PluginsComponent {
       label: T("MANAGE"),
       icon: 'settings',
       onClick: (row) => {
-        window.open(row.admin_portal);
+        if (row.admin_portals.length > 1) {
+          const conf: DialogFormConfiguration = {
+            title: helptext.portal_dialog.title,
+            fieldConfig: [
+              {
+                type: 'select',
+                name: 'admin_portal',
+                placeholder: helptext.portal_dialog.admin_portal_placeholder,
+                options: row.admin_portals ? row.admin_portals.map(item => {return {label: item, value: item}}) : [],
+                value: row.admin_portals[0]
+              }
+            ],
+            saveButtonText: helptext.portal_dialog.saveButtonText,
+            customSubmit: function (entityDialog) {
+              const value = entityDialog.formValue;
+              window.open(value.admin_portal);
+              entityDialog.dialogRef.close(true);
+            }
+          }
+          this.dialogService.dialogForm(conf);
+        } else {
+          window.open(row.admin_portals);
+        }
       }
     },
     {
@@ -490,7 +518,7 @@ export class PluginsComponent {
       return false;
     } else if (actionId === 'stop' && row.state === "down") {
       return false;
-    } else if (actionId === 'management' && (row.state === "down" || row.admin_portal == null)) {
+    } else if (actionId === 'management' && (row.state === "down" || row.admin_portals.length === 0)) {
       return false;
     } else if (actionId === 'restart' && row.state === "down") {
       return false;

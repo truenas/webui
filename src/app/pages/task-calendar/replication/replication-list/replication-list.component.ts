@@ -113,6 +113,8 @@ export class ReplicationListComponent {
             } else {
                 this.job.showLogs(row.job.id);
             }
+        } else if (row.state.state === 'ERROR') {
+            this.dialog.errorReport(row.state.state, row.state.error);
         } else {
             this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
         }

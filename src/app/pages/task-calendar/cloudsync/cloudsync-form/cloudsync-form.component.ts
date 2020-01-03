@@ -150,7 +150,7 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'input',
     inputType: 'number',
-    name: 'b2-chunk-size',
+    name: 'chunk_size',
     placeholder: helptext.b2_chunk_size_placeholder,
     tooltip: helptext.b2_chunk_size_tooltip,
     isHidden: true,
@@ -322,7 +322,7 @@ export class CloudsyncFormComponent implements OnInit {
     tooltip: helptext.bwlimit_tooltip,
   },
   {
-    type: 'input',
+    type: 'textarea',
     name: 'exclude',
     placeholder: helptext.exclude_placeholder,
     tooltip: helptext.exclude_tooltip,
@@ -347,7 +347,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected pid: any;
 
   protected providers: any;
-  protected taskSchemas = ['encryption', 'fast_list', 'b2-chunk-size', 'storage_class'];
+  protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -698,7 +698,7 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     if (data.exclude) {
-      data.exclude = _.join(data.exclude, ' ');
+      data.exclude = _.join(data.exclude, '\n');
     }
 
     return data;
@@ -760,9 +760,9 @@ export class CloudsyncFormComponent implements OnInit {
       attributes['fast_list'] = value.fast_list;
       delete value.fast_list;
     }
-    if (value['b2-chunk-size'] != undefined) {
-      attributes['b2-chunk-size'] = value['b2-chunk-size'];
-      delete value['b2-chunk-size'];
+    if (value['chunk_size'] != undefined) {
+      attributes['chunk_size'] = value['chunk_size'];
+      delete value['chunk_size'];
     }
 
     value['attributes'] = attributes;
@@ -782,7 +782,14 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     if (value.exclude !== undefined) {
-      value.exclude = value.exclude.trim() === '' ? [] : value.exclude.trim().split(" ");
+      const exclude = [];
+      value.exclude.split("\n").map(item => {
+        const trimmedItem = item.trim();
+        if (trimmedItem !== '') {
+          exclude.push(trimmedItem);
+        }
+      });
+      value.exclude = exclude;
     }
 
     if (!this.formGroup.valid) {

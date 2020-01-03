@@ -241,6 +241,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
+  onShowAPI() {
+    window.open(window.location.origin + '/api/docs');
+  }
+
   signOut() {
     this.ws.logout();
   }
@@ -422,6 +426,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           this.checkUpgradePending();
         }
       }
+      
+      this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
       window.sessionStorage.setItem('ha_status', ha_enabled.toString());
     });
   }
