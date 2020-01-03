@@ -28,12 +28,24 @@ export class ListSelectionImpl implements ListSelection {
 
   constructor(public readonly totalItems: any[]) {}
 
-  select(item: any): void {
-    if (!this.isSelected(item)) {
+  select(item: any, event?): void {
+    if (!event.ctrlKey) {
+      this._selectedItems.length = 0;
       this._selectedItems.push(item);
-    } else {
-      this.unselect(item);
+    } else { 
+        if (!this.isSelected(item)) {
+          this._selectedItems.push(item);
+        } else {
+        this.unselect(item);
+        }
     }
+  }
+
+  ctrlKeyAction(item, event) {
+    // if (!event.ctrlKey) {
+    //   this._selectedItems.length = 0;
+    //   this._selectedItems.push(item);
+    // }
   }
 
   selectAll(): void {

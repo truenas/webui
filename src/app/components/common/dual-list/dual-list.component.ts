@@ -53,9 +53,13 @@ export class DualListboxComponent implements OnInit {
     if (event.previousContainer === event.container) {
       let chosenItems = document.querySelectorAll('.chosen');
       chosenItems.forEach((item) => {
-        item.classList.remove('cdk-drag-placeholder');
+        if (item.classList) {
+          item.classList.remove('cdk-drag-placeholder');
+        }
       });
-      document.querySelector('#counter').remove();
+      if (document.querySelector('#counter')) {
+        document.querySelector('#counter').remove();
+      }
     } else {
       event.previousContainer.id === 'cdk-drop-list-0' ? this.select() : this.return();
     }
