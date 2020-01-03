@@ -86,6 +86,11 @@ export default {
     properties_tooltip: T('Include dataset properties with the replicated \
  snapshots.'),
 
+    replicate_placeholder: T('Full Filesystem Replication'),
+    replicate_tooltip: T('Completely replicate the selected dataset. The target \
+dataset will have all of the properties, snapshots, child datasets, and clones \
+from the source dataset.'),
+
     periodic_snapshot_tasks_placeholder: T('Periodic Snapshot Tasks'),
     periodic_snapshot_tasks_tooltip: T('Snapshot schedule for this \
  replication task. Choose from configured \
