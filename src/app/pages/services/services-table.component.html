@@ -9,7 +9,7 @@
     [scrollbarV]="true">
   <ngx-datatable-column name="Label">
     <ng-template let-column="column" ngx-datatable-header-template>
-      <span class="datatable-header-cell-label">Name</span>
+      <span class="datatable-header-cell-label">{{'Name' | translate}}</span>
     </ng-template>
     <ng-template let-value="value" ngx-datatable-cell-template>
       <div id="row-name__{{value}}"
@@ -18,7 +18,7 @@
   </ngx-datatable-column>
   <ngx-datatable-column name="State">
     <ng-template let-column="column" ngx-datatable-header-template>
-      <span class="datatable-header-cell-label">Running</span>
+      <span class="datatable-header-cell-label">{{'Running' | translate}}</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
       <mat-spinner [diameter]='40' *ngIf="row['onChanging']; else actionButtons"></mat-spinner>
@@ -39,7 +39,7 @@
   </ngx-datatable-column>
   <ngx-datatable-column name="Enable">
     <ng-template let-column="column" ngx-datatable-header-template>
-      <span class="datatable-header-cell-label">Start Automatically</span>
+      <span class="datatable-header-cell-label">{{'Start Automatically' | translate}}</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
       <mat-checkbox id="checkbox__{{row.label}}" class="checkbox" style="position:absolute;bottom:16px;" [(ngModel)]="row.enable" (change)="this.conf.enableToggle($event, row)"
@@ -48,7 +48,7 @@
   </ngx-datatable-column>
   <ngx-datatable-column name="Actions" [flexGrow]="2">
     <ng-template let-column="column" ngx-datatable-header-template>
-      <span class="datatable-header-cell-label">Actions</span>
+      <span class="datatable-header-cell-label">{{'Actions' | translate}}</span>
     </ng-template>
     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
       <button mat-icon-button id="action-button__{{row.label}}" (click)="this.conf.editService(row.title)" style="position:absolute;bottom:6px;"  matTooltip="Configure" matTooltipPosition="right" 

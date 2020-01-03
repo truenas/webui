@@ -8,6 +8,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 
 @Component({
   selector : 'app-email',
@@ -16,8 +17,6 @@ import { T } from 'app/translate-marker';
   `
 })
 export class EmailComponent implements OnDestroy {
-
-  // protected resource_name = 'system/email';
   queryCall = 'mail.config';
   updateCall = 'mail.update';
   public entityEdit: any;
@@ -59,95 +58,112 @@ export class EmailComponent implements OnDestroy {
         this.dialogservice.Info(T("email"), T("Configure the root user email address."));
       }
     }
-  }
-];
-  public fieldConfig: FieldConfig[] = [
+  }];
+
+  public fieldSets = new FieldSets([
     {
-      type : 'input',
-      name : 'fromemail',
-      placeholder : helptext_system_email.fromemail.placeholder,
-      tooltip : helptext_system_email.fromemail.tooltip,
-      validation: helptext_system_email.fromemail.validation,
-      required: true
-    },
-    {
-      type : 'input',
-      name : 'fromname',
-      placeholder : helptext_system_email.fromname.placeholder,
-      tooltip : helptext_system_email.fromname.tooltip,
-    },
-    {
-      type : 'input',
-      name : 'outgoingserver',
-      placeholder : helptext_system_email.outgoingserver.placeholder,
-      tooltip : helptext_system_email.outgoingserver.tooltip,
-    },
-    {
-      type : 'input',
-      name : 'port',
-      inputType: 'number',
-      validation: helptext_system_email.port.validation,
-      required: true,
-      placeholder : helptext_system_email.port.placeholder,
-      tooltip : helptext_system_email.port.tooltip
-    },
-    {
-      type : 'select',
-      name : 'security',
-      placeholder : helptext_system_email.security.placeholder,
-      tooltip : helptext_system_email.security.tooltip,
-      options : [
-        {label : 'Plain (No Encryption)', value : 'PLAIN'},
-        {label : 'SSL (Implicit TLS)', value : 'SSL'},
-        {label : 'TLS (STARTTLS)', value : 'TLS'},
-      ],
-    },
-    {
-      type : 'checkbox',
-      name : 'smtp',
-      placeholder : helptext_system_email.smtp.placeholder,
-      tooltip : helptext_system_email.smtp.tooltip,
-    },
-    {
-      type : 'input',
-      name : 'user',
-      placeholder : helptext_system_email.user.placeholder,
-      tooltip : helptext_system_email.user.tooltip,
-      relation : [
+      name: helptext_system_email.fieldsets.general,
+      label: true,
+      width: '49%',
+      config: [
         {
-          action : 'DISABLE',
-          when : [ {
-            name : 'smtp',
-            value : false,
-          } ]
+          type : 'input',
+          name : 'fromemail',
+          placeholder : helptext_system_email.fromemail.placeholder,
+          tooltip : helptext_system_email.fromemail.tooltip,
+          validation: helptext_system_email.fromemail.validation,
+          required: true
         },
-      ],
-      required: true,
-      validation : helptext_system_email.user.validation
-    },
-    {
-      type : 'input',
-      name : 'pass',
-      placeholder : helptext_system_email.pass.placeholder,
-      tooltip : helptext_system_email.pass.tooltip,
-      inputType : 'password',
-      relation : [
         {
-          action : 'DISABLE',
-          when : [ {
-            name : 'smtp',
-            value : false,
-          } ]
+          type : 'input',
+          name : 'fromname',
+          placeholder : helptext_system_email.fromname.placeholder,
+          tooltip : helptext_system_email.fromname.tooltip,
         },
-      ],
-      togglePw : true
-    }
-  ];
+        {
+          type : 'input',
+          name : 'outgoingserver',
+          placeholder : helptext_system_email.outgoingserver.placeholder,
+          tooltip : helptext_system_email.outgoingserver.tooltip,
+        },
+        {
+          type : 'input',
+          name : 'port',
+          inputType: 'number',
+          validation: helptext_system_email.port.validation,
+          required: true,
+          placeholder : helptext_system_email.port.placeholder,
+          tooltip : helptext_system_email.port.tooltip
+        },
+        {
+          type : 'select',
+          name : 'security',
+          placeholder : helptext_system_email.security.placeholder,
+          tooltip : helptext_system_email.security.tooltip,
+          options : [
+            {label : 'Plain (No Encryption)', value : 'PLAIN'},
+            {label : 'SSL (Implicit TLS)', value : 'SSL'},
+            {label : 'TLS (STARTTLS)', value : 'TLS'},
+          ]
+        }
+      ]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext_system_email.fieldsets.access,
+      label: true,
+      width: '49%',
+      config: [
+        {
+          type : 'checkbox',
+          name : 'smtp',
+          placeholder : helptext_system_email.smtp.placeholder,
+          tooltip : helptext_system_email.smtp.tooltip,
+        },
+        {
+          type : 'input',
+          name : 'user',
+          placeholder : helptext_system_email.user.placeholder,
+          tooltip : helptext_system_email.user.tooltip,
+          relation : [
+            {
+              action : 'DISABLE',
+              when : [ {
+                name : 'smtp',
+                value : false,
+              } ]
+            },
+          ],
+          required: true,
+          validation : helptext_system_email.user.validation
+        },
+        {
+          type : 'input',
+          name : 'pass',
+          placeholder : helptext_system_email.pass.placeholder,
+          tooltip : helptext_system_email.pass.tooltip,
+          inputType : 'password',
+          relation : [
+            {
+              action : 'DISABLE',
+              when : [ {
+                name : 'smtp',
+                value : false,
+              } ]
+            },
+          ],
+          togglePw : true
+        }
+      ]
+    },
+    { name: 'divider', divider: true }
+  ]);
+
   protected dialogRef: any;
 
   private smtp;
   private smtp_subscription;
-  private pass;
+  private pass: FieldConfig;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
@@ -169,7 +185,7 @@ export class EmailComponent implements OnDestroy {
     this.ws.call('user.query', [[payload]]).subscribe((res)=>{
       this.rootEmail = res[0].email;
     });
-    this.pass = _.find(this.fieldConfig, {'name': 'pass'});
+    this.pass = this.fieldSets.config('pass');
     this.smtp = entityEdit.formGroup.controls['smtp'];
 
     this.smtp_subscription = this.smtp.valueChanges.subscribe((value) => {
