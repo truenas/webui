@@ -54,7 +54,8 @@ export class DualListboxComponent implements OnInit {
       let chosenItems = document.querySelectorAll('.chosen');
       chosenItems.forEach((item) => {
         item.classList.remove('cdk-drag-placeholder');
-      })
+      });
+      document.querySelector('#counter').remove();
     } else {
       event.previousContainer.id === 'cdk-drop-list-0' ? this.select() : this.return();
     }
@@ -62,11 +63,17 @@ export class DualListboxComponent implements OnInit {
   }
 
   public onDragStart(event: CdkDragStart<string[]>) {
+    let div = document.querySelector(`#${event.source.dropContainer.id}`);
     this.dragging = true;
-    console.log(document.querySelector('.draggable'))
-    let b = document.querySelector('.draggable:active')
-    b.innerHTML = "background-color";
-    let chosenItems = document.querySelectorAll('.chosen');
+    let b = div.querySelector('.draggable:active')
+    let chosenItems = div.querySelectorAll('.chosen');
+    if (chosenItems.length > 0) {
+      b.insertAdjacentHTML('afterbegin', 
+      `<div id="counter" style="background: red; color: white; border-radius: 50%; 
+        width:20px; height: 20px; text-align: center; font-weight: 700;
+        position: relative; top: 5px; left: 5px;">
+        ${chosenItems.length.toString()}</div>`);
+    }
     chosenItems.forEach((item) => {
       item.classList.add('cdk-drag-placeholder');
     })
