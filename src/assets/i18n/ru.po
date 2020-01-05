@@ -2932,7 +2932,7 @@ msgid "Clear SED Password"
 msgstr "Очистить пароль SED"
 
 msgid "Clear the SED password for this disk."
-msgstr ""
+msgstr "Очистить пароль SED для этого диска."
 
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
@@ -7017,7 +7017,7 @@ msgid "Keep changed network settings permanently?"
 msgstr "Сохранить на постоянно измененные настройки сети?"
 
 msgid "Keep snapshot for"
-msgstr ""
+msgstr "Хранить снимок"
 
 msgid ""
 "Keep the name short. Using a name longer than 63 characters can prevent "
@@ -7224,7 +7224,7 @@ msgstr ""
 "ниже."
 
 msgid "Legacy"
-msgstr ""
+msgstr "Старый"
 
 msgid "Legacy Web Interface"
 msgstr "Старый Web интерфейс"
@@ -10765,6 +10765,8 @@ msgid ""
 "Set or change the password of this SED.  This password is used instead of "
 "the global SED password."
 msgstr ""
+"Установите или измените пароль этого SED. Этот пароль используется вместо "
+"глобального пароля SED."
 
 msgid ""
 "Set resource limitations of the jail using the <a "
@@ -13727,7 +13729,7 @@ msgid "VMWare Sync"
 msgstr "Синхронизация VMWare"
 
 msgid "VMware Sync"
-msgstr ""
+msgstr "Синхронизация VMware"
 
 msgid "VMware-Snapshots"
 msgstr "VMware-Снимки"
