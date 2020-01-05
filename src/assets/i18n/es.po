@@ -496,9 +496,6 @@ msgid ""
 "database file was saved  without the Password Secret Seed. </font></p>"
 msgstr ""
 
-msgid ">release notes</a>."
-msgstr ""
-
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -613,6 +610,9 @@ msgid "AFP"
 msgstr ""
 
 msgid "AFP3 Unix Privs"
+msgstr ""
+
+msgid "API"
 msgstr ""
 
 msgid "API Key"
@@ -1934,9 +1934,6 @@ msgstr ""
 msgid "Checking HA status"
 msgstr ""
 
-msgid "Checking this box clears a previously-set password."
-msgstr ""
-
 msgid "Chmod Request"
 msgstr ""
 
@@ -2240,6 +2237,9 @@ msgid ""
 msgstr ""
 
 msgid "Clear SED Password"
+msgstr ""
+
+msgid "Clear the SED password for this disk."
 msgstr ""
 
 msgid ""
@@ -5625,6 +5625,9 @@ msgstr ""
 msgid "Keep changed network settings permanently?"
 msgstr ""
 
+msgid "Keep snapshot for"
+msgstr ""
+
 msgid ""
 "Keep the name short. Using a name longer than 63 characters can prevent "
 "accessing the block device."
@@ -5798,6 +5801,9 @@ msgstr ""
 msgid ""
 "Leaving the domain requires sufficient privileges. Enter your credentials "
 "below."
+msgstr ""
+
+msgid "Legacy"
 msgstr ""
 
 msgid "Legacy Web Interface"
@@ -8719,6 +8725,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Set or change the password of this SED.  This password is used instead of "
+"the global SED password."
+msgstr ""
+
+msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
 "target=\"_blank\">getrlimit(2)</a> utility."
@@ -10882,11 +10893,6 @@ msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr ""
 
 msgid ""
-"Use this field to set or change the password for SED. Leave this field "
-"blank  to keep a previously-set password."
-msgstr ""
-
-msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
 "that SMB1 is being deprecated and it is advised to upgrade clients to "
 "operating system versions that support modern versions of the SMB protocol."
@@ -11027,6 +11033,9 @@ msgid "VM system time. Default is <i>Local</i>."
 msgstr ""
 
 msgid "VMWare Sync"
+msgstr ""
+
+msgid "VMware Sync"
 msgstr ""
 
 msgid "VMware-Snapshots"
