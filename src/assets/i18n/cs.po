@@ -5,91 +5,101 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Check Notifications for more details."
-msgstr ""
+msgstr " Pro bližší informace se podívejte na notifikace."
 
 msgid " Download Updates"
-msgstr ""
+msgstr " Stáhnout aktualizace"
 
 msgid " First vdev has "
-msgstr ""
+msgstr " První vdev má "
 
 msgid " First vdev is a "
-msgstr ""
+msgstr " První vdev je "
 
 msgid " Plugin"
-msgstr ""
+msgstr " Zásuvný modul"
 
 msgid " Service"
-msgstr ""
+msgstr " Služba"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
 msgstr ""
+" Pokud je <b>UPS mód</b> ve stavu <i>slave</i>. Vložte otevřený port "
+"UPS <i>Master</i> systému. Výchozí port je <i>3493</i>."
 
 msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a "
 "backup of the existing encryption key  without making any changes, click "
 "<b>DOWNLOAD ENCRYPTION KEY</b>."
 msgstr ""
+" heslo zneplatní současný obnovovací klíč daného poolu. K zazálohování "
+"současného šifrovacího klíče bez provedení jakýchkoliv změn, klikněte na "
+"<b>STÁHNOUT ŠIFROVACÍ KLÍČ</b>."
 
 msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
 "selected."
 msgstr ""
+" adresy. Pokud je tato volba vybrána, další adresy již nemohou být "
+"zvoleny."
 
 msgid " and "
-msgstr ""
+msgstr " a "
 
 msgid " and all snapshots of it?"
-msgstr ""
+msgstr " a všechny jeho snapshoty?"
 
 msgid " but datastore "
-msgstr ""
+msgstr " kromě úložiště "
 
 msgid " disks"
-msgstr ""
+msgstr " disky"
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " disky, nový vdev má "
 
 msgid " has been unlocked."
-msgstr ""
+msgstr " byl odemčen."
 
 msgid " is "
-msgstr ""
+msgstr " je "
 
 msgid " is required."
-msgstr ""
+msgstr " je požadován."
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr ""
+" je minimální doporučená velikost. Zvolením menší velikosti, může dojít ke "
+"snížení výkonu systému."
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
 "for testing."
 msgstr ""
+" vteřiny, pokud není vybrána možnost NASTAVIT NAPOŘÁD. Upravte časovou prodlevu pro možné otestování."
 
 msgid " service has been enabled."
-msgstr ""
+msgstr " služba byla povolena."
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr " systém zapnut a připojen k síti."
 
 msgid " to include all "
-msgstr ""
+msgstr " k zahrnutí všeho "
 
 msgid " update successful"
-msgstr ""
+msgstr " aktualizace proběhla úspěšně"
 
 msgid " updated."
-msgstr ""
+msgstr " aktualizováno."
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% ze všech jader"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
@@ -97,80 +107,88 @@ msgid ""
 "encrypted pools, download and safely store the encryption key and any "
 "passphrase for it."
 msgstr ""
+"' je zašifrován! Pokud dojde ke ztrátě hesla pro tento zašifrovaný pool, "
+"data již NEBUDE MOŽNÉ OBNOVIT. Před exportováním/odpojením zašifrovaných "
+"poolů, nezapomeňte stáhnout a bezpečně uložit šifrovací klíč a jeho heslo."
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Všechna data na poolu byla smazána."
 
 msgid "(No description)"
-msgstr ""
+msgstr "(Bez popisu)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(Odstranit pool z databáze)"
 
 msgid "*allow_sysvipc"
-msgstr ""
+msgstr "*allow_sysvipc"
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", nový vdev je "
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Všechna data na poolu byla smazána."
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". Alespoň jeden je nezbytné."
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". Je toto správně?"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... Ujistěte se, že "
 
 msgid "0=Disabled, blank=inherit"
 msgstr ""
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "Maximální délka je 20 znaků."
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr ": Automatická kontrola aktualizací selhala. Prosím zkontrolujte systémové nastavení sítě."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
-msgstr ""
+msgstr "</b> zásuvný modul maže všechna data a snapshoty ????"
 
 msgid "</b> with the keypair"
-msgstr ""
+msgstr "</b> s klíčovým párem"
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr ""
+msgstr "</i> nemůže běžet pokud probíhá mazání přípojného místa."
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> byl spuštěn."
 
 msgid "</i> keypair?</p>"
-msgstr ""
+msgstr "</i> klíčový pár?</p>"
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> nyní?"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> byl zastaven."
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> byl/a aktualizován/a."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr ""
+msgstr "</i>. Data na poolu nebudou přístupná dokud pool nebude odemčen."
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
 "disks can be destroyed by setting the <b>Destroy data</b> option. Back up "
 "critical data <b>before</b> exporting/disconnecting the pool."
 msgstr ""
+"</i>. Data na poolu nebudou po exportu dostupná. Data z disků v poolu "
+"mohou být smazána nastavením volby <b>Smazat data</b>. Zazálohujte si "
+"důležitá data <b>předtím</b> než vyexportujete/odpojíte pool."
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
 "by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
 msgstr ""
+"</i> je v databázi, avšak není připojen k zařízení. Pokud byl mylně vyexportován, "
+"opětovně připojte hardware a použijte <b>Importovat pool</b>.<br /><br />"
 
 msgid ""
 "<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
@@ -178,6 +196,10 @@ msgid ""
 "discover valid devices. <i>None</i> allows anonymous discovery while "
 "<i>CHAP</i> and <i>Mutual CHAP</i> require authentication."
 msgstr ""
+"<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
+"podporuje mnoho autentizačních metod, které jsou využity k nalezení "
+"validních zařízení. Anonymní zjištění nebude funkční v případě, že "
+"<i>CHAP</i> nebo <i>Mutual CHAP</i> vyžaduje autentizaci."
 
 msgid ""
 "<a "
@@ -190,6 +212,14 @@ msgid ""
 "region_endpoints  target=\"_blank\">Simple Storage Service Website "
 "Endpoints</a>."
 msgstr ""
+"<a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
+"html\"  target=\"_blank\">S3 API endpoint URL</a>. V případě použití AWS, "
+"políčko endpoint může zůstat prázdné pro použítí výchozího nastavení pro region "
+"a dostupné buckety budou automaticky získány. Viz AWS dokumentace a seznam "
+"href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
+"region_endpoints  target=\"_blank\">Simple Storage Service Website "
+"Endpoints</a>."
 
 msgid ""
 "<a href=\"https://docs.aws.amazon.com/general/latest/gr/rande-manage.html\" "
@@ -201,48 +231,74 @@ msgid ""
 "href=\"https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/whatis.html\""
 " target=\"_blank\">AWS GovCloud</a>  region."
 msgstr ""
+"<a href=\"https://docs.aws.amazon.com/general/latest/gr/rande-manage.html\" "
+" target=\"_blank\">AWS resources in a geographic area</a>. Nechte prázdné  "
+"pro automatickou detekci veřejného regionu pro bucket. Vložením názvu "
+"privátního regionu, je možné pracovat s Amazon buckety vytvořenými v tomto "
+"regionu. Například vložte <i>us-gov-east-1</i> pro vyhledání bucketů "
+"vytvořených v eastern <a "
+"href=\"https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/whatis.html\""
+" target=\"_blank\">AWS GovCloud</a> regionu."
 
 msgid ""
 "<a "
 "href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
 "storage-account\"  target=\"_blank\">Microsoft Azure</a> account name."
 msgstr ""
+"<a "
+"href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
+"storage-account\"  target=\"_blank\">Microsoft Azure</a> název účtu."
 
 msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
 "target=\"_blank\">pCloud Access Token</a>. These tokens can expire and  "
 "require extension."
 msgstr ""
+"<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
+"target=\"_blank\">pCloud Access Token</a>. Tyto tokeny mohou expirovat a proto "
+"potřebují prodloužit."
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
 "target=\"_blank\">Authentication protocol</a> used to authenticate  "
 "messages sent on behalf of the specified <i>Username</i>."
 msgstr ""
+"<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
+"target=\"_blank\">Autentizační protokol</a> používaný k ověření  "
+"zpráv poslaných jménem konkrétního <i>uživatelského jména</i>."
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
 "target=\"_blank\">Encryption protocol</a> used to encrypt messages  sent on "
 "behalf of the specified <i>Username</i>."
 msgstr ""
+"<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
+"target=\"_blank\">Šifrovací protokol</a> používaný k zašifrování "
+"zpráv poslaných jménem konkrétního <i>uživatelského jména</i>."
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
 "      target=\"_blank\">Extended attributes</a> are                "
 "preserved, but must be supported by both systems."
 msgstr ""
+"<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
+"      target=\"_blank\">Rozšiřující atributy</a> jsou zachovány, "
+"avšak musí být podporovány systémy na obou stranách."
 
 msgid ""
 "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
 "target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
 "valid    email address when registering to receive issue status updates."
 msgstr ""
+"Pro založení hlášení si <a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
+"target=\"_blank\"> vytvořte účet na Jira</a>. Pro registraci použijte platnou"
+"emailovou adresu, abyste dostávali oznámení o stavu vašeho hlášení."
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
-msgstr ""
+msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> heslo k účtu."
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  username."
-msgstr ""
+msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> uživatelské jméno."
 
 msgid ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
@@ -251,12 +307,20 @@ msgid ""
 "page, and add a new application key. Copy the <i>applicationKey</i> string "
 "to this field."
 msgstr ""
+"<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
+"target=\"_blank\">Backblaze B2</a> aplikační klíč. Pro vygenerování nového "
+"aplikačního klíče se přihlaste prostřednictvím Backblaze účtu, běžte na <i>App Keys</i> "
+"stránku a přidejte nový aplikační klíč. Následně zkopírujte <i>applicationKey</i> string "
+"do tohoto pole."
 
 msgid ""
 "<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
 "target=\"_blank\">Email encryption</a> type. Choices are <i>Plain (No "
 "Encryption)</i>, <i>SSL (Implicit TLS)</i>, or <i>TLS (STARTTLS)</i>."
 msgstr ""
+"Způsob <a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
+"target=\"_blank\">šifrování emailu</a>. Volby jsou <i>Plain (Bez "
+"šifrování)</i>, <i>SSL (Implicitní TLS)</i>, nebo <i>TLS (STARTTLS)</i>."
 
 msgid ""
 "<a "
@@ -267,6 +331,13 @@ msgid ""
 "target=\"_blank\">Encryption section</a> of the guide before activating "
 "this option."
 msgstr ""
+"<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
+"RELEASE+and+Ports\" target=\"_blank\">GELI</a> šifrování možné pro "
+"ZFS pooly. <b>VAROVÁNÍ:</b> Přečtěte si <a "
+"href=\"--docurl--/storage.html#managing-encrypted-pools\" "
+"target=\"_blank\">sekci o šifrování</a> v dokumentaci, ještě předtím, než vyberete "
+"tuto volbu."
 
 msgid ""
 "<a href='--docurl--/sharing.html--webversion--#block-iscsi' "
@@ -274,12 +345,19 @@ msgid ""
 "used by the target to discover valid devices. None allows anonymous "
 "discovery while CHAP and Mutual CHAP require authentication."
 msgstr ""
+"<a href='--docurl--/sharing.html--webversion--#block-iscsi' "
+"target='_blank'>iSCSI</a> podporuje mnoho autentizačních metod, které jsou"
+"využity k nalezení validních zařízení. Anonymní zjištění nebude funkční v případě, že "
+"CHAP nebo Mutual CHAP vyžaduje autentizaci."
 
 msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
 msgstr ""
+"<b>KOPÍROVAT</b>: Soubory ze zdrojového adresáře jsou <i><u>zkopírovány</u></i> do "
+"cílové složky. V případě, že se v cílovém adresáři nachází soubory se stejným názvem, "
+"budou <i><u>přepsány</u></i> nově zkopírovanými."
 
 msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>    Many utilities are "
@@ -289,29 +367,42 @@ msgid ""
 "   href=\"--docurl--/cli.html\"    target=\"_blank\">Command Line "
 "Utilities</a>    chapter in the guide for usage information    and examples."
 msgstr ""
+"<b>Ctrl+C</b> ukončí běžící procesy na popředí.<br> Spousta nástrojů je již"
+"vestavěných:<br> <b>Iperf</b>,    <b>Netperf</b>, <b>IOzone</b>, "
+"<b>arcsat</b>,    <b>tw_cli</b>, <br><b>MegaCli</b>,    "
+"<b>freenas-debug</b>, <b>tmux</b>,    <b>Dmidecode</b>.<br> Viz <a "
+"   href=\"--docurl--/cli.html\"    target=\"_blank\">kapitola o nástrojích v "
+"příkazové řádce</a> v příručce pro informace o použití společně s příklady."
 
 msgid "<b>Current Version:</b> "
-msgstr ""
+msgstr "<b>Současná verze:</b> "
 
 msgid ""
 "<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the "
 "destination, they are <i><u>deleted</u></i> from the source. Files with the "
 "same names on the destination are <i><u>overwritten</u></i>."
 msgstr ""
+"<b>PŘESUNOUT</b>: Poté co jsou soubory <i><u>překopírovány</u></i> ze zdrojové složky"
+"do cílové, dojde k jejich <i><u>smazání</u></i> ze zdrojového umístění. Soubory s "
+"totožným názvem v cílové složce budou <i><u>přepsány</u></i>."
 
 msgid ""
 "<b>Not recommended.</b> Allow more than one group to  have the same group "
 "ID."
 msgstr ""
+"<b>Nedoporučuje se.</b> Mít vícero skupin se stejným ID."
 
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
 "must be set for the <i>root</i> user in <a "
 "href=\"--docurl--/accounts.html#users\" target=\"_blank\">Users</a>."
 msgstr ""
+"<b>Přihlašování jako root se nedoporučuje.</b> Povolení přihlášení pod "
+"uživatele root. Musí být nastaveno heslo pro <i>root</i> uživatele v <a "
+"href=\"--docurl--/accounts.html#users\" target=\"_blank\">uživatelích</a>."
 
 msgid "<b>SED (Self-Encrypting Drives) Options</b>"
-msgstr ""
+msgstr "<b>SED (Self-Encrypting Drives) nastavení</b>"
 
 msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
@@ -968,10 +1059,10 @@ msgid "Advanced"
 msgstr "Pokročilé"
 
 msgid "Advanced Details"
-msgstr ""
+msgstr "Podrobné detaily"
 
 msgid "Advanced Jail Creation"
-msgstr ""
+msgstr "Podrobné vytváření Jail"
 
 msgid "Advanced Mode"
 msgstr "Pokročilý režim"
@@ -11360,15 +11451,18 @@ msgid ""
 "href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
 "\"  target=\"_blank\">Access Token</a>."
 msgstr ""
+"Yandex <a "
+"href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
+"\"  target=\"_blank\">Přístupový token</a>."
 
 msgid "Years"
-msgstr ""
+msgstr "Roky"
 
 msgid "Yes"
 msgstr "Ano"
 
 msgid "Yes I understand the risks"
-msgstr ""
+msgstr "Ano, chápu riziko"
 
 msgid "Yes, decrypt the disks"
 msgstr "Ano, dešifrovat disky"
@@ -11377,10 +11471,10 @@ msgid "You have left the domain."
 msgstr ""
 
 msgid "ZFS"
-msgstr ""
+msgstr "ZFS"
 
 msgid "ZFS Cache"
-msgstr ""
+msgstr "ZFS cache"
 
 msgid "ZFS Deduplication"
 msgstr "ZFS deduplikace"
@@ -11389,13 +11483,16 @@ msgid "ZFS Filesystem"
 msgstr "Souborový systém ZFS"
 
 msgid "ZFS deduplication"
-msgstr ""
+msgstr "ZFS deduplikace"
 
 msgid ""
 "ZFS pools must conform to strict naming <a "
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
 "target=\"_blank\">conventions</a>. Choose a memorable name."
 msgstr ""
+"ZFS pooly musí přesně odpovídat jmenné <a"
+"href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
+"target=\"_blank\">konvenci</a>. Vyberte zapamatovatelný název."
 
 msgid "Zero Device Numbers"
 msgstr ""
@@ -11404,10 +11501,10 @@ msgid "Zeroconf share discovery"
 msgstr ""
 
 msgid "Zvol Location"
-msgstr ""
+msgstr "umístění Zvol"
 
 msgid "Zvol name"
-msgstr ""
+msgstr "název Zvol"
 
 msgid ""
 "[Use fewer transactions in exchange for more "
@@ -11416,64 +11513,64 @@ msgid ""
 msgstr ""
 
 msgid "allow_chflags"
-msgstr ""
+msgstr "allow_chflags"
 
 msgid "allow_mlock"
-msgstr ""
+msgstr "allow_mlock"
 
 msgid "allow_mount"
-msgstr ""
+msgstr "allow_mount"
 
 msgid "allow_mount_devfs"
-msgstr ""
+msgstr "allow_mount_devfs"
 
 msgid "allow_mount_fusefs"
-msgstr ""
+msgstr "allow_mount_fusefs"
 
 msgid "allow_mount_nullfs"
-msgstr ""
+msgstr "allow_mount_nullfs"
 
 msgid "allow_mount_procfs"
-msgstr ""
+msgstr "allow_mount_procfs"
 
 msgid "allow_mount_tmpfs"
-msgstr ""
+msgstr "allow_mount_tmpfs"
 
 msgid "allow_mount_zfs"
-msgstr ""
+msgstr "allow_mount_zfs"
 
 msgid "allow_quotas"
-msgstr ""
+msgstr "allow_quotas"
 
 msgid "allow_raw_sockets"
-msgstr ""
+msgstr "allow_raw_sockets"
 
 msgid "allow_set_hostname"
-msgstr ""
+msgstr "allow_set_hostname"
 
 msgid "allow_socket_af"
-msgstr ""
+msgstr "allow_socket_af"
 
 msgid "allow_sysvipc"
-msgstr ""
+msgstr "allow_sysvipc"
 
 msgid "allow_tun"
-msgstr ""
+msgstr "allow_tun"
 
 msgid "allow_vmm"
-msgstr ""
+msgstr "allow_vmm"
 
 msgid "assign_localhost"
-msgstr ""
+msgstr "assign_localhost"
 
 msgid "below to confirm."
-msgstr ""
+msgstr "níže pro potvrzení."
 
 msgid "boot"
-msgstr ""
+msgstr "boot"
 
 msgid "children_max"
-msgstr ""
+msgstr "children_max"
 
 msgid "close"
 msgstr "zavřít"
@@ -11482,22 +11579,22 @@ msgid "comment"
 msgstr "komentář"
 
 msgid "coredumpsize"
-msgstr ""
+msgstr "coredumpsize"
 
 msgid "cpuset"
-msgstr ""
+msgstr "cpuset"
 
 msgid "cputime"
-msgstr ""
+msgstr "cputime"
 
 msgid "createcomputer"
-msgstr ""
+msgstr "createcomputer"
 
 msgid "datasize"
-msgstr ""
+msgstr "datasize"
 
 msgid "days"
-msgstr ""
+msgstr "dní"
 
 msgid "depends"
 msgstr "závisí"
@@ -11506,82 +11603,82 @@ msgid "destroy"
 msgstr "zrušit"
 
 msgid "devfs_ruleset"
-msgstr ""
+msgstr "devfs_ruleset"
 
 msgid "email"
-msgstr ""
+msgstr "email"
 
 msgid "empty"
-msgstr ""
+msgstr "prázdný"
 
 msgid "enforce_statfs"
-msgstr ""
+msgstr "enforce_statfs"
 
 msgid "error"
-msgstr ""
+msgstr "chyba"
 
 msgid "exec_clean"
-msgstr ""
+msgstr "exec_clean"
 
 msgid "exec_fib"
-msgstr ""
+msgstr "exec_fib"
 
 msgid "exec_jail_user"
-msgstr ""
+msgstr "exec_jail_user"
 
 msgid "exec_poststart"
-msgstr ""
+msgstr "exec_poststart"
 
 msgid "exec_poststop"
-msgstr ""
+msgstr "exec_poststop"
 
 msgid "exec_prestart"
-msgstr ""
+msgstr "exec_prestart"
 
 msgid "exec_prestop"
-msgstr ""
+msgstr "exec_prestop"
 
 msgid "exec_start"
-msgstr ""
+msgstr "exec_start"
 
 msgid "exec_stop"
-msgstr ""
+msgstr "exec_stop"
 
 msgid "exec_system_jail_user"
-msgstr ""
+msgstr "exec_system_jail_user"
 
 msgid "exec_system_user"
-msgstr ""
+msgstr "exec_system_user"
 
 msgid "exec_timeout"
-msgstr ""
+msgstr "exec_timeout"
 
 msgid "expires in"
-msgstr ""
+msgstr "expiruje během"
 
 msgid "gathering info..."
-msgstr ""
+msgstr "získávání informací..."
 
 msgid "group"
 msgstr "skupina"
 
 msgid "host_domainname"
-msgstr ""
+msgstr "host_domainname"
 
 msgid "host_hostname"
-msgstr ""
+msgstr "host_hostname"
 
 msgid "host_time"
-msgstr ""
+msgstr "host_time"
 
 msgid "hostid"
 msgstr "identifikátor stroje"
 
 msgid "hostid_strict_check"
-msgstr ""
+msgstr "hostid_strict_check"
 
 msgid "iSCSI"
-msgstr ""
+msgstr "iSCSI"
 
 msgid "interfaces"
 msgstr "rozhraní"
@@ -11590,94 +11687,94 @@ msgid "ip4"
 msgstr "IPv4"
 
 msgid "ip4.saddrsel"
-msgstr ""
+msgstr "ip4.saddrsel"
 
 msgid "ip6"
 msgstr "IPv6"
 
 msgid "ip6.saddrsel"
-msgstr ""
+msgstr "ip6.saddrsel"
 
 msgid "ip_hostname"
-msgstr ""
+msgstr "ip_hostname"
 
 msgid "is already in use."
-msgstr ""
+msgstr "se již používá."
 
 msgid "jail_zfs"
-msgstr ""
+msgstr "jail_zfs"
 
 msgid "jail_zfs_dataset"
-msgstr ""
+msgstr "jail_zfs_dataset"
 
 msgid "jail_zfs_mountpoint"
-msgstr ""
+msgstr "jail_zfs_mountpoint"
 
 msgid "list"
 msgstr "seznam"
 
 msgid "login_flags"
-msgstr ""
+msgstr "login_flags"
 
 msgid "mac_prefix"
-msgstr ""
+msgstr "mac_prefix"
 
 msgid "maxproc"
-msgstr ""
+msgstr "maxproc"
 
 msgid "memorylocked"
-msgstr ""
+msgstr "memorylocked"
 
 msgid "memoryuse"
-msgstr ""
+msgstr "memoryuse"
 
 msgid "mount_devfs"
-msgstr ""
+msgstr "mount_devfs"
 
 msgid "mount_fdescfs"
-msgstr ""
+msgstr "mount_fdescfs"
 
 msgid "mount_linprocfs"
-msgstr ""
+msgstr "mount_linprocfs"
 
 msgid "mount_procfs"
-msgstr ""
+msgstr "mount_procfs"
 
 msgid "mountd(8) bind port"
 msgstr ""
 
 msgid "msgqqueued"
-msgstr ""
+msgstr "msgqqueued"
 
 msgid "msgqsize"
-msgstr ""
+msgstr "msgqsize"
 
 msgid "multipath"
-msgstr ""
+msgstr "multipath"
 
 msgid "name"
 msgstr "název"
 
 msgid "nmsgq"
-msgstr ""
+msgstr "nmsgq"
 
 msgid "no"
-msgstr ""
+msgstr "ne"
 
 msgid "nsemop"
-msgstr ""
+msgstr "nsemop"
 
 msgid "nshm"
-msgstr ""
+msgstr "nshm"
 
 msgid "nthr"
-msgstr ""
+msgstr "nthr"
 
 msgid "openfiles"
-msgstr ""
+msgstr "openfiles"
 
 msgid "overview"
-msgstr ""
+msgstr "přehled"
 
 msgid "owner"
 msgstr "vlastník"
@@ -11686,19 +11783,19 @@ msgid "password"
 msgstr "heslo"
 
 msgid "pcpu"
-msgstr ""
+msgstr "pcpu"
 
 msgid "priority"
 msgstr "priorita"
 
 msgid "pseudoterminals"
-msgstr ""
+msgstr "pseudoterminals"
 
 msgid "resolver"
-msgstr ""
+msgstr "resolver"
 
 msgid "rlimits"
-msgstr ""
+msgstr "rlimits"
 
 msgid "rpc.lockd(8) bind port"
 msgstr ""
@@ -11713,7 +11810,7 @@ msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
 msgstr ""
 
 msgid "securelevel"
-msgstr ""
+msgstr "securelevel"
 
 msgid "service failed to start."
 msgstr "službu se nepodařilo spustit"
@@ -11722,67 +11819,67 @@ msgid "service failed to stop."
 msgstr "službu se nepodařilo zastavit."
 
 msgid "shmsize"
-msgstr ""
+msgstr "shmsize"
 
 msgid "stacksize"
-msgstr ""
+msgstr "stacksize"
 
 msgid "stop_timeout"
-msgstr ""
+msgstr "stop_timeout"
 
 msgid "swapuse"
-msgstr ""
+msgstr "swapuse"
 
 msgid "sysvmsg"
-msgstr ""
+msgstr "sysvmsg"
 
 msgid "sysvsem"
-msgstr ""
+msgstr "sysvsem"
 
 msgid "sysvshm"
-msgstr ""
+msgstr "sysvshm"
 
 msgid "template"
 msgstr "šablona"
 
 msgid "total memory installed"
-msgstr ""
+msgstr "veškerá instalovaná pamět"
 
 msgid "used"
-msgstr ""
+msgstr "použit"
 
 msgid "vmemoryuse"
-msgstr ""
+msgstr "vmemoryuse"
 
 msgid "vnet0_mac"
-msgstr ""
+msgstr "vnet0_mac"
 
 msgid "vnet1_mac"
-msgstr ""
+msgstr "vnet1_mac"
 
 msgid "vnet2_mac"
-msgstr ""
+msgstr "vnet2_mac"
 
 msgid "vnet3_mac"
-msgstr ""
+msgstr "vnet3_mac"
 
 msgid "vnet_default_interface"
-msgstr ""
+msgstr "vnet_default_interface"
 
 msgid "vnet_interfaces"
-msgstr ""
+msgstr "vnet_interfaces"
 
 msgid "wallclock"
-msgstr ""
+msgstr "nástěnné hodiny"
 
 msgid "warn"
 msgstr ""
 
 msgid "was successfully attached."
-msgstr ""
+msgstr "byl úspěšně připojen."
 
 msgid "while pool is encrypted"
-msgstr ""
+msgstr "zatímco je pool zašifrován"
 
 msgid "yes"
 msgstr "ano"
