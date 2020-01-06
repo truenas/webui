@@ -11,7 +11,8 @@
       class="draggable"
       (cdkDragStarted)="onDragStart($event)"
       [ngClass]="{ chosen: availableItems.isSelected(item,1) }" 
-      (mouseup)="availableItems.select(item, $event)">
+      (mousedown)="availableItems.mouseDown(item, $event)"
+      (mouseup)="availableItems.mouseUp(item, $event)">
       <mat-list *ngIf="templateItem;else noTemplateItem" >
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item}"></ng-container>
       </mat-list>
@@ -51,7 +52,8 @@
       class="draggable"
       (cdkDragStarted)="onDragStart($event)"
       [ngClass]="{ chosen: selectedItems.isSelected(item,2) }"
-      (mouseup)="selectedItems.select(item, $event)">
+      (mousedown)="selectedItems.mouseDown(item, $event)"
+      (mouseup)="selectedItems.mouseUp(item, $event)">
       <mat-list *ngIf="templateItem;else noTemplateItem">
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
       </mat-list>

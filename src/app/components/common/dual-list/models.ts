@@ -14,7 +14,9 @@ export interface ListSelection {
 
   totalItems: any[];
 
-  select(item: any): void;
+  mouseDown(item: any): void;
+
+  mouseUp(item: any): void;
 
   selectAll(): void;
 
@@ -28,11 +30,15 @@ export class ListSelectionImpl implements ListSelection {
 
   constructor(public readonly totalItems: any[]) {}
 
-  select(item: any, event?): void {
+
+
+  mouseDown(item: any, event?): void {
     if (!event.ctrlKey) {
-      this._selectedItems.length = 0;
-      this._selectedItems.push(item);
-    } else { 
+      if (!this.isSelected(item)) {
+        this._selectedItems.length = 0;
+        this._selectedItems.push(item);
+      }
+    } else {
         if (!this.isSelected(item)) {
           this._selectedItems.push(item);
         } else {
@@ -41,11 +47,13 @@ export class ListSelectionImpl implements ListSelection {
     }
   }
 
-  ctrlKeyAction(item, event) {
-    // if (!event.ctrlKey) {
-    //   this._selectedItems.length = 0;
-    //   this._selectedItems.push(item);
-    // }
+  mouseUp(item: any, event?) {
+    if (!event.ctrlKey) {
+      if (this._selectedItems.length > 1 && this.isSelected(item)) {
+        this._selectedItems.length = 0;
+        this._selectedItems.push(item);      
+      }
+    }
   }
 
   selectAll(): void {
