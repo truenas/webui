@@ -9,7 +9,6 @@ import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
 import { catchError, map, switchMap, take, tap, filter } from 'rxjs/operators';
-import { MessageService } from '../../../../pages/common/entity/entity-form/services/message.service'
 import { AppLoaderService, DialogService, RestService, WebSocketService } from '../../../../services/';
 import { Validators } from '@angular/forms';
 
@@ -213,8 +212,7 @@ export class SMBFormComponent {
     protected ws: WebSocketService,
     private dialog: DialogService,
     protected loader: AppLoaderService,
-    private activatedRoute: ActivatedRoute,
-    protected messageService: MessageService
+    private activatedRoute: ActivatedRoute
   ) {
     combineLatest(
       this.ws.call("sharing.smb.query", []),
@@ -308,10 +306,9 @@ export class SMBFormComponent {
     const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]
 
     if (homeShare && entityForm.isNew) {
-      this.messageService.newMessage('hey now!');
       return this.router.navigate(
-        ['/'].concat(ACLRoute)
-      )
+        ['/'].concat(ACLRoute),{ queryParams: {homeShare: true}})
+      
     }
     /**
      * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
