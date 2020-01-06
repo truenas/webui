@@ -22,6 +22,7 @@ import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import {EntityUtils} from '../../../../common/entity/utils';
 import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
+import { MessageService } from '../../../../../pages/common/entity/entity-form/services/message.service'
 
 
 @Component({
@@ -57,6 +58,7 @@ export class DatasetAclComponent implements OnDestroy {
   protected dialogRef: any
   protected route_success: string[] = [ 'storage', 'pools' ];
   public save_button_enabled = true;
+  public homeShare;
 
   protected uid_fc: any;
   protected gid_fc: any;
@@ -274,7 +276,8 @@ export class DatasetAclComponent implements OnDestroy {
               protected aroute: ActivatedRoute, 
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
-              protected loader: AppLoaderService, protected dialog: MatDialog) {}
+              protected loader: AppLoaderService, protected dialog: MatDialog,
+              protected messageService: MessageService) {}
 
   preInit(entityEdit: any) {
     this.sub = this.aroute.params.subscribe(params => {
@@ -310,6 +313,8 @@ export class DatasetAclComponent implements OnDestroy {
             {label : item, value : item});
       });
     });
+    this.homeShare = this.messageService.messageSourceHasNewMessage$;
+    console.log(this.homeShare)
   }
 
   afterInit(entityEdit: any) {

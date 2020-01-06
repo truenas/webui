@@ -9,6 +9,7 @@ import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
 import { catchError, map, switchMap, take, tap, filter } from 'rxjs/operators';
+import { MessageService } from '../../../../pages/common/entity/entity-form/services/message.service'
 import { AppLoaderService, DialogService, RestService, WebSocketService } from '../../../../services/';
 import { Validators } from '@angular/forms';
 
@@ -212,7 +213,8 @@ export class SMBFormComponent {
     protected ws: WebSocketService,
     private dialog: DialogService,
     protected loader: AppLoaderService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    protected messageService: MessageService
   ) {
     combineLatest(
       this.ws.call("sharing.smb.query", []),
@@ -302,6 +304,15 @@ export class SMBFormComponent {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
+    const homeShare = entityForm.formGroup.get('home').value;
+    const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]
+
+    if (homeShare && entityForm.isNew) {
+      this.messageService.newMessage('hey now!');
+      return this.router.navigate(
+        ['/'].concat(ACLRoute)
+      )
+    }
     /**
      * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
@@ -325,7 +336,7 @@ export class SMBFormComponent {
         tap(([doConfigureACL, dataset]) =>
           doConfigureACL
             ? this.router.navigate(
-                ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId])
+                ['/'].concat(ACLRoute)
               )
             : this.router.navigate(['/'].concat(this.route_success))
         )
