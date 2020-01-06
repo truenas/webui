@@ -717,9 +717,6 @@ msgstr ""
 "de base de données de configuration téléchargé a été enregistré sans le "
 "Password Secret Seed</font></p>"
 
-msgid ">release notes</a>."
-msgstr ""
-
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -880,6 +877,9 @@ msgstr "AFP"
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 Unix Privs"
+
+msgid "API"
+msgstr ""
 
 msgid "API Key"
 msgstr "Clé API"
@@ -2542,9 +2542,6 @@ msgstr "Serveur CheckIP SSL"
 msgid "Checking HA status"
 msgstr "Vérification de l'état du HA"
 
-msgid "Checking this box clears a previously-set password."
-msgstr ""
-
 msgid "Chmod Request"
 msgstr "Demande de Chmod"
 
@@ -2989,6 +2986,9 @@ msgstr ""
 "d'informations."
 
 msgid "Clear SED Password"
+msgstr ""
+
+msgid "Clear the SED password for this disk."
 msgstr ""
 
 msgid ""
@@ -7132,6 +7132,9 @@ msgstr "Conserver les modifications du réseau"
 msgid "Keep changed network settings permanently?"
 msgstr "Conserver en permanence les paramètres réseau modifiés ?"
 
+msgid "Keep snapshot for"
+msgstr ""
+
 msgid ""
 "Keep the name short. Using a name longer than 63 characters can prevent "
 "accessing the block device."
@@ -7335,6 +7338,9 @@ msgid ""
 msgstr ""
 "Quitter le domaine nécessite des privilèges suffisants. Entrez vos "
 "informations d'identification ci-dessous."
+
+msgid "Legacy"
+msgstr ""
 
 msgid "Legacy Web Interface"
 msgstr "Interface Web legacy"
@@ -10894,6 +10900,11 @@ msgstr ""
 "répondre aux demandes de montage non-root (non racine)."
 
 msgid ""
+"Set or change the password of this SED.  This password is used instead of "
+"the global SED password."
+msgstr ""
+
+msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
 "target=\"_blank\">getrlimit(2)</a> utility."
@@ -13746,11 +13757,6 @@ msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "Utiliser le format <i>A.B.C.C.D/E</i> où <i>E</i> est le masque CIDR."
 
 msgid ""
-"Use this field to set or change the password for SED. Leave this field "
-"blank  to keep a previously-set password."
-msgstr ""
-
-msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
 "that SMB1 is being deprecated and it is advised to upgrade clients to "
 "operating system versions that support modern versions of the SMB protocol."
@@ -13930,6 +13936,9 @@ msgstr "Temps du système de la VM. La valeur par défaut est <i>Local</i>."
 
 msgid "VMWare Sync"
 msgstr "VMWare Sync"
+
+msgid "VMware Sync"
+msgstr ""
 
 msgid "VMware-Snapshots"
 msgstr "VMware-Snapshots"

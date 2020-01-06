@@ -592,9 +592,6 @@ msgstr ""
 "<p>系统将重新启动以执行此操作！</p> <p> <font "
 "color=\"red\">在没有密码种子的情况下保存上传的配置数据库文件时，所有密码都会重置。</font> </p>"
 
-msgid ">release notes</a>."
-msgstr ">发行说明</a>。"
-
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -733,6 +730,9 @@ msgstr "AFP"
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 权限"
+
+msgid "API"
+msgstr ""
 
 msgid "API Key"
 msgstr "API密钥"
@@ -2176,9 +2176,6 @@ msgstr "CheckIP服务器SSL"
 msgid "Checking HA status"
 msgstr "正在检查HA状态"
 
-msgid "Checking this box clears a previously-set password."
-msgstr "选中此框将清除先前设置的密码。"
-
 msgid "Chmod Request"
 msgstr "Chmod请求"
 
@@ -2537,6 +2534,9 @@ msgstr ""
 
 msgid "Clear SED Password"
 msgstr "清除SED密码"
+
+msgid "Clear the SED password for this disk."
+msgstr ""
 
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
@@ -4041,7 +4041,12 @@ msgid ""
 "still report that the task was successful. To  verify that files were "
 "transferred successfully, click the finished  task status to see a list of "
 "transferred files."
-msgstr "使用rclone <a href=\"https://rclone.org/crypt/#file-name-encryption-modes\" target=\"_blank\">\"Standard\"文件名加密模式</a>加密（<i> 推送 </i>）或解密（<i> 拉取 </i>）文件名。原始目录结构得以保留。具有相同名称的文件名始终具有相同的加密文件名。<br> <br> 启用了<b>文件名加密</b>且<b>加密密码</ b>或<b>加密盐</ b>不正确的<i> 拉取 </ i>任务将不会传输任何文件，但仍然会报告该任务已成功。要验证文件是否已成功传输，请单击完成的任务状态以查看已传输文件的列表。"
+msgstr ""
+"使用rclone <a href=\"https://rclone.org/crypt/#file-name-encryption-modes\" "
+"target=\"_blank\">\"Standard\"文件名加密模式</a>加密（<i> 推送 </i>）或解密（<i> 拉取 "
+"</i>）文件名。原始目录结构得以保留。具有相同名称的文件名始终具有相同的加密文件名。<br> <br> "
+"启用了<b>文件名加密</b>且<b>加密密码</ b>或<b>加密盐</ b>不正确的<i> 拉取 </ "
+"i>任务将不会传输任何文件，但仍然会报告该任务已成功。要验证文件是否已成功传输，请单击完成的任务状态以查看已传输文件的列表。"
 
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr "加密的存储池磁盘必须在导入之前解密。"
@@ -6200,6 +6205,9 @@ msgstr "保持网络更改"
 msgid "Keep changed network settings permanently?"
 msgstr "要永久更改网络设置吗？"
 
+msgid "Keep snapshot for"
+msgstr ""
+
 msgid ""
 "Keep the name short. Using a name longer than 63 characters can prevent "
 "accessing the block device."
@@ -6385,6 +6393,9 @@ msgid ""
 "Leaving the domain requires sufficient privileges. Enter your credentials "
 "below."
 msgstr "离开域需要足够的权限。在下面输入您的凭据。"
+
+msgid "Legacy"
+msgstr ""
 
 msgid "Legacy Web Interface"
 msgstr "旧版Web界面"
@@ -9505,6 +9516,11 @@ msgid ""
 msgstr "仅在NFS客户端要求时设置。设置为允许服务非root安装请求。"
 
 msgid ""
+"Set or change the password of this SED.  This password is used instead of "
+"the global SED password."
+msgstr ""
+
+msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
 "target=\"_blank\">getrlimit(2)</a> utility."
@@ -11853,11 +11869,6 @@ msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "使用格式<i>ABCD / E</i> ，其中<i>E</i>是CIDR掩码。"
 
 msgid ""
-"Use this field to set or change the password for SED. Leave this field "
-"blank  to keep a previously-set password."
-msgstr "使用此字段设置或更改SED的密码。将此字段保留为空白以保留先前设置的密码。"
-
-msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
 "that SMB1 is being deprecated and it is advised to upgrade clients to "
 "operating system versions that support modern versions of the SMB protocol."
@@ -12007,6 +12018,9 @@ msgstr "虚拟机系统时间。默认为<i>本地</i>。"
 
 msgid "VMWare Sync"
 msgstr "虚拟机同步"
+
+msgid "VMware Sync"
+msgstr ""
 
 msgid "VMware-Snapshots"
 msgstr "虚拟机快照"
@@ -12213,7 +12227,8 @@ msgid ""
 "read-only for others. <b>Only</b> leave unset when creating a share on a "
 "system that already has custom ACLs configured."
 msgstr ""
-"启用后，访问控制列表会授予所有者或组读取和写入访问权限，并为其他人授予只读访问权限。<b>仅</b>在已配置自定义访问控制列表的系统上创建共享时，请保持未设置设置。"
+"启用后，访问控制列表会授予所有者或组读取和写入访问权限，并为其他人授予只读访问权限。<b>仅</b>"
+"在已配置自定义访问控制列表的系统上创建共享时，请保持未设置设置。"
 
 msgid ""
 "When replicated snapshots are deleted  from the destination system: <br>  "
