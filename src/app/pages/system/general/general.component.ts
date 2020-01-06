@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
 import { DialogService, LanguageService, RestService, StorageService, SystemGeneralService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { LocaleService } from 'app/services/locale.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../common/entity/utils';
@@ -129,6 +130,19 @@ export class GeneralComponent {
           placeholder: helptext.stg_timezone.placeholder,
           tooltip: helptext.stg_timezone.tooltip,
           options: [{ label: "---", value: null }],
+          width: '50%'
+        },
+        {
+          type: 'select',
+          name: 'date_format',
+          placeholder: 'Date Format',
+          tooltip: 'As I said, Date Format',
+          options: [{ label: '---', value: null }],
+          width: '50%'
+        },
+        {
+          type: 'paragraph',
+          name: 'placeholder',
           width: '50%'
         }
       ]
@@ -260,7 +274,8 @@ export class GeneralComponent {
     protected loader: AppLoaderService,
     public http: Http,
     protected storage: StorageService,
-    private sysGeneralService: SystemGeneralService
+    private sysGeneralService: SystemGeneralService,
+    public localeService: LocaleService
   ) {}
 
   IPValidator(name: string, wildcard: string) {
@@ -340,6 +355,8 @@ export class GeneralComponent {
           .config.find(config => config.name === "ui_v6address").options = v6Ips;
       });
 
+
+
     this.makeLanguageList();
 
     this.sysGeneralService.kbdMapChoices().subscribe(mapChoices => {
@@ -354,6 +371,11 @@ export class GeneralComponent {
         .config.find(config => config.name === "timezone").options = tzChoices;
     });
 
+    let dateOptions = this.localeService.getDateFormatOptions();
+    this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "date_format").options = dateOptions;
+   
     entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res)=> {
       res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
       this.makeLanguageList();
@@ -522,6 +544,8 @@ export class GeneralComponent {
   }
 
   public customSubmit(body) {
+    this.localeService.saveDateFormat(body.date_format);
+    delete body.date_format;
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
