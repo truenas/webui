@@ -63,7 +63,7 @@ export class GroupListComponent {
         name: helptext.group_list_actions_id_edit,
         onClick : (members_edit) => {
           this._router.navigate(new Array('/').concat(
-            [ "account", "groups", "edit", members_edit.id ]));
+            [ "account", "groups", "edit", members_edit.bsdgrp_gid ]));
         }
       })
       actions.push({

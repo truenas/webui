@@ -4,7 +4,10 @@
 </h1>
 <div mat-dialog-content id="err-md-content">
   <div id="err-message-wrapper"><span [innerHTML]="message"></span></div>
-  <div class="more-info" (click)="toggleOpen($event)" *ngIf="backtrace">
+  <div class="more-info" (click)="toggleOpen($event)" *ngIf="backtrace"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="backtrace-toggle">
     <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
     <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
     <span>More info...</span>
@@ -16,6 +19,12 @@
 <div mat-dialog-actions>
   &nbsp;
   <span fxFlex></span>
-  <button mat-button class="mat-button mat-accent" (click)="dialogRef.close(true)">{{"Close" | translate}}</button>
-  <button mat-button class="mat-button mat-primary" *ngIf="logs" (click)="downloadLogs()">{{"Download Logs" | translate}}</button>
+  <button mat-button class="mat-button mat-accent" (click)="dialogRef.close(true)"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="CLOSE">{{"Close" | translate}}</button>
+  <button mat-button class="mat-button mat-primary" *ngIf="logs" (click)="downloadLogs()"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="DOWNLOAD LOGS">{{"Download Logs" | translate}}</button>
 </div>

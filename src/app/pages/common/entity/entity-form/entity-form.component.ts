@@ -226,7 +226,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       // Fallback if no fieldsets are defined
       if(this.conf.fieldSets){
         this.fieldConfig = [];
-        this.fieldSets = this.conf.fieldSets;
+        /* Temp patch to support both FieldSet approaches */
+        this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
         for(let i = 0; i < this.fieldSets.length; i++){
           let fieldset = this.fieldSets[i];
           if(fieldset.config){
@@ -275,7 +276,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             filter = this.conf.customFilter;
           }
           if (this.conf.queryKey) {
-            filter = [[[this.conf.queryKey, '=', pk]]];
+            filter = [[[this.conf.queryKey, '=', parseInt(pk, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
           }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {

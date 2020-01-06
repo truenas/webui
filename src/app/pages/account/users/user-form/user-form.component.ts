@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import * as _ from 'lodash';
 
 import {
-  RestService,
+  //RestService,
   WebSocketService,
   StorageService,
   AppLoaderService,
@@ -266,8 +266,9 @@ export class UserFormComponent {
   private sudo: any;
   private locked: any;
 
-  constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected storageService: StorageService,
+  constructor(protected router: Router, 
+              protected ws: WebSocketService, 
+              protected storageService: StorageService,
               public loader: AppLoaderService
               ) {
       this.ws.call('user.query').subscribe(

@@ -3,6 +3,7 @@ import { regexValidator } from '../../pages/common/entity/entity-form/validators
 import { rangeValidator } from '../../pages/common/entity/entity-form/validators/range-validation';
 
 export const helptext = {
+fieldset_general: T('General Options'),
 cpu_in_percentage_placeholder: T('Report CPU usage in percent'),
 cpu_in_percentage_tooltip: T('When set, report CPU usage in percent \
  instead of units of kernel time.'),

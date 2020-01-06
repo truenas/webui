@@ -30,30 +30,12 @@ export class NetworkService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
-  getVlanNicChoices() {
-    return this.ws.call('notifier.choices',
-                        [ 'NICChoices', [ false, true, true, true, false ] ]);
-  }
-
   getVlanParentInterfaceChoices() {
     return this.ws.call('interface.vlan_parent_interface_choices');
   }
 
-  getInterfaceNicChoices() {
-    return this.ws.call('notifier.choices', [ 'NICChoices', [] ]);
-  }
-
-  getLaggNicChoices() {
-    return this.ws.call('notifier.choices',
-                        [ 'NICChoices', [ true, false, true ] ]);
-  }
-
   getLaggPortsChoices(id = null) {
     return this.ws.call('interface.lag_ports_choices', [id]);
-  }
-
-  getLaggProtocolTypes() {
-    return this.ws.call('notifier.choices', [ 'LAGGType' ]);
   }
 
   getBridgeMembersChoices(id = null) {

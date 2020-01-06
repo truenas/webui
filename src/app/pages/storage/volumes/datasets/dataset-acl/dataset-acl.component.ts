@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
 import { UserService } from '../../../../../services/user.service';
-import {RestService, WebSocketService, StorageService, DialogService} from '../../../../../services/';
+import {WebSocketService, StorageService, DialogService} from '../../../../../services/';
 import {
   FieldConfig
 } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -271,7 +271,7 @@ export class DatasetAclComponent implements OnDestroy {
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected aroute: ActivatedRoute, protected rest: RestService,
+              protected aroute: ActivatedRoute, 
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
               protected loader: AppLoaderService, protected dialog: MatDialog) {}

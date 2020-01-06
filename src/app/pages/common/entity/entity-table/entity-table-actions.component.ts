@@ -19,6 +19,7 @@ export class EntityTableActionsComponent implements OnInit {
   @Input('entity') entity: EntityTableComponent & { conf: any };
   @Input('row') row: any;
   @Input('icon_name') icon_name = "more_vert";
+  @Input('action') action: any;
 
   public actions: any[];
   public showMenu = true;
@@ -40,18 +41,5 @@ export class EntityTableActionsComponent implements OnInit {
       this.key_prop = this.entity.filterColumns[0].prop;
     }
     this.actions = this.entity.getActions(this.row);
-    
-    interval(5000).subscribe((val) => {
-      this.actions = this.entity.getActions(this.row);
-      const removeIds = [];
-      for (let i = 0; i < this.actions.length; i++) {
-        if (this.entity.conf.isActionVisible) {
-          this.actions[i].visible = this.entity.conf.isActionVisible.bind(
-              this.entity.conf)(this.actions[i].id, this.row);
-        } else {
-          this.actions[i].visible = true;
-        }
-      }
-     });
   }
 }
