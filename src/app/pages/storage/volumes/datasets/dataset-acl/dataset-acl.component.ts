@@ -56,7 +56,6 @@ export class DatasetAclComponent implements OnDestroy {
   protected dialogRef: any
   protected route_success: string[] = [ 'storage', 'pools' ];
   public save_button_enabled = true;
-  public homeShare;
 
   protected uid_fc: any;
   protected gid_fc: any;
