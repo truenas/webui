@@ -533,6 +533,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         let body = {};
         if (this.isNew) {
           body = {name: this.name, encryption: this.isEncrypted, topology: { data: layout } };
+          if (this.isEncrypted) { // quick fix to restore old encrypted pool creation functionality, this will change
+            const encryption_options = {'generate_key': true};
+            body['encryption_options'] = encryption_options;
+          }
         } else {
           body  = {name: this.name, topology: layout };
         }
