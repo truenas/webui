@@ -1,4 +1,4 @@
-<div class="widget" ngClass.xs="double-height xs {{!product_image ? 'generic-hardware' : 'ix-hardware'}}" >
+<div class="widget" [ngClass]="{'double-height': true,'xs': screenType == 'Mobile', 'generic-hardware': !product_image, 'ix-hardware': product_image}" >
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
@@ -6,7 +6,7 @@
         <mat-toolbar-row fxHide.xs class="view-overview">
           <span fxHide.xs class="mat-card-title-text">
             <span class="card-title-text">
-              &nbsp;System Information&nbsp;<span *ngIf="isPassive" class="passive">(Standby)</span>
+              &nbsp;{{"System Information" | translate}}&nbsp;<span *ngIf="isPassive" class="passive">({{"Standby" | translate}})</span>
             </span>
           </span>
         </mat-toolbar-row>
@@ -27,15 +27,18 @@
                 <img *ngIf="!isFN" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">
               </div>
 
-            <div class="content-left" fxFlex="60" fxLayout="column" fxLayoutAlign="center center">
+            <div class="content-left" [fxFlex.xs]="!isFN && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
 
               <div class="product-image {{!isFN ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                 <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
-                    <mat-icon *ngIf="isFN" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="isFN && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="isFN && certified" class="generic certified" svgIcon="freenas_certified"></mat-icon>
                   </ng-template>
-                  <img class="certified-badge" *ngIf="certified" src="assets/images/freenas_certified.svg">
-                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" }})</div>
+                  <div class="generic alert" *ngIf="!product_image && isPassive && ha_status !== 'HA Enabled'">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  </div>
+                  <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" | translate }})</div>
               </div>
             </div>
 
@@ -45,14 +48,24 @@
 
             <ng-template #noUpdateRunning>
               <div fxHide.xs fxFlex="18" class="update-action">
-                <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
-                <simple-failover-button *ngIf="isPassive"></simple-failover-button>
+                <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])"
+                  ix-auto ix-auto-type="button" ix-auto-identifier="{{updateBtnLabel | uppercase}}">{{updateBtnLabel | translate}}</button>
+                <simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></simple-failover-button>
               </div>
             </ng-template>  
           </div>
   
           <!-- Details Section -->
           <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
+
+            <div  fxFlex *ngIf="!data && isHA && isPassive && !ha_status" class="data-container ha-status">
+              <div class="spinner-wrapper"><mat-spinner [diameter]="40" style="margin: 0 auto;"></mat-spinner></div>
+            </div>
+
+            <div  fxFlex *ngIf="!data && isHA && isPassive && ha_status && ha_status !== 'HA Enabled'" class="data-container ha-status">
+              <h3>{{ha_status}}</h3>
+            </div>
+
             <div  fxFlex *ngIf="data" class="data-container">
               <div fxHide.gt-xs class="list-subheader">{{isPassive ? 'System Information (Standby)' : 'System Information'}}</div>
               <div fxHide.xs class="list-subheader">Overview</div>
@@ -78,7 +91,8 @@
               </mat-list>
 
               <div fxHide.gt-xs class="mobile-update-action update-action" *ngIf="ready">
-                <button *ngIf="!isPassive" class="" mat-button color="primary" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+                <button *ngIf="!isPassive" class="" mat-button color="primary" (click)="router.navigate(['system','update'])"
+                  ix-auto ix-auto-type="button" ix-auto-identifier="{{updateBtnLabel | uppercase}}">{{updateBtnLabel | translate}}</button>
                 <simple-failover-button color="primary" *ngIf="isPassive"></simple-failover-button>
               </div>
               
@@ -96,7 +110,8 @@
       <mat-card-content>
         <h3>Form goes here</h3>
       </mat-card-content>
-      <div class="widget-footer"><button mat-button color="primary" (click)="toggleConfig()">{{"Flip" | translate}}</button></div>
+      <div class="widget-footer"><button mat-button color="primary" (click)="toggleConfig()"
+          ix-auto ix-auto-type="button" ix-auto-identifier="FLIP">{{"Flip" | translate}}</button></div>
     </mat-card>
   </div>
 </div>

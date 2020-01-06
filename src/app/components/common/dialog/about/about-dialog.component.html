@@ -21,11 +21,17 @@
 					<label mat-line class="mr-1"><strong>Uptime:</strong></label>
 					<p mat-line>{{info.uptime}} </p>
 				</mat-list-item>
-				<mat-list-item *ngFor="let ip of ipAddress">
+				<mat-list-item *ngFor="let ip of ipv4Choices">
 					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
 					<span class="cdk-visually-hidden mr-1">Label Icon</span>
-					<label mat-line class="mr-1"><strong>IP:</strong></label>
-					<p mat-line>{{ip}} </p>
+					<label mat-line class="mr-1"><strong>IPv4:</strong></label>
+					<p mat-line>{{ip.label}} </p>
+				</mat-list-item>
+				<mat-list-item *ngFor="let ip of ipv6Choices">
+					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+					<span class="cdk-visually-hidden mr-1">Label Icon</span>
+					<label mat-line class="mr-1"><strong>IPv6:</strong></label>
+					<p mat-line>{{ip.label}} </p>
 				</mat-list-item>
 				<mat-list-item>
 					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
@@ -55,5 +61,6 @@
 	<ng-template #isTruenasCopyright>
 		<span fxFlex class="copyright-txt">TrueNAS® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
 	</ng-template>
-  <button mat-button class="mat-button mat-primary" (click)="dialogRef.close(false)">{{"Close" | translate}}</button>
+  <button mat-button class="mat-button mat-primary" (click)="dialogRef.close(false)"
+  	ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">{{"Close" | translate}}</button>
 </div>

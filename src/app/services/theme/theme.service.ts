@@ -313,24 +313,11 @@ export class ThemeService {
     this.allThemes = this.freenasThemes;
     this.themesMenu = this.freenasThemes;
 
-    this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
-      this.core.emit({name:"ThemeChanged", data:this.findTheme(this.activeTheme), sender:this});
-      this.loggedIn = evt.data;
-      if(this.loggedIn == true){
-        this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]] });
-      } else {
-        //console.warn("SETTING DEFAULT THEME");
-        this.resetToDefaultTheme();
-      }
-    });
-
     this.core.register({observerClass:this, eventName:"ThemeDataRequest"}).subscribe((evt:CoreEvent) => {
       this.core.emit({name:"ThemeData", data:this.findTheme(this.activeTheme), sender:this});
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
-      console.log("GlobalPreview callback")
-      //this.globalPreview = !this.globalPreview;
       if(evt.data){
         this.globalPreview = true;
       } else {
@@ -346,16 +333,15 @@ export class ThemeService {
     });
 
     this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+
       if(evt.data.customThemes){
         this.customThemes = evt.data.customThemes;
       }
 
-      //if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
         this.setCssVars(this.findTheme(this.activeTheme, true));
         this.userThemeLoaded = true;
         this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
-      //}
 
       if(evt.data.allowPwToggle){
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop","inline");
@@ -368,7 +354,7 @@ export class ThemeService {
       } else if(!evt.data.allowPwToggle){
         (<any>document).documentElement.style.setProperty("--enableWarning", "none");
       }
-
+      
     });
   }
 

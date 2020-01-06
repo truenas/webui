@@ -18,9 +18,7 @@ import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
-import {ManualUpdateConfigSaveComponent} from './update/manualupdate/manualupdateconfig-save/'
-import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
-import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
+import { NTPServerFormComponent } from './ntpservers/ntpserver-form';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
@@ -39,15 +37,15 @@ import { CertificateAddComponent } from './certificates/certificate-add';
 import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
 import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
 import { SupportComponent } from './support/support.component';
-import {EmailComponent} from './email/';
+import { EmailComponent } from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
-import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './support/eula/eula.component';
+import { T } from '../../translate-marker';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -155,11 +153,6 @@ export const routes: Routes = [
               path:'',
               component: ManualUpdateComponent,
               data: { title: 'Manual Update', breadcrumb: 'Manual Update' },
-            },
-            {
-              path:'saveconfig',
-              component: ManualUpdateConfigSaveComponent,
-              data: {title:'Save Config', breadcrumb: 'config'}
             }
           ]
         },
@@ -174,12 +167,12 @@ export const routes: Routes = [
           data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
         }, {
           path: 'add',
-          component: NTPServerAddComponent,
+          component: NTPServerFormComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
         },
         {
           path: 'edit/:pk',
-          component: NTPServerEditComponent,
+          component: NTPServerFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
         }
       ]
@@ -204,11 +197,11 @@ export const routes: Routes = [
         }, {
           path: 'add',
           component: AlertServiceComponent,
-          data: { title: 'Add Alert Service', breadcrumb: 'Add Alert Service' },
+          data: { title: T('Add Alert Service'), breadcrumb: T('Add Alert Service') },
         }, {
           path: 'edit/:pk',
           component: AlertServiceComponent,
-          data: { title: 'Edit Alert Service', breadcrumb: 'Edit Alert Service' },
+          data: { title: T('Edit Alert Service'), breadcrumb: T('Edit Alert Service') },
         }
       ]
     },{
@@ -351,16 +344,8 @@ export const routes: Routes = [
           data: { title: 'EULA', breadcrumb: 'EULA'}
         }
       ]
-    }, 
-    {
-      path: 'proactivesupport',
-      component: ProactiveSupportComponent,
-      data: {
-          title: 'Proactive Support',
-          breadcrumb: 'Proactive Support',
-          icon: 'perm_phone_msg',
-      }
-    }]
+    }
+    ]
   }
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

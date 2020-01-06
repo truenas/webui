@@ -41,9 +41,15 @@ interface NetIfInfo {
 }
 
 interface NetTraffic {
-  "KB/s in": string;
-  "KB/s out": string;
-  name: string;
+  sent: string;
+  sentUnits: string;
+  received: string;
+  receivedUnits: string;
+}
+
+interface Converted {
+  value: string;
+  units: string;
 }
 
 interface Slide {
@@ -77,16 +83,16 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   public title: string = "Interface";
 
   path: Slide[] = [
-    { name: "overview"},
-    { name: "empty"},
-    { name: "empty"}
+    { name: T("overview")},
+    { name: T("empty")},
+    { name: T("empty")}
   ];
 
   get ipAddresses(){
     if(!this.nicState && !this.nicState.aliases){ return [];}
 
     let result = this.nicState.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6' ;
     });
     
     return result;
@@ -98,9 +104,8 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
 
     let vlan = this.nicState.vlans[ parseInt(this.path[2].index) ];
     let result = vlan.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6' ;
     });
-    console.log(vlan);
 
     return result;
   }
@@ -124,25 +129,26 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     if(changes.nicState ){
       this.title = this.currentSlide == "0" ? "Interface" : this.nicState.name;
     }
+
   }
 
   ngOnInit(){
-
-    this.core.emit({name:"NetInfoRequest"});
-    
-    //Get Network info and determine Primary interface
-    this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
-    });
-
-    this.core.register({observerClass:this, eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
-    });
-
   }
 
   ngAfterViewInit(){
     this.stats.subscribe((evt:CoreEvent) => {
       if(evt.name == "NetTraffic_" + this.nicState.name){
-        this.traffic = evt.data;
+        const sent: Converted = this.convert(evt.data.sent_bytes_rate);
+        const received: Converted = this.convert(evt.data.received_bytes_rate);
+
+        let t = {
+          sent: sent.value,
+          sentUnits: sent.units,
+          received: received.value,
+          receivedUnits: received.units
+        }
+
+        this.traffic = t; //evt.data;
       }
     })
   }
@@ -182,7 +188,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     if(typeof vlanIndex == 'string'){ vlanIndex = parseInt(vlanIndex); }
     let vlan = this.nicState.vlans[vlanIndex];
     let result = vlan.aliases.filter((item) => {
-      return item.type == 'INET' ;
+      return item.type == 'INET' || item.type == 'INET6';
     });
     return result;
   }
@@ -203,6 +209,55 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
       return -1;
     }
     
+  }
+
+  convert(value): Converted{
+    let result;
+    let units;
+
+    // uppercase so we handle bits and bytes...
+    switch(this.optimizeUnits(value)){
+      case 'KB':
+        units = T('KiB');
+        result = value / 1024;
+        break;
+      case 'MB':
+        units = T('MiB');
+        result = value / 1024 / 1024;
+        break;
+      case 'GB':
+        units = T('GiB');
+        result = value / 1024 / 1024 / 1024;
+        break;
+      case 'TB':
+        units = T('TiB');
+        result = value / 1024 / 1024 / 1024 / 1024;
+        break;
+      case 'PB':
+        units = T('PiB');
+        result = value / 1024 / 1024 / 1024 / 1024 / 1024;
+        break;
+      default:
+        units = T('KiB');
+        result = 0.00;
+    }
+
+    return result ? { value: result.toFixed(2), units: units } : { value: '0.00', units: units };
+  }
+
+  optimizeUnits(value){
+    let units: string = 'B';
+    if(value > 1024 && value < (1024 * 1024)){
+      units = 'KB';
+    } else if (value >= (1024 * 1024) && value < (1024 * 1024 * 1024)){
+      units = 'MB'
+    } else if (value >= (1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024)){
+      units = 'GB'
+    } else if (value >= (1024 * 1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024 * 1024)){
+      units = 'TB'
+    }
+
+    return units;
   }
 
 }

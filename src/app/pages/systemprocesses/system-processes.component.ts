@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ShellService, WebSocketService } from '../../services/';
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 
@@ -18,20 +18,30 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   public token: any;
   public xterm: any;
   private shellSubscription: any;
+  private top_displayed = false;
 
   clearLine = "\u001b[2K\r"
 
   ngOnInit() {
+    const self = this;
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
         this.xterm.write(value);
-        this.xterm.setOption('disableStdin', true);
+        if (!this.top_displayed) {
+          setTimeout(function() {
+            self.xterm.send('top\n');
+            setTimeout(function() {
+              self.xterm.setOption('disableStdin', true);
+            }, 100);
+          }, 100);
+          this.top_displayed = true;
+        }
       });
       this.initializeTerminal().then((res) => {
         if (res) {
           // excute 'top' command
-          this.xterm.send('top\n');
+         
         }
       });
     });
@@ -53,7 +63,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
         //'tabStopWidth': 4,
         'cols': 80,
         'rows': 25,
-        //'focus': true,
+        'focus': false, 
       });
       this.xterm.open(this.container.nativeElement);
       this.xterm.attach(this.ss);
@@ -72,11 +82,10 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   }
 
   onShellRightClick(): false {
-    this.snackbar.openFromComponent(CopyPasteMessageComponent);
-
+    this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, private snackbar: MatSnackBar) {
+  constructor(private ws: WebSocketService, public ss: ShellService, private dialog: MatDialog) {
   }
 }

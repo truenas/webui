@@ -1,6 +1,10 @@
 import { T } from '../../../translate-marker';
 
 export default {
+afp_fieldset_path: T('Path'),
+afp_fieldset_access: T('Access'),
+afp_fieldset_other: T('Other Options'),
+
 afp_srv_guest_user_placeholder : T('Guest Account'),
 afp_srv_guest_user_tooltip: T('Select an account to use for guest access. This\
  account must have permissions to the shared pool or dataset.\
@@ -34,9 +38,9 @@ afp_srv_chmod_request_tooltip: T('Indicates how to handle Access Control Lists.\
  <b>Simple:</b> is set to chmod() as requested\
  without any extra steps.'),
 afp_srv_chmod_request_options : [
-  {label : 'Ignore', value : 'ignore'},
-  {label : 'Preserve', value : 'preserve'},
-  {label : 'Simple', value : 'simple'},
+  {label : 'Ignore', value : 'IGNORE'},
+  {label : 'Preserve', value : 'PRESERVE'},
+  {label : 'Simple', value : 'SIMPLE'},
 ],
 
 afp_srv_map_acls_placeholder : T('Map ACLs'),
@@ -45,9 +49,9 @@ afp_srv_map_acls_tooltip: T('Select mapping of permissions for\
  (default, Unix-style permissions), <b>None</b>,\
  or <b>Mode</b> (ACLs).'),
 afp_srv_map_acls_options : [
-  {label : 'Rights', value : 'rights'},
-  {label : 'None', value : 'none'},
-  {label : 'Mode', value : 'mode'},
+  {label : 'Rights', value : 'RIGHTS'},
+  {label : 'None', value : 'NONE'},
+  {label : 'Mode', value : 'MODE'},
 ],
 
 afp_srv_bindip_placeholder : T('Bind Interfaces'),

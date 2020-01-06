@@ -13,6 +13,7 @@ export class WebdavListComponent {
 
     public title = "WebDAV";
     protected queryCall: string = 'sharing.webdav.query';
+    protected wsDelete: string = 'sharing.webdav.delete';
     public busy: Subscription;
     public sub: Subscription;
 
@@ -25,8 +26,8 @@ export class WebdavListComponent {
         {prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
         {prop: 'comment', name: helptext_sharing_webdav.column_comment},
         {prop: 'path', name:  helptext_sharing_webdav.column_path},
-        {prop: 'ro', name:  helptext_sharing_webdav.column_ro},
-        {prop: 'perm', name:  helptext_sharing_webdav.column_perm},
+        {prop: 'ro', name:  helptext_sharing_webdav.column_ro, hidden: true},
+        {prop: 'perm', name:  helptext_sharing_webdav.column_perm, hidden: true},
     ];
     public rowIdentifier = helptext_sharing_webdav.column_name;
 

@@ -269,8 +269,11 @@ export class WebSocketService {
 
   loginCallback(result, observer) {
     if (result === true) {
+      if(!this.loggedIn){
+        this._authStatus.next(this.loggedIn);
+      }
+
       this.loggedIn = true;
-      this._authStatus.next(this.loggedIn);
       
       // Subscribe to all events by default
       this.send({

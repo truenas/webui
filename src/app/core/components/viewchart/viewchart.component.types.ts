@@ -15,7 +15,7 @@ export interface ChartConfiguration {
      * Note: When chart is not binded, c3 starts observing if chart.element is binded by MutationObserver. In this case, polyfill is required in IE9 and IE10 because they do not support
      * MutationObserver. On the other hand, if chart always will be binded, polyfill will not be required because MutationObserver will never be called.
      */
-    bindto?: string | HTMLElement | d3.Selection<any> | null;
+    bindto?: any//string | HTMLElement | d3.Selection<any> | null;
     size?: {
         /**
          * The desired width of the chart element.
@@ -378,11 +378,11 @@ export interface Data {
      * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that
      * represents color (e.g. '#00ff00').
      */
-    color?(color: string, d: any): string | d3.Rgb;
+    color?(color: string, d: any): string;
     /**
      * Set color for each data.
      */
-    colors?: { [key: string]: string | d3.Rgb | ((d: any) => string | d3.Rgb) };
+    colors?: { [key: string]: string | ((d: any) => string) };
     /**
      * Hide each data when the chart appears.
      * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.

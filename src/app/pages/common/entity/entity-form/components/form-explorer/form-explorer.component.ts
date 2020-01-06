@@ -22,7 +22,7 @@ export class FormExplorerComponent implements Field, OnInit {
   fieldShow: string;
   nodes: any[];
 
-  private treeVisible: boolean = false;
+  private treeVisible: boolean = true;
   private displayFieldName: string;
   private rootSelectable: boolean;
 
@@ -74,7 +74,6 @@ export class FormExplorerComponent implements Field, OnInit {
                public translate: TranslateService){}
 
   ngOnInit() {
-    this.treeVisible = false;
     this.rootSelectable = this.config.rootSelectable === undefined ? true : this.config.rootSelectable;
 
     if (this.config.multiple) {
@@ -122,7 +121,7 @@ export class FormExplorerComponent implements Field, OnInit {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
       }
       else if (this.config.explorerType === "dataset") {
-        resolve(this.entityFormService.getPoolDatasets());
+        resolve(this.entityFormService.getPoolDatasets(this.config.explorerParam ? this.config.explorerParam : []));
       }
       else {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));

@@ -1,1 +1,0 @@
-export {ServiceNetDataComponent} from './service-netdata.component';

@@ -4,9 +4,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
-import { SnackbarService } from 'app/services/snackbar.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -156,8 +154,7 @@ export class TnSupportComponent implements OnInit {
   ]
 
   constructor(public dialog: MatDialog, public loader: AppLoaderService,
-    public ws: WebSocketService, public snackbar: SnackbarService,
-    public dialogService: DialogService, public router: Router) { }
+    public ws: WebSocketService, public dialogService: DialogService, public router: Router) { }
 
   ngOnInit() {
   }

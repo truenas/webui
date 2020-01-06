@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { RestService, WebSocketService, SnackbarService, DialogService } from '../../../services/';
+import { WebSocketService, DialogService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_dataset } from 'app/helptext/system/dataset';
 import { EntityUtils } from '../../common/entity/utils';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -12,44 +13,65 @@ import { T } from '../../../translate-marker';
 @Component({
   selector: 'app-system-dataset',
   template : `<entity-form [conf]="this"></entity-form>`,
-  providers: [SnackbarService]
+  providers: []
 })
-export class DatasetComponent implements OnInit{
+export class DatasetComponent {
 
-  protected resource_name: string = 'storage/dataset';
-  protected volume_name: string = 'storage/volume';
+  protected queryCall: string = 'systemdataset.config';
+  protected updateCall: string = 'systemdataset.update';
+  public isEntity = false;
+
   public formGroup: FormGroup;
+  public entityForm: any;
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'select',
-      name: 'pool',
-      placeholder: helptext_system_dataset.pool.placeholder,
-      tooltip: helptext_system_dataset.pool.tooltip,
-      options: [
-        {label: '---', value: null},
-        { label: 'freenas-boot', value: 'freenas-boot' },
+      name: helptext_system_dataset.metadata.fieldsets[0],
+      class:'edit-system-dataset',
+      label:true,
+      width:'300px',
+      config:[
+        {
+          type: 'select',
+          name: 'pool',
+          placeholder: helptext_system_dataset.pool.placeholder,
+          tooltip: helptext_system_dataset.pool.tooltip,
+          options: [
+            {label: '---', value: null},
+          ]
+        },
+        {
+          type: 'checkbox',
+          name: 'syslog',
+          placeholder: helptext_system_dataset.syslog.placeholder,
+          tooltip : helptext_system_dataset.syslog.tooltip
+        }
       ]
     },
     {
-      type: 'checkbox',
-      name: 'syslog',
-      placeholder: helptext_system_dataset.syslog.placeholder,
-      tooltip : helptext_system_dataset.syslog.tooltip
-    }
-  ];
+      name:'divider',
+      divider:true
+    },
+  ]
 
   private pool: any;
   private syslog: any;
-  constructor(private rest: RestService, private ws: WebSocketService,
-              private loader: AppLoaderService, private snackbarService: SnackbarService,
-              private dialogService: DialogService) {}
+  constructor(private ws: WebSocketService,
+    private loader: AppLoaderService, 
+    private dialogService: DialogService) {}
 
-  ngOnInit() {
-    this.rest.get(this.volume_name, {}).subscribe( res => {
+  preInit(EntityForm) {
+    
+    this.ws.call('boot.pool_name').subscribe( res => {
+      this.pool = _.find(this.fieldConfig, {'name': 'pool'});
+      this.pool.options.push({ label: res, value: res});
+    });
+    
+    this.ws.call('pool.query').subscribe( res => {
        if (res) {
          this.pool = _.find(this.fieldConfig, {'name': 'pool'});
-         res.data.forEach( x => {
+         res.forEach( x => {
            this.pool.options.push({ label: x.name, value: x.name});
          });
        }
@@ -57,17 +79,20 @@ export class DatasetComponent implements OnInit{
   }
 
   afterInit(entityForm: any) {
-    this.ws.call('systemdataset.config').subscribe(res => {
+    this.entityForm = entityForm;
+    /*this.ws.call('systemdataset.config').subscribe(res => {
       entityForm.formGroup.controls['pool'].setValue(res.pool);
       entityForm.formGroup.controls['syslog'].setValue(res.syslog);
-    });
+    });*/
   }
 
   customSubmit(value) {
+    this.loader.open();
     this.ws.call("service.query").subscribe(
       (services) => {
         const smbShare = _.find(services, {'service': "cifs"});
         if (smbShare.state === 'RUNNING') {
+          this.loader.close();
           this.dialogService.confirm(
             T('Restart SMB Service'),
             T('The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.'),
@@ -75,6 +100,7 @@ export class DatasetComponent implements OnInit{
             T('Continue')
           ).subscribe((confirmed) => {
             if (confirmed) {
+              this.loader.open();
               this.doUpdate(value);
             }
           });
@@ -86,7 +112,6 @@ export class DatasetComponent implements OnInit{
   }
 
   doUpdate(value) {
-    this.loader.open();
     this.ws.job('systemdataset.update', [value]).subscribe(
       (res) => {
         if (res.error) {
@@ -97,10 +122,13 @@ export class DatasetComponent implements OnInit{
           new EntityUtils().handleWSError(this, res);
         }
         if (res.state === 'SUCCESS') {
-            this.snackbarService.open(T("Settings saved."), T('Close'), { duration: 5000 });
+          this.loader.close();
+          this.entityForm.success = true;
+          this.entityForm.formGroup.markAsPristine();
         }
       },
       (err) => {
+        this.loader.close();
         new EntityUtils().handleWSError(this, err);
       }
     );

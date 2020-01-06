@@ -95,7 +95,6 @@ export class VolumeStatusComponent implements OnInit {
     protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
-    protected snackBar: MatSnackBar,
     protected matDialog: MatDialog) {}
 
   getZfsPoolScan(poolName) {
@@ -268,7 +267,7 @@ export class VolumeStatusComponent implements OnInit {
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.snackBar.open("Successfully replaced disk " + name + ".", 'close', { duration: 5000 });
+              entityDialog.parent.dialogService.Info(T("Replacing Disk"), T("Successfully replaced disk ") + name + ".", '', 'info', true);
             }),
             dialogRef.componentInstance.failure.subscribe((res) => {
               if (res.error.startsWith('[EINVAL]')) {

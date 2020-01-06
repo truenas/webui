@@ -63,3 +63,7 @@ div.form-inline{
 .fieldset-container.fieldset-display-default .fieldset{
   margin:0;
 }
+
+.fieldset.hidden{
+  display:none !important;
+}

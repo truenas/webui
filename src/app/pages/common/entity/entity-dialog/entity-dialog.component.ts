@@ -13,6 +13,7 @@ import { EntityUtils } from '../utils';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
 import { DatePipe } from '@angular/common';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-entity-dialog',
@@ -37,6 +38,7 @@ export class EntityDialogComponent implements OnInit {
   public showPassword = false;
   public parent: any;
   public submitEnabled = true;
+  public instructions: string;
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
@@ -82,6 +84,7 @@ export class EntityDialogComponent implements OnInit {
     if(this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+    this.instructions = T(`Enter <strong>${ this.conf['name'] }</strong> below to confirm.`)
   }
 
   submit() {
@@ -106,7 +109,18 @@ export class EntityDialogComponent implements OnInit {
           }
         );
       } else if (this.conf.method_ws) {
-        // ws call
+        this.ws.call(this.conf.method_ws, [this.formValue]).subscribe(
+          () => {},
+          e => {
+            this.loader.close();
+            this.dialogRef.close(false);
+            new EntityUtils().handleWSError(this, e);
+          },
+          () => {
+            this.loader.close();
+            this.dialogRef.close(true);
+          }
+        );
       }
     }
   }

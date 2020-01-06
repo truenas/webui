@@ -42,6 +42,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   public views: ViewConfig[] = [];
   public spinner: boolean = true;
 
+  public system_manufacturer: string;
   private _system_product;
   get system_product(){
     return this._system_product;
@@ -100,7 +101,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
       this.system.diskData = evt.data;
-      //core.emit({name: 'PoolDataRequest', sender: this});
       core.emit({name: 'SensorDataRequest', sender: this});
       setTimeout(() => {
         this.spinner = false;
@@ -110,6 +110,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
       if(!this.system_product){
         this.system_product = evt.data.license.model;
+        this.system_manufacturer = evt.data.system_manufacturer.toLowerCase();
       } else {
         return;
       }

@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { JailService, NetworkService, DialogService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
 import { T } from '../../../translate-marker'
 import helptext from '../../../helptext/jails/jail-configuration';
 
@@ -26,19 +27,35 @@ export class JailWizardComponent {
   summary_title = "Jail Summary";
   objectKeys = Object.keys;
   entityWizard: any;
+  protected namesInUse = [];
 
   isLinear = true;
   firstFormGroup: FormGroup;
   protected custActions: Array<any> = [
   {
     id: 'advanced_add',
-    name: "Advanced Jail Creation",
+    name: T("Advanced Jail Creation"),
     function: () => {
       this.router.navigate(
         new Array('').concat(["jails", "add", "advanced"])
       );
     }
   }];
+
+  protected interfaces = {
+    vnetEnabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+    vnetDisabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+  }
 
   protected wizardConfig: Wizard[] = [{
       label: helptext.wizard_step1_label,
@@ -48,10 +65,7 @@ export class JailWizardComponent {
           required: true,
           placeholder: helptext.uuid_placeholder,
           tooltip: helptext.uuid_tooltip,
-          validation: [regexValidator(this.jailService.jailNameRegex)],
-          blurStatus: true,
-          blurEvent: this.blurEvent,
-          parent: this
+          validation: [regexValidator(this.jailService.jailNameRegex), forbiddenValues(this.namesInUse)],
         },
         {
           type: 'select',
@@ -129,10 +143,7 @@ export class JailWizardComponent {
           name: 'ip4_interface',
           placeholder: helptext.ip4_interface_placeholder,
           tooltip: helptext.ip4_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           relation: [{
             action: "ENABLE",
             connective: 'AND',
@@ -221,10 +232,7 @@ export class JailWizardComponent {
           name: 'ip6_interface',
           placeholder: helptext.ip6_interface_placeholder,
           tooltip: helptext.ip6_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           class: 'inline',
           width: '30%',
           value: '',
@@ -291,6 +299,7 @@ export class JailWizardComponent {
   public ipv6: any;
   protected template_list: string[];
   protected unfetchedRelease = [];
+  protected showSpinner = true;
 
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
@@ -335,12 +344,23 @@ export class JailWizardComponent {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{
         new EntityUtils().handleError(this, res);
+      }
+    );
+
+    this.jailService.getDefaultConfiguration().subscribe(
+      (res) => {
+        const ventInterfaces = res['interfaces'].split(',');
+        for (const item of ventInterfaces) {
+          this.interfaces.vnetEnabled.push({ label: item, value: item});
+        }
+      },
+      (err) => {
+        new EntityUtils().handleError(this, err);
       }
     );
   }
@@ -355,7 +375,8 @@ export class JailWizardComponent {
       } else {
         let full_address = ip4_address_control.value;
         if (ip4_interface_control.value != '') {
-          full_address = ip4_interface_control.value + '|' + ip4_address_control.value;
+          const validInterface = _.find(this.ip4_interfaceField.options, {value: ip4_interface_control.value}) !== undefined;
+          full_address = validInterface ? ip4_interface_control.value + '|' + ip4_address_control.value : ip4_address_control.value;
         }
         if (ip4_netmask_control.value != '') {
           full_address += '/' + ip4_netmask_control.value;
@@ -390,8 +411,13 @@ export class JailWizardComponent {
     }
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  async afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
+    await this.jailService.listJails().toPromise().then((res) => {
+      res.forEach(i => this.namesInUse.push(i.id));
+      this.entityWizard.showSpinner = false;
+    })
+
     const httpsField =  _.find(this.wizardConfig[0].fieldConfig, {'name': 'https'});
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
@@ -477,17 +503,8 @@ export class JailWizardComponent {
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
       this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
-      if (res) {
-        if (!_.find(this.ip4_interfaceField.options, { label: 'vnet0'})) {
-          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-        }
-        if (!_.find(this.ip6_interfaceField.options, { label: 'vnet0'})) {
-          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-        }
-      } else {
-        this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
-        this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
-      }
+      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
+      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
 
       if (((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
            ( < FormGroup > entityWizard.formArray.get([1])).controls['nat'].value) ||
@@ -498,6 +515,9 @@ export class JailWizardComponent {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
+
+      this.updateIpAddress(entityWizard, 'ipv4');
+      this.updateIpAddress(entityWizard, 'ipv6');
     });
   }
 
@@ -565,24 +585,6 @@ export class JailWizardComponent {
       this.dialogRef.close();
       new EntityUtils().handleWSError(this, res, this.dialogService);
     });
-  }
-
-  blurEvent(parent){
-    
-    const jail_name = parent.entityWizard.formGroup.value.formArray[0].uuid;
-    parent.ws.call('jail.query', [[["id","=",jail_name]]]).subscribe((jail_wizard_res)=>{
-      if(jail_wizard_res.length > 0){
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['hasErrors'] = true;
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['errors'] = `Jail ${jail_wizard_res[0].id} already exists.`;
-        parent.entityWizard.formGroup.controls.formArray.controls[0].controls.uuid.setValue("");
-
-  
-      } else {
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['hasErrors'] = false;
-        _.find(parent.wizardConfig[0].fieldConfig, {'name' : 'uuid'})['errors'] = '';
-
-      }
-    })
   }
 
   isCustActionVisible(id, stepperIndex) {

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef} from '@angular/core';
+import {Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef} from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ViewComponent } from 'app/core/components/view/view.component';
@@ -10,7 +10,6 @@ import * as moment from 'moment';
 import Dygraph from 'dygraphs';
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import Chart from 'chart.js';
-import 'chartjs-plugin-crosshair';
 import * as simplify from 'simplify-js';
 
 interface Conversion {
@@ -34,7 +33,7 @@ interface DataSet {
      templateUrl:'./lineChart.component.html',
      styleUrls:['./lineChart.component.css']
 })
-export class LineChartComponent extends ViewComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class LineChartComponent extends ViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('wrapper', {static: true}) el: ElementRef;
   @Input() chartId: string;
   @Input() chartColors: string[];
@@ -52,7 +51,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   @Input() interactive: boolean = false;
 
   public library: string = 'dygraph'; // dygraph or chart.js
-    public ctx: any; // canvas context for chart.js
+  public ctx: any; // canvas context for chart.js
 
   public chart:any;
   public conf:any;
@@ -68,7 +67,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   public _colorPattern: string[] = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
   get colorPattern(){
-    //return this.chartColors ? this.chartColors : this._colorPattern;
     return this.chartColors;
   }
 
@@ -97,14 +95,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
   }
 
   public render(option?:string){
-
-    if(this.library == 'dygraph'){
-      // Use dygraph for line graphs with large data sets
-      this.renderGraph(option);
-    } else if(this.library == 'chart.js'){
-      // Use chart.js for everything else
-      this.renderChart();
-    } 
+    this.renderGraph(option);
   }
 
   // dygraph renderer
@@ -145,7 +136,7 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
            clone.series[index].yHTML = this.limitDecimals(converted.value).toString() + suffix;
         
          });
-         //this.legendEvents.next(clone);
+         
          this.core.emit({name: "LegendEvent-" + this.chartId,data:clone, sender: this})
          return "";
        },
@@ -173,107 +164,11 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
      }
 
      if(option == 'update'){
-       this.chart.updateOptions(/*this.el.nativeElement, data,*/ options);
+       this.chart.updateOptions(options);
      } else {
        this.chart = new Dygraph(this.el.nativeElement, data, options);
      }
 
-  }
-
-  // chart.js renderer
-  public renderChart(){
-    if(!this.ctx){
-      const el = this.el.nativeElement.querySelector('canvas');
-      if(!el){ return; }
-
-      const ds = this.makeDatasets(this.data);
-      this.ctx = el.getContext('2d');
-
-      let data = {
-        labels: this.makeTimeAxis(this.data),//this.data.legend,
-        datasets: ds ,
-      }
-
-      let options = {
-        plugins: {
-          crosshair: {
-            line: {
-              width: 1,
-              color: '#666'
-            },
-            sync: {
-              enabled: true
-            },
-            zoom : {
-              enabled: true
-            },
-            callbacks: {
-              afterZoom: (start, end) => {
-              }
-            }
-          }
-        },
-        tooltips:{
-          enabled: true,
-          callbacks: { 
-            label: (evt, data) =>{
-              //console.log(evt);
-              }
-          }
-        },
-        //showLines: false,
-        responsive:true,
-        maintainAspectRatio: false,
-        legend: {
-          display: false
-        },
-        responsiveAnimationDuration: 0,
-        animation: {
-          duration: 0
-        },
-        hover: {
-          animationDuration: 0 
-        },
-        elements: {
-          line: {
-            tension: 0
-          }
-        },
-        scales: {
-          xAxes: [{
-            type: 'time',
-            display: true,
-            scaleLabel: {
-              display: false,
-              labelString: 'Date'
-            },
-          }],
-          yAxes: [{
-            ticks: {
-              beginAtZero: true
-            }
-          }]
-        }
-      }
-
-      this.chart = new Chart(this.ctx, {
-        type: this.type,
-        data:data,
-        options
-      });
-
-    } else {
-
-      const ds = this.makeDatasets(this.data);
-      let data = {
-        labels: this.makeTimeAxis(this.data, ds[0].data),//this.data.legend,
-        datasets: ds ,
-      }
-      this.chart.data = data;
-
-      this.chart.update();
-
-    }
   }
 
   makeColumn(data:ReportData, legendKey): number[]{
@@ -285,28 +180,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     }
 
     return result;
-  }
-
-  protected makeDatasets(data:ReportData): DataSet[]{
-
-    let datasets = [];
-    let legend = Object.assign([],data.legend);
-
-    // Create the data...
-    legend.forEach((item, index) => {
-
-      let ds:DataSet = {
-        label: item,
-        data:this.makeColumn(data, index),
-        backgroundColor: [], 
-        borderColor: [this.colorPattern[index]],
-        borderWidth: 1
-      }
-
-      datasets.push(ds);
-    });
-
-    return datasets
   }
 
   protected makeTimeAxis(rd:ReportData, data?: number[]):any[]{
@@ -376,18 +249,6 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   }
 
-  /*convertAggregations(agg){
-    //let converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
-    let keys = Object.keys(agg);
-    let clone = Object.assign({}, agg);
-
-    keys.forEach((key, index) =>{
-      clone[key] = this.formatLabelValue(clone[key], this.inferUnits(this.labelY))
-    });
-
-    return clone;
-  }*/
-
   inferUnits(label:string){
     //if(this.report.units){ return this.report.units; }
     // Figures out from the label what the unit is
@@ -414,22 +275,15 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
     if(!fixed){ fixed = -1; }
     if(typeof value !== 'number'){ return value; }
     
-    //let converted: Conversion;
     switch(units.toLowerCase()){
       case "bits":
       case "bytes":
         output = this.convertKMGT(value, units.toLowerCase(), fixed, prefixRules);
-        //converted  = this.convertKMGT(value, units, fixed);
-        //output = this.limitDecimals(converted.value).toString() + converted.shortName;
         break;
       case "%":
       case "°":
       default:
-        //output = [value];
         output = this.convertByKilo(value);
-        //return //[this.limitDecimals(converted.value).toString() + converted.suffix, ''];
-        //return [this.limitDecimals(value), ''];
-        //break;
     }
 
     return output;
@@ -490,19 +344,8 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
       shortName = shortName.replace(/i/, '');
       shortName = shortName.toLowerCase();
     }
- 
-    /*if(fixed && fixed !== -1){
-      return [output.toFixed(fixed), prefix];
-    } else {
-      return [output.toString(), prefix];
-    }*/
 
     return { value: output, prefix: prefix, shortName: shortName };
-  }
-
-
-  // LifeCycle Hooks
-  ngOnInit() {
   }
 
   ngAfterViewInit() {
@@ -526,9 +369,9 @@ export class LineChartComponent extends ViewComponent implements OnInit, AfterVi
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
-    if(this.library == 'dygraph'){
-      this.chart.destroy();
-    }
+    
+    this.chart.destroy();
+    
   }
 
 }

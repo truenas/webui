@@ -1,13 +1,17 @@
 mat-dialog-content.task-manager-dialog-content.mat-dialog-content {
     padding: 0px;
     overflow: scroll !important;
+    margin-top: -10px;
 }
 span.task-manager-search {
     padding: 0 24px;
 }
 span.task-manager-search input{
     width: 80%;
-    height: 40px;
+}
+span.task-manager-search mat-icon {
+    top: 10px;
+    position: relative;
 }
 button.task-manager-action-button {
     width: 100%;
@@ -24,6 +28,9 @@ mat-icon.state-running {
 }
 mat-icon.state-waiting {
     color: var(--accent);
+}
+mat-icon.state-aborted {
+    color: var(--orange);
 }
 
 mat-cell.mat-column-percent {

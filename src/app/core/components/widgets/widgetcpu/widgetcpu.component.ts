@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, OnDestroy} from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, OnDestroy, ElementRef} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -6,11 +6,11 @@ import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { Subject } from 'rxjs';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
+import Chart from 'chart.js';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
-import * as c3 from 'c3';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -27,6 +27,15 @@ interface DataPoint {
   coreNumber: number;
 }
 
+// For Chart.js
+interface DataSet {
+  label: string;
+  data: number[];
+  backgroundColor: string;
+  borderColor?: string;
+  borderWidth?: number;
+}
+
 @Component({
   selector: 'widget-cpu',
   templateUrl:'./widgetcpu.component.html',
@@ -38,17 +47,18 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   @ViewChild('cores',{static: true}) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
-  public chart: any;// c3 chart with per core data
+  public chart: any;// Chart.js instance with per core data
+  public ctx: any; // canvas context for chart.js
   private _cpuData: any;
   get cpuData() { return this._cpuData}
   set cpuData(value){
     this._cpuData = value;
-    if(this.legendData && typeof this.legendIndex !== "undefined"){
+    /*if(this.legendData && typeof this.legendIndex !== "undefined"){
       // C3 does not have a way to update tooltip when new data is loaded. 
       // So this is the workaround
       this.legendData[0].value = this.cpuData.data[0][this.legendIndex + 1];
       this.legendData[1].value = this.cpuData.data[1][this.legendIndex + 1];
-    }
+    }*/
   }
 
   public cpuAvg: any;
@@ -74,8 +84,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   public legendColors: string[];
   private legendIndex: number;
 
+  public labels: string[] = [];
+  protected currentTheme: any;
 
-  constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver){
+
+  constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver, private el: ElementRef){
     super(translate);
 
     mediaObserver.media$.subscribe((evt) =>{
@@ -99,10 +112,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   ngAfterViewInit(){
 
-    /*this.core.register({observerClass: this, eventName:"SysInfo"}).subscribe((evt: CoreEvent) => {
-      this.cpuModel = evt.data.model;
-    });*/
-
     this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
       d3.select('#grad1 .begin')
         .style('stop-color', this.getHighlightColor(0))
@@ -113,7 +122,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     this.data.subscribe((evt:CoreEvent) => {
       if(evt.name == "CpuStats"){
-        //this.cpuData = evt.data;
         if(evt.data.average){
           this.setCpuLoadData(['Load', parseInt(evt.data.average.usage.toFixed(1))]);
           this.setCpuData(evt.data);
@@ -184,23 +192,17 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
-  setCpuData(/*chart,*/ data){
+  setCpuData(data){
     let config: any = {}
     config.title = "Cores";
     config.orientation = 'horizontal';
-    //config.units = "%";
     config.max = 100;
     config.data = this.parseCpuData(data);
     this.cpuData = config;
-    if(!this.chart){
-      this.coresChartInit();
-    } else {
-      this.coresChartUpdate();
-    }
-    //console.log(config);
+    this.coresChartInit();
   }
 
-  setCpuLoadData(/*chart,*/ data){
+  setCpuLoadData(data){
     let config: any = {}
     config.title = data[0];
     config.units = "%";
@@ -221,110 +223,98 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
-  coresChartInit(){
-    let conf = {
-      bindto: '#cpu-cores-chart',
-      size: {
-        width: this.screenType == 'Desktop' ? 536 : 300,
-        height: 140//160
-      },
-      tooltip:{
-        show: true,
-        contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
-          this.legendData = raw;
-          this.legendIndex = raw[0].index;
-          this.hoverHighlight();
-          return '<div style="display:none"></div>';
-        }
-      },
-      legend:{
-        hide:true
-      },
-      data: {
-        onmouseout: (d) => {
-          this.legendData = null;
-          this.hoverHighlight(true);
-          this.legendIndex = null;
-        },
-        colors: {
-          Usage: 'var(--primary)',
-          Temperature: 'var(--accent)',
-        },
-        columns: this.cpuData.data,
-        type: 'bar'
-      },
-      bar: {
-        width: this.coreCount < 16 ? 10 : {ratio: 0.45}
-      },
-      axis: {
-        y: {
-          max:100,
-          tick: {
-            values: [0,20,40,60,80,100]
+  // chart.js renderer
+  renderChart(){
+    if(!this.ctx){
+      const el = this.el.nativeElement.querySelector('#cpu-cores-chart canvas');
+      if(!el){ return; }
+
+      const ds = this.makeDatasets(this.cpuData.data);
+      this.ctx = el.getContext('2d');
+
+      let data = {
+        labels: this.labels,
+        datasets: ds ,
+      }
+
+      let options = {
+        events: ['mousemove','mouseout'],
+        onHover: (e) => {
+          if(e.type == "mouseout"){ 
+            this.legendData = null; 
+            this.legendIndex = null
           }
         },
-        y2: {
-          max:100,
-          tick: {
-            values: [0,20,40,60,80,100]
+        tooltips:{
+          enabled: false,
+          mode: 'nearest',
+          intersect: true,
+          callbacks: {
+            label: (tt, data) => {
+              if(this.screenType.toLowerCase() == 'mobile'){
+                this.legendData = null;
+                this.legendIndex = null
+                return;
+              }
+
+              this.legendData = data.datasets;
+              this.legendIndex = tt.index;
+              
+              return '';
+            }
+          },
+          custom: (evt,data) => {
           }
-        }
-      },
-      grid: {
-        x: {
-          show: false
         },
-        y: {
-          show:true
+        responsive:true,
+        maintainAspectRatio: false,
+        legend: {
+          display: false
+        },
+        responsiveAnimationDuration: 0,
+        animation: {
+          duration: 1000,
+          animateRotate: true,
+          animateScale: true
+        },
+        hover: {
+          animationDuration: 0 
+        },
+        scales: {
+          xAxes: [{
+            maxBarThickness: 16,
+            type: 'category',
+            labels: this.labels
+          }],
+          yAxes: [{
+            ticks: {
+              max:100,
+              beginAtZero: true
+            }
+          }]
         }
       }
-    }
-
-    this.chart = c3.generate(conf);
       
-    // setup highlight svg gradient
-    let def = d3.select('#cpu-cores-chart svg defs')
-      .append('linearGradient')
-      .attr('id', 'grad1')
-      .attr('x1', '0%')
-      .attr('y1', '0%')
-      .attr('x2', '0%')
-      .attr('y2', '100%')
+      this.chart = new Chart(this.ctx, {
+        type: 'bar',
+        data:data,
+        options: options
+      });
 
-    def.append('stop')
-      .attr('class', 'begin')
-      .attr('offset', '0%')
-      .style('stop-color', this.getHighlightColor(0))
-      //.style('stop-color', 'rgba(255,255,255,0)')
+    } else {
 
-    def.append('stop')
-      .attr('class', 'end')
-      .attr('offset', '100%')
-      .style('stop-color', this.getHighlightColor(0.15))
-      //.style('stop-color', 'rgba(255,255,255,0.15)')
-
-    let g = d3.select('#cpu-cores-chart svg g.c3-chart')
-    g.insert('rect', ':first-child')
-      .attr('class', 'c3-event-rect-highlighted')
-    
-    let highlightRect = d3.select('rect.c3-event-rect-highlighted')
-    highlightRect.attr('class', 'active c3-event-rect-highlighted active')
-      .attr('x', '-1000')
-      .attr('fill', 'url(#grad1)')
+      const ds = this.makeDatasets(this.cpuData.data);
+ 
+      this.chart.data.datasets[0].data = ds[0].data
+      this.chart.update();
+    }
   }
 
-  getHighlightColor(opacity: number){
-    // Get highlight color
-    let currentTheme = this.themeService.currentTheme();
-    let txtColor = currentTheme.fg2;
+  coresChartInit(){
 
-    // convert to rgb
-    let rgb = this.themeService.hexToRGB(txtColor).rgb;
-
-    // return rgba
-    let rgba =  "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")";
-
-    return rgba;
+    this.currentTheme = this.themeService.currentTheme();
+    this.renderChart();
+      
   }
 
   colorFromTemperature(t){
@@ -345,22 +335,68 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  hoverHighlight(remove?: boolean){
-    let eventRect = d3.select('rect.c3-event-rect-' + this.legendIndex)
-    let highlightRect = d3.select('rect.c3-event-rect-highlighted')
-    // Remove fill attributes from all event rects
-    // if this just a removal only, skip highlight
-    if(remove){
-        highlightRect.attr('y', '10000');
-      return;
+  protected makeDatasets(data:any): DataSet[]{
+    let datasets = [];
+    let labels = [];
+    for(let i = 0; i < this.coreCount; i++){
+      labels.push((i).toString());
     }
+    this.labels = labels;
 
-    // highlight chosen rect
-    highlightRect.attr('x', eventRect.attr('x'))
-      .attr('y', eventRect.attr('y'))
-      .attr('width', eventRect.attr('width'))
-      .attr('height', eventRect.attr('height'))
+    // Create the data...
+    data.forEach((item, index) => {
+
+      let ds:DataSet = {
+        label: item[0],
+        data: data[index].slice(1),
+        backgroundColor: '',
+        borderColor: '', 
+        borderWidth: 1,
+      }
+  
+      const cssVar = ds.label == 'Temperature' ? 'accent' : 'primary'; 
+      const color = this.stripVar(this.currentTheme[cssVar])
+      
+      const bgRGB = this.themeService.hexToRGB(this.currentTheme[color]).rgb;
+      const borderRGB = this.themeService.hexToRGB(this.currentTheme[color]).rgb;
+
+      ds.backgroundColor = this.rgbToString(bgRGB, 0.85);
+      ds.borderColor = this.rgbToString(bgRGB);
+      datasets.push(ds);
+    });
+
+    return datasets
   }
   
+  private processThemeColors(theme):string[]{
+    let colors: string[] = [];
+    theme.accentColors.map((color) => {
+      colors.push(theme[color]);
+    }); 
+    return colors;
+  }
+
+  rgbToString(rgb:string[], alpha?:number){
+    const a = alpha ? alpha.toString() : '1';
+    return 'rgba(' + rgb.join(',') + ',' + a + ')';
+  }
+
+  stripVar(str: string){
+    return str.replace('var(--', '').replace(')','');
+  }
+
+  getHighlightColor(opacity: number){
+    // Get highlight color
+    let currentTheme = this.themeService.currentTheme();
+    let txtColor = currentTheme.fg2;
+
+    // convert to rgb
+    let rgb = this.themeService.hexToRGB(txtColor).rgb;
+
+    // return rgba
+    let rgba =  "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")";
+
+    return rgba;
+  }
 
 }

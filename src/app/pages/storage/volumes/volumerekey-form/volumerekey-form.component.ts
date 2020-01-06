@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService, DialogService } from '../../../../services/';
@@ -87,7 +87,6 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
       protected ws: WebSocketService,
       protected dialogService: DialogService,
       protected loader: AppLoaderService,
-      protected snackBar: MatSnackBar,
       protected mdDialog: MatDialog,
       protected encryptionService: EncryptionService
   ) {}
@@ -130,9 +129,7 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
                 break;
   
               default:
-                this.snackBar.open(T('Successfully reset encryption for pool: ') + value.name, T("Close"), {
-                  duration: 5000,
-                });
+                this.dialogService.Info(T('Success'), T('Successfully reset encryption for pool: ') + value.name);
                 this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
             }
         },

@@ -8,6 +8,7 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
 import { WebSocketService, SystemGeneralService } from '../../../../services/';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
 
 import filesize from 'filesize';
@@ -51,14 +52,21 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public isFN: boolean = false;
   public isUpdateRunning = false;
   public is_ha: boolean;
+  public ha_status:string;
   public updateMethod = 'update.update';
+  public screenType: string = 'Desktop';
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
-    public sysGenService: SystemGeneralService){
+    public sysGenService: SystemGeneralService,  public mediaObserver: MediaObserver){
     super(translate);
     this.configurable = false;
     this.sysGenService.updateRunning.subscribe((res) => { 
       res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+    });
+
+    mediaObserver.media$.subscribe((evt) =>{
+      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+      this.screenType = st;
     });
   }
 
@@ -68,20 +76,21 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   ngAfterViewInit(){
 
     this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
       if(evt.data.status == "AVAILABLE"){
         this.updateAvailable = true;
       }
     });
 
     if(this.isHA && this.isPassive){
-      // Delay query
-      setTimeout(() => {
-        this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
-          const evt = {name: 'SysInfoPassive', data:res};
-          this.processSysInfo(evt);
-        });
-      }, 500);
+      this.core.register({observerClass:this,eventName:"HA_Status"}).subscribe((evt:CoreEvent) => {
+        if(evt.data == "HA Enabled" && !this.data){
+          this.ws.call('failover.call_remote', ['system.info']).subscribe((res) => {
+            const evt = {name: 'SysInfoPassive', data:res};
+            this.processSysInfo(evt);
+          });
+        } 
+        this.ha_status = evt.data;
+      });
     } else {
 
       this.ws.call('system.info').subscribe((res) => {
@@ -92,13 +101,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.core.emit({name:"UpdateCheck"});
       
     }
-    this.ws.call('failover.licensed').subscribe((res) => {
-      if (res) {
-        this.updateMethod = 'failover.upgrade';
-        this.is_ha = true;
-      };
-      this.checkForRunningUpdate();
-    });
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((res) => {
+        if (res) {
+          this.updateMethod = 'failover.upgrade';
+          this.is_ha = true;
+        };
+        this.checkForRunningUpdate();
+      });
+    }
   }
 
   ngOnInit(){
@@ -163,7 +174,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.isFN = true;
       } else {
         this.systemLogo = 'TrueNAS_Logomark_Black.svg';
-        this.getTrueNASImage(evt.data.system_product);
+        this.getTrueNASImage(evt.data.license.model);
         this.isFN = false;
       }    
 
@@ -222,9 +233,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     
     switch(sys_product){
       case "FREENAS-MINI-2.0":
+      case "FREENAS-MINI-3.0-E":
         this.product_image = 'freenas_mini_cropped.png';
       break;
       case "FREENAS-MINI-XL":
+      case "FREENAS-MINI-3.0-XL+":
         this.product_image = 'freenas_mini_xl_cropped.png';
       break;
       default:

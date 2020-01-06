@@ -66,7 +66,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public diskMetrics = [];
   public categoryDevices = [];
   public categoryMetrics = [];
-  public saveSubmitText = "Generate Reports";
+  public saveSubmitText = T("Generate Reports");
   public actionButtonsAlign = "left";
   public fieldConfig:FieldConfig[] = [];
   public fieldSets: FieldSet[];
@@ -86,8 +86,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   ngOnInit() { 
     this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
-    
-    this.generateTabs();
 
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
@@ -113,9 +111,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
 
         this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
+
+        this.generateTabs();
        
         this.activateTabFromUrl();
-}
+      }
     });
 
     this.ws.call('disk.query').subscribe((res) => {
@@ -155,7 +155,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
 
   generateTabs(){
-      let labels = ['CPU', 'Disk', 'Memory', 'Network', 'NFS', 'Partition', 'System', 'Target', 'UPS', 'ZFS'];
+      let labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
+      let UPS = this.otherReports.find((report) => {
+        return report.title.startsWith('UPS');
+      });
+
+      if(UPS){
+        labels.splice(8,0,'UPS');
+      }
+
       labels.forEach((item) =>{
         this.allTabs.push({label:item, value:item.toLowerCase()});
       })
@@ -303,16 +311,16 @@ diskReportBuilderSetup(){
           {
             type: 'multimenu',
             name: 'devices',
-            label: 'Devices',
+            label: T('Devices'),
             disabled:false,
             options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
           },
           {
             type: 'multimenu',
             name: 'metrics',
-            label: 'Metrics',
+            label: T('Metrics'),
             disabled: false,
-            options: this.diskMetrics ? this.diskMetrics.map((v) => v) : ['Not Available'], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
           }
     ]
 
@@ -328,22 +336,22 @@ diskReportBuilderSetup(){
             type: 'select',
             name: 'devices',
             width:'calc(50% - 16px)',
-            placeholder: 'Choose a Device',
+            placeholder: T('Choose a Device'),
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
             required: true,
             multiple: true,
-            tooltip:'Choose a device for your report.',
+            tooltip:T('Choose a device for your report.'),
             class:'inline'
           },
           {
             type: 'select',
             name: 'metrics',
             width:'calc(50% - 16px)',
-            placeholder: 'Choose a metric',
+            placeholder: T('Choose a metric'),
             options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
             required: true,
             multiple: true,
-            tooltip:'Choose a metric to display.',
+            tooltip:T('Choose a metric to display.'),
             class:'inline'
           }
         ]

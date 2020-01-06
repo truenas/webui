@@ -3,6 +3,12 @@ import { Validators } from '@angular/forms';
 import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
+fieldset_general: T('General Options'),
+fieldset_access: T('Access'),
+fieldset_bw: T('Bandwidth'),
+fieldset_tls: T('TLS'),
+fieldset_other: T('Other Options'),
+
 port_placeholder : T('Port'),
 port_tooltip: T('Set the port the FTP service listens on.'),
 port_validation: [rangeValidator(1, 65535), Validators.required],
@@ -29,14 +35,15 @@ rootlogin_placeholder : T('Allow Root Login'),
 rootlogin_tooltip: T('Setting this option is discouraged as it increases security risk.'),
 
 onlyanonymous_placeholder : T('Allow Anonymous Login'),
-onlyanonymous_tooltip: T('Set to allow anonymous FTP logins with access to the\
+onlyanonymous_tooltip: T('Allow anonymous FTP logins with access to the \
  directory specified in <b>Path</b>.'),
 
 anonpath_placeholder : T('Path'),
 anonpath_tooltip: T('Set the root directory for anonymous FTP connections.'),
 
 onlylocal_placeholder : T('Allow Local User Login'),
-onlylocal_tooltip: T('Required if <b>Anonymous Login</b> is disabled.'),
+onlylocal_tooltip: T('Allow any local user to log in. By default, only \
+ members of the <i>ftp</i> group are allowed to log in.'),
 
 banner_placeholder : T('Display Login'),
 banner_tooltip: T('Specify the message displayed to local login users after\
@@ -181,4 +188,7 @@ tls_opt_ip_address_required_tooltip: T('If set, the client certificate must cont
 options_placeholder : T('Auxiliary Parameters'),
 options_tooltip: T('Used to add additional <a href="https://linux.die.net/man/8/proftpd"\
  target="_blank">proftpd(8)</a> parameters.'),
+
+rootlogin_dialog_title : T('Allow Root Login'),
+rootlogin_dialog_message : T('Enabling this option can expose administrator credentials and is not recommended.')
 }

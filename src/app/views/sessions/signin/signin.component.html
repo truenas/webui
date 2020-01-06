@@ -11,7 +11,7 @@
               <img class="logo" src="assets/images/TrueNAS_Logo_Full_White.svg" alt="TrueNAS logo">
             </ng-template>
           </div>
-          <span *ngIf="failover_status === 'SINGLE' || failover_status === 'MASTER' || is_freenas">
+          <span *ngIf="canLogin()">
             <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
               <div class="">
                 <mat-form-field class="full-width">
@@ -93,10 +93,13 @@
         <ng-template #notconnected>
           <div class="disconnected" *ngIf="product">
             <div class="fake-icon">?</div>
-            <p>
+            <p *ngIf="!ha_status">
               {{"Connecting to " | translate}} {{product}}
               {{"... Make sure the " | translate}} {{product}}
               {{" system is powered on and connected to the network." | translate}}
+            </p>
+            <p *ngIf="ha_status">
+              {{"Waiting for Active TrueNAS controller to come up..." | translate}}
             </p>
           </div>
         </ng-template>

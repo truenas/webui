@@ -1,28 +1,27 @@
-import {interval as observableInterval,  Subscription } from 'rxjs';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import * as domHelper from '../../../helpers/dom.helper';
-import { ThemeService, Theme } from '../../../services/theme/theme.service';
-import { WebSocketService } from '../../../services/ws.service';
-import { DialogService } from '../../../services/dialog.service';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { SystemGeneralService } from '../../../services/system-general.service';
-import { AboutModalDialog } from '../dialog/about/about-dialog.component';
-import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
-import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
-import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
-import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
-import { RestService } from "../../../services/rest.service";
-import { LanguageService } from "../../../services/language.service"
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from '../../../pages/common/entity/utils';
-import { T } from '../../../translate-marker';
-import helptext from '../../../helptext/topbar';
-
-import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
-import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { Subscription, interval } from 'rxjs';
+import * as domHelper from '../../../helpers/dom.helper';
+import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
+import helptext from '../../../helptext/topbar';
+import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from '../../../pages/common/entity/utils';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../services/dialog.service';
+import { LanguageService } from "../../../services/language.service";
+import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
+import { RestService } from "../../../services/rest.service";
+import { SystemGeneralService } from '../../../services/system-general.service';
+import { Theme, ThemeService } from '../../../services/theme/theme.service';
+import { WebSocketService } from '../../../services/ws.service';
+import { T } from '../../../translate-marker';
+import { AboutModalDialog } from '../dialog/about/about-dialog.component';
+import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
+import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 
 @Component({
   selector: 'topbar',
@@ -39,7 +38,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   interval: any;
 
-  continuosStreaming: Subscription;
+  replicationStatusSub: Subscription;
+  continuousStreaming: Subscription
   showReplication = false;
   showResilvering = false;
   pendingNetworkChanges = false;
@@ -73,25 +73,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   constructor(
     public themeService: ThemeService,
-    /*public core: CoreService,*/
     private router: Router,
     private notificationsService: NotificationsService,
-    private activeRoute: ActivatedRoute,
     private ws: WebSocketService,
-    private rest: RestService,
     public language: LanguageService,
     private dialogService: DialogService,
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar,
     public translate: TranslateService,
     protected loader: AppLoaderService, ) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
-        setTimeout(() => {
-          this.updateNotificationSent = false;
-        }, 900000);
       });
     }
 
@@ -102,14 +95,21 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
-        this.isUpdateRunning();
       });
       this.sysName = 'TrueNAS';
     } else {
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
-      this.isUpdateRunning();
     }
+    this.ws.subscribe('core.get_jobs').subscribe((res) => {
+      if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
+        this.updateIsRunning = true;
+        if (!this.updateNotificationSent) {
+          this.updateInProgress();
+          this.updateNotificationSent = true;
+        }      
+      }
+    })
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
@@ -119,14 +119,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     const notifications = this.notificationsService.getNotificationList();
 
     notifications.forEach((notificationAlert: NotificationAlert) => {
-      if (notificationAlert.dismissed === false) {
+      if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
         this.notifications.push(notificationAlert);
       }
     });
     this.notificationsService.getNotifications().subscribe((notifications1) => {
       this.notifications = [];
       notifications1.forEach((notificationAlert: NotificationAlert) => {
-        if (notificationAlert.dismissed === false) {
+        if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
           this.notifications.push(notificationAlert);
         }
       });
@@ -134,15 +134,34 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
-    this.continuosStreaming = observableInterval(10000).subscribe(x => {
-      this.showReplicationStatus();
+    this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
+      if (evt && evt.data.commit) {
+        this.pendingNetworkChanges = false;
+        this.checkNetworkCheckinWaiting();
+      } else {
+        this.checkNetworkChangesPending();
+      }
+    });
+
+    this.replicationStatusSub = this.ws
+      .sub("replication.query")
+      .subscribe(repStatus => {
+        repStatus.data.forEach(x => {
+          if (
+            typeof x.repl_status === "string" &&
+            x.repl_status.indexOf("Sending") > -1 &&
+            x.repl_enabled
+          ) {
+            this.showReplication = true;
+            this.replicationDetails = x;
+          }
+        });
+      });
+
+    this.continuousStreaming = interval(10000).subscribe(x => {
       if (this.is_ha) {
         this.getHAStatus();
       }
-      this.checkNetworkCheckinWaiting();
-      this.checkNetworkChangesPending();
-      this.getDirServicesStatus();
-      this.isUpdateRunning();
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
@@ -183,7 +202,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       clearInterval(this.interval);
     }
 
-    this.continuosStreaming.unsubscribe();
+    this.continuousStreaming.unsubscribe();
+    this.replicationStatusSub.unsubscribe();
 
     this.core.unregister({observerClass:this});
   }
@@ -221,6 +241,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
+  onShowAPI() {
+    window.open(window.location.origin + '/api/docs');
+  }
+
   signOut() {
     this.ws.logout();
   }
@@ -255,9 +279,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.ws.call('truenas.get_eula').subscribe(eula => {
           this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true, T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
             if (accept_eula) {
-              this.ws.call('truenas.accept_eula').subscribe(accepted => {
-                this.snackBar.open(T("End User License Agreement Accepted"),T("OK"));
-              });
+              this.ws.call('truenas.accept_eula')
+                .subscribe(),
+                err => { console.error(err)};
             }
           });
         });
@@ -288,12 +312,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showNetworkCheckinWaiting() {
     this.dialogService.confirm(
       network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.pending_checkin_text,
+      network_interfaces_helptext.pending_checkin_dialog_text,
       true, network_interfaces_helptext.checkin_button).subscribe(res => {
         if (res) {
           this.user_check_in_prompted = false;
           this.loader.open();
           this.ws.call('interface.checkin').subscribe((success) => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
             this.loader.close();
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
@@ -323,30 +348,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
   }
 
-  showReplicationStatus() {
-    this.rest.get('storage/replication/', {}).subscribe(res => {
-      let idx = res.data.forEach(x => {
-        if(typeof(x.repl_status) !== "undefined" &&
-            x.repl_status != null && x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
-          this.showReplication = true;
-          this.replicationDetails = x;
-        }
-      });
-    }, err => {
-      console.error(err);
-    })
-  }
-
   showReplicationDetails(){
-    this.translate.get('Ok').subscribe((ok: string) => {
-      this.snackBar.open(this.replicationDetails.repl_status.toString(), ok);
-    });
+    this.dialogService.Info(T('Replication Status',), this.replicationDetails.repl_status.toString());
   }
 
   showResilveringDetails() {
-    this.translate.get('Ok').subscribe((ok: string) => {
-      this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, ok);
-    });
+    this.dialogService.Info(T('Resilvering Status'), 
+      `Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`);
   }
 
   onGoToLegacy() {
@@ -407,15 +415,20 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   getHAStatus() {
     this.ws.call('failover.disabled_reasons').subscribe(res => {
+      let ha_enabled = false;
       this.ha_disabled_reasons = res;
       if (res.length > 0) {
         this.ha_status_text = helptext.ha_status_text_disabled;
       } else {
+        ha_enabled = true;
         this.ha_status_text = helptext.ha_status_text_enabled;
         if (!this.pendingUpgradeChecked) {
           this.checkUpgradePending();
         }
       }
+      
+      this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
+      window.sessionStorage.setItem('ha_status', ha_enabled.toString());
     });
   }
 
@@ -475,49 +488,37 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       });
   }
 
-  getDirServicesStatus() {
-    let counter = 0;
-    this.ws.call('activedirectory.get_state').subscribe((res) => {
-      this.dirServicesStatus.push({name: 'Active Directory', state: res});
-
-      this.ws.call('ldap.get_state').subscribe((res) => {
-        this.dirServicesStatus.push({name: 'LDAP', state: res});
-
-        this.ws.call('nis.get_state').subscribe((res) => {
-          this.dirServicesStatus.push({name: 'NIS', state: res});
-          this.dirServicesStatus.forEach((item) => {
-            if (item.state !== 'DISABLED') {
-              counter ++;
-            }
-          });
-          counter > 0 ? this.showDirServicesIcon = true : this.showDirServicesIcon = false;
-        });
-      });
-    });
+  getDirServicesStatus() { 
+    this.ws.call('directoryservices.get_state').subscribe((res) => {
+      for (let i in res) {
+        this.dirServicesStatus.push(res[i])
+      }
+      this.showDSIcon();
+    })
+    this.ws.subscribe('directoryservices.status').subscribe((res) => {
+      this.dirServicesStatus = [];
+      for (let i in res.fields) {
+        this.dirServicesStatus.push(res.fields[i])
+      }
+      this.showDSIcon()
+    })
   };
 
-  isUpdateRunning() {
-    let method;
-    this.is_ha ? method = 'failover.upgrade' : method = 'update.update';
-    this.ws.call('core.get_jobs', [[["method", "=", method], ["state", "=", "RUNNING"]]]).subscribe(
-      (res) => {
-        if (res && res.length > 0) {
-          this.sysGenService.updateRunning.emit('true');
-          this.updateIsRunning = true;
-          if (!this.updateNotificationSent) {
-            this.showUpdateDialog();
-            this.updateNotificationSent = true;
-            setTimeout(() => {
-              this.updateNotificationSent = false;
-            }, 600000);
-          }      
-        } else {
-          this.sysGenService.updateRunning.emit('false');
-        }
-      },
-      (err) => {
-        console.error(err);
-      });
+  showDSIcon() {
+    this.showDirServicesIcon = false;
+    this.dirServicesStatus.forEach((item) => {
+      if (item !== 'DISABLED') { 
+        this.showDirServicesIcon = true; 
+      };
+    });
+  }
+
+  updateInProgress() {
+    this.sysGenService.updateRunning.emit('true');
+    if (!this.updateNotificationSent) {
+      this.showUpdateDialog();
+      this.updateNotificationSent = true;
+    }      
   };
 
   showUpdateDialog() {

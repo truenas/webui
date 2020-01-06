@@ -8,22 +8,26 @@
   <div>
     <div class="train-card-row">
       <mat-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
-        (change)="toggleAutoCheck()">{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
-      <tooltip class="updatecheckTooltip" [message]=updatecheck_tooltip></tooltip>
+        (change)="toggleAutoCheck()" ix-auto ix-auto-type="checkbox" ix-auto-identifier="daily-updates">{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
+      <tooltip class="updatecheckTooltip" [message]=updatecheck_tooltip ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="update-check"></tooltip>
     </div>
     <div class="train-card-row train-select-row" *ngIf="trains.length > 1; else trainName">
       <mat-label id="train-label">{{"Train" | translate}}</mat-label>
-      <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (change)="onTrainChanged($event)">
-        <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }} - {{ train.description }}</mat-option>
+      <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (ngModelChange)="onTrainChanged($event)"
+        ix-auto ix-auto-type="select" ix-auto-identifier="train-select">
+        <mat-option *ngFor="let train of trains" [value]="train.name"
+          ix-auto ix-auto-type="option" ix-auto-identifier="{{train.name}}">{{ train.name }} - {{ train.description }}</mat-option>
       </mat-select>
-      <button mat-mini-fab color="primary" id="refresh-button" matTooltip="Refresh" (click)="check()">
+      <button mat-mini-fab color="primary" id="refresh-button" matTooltip="Refresh" (click)="check()" 
+        ix-auto ix-auto-type="button" ix-auto-identifier="refresh">
         <mat-icon>refresh</mat-icon>
       </button>
     </div>
     <ng-template #trainName>
       <div class="train-card-row train-select-row">
-        <div id="single-train-name">Current Train: {{ train }} - {{ singleDescription }}</div>
-        <button mat-mini-fab color="primary" [disabled]="isUpdateRunning" id="single-train-refresh-button" matTooltip="Refresh" (click)="check()">
+        <div id="single-train-name">{{"Current Train:" | translate}} {{ train }} - {{ singleDescription }}</div>
+        <button mat-mini-fab color="primary" [disabled]="isUpdateRunning" id="single-train-refresh-button" matTooltip="Refresh" (click)="check()"
+          ix-auto ix-auto-type="button" ix-auto-identifier="refresh">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -37,7 +41,7 @@
 
       <div *ngIf="status == 'UNAVAILABLE'">{{"No updates available." | translate}}</div>
       <div *ngIf="updated">
-        Update is complete, please reboot the system.
+        {{"Update is complete, please reboot the system." | translate}}
       </div>
     </div>
   </div>
@@ -95,42 +99,55 @@
 </mat-card>
 
 <mat-card *ngIf="updates_available && pre_release_train && isfreenas" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i><strong>This is not a production release, and should only be used for testing.</strong></div>
-  <div class="stable-warning" id="stable_warning_line_2">Before updating, please read the
-    <a href='https://www.ixsystems.com/blog/library/freenas-11-2-rc1' target="new">release notes</a>.
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <strong>{{"This is not a production release, and should only be used for testing." | translate}}</strong>
+  </div>
+  <div class="stable-warning" id="stable_warning_line_2">
+    <a href='https://www.ixsystems.com/blog/library/{{train_version}}' target="new">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
   </div>
 </mat-card>
 
 <mat-card *ngIf="updates_available && release_train && isfreenas" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>Before updating, please read the
-    <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest=true' target="new">release notes</a>.
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/freenas/?latest=true' target="new">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
   </div>
 </mat-card>
 
 <mat-card *ngIf="updates_available && pre_release_train && !isfreenas" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>Before updating, please read the
-    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">release notes</a>.
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
   </div>
 </mat-card>
 
 <mat-card *ngIf="updates_available && release_train && !isfreenas" id="stable-warning-card">
-  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>Before updating, please read the
-    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">release notes</a>.
+  <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
+    <a href='https://www.ixsystems.com/blog/knowledgebase_category/truenas/?latest' target="new">
+      {{"Before updating, please read the release notes." | translate}}
+    </a>
   </div>
 </mat-card>
 
 <mat-card *ngIf="updates_available && nightly_train" id="stable-warning-card">
   <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <strong>This is not a production release, and should only be used for testing.</strong>
+    <strong>{{"This is not a production release, and should only be used for testing." | translate}}</strong>
   </div>
 </mat-card>
 
 <mat-card id="button-card" *ngIf="!isUpdateRunning">
   <div class="row">
     <div class="col-md-12">
-      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Fetch and Install Updates" | translate}}</button>
-      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="ApplyPendingUpdate()">{{"Apply Pending update" | translate}}</button>
-      <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()" >{{"Install Manual Update File" | translate}}</button>
+      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'"
+        ix-auto ix-auto-type="button" ix-auto-identifier="DOWNLOAD UPDATES">{{" Download Updates" | translate}}</button>
+      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="ApplyPendingUpdate()"
+        ix-auto ix-auto-type="button" ix-auto-identifier="APPLY PENDING UPDATE">{{"Apply Pending update" | translate}}</button>
+      <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()" 
+        ix-auto ix-auto-type="button" ix-auto-identifier="INSTALL MANUAL UPDATE FILE">{{"Install Manual Update File" | translate}}</button>
       <!-- <button mat-button class="btn btn-success update-button red-warning-button" *ngIf="failover_upgrade_pending" (click)="applyFailoverUpgrade()">{{"Apply Failover Upgrade" | translate}}</button> -->
       <p><font color ="red">{{general_update_error}}</font></p>
     </div>

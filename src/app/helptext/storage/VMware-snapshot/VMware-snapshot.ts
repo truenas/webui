@@ -27,4 +27,9 @@ VMware_snapshot_form_datastore_tooltip: T('After entering the <b>Hostname, Usern
  select the datastore to be synchronized.'),
 VMware_snapshot_form_datastore_validation: [Validators.required],
 
+connect_err_dialog: {
+ title: T('Connection Error'),
+ msg: T('The operation timed out. The requested resource might be offline. Check the network connection.')
+}
+
 }

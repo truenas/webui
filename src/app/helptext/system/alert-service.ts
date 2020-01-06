@@ -52,7 +52,7 @@ export default {
 
     InfluxDB_host_placeholder: T('Host'),
     InfluxDB_host_tooltip: T('Enter the <a\
- href="https://docs.influxdata.com/influxdb/v1.5/introduction/getting-started/"\
+ href="https://docs.influxdata.com/influxdb/"\
  target="_blank">InfluxDB</a> hostname.'),
 
     InfluxDB_username_placeholder: T('Username'),
@@ -67,11 +67,6 @@ export default {
     InfluxDB_series_name_placeholder: T('Series'),
     InfluxDB_series_name_tooltip: T('InfluxDB time series name for collected points.'),
 
-    Mattermost_cluster_name_placeholder: T('Cluster Name'),
-    Mattermost_cluster_name_tooltip: T('Name of the <a\
- href="https://docs.mattermost.com/overview/index.html"\
- target="_blank">Mattermost</a> cluster to join.'),
-
     Mattermost_url_placeholder: T('Webhook URL'),
     Mattermost_url_tooltip: T('Enter or paste the <a\
  href="https://docs.mattermost.com/developer/webhooks-incoming.html"\
@@ -81,14 +76,6 @@ export default {
     Mattermost_username_placeholder: T('Username'),
     Mattermost_username_tooltip: T('Mattermost username.'),
 
-    Mattermost_password_placeholder: T('Password'),
-    Mattermost_password_tooltip: T('Mattermost password.'),
-
-    Mattermost_team_placeholder: T('Team'),
-    Mattermost_team_tooltip: T('Mattermost <a\
- href="https://docs.mattermost.com/help/getting-started/creating-teams.html"\
- target="_blank">team name</a>.'),
-
     Mattermost_channel_placeholder: T('Channel'),
     Mattermost_channel_tooltip: T('Name of the <a\
  href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
@@ -96,13 +83,12 @@ export default {
  This overrides the default channel in the incoming\
  webhook settings.'),
 
-    OpsGenie_cluster_name_placeholder: T('Cluster Name'),
-    OpsGenie_cluster_name_tooltip: T('Name of the <a\
- href="https://docs.opsgenie.com/docs"\
- target="_blank">OpsGenie</a> cluster. Find the Cluster\
- Name by signing into the OpsGenie web interface and\
- going to Integrations/Configured Integrations. Click the\
- desired integration, Settings, and read the Name field.'),
+    Mattermost_icon_url_placeholder: T('Icon URL'),
+    Mattermost_icon_url_tooltip: T('Icon file to use as the profile \
+ picture for new messages. Example: \
+ <i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br> \
+ Requires configuring Mattermost to <a \
+ href="https://docs.mattermost.com/administration/config-settings.html#enable-integrations-to-override-profile-picture-icons" target="_blank">override profile picture icons</a>.'),
 
     OpsGenie_api_key_placeholder: T('API Key'),
     OpsGenie_api_key_tooltip: T('Enter or paste the <a\
@@ -124,38 +110,26 @@ export default {
     PagerDuty_client_name_placeholder: T('Client Name'),
     PagerDuty_client_name_tooltip: T('PagerDuty client name.'),
 
-    Slack_cluster_name_placeholder: T('Cluster Name'),
-    Slack_cluster_name_tooltip: T('Name of the cluster.'),
-
     Slack_url_placeholder: T('Webhook URL'),
     Slack_url_tooltip: T('Paste the <a\
  href="https://api.slack.com/incoming-webhooks"\
  target="_blank">incoming webhook</a> URL associated with\
  this service.'),
 
-    Slack_channel_placeholder: T('Channel'),
-    Slack_channel_tooltip: T('Slack channel name. The service will post all\
- messages to this channel.'),
-
-    Slack_username_placeholder: T('Username'),
-    Slack_username_tooltip: T('Slack username for this service.'),
-
-    Slack_icon_url_placeholder: T('Icon URL'),
-    Slack_icon_url_tooltip: T('URL to an image to use for notification icons.\
- This overrides the incoming webhook setting.'),
-
     SNMPTrap_host_placeholder: T('Hostname'),
-    SNMPTrap_host_tooltip: T(''),
+    SNMPTrap_host_tooltip: T('Hostname or IP address of the system to \
+ receive SNMP trap notifications.'),
 
     SNMPTrap_port_placeholder: T('Port'),
-    SNMPTrap_port_tooltip: T(''),
+    SNMPTrap_port_tooltip: T('UDP port number on the system receiving \
+ SNMP trap notifications. The default is <i>162</i>.'),
 
     SNMPTrap_v3_placeholder: T('SNMPv3 Security Model'),
     SNMPTrap_v3_tooltip: T('Enable the SNMPv3 security model.'),
 
     SNMPTrap_v3_username_placeholder: T('Username'),
     SNMPTrap_v3_username_tooltip: T('Username of the SNMP \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#user-based" \
+ <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.UsmUserData" \
  target="_blank">User-based Security Model (USM)</a> user.'),
 
     SNMPTrap_v3_authkey_placeholder: T('Secret Authentication Key'),
@@ -163,7 +137,7 @@ export default {
  When an authentication key is not set, no <i>Authentication Protocol</i> is \
  used. If an authentication key is set and an \
  <i>Authentication Protocol</i> is not specified, \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmHMACMD5AuthProtocol" \
+ <a href="https://en.wikipedia.org/wiki/MD5" \
  target="_blank">MD5</a> is used as the default.<br> \
  Must be at least 8 and at most 32 octets long.'),
 
@@ -172,17 +146,17 @@ export default {
  If an encryption key is not set, no <i>Encryption Protocol</i> is used. \
  If an encryption key is set and an <i>Encryption Protocol</i> is \
  not specified, \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmDESPrivProtocol" \
+ <a href="https://en.wikipedia.org/wiki/Data_Encryption_Standard" \
  target="_blank">DES</a> is used as the default.<br> \
  Must be at least 8 and at most 32 octets long.'),
 
     SNMPTrap_v3_authprotocol_placeholder: T('Authentication Protocol'),
-    SNMPTrap_v3_authprotocol_tooltip: T('<a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoAuthProtocol" \
+    SNMPTrap_v3_authprotocol_tooltip: T('<a href="https://en.wikipedia.org/wiki/Authentication_protocol" \
  target="_blank">Authentication protocol</a> used to authenticate \
  messages sent on behalf of the specified <i>Username</i>.'),
 
     SNMPTrap_v3_privprotocol_placeholder: T('Encryption Protocol'),
-    SNMPTrap_v3_privprotocol_tooltip: T('<a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.usmNoPrivProtocol" \
+    SNMPTrap_v3_privprotocol_tooltip: T('<a href="https://en.wikipedia.org/wiki/Cryptographic_protocol" \
  target="_blank">Encryption protocol</a> used to encrypt messages \
  sent on behalf of the specified <i>Username</i>.'),
 

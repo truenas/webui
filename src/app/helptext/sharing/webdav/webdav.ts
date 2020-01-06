@@ -6,7 +6,7 @@ export const helptext_sharing_webdav = {
     tooltip_name: T('Enter a name for the share.'),
     validator_name: [ Validators.required ],
 
-    placeholder_comment: T('Comment'),
+    placeholder_comment: T('Description'),
     tooltip_comment: T('Optional.'),
 
     placeholder_path: T('Path'),
@@ -23,7 +23,7 @@ export const helptext_sharing_webdav = {
  to the <samp>webdav</samp> or <samp>www</samp> user/group.'),
 
     column_name: T('Share Name'),
-    column_comment: T('Comment'),
+    column_comment: T('Description'),
     column_path: T('Path'),
     column_ro: T('Read Only'),
     column_perm: T('Change User and Group Ownership'),
@@ -35,5 +35,6 @@ export const helptext_sharing_webdav = {
  might make files inaccesible to their original owners. This operation \
  cannot be undone! If unset, ownership of files to be accessed through \
  WebDAV must be manually set to the <samp>webdav</samp> or \
- <samp>www</samp> user/group.')
+ <samp>www</samp> user/group.'),
+    fieldset_name: T('WebDAV Configuration')
 };

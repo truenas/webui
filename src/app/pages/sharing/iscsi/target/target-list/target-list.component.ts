@@ -21,12 +21,12 @@ export class TargetListComponent {
 
   public columns: Array<any> = [
     {
-      name : 'Target Name',
+      name : T('Target Name'),
       prop : 'name',
       always_display: true
     },
     {
-      name : 'Target Alias',
+      name : T('Target Alias'),
       prop : 'alias',
     },
   ];
@@ -51,13 +51,13 @@ export class TargetListComponent {
       id: row.name,
       icon: 'edit',
       name: "edit",
-      label: "Edit",
+      label: T("Edit"),
       onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.name,
       icon: 'delete',
       name: "delete",
-      label: "Delete",
+      label: T("Delete"),
       onClick: (rowinner) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().subscribe(

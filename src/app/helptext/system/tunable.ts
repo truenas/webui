@@ -2,6 +2,9 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_tunable = {
+  metadata:{
+    fieldsets:[T('Tunable')]
+  },
   var: {
     placeholder: T("Variable"),
     tooltip: T(
@@ -43,8 +46,8 @@ export const helptext_system_tunable = {
     )
   },
 
-  comment: {
-    placeholder: T("Comment"),
+  description: {
+    placeholder: T("Description"),
     tooltip: T("Enter a description of the tunable.")
   },
 

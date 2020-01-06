@@ -2,9 +2,7 @@ import { Component, AfterViewInit, OnInit, OnChanges, Input, HostListener } from
 import { LayoutChild } from 'app/core/classes/layouts';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import {UUID} from 'angular2-uuid';
-import * as c3 from 'c3';
-//import { ChartConfiguration, LegendOptions, TooltipOptions } from 'c3';
-import { /*ChartConfiguration,*/ LegendOptions, TooltipOptions } from './viewchart.component.types';
+import { LegendOptions, TooltipOptions } from './viewchart.component.types';
 
 export interface ChartData {
   legend: string;
@@ -45,7 +43,6 @@ export const ViewChartMetadata = {
 @Component({
   selector: 'viewchart',
   template: ViewChartMetadata.template,
-  //templateUrl: './viewchart.component.html',
   styleUrls: ['./viewchart.component.css']
 })
 export class ViewChartComponent extends ViewComponent implements AfterViewInit {
@@ -56,13 +53,6 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   public max: number;
   @Input() width: number;
   @Input() height: number;
-  /*
-  @HostListener('window:resize', ['$event'])
-  onResize(event){
-       //DEBUG: console.log("Width: " + event.target.innerWidth);
-       this.refresh();
-  }
-  */
 
   public chart: any;
   public chartLoaded: boolean = false;
@@ -81,13 +71,10 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
         this.showLegendValues = true;
       }
       let time = raw[0].x;
-      //console.log("******** TOOLTIP VALUES ********");
       for(let index = 0; index < this.legend.length; index++){
-        //console.log("Looking for value");
         for(let i = 0; i < raw.length; i++){
           if(this.legend[index].name == raw[i].name){
             this.legend[index].value = raw[i].value;
-            //DEBUG: console.log(this.legend);
           }
         }
         this.legend[index].x = time;
@@ -106,12 +93,10 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    //DEBUG: console.log("******** CHART DIMENSIONS - Width:" + this.width + "/ Height: " + this.height);
     this.render();
   }
 
   ngOnChanges(changes) {
-    //DEBUG: console.log("OnChanges");
     if(changes.data){ // This only works with @Input() properties
       console.log(changes.data);
       if(this.chartConfig){
@@ -128,22 +113,8 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   }
 
   set data(d:ChartData[]){
-    if(/*!this.chartConfig ||*/ !d){
-      /*this.chartConfig = {
-        data:{
-          columns:[]
-        }
-      }*/
+    if(!d){
       this._data = [];
-    /*} else if(this.chartType == "gauge") {
-      this._data = d;
-      if(this.chartConfig){
-        this.chart.load({
-          columns: [d]
-        });
-      } else {
-        this.render();
-      }*/
     } else {
       let result: any[] = [];
  
@@ -156,13 +127,9 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
         let legendHtmlItem: Legend = {swatch:'',name:item.legend, value: "empty", x:"empty", visible:true};
         if(this.chartType == "donut" || this.chartType == "pie"){
-          //DEBUG: console.log("******** DONUT/PIE LEGEND VALUE ********");
-          //DEBUG: console.log(legendHtmlItem);
           legendHtmlItem.value = d[i].data[0];
           this.showLegendValues = true;
         }
-
-        //this.legend.push(legendHtmlItem);
 
         // Don't duplicate legend items when new data comes in
         let legendIndex = this.findLegendItem(legendHtmlItem);
@@ -171,9 +138,6 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
         } else {
           let dupe = this.legend[legendIndex];
           dupe.value = legendHtmlItem.value
-          /*if(!dupe.visible){
-            this.chart.hide(dupe.name);
-          }*/
         }
       }
       this._data = result;
@@ -188,22 +152,18 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   set chartId(sel: string){
     this._chartId = sel;
-    //this.chartConfig.bindto = '#' + sel;
   }
 
   get chartClass(){
     return this._chartType;
-    //return this.chartConfig.data.type;
   }
 
   get chartType(){
     return this._chartType;
-    //return this.chartConfig.data.type;
   }
 
   set chartType(str:string){
     this._chartType = str;
-    //this.chartConfig.data.type = str;
   }
 
   findLegendItem(item:Legend){
@@ -229,14 +189,9 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
      },
      tooltip:{
        show:false,
-       /*contents: (raw, defaultTitleFormat, defaultValueFormat, color) =>{
-         //DEBUG: console.log(raw[0]);
-           //return ... // formatted html as you want
-       }*/
        format: {
          value: (value, ratio, id, index) => {
            if(this.units){
-             //DEBUG: console.log("Units = " + this.units)
              return value + this.units; 
            } else {
              return value;
@@ -259,59 +214,10 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   refresh(){
     // Reset legend to avoid concatenation
-    //this.legend = [];
     this.render();
   }
 
   render(conf?:any){
-    if(!this.data || this.data.length == 0){
-      console.warn("NO DATA FOUND");
-      return -1;
-    }
-
-    if(!conf){
-      conf = this.makeConfig();
-    }
-
-    let colors = this.colorsFromTheme();
-    //DEBUG: console.log(colors);
-    if(colors){
-      let color = {
-        pattern: colors
-      }
-      conf.color = color;
-    }
-
-    // Hide legend. We've moved the legends out of the svg and into Angular
-    conf.legend = this.legendOptions;
-    conf.tooltip = this.tooltipOptions;
-    if(this.legend.length > 0 && colors){
-      // Since we're checking the legend
-      // hide any existing data points
-      // where legend.visible=false
-      conf.data.hide = [];
-      for(let i in this.legend){
-        let legendItem = this.legend[i];
-        legendItem.swatch = conf.color.pattern[i];
-        if(!legendItem.visible){
-          conf.data.hide.push(legendItem.name);
-        }
-      }
-    }
-    if(this.chartType != "donut" && this.chartType != "pie"){
-      conf.data.onmouseout = (d) => {
-        this.showLegendValues = false;
-      }
-    }
-
-    if(conf.axis && conf.axis.y && this.max){
-      conf.axis.y.max = this.max;
-    }
-
-    //DEBUG: console.log("GENERATING DATA FROM ...");
-    this.chart = c3.generate(conf);
-    this.chartLoaded = true;
-    return this.chart
   }
 
 }

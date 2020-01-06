@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { Http } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
+import { EntityUtils } from '../../../common/entity/utils';
 
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -81,9 +82,10 @@ export class VolumeImportWizardComponent {
           tooltip: helptext.devices_tooltip,
           required: true,
           isHidden: true,
+          disabled: true,
           options: [],
           relation: [{
-            action: 'DISABLE',
+            action: 'HIDE',
             when: [{
               name: 'encrypted',
               value: false,
@@ -100,8 +102,10 @@ export class VolumeImportWizardComponent {
           updater: this.updater,
           parent: this,
           isHidden: true,
+          disabled: true,
+          hideButton: true,
           relation: [{
-            action: 'DISABLE',
+            action: 'HIDE',
             when: [{
               name: 'encrypted',
               value: false,
@@ -116,8 +120,9 @@ export class VolumeImportWizardComponent {
           inputType: 'password',
           togglePw: true,
           isHidden: true,
+          disabled: true,
           relation: [{
-            action: 'DISABLE',
+            action: 'HIDE',
             when: [{
               name: 'encrypted',
               value: false,
@@ -155,7 +160,6 @@ export class VolumeImportWizardComponent {
   protected isNew = true;
   protected is_new_subscription;
   protected encrypted;
-  protected encrypted_subscription;
   protected devices;
   protected devices_fg;
   protected key;
@@ -178,8 +182,13 @@ export class VolumeImportWizardComponent {
     if (this.isNew) {
       this.router.navigate(new Array('/').concat(
         this.route_create));
-    } else if (this.encrypted.value && stepper._selectedIndex === 1) {
-      this.decryptDisks(stepper);
+    } else if (stepper._selectedIndex === 1) {
+      if (this.encrypted.value) {
+        this.decryptDisks(stepper);
+      } else {
+        this.getImportableDisks();
+        stepper.next();
+      }
     } else {
       stepper.next();
     }
@@ -204,7 +213,7 @@ export class VolumeImportWizardComponent {
     }));
     formData.append('file', this.subs.file);
 
-    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Decrypting Disks"}, disableClose: true});
+    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.decrypt_disks_title}, disableClose: true});
     dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.subscribe(res=>{
       dialogRef.close(false);
@@ -219,10 +228,22 @@ export class VolumeImportWizardComponent {
 
   getImportableDisks() {
     this.guid.options = [];
-    this.ws.call('pool.import_find').subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.guid.options.push({label:res[i].name + ' | ' + res[i].guid, value:res[i].guid});
+    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_encrypted_disks_title}, disableClose: true});
+    dialogRef.componentInstance.setDescription(helptext.find_encrypted_disks_msg);
+    dialogRef.componentInstance.setCall('pool.import_find', []);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe((res) => {
+      if (res && res.result) {
+        const result = res.result;
+        for (let i = 0; i < result.length; i++) {
+          this.guid.options.push({label:result[i].name + ' | ' + result[i].guid, value:result[i].guid});
+        }
       }
+      dialogRef.close(false);
+    });
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      new EntityUtils().handleWSError(this.entityWizard, res, this.dialogService);
+      dialogRef.close(false);
     });
   }
 
@@ -248,11 +269,6 @@ export class VolumeImportWizardComponent {
     this.key_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('key'));
     this.passphrase = _.find(this.wizardConfig[1].fieldConfig, {'name': 'passphrase'});
     this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
-    this.encrypted_subscription = this.encrypted.valueChanges.subscribe((res) => {
-      this.devices['isHidden'] = !res;
-      this.key['isHidden'] = !res;
-      this.passphrase['isHidden'] = !res;
-    });
 
     this.ws.call('disk.get_encrypted', [{"unused": true}]).subscribe((res)=>{
       for (let i = 0; i < res.length; i++) {
@@ -261,7 +277,6 @@ export class VolumeImportWizardComponent {
     });
 
     this.guid = _.find(this.wizardConfig[2].fieldConfig, {'name': 'guid'});
-    this.getImportableDisks();
     this.guid_subscription =
     ( < FormGroup > entityWizard.formArray.get([2]).get('guid'))
     .valueChanges.subscribe((res) => {
@@ -277,8 +292,10 @@ export class VolumeImportWizardComponent {
   customSubmit(value) {
     if (value.encrypted) {
       const formData: FormData = new FormData();
-      let params = {"guid": value.guid,
-                    "passphrase": value.passphrase ? value.passphrase: null };
+      const params = {"guid": value.guid};
+      if (value.passphrase && value.passphrase != null) {
+        params['passphrase'] = value.passphrase;
+      }
       formData.append('data', JSON.stringify({
         "method": "pool.import_pool",
         "params": [params]
@@ -323,7 +340,6 @@ export class VolumeImportWizardComponent {
   }
 
   ngOnDestroy() {
-    this.encrypted_subscription.unsubscribe();
     this.guid_subscription.unsubscribe();
     this.message_subscription.unsubscribe();
     this.is_new_subscription.unsubscribe();

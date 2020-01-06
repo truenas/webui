@@ -83,8 +83,12 @@ export class EntityFormService {
             if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
               continue;
             }
+            if(res[i].type === 'SYMLINK') {
+              continue;
+            }
             if(res[i].name !== hideDirs) {
                 child['name'] = res[i].path;
+                child['acl'] = res[i].acl;
                 if(res[i].type === 'DIRECTORY') {
                   child['hasChildren'] = true;
                   }
@@ -97,6 +101,9 @@ export class EntityFormService {
         else{
           if (res[i].hasOwnProperty('name')) {
             if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
+              continue;
+            }
+            if(res[i].type === 'SYMLINK') {
               continue;
             }
             if(res[i].name !== hideDirs) {
@@ -128,9 +135,9 @@ export class EntityFormService {
     });
   }
 
-  getPoolDatasets() {
+  getPoolDatasets(param = []) {
     const nodes = [];
-    return this.ws.call('pool.filesystem_choices').toPromise().then((res)=> {
+    return this.ws.call('pool.filesystem_choices', param).toPromise().then((res)=> {
       for (let i = 0; i < res.length; i++) {
         const pathArr = res[i].split('/');
         if (pathArr.length === 1) {

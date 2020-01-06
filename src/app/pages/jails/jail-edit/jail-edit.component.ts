@@ -20,14 +20,14 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 @Component({
   selector: 'jail-edit',
   templateUrl: './jail-edit.component.html',
-  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss', '../jail-list/jail-list.component.css'],
   providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
 export class JailEditComponent implements OnInit, AfterViewInit {
 
   @ViewChild('basic', { static: true}) basicPanel:any;
   public isReady: boolean =  false;
-  protected updateCall = 'jail.do_update';
+  protected updateCall = 'jail.update';
   protected upgradeCall = 'jail.upgrade';
   protected queryCall = 'jail.query';
   public route_success: string[] = ['jails'];
@@ -37,6 +37,31 @@ export class JailEditComponent implements OnInit, AfterViewInit {
   public busy: Subscription;
   public custActions: any;
   public pk: any;
+
+  protected interfaces = {
+    vnetEnabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+    vnetDisabled: [
+      {
+        label: '------',
+        value: '',
+      }
+    ],
+    vnetDefaultInterface: [
+      {
+        label: 'none',
+        value: 'none',
+      },
+      {
+        label: 'auto',
+        value: 'auto',
+      }
+    ]
+  }
 
   protected formFields: FieldConfig[];
   public basicfieldConfig: FieldConfig[] = [
@@ -121,10 +146,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           name: 'ip4_interface',
           placeholder: helptext.ip4_interface_placeholder,
           tooltip: helptext.ip4_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           value: '',
           class: 'inline',
           width: '30%',
@@ -196,10 +218,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           name: 'ip6_interface',
           placeholder: helptext.ip6_interface_placeholder,
           tooltip: helptext.ip6_interface_tooltip,
-          options: [{
-            label: '------',
-            value: '',
-          }],
+          options: this.interfaces.vnetDisabled,
           value: '',
           class: 'inline',
           width: '30%',
@@ -670,16 +689,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       name: 'vnet_default_interface',
       placeholder: helptext.vnet_default_interface_placeholder,
       tooltip: helptext.vnet_default_interface_tooltip,
-      options: [
-        {
-          label: 'none',
-          value: 'none',
-        },
-        {
-          label: 'auto',
-          value: 'auto',
-        }
-      ],
+      options: this.interfaces.vnetDefaultInterface,
       disabled: false,
     },
     {
@@ -711,9 +721,23 @@ export class JailEditComponent implements OnInit, AfterViewInit {
       disabled: false,
     },
     {
+      type: 'input',
+      name: 'nat_interface',
+      placeholder: helptext.nat_interface_placeholder,
+      tooltip: helptext.nat_interface_tooltip,
+      relation: [{
+        action: "SHOW",
+        when: [{
+          name: "nat",
+          value: true,
+        }]
+      }],
+    },
+    {
       type: 'checkbox',
       name: 'nat_forwards_checkbox',
-      placeholder: 'nat_forwards',
+      placeholder: helptext.nat_forwards_placeholder,
+      tooltip: helptext.nat_forwards_tooltip,
       relation: [{
         action: "SHOW",
         when: [{
@@ -1131,6 +1155,8 @@ export class JailEditComponent implements OnInit, AfterViewInit {
   public error: any;
   protected isPlugin = false;
 
+  public showSpinner = true;
+
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected jailService: JailService,
@@ -1150,17 +1176,6 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  updateInterfaceOptions(interfaceField, addVnet) {
-    if (addVnet != undefined) {
-      const index = _.findIndex(interfaceField.options as any, { 'label': 'vnet0'});
-      if (addVnet && index == -1) {
-        interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
-      } else if (!addVnet && index > -1){
-        interfaceField.options.splice(index, 1);
-      }
-    }
-  }
-
   updateInterface(addVnet?) {
     for (const ipType of ['ip4', 'ip6']) {
       const targetPropName = ipType + '_addr';
@@ -1169,7 +1184,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         const subipInterfaceField = _.find(_.find(this.basicfieldConfig, {'name': targetPropName}).listFields[i], {'name': ipType + '_interface'});
 
         if (addVnet != undefined) {
-          this.updateInterfaceOptions(subipInterfaceField, addVnet);
+          subipInterfaceField.options = addVnet ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
         }
       }
     }
@@ -1201,9 +1216,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.vnet_default_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i]});
         }
       },
       (res)=>{
@@ -1255,7 +1268,8 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
       }
-
+      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
+      this.ip6_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
       this.updateInterface(res);
     });
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
@@ -1292,6 +1306,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         ]
       ]).subscribe(
       (res) => {
+        this.showSpinner = false;
         this.wsResponse = res[0];
         if (res[0] && res[0].state == 'up') {
           this.save_button_enabled = false;
@@ -1305,6 +1320,13 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         }
 
         for (let i in res[0]) {
+          if (i === 'interfaces') {
+            const ventInterfaces = res[0]['interfaces'].split(',');
+            for (const item of ventInterfaces) {
+              this.interfaces.vnetEnabled.push({ label: item, value: item});
+              this.interfaces.vnetDefaultInterface.push({ label: item, value: item});
+            }
+          }
           if (i == 'type' && res[0][i] == 'pluginv2') {
             this.setDisabled("host_hostuuid", true);
             this.isPlugin = true;
@@ -1429,10 +1451,11 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     this.router.navigate(new Array('').concat(this.route_success));
   }
 
-  getFullIP(ipInterface: string, ip: string, netmask: string) {
+  getFullIP(type: string, ipInterface: string, ip: string, netmask: string) {
     let full_address = ip;
     if (ipInterface != '') {
-      full_address = ipInterface + '|' + ip;
+      const validInterface = _.find(type === 'ip4' ? this.ip4_interfaceField.options : this.ip6_interfaceField.options, {value: ipInterface}) !== undefined;
+      full_address = validInterface ? ipInterface + '|' + ip : ip;
     }
     if (netmask != '') {
       full_address += '/' + netmask;
@@ -1448,7 +1471,7 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < value[propName].length; i++) {
           const subAddr = value[propName][i];
           if (subAddr[propName] != '' && subAddr[propName] != undefined) {
-            multi_ipaddr.push(this.getFullIP(subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')]));
+            multi_ipaddr.push(this.getFullIP(ipType, subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')]));
           }
         }
         value[propName] = multi_ipaddr.join(',');
@@ -1475,11 +1498,18 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     }
     delete value['auto_configure_ip6'];
 
-    for (let i in value) {
-      // do not send value[i] if value[i] no change
-      if (value[i] == this.wsResponse[i]) {
-        delete value[i];
+    for (let i in this.wsResponse) {
+      if (value[i] == undefined && _.find(this.formFields, {name: i}) != undefined && i !== 'host_hostuuid' && i !== 'release') {
+        if (this.wsResponse[i] === true) {
+          value[i] = false;
+        }
+      } else {
+        // do not send value[i] if value[i] no change
+        if (value[i] == this.wsResponse[i]) {
+          delete value[i];
+        }
       }
+
       if (value.hasOwnProperty(i)) {
         if (i == 'release') {
           // upgrade release
@@ -1489,9 +1519,9 @@ export class JailEditComponent implements OnInit, AfterViewInit {
         }
         if (_.indexOf(this.TFfields, i) > -1) {
           if (value[i]) {
-            value[i] = '1';
+            value[i] = 1;
           } else {
-            value[i] = '0';
+            value[i] = 0;
           }
         } else if (_.indexOf(this.OFfields, i) > -1) {
           if (value[i]) {

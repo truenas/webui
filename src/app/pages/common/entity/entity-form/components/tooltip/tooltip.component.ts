@@ -17,7 +17,7 @@ export class TooltipComponent {
   public isShowTooltip: boolean;
   public tooltipMsgStyle: any;
   public isLockTooltip: boolean = false;
-  public isWizard: boolean = false
+  public isWizard: boolean = false;
 
   public positionString: string = 'Default';
   public isMoved: boolean = false;
@@ -28,7 +28,6 @@ export class TooltipComponent {
     this.isShowTooltip = $event;
 
     let formParent = this.findParent();
-
     let screenW = document.body.clientWidth;
     let screenH = document.body.clientHeight;
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
@@ -56,7 +55,6 @@ export class TooltipComponent {
     } else {
       this.positionString = insideJob ? 'right' : 'left';
     }
-
   }
 
   toggleVis(state?) {
@@ -78,7 +76,10 @@ export class TooltipComponent {
   findParent(){
     let formParent = this.tooltip.nativeElement.offsetParent;
     let card;
-    if(formParent.tagName.toLowerCase() == 'mat-card'){
+    if (this.tooltip.nativeElement.closest('mat-dialog-container')) {
+      card = this.tooltip.nativeElement.closest('mat-dialog-container');
+      this.positionOverride = 'right';
+    } else if(formParent.tagName.toLowerCase() == 'mat-card'){
       card = formParent;
     } else if(formParent.offsetParent.tagName.toLowerCase() == 'mat-card'){
       card = formParent.offsetParent;

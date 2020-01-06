@@ -1,9 +1,9 @@
 <div class="text-center pb-2">
-    <h6 class="m-0 pb-1">{{ title }}</h6>
+    <h6 class="m-0 pb-1">{{ title | translate }}</h6>
     <div mat-dialog-content class="spinner-container">
         <mat-spinner></mat-spinner>
     </div>
 </div>
 <div *ngIf="isShowConsole$ | async" fxLayoutAlign="center center">
-    <button mat-button color="primary" (click)="onOpenConsole()">{{ 'Console' }}</button>
+    <button mat-button color="primary" (click)="onOpenConsole()">{{ 'Console' | translate }}</button>
 </div>

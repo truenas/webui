@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Http } from '@angular/http';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
-import { SnackbarService } from 'app/services/snackbar.service';
+import { StorageService } from 'app/services/storage.service';
 
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -16,8 +17,8 @@ import helptext from '../helptext/storage/volumes/volume-key'
 
 export class EncryptionService {
     constructor(protected ws: WebSocketService, protected dialogService: DialogService,
-        protected snackBar: MatSnackBar, protected loader: AppLoaderService,
-        protected mdDialog: MatDialog, protected router: Router, protected snackbarService: SnackbarService) {}
+        protected snackBar: MatSnackBar, protected loader: AppLoaderService, protected storage: StorageService,
+        protected mdDialog: MatDialog, protected router: Router, protected http: Http) {}
 
     setPassphrase(row, encryptKeyPassphrase, adminPassphrase, poolName, route_success, 
       addRecoveryKey?: boolean, downloadEncrytpKey?: boolean, success_message?) {
@@ -25,10 +26,7 @@ export class EncryptionService {
       this.ws.call('pool.passphrase', [parseInt(row), {'passphrase': encryptKeyPassphrase, 
         'admin_password': adminPassphrase}]).subscribe(() => {
           this.loader.close();
-          this.snackbarService.open(T(`Passphrase ${success_message} <i>${poolName}</i>`), T("Close"), {
-            duration: 5000,
-          });
-          this.loader.close();
+          this.dialogService.Info(T('Set Passphrase'), T(`Passphrase ${success_message} <i>${poolName}</i>`), '300px', "info", true)
           this.openEncryptDialog(row, route_success, poolName, addRecoveryKey);
       },
       (err) => {
@@ -53,14 +51,20 @@ export class EncryptionService {
     
     makeRecoveryKey(row, poolName, route_success) {
       this.loader.open();
-      this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], 'pool_' + poolName + '_recovery.key']).subscribe((res) => {
+      const fileName = 'pool_' + poolName + '_recovery.key'
+      this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], fileName]).subscribe((res) => {
         this.loader.close();
-        this.snackbarService.open(T(`Recovery key added to pool <i>${poolName}</i>`), 'close', { duration: 5000 });
         this.dialogService.confirm(helptext.set_recoverykey_dialog_title, helptext.set_recoverykey_dialog_message, 
           true, helptext.set_recoverykey_dialog_button, false, '', '', '', '', true).subscribe(() => {
-            window.open(res[1]);
-            this.router.navigate(new Array('/').concat(
-              route_success));
+            const url = res[1];
+            const mimetype = 'application/octet-stream';
+            this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+              this.storage.downloadBlob(file, fileName);
+              this.router.navigate(new Array('/').concat(
+                route_success));
+            }, err => {
+              this.dialogService.errorReport(helptext.addkey_download_failed_title, helptext.addkey_download_failed_message, err);
+            });
           });
       }, (err) => {
         this.loader.close();
@@ -75,7 +79,7 @@ export class EncryptionService {
             this.loader.open();
             this.ws.call('pool.recoverykey_rm', [parseInt(row), {'admin_password': adminPassphrase}]).subscribe(() => {
               this.loader.close();
-              this.snackbarService.open(T(`Recovery key deleted from pool <i>${poolName}</i>`), 'close', { duration: 5000 });
+              this.dialogService.Info(helptext.delete_recovery_key_title, T(`Recovery key deleted from pool <i>${poolName}</i>`), '300px', "info", true);
               this.router.navigate(new Array('/').concat(route_success));
             },
             (err) => {

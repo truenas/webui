@@ -304,13 +304,13 @@ export class CertificateAuthorityAddComponent {
       });
     });
 
-    this.ws.call('notifier.choices', ['COUNTRY_CHOICES']).subscribe( (res) => {
+   this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
       this.country = _.find(this.fieldConfig, {'name' : 'country'});
-      res.forEach((item) => {
+      for (const item in res) {
         this.country.options.push(
-          { label : item[1], value : item[0]}
+          { label : res[item], value : item}
         );
-      });
+      };
     });
   }
 

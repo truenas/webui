@@ -30,6 +30,12 @@ detachDialog_pool_detach_warning_paratext_b: T("</i>.\
  Data on the pool disks can be destroyed by setting the <b>Destroy data</b> option.\
  Back up critical data <b>before</b> exporting/disconnecting the pool."),
 
+detachWarningForUnknownState: {
+    message_a: T('The pool <i>'),
+    message_b: T('</i>is in the database but not connected to the machine. If it was exported by \
+ mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />')
+},
+
 detachDialog_pool_detach_warning__encrypted_paratext: T("' is encrypted! If the passphrase for\
  this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE!\
  Before exporting/disconnecting encrypted pools, download and safely\
@@ -38,9 +44,18 @@ detachDialog_pool_detach_warning__encrypted_paratext: T("' is encrypted! If the 
 detachDialog_pool_detach_destroy_checkbox_placeholder: T("Destroy data on this pool?"),
 detachDialog_pool_detach_cascade_checkbox_placeholder: T("Delete configuration of shares that used this pool?"),
 detachDialog_pool_detach_confim_checkbox_placeholder: T("Confirm Export/Disconnect"),
+unknown_status_alt_text: T('(Remove pool from database)'),
 
 upgradePoolDialog_warning: T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
- the pool incompatible with older versions of FreeNAS: ")
+ the pool incompatible with older versions of FreeNAS: "),
+
+pool_lock_warning_paratext_a: T("WARNING: Locking pool <i>"),
+pool_lock_warning_paratext_b: T("</i>.\
+ Data on the pool will not be accessible until the pool is unlocked."),
+
+permissions_edit_msg: T('Root dataset permissions cannot be edited.'),
+acl_edit_msg: T('Root dataset ACL cannot be edited.')
+
 
 }

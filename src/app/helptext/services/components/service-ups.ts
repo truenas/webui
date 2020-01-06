@@ -2,6 +2,12 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+ups_fieldset_general: T('General Options'),
+ups_fieldset_monitor: T('Monitor'),
+ups_fieldset_shutdown: T('Shutdown'),
+ups_fieldset_email: T('Email'),
+ups_fieldset_other: T('Other Options'),
+
 ups_mode_placeholder : T('UPS Mode'),
 ups_mode_tooltip : T('Choose <i>Master</i> if the UPS is plugged directly\
  into the system serial port. The UPS will remain the\
@@ -10,8 +16,8 @@ ups_mode_tooltip : T('Choose <i>Master</i> if the UPS is plugged directly\
  <a href="http://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client"\
  target="_blank">Network UPS Tools Overview</a>.'),
 ups_mode_options : [
-    {label : 'Master', value : 'master'},
-    {label : 'Slave', value : 'slave'},
+    {label : 'Master', value : 'MASTER'},
+    {label : 'Slave', value : 'SLAVE'},
 ],
 
 ups_identifier_placeholder : T('Identifier'),
@@ -40,10 +46,10 @@ ups_driver_tooltip : T('See the <a\
 ups_driver_validation : [ Validators.required ],
 
 ups_port_placeholder : T('Port or Hostname'),
-ups_port_tooltip : T('The serial or USB port that the UPS is \
- using.<br /> <br />\
- <b>Hostname</b>: Enter the IP address or hostname of the SNMP UPS \
- device.<br /> <br />'),
+ups_port_tooltip : T('Serial or USB port connected to the UPS. To \
+ automatically detect and manage the USB port settings, select \
+ <i>auto</i>.<br><br> When an SNMP driver is selected, enter the IP \
+ address or hostname of the SNMP UPS device.'),
 ups_port_validation : [ Validators.required ],
 
 ups_hostname_placeholder: T('Hostname'),
@@ -65,8 +71,8 @@ ups_description_tooltip : T('Describe this service.'),
 ups_shutdown_placeholder : T('Shutdown Mode'),
 ups_shutdown_tooltip : T('Choose when the UPS initiates shutdown.'),
 ups_shutdown_options : [
-{label : 'UPS reaches low battery', value : 'lowbatt'},
-{label : 'UPS goes on battery', value : 'batt'},
+{label : 'UPS reaches low battery', value : 'LOWBATT'},
+{label : 'UPS goes on battery', value : 'BATT'},
 ],
 
 ups_shutdowntimer_placeholder : T('Shutdown Timer'),
@@ -79,7 +85,6 @@ ups_shutdowntimer_tooltip : T('Enter a value in seconds for the the UPS to wait\
 ups_shutdowncmd_placeholder : T('Shutdown Command'),
 ups_shutdowncmd_tooltip : T('Enter a command to shut down the system when either\
  battery power is low or the shutdown timer ends.'),
-ups_shutdowncmd_validation : [ Validators.required ],
 
 ups_nocommwarntime_placeholder: T('No Communication Warning Time'),
 ups_nocommwarntime_tooltip: T('Enter a number of seconds to wait before alerting that\

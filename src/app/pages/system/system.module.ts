@@ -9,6 +9,7 @@ import { MaterialModule } from '../../appMaterial.module';
 import { MarkdownModule } from 'ngx-markdown';
 import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { GeneralComponent } from './general/general.component';
 import { AdvancedComponent } from './advanced/';
@@ -24,9 +25,7 @@ import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
-import {ManualUpdateConfigSaveComponent} from './update/manualupdate/manualupdateconfig-save/';
-import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
-import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
+import { NTPServerFormComponent } from './ntpservers/ntpserver-form/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
@@ -51,7 +50,6 @@ import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.compon
 import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
 import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
-import { ProactiveSupportComponent } from './proactive-support/proactive-support.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
 import { EulaComponent } from './support/eula/eula.component';
@@ -69,7 +67,7 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
-    EnclosureModule
+    EnclosureModule, CommonDirectivesModule
   ],
   declarations: [
     GeneralComponent,
@@ -86,10 +84,8 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     TunableFormComponent,
     UpdateComponent,
     ManualUpdateComponent,
-    ManualUpdateConfigSaveComponent,
     NTPServerListComponent,
-    NTPServerAddComponent,
-    NTPServerEditComponent,
+    NTPServerFormComponent,
     AlertServiceListComponent,
     CloudCredentialsListComponent,
     CloudCredentialsFormComponent,
@@ -112,7 +108,6 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     AcmednsFormComponent,
     CertificateAcmeAddComponent,
     FailoverComponent,
-    ProactiveSupportComponent,
     ReportingComponent,
     EulaComponent,
     TnSysInfoComponent,

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
-import { SnackbarService } from 'app/services/snackbar.service'
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -193,12 +192,13 @@ export class ProactiveComponent {
   },
 ]
 
-  constructor(public ws: WebSocketService,protected snackbar: SnackbarService, 
-    protected loader: AppLoaderService, protected dialogService: DialogService) { }
+  constructor(public ws: WebSocketService, protected loader: AppLoaderService, 
+    protected dialogService: DialogService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const proactiveFields: Array<any> = [
+      'enabled',
       'name',
       'title',
       'email',
@@ -207,8 +207,7 @@ export class ProactiveComponent {
       'secondary_title',
       'secondary_email',
       'secondary_phone',
-      'TN_proactive_title',
-      'enabled'
+      'TN_proactive_title'
     ];
 
     const proactiveParatext: Array<any> = [
@@ -271,8 +270,8 @@ export class ProactiveComponent {
     this.loader.open();
     this.ws.call('support.update', [data]).subscribe(() => {
       this.loader.close();
-      this.snackbar.open(helptext.proactive.snackbar_mesage, 
-        helptext.proactive.snackbar_action, {duration: 4000});
+      this.dialogService.Info(helptext.proactive.dialog_title, 
+        helptext.proactive.dialog_mesage, '350px', 'info', true);
     }, 
     (err) => {
       this.loader.close();

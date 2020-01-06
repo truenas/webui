@@ -4,6 +4,7 @@ import { MatDialogModule, MatIconModule, MatProgressSpinnerModule } from '@angul
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { AppLoaderComponent } from './app-loader.component';
 import { AppLoaderService } from './app-loader.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -11,7 +12,8 @@ import { AppLoaderService } from './app-loader.service';
     CoreComponents,
     MatDialogModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    TranslateModule
   ],
   providers: [AppLoaderService],
   declarations: [AppLoaderComponent],

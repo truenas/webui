@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
-import { MatSnackBar, MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material';
 import { DialogService } from '../../../../services/';
 import { EntityUtils } from '../utils';
 
@@ -27,7 +27,7 @@ export class EntityWizardComponent implements OnInit {
   @ViewChild('stepper', {static: true}) stepper: MatStepper;
 
   public formGroup: FormGroup;
-
+  public showSpinner = false;
   public busy: Subscription;
 
   public saveSubmitText = T("Submit");
@@ -38,12 +38,15 @@ export class EntityWizardComponent implements OnInit {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private formBuilder: FormBuilder, private entityFormService: EntityFormService,
     protected loader: AppLoaderService, protected fieldRelationService: FieldRelationService,
-    public snackBar: MatSnackBar, protected router: Router, protected aroute: ActivatedRoute,
+    protected router: Router, protected aroute: ActivatedRoute,
     private dialog: DialogService, protected translate: TranslateService) {
 
   }
 
   ngOnInit() {
+    if (this.conf.showSpinner) {
+      this.showSpinner = true;
+    }
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -163,7 +166,7 @@ export class EntityWizardComponent implements OnInit {
             if (this.conf.route_success) {
               this.router.navigate(new Array('/').concat(this.conf.route_success));
             } else {
-              this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
+              this.dialog.Info(T("Settings saved"), '', '300px', 'info', true);
             }
           }
         },

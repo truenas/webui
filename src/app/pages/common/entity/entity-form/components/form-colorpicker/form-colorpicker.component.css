@@ -2,8 +2,8 @@ div.color-swatch{
   /*display:inline-block;*/
   float:left;
   margin:0 8px;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 0;
   color: rgba(0,0,0,0);

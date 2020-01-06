@@ -11,7 +11,7 @@
   /*position: absolute;
   left: 0;
   bottom: 0;*/
-  width: 536px;
+  width: calc(100% - 32px);
   margin:0 16px;
 }
 

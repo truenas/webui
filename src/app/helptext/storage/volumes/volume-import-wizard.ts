@@ -29,5 +29,10 @@ passphrase_tooltip: T('Enter the decryption passphrase.'),
 
 import_label: T('Select pool to import'),
 guid_placeholder: T('Pool'),
-guid_tooltip: T('Select a pool to import.')
+guid_tooltip: T('Select a pool to import.'),
+
+find_encrypted_disks_title: T("Finding Disks"),
+find_encrypted_disks_msg: T("Finding encrypted disks..."),
+
+decrypt_disks_title: T("Decrypting Disks")
 }

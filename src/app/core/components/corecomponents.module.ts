@@ -13,7 +13,8 @@ import { Display,DisplayContainer } from 'app/core/components/display/display.co
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
-//import { C3ChartComponent } from 'app/core/components/c3chart/c3chart.component';
+import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
@@ -29,8 +30,6 @@ import { WidgetNicComponent } from 'app/core/components/widgets/widgetnic/widget
 import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widgetcpu.component';
 
 import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
-import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
-import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
 
@@ -59,7 +58,8 @@ import { ConvertPipe } from './pipes/convert.pipe';
     PortalModule,
     FlexLayoutModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
+    CommonDirectivesModule
   ],
   declarations: [
     ContextMenuComponent,
@@ -72,7 +72,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     Display,
     DisplayContainer,
     ViewButtonComponent,
-    //C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartPieComponent,
@@ -85,8 +84,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetNicComponent,
     WidgetCpuComponent,
     WidgetMemoryComponent,
-    WidgetNoteComponent,
-    WidgetNotesCollectionComponent,
     WidgetPoolComponent,
     TextLimiterDirective,
     TextLimiterTooltipComponent,
@@ -106,8 +103,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ContextMenuComponent,
     CopyPasteMessageComponent,
     PageComponent,
-    ViewComponent,
-    //C3ChartComponent,
+    ViewComponent, 
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
@@ -124,8 +120,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetNicComponent,
     WidgetCpuComponent,
     WidgetMemoryComponent,
-    WidgetNoteComponent,
-    WidgetNotesCollectionComponent,
     TextLimiterTooltipComponent,
     WidgetPoolComponent,
     WidgetControllerComponent,
@@ -137,7 +131,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     CopyPasteMessageComponent,
     DisplayContainer,
     ViewComponent,
-    //C3ChartComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
@@ -154,8 +147,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetNicComponent,
     WidgetCpuComponent,
     WidgetMemoryComponent,
-    WidgetNoteComponent,
-    WidgetNotesCollectionComponent,
     WidgetPoolComponent,
     TextLimiterTooltipComponent,
     WidgetControllerComponent,

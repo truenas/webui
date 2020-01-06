@@ -35,7 +35,6 @@ export class Services implements OnInit {
     'ftp': 'FTP',
     'iscsitarget': 'iSCSI',
     'lldp': 'LLDP',
-    'netdata': 'Netdata',
     'nfs': 'NFS',
     'rsync': 'Rsync',
     's3': 'S3',
@@ -80,14 +79,16 @@ export class Services implements OnInit {
       .subscribe((res) => {
         this.services = res;
         this.services.forEach((item) => {
-          if (this.name_MAP[item.service]) {
-            item.label = this.name_MAP[item.service];
-          } else {
-            item.label = item.service;
+          if (item.service !== 'netdata') {
+            if (this.name_MAP[item.service]) {
+              item.label = this.name_MAP[item.service];
+            } else {
+              item.label = item.service;
+            }
+            const card = this.parseResponse(item);
+            this.cards.push(card);
+            this.cache.push(card);
           }
-          const card = this.parseResponse(item);
-          this.cards.push(card);
-          this.cache.push(card);
         });
         this.cards = _.sortBy(this.cards, [function(i) {return i.label.toLowerCase()}]);
         this.cache = _.sortBy(this.cache, [function(i) {return i.label.toLowerCase()}]);

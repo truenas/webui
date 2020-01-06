@@ -1,31 +1,31 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
-import { CloudCredentialService, DialogService, WebSocketService } from '../../../../services/';
+import { CloudCredentialService, DialogService, WebSocketService, ReplicationService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-cloudcredentials-form',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [ CloudCredentialService ],
+  providers: [ CloudCredentialService, ReplicationService ],
 })
 export class CloudCredentialsFormComponent {
 
   protected isEntity = true;
   protected addCall = 'cloudsync.credentials.create';
   protected queryCall = 'cloudsync.credentials.query';
+  protected editCall = 'cloudsync.credentials.update';
   protected queryCallOption: Array<any> = [['id', '=']];
   protected route_success: string[] = ['system', 'cloudcredentials'];
   protected formGroup: FormGroup;
   protected id: any;
   protected pk: any;
+  protected keyID: number;
 
   protected selectedProvider: string = 'S3';
   protected credentialsOauth = false;
@@ -44,6 +44,7 @@ export class CloudCredentialsFormComponent {
       type: 'select',
       name: 'provider',
       placeholder: helptext.provider.placeholder,
+      tooltip: helptext.provider.tooltip,
       options: [],
       value: this.selectedProvider,
       required: true,
@@ -522,6 +523,27 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'select',
+      name: 'drives-ONEDRIVE',
+      placeholder: helptext.drives_onedrive.placeholder,
+      tooltip: helptext.drives_onedrive.tooltip,
+      options: [{
+        label: '---------',
+        value: '',
+      }],
+      value: '',
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'ONEDRIVE',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'select',
       name: 'drive_type-ONEDRIVE',
       placeholder: helptext.drive_type_onedrive.placeholder,
       tooltip: helptext.drive_type_onedrive.tooltip,
@@ -667,6 +689,10 @@ export class CloudCredentialsFormComponent {
         {
           label: '---------',
           value: '',
+        },
+        {
+          label: 'Generate New',
+          value: 'NEW',
         }
       ],
       value: '',
@@ -822,6 +848,7 @@ export class CloudCredentialsFormComponent {
         const controls = this.entityForm.formGroup.controls;
         const selectedProvider = this.selectedProvider;
         const dialogService = this.dialog;
+        const getOnedriveList = this.getOnedriveList.bind(this);
 
         window.addEventListener("message", doAuth, false);
 
@@ -837,6 +864,9 @@ export class CloudCredentialsFormComponent {
                 }
                 controls[targetProp].setValue(message.data.result[prop]);
               }
+            }
+            if (selectedProvider === 'ONEDRIVE') {
+              getOnedriveList(message.data);
             }
           }
           window.removeEventListener("message", doAuth);
@@ -859,29 +889,22 @@ export class CloudCredentialsFormComponent {
             if (!this.entityForm.formGroup.controls[item].valid) {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
-            if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3') {
+            if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3' && item !== 'drives-ONEDRIVE') {
               attr_name = item.split("-")[0];
-              attributes[attr_name] = value[item];
+              if (value[item] != '' && value[item] != undefined) {
+                attributes[attr_name] = value[item];
+              }
             }
             delete value[item];
           }
         }
-        delete value['name'];
         value['attributes'] = attributes;
 
-        this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
-          (res) => {
-            this.entityForm.loader.close();
-            if (res.valid) {
-              this.snackBar.open(T('The Credential is valid.'), T('Close'), { duration: 5000 });
-            } else {
-              this.dialog.errorReport('Error', res.excerpt, res.error);
-            }
-          },
-          (err) => {
-            this.entityForm.loader.close();
-            new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
-          })
+        if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
+          this.makeNewKeyPair(value);
+        } else {
+        this.verifyCredentials(value);
+        }
       }
     }
   ];
@@ -891,7 +914,7 @@ export class CloudCredentialsFormComponent {
               protected ws: WebSocketService,
               protected cloudcredentialService: CloudCredentialService,
               protected dialog: DialogService,
-              public snackBar: MatSnackBar) {
+              protected replicationService: ReplicationService) {
     this.providerField = _.find(this.fieldConfig, {'name': 'provider'});
     this.cloudcredentialService.getProviders().subscribe(
       (res) => {
@@ -923,6 +946,13 @@ export class CloudCredentialsFormComponent {
     return true;
   }
 
+  isCustActionDisabled(actionId: string) {
+    if (actionId === 'validCredential') {
+      return this.entityForm.formGroup.invalid;
+    }
+    return false;
+  }
+
   preInit() {
     this.oauthClentIdField = _.find(this.fieldConfig, {'name': 'client_id'});
     this.oauthClentSecretField = _.find(this.fieldConfig, {'name': 'client_secret'});
@@ -951,7 +981,6 @@ export class CloudCredentialsFormComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-    entityForm.submitFunction = this.submitFunction;
 
     const providerField = _.find(this.fieldConfig, {'name' : 'provider'});
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
@@ -982,22 +1011,80 @@ export class CloudCredentialsFormComponent {
         this.setFieldRequired('pass-SFTP', required, entityForm);
       }
     });
+
+    const driveTypeCtrl = entityForm.formGroup.controls['drive_type-ONEDRIVE'];
+    const driveIdCtrl = entityForm.formGroup.controls['drive_id-ONEDRIVE'];
+    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.subscribe((res) => {
+      if (res) {
+        driveTypeCtrl.setValue(res.drive_type);
+        driveIdCtrl.setValue(res.drive_id);
+      } else {
+        driveTypeCtrl.setValue('PERSONAL');
+        driveIdCtrl.setValue(null);
+      }
+    });
   }
 
-  beforeSubmit(value) {
-    if (!this.credentialsOauth) {
-      delete value['client_id'];
-      delete value['client_secret'];
-    }
+  verifyCredentials(value) {
+    delete value['name'];
+    this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
+      (res) => {
+        this.entityForm.loader.close();
+        if (res.valid) {
+          this.dialog.Info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
+        } else {
+          this.dialog.errorReport('Error', res.excerpt, res.error);
+        }
+      },
+      (err) => {
+        this.entityForm.loader.close();
+        new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
+      })
   }
 
-  submitFunction(value) {
+  async makeNewKeyPair(value, submitting?: boolean) {
+    await this.replicationService.genSSHKeypair().then(
+      async (res) => {
+        const payload = {
+          name: value['name'] + ' Key',
+          type: 'SSH_KEY_PAIR',
+          attributes: res,
+        };
+        await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
+          (sshKey) => {
+            
+            this.keyID = sshKey.id;
+            const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
+            privateKeySFTPField.options.push({ label: payload.name, value: this.keyID});
+            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
+            if (submitting) {
+              value['private_key-SFTP'] = sshKey.id;
+              this.finishSubmit(value)
+            } else  {
+              value.attributes.private_key = this.keyID;
+              this.verifyCredentials(value);
+            }
+          },
+          (sshKey_err) => {
+            this.entityForm.loader.close();
+            new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
+          });
+      },
+      (err) => {
+        this.entityForm.loader.close();
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      });
+  }
+
+
+
+  finishSubmit(value) {
+    this.entityForm.loader.open();
     const attributes = {};
     let attr_name: string;
-
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
-        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && value[item] != '') {
+        if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
           attr_name = item.split("-")[0];
           attributes[attr_name] = value[item];
         }
@@ -1006,10 +1093,34 @@ export class CloudCredentialsFormComponent {
     }
     value['attributes'] = attributes;
 
-    if (!this.pk) {
-      return this.ws.call('cloudsync.credentials.create', [value]);
+    this.entityForm.submitFunction(value).subscribe(
+      (res) => {
+          this.entityForm.loader.close();
+          this.entityForm.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (err) => {
+          this.entityForm.loader.close();
+          if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
+              new EntityUtils().handleWSError(this, err, this.dialog);
+          } else {
+              new EntityUtils().handleError(this, err);
+          }
+      });
+  }
+
+
+  beforeSubmit(value) {
+    if (!this.credentialsOauth) {
+      delete value['client_id'];
+      delete value['client_secret'];
+    }
+  }
+
+  async customSubmit(value) {
+    if (value['private_key-SFTP'] === 'NEW') {
+      this.makeNewKeyPair(value, true);
     } else {
-      return this.ws.call('cloudsync.credentials.update', [this.pk, value]);
+      this.finishSubmit(value);
     }
   }
 
@@ -1027,5 +1138,28 @@ export class CloudCredentialsFormComponent {
       }
       entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
     }
+  }
+
+  getOnedriveList(data) {
+    if (data.error) {
+      this.entityForm.setDisabled('drives-ONEDRIVE', true, true);
+      return;
+    }
+    data = data.result;
+    const drivesConfig = _.find(this.fieldConfig, {name: 'drives-ONEDRIVE'});
+    this.entityForm.setDisabled('drives-ONEDRIVE', false, false);
+    this.ws.call('cloudsync.onedrive_list_drives', [{
+      client_id: data.client_id,
+      client_secret: data.client_secret,
+      token: data.token,
+    }]).subscribe(
+      (drives) => {
+        for (let i = 0; i < drives.length; i++) {
+          drivesConfig.options.push({label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i]});
+        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      })
   }
 }

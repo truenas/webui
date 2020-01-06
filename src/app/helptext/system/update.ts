@@ -55,6 +55,11 @@ export const helptext_system_update = {
     complete_msg: T('The standby controller has finished upgrading. To complete the update process, \
  failover to the standby controller.'),
     complete_action: T('Close')
+  },
+
+  save_config_err: {
+    title: T('Error'),
+    message: T('System failed to save configuration settings. Check the network connection.')
   }
   
 };

@@ -78,19 +78,19 @@ export interface Disk {
 }
 
 export interface VolumeData {
-  avail:number;
-  id:number;
-  is_decrypted:boolean;
-  is_upgraded:boolean;
-  mountpoint:string;
-  name:string;
-  status:string;
-  used:number;
-  used_pct:string;
-  vol_encrypt:number;
-  vol_encryptkey:string;
-  vol_guid:string;
-  vol_name:string;
+  avail?:number;
+  id?:number;
+  is_decrypted?:boolean;
+  is_upgraded?:boolean;
+  mountpoint?:string;
+  name?:string;
+  status?:string;
+  used?:number;
+  used_pct?:string;
+  vol_encrypt?:number;
+  vol_encryptkey?:string;
+  vol_guid?:string;
+  vol_name?:string;
 }
 
 @Component({
@@ -169,16 +169,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   ngOnInit(){
-
-    this.core.emit({name:"NetInfoRequest"});
-    
-    //Get Network info and determine Primary interface
-    this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
-    });
-
-    this.core.register({observerClass:this, eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
-    });
-
   }
 
   ngAfterContentInit(){
@@ -195,7 +185,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     this.path = [
-      { name: "overview",template: this.overview},
+      { name: T("overview"),template: this.overview},
       { name: "empty", template: this.empty},
       { name: "empty", template: this.empty},
       { name: "empty", template: this.empty}
@@ -253,7 +243,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     };
 
     let percentage = this.volumeData.used_pct.split("%");
-    this.core.emit({name:"PoolDisksRequest",data:[this.volumeData.id]});
+    this.core.emit({name:"PoolDisksRequest",data:[this.poolState.id]});
 
     this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
     if (this.displayValue.slice(-2) === ' B') {
@@ -344,7 +334,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     
     this.currentSlide = value.toString();
     this.title = this.currentSlide == "0" ? "Pool" : this.poolState.name;
-    //console.log(this.path[this.currentSlideIndex].name);
     
   }
 
@@ -380,11 +369,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     if(this.poolHealth.errors.length > 0){
-      this.poolHealth.level = "error"
+      this.poolHealth.level = T("error");
     } else if(this.poolHealth.warnings.length > 0){
-      this.poolHealth.level = "warn"
+      this.poolHealth.level = T("warn");
     } else {
-      this.poolHealth.level = "safe"
+      this.poolHealth.level = T("safe");
     }
 
     if (condition === 'locked') {

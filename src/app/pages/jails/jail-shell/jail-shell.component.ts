@@ -1,11 +1,11 @@
 import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
 import { ShellService, WebSocketService } from '../../../services/';
-import { T } from '../../../translate-marker';
+import helptext from "./../../../helptext/shell/shell";
 
 @Component({
   selector: 'app-jail-shell',
@@ -27,16 +27,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   public xterm: any;
   private shellSubscription: any;
 
-  public shell_tooltip = T('<b>Ctrl+C</b> kills a foreground process.<br>\
-                            Many utilities are built-in:<br> <b>Iperf</b>,\
-                            <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
-                            <b>tw_cli</b>, <br><b>MegaCli</b>,\
-                            <b>freenas-debug</b>, <b>tmux</b>,\
-                            <b>Dmidecode</b>.<br> Refer to the <a\
-                            href="--docurl--/cli.html"\
-                            target="_blank">Command Line Utilities</a>\
-                            chapter in the guide for usage information\
-                            and examples.');
+  public shell_tooltip = helptext.usage_tooltip;
 
   clearLine = "\u001b[2K\r"
   protected pk: string;
@@ -46,7 +37,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
               protected aroute: ActivatedRoute,
               public translate: TranslateService,
               protected router: Router,
-              private snackbar: MatSnackBar) {
+              private dialog: MatDialog) {
               }
 
   ngOnInit() {
@@ -126,8 +117,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onShellRightClick(): false {
-    this.snackbar.openFromComponent(CopyPasteMessageComponent);
-
+    this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
 }

@@ -8,6 +8,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
 import {RestService, WebSocketService} from '../../../../services/';
 
@@ -22,20 +23,36 @@ import helptext from '../../../../helptext/storage/snapshots/snapshots';
 
 export class SnapshotCloneComponent {
 
-  protected resource_name: string = 'storage/snapshot';
   protected route_success: string[] = [ 'storage', 'pools' ];
   protected route_cancel: string[] = [ 'storage', 'snapshots' ];
+  protected addCall = 'zfs.snapshot.clone';
   protected pk: any;
   protected isEntity: boolean = true;
   protected isNew: boolean = true;
 
-  public fieldConfig: FieldConfig[];
-
-  get custom_add_query(): string {
-    return this.resource_name + '/' + this.pk + '/clone/'
-  }
-
-  @ViewChildren('component') components;
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
+    {
+      name: helptext.label_clone,
+      class: 'clone',
+      label:true,
+      config: [
+        {
+          type: 'input',
+          name: 'snapshot',
+          placeholder: '',
+          isHidden: true
+        },
+        {
+          type: 'input',
+          name: 'dataset_dst',
+          placeholder: helptext.snapshot_clone_name_placeholder,
+          tooltip: helptext.snapshot_clone_name_tooltip,
+          required: true,
+          validation : helptext.snapshot_clone_name_validation
+        }
+      ]
+    }];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -44,19 +61,12 @@ export class SnapshotCloneComponent {
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
-      this.fieldConfig =
-        [
-          {
-            type: 'input',
-            name: 'name',
-            placeholder: helptext.snapshot_clone_name_placeholder,
-            tooltip: helptext.snapshot_clone_name_tooltip,
-            value: this.setName(this.pk),
-            required: true,
-            validation : helptext.snapshot_clone_name_validation
-          }
-        ];
     });
+  }
+
+  afterInit(entityForm: any) {
+    entityForm.formGroup.controls['dataset_dst'].setValue(this.setName(this.pk));
+    entityForm.formGroup.controls['snapshot'].setValue(this.pk);
   }
 
   setName(name) {

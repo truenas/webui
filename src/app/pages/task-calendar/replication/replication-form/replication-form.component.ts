@@ -8,7 +8,6 @@ import { WebSocketService, TaskService, KeychainCredentialService, ReplicationSe
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
-import globalHelptext from './../../../../helptext/global-helptext';
 
 @Component({
     selector: 'app-replication-list',
@@ -281,6 +280,13 @@ export class ReplicationFormComponent {
             placeholder: helptext.recursive_placeholder,
             tooltip: helptext.recursive_tooltip,
             value: false,
+            relation: [{
+                action: 'HIDE',
+                when: [{
+                    name: 'replicate',
+                    value: true,
+                }]
+            }],
         }, {
             type: 'input',
             name: 'exclude',
@@ -295,6 +301,9 @@ export class ReplicationFormComponent {
                 }, {
                     name: 'transport',
                     value: 'LEGACY',
+                }, {
+                    name: 'replicate',
+                    value: true,
                 }]
             }],
         }, {
@@ -303,6 +312,22 @@ export class ReplicationFormComponent {
             placeholder: helptext.properties_placeholder,
             tooltip: helptext.properties_tooltip,
             value: true,
+            relation: [{
+                action: 'HIDE',
+                connective: 'OR',
+                when: [{
+                    name: 'transport',
+                    value: 'LEGACY',
+                }, {
+                    name: 'replicate',
+                    value: true,
+                }]
+            }],
+        }, {
+            type: 'checkbox',
+            name: 'replicate',
+            placeholder: helptext.replicate_placeholder,
+            tooltip: helptext.replicate_tooltip,
         }, {
             type: 'select',
             multiple: true,
@@ -815,7 +840,7 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
-        if (this.entityForm.formGroup.controls['speed_limit'].value) {
+        if (this.entityForm.formGroup.controls['speed_limit'].value) { 
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
         }
@@ -886,6 +911,7 @@ export class ReplicationFormComponent {
                 entityForm.setDisabled('schedule_begin', toDisable, toDisable);
                 entityForm.setDisabled('schedule_end', toDisable, toDisable);
             }
+            entityForm.setDisabled('only_matching_schedule', toDisable, toDisable);
         })
 
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
@@ -905,12 +931,12 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
             const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
-            const filteredValue = this.storageService.convertHumanStringToNum(value);
+            const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
             speedLimitField['hasErrors'] = false;
             speedLimitField['errors'] = '';
-                if (isNaN(filteredValue)) {
+                if (filteredValue !== undefined && isNaN(filteredValue)) {
                     speedLimitField['hasErrors'] = true;
-                    speedLimitField['errors'] = globalHelptext.human_readable_input_error;
+                    speedLimitField['errors'] = helptext.speed_limit_errors;
                 };
         });
     }
@@ -955,7 +981,7 @@ export class ReplicationFormComponent {
             wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
             wsResponse['restrict_schedule'] = true;
         }
-        wsResponse['speed_limit'] = this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0);
+        wsResponse['speed_limit'] = wsResponse['speed_limit'] ? this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0) : undefined;
         return wsResponse;
     }
 
@@ -973,6 +999,12 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
+        if (data['replicate']) {
+            data['recursive'] = true;
+            data['properties'] = true;
+            data['exclude'] = [];
+        }
+
         if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
             data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
         }
@@ -1018,6 +1050,8 @@ export class ReplicationFormComponent {
             delete data['restrict_schedule_picker'];
             delete data['restrict_schedule_begin'];
             delete data['restrict_schedule_end'];
+        } else {
+            delete data['restrict_schedule'];
         }
 
         if (data['compression'] === 'DISABLED') {
@@ -1049,11 +1083,15 @@ export class ReplicationFormComponent {
             }
 
             for (const prop in this.queryRes) {
-                if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
-                    data[prop] = false;
+                if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && prop !== 'job' && data[prop] === undefined) {
+                    if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
+                        data[prop] = false;
+                    } else {
+                        data[prop] = Array.isArray(this.queryRes[prop]) ? [] :  null;
+                    }
                 }
-                if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && data[prop] === undefined) {
-                    data[prop] = Array.isArray(this.queryRes[prop]) ? [] :  null;
+                if (prop === 'schedule' && data[prop] === false) {
+                    data[prop] = null;
                 }
             }
         }

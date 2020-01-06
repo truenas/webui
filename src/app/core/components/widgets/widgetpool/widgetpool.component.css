@@ -63,6 +63,7 @@
   /*border-left:solid 1px var(--bg1);*/
 }
 
+.vdev.hidden,
 .slide .hidden{
   display:none;
 }

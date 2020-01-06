@@ -5,6 +5,8 @@ export default {
 plugin_name_placeholder: T('Plugin Name'),
 
 jail_name_placeholder: T('Jail Name'),
+uuid_tooltip: T('Required. Can contain letters, numbers, periods (.), \
+ dashes (-), and underscores (_).'),
 
 https_placeholder: T('Fetch Method'),
 https_tooltip: T('Use encrypted connection for increased security (preferred).'),
@@ -39,5 +41,17 @@ network and not already in use.'),
 
 ip6_prefix_placeholder: T('IPv6 Prefix'),
 ip6_prefix_tooltip: T('IPv6 prefix for the jail.'),
+
+multi_update_dialog: {
+    title: T('Update Plugins'),
+    content: T('Updating selected plugins.'),
+    succeed: T('Selected plugins updated.'),
+},
+
+portal_dialog: {
+    title: T('Go to Admin Portal'),
+    admin_portal_placeholder: T('Select the admin portal：'),
+    saveButtonText: T('Go to Portal'),
+}
 
 }

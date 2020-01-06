@@ -6,7 +6,6 @@ import {ServiceDDNSComponent} from './components/service-dynamicdns/';
 import {ServiceFTPComponent} from './components/service-ftp/';
 import {ServiceLLDPComponent} from './components/service-lldp/';
 import {ServiceNFSComponent} from './components/service-nfs/';
-import {ServiceNetDataComponent} from './components/service-netdata';
 import {ServiceRSYNCComponent} from './components/service-rsync/';
 import {CconfigureRYSNCComponent} from './components/service-rsync/rsyncconfiguration/configure_rsync';
 import {RSYNCconfigurationListComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list/';
@@ -50,31 +49,35 @@ export const routes: Routes = [
   {
     data: { title: 'Rsync', breadcrumb: 'Rsync'},
     path : 'rsync',
-    component : ServiceRSYNCComponent,
     children: [
       {
         path: '',
-        redirectTo: 'configure',
-      },
-      {
-        path: 'configure',
-        component: CconfigureRYSNCComponent,
-        data: { title: 'Configure', breadcrumb: 'Configure' },
-      },
-      {
-        path: 'rsync-module',
-        component: RSYNCconfigurationListComponent,
-        data: { title: 'RSYNCModule', breadcrumb: 'RSYNCModule' },
-      },
-      {
-        path: 'rsync-module/add',
-        component: RYSNCConfigurationFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      },
-      {
-        path : 'rsync-module/edit/:pk', component : RYSNCConfigurationFormComponent,
-        data: {title: 'Edit', breadcrumb:'Edit' }
-      },
+        data: { title: 'Rsync', breadcrumb: 'Rsync'},
+        children: [
+          {
+            path: '',
+            redirectTo: 'configure',
+          },
+          {
+            path: ':pk',
+            component: ServiceRSYNCComponent,
+            data: { title: '', breadcrumb: ''},
+          },
+          {
+            path: 'rsync-module',
+            data: { title: 'Rsync Module', breadcrumb: 'Rsync Module'},
+            children: [{
+              path: 'add',
+              component: RYSNCConfigurationFormComponent,
+              data: { title: 'Add', breadcrumb: 'Add' },
+            },{
+              path: 'edit/:pk',
+              component: RYSNCConfigurationFormComponent,
+              data: { title: 'Edit', breadcrumb: 'Edit' },
+            }]
+          },
+        ]
+      }
     ]
   },
   {
@@ -86,11 +89,6 @@ export const routes: Routes = [
     data: { title: 'NFS', breadcrumb: 'NFS'},
     path : 'nfs',
     component : ServiceNFSComponent,
-  },
-  {
-    data: { title: 'Netdata', breadcrumb: 'Netdata'},
-    path : 'netdata',
-    component : ServiceNetDataComponent,
   },
   {
     data: { title: 'TFTP', breadcrumb: 'TFTP'},

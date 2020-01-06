@@ -47,7 +47,6 @@ export class AcmednsFormComponent {
             tooltip : helptext.authenticator_provider_tooltip,
               options : [
                 {label: 'Route53', value: 'route53'},
-                {label: 'Hover', value: 'hover'} // demo only
               ],
               value: 'route53',
             parent: this

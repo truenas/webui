@@ -1,10 +1,13 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
-import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
 import globalHelptext from '../../../helptext/global-helptext';
 
 export default {
+cifs_srv_fieldset_netbios: T('NetBIOS'),
+cifs_srv_fieldset_idmap: T('IDMAP'),
+cifs_srv_fieldset_other: T('Other Options'),
+
 cifs_srv_netbiosname_placeholder: T('NetBIOS Name'),
 cifs_srv_netbiosname_tooltip: T('Automatically populated with the original hostname\
  of the system. This name is limited to 15 characters and\
@@ -41,11 +44,11 @@ cifs_srv_unixcharset_tooltip: T('Default is UTF-8 which supports all characters 
 cifs_srv_loglevel_placeholder: T('Log Level'),
 cifs_srv_loglevel_tooltip: T('Choices are <i>Minimum, Normal, or Debug</i>.'),
 cifs_srv_loglevel_options: [
-  { label: 'None', value: '0' },
-  { label: 'Minimum', value: '1' },
-  { label: 'Normal', value: '2' },
-  { label: 'Full', value: '3' },
-  { label: 'Debug', value: '10' },
+  { label: 'None', value: 'NONE' },
+  { label: 'Minimum', value: 'MINIMUM' },
+  { label: 'Normal', value: 'NORMAL' },
+  { label: 'Full', value: 'FULL' },
+  { label: 'Debug', value: 'DEBUG' },
 ],
 
 cifs_srv_syslog_placeholder: T('Use syslog only'),
@@ -103,7 +106,7 @@ idmap_tdb_range_high_tooltip: T('The ending UID/GID for which this system is aut
  Any UID/GID higher than this value is ignored.\
  This avoids accidental UID/GID overlaps between local\
  and remotely defined IDs.'),
- idmap_tdb_range_high_validation: [greaterThan('idmap_tdb_range_low'), regexValidator(/^\d+$/)], 
+
 
 cifs_srv_enable_smb1_placeholder: T('Enable SMB1 support'),
 cifs_srv_enable_smb1_tooltip: T('Use this option to allow legacy SMB clients to connect to the\
