@@ -135,14 +135,15 @@ export class GeneralComponent {
         {
           type: 'select',
           name: 'date_format',
-          placeholder: 'Date Format',
-          tooltip: 'As I said, Date Format',
+          placeholder: helptext.date_format.placeholder,
+          tooltip: helptext.date_format.tooltip,
           options: [{ label: '---', value: null }],
           width: '50%'
         },
         {
           type: 'paragraph',
           name: 'placeholder',
+          paraText: '',
           width: '50%'
         }
       ]
@@ -380,6 +381,9 @@ export class GeneralComponent {
       res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
       this.makeLanguageList();
     })
+    setTimeout(() => {
+      entityEdit.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
+    }, 2000)
   }
   
   makeLanguageList() {

@@ -9,12 +9,13 @@ export class LocaleService {
 
     getDateFormatOptions() {
         let options = [
-            { label: moment().format('MMMM D, YYYY'), value: 'MMMM D, YYYY' },
-            { label: moment().format('D MMMM, YYYY'), value: 'D MMMM, YYYY' },
-            { label: moment().format('MMM D, YYYY'), value: 'MMM D, YYYY' },
-            { label: moment().format('D MMM YYYY'), value: 'D MMM YYYY' },
-            { label: moment().format('MM/DD/YYYY'), value: 'MM/DD/YYYY' },
-            { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY' },     
+            { label: moment().format('MMMM D, YYYY'), value: 'MMMM D, YYYY, h:mm:ss a' },
+            { label: moment().format('D MMMM, YYYY'), value: 'D MMMM, YYYY, h:mm:ss a' },
+            { label: moment().format('MMM D, YYYY'), value: 'MMM D, YYYY, h:mm:ss a' },
+            { label: moment().format('D MMM YYYY'), value: 'D MMM YYYY, h:mm:ss a' },
+            { label: moment().format('MM/DD/YYYY'), value: 'MM/DD/YYYY, h:mm:ss a' },
+            { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY, h:mm:ss a' },
+            { label: moment().format('YYYY/MM/DD'), value: 'YYYY/MM/DD, h:mm:ss a' },     
           ];
           return options;
     }

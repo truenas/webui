@@ -11,6 +11,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { StorageService } from '../../../../services/storage.service';
+import { LocaleService } from 'app/services/locale.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -42,10 +43,10 @@ export class BootEnvironmentListComponent {
   public header: string;
   public scrub_msg: string;
   public scrub_interval: number;
-  public locale: string;
 
   constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
-    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService) {}
+    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
+    protected localeService: LocaleService) {}
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name', always_display: true},
@@ -83,7 +84,7 @@ export class BootEnvironmentListComponent {
 
   rowValue(row, attr) {
     if (attr === 'created'){
-      return moment(row.created.$date).format('l LT')
+      return this.localeService.formatDate(row.created.$date);
     }
     if (attr === 'active'){
       if (row.active === 'N'){
@@ -101,10 +102,6 @@ export class BootEnvironmentListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
-    this.ws.call('system.general.config').subscribe((res) => {
-      this.locale = res.language;
-      moment.locale(this.locale);
-    });
   }
 
   isActionVisible(actionId: string, row: any) {
@@ -247,7 +244,7 @@ export class BootEnvironmentListComponent {
   updateBootState(): void {
     this.ws.call("boot.get_state").subscribe(wres => {
       if (wres.scan.end_time) {
-        this.scrub_msg = moment(wres.scan.end_time.$date).format("LL, LTS");
+        this.scrub_msg = this.localeService.formatDate(wres.scan.end_time.$date);
       } else {
         this.scrub_msg = T("Never");
       }

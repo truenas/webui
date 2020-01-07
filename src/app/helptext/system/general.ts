@@ -92,6 +92,11 @@ export const helptext_system_general = {
     tooltip: T("Select a time zone.")
   },
 
+  date_format: {
+    placeholder: T('Date Format'),
+    tooltip: T('Choose a date format.')
+  },
+
   stg_sysloglevel: {
     placeholder: T("Syslog level"),
     tooltip: T(
