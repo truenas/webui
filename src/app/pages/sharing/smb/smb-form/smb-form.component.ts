@@ -302,6 +302,14 @@ export class SMBFormComponent {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
+    const homeShare = entityForm.formGroup.get('home').value;
+    const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]
+
+    if (homeShare && entityForm.isNew) {
+      return this.router.navigate(
+        ['/'].concat(ACLRoute),{ queryParams: {homeShare: true}})
+      
+    }
     /**
      * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
@@ -325,7 +333,7 @@ export class SMBFormComponent {
         tap(([doConfigureACL, dataset]) =>
           doConfigureACL
             ? this.router.navigate(
-                ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId])
+                ['/'].concat(ACLRoute)
               )
             : this.router.navigate(['/'].concat(this.route_success))
         )
