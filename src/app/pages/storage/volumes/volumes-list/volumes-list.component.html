@@ -12,7 +12,7 @@
         ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <div *ngIf="row.vol_encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
+            <div *ngIf="row.encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
               <mat-icon *ngIf="!row.is_decrypted">lock_outline</mat-icon>
               <mat-icon *ngIf="row.is_decrypted">lock_open</mat-icon>
             </div>
@@ -37,7 +37,7 @@
           <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
             <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row" [action]="'settings'"></app-entity-table-actions>
           </div>
-          <div *ngIf="row.vol_encrypt > 0 && row.is_decrypted" 
+          <div *ngIf="row.encrypt > 0 && row.is_decrypted"
             class="global_volume_based_action_menu pool-icon" 
             title="Encryption Operations"
             name="lock"
@@ -45,7 +45,7 @@
             >
             <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row" [action]="'lock'"></app-entity-table-actions>
           </div>
-          <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" 
+          <div *ngIf="row.encrypt > 0 && !row.is_decrypted"
               class="encryption_icon pool-icon" 
               title="Unlock" 
               name="unlock"
