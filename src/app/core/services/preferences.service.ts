@@ -37,7 +37,7 @@ export class PreferencesService {
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
     "tableDisplayedColumns":[],
-    "dateFormat": 'D MMM YYYY'
+    "dateFormat": 'YYYY/MM/DD, h:mm:ss a'
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
