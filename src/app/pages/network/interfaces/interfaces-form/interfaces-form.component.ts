@@ -88,7 +88,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       name : 'lag_protocol',
       placeholder : helptext.lagg_protocol_placeholder,
       tooltip : helptext.lagg_protocol_tooltip,
-      options : helptext.lagg_protocol_options,
+      options : [],
       required: true,
       isHidden: true,
       disabled: true,
@@ -223,6 +223,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private vlan_pcp:any;
   private vlan_pint:any;
   private lag_ports: any;
+  private lag_protocol: any;
   private bridge_members: any;
   private type: any;
   private type_fg: any;
@@ -275,6 +276,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
+    this.lag_protocol = _.find(this.fieldConfig, {'name' : 'lag_protocol'});
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.vlan_pint.type = 'input';
@@ -345,6 +347,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.networkService.getLaggPortsChoices().subscribe((res) => {
         for (const key in res) {
           this.lag_ports.options.push({label: res[key], value: key});
+        }
+      });
+      this.networkService.getLaggProtocolChoices().subscribe((res) => {
+        for (let i=0;i<res.length;i++) {
+          this.lag_protocol.options.push({label: res[i], value: res[i]});
         }
       });
       this.networkService.getBridgeMembersChoices().subscribe((res) => {

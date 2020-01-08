@@ -38,6 +38,10 @@ export class NetworkService {
     return this.ws.call('interface.lag_ports_choices', [id]);
   }
 
+  getLaggProtocolChoices() {
+    return this.ws.call('interface.lag_supported_protocols', []);
+  }
+
   getBridgeMembersChoices(id = null) {
     return this.ws.call('interface.bridge_members_choices', [id]);
   }
