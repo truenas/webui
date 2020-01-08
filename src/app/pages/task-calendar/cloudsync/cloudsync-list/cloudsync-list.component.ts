@@ -6,10 +6,12 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 import { DialogService, JobService, TaskService, WebSocketService } from '../../../../services';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
 import globalHelptext from '../../../../helptext/global-helptext';
+import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -135,6 +137,63 @@ export class CloudsyncListComponent implements InputTableConf {
           }
         });
       },
+    }, {
+      actionName: parentrow.description,
+      id: 'restore',
+      label: T('Restore'),
+      icon: 'restore',
+      onClick: (row) => {
+        console.log('restore');
+        const parent = this;
+        const conf: DialogFormConfiguration = {
+          title: 'Restore cloudsync task',
+          fieldConfig: [
+            {
+              type: 'input',
+              name: 'description',
+              placeholder: helptext.description_placeholder,
+              tooltip: helptext.description_tooltip,
+              validation: helptext.description_validation,
+            },
+            {
+              type: 'select',
+              name: 'transfer_mode',
+              placeholder: helptext.transfer_mode_placeholder,
+              tooltip: helptext.transfer_mode_tooltip,
+              validation: helptext.transfer_mode_validation,
+              options: [
+                { label: 'SYNC', value: 'SYNC' },
+                { label: 'COPY', value: 'COPY' },
+              ]
+            },
+            {
+              type: 'explorer',
+              explorerType: 'directory',
+              name: 'path',
+              placeholder: helptext.path_placeholder,
+              tooltip: helptext.path_tooltip,
+              validation: helptext.path_validation,
+              initial: '/mnt',
+            }
+          ],
+          saveButtonText: 'Restore',
+          customSubmit: function (entityDialog) {
+            parent.entityList.loader.open();
+            const value = entityDialog.formValue;
+            parent.ws.call('cloudsync.restore', [row.id, value]).subscribe(
+              (res) => {
+                entityDialog.dialogRef.close(true);
+                parent.entityList.loaderOpen = true;
+                parent.entityList.getData();
+              },
+              (err) => {
+                new EntityUtils().handleWSError(parent, err, parent.dialog);
+              }
+            )
+          }
+        }
+        this.dialog.dialogForm(conf);
+      }
     }, {
       id: "edit",
       actionName: parentrow.description,
