@@ -107,7 +107,7 @@ export class ReplicationListComponent {
     stateButton(row) {
         if (row.state.state === 'HOLD') {
             this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
-        } else if (row.state.state === 'ERROR') {
+        } else if (row.state.state === 'ERROR' && row.job === null) {
             this.dialog.errorReport(row.state.state, row.state.error);
         } else if (row.job) {
             if (row.state.state === 'RUNNING') {
