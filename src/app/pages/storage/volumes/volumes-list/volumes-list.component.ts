@@ -1096,7 +1096,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
               pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: "iec" });
             } catch (error) {
-              // pool.availStr = "" + pool.children[0].available.parsed;
+              pool.availStr = "" + pool.children[0].available.parsed;
               pool.children[0].available_parsed = "Unknown";
               pool.children[0].used_parsed = "Unknown";
             }
@@ -1105,7 +1105,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               const used_pct =  pool.children[0].used.parsed / (pool.children[0].used.parsed + pool.children[0].available.parsed);
               pool.usedStr = ": " + (<any>window).filesize(pool.children[0].used.parsed, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
             } catch (error) {
-              // pool.usedStr = "" + pool.children[0].used.parsed;
+              pool.usedStr = "" + pool.children[0].used.parsed;
             }
           }
 
