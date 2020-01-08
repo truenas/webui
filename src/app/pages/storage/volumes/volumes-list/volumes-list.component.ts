@@ -749,52 +749,39 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       if (rowDataPathSplit[1] !== "iocage") {
-        let optionDisabled;
-        rowData.id.includes('/') ? optionDisabled = false : optionDisabled = true;
-        actions.push({
-          id: rowData.name,
-          name: T('Edit Permissions'),
-          label: T("Edit Permissions"),
-          disabled: optionDisabled,
-          matTooltip: helptext.permissions_edit_msg,
-          ttposition: 'left',
-          onClick: (row1) => {
-            this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.id]).subscribe(acl_is_trivial => {
-              if (acl_is_trivial) {
+        this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
+          let aclEditDisabled, permissionsEditDisabled;
+          !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
+          rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
+            actions.push({
+              id: rowData.name,
+              name: T('Edit Permissions'),
+              label: T("Edit Permissions"),
+              disabled: permissionsEditDisabled,
+              matTooltip: aclEditDisabled ? helptext.permissions_edit_msg1 : helptext.permissions_edit_msg2, 
+              ttposition: 'left',
+              onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
                   "storage", "pools", "permissions", row1.id
                 ]));
-              } else {
-                this.dialogService.confirm(T("Dataset Has Complex ACLs"),
-                  T("This dataset has an active ACL. Changes to permissions must be made with the ACL editor. \
-                  Open ACL editor?"),
-                  true, T("EDIT ACL")).subscribe(edit_acl => {
-                    if (edit_acl) {
-                        this._router.navigate(new Array('/').concat([
-                          "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                          "acl", row1.id
-                        ]));
-                      }
-                });
               }
-            });
-          }
-        },
-        {
-          id: rowData.name,
-          name: T('Edit ACL'),
-          label: T("Edit ACL"),
-          disabled: optionDisabled,
-          matTooltip: helptext.acl_edit_msg,
-          ttposition: 'left',
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-              "acl", row1.id
-            ]));
-          }
-        },
-        );
+            },
+            {
+              id: rowData.name,
+              name: T('Edit ACL'),
+              label: T("Edit ACL"),
+              disabled: aclEditDisabled,
+              matTooltip: helptext.acl_edit_msg,
+              ttposition: 'left',
+              onClick: (row1) => {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                  "acl", row1.id
+                ]));
+              }
+            },
+          );          
+        })
       }
 
       if (rowData.id.indexOf('/') !== -1) {
@@ -1109,7 +1096,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
               pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: "iec" });
             } catch (error) {
-              pool.availStr = "" + pool.children[0].available.parsed;
+              // pool.availStr = "" + pool.children[0].available.parsed;
               pool.children[0].available_parsed = "Unknown";
               pool.children[0].used_parsed = "Unknown";
             }
@@ -1118,7 +1105,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               const used_pct =  pool.children[0].used.parsed / (pool.children[0].used.parsed + pool.children[0].available.parsed);
               pool.usedStr = ": " + (<any>window).filesize(pool.children[0].used.parsed, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
             } catch (error) {
-              pool.usedStr = "" + pool.children[0].used.parsed;
+              // pool.usedStr = "" + pool.children[0].used.parsed;
             }
           }
 
