@@ -154,17 +154,26 @@ export class CloudsyncListComponent implements InputTableConf {
               placeholder: helptext.description_placeholder,
               tooltip: helptext.description_tooltip,
               validation: helptext.description_validation,
+              required: true,
             },
             {
               type: 'select',
               name: 'transfer_mode',
               placeholder: helptext.transfer_mode_placeholder,
-              tooltip: helptext.transfer_mode_tooltip,
               validation: helptext.transfer_mode_validation,
+              required: true,
               options: [
                 { label: 'SYNC', value: 'SYNC' },
                 { label: 'COPY', value: 'COPY' },
-              ]
+              ],
+              value: 'COPY',
+            },
+            {
+              type: 'paragraph',
+              name: 'transfer_mode_warning',
+              paraText: helptext.transfer_mode_warning_copy,
+              isLargeText: true,
+              paragraphIcon: 'add_to_photos'
             },
             {
               type: 'explorer',
@@ -174,25 +183,41 @@ export class CloudsyncListComponent implements InputTableConf {
               tooltip: helptext.path_tooltip,
               validation: helptext.path_validation,
               initial: '/mnt',
+              required: true,
             }
           ],
           saveButtonText: 'Restore',
+          afterInit: function(entityDialog) {
+            entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe(mode => {
+              const paragraph = conf.fieldConfig.find(config => config.name === 'transfer_mode_warning');
+              switch (mode) {
+                case 'SYNC':
+                  paragraph.paraText = helptext.transfer_mode_warning_sync;
+                  paragraph.paragraphIcon = 'sync';
+                  break;
+                default:
+                  paragraph.paraText = helptext.transfer_mode_warning_copy;
+                  paragraph.paragraphIcon = 'add_to_photos';
+              }
+            });
+          },
           customSubmit: function (entityDialog) {
             parent.entityList.loader.open();
-            const value = entityDialog.formValue;
-            parent.ws.call('cloudsync.restore', [row.id, value]).subscribe(
+            parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
               (res) => {
                 entityDialog.dialogRef.close(true);
                 parent.entityList.loaderOpen = true;
+                parent.entityList.needRefreshTable = true;
                 parent.entityList.getData();
               },
               (err) => {
-                new EntityUtils().handleWSError(parent, err, parent.dialog);
+                parent.entityList.loader.close(true);
+                new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
               }
             )
           }
         }
-        this.dialog.dialogForm(conf);
+        this.dialog.dialogFormWide(conf);
       }
     }, {
       id: "edit",
