@@ -70,6 +70,16 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
 
+cores: {
+  placeholder: T('Cores'),
+  tooltip: T('Specify the number of cores per virtual CPU socket.'),
+}, 
+
+threads: {
+  placeholder: T('Threads'),
+  tooltip: T('Specify the number of threads per core.')
+},
+
 memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
 memory_validation : [Validators.required],
 memory_tooltip: T(`Allocate RAM for the VM. Minimum value is 256 MiB. ${globalHelptext.human_readable.suggestion_tooltip} bytes.`),

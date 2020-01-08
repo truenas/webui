@@ -125,6 +125,24 @@ export class VMWizardComponent {
         },
         {
           type: 'input',
+          name: 'cores',
+          placeholder: helptext.cores.placeholder,
+          inputType: 'number',
+          validation : [ Validators.min(1)],
+          value: 1,
+          tooltip: helptext.cores.tooltip
+        },
+        {
+          type: 'input',
+          name: 'threads',
+          placeholder: helptext.threads.placeholder,
+          inputType: 'number',
+          validation : [ Validators.min(1)],
+          value: 1,
+          tooltip: helptext.threads.tooltip
+        },
+        {
+          type: 'input',
           name: 'memory',
           placeholder: helptext.memory_placeholder,
           inputType: 'text',
