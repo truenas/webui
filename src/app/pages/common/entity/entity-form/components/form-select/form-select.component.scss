@@ -6,3 +6,20 @@
   //min-width:calc(100% - 32px);
   max-width:none !important;
 }
+
+.inline-label div.label.half-width,
+.inline-label .mat-form-field {
+  display:inline-block;
+}
+
+.inline-label div.label.half-width{
+  width:calc(50% - 16px);
+}
+
+.inline-label .mat-form-field {
+  width:calc(40% - 16px);
+}
+
+.inline-label .mat-form-field {
+  padding:8px;
+}

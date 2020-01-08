@@ -65,32 +65,29 @@ export class AlertConfigComponent implements OnInit {
 
     const categories: AlertCategory[] = await this.ws.call("alert.list_categories").toPromise();
     categories.forEach((category, index) => {
-      /* Add spacer between sets in same row */
-      if (index + 1 > 1 && (index + 1 % 2) !== 0) {
-        sets.push({ name: "spacer", width: "2%", label: false });
-      }
+      const modulo = index % 2;
 
-      sets.push({
+      let fieldSet = {
         name: category.title,
         label: true,
-        width: "49%",
+        width: "40%",
         config: category.classes.map(c => ({
           type: "select",
           name: c.id,
-          placeholder: c.title,
+          inlineLabel: c.title,
+          placeholder: T("Set frequency"),
           options: this.settingOptions,
           value: "IMMEDIATELY"
         }))
-      });
-    });
+      }
+    
+      sets.push(fieldSet);
 
-    /**
-     * If list length is odd, add large spacer to the end to keep all sections
-     * the same width.
-     */
-    if (categories.length % 2 !== 0) {
-      sets.push({ name: 'spacer', width: '51%', label: false });
-    }
+      if(modulo == 1 && index < categories.length - 2){
+        sets.push({ name: 'divider', divider: true },);
+      }
+
+    });
 
     /* Final divider before action buttons */
     sets.push({ name: 'divider', divider: true });
