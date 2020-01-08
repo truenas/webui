@@ -135,10 +135,10 @@ export class AuthorizedAccessFormComponent {
         if (res === entityForm.formGroup.controls[compartedCtrlName].value) {
           if (!ctrl.hasError('manualValidateError')) {
             if (errors === null) {
-              errors = { manualValidateError: true, manualValidateErrorMsg: helptext_sharing_iscsi.authaccess_error_peersecret };
+              errors = { manualValidateError: true, manualValidateErrorMsg: helptext_sharing_iscsi.authaccess_error_duplicate_secrets };
             } else {
               errors['manualValidateError'] = true;
-              errors['manualValidateErrorMsg'] = helptext_sharing_iscsi.authaccess_error_peersecret;
+              errors['manualValidateErrorMsg'] = helptext_sharing_iscsi.authaccess_error_duplicate_secrets;
             }
           }
         } else {

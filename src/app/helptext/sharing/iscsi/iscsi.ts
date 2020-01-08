@@ -276,7 +276,7 @@ export const helptext_sharing_iscsi = {
     "Mutual secret password. Required when Peer User is set. Must be\
  different than the <i>Secret</i>."
   ),
-  authaccess_error_peersecret: T('Secret and Peer Secret can not be the same.'),
+  authaccess_error_duplicate_secrets: T('Secret and Peer Secret can not be the same.'),
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
 
