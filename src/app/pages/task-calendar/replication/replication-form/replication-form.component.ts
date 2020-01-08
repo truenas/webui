@@ -1063,7 +1063,6 @@ export class ReplicationFormComponent {
 
         if (data["transport"] === "LEGACY") {
             data["auto"] = true;
-            data["retention_policy"] = "NONE";
             data["allow_from_scratch"] = true;
             data["exclude"] = [];
             data["periodic_snapshot_tasks"] = [];
@@ -1074,7 +1073,8 @@ export class ReplicationFormComponent {
             data["large_block"] = false;
             data["embed"] = false;
             data["compressed"] = false;
-            data["retries"] = 1
+            data["retries"] = 1;
+            data["properties"] = data["retention_policy"] === 'SOURCE' ? true : false;
         }
         // for edit replication task
         if (!this.entityForm.isNew) {
