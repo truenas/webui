@@ -140,6 +140,7 @@ export class AppComponent {
       if (chunkFailedMessage.test(err.message)) {
         window.location.reload();
       }
+      console.error(err);
     }
   }
 
