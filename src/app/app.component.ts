@@ -133,6 +133,14 @@ export class AppComponent {
         }
       }
     });
+
+    this.router.errorHandler = function (err:any) {
+      const chunkFailedMessage = /Loading chunk [\d]+ failed/;
+
+      if (chunkFailedMessage.test(err.message)) {
+        window.location.reload();
+      }
+    }
   }
 
   private setFavicon(str) {
