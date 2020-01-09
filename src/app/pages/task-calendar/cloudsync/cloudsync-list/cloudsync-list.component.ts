@@ -146,7 +146,7 @@ export class CloudsyncListComponent implements InputTableConf {
         console.log('restore');
         const parent = this;
         const conf: DialogFormConfiguration = {
-          title: 'Restore cloudsync task',
+          title: T('Restore cloudsync task'),
           fieldConfig: [
             {
               type: 'input',
