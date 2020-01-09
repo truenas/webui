@@ -81,8 +81,7 @@
                 </mat-list-item>
   
                 <mat-list-item  *ngIf="data.system_serial && manufacturer == 'ixsystems' ">
-                  <span *ngIf="isHA"><strong>{{"Serial Number" | translate}}:</strong>&nbsp;&nbsp;{{isPassive ? data.license.system_serial_ha : data.license.system_serial}}</span>
-                  <span *ngIf="!isHA"><strong>{{"Serial Number" | translate}}:</strong>&nbsp;&nbsp;{{ data.system_serial}}</span>
+                  <span><strong>{{"Serial Number" | translate}}:</strong>&nbsp;&nbsp;{{ data.system_serial}}</span>
                 </mat-list-item>
               
                 <mat-list-item><strong>{{"HostName" | translate}}:</strong> &nbsp;&nbsp;{{data.hostname}}</mat-list-item>
