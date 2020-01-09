@@ -31,7 +31,12 @@
             <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'dataset') || (config.explorerType == 'file') || !config.explorerType">
                 <mat-icon *ngIf="node.data.hasChildren || node.data.children; else fileIcon">folder</mat-icon>
                 <ng-template #fileIcon><mat-icon>insert_drive_file</mat-icon></ng-template>
-                <span title="{{node.data.name}}">{{ node.data.subTitle }}<i *ngIf="node.data['acl']"> (ACL)</i></span>
+                <span title="{{node.data.name}}">{{ node.data.subTitle }}
+                        <div class="dataset-subtitle" 
+                        matTooltip="{{'ACL is present on this path' | translate}}" matTooltipPosition="right"
+                        *ngIf="node.data['acl']">ACL
+                    </div>
+                </span>
             </ng-template>
         </tree-root>
     </div>
