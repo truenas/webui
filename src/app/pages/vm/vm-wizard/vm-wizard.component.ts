@@ -128,8 +128,7 @@ export class VMWizardComponent {
           name: 'cores',
           placeholder: helptext.cores.placeholder,
           inputType: 'number',
-          validation : [ Validators.min(1)],
-          value: 1,
+          validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: helptext.cores.tooltip
         },
         {
@@ -137,9 +136,13 @@ export class VMWizardComponent {
           name: 'threads',
           placeholder: helptext.threads.placeholder,
           inputType: 'number',
-          validation : [ Validators.min(1)],
-          value: 1,
-          tooltip: helptext.threads.tooltip
+          validation : [ 
+            // this.cpuValidator('threads'),
+            Validators.required, 
+            Validators.min(1),
+            Validators.max(16),
+          ],
+          tooltip: helptext.threads.tooltip,
         },
         {
           type: 'input',
@@ -434,6 +437,12 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
+      ( < FormGroup > entityWizard.formArray.get([1])).get('cores').valueChanges.subscribe((cores) => {
+        this.summary[T('Number of Cores')] = cores;
+      });
+      ( < FormGroup > entityWizard.formArray.get([1])).get('threads').valueChanges.subscribe((threads) => {
+        this.summary[T('Number of Threads')] = threads;
+      });
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] =
           isNaN(this.storageService.convertHumanStringToNum(memory))
@@ -513,11 +522,15 @@ export class VMWizardComponent {
       this.res = res;
       if (res === 'Windows') {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['cores'].setValue(1);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['threads'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4 GiB');
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('40 GiB');
       }
       else {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['cores'].setValue(1);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['threads'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512 MiB');
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('10 GiB');
       }
@@ -611,6 +624,29 @@ memoryValidator(name: string) {
   }
 };
 
+cpuValidator(name: string) {
+  const self = this;
+  return function validCPU(control: FormControl) {
+    const config = self.wizardConfig[1].fieldConfig.find(c => c.name === name);
+
+      const group = self.entityWizard.formGroup.value.formArray[1];
+
+      const errors = control.value * group.vcpus * group.cores > 16
+      ? { validCPU : true }
+      : null;
+
+    if (errors) {
+      config.hasErrors = true;
+      config.warnings = T(`The product of vCPUs, cores and threads must not exceed 16.`);
+    } else {
+      config.hasErrors = false;
+      config.warnings = '';
+    }
+
+    return errors;
+  }
+};
+
 volSizeValidator(name: string) {
   const self = this;
   return function validStorage(control: FormControl) {
@@ -686,6 +722,8 @@ async customSubmit(value) {
     vm_payload["description"] = value.description;
     vm_payload["time"]= value.time;
     vm_payload["vcpus"] = value.vcpus;
+    vm_payload["cores"] = value.cores;
+    vm_payload["threads"] = value.threads;
     vm_payload["memory"] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024**2); // bytes -> mb
     vm_payload["bootloader"] = value.bootloader;
     vm_payload["autoloader"] = value.autoloader;
