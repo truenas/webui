@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
-import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService } from 'app/services';
+import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService, DialogService } from 'app/services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
@@ -751,7 +751,8 @@ export class ReplicationFormComponent {
         protected storageService: StorageService,
         private aroute: ActivatedRoute,
         private keychainCredentialService: KeychainCredentialService,
-        private replicationService: ReplicationService) {
+        private replicationService: ReplicationService,
+        private dialogService: DialogService) {
         const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
         this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
