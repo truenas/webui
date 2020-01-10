@@ -155,6 +155,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private interval: any;
   private excuteDeletion = false;
+  private needRefreshTable = false;
 
   protected toDeleteRow: any;
   public hasDetails = () =>
@@ -377,7 +378,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getData() {
-
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -494,8 +494,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPaginationInfo();
       this.showDefaults = true;
     }
-    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion) && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
+      this.needRefreshTable = false;
+      this.updateTableHeightAfterDetailToggle();
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
