@@ -33,7 +33,7 @@ export default {
     ini_timeout_tooltip: T('Automatically stop the script or command after the specified seconds.'),
 
     ini_description_placeholder: T('Description'),
-    ini_description_tooltip: T('Enter a description of the Init/Shutdown script.'),
+    ini_description_tooltip: T('Comments about this script.'),
 
     ini_title: T('Init/Shutdown Script')
 }
