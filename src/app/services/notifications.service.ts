@@ -58,7 +58,9 @@ export class NotificationsService {
       this.ws.subscribe('alert.list').subscribe((res) => { // check for changed alerts
         if (res && res.msg === "changed" && res.cleared) {
           const index = _.findIndex(this.notifications, { id: res.id });
-          this.notifications.splice(index, 1);
+          if (index !== -1) {
+            this.notifications.splice(index, 1);
+          }
           this.subject.next(this.notifications);
         }
       });
