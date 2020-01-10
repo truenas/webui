@@ -97,6 +97,9 @@ export class ServiceS3Component implements OnDestroy {
         options : [{label: '---', value: null}]
       },
     ]
+  },{
+    name: 'divider',
+    divider: true
   }];
   protected storage_path: any;
   protected storage_path_subscription: any;
