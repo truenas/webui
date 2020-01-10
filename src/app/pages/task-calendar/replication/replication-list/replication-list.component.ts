@@ -98,7 +98,7 @@ export class ReplicationListComponent {
             onClick: (row) => {
               const parent = this;
               const conf: DialogFormConfiguration = {
-                title: helptext.replication_restore_dialog_title,
+                title: helptext.replication_restore_dialog.title,
                 fieldConfig: [
                   {
                     type: 'input',
@@ -119,7 +119,7 @@ export class ReplicationListComponent {
                     required: true,
                   }
                 ],
-                saveButtonText: 'Restore',
+                saveButtonText: helptext.replication_restore_dialog.saveButton,
                 customSubmit: function (entityDialog) {
                   parent.entityList.loader.open();
                   parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
