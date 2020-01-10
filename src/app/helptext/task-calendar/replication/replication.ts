@@ -247,4 +247,5 @@ from the source dataset.'),
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Activates the replication schedule.'),
 
+    replication_restore_dialog_title: T('Restore Replication Task')
 }

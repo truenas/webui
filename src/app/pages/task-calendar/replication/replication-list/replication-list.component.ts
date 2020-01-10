@@ -98,7 +98,7 @@ export class ReplicationListComponent {
             onClick: (row) => {
               const parent = this;
               const conf: DialogFormConfiguration = {
-                title: T('Restore Replication Task'),
+                title: helptext.replication_restore_dialog_title,
                 fieldConfig: [
                   {
                     type: 'input',
