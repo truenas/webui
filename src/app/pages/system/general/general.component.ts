@@ -89,7 +89,7 @@ export class GeneralComponent {
       label: true,
       config: [
         {
-          type: "select",
+          type: "combobox",
           name: "language",
           placeholder: helptext.stg_language.placeholder,
           tooltip: helptext.stg_language.tooltip,
@@ -124,11 +124,11 @@ export class GeneralComponent {
           width: '50%'
         },
         {
-          type: "select",
-          name: "timezone",
+          type: 'combobox',
+          name: 'timezone',
           placeholder: helptext.stg_timezone.placeholder,
           tooltip: helptext.stg_timezone.tooltip,
-          options: [{ label: "---", value: null }],
+          options: [],
           width: '50%'
         }
       ]
