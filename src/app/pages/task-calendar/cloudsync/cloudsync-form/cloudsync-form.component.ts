@@ -1,332 +1,397 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
-import * as _ from 'lodash';
-
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services/';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
-import { EntityUtils } from '../../../common/entity/utils';
 import { Validators } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 
+import * as _ from 'lodash';
+import { EntityFormComponent } from '../../../common/entity/entity-form';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { WebSocketService, DialogService, CloudCredentialService, AppLoaderService} from '../../../../services/';
+import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
+import { EntityUtils } from '../../../common/entity/utils';
+
 @Component({
-  selector: 'cloudsync-add',
-  templateUrl: './cloudsync-form.component.html',
-  styleUrls: ['./cloudsync-form.component.css'],
-  providers: [EntityFormService, FieldRelationService, CloudCredentialService]
+  selector: 'app-cloudsync-add',
+  template: `<entity-form [conf]='this'></entity-form>`,
+  providers: [CloudCredentialService]
 })
-export class CloudsyncFormComponent implements OnInit {
+export class CloudsyncFormComponent {
 
   protected addCall = 'cloudsync.create';
   protected editCall = 'cloudsync.update';
   public route_success: string[] = ['tasks', 'cloudsync'];
   protected entityForm: EntityFormComponent;
-  protected isEntity: boolean = true;
+  protected isEntity = true;
+  protected queryCall = 'cloudsync.query';
   protected queryPayload = [];
+  protected customFilter;
 
-  public fieldConfig: FieldConfig[] = [{
-    type: 'input',
-    name: 'description',
-    placeholder: helptext.description_placeholder,
-    tooltip: helptext.description_tooltip,
-    required: true,
-    validation : helptext.description_validation,
-  }, {
-    type: 'select',
-    name: 'direction',
-    placeholder: helptext.direction_placeholder,
-    tooltip: helptext.direction_tooltip,
-    options: [
-      { label: 'PUSH', value: 'PUSH' },
-      { label: 'PULL', value: 'PULL' },
-    ],
-    value: 'PULL',
-    required: true,
-    validation : helptext.direction_validation,
-  }, {
-    type: 'select',
-    name: 'credentials',
-    placeholder: helptext.credentials_placeholder,
-    tooltip: helptext.credentials_tooltip,
-    options: [{
-      label: '----------', value: null
-    }],
-    value: null,
-    required: true,
-    validation : helptext.credentials_validation,
-  }, {
-    type: 'select',
-    name: 'bucket',
-    placeholder: helptext.bucket_placeholder,
-    tooltip: helptext.bucket_tooltip,
-    options: [{
-      label: '----------', value: ''
-    }],
-    value: '',
-    isHidden: true,
-    disabled: true,
-    relation: [
-      {
-        action: 'HIDE',
-        when: [{
-          name: 'credentials',
-          value: null,
-        }]
-      }
-    ],
-    required: true,
-    validation : helptext.bucket_validation
-  }, {
-    type: 'input',
-    name: 'bucket_input',
-    placeholder: helptext.bucket_input_placeholder,
-    tooltip: helptext.bucket_input_tooltip,
-    value: '',
-    isHidden: true,
-    disabled: true,
-    required: true,
-    validation : helptext.bucket_input_validation
-  }, {
-    type: 'explorer',
-    name: 'folder',
-    placeholder: helptext.folder_placeholder,
-    tooltip: helptext.folder_tooltip,
-    initial: '/',
-    value: '/',
-    explorerType: 'directory',
-    customTemplateStringOptions: {
-      displayField: 'Path',
-      isExpandedField: 'expanded',
-      idField: 'uuid',
-      getChildren: this.getChildren.bind(this),
-      nodeHeight: 23,
-      allowDrag: true,
-      useVirtualScroll: false,
-    },
-    isHidden: true,
-    disabled: true,
-    relation: [
-      {
-        action: 'HIDE',
-        when: [{
-          name: 'credentials',
-          value: null,
-        }]
-      }
-    ],
-  }, {
-    type: 'select',
-    name: 'task_encryption',
-    placeholder: helptext.encryption_placeholder,
-    tooltip: helptext.encryption_tooltip,
-    options: [
-      {label: "None", value: ""},
-      {label: "AES-256", value: "AES256"},
-    ],
-    value: "",
-    isHidden: true,
-  }, {
-    type: 'select',
-    name: 'storage_class',
-    placeholder: helptext.storage_class_placeholder,
-    tooltip: helptext.storage_class_tooltip,
-    options: [
-      {label: "---------", value: ""},
-      {label: "STANDARD", value: "STANDARD"},
-      {label: "REDUCED_REDUNDANCY", value: "REDUCED_REDUNDANCY"},
-      {label: "STANDARD_IA", value: "STANDARD_IA"},
-      {label: "ONEZONE_IA", value: "ONEZONE_IA"},
-      {label: "GLACIER", value: "GLACIER"},
-      {label: "DEEP_ARCHIVE", value: "DEEP_ARCHIVE"},
-    ],
-    value: '',
-    isHidden: true,
-  }, {
-    type: 'input',
-    inputType: 'number',
-    name: 'chunk_size',
-    placeholder: helptext.b2_chunk_size_placeholder,
-    tooltip: helptext.b2_chunk_size_tooltip,
-    isHidden: true,
-    value: 96,
-    min: 5,
-    validation: [Validators.min(5)],
-  }, {
-    type: 'checkbox',
-    name: 'fast_list',
-    placeholder: helptext.fast_list_placeholder,
-    tooltip: helptext.fast_list_tooltip,
-    isHidden: true,
-  }, {
-    type: 'explorer',
-    initial: '/mnt',
-    explorerType: 'directory',
-    name: 'path',
-    placeholder: helptext.path_placeholder,
-    value: '/mnt',
-    tooltip: helptext.path_tooltip,
-    required: true,
-    validation : helptext.path_validation
-  }, {
-    type: 'select',
-    name: 'transfer_mode',
-    placeholder: helptext.transfer_mode_placeholder,
-    tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
-    options: [
-      { label: 'SYNC', value: 'SYNC' },
-      { label: 'COPY', value: 'COPY' },
-      { label: 'MOVE', value: 'MOVE' },
-    ],
-    value: 'COPY',
-    required: true,
-    validation : helptext.transfer_mode_validation
-  },
-  {
-    type: 'paragraph',
-    name: 'transfer_mode_warning',
-    paraText: helptext.transfer_mode_warning_copy,
-    isLargeText: true,
-    paragraphIcon: 'add_to_photos'
-  },
-  {
-    type: 'checkbox',
-    name: 'snapshot',
-    placeholder: helptext.snapshot_placeholder,
-    tooltip: helptext.snapshot_tooltip,
-    value: false,
-    isHidden: false,
-    disabled: false,
-    relation: [
-      {
-        action: 'HIDE',
-        connective: 'OR',
-        when: [{
-          name: 'direction',
-          value: 'PULL',
+  public fieldSets: FieldSet[] = [
+    {
+      name: helptext.fieldset_transfer,
+      label: true,
+      class: '',
+      width: '49%',
+      config: [
+        {
+          type: 'input',
+          name: 'description',
+          placeholder: helptext.description_placeholder,
+          tooltip: helptext.description_tooltip,
+          required: true,
+          validation : helptext.description_validation,
         }, {
+          type: 'select',
+          name: 'direction',
+          placeholder: helptext.direction_placeholder,
+          tooltip: helptext.direction_tooltip,
+          options: [
+            { label: 'PUSH', value: 'PUSH' },
+            { label: 'PULL', value: 'PULL' },
+          ],
+          value: 'PULL',
+          required: true,
+          validation : helptext.direction_validation,
+        }, {
+          type: 'select',
           name: 'transfer_mode',
-          value: 'MOVE',
-        }]
-      }
-    ],
-  },
-  {
-    type: 'textarea',
-    name: 'pre_script',
-    placeholder: helptext.pre_script_placeholder,
-    tooltip: helptext.pre_script_tooltip,
-    value: '',
-  },
-  {
-    type: 'textarea',
-    name: 'post_script',
-    placeholder: helptext.post_script_placeholder,
-    tooltip: helptext.post_script_tooltip,
-    value: '',
-  },
-  {
-    type: 'checkbox',
-    name: 'encryption',
-    placeholder: helptext.remote_encryption_placeholder,
-    tooltip: helptext.remote_encryption_tooltip,
-    value: false,
-  },
-  {
-    type: 'checkbox',
-    name: 'filename_encryption',
-    placeholder: helptext.filename_encryption_placeholder,
-    value: true,
-    tooltip: helptext.filename_encryption_tooltip,
-    isHidden: true,
-    relation: [
-      {
-        action: 'SHOW',
-        when: [{
-          name: 'encryption',
+          placeholder: helptext.transfer_mode_placeholder,
+          tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
+          options: [
+            { label: 'SYNC', value: 'SYNC' },
+            { label: 'COPY', value: 'COPY' },
+            { label: 'MOVE', value: 'MOVE' },
+          ],
+          value: 'COPY',
+          required: true,
+          validation : helptext.transfer_mode_validation
+        },
+        {
+          type: 'paragraph',
+          name: 'transfer_mode_warning',
+          paraText: helptext.transfer_mode_warning_copy,
+          isLargeText: true,
+          paragraphIcon: 'add_to_photos'
+        },
+        {
+          type: 'explorer',
+          initial: '/mnt',
+          explorerType: 'directory',
+          name: 'path',
+          placeholder: helptext.path_placeholder,
+          value: '/mnt',
+          tooltip: helptext.path_tooltip,
+          required: true,
+          validation : helptext.path_validation
+        },
+      ]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext.fieldset_remote,
+      label: true,
+      class: '',
+      width: '49%',
+      config: [
+        {
+          type: 'select',
+          name: 'credentials',
+          placeholder: helptext.credentials_placeholder,
+          tooltip: helptext.credentials_tooltip,
+          options: [{
+            label: '----------', value: null
+          }],
+          value: null,
+          required: true,
+          validation : helptext.credentials_validation,
+        }, {
+          type: 'select',
+          name: 'bucket',
+          placeholder: helptext.bucket_placeholder,
+          tooltip: helptext.bucket_tooltip,
+          options: [{
+            label: '----------', value: ''
+          }],
+          value: '',
+          isHidden: true,
+          disabled: true,
+          relation: [
+            {
+              action: 'HIDE',
+              when: [{
+                name: 'credentials',
+                value: null,
+              }]
+            }
+          ],
+          required: true,
+          validation : helptext.bucket_validation
+        }, {
+          type: 'input',
+          name: 'bucket_input',
+          placeholder: helptext.bucket_input_placeholder,
+          tooltip: helptext.bucket_input_tooltip,
+          value: '',
+          isHidden: true,
+          disabled: true,
+          required: true,
+          validation : helptext.bucket_input_validation
+        }, {
+          type: 'explorer',
+          name: 'folder',
+          placeholder: helptext.folder_placeholder,
+          tooltip: helptext.folder_tooltip,
+          initial: '/',
+          value: '/',
+          explorerType: 'directory',
+          customTemplateStringOptions: {
+            displayField: 'Path',
+            isExpandedField: 'expanded',
+            idField: 'uuid',
+            getChildren: this.getChildren.bind(this),
+            nodeHeight: 23,
+            allowDrag: true,
+            useVirtualScroll: false,
+          },
+          isHidden: true,
+          disabled: true,
+          relation: [
+            {
+              action: 'HIDE',
+              when: [{
+                name: 'credentials',
+                value: null,
+              }]
+            }
+          ],
+        }
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
+      name: helptext.fieldset_control,
+      label: true,
+      class: '',
+      width: '100%',
+      config: [
+        {
+          type: 'scheduler',
+          name: 'cloudsync_picker',
+          placeholder: helptext.cloudsync_picker_placeholder,
+          tooltip: helptext.cloudsync_picker_tooltip,
+          required: true,
+          value: "0 0 * * *",
+          class: 'inline',
+          width: "50%"
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext.enabled_placeholder,
+          tooltip: helptext.enabled_tooltip,
           value: true,
-        }]
-      }
-    ]
-  },
-  {
-    type: 'input',
-    name: 'encryption_password',
-    placeholder: helptext.encryption_password_placeholder,
-    tooltip: helptext.encryption_password_tooltip,
-    isHidden: true,
-    relation: [
-      {
-        action: 'SHOW',
-        when: [{
+        }
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
+      name: helptext.fieldset_advanced_options,
+      label: true,
+      class: '',
+      width: '100%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'snapshot',
+          placeholder: helptext.snapshot_placeholder,
+          tooltip: helptext.snapshot_tooltip,
+          value: false,
+          isHidden: false,
+          disabled: false,
+          relation: [
+            {
+              action: 'HIDE',
+              connective: 'OR',
+              when: [{
+                name: 'direction',
+                value: 'PULL',
+              }, {
+                name: 'transfer_mode',
+                value: 'MOVE',
+              }]
+            }
+          ],
+        },
+        {
+          type: 'checkbox',
+          name: 'follow_symlinks',
+          placeholder: helptext.follow_symlinks_placeholder,
+          tooltip: helptext.follow_symlinks_tooltip,
+        },
+        {
+          type: 'textarea',
+          name: 'pre_script',
+          placeholder: helptext.pre_script_placeholder,
+          tooltip: helptext.pre_script_tooltip,
+          value: '',
+          class: 'inline',
+          width: "50%"
+        },
+        {
+          type: 'textarea',
+          name: 'post_script',
+          placeholder: helptext.post_script_placeholder,
+          tooltip: helptext.post_script_tooltip,
+          value: '',
+          class: 'inline',
+          width: "50%"
+        },
+        {
+          type: 'textarea',
+          name: 'exclude',
+          placeholder: helptext.exclude_placeholder,
+          tooltip: helptext.exclude_tooltip,
+          class: 'inline',
+          width: "50%"
+        },
+        {
+          type: 'paragraph',
+          name: 'advanced_remote_options',
+          paraText: helptext.advanced_remote_options,
+        },
+        {
+          type: 'select',
+          name: 'task_encryption',
+          placeholder: helptext.encryption_placeholder,
+          tooltip: helptext.encryption_tooltip,
+          options: [
+            {label: "None", value: ""},
+            {label: "AES-256", value: "AES256"},
+          ],
+          value: "",
+          isHidden: true,
+          class: 'inline',
+          width: "50%"
+        }, {
+          type: 'select',
+          name: 'storage_class',
+          placeholder: helptext.storage_class_placeholder,
+          tooltip: helptext.storage_class_tooltip,
+          options: [
+            {label: "---------", value: ""},
+            {label: "STANDARD", value: "STANDARD"},
+            {label: "REDUCED_REDUNDANCY", value: "REDUCED_REDUNDANCY"},
+            {label: "STANDARD_IA", value: "STANDARD_IA"},
+            {label: "ONEZONE_IA", value: "ONEZONE_IA"},
+            {label: "GLACIER", value: "GLACIER"},
+            {label: "DEEP_ARCHIVE", value: "DEEP_ARCHIVE"},
+          ],
+          value: '',
+          isHidden: true,
+          class: 'inline',
+          width: "50%"
+        }, {
+          type: 'input',
+          inputType: 'number',
+          name: 'chunk_size',
+          placeholder: helptext.b2_chunk_size_placeholder,
+          tooltip: helptext.b2_chunk_size_tooltip,
+          isHidden: true,
+          value: 96,
+          min: 5,
+          validation: [Validators.min(5)],
+          class: 'inline',
+          width: "50%"
+        }, {
+          type: 'checkbox',
+          name: 'fast_list',
+          placeholder: helptext.fast_list_placeholder,
+          tooltip: helptext.fast_list_tooltip,
+          isHidden: true,
+        },
+        {
+          type: 'checkbox',
           name: 'encryption',
+          placeholder: helptext.remote_encryption_placeholder,
+          tooltip: helptext.remote_encryption_tooltip,
+          value: false,
+        },
+        {
+          type: 'checkbox',
+          name: 'filename_encryption',
+          placeholder: helptext.filename_encryption_placeholder,
           value: true,
-        }]
-      }
-    ]
-  },
-  {
-    type: 'input',
-    name: 'encryption_salt',
-    placeholder: helptext.encryption_salt_placeholder,
-    tooltip: helptext.encryption_salt_tooltip,
-    isHidden: true,
-    relation: [
-      {
-        action: 'SHOW',
-        when: [{
-          name: 'encryption',
-          value: true,
-        }]
-      }
-    ]
-  },
-  {
-    type: 'scheduler',
-    name: 'cloudsync_picker',
-    placeholder: helptext.cloudsync_picker_placeholder,
-    tooltip: helptext.cloudsync_picker_tooltip,
-    required: true,
-    value: "0 0 * * *",
-  },
-  {
-    type: 'input',
-    inputType: 'number',
-    name: 'transfers',
-    placeholder: helptext.transfers_placeholder,
-    tooltip: helptext.transfers_tooltip,
-    value: null,
-  },
-  {
-    type: 'checkbox',
-    name: 'follow_symlinks',
-    placeholder: helptext.follow_symlinks_placeholder,
-    tooltip: helptext.follow_symlinks_tooltip,
-  },
-  {
-    type: 'checkbox',
-    name: 'enabled',
-    placeholder: helptext.enabled_placeholder,
-    tooltip: helptext.enabled_tooltip,
-    value: true,
-  },
-  {
-    type: 'input',
-    name: 'bwlimit',
-    placeholder: helptext.bwlimit_placeholder,
-    tooltip: helptext.bwlimit_tooltip,
-  },
-  {
-    type: 'textarea',
-    name: 'exclude',
-    placeholder: helptext.exclude_placeholder,
-    tooltip: helptext.exclude_tooltip,
-  }];
+          tooltip: helptext.filename_encryption_tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'encryption',
+                value: true,
+              }]
+            }
+          ],
+        },
+        {
+          type: 'input',
+          name: 'encryption_password',
+          placeholder: helptext.encryption_password_placeholder,
+          tooltip: helptext.encryption_password_tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'encryption',
+                value: true,
+              }]
+            }
+          ],
+          class: 'inline',
+          width: "50%"
+        },
+        {
+          type: 'input',
+          name: 'encryption_salt',
+          placeholder: helptext.encryption_salt_placeholder,
+          tooltip: helptext.encryption_salt_tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'encryption',
+                value: true,
+              }]
+            }
+          ],
+          class: 'inline',
+          width: "50%"
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'transfers',
+          placeholder: helptext.transfers_placeholder,
+          tooltip: helptext.transfers_tooltip,
+          value: null,
+          class: 'inline',
+          width: "50%"
+        },
+        {
+          type: 'input',
+          name: 'bwlimit',
+          placeholder: helptext.bwlimit_placeholder,
+          tooltip: helptext.bwlimit_tooltip,
+          class: 'inline',
+          width: "50%"
+        }
+      ]
+    }
+  ];
+  public fieldConfig = [];
 
   protected month_field: any;
   protected day_field: any;
@@ -342,17 +407,14 @@ export class CloudsyncFormComponent implements OnInit {
   public formGroup: any;
   public error: string;
   protected pk: any;
-  public isNew: boolean = false;
+  public isNew = false;
   protected data: any;
-  protected pid: any;
 
   protected providers: any;
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
-    protected entityFormService: EntityFormService,
-    protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     protected dialog: DialogService,
     protected ws: WebSocketService,
@@ -437,32 +499,6 @@ export class CloudsyncFormComponent implements OnInit {
       });
   }
 
-  setRelation(config: FieldConfig) {
-    const activations =
-        this.fieldRelationService.findActivationRelation(config.relation);
-    if (activations) {
-      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-          activations, this.formGroup);
-      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-          activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled, tobeHide);
-
-      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-          .forEach(control => {
-            control.valueChanges.subscribe(
-                () => { this.relationUpdate(config, activations); });
-          });
-    }
-  }
-
-  relationUpdate(config: FieldConfig, activations: any) {
-    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-        activations, this.formGroup);
-    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-          activations, this.formGroup);
-    this.setDisabled(config.name, tobeDisabled, tobeHide);
-  }
-
   setDisabled(name: string, disable: boolean, hide: boolean = false, status?:string) {
     if (hide) {
       disable = hide;
@@ -483,21 +519,52 @@ export class CloudsyncFormComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
-    this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
-    this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
-    this.bucket_input_field = _.find(this.fieldConfig, {'name': 'bucket_input'});
+  preInit() {
+    this.aroute.params.subscribe(params => {
+        this.pk = params['pk'];
+        if (this.pk) {
+          this.customFilter = [[["id", "=", parseInt(params['pk'], 10)]]]
+        }
+    });
+  }
 
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
-      if (config.relation.length > 0) {
-        this.setRelation(config);
+  dataHandler(entityForm) {
+    const data = entityForm.wsResponse;
+    for (const i in data) {
+      const fg = entityForm.formGroup.controls[i];
+      if (fg) {
+        const current_field = this.fieldConfig.find((control) => control.name === i);
+        fg.setValue(data[i]);
       }
     }
+    if (data.credentials) {
+      entityForm.formGroup.controls['credentials'].setValue(data.credentials.id);
+    }
+    if (data.attributes) {
+      for (let attr in data.attributes) {
+        attr = attr === 'encryption' ? 'task_encryption' : attr;
+        if (entityForm.formGroup.controls[attr]) {
+          if (attr === 'task_encryption') {
+            entityForm.formGroup.controls[attr].setValue(data.attributes['encryption'] == null ? '' : data.attributes['encryption']);
+          } else {
+            entityForm.formGroup.controls[attr].setValue(data.attributes[attr]);
+          }
+          if (attr === 'bucket' && entityForm.formGroup.controls['bucket_input']) {
+            entityForm.formGroup.controls['bucket_input'].setValue(data.attributes[attr]);
+          }
+        }
+      }
+    }
+  }
 
-    await this.cloudcredentialService.getCloudsyncCredentials().then(
+  async afterInit(entityForm) {
+    this.formGroup = entityForm.formGroup;
+
+    this.credentials = _.find(entityForm.fieldConfig, { 'name': 'credentials' });
+    this.bucket_field = _.find(entityForm.fieldConfig, {'name': 'bucket'});
+    this.bucket_input_field = _.find(entityForm.fieldConfig, {'name': 'bucket_input'});
+
+    this.cloudcredentialService.getCloudsyncCredentials().then(
       (res) => {
         res.forEach((item) => {
           this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
@@ -506,11 +573,13 @@ export class CloudsyncFormComponent implements OnInit {
       }
     )
 
-    this.folder_field = _.find(this.fieldConfig, { "name": "folder"});
+    this.folder_field = _.find(entityForm.fieldConfig, { "name": "folder"}); 
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
       // reset folder tree view
       if (!this.folder_field.disabled) {
-        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+        if (this.folder_field.customTemplateStringOptions.explorer) {
+          this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+        }
       }
 
       if (res!=null) {
@@ -578,17 +647,21 @@ export class CloudsyncFormComponent implements OnInit {
 
     this.formGroup.controls['bucket_input'].valueChanges.subscribe((res)=> {
       this.setBucketError(null);
-      this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      if (this.folder_field.customTemplateStringOptions.explorer) {
+        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      }
     });
 
     this.formGroup.controls['bucket'].valueChanges.subscribe((res)=> {
       this.setBucketError(null);
-      this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      if (this.folder_field.customTemplateStringOptions.explorer) {
+        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      }
     });
 
     this.formGroup.controls['bwlimit'].valueChanges.subscribe((res)=> {
-      _.find(this.fieldConfig, {name: 'bwlimit'}).hasErrors = false;
-      _.find(this.fieldConfig, {name: 'bwlimit'}).errors = null;
+      _.find(entityForm.fieldConfig, {name: 'bwlimit'}).hasErrors = false;
+      _.find(entityForm.fieldConfig, {name: 'bwlimit'}).errors = null;
       this.formGroup.controls['bwlimit'].errors = null;
     });
 
@@ -603,7 +676,7 @@ export class CloudsyncFormComponent implements OnInit {
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.subscribe(mode => {
-      const paragraph = this.fieldConfig.find(config => config.name === 'transfer_mode_warning');
+      const paragraph = entityForm.fieldConfig.find(config => config.name === 'transfer_mode_warning');
       switch (mode) {
         case 'SYNC':
           paragraph.paraText = helptext.transfer_mode_warning_sync;
@@ -618,59 +691,6 @@ export class CloudsyncFormComponent implements OnInit {
           paragraph.paragraphIcon = 'add_to_photos';
       }
     });
-
-    this.aroute.params.subscribe(params => {
-      if (this.isEntity) {
-        this.pk = params['pk'];
-        this.pid = params['pk'];
-        if (this.pk && !this.isNew) {
-          this.queryPayload.push("id")
-          this.queryPayload.push("=")
-          this.queryPayload.push(parseInt(params['pk']));
-          this.pk = [this.queryPayload];
-        } else {
-          this.isNew = true;
-        }
-      }
-    });
-
-    if (!this.isNew) {
-      this.ws.call('cloudsync.query', [this.pk]).subscribe((res) => {
-        if (res) {
-          this.data = this.resourceTransformIncomingRestData(res[0]);
-          for (let i in this.data) {
-            let fg = this.formGroup.controls[i];
-            if (fg) {
-              let current_field = this.fieldConfig.find((control) => control.name === i);
-              fg.setValue(this.data[i]);
-            }
-          }
-          if (this.data.credentials) {
-            this.formGroup.controls['credentials'].setValue(this.data.credentials.id);
-          }
-          if (this.data.attributes) {
-            for (let attr in this.data.attributes) {
-              attr = attr === 'encryption' ? 'task_encryption' : attr;
-              if (this.formGroup.controls[attr]) {
-                if (attr === 'task_encryption') {
-                  this.formGroup.controls[attr].setValue(this.data.attributes['encryption'] == null ? '' : this.data.attributes['encryption']);
-                } else {
-                  this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
-                }
-                if (attr === 'bucket' && this.formGroup.controls['bucket_input']) {
-                  this.formGroup.controls['bucket_input'].setValue(this.data.attributes[attr]);
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
-  }
-
-  goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
   }
 
   resourceTransformIncomingRestData(data) {
@@ -728,15 +748,12 @@ export class CloudsyncFormComponent implements OnInit {
     }
     return bwlimtArr;
   }
-  onSubmit(event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.error = null;
-    let value = _.cloneDeep(this.formGroup.value);
-    let attributes = {};
-    let schedule = {};
 
-    value['credentials'] = parseInt(value.credentials);
+  customSubmit(value) {
+    const attributes = {};
+    const schedule = {};
+
+    value['credentials'] = parseInt(value.credentials, 10);
 
     if (value.bucket != undefined) {
       attributes['bucket'] = value.bucket;
@@ -767,7 +784,7 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['attributes'] = attributes;
 
-    let spl = value.cloudsync_picker.split(" ");
+    const spl = value.cloudsync_picker.split(" ");
     delete value.cloudsync_picker;
     schedule['minute'] = spl[0];
     schedule['hour'] = spl[1];
@@ -811,7 +828,7 @@ export class CloudsyncFormComponent implements OnInit {
       });
     } else {
       this.loader.open();
-      this.ws.call(this.editCall, [parseInt(this.pid), value]).subscribe(
+      this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
         (res)=>{
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
@@ -823,5 +840,4 @@ export class CloudsyncFormComponent implements OnInit {
       );
     }
   }
-
 }
