@@ -263,7 +263,7 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
-    } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
+    } else if (rowData.encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
       actions.push({
         label: T("Encryption Key"),
         onClick: (row1) => {
