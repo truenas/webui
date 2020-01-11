@@ -52,7 +52,6 @@ export class SystemProfileService extends BaseService {
 
   fetchProfile(respond?:boolean, localOnly?: boolean){
     this.websocket.call('system.info').subscribe((res) => {
-      console.log("New SysInfo!")
       this.cache = res;
       if(localOnly){ 
         this.buffer.push({name:"SysInfoRequest", sender: this});
