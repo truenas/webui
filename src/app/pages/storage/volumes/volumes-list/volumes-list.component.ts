@@ -671,6 +671,52 @@ export class VolumesListTableConfig implements InputTableConf {
               ["storage", "pools", "status", row1.id]));
           }
         });
+        actions.push({
+          id: rowData.name,
+          name: T('Expand Pool'),
+          label: T("Expand Pool"),
+          onClick: (row1) => {
+            const parent = this;
+            console.log('expand', row1);
+            const conf: DialogFormConfiguration = {
+              title: T("Enter passphrase to expand pool ") + row1.name + '.',
+              fieldConfig: [
+                {
+                  type: 'input',
+                  inputType: 'password',
+                  name: 'passphrase',
+                  placeholder: 'passphrase',
+                  required: true
+                }
+              ],
+              saveButtonText: T("Expand Pool"),
+              customSubmit: function (entityDialog) {
+                doExpand(entityDialog.formValue['passphrase']);
+              }
+            }
+
+            function doExpand(passphrase?) {
+              const payload = [row1.id];
+              if (passphrase) {
+                payload.push({"geli": {"passphrase": passphrase}});
+              }
+              parent.ws.job('pool.expand', payload).subscribe(
+                (res) => {
+                  console.log(res);
+
+                },
+                (err) => {
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+              )
+            }
+            if (row1.encrypt === 0) {
+              doExpand();
+            } else {
+              self.dialogService.dialogForm(conf);
+            }
+          }
+        });
 
         if (rowData.is_upgraded === false) {
           actions.push({
