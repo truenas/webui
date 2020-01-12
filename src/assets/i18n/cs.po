@@ -27,8 +27,8 @@ msgid ""
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
 msgstr ""
-" Pokud je <b>UPS mód</b> ve stavu <i>slave</i>. Vložte otevřený port "
-"UPS <i>Master</i> systému. Výchozí port je <i>3493</i>."
+" Pokud je <b>UPS mód</b> ve stavu <i>slave</i>. Vložte otevřený port UPS "
+"<i>Master</i> systému. Výchozí port je <i>3493</i>."
 
 msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a "
@@ -42,9 +42,7 @@ msgstr ""
 msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
 "selected."
-msgstr ""
-" adresy. Pokud je tato volba vybrána, další adresy již nemohou být "
-"zvoleny."
+msgstr " adresy. Pokud je tato volba vybrána, další adresy již nemohou být zvoleny."
 
 msgid " and "
 msgstr " a "
@@ -81,7 +79,8 @@ msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
 "for testing."
 msgstr ""
-" vteřiny, pokud není vybrána možnost NASTAVIT NAPOŘÁD. Upravte časovou prodlevu pro možné otestování."
+" vteřiny, pokud není vybrána možnost NASTAVIT NAPOŘÁD. Upravte časovou "
+"prodlevu pro možné otestování."
 
 msgid " service has been enabled."
 msgstr " služba byla povolena."
@@ -145,7 +144,9 @@ msgid "20 characters is the maximum length."
 msgstr "Maximální délka je 20 znaků."
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ": Automatická kontrola aktualizací selhala. Prosím zkontrolujte systémové nastavení sítě."
+msgstr ""
+": Automatická kontrola aktualizací selhala. Prosím zkontrolujte systémové "
+"nastavení sítě."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr "</b> zásuvný modul maže všechna data a snapshoty ????"
@@ -179,16 +180,17 @@ msgid ""
 "disks can be destroyed by setting the <b>Destroy data</b> option. Back up "
 "critical data <b>before</b> exporting/disconnecting the pool."
 msgstr ""
-"</i>. Data na poolu nebudou po exportu dostupná. Data z disků v poolu "
-"mohou být smazána nastavením volby <b>Smazat data</b>. Zazálohujte si "
-"důležitá data <b>předtím</b> než vyexportujete/odpojíte pool."
+"</i>. Data na poolu nebudou po exportu dostupná. Data z disků v poolu mohou "
+"být smazána nastavením volby <b>Smazat data</b>. Zazálohujte si důležitá "
+"data <b>předtím</b> než vyexportujete/odpojíte pool."
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
 "by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
 msgstr ""
-"</i> je v databázi, avšak není připojen k zařízení. Pokud byl mylně vyexportován, "
-"opětovně připojte hardware a použijte <b>Importovat pool</b>.<br /><br />"
+"</i> je v databázi, avšak není připojen k zařízení. Pokud byl mylně "
+"vyexportován, opětovně připojte hardware a použijte <b>Importovat "
+"pool</b>.<br /><br />"
 
 msgid ""
 "<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
@@ -215,8 +217,9 @@ msgstr ""
 "<a "
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
 "html\"  target=\"_blank\">S3 API endpoint URL</a>. V případě použití AWS, "
-"políčko endpoint může zůstat prázdné pro použítí výchozího nastavení pro region "
-"a dostupné buckety budou automaticky získány. Viz AWS dokumentace a seznam "
+"políčko endpoint může zůstat prázdné pro použítí výchozího nastavení pro "
+"region a dostupné buckety budou automaticky získány. Viz AWS dokumentace a "
+"seznam "
 "href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
 "region_endpoints  target=\"_blank\">Simple Storage Service Website "
 "Endpoints</a>."
@@ -255,8 +258,8 @@ msgid ""
 "require extension."
 msgstr ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
-"target=\"_blank\">pCloud Access Token</a>. Tyto tokeny mohou expirovat a proto "
-"potřebují prodloužit."
+"target=\"_blank\">pCloud Access Token</a>. Tyto tokeny mohou expirovat a "
+"proto potřebují prodloužit."
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
@@ -264,8 +267,8 @@ msgid ""
 "messages sent on behalf of the specified <i>Username</i>."
 msgstr ""
 "<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
-"target=\"_blank\">Autentizační protokol</a> používaný k ověření  "
-"zpráv poslaných jménem konkrétního <i>uživatelského jména</i>."
+"target=\"_blank\">Autentizační protokol</a> používaný k ověření  zpráv "
+"poslaných jménem konkrétního <i>uživatelského jména</i>."
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
@@ -273,8 +276,8 @@ msgid ""
 "behalf of the specified <i>Username</i>."
 msgstr ""
 "<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
-"target=\"_blank\">Šifrovací protokol</a> používaný k zašifrování "
-"zpráv poslaných jménem konkrétního <i>uživatelského jména</i>."
+"target=\"_blank\">Šifrovací protokol</a> používaný k zašifrování zpráv "
+"poslaných jménem konkrétního <i>uživatelského jména</i>."
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
@@ -282,17 +285,18 @@ msgid ""
 "preserved, but must be supported by both systems."
 msgstr ""
 "<a href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"          "
-"      target=\"_blank\">Rozšiřující atributy</a> jsou zachovány, "
-"avšak musí být podporovány systémy na obou stranách."
+"      target=\"_blank\">Rozšiřující atributy</a> jsou zachovány, avšak musí "
+"být podporovány systémy na obou stranách."
 
 msgid ""
 "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
 "target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
 "valid    email address when registering to receive issue status updates."
 msgstr ""
-"Pro založení hlášení si <a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
-"target=\"_blank\"> vytvořte účet na Jira</a>. Pro registraci použijte platnou"
-"emailovou adresu, abyste dostávali oznámení o stavu vašeho hlášení."
+"Pro založení hlášení si <a "
+"href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
+"target=\"_blank\"> vytvořte účet na Jira</a>. Pro registraci použijte "
+"platnouemailovou adresu, abyste dostávali oznámení o stavu vašeho hlášení."
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> heslo k účtu."
@@ -309,16 +313,17 @@ msgid ""
 msgstr ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
 "target=\"_blank\">Backblaze B2</a> aplikační klíč. Pro vygenerování nového "
-"aplikačního klíče se přihlaste prostřednictvím Backblaze účtu, běžte na <i>App Keys</i> "
-"stránku a přidejte nový aplikační klíč. Následně zkopírujte <i>applicationKey</i> string "
-"do tohoto pole."
+"aplikačního klíče se přihlaste prostřednictvím Backblaze účtu, běžte na "
+"<i>App Keys</i> stránku a přidejte nový aplikační klíč. Následně zkopírujte "
+"<i>applicationKey</i> string do tohoto pole."
 
 msgid ""
 "<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
 "target=\"_blank\">Email encryption</a> type. Choices are <i>Plain (No "
 "Encryption)</i>, <i>SSL (Implicit TLS)</i>, or <i>TLS (STARTTLS)</i>."
 msgstr ""
-"Způsob <a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
+"Způsob <a "
+"href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
 "target=\"_blank\">šifrování emailu</a>. Volby jsou <i>Plain (Bez "
 "šifrování)</i>, <i>SSL (Implicitní TLS)</i>, nebo <i>TLS (STARTTLS)</i>."
 
@@ -333,11 +338,11 @@ msgid ""
 msgstr ""
 "<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">GELI</a> šifrování možné pro "
-"ZFS pooly. <b>VAROVÁNÍ:</b> Přečtěte si <a "
+"RELEASE+and+Ports\" target=\"_blank\">GELI</a> šifrování možné pro ZFS "
+"pooly. <b>VAROVÁNÍ:</b> Přečtěte si <a "
 "href=\"--docurl--/storage.html#managing-encrypted-pools\" "
-"target=\"_blank\">sekci o šifrování</a> v dokumentaci, ještě předtím, než vyberete "
-"tuto volbu."
+"target=\"_blank\">sekci o šifrování</a> v dokumentaci, ještě předtím, než "
+"vyberete tuto volbu."
 
 msgid ""
 "<a href='--docurl--/sharing.html--webversion--#block-iscsi' "
@@ -346,18 +351,19 @@ msgid ""
 "discovery while CHAP and Mutual CHAP require authentication."
 msgstr ""
 "<a href='--docurl--/sharing.html--webversion--#block-iscsi' "
-"target='_blank'>iSCSI</a> podporuje mnoho autentizačních metod, které jsou"
-"využity k nalezení validních zařízení. Anonymní zjištění nebude funkční v případě, že "
-"CHAP nebo Mutual CHAP vyžaduje autentizaci."
+"target='_blank'>iSCSI</a> podporuje mnoho autentizačních metod, které "
+"jsouvyužity k nalezení validních zařízení. Anonymní zjištění nebude funkční "
+"v případě, že CHAP nebo Mutual CHAP vyžaduje autentizaci."
 
 msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
 msgstr ""
-"<b>KOPÍROVAT</b>: Soubory ze zdrojového adresáře jsou <i><u>zkopírovány</u></i> do "
-"cílové složky. V případě, že se v cílovém adresáři nachází soubory se stejným názvem, "
-"budou <i><u>přepsány</u></i> nově zkopírovanými."
+"<b>KOPÍROVAT</b>: Soubory ze zdrojového adresáře jsou "
+"<i><u>zkopírovány</u></i> do cílové složky. V případě, že se v cílovém "
+"adresáři nachází soubory se stejným názvem, budou <i><u>přepsány</u></i> "
+"nově zkopírovanými."
 
 msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>    Many utilities are "
@@ -367,11 +373,11 @@ msgid ""
 "   href=\"--docurl--/cli.html\"    target=\"_blank\">Command Line "
 "Utilities</a>    chapter in the guide for usage information    and examples."
 msgstr ""
-"<b>Ctrl+C</b> ukončí běžící procesy na popředí.<br> Spousta nástrojů je již"
-"vestavěných:<br> <b>Iperf</b>,    <b>Netperf</b>, <b>IOzone</b>, "
+"<b>Ctrl+C</b> ukončí běžící procesy na popředí.<br> Spousta nástrojů je "
+"jižvestavěných:<br> <b>Iperf</b>,    <b>Netperf</b>, <b>IOzone</b>, "
 "<b>arcsat</b>,    <b>tw_cli</b>, <br><b>MegaCli</b>,    "
-"<b>freenas-debug</b>, <b>tmux</b>,    <b>Dmidecode</b>.<br> Viz <a "
-"   href=\"--docurl--/cli.html\"    target=\"_blank\">kapitola o nástrojích v "
+"<b>freenas-debug</b>, <b>tmux</b>,    <b>Dmidecode</b>.<br> Viz <a    "
+"href=\"--docurl--/cli.html\"    target=\"_blank\">kapitola o nástrojích v "
 "příkazové řádce</a> v příručce pro informace o použití společně s příklady."
 
 msgid "<b>Current Version:</b> "
@@ -382,15 +388,15 @@ msgid ""
 "destination, they are <i><u>deleted</u></i> from the source. Files with the "
 "same names on the destination are <i><u>overwritten</u></i>."
 msgstr ""
-"<b>PŘESUNOUT</b>: Poté co jsou soubory <i><u>překopírovány</u></i> ze zdrojové složky"
-"do cílové, dojde k jejich <i><u>smazání</u></i> ze zdrojového umístění. Soubory s "
-"totožným názvem v cílové složce budou <i><u>přepsány</u></i>."
+"<b>PŘESUNOUT</b>: Poté co jsou soubory <i><u>překopírovány</u></i> ze "
+"zdrojové složkydo cílové, dojde k jejich <i><u>smazání</u></i> ze "
+"zdrojového umístění. Soubory s totožným názvem v cílové složce budou "
+"<i><u>přepsány</u></i>."
 
 msgid ""
 "<b>Not recommended.</b> Allow more than one group to  have the same group "
 "ID."
-msgstr ""
-"<b>Nedoporučuje se.</b> Mít vícero skupin se stejným ID."
+msgstr "<b>Nedoporučuje se.</b> Mít vícero skupin se stejným ID."
 
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
@@ -411,9 +417,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<b>WARNING:</b> Rolling back to this snapshot will permanently delete later "
-"snapshots of this dataset. Do not roll back until all desired snapshots "
-"have been backed up!"
+"<b>WARNING:</b> Rolling the dataset back  destroys data on the dataset "
+"<i>and</i> can destroy additional snapshots  that are related to the "
+"dataset. <b>This can result in permanent data  loss!</b> Do not roll back "
+"until all desired data and snapshots are  backed up."
 msgstr ""
 
 msgid ""
@@ -431,9 +438,6 @@ msgid "<b>rsyncd</b> listens on this port."
 msgstr ""
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
-msgstr ""
-
-msgid "<br><br>Roll back to snapshot <i>"
 msgstr ""
 
 msgid "<font color=\"red\"> There are "
@@ -868,6 +872,9 @@ msgstr "Přidat datovou sadu"
 msgid "Add Extra ISCSI Group"
 msgstr ""
 
+msgid "Add Group"
+msgstr ""
+
 msgid "Add Log"
 msgstr ""
 
@@ -942,12 +949,6 @@ msgid ""
 msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
-msgstr ""
-
-msgid ""
-"Additional <a                   "
-"href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
-"in\"                   target=\"_blank\">smartctl(8)</a> options."
 msgstr ""
 
 msgid ""
@@ -1055,6 +1056,9 @@ msgstr ""
 msgid "Adv. Power Management"
 msgstr ""
 
+msgid "Advance Options"
+msgstr ""
+
 msgid "Advanced"
 msgstr "Pokročilé"
 
@@ -1072,6 +1076,9 @@ msgstr ""
 
 msgid "Advanced Power Management"
 msgstr "Pokročilá správa napájení"
+
+msgid "Advanced Remote Options"
+msgstr ""
 
 msgid "Advanced Settings"
 msgstr ""
@@ -1111,6 +1118,9 @@ msgstr ""
 msgid "Allocate at least 256 MiB."
 msgstr ""
 
+msgid "Allow"
+msgstr ""
+
 msgid "Allow All Initiators"
 msgstr ""
 
@@ -1134,6 +1144,9 @@ msgstr ""
 
 msgid "Allow Guest Access"
 msgstr "Umožnit přístup neověřeným uživatelům (hostům)"
+
+msgid "Allow Hosts"
+msgstr ""
 
 msgid "Allow Kerberos authentication"
 msgstr ""
@@ -1314,6 +1327,9 @@ msgid ""
 msgstr ""
 
 msgid "Always Chroot"
+msgstr ""
+
+msgid "Always On"
 msgstr ""
 
 msgid ""
@@ -1582,6 +1598,12 @@ msgid ""
 "GIDs. To configure the selected  backend, click <i>EDIT IDMAP</i>."
 msgstr ""
 
+msgid "Background (lowest)"
+msgstr ""
+
+msgid "Bandwidth"
+msgstr ""
+
 msgid "Bandwidth Limit"
 msgstr ""
 
@@ -1621,6 +1643,9 @@ msgid ""
 msgstr ""
 
 msgid "Berkeley Packet Filter"
+msgstr ""
+
+msgid "Best effort (default)"
 msgstr ""
 
 msgid "Bind"
@@ -1767,7 +1792,9 @@ msgstr ""
 msgid ""
 "Browse to the path to be copied. The                 <a "
 "href=\"--docurl--/intro.html#path-and-name-lengths\"                 "
-"target=\"_blank\">FreeBSD file path limits</a> apply."
+"target=\"_blank\">FreeBSD file path limits</a> apply.                 Other "
+"operating systems can have different limits                 which might "
+"affect how they can be used as sources                 or destinations."
 msgstr ""
 
 msgid "Browse to the pool or dataset to share."
@@ -2145,6 +2172,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Choose a safety level for the  rollback action. The rollback is canceled "
+"when the safety check finds  additional snapshots that are directly related "
+"to the dataset being rolled back."
+msgstr ""
+
+msgid ""
 "Choose a saved SSH Keypair or select  <i>Generate New</i> to create a new "
 "keypair and use it for this  connection."
 msgstr ""
@@ -2348,6 +2381,9 @@ msgstr "Klienti"
 msgid "Clone"
 msgstr ""
 
+msgid "Clone Boot Environment"
+msgstr ""
+
 msgid "Clone to New Dataset"
 msgstr ""
 
@@ -2455,6 +2491,9 @@ msgstr "Komentář"
 msgid "Comments"
 msgstr "Komentáře"
 
+msgid "Comments about this script."
+msgstr ""
+
 msgid "Common Name"
 msgstr ""
 
@@ -2462,6 +2501,12 @@ msgid "Community"
 msgstr "Komunita"
 
 msgid "Complete the Upgrade"
+msgstr ""
+
+msgid ""
+"Completely replicate the selected dataset. The target dataset will have all "
+"of the properties, snapshots, child datasets, and clones from the source "
+"dataset."
 msgstr ""
 
 msgid "Compress"
@@ -2507,6 +2552,9 @@ msgid ""
 msgstr ""
 
 msgid "Configure Networking"
+msgstr ""
+
+msgid "Configure System Dataset"
 msgstr ""
 
 msgid ""
@@ -2574,6 +2622,9 @@ msgstr ""
 msgid "Connecting to "
 msgstr ""
 
+msgid "Connection"
+msgstr ""
+
 msgid "Connection Error"
 msgstr ""
 
@@ -2625,6 +2676,9 @@ msgid "Continue with download?"
 msgstr ""
 
 msgid "Contract Type"
+msgstr ""
+
+msgid "Control"
 msgstr ""
 
 msgid "Control left sidebar's display style."
@@ -2776,10 +2830,19 @@ msgstr ""
 msgid "Credential"
 msgstr "Přihlašovací údaj"
 
+msgid "Credentials"
+msgstr ""
+
 msgid "Critical"
 msgstr "Kritické"
 
+msgid "Critical applications"
+msgstr ""
+
 msgid "Criticality"
+msgstr ""
+
+msgid "Cron Job"
 msgstr ""
 
 msgid "Cron Jobs"
@@ -2991,16 +3054,16 @@ msgstr ""
 msgid ""
 "Define any additional settings for use by some Kerberos applications. The "
 "available settings and syntax is listed in the <a "
-"href=\"http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf."
-"html#appdefaults\" target=\"_blank\">appdefaults section of "
+"href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
+"conf.html#appdefaults\" target=\"_blank\">appdefaults section of "
 "krb.conf(5).</a>."
 msgstr ""
 
 msgid ""
 "Define any settings used by the Kerberos library. The available settings "
 "and their syntax are listed in the <a "
-"href=\"http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf."
-"html#libdefaults\" target=\"_blank\">libdefaults section of "
+"href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
+"conf.html#libdefaults\" target=\"_blank\">libdefaults section of "
 "krb.conf(5).</a>."
 msgstr ""
 
@@ -3110,6 +3173,12 @@ msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
 msgid "Deleting the <b>"
+msgstr ""
+
+msgid "Deny"
+msgstr ""
+
+msgid "Deny Hosts"
 msgstr ""
 
 msgid "Deny list"
@@ -3256,8 +3325,8 @@ msgstr ""
 msgid "Direction"
 msgstr "Směr"
 
-msgid "Directories & Permissions"
-msgstr "Složky a oprávnění"
+msgid "Directories and Permissions"
+msgstr ""
 
 msgid "Directory"
 msgstr "Složka"
@@ -3313,6 +3382,9 @@ msgstr ""
 msgid "Disable physical block size reporting"
 msgstr "Nehlásit velikost fyzického bloku"
 
+msgid "Disabled"
+msgstr ""
+
 msgid "Disabled (Not encrypted)"
 msgstr ""
 
@@ -3367,6 +3439,9 @@ msgstr "Disk který přemazat."
 msgid "Disks"
 msgstr "Disky"
 
+msgid "Disks to be edited:"
+msgstr ""
+
 msgid "Dismiss"
 msgstr ""
 
@@ -3402,6 +3477,9 @@ msgstr "Doménové uživatelské jméno"
 
 msgid "Domain Account Password"
 msgstr "Heslo k doménovému účtu"
+
+msgid "Domain Credentials"
+msgstr ""
 
 msgid "Domain Forest Level"
 msgstr ""
@@ -3497,9 +3575,6 @@ msgstr "Upravit ZFS svazek"
 
 msgid "Editing interfaces while HA is enabled is not allowed."
 msgstr ""
-
-msgid "Editing the following disks:"
-msgstr "Upravují se následující disky:"
 
 msgid ""
 "Editing top-level datasets can prevent users from accessing data in child "
@@ -4489,9 +4564,6 @@ msgstr "Chyba při zjišťování aktualizací."
 msgid "Error creating VM."
 msgstr "Chyba při vytváření virt. stroje"
 
-msgid "Error creating pool"
-msgstr "Chyba při vytváření fondu"
-
 msgid "Error decrypting disks"
 msgstr "Chyba při rozšifrovávání disku"
 
@@ -4525,14 +4597,8 @@ msgstr "Chyba při získávání dat fondu."
 msgid "Error importing pool"
 msgstr "Chyba při importu fondu"
 
-msgid "Error locking pool."
-msgstr "Chyba při zamykání fondu."
-
 msgid "Error restarting web service"
 msgstr "Chyba při restartování webové služby"
-
-msgid "Error rolling back snapshot"
-msgstr ""
 
 msgid "Error saving ZVOL."
 msgstr "Chyba při ukládání zfs svazku"
@@ -4546,8 +4612,8 @@ msgstr "Chyba při zastavování služby "
 msgid "Error submitting file"
 msgstr "Chyba při odesílání souboru"
 
-msgid "Error updating disks."
-msgstr "Chyba při aktualizaci disků."
+msgid "Error updating disks"
+msgstr ""
 
 msgid "Error:"
 msgstr ""
@@ -4570,6 +4636,9 @@ msgstr "Odhadovaná holá kapacita:"
 
 msgid "Estimated total raw data capacity"
 msgstr "Odhadovaná hrubá kapacita"
+
+msgid "Excellent effort"
+msgstr ""
 
 msgid "Exclude"
 msgstr "Vynechat"
@@ -4846,6 +4915,9 @@ msgstr ""
 msgid "Free"
 msgstr ""
 
+msgid "FreeBSD device names of each disk being edited."
+msgstr ""
+
 msgid ""
 "FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
 "versions up to the same version as the host  system. Newer releases are not "
@@ -4865,6 +4937,9 @@ msgid "From E-mail"
 msgstr "Z e-mailu"
 
 msgid "From Name"
+msgstr ""
+
+msgid "Full Filesystem Replication"
 msgstr ""
 
 msgid "Full Name"
@@ -4890,6 +4965,9 @@ msgstr ""
 msgid "GID"
 msgstr "GID"
 
+msgid "GUI"
+msgstr ""
+
 msgid "GUI SSL Certificate"
 msgstr ""
 
@@ -4904,6 +4982,9 @@ msgstr ""
 
 msgid "General"
 msgstr "Obecné"
+
+msgid "General Options"
+msgstr ""
 
 msgid "General Preferences"
 msgstr ""
@@ -4971,6 +5052,9 @@ msgid "Group"
 msgstr "Skupina"
 
 msgid "Group Bind Path"
+msgstr ""
+
+msgid "Group Configuration"
 msgstr ""
 
 msgid "Group ID"
@@ -5166,6 +5250,9 @@ msgid ""
 "iSCSI targets and portals of the system. Separate each entry with a space."
 msgstr ""
 
+msgid "Hosts"
+msgstr ""
+
 msgid "Hosts Allow"
 msgstr ""
 
@@ -5235,8 +5322,8 @@ msgstr "Rozumím"
 msgid "IBurst"
 msgstr ""
 
-msgid "ID & Groups"
-msgstr "Identif. a skupiny"
+msgid "IDMAP"
+msgstr ""
 
 msgid "INSTALL"
 msgstr "NAINSTALOVAT"
@@ -5352,6 +5439,9 @@ msgid ""
 msgstr ""
 
 msgid "Id"
+msgstr ""
+
+msgid "Identification"
 msgstr ""
 
 msgid "Identifier"
@@ -5476,15 +5566,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Indicates the time of inactivity in minutes before                   the "
-"drive enters standby mode. This <a                   "
-"href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
-"drive-is-spinning-down-properly.2068/\"                   "
-"target=\"_blank\">forum post</a> demonstrates how to                   "
-"determine if a drive has spun down."
-msgstr ""
-
-msgid ""
 "Indicates the time of inactivity in minutes before the drive enters standby "
 "mode. This <a "
 "href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
@@ -5506,6 +5587,9 @@ msgid "Inherit"
 msgstr ""
 
 msgid "Inherits"
+msgstr ""
+
+msgid "Init/Shutdown Script"
 msgstr ""
 
 msgid "Init/Shutdown Scripts"
@@ -5603,6 +5687,9 @@ msgstr ""
 msgid ""
 "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" "
 "are allowed."
+msgstr ""
+
+msgid "Internetwork control"
 msgstr ""
 
 msgid "Invalid dataset."
@@ -5777,6 +5864,9 @@ msgstr "Kerberos oblasti"
 msgid "Kerberos Settings"
 msgstr "Nastavení pro Kerberos"
 
+msgid "Kernel"
+msgstr ""
+
 msgid "Key ID"
 msgstr ""
 
@@ -5932,6 +6022,24 @@ msgstr ""
 msgid "Level"
 msgstr ""
 
+msgid "Level 1 - Minimum power usage with Standby (spindown)"
+msgstr ""
+
+msgid "Level 127 - Maximum power usage with Standby"
+msgstr ""
+
+msgid "Level 128 - Minimum power usage without Standby (no spindown)"
+msgstr ""
+
+msgid "Level 192 - Intermediate power usage without Standby"
+msgstr ""
+
+msgid "Level 254 - Maximum performance, maximum power usage"
+msgstr ""
+
+msgid "Level 64 - Intermediate power usage with Standby"
+msgstr ""
+
 msgid "Libdefaults Auxiliary Parameters"
 msgstr "Pomocné parametry pro libdefaults"
 
@@ -5972,6 +6080,9 @@ msgid "Local User Upload Bandwidth"
 msgstr ""
 
 msgid "Locality"
+msgstr ""
+
+msgid "Localization"
 msgstr ""
 
 msgid "Location"
@@ -6055,6 +6166,9 @@ msgstr "MAC adresa"
 msgid "Mail Server Port"
 msgstr "Port e-mailového serveru"
 
+msgid "Manage"
+msgstr ""
+
 msgid "Manage Custom Themes"
 msgstr ""
 
@@ -6103,6 +6217,9 @@ msgid "Max. Connections"
 msgstr "Nejvýše spojení"
 
 msgid "Max. Poll"
+msgstr ""
+
+msgid "Maximum"
 msgstr ""
 
 msgid "Maximum Passive Port"
@@ -6184,6 +6301,9 @@ msgstr ""
 msgid "Media Type"
 msgstr ""
 
+msgid "Medium"
+msgstr ""
+
 msgid "Member Disk"
 msgstr "Účastnící se disk"
 
@@ -6259,6 +6379,9 @@ msgstr ""
 msgid "Min. Poll"
 msgstr ""
 
+msgid "Minimum"
+msgstr ""
+
 msgid "Minimum Passive Port"
 msgstr "Nejnižší číslo pasivního portu"
 
@@ -6287,18 +6410,15 @@ msgid "Model:"
 msgstr ""
 
 msgid ""
-"Modify for disks that understand <a                   "
-"href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\"        "
-"           target=\"_blank\">AAM</a>."
-msgstr ""
-
-msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>."
 msgstr ""
 
 msgid "Mon"
+msgstr ""
+
+msgid "Monitor"
 msgstr ""
 
 msgid "Monitor Password"
@@ -6387,6 +6507,9 @@ msgstr ""
 msgid "NFSv3 ownership model for NFSv4"
 msgstr "NFSv3 model vlastnictví pro NFSv4"
 
+msgid "NFSv4"
+msgstr ""
+
 msgid "NIC"
 msgstr ""
 
@@ -6408,14 +6531,14 @@ msgstr ""
 msgid "NTLMv1 Auth"
 msgstr ""
 
+msgid "NTP Server Settings"
+msgstr ""
+
 msgid "NTP Servers"
 msgstr "NTP servery"
 
 msgid "Name"
 msgstr "Název"
-
-msgid "Name & Contact"
-msgstr "Název a kontakt"
 
 msgid "Name Jail and Choose FreeBSD Release"
 msgstr "Nazvěte ohraničené prostředí a zvolte vydání FreeBSD"
@@ -6464,7 +6587,7 @@ msgid ""
 "(-), underscores (_),     and periods (.) are allowed."
 msgstr ""
 
-msgid "Name of the new dataset created from the cloned snapshot."
+msgid "Name of the new dataset created from the  cloned snapshot."
 msgstr ""
 
 msgid "Name of the room."
@@ -6498,6 +6621,9 @@ msgid "Naming Schema"
 msgstr "Schéma názvů"
 
 msgid "Navigation"
+msgstr ""
+
+msgid "NetBIOS"
 msgstr ""
 
 msgid "NetBIOS Alias"
@@ -6555,6 +6681,9 @@ msgstr ""
 
 msgid "Network Changes Made Permanent"
 msgstr "Změny v síti trvale uloženy"
+
+msgid "Network Information Service (NIS)"
+msgstr ""
 
 msgid "Network Interface"
 msgstr "Síťové rozhraní"
@@ -6614,12 +6743,18 @@ msgstr "Připojení k síti bude přerušeno. "
 msgid "Network connectivity will be interrupted. Proceed?"
 msgstr ""
 
+msgid "Network control (highest)"
+msgstr ""
+
 msgid "Network interfaces to include in the bridge."
 msgstr ""
 
 msgid ""
 "Network settings have been temporarily changed. They will be automatically "
 "discarded after"
+msgstr ""
+
+msgid "Networks"
 msgstr ""
 
 msgid "Never"
@@ -6637,6 +6772,12 @@ msgstr "Nová hlavní skupina"
 msgid ""
 "New users are not given <b>su</b> permissions if <i>wheel</i> is their "
 "primary group."
+msgstr ""
+
+msgid "Newer Clone"
+msgstr ""
+
+msgid "Newer Intermediate, Child, and Clone"
 msgstr ""
 
 msgid ""
@@ -6669,6 +6810,9 @@ msgid "No Pools"
 msgstr ""
 
 msgid "No Repositories"
+msgstr ""
+
+msgid "No Safety Check (CAUTION)"
 msgstr ""
 
 msgid "No Stat"
@@ -7094,6 +7238,9 @@ msgstr ""
 msgid "Path to the extent"
 msgstr ""
 
+msgid "Paths"
+msgstr ""
+
 msgid ""
 "Pattern of naming custom  snapshots to include in the replication with the "
 "periodic snapshot  schedule. Enter the  <a "
@@ -7272,6 +7419,9 @@ msgstr ""
 
 msgid "Portal Group ID"
 msgstr "Identif. skupiny portálu"
+
+msgid "Ports"
+msgstr ""
 
 msgid "Post Install Notes"
 msgstr ""
@@ -7499,6 +7649,9 @@ msgstr "Pouze pro čtení"
 msgid "Read-only"
 msgstr "Pouze pro čtení"
 
+msgid "Read/Write"
+msgstr ""
+
 msgid "Read/Write Access"
 msgstr "Přístup pro čtení/zápis"
 
@@ -7568,6 +7721,9 @@ msgid "Reload the page"
 msgstr ""
 
 msgid "Reload the page for the license to take effect."
+msgstr ""
+
+msgid "Remote"
 msgstr ""
 
 msgid "Remote Encryption"
@@ -7834,6 +7990,12 @@ msgstr "Restartovat systém?"
 msgid "Restarting Jail"
 msgstr ""
 
+msgid "Restore"
+msgstr ""
+
+msgid "Restore Cloud Sync Task"
+msgstr ""
+
 msgid "Restore default"
 msgstr "Obnovit výchozí"
 
@@ -7912,7 +8074,7 @@ msgstr ""
 msgid "Run this cloud sync now?"
 msgstr ""
 
-msgid "Run this cron job now?"
+msgid "Run this job now?"
 msgstr ""
 
 msgid "Run this rsync now?"
@@ -7935,6 +8097,9 @@ msgstr ""
 
 msgid "SAVE CONFIGURATION"
 msgstr "ULOŽIT NASTAVENÍ"
+
+msgid "SED"
+msgstr ""
 
 msgid "SED Password"
 msgstr ""
@@ -8020,9 +8185,6 @@ msgid "Save Config"
 msgstr "Uložit nastavení"
 
 msgid "Save Configuration"
-msgstr ""
-
-msgid "Save Cron Job"
 msgstr ""
 
 msgid "Save Custom Theme"
@@ -8129,6 +8291,9 @@ msgid "Scrub Pool"
 msgstr ""
 
 msgid "Scrub Started"
+msgstr ""
+
+msgid "Scrub Task"
 msgstr ""
 
 msgid "Scrub Tasks"
@@ -8715,6 +8880,9 @@ msgstr ""
 msgid "Sep"
 msgstr ""
 
+msgid "Separate multiple values with a space."
+msgstr ""
+
 msgid "Separate values with commas, and without spaces."
 msgstr ""
 
@@ -8730,6 +8898,9 @@ msgstr "Sériový port"
 msgid "Serial Speed"
 msgstr ""
 
+msgid "Serial numbers of each disk being edited."
+msgstr ""
+
 msgid ""
 "Serial or USB port connected to the UPS. To  automatically detect and "
 "manage the USB port settings, select  <i>auto</i>.<br><br> When an SNMP "
@@ -8741,6 +8912,9 @@ msgid "Series"
 msgstr ""
 
 msgid "Serve UDP NFS clients"
+msgstr ""
+
+msgid "Server Credentials"
 msgstr ""
 
 msgid "Server Role"
@@ -8779,13 +8953,6 @@ msgid "Set an ending time for when  replications are not allowed to start."
 msgstr ""
 
 msgid ""
-"Set by default if the disk supports S.M.A.R.T.                   Unset to "
-"disable any configured <a                   "
-"href=\"--docurl--/tasks.html#s-m-a-r-t-tests\"                   "
-"target=\"_blank\">S.M.A.R.T. tests</a>."
-msgstr ""
-
-msgid ""
 "Set by default if the disk supports S.M.A.R.T. Unset to disable any "
 "configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
@@ -8818,6 +8985,9 @@ msgid ""
 msgstr ""
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
+msgstr ""
+
+msgid "Set frequency"
 msgstr ""
 
 msgid "Set if NFS clients need to use UDP."
@@ -9580,6 +9750,9 @@ msgstr "Vypnout"
 msgid "Shut down the system?"
 msgstr "Vypnout systém?"
 
+msgid "Shutdown"
+msgstr ""
+
 msgid "Shutdown Command"
 msgstr "Příkaz pro vypínání"
 
@@ -9624,6 +9797,9 @@ msgstr ""
 msgid ""
 "Skip automatic detection of the Endpoint URL region. Set this  when "
 "configuring a custom Endpoint URL."
+msgstr ""
+
+msgid "Snapshot"
 msgstr ""
 
 msgid "Snapshot Lifetime"
@@ -9812,6 +9988,9 @@ msgstr "Zastavit"
 msgid "Stop "
 msgstr "Zastavit "
 
+msgid "Stop Rollback if Snapshots Exist:"
+msgstr ""
+
 msgid "Stop Scrub"
 msgstr ""
 
@@ -9825,6 +10004,17 @@ msgid "Stopping Jail"
 msgstr ""
 
 msgid "Stopping scrub on pool <i>"
+msgstr ""
+
+msgid ""
+"Stops the rollback when the safety  check finds any related clone snapshots "
+"that are newer than the  rollback snapshot."
+msgstr ""
+
+msgid ""
+"Stops the rollback when the safety check  finds any related intermediate, "
+"child dataset, or clone snapshots that  are newer than the rollback "
+"snapshot."
 msgstr ""
 
 msgid "Storage"
@@ -10017,6 +10207,9 @@ msgstr ""
 msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
 msgstr ""
 
+msgid "TLS"
+msgstr ""
+
 msgid "TLS Allow Client Renegotiations"
 msgstr ""
 
@@ -10084,6 +10277,9 @@ msgid "Task Name"
 msgstr ""
 
 msgid "Task Started"
+msgstr ""
+
+msgid "Task State"
 msgstr ""
 
 msgid "Task Stopped"
@@ -10379,6 +10575,11 @@ msgid ""
 "secure location!"
 msgstr ""
 
+msgid ""
+"The rollback will destroy any  related intermediate, child dataset, and "
+"cloned snapshots that are  newer than the rollback snapshot."
+msgstr ""
+
 msgid "The search base where group objects can be found in the LDAP server."
 msgstr ""
 
@@ -10552,6 +10753,9 @@ msgstr ""
 msgid "This is the serial number of the disk."
 msgstr "Toto je sériové číslo disku."
 
+msgid "This job will not run again until it is enabled."
+msgstr ""
+
 msgid ""
 "This number selects the routing table (<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setfib\" "
@@ -10645,6 +10849,9 @@ msgstr ""
 msgid "Train"
 msgstr "Varianta"
 
+msgid "Transfer"
+msgstr ""
+
 msgid "Transfer Mode"
 msgstr "Režim přenosu"
 
@@ -10676,6 +10883,9 @@ msgid "TrueNAS controllers"
 msgstr ""
 
 msgid "Tue"
+msgstr ""
+
+msgid "Tunable"
 msgstr ""
 
 msgid "Tunables"
@@ -11058,6 +11268,9 @@ msgstr ""
 msgid "User ID"
 msgstr "Identif. uživatele"
 
+msgid "User ID and Groups"
+msgstr ""
+
 msgid "User account password for logging into the  remote system."
 msgstr ""
 
@@ -11072,6 +11285,9 @@ msgstr ""
 msgid ""
 "User accounts have an ID greater than 1000 and system accounts have an ID "
 "equal to the default port number used by the service."
+msgstr ""
+
+msgid "User or Group"
 msgstr ""
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
@@ -11211,6 +11427,12 @@ msgstr "Ověřit heslovou frázi"
 msgid "Version"
 msgstr ""
 
+msgid "Video, < 100ms latency"
+msgstr ""
+
+msgid "Video, < 10ms latency"
+msgstr ""
+
 msgid "View"
 msgstr "Zobrazit"
 
@@ -11230,6 +11452,9 @@ msgid "Virtual Interface"
 msgstr "Virtuální rozhraní"
 
 msgid "Virtual Machine (VM) Wizard type."
+msgstr ""
+
+msgid "Virtual Machine Settings"
 msgstr ""
 
 msgid "Virtual Machines"
@@ -11291,6 +11516,24 @@ msgstr ""
 msgid "Web Interface"
 msgstr "Webové rozhraní"
 
+msgid "Web Interface HTTP -> HTTPS Redirect"
+msgstr ""
+
+msgid "Web Interface HTTP Port"
+msgstr ""
+
+msgid "Web Interface HTTPS Port"
+msgstr ""
+
+msgid "Web Interface IPv4 Address"
+msgstr ""
+
+msgid "Web Interface IPv6 Address"
+msgstr ""
+
+msgid "WebDAV Configuration"
+msgstr ""
+
 msgid "WebDAV Shares"
 msgstr "WebDAV sdílení"
 
@@ -11302,21 +11545,6 @@ msgstr ""
 
 msgid "WebDAV service"
 msgstr ""
-
-msgid "WebGUI HTTP -> HTTPS Redirect"
-msgstr "Přesměrovávat webové rozhraní z HTTP na HTTPS"
-
-msgid "WebGUI HTTP Port"
-msgstr "HTTP port webového rozhraní"
-
-msgid "WebGUI HTTPS Port"
-msgstr "HTTPS port webového rozhraní"
-
-msgid "WebGUI IPv4 Address"
-msgstr "IPv4 adresa webového rozhraní"
-
-msgid "WebGUI IPv6 Address"
-msgstr "IPv6 adresa webového rozhraní"
 
 msgid "Webdav Password"
 msgstr "Webdav heslo"
@@ -11499,8 +11727,8 @@ msgid ""
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
 "target=\"_blank\">conventions</a>. Choose a memorable name."
 msgstr ""
-"ZFS pooly musí přesně odpovídat jmenné <a"
-"href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
+"ZFS pooly musí přesně odpovídat jmenné "
+"<ahref=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
 "target=\"_blank\">konvenci</a>. Vyberte zapamatovatelný název."
 
 msgid "Zero Device Numbers"
