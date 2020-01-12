@@ -19,7 +19,7 @@ msgstr ""
 msgid " Plugin"
 msgstr ""
 
-msgid " Service"
+msgid " Servizi"
 msgstr ""
 
 msgid ""
