@@ -18,6 +18,7 @@ import {ServiceSSHComponent} from './components/service-ssh/';
 import {ServiceTFTPComponent} from './components/service-tftp/';
 import {ServiceUPSComponent} from './components/service-ups/';
 import {ServiceWebdavComponent} from './components/service-webdav/';
+import { ServiceOpenvpnComponent } from './components/service-openvpn';
 import {Services} from './services.component';
 
 export const routes: Routes = [
@@ -124,6 +125,11 @@ export const routes: Routes = [
     data: { title: 'S3', breadcrumb: 'S3'},
     path : 's3',
     component : ServiceS3Component,
+  },
+  {
+    data: { title: 'OpenVPN', breadcrumb: 'OpenVPN'},
+    path : 'openvpn_client',
+    component : ServiceOpenvpnComponent,
   }
 ];
 

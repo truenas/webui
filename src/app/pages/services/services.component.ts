@@ -36,6 +36,7 @@ export class Services implements OnInit {
     'iscsitarget': 'iSCSI',
     'lldp': 'LLDP',
     'nfs': 'NFS',
+    'openvpn_client': 'OpenVPN',
     'rsync': 'Rsync',
     's3': 'S3',
     'smartd': 'S.M.A.R.T.',
@@ -79,7 +80,7 @@ export class Services implements OnInit {
       .subscribe((res) => {
         this.services = res;
         this.services.forEach((item) => {
-          if (item.service !== 'netdata') {
+          if (item.service !== 'netdata' && item.service !== 'openvpn_server') {
             if (this.name_MAP[item.service]) {
               item.label = this.name_MAP[item.service];
             } else {

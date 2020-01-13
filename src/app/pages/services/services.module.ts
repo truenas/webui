@@ -25,6 +25,7 @@ import {ServiceSSHComponent} from './components/service-ssh';
 import {ServiceTFTPComponent} from './components/service-tftp';
 import {ServiceUPSComponent} from './components/service-ups';
 import {ServiceWebdavComponent} from './components/service-webdav';
+import { ServiceOpenvpnComponent } from './components/service-openvpn';
 import {Services} from './services.component';
 import { ServicesTableComponent } from './services-table.component';
 import {routing} from './services.routing';
@@ -40,7 +41,7 @@ import { UserService } from '../../services/user.service';
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
     ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent,
     ServiceDDNSComponent, ServiceSMBComponent, ServiceSNMPComponent,
-    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent
+    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent, ServiceOpenvpnComponent
   ],
   providers : [UserService]
 })
