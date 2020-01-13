@@ -4,10 +4,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid " Check Notifications for more details."
+msgid " Controlla le notifiche per maggiori dettagli."
 msgstr ""
 
-msgid " Download Updates"
+msgid " Scarica aggiornamenti"
 msgstr ""
 
 msgid " First vdev has "
@@ -39,28 +39,28 @@ msgid ""
 "selected."
 msgstr ""
 
-msgid " and "
+msgid " e "
 msgstr ""
 
 msgid " and all snapshots of it?"
 msgstr ""
 
-msgid " but datastore "
+msgid " ma archivio dati "
 msgstr ""
 
-msgid " disks"
+msgid " dischi"
 msgstr ""
 
 msgid " disks, new vdev has "
 msgstr ""
 
-msgid " has been unlocked."
+msgid " è stato sbloccato."
 msgstr ""
 
-msgid " is "
+msgid " è "
 msgstr ""
 
-msgid " is required."
+msgid " è richiesto."
 msgstr ""
 
 msgid ""
@@ -73,19 +73,19 @@ msgid ""
 "for testing."
 msgstr ""
 
-msgid " service has been enabled."
+msgid " il servizio è stato abilitato."
 msgstr ""
 
-msgid " system is powered on and connected to the network."
+msgid " il sistema è acceso e connesso alla rete."
 msgstr ""
 
 msgid " to include all "
 msgstr ""
 
-msgid " update successful"
+msgid " aggiornamento riuscito"
 msgstr ""
 
-msgid " updated."
+msgid " aggiornato."
 msgstr ""
 
 msgid "% of all cores"
@@ -98,10 +98,10 @@ msgid ""
 "passphrase for it."
 msgstr ""
 
-msgid "'. All data on that pool was destroyed."
+msgid "'. Tutti i dati su quel pool sono stati distrutti."
 msgstr ""
 
-msgid "(No description)"
+msgid "(Nessuna descruzione)"
 msgstr ""
 
 msgid "(Remove pool from database)"
@@ -113,22 +113,22 @@ msgstr ""
 msgid ", new vdev is "
 msgstr ""
 
-msgid ". All data on that pool was destroyed."
+msgid ". Tutti i dati su quel pool sono stati distrutti."
 msgstr ""
 
-msgid ". At least one is required."
+msgid ". Ne è richiesto almeno uno."
 msgstr ""
 
-msgid ". Is this correct?"
+msgid ". È corretto?"
 msgstr ""
 
-msgid "... Make sure the "
+msgid "... Assicurati che "
 msgstr ""
 
 msgid "0=Disabled, blank=inherit"
 msgstr ""
 
-msgid "20 characters is the maximum length."
+msgid "20 caratteri è la lunghezza massima."
 msgstr ""
 
 msgid ": Automatic update check failed. Please check system network settings."
