@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http } from '@angular/http';
+import { Validators } from '@angular/forms';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
-import * as moment from 'moment';
 import { DialogService, JobService, WebSocketService, StorageService } from '../../../../services';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import globalHelptext from '../../../../helptext/global-helptext';
-
+import helptext from '../../../../helptext/task-calendar/replication/replication';
 
 @Component({
     selector: 'app-replication-list',
@@ -89,7 +90,55 @@ export class ReplicationListComponent {
                     }
                 });
             },
-        }, {
+        },  {
+            actionName: parentrow.description,
+            id: 'restore',
+            label: T('Restore'),
+            icon: 'restore',
+            onClick: (row) => {
+              const parent = this;
+              const conf: DialogFormConfiguration = {
+                title: helptext.replication_restore_dialog.title,
+                fieldConfig: [
+                  {
+                    type: 'input',
+                    name: 'name',
+                    placeholder: helptext.name_placeholder,
+                    tooltip: helptext.name_tooltip,
+                    validation: [Validators.required],
+                    required: true,
+                  },
+                  {
+                    type: 'explorer',
+                    explorerType: 'dataset',
+                    initial: '',
+                    name: 'target_dataset',
+                    placeholder: helptext.target_dataset_placeholder,
+                    tooltip: helptext.target_dataset_placeholder,
+                    validation: [Validators.required],
+                    required: true,
+                  }
+                ],
+                saveButtonText: helptext.replication_restore_dialog.saveButton,
+                customSubmit: function (entityDialog) {
+                  parent.entityList.loader.open();
+                  parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
+                    (res) => {
+                      entityDialog.dialogRef.close(true);
+                      parent.entityList.loaderOpen = true;
+                      parent.entityList.needRefreshTable = true;
+                      parent.entityList.getData();
+                    },
+                    (err) => {
+                      parent.entityList.loader.close(true);
+                      new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
+                    }
+                  )
+                }
+              }
+              this.dialog.dialogFormWide(conf);
+            }
+          }, {
             id: parentrow.name,
             icon: 'edit',
             name: "edit",
