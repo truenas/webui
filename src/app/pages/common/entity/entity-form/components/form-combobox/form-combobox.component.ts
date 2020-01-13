@@ -22,6 +22,7 @@ export class FormComboboxComponent implements Field {
 
   onChangeOption(value) {
     this.group.controls[this.config.name].setValue(value);
+    console.log(this.config)
   }
 
   updateSearchOptions(value) {
