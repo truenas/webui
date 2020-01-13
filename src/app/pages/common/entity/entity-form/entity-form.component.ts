@@ -166,7 +166,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  ngOnInit() {
+  ngOnInit() { console.log(this.conf)
     //get system general setting
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {

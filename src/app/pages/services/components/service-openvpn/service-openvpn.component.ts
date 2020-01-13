@@ -1,15 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-service-openvpn',
   templateUrl: './service-openvpn.component.html',
-  styleUrls: ['./service-openvpn.component.css']
 })
-export class ServiceOpenvpnComponent implements OnInit {
+export class ServiceOpenvpnComponent  {
 
   constructor() { }
-
-  ngOnInit() {
-  }
-
 }

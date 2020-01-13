@@ -76,6 +76,7 @@ export default {
             placeholder: T('TLS Crypt Auth'),
             tooltip: T('A tooltip about this topic')
         },
+        saveButtonText: T('Save Client Settings')
         
     },
     server: {
@@ -168,6 +169,7 @@ export default {
                 value: 'SUBNET'
                 }
             ]
-        }
+        },
+        saveButtonText: T('Save Server Settings')
     }
 }

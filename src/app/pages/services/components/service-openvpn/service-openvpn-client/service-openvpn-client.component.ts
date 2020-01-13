@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { ServicesService } from '../../../../services';
+import { ServicesService } from '../../../../../services';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
 
@@ -15,6 +15,7 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 export class ServiceOpenvpnClientComponent {
   protected queryCall = 'openvpn.client.config';
   protected editCall = 'openvpn.client.update';
+  public saveSubmitText = helptext.client.saveButtonText;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
