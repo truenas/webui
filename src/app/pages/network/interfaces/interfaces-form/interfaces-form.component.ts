@@ -88,7 +88,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       name : 'lag_protocol',
       placeholder : helptext.lagg_protocol_placeholder,
       tooltip : helptext.lagg_protocol_tooltip,
-      options : helptext.lagg_protocol_options,
+      options : [],
       required: true,
       isHidden: true,
       disabled: true,
@@ -157,7 +157,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       type: 'select',
       name: 'vlan_pcp',
       placeholder: helptext.vlan_pcp_placeholder,
-      options: [],
+      options: helptext.vlan_pcp_options,
       tooltip: helptext.vlan_pcp_tooltip,
       isHidden: true,
       disabled: true,
@@ -223,6 +223,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private vlan_pcp:any;
   private vlan_pint:any;
   private lag_ports: any;
+  private lag_protocol: any;
   private bridge_members: any;
   private type: any;
   private type_fg: any;
@@ -275,6 +276,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
+    this.lag_protocol = _.find(this.fieldConfig, {'name' : 'lag_protocol'});
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.vlan_pint.type = 'input';
@@ -347,6 +349,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           this.lag_ports.options.push({label: res[key], value: key});
         }
       });
+      this.networkService.getLaggProtocolChoices().subscribe((res) => {
+        for (let i=0;i<res.length;i++) {
+          this.lag_protocol.options.push({label: res[i], value: res[i]});
+        }
+      });
       this.networkService.getBridgeMembersChoices().subscribe((res) => {
         for (const key in res) {
           this.bridge_members.options.push({label: res[key], value: key});
@@ -356,12 +363,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       entityForm.setDisabled('name', true);
       entityForm.setDisabled('type', true, true);
     }
-    this.ws.call('notifier.choices', ['VLAN_PCP_CHOICES']).subscribe((res) => {
-      this.vlan_pcp = _.find(this.fieldConfig, {'name' : 'vlan_pcp'});
-      res.forEach((item) => {
-        this.vlan_pcp.options.push({label : item[1], value : item[0]});
-      });
-    });
   }
 
   clean(data) {

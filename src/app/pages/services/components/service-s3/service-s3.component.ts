@@ -7,6 +7,7 @@ import { RestService, SystemGeneralService, WebSocketService } from '../../../..
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/services/components/service-s3';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector : 's3-edit',
@@ -129,14 +130,19 @@ export class ServiceS3Component implements OnDestroy {
         });
       }
     });
-    this.systemGeneralService.getIPChoices().subscribe(res=>{
-      this.ip_address = _.find(this.fieldConfig,{name:'bindip'});
-      if (res.length > 0) {
-        res.forEach(element => {
-          this.ip_address.options.push({label:element[1], value: element[0]});
-        });
-      }
-    });
+    this.ws
+      .call("s3.bindip_choices", [])
+      .pipe(
+        map(response =>
+          Object.keys(response || {}).map(key => ({
+            label: response[key],
+            value: key
+          }))
+        )
+      )
+      .subscribe(choices => {
+        _.find(this.fieldConfig, { name: "bindip" }).options = choices;
+      });
     entityForm.ws.call('s3.config').subscribe((res)=>{
       entityForm.formGroup.controls['bindip'].setValue(res.bindip);
       entityForm.formGroup.controls['bindport'].setValue(res.bindport);

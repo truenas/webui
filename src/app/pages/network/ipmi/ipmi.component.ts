@@ -56,6 +56,7 @@ export class IPMIComponent {
   public controllerName = globalHelptext.Ctrlr;
   public currentControllerLabel: string;
   public failoverControllerLabel: string;
+  public managementIP: string;
   private options: Array<any> = [
     {label:'Indefinitely', value: 'force'},
     {label:'15 seconds', value: 15},
@@ -74,6 +75,13 @@ export class IPMIComponent {
         this.dialog.select(
           'IPMI Identify',this.options,'IPMI flash duration','ipmi.identify','seconds', "IPMI identify command issued");
       }
+    },
+    {
+      'id' : 'connect',
+      'name' : T('Manage'),
+       function :  () => {
+        window.open(`http://${this.managementIP}`);
+       }
     }
   ];
   public fieldConfig: FieldConfig[] = [
@@ -89,13 +97,6 @@ export class IPMIComponent {
       togglePw: true,
       tooltip : helptext.password_tooltip,
 
-    },
-    {
-      type : 'input',
-      name : 'conf_password',
-      inputType: 'password',
-      placeholder : helptext.conf_password_placeholder,
-      validation : helptext.conf_password_validation
     },
     {
       type : 'checkbox',
@@ -178,6 +179,13 @@ export class IPMIComponent {
 
     entityEdit.formGroup.controls['ipaddress'].statusChanges.subscribe((status) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, {name: "ipaddress"}));
+      const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
+      const btn = <HTMLInputElement> document.getElementById('cust_button_Manage');
+      status === 'INVALID' || ipValue === '0.0.0.0' ? btn.disabled = true : btn.disabled = false;
+     })
+
+     entityEdit.formGroup.controls['ipaddress'].valueChanges.subscribe((value) => {
+      this.managementIP = value;
      })
 
      entityEdit.formGroup.controls['netmask'].statusChanges.subscribe((status) => {
@@ -191,10 +199,6 @@ export class IPMIComponent {
 
   setErrorStatus(status, field) {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
-  }
-
-  beforeSubmit(data) {
-    delete data.conf_password;
   }
 
   customSubmit(payload){

@@ -3,6 +3,12 @@ import { Validators } from '@angular/forms';
 import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
+fieldset_general: T('General Options'),
+fieldset_access: T('Access'),
+fieldset_bw: T('Bandwidth'),
+fieldset_tls: T('TLS'),
+fieldset_other: T('Other Options'),
+
 port_placeholder : T('Port'),
 port_tooltip: T('Set the port the FTP service listens on.'),
 port_validation: [rangeValidator(1, 65535), Validators.required],

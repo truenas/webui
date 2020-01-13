@@ -7,6 +7,12 @@ export const helptext_sharing_nfs = {
   column_comment: T("Description"),
 
   // NFSFormComponent
+  fieldset_paths: T('Paths'),
+  fieldset_general: T('General Options'),
+  fieldset_access: T('Access'),
+  fieldset_networks: T('Networks'),
+  fieldset_hosts: T('Hosts'),
+
   placeholder_path: T("Path"),
   tooltip_path: T(
     "Full path to the pool or dataset to share. Mandatory.\

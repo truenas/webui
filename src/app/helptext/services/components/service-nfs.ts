@@ -2,6 +2,11 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+nfs_srv_fieldset_general: T('General Options'),
+nfs_srv_fieldset_v4: T('NFSv4'),
+nfs_srv_fieldset_ports: T('Ports'),
+nfs_srv_fieldset_other: T('Other Options'),
+
 nfs_srv_servers_placeholder: T('Number of servers'),
 nfs_srv_servers_tooltip: T('Specify how many servers to create. Increase if NFS\
  client responses are slow. Keep this less than or\
@@ -31,7 +36,7 @@ nfs_srv_v4_v3owner_relation: [
 {
 action: 'DISABLE',
 when: [{
-name: 'nfs_srv_v4',
+name: 'v4',
 value: false,
 }]
 }],
@@ -63,10 +68,10 @@ nfs_srv_16_relation: [{
   action: 'DISABLE',
   connective: 'AND',
   when: [{
-    name: 'nfs_srv_v4',
+    name: 'v4',
     value: true,
     }, {
-    name: 'nfs_srv_v4_v3owner',
+    name: 'v4_v3owner',
     value: true,
   }]
 }],

@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { EntityFormService } from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RestService, WebSocketService, SystemGeneralService, NetworkService } from '../../../../services/';
+import { RestService, WebSocketService, SystemGeneralService, NetworkService, VmService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
@@ -288,7 +288,8 @@ export class DeviceAddComponent implements OnInit {
               protected loader: AppLoaderService,
               protected systemGeneralService: SystemGeneralService,
               protected dialogService: DialogService,
-              protected networkService: NetworkService) {}
+              protected networkService: NetworkService,
+              protected vmService: VmService) {}
 
 
   preInit() {
@@ -310,14 +311,11 @@ export class DeviceAddComponent implements OnInit {
         value: nicId
       }));
     });
-    this.ws.call('notifier.choices', ['VM_NICTYPES']).subscribe(
-      (res) => {
-        this.nicType = _.find(this.nicFieldConfig, { name: "type" });
-        res.forEach((item) => {
-          this.nicType.options.push({ label: item[1], value: item[0] });
-        });
-      }
-    );
+
+    this.nicType = _.find(this.nicFieldConfig, { name: "type" });
+    this.vmService.getNICTypes().forEach((item) => {
+      this.nicType.options.push({ label: item[1], value: item[0] });
+    });
   }
   ngOnInit() {
     this.preInit();
@@ -380,7 +378,7 @@ export class DeviceAddComponent implements OnInit {
   }
 
   async afterInit() {
-
+    
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
         _.find(this.diskFieldConfig, {name:'path'}).options.push(

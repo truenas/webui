@@ -6,7 +6,10 @@ export default {
     rsync_path_placeholder: T('Path'),
     rsync_path_tooltip: T('Browse to the path to be copied. The \
                 <a href="--docurl--/intro.html#path-and-name-lengths" \
-                target="_blank">FreeBSD file path limits</a> apply.'),
+                target="_blank">FreeBSD file path limits</a> apply. \
+                Other operating systems can have different limits \
+                which might affect how they can be used as sources \
+                or destinations.'),
     rsync_path_validation : [ Validators.required ],
 
     rsync_user_placeholder: T('User'),

@@ -1,7 +1,7 @@
 import { T } from '../translate-marker';
 
 export default {
-    copyright_year: '2019',
+    copyright_year: '2020',
     dockerhost: T('Docker Host'),
 
     ctrlr: T('TrueNAS controller'),
@@ -31,6 +31,10 @@ noLogDilaog: {
     message: T('No logs are available for this task.'),
 },
 
-ha_connecting_text: T('Waiting for active TrueNAS controller to come up...')
+ha_connecting_text: T('Waiting for active TrueNAS controller to come up...'),
 
+fieldset_general_options: T('General Options'),
+fieldset_other_options: T('Other Options'),
+
+hostname: T('Hostname')
 }

@@ -2,9 +2,10 @@ import {ApplicationRef, Component, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 
-import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
+import { SystemGeneralService, WebSocketService } from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
 
@@ -33,12 +34,16 @@ export class ActiveDirectoryComponent {
     {
       'id' : helptext.activedirectory_custactions_basic_id,
       'name' : helptext.activedirectory_custactions_basic_name,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      function : () => { 
+        this.setBasicMode(true);
+      }
     },
     {
       'id' : helptext.activedirectory_custactions_advanced_id,
       'name' : helptext.activedirectory_custactions_advanced_name,
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      function : () => { 
+        this.setBasicMode(false);   
+      }
     },
     {
       'id' : helptext.activedirectory_custactions_edit_imap_id,
@@ -51,7 +56,7 @@ export class ActiveDirectoryComponent {
       'id' : helptext.activedirectory_custactions_clearcache_id,
       'name' : helptext.activedirectory_custactions_clearcache_name,
        function : async () => {
-         this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+         this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status)=>{
           this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title, 
             helptext.activedirectory_custactions_clearcache_dialog_message);
         })
@@ -62,7 +67,6 @@ export class ActiveDirectoryComponent {
       'name' : helptext.activedirectory_custactions_leave_domain,
       function : () => { 
         const that = this;
-        console.log(that)
         this.dialogservice.dialogForm(
           {
             title: helptext.activedirectory_custactions_leave_domain,
@@ -114,7 +118,13 @@ export class ActiveDirectoryComponent {
     },
   ];
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = []
+  public fieldSets: FieldSet[] = [
+    {
+      name: helptext.ad_section_headers.dc,
+      class: 'section_header',
+      label:true,
+      config:[
     {
       type : 'input',
       name : helptext.activedirectory_domainname_name,
@@ -143,6 +153,23 @@ export class ActiveDirectoryComponent {
       disabled: false,
       isHidden:false
     },
+    {
+      type : 'checkbox',
+      name : helptext.activedirectory_enable_name,
+      placeholder : helptext.activedirectory_enable_placeholder,
+      tooltip : helptext.activedirectory_enable_tooltip,
+    },
+  ]},
+  {
+    name:'divider1',
+    class: 'divider1',
+    divider:false
+  },
+  {
+    name: helptext.ad_section_headers.advanced_row,
+    class: 'adv_row',
+    label:false,
+    config:[
     {
       type : 'select',
       name : helptext.activedirectory_ssl_name,
@@ -194,7 +221,18 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_disable_fn_cache_name,
       placeholder : helptext.activedirectory_disable_fn_cache_placeholder,
       tooltip : helptext.activedirectory_disable_fn_cache_tooltip,
+    }
+    ]},
+    {
+      name:'divider2',
+      divider:true
     },
+    {
+      name: helptext.ad_section_headers.advanced_col1,
+      class: 'adv_column1',
+      label:false,
+      width: '48%',
+      config:[
     {
       type : 'input',
       name : helptext.activedirectory_site_name,
@@ -234,7 +272,20 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_dns_timeout_name,
       placeholder : helptext.activedirectory_dns_timeout_placeholder,
       tooltip : helptext.activedirectory_dns_timeout_tooltip,
-    },
+    }
+      ]},
+      {
+        name: 'column_spacer',
+        class: 'column_spacer',
+        label:false,
+        width: '4%',
+        config:[]},
+      {
+        name: helptext.ad_section_headers.advanced_col2,
+        class: 'adv_column2',
+        label:false,
+        width: '48%',
+        config:[
     {
       type : 'select',
       name : helptext.activedirectory_idmap_backend_name,
@@ -255,12 +306,6 @@ export class ActiveDirectoryComponent {
       placeholder : helptext.activedirectory_sasl_wrapping_placeholder,
       tooltip : helptext.activedirectory_sasl_wrapping_tooltip,
       options : []
-    },
-    {
-      type : 'checkbox',
-      name : helptext.activedirectory_enable_name,
-      placeholder : helptext.activedirectory_enable_placeholder,
-      tooltip : helptext.activedirectory_enable_tooltip,
     },
     {
       type : 'input',
@@ -286,6 +331,7 @@ export class ActiveDirectoryComponent {
       placeholder : helptext.activedirectory_netbiosalias_placeholder,
       tooltip : helptext.activedirectory_netbiosalias_tooltip,
     }
+      ]}
   ];
 
   protected advanced_field: Array<any> = helptext.activedirectory_advanced_fields;
@@ -304,7 +350,7 @@ export class ActiveDirectoryComponent {
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
+              protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService,
               protected dialogservice: DialogService) {}
@@ -337,11 +383,11 @@ export class ActiveDirectoryComponent {
 
   afterInit(entityEdit: any) { 
     this.entityEdit = entityEdit;
-    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
+    this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.kerberos_realm.options.push(
-            {label : item.krb_realm, value : item.id});
+            {label : item.realm, value : item.id});
       });
     });
 
@@ -430,6 +476,14 @@ export class ActiveDirectoryComponent {
     })
 
     entityEdit.submitFunction = this.submitFunction;
+  }
+
+  setBasicMode(basic_mode) {
+    this.isBasicMode = basic_mode;
+    _.find(this.fieldSets, {class:'adv_row'}).label = !basic_mode; 
+    _.find(this.fieldSets, {class:'adv_column1'}).label = !basic_mode; 
+    _.find(this.fieldSets, {class:'adv_column2'}).label = !basic_mode; 
+    _.find(this.fieldSets, {class:'divider1'}).divider = !basic_mode;
   }
 
   beforeSubmit(data){

@@ -18,13 +18,42 @@ disk_form_hddstandby_tooltip : T('Indicates the time of inactivity in minutes be
  determine if a drive has spun down. Temperature monitoring is \
  disabled if the disk is set to enter standby.'),
 
+disk_form_hddstandby_options: [
+ {label:T('Always On'), value:'ALWAYS ON'},
+ {label:'5', value: '5'},
+ {label:'10', value: '10'},
+ {label:'20', value: '20'},
+ {label:'30', value: '30'},
+ {label:'60', value: '60'},
+ {label:'120', value: '120'},
+ {label:'180', value: '180'},
+ {label:'240', value: '240'},
+ {label:'300', value: '300'},
+ {label:'330', value: '330'},
+],
+
 disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
 disk_form_advpowermgmt_tooltip : T('Select a power management profile from the menu.'),
+disk_form_advpowermgmt_options: [
+ {label:T('Disabled'), value: 'DISABLED'},
+ {label:T('Level 1 - Minimum power usage with Standby (spindown)'), value: '1'},
+ {label:T('Level 64 - Intermediate power usage with Standby'), value: '64'},
+ {label:T('Level 127 - Maximum power usage with Standby'), value: '127'},
+ {label:T('Level 128 - Minimum power usage without Standby (no spindown)'), value: '128'},
+ {label:T('Level 192 - Intermediate power usage without Standby'), value: '192'},
+ {label:T('Level 254 - Maximum performance, maximum power usage'), value: '254'},
+],
 
 disk_form_acousticlevel_placeholder: T('Acoustic Level'),
 disk_form_acousticlevel_tooltip : T('Modify for disks that understand <a\
  href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
  target="_blank">AAM</a>.'),
+disk_form_acousticlevel_options: [
+ {label:T('Disabled'), value: 'DISABLED'},
+ {label:T('Minimum'), value: 'MINIMUM'},
+ {label:T('Medium'), value: 'MEDIUM'},
+ {label:T('Maximum'), value: 'MAXIMUM'},
+],
 
 disk_form_togglesmart_placeholder : T('Enable S.M.A.R.T.'),
 disk_form_togglesmart_tooltip : T('Set by default if the disk supports S.M.A.R.T.\
@@ -52,11 +81,26 @@ disk_form_informational_tooltip: T('Report if drive temperature is at or\
  above this temperature in Celsius. <i>0</i> disables the report.'),
 
 disk_form_passwd_placeholder: T('SED Password'),
-disk_form_passwd_tooltip: T('Use this field to set or change the password for SED. Leave this field blank \
- to keep a previously-set password.'),
+disk_form_passwd_tooltip: T('Set or change the password of this SED. \
+ This password is used instead of the global SED password.'),
+
+bulk_edit: {
+    title: T('Disks'),
+    label: T('Settings'),
+    disks : {
+        placeholder: T('Disks to be edited:'),
+        tooltip : T('FreeBSD device names of each disk being edited.'),
+    },
+    serial : {
+        placeholder: T('Serial'),
+        tooltip : T('Serial numbers of each disk being edited.')
+    }
+
+}, 
+dialog_error: T('Error updating disks'),
 
 clear_pw: {
     placeholder: T('Clear SED Password'),
-    tooltip: T('Checking this box clears a previously-set password.')
+    tooltip: T('Clear the SED password for this disk.')
 }
 }

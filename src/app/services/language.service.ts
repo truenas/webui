@@ -6,7 +6,7 @@ import {Observable, Subject, Subscription} from 'rxjs/Rx';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
-import { RestService } from './rest.service'
+import { WebSocketService } from './ws.service'
 
 @Injectable()
 export class LanguageService {
@@ -366,9 +366,10 @@ export class LanguageService {
     code: 'zh-hans',
   }
 ];
-  system_resource = 'system/settings';
+  queryCall = 'system.general.config';
+  updateCall = 'system.general.update';
 
-  constructor(protected translate: TranslateService, protected rest: RestService) {
+  constructor(protected translate: TranslateService, protected ws: WebSocketService) {
   }
 
   getBrowserLanguage() {
@@ -379,9 +380,9 @@ export class LanguageService {
   }
 
   getMiddlewareLanguage() {
-    this.rest.get(this.system_resource, {}).subscribe((res) => {
-      if (res.data && res.data.stg_language) {
-        this.setLang(res.data.stg_language);
+    this.ws.call(this.queryCall, []).subscribe((res) => {
+      if (res && res.language) {
+        this.setLang(res.language);
       } else {
         this.getBrowserLanguage();
       }
@@ -389,8 +390,8 @@ export class LanguageService {
   }
 
   setMiddlewareLanguage(lang: any) {
-    this.rest.put(this.system_resource, 
-      {body: JSON.stringify({stg_language: lang})}).subscribe(
+    this.ws.call(this.updateCall, 
+      [{language: lang}]).subscribe(
     (res) => {
     },
     (err) => {

@@ -2,6 +2,8 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_ntpservers = {
+  header : T('NTP Server Settings'),
+
   add: {
     address: {
       placeholder: T("Address"),

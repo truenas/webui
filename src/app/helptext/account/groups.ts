@@ -7,6 +7,7 @@ import { UserService } from 'app/services';
 
 export default {
 
+fieldset_name: T('Group Configuration'),
 bsdgrp_gid_placeholder: T('GID'),
 bsdgrp_gid_tooltip: T('The Group ID (GID) is a unique number used to identify\
  a Unix group. Enter a number above 1000 for a group\
