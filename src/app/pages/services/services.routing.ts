@@ -18,7 +18,11 @@ import {ServiceSSHComponent} from './components/service-ssh/';
 import {ServiceTFTPComponent} from './components/service-tftp/';
 import {ServiceUPSComponent} from './components/service-ups/';
 import {ServiceWebdavComponent} from './components/service-webdav/';
-import { ServiceOpenvpnComponent } from './components/service-openvpn';
+import { ServiceOpenvpnClientComponent } from './components/service-openvpn-client';
+import { ServiceOpenvpnServerComponent } from './components/service-openvpn-server';
+import { ServiceOpenvpnComponent } from './components/service-openvpn/service-openvpn.component';
+
+
 import {Services} from './services.component';
 
 export const routes: Routes = [
@@ -126,6 +130,11 @@ export const routes: Routes = [
     path : 's3',
     component : ServiceS3Component,
   },
+  // {
+  //   data: { title: 'OpenVPN', breadcrumb: 'OpenVPN'},
+  //   path : 'openvpn_client',
+  //   component : ServiceOpenvpnClientComponent,
+  // },
   {
     data: { title: 'OpenVPN', breadcrumb: 'OpenVPN'},
     path : 'openvpn_client',

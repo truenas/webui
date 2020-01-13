@@ -1,1 +1,0 @@
-export { ServiceOpenvpnComponent } from './service-openvpn.component';

@@ -28,7 +28,18 @@ export class ServicesService {
   getCAs() {
     return this.ws.call('certificateauthority.query');
   }
- 
+
+  getOpenVPNServerAuthAlgorithmChoices() {
+    return this.ws.call('openvpn.server.authentication_algorithm_choices');
+  }
+
+  getOpenServerCipherChoices() {
+    return this.ws.call('openvpn.server.cipher_choices');
+  }
+  
+  generateOpenServerClientConfig() {
+    return this.ws.call('openvpn.server.client_configuration_generation');
+  }
 
   // -- end of OpenVPN Service
 }

@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MaterialModule} from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import {EntityModule} from '../common/entity/entity.module';
 import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
@@ -25,7 +26,9 @@ import {ServiceSSHComponent} from './components/service-ssh';
 import {ServiceTFTPComponent} from './components/service-tftp';
 import {ServiceUPSComponent} from './components/service-ups';
 import {ServiceWebdavComponent} from './components/service-webdav';
-import { ServiceOpenvpnComponent } from './components/service-openvpn';
+import { ServiceOpenvpnClientComponent } from './components/service-openvpn-client';
+import { ServiceOpenvpnServerComponent } from './components/service-openvpn-server';
+import { ServiceOpenvpnComponent } from './components/service-openvpn/service-openvpn.component';
 import {Services} from './services.component';
 import { ServicesTableComponent } from './services-table.component';
 import {routing} from './services.routing';
@@ -34,14 +37,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UserService } from '../../services/user.service';
 
 @NgModule({
-  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule, CommonDirectivesModule ],
+  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule, CommonDirectivesModule, FlexLayoutModule],
   declarations : [
     Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceFTPComponent, ServiceLLDPComponent,
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
     ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent,
     ServiceDDNSComponent, ServiceSMBComponent, ServiceSNMPComponent,
-    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent, ServiceOpenvpnComponent
+    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent, ServiceOpenvpnClientComponent, ServiceOpenvpnServerComponent, ServiceOpenvpnComponent
   ],
   providers : [UserService]
 })
