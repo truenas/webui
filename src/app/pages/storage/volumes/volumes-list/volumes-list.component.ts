@@ -677,36 +677,47 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Expand Pool"),
           onClick: (row1) => {
             const parent = this;
-            console.log('expand', row1);
             const conf: DialogFormConfiguration = {
-              title: T("Enter passphrase to expand pool ") + row1.name + '.',
+              title: helptext.expand_pool_dialog.title + row1.name,
               fieldConfig: [
                 {
                   type: 'input',
                   inputType: 'password',
                   name: 'passphrase',
-                  placeholder: 'passphrase',
+                  placeholder: helptext.expand_pool_dialog.passphrase_placeholder,
                   required: true
                 }
               ],
-              saveButtonText: T("Expand Pool"),
+              saveButtonText: helptext.expand_pool_dialog.save_button,
               customSubmit: function (entityDialog) {
-                doExpand(entityDialog.formValue['passphrase']);
+                doExpand(entityDialog);
               }
             }
 
-            function doExpand(passphrase?) {
+            function doExpand(entityDialog?) {
+              parent.loader.open();
               const payload = [row1.id];
-              if (passphrase) {
-                payload.push({"geli": {"passphrase": passphrase}});
+              if (entityDialog) {
+                payload.push({"geli": {"passphrase": entityDialog.formValue['passphrase']}});
               }
               parent.ws.job('pool.expand', payload).subscribe(
                 (res) => {
-                  console.log(res);
-
+                  parent.loader.close();
+                  if (res.error) {
+                    if (res.exc_info && res.exc_info.extra) {
+                      res.extra = res.exc_info.extra;
+                    }
+                    new EntityUtils().handleWSError(this, res, parent.dialogService, conf.fieldConfig);
+                  }
+                  if (res.state === 'SUCCESS') {
+                    if (entityDialog) {
+                      entityDialog.dialogRef.close(true);
+                    }
+                  }
                 },
                 (err) => {
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  parent.loader.close();
+                  new EntityUtils().handleWSError(this, err, parent.dialogService);
                 }
               )
             }
