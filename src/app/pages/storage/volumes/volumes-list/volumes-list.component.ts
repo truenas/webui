@@ -1107,8 +1107,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
           /* Filter out system datasets */
           const pChild = datasets.find(set => set.name === pool.name);
-          pChild.children = pChild.children.filter(child => child.name.indexOf(`${pool.name}/.system`) === -1);
-          pool.children = [pChild];
+          if (pChild) {
+            pChild.children = pChild.children.filter(child => child.name.indexOf(`${pool.name}/.system`) === -1);
+          }
+          pool.children = pChild ? [pChild] : [];
 
           pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);          
           pool.type = 'zpool';
