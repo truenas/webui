@@ -60,4 +60,9 @@ hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>.\
  by name even when DNS is not available. See <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=hosts"\
  target="_blank">hosts(5)</a> for additional information.'),
+
+hostname_and_domain: T('Hostname and Domain'),
+gateway: T('Default Gateway'),
+nameservers: T('DNS Servers'),
+other: T('Other Settings')
 }
