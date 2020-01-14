@@ -354,7 +354,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.failover_fieldset = _.find(this.fieldSets, {'class' : 'failover_settings'});
     this.interface_divider = _.find(this.fieldSets, {'name': 'interface_divider'});
     this.failover_divider = _.find(this.fieldSets, {'name': 'failover_divider'});
-    this.vlan_pint = _.find(this.vlan_fieldset, {'name' : 'vlan_parent_interface'});
+    this.vlan_pint = _.find(this.vlan_fieldset.config, {'name' : 'vlan_parent_interface'});
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.vlan_pint.type = 'input';
