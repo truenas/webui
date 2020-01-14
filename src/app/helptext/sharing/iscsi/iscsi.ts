@@ -160,8 +160,8 @@ export const helptext_sharing_iscsi = {
   extent_validators_name: [Validators.required],
 
   extent_placeholder_type: T("Extent type"),
-  extent_tooltip_type: T("<i>Device</i> provide virtual storage access to zvols, zvol snapshots, or physical devices.\
-  <i>File</i> provides virtual storage access to an individual file."),
+  extent_tooltip_type: T("<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.\
+  <i>File</i> provides virtual storage access to a single file."),
 
   extent_placeholder_disk: T("Device"),
   extent_tooltip_disk: T(
@@ -325,7 +325,7 @@ export const helptext_sharing_iscsi = {
 
   disk_placeholder: T("Device"),
   disk_tooltip: T("Select the unformatted disk, controller, zvol, or zvol snapshot. Select\
- <i>Create New</i> for options to create a new zvol."),
+ <i>Create New</i> to create a new zvol."),
 
   dataset_placeholder: T("Pool/Dataset"),
   dataset_tooltip: T("Browse to an existing pool or dataset to store the new zvol."),
@@ -336,7 +336,7 @@ export const helptext_sharing_iscsi = {
   volblocksize_placeholder: T("Block Size"),
   volblocksize_tooltip: T("Only override the default if the initiator requires a different block size."),
 
-  usefor_placeholder: T("What are you using this for"),
+  usefor_placeholder: T("Sharing Platform"),
   usefor_tooltip: T("Choose the platform that will use this share. The associated options are applied to this share."),
 
   step2_label: T("Portal"),
