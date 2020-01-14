@@ -540,10 +540,10 @@ export class GeneralComponent {
     dialogRef.componentInstance.success.subscribe(res=>{
       dialogRef.close();
       parent.router.navigate(['/others/reboot']);
-    }), (err => {
-      dialogRef.close;
-      parent.dialog.errorReport(err.status, err.statusText, err._body);
     })
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.setDescription(res.error);
+    });
   }
 
   resetConfigSubmit(entityDialog) {
