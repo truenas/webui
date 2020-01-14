@@ -23,6 +23,7 @@ export class GeneralComponent {
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
+  public languageKey: string;
 
   public fieldSets: FieldSet[] = [
     {
@@ -360,41 +361,35 @@ export class GeneralComponent {
     })
 
     entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
-      // const language_key = this.getKeyByValue(this.languageList, res);
+      this.languageKey = this.getKeyByValue(this.languageList, res);
       if (this.languageList[res]) {
-        entityEdit.formGroup.controls['language'].setValue(this.languageList[res]);
+        entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);
       }
     });
   }
   
   makeLanguageList() {
-    this.sysGeneralService
-      .languageChoices().subscribe((res) => {this.languageList = res});   
-      this.sysGeneralService.languageChoices()
-      .pipe(
-        map(response =>
-          
-          Object.keys(response || {}).map(key => ({
-            label: this.sortLanguagesByName
-              ? `${response[key]} (${key})`
-              : `${key} (${response[key]})`,
-            value: key
-          }))
-          
-        )
-      )
-      .subscribe(options => { 
-        this.fieldSets
-          .find(set => set.name === helptext.stg_fieldset_loc)
-          .config.find(config => config.name === "language").options = _.sortBy(
-          options,
-          this.sortLanguagesByName ? "label" : "value"
-        );
-      });
+    this.sysGeneralService.languageChoices().subscribe((res) => {
+      this.languageList = res
+      let options = 
+        Object.keys(this.languageList || {}).map(key => ({
+          label: this.sortLanguagesByName
+            ? `${this.languageList[key]} (${key})`
+            : `${key} (${this.languageList[key]})`,
+          value: key
+        }));
+      this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "language").options = _.sortBy(
+        options,
+        this.sortLanguagesByName ? "label" : "value"
+      );
+    });
   }
    
   beforeSubmit(value) {
     delete value.language_sort;
+    value.language = this.languageKey;
   }
 
   afterSubmit(value) {
