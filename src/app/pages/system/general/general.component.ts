@@ -129,7 +129,7 @@ export class GeneralComponent {
           name: 'timezone',
           placeholder: helptext.stg_timezone.placeholder,
           tooltip: helptext.stg_timezone.tooltip,
-          options: [],
+          options: [{ label: "---", value: null }],
           width: '50%'
         }
       ]
