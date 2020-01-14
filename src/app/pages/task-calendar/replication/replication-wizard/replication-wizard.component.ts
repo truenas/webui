@@ -1081,7 +1081,7 @@ export class ReplicationWizardComponent {
                     )
                 }
                 if (value['setup_method'] == 'manual') {
-                    await this.getRemoteHostKey(value).then(
+                    await self.getRemoteHostKey(value).then(
                         (res) => {
                             value['remote_host_key'] = res;
                         },
