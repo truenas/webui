@@ -230,13 +230,23 @@ export class VolumesListTableConfig implements InputTableConf {
                 customSubmit: function (entityDialog) {
                   const value = entityDialog.formValue;
                   self.loader.open();
-                  self.ws.call('pool.lock', [{ id: row1.id, passphrase: value.passphrase }]).subscribe(() => {
-                      entityDialog.dialogRef.close(true);
+                  self.ws.job('pool.lock', [row1.id, value.passphrase]).subscribe(
+                    res => {
+                    if (res.error) {
                       self.loader.close();
+                      if (res.exc_info && res.exc_info.extra) {
+                        res.extra = res.exc_info.extra;
+                      }
+                      new EntityUtils().handleWSError(this, res, self.dialogService);
+                    }
+                    if (res.state === 'SUCCESS') {
+                      self.loader.close();
+                      entityDialog.dialogRef.close(true);
                       self.parentVolumesListComponent.repaintMe();
+                    }
                   }, e => {
                     self.loader.close();
-                    new EntityUtils().handleWSError(this, e, this.dialog);
+                    new EntityUtils().handleWSError(this, e, self.dialogService);
                   });
                 }
               }
