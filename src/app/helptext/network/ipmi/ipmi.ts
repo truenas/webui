@@ -28,6 +28,8 @@ ip_error: T('Enter a valid IPv4 address.'),
 
 vlan_placeholder : T('VLAN ID'),
 vlan_tooltip : T('If the IPMI out-of-band management interface is on a\
- different VLAN from the management network, enter the IPMI VLAN.')
+ different VLAN from the management network, enter the IPMI VLAN.'),
+
+ipmi_configuration: T('IPMI Configuration')
 
 }
