@@ -36,6 +36,9 @@ export class VMWizardComponent {
   summary_title = "VM Summary";
   public namesInUse = [];
   public statSize: any;
+  public vcpus: number = 1;
+  public cores: number = 1;
+  public threads: number = 1;
 
   entityWizard: any;
   public res;
@@ -120,7 +123,7 @@ export class VMWizardComponent {
           placeholder: helptext.vcpus_placeholder,
           inputType: 'number',
           min: 1,
-          validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
+          validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: helptext.vcpus_tooltip,
         },
         {
@@ -128,7 +131,7 @@ export class VMWizardComponent {
           name: 'cores',
           placeholder: helptext.cores.placeholder,
           inputType: 'number',
-          validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
+          validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: helptext.cores.tooltip
         },
         {
@@ -137,7 +140,7 @@ export class VMWizardComponent {
           placeholder: helptext.threads.placeholder,
           inputType: 'number',
           validation : [ 
-            // this.cpuValidator('threads'),
+            this.cpuValidator('threads'),
             Validators.required, 
             Validators.min(1),
             Validators.max(16),
@@ -435,12 +438,15 @@ export class VMWizardComponent {
         this.summary[T('Name')] = name;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
+        this.vcpus = vcpus;
         this.summary[T('Number of CPUs')] = vcpus;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('cores').valueChanges.subscribe((cores) => {
+        this.cores = cores;
         this.summary[T('Number of Cores')] = cores;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('threads').valueChanges.subscribe((threads) => {
+        this.threads = threads;
         this.summary[T('Number of Threads')] = threads;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
@@ -624,26 +630,24 @@ memoryValidator(name: string) {
   }
 };
 
-cpuValidator(name: string) {
+cpuValidator(name: string) { 
   const self = this;
   return function validCPU(control: FormControl) {
     const config = self.wizardConfig[1].fieldConfig.find(c => c.name === name);
+      setTimeout(() => {
+        const errors = self.vcpus * self.cores * self.threads > 16
+        ? { validCPU : true }
+        : null;
 
-      const group = self.entityWizard.formGroup.value.formArray[1];
-
-      const errors = control.value * group.vcpus * group.cores > 16
-      ? { validCPU : true }
-      : null;
-
-    if (errors) {
-      config.hasErrors = true;
-      config.warnings = T(`The product of vCPUs, cores and threads must not exceed 16.`);
-    } else {
-      config.hasErrors = false;
-      config.warnings = '';
-    }
-
-    return errors;
+        if (errors) {
+          config.hasErrors = true;
+          config.warnings = T(`The product of vCPUs, cores and threads must not exceed 16.`);
+        } else {
+          config.hasErrors = false;
+          config.warnings = '';
+        }
+        return errors;
+      }, 100)
   }
 };
 
