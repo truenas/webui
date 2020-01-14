@@ -28,6 +28,7 @@ fs.readdir( translations, function( err, files ) {
                 
             } catch(e) {
                 console.error( "Error converting file.", e);
+                process.exit(1);
             }
         }
     });
