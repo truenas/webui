@@ -2,10 +2,6 @@ import { T } from "app/translate-marker";
 import { Validators } from "@angular/forms";
 
 export const helptext_sharing_smb = {
-    fieldset_general: T('General Options'),
-    fieldset_access: T('Access'),
-    fieldset_other: T('Other Options'),
-
     column_name: T('Name'),
     column_path: T('Path'),
     column_comment: T('Description'),
@@ -25,8 +21,8 @@ export const helptext_sharing_smb = {
     ),
 
     placeholder_home: T('Use as home share'),
-    tooltip_home: T('Set to allow the share to host user home \
- directories. Each user is given a personal home direcotry when \
+    tooltip_home: T('Allows the share to host user home \
+ directories. Each user is given a personal home directory when \
  connecting to the share which is not accessible by other users. This \
  allows for a personal, dynamic share. Only one share can be used \
  as the home share.'),
