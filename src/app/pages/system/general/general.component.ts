@@ -5,6 +5,7 @@ import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 import { DialogService, LanguageService, RestService, WebSocketService, StorageService } from '../../../services/';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -528,24 +529,21 @@ export class GeneralComponent {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
-    parent.loader.open();
+    const dialogRef = parent.mdDialog.open(EntityJobComponent, {data: {"title":T("Upload Config"),"CloseOnClickOutside":true}});
+    dialogRef.componentInstance.setDescription(T("Uploading..."));
     formData.append('data', JSON.stringify({
       "method": "config.upload",
       "params": []
     }));
     formData.append('file', parent.subs.file);
-
-    parent.http.post(parent.subs.apiEndPoint, formData).subscribe(
-      (data) => {
-        parent.loader.close();
-        entityDialog.dialogRef.close();
-        parent.router.navigate(['/others/reboot']);
-      },
-      (err) => {
-        parent.loader.close();
-        this.dialog.errorReport(err.status, err.statusText, err._body);
-      }
-    );
+    dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
+    dialogRef.componentInstance.success.subscribe(res=>{
+      dialogRef.close();
+      parent.router.navigate(['/others/reboot']);
+    })
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.setDescription(res.error);
+    });
   }
 
   resetConfigSubmit(entityDialog) {
