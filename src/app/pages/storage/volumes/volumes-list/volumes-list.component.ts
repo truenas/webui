@@ -681,6 +681,63 @@ export class VolumesListTableConfig implements InputTableConf {
               ["storage", "pools", "status", row1.id]));
           }
         });
+        actions.push({
+          id: rowData.name,
+          name: T('Expand Pool'),
+          label: T("Expand Pool"),
+          onClick: (row1) => {
+            const parent = this;
+            const conf: DialogFormConfiguration = {
+              title: helptext.expand_pool_dialog.title + row1.name,
+              fieldConfig: [
+                {
+                  type: 'input',
+                  inputType: 'password',
+                  name: 'passphrase',
+                  placeholder: helptext.expand_pool_dialog.passphrase_placeholder,
+                  required: true
+                }
+              ],
+              saveButtonText: helptext.expand_pool_dialog.save_button,
+              customSubmit: function (entityDialog) {
+                doExpand(entityDialog);
+              }
+            }
+
+            function doExpand(entityDialog?) {
+              parent.loader.open();
+              const payload = [row1.id];
+              if (entityDialog) {
+                payload.push({"geli": {"passphrase": entityDialog.formValue['passphrase']}});
+              }
+              parent.ws.job('pool.expand', payload).subscribe(
+                (res) => {
+                  parent.loader.close();
+                  if (res.error) {
+                    if (res.exc_info && res.exc_info.extra) {
+                      res.extra = res.exc_info.extra;
+                    }
+                    new EntityUtils().handleWSError(this, res, parent.dialogService, conf.fieldConfig);
+                  }
+                  if (res.state === 'SUCCESS') {
+                    if (entityDialog) {
+                      entityDialog.dialogRef.close(true);
+                    }
+                  }
+                },
+                (err) => {
+                  parent.loader.close();
+                  new EntityUtils().handleWSError(this, err, parent.dialogService);
+                }
+              )
+            }
+            if (row1.encrypt === 0) {
+              doExpand();
+            } else {
+              self.dialogService.dialogForm(conf);
+            }
+          }
+        });
 
         if (rowData.is_upgraded === false) {
           actions.push({
