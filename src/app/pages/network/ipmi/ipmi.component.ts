@@ -10,6 +10,7 @@ import helptext from '../../../helptext/network/ipmi/ipmi';
 import globalHelptext from '../../../helptext/global-helptext';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../common/entity/utils';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../translate-marker';
 
 
@@ -84,61 +85,66 @@ export class IPMIComponent {
        }
     }
   ];
-  public fieldConfig: FieldConfig[] = [
-
+  public fieldConfig: FieldConfig[] = []
+  public fieldSets: FieldSet[] = [
     {
-      type : 'input',
-      inputType: 'password',
-      name : 'password',
-      placeholder : helptext.password_placeholder,
-      validation: helptext.password_validation,
-      hasErrors: false,
-      errors: helptext.password_errors,
-      togglePw: true,
-      tooltip : helptext.password_tooltip,
-
-    },
-    {
-      type : 'checkbox',
-      name : 'dhcp',
-      placeholder : helptext.dhcp_placeholder,
-      tooltip : helptext.dhcp_tooltip,
-    },
-    {
-      type : 'input',
-      name : 'ipaddress',
-      placeholder : helptext.ipaddress_placeholder,
-      tooltip : helptext.ipaddress_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      errors: helptext.ip_error,
-      hasErrors: false
-    },
-    {
-      type : 'input',
-      name : 'netmask',
-      placeholder : helptext.netmask_placeholder,
-      tooltip : helptext.netmask_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      errors: helptext.ip_error,
-      hasErrors: false
-    },
-    {
-      type : 'input',
-      name : 'gateway',
-      placeholder : helptext.gateway_placeholder,
-      tooltip : helptext.gateway_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
-      errors: helptext.ip_error,
-      hasErrors: false
-    },
-    {
-      type : 'input',
-      name : 'vlan',
-      placeholder : helptext.vlan_placeholder,
-      tooltip : helptext.vlan_tooltip,
-      inputType: 'number',
-    },
-  ];
+      name: helptext.ipmi_configuration,
+      width: "100%",
+      label: true,
+      config: [
+      {
+        type : 'input',
+        inputType: 'password',
+        name : 'password',
+        placeholder : helptext.password_placeholder,
+        validation: helptext.password_validation,
+        hasErrors: false,
+        errors: helptext.password_errors,
+        togglePw: true,
+        tooltip : helptext.password_tooltip,
+      },
+      {
+        type : 'checkbox',
+        name : 'dhcp',
+        placeholder : helptext.dhcp_placeholder,
+        tooltip : helptext.dhcp_tooltip,
+      },
+      {
+        type : 'input',
+        name : 'ipaddress',
+        placeholder : helptext.ipaddress_placeholder,
+        tooltip : helptext.ipaddress_tooltip,
+        validation : [ regexValidator(this.networkService.ipv4_regex) ],
+        errors: helptext.ip_error,
+        hasErrors: false
+      },
+      {
+        type : 'input',
+        name : 'netmask',
+        placeholder : helptext.netmask_placeholder,
+        tooltip : helptext.netmask_tooltip,
+        validation : [ regexValidator(this.networkService.ipv4_regex) ],
+        errors: helptext.ip_error,
+        hasErrors: false
+      },
+      {
+        type : 'input',
+        name : 'gateway',
+        placeholder : helptext.gateway_placeholder,
+        tooltip : helptext.gateway_tooltip,
+        validation : [ regexValidator(this.networkService.ipv4_regex) ],
+        errors: helptext.ip_error,
+        hasErrors: false
+      },
+      {
+        type : 'input',
+        name : 'vlan',
+        placeholder : helptext.vlan_placeholder,
+        tooltip : helptext.vlan_tooltip,
+        inputType: 'number',
+      },
+    ]
+  }];
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService,
