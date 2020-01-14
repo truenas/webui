@@ -218,5 +218,10 @@ export const helptext_system_general = {
   config_download: {
     failed_title: T("Error Downloading File"),
     failed_message: T("Config could not be downloaded")
+  },
+
+  config_upload: {
+    title: T('Upload Config'),
+    message: T('Uploading...')
   }
 };
