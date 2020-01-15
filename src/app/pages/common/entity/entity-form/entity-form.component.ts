@@ -118,7 +118,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public wsfg;
   public wsResponseIdx;
   public queryResponse;
-  public saveSubmitText = T("Save");
+  public saveSubmitText = T("Submit");
   public showPassword = false;
   public isFooterConsoleOpen: boolean;
   public successMessage = T('Settings saved.')
@@ -198,6 +198,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (this.conf.isEntity) {
         this.pk = params['pk'];
         if (this.pk && !this.conf.isNew) {
+          if (this.conf.saveSubmitText === undefined) {
+            this.saveSubmitText = T('Save');
+          }
           if (this.conf.editCall) {
             this.submitFunction = this.editCall;  // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
                                                   // But to my eyes it almost looks like a bug when I first saw it. FYI
