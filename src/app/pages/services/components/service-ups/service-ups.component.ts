@@ -4,6 +4,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-ups';
 import { RestService, WebSocketService } from '../../../../services/';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'ups-edit',
@@ -15,7 +16,7 @@ export class ServiceUPSComponent {
   private ups_driver_key: any;
   protected ups_port: any;
   protected entityForm: any;
-
+  protected saveSubmitText = T('Save');
   protected queryCall = 'ups.config';
   protected route_success: string[] = [ 'services' ];
 

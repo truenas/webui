@@ -6,6 +6,7 @@ import { IdmapService, IscsiService, RestService, WebSocketService } from '../..
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-snmp';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'snmp-edit',
@@ -17,6 +18,7 @@ export class ServiceSNMPComponent {
   protected updateCall = 'snmp.update';
   protected queryCall = 'snmp.config';
   protected route_success: string[] = [ 'services' ];
+  protected saveSubmitText = T('Save');
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

@@ -28,7 +28,7 @@ export class ServiceSMBComponent {
   protected idmap_type = 'tdb'
   protected targetDS = '5';
   protected isBasicMode = true;
-
+  protected saveSubmitText = T('Save');
   private cifs_srv_bindip: any;
   private cifs_srv_guest: any;
   private cifs_srv_unixcharset: any;

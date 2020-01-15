@@ -5,7 +5,7 @@ import helptext from '../../../../../../helptext/services/components/service-rsy
 import { RestService } from "../../../../../../services/rest.service";
 import { WebSocketService } from "../../../../../../services/ws.service";
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
-
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-configure-rsync',
@@ -16,6 +16,7 @@ export class CconfigureRYSNCComponent {
   protected queryCall = 'rsyncd.config';
 
   protected route_success: string[] = [ 'services' ];
+  protected saveSubmitText = T('Save');
 
   public fieldConfig: FieldConfig[] = [
     {

@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-lldp';
 import { RestService, WebSocketService } from '../../../../services/';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'lldp-edit',
@@ -16,7 +17,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 export class ServiceLLDPComponent {
   protected queryCall = 'lldp.config';
   protected route_success: string[] = [ 'services' ];
-
+  protected saveSubmitText = T('Save');
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

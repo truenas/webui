@@ -6,6 +6,7 @@ import { RestService, SystemGeneralService, WebSocketService } from '../../../..
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-webdav';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'webdav-edit',
@@ -19,7 +20,7 @@ export class ServiceWebdavComponent implements OnDestroy {
   protected queryCall: string = 'webdav.config';
   protected editCall: string = 'webdav.update';
   protected route_success: string[] = [ 'services' ];
-
+  protected saveSubmitText = T('Save');
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

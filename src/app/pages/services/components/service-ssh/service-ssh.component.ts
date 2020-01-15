@@ -18,7 +18,7 @@ export class ServiceSSHComponent implements OnInit {
   protected isBasicMode: boolean = true;
   protected queryCall = 'ssh.config';
   protected route_success: string[] = [ 'services' ];
-
+  protected saveSubmitText = T('Save');
   public fieldSets: FieldSet[] = [
     {
       name: globalHelptext.fieldset_general_options,

@@ -23,7 +23,7 @@ export class ServiceS3Component implements OnDestroy {
   protected route_success: string[] = [ 'services' ];
   private certificate: any;
   private ip_address: any;
-
+  protected saveSubmitText = T('Save');
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [

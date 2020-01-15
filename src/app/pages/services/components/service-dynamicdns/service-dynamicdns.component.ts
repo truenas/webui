@@ -6,6 +6,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-dynamic-dns';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'dynamicdns-edit',
@@ -15,6 +16,7 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 export class ServiceDDNSComponent {
   protected addCall = 'dyndns.update';
   protected route_success: string[] = [ 'services' ];
+  protected saveSubmitText = T('Save');
 
   public fieldSets = new FieldSets([
     {

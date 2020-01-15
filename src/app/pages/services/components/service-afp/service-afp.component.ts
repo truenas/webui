@@ -6,6 +6,7 @@ import { RestService, UserService, WebSocketService, IscsiService } from '../../
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-afp';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'afp-edit',
@@ -16,6 +17,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 export class ServiceAFPComponent {
   protected route_success: string[] = [ 'services' ];
   protected queryCall = 'afp.config';
+  protected saveSubmitText = T('Save');
 
   public fieldConfig: FieldConfig[] = [];
   

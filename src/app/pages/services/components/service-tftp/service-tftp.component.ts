@@ -4,6 +4,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-tftp';
 import { RestService, UserService, WebSocketService } from '../../../../services/';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'tftp-edit',
@@ -12,7 +13,7 @@ import { RestService, UserService, WebSocketService } from '../../../../services
 export class ServiceTFTPComponent {
   protected queryCall = 'tftp.config';
   protected route_success: string[] = [ 'services' ];
-
+  protected saveSubmitText = T('Save');
   protected fieldSets: FieldSet[] = [
     {
       name: helptext.tftp_fieldset_path,

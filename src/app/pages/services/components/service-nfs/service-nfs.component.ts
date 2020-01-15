@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import helptext from '../../../../helptext/services/components/service-nfs';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'nfs-edit',
@@ -15,6 +16,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 export class ServiceNFSComponent {
   protected queryCall = 'nfs.config';
   protected route_success: string[] = ['services'];
+  protected saveSubmitText = T('Save');
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

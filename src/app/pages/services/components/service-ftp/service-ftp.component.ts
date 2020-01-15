@@ -14,7 +14,7 @@ export class ServiceFTPComponent implements OnInit {
   protected editCall: string = 'ftp.update';
   protected queryCall: string = 'ftp.config';
   protected route_success: string[] = [ 'services' ];
-
+  protected saveSubmitText = T('Save');
   protected isBasicMode: boolean = true;
 
   protected rootlogin_fg: any;

@@ -5,6 +5,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-smart';
 import { RestService, WebSocketService } from '../../../../services/';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'smart-edit',
@@ -15,7 +16,7 @@ export class ServiceSMARTComponent {
 
   protected queryCall = 'smart.config';
   protected route_success: string[] = [ 'services' ];
-
+  protected saveSubmitText = T('Save');
   public fieldSets: FieldSet[] = [
     {
       name: helptext.smart_fieldset_general,
