@@ -93,17 +93,6 @@ export class IPMIComponent {
       label: true,
       config: [
       {
-        type : 'input',
-        inputType: 'password',
-        name : 'password',
-        placeholder : helptext.password_placeholder,
-        validation: helptext.password_validation,
-        hasErrors: false,
-        errors: helptext.password_errors,
-        togglePw: true,
-        tooltip : helptext.password_tooltip,
-      },
-      {
         type : 'checkbox',
         name : 'dhcp',
         placeholder : helptext.dhcp_placeholder,
@@ -143,7 +132,31 @@ export class IPMIComponent {
         tooltip : helptext.vlan_tooltip,
         inputType: 'number',
       },
-    ]
+    ]},
+    {
+      name:'ipmi_divider',
+      divider:true
+    },
+    {
+      name: helptext.ipmi_password_reset,
+      width: "100%",
+      label: true,
+      config: [
+      {
+        type : 'input',
+        inputType: 'password',
+        name : 'password',
+        placeholder : helptext.password_placeholder,
+        validation: helptext.password_validation,
+        hasErrors: false,
+        errors: helptext.password_errors,
+        togglePw: true,
+        tooltip : helptext.password_tooltip,
+      },
+    ]},
+    {
+      name:'divider',
+      divider:true
   }];
 
   constructor(protected router: Router, protected rest: RestService,
