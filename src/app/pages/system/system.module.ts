@@ -9,6 +9,7 @@ import { MaterialModule } from '../../appMaterial.module';
 import { MarkdownModule } from 'ngx-markdown';
 import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { GeneralComponent } from './general/general.component';
 import { AdvancedComponent } from './advanced/';
@@ -24,8 +25,7 @@ import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
-import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
-import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
+import { NTPServerFormComponent } from './ntpservers/ntpserver-form/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
@@ -67,7 +67,7 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
-    EnclosureModule
+    EnclosureModule, CommonDirectivesModule
   ],
   declarations: [
     GeneralComponent,
@@ -85,8 +85,7 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     UpdateComponent,
     ManualUpdateComponent,
     NTPServerListComponent,
-    NTPServerAddComponent,
-    NTPServerEditComponent,
+    NTPServerFormComponent,
     AlertServiceListComponent,
     CloudCredentialsListComponent,
     CloudCredentialsFormComponent,

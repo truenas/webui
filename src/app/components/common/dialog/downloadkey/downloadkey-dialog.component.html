@@ -8,6 +8,8 @@
 <div mat-dialog-actions>
   &nbsp;
   <span fxFlex></span>
-	<button class="mat-button download-link red-warning-button" (click)="downloadKey()">Download Encryption Key</button>
-	<button class="mat-button mat-primary" [disabled]="!isDownloaded" (click)="dialogRef.close(true)">{{"Done" | translate}}</button>
+	<button class="mat-button download-link red-warning-button" (click)="downloadKey()"
+		ix-auto ix-auto-type="button" ix-auto-identifier="DOWNLOAD ENCRYPTION KEY">Download Encryption Key</button>
+	<button class="mat-button mat-primary" [disabled]="!isDownloaded" (click)="dialogRef.close(true)"
+		ix-auto ix-auto-type="button" ix-auto-identifier="DONE">{{"Done" | translate}}</button>
 </div>

@@ -109,7 +109,18 @@ export class EntityDialogComponent implements OnInit {
           }
         );
       } else if (this.conf.method_ws) {
-        // ws call
+        this.ws.call(this.conf.method_ws, [this.formValue]).subscribe(
+          () => {},
+          e => {
+            this.loader.close();
+            this.dialogRef.close(false);
+            new EntityUtils().handleWSError(this, e);
+          },
+          () => {
+            this.loader.close();
+            this.dialogRef.close(true);
+          }
+        );
       }
     }
   }

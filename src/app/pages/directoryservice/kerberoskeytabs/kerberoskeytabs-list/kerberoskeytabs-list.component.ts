@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form-list';
 
 @Component({
@@ -10,16 +9,17 @@ import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form
 export class KerberosKeytabsListComponent {
 
   public title = "Kerberos Keytabs";
-  protected resource_name: string = 'directoryservice/kerberoskeytab';
+  protected queryCall = 'kerberos.keytab.query';
+  protected wsDelete = 'kerberos.keytab.delete';
   protected route_add: string[] = ['directoryservice', 'kerberoskeytabs', 'add'];
   protected route_add_tooltip: string = "Add Kerberos Keytab";
   protected route_edit: string[] = ['directoryservice', 'kerberoskeytabs', 'edit'];
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Name', prop: 'keytab_name', always_display: true },
+    { name: 'Name', prop: 'name', always_display: true },
   ];
-  public rowIdentifier = 'keytab_name';
+  public rowIdentifier = 'name';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
@@ -29,21 +29,10 @@ export class KerberosKeytabsListComponent {
     },
   };
 
-  constructor(protected rest: RestService, private router: Router) {}
+  constructor(private router: Router) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
 
-  getActions(parentRow) {
-    return [{
-      id: parentRow.keytab_name,
-      icon: 'delete',
-      name: helptext.kkt_list_actions_delete_id,
-      label: helptext.kkt_list_actions_delete_label,
-      onClick: (row) => {
-        this.entityList.doDelete(row);
-      }
-    }]
-  }
 }

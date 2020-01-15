@@ -2,6 +2,9 @@ import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+ldap_server_creds: T('Server Credentials'),
+ldap_advanced: T('Advanced Settings'),
+
 ldap_custactions_basic_id : 'basic_mode',
 ldap_custactions_basic_name : T('Basic Mode'),
 

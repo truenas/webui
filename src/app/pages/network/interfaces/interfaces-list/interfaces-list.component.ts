@@ -52,7 +52,8 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
     {name : T('Bridge Members'), prop: 'bridge_members', hidden: true},
     {name : T('LAGG Ports'), prop: 'lagg_ports', hidden: true},
     {name : T('LAGG Protocol'), prop: 'lagg_protocol', hidden: true},
-    {name : T('MAC Address'), prop: 'mac_address', hidden: true}
+    {name : T('MAC Address'), prop: 'mac_address', hidden: true},
+    {name : T('MTU'), prop: 'mtu', hidden: true}
   ];
   public config: any = {
     paging : true,

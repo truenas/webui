@@ -2,6 +2,11 @@ import { T } from '../../../translate-marker';
 import {Validators} from '@angular/forms';
 
 export default {
+fieldset_transfer: T('Transfer'),
+fieldset_remote: T('Remote'),
+fieldset_control: T('Control'),
+fieldset_advanced_options: T('Advance Options'),
+advanced_remote_options: T('Advanced Remote Options'),
 
 description_placeholder: T('Description'),
 description_tooltip: T('Enter a description of the Cloud Sync Task.'),

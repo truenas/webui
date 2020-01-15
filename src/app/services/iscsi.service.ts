@@ -34,10 +34,6 @@ export class IscsiService {
     return this.ws.call('iscsi.target.query', []);
   };
 
-  getRPMChoices() {
-    return this.ws.call('notifier.choices', ['EXTENT_RPM_CHOICES', [true, false]]);
-  };
-
   getVolumes() {
     return this.rest.get(this.volumeResource, {});
   };

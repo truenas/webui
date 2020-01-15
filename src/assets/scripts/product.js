@@ -1,1 +1,1 @@
-var product = 'FreeNAS'
+var product = 'TrueNAS'

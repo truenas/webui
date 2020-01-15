@@ -127,6 +127,16 @@ vlan_pcp_placeholder: T('Priority Code Point'),
 vlan_pcp_tooltip: T('Select the Class of Service. The available 802.1p\
  Class of Service ranges from <i>Best effort (default)</i> \
  to <i>Network control (highest)</i>.'),
+vlan_pcp_options: [
+    {value:0, label:T("Best effort (default)")},
+    {value:1, label:T("Background (lowest)")},
+    {value:2, label:T("Excellent effort")},
+    {value:3, label:T("Critical applications")},
+    {value:4, label:T("Video, < 100ms latency")},
+    {value:5, label:T("Video, < 10ms latency")},
+    {value:6, label:T("Internetwork control")}, 
+    {value:7, label:T("Network control (highest)")}
+],
 
 lagg_protocol_placeholder : T('Lagg Protocol'),
 lagg_protocol_tooltip : T('Select the <a\
@@ -163,4 +173,12 @@ alias_list_placeholder: T('Aliases'),
 alias_list_label: T('Aliases'),
 
 int_save_button: T('Apply'),
+
+interface_settings: T('Interface Settings'),
+vlan_settings: T('VLAN Settings'),
+bridge_settings: T('Bridge Settings'),
+lag_settings: T('LAGG Settings'),
+failover_settings: T('Failover Settings'),
+other_settings: T('Other Settings'),
+ip_addresses: T('IP Addresses')
 }

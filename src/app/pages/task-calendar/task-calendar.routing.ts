@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 
-import { TaskCalendarComponent } from './calendar/calendar.component';
 import { CronFormComponent } from './cron/cron-form/cron-form.component';
 import { CronListComponent } from './cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './initshutdown/initshutdown-list/initshutdown-list.component';

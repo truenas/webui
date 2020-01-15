@@ -1,1 +1,1 @@
-export default { product:'FreeNAS' }
+export default { product:'TrueNAS' }

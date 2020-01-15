@@ -1,7 +1,6 @@
 import {Component, ElementRef} from '@angular/core';
 import {Router} from '@angular/router';
 
-import {RestService} from '../../../../services/rest.service';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -11,7 +10,7 @@ import { T } from '../../../../translate-marker';
 export class VMwareSnapshotListComponent {
 
   public title = "VMware Snapshots";
-  protected resource_name: string = 'storage/vmwareplugin';
+  protected queryCall = 'vmware.query';
   protected route_add: string[] = ["storage", "vmware-Snapshots", "add"];
   protected route_add_tooltip = "Add VMware Snapshot";
   protected entityList: any;
@@ -30,8 +29,7 @@ export class VMwareSnapshotListComponent {
     },
   };
 
-  constructor(_rest: RestService, private _router: Router,
-              _eRef: ElementRef) {}
+  constructor(private _router: Router, _eRef: ElementRef) {}
 
   isActionVisible(actionId: string, row: any) {
     if (actionId == 'edit' || actionId == 'add') {

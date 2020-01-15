@@ -1,7 +1,6 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
-
-import {RestService} from '../../../../services/rest.service';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { RestService } from '../../../../services/rest.service';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -11,25 +10,25 @@ import { T } from '../../../../translate-marker';
 export class StaticRouteListComponent {
 
   public title = "Static Routes";
-  protected resource_name: string = 'network/staticroute/';
+  protected queryCall = 'staticroute.query';
   protected route_add: string[] = [ 'network', 'staticroutes', 'add' ];
   protected route_add_tooltip: string = "Add Static Route";
   protected route_edit: string[] = [ 'network', 'staticroutes', 'edit' ];
 
-  constructor(protected rest: RestService, protected router: Router) {}
-
   public columns: Array<any> = [
-    {name : T('Destination'), prop : 'sr_destination', always_display: true },
-    {name : T('Gateway'), prop : 'sr_gateway'},
-    {name : T('Description'), prop : 'sr_description'}
+    {name : T('Destination'), prop : 'destination', always_display: true },
+    {name : T('Gateway'), prop : 'gateway'},
+    {name : T('Description'), prop : 'description'}
   ];
-  public rowIdentifier = 'sr_destination';
+  public rowIdentifier = 'destination';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
     deleteMsg: {
       title: 'Static Route',
-      key_props: ['sr_destination']
+      key_props: ['destination']
     },
   };
+
+  constructor(protected rest: RestService, protected router: Router) {}
 }
