@@ -141,6 +141,16 @@ export class DiskListComponent {
 				"storage", "disks", "edit", row.identifier
 				]));
 			}
+		}, {
+			id: parentRow.name,
+			icon: 'format_list_bulleted',
+			name: 'smartresults',
+			label: T("S.M.A.R.T Test Results"),
+			onClick: (row) => {
+				this.router.navigate(new Array('/').concat([
+				"storage", "disks", "smartresults", row.name
+				]));
+			}
 		}];
 		if (_.find(this.unused, {"name": parentRow.name})) {
 			actions.push({
