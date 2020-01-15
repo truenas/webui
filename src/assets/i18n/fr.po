@@ -4456,7 +4456,7 @@ msgid "Enable NFSv4"
 msgstr "Activer NFSv4"
 
 msgid "Enable Password Toggle"
-msgstr "Activer le changement de mot de passe"
+msgstr "Activer la visualisation du mot de passe"
 
 msgid "Enable S.M.A.R.T."
 msgstr "Activer S.M.A.A.R.T."
