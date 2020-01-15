@@ -1,7 +1,7 @@
 
 
 import {Injectable, EventEmitter} from '@angular/core';
-import {Http} from '@angular/http';
+import { map } from 'rxjs/operators';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {RestService} from './rest.service';
@@ -33,6 +33,28 @@ export class SystemGeneralService {
 
   getSysInfo() {
     return this.ws.call('system.info', []);
+  }
+
+  ipChoicesv4() {
+    return this.ws.call("system.general.ui_address_choices", []).pipe(
+      map(response =>
+        Object.keys(response || {}).map(key => ({
+          label: response[key],
+          value: response[key]
+        }))
+      )
+    );
+  }
+
+  ipChoicesv6() {
+    return this.ws.call("system.general.ui_v6address_choices", []).pipe(
+      map(response =>
+        Object.keys(response || {}).map(key => ({
+          label: response[key],
+          value: response[key]
+        }))
+      )
+    );
   }
 
   updateRunning = new EventEmitter<string>();
