@@ -43,6 +43,7 @@
     fxLayoutAlign="start center"
     fxLayoutGap="8px"
     class="wrapper__action-buttons"
+    *ngIf="parent.hasActions"
 >
     <ng-container *ngFor="let action of actions">
         <button

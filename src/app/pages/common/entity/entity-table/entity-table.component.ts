@@ -37,6 +37,7 @@ export interface InputTableConf {
   custActions?: any[];
   multiActions?:any[];
   multiActionsIconsOnly?:boolean;
+  noActions?: boolean;
   config?: any;
   confirmDeleteDialog?: any;
   checkbox_confirm?: any;
@@ -157,6 +158,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private excuteDeletion = false;
   private needRefreshTable = false;
 
+  public hasActions = true;
+
   protected toDeleteRow: any;
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
@@ -164,7 +167,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
      this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
       : this.conf.detailRowHeight || 100;
-
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -185,6 +187,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
     this.setTableHeight();
+    this.hasActions = this.conf.noActions === true ? false : true;
 
     setTimeout(async() => {
       if (this.conf.prerequisite) {
