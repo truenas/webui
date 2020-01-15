@@ -13,6 +13,7 @@ import {
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-nis',
@@ -34,6 +35,7 @@ export class NISComponent {
       }
     }
   ];
+  protected saveSubmitText = T('Save');
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [

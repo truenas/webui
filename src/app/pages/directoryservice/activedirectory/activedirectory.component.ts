@@ -8,6 +8,7 @@ import {FieldConfig} from '../../common/entity/entity-form/models/field-config.i
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-activedirectory',
@@ -29,6 +30,7 @@ export class ActiveDirectoryComponent {
   protected ldap_sasl_wrapping: any;
   public adStatus = false;
   entityEdit: any;
+  protected saveSubmitText = T('Save');
 
   public custActions: Array<any> = [
     {

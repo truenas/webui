@@ -10,6 +10,7 @@ import { WebSocketService, DialogService, NetworkService } from '../../../../../
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import * as _ from 'lodash';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
@@ -25,6 +26,7 @@ export class InitiatorFormComponent implements OnInit {
   protected customFilter: Array<any> = [[["id", "="]]];
   public route_success: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: any;
+  protected saveSubmitText = T('Submit');
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -110,6 +112,7 @@ export class InitiatorFormComponent implements OnInit {
 
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
+        this.saveSubmitText = T('Save');
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }

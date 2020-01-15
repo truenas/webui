@@ -12,6 +12,7 @@ import {
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/ldap';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-ldap',
@@ -32,6 +33,8 @@ export class LdapComponent {
   protected ldap_schema: any;
   protected ldap_hostname: any;
   protected entityForm: any;
+  protected saveSubmitText = T('Save');
+
   public custActions: Array<any> = [
     {
       id : helptext.ldap_custactions_basic_id,

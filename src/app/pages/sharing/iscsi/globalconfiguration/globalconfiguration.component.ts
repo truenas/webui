@@ -15,6 +15,7 @@ export class GlobalconfigurationComponent {
 
   protected queryCall: string = 'iscsi.global.config';
   protected editCall: string = 'iscsi.global.update';
+  protected saveSubmitText = T('Save');
 
   public fieldConfig: FieldConfig[] = [{
       type: 'input',

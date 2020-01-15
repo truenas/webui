@@ -36,7 +36,7 @@
         </div>
         <mat-card-actions>
             <button class="btn btn-block btn-warning" type="submit" mat-button color="primary"
-                [disabled]="!formGroup.valid">{{ "Save" | translate }} </button>
+                [disabled]="!formGroup.valid">{{ saveSubmitText | translate }} </button>
             <button *ngIf="route_success" (click)="goBack()" type="button" mat-button
                 color="accent">{{ "Cancel" | translate }}</button>
         </mat-card-actions>

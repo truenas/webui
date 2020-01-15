@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../helptext/directoryservice/kerberossettings';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'directoryservice-kerberossettings',
@@ -14,6 +15,7 @@ export class KerberosSettingsComponent {
   protected addCall = 'kerberos.update';
   protected editCall = 'kerberos.update';
   protected isEntity = true;
+  protected saveSubmitText = T('Save');
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
