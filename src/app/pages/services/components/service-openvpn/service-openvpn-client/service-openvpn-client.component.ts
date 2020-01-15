@@ -15,96 +15,111 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 export class ServiceOpenvpnClientComponent {
   protected queryCall = 'openvpn.client.config';
   protected editCall = 'openvpn.client.update';
-  public saveSubmitText = helptext.client.saveButtonText;
+  protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
       name: helptext.client.header,
       label: true,
+      config: []
+    },
+    {
+      name: 'client-settings',
+      label: false,
+      width: '53%',
       config: [
         {
           type : 'select',
           name : 'client_certificate',
           placeholder : helptext.client.client_certificate.placeholder,
           tooltip: helptext.client.client_certificate.tooltip,
-          options: [{label: '---', value: null}]
+          options: [{label: '---', value: null}],
+          required: true
         },
         {
           type : 'select',
           name : 'root_ca',
           placeholder : helptext.client.root_ca.placeholder,
           tooltip: helptext.client.root_ca.tooltip,
-          options: [{label: '---', value: null}]
+          options: [{label: '---', value: null}],
+          required: true,
         },
-        {
-          type : 'input',
-          name : 'port',
-          inputType: 'number',
-          placeholder : helptext.client.port.placeholder,
-          tooltip: helptext.client.port.tooltip,
-        },
-        {
-          type : 'input',
-          name : 'additional_parameters',
-          placeholder : helptext.client.additional_parameters.placeholder,
-          tooltip: helptext.client.additional_parameters.tooltip,
-        },
-        {
-          type : 'select',
-          name : 'authentication_algorithm',
-          placeholder : helptext.client.authentication_algorithm.placeholder,
-          tooltip: helptext.client.authentication_algorithm.tooltip,
-          options: [{label: '---', value: null}]
-        },
-        {
-          type : 'select',
-          name : 'cipher',
-          placeholder : helptext.client.cipher.placeholder,
-          tooltip: helptext.client.cipher.tooltip,
-          options: [{label: '---', value: null}]
-        },
-        {
-          type : 'select',
-          name : 'compression',
-          placeholder : helptext.client.compression.placeholder,
-          tooltip: helptext.client.compression.tooltip,
-          options: helptext.client.compression.enum
-        },
-        {
-          type : 'select',
-          name : 'device_type',
-          placeholder : helptext.client.device_type.placeholder,
-          tooltip: helptext.client.device_type.tooltip,
-          options: helptext.client.device_type.enum
-        },
-        {
-          type : 'select',
-          name : 'protocol',
-          placeholder : helptext.client.protocol.placeholder,
-          tooltip: helptext.client.protocol.tooltip,
-          options: helptext.client.protocol.enum
-        },
-
-        {
-          type : 'checkbox',
-          name : 'tls_crypt_auth_enabled',
-          placeholder : helptext.client.tls_crypt_auth_enabled.placeholder,
-          tooltip: helptext.client.tls_crypt_auth_enabled.tooltip,
-        },
-        {
-          type : 'select',
-          name : 'tls_crypt_auth',
-          placeholder : helptext.client.tls_crypt_auth.placeholder,
-          tooltip: helptext.client.tls_crypt_auth.tooltip,
-          options: [{label: '---', value: null}]
-        },
-      
         {
           type : 'input',
           name : 'remote',
           placeholder : helptext.client.remote.placeholder,
           tooltip: helptext.client.remote.tooltip,
+          required: true
+        },
+        {
+          type : 'input',
+          name : 'port',
+          inputType: 'number',
+          placeholder : helptext.port.placeholder,
+          tooltip: helptext.port.tooltip,
+        },
+        {
+          type : 'select',
+          name : 'authentication_algorithm',
+          placeholder : helptext.authentication_algorithm.placeholder,
+          tooltip: helptext.authentication_algorithm.tooltip,
+          options: [{label: '---', value: null}]
+        },
+        {
+          type : 'select',
+          name : 'cipher',
+          placeholder : helptext.cipher.placeholder,
+          tooltip: helptext.cipher.tooltip,
+          options: [{label: '---', value: null}]
+        },
+        {
+          type : 'select',
+          name : 'compression',
+          placeholder : helptext.compression.placeholder,
+          tooltip: helptext.compression.tooltip,
+          options: helptext.compression.enum
+        }
+      ]
+    },
+    {
+      name: 'vertical-spacer',
+      label: false,
+      width: '4%',
+      config: []
+    },
+    {
+      name: 'client-server-settings',
+      label: false,
+      width: '43%',
+      config: [
+        {
+          type : 'select',
+          name : 'device_type',
+          placeholder : helptext.device_type.placeholder,
+          tooltip: helptext.device_type.tooltip,
+          options: helptext.device_type.enum
+        },
+        {
+          type : 'select',
+          name : 'protocol',
+          placeholder : helptext.protocol.placeholder,
+          tooltip: helptext.protocol.tooltip,
+          options: helptext.protocol.enum
+        },
+
+        {
+          type : 'checkbox',
+          name : 'tls_crypt_auth_enabled',
+          placeholder : helptext.tls_crypt_auth_enabled.placeholder,
+          tooltip: helptext.tls_crypt_auth_enabled.tooltip,
+        },
+        {
+          type : 'input',
+          name : 'tls_crypt_auth',
+          placeholder : helptext.client.tls_crypt_auth.placeholder,
+          tooltip: helptext.client.tls_crypt_auth.tooltip,
+          options: [{label: '---', value: null}]
         },
         {
           type : 'checkbox',
@@ -112,10 +127,14 @@ export class ServiceOpenvpnClientComponent {
           placeholder : helptext.client.nobind.placeholder,
           tooltip: helptext.client.nobind.tooltip,
         },
-
-        
+        {
+          type : 'input',
+          name : 'additional_parameters',
+          placeholder : helptext.additional_parameters.placeholder,
+          tooltip: helptext.additional_parameters.tooltip,
+        },
       ]
-    }
+    },
   ];
 
   constructor(protected services: ServicesService) { }
@@ -129,14 +148,14 @@ export class ServiceOpenvpnClientComponent {
       const config = this.fieldConfig.find(c => c.name === 'authentication_algorithm');
       for (let item in res) {
         config.options.push(
-          {label : item, value : res[item]});
+          {label : `${item} (${res[item]})`, value : item});
       };
     });
     this.services.getOpenVPNClientCipherChoices().subscribe((res) => {
       const config = this.fieldConfig.find(c => c.name === 'cipher');
       for (let item in res) {
         config.options.push(
-          {label : item, value : res[item]});
+          {label : `${item} ${res[item]}`, value : item});
       };
     });
     this.services.getCerts().subscribe((res) => {
@@ -151,6 +170,10 @@ export class ServiceOpenvpnClientComponent {
         config.options.push({label: item.name, value: item.id})
       })
     });
+  }
+
+  beforeSubmit(data) {
+    console.log(data)
   }
 
 

@@ -15,13 +15,19 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 export class ServiceOpenvpnServerComponent {
   protected queryCall = 'openvpn.server.config';
   protected editCall = 'openvpn.server.update';
-  public saveSubmitText = helptext.server.saveButtonText;
+  protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
       name: helptext.server.header,
       label: true,
+      config: []
+    },
+    {
+      name: 'server-settings',
+      label: false,
+      width: '53%',
       config: [
         {
           type : 'select',
@@ -41,55 +47,62 @@ export class ServiceOpenvpnServerComponent {
           type : 'input',
           name : 'port',
           inputType: 'number',
-          placeholder : helptext.server.port.placeholder,
-          tooltip: helptext.server.port.tooltip,
-        },
-        {
-          type : 'input',
-          name : 'additional_parameters',
-          placeholder : helptext.server.additional_parameters.placeholder,
-          tooltip: helptext.server.additional_parameters.tooltip,
+          placeholder : helptext.port.placeholder,
+          tooltip: helptext.port.tooltip,
         },
         {
           type : 'select',
           name : 'authentication_algorithm',
-          placeholder : helptext.server.authentication_algorithm.placeholder,
-          tooltip: helptext.server.authentication_algorithm.tooltip,
+          placeholder : helptext.authentication_algorithm.placeholder,
+          tooltip: helptext.authentication_algorithm.tooltip,
           options: [{label: '---', value: null}]
         },
         {
           type : 'select',
           name : 'cipher',
-          placeholder : helptext.server.cipher.placeholder,
-          tooltip: helptext.server.cipher.tooltip,
+          placeholder : helptext.cipher.placeholder,
+          tooltip: helptext.cipher.tooltip,
           options: [{label: '---', value: null}]
         },
         {
           type : 'select',
           name : 'compression',
-          placeholder : helptext.server.compression.placeholder,
-          tooltip: helptext.server.compression.tooltip,
-          options: helptext.server.compression.enum
-        },
+          placeholder : helptext.compression.placeholder,
+          tooltip: helptext.compression.tooltip,
+          options: helptext.compression.enum
+        }
+      ]
+    },
+    {
+      name: 'vertical-spacer',
+      label: false,
+      width: '4%',
+      config: []
+    },
+    {
+      name: 'client-server-settings',
+      label: false,
+      width: '43%',
+      config: [
         {
           type : 'select',
           name : 'device_type',
-          placeholder : helptext.server.device_type.placeholder,
-          tooltip: helptext.server.device_type.tooltip,
-          options: helptext.server.device_type.enum
+          placeholder : helptext.device_type.placeholder,
+          tooltip: helptext.device_type.tooltip,
+          options: helptext.device_type.enum
         },
         {
           type : 'select',
           name : 'protocol',
-          placeholder : helptext.server.protocol.placeholder,
-          tooltip: helptext.server.protocol.tooltip,
-          options: helptext.server.protocol.enum
+          placeholder : helptext.protocol.placeholder,
+          tooltip: helptext.protocol.tooltip,
+          options: helptext.protocol.enum
         },
         {
           type : 'checkbox',
           name : 'tls_crypt_auth_enabled',
-          placeholder : helptext.server.tls_crypt_auth_enabled.placeholder,
-          tooltip: helptext.server.tls_crypt_auth_enabled.tooltip,
+          placeholder : helptext.tls_crypt_auth_enabled.placeholder,
+          tooltip: helptext.tls_crypt_auth_enabled.tooltip,
         },
         {
           type : 'select',
@@ -119,10 +132,27 @@ export class ServiceOpenvpnServerComponent {
           tooltip: helptext.server.topology.tooltip,
           options: helptext.server.topology.enum
         },
-
+        {
+          type : 'input',
+          name : 'additional_parameters',
+          placeholder : helptext.additional_parameters.placeholder,
+          tooltip: helptext.additional_parameters.tooltip,
+        }
       ]
     }
   ]
+
+  public custActions: Array<any> = [
+    {
+      id : 'renew_key',
+      name : 'Renew Static Key',
+      function : () => {
+        this.services.renewStaticKey('whatevs').subscribe((res) => {
+          console.log(res);
+        })
+      }
+    }
+  ];
 
   constructor(protected services: ServicesService) { }
 
@@ -135,14 +165,14 @@ export class ServiceOpenvpnServerComponent {
       const config = this.fieldConfig.find(c => c.name === 'authentication_algorithm');
       for (let item in res) {
         config.options.push(
-          {label : item, value : res[item]});
+          {label : `${item} (${res[item]})`, value : item});
       };
     });
     this.services.getOpenServerCipherChoices().subscribe((res) => {
       const config = this.fieldConfig.find(c => c.name === 'cipher');
       for (let item in res) {
         config.options.push(
-          {label : item, value : res[item]});
+          {label : `${item} ${res[item]}`, value : item});
       };
     });
     this.services.getCerts().subscribe((res) => {
@@ -157,6 +187,10 @@ export class ServiceOpenvpnServerComponent {
         config.options.push({label: item.name, value: item.id})
       })
     });
+  }
+
+  beforeSubmit(data) {
+    console.log(data)
   }
 
 }

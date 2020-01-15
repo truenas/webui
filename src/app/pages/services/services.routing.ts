@@ -128,12 +128,12 @@ export const routes: Routes = [
     component : ServiceS3Component,
   },
   {
-    data: { title: 'OpenVPN', breadcrumb: 'OpenVPN'},
+    data: { title: 'OpenVPN', breadcrumb: 'OpenVPN Client'},
     path : 'openvpn_client',
     component : ServiceOpenvpnClientComponent,
   },
   {
-    data: { title: 'OpenVPN', breadcrumb: 'OpenVPN'},
+    data: { title: 'OpenVPN', breadcrumb: 'OpenVPN Server'},
     path : 'openvpn_server',
     component : ServiceOpenvpnServerComponent,
   }
