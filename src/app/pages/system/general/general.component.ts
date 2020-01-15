@@ -13,6 +13,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../common/entity/utils';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-general',
@@ -26,6 +27,7 @@ export class GeneralComponent {
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
   public languageKey: string;
+  protected saveSubmitText = T('Save');
 
   public fieldSets: FieldSet[] = [
     {

@@ -4,10 +4,11 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { DialogService, RestService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { EntityUtils } from '../../common/entity/utils';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-system-reporting',
-  templateUrl: 'reporting.component.html',
+  template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: ['reporting.component.css'],
 })
 export class ReportingComponent {
@@ -17,6 +18,7 @@ export class ReportingComponent {
   public isCpuCheckboxChecked: boolean;
   public graphPoints: any;
   public graphAge: any;
+  protected saveSubmitText = T('Save');
 
   custActions: any[] = [
     {

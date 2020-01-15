@@ -22,6 +22,8 @@ export class EmailComponent implements OnDestroy {
   public entityEdit: any;
   public rootEmail: string;
   customSubmit = this.saveConfigSubmit;
+  protected saveSubmitText = T('Save');
+
   public custActions: Array < any > = [{
     id: 'send_mail',
     name: T('Send Test Mail'),

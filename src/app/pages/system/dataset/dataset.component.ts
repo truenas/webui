@@ -23,6 +23,7 @@ export class DatasetComponent {
 
   public formGroup: FormGroup;
   public entityForm: any;
+  protected saveSubmitText = T('Save');
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
