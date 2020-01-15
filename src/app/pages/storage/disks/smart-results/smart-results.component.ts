@@ -9,7 +9,7 @@ import { T } from '../../../../translate-marker';
 })
 export class SmartResultsComponent {
 
-    public title = T("S.M.A.R.T Test Results");
+    public title;
     protected queryCall = "smart.test.results";
     protected queryCallOption = [];
 
@@ -32,6 +32,7 @@ export class SmartResultsComponent {
     preInit(entityForm: any) {
         this.aroute.params.subscribe(params => {
             this.disk = params['pk'];
+            this.title = T(`S.M.A.R.T Test Results of ${this.disk}`);
             this.queryCallOption = [[["disk", "=", this.disk]], { "get": true }];
         });
     }
