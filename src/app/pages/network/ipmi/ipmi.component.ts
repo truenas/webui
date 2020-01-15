@@ -158,6 +158,7 @@ export class IPMIComponent {
       name:'divider',
       divider:true
   }];
+  protected saveSubmitText = T('Save');
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService,

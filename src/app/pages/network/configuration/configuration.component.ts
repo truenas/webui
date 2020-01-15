@@ -7,6 +7,7 @@ import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../helptext/network/configuration/configuration';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-networkconfiguration',
@@ -21,9 +22,10 @@ export class ConfigurationComponent {
   protected queryCall: string = 'network.configuration.config';
   protected updateCall: string = 'network.configuration.update';
   public isEntity = false;
+  protected saveSubmitText = T('Save');
+
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
-  
     {
       name: helptext.hostname_and_domain,
       width: "100%",

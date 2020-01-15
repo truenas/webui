@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { TaskService } from '../../../services/';
 import helptext from '../../../helptext/task-calendar/resilver/resilver';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'resilver-priority',
@@ -16,6 +17,7 @@ export class ResilverComponent {
 
   protected queryCall = 'pool.resilver.config';
   protected editCall = 'pool.resilver.update';
+  protected saveSubmitText = T('Save');
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
