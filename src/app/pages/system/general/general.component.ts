@@ -501,11 +501,11 @@ export class GeneralComponent {
 
     const dialogRef = parent.mdDialog.open(EntityJobComponent, 
       {data: {"title":helptext.config_upload.title,"CloseOnClickOutside":false}});
-    dialogRef.componentInstance.setDescription(helptext.config_upload.message);
-    formData.append('data', JSON.stringify({
-      "method": "config.upload",
-      "params": []
-    }));
+        dialogRef.componentInstance.setDescription(helptext.config_upload.message);
+        formData.append('data', JSON.stringify({
+          "method": "config.upload",
+          "params": []
+        }));
     formData.append('file', parent.subs.file);
     dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.subscribe(res=>{
