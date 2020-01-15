@@ -206,9 +206,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.resourceName = this.resourceName + this.pk + '/';
           }      
         } else {
-          if (this.conf.addCall) {
+          if (this.conf.addCall) { console.log('add')
             this.submitFunction = this.addCall;
-          } else {
+          } else { console.log('here')
             this.submitFunction = this.addSubmit;
           }
           this.isNew = true;

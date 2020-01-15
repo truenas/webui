@@ -14,7 +14,6 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 
 export class ServiceOpenvpnServerComponent {
   protected queryCall = 'openvpn.server.config';
-  protected editCall = 'openvpn.server.update';
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [];
@@ -34,14 +33,16 @@ export class ServiceOpenvpnServerComponent {
           name : 'server_certificate',
           placeholder : helptext.server.server_certificate.placeholder,
           tooltip: helptext.server.server_certificate.tooltip,
-          options: [{label: '---', value: null}]
+          options: [],
+          required: true
         },
         {
           type : 'select',
           name : 'root_ca',
           placeholder : helptext.server.root_ca.placeholder,
           tooltip: helptext.server.root_ca.tooltip,
-          options: [{label: '---', value: null}]
+          options: [],
+          required: true
         },
         {
           type : 'input',
@@ -124,6 +125,7 @@ export class ServiceOpenvpnServerComponent {
           name : 'server',
           placeholder : helptext.server.server.placeholder,
           tooltip: helptext.server.server.tooltip,
+          required: true
         },
         {
           type : 'select',
@@ -161,6 +163,8 @@ export class ServiceOpenvpnServerComponent {
   }
 
   afterInit(entityEdit: any) {
+    entityEdit.submitFunction = body => this.services.updateOpenVPN('openvpn.server.update', body); 
+
     this.services.getOpenVPNServerAuthAlgorithmChoices().subscribe((res) => {
       const config = this.fieldConfig.find(c => c.name === 'authentication_algorithm');
       for (let item in res) {

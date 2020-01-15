@@ -43,6 +43,9 @@ export class ServicesService {
   renewStaticKey(server: string) {
     return this.ws.call('openvpn.server.renew_static_key', [server]);
   }
+  updateOpenVPN(call, body) {
+    return this.ws.call(call, [body]);
+  }
  
   // -- end of OpenVPN Service
 }
