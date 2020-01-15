@@ -35,8 +35,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-" addresses. When this has been chosen, additional addresses cannot be "
-"selected."
+" indirizzi. Se selezionato non possono essere aggiunti altri indirizzi "
+"selezionato."
 msgstr ""
 
 msgid " e "
@@ -64,8 +64,8 @@ msgid " è richiesto."
 msgstr ""
 
 msgid ""
-" is the minimum recommended record size. Choosing a smaller size can reduce "
-"system performance."
+" è la dimensione minima consigliata. La scelta di una dimensione inferiore può ridurre "
+"le prestazioni di sistema."
 msgstr ""
 
 msgid ""
@@ -98,7 +98,7 @@ msgid ""
 "passphrase for it."
 msgstr ""
 
-msgid "'. Tutti i dati su quel pool sono stati distrutti."
+msgid "'. Tutti i dati sul pool sono stati distrutti."
 msgstr ""
 
 msgid "(Nessuna descruzione)"
@@ -113,7 +113,7 @@ msgstr ""
 msgid ", new vdev is "
 msgstr ""
 
-msgid ". Tutti i dati su quel pool sono stati distrutti."
+msgid ". Tutti i dati sul pool sono stati distrutti."
 msgstr ""
 
 msgid ". Ne è richiesto almeno uno."
