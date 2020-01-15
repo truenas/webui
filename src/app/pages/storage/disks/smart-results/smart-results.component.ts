@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
 
@@ -28,11 +29,15 @@ export class SmartResultsComponent {
     protected noActions = true;
 
     protected disk;
-    constructor(private aroute: ActivatedRoute) { }
+    constructor(private aroute: ActivatedRoute, protected translate: TranslateService,) { }
     preInit(entityForm: any) {
         this.aroute.params.subscribe(params => {
             this.disk = params['pk'];
-            this.title = T(`S.M.A.R.T Test Results of ${this.disk}`);
+            this.translate.get(T('S.M.A.R.T Test Results of ')).subscribe(
+                (res) => {
+                    this.title = res + this.disk;
+                }
+            );
             this.queryCallOption = [[["disk", "=", this.disk]], { "get": true }];
         });
     }
