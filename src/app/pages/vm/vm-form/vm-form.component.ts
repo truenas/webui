@@ -11,7 +11,6 @@ import helptext from './../../../helptext/vm/vm-wizard/vm-wizard';
 import globalHelptext from './../../../helptext/global-helptext';
 import {WebSocketService, StorageService, VmService, ValidationService} from '../../../services/';
 import { Validators } from '@angular/forms';
-import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector : 'app-vm',
