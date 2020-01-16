@@ -87,9 +87,6 @@ export class ReplicationFormComponent {
                 }, {
                     label: 'LOCAL',
                     value: 'LOCAL',
-                }, {
-                    label: 'LEGACY',
-                    value: 'LEGACY',
                 }
             ],
             value: 'SSH',
@@ -298,10 +295,7 @@ export class ReplicationFormComponent {
                 when: [{
                     name: 'recursive',
                     value: false,
-                }, {
-                    name: 'transport',
-                    value: 'LEGACY',
-                }, {
+                },{
                     name: 'replicate',
                     value: true,
                 }]
@@ -314,11 +308,7 @@ export class ReplicationFormComponent {
             value: true,
             relation: [{
                 action: 'HIDE',
-                connective: 'OR',
                 when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }, {
                     name: 'replicate',
                     value: true,
                 }]
@@ -337,13 +327,9 @@ export class ReplicationFormComponent {
             options: [],
             relation: [{
                 action: 'HIDE',
-                connective: 'OR',
                 when: [{
                     name: 'direction',
                     value: 'PULL',
-                }, {
-                    name: 'transport',
-                    value: 'LEGACY',
                 }]
             }],
         },
@@ -354,13 +340,9 @@ export class ReplicationFormComponent {
             tooltip: helptext.naming_schema_tooltip,
             relation: [{
                 action: 'HIDE',
-                connective: 'OR',
                 when: [{
                     name: 'direction',
                     value: 'PUSH',
-                }, {
-                    name: 'transport',
-                    value: 'LEGACY',
                 }]
             }],
         },
@@ -371,13 +353,9 @@ export class ReplicationFormComponent {
             tooltip: helptext.also_include_naming_schema_tooltip,
             relation: [{
                 action: 'HIDE',
-                connective: 'OR',
                 when: [{
                     name: 'direction',
                     value: 'PULL',
-                }, {
-                    name: 'transport',
-                    value: 'LEGACY',
                 }]
             }],
             blurStatus: true,
@@ -390,13 +368,6 @@ export class ReplicationFormComponent {
             placeholder: helptext.auto_placeholder,
             tooltip: helptext.auto_tooltip,
             value: true,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'checkbox',
             name: 'schedule',
@@ -405,11 +376,7 @@ export class ReplicationFormComponent {
             value: null,
             relation: [{
                 action: 'HIDE',
-                connective: 'OR',
                 when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }, {
                     name: 'auto',
                     value: false,
                 }]
@@ -459,13 +426,6 @@ export class ReplicationFormComponent {
             name: 'restrict_schedule',
             placeholder: helptext.restrict_schedule_placeholder,
             tooltip: helptext.restrict_schedule_tooltip,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'scheduler',
             name: 'restrict_schedule_picker',
@@ -520,9 +480,6 @@ export class ReplicationFormComponent {
                 }, {
                     name: 'schedule',
                     value: null,
-                }, {
-                    name: 'transport',
-                    value: 'LEGACY',
                 }]
             }],
         }, {
@@ -530,25 +487,11 @@ export class ReplicationFormComponent {
             name: 'allow_from_scratch',
             placeholder: helptext.allow_from_scratch_placeholder,
             tooltip: helptext.allow_from_scratch_tooltip,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'checkbox',
             name: 'hold_pending_snapshots',
             placeholder: helptext.hold_pending_snapshots_placeholder,
             tooltip: helptext.hold_pending_snapshots_tooltip,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'select',
             name: 'retention_policy',
@@ -626,13 +569,9 @@ export class ReplicationFormComponent {
             value: 'DISABLED',
             relation: [{
                 action: 'SHOW',
-                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'SSH',
-                }, {
-                    name: 'transport',
-                    value: 'LEGACY',
                 }]
             }],
         }, {
@@ -643,13 +582,9 @@ export class ReplicationFormComponent {
             hasErrors: false,
             relation: [{
                 action: 'SHOW',
-                connective: 'OR',
                 when: [{
                     name: 'transport',
                     value: 'SSH',
-                }, {
-                    name: 'transport',
-                    value: 'LEGACY',
                 }]
             }],
             blurStatus : true,
@@ -661,26 +596,12 @@ export class ReplicationFormComponent {
             name: 'dedup',
             placeholder: helptext.dedup_placeholder,
             tooltip: helptext.dedup_tooltip,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'checkbox',
             name: 'large_block',
             placeholder: helptext.large_block_placeholder,
             tooltip: helptext.large_block_tooltip,
             value: true,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         },
         // {
         //     type: 'checkbox',
@@ -688,13 +609,6 @@ export class ReplicationFormComponent {
         //     placeholder: helptext.embed_placeholder,
         //     tooltip: helptext.embed_tooltip,
         //     value: true,
-        //     relation: [{
-        //         action: 'HIDE',
-        //         when: [{
-        //             name: 'transport',
-        //             value: 'LEGACY',
-        //         }]
-        //     }],
         // },
         {
             type: 'checkbox',
@@ -702,13 +616,6 @@ export class ReplicationFormComponent {
             placeholder: helptext.compressed_placeholder,
             tooltip: helptext.compressed_tooltip,
             value: true,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'input',
             inputType: 'number',
@@ -716,13 +623,6 @@ export class ReplicationFormComponent {
             placeholder: helptext.retries_placeholder,
             tooltip: helptext.retries_tooltip,
             value: 5,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'select',
             name: 'logging_level',
@@ -748,13 +648,6 @@ export class ReplicationFormComponent {
                 }
             ],
             value: 'DEFAULT',
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
         }, {
             type: 'checkbox',
             name: 'enabled',
@@ -877,15 +770,8 @@ export class ReplicationFormComponent {
                     this.form_message.content = '';
                 }
 
-                if (res !== 'LEGACY' && retentionPolicyField.options !== this.retentionPolicyChoice) {
+                if (retentionPolicyField.options !== this.retentionPolicyChoice) {
                     retentionPolicyField.options = this.retentionPolicyChoice;
-                } else if (res === 'LEGACY') {
-                    const options = [...this.retentionPolicyChoice];
-                    options.splice(1, 1);
-                    retentionPolicyField.options = options;
-                    if (entityForm.formGroup.controls['retention_policy'].value === 'CUSTOM') {
-                        entityForm.formGroup.controls['retention_policy'].setValue('NONE');
-                    }
                 }
 
                 if (res === 'LOCAL') {
@@ -898,10 +784,8 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
             (res) => {
-                if (entityForm.formGroup.controls['transport'].value !== 'LEGACY') {
-                    const toDisable = (res && res.length === 0) ? false : true;
-                    entityForm.setDisabled('schedule', toDisable, toDisable);
-                }
+                const toDisable = (res && res.length === 0) ? false : true;
+                entityForm.setDisabled('schedule', toDisable, toDisable);
             }
         )
 
@@ -1062,21 +946,6 @@ export class ReplicationFormComponent {
             delete data['logging_level'];
         }
 
-        if (data["transport"] === "LEGACY") {
-            data["auto"] = true;
-            data["allow_from_scratch"] = true;
-            data["exclude"] = [];
-            data["periodic_snapshot_tasks"] = [];
-            data["naming_schema"] = [];
-            data["also_include_naming_schema"] = [];
-            data["only_matching_schedule"] = false;
-            data["dedup"] = false;
-            data["large_block"] = false;
-            data["embed"] = false;
-            data["compressed"] = false;
-            data["retries"] = 1;
-            data["properties"] = data["retention_policy"] === 'SOURCE' ? true : false;
-        }
         // for edit replication task
         if (!this.entityForm.isNew) {
             if (data["transport"] === "LOCAL") {
