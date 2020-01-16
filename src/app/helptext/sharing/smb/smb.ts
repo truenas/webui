@@ -22,7 +22,7 @@ export const helptext_sharing_smb = {
 
     placeholder_home: T('Use as home share'),
     tooltip_home: T('Set to allow the share to host user home \
- directories. Each user is given a personal home direcotry when \
+ directories. Each user is given a personal home directory when \
  connecting to the share which is not accessible by other users. This \
  allows for a personal, dynamic share. Only one share can be used \
  as the home share.'),
