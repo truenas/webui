@@ -26,7 +26,7 @@ export class InitiatorFormComponent implements OnInit {
   protected customFilter: Array<any> = [[["id", "="]]];
   public route_success: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: any;
-  protected saveSubmitText = T('Submit');
+  public saveSubmitText = T('Submit');
 
   public fieldConfig: FieldConfig[] = [
     {
