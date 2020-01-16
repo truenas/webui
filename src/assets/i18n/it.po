@@ -104,7 +104,7 @@ msgstr ""
 msgid "(Nessuna descruzione)"
 msgstr ""
 
-msgid "(Remove pool from database)"
+msgid "(Rimuovere pool dal database)"
 msgstr ""
 
 msgid "*allow_sysvipc"
