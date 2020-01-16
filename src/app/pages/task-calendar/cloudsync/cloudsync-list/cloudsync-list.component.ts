@@ -139,6 +139,29 @@ export class CloudsyncListComponent implements InputTableConf {
       },
     }, {
       actionName: parentrow.description,
+      id: 'dryrun',
+      label: T('Dry Run'),
+      icon: 'sync',
+      onClick: (row) => {
+        console.log('dry run');
+        this.dialog.confirm(T("Dry Run Now"), T("Dru run this cloud sync now?"), true).subscribe((dialog_res) => {
+          if (dialog_res) {
+            this.ws.call('cloudsync.sync', [row.id, {"dry_run": true}]).subscribe(
+              (res) => {
+                this.dialog.Info(T('Task Started'), T('Cloud sync <i>') + row.description + T('</i> has started.'), '500px', 'info', true);
+                this.job.getJobStatus(res).subscribe((task) => {
+                  row.state = task.state;
+                  row.job = task;
+                });
+              },
+              (err) => {
+                new EntityUtils().handleWSError(this.entityList, err);
+              })
+          }
+        });
+      }
+    }, {
+      actionName: parentrow.description,
       id: 'restore',
       label: T('Restore'),
       icon: 'restore',
