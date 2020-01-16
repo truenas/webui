@@ -745,35 +745,41 @@ export class VolumesListTableConfig implements InputTableConf {
             name: T('Upgrade Pool'),
             label: T("Upgrade Pool"),
             onClick: (row1) => {
-              this.dialogService
-                .confirm(
-                  T("Upgrade Pool"),
-                  helptext.upgradePoolDialog_warning + row1.name
-                )
-                .subscribe(confirmResult => {
-                  if (confirmResult === true) {
-                    this.loader.open();
-                    this.ws.call("pool.upgrade", [rowData.id]).subscribe(
-                      res => {
-                        this.dialogService
-                          .Info(
-                            T("Upgraded"),
-                            T("Successfully Upgraded ") + row1.name
-                          )
-                          .subscribe(infoResult => {
-                            this.parentVolumesListComponent.repaintMe();
+              this.translate.get(helptext.upgradePoolDialog_warning).subscribe(warning => {
+                this.dialogService
+                  .confirm(
+                    T("Upgrade Pool"),
+                      warning + row1.name
+                  )
+                  .subscribe(confirmResult => {
+                    if (confirmResult === true) {
+                      this.loader.open();
+                      this.ws.call("pool.upgrade", [rowData.id]).subscribe(
+                        res => {
+                          this.translate.get(T("Successfully Upgraded ")).subscribe(success_upgrade => {
+                            this.dialogService
+                              .Info(
+                                T("Upgraded"),
+                                  success_upgrade + row1.name
+                              )
+                              .subscribe(infoResult => {
+                                this.parentVolumesListComponent.repaintMe();
+                            });
                           });
-                      },
-                      res => {
-                        this.dialogService.errorReport(
-                          T("Error Upgrading Pool ") + row1.name,
-                          res.message,
-                          res.stack
-                        );
-                      },
-                      () => this.loader.close()
-                    );
-                  }
+                        },
+                        res => {
+                          this.translate.get(T("Error Upgrading Pool ")).subscribe(error_upgrade => {
+                            this.dialogService.errorReport(
+                              error_upgrade + row1.name,
+                              res.message,
+                              res.stack
+                            );
+                          });
+                        },
+                        () => this.loader.close()
+                      );
+                    }
+                  });
                 });
             }
           });
