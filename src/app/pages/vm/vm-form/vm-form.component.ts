@@ -114,15 +114,17 @@ export class VmFormComponent {
               protected vmService: VmService, protected route: ActivatedRoute
               ) {}
 
-  afterInit(entityForm: any) {
+  preInit(entityForm: any) {
     this.entityForm = entityForm;
     this.route.params.subscribe(params => {
       if (params['pk']) {
-        let opt = params.pk ? [{'id':params.pk}] : [];
+        let opt = params.pk ? ['id', "=", parseInt(params.pk, 10)] : [];
         this.queryCallOption = [opt]
         }
       })
+  }
 
+  afterInit(entityForm: any) {
     this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
     this.vmService.getBootloaderOptions().forEach((item) => {
       this.bootloader.options.push({label : item[1], value : item[0]})
