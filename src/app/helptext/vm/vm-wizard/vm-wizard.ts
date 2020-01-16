@@ -1,7 +1,6 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
-import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 import globalHelptext from './../../../helptext/global-helptext';
 
 export default {

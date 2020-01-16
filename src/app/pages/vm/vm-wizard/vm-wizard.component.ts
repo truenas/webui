@@ -735,13 +735,13 @@ async customSubmit(value) {
     if ( value.iso_path && value.iso_path !== undefined) {
       vm_payload["devices"] = [
         {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, 'physical_sectorsize': null, 'logical_sectorsize': null}},
         {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
       ]
     } else {
       vm_payload["devices"] = [
         {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, 'physical_sectorsize': null, 'logical_sectorsize': null}},
       ]
     }
     
@@ -749,7 +749,7 @@ async customSubmit(value) {
       vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
             "wait": value.wait,
-            "vnc_port": String(this.getRndInteger(5553,6553)),
+            "vnc_port": String(this.getRndInteger(5900,65535)),
             "vnc_resolution": "1024x768",
             "vnc_bind": value.vnc_bind,
             "vnc_password": "",

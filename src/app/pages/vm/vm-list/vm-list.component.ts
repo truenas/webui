@@ -33,6 +33,8 @@ export class VMListComponent {
         { name: T('State'), prop: 'state', always_display: true, toggle: true },
         { name: T('Autostart'), prop: 'autostart', selectable: true },
         { name: T("Virtual CPUs"), prop: 'vcpus', hidden: true },
+        { name: T("Cores"), prop: 'cores', hidden: true },
+        { name: T("Threads"), prop: 'threads', hidden: true },
         { name: T("Memory Size"), prop: 'memory', hidden: true },
         { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
         { name: T('System Clock'), prop: 'time', hidden: true },
