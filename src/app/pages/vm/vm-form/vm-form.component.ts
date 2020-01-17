@@ -178,7 +178,7 @@ export class VmFormComponent {
   
           if (errors) {
             config.hasErrors = true;
-            config.warnings = T(`The product of vCPUs, cores and threads must not exceed 16.`);
+            config.warnings = T(`The product of vCPUs, cores, and threads must not exceed 16.`);
           } else {
             config.hasErrors = false;
             config.warnings = '';
