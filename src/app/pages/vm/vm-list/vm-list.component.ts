@@ -264,9 +264,10 @@ export class VMListComponent {
                         {
                             type: 'checkbox',
                             name: 'force',
-                            placeholder: T('Force?'),
+                            placeholder: T('Force delete?'),
                             value: false,
-                            tooltip: T('Some explanation here would be excellent.')
+                            tooltip: T('When selected, the system will attempt to delete this Virtual Machine even if \
+ the VM\'s status cannot be determined (for example if the VM has crashed or is unresponsive).')
                         }
                     ],
                     saveButtonText: T('Delete'),
@@ -279,13 +280,10 @@ export class VMListComponent {
                                 force: entityDialog.formValue.force
                             }
                         ];
-                        // won't work until v 12
                         parent.doRowAction(delete_row, parent.wsDelete, params, true);
                     }                  
-
                 }
                 this.dialogService.dialogForm(conf);
-                // this.entityList.doDelete(delete_row); old method
             }
         },
         {
