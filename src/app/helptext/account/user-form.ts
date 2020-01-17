@@ -116,5 +116,6 @@ user_form_microsoft_tooltip : T('Set to allow additional username authentication
  methods when the user is connecting from a Windows 8 or newer operating system.'),
 user_form_blur_event2_warning: T('Usernames can be up to 16 characters long.\
  When using NIS or other legacy software with limited username lengths,\
- keep usernames to eight characters or less for compatibility.')
+ keep usernames to eight characters or less for compatibility.'),
+user_form_download_key: T('Download SSH Public Key')
 }
