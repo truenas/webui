@@ -417,10 +417,10 @@ export class CloudsyncFormComponent {
   public custActions: Array<any> = [
     {
       id : 'dry_run',
-      name : 'Dry Run',
+      name : helptext.action_button_dry_run,
       function : () => {
         const payload = this.submitDataHandler(this.formGroup.value);
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": ("Dry Run Cloud Sync Task") }, disableClose: true});
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": helptext.job_dialog_title_dry_run }, disableClose: true});
         dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload]);
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {

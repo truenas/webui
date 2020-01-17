@@ -140,7 +140,7 @@ export class CloudsyncListComponent implements InputTableConf {
     }, {
       actionName: parentrow.description,
       id: 'dryrun',
-      label: T('Dry Run'),
+      label: helptext.action_button_dry_run,
       icon: 'sync',
       onClick: (row) => {
         console.log('dry run');

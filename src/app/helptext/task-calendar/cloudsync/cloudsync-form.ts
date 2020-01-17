@@ -160,6 +160,9 @@ dry_run_dialog: T('Start a dry run test of this cloud sync task? The \
  system will connect to the cloud service provider and simulate \
  transferring a file. No data will be sent or received.'),
 
+action_button_dry_run: T('Dry Run'),
+job_dialog_title_dry_run: T('Dry Run Cloud Sync Task'),
+
 resetTransferModeDialog: {
     title: T('Transfer Mode Reset'),
     content: T('Transfer Mode has been reset to <i>COPY</i>.'),
