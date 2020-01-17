@@ -78,7 +78,7 @@ cores: {
 threads: {
   placeholder: T('Threads'),
   tooltip: T('Specify the number of threads per core. \
- The product of vCPUs, cores and threads must not exceed 16.')
+ The product of vCPUs, cores, and threads must not exceed 16.')
 },
 
 memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
