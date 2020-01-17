@@ -10,7 +10,8 @@
       <app-dual-listbox 
         [items]="members" 
         [(selectedItems)]="selectedMembers" 
-        minHeight="300px" 
+        minHeight="65vh"
+        maxHeight="65vh" 
         title1="{{'All users' | translate}}"
         title2="{{'Group members' | translate}}">
         <ng-template #templateItem let-item="data">

@@ -491,6 +491,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   //Entity Module Overrides
 
+  app-members .form-card.mat-card,
   entity-task .form-card.mat-card,
   device-edit .form-card.mat-card,
   entity-form .form-card.mat-card{
@@ -707,11 +708,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Give vdev arrow buttons theme colors
-  .vdev-action-btn {
+  .vdev-action-btn, .dual-list-action-btn {
     @include variable(background, --bg1, $bg1);
   }
 
-  .vdev-action-btn .arrow {
+  .vdev-action-btn .arrow, .dual-list-action-btn .arrow {
     @include variable(color, --primary, $primary);
   }
 

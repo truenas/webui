@@ -14,7 +14,7 @@
       (mousedown)="availableItems.mouseDown(item, $event)"
       (mouseup)="availableItems.mouseUp(item, $event)">
       <mat-list *ngIf="templateItem;else noTemplateItem" >
-        <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item}"></ng-container>
+        <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item}" ngclass="yo"></ng-container>
       </mat-list>
       <ng-template #noTemplateItem>
         {{item.name}}
@@ -22,13 +22,13 @@
     </div>
   </div>
   <div class="container-buttons">
-    <div class="" (click)="select()">
-      <div *ngIf="templateArrowRight;else arrowRigth">
+    <div class="" (click)="select()" [style.margin-bottom.px]="5">
+      <div *ngIf="templateArrowRight;else arrowRight">
         <ng-container [ngTemplateOutlet]="templateArrowRight">
         </ng-container>
       </div>
-      <ng-template #arrowRigth>
-        <button mat-icon-button> <mat-icon>arrow_forward</mat-icon> </button>
+      <ng-template #arrowRight>
+        <button mat-flat-button class="dual-list-action-btn"> <mat-icon class="arrow">arrow_forward</mat-icon> </button>
       </ng-template>
     </div>
     <div class="" (click)="return()">
@@ -37,10 +37,15 @@
         </ng-container>
       </div>
       <ng-template #arrowLeft>
-        <button mat-icon-button> <mat-icon>arrow_back</mat-icon> </button>
+        <button mat-flat-button class="dual-list-action-btn"> <mat-icon class="arrow">arrow_back</mat-icon> </button>
       </ng-template>
     </div>
   </div>
+
+  <div class="vdev-actions" id="vdev__action-buttons">
+    <!-- <button id="vdev__add-button" mat-flat-button name="vdev_add-button" class="vdev-action-btn" (click)="addSelectedDisks()" [disabled]="!manager.selected.length"><mat-icon class="arrow">arrow_forward</mat-icon></button>
+    <button id="vdev__remove-button" mat-flat-button name="vdev_remove-button" class="vdev-action-btn" (click)="removeSelectedDisks()" [disabled]="!selected.length"><mat-icon class="arrow">arrow_back</mat-icon></button> -->
+</div>
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
     cdkDropList
     #memberList="cdkDropList"
