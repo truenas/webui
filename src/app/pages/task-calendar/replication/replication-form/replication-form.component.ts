@@ -994,13 +994,13 @@ export class ReplicationFormComponent {
                     data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
                 }
             }
-            data['source_datasets'] = Array.isArray(data['source_datasets_PUSH']) ? _.cloneDeep(data['source_datasets_PUSH']) : _.cloneDeep(data['source_datasets_PUSH']).split(' ');
+            data['source_datasets'] = _.filter(Array.isArray(data['source_datasets_PUSH']) ? _.cloneDeep(data['source_datasets_PUSH']) : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim));
             data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? _.cloneDeep(data['target_dataset_PUSH']) : _.cloneDeep(data['target_dataset_PUSH']).toString();
 
             delete data['source_datasets_PUSH'];
             delete data['target_dataset_PUSH'];
         } else {
-            data['source_datasets'] = Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(' ');
+            data['source_datasets'] = _.filter(Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim));
             data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string' ? _.cloneDeep(data['target_dataset_PULL']) : _.cloneDeep(data['target_dataset_PULL']).toString();
             if (_.startsWith(data['target_dataset'], '/mnt/')) {
                 data['target_dataset']  =  data['target_dataset'] .substring(5);
