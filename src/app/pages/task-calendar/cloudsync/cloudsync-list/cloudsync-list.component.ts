@@ -144,7 +144,7 @@ export class CloudsyncListComponent implements InputTableConf {
       icon: 'sync',
       onClick: (row) => {
         console.log('dry run');
-        this.dialog.confirm(T("Dry Run Now"), T("Dru run this cloud sync now?"), true).subscribe((dialog_res) => {
+        this.dialog.confirm(helptext.dry_run_title, helptext.dry_run_dialog, true).subscribe((dialog_res) => {
           if (dialog_res) {
             this.ws.call('cloudsync.sync', [row.id, {"dry_run": true}]).subscribe(
               (res) => {
