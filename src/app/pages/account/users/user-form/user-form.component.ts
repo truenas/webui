@@ -250,6 +250,19 @@ export class UserFormComponent {
     }
   ]
 
+  protected custActions = [
+    {
+      id: 'download_sshpubkey',
+      name: helptext.user_form_download_key,
+      function: () => {
+        const name = this.entityForm.formGroup.controls['username'].value;
+        const key = this.entityForm.formGroup.controls['sshpubkey'].value;
+        const filename = name + '_public_key_rsa';
+        const blob = new Blob([key], {type: 'text/plain'});
+        this.storageService.downloadBlob(blob, filename);
+      }
+    }
+  ]
 
 
 
