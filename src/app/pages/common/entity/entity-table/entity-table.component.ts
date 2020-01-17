@@ -343,7 +343,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     let rowNum = 6, n, addRows = 4;
     // if (this.title === 'Boot Environments') {
     //   n = 6;
-    // } else 
+    // } else
     if (this.title === 'Jails') {
       n = 4;
     } else if (this.title === 'Virtual Machines') {
@@ -981,7 +981,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // resets col view to the default set in the table's component
   resetColViewToDefaults() {
-    if (!(this.conf.columns.length === this.originalConfColumns.length && 
+    if (!(this.conf.columns.length === this.originalConfColumns.length &&
         this.conf.columns.length === this.allColumns.length)) {
       this.conf.columns = this.originalConfColumns;
       this.updateTableHeightAfterDetailToggle();
@@ -1061,7 +1061,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (colConfig.infoStates) {
       return _.indexOf(colConfig.infoStates, value) < 0;
     } else {
-      return value !== 'PENDING';
+      return value !== 'PENDING' && value !== 'LEGACY';
     }
   }
 
