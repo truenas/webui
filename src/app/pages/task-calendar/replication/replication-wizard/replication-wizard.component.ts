@@ -996,6 +996,10 @@ export class ReplicationWizardComponent {
     }
 
     async customSubmit(value) {
+        if (typeof(value.source_datasets) === 'string') {
+            value.source_datasets = value.source_datasets.replace(/\s/g, '').split(',');
+        }
+        console.log(value, value.source_datasets, typeof(value.source_datasets))
         this.loader.open();
         let toStop = false;
 
