@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 import { filter } from 'rxjs/operators';
 
 import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../common/entity/entity-form';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { WebSocketService, DialogService, CloudCredentialService, AppLoaderService} from '../../../../services/';
+import { WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService} from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -14,7 +16,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 @Component({
   selector: 'app-cloudsync-add',
   template: `<entity-form [conf]='this'></entity-form>`,
-  providers: [CloudCredentialService]
+  providers: [CloudCredentialService, JobService]
 })
 export class CloudsyncFormComponent {
 
@@ -412,13 +414,35 @@ export class CloudsyncFormComponent {
 
   protected providers: any;
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
+  public custActions: Array<any> = [
+    {
+      id : 'dry_run',
+      name : helptext.action_button_dry_run,
+      function : () => {
+        const payload = this.submitDataHandler(this.formGroup.value);
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": helptext.job_dialog_title_dry_run }, disableClose: true});
+        dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload]);
+        dialogRef.componentInstance.submit();
+        dialogRef.componentInstance.success.subscribe((res) => {
+          this.matDialog.closeAll();
+          this.job.showLogs(res.id);
+        });
+        dialogRef.componentInstance.failure.subscribe((err) => {
+          this.matDialog.closeAll()
+          new EntityUtils().handleWSError(this.entityForm, err);
+        });
+      }
+    }
+  ];
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
     protected dialog: DialogService,
+    protected matDialog: MatDialog,
     protected ws: WebSocketService,
-    protected cloudcredentialService: CloudCredentialService) {
+    protected cloudcredentialService: CloudCredentialService,
+    protected job: JobService) {
     this.cloudcredentialService.getProviders().subscribe((res) => {
       this.providers = res;
     });
@@ -558,6 +582,7 @@ export class CloudsyncFormComponent {
   }
 
   async afterInit(entityForm) {
+    this.entityForm = entityForm;
     this.formGroup = entityForm.formGroup;
 
     this.credentials = _.find(entityForm.fieldConfig, { 'name': 'credentials' });
@@ -757,7 +782,8 @@ export class CloudsyncFormComponent {
     return bwlimtArr;
   }
 
-  customSubmit(value) {
+  submitDataHandler(formValue) {
+    const value = _.cloneDeep(formValue);
     const attributes = {};
     const schedule = {};
 
@@ -792,13 +818,15 @@ export class CloudsyncFormComponent {
 
     value['attributes'] = attributes;
 
-    const spl = value.cloudsync_picker.split(" ");
-    delete value.cloudsync_picker;
-    schedule['minute'] = spl[0];
-    schedule['hour'] = spl[1];
-    schedule['dom'] = spl[2];
-    schedule['month'] = spl[3];
-    schedule['dow'] = spl[4];
+    if (value.cloudsync_picker) {
+      const spl = value.cloudsync_picker.split(" ");
+      delete value.cloudsync_picker;
+      schedule['minute'] = spl[0];
+      schedule['hour'] = spl[1];
+      schedule['dom'] = spl[2];
+      schedule['month'] = spl[3];
+      schedule['dow'] = spl[4];
+    }
 
     value['schedule'] = schedule;
 
@@ -824,7 +852,11 @@ export class CloudsyncFormComponent {
     if (value['direction'] == 'PULL') {
       value['snapshot'] = false;
     }
+    return value;
+  }
 
+  customSubmit(value) {
+    value = this.submitDataHandler(value);
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
@@ -847,5 +879,13 @@ export class CloudsyncFormComponent {
         }
       );
     }
+  }
+
+  isCustActionDisabled(id) {
+    return !this.entityForm.valid;
+  }
+
+  isCustActionVisible(id) {
+    return this.pk === undefined;
   }
 }
