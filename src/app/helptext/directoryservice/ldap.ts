@@ -2,6 +2,9 @@ import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+ldap_server_creds: T('Server Credentials'),
+ldap_advanced: T('Advanced Settings'),
+
 ldap_custactions_basic_id : 'basic_mode',
 ldap_custactions_basic_name : T('Basic Mode'),
 
@@ -65,11 +68,11 @@ ldap_ssl_name : 'ssl',
 ldap_ssl_placeholder : T('Encryption Mode'),
 ldap_ssl_tooltip: T('Options for encrypting the LDAP connection: \
  <ul> \
- <li><i>OFF:</i> Do not encrypt the LDAP connection.</li> \
- <li><i>ON:</i> <i>SSL</i> encrypts the LDAP connection and uses port \
+ <li><i>OFF:</i> do not encrypt the LDAP connection.</li> \
+ <li><i>ON:</i> encrypt the LDAP connection with <i>SSL</i> on port \
  <i>636</i>.</li> \
- <li><i>START_TLS:</i> <i>STARTTLS</i> encrypts the LDAP connection and \
- uses the default LDAP port <i>389</i>.</li> \
+ <li><i>START_TLS:</i> encrypt the LDAP connection with <i>STARTTLS</i> \
+ on the default LDAP port <i>389</i>.</li> \
  </ul>'),
 
 ldap_certificate_name : 'certificate',

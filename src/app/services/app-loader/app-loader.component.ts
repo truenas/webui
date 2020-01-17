@@ -3,9 +3,7 @@ import { MatDialog, MatDialogRef } from "@angular/material";
 import { ConsolePanelModalDialog } from "app/components/common/dialog/consolepanel/consolepanel-dialog.component";
 import { Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, take } from "rxjs/operators";
-import { RestService } from "../rest.service";
 import { WebSocketService } from "../ws.service";
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-app-loader",
@@ -19,19 +17,15 @@ export class AppLoaderComponent {
   consoleMsg: string;
   consoleMSgList: string[] = [];
 
-  isShowConsole$: Observable<boolean> = this._rest
-    .get("system/advanced", { limit: 0 })
-    .pipe(map(res => res.data["adv_consolemsg"]));
+  isShowConsole$: Observable<boolean> = this._ws.call('system.advanced.config', []).pipe(map(config => config.consolemsg));
 
   consoleDialog: MatDialogRef<ConsolePanelModalDialog>;
   private _consoleSubscription: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<AppLoaderComponent>,
-    private _rest: RestService,
     private _dialog: MatDialog,
     private _ws: WebSocketService,
-    private translate: TranslateService,
   ) {
     this.isShowConsole$
       .pipe(

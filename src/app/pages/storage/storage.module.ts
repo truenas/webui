@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FileSizeModule } from 'ngx-filesize';
+import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { EntityModule } from '../common/entity/entity.module';
 import { UserService } from '../../services/user.service';
@@ -35,6 +36,7 @@ import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
+import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { TreeTableModule } from 'primeng/treetable';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
@@ -49,7 +51,7 @@ import { JobService } from 'app/services';
     RouterModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
-    FileSizeModule
+    FileSizeModule, CommonDirectivesModule
   ],
   declarations : [
     VolumesListComponent,
@@ -79,7 +81,8 @@ import { JobService } from 'app/services';
     MultipathsComponent,
     DiskFormComponent,
     DiskWipeComponent,
-    DiskBulkEditComponent
+    DiskBulkEditComponent,
+    SmartResultsComponent
   ],
   entryComponents: [SnapshotDetailsComponent],
   providers : [UserService, StorageService, MessageService, JobService]

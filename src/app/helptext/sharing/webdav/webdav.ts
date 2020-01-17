@@ -35,5 +35,6 @@ export const helptext_sharing_webdav = {
  might make files inaccesible to their original owners. This operation \
  cannot be undone! If unset, ownership of files to be accessed through \
  WebDAV must be manually set to the <samp>webdav</samp> or \
- <samp>www</samp> user/group.')
+ <samp>www</samp> user/group.'),
+    fieldset_name: T('WebDAV Configuration')
 };

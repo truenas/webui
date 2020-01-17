@@ -3,9 +3,10 @@ import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
-import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
+import { WebSocketService, SystemGeneralService } from '../../../../services/';
 import { DialogService } from '../../../../services/dialog.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
@@ -28,7 +29,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   public isHA = false;
   public isUpdateRunning = false;
   public updateMethod: string = 'update.update';
-  public saveSubmitText ="Apply Update";
+  public saveSubmitText = T("Apply Update");
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'paragraph',
@@ -71,7 +72,6 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,

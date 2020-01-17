@@ -1,0 +1,14 @@
+Source: truenas-webui
+Section: web
+Priority: optional
+Maintainer: Kris Moore <kris@ixsystems.com>
+Build-Depends: debhelper (>=10), debhelper-compat (= 12), yarnpkg (>= 1.13.0), make (>= 4.2.1), python2.7 (>= 2.7.16)
+Standards-Version: 4.0.0
+
+Package: truenas-webui
+Architecture: all
+Depends: ${misc:Depends}
+Description: TrueNAS Angular UI
+ .
+ This package installs the TrueNAS Angular web-ui component,
+ it should be installed as part of the general TrueNAS suite of packages.

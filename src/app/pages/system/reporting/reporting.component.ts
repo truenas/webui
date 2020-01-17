@@ -1,22 +1,20 @@
 import { Component } from '@angular/core';
-import * as _ from 'lodash';
+import { helptext } from 'app/helptext/system/reporting';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { DialogService, RestService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService, DialogService } from '../../../services/';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { helptext } from 'app/helptext/system/reporting';
 
 @Component({
   selector: 'app-system-reporting',
   templateUrl: 'reporting.component.html',
   styleUrls: ['reporting.component.css'],
 })
-
 export class ReportingComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
   public entityForm: any;
-  public rrd_checkbox: any;
+  public isCpuCheckboxChecked: boolean;
   public graphPoints: any;
   public graphAge: any;
 
@@ -34,37 +32,44 @@ export class ReportingComponent {
     }
   ]
 
-  public fieldConfig: FieldConfig[] = [{
-    type: 'checkbox',
-    name: 'cpu_in_percentage',
-    placeholder: helptext.cpu_in_percentage_placeholder,
-    tooltip: helptext.cpu_in_percentage_tooltip,
-  },
-  {
-    type: 'input',
-    name: 'graphite',
-    placeholder: helptext.graphite_placeholder,
-    tooltip: helptext.graphite_tooltip
-  },
-  {
-    type: 'input',
-    name: 'graph_age',
-    inputType: 'number',
-    placeholder: helptext.graph_age_placeholder,
-    tooltip: helptext.graph_age_tooltip,
-    validation: helptext.graph_age_validation,
-    required: true
-  },
-  {
-    type: 'input',
-    name: 'graph_points',
-    inputType: 'number',
-    placeholder: helptext.graph_points_placeholder,
-    tooltip: helptext.graph_points_tooltip,
-    validation: helptext.graph_points_validation,
-    required: true
-  },
-];
+  public fieldSets = new FieldSets([
+    {
+      name: helptext.fieldset_general,
+      class: 'general',
+      label: true,
+      config: [
+        {
+          type: "checkbox",
+          name: "cpu_in_percentage",
+          placeholder: helptext.cpu_in_percentage_placeholder,
+          tooltip: helptext.cpu_in_percentage_tooltip
+        },
+        {
+          type: "input",
+          name: "graphite",
+          placeholder: helptext.graphite_placeholder,
+          tooltip: helptext.graphite_tooltip
+        },
+        {
+          type: "input",
+          name: "graph_age",
+          placeholder: helptext.graph_age_placeholder,
+          tooltip: helptext.graph_age_tooltip,
+          validation: helptext.graph_age_validation,
+          required: true
+        },
+        {
+          type: "input",
+          name: "graph_points",
+          placeholder: helptext.graph_points_placeholder,
+          tooltip: helptext.graph_points_tooltip,
+          validation: helptext.graph_points_validation,
+          required: true
+        }
+      ]
+    },
+    { name: 'divider', divider: true }
+  ]);
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
@@ -75,6 +80,7 @@ export class ReportingComponent {
   resourceTransformIncomingRestData(data) {
     this.graphPoints = data.graph_points;
     this.graphAge = data.graph_age;
+    this.isCpuCheckboxChecked = data.cpu_in_percentage;
     return data;
   }
 
@@ -83,7 +89,8 @@ export class ReportingComponent {
   }
   
   public customSubmit(body) {
-    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints) {
+    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints || 
+      body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
       this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false, 
         helptext.dialog.action).subscribe((res) => {
         if (res) {
@@ -100,6 +107,7 @@ export class ReportingComponent {
   doSubmit(body) {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
+    this.isCpuCheckboxChecked = body.cpu_in_percentage;
     this.load.open();
     return this.ws.call('reporting.update', [body]).subscribe((res) => {
       this.load.close();

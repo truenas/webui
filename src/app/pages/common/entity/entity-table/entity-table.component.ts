@@ -37,6 +37,7 @@ export interface InputTableConf {
   custActions?: any[];
   multiActions?:any[];
   multiActionsIconsOnly?:boolean;
+  noActions?: boolean;
   config?: any;
   confirmDeleteDialog?: any;
   checkbox_confirm?: any;
@@ -155,6 +156,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private interval: any;
   private excuteDeletion = false;
+  private needRefreshTable = false;
+
+  public hasActions = true;
 
   protected toDeleteRow: any;
   public hasDetails = () =>
@@ -163,7 +167,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
      this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
       : this.conf.detailRowHeight || 100;
-
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -184,6 +187,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
     this.setTableHeight();
+    this.hasActions = this.conf.noActions === true ? false : true;
 
     setTimeout(async() => {
       if (this.conf.prerequisite) {
@@ -377,7 +381,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getData() {
-
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -494,13 +497,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.setPaginationInfo();
       this.showDefaults = true;
     }
-    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion) && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
+      this.needRefreshTable = false;
+      this.updateTableHeightAfterDetailToggle();
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
     }
-
     return res;
 
   }
@@ -645,9 +649,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //generate delete msg
   getDeleteMessage(item) {
-    let deleteMsg = "Delete the selected item?";
+    let deleteMsg = T("Delete the selected item?");
     if (this.conf.config.deleteMsg) {
-      deleteMsg = "Delete " + this.conf.config.deleteMsg.title;
+      deleteMsg = T("Delete ") + this.conf.config.deleteMsg.title;
       let msg_content = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
       if (this.conf.config.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {

@@ -1,7 +1,5 @@
-
 import {mergeMap} from 'rxjs/operators';
 import {Component, OnInit} from '@angular/core';
-import {RestService} from "../../../../services/rest.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {WebSocketService} from "../../../../services/ws.service";
 import {AppLoaderService} from "../../../../services/app-loader/app-loader.service";
@@ -36,7 +34,6 @@ export class MembersComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((res: Params) => this.group.id = res.pk);
     this.getGroupDetails();
-    //this.getMembers();
   }
 
   getGroupDetails() {

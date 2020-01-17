@@ -19,6 +19,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
@@ -102,7 +103,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   public fieldSets: FieldSet[]
   public fieldConfig: FieldConfig[];
   public hasConf = true;
-  public saveSubmitText = "Save";
+  public saveSubmitText = T("Save");
   public saveSubmitStatus:string = ""; 
   public actionButtonsAlign = "center";
 
@@ -188,7 +189,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.fieldConfig = this.conf.fieldConfig;
     this.actionButtonsAlign = this.conf.actionButtonsAlign;
     this.fieldSetDisplay = this.conf.fieldSetDisplay;
-    this.fieldSets = this.conf.fieldSets;
+    if (this.conf.fieldSets) {
+      /* Temp patch to support both FieldSet approaches */
+      this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
+    }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.setControlChangeDetection();
 

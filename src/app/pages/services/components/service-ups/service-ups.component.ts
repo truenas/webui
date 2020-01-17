@@ -1,16 +1,14 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as _ from 'lodash';
-
-import { RestService, WebSocketService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-ups';
+import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector : 'ups-edit',
   template : `<entity-form [conf]="this"></entity-form>`,
 })
-
 export class ServiceUPSComponent {
   protected ups_driver: any;
   private ups_drivers_list: any;
@@ -18,174 +16,209 @@ export class ServiceUPSComponent {
   protected ups_port: any;
   protected entityForm: any;
 
-  protected resource_name: string = 'services/ups';
+  protected queryCall = 'ups.config';
   protected route_success: string[] = [ 'services' ];
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldSets: FieldSet[] = [
     {
-      type : 'select',
-      name : 'ups_mode',
-      placeholder : helptext.ups_mode_placeholder,
-      tooltip : helptext.ups_mode_tooltip,
-      options : helptext.ups_mode_options
+      name: helptext.ups_fieldset_general,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type : 'input',
+          name : 'identifier',
+          placeholder : helptext.ups_identifier_placeholder,
+          tooltip : helptext.ups_identifier_tooltip,
+          required: true,
+          validation : helptext.ups_identifier_validation
+        },
+        {
+          type : 'select',
+          name : 'mode',
+          placeholder : helptext.ups_mode_placeholder,
+          tooltip : helptext.ups_mode_tooltip,
+          options : helptext.ups_mode_options
+        },
+        {
+          type : 'input',
+          name : 'remotehost',
+          placeholder : helptext.ups_remotehost_placeholder,
+          tooltip : helptext.ups_remotehost_tooltip,
+          required: true,
+          isHidden: true,
+          validation : helptext.ups_remotehost_validation
+        },
+        {
+          type : 'input',
+          name : 'remoteport',
+          placeholder : helptext.ups_remoteport_placeholder,
+          tooltip : helptext.ups_remoteport_tooltip,
+          value : helptext.ups_remoteport_value,
+          required: true,
+          isHidden: true,
+          validation : helptext.ups_remoteport_validation
+        },
+        {
+          type : 'combobox',
+          name : 'driver',
+          placeholder : helptext.ups_driver_placeholder,
+          tooltip : helptext.ups_driver_tooltip,
+          required: true,
+          options: [],
+          validation : helptext.ups_driver_validation,
+          isHidden: false
+        },
+        {
+          type : 'combobox',
+          name : 'port',
+          placeholder : helptext.ups_port_placeholder,
+          options: [],
+          tooltip : helptext.ups_port_tooltip,
+          required: true,
+          validation : helptext.ups_port_validation,
+          isHidden: false
+        }
+      ]
     },
     {
-      type : 'input',
-      name : 'ups_identifier',
-      placeholder : helptext.ups_identifier_placeholder,
-      tooltip : helptext.ups_identifier_tooltip,
-      required: true,
-      validation : helptext.ups_identifier_validation
+      name: helptext.ups_fieldset_monitor,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type : 'input',
+          name : 'monuser',
+          placeholder : helptext.ups_monuser_placeholder,
+          tooltip : helptext.ups_monuser_tooltip,
+          required: true,
+          validation : helptext.ups_monuser_validation
+        },
+        {
+          type : 'input',
+          name : 'monpwd',
+          inputType: 'password',
+          togglePw: true,
+          placeholder : helptext.ups_monpwd_placeholder,
+          tooltip : helptext.ups_monpwd_tooltip,
+          validation: helptext.ups_monpwd_validation
+        },
+        {
+          type : 'textarea',
+          name : 'extrausers',
+          placeholder : helptext.ups_extrausers_placeholder,
+          tooltip : helptext.ups_extrausers_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : 'rmonitor',
+          placeholder : helptext.ups_rmonitor_placeholder,
+          tooltip : helptext.ups_rmonitor_tooltip,
+        }
+      ]
+    },
+    { name: 'divier', divider: true },
+    {
+      name: helptext.ups_fieldset_shutdown,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type : 'select',
+          name : 'shutdown',
+          placeholder : helptext.ups_shutdown_placeholder,
+          tooltip : helptext.ups_shutdown_tooltip,
+          options : helptext.ups_shutdown_options
+        },
+        {
+          type : 'input',
+          inputType: 'number',
+          name : 'shutdowntimer',
+          placeholder : helptext.ups_shutdowntimer_placeholder,
+          tooltip : helptext.ups_shutdowntimer_tooltip,
+        },
+        {
+          type : 'input',
+          name : 'shutdowncmd',
+          placeholder : helptext.ups_shutdowncmd_placeholder,
+          tooltip : helptext.ups_shutdowncmd_tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : 'powerdown',
+          placeholder : helptext.ups_powerdown_placeholder,
+          tooltip : helptext.ups_powerdown_tooltip
+        }
+      ]
     },
     {
-      type : 'input',
-      name : 'ups_remotehost',
-      placeholder : helptext.ups_remotehost_placeholder,
-      tooltip : helptext.ups_remotehost_tooltip,
-      required: true,
-      isHidden: true,
-      disabled: true,
-      validation : helptext.ups_remotehost_validation
+      name: helptext.ups_fieldset_email,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type : 'checkbox',
+          name : 'emailnotify',
+          placeholder : helptext.ups_emailnotify_placeholder,
+          tooltip : helptext.ups_emailnotify_tooltip,
+        },
+        {
+          type : 'input',
+          name : 'toemail',
+          placeholder : helptext.ups_toemail_placeholder,
+          tooltip : helptext.ups_toemail_tooltip,
+        },
+        {
+          type : 'input',
+          name : 'subject',
+          placeholder : helptext.ups_subject_placeholder,
+          tooltip : helptext.ups_subject_tooltip,
+        }
+      ]
     },
+    { name: 'divier', divider: true },
     {
-      type : 'input',
-      name : 'ups_remoteport',
-      placeholder : helptext.ups_remoteport_placeholder,
-      tooltip : helptext.ups_remoteport_tooltip,
-      value : helptext.ups_remoteport_value,
-      required: true,
-      isHidden: true,
-      disabled: true,
-      validation : helptext.ups_remoteport_validation
+      name: helptext.ups_fieldset_other,
+      label: true,
+      config: [
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'nocommwarntime',
+          placeholder: helptext.ups_nocommwarntime_placeholder,
+          tooltip: helptext.ups_nocommwarntime_tooltip,
+          value: `300`,
+        },
+        {
+          type : 'input',
+          inputType: 'number',
+          name : 'hostsync',
+          placeholder : helptext.ups_hostsync_placeholder,
+          tooltip : helptext.ups_hostsync_tooltip,
+          value: 15,
+        },
+        {
+          type : 'input',
+          name : 'description',
+          placeholder : helptext.ups_description_placeholder,
+          tooltip : helptext.ups_description_tooltip,
+        },
+        {
+          type : 'textarea',
+          name : 'options',
+          placeholder : helptext.ups_options_placeholder,
+          tooltip : helptext.ups_options_tooltip,
+          isHidden: false
+        },
+        {
+          type : 'textarea',
+          name : 'optionsupsd',
+          placeholder : helptext.ups_optionsupsd_placeholder,
+          tooltip : helptext.ups_optionsupsd_tooltip,
+        }
+      ]
     },
-    {
-      type : 'combobox',
-      name : 'ups_driver',
-      placeholder : helptext.ups_driver_placeholder,
-      tooltip : helptext.ups_driver_tooltip,
-      required: true,
-      options: [],
-      validation : helptext.ups_driver_validation,
-      isHidden: false
-    },
-    {
-      type : 'combobox',
-      name : 'ups_port',
-      placeholder : helptext.ups_port_placeholder,
-      options: [],
-      tooltip : helptext.ups_port_tooltip,
-      required: true,
-      validation : helptext.ups_port_validation,
-      isHidden: false
-    },
-    {
-      type : 'textarea',
-      name : 'ups_options',
-      placeholder : helptext.ups_options_placeholder,
-      tooltip : helptext.ups_options_tooltip,
-      isHidden: false
-    },
-    {
-      type : 'textarea',
-      name : 'ups_optionsupsd',
-      placeholder : helptext.ups_optionsupsd_placeholder,
-      tooltip : helptext.ups_optionsupsd_tooltip,
-    },
-    {
-      type : 'input',
-      name : 'ups_description',
-      placeholder : helptext.ups_description_placeholder,
-      tooltip : helptext.ups_description_tooltip,
-    },
-    {
-      type : 'select',
-      name : 'ups_shutdown',
-      placeholder : helptext.ups_shutdown_placeholder,
-      tooltip : helptext.ups_shutdown_tooltip,
-      options : helptext.ups_shutdown_options
-    },
-    {
-      type : 'input',
-      inputType: 'number',
-      name : 'ups_shutdowntimer',
-      placeholder : helptext.ups_shutdowntimer_placeholder,
-      tooltip : helptext.ups_shutdowntimer_tooltip,
-    },
-    {
-      type : 'input',
-      name : 'ups_shutdowncmd',
-      placeholder : helptext.ups_shutdowncmd_placeholder,
-      tooltip : helptext.ups_shutdowncmd_tooltip,
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'ups_nocommwarntime',
-      placeholder: helptext.ups_nocommwarntime_placeholder,
-      tooltip: helptext.ups_nocommwarntime_tooltip,
-      value: `300`,
-    },
-    {
-      type : 'input',
-      name : 'ups_monuser',
-      placeholder : helptext.ups_monuser_placeholder,
-      tooltip : helptext.ups_monuser_tooltip,
-      required: true,
-      validation : helptext.ups_monuser_validation
-    },
-    {
-      type : 'input',
-      name : 'ups_monpwd',
-      inputType: 'password',
-      togglePw: true,
-      placeholder : helptext.ups_monpwd_placeholder,
-      tooltip : helptext.ups_monpwd_tooltip,
-      validation: helptext.ups_monpwd_validation
-    },
-    {
-      type : 'textarea',
-      name : 'ups_extrausers',
-      placeholder : helptext.ups_extrausers_placeholder,
-      tooltip : helptext.ups_extrausers_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : 'ups_rmonitor',
-      placeholder : helptext.ups_rmonitor_placeholder,
-      tooltip : helptext.ups_rmonitor_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : 'ups_emailnotify',
-      placeholder : helptext.ups_emailnotify_placeholder,
-      tooltip : helptext.ups_emailnotify_tooltip,
-    },
-    {
-      type : 'input',
-      name : 'ups_toemail',
-      placeholder : helptext.ups_toemail_placeholder,
-      tooltip : helptext.ups_toemail_tooltip,
-    },
-    {
-      type : 'input',
-      name : 'ups_subject',
-      placeholder : helptext.ups_subject_placeholder,
-      tooltip : helptext.ups_subject_tooltip,
-    },
-    {
-      type : 'checkbox',
-      name : 'ups_powerdown',
-      placeholder : helptext.ups_powerdown_placeholder,
-      tooltip : helptext.ups_powerdown_tooltip
-    },
-    {
-      type : 'input',
-      inputType: 'number',
-      name : 'ups_hostsync',
-      placeholder : helptext.ups_hostsync_placeholder,
-      tooltip : helptext.ups_hostsync_tooltip,
-      value: 15,
-    },
+    { name: 'divider', divider: true },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -193,10 +226,13 @@ export class ServiceUPSComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: EntityFormComponent) {
+    entityForm.submitFunction = body => this.ws.call('ups.update', [body]);
     this.entityForm = entityForm;
-    this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
-    this.ups_port = _.find(this.fieldConfig, { name: 'ups_port' });
+
+    const generalSet = this.fieldSets.find(set => set.name === helptext.ups_fieldset_general);
+    this.ups_driver = generalSet.config.find(config => config.name === 'driver');
+    this.ups_port = generalSet.config.find(config => config.name === 'port')
 
     this.ws.call('ups.driver_choices', []).subscribe((res) => {
       this.ups_drivers_list = res;
@@ -211,28 +247,17 @@ export class ServiceUPSComponent {
       } 
     });
 
-    entityForm.formGroup.controls['ups_driver'].valueChanges.subscribe((res) => {;
+    entityForm.formGroup.controls['driver'].valueChanges.subscribe((res) => {;
       this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
       if (this.ups_drivers_list[res]) {
-        entityForm.formGroup.controls['ups_driver'].setValue(this.ups_drivers_list[res]);
+        entityForm.formGroup.controls['driver'].setValue(this.ups_drivers_list[res]);
       }
     });
 
-    entityForm.formGroup.controls['ups_mode'].valueChanges.subscribe((res) => {;
-      if (res === 'slave') {
-        this.hideField('ups_remotehost', false, entityForm);
-        this.hideField('ups_remoteport', false, entityForm);
-      } else {
-        this.hideField('ups_remotehost', true, entityForm)
-        this.hideField('ups_remoteport', true, entityForm)
-      }
+    entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
+        generalSet.config.find(conf => conf.name === 'remotehost').isHidden = res === 'master';
+        generalSet.config.find(conf => conf.name === 'remoteport').isHidden = res === 'master';
     });
-  }
-
-  hideField(fieldName: any, show: boolean, entity: any) {
-    let target = _.find(this.fieldConfig, {'name' : fieldName});
-    target['isHidden'] = show;
-    entity.setDisabled(fieldName, show, show);
   }
 
   getKeyByValue(object, value) {

@@ -34,6 +34,11 @@ msgid ""
 "<b>DOWNLOAD ENCRYPTION KEY</b>."
 msgstr ""
 
+msgid ""
+" addresses. When this has been chosen, additional addresses cannot be "
+"selected."
+msgstr ""
+
 msgid " and "
 msgstr ""
 
@@ -72,6 +77,9 @@ msgid " service has been enabled."
 msgstr ""
 
 msgid " system is powered on and connected to the network."
+msgstr ""
+
+msgid " to include all "
 msgstr ""
 
 msgid " update successful"
@@ -605,6 +613,9 @@ msgstr ""
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 權限"
 
+msgid "API"
+msgstr ""
+
 msgid "API Key"
 msgstr "API 金鑰"
 
@@ -721,6 +732,9 @@ msgstr ""
 msgid "Activates the replication schedule."
 msgstr ""
 
+msgid "Active"
+msgstr ""
+
 msgid "Active Directory"
 msgstr "Active Directory"
 
@@ -748,6 +762,9 @@ msgstr ""
 msgid "Add Additional Path"
 msgstr "新增其它路徑"
 
+msgid "Add Alert Service"
+msgstr ""
+
 msgid "Add Cache"
 msgstr "新增快取"
 
@@ -759,6 +776,9 @@ msgstr "新增資料"
 
 msgid "Add Dataset"
 msgstr "新增資料集"
+
+msgid "Add Extra ISCSI Group"
+msgstr ""
 
 msgid "Add Log"
 msgstr "新增日誌"
@@ -929,7 +949,7 @@ msgstr ""
 msgid "Adjust the file permissions using the checkboxes."
 msgstr ""
 
-msgid "Admin Portal"
+msgid "Admin Portals"
 msgstr ""
 
 msgid "Admin Server"
@@ -954,6 +974,12 @@ msgstr "進階電源管理"
 
 msgid "Advanced"
 msgstr "進階"
+
+msgid "Advanced Details"
+msgstr ""
+
+msgid "Advanced Jail Creation"
+msgstr ""
 
 msgid "Advanced Mode"
 msgstr "進階模式"
@@ -1274,6 +1300,9 @@ msgstr "套用擱置中的更新"
 msgid "Apply Permissions Recursively"
 msgstr ""
 
+msgid "Apply Update"
+msgstr ""
+
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
 
@@ -1400,6 +1429,9 @@ msgstr "自動設定 IPv6"
 msgid "Autoconfigure IPv6 with rtsold"
 msgstr ""
 
+msgid "Automatic scrub interval (in days)"
+msgstr ""
+
 msgid ""
 "Automatically compress data written to the zvol. Choose a <a "
 "href=\"--docurl--/storage.html#compression\" target=\"_blank\">compression "
@@ -1444,6 +1476,9 @@ msgstr "可用磁碟"
 msgid "Available Memory:"
 msgstr ""
 
+msgid "Available Space"
+msgstr ""
+
 msgid "Available Themes"
 msgstr "可用佈景主題"
 
@@ -1486,6 +1521,9 @@ msgid "Basic Properties"
 msgstr "基本屬性"
 
 msgid "Batch Operations"
+msgstr ""
+
+msgid "Before updating, please read the release notes."
 msgstr ""
 
 msgid "Begin"
@@ -1538,6 +1576,9 @@ msgstr "區塊大小"
 msgid "Boot"
 msgstr "開機"
 
+msgid "Boot Environments"
+msgstr ""
+
 msgid "Boot Loader Type"
 msgstr "開機載入器類型"
 
@@ -1546,6 +1587,9 @@ msgstr "啟動方式"
 
 msgid "Boot Pool"
 msgstr "開機儲存集區"
+
+msgid "Boot Pool Condition"
+msgstr ""
 
 msgid "Boot Pool Status"
 msgstr "開機儲存集區狀態"
@@ -1686,6 +1730,9 @@ msgstr ""
 msgid "CPU"
 msgstr ""
 
+msgid "CPU Details"
+msgstr ""
+
 msgid "CPU Usage"
 msgstr "CPU 使用率"
 
@@ -1700,6 +1747,9 @@ msgstr ""
 
 msgid "Cache VDev"
 msgstr "快取 VDev"
+
+msgid "Caches"
+msgstr ""
 
 msgid ""
 "Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
@@ -1756,6 +1806,9 @@ msgstr "變更複雜密碼"
 
 msgid "Change Password"
 msgstr "變更密碼"
+
+msgid "Change Settings and Clear Report History?"
+msgstr ""
 
 msgid "Change User & Group Ownership"
 msgstr "變更帳戶與群組隸屬關係"
@@ -1820,11 +1873,6 @@ msgid ""
 "Changing the minor version is considered a downgrade and is not a supported "
 "operation. Activate an existing boot environment that uses the desired "
 "train and boot into it to switch to that train."
-msgstr ""
-
-msgid ""
-"Changing the values of <i>Graph Age</i> or <i>Graph Points</i> requires "
-"destroying  the reporting database."
 msgstr ""
 
 msgid ""
@@ -1955,6 +2003,9 @@ msgstr ""
 msgid "Choose a DNS provider and configure any required authenticator attributes."
 msgstr ""
 
+msgid "Choose a Device"
+msgstr ""
+
 msgid "Choose a color scheme."
 msgstr "選擇色彩模式."
 
@@ -1964,7 +2015,16 @@ msgid ""
 "the  destination system. Click a dataset to set it as the target."
 msgstr ""
 
+msgid "Choose a device for your report."
+msgstr ""
+
 msgid "Choose a location to store the installer image file."
+msgstr ""
+
+msgid "Choose a metric"
+msgstr ""
+
+msgid "Choose a metric to display."
 msgstr ""
 
 msgid ""
@@ -2182,6 +2242,12 @@ msgid ""
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
 msgstr ""
 
+msgid "Clear SED Password"
+msgstr ""
+
+msgid "Clear the SED password for this disk."
+msgstr ""
+
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
@@ -2328,6 +2394,9 @@ msgid "Computer Account OU"
 msgstr ""
 
 msgid "Config could not be downloaded"
+msgstr ""
+
+msgid "Configure"
 msgstr ""
 
 msgid "Configure ACL"
@@ -2506,6 +2575,9 @@ msgid ""
 "using IPv6 entirely."
 msgstr ""
 
+msgid "Coolest:"
+msgstr ""
+
 msgid "Copies"
 msgstr "複本數量"
 
@@ -2547,6 +2619,9 @@ msgstr "建立 CA"
 
 msgid "Create Certificate"
 msgstr "建立憑證"
+
+msgid "Create New Theme"
+msgstr ""
 
 msgid "Create Passphrase"
 msgstr "建立複雜密碼"
@@ -2630,6 +2705,9 @@ msgstr "例行作業 (Cron Jobs)"
 msgid "Current Password"
 msgstr "現行密碼"
 
+msgid "Current Train:"
+msgstr ""
+
 msgid "Custom"
 msgstr ""
 
@@ -2692,10 +2770,16 @@ msgstr ""
 msgid "Dashboard"
 msgstr "資訊看板"
 
+msgid "Data"
+msgstr ""
+
 msgid "Data VDevs"
 msgstr "Data VDevs"
 
 msgid "Data collection frequency, in seconds."
+msgstr ""
+
+msgid "Data not available"
 msgstr ""
 
 msgid ""
@@ -2714,10 +2798,10 @@ msgstr "資料庫路徑"
 msgid "Dataset"
 msgstr "資料集"
 
-msgid "Dataset Path"
+msgid "Dataset Has Complex ACLs"
 msgstr ""
 
-msgid "Dataset has complex ACLs"
+msgid "Dataset Path"
 msgstr ""
 
 msgid "Dataset which will store replicated  snapshots."
@@ -2899,6 +2983,9 @@ msgstr ""
 msgid "Delete Path"
 msgstr "刪除路徑"
 
+msgid "Delete Selected"
+msgstr ""
+
 msgid "Delete Zvol"
 msgstr "刪除 Zvol"
 
@@ -2922,6 +3009,9 @@ msgstr "刪除快照。"
 msgid ""
 "Delete the passphrase from  the encryption key. Invalidates an existing "
 "pool recovery key file. A  dialog prompts to back up the encryption key."
+msgstr ""
+
+msgid "Delete the selected item?"
 msgstr ""
 
 msgid "Delete the zvol "
@@ -3001,9 +3091,6 @@ msgstr ""
 
 msgid "Destroy data on this pool?"
 msgstr "銷毀這個儲存集區上的資料？"
-
-msgid "Destroy the Reporting Database?"
-msgstr ""
 
 msgid "Detach"
 msgstr "中斷連結"
@@ -3113,6 +3200,9 @@ msgstr "停用容錯移轉"
 msgid "Disable FreeNAS Cache"
 msgstr "取消 FreeNAS 快取"
 
+msgid "Disable Hardware Offloading"
+msgstr ""
+
 msgid ""
 "Disable IPv4 source address selection for  the jail in favor of the primary "
 "IPv4 address of the jail.  Only available when the jail is not configured "
@@ -3137,13 +3227,16 @@ msgid ""
 "menus, but are still accepted when manually entered."
 msgstr ""
 
-msgid "Disable offload capabilities"
-msgstr ""
-
 msgid "Disable physical block size reporting"
 msgstr ""
 
 msgid "Disabled (Not encrypted)"
+msgstr ""
+
+msgid ""
+"Disabling hardware offloading can severely reduce network performance. "
+"Disabling this feature is only recommended when an interface is used for "
+"plugin, jail, or virtual machine networking."
 msgstr ""
 
 msgid "Discard Network Changes"
@@ -3164,7 +3257,13 @@ msgstr ""
 msgid "Disk"
 msgstr "磁碟"
 
+msgid "Disk Details"
+msgstr ""
+
 msgid "Disk Imported: Log Summary"
+msgstr ""
+
+msgid "Disk Reports"
 msgstr ""
 
 msgid "Disk Selection Required"
@@ -3236,6 +3335,9 @@ msgstr "完成"
 msgid "Download"
 msgstr ""
 
+msgid "Download Encryption Key"
+msgstr ""
+
 msgid "Download Key"
 msgstr ""
 
@@ -3291,6 +3393,9 @@ msgstr "編輯"
 
 msgid "Edit ACL"
 msgstr "編輯 ACL"
+
+msgid "Edit Alert Service"
+msgstr ""
 
 msgid "Edit Disk(s)"
 msgstr "編輯磁碟"
@@ -4459,9 +4564,6 @@ msgstr "額外使用者"
 msgid "Extra options"
 msgstr "額外選項"
 
-msgid "F"
-msgstr ""
-
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr ""
 
@@ -4502,6 +4604,9 @@ msgid "Features"
 msgstr ""
 
 msgid "Feb"
+msgstr ""
+
+msgid "Fetch DataStores"
 msgstr ""
 
 msgid "Fetch Method"
@@ -4647,6 +4752,9 @@ msgstr ""
 msgid "FreeNAS/TrueNAS URL"
 msgstr ""
 
+msgid "Fri"
+msgstr ""
+
 msgid "From"
 msgstr "有效起始日"
 
@@ -4685,6 +4793,12 @@ msgstr "GUI SSL 憑證"
 msgid "Gateway"
 msgstr "閘道"
 
+msgid "Gathering data"
+msgstr ""
+
+msgid "Gathering data..."
+msgstr ""
+
 msgid "General"
 msgstr "一般"
 
@@ -4700,11 +4814,17 @@ msgstr ""
 msgid "Generate New"
 msgstr ""
 
+msgid "Generate Reports"
+msgstr ""
+
 msgid ""
 "Generate a name for the snapshot  from a previously created  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
 "target=\"_blank\">periodic snapshot task</a> naming schema. This allows  "
 "the snapshot to be replicated. Cannot be used with a <i>Name</i>."
+msgstr ""
+
+msgid "GiB"
 msgstr ""
 
 msgid ""
@@ -4732,13 +4852,16 @@ msgstr ""
 msgid "Go Back to Jails"
 msgstr "回到 Jails"
 
+msgid "Go to Admin Portal"
+msgstr ""
+
 msgid "Go to HA settings"
 msgstr ""
 
-msgid "Graph Age"
+msgid "Go to Portal"
 msgstr ""
 
-msgid "Graph Points"
+msgid "Graph Age in Months"
 msgstr ""
 
 msgid "Group"
@@ -4749,6 +4872,16 @@ msgstr ""
 
 msgid "Group ID"
 msgstr "群組 ID"
+
+msgid ""
+"Group ID created in  Authorized Access. Required when the Discovery Auth "
+"Method is set to  CHAP or Mutual CHAP."
+msgstr ""
+
+msgid ""
+"Group ID created in Authorized  Access. Required when the Discovery Auth "
+"Method is set to CHAP or  Mutual CHAP."
+msgstr ""
 
 msgid ""
 "Group name cannot begin with a hyphen (<i>-</i>) or contain a space, tab, "
@@ -4843,6 +4976,9 @@ msgid ""
 "to run the command."
 msgstr ""
 
+msgid "Highest Usage:"
+msgstr ""
+
 msgid ""
 "Highest port number of the  active side listen address that is open to "
 "connections. The first  available port between the minimum and maximum is "
@@ -4930,6 +5066,9 @@ msgstr "允許主機清單"
 
 msgid "Hosts Deny"
 msgstr "拒絕主機清單"
+
+msgid "Hottest:"
+msgstr ""
 
 msgid "Hour"
 msgstr "時"
@@ -5113,6 +5252,9 @@ msgstr ""
 msgid "Identifier"
 msgstr "識別名稱"
 
+msgid "Identify Light"
+msgstr ""
+
 msgid "Idmap Backend"
 msgstr ""
 
@@ -5195,6 +5337,9 @@ msgstr "正在匯入儲存集區..."
 
 msgid "Importing pools."
 msgstr "正在匯入資料集區。"
+
+msgid "In"
+msgstr ""
 
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr ""
@@ -5320,6 +5465,9 @@ msgstr "安裝媒體"
 
 msgid "Installing plugin..."
 msgstr "正在安裝外掛..."
+
+msgid "Interface"
+msgstr ""
 
 msgid "Interface Description"
 msgstr "介面說明"
@@ -5483,6 +5631,9 @@ msgstr ""
 msgid "Keep changed network settings permanently?"
 msgstr ""
 
+msgid "Keep snapshot for"
+msgstr ""
+
 msgid ""
 "Keep the name short. Using a name longer than 63 characters can prevent "
 "accessing the block device."
@@ -5531,6 +5682,9 @@ msgid ""
 "href=\"https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_"
 "access-keys.html\" target=\"_blank\">AWS Access Key documentation</a> for "
 "instructions to generate the key."
+msgstr ""
+
+msgid "KiB"
 msgstr ""
 
 msgid "LAGG Ports"
@@ -5584,6 +5738,9 @@ msgstr ""
 msgid "LEGACY WEB INTERFACE"
 msgstr "傳統 WEB 介面"
 
+msgid "LOAD"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr "登入到服務供應商"
 
@@ -5615,6 +5772,9 @@ msgid "Language"
 msgstr "語言"
 
 msgid "Language code"
+msgstr ""
+
+msgid "Last Scrub Run on"
 msgstr ""
 
 msgid "Leave Domain"
@@ -5649,8 +5809,14 @@ msgid ""
 "below."
 msgstr ""
 
+msgid "Legacy"
+msgstr ""
+
 msgid "Legacy Web Interface"
 msgstr "傳統 Web 介面"
+
+msgid "Legend"
+msgstr ""
 
 msgid "Level"
 msgstr "等級"
@@ -5749,12 +5915,12 @@ msgid ""
 "target=\"_blank\">RFC3721</a>."
 msgstr ""
 
+msgid "Lowest Usage:"
+msgstr ""
+
 msgid ""
 "Lowest port number of the  active side listen address that is open to "
 "connections."
-msgstr ""
-
-msgid "M"
 msgstr ""
 
 msgid "MAC Address"
@@ -5777,6 +5943,9 @@ msgstr "Mac 位址"
 
 msgid "Mail Server Port"
 msgstr "郵件伺服器埠號"
+
+msgid "Manage Custom Themes"
+msgstr ""
 
 msgid "Manual"
 msgstr ""
@@ -5889,12 +6058,19 @@ msgid "Maximum swap space to use for the jail."
 msgstr ""
 
 msgid ""
-"Maximum time a graph is stored in months.  Changing this value causes the "
-"<i>Confirm RRD Destroy</i>  checkbox to appear. Changes do not take effect "
-"until the existing  reporting database is destroyed."
+"Maximum time a graph is stored in months (allowed values are 1-60).  "
+"Changing this value causes the <i>Confirm RRD Destroy</i>  dialog to "
+"appear. Changes do not take effect until the existing  reporting database "
+"is destroyed."
 msgstr ""
 
 msgid "May"
+msgstr ""
+
+msgid "Media Subtype"
+msgstr ""
+
+msgid "Media Type"
 msgstr ""
 
 msgid "Member Disk"
@@ -5914,6 +6090,9 @@ msgstr ""
 
 msgid "Memory"
 msgstr "記憶體"
+
+msgid "Memory Reports"
+msgstr ""
 
 msgid "Memory Size"
 msgstr ""
@@ -5945,6 +6124,12 @@ msgid ""
 "<li><i>LOCAL</i> efficiently replicates snapshots to another dataset on  "
 "the same system without using the network.</li>  <li><i>LEGACY</i> uses the "
 "legacy replication engine from FreeNAS 11.2  and earlier.</li></ul>"
+msgstr ""
+
+msgid "Metrics"
+msgstr ""
+
+msgid "MiB"
 msgstr ""
 
 msgid "Microsoft Account"
@@ -5987,6 +6172,9 @@ msgstr "模式"
 msgid "Model"
 msgstr "型號"
 
+msgid "Model:"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a                   "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\"        "
@@ -5997,6 +6185,9 @@ msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>."
+msgstr ""
+
+msgid "Mon"
 msgstr ""
 
 msgid "Monitor Password"
@@ -6038,6 +6229,9 @@ msgid ""
 "Multi-domain support. Enter additional domains to secure, separated by "
 "spaces. For example, if the primary domain is example.com, entering "
 "www.example.com will secure both addresses."
+msgstr ""
+
+msgid "Multipath Name"
 msgstr ""
 
 msgid "Multipaths"
@@ -6257,6 +6451,9 @@ msgstr "網路介面"
 msgid "Network Properties"
 msgstr "網路內容"
 
+msgid "Network Reports"
+msgstr ""
+
 msgid "Network Summary"
 msgstr "網路摘要"
 
@@ -6366,6 +6563,11 @@ msgstr ""
 msgid "No Stat"
 msgstr ""
 
+msgid ""
+"No custom themes. Click <b>Create New Theme</b> to create a new custom "
+"theme."
+msgstr ""
+
 msgid "No interfaces configured with Virtual IP."
 msgstr ""
 
@@ -6396,6 +6598,9 @@ msgstr "沒有可用更新。"
 msgid "No, continue with import"
 msgstr "不，繼續並匯入"
 
+msgid "Not Available"
+msgstr ""
+
 msgid "Notes"
 msgstr "備註"
 
@@ -6410,6 +6615,9 @@ msgstr ""
 
 msgid "Number of CPUs"
 msgstr "CPU 數量"
+
+msgid "Number of Graph Points"
+msgstr ""
 
 msgid ""
 "Number of SysV semaphores modified in a single <a "
@@ -6435,10 +6643,10 @@ msgid "Number of days to renew certificate before expiring."
 msgstr ""
 
 msgid ""
-"Number of points for each hourly, daily,  weekly, monthly, or yearly graph. "
-"Do not set this less than the  width of the graphs in pixels. Changing this "
-"value causes the  <i>Confirm RRD Destroy</i> checkbox to appear. Changes do "
-"not take  effect until the existing reporting database is destroyed."
+"Number of points for each hourly, daily,  weekly, monthly, or yearly graph "
+"(allowed values are 1-4096). Changing this value causes the  <i>Confirm RRD "
+"Destroy</i> dialog to appear. Changes do not take  effect until the "
+"existing reporting database is destroyed."
 msgstr ""
 
 msgid "Number of queued SysV messages allowed for the jail."
@@ -6624,11 +6832,11 @@ msgid "Options"
 msgstr "選項"
 
 msgid ""
-"Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> Do not "
-"encrypt the LDAP connection.</li>  <li><i>ON:</i> <i>SSL</i> encrypts the "
-"LDAP connection and uses port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
-"<i>STARTTLS</i> encrypts the LDAP connection and  uses the default LDAP "
-"port <i>389</i>.</li>  </ul>"
+"Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> do not "
+"encrypt the LDAP connection.</li>  <li><i>ON:</i> encrypt the LDAP "
+"connection with <i>SSL</i> on port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
+"encrypt the LDAP connection with <i>STARTTLS</i>  on the default LDAP port "
+"<i>389</i>.</li>  </ul>"
 msgstr ""
 
 msgid ""
@@ -6650,6 +6858,9 @@ msgid "Other"
 msgstr ""
 
 msgid "Other Options"
+msgstr ""
+
+msgid "Out"
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -6685,6 +6896,9 @@ msgstr ""
 msgid "Parent Interface"
 msgstr "上層介面"
 
+msgid "Partition"
+msgstr ""
+
 msgid "Passphrase"
 msgstr "複雜密碼"
 
@@ -6696,9 +6910,6 @@ msgstr "密碼伺服器"
 
 msgid "Password associated with the LDAP User DN."
 msgstr ""
-
-msgid "Password for SED"
-msgstr "SED 密碼"
 
 msgid "Password for logging in to the provider and  updating the record."
 msgstr ""
@@ -6841,6 +7052,9 @@ msgid "Phone Number"
 msgstr "電話號碼"
 
 msgid "Physical interface of the selected member."
+msgstr ""
+
+msgid "PiB"
 msgstr ""
 
 msgid "Platform"
@@ -7159,6 +7373,9 @@ msgstr "Raw 檔案大小"
 msgid "Read"
 msgstr ""
 
+msgid "Read Errors"
+msgstr ""
+
 msgid "Read Only"
 msgstr "唯讀"
 
@@ -7288,6 +7505,9 @@ msgstr "移除"
 msgid "Remove Additional Path"
 msgstr "移除其它路徑"
 
+msgid "Remove Extra ISCSI Group"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr ""
 
@@ -7359,6 +7579,11 @@ msgid "Report CPU usage in percent"
 msgstr ""
 
 msgid "Report CPU usage in percentage"
+msgstr ""
+
+msgid ""
+"Report history is cleared when <i>CPU reporting</i>, <i>Graph Age</i>,  or "
+"<i>Graph Points</i> are changed."
 msgstr ""
 
 msgid ""
@@ -7582,7 +7807,7 @@ msgstr ""
 msgid "Run this rsync now?"
 msgstr ""
 
-msgid "S"
+msgid "Running"
 msgstr ""
 
 msgid "S.M.A.R.T. Test"
@@ -7674,6 +7899,9 @@ msgstr "Samba 架構"
 msgid "Same as Source"
 msgstr ""
 
+msgid "Sat"
+msgstr ""
+
 msgid "Save"
 msgstr "儲存"
 
@@ -7681,6 +7909,15 @@ msgid "Save Config"
 msgstr "下載設定"
 
 msgid "Save Configuration"
+msgstr ""
+
+msgid "Save Cron Job"
+msgstr ""
+
+msgid "Save Custom Theme"
+msgstr ""
+
+msgid "Save Debug"
 msgstr ""
 
 msgid "Save License"
@@ -7852,9 +8089,6 @@ msgid ""
 "target=\"_blank\">SSH/Authentication</a>."
 msgstr ""
 
-msgid "See task manager for progress updates."
-msgstr ""
-
 msgid ""
 "See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
 "target=\"_blank\"> Self Encrypting Drives</a> section of the user guide for "
@@ -7865,6 +8099,9 @@ msgid ""
 "See the <a href=\"http://networkupstools.org/stable-hcl.html\" "
 "target=\"_blank\">Network UPS Tools compatibility list</a> for a list of "
 "supported UPS devices."
+msgstr ""
+
+msgid "Select "
 msgstr ""
 
 msgid ""
@@ -7933,11 +8170,6 @@ msgstr ""
 
 msgid "Select VM wizard type"
 msgstr "選擇 VM 引導類型"
-
-msgid ""
-"Select a Group ID created in <b>Authorized Access</b> if the <b>Discovery "
-"Auth Method</b> is set to <i>CHAP</i> or <i>Mutual CHAP</i>."
-msgstr ""
 
 msgid ""
 "Select a compression algorithm to reduce the size of the data being "
@@ -8022,11 +8254,6 @@ msgstr "選擇時區。"
 msgid ""
 "Select a user account to run the command. The                user must have "
 "permissions allowing them to run                the command or script."
-msgstr ""
-
-msgid ""
-"Select a user created in Authorized Access if the Discovery Auth Method is "
-"set to CHAP or Mutual CHAP."
 msgstr ""
 
 msgid "Select an IP address to use for VNC sessions."
@@ -8164,6 +8391,9 @@ msgstr ""
 msgid ""
 "Select the account to use for TFTP requests. This account must have "
 "permission to the <b>Directory</b>."
+msgstr ""
+
+msgid "Select the admin portal："
 msgstr ""
 
 msgid "Select the appropriate environment."
@@ -8344,6 +8574,9 @@ msgstr "所選擇的 Jails 已更新。"
 msgid "Selected plugins updated."
 msgstr "所選擇的外掛程式已更新。"
 
+msgid "Self Healed"
+msgstr ""
+
 msgid "Semi-automatic (FreeNAS only)"
 msgstr ""
 
@@ -8495,6 +8728,11 @@ msgstr "設定新的 root 帳戶密碼："
 msgid ""
 "Set only if required by the NFS client. Set to allow serving non-root mount "
 "requests."
+msgstr ""
+
+msgid ""
+"Set or change the password of this SED.  This password is used instead of "
+"the global SED password."
 msgstr ""
 
 msgid ""
@@ -8768,9 +9006,6 @@ msgid ""
 "Set to determine if the system participates in a browser election. Leave "
 "unset when the network contains an AD or LDAP server, or when Vista or "
 "Windows 7 machines are present."
-msgstr ""
-
-msgid "Set to disable NIC capabilities when using a Jail or VM."
 msgstr ""
 
 msgid ""
@@ -9344,6 +9579,9 @@ msgstr ""
 msgid "Spare VDev"
 msgstr ""
 
+msgid "Spares"
+msgstr ""
+
 msgid "Sparse"
 msgstr ""
 
@@ -9394,8 +9632,14 @@ msgstr ""
 msgid "Standard (Secure)"
 msgstr ""
 
+msgid "Standby"
+msgstr ""
+
 msgid "Start"
 msgstr "開始"
+
+msgid "Start Automatically"
+msgstr ""
 
 msgid "Start Scrub"
 msgstr "開始 Scrub"
@@ -9435,6 +9679,9 @@ msgstr ""
 
 msgid "Static Routes"
 msgstr "靜態路由"
+
+msgid "Stats Per Thread"
+msgstr ""
 
 msgid "Stats/Settings"
 msgstr ""
@@ -9548,6 +9795,9 @@ msgstr "已成功更新。"
 msgid "Suggest Layout"
 msgstr "建議配置"
 
+msgid "Sun"
+msgstr ""
+
 msgid "Support"
 msgstr "支援"
 
@@ -9602,6 +9852,9 @@ msgstr "系統資料集儲存集區"
 msgid "System Info"
 msgstr "系統資訊"
 
+msgid "System Information"
+msgstr ""
+
 msgid "System Processes"
 msgstr "系統程序"
 
@@ -9636,9 +9889,6 @@ msgid ""
 "System network interface that remaps jail  network addresses into a "
 "different IP address space. To override using  the default system network "
 "interface, enter the name of a network  interface to use for NAT."
-msgstr ""
-
-msgid "T"
 msgstr ""
 
 msgid "TCP Port"
@@ -9741,6 +9991,9 @@ msgid "Tasks"
 msgstr "作業"
 
 msgid "Team Drive ID"
+msgstr ""
+
+msgid "Temperature"
 msgstr ""
 
 msgid "Template"
@@ -10150,8 +10403,8 @@ msgid "This Dataset and Child Datasets"
 msgstr ""
 
 msgid ""
-"This dataset has ACLs that are too complex to be edited with                "
-"     the permissions editor.  Open in ACL editor instead?"
+"This dataset has an active ACL. Changes to permissions must be made with "
+"the ACL editor.                   Open ACL editor?"
 msgstr ""
 
 msgid ""
@@ -10179,6 +10432,9 @@ msgid ""
 "plugin."
 msgstr ""
 
+msgid "This is not a production release, and should only be used for testing."
+msgstr ""
+
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
@@ -10200,6 +10456,15 @@ msgstr ""
 msgid "This type of VDEV requires at least "
 msgstr ""
 
+msgid "Thread number:"
+msgstr ""
+
+msgid "Threads"
+msgstr ""
+
+msgid "Threads:"
+msgstr ""
+
 msgid "Threshold days"
 msgstr "檢查門檻日數"
 
@@ -10207,6 +10472,12 @@ msgid ""
 "Threshold temperature in Celsius. If the drive temperature is higher than "
 "this value, a LOG_CRIT level log entry is created and an email is sent. "
 "<i>0</i> disables this check."
+msgstr ""
+
+msgid "Thu"
+msgstr ""
+
+msgid "TiB"
 msgstr ""
 
 msgid ""
@@ -10293,8 +10564,18 @@ msgstr ""
 msgid "TrueNAS controllers"
 msgstr ""
 
+msgid "Tue"
+msgstr ""
+
 msgid "Tunables"
 msgstr "參數調整"
+
+msgid ""
+"Turn off hardware offloading  for network traffic processing. WARNING: "
+"disabling hardware offloading  can reduce network performance. Disabling "
+"hardware offloading is only  recommended when the interface is managing "
+"jails, plugins, or virtual  machines."
+msgstr ""
 
 msgid ""
 "Two-letter <a  href=\"https://www.iso.org/obp/ui/#search/code/\" "
@@ -10467,6 +10748,9 @@ msgstr ""
 msgid "Update in Progress"
 msgstr ""
 
+msgid "Update is complete, please reboot the system."
+msgstr ""
+
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr ""
 
@@ -10537,6 +10821,9 @@ msgstr ""
 
 msgid "Uptime"
 msgstr "運作時間"
+
+msgid "Usage"
+msgstr ""
 
 msgid "Usage collection"
 msgstr "使用資料搜集"
@@ -10742,6 +11029,9 @@ msgstr ""
 msgid "VLAN Tag"
 msgstr ""
 
+msgid "VLANs"
+msgstr ""
+
 msgid "VM Snapshot"
 msgstr "VM 快照"
 
@@ -10750,6 +11040,9 @@ msgstr ""
 
 msgid "VMWare Sync"
 msgstr "VMWare 同步"
+
+msgid "VMware Sync"
+msgstr ""
 
 msgid "VMware-Snapshots"
 msgstr "VMWare 快照"
@@ -10843,9 +11136,6 @@ msgstr ""
 msgid "Volume size cannot be zero."
 msgstr ""
 
-msgid "W"
-msgstr ""
-
 msgid "WARNING"
 msgstr "警告"
 
@@ -10924,6 +11214,9 @@ msgid "Webdav SSL Certificate"
 msgstr "Webdav SSL 憑證"
 
 msgid "Webhook URL"
+msgstr ""
+
+msgid "Wed"
 msgstr ""
 
 msgid "Weeks"
@@ -11042,6 +11335,9 @@ msgstr "工作群組"
 msgid "Write"
 msgstr ""
 
+msgid "Write Errors"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
 
@@ -11067,6 +11363,12 @@ msgid "Yes, decrypt the disks"
 msgstr "是的，解密這個磁碟"
 
 msgid "You have left the domain."
+msgstr ""
+
+msgid "ZFS"
+msgstr ""
+
+msgid "ZFS Cache"
 msgstr ""
 
 msgid "ZFS Deduplication"
@@ -11198,7 +11500,13 @@ msgstr ""
 msgid "email"
 msgstr ""
 
+msgid "empty"
+msgstr ""
+
 msgid "enforce_statfs"
+msgstr ""
+
+msgid "error"
 msgstr ""
 
 msgid "exec_clean"
@@ -11238,6 +11546,9 @@ msgid "exec_timeout"
 msgstr ""
 
 msgid "expires in"
+msgstr ""
+
+msgid "gathering info..."
 msgstr ""
 
 msgid "group"
@@ -11330,6 +11641,9 @@ msgstr ""
 msgid "msgqsize"
 msgstr ""
 
+msgid "multipath"
+msgstr ""
+
 msgid "name"
 msgstr "名稱"
 
@@ -11349,6 +11663,9 @@ msgid "nthr"
 msgstr ""
 
 msgid "openfiles"
+msgstr ""
+
+msgid "overview"
 msgstr ""
 
 msgid "owner"
@@ -11376,6 +11693,9 @@ msgid "rpc.lockd(8) bind port"
 msgstr ""
 
 msgid "rpc.statd(8) bind port"
+msgstr ""
+
+msgid "safe"
 msgstr ""
 
 msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
@@ -11414,6 +11734,12 @@ msgstr ""
 msgid "template"
 msgstr ""
 
+msgid "total memory installed"
+msgstr ""
+
+msgid "used"
+msgstr ""
+
 msgid "vmemoryuse"
 msgstr "虛擬記憶體使用"
 
@@ -11438,7 +11764,13 @@ msgstr ""
 msgid "wallclock"
 msgstr ""
 
+msgid "warn"
+msgstr ""
+
 msgid "was successfully attached."
+msgstr ""
+
+msgid "while pool is encrypted"
 msgstr ""
 
 msgid "yes"

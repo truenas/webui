@@ -83,9 +83,9 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   public title: string = "Interface";
 
   path: Slide[] = [
-    { name: "overview"},
-    { name: "empty"},
-    { name: "empty"}
+    { name: T("overview")},
+    { name: T("empty")},
+    { name: T("empty")}
   ];
 
   get ipAddresses(){
@@ -138,8 +138,8 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   ngAfterViewInit(){
     this.stats.subscribe((evt:CoreEvent) => {
       if(evt.name == "NetTraffic_" + this.nicState.name){
-        const sent: Converted = this.convert(evt.data.sent_bytes_last);
-        const received: Converted = this.convert(evt.data.received_bytes_last);
+        const sent: Converted = this.convert(evt.data.sent_bytes_rate);
+        const received: Converted = this.convert(evt.data.received_bytes_rate);
 
         let t = {
           sent: sent.value,
@@ -218,27 +218,27 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     // uppercase so we handle bits and bytes...
     switch(this.optimizeUnits(value)){
       case 'KB':
-        units = 'KiB';
+        units = T('KiB');
         result = value / 1024;
         break;
       case 'MB':
-        units = 'MiB';
+        units = T('MiB');
         result = value / 1024 / 1024;
         break;
       case 'GB':
-        units = 'GiB';
+        units = T('GiB');
         result = value / 1024 / 1024 / 1024;
         break;
       case 'TB':
-        units = 'TiB';
+        units = T('TiB');
         result = value / 1024 / 1024 / 1024 / 1024;
         break;
       case 'PB':
-        units = 'PiB';
+        units = T('PiB');
         result = value / 1024 / 1024 / 1024 / 1024 / 1024;
         break;
       default:
-        units = 'KiB';
+        units = T('KiB');
         result = 0.00;
     }
 

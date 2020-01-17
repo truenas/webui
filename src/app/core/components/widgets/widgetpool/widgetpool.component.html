@@ -5,12 +5,14 @@
         <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}">
 
           <!-- Mobile Only: Exit widget -->
-          <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default" >
+          <button fxHide.gt-xs class="mat-card-title-text primary-nav" *ngIf="currentSlide == '0'" mat-icon-button color="default" 
+            ix-auto ix-auto-type="button" ix-auto-identifier="goBack">
             <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
           </button>
 
           <!-- Back to previous slide -->
-          <button class="mat-card-title-text primary-nav" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)">
+          <button class="mat-card-title-text primary-nav" *ngIf="currentSlide !== '0'" mat-icon-button color="default" (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
+            ix-auto ix-auto-type="button" ix-auto-identifier="previousSlide">
             <mat-icon class="back-arrow">chevron_left</mat-icon>
           </button>
           <span class="mat-card-title-text primary-nav">
@@ -20,18 +22,20 @@
           </span>
 
             <div class="controls">
-              <button mat-icon-button class="" (click)="router.navigate(['storage/pools/status/' + poolState.id.toString()])">
+              <button mat-icon-button class="" (click)="router.navigate(['storage/pools/status/' + poolState.id.toString()])"
+                [ix-auto]="poolState.name" ix-auto-type="button" ix-auto-identifier="poolStatus">
                 <mat-icon role="img"
-                  matTooltip="Pool Status"
+                  matTooltip="{{'Pool Status' | translate}}"
                   matTooltipPosition="above"
                   aria-label="Configure Pools">
                     settings
                 </mat-icon>
               </button>
 
-              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/disk'])">
+              <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/disk'])"
+                ix-auto ix-auto-type="button" ix-auto-identifier="diskReports">
                 <mat-icon role="img"
-                  matTooltip="Disk Reports"
+                  matTooltip="{{'Disk Reports' | translate}}"
                   matTooltipPosition="above"
                   aria-label="Disk Reports">
                     insert_chart
@@ -48,7 +52,7 @@
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock-alert"></mat-icon>
-              <h4>Data not available <span *ngIf="!poolState.is_decrypted"><br>while pool is encrypted</span>.</h4>
+              <h4>{{"Data not available" | translate}} <span *ngIf="!poolState.is_decrypted"><br>{{"while pool is encrypted" | translate}}</span>.</h4>
             </div>
           </ng-template>
 
@@ -98,38 +102,38 @@
               <div fxFlex="100" *ngIf="poolState.topology && poolState.topology.data; else locked;">
                 <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
                 <mat-list>
-                  <mat-list-item><strong>Path: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
+                  <mat-list-item><strong>{{"Path" | translate}}: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
 
                   <mat-list-item>
-                    <strong>Available Space: </strong>&nbsp;&nbsp; 
+                    <strong>{{"Available Space" | translate}}: </strong>&nbsp;&nbsp; 
                     <span *ngIf="volumeData && volumeData.used_pct;else unavail">
                       <span class="value">{{diskSize}}</span>
                       <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
-                      <span class="value-used">({{volumeData.used_pct}} used)</span>&nbsp;&nbsp;
+                      <span class="value-used">({{volumeData.used_pct}} {{"used" | translate}})</span>&nbsp;&nbsp;
                     </span>
                     <ng-template #unavail>
-                      <span class="value">Gathering data...</span>
+                      <span class="value">{{"Gathering data..." | translate}}</span>
                     </ng-template>
                   </mat-list-item>
                   
                   <mat-list-item (click)="updateSlide('data', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
-                    <strong>Data: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
-                    <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide">chevron_right</mat-icon>
+                    <strong>{{"Data" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
+                    <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, { children: poolState.topology.cache})" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
-                    <strong>Caches: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
-                    <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide">chevron_right</mat-icon>
+                    <strong>{{"Caches" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
+                    <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, {children: poolState.topology.spare})" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
-                    <strong>Spares: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
-                    <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide">chevron_right</mat-icon>
+                    <strong>{{"Spares" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
+                    <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
                   <mat-list-item (click)="updateSlide('disks', poolState.topology.log.length > 0, 1, 0, {children: poolState.topology.log})" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
-                    <strong>Logs: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
-                    <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide">chevron_right</mat-icon>
+                    <strong>{{"Logs" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
+                    <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
                 </mat-list>
@@ -161,7 +165,7 @@
                     <span>&nbsp;&nbsp; ({{vdev.children.length - 4}} more)</span>
                   </span>
 
-                <mat-icon class="next-slide">chevron_right</mat-icon>
+                <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
           </ng-template>
@@ -175,11 +179,11 @@
                  (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, disk )" 
                  (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
                  [ngClass]="{'clickable': true}">
-                <strong>{{checkMultipathLabel(disk.disk)}}<span *ngIf="checkMultipath(disk.disk)">&nbsp;(multipath)</span>:</strong>&nbsp;&nbsp; {{disk.status}}
+                <strong>{{checkMultipathLabel(disk.disk)}}<span *ngIf="checkMultipath(disk.disk)">&nbsp;({{"multipath" | translate}})</span>:</strong>&nbsp;&nbsp; {{disk.status | translate}}
                 <span *ngIf="disk.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
-                <mat-icon class="next-slide">chevron_right</mat-icon>
+                <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>
               
             </mat-list>
@@ -189,11 +193,11 @@
                  (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, path[currentSlideIndex].dataSource)" 
                  (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk, checkMultipath(path[currentSlideIndex].dataSource.disk))" 
                  [ngClass]="{'clickable': true}">
-                <strong>{{path[2].dataSource.disk}}:</strong>&nbsp;&nbsp; {{path[2].dataSource.status}}
+                <strong>{{path[2].dataSource.disk}}:</strong>&nbsp;&nbsp; {{path[2].dataSource.status | translate}}
                 <span *ngIf="path[2].dataSource.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
-                <mat-icon class="next-slide">chevron_right</mat-icon>
+                <mat-icon class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
               </mat-list-item>
             </mat-list>
 
@@ -201,19 +205,19 @@
 
 
           <ng-template #disk_details>
-            <div class="list-subheader"><span class="capitalize">Disk Details</span></div>
+            <div class="list-subheader"><span class="capitalize">{{"Disk Details" | translate}}</span></div>
             <mat-list >
               <mat-list-item *ngIf="!currentMultipathDetails" role="listitem">
-                <strong> Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+                <strong> {{"Name" | translate}}:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
               </mat-list-item>
 
             <ng-template [ngIf]="currentMultipathDetails">
               <mat-list-item role="listitem">
-                <strong> Multipath Name:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+                <strong> {{"Multipath Name" | translate}}:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
               </mat-list-item>
 
               <mat-list-item *ngFor="let child of currentMultipathDetails.children" role="listitem">
-                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> Disk:</strong>&nbsp;&nbsp; {{child.name}}
+                <strong class="multipath-detail-label"><span class="capitalize">{{child.status.toLowerCase()}}</span> {{"Disk" | translate}}:</strong>&nbsp;&nbsp; {{child.name}}
               </mat-list-item>
             </ng-template>
 
@@ -221,18 +225,18 @@
                 <strong> GUID:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.guid}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Read Errors:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.read_errors}}
+                <strong> {{"Read Errors" | translate}}:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.read_errors}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Write Errors:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.write_errors}}
+                <strong> {{"Write Errors" | translate}}:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.write_errors}}
               </mat-list-item>
               <mat-list-item role="listitem">
-                <strong> Self Healed:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.self_healed}}
+                <strong> {{"Self Healed" | translate}}:</strong>&nbsp;&nbsp; {{path[currentSlideIndex].dataSource.stats.self_healed}}
               </mat-list-item>
             </mat-list>
             
             <!-- Dynamic disk details-->
-            <div class="list-subheader">Advanced Details</div>
+            <div class="list-subheader">{{"Advanced Details" | translate}}</div>
             <mat-list>
               <ng-container *ngFor="let key of currentDiskDetailsKeys">
                 <mat-list-item *ngIf="currentDiskDetails[key]" role="listitem">

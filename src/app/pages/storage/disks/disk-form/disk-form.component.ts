@@ -47,21 +47,21 @@ export class DiskFormComponent {
       name: 'hddstandby',
       placeholder: helptext.disk_form_hddstandby_placeholder,
       tooltip : helptext.disk_form_hddstandby_tooltip,
-      options: [],
+      options: helptext.disk_form_hddstandby_options,
     },
     {
       type: 'select',
       name: 'advpowermgmt',
       placeholder: helptext.disk_form_advpowermgmt_placeholder,
       tooltip : helptext.disk_form_advpowermgmt_tooltip,
-      options: [],
+      options: helptext.disk_form_advpowermgmt_options,
     },
     {
       type: 'select',
       name: 'acousticlevel',
       placeholder: helptext.disk_form_acousticlevel_placeholder,
       tooltip : helptext.disk_form_acousticlevel_tooltip,
-      options: [],
+      options: helptext.disk_form_acousticlevel_options,
     },
     {
       type : 'checkbox',
@@ -109,17 +109,23 @@ export class DiskFormComponent {
       tooltip: helptext.disk_form_passwd_tooltip,
       inputType: 'password',
       value: '',
-      togglePw: true
+      togglePw: true,
+      relation: [
+        {
+          action : 'DISABLE',
+          when : [{
+            name: 'clear_pw',
+            value: true
+          }]
+        }
+      ],
     },
     {
-      type: 'input',
-      name: 'passwd2',
-      placeholder: helptext.disk_form_passwd2_placeholder,
-      tooltip: helptext.disk_form_passwd2_tooltip,
-      inputType: 'password',
-      value: '',
-      validation : [ matchOtherValidator('passwd') ]
-    },
+      type: 'checkbox',
+      name: 'clear_pw',
+      placeholder: helptext.clear_pw.placeholder,
+      tooltip: helptext.clear_pw.tooltip
+    }
   ];
 
   protected disk_hddstandby: any;
@@ -138,6 +144,12 @@ export class DiskFormComponent {
     })
   }
 
+  resourceTransformIncomingRestData(data) {
+    delete data.passwd;
+    return data;
+  }
+
+
   preInit() {
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
@@ -147,35 +159,20 @@ export class DiskFormComponent {
   }
 
   afterInit(entityEdit: any) {
-    this.ws.call('notifier.choices', ['HDDSTANDBY_CHOICES']).subscribe((res) => {
-      this.disk_hddstandby = _.find(this.fieldConfig, {name : 'hddstandby'});
-      res.forEach((item) => {
-        this.disk_hddstandby.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
-
-    this.ws.call('notifier.choices', ['ADVPOWERMGMT_CHOICES']).subscribe((res) => {
-      this.disk_advpowermgmt = _.find(this.fieldConfig, {name : 'advpowermgmt'});
-      res.forEach((item) => {
-        this.disk_advpowermgmt.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
-
-    this.ws.call('notifier.choices', ['ACOUSTICLVL_CHOICES']).subscribe((res) => {
-      this.disk_acousticlevel = _.find(this.fieldConfig, {name : 'acousticlevel'});
-      res.forEach((item) => {
-        this.disk_acousticlevel.options.push(
-            {label : item[1], value : item[0].toUpperCase()});
-      });
-    });
   }
 
   beforeSubmit(value) {
+    if (value.passwd === '') {
+      delete value.passwd;
+    }
+
+    if (value.clear_pw) {
+      value.passwd= '';
+    }
+
+    delete value.clear_pw;
     delete value.name;
     delete value.serial;
-    delete value.passwd2;
 
     value.critical = value.critical === '' ? null : value.critical;
     value.difference = value.difference === '' ? null : value.difference;

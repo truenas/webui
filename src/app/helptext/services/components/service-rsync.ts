@@ -2,6 +2,11 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+rsyncd_fieldset_name: T('Name'),
+rsyncd_fieldset_path: T('Path'),
+rsyncd_fieldset_access: T('Access'),
+rsyncd_fieldset_other: T('Other Options'),
+
 // configure_rsync service
 rsyncd_port_placeholder :T( 'TCP Port'),
 rsyncd_port_tooltip: T('<b>rsyncd</b> listens on this port.'),

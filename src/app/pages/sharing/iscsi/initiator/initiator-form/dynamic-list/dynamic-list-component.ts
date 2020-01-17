@@ -47,8 +47,10 @@ export class DynamicListComponent implements OnInit {
     }
 
     add() {
-        this.listControl.value.add(this.inputControl.value);
-        this.inputControl.setValue(null);
+        if (this.inputControl.value !== null && this.inputControl.value !== undefined && this.inputControl.value !== "") {
+            this.listControl.value.add(this.inputControl.value);
+            this.inputControl.setValue(null);
+        }
     }
     remove(item) {
         this.listControl.value.delete(item);

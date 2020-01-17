@@ -2,6 +2,7 @@ import { T } from '../../../translate-marker';
 import {Validators} from '@angular/forms';
 
 export default {
+    cron_fieldsets: [T('Cron Job')],
     cron_description_placeholder: T('Description'),
     cron_description_tooltip: T('Enter a description of the cron job.'),
 

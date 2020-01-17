@@ -2,6 +2,9 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_general = {
+  stg_fieldset_gui: T('GUI'),
+  stg_fieldset_loc: T('Localization'),
+  stg_fieldset_other: T('Other Options'),
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
@@ -14,7 +17,7 @@ export const helptext_system_general = {
   },
 
   stg_guiaddress: {
-    placeholder: T("WebGUI IPv4 Address"),
+    placeholder: T("Web Interface IPv4 Address"),
     tooltip: T(
       "Choose a recent IP address to limit the usage when\
  accessing the administrative GUI. The built-in HTTP\
@@ -25,7 +28,7 @@ export const helptext_system_general = {
   },
 
   stg_guiv6address: {
-    placeholder: T("WebGUI IPv6 Address"),
+    placeholder: T("Web Interface IPv6 Address"),
     tooltip: T(
       "Choose a recent IPv6 address to limit the usage when\
  accessing the administrative GUI. The built-in HTTP\
@@ -36,7 +39,7 @@ export const helptext_system_general = {
   },
 
   stg_guiport: {
-    placeholder: T("WebGUI HTTP Port"),
+    placeholder: T("Web Interface HTTP Port"),
     tooltip: T(
       'Allow configuring a non-standard port to access the GUI\
  over <i>HTTP</i>. Changing this setting might require\
@@ -48,7 +51,7 @@ export const helptext_system_general = {
   },
 
   stg_guihttpsport: {
-    placeholder: T("WebGUI HTTPS Port"),
+    placeholder: T("Web Interface HTTPS Port"),
     tooltip: T(
       "Allow configuring a non-standard port to access the GUI\
  over <i>HTTPS</i>."
@@ -57,7 +60,7 @@ export const helptext_system_general = {
   },
 
   stg_guihttpsredirect: {
-    placeholder: T("WebGUI HTTP -> HTTPS Redirect"),
+    placeholder: T("Web Interface HTTP -> HTTPS Redirect"),
     tooltip: T(
       'Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A \
  <i>GUI SSL Certificate</i> is required for <i>HTTPS</i>. Activating \
@@ -215,5 +218,10 @@ export const helptext_system_general = {
   config_download: {
     failed_title: T("Error Downloading File"),
     failed_message: T("Config could not be downloaded")
+  },
+
+  config_upload: {
+    title: T('Upload Config'),
+    message: T('Uploading...')
   }
 };

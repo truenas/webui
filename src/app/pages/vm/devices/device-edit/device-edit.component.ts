@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { EntityFormService } from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RestService, WebSocketService, SystemGeneralService, NetworkService } from '../../../../services/';
+import { RestService, WebSocketService, SystemGeneralService, NetworkService, VmService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
@@ -293,7 +293,8 @@ export class DeviceEditComponent implements OnInit {
               protected systemGeneralService: SystemGeneralService,
               protected networkService: NetworkService,
               protected dialogService: DialogService,
-              private core:CoreService) {}
+              private core:CoreService,
+              protected vmService: VmService) {}
 
 
   preInit() {
@@ -315,14 +316,11 @@ export class DeviceEditComponent implements OnInit {
         value: nicId
       }));
     });
-    this.ws.call('notifier.choices', ['VM_NICTYPES']).subscribe(
-      (res) => {
-        this.nicType = _.find(this.nicFieldConfig, { name: "type" });
-        res.forEach((item) => {
-          this.nicType.options.push({ label: item[1], value: item[0] });
-        });
-      }
-    );
+
+    this.nicType = _.find(this.nicFieldConfig, { name: "type" });
+    this.vmService.getNICTypes().forEach((item) => {
+      this.nicType.options.push({ label: item[1], value: item[0] });
+    });
   }
   //Setting values coming from backend and populating formgroup with it.
   setgetValues(activeformgroup, deviceInformation) {

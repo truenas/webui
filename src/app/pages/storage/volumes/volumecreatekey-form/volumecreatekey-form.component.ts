@@ -27,7 +27,6 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
   saveSubmitText = T("Create Passphrase");
 
-  resource_name = 'storage/volume';
   route_return: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
@@ -76,7 +75,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   public custActions: Array<any> = [
     {
       id : 'download_encrypt_key',
-      name : 'Download Encryption Key',
+      name : T('Download Encryption Key'),
       disabled: true,
       function : () => {
         this.ws.call('auth.check_user', ['root', this.admin_pw]).subscribe((res) => {
@@ -90,7 +89,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     },
     {
       id : 'custom_cancel',
-      name : 'Cancel',
+      name : T('Cancel'),
       function : () => {
         this.router.navigate(new Array('/').concat(
           this.route_return));

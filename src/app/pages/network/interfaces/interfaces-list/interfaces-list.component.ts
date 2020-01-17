@@ -52,7 +52,8 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
     {name : T('Bridge Members'), prop: 'bridge_members', hidden: true},
     {name : T('LAGG Ports'), prop: 'lagg_ports', hidden: true},
     {name : T('LAGG Protocol'), prop: 'lagg_protocol', hidden: true},
-    {name : T('MAC Address'), prop: 'mac_address', hidden: true}
+    {name : T('MAC Address'), prop: 'mac_address', hidden: true},
+    {name : T('MTU'), prop: 'mtu', hidden: true}
   ];
   public config: any = {
     paging : true,
@@ -101,7 +102,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
         rows[i].active_media_subtype = rows[i]["state"]["active_media_subtype"];
       } else if (rows[i].type === "VLAN") {
         rows[i].vlan_tag = rows[i]["vlan_tag"];
-        rows[i].vlan_parent_interface = rows[i]["state"]["vlan_parent_interface"];
+        rows[i].vlan_parent_interface = rows[i]["vlan_parent_interface"];
       } else if (rows[i].type === "BRIDGE") {
         rows[i].bridge_members = rows[i]["bridge_members"];
       } else if (rows[i].type === "LINK_AGGREGATION") {
@@ -119,7 +120,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       icon: 'edit',
       name: "edit",
       label: T("Edit"),
-      onClick: (rowinner) => { 
+      onClick: (rowinner) => {
         if(this.ha_enabled) {
           this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
         } else {
@@ -281,7 +282,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   goToHA() {
     this.router.navigate(new Array('/').concat('system', 'failover'));
   }
-  
+
   ngOnDestroy() {
     this.core.unregister({observerClass:this});
   }

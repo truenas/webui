@@ -29,7 +29,6 @@ export class DiskListComponent {
 	  { name: T('Acoustic Level'), prop: 'acousticlevel', hidden: true },
 	  { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
 	  { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
-		{ name: T('Password for SED'), prop: 'passwd', hidden: true },
 	];
 	public config: any = {
 		paging: true,
@@ -140,6 +139,16 @@ export class DiskListComponent {
 			onClick: (row) => {
 				this.router.navigate(new Array('/').concat([
 				"storage", "disks", "edit", row.identifier
+				]));
+			}
+		}, {
+			id: parentRow.name,
+			icon: 'format_list_bulleted',
+			name: 'smartresults',
+			label: T("S.M.A.R.T Test Results"),
+			onClick: (row) => {
+				this.router.navigate(new Array('/').concat([
+				"storage", "disks", "smartresults", row.name
 				]));
 			}
 		}];
