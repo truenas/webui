@@ -34,7 +34,12 @@ dialog: {
     action: T('Continue')
 },
 graphite_separateinstances_placeholder: T('Graphite Separate Instances'),
-graphite_separateinstances_tooltip:T("If checked, when sending to Graphite,\
+graphite_separateinstances_tooltip:T("Enabling sends the \
+ <i>plugin instance</i> and <i>type instance</i> to Graphite as separate \
+ path components: <i>host.cpu.0.cpu.idle</i>.<br><br> Disabling sends \
+ the <i>plugin</i> and <i>plugin instance</i> as one path component and \
+ <i>type</i> and <i>type instance</i> as another component: \
+ <i>host.cpu-0.cpu-idle</i>.")
  the plugin instance and type instance will be in their own path component,\
  for example host.cpu.0.cpu.idle. If unchecked (the default), the plugin and\
  plugin instance  (and likewise the type and type instance) are put into one component,\
