@@ -707,13 +707,20 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       background-color: var(--bg2);
   }
 
-  // Give vdev arrow buttons theme colors
+  // Give vdev and dual-list arrow buttons theme colors
   .vdev-action-btn, .dual-list-action-btn {
     @include variable(background, --bg1, $bg1);
   }
 
   .vdev-action-btn .arrow, .dual-list-action-btn .arrow {
     @include variable(color, --primary, $primary);
+    font-size: 36px;
+    height: 36px;
+    width: 36px;
+  }
+
+  app-dual-listbox .chosen .mat-list-item-content {
+    color: white;
   }
 
   .vdev-action-btn:disabled {

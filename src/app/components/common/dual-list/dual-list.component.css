@@ -52,8 +52,7 @@
 
 .chosen, .draggable:active {
   width: 100%;
-  background: #91949c;
-  color: red !important;
+  background: var(--primary);
 }
 
 .cdk-drag-placeholder {
