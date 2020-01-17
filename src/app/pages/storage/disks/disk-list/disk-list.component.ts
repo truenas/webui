@@ -4,7 +4,10 @@ import { Router } from '@angular/router';
 import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
-import { StorageService } from '../../../../services/storage.service';
+import { StorageService, DialogService } from '../../../../services';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import helptext from '../../../../helptext/storage/disks/disks';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component ({
 	selector: 'disk-list',
@@ -97,13 +100,22 @@ export class DiskListComponent {
 			}
 
 		}
+	}, {
+		id: 'mmanualtest',
+		label: T("Manual Test"),
+		icon: 'play_arrow',
+		enable: true,
+		ttpos: "above",
+		onClick: (selected) => {
+			this.manualTest(selected);
+		}
 	}]
 
 	protected disk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unusedDisk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unused: any;
 	protected disk_pool: Map<string, string> = new Map<string, string>();
-	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService) {
+	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService, protected dialogService: DialogService) {
 		this.ws.call('boot.get_disks', []).subscribe((boot_res) => {
 			for (const boot in boot_res) {
 				this.disk_pool.set(boot_res[boot], T('Boot Pool'));
@@ -144,6 +156,14 @@ export class DiskListComponent {
 		}, {
 			id: parentRow.name,
 			icon: 'format_list_bulleted',
+			name: 'manual_test',
+			label: T("Manual Test"),
+			onClick: (row) => {
+				this.manualTest(row);
+			}
+		}, {
+			id: parentRow.name,
+			icon: 'format_list_bulleted',
 			name: 'smartresults',
 			label: T("S.M.A.R.T Test Results"),
 			onClick: (row) => {
@@ -175,5 +195,65 @@ export class DiskListComponent {
         disk.pool = this.disk_pool.get(disk.name) || this.disk_pool.get(disk.devname);
 	    }
     });
+  }
+
+  manualTest(selected) {
+	const parent = this;
+	const disks = Array.isArray(selected) ? selected.map(item => item.name) : [ selected.name ];
+	const disksIdentifier = Array.isArray(selected) ? selected.map(item => {
+		return {'identifier': item.identifier}
+	}) : [ {'identifier': selected.identifier} ];
+	const conf: DialogFormConfiguration = {
+		title: helptext.manual_test_dialog.title,
+		fieldConfig: [
+			{
+				type: 'input',
+				name: 'disks',
+				placeholder: helptext.manual_test_dialog.disk_placeholder,
+				value: disks,
+				readonly: true,
+			},
+		  {
+			type: 'select',
+			name: 'type',
+			placeholder: helptext.manual_test_dialog.type_placeholder,
+			options: [
+				{
+				  label: 'LONG',
+				  value: 'LONG',
+				},
+				{
+				  label: 'SHORT',
+				  value: 'SHORT',
+				},
+				{
+				  label: 'CONVEYANCE',
+				  value: 'CONVEYANCE',
+				},
+				{
+				  label: 'OFFLINE',
+				  value: 'OFFLINE',
+				}
+			],
+			value: 'LONG',
+		  }
+		],
+		saveButtonText: helptext.manual_test_dialog.saveButtonText,
+		customSubmit: function (entityDialog) {
+			disksIdentifier.forEach(item => {
+				item['type'] = entityDialog.formValue.type;
+			});
+
+			parent.ws.call('smart.test.manual_test', [disksIdentifier]).subscribe(
+				res => {
+
+				},
+				err => {
+					new EntityUtils().handleWSError(parent, err, parent.dialogService, conf.fieldConfig);
+				}
+			)
+		}
+	  }
+	  this.dialogService.dialogForm(conf);
   }
 }
