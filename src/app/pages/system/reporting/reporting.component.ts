@@ -99,8 +99,7 @@ export class ReportingComponent {
   
   public customSubmit(body) {
     if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints || 
-      body.cpu_in_percentage !== this.isCpuCheckboxChecked ||
-      body.graphite_separateinstances !== this.graphite_separateinstances) {
+      body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
       this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false, 
         helptext.dialog.action).subscribe((res) => {
         if (res) {

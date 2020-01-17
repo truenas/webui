@@ -30,7 +30,7 @@ reset_button: T('Reset to Defaults'),
 dialog: {
     title: T('Change Settings and Clear Report History?'),
     message: T('Report history is cleared when <i>CPU reporting</i>, <i>Graph Age</i>, \
-<i>Graphite Separate Instances</i> or <i>Graph Points</i> are changed.'),
+ or <i>Graph Points</i> are changed.'),
     action: T('Continue')
 },
 graphite_separateinstances_placeholder: T('Graphite Separate Instances'),
@@ -40,8 +40,4 @@ graphite_separateinstances_tooltip:T("Enabling sends the \
  the <i>plugin</i> and <i>plugin instance</i> as one path component and \
  <i>type</i> and <i>type instance</i> as another component: \
  <i>host.cpu-0.cpu-idle</i>.")
- the plugin instance and type instance will be in their own path component,\
- for example host.cpu.0.cpu.idle. If unchecked (the default), the plugin and\
- plugin instance  (and likewise the type and type instance) are put into one component,\
- for example host.cpu-0.cpu-idle.")
 }
