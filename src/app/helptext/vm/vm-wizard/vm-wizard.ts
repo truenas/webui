@@ -72,7 +72,7 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
 cores: {
   placeholder: T('Cores'),
   tooltip: T('Specify the number of cores per virtual CPU socket. \
- The product of vCPUs, cores and threads must not exceed 16.'),
+ The product of vCPUs, cores, and threads must not exceed 16.'),
 }, 
 
 threads: {
