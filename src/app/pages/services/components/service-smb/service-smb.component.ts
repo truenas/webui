@@ -235,7 +235,7 @@ export class ServiceSMBComponent {
   }
 
   updateGroupSearchOptions(value = "", parent) {
-    parent.userService.groupQueryDSCache(value).subscribe(items => {
+    parent.userService.groupQueryDSCache(value, true).subscribe(items => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].group, value: items[i].group});
