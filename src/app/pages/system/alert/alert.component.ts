@@ -104,7 +104,6 @@ export class AlertConfigComponent implements OnInit {
         width: "40%",
         config: config
       }
-      console.log(fieldSet);
     
       sets.push(fieldSet);
 
