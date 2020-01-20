@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
 import helptext from '../../../helptext/vm/vm-list';
@@ -258,16 +259,29 @@ export class VMListComponent {
                         {
                             type: 'checkbox',
                             name: 'zvols',
-                            placeholder: T('Delete data too?'),
-                            value: false
+                            placeholder: T('Delete Virtual Machine Data?'),
+                            value: false,
+                            tooltip: T('Set to remove the data associated with this \
+ Virtual Machine (which will result in data loss if the data is not backed up). Unset to \
+ leave the data intact.')
                         },
                         {
                             type: 'checkbox',
                             name: 'force',
-                            placeholder: T('Force delete?'),
+                            placeholder: T('Force Delete?'),
                             value: false,
-                            tooltip: T('When selected, the system will attempt to delete this Virtual Machine even if \
- the VM\'s status cannot be determined (for example if the VM has crashed or is unresponsive).')
+                            tooltip: T('Set to ignore the Virtual \
+ Machine status during the delete operation. Unset to prevent deleting \
+ the Virtual Machine when it is still active or has an undefined state.')
+                        },
+                        {
+                            type: 'input',
+                            name: 'confirm_name',
+                            placeholder: '',
+                            maskValue: delete_row.name,
+                            required: true,
+                            validation : [regexValidator(new RegExp(delete_row.name))],
+                            hideErrMsg: true
                         }
                     ],
                     saveButtonText: T('Delete'),
