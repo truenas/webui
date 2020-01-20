@@ -26,13 +26,17 @@ msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
-msgstr "<b>UPSモード</b>が<i>スレーブ</i>に設定されている場合。UPS<i>マスター</i>システムの開いているネットワークポート番号を入力します。デフォルトのポートは<i>3493</i>です。"
+msgstr ""
+"<b>UPSモード</b>が<i>スレーブ</i>に設定されている場合。UPS<i>マスター</i>"
+"システムの開いているネットワークポート番号を入力します。デフォルトのポートは<i>3493</i>です。"
 
 msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a "
 "backup of the existing encryption key  without making any changes, click "
 "<b>DOWNLOAD ENCRYPTION KEY</b>."
-msgstr "パスフレーズは、既存のプール回復キー ファイルを無効にします。変更を加えずに既存の暗号化キーのバックアップを保存するには、[<b>暗号化キーのダウンロード</b>] をクリックします。"
+msgstr ""
+"パスフレーズは、既存のプール回復キー "
+"ファイルを無効にします。変更を加えずに既存の暗号化キーのバックアップを保存するには、[<b>暗号化キーのダウンロード</b>] をクリックします。"
 
 msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
@@ -43,6 +47,9 @@ msgid " and "
 msgstr ""
 
 msgid " and all snapshots of it?"
+msgstr ""
+
+msgid " and will be disrupted if the pool is locked:"
 msgstr ""
 
 msgid " but datastore "
@@ -96,7 +103,9 @@ msgid ""
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
 "encrypted pools, download and safely store the encryption key and any "
 "passphrase for it."
-msgstr "'は暗号化されています！ この暗号化されたプールのパスフレーズが失われた場合、データは<b>永久に回復不能</b>になります！ 暗号化されたプールをエクスポート/切断する前に、暗号化キーとそのパスフレーズをダウンロードして安全に保存します。"
+msgstr ""
+"'は暗号化されています！ この暗号化されたプールのパスフレーズが失われた場合、データは<b>永久に回復不能</b>になります！ "
+"暗号化されたプールをエクスポート/切断する前に、暗号化キーとそのパスフレーズをダウンロードして安全に保存します。"
 
 msgid "'. All data on that pool was destroyed."
 msgstr "'. このプールの全データは削除されました。"
@@ -284,13 +293,6 @@ msgstr ""
 "target=\"_blank\">Encryption section</a>をお読みください。"
 
 msgid ""
-"<a href='--docurl--/sharing.html--webversion--#block-iscsi' "
-"target='_blank'>iSCSI</a> supports multiple authentication methods that are "
-"used by the target to discover valid devices. None allows anonymous "
-"discovery while CHAP and Mutual CHAP require authentication."
-msgstr ""
-
-msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
@@ -348,9 +350,10 @@ msgstr ""
 "されます。ソースにファイルが存在しない場合は、ファイルも宛先から<i><u>削除</u></i>されます。"
 
 msgid ""
-"<b>WARNING:</b> Rolling back to this snapshot will permanently delete later "
-"snapshots of this dataset. Do not roll back until all desired snapshots "
-"have been backed up!"
+"<b>WARNING:</b> Rolling the dataset back  destroys data on the dataset "
+"<i>and</i> can destroy additional snapshots  that are related to the "
+"dataset. <b>This can result in permanent data  loss!</b> Do not roll back "
+"until all desired data and snapshots are  backed up."
 msgstr ""
 
 msgid ""
@@ -368,9 +371,6 @@ msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b>はこのポートでリッスンします。"
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
-msgstr ""
-
-msgid "<br><br>Roll back to snapshot <i>"
 msgstr ""
 
 msgid "<font color=\"red\"> There are "
@@ -406,11 +406,33 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_tdb2\" "
 "target=\"_blank\">idmap_tdb2(8)</a>"
 msgstr ""
-"<font color=\"red\">警告</font>: ほとんどのホーム ネットワークのように、Windows コンピュータのみを使用するネットワークには<i>rid</i>または<i>autorid</i>を使用してください。Active Directory に参加している Mac コンピュータも、<i>ird</i>および<i>autorid</i>で使用することもできます。これらのバックエンドはどちらも、この NAS で動作するように事前に構成されています。その他の"
-"idmap_backend値は、Windows やその他のオペレーティング システムとの大規模なネットワークまたは混在ネットワークで使用するための値です。混合ネットワークで動作させる必要があり、適切な構成が既に決定されているのでない限り、idmap_backendの設定を変更しないでください。参考までに<a href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_rid\" target=\"_blank\">idmap_rid(8)</a>, <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_autorid\" target=\"_blank\">idmap_autorid(8)</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ad\" target=\"_blank\">ad</a>, <a href=\"--docurl--/directoryservices.html#id12\" target=\"_blank\">fruit</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap\" target=\"_blank\">idmap_ldap(8)</"
-"a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_nss\" target=\"_blank\">idmap_nss(8)</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_rfc2307\" target=\"_blank\">idmap_rfc2307(8), <a href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_script\" target=\"_blank\">idmap_script(8)</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?"
-"query=idmap_tdb\" target=\"_blank\">tdb</a>, <a href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_tdb2\" target=\"_blank\">idmap_tdb2(8)</a>を参照してください。"
+"<font color=\"red\">警告</font>: ほとんどのホーム ネットワークのように、Windows "
+"コンピュータのみを使用するネットワークには<i>rid</i>または<i>autorid</i>を使用してください。Active Directory "
+"に参加している Mac "
+"コンピュータも、<i>ird</i>および<i>autorid</i>で使用することもできます。これらのバックエンドはどちらも、この NAS "
+"で動作するように事前に構成されています。その他のidmap_backend値は、Windows やその他のオペレーティング "
+"システムとの大規模なネットワークまたは混在ネットワークで使用するための値です。混合ネットワークで動作させる必要があり、適切な構成が既に決定されているので"
+"ない限り、idmap_backendの設定を変更しないでください。参考までに<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_rid\" "
+"target=\"_blank\">idmap_rid(8)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_autorid\" "
+"target=\"_blank\">idmap_autorid(8)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ad\" "
+"target=\"_blank\">ad</a>, <a "
+"href=\"--docurl--/directoryservices.html#id12\" "
+"target=\"_blank\">fruit</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap\" "
+"target=\"_blank\">idmap_ldap(8)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_nss\" "
+"target=\"_blank\">idmap_nss(8)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_rfc2307\" "
+"target=\"_blank\">idmap_rfc2307(8), <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_script\" "
+"target=\"_blank\">idmap_script(8)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_tdb\" "
+"target=\"_blank\">tdb</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_tdb2\" "
+"target=\"_blank\">idmap_tdb2(8)</a>を参照してください。"
 
 msgid "<i>0</i> disables quotas. Specify a maximum allowed space for this dataset."
 msgstr ""
@@ -453,14 +475,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<i>Device</i> provide virtual storage access to zvols, zvol snapshots, or "
-"physical devices. <i>File</i> provides virtual storage access to an "
-"individual file."
-msgstr ""
-
-msgid ""
-"<i>File</i> shares the contents of an individual file. <i>Device</i> shares "
-"an entire device."
+"<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or "
+"physical devices.  <i>File</i> provides virtual storage access to a single "
+"file."
 msgstr ""
 
 msgid ""
@@ -507,6 +524,17 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<i>Yes:</i> Disables the <b>Password</b>  fields and removes the password "
+"from the account. The account cannot  use password-based logins for "
+"services. For example, disabling the  password prevents using account "
+"credentials to log in to an SMB share  or open an SSH session on the "
+"system. The <b>Lock User</b> and  <b>Permit Sudo</b> options are also "
+"removed.<br><br>  <i>No:</i> Requires adding a <b>Password</b> to the "
+"account. The  account can use the saved <b>Password</b> to authenticate "
+"with  password-based services."
+msgstr ""
+
+msgid ""
 "<i>global</i> is a reserved name that cannot be used as a share name. "
 "Please enter a different share name."
 msgstr ""
@@ -519,7 +547,10 @@ msgid ""
 "with a new boot device. This also decrypts all system passwords for reuse "
 "when the configuration file is uploaded.</p> <br /><b>Keep the "
 "configuration file safe and protect it from unauthorized access!</b>"
-msgstr "<p>パスワード シークレット シードを含めると、この設定ファイルを新しいブート デバイスで使用できます。これにより、構成ファイルのアップロード時に再利用するためにすべてのシステム パスワードが復号化されます。</p><br><b>不正アクセスから保護するため、構成ファイルは安全なところに厳重に保管してください。</b>"
+msgstr ""
+"<p>パスワード シークレット シードを含めると、この設定ファイルを新しいブート "
+"デバイスで使用できます。これにより、構成ファイルのアップロード時に再利用するためにすべてのシステム "
+"パスワードが復号化されます。</p><br><b>不正アクセスから保護するため、構成ファイルは安全なところに厳重に保管してください。</b>"
 
 msgid ""
 "<p>The system will reboot to perform this operation!</p> <p><font "
@@ -815,6 +846,9 @@ msgstr "データセットを追加"
 msgid "Add Extra ISCSI Group"
 msgstr ""
 
+msgid "Add Group"
+msgstr ""
+
 msgid "Add Log"
 msgstr "ログを追加"
 
@@ -889,12 +923,6 @@ msgid ""
 msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
-msgstr ""
-
-msgid ""
-"Additional <a                   "
-"href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
-"in\"                   target=\"_blank\">smartctl(8)</a> options."
 msgstr ""
 
 msgid ""
@@ -1009,6 +1037,9 @@ msgstr "管理者グループ"
 msgid "Adv. Power Management"
 msgstr ""
 
+msgid "Advance Options"
+msgstr ""
+
 msgid "Advanced"
 msgstr "高度な設定"
 
@@ -1025,6 +1056,9 @@ msgid "Advanced Plugin Installation"
 msgstr ""
 
 msgid "Advanced Power Management"
+msgstr ""
+
+msgid "Advanced Remote Options"
 msgstr ""
 
 msgid "Advanced Settings"
@@ -1061,11 +1095,17 @@ msgstr "全ディスク"
 msgid "All dirs"
 msgstr "全ディレクトリ"
 
+msgid "All users"
+msgstr ""
+
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "仮想マシンにRAMをメガバイトで割り当てます。"
 
 msgid "Allocate at least 256 MiB."
 msgstr "少なくとも256 MiBを割り当てます。"
+
+msgid "Allow"
+msgstr ""
 
 msgid "Allow All Initiators"
 msgstr "すべてのイニシエーターを許可する"
@@ -1090,6 +1130,9 @@ msgstr "重複する GIDs を許可する"
 
 msgid "Allow Guest Access"
 msgstr "ゲストアクセスを許可する"
+
+msgid "Allow Hosts"
+msgstr ""
 
 msgid "Allow Kerberos authentication"
 msgstr "ケルベロス認証を許可する"
@@ -1257,9 +1300,10 @@ msgid "Allowed Initiators (IQN)"
 msgstr ""
 
 msgid ""
-"Allows different groups to be configured with different authentication "
-"profiles. Example: all users with a group ID of 1 will inherit the "
-"authentication profile associated with Group 1."
+"Allows the share to host user home  directories. Each user is given a "
+"personal home directory when  connecting to the share which is not "
+"accessible by other users. This  allows for a personal, dynamic share. Only "
+"one share can be used  as the home share."
 msgstr ""
 
 msgid ""
@@ -1281,6 +1325,9 @@ msgstr ""
 msgid "Always Chroot"
 msgstr ""
 
+msgid "Always On"
+msgstr ""
+
 msgid ""
 "Always back up the key! Losing the key will also lose all data on the disks "
 "with no chance of recovery."
@@ -1292,14 +1339,20 @@ msgid ""
 "through <i>My account -> Security Credentials -> Access Keys  (Access Key "
 "ID and Secret Access Key)</i>. Must be alphanumeric and  between 5 and 20 "
 "characters."
-msgstr "アマゾンウェブサービスキーID。 これは、<a href=\"https://aws.amazon.com/\" target=\"_blank\">Amazon AWS</a>で、<i>マイアカウント->セキュリティ認証情報->アクセスキー（Access キーIDとシークレットアクセスキー）</ i>で見ることができます。 5〜20文字の英数字である必要があります。"
+msgstr ""
+"アマゾンウェブサービスキーID。 これは、<a href=\"https://aws.amazon.com/\" "
+"target=\"_blank\">Amazon AWS</a>で、<i>マイアカウント->セキュリティ認証情報->アクセスキー（Access "
+"キーIDとシークレットアクセスキー）</ i>で見ることができます。 5〜20文字の英数字である必要があります。"
 
 msgid ""
 "Amazon Web Services password. If the Secret Access Key cannot be  found or "
 "remembered, go to <i>My Account -> Security Credentials ->  Access Keys</i> "
 "and create a new key pair. Must be alphanumeric and  between 8 and 40 "
 "characters."
-msgstr "アマゾンウェブサービスのパスワード。 シークレットアクセスキーが見つからない、または思い出せない場合は、<i>マイアカウント->セキュリティ認証情報->アクセスキー</ i>に移動して、新しいキーペアを作成します。 8〜40文字の英数字である必要があります。"
+msgstr ""
+"アマゾンウェブサービスのパスワード。 "
+"シークレットアクセスキーが見つからない、または思い出せない場合は、<i>マイアカウント->セキュリティ認証情報->アクセスキー</ "
+"i>に移動して、新しいキーペアを作成します。 8〜40文字の英数字である必要があります。"
 
 msgid "Amount of locked memory in bytes for the jail."
 msgstr ""
@@ -1404,7 +1457,9 @@ msgid ""
 "previous permissions.                                              Creating "
 "a separate dataset for Minio is strongly                                    "
 "          recommended."
-msgstr "ディレクトリをMinioに割り当てると、そのディレクトリとその中のすべてのディレクトリの権限がminio：minioに変更され、以前の権限が上書きされます。 Minio用に個別のデータセットを作成することを強くお勧めします。"
+msgstr ""
+"ディレクトリをMinioに割り当てると、そのディレクトリとその中のすべてのディレクトリの権限がminio：minioに変更され、以前の権限が上書きされま"
+"す。 Minio用に個別のデータセットを作成することを強くお勧めします。"
 
 msgid ""
 "At least one module must be defined in <a                "
@@ -1548,7 +1603,15 @@ msgstr "サポートに戻る"
 msgid ""
 "Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
 "GIDs. To configure the selected  backend, click <i>EDIT IDMAP</i>."
-msgstr "Windowsセキュリティ識別子（SID）をUNIX UIDおよびGIDにマップするために使用されるバックエンド。 選択したバックエンドを設定するには、<i>EDIT IDMAP</i>をクリックします。"
+msgstr ""
+"Windowsセキュリティ識別子（SID）をUNIX UIDおよびGIDにマップするために使用されるバックエンド。 "
+"選択したバックエンドを設定するには、<i>EDIT IDMAP</i>をクリックします。"
+
+msgid "Background (lowest)"
+msgstr ""
+
+msgid "Bandwidth"
+msgstr ""
 
 msgid "Bandwidth Limit"
 msgstr "帯域制限"
@@ -1589,6 +1652,9 @@ msgid ""
 msgstr "このシステムが信頼できる開始UID / GID番号。 この番号の範囲より低いか、この番号の範囲より高いUID / GID値は無視されます。"
 
 msgid "Berkeley Packet Filter"
+msgstr ""
+
+msgid "Best effort (default)"
 msgstr ""
 
 msgid "Bind"
@@ -1659,9 +1725,15 @@ msgid ""
 "href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
 "vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
 "Brainpool </a> for more information."
-msgstr "脳プール曲線はより安全であり、secp曲線はより高速です。 詳しくは<a href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-vs-brainpool\" target=\"blank\">楕円曲線のパフォーマンス：NISTとBrainpool </a>をご覧ください。"
+msgstr ""
+"脳プール曲線はより安全であり、secp曲線はより高速です。 詳しくは<a "
+"href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
+"vs-brainpool\" target=\"blank\">楕円曲線のパフォーマンス：NISTとBrainpool </a>をご覧ください。"
 
 msgid "Bridge Members"
+msgstr ""
+
+msgid "Bridge Settings"
 msgstr ""
 
 msgid "Browsable to Network Clients"
@@ -1682,24 +1754,23 @@ msgid ""
 "Browse to an <b>existing</b> directory to use for storage. Some devices can "
 "require a specific directory name. Consult the documentation for that "
 "device to see if there are any restrictions."
-msgstr "ストレージに使用する<b>既存の</b>ディレクトリを参照します。 デバイスによっては、特定のディレクトリ名が必要な場合があります。 そのデバイスのドキュメントを参照して、制限があるかどうかを確認してください。"
+msgstr ""
+"ストレージに使用する<b>既存の</b>ディレクトリを参照します。 デバイスによっては、特定のディレクトリ名が必要な場合があります。 "
+"そのデバイスのドキュメントを参照して、制限があるかどうかを確認してください。"
 
 msgid ""
 "Browse to an empty directory within the jail or enter a new directory name "
 "within the jail directory structure. This links to the <b>Source</b> "
 "storage area."
-msgstr "jail内の空のディレクトリを参照するか、jailディレクトリ構造内に新しいディレクトリ名を入力します。 これは、<b>ソース</b>ストレージエリアにリンクします。"
+msgstr ""
+"jail内の空のディレクトリを参照するか、jailディレクトリ構造内に新しいディレクトリ名を入力します。 "
+"これは、<b>ソース</b>ストレージエリアにリンクします。"
 
 msgid ""
 "Browse to an existing file. Create a new file by browsing to a dataset and "
-"appending /<i>{filename.ext}</i> to the path."
-msgstr "既存のファイルを参照します。 データセットを参照し、パスに/<i>{filename.ext}</i>を追加して、新しいファイルを作成します。"
-
-msgid ""
-"Browse to an existing file. Create a new file by browsing to a dataset and "
-"appending the file name to the path. Extents cannot be created inside a "
-"jail root directory."
-msgstr "既存のファイルを参照します。 データセットを参照し、パスにファイル名を追加して、新しいファイルを作成します。 エクステントは、jailルートディレクトリ内に作成できません。"
+"appending /<i>{filename.ext}</i> to the path. Extents cannot be created "
+"inside a jail root directory."
+msgstr ""
 
 msgid "Browse to an existing pool or dataset to store the new zvol."
 msgstr "既存のプールまたはデータセットを参照して、新しいzvolを保存します。"
@@ -1735,10 +1806,10 @@ msgstr ""
 msgid ""
 "Browse to the path to be copied. The                 <a "
 "href=\"--docurl--/intro.html#path-and-name-lengths\"                 "
-"target=\"_blank\">FreeBSD file path limits</a> apply."
+"target=\"_blank\">FreeBSD file path limits</a> apply.                 Other "
+"operating systems can have different limits                 which might "
+"affect how they can be used as sources                 or destinations."
 msgstr ""
-"コピーするパスを参照します。。 <a href=\"--docurl--/intro.html#path-and-name-lengths\"     "
-"            target=\"_blank\">FreeBSDファイルパスの制限</a>が適用されます。"
 
 msgid "Browse to the pool or dataset to share."
 msgstr "共有するPoolまたはDatasetを参照します。"
@@ -1746,7 +1817,9 @@ msgstr "共有するPoolまたはDatasetを参照します。"
 msgid ""
 "Browse to the pool or dataset to share. Netatalk does not fully support "
 "nesting additional pools, datasets, or symbolic links beneath this path."
-msgstr "共有するPoolまたはDatasetを参照します。Netatalkは、このパスの下に追加のプール、データセット、またはシンボリックリンクをネストすることを完全にはサポートしていません。"
+msgstr ""
+"共有するPoolまたはDatasetを参照します。Netatalkは、このパスの下に追加のプール、データセット、またはシンボリックリンクをネストすること"
+"を完全にはサポートしていません。"
 
 msgid "Bucket"
 msgstr ""
@@ -1981,7 +2054,9 @@ msgid ""
 "is available. Click                                   <i>APPLY PENDING "
 "UPDATE</i> to install                                   the downloaded "
 "update."
-msgstr "選択したドレインの更新を毎日更新サーバーで確認します。更新プログラムがある場合は、自動的にダウンロードします。<i>保留中の更新プログラムの適用</i> をクリックして、ダウンロードした更新プログラムをインストールします。"
+msgstr ""
+"選択したドレインの更新を毎日更新サーバーで確認します。更新プログラムがある場合は、自動的にダウンロードします。<i>保留中の更新プログラムの適用</i>"
+" をクリックして、ダウンロードした更新プログラムをインストールします。"
 
 msgid ""
 "Check this box if importing a certificate for which a CSR exists on this "
@@ -2141,6 +2216,12 @@ msgstr ""
 "管理用GUIへのアクセスすることができるIPv6"
 "アドレスを最近のIPアドレスから選択して制限することができます。ビルトインのHTTPサーバーはワイルドカードアドレス <i>::</i> "
 "(任意のアドレス)にバインドされ、指定されたアドレスが使用できなくなった場合にアラートを発行します。"
+
+msgid ""
+"Choose a safety level for the  rollback action. The rollback is canceled "
+"when the safety check finds  additional snapshots that are directly related "
+"to the dataset being rolled back."
+msgstr ""
 
 msgid ""
 "Choose a saved SSH Keypair or select  <i>Generate New</i> to create a new "
@@ -2362,6 +2443,9 @@ msgstr "クライアント"
 msgid "Clone"
 msgstr "クローン"
 
+msgid "Clone Boot Environment"
+msgstr ""
+
 msgid "Clone to New Dataset"
 msgstr ""
 
@@ -2469,6 +2553,9 @@ msgstr "コメント"
 msgid "Comments"
 msgstr "コメント"
 
+msgid "Comments about this script."
+msgstr ""
+
 msgid "Common Name"
 msgstr "共通名"
 
@@ -2476,6 +2563,12 @@ msgid "Community"
 msgstr "コミュニティー"
 
 msgid "Complete the Upgrade"
+msgstr ""
+
+msgid ""
+"Completely replicate the selected dataset. The target dataset will have all "
+"of the properties, snapshots, child datasets, and clones from the source "
+"dataset."
 msgstr ""
 
 msgid "Compress"
@@ -2522,6 +2615,9 @@ msgstr ""
 
 msgid "Configure Networking"
 msgstr "ネットワーク設定"
+
+msgid "Configure System Dataset"
+msgstr ""
 
 msgid ""
 "Configure an external program to perform ID mapping. See <a "
@@ -2588,6 +2684,9 @@ msgstr ""
 msgid "Connecting to "
 msgstr ""
 
+msgid "Connection"
+msgstr ""
+
 msgid "Connection Error"
 msgstr ""
 
@@ -2602,7 +2701,8 @@ msgid ""
 msgstr ""
 "接続セキュリティレベル：<br>  <ul><li><i>標準</i>は最も安全ですが、接続速度に最も大きな影響を及ぼします。</li><br>\n"
 "<li><i>高速</i>は<i>標準</i>よりも安全性は劣りますが、限定的な暗号化速度のデバイスに適切な転送速度を提供できます。</li><br>\n"
-"<li><i>無効</i>にすると、すべてのセキュリティが削除され、接続速度が最大になります。 セキュリティの無効化は、安全で信頼できるネットワーク内でのみ使用してください。</li></ul>"
+"<li><i>無効</i>にすると、すべてのセキュリティが削除され、接続速度が最大になります。 "
+"セキュリティの無効化は、安全で信頼できるネットワーク内でのみ使用してください。</li></ul>"
 
 msgid "Connections"
 msgstr ""
@@ -2644,6 +2744,9 @@ msgstr "ダウンロードを続行しますか?"
 msgid "Contract Type"
 msgstr ""
 
+msgid "Control"
+msgstr ""
+
 msgid "Control left sidebar's display style."
 msgstr ""
 
@@ -2682,6 +2785,9 @@ msgid "Copies"
 msgstr ""
 
 msgid "Copy and Paste"
+msgstr ""
+
+msgid "Cores"
 msgstr ""
 
 msgid "Could not delete boot environment."
@@ -2797,10 +2903,19 @@ msgstr ""
 msgid "Credential"
 msgstr ""
 
+msgid "Credentials"
+msgstr ""
+
 msgid "Critical"
 msgstr ""
 
+msgid "Critical applications"
+msgstr ""
+
 msgid "Criticality"
+msgstr ""
+
+msgid "Cron Job"
 msgstr ""
 
 msgid "Cron Jobs"
@@ -2857,6 +2972,9 @@ msgid "DISCARD CHANGES"
 msgstr ""
 
 msgid "DNS Forwarder"
+msgstr ""
+
+msgid "DNS Servers"
 msgstr ""
 
 msgid "DNS Timeout"
@@ -2976,6 +3094,9 @@ msgstr ""
 msgid "Default ACL Options"
 msgstr ""
 
+msgid "Default Gateway"
+msgstr ""
+
 msgid "Default Permissions"
 msgstr ""
 
@@ -3009,6 +3130,11 @@ msgstr ""
 "トは影響を受けません。"
 
 msgid ""
+"Define a maximum size for both the dataset and any child datasets. Enter "
+"<i>0</i> to remove the quota."
+msgstr ""
+
+msgid ""
 "Define a number of minutes for <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1"
 "-RELEASE+and+Ports\" target=\"_blank\">smartd</a> to wake up and check if "
@@ -3022,16 +3148,16 @@ msgstr ""
 msgid ""
 "Define any additional settings for use by some Kerberos applications. The "
 "available settings and syntax is listed in the <a "
-"href=\"http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf."
-"html#appdefaults\" target=\"_blank\">appdefaults section of "
+"href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
+"conf.html#appdefaults\" target=\"_blank\">appdefaults section of "
 "krb.conf(5).</a>."
 msgstr ""
 
 msgid ""
 "Define any settings used by the Kerberos library. The available settings "
 "and their syntax are listed in the <a "
-"href=\"http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf."
-"html#libdefaults\" target=\"_blank\">libdefaults section of "
+"href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
+"conf.html#libdefaults\" target=\"_blank\">libdefaults section of "
 "krb.conf(5).</a>."
 msgstr ""
 
@@ -3141,6 +3267,12 @@ msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
 msgid "Deleting the <b>"
+msgstr ""
+
+msgid "Deny"
+msgstr ""
+
+msgid "Deny Hosts"
 msgstr ""
 
 msgid "Deny list"
@@ -3287,8 +3419,8 @@ msgstr "リモートホストとデータのフローを転送する方向です
 msgid "Direction"
 msgstr ""
 
-msgid "Directories & Permissions"
-msgstr "ディレクトリと権限"
+msgid "Directories and Permissions"
+msgstr ""
 
 msgid "Directory"
 msgstr ""
@@ -3332,6 +3464,9 @@ msgstr ""
 msgid "Disable LDAP User/Group Cache"
 msgstr ""
 
+msgid "Disable Password"
+msgstr ""
+
 msgid "Disable automatic failover."
 msgstr ""
 
@@ -3342,6 +3477,9 @@ msgid ""
 msgstr ""
 
 msgid "Disable physical block size reporting"
+msgstr ""
+
+msgid "Disabled"
 msgstr ""
 
 msgid "Disabled (Not encrypted)"
@@ -3398,6 +3536,9 @@ msgstr ""
 msgid "Disks"
 msgstr "ディスク"
 
+msgid "Disks to be edited:"
+msgstr ""
+
 msgid "Dismiss"
 msgstr ""
 
@@ -3434,6 +3575,9 @@ msgstr ""
 msgid "Domain Account Password"
 msgstr ""
 
+msgid "Domain Credentials"
+msgstr ""
+
 msgid "Domain Forest Level"
 msgstr ""
 
@@ -3458,7 +3602,16 @@ msgstr ""
 msgid "Download Logs"
 msgstr ""
 
+msgid "Download Private Key"
+msgstr ""
+
+msgid "Download Public Key"
+msgstr ""
+
 msgid "Download Recovery Key"
+msgstr ""
+
+msgid "Download SSH Public Key"
 msgstr ""
 
 msgid "Download Sucessful"
@@ -3482,6 +3635,12 @@ msgstr ""
 msgid ""
 "Drives and IDs registered to the Microsoft account.  Selecting a drive also "
 "fills the <i>Drive ID</i> field."
+msgstr ""
+
+msgid "Dry Run"
+msgstr ""
+
+msgid "Dry Run Cloud Sync Task"
 msgstr ""
 
 msgid "EC Curve"
@@ -3527,9 +3686,6 @@ msgid "Edit Zvol"
 msgstr ""
 
 msgid "Editing interfaces while HA is enabled is not allowed."
-msgstr ""
-
-msgid "Editing the following disks:"
 msgstr ""
 
 msgid ""
@@ -3639,16 +3795,6 @@ msgstr "MacクライアントがSMB共有に接続する場合に有効にしま
 msgid "Enable netwait feature"
 msgstr ""
 
-msgid "Enable password login"
-msgstr ""
-
-msgid ""
-"Enable password logins and authentication to SMB shares. Selecting "
-"<b>No</b> removes the <b>Lock User</b> and <b>Permit Sudo</b> options."
-msgstr ""
-"ログインと、SMB共有の認証のためにパスワードを必要とします。 <b>No</b> を選択することで、 <b>Lock User</b> と "
-"<b>Permit Sudo</b> オプションを取り除きます。"
-
 msgid ""
 "Enable running services that require <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=mlock\" "
@@ -3732,6 +3878,14 @@ msgstr ""
 msgid ""
 "Enabling <em>Time Machine</em> on an SMB share requires a restart of the "
 "SMB service."
+msgstr ""
+
+msgid ""
+"Enabling sends the  <i>plugin instance</i> and <i>type instance</i> to "
+"Graphite as separate  path components: <i>host.cpu.0.cpu.idle</i>.<br><br> "
+"Disabling sends  the <i>plugin</i> and <i>plugin instance</i> as one path "
+"component and  <i>type</i> and <i>type instance</i> as another component:  "
+"<i>host.cpu-0.cpu-idle</i>."
 msgstr ""
 
 msgid ""
@@ -3967,9 +4121,6 @@ msgid ""
 "VM from the serial shell."
 msgstr ""
 
-msgid "Enter a password for the User. Must be between 12 and 16 characters."
-msgstr "ユーザーのパスワードを入力します。12～16 文字の間にする必要があります。"
-
 msgid "Enter a password of at least eight characters."
 msgstr "8 文字以上のパスワードを入力してください。"
 
@@ -4180,12 +4331,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter name of user account to use for CHAP authentication with the user on "
-"the remote system. Many initiators default to the initiator name as the "
-"user."
-msgstr ""
-
-msgid ""
 "Enter network proxy information if a proxy is used. Example: "
 "<i>http://my.proxy.server:3128</i> or "
 "<i>http://user:password@my.proxy.server:3128</i>"
@@ -4235,6 +4380,9 @@ msgstr ""
 "公開キーベースの認証のための <b>公開（Public）</b> SSH キーを入力するかペーストしてください。 "
 "<b>秘密（Private）鍵をペーストしないでください。</b>"
 
+msgid "Enter passphrase to expand pool "
+msgstr ""
+
 msgid "Enter passphrase to lock pool "
 msgstr ""
 
@@ -4245,7 +4393,10 @@ msgid ""
 "Enter the <a "
 "href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries."
 "html\" target=\"_blank\">AWS account region</a>."
-msgstr "<a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\">AWSアカウントのリージョン</a>を入力します。"
+msgstr ""
+"<a "
+"href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries."
+"html\" target=\"_blank\">AWSアカウントのリージョン</a>を入力します。"
 
 msgid ""
 "Enter the <a href=\"https://docs.influxdata.com/influxdb/\" "
@@ -4256,7 +4407,9 @@ msgid ""
 "Enter the <a href=\"https://kb.iu.edu/d/aiuv\" "
 "target=\"_blank\">fully-qualified hostname (FQDN)</a> of the system. This "
 "name must be unique within a certificate chain."
-msgstr "システムの<a href=\"https://kb.iu.edu/d/aiuv\" target=\"_blank\">完全修飾ホスト名（FQDN）</a>を入力します。 この名前は、証明書チェーン内で一意である必要があります。"
+msgstr ""
+"システムの<a href=\"https://kb.iu.edu/d/aiuv\" "
+"target=\"_blank\">完全修飾ホスト名（FQDN）</a>を入力します。 この名前は、証明書チェーン内で一意である必要があります。"
 
 msgid "Enter the Active Directory administrator account name."
 msgstr "Active Directory 管理者アカウント名を入力します。"
@@ -4264,7 +4417,9 @@ msgstr "Active Directory 管理者アカウント名を入力します。"
 msgid ""
 "Enter the Active Directory domain (<i>example.com</i>) or child domain "
 "(<i>sales.example.com</i>)."
-msgstr "Active Directory ドメイン (<i>example.com</i>) または子ドメイン (<i>sales.example.com</i>) を入力します。"
+msgstr ""
+"Active Directory ドメイン (<i>example.com</i>) または子ドメイン "
+"(<i>sales.example.com</i>) を入力します。"
 
 msgid ""
 "Enter the FreeBSD device name of the interface. This cannot be changed "
@@ -4541,9 +4696,6 @@ msgstr ""
 msgid "Error creating VM."
 msgstr ""
 
-msgid "Error creating pool"
-msgstr ""
-
 msgid "Error decrypting disks"
 msgstr ""
 
@@ -4577,13 +4729,7 @@ msgstr ""
 msgid "Error importing pool"
 msgstr ""
 
-msgid "Error locking pool."
-msgstr ""
-
 msgid "Error restarting web service"
-msgstr ""
-
-msgid "Error rolling back snapshot"
 msgstr ""
 
 msgid "Error saving ZVOL."
@@ -4598,7 +4744,7 @@ msgstr ""
 msgid "Error submitting file"
 msgstr ""
 
-msgid "Error updating disks."
+msgid "Error updating disks"
 msgstr ""
 
 msgid "Error:"
@@ -4622,6 +4768,9 @@ msgstr ""
 
 msgid "Estimated total raw data capacity"
 msgstr "推定総RAWデータ容量"
+
+msgid "Excellent effort"
+msgstr ""
 
 msgid "Exclude"
 msgstr ""
@@ -4651,6 +4800,9 @@ msgid "Exec"
 msgstr ""
 
 msgid "Execute"
+msgstr ""
+
+msgid "Expand Pool"
 msgstr ""
 
 msgid "Expiration Date"
@@ -4713,9 +4865,6 @@ msgstr ""
 msgid "Extent name"
 msgstr ""
 
-msgid "Extent size"
-msgstr ""
-
 msgid "Extent type"
 msgstr ""
 
@@ -4743,10 +4892,16 @@ msgstr ""
 msgid "Failover"
 msgstr ""
 
+msgid "Failover Configuration"
+msgstr ""
+
 msgid "Failover Group"
 msgstr ""
 
 msgid "Failover IP Address"
+msgstr ""
+
+msgid "Failover Settings"
 msgstr ""
 
 msgid "Failover VHID"
@@ -4777,9 +4932,6 @@ msgid "Fibre Channel "
 msgstr ""
 
 msgid "Fibre Channel Port "
-msgstr ""
-
-msgid "File"
 msgstr ""
 
 msgid "File Information"
@@ -4909,6 +5061,9 @@ msgstr ""
 msgid "Free"
 msgstr "空き"
 
+msgid "FreeBSD device names of each disk being edited."
+msgstr ""
+
 msgid ""
 "FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
 "versions up to the same version as the host  system. Newer releases are not "
@@ -4929,6 +5084,9 @@ msgstr "送信元メールアドレス"
 
 msgid "From Name"
 msgstr "差出人名"
+
+msgid "Full Filesystem Replication"
+msgstr ""
 
 msgid "Full Name"
 msgstr "フルネーム"
@@ -4955,6 +5113,9 @@ msgstr ""
 msgid "GID"
 msgstr ""
 
+msgid "GUI"
+msgstr ""
+
 msgid "GUI SSL Certificate"
 msgstr ""
 
@@ -4969,6 +5130,9 @@ msgstr ""
 
 msgid "General"
 msgstr "全般"
+
+msgid "General Options"
+msgstr ""
 
 msgid "General Preferences"
 msgstr ""
@@ -4996,12 +5160,10 @@ msgid "GiB"
 msgstr ""
 
 msgid ""
-"Give this user permission to use <a href=\"https://www.sudo.ws/\" "
-"target=\"_blank\">sudo</a>."
+"Give this user permission to use <a  href=\"https://www.sudo.ws/\" "
+"target=\"_blank\">sudo</a>. When using sudo,  a user is prompted for their "
+"account <b>Password</b>."
 msgstr ""
-"以前に作成された<a href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
-"target=\"_blank\">periodic snapshot task</a>の命名スキーマからスナップショットの名前を生成します。 "
-"これにより、スナップショットを複製できます。 <i>Name</i>には使用できません。"
 
 msgid ""
 "Gives control of how much of the new device is made available to ZFS. Set "
@@ -5035,10 +5197,16 @@ msgstr ""
 msgid "Graph Age in Months"
 msgstr "月のグラフ寿命"
 
+msgid "Graphite Separate Instances"
+msgstr ""
+
 msgid "Group"
 msgstr ""
 
 msgid "Group Bind Path"
+msgstr ""
+
+msgid "Group Configuration"
 msgstr ""
 
 msgid "Group ID"
@@ -5049,9 +5217,7 @@ msgid ""
 "Method is set to  CHAP or Mutual CHAP."
 msgstr ""
 
-msgid ""
-"Group ID created in Authorized  Access. Required when the Discovery Auth "
-"Method is set to CHAP or  Mutual CHAP."
+msgid "Group members"
 msgstr ""
 
 msgid ""
@@ -5207,6 +5373,9 @@ msgstr "ホスト名"
 msgid "Hostname (Virtual)"
 msgstr ""
 
+msgid "Hostname and Domain"
+msgstr ""
+
 msgid ""
 "Hostname or IP  address used to connect to the active side system. When the "
 "active side  is <i>LOCAL</i>, this defaults to the <i>SSH_CLIENT</i> "
@@ -5239,6 +5408,9 @@ msgid ""
 "Hostnames or IP addresses of the ISNS servers to be registered with the "
 "iSCSI targets and portals of the system. Separate each entry with a space."
 msgstr "システムのiSCSIターゲットおよびポータルに登録されるISNSサーバーのホスト名またはIPアドレス。 各エントリはスペースで区切ります。"
+
+msgid "Hosts"
+msgstr ""
 
 msgid "Hosts Allow"
 msgstr ""
@@ -5299,8 +5471,10 @@ msgid ""
 "URL and  login credentials of the remote system to connect and exchange SSH "
 " keys."
 msgstr ""
-"接続の構成方法：<br> <br> <i>手動</i>では、リモートシステムで認証を構成する必要があります。 これには、SSHキーのコピーとそのシステムの<i>root</i>ユーザーアカウントの変更が含まれます。<br> <br> <i>半自動</i>は、リモートFreeNASまたはTrueNASシステムとのSSH接続を設定する場合にのみ機能します 。 この方法では、リモートシステムのURLとログイン資格情報を使用して、接続およびSSHキー"
-"を交換します。"
+"接続の構成方法：<br> <br> <i>手動</i>では、リモートシステムで認証を構成する必要があります。 "
+"これには、SSHキーのコピーとそのシステムの<i>root</i>ユーザーアカウントの変更が含まれます。<br> <br> "
+"<i>半自動</i>は、リモートFreeNASまたはTrueNASシステムとのSSH接続を設定する場合にのみ機能します 。 "
+"この方法では、リモートシステムのURLとログイン資格情報を使用して、接続およびSSHキーを交換します。"
 
 msgid "I Agree"
 msgstr ""
@@ -5311,13 +5485,13 @@ msgstr ""
 msgid "IBurst"
 msgstr ""
 
-msgid "ID & Groups"
+msgid "ID"
+msgstr ""
+
+msgid "IDMAP"
 msgstr ""
 
 msgid "INSTALL"
-msgstr ""
-
-msgid "IP"
 msgstr ""
 
 msgid "IP Address"
@@ -5342,6 +5516,12 @@ msgid ""
 msgstr ""
 
 msgid "IPMI"
+msgstr ""
+
+msgid "IPMI Configuration"
+msgstr ""
+
+msgid "IPMI Password Reset"
 msgstr ""
 
 msgid "IPv4"
@@ -5428,6 +5608,9 @@ msgid ""
 msgstr ""
 
 msgid "Id"
+msgstr ""
+
+msgid "Identification"
 msgstr ""
 
 msgid "Identifier"
@@ -5550,15 +5733,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Indicates the time of inactivity in minutes before                   the "
-"drive enters standby mode. This <a                   "
-"href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
-"drive-is-spinning-down-properly.2068/\"                   "
-"target=\"_blank\">forum post</a> demonstrates how to                   "
-"determine if a drive has spun down."
-msgstr ""
-
-msgid ""
 "Indicates the time of inactivity in minutes before the drive enters standby "
 "mode. This <a "
 "href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
@@ -5580,6 +5754,9 @@ msgid "Inherit"
 msgstr ""
 
 msgid "Inherits"
+msgstr ""
+
+msgid "Init/Shutdown Script"
 msgstr ""
 
 msgid "Init/Shutdown Scripts"
@@ -5653,6 +5830,9 @@ msgstr "インターフェイス"
 msgid "Interface Description"
 msgstr ""
 
+msgid "Interface Settings"
+msgstr ""
+
 msgid "Interfaces"
 msgstr "インターフェイス"
 
@@ -5677,6 +5857,9 @@ msgstr ""
 msgid ""
 "Internal identifier of the certificate. Only alphanumeric, \"_\" and \"-\" "
 "are allowed."
+msgstr ""
+
+msgid "Internetwork control"
 msgstr ""
 
 msgid "Invalid dataset."
@@ -5849,6 +6032,9 @@ msgstr ""
 msgid "Kerberos Settings"
 msgstr ""
 
+msgid "Kernel"
+msgstr ""
+
 msgid "Key ID"
 msgstr ""
 
@@ -5863,7 +6049,10 @@ msgid ""
 "href=\"https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_"
 "access-keys.html\" target=\"_blank\">AWS Access Key documentation</a> for "
 "instructions to generate the key."
-msgstr "Amazon Web Servicesアカウントによって生成されたキー。 キーを生成する手順については、<a href=\"https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html\" target=\"_blank\">AWSアクセスキーのドキュメント</a>を参照してください。"
+msgstr ""
+"Amazon Web Servicesアカウントによって生成されたキー。 キーを生成する手順については、<a "
+"href=\"https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_"
+"access-keys.html\" target=\"_blank\">AWSアクセスキーのドキュメント</a>を参照してください。"
 
 msgid "KiB"
 msgstr ""
@@ -5872,6 +6061,9 @@ msgid "LAGG Ports"
 msgstr ""
 
 msgid "LAGG Protocol"
+msgstr ""
+
+msgid "LAGG Settings"
 msgstr ""
 
 msgid "LDAP"
@@ -5900,7 +6092,9 @@ msgid ""
 "space. Multiple hostnames or IP addresses can be entered to create an LDAP "
 "failover priority list. If a host does not respond, the next host in the "
 "list is tried until a new connection is established."
-msgstr "LDAP サーバーのホスト名または IP アドレス。エントリは空のスペースで区切ります。複数のホスト名または IP アドレスを入力して、LDAP フェイルオーバー優先順位リストを作成できます。ホストが応答しない場合は、新しい接続が確立されるまで、リスト内の次のホストが試行されます。"
+msgstr ""
+"LDAP サーバーのホスト名または IP アドレス。エントリは空のスペースで区切ります。複数のホスト名または IP アドレスを入力して、LDAP "
+"フェイルオーバー優先順位リストを作成できます。ホストが応答しない場合は、新しい接続が確立されるまで、リスト内の次のホストが試行されます。"
 
 msgid ""
 "LDAP server to use for SID/uid/gid map entries. When undefined, idmap_ldap "
@@ -6002,6 +6196,24 @@ msgstr ""
 msgid "Level"
 msgstr ""
 
+msgid "Level 1 - Minimum power usage with Standby (spindown)"
+msgstr ""
+
+msgid "Level 127 - Maximum power usage with Standby"
+msgstr ""
+
+msgid "Level 128 - Minimum power usage without Standby (no spindown)"
+msgstr ""
+
+msgid "Level 192 - Intermediate power usage without Standby"
+msgstr ""
+
+msgid "Level 254 - Maximum performance, maximum power usage"
+msgstr ""
+
+msgid "Level 64 - Intermediate power usage with Standby"
+msgstr ""
+
 msgid "Libdefaults Auxiliary Parameters"
 msgstr ""
 
@@ -6042,6 +6254,9 @@ msgid "Local User Upload Bandwidth"
 msgstr ""
 
 msgid "Locality"
+msgstr ""
+
+msgid "Localization"
 msgstr ""
 
 msgid "Location"
@@ -6129,8 +6344,14 @@ msgstr ""
 msgid "Mail Server Port"
 msgstr "メール サーバー ポート番号"
 
+msgid "Manage"
+msgstr ""
+
 msgid "Manage Custom Themes"
 msgstr "カスタムテーマの管理"
+
+msgid "Manage members of"
+msgstr ""
 
 msgid "Manual"
 msgstr ""
@@ -6179,6 +6400,9 @@ msgstr ""
 msgid "Max. Poll"
 msgstr ""
 
+msgid "Maximum"
+msgstr ""
+
 msgid "Maximum Passive Port"
 msgstr ""
 
@@ -6190,8 +6414,8 @@ msgid ""
 "communicated. The largest workable MTU size varies  with network interfaces "
 "and equipment. *1500* and *9000* are standard  Ethernet MTU sizes."
 msgstr ""
-"最大伝送単位、通信可能な最大のプロトコルデータ単位。 実行可能な最大MTUサイズは、ネットワークインターフェイスと機器によって異なります。 *"
-"1500* および *9000* は標準のイーサネットMTUサイズです。"
+"最大伝送単位、通信可能な最大のプロトコルデータ単位。 実行可能な最大MTUサイズは、ネットワークインターフェイスと機器によって異なります。 "
+"*1500* および *9000* は標準のイーサネットMTUサイズです。"
 
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
@@ -6262,13 +6486,13 @@ msgstr ""
 msgid "Media Type"
 msgstr ""
 
+msgid "Medium"
+msgstr ""
+
 msgid "Member Disk"
 msgstr ""
 
 msgid "Members"
-msgstr ""
-
-msgid "Members of"
 msgstr ""
 
 msgid ""
@@ -6339,6 +6563,9 @@ msgstr ""
 msgid "Min. Poll"
 msgstr ""
 
+msgid "Minimum"
+msgstr ""
+
 msgid "Minimum Passive Port"
 msgstr ""
 
@@ -6367,18 +6594,15 @@ msgid "Model:"
 msgstr "モデル:"
 
 msgid ""
-"Modify for disks that understand <a                   "
-"href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\"        "
-"           target=\"_blank\">AAM</a>."
-msgstr ""
-
-msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>."
 msgstr ""
 
 msgid "Mon"
+msgstr ""
+
+msgid "Monitor"
 msgstr ""
 
 msgid "Monitor Password"
@@ -6420,7 +6644,9 @@ msgid ""
 "Multi-domain support. Enter additional domains to secure, separated by "
 "spaces. For example, if the primary domain is example.com, entering "
 "www.example.com will secure both addresses."
-msgstr "マルチドメインのサポート。 保護する追加のドメインをスペースで区切って入力します。 たとえば、プライマリドメインがexample.comの場合、www.example.comを入力すると両方のアドレスが保護されます。"
+msgstr ""
+"マルチドメインのサポート。 保護する追加のドメインをスペースで区切って入力します。 "
+"たとえば、プライマリドメインがexample.comの場合、www.example.comを入力すると両方のアドレスが保護されます。"
 
 msgid "Multipath Name"
 msgstr ""
@@ -6472,6 +6698,9 @@ msgstr ""
 msgid "NFSv3 ownership model for NFSv4"
 msgstr ""
 
+msgid "NFSv4"
+msgstr ""
+
 msgid "NIC"
 msgstr ""
 
@@ -6493,14 +6722,14 @@ msgstr ""
 msgid "NTLMv1 Auth"
 msgstr ""
 
+msgid "NTP Server Settings"
+msgstr ""
+
 msgid "NTP Servers"
 msgstr "NTPサーバー"
 
 msgid "Name"
 msgstr ""
-
-msgid "Name & Contact"
-msgstr "名前と連絡先"
 
 msgid "Name Jail and Choose FreeBSD Release"
 msgstr ""
@@ -6549,7 +6778,7 @@ msgid ""
 "(-), underscores (_),     and periods (.) are allowed."
 msgstr ""
 
-msgid "Name of the new dataset created from the cloned snapshot."
+msgid "Name of the new dataset created from the  cloned snapshot."
 msgstr ""
 
 msgid "Name of the room."
@@ -6583,6 +6812,9 @@ msgid "Naming Schema"
 msgstr ""
 
 msgid "Navigation"
+msgstr ""
+
+msgid "NetBIOS"
 msgstr ""
 
 msgid "NetBIOS Alias"
@@ -6641,6 +6873,9 @@ msgstr ""
 msgid "Network Changes Made Permanent"
 msgstr ""
 
+msgid "Network Information Service (NIS)"
+msgstr ""
+
 msgid "Network Interface"
 msgstr ""
 
@@ -6658,8 +6893,8 @@ msgstr ""
 
 msgid ""
 "Network addresses allowed to use this initiator. Leave blank to allow all "
-"networks or list network addresses with       a CIDR mask. Separate "
-"multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."
+"networks or list network addresses with a CIDR mask. Separate multiple "
+"addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."
 msgstr ""
 
 msgid ""
@@ -6699,12 +6934,18 @@ msgstr ""
 msgid "Network connectivity will be interrupted. Proceed?"
 msgstr ""
 
+msgid "Network control (highest)"
+msgstr ""
+
 msgid "Network interfaces to include in the bridge."
 msgstr ""
 
 msgid ""
 "Network settings have been temporarily changed. They will be automatically "
 "discarded after"
+msgstr ""
+
+msgid "Networks"
 msgstr ""
 
 msgid "Never"
@@ -6723,6 +6964,12 @@ msgid ""
 "New users are not given <b>su</b> permissions if <i>wheel</i> is their "
 "primary group."
 msgstr "新しいユーザーは、 <i>wheel</i> をプライマリグループとして指定されないかぎり、 <b>su</b> 権限を与えられません。"
+
+msgid "Newer Clone"
+msgstr ""
+
+msgid "Newer Intermediate, Child, and Clone"
+msgstr ""
 
 msgid ""
 "Newline-separated list of files and directories to exclude from sync.<br /> "
@@ -6756,6 +7003,9 @@ msgid "No Pools"
 msgstr "Poolがありません"
 
 msgid "No Repositories"
+msgstr ""
+
+msgid "No Safety Check (CAUTION)"
 msgstr ""
 
 msgid "No Stat"
@@ -6814,6 +7064,9 @@ msgstr ""
 msgid "Number of CPUs"
 msgstr ""
 
+msgid "Number of Cores"
+msgstr ""
+
 msgid "Number of Graph Points"
 msgstr "グラフのポイント数"
 
@@ -6827,6 +7080,9 @@ msgid "Number of SysV shared memory segments in bytes."
 msgstr ""
 
 msgid "Number of SysV shared memory segments."
+msgstr ""
+
+msgid "Number of Threads"
 msgstr ""
 
 msgid ""
@@ -7067,6 +7323,9 @@ msgstr ""
 msgid "Other Options"
 msgstr ""
 
+msgid "Other Settings"
+msgstr ""
+
 msgid "Out"
 msgstr ""
 
@@ -7125,7 +7384,9 @@ msgid ""
 "Password for the Active Directory administrator account.  Required the "
 "first time a domain is configured. After initial configuration, the "
 "password  is not needed to edit, start, or stop the service."
-msgstr "Active Directory 管理者アカウントのパスワード。 ドメインを初めて構成する場合に必要です。初期構成後、サービスの編集、開始、または停止にパスワードは必要ありません。"
+msgstr ""
+"Active Directory 管理者アカウントのパスワード。 "
+"ドメインを初めて構成する場合に必要です。初期構成後、サービスの編集、開始、または停止にパスワードは必要ありません。"
 
 msgid "Password for the Bind DN."
 msgstr "バインド DN のパスワード。"
@@ -7160,7 +7421,10 @@ msgid ""
 "public key will be automatically  calculated and entered in the public key "
 "field.  Click <b>Generate Keypair</b> to create a new keypair.  Encrypted "
 "keypairs or keypairs with passphrases are not supported."
-msgstr "公開鍵と秘密鍵のいずれかまたは両方を貼り付けます。 公開鍵のみが入力された場合、それは単独で保存されます。 秘密鍵のみが貼り付けられている場合、公開鍵は自動的に計算され、公開鍵フィールドに入力されます。<b>キーペアを生成</b>をクリックして、新しいキーペアを作成します。 暗号化されたキーペアまたはパスフレーズ付きのキーペアはサポートされていません。"
+msgstr ""
+"公開鍵と秘密鍵のいずれかまたは両方を貼り付けます。 公開鍵のみが入力された場合、それは単独で保存されます。 "
+"秘密鍵のみが貼り付けられている場合、公開鍵は自動的に計算され、公開鍵フィールドに入力されます。<b>キーペアを生成</b>"
+"をクリックして、新しいキーペアを作成します。 暗号化されたキーペアまたはパスフレーズ付きのキーペアはサポートされていません。"
 
 msgid ""
 "Paste the <a href=\"https://api.slack.com/incoming-webhooks\" "
@@ -7188,6 +7452,9 @@ msgid ""
 msgstr ""
 
 msgid "Path to the extent"
+msgstr ""
+
+msgid "Paths"
 msgstr ""
 
 msgid ""
@@ -7369,6 +7636,9 @@ msgstr ""
 msgid "Portal Group ID"
 msgstr ""
 
+msgid "Ports"
+msgstr ""
+
 msgid "Post Install Notes"
 msgstr ""
 
@@ -7424,6 +7694,13 @@ msgstr ""
 msgid ""
 "Prevent source system snapshots  that have failed replication from being "
 "automatically removed by the  <b>Snapshot Retention Policy</b>."
+msgstr ""
+
+msgid ""
+"Prevent the user from logging in or  using password-based services until "
+"this option is unset. Locking an  account is only possible when <b>Disable "
+"Password</b> is <i>No</i> and  a <b>Password</b> has been created for the "
+"account."
 msgstr ""
 
 msgid "Preview JSON Service Account Key"
@@ -7543,6 +7820,9 @@ msgstr ""
 msgid "Quota for this dataset"
 msgstr ""
 
+msgid "Quota for this dataset and all children"
+msgstr ""
+
 msgid "Quota warning alert at, %"
 msgstr ""
 
@@ -7606,6 +7886,9 @@ msgstr ""
 msgid "Read-only"
 msgstr ""
 
+msgid "Read/Write"
+msgstr ""
+
 msgid "Read/Write Access"
 msgstr ""
 
@@ -7622,13 +7905,17 @@ msgid ""
 "Recommended when <i>Max. Poll</i> is greater   than 10. Only use on "
 "personal NTP servers or those   under direct control. <b>Do not</b> enable "
 "when using   public NTP servers."
-msgstr "<i>Max. Poll</i>が10より大きい場合に推奨。個人のNTPサーバーまたは直接制御されているNTPサーバーでのみ使用します。 パブリックNTPサーバーを使用する場合は、<b>有効にしないで</b>ください。"
+msgstr ""
+"<i>Max. Poll</i>が10より大きい場合に推奨。個人のNTPサーバーまたは直接制御されているNTPサーバーでのみ使用します。 "
+"パブリックNTPサーバーを使用する場合は、<b>有効にしないで</b>ください。"
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater than 10. Only use on personal "
 "NTP servers or those under direct control. <b>Do not</b> enable when using "
 "public NTP servers."
-msgstr "<i>Max. Poll</i>が10より大きい場合に推奨。個人のNTPサーバーまたは直接制御されているNTPサーバーでのみ使用します。 パブリックNTPサーバーを使用する場合は、<b>有効にしないで</b>ください。"
+msgstr ""
+"<i>Max. Poll</i>が10より大きい場合に推奨。個人のNTPサーバーまたは直接制御されているNTPサーバーでのみ使用します。 "
+"パブリックNTPサーバーを使用する場合は、<b>有効にしないで</b>ください。"
 
 msgid "Reconnect"
 msgstr ""
@@ -7682,6 +7969,12 @@ msgid "Reload the page"
 msgstr ""
 
 msgid "Reload the page for the license to take effect."
+msgstr ""
+
+msgid "Remaining"
+msgstr ""
+
+msgid "Remote"
 msgstr ""
 
 msgid "Remote Encryption"
@@ -7953,6 +8246,15 @@ msgstr ""
 msgid "Restarting Jail"
 msgstr ""
 
+msgid "Restore"
+msgstr ""
+
+msgid "Restore Cloud Sync Task"
+msgstr ""
+
+msgid "Restore Replication Task"
+msgstr ""
+
 msgid "Restore default"
 msgstr "デフォルトに戻す"
 
@@ -7964,9 +8266,6 @@ msgstr ""
 "共有への読み取りまたは書き込みアクセス権を持つユーザーにのみ共有が見えるように制限します。 <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=_blank>smb.conf(5)</a>を参照してください。"
-
-msgid "Retype the <i>Secret</i>."
-msgstr ""
 
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
@@ -8034,13 +8333,19 @@ msgstr ""
 msgid "Run this cloud sync now?"
 msgstr ""
 
-msgid "Run this cron job now?"
+msgid "Run this job now?"
 msgstr ""
 
 msgid "Run this rsync now?"
 msgstr ""
 
 msgid "Running"
+msgstr ""
+
+msgid "S.M.A.R.T Test Results"
+msgstr ""
+
+msgid "S.M.A.R.T Test Results of "
 msgstr ""
 
 msgid "S.M.A.R.T. Test"
@@ -8052,10 +8357,16 @@ msgstr "S.M.A.R.T. テスト"
 msgid "S.M.A.R.T. extra options"
 msgstr ""
 
+msgid "S3 Configuration Options"
+msgstr ""
+
 msgid "SASL wrapping"
 msgstr ""
 
 msgid "SAVE CONFIGURATION"
+msgstr ""
+
+msgid "SED"
 msgstr ""
 
 msgid "SED Password"
@@ -8085,6 +8396,9 @@ msgid ""
 msgstr "SMTPポート番号。通常<i>25 か 465</i> （セキュアSMTP）、または <i>587</i> （サブミッション）。"
 
 msgid "SNMP Community"
+msgstr ""
+
+msgid "SNMP v3 Options"
 msgstr ""
 
 msgid "SNMP v3 Support"
@@ -8142,9 +8456,6 @@ msgid "Save Config"
 msgstr "設定ファイルの保存"
 
 msgid "Save Configuration"
-msgstr ""
-
-msgid "Save Cron Job"
 msgstr ""
 
 msgid "Save Custom Theme"
@@ -8253,6 +8564,9 @@ msgstr ""
 msgid "Scrub Started"
 msgstr ""
 
+msgid "Scrub Task"
+msgstr ""
+
 msgid "Scrub Tasks"
 msgstr "Scrub タスク"
 
@@ -8320,13 +8634,19 @@ msgid ""
 "curve-cryptography-not-widely-used-compared-to-rsa\" target=\"blank\"> Why "
 "is elliptic curve cryptography not widely used, compared to RSA?</a> for "
 "more information about key types."
-msgstr "キータイプの詳細については、<a href=\"https://crypto.stackexchange.com/questions/1190/why-is-elliptic-curve-cryptography-not-widely-used-compared-to-rsa\" target=\"blank\">RSAと比較して、なぜ楕円曲線暗号が広く使用されていないのか</a>を参照してください。"
+msgstr ""
+"キータイプの詳細については、<a "
+"href=\"https://crypto.stackexchange.com/questions/1190/why-is-elliptic-"
+"curve-cryptography-not-widely-used-compared-to-rsa\" "
+"target=\"blank\">RSAと比較して、なぜ楕円曲線暗号が広く使用されていないのか</a>を参照してください。"
 
 msgid ""
 "See <i>Public key authentication</i> in <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ssh\" "
 "target=\"_blank\">SSH/Authentication</a>."
-msgstr "<a href=\"https://www.freebsd.org/cgi/man.cgi?query=ssh\" target=\"_blank\">SSH/Authentication</a>の<i>公開キー認証</i>をご覧ください。"
+msgstr ""
+"<a href=\"https://www.freebsd.org/cgi/man.cgi?query=ssh\" "
+"target=\"_blank\">SSH/Authentication</a>の<i>公開キー認証</i>をご覧ください。"
 
 msgid ""
 "See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
@@ -8463,7 +8783,9 @@ msgstr ""
 msgid ""
 "Select a previously imported or created <a "
 "href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
-msgstr "以前にインポートまたは作成した<a href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>を選択します。"
+msgstr ""
+"以前にインポートまたは作成した<a href=\"--docurl--/system.html#cas\" "
+"target=\"_blank\">CA</a>を選択します。"
 
 msgid ""
 "Select a saved remote system SSH  connection or choose <i>Create New</i> to "
@@ -8604,11 +8926,6 @@ msgstr ""
 msgid ""
 "Select the Class of Service. The available 802.1p Class of Service ranges "
 "from <i>Best effort (default)</i>  to <i>Network control (highest)</i>."
-msgstr ""
-
-msgid ""
-"Select the IP address associated with an interface or the wildcard address "
-"of 0.0.0.0 (any interface)."
 msgstr ""
 
 msgid ""
@@ -8785,7 +9102,7 @@ msgstr ""
 
 msgid ""
 "Select the unformatted disk, controller, zvol, or zvol snapshot. Select "
-"<i>Create New</i> for options to create a new zvol."
+"<i>Create New</i> to create a new zvol."
 msgstr ""
 
 msgid ""
@@ -8858,6 +9175,9 @@ msgstr ""
 msgid "Sep"
 msgstr ""
 
+msgid "Separate multiple values with a space."
+msgstr ""
+
 msgid "Separate values with commas, and without spaces."
 msgstr ""
 
@@ -8871,6 +9191,9 @@ msgid "Serial Port"
 msgstr ""
 
 msgid "Serial Speed"
+msgstr ""
+
+msgid "Serial numbers of each disk being edited."
 msgstr ""
 
 msgid ""
@@ -8887,6 +9210,9 @@ msgid "Series"
 msgstr ""
 
 msgid "Serve UDP NFS clients"
+msgstr ""
+
+msgid "Server Credentials"
 msgstr ""
 
 msgid "Server Role"
@@ -8925,13 +9251,6 @@ msgid "Set an ending time for when  replications are not allowed to start."
 msgstr ""
 
 msgid ""
-"Set by default if the disk supports S.M.A.R.T.                   Unset to "
-"disable any configured <a                   "
-"href=\"--docurl--/tasks.html#s-m-a-r-t-tests\"                   "
-"target=\"_blank\">S.M.A.R.T. tests</a>."
-msgstr ""
-
-msgid ""
 "Set by default if the disk supports S.M.A.R.T. Unset to disable any "
 "configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
 "target=\"_blank\">S.M.A.R.T. tests</a>."
@@ -8965,6 +9284,9 @@ msgstr ""
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
 msgstr "ypbind が最速で応答するサーバーにバインドするように設定します。"
+
+msgid "Set frequency"
+msgstr ""
 
 msgid "Set if NFS clients need to use UDP."
 msgstr ""
@@ -9182,24 +9504,6 @@ msgid ""
 msgstr "共有がユーザーのホームディレクトリをホストできるように設定します。 1つの共有のみがホーム共有になります。"
 
 msgid ""
-"Set to allow this share to hold user home directories. Only one share can "
-"be the home share. Note: Lower case names for user home directories are "
-"strongly recommended, as Samba maps usernames to all lower case. For "
-"example, the username John will be mapped to a home directory named john. "
-"If the <i>Path</i> to the home share includes an upper case username, "
-"delete the existing user and recreate it in <i>Accounts --> Users</i> with "
-"an all lower case <i>Username</i>. Return to <i>Sharing --> SMB</i> to "
-"create the home share, and select the </i>Path</i> that contains the new "
-"lower case username."
-msgstr ""
-"この共有がユーザーのホームディレクトリを保持できるように設定します。 1つの共有のみがホーム共有になります。 "
-"注：Sambaはユーザー名をすべて小文字にマッピングするため、ユーザーのホームディレクトリには小文字の名前を使用することを強くお勧めします。 "
-"たとえば、ユーザー名Johnはjohnという名前のホームディレクトリにマップされます。 "
-"ホーム共有への<i>Path</i>に大文字のユーザー名が含まれている場合、既存のユーザーを削除し、<i>Accounts --> "
-"Users</i>よりすべて小文字の<i>Username</i>を持つユーザーで再作成します。<i>Sharing --> "
-"SMB</i>に戻ってホーム共有を作成し、新しい小文字のユーザー名を含む</i>Path</i>を選択します。"
-
-msgid ""
 "Set to allow users to bypass firewall restrictions using the SSH port <a "
 "href=\"https://www.symantec.com/connect/articles/ssh-port-forwarding\" "
 "target=\"_blank\">forwarding feature</a>."
@@ -9284,9 +9588,6 @@ msgid ""
 "bind to a domain with a large number of users or groups."
 msgstr ""
 
-msgid "Set to disable logging in to this user account."
-msgstr "このユーザーアカウントでのログインを無効にします。"
-
 msgid ""
 "Set to disable the Windows <i>hidden</i> attribute on a new Unix hidden "
 "file. Unix hidden filenames start with a dot: <b>.foo</b>. Existing files "
@@ -9366,7 +9667,10 @@ msgid ""
 "Set to have <a href=\"https://www.freebsd.org/cgi/man.cgi?query=ypbind\" "
 "target=\"_blank\">ypbind(8)</a> refuse to bind to any NIS server not "
 "running as root on a TCP port over 1024."
-msgstr "1024 を超える TCP ポートでルートとして実行されていない NIS サーバーへのバインドを<a href=\"https://www.freebsd.org/cgi/man.cgi?query=ypbind\" target=\"_blank\">ypbind(8)</a>が拒否するように設定します。"
+msgstr ""
+"1024 を超える TCP ポートでルートとして実行されていない NIS サーバーへのバインドを<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=ypbind\" "
+"target=\"_blank\">ypbind(8)</a>が拒否するように設定します。"
 
 msgid "Set to ignore mapping requests for the <i>BUILTIN</i> domain."
 msgstr ""
@@ -9695,6 +9999,9 @@ msgstr "共有"
 msgid "Sharing Controls"
 msgstr ""
 
+msgid "Sharing Platform"
+msgstr ""
+
 msgid "Shell"
 msgstr "シェル"
 
@@ -9746,6 +10053,9 @@ msgstr ""
 msgid "Shut down the system?"
 msgstr ""
 
+msgid "Shutdown"
+msgstr ""
+
 msgid "Shutdown Command"
 msgstr ""
 
@@ -9790,6 +10100,9 @@ msgstr ""
 msgid ""
 "Skip automatic detection of the Endpoint URL region. Set this  when "
 "configuring a custom Endpoint URL."
+msgstr ""
+
+msgid "Snapshot"
 msgstr ""
 
 msgid "Snapshot Lifetime"
@@ -9906,6 +10219,16 @@ msgid ""
 "Not displayed to anonymous login users."
 msgstr ""
 
+msgid ""
+"Specify the number of cores per virtual CPU socket.  The product of vCPUs, "
+"cores, and threads must not exceed 16."
+msgstr ""
+
+msgid ""
+"Specify the number of threads per core.  The product of vCPUs, cores, and "
+"threads must not exceed 16."
+msgstr ""
+
 msgid "Specify the size of the new zvol."
 msgstr ""
 
@@ -9931,6 +10254,12 @@ msgid "Start Scrub"
 msgstr ""
 
 msgid "Start Time:"
+msgstr ""
+
+msgid ""
+"Start a dry run test of this cloud sync task? The  system will connect to "
+"the cloud service provider and simulate  transferring a file. No data will "
+"be sent or received."
 msgstr ""
 
 msgid "Start on Boot"
@@ -9989,6 +10318,9 @@ msgstr ""
 msgid "Stop "
 msgstr ""
 
+msgid "Stop Rollback if Snapshots Exist:"
+msgstr ""
+
 msgid "Stop Scrub"
 msgstr ""
 
@@ -10002,6 +10334,17 @@ msgid "Stopping Jail"
 msgstr ""
 
 msgid "Stopping scrub on pool <i>"
+msgstr ""
+
+msgid ""
+"Stops the rollback when the safety  check finds any related clone snapshots "
+"that are newer than the  rollback snapshot."
+msgstr ""
+
+msgid ""
+"Stops the rollback when the safety check  finds any related intermediate, "
+"child dataset, or clone snapshots that  are newer than the rollback "
+"snapshot."
 msgstr ""
 
 msgid "Storage"
@@ -10188,10 +10531,10 @@ msgstr ""
 msgid "TCP port to use on bind to IP addresses"
 msgstr ""
 
-msgid "TCP port used to access the iSCSI target. Default is 3260."
+msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
 msgstr ""
 
-msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
+msgid "TLS"
 msgstr ""
 
 msgid "TLS Allow Client Renegotiations"
@@ -10263,6 +10606,9 @@ msgstr ""
 msgid "Task Started"
 msgstr ""
 
+msgid "Task State"
+msgstr ""
+
 msgid "Task Stopped"
 msgstr ""
 
@@ -10288,6 +10634,9 @@ msgid "Template"
 msgstr ""
 
 msgid "Terms of Service"
+msgstr ""
+
+msgid "Test Cloud Sync"
 msgstr ""
 
 msgid "Test alert sent!"
@@ -10367,6 +10716,9 @@ msgid ""
 "The VM could not start because the current configuration could potentially "
 "require more RAM than is available on the system.  Would you like to "
 "overcommit memory? "
+msgstr ""
+
+msgid "The WebDAV"
 msgstr ""
 
 msgid "The active controller cannot be detected."
@@ -10478,7 +10830,9 @@ msgid ""
 "The maximum polling interval, in seconds, as a power of 2.  For example, "
 "<i>10</i> means 2^10, or 1,024 seconds. The default is  10, maximum value "
 "is 17."
-msgstr "最大ポーリング間隔、秒単位、2の累乗として設定されます。たとえば、<i>10</i>は2は2の10乗（2^10）、つまり1,024秒を意味します。デフォルトは10、最大値は17です。"
+msgstr ""
+"最大ポーリング間隔、秒単位、2の累乗として設定されます。たとえば、<i>10</i>は2は2の10乗（2^10）、つまり1,024"
+"秒を意味します。デフォルトは10、最大値は17です。"
 
 msgid "The member interface to configure."
 msgstr ""
@@ -10489,7 +10843,9 @@ msgstr "ユーザーがSSHでログインしたときに表示するメッセー
 msgid ""
 "The minimum polling interval, in seconds, as a power of 2.  For example, "
 "<i>6</i> means 2^6, or 64 seconds. The default is 6,  minimum value is 4."
-msgstr "最小ポーリング間隔、秒単位、2の累乗として設定されます。たとえば、<i>6</i>は2は2の6乗（2^6）、つまり64秒を意味します。デフォルトは6、最小値は4です。"
+msgstr ""
+"最小ポーリング間隔、秒単位、2の累乗として設定されます。たとえば、<i>6</i>は2は2の6乗（2^6）、つまり64秒を意味します。デフォルトは6"
+"、最小値は4です。"
 
 msgid "The name "
 msgstr ""
@@ -10547,6 +10903,12 @@ msgid ""
 "Authority (IANA) registry</a>."
 msgstr ""
 
+msgid "The product of vCPUs, cores and threads must not exceed 16."
+msgstr ""
+
+msgid "The product of vCPUs, cores, and threads must not exceed 16."
+msgstr ""
+
 msgid ""
 "The recovery key is an additional key file that  can be used to decrypt the "
 "pool. <br /> <br />  Entering the administrator password and clicking "
@@ -10560,6 +10922,11 @@ msgstr ""
 msgid ""
 "The recovery key is used to decrypt  the pool. Store the key file in a "
 "secure location!"
+msgstr ""
+
+msgid ""
+"The rollback will destroy any  related intermediate, child dataset, and "
+"cloned snapshots that are  newer than the rollback snapshot."
 msgstr ""
 
 msgid "The search base where group objects can be found in the LDAP server."
@@ -10685,6 +11052,9 @@ msgid ""
 "unless changed."
 msgstr ""
 
+msgid "These services depend on pool "
+msgstr ""
+
 msgid "Third DNS server."
 msgstr "三番目のDNSサーバーです。"
 
@@ -10741,6 +11111,9 @@ msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
 msgid "This is the serial number of the disk."
+msgstr ""
+
+msgid "This job will not run again until it is enabled."
 msgstr ""
 
 msgid ""
@@ -10831,9 +11204,15 @@ msgid ""
 "href=\"https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html\" "
 "target=\"_blank\">Amazon Resource Name (ARN)</a> for publishing. Example: "
 "<b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>."
-msgstr "<a href=\"https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html\" target=\"_blank\">Amazon Resource Name (ARN)</a>トピック発行用。例：<b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>"
+msgstr ""
+"<a href=\"https://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html\" "
+"target=\"_blank\">Amazon Resource Name "
+"(ARN)</a>トピック発行用。例：<b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>"
 
 msgid "Train"
+msgstr ""
+
+msgid "Transfer"
 msgstr ""
 
 msgid "Transfer Mode"
@@ -10867,6 +11246,9 @@ msgid "TrueNAS controllers"
 msgstr ""
 
 msgid "Tue"
+msgstr ""
+
+msgid "Tunable"
 msgstr ""
 
 msgid "Tunables"
@@ -11119,6 +11501,9 @@ msgstr ""
 msgid "Uploading file..."
 msgstr ""
 
+msgid "Uploading..."
+msgstr ""
+
 msgid ""
 "Upsmon will wait up to this many seconds in master mode for the slaves to "
 "disconnect during a shutdown situation."
@@ -11252,6 +11637,9 @@ msgstr ""
 msgid "User ID"
 msgstr ""
 
+msgid "User ID and Groups"
+msgstr ""
+
 msgid "User account password for logging into the  remote system."
 msgstr "リモートシステムにログインするためのユーザーアカウントのパスワード。"
 
@@ -11267,6 +11655,9 @@ msgid ""
 "User accounts have an ID greater than 1000 and system accounts have an ID "
 "equal to the default port number used by the service."
 msgstr "ユーザーアカウントは、 1000 以上のIDを持ちます。また、システムアカウントは、そのサービスで使用されるデフォルトポート番号と同じIDを持ちます。"
+
+msgid "User or Group"
+msgstr ""
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
 msgstr "SEDのロックを解除するために<i>camcontrol security -u</i>を渡されたユーザー。"
@@ -11335,6 +11726,9 @@ msgid "VLAN ID"
 msgstr ""
 
 msgid "VLAN Parent Interface"
+msgstr ""
+
+msgid "VLAN Settings"
 msgstr ""
 
 msgid "VLAN Tag"
@@ -11413,6 +11807,12 @@ msgstr ""
 msgid "Version"
 msgstr "バージョン"
 
+msgid "Video, < 100ms latency"
+msgstr ""
+
+msgid "Video, < 10ms latency"
+msgstr ""
+
 msgid "View"
 msgstr ""
 
@@ -11432,6 +11832,9 @@ msgid "Virtual Interface"
 msgstr ""
 
 msgid "Virtual Machine (VM) Wizard type."
+msgstr ""
+
+msgid "Virtual Machine Settings"
 msgstr ""
 
 msgid "Virtual Machines"
@@ -11493,6 +11896,27 @@ msgstr ""
 msgid "Web Interface"
 msgstr ""
 
+msgid "Web Interface HTTP -> HTTPS Redirect"
+msgstr ""
+
+msgid "Web Interface HTTP Port"
+msgstr ""
+
+msgid "Web Interface HTTPS Port"
+msgstr ""
+
+msgid "Web Interface IPv4 Address"
+msgstr ""
+
+msgid "Web Interface IPv6 Address"
+msgstr ""
+
+msgid "WebDAV"
+msgstr ""
+
+msgid "WebDAV Configuration"
+msgstr ""
+
 msgid "WebDAV Shares"
 msgstr "WebDAV 共有"
 
@@ -11504,21 +11928,6 @@ msgstr ""
 
 msgid "WebDAV service"
 msgstr ""
-
-msgid "WebGUI HTTP -> HTTPS Redirect"
-msgstr "WebGUI HTTP-> HTTPSリダイレクト"
-
-msgid "WebGUI HTTP Port"
-msgstr "WebGUI HTTP ポート"
-
-msgid "WebGUI HTTPS Port"
-msgstr "WebGUI HTTPS ポート"
-
-msgid "WebGUI IPv4 Address"
-msgstr "WebGUI IPv4アドレス"
-
-msgid "WebGUI IPv6 Address"
-msgstr "WebGUI IPv6アドレス"
 
 msgid "Webdav Password"
 msgstr ""
@@ -11536,9 +11945,6 @@ msgid "Weeks"
 msgstr ""
 
 msgid "What and Where"
-msgstr ""
-
-msgid "What are you using this for"
 msgstr ""
 
 msgid "When"
@@ -11611,11 +12017,6 @@ msgid ""
 "names to be prepended to user names. One possible reason for unsetting this "
 "value is to prevent username collisions when Allow Trusted Domains is set "
 "and there are identical usernames in more than one domain."
-msgstr ""
-
-msgid ""
-"When the file already exists, enter a size of 0 to use the actual file "
-"size. For new files, enter the size of the file to create."
 msgstr ""
 
 msgid "Who"
