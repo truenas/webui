@@ -53,6 +53,12 @@ export class TnSupportComponent implements OnInit {
         },
         {
           type : 'input',
+          name : 'cc',
+          placeholder : helptext.cc.placeholder,
+          tooltip : helptext.cc.tooltip,
+        },
+        {
+          type : 'input',
           name : 'phone',
           placeholder : helptext.phone.placeholder,
           tooltip : helptext.phone.tooltip,
@@ -183,6 +189,7 @@ export class TnSupportComponent implements OnInit {
   customSubmit(entityEdit): void{
     this.payload['name'] = entityEdit.name;
     this.payload['email'] = entityEdit.email;
+    this.payload['cc'] = _.filter(entityEdit.cc.split(',').map(_.trim));
     this.payload['phone'] = entityEdit.phone;
     this.payload['category'] = entityEdit.TNCategory;
     this.payload['environment'] = entityEdit.environment;

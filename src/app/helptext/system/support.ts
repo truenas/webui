@@ -66,6 +66,12 @@ export const helptext_system_support = {
     validation: [Validators.required, Validators.email]
   },
 
+  cc: {
+    placeholder: T("CC"),
+    tooltip: T("Enter one or more email addresses which should receive copies of support correspondence \
+ on this issue. Separate addresses with a comma."),
+  },
+
   phone: {
     placeholder: T("Phone"),
     tooltip: T("Enter the phone number of the contact person."),
