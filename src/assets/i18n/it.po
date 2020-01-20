@@ -8,7 +8,7 @@ msgid " Check Notifications for more details."
 msgstr "Controlla le notifiche per maggiori dettagli."
 
 msgid " Download Updates"
-msgstr ""
+msgstr "Scarica Aggiornamenti"
 
 msgid " First vdev has "
 msgstr ""
@@ -20,7 +20,7 @@ msgid " Plugin"
 msgstr ""
 
 msgid " Service"
-msgstr ""
+msgstr "Servizio"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -37,10 +37,10 @@ msgstr ""
 msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
 "selected."
-msgstr ""
+msgstr "indirizzi. Quanto questo è stato scelto, è impossibile selezionarne un altro. "
 
 msgid " and "
-msgstr ""
+msgstr "e"
 
 msgid " and all snapshots of it?"
 msgstr ""
@@ -49,24 +49,24 @@ msgid " but datastore "
 msgstr ""
 
 msgid " disks"
-msgstr ""
+msgstr "dischi"
 
 msgid " disks, new vdev has "
 msgstr ""
 
 msgid " has been unlocked."
-msgstr ""
+msgstr "è stato sbloccato."
 
 msgid " is "
-msgstr ""
+msgstr "è"
 
 msgid " is required."
-msgstr ""
+msgstr "è richiesto."
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
-msgstr ""
+msgstr "è la dimensione minima consigliata. Scelgiere una dimensione più piccola può ridurre le prestazioni di sistema."
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
@@ -77,16 +77,16 @@ msgid " service has been enabled."
 msgstr ""
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr "sistema è acceso e connesso alla rete. "
 
 msgid " to include all "
 msgstr ""
 
 msgid " update successful"
-msgstr ""
+msgstr "aggiornamento riuscito"
 
 msgid " updated."
-msgstr ""
+msgstr "aggiornato."
 
 msgid "% of all cores"
 msgstr ""
