@@ -70,7 +70,7 @@ export const helptext_system_support = {
     placeholder: T("CC"),
     tooltip: T("Enter one or more email addresses which should receive copies of support correspondence \
  on this issue. Separate addresses with a comma."),
-    err: T('All emails are in valid form.')
+    err: T('All emails must be in valid form.')
   },
 
   phone: {
