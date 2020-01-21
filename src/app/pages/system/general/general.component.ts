@@ -476,7 +476,7 @@ export class GeneralComponent {
             }, err => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
-              entityDialog.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
+              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
             });
           },
           (err) => {
