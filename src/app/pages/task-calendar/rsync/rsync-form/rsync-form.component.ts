@@ -222,6 +222,9 @@ export class RsyncFormComponent implements OnDestroy {
   }
 
   beforeSubmit(value){
+    if(value.extra) {
+      value.extra = _.filter(value.extra.split(',').map(_.trim));
+    }
     let spl = value.rsync_picker.split(" ");
     delete value.rsync_picker;
     const schedule = {}
@@ -234,6 +237,9 @@ export class RsyncFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
+    if (data.extra) {
+      data.extra = data.extra.toString();
+    }
     data['rsync_picker'] = data.schedule.minute + " " +
                           data.schedule.hour + " " +
                           data.schedule.dom + " " +
