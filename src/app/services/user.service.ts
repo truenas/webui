@@ -33,7 +33,6 @@ export class UserService {
     if (hideBuiltIn) {
       queryArgs = queryArgs.concat([["builtin", "=", false]]);
     }
-    console.log(queryArgs);
     return this.ws.call(this.groupQuery, [queryArgs, this.queryOptions]);
   }
   
