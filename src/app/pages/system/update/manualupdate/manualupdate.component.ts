@@ -149,6 +149,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
 
 
   customSubmit(entityForm: any) {
+    this.save_button_enabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.manual_update_action }, disableClose: true });
@@ -185,11 +186,13 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
         this.dialogRef.close(false);
         this.dialogService.errorReport(helptext.manual_update_error_dialog.message, 
-          `${prefailure.status.toString()} ${prefailure.statusText}`)
+          `${prefailure.status.toString()} ${prefailure.statusText}`);
+          this.save_button_enabled = true;
       })
       this.dialogRef.componentInstance.failure.subscribe((failure)=>{
         this.dialogRef.close(false);
-        this.dialogService.errorReport(failure.error,failure.state,failure.exception)
+        this.dialogService.errorReport(failure.error,failure.state,failure.exception);
+        this.save_button_enabled = true;
       })
     })
   }
