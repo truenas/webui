@@ -235,7 +235,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.trains.push({ name: i, description: res.trains[i].description });
           }
         }
-        this.singleDescription = this.trains[0].description;
+        if (this.trains.length > 0) {
+          this.singleDescription = this.trains[0].description;
+        }
         
         if (this.fullTrainList[res.current]) {
           if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
@@ -626,7 +628,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
-          if (this.currentTrainDescription.includes('[release]')) {
+          if (this.currentTrainDescription && this.currentTrainDescription.includes('[release]')) {
             this.release_train = true;
             this.pre_release_train = false;
             this.nightly_train = false;
