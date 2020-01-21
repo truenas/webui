@@ -92,7 +92,7 @@ export class AlertConfigComponent implements OnInit {
           type: "select",
           name: c.id + '_policy',
           inlineLabel: " ",
-          placeholder: T("Set frequency"),
+          placeholder: T("Set Frequency"),
           options: this.settingOptions,
           value: "IMMEDIATELY"
         })
