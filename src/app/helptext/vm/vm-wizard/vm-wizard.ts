@@ -156,6 +156,7 @@ upload_iso_placeholder : 'ISO upload location',
 upload_iso_tooltip: 'Browse to the installer image file and click <b>Upload</b>.',
 upload_iso_validation : [  ],
 
-vm_form_title: T('Virtual Machine Settings')
+vm_settings_title: T('General VM Settings'),
+vm_cpu_mem_title: T('CPUs and Memory')
 
 }
