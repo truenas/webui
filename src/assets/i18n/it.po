@@ -74,13 +74,13 @@ msgid ""
 msgstr ""
 
 msgid " service has been enabled."
-msgstr ""
+msgstr "il servizio è stato abilitato."
 
 msgid " system is powered on and connected to the network."
-msgstr "sistema è acceso e connesso alla rete. "
+msgstr "il sistema è acceso e connesso alla rete. "
 
 msgid " to include all "
-msgstr ""
+msgstr "per includere tutto"
 
 msgid " update successful"
 msgstr "aggiornamento riuscito"
@@ -99,13 +99,13 @@ msgid ""
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Tutti i dati sul pool sono stati distrutti."
 
 msgid "(No description)"
-msgstr ""
+msgstr "(Nessuna descrizione)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(rimuovere il pool dal database)"
 
 msgid "*allow_sysvipc"
 msgstr ""
@@ -114,25 +114,25 @@ msgid ", new vdev is "
 msgstr ""
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Tutti i dati sul pool sono stati distrutti."
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". Ne è richiesto almeno uno."
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". È corretto?"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... Sei sicuro che"
 
 msgid "0=Disabled, blank=inherit"
 msgstr ""
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "20 caratteri è la lunghezza massima."
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr ": Controllo aggiornamento automatico fallito. Verificare le impostazioni di rete del sistema."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr ""
@@ -144,22 +144,22 @@ msgid "</i> cannot be running when deleting a mountpoint."
 msgstr ""
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> è iniziato."
 
 msgid "</i> keypair?</p>"
 msgstr ""
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> ora?"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> fermato."
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> aggiornato."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr ""
+msgstr "</i>. I dati sul pool non saranno acessibili fino al suo sblocco."
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
