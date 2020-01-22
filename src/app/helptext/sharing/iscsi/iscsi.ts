@@ -240,6 +240,10 @@ export const helptext_sharing_iscsi = {
  LUN."
   ),
 
+  fieldset_group: T('Group'),
+  fieldset_user: T('User'),
+  fieldset_peeruser: T('Peer User'),
+
   authaccess_placeholder_tag: T("Group ID"),
   authaccess_tooltip_tag: T(
     "Allow different groups to be configured\
