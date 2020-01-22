@@ -222,8 +222,10 @@ export class RsyncFormComponent implements OnDestroy {
   }
 
   beforeSubmit(value){
-    if(value.extra) {
-      value.extra = _.filter(value.extra.split(',').map(_.trim));
+    /* Ignore 'extra' if undefined, submit [] if empty string, otherwise make an array splitting on comma, 
+       trimming spaces off the ends. Middleware splits on space, so user can use space and/or comma. */
+    if(value.extra || value.extra === '') {
+      value.extra === '' ? value.extra = [] : value.extra = _.filter(value.extra.split(',').map(_.trim));
     }
     let spl = value.rsync_picker.split(" ");
     delete value.rsync_picker;
