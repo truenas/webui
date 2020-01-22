@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
 import { UserService } from '../../../../../services/user.service';
-import {RestService, WebSocketService, StorageService, DialogService} from '../../../../../services/';
+import {WebSocketService, StorageService, DialogService} from '../../../../../services/';
 import {
   FieldConfig
 } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -22,7 +22,6 @@ import { MatDialog } from '@angular/material';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import {EntityUtils} from '../../../../common/entity/utils';
 import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
-
 
 @Component({
   selector : 'app-dataset-acl',
@@ -271,7 +270,7 @@ export class DatasetAclComponent implements OnDestroy {
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected aroute: ActivatedRoute, protected rest: RestService,
+              protected aroute: ActivatedRoute, 
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
               protected loader: AppLoaderService, protected dialog: MatDialog) {}
@@ -313,6 +312,11 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   afterInit(entityEdit: any) {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('homeShare')) {
+      entityEdit.formGroup.controls['default_acl_choices'].setValue('HOME');
+    }
+
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {

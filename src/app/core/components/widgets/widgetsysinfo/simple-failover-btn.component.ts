@@ -10,7 +10,8 @@ interface DialogData {
 
 @Component({
   selector: 'simple-failover-button',
-  template: `<button mat-button [style.opacity]="1" [color]="color" [disabled]="disabled" (click)="openDialog()">INITIATE FAILOVER</button>`,
+  template: `<button mat-button [style.opacity]="1" [color]="color" [disabled]="disabled" (click)="openDialog()"
+    ix-auto ix-auto-type="button" ix-auto-identifier="INITIATE FAILOVER">INITIATE FAILOVER</button>`,
 })
 
 export class SimpleFailoverBtnComponent implements OnDestroy {

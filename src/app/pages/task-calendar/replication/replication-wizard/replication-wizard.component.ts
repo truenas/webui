@@ -609,8 +609,10 @@ export class ReplicationWizardComponent {
         this.replicationService.getReplicationTasks().subscribe(
             (res) => {
                 for (const task of res) {
-                    const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
-                    exist_replicationField.options.push({ label: lable, value: task });
+                    if (task.transport !== 'LEGACY') {
+                        const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
+                        exist_replicationField.options.push({ label: lable, value: task });
+                    }
                 }
             }
         )
@@ -892,7 +894,7 @@ export class ReplicationWizardComponent {
                     schedule: this.parsePickerTime(data['schedule_picker']),
                     lifetime_value: 2,
                     lifetime_unit: 'WEEK',
-                    naming_schema: this.defaultNamingSchema,
+                    naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
                     enabled: true,
                 };
                 await this.isSnapshotTaskExist(payload).then(
@@ -913,7 +915,7 @@ export class ReplicationWizardComponent {
             for (const dataset of data['source_datasets']) {
                 payload = {
                     dataset: dataset,
-                    naming_schema: this.defaultNamingSchema,
+                    naming_schema: data['naming_schema']? data['naming_schema'] : this.defaultNamingSchema,
                 }
                 snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
             }
@@ -937,16 +939,16 @@ export class ReplicationWizardComponent {
                 payload['auto'] = true;
                 if (payload['direction'] === 'PULL') {
                     payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-                    payload['naming_schema'] = [this.defaultNamingSchema]; //default?
+                    payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema]; //default?
                 } else {
                     payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
                 }
             } else {
                 payload['auto'] = false;
                 if (payload['direction'] === 'PULL') {
-                    payload['naming_schema'] = [this.defaultNamingSchema];
+                    payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
                 } else {
-                    payload['also_include_naming_schema'] = [this.defaultNamingSchema];
+                    payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
                 }
             }
 
@@ -996,6 +998,9 @@ export class ReplicationWizardComponent {
     }
 
     async customSubmit(value) {
+        if (typeof(value.source_datasets) === 'string') {
+            value.source_datasets = _.filter(value.source_datasets.split(",").map(_.trim));
+        }
         this.loader.open();
         let toStop = false;
 
@@ -1081,7 +1086,7 @@ export class ReplicationWizardComponent {
                     )
                 }
                 if (value['setup_method'] == 'manual') {
-                    await this.getRemoteHostKey(value).then(
+                    await self.getRemoteHostKey(value).then(
                         (res) => {
                             value['remote_host_key'] = res;
                         },
@@ -1152,7 +1157,11 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
-        const transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
+        let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
+        // count local snapshots if transport is SSH/SSH-NETCAT, and direction is PUSH
+        if (this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value) {
+            transport = 'LOCAL';
+        }
         const payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
             (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : [this.defaultNamingSchema],
@@ -1195,7 +1204,8 @@ export class ReplicationWizardComponent {
             ["schedule.hour", "=", payload['schedule']['hour']],
             ["schedule.dom", "=", payload['schedule']['dom']],
             ["schedule.month", "=", payload['schedule']['month']],
-            ["schedule.dow", "=", payload['schedule']['dow']]
+            ["schedule.dow", "=", payload['schedule']['dow']],
+            ["naming_schema", "=", payload['naming_schema'] ? payload['naming_schema'] : this.defaultNamingSchema]
         ]]).toPromise();
     }
 

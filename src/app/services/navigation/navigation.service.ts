@@ -100,11 +100,11 @@ export class NavigationService {
       icon: 'device_hub',
       state: 'network',
       sub: [
+        { name: T('Network Summary'), state: 'summary' },
         { name: T('Global Configuration'), state: 'configuration' },
         { name: T('Interfaces'), state: 'interfaces' },
-        { name: T('IPMI'), state: 'ipmi', disabled: false },
-        { name: T('Network Summary'), state: 'summary' },
         { name: T('Static Routes'), state: 'staticroutes' },
+        { name: T('IPMI'), state: 'ipmi', disabled: false },
       ]
     },
     {

@@ -25,7 +25,7 @@ access_key_validation: [Validators.minLength(5), Validators.maxLength(20), Valid
 
 secret_key_placeholder : T('Secret Key'),
 secret_key_tooltip: T('Enter the password that must be used by connecting S3 systems.'),
-secret_key_validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required, 
+secret_key_validation: [Validators.minLength(8), Validators.maxLength(40), 
   regexValidator(/^\w+$/)],
 
 secret_key2_placeholder : T('Confirm Secret Key'),
@@ -47,5 +47,7 @@ mode_options : [
 certificate_placeholder : T('Certificate'),
 certificate_tooltip : T('Add an <a href="--docurl--/system.html#certificates"\
  target="_blank">SSL certificate</a> to be used for\
- secure S3 connections.')
+ secure S3 connections.'),
+
+fieldset_title: T('S3 Configuration Options')
 }

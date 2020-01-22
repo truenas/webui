@@ -205,8 +205,8 @@ export class UserFormComponent {
           placeholder : helptext.user_form_auth_pw_enable_placeholder,
           tooltip : helptext.user_form_auth_pw_enable_tooltip,
           options : [
-            {label:helptext.user_form_auth_pw_enable_label_yes, value: false },
-            {label: helptext.user_form_auth_pw_enable_label_no, value: true },
+            {label:helptext.user_form_auth_pw_enable_label_yes, value: true },
+            {label: helptext.user_form_auth_pw_enable_label_no, value: false },
           ],
           value: false
         },
@@ -244,6 +244,22 @@ export class UserFormComponent {
       divider:true
     }
   ]);
+
+  protected custActions = [
+    {
+      id: 'download_sshpubkey',
+      name: helptext.user_form_download_key,
+      function: () => {
+        const name = this.entityForm.formGroup.controls['username'].value;
+        const key = this.entityForm.formGroup.controls['sshpubkey'].value;
+        const filename = name + '_public_key_rsa';
+        const blob = new Blob([key], {type: 'text/plain'});
+        this.storageService.downloadBlob(blob, filename);
+      }
+    }
+  ]
+
+
 
   private shells: any;
   private shell: any;

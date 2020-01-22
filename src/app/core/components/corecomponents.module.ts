@@ -13,6 +13,7 @@ import { Display,DisplayContainer } from 'app/core/components/display/display.co
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
+import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -57,7 +58,8 @@ import { ConvertPipe } from './pipes/convert.pipe';
     PortalModule,
     FlexLayoutModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
+    CommonDirectivesModule
   ],
   declarations: [
     ContextMenuComponent,

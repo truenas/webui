@@ -68,7 +68,7 @@ export class PortalFormComponent {
           multiple: true,
           name: 'ip',
           placeholder: helptext_sharing_iscsi.portal_form_placeholder_ip,
-          tooltip: helptext_sharing_iscsi.portal_form_placeholder_ip,
+          tooltip: helptext_sharing_iscsi.portal_form_tooltip_ip,
           options: [],
           class: 'inline',
           width: '60%',

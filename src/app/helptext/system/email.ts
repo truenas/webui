@@ -3,6 +3,10 @@ import { T } from "app/translate-marker";
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation'
 
 export const helptext_system_email = {
+  fieldsets: {
+    general: T('General Options'),
+    access: T('Access')
+  },
   fromemail: {
     placeholder: T("From E-mail"),
     validation: [Validators.required, Validators.email],

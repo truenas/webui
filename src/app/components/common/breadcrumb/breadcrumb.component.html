@@ -1,6 +1,8 @@
 <div id="breadcrumb-bar" class="breadcrumb-bar" *ngIf="isEnabled">
   <ul class="breadcrumb">
-    <li *ngFor="let part of routeParts"><a [routerLink]="[part.url]">{{part.breadcrumb | translate}}</a></li>
+    <li *ngFor="let part of routeParts"
+      ix-auto ix-auto-type="option" ix-auto-identifier="{{part.breadcrumb}}">
+    <a [routerLink]="[part.url]">{{part.breadcrumb | translate}}</a></li>
   </ul>
   <span fxFlex class="copyright-txt">{{systemName}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
 </div>

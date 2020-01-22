@@ -8,6 +8,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { WebSocketService } from '../../../services/';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 
 @Component({
@@ -85,34 +86,41 @@ export class FailoverComponent implements OnDestroy {
     }
   ];
 
-  public fieldConfig: FieldConfig[] = [{
-    type: 'checkbox',
-    name: 'disabled',
-    placeholder: helptext_system_failover.disabled_placeholder,
-    tooltip: helptext_system_failover.disabled_tooltip
-  }, {
-    type: 'checkbox',
-    name: 'master',
-    placeholder: helptext_system_failover.master_placeholder,
-    tooltip: helptext_system_failover.master_tooltip,
-    value: true,
-    relation: [
+  public fieldConfig: FieldConfig[] = []
+  public fieldSets: FieldSet[] = [
+  {
+    name: helptext_system_failover.fieldset_title,
+    width: "100%",
+    label: true,
+    config: [
       {
-        action : 'DISABLE',
-        when : [{
-          name: 'disabled',
-          value: false
-        }]
+        type: 'checkbox',
+        name: 'disabled',
+        placeholder: helptext_system_failover.disabled_placeholder,
+        tooltip: helptext_system_failover.disabled_tooltip
+      }, {
+        type: 'checkbox',
+        name: 'master',
+        placeholder: helptext_system_failover.master_placeholder,
+        tooltip: helptext_system_failover.master_tooltip,
+        value: true,
+        relation: [
+          {
+            action : 'DISABLE',
+            when : [{
+              name: 'disabled',
+              value: false
+            }]
+          }
+        ]
+      }, {
+        type: 'input',
+        name: 'timeout',
+        placeholder: helptext_system_failover.timeout_placeholder,
+        tooltip: helptext_system_failover.timeout_tooltip,
       }
     ]
-  }, {
-    type: 'input',
-    name: 'timeout',
-    placeholder: helptext_system_failover.timeout_placeholder,
-    tooltip: helptext_system_failover.timeout_tooltip,
-
-  }
-];
+  }];
 
   constructor(
     private load: AppLoaderService,

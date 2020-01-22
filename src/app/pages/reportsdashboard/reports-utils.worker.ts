@@ -253,7 +253,7 @@ function avgCpuTempReport(report){
   //Handle Aggregations
   const keys = Object.keys(output.aggregations);
   keys.forEach((key, index) =>{ 
-    output.aggregations[key] = arrayAvg(output.aggregations[key]);
+    output.aggregations[key] = [arrayAvg(output.aggregations[key])];
   });
   
   return output;

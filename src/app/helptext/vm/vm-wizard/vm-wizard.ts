@@ -1,7 +1,6 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
-import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
@@ -69,6 +68,18 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  CPU limits the maximum. The VM operating system\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
+
+cores: {
+  placeholder: T('Cores'),
+  tooltip: T('Specify the number of cores per virtual CPU socket. \
+ The product of vCPUs, cores, and threads must not exceed 16.'),
+}, 
+
+threads: {
+  placeholder: T('Threads'),
+  tooltip: T('Specify the number of threads per core. \
+ The product of vCPUs, cores, and threads must not exceed 16.')
+},
 
 memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
 memory_validation : [Validators.required],

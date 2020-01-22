@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 import { EntityModule } from '../common/entity/entity.module';
+import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 //Component Modules
 import { ShellComponent } from './shell.component';
 import { routing } from './shell.routing';
@@ -11,7 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, EntityModule, routing, MaterialModule, TranslateModule, CoreComponents],
+  imports: [CommonModule, FormsModule, EntityModule, routing, MaterialModule, TranslateModule, CoreComponents, CommonDirectivesModule],
   declarations: [ShellComponent]
 })
 export class ShellModule {}

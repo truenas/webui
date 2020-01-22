@@ -1,17 +1,15 @@
 import { Component } from '@angular/core';
-import * as _ from 'lodash';
+import { helptext } from 'app/helptext/system/reporting';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { DialogService, RestService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { EntityUtils } from '../../common/entity/utils';
-import { RestService, WebSocketService, DialogService } from '../../../services/';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { helptext } from 'app/helptext/system/reporting';
 
 @Component({
   selector: 'app-system-reporting',
   templateUrl: 'reporting.component.html',
   styleUrls: ['reporting.component.css'],
 })
-
 export class ReportingComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
@@ -19,6 +17,7 @@ export class ReportingComponent {
   public isCpuCheckboxChecked: boolean;
   public graphPoints: any;
   public graphAge: any;
+  public graphite_separateinstances: any;
 
   custActions: any[] = [
     {
@@ -26,6 +25,7 @@ export class ReportingComponent {
       name:helptext.reset_button,
       function : () => {
         this.entityForm.formGroup.controls['cpu_in_percentage'].setValue(false);
+        this.entityForm.formGroup.controls['graphite_separateinstances'].setValue(false);
         this.entityForm.formGroup.controls['graphite'].setValue(this.entityForm.wsResponse['graphite']);
         this.entityForm.formGroup.controls['graph_age'].setValue(12);
         this.entityForm.formGroup.controls['graph_points'].setValue(1200);
@@ -34,35 +34,50 @@ export class ReportingComponent {
     }
   ]
 
-  public fieldConfig: FieldConfig[] = [{
-    type: 'checkbox',
-    name: 'cpu_in_percentage',
-    placeholder: helptext.cpu_in_percentage_placeholder,
-    tooltip: helptext.cpu_in_percentage_tooltip,
-  },
-  {
-    type: 'input',
-    name: 'graphite',
-    placeholder: helptext.graphite_placeholder,
-    tooltip: helptext.graphite_tooltip
-  },
-  {
-    type: 'input',
-    name: 'graph_age',
-    placeholder: helptext.graph_age_placeholder,
-    tooltip: helptext.graph_age_tooltip,
-    validation: helptext.graph_age_validation,
-    required: true
-  },
-  {
-    type: 'input',
-    name: 'graph_points',
-    placeholder: helptext.graph_points_placeholder,
-    tooltip: helptext.graph_points_tooltip,
-    validation: helptext.graph_points_validation,
-    required: true
-  },
-];
+  public fieldSets = new FieldSets([
+    {
+      name: helptext.fieldset_general,
+      class: 'general',
+      label: true,
+      config: [
+        {
+          type: "checkbox",
+          name: "cpu_in_percentage",
+          placeholder: helptext.cpu_in_percentage_placeholder,
+          tooltip: helptext.cpu_in_percentage_tooltip
+        },
+        {
+          type: "checkbox",
+          name: "graphite_separateinstances",
+          placeholder:helptext.graphite_separateinstances_placeholder,
+          tooltip: helptext.graphite_separateinstances_tooltip
+        },
+        {
+          type: "input",
+          name: "graphite",
+          placeholder: helptext.graphite_placeholder,
+          tooltip: helptext.graphite_tooltip
+        },
+        {
+          type: "input",
+          name: "graph_age",
+          placeholder: helptext.graph_age_placeholder,
+          tooltip: helptext.graph_age_tooltip,
+          validation: helptext.graph_age_validation,
+          required: true
+        },
+        {
+          type: "input",
+          name: "graph_points",
+          placeholder: helptext.graph_points_placeholder,
+          tooltip: helptext.graph_points_tooltip,
+          validation: helptext.graph_points_validation,
+          required: true
+        }
+      ]
+    },
+    { name: 'divider', divider: true }
+  ]);
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
@@ -74,6 +89,7 @@ export class ReportingComponent {
     this.graphPoints = data.graph_points;
     this.graphAge = data.graph_age;
     this.isCpuCheckboxChecked = data.cpu_in_percentage;
+    this.graphite_separateinstances = data.graphite_separateinstances;
     return data;
   }
 
