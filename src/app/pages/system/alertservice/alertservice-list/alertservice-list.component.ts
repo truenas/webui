@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { WebSocketService, DialogService } from '../../../../services';
+import { EntityUtils } from '../../../common/entity/utils';
+
 @Component({
   selector: 'app-alertservice-list',
   template: `<entity-table [title]="title"  [conf]="this"></entity-table>`
@@ -19,7 +22,7 @@ export class AlertServiceListComponent {
     { name: 'Service Name', prop: 'name', always_display: true },
     { name: 'Type', prop: 'type'},
     { name: 'Level', prop: 'level'},
-    { name: 'Enabled', prop: 'enabled' },
+    { name: 'Enabled', prop: 'enabled', selectable: true },
   ];
   public config: any = {
     paging: true,
@@ -32,12 +35,31 @@ export class AlertServiceListComponent {
 
   private providerList = ['AWSSNS','Mail','InfluxDB','Mattermost','OpsGenie','PagerDuty', 'Slack','SNMPTrap', 'VictorOps'];
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute) { }
+  constructor(
+    protected router: Router,
+    protected aroute: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected dialogService: DialogService) { }
   
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'edit' && this.providerList.indexOf(row.type) === -1) {
       return false;
     }
     return true;
+  }
+
+  onCheckboxChange(row) {
+    row.enabled = !row.enabled;
+    this.ws.call('alertservice.update', [row.id, {'enabled': row.enabled}] )
+    .subscribe(
+      (res) => {
+        if (!res) {
+          row.enabled = !row.enabled;
+        }
+      },
+      (err) => {
+        row.enabled = !row.enabled;
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      });
   }
 }
