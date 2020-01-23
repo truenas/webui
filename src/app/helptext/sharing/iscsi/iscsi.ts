@@ -50,6 +50,10 @@ export const helptext_sharing_iscsi = {
 
   target_form_placeholder_delete: T("Delete"),
 
+  fieldset_portal_basic: T('Basic Info'),
+  fieldset_portal_authgroup: T('Auth Method and Group'),
+  fieldset_portal_ip: T('IP Address'),
+
   portal_form_placeholder_comment: T("Description"),
   portal_form_tooltip_comment: T(
     "Optional description. Portals are automatically assigned a numeric\
