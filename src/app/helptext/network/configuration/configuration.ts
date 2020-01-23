@@ -64,5 +64,13 @@ hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>.\
 hostname_and_domain: T('Hostname and Domain'),
 gateway: T('Default Gateway'),
 nameservers: T('DNS Servers'),
-other: T('Other Settings')
+other: T('Other Settings'),
+service_announcement: T('Service Announcement'),
+
+netbios_placeholder: T('NetBIOS-NS'),
+netbios_tooltip: T(''),
+mdns_placeholder: T('mDNS'),
+mdns_tooltip: T(''),
+wsd_placeholder: T('WS-Discovery'),
+wsd_tooltip: T(''),
 }
