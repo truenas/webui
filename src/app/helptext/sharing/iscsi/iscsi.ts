@@ -295,6 +295,8 @@ export const helptext_sharing_iscsi = {
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
 
+  fieldset_associated_target: T('Associated Target'),
+
   associated_target_placeholder_target: T("Target"),
   associated_target_tooltip_target: T("Select an existing target."),
   associated_target_validators_target: [Validators.required],
