@@ -124,6 +124,8 @@ export const helptext_sharing_iscsi = {
   initiator_form_placeholder_comment: T("Description"),
   initiator_form_tooltip_comment: T("Any notes about initiators."),
 
+  fieldset_globalconf: T('Global Configuration'),
+
   globalconf_placeholder_basename: T("Base Name"),
   globalconf_tooltip_basename: T(
     'Lowercase alphanumeric characters plus dot (.), dash (-),\
