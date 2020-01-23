@@ -152,6 +152,10 @@ export const helptext_sharing_iscsi = {
  ${globalHelptext.ctrlrs} on the target and increase storage traffic\
  efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
 
+  fieldset_extent_basic: T('Basic Info'),
+  fieldset_extent_type: T('Type'),
+  fieldset_extent_options: T('Compatability'),
+
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(
     "Name of the extent. If the <i>Extent size</i> is not <i>0</i>,\
