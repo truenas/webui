@@ -68,7 +68,9 @@ other: T('Other Settings'),
 service_announcement: T('Service Announcement'),
 
 netbios_placeholder: T('NetBIOS-NS'),
-netbios_tooltip: T(''),
+netbios_tooltip: T('Legacy NetBIOS name server. Advertises the SMB \
+ Service <i>NetBIOS Name</i>. Could be required for legacy SMB1 clients \
+ to discover the server (server appears in <i>Network Neighborhood</i>).'),
 mdns_placeholder: T('mDNS'),
 mdns_tooltip: T(''),
 wsd_placeholder: T('WS-Discovery'),
