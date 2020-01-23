@@ -173,4 +173,12 @@ alias_list_placeholder: T('Aliases'),
 alias_list_label: T('Aliases'),
 
 int_save_button: T('Apply'),
+
+interface_settings: T('Interface Settings'),
+vlan_settings: T('VLAN Settings'),
+bridge_settings: T('Bridge Settings'),
+lag_settings: T('LAGG Settings'),
+failover_settings: T('Failover Settings'),
+other_settings: T('Other Settings'),
+ip_addresses: T('IP Addresses')
 }

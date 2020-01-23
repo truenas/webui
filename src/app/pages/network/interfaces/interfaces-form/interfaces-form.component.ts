@@ -12,6 +12,7 @@ import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 import { CoreService } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import globalHelptext from '../../../../helptext/global-helptext';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
 @Component({
   selector : 'app-interfaces-form',
@@ -32,197 +33,275 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected offload_warned = false;
   protected offload_warning_sub: any;
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
     {
-      type : 'select',
-      name : 'type',
-      placeholder: helptext.int_type_placeholder,
-      tooltip: helptext.int_type_tooltip,
-      required: true,
-      options: helptext.int_type_options
+      name: helptext.interface_settings,
+      width: "100%",
+      label: true,
+      class: 'interface_settings',
+      config: [  
+      {
+        type : 'select',
+        name : 'type',
+        placeholder: helptext.int_type_placeholder,
+        tooltip: helptext.int_type_tooltip,
+        required: true,
+        options: helptext.int_type_options
+      },
+      {
+        type : 'input',
+        name : 'name',
+        placeholder : helptext.int_name_placeholder,
+        tooltip : helptext.int_name_tooltip,
+        required: true,
+        validation : helptext.int_name_validation
+      },
+      {
+        type: 'input',
+        name: 'description',
+        placeholder: helptext.int_description_placeholder,
+        tooltip: helptext.int_description_tooltip,
+      },
+      {
+        type : 'checkbox',
+        name : 'ipv4_dhcp',
+        placeholder : helptext.int_dhcp_placeholder,
+        tooltip : helptext.int_dhcp_tooltip,
+      },
+      {
+        type : 'checkbox',
+        name : 'ipv6_auto',
+        placeholder : helptext.int_ipv6auto_placeholder,
+        tooltip : helptext.int_ipv6auto_tooltip
+      }
+    ]},
+    {
+      name:'interface_divider',
+      divider:false
     },
     {
-      type : 'input',
-      name : 'name',
-      placeholder : helptext.int_name_placeholder,
-      tooltip : helptext.int_name_tooltip,
-      required: true,
-      validation : helptext.int_name_validation
+      name: helptext.bridge_settings,
+      width: "100%",
+      label: false,
+      class: 'bridge_settings',
+      config: [
+      {
+        type: 'select',
+        name: 'bridge_members',
+        placeholder: helptext.bridge_members_placeholder,
+        tooltip: helptext.bridge_members_tooltip,
+        multiple: true,
+        options: [],
+        isHidden: true,
+        disabled: true,
+      },
+    ]},
+    {
+      name: helptext.lag_settings,
+      width: "100%",
+      label: false,
+      class: 'lag_settings',
+      config: [
+      {
+        type : 'select',
+        name : 'lag_protocol',
+        placeholder : helptext.lagg_protocol_placeholder,
+        tooltip : helptext.lagg_protocol_tooltip,
+        options : [],
+        required: true,
+        isHidden: true,
+        disabled: true,
+        validation : helptext.lagg_protocol_validation,
+        value: "NONE"
+      },
+      {
+        type : 'select',
+        name : 'lag_ports',
+        placeholder : helptext.lagg_interfaces_placeholder,
+        tooltip : helptext.lagg_interfaces_tooltip,
+        options : [],
+        multiple : true,
+        required: true,
+        isHidden: true,
+        disabled: true,
+        validation : helptext.lagg_interfaces_validation,
+      },
+    ]},
+    {
+      name: helptext.vlan_settings,
+      width: "100%",
+      label: false,
+      class: 'vlan_settings',
+      config: [
+      {
+        type: 'select',
+        name: 'vlan_parent_interface',
+        placeholder: helptext.vlan_pint_placeholder,
+        tooltip: helptext.vlan_pint_tooltip,
+        options: [],
+        required: true,
+        isHidden: true,
+        disabled: true,
+        validation: helptext.vlan_pint_validation
+      },
+      {
+        type: 'input',
+        name: 'vlan_tag',
+        placeholder: helptext.vlan_tag_placeholder,
+        tooltip: helptext.vlan_tag_tooltip,
+        required: true,
+        isHidden: true,
+        disabled: true,
+        validation: helptext.vlan_tag_validation
+      },
+      {
+        type: 'select',
+        name: 'vlan_pcp',
+        placeholder: helptext.vlan_pcp_placeholder,
+        options: helptext.vlan_pcp_options,
+        tooltip: helptext.vlan_pcp_tooltip,
+        isHidden: true,
+        disabled: true,
+      },
+    ]},
+    {
+      name:'failover_divider',
+      divider:false
     },
     {
-      type: 'input',
-      name: 'description',
-      placeholder: helptext.int_description_placeholder,
-      tooltip: helptext.int_description_tooltip,
+      name: helptext.failover_settings,
+      width: "100%",
+      label: false,
+      class: 'failover_settings',
+      config: [  
+      {
+        type: 'checkbox',
+        name: 'failover_critical',
+        placeholder: helptext.failover_critical_placeholder,
+        tooltip: helptext.failover_critical_tooltip,
+        isHidden: true,
+        disabled: true,
+      },
+      {
+        type: 'select',
+        name: 'failover_group',
+        placeholder: helptext.failover_group_placeholder,
+        tooltip: helptext.failover_group_tooltip,
+        isHidden: true,
+        disabled: true,
+        options: [{label: '---', value: null}]
+      },
+      {
+        type: 'input',
+        name: 'failover_vhid',
+        placeholder: helptext.failover_vhid_placeholder,
+        tooltip: helptext.failover_vhid_tooltip,
+        isHidden: true,
+        disabled: true,
+      },
+    ]},
+    {
+      name:'other_divider',
+      divider:true
     },
     {
-      type : 'checkbox',
-      name : 'ipv4_dhcp',
-      placeholder : helptext.int_dhcp_placeholder,
-      tooltip : helptext.int_dhcp_tooltip,
+      name: helptext.other_settings,
+      width: "100%",
+      label: true,
+      class: 'other_settings',
+      config: [
+      {
+        type : 'checkbox',
+        name: 'disable_offload_capabilities',
+        placeholder : helptext.disable_offload_capabilities_placeholder,
+        tooltip : helptext.disable_offload_capabilities_tooltip,
+      },
+      {
+        type: 'input',
+        name: 'mtu',
+        placeholder: helptext.mtu_placeholder,
+        tooltip: helptext.mtu_tooltip,
+        validation: helptext.mtu_validation,
+        value: 1500
+      },
+      {
+        type : 'input',
+        name : 'options',
+        placeholder : helptext.int_options_placeholder,
+        tooltip : helptext.int_options_tooltip,
+      },
+    ]},
+    {
+      name:'ip_divider',
+      divider:true
     },
     {
-      type : 'checkbox',
-      name : 'ipv6_auto',
-      placeholder : helptext.int_ipv6auto_placeholder,
-      tooltip : helptext.int_ipv6auto_tooltip
-    },
-    {
-      type : 'checkbox',
-      name: 'disable_offload_capabilities',
-      placeholder : helptext.disable_offload_capabilities_placeholder,
-      tooltip : helptext.disable_offload_capabilities_tooltip,
-    },
-    {
-      type: 'select',
-      name: 'bridge_members',
-      placeholder: helptext.bridge_members_placeholder,
-      tooltip: helptext.bridge_members_tooltip,
-      multiple: true,
-      options: [],
-      isHidden: true,
-      disabled: true,
-    },
-    {
-      type : 'select',
-      name : 'lag_protocol',
-      placeholder : helptext.lagg_protocol_placeholder,
-      tooltip : helptext.lagg_protocol_tooltip,
-      options : helptext.lagg_protocol_options,
-      required: true,
-      isHidden: true,
-      disabled: true,
-      validation : helptext.lagg_protocol_validation,
-      value: "NONE"
-    },
-    {
-      type : 'select',
-      name : 'lag_ports',
-      placeholder : helptext.lagg_interfaces_placeholder,
-      tooltip : helptext.lagg_interfaces_tooltip,
-      options : [],
-      multiple : true,
-      required: true,
-      isHidden: true,
-      disabled: true,
-      validation : helptext.lagg_interfaces_validation,
-    },
-    {
-      type: 'checkbox',
-      name: 'failover_critical',
-      placeholder: helptext.failover_critical_placeholder,
-      tooltip: helptext.failover_critical_tooltip,
-      isHidden: true,
-      disabled: true,
-    },
-    {
-      type: 'select',
-      name: 'failover_group',
-      placeholder: helptext.failover_group_placeholder,
-      tooltip: helptext.failover_group_tooltip,
-      isHidden: true,
-      disabled: true,
-      options: [{label: '---', value: null}]
-    },
-    {
-      type: 'input',
-      name: 'failover_vhid',
-      placeholder: helptext.failover_vhid_placeholder,
-      tooltip: helptext.failover_vhid_tooltip,
-      isHidden: true,
-      disabled: true,
-    },
-    {
-      type: 'select',
-      name: 'vlan_parent_interface',
-      placeholder: helptext.vlan_pint_placeholder,
-      tooltip: helptext.vlan_pint_tooltip,
-      options: [],
-      required: true,
-      isHidden: true,
-      disabled: true,
-      validation: helptext.vlan_pint_validation
-    },
-    {
-      type: 'input',
-      name: 'vlan_tag',
-      placeholder: helptext.vlan_tag_placeholder,
-      tooltip: helptext.vlan_tag_tooltip,
-      required: true,
-      isHidden: true,
-      disabled: true,
-      validation: helptext.vlan_tag_validation
-    },
-    {
-      type: 'select',
-      name: 'vlan_pcp',
-      placeholder: helptext.vlan_pcp_placeholder,
-      options: helptext.vlan_pcp_options,
-      tooltip: helptext.vlan_pcp_tooltip,
-      isHidden: true,
-      disabled: true,
-    },
-    {
-      type: 'input',
-      name: 'mtu',
-      placeholder: helptext.mtu_placeholder,
-      tooltip: helptext.mtu_tooltip,
-      validation: helptext.mtu_validation,
-    },
-    {
-      type : 'input',
-      name : 'options',
-      placeholder : helptext.int_options_placeholder,
-      tooltip : helptext.int_options_tooltip,
-    },
-    {
-      type: 'list',
-      name: 'aliases',
-      placeholder: helptext.alias_list_placeholder,
-      label: helptext.alias_list_label,
-      templateListField: [
-          {
-            name: 'address',
-            placeholder: helptext.alias_address_placeholder,
-            tooltip: helptext.alias_address_tooltip,
-            type: 'ipwithnetmask',
-            width: '55%',
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
-          },
-          {
-            name: 'failover_address',
-            placeholder: helptext.failover_alias_address_placeholder,
-            tooltip: helptext.failover_alias_address_tooltip,
-            disabled: true,
-            isHidden: true,
-            type: 'ipwithnetmask',
-            width: '55%',
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
-          },
-          {
-            name: 'failover_virtual_address',
-            placeholder: helptext.failover_virtual_alias_address_placeholder,
-            tooltip: helptext.failover_virtual_alias_address_tooltip,
-            disabled: true,
-            isHidden: true,
-            type: 'ipwithnetmask',
-            width: '55%',
-            netmaskPreset: 32,
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+      name: helptext.ip_addresses,
+      width: "100%",
+      label: true,
+      class: 'ip_addresses',
+      config: [
+      {
+        type: 'list',
+        name: 'aliases',
+        placeholder: helptext.alias_list_placeholder,
+        label: helptext.alias_list_label,
+        templateListField: [
+            {
+              name: 'address',
+              placeholder: helptext.alias_address_placeholder,
+              tooltip: helptext.alias_address_tooltip,
+              type: 'ipwithnetmask',
+              width: '55%',
+              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+            },
+            {
+              name: 'failover_address',
+              placeholder: helptext.failover_alias_address_placeholder,
+              tooltip: helptext.failover_alias_address_tooltip,
+              disabled: true,
+              isHidden: true,
+              type: 'ipwithnetmask',
+              width: '55%',
+              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+            },
+            {
+              name: 'failover_virtual_address',
+              placeholder: helptext.failover_virtual_alias_address_placeholder,
+              tooltip: helptext.failover_virtual_alias_address_tooltip,
+              disabled: true,
+              isHidden: true,
+              type: 'ipwithnetmask',
+              width: '55%',
+              netmaskPreset: 32,
+              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
 
-          }
-      ],
-      listFields: []
-    }
+            }
+        ],
+        listFields: []
+      }
+    ]},
+    {
+      name:'divider',
+      divider:true
+    },
   ];
 
   private vlan_fields = ['vlan_tag', 'vlan_pcp', 'vlan_parent_interface'];
   private lagg_fields = ['lag_protocol', 'lag_ports'];
   private bridge_fields = ['bridge_members'];
   private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid'];
+  private vlan_fieldset;
+  private lag_fieldset;
+  private bridge_fieldset;
+  private failover_fieldset;
+  private interface_divider;
+  private failover_divider;
   private vlan_pcp:any;
   private vlan_pint:any;
   private lag_ports: any;
+  private lag_protocol: any;
   private bridge_members: any;
   private type: any;
   private type_fg: any;
@@ -260,26 +339,40 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     for (let i = 0; i < this.vlan_fields.length; i++) {
       this.entityForm.setDisabled(this.bridge_fields[i], !is_bridge, !is_bridge);
     }
+    this.vlan_fieldset.label = is_vlan;
+    this.lag_fieldset.label = is_lagg;
+    this.bridge_fieldset.label = is_bridge;
+    this.interface_divider.divider = is_vlan || is_lagg || is_bridge;
 
   }
 
   preInit(entityForm: any) {
     this.entityForm = entityForm;
+    this.vlan_fieldset = _.find(this.fieldSets, {'class' : 'vlan_settings'});
+    this.lag_fieldset = _.find(this.fieldSets, {'class' : 'lag_settings'});
+    this.bridge_fieldset = _.find(this.fieldSets, {'class' : 'bridge_settings'});
+    this.failover_fieldset = _.find(this.fieldSets, {'class' : 'failover_settings'});
+    this.interface_divider = _.find(this.fieldSets, {'name': 'interface_divider'});
+    this.failover_divider = _.find(this.fieldSets, {'name': 'failover_divider'});
+    this.vlan_pint = _.find(this.vlan_fieldset.config, {'name' : 'vlan_parent_interface'});
+    this.route.params.subscribe(params => {
+      if (params['pk']) {
+        this.vlan_pint.type = 'input';
+      }
+    });
+  }
+
+  afterInit(entityForm: any) {
+    this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
+    this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
+    this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
+    this.lag_protocol = _.find(this.fieldConfig, {'name' : 'lag_protocol'});
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.ipListControl = _.find(this.fieldConfig, {'name' : 'aliases'});
     this.failover_group = _.find(this.fieldConfig, {'name': 'failover_group'});
     for (let i = 1; i <= 32; i++) {
       this.failover_group.options.push({label:i, value:i});
     }
-
-    this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
-    this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
-    this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.vlan_pint.type = 'input';
-      }
-    });
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.node').subscribe((node) => {
@@ -297,9 +390,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         _.find(this.ipListControl.templateListField, {'name': 'failover_address'}).placeholder += this.failoverPlaceholder;
       })
     }
-  }
 
-  afterInit(entityForm: any) {
     if (window.localStorage.getItem('is_freenas') === 'false' &&
       window.localStorage.getItem('alias_ips') === 'show') {
         const failover_virtual_address = _.find(this.ipListControl.templateListField, {"name":"failover_virtual_address"});
@@ -327,6 +418,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
+        this.failover_fieldset.label = is_ha;
+        this.failover_divider.divider = is_ha;
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
@@ -345,6 +438,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.networkService.getLaggPortsChoices().subscribe((res) => {
         for (const key in res) {
           this.lag_ports.options.push({label: res[key], value: key});
+        }
+      });
+      this.networkService.getLaggProtocolChoices().subscribe((res) => {
+        for (let i=0;i<res.length;i++) {
+          this.lag_protocol.options.push({label: res[i], value: res[i]});
         }
       });
       this.networkService.getBridgeMembersChoices().subscribe((res) => {

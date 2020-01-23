@@ -84,10 +84,16 @@ user_form_auth_sshkey_placeholder : T('SSH Public Key'),
 user_form_auth_sshkey_tooltip : T('Enter or paste the <b>public</b> SSH key of the\
  user for any key-based authentication. <b>Do not paste the private key.</b>'),
 user_form_auth_pw_enable_name: 'password_disabled',
-user_form_auth_pw_enable_placeholder : T('Enable password login'),
-user_form_auth_pw_enable_tooltip : T('Enable password logins and authentication to SMB\
- shares. Selecting <b>No</b> removes the <b>Lock\
- User</b> and <b>Permit Sudo</b> options.'),
+user_form_auth_pw_enable_placeholder : T('Disable Password'),
+user_form_auth_pw_enable_tooltip : T('<i>Yes:</i> Disables the <b>Password</b> \
+ fields and removes the password from the account. The account cannot \
+ use password-based logins for services. For example, disabling the \
+ password prevents using account credentials to log in to an SMB share \
+ or open an SSH session on the system. The <b>Lock User</b> and \
+ <b>Permit Sudo</b> options are also removed.<br><br> \
+ <i>No:</i> Requires adding a <b>Password</b> to the account. The \
+ account can use the saved <b>Password</b> to authenticate with \
+ password-based services.'),
 user_form_auth_pw_enable_label_yes: T('Yes'),
 user_form_auth_pw_enable_label_no: T('No'),
 user_form_shell_name : 'shell',
@@ -95,16 +101,21 @@ user_form_shell_placeholder : T('Shell'),
 user_form_shell_tooltip : T('Select the shell to use for local and SSH logins.'),
 user_form_lockuser_name : 'locked',
 user_form_lockuser_placeholder : T('Lock User'),
-user_form_lockuser_tooltip : T('Set to disable logging in to this user account.'),
+user_form_lockuser_tooltip : T('Prevent the user from logging in or \
+ using password-based services until this option is unset. Locking an \
+ account is only possible when <b>Disable Password</b> is <i>No</i> and \
+ a <b>Password</b> has been created for the account.'),
 user_form_sudo_name: 'sudo',
 user_form_sudo_placeholder : T('Permit Sudo'),
-user_form_sudo_tooltip : T('Give this user permission to use <a\
- href="https://www.sudo.ws/" target="_blank">sudo</a>.'),
+user_form_sudo_tooltip : T('Give this user permission to use <a \
+ href="https://www.sudo.ws/" target="_blank">sudo</a>. When using sudo, \
+ a user is prompted for their account <b>Password</b>.'),
 user_form_microsoft_name : 'microsoft_account',
 user_form_microsoft_placeholder : T('Microsoft Account'),
 user_form_microsoft_tooltip : T('Set to allow additional username authentication\
  methods when the user is connecting from a Windows 8 or newer operating system.'),
 user_form_blur_event2_warning: T('Usernames can be up to 16 characters long.\
  When using NIS or other legacy software with limited username lengths,\
- keep usernames to eight characters or less for compatibility.')
+ keep usernames to eight characters or less for compatibility.'),
+user_form_download_key: T('Download SSH Public Key')
 }

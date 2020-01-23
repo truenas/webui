@@ -2,7 +2,7 @@ import { ValidatorFn } from '@angular/forms';
 import { RelationGroup } from './field-relation.interface';
 
 export interface FieldConfig {
-  disabled?: boolean, label?: string, name: string, options?: any[],
+  disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
   inputType?: string, validation?: any[] | ValidatorFn | ValidatorFn[],
   value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string,
@@ -18,6 +18,6 @@ export interface FieldConfig {
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
   isLargeText?: boolean, paragraphIcon?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,
-  maskValue?: any
+  maskValue?: any, hideErrMsg?: boolean
   customEventMethod?(data:any), onChangeOption?(data:any),
 }

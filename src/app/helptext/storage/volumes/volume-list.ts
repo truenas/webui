@@ -56,7 +56,11 @@ pool_lock_warning_paratext_b: T("</i>.\
 
 permissions_edit_msg1: T('Root dataset permissions cannot be edited.'),
 permissions_edit_msg2: T('This dataset has an active ACL. Changes to permissions must be made with the ACL editor.'),
-acl_edit_msg: T('Root dataset ACL cannot be edited.')
+acl_edit_msg: T('Root dataset ACL cannot be edited.'),
 
-
+expand_pool_dialog: {
+    title: T("Enter passphrase to expand pool "),
+    passphrase_placeholder: T('Passphrase'),
+    save_button: T("Expand Pool"),
+}
 }

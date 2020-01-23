@@ -43,5 +43,7 @@ export const helptext_system_failover = {
   master_dialog_title: T('Failover'),
   master_dialog_warning: T(`Forcing the other ${globalHelptext.ctrlr} to \
  become active requires a failover. This will temporarily interrupt \
- system services.`)
+ system services.`),
+
+  fieldset_title: T('Failover Configuration')
 };

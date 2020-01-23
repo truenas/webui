@@ -361,7 +361,8 @@
         [resizeable]="false"
         [sortable]="false"
         [draggable]="false"
-        [canAutoResize]="false">
+        [canAutoResize]="false"
+        *ngIf="hasActions || hasDetails()">
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
           <a
             *ngIf="hasDetails(); else threeDot"
