@@ -4,6 +4,9 @@ import { matchOtherValidator } from "app/pages/common/entity/entity-form/validat
 import globalHelptext from '../../../helptext/global-helptext';
 
 export const helptext_sharing_iscsi = {
+  fieldset_target_basic: T('Basic Info'),
+  fieldset_target_group: T('iSCSI Group'),
+
   target_form_placeholder_name: T("Target Name"),
   target_form_tooltip_name: T(
     'The base name is automatically prepended if the target\
