@@ -240,6 +240,9 @@ export const helptext_sharing_iscsi = {
  LUN."
   ),
 
+  extent_placeholder_enabled: T('Enabled'),
+  extent_tooltip_enabled: T(''),
+
   authaccess_placeholder_tag: T("Group ID"),
   authaccess_tooltip_tag: T(
     "Allow different groups to be configured\

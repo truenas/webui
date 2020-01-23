@@ -214,6 +214,12 @@ export class ExtentFormComponent {
       placeholder: helptext_sharing_iscsi.extent_placeholder_ro,
       tooltip: helptext_sharing_iscsi.extent_tooltip_ro,
     },
+    {
+      type: 'checkbox',
+      name: 'enabled',
+      placeholder: helptext_sharing_iscsi.extent_placeholder_enabled,
+      tooltip: helptext_sharing_iscsi.extent_tooltip_enabled,
+    },
   ];
   protected deviceFieldGroup: any[] = [
     'disk',
