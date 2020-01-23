@@ -74,5 +74,7 @@ netbios_tooltip: T('Legacy NetBIOS name server. Advertises the SMB \
 mdns_placeholder: T('mDNS'),
 mdns_tooltip: T(''),
 wsd_placeholder: T('WS-Discovery'),
-wsd_tooltip: T(''),
+wsd_tooltip: T('Uses the SMB Service <i>NetBIOS Name</i> to advertise \
+ the server to WS-Discovery clients. This causes the computer appear in \
+ the <i>Network Neighborhood</i> of modern Windows OSes.'),
 }
