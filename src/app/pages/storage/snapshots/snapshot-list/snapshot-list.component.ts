@@ -39,7 +39,7 @@ export class SnapshotListComponent {
     multiSelect: true,
     deleteMsg: {
       title: 'Snapshot',
-      key_props: ['name']
+      key_props: ['dataset']
     },
   };
 

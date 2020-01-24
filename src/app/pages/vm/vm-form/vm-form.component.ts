@@ -33,9 +33,10 @@ export class VmFormComponent {
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
       {
-        name: helptext.vm_form_title,
+        name: helptext.vm_settings_title,
         class: 'vm_settings',
         label:true,
+        width: '49%',
         config:[
         { 
           type: 'input', 
@@ -56,6 +57,32 @@ export class VmFormComponent {
           type: 'select',
           options: [{ label: helptext.time_local_text, value: 'LOCAL'}, { label: helptext.time_utc_text, value: 'UTC' }]
         },
+        { 
+          type: 'select', 
+          name : 'bootloader', 
+          placeholder : helptext.bootloader_placeholder, 
+          tooltip: helptext.bootloader_tooltip,options: []
+        },
+        { 
+          type: 'checkbox', 
+          name : 'autostart', 
+          placeholder : helptext.autostart_placeholder, 
+          tooltip: helptext.autostart_tooltip
+        }
+      ]
+    },
+    {
+      name: 'spacer',
+      class: 'spacer',
+      label:false,
+      width: '2%',
+      config:[]},
+    {
+      name: helptext.vm_cpu_mem_title,
+      class: 'vm_settings',
+      label:true,
+      width: '49%',
+      config:[
         { 
           type : 'input', 
           name: 'vcpus',
@@ -89,18 +116,7 @@ export class VmFormComponent {
           blurEvent : this.blurEvent,
           parent : this
         },
-        { 
-          type: 'select', 
-          name : 'bootloader', 
-          placeholder : helptext.bootloader_placeholder, 
-          tooltip: helptext.bootloader_tooltip,options: []
-        },
-        { 
-          type: 'checkbox', 
-          name : 'autostart', 
-          placeholder : helptext.autostart_placeholder, 
-          tooltip: helptext.autostart_tooltip
-        }
+
       ]
     }
   ]
