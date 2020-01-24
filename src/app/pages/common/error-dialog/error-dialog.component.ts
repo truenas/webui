@@ -24,9 +24,9 @@ export class ErrorDialog {
     private ws: WebSocketService, public http: Http, public storage: StorageService) {}
 
   public toggleOpen () {
-    const messageWrapper = document.getElementById('err-message-wrapper');
     const dialogs = document.getElementsByClassName('mat-dialog-container');
     const dialog = dialogs[dialogs.length -1];
+    const messageWrapper = (<HTMLElement>dialog.querySelector('#err-message-wrapper'));
     const title =   (<HTMLElement>dialog.querySelector('#err-title'));
     const content = (<HTMLElement>dialog.querySelector('#err-md-content'));
     const btPanel = (<HTMLElement>dialog.querySelector('#err-bt-panel'));
@@ -35,7 +35,7 @@ export class ErrorDialog {
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
       dialog.setAttribute('style','width : 800px; height: 600px');
-      let errMsgHeight = (<HTMLElement>dialog.querySelector('#err-message-wrapper')).offsetHeight-21;
+      let errMsgHeight = messageWrapper.offsetHeight-21;
       if (errMsgHeight > 63) {
         errMsgHeight = 63;
       };
