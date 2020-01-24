@@ -1035,11 +1035,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   resetTableToStartingHeight() {
     setTimeout(() => {
-    if (!this.startingHeight) {
-      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }
-    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
-  }, 0);
+      if (!this.startingHeight) {
+        this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+      }
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+    }, 0);
   }
 
   updateTableHeightAfterDetailToggle() {
