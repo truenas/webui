@@ -1691,4 +1691,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     text-decoration: underline;
   }
 
+  .mat-select-panel{
+    max-height: 60vh !important;
+  }
+
  } // end of ix theme
