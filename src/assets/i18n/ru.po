@@ -1043,9 +1043,6 @@ msgstr "Добавить данные"
 msgid "Add Dataset"
 msgstr "Добавить набор данных"
 
-msgid "Add Extra ISCSI Group"
-msgstr "Добавить группу iSCSI"
-
 msgid "Add Group"
 msgstr ""
 
@@ -1248,14 +1245,6 @@ msgstr "Адрес"
 
 msgid "Address space limit in bytes for the jail."
 msgstr "Ограничение адресного пространства в байтах для jail."
-
-msgid ""
-"Adds <a href=\"--docurl--/sharing.html#avail-vfs-modules-tab\" "
-"target=\"blank\">virtual file system modules</a> to enhance functionality."
-msgstr ""
-"Добавляет <a href=\"--docurl--/sharing.html#avail-vfs-modules-tab\" "
-"target=\"blank\">модули виртуальной файловой системы</a> для расширения "
-"функциональности."
 
 msgid "Adjust the file permissions using the checkboxes."
 msgstr "Настройте права доступа к файлу с помощью флажков."
@@ -1805,6 +1794,9 @@ msgstr ""
 "каждого каталога в нем на minio:minio и отменяет все предыдущие разрешения. "
 "Настоятельно рекомендуется создать отдельный набор данных для Minio."
 
+msgid "Associated Target"
+msgstr ""
+
 msgid ""
 "At least one module must be defined in <a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
@@ -1833,6 +1825,9 @@ msgstr "Авг"
 
 msgid "Auth Method"
 msgstr "Метод аутентификации"
+
+msgid "Auth Method and Group"
+msgstr ""
 
 msgid "Auth Token"
 msgstr "Токен аутентификации"
@@ -1982,6 +1977,9 @@ msgstr "Ключ в кодировке Base64 для учетной записи
 
 msgid "Basejail"
 msgstr "Базовый jail"
+
+msgid "Basic Info"
+msgstr ""
 
 msgid "Basic Mode"
 msgstr "Основной режим"
@@ -2227,6 +2225,9 @@ msgstr ""
 msgid "CAs"
 msgstr "Центры сертификации"
 
+msgid "CC"
+msgstr ""
+
 msgid "CD-ROM Path"
 msgstr "Путь к CD-ROM"
 
@@ -2244,6 +2245,9 @@ msgstr "Использование процессора"
 
 msgid "CPU and Memory"
 msgstr "Процессор и память"
+
+msgid "CPUs and Memory"
+msgstr ""
 
 msgid "CSR exists on this system"
 msgstr "CSR существует на этой системе"
@@ -3110,6 +3114,9 @@ msgstr "Общее имя"
 msgid "Community"
 msgstr "Сообщество"
 
+msgid "Compatability"
+msgstr ""
+
 msgid "Complete the Upgrade"
 msgstr "Завершить обновление"
 
@@ -3400,13 +3407,10 @@ msgid "Country Code"
 msgstr "Код страны"
 
 msgid ""
-"Country Code must be blank or have a  valid two-letter <a  "
+"Country Code must contain a valid  <a "
 "href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
-"3166-1 alpha-2 code</a>."
+"3166-1 alpha-2 code</a>  of two capital letters."
 msgstr ""
-"Код страны должен быть пустым или иметь действительный двухбуквенный код <a "
-"href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
-"3166-1 alpha-2</a>."
 
 msgid "Crash reporting"
 msgstr "Отчеты о сбоях"
@@ -3636,9 +3640,6 @@ msgstr "Путь к базе данных"
 msgid "Dataset"
 msgstr "Набор данных"
 
-msgid "Dataset Has Complex ACLs"
-msgstr "Набор данных имеет сложные ACL"
-
 msgid "Dataset Path"
 msgstr "Путь к набору данных"
 
@@ -3859,6 +3860,12 @@ msgstr "Удалить путь"
 
 msgid "Delete Selected"
 msgstr "Удалить выбранные"
+
+msgid "Delete Virtual Machine"
+msgstr ""
+
+msgid "Delete Virtual Machine Data?"
+msgstr ""
 
 msgid "Delete Zvol"
 msgstr "Удалить ZVol"
@@ -4341,9 +4348,6 @@ msgstr ""
 msgid "EC Curve"
 msgstr "Кривая EC"
 
-msgid "EDIT ACL"
-msgstr "РЕДАКТИРОВАТЬ ACL"
-
 msgid "ERROR: Not Enough Memory"
 msgstr "ОШИБКА: Недостаточно памяти"
 
@@ -4399,6 +4403,18 @@ msgstr "Адрес электронной почты"
 msgid "Email Subject"
 msgstr "Тема письма"
 
+msgid ""
+"Email addresses must be entered in the format   "
+"<i>local-name</i>@<i>domain.com<i> with a comma (,) separating each   "
+"address."
+msgstr ""
+
+msgid ""
+"Email addresses to receive copies of iXsystems Support   messages about "
+"this issue. Use the format <i>name</i>@<i>domain.com</i>   and a comma (,) "
+"to separate each address."
+msgstr ""
+
 msgid "Emergency"
 msgstr "Чрезвычайно"
 
@@ -4430,9 +4446,6 @@ msgstr "Включить отладочное ядро"
 
 msgid "Enable FXP"
 msgstr "Включить FXP"
-
-msgid "Enable Legacy User Interface"
-msgstr "Включить устаревший пользовательский интерфейс"
 
 msgid "Enable NFSv4"
 msgstr "Включить NFSv4"
@@ -4496,9 +4509,6 @@ msgstr "Включить iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "Включить проактивную поддержку iXsystems"
-
-msgid "Enable if Mac clients will be connecting to the SMB share."
-msgstr "Включите, если клиенты Mac будут подключаться к общему ресурсу SMB."
 
 msgid "Enable netwait feature"
 msgstr "Включить ожидание сети"
@@ -5378,8 +5388,10 @@ msgstr "Введите адрес электронной почты нового
 msgid "Enter the email address of the person responsible for the CA."
 msgstr "Введите адрес электронной почты лица, ответственного за центр сертификации."
 
-msgid "Enter the email of the contact person."
-msgstr "Введите адрес электронной почты контактного лица."
+msgid ""
+"Enter the email of the contact person. Use the format "
+"<i>name</i>@<i>domain.com</i>."
+msgstr ""
 
 msgid "Enter the filesystem to snapshot."
 msgstr "Введите файловую систему для снимка."
@@ -5586,6 +5598,9 @@ msgstr "Ошибка при загрузке файла"
 
 msgid "Error Promoting dataset "
 msgstr "Ошибка продвижения набора данных "
+
+msgid "Error Saving Configuration Settings"
+msgstr ""
 
 msgid "Error Saving Proactive Support Settings"
 msgstr "Ошибка сохранения настроек проактивной поддержки"
@@ -5975,6 +5990,9 @@ msgstr "Принудить"
 msgid "Force Delete"
 msgstr "Принудительно удалить"
 
+msgid "Force Delete?"
+msgstr ""
+
 msgid "Force deletion of dataset "
 msgstr "Принудительное удаление набора данных "
 
@@ -6094,6 +6112,9 @@ msgstr ""
 
 msgid "General Preferences"
 msgstr "Общие настройки"
+
+msgid "General VM Settings"
+msgstr ""
 
 msgid "Generate Debug File"
 msgstr "Создать файл отладки"
@@ -7308,6 +7329,12 @@ msgstr ""
 msgid "Legacy"
 msgstr "Старый"
 
+msgid ""
+"Legacy NetBIOS name server. Advertises the SMB  Service <i>NetBIOS "
+"Name</i>. Could be required for legacy SMB1 clients  to discover the server "
+"(server appears in <i>Network Neighborhood</i>)."
+msgstr ""
+
 msgid "Legacy Web Interface"
 msgstr "Старый Web интерфейс"
 
@@ -7848,6 +7875,12 @@ msgstr ""
 "разделенные пробелами. Например, если основным доменом является "
 "example.com, ввод www.example.com защитит оба адреса."
 
+msgid ""
+"Multicast DNS. Uses the system <i>Hostname</i> to  advertise enabled and "
+"running services. For example, this controls if  the server appears under "
+"<i>Network</i> on MacOS clients."
+msgstr ""
+
 msgid "Multipath Name"
 msgstr "Имя Multipath"
 
@@ -8045,6 +8078,9 @@ msgstr "Имя компьютера NetBIOS"
 
 msgid "NetBIOS alias"
 msgstr "Псевдоним NetBIOS"
+
+msgid "NetBIOS-NS"
+msgstr ""
 
 msgid "Netbios Name"
 msgstr "Имя компьютера NetBIOS"
@@ -9141,6 +9177,9 @@ msgstr ""
 msgid "Proceed"
 msgstr "Продолжить"
 
+msgid "Proceed with Update"
+msgstr ""
+
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
@@ -9421,9 +9460,6 @@ msgstr "Удалить"
 
 msgid "Remove Additional Path"
 msgstr "Удалить дополнительный путь"
-
-msgid "Remove Extra ISCSI Group"
-msgstr "Удалить группу iSCSI"
 
 msgid "Remove Keep Flag"
 msgstr "Убрать флаг сохранения"
@@ -10829,6 +10865,9 @@ msgstr "Шифрование на стороне сервера"
 msgid "Service Account"
 msgstr "Учетная запись сервиса"
 
+msgid "Service Announcement"
+msgstr ""
+
 msgid "Service Key"
 msgstr "Ключ сервиса"
 
@@ -11462,6 +11501,12 @@ msgstr ""
 "<i>BUILTIN</i>."
 
 msgid ""
+"Set to ignore the Virtual  Machine status during the delete operation. "
+"Unset to prevent deleting  the Virtual Machine when it is still active or "
+"has an undefined state."
+msgstr ""
+
+msgid ""
 "Set to include all subdirectories of the specified                "
 "directory. When unset, only the specified directory                is "
 "included."
@@ -11628,6 +11673,12 @@ msgstr ""
 "Установите, чтобы удалить все ACL из текущего набора данных. ACL также "
 "рекурсивно удаляются из каталогов и дочерних наборов данных, когда эти "
 "параметры установлены."
+
+msgid ""
+"Set to remove the data associated with this  Virtual Machine (which will "
+"result in data loss if the data is not backed up). Unset to  leave the data "
+"intact."
+msgstr ""
 
 msgid "Set to run resilver tasks between the configured times."
 msgstr "Задайте запуск задач восстановления в заданное время"
@@ -12443,10 +12494,12 @@ msgstr "Системные часы"
 msgid "System domain name, like <i>example.com</i>"
 msgstr "Доменное имя системы, например <i>example.com</i>"
 
-msgid "System failed to save configuration settings. Check the network connection."
+msgid ""
+"System failed to save configuration settings. Check the network connection. "
+" To proceed with the system upgrade <b>without</b> saving a current backup "
+"of the configuration setting, select  the <i>Confirm</i> checkbox and click "
+"<i>Proceed with Update</i>."
 msgstr ""
-"Системе не удалось сохранить настройки конфигурации. Проверьте подключение "
-"к сети."
 
 msgid "System host time to synchronize the time between jail and host."
 msgstr "Время системного хоста для синхронизации времени между jail и хостом."
@@ -13168,10 +13221,8 @@ msgstr "Этот и дочерние наборы данных"
 
 msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
-"the ACL editor.                   Open ACL editor?"
+"the ACL editor."
 msgstr ""
-"Этот набор данных имеет активный ACL. Изменения в разрешениях должны быть "
-"сделаны с помощью редактора ACL. Открыть редактор ACL?"
 
 msgid ""
 "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
@@ -13622,13 +13673,10 @@ msgstr "Обновлен"
 
 msgid ""
 "Upgrades both controllers. Files are downloaded to the Active Controller    "
-"                  and then transferred to the Standby Controller. The "
-"upgrade process starts concurrently on both TrueNAS Controllers.            "
-"          Continue with download?"
+"        and then transferred to the Standby Controller. The upgrade process "
+"starts concurrently on both TrueNAS Controllers.            Continue with "
+"download?"
 msgstr ""
-"Обновляет оба контроллера. Файлы загружаются в активный контроллер, а затем "
-"передаются в резервный контроллер. Процесс обновления запускается "
-"одновременно на обоих контроллерах TrueNAS. Приступить к загрузке?"
 
 msgid "Upgrading Jail"
 msgstr "Обновление jail"
@@ -13930,11 +13978,14 @@ msgstr "Пользователи"
 msgid "Users & Groups"
 msgstr "Пользователи и группы"
 
+msgid ""
+"Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to "
+"WS-Discovery clients. This causes the computer appear in  the <i>Network "
+"Neighborhood</i> of modern Windows OSes."
+msgstr ""
+
 msgid "Using pool "
 msgstr "Используется пул "
-
-msgid "VFS Objects"
-msgstr "Объекты VFS"
 
 msgid "VLAN ID"
 msgstr "VLAN ID"
@@ -14048,9 +14099,6 @@ msgstr "Виртуальный интерфейс"
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "Тип мастера виртуальной машины (ВМ)."
 
-msgid "Virtual Machine Settings"
-msgstr ""
-
 msgid "Virtual Machines"
 msgstr "Виртуальные машины"
 
@@ -14071,9 +14119,6 @@ msgstr "Размер тома не может быть нулевым."
 msgid "WARNING"
 msgstr "ВНИМАНИЕ"
 
-msgid "WARNING: "
-msgstr "ВНИМАНИЕ: "
-
 msgid "WARNING: A failover will  temporarily interrupt system services."
 msgstr "ВНИМАНИЕ: Аварийное переключение временно прерывет системные службы."
 
@@ -14092,6 +14137,9 @@ msgstr "ВНИМАНИЕ: Экспорт/отключение пула <i>"
 
 msgid "WARNING: Locking pool <i>"
 msgstr "ВНИМАНИЕ: Блокировка пула <i>"
+
+msgid "WS-Discovery"
+msgstr ""
 
 msgid "Wait to start VM until VNC client connects."
 msgstr "Ждать с запуском виртуальной машины, пока клиент VNC не подключится."
@@ -14367,9 +14415,6 @@ msgstr ""
 msgid "Zero Device Numbers"
 msgstr "Обнулять номера устройств"
 
-msgid "Zeroconf share discovery"
-msgstr "Zeroconf обнаружение ресурса"
-
 msgid "Zvol Location"
 msgstr "Местоположение zvol"
 
@@ -14553,6 +14598,9 @@ msgstr ""
 msgid "iSCSI"
 msgstr "iSCSI"
 
+msgid "iSCSI Group"
+msgstr ""
+
 msgid "interfaces"
 msgstr "интерфейсы"
 
@@ -14587,6 +14635,9 @@ msgid "list"
 msgstr "список"
 
 msgid "login_flags"
+msgstr ""
+
+msgid "mDNS"
 msgstr ""
 
 msgid "mac_prefix"
