@@ -102,9 +102,7 @@ export class AuthorizedAccessFormComponent {
             Validators.maxLength(16),
             doesNotEqual("secret"),
             matchOtherValidator("peersecret_confirm")
-          ],
-          blurStatus: true,
-          errors: helptext_sharing_iscsi.authaccess_error_peersecret
+          ]
         },
         {
           type : 'input',
@@ -117,7 +115,6 @@ export class AuthorizedAccessFormComponent {
   ]
 
   protected pk: any;
-  protected entityForm: any;
   protected peeruser_field: any;
   protected peersecret_field: any;
 
@@ -134,6 +131,7 @@ export class AuthorizedAccessFormComponent {
   }
 
   afterInit(entityForm) {
+    const secretControl: FormControl = entityForm.formGroup.controls['secret'];
     const peersecretControl: FormControl = entityForm.formGroup.controls['peersecret'];
     const peeruserFieldset = _.find(this.fieldSets, {class: 'peeruser'});
     const peersecretConfig = _.find(peeruserFieldset.config, {name: 'peersecret'});
@@ -147,23 +145,35 @@ export class AuthorizedAccessFormComponent {
           matchOtherValidator("peersecret_confirm"),
           doesNotEqual("secret")
         ]);
+        peersecretConfig.required = true;
       } else {
         peersecretControl.clearValidators();
+        peersecretConfig.required = false;
       }
       peersecretControl.updateValueAndValidity();
     });
 
-    peersecretControl.valueChanges.subscribe((res) => {
-      peersecretConfig.hasErrors = !!res && peersecretControl.touched && peersecretControl.invalid;
-    });
-
-    peersecretConfig.blurEvent = () => {
-      peersecretConfig.hasErrors = (!!entityForm.formGroup.controls['peeruser'].value && !peersecretControl.value) || (!!peersecretControl.value && peersecretControl.invalid);
-      peersecretControl.updateValueAndValidity();
-    };
-
-    entityForm.formGroup.controls['peersecret_confirm'].valueChanges.subscribe(() => {
-      peersecretControl.updateValueAndValidity();
+    [secretControl, peersecretControl].forEach((ctrl, index) => {
+      ctrl.valueChanges.subscribe((res) => {
+        let errors = ctrl.errors;
+        const compartedCtrlName = index === 0 ? 'peersecret' : 'secret';
+        if (res === entityForm.formGroup.controls[compartedCtrlName].value) {
+          if (!ctrl.hasError('manualValidateError')) {
+            if (errors === null) {
+              errors = { manualValidateError: true, manualValidateErrorMsg: helptext_sharing_iscsi.authaccess_error_duplicate_secrets };
+            } else {
+              errors['manualValidateError'] = true;
+              errors['manualValidateErrorMsg'] = helptext_sharing_iscsi.authaccess_error_duplicate_secrets;
+            }
+          }
+        } else {
+          if (ctrl.hasError('manualValidateError')) {
+            delete errors['manualValidateError'];
+            delete errors['manualValidateErrorMsg'];
+          }
+        }
+        ctrl.setErrors(errors);
+      });
     })
   }
 
