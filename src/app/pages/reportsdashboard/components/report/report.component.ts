@@ -136,10 +136,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public chartColors: string[];
 
   get startTime(){
-    return this.localeService.formatDate(new Date(this.currentStartDate));
+    return this.localeService.formatDateTime(new Date(this.currentStartDate));
   }
   get endTime(){
-    return this.localeService.formatDate(new Date(this.currentEndDate));
+    return this.localeService.formatDateTime(new Date(this.currentEndDate));
   }
 
   constructor(public router: Router, 

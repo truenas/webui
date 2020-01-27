@@ -84,7 +84,7 @@ export class BootEnvironmentListComponent {
 
   rowValue(row, attr) {
     if (attr === 'created'){
-      return this.localeService.formatDate(row.created.$date);
+      return this.localeService.formatDateTime(row.created.$date);
     }
     if (attr === 'active'){
       if (row.active === 'N'){
@@ -244,7 +244,7 @@ export class BootEnvironmentListComponent {
   updateBootState(): void {
     this.ws.call("boot.get_state").subscribe(wres => {
       if (wres.scan.end_time) {
-        this.scrub_msg = this.localeService.formatDate(wres.scan.end_time.$date);
+        this.scrub_msg = this.localeService.formatDateTime(wres.scan.end_time.$date);
       } else {
         this.scrub_msg = T("Never");
       }

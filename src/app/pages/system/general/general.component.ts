@@ -140,14 +140,17 @@ export class GeneralComponent {
           name: 'date_format',
           placeholder: helptext.date_format.placeholder,
           tooltip: helptext.date_format.tooltip,
-          options: [{ label: '---', value: null }],
-          width: '50%'
+          options: [],
+          width: '49%'
         },
+        { type: 'paragraph', name: 'spacer', width: '2%' },
         {
-          type: 'paragraph',
-          name: 'placeholder',
-          paraText: '',
-          width: '50%'
+          type: 'select',
+          name: 'time_format',
+          placeholder: helptext.time_format.placeholder,
+          tooltip: helptext.time_format.tooltip,
+          options: [],
+          width: '49%'
         }
       ]
     },
@@ -380,6 +383,11 @@ export class GeneralComponent {
     this.fieldSets
         .find(set => set.name === helptext.stg_fieldset_loc)
         .config.find(config => config.name === "date_format").options = dateOptions;
+
+    let timeOptions = this.localeService.getTimeFormatOptions();
+    this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "time_format").options = timeOptions;
    
     entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res)=> {
       res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
@@ -388,6 +396,8 @@ export class GeneralComponent {
 
     setTimeout(() => {
       entityEdit.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
+      entityEdit.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
+
     }, 2000);
 
     entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
@@ -555,8 +565,9 @@ export class GeneralComponent {
   }
 
   public customSubmit(body) {
-    this.localeService.saveDateFormat(body.date_format);
+    this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
+    delete body.time_format;
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();

@@ -37,7 +37,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
         map(response => ({
           ...response[0].properties,
           name: this.config.name,
-          creation:  this.localeService.formatDate(response[0].properties.creation.parsed.$date)
+          creation:  this.localeService.formatDateTime(response[0].properties.creation.parsed.$date)
         }))
       )
       .subscribe(snapshot => {

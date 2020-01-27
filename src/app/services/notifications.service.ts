@@ -151,7 +151,7 @@ export class NotificationsService {
     const level: string = <string>alertObj.level;
     const date: Date = new Date(alertObj.datetime.$date);
     const dateStr = date.toUTCString();
-    const dateStrLocale = this.localeService.formatDate(date);
+    const dateStrLocale = this.localeService.formatDateTime(date);
     const one_shot: boolean = alertObj.one_shot;
     let icon_tooltip: string = <string>alertObj.level;
     //const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());

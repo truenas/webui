@@ -94,7 +94,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
 
   getReadableDate(data: any) {
     if (data != null) {
-      return this.localeService.formatDate(new Date(data.$date));
+      return this.localeService.formatDateTime(new Date(data.$date));
     }
     return;
   }
