@@ -270,7 +270,10 @@ export class AdvancedComponent implements OnDestroy {
   ) {}
 
   ngOnDestroy() {
-    this.swapondrive_subscription.unsubscribe();
+    if (this.swapondrive_subscription) {
+      this.swapondrive_subscription.unsubscribe();
+    }
+
   }
 
 

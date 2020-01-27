@@ -47,5 +47,17 @@ export class LocaleService {
     getPreferredTimeFormat() {
         return this.prefService.preferences.timeFormat;
     }
+    
+    // Translates moment.js format to angular template format for use in special cases such as form-scheduler
+    getAngularFormat() {
+        let tempStr = `${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`
+        let dateStr = '';
+        ;
+        for (let i = 0; i < tempStr.length; i++) {
+            tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i] :
+                dateStr += tempStr[i].toLowerCase();
+        }
+        return dateStr;
+    }
 
 }
