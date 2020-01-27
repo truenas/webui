@@ -180,6 +180,7 @@
       [style.height.px]="tableHeight"
       [scrollbarH]='true'
       [scrollbarV]='true'
+      [sorts]="[rows.length > 1 ? { prop: sortKey, dir: 'asc' } : '']"
       #entityTable>
 
       <!-- Row Detail Template -->
@@ -361,7 +362,8 @@
         [resizeable]="false"
         [sortable]="false"
         [draggable]="false"
-        [canAutoResize]="false">
+        [canAutoResize]="false"
+        *ngIf="hasActions || hasDetails()">
         <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
           <a
             *ngIf="hasDetails(); else threeDot"

@@ -491,6 +491,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   //Entity Module Overrides
 
+  app-members .form-card.mat-card,
   entity-task .form-card.mat-card,
   device-edit .form-card.mat-card,
   entity-form .form-card.mat-card{
@@ -706,13 +707,20 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       background-color: var(--bg2);
   }
 
-  // Give vdev arrow buttons theme colors
-  .vdev-action-btn {
+  // Give vdev and dual-list arrow buttons theme colors
+  .vdev-action-btn, .dual-list-action-btn {
     @include variable(background, --bg1, $bg1);
   }
 
-  .vdev-action-btn .arrow {
+  .vdev-action-btn .arrow, .dual-list-action-btn .arrow {
     @include variable(color, --primary, $primary);
+    font-size: 36px;
+    height: 36px;
+    width: 36px;
+  }
+
+  app-dual-listbox .chosen .mat-list-item-content {
+    color: white;
   }
 
   .vdev-action-btn:disabled {
@@ -1681,6 +1689,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   mat-error a {
     text-decoration: underline;
+  }
+
+  .mat-select-panel{
+    max-height: 60vh !important;
   }
 
  } // end of ix theme

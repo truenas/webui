@@ -49,7 +49,6 @@ export class ServiceSMBComponent {
     'localmaster',
     'guest',
     'admin_group',
-    'zeroconf',
     'bindip',
     'smb_options'
   ];
@@ -183,12 +182,6 @@ export class ServiceSMBComponent {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions
-        },
-        {
-          type: 'checkbox',
-          name: 'zeroconf',
-          placeholder: helptext.cifs_srv_zeroconf_placeholder,
-          tooltip: helptext.cifs_srv_zeroconf_tooltip,
         },
         {
           type: 'select',

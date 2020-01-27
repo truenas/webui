@@ -6,7 +6,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import helptext from 'app/helptext/system/ssh-keypairs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
-import { WebSocketService, DialogService } from '../../../../services';
+import { WebSocketService, DialogService, StorageService } from '../../../../services';
 import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
 
 @Component({
@@ -71,10 +71,24 @@ export class SshKeypairsFormComponent {
                 )
             }
         },
+        {
+            id: 'download_private',
+            name: helptext.download_private,
+            function: () => {
+                this.downloadKey('private_key');
+            }
+        },
+        {
+            id: 'download_public',
+            name: helptext.download_public,
+            function: () => {
+                this.downloadKey('public_key');
+            }
+        }
     ];
 
     constructor(private aroute: ActivatedRoute, private ws: WebSocketService, private loader: AppLoaderService,
-        private dialogService: DialogService) { }
+        private dialogService: DialogService, private storage: StorageService) { }
 
     preInit() {
         this.aroute.params.subscribe(params => {
@@ -82,6 +96,14 @@ export class SshKeypairsFormComponent {
                 this.queryCallOption[0].push(params['pk']);
             }
         });
+    }
+
+    downloadKey(key_type) {
+        const name = this.entityForm.formGroup.controls['name'].value;
+        const key = this.entityForm.formGroup.controls[key_type].value;
+        const filename = name + '_' + key_type + '_rsa';
+        const blob = new Blob([key], {type: 'text/plain'});
+        this.storage.downloadBlob(blob, filename);
     }
 
     afterInit(entityForm) {

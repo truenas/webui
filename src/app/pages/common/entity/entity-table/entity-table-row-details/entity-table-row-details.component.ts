@@ -26,7 +26,10 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   }
 
   getPropValue(prop, isCronTime = false) {
-    const val =  _.get(this.config, prop.split('.')) || 'N/A';
+    let val =_.get(this.config, prop.split('.'));
+    if (val === undefined || val === null) {
+      val = 'N/A';
+    }
     return isCronTime ? (val !== 'N/A' ? cronstrue.toString(val) : val) : val;
   }
 

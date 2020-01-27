@@ -34,7 +34,7 @@ export class UserListComponent implements OnInit {
     { name: 'Builtin', prop: 'builtin', hidden: false  },
     { name: 'Full Name', prop: 'full_name', hidden: false, minWidth: 250 },
     { name: 'Email', prop: 'email', hidden: true, maxWidth: 250 },
-    { name: 'Disable Password Login', prop: 'password_disabled', hidden: true, minWidth: 200 },
+    { name: 'Password Disabled', prop: 'password_disabled', hidden: true, minWidth: 200 },
     { name: 'Lock User', prop: 'locked', hidden: true },
     { name: 'Permit Sudo', prop: 'sudo', hidden: true  },
     { name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170 },

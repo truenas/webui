@@ -48,17 +48,20 @@ export class NotificationsService {
           this.subject.next(this.notifications);
       });
 
-      this.ws.sub('alert.list').subscribe((res) => {
+      this.ws.sub('alert.list').subscribe((res) => { // check for updates to alerts
         const notification  = this.alertsArrivedHandler([res])[0];
-        this.notifications.push(notification);
+        if (!_.find(this.notifications, {id:notification.id})) {
+          this.notifications.push(notification);
+        }
         this.subject.next(this.notifications);
       });
 
-      this.ws.subscribe('alert.list').subscribe((res) => {
+      this.ws.subscribe('alert.list').subscribe((res) => { // check for changed alerts
         if (res && res.msg === "changed" && res.cleared) {
-          this.notifications = _.remove(this.notifications, function(n) {
-            return n.id !== res.id;
-          });
+          const index = _.findIndex(this.notifications, { id: res.id });
+          if (index !== -1) {
+            this.notifications.splice(index, 1);
+          }
           this.subject.next(this.notifications);
         }
       });

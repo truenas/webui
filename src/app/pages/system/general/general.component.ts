@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
+import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogService, LanguageService, RestService, StorageService, SystemGeneralService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -24,6 +26,7 @@ export class GeneralComponent {
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
+  public languageKey: string;
 
   public fieldSets: FieldSet[] = [
     {
@@ -90,7 +93,7 @@ export class GeneralComponent {
       label: true,
       config: [
         {
-          type: "select",
+          type: "combobox",
           name: "language",
           placeholder: helptext.stg_language.placeholder,
           tooltip: helptext.stg_language.tooltip,
@@ -125,8 +128,8 @@ export class GeneralComponent {
           width: '50%'
         },
         {
-          type: "select",
-          name: "timezone",
+          type: 'combobox',
+          name: 'timezone',
           placeholder: helptext.stg_timezone.placeholder,
           tooltip: helptext.stg_timezone.tooltip,
           options: [{ label: "---", value: null }],
@@ -276,7 +279,8 @@ export class GeneralComponent {
     public http: Http,
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
-    public localeService: LocaleService
+    public localeService: LocaleService,
+    public mdDialog: MatDialog
   ) {}
 
   IPValidator(name: string, wildcard: string) {
@@ -380,37 +384,42 @@ export class GeneralComponent {
     entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res)=> {
       res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
       this.makeLanguageList();
-    })
+    });
+
     setTimeout(() => {
       entityEdit.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
-    }, 2000)
+    }, 2000);
+
+    entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
+      this.languageKey = this.getKeyByValue(this.languageList, res);
+      if (this.languageList[res]) {
+        entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);
+      }
+    });
   }
   
   makeLanguageList() {
-    this.sysGeneralService
-      .languageChoices()
-      .pipe(
-        map(response =>
-          Object.keys(response || {}).map(key => ({
-            label: this.sortLanguagesByName
-              ? `${response[key]} (${key})`
-              : `${key} (${response[key]})`,
-            value: key
-          }))
-        )
-      )
-      .subscribe(options => {
-        this.fieldSets
-          .find(set => set.name === helptext.stg_fieldset_loc)
-          .config.find(config => config.name === "language").options = _.sortBy(
-          options,
-          this.sortLanguagesByName ? "label" : "value"
-        );
-      });
+    this.sysGeneralService.languageChoices().subscribe((res) => {
+      this.languageList = res
+      let options = 
+        Object.keys(this.languageList || {}).map(key => ({
+          label: this.sortLanguagesByName
+            ? `${this.languageList[key]} (${key})`
+            : `${key} (${this.languageList[key]})`,
+          value: key
+        }));
+      this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "language").options = _.sortBy(
+        options,
+        this.sortLanguagesByName ? "label" : "value"
+      );
+    });
   }
    
   beforeSubmit(value) {
     delete value.language_sort;
+    value.language = this.languageKey;
   }
 
   afterSubmit(value) {
@@ -494,7 +503,7 @@ export class GeneralComponent {
             }, err => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
-              entityDialog.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
+              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
             });
           },
           (err) => {
@@ -522,24 +531,22 @@ export class GeneralComponent {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
-    parent.loader.open();
-    formData.append('data', JSON.stringify({
-      "method": "config.upload",
-      "params": []
-    }));
+    const dialogRef = parent.mdDialog.open(EntityJobComponent, 
+      {data: {"title":helptext.config_upload.title,"CloseOnClickOutside":false}});
+        dialogRef.componentInstance.setDescription(helptext.config_upload.message);
+        formData.append('data', JSON.stringify({
+          "method": "config.upload",
+          "params": []
+        }));
     formData.append('file', parent.subs.file);
-
-    parent.http.post(parent.subs.apiEndPoint, formData).subscribe(
-      (data) => {
-        parent.loader.close();
-        entityDialog.dialogRef.close();
-        parent.router.navigate(['/others/reboot']);
-      },
-      (err) => {
-        parent.loader.close();
-        this.dialog.errorReport(err.status, err.statusText, err._body);
-      }
-    );
+    dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
+    dialogRef.componentInstance.success.subscribe(res=>{
+      dialogRef.close();
+      parent.router.navigate(['/others/reboot']);
+    })
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.setDescription(res.error);
+    });
   }
 
   resetConfigSubmit(entityDialog) {

@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import { IscsiService, WebSocketService } from '../../../../../services/';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
@@ -16,44 +16,54 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 })
 export class AssociatedTargetFormComponent {
 
-  protected addCall: string = 'iscsi.targetextent.create';
-  protected queryCall: string = 'iscsi.targetextent.query';
+  protected addCall = 'iscsi.targetextent.create';
+  protected queryCall = 'iscsi.targetextent.query';
   protected editCall = 'iscsi.targetextent.update';
   protected route_success: string[] = [ 'sharing', 'iscsi', 'associatedtarget' ];
-  protected isEntity: boolean = true;
+  protected isEntity = true;
   protected customFilter: Array<any> = [[["id", "="]]];
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldSets: FieldSet[] = [
     {
-      type: 'select',
-      name: 'target',
-      placeholder: helptext_sharing_iscsi.associated_target_placeholder_target,
-      tooltip: helptext_sharing_iscsi.associated_target_tooltip_target,
-      options: [],
-      value: '',
-      required: true,
-      validation : helptext_sharing_iscsi.associated_target_validators_target
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'lunid',
-      placeholder: helptext_sharing_iscsi.associated_target_placeholder_lunid,
-      tooltip: helptext_sharing_iscsi.associated_target_tooltip_lunid,
-      value: '',
-      validation: helptext_sharing_iscsi.associated_target_validators_lunid,
-    },
-    {
-      type: 'select',
-      name: 'extent',
-      placeholder: helptext_sharing_iscsi.associated_target_placeholder_extent,
-      tooltip: helptext_sharing_iscsi.associated_target_tooltip_extent,
-      options: [],
-      value: '',
-      required: true,
-      validation : helptext_sharing_iscsi.associated_target_validators_extent
-    },
+      name: helptext_sharing_iscsi.fieldset_associated_target,
+      label: true,
+      class: 'associated_target',
+      width: '100%',
+      config: [
+        {
+          type: 'select',
+          name: 'target',
+          placeholder: helptext_sharing_iscsi.associated_target_placeholder_target,
+          tooltip: helptext_sharing_iscsi.associated_target_tooltip_target,
+          options: [],
+          value: '',
+          required: true,
+          validation : helptext_sharing_iscsi.associated_target_validators_target
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'lunid',
+          placeholder: helptext_sharing_iscsi.associated_target_placeholder_lunid,
+          tooltip: helptext_sharing_iscsi.associated_target_tooltip_lunid,
+          value: '',
+          validation: helptext_sharing_iscsi.associated_target_validators_lunid,
+        },
+        {
+          type: 'select',
+          name: 'extent',
+          placeholder: helptext_sharing_iscsi.associated_target_placeholder_extent,
+          tooltip: helptext_sharing_iscsi.associated_target_tooltip_extent,
+          options: [],
+          value: '',
+          required: true,
+          validation : helptext_sharing_iscsi.associated_target_validators_extent
+        }
+      ]
+    }
   ];
+
+  protected fieldConfig;
 
   protected target_control: any;
   protected extent_control: any;
@@ -67,13 +77,15 @@ export class AssociatedTargetFormComponent {
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
         this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk']));
+        this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
     });
   }
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+    this.fieldConfig = entityForm.fieldConfig;
+
     this.target_control = _.find(this.fieldConfig, {'name' : 'target'});
     this.target_control.options.push({label: '----------', value: ''});
     this.iscsiService.getTargets().subscribe((res) => {
@@ -109,6 +121,5 @@ export class AssociatedTargetFormComponent {
         new EntityUtils().handleWSError(this.entityForm, res);
       }
     );
-
   }
 }

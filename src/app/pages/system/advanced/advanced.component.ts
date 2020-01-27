@@ -181,14 +181,6 @@ export class AdvancedComponent implements OnDestroy {
       config: [
         {
           type: 'checkbox',
-          name: 'legacy_ui',
-          placeholder: helptext_system_advanced.enable_legacy_placeholder,
-          tooltip: helptext_system_advanced.enable_legacy_tooltip,
-          isHidden: true,
-          value: false
-        },
-        {
-          type: 'checkbox',
           name: 'consolemsg',
           placeholder: helptext_system_advanced.consolemsg_placeholder,
           tooltip: helptext_system_advanced.consolemsg_tooltip
@@ -295,19 +287,6 @@ export class AdvancedComponent implements OnDestroy {
           this.swapondrive.warnings = null;
         }
       });
-      setTimeout(() => {
-        entityEdit.formGroup.controls['legacy_ui'].valueChanges.subscribe((value) => {
-          if (value) {
-            this.dialog.confirm('Warning', `${helptext_system_advanced.enable_legacy_dialog}`, true,
-             'I accept the risks').subscribe((res) => {
-               if (!res) {
-                entityEdit.formGroup.controls['legacy_ui'].setValue(false);
-               }
-             })
-          }
-        });
-      }, 50)
-
   
       this.ws.call(this.queryCall).subscribe((adv_values)=>{
         entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);

@@ -2,6 +2,11 @@ import { T } from '../../../translate-marker';
 import {Validators} from '@angular/forms';
 
 export default {
+fieldset_transfer: T('Transfer'),
+fieldset_remote: T('Remote'),
+fieldset_control: T('Control'),
+fieldset_advanced_options: T('Advance Options'),
+advanced_remote_options: T('Advanced Remote Options'),
 
 description_placeholder: T('Description'),
 description_tooltip: T('Enter a description of the Cloud Sync Task.'),
@@ -149,6 +154,14 @@ bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclo
 exclude_placeholder: T('Exclude'),
 exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\
  See https://rclone.org/filtering/ for more details on --exclude option.'),
+
+dry_run_title: T('Test Cloud Sync'),
+dry_run_dialog: T('Start a dry run test of this cloud sync task? The \
+ system will connect to the cloud service provider and simulate \
+ transferring a file. No data will be sent or received.'),
+
+action_button_dry_run: T('Dry Run'),
+job_dialog_title_dry_run: T('Dry Run Cloud Sync Task'),
 
 resetTransferModeDialog: {
     title: T('Transfer Mode Reset'),

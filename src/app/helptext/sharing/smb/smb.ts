@@ -25,20 +25,11 @@ export const helptext_sharing_smb = {
     ),
 
     placeholder_home: T('Use as home share'),
-    tooltip_home: T('Set to allow this share to hold user home\
- directories. Only one share can be\
- the home share.\
- Note: Lower case names for user home\
- directories are strongly recommended, as Samba\
- maps usernames to all lower case. For example, the\
- username John will be mapped to a home directory\
- named john. If the <i>Path</i> to the home share\
- includes an upper case username, delete the existing user\
- and recreate it in <i>Accounts --> Users</i>\
- with an all lower case <i>Username</i>. Return\
- to <i>Sharing --> SMB</i> to create the home share,\
- and select the </i>Path</i> that contains the new\
- lower case username.'),
+    tooltip_home: T('Allows the share to host user home \
+ directories. Each user is given a personal home directory when \
+ connecting to the share which is not accessible by other users. This \
+ allows for a personal, dynamic share. Only one share can be used \
+ as the home share.'),
 
    placeholder_timemachine: T('Time Machine'),
    tooltip_timemachine: T('Enable Time Machine backups on this share.'),
@@ -103,12 +94,6 @@ export const helptext_sharing_smb = {
     placeholder_hostsdeny: T('Hosts Deny'),
     tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
  Separate entries with a comma, space, or tab.'),
-
-    placeholder_vfsobjects: T('VFS Objects'),
-    tooltip_vfsobjects: T('Adds <a\
- href="--docurl--/sharing.html#avail-vfs-modules-tab"\
- target="blank">virtual file system modules</a> to\
- enhance functionality.'),
 
     placeholder_shadowcopy: T('Enable Shadow Copies'),
     tooltip_shadowcopy: T('Export ZFS snapshots as\
