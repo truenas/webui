@@ -201,6 +201,8 @@ msgid ""
 "href=\"https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/whatis.html\""
 " target=\"_blank\">AWS GovCloud</a>  region."
 msgstr ""
+"<a href=\"https://docs.aws.amazon.com/general/latest/gr/rande-manage.html\" target=\"_blank\">地理的エリアのAWSリソース</a>。空のままにすると、バケットの正しいパブリック領域が自動的に検出されます。プライベート・リージョン名を入力すると、そのリージョンで作成されたAmazonバケットと対話できます。たとえば、東<a href=\"https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/whatis.html\" target=\"_blank\">AWS GovCloud</a>リージョンで作成されたバケットを検出"
+"するには、<i>us-gov-east-1</i>と入力します。"
 
 msgid ""
 "<a "
@@ -428,7 +430,7 @@ msgid ""
 "<i>Device</i> provide virtual storage access to zvols, zvol snapshots, or "
 "physical devices. <i>File</i> provides virtual storage access to an "
 "individual file."
-msgstr ""
+msgstr "<i>Device</i>は、zvol、zvolスナップショット、または物理デバイスへの仮想ストレージアクセスを提供します。<i>File</i>は、個々のファイルへの仮想ストレージ・アクセスを提供します。"
 
 msgid ""
 "<i>File</i> shares the contents of an individual file. <i>Device</i> shares "
@@ -710,7 +712,7 @@ msgid "Acoustic Level"
 msgstr "騒音レベル"
 
 msgid "Actions"
-msgstr ""
+msgstr "操作"
 
 msgid "Activate"
 msgstr ""
@@ -898,13 +900,13 @@ msgid "Additional Data VDevs to Create"
 msgstr ""
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "追加のドメイン"
 
 msgid "Additional Hardware"
-msgstr ""
+msgstr "追加のハードウェア"
 
 msgid "Additional Parameters"
-msgstr ""
+msgstr "追加のパラメータ"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
@@ -1274,13 +1276,13 @@ msgid ""
 msgstr ""
 
 msgid "Apple Shares (AFP)"
-msgstr ""
+msgstr "Apple 共有 (AFP)"
 
 msgid "Application Key"
 msgstr ""
 
 msgid "Apply"
-msgstr ""
+msgstr "適用"
 
 msgid "Apply Failover Upgrade"
 msgstr ""
@@ -1538,7 +1540,7 @@ msgid "Berkeley Packet Filter"
 msgstr ""
 
 msgid "Bind"
-msgstr ""
+msgstr "バインド"
 
 msgid "Bind DN"
 msgstr ""
@@ -1562,7 +1564,7 @@ msgid "Bind to Port"
 msgstr ""
 
 msgid "Block Shares (iSCSI)"
-msgstr ""
+msgstr "Block 共有 (iSCSI)"
 
 msgid "Block Size"
 msgstr "ブロックサイズ"
@@ -1580,7 +1582,7 @@ msgid "Boot Loader Type"
 msgstr ""
 
 msgid "Boot Method"
-msgstr ""
+msgstr "起動方法"
 
 msgid "Boot Pool"
 msgstr ""
@@ -1808,7 +1810,7 @@ msgid "Change Settings and Clear Report History?"
 msgstr ""
 
 msgid "Change User & Group Ownership"
-msgstr ""
+msgstr "ユーザーとグループの所有権を変更する"
 
 msgid "Change User and Group Ownership"
 msgstr ""
@@ -1958,7 +1960,7 @@ msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr ""
 
 msgid "Choose"
-msgstr ""
+msgstr "選択"
 
 msgid ""
 "Choose <a                 href=\"--docurl--/tasks.html#rsync-module-mode\"  "
@@ -2036,7 +2038,7 @@ msgid ""
 msgstr "ユーザーのホームディレクトリへのパスを指定してください。ディレクトリが存在して、Usernameに一致する場合、そのユーザーのホームディレクトリとして設定されます。パスの末尾がUsernameと一致せず、サブディレクトリにUsernameが存在しない場合、新しいサブディレクトリが作成されます。ユーザーのホームディレクトリへのフルパスはユーザーを編集する場合、ここに表示されます。"
 
 msgid "Choose a pool for plugin and jail storage."
-msgstr ""
+msgstr "プラグインとジェイルストレージ用のプールを選択してください"
 
 msgid "Choose a pool to scrub."
 msgstr "スクラブするプールを選択します。"
@@ -2084,7 +2086,7 @@ msgid ""
 "target=\"_blank\">SSL</a> or <a "
 "href=\"https://hpbn.co/transport-layer-security-tls/\" "
 "target=\"_blank\">TLS</a>."
-msgstr ""
+msgstr "以下から選択 <i>Off</i>、 <a href=\"http://info.ssl.com/article.aspx?id=10241\" target=\"_blank\">SSL</a>または<a href=\"https://hpbn.co/transport-layer-security-tls/\" target=\"_blank\">TLS</a>。"
 
 msgid ""
 "Choose datasets on the source system to  be replicated. Click the <i "
@@ -2159,7 +2161,7 @@ msgstr "再同期化タスクを開始できる時間と分を選択します。
 msgid ""
 "Choose the platform that will use this share. The associated options are "
 "applied to this share."
-msgstr ""
+msgstr "この共有を使用するプラットフォームを選択します。関連付けられたオプションがこの共有に適用されます。"
 
 msgid ""
 "Choose the schema to use when querying AD for user/group info. "
@@ -2272,7 +2274,7 @@ msgid "Cloud Credentials"
 msgstr "クラウド認証情報"
 
 msgid "Cloud Sync Tasks"
-msgstr ""
+msgstr "Cloud Sync タスク"
 
 msgid "Cloud sync <i>"
 msgstr ""
@@ -2700,7 +2702,7 @@ msgid "Criticality"
 msgstr ""
 
 msgid "Cron Jobs"
-msgstr ""
+msgstr "Cron ジョブ"
 
 msgid "Current Password"
 msgstr ""
@@ -2954,7 +2956,7 @@ msgid "Delay Updates"
 msgstr ""
 
 msgid "Delay VM Boot Until VNC Connects"
-msgstr ""
+msgstr "VNCクライアントが接続するまでVMを起動するのを待ちます。"
 
 msgid "Delete"
 msgstr ""
@@ -3068,7 +3070,7 @@ msgid "Descriptive name for the replication."
 msgstr ""
 
 msgid "Destination"
-msgstr ""
+msgstr "宛先"
 
 msgid "Destination Dataset"
 msgstr ""
@@ -3192,7 +3194,7 @@ msgid "Directory/Files"
 msgstr ""
 
 msgid "Disable Endpoint Region"
-msgstr ""
+msgstr "Endpoint Region を無効にする"
 
 msgid "Disable Failover"
 msgstr ""
@@ -3201,7 +3203,7 @@ msgid "Disable FreeNAS Cache"
 msgstr ""
 
 msgid "Disable Hardware Offloading"
-msgstr ""
+msgstr "ハードウェアオフローディングを無効にする"
 
 msgid ""
 "Disable IPv4 source address selection for  the jail in favor of the primary "
@@ -3282,7 +3284,7 @@ msgid "Disk to wipe."
 msgstr ""
 
 msgid "Disks"
-msgstr ""
+msgstr "ディスク"
 
 msgid "Dismiss"
 msgstr ""
@@ -3401,7 +3403,7 @@ msgid "Edit Disk(s)"
 msgstr ""
 
 msgid "Edit Idmap"
-msgstr ""
+msgstr "IDマップの編集"
 
 msgid "Edit Options"
 msgstr ""
@@ -3424,7 +3426,7 @@ msgid ""
 msgstr ""
 
 msgid "Email"
-msgstr ""
+msgstr "メール"
 
 msgid "Email Address"
 msgstr ""
@@ -3482,7 +3484,7 @@ msgid "Enable Service"
 msgstr ""
 
 msgid "Enable Shadow Copies"
-msgstr ""
+msgstr "シャドウコピーを有効にする"
 
 msgid "Enable TLS"
 msgstr ""
@@ -3500,7 +3502,7 @@ msgid ""
 msgstr ""
 
 msgid "Enable VNC"
-msgstr ""
+msgstr "VNC を有効にする"
 
 msgid ""
 "Enable a VNC (Virtual Network Computing) remote connection. Requires "
@@ -3523,10 +3525,10 @@ msgid "Enable if Mac clients will be connecting to the SMB share."
 msgstr "MacクライアントがSMB共有に接続する場合に有効にします。"
 
 msgid "Enable netwait feature"
-msgstr ""
+msgstr "netwait機能の有効化"
 
 msgid "Enable password login"
-msgstr ""
+msgstr "パスワードログインを有効にします"
 
 msgid ""
 "Enable password logins and authentication to SMB shares. Selecting "
@@ -4535,7 +4537,7 @@ msgid "Expose zilstat via SNMP"
 msgstr ""
 
 msgid "Extend"
-msgstr ""
+msgstr "拡張"
 
 msgid "Extend Pool"
 msgstr ""
@@ -4660,7 +4662,7 @@ msgid "Filesystem type"
 msgstr "ファイルシステムの形式"
 
 msgid "Filter"
-msgstr ""
+msgstr "フィルタ"
 
 msgid "Finding Disks"
 msgstr ""
@@ -4725,7 +4727,7 @@ msgid ""
 "href=\"https://docs.aws.amazon.com/general/latest/gr/signature-version-2."
 "html\"  target=\"_blank\">Signature Version 2</a> to sign API requests. Set "
 "this  when configuring a custom Endpoint URL."
-msgstr ""
+msgstr "<a href=\"https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html\" target=\"_blank\">Signature Version 2</a>を使用してAPI要求に署名するよう強制します。カスタム・エンドポイントURLを構成するときに設定します。"
 
 msgid ""
 "Forces the addition of the <b>NTP</b> server,   even if it is currently "
@@ -4791,7 +4793,7 @@ msgid "GUI SSL Certificate"
 msgstr "GUI SSL 証明書"
 
 msgid "Gateway"
-msgstr ""
+msgstr "ゲートウェイ"
 
 msgid "Gathering data"
 msgstr ""
@@ -5019,7 +5021,7 @@ msgid "Host Sync"
 msgstr ""
 
 msgid "Host name database"
-msgstr ""
+msgstr "ホスト名データベース"
 
 msgid "HostName"
 msgstr "ホスト名"
@@ -5167,10 +5169,10 @@ msgid "IPv4"
 msgstr ""
 
 msgid "IPv4 Address"
-msgstr ""
+msgstr "IPv4 アドレス"
 
 msgid "IPv4 Default Gateway"
-msgstr ""
+msgstr "IPv4 デフォルトゲートウエイ"
 
 msgid "IPv4 Default Router"
 msgstr ""
@@ -5202,13 +5204,13 @@ msgid "IPv6"
 msgstr ""
 
 msgid "IPv6 Address"
-msgstr ""
+msgstr "IPv6 アドレス"
 
 msgid "IPv6 Auto Configure"
 msgstr ""
 
 msgid "IPv6 Default Gateway"
-msgstr ""
+msgstr "IPv6 デフォルトゲートウエイ"
 
 msgid "IPv6 Default Router"
 msgstr ""
@@ -5310,7 +5312,7 @@ msgid "Import"
 msgstr ""
 
 msgid "Import Disk"
-msgstr ""
+msgstr "ディスクのインポート"
 
 msgid "Import a pool that exists but is not connected."
 msgstr "存在するが接続されていないPoolをインポートします。"
@@ -5425,7 +5427,7 @@ msgid "Initiate Failover"
 msgstr ""
 
 msgid "Initiator"
-msgstr ""
+msgstr "イニシエータ"
 
 msgid "Initiator Group ID"
 msgstr ""
@@ -5634,7 +5636,7 @@ msgstr ""
 msgid ""
 "Keep the name short. Using a name longer than 63 characters can prevent "
 "accessing the block device."
-msgstr ""
+msgstr "名前は短くしてください。63文字を超える名前を使用すると、ブロックデバイスにアクセスできなくなります。"
 
 msgid ""
 "Keep the zvol name short. Using a zvol name longer than 63 characters can "
@@ -5867,7 +5869,7 @@ msgid "Lock Pool"
 msgstr ""
 
 msgid "Lock User"
-msgstr ""
+msgstr "ユーザーをロック"
 
 msgid "Log Level"
 msgstr ""
@@ -5980,13 +5982,13 @@ msgid "Mattermost username."
 msgstr ""
 
 msgid "Max Poll"
-msgstr ""
+msgstr "ポーリングの最大値"
 
 msgid "Max. Connections"
 msgstr ""
 
 msgid "Max. Poll"
-msgstr ""
+msgstr "ポーリングの最大値"
 
 msgid "Maximum Passive Port"
 msgstr ""
@@ -6137,10 +6139,10 @@ msgid ""
 msgstr ""
 
 msgid "Min Poll"
-msgstr ""
+msgstr "ポーリングの最小値"
 
 msgid "Min. Poll"
-msgstr ""
+msgstr "ポーリングの最小値"
 
 msgid "Minimum Passive Port"
 msgstr ""
@@ -6378,7 +6380,7 @@ msgid "Nameservers"
 msgstr "ネームサーバー"
 
 msgid "Naming Schema"
-msgstr ""
+msgstr "命名規則"
 
 msgid "Navigation"
 msgstr ""
@@ -6530,7 +6532,7 @@ msgstr ""
 "--excludeオプションの詳細については、https：//rclone.org/filtering/ を参照してください。"
 
 msgid "Next"
-msgstr ""
+msgstr "次へ"
 
 msgid "Next Run"
 msgstr ""
@@ -6798,7 +6800,7 @@ msgid ""
 msgstr ""
 
 msgid "Operating System"
-msgstr ""
+msgstr "オペレーティングシステム"
 
 msgid "Operation"
 msgstr ""
@@ -7030,7 +7032,7 @@ msgid "Performs authentication from an LDAP server."
 msgstr ""
 
 msgid "Periodic Snapshot Tasks"
-msgstr ""
+msgstr "Periodic Snapshot タスク"
 
 msgid "Permissions"
 msgstr ""
@@ -7114,7 +7116,7 @@ msgid "Pool Available Space Threshold (%)"
 msgstr ""
 
 msgid "Pool Chosen"
-msgstr ""
+msgstr "プールは選択されました"
 
 msgid "Pool Manager"
 msgstr ""
@@ -7153,7 +7155,7 @@ msgid ""
 msgstr ""
 
 msgid "Portal"
-msgstr ""
+msgstr "ポータル"
 
 msgid "Portal Group ID"
 msgstr ""
@@ -7376,7 +7378,7 @@ msgid "Read Errors"
 msgstr ""
 
 msgid "Read Only"
-msgstr ""
+msgstr "読み取り専用"
 
 msgid "Read Only Access"
 msgstr ""
@@ -7424,7 +7426,7 @@ msgid "Recovery Key for Pool "
 msgstr ""
 
 msgid "Recursive"
-msgstr ""
+msgstr "再帰的"
 
 msgid ""
 "Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
@@ -7572,7 +7574,7 @@ msgid "Replication Status"
 msgstr ""
 
 msgid "Replication Tasks"
-msgstr ""
+msgstr "Replication タスク"
 
 msgid "Report CPU usage in percent"
 msgstr "CPU使用率をパーセントで報告する"
@@ -7690,7 +7692,7 @@ msgid ""
 msgstr ""
 
 msgid "Resilver Priority"
-msgstr ""
+msgstr "Resilver 優先度"
 
 msgid "Resilvering"
 msgstr ""
@@ -7764,7 +7766,7 @@ msgid "Routing Key"
 msgstr ""
 
 msgid "Rsync Tasks"
-msgstr ""
+msgstr "Rsync タスク"
 
 msgid "Rsync mode"
 msgstr ""
@@ -7810,10 +7812,10 @@ msgid "Running"
 msgstr ""
 
 msgid "S.M.A.R.T. Test"
-msgstr ""
+msgstr "S.M.A.R.T. テスト"
 
 msgid "S.M.A.R.T. Tests"
-msgstr ""
+msgstr "S.M.A.R.T. テスト"
 
 msgid "S.M.A.R.T. extra options"
 msgstr ""
@@ -8014,13 +8016,13 @@ msgid "Scrub Interval Set"
 msgstr ""
 
 msgid "Scrub Pool"
-msgstr ""
+msgstr "プールをスクラブ"
 
 msgid "Scrub Started"
 msgstr ""
 
 msgid "Scrub Tasks"
-msgstr ""
+msgstr "Scrub タスク"
 
 msgid "Scrub complete on pool <i>"
 msgstr ""
@@ -8537,7 +8539,7 @@ msgstr ""
 msgid ""
 "Select the unformatted disk, controller, zvol, or zvol snapshot. Select "
 "<i>Create New</i> for options to create a new zvol."
-msgstr ""
+msgstr "フォーマットされていないディスク、コントローラ、zvol、またはzvolスナップショットを選択します。新しいzvolを作成するには<i>Create New</i>を選択します。"
 
 msgid ""
 "Select the user to control the dataset. Users created manually or imported "
@@ -9111,7 +9113,7 @@ msgid ""
 "Set to inhibit some syslog diagnostics to avoid error messages. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=exports\" "
 "target=\"_blank\">exports(5)</a> for examples."
-msgstr ""
+msgstr "エラーメッセージを回避するために、一部のsyslog診断を禁止するように設定します。例については、<a href=\"https://www.freebsd.org/cgi/man.cgi?query=exports\" target=\"_blank\">exports(5)</a>を参照してください。"
 
 msgid ""
 "Set to log <a href=\"https://www.freebsd.org/cgi/man.cgi?query=mountd\" "
@@ -9389,7 +9391,7 @@ msgid "Settings saved."
 msgstr ""
 
 msgid "Setup Method"
-msgstr ""
+msgstr "設定方法"
 
 msgid "Setup Users and Groups."
 msgstr ""
@@ -9507,7 +9509,7 @@ msgstr ""
 msgid ""
 "Skip automatic detection of the Endpoint URL region. Set this  when "
 "configuring a custom Endpoint URL."
-msgstr ""
+msgstr "エンドポイントURLリージョンの自動検出をスキップします。カスタム・エンドポイントURLを構成するときに設定します。"
 
 msgid "Snapshot Lifetime"
 msgstr ""
@@ -9560,12 +9562,12 @@ msgstr ""
 msgid ""
 "Space-delimited list of allowed IP addresses <i>(192.168.1.10)</i> or "
 "hostnames <i>(www.freenas.com)</i>. Leave empty to allow all."
-msgstr ""
+msgstr "許可されるIPアドレスのスペース区切りのリスト<i>(192.168.1.10)</i>またはホスト名<i>(www.freenas.com)</i>。すべてを許可するには、空のままにします。"
 
 msgid ""
 "Space-delimited list of allowed networks in network/mask CIDR notation. "
 "Example: <i>1.2.3.0/24</i>. Leave empty to allow all."
-msgstr ""
+msgstr "ネットワーク/マスクCIDR表記で許可されるネットワークのスペース区切りのリスト。例:<i>1.2.3.0/24</i>。すべてを許可するには、空のままにします。"
 
 msgid "Spaces are allowed."
 msgstr "スペースは利用できます。"
@@ -9636,16 +9638,16 @@ msgid "Start Automatically"
 msgstr ""
 
 msgid "Start Scrub"
-msgstr ""
+msgstr "スクラブを開始"
 
 msgid "Start Time:"
 msgstr ""
 
 msgid "Start on Boot"
-msgstr ""
+msgstr "起動時に開始"
 
 msgid "Start scrub on pool <i>"
-msgstr ""
+msgstr "スクラブを開始、プール <i>"
 
 msgid "Start the scrub now?"
 msgstr "このスクラブを開始しますか？"
@@ -9681,7 +9683,7 @@ msgid "Stats/Settings"
 msgstr "状態/設定"
 
 msgid "Status"
-msgstr ""
+msgstr "状態"
 
 msgid "Status updated"
 msgstr ""
@@ -9829,13 +9831,13 @@ msgid "Syslog level"
 msgstr "Syslogレベル"
 
 msgid "Syslog server"
-msgstr ""
+msgstr "Syslogサーバー"
 
 msgid "System"
 msgstr "システム"
 
 msgid "System Clock"
-msgstr ""
+msgstr "システムクロック"
 
 msgid "System Dataset"
 msgstr "システムデータセット"
@@ -10284,10 +10286,10 @@ msgid ""
 msgstr ""
 
 msgid "The specified permissions of that group are used by all clients."
-msgstr ""
+msgstr "そのグループの指定されたアクセス許可は、すべてのクライアントによって使用されます。"
 
 msgid "The specified permissions of that user are used by all clients."
-msgstr ""
+msgstr "指定したユーザーの権限は、すべてのクライアントで使用されます。"
 
 msgid ""
 "The standby controller has finished upgrading. To complete the update "
@@ -10651,7 +10653,7 @@ msgid "Unique snapshot name. Cannot be used with  a <i>Naming Schema</i>."
 msgstr "一意のスナップショット名。 <i>Naming Schema</i>では使用できません。"
 
 msgid "Unix Shares (NFS)"
-msgstr ""
+msgstr "Unix 共有 (NFS)"
 
 msgid "Unkeep"
 msgstr ""
@@ -10866,13 +10868,13 @@ msgid "Use HTTPS for the connection to the server that updates  the DNS record."
 msgstr ""
 
 msgid "Use Signature Version 2"
-msgstr ""
+msgstr "Signature Version 2 を使用する"
 
 msgid "Use all disk space"
 msgstr ""
 
 msgid "Use as home share"
-msgstr ""
+msgstr "ホーム共有として利用する"
 
 msgid ""
 "Use compressed WRITE records to make the  stream more efficient. The "
@@ -10911,7 +10913,7 @@ msgid "Use unencrypted connection."
 msgstr ""
 
 msgid "Used"
-msgstr ""
+msgstr "使用済"
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
@@ -11181,7 +11183,7 @@ msgid "Web Interface"
 msgstr ""
 
 msgid "WebDAV Shares"
-msgstr ""
+msgstr "WebDAV 共有"
 
 msgid "WebDAV account password."
 msgstr ""
@@ -11237,12 +11239,12 @@ msgstr "Syslog サーバーが設定されているとき、このレベルに�
 msgid ""
 "When a group is selected, the <i>root</i> user is also limited to the "
 "permissions of that group."
-msgstr ""
+msgstr "グループを選択すると、<i>root</i>ユーザーもそのグループの権限に制限されます。"
 
 msgid ""
 "When a user is selected, the <i>root</i> user is limited to the permissions "
 "of that user."
-msgstr ""
+msgstr "ユーザーを選択すると、<i>root</i>ユーザーはそのユーザーの権限に制限されます。"
 
 msgid ""
 "When enabled, the ACLs grant read and write access for owner or group and "
@@ -11315,7 +11317,7 @@ msgid "Winbind NSS Info"
 msgstr ""
 
 msgid "Windows Shares (SMB)"
-msgstr ""
+msgstr "Windows 共有 (SMB)"
 
 msgid "Wipe"
 msgstr ""
