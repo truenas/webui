@@ -10,7 +10,6 @@ export interface NotificationAlert {
   icon: string;
   icon_tooltip: string;
   time: string;
-  time_locale: string;
   timezone: string;
   route: string;
   color: string;
@@ -149,12 +148,9 @@ export class NotificationsService {
     const dismissed: boolean = alertObj.dismissed;
     const message: string = <string>alertObj.formatted;
     const level: string = <string>alertObj.level;
-    const date: Date = new Date(alertObj.datetime.$date);
-    const dateStr = date.toUTCString();
-    const dateStrLocale = this.localeService.formatDateTime(date);
+    const date = alertObj.datetime.$date;
     const one_shot: boolean = alertObj.one_shot;
     let icon_tooltip: string = <string>alertObj.level;
-    //const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
     const routeName = "/dashboard"
     let icon = "info";
     let color = "primary";
@@ -180,8 +176,7 @@ export class NotificationsService {
       message: message,
       icon: icon,
       icon_tooltip: icon_tooltip,
-      time: dateStr,
-      time_locale: dateStrLocale,
+      time: date,
       timezone: this.timeZone,
       route: routeName,
       color: color,

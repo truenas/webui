@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
+import { LocaleService } from 'app/services/locale.service';
 import * as _ from 'lodash';
 
 @Component({
@@ -14,13 +15,16 @@ export class NotificationsComponent implements OnInit {
   notifications: Array<NotificationAlert> = [];
   dismissedNotifications: Array<NotificationAlert> = []
 
-  constructor(private notificationsService: NotificationsService) {
+  constructor(private notificationsService: NotificationsService, protected localeService: LocaleService) {
   }
 
   ngOnInit() {
     this.initData();
 
     this.notificationsService.getNotifications().subscribe((notifications)=>{
+      notifications.forEach((i) => {
+        i.time = this.localeService.formatDateTime(i.time);
+      })
       this.notifications = [];
       this.dismissedNotifications = [];
 
