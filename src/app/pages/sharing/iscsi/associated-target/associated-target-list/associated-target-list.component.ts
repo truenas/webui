@@ -94,7 +94,7 @@ export class AssociatedTargetListComponent {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
-                this.entityList.ws.call(this.wsDelete, [rowinner.id]).subscribe(
+                this.entityList.ws.call(this.wsDelete, [rowinner.id, true]).subscribe(
                   (resinner) => { this.entityList.getData() },
                   (resinner) => {
                     new EntityUtils().handleError(this, resinner);

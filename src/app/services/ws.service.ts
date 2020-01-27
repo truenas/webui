@@ -122,7 +122,7 @@ export class WebSocketService {
         console.log("Error: ", data.error);
         call.observer.error(data.error);
       }
-      if (call.observer) {
+      if (call && call.observer) {
         call.observer.next(data.result);
         call.observer.complete();
       }

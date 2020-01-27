@@ -26,7 +26,7 @@ export class ConfigurationComponent {
   
     {
       name: helptext.hostname_and_domain,
-      width: "100%",
+      width: "50%",
       label: true,
       config: [
       {
@@ -62,6 +62,30 @@ export class ConfigurationComponent {
         name : 'domains',
         placeholder: helptext.domains_placeholder,
         tooltip : helptext.domains_tooltip,
+      },
+    ]},
+    {
+      name: helptext.service_announcement,
+      class: "service_announcement",
+      width: "50%",
+      label: true,
+      config: [{
+        type: 'checkbox',
+        name: 'netbios',
+        placeholder: helptext.netbios_placeholder,
+        tooltip: helptext.netbios_tooltip
+      },
+      {
+        type: 'checkbox',
+        name: 'mdns',
+        placeholder: helptext.mdns_placeholder,
+        tooltip: helptext.mdns_tooltip
+      },
+      {
+        type: 'checkbox',
+        name: 'wsd',
+        placeholder: helptext.wsd_placeholder,
+        tooltip: helptext.wsd_tooltip
       },
     ]},
     {
@@ -173,6 +197,9 @@ export class ConfigurationComponent {
   resourceTransformIncomingRestData(data) {
     data['netwait_ip'] = data['netwait_ip'].join(' ');
     data['domains'] = data['domains'].join(' ');
+    data['netbios'] = data['service_announcement']['netbios'];
+    data['mdns'] = data['service_announcement']['mdns'];
+    data['wsd'] = data['service_announcement']['wsd'];
 
     return data;
   }
@@ -182,6 +209,14 @@ export class ConfigurationComponent {
     if (data['netwait_ip']) {
       data['netwait_ip'] = data['netwait_ip'].split(' ');
     }
+    data['service_announcement'] = {
+      'netbios':data['netbios'],
+      'mdns':data['mdns'],
+      'wsd':data['wsd']
+    };
+    delete data['netbios'];
+    delete data['mdns'];
+    delete data['wsd'];
 
     return data;
   }

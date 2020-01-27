@@ -12,8 +12,8 @@ smart_interval_tooltip: T('Define a number of minutes for <a\
 smart_interval_validation : [ Validators.required ],
 
 smart_powermode_placeholder : T('Power Mode'),
-smart_powermode_tooltip: T('Tests are not performed when the system enters the\
- selected power mode.'),
+smart_powermode_tooltip: T('Tests are only performed when <i>Never</i> \
+ is selected.'),
 smart_powermode_options : [
   {label : 'Never', value : 'NEVER'},
   {label : 'Sleep', value : 'SLEEP'},
