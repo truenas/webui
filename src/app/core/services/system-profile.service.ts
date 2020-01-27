@@ -22,6 +22,14 @@ export class SystemProfileService extends BaseService {
         this.respond({name:"SysInfoRequest", sender: this});
       }
     });
+
+    this.core.register({
+      observerClass: this,
+      eventName: "SysInfoUpdateCache"
+    }).subscribe((evt:CoreEvent) => {
+      delete this.cache;
+      this.fetchProfile(true);
+    });
   }
 
   protected onAuthenticated(evt: CoreEvent){
@@ -42,7 +50,7 @@ export class SystemProfileService extends BaseService {
     }
   }
 
-  fetchProfile(localOnly?: boolean){
+  fetchProfile(respond?:boolean, localOnly?: boolean){
     this.websocket.call('system.info').subscribe((res) => {
       this.cache = res;
       if(localOnly){ 
@@ -52,6 +60,10 @@ export class SystemProfileService extends BaseService {
       
       if(this.buffer.length > 0){
         this.clearBuffer();
+      }
+
+      if(respond){
+        this.respond({name:"SysInfoRequest", sender: this});
       }
     });
   }
@@ -71,7 +83,6 @@ export class SystemProfileService extends BaseService {
         responseEvent = 'SysInfo';
         break;
     }
-
     this.core.emit({name:responseEvent, data: data, sender: this});
   }
 
