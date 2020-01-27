@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-initshutdown-list',
@@ -15,19 +16,20 @@ export class InitshutdownListComponent {
   protected entityList: any;
 
   public columns: Array<any> = [
-    { name: 'Type', prop: 'type' },
-    { name: 'Command', prop: 'command' },
-    { name: 'Script', prop: 'script' },
-    { name: 'When', prop: 'when' },
-    { name: 'Enabled', prop: 'enabled' },
-    { name: 'Timeout', prop: 'timeout' },
+    { name: T('Type'), prop: 'type' },
+    { name: T('Command'), prop: 'command', hidden: true },
+    { name: T('Script'), prop: 'script', hidden: true },
+    { name: T('Description'), prop: 'comment' },
+    { name: T('When'), prop: 'when' },
+    { name: T('Enabled'), prop: 'enabled' },
+    { name: T('Timeout'), prop: 'timeout', hidden: true },
   ];
   public rowIdentifier = 'type';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Init/Shutdown Script',
+      title: T('Init/Shutdown Script'),
       key_props: ['type', 'command', 'script']
     },
   };

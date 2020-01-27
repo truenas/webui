@@ -4,10 +4,10 @@ import { Validators } from "@angular/forms";
 
 import * as _ from 'lodash';
 import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services/';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { ipValidator } from "app/pages/common/entity/entity-form/validators/ip-validation";
+import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 
 @Component({
   selector: 'app-iscsi-portal-add',
@@ -23,73 +23,98 @@ export class PortalFormComponent {
   protected customFilter: Array<any> = [[["id", "="]]];
   protected isEntity = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldSets: FieldSet[] = [
     {
-      type: 'input',
-      name: 'comment',
-      placeholder: helptext_sharing_iscsi.portal_form_placeholder_comment,
-      tooltip: helptext_sharing_iscsi.portal_form_tooltip_comment,
+      name: helptext_sharing_iscsi.fieldset_portal_basic,
+      label: true,
+      class: 'basic',
+      width: '100%',
+      config: [
+        {
+          type: 'input',
+          name: 'comment',
+          placeholder: helptext_sharing_iscsi.portal_form_placeholder_comment,
+          tooltip: helptext_sharing_iscsi.portal_form_tooltip_comment,
+        }
+      ]
     },
     {
-      type: 'select',
-      name: 'discovery_authmethod',
-      placeholder: helptext_sharing_iscsi.portal_form_placeholder_discovery_authmethod,
-      tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authmethod,
-      options: [
+      name: helptext_sharing_iscsi.fieldset_portal_authgroup,
+      label: true,
+      class: 'authgroup',
+      width: '100%',
+      config: [
         {
-          label: 'NONE',
+          type: 'select',
+          name: 'discovery_authmethod',
+          placeholder: helptext_sharing_iscsi.portal_form_placeholder_discovery_authmethod,
+          tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authmethod,
+          options: [
+            {
+              label: 'NONE',
+              value: 'NONE',
+            },
+            {
+              label: 'CHAP',
+              value: 'CHAP',
+            },
+            {
+              label: 'Mutual CHAP',
+              value: 'CHAP_MUTUAL',
+            }
+          ],
           value: 'NONE',
         },
         {
-          label: 'CHAP',
-          value: 'CHAP',
-        },
-        {
-          label: 'Mutual CHAP',
-          value: 'CHAP_MUTUAL',
-        }
-      ],
-      value: 'NONE',
-    },
-    {
-      type: 'select',
-      name: 'discovery_authgroup',
-      placeholder: helptext_sharing_iscsi.portal_form_placeholder_discovery_authgroup,
-      tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authgroup,
-      options: [{ label: '---', value: null }],
-      value: null,
-    },
-    {
-      type: 'list',
-      name: 'listen',
-      templateListField: [
-        {
           type: 'select',
-          multiple: true,
-          name: 'ip',
-          placeholder: helptext_sharing_iscsi.portal_form_placeholder_ip,
-          tooltip: helptext_sharing_iscsi.portal_form_placeholder_ip,
-          options: [],
-          class: 'inline',
-          width: '60%',
-          required: true,
-          validation: [Validators.required, ipValidator('all')]
-        },
-        {
-          type: 'input',
-          name: 'port',
-          placeholder: helptext_sharing_iscsi.portal_form_placeholder_port,
-          tooltip: helptext_sharing_iscsi.portal_form_tooltip_port,
-          value: '3260',
-          validation: helptext_sharing_iscsi.portal_form_validators_port,
-          class: 'inline',
-          width: '30%',
+          name: 'discovery_authgroup',
+          placeholder: helptext_sharing_iscsi.portal_form_placeholder_discovery_authgroup,
+          tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authgroup,
+          options: [{ label: '---', value: null }],
+          value: null,
         }
-      ],
-      listFields: [],
+      ]
+    },
+    {
+      name: helptext_sharing_iscsi.fieldset_portal_ip,
+      label: true,
+      class: 'ip',
+      width: '100%',
+      config: [
+        {
+          type: 'list',
+          name: 'listen',
+          templateListField: [
+            {
+              type: 'select',
+              multiple: true,
+              name: 'ip',
+              placeholder: helptext_sharing_iscsi.portal_form_placeholder_ip,
+              tooltip: helptext_sharing_iscsi.portal_form_tooltip_ip,
+              options: [],
+              class: 'inline',
+              width: '60%',
+              required: true,
+              validation: [Validators.required, ipValidator('all')]
+            },
+            {
+              type: 'input',
+              name: 'port',
+              placeholder: helptext_sharing_iscsi.portal_form_placeholder_port,
+              tooltip: helptext_sharing_iscsi.portal_form_tooltip_port,
+              value: '3260',
+              validation: helptext_sharing_iscsi.portal_form_validators_port,
+              class: 'inline',
+              width: '30%',
+            }
+          ],
+          listFields: [],
+        }
+      ]
     }
-  ];
+  ]
 
+  protected fieldConfig;
   protected pk: any;
   protected authgroup_field: any;
   protected entityForm: any;
@@ -105,11 +130,11 @@ export class PortalFormComponent {
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
         this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk']));
+        this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
     });
-
-    this.authgroup_field = _.find(this.fieldConfig, { 'name': 'discovery_authgroup' });
+    const authgroupFieldset = _.find(this.fieldSets, {'class': 'authgroup'});
+    this.authgroup_field = _.find(authgroupFieldset.config, { 'name': 'discovery_authgroup' });
     this.iscsiService.getAuth().subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         if (_.find(this.authgroup_field.options, { value: res[i].tag }) == undefined) {
@@ -121,6 +146,7 @@ export class PortalFormComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+    this.fieldConfig = entityForm.fieldConfig;
 
     const listenIpField = _.find(this.fieldConfig, { 'name': 'listen' }).templateListField[0];
     this.iscsiService.getIpChoices().subscribe((ips) => {

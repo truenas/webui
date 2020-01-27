@@ -4,6 +4,7 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import helptext from '../../../../helptext/account/group-list';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-group-list',
@@ -11,33 +12,33 @@ import helptext from '../../../../helptext/account/group-list';
 })
 export class GroupListComponent {
   public title = "Groups";
-  protected resource_name = 'account/groups/';
+  protected queryCall = 'group.query';
   protected route_add: string[] = ['account', 'groups', 'add' ];
-  protected route_add_tooltip = "Add Group";
+  protected route_add_tooltip = T("Add Group");
   protected route_edit: string[] = [ 'account', 'groups', 'edit' ];
   protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
   protected entityList: any;
   protected loaderOpen = false;
   public columns: Array<any> = [
-    {name : 'Group', prop : 'bsdgrp_group', always_display: true},
-    {name : 'GID', prop : 'bsdgrp_gid'},
-    {name : 'Builtin', prop : 'bsdgrp_builtin'},
-    {name : 'Permit Sudo', prop : 'bsdgrp_sudo'},
+    {name : 'Group', prop : 'group', always_display: true},
+    {name : 'GID', prop : 'gid'},
+    {name : 'Builtin', prop : 'builtin'},
+    {name : 'Permit Sudo', prop : 'sudo'},
   ];
-  public rowIdentifier = 'bsdgrp_group';
+  public rowIdentifier = 'group';
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
     deleteMsg: {
-      title: 'Group',
-      key_props: ['bsdgrp_group']
+      title: T('Group'),
+      key_props: ['group']
     },
   };
 
   constructor(private _router: Router, protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService) { }
   afterInit(entityList: any) { this.entityList = entityList; }
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'delete' && row.bsdgrp_builtin === true) {
+    if (actionId === 'delete' && row.builtin === true) {
       return false;
     }
     return true;
@@ -46,7 +47,7 @@ export class GroupListComponent {
   getActions(row) {
     const actions = [];
     actions.push({
-      id: row.bsdgrp_group,
+      id: row.group,
       name: helptext.group_list_actions_id_member,
       label : helptext.group_list_actions_label_member,
       icon: 'people',
@@ -55,19 +56,19 @@ export class GroupListComponent {
           [ "account", "groups", "members", members.id ]));
       }
     });
-    if (row.bsdgrp_builtin === !true){
+    if (row.builtin === !true){
       actions.push({
-        id: row.bsdgrp_group,
+        id: row.group,
         icon: 'edit',
         label : helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
         onClick : (members_edit) => {
           this._router.navigate(new Array('/').concat(
-            [ "account", "groups", "edit", members_edit.bsdgrp_gid ]));
+            [ "account", "groups", "edit", members_edit.gid ]));
         }
       })
       actions.push({
-        id: row.bsdgrp_group,
+        id: row.group,
         icon: 'delete',
         name: 'delete',
         label : helptext.group_list_actions_label_delete,

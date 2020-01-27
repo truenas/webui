@@ -1,5 +1,6 @@
 import {Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
 import {difference, ListSelection, ListSelectionImpl} from './models';
+import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-dual-listbox',
@@ -16,6 +17,8 @@ export class DualListboxComponent implements OnInit {
 
   @Input() minHeight = '200px';
   @Input() maxHeight = '300px';
+  @Input() title1: string;
+  @Input() title2: string;
 
   @ContentChild('templateItem', { static: true}) templateItem: TemplateRef<any>;
   @ContentChild('templateArrowLeft', { static: true}) templateArrowLeft: TemplateRef<any>;
@@ -23,6 +26,7 @@ export class DualListboxComponent implements OnInit {
 
   availableItems: ListSelection;
   selectedItems: ListSelection;
+  dragging = false;
 
   ngOnInit() {
     this.availableItems = new ListSelectionImpl(
@@ -44,8 +48,41 @@ export class DualListboxComponent implements OnInit {
     this.availableItems = to;
     this.selectedItemsChange.emit(this.selectedItems.totalItems);
   }
-}
+  
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      let chosenItems = document.querySelectorAll('.chosen');
+      chosenItems.forEach((item) => {
+        if (item.classList) {
+          item.classList.remove('cdk-drag-placeholder');
+        }
+      });
+      if (document.querySelector('#counter')) {
+        document.querySelector('#counter').remove();
+      }
+    } else {
+      event.previousContainer.id === 'cdk-drop-list-0' ? this.select() : this.return();
+    }
+    this.dragging = false;
+  }
 
+  public onDragStart(event: CdkDragStart<string[]>) {
+    let div = document.querySelector(`#${event.source.dropContainer.id}`);
+    this.dragging = true;
+    let b = div.querySelector('.draggable:active')
+    let chosenItems = div.querySelectorAll('.chosen');
+    if (chosenItems.length > 0) {
+      b.insertAdjacentHTML('afterbegin', 
+      `<div id="counter" style="background: red; color: white; border-radius: 50%; 
+        width:20px; height: 20px; text-align: center; font-weight: 700;
+        position: relative; top: 5px; left: 5px;">
+        ${chosenItems.length.toString()}</div>`);
+    }
+    chosenItems.forEach((item) => {
+      item.classList.add('cdk-drag-placeholder');
+    })
+  }
+}
 
 const transfer = (from: ListSelection, to: ListSelection) => {
   return {

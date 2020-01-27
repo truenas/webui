@@ -166,7 +166,8 @@ export class DialogService {
               {
                 type: 'input',
                 name: 'name',
-                required: true
+                required: true,
+                hideErrMsg: true
               },
               {
                   type: 'checkbox',

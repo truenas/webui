@@ -14,6 +14,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../../../pages/common/entity/utils';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-manualupdate',
@@ -186,9 +187,11 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         this.dialogService.errorReport(helptext.manual_update_error_dialog.message, 
           `${prefailure.status.toString()} ${prefailure.statusText}`)
       })
-      this.dialogRef.componentInstance.failure.subscribe((failure)=>{
-        this.dialogRef.close(false);
-        this.dialogService.errorReport(failure.error,failure.state,failure.exception)
+      this.dialogRef.componentInstance.failure
+        .pipe(take(1))
+        .subscribe((failure)=>{
+          this.dialogRef.close(false);
+          this.dialogService.errorReport(failure.error,failure.state,failure.exception);
       })
     })
   }

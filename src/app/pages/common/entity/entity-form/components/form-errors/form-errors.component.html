@@ -1,5 +1,5 @@
 <div class="form-error" *ngIf="control.dirty || control.touched">
-    <mat-error *ngIf="control.hasError('required')">
+    <mat-error *ngIf="control.hasError('required') && !config.hideErrMsg">
         {{config.placeholder}} {{" is required." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('minlength')">
@@ -23,7 +23,7 @@
     <mat-error *ngIf="control.hasError('range')">
         {{"The value is out of range. Enter a value between " | translate}} {{control.errors.rangeValue.min}} {{" and " | translate }} {{control.errors.rangeValue.max}}.
     </mat-error>
-    <mat-error *ngIf="control.hasError('regex')">
+    <mat-error *ngIf="control.hasError('regex') && !config.hideErrMsg">
         {{"Invalid format or character." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('ip')">

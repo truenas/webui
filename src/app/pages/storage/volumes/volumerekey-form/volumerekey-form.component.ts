@@ -18,7 +18,6 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
 
   saveSubmitText = T("Reset Encryption");
 
-  resource_name = 'storage/volume';
   route_success: string[] = ['storage', 'pools'];
   isNew = false;
   isEntity = true;

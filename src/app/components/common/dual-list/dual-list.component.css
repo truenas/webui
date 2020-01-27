@@ -46,8 +46,24 @@
   text-align: center;
 }
 
-.choosed {
+.draggable {
   width: 100%;
-  background: #91949c;
-  color: white;
+}
+
+.chosen, .draggable:active {
+  width: 100%;
+  background: var(--primary);
+}
+
+.cdk-drag-placeholder {
+  background: rgba(145,148,156, 0.1);
+  opacity: .5;
+  border: 1px dashed var(--fg1);
+  width: 100%;
+}
+
+.list-title {
+  position: absolute;
+  top: 43px;
+  font-size: small;
 }

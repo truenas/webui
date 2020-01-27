@@ -23,7 +23,6 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
 import {EntityUtils} from '../../../../common/entity/utils';
 import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 
-
 @Component({
   selector : 'app-dataset-acl',
   template : `<entity-form [conf]="this"></entity-form>`
@@ -313,6 +312,11 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   afterInit(entityEdit: any) {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('homeShare')) {
+      entityEdit.formGroup.controls['default_acl_choices'].setValue('HOME');
+    }
+
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {

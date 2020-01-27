@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/task-calendar/initshutdown/initshutdown';
 
 @Component({
@@ -21,69 +22,84 @@ export class InitshutdownFormComponent {
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
 
-  public fieldConfig: FieldConfig[] = [{
-    type: 'select',
-    name: 'type',
-    placeholder: helptext.ini_type_placeholder,
-    tooltip: helptext.ini_type_tooltip,
-    options: [{
-      label: 'Command',
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = 
+  [{
+    name:helptext.ini_title,
+    class:'add-init',
+    label:true,
+    width:'300px',
+    config: [
+    {
+      type: 'input',
+      name: 'comment',
+      placeholder: helptext.ini_description_placeholder,
+      tooltip: helptext.ini_description_tooltip
+    },
+    {
+      type: 'select',
+      name: 'type',
+      placeholder: helptext.ini_type_placeholder,
+      tooltip: helptext.ini_type_tooltip,
+      options: [{
+        label: 'Command',
+        value: 'COMMAND',
+      }, {
+        label: 'Script',
+        value: 'SCRIPT',
+      }],
       value: 'COMMAND',
     }, {
-      label: 'Script',
-      value: 'SCRIPT',
-    }],
-    value: 'COMMAND',
-  }, {
-    type: 'input',
-    name: 'command',
-    placeholder: helptext.ini_command_placeholder,
-    tooltip: helptext.ini_command_tooltip,
-    required: true,
-    validation : helptext.ini_command_validation,
-  }, {
-    type : 'explorer',
-    initial: '/mnt',
-    name: 'script',
-    placeholder: helptext.ini_script_placeholder,
-    explorerType: 'file',
-    required: true,
-    validation : helptext.ini_script_validation,
-    tooltip: helptext.ini_script_tooltip,
-  }, {
-    type: 'select',
-    name: 'when',
-    placeholder: helptext.ini_when_placeholder,
-    tooltip: helptext.ini_when_tooltip,
-    options: [{
-      label: '---------',
+      type: 'input',
+      name: 'command',
+      placeholder: helptext.ini_command_placeholder,
+      tooltip: helptext.ini_command_tooltip,
+      required: true,
+      validation : helptext.ini_command_validation,
+    }, {
+      type : 'explorer',
+      initial: '/mnt',
+      name: 'script',
+      placeholder: helptext.ini_script_placeholder,
+      explorerType: 'file',
+      required: true,
+      validation : helptext.ini_script_validation,
+      tooltip: helptext.ini_script_tooltip,
+    }, {
+      type: 'select',
+      name: 'when',
+      placeholder: helptext.ini_when_placeholder,
+      tooltip: helptext.ini_when_tooltip,
+      options: [{
+        label: '---------',
+        value: '',
+      }, {
+        label: 'Pre Init',
+        value: 'PREINIT',
+      }, {
+        label: 'Post Init',
+        value: 'POSTINIT',
+      }, {
+        label: 'Shutdown',
+        value: 'SHUTDOWN',
+      }],
       value: '',
+      required: true,
+      validation : helptext.ini_when_validation,
     }, {
-      label: 'Pre Init',
-      value: 'PREINIT',
+      type: 'checkbox',
+      name: 'enabled',
+      placeholder: helptext.ini_enabled_placeholder,
+      tooltip: helptext.ini_enabled_tooltip,
+      value: true,
     }, {
-      label: 'Post Init',
-      value: 'POSTINIT',
-    }, {
-      label: 'Shutdown',
-      value: 'SHUTDOWN',
-    }],
-    value: '',
-    required: true,
-    validation : helptext.ini_when_validation,
-  }, {
-    type: 'checkbox',
-    name: 'enabled',
-    placeholder: helptext.ini_enabled_placeholder,
-    tooltip: helptext.ini_enabled_tooltip,
-    value: true,
-  }, {
-    type: 'input',
-    inputType: 'number',
-    name: 'timeout',
-    placeholder: helptext.ini_timeout_placeholder,
-    tooltip: helptext.ini_timeout_tooltip,
-    value: 10,
+      type: 'input',
+      inputType: 'number',
+      name: 'timeout',
+      placeholder: helptext.ini_timeout_placeholder,
+      tooltip: helptext.ini_timeout_tooltip,
+      value: 10,
+    }]
   }];
 
   protected type_control: any;
