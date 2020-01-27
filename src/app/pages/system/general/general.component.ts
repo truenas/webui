@@ -141,7 +141,7 @@ export class GeneralComponent {
           placeholder: helptext.date_format.placeholder,
           tooltip: helptext.date_format.tooltip,
           options: [],
-          width: '49%'
+          width: '48%'
         },
         { type: 'paragraph', name: 'spacer', width: '2%' },
         {
@@ -150,7 +150,7 @@ export class GeneralComponent {
           placeholder: helptext.time_format.placeholder,
           tooltip: helptext.time_format.tooltip,
           options: [],
-          width: '49%'
+          width: '50%'
         }
       ]
     },

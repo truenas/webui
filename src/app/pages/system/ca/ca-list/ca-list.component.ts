@@ -6,6 +6,7 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { RestService, WebSocketService, DialogService, StorageService } from '../../../../services/';
+import { LocaleService } from 'app/services/locale.service';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -31,7 +32,7 @@ export class CertificateAuthorityListComponent {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     public dialog: DialogService, public storage: StorageService,
-    public http: Http) {}
+    public http: Http, protected localeService: LocaleService) {}
 
   public columns: Array < any > = [
     { name: helptext_system_ca.list.column_name, prop: 'name', always_display: true },
@@ -49,6 +50,14 @@ export class CertificateAuthorityListComponent {
       title: 'Certificate Authority',
       key_props: ['name']
     },
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data.forEach((i) => {
+      i.from = this.localeService.formatDateTime(Date.parse(i.from));
+      i.until = this.localeService.formatDateTime(Date.parse(i.until));
+    })
+    return data;
   }
 
   afterInit(entityList: any) {
