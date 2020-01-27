@@ -265,8 +265,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.loaderOpen = true;
           this.ws.call('interface.rollback').subscribe(res => {
             this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false}, sender:this});
-            this.entityList.loader.close();
-            this.entityList.loaderOpen = false;
+            this.entityList.getData();
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
             this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '300px', "info", true);
