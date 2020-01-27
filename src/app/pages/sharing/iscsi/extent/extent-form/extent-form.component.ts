@@ -52,6 +52,12 @@ export class ExtentFormComponent {
           name : 'comment',
           placeholder : helptext_sharing_iscsi.extent_placeholder_comment,
           tooltip: helptext_sharing_iscsi.extent_tooltip_comment,
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext_sharing_iscsi.extent_placeholder_enabled,
+          tooltip: helptext_sharing_iscsi.extent_tooltip_enabled,
         }
       ]
     },

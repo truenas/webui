@@ -254,6 +254,9 @@ export const helptext_sharing_iscsi = {
  LUN."
   ),
 
+  extent_placeholder_enabled: T('Enabled'),
+  extent_tooltip_enabled: T(''),
+
   fieldset_group: T('Group'),
   fieldset_user: T('User'),
   fieldset_peeruser: T('Peer User'),
