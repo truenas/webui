@@ -265,7 +265,7 @@ export class ServiceSMBComponent {
       });
     });
 
-    this.userService.groupQueryDSCache().subscribe(items => {
+    this.userService.groupQueryDSCache("", true).subscribe(items => {
       const groups = [];
       items.forEach((item) => {
         groups.push({label: item.group, value: item.group});
@@ -301,7 +301,7 @@ export class ServiceSMBComponent {
   }
 
   updateGroupSearchOptions(value = "", parent) {
-    parent.userService.groupQueryDSCache(value).subscribe(items => {
+    parent.userService.groupQueryDSCache(value, true).subscribe(items => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].group, value: items[i].group});

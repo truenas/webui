@@ -24,11 +24,14 @@ export class UserService {
 
   listGroups() { return this.rest.get(this.accountGroupResource, {limit: 50}); };
   
-  groupQueryDSCache(search = "") {
+  groupQueryDSCache(search = "", hideBuiltIn = false) {
     let queryArgs = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [["group", "^", search]];
+    }
+    if (hideBuiltIn) {
+      queryArgs = queryArgs.concat([["builtin", "=", false]]);
     }
     return this.ws.call(this.groupQuery, [queryArgs, this.queryOptions]);
   }
