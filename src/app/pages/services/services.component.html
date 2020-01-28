@@ -4,7 +4,8 @@
       <mat-icon role="img">search</mat-icon>
       <div class="card-filter-field">
         <mat-form-field floatPlaceholder="Filter Service">
-          <input matInput #filter placeholder="Filter Service" [ngModel]="searchTerm" (ngModelChange)="displayFilter('title',$event)">
+          <input matInput #filter placeholder="Filter Service" [ngModel]="searchTerm" 
+          (ngModelChange)="displayFilter('label',$event)">
         </mat-form-field>
       </div>
     </div>
