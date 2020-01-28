@@ -2,7 +2,8 @@ import { ApplicationRef, Component, Injector, Input, ViewChild, ElementRef} from
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import {  DialogService, RestService, TooltipsService, WebSocketService, NetworkService, SnackbarService } from '../../../services/';
+import {  DialogService, RestService, TooltipsService, WebSocketService, 
+  NetworkService, SnackbarService } from '../../../services/';
 import { FormGroup } from '@angular/forms';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';

@@ -39,7 +39,6 @@ htauth_options : [
 password_placeholder : T('Webdav Password'),
 password_tooltip : T('The default of <i>davtest</i> is recommended to\
  change. <i>davtest</i> is a known value.'),
-password_validation : [ matchOtherValidator('password2') ],
 
 password2_placeholder : T('Confirm Password'),
 fieldset_title: T('WebDAV Configuration')
