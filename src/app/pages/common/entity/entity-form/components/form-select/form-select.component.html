@@ -1,5 +1,8 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
-  <mat-form-field class="full-width" value="fromFormField" #field>
+<div id="{{config.name}}" class="dynamic-field form-select {{config.inlineLabel ? 'inline-label' : 'not'}}" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
+  <ng-container *ngIf="config.inlineLabel">
+    <div class="label half-width">{{config.inlineLabel}}</div>
+  </ng-container>
+  <mat-form-field [ngClass]="{'full-width': !config.inlineLabel,'half-width': config.inlineLabel}" value="fromFormField" #field>
       <mat-spinner
         diameter='40'
         class="form-select-spinner"
