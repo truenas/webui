@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { IdmapService, IscsiService, RestService, WebSocketService } from '../../../../services/';
+import { IdmapService, IscsiService, RestService, WebSocketService, ValidationService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-snmp';
 
@@ -77,7 +77,7 @@ export class ServiceSNMPComponent {
       inputType : 'password',
       placeholder : helptext.v3_password2_placeholder,
       required: true,
-      validation: helptext.v3_password2_validation,
+      validation: this.validationService.matchOtherValidator('v3_password'),
       relation : helptext.v3_password2_relation
     },
     {
@@ -103,7 +103,8 @@ export class ServiceSNMPComponent {
       name : 'v3_privpassphrase2',
       inputType : 'password',
       placeholder : helptext.v3_privpassphrase2_placeholder,
-      relation : helptext.v3_privpassphrase2_relation
+      relation : helptext.v3_privpassphrase2_relation,
+      validation: this.validationService.matchOtherValidator('v3_privpassphrase'),
     },
     {
       type : 'textarea',
@@ -130,7 +131,7 @@ export class ServiceSNMPComponent {
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected iscsiService: IscsiService,
-              protected idmapService: IdmapService) {}
+              protected idmapService: IdmapService, protected validationService: ValidationService) {}
 
   afterInit(entityForm: any) {
     entityForm.ws.call('snmp.config').subscribe((res)=>{

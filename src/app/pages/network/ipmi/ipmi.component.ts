@@ -2,7 +2,8 @@ import { ApplicationRef, Component, Injector, Input, ViewChild, ElementRef} from
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import {  DialogService, RestService, TooltipsService, WebSocketService, NetworkService, SnackbarService } from '../../../services/';
+import {  DialogService, RestService, TooltipsService, WebSocketService, 
+  NetworkService, SnackbarService, ValidationService } from '../../../services/';
 import { FormGroup } from '@angular/forms';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -95,7 +96,7 @@ export class IPMIComponent {
       name : 'conf_password',
       inputType: 'password',
       placeholder : helptext.conf_password_placeholder,
-      validation : helptext.conf_password_validation
+      validation : this.validationService.matchOtherValidator('password')
     },
     {
       type : 'checkbox',
@@ -144,7 +145,8 @@ export class IPMIComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected tooltipsService: TooltipsService,
               protected networkService: NetworkService, protected dialog: DialogService,
-              protected loader: AppLoaderService, protected snackBar: SnackbarService
+              protected loader: AppLoaderService, protected snackBar: SnackbarService,
+              protected validationService: ValidationService
             ) {}
 
 
