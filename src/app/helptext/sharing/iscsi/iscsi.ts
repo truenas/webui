@@ -4,6 +4,9 @@ import { matchOtherValidator } from "app/pages/common/entity/entity-form/validat
 import globalHelptext from '../../../helptext/global-helptext';
 
 export const helptext_sharing_iscsi = {
+  fieldset_target_basic: T('Basic Info'),
+  fieldset_target_group: T('iSCSI Group'),
+
   target_form_placeholder_name: T("Target Name"),
   target_form_tooltip_name: T(
     'The base name is automatically prepended if the target\
@@ -47,6 +50,10 @@ export const helptext_sharing_iscsi = {
 
   target_form_placeholder_delete: T("Delete"),
 
+  fieldset_portal_basic: T('Basic Info'),
+  fieldset_portal_authgroup: T('Auth Method and Group'),
+  fieldset_portal_ip: T('IP Address'),
+
   portal_form_placeholder_comment: T("Description"),
   portal_form_tooltip_comment: T(
     "Optional description. Portals are automatically assigned a numeric\
@@ -70,11 +77,12 @@ export const helptext_sharing_iscsi = {
   ),
 
   portal_form_placeholder_ip: T("IP Address"),
-  portal_form_tooltip_ip: T(
-    "Select the IP address associated with an interface\
- or the wildcard address of <i>0.0.0.0</i> (any interface)."
+  portal_form_tooltip_ip: T("Select the IP addresses to be listened on \
+ by the portal. Click ADD to add IP addresses with a different network \
+ port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
+ addresses, or <i>::</i> to listen on all IPv6 addresses."
   ),
-  
+
   portal_form_validators_ip: [Validators.required],
 
   portal_form_placeholder_port: T("Port"),
@@ -117,6 +125,8 @@ export const helptext_sharing_iscsi = {
   initiator_form_placeholder_comment: T("Description"),
   initiator_form_tooltip_comment: T("Any notes about initiators."),
 
+  fieldset_globalconf: T('Global Configuration'),
+
   globalconf_placeholder_basename: T("Base Name"),
   globalconf_tooltip_basename: T(
     'Lowercase alphanumeric characters plus dot (.), dash (-),\
@@ -151,6 +161,10 @@ export const helptext_sharing_iscsi = {
   globalconf_tooltip_alua: T(`Allow initiator to discover paths to both\
  ${globalHelptext.ctrlrs} on the target and increase storage traffic\
  efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
+
+  fieldset_extent_basic: T('Basic Info'),
+  fieldset_extent_type: T('Type'),
+  fieldset_extent_options: T('Compatability'),
 
   extent_placeholder_name: T("Extent name"),
   extent_tooltip_name: T(
@@ -240,6 +254,13 @@ export const helptext_sharing_iscsi = {
  LUN."
   ),
 
+  extent_placeholder_enabled: T('Enabled'),
+  extent_tooltip_enabled: T(''),
+
+  fieldset_group: T('Group'),
+  fieldset_user: T('User'),
+  fieldset_peeruser: T('Peer User'),
+
   authaccess_placeholder_tag: T("Group ID"),
   authaccess_tooltip_tag: T(
     "Allow different groups to be configured\
@@ -274,11 +295,11 @@ export const helptext_sharing_iscsi = {
     "Mutual secret password. Required when Peer User is set. Must be\
  different than the <i>Secret</i>."
   ),
-  authaccess_error_peersecret: T('Must match Peer Secret (Confirm) and be\
- between 12 and 16 characters in length. Cannot be the same as\
- Secret.'),
+  authaccess_error_duplicate_secrets: T('Secret and Peer Secret can not be the same.'),
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
+
+  fieldset_associated_target: T('Associated Target'),
 
   associated_target_placeholder_target: T("Target"),
   associated_target_tooltip_target: T("Select an existing target."),

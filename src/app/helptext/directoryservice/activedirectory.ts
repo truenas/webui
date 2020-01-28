@@ -151,7 +151,7 @@ activedirectory_sasl_wrapping_tooltip : T('Choose how LDAP traffic is transmitte
  and newer can be configured to enforce signed LDAP connections.'),
 
 activedirectory_enable_name: 'enable',
-activedirectory_enable_placeholder : T('Enable (requires password)'),
+activedirectory_enable_placeholder : T('Enable (requires password or Kerberos principal)'),
 activedirectory_enable_tooltip : T('Enable the Active Directory service.\
  The first time this option is set, the Domain Account Password must be entered.'),
 

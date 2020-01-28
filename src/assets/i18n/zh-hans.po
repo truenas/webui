@@ -907,9 +907,6 @@ msgstr "添加数据"
 msgid "Add Dataset"
 msgstr "添加数据集"
 
-msgid "Add Extra ISCSI Group"
-msgstr "添加额外的ISCSI组"
-
 msgid "Add Group"
 msgstr ""
 
@@ -1094,13 +1091,6 @@ msgstr "地址"
 
 msgid "Address space limit in bytes for the jail."
 msgstr "Jail的地址空间限制（以bytes为单位）。"
-
-msgid ""
-"Adds <a href=\"--docurl--/sharing.html#avail-vfs-modules-tab\" "
-"target=\"blank\">virtual file system modules</a> to enhance functionality."
-msgstr ""
-"添加<a href=\"--docurl--/sharing.html#avail-vfs-modules-tab\" "
-"target=\"blank\">虚拟文件系统模块</a>以增强功能。"
 
 msgid "Adjust the file permissions using the checkboxes."
 msgstr "使用复选框来调整文件权限。"
@@ -1586,6 +1576,9 @@ msgid ""
 "          recommended."
 msgstr "为Minio分配目录会将该目录及其中的每个目录的权限更改为minio:minio，并覆盖以前的所有权限。强烈建议为Minio创建单独的数据集。"
 
+msgid "Associated Target"
+msgstr ""
+
 msgid ""
 "At least one module must be defined in <a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
@@ -1613,6 +1606,9 @@ msgstr "八月"
 
 msgid "Auth Method"
 msgstr "验证方法"
+
+msgid "Auth Method and Group"
+msgstr ""
 
 msgid "Auth Token"
 msgstr "验证令牌"
@@ -1752,6 +1748,9 @@ msgstr "Azure帐户的Base64编码密钥。"
 
 msgid "Basejail"
 msgstr "基础Jail"
+
+msgid "Basic Info"
+msgstr ""
 
 msgid "Basic Mode"
 msgstr "基本模式"
@@ -1970,6 +1969,9 @@ msgstr "认证机构ID"
 msgid "CAs"
 msgstr "认证机构"
 
+msgid "CC"
+msgstr ""
+
 msgid "CD-ROM Path"
 msgstr "CD-ROM路径"
 
@@ -1987,6 +1989,9 @@ msgstr "处理器使用率"
 
 msgid "CPU and Memory"
 msgstr "处理器和内存"
+
+msgid "CPUs and Memory"
+msgstr ""
 
 msgid "CSR exists on this system"
 msgstr "此系统上存在CSR"
@@ -2707,6 +2712,9 @@ msgstr "通用名"
 msgid "Community"
 msgstr "社区"
 
+msgid "Compatability"
+msgstr ""
+
 msgid "Complete the Upgrade"
 msgstr "完成升级"
 
@@ -2987,13 +2995,10 @@ msgid "Country Code"
 msgstr "国家/地区代码"
 
 msgid ""
-"Country Code must be blank or have a  valid two-letter <a  "
+"Country Code must contain a valid  <a "
 "href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
-"3166-1 alpha-2 code</a>."
+"3166-1 alpha-2 code</a>  of two capital letters."
 msgstr ""
-"国家/地区代码必须为空白或具有有效的两个字母的<a  "
-"href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\"> ISO "
-"3166-1 alpha-2代码</a>。"
 
 msgid "Crash reporting"
 msgstr "崩溃报告"
@@ -3208,9 +3213,6 @@ msgstr "数据库路径"
 msgid "Dataset"
 msgstr "数据集"
 
-msgid "Dataset Has Complex ACLs"
-msgstr "数据集具有复杂的访问控制列表"
-
 msgid "Dataset Path"
 msgstr "数据集路径"
 
@@ -3415,6 +3417,12 @@ msgstr "删除路径"
 
 msgid "Delete Selected"
 msgstr "删除所选"
+
+msgid "Delete Virtual Machine"
+msgstr ""
+
+msgid "Delete Virtual Machine Data?"
+msgstr ""
 
 msgid "Delete Zvol"
 msgstr "删除Zvol"
@@ -3860,9 +3868,6 @@ msgstr ""
 msgid "EC Curve"
 msgstr "EC曲线"
 
-msgid "EDIT ACL"
-msgstr "编辑访问控制列表"
-
 msgid "ERROR: Not Enough Memory"
 msgstr "错误：内存不足"
 
@@ -3916,6 +3921,18 @@ msgstr "电子邮件地址"
 msgid "Email Subject"
 msgstr "电子邮件主题"
 
+msgid ""
+"Email addresses must be entered in the format   "
+"<i>local-name</i>@<i>domain.com<i> with a comma (,) separating each   "
+"address."
+msgstr ""
+
+msgid ""
+"Email addresses to receive copies of iXsystems Support   messages about "
+"this issue. Use the format <i>name</i>@<i>domain.com</i>   and a comma (,) "
+"to separate each address."
+msgstr ""
+
 msgid "Emergency"
 msgstr "紧急情况"
 
@@ -3945,9 +3962,6 @@ msgstr "启用调试内核"
 
 msgid "Enable FXP"
 msgstr "启用FXP"
-
-msgid "Enable Legacy User Interface"
-msgstr "启用旧版用户界面"
 
 msgid "Enable NFSv4"
 msgstr "启用NFSv4"
@@ -4004,9 +4018,6 @@ msgstr "启用iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "启用iXsystems主动支持"
-
-msgid "Enable if Mac clients will be connecting to the SMB share."
-msgstr "如果Mac客户端将连接到SMB共享，则启用。"
 
 msgid "Enable netwait feature"
 msgstr "启用netwait功能"
@@ -4774,8 +4785,10 @@ msgstr "输入新用户的电子邮件地址。"
 msgid "Enter the email address of the person responsible for the CA."
 msgstr "输入负责CA的人员的电子邮件地址。"
 
-msgid "Enter the email of the contact person."
-msgstr "输入联系人的电子邮件。"
+msgid ""
+"Enter the email of the contact person. Use the format "
+"<i>name</i>@<i>domain.com</i>."
+msgstr ""
 
 msgid "Enter the filesystem to snapshot."
 msgstr "输入要快照的文件系统。"
@@ -4955,6 +4968,9 @@ msgstr "下载文件时出错"
 
 msgid "Error Promoting dataset "
 msgstr "错误提升数据集 "
+
+msgid "Error Saving Configuration Settings"
+msgstr ""
 
 msgid "Error Saving Proactive Support Settings"
 msgstr "保存主动支持设置时出错"
@@ -5317,6 +5333,9 @@ msgstr "强制"
 msgid "Force Delete"
 msgstr "强制删除"
 
+msgid "Force Delete?"
+msgstr ""
+
 msgid "Force deletion of dataset "
 msgstr "强制删除数据集 "
 
@@ -5424,6 +5443,9 @@ msgstr ""
 
 msgid "General Preferences"
 msgstr "常规首选项"
+
+msgid "General VM Settings"
+msgstr ""
 
 msgid "Generate Debug File"
 msgstr "生成调试文件"
@@ -6513,6 +6535,12 @@ msgstr "离开域需要足够的权限。在下面输入您的凭据。"
 msgid "Legacy"
 msgstr ""
 
+msgid ""
+"Legacy NetBIOS name server. Advertises the SMB  Service <i>NetBIOS "
+"Name</i>. Could be required for legacy SMB1 clients  to discover the server "
+"(server appears in <i>Network Neighborhood</i>)."
+msgstr ""
+
 msgid "Legacy Web Interface"
 msgstr "旧版Web界面"
 
@@ -6994,6 +7022,12 @@ msgid ""
 "www.example.com will secure both addresses."
 msgstr "多域名支持。输入要保护的其他域，以空格分隔。例如，如果主域是example.com，则输入www.example.com将保护两个地址。"
 
+msgid ""
+"Multicast DNS. Uses the system <i>Hostname</i> to  advertise enabled and "
+"running services. For example, this controls if  the server appears under "
+"<i>Network</i> on MacOS clients."
+msgstr ""
+
 msgid "Multipath Name"
 msgstr "多路径名称"
 
@@ -7177,6 +7211,9 @@ msgstr "NetBIOS 名称"
 
 msgid "NetBIOS alias"
 msgstr "NetBIOS 别名"
+
+msgid "NetBIOS-NS"
+msgstr ""
 
 msgid "Netbios Name"
 msgstr "NetBIOS 名称"
@@ -8165,6 +8202,9 @@ msgstr "当TrueNAS的硬件状况需要注意时，主动支持可以通过电�
 msgid "Proceed"
 msgstr "继续"
 
+msgid "Proceed with Update"
+msgstr ""
+
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
@@ -8418,9 +8458,6 @@ msgstr "删除"
 
 msgid "Remove Additional Path"
 msgstr "删除附加路径"
-
-msgid "Remove Extra ISCSI Group"
-msgstr "删除额外的ISCSI组"
 
 msgid "Remove Keep Flag"
 msgstr "删除保留标志"
@@ -9649,6 +9686,9 @@ msgstr "服务器端加密"
 msgid "Service Account"
 msgstr "服务账户"
 
+msgid "Service Announcement"
+msgstr ""
+
 msgid "Service Key"
 msgstr "服务密钥"
 
@@ -10141,6 +10181,12 @@ msgid "Set to ignore mapping requests for the <i>BUILTIN</i> domain."
 msgstr "设置为忽略<i>BUILTIN</i>域的映射请求。"
 
 msgid ""
+"Set to ignore the Virtual  Machine status during the delete operation. "
+"Unset to prevent deleting  the Virtual Machine when it is still active or "
+"has an undefined state."
+msgstr ""
+
+msgid ""
 "Set to include all subdirectories of the specified                "
 "directory. When unset, only the specified directory                is "
 "included."
@@ -10280,6 +10326,12 @@ msgid ""
 "Set to remove all ACLs from the current dataset. ACLs are also recursively "
 "stripped from directories and child datasets when those options are set."
 msgstr "设置为从当前数据集中删除所有访问控制列表。设置了这些选项后，访问控制列表也会从目录和子数据集中递归剥离。"
+
+msgid ""
+"Set to remove the data associated with this  Virtual Machine (which will "
+"result in data loss if the data is not backed up). Unset to  leave the data "
+"intact."
+msgstr ""
 
 msgid "Set to run resilver tasks between the configured times."
 msgstr "设置为在配置的时间之间运行重新同步任务。"
@@ -11008,8 +11060,12 @@ msgstr "系统时钟"
 msgid "System domain name, like <i>example.com</i>"
 msgstr "系统域名，例如<i>example.com</i>"
 
-msgid "System failed to save configuration settings. Check the network connection."
-msgstr "系统无法保存配置设置。检查网络连接。"
+msgid ""
+"System failed to save configuration settings. Check the network connection. "
+" To proceed with the system upgrade <b>without</b> saving a current backup "
+"of the configuration setting, select  the <i>Confirm</i> checkbox and click "
+"<i>Proceed with Update</i>."
+msgstr ""
 
 msgid "System host time to synchronize the time between jail and host."
 msgstr "系统主机时间，用于同步Jail和主机之间的时间。"
@@ -11608,8 +11664,8 @@ msgstr "此数据集和子数据集"
 
 msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
-"the ACL editor.                   Open ACL editor?"
-msgstr "该数据集具有活动的访问控制列表。必须使用访问控制列表编辑器来更改权限。打开访问控制列表编辑器？"
+"the ACL editor."
+msgstr ""
 
 msgid ""
 "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
@@ -12011,10 +12067,10 @@ msgstr "已升级"
 
 msgid ""
 "Upgrades both controllers. Files are downloaded to the Active Controller    "
-"                  and then transferred to the Standby Controller. The "
-"upgrade process starts concurrently on both TrueNAS Controllers.            "
-"          Continue with download?"
-msgstr "升级两个控制器。文件下载到活动控制器，然后传输到备用控制器。升级过程同时在两个TrueNAS控制器上开始。继续下载吗？"
+"        and then transferred to the Standby Controller. The upgrade process "
+"starts concurrently on both TrueNAS Controllers.            Continue with "
+"download?"
+msgstr ""
 
 msgid "Upgrading Jail"
 msgstr "升级Jail"
@@ -12275,11 +12331,14 @@ msgstr "用户"
 msgid "Users & Groups"
 msgstr "用户与群组"
 
+msgid ""
+"Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to "
+"WS-Discovery clients. This causes the computer appear in  the <i>Network "
+"Neighborhood</i> of modern Windows OSes."
+msgstr ""
+
 msgid "Using pool "
 msgstr "正在使用存储池"
-
-msgid "VFS Objects"
-msgstr "VFS 对象"
 
 msgid "VLAN ID"
 msgstr "虚拟局域网ID"
@@ -12391,9 +12450,6 @@ msgstr "虚拟接口"
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "虚拟机（VM）向导类型。"
 
-msgid "Virtual Machine Settings"
-msgstr ""
-
 msgid "Virtual Machines"
 msgstr "虚拟机"
 
@@ -12412,9 +12468,6 @@ msgstr "卷大小不能为零。"
 msgid "WARNING"
 msgstr "警告"
 
-msgid "WARNING: "
-msgstr "警告： "
-
 msgid "WARNING: A failover will  temporarily interrupt system services."
 msgstr "警告：故障转移将暂时中断系统服务。"
 
@@ -12431,6 +12484,9 @@ msgstr "导出/断开存储池错误。"
 
 msgid "WARNING: Locking pool <i>"
 msgstr "警告：锁定池<i>"
+
+msgid "WS-Discovery"
+msgstr ""
 
 msgid "Wait to start VM until VNC client connects."
 msgstr "等待启动VM，直到VNC客户端连接。"
@@ -12677,9 +12733,6 @@ msgstr ""
 msgid "Zero Device Numbers"
 msgstr "设备号为0"
 
-msgid "Zeroconf share discovery"
-msgstr "Zeroconf 共享发现"
-
 msgid "Zvol Location"
 msgstr "Zvol位置"
 
@@ -12860,6 +12913,9 @@ msgstr "hostid_strict_check"
 msgid "iSCSI"
 msgstr "iSCSI"
 
+msgid "iSCSI Group"
+msgstr ""
+
 msgid "interfaces"
 msgstr "接口"
 
@@ -12895,6 +12951,9 @@ msgstr "列表"
 
 msgid "login_flags"
 msgstr "login_flags"
+
+msgid "mDNS"
+msgstr ""
 
 msgid "mac_prefix"
 msgstr "mac_prefix"

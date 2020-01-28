@@ -151,14 +151,6 @@ export class SMBFormComponent {
           tooltip: helptext_sharing_smb.tooltip_showhiddenfiles
         },
         {
-          type: 'select',
-          name: 'vfsobjects',
-          placeholder: helptext_sharing_smb.placeholder_vfsobjects,
-          tooltip: helptext_sharing_smb.tooltip_vfsobjects,
-          options: [],
-          multiple: true,
-        },
-        {
           type: 'textarea',
           name: 'auxsmbconf',
           placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
@@ -173,7 +165,6 @@ export class SMBFormComponent {
 
   protected advanced_field: Array<any> = [
     'auxsmbconf',
-    'vfsobjects',
     'hostsdeny',
     'hostsallow',
     'guestok',
@@ -389,19 +380,7 @@ export class SMBFormComponent {
 
   afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
-    this.ws.call('sharing.smb.vfsobjects_choices', [])
-        .subscribe((res) => {
-          this.cifs_vfsobjects = this.fieldSets
-            .find(set => set.name === helptext_sharing_smb.fieldset_other)
-            .config.find(config => config.name === "vfsobjects");
-          const options = [];
-          res.forEach((item) => {
-            options.push({label : item, value : item});
-          });
-          this.cifs_vfsobjects.options = _.sortBy(options, ['label']);
-        });
     if (entityForm.isNew) {
-      entityForm.formGroup.controls['vfsobjects'].setValue(['ixnas', 'streams_xattr']);
       entityForm.formGroup.controls['browsable'].setValue(true);
     }
 

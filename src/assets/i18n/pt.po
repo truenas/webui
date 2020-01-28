@@ -774,9 +774,6 @@ msgstr "Adicionar Dados"
 msgid "Add Dataset"
 msgstr "Adicionar Dataset"
 
-msgid "Add Extra ISCSI Group"
-msgstr ""
-
 msgid "Add Group"
 msgstr ""
 
@@ -928,11 +925,6 @@ msgid "Address"
 msgstr "Endereço"
 
 msgid "Address space limit in bytes for the jail."
-msgstr ""
-
-msgid ""
-"Adds <a href=\"--docurl--/sharing.html#avail-vfs-modules-tab\" "
-"target=\"blank\">virtual file system modules</a> to enhance functionality."
 msgstr ""
 
 msgid "Adjust the file permissions using the checkboxes."
@@ -1366,6 +1358,9 @@ msgid ""
 "          recommended."
 msgstr ""
 
+msgid "Associated Target"
+msgstr ""
+
 msgid ""
 "At least one module must be defined in <a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
@@ -1390,6 +1385,9 @@ msgstr ""
 
 msgid "Auth Method"
 msgstr "Método de Autenticação"
+
+msgid "Auth Method and Group"
+msgstr ""
 
 msgid "Auth Token"
 msgstr ""
@@ -1526,6 +1524,9 @@ msgid "Base64 encoded key for the Azure account."
 msgstr ""
 
 msgid "Basejail"
+msgstr ""
+
+msgid "Basic Info"
 msgstr ""
 
 msgid "Basic Mode"
@@ -1738,6 +1739,9 @@ msgstr ""
 msgid "CAs"
 msgstr "CAs"
 
+msgid "CC"
+msgstr ""
+
 msgid "CD-ROM Path"
 msgstr ""
 
@@ -1755,6 +1759,9 @@ msgstr ""
 
 msgid "CPU and Memory"
 msgstr "CPU e Memória"
+
+msgid "CPUs and Memory"
+msgstr ""
 
 msgid "CSR exists on this system"
 msgstr ""
@@ -2407,6 +2414,9 @@ msgstr ""
 msgid "Community"
 msgstr "Comunidade"
 
+msgid "Compatability"
+msgstr ""
+
 msgid "Complete the Upgrade"
 msgstr ""
 
@@ -2647,9 +2657,9 @@ msgid "Country Code"
 msgstr "Código de País"
 
 msgid ""
-"Country Code must be blank or have a  valid two-letter <a  "
+"Country Code must contain a valid  <a "
 "href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
-"3166-1 alpha-2 code</a>."
+"3166-1 alpha-2 code</a>  of two capital letters."
 msgstr ""
 
 msgid "Crash reporting"
@@ -2857,9 +2867,6 @@ msgstr ""
 msgid "Dataset"
 msgstr ""
 
-msgid "Dataset Has Complex ACLs"
-msgstr ""
-
 msgid "Dataset Path"
 msgstr ""
 
@@ -3051,6 +3058,12 @@ msgid "Delete Path"
 msgstr ""
 
 msgid "Delete Selected"
+msgstr ""
+
+msgid "Delete Virtual Machine"
+msgstr ""
+
+msgid "Delete Virtual Machine Data?"
 msgstr ""
 
 msgid "Delete Zvol"
@@ -3473,9 +3486,6 @@ msgstr ""
 msgid "EC Curve"
 msgstr ""
 
-msgid "EDIT ACL"
-msgstr ""
-
 msgid "ERROR: Not Enough Memory"
 msgstr ""
 
@@ -3529,6 +3539,18 @@ msgstr ""
 msgid "Email Subject"
 msgstr "Assunto do Email"
 
+msgid ""
+"Email addresses must be entered in the format   "
+"<i>local-name</i>@<i>domain.com<i> with a comma (,) separating each   "
+"address."
+msgstr ""
+
+msgid ""
+"Email addresses to receive copies of iXsystems Support   messages about "
+"this issue. Use the format <i>name</i>@<i>domain.com</i>   and a comma (,) "
+"to separate each address."
+msgstr ""
+
 msgid "Emergency"
 msgstr ""
 
@@ -3556,9 +3578,6 @@ msgstr "Activar Kernel de Debug"
 
 msgid "Enable FXP"
 msgstr "Activar FXP"
-
-msgid "Enable Legacy User Interface"
-msgstr ""
 
 msgid "Enable NFSv4"
 msgstr ""
@@ -3618,9 +3637,6 @@ msgstr ""
 
 msgid "Enable iXsystems Proactive Support"
 msgstr ""
-
-msgid "Enable if Mac clients will be connecting to the SMB share."
-msgstr "Activar se clientes Mac se ligarem ao share SMB."
 
 msgid "Enable netwait feature"
 msgstr "Activar função netwait"
@@ -4297,7 +4313,9 @@ msgstr ""
 msgid "Enter the email address of the person responsible for the CA."
 msgstr ""
 
-msgid "Enter the email of the contact person."
+msgid ""
+"Enter the email of the contact person. Use the format "
+"<i>name</i>@<i>domain.com</i>."
 msgstr ""
 
 msgid "Enter the filesystem to snapshot."
@@ -4462,6 +4480,9 @@ msgid "Error Downloading File"
 msgstr ""
 
 msgid "Error Promoting dataset "
+msgstr ""
+
+msgid "Error Saving Configuration Settings"
 msgstr ""
 
 msgid "Error Saving Proactive Support Settings"
@@ -4807,6 +4828,9 @@ msgstr "Forçar"
 msgid "Force Delete"
 msgstr ""
 
+msgid "Force Delete?"
+msgstr ""
+
 msgid "Force deletion of dataset "
 msgstr ""
 
@@ -4908,6 +4932,9 @@ msgid "General Options"
 msgstr ""
 
 msgid "General Preferences"
+msgstr ""
+
+msgid "General VM Settings"
 msgstr ""
 
 msgid "Generate Debug File"
@@ -5943,6 +5970,12 @@ msgstr ""
 msgid "Legacy"
 msgstr ""
 
+msgid ""
+"Legacy NetBIOS name server. Advertises the SMB  Service <i>NetBIOS "
+"Name</i>. Could be required for legacy SMB1 clients  to discover the server "
+"(server appears in <i>Network Neighborhood</i>)."
+msgstr ""
+
 msgid "Legacy Web Interface"
 msgstr ""
 
@@ -6392,6 +6425,12 @@ msgid ""
 "www.example.com will secure both addresses."
 msgstr ""
 
+msgid ""
+"Multicast DNS. Uses the system <i>Hostname</i> to  advertise enabled and "
+"running services. For example, this controls if  the server appears under "
+"<i>Network</i> on MacOS clients."
+msgstr ""
+
 msgid "Multipath Name"
 msgstr ""
 
@@ -6563,6 +6602,9 @@ msgid "NetBIOS Name"
 msgstr "Nome NetBIOS"
 
 msgid "NetBIOS alias"
+msgstr ""
+
+msgid "NetBIOS-NS"
 msgstr ""
 
 msgid "Netbios Name"
@@ -7480,6 +7522,9 @@ msgstr ""
 msgid "Proceed"
 msgstr ""
 
+msgid "Proceed with Update"
+msgstr ""
+
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
@@ -7723,9 +7768,6 @@ msgstr ""
 
 msgid "Remove Additional Path"
 msgstr "Remover Caminho Adicional"
-
-msgid "Remove Extra ISCSI Group"
-msgstr ""
 
 msgid "Remove Keep Flag"
 msgstr ""
@@ -8885,6 +8927,9 @@ msgstr ""
 msgid "Service Account"
 msgstr ""
 
+msgid "Service Announcement"
+msgstr ""
+
 msgid "Service Key"
 msgstr ""
 
@@ -9322,6 +9367,12 @@ msgid "Set to ignore mapping requests for the <i>BUILTIN</i> domain."
 msgstr ""
 
 msgid ""
+"Set to ignore the Virtual  Machine status during the delete operation. "
+"Unset to prevent deleting  the Virtual Machine when it is still active or "
+"has an undefined state."
+msgstr ""
+
+msgid ""
 "Set to include all subdirectories of the specified                "
 "directory. When unset, only the specified directory                is "
 "included."
@@ -9441,6 +9492,12 @@ msgstr ""
 msgid ""
 "Set to remove all ACLs from the current dataset. ACLs are also recursively "
 "stripped from directories and child datasets when those options are set."
+msgstr ""
+
+msgid ""
+"Set to remove the data associated with this  Virtual Machine (which will "
+"result in data loss if the data is not backed up). Unset to  leave the data "
+"intact."
 msgstr ""
 
 msgid "Set to run resilver tasks between the configured times."
@@ -10131,7 +10188,11 @@ msgstr ""
 msgid "System domain name, like <i>example.com</i>"
 msgstr ""
 
-msgid "System failed to save configuration settings. Check the network connection."
+msgid ""
+"System failed to save configuration settings. Check the network connection. "
+" To proceed with the system upgrade <b>without</b> saving a current backup "
+"of the configuration setting, select  the <i>Confirm</i> checkbox and click "
+"<i>Proceed with Update</i>."
 msgstr ""
 
 msgid "System host time to synchronize the time between jail and host."
@@ -10691,7 +10752,7 @@ msgstr ""
 
 msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
-"the ACL editor.                   Open ACL editor?"
+"the ACL editor."
 msgstr ""
 
 msgid ""
@@ -11079,9 +11140,9 @@ msgstr ""
 
 msgid ""
 "Upgrades both controllers. Files are downloaded to the Active Controller    "
-"                  and then transferred to the Standby Controller. The "
-"upgrade process starts concurrently on both TrueNAS Controllers.            "
-"          Continue with download?"
+"        and then transferred to the Standby Controller. The upgrade process "
+"starts concurrently on both TrueNAS Controllers.            Continue with "
+"download?"
 msgstr ""
 
 msgid "Upgrading Jail"
@@ -11319,11 +11380,14 @@ msgstr "Utilizadores"
 msgid "Users & Groups"
 msgstr "Utilizadores e Grupos"
 
-msgid "Using pool "
+msgid ""
+"Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to "
+"WS-Discovery clients. This causes the computer appear in  the <i>Network "
+"Neighborhood</i> of modern Windows OSes."
 msgstr ""
 
-msgid "VFS Objects"
-msgstr "Objectos VFS"
+msgid "Using pool "
+msgstr ""
 
 msgid "VLAN ID"
 msgstr "VLAN ID"
@@ -11435,9 +11499,6 @@ msgstr ""
 msgid "Virtual Machine (VM) Wizard type."
 msgstr ""
 
-msgid "Virtual Machine Settings"
-msgstr ""
-
 msgid "Virtual Machines"
 msgstr ""
 
@@ -11456,9 +11517,6 @@ msgstr ""
 msgid "WARNING"
 msgstr ""
 
-msgid "WARNING: "
-msgstr ""
-
 msgid "WARNING: A failover will  temporarily interrupt system services."
 msgstr ""
 
@@ -11474,6 +11532,9 @@ msgid "WARNING: Exporting/disconnecting pool <i>"
 msgstr ""
 
 msgid "WARNING: Locking pool <i>"
+msgstr ""
+
+msgid "WS-Discovery"
 msgstr ""
 
 msgid "Wait to start VM until VNC client connects."
@@ -11704,9 +11765,6 @@ msgstr ""
 msgid "Zero Device Numbers"
 msgstr ""
 
-msgid "Zeroconf share discovery"
-msgstr ""
-
 msgid "Zvol Location"
 msgstr ""
 
@@ -11887,6 +11945,9 @@ msgstr ""
 msgid "iSCSI"
 msgstr ""
 
+msgid "iSCSI Group"
+msgstr ""
+
 msgid "interfaces"
 msgstr ""
 
@@ -11922,6 +11983,9 @@ msgstr "list"
 
 msgid "login_flags"
 msgstr "login_flags"
+
+msgid "mDNS"
+msgstr ""
 
 msgid "mac_prefix"
 msgstr "mac_prefix"

@@ -74,9 +74,10 @@ export class EntityUtils {
         this.errorReport(res, dialog);
       }
       for (let i = 0; i < res.extra.length; i++) {
-        const field = res.extra[i][0].split('.').pop();
+        let field = res.extra[i][0].split('.');
         const error = res.extra[i][1];
 
+        field = field[1];
         let fc = _.find(entity.fieldConfig, {'name' : field}) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         let stepIndex;
         if (entity.wizardConfig) {
@@ -105,12 +106,8 @@ export class EntityUtils {
           }
           fc['hasErrors'] = true;
           fc['errors'] = error;
-          if (entity.formGroup && entity.formGroup.controls[field]) {
-            entity.formGroup.controls[field].setErrors({'invalidValue': true});
-          }
           if (entity.wizardConfig && entity.entityWizard) {
             entity.entityWizard.stepper.selectedIndex = stepIndex;
-            entity.entityWizard.formGroup.controls.formArray.controls[stepIndex].controls[field].setErrors({'invalidValue': true});
           }
         } else {
           if (entity.error) {

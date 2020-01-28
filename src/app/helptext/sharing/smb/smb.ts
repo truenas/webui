@@ -95,12 +95,6 @@ export const helptext_sharing_smb = {
     tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
  Separate entries with a comma, space, or tab.'),
 
-    placeholder_vfsobjects: T('VFS Objects'),
-    tooltip_vfsobjects: T('Adds <a\
- href="--docurl--/sharing.html#avail-vfs-modules-tab"\
- target="blank">virtual file system modules</a> to\
- enhance functionality.'),
-
     placeholder_shadowcopy: T('Enable Shadow Copies'),
     tooltip_shadowcopy: T('Export ZFS snapshots as\
  <a href="https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets"\

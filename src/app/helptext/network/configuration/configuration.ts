@@ -64,5 +64,19 @@ hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>.\
 hostname_and_domain: T('Hostname and Domain'),
 gateway: T('Default Gateway'),
 nameservers: T('DNS Servers'),
-other: T('Other Settings')
+other: T('Other Settings'),
+service_announcement: T('Service Announcement'),
+
+netbios_placeholder: T('NetBIOS-NS'),
+netbios_tooltip: T('Legacy NetBIOS name server. Advertises the SMB \
+ Service <i>NetBIOS Name</i>. Could be required for legacy SMB1 clients \
+ to discover the server (server appears in <i>Network Neighborhood</i>).'),
+mdns_placeholder: T('mDNS'),
+mdns_tooltip: T('Multicast DNS. Uses the system <i>Hostname</i> to \
+ advertise enabled and running services. For example, this controls if \
+ the server appears under <i>Network</i> on MacOS clients.'),
+wsd_placeholder: T('WS-Discovery'),
+wsd_tooltip: T('Uses the SMB Service <i>NetBIOS Name</i> to advertise \
+ the server to WS-Discovery clients. This causes the computer appear in \
+ the <i>Network Neighborhood</i> of modern Windows OSes.'),
 }

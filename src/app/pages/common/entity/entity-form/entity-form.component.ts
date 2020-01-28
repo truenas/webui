@@ -89,6 +89,7 @@ export interface Formconfiguration {
   preHandler?;
   initialCount?
   initialCount_default?;
+  responseOnSubmit?;
 
   goBack?();
   onSuccess?(res);
@@ -514,6 +515,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
                             if (this.conf.afterSubmit) {
                               this.conf.afterSubmit(value);
+                            }
+                            if (this.conf.responseOnSubmit) {
+                              this.conf.responseOnSubmit(res);
                             }
                           }
 

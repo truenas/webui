@@ -79,9 +79,6 @@ cifs_srv_smb_options_tooltip: T('Enter additional <b>smb.conf</b> options. See t
  target="_blank">Samba Guide</a>\
  for more information on these settings.'),
 
-cifs_srv_zeroconf_placeholder: T('Zeroconf share discovery'),
-cifs_srv_zeroconf_tooltip: T('Enable if Mac clients will be connecting to the SMB share.'),
-
 cifs_srv_ntlmv1_auth_placeholder: T('NTLMv1 Auth'),
 cifs_srv_ntlmv1_auth_tooltip: T('Off by default. When set,\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=smbd" target="_blank">smbd(8)</a>\

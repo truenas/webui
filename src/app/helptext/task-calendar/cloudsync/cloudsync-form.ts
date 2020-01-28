@@ -45,9 +45,11 @@ storage_class_tooltip: T('Classification for each S3 object. Choose a\
  target="_blank">Amazon S3 Storage Classes</a> for more information.'),
 
 b2_chunk_size_placeholder:  T('Upload Chunk Size (MiB)'),
-b2_chunk_size_tooltip: T('Files are split into chunks of this size before upload.\
- Up to «--transfers» chunks can be in progress at one time. The single largest file\
- being transferred must fit into no more than 10,000 chunks.'),
+b2_chunk_size_tooltip: T('Files are split into chunks of this size \
+ before upload. The number of chunks that can be simultaneously \
+ transferred is set by the <b>Transfers</b> number. The single \
+ largest file being transferred must fit into no more than 10,000 \
+ chunks.'),
 
 fast_list_placeholder: T('Use --fast-list'),
 fast_list_tooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\

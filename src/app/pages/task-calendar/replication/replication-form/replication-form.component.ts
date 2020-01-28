@@ -921,6 +921,13 @@ export class ReplicationFormComponent {
 
         data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(' ') : data['exclude'];
         data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
+        if (data["naming_schema"] === '') {
+            delete data["naming_schema"];
+        }
+        if (data["also_include_naming_schema"] === '') {
+            delete data["also_include_naming_schema"];
+        }
+
         data["naming_schema"] = typeof data['naming_schema'] === "string" ? data['naming_schema'].split(' ') : data['naming_schema'];
         data["also_include_naming_schema"] = typeof data['also_include_naming_schema'] === "string" ? data['also_include_naming_schema'].split(' ') : data['also_include_naming_schema'];
 
@@ -1000,7 +1007,7 @@ export class ReplicationFormComponent {
             parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
             parent.countEligibleManualSnapshots();
         } else {
-            this.form_message.content = '';
+            parent.form_message.content = '';
         }
     }
 }

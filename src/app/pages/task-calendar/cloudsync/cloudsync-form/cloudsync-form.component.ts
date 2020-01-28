@@ -755,7 +755,7 @@ export class CloudsyncFormComponent {
 
     for (let i = 0; i < bwlimit.length; i++) {
       const sublimitArr = bwlimit[i].split(',');
-      if (sublimitArr.length === 1) {
+      if (sublimitArr.length === 1 && bwlimit.length === 1) {
         if (!sublimitArr[0].includes(':')) {
           sublimitArr.unshift('00:00');
         }
