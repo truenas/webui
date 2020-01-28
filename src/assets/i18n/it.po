@@ -535,7 +535,7 @@ msgid ""
 msgstr ""
 
 msgid "A pool with this name already exists."
-msgstr ""
+msgstr "Un pool con questo nome esiste già"
 
 msgid ""
 "A single bandwidth limit or bandwidth limit schedule in rclone format. "
