@@ -50,7 +50,10 @@ export default {
  Mutual CHAP."),
 
     ip_placeholder: T("IP"),
-    ip_tooltip: T("Select the IP address associated with an interface or the wildcard address of 0.0.0.0 (any interface)."),
+    ip_tooltip: T("Select the IP addresses to be listened on by the \
+ portal. Click ADD to add IP addresses with a different network port. \
+ The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
+ addresses, or <i>::</i> to listen on all IPv6 addresses."),
 
     port_placeholder: T("Port"),
     port_tooltip: T("TCP port used to access the iSCSI target. Default is 3260."),

@@ -143,7 +143,7 @@ export class VolumesListTableConfig implements InputTableConf {
               this.loader.open();
               this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
                 if (res.length > 0) {
-                  p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is locked:`;
+                  p1 = T('These services depend on pool ') + `<i>${row1.name}</i>` + T(' and will be disrupted if the pool is locked:');
                   res.forEach((item) => {
                     p1 += `<br><br>${item.type}:`;
                     item.attachments.forEach((i) => {

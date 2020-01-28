@@ -260,6 +260,18 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
+  getServerTime(){
+    
+    let xmlHttp = new XMLHttpRequest(); 
+    xmlHttp.open('HEAD',window.location.origin.toString(),false);
+    xmlHttp.setRequestHeader("Content-Type", "text/html");
+    xmlHttp.send('');
+    const serverTime = xmlHttp.getResponseHeader("Date");
+    return new Date(serverTime);
+
+  }
+
+
   // Convert timespan to start/end options for RRDTool
   convertTimespan(timespan, direction?: string, currentDate?:number): TimeData{
     if(!direction){
@@ -269,7 +281,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let units: string;
     let value: number;
 
-    const now = new Date();
+    const now = this.getServerTime(); 
+
     let startDate:Date;
     let endDate:Date;
     if(direction == 'backward' && !currentDate){

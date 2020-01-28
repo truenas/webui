@@ -702,9 +702,6 @@ msgstr ""
 "color=\"red\">Все пароли сбрасываются при загрузке конфигурации сохраненной "
 "без секретного пароля. </font></p>"
 
-msgid ">release notes</a>."
-msgstr ""
-
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -870,6 +867,9 @@ msgstr "AFP"
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 Unix привилегии"
+
+msgid "API"
+msgstr ""
 
 msgid "API Key"
 msgstr "Ключ API"
@@ -2495,9 +2495,6 @@ msgstr "SSL сервер CheckIP"
 msgid "Checking HA status"
 msgstr "Проверка статуса ВД"
 
-msgid "Checking this box clears a previously-set password."
-msgstr "Установка этого флажка удаляет ранее установленный пароль."
-
 msgid "Chmod Request"
 msgstr "Запрос chmod"
 
@@ -2933,6 +2930,9 @@ msgstr ""
 
 msgid "Clear SED Password"
 msgstr "Очистить пароль SED"
+
+msgid "Clear the SED password for this disk."
+msgstr "Очистить пароль SED для этого диска."
 
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
@@ -7016,6 +7016,9 @@ msgstr "Сохранить сетевые изменения"
 msgid "Keep changed network settings permanently?"
 msgstr "Сохранить на постоянно измененные настройки сети?"
 
+msgid "Keep snapshot for"
+msgstr "Хранить снимок"
+
 msgid ""
 "Keep the name short. Using a name longer than 63 characters can prevent "
 "accessing the block device."
@@ -7219,6 +7222,9 @@ msgid ""
 msgstr ""
 "Выход из домена требует достаточных привилегий. Введите свои учетные данные "
 "ниже."
+
+msgid "Legacy"
+msgstr "Старый"
 
 msgid "Legacy Web Interface"
 msgstr "Старый Web интерфейс"
@@ -10756,6 +10762,13 @@ msgstr ""
 "разрешить обслуживание запросов монтирования без полномочий root."
 
 msgid ""
+"Set or change the password of this SED.  This password is used instead of "
+"the global SED password."
+msgstr ""
+"Установите или измените пароль этого SED. Этот пароль используется вместо "
+"глобального пароля SED."
+
+msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
 "target=\"_blank\">getrlimit(2)</a> utility."
@@ -13537,13 +13550,6 @@ msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "Используйте формат <i>A.B.C.D/E</i>, где <i>E</i> - маска CIDR."
 
 msgid ""
-"Use this field to set or change the password for SED. Leave this field "
-"blank  to keep a previously-set password."
-msgstr ""
-"Используйте это поле для установки или изменения пароля для SED. Оставьте "
-"это поле пустым, чтобы сохранить ранее установленный пароль."
-
-msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
 "that SMB1 is being deprecated and it is advised to upgrade clients to "
 "operating system versions that support modern versions of the SMB protocol."
@@ -13721,6 +13727,9 @@ msgstr "Системное время ВМ. По умолчанию <i>Мест�
 
 msgid "VMWare Sync"
 msgstr "Синхронизация VMWare"
+
+msgid "VMware Sync"
+msgstr "Синхронизация VMware"
 
 msgid "VMware-Snapshots"
 msgstr "VMware-Снимки"

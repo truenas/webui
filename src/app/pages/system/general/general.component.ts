@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
-import { DialogService, LanguageService, RestService, WebSocketService, StorageService } from '../../../services/';
+import { DialogService, LanguageService, RestService, WebSocketService, StorageService, SystemGeneralService } from '../../../services/';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -286,7 +287,8 @@ export class GeneralComponent {
 
   constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
-    protected dialog: DialogService, protected loader: AppLoaderService,
+    protected dialog: DialogService, protected loader: AppLoaderService, 
+    protected sysGeneralService: SystemGeneralService,
     public http: Http, protected storage: StorageService,  private mdDialog: MatDialog) {}
 
   IPValidator(name: string, wildcard: string) {
@@ -346,32 +348,6 @@ export class GeneralComponent {
         }
       });
 
-    entityEdit.ws.call('notifier.choices', ['IPChoices', [true, false]])
-      .subscribe((res) => {
-        this.ui_address =
-          _.find(this.fieldConfig, { 'name': 'ui_address' });
-        this.ui_address.options.push({ label: '0.0.0.0', value: '0.0.0.0' });
-        res.forEach((item) => {
-          this.ui_address.options.push({ label: item[1], value: item[0] });
-        });
-      });
-
-    entityEdit.ws.call('notifier.choices', ['IPChoices', [false, true]])
-      .subscribe((res) => {
-        this.ui_v6address =
-          _.find(this.fieldConfig, { 'name': 'ui_v6address' });
-        let wildcard_found = false;
-        res.forEach((item) => {
-          if (item[0] === '::' && !wildcard_found) {
-            wildcard_found = true;
-          }
-          this.ui_v6address.options.push({ label: item[1], value: item[0] });
-        });
-        if (!wildcard_found) {
-          this.ui_v6address.options.unshift({ label: '::', value: '::' });
-        }
-      });
-
     entityEdit.ws.call('notifier.gui_languages').subscribe((res) => {
       this.languageList = res;
       this.makeLanguageList();
@@ -398,6 +374,22 @@ export class GeneralComponent {
         res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
         this.makeLanguageList();
       })
+
+    this.sysGeneralService
+      .ipChoicesv4()
+      .subscribe(ips => {
+        this.fieldSets
+          .find(set => set.name === "top")
+          .config.find(config => config.name === "ui_address").options = ips;
+      });
+
+    this.sysGeneralService
+      .ipChoicesv6()
+      .subscribe(v6Ips => {
+        this.fieldSets
+          .find(set => set.name === "top")
+          .config.find(config => config.name === "ui_v6address").options = v6Ips;
+      });
   }
   
   makeLanguageList() {
@@ -500,7 +492,7 @@ export class GeneralComponent {
             }, err => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
-              entityDialog.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
+              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
             });
           },
           (err) => {
@@ -528,24 +520,21 @@ export class GeneralComponent {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
-    parent.loader.open();
+    const dialogRef = parent.mdDialog.open(EntityJobComponent, {data: {"title":T("Upload Config"),"CloseOnClickOutside":true}});
+    dialogRef.componentInstance.setDescription(T("Uploading..."));
     formData.append('data', JSON.stringify({
       "method": "config.upload",
       "params": []
     }));
     formData.append('file', parent.subs.file);
-
-    parent.http.post(parent.subs.apiEndPoint, formData).subscribe(
-      (data) => {
-        parent.loader.close();
-        entityDialog.dialogRef.close();
-        parent.router.navigate(['/others/reboot']);
-      },
-      (err) => {
-        parent.loader.close();
-        this.dialog.errorReport(err.status, err.statusText, err._body);
-      }
-    );
+    dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
+    dialogRef.componentInstance.success.subscribe(res=>{
+      dialogRef.close();
+      parent.router.navigate(['/others/reboot']);
+    })
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.setDescription(res.error);
+    });
   }
 
   resetConfigSubmit(entityDialog) {

@@ -296,23 +296,23 @@ export class PluginAddComponent implements OnInit {
       (this.formGroup.controls['ip6_addr'].value == '' || this.formGroup.controls['ip6_addr'].value == undefined)) {
         if (ip4AddrField.required == false) {
           ip4AddrField.required = true;
-          this.formGroup.controls['ip4_addr'].setValidators([Validators.required]);
+          this.formGroup.controls['ip4_addr'].setValidators([Validators.required, regexValidator(this.networkService.ipv4_regex)]);
           this.formGroup.controls['ip4_addr'].updateValueAndValidity();
         }
         if (ip6AddrField.required == false) {
           ip6AddrField.required = true;
-          this.formGroup.controls['ip6_addr'].setValidators([Validators.required]);
+          this.formGroup.controls['ip6_addr'].setValidators([Validators.required, regexValidator(this.networkService.ipv6_regex)]);
           this.formGroup.controls['ip6_addr'].updateValueAndValidity();
         }
       } else {
         if (ip4AddrField.required == true) {
           ip4AddrField.required = false;
-          this.formGroup.controls['ip4_addr'].clearValidators();
+          this.formGroup.controls['ip4_addr'].setValidators([regexValidator(this.networkService.ipv4_regex)]);
           this.formGroup.controls['ip4_addr'].updateValueAndValidity();
         }
         if (ip6AddrField.required == true) {
           ip6AddrField.required = false;
-          this.formGroup.controls['ip6_addr'].clearValidators();
+          this.formGroup.controls['ip6_addr'].setValidators([regexValidator(this.networkService.ipv6_regex)]);
           this.formGroup.controls['ip6_addr'].updateValueAndValidity();
         }
       }

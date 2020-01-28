@@ -96,7 +96,7 @@ export class SnapshotFormComponent implements OnDestroy {
     placeholder: helptext.begin_placeholder,
     tooltip: helptext.begin_tooltip,
     options: [],
-    value: '09:00',
+    value: '00:00',
     required: true,
     validation: [Validators.required],
   }, {
@@ -105,7 +105,7 @@ export class SnapshotFormComponent implements OnDestroy {
     placeholder: helptext.end_placeholder,
     tooltip: helptext.end_tooltip,
     options: [],
-    value: '18:00',
+    value: '23:59',
     required: true,
     validation: [Validators.required],
   }, {

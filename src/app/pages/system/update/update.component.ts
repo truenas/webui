@@ -680,7 +680,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
               entityDialog.parent.storage.downloadBlob(file, fileName);
             }, err => {
               entityDialog.dialogRef.close();
-              entityDialog.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
+              entityDialog.parent.dialogService.errorReport(helptext.save_config_err.title, helptext.save_config_err.message);
             })
             entityDialog.dialogRef.close();
           },
