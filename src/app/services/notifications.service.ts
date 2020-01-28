@@ -1,6 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
 import { RestService, WebSocketService } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
 import { Observable ,  Observer ,  Subject } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -10,6 +9,7 @@ export interface NotificationAlert {
   icon: string;
   icon_tooltip: string;
   time: string;
+  time_locale: string;
   timezone: string;
   route: string;
   color: string;
@@ -29,7 +29,7 @@ export class NotificationsService {
   private locale = 'en-US';
   private timeZone = 'UTC'
 
-  constructor(private restService: RestService, private ws: WebSocketService, protected localeService: LocaleService) {
+  constructor(private restService: RestService, private ws: WebSocketService) {
 
     this.initMe();
 
@@ -148,9 +148,12 @@ export class NotificationsService {
     const dismissed: boolean = alertObj.dismissed;
     const message: string = <string>alertObj.formatted;
     const level: string = <string>alertObj.level;
-    const date = alertObj.datetime.$date;
+    const date: Date = new Date(alertObj.datetime.$date);
+    const dateStr = date.toUTCString();
+    const dateStrLocale = date.toLocaleString(this.locale, {timeZone: this.timeZone});
     const one_shot: boolean = alertObj.one_shot;
     let icon_tooltip: string = <string>alertObj.level;
+    //const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
     const routeName = "/dashboard"
     let icon = "info";
     let color = "primary";
@@ -176,7 +179,8 @@ export class NotificationsService {
       message: message,
       icon: icon,
       icon_tooltip: icon_tooltip,
-      time: date,
+      time: dateStr,
+      time_locale: dateStrLocale,
       timezone: this.timeZone,
       route: routeName,
       color: color,

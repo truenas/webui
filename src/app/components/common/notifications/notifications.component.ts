@@ -14,17 +14,19 @@ export class NotificationsComponent implements OnInit {
 
   notifications: Array<NotificationAlert> = [];
   dismissedNotifications: Array<NotificationAlert> = []
+  ngDateFormat;
 
   constructor(private notificationsService: NotificationsService, protected localeService: LocaleService) {
   }
 
   ngOnInit() {
     this.initData();
+    setTimeout(() => {
+      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
+    }, 1000)
+
 
     this.notificationsService.getNotifications().subscribe((notifications)=>{
-      notifications.forEach((i) => {
-        i.time = this.localeService.formatDateTime(i.time);
-      })
       this.notifications = [];
       this.dismissedNotifications = [];
 
