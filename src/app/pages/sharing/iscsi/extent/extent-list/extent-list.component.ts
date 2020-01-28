@@ -34,6 +34,10 @@ export class ExtentListComponent {
     {
       name: T('NAA'),
       prop: 'naa',
+    },
+    {
+      name: T('Enabled'),
+      prop: 'enabled',
     }
   ];
   public config: any = {

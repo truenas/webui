@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
-import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService } from 'app/services';
+import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService, DialogService } from 'app/services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
@@ -751,7 +751,8 @@ export class ReplicationFormComponent {
         protected storageService: StorageService,
         private aroute: ActivatedRoute,
         private keychainCredentialService: KeychainCredentialService,
-        private replicationService: ReplicationService) {
+        private replicationService: ReplicationService,
+        private dialogService: DialogService) {
         const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
         this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
@@ -994,13 +995,13 @@ export class ReplicationFormComponent {
                     data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
                 }
             }
-            data['source_datasets'] = Array.isArray(data['source_datasets_PUSH']) ? _.cloneDeep(data['source_datasets_PUSH']) : _.cloneDeep(data['source_datasets_PUSH']).split(' ');
+            data['source_datasets'] = _.filter(Array.isArray(data['source_datasets_PUSH']) ? _.cloneDeep(data['source_datasets_PUSH']) : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim));
             data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? _.cloneDeep(data['target_dataset_PUSH']) : _.cloneDeep(data['target_dataset_PUSH']).toString();
 
             delete data['source_datasets_PUSH'];
             delete data['target_dataset_PUSH'];
         } else {
-            data['source_datasets'] = Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(' ');
+            data['source_datasets'] = _.filter(Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim));
             data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string' ? _.cloneDeep(data['target_dataset_PULL']) : _.cloneDeep(data['target_dataset_PULL']).toString();
             if (_.startsWith(data['target_dataset'], '/mnt/')) {
                 data['target_dataset']  =  data['target_dataset'] .substring(5);
@@ -1011,6 +1012,13 @@ export class ReplicationFormComponent {
 
         data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(' ') : data['exclude'];
         data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
+        if (data["naming_schema"] === '') {
+            delete data["naming_schema"];
+        }
+        if (data["also_include_naming_schema"] === '') {
+            delete data["also_include_naming_schema"];
+        }
+
         data["naming_schema"] = typeof data['naming_schema'] === "string" ? data['naming_schema'].split(' ') : data['naming_schema'];
         data["also_include_naming_schema"] = typeof data['also_include_naming_schema'] === "string" ? data['also_include_naming_schema'].split(' ') : data['also_include_naming_schema'];
 
@@ -1038,7 +1046,6 @@ export class ReplicationFormComponent {
 
         if (data["transport"] === "LEGACY") {
             data["auto"] = true;
-            data["retention_policy"] = "NONE";
             data["allow_from_scratch"] = true;
             data["exclude"] = [];
             data["periodic_snapshot_tasks"] = [];
@@ -1049,7 +1056,8 @@ export class ReplicationFormComponent {
             data["large_block"] = false;
             data["embed"] = false;
             data["compressed"] = false;
-            data["retries"] = 1
+            data["retries"] = 1;
+            data["properties"] = data["retention_policy"] === 'SOURCE' ? true : false;
         }
         // for edit replication task
         if (!this.entityForm.isNew) {
@@ -1105,7 +1113,7 @@ export class ReplicationFormComponent {
             parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
             parent.countEligibleManualSnapshots();
         } else {
-            this.form_message.content = '';
+            parent.form_message.content = '';
         }
     }
 }

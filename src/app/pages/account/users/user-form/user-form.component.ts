@@ -210,8 +210,8 @@ export class UserFormComponent {
           placeholder : helptext.user_form_auth_pw_enable_placeholder,
           tooltip : helptext.user_form_auth_pw_enable_tooltip,
           options : [
-            {label:helptext.user_form_auth_pw_enable_label_yes, value: false },
-            {label: helptext.user_form_auth_pw_enable_label_no, value: true },
+            {label:helptext.user_form_auth_pw_enable_label_yes, value: true },
+            {label: helptext.user_form_auth_pw_enable_label_no, value: false },
           ],
           value: false
         },

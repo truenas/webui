@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
@@ -6,6 +6,7 @@ import { RestService, TooltipsService, WebSocketService } from '../../../service
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../helptext/network/configuration/configuration';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 @Component({
   selector : 'app-networkconfiguration',
@@ -14,7 +15,7 @@ import helptext from '../../../helptext/network/configuration/configuration';
   `,
   providers : [ TooltipsService ],
 })
-export class ConfigurationComponent {
+export class ConfigurationComponent implements OnDestroy{
 
   //protected resource_name: string = 'network/globalconfiguration/';
   protected queryCall: string = 'network.configuration.config';
@@ -123,9 +124,14 @@ export class ConfigurationComponent {
   private failover_fields = ['hostname_b', 'hostname_virtual'];
 
   constructor(protected router: Router, protected rest: RestService,
+              public core: CoreService,
               protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected tooltipsService: TooltipsService) {}
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass: this});
+  }
 
   afterInit(entityEdit: any) { 
     this.entityEdit = entityEdit; 
@@ -157,5 +163,9 @@ export class ConfigurationComponent {
 
   submitFunction(body: any) {
     return this.ws.call('network.configuration.update', [body]);
+  }
+
+  afterSubmit(value){
+    this.core.emit({name: "SysInfoUpdateCache", sender:this});
   }
 }

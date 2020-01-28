@@ -70,9 +70,10 @@ export const helptext_sharing_iscsi = {
   ),
 
   portal_form_placeholder_ip: T("IP Address"),
-  portal_form_tooltip_ip: T(
-    "Select the IP address associated with an interface\
- or the wildcard address of <i>0.0.0.0</i> (any interface)."
+  portal_form_tooltip_ip: T("Select the IP addresses to be listened on \
+ by the portal. Click ADD to add IP addresses with a different network \
+ port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4 \
+ addresses, or <i>::</i> to listen on all IPv6 addresses."
   ),
   portal_form_validators_ip: [Validators.required],
 
@@ -242,6 +243,9 @@ export const helptext_sharing_iscsi = {
  LUN."
   ),
 
+  extent_placeholder_enabled: T('Enabled'),
+  extent_tooltip_enabled: T(''),
+
   authaccess_placeholder_tag: T("Group ID"),
   authaccess_tooltip_tag: T(
     "Allow different groups to be configured\
@@ -276,9 +280,7 @@ export const helptext_sharing_iscsi = {
     "Mutual secret password. Required when Peer User is set. Must be\
  different than the <i>Secret</i>."
   ),
-  authaccess_error_peersecret: T('Must match Peer Secret (Confirm) and be\
- between 12 and 16 characters in length. Cannot be the same as\
- Secret.'),
+  authaccess_error_peersecret: T('Secret and Peer Secret can not be the same.'),
 
   authaccess_placeholder_peersecret_confirm: T("Peer Secret (Confirm)"),
 

@@ -62,7 +62,6 @@ export class ActiveDirectoryComponent {
       'name' : helptext.activedirectory_custactions_leave_domain,
       function : () => { 
         const that = this;
-        console.log(that)
         this.dialogservice.dialogForm(
           {
             title: helptext.activedirectory_custactions_leave_domain,
@@ -156,7 +155,7 @@ export class ActiveDirectoryComponent {
       placeholder : helptext.activedirectory_certificate_placeholder,
       tooltip : helptext.activedirectory_certificate_tooltip,
       options : [
-        {label : '---', value : ""},
+        {label : '---', value : null},
       ]
     },
     {
@@ -214,7 +213,7 @@ export class ActiveDirectoryComponent {
       placeholder : helptext.activedirectory_kerberos_principal_placeholder,
       tooltip : helptext.activedirectory_kerberos_principal_tooltip,
       options : [
-        {label : '---', value : ""},
+        {label : '---', value : null},
       ]
     },
     {
@@ -454,9 +453,33 @@ export class ActiveDirectoryComponent {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  afterSubmit(value) {
+  
+  responseOnSubmit(value) {
+    this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
+    this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
+
     if (value.enable) {
       this.adStatus = true;
     }
+
+    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
+      this.kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
+      this.kerberos_realm.options.length = 0;
+      this.kerberos_realm.options.push({label : '---', value : null});
+      res.data.forEach((item) => {
+        this.kerberos_realm.options.push(
+            {label : item.krb_realm, value : item.id});
+      });
+    });
+
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
+      this.kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});
+      this.kerberos_principal.options.length = 0;
+      this.kerberos_principal.options.push({label : '---', value : null});
+      res.forEach((item) => {
+        this.kerberos_principal.options.push(
+            {label : item, value : item});
+      });
+    });
   }
 }

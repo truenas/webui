@@ -469,4 +469,7 @@ export class JailListComponent {
     }
   }
 
+  wsDeleteParams(row, id) {
+    return row.state === 'up' ? [id, {force: true}] : [id];
+  }
 }
