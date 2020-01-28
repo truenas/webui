@@ -27,13 +27,15 @@
           </div>
         </div>
         <ng-template #extend>
+        <div>
           <mat-form-field>
             <input id="pool-manager__extend-name-input-field" matInput placeholder="Name" [value]="name" disabled>
           </mat-form-field>
-          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
+          <mat-error *ngIf="isEncrypted" class="adjust-upward">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
           <div>
             <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
           </div>
+        </div>
         </ng-template>
       </div>
       <div class="wrapper">
