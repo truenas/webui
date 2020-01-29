@@ -481,20 +481,6 @@ export class ReplicationFormComponent {
                     value: '23:59',
                 },
                 {
-                    type: 'checkbox',
-                    name: 'only_matching_schedule',
-                    placeholder: helptext.only_matching_schedule_placeholder,
-                    tooltip: helptext.only_matching_schedule_tooltip,
-                    isHidden: true,
-                    relation: [{
-                        action: 'SHOW',
-                        when: [{
-                            name: 'schedule',
-                            value: true,
-                        }]
-                    }],
-                }, 
-                {
                     type: 'input',
                     name: 'naming_schema',
                     placeholder: helptext.naming_schema_placeholder,
@@ -712,6 +698,20 @@ export class ReplicationFormComponent {
                     }],
                     value: '23:59',
                 },
+                {
+                    type: 'checkbox',
+                    name: 'only_matching_schedule',
+                    placeholder: helptext.only_matching_schedule_placeholder,
+                    tooltip: helptext.only_matching_schedule_tooltip,
+                    isHidden: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule',
+                            value: true,
+                        }]
+                    }],
+                },
             ]
         }
     ]
@@ -854,7 +854,7 @@ export class ReplicationFormComponent {
             entityForm.setDisabled('schedule_picker', !res, !res);
             entityForm.setDisabled('schedule_begin', !res, !res);
             entityForm.setDisabled('schedule_end', !res, !res);
-            entityForm.setDisabled('only_matching_schedule', res, res);
+            entityForm.setDisabled('only_matching_schedule', !res, !res);
         })
 
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
@@ -882,6 +882,8 @@ export class ReplicationFormComponent {
                 speedLimitField['errors'] = helptext.speed_limit_errors;
             };
         });
+
+        entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
     }
 
     resourceTransformIncomingRestData(wsResponse) {
