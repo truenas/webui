@@ -190,7 +190,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setTableHeight();
     this.hasActions = this.conf.noActions === true ? false : true;
 
-    this.sortKey = this.conf.config.deleteMsg.key_props ? this.conf.config.deleteMsg.key_props[0] : this.conf.columns[0].prop;
+    this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props) ? this.conf.config.deleteMsg.key_props[0] : this.conf.columns[0].prop;
     setTimeout(async() => {
       if (this.conf.prerequisite) {
         await this.conf.prerequisite().then(
