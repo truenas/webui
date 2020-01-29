@@ -10,7 +10,7 @@ export class LocaleService {
 
     getDateFormatOptions() {
         let options = [
-            { label: moment().format('YYYY/MM/DD'), value: 'YYYY/MM/DD' },     
+            { label: moment().format('YYYY-MM-DD'), value: 'YYYY-MM-DD' },     
             { label: moment().format('MMMM D, YYYY'), value: 'MMMM D, YYYY' },
             { label: moment().format('D MMMM, YYYY'), value: 'D MMMM, YYYY' },
             { label: moment().format('MMM D, YYYY'), value: 'MMM D, YYYY' },
@@ -23,9 +23,9 @@ export class LocaleService {
 
     getTimeFormatOptions() {
         let options = [
-            { label: moment().format('hh:mm:ss a'), value: 'hh:mm:ss a' },
-            { label: moment().format('hh:mm:ss A'), value: 'hh:mm:ss A' },
             { label: `${moment().format('HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
+            { label: moment().format('hh:mm:ss a'), value: 'hh:mm:ss a' },
+            { label: moment().format('hh:mm:ss A'), value: 'hh:mm:ss A' }
         ];
         return options;
     }
@@ -50,17 +50,13 @@ export class LocaleService {
     
     // Translates moment.js format to angular template format for use in special cases such as form-scheduler
     getAngularFormat() {
-        // setTimeout(() => {
-            let tempStr = `${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`
-            let dateStr = '';
-            console.log(tempStr)
-            for (let i = 0; i < tempStr.length; i++) {
-                tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i] :
-                    dateStr += tempStr[i].toLowerCase();
-            }
-            return dateStr;
-        // }, 1000)
-
+        let tempStr = `${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`
+        let dateStr = '';
+        for (let i = 0; i < tempStr.length; i++) {
+            tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i] :
+                dateStr += tempStr[i].toLowerCase();
+        }
+        return dateStr;
     }
 
 }
