@@ -2,6 +2,12 @@ import { T } from '../../../translate-marker';
 import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
+   fieldset_general: T('General'),
+   fieldset_transport: T('Transport Options'),
+   fieldset_source: T('Source'),
+   fieldset_destination: T('Destination'),
+   fieldset_schedule: T('Replication Schedule'),
+
     name_placeholder: T('Name'),
     name_tooltip: T('Descriptive name for the replication.'),
 
