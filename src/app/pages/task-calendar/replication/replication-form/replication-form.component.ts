@@ -368,12 +368,6 @@ export class ReplicationFormComponent {
                             value: 'PULL',
                         }]
                     }],
-                },
-                {
-                    type: 'checkbox',
-                    name: 'replicate',
-                    placeholder: helptext.replicate_placeholder,
-                    tooltip: helptext.replicate_tooltip,
                 }, 
                 {
                     type: 'checkbox',
@@ -418,6 +412,12 @@ export class ReplicationFormComponent {
                             value: true,
                         }]
                     }],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'replicate',
+                    placeholder: helptext.replicate_placeholder,
+                    tooltip: helptext.replicate_tooltip,
                 },
                 {
                     type: 'select',
@@ -480,6 +480,20 @@ export class ReplicationFormComponent {
                     }],
                     value: '23:59',
                 },
+                {
+                    type: 'checkbox',
+                    name: 'only_matching_schedule',
+                    placeholder: helptext.only_matching_schedule_placeholder,
+                    tooltip: helptext.only_matching_schedule_tooltip,
+                    isHidden: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule',
+                            value: true,
+                        }]
+                    }],
+                }, 
                 {
                     type: 'input',
                     name: 'naming_schema',
@@ -572,22 +586,6 @@ export class ReplicationFormComponent {
                 }, 
                 {
                     type: 'checkbox',
-                    name: 'only_matching_schedule',
-                    placeholder: helptext.only_matching_schedule_placeholder,
-                    tooltip: helptext.only_matching_schedule_tooltip,
-                    relation: [{
-                        action: 'HIDE',
-                        connective: 'OR',
-                        when: [{
-                            name: 'schedule',
-                            value: false,
-                        }, {
-                            name: 'schedule',
-                            value: null,
-                        }]
-                    }],
-                }, {
-                    type: 'checkbox',
                     name: 'allow_from_scratch',
                     placeholder: helptext.allow_from_scratch_placeholder,
                     tooltip: helptext.allow_from_scratch_tooltip,
@@ -666,7 +664,6 @@ export class ReplicationFormComponent {
                     name: 'schedule',
                     placeholder: helptext.schedule_placeholder,
                     tooltip: helptext.schedule_tooltip,
-                    value: null,
                     relation: [{
                         action: 'HIDE',
                         when: [{
@@ -853,14 +850,11 @@ export class ReplicationFormComponent {
             }
         )
 
-        entityForm.formGroup.controls['schedule'].statusChanges.subscribe((res) => {
-            const toDisable = res === 'DISABLED' ? true : false;
-            if (entityForm.formGroup.controls['schedule'].value) {
-                entityForm.setDisabled('schedule_picker', toDisable, toDisable);
-                entityForm.setDisabled('schedule_begin', toDisable, toDisable);
-                entityForm.setDisabled('schedule_end', toDisable, toDisable);
-            }
-            entityForm.setDisabled('only_matching_schedule', toDisable, toDisable);
+        entityForm.formGroup.controls['schedule'].valueChanges.subscribe((res) => {
+            entityForm.setDisabled('schedule_picker', !res, !res);
+            entityForm.setDisabled('schedule_begin', !res, !res);
+            entityForm.setDisabled('schedule_end', !res, !res);
+            entityForm.setDisabled('only_matching_schedule', res, res);
         })
 
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
