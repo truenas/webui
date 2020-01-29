@@ -146,9 +146,7 @@ export class ServiceS3Component implements OnDestroy {
       entityForm.formGroup.controls['storage_path'].setValue(res.storage_path);
       entityForm.formGroup.controls['browser'].setValue(res.browser);
       //entityForm.formGroup.controls['mode'].setValue(res.mode);
-      if (res.certificate && res.certificate.id) {
-        entityForm.formGroup.controls['certificate'].setValue(res.certificate.id);
-      }
+      entityForm.formGroup.controls['certificate'].setValue(res.certificate);
     })
     entityForm.submitFunction = this.submitFunction;
 
