@@ -11,6 +11,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { StorageService } from '../../../../services/storage.service';
+import { LocaleService } from 'app/services/locale.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -44,7 +45,8 @@ export class BootEnvironmentListComponent {
   public scrub_interval: number;
 
   constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
-    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService) {}
+    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
+    protected localeService: LocaleService) {}
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name', always_display: true},
@@ -82,7 +84,7 @@ export class BootEnvironmentListComponent {
 
   rowValue(row, attr) {
     if (attr === 'created'){
-      return moment(row.created.$date).format('l LT')
+      return this.localeService.formatDateTime(row.created.$date);
     }
     if (attr === 'active'){
       if (row.active === 'N'){
@@ -242,7 +244,7 @@ export class BootEnvironmentListComponent {
   updateBootState(): void {
     this.ws.call("boot.get_state").subscribe(wres => {
       if (wres.scan.end_time) {
-        this.scrub_msg = moment(wres.scan.end_time.$date).format("MMMM Do YYYY, h:mm:ss a");
+        this.scrub_msg = this.localeService.formatDateTime(wres.scan.end_time.$date);
       } else {
         this.scrub_msg = T("Never");
       }

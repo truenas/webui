@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatSort, MatTableDataSource, MatTable } from '@angular/material';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
+import { LocaleService } from 'app/services/locale.service';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
@@ -33,7 +34,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     public dialogRef: MatDialogRef<TaskManagerComponent>,
     private ws: WebSocketService,
     protected translate: TranslateService,
-    protected job: JobService) {
+    protected job: JobService, protected localeService: LocaleService) {
       this.dataSource = new MatTableDataSource<any>([]);
     }
 
@@ -93,7 +94,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
 
   getReadableDate(data: any) {
     if (data != null) {
-      return new Date(data.$date);
+      return this.localeService.formatDateTime(new Date(data.$date));
     }
     return;
   }

@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { TranslateService } from '@ngx-translate/core';
+import { LocaleService } from 'app/services/locale.service';
 
 import { T } from '../../../../translate-marker';
 
@@ -135,16 +136,17 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public chartColors: string[];
 
   get startTime(){
-    return new Date(this.currentStartDate);
+    return this.localeService.formatDateTime(new Date(this.currentStartDate));
   }
   get endTime(){
-    return new Date(this.currentEndDate);
+    return this.localeService.formatDateTime(new Date(this.currentEndDate));
   }
 
   constructor(public router: Router, 
     public translate: TranslateService,
     private rs: ReportsService,
-    private ws: WebSocketService){
+    private ws: WebSocketService,
+    protected localeService: LocaleService){
     super(translate); 
     
     this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {

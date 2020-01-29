@@ -21,6 +21,8 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 //import { LineChartService } from './lineChart/lineChart.service';
 import { LanguageService } from '../../services/language.service';
 import { HttpClientModule } from '@angular/common/http';
+import { LocaleService } from '../../services/locale.service';
+
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
 @NgModule({
@@ -43,7 +45,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     NavigationComponent,
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, //LineChartComponent
   ],
-  providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService],
+  providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService, LocaleService],
   exports: [/*LineChartComponent*/]
 })
 export class AppCommonModule {}

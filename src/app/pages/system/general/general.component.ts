@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogService, LanguageService, RestService, StorageService, SystemGeneralService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { LocaleService } from 'app/services/locale.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../common/entity/utils';
@@ -132,6 +133,23 @@ export class GeneralComponent {
           placeholder: helptext.stg_timezone.placeholder,
           tooltip: helptext.stg_timezone.tooltip,
           options: [{ label: "---", value: null }],
+          width: '50%'
+        },
+        {
+          type: 'select',
+          name: 'date_format',
+          placeholder: helptext.date_format.placeholder,
+          tooltip: helptext.date_format.tooltip,
+          options: [],
+          width: '48%'
+        },
+        { type: 'paragraph', name: 'spacer', width: '2%' },
+        {
+          type: 'select',
+          name: 'time_format',
+          placeholder: helptext.time_format.placeholder,
+          tooltip: helptext.time_format.tooltip,
+          options: [],
           width: '50%'
         }
       ]
@@ -264,6 +282,7 @@ export class GeneralComponent {
     public http: Http,
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
+    public localeService: LocaleService,
     public mdDialog: MatDialog
   ) {}
 
@@ -344,6 +363,8 @@ export class GeneralComponent {
           .config.find(config => config.name === "ui_v6address").options = v6Ips;
       });
 
+
+
     this.makeLanguageList();
 
     this.sysGeneralService.kbdMapChoices().subscribe(mapChoices => {
@@ -358,10 +379,26 @@ export class GeneralComponent {
         .config.find(config => config.name === "timezone").options = tzChoices;
     });
 
+    let dateOptions = this.localeService.getDateFormatOptions();
+    this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "date_format").options = dateOptions;
+
+    let timeOptions = this.localeService.getTimeFormatOptions();
+    this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "time_format").options = timeOptions;
+   
     entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res)=> {
       res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
       this.makeLanguageList();
-    })
+    });
+
+    setTimeout(() => {
+      entityEdit.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
+      entityEdit.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
+
+    }, 2000);
 
     entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);
@@ -528,6 +565,9 @@ export class GeneralComponent {
   }
 
   public customSubmit(body) {
+    this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
+    delete body.date_format;
+    delete body.time_format;
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();

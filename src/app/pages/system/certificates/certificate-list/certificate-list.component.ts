@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
 import { WebSocketService, StorageService, DialogService } from '../../../../services/';
+import { LocaleService } from 'app/services/locale.service';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -40,7 +41,15 @@ export class CertificateListComponent {
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected ws: WebSocketService, public storage: StorageService,
-    public dialog: DialogService, public http: Http) {
+    public dialog: DialogService, public http: Http, protected localeService: LocaleService) {
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data.forEach((i) => {
+      i.from = this.localeService.formatDateTime(Date.parse(i.from));
+      i.until = this.localeService.formatDateTime(Date.parse(i.until));
+    })
+    return data;
   }
 
   afterInit(entityList: any) {
