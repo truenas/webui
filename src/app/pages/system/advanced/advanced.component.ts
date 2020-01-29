@@ -278,7 +278,6 @@ export class AdvancedComponent implements OnDestroy {
     this.entityForm = entityEdit;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.is_freenas = res;
-      this.fieldSets.config('legacy_ui').isHidden = this.is_freenas;
       this.swapondrive = this.fieldSets.config('swapondrive');
       this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
         if (parseInt(value) === 0) {
