@@ -41,7 +41,7 @@ export const routes: Routes = [{
       data: { title: 'Idmap', breadcrumb: 'Idmap'}
     },
     {
-      path: 'edit/:pk',
+      path: 'edit',
       component: IdmapFormComponent,
       data: { title: 'Idmap Edit', breadcrumb: 'Idmap Edit'}
     }  

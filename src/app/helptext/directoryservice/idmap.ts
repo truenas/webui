@@ -167,7 +167,46 @@ idmap_tdb_range_high_tooltip: T('Ending UID/GID number for which this system is\
 
 idmap_error_dialog_title: T('Error'),
 
-idmap_range_validator: [Validators.required]
+idmap_range_validator: [Validators.required],
+
+// idmap config table and form
+idmap: {
+    name: {
+        placeholder: T('Name'),
+        tooltip: T('Need docs')
+    },
+    dns_domain_name: {
+        placeholder: T('DNS Domain Name'),
+        tooltip: T('Need docs')
+    },
+    range_low: {
+        placeholder: T('Range Low'),
+        tooltip: T('Beginning UID/GID number for which this system is \
+ authoritative. UID/GID values below Range Low or higher than Range High are ignored.')
+    },
+    range_high: {
+        placeholder: T('Range High'),
+        tooltip: T('Ending UID/GID number for which this system is\
+ authoritative. UID/GID values below Range Low or higher than Range High are ignored.')
+    },
+    idmap_backend: {
+        placeholder: T('Idmap Backend'),
+        tooltip: T('Need docs'),
+        enum: [
+            {label: "AD", value: "AD"},
+            {label: "AUTORID", value: "AUTORID"},
+            {label: "LDAP", value: "LDAP"},
+            {label: "NSS", value: "NSS"},
+            {label: "RFC2307", value: "RFC2307"},
+            {label: "RID", value: "RID"},
+            {label: "TDB", value: "TDB"}
+        ]
+    },
+    certificate_id: {
+        placeholder: T('Cerfiticate'),
+        tooltip: T('Choose one')
+    },
+}
 
 }
 

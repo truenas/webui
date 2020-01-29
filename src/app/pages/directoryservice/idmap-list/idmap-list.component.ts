@@ -8,7 +8,7 @@ import { T } from '../../../translate-marker';
 export class IdmapListComponent {
   public title = "Idmap";
   protected queryCall = 'idmap.query';
-  protected route_add: string[] = [ 'idmap', 'add' ];
+  protected route_add: string[] = [ 'directoryservice', 'idmap', 'edit' ];
   protected route_add_tooltip = T("Add Idmap");
   protected route_edit: string[] = [ 'idmap', 'edit' ];
   protected route_delete: string[] = [ 'idmap', 'delete' ];
