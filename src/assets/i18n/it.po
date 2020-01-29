@@ -499,7 +499,7 @@ msgid ""
 "with a new boot device. This also decrypts all system passwords for reuse "
 "when the configuration file is uploaded.</p> <br /><b>Keep the "
 "configuration file safe and protect it from unauthorized access!</b>"
-msgstr "<p> Includere il Password Secret Seed permette di utiizzare questo file di configurazione "
+msgstr "<p> Includere il Password Secret Seed permette di utilizzare questo file di configurazione "
 "con un nuovo dispositivo di avvio. Questo decodifica anche tutte le password di sistema per il riutilizzo "
 "quando viene caricato il file di configurazione. </p> <br /><b> Mantieni il "
 "file di configurazione sicuro e protetto da accessi non autorizzati!</b>"
@@ -562,7 +562,7 @@ msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
 msgid "A system update is in progress. "
-msgstr ""
+msgstr "Aggiornamento di sistema in corso. "
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -636,7 +636,7 @@ msgid "API URL"
 msgstr ""
 
 msgid "APPLY CHANGES"
-msgstr ""
+msgstr "APPLICA LE MODIFICHE"
 
 msgid "ARN"
 msgstr ""
@@ -651,10 +651,10 @@ msgid "About"
 msgstr ""
 
 msgid "Access"
-msgstr ""
+msgstr "Accesso"
 
 msgid "Access Based Share Enumeration"
-msgstr ""
+msgstr "Enumerazione di Condivisione Basata sull'Accesso"
 
 msgid "Access Control Entries"
 msgstr ""
@@ -669,13 +669,13 @@ msgid ""
 msgstr ""
 
 msgid "Access Control List"
-msgstr ""
+msgstr "Elenco Controllo Accessi"
 
 msgid "Access ID Key"
 msgstr ""
 
 msgid "Access Key"
-msgstr ""
+msgstr "Chiave di Accesso"
 
 msgid "Access Key ID"
 msgstr ""
@@ -684,7 +684,7 @@ msgid "Access Key ID for the linked AWS account."
 msgstr ""
 
 msgid "Access Mode"
-msgstr ""
+msgstr "Modalità di Accesso"
 
 msgid "Access Token"
 msgstr ""
@@ -706,7 +706,7 @@ msgid "Account Key"
 msgstr ""
 
 msgid "Account Name"
-msgstr ""
+msgstr "Nome Account"
 
 msgid ""
 "Account to be used for guest access. Default is nobody. Account is required "
@@ -721,10 +721,10 @@ msgid "Acoustic Level"
 msgstr ""
 
 msgid "Actions"
-msgstr ""
+msgstr "Azioni"
 
 msgid "Activate"
-msgstr ""
+msgstr "Attivare"
 
 msgid "Activate this Boot Environment?"
 msgstr ""
@@ -743,10 +743,10 @@ msgid ""
 msgstr ""
 
 msgid "Activates the replication schedule."
-msgstr ""
+msgstr "Attiva il programma di duplicazione"
 
 msgid "Active"
-msgstr ""
+msgstr "Attiva"
 
 msgid "Active Directory"
 msgstr ""
@@ -767,7 +767,7 @@ msgid "Adapter Type:"
 msgstr ""
 
 msgid "Add"
-msgstr ""
+msgstr "Aggiungi"
 
 msgid "Add ACL Item"
 msgstr ""
@@ -776,13 +776,13 @@ msgid "Add Additional Path"
 msgstr ""
 
 msgid "Add Alert Service"
-msgstr ""
+msgstr "Aggiungi Servizio di Avviso"
 
 msgid "Add Cache"
-msgstr ""
+msgstr "Aggiungi Cache"
 
 msgid "Add Cloud Credential"
-msgstr ""
+msgstr "Aggiungi Credenziali Cloud"
 
 msgid "Add Data"
 msgstr ""
@@ -814,7 +814,8 @@ msgstr ""
 msgid ""
 "Add a passphrase to the new  encryption key. This is used to lock and "
 "unlock the pool."
-msgstr ""
+msgstr "Aggiungi una passphrase alla nuova chiave crittografica. Questa è usata per bloccare e "
+sbloccare il pool."
 
 msgid ""
 "Add an <a href=\"--docurl--/system.html#certificates\" "
@@ -853,13 +854,13 @@ msgid ""
 msgstr ""
 
 msgid "Add one or more disks to be used for data."
-msgstr ""
+msgstr "Aggiungi uno o più disci da usare per i dati."
 
 msgid "Add one or more disks to extend the pool."
-msgstr ""
+msgstr "Aggiungi uno o più disci per estendere il pool."
 
 msgid "Add this user to additional groups."
-msgstr ""
+msgstr "Aggiungi questo utente ad altri gruppi."
 
 msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
@@ -909,13 +910,13 @@ msgid "Additional Data VDevs to Create"
 msgstr ""
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "Domini Aggiuntivi"
 
 msgid "Additional Hardware"
-msgstr ""
+msgstr "Hardware Aggiuntivi"
 
 msgid "Additional Parameters"
-msgstr ""
+msgstr "Parametri Aggiuntivi"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
@@ -944,10 +945,10 @@ msgid ""
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Indirizzi"
 
 msgid "Address space limit in bytes for the jail."
-msgstr ""
+msgstr "Limite dello spazio degli indirizzi in bytes per il jail."
 
 msgid ""
 "Adds <a href=\"--docurl--/sharing.html#avail-vfs-modules-tab\" "
@@ -955,7 +956,7 @@ msgid ""
 msgstr ""
 
 msgid "Adjust the file permissions using the checkboxes."
-msgstr ""
+msgstr "Sistemare i permessi dei file usando le checkboxes."
 
 msgid "Admin Portals"
 msgstr ""
@@ -969,37 +970,37 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "Password di Amministratore"
 
 msgid "Administrator password"
-msgstr ""
+msgstr "Password di amministratore"
 
 msgid "Administrators Group"
-msgstr ""
+msgstr "Gruppo Amministratori"
 
 msgid "Adv. Power Management"
 msgstr ""
 
 msgid "Advanced"
-msgstr ""
+msgstr "Avanzate"
 
 msgid "Advanced Details"
-msgstr ""
+msgstr "Dettagli Avanzati"
 
 msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Modalità Esperta"
 
 msgid "Advanced Plugin Installation"
-msgstr ""
+msgstr "Installazione Avanzata dei Plugin"
 
 msgid "Advanced Power Management"
 msgstr ""
 
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Impostazioni Avanzate"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -1007,43 +1008,43 @@ msgid ""
 msgstr ""
 
 msgid "Alarms"
-msgstr ""
+msgstr "Allarmi"
 
 msgid "Alert"
-msgstr ""
+msgstr "Avviso"
 
 msgid "Alert Services"
-msgstr ""
+msgstr "Servizi di Avviso"
 
 msgid "Alert Settings"
-msgstr ""
+msgstr "Impostazioni di Avviso"
 
 msgid "Alerts"
-msgstr ""
+msgstr "Avvisi"
 
 msgid "Aliases"
-msgstr ""
+msgstr "Alias"
 
 msgid "All Disks"
-msgstr ""
+msgstr "Tutti i Dischi"
 
 msgid "All dirs"
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
-msgstr ""
+msgstr "Assegnare un numero di megabyters di RAM alla VM."
 
 msgid "Allocate at least 256 MiB."
-msgstr ""
+msgstr "Assegnare almeni 256 MiB."
 
 msgid "Allow All Initiators"
 msgstr ""
 
 msgid "Allow Anonymous Binding"
-msgstr ""
+msgstr "Consenti Associazione Anonima"
 
 msgid "Allow Anonymous Login"
-msgstr ""
+msgstr "Consenti Accesso Anonimo"
 
 msgid "Allow Blocks Larger than 128KB"
 msgstr ""
