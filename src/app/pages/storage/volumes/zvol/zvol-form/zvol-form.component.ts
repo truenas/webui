@@ -138,7 +138,9 @@ export class ZvolFormComponent {
             config.hasErrors = true;
             config.errors = helptext.zvol_volsize_zero_error;
             errors = { invalid_byte_string: true };
-          } else if (this.origHuman && humanSize < this.origHuman){
+          } else if ((this.origHuman && humanSize) && 
+                     (humanSize !== this.origHuman) &&
+                     (size < this.origVolSize)){
             config.hasErrors = true;
             config.errors = helptext.zvol_volsize_shrink_error;
             errors = { invalid_byte_string: true };
