@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ServicesService } from '../../../../../services';
+import * as _ from 'lodash';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -34,7 +35,6 @@ export class ServiceOpenvpnClientComponent {
           placeholder : helptext.client.client_certificate.placeholder,
           tooltip: helptext.client.client_certificate.tooltip,
           options: [],
-          required: true
         },
         {
           type : 'select',
@@ -42,7 +42,6 @@ export class ServiceOpenvpnClientComponent {
           placeholder : helptext.client.root_ca.placeholder,
           tooltip: helptext.client.root_ca.tooltip,
           options: [],
-          required: true,
         },
         {
           type : 'input',
@@ -171,6 +170,19 @@ export class ServiceOpenvpnClientComponent {
         config.options.push({label: item.name, value: item.id})
       })
     });
+    const cert = _.find(entityEdit.fieldConfig, { name: 'client_certificate' });
+    const ca = _.find(entityEdit.fieldConfig, { name: 'root_ca' });
+
+    entityEdit.formGroup.controls['client_certificate'].valueChanges.subscribe(() => {
+      cert['hasErrors'] = false;
+      ca['hasErrors'] = false;
+    })
+
+    entityEdit.formGroup.controls['root_ca'].valueChanges.subscribe(() => {
+      cert['hasErrors'] = false;
+      ca['hasErrors'] = false;      
+      entityEdit.formGroup.controls['client_certificate'].updateValueAndValidity();      
+    })
   }
 
   beforeSubmit(data) {
