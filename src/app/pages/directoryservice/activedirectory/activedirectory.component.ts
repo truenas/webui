@@ -49,7 +49,8 @@ export class ActiveDirectoryComponent {
       'id' : helptext.activedirectory_custactions_edit_imap_id,
       'name' : helptext.activedirectory_custactions_edit_imap_name,
       function : () => {
-        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'activedirectory']));
+        console.log(this.idmapBacked)
+        this.router.navigate(new Array('').concat(['directoryservice','idmap']));
       }
     },
     {
