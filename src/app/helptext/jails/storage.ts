@@ -19,5 +19,7 @@ readonly_placeholder: T('Read-Only'),
 readonly_tooltip: T('Set to prevent users from modifying the \
 <b>Destination</b>.'),
 
+acl_edit_msg: T('Root dataset ACL cannot be edited.'),
+action_edit_acl: T('Edit ACL'),
 }
 
