@@ -24,6 +24,7 @@ export class GroupListComponent {
     {name : 'GID', prop : 'gid'},
     {name : 'Builtin', prop : 'builtin'},
     {name : 'Permit Sudo', prop : 'sudo'},
+    {name : 'Samba Authentication', prop: 'smb', hidden: true}
   ];
   public rowIdentifier = 'group';
   public config: any = {
@@ -64,7 +65,7 @@ export class GroupListComponent {
         name: helptext.group_list_actions_id_edit,
         onClick : (members_edit) => {
           this._router.navigate(new Array('/').concat(
-            [ "account", "groups", "edit", members_edit.gid ]));
+            [ "account", "groups", "edit", members_edit.id ]));
         }
       })
       actions.push({
