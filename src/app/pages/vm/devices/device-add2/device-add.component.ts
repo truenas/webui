@@ -440,6 +440,10 @@ export class DeviceAddComponent implements OnInit {
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
       const deviceOrder = deviceValue['order'];
       delete deviceValue.order;
+      // ui use sectorsize field for both physical_sectorsize and logical_sectorsize prop
+      deviceValue['physical_sectorsize'] = deviceValue['sectorsize'] === 0 ? null : deviceValue['sectorsize'];
+      deviceValue['logical_sectorsize'] = deviceValue['sectorsize'] === 0 ? null : deviceValue['sectorsize'];
+      delete deviceValue['sectorsize'];
 
       const payload = {
         "vm": parseInt(params['pk'],10),
