@@ -34,8 +34,8 @@ mode_options : [
 
 sectorsize_placeholder : T('Disk sector size'),
 sectorsize_tooltip : T('Select a sector size in bytes. <i>Default</i> leaves the\
- sector size unset, using value reported from ZFS volume. Setting a sector size\
- will force the logical and physical sector size to that value.'),
+ sector size unset and uses the ZFS volume values. Setting a sector size\
+ changes both the logical and physical sector size.'),
 sectorsize_options: [
   { label: 'Default', value:0 },
   { label: '512', value:512 },
