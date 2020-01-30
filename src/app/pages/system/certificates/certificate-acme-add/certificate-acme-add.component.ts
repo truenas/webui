@@ -63,6 +63,14 @@ export class CertificateAcmeAddComponent {
         {label: 'https://acme-staging-v02.api.letsencrypt.org/directory', value: 'https://acme-staging-v02.api.letsencrypt.org/directory'},
         {label: 'https://acme-v02.api.letsencrypt.org/directory', value: 'https://acme-v02.api.letsencrypt.org/directory'}
       ],
+    },
+    {
+      type: 'select',
+      name: 'dns_mapping',
+      placeholder: 'DNS Mapping',
+      tooltip: 'Keep it real.',
+      multiple: true,
+      options: []
     }
   ]
 
@@ -81,18 +89,29 @@ export class CertificateAcmeAddComponent {
   ) { }
 
   preInit() { 
-    this.arrayControl = _.find(this.fieldConfig, {'name' : 'dns_mapping_array'});
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(parseInt(params['pk']));
       }
     });
+
     this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
-      this.csrOrg = res;
-      let domains = [this.csrOrg[0].common];
-      for (let item of this.csrOrg[0].san) {
-        domains.push(item);
-      }
+      this.csrOrg = res[0];
+      let domains = _.filter(this.csrOrg.common.split(",").map(_.trim));
+
+      let dns_map = _.find(this.fieldConfig, {'name' : 'dns_mapping'});
+      domains.forEach((domain) => {
+        dns_map.options.push(
+          { label : domain, value : domain}
+        )      
+      })
+
+      // this.csrOrg = res;
+      // let domains = [this.csrOrg[0].common];
+      // for (let item of this.csrOrg[0].san) {
+      //   domains.push(item);
+      // }
+      // console.log(domains)
       this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
         res.forEach((item) => {
           this.authenticators.push(
@@ -104,43 +123,49 @@ export class CertificateAcmeAddComponent {
       // TODO: This works, submits data to payload but throws console errors and doesn't add new fields to the FormGroup.
       // So Angular doesn;t recognize them as required. Need to work on dynamically adding these fields, although the user is warned by dialog
       // if these selections are left blank.
-      for (let item of domains) {
-        let fc = (
-          {
-            type: "select",
-            name: "dns_mapping-" + item, 
-            placeholder: "Authenticator for " + item, 
-            tooltip: "Specify Authenticator to be used for " + item, 
-            options: this.authenticators,
-            required: true, 
-            class: 'dns_mapping'              
-          });
-        this.fieldConfig.push(fc);
-      }
+      // for (let item of domains) {
+      //   let fc = (
+      //     {
+      //       type: "select",
+      //       name: "dns_mapping-" + item, 
+      //       placeholder: "Authenticator for " + item, 
+      //       tooltip: "Specify Authenticator to be used for " + item, 
+      //       options: this.authenticators,
+      //       required: true, 
+      //       class: 'dns_mapping'              
+      //     });
+          
+      //   this.fieldConfig.push(fc);
+      //   console.log(this.fieldConfig)
+      // }
     })
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.formArray = entityEdit.formGroup.controls['dns_mapping_array'];
+    // this.formArray = entityEdit.formGroup.controls['dns_mapping_array'];
   }
 
   customSubmit(value) {
+    console.log(value)
+    let counter = 1;
     let dns_map = {};
-    for (let item in value) {
-    if (item.includes('dns_mapping')) {
-        let i = item.split('-');
-        dns_map[i[1]]=value[item];
-      }
-    }
+    value.dns_mapping.forEach((item) => {
+      dns_map[item] = counter.toString();
+      counter++;
+    }) 
+    console.log(dns_map)
+
     let payload = {};
     payload['tos'] = value.tos;
-    payload['csr_id'] = this.csrOrg[0].id;
+    payload['csr_id'] = this.csrOrg.id;
     payload['acme_directory_uri'] = value.acme_directory_uri;
     payload['name'] = value.identifier;
     payload['renew_days'] = value.renew_days;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = dns_map;
+
+    console.log(payload)
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": ("Creating...") }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
