@@ -237,6 +237,13 @@ export class UserFormComponent {
           placeholder : helptext.user_form_microsoft_placeholder,
           tooltip : helptext.user_form_microsoft_tooltip,
         },
+        {
+          type: 'checkbox',
+          name: helptext.user_form_smb_name,
+          placeholder: helptext.user_form_smb_placeholder,
+          tooltip: helptext.user_form_smb_tooltip,
+          value: true
+        }
       ]
     },
     {
