@@ -1044,7 +1044,7 @@ export class ReplicationFormComponent {
         if (sshCredentials == undefined || sshCredentials == '') {
             for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
                 _.find(this.fieldConfig, { name: item }).hasErrors = true;
-                _.find(this.fieldConfig, { name: item }).errors = 'Please select a valid SSH Connection';
+                _.find(this.fieldConfig, { name: item }).errors = T('Please select a valid SSH Connection');
             }
             return;
         }
