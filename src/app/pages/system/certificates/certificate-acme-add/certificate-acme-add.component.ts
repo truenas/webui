@@ -109,7 +109,6 @@ export class CertificateAcmeAddComponent {
           );
         });
         if (res[0]) {
-          console.log(res[0].name)
           this.entityForm.formGroup.controls['authenticators'].setValue(res[0].id);
         }
       });
@@ -130,7 +129,6 @@ export class CertificateAcmeAddComponent {
     payload['csr_id'] = this.csrOrg.id;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = dns_map;
-    console.log(payload)
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": ("Creating...") }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
