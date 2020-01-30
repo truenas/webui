@@ -127,4 +127,5 @@ export default {
             value: 'TCP'
         }]
     },
+    error_dialog_title: T('Error')
 }

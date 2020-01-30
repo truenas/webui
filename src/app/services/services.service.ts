@@ -37,8 +37,8 @@ export class ServicesService {
     return this.ws.call('openvpn.server.cipher_choices');
   }
   
-  generateOpenServerClientConfig() {
-    return this.ws.call('openvpn.server.client_configuration_generation');
+  generateOpenServerClientConfig(id: number, address: string) {
+    return this.ws.call('openvpn.server.client_configuration_generation', [id, address]);
   }
   renewStaticKey(server: string) {
     return this.ws.call('openvpn.server.renew_static_key', [server]);

@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { ServicesService } from '../../../../../services';
+import { ServicesService, DialogService} from '../../../../../services';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
-
 
 @Component({
   selector: 'openvpn-server-edit',
@@ -151,12 +150,25 @@ export class ServiceOpenvpnServerComponent {
       function : () => {
         this.services.renewStaticKey('whatevs').subscribe((res) => {
           console.log(res);
+        }, err => {
+          this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
+        })
+      }
+    },
+    {
+      id : 'client_config',
+      name : 'Download Client Config',
+      function : () => {
+        this.services.generateOpenServerClientConfig(1, 'test').subscribe((res) => {
+          console.log(res);
+        }, err => {
+          this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
         })
       }
     }
   ];
 
-  constructor(protected services: ServicesService) { }
+  constructor(protected services: ServicesService, protected dialog: DialogService) { }
 
   resourceTransformIncomingRestData(data) {
     return data;
