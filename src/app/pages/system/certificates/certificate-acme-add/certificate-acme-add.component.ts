@@ -10,7 +10,6 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { helptext } from 'app/helptext/system/reporting';
 
 @Component({
   selector: 'app-certificate-acme-add',
