@@ -8,6 +8,7 @@ import { WebSocketService, TaskService, KeychainCredentialService, ReplicationSe
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
 @Component({
     selector: 'app-replication-list',
@@ -41,621 +42,680 @@ export class ReplicationFormComponent {
         value: 'NONE',
     }];
 
-    protected fieldConfig: FieldConfig[] = [
+    public fieldSets: FieldSet[] = [
         {
-            type: 'input',
-            name: 'name',
-            placeholder: helptext.name_placeholder,
-            tooltip: helptext.name_tooltip,
-            required: true,
-            validation: [Validators.required]
-        },
-        {
-            type: 'select',
-            name: 'direction',
-            placeholder: helptext.direction_placeholder,
-            tooltip: helptext.direction_tooltip,
-            options: [
+            name: helptext.fieldset_general,
+            label: true,
+            class: 'general',
+            width: '49%',
+            config: [
                 {
-                    label: 'PUSH',
-                    value: 'PUSH',
-                }, {
-                    label: 'PULL',
-                    value: 'PULL',
-                }
-            ],
-            value: 'PUSH',
-            relation: [{
-                action: "HIDE",
-                when: [{
-                    name: "transport",
-                    value: 'LOCAL'
-                  }]
-            }]
-        }, {
-            type: 'select',
-            name: 'transport',
-            placeholder: helptext.transport_placeholder,
-            tooltip: helptext.transport_tooltip,
-            options: [
-                {
-                    label: 'SSH',
-                    value: 'SSH',
-                }, {
-                    label: 'SSH+NETCAT',
-                    value: 'SSH+NETCAT',
-                }, {
-                    label: 'LOCAL',
-                    value: 'LOCAL',
-                }
-            ],
-            value: 'SSH',
-        }, {
-            type: 'select',
-            name: 'ssh_credentials',
-            placeholder: helptext.ssh_credentials_placeholder,
-            tooltip: helptext.ssh_credentials_tooltip,
-            options: [
-                {
-                    label: '---------',
-                    value: '',
-                }
-            ],
-            value: '',
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LOCAL',
-                }]
-            }],
-            required: true,
-            validation: [Validators.required],
-        }, {
-            type: 'select',
-            name: 'netcat_active_side',
-            placeholder: helptext.netcat_active_side_placeholder,
-            tooltip: helptext.netcat_active_side_tooltip,
-            options: [
-                {
-                    label: 'LOCAL',
-                    value: 'LOCAL',
-                }, {
-                    label: 'REMOTE',
-                    value: 'REMOTE',
-                }
-            ],
-            value: 'LOCAL',
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'transport',
-                    value: 'SSH+NETCAT',
-                }]
-            }],
-        }, {
-            type: 'input',
-            name: 'netcat_active_side_listen_address',
-            placeholder: helptext.netcat_active_side_listen_address_placeholder,
-            tooltip: helptext.netcat_active_side_listen_address_tooltip,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'transport',
-                    value: 'SSH+NETCAT',
-                }]
-            }],
-        }, {
-            type: 'input',
-            name: 'netcat_active_side_port_min',
-            placeholder: helptext.netcat_active_side_port_min_placeholder,
-            tooltip: helptext.netcat_active_side_port_min_tooltip,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'transport',
-                    value: 'SSH+NETCAT',
-                }]
-            }],
-        }, {
-            type: 'input',
-            name: 'netcat_active_side_port_max',
-            placeholder: helptext.netcat_active_side_port_max_placeholder,
-            tooltip: helptext.netcat_active_side_port_max_tooltip,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'transport',
-                    value: 'SSH+NETCAT',
-                }]
-            }],
-        }, {
-            type: 'input',
-            name: 'netcat_passive_side_connect_address',
-            placeholder: helptext.netcat_passive_side_connect_address_placeholder,
-            tooltip: helptext.netcat_passive_side_connect_address_tooltip,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'transport',
-                    value: 'SSH+NETCAT',
-                }]
-            }],
-        }, {
-            type: 'explorer',
-            initial: '',
-            explorerType: 'dataset',
-            multiple: true,
-            tristate: false,
-            name: 'source_datasets_PUSH',
-            placeholder: helptext.source_datasets_placeholder,
-            tooltip: helptext.source_datasets_tooltip,
-            options: [],
-            required: true,
-            validation: [Validators.required],
-            isHidden: true,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'direction',
-                    value: 'PUSH',
-                }]
-            }],
-        }, {
-            type: 'explorer',
-            name: 'target_dataset_PUSH',
-            placeholder: helptext.target_dataset_placeholder,
-            tooltip: helptext.target_dataset_tooltip,
-            initial: '',
-            explorerType: 'directory',
-            customTemplateStringOptions: {
-                displayField: 'Path',
-                isExpandedField: 'expanded',
-                idField: 'uuid',
-                getChildren: this.getChildren.bind(this),
-                nodeHeight: 23,
-                allowDrag: false,
-                useVirtualScroll: false,
-            },
-            required: true,
-            validation: [Validators.required],
-            isHidden: true,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'direction',
-                    value: 'PUSH',
-                }]
-            }],
-        }, {
-            type: 'explorer',
-            name: 'source_datasets_PULL',
-            placeholder: helptext.source_datasets_placeholder,
-            tooltip: helptext.source_datasets_placeholder,
-            initial: '',
-            explorerType: 'directory',
-            customTemplateStringOptions: {
-                displayField: 'Path',
-                isExpandedField: 'expanded',
-                idField: 'uuid',
-                getChildren: this.getChildren.bind(this),
-                nodeHeight: 23,
-                allowDrag: false,
-                useVirtualScroll: false,
-            },
-            required: true,
-            validation: [Validators.required],
-            isHidden: true,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'direction',
-                    value: 'PULL',
-                }]
-            }],
-        }, {
-            type: 'explorer',
-            initial: '',
-            explorerType: 'dataset',
-            name: 'target_dataset_PULL',
-            placeholder: helptext.target_dataset_placeholder,
-            tooltip: helptext.target_dataset_placeholder,
-            options: [],
-            required: true,
-            validation: [Validators.required],
-            isHidden: true,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'direction',
-                    value: 'PULL',
-                }]
-            }],
-        }, {
-            type: 'checkbox',
-            name: 'recursive',
-            placeholder: helptext.recursive_placeholder,
-            tooltip: helptext.recursive_tooltip,
-            value: false,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'replicate',
-                    value: true,
-                }]
-            }],
-        }, {
-            type: 'input',
-            name: 'exclude',
-            placeholder: helptext.exclude_placeholder,
-            tooltip: helptext.exclude_tooltip,
-            relation: [{
-                action: 'HIDE',
-                connective: 'OR',
-                when: [{
-                    name: 'recursive',
-                    value: false,
-                },{
-                    name: 'replicate',
-                    value: true,
-                }]
-            }],
-        }, {
-            type: 'checkbox',
-            name: 'properties',
-            placeholder: helptext.properties_placeholder,
-            tooltip: helptext.properties_tooltip,
-            value: true,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'replicate',
-                    value: true,
-                }]
-            }],
-        }, {
-            type: 'checkbox',
-            name: 'replicate',
-            placeholder: helptext.replicate_placeholder,
-            tooltip: helptext.replicate_tooltip,
-        }, {
-            type: 'select',
-            multiple: true,
-            name: 'periodic_snapshot_tasks',
-            placeholder: helptext.periodic_snapshot_tasks_placeholder,
-            tooltip: helptext.periodic_snapshot_tasks_tooltip,
-            options: [],
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'direction',
-                    value: 'PULL',
-                }]
-            }],
-        },
-        {
-            type: 'input',
-            name: 'naming_schema',
-            placeholder: helptext.naming_schema_placeholder,
-            tooltip: helptext.naming_schema_tooltip,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'direction',
-                    value: 'PUSH',
-                }]
-            }],
-        },
-        {
-            type: 'input',
-            name: 'also_include_naming_schema',
-            placeholder: helptext.also_include_naming_schema_placeholder,
-            tooltip: helptext.also_include_naming_schema_tooltip,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'direction',
-                    value: 'PULL',
-                }]
-            }],
-            blurStatus: true,
-            blurEvent: this.blurEventNamingSchema,
-            parent: this
-        },
-        {
-            type: 'checkbox',
-            name: 'auto',
-            placeholder: helptext.auto_placeholder,
-            tooltip: helptext.auto_tooltip,
-            value: true,
-        }, {
-            type: 'checkbox',
-            name: 'schedule',
-            placeholder: helptext.schedule_placeholder,
-            tooltip: helptext.schedule_tooltip,
-            value: null,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'auto',
-                    value: false,
-                }]
-            }]
-        }, {
-            type: 'scheduler',
-            name: 'schedule_picker',
-            tooltip: helptext.schedule_picker_tooltip,
-            value: "0 0 * * *",
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'schedule',
-                    value: true,
-                }]
-            }],
-        }, {
-            type: 'select',
-            name: 'schedule_begin',
-            placeholder: helptext.schedule_begin_placeholder,
-            tooltip: helptext.schedule_begin_tooltip,
-            options: [],
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'schedule',
-                    value: true,
-                }]
-            }],
-            value: '00:00',
-        }, {
-            type: 'select',
-            name: 'schedule_end',
-            placeholder: helptext.schedule_end_placeholder,
-            tooltip: helptext.schedule_end_tooltip,
-            options: [],
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'schedule',
-                    value: true,
-                }]
-            }],
-            value: '23:59',
-        }, {
-            type: 'checkbox',
-            name: 'restrict_schedule',
-            placeholder: helptext.restrict_schedule_placeholder,
-            tooltip: helptext.restrict_schedule_tooltip,
-        }, {
-            type: 'scheduler',
-            name: 'restrict_schedule_picker',
-            tooltip: helptext.restrict_schedule_picker_tooltip,
-            value: "0 0 * * *",
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'restrict_schedule',
-                    value: true,
-                }]
-            }],
-        }, {
-            type: 'select',
-            name: 'restrict_schedule_begin',
-            placeholder: helptext.restrict_schedule_begin_placeholder,
-            tooltip: helptext.restrict_schedule_begin_tooltip,
-            options: [],
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'restrict_schedule',
-                    value: true,
-                }]
-            }],
-            value: '00:00',
-        }, {
-            type: 'select',
-            name: 'restrict_schedule_end',
-            placeholder: helptext.restrict_schedule_end_placeholder,
-            tooltip: helptext.restrict_schedule_end_tooltip,
-            options: [],
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'restrict_schedule',
-                    value: true,
-                }]
-            }],
-            value: '23:59',
-        }, {
-            type: 'checkbox',
-            name: 'only_matching_schedule',
-            placeholder: helptext.only_matching_schedule_placeholder,
-            tooltip: helptext.only_matching_schedule_tooltip,
-            relation: [{
-                action: 'HIDE',
-                connective: 'OR',
-                when: [{
-                    name: 'schedule',
-                    value: false,
-                }, {
-                    name: 'schedule',
-                    value: null,
-                }]
-            }],
-        }, {
-            type: 'checkbox',
-            name: 'allow_from_scratch',
-            placeholder: helptext.allow_from_scratch_placeholder,
-            tooltip: helptext.allow_from_scratch_tooltip,
-        }, {
-            type: 'checkbox',
-            name: 'hold_pending_snapshots',
-            placeholder: helptext.hold_pending_snapshots_placeholder,
-            tooltip: helptext.hold_pending_snapshots_tooltip,
-        }, {
-            type: 'select',
-            name: 'retention_policy',
-            placeholder: helptext.retention_policy_placeholder,
-            tooltip: helptext.retention_policy_tooltip,
-            options: this.retentionPolicyChoice,
-            value: 'NONE',
-        }, {
-            type: 'input',
-            inputType: 'number',
-            name: 'lifetime_value',
-            placeholder: helptext.lifetime_value_placeholder,
-            tooltip: helptext.lifetime_value_tooltip,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'retention_policy',
-                    value: 'CUSTOM',
-                }]
-            }],
-            width: '50%',
-        }, {
-            type: 'select',
-            name: 'lifetime_unit',
-            placeholder: helptext.lifetime_unit_placeholder,
-            tooltip: helptext.lifetime_unit_tooltip,
-            options: [
-                {
-                    label: 'Hour(s)',
-                    value: 'HOUR',
-                }, {
-                    label: 'Day(s)',
-                    value: 'DAY',
-                }, {
-                    label: 'Week(s)',
-                    value: 'WEEK',
-                }, {
-                    label: 'Month(s)',
-                    value: 'MONTH',
-                }, {
-                    label: 'Year(s)',
-                    value: 'YEAR',
-                }
-            ],
-            value: 'WEEK',
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'retention_policy',
-                    value: 'CUSTOM',
-                }]
-            }],
-            width: '50%',
-        },
-        {
-            type: 'select',
-            name: 'compression',
-            placeholder: helptext.compression_placeholder,
-            tooltip: helptext.compression_tooltip,
-            options: [
-                {
-                    label: 'Disabled',
-                    value: 'DISABLED', // should set it to be null before submit
-                }, {
-                    label: 'lz4 (fastest)',
-                    value: 'LZ4',
-                }, {
-                    label: 'pigz (all rounder)',
-                    value: 'PIGZ',
-                }, {
-                    label: 'plzip (best compression)',
-                    value: 'PLZIP',
-                }
-            ],
-            value: 'DISABLED',
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'transport',
-                    value: 'SSH',
-                }]
-            }],
-        }, {
-            type: 'input',
-            name: 'speed_limit',
-            placeholder: helptext.speed_limit_placeholder,
-            tooltip: helptext.speed_limit_tooltip,
-            hasErrors: false,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'transport',
-                    value: 'SSH',
-                }]
-            }],
-            blurStatus : true,
-            blurEvent : this.blurEvent,
-            parent : this,
-        },
-        {
-            type: 'checkbox',
-            name: 'dedup',
-            placeholder: helptext.dedup_placeholder,
-            tooltip: helptext.dedup_tooltip,
-        }, {
-            type: 'checkbox',
-            name: 'large_block',
-            placeholder: helptext.large_block_placeholder,
-            tooltip: helptext.large_block_tooltip,
-            value: true,
-        },
-        // {
-        //     type: 'checkbox',
-        //     name: 'embed',
-        //     placeholder: helptext.embed_placeholder,
-        //     tooltip: helptext.embed_tooltip,
-        //     value: true,
-        // },
-        {
-            type: 'checkbox',
-            name: 'compressed',
-            placeholder: helptext.compressed_placeholder,
-            tooltip: helptext.compressed_tooltip,
-            value: true,
-        }, {
-            type: 'input',
-            inputType: 'number',
-            name: 'retries',
-            placeholder: helptext.retries_placeholder,
-            tooltip: helptext.retries_tooltip,
-            value: 5,
-        }, {
-            type: 'select',
-            name: 'logging_level',
-            placeholder: helptext.logging_level_placeholder,
-            tooltip: helptext.logging_level_tooltip,
-            options: [
-                {
-                    label: 'DEFAULT',
-                    value: 'DEFAULT',
+                    type: 'input',
+                    name: 'name',
+                    placeholder: helptext.name_placeholder,
+                    tooltip: helptext.name_tooltip,
+                    required: true,
+                    validation: [Validators.required]
                 },
                 {
-                    label: 'DEBUG',
-                    value: 'DEBUG',
+                    type: 'select',
+                    name: 'direction',
+                    placeholder: helptext.direction_placeholder,
+                    tooltip: helptext.direction_tooltip,
+                    options: [
+                        {
+                            label: 'PUSH',
+                            value: 'PUSH',
+                        }, {
+                            label: 'PULL',
+                            value: 'PULL',
+                        }
+                    ],
+                    value: 'PUSH',
+                    relation: [{
+                        action: "HIDE",
+                        when: [{
+                            name: "transport",
+                            value: 'LOCAL'
+                        }]
+                    }]
                 }, {
-                    label: 'INFO',
-                    value: 'INFO',
+                    type: 'select',
+                    name: 'transport',
+                    placeholder: helptext.transport_placeholder,
+                    tooltip: helptext.transport_tooltip,
+                    options: [
+                        {
+                            label: 'SSH',
+                            value: 'SSH',
+                        }, {
+                            label: 'SSH+NETCAT',
+                            value: 'SSH+NETCAT',
+                        }, {
+                            label: 'LOCAL',
+                            value: 'LOCAL',
+                        }
+                    ],
+                    value: 'SSH',
+                },
+                {
+                    type: 'input',
+                    inputType: 'number',
+                    name: 'retries',
+                    placeholder: helptext.retries_placeholder,
+                    tooltip: helptext.retries_tooltip,
+                    value: 5,
                 }, {
-                    label: 'WARNING',
-                    value: 'WARNING',
+                    type: 'select',
+                    name: 'logging_level',
+                    placeholder: helptext.logging_level_placeholder,
+                    tooltip: helptext.logging_level_tooltip,
+                    options: [
+                        {
+                            label: 'DEFAULT',
+                            value: 'DEFAULT',
+                        },
+                        {
+                            label: 'DEBUG',
+                            value: 'DEBUG',
+                        }, {
+                            label: 'INFO',
+                            value: 'INFO',
+                        }, {
+                            label: 'WARNING',
+                            value: 'WARNING',
+                        }, {
+                            label: 'ERROR',
+                            value: 'ERROR',
+                        }
+                    ],
+                    value: 'DEFAULT',
                 }, {
-                    label: 'ERROR',
-                    value: 'ERROR',
-                }
-            ],
-            value: 'DEFAULT',
-        }, {
-            type: 'checkbox',
-            name: 'enabled',
-            placeholder: helptext.enabled_placeholder,
-            tooltip: helptext.enabled_tooltip,
-            value: true,
+                    type: 'checkbox',
+                    name: 'enabled',
+                    placeholder: helptext.enabled_placeholder,
+                    tooltip: helptext.enabled_tooltip,
+                    value: true,
+                },
+            ]
         },
+        { name: 'spacer', label: false, width: '2%' },
+        {
+            name: helptext.fieldset_transport,
+            label: true,
+            class: 'transport',
+            width: '49%',
+            config: [
+                {
+                    type: 'select',
+                    name: 'ssh_credentials',
+                    placeholder: helptext.ssh_credentials_placeholder,
+                    tooltip: helptext.ssh_credentials_tooltip,
+                    options: [
+                        {
+                            label: '---------',
+                            value: '',
+                        }
+                    ],
+                    value: '',
+                    relation: [{
+                        action: 'HIDE',
+                        when: [{
+                            name: 'transport',
+                            value: 'LOCAL',
+                        }]
+                    }],
+                    required: true,
+                    validation: [Validators.required],
+                },
+                {
+                    type: 'select',
+                    name: 'netcat_active_side',
+                    placeholder: helptext.netcat_active_side_placeholder,
+                    tooltip: helptext.netcat_active_side_tooltip,
+                    options: [
+                        {
+                            label: 'LOCAL',
+                            value: 'LOCAL',
+                        }, {
+                            label: 'REMOTE',
+                            value: 'REMOTE',
+                        }
+                    ],
+                    value: 'LOCAL',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'transport',
+                            value: 'SSH+NETCAT',
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    name: 'netcat_active_side_listen_address',
+                    placeholder: helptext.netcat_active_side_listen_address_placeholder,
+                    tooltip: helptext.netcat_active_side_listen_address_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'transport',
+                            value: 'SSH+NETCAT',
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    name: 'netcat_active_side_port_min',
+                    placeholder: helptext.netcat_active_side_port_min_placeholder,
+                    tooltip: helptext.netcat_active_side_port_min_tooltip,
+                    width: '50%',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'transport',
+                            value: 'SSH+NETCAT',
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    name: 'netcat_active_side_port_max',
+                    placeholder: helptext.netcat_active_side_port_max_placeholder,
+                    tooltip: helptext.netcat_active_side_port_max_tooltip,
+                    width: '50%',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'transport',
+                            value: 'SSH+NETCAT',
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    name: 'netcat_passive_side_connect_address',
+                    placeholder: helptext.netcat_passive_side_connect_address_placeholder,
+                    tooltip: helptext.netcat_passive_side_connect_address_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'transport',
+                            value: 'SSH+NETCAT',
+                        }]
+                    }],
+                },
+                {
+                    type: 'select',
+                    name: 'compression',
+                    placeholder: helptext.compression_placeholder,
+                    tooltip: helptext.compression_tooltip,
+                    options: [
+                        {
+                            label: 'Disabled',
+                            value: 'DISABLED', // should set it to be null before submit
+                        }, {
+                            label: 'lz4 (fastest)',
+                            value: 'LZ4',
+                        }, {
+                            label: 'pigz (all rounder)',
+                            value: 'PIGZ',
+                        }, {
+                            label: 'plzip (best compression)',
+                            value: 'PLZIP',
+                        }
+                    ],
+                    value: 'DISABLED',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'transport',
+                            value: 'SSH',
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    name: 'speed_limit',
+                    placeholder: helptext.speed_limit_placeholder,
+                    tooltip: helptext.speed_limit_tooltip,
+                    hasErrors: false,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'transport',
+                            value: 'SSH',
+                        }]
+                    }],
+                    blurStatus: true,
+                    blurEvent: this.blurEvent,
+                    parent: this,
+                },
+                {
+                    type: 'checkbox',
+                    name: 'dedup',
+                    placeholder: helptext.dedup_placeholder,
+                    tooltip: helptext.dedup_tooltip,
+                }, {
+                    type: 'checkbox',
+                    name: 'large_block',
+                    placeholder: helptext.large_block_placeholder,
+                    tooltip: helptext.large_block_tooltip,
+                    value: true,
+                },
+                // {
+                //     type: 'checkbox',
+                //     name: 'embed',
+                //     placeholder: helptext.embed_placeholder,
+                //     tooltip: helptext.embed_tooltip,
+                //     value: true,
+                // },
+                {
+                    type: 'checkbox',
+                    name: 'compressed',
+                    placeholder: helptext.compressed_placeholder,
+                    tooltip: helptext.compressed_tooltip,
+                    value: true,
+                },
+            ]
+        },
+        { name: 'divider', divider: true },
+        {
+            name: helptext.fieldset_source,
+            label: true,
+            class: 'source',
+            width: '49%',
+            config: [
+                {
+                    type: 'explorer',
+                    initial: '',
+                    explorerType: 'dataset',
+                    multiple: true,
+                    tristate: false,
+                    name: 'source_datasets_PUSH',
+                    placeholder: helptext.source_datasets_placeholder,
+                    tooltip: helptext.source_datasets_tooltip,
+                    options: [],
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'direction',
+                            value: 'PUSH',
+                        }]
+                    }],
+                }, 
+                {
+                    type: 'explorer',
+                    name: 'source_datasets_PULL',
+                    placeholder: helptext.source_datasets_placeholder,
+                    tooltip: helptext.source_datasets_placeholder,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'direction',
+                            value: 'PULL',
+                        }]
+                    }],
+                }, 
+                {
+                    type: 'checkbox',
+                    name: 'recursive',
+                    placeholder: helptext.recursive_placeholder,
+                    tooltip: helptext.recursive_tooltip,
+                    value: false,
+                    relation: [{
+                        action: 'HIDE',
+                        when: [{
+                            name: 'replicate',
+                            value: true,
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    name: 'exclude',
+                    placeholder: helptext.exclude_placeholder,
+                    tooltip: helptext.exclude_tooltip,
+                    relation: [{
+                        action: 'HIDE',
+                        connective: 'OR',
+                        when: [{
+                            name: 'recursive',
+                            value: false,
+                        }, {
+                            name: 'replicate',
+                            value: true,
+                        }]
+                    }],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'properties',
+                    placeholder: helptext.properties_placeholder,
+                    tooltip: helptext.properties_tooltip,
+                    value: true,
+                    relation: [{
+                        action: 'HIDE',
+                        when: [{
+                            name: 'replicate',
+                            value: true,
+                        }]
+                    }],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'replicate',
+                    placeholder: helptext.replicate_placeholder,
+                    tooltip: helptext.replicate_tooltip,
+                },
+                {
+                    type: 'select',
+                    multiple: true,
+                    name: 'periodic_snapshot_tasks',
+                    placeholder: helptext.periodic_snapshot_tasks_placeholder,
+                    tooltip: helptext.periodic_snapshot_tasks_tooltip,
+                    options: [],
+                    relation: [{
+                        action: 'HIDE',
+                        when: [{
+                            name: 'direction',
+                            value: 'PULL',
+                        }]
+                    }],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'restrict_schedule',
+                    placeholder: helptext.restrict_schedule_placeholder,
+                    tooltip: helptext.restrict_schedule_tooltip,
+                }, {
+                    type: 'scheduler',
+                    name: 'restrict_schedule_picker',
+                    tooltip: helptext.restrict_schedule_picker_tooltip,
+                    value: "0 0 * * *",
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'restrict_schedule',
+                            value: true,
+                        }]
+                    }],
+                }, {
+                    type: 'select',
+                    name: 'restrict_schedule_begin',
+                    placeholder: helptext.restrict_schedule_begin_placeholder,
+                    tooltip: helptext.restrict_schedule_begin_tooltip,
+                    options: [],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'restrict_schedule',
+                            value: true,
+                        }]
+                    }],
+                    value: '00:00',
+                }, {
+                    type: 'select',
+                    name: 'restrict_schedule_end',
+                    placeholder: helptext.restrict_schedule_end_placeholder,
+                    tooltip: helptext.restrict_schedule_end_tooltip,
+                    options: [],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'restrict_schedule',
+                            value: true,
+                        }]
+                    }],
+                    value: '23:59',
+                },
+                {
+                    type: 'input',
+                    name: 'naming_schema',
+                    placeholder: helptext.naming_schema_placeholder,
+                    tooltip: helptext.naming_schema_tooltip,
+                    relation: [{
+                        action: 'HIDE',
+                        when: [{
+                            name: 'direction',
+                            value: 'PUSH',
+                        }]
+                    }],
+                },
+                {
+                    type: 'input',
+                    name: 'also_include_naming_schema',
+                    placeholder: helptext.also_include_naming_schema_placeholder,
+                    tooltip: helptext.also_include_naming_schema_tooltip,
+                    relation: [{
+                        action: 'HIDE',
+                        when: [{
+                            name: 'direction',
+                            value: 'PULL',
+                        }]
+                    }],
+                    blurStatus: true,
+                    blurEvent: this.blurEventNamingSchema,
+                    parent: this
+                },
+                {
+                    type: 'checkbox',
+                    name: 'hold_pending_snapshots',
+                    placeholder: helptext.hold_pending_snapshots_placeholder,
+                    tooltip: helptext.hold_pending_snapshots_tooltip,
+                },
+            ]
+        },
+        { name: 'spacer', label: false, width: '2%' },
+        {
+            name: helptext.fieldset_destination,
+            label: true,
+            class: 'destination',
+            width: '49%',
+            config: [
+                {
+                    type: 'explorer',
+                    name: 'target_dataset_PUSH',
+                    placeholder: helptext.target_dataset_placeholder,
+                    tooltip: helptext.target_dataset_tooltip,
+                    initial: '',
+                    explorerType: 'directory',
+                    customTemplateStringOptions: {
+                        displayField: 'Path',
+                        isExpandedField: 'expanded',
+                        idField: 'uuid',
+                        getChildren: this.getChildren.bind(this),
+                        nodeHeight: 23,
+                        allowDrag: false,
+                        useVirtualScroll: false,
+                    },
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'direction',
+                            value: 'PUSH',
+                        }]
+                    }],
+                },
+                {
+                    type: 'explorer',
+                    initial: '',
+                    explorerType: 'dataset',
+                    name: 'target_dataset_PULL',
+                    placeholder: helptext.target_dataset_placeholder,
+                    tooltip: helptext.target_dataset_placeholder,
+                    options: [],
+                    required: true,
+                    validation: [Validators.required],
+                    isHidden: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'direction',
+                            value: 'PULL',
+                        }]
+                    }],
+                }, 
+                {
+                    type: 'checkbox',
+                    name: 'allow_from_scratch',
+                    placeholder: helptext.allow_from_scratch_placeholder,
+                    tooltip: helptext.allow_from_scratch_tooltip,
+                },  
+                {
+                    type: 'select',
+                    name: 'retention_policy',
+                    placeholder: helptext.retention_policy_placeholder,
+                    tooltip: helptext.retention_policy_tooltip,
+                    options: this.retentionPolicyChoice,
+                    value: 'NONE',
+                }, {
+                    type: 'input',
+                    inputType: 'number',
+                    name: 'lifetime_value',
+                    placeholder: helptext.lifetime_value_placeholder,
+                    tooltip: helptext.lifetime_value_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'retention_policy',
+                            value: 'CUSTOM',
+                        }]
+                    }],
+                    width: '50%',
+                }, {
+                    type: 'select',
+                    name: 'lifetime_unit',
+                    placeholder: helptext.lifetime_unit_placeholder,
+                    tooltip: helptext.lifetime_unit_tooltip,
+                    options: [
+                        {
+                            label: 'Hour(s)',
+                            value: 'HOUR',
+                        }, {
+                            label: 'Day(s)',
+                            value: 'DAY',
+                        }, {
+                            label: 'Week(s)',
+                            value: 'WEEK',
+                        }, {
+                            label: 'Month(s)',
+                            value: 'MONTH',
+                        }, {
+                            label: 'Year(s)',
+                            value: 'YEAR',
+                        }
+                    ],
+                    value: 'WEEK',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'retention_policy',
+                            value: 'CUSTOM',
+                        }]
+                    }],
+                    width: '50%',
+                },
+            ]
+        },
+        { name: 'divider', divider: true },
+        {
+            name: helptext.fieldset_schedule,
+            label: true,
+            class: 'schedule',
+            width: '50%',
+            config: [
+                {
+                    type: 'checkbox',
+                    name: 'auto',
+                    placeholder: helptext.auto_placeholder,
+                    tooltip: helptext.auto_tooltip,
+                    value: true,
+                }, {
+                    type: 'checkbox',
+                    name: 'schedule',
+                    placeholder: helptext.schedule_placeholder,
+                    tooltip: helptext.schedule_tooltip,
+                    relation: [{
+                        action: 'HIDE',
+                        when: [{
+                            name: 'auto',
+                            value: false,
+                        }]
+                    }]
+                }, {
+                    type: 'scheduler',
+                    name: 'schedule_picker',
+                    tooltip: helptext.schedule_picker_tooltip,
+                    value: "0 0 * * *",
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule',
+                            value: true,
+                        }]
+                    }],
+                }, {
+                    type: 'select',
+                    name: 'schedule_begin',
+                    placeholder: helptext.schedule_begin_placeholder,
+                    tooltip: helptext.schedule_begin_tooltip,
+                    options: [],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule',
+                            value: true,
+                        }]
+                    }],
+                    value: '00:00',
+                }, {
+                    type: 'select',
+                    name: 'schedule_end',
+                    placeholder: helptext.schedule_end_placeholder,
+                    tooltip: helptext.schedule_end_tooltip,
+                    options: [],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule',
+                            value: true,
+                        }]
+                    }],
+                    value: '23:59',
+                },
+                {
+                    type: 'checkbox',
+                    name: 'only_matching_schedule',
+                    placeholder: helptext.only_matching_schedule_placeholder,
+                    tooltip: helptext.only_matching_schedule_tooltip,
+                    isHidden: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule',
+                            value: true,
+                        }]
+                    }],
+                },
+            ]
+        }
     ]
+    protected fieldConfig;
 
     constructor(
         private ws: WebSocketService,
@@ -665,7 +725,8 @@ export class ReplicationFormComponent {
         private keychainCredentialService: KeychainCredentialService,
         private replicationService: ReplicationService,
         private dialogService: DialogService) {
-        const sshCredentialsField = _.find(this.fieldConfig, { name: 'ssh_credentials' });
+        const transportFieldsets = _.find(this.fieldSets, {class: 'transport'});
+        const sshCredentialsField = _.find(transportFieldsets.config, { name: 'ssh_credentials' });
         this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
                 for (const i in res) {
@@ -673,8 +734,8 @@ export class ReplicationFormComponent {
                 }
             }
         )
-
-        const periodicSnapshotTasksField = _.find(this.fieldConfig, { name: 'periodic_snapshot_tasks' });
+        const sourceFieldsets = _.find(this.fieldSets, {class: 'source'});
+        const periodicSnapshotTasksField = _.find(sourceFieldsets.config, { name: 'periodic_snapshot_tasks' });
         this.ws.call('pool.snapshottask.query').subscribe(
             (res) => {
                 for (const i in res) {
@@ -683,11 +744,11 @@ export class ReplicationFormComponent {
                 }
             }
         )
-
-        const scheduleBeginField = _.find(this.fieldConfig, { 'name': 'schedule_begin' });
-        const restrictScheduleBeginField = _.find(this.fieldConfig, { 'name': 'restrict_schedule_begin' });
-        const scheduleEndField = _.find(this.fieldConfig, { 'name': 'schedule_end' });
-        const restrictScheduleEndField = _.find(this.fieldConfig, { 'name': 'restrict_schedule_end' });
+        const scheduleFieldsets = _.find(this.fieldSets, {class: 'schedule'});
+        const scheduleBeginField = _.find(scheduleFieldsets.config, { 'name': 'schedule_begin' });
+        const restrictScheduleBeginField = _.find(sourceFieldsets.config, { 'name': 'restrict_schedule_begin' });
+        const scheduleEndField = _.find(scheduleFieldsets.config, { 'name': 'schedule_end' });
+        const restrictScheduleEndField = _.find(sourceFieldsets.config, { 'name': 'restrict_schedule_end' });
 
         const time_options = this.taskService.getTimeOptions();
         for (let i = 0; i < time_options.length; i++) {
@@ -714,35 +775,35 @@ export class ReplicationFormComponent {
         }
 
         this.ws.call('replication.count_eligible_manual_snapshots',
-        [
-            this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
-            typeof this.entityForm.formGroup.controls['also_include_naming_schema'].value === "string" ?
-            this.entityForm.formGroup.controls['also_include_naming_schema'].value.split(' ') : this.entityForm.formGroup.controls['also_include_naming_schema'].value,
-            this.entityForm.formGroup.controls['transport'].value,
-            this.entityForm.formGroup.controls['ssh_credentials'].value,
-        ]).subscribe(
-            (res) => {
-                this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
-                this.form_message.content = T(`${res.eligible} of ${res.total} existing snapshots of dataset ${this.entityForm.formGroup.controls['target_dataset_PUSH'].value} would be replicated with this task.`);
-            },
-            (err) => {
-                this.form_message.content = '';
-                new EntityUtils().handleWSError(this, err);
-            }
-        )
+            [
+                this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
+                typeof this.entityForm.formGroup.controls['also_include_naming_schema'].value === "string" ?
+                    this.entityForm.formGroup.controls['also_include_naming_schema'].value.split(' ') : this.entityForm.formGroup.controls['also_include_naming_schema'].value,
+                this.entityForm.formGroup.controls['transport'].value,
+                this.entityForm.formGroup.controls['ssh_credentials'].value,
+            ]).subscribe(
+                (res) => {
+                    this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
+                    this.form_message.content = T(`${res.eligible} of ${res.total} existing snapshots of dataset ${this.entityForm.formGroup.controls['target_dataset_PUSH'].value} would be replicated with this task.`);
+                },
+                (err) => {
+                    this.form_message.content = '';
+                    new EntityUtils().handleWSError(this, err);
+                }
+            )
     }
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
-        if (this.entityForm.formGroup.controls['speed_limit'].value) { 
+        if (this.entityForm.formGroup.controls['speed_limit'].value) {
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
         }
         this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe(
             (res) => {
                 if (entityForm.formGroup.controls['direction'].value === 'PUSH' &&
-                entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
-                entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+                    entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
                     this.countEligibleManualSnapshots();
                 } else {
                     this.form_message.content = '';
@@ -752,8 +813,8 @@ export class ReplicationFormComponent {
         entityForm.formGroup.controls['direction'].valueChanges.subscribe(
             (res) => {
                 if (res === 'PUSH' &&
-                entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
-                entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
+                    entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+                    entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
                     this.countEligibleManualSnapshots();
                 } else {
                     this.form_message.content = '';
@@ -761,7 +822,7 @@ export class ReplicationFormComponent {
             }
         );
 
-        const retentionPolicyField = _.find(this.fieldConfig, {name: 'retention_policy'});
+        const retentionPolicyField = _.find(this.fieldConfig, { name: 'retention_policy' });
         entityForm.formGroup.controls['transport'].valueChanges.subscribe(
             (res) => {
                 if (res !== 'LOCAL' && entityForm.formGroup.controls['direction'].value === 'PUSH' && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
@@ -789,20 +850,17 @@ export class ReplicationFormComponent {
             }
         )
 
-        entityForm.formGroup.controls['schedule'].statusChanges.subscribe((res) => {
-            const toDisable = res === 'DISABLED' ? true : false;
-            if (entityForm.formGroup.controls['schedule'].value) {
-                entityForm.setDisabled('schedule_picker', toDisable, toDisable);
-                entityForm.setDisabled('schedule_begin', toDisable, toDisable);
-                entityForm.setDisabled('schedule_end', toDisable, toDisable);
-            }
-            entityForm.setDisabled('only_matching_schedule', toDisable, toDisable);
+        entityForm.formGroup.controls['schedule'].valueChanges.subscribe((res) => {
+            entityForm.setDisabled('schedule_picker', !res, !res);
+            entityForm.setDisabled('schedule_begin', !res, !res);
+            entityForm.setDisabled('schedule_end', !res, !res);
+            entityForm.setDisabled('only_matching_schedule', !res, !res);
         })
 
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
             (res) => {
                 for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-                    const explorerComponent = _.find(this.fieldConfig, {name: item}).customTemplateStringOptions.explorerComponent;
+                    const explorerComponent = _.find(this.fieldConfig, { name: item }).customTemplateStringOptions.explorerComponent;
                     if (explorerComponent) {
                         explorerComponent.nodes = [{
                             mountpoint: explorerComponent.config.initial,
@@ -815,15 +873,17 @@ export class ReplicationFormComponent {
         )
 
         entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
-            const speedLimitField = _.find(this.fieldConfig, {name: "speed_limit"});
+            const speedLimitField = _.find(this.fieldConfig, { name: "speed_limit" });
             const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
             speedLimitField['hasErrors'] = false;
             speedLimitField['errors'] = '';
-                if (filteredValue !== undefined && isNaN(filteredValue)) {
-                    speedLimitField['hasErrors'] = true;
-                    speedLimitField['errors'] = helptext.speed_limit_errors;
-                };
+            if (filteredValue !== undefined && isNaN(filteredValue)) {
+                speedLimitField['hasErrors'] = true;
+                speedLimitField['errors'] = helptext.speed_limit_errors;
+            };
         });
+
+        entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
     }
 
     resourceTransformIncomingRestData(wsResponse) {
@@ -913,7 +973,7 @@ export class ReplicationFormComponent {
             data['source_datasets'] = _.filter(Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim));
             data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string' ? _.cloneDeep(data['target_dataset_PULL']) : _.cloneDeep(data['target_dataset_PULL']).toString();
             if (_.startsWith(data['target_dataset'], '/mnt/')) {
-                data['target_dataset']  =  data['target_dataset'] .substring(5);
+                data['target_dataset'] = data['target_dataset'].substring(5);
             }
             delete data['source_datasets_PULL'];
             delete data['target_dataset_PULL'];
@@ -964,7 +1024,7 @@ export class ReplicationFormComponent {
                     if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
                         data[prop] = false;
                     } else {
-                        data[prop] = Array.isArray(this.queryRes[prop]) ? [] :  null;
+                        data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
                     }
                 }
                 if (prop === 'schedule' && data[prop] === false) {
@@ -976,25 +1036,25 @@ export class ReplicationFormComponent {
 
     getChildren(node) {
         for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-            _.find(this.fieldConfig, {name: 'target_dataset_PUSH'}).hasErrors = false;
+            _.find(this.fieldConfig, { name: 'target_dataset_PUSH' }).hasErrors = false;
         }
 
         const transport = this.entityForm.formGroup.controls['transport'].value;
         const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
         if (sshCredentials == undefined || sshCredentials == '') {
             for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-                _.find(this.fieldConfig, {name: item}).hasErrors = true;
-                _.find(this.fieldConfig, {name: item}).errors = 'Please select a valid SSH Connection';
+                _.find(this.fieldConfig, { name: item }).hasErrors = true;
+                _.find(this.fieldConfig, { name: item }).errors = T('Please select a valid SSH Connection');
             }
             return;
         }
 
         return new Promise((resolve, reject) => {
-            resolve(this.replicationService.getRemoteDataset(transport,sshCredentials, this));
+            resolve(this.replicationService.getRemoteDataset(transport, sshCredentials, this));
         });
     }
 
-    blurEvent(parent){
+    blurEvent(parent) {
         if (parent.entityForm) {
             parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable)
         }
