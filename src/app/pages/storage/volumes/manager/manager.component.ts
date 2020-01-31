@@ -540,7 +540,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
         let body = {};
         if (this.isNew) {
-          console.log(layout);
           body = {name: this.name, encryption: this.isEncrypted, topology: layout };
         } else {
           body  = {name: this.name, topology: layout };
