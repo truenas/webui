@@ -6,7 +6,6 @@ import { MatDialog } from '@angular/material';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { JailService, WebSocketService, AppLoaderService, DialogService, NetworkService } from '../../../services/';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -21,11 +20,11 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 
 @Component({
   selector: 'app-jail-form',
-  templateUrl: '../jail-add/jail-add.component.html',
+  templateUrl: './jail-form.component.html',
   styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
   providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
-export class JailFormComponent implements OnInit, AfterViewInit{
+export class JailFormComponent implements OnInit, AfterViewInit {
   protected addCall = 'jail.create';
   public route_success: string[] = ['jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
@@ -61,237 +60,236 @@ export class JailFormComponent implements OnInit, AfterViewInit{
 
   protected dialogRef: any;
   protected formFields: FieldConfig[];
-  public basicFieldSets: FieldSet[] = [
+
+  public fieldSets: FieldSet[] = [
     {
       name: helptext.fieldsets.basic,
       label: false,
       class: 'basic',
       width: '100%',
       config: [
-          {
-            type: 'input',
-            name: 'uuid',
-            placeholder: helptext.uuid_placeholder,
-            tooltip: helptext.uuid_tooltip,
-            required: true,
-            validation: [regexValidator(this.jailService.jailNameRegex), forbiddenValues(this.namesInUse)],
-          },
-          {
-            type: 'select',
-            name: 'jailtype',
-            placeholder: helptext.jailtype_placeholder,
-            tooltip: helptext.jailtype_tooltip,
-            options: [
-              {
-                label: 'Default (Clone Jail)',
-                value: 'default',
-              },
-              {
-                label: 'Basejail',
-                value: 'basejail',
-              }
-            ],
-            value: 'default',
-          },
-          {
-            type: 'select',
-            name: 'release',
-            placeholder: helptext.release_placeholder,
-            tooltip: helptext.release_tooltip,
-            options: [],
-            required: true,
-            validation: [Validators.required],
-          },
-          {
-            type: 'radio',
-            name: 'https',
-            placeholder: helptext.https_placeholder,
-            options: [
-              { label: 'HTTPS', value: true, tooltip: helptext.https_tooltip, },
-              { label: 'HTTP', value: false, tooltip: helptext.http_tooltip, },
-            ],
-            value: true,
-            isHidden: true,
-          },
-          {
-            type: 'checkbox',
-            name: 'dhcp',
-            placeholder: helptext.dhcp_placeholder,
-            tooltip: helptext.dhcp_tooltip,
-            relation: [{
-              action: "DISABLE",
-              when: [{
-                name: "nat",
-                value: true
-              }]
-            }],
-          },
-          {
-            type: 'checkbox',
-            name: 'nat',
-            placeholder: helptext.nat_placeholder,
-            tooltip: helptext.nat_tooltip,
-          },
-          {
-            type: 'checkbox',
-            name: 'vnet',
-            placeholder: helptext.vnet_placeholder,
-            tooltip: helptext.vnet_tooltip,
-            value: false,
-          },
-          {
-            type: 'checkbox',
-            name: 'bpf',
-            placeholder: helptext.bpf_placeholder,
-            tooltip: helptext.bpf_tooltip,
-            relation: [{
-              action: "DISABLE",
-              when: [{
-                name: "nat",
-                value: true
-              }]
-            }],
-          },
-          {
-            type: 'list',
-            name: 'ip4_addr',
-            placeholder: 'IPv4 Addresses',
-            relation: [{
-              action: "ENABLE",
-              connective: 'AND',
-              when: [{
-                name: "dhcp",
-                value: false
-              }, {
-                name: 'nat',
-                value: false,
-              }]
-            }],
-            templateListField: [
-              {
-                type: 'select',
-                name: 'ip4_interface',
-                placeholder: helptext.ip4_interface_placeholder,
-                tooltip: helptext.ip4_interface_tooltip,
-                options: this.interfaces.vnetDisabled,
-                value: '',
-                class: 'inline',
-                width: '30%',
-              },
-              {
-                type: 'input',
-                name: 'ip4_addr',
-                placeholder: helptext.ip4_addr_placeholder,
-                tooltip: helptext.ip4_addr_tooltip,
-                validation: [regexValidator(this.networkService.ipv4_regex)],
-                class: 'inline',
-                width: '50%',
-              },
-              {
-                type: 'select',
-                name: 'ip4_netmask',
-                placeholder: helptext.ip4_netmask_placeholder,
-                tooltip: helptext.ip4_netmask_tooltip,
-                options: this.networkService.getV4Netmasks(),
-                value: '',
-                class: 'inline',
-                width: '20%',
-              }
-            ],
-            listFields: []
-          },
-          {
-            type: 'input',
-            name: 'defaultrouter',
-            placeholder: helptext.defaultrouter_placeholder,
-            tooltip: helptext.defaultrouter_tooltip,
-            relation: [{
-              action: 'DISABLE',
-              connective: 'OR',
-              when: [{
-                name: 'dhcp',
-                value: true,
-              }, {
-                name: 'nat',
-                value: true,
-              }, {
-                name: 'vnet',
-                value: false,
-              }]
+        {
+          type: 'input',
+          name: 'uuid',
+          placeholder: helptext.uuid_placeholder,
+          tooltip: helptext.uuid_tooltip,
+          required: true,
+          validation: [regexValidator(this.jailService.jailNameRegex), forbiddenValues(this.namesInUse)],
+        },
+        {
+          type: 'select',
+          name: 'jailtype',
+          placeholder: helptext.jailtype_placeholder,
+          tooltip: helptext.jailtype_tooltip,
+          options: [
+            {
+              label: 'Default (Clone Jail)',
+              value: 'default',
+            },
+            {
+              label: 'Basejail',
+              value: 'basejail',
+            }
+          ],
+          value: 'default',
+        },
+        {
+          type: 'select',
+          name: 'release',
+          placeholder: helptext.release_placeholder,
+          tooltip: helptext.release_tooltip,
+          options: [],
+          required: true,
+          validation: [Validators.required],
+        },
+        {
+          type: 'radio',
+          name: 'https',
+          placeholder: helptext.https_placeholder,
+          options: [
+            { label: 'HTTPS', value: true, tooltip: helptext.https_tooltip, },
+            { label: 'HTTP', value: false, tooltip: helptext.http_tooltip, },
+          ],
+          value: true,
+          isHidden: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'dhcp',
+          placeholder: helptext.dhcp_placeholder,
+          tooltip: helptext.dhcp_tooltip,
+          relation: [{
+            action: "DISABLE",
+            when: [{
+              name: "nat",
+              value: true
             }]
-          },
-          {
-            type: 'checkbox',
-            name: 'auto_configure_ip6',
-            placeholder: helptext.auto_configure_ip6_placeholder,
-            tooltip: helptext.auto_configure_ip6_tooltip,
-          },
-          {
-            type: 'list',
-            name: 'ip6_addr',
-            placeholder: 'IPv6 Addresses',
-            relation: [{
-              action: 'DISABLE',
-              when: [{
-                name: 'auto_configure_ip6',
-                value: true,
-              }]
-            }],
-            templateListField: [
-              {
-                type: 'select',
-                name: 'ip6_interface',
-                placeholder: helptext.ip6_interface_placeholder,
-                tooltip: helptext.ip6_interface_tooltip,
-                options: this.interfaces.vnetDisabled,
-                value: '',
-                class: 'inline',
-                width: '30%',
-              },
-              {
-                type: 'input',
-                name: 'ip6_addr',
-                placeholder: helptext.ip6_addr_placeholder,
-                tooltip: helptext.ip6_addr_tooltip,
-                validation: [regexValidator(this.networkService.ipv6_regex)],
-                class: 'inline',
-                width: '50%',
-              },
-              {
-                type: 'select',
-                name: 'ip6_prefix',
-                placeholder: helptext.ip6_prefix_placeholder,
-                tooltip: helptext.ip6_prefix_tooltip,
-                options: this.networkService.getV6PrefixLength(),
-                value: '',
-                class: 'inline',
-                width: '20%',
-              },
-            ],
-            listFields: []
-          },
-          {
-            type: 'input',
-            name: 'defaultrouter6',
-            placeholder: helptext.defaultrouter6_placeholder,
-            tooltip: helptext.defaultrouter6_tooltip,
-          },
-          {
-            type: 'input',
-            name: 'notes',
-            placeholder: helptext.notes_placeholder,
-            tooltip: helptext.notes_tooltip,
-          },
-          {
-            type: 'checkbox',
-            name: 'boot',
-            placeholder: helptext.boot_placeholder,
-            tooltip: helptext.boot_tooltip,
-          }
-        ]
-    }
-  ];
-  public jailFieldSets: FieldSet[] = [
+          }],
+        },
+        {
+          type: 'checkbox',
+          name: 'nat',
+          placeholder: helptext.nat_placeholder,
+          tooltip: helptext.nat_tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'vnet',
+          placeholder: helptext.vnet_placeholder,
+          tooltip: helptext.vnet_tooltip,
+          value: false,
+        },
+        {
+          type: 'checkbox',
+          name: 'bpf',
+          placeholder: helptext.bpf_placeholder,
+          tooltip: helptext.bpf_tooltip,
+          relation: [{
+            action: "DISABLE",
+            when: [{
+              name: "nat",
+              value: true
+            }]
+          }],
+        },
+        {
+          type: 'list',
+          name: 'ip4_addr',
+          placeholder: 'IPv4 Addresses',
+          relation: [{
+            action: "ENABLE",
+            connective: 'AND',
+            when: [{
+              name: "dhcp",
+              value: false
+            }, {
+              name: 'nat',
+              value: false,
+            }]
+          }],
+          templateListField: [
+            {
+              type: 'select',
+              name: 'ip4_interface',
+              placeholder: helptext.ip4_interface_placeholder,
+              tooltip: helptext.ip4_interface_tooltip,
+              options: this.interfaces.vnetDisabled,
+              value: '',
+              class: 'inline',
+              width: '30%',
+            },
+            {
+              type: 'input',
+              name: 'ip4_addr',
+              placeholder: helptext.ip4_addr_placeholder,
+              tooltip: helptext.ip4_addr_tooltip,
+              validation: [regexValidator(this.networkService.ipv4_regex)],
+              class: 'inline',
+              width: '50%',
+            },
+            {
+              type: 'select',
+              name: 'ip4_netmask',
+              placeholder: helptext.ip4_netmask_placeholder,
+              tooltip: helptext.ip4_netmask_tooltip,
+              options: this.networkService.getV4Netmasks(),
+              value: '',
+              class: 'inline',
+              width: '20%',
+            }
+          ],
+          listFields: []
+        },
+        {
+          type: 'input',
+          name: 'defaultrouter',
+          placeholder: helptext.defaultrouter_placeholder,
+          tooltip: helptext.defaultrouter_tooltip,
+          relation: [{
+            action: 'DISABLE',
+            connective: 'OR',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }, {
+              name: 'nat',
+              value: true,
+            }, {
+              name: 'vnet',
+              value: false,
+            }]
+          }]
+        },
+        {
+          type: 'checkbox',
+          name: 'auto_configure_ip6',
+          placeholder: helptext.auto_configure_ip6_placeholder,
+          tooltip: helptext.auto_configure_ip6_tooltip,
+        },
+        {
+          type: 'list',
+          name: 'ip6_addr',
+          placeholder: 'IPv6 Addresses',
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'auto_configure_ip6',
+              value: true,
+            }]
+          }],
+          templateListField: [
+            {
+              type: 'select',
+              name: 'ip6_interface',
+              placeholder: helptext.ip6_interface_placeholder,
+              tooltip: helptext.ip6_interface_tooltip,
+              options: this.interfaces.vnetDisabled,
+              value: '',
+              class: 'inline',
+              width: '30%',
+            },
+            {
+              type: 'input',
+              name: 'ip6_addr',
+              placeholder: helptext.ip6_addr_placeholder,
+              tooltip: helptext.ip6_addr_tooltip,
+              validation: [regexValidator(this.networkService.ipv6_regex)],
+              class: 'inline',
+              width: '50%',
+            },
+            {
+              type: 'select',
+              name: 'ip6_prefix',
+              placeholder: helptext.ip6_prefix_placeholder,
+              tooltip: helptext.ip6_prefix_tooltip,
+              options: this.networkService.getV6PrefixLength(),
+              value: '',
+              class: 'inline',
+              width: '20%',
+            },
+          ],
+          listFields: []
+        },
+        {
+          type: 'input',
+          name: 'defaultrouter6',
+          placeholder: helptext.defaultrouter6_placeholder,
+          tooltip: helptext.defaultrouter6_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'notes',
+          placeholder: helptext.notes_placeholder,
+          tooltip: helptext.notes_tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'boot',
+          placeholder: helptext.boot_placeholder,
+          tooltip: helptext.boot_tooltip,
+        }
+      ]
+    },
     {
       name: helptext.fieldsets.jail,
       label: false,
@@ -446,7 +444,7 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           class: 'inline',
           width: '50%',
         },
-        
+
         {
           type: 'input',
           name: 'vnet_interfaces',
@@ -486,7 +484,7 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           tooltip: helptext.allow_mlock_tooltip,
         },
 
-        
+
         {
           type: 'checkbox',
           name: 'allow_vmm',
@@ -553,9 +551,7 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           width: '50%',
         },
       ]
-    }
-  ];
-  public networkFieldSets: FieldSet[] = [
+    },
     {
       name: helptext.fieldsets.network,
       label: false,
@@ -567,24 +563,45 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           name: 'interfaces',
           placeholder: helptext.interfaces_placeholder,
           tooltip: helptext.interfaces_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
           name: 'host_domainname',
           placeholder: helptext.host_domainname_placeholder,
           tooltip: helptext.host_domainname_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
           name: 'host_hostname',
           placeholder: helptext.host_hostname_placeholder,
           tooltip: helptext.host_hostname_tooltip,
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'input',
+          name: 'resolver',
+          placeholder: helptext.resolver_placeholder,
+          tooltip: helptext.resolver_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'checkbox',
           name: 'ip4_saddrsel',
           placeholder: helptext.ip4_saddrsel_placeholder,
           tooltip: helptext.ip4_saddrsel_tooltip,
+
+        },
+        {
+          type: 'checkbox',
+          name: 'ip6_saddrsel',
+          placeholder: helptext.ip6_saddrsel_placeholder,
+          tooltip: helptext.ip6_saddrsel_tooltip,
         },
         {
           type: 'select',
@@ -600,13 +617,9 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           }, {
             label: 'Disable',
             value: 'disable',
-          }]
-        },
-        {
-          type: 'checkbox',
-          name: 'ip6_saddrsel',
-          placeholder: helptext.ip6_saddrsel_placeholder,
-          tooltip: helptext.ip6_saddrsel_tooltip,
+          }],
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'select',
@@ -622,19 +635,18 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           }, {
             label: 'Disable',
             value: 'disable',
-          }]
+          }],
+          class: 'inline',
+          width: '50%',
         },
-        {
-          type: 'input',
-          name: 'resolver',
-          placeholder: helptext.resolver_placeholder,
-          tooltip: helptext.resolver_tooltip,
-        },
+
         {
           type: 'input',
           name: 'mac_prefix',
           placeholder: helptext.mac_prefix_placeholder,
           tooltip: helptext.mac_prefix_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'select',
@@ -642,12 +654,16 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           placeholder: helptext.vnet_default_interface_placeholder,
           tooltip: helptext.vnet_default_interface_tooltip,
           options: this.interfaces.vnetDefaultInterface,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
           name: 'vnet0_mac',
           placeholder: helptext.vnet0_mac_placeholder,
           tooltip: helptext.vnet0_mac_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -661,6 +677,8 @@ export class JailFormComponent implements OnInit, AfterViewInit{
               value: true,
             }]
           }],
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'checkbox',
@@ -729,9 +747,7 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           disabled: true,
         },
       ]
-    }
-  ];
-  public customFieldSets: FieldSet[] = [
+    },
     {
       name: helptext.fieldsets.custom,
       label: false,
@@ -743,18 +759,24 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           name: 'priority',
           placeholder: helptext.priority_placeholder,
           tooltip: helptext.priority_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
           name: 'hostid',
           placeholder: helptext.hostid_placeholder,
           tooltip: helptext.hostid_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
           name: 'comment',
           placeholder: helptext.comment_placeholder,
           tooltip: helptext.comment_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'checkbox',
@@ -779,12 +801,16 @@ export class JailFormComponent implements OnInit, AfterViewInit{
           name: 'jail_zfs_dataset',
           placeholder: helptext.jail_zfs_dataset_placeholder,
           tooltip: helptext.jail_zfs_dataset_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
           name: 'jail_zfs_mountpoint',
           placeholder: helptext.jail_zfs_mountpoint_placeholder,
           tooltip: helptext.jail_zfs_mountpoint_tooltip,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'checkbox',
@@ -813,11 +839,11 @@ export class JailFormComponent implements OnInit, AfterViewInit{
       ]
     }
   ];
-  
-  public basicfieldConfig = _.find(this.basicFieldSets, {class: 'basic'}).config;
-  public jailfieldConfig = _.find(this.jailFieldSets, {class: 'jail'}).config;
-  public networkfieldConfig = _.find(this.networkFieldSets, {class: 'network'}).config;
-  public customConfig = _.find(this.customFieldSets, {class: 'custom'}).config;
+
+  public basicfieldConfig = _.find(this.fieldSets, { class: 'basic' }).config;
+  public jailfieldConfig = _.find(this.fieldSets, { class: 'jail' }).config;
+  public networkfieldConfig = _.find(this.fieldSets, { class: 'network' }).config;
+  public customConfig = _.find(this.fieldSets, { class: 'custom' }).config;
 
   protected releaseField: any;
   public step: any = 0;
@@ -864,7 +890,7 @@ export class JailFormComponent implements OnInit, AfterViewInit{
   protected unfetchedRelease = [];
   public showSpinner = true;
 
-  
+
   constructor(protected router: Router,
     protected jailService: JailService,
     protected ws: WebSocketService,
@@ -891,7 +917,7 @@ export class JailFormComponent implements OnInit, AfterViewInit{
   }
 
   async ngOnInit() {
-    
+
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
     this.template_list = new Array<string>();
     // get jail templates as release options
