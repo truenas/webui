@@ -117,5 +117,8 @@ user_form_microsoft_tooltip : T('Set to allow additional username authentication
 user_form_blur_event2_warning: T('Usernames can be up to 16 characters long.\
  When using NIS or other legacy software with limited username lengths,\
  keep usernames to eight characters or less for compatibility.'),
-user_form_download_key: T('Download SSH Public Key')
+user_form_download_key: T('Download SSH Public Key'),
+user_form_smb_name: 'smb',
+user_form_smb_placeholder: T('Samba Authentication'),
+user_form_smb_tooltip: T('Set to allow user to authenticate to Samba shares.')
 }

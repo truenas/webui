@@ -38,6 +38,7 @@ export class UserListComponent implements OnInit {
     { name: 'Lock User', prop: 'locked', hidden: true },
     { name: 'Permit Sudo', prop: 'sudo', hidden: true  },
     { name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170 },
+    { name : 'Samba Authentication', prop: 'smb', hidden: true }
   ];
   public rowIdentifier = 'username';
   public config: any = {
