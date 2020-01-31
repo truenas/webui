@@ -518,7 +518,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       if (res) {
         this.error = null;
 
-        const layout = [];
+        const layout = {};
         this.vdevComponents.forEach((vdev) => {
           const disks = [];
           vdev.getDisks().forEach((disk) => {
@@ -526,13 +526,21 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           if (disks.length > 0) {
             let type = vdev.type.toUpperCase();
             type = type === 'RAIDZ' ? 'RAIDZ1' : type;
-            layout.push({ type, disks });
+            const group = vdev.group;
+            if (!layout[group]) {
+              layout[group] = [];
+            }
+            if (group === 'spares') {
+              layout[group] = disks;
+            } else {
+              layout[group].push({ type:type, disks:disks });
+            }
           }
         });
 
         let body = {};
         if (this.isNew) {
-          body = {name: this.name, encryption: this.isEncrypted, topology: { data: layout } };
+          body = {name: this.name, encryption: this.isEncrypted, topology: layout };
         } else {
           body  = {name: this.name, topology: layout };
         }
