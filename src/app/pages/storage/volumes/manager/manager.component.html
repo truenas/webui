@@ -153,7 +153,7 @@
           </div>
           <div *ngIf="vdevs.spare.length > 0">
             <h4 class="vdev-h4">{{"Spare VDev" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spare'" [manager]="this" [index]="i"></app-vdev>
+            <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spares'" [manager]="this" [index]="i"></app-vdev>
           </div>
         </div>
       </div>

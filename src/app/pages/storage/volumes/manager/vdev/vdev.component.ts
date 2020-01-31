@@ -56,7 +56,7 @@ export class VdevComponent implements OnInit {
         this.type = 'stripe';
       }
     } else {
-      this.type = this.group;
+      this.type = 'stripe';
     }
     if (this.initial_values['disks']) {
       for (let i = 0; i < this.initial_values['disks'].length; i++) {
