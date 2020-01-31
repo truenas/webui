@@ -15,13 +15,13 @@
 		<table>
 			<tr>
 				<td></td>
-				<td>{{"User" | translate}}</td>
-				<td>{{"Group" | translate}}</td>
-				<td>{{"Other" | translate}}</td>
+				<td>{{"Read" | translate}}</td>
+				<td>{{"Write" | translate}}</td>
+				<td>{{"Execute" | translate}}</td>
 			</tr>
 			<tr>
 				<td>
-					{{"Read" | translate}}
+					{{"User" | translate}}
 				</td>
 				<td>
 					<mat-checkbox [checked]="ownerRead" (change)="toggleOwnerRead()"
@@ -31,29 +31,29 @@
 					</mat-checkbox>
 				</td>
 				<td>
-					<mat-checkbox [checked]="groupRead" (change)="toggleGroupRead()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_groupRead">
-					</mat-checkbox>
-				</td>
-				<td>
-					<mat-checkbox [checked]="otherRead" (change)="toggleOtherRead()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_otherRead">
-					</mat-checkbox><br/>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					{{"Write" | translate}}
-				</td>
-				<td>
 					<mat-checkbox [checked]="ownerWrite" (change)="toggleOwnerWrite()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_ownerWrite">
+					</mat-checkbox>
+				</td>
+				<td>
+					<mat-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()"
+						ix-auto
+						ix-auto-type="checkbox"
+						ix-auto-identifier="{{config.name}}_ownerExec">
+					</mat-checkbox>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					{{"Group" | translate}}
+				</td>
+				<td>
+					<mat-checkbox [checked]="groupRead" (change)="toggleGroupRead()"
+						ix-auto
+						ix-auto-type="checkbox"
+						ix-auto-identifier="{{config.name}}_groupRead">
 					</mat-checkbox>
 				</td>
 				<td>
@@ -64,30 +64,30 @@
 					</mat-checkbox>
 				</td>
 				<td>
-					<mat-checkbox [checked]="otherWrite" (change)="toggleOtherWrite()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_otherWrite">
-					</mat-checkbox><br/>
-				</td>
-			</tr>
-			<tr *ngIf="!config.noexec">
-				<td>
-					{{"Execute" | translate}}
-				</td>
-				<td>
-					<mat-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()"
-						ix-auto
-						ix-auto-type="checkbox"
-						ix-auto-identifier="{{config.name}}_ownerExec">
-					</mat-checkbox>
-				</td>
-				<td>
 					<mat-checkbox [checked]="groupExec" (change)="toggleGroupExec()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_groupExec">
 					</mat-checkbox>
+				</td>
+			</tr>
+			<tr *ngIf="!config.noexec">
+				<td>
+					{{"Other" | translate}}
+				</td>
+				<td>
+					<mat-checkbox [checked]="otherRead" (change)="toggleOtherRead()"
+						ix-auto
+						ix-auto-type="checkbox"
+						ix-auto-identifier="{{config.name}}_otherRead">
+					</mat-checkbox><br/>
+				</td>
+				<td>
+					<mat-checkbox [checked]="otherWrite" (change)="toggleOtherWrite()"
+						ix-auto
+						ix-auto-type="checkbox"
+						ix-auto-identifier="{{config.name}}_otherWrite">
+					</mat-checkbox><br/>
 				</td>
 				<td>
 					<mat-checkbox [checked]="otherExec" (change)="toggleOtherExec()"
@@ -95,7 +95,7 @@
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_otherExec">
 					</mat-checkbox>
-				</td>
+				</td>			
 			</tr>
 		</table>
 	
