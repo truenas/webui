@@ -590,7 +590,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         id: "edit",
         icon: 'edit',
         label: T("Edit"),
-        onClick: (rowinner) => { this.doEdit(rowinner.id); },
+        onClick: (rowinner) => { console.log(rowinner); this.doEdit(rowinner.id); },
       }, {
         name: 'delete',
         id: "delete",
@@ -646,6 +646,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doEdit(id) {
+    console.log(id)
     this.router.navigate(
       new Array('/').concat(this.conf.route_edit).concat(id));
   }

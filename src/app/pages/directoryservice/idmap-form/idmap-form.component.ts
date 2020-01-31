@@ -12,7 +12,7 @@ import helptext from '../../../helptext/directoryservice/idmap';
 })
 export class IdmapFormComponent {
 
-  protected route_success: string[] = ['account', 'groups'];
+  protected route_success: string[] = ['directoryservice', 'idmap'];
   protected isEntity: boolean = true;
   protected namesInUse = [];
   protected queryCall = 'idmap.query';
@@ -130,7 +130,7 @@ export class IdmapFormComponent {
         },
         {
           type:  'checkbox' ,
-          name: 'ignore_built_in',
+          name: 'ignore_builtin',
           placeholder: 'Ignore Built-In',
           tooltip: helptext.idmap.dns_domain_name.tooltip,
         },
@@ -231,12 +231,13 @@ export class IdmapFormComponent {
   ];
 
   private optionsFields: Array<any> = [
+    'certificate_id',
     'schema_mode',
     'unix_primary_group',
     'unix_nss_info',
     'rangesize',
     'readonly',
-    'ignore_built_in',
+    'ignore_builtin',
     'ldap_base_dn',
     'ldap_user_dn',
     'ldap_user_dn_password',
@@ -253,6 +254,11 @@ export class IdmapFormComponent {
   ]
 
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService) { }
+
+  resourceTransformIncomingRestData(data) {
+    console.log(data);
+    return data;
+  }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
@@ -272,6 +278,22 @@ export class IdmapFormComponent {
       const be = _.find(this.fieldConfig, { name: 'idmap_backend' });
       be.tooltip = '';
       be.tooltip += descrip;
+      this.optionsFields.forEach((option) => {
+        this.hideField(option, true, entityEdit);
+      })
+      for(let i in this.backendChoices[value].parameters) {
+        this.optionsFields.forEach((option) => {
+          if (option === i) {
+            const params = this.backendChoices[value].parameters[option];
+            this.hideField(option, false, entityEdit);
+            _.find(this.fieldConfig, { name: option }).required = params.required;
+            entityEdit.formGroup.controls[option].setValue(params.default);
+            if (value === 'LDAP' || value === 'RFC2307') {
+              this.hideField('certificate_id', false, entityEdit);
+            }
+          }
+        })
+      }
     });
 
     this.idmapService.getBackendChoices().subscribe((res) => {
@@ -289,6 +311,5 @@ export class IdmapFormComponent {
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);
   }
-
 
 }
