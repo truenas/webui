@@ -321,10 +321,16 @@ export class VolumesListTableConfig implements InputTableConf {
           title: "Unlock " + row1.name,
           fieldConfig: [
             {
+              type: 'paragraph',
+              name: 'unlock_msg',
+              paraText: helptext.unlock_msg,
+            },
+            {
               type : 'input',
               inputType: 'password',
               name : 'passphrase',
               togglePw: true,
+              required: true,
               placeholder: helptext.unlockDialog_password_placeholder,
             },
             {
@@ -334,6 +340,7 @@ export class VolumesListTableConfig implements InputTableConf {
               parent: self,
               hideButton: true, 
               name: 'key',
+              required: true,
               placeholder: helptext.unlockDialog_recovery_key_placeholder,
               tooltip: helptext.unlockDialog_recovery_key_tooltip,
             },
@@ -350,6 +357,28 @@ export class VolumesListTableConfig implements InputTableConf {
           afterInit: function(entityDialog) {
                 self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
                   entityDialog.formGroup.controls['key'].setValue(message);
+                });
+                // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
+                let keyDisabled = false;
+                let passphraseDisabled = false;
+                entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
+                  if (!passphraseDisabled) {
+                    if (passphrase && passphrase !== '') {
+                      keyDisabled = true;
+                      entityDialog.setDisabled('key', true, true);
+                    } else {
+                      keyDisabled = false;
+                      entityDialog.setDisabled('key', false, false);
+                    }
+                  }
+                });
+                entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
+                  if (!keyDisabled) {
+                    if (key && !passphraseDisabled) {
+                      passphraseDisabled = true;
+                      entityDialog.setDisabled('passphrase', true, true);
+                    }
+                  }
                 });
           },
           saveButtonText: T("Unlock"),
