@@ -35,6 +35,9 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   public route_success: string[] = ['jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
+  protected pluginAddCall = 'plugin.create';
+  public plugin_route_success: string[] = ['plugins'];
+
   public formGroup: any;
   public error: string;
   protected namesInUse = [];
@@ -71,6 +74,12 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       class: 'basic',
       width: '100%',
       config: [
+        {
+          type: 'input',
+          name: 'plugin',
+          placeholder: helptext.plugin_name_placeholder,
+          disabled: true,
+        },
         {
           type: 'input',
           name: 'uuid',
@@ -897,6 +906,8 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   public pk: any;
   protected currentReleaseVersion: any;
   protected currentServerVersion: any;
+  public plugin: any;
+  protected pluginRepository: any;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -973,7 +984,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           this.formGroup.controls[item].setValue(res);
         }
         _.find(this.basicfieldConfig, { 'name': item }).required = res;
-        if (this.formGroup.controls['nat'].disabled !== res && this.wsResponse.state !== 'up') {
+        if (this.formGroup.controls['nat'].disabled !== res && (this.wsResponse && this.wsResponse.state !== 'up')) {
           this.setDisabled('nat', res);
         }
       })
@@ -1018,6 +1029,33 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getPluginDefaults() {
+    // get defaults of plugin
+    this.ws.call('plugin.defaults', [{
+      plugin: this.plugin,
+      plugin_repository: this.pluginRepository,
+      refresh: false
+    }]).subscribe((defaults) => {
+      for (let i in defaults.properties) {
+        if (this.formGroup.controls[i]) {
+          if (i === 'nat_forwards') {
+            this.deparseNatForwards(defaults.properties[i]);
+            continue;
+          }
+          if (_.indexOf(this.TFfields, i) > -1) {
+            defaults.properties[i] = defaults.properties[i] == '1' ? true : false;
+          }
+          this.formGroup.controls[i].setValue(defaults.properties[i]);
+        }
+      }
+      if (!defaults.properties.hasOwnProperty('dhcp') && !defaults.properties.hasOwnProperty('nat')) {
+        this.formGroup.controls['nat'].setValue(true);
+      }
+    }, (err) => {
+      new EntityUtils().handleWSError(this, err, this.dialog);
+    });
+  }
+
   loadFormValue() {
     if (this.pk === undefined) {
       this.jailService.getDefaultConfiguration().subscribe(
@@ -1049,6 +1087,9 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               }
             }
           }
+          if (this.plugin !== undefined) {
+            this.getPluginDefaults();
+          }
         },
         (res) => {
           new EntityUtils().handleError(this, res);
@@ -1065,7 +1106,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           this.save_button_enabled = false;
           this.error = T("Jails cannot be changed while running.");
           for (let i = 0; i < this.formFields.length; i++) {
-            this.setDisabled(this.formFields[i].name, true);
+            this.setDisabled(this.formFields[i].name, true, this.formFields[i].isHidden);
           }
         } else {
           this.save_button_enabled = true;
@@ -1133,10 +1174,22 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
     this.aroute.params.subscribe(async params => {
       this.pk = params['pk'];
+      this.plugin = params['plugin'];
+
       if (this.pk !== undefined) {
         this.setDisabled('jailtype', true, true);
         this.setDisabled('release', true, false);
         this.setDisabled('https', true, true);
+      }
+      if (this.plugin !== undefined) {
+        this.setDisabled('jailtype', true, true);
+        this.setDisabled('release', true, true);
+        this.setDisabled('https', true, true);
+
+        this.formGroup.controls['plugin'].setValue(this.plugin);
+        this.pluginRepository =  params['plugin_repository'];
+      } else {
+        this.setDisabled('plugin', true, true);
       }
 
       // get forbiden name list
@@ -1217,7 +1270,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
+    this.router.navigate(new Array('').concat(this.plugin === undefined ? this.route_success : this.plugin_route_success));
   }
 
   getFullIP(type: string, ipInterface: string, ip: string, netmask: string) {
@@ -1332,6 +1385,11 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           }
         }
       }
+      if (this.plugin !== undefined) {
+        value['plugin_name'] = this.plugin;
+        value['plugin_repository'] = this.pluginRepository;
+      }
+
       value['props'] = property;
       if (_.indexOf(this.template_list, value['release']) > -1) {
         value['template'] = value['release'];
@@ -1376,8 +1434,28 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         delete value['uuid'];
       }
     }
+    if (this.plugin !== undefined) {
+      value['jail_name'] = value['uuid'];
+      delete value['uuid'];
 
-    if (this.pk === undefined) {
+      const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Install") }, disableClose: true });
+      dialogRef.componentInstance.setDescription(T("Installing plugin..."));
+      dialogRef.componentInstance.setCall(this.pluginAddCall, [value]);
+      dialogRef.componentInstance.submit();
+      dialogRef.componentInstance.success.subscribe((res) => {
+        dialogRef.componentInstance.setTitle(T("Plugin Installed Successfully"));
+        let install_notes = '<p><b>Install Notes:</b></p>';
+        for (const msg of res.result.install_notes.split('\n')) {
+            install_notes += '<p>' + msg + '</p>';
+        }
+        dialogRef.componentInstance.setDescription(install_notes);
+        dialogRef.componentInstance.showCloseButton = true;
+
+        dialogRef.afterClosed().subscribe(result => {
+          this.router.navigate(new Array('/').concat(this.plugin_route_success));
+        });
+      });
+    } else if (this.pk === undefined) {
       const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true });
       dialogRef.componentInstance.setDescription(T("Creating Jail..."));
       dialogRef.componentInstance.setCall(this.addCall, [value]);
