@@ -935,41 +935,56 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   }
 
   getReleaseAndInterface() {
-    this.template_list = new Array<string>();
-    // get jail templates as release options
-    this.jailService.getTemplates().subscribe(
-      (templates) => {
-        for (const template of templates) {
-          this.template_list.push(template.host_hostuuid);
-          this.releaseField.options.push({ label: template.host_hostuuid + ' (template)', value: template.host_hostuuid });
+    if (this.plugin !== undefined) {
+      // get interface options
+      this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+        (res) => {
+          for (let i in res) {
+            this.interfaces.vnetDisabled.push({ label: res[i].name, value: res[i].name });
+          }
+        },
+        (res) => {
+          new EntityUtils().handleWSError(this, res, this.dialogService);
         }
-      },
-      (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
-      }
-    )
-
-    this.jailService.getReleaseChoices().subscribe(
-      (releases) => {
-        for (const item in releases) {
-          this.releaseField.options.push({ label: item, value: releases[item] });
+      );
+    } else {
+      this.template_list = new Array<string>();
+      // get jail templates as release options
+      this.jailService.getTemplates().subscribe(
+        (templates) => {
+          for (const template of templates) {
+            this.template_list.push(template.host_hostuuid);
+            this.releaseField.options.push({ label: template.host_hostuuid + ' (template)', value: template.host_hostuuid });
+          }
+        },
+        (err) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService);
         }
-      },
-      (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
-      }
-    );
-
-    this.jailService.getInterfaceChoice().subscribe(
-      (res) => {
-        for (const i in res) {
-          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i] });
+      )
+  
+      this.jailService.getReleaseChoices().subscribe(
+        (releases) => {
+          for (const item in releases) {
+            this.releaseField.options.push({ label: item, value: releases[item] });
+          }
+        },
+        (err) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService);
         }
-      },
-      (res) => {
-        new EntityUtils().handleWSError(this, res, this.dialogService);
-      }
-    );
+      );
+  
+      this.jailService.getInterfaceChoice().subscribe(
+        (res) => {
+          for (const i in res) {
+            this.interfaces.vnetDisabled.push({ label: res[i], value: res[i] });
+          }
+        },
+        (res) => {
+          new EntityUtils().handleWSError(this, res, this.dialogService);
+        }
+      );
+    }
+    
   }
 
   setValuechange() {
@@ -1162,8 +1177,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-    this.getReleaseAndInterface();
-
     this.formGroup = this.entityFormService.createFormGroup(this.formFields);
 
     for (const i in this.formFields) {
@@ -1175,6 +1188,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     this.aroute.params.subscribe(async params => {
       this.pk = params['pk'];
       this.plugin = params['plugin'];
+      this.getReleaseAndInterface();
 
       if (this.pk !== undefined) {
         this.setDisabled('jailtype', true, true);
@@ -1220,6 +1234,9 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         subipInterfaceField.options = ipType === 'ip4' ? this.ip4_interfaceField.options : this.ip6_interfaceField.options;
       }
     }
+
+    this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
+    this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
   }
 
   setRelation(config: FieldConfig) {
