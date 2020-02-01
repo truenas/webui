@@ -628,4 +628,12 @@ shmsize_tooltip: T('Number of SysV shared memory segments in bytes.'),
 
 wallclock_placeholder: T('wallclock'),
 wallclock_tooltip: T('Wallclock time in seconds.'),
+
+fieldsets: {
+    basic: T('Basic Properties'),
+    jail: T('Jail Properties'),
+    network: T('Network Properties'),
+    custom: T('Custom Properties'),
+}
+
 }
