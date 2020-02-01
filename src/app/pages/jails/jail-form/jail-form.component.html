@@ -1,8 +1,7 @@
-<p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <mat-card>
-    <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="showSpinner"></mat-spinner>
+    <mat-spinner class="jail-spinner" [diameter]='40' id="jail-spinner" *ngIf="showSpinner"></mat-spinner>
     <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
-        <mat-expansion-panel *ngFor="let fieldSet of fieldSets; let i = index" [expanded]="step === i" (opened)="setStep(i)">
+        <mat-expansion-panel *ngFor="let fieldSet of fieldSets; let i = index" [expanded]="step === i && isReady" (opened)="setStep(i)">
             <mat-expansion-panel-header>
                 <mat-panel-title>{{fieldSet.name | translate}}</mat-panel-title>
             </mat-expansion-panel-header>
@@ -25,8 +24,9 @@
             </mat-action-row>
         </mat-expansion-panel>
         <mat-card-actions>
-            <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid" >{{ "Save" | translate }}</button>
+            <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid || !save_button_enabled" >{{ "Save" | translate }}</button>
             <button *ngIf="route_success" (click)="goBack()" mat-button color="accent" type="button">{{ "Cancel" | translate }}</button>
         </mat-card-actions>
     </form>
+    <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
 </mat-card>

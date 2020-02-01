@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core'
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
@@ -21,10 +21,16 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 @Component({
   selector: 'app-jail-form',
   templateUrl: './jail-form.component.html',
-  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss', '../jail-list/jail-list.component.css'],
   providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
 export class JailFormComponent implements OnInit, AfterViewInit {
+
+  public isReady =  false;
+  protected queryCall = 'jail.query';
+  protected updateCall = 'jail.update';
+  protected upgradeCall = 'jail.upgrade';
+
   protected addCall = 'jail.create';
   public route_success: string[] = ['jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
@@ -57,9 +63,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       }
     ]
   }
-
-  protected dialogRef: any;
-  protected formFields: FieldConfig[];
 
   public fieldSets: FieldSet[] = [
     {
@@ -546,9 +549,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               label: helptext.allow_mount_zfs_placeholder,
               tooltip: helptext.allow_mount_zfs_tooltip,
             }
-          ],
-          class: 'inline',
-          width: '50%',
+          ]
         },
       ]
     },
@@ -844,8 +845,9 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   public jailfieldConfig = _.find(this.fieldSets, { class: 'jail' }).config;
   public networkfieldConfig = _.find(this.fieldSets, { class: 'network' }).config;
   public customConfig = _.find(this.fieldSets, { class: 'custom' }).config;
+  protected formFields = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig);
 
-  protected releaseField: any;
+
   public step: any = 0;
 
   // fields only accepted by ws with value 0/1
@@ -881,17 +883,23 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     'nat',
   ];
 
-  protected ip4_interfaceField: any;
-  protected ip4_netmaskField: any;
-  protected ip6_interfaceField: any;
-  protected ip6_prefixField: any;
-  protected vnet_default_interfaceField: any;
+  protected releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
+  protected ip4_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip4_addr' }).templateListField[0];
+  protected ip6_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip6_addr' }).templateListField[0];
+  protected vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
   protected template_list: string[];
   protected unfetchedRelease = [];
   public showSpinner = true;
 
+  public save_button_enabled: boolean;
+  protected isPlugin = false;
+  protected wsResponse: any;
+  public pk: any;
+  protected currentReleaseVersion: any;
+  protected currentServerVersion: any;
 
   constructor(protected router: Router,
+    protected aroute: ActivatedRoute,
     protected jailService: JailService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
@@ -906,7 +914,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     for (const ipType of ['ip4', 'ip6']) {
       const targetPropName = ipType + '_addr';
       for (let i = 0; i < this.formGroup.controls[targetPropName].controls.length; i++) {
-        const subipFormgroup = this.formGroup.controls[targetPropName].controls[i];
         const subipInterfaceField = _.find(_.find(this.basicfieldConfig, { 'name': targetPropName }).listFields[i], { 'name': ipType + '_interface' });
 
         if (addVnet != undefined) {
@@ -916,9 +923,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async ngOnInit() {
-
-    this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
+  getReleaseAndInterface() {
     this.template_list = new Array<string>();
     // get jail templates as release options
     this.jailService.getTemplates().subscribe(
@@ -944,10 +949,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       }
     );
 
-    this.ip4_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip4_addr' }).templateListField[0];
-    this.ip6_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip6_addr' }).templateListField[0];
-    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
-
     this.jailService.getInterfaceChoice().subscribe(
       (res) => {
         for (const i in res) {
@@ -958,8 +959,170 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         new EntityUtils().handleWSError(this, res, this.dialogService);
       }
     );
+  }
 
-    this.formFields = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig);
+  setValuechange() {
+    const httpsField = _.find(this.formFields, { 'name': 'https' });
+    this.formGroup.controls['release'].valueChanges.subscribe((res) => {
+      httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
+    });
+
+    this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
+      ['vnet', 'bpf'].forEach((item) => {
+        if (res) {
+          this.formGroup.controls[item].setValue(res);
+        }
+        _.find(this.basicfieldConfig, { 'name': item }).required = res;
+        if (this.formGroup.controls['nat'].disabled !== res && this.wsResponse.state !== 'up') {
+          this.setDisabled('nat', res);
+        }
+      })
+    });
+
+    const vnetFieldConfig = _.find(this.basicfieldConfig, { 'name': 'vnet' });
+    this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
+      if (res) {
+        this.formGroup.controls['vnet'].setValue(res);
+      }
+      vnetFieldConfig.required = res;
+    });
+
+    this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
+      const hasError = (!res && (
+        (this.formGroup.controls['dhcp'].value || this.formGroup.controls['nat'].value) ||
+        this.formGroup.controls['auto_configure_ip6'].value)) ? true : false;
+
+      vnetFieldConfig.hasErrors = hasError;
+      vnetFieldConfig.errors = hasError ? T('VNET is required.') : '';
+      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
+      this.ip6_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
+      this.updateInterface(res);
+    });
+
+    const bpfFieldConfig = _.find(this.basicfieldConfig, { 'name': 'bpf' });
+    this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
+      const hasError = (!res && this.formGroup.controls['dhcp'].value) ? true : false;
+      bpfFieldConfig.hasErrors = hasError;
+      bpfFieldConfig.errors = hasError ? T('BPF is required.') : '';
+    });
+
+    this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
+      this.formGroup.controls['vnet'].setValue(res ? true : this.formGroup.controls['vnet'].value);
+      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
+    });
+
+    ['ip4_addr', 'ip6_addr'].forEach((item) => {
+      this.formGroup.controls[item].valueChanges.subscribe((res) => {
+        this.updateInterface();
+      });
+    });
+  }
+
+  loadFormValue() {
+    if (this.pk === undefined) {
+      this.jailService.getDefaultConfiguration().subscribe(
+        (res) => {
+          this.save_button_enabled = true;
+          for (let i in res) {
+            if (i === 'interfaces') {
+              const ventInterfaces = res['interfaces'].split(',');
+              for (const item of ventInterfaces) {
+                this.interfaces.vnetEnabled.push({ label: item, value: item });
+                this.interfaces.vnetDefaultInterface.push({ label: item, value: item });
+              }
+            }
+            if (this.formGroup.controls[i]) {
+              if ((i == 'ip4_addr' || i == 'ip6_addr') && res[i] == 'none') {
+                continue;
+              }
+              if (_.indexOf(this.TFfields, i) > -1) {
+                if (res[i] == '1') {
+                  res[i] = true;
+                } else {
+                  res[i] = false;
+                }
+              }
+              if (i === 'nat_forwards') {
+                this.deparseNatForwards(res[i]);
+              } else {
+                this.formGroup.controls[i].setValue(res[i]);
+              }
+            }
+          }
+        },
+        (res) => {
+          new EntityUtils().handleError(this, res);
+        });
+    } else {
+      this.ws.call(this.queryCall, [
+        [
+          ["host_hostuuid", "=", this.pk]
+        ]
+      ]).subscribe(
+      (res) => {
+        this.wsResponse = res[0];
+        if (res[0] && res[0].state == 'up') {
+          this.save_button_enabled = false;
+          this.error = T("Jails cannot be changed while running.");
+          for (let i = 0; i < this.formFields.length; i++) {
+            this.setDisabled(this.formFields[i].name, true);
+          }
+        } else {
+          this.save_button_enabled = true;
+          this.error = "";
+        }
+        const allowMountList = [];
+        for (let i in res[0]) {
+          if (i === 'interfaces') {
+            const ventInterfaces = res[0]['interfaces'].split(',');
+            for (const item of ventInterfaces) {
+              this.interfaces.vnetEnabled.push({ label: item, value: item});
+              this.interfaces.vnetDefaultInterface.push({ label: item, value: item});
+            }
+          }
+          if (i == 'type' && res[0][i] == 'pluginv2') {
+            this.setDisabled("uuid", true);
+            this.isPlugin = true;
+          }
+          if (_.startsWith(i, 'allow_mount_') && res[0][i] === 1) {
+            allowMountList.push(i);
+          }
+          if (this.formGroup.controls[i]) {
+            if (i == 'ip4_addr' || i == 'ip6_addr') {
+              this.deparseIpaddr(res[0][i], i.split('_')[0]);
+              continue;
+            }
+            if (i === 'nat_forwards') {
+              this.deparseNatForwards(res[0][i]);
+              continue;
+            }
+            if (i == 'release') {
+              _.find(this.basicfieldConfig, { 'name': 'release' }).options.push({ label: res[0][i], value: res[0][i] });
+              this.currentReleaseVersion = Number(_.split(res[0][i], '-')[0]);
+            }
+            if (_.indexOf(this.TFfields, i) > -1) {
+              if (res[0][i] == '1') {
+                res[0][i] = true;
+              } else {
+                res[0][i] = false;
+              }
+            }
+            this.formGroup.controls[i].setValue(res[0][i]);
+          }
+        }
+        this.formGroup.controls['uuid'].setValue(res[0]['host_hostuuid']);
+        this.formGroup.controls['allow_mount_*'].setValue(allowMountList);
+        this.showSpinner = false;
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this, res, this.dialogService);
+      });
+    }
+  }
+
+  async ngOnInit() {
+    this.getReleaseAndInterface();
+
     this.formGroup = this.entityFormService.createFormGroup(this.formFields);
 
     for (const i in this.formFields) {
@@ -968,115 +1131,35 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         this.setRelation(config);
       }
     }
-
-    await this.jailService.listJails().toPromise().then((res) => {
-      res.forEach(i => this.namesInUse.push(i.id));
-      this.showSpinner = false;
-    })
-
-    const httpsField = _.find(this.formFields, { 'name': 'https' });
-    this.formGroup.controls['release'].valueChanges.subscribe((res) => {
-      httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
-    });
-
-    this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
-      if (res) {
-        this.formGroup.controls['vnet'].setValue(true);
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = true;
-        this.formGroup.controls['bpf'].setValue(true);
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = true;
-
-        if (!this.formGroup.controls['nat'].disabled) {
-          this.setDisabled('nat', true);
-        }
-      } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
-
-        if (this.formGroup.controls['nat'].disabled) {
-          this.setDisabled('nat', false);
-        }
+    this.aroute.params.subscribe(async params => {
+      this.pk = params['pk'];
+      if (this.pk !== undefined) {
+        this.setDisabled('jailtype', true, true);
+        this.setDisabled('release', true, false);
+        this.setDisabled('https', true, true);
       }
-    });
-    this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
-      if (res) {
-        this.formGroup.controls['vnet'].setValue(true);
-      }
-      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
-    });
-    this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
-      if (((this.formGroup.controls['dhcp'].value || this.formGroup.controls['nat'].value) || this.formGroup.controls['auto_configure_ip6'].value) && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = true;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = 'VNET is required.';
-      } else {
-        _.find(this.basicfieldConfig, { 'name': 'vnet' })['hasErrors'] = false;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' })['errors'] = '';
-      }
-      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
-      this.ip6_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
-      this.updateInterface(res);
-    });
-    this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
-      if (this.formGroup.controls['dhcp'].value && !res) {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = true;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = 'BPF is required.';
-      } else {
-        _.find(this.basicfieldConfig, { 'name': 'bpf' })['hasErrors'] = false;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' })['errors'] = '';
-      }
-    });
-    this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
-      let vnet_ctrl = this.formGroup.controls['vnet'];
-      if (res) {
-        vnet_ctrl.setValue(true);
-      } else {
-        vnet_ctrl.setValue(vnet_ctrl.value);
-      }
-      _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
-    });
 
-    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
-      this.updateInterface();
-    });
-    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
-      this.updateInterface();
-    });
-
-    this.jailService.getDefaultConfiguration().subscribe(
-      (res) => {
-        for (let i in res) {
-          if (i === 'interfaces') {
-            const ventInterfaces = res['interfaces'].split(',');
-            for (const item of ventInterfaces) {
-              this.interfaces.vnetEnabled.push({ label: item, value: item });
-              this.interfaces.vnetDefaultInterface.push({ label: item, value: item });
-            }
+      // get forbiden name list
+      await this.jailService.listJails().toPromise().then((res) => {
+        res.forEach(i => {
+          if (i.id !== this.pk) {
+            this.namesInUse.push(i.id);
           }
-          if (this.formGroup.controls[i]) {
-            if ((i == 'ip4_addr' || i == 'ip6_addr') && res[i] == 'none') {
-              continue;
-            }
-            if (_.indexOf(this.TFfields, i) > -1) {
-              if (res[i] == '1') {
-                res[i] = true;
-              } else {
-                res[i] = false;
-              }
-            }
-            if (i === 'nat_forwards') {
-              this.deparseNatForwards(res[i]);
-            } else {
-              this.formGroup.controls[i].setValue(res[i]);
-            }
-          }
-        }
-      },
-      (res) => {
-        new EntityUtils().handleError(this, res);
+        });
+        this.showSpinner = false;
       });
+
+      this.setValuechange();
+      this.loadFormValue();
+    })
   }
 
   ngAfterViewInit() {
+    setTimeout(() => {
+      this.isReady = true;
+      this.setStep(0);
+    }, 100);
+
     for (const ipType of ['ip4', 'ip6']) {
       const targetPropName = ipType + '_addr';
       for (let i = 0; i < this.formGroup.controls[targetPropName].controls.length; i++) {
@@ -1168,17 +1251,44 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
+
+  deparseIpaddr(value, ipType) {
+    value = value.split(',');
+    const propName = ipType + '_addr';
+    for (let i = 0; i < value.length; i++) {
+      if (this.formGroup.controls[propName].controls[i] == undefined) {
+        // add controls;
+        const templateListField = _.cloneDeep(_.find(this.basicfieldConfig, {'name': propName}).templateListField);
+        this.formGroup.controls[propName].push(this.entityFormService.createFormGroup(templateListField));
+        _.find(this.basicfieldConfig, {'name': propName}).listFields.push(templateListField);
+      }
+      if (ipType == 'ip6' && value[i] == 'vnet0|accept_rtadv') {
+        this.formGroup.controls['auto_configure_ip6'].setValue(true);
+      }
+
+      if (value[i].indexOf('|') > 0) {
+        this.formGroup.controls[propName].controls[i].controls[ipType + '_interface'].setValue(value[i].split('|')[0]);
+        value[i] = value[i].split('|')[1];
+      }
+      if (value[i].indexOf('/') > 0) {
+        this.formGroup.controls[propName].controls[i].controls[propName].setValue(value[i].split('/')[0]);
+        this.formGroup.controls[propName].controls[i].controls[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')].setValue(value[i].split('/')[1]);
+      } else {
+        this.formGroup.controls[propName].controls[i].controls[propName].setValue(value[i] == 'none' ? '' : value[i]);
+      }
+    }
+    this.formGroup.controls['dhcp'].setValue(this.wsResponse['dhcp']);
+    this.formGroup.controls['nat'].setValue(this.wsResponse['nat']);
+  }
+
   onSubmit(event: Event) {
+    let updateRelease = false;
+    let newRelease: any;
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
     const property: any = [];
     const value = _.cloneDeep(this.formGroup.value);
-
-    if (value['jailtype'] === 'basejail') {
-      value['basejail'] = true;
-    }
-    delete value['jailtype'];
 
     this.parseIpaddr(value);
     this.parseNatForwards(value);
@@ -1188,57 +1298,142 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
     delete value['auto_configure_ip6'];
 
-    for (let i in value) {
-      if (value.hasOwnProperty(i)) {
-        if (value[i] == undefined) {
-          delete value[i];
-        } else {
-          if (_.indexOf(this.TFfields, i) > -1) {
-            if (value[i]) {
-              property.push(i + '=1');
-            } else {
-              property.push(i + '=0');
-            }
+    if (value['allow_mount_*']) {
+      for (const i of value['allow_mount_*']) {
+        value[i] = true;
+      }
+      delete value['allow_mount_*'];
+    }
+    
+    if (this.pk === undefined) {
+      if (value['jailtype'] === 'basejail') {
+        value['basejail'] = true;
+      }
+      delete value['jailtype'];
+
+      for (let i in value) {
+        if (value.hasOwnProperty(i)) {
+          if (value[i] == undefined) {
             delete value[i];
           } else {
-            if (i != 'uuid' && i != 'release' && i != 'basejail' && i != 'https') {
-              property.push(i + '=' + value[i]);
+            if (_.indexOf(this.TFfields, i) > -1) {
+              if (value[i]) {
+                property.push(i + '=1');
+              } else {
+                property.push(i + '=0');
+              }
               delete value[i];
+            } else {
+              if (i != 'uuid' && i != 'release' && i != 'basejail' && i != 'https') {
+                property.push(i + '=' + value[i]);
+                delete value[i];
+              }
             }
           }
         }
       }
-    }
-    value['props'] = property;
-
-    if (_.indexOf(this.template_list, value['release']) > -1) {
-      value['template'] = value['release'];
-    }
-
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true });
-    this.dialogRef.componentInstance.setDescription(T("Creating Jail..."));
-    this.dialogRef.componentInstance.setCall(this.addCall, [value]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialogRef.close(true);
-      this.router.navigate(new Array('/').concat(this.route_success));
-    });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogRef.close();
-      // show error inline if error is EINVAL
-      if (res.error.indexOf('[EINVAL]') > -1) {
-        res.error = res.error.substring(9).split(':');
-        const field = res.error[0];
-        const error = res.error[1];
-        const fc = _.find(this.formFields, { 'name': field });
-        if (fc && !fc['isHidden']) {
-          fc['hasErrors'] = true;
-          fc['errors'] = error;
-        }
-      } else {
-        new EntityUtils().handleWSError(this, res, this.dialogService);
+      value['props'] = property;
+      if (_.indexOf(this.template_list, value['release']) > -1) {
+        value['template'] = value['release'];
       }
-    });
+    } else {
+      for (let i in this.wsResponse) {
+        if (value[i] == undefined && _.find(this.formFields, {name: i}) != undefined && i !== 'host_hostuuid' && i !== 'release') {
+          if (this.wsResponse[i] === true) {
+            value[i] = false;
+          }
+        } else {
+          if (_.startsWith(i, 'allow_mount_')) {
+            if (value[i] === undefined) {
+              value[i] = 0;
+            }
+          }
+          // do not send value[i] if value[i] no change
+          if (value[i] == this.wsResponse[i] || (i === 'host_hostuuid' && value['uuid'] === this.wsResponse[i])) {
+            i === 'host_hostuuid' ? delete value['uuid'] :  delete value[i];
+          }
+        }
+  
+        if (value.hasOwnProperty(i)) {
+          if (i == 'release') {
+            // upgrade release
+            updateRelease = true;
+            newRelease = value[i];
+            delete value[i];
+          }
+          if (_.indexOf(this.TFfields, i) > -1) {
+            if (value[i]) {
+              value[i] = 1;
+            } else {
+              value[i] = 0;
+            }
+          }
+        }
+      }
+  
+      if (value['uuid']) {
+        value['name'] = value['uuid'];
+        delete value['uuid'];
+      }
+    }
+
+    if (this.pk === undefined) {
+      const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true });
+      dialogRef.componentInstance.setDescription(T("Creating Jail..."));
+      dialogRef.componentInstance.setCall(this.addCall, [value]);
+      dialogRef.componentInstance.submit();
+      dialogRef.componentInstance.success.subscribe((res) => {
+        dialogRef.close(true);
+        this.router.navigate(new Array('/').concat(this.route_success));
+      });
+      dialogRef.componentInstance.failure.subscribe((res) => {
+        dialogRef.close();
+        // show error inline if error is EINVAL
+        if (res.error.indexOf('[EINVAL]') > -1) {
+          res.error = res.error.substring(9).split(':');
+          const field = res.error[0];
+          const error = res.error[1];
+          const fc = _.find(this.formFields, { 'name': field });
+          if (fc && !fc['isHidden']) {
+            fc['hasErrors'] = true;
+            fc['errors'] = error;
+          }
+        } else {
+          new EntityUtils().handleWSError(this, res, this.dialogService);
+        }
+      });
+    } else {
+      this.loader.open();
+      this.ws.call(this.updateCall, [this.pk, value]).subscribe(
+        (res) => {
+          this.loader.close();
+          if (updateRelease) {
+            const option = {
+              'release': newRelease,
+              'plugin': this.isPlugin,
+            }
+            const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Upgrading Jail") }, disableClose: true });
+            dialogRef.componentInstance.setCall(this.upgradeCall, [this.pk, option]);
+            dialogRef.componentInstance.submit();
+            dialogRef.componentInstance.success.subscribe((dialogRes) => {
+              dialogRef.close(true);
+              this.router.navigate(new Array('/').concat(this.route_success));
+            });
+          } else {
+            if (res.error) {
+              new EntityUtils().handleWSError(this, res, this.dialogService);
+            } else {
+              this.router.navigate(new Array('/').concat(this.route_success));
+            }
+          }
+        },
+        (res) => {
+          this.loader.close();
+          new EntityUtils().handleWSError(this, res, this.dialogService);
+        }
+      );
+    }
+
   }
 
   setStep(index: number) {
@@ -1298,5 +1493,4 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     delete value['nat_forwards_checkbox'];
   }
 }
-
 
