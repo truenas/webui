@@ -2,8 +2,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
-import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advanced-add.component';
+import { JailFormComponent } from '../jails/jail-form/jail-form.component';
 import { PluginsComponent } from './plugins.component';
 
 export const routes: Routes = [
@@ -22,8 +21,8 @@ export const routes: Routes = [
       data: { title: 'Add', breadcrumb: 'Add' },
     },
     {
-      path: 'advanced/:pk',
-      component: PluginAdvancedAddComponent,
+      path: 'advanced/:plugin',
+      component: JailFormComponent,
       data: { title: 'Advanced Add', breadcrumb: 'Advanced Add' },
     },
     ]
