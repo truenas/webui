@@ -37,7 +37,7 @@ msgstr ""
 msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
 "selected."
-msgstr "indirizzi. Quanto questo è stato scelto, è impossibile selezionarne un altro. "
+msgstr "indirizzi. Quando questo è stato scelto, è impossibile selezionarne un altro. "
 
 msgid " and "
 msgstr "e"
