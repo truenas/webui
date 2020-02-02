@@ -79,6 +79,12 @@ msgstr " 除非选择永久保持，否则为秒。调整延迟时间以进行�
 msgid " service has been enabled."
 msgstr " 服务已启用。"
 
+msgid " should be greater than "
+msgstr ""
+
+msgid " should be less than "
+msgstr ""
+
 msgid " system is powered on and connected to the network."
 msgstr " 系统已启动并连接到网络。"
 
@@ -103,6 +109,9 @@ msgstr "' 已加密！如果此加密池的密码丢失，则数据将永久不�
 
 msgid "'. All data on that pool was destroyed."
 msgstr "'。该存储池上的所有数据均已销毁。"
+
+msgid "(24 Hours)"
+msgstr ""
 
 msgid "(No description)"
 msgstr "（没有描述）"
@@ -299,18 +308,12 @@ msgstr ""
 msgid ""
 "<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
-"ZFS pools. <b>WARNING:</b> Read the <a "
+"RELEASE+and+Ports\" target=\"_blank\">GELI</a>  encryption is available for "
+"ZFS pools. <b>WARNING:</b> Read the  <a "
 "href=\"--docurl--/storage.html#managing-encrypted-pools\" "
-"target=\"_blank\">Encryption section</a> of the guide before activating "
+"target=\"_blank\">Encryption section</a>  of the guide before activating "
 "this option."
 msgstr ""
-"<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\"> GELI </a> "
-"加密可用于ZFS池。<b>警告</b>：阅读以下内容的<a "
-"href=\"--docurl--/storage.html#managing-encrypted-pools\" "
-"target=\"_blank\">加密</a>部分，激活此选项之前请先进行操作。"
 
 msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
@@ -1474,6 +1477,9 @@ msgstr ""
 msgid "Amount of locked memory in bytes for the jail."
 msgstr "Jail的锁定内存量（以bytes为单位）"
 
+msgid "An ACL is present in this path"
+msgstr ""
+
 msgid "An update is already applied. Please reboot the system."
 msgstr "已应用更新。请重新启动系统。"
 
@@ -1939,6 +1945,9 @@ msgid ""
 "nesting additional pools, datasets, or symbolic links beneath this path."
 msgstr "浏览存储池或数据集来共享。Netatalk并不完全支持在此路径下嵌套其他池、数据集或符号链接。"
 
+msgid "Browse to the pool or dataset to store received  data."
+msgstr ""
+
 msgid "Bucket"
 msgstr "存储桶"
 
@@ -2289,6 +2298,9 @@ msgstr ""
 "在目标系统上选择存储快照的数据集。单击<i class=material-icons>文件夹</i>以查看目标系统上的所有数据集。 "
 "单击数据集以将其设置为目标。"
 
+msgid "Choose a date format."
+msgstr ""
+
 msgid "Choose a device for your report."
 msgstr "选择报告的设备。"
 
@@ -2351,6 +2363,9 @@ msgid ""
 "Choose a saved SSH Keypair or select  <i>Generate New</i> to create a new "
 "keypair and use it for this  connection."
 msgstr "选择一个已保存的SSH密钥对或选择<i>新建</i>来创建一个新的密钥对并将其用于此连接。"
+
+msgid "Choose a time format."
+msgstr ""
 
 msgid "Choose an alert service to display options for that service."
 msgstr "选择警报服务以显示该服务的选项。"
@@ -2423,6 +2438,9 @@ msgid ""
 "Choose one of the presets or choose <i>Custom</i> to use the advanced "
 "scheduler."
 msgstr "选择其中一个预设或选择<i>自定义</i>以使用高级计划程序。"
+
+msgid "Choose permissions for this rsync module."
+msgstr ""
 
 msgid ""
 "Choose the  <a href=\"--docurl--/system.html#ssh-connection\"  "
@@ -3225,6 +3243,9 @@ msgstr "具有要复制的快照的数据集。"
 msgid "Datastore"
 msgstr "数据存储"
 
+msgid "Date Format"
+msgstr ""
+
 msgid "Day of Month"
 msgstr "每月的几号"
 
@@ -3312,6 +3333,9 @@ msgstr "默认值为UTF-8，它支持所有语言的字符。"
 msgid "Default umask"
 msgstr "默认掩码"
 
+msgid "Define Periodic Snapshots to Replicate"
+msgstr ""
+
 msgid ""
 "Define a length of time to retain the snapshot on this system. After the "
 "time expires, the snapshot is removed. Snapshots which have been replicated "
@@ -3335,10 +3359,10 @@ msgstr ""
 
 msgid ""
 "Define any additional settings for use by some Kerberos applications. The "
-"available settings and syntax is listed in the <a "
+"available settings and syntax is listed in the  <a "
 "href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
 "conf.html#appdefaults\" target=\"_blank\">appdefaults section of "
-"krb.conf(5).</a>."
+"krb.conf(5)</a>."
 msgstr ""
 
 msgid ""
@@ -3346,7 +3370,7 @@ msgid ""
 "and their syntax are listed in the <a "
 "href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
 "conf.html#libdefaults\" target=\"_blank\">libdefaults section of "
-"krb.conf(5).</a>."
+"krb.conf(5)</a>."
 msgstr ""
 
 msgid ""
@@ -3486,6 +3510,9 @@ msgstr "描述虚拟机或其用途。"
 
 msgid "Describe the scrub task."
 msgstr "描述这个数据校验任务。"
+
+msgid "Describe this module."
+msgstr ""
 
 msgid "Describe this service."
 msgstr "描述这个服务。"
@@ -3948,8 +3975,8 @@ msgstr ""
 msgid "Enable"
 msgstr "启用"
 
-msgid "Enable (requires password)"
-msgstr "启用（需要密码）"
+msgid "Enable (requires password or Kerberos principal)"
+msgstr ""
 
 msgid "Enable Atime"
 msgstr "启用Atime"
@@ -4548,6 +4575,12 @@ msgid ""
 msgstr ""
 "输入<a href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\"> rsyncd.conf（5）</a>中的任何其他参数 。"
+
+msgid ""
+"Enter any additional settings from <a "
+"href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
+"target=\"_blank\">rsyncd.conf(5)</a>."
+msgstr ""
 
 msgid ""
 "Enter any aliases, separated by spaces. Each alias can be up to 15 "
@@ -5247,10 +5280,11 @@ msgid "Filename Encryption"
 msgstr "文件名加密"
 
 msgid ""
-"Files are split into chunks of this size before upload. Up to «--transfers» "
-"chunks can be in progress at one time. The single largest file being "
-"transferred must fit into no more than 10,000 chunks."
-msgstr "上传之前，文件将被拆分为该大小的块。一次最多可以进行«--transfer»个块。传输的单个最大文件不得超过10,000个块。"
+"Files are split into chunks of this size  before upload. The number of "
+"chunks that can be simultaneously  transferred is set by the "
+"<b>Transfers</b> number. The single  largest file being transferred must "
+"fit into no more than 10,000  chunks."
+msgstr ""
 
 msgid ""
 "Files that are deleted from the same  dataset are moved to the Recycle Bin "
@@ -5385,6 +5419,20 @@ msgstr "周五"
 
 msgid "From"
 msgstr "来自"
+
+msgid ""
+"From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
+"target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
+"hostname and IP address of a connecting client. The connection is  rejected "
+"if no patterns match. Separate patterns with whitespace or a  comma."
+msgstr ""
+
+msgid ""
+"From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
+"target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
+"hostname and IP address of a connecting client. The connection is  rejected "
+"when the patterns match. Separate patterns with whitespace  or a comma."
+msgstr ""
 
 msgid "From E-mail"
 msgstr "从电子邮件"
@@ -5540,6 +5588,9 @@ msgstr ""
 "组名不能以连字符（ <i>-</i> ）开头，也不能包含空格，制表符或这些字符： <i>，+：＆＃％^（）！ @〜*？ &lt;&gt; "
 "=</i>。<i>$</i>只能用作用户名的最后一个字符。"
 
+msgid "Group to run as during file transfers to and  from this module."
+msgstr ""
+
 msgid "Group to which this ACL entry applies."
 msgstr "此访问控制列表条目适用的组。"
 
@@ -5644,9 +5695,6 @@ msgstr "HipChat集群名称。"
 
 msgid "History"
 msgstr "历史"
-
-msgid "Hold Pending Snapshots"
-msgstr "暂挂快照"
 
 msgid "Home Directory"
 msgstr "主目录"
@@ -6026,6 +6074,9 @@ msgstr "入"
 
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr "以KiB/s为单位。默认值<i> 0 </i>表示无限制。"
+
+msgid "Include Dataset Properties"
+msgstr ""
 
 msgid "Include Password Secret Seed"
 msgstr "包括密码种子"
@@ -6765,8 +6816,10 @@ msgstr "Jail的最大SysV消息队列大小（以bytes为单位）。"
 msgid ""
 "Maximum Transmission Unit, the largest protocol data  unit that can be "
 "communicated. The largest workable MTU size varies  with network interfaces "
-"and equipment. *1500* and *9000* are standard  Ethernet MTU sizes."
-msgstr "最大传输单位，可以通信的最大协议数据单位。最大可用MTU大小随网络接口和设备而异。 *1500*和*9000*是标准的以太网MTU尺寸。"
+"and equipment. <i>1500</i> and <i>9000</i>  are standard Ethernet MTU "
+"sizes. Leaving blank restores the field to  the default value of "
+"<i>1500</i>."
+msgstr ""
 
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
@@ -6810,6 +6863,9 @@ msgstr "断开客户端之前的最大客户端空闲时间（秒）。"
 
 msgid "Maximum connections"
 msgstr "最大连接数"
+
+msgid "Maximum connections to this module. <i>0</i>  is unlimited."
+msgstr ""
 
 msgid "Maximum number of SysV message queues."
 msgstr "SysV消息队列的最大数量。"
@@ -6965,6 +7021,9 @@ msgstr ""
 "修改具有<a href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>的磁盘。"
 
+msgid "Module name that matches the name requested by  the rsync client."
+msgstr ""
+
 msgid "Mon"
 msgstr "周一"
 
@@ -7033,11 +7092,6 @@ msgstr "多路径名称"
 
 msgid "Multipaths"
 msgstr "多路径"
-
-msgid ""
-"Must match Peer Secret (Confirm) and be between 12 and 16 characters in "
-"length. Cannot be the same as Secret."
-msgstr "必须与Peer Secret（确认）匹配，长度在12到16个字符之间。不能与密码相同。"
 
 msgid ""
 "Must match Windows workgroup name. This setting is ignored if the <a "
@@ -7989,6 +8043,9 @@ msgstr ""
 "在考虑更改此设置之前，请阅读<a href=\"--docurl--/storage.html#deduplication\" "
 "target=\"_blank\">重复数据删除</a>章节 。"
 
+msgid "Please select a valid SSH Connection"
+msgstr ""
+
 msgid "Please select a valid path"
 msgstr "请选择一个有效的路径"
 
@@ -8220,9 +8277,6 @@ msgstr "进度"
 msgid "Promote Dataset"
 msgstr "升级数据集"
 
-msgid "Properties"
-msgstr "属性"
-
 msgid "Protocol"
 msgstr "协议"
 
@@ -8318,6 +8372,9 @@ msgstr "只读"
 
 msgid "Read Only Access"
 msgstr "只读访问"
+
+msgid "Read and Write"
+msgstr ""
 
 msgid "Read-Only"
 msgstr "只读"
@@ -8503,9 +8560,6 @@ msgid ""
 "Datasets</b> becomes available."
 msgstr "复制所有子数据集快照。设置后，<b>排除子数据集</b>变为可用。"
 
-msgid "Replicate from scratch if incremental is not possible"
-msgstr "如果无法进行增量复制，则从头开始复制"
-
 msgid ""
 "Replicate snapshots that have not been  created by an automated snapshot "
 "task. Requires setting a naming schema  for the custom snapshots."
@@ -8519,9 +8573,6 @@ msgstr "复制 <i>"
 
 msgid "Replication Schedule"
 msgstr "复制计划"
-
-msgid "Replication Status"
-msgstr "复制状态"
 
 msgid "Replication Tasks"
 msgstr "复制任务"
@@ -8875,6 +8926,9 @@ msgstr "开始"
 msgid "STOP"
 msgstr "停止"
 
+msgid "Samba Authentication"
+msgstr ""
+
 msgid "Samba Schema"
 msgstr "Samba架构"
 
@@ -8904,6 +8958,9 @@ msgstr "保存许可证"
 
 msgid "Save Network Interface Changes"
 msgstr "保存网络接口更改"
+
+msgid "Save Pending Snapshots"
+msgstr ""
 
 msgid "Save Without Restarting"
 msgstr "保存而不重新启动"
@@ -9054,6 +9111,9 @@ msgstr "私有密钥"
 
 msgid "Secret Key"
 msgstr "密钥"
+
+msgid "Secret and Peer Secret can not be the same."
+msgstr ""
 
 msgid "Secure mode"
 msgstr "安全模式"
@@ -9239,9 +9299,10 @@ msgid "Select a screen resolution to use for VNC sessions."
 msgstr "选择一个用于VNC会话的分辨率。"
 
 msgid ""
-"Select a sector size in bytes. <i>Default</i> leaves the leaves the sector "
-"size unset."
-msgstr "选择以bytes为单位的扇区大小。<i>默认</i>保留未设置的扇区大小。"
+"Select a sector size in bytes. <i>Default</i> leaves the sector size unset "
+"and uses the ZFS volume values. Setting a sector size changes both the "
+"logical and physical sector size."
+msgstr ""
 
 msgid "Select a stream mode if system is to be used for streaming."
 msgstr "如果要使用系统进行流传输，请选择一种流传输模式。"
@@ -9375,13 +9436,15 @@ msgid ""
 "from <i>Best effort (default)</i>  to <i>Network control (highest)</i>."
 msgstr "选择服务等级。可用的802.1p服务等级的范围从<i>尽量（默认）</i>到<i>网络控制（最高）</i>。"
 
-msgid ""
-"Select the IP address associated with an interface or the wildcard address "
-"of <i>0.0.0.0</i> (any interface)."
-msgstr "选择与接口关联的IP地址或通配符地址<i>0.0.0.0</i>（任何接口）。"
-
 msgid "Select the IP addresses SMB will listen for."
 msgstr "选择SMB将侦听的IP地址。"
+
+msgid ""
+"Select the IP addresses to be listened on  by the portal. Click ADD to add "
+"IP addresses with a different network  port. The address <i>0.0.0.0</i> can "
+"be selected to listen on all IPv4  addresses, or <i>::</i> to listen on all "
+"IPv6 addresses."
+msgstr ""
 
 msgid ""
 "Select the VLAN Parent Interface. Usually an Ethernet card connected to a "
@@ -9701,11 +9764,17 @@ msgstr "服务停止失败"
 msgid "Services"
 msgstr "服务"
 
+msgid "Set Frequency"
+msgstr ""
+
 msgid "Set Keep Flag"
 msgstr "设置保留标志"
 
 msgid "Set Passphrase"
 msgstr "设置密码"
+
+msgid "Set Warning Level"
+msgstr ""
 
 msgid ""
 "Set a starting time when the  replication is not allowed to start. A "
@@ -9752,9 +9821,6 @@ msgstr "设置为默认配置，以使用用户<i> upsmon </i>和密码：<i> fi
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
 msgstr "设置ypbind以绑定到响应最快的服务器。"
-
-msgid "Set frequency"
-msgstr ""
 
 msgid "Set if NFS clients need to use UDP."
 msgstr "设置NFS客户端是否需要使用UDP。"
@@ -9917,6 +9983,9 @@ msgstr ""
 "windows-server-2012-R2-and-2012/cc771254(v=ws.11)\" target=\"_blank\"> "
 "xcopy </a>操作，否则这些操作将被访问控制阻止。"
 
+msgid "Set to allow group to be used for Samba permissions and authentication."
+msgstr ""
+
 msgid ""
 "Set to allow privileged users inside the jail to mount and unmount "
 "filesystem types marked as jail-friendly."
@@ -10008,6 +10077,9 @@ msgid ""
 "Set to allow the share to host user home directories. Only one share can be "
 "the home share."
 msgstr "设置为允许共享托管用户主目录。只有一个共享可以是主目录共享。"
+
+msgid "Set to allow user to authenticate to Samba shares."
+msgstr ""
 
 msgid ""
 "Set to allow users to bypass firewall restrictions using the SSH port <a "
@@ -10667,9 +10739,6 @@ msgstr ""
 msgid "Snapshot Lifetime"
 msgstr "快照生命周期"
 
-msgid "Snapshot Replication Schedule"
-msgstr "快照复制计划"
-
 msgid "Snapshot Retention Policy"
 msgstr "快照保留策略"
 
@@ -11021,6 +11090,9 @@ msgstr "同步到对等方"
 msgid "Sync to peer succeeded."
 msgstr "与对等方同步成功。"
 
+msgid "Synchronize Destination Snapshots With Source"
+msgstr ""
+
 msgid "Syslog"
 msgstr "系统日志"
 
@@ -11211,8 +11283,8 @@ msgstr "测试警报已发送！"
 msgid "Test email sent!"
 msgstr "已发送测试邮件！"
 
-msgid "Tests are not performed when the system enters the selected power mode."
-msgstr "系统进入所选电源模式时，不会执行测试。"
+msgid "Tests are only performed when <i>Never</i>  is selected."
+msgstr ""
 
 msgid ""
 "The <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
@@ -11393,6 +11465,9 @@ msgid ""
 "The legacy user interface is deprecated. All management should be performed "
 "through the new user interface."
 msgstr "旧版用户界面已弃用。所有管理应通过新的用户界面执行。"
+
+msgid "The length of "
+msgstr ""
 
 msgid "The lifetime of the CA specified in days."
 msgstr "CA的寿命，以天为单位。"
@@ -11753,6 +11828,9 @@ msgid ""
 "connection with the remote system."
 msgstr "系统停止尝试与远程系统建立连接之前的时间（以秒为单位）。"
 
+msgid "Time Format"
+msgstr ""
+
 msgid "Time Machine"
 msgstr "时光机"
 
@@ -11824,6 +11902,9 @@ msgstr "转移"
 
 msgid "Transport"
 msgstr "传输"
+
+msgid "Transport Options"
+msgstr ""
 
 msgid "Traverse"
 msgstr "遍历"
@@ -12280,6 +12361,9 @@ msgstr "用户传递给<i>camcontrol security -u</i>以解锁SED"
 msgid "User password. Must be at least 12 and no more than 16 characters long."
 msgstr "用户密码。必须至少有12个字符，最长不超过16个字符。"
 
+msgid "User to run as during file transfers to and from  this module."
+msgstr ""
+
 msgid ""
 "User who controls the dataset. This user always has permissions to read or "
 "write the ACL and read or write attributes. Users created manually or "
@@ -12676,6 +12760,9 @@ msgstr "写入"
 msgid "Write Errors"
 msgstr "写入错误"
 
+msgid "Write Only"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr "输入单个处理器核心的占用百分比限制。"
 
@@ -12722,13 +12809,10 @@ msgid "ZFS deduplication"
 msgstr "ZFS重复数据删除"
 
 msgid ""
-"ZFS pools must conform to strict naming <a "
+"ZFS pools must conform to strict naming  <a "
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
-"target=\"_blank\">conventions</a>. Choose a memorable name."
+"target=\"_blank\">conventions</a>.  Choose a memorable name."
 msgstr ""
-"ZFS池的名字必须严格符合<a "
-"href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
-"target=\"_blank\">规定</a>。选择一个好记的名字。"
 
 msgid "Zero Device Numbers"
 msgstr "设备号为0"

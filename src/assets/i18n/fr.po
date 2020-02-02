@@ -92,6 +92,12 @@ msgstr ""
 msgid " service has been enabled."
 msgstr " le service a été activé."
 
+msgid " should be greater than "
+msgstr ""
+
+msgid " should be less than "
+msgstr ""
+
 msgid " system is powered on and connected to the network."
 msgstr " est mis sous tension et connecté au réseau."
 
@@ -120,6 +126,9 @@ msgstr ""
 
 msgid "'. All data on that pool was destroyed."
 msgstr "'. Toutes les données de ce volume ont été détruites."
+
+msgid "(24 Hours)"
+msgstr ""
 
 msgid "(No description)"
 msgstr "(Pas de description)"
@@ -351,18 +360,12 @@ msgstr ""
 msgid ""
 "<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
-"ZFS pools. <b>WARNING:</b> Read the <a "
+"RELEASE+and+Ports\" target=\"_blank\">GELI</a>  encryption is available for "
+"ZFS pools. <b>WARNING:</b> Read the  <a "
 "href=\"--docurl--/storage.html#managing-encrypted-pools\" "
-"target=\"_blank\">Encryption section</a> of the guide before activating "
+"target=\"_blank\">Encryption section</a>  of the guide before activating "
 "this option."
 msgstr ""
-"Le chiffrement <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\"> GELI</a> est disponible pour les "
-"volumes ZFS. <b>AVERTISSEMENT :</b> Lisez la section <a "
-"href=\"--docurl--/storage.html#managing-encrypted-pools\" "
-"target=\"_blank\">chiffrement</a> du guide avant d'activer cette option."
 
 msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
@@ -1706,6 +1709,9 @@ msgstr ""
 msgid "Amount of locked memory in bytes for the jail."
 msgstr "Quantité de mémoire verrouillée en octets pour le jail."
 
+msgid "An ACL is present in this path"
+msgstr ""
+
 msgid "An update is already applied. Please reboot the system."
 msgstr "Une mise à jour est déjà appliquée. Veuillez redémarrer le système."
 
@@ -2231,6 +2237,9 @@ msgstr ""
 "entièrement en charge l'imbrication de volumes, de datasets ou de liens "
 "symboliques supplémentaires sous ce chemin."
 
+msgid "Browse to the pool or dataset to store received  data."
+msgstr ""
+
 msgid "Bucket"
 msgstr "Bucket"
 
@@ -2650,6 +2659,9 @@ msgstr ""
 "afficher tous les datasets du système de destination. Cliquez sur un "
 "dataset pour le définir comme cible."
 
+msgid "Choose a date format."
+msgstr ""
+
 msgid "Choose a device for your report."
 msgstr "Choisissez un périphérique pour votre rapport."
 
@@ -2728,6 +2740,9 @@ msgstr ""
 "Choisissez une paire de clés SSH enregistrée ou sélectionnez <i>Générer "
 "nouveau</i> pour créer une nouvelle paire de clés et utilisez-la pour cette "
 "connexion."
+
+msgid "Choose a time format."
+msgstr ""
 
 msgid "Choose an alert service to display options for that service."
 msgstr "Choisissez un service d'alerte pour afficher les options de ce service."
@@ -2820,6 +2835,9 @@ msgid ""
 msgstr ""
 "Choisissez l'un des préréglages ou choisissez <i>Personnaliser</i> pour "
 "utiliser le planificateur avancé."
+
+msgid "Choose permissions for this rsync module."
+msgstr ""
 
 msgid ""
 "Choose the  <a href=\"--docurl--/system.html#ssh-connection\"  "
@@ -3722,6 +3740,9 @@ msgstr "Datasets avec instantanés à répliquer."
 msgid "Datastore"
 msgstr "Magasin de données"
 
+msgid "Date Format"
+msgstr ""
+
 msgid "Day of Month"
 msgstr "Jour du Mois"
 
@@ -3818,6 +3839,9 @@ msgstr ""
 msgid "Default umask"
 msgstr "Umask par défaut"
 
+msgid "Define Periodic Snapshots to Replicate"
+msgstr ""
+
 msgid ""
 "Define a length of time to retain the snapshot on this system. After the "
 "time expires, the snapshot is removed. Snapshots which have been replicated "
@@ -3845,10 +3869,10 @@ msgstr ""
 
 msgid ""
 "Define any additional settings for use by some Kerberos applications. The "
-"available settings and syntax is listed in the <a "
+"available settings and syntax is listed in the  <a "
 "href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
 "conf.html#appdefaults\" target=\"_blank\">appdefaults section of "
-"krb.conf(5).</a>."
+"krb.conf(5)</a>."
 msgstr ""
 
 msgid ""
@@ -3856,7 +3880,7 @@ msgid ""
 "and their syntax are listed in the <a "
 "href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
 "conf.html#libdefaults\" target=\"_blank\">libdefaults section of "
-"krb.conf(5).</a>."
+"krb.conf(5)</a>."
 msgstr ""
 
 msgid ""
@@ -4012,6 +4036,9 @@ msgstr "Décrivez la VM ou ce qu'elle propose."
 
 msgid "Describe the scrub task."
 msgstr "Décrivez la tâche de nettoyage."
+
+msgid "Describe this module."
+msgstr ""
 
 msgid "Describe this service."
 msgstr "Décrivez ce service."
@@ -4517,8 +4544,8 @@ msgstr ""
 msgid "Enable"
 msgstr "Activer"
 
-msgid "Enable (requires password)"
-msgstr "Activer (mot de passe requis)"
+msgid "Enable (requires password or Kerberos principal)"
+msgstr ""
 
 msgid "Enable Atime"
 msgstr "Activer Atime"
@@ -5231,6 +5258,12 @@ msgstr ""
 "Entrez tous les paramètres supplémentaires de <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a>."
+
+msgid ""
+"Enter any additional settings from <a "
+"href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
+"target=\"_blank\">rsyncd.conf(5)</a>."
+msgstr ""
 
 msgid ""
 "Enter any aliases, separated by spaces. Each alias can be up to 15 "
@@ -6009,14 +6042,11 @@ msgid "Filename Encryption"
 msgstr "Chiffrement du nom de fichier"
 
 msgid ""
-"Files are split into chunks of this size before upload. Up to «--transfers» "
-"chunks can be in progress at one time. The single largest file being "
-"transferred must fit into no more than 10,000 chunks."
+"Files are split into chunks of this size  before upload. The number of "
+"chunks that can be simultaneously  transferred is set by the "
+"<b>Transfers</b> number. The single  largest file being transferred must "
+"fit into no more than 10,000  chunks."
 msgstr ""
-"Les fichiers sont divisés en morceaux de cette taille avant le "
-"téléchargement. Jusqu'à «--transfers» des morceaux peuvent être en cours en "
-"même temps. Le fichier le plus volumineux transféré ne doit pas contenir "
-"plus de 10 000 morceaux."
 
 msgid ""
 "Files that are deleted from the same  dataset are moved to the Recycle Bin "
@@ -6167,6 +6197,20 @@ msgstr "Ven"
 
 msgid "From"
 msgstr "De"
+
+msgid ""
+"From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
+"target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
+"hostname and IP address of a connecting client. The connection is  rejected "
+"if no patterns match. Separate patterns with whitespace or a  comma."
+msgstr ""
+
+msgid ""
+"From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
+"target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
+"hostname and IP address of a connecting client. The connection is  rejected "
+"when the patterns match. Separate patterns with whitespace  or a comma."
+msgstr ""
 
 msgid "From E-mail"
 msgstr "Courriel de l'expéditeur"
@@ -6336,6 +6380,9 @@ msgstr ""
 "()! @ ~ *? &lt;&gt; =</i> . <i>$</i> ne peut être utilisé que comme dernier "
 "caractère du nom d'utilisateur."
 
+msgid "Group to run as during file transfers to and  from this module."
+msgstr ""
+
 msgid "Group to which this ACL entry applies."
 msgstr "Groupe auquel cette entrée ACL s'applique."
 
@@ -6449,9 +6496,6 @@ msgstr "Nom du cluster HipChat."
 
 msgid "History"
 msgstr "Historique"
-
-msgid "Hold Pending Snapshots"
-msgstr "Tenir les instantanés en attente"
 
 msgid "Home Directory"
 msgstr "Répertoire utilisateur"
@@ -6885,6 +6929,9 @@ msgstr "Dans"
 
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr "En KiB / s. Un défaut de <i>0</i> signifie illimité."
+
+msgid "Include Dataset Properties"
+msgstr ""
 
 msgid "Include Password Secret Seed"
 msgstr "Inclure le Password Secret Seed"
@@ -7689,12 +7736,10 @@ msgstr ""
 msgid ""
 "Maximum Transmission Unit, the largest protocol data  unit that can be "
 "communicated. The largest workable MTU size varies  with network interfaces "
-"and equipment. *1500* and *9000* are standard  Ethernet MTU sizes."
+"and equipment. <i>1500</i> and <i>9000</i>  are standard Ethernet MTU "
+"sizes. Leaving blank restores the field to  the default value of "
+"<i>1500</i>."
 msgstr ""
-"Maximum Transmission Unit (MTU), la plus grande unité de données de "
-"protocole pouvant être communiquée. La plus grande taille MTU utilisable "
-"varie en fonction des interfaces réseau et de l'équipement. *1500* et "
-"*9000* sont des tailles MTU Ethernet standard."
 
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
@@ -7754,6 +7799,9 @@ msgstr ""
 
 msgid "Maximum connections"
 msgstr "Connexions maximales"
+
+msgid "Maximum connections to this module. <i>0</i>  is unlimited."
+msgstr ""
 
 msgid "Maximum number of SysV message queues."
 msgstr "Nombre maximum de files d'attente de messages SysV."
@@ -7930,6 +7978,9 @@ msgstr ""
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
 "target=\"_blank\">AAM</a>."
 
+msgid "Module name that matches the name requested by  the rsync client."
+msgstr ""
+
 msgid "Mon"
 msgstr "Lun"
 
@@ -8004,13 +8055,6 @@ msgstr "Nom du Multipath"
 
 msgid "Multipaths"
 msgstr "Chemins multiples"
-
-msgid ""
-"Must match Peer Secret (Confirm) and be between 12 and 16 characters in "
-"length. Cannot be the same as Secret."
-msgstr ""
-"Doit correspondre à Peer Secret (Confirmer) et comporter entre 12 et 16 "
-"caractères. Ça ne peut pas être la même chose que Secret."
 
 msgid ""
 "Must match Windows workgroup name. This setting is ignored if the <a "
@@ -9088,6 +9132,9 @@ msgstr ""
 "target=\"_blank\">déduplication</a> avant d'envisager de modifier ce "
 "paramètre."
 
+msgid "Please select a valid SSH Connection"
+msgstr ""
+
 msgid "Please select a valid path"
 msgstr "Veuillez sélectionner un chemin d'accès valide"
 
@@ -9341,9 +9388,6 @@ msgstr "Progression"
 msgid "Promote Dataset"
 msgstr "Promouvoir le dataset"
 
-msgid "Properties"
-msgstr "Propriétés"
-
 msgid "Protocol"
 msgstr "Protocole"
 
@@ -9446,6 +9490,9 @@ msgstr "Lecture seule"
 
 msgid "Read Only Access"
 msgstr "Accès en lecture seule"
+
+msgid "Read and Write"
+msgstr ""
 
 msgid "Read-Only"
 msgstr "Lecture seule"
@@ -9648,9 +9695,6 @@ msgstr ""
 "Répliquer tous les instantanés du dataset enfant. Lorsqu'il est défini, "
 "<b>Exclure les datasets enfant</b> devient disponible."
 
-msgid "Replicate from scratch if incremental is not possible"
-msgstr "Répliquer à partir de zéro si l'incrémentation n'est pas possible"
-
 msgid ""
 "Replicate snapshots that have not been  created by an automated snapshot "
 "task. Requires setting a naming schema  for the custom snapshots."
@@ -9667,9 +9711,6 @@ msgstr "Réplication <i>"
 
 msgid "Replication Schedule"
 msgstr "Planning de réplication"
-
-msgid "Replication Status"
-msgstr "Statut de réplication"
 
 msgid "Replication Tasks"
 msgstr "Réplication"
@@ -10060,6 +10101,9 @@ msgstr "DÉMARRER"
 msgid "STOP"
 msgstr "ARRÊTER"
 
+msgid "Samba Authentication"
+msgstr ""
+
 msgid "Samba Schema"
 msgstr "Schéma Samba"
 
@@ -10089,6 +10133,9 @@ msgstr "Sauvegarder la licence"
 
 msgid "Save Network Interface Changes"
 msgstr "Enregistrer les modifications de l'interface réseau"
+
+msgid "Save Pending Snapshots"
+msgstr ""
 
 msgid "Save Without Restarting"
 msgstr "Sauvegarder sans redémarrer"
@@ -10254,6 +10301,9 @@ msgstr "Clé de chiffrement secrète"
 
 msgid "Secret Key"
 msgstr "Clé secrète"
+
+msgid "Secret and Peer Secret can not be the same."
+msgstr ""
 
 msgid "Secure mode"
 msgstr "Mode sécurisé"
@@ -10483,11 +10533,10 @@ msgid "Select a screen resolution to use for VNC sessions."
 msgstr "Sélectionnez une résolution d'écran à utiliser pour les sessions VNC."
 
 msgid ""
-"Select a sector size in bytes. <i>Default</i> leaves the leaves the sector "
-"size unset."
+"Select a sector size in bytes. <i>Default</i> leaves the sector size unset "
+"and uses the ZFS volume values. Setting a sector size changes both the "
+"logical and physical sector size."
 msgstr ""
-"Sélectionnez une taille de secteur en octets. La valeur <i>par défaut</i> "
-"laisse la taille du secteur non définie."
 
 msgid "Select a stream mode if system is to be used for streaming."
 msgstr ""
@@ -10657,15 +10706,15 @@ msgstr ""
 "va du <i>meilleur effort (par défaut)</i> au <i>contrôle réseau (le plus "
 "élevé)</i>."
 
-msgid ""
-"Select the IP address associated with an interface or the wildcard address "
-"of <i>0.0.0.0</i> (any interface)."
-msgstr ""
-"Sélectionnez l'adresse IP associée à une interface ou l'adresse joker "
-"<i>0.0.0.0.0</i> (toute interface)."
-
 msgid "Select the IP addresses SMB will listen for."
 msgstr "Sélectionnez les adresses IP que SMB écoutera."
+
+msgid ""
+"Select the IP addresses to be listened on  by the portal. Click ADD to add "
+"IP addresses with a different network  port. The address <i>0.0.0.0</i> can "
+"be selected to listen on all IPv4  addresses, or <i>::</i> to listen on all "
+"IPv6 addresses."
+msgstr ""
 
 msgid ""
 "Select the VLAN Parent Interface. Usually an Ethernet card connected to a "
@@ -11043,11 +11092,17 @@ msgstr "Le service n'a pas réussi à s'arrêter"
 msgid "Services"
 msgstr "Services"
 
+msgid "Set Frequency"
+msgstr ""
+
 msgid "Set Keep Flag"
 msgstr "Définir Keep Flag"
 
 msgid "Set Passphrase"
 msgstr "Définir la passphrase"
+
+msgid "Set Warning Level"
+msgstr ""
 
 msgid ""
 "Set a starting time when the  replication is not allowed to start. A "
@@ -11109,9 +11164,6 @@ msgid "Set for ypbind to bind to the server that responds the fastest."
 msgstr ""
 "Configurez ypbind pour qu'il se lie au serveur qui répond le plus "
 "rapidement."
-
-msgid "Set frequency"
-msgstr ""
 
 msgid "Set if NFS clients need to use UDP."
 msgstr "Définit si les clients NFS doivent utiliser UDP."
@@ -11321,6 +11373,9 @@ msgstr ""
 "target=\"_blank\">xcopy</a> qui sont autrement bloquées par le contrôle "
 "d'accès."
 
+msgid "Set to allow group to be used for Samba permissions and authentication."
+msgstr ""
+
 msgid ""
 "Set to allow privileged users inside the jail to mount and unmount "
 "filesystem types marked as jail-friendly."
@@ -11439,6 +11494,9 @@ msgid ""
 msgstr ""
 "Configuré pour permettre au partage d'héberger les répertoires personnels "
 "des utilisateurs. Une seule part peut être la part de la maison."
+
+msgid "Set to allow user to authenticate to Samba shares."
+msgstr ""
 
 msgid ""
 "Set to allow users to bypass firewall restrictions using the SSH port <a "
@@ -12264,9 +12322,6 @@ msgstr ""
 msgid "Snapshot Lifetime"
 msgstr "Durée de vie des instantanés"
 
-msgid "Snapshot Replication Schedule"
-msgstr "Planification de réplication des instantanés"
-
 msgid "Snapshot Retention Policy"
 msgstr "Politique de conservation des instantanés"
 
@@ -12653,6 +12708,9 @@ msgstr "Sync pairs (peer)"
 msgid "Sync to peer succeeded."
 msgstr "Sync pairs (peer) réussi."
 
+msgid "Synchronize Destination Snapshots With Source"
+msgstr ""
+
 msgid "Syslog"
 msgstr "Syslog"
 
@@ -12850,10 +12908,8 @@ msgstr "Alerte de test envoyée !"
 msgid "Test email sent!"
 msgstr "Courriel test envoyé !"
 
-msgid "Tests are not performed when the system enters the selected power mode."
+msgid "Tests are only performed when <i>Never</i>  is selected."
 msgstr ""
-"Aucun test n'est effectué lorsque le système entre dans le mode "
-"d'alimentation sélectionné."
 
 msgid ""
 "The <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
@@ -13088,6 +13144,9 @@ msgid ""
 msgstr ""
 "L'ancienne interface utilisateur est obsolète. Toute la gestion devrait "
 "être effectuée par le biais de la nouvelle interface utilisateur."
+
+msgid "The length of "
+msgstr ""
 
 msgid "The lifetime of the CA specified in days."
 msgstr "La durée de vie de la CA spécifiée en jours."
@@ -13549,6 +13608,9 @@ msgstr ""
 "Temps (en secondes) avant que le système n'arrête de tenter d'établir une "
 "connexion avec le système distant."
 
+msgid "Time Format"
+msgstr ""
+
 msgid "Time Machine"
 msgstr "Time Machine"
 
@@ -13625,6 +13687,9 @@ msgstr "Transferts"
 
 msgid "Transport"
 msgstr "Transport"
+
+msgid "Transport Options"
+msgstr ""
 
 msgid "Traverse"
 msgstr "Traverser"
@@ -14153,6 +14218,9 @@ msgstr ""
 "Mot de passe utilisateur. Doit comporter au moins 12 caractères et au plus "
 "16 caractères."
 
+msgid "User to run as during file transfers to and from  this module."
+msgstr ""
+
 msgid ""
 "User who controls the dataset. This user always has permissions to read or "
 "write the ACL and read or write attributes. Users created manually or "
@@ -14604,6 +14672,9 @@ msgstr "Écrire"
 msgid "Write Errors"
 msgstr "Erreurs d'écriture"
 
+msgid "Write Only"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr "Écrivez une limite de pourcentage pour un seul cœur de processeur."
 
@@ -14650,14 +14721,10 @@ msgid "ZFS deduplication"
 msgstr "Déduplication ZFS"
 
 msgid ""
-"ZFS pools must conform to strict naming <a "
+"ZFS pools must conform to strict naming  <a "
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
-"target=\"_blank\">conventions</a>. Choose a memorable name."
+"target=\"_blank\">conventions</a>.  Choose a memorable name."
 msgstr ""
-"Les volumes ZFS doivent se conformer à des <a "
-"href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
-"target=\"_blank\">conventions</a> d'appellation strictes. Choisissez un nom "
-"mémorable."
 
 msgid "Zero Device Numbers"
 msgstr "Numéros de dispositif zéro"
