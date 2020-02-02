@@ -385,13 +385,13 @@ msgid ""
 msgstr ""
 
 msgid "<i>0</i> disables quotas. Specify a maximum allowed space for this dataset."
-msgstr "<i>0</i> quote fisse. Specificare uno spazio massimo consentito per questo dataset"
+msgstr "<i>0</i> disabilita quote. Specificare uno spazio massimo consentito per questo dataset"
 
 msgid ""
 "<i>0</i> is unlimited. A specified value applies to both this dataset and "
 "any child datasets."
 msgstr "<i>0</i> è illimitato. Un valore specificato si applica ad entrambi i dataset e "
-"a ogni altro dataset."
+"ogni dataset figlio."
 
 msgid ""
 "<i>0</i> is unlimited. Reserve additional space for datasets containing "
@@ -727,7 +727,7 @@ msgid "Activate"
 msgstr "Attivare"
 
 msgid "Activate this Boot Environment?"
-msgstr ""
+msgstr "Attivare questo Ambiente di Boot?"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -743,13 +743,13 @@ msgid ""
 msgstr ""
 
 msgid "Activates the replication schedule."
-msgstr "Attiva il programma di duplicazione"
+msgstr "Attiva l'intervallo di replica."
 
 msgid "Active"
 msgstr "Attiva"
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directoy"
 
 msgid "Active Directory IDMAP change!"
 msgstr ""
@@ -776,7 +776,7 @@ msgid "Add Additional Path"
 msgstr ""
 
 msgid "Add Alert Service"
-msgstr "Aggiungi Servizio di Avviso"
+msgstr "Aggiungi Alert Service"
 
 msgid "Add Cache"
 msgstr "Aggiungi Cache"
@@ -785,7 +785,7 @@ msgid "Add Cloud Credential"
 msgstr "Aggiungi Credenziali Cloud"
 
 msgid "Add Data"
-msgstr ""
+msgstr "Aggiungi Dati"
 
 msgid "Add Dataset"
 msgstr ""
@@ -854,10 +854,10 @@ msgid ""
 msgstr ""
 
 msgid "Add one or more disks to be used for data."
-msgstr "Aggiungi uno o più disci da usare per i dati."
+msgstr "Aggiungi uno o più dischi da usare per i dati."
 
 msgid "Add one or more disks to extend the pool."
-msgstr "Aggiungi uno o più disci per estendere il pool."
+msgstr "Aggiungi uno o più dischi per estendere il pool."
 
 msgid "Add this user to additional groups."
 msgstr "Aggiungi questo utente ad altri gruppi."
@@ -991,13 +991,13 @@ msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
-msgstr "Modalità Esperta"
+msgstr "Modalità Esperto"
 
 msgid "Advanced Plugin Installation"
 msgstr "Installazione Avanzata dei Plugin"
 
 msgid "Advanced Power Management"
-msgstr ""
+msgstr "Gestione Avanzata Energia"
 
 msgid "Advanced Settings"
 msgstr "Impostazioni Avanzate"
@@ -1032,16 +1032,16 @@ msgid "All dirs"
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
-msgstr "Assegnare un numero di megabyters di RAM alla VM."
+msgstr "Assegnare quantità di megabyters di RAM alla VM."
 
 msgid "Allocate at least 256 MiB."
-msgstr "Assegnare almeni 256 MiB."
+msgstr "Assegnare almeno 256 MiB."
 
 msgid "Allow All Initiators"
 msgstr ""
 
 msgid "Allow Anonymous Binding"
-msgstr "Consenti Associazione Anonima"
+msgstr ""
 
 msgid "Allow Anonymous Login"
 msgstr "Consenti Accesso Anonimo"
