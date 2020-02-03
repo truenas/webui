@@ -81,6 +81,12 @@ msgstr ""
 msgid " service has been enabled."
 msgstr ""
 
+msgid " should be greater than "
+msgstr ""
+
+msgid " should be less than "
+msgstr ""
+
 msgid " system is powered on and connected to the network."
 msgstr ""
 
@@ -105,6 +111,9 @@ msgstr ""
 
 msgid "'. All data on that pool was destroyed."
 msgstr "' Todos los datos de este pool fueron destruidos."
+
+msgid "(24 Hours)"
+msgstr ""
 
 msgid "(No description)"
 msgstr ""
@@ -266,10 +275,10 @@ msgstr ""
 msgid ""
 "<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
-"ZFS pools. <b>WARNING:</b> Read the <a "
+"RELEASE+and+Ports\" target=\"_blank\">GELI</a>  encryption is available for "
+"ZFS pools. <b>WARNING:</b> Read the  <a "
 "href=\"--docurl--/storage.html#managing-encrypted-pools\" "
-"target=\"_blank\">Encryption section</a> of the guide before activating "
+"target=\"_blank\">Encryption section</a>  of the guide before activating "
 "this option."
 msgstr ""
 
@@ -1258,6 +1267,9 @@ msgstr ""
 msgid "Amount of locked memory in bytes for the jail."
 msgstr ""
 
+msgid "An ACL is present in this path"
+msgstr ""
+
 msgid "An update is already applied. Please reboot the system."
 msgstr ""
 
@@ -1715,6 +1727,9 @@ msgid ""
 "nesting additional pools, datasets, or symbolic links beneath this path."
 msgstr ""
 
+msgid "Browse to the pool or dataset to store received  data."
+msgstr ""
+
 msgid "Bucket"
 msgstr ""
 
@@ -2041,6 +2056,9 @@ msgid ""
 "the  destination system. Click a dataset to set it as the target."
 msgstr ""
 
+msgid "Choose a date format."
+msgstr ""
+
 msgid "Choose a device for your report."
 msgstr ""
 
@@ -2096,6 +2114,9 @@ msgstr ""
 msgid ""
 "Choose a saved SSH Keypair or select  <i>Generate New</i> to create a new "
 "keypair and use it for this  connection."
+msgstr ""
+
+msgid "Choose a time format."
 msgstr ""
 
 msgid "Choose an alert service to display options for that service."
@@ -2158,6 +2179,9 @@ msgstr ""
 msgid ""
 "Choose one of the presets or choose <i>Custom</i> to use the advanced "
 "scheduler."
+msgstr ""
+
+msgid "Choose permissions for this rsync module."
 msgstr ""
 
 msgid ""
@@ -2881,6 +2905,9 @@ msgstr ""
 msgid "Datastore"
 msgstr ""
 
+msgid "Date Format"
+msgstr ""
+
 msgid "Day of Month"
 msgstr ""
 
@@ -2963,6 +2990,9 @@ msgstr ""
 msgid "Default umask"
 msgstr ""
 
+msgid "Define Periodic Snapshots to Replicate"
+msgstr ""
+
 msgid ""
 "Define a length of time to retain the snapshot on this system. After the "
 "time expires, the snapshot is removed. Snapshots which have been replicated "
@@ -2983,10 +3013,10 @@ msgstr ""
 
 msgid ""
 "Define any additional settings for use by some Kerberos applications. The "
-"available settings and syntax is listed in the <a "
+"available settings and syntax is listed in the  <a "
 "href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
 "conf.html#appdefaults\" target=\"_blank\">appdefaults section of "
-"krb.conf(5).</a>."
+"krb.conf(5)</a>."
 msgstr ""
 
 msgid ""
@@ -2994,7 +3024,7 @@ msgid ""
 "and their syntax are listed in the <a "
 "href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
 "conf.html#libdefaults\" target=\"_blank\">libdefaults section of "
-"krb.conf(5).</a>."
+"krb.conf(5)</a>."
 msgstr ""
 
 msgid ""
@@ -3129,6 +3159,9 @@ msgid "Describe the VM or its purpose."
 msgstr ""
 
 msgid "Describe the scrub task."
+msgstr ""
+
+msgid "Describe this module."
 msgstr ""
 
 msgid "Describe this service."
@@ -3566,7 +3599,7 @@ msgstr ""
 msgid "Enable"
 msgstr ""
 
-msgid "Enable (requires password)"
+msgid "Enable (requires password or Kerberos principal)"
 msgstr ""
 
 msgid "Enable Atime"
@@ -4103,6 +4136,12 @@ msgstr ""
 
 msgid ""
 "Enter any additional parameters from <a "
+"href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
+"target=\"_blank\">rsyncd.conf(5)</a>."
+msgstr ""
+
+msgid ""
+"Enter any additional settings from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a>."
 msgstr ""
@@ -4748,9 +4787,10 @@ msgid "Filename Encryption"
 msgstr ""
 
 msgid ""
-"Files are split into chunks of this size before upload. Up to «--transfers» "
-"chunks can be in progress at one time. The single largest file being "
-"transferred must fit into no more than 10,000 chunks."
+"Files are split into chunks of this size  before upload. The number of "
+"chunks that can be simultaneously  transferred is set by the "
+"<b>Transfers</b> number. The single  largest file being transferred must "
+"fit into no more than 10,000  chunks."
 msgstr ""
 
 msgid ""
@@ -4873,6 +4913,20 @@ msgid "Fri"
 msgstr ""
 
 msgid "From"
+msgstr ""
+
+msgid ""
+"From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
+"target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
+"hostname and IP address of a connecting client. The connection is  rejected "
+"if no patterns match. Separate patterns with whitespace or a  comma."
+msgstr ""
+
+msgid ""
+"From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
+"target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
+"hostname and IP address of a connecting client. The connection is  rejected "
+"when the patterns match. Separate patterns with whitespace  or a comma."
 msgstr ""
 
 msgid "From E-mail"
@@ -5023,6 +5077,9 @@ msgid ""
 "only be used as the last character of the username."
 msgstr ""
 
+msgid "Group to run as during file transfers to and  from this module."
+msgstr ""
+
 msgid "Group to which this ACL entry applies."
 msgstr ""
 
@@ -5126,9 +5183,6 @@ msgid "HipChat cluster name."
 msgstr ""
 
 msgid "History"
-msgstr ""
-
-msgid "Hold Pending Snapshots"
 msgstr ""
 
 msgid "Home Directory"
@@ -5491,6 +5545,9 @@ msgid "In"
 msgstr ""
 
 msgid "In KiB/s. A default of <i>0</i> means unlimited."
+msgstr ""
+
+msgid "Include Dataset Properties"
 msgstr ""
 
 msgid "Include Password Secret Seed"
@@ -6194,7 +6251,9 @@ msgstr ""
 msgid ""
 "Maximum Transmission Unit, the largest protocol data  unit that can be "
 "communicated. The largest workable MTU size varies  with network interfaces "
-"and equipment. *1500* and *9000* are standard  Ethernet MTU sizes."
+"and equipment. <i>1500</i> and <i>9000</i>  are standard Ethernet MTU "
+"sizes. Leaving blank restores the field to  the default value of "
+"<i>1500</i>."
 msgstr ""
 
 msgid ""
@@ -6232,6 +6291,9 @@ msgid "Maximum client idle time in seconds before client is disconnected."
 msgstr ""
 
 msgid "Maximum connections"
+msgstr ""
+
+msgid "Maximum connections to this module. <i>0</i>  is unlimited."
 msgstr ""
 
 msgid "Maximum number of SysV message queues."
@@ -6375,6 +6437,9 @@ msgid ""
 "target=\"_blank\">AAM</a>."
 msgstr ""
 
+msgid "Module name that matches the name requested by  the rsync client."
+msgstr ""
+
 msgid "Mon"
 msgstr ""
 
@@ -6432,11 +6497,6 @@ msgid "Multipath Name"
 msgstr ""
 
 msgid "Multipaths"
-msgstr ""
-
-msgid ""
-"Must match Peer Secret (Confirm) and be between 12 and 16 characters in "
-"length. Cannot be the same as Secret."
 msgstr ""
 
 msgid ""
@@ -7317,6 +7377,9 @@ msgid ""
 "setting."
 msgstr ""
 
+msgid "Please select a valid SSH Connection"
+msgstr ""
+
 msgid "Please select a valid path"
 msgstr ""
 
@@ -7537,9 +7600,6 @@ msgstr ""
 msgid "Promote Dataset"
 msgstr ""
 
-msgid "Properties"
-msgstr ""
-
 msgid "Protocol"
 msgstr ""
 
@@ -7632,6 +7692,9 @@ msgid "Read Only"
 msgstr ""
 
 msgid "Read Only Access"
+msgstr ""
+
+msgid "Read and Write"
 msgstr ""
 
 msgid "Read-Only"
@@ -7810,9 +7873,6 @@ msgid ""
 "Datasets</b> becomes available."
 msgstr ""
 
-msgid "Replicate from scratch if incremental is not possible"
-msgstr ""
-
 msgid ""
 "Replicate snapshots that have not been  created by an automated snapshot "
 "task. Requires setting a naming schema  for the custom snapshots."
@@ -7825,9 +7885,6 @@ msgid "Replication <i>"
 msgstr ""
 
 msgid "Replication Schedule"
-msgstr ""
-
-msgid "Replication Status"
 msgstr ""
 
 msgid "Replication Tasks"
@@ -8172,6 +8229,9 @@ msgstr ""
 msgid "STOP"
 msgstr ""
 
+msgid "Samba Authentication"
+msgstr ""
+
 msgid "Samba Schema"
 msgstr ""
 
@@ -8200,6 +8260,9 @@ msgid "Save License"
 msgstr ""
 
 msgid "Save Network Interface Changes"
+msgstr ""
+
+msgid "Save Pending Snapshots"
 msgstr ""
 
 msgid "Save Without Restarting"
@@ -8346,6 +8409,9 @@ msgid "Secret Encryption Key"
 msgstr ""
 
 msgid "Secret Key"
+msgstr ""
+
+msgid "Secret and Peer Secret can not be the same."
 msgstr ""
 
 msgid "Secure mode"
@@ -8520,8 +8586,9 @@ msgid "Select a screen resolution to use for VNC sessions."
 msgstr ""
 
 msgid ""
-"Select a sector size in bytes. <i>Default</i> leaves the leaves the sector "
-"size unset."
+"Select a sector size in bytes. <i>Default</i> leaves the sector size unset "
+"and uses the ZFS volume values. Setting a sector size changes both the "
+"logical and physical sector size."
 msgstr ""
 
 msgid "Select a stream mode if system is to be used for streaming."
@@ -8639,12 +8706,14 @@ msgid ""
 "from <i>Best effort (default)</i>  to <i>Network control (highest)</i>."
 msgstr ""
 
-msgid ""
-"Select the IP address associated with an interface or the wildcard address "
-"of <i>0.0.0.0</i> (any interface)."
+msgid "Select the IP addresses SMB will listen for."
 msgstr ""
 
-msgid "Select the IP addresses SMB will listen for."
+msgid ""
+"Select the IP addresses to be listened on  by the portal. Click ADD to add "
+"IP addresses with a different network  port. The address <i>0.0.0.0</i> can "
+"be selected to listen on all IPv4  addresses, or <i>::</i> to listen on all "
+"IPv6 addresses."
 msgstr ""
 
 msgid ""
@@ -8939,10 +9008,16 @@ msgstr ""
 msgid "Services"
 msgstr ""
 
+msgid "Set Frequency"
+msgstr ""
+
 msgid "Set Keep Flag"
 msgstr ""
 
 msgid "Set Passphrase"
+msgstr ""
+
+msgid "Set Warning Level"
 msgstr ""
 
 msgid ""
@@ -8986,9 +9061,6 @@ msgid ""
 msgstr ""
 
 msgid "Set for ypbind to bind to the server that responds the fastest."
-msgstr ""
-
-msgid "Set frequency"
 msgstr ""
 
 msgid "Set if NFS clients need to use UDP."
@@ -9130,6 +9202,9 @@ msgid ""
 "access control."
 msgstr ""
 
+msgid "Set to allow group to be used for Samba permissions and authentication."
+msgstr ""
+
 msgid ""
 "Set to allow privileged users inside the jail to mount and unmount "
 "filesystem types marked as jail-friendly."
@@ -9201,6 +9276,9 @@ msgstr ""
 msgid ""
 "Set to allow the share to host user home directories. Only one share can be "
 "the home share."
+msgstr ""
+
+msgid "Set to allow user to authenticate to Samba shares."
 msgstr ""
 
 msgid ""
@@ -9806,9 +9884,6 @@ msgstr ""
 msgid "Snapshot Lifetime"
 msgstr ""
 
-msgid "Snapshot Replication Schedule"
-msgstr ""
-
 msgid "Snapshot Retention Policy"
 msgstr ""
 
@@ -10146,6 +10221,9 @@ msgstr ""
 msgid "Sync to peer succeeded."
 msgstr ""
 
+msgid "Synchronize Destination Snapshots With Source"
+msgstr ""
+
 msgid "Syslog"
 msgstr ""
 
@@ -10336,7 +10414,7 @@ msgstr ""
 msgid "Test email sent!"
 msgstr ""
 
-msgid "Tests are not performed when the system enters the selected power mode."
+msgid "Tests are only performed when <i>Never</i>  is selected."
 msgstr ""
 
 msgid ""
@@ -10500,6 +10578,9 @@ msgstr ""
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
 "through the new user interface."
+msgstr ""
+
+msgid "The length of "
 msgstr ""
 
 msgid "The lifetime of the CA specified in days."
@@ -10833,6 +10914,9 @@ msgid ""
 "connection with the remote system."
 msgstr ""
 
+msgid "Time Format"
+msgstr ""
+
 msgid "Time Machine"
 msgstr ""
 
@@ -10898,6 +10982,9 @@ msgid "Transfers"
 msgstr ""
 
 msgid "Transport"
+msgstr ""
+
+msgid "Transport Options"
 msgstr ""
 
 msgid "Traverse"
@@ -11332,6 +11419,9 @@ msgstr ""
 msgid "User password. Must be at least 12 and no more than 16 characters long."
 msgstr ""
 
+msgid "User to run as during file transfers to and from  this module."
+msgstr ""
+
 msgid ""
 "User who controls the dataset. This user always has permissions to read or "
 "write the ACL and read or write attributes. Users created manually or "
@@ -11711,6 +11801,9 @@ msgstr ""
 msgid "Write Errors"
 msgstr ""
 
+msgid "Write Only"
+msgstr ""
+
 msgid "Write a percentage limit of a single CPU core."
 msgstr ""
 
@@ -11754,9 +11847,9 @@ msgid "ZFS deduplication"
 msgstr ""
 
 msgid ""
-"ZFS pools must conform to strict naming <a "
+"ZFS pools must conform to strict naming  <a "
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
-"target=\"_blank\">conventions</a>. Choose a memorable name."
+"target=\"_blank\">conventions</a>.  Choose a memorable name."
 msgstr ""
 
 msgid "Zero Device Numbers"
