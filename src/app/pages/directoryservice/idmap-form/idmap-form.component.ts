@@ -279,7 +279,7 @@ export class IdmapFormComponent {
       this.optionsFields.forEach((option) => {
         this.hideField(option, true, entityEdit);
       })
-      for(let i in this.backendChoices[value].parameters) { console.log(i)
+      for(let i in this.backendChoices[value].parameters) {
         this.optionsFields.forEach((option) => {
           if (option === i) {
             const params = this.backendChoices[value].parameters[option];
@@ -309,6 +309,17 @@ export class IdmapFormComponent {
     let target = _.find(this.fieldConfig, {'name' : fieldName});
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);
+  }
+
+  beforeSubmit(data) {
+    let options = {}
+    for (let item in data) {
+      if (this.optionsFields.includes(item)) {
+        options[item] = data[item];
+        delete data[item]
+      }
+    }
+    data['options'] = options;
   }
 
 }
