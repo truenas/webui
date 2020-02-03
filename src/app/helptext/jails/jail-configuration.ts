@@ -634,6 +634,20 @@ fieldsets: {
     jail: T('Jail Properties'),
     network: T('Network Properties'),
     custom: T('Custom Properties'),
-}
+},
 
+jailFormJobDialog: {
+    pluginInstall: {
+        title: T("Install"),
+        description: T("Installing plugin..."),
+    },
+    jailInstall: {
+        title: T("Install"),
+        description: T("Installing plugin..."),
+    },
+    jailEdit: {
+        title: T("Install"),
+        description: T("Installing plugin..."),
+    }
+}
 }
