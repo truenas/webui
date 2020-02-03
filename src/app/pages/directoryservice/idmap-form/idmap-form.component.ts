@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
@@ -16,6 +17,9 @@ export class IdmapFormComponent {
   protected isEntity: boolean = true;
   protected namesInUse = [];
   protected queryCall = 'idmap.query';
+  protected addCall = 'idmap.create';
+  protected editCall = 'idmap.update';
+  protected queryCallOption: Array<any> = [["id", "="]];
   public rangeLowValidation = [
     ...helptext.idmap_range_validator, 
     this.validationService.rangeValidator(1000, 2147483647)
@@ -32,7 +36,7 @@ export class IdmapFormComponent {
   public fieldSetDisplay  = 'default';
   protected fieldSets: FieldSet[] = [
     {
-      name: "Idmap stuff",
+      name: helptext.idmap.settings_label,
       class: 'idmap-configuration-form',
       label:true,
       width: '48%',
@@ -56,13 +60,14 @@ export class IdmapFormComponent {
           name: 'dns_domain_name',
           placeholder: helptext.idmap.dns_domain_name.placeholder,
           tooltip: helptext.idmap.dns_domain_name.tooltip,
+          required: true
         },
         {
           type:  'input' ,
           name: 'range_low',
           inputType: 'number',
           placeholder: helptext.idmap.range_low.placeholder,
-          tooltip: helptext.idmap.range_low.tooltip,
+          tooltip: helptext.idmap.range_tooltip,
           validation: this.rangeLowValidation,
           required: true
         },
@@ -71,7 +76,7 @@ export class IdmapFormComponent {
           name: 'range_high',
           inputType: 'number',
           placeholder: helptext.idmap.range_high.placeholder,
-          tooltip: helptext.idmap.range_high.tooltip,
+          tooltip: helptext.idmap.range_tooltip,
           validation: this.rangeHighValidation,
           required: true
         },
@@ -92,137 +97,130 @@ export class IdmapFormComponent {
       width: '4%',
       config:[]},
     {
-      name: "Idmap Options",
+      name: helptext.idmap.options_label,
       class: 'idmap-configuration-form',
       label:true,
       width: '48%',
       config: [
         {
-          type: 'input',
+          type: 'select',
           name: 'schema_mode',
-          placeholder: 'Schema Mode',
-          tooltip: T(''),
+          placeholder: helptext.idmap.schema_mode.placeholder,
+          tooltip: helptext.idmap.schema_mode.tooltip,
+          options: helptext.idmap.schema_mode.options
         },
         {
           type:  'checkbox' ,
           name: 'unix_primary_group',
-          placeholder: 'Unix Primary Group',
-          tooltip: helptext.idmap.dns_domain_name.tooltip,
+          placeholder: helptext.idmap.unix_primary_group.placeholder,
+          tooltip: helptext.idmap.unix_primary_group.tooltip,
         },
         {
           type:  'checkbox' ,
           name: 'unix_nss_info',
-          placeholder: 'Unix NSS Info',
-          tooltip: helptext.idmap.dns_domain_name.tooltip,
+          placeholder: helptext.idmap.unix_nss.placeholder,
+          tooltip: helptext.idmap.unix_nss.tooltip,
         },
         {
           type:  'input' ,
           name: 'rangesize',
           inputType: 'number',
-          placeholder: 'Range Size',
-          tooltip: helptext.idmap.range_low.tooltip,
+          placeholder: helptext.idmap.rangesize.placeholder,
+          tooltip: helptext.idmap.rangesize.tooltip,
         },
         {
           type:  'checkbox' ,
           name: 'readonly',
-          placeholder: 'Read Only',
-          tooltip: helptext.idmap.dns_domain_name.tooltip,
+          placeholder: helptext.idmap.readonly.placeholder,
+          tooltip: helptext.idmap.readonly.tooltip,
         },
         {
           type:  'checkbox' ,
           name: 'ignore_builtin',
-          placeholder: 'Ignore Built-In',
-          tooltip: helptext.idmap.dns_domain_name.tooltip,
+          placeholder: helptext.idmap.ignore_builtin.placeholder,
+          tooltip: helptext.idmap.ignore_builtin.tooltip,
         },
         {
           type:  'input' ,
           name: 'ldap_base_dn',
-          placeholder: 'LDAP Base DN',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.ldap_basedn.placeholder,
+          tooltip: helptext.idmap.ldap_basedn.tooltip,
         },
         {
           type:  'input' ,
           name: 'ldap_user_dn',
-          placeholder: 'LDAP User DN',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.ldap_userdn.placeholder,
+          tooltip: helptext.idmap.ldap_userdn.tooltip,
         },
         {
           type:  'input' ,
           name: 'ldap_user_dn_password',
           inputType: 'password',
-          hideButton: false,
-          placeholder: 'LDAP User DN Password',
-          tooltip: helptext.idmap.range_high.tooltip,
+          hideButton: true,
+          placeholder: helptext.idmap.ldap_user_dn_password.placeholder,
+          tooltip: helptext.idmap.ldap_user_dn_password.tooltip,
         },
         {
           type:  'input' ,
           name: 'ldap_url',
-          placeholder: 'LDAP Url',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.ldap_url.placeholder,
+          tooltip: helptext.idmap.ldap_url.tooltip,
         },
         {
           type: 'select',
           name: 'ssl',
-          placeholder: 'SSL',
-          tooltip: helptext.idmap.idmap_backend.tooltip,
-          options: [
-            {label: 'OFF', value: 'OFF'},
-            {label: 'ON', value: 'ON'},
-            {label: 'START_TLS', value: 'START_TLS'}
-          ]
+          placeholder: helptext.idmap.ssl.placeholder,
+          tooltip: helptext.idmap.ssl.tooltip,
+          options: helptext.idmap.ssl.options
         },
         {
           type: 'select',
           name: 'linked_service',
-          placeholder: 'Linked Service',
-          tooltip: helptext.idmap.idmap_backend.tooltip,
-          options: [
-            {label: 'LOCAL_ACCOUNT', value: 'LOCAL_ACCOUNT'},
-            {label: 'LDAP', value: 'LDAP'},
-            {label: 'NIS', value: 'NIS'}
-          ]
+          placeholder: helptext.idmap.linked_service.placeholder,
+          tooltip: helptext.idmap.linked_service.tooltip,
+          options: helptext.idmap.linked_service.options
         },
         {
           type:  'input' ,
           name: 'ldap_server',
-          placeholder: 'LDAP Server',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.ldap_server.placeholder,
+          tooltip: helptext.idmap.ldap_server.tooltip,
         },
         {
           type:  'input' ,
           name: 'bind_path_user',
-          placeholder: 'Bind Path User',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.bind_path_user.placeholder,
+          tooltip: helptext.idmap.bind_path_user.tooltip,
         },
         {
           type:  'input' ,
           name: 'bind_path_group',
-          placeholder: 'Bind Path Group',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.bind_path_group.placeholder,
+          tooltip: helptext.idmap.bind_path_group.tooltip,
         },
         {
           type:  'input' ,
           name: 'user_cn',
-          placeholder: 'User CN',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.user_cn.placeholder,
+          tooltip: helptext.idmap.user_cn.tooltip,
         },
         {
           type:  'input' ,
           name: 'cn_realm',
-          placeholder: 'CN Realm',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.cn_realm.placeholder,
+          tooltip: helptext.idmap.cn_realm.tooltip,
         },
         {
           type:  'input' ,
           name: 'ldap_domain',
-          placeholder: 'LDAP Domain',
-          tooltip: helptext.idmap.range_high.tooltip,
+          placeholder: helptext.idmap.ldap_domain.placeholder,
+          tooltip: helptext.idmap.ldap_server.tooltip,
         },
         {
           type:  'checkbox' ,
           name: 'sssd_compat',
-          placeholder: 'SSSD Compat',
-          tooltip: helptext.idmap.dns_domain_name.tooltip,
+          placeholder: helptext.idmap.sssd_compat.placeholder,
+          tooltip: helptext.idmap.sssd_compat.tooltip,
         },
 
       ]
@@ -253,11 +251,15 @@ export class IdmapFormComponent {
     'sssd_compat',
   ]
 
-  constructor(protected idmapService: IdmapService, protected validationService: ValidationService) { }
+  constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
+    protected route: ActivatedRoute) { }
 
-  resourceTransformIncomingRestData(data) {
-    console.log(data);
-    return data;
+  preInit() {
+    this.route.params.subscribe(params => {
+      if (params['pk']) {
+        this.queryCallOption[0].push(parseInt(params['pk']));
+      }
+    });
   }
 
   afterInit(entityEdit: any) {
@@ -286,7 +288,8 @@ export class IdmapFormComponent {
           if (option === i) {
             const params = this.backendChoices[value].parameters[option];
             this.hideField(option, false, entityEdit);
-            _.find(this.fieldConfig, { name: option }).required = params.required;
+           let field =  _.find(this.fieldConfig, { name: option });
+           field['required'] = params.required;
             entityEdit.formGroup.controls[option].setValue(params.default);
             if (value === 'LDAP' || value === 'RFC2307') {
               this.hideField('certificate_id', false, entityEdit);
