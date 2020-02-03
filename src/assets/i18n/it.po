@@ -2109,16 +2109,16 @@ msgid ""
 msgstr ""
 
 msgid "Choose an alert service to display options for that service."
-msgstr ""
+msgstr "Scegli un servizio di avviso per visualizzare le opzioni di quel servizio."
 
 msgid "Choose an authentication method."
-msgstr ""
+msgstr "Scegli un metodo di autenticazione."
 
 msgid "Choose an encryption mode to use with LDAP."
-msgstr ""
+msgstr "Scegli una modalita crittografica da usare con LDAP."
 
 msgid "Choose an encryption mode."
-msgstr ""
+msgstr "Scegli una modalità crittografica."
 
 msgid ""
 "Choose between <i>Off</i>, <a "
@@ -2159,6 +2159,8 @@ msgid ""
 "Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
 "on this dataset."
 msgstr ""
+"Scegliere se la directory dello snaoshot .zfs è i>Visible</i> or <i>Invisible</i> "
+"in questo dataset."
 
 msgid ""
 "Choose one of the convenient presets    or choose <b>Custom</b> to trigger "
@@ -2181,7 +2183,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose the VM operating system type."
-msgstr ""
+msgstr "Scegli il tipo di sistema operativo della VM."
 
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
@@ -2201,7 +2203,8 @@ msgstr ""
 msgid ""
 "Choose the platform that will use this share. The associated options are "
 "applied to this share."
-msgstr ""
+msgstr "Scegli la piattaforma che userà questa share. Le opzioni associate sono "
+"applicate a questa share."
 
 msgid ""
 "Choose the schema to use when querying AD for user/group info. "
@@ -2216,7 +2219,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose the speed in bps used by the serial port."
-msgstr ""
+msgstr "Scegli la velocità in bps usata dalla porta seriale."
 
 msgid ""
 "Choose the test type. See <a                "
@@ -2232,6 +2235,9 @@ msgid ""
 "href=\"--docurl--/storage.html#import-disk\" target=\"_blank\">importing "
 "disks</a> for more details."
 msgstr ""
+"Scegliere il tipo di filesystem sul disco. Consultare la sezione guida su <a 
+"href=\"--docurl--/storage.html#import-disk\" target=\"_blank\">importing "
+"disks</a> per più dettagli."
 
 msgid ""
 "Choose the type of interface. <i>Bridge</i> creates a logical link between "
@@ -2240,11 +2246,18 @@ msgid ""
 "and isolates a segment of the connection. Read-only when editing an "
 "interface."
 msgstr ""
+"Scegliere il tipo di interfaccia. <i>Bridge</i> crea un collegamento logico tra "
+"più reti. <i>Link Aggregation</i> combina più connessione di rete "
+"in un'unica interfaccia. <i>Virtual LAN (VLAN)</i> partiziona "
+"e isola un segmento della connessione. Sola lettura durante la modifica "
+"di un'interfaccia."
 
 msgid ""
 "Choose the type of permissions. <i>Basic</i> shows general permissions. "
 "<i>Advanced</i> shows each specific type of permission for finer control."
 msgstr ""
+"Scegliere il tipo di permessi. <i>Basic</i> mostra i permessi generali. "
+"<i>Advanced</i> mostra ogni tipo specifico di permesso per un maggiore controllo."
 
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
 msgstr ""
@@ -2267,7 +2280,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose your language."
-msgstr ""
+msgstr "Scegli la tua lingua."
 
 msgid ""
 "Choosing an entry loads a preset ACL that is  configured to match general "
@@ -2296,25 +2309,25 @@ msgid ""
 msgstr ""
 
 msgid "Click on alarms to select or unselect."
-msgstr ""
+msgstr "Fare clic sugli allarmi per selezionare o deselezionare."
 
 msgid "Client Name"
-msgstr ""
+msgstr "Nome Client"
 
 msgid "Clients"
 msgstr ""
 
 msgid "Clone"
-msgstr ""
+msgstr "Clonare"
 
 msgid "Clone to New Dataset"
-msgstr ""
+msgstr "Clonare un Nuovo Dataset"
 
 msgid "Close"
 msgstr ""
 
 msgid "Cloud Credentials"
-msgstr ""
+msgstr "Credenziali Cloud"
 
 msgid "Cloud Sync Tasks"
 msgstr ""
@@ -2323,7 +2336,7 @@ msgid "Cloud sync <i>"
 msgstr ""
 
 msgid "Cluster Name"
-msgstr ""
+msgstr "Nome del Cluster"
 
 msgid "Collection"
 msgstr ""
@@ -2409,40 +2422,40 @@ msgid "Commands to run in the system environment before a jail is stopped."
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "Commento"
 
 msgid "Comments"
-msgstr ""
+msgstr "Commenti"
 
 msgid "Common Name"
-msgstr ""
+msgstr "Nome Comune"
 
 msgid "Community"
 msgstr ""
 
 msgid "Complete the Upgrade"
-msgstr ""
+msgstr "Completa l'Aggiornamento"
 
 msgid "Compress"
-msgstr ""
+msgstr "Comprimi"
 
 msgid "Compress connections"
-msgstr ""
+msgstr "Comprimi le connessioni"
 
 msgid "Compression level"
-msgstr ""
+msgstr "Livello di compressione"
 
 msgid "Computer Account OU"
 msgstr ""
 
 msgid "Config could not be downloaded"
-msgstr ""
+msgstr "Impossibile scaricare la configurazione"
 
 msgid "Configure"
-msgstr ""
+msgstr "Configura"
 
 msgid "Configure ACL"
-msgstr ""
+msgstr "Configura ACL"
 
 msgid ""
 "Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
@@ -2466,7 +2479,7 @@ msgid ""
 msgstr ""
 
 msgid "Configure Networking"
-msgstr ""
+msgstr "Configura Rete"
 
 msgid ""
 "Configure an external program to perform ID mapping. See <a "
@@ -2475,15 +2488,17 @@ msgid ""
 msgstr ""
 
 msgid "Configure now"
-msgstr ""
+msgstr "Configura adesso"
 
 msgid "Configure permissions for this share's dataset now?"
-msgstr ""
+msgstr "Configurare i permessi per i dataset di questa share ora?"
 
 msgid ""
 "Configure the ports that allow remote access to  the jail. Required to "
 "override the default settings or when installing  duplicate plugins."
 msgstr ""
+"Configurare le porte che consentono l'accesso remoto al jail. Necessario per "
+"sovrascrivere le impostazioni predefinite o durante l'installazione di plugin duplicati."
 
 msgid "Configure the root user email address."
 msgstr ""
