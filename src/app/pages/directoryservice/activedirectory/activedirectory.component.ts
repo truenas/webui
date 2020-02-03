@@ -24,7 +24,6 @@ export class ActiveDirectoryComponent {
   protected kerberos_realm: any;
   protected kerberos_principal: any;
   protected ssl: any;
-  protected idmap_backend: any;
   protected nss_info: any;
   protected ldap_sasl_wrapping: any;
   public adStatus = false;
@@ -49,7 +48,6 @@ export class ActiveDirectoryComponent {
       'id' : helptext.activedirectory_custactions_edit_imap_id,
       'name' : helptext.activedirectory_custactions_edit_imap_name,
       function : () => {
-        console.log(this.idmapBacked)
         this.router.navigate(new Array('').concat(['directoryservice','idmap']));
       }
     },
@@ -267,12 +265,6 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_timeout_name,
       placeholder : helptext.activedirectory_timeout_placeholder,
       tooltip : helptext.activedirectory_timeout_tooltip,
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_dns_timeout_name,
-      placeholder : helptext.activedirectory_dns_timeout_placeholder,
-      tooltip : helptext.activedirectory_dns_timeout_tooltip,
     }
       ]},
       {
@@ -288,11 +280,10 @@ export class ActiveDirectoryComponent {
         width: '48%',
         config:[
     {
-      type : 'select',
-      name : helptext.activedirectory_idmap_backend_name,
-      placeholder : helptext.activedirectory_idmap_backend_placeholder,
-      tooltip : helptext.activedirectory_idmap_backend_tooltip,
-      options : []
+      type : 'input',
+      name : helptext.activedirectory_dns_timeout_name,
+      placeholder : helptext.activedirectory_dns_timeout_placeholder,
+      tooltip : helptext.activedirectory_dns_timeout_tooltip,
     },
     {
       type : 'select',
@@ -416,14 +407,6 @@ export class ActiveDirectoryComponent {
       });
     });
 
-    this.ws.call('activedirectory.idmap_backend_choices').subscribe((res) => {
-      this.idmap_backend = _.find(this.fieldConfig, {name : 'idmap_backend'});
-      res.forEach((item) => {
-        this.idmap_backend.options.push(
-            {label : item, value : item});
-      });
-    });
-
     this.ws.call('activedirectory.nss_info_choices').subscribe((res) => {
       this.nss_info = _.find(this.fieldConfig, {name : 'nss_info'});
       res.forEach((item) => {
@@ -438,22 +421,6 @@ export class ActiveDirectoryComponent {
         this.ldap_sasl_wrapping.options.push(
             {label : item, value : item});
       });
-    });
-
-    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((res)=> {
-      if ((this.idmapBacked != null) && (this.idmapBacked !== res)) {
-        this.dialogservice.confirm(helptext.activedirectory_idmap_change_dialog_title,
-          helptext.activedirectory_idmap_change_dialog_message).subscribe(
-        (confirm) => {
-          if (confirm) {
-            this.idmapBacked = res;
-          } else {
-            entityEdit.formGroup.controls['idmap_backend'].setValue(this.idmapBacked);
-          }
-        });
-      } else {
-        this.idmapBacked = res;
-      }
     });
 
     entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res)=> {

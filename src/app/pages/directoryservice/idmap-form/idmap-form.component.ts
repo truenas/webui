@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ValidationService, IdmapService } from '../../../services/';
-import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/directoryservice/idmap';
 
 @Component({
@@ -49,10 +48,11 @@ export class IdmapFormComponent {
           options: []
         },
         {
-          type: 'input',
+          type: 'combobox',
           name: 'name',
           placeholder: helptext.idmap.name.placeholder,
           tooltip: helptext.idmap.name.tooltip,
+          options: helptext.idmap.name.options,
           required: true,
         },
         {
@@ -156,7 +156,7 @@ export class IdmapFormComponent {
           type:  'input' ,
           name: 'ldap_user_dn_password',
           inputType: 'password',
-          hideButton: true,
+          togglePw: true,
           placeholder: helptext.idmap.ldap_user_dn_password.placeholder,
           tooltip: helptext.idmap.ldap_user_dn_password.tooltip,
         },
@@ -276,14 +276,10 @@ export class IdmapFormComponent {
     });
 
     entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((value) => {
-      const descrip = this.backendChoices[value].description;
-      const be = _.find(this.fieldConfig, { name: 'idmap_backend' });
-      be.tooltip = '';
-      be.tooltip += descrip;
       this.optionsFields.forEach((option) => {
         this.hideField(option, true, entityEdit);
       })
-      for(let i in this.backendChoices[value].parameters) {
+      for(let i in this.backendChoices[value].parameters) { console.log(i)
         this.optionsFields.forEach((option) => {
           if (option === i) {
             const params = this.backendChoices[value].parameters[option];
