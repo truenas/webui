@@ -1332,38 +1332,41 @@ msgid ""
 "Apply permissions recursively to all directories and files in the current "
 "dataset."
 msgstr ""
+"Applicare i permessi in modo ricorsivo a tutte le directory e a tutti i files nel corrente "
+"dataset."
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset."
-msgstr ""
+msgstr "Applicare i permessi in modo ricorsivo a tutte le directory e ai files all'interno del "
+"corrente dataset."
 
 msgid "Apply permissions to child datasets"
-msgstr ""
+msgstr "Applicare i permessi ai dataset figli"
 
 msgid "Apply the same quota critical  alert settings as the parent dataset."
-msgstr ""
+msgstr "Applicare le stesse impostazioni di avviso di quota critica del dataset padre."
 
 msgid "Apply the same quota warning  alert settings as the parent dataset."
 msgstr ""
 
 msgid "Apply updates and reboot system after downloading."
-msgstr ""
+msgstr "Applicare gli aggiornamenti e riavviare il sistema dopo il download."
 
 msgid "Apr"
 msgstr ""
 
 msgid "Archive"
-msgstr ""
+msgstr "Archivio"
 
 msgid "Are you sure you want to sync from peer?"
-msgstr ""
+msgstr "Sei sicuro di voler sincronizzare dal peer?"
 
 msgid "Are you sure you want to sync to peer?"
-msgstr ""
+msgstr "Sei sicuro di voler sincronizzare con il peer?"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Sei sicuro?"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -1373,6 +1376,10 @@ msgid ""
 "a separate dataset for Minio is strongly                                    "
 "          recommended."
 msgstr ""
+"L'assegnazione di una directory a Minio modifica i permessi                      "
+"                        di quella directory e ogni directory in essa contenuta      "
+"                                      minio:minio e sovrascrive ogni "
+"permesso precedente."
 
 msgid ""
 "At least one module must be defined in <a                "
@@ -1382,16 +1389,16 @@ msgid ""
 msgstr ""
 
 msgid "Attach"
-msgstr ""
+msgstr "Allegare"
 
 msgid "Attach Debug"
-msgstr ""
+msgstr "Allegare Debug"
 
 msgid "Attach NIC"
 msgstr ""
 
 msgid "Attach screenshots."
-msgstr ""
+msgstr "Allegare screenshots."
 
 msgid "Aug"
 msgstr ""
@@ -1403,16 +1410,16 @@ msgid "Auth Token"
 msgstr ""
 
 msgid "Authentication Group number"
-msgstr ""
+msgstr "Numero del Gruppo di Autenticazione"
 
 msgid "Authentication Protocol"
-msgstr ""
+msgstr "Protocollo di Autenticazione"
 
 msgid "Authentication Type"
 msgstr ""
 
 msgid "Authenticator"
-msgstr ""
+msgstr "Autenticatore"
 
 msgid "Authenticator Attributes"
 msgstr ""
@@ -1423,10 +1430,10 @@ msgid ""
 msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
-msgstr ""
+msgstr "Hosts e indirizzi IP Autorizzati"
 
 msgid "Authorized Networks"
-msgstr ""
+msgstr "Reti Autorizzate"
 
 msgid "Auto configure IPv6"
 msgstr ""
@@ -1437,7 +1444,7 @@ msgid ""
 msgstr ""
 
 msgid "Auto-start"
-msgstr ""
+msgstr "Auto-avvio"
 
 msgid "Autoconfigure IPv6"
 msgstr ""
@@ -1458,24 +1465,26 @@ msgid ""
 "Automatically populated with the original hostname of the system. This name "
 "is limited to 15 characters and cannot be the <b>Workgroup</b> name."
 msgstr ""
+"Popolato automaticamente con il nome originale del host del sistema. Questo nome "
+"è limitato a 15 caratteri e non può essere il <b>Workgroup</b> nome."
 
 msgid "Automatically reboot the system after the update is applied."
-msgstr ""
+msgstr "Riavviare automaticamente il sistema dopo l'applicazione dell'aggiormamento."
 
 msgid "Automatically stop the script or command after the specified seconds."
-msgstr ""
+msgstr "Arresta automaticamente lo script o il comando dopo i secondi specificati."
 
 msgid "Autostart"
-msgstr ""
+msgstr "Avvio automatico"
 
 msgid "Auxiliary Arguments"
-msgstr ""
+msgstr "Argomenti Ausiliari"
 
 msgid "Auxiliary Groups"
-msgstr ""
+msgstr "Gruppi Ausiliari"
 
 msgid "Auxiliary Parameters"
-msgstr ""
+msgstr "Parametri Ausiliari"
 
 msgid "Auxiliary Parameters (ups.conf)"
 msgstr ""
@@ -1487,28 +1496,28 @@ msgid "Auxiliary parameters"
 msgstr ""
 
 msgid "Available Disks"
-msgstr ""
+msgstr "Dischi Disponibili"
 
 msgid "Available Memory:"
-msgstr ""
+msgstr "Memoria Disponibile:"
 
 msgid "Available Space"
-msgstr ""
+msgstr "Spazio Disponibile"
 
 msgid "Available Themes"
-msgstr ""
+msgstr "Temi Disponibili"
 
 msgid "Available space threshold (%)"
-msgstr ""
+msgstr "Limite di spazio disponibile (%)"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
-msgstr ""
+msgstr "Eccezionale! Ora esploriamo le fantastiche funzionalità di FreeNAS."
 
 msgid "Back"
-msgstr ""
+msgstr "Indietro"
 
 msgid "Back to Support"
-msgstr ""
+msgstr "Torna al Supporto"
 
 msgid ""
 "Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
@@ -1516,7 +1525,7 @@ msgid ""
 msgstr ""
 
 msgid "Bandwidth Limit"
-msgstr ""
+msgstr "Limite di Larghezza di Banda"
 
 msgid "Base DN"
 msgstr ""
@@ -1531,19 +1540,19 @@ msgid "Basejail"
 msgstr ""
 
 msgid "Basic Mode"
-msgstr ""
+msgstr "Modalità Base"
 
 msgid "Basic Properties"
-msgstr ""
+msgstr "Proprietà di Base"
 
 msgid "Batch Operations"
 msgstr ""
 
 msgid "Before updating, please read the release notes."
-msgstr ""
+msgstr "Prima del'aggionamento, si prega di leggere le note di rilascio."
 
 msgid "Begin"
-msgstr ""
+msgstr "Inizia"
 
 msgid "Begin Time"
 msgstr ""
@@ -1557,28 +1566,28 @@ msgid "Berkeley Packet Filter"
 msgstr ""
 
 msgid "Bind"
-msgstr ""
+msgstr "Associare"
 
 msgid "Bind DN"
-msgstr ""
+msgstr "Associare DN"
 
 msgid "Bind IP Addresses"
-msgstr ""
+msgstr "Associare Indirizzi IP"
 
 msgid "Bind Interfaces"
-msgstr ""
+msgstr "Associare Interfacce"
 
 msgid "Bind Password"
-msgstr ""
+msgstr "Associare Password"
 
 msgid "Bind interfaces"
-msgstr ""
+msgstr "Associare interfacce"
 
 msgid "Bind to"
-msgstr ""
+msgstr "Associare a"
 
 msgid "Bind to Port"
-msgstr ""
+msgstr "Associare alla Porta"
 
 msgid "Block Shares (iSCSI)"
 msgstr ""
@@ -1590,33 +1599,35 @@ msgid "Block size"
 msgstr ""
 
 msgid "Boot"
-msgstr ""
+msgstr "Avvio"
 
 msgid "Boot Environments"
-msgstr ""
+msgstr "Ambienti di Avvio"
 
 msgid "Boot Loader Type"
 msgstr ""
 
 msgid "Boot Method"
-msgstr ""
+msgstr "Metodo di Avvio"
 
 msgid "Boot Pool"
-msgstr ""
+msgstr "Pool di Avvio"
 
 msgid "Boot Pool Condition"
-msgstr ""
+msgstr "Condizioni del Pool di Avvio"
 
 msgid "Boot Pool Status"
-msgstr ""
+msgstr "Stato del Pool di Avvio"
 
 msgid ""
 "Boot environment name. Alphanumeric characters, dashes (-), underscores "
 "(_),     and periods (.) are allowed."
 msgstr ""
+"Nome dell'ambiente di avvio. Caratteri alfanumerici, trattini (-), trattini bassi "
+"(_),     e punti (.) sono permessi."
 
 msgid "Boot environment to be cloned."
-msgstr ""
+msgstr "Ambiente di avvio da clonare."
 
 msgid ""
 "Brainpool curves can be more secure, while secp curves can be faster. See "
@@ -1633,10 +1644,10 @@ msgid "Browsable to Network Clients"
 msgstr ""
 
 msgid "Browse a Collection"
-msgstr ""
+msgstr "Sfoglia una Collezione"
 
 msgid "Browse to a CD-ROM file present on the system storage."
-msgstr ""
+msgstr "Passare a un file CD-ROM presente nella memoria di sistema."
 
 msgid ""
 "Browse to a storage location and add the name of the new raw file on the "
@@ -1773,33 +1784,35 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Annulla"
 
 msgid "Cannot Delete while HA is Enabled"
-msgstr ""
+msgstr "Impossibile Eliminare mentre HA è Abilitato"
 
 msgid "Cannot Edit while HA is Enabled"
-msgstr ""
+msgstr "Impossibile Modificare mentre HA è Abilitato"
 
 msgid "Cannot create plugins or jails until a pool is present for storing them."
-msgstr ""
+msgstr "Impossibile creare plugins o jails finchè non è presente un pool per la loro memorizzazione."
 
 msgid "Cannot edit while HA is enabled."
-msgstr ""
+msgstr "Impossibile modificare mentre HA è abilitato"
 
 msgid "Case Sensitivity"
-msgstr ""
+msgstr "Distinzione tra Maiuscolo e Minuscolo"
 
 msgid "Category"
-msgstr ""
+msgstr "Categoria"
 
 msgid ""
 "Caution: Allocating too much memory can slow the  system or prevent VMs "
 "from running."
 msgstr ""
+"Attenzione: assegnare troppa memoria può rallentare il sistema o impedire alle VMs "
+"di funzionare."
 
 msgid "Certificate"
-msgstr ""
+msgstr "Certificato"
 
 msgid ""
 "Certificate to use when performing LDAP  certificate-based authentication. "
@@ -1809,28 +1822,28 @@ msgid ""
 msgstr ""
 
 msgid "Certificates"
-msgstr ""
+msgstr "Certificati"
 
 msgid "Change Administrator Password"
-msgstr ""
+msgstr "Cambia Password Amministratore"
 
 msgid "Change Device Order"
 msgstr ""
 
 msgid "Change Passphrase"
-msgstr ""
+msgstr "Cambia Passphrase"
 
 msgid "Change Password"
-msgstr ""
+msgstr "Cambia Password"
 
 msgid "Change Settings and Clear Report History?"
-msgstr ""
+msgstr "Modifica Impostazioni e Cancella Cronologia Rapporti?"
 
 msgid "Change User & Group Ownership"
-msgstr ""
+msgstr "Modifica Proprietà Utente & Gruppo"
 
 msgid "Change User and Group Ownership"
-msgstr ""
+msgstr "odifica Proprietà Utente e Gruppo"
 
 msgid ""
 "Change existing ownership of ALL files in the share  to user "
@@ -1838,20 +1851,29 @@ msgid ""
 "files to be accessed through WebDAV must be manually set  to the "
 "<samp>webdav</samp> or <samp>www</samp> user/group."
 msgstr ""
+"Cambia la proprietà esistente di TUTTI i files nella condivisione per l'utente "
+"<samp>webdav</samp> e il gruppo <samp>webdav</samp>. Se non impostato, la proprietà dei "
+"files a cui accedere tranite WebDAV deve essere impostata  manualmente su"
+"<samp>webdav</samp> o <samp>www</samp> user/group."
 
 msgid ""
 "Change from <i>public</i> to increase system security. Can only contain "
 "alphanumeric characters, underscores, dashes, periods, and spaces. This can "
 "be left empty for <i>SNMPv3</i> networks."
 msgstr ""
+"Passa da <i>public</i> per aumentare il livello di sicurezza. Può contenere solo "
+caratteri alfanumerici, trattini bassi, trattini, punti, e spazi. Questo può "
+"essere lasciato vuoto per le reti <i>SNMPv3</i>."
 
 msgid "Change log"
-msgstr ""
+msgstr "Cambia i log"
 
 msgid ""
 "Change the default password to improve system security. The new password "
 "cannot contain a space or <b>#</b>."
 msgstr ""
+"Modifica la password di default per migliorare la sicurezza del sistema. La nuova password "
+"non può contenere spazi o <b>#</b>."
 
 msgid "Changes that have been applied will revert after "
 msgstr ""
@@ -1875,9 +1897,11 @@ msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
 "particularly when going from Windows to Unix permissions."
 msgstr ""
+"La modifica della modalità di autorizzazione del dataset può influire gravemente sui permessi esistenti, "
+"in particolare quando si passa da Windows ai permessi Unix."
 
 msgid "Changing dataset permission mode can severely affect existing permissions."
-msgstr ""
+msgstr "La modifica della modalità di autorizzazione del dataset può influire gravemente sui permessi esistenti."
 
 msgid ""
 "Changing the major version is considered a downgrade and is not a supported "
@@ -1897,30 +1921,32 @@ msgid ""
 msgstr ""
 
 msgid "Channel"
-msgstr ""
+msgstr "Canale"
 
 msgid "Check Interval"
-msgstr ""
+msgstr "Intervallo di Controllo"
 
 msgid "Check Now"
-msgstr ""
+msgstr "Controlla Ora"
 
 msgid "Check Release Notes"
-msgstr ""
+msgstr "Controlla le Note di Rilascio"
 
 msgid "Check for Updates"
-msgstr ""
+msgstr "Controlla gli Aggiornamenti"
 
 msgid "Check for Updates Daily and Download if Available"
-msgstr ""
+msgstr "Controlla gli Aggiornamenti Quotidianamente e Scarica se Disponibili"
 
 msgid "Check server certificates in a TLS session."
-msgstr ""
+msgstr "Controlla i certificati del server in una sessione TLS."
 
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
 "do not start the jail"
 msgstr ""
+"Controlla la proprietà del jail <i>hostid</i>. Se non è uguale all'host, "
+"non avviare il jail"
 
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
@@ -1928,7 +1954,7 @@ msgid ""
 msgstr ""
 
 msgid "Check the network connection."
-msgstr ""
+msgstr "Controlla la connessione di rete."
 
 msgid ""
 "Check the update server daily for                                   any "
@@ -2017,13 +2043,13 @@ msgid ""
 msgstr ""
 
 msgid "Choose a DNS provider and configure any required authenticator attributes."
-msgstr ""
+msgstr "Scegli un provider DNS e configura tutte le caratteristiche di autenticazione richieste."
 
 msgid "Choose a Device"
-msgstr ""
+msgstr "Scegli un Dispositivo"
 
 msgid "Choose a color scheme."
-msgstr ""
+msgstr "Scegli una combinazione di colori."
 
 msgid ""
 "Choose a dataset on the destination  system where snapshots are stored. "
@@ -2032,16 +2058,16 @@ msgid ""
 msgstr ""
 
 msgid "Choose a device for your report."
-msgstr ""
+msgstr "Scegli un dispositivo per il rapporto."
 
 msgid "Choose a location to store the installer image file."
-msgstr ""
+msgstr "Scegli una destinazione in cui archiviare il file immagine del programma di installazione."
 
 msgid "Choose a metric"
-msgstr ""
+msgstr "Scegli un parametro"
 
 msgid "Choose a metric to display."
-msgstr ""
+msgstr "Scegli un parametro da visualizzare."
 
 msgid ""
 "Choose a path to the user's home directory. If the directory exists and "
@@ -2052,16 +2078,16 @@ msgid ""
 msgstr ""
 
 msgid "Choose a pool for plugin and jail storage."
-msgstr ""
+msgstr "Scegli un pool per l'archiviazione del plugin e del jail."
 
 msgid "Choose a pool to scrub."
 msgstr ""
 
 msgid "Choose a preferred theme."
-msgstr ""
+msgstr "Scegli un tema preferito."
 
 msgid "Choose a privacy protocol."
-msgstr ""
+msgstr "Scegli un protocollo di privacy."
 
 msgid ""
 "Choose a recent IP address to limit the usage when accessing the "
