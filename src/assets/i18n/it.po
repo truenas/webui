@@ -1182,14 +1182,16 @@ msgid ""
 msgstr ""
 
 msgid "Allow password authentication"
-msgstr ""
+msgstr "Consenti autenticazione password"
 
 msgid ""
 "Allow sending large data blocks. The  destination system must also support "
 "large blocks. See  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
-msgstr ""
+msgstr "Consenti invio di pacchetti di dati di grandi dimensioni. Anche il sistema di destinazione deve supportare "
+"grandi pacchetti. Vedere  <a ""href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
 
 msgid ""
 "Allow the jail hostname to be changed with <a "
@@ -1222,6 +1224,9 @@ msgid ""
 "profiles. Example: all users with a group ID of 1 will inherit the "
 "authentication profile associated with Group 1."
 msgstr ""
+"Consente a diversi gruppi di essere configurati con differenti profili "
+"di autenticazione. Esempio: tutti gli utenti con un ID di gruppo 1 erediteranno il"
+"profilo di autenticazione associato al Gruppo 1."
 
 msgid ""
 "Alphanumeric <a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
@@ -1239,13 +1244,15 @@ msgid ""
 "be no greater than 15 characters."
 msgstr ""
 
+
 msgid "Always Chroot"
 msgstr ""
 
 msgid ""
 "Always back up the key! Losing the key will also lose all data on the disks "
 "with no chance of recovery."
-msgstr ""
+msgstr "Eseguire sempre il back up della chiave! Perdendo la chiave si perderanno tutti i dati sui dischi "
+senza possibilità di recupero."
 
 msgid ""
 "Amazon Web Services Key ID. This is found on  <a "
@@ -1263,22 +1270,22 @@ msgid ""
 msgstr ""
 
 msgid "Amount of locked memory in bytes for the jail."
-msgstr ""
+msgstr "Quantità di memoria bloccata per il jail."
 
 msgid "An update is already applied. Please reboot the system."
-msgstr ""
+msgstr "Un aggiornamento è già stato applicato. Si prega di riavviare il sistema."
 
 msgid "Anonymous User Download Bandwidth"
-msgstr ""
+msgstr "Larghezza di Banda per il Download di Utenti Anonimi"
 
 msgid "Anonymous User Upload Bandwidth"
-msgstr ""
+msgstr "Larghezza di Banda per il Caricamento di Utenti Anonimi"
 
 msgid "Any notes about initiators."
 msgstr ""
 
 msgid "Appdefaults Auxiliary Parameters"
-msgstr ""
+msgstr "Parametri Ausiliari di Default"
 
 msgid ""
 "Append <i>@realm</i> to <i>cn</i> in LDAP queries for both groups and users "
@@ -1292,34 +1299,34 @@ msgid "Application Key"
 msgstr ""
 
 msgid "Apply"
-msgstr ""
+msgstr "Applica"
 
 msgid "Apply Failover Upgrade"
 msgstr ""
 
 msgid "Apply Network Changes"
-msgstr ""
+msgstr "Applica Modifiche alla Rete"
 
 msgid "Apply Pending Updates"
-msgstr ""
+msgstr "Applica Aggiornamenti in Sospeso"
 
 msgid "Apply Pending update"
-msgstr ""
+msgstr "Applica aggiornamento in Sospeso"
 
 msgid "Apply Permissions Recursively"
-msgstr ""
+msgstr "Applica Permessi in modo Ricorsivo"
 
 msgid "Apply Update"
-msgstr ""
+msgstr "Fare l'Aggiornamento"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
-msgstr ""
+msgstr "Applicare le modifiche di rete? La connessione di rete sarà interrotta."
 
 msgid "Apply permissions recursively"
-msgstr ""
+msgstr "Applica i permessi in modo ricorsivo"
 
 msgid "Apply permissions recursively to all child datasets of the current dataset."
-msgstr ""
+msgstr "Applicare i permessi in modo ricorsivo a tutti i dataset figlio del dataset corrente."
 
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
