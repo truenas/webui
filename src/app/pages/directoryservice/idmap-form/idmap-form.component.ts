@@ -48,11 +48,10 @@ export class IdmapFormComponent {
           options: []
         },
         {
-          type: 'combobox',
+          type: 'input',
           name: 'name',
           placeholder: helptext.idmap.name.placeholder,
           tooltip: helptext.idmap.name.tooltip,
-          options: helptext.idmap.name.options,
           required: true,
         },
         {
@@ -253,6 +252,14 @@ export class IdmapFormComponent {
 
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
     protected route: ActivatedRoute) { }
+
+  resourceTransformIncomingRestData(data) {
+    for (let item in data.options) {
+      data[item] = data.options[item]
+    }
+    delete data.options;
+    return data;
+  }
 
   preInit() {
     this.route.params.subscribe(params => {

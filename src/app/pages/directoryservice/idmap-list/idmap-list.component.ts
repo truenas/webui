@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { T } from '../../../translate-marker';
+import { IdmapService } from 'app/services/idmap.service';
+import { DialogService } from 'app/services/dialog.service';
+import helptext from '../../../helptext/directoryservice/idmap';
 
 @Component({
   selector: 'app-idmap-list',
@@ -8,12 +12,10 @@ import { T } from '../../../translate-marker';
 export class IdmapListComponent {
   public title = "Idmap";
   protected queryCall = 'idmap.query';
-  protected route_add: string[] = [ 'directoryservice', 'idmap', 'add' ];
   protected route_add_tooltip = T("Add Idmap");
   protected route_edit: string[] = [ 'directoryservice', 'idmap', 'edit' ];
   protected route_delete: string[] = [ 'idmap', 'delete' ];
   protected entityList: any;
-  protected loaderOpen = false;
 
   public columns: Array<any> = [
     {name : 'Name', prop : 'name', always_display: true},
@@ -34,9 +36,32 @@ export class IdmapListComponent {
     },
   };
 
-  constructor() { }
+  constructor(protected idmapService: IdmapService, protected router: Router,
+    protected dialogService: DialogService) { }
 
-  afterInit(entityList: any) { this.entityList = entityList; }
+  afterInit(entityList: any) { 
+    this.entityList = entityList; 
+  }
+
+  getAddActions() {
+    return [{
+      label: T('Add'),
+      onClick: () => {
+        this.idmapService.getADStatus().subscribe((res) => {
+          if (res.enable) {
+            this.router.navigate(['directoryservice', 'idmap', 'add'])
+          } else {
+            this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message, 
+              true, helptext.idmap.enable_ad_dialog.button).subscribe((res) => {
+             if(res) {
+               this.router.navigate(['directoryservice', 'activedirectory'])
+             }
+            })
+          }
+        })      
+      }
+    }];
+  }
   
 
 }

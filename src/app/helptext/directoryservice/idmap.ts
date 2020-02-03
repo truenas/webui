@@ -174,11 +174,6 @@ idmap: {
     name: {
         placeholder: T('Name'),
         tooltip: T('Enter the pre-Windows 2000 domain name.'),
-        options: [
-            {label: T('DS_TYPE_DEFAULT_DOMAIN'), value: 'DS_TYPE_DEFAULT_DOMAIN'},
-            {label: T('DS_TYPE_ACTIVEDIRECTORY'), value: 'DS_TYPE_ACTIVEDIRECTORY'},
-            {label: T('DS_TYPE_LDAP'), value: 'DS_TYPE_LDAP'}
-        ]
     },
     dns_domain_name: {
         placeholder: T('DNS Domain Name'),
@@ -326,6 +321,11 @@ idmap: {
     sssd_compat: {
         placeholder: T('SSSD Compat'),
         tooltip: T('Generate idmap low range based on same algorithm that SSSD uses by default.')
+    },
+    enable_ad_dialog: {
+        title: T('Enable Active Directory'), 
+        message: T('Active Directory must be enabled before adding new domains.'),
+        button: T('Go to Active Directory Form')
     }
         
 }
