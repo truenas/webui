@@ -326,6 +326,12 @@ idmap: {
         title: T('Enable Active Directory'), 
         message: T('Active Directory must be enabled before adding new domains.'),
         button: T('Go to Active Directory Form')
+    },
+    clear_cache_dialog: {
+        title: T('Clear the Idmap Cache'),
+        message: T('The Idmap cache should be cleared after finalizing idmap changes. \
+ Click "Continue" to clear the cache.'),
+        job_title: T('Clearing Cache...')
     }
         
 }

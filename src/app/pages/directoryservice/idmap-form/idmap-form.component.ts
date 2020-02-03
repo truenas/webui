@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ValidationService, IdmapService } from '../../../services/';
+import { ValidationService, IdmapService, DialogService } from '../../../services/';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from '../../../pages/common/entity/utils';
 import helptext from '../../../helptext/directoryservice/idmap';
 
 @Component({
@@ -30,6 +33,7 @@ export class IdmapFormComponent {
   ];
   private entityForm: any;
   protected backendChoices: any;
+  protected dialogRef: any;
   protected fieldConfig: FieldConfig[] = [];
 
   public fieldSetDisplay  = 'default';
@@ -251,7 +255,7 @@ export class IdmapFormComponent {
   ]
 
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
-    protected route: ActivatedRoute) { }
+    protected route: ActivatedRoute, protected dialogService: DialogService, protected dialog: MatDialog) { }
 
   resourceTransformIncomingRestData(data) {
     for (let item in data.options) {
@@ -329,4 +333,20 @@ export class IdmapFormComponent {
     data['options'] = options;
   }
 
+  afterSubmit(value) {
+    this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
+      true)
+      .subscribe((res) => {
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true});
+        this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache ');
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe((res) => {
+          this.dialog.closeAll();
+        });
+        this.dialogRef.componentInstance.failure.subscribe((res) => {
+          this.dialog.closeAll()
+          new EntityUtils().handleWSError(this.entityForm, res);
+        });
+      })
+    }
 }
