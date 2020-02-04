@@ -62,5 +62,7 @@ expand_pool_dialog: {
     title: T("Enter passphrase to expand pool "),
     passphrase_placeholder: T('Passphrase'),
     save_button: T("Expand Pool"),
-}
+},
+
+unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.')
 }

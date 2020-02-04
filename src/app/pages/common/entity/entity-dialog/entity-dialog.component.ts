@@ -156,4 +156,30 @@ export class EntityDialogComponent implements OnInit {
     }
     this.showPassword = !this.showPassword;
   }
+
+  setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
+    // if field is hidden, disable it too
+    if (hide) {
+      disable = hide;
+    } else {
+      hide = false;
+    }
+
+
+    this.fieldConfig = this.fieldConfig.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+        item['isHidden'] = hide;
+      }
+      return item;
+    });
+
+    if (this.formGroup.controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      this.formGroup.controls[name][method]();
+      return;
+    }
+
+
+  }
 }
