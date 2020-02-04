@@ -21,7 +21,7 @@
     cdkConnectedOverlay
     [cdkConnectedOverlayOrigin]="trigger"
     [cdkConnectedOverlayOpen]="isOpen">
-  <div  class="mat-card advanced-date-picker" role="dialog">
+  <mat-card  class="mat-card advanced-date-picker" role="dialog">
     <div class="mat-calendar-content">
       <h4 class="preview-label">{{"Schedule Preview" | translate}}
         <div class="controls">
@@ -164,6 +164,6 @@
 
       <button mat-button color="accent" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">{{"Done" | translate}}</button>
     </div>
-  </div>
+  </mat-card>
 </ng-template>
 <!--</mat-form-field>-->
