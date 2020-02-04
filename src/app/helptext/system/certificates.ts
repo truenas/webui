@@ -234,6 +234,11 @@ export const helptext_system_certificates = {
       placeholder: T("Authenticator"),
       tooltip: T("Authenticator to validate the Domain. Choose a\
  previously configured ACME DNS authenticator.")
+    },
+    job_dialog_title: T('Creating...'),
+    error_dialog: {
+      title: T('Error'),
+
     }
   }
 };
