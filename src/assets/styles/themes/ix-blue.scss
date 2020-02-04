@@ -1693,4 +1693,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     max-height: 60vh !important;
   }
 
+  tree-viewport {
+    max-height: 300px;
+    overflow: auto;
+  }
+
  } // end of ix theme
