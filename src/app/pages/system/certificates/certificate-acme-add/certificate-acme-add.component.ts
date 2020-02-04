@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
 import { FormArray } from '@angular/forms';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -86,7 +86,7 @@ export class CertificateAcmeAddComponent {
     protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected loader: AppLoaderService, private dialog: MatDialog,
-    protected entityFormService: EntityFormService
+    protected entityFormService: EntityFormService, protected dialogService: DialogService
   ) { }
 
   preInit() { 
@@ -129,16 +129,20 @@ export class CertificateAcmeAddComponent {
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = dns_map;
 
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": ("Creating...") }, disableClose: true});
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": (
+      helptext_system_certificates.acme.job_dialog_title) }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialog.closeAll();
       this.router.navigate(new Array('/').concat(this.route_success));
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
       this.dialog.closeAll()
-      new EntityUtils().handleWSError(this.entityForm, res);
+      // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
+      this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title, 
+        err.exc_info.type, err.exception)
+      new EntityUtils().handleWSError(this.entityForm, err);
     });
   }
 }
