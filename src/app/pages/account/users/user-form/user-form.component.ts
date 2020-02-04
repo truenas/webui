@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-form';
-import { AppLoaderService, StorageService, UserService, WebSocketService } from '../../../../services/';
+import { AppLoaderService, StorageService, UserService, WebSocketService, ValidationService } from '../../../../services/';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
@@ -85,7 +85,7 @@ export class UserFormComponent {
           placeholder : helptext.user_form_password_confirm_placeholder,
           inputType : 'password',
           required: true,
-          validation : helptext.user_form_password_confirm_validation,
+          validation : this.validationService.matchOtherValidator('password'),
           isHidden: false
         },
         {
@@ -103,7 +103,7 @@ export class UserFormComponent {
           name : helptext.user_form_password_edit_confirm_name,
           placeholder : helptext.user_form_password_edit_confirm_placeholder,
           inputType : 'password',
-          validation : helptext.user_form_password_edit_confirm_validation,
+          validation : this.validationService.matchOtherValidator('password_edit'),
           isHidden: true
         },
       ]
@@ -278,7 +278,8 @@ export class UserFormComponent {
               protected ws: WebSocketService, 
               protected storageService: StorageService,
               public loader: AppLoaderService,
-              private userService: UserService
+              private userService: UserService,
+              protected validationService: ValidationService
               ) {
       this.ws.call('user.query').subscribe(
         (res)=>{

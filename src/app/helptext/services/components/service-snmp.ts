@@ -49,7 +49,7 @@ v3_authtype_relation : [ {
 
 v3_password_placeholder : T('Password'),
 v3_password_tooltip: T('Enter a password of at least eight characters.'),
-v3_password_validation : [ Validators.minLength(8)],
+v3_password_validation : [ Validators.minLength(8), Validators.required ],
 v3_password_relation : [ {
   action : 'HIDE',
   when : [ {name : 'v3', value : false} ]
@@ -77,7 +77,7 @@ v3_privproto_relation : [ {
 v3_privpassphrase_placeholder : T('Privacy Passphrase'),
 v3_privpassphrase_tooltip: T('Enter a separate privacy passphrase. <b>Password</b>\
  is used when this is left empty.'),
-v3_privpassphrase_validation : [ Validators.minLength(8)],
+v3_privpassphrase_validation : [ Validators.minLength(8) ],
 v3_privpassphrase_relation : [ {
   action : 'HIDE',
   when : [ {name : 'v3', value : false} ]

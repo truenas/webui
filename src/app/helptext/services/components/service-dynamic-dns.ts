@@ -56,9 +56,7 @@ username_tooltip: T('Username for logging in to the provider and \
 
 password_placeholder : T('Password'),
 password_tooltip: T('Password for logging in to the provider and \
- updating the record.'),
-password_validation :
-        [ Validators.minLength(8), matchOtherValidator('password2') ],
+ updating the record. '),
 
 password2_placeholder : T('Confirm Password'),
 

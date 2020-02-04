@@ -10,7 +10,6 @@ password_tooltip : T('Enter the password used to connect to the IPMI\
  interface from a web browser.'),
 
 conf_password_placeholder: T('Confirm Password'),
-conf_password_validation : [ matchOtherValidator('password') ],
 
 dhcp_placeholder : T('DHCP'),
 dhcp_tooltip : T('Use DHCP. Unset to manually configure a static IPv4 connection.'),
