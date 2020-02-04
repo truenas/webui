@@ -10,10 +10,9 @@ import { EntityModule } from '../common/entity/entity.module';
 
 import { routing } from './jails.routing';
 import { JailListComponent } from './jail-list/';
+import { JailFormComponent } from './jail-form/jail-form.component';
 import { StorageListComponent } from './storages/storage-list/';
 import { StorageFormComponent } from './storages/storage-form/';
-import { JailAddComponent } from './jail-add/';
-import { JailEditComponent } from './jail-edit/';
 import { JailWizardComponent } from './jail-wizard/';
 import { JailShellComponent } from './jail-shell/';
 
@@ -23,10 +22,9 @@ import { JailShellComponent } from './jail-shell/';
   ],
   declarations : [
     JailListComponent,
+    JailFormComponent,
     StorageListComponent,
     StorageFormComponent,
-    JailAddComponent,
-    JailEditComponent,
     JailWizardComponent,
     JailShellComponent
   ],

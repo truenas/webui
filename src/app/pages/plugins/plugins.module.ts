@@ -11,7 +11,6 @@ import {EntityModule} from '../common/entity/entity.module';
 
 import {routing} from './plugins.routing';
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
-import { PluginAdvancedAddComponent } from './plugin-advanced-add/plugin-advanced-add.component';
 import { PluginsComponent } from './plugins.component';
 import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
 
@@ -23,7 +22,6 @@ import { AvailablePluginsComponent } from './available-plugins/available-plugins
   ],
   declarations : [
   	PluginAddComponent,
-    PluginAdvancedAddComponent,
     PluginsComponent,
     AvailablePluginsComponent,
   ],
