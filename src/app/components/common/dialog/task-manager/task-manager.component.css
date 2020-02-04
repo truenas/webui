@@ -55,3 +55,6 @@ mat-cell.mat-column-expandedDetail {
 mat-row.detail-row {
     padding-bottom: 12px;
 }
+.small-label {
+    font-size: small;
+}
