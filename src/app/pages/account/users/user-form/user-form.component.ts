@@ -8,6 +8,7 @@ import {
   StorageService,
   AppLoaderService,
   UserService,
+  ValidationService
 } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -90,7 +91,7 @@ export class UserFormComponent {
           placeholder : helptext.user_form_password_confirm_placeholder,
           inputType : 'password',
           required: true,
-          validation : helptext.user_form_password_confirm_validation,
+          validation : this.validationService.matchOtherValidator('password'),
           isHidden: false
         },
         {
@@ -108,7 +109,7 @@ export class UserFormComponent {
           name : helptext.user_form_password_edit_confirm_name,
           placeholder : helptext.user_form_password_edit_confirm_placeholder,
           inputType : 'password',
-          validation : helptext.user_form_password_edit_confirm_validation,
+          validation : this.validationService.matchOtherValidator('password_edit'),
           isHidden: true
         },
       ]
@@ -268,7 +269,7 @@ export class UserFormComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
-              public loader: AppLoaderService
+              public loader: AppLoaderService, protected validationService: ValidationService
               ) {
       this.ws.call('user.query').subscribe(
         (res)=>{

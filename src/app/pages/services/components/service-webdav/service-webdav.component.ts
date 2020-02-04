@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit, OnDestroy } from '@angular
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { RestService, SystemGeneralService, WebSocketService, ValidationService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-webdav';
 
@@ -60,13 +60,13 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       togglePw: true,
       tooltip : helptext.password_tooltip,
       inputType : 'password',
-      validation : helptext.password_validation
     },
     {
       type : 'input',
       name : 'password2',
       placeholder : helptext.password2_placeholder,
-      inputType : 'password'
+      inputType : 'password',
+      validation: this.validationService.matchOtherValidator('password')
     },
   ];
 
@@ -89,6 +89,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
       protected systemGeneralService: SystemGeneralService,
+      protected validationService: ValidationService
   ) {}
 
   ngOnInit() {

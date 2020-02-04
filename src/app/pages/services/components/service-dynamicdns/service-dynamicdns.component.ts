@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, ValidationService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-dynamic-dns';
 
@@ -84,13 +84,13 @@ export class ServiceDDNSComponent {
       tooltip: helptext.password_tooltip,
       inputType : 'password',
       togglePw: true,
-      validation : helptext.password_validation,
     },
     {
       type : 'input',
       name : 'password2',
       placeholder : helptext.password2_placeholder,
       inputType : 'password',
+      validation: this.validationService.matchOtherValidator('password')
     },
     {
       type : 'input',
@@ -105,6 +105,7 @@ export class ServiceDDNSComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected validationService: ValidationService
               ) {}
 
   afterInit(entityForm: any) {

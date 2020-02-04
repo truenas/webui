@@ -30,7 +30,6 @@ user_form_password_tooltip : T('Required unless <b>Enable password login</b> is\
 user_form_password_validation : [ Validators.pattern('^[^?]*$'), Validators.required ],
 user_form_password_confirm_name : 'password_conf',
 user_form_password_confirm_placeholder : T('Confirm Password'),
-user_form_password_confirm_validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.required ],
 user_form_password_edit_name: 'password_edit',
 user_form_password_edit_placeholder : T('Password'),
 user_form_password_edit_tooltip : T('Required unless <b>Enable password login</b> is\
@@ -38,7 +37,6 @@ user_form_password_edit_tooltip : T('Required unless <b>Enable password login</b
 user_form_password_edit_validation : [ Validators.pattern('^[^?]*$') ],
 user_form_password_edit_confirm_name: 'password_conf_edit',
 user_form_password_edit_confirm_placeholder : T('Confirm Password'),
-user_form_password_edit_confirm_validation : [ matchOtherValidator('password_edit'), Validators.pattern('^[^?]*$') ],
 
 user_form_ids_groups_title: T('ID & Groups'),
 user_form_ids_groups_title_class: 'id-and-groups',
