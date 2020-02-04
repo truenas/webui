@@ -171,7 +171,7 @@ export class JailFormService {
 
     handleTFfiledValues(res, i) {
         if (_.indexOf(this.TFfields, i) > -1) {
-            res[i] = res[i] === '1' ? true : false;
+            res[i] = res[i] == '1' ? true : false;
         }
     }
 

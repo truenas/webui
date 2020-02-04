@@ -51,7 +51,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       config: [
         {
           type: 'input',
-          name: 'plugin',
+          name: 'plugin_name',
           placeholder: helptext.plugin_name_placeholder,
           disabled: true,
         },
@@ -998,8 +998,10 @@ export class JailFormComponent implements OnInit, AfterViewInit {
             }
           }
           if (this.plugin !== undefined) {
+            this.formGroup.controls['plugin_name'].setValue(this.plugin);
             this.jailFromService.getPluginDefaults(this.plugin, this.pluginRepository, this.formGroup, this.networkfieldConfig);
           }
+          this.showSpinner = false;
         },
         (res) => {
           new EntityUtils().handleError(this, res);
@@ -1021,18 +1023,12 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           const allowMountList = [];
           for (let i in res[0]) {
             this.loadInterfaces(res[0], i);
-            if (i == 'type' && res[0][i] == 'pluginv2') {
-              this.jailFromService.setDisabled(this.formGroup, this.formFields, "uuid", true);
-              this.isPlugin = true;
-            }
             if (_.startsWith(i, 'allow_mount_') && res[0][i] === 1) {
               allowMountList.push(i);
             }
             if (this.formGroup.controls[i]) {
               if (i == 'ip4_addr' || i == 'ip6_addr') {
                 this.jailFromService.deparseIpaddr(res[0][i], i.split('_')[0], this.formGroup, this.basicfieldConfig);
-                this.formGroup.controls['dhcp'].setValue(this.wsResponse['dhcp']);
-                this.formGroup.controls['nat'].setValue(this.wsResponse['nat']);
                 continue;
               }
               if (i === 'nat_forwards') {
@@ -1046,7 +1042,16 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               this.jailFromService.handleTFfiledValues(res[0], i);
               this.formGroup.controls[i].setValue(res[0][i]);
             }
+            if (i == 'type') {
+              if (res[0][i] == 'pluginv2') {
+                this.jailFromService.setDisabled(this.formGroup, this.formFields, "uuid", true);
+                this.isPlugin = true;
+              }
+              this.jailFromService.setDisabled(this.formGroup, this.formFields, 'plugin_name', true, !this.isPlugin);
+            }
           }
+          this.formGroup.controls['dhcp'].setValue(res[0]['dhcp']);
+          this.formGroup.controls['nat'].setValue(res[0]['nat']);
           this.formGroup.controls['uuid'].setValue(res[0]['host_hostuuid']);
           this.formGroup.controls['allow_mount_*'].setValue(allowMountList);
           this.showSpinner = false;
@@ -1069,10 +1074,12 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         this.jailFromService.setDisabled(this.formGroup, this.formFields, 'release', true, this.pk !== undefined ? false : true);
         this.jailFromService.setDisabled(this.formGroup, this.formFields, 'https', true, true);
 
-        this.formGroup.controls['plugin'].setValue(this.plugin);
-        this.pluginRepository = params['plugin_repository'];
+        if (this.plugin !== undefined) {
+          this.formGroup.controls['plugin_name'].setValue(this.plugin);
+          this.pluginRepository = params['plugin_repository'];
+        }
       } else {
-        this.jailFromService.setDisabled(this.formGroup, this.formFields, 'plugin', true, true);
+        this.jailFromService.setDisabled(this.formGroup, this.formFields, 'plugin_name', true, true);
       }
 
       await this.jailService.listJails().toPromise().then((res) => {
@@ -1081,7 +1088,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
             this.namesInUse.push(i.id);
           }
         });
-        this.showSpinner = false;
       });
 
       this.setValuechange();
@@ -1112,8 +1118,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   }
 
   openJobDialog(type: 'pluginInstall' | 'jailInstall' | 'jailEdit', wsCall, payload) {
-    console.log(type);
-    
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.jailFormJobDialog[type].title }, disableClose: true });
     dialogRef.componentInstance.setDescription(helptext.jailFormJobDialog[type].description);
     dialogRef.componentInstance.setCall(wsCall, payload);
@@ -1157,7 +1161,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
             delete value[i];
           } else {
             if (_.indexOf(this.jailFromService.TFfields, i) > -1) {
-              property.push(i + value[i] ? '=1' : '=0');
+              property.push(i + (value[i] ? '=1' : '=0'));
               delete value[i];
             } else {
               if (i != 'uuid' && i != 'release' && i != 'basejail' && i != 'https') {
