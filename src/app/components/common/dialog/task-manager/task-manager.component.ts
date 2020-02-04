@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
-import { WebSocketService, JobService } from '../../../../services/';
+import { WebSocketService, JobService, SystemGeneralService } from '../../../../services/';
 
 @Component({
   selector: 'task-manager',
@@ -28,16 +28,20 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   displayedColumns = ['state', 'method', 'percent'];
   private subscrition: Subscription;
   public expandedElement: any | null;
+  public timeZone: string;
 
   constructor(
     public dialogRef: MatDialogRef<TaskManagerComponent>,
     private ws: WebSocketService,
     protected translate: TranslateService,
-    protected job: JobService) {
+    protected job: JobService, protected sysGeneralService: SystemGeneralService) {
       this.dataSource = new MatTableDataSource<any>([]);
     }
 
   ngOnInit() {
+    this.sysGeneralService.getSysInfo().subscribe((res) => {
+      this.timeZone = res.timezone;
+    })
     this.ws.call('core.get_jobs', []).subscribe(
       (res)=> {
         for (const i in res) {
@@ -93,7 +97,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
 
   getReadableDate(data: any) {
     if (data != null) {
-      return new Date(data.$date);
+      return new Date(data.$date).toLocaleString('en-US', {timeZone: this.timeZone });
     }
     return;
   }

@@ -33,8 +33,8 @@
         <ng-container matColumnDef="expandedDetail">
             <mat-cell *matCellDef="let element">
                 <span><b>{{ 'Status:' | translate}}</b> {{element.state}}</span>
-                <span *ngIf="element.time_started != null"><b>{{ 'Start Time:' | translate }}</b> {{getReadableDate(element.time_started)}}</span>
-                <span *ngIf="element.time_finished != null"><b>{{ 'Finished Time:' | translate }}</b> {{getReadableDate(element.time_finished)}}</span>
+                <span *ngIf="element.time_started != null"><b>{{ 'Start Time:' | translate }}</b> {{getReadableDate(element.time_started) | date: ' E MMM d, y, H:mm:ss'}} <span class="small-label">({{timeZone}})</span></span>
+                <span *ngIf="element.time_finished != null"><b>{{ 'Finished Time:' | translate }}</b> {{getReadableDate(element.time_finished) | date: ' E MMM d, y, H:mm:ss'}}</span>
                 <span *ngIf="element.error != null"><b>{{ 'Error:' | translate }}</b> {{element.error}}</span>
                 <span *ngIf="element.logs_excerpt != null && element.logs_path != null"><button mat-flat-button color="primary" (click)="showLogs(element)">{{ 'View Logs' | translate }}</button></span>
             </mat-cell>
