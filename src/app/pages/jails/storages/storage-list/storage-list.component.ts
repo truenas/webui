@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class StorageListComponent {
 
-  public title = "Mount points";
+  public title;
   protected queryCall = 'jail.fstab';
   protected queryCallOption = [];
   protected queryRes: any = [];
@@ -49,6 +49,11 @@ export class StorageListComponent {
       this.route_add.push(params['jail'], 'add');
       this.route_delete.push(params['jail'], 'delete');
       this.route_edit.push(params['jail'], 'edit');
+      this.translate.get(T('Mount Points of ')).subscribe(
+        (res) => {
+            this.title = res + this.jailId;
+        }
+      );
     });
   }
 
