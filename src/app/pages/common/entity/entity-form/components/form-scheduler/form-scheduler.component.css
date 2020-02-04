@@ -22,6 +22,8 @@
 
 .advanced-date-picker.mat-card .cron-fields h4.preview-label{
   padding:0;
+  display: inline-block;
+  float: left;
 }
 
 .mat-calendar-content{
