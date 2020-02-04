@@ -55,7 +55,7 @@ pool_lock_warning_paratext_b: T("</i>.\
  Data on the pool will not be accessible until the pool is unlocked."),
 
 permissions_edit_msg: T('Root dataset permissions cannot be edited.'),
-acl_edit_msg: T('Root dataset ACL cannot be edited.')
+acl_edit_msg: T('Root dataset ACL cannot be edited.'),
 
-
+unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.')
 }
