@@ -36,5 +36,20 @@ ha_connecting_text: T('Waiting for active TrueNAS controller to come up...'),
 fieldset_general_options: T('General Options'),
 fieldset_other_options: T('Other Options'),
 
-hostname: T('Hostname')
+hostname: T('Hostname'),
+
+scheduler: {
+    minutes: {
+        header: T('Mintues'),
+        tooltip: T(''),
+    },
+    hours: {
+        header: T('Hours'),
+        tooltip: T(''),
+    },
+    days: {
+        header: T('Days'),
+        tooltip: T(''),
+    }
+}
 }

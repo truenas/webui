@@ -70,13 +70,16 @@
           <mat-form-field *ngIf="!config.noMinutes">
             <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
           </mat-form-field>
+          <tooltip *ngIf="!config.noMinutes" [header]="helptext.scheduler.minutes.header" [message]="helptext.scheduler.minutes.tooltip"></tooltip>
           <mat-form-field>
             <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours" required [ngClass]="{'invalid': validHours === false}">
           </mat-form-field>
+          <tooltip [header]="helptext.scheduler.hours.header" [message]="helptext.scheduler.hours.tooltip"></tooltip>
           <br *ngIf="config.noMinutes"/>
           <mat-form-field>
             <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days" required [ngClass]="{'invalid': validDays === false}">
           </mat-form-field>
+          <tooltip [header]="helptext.scheduler.days.header" [message]="helptext.scheduler.days.tooltip"></tooltip>
       </section>
       <mat-divider></mat-divider>
 
