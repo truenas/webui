@@ -2502,22 +2502,22 @@ msgstr ""
 "sovrascrivere le impostazioni predefinite o durante l'installazione di plugin duplicati."
 
 msgid "Configure the root user email address."
-msgstr ""
+msgstr "Configurare l'indirizzo mail dell'utente root."
 
 msgid "Confirm"
-msgstr ""
+msgstr "Conferma"
 
 msgid "Confirm Export/Disconnect"
-msgstr ""
+msgstr "Conferma Esportazione/Disconnessione"
 
 msgid "Confirm Options"
-msgstr ""
+msgstr "Conferma Opzioni"
 
 msgid "Confirm Passphrase"
-msgstr ""
+msgstr "Conferma Passphrase"
 
 msgid "Confirm Password"
-msgstr ""
+msgstr "Conferma Password"
 
 msgid "Confirm Privacy Passphrase"
 msgstr ""
@@ -2535,22 +2535,22 @@ msgid "Confirm it is okay to proceed with Detach."
 msgstr ""
 
 msgid "Confirm password"
-msgstr ""
+msgstr "Conferma password"
 
 msgid "Confirm these settings."
-msgstr ""
+msgstr "Conferma queste impostazioni."
 
 msgid "Connect Timeout"
-msgstr ""
+msgstr "Connessione Scaduta"
 
 msgid "Connected Initiators"
 msgstr ""
 
 msgid "Connecting to "
-msgstr ""
+msgstr "Connessione a "
 
 msgid "Connection Error"
-msgstr ""
+msgstr "Errore di Connessione"
 
 msgid ""
 "Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but "
@@ -2561,9 +2561,16 @@ msgid ""
 "the security should only be used within a  secure, trusted "
 "network.</li></ul>"
 msgstr ""
+"Livello di sicurezza della connessione:<br>  <ul><li><i>Standard</i> è il più sicuro, ma "
+"ha il maggior impatto sulla velocità di connessione.</li><br>  <li><i>Fast</i> è "
+"meno sicuro di <i>Standard</i> ma può fornire velocità di trasferimento ragionevoli "
+"per dispositivi con velocità crittografica limitata. </li><br>  <li><i>Disabled</i> "
+"rimuove tutta la protezione in favore della massiam velocità di connessione. La disabilitazione "
+"della protezione dovrebbe essere utilizzata solo all'interno di una rete sicura "
+"e affidabile.</li></ul>"
 
 msgid "Connections"
-msgstr ""
+msgstr "Connessioni"
 
 msgid "Console"
 msgstr ""
@@ -2637,13 +2644,13 @@ msgid "Coolest:"
 msgstr ""
 
 msgid "Copies"
-msgstr ""
+msgstr "Copie"
 
 msgid "Copy and Paste"
-msgstr ""
+msgstr "Copia e Incolla"
 
 msgid "Could not delete boot environment."
-msgstr ""
+msgstr "Impossibile eliminare l'ambiente di boot."
 
 msgid "Could not find a group name for this group ID."
 msgstr ""
@@ -2652,55 +2659,58 @@ msgid "Could not find a user name for this user ID."
 msgstr ""
 
 msgid "Country"
-msgstr ""
+msgstr "Nazione"
 
 msgid "Country Code"
-msgstr ""
+msgstr "Prefisso Internazionale"
 
 msgid ""
 "Country Code must be blank or have a  valid two-letter <a  "
 "href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
 "3166-1 alpha-2 code</a>."
 msgstr ""
+"Il Prefisso Internazionale deve essere vuoto o contenere due lettere valide <a  "
+"href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
+"3166-1 alpha-2 code</a>."
 
 msgid "Crash reporting"
 msgstr ""
 
 msgid "Create"
-msgstr ""
+msgstr "Creare"
 
 msgid "Create ACME Certificate"
-msgstr ""
+msgstr "Creare Certificato ACME"
 
 msgid "Create CA"
-msgstr ""
+msgstr "Creare CA"
 
 msgid "Create Certificate"
-msgstr ""
+msgstr "Creare Certificato"
 
 msgid "Create New Theme"
-msgstr ""
+msgstr "Creare Nuovo Tema"
 
 msgid "Create Passphrase"
-msgstr ""
+msgstr "Creare Passphrase"
 
 msgid "Create Pool"
-msgstr ""
+msgstr "Creare Pool"
 
 msgid "Create SSH Connection"
-msgstr ""
+msgstr "Creare Connessione SSH"
 
 msgid "Create Snapshot"
-msgstr ""
+msgstr "Creare Snapshot"
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "Creare un nuovo Pool"
 
 msgid "Create a new, empty pool."
-msgstr ""
+msgstr "Creare un nuovo pool vuoto."
 
 msgid "Create a pool:"
-msgstr ""
+msgstr "Creare un pool:"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
@@ -2709,22 +2719,22 @@ msgid "Create more data vdevs like the first."
 msgstr ""
 
 msgid "Create new Pool"
-msgstr ""
+msgstr "Creare un nuovo Pool"
 
 msgid "Create new disk image"
-msgstr ""
+msgstr "Creare una nuova immagine del disco"
 
 msgid "Create new pool"
-msgstr ""
+msgstr "Creare un nuovo pool"
 
 msgid "Create or Choose Block Device"
-msgstr ""
+msgstr "Crea o Scegli Blocca Dispositivo"
 
 msgid "Create or Import Pool"
-msgstr ""
+msgstr "Crea o Importa Pool"
 
 msgid "Create or Import pool"
-msgstr ""
+msgstr "Crea o Importa pool"
 
 msgid ""
 "Creates dataset snapshots when there are no changes. Set to support "
@@ -2733,13 +2743,13 @@ msgid ""
 msgstr ""
 
 msgid "Creating"
-msgstr ""
+msgstr "Creazione"
 
 msgid "Creating Jail"
-msgstr ""
+msgstr "Creazione Jail"
 
 msgid "Creating Jail..."
-msgstr ""
+msgstr "Creazione Jail..."
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2749,28 +2759,28 @@ msgid ""
 msgstr ""
 
 msgid "Credential"
-msgstr ""
+msgstr "Credenziali"
 
 msgid "Critical"
-msgstr ""
+msgstr "Critico"
 
 msgid "Criticality"
-msgstr ""
+msgstr "Criticità"
 
 msgid "Cron Jobs"
 msgstr ""
 
 msgid "Current Password"
-msgstr ""
+msgstr "Password Attuale"
 
 msgid "Current Train:"
 msgstr ""
 
 msgid "Custom"
-msgstr ""
+msgstr "Personalizza"
 
 msgid "Custom Path"
-msgstr ""
+msgstr "Personalizza Path"
 
 msgid "Custom Properties"
 msgstr ""
@@ -2796,10 +2806,10 @@ msgid ""
 msgstr ""
 
 msgid "DELETE"
-msgstr ""
+msgstr "CANCELLA"
 
 msgid "DELETE DATASET"
-msgstr ""
+msgstr "CANCELLA DATASET"
 
 msgid "DHCP"
 msgstr ""
@@ -2808,7 +2818,7 @@ msgid "DHCP Autoconfigure IPv4"
 msgstr ""
 
 msgid "DISCARD CHANGES"
-msgstr ""
+msgstr "NON SALVARE LE MODIFICHE"
 
 msgid "DNS Forwarder"
 msgstr ""
@@ -2823,22 +2833,22 @@ msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
 
 msgid "DOCUMENTATION"
-msgstr ""
+msgstr "DOCUMENTAZIONE"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Pannello di controllo"
 
 msgid "Data"
-msgstr ""
+msgstr "Dati"
 
 msgid "Data VDevs"
 msgstr ""
 
 msgid "Data collection frequency, in seconds."
-msgstr ""
+msgstr "Frequenza di raccolta dati, in secondi."
 
 msgid "Data not available"
-msgstr ""
+msgstr "Dati non disponibili"
 
 msgid ""
 "Data transfer security. The connection is  authenticated with SSH. Data can "
@@ -2846,15 +2856,19 @@ msgid ""
 "transfer speed. Encryption is  recommended, but can be disabled for "
 "increased speed on secure networks."
 msgstr ""
+"Sicurezza del trasferimento dei dati. La connessione è autenticata con SSH. I dati possono "
+"essere crittografati durante il trasferimento per motivi di sicurezza o essere lasciati non crittografati per massimizzare "
+"la velocità di trasferimento. Si consiglia la crittografia, ma può essere disabilitata per "
+"aumemtare la velocità su reti sicure."
 
 msgid "Database"
-msgstr ""
+msgstr "Database"
 
 msgid "Database Path"
 msgstr ""
 
 msgid "Dataset"
-msgstr ""
+msgstr "Dataset"
 
 msgid "Dataset Has Complex ACLs"
 msgstr ""
@@ -2872,13 +2886,13 @@ msgid "Datastore"
 msgstr ""
 
 msgid "Day of Month"
-msgstr ""
+msgstr "Giorno del Mese"
 
 msgid "Day of Week"
-msgstr ""
+msgstr "Giorno della Settimana"
 
 msgid "Days"
-msgstr ""
+msgstr "Giorni"
 
 msgid ""
 "Days before a completed scrub is allowed  to run again. This controls the "
@@ -2890,28 +2904,28 @@ msgid ""
 msgstr ""
 
 msgid "Days of Week"
-msgstr ""
+msgstr "Giorni della Settimana"
 
 msgid "Days of the Week"
-msgstr ""
+msgstr "Giorni della Settimana"
 
 msgid "Deactivate the recovery key for this pool?"
-msgstr ""
+msgstr "Disattivare la chiave di ripristino per questo pool?"
 
 msgid "Debug"
-msgstr ""
+msgstr "Debug"
 
 msgid "Debug could not be downloaded."
-msgstr ""
+msgstr "Impossibile scaricare il debug."
 
 msgid "Dec"
 msgstr ""
 
 msgid "Decrypt pool"
-msgstr ""
+msgstr "Decriptare pool"
 
 msgid "Decrypting Disks"
-msgstr ""
+msgstr "Decodifica Dischi"
 
 msgid ""
 "Deduplicate the stream to avoid sending redundant  data blocks. The "
@@ -2919,15 +2933,19 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
+"Deduplicare lo stream per evitare l'invio di blocchi di dati ridondanti. Il "
+"sistema di destinazione deve supportare anche flussi deduplicati. Vedi <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
 
 msgid "Default"
-msgstr ""
+msgstr "Default"
 
 msgid "Default ACL Options"
-msgstr ""
+msgstr "Opzioni ACL di Default"
 
 msgid "Default Permissions"
-msgstr ""
+msgstr "Permessi di Default"
 
 msgid "Default Router For IPv4"
 msgstr ""
@@ -2997,10 +3015,10 @@ msgid ""
 msgstr ""
 
 msgid "Define the server where all changes to the database are performed."
-msgstr ""
+msgstr "Determinare il server su cui vengono eseguite tutte le modifiche al database."
 
 msgid "Define the server where all password changes are performed."
-msgstr ""
+msgstr "Determinare il server su cui vengono eseguite tutte le modifiche alle password."
 
 msgid "Define the size of the raw file in GiB."
 msgstr ""
@@ -3009,34 +3027,34 @@ msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr ""
 
 msgid "Delay Updates"
-msgstr ""
+msgstr "Ritardare Aggiornamenti"
 
 msgid "Delay VM Boot Until VNC Connects"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Elimina"
 
 msgid "Delete "
-msgstr ""
+msgstr "Elimina "
 
 msgid "Delete Dataset"
-msgstr ""
+msgstr "Elimina Dataset"
 
 msgid "Delete Dataset <i><b>"
-msgstr ""
+msgstr "Elimina Dataset <i><b>"
 
 msgid "Delete Device"
-msgstr ""
+msgstr "Elimina Dispositivo"
 
 msgid "Delete Key"
-msgstr ""
+msgstr "Elimina Chiave"
 
 msgid "Delete Mount Point"
-msgstr ""
+msgstr "Elimina Mount Point"
 
 msgid "Delete Mountpoint"
-msgstr ""
+msgstr "Elimina Mountpoint"
 
 msgid "Delete Path"
 msgstr ""
@@ -3048,21 +3066,23 @@ msgid "Delete Zvol"
 msgstr ""
 
 msgid "Delete all users with this primary group?"
-msgstr ""
+msgstr "Elimina tutti gli utenti con questo gruppo principale?"
 
 msgid "Delete configuration of shares that used this pool?"
-msgstr ""
+msgstr "Eliminare la configurazione delle condivisioni che hanno utilizzato questo pool?"
 
 msgid ""
 "Delete files in the destination directory                that do not exist "
 "in the source directory."
 msgstr ""
+"Elimina i file nella directory di destinazione                che non esistono "
+"nella direcotry di origine."
 
 msgid "Delete selections"
-msgstr ""
+msgstr "Elimina le selezioni"
 
 msgid "Delete snapshot "
-msgstr ""
+msgstr "Elimina snapshot "
 
 msgid ""
 "Delete the passphrase from  the encryption key. Invalidates an existing "
@@ -3070,19 +3090,19 @@ msgid ""
 msgstr ""
 
 msgid "Delete the selected item?"
-msgstr ""
+msgstr "Eliminare l'elemento selezionato?"
 
 msgid "Delete the zvol "
 msgstr ""
 
 msgid "Delete this device?"
-msgstr ""
+msgstr "Eliminare questo dispositivo?"
 
 msgid "Delete this path."
 msgstr ""
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
-msgstr ""
+msgstr "L'eliminazione delle interfacce non è consentita mentre HA è abilitato."
 
 msgid "Deleting the <b>"
 msgstr ""
@@ -3102,16 +3122,16 @@ msgid "Describe the scrub task."
 msgstr ""
 
 msgid "Describe this service."
-msgstr ""
+msgstr "Descrivi questo servizio."
 
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 msgid "Description (max. 25 characters)"
-msgstr ""
+msgstr "Descrizione (max. 25 caratteri)"
 
 msgid "Description (optional)."
-msgstr ""
+msgstr "Descrizione (facoltativa)."
 
 msgid "Description of the VLAN."
 msgstr ""
@@ -3126,7 +3146,7 @@ msgid "Descriptive name for the replication."
 msgstr ""
 
 msgid "Destination"
-msgstr ""
+msgstr "Destinazione"
 
 msgid "Destination Dataset"
 msgstr ""
@@ -3148,19 +3168,19 @@ msgid ""
 msgstr ""
 
 msgid "Destroy data on this pool?"
-msgstr ""
+msgstr "Distruggere i dati su questo pool?"
 
 msgid "Detach"
-msgstr ""
+msgstr "Smontare"
 
 msgid "Detach Pool"
-msgstr ""
+msgstr "Smontare Pool"
 
 msgid "Detach disk "
-msgstr ""
+msgstr "Smontare disco"
 
 msgid "Details"
-msgstr ""
+msgstr "Dettagli"
 
 msgid ""
 "Determine whether this share name is included when browsing shares. Home "
@@ -3202,25 +3222,25 @@ msgid ""
 msgstr ""
 
 msgid "Device"
-msgstr ""
+msgstr "Dispositivo"
 
 msgid "Device Attached"
-msgstr ""
+msgstr "Dispositivo Collegato"
 
 msgid "Device Busy"
-msgstr ""
+msgstr "Dispositivo Occupato"
 
 msgid "Device Order"
 msgstr ""
 
 msgid "Device detached "
-msgstr ""
+msgstr "Dispositivo scollegato"
 
 msgid "Devices"
-msgstr ""
+msgstr "Dispositivi"
 
 msgid "Difference"
-msgstr ""
+msgstr "Differenza"
 
 msgid "Digest Algorithm"
 msgstr ""
