@@ -151,7 +151,7 @@ mat-form-field.cron-presets{
 .cron-fields section.m-h-d mat-form-field{
   display:inline-block;
   margin-left:16px;
-  width:120px;
+  width:100px;
 }
 
 /* Calendar View Settings*/
