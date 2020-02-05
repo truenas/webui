@@ -510,7 +510,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
       });
     } else {
-      // this.ws.call('update.set_train', [this.train]).subscribe(() => { 
+      this.ws.call('update.set_train', [this.train]).subscribe(() => { 
         this.dialogRef.componentInstance.setCall('failover.upgrade');
         this.dialogRef.componentInstance.disableProgressValue(true);
         this.dialogRef.componentInstance.submit();
@@ -529,7 +529,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.dialogRef.componentInstance.failure.subscribe((err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
         })
-      // })
+      })
     };
   }
 
