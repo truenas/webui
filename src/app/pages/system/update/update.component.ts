@@ -463,13 +463,32 @@ export class UpdateComponent implements OnInit, OnDestroy {
                   this.ds  = this.dialogService.confirm(
                     T("Download Update"), T("Upgrades both controllers. Files are downloaded to the Active Controller\
                       and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
-                      Continue with download?"),true).subscribe((res) =>  {
-                      if (res) {
-                        this.update()
-                      };
-                    });
-                };
-            });
+                      Continue with download?"),true,T('Download'),true,T("Apply updates and reboot system after downloading.")
+                  )
+                  this.ds.componentInstance.isSubmitEnabled = true;
+                  this.ds.afterClosed().subscribe((status)=>{
+                    if(status){
+                      if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
+                        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+                        this.dialogRef.componentInstance.setCall('update.download');
+                        this.dialogRef.componentInstance.submit();
+                        this.dialogRef.componentInstance.success.subscribe((succ) => {
+                          this.dialogRef.close(false);
+                          this.dialogService.Info(T("Updates successfully downloaded"),'', '450px', 'info', true);
+                          this.pendingupdates();
+  
+                        });
+                        this.dialogRef.componentInstance.failure.subscribe((err) => {
+                          new EntityUtils().handleWSError(this, err, this.dialogService);
+                        });
+                      }
+                      else{
+                        this.update();
+                      }
+                    }
+                  })
+   
+            }});
           } else if (res.status === 'UNAVAILABLE'){
             this.dialogService.Info(T('Check Now'), T('No updates available.'))
           }
@@ -511,7 +530,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
       });
     } else {
-      this.ws.call('update.set_train', [this.train]).subscribe(() => { 
+      // this.ws.call('update.set_train', [this.train]).subscribe(() => { 
         this.dialogRef.componentInstance.setCall('failover.upgrade');
         this.dialogRef.componentInstance.disableProgressValue(true);
         this.dialogRef.componentInstance.submit();
@@ -530,7 +549,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.dialogRef.componentInstance.failure.subscribe((err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
         })
-      })
+      // })
     };
   }
 
