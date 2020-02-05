@@ -283,6 +283,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.node').subscribe((node) => {
+        console.log(node);
         if (node === 'A') {
           this.ipPlaceholder = ` (${globalHelptext.thisCtlr})`;
           this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
@@ -290,8 +291,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
           this.failoverPlaceholder = ` (${globalHelptext.thisCtlr})`;
         } else {
-          this.ipPlaceholder = ` ${globalHelptext.unknownCtrl}`;
-          this.failoverPlaceholder = ''
+          return;
         }
         _.find(this.ipListControl.templateListField, {'name': 'address'}).placeholder += this.ipPlaceholder;
         _.find(this.ipListControl.templateListField, {'name': 'failover_address'}).placeholder += this.failoverPlaceholder;
