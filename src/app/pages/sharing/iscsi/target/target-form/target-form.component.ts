@@ -219,7 +219,7 @@ export class TargetFormComponent {
         if (this.portals[i].comment) {
           label += ' (' + this.portals[i].comment + ')';
         }
-        groupModel.options.push({label : label, value : i + 1})
+        groupModel.options.push({label : label, value : this.portals[i].id})
       }
     } else if (groupModel.name == 'initiator') {
       groupModel.options.push({label : 'None', value : null});
