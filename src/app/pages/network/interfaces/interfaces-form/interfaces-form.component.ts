@@ -283,7 +283,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
     if (window.localStorage.getItem('is_freenas') === 'false') {
       this.ws.call('failover.node').subscribe((node) => {
-        console.log(node);
         if (node === 'A') {
           this.ipPlaceholder = ` (${globalHelptext.thisCtlr})`;
           this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
