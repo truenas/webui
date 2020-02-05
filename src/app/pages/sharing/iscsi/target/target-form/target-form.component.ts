@@ -166,15 +166,10 @@ export class TargetFormComponent {
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
     });
-  }
-
-  afterInit(entityForm: any) {
-    this.entityForm = entityForm;
-    this.fieldConfig = entityForm.fieldConfig;
-
-    const portalGroupField = _.find(this.fieldConfig, { 'name': 'groups' }).templateListField[0];
-    const initiatorGroupField = _.find(this.fieldConfig, { 'name': 'groups' }).templateListField[1];
-    const authGroupField = _.find(this.fieldConfig, { 'name': 'groups' }).templateListField[3];
+    const targetGroupFieldset = _.find(this.fieldSets, {class: 'group'});
+    const portalGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[0];
+    const initiatorGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[1];
+    const authGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[3];
     this.iscsiService.listPortals().subscribe(
       (res) => {
         for (let i = 0; i < res.length; i++) {
@@ -182,7 +177,7 @@ export class TargetFormComponent {
           if (res[i].comment) {
             label += ' (' + res[i].comment + ')';
           }
-          portalGroupField.options.push({ label: label, value: i + 1 })
+          portalGroupField.options.push({ label: label, value: res[i].id })
         }
       }
     );
@@ -203,6 +198,11 @@ export class TargetFormComponent {
         }
       }
     );
+  }
+
+  afterInit(entityForm: any) {
+    this.entityForm = entityForm;
+    this.fieldConfig = entityForm.fieldConfig;
   }
 
   customEditCall(value) {
