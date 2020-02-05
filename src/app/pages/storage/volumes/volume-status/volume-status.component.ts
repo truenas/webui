@@ -85,6 +85,36 @@ export class VolumeStatusComponent implements OnInit {
     name: 'force',
     placeholder: "Force",
   }];
+  protected extendVdevFormFields: FieldConfig[] = [{
+    type: 'input',
+    name: 'target_vdev',
+    value: '',
+    isHidden: true,
+  }, {
+    type: 'select',
+    name: 'new_disk',
+    placeholder: "New Disk",
+    options: [],
+    required: true,
+    validation: [Validators.required],
+  }, {
+    type: 'input',
+    inputType: 'password',
+    name: 'passphrase',
+    placeholder: T('Passphrase'),
+    required: true,
+    isHidden: true,
+    disabled: true,
+  }, {
+    type: 'input',
+    inputType: 'password',
+    name: 'passphrase2',
+    placeholder: T('Confirm Passphrase'),
+    validation : [ matchOtherValidator('passphrase') ],
+    required: true,
+    isHidden: true,
+    disabled: true,
+  }];
 
   protected pool: any;
 
@@ -118,10 +148,12 @@ export class VolumeStatusComponent implements OnInit {
         if (res[0]) {
           // if pool is passphrase protected, abled passphrase field.
           if (res[0].encrypt === 2) {
-            _.find(this.replaceDiskFormFields, { name: 'passphrase' })['isHidden'] = false;
-            _.find(this.replaceDiskFormFields, { name: 'passphrase' }).disabled = false;
-            _.find(this.replaceDiskFormFields, { name: 'passphrase2' })['isHidden'] = false;
-            _.find(this.replaceDiskFormFields, { name: 'passphrase2' }).disabled = false;
+            [this.replaceDiskFormFields, this.extendVdevFormFields].forEach(formFields => {
+              _.find(formFields, { name: 'passphrase' })['isHidden'] = false;
+              _.find(formFields, { name: 'passphrase' }).disabled = false;
+              _.find(formFields, { name: 'passphrase2' })['isHidden'] = false;
+              _.find(formFields, { name: 'passphrase2' }).disabled = false;
+            })
           }
           this.poolScan = res[0].scan;
           // subscribe zfs.pool.scan to get scrub job info
@@ -139,14 +171,20 @@ export class VolumeStatusComponent implements OnInit {
 
   getUnusedDisk() {
     const availableDisks = [];
+    const availableDisksForExtend = [];
     this.ws.call('disk.get_unused').subscribe((res) => {
       for (const i in res) {
         availableDisks.push({
           label: res[i].devname,
           value: res[i].identifier,
-        })
+        });
+        availableDisksForExtend.push({
+          label: res[i].devname + '(' + (<any>window).filesize(res[i].size, { standard: 'iec' }) + ')',
+          value: res[i].name,
+        });
       }
       _.find(this.replaceDiskFormFields, { name: 'disk' }).options = availableDisks;
+      _.find(this.extendVdevFormFields, { name: 'new_disk' }).options = availableDisksForExtend;
     })
   }
   ngOnInit() {
@@ -352,6 +390,46 @@ export class VolumeStatusComponent implements OnInit {
     return actions;
   }
 
+  extendAction(data) {
+    return [{
+      label: "Extend",
+      onClick: (row) => {
+        console.log(row);
+        const pk = this.pk;
+        _.find(this.extendVdevFormFields, { name: 'target_vdev' }).value = row.guid;
+        const conf: DialogFormConfiguration = {
+          title: "Extend  vdev",
+          fieldConfig: this.extendVdevFormFields,
+          saveButtonText: "Extend",
+          parent: this,
+          customSubmit: function (entityDialog: any) {
+            delete entityDialog.formValue['passphrase2'];
+
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title":"Extending vdev"}, disableClose: true});
+            dialogRef.componentInstance.setDescription(T("Extending vdev..."));
+            dialogRef.componentInstance.setCall('pool.attach', [pk, entityDialog.formValue]);
+            dialogRef.componentInstance.submit();
+            dialogRef.componentInstance.success.subscribe(res=>{
+              dialogRef.close(true);
+              entityDialog.dialogRef.close(true);
+              entityDialog.parent.getData();
+              entityDialog.parent.getUnusedDisk();
+              entityDialog.parent.dialogService.Info(T("Extending Vdev"), T("Successfully Extent vdev ") + name + ".", '', 'info', true);
+            }),
+            dialogRef.componentInstance.failure.subscribe((res) => {
+              if (res.error.startsWith('[EINVAL]')) {
+                dialogRef.close();
+                new EntityUtils().handleWSError(this, res.exc_info);
+              }
+            });
+          }
+        }
+        this.dialogService.dialogForm(conf);
+
+      }
+    }];
+  }
+
   parseData(data: any, category?: any, vdev_type?: any) {
     let stats: any = {
       read_errors: 0,
@@ -381,8 +459,12 @@ export class VolumeStatusComponent implements OnInit {
     };
 
     // add actions
-    if (category && data.type && data.type == 'DISK') {
-      item.actions = this.getAction(data, category, vdev_type);
+    if (category && data.type) {
+      if (data.type == 'DISK') {
+        item.actions = this.getAction(data, category, vdev_type);
+      } else if (data.type === 'MIRROR') {
+        item.actions = this.extendAction(data);
+      }
     }
     return item;
   }
