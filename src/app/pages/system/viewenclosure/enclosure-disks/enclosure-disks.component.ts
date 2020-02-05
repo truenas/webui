@@ -275,6 +275,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   createEnclosure(){
 
     switch(this.selectedEnclosure.model){
+      case "M60":
       case "M Series":
         this.enclosure = new M50();
         break;
@@ -346,6 +347,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   createExtractedEnclosure(profile){
     let enclosure;
     switch(profile.model){
+      case "M60":
       case "M Series":
         enclosure = new M50();
         break;
