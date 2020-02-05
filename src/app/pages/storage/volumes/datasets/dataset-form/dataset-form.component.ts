@@ -83,6 +83,9 @@ export class DatasetFormComponent implements Formconfiguration{
   private reservation_subscription;
   private refreservation_subscription;
 
+  private minquota = 1024 * 1024 * 1024; // 1G minimum
+  private minrefquota = 1024 * 1024 * 1024;
+
   public parent: string;
   public data: any;
   public parent_data: any;
@@ -190,7 +193,8 @@ export class DatasetFormComponent implements Formconfiguration{
           (control: FormControl): ValidationErrors => {
             const config = this.fieldConfig.find(c => c.name === 'refquota');
             
-            const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'refquota')) 
+            const size = this.convertHumanStringToNum(control.value, 'refquota');
+            const errors = control.value && isNaN(size)
               ? { invalid_byte_string: true }
               : null
 
@@ -198,8 +202,17 @@ export class DatasetFormComponent implements Formconfiguration{
               config.hasErrors = true;
               config.errors = globalHelptext.human_readable.input_error;
             } else {
-              config.hasErrors = false;
-              config.errors = '';
+              const size_err = control.value && (size != 0) && (size < this.minrefquota)
+                ? { invalid_size: true }
+                : null
+
+              if (size_err) {
+                config.hasErrors = true;
+                config.errors = helptext.dataset_form_quota_too_small;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
             }
 
             return errors;
@@ -313,7 +326,8 @@ export class DatasetFormComponent implements Formconfiguration{
           (control: FormControl): ValidationErrors => {
             const config = this.fieldConfig.find(c => c.name === 'quota');
             
-            const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'quota'))
+            const size = this.convertHumanStringToNum(control.value, 'quota');
+            const errors = control.value && isNaN(size)
               ? { invalid_byte_string: true }
               : null
 
@@ -321,8 +335,17 @@ export class DatasetFormComponent implements Formconfiguration{
               config.hasErrors = true;
               config.errors = globalHelptext.human_readable.input_error;
             } else {
-              config.hasErrors = false;
-              config.errors = '';
+              const size_err = control.value && (size != 0) && (size < this.minquota)
+                ? { invalid_size: true }
+                : null
+
+              if (size_err) {
+                config.hasErrors = true;
+                config.errors = helptext.dataset_form_quota_too_small;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
             }
 
             return errors;

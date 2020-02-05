@@ -106,5 +106,7 @@ dataset_form_name_section_placeholder: T("Name and Options"),
 dataset_form_other_section_placeholder: T("Other Options"),
 
 dataset_form_inherit: T('Inherit'),
-dataset_form_default: T('Default')
+dataset_form_default: T('Default'),
+
+dataset_form_quota_too_small: T("Quota size is too small, enter a value of 1 GiB or larger."),
 }
