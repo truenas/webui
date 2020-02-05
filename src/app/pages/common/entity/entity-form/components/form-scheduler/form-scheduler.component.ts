@@ -12,6 +12,7 @@ import {MatDatepickerModule, MatMonthView} from '@angular/material';
 import * as moment from 'moment';
 import * as parser from 'cron-parser';
 import { EntityUtils } from '../../../utils';
+import globalHelptext from '../../../../../../helptext/global-helptext';
 
 interface CronPreset {
   label:string;
@@ -36,6 +37,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public fieldShow: string;
   public disablePrevious:boolean;
   public ngDateFormat: string;
+  public helptext = globalHelptext;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
