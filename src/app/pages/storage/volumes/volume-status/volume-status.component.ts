@@ -359,6 +359,7 @@ export class VolumeStatusComponent implements OnInit {
             this.ws.call('pool.detach', [this.pk, {label: row.guid}]).subscribe(
               (res) => {
                 this.getData();
+                this.getUnusedDisk();
                 this.loader.close();
               },
               (err) => {
