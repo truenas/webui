@@ -476,6 +476,10 @@ export class VolumeStatusComponent implements OnInit {
     node.children = [];
 
     if (data.children) {
+      if (data.children.length === 0 && vdev_type === undefined) {
+        const extend_action = this.extendAction(data);
+        node.data.actions.push(extend_action[0]);
+      }
       vdev_type = data.name;
       for (let i = 0; i < data.children.length; i++) {
         node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
