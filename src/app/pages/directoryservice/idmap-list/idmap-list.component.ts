@@ -12,18 +12,19 @@ import helptext from '../../../helptext/directoryservice/idmap';
 export class IdmapListComponent {
   public title = "Idmap";
   protected queryCall = 'idmap.query';
+  protected wsDelete = "idmap.delete";
   protected route_add_tooltip = T("Add Idmap");
   protected route_edit: string[] = [ 'directoryservice', 'idmap', 'edit' ];
   protected route_delete: string[] = [ 'idmap', 'delete' ];
   protected entityList: any;
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name', always_display: true},
+    {name : 'Name', prop : 'name', always_display: true, minWidth: 250},
+    {name : 'Backend', prop : 'idmap_backend', maxWidth: 100},
     {name : 'DNS Domain Name', prop : 'dns_domain_name'},
     {name : 'Range Low', prop : 'range_low'},
     {name : 'Range High', prop : 'range_high'},
-    {name : 'Backend', prop : 'idmap_backend'},
-    {name : 'Certificate', prop : 'certificate_id'},
+    {name : 'Certificate', prop : 'cert_name'},
   ];
 
   public rowIdentifier = 'name';
@@ -39,6 +40,15 @@ export class IdmapListComponent {
   constructor(protected idmapService: IdmapService, protected router: Router,
     protected dialogService: DialogService) { }
 
+  resourceTransformIncomingRestData(data) {
+    data.forEach((item) => {
+      if (item.certificate) {
+        item.cert_name = item.certificate.cert_name;
+      }
+    })
+    return data;
+  }
+
   afterInit(entityList: any) { 
     this.entityList = entityList; 
   }
@@ -48,7 +58,7 @@ export class IdmapListComponent {
       label: T('Add'),
       onClick: () => {
         this.idmapService.getADStatus().subscribe((res) => {
-          if (res.enable) {
+          if (!res.enable) {
             this.router.navigate(['directoryservice', 'idmap', 'add'])
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message, 

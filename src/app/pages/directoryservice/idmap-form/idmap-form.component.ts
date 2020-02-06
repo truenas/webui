@@ -85,10 +85,11 @@ export class IdmapFormComponent {
         },
         {
           type:  'select' ,
-          name: 'certificate_id',
+          name: 'certificate',
           placeholder: helptext.idmap.certificate_id.placeholder,
           tooltip: helptext.idmap.certificate_id.tooltip,
-          options: []
+          options: [],
+          isHidden: true
         },
 
       ]
@@ -224,15 +225,12 @@ export class IdmapFormComponent {
           name: 'sssd_compat',
           placeholder: helptext.idmap.sssd_compat.placeholder,
           tooltip: helptext.idmap.sssd_compat.tooltip,
-        },
-
+        }
       ]
-    },
-
+    }
   ];
 
   private optionsFields: Array<any> = [
-    'certificate_id',
     'schema_mode',
     'unix_primary_group',
     'unix_nss_info',
@@ -261,7 +259,9 @@ export class IdmapFormComponent {
     for (let item in data.options) {
       data[item] = data.options[item]
     }
-    delete data.options;
+    if (data.certificate) {
+      data.certificate = data.certificate.id;
+    }
     return data;
   }
 
@@ -280,7 +280,7 @@ export class IdmapFormComponent {
     })
 
     this.idmapService.getCerts().subscribe((res) => {
-      const config = this.fieldConfig.find(c => c.name === 'certificate_id');
+      const config = this.fieldConfig.find(c => c.name === 'certificate');
       res.forEach((item) => {
         config.options.push({label: item.name, value: item.id})
       })
@@ -299,7 +299,9 @@ export class IdmapFormComponent {
            field['required'] = params.required;
             entityEdit.formGroup.controls[option].setValue(params.default);
             if (value === 'LDAP' || value === 'RFC2307') {
-              this.hideField('certificate_id', false, entityEdit);
+              this.hideField('certificate', false, entityEdit);
+            } else {
+              this.hideField('certificate', true, entityEdit);
             }
           }
         })
@@ -326,7 +328,9 @@ export class IdmapFormComponent {
     let options = {}
     for (let item in data) {
       if (this.optionsFields.includes(item)) {
-        options[item] = data[item];
+        if(data[item]) {
+          options[item] = data[item];
+        }
         delete data[item]
       }
     }
@@ -337,16 +341,20 @@ export class IdmapFormComponent {
     this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
       true)
       .subscribe((res) => {
-        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true});
-        this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache ');
-        this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe((res) => {
-          this.dialog.closeAll();
-        });
-        this.dialogRef.componentInstance.failure.subscribe((res) => {
-          this.dialog.closeAll()
-          new EntityUtils().handleWSError(this.entityForm, res);
-        });
+        if (res) {
+          this.dialogRef = this.dialog.open(EntityJobComponent, { 
+            data: { "title": (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true});
+          this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((res) => {
+            this.dialog.closeAll();
+            this.dialogService.Info('Success', 'The cache has been cleared.', '250px', '', true)
+          });
+          this.dialogRef.componentInstance.failure.subscribe((res) => {
+            this.dialog.closeAll()
+            new EntityUtils().handleWSError(this.entityForm, res);
+          });
+        }
       })
     }
 }
