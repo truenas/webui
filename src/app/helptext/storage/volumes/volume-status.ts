@@ -4,23 +4,27 @@ export default {
     dialogFormFields: {
         disk: {
             placeholder: T('Member disk'),
-            tooltip: T(''),
+            tooltip: T('Choose a new disk for the pool. To protect any existing data,\
+ adding the selected disk is stopped when the disk is already in use or has partitions present.'),
         },
         passphrase: {
             placeholder: T('Passphrase'),
-            tooltip: T('')
+            tooltip: T('Enter the current passphrase for the encrypted pool. This will be used\
+ to encrypt the new disk and integrate it into the pool.')
         },
         passphrase2: {
             placeholder: T('Confirm Passphrase'),
-            tooltip: T(''),
+            tooltip: T('Verify the pool encryption passphrase.'),
         },
         force: {
             placeholder: T('Force'),
-            tooltip: T(''),
+            tooltip: T('Set to override safety checks and add the disk to the pool. <br>WARNING:\
+ any data stored on the disk will be erased!'),
         },
         new_disk: {
             placeholder: T('New Disk'),
-            tooltip: T(''),
+            tooltip: T('Select an unused disk to add to this vdev. <br>WARNING: any data stored\
+ on the unused disk will be erased!'),
         }
     },
 
