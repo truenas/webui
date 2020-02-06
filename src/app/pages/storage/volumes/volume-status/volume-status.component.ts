@@ -13,6 +13,7 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../../translate-marker';
+import helptext from '../../../../helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 interface poolDiskInfo {
@@ -37,11 +38,11 @@ export class VolumeStatusComponent implements OnInit {
   public treeTableConfig: EntityTreeTable = {
     tableData: [],
     columns: [
-      { name: 'Name', prop: 'name', },
-      { name: 'Read', prop: 'read', },
-      { name: 'Write', prop: 'write', },
-      { name: 'Checksum', prop: 'checksum', },
-      { name: 'Status', prop: 'status', },
+      { name: T('Name'), prop: 'name', },
+      { name: T('Read'), prop: 'read', },
+      { name: T('Write'), prop: 'write', },
+      { name: T('Checksum'), prop: 'checksum', },
+      { name: T('Status'), prop: 'status', },
     ]
   }
 
@@ -59,7 +60,8 @@ export class VolumeStatusComponent implements OnInit {
   }, {
     type: 'select',
     name: 'disk',
-    placeholder: "Member disk",
+    placeholder: helptext.dialogFormFields.disk.placeholder,
+    tooltip: helptext.dialogFormFields.disk.tooltip,
     options: [],
     required: true,
     validation: [Validators.required],
@@ -67,7 +69,8 @@ export class VolumeStatusComponent implements OnInit {
     type: 'input',
     inputType: 'password',
     name: 'passphrase',
-    placeholder: T('Passphrase'),
+    placeholder: helptext.dialogFormFields.passphrase.placeholder,
+    tooltip: helptext.dialogFormFields.passphrase.tooltip,
     required: true,
     isHidden: true,
     disabled: true,
@@ -75,7 +78,8 @@ export class VolumeStatusComponent implements OnInit {
     type: 'input',
     inputType: 'password',
     name: 'passphrase2',
-    placeholder: T('Confirm Passphrase'),
+    placeholder: helptext.dialogFormFields.passphrase2.placeholder,
+    tooltip: helptext.dialogFormFields.passphrase2.tooltip,
     validation : [ matchOtherValidator('passphrase') ],
     required: true,
     isHidden: true,
@@ -83,7 +87,8 @@ export class VolumeStatusComponent implements OnInit {
   }, {
     type: 'checkbox',
     name: 'force',
-    placeholder: "Force",
+    placeholder: helptext.dialogFormFields.force.placeholder,
+    tooltip: helptext.dialogFormFields.force.tooltip,
   }];
   protected extendVdevFormFields: FieldConfig[] = [{
     type: 'input',
@@ -93,7 +98,8 @@ export class VolumeStatusComponent implements OnInit {
   }, {
     type: 'select',
     name: 'new_disk',
-    placeholder: "New Disk",
+    placeholder: helptext.dialogFormFields.new_disk.placeholder,
+    tooltip: helptext.dialogFormFields.new_disk.tooltip,
     options: [],
     required: true,
     validation: [Validators.required],
@@ -101,7 +107,8 @@ export class VolumeStatusComponent implements OnInit {
     type: 'input',
     inputType: 'password',
     name: 'passphrase',
-    placeholder: T('Passphrase'),
+    placeholder: helptext.dialogFormFields.passphrase.placeholder,
+    tooltip: helptext.dialogFormFields.passphrase.tooltip,
     required: true,
     isHidden: true,
     disabled: true,
@@ -109,7 +116,8 @@ export class VolumeStatusComponent implements OnInit {
     type: 'input',
     inputType: 'password',
     name: 'passphrase2',
-    placeholder: T('Confirm Passphrase'),
+    placeholder: helptext.dialogFormFields.passphrase2.placeholder,
+    tooltip: helptext.dialogFormFields.passphrase2.tooltip,
     validation : [ matchOtherValidator('passphrase') ],
     required: true,
     isHidden: true,
@@ -179,7 +187,7 @@ export class VolumeStatusComponent implements OnInit {
           value: res[i].identifier,
         });
         availableDisksForExtend.push({
-          label: res[i].devname + '(' + (<any>window).filesize(res[i].size, { standard: 'iec' }) + ')',
+          label: res[i].devname + ' (' + (<any>window).filesize(res[i].size, { standard: 'iec' }) + ')',
           value: res[i].name,
         });
       }
@@ -189,7 +197,7 @@ export class VolumeStatusComponent implements OnInit {
   }
   ngOnInit() {
     this.aroute.params.subscribe(params => {
-      this.pk = parseInt(params['pk']);
+      this.pk = parseInt(params['pk'], 10);
       this.getData();
     });
     this.getUnusedDisk();
@@ -203,7 +211,8 @@ export class VolumeStatusComponent implements OnInit {
 
   getAction(data, category, vdev_type): any {
     const actions = [{
-      label: "Edit",
+      id: 'edit',
+      label: helptext.actions_label.edit,
       onClick: (row) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
@@ -219,10 +228,9 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: false,
     }, {
-      label: T("Offline"),
+      id: 'offline',
+      label: helptext.actions_label.offline,
       onClick: (row) => {
-        const encryptPoolWarning = T('<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>');
-
         let name = row.name;
         // if use path as name, show the full path
         if (!_.startsWith(name, '/')) {
@@ -230,8 +238,10 @@ export class VolumeStatusComponent implements OnInit {
           name = pIndex > -1 ? name.substring(0, pIndex) : name;
         }
         this.dialogService.confirm(
-          "Offline",
-          "Offline disk " + name + "?" + (this.pool.encrypt == 0 ? '' : encryptPoolWarning), false, T('Offline')
+          helptext.offline_disk.title,
+          helptext.offline_disk.message + name + "?" + (this.pool.encrypt == 0 ? '' : helptext.offline_disk.encryptPoolWarning),
+          false,
+          helptext.offline_disk.buttonMsg
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -251,14 +261,17 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: data.status == "OFFLINE" ? true : false,
     }, {
-      label: T("Online"),
+      id: 'online',
+      label: helptext.actions_label.online,
       onClick: (row) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
         this.dialogService.confirm(
-          "Online",
-          "Online disk " + diskName + "?", false, T('Online')
+          helptext.online_disk.title,
+          helptext.online_disk.message + diskName + "?",
+          false,
+          helptext.online_disk.buttonMsg,
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -278,7 +291,8 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: data.status == "ONLINE" || this.pool.encrypt !== 0 ? true : false,
     }, {
-      label: T("Replace"),
+      id: 'replace',
+      label: helptext.actions_label.replace,
       onClick: (row) => {
         let name = row.name;
         if (!_.startsWith(name, '/')) {
@@ -289,15 +303,15 @@ export class VolumeStatusComponent implements OnInit {
         _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
 
         const conf: DialogFormConfiguration = {
-          title: "Replacing disk " + name,
+          title: helptext.replace_disk.form_title + name,
           fieldConfig: this.replaceDiskFormFields,
-          saveButtonText: "Replace Disk",
+          saveButtonText: helptext.replace_disk.saveButtonText,
           parent: this,
           customSubmit: function (entityDialog: any) {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title":"Replacing Disk"}, disableClose: true});
-            dialogRef.componentInstance.setDescription(T("Replacing disk..."));
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title": helptext.replace_disk.title}, disableClose: true});
+            dialogRef.componentInstance.setDescription(helptext.replace_disk.description);
             dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.subscribe(res=>{
@@ -305,7 +319,7 @@ export class VolumeStatusComponent implements OnInit {
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.dialogService.Info(T("Replacing Disk"), T("Successfully replaced disk ") + name + ".", '', 'info', true);
+              entityDialog.parent.dialogService.Info(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + ".", '', 'info', true);
             }),
             dialogRef.componentInstance.failure.subscribe((res) => {
               if (res.error.startsWith('[EINVAL]')) {
@@ -319,14 +333,17 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: false,
     }, {
-      label: T("Remove"),
+      id: 'remove',
+      label: helptext.actions_label.remove,
       onClick: (row) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
         this.dialogService.confirm(
-          "Remove",
-          "Remove disk " + diskName + "?", false, T('Remove')
+          helptext.remove_disk.title,
+          helptext.remove_disk.message + diskName + "?",
+          false,
+          helptext.remove_disk.buttonMsg
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -345,14 +362,17 @@ export class VolumeStatusComponent implements OnInit {
       },
       isHidden: false,
     }, {
-      label: T("Detach"),
+      id: 'detach',
+      label: helptext.actions_label.detach,
       onClick: (row) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
         this.dialogService.confirm(
-          T("Detach"),
-          T("Detach disk ") + diskName + "?", false, T('Detach')
+          helptext.detach_disk.title,
+          helptext.detach_disk.message + diskName + "?",
+          false,
+          helptext.detach_disk.buttonMsg
         ).subscribe((res) => {
           if (res) {
             this.loader.open();
@@ -374,18 +394,18 @@ export class VolumeStatusComponent implements OnInit {
     }];
 
     if (category == "data") {
-      _.find(actions, { label: "Remove" }).isHidden = true;
+      _.find(actions, { id: "remove" }).isHidden = true;
     } else if (category == "spares") {
-      _.find(actions, { label: "Online" }).isHidden = true;
-      _.find(actions, { label: "Offline" }).isHidden = true;
-      _.find(actions, { label: "Replace" }).isHidden = true;
+      _.find(actions, { id: "online" }).isHidden = true;
+      _.find(actions, { id: "offline" }).isHidden = true;
+      _.find(actions, { id: "Replace" }).isHidden = true;
     } else if (category == "cache") {
-      _.find(actions, { label: "Online" }).isHidden = true;
-      _.find(actions, { label: "Offline" }).isHidden = true;
+      _.find(actions, { id: "online" }).isHidden = true;
+      _.find(actions, { id: "offline" }).isHidden = true;
     }
 
     if (vdev_type === "MIRROR" || vdev_type === "REPLACING") {
-      _.find(actions, { label: "Detach" }).isHidden = false;
+      _.find(actions, { id: "detach" }).isHidden = false;
     }
 
     return actions;
@@ -393,21 +413,21 @@ export class VolumeStatusComponent implements OnInit {
 
   extendAction(data) {
     return [{
-      label: "Extend",
+      id: 'extend',
+      label: helptext.actions_label.extend,
       onClick: (row) => {
-        console.log(row);
         const pk = this.pk;
         _.find(this.extendVdevFormFields, { name: 'target_vdev' }).value = row.guid;
         const conf: DialogFormConfiguration = {
-          title: "Extend  vdev",
+          title: helptext.extend_disk.form_title,
           fieldConfig: this.extendVdevFormFields,
-          saveButtonText: "Extend",
+          saveButtonText: helptext.extend_disk.saveButtonText,
           parent: this,
           customSubmit: function (entityDialog: any) {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title":"Extending vdev"}, disableClose: true});
-            dialogRef.componentInstance.setDescription(T("Extending vdev..."));
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {data: {"title": helptext.extend_disk.title}, disableClose: true});
+            dialogRef.componentInstance.setDescription(helptext.extend_disk.description);
             dialogRef.componentInstance.setCall('pool.attach', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.subscribe(res=>{
@@ -415,7 +435,7 @@ export class VolumeStatusComponent implements OnInit {
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.dialogService.Info(T("Extending Vdev"), T("Successfully Extent vdev ") + name + ".", '', 'info', true);
+              entityDialog.parent.dialogService.Info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + ".", '', 'info', true);
             }),
             dialogRef.componentInstance.failure.subscribe((res) => {
               if (res.error.startsWith('[EINVAL]')) {
