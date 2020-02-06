@@ -290,6 +290,11 @@
                  [ix-auto]="col?.name"
                  ix-auto-type="value"
                  [ix-auto-identifier]="row[conf.rowIdentifier || 'name']">
+              <button mat-icon-button *ngIf="row[col.icon] && conf.iconAction"
+                id="{{row[conf.rowIdentifier || 'name' ]}}_{{col.name}}_icon"
+                (click)="conf.iconAction(row)">
+                <img width="20" src="{{row[col.icon]}}"/>
+              </button>
               {{convertDisplayValue(row[col.prop])}}
             </div>
           </ng-template>

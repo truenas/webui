@@ -83,6 +83,7 @@ export class AvailablePluginsComponent implements OnInit {
                     }
                     this.selectedPlugin = res.result[0];
                     this.parent.cardHeaderReady = true;
+                    this.parent.conf.availablePlugins = this.plugins;
                 }
                 if (res.error) {
                     this.parent.dialogService.errorReport('Get Plugins Failed', res.error, res.exception);
