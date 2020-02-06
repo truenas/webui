@@ -23,13 +23,13 @@ export class IdmapFormComponent {
   protected editCall = 'idmap.update';
   protected queryCallOption: Array<any> = [["id", "="]];
   public rangeLowValidation = [
-    ...helptext.idmap_range_validator, 
+    ...helptext.idmap.required_validator, 
     this.validationService.rangeValidator(1000, 2147483647)
   ];
   public rangeHighValidation = [
-    ...helptext.idmap_range_validator, 
+    ...helptext.idmap.required_validator, 
     this.validationService.rangeValidator(1000, 2147483647), 
-    this.validationService.greaterThan('range_low', [helptext.idmap_range_low_placeholder])
+    this.validationService.greaterThan('range_low', [helptext.idmap.range_low.placeholder])
   ];
   private entityForm: any;
   protected backendChoices: any;
@@ -198,6 +198,12 @@ export class IdmapFormComponent {
         },
         {
           type:  'input' ,
+          name: 'ldap_realm',
+          placeholder: helptext.idmap.ldap_realm.placeholder,
+          tooltip: helptext.idmap.ldap_realm.tooltip,
+        },
+        {
+          type:  'input' ,
           name: 'bind_path_user',
           placeholder: helptext.idmap.bind_path_user.placeholder,
           tooltip: helptext.idmap.bind_path_user.tooltip,
@@ -250,6 +256,7 @@ export class IdmapFormComponent {
     'ssl',
     'linked_service',
     'ldap_server',
+    'ldap_realm',
     'bind_path_user',
     'bind_path_group',
     'user_cn',
@@ -362,7 +369,8 @@ export class IdmapFormComponent {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((res) => {
             this.dialog.closeAll();
-            this.dialogService.Info('Success', 'The cache has been cleared.', '250px', '', true)
+            this.dialogService.Info(helptext.idmap.clear_cache_dialog.success_title,
+              helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true)
           });
           this.dialogRef.componentInstance.failure.subscribe((res) => {
             this.dialog.closeAll()

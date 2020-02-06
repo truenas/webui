@@ -26,12 +26,12 @@ export class IdmapListComponent {
   ];
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name', always_display: true, minWidth: 250},
-    {name : 'Backend', prop : 'idmap_backend', maxWidth: 100},
-    {name : 'DNS Domain Name', prop : 'dns_domain_name'},
-    {name : 'Range Low', prop : 'range_low'},
-    {name : 'Range High', prop : 'range_high'},
-    {name : 'Certificate', prop : 'cert_name'},
+    {name : T('Name'), prop : 'name', always_display: true, minWidth: 250},
+    {name : T('Backend'), prop : 'idmap_backend', maxWidth: 100},
+    {name : T('DNS Domain Name'), prop : 'dns_domain_name'},
+    {name : T('Range Low'), prop : 'range_low'},
+    {name : T('Range High'), prop : 'range_high'},
+    {name : T('Certificate'), prop : 'cert_name'},
   ];
 
   public rowIdentifier = 'name';
@@ -88,7 +88,7 @@ export class IdmapListComponent {
     const actions = [];
     actions.push({
       id: 'edit',
-      label: 'Edit',
+      label: T('Edit'),
       disabled: row.disableEdit,
       onClick: (row) => {
         this.router.navigate(new Array('').concat(['directoryservice', 'idmap', 'edit', row.id]))
@@ -97,7 +97,7 @@ export class IdmapListComponent {
     if(!this.requiredDomains.includes(row.name)) {
       actions.push(      {
         id: 'delete',
-        label: 'Delete',
+        label: T('Delete'),
         onClick: (row) => {
           this.entityList.doDeleteJob(row).subscribe(
             (progress) => {

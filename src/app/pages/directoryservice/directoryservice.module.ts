@@ -12,7 +12,6 @@ import { ActiveDirectoryComponent } from './activedirectory/';
 import { routing } from './directoryservice.routing';
 import { LdapComponent } from './ldap/';
 import { NISComponent } from './nis/';
-import { IdmapComponent } from './idmap';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
 import { KerberosSettingsComponent } from './kerberossettings';
@@ -30,7 +29,6 @@ import { IdmapFormComponent } from './idmap-form/idmap-form.component';
     LdapComponent,
     ActiveDirectoryComponent,
     NISComponent,
-    IdmapComponent,
     KerberosRealmsListComponent,
     KerberosRealmsFormComponent,
     KerberosSettingsComponent,
