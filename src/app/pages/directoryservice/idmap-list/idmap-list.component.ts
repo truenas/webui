@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { T } from '../../../translate-marker';
 import { IdmapService } from 'app/services/idmap.service';
 import { DialogService } from 'app/services/dialog.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+
 import helptext from '../../../helptext/directoryservice/idmap';
 
 @Component({
@@ -17,6 +19,11 @@ export class IdmapListComponent {
   protected route_edit: string[] = [ 'directoryservice', 'idmap', 'edit' ];
   protected route_delete: string[] = [ 'idmap', 'delete' ];
   protected entityList: any;
+  protected requiredDomains = [
+    'DS_TYPE_ACTIVEDIRECTORY',
+    'DS_TYPE_DEFAULT_DOMAIN',
+    'DS_TYPE_LDAP'
+  ];
 
   public columns: Array<any> = [
     {name : 'Name', prop : 'name', always_display: true, minWidth: 250},
@@ -45,6 +52,10 @@ export class IdmapListComponent {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
       }
+      if (item.name === 'DS_TYPE_ACTIVEDIRECTORY' &&  item.idmap_backend === 'AUTORID') {
+        let obj = data.find(o => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
+        obj.disableEdit = true;
+      }
     })
     return data;
   }
@@ -72,6 +83,36 @@ export class IdmapListComponent {
       }
     }];
   }
-  
+
+  getActions(row) {
+    const actions = [];
+    actions.push({
+      id: 'edit',
+      label: 'Edit',
+      disabled: row.disableEdit,
+      onClick: (row) => {
+        this.router.navigate(new Array('').concat(['directoryservice', 'idmap', 'edit', row.id]))
+      }
+    });
+    if(!this.requiredDomains.includes(row.name)) {
+      actions.push(      {
+        id: 'delete',
+        label: 'Delete',
+        onClick: (row) => {
+          this.entityList.doDeleteJob(row).subscribe(
+            (progress) => {
+            },
+            (err) => {
+              new EntityUtils().handleWSError(this.entityList, err);
+            },
+            () => {
+              this.entityList.getData();
+            }
+          );
+        }
+      })
+    } 
+    return actions;
+  }
 
 }

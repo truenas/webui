@@ -34,6 +34,12 @@ export class IdmapFormComponent {
   private entityForm: any;
   protected backendChoices: any;
   protected dialogRef: any;
+  protected requiredDomains = [
+    'DS_TYPE_ACTIVEDIRECTORY',
+    'DS_TYPE_DEFAULT_DOMAIN',
+    'DS_TYPE_LDAP'
+  ];
+  protected readOnly = false;
   protected fieldConfig: FieldConfig[] = [];
 
   public fieldSetDisplay  = 'default';
@@ -262,6 +268,7 @@ export class IdmapFormComponent {
     if (data.certificate) {
       data.certificate = data.certificate.id;
     }
+    this.requiredDomains.includes(data.name) ? this.readOnly = true : this.readOnly = false;
     return data;
   }
 
@@ -281,6 +288,7 @@ export class IdmapFormComponent {
 
     this.idmapService.getCerts().subscribe((res) => {
       const config = this.fieldConfig.find(c => c.name === 'certificate');
+      config.options.push({label: '---', value: null})
       res.forEach((item) => {
         config.options.push({label: item.name, value: item.id})
       })
@@ -316,6 +324,12 @@ export class IdmapFormComponent {
       }
       entityEdit.formGroup.controls['idmap_backend'].setValue('AD');
     });
+
+    setTimeout(() => {
+      if (this.readOnly) {
+        entityEdit.setDisabled('name', true, false)
+      }
+    }, 500);
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
