@@ -33,9 +33,6 @@
       <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
         <mat-icon class="fa-spin">autorenew</mat-icon>
       </button>
-      <button *ngIf="showReplication" mat-icon-button id="replication" [matTooltip]="mat_tooltips.replication" (click)="showReplicationDetails()" class="topbar-button-right">
-        <mat-icon class="movement">content_copy</mat-icon>
-      </button>
       <!-- HA Status -->
       <span *ngIf="is_ha && ha_status_text">
       <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
