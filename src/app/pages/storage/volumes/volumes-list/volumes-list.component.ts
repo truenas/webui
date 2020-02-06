@@ -89,9 +89,6 @@ export class VolumesListTableConfig implements InputTableConf {
     },
   };
 
-  public aclEditDisabled: boolean;
-  public permissionsEditDisabled: boolean;
-
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
@@ -858,8 +855,6 @@ export class VolumesListTableConfig implements InputTableConf {
               id: rowData.name,
               name: T('Edit Permissions'),
               label: T("Edit Permissions"),
-              disabled: this.permissionsEditDisabled,
-              matTooltip: this.aclEditDisabled ? helptext.permissions_edit_msg1 : helptext.permissions_edit_msg2, 
               ttposition: 'left',
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
@@ -871,7 +866,6 @@ export class VolumesListTableConfig implements InputTableConf {
               id: rowData.name,
               name: T('Edit ACL'),
               label: T("Edit ACL"),
-              disabled: this.aclEditDisabled,
               matTooltip: helptext.acl_edit_msg,
               ttposition: 'left',
               onClick: (row1) => {
@@ -1065,14 +1059,17 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   clickAction(rowData) {
+    let aclEditDisabled = false;
+    let permissionsEditDisabled = false;
     this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
-      this.aclEditDisabled = false;
-      this.permissionsEditDisabled = false;
-      !rowData.id.includes('/') || !acl_is_trivial ? this.permissionsEditDisabled = true : this.permissionsEditDisabled = false;
-      rowData.id.includes('/') ? this.aclEditDisabled = false : this.aclEditDisabled = true;
-      rowData.actions.find(o => o.name === 'Edit ACL').disabled = this.aclEditDisabled;
-      rowData.actions.find(o => o.name === 'Edit Permissions').disabled = this.permissionsEditDisabled;
-
+      !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
+      rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
+      let editACL = rowData.actions.find(o => o.name === 'Edit ACL');
+        editACL.disabled = aclEditDisabled;
+      let editPermissions = rowData.actions.find(o => o.name === 'Edit Permissions')
+        editPermissions.disabled = permissionsEditDisabled;
+        aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 : 
+        editPermissions.matTooltip = helptext.permissions_edit_msg2
     })
   }
 
