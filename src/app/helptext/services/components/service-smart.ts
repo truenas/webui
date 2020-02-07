@@ -11,17 +11,6 @@ smart_interval_tooltip: T('Define a number of minutes for <a\
  tests are configured to run.'),
 smart_interval_validation : [ Validators.required ],
 
-smart_powermode_placeholder : T('Power Mode'),
-smart_powermode_tooltip: T('Tests are only performed when <i>Never</i> \
- is selected.'),
-smart_powermode_options : [
-  {label : 'Never', value : 'NEVER'},
-  {label : 'Sleep', value : 'SLEEP'},
-  {label : 'Standby', value : 'STANDBY'},
-  {label : 'Idle', value : 'IDLE'},
-],
-smart_powermode_validation : [ Validators.required ],
-
 smart_difference_placeholder : T('Difference'),
 smart_difference_tooltip: T('Enter a number of degrees in Celsius. SMART reports if\
  the temperature of a drive has changed by N degrees\
