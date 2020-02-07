@@ -45,6 +45,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public addCall = 'pool.create';
   public editCall = 'pool.update';
   public queryCall = 'pool.query';
+  public datasetQueryCall = 'pool.dataset.query';
   public pk: any;
   public isNew = true;
   public vol_encrypt: number = 0;
@@ -216,7 +217,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getPoolData() {
-    this.ws.call('pool.query', [[["id", "=", this.pk]]]).subscribe((res) => {
+    this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
         if (res[0]) {
           this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();
           if (this.first_data_vdev_type === 'raidz1') {
@@ -240,21 +241,23 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             this.getDuplicableDisks();
           });
+          this.name = res[0].name;
+          this.vol_encrypt = res[0].encrypt;
+          if (this.vol_encrypt > 0) {
+            this.isEncrypted = true;
+          }
+          this.ws.call(this.datasetQueryCall, [[["id","=",res[0].name]]]).subscribe(datasets => {
+            if (datasets[0]) {
+              this.extendedAvailable = datasets[0].available.parsed;
+              this.size = (<any>window).filesize(this.extendedAvailable, {standard : "iec"});
+            }
+          })
         }
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);
       }
     );
-    this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
-      if (res && res.data) {
-        this.extendedAvailable = res.data.avail;
-        this.size = (<any>window).filesize(this.extendedAvailable, {standard : "iec"});
-      }
-    },
-    (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialog);
-    });
   }
 
   ngOnInit() {
@@ -270,19 +273,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.isNew) {
       this.submitTitle = this.extendedSubmitTitle;
       this.sizeMessage = this.extendedSizeMessage;
-      this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe(res => {
-        const pool = res[0];
-        if (pool) {
-          this.name = pool.name;
-          this.vol_encrypt = pool.encrypt;
-        }
-        if (this.vol_encrypt > 0) {
-          this.isEncrypted = true;
-        }
-      });
       this.getPoolData();
     } else {
-      this.ws.call('pool.query', []).subscribe((res) => {
+      this.ws.call(this.queryCall, []).subscribe((res) => {
         if (res) {
           this.existing_pools = res;
         }
@@ -542,13 +535,17 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.isNew) {
           body = {name: this.name, encryption: this.isEncrypted, topology: layout };
         } else {
-          body  = {name: this.name, topology: layout };
+          body = { topology: layout };
         }
 
         const dialogRef = this.mdDialog.open(EntityJobComponent, {
           data: { title: confirmButton, disableClose: true }
         });
-        dialogRef.componentInstance.setCall(this.pk ? this.editCall : this.addCall, [body]);
+        if (this.pk) {
+          dialogRef.componentInstance.setCall(this.editCall, [this.pk, body]);
+        } else {
+          dialogRef.componentInstance.setCall(this.addCall, [body]);
+        }
         dialogRef.componentInstance.success
           .pipe(
             switchMap((r: any) => {
