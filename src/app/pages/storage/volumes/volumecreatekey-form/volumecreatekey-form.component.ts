@@ -27,6 +27,8 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
   saveSubmitText = T("Create Passphrase");
 
+  queryCall = 'pool.query';
+  queryKey = 'id';
   route_return: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;

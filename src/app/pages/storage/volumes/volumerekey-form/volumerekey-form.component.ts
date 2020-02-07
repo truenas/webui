@@ -18,6 +18,8 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
 
   saveSubmitText = T("Reset Encryption");
 
+  queryCall = 'pool.query';
+  queryKey = 'id';
   route_success: string[] = ['storage', 'pools'];
   isNew = false;
   isEntity = true;

@@ -27,6 +27,8 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
 
   saveSubmitText = T("Add Recovery Key");
 
+  queryCall = 'pool.query';
+  queryKey = 'id';
   route_return: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
