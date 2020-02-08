@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from '../../models/field-config.interface';
 import { EntityFormService } from '../../services/entity-form.service';
 import { Field } from '../../models/field.interface';
+import globalHelptext from '../../../../../../helptext/global-helptext';
 
 @Component({
   selector: 'form-input',
@@ -76,7 +77,7 @@ export class FormInputComponent implements Field {
     if (this.config.inputUnitType) {
       const phrasedValue = this.formService.phraseInputData(this.group.controls[this.config.name].value, this.config.inputUnitType);
       if (isNaN(phrasedValue)) {
-        this.group.controls[this.config.name].setErrors({manualValidateError: true, manualValidateErrorMsg: 'invalid input'});
+        this.group.controls[this.config.name].setErrors({manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit});
       }
       if (phrasedValue) {
         this.group.controls[this.config.name].setValue(phrasedValue);
