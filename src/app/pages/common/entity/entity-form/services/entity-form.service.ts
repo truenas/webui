@@ -12,11 +12,22 @@ import * as _ from 'lodash';
 import {WebSocketService} from '../../../../../services/ws.service';
 import {RestService} from '../../../../../services/rest.service';
 
-
 import {FieldConfig} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {
+
+  public durationRegex = /^\s*((MINUTE|HOUR|DAY|WEEK|MONTH|YEAR){1}(S)?)|((M|h|d|w|m|y){1})\s*$/;
+  public storageRegex = /^\s*(KIB|MIB|GIB|TIB|PIB|KB|MB|GB|TB|PB|K|M|G|T|P){1}\s*$/;
+
+  public shortDurationUnit = {
+    M: 'MINUTE',
+    h: 'HOUR',
+    d: 'DAY',
+    w: 'WEEK',
+    m: 'MONTH',
+    y: 'YEAR',
+  }
 
   constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
               protected ws: WebSocketService, private rest: RestService) {}
@@ -170,5 +181,45 @@ export class EntityFormService {
       fieldConfig[f]['errors'] = '';
       fieldConfig[f]['hasErrors'] = false;
     }
+  }
+
+  phraseInputData(value: any, type: string) {
+    if (!value) {
+      return value;
+    }
+    let num = 0;
+    let unit = '';
+
+    // remove whitespace
+    value = value.replace(/\s+/g, '');
+
+    // get leading number
+    let match = [];
+    match = value.match(/^(\d+(\.\d+)?)/);
+    if (match && match.length > 0) {
+      num = match[1];
+    } else {
+      return NaN;
+    }
+
+    unit = value.replace(num, '');
+    unit = unit.length > 1 ? unit.toUpperCase() : unit;
+
+    const matchUnits = unit.match(this.durationRegex);
+    if (matchUnits && matchUnits[0] === unit) {
+      return num + ' ' + this.getHumanReadableUnit(num, unit);
+    } else {
+      return NaN;
+    }
+  }
+
+  getHumanReadableUnit(num, unit) {
+    let readableUnit = unit.length > 1 ? unit : this.shortDurationUnit[unit];
+    if (num <= 1 && _.endsWith(readableUnit, 'S')) {
+      readableUnit = readableUnit.substring(0, readableUnit.length - 1);
+    } else if(num >1 && !_.endsWith(readableUnit, 'S')) {
+      readableUnit += 'S';
+    }
+    return readableUnit;
   }
 }
