@@ -106,6 +106,11 @@
           <mat-icon>info_outline</mat-icon>
           <span>{{'About' | translate}}</span>
         </button>
+        <button name="settings-licenses" mat-menu-item (click)="showLicenses()"
+          ix-auto ix-auto-type="option" ix-auto-identifier="Licenses">
+          <mat-icon>info_outline</mat-icon>
+          <span>{{'View License Info' | translate}}</span>
+        </button>
         <button *ngIf="exposeLegacyUI" name="settings-legacy-ui" mat-menu-item (click)="onGoToLegacy()"
           ix-auto ix-auto-type="option" ix-auto-identifier="Legacy Web Interface">
           <mat-icon>keyboard_return</mat-icon>
