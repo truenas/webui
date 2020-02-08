@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Http } from '@angular/http';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -78,7 +79,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {
+    protected loader: AppLoaderService,
+    protected http: Http ) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
@@ -267,6 +269,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           });
         });
       }
+    });
+  }
+
+  showLicenses() {
+    this.http.get('assets/disclaimer.txt').subscribe(licenses => {
+      this.dialogService.confirm(T("View Licenses"), licenses.text(), true, T("Ok"), false, null, '', null, null, true).subscribe(ok => {
+      });
     });
   }
 
