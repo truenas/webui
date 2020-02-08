@@ -1,10 +1,14 @@
 import { ValidatorFn } from '@angular/forms';
 import { RelationGroup } from './field-relation.interface';
+export enum UnitType {
+  duration = 'duration',
+  size = 'size'
+};
 
 export interface FieldConfig {
   disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
-  inputType?: string, inputUnitType?: string, validation?: any[] | ValidatorFn | ValidatorFn[],
+  inputType?: string, inputUnitType?: UnitType, validation?: any[] | ValidatorFn | ValidatorFn[],
   value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string,
   relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
   initialCount?: number, readonly?: boolean, initial?: string, rootSelectable?: boolean,

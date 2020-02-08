@@ -12,13 +12,13 @@ import * as _ from 'lodash';
 import {WebSocketService} from '../../../../../services/ws.service';
 import {RestService} from '../../../../../services/rest.service';
 
-import {FieldConfig} from '../models/field-config.interface';
+import {FieldConfig, UnitType} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {
 
   public durationRegex = /^\s*((MINUTE|HOUR|DAY|WEEK|MONTH|YEAR){1}(S)?)|((M|h|d|w|m|y){1})\s*$/;
-  public storageRegex = /^\s*(KIB|MIB|GIB|TIB|PIB|KB|MB|GB|TB|PB|K|M|G|T|P){1}\s*$/;
+  public sizeRegex = /^\s*(KIB|MIB|GIB|TIB|PIB|KB|MB|GB|TB|PB|K|M|G|T|P){1}\s*$/;
 
   public shortDurationUnit = {
     M: 'MINUTE',
@@ -183,14 +183,13 @@ export class EntityFormService {
     }
   }
 
-  phraseInputData(value: any, type: string) {
+  phraseInputData(value: any, type: UnitType) {
     if (!value) {
       return value;
     }
     let num = 0;
     let unit = '';
 
-    // remove whitespace
     value = value.replace(/\s+/g, '');
 
     // get leading number
@@ -202,24 +201,31 @@ export class EntityFormService {
       return NaN;
     }
 
+    // get unit and return phrased string
     unit = value.replace(num, '');
-    unit = unit.length > 1 ? unit.toUpperCase() : unit;
+    // do uppercase except when type is duration and unit is only one character (M is for minutes while m is for month)
+    unit = (type === UnitType.size || unit.length > 1) ? unit.toUpperCase() : unit;
+    const matchUnits = unit.match(type === UnitType.size ? this.sizeRegex : this.durationRegex);
 
-    const matchUnits = unit.match(this.durationRegex);
     if (matchUnits && matchUnits[0] === unit) {
-      return num + ' ' + this.getHumanReadableUnit(num, unit);
+      return num + ' ' + this.getHumanReadableUnit(num, unit, type);
     } else {
       return NaN;
     }
   }
 
-  getHumanReadableUnit(num, unit) {
-    let readableUnit = unit.length > 1 ? unit : this.shortDurationUnit[unit];
-    if (num <= 1 && _.endsWith(readableUnit, 'S')) {
-      readableUnit = readableUnit.substring(0, readableUnit.length - 1);
-    } else if(num >1 && !_.endsWith(readableUnit, 'S')) {
-      readableUnit += 'S';
+  getHumanReadableUnit(num: number, unit: string, type: UnitType) {
+    if (type === UnitType.duration) {
+      let readableUnit = unit.length > 1 ? unit : this.shortDurationUnit[unit];
+      if (num <= 1 && _.endsWith(readableUnit, 'S')) {
+        readableUnit = readableUnit.substring(0, readableUnit.length - 1);
+      } else if(num >1 && !_.endsWith(readableUnit, 'S')) {
+        readableUnit += 'S';
+      }
+      return readableUnit;
     }
-    return readableUnit;
+    if (type === UnitType.size) {
+      return unit[0] + 'iB';
+    }
   }
 }
