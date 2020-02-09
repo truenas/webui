@@ -78,7 +78,7 @@ raw_size_tooltip : T('Define the size of the raw file in GiB.'),
 
 pptdev_placeholder: T('PCI Passthru Device'),
 pptdev_tooltip: T('Specify the PCI device to pass thru (bus#/slot#/fcn#).'),
-pptdev_validation: [regexValidator(/\b([0-9]{1,2}\/){2}([0-9]){1,2}\b/i)],
+pptdev_validation: [regexValidator(/\b([0-9]+\/){2}([0-9])+\b/i)],
 
 rootpwd_placeholder : T('password'),
 rootpwd_tooltip : T('Enter a password for the <i>rancher</i> user. This\
