@@ -2430,6 +2430,9 @@ msgstr "Serveur CheckIP SSL"
 msgid "Checking HA status"
 msgstr "Vérification de l'état du HA"
 
+msgid "Checksum"
+msgstr ""
+
 msgid "Chmod Request"
 msgstr "Demande de Chmod"
 
@@ -2552,6 +2555,12 @@ msgstr "Choisir une métrique"
 
 msgid "Choose a metric to display."
 msgstr "Choisissez une métrique à afficher."
+
+msgid ""
+"Choose a new disk for the pool. To protect any existing data, adding the "
+"selected disk is stopped when the disk is already in use or has partitions "
+"present."
+msgstr ""
 
 msgid ""
 "Choose a path to the user's home directory. If the directory exists and "
@@ -3891,6 +3900,9 @@ msgstr "Détruire les données de ce volume ?"
 
 msgid "Detach"
 msgstr "Détacher"
+
+msgid "Detach Disk"
+msgstr ""
 
 msgid "Detach Pool"
 msgstr "Détacher le volume"
@@ -5276,6 +5288,11 @@ msgstr "Entrez le mot de passe du compte du bug tracker."
 msgid "Enter the command with any options."
 msgstr "Entrez la commande avec toutes les options possibles."
 
+msgid ""
+"Enter the current passphrase for the encrypted pool. This will be used to "
+"encrypt the new disk and integrate it into the pool."
+msgstr ""
+
 msgid "Enter the decryption passphrase."
 msgstr "Entrez la passphrase de déchiffrement."
 
@@ -5693,10 +5710,19 @@ msgstr "Étendre"
 msgid "Extend Pool"
 msgstr "Étendre le volume"
 
+msgid "Extend Vdev"
+msgstr ""
+
+msgid "Extending Vdev"
+msgstr ""
+
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 "L'extension d'un volume chiffré réinitialise la passphrase et la clé de "
 "récupération !"
+
+msgid "Extending vdev..."
+msgstr ""
 
 msgid "Extent"
 msgstr "Étendre"
@@ -7576,6 +7602,9 @@ msgstr "Moyen"
 msgid "Member Disk"
 msgstr "Membre du disque"
 
+msgid "Member disk"
+msgstr ""
+
 msgid "Members"
 msgstr "Membres"
 
@@ -8117,6 +8146,9 @@ msgstr "Jamais"
 msgid "Never Delete"
 msgstr "Jamais effacé"
 
+msgid "New Disk"
+msgstr ""
+
 msgid "New Password"
 msgstr "Nouveau mot de passe"
 
@@ -8394,6 +8426,12 @@ msgstr ""
 msgid "Offline"
 msgstr "Hors ligne"
 
+msgid "Offline Disk"
+msgstr ""
+
+msgid "Offline disk "
+msgstr ""
+
 msgid "Ok"
 msgstr "Ok"
 
@@ -8408,6 +8446,12 @@ msgstr "Une ou plusieurs adresses IP auxquelles lier le service Netdata."
 
 msgid "Online"
 msgstr "En ligne"
+
+msgid "Online Disk"
+msgstr ""
+
+msgid "Online disk "
+msgstr ""
 
 msgid "Only Allow Guest Access"
 msgstr "Autoriser seulement l'accès des invités"
@@ -9342,11 +9386,17 @@ msgstr "Supprimer"
 msgid "Remove Additional Path"
 msgstr "Supprimer le chemin d'accès supplémentaire"
 
+msgid "Remove Disk"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr "Supprimer le Keep Flag"
 
 msgid "Remove Recovery Key"
 msgstr "Supprimer la clé de récupération"
+
+msgid "Remove disk "
+msgstr ""
 
 msgid "Remove passphrase"
 msgstr "Supprimer la passphrase"
@@ -9369,8 +9419,14 @@ msgstr "Répéter le Vdev"
 msgid "Replace"
 msgstr "Remplacer"
 
+msgid "Replace Disk"
+msgstr ""
+
 msgid "Replacing Disk"
 msgstr "Remplacement du disque"
+
+msgid "Replacing disk "
+msgstr ""
 
 msgid "Replacing disk..."
 msgstr "Remplacement du disque...."
@@ -10269,6 +10325,11 @@ msgstr ""
 
 msgid "Select an existing target."
 msgstr "Sélectionnez une cible existante."
+
+msgid ""
+"Select an unused disk to add to this vdev. <br>WARNING: any data stored on "
+"the unused disk will be erased!"
+msgstr ""
 
 msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
 msgstr ""
@@ -11461,6 +11522,11 @@ msgstr ""
 "target=\"_blank\">procfs(5)</a> dans le répertoire jail <i>/dev/proc</i>."
 
 msgid ""
+"Set to override safety checks and add the disk to the pool. <br>WARNING: "
+"any data stored on the disk will be erased!"
+msgstr ""
+
+msgid ""
 "Set to perform reverse DNS lookups on client IPs. This can cause long "
 "delays if reverse DNS is not configured."
 msgstr ""
@@ -12261,6 +12327,9 @@ msgstr "Volume détaché avec succès "
 
 msgid "Successfully exported/disconnected '"
 msgstr "Exporté/déconnecté avec succès '"
+
+msgid "Successfully extended vdev "
+msgstr ""
 
 msgid "Successfully replaced disk "
 msgstr "Remplacement réussi du disque "
@@ -13964,6 +14033,9 @@ msgstr "Vérifier l'authenticité du certificat."
 
 msgid "Verify passphrase"
 msgstr "Vérifier la passphrase"
+
+msgid "Verify the pool encryption passphrase."
+msgstr ""
 
 msgid "Version"
 msgstr "Version"

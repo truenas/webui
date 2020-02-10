@@ -2384,6 +2384,9 @@ msgstr "SSL сервер CheckIP"
 msgid "Checking HA status"
 msgstr "Проверка статуса ВД"
 
+msgid "Checksum"
+msgstr ""
+
 msgid "Chmod Request"
 msgstr "Запрос chmod"
 
@@ -2507,6 +2510,12 @@ msgstr "Выберите показатель"
 
 msgid "Choose a metric to display."
 msgstr "Выберите показатель для отображения."
+
+msgid ""
+"Choose a new disk for the pool. To protect any existing data, adding the "
+"selected disk is stopped when the disk is already in use or has partitions "
+"present."
+msgstr ""
 
 msgid ""
 "Choose a path to the user's home directory. If the directory exists and "
@@ -3814,6 +3823,9 @@ msgstr "Уничтожить данные в этом пуле?"
 
 msgid "Detach"
 msgstr "Отсоединить"
+
+msgid "Detach Disk"
+msgstr ""
 
 msgid "Detach Pool"
 msgstr "Отсоединить пул"
@@ -5161,6 +5173,11 @@ msgstr "Введите пароль учетной записи трекера �
 msgid "Enter the command with any options."
 msgstr "Введите команду с любыми опциями."
 
+msgid ""
+"Enter the current passphrase for the encrypted pool. This will be used to "
+"encrypt the new disk and integrate it into the pool."
+msgstr ""
+
 msgid "Enter the decryption passphrase."
 msgstr "Введите пароль расшифровки."
 
@@ -5572,8 +5589,17 @@ msgstr "Расширить"
 msgid "Extend Pool"
 msgstr "Расширить пул"
 
+msgid "Extend Vdev"
+msgstr ""
+
+msgid "Extending Vdev"
+msgstr ""
+
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr "Расширение зашифрованного пула сбрасывает пароль и ключ восстановления!"
+
+msgid "Extending vdev..."
+msgstr ""
 
 msgid "Extent"
 msgstr "Экстент"
@@ -7444,6 +7470,9 @@ msgstr ""
 msgid "Member Disk"
 msgstr "Диск-участник"
 
+msgid "Member disk"
+msgstr ""
+
 msgid "Members"
 msgstr "Члены"
 
@@ -7993,6 +8022,9 @@ msgstr "Никогда"
 msgid "Never Delete"
 msgstr "Никогда не удалять"
 
+msgid "New Disk"
+msgstr ""
+
 msgid "New Password"
 msgstr "Новый пароль"
 
@@ -8266,6 +8298,12 @@ msgstr ""
 msgid "Offline"
 msgstr "Offline"
 
+msgid "Offline Disk"
+msgstr ""
+
+msgid "Offline disk "
+msgstr ""
+
 msgid "Ok"
 msgstr "Ok"
 
@@ -8280,6 +8318,12 @@ msgstr "Один или несколько IP-адресов, к которым 
 
 msgid "Online"
 msgstr "Online"
+
+msgid "Online Disk"
+msgstr ""
+
+msgid "Online disk "
+msgstr ""
 
 msgid "Only Allow Guest Access"
 msgstr "Разрешить только гостевой доступ"
@@ -9203,11 +9247,17 @@ msgstr "Удалить"
 msgid "Remove Additional Path"
 msgstr "Удалить дополнительный путь"
 
+msgid "Remove Disk"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr "Убрать флаг сохранения"
 
 msgid "Remove Recovery Key"
 msgstr "Удалить ключ восстановления"
+
+msgid "Remove disk "
+msgstr ""
 
 msgid "Remove passphrase"
 msgstr "Удалить пароль"
@@ -9230,8 +9280,14 @@ msgstr "Повторить VDev"
 msgid "Replace"
 msgstr "Заменить"
 
+msgid "Replace Disk"
+msgstr ""
+
 msgid "Replacing Disk"
 msgstr "Заменяю диск"
+
+msgid "Replacing disk "
+msgstr ""
 
 msgid "Replacing disk..."
 msgstr "Заменяю диск..."
@@ -10122,6 +10178,11 @@ msgstr ""
 
 msgid "Select an existing target."
 msgstr "Выберите существующую цель."
+
+msgid ""
+"Select an unused disk to add to this vdev. <br>WARNING: any data stored on "
+"the unused disk will be erased!"
+msgstr ""
 
 msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
 msgstr ""
@@ -11288,6 +11349,11 @@ msgstr ""
 "target=\"_blank\">procfs(5)</a> в каталог jail <i>/dev/proc</i>."
 
 msgid ""
+"Set to override safety checks and add the disk to the pool. <br>WARNING: "
+"any data stored on the disk will be erased!"
+msgstr ""
+
+msgid ""
 "Set to perform reverse DNS lookups on client IPs. This can cause long "
 "delays if reverse DNS is not configured."
 msgstr ""
@@ -12065,6 +12131,9 @@ msgstr "Успешно отключен pool "
 
 msgid "Successfully exported/disconnected '"
 msgstr "Успешно экспортирован/отключен '"
+
+msgid "Successfully extended vdev "
+msgstr ""
 
 msgid "Successfully replaced disk "
 msgstr "Успешно заменен диск "
@@ -13728,6 +13797,9 @@ msgstr "Проверять подлинность сертификата."
 
 msgid "Verify passphrase"
 msgstr "Подтвердите пароль"
+
+msgid "Verify the pool encryption passphrase."
+msgstr ""
 
 msgid "Version"
 msgstr "Версия"

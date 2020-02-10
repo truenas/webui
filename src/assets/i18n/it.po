@@ -5,10 +5,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Check Notifications for more details."
-msgstr ""
+msgstr "Controlla le notifiche per maggiori dettagli."
 
 msgid " Download Updates"
-msgstr ""
+msgstr "Scarica Aggiornamenti"
 
 msgid " First vdev has "
 msgstr ""
@@ -20,7 +20,7 @@ msgid " Plugin"
 msgstr ""
 
 msgid " Service"
-msgstr ""
+msgstr "Servizio"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -38,9 +38,11 @@ msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
 "selected."
 msgstr ""
+"indirizzi. Quando questo è stato scelto, è impossibile selezionarne un "
+"altro. "
 
 msgid " and "
-msgstr ""
+msgstr "e"
 
 msgid " and all snapshots of it?"
 msgstr ""
@@ -52,32 +54,36 @@ msgid " but datastore "
 msgstr ""
 
 msgid " disks"
-msgstr ""
+msgstr "dischi"
 
 msgid " disks, new vdev has "
 msgstr ""
 
 msgid " has been unlocked."
-msgstr ""
+msgstr "è stato sbloccato."
 
 msgid " is "
-msgstr ""
+msgstr "è"
 
 msgid " is required."
-msgstr ""
+msgstr "è richiesto."
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr ""
+"è la dimensione minima consigliata. Scelgiere una dimensione più piccola "
+"può ridurre le prestazioni di sistema."
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
 "for testing."
 msgstr ""
+"secondi a meno che non venga selezionato MANTENERE PERMANENTE. Regolare il "
+"tempo di ritardo per consentire i test"
 
 msgid " service has been enabled."
-msgstr ""
+msgstr "il servizio è stato abilitato."
 
 msgid " should be greater than "
 msgstr ""
@@ -86,16 +92,16 @@ msgid " should be less than "
 msgstr ""
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr "il sistema è acceso e connesso alla rete. "
 
 msgid " to include all "
-msgstr ""
+msgstr "per includere tutto"
 
 msgid " update successful"
-msgstr ""
+msgstr "aggiornamento riuscito"
 
 msgid " updated."
-msgstr ""
+msgstr "aggiornato."
 
 msgid "% of all cores"
 msgstr ""
@@ -106,15 +112,19 @@ msgid ""
 "encrypted pools, download and safely store the encryption key and any "
 "passphrase for it."
 msgstr ""
+"' è crittografato! Se la passphrase per questo pool è persa, i dati saranno "
+"IRRIMEDIABILMENTE PERSI! Prima di esportare/disconnettere pool "
+"crittografati, scaricare e archiviare la chiave archiviata e la relativa "
+"passphrase."
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Tutti i dati sul pool sono stati distrutti."
 
 msgid "(24 Hours)"
 msgstr ""
 
 msgid "(No description)"
-msgstr ""
+msgstr "(Nessuna descrizione)"
 
 msgid "(Remove pool from database)"
 msgstr ""
@@ -123,25 +133,27 @@ msgid ", new vdev is "
 msgstr ""
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Tutti i dati sul pool sono stati distrutti."
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". Ne è richiesto almeno uno."
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". È corretto?"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... Sei sicuro che"
 
 msgid "0=Disabled, blank=inherit"
 msgstr ""
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "20 caratteri è la lunghezza massima."
 
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
+": Controllo aggiornamento automatico fallito. Verificare le impostazioni di "
+"rete del sistema."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr ""
@@ -153,22 +165,22 @@ msgid "</i> cannot be running when deleting a mountpoint."
 msgstr ""
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> è iniziato."
 
 msgid "</i> keypair?</p>"
 msgstr ""
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> ora?"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> fermato."
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> aggiornato."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr ""
+msgstr "</i>. I dati sul pool non saranno acessibili fino al suo sblocco."
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
@@ -180,6 +192,9 @@ msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
 "by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
 msgstr ""
+"</i> si trova nel database ma non è collegato alla macchina. Se è stato "
+"esportato per errore, ricollegare 'hardware e usare <b>Import Pool</b>.<br "
+"/><br />"
 
 msgid ""
 "<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
@@ -305,6 +320,8 @@ msgid ""
 "<b>Not recommended.</b> Allow more than one group to  have the same group "
 "ID."
 msgstr ""
+"<b>Non raccomandato.</b> Permettere a più di un gruppo di avere lo stesso "
+"ID."
 
 msgid ""
 "<b>Root logins are discouraged.</b> Set to allow root logins. A password "
@@ -344,6 +361,8 @@ msgstr ""
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
 msgstr ""
+"<br><b>Avviso: i dischi non possono essere incorporati nei pool "
+"crittografati.</b></br>"
 
 msgid "<font color=\"red\"> There are "
 msgstr ""
@@ -381,16 +400,22 @@ msgstr ""
 
 msgid "<i>0</i> disables quotas. Specify a maximum allowed space for this dataset."
 msgstr ""
+"<i>0</i> disabilita quote. Specificare uno spazio massimo consentito per "
+"questo dataset"
 
 msgid ""
 "<i>0</i> is unlimited. A specified value applies to both this dataset and "
 "any child datasets."
 msgstr ""
+"<i>0</i> è illimitato. Un valore specificato si applica ad entrambi i "
+"dataset e ogni dataset figlio."
 
 msgid ""
 "<i>0</i> is unlimited. Reserve additional space for datasets containing "
 "logs which could take up all available free space."
 msgstr ""
+"<i>0</i> è illimitato. Riservare spazio aggiuntivo per i dataset contenenti "
+"logs che potrebbero occupare tutto lo spazio libero disponibile."
 
 msgid ""
 "<i>AHCI</i> emulates an AHCI hard disk for best software compatibility. "
@@ -429,6 +454,9 @@ msgid ""
 "<i>HTTP</i> will keep the connection unencrypted. <i>HTTPS</i> encrypts the "
 "connection. <i>HTTP+HTTPS</i> allows both types of connections."
 msgstr ""
+"<i>HTTP</i> manterrà la connessione non crittografata. <i>HTTPS</i> "
+"crittografa la connessione. <i>HTTP+HTTPS</i> consente entrambi i tipi di "
+"connessione."
 
 msgid ""
 "<i>Intel e82545 (e1000)</i> emulates the same Intel Ethernet card. This "
@@ -455,6 +483,10 @@ msgid ""
 "with zeros. <i>Full with random data</i> overwrites the entire disk with "
 "random binary data."
 msgstr ""
+"<i>Quick</i> cancella solo le informazioni su una partizione del disco "
+"senza cancellare vecchi dati. <i>Full with zeros</i> sovrascrive l'intero "
+"disco con degli zero. <i>Full with random data</i> sovrascrive l'intero "
+"disco con dati binari casuali."
 
 msgid ""
 "<i>Sensitive</i> assumes filenames are case sensitive. <i>Insensitive</i> "
@@ -483,6 +515,8 @@ msgid ""
 "<i>global</i> is a reserved name that cannot be used as a share name. "
 "Please enter a different share name."
 msgstr ""
+"<i>global</i> è un nome riservato che non può essere usato come nome per "
+"una condivisione. Inserire un diverso nome."
 
 msgid "<p>Delete the <i>"
 msgstr ""
@@ -493,6 +527,11 @@ msgid ""
 "when the configuration file is uploaded.</p> <br /><b>Keep the "
 "configuration file safe and protect it from unauthorized access!</b>"
 msgstr ""
+"<p> Includere il Password Secret Seed permette di utilizzare questo file di "
+"configurazione con un nuovo dispositivo di avvio. Questo decodifica anche "
+"tutte le password di sistema per il riutilizzo quando viene caricato il "
+"file di configurazione. </p> <br /><b> Mantieni il file di configurazione "
+"sicuro e protetto da accessi non autorizzati!</b>"
 
 msgid ""
 "<p>The system will reboot to perform this operation!</p> <p><font "
@@ -520,7 +559,7 @@ msgid ""
 msgstr ""
 
 msgid "A pool with this name already exists."
-msgstr ""
+msgstr "Un pool con questo nome esiste già"
 
 msgid ""
 "A single bandwidth limit or bandwidth limit schedule in rclone format. "
@@ -541,7 +580,7 @@ msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
 msgid "A system update is in progress. "
-msgstr ""
+msgstr "Aggiornamento di sistema in corso. "
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -600,7 +639,7 @@ msgid "API URL"
 msgstr ""
 
 msgid "APPLY CHANGES"
-msgstr ""
+msgstr "APPLICA LE MODIFICHE"
 
 msgid "ARN"
 msgstr ""
@@ -615,10 +654,10 @@ msgid "About"
 msgstr ""
 
 msgid "Access"
-msgstr ""
+msgstr "Accesso"
 
 msgid "Access Based Share Enumeration"
-msgstr ""
+msgstr "Enumerazione di Condivisione Basata sull'Accesso"
 
 msgid "Access Control Entries"
 msgstr ""
@@ -633,13 +672,13 @@ msgid ""
 msgstr ""
 
 msgid "Access Control List"
-msgstr ""
+msgstr "Elenco Controllo Accessi"
 
 msgid "Access ID Key"
 msgstr ""
 
 msgid "Access Key"
-msgstr ""
+msgstr "Chiave di Accesso"
 
 msgid "Access Key ID"
 msgstr ""
@@ -648,7 +687,7 @@ msgid "Access Key ID for the linked AWS account."
 msgstr ""
 
 msgid "Access Mode"
-msgstr ""
+msgstr "Modalità di Accesso"
 
 msgid "Access Token"
 msgstr ""
@@ -670,7 +709,7 @@ msgid "Account Key"
 msgstr ""
 
 msgid "Account Name"
-msgstr ""
+msgstr "Nome Account"
 
 msgid ""
 "Account to be used for guest access. Default is nobody. Account is required "
@@ -685,13 +724,13 @@ msgid "Acoustic Level"
 msgstr ""
 
 msgid "Actions"
-msgstr ""
+msgstr "Azioni"
 
 msgid "Activate"
-msgstr ""
+msgstr "Attivare"
 
 msgid "Activate this Boot Environment?"
-msgstr ""
+msgstr "Attivare questo Ambiente di Boot?"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -707,13 +746,13 @@ msgid ""
 msgstr ""
 
 msgid "Activates the replication schedule."
-msgstr ""
+msgstr "Attiva l'intervallo di replica."
 
 msgid "Active"
-msgstr ""
+msgstr "Attiva"
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directoy"
 
 msgid "Active Directory IDMAP change!"
 msgstr ""
@@ -731,7 +770,7 @@ msgid "Adapter Type:"
 msgstr ""
 
 msgid "Add"
-msgstr ""
+msgstr "Aggiungi"
 
 msgid "Add ACL Item"
 msgstr ""
@@ -740,16 +779,16 @@ msgid "Add Additional Path"
 msgstr ""
 
 msgid "Add Alert Service"
-msgstr ""
+msgstr "Aggiungi Alert Service"
 
 msgid "Add Cache"
-msgstr ""
+msgstr "Aggiungi Cache"
 
 msgid "Add Cloud Credential"
-msgstr ""
+msgstr "Aggiungi Credenziali Cloud"
 
 msgid "Add Data"
-msgstr ""
+msgstr "Aggiungi Dati"
 
 msgid "Add Dataset"
 msgstr ""
@@ -779,6 +818,8 @@ msgid ""
 "Add a passphrase to the new  encryption key. This is used to lock and "
 "unlock the pool."
 msgstr ""
+"Aggiungi una passphrase alla nuova chiave crittografica. Questa è usata per "
+"bloccare e sbloccare il pool."
 
 msgid ""
 "Add an <a href=\"--docurl--/system.html#certificates\" "
@@ -810,13 +851,13 @@ msgid ""
 msgstr ""
 
 msgid "Add one or more disks to be used for data."
-msgstr ""
+msgstr "Aggiungi uno o più dischi da usare per i dati."
 
 msgid "Add one or more disks to extend the pool."
-msgstr ""
+msgstr "Aggiungi uno o più dischi per estendere il pool."
 
 msgid "Add this user to additional groups."
-msgstr ""
+msgstr "Aggiungi questo utente ad altri gruppi."
 
 msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
@@ -860,13 +901,13 @@ msgid "Additional Data VDevs to Create"
 msgstr ""
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "Domini Aggiuntivi"
 
 msgid "Additional Hardware"
-msgstr ""
+msgstr "Hardware Aggiuntivi"
 
 msgid "Additional Parameters"
-msgstr ""
+msgstr "Parametri Aggiuntivi"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
@@ -895,13 +936,13 @@ msgid ""
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Indirizzi"
 
 msgid "Address space limit in bytes for the jail."
-msgstr ""
+msgstr "Limite dello spazio degli indirizzi in bytes per il jail."
 
 msgid "Adjust the file permissions using the checkboxes."
-msgstr ""
+msgstr "Sistemare i permessi dei file usando le checkboxes."
 
 msgid "Admin Portals"
 msgstr ""
@@ -915,13 +956,13 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "Password di Amministratore"
 
 msgid "Administrator password"
-msgstr ""
+msgstr "Password di amministratore"
 
 msgid "Administrators Group"
-msgstr ""
+msgstr "Gruppo Amministratori"
 
 msgid "Adv. Power Management"
 msgstr ""
@@ -930,28 +971,28 @@ msgid "Advance Options"
 msgstr ""
 
 msgid "Advanced"
-msgstr ""
+msgstr "Avanzate"
 
 msgid "Advanced Details"
-msgstr ""
+msgstr "Dettagli Avanzati"
 
 msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Modalità Esperto"
 
 msgid "Advanced Plugin Installation"
-msgstr ""
+msgstr "Installazione Avanzata dei Plugin"
 
 msgid "Advanced Power Management"
-msgstr ""
+msgstr "Gestione Avanzata Energia"
 
 msgid "Advanced Remote Options"
 msgstr ""
 
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Impostazioni Avanzate"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -959,25 +1000,25 @@ msgid ""
 msgstr ""
 
 msgid "Alarms"
-msgstr ""
+msgstr "Allarmi"
 
 msgid "Alert"
-msgstr ""
+msgstr "Avviso"
 
 msgid "Alert Services"
-msgstr ""
+msgstr "Servizi di Avviso"
 
 msgid "Alert Settings"
-msgstr ""
+msgstr "Impostazioni di Avviso"
 
 msgid "Alerts"
-msgstr ""
+msgstr "Avvisi"
 
 msgid "Aliases"
-msgstr ""
+msgstr "Alias"
 
 msgid "All Disks"
-msgstr ""
+msgstr "Tutti i Dischi"
 
 msgid "All dirs"
 msgstr ""
@@ -986,10 +1027,10 @@ msgid "All users"
 msgstr ""
 
 msgid "Allocate a number of megabytes of RAM to the VM."
-msgstr ""
+msgstr "Assegnare quantità di megabyters di RAM alla VM."
 
 msgid "Allocate at least 256 MiB."
-msgstr ""
+msgstr "Assegnare almeno 256 MiB."
 
 msgid "Allow"
 msgstr ""
@@ -1001,7 +1042,7 @@ msgid "Allow Anonymous Binding"
 msgstr ""
 
 msgid "Allow Anonymous Login"
-msgstr ""
+msgstr "Consenti Accesso Anonimo"
 
 msgid "Allow Blocks Larger than 128KB"
 msgstr ""
@@ -1115,7 +1156,7 @@ msgid ""
 msgstr ""
 
 msgid "Allow password authentication"
-msgstr ""
+msgstr "Consenti autenticazione password"
 
 msgid ""
 "Allow sending large data blocks. The  destination system must also support "
@@ -1123,6 +1164,10 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
+"Consenti invio di pacchetti di dati di grandi dimensioni. Anche il sistema "
+"di destinazione deve supportare grandi pacchetti. Vedere  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
 
 msgid ""
 "Allow the jail hostname to be changed with <a "
@@ -1148,6 +1193,9 @@ msgid ""
 "accessible by other users. This  allows for a personal, dynamic share. Only "
 "one share can be used  as the home share."
 msgstr ""
+"Consente a diversi gruppi di essere configurati con differenti profili di "
+"autenticazione. Esempio: tutti gli utenti con un ID di gruppo 1 "
+"erediteranno ilprofilo di autenticazione associato al Gruppo 1."
 
 msgid ""
 "Alphanumeric <a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
@@ -1192,25 +1240,25 @@ msgid ""
 msgstr ""
 
 msgid "Amount of locked memory in bytes for the jail."
-msgstr ""
+msgstr "Quantità di memoria bloccata per il jail."
 
 msgid "An ACL is present in this path"
 msgstr ""
 
 msgid "An update is already applied. Please reboot the system."
-msgstr ""
+msgstr "Un aggiornamento è già stato applicato. Si prega di riavviare il sistema."
 
 msgid "Anonymous User Download Bandwidth"
-msgstr ""
+msgstr "Larghezza di Banda per il Download di Utenti Anonimi"
 
 msgid "Anonymous User Upload Bandwidth"
-msgstr ""
+msgstr "Larghezza di Banda per il Caricamento di Utenti Anonimi"
 
 msgid "Any notes about initiators."
 msgstr ""
 
 msgid "Appdefaults Auxiliary Parameters"
-msgstr ""
+msgstr "Parametri Ausiliari di Default"
 
 msgid ""
 "Append <i>@realm</i> to <i>cn</i> in LDAP queries for both groups and users "
@@ -1224,71 +1272,79 @@ msgid "Application Key"
 msgstr ""
 
 msgid "Apply"
-msgstr ""
+msgstr "Applica"
 
 msgid "Apply Failover Upgrade"
 msgstr ""
 
 msgid "Apply Network Changes"
-msgstr ""
+msgstr "Applica Modifiche alla Rete"
 
 msgid "Apply Pending Updates"
-msgstr ""
+msgstr "Applica Aggiornamenti in Sospeso"
 
 msgid "Apply Pending update"
-msgstr ""
+msgstr "Applica aggiornamento in Sospeso"
 
 msgid "Apply Permissions Recursively"
-msgstr ""
+msgstr "Applica Permessi in modo Ricorsivo"
 
 msgid "Apply Update"
-msgstr ""
+msgstr "Fare l'Aggiornamento"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
-msgstr ""
+msgstr "Applicare le modifiche di rete? La connessione di rete sarà interrotta."
 
 msgid "Apply permissions recursively"
-msgstr ""
+msgstr "Applica i permessi in modo ricorsivo"
 
 msgid "Apply permissions recursively to all child datasets of the current dataset."
 msgstr ""
+"Applicare i permessi in modo ricorsivo a tutti i dataset figlio del dataset "
+"corrente."
 
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
 "dataset."
 msgstr ""
+"Applicare i permessi in modo ricorsivo a tutte le directory e a tutti i "
+"files nel corrente dataset."
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset."
 msgstr ""
+"Applicare i permessi in modo ricorsivo a tutte le directory e ai files "
+"all'interno del corrente dataset."
 
 msgid "Apply permissions to child datasets"
-msgstr ""
+msgstr "Applicare i permessi ai dataset figli"
 
 msgid "Apply the same quota critical  alert settings as the parent dataset."
 msgstr ""
+"Applicare le stesse impostazioni di avviso di quota critica del dataset "
+"padre."
 
 msgid "Apply the same quota warning  alert settings as the parent dataset."
 msgstr ""
 
 msgid "Apply updates and reboot system after downloading."
-msgstr ""
+msgstr "Applicare gli aggiornamenti e riavviare il sistema dopo il download."
 
 msgid "Apr"
 msgstr ""
 
 msgid "Archive"
-msgstr ""
+msgstr "Archivio"
 
 msgid "Are you sure you want to sync from peer?"
-msgstr ""
+msgstr "Sei sicuro di voler sincronizzare dal peer?"
 
 msgid "Are you sure you want to sync to peer?"
-msgstr ""
+msgstr "Sei sicuro di voler sincronizzare con il peer?"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Sei sicuro?"
 
 msgid ""
 "Assigning a directory to Minio changes the permissions                      "
@@ -1298,6 +1354,10 @@ msgid ""
 "a separate dataset for Minio is strongly                                    "
 "          recommended."
 msgstr ""
+"L'assegnazione di una directory a Minio modifica i permessi                 "
+"                             di quella directory e ogni directory in essa "
+"contenuta                                            minio:minio e "
+"sovrascrive ogni permesso precedente."
 
 msgid "Associated Target"
 msgstr ""
@@ -1310,16 +1370,16 @@ msgid ""
 msgstr ""
 
 msgid "Attach"
-msgstr ""
+msgstr "Allegare"
 
 msgid "Attach Debug"
-msgstr ""
+msgstr "Allegare Debug"
 
 msgid "Attach NIC"
 msgstr ""
 
 msgid "Attach screenshots."
-msgstr ""
+msgstr "Allegare screenshots."
 
 msgid "Aug"
 msgstr ""
@@ -1334,16 +1394,16 @@ msgid "Auth Token"
 msgstr ""
 
 msgid "Authentication Group number"
-msgstr ""
+msgstr "Numero del Gruppo di Autenticazione"
 
 msgid "Authentication Protocol"
-msgstr ""
+msgstr "Protocollo di Autenticazione"
 
 msgid "Authentication Type"
 msgstr ""
 
 msgid "Authenticator"
-msgstr ""
+msgstr "Autenticatore"
 
 msgid "Authenticator Attributes"
 msgstr ""
@@ -1354,10 +1414,10 @@ msgid ""
 msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
-msgstr ""
+msgstr "Hosts e indirizzi IP Autorizzati"
 
 msgid "Authorized Networks"
-msgstr ""
+msgstr "Reti Autorizzate"
 
 msgid "Auto configure IPv6"
 msgstr ""
@@ -1368,7 +1428,7 @@ msgid ""
 msgstr ""
 
 msgid "Auto-start"
-msgstr ""
+msgstr "Auto-avvio"
 
 msgid "Autoconfigure IPv6"
 msgstr ""
@@ -1389,24 +1449,26 @@ msgid ""
 "Automatically populated with the original hostname of the system. This name "
 "is limited to 15 characters and cannot be the <b>Workgroup</b> name."
 msgstr ""
+"Popolato automaticamente con il nome originale del host del sistema. Questo "
+"nome è limitato a 15 caratteri e non può essere il <b>Workgroup</b> nome."
 
 msgid "Automatically reboot the system after the update is applied."
-msgstr ""
+msgstr "Riavviare automaticamente il sistema dopo l'applicazione dell'aggiormamento."
 
 msgid "Automatically stop the script or command after the specified seconds."
-msgstr ""
+msgstr "Arresta automaticamente lo script o il comando dopo i secondi specificati."
 
 msgid "Autostart"
-msgstr ""
+msgstr "Avvio automatico"
 
 msgid "Auxiliary Arguments"
-msgstr ""
+msgstr "Argomenti Ausiliari"
 
 msgid "Auxiliary Groups"
-msgstr ""
+msgstr "Gruppi Ausiliari"
 
 msgid "Auxiliary Parameters"
-msgstr ""
+msgstr "Parametri Ausiliari"
 
 msgid "Auxiliary Parameters (ups.conf)"
 msgstr ""
@@ -1418,31 +1480,31 @@ msgid "Auxiliary parameters"
 msgstr ""
 
 msgid "Available Disks"
-msgstr ""
+msgstr "Dischi Disponibili"
 
 msgid "Available Memory:"
-msgstr ""
+msgstr "Memoria Disponibile:"
 
 msgid "Available Space"
-msgstr ""
+msgstr "Spazio Disponibile"
 
 msgid "Available Themes"
-msgstr ""
+msgstr "Temi Disponibili"
 
 msgid "Available space threshold (%)"
-msgstr ""
+msgstr "Limite di spazio disponibile (%)"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
-msgstr ""
+msgstr "Eccezionale! Ora esploriamo le fantastiche funzionalità di FreeNAS."
 
 msgid "BPF is required."
 msgstr ""
 
 msgid "Back"
-msgstr ""
+msgstr "Indietro"
 
 msgid "Back to Support"
-msgstr ""
+msgstr "Torna al Supporto"
 
 msgid ""
 "Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
@@ -1456,7 +1518,7 @@ msgid "Bandwidth"
 msgstr ""
 
 msgid "Bandwidth Limit"
-msgstr ""
+msgstr "Limite di Larghezza di Banda"
 
 msgid "Base DN"
 msgstr ""
@@ -1474,19 +1536,19 @@ msgid "Basic Info"
 msgstr ""
 
 msgid "Basic Mode"
-msgstr ""
+msgstr "Modalità Base"
 
 msgid "Basic Properties"
-msgstr ""
+msgstr "Proprietà di Base"
 
 msgid "Batch Operations"
 msgstr ""
 
 msgid "Before updating, please read the release notes."
-msgstr ""
+msgstr "Prima del'aggionamento, si prega di leggere le note di rilascio."
 
 msgid "Begin"
-msgstr ""
+msgstr "Inizia"
 
 msgid "Begin Time"
 msgstr ""
@@ -1503,28 +1565,28 @@ msgid "Best effort (default)"
 msgstr ""
 
 msgid "Bind"
-msgstr ""
+msgstr "Associare"
 
 msgid "Bind DN"
-msgstr ""
+msgstr "Associare DN"
 
 msgid "Bind IP Addresses"
-msgstr ""
+msgstr "Associare Indirizzi IP"
 
 msgid "Bind Interfaces"
-msgstr ""
+msgstr "Associare Interfacce"
 
 msgid "Bind Password"
-msgstr ""
+msgstr "Associare Password"
 
 msgid "Bind interfaces"
-msgstr ""
+msgstr "Associare interfacce"
 
 msgid "Bind to"
-msgstr ""
+msgstr "Associare a"
 
 msgid "Bind to Port"
-msgstr ""
+msgstr "Associare alla Porta"
 
 msgid "Block Shares (iSCSI)"
 msgstr ""
@@ -1536,33 +1598,35 @@ msgid "Block size"
 msgstr ""
 
 msgid "Boot"
-msgstr ""
+msgstr "Avvio"
 
 msgid "Boot Environments"
-msgstr ""
+msgstr "Ambienti di Avvio"
 
 msgid "Boot Loader Type"
 msgstr ""
 
 msgid "Boot Method"
-msgstr ""
+msgstr "Metodo di Avvio"
 
 msgid "Boot Pool"
-msgstr ""
+msgstr "Pool di Avvio"
 
 msgid "Boot Pool Condition"
-msgstr ""
+msgstr "Condizioni del Pool di Avvio"
 
 msgid "Boot Pool Status"
-msgstr ""
+msgstr "Stato del Pool di Avvio"
 
 msgid ""
 "Boot environment name. Alphanumeric characters, dashes (-), underscores "
 "(_),     and periods (.) are allowed."
 msgstr ""
+"Nome dell'ambiente di avvio. Caratteri alfanumerici, trattini (-), trattini "
+"bassi (_),     e punti (.) sono permessi."
 
 msgid "Boot environment to be cloned."
-msgstr ""
+msgstr "Ambiente di avvio da clonare."
 
 msgid ""
 "Brainpool curves can be more secure, while secp curves can be faster. See "
@@ -1582,10 +1646,10 @@ msgid "Browsable to Network Clients"
 msgstr ""
 
 msgid "Browse a Collection"
-msgstr ""
+msgstr "Sfoglia una Collezione"
 
 msgid "Browse to a CD-ROM file present on the system storage."
-msgstr ""
+msgstr "Passare a un file CD-ROM presente nella memoria di sistema."
 
 msgid ""
 "Browse to a storage location and add the name of the new raw file on the "
@@ -1728,33 +1792,37 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Annulla"
 
 msgid "Cannot Delete while HA is Enabled"
-msgstr ""
+msgstr "Impossibile Eliminare mentre HA è Abilitato"
 
 msgid "Cannot Edit while HA is Enabled"
-msgstr ""
+msgstr "Impossibile Modificare mentre HA è Abilitato"
 
 msgid "Cannot create plugins or jails until a pool is present for storing them."
 msgstr ""
+"Impossibile creare plugins o jails finchè non è presente un pool per la "
+"loro memorizzazione."
 
 msgid "Cannot edit while HA is enabled."
-msgstr ""
+msgstr "Impossibile modificare mentre HA è abilitato"
 
 msgid "Case Sensitivity"
-msgstr ""
+msgstr "Distinzione tra Maiuscolo e Minuscolo"
 
 msgid "Category"
-msgstr ""
+msgstr "Categoria"
 
 msgid ""
 "Caution: Allocating too much memory can slow the  system or prevent VMs "
 "from running."
 msgstr ""
+"Attenzione: assegnare troppa memoria può rallentare il sistema o impedire "
+"alle VMs di funzionare."
 
 msgid "Certificate"
-msgstr ""
+msgstr "Certificato"
 
 msgid ""
 "Certificate to use when performing LDAP  certificate-based authentication. "
@@ -1764,28 +1832,28 @@ msgid ""
 msgstr ""
 
 msgid "Certificates"
-msgstr ""
+msgstr "Certificati"
 
 msgid "Change Administrator Password"
-msgstr ""
+msgstr "Cambia Password Amministratore"
 
 msgid "Change Device Order"
 msgstr ""
 
 msgid "Change Passphrase"
-msgstr ""
+msgstr "Cambia Passphrase"
 
 msgid "Change Password"
-msgstr ""
+msgstr "Cambia Password"
 
 msgid "Change Settings and Clear Report History?"
-msgstr ""
+msgstr "Modifica Impostazioni e Cancella Cronologia Rapporti?"
 
 msgid "Change User & Group Ownership"
-msgstr ""
+msgstr "Modifica Proprietà Utente & Gruppo"
 
 msgid "Change User and Group Ownership"
-msgstr ""
+msgstr "odifica Proprietà Utente e Gruppo"
 
 msgid ""
 "Change existing ownership of ALL files in the share  to user "
@@ -1793,20 +1861,29 @@ msgid ""
 "files to be accessed through WebDAV must be manually set  to the "
 "<samp>webdav</samp> or <samp>www</samp> user/group."
 msgstr ""
+"Cambia la proprietà esistente di TUTTI i files nella condivisione per "
+"l'utente <samp>webdav</samp> e il gruppo <samp>webdav</samp>. Se non "
+"impostato, la proprietà dei files a cui accedere tranite WebDAV deve essere "
+"impostata  manualmente su<samp>webdav</samp> o <samp>www</samp> user/group."
 
 msgid ""
 "Change from <i>public</i> to increase system security. Can only contain "
 "alphanumeric characters, underscores, dashes, periods, and spaces. This can "
 "be left empty for <i>SNMPv3</i> networks."
 msgstr ""
+"Passa da <i>public</i> per aumentare il livello di sicurezza. Può contenere "
+"solo caratteri alfanumerici, trattini bassi, trattini, punti, e spazi. "
+"Questo può essere lasciato vuoto per le reti <i>SNMPv3</i>."
 
 msgid "Change log"
-msgstr ""
+msgstr "Cambia i log"
 
 msgid ""
 "Change the default password to improve system security. The new password "
 "cannot contain a space or <b>#</b>."
 msgstr ""
+"Modifica la password di default per migliorare la sicurezza del sistema. La "
+"nuova password non può contenere spazi o <b>#</b>."
 
 msgid "Changes that have been applied will revert after "
 msgstr ""
@@ -1830,9 +1907,14 @@ msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
 "particularly when going from Windows to Unix permissions."
 msgstr ""
+"La modifica della modalità di autorizzazione del dataset può influire "
+"gravemente sui permessi esistenti, in particolare quando si passa da "
+"Windows ai permessi Unix."
 
 msgid "Changing dataset permission mode can severely affect existing permissions."
 msgstr ""
+"La modifica della modalità di autorizzazione del dataset può influire "
+"gravemente sui permessi esistenti."
 
 msgid ""
 "Changing the major version is considered a downgrade and is not a supported "
@@ -1852,25 +1934,25 @@ msgid ""
 msgstr ""
 
 msgid "Channel"
-msgstr ""
+msgstr "Canale"
 
 msgid "Check Interval"
-msgstr ""
+msgstr "Intervallo di Controllo"
 
 msgid "Check Now"
-msgstr ""
+msgstr "Controlla Ora"
 
 msgid "Check Release Notes"
-msgstr ""
+msgstr "Controlla le Note di Rilascio"
 
 msgid "Check for Updates"
-msgstr ""
+msgstr "Controlla gli Aggiornamenti"
 
 msgid "Check for Updates Daily and Download if Available"
-msgstr ""
+msgstr "Controlla gli Aggiornamenti Quotidianamente e Scarica se Disponibili"
 
 msgid "Check server certificates in a TLS session."
-msgstr ""
+msgstr "Controlla i certificati del server in una sessione TLS."
 
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
@@ -1878,7 +1960,7 @@ msgid ""
 msgstr ""
 
 msgid "Check the network connection."
-msgstr ""
+msgstr "Controlla la connessione di rete."
 
 msgid ""
 "Check the update server daily for                                   any "
@@ -1904,6 +1986,9 @@ msgid "CheckIP Server SSL"
 msgstr ""
 
 msgid "Checking HA status"
+msgstr ""
+
+msgid "Checksum"
 msgstr ""
 
 msgid "Chmod Request"
@@ -1968,12 +2053,14 @@ msgstr ""
 
 msgid "Choose a DNS provider and configure any required authenticator attributes."
 msgstr ""
+"Scegli un provider DNS e configura tutte le caratteristiche di "
+"autenticazione richieste."
 
 msgid "Choose a Device"
-msgstr ""
+msgstr "Scegli un Dispositivo"
 
 msgid "Choose a color scheme."
-msgstr ""
+msgstr "Scegli una combinazione di colori."
 
 msgid ""
 "Choose a dataset on the destination  system where snapshots are stored. "
@@ -1985,15 +2072,23 @@ msgid "Choose a date format."
 msgstr ""
 
 msgid "Choose a device for your report."
-msgstr ""
+msgstr "Scegli un dispositivo per il rapporto."
 
 msgid "Choose a location to store the installer image file."
 msgstr ""
+"Scegli una destinazione in cui archiviare il file immagine del programma di "
+"installazione."
 
 msgid "Choose a metric"
-msgstr ""
+msgstr "Scegli un parametro"
 
 msgid "Choose a metric to display."
+msgstr "Scegli un parametro da visualizzare."
+
+msgid ""
+"Choose a new disk for the pool. To protect any existing data, adding the "
+"selected disk is stopped when the disk is already in use or has partitions "
+"present."
 msgstr ""
 
 msgid ""
@@ -2005,16 +2100,16 @@ msgid ""
 msgstr ""
 
 msgid "Choose a pool for plugin and jail storage."
-msgstr ""
+msgstr "Scegli un pool per l'archiviazione del plugin e del jail."
 
 msgid "Choose a pool to scrub."
 msgstr ""
 
 msgid "Choose a preferred theme."
-msgstr ""
+msgstr "Scegli un tema preferito."
 
 msgid "Choose a privacy protocol."
-msgstr ""
+msgstr "Scegli un protocollo di privacy."
 
 msgid ""
 "Choose a recent IP address to limit the usage when accessing the "
@@ -2045,16 +2140,16 @@ msgid "Choose a time format."
 msgstr ""
 
 msgid "Choose an alert service to display options for that service."
-msgstr ""
+msgstr "Scegli un servizio di avviso per visualizzare le opzioni di quel servizio."
 
 msgid "Choose an authentication method."
-msgstr ""
+msgstr "Scegli un metodo di autenticazione."
 
 msgid "Choose an encryption mode to use with LDAP."
-msgstr ""
+msgstr "Scegli una modalita crittografica da usare con LDAP."
 
 msgid "Choose an encryption mode."
-msgstr ""
+msgstr "Scegli una modalità crittografica."
 
 msgid ""
 "Choose between <i>Off</i>, <a "
@@ -2095,6 +2190,8 @@ msgid ""
 "Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
 "on this dataset."
 msgstr ""
+"Scegliere se la directory dello snaoshot .zfs è i>Visible</i> or "
+"<i>Invisible</i> in questo dataset."
 
 msgid ""
 "Choose one of the convenient presets    or choose <b>Custom</b> to trigger "
@@ -2115,7 +2212,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose the VM operating system type."
-msgstr ""
+msgstr "Scegli il tipo di sistema operativo della VM."
 
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
@@ -2136,6 +2233,8 @@ msgid ""
 "Choose the platform that will use this share. The associated options are "
 "applied to this share."
 msgstr ""
+"Scegli la piattaforma che userà questa share. Le opzioni associate sono "
+"applicate a questa share."
 
 msgid ""
 "Choose the schema to use when querying AD for user/group info. "
@@ -2150,7 +2249,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose the speed in bps used by the serial port."
-msgstr ""
+msgstr "Scegli la velocità in bps usata dalla porta seriale."
 
 msgid ""
 "Choose the test type. See <a                "
@@ -2166,6 +2265,8 @@ msgid ""
 "href=\"--docurl--/storage.html#import-disk\" target=\"_blank\">importing "
 "disks</a> for more details."
 msgstr ""
+"Scegliere il tipo di filesystem sul disco. Consultare la sezione guida su "
+"<a \n"
 
 msgid ""
 "Choose the type of interface. <i>Bridge</i> creates a logical link between "
@@ -2174,11 +2275,19 @@ msgid ""
 "and isolates a segment of the connection. Read-only when editing an "
 "interface."
 msgstr ""
+"Scegliere il tipo di interfaccia. <i>Bridge</i> crea un collegamento logico "
+"tra più reti. <i>Link Aggregation</i> combina più connessione di rete in "
+"un'unica interfaccia. <i>Virtual LAN (VLAN)</i> partiziona e isola un "
+"segmento della connessione. Sola lettura durante la modifica di "
+"un'interfaccia."
 
 msgid ""
 "Choose the type of permissions. <i>Basic</i> shows general permissions. "
 "<i>Advanced</i> shows each specific type of permission for finer control."
 msgstr ""
+"Scegliere il tipo di permessi. <i>Basic</i> mostra i permessi generali. "
+"<i>Advanced</i> mostra ogni tipo specifico di permesso per un maggiore "
+"controllo."
 
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
 msgstr ""
@@ -2194,7 +2303,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose your language."
-msgstr ""
+msgstr "Scegli la tua lingua."
 
 msgid ""
 "Choosing an entry loads a preset ACL that is  configured to match general "
@@ -2223,28 +2332,28 @@ msgid ""
 msgstr ""
 
 msgid "Click on alarms to select or unselect."
-msgstr ""
+msgstr "Fare clic sugli allarmi per selezionare o deselezionare."
 
 msgid "Client Name"
-msgstr ""
+msgstr "Nome Client"
 
 msgid "Clients"
 msgstr ""
 
 msgid "Clone"
-msgstr ""
+msgstr "Clonare"
 
 msgid "Clone Boot Environment"
 msgstr ""
 
 msgid "Clone to New Dataset"
-msgstr ""
+msgstr "Clonare un Nuovo Dataset"
 
 msgid "Close"
 msgstr ""
 
 msgid "Cloud Credentials"
-msgstr ""
+msgstr "Credenziali Cloud"
 
 msgid "Cloud Sync Tasks"
 msgstr ""
@@ -2253,7 +2362,7 @@ msgid "Cloud sync <i>"
 msgstr ""
 
 msgid "Cluster Name"
-msgstr ""
+msgstr "Nome del Cluster"
 
 msgid "Collection"
 msgstr ""
@@ -2332,16 +2441,16 @@ msgid "Commands to run in the system environment before a jail is stopped."
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "Commento"
 
 msgid "Comments"
-msgstr ""
+msgstr "Commenti"
 
 msgid "Comments about this script."
 msgstr ""
 
 msgid "Common Name"
-msgstr ""
+msgstr "Nome Comune"
 
 msgid "Community"
 msgstr ""
@@ -2350,7 +2459,7 @@ msgid "Compatability"
 msgstr ""
 
 msgid "Complete the Upgrade"
-msgstr ""
+msgstr "Completa l'Aggiornamento"
 
 msgid ""
 "Completely replicate the selected dataset. The target dataset will have all "
@@ -2359,28 +2468,28 @@ msgid ""
 msgstr ""
 
 msgid "Compress"
-msgstr ""
+msgstr "Comprimi"
 
 msgid "Compress connections"
-msgstr ""
+msgstr "Comprimi le connessioni"
 
 msgid "Compression level"
-msgstr ""
+msgstr "Livello di compressione"
 
 msgid "Computer Account OU"
 msgstr ""
 
 msgid "Config could not be downloaded"
-msgstr ""
+msgstr "Impossibile scaricare la configurazione"
 
 msgid "Configure"
-msgstr ""
+msgstr "Configura"
 
 msgid "Configure ACL"
-msgstr ""
+msgstr "Configura ACL"
 
 msgid "Configure Networking"
-msgstr ""
+msgstr "Configura Rete"
 
 msgid "Configure System Dataset"
 msgstr ""
@@ -2392,33 +2501,36 @@ msgid ""
 msgstr ""
 
 msgid "Configure now"
-msgstr ""
+msgstr "Configura adesso"
 
 msgid "Configure permissions for this share's dataset now?"
-msgstr ""
+msgstr "Configurare i permessi per i dataset di questa share ora?"
 
 msgid ""
 "Configure the ports that allow remote access to  the jail. Required to "
 "override the default settings or when installing  duplicate plugins."
 msgstr ""
+"Configurare le porte che consentono l'accesso remoto al jail. Necessario "
+"per sovrascrivere le impostazioni predefinite o durante l'installazione di "
+"plugin duplicati."
 
 msgid "Configure the root user email address."
-msgstr ""
+msgstr "Configurare l'indirizzo mail dell'utente root."
 
 msgid "Confirm"
-msgstr ""
+msgstr "Conferma"
 
 msgid "Confirm Export/Disconnect"
-msgstr ""
+msgstr "Conferma Esportazione/Disconnessione"
 
 msgid "Confirm Options"
-msgstr ""
+msgstr "Conferma Opzioni"
 
 msgid "Confirm Passphrase"
-msgstr ""
+msgstr "Conferma Passphrase"
 
 msgid "Confirm Password"
-msgstr ""
+msgstr "Conferma Password"
 
 msgid "Confirm Privacy Passphrase"
 msgstr ""
@@ -2436,25 +2548,25 @@ msgid "Confirm it is okay to proceed with Detach."
 msgstr ""
 
 msgid "Confirm password"
-msgstr ""
+msgstr "Conferma password"
 
 msgid "Confirm these settings."
-msgstr ""
+msgstr "Conferma queste impostazioni."
 
 msgid "Connect Timeout"
-msgstr ""
+msgstr "Connessione Scaduta"
 
 msgid "Connected Initiators"
 msgstr ""
 
 msgid "Connecting to "
-msgstr ""
+msgstr "Connessione a "
 
 msgid "Connection"
 msgstr ""
 
 msgid "Connection Error"
-msgstr ""
+msgstr "Errore di Connessione"
 
 msgid ""
 "Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but "
@@ -2465,9 +2577,17 @@ msgid ""
 "the security should only be used within a  secure, trusted "
 "network.</li></ul>"
 msgstr ""
+"Livello di sicurezza della connessione:<br>  <ul><li><i>Standard</i> è il "
+"più sicuro, ma ha il maggior impatto sulla velocità di "
+"connessione.</li><br>  <li><i>Fast</i> è meno sicuro di <i>Standard</i> ma "
+"può fornire velocità di trasferimento ragionevoli per dispositivi con "
+"velocità crittografica limitata. </li><br>  <li><i>Disabled</i> rimuove "
+"tutta la protezione in favore della massiam velocità di connessione. La "
+"disabilitazione della protezione dovrebbe essere utilizzata solo "
+"all'interno di una rete sicura e affidabile.</li></ul>"
 
 msgid "Connections"
-msgstr ""
+msgstr "Connessioni"
 
 msgid "Console"
 msgstr ""
@@ -2530,16 +2650,16 @@ msgid "Coolest:"
 msgstr ""
 
 msgid "Copies"
-msgstr ""
+msgstr "Copie"
 
 msgid "Copy and Paste"
-msgstr ""
+msgstr "Copia e Incolla"
 
 msgid "Cores"
 msgstr ""
 
 msgid "Could not delete boot environment."
-msgstr ""
+msgstr "Impossibile eliminare l'ambiente di boot."
 
 msgid "Could not find a group name for this group ID."
 msgstr ""
@@ -2548,55 +2668,58 @@ msgid "Could not find a user name for this user ID."
 msgstr ""
 
 msgid "Country"
-msgstr ""
+msgstr "Nazione"
 
 msgid "Country Code"
-msgstr ""
+msgstr "Prefisso Internazionale"
 
 msgid ""
 "Country Code must contain a valid  <a "
 "href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
 "3166-1 alpha-2 code</a>  of two capital letters."
 msgstr ""
+"Il Prefisso Internazionale deve essere vuoto o contenere due lettere valide "
+"<a  href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
+"3166-1 alpha-2 code</a>."
 
 msgid "Crash reporting"
 msgstr ""
 
 msgid "Create"
-msgstr ""
+msgstr "Creare"
 
 msgid "Create ACME Certificate"
-msgstr ""
+msgstr "Creare Certificato ACME"
 
 msgid "Create CA"
-msgstr ""
+msgstr "Creare CA"
 
 msgid "Create Certificate"
-msgstr ""
+msgstr "Creare Certificato"
 
 msgid "Create New Theme"
-msgstr ""
+msgstr "Creare Nuovo Tema"
 
 msgid "Create Passphrase"
-msgstr ""
+msgstr "Creare Passphrase"
 
 msgid "Create Pool"
-msgstr ""
+msgstr "Creare Pool"
 
 msgid "Create SSH Connection"
-msgstr ""
+msgstr "Creare Connessione SSH"
 
 msgid "Create Snapshot"
-msgstr ""
+msgstr "Creare Snapshot"
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "Creare un nuovo Pool"
 
 msgid "Create a new, empty pool."
-msgstr ""
+msgstr "Creare un nuovo pool vuoto."
 
 msgid "Create a pool:"
-msgstr ""
+msgstr "Creare un pool:"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
@@ -2605,22 +2728,22 @@ msgid "Create more data vdevs like the first."
 msgstr ""
 
 msgid "Create new Pool"
-msgstr ""
+msgstr "Creare un nuovo Pool"
 
 msgid "Create new disk image"
-msgstr ""
+msgstr "Creare una nuova immagine del disco"
 
 msgid "Create new pool"
-msgstr ""
+msgstr "Creare un nuovo pool"
 
 msgid "Create or Choose Block Device"
-msgstr ""
+msgstr "Crea o Scegli Blocca Dispositivo"
 
 msgid "Create or Import Pool"
-msgstr ""
+msgstr "Crea o Importa Pool"
 
 msgid "Create or Import pool"
-msgstr ""
+msgstr "Crea o Importa pool"
 
 msgid ""
 "Creates dataset snapshots when there are no changes. Set to support "
@@ -2629,13 +2752,13 @@ msgid ""
 msgstr ""
 
 msgid "Creating"
-msgstr ""
+msgstr "Creazione"
 
 msgid "Creating Jail"
-msgstr ""
+msgstr "Creazione Jail"
 
 msgid "Creating Jail..."
-msgstr ""
+msgstr "Creazione Jail..."
 
 msgid ""
 "Creating or editing a <i>sysctl</i> immediately updates the Variable to the "
@@ -2648,19 +2771,19 @@ msgid "Creating..."
 msgstr ""
 
 msgid "Credential"
-msgstr ""
+msgstr "Credenziali"
 
 msgid "Credentials"
 msgstr ""
 
 msgid "Critical"
-msgstr ""
+msgstr "Critico"
 
 msgid "Critical applications"
 msgstr ""
 
 msgid "Criticality"
-msgstr ""
+msgstr "Criticità"
 
 msgid "Cron Job"
 msgstr ""
@@ -2669,16 +2792,16 @@ msgid "Cron Jobs"
 msgstr ""
 
 msgid "Current Password"
-msgstr ""
+msgstr "Password Attuale"
 
 msgid "Current Train:"
 msgstr ""
 
 msgid "Custom"
-msgstr ""
+msgstr "Personalizza"
 
 msgid "Custom Path"
-msgstr ""
+msgstr "Personalizza Path"
 
 msgid "Custom Properties"
 msgstr ""
@@ -2704,10 +2827,10 @@ msgid ""
 msgstr ""
 
 msgid "DELETE"
-msgstr ""
+msgstr "CANCELLA"
 
 msgid "DELETE DATASET"
-msgstr ""
+msgstr "CANCELLA DATASET"
 
 msgid "DHCP"
 msgstr ""
@@ -2716,7 +2839,7 @@ msgid "DHCP Autoconfigure IPv4"
 msgstr ""
 
 msgid "DISCARD CHANGES"
-msgstr ""
+msgstr "NON SALVARE LE MODIFICHE"
 
 msgid "DNS Forwarder"
 msgstr ""
@@ -2734,22 +2857,22 @@ msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
 
 msgid "DOCUMENTATION"
-msgstr ""
+msgstr "DOCUMENTAZIONE"
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Pannello di controllo"
 
 msgid "Data"
-msgstr ""
+msgstr "Dati"
 
 msgid "Data VDevs"
 msgstr ""
 
 msgid "Data collection frequency, in seconds."
-msgstr ""
+msgstr "Frequenza di raccolta dati, in secondi."
 
 msgid "Data not available"
-msgstr ""
+msgstr "Dati non disponibili"
 
 msgid ""
 "Data transfer security. The connection is  authenticated with SSH. Data can "
@@ -2757,15 +2880,20 @@ msgid ""
 "transfer speed. Encryption is  recommended, but can be disabled for "
 "increased speed on secure networks."
 msgstr ""
+"Sicurezza del trasferimento dei dati. La connessione è autenticata con SSH. "
+"I dati possono essere crittografati durante il trasferimento per motivi di "
+"sicurezza o essere lasciati non crittografati per massimizzare la velocità "
+"di trasferimento. Si consiglia la crittografia, ma può essere disabilitata "
+"per aumemtare la velocità su reti sicure."
 
 msgid "Database"
-msgstr ""
+msgstr "Database"
 
 msgid "Database Path"
 msgstr ""
 
 msgid "Dataset"
-msgstr ""
+msgstr "Dataset"
 
 msgid "Dataset Path"
 msgstr ""
@@ -2783,13 +2911,13 @@ msgid "Date Format"
 msgstr ""
 
 msgid "Day of Month"
-msgstr ""
+msgstr "Giorno del Mese"
 
 msgid "Day of Week"
-msgstr ""
+msgstr "Giorno della Settimana"
 
 msgid "Days"
-msgstr ""
+msgstr "Giorni"
 
 msgid ""
 "Days before a completed scrub is allowed  to run again. This controls the "
@@ -2801,31 +2929,31 @@ msgid ""
 msgstr ""
 
 msgid "Days of Week"
-msgstr ""
+msgstr "Giorni della Settimana"
 
 msgid "Days of the Week"
-msgstr ""
+msgstr "Giorni della Settimana"
 
 msgid "Days when this task will run."
 msgstr ""
 
 msgid "Deactivate the recovery key for this pool?"
-msgstr ""
+msgstr "Disattivare la chiave di ripristino per questo pool?"
 
 msgid "Debug"
-msgstr ""
+msgstr "Debug"
 
 msgid "Debug could not be downloaded."
-msgstr ""
+msgstr "Impossibile scaricare il debug."
 
 msgid "Dec"
 msgstr ""
 
 msgid "Decrypt pool"
-msgstr ""
+msgstr "Decriptare pool"
 
 msgid "Decrypting Disks"
-msgstr ""
+msgstr "Decodifica Dischi"
 
 msgid ""
 "Deduplicate the stream to avoid sending redundant  data blocks. The "
@@ -2833,18 +2961,22 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
+"Deduplicare lo stream per evitare l'invio di blocchi di dati ridondanti. Il "
+"sistema di destinazione deve supportare anche flussi deduplicati. Vedi <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
 
 msgid "Default"
-msgstr ""
+msgstr "Default"
 
 msgid "Default ACL Options"
-msgstr ""
+msgstr "Opzioni ACL di Default"
 
 msgid "Default Gateway"
 msgstr ""
 
 msgid "Default Permissions"
-msgstr ""
+msgstr "Permessi di Default"
 
 msgid "Default Router For IPv4"
 msgstr ""
@@ -2923,9 +3055,13 @@ msgstr ""
 
 msgid "Define the server where all changes to the database are performed."
 msgstr ""
+"Determinare il server su cui vengono eseguite tutte le modifiche al "
+"database."
 
 msgid "Define the server where all password changes are performed."
 msgstr ""
+"Determinare il server su cui vengono eseguite tutte le modifiche alle "
+"password."
 
 msgid "Define the size of the raw file in GiB."
 msgstr ""
@@ -2934,34 +3070,34 @@ msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr ""
 
 msgid "Delay Updates"
-msgstr ""
+msgstr "Ritardare Aggiornamenti"
 
 msgid "Delay VM Boot Until VNC Connects"
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Elimina"
 
 msgid "Delete "
-msgstr ""
+msgstr "Elimina "
 
 msgid "Delete Dataset"
-msgstr ""
+msgstr "Elimina Dataset"
 
 msgid "Delete Dataset <i><b>"
-msgstr ""
+msgstr "Elimina Dataset <i><b>"
 
 msgid "Delete Device"
-msgstr ""
+msgstr "Elimina Dispositivo"
 
 msgid "Delete Key"
-msgstr ""
+msgstr "Elimina Chiave"
 
 msgid "Delete Mount Point"
-msgstr ""
+msgstr "Elimina Mount Point"
 
 msgid "Delete Mountpoint"
-msgstr ""
+msgstr "Elimina Mountpoint"
 
 msgid "Delete Path"
 msgstr ""
@@ -2979,21 +3115,25 @@ msgid "Delete Zvol"
 msgstr ""
 
 msgid "Delete all users with this primary group?"
-msgstr ""
+msgstr "Elimina tutti gli utenti con questo gruppo principale?"
 
 msgid "Delete configuration of shares that used this pool?"
 msgstr ""
+"Eliminare la configurazione delle condivisioni che hanno utilizzato questo "
+"pool?"
 
 msgid ""
 "Delete files in the destination directory                that do not exist "
 "in the source directory."
 msgstr ""
+"Elimina i file nella directory di destinazione                che non "
+"esistono nella direcotry di origine."
 
 msgid "Delete selections"
-msgstr ""
+msgstr "Elimina le selezioni"
 
 msgid "Delete snapshot "
-msgstr ""
+msgstr "Elimina snapshot "
 
 msgid ""
 "Delete the passphrase from  the encryption key. Invalidates an existing "
@@ -3001,19 +3141,19 @@ msgid ""
 msgstr ""
 
 msgid "Delete the selected item?"
-msgstr ""
+msgstr "Eliminare l'elemento selezionato?"
 
 msgid "Delete the zvol "
 msgstr ""
 
 msgid "Delete this device?"
-msgstr ""
+msgstr "Eliminare questo dispositivo?"
 
 msgid "Delete this path."
 msgstr ""
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
-msgstr ""
+msgstr "L'eliminazione delle interfacce non è consentita mentre HA è abilitato."
 
 msgid "Deleting the <b>"
 msgstr ""
@@ -3042,16 +3182,16 @@ msgid "Describe this module."
 msgstr ""
 
 msgid "Describe this service."
-msgstr ""
+msgstr "Descrivi questo servizio."
 
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 msgid "Description (max. 25 characters)"
-msgstr ""
+msgstr "Descrizione (max. 25 caratteri)"
 
 msgid "Description (optional)."
-msgstr ""
+msgstr "Descrizione (facoltativa)."
 
 msgid "Description of the VLAN."
 msgstr ""
@@ -3066,7 +3206,7 @@ msgid "Descriptive name for the replication."
 msgstr ""
 
 msgid "Destination"
-msgstr ""
+msgstr "Destinazione"
 
 msgid "Destination Dataset"
 msgstr ""
@@ -3088,19 +3228,22 @@ msgid ""
 msgstr ""
 
 msgid "Destroy data on this pool?"
-msgstr ""
+msgstr "Distruggere i dati su questo pool?"
 
 msgid "Detach"
+msgstr "Smontare"
+
+msgid "Detach Disk"
 msgstr ""
 
 msgid "Detach Pool"
-msgstr ""
+msgstr "Smontare Pool"
 
 msgid "Detach disk "
-msgstr ""
+msgstr "Smontare disco"
 
 msgid "Details"
-msgstr ""
+msgstr "Dettagli"
 
 msgid ""
 "Determine whether this share name is included when browsing shares. Home "
@@ -3125,25 +3268,25 @@ msgid ""
 msgstr ""
 
 msgid "Device"
-msgstr ""
+msgstr "Dispositivo"
 
 msgid "Device Attached"
-msgstr ""
+msgstr "Dispositivo Collegato"
 
 msgid "Device Busy"
-msgstr ""
+msgstr "Dispositivo Occupato"
 
 msgid "Device Order"
 msgstr ""
 
 msgid "Device detached "
-msgstr ""
+msgstr "Dispositivo scollegato"
 
 msgid "Devices"
-msgstr ""
+msgstr "Dispositivi"
 
 msgid "Difference"
-msgstr ""
+msgstr "Differenza"
 
 msgid "Digest Algorithm"
 msgstr ""
@@ -4186,6 +4329,11 @@ msgstr ""
 msgid "Enter the command with any options."
 msgstr ""
 
+msgid ""
+"Enter the current passphrase for the encrypted pool. This will be used to "
+"encrypt the new disk and integrate it into the pool."
+msgstr ""
+
 msgid "Enter the decryption passphrase."
 msgstr ""
 
@@ -4537,7 +4685,16 @@ msgstr ""
 msgid "Extend Pool"
 msgstr ""
 
+msgid "Extend Vdev"
+msgstr ""
+
+msgid "Extending Vdev"
+msgstr ""
+
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
+msgstr ""
+
+msgid "Extending vdev..."
 msgstr ""
 
 msgid "Extent"
@@ -6166,6 +6323,9 @@ msgstr ""
 msgid "Member Disk"
 msgstr ""
 
+msgid "Member disk"
+msgstr ""
+
 msgid "Members"
 msgstr ""
 
@@ -6622,6 +6782,9 @@ msgstr ""
 msgid "Never Delete"
 msgstr ""
 
+msgid "New Disk"
+msgstr ""
+
 msgid "New Password"
 msgstr ""
 
@@ -6848,6 +7011,12 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
+msgid "Offline Disk"
+msgstr ""
+
+msgid "Offline disk "
+msgstr ""
+
 msgid "Ok"
 msgstr ""
 
@@ -6861,6 +7030,12 @@ msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr ""
 
 msgid "Online"
+msgstr ""
+
+msgid "Online Disk"
+msgstr ""
+
+msgid "Online disk "
 msgstr ""
 
 msgid "Only Allow Guest Access"
@@ -7644,10 +7819,16 @@ msgstr ""
 msgid "Remove Additional Path"
 msgstr ""
 
+msgid "Remove Disk"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr ""
 
 msgid "Remove Recovery Key"
+msgstr ""
+
+msgid "Remove disk "
 msgstr ""
 
 msgid "Remove passphrase"
@@ -7671,7 +7852,13 @@ msgstr ""
 msgid "Replace"
 msgstr ""
 
+msgid "Replace Disk"
+msgstr ""
+
 msgid "Replacing Disk"
+msgstr ""
+
+msgid "Replacing disk "
 msgstr ""
 
 msgid "Replacing disk..."
@@ -8432,6 +8619,11 @@ msgid ""
 msgstr ""
 
 msgid "Select an existing target."
+msgstr ""
+
+msgid ""
+"Select an unused disk to add to this vdev. <br>WARNING: any data stored on "
+"the unused disk will be erased!"
 msgstr ""
 
 msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
@@ -9283,6 +9475,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Set to override safety checks and add the disk to the pool. <br>WARNING: "
+"any data stored on the disk will be erased!"
+msgstr ""
+
+msgid ""
 "Set to perform reverse DNS lookups on client IPs. This can cause long "
 "delays if reverse DNS is not configured."
 msgstr ""
@@ -9926,6 +10123,9 @@ msgid "Successfully detached pool "
 msgstr ""
 
 msgid "Successfully exported/disconnected '"
+msgstr ""
+
+msgid "Successfully extended vdev "
 msgstr ""
 
 msgid "Successfully replaced disk "
@@ -11305,6 +11505,9 @@ msgid "Verify certificate authenticity."
 msgstr ""
 
 msgid "Verify passphrase"
+msgstr ""
+
+msgid "Verify the pool encryption passphrase."
 msgstr ""
 
 msgid "Version"
