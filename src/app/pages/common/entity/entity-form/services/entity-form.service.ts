@@ -224,8 +224,11 @@ export class EntityFormService {
 
     if (matchUnits && matchUnits[0] === unit) {
       const humanReableUnit = this.getHumanReadableUnit(num, unit, config.type);
-      if (config.allowUnits && _.indexOf(config.allowUnits, humanReableUnit) < 0) {
-        return NaN;
+      if (config.allowUnits) {
+        const singleUnit = _.endsWith(humanReableUnit, 'S') ? humanReableUnit.substring(0, humanReableUnit.length - 1) : humanReableUnit;
+        if ( _.indexOf(config.allowUnits, singleUnit) < 0) {
+          return NaN;
+        }
       }
       return num + ' ' + humanReableUnit;
     } else {
