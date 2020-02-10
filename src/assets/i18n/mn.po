@@ -1906,6 +1906,9 @@ msgstr ""
 msgid "Checking HA status"
 msgstr ""
 
+msgid "Checksum"
+msgstr ""
+
 msgid "Chmod Request"
 msgstr ""
 
@@ -1994,6 +1997,12 @@ msgid "Choose a metric"
 msgstr ""
 
 msgid "Choose a metric to display."
+msgstr ""
+
+msgid ""
+"Choose a new disk for the pool. To protect any existing data, adding the "
+"selected disk is stopped when the disk is already in use or has partitions "
+"present."
 msgstr ""
 
 msgid ""
@@ -3093,6 +3102,9 @@ msgstr ""
 msgid "Detach"
 msgstr ""
 
+msgid "Detach Disk"
+msgstr ""
+
 msgid "Detach Pool"
 msgstr ""
 
@@ -4186,6 +4198,11 @@ msgstr ""
 msgid "Enter the command with any options."
 msgstr ""
 
+msgid ""
+"Enter the current passphrase for the encrypted pool. This will be used to "
+"encrypt the new disk and integrate it into the pool."
+msgstr ""
+
 msgid "Enter the decryption passphrase."
 msgstr ""
 
@@ -4537,7 +4554,16 @@ msgstr ""
 msgid "Extend Pool"
 msgstr ""
 
+msgid "Extend Vdev"
+msgstr ""
+
+msgid "Extending Vdev"
+msgstr ""
+
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
+msgstr ""
+
+msgid "Extending vdev..."
 msgstr ""
 
 msgid "Extent"
@@ -6166,6 +6192,9 @@ msgstr ""
 msgid "Member Disk"
 msgstr ""
 
+msgid "Member disk"
+msgstr ""
+
 msgid "Members"
 msgstr ""
 
@@ -6622,6 +6651,9 @@ msgstr ""
 msgid "Never Delete"
 msgstr ""
 
+msgid "New Disk"
+msgstr ""
+
 msgid "New Password"
 msgstr ""
 
@@ -6848,6 +6880,12 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
+msgid "Offline Disk"
+msgstr ""
+
+msgid "Offline disk "
+msgstr ""
+
 msgid "Ok"
 msgstr ""
 
@@ -6861,6 +6899,12 @@ msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr ""
 
 msgid "Online"
+msgstr ""
+
+msgid "Online Disk"
+msgstr ""
+
+msgid "Online disk "
 msgstr ""
 
 msgid "Only Allow Guest Access"
@@ -7644,10 +7688,16 @@ msgstr ""
 msgid "Remove Additional Path"
 msgstr ""
 
+msgid "Remove Disk"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr ""
 
 msgid "Remove Recovery Key"
+msgstr ""
+
+msgid "Remove disk "
 msgstr ""
 
 msgid "Remove passphrase"
@@ -7671,7 +7721,13 @@ msgstr ""
 msgid "Replace"
 msgstr ""
 
+msgid "Replace Disk"
+msgstr ""
+
 msgid "Replacing Disk"
+msgstr ""
+
+msgid "Replacing disk "
 msgstr ""
 
 msgid "Replacing disk..."
@@ -8432,6 +8488,11 @@ msgid ""
 msgstr ""
 
 msgid "Select an existing target."
+msgstr ""
+
+msgid ""
+"Select an unused disk to add to this vdev. <br>WARNING: any data stored on "
+"the unused disk will be erased!"
 msgstr ""
 
 msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
@@ -9283,6 +9344,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Set to override safety checks and add the disk to the pool. <br>WARNING: "
+"any data stored on the disk will be erased!"
+msgstr ""
+
+msgid ""
 "Set to perform reverse DNS lookups on client IPs. This can cause long "
 "delays if reverse DNS is not configured."
 msgstr ""
@@ -9926,6 +9992,9 @@ msgid "Successfully detached pool "
 msgstr ""
 
 msgid "Successfully exported/disconnected '"
+msgstr ""
+
+msgid "Successfully extended vdev "
 msgstr ""
 
 msgid "Successfully replaced disk "
@@ -11305,6 +11374,9 @@ msgid "Verify certificate authenticity."
 msgstr ""
 
 msgid "Verify passphrase"
+msgstr ""
+
+msgid "Verify the pool encryption passphrase."
 msgstr ""
 
 msgid "Version"

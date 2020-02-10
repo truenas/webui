@@ -2121,6 +2121,9 @@ msgstr "CheckIP服务器SSL"
 msgid "Checking HA status"
 msgstr "正在检查HA状态"
 
+msgid "Checksum"
+msgstr ""
+
 msgid "Chmod Request"
 msgstr "Chmod请求"
 
@@ -2226,6 +2229,12 @@ msgstr "选择一个指标"
 
 msgid "Choose a metric to display."
 msgstr "选择要显示的指标。"
+
+msgid ""
+"Choose a new disk for the pool. To protect any existing data, adding the "
+"selected disk is stopped when the disk is already in use or has partitions "
+"present."
+msgstr ""
 
 msgid ""
 "Choose a path to the user's home directory. If the directory exists and "
@@ -3409,6 +3418,9 @@ msgstr "销毁这个存储池里的数据？"
 
 msgid "Detach"
 msgstr "分离"
+
+msgid "Detach Disk"
+msgstr ""
 
 msgid "Detach Pool"
 msgstr "分离存储池"
@@ -4619,6 +4631,11 @@ msgstr "输入错误跟踪器帐户密码。"
 msgid "Enter the command with any options."
 msgstr "输入带有任何选项的命令。"
 
+msgid ""
+"Enter the current passphrase for the encrypted pool. This will be used to "
+"encrypt the new disk and integrate it into the pool."
+msgstr ""
+
 msgid "Enter the decryption passphrase."
 msgstr "输入解密密码。"
 
@@ -4992,8 +5009,17 @@ msgstr "扩展"
 msgid "Extend Pool"
 msgstr "扩展存储池"
 
+msgid "Extend Vdev"
+msgstr ""
+
+msgid "Extending Vdev"
+msgstr ""
+
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr "扩展加密池会重置密码和恢复密钥！"
+
+msgid "Extending vdev..."
+msgstr ""
 
 msgid "Extent"
 msgstr "区块"
@@ -6708,6 +6734,9 @@ msgstr ""
 msgid "Member Disk"
 msgstr "成员磁盘"
 
+msgid "Member disk"
+msgstr ""
+
 msgid "Members"
 msgstr "成员"
 
@@ -7204,6 +7233,9 @@ msgstr "从不"
 msgid "Never Delete"
 msgstr "永不删除"
 
+msgid "New Disk"
+msgstr ""
+
 msgid "New Password"
 msgstr "新密码"
 
@@ -7447,6 +7479,12 @@ msgstr ""
 msgid "Offline"
 msgstr "离线"
 
+msgid "Offline Disk"
+msgstr ""
+
+msgid "Offline disk "
+msgstr ""
+
 msgid "Ok"
 msgstr "是"
 
@@ -7461,6 +7499,12 @@ msgstr "要绑定Netdata服务的一个或多个IP地址。"
 
 msgid "Online"
 msgstr "在线"
+
+msgid "Online Disk"
+msgstr ""
+
+msgid "Online disk "
+msgstr ""
 
 msgid "Only Allow Guest Access"
 msgstr "仅允许访客访问"
@@ -8300,11 +8344,17 @@ msgstr "删除"
 msgid "Remove Additional Path"
 msgstr "删除附加路径"
 
+msgid "Remove Disk"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr "删除保留标志"
 
 msgid "Remove Recovery Key"
 msgstr "删除恢复密钥"
+
+msgid "Remove disk "
+msgstr ""
 
 msgid "Remove passphrase"
 msgstr "删除密码"
@@ -8327,8 +8377,14 @@ msgstr "重复Vdev"
 msgid "Replace"
 msgstr "更换"
 
+msgid "Replace Disk"
+msgstr ""
+
 msgid "Replacing Disk"
 msgstr "更换磁盘"
+
+msgid "Replacing disk "
+msgstr ""
 
 msgid "Replacing disk..."
 msgstr "正在更换磁盘..."
@@ -9120,6 +9176,11 @@ msgstr "选择一个现有入口或选择<i>新建</i>来配置一个新portal�
 
 msgid "Select an existing target."
 msgstr "选择现有目标。"
+
+msgid ""
+"Select an unused disk to add to this vdev. <br>WARNING: any data stored on "
+"the unused disk will be erased!"
+msgstr ""
 
 msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
 msgstr "选择要复制的数据集快照。可以选择多个数据集。"
@@ -10075,6 +10136,11 @@ msgstr ""
 "target=\"_blank\">procfs（5）</a>文件系统。"
 
 msgid ""
+"Set to override safety checks and add the disk to the pool. <br>WARNING: "
+"any data stored on the disk will be erased!"
+msgstr ""
+
+msgid ""
 "Set to perform reverse DNS lookups on client IPs. This can cause long "
 "delays if reverse DNS is not configured."
 msgstr "设置为在客户端IP上执行反向DNS查找。如果未配置反向DNS，则可能导致较长的延迟。"
@@ -10756,6 +10822,9 @@ msgstr "成功分离存储池 "
 
 msgid "Successfully exported/disconnected '"
 msgstr "成功导出/断开'"
+
+msgid "Successfully extended vdev "
+msgstr ""
 
 msgid "Successfully replaced disk "
 msgstr "成功更换磁盘 "
@@ -12211,6 +12280,9 @@ msgstr "验证证书的真实性。"
 
 msgid "Verify passphrase"
 msgstr "确认密码"
+
+msgid "Verify the pool encryption passphrase."
+msgstr ""
 
 msgid "Version"
 msgstr "版本"
