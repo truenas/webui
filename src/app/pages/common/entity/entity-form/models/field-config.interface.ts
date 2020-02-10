@@ -6,6 +6,7 @@ export enum UnitType {
 };
 export interface InputUnitConfig {
   type: UnitType,
+  decimal?: boolean,
   default?: string,
   allowUnits?: Array<string>,
 }

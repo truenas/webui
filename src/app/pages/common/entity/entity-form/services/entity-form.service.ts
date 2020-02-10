@@ -198,7 +198,12 @@ export class EntityFormService {
 
     // get leading number
     let match = [];
-    match = value.match(/^(\d+(\.\d+)?)/);
+    if (config.decimal === undefined || config.decimal) {
+      match = value.match(/^(\d+(\.\d+)?)/);
+    } else {
+      match = value.match(/^(\d+)/);
+    }
+
     if (match && match.length > 0) {
       num = match[1];
     } else {

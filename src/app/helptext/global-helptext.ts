@@ -63,5 +63,5 @@ scheduler: {
     }
 },
 
-invalidInputValueWithUnit: T('Invalid value. Missing numerical value or invalid unit'),
+invalidInputValueWithUnit: T('Invalid value. Missing numerical value or invalid numerical value/unit'),
 }
