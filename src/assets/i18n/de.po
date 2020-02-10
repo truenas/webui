@@ -11,51 +11,54 @@ msgid " Download Updates"
 msgstr " Aktualisierungen herunterladen"
 
 msgid " First vdev has "
-msgstr ""
+msgstr "Das erste vdev hat "
 
 msgid " First vdev is a "
-msgstr ""
+msgstr "Das erste vdev ist ein "
 
 msgid " Plugin"
 msgstr " Plugin"
 
 msgid " Service"
-msgstr ""
+msgstr "Dienst"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
-msgstr ""
+msgstr " Wenn der <b>USV Modus</b> auf <i>slave</i> eingestellt wurde. Geben Sie den im Netz erreichbaren Netzwerkport"
+"des USV <i>Master</i> Systems ein. Der Standardport hierfür ist die <i>3493</i>. "
 
 msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a "
 "backup of the existing encryption key  without making any changes, click "
 "<b>DOWNLOAD ENCRYPTION KEY</b>."
-msgstr ""
+msgstr "Ein Passwort macht eine existierende Schlüsseldatei zur Poolwiederherstellung unbrauchbar. Um eine Sicherung "
+" des bestehndenden Verschlüsselungskeys ohne weitere Änderungen durchzuführen, klicken Sie auf "
+"<b>DOWNLOAD ENCRYPTION KEY</b>."
 
 msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
 "selected."
-msgstr ""
+msgstr "Adressen. Wenn Sie diese Option wählen, können keine weiteren Adressen ausgewählt werden. "
 
 msgid " and "
-msgstr ""
+msgstr " und "
 
 msgid " and all snapshots of it?"
-msgstr ""
+msgstr " und alle beinhalteten Snapshots? "
 
 msgid " and will be disrupted if the pool is locked:"
-msgstr ""
+msgstr " und werden gestört sein wenn der Pool verriegelt ist "
 
 msgid " but datastore "
-msgstr ""
+msgstr " aber datastore "
 
 msgid " disks"
 msgstr " Festplatten"
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " Festplatten, neue vdev hat "
 
 msgid " has been unlocked."
 msgstr " wurde entsperrt."
@@ -64,35 +67,36 @@ msgid " is "
 msgstr " ist"
 
 msgid " is required."
-msgstr ""
+msgstr " wird benötigt "
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
-msgstr ""
+msgstr " ist die kleinste empfohlene Datenspeichergröße. Ein kleinerer Werte kann die Systemperformance beeinträchtigen "
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
 "for testing."
-msgstr ""
+msgstr " sekunden anstatt KEEP PERMANENTLY wurde ausgewählt. Modifiziere die Verzögerungszeit um noch Zeit für Testroutinen "
+" zu ermöglichen "
 
 msgid " service has been enabled."
-msgstr ""
+msgstr "Der Dienst wurde aktiviert"
 
 msgid " should be greater than "
-msgstr ""
+msgstr "sollte größer sein als"
 
 msgid " should be less than "
-msgstr ""
+msgstr "sollte kleiner sein als"
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr "Das System ist betriebsbereit und mit dem Netzwerk verbunden"
 
 msgid " to include all "
-msgstr ""
+msgstr " um alles zu beinhalten"
 
 msgid " update successful"
-msgstr ""
+msgstr " Aktualisierung erfolgreich"
 
 msgid " updated."
 msgstr " aktualisiert."
@@ -105,40 +109,42 @@ msgid ""
 "the data will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting "
 "encrypted pools, download and safely store the encryption key and any "
 "passphrase for it."
-msgstr ""
+msgstr " ist verschlüsselt! Wenn das Passwort für diesen verschlüsselten Pool verloren geht, "
+"werden alle Daten UNWIDERBRINGLICH VERLOREN GEHEN! Bevor verschlüsselte Pools exportiert/getrennt werden, "
+" laden Sie den Verschlüsselungskey und das Passwort herunter und bewahren Sie ihn an einem sicheren Ort auf!"
 
 msgid "'. All data on that pool was destroyed."
 msgstr "'. Alle Daten in diesem Pool wurden vernichtet."
 
 msgid "(24 Hours)"
-msgstr ""
+msgstr "(24 Stunden)"
 
 msgid "(No description)"
 msgstr "(Keine Beschreibung)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(Entferne Pool aus dem Datastore)"
 
 msgid "*allow_sysvipc"
-msgstr ""
+msgstr "*allow_sysvipc"
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", das neue vdev ist"
 
 msgid ". All data on that pool was destroyed."
 msgstr ". Alle Daten in diesem Pool wurden vernichtet."
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". Mindestens einer wird benötigt."
 
 msgid ". Is this correct?"
-msgstr ". Ist das richtig?"
+msgstr ". Ist das korrekt?"
 
 msgid "... Make sure the "
 msgstr "... stellen Sie sicher, dass"
 
 msgid "0=Disabled, blank=inherit"
-msgstr "0=deaktiviert, leer=erben"
+msgstr "0=deaktiviert, leer=vererben"
 
 msgid "20 characters is the maximum length."
 msgstr "Die maximale Länge beträgt 20 Zeichen."
@@ -149,28 +155,28 @@ msgstr ""
 "Sie die Netzwerkeinstellungen ihres Systems."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
-msgstr ""
+msgstr "</b> das plugin löscht alle Daten und darin enthaltenen snapshots."
 
 msgid "</b> with the keypair"
-msgstr ""
+msgstr "</b> mit dem Schlüsselpaar"
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr ""
+msgstr "</i> kann nicht gestartet werden wenn ein Mointpoint gelöscht wird."
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> hat gestartet."
 
 msgid "</i> keypair?</p>"
-msgstr ""
+msgstr "</i> Schlüsselpaar?</p>"
 
 msgid "</i> now?"
 msgstr "</i> jetzt?"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> gestoppt."
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> aktualisiert."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr ""
@@ -11131,22 +11137,22 @@ msgid ""
 msgstr ""
 
 msgid "Unselect All"
-msgstr ""
+msgstr "Alles abwählen"
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr ""
 
 msgid "Unset to disable the configuration without deleting it."
-msgstr ""
+msgstr "Abwählen um diese Konfiguration zu deaktiveren ohne Sie zu löschen"
 
 msgid "Unset to disable the scheduled scrub  without deleting it."
 msgstr ""
 
 msgid "Unset to disable this service without deleting it."
-msgstr ""
+msgstr "Abwählen um diesen Dienst zu deaktiveren ohne Ihn zu löschen"
 
 msgid "Unset to disable this task without deleting it."
-msgstr ""
+msgstr "Abwählen um diese Aufgabe zu deaktiveren ohne Sie zu löschen"
 
 msgid ""
 "Unset to prepend the domain name to the username. Unset to prevent name "
@@ -11161,82 +11167,82 @@ msgid ""
 msgstr ""
 
 msgid "Unshare"
-msgstr ""
+msgstr "Unshare"
 
 msgid "Until"
-msgstr ""
+msgstr "Bis"
 
 msgid "Unused"
-msgstr ""
+msgstr "nicht verwendet"
 
 msgid "Upcoming tasks"
-msgstr ""
+msgstr "anstehende Aufgaben"
 
 msgid "Update"
-msgstr ""
+msgstr "Aktualisierung"
 
 msgid "Update File"
-msgstr ""
+msgstr "Aktualisiere Datei"
 
 msgid "Update File Temporary Storage Location"
-msgstr ""
+msgstr "Aktualisiere den Pfad des temporären Speicherortes"
 
 msgid "Update Frequency"
-msgstr ""
+msgstr "Häufigkeit der Aktualisierungen"
 
 msgid "Update Interval"
-msgstr ""
+msgstr "Aktualisierungsintervall"
 
 msgid "Update License"
-msgstr ""
+msgstr "Aktualisiere Lizenzen"
 
 msgid "Update Period"
-msgstr ""
+msgstr "Aktualisierungszeitraum"
 
 msgid "Update Plugins"
-msgstr ""
+msgstr "Aktualisiere die Plugins"
 
 msgid "Update Settings"
-msgstr ""
+msgstr "Einstellungen zur Aktualisierung"
 
 msgid "Update Status"
-msgstr ""
+msgstr "Status der Aktualisierung"
 
 msgid "Update in Progress"
-msgstr ""
+msgstr "Aktualisierung wird durchgeführt"
 
 msgid "Update is complete, please reboot the system."
-msgstr ""
+msgstr "Die Aktualisierung ist abgeschlossen, bitte starten Sie Ihr System nun neu."
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
-msgstr ""
+msgstr "Aktualisierung erfolgreich. Bitte führen Sie einen Neustart zur Aktivierung des Updates durch. Jetzt neu starten?"
 
 msgid "Updated"
-msgstr ""
+msgstr "Aktualisiert"
 
 msgid "Updates Available"
-msgstr ""
+msgstr "Updates verfügbar"
 
 msgid "Updates successfully downloaded"
-msgstr ""
+msgstr "Updates erfolgreich heruntergeladen"
 
 msgid "Updating Jail"
-msgstr ""
+msgstr "Aktualisiere Jail"
 
 msgid "Updating Plugin"
-msgstr ""
+msgstr "Aktualisiere Plugin"
 
 msgid "Updating group members"
-msgstr ""
+msgstr "Aktualisiere Mitglieder der Gruppe"
 
 msgid "Updating selected plugins."
-msgstr ""
+msgstr "Aktualisiere ausgewählte Plugins"
 
 msgid "Upgrade Pool"
-msgstr ""
+msgstr "Aktualisiere Pool"
 
 msgid "Upgraded"
-msgstr ""
+msgstr "Aktualisiert"
 
 msgid ""
 "Upgrades both controllers. Files are downloaded to the Active Controller    "
@@ -11246,16 +11252,16 @@ msgid ""
 msgstr ""
 
 msgid "Upgrading Jail"
-msgstr ""
+msgstr "Aktualisiere Jail"
 
 msgid "Upload"
-msgstr ""
+msgstr "Hochladen"
 
 msgid "Upload Chunk Size (MiB)"
-msgstr ""
+msgstr "Hochladen der Stückgröße (MiB)"
 
 msgid "Upload Config"
-msgstr ""
+msgstr "Hochladen der Konfiguration"
 
 msgid ""
 "Upload a Google  <a "
@@ -11266,13 +11272,13 @@ msgid ""
 msgstr ""
 
 msgid "Upload an installer image file"
-msgstr ""
+msgstr "Hochladen einer Installer Image Datei"
 
 msgid "Uploading file..."
-msgstr ""
+msgstr "Lade Datei hoch..."
 
 msgid "Uploading..."
-msgstr ""
+msgstr "Hochladen..."
 
 msgid ""
 "Upsmon will wait up to this many seconds in master mode for the slaves to "
@@ -11280,13 +11286,13 @@ msgid ""
 msgstr ""
 
 msgid "Uptime"
-msgstr ""
+msgstr "Laufzeit"
 
 msgid "Usage"
-msgstr ""
+msgstr "Auslastung"
 
 msgid "Usage collection"
-msgstr ""
+msgstr "Zusammenfassung der Auslastung"
 
 msgid ""
 "Use  <a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone "
@@ -11313,28 +11319,28 @@ msgid ""
 msgstr ""
 
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
-msgstr ""
+msgstr "Verwende DHCP. Zur manuellen Konfiguration einer statischen IPv4 Adresse bitte abwählen."
 
 msgid "Use Default Domain"
-msgstr ""
+msgstr "Benutze die Default Domäne"
 
 msgid "Use FQDN for logging"
-msgstr ""
+msgstr "Benutze FQDN für das Logging"
 
 msgid "Use HTTPS for the connection to the  <b>CheckIP Server</b>."
-msgstr ""
+msgstr "Verwende HTTPS für die Verbindung zum  <b>CheckIP Server</b>."
 
 msgid "Use HTTPS for the connection to the server that updates  the DNS record."
-msgstr ""
+msgstr "Verwende HTTPS für die Verbindung zum Server der die DNS records aktualisiert"
 
 msgid "Use Signature Version 2"
-msgstr ""
+msgstr "Verwende Signaturen der Version 2"
 
 msgid "Use all disk space"
-msgstr ""
+msgstr "Verwende den gesamten Plattenplatz"
 
 msgid "Use as home share"
-msgstr ""
+msgstr "Verwende als home Share"
 
 msgid ""
 "Use compressed WRITE records to make the  stream more efficient. The "
@@ -12250,13 +12256,13 @@ msgid "wallclock"
 msgstr ""
 
 msgid "warn"
-msgstr ""
+msgstr "Warnung"
 
 msgid "was successfully attached."
-msgstr ""
+msgstr "wurde erfolgreich hinzugefügt"
 
 msgid "while pool is encrypted"
-msgstr ""
+msgstr "während der Pool verschlüsselt ist"
 
 msgid "yes"
-msgstr ""
+msgstr "Ja"
