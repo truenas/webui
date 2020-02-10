@@ -74,8 +74,8 @@ export class FormInputComponent implements Field {
   }
 
   valueChange() {
-    if (this.config.inputUnitType) {
-      const phrasedValue = this.formService.phraseInputData(this.group.controls[this.config.name].value, this.config.inputUnitType);
+    if (this.config.inputUnit) {
+      const phrasedValue = this.formService.phraseInputData(this.group.controls[this.config.name].value, this.config.inputUnit);
       if (isNaN(phrasedValue)) {
         this.group.controls[this.config.name].setErrors({manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit});
       }

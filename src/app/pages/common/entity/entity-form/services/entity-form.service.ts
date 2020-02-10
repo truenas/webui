@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import {WebSocketService} from '../../../../../services/ws.service';
 import {RestService} from '../../../../../services/rest.service';
 
-import {FieldConfig, UnitType} from '../models/field-config.interface';
+import {FieldConfig, UnitType, InputUnitConfig} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {
@@ -29,6 +29,10 @@ export class EntityFormService {
     y: 'YEAR',
   }
 
+  public defaultUnit = {
+    size: 'KIB',
+    duration: 'MINUTE',
+  }
   constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
               protected ws: WebSocketService, private rest: RestService) {}
 
@@ -183,7 +187,7 @@ export class EntityFormService {
     }
   }
 
-  phraseInputData(value: any, type: UnitType) {
+  phraseInputData(value: any, config: InputUnitConfig) {
     if (!value) {
       return value;
     }
@@ -203,12 +207,22 @@ export class EntityFormService {
 
     // get unit and return phrased string
     unit = value.replace(num, '');
+    if (unit === '') {
+      unit = config.default ? config.default : (config.allowUnits ? config.allowUnits[0] : this.defaultUnit[config.type]);
+    }
+    if (config.allowUnits !== undefined ) {
+      config.allowUnits.forEach(item => item.toUpperCase());
+    }
     // do uppercase except when type is duration and unit is only one character (M is for minutes while m is for month)
-    unit = (type === UnitType.size || unit.length > 1) ? unit.toUpperCase() : unit;
-    const matchUnits = unit.match(type === UnitType.size ? this.sizeRegex : this.durationRegex);
+    unit = (config.type === UnitType.size || unit.length > 1) ? unit.toUpperCase() : unit;
+    const matchUnits = unit.match(config.type === UnitType.size ? this.sizeRegex : this.durationRegex);
 
     if (matchUnits && matchUnits[0] === unit) {
-      return num + ' ' + this.getHumanReadableUnit(num, unit, type);
+      const humanReableUnit = this.getHumanReadableUnit(num, unit, config.type);
+      if (config.allowUnits && _.indexOf(config.allowUnits, humanReableUnit) < 0) {
+        return NaN;
+      }
+      return num + ' ' + humanReableUnit;
     } else {
       return NaN;
     }
