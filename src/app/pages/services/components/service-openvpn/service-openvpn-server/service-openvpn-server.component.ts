@@ -14,6 +14,8 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 export class ServiceOpenvpnServerComponent {
   protected queryCall = 'openvpn.server.config';
   protected route_success: string[] = [ 'services' ];
+  protected certID: number;
+  protected serverAddress: string;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -159,8 +161,7 @@ export class ServiceOpenvpnServerComponent {
       id : 'client_config',
       name : 'Download Client Config',
       function : () => {
-        this.services.generateOpenServerClientConfig(1, 'test').subscribe((res) => {
-          console.log(res);
+        this.services.generateOpenServerClientConfig(this.certID, this.serverAddress).subscribe((res) => {
         }, err => {
           this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
         })
@@ -176,6 +177,10 @@ export class ServiceOpenvpnServerComponent {
 
   afterInit(entityEdit: any) {
     entityEdit.submitFunction = body => this.services.updateOpenVPN('openvpn.server.update', body); 
+
+    this.services.getClientInfo().subscribe((res) => {
+      this.certID = res.client_certificate;
+    })
 
     this.services.getOpenVPNServerAuthAlgorithmChoices().subscribe((res) => {
       const config = this.fieldConfig.find(c => c.name === 'authentication_algorithm');
@@ -203,6 +208,9 @@ export class ServiceOpenvpnServerComponent {
         config.options.push({label: item.name, value: item.id})
       })
     });
+    entityEdit.formGroup.controls['server'].valueChanges.subscribe((res) => {
+      this.serverAddress = res;
+    })
   }
 
   beforeSubmit(data) {

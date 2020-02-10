@@ -46,6 +46,9 @@ export class ServicesService {
   updateOpenVPN(call, body) {
     return this.ws.call(call, [body]);
   }
+  getClientInfo() {
+    return this.ws.call('openvpn.client.config');
+  }
  
   // -- end of OpenVPN Service
 }
