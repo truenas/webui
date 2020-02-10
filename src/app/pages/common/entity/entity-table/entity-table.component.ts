@@ -1039,7 +1039,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
       }
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
-    }, 0);
+    }, 100);
   }
 
   updateTableHeightAfterDetailToggle() {
@@ -1051,7 +1051,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 0);
+    }, 100);
   }
 
   getButtonClass(prop) {
