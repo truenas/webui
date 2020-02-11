@@ -271,6 +271,82 @@ a new application key, log in to the Backblaze account, go to the \
     )
   },
 
+  user_openstack_swift: {
+    placeholder: T('User Name'),
+    tooltip: T(''),
+  },
+
+  key_openstack_swift: {
+    placeholder: T('API Key or Password'),
+    tooltip: T('')
+  },
+
+  auth_openstack_swift: {
+    placeholder: T('Authentication URL'),
+    tooltip: T('')
+  },
+
+  user_id_openstack_swift: {
+    placeholder: T('User ID'),
+    tooltip: T('')
+  },
+
+  domain_openstack_swift: {
+    placeholder: T('User Domain'),
+    tooltip: T('')
+  },
+
+  tenant_openstack_swift: {
+    placeholder: T('Tenant Name'),
+    tooltip: T('')
+  },
+
+  tenant_id_openstack_swift: {
+    placeholder: T('Tenant ID'),
+    tooltip: T('')
+  },
+
+  tenant_domain_openstack_swift: {
+    placeholder: T('Tenant Domain'),
+    tooltip: T('')
+  },
+
+  region_openstack_swift: {
+    placeholder: T('Region Name'),
+    tooltip: T('')
+  },
+
+  storage_url_openstack_swift: {
+    placeholder: T('Storage URL'),
+    tooltip: T('')
+  },
+
+  auth_token_openstack_swift: {
+    placeholder: T('Auth Token'),
+    tooltip: T('')
+  },
+
+  application_credential_id_openstack_swift: {
+    placeholder: T('Application Credential ID'),
+    tooltip: T('')
+  },
+  application_credential_name_openstack_swift: {
+    placeholder: T('Application Credential Name'),
+    tooltip: T('')
+  },
+  application_credential_secret_openstack_swift: {
+    placeholder: T('Application Credential Secret'),
+    tooltip: T('')
+  },
+  auth_version_openstack_swift: {
+    placeholder: T('AuthVersion'),
+    tooltip: T('')
+  },
+  endpoint_type_openstack_swift: {
+    placeholder: T('Endpoint Type'),
+    tooltip: T('')
+  },
+
   token_pcloud: {
     placeholder: T("Access Token"),
     tooltip: T(

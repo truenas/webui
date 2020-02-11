@@ -511,6 +511,133 @@ export class CloudCredentialsFormComponent {
             }
           ]
         },
+        // openstack swift
+        {
+          type: 'input',
+          name: 'user-OPENSTACK_SWIFT',
+          placeholder: helptext.user_openstack_swift.placeholder,
+          tooltip: helptext.user_openstack_swift.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'key-OPENSTACK_SWIFT',
+          placeholder: helptext.key_openstack_swift.placeholder,
+          tooltip: helptext.key_openstack_swift.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'auth-OPENSTACK_SWIFT',
+          placeholder: helptext.auth_openstack_swift.placeholder,
+          tooltip: helptext.auth_openstack_swift.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        // {
+        //   type: 'input',
+        //   name: 'application_credential_id-OPENSTACK_SWIFT',
+        //   placeholder: helptext.application_credential_id_openstack_swift.placeholder,
+        //   tooltip: helptext.application_credential_id_openstack_swift.tooltip,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'provider',
+        //         value: 'OPENSTACK_SWIFT',
+        //        }]
+        //     }
+        //   ]
+        // },
+        // {
+        //   type: 'input',
+        //   name: 'application_credential_name-OPENSTACK_SWIFT',
+        //   placeholder: helptext.application_credential_name_openstack_swift.placeholder,
+        //   tooltip: helptext.application_credential_name_openstack_swift.tooltip,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'provider',
+        //         value: 'OPENSTACK_SWIFT',
+        //        }]
+        //     }
+        //   ]
+        // },
+        // {
+        //   type: 'input',
+        //   name: 'application_credential_secret-OPENSTACK_SWIFT',
+        //   placeholder: helptext.application_credential_secret_openstack_swift.placeholder,
+        //   tooltip: helptext.application_credential_secret_openstack_swift.tooltip,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'provider',
+        //         value: 'OPENSTACK_SWIFT',
+        //        }]
+        //     }
+        //   ]
+        // },
+        {
+          type: 'select',
+          name: 'auth_version-OPENSTACK_SWIFT',
+          placeholder: helptext.auth_version_openstack_swift.placeholder,
+          tooltip: helptext.auth_version_openstack_swift.tooltip,
+          options: [
+            {
+              label: 'Auto(vX)',
+              value: 0
+            },
+            {
+              label: 'v1',
+              value: 1
+            },
+            {
+              label: 'v2',
+              value: 2
+            },
+            {
+              label: 'v3',
+              value: 3
+            }
+          ],
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
         // pcloud
         {
           type: 'input',
@@ -776,6 +903,108 @@ export class CloudCredentialsFormComponent {
             }
           ]
         },
+        {
+          type: 'input',
+          name: 'user_id-OPENSTACK_SWIFT',
+          placeholder: helptext.user_id_openstack_swift.placeholder,
+          tooltip: helptext.user_id_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }, {
+                name: 'auth_version-OPENSTACK_SWIFT',
+                value: 3,
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'domain-OPENSTACK_SWIFT',
+          placeholder: helptext.domain_openstack_swift.placeholder,
+          tooltip: helptext.domain_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }, {
+                name: 'auth_version-OPENSTACK_SWIFT',
+                value: 3,
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'tenant-OPENSTACK_SWIFT',
+          placeholder: helptext.tenant_openstack_swift.placeholder,
+          tooltip: helptext.tenant_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'teant_id-OPENSTACK_SWIFT',
+          placeholder: helptext.tenant_id_openstack_swift.placeholder,
+          tooltip: helptext.tenant_id_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'tenant_domain-OPENSTACK_SWIFT',
+          placeholder: helptext.tenant_domain_openstack_swift.placeholder,
+          tooltip: helptext.tenant_domain_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }, {
+                name: 'auth_version-OPENSTACK_SWIFT',
+                value: 3,
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'auth_token-OPENSTACK_SWIFT',
+          placeholder: helptext.auth_token_openstack_swift.placeholder,
+          tooltip: helptext.auth_token_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
       ]
     },
     { name: 'spacer', label: false, width: '2%' },
@@ -861,6 +1090,65 @@ export class CloudCredentialsFormComponent {
                }, {
                 name: 'advanced-S3',
                 value: true,
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'region-OPENSTACK_SWIFT',
+          placeholder: helptext.region_openstack_swift.placeholder,
+          tooltip: helptext.region_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'storage_url-OPENSTACK_SWIFT',
+          placeholder: helptext.storage_url_openstack_swift.placeholder,
+          tooltip: helptext.storage_url_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'select',
+          name: 'endpoint_type-OPENSTACK_SWIFT',
+          placeholder: helptext.endpoint_type_openstack_swift.placeholder,
+          tooltip: helptext.endpoint_type_openstack_swift.tooltip,
+          options: [
+            {
+              label: 'Public',
+              value: 'public'
+            },
+            {
+              label: 'Internal',
+              value: 'internal'
+            },
+            {
+              label: 'Admin',
+              value: 'admin'
+            }
+          ],
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
                }]
             }
           ]
@@ -1168,7 +1456,9 @@ export class CloudCredentialsFormComponent {
       if (field_name != 'client_id' && field_name != 'client_secret') {
         field_name += '-' + provider;
       }
-      entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+      if (entityForm.formGroup.controls[field_name]) {
+        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+      }
     }
   }
 
