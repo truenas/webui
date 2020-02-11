@@ -17,8 +17,8 @@ export default {
  Example: <i>pool1/dataset1/child1</i>. A recursive snapshot of\
  <i>pool1/dataset1</i> will include all child datasets except <i>child1</i>.'),
 
-    lifetime_value_placeholder: T('Snapshot Lifetime'),
-    lifetime_unit_tooltip: T('Define a length of time to retain the snapshot on this\
+    lifetime_placeholder: T('Snapshot Lifetime'),
+    lifetime_tooltip: T('Define a length of time to retain the snapshot on this\
  system. After the time expires, the snapshot is removed. Snapshots which have\
  been replicated to other systems are not affected.'),
 
