@@ -4,6 +4,7 @@ import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-list';
 
@@ -58,7 +59,8 @@ export class UserListComponent implements OnInit {
   }
 
   constructor(private router: Router,
-              protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService){
+              protected dialogService: DialogService, protected loader: AppLoaderService,
+              protected ws: WebSocketService, protected prefService: PreferencesService) {
   }
 
   ngOnInit() {
@@ -139,7 +141,6 @@ export class UserListComponent implements OnInit {
 
   resourceTransformIncomingRestData(d) {
     let data = Object.assign([], d);
-    
     this.ws.call('group.query').subscribe((res)=>{
       data.forEach(user => {
         const group = _.find(res, {"gid" : user.group.bsdgrp_gid});
@@ -155,7 +156,16 @@ export class UserListComponent implements OnInit {
                              {label:T("Email"), value:rows[i].email});
       };
       
-    })
+    });
+    if (this.prefService.preferences.hide_user_builtin) {
+      let newData = []
+      data.forEach((item) => {
+        if (!item.builtin) {
+          newData.push(item);
+        }
+      }) 
+      return data = newData;
+    }
     return data;
   }
 }

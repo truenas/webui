@@ -17,6 +17,8 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
   tableDisplayedColumns:any;
+  hide_user_builtin: boolean;
+  hide_group_builtin: boolean;
   dateFormat:string;
   timeFormat:string;
 }
@@ -38,6 +40,8 @@ export class PreferencesService {
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
     "tableDisplayedColumns":[],
+    "hide_user_builtin": true,
+    "hide_group_builtin": true,
     "dateFormat": 'YYYY-MM-DD',
     "timeFormat": 'HH:mm:ss'
   }

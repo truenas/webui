@@ -4,6 +4,7 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import helptext from '../../../../helptext/account/group-list';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -36,7 +37,24 @@ export class GroupListComponent {
     },
   };
 
-  constructor(private _router: Router, protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService) { }
+  constructor(private _router: Router, protected dialogService: DialogService, 
+    protected loader: AppLoaderService,protected ws: WebSocketService,
+    protected prefService: PreferencesService){ }
+
+  resourceTransformIncomingRestData(data) {
+    // Default setting is to hide builtin groups 
+    if (this.prefService.preferences.hide_group_builtin) {
+      let newData = []
+      data.forEach((item) => {
+        if (!item.builtin) {
+          newData.push(item);
+        }
+      }) 
+      return data = newData;
+    }
+    return data;
+  }
+
   afterInit(entityList: any) { this.entityList = entityList; }
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'delete' && row.builtin === true) {
