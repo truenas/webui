@@ -613,21 +613,22 @@ export class CloudCredentialsFormComponent {
           options: [
             {
               label: 'Auto(vX)',
-              value: 0
+              value: '0',
             },
             {
               label: 'v1',
-              value: 1
+              value: '1'
             },
             {
               label: 'v2',
-              value: 2
+              value: '2'
             },
             {
               label: 'v3',
-              value: 3
+              value: '3'
             }
           ],
+          value: '0',
           relation: [
             {
               action: 'SHOW',
@@ -917,7 +918,7 @@ export class CloudCredentialsFormComponent {
                 value: 'OPENSTACK_SWIFT',
                }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
-                value: 3,
+                value: '3',
                }]
             }
           ]
@@ -936,7 +937,7 @@ export class CloudCredentialsFormComponent {
                 value: 'OPENSTACK_SWIFT',
                }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
-                value: 3,
+                value: '3',
                }]
             }
           ]
@@ -946,6 +947,7 @@ export class CloudCredentialsFormComponent {
           name: 'tenant-OPENSTACK_SWIFT',
           placeholder: helptext.tenant_openstack_swift.placeholder,
           tooltip: helptext.tenant_openstack_swift.tooltip,
+          required: true,
           relation: [
             {
               action: 'SHOW',
@@ -958,9 +960,10 @@ export class CloudCredentialsFormComponent {
         },
         {
           type: 'input',
-          name: 'teant_id-OPENSTACK_SWIFT',
+          name: 'tenant_id-OPENSTACK_SWIFT',
           placeholder: helptext.tenant_id_openstack_swift.placeholder,
           tooltip: helptext.tenant_id_openstack_swift.tooltip,
+          required: true,
           relation: [
             {
               action: 'SHOW',
@@ -985,7 +988,7 @@ export class CloudCredentialsFormComponent {
                 value: 'OPENSTACK_SWIFT',
                }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
-                value: 3,
+                value: '3',
                }]
             }
           ]
@@ -1346,6 +1349,39 @@ export class CloudCredentialsFormComponent {
         driveIdCtrl.setValue(null);
       }
     });
+
+    const authCtrl = entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'];
+    const tenantCtrl = entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'];
+    const tenantIdCtrl = entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'];
+    entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.subscribe(
+      (res) => {
+        if (res === '1') {
+          this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
+          this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', false, entityForm);
+        } else {
+          if ((tenantCtrl.value === undefined || tenantCtrl.value === '') &&
+          (tenantIdCtrl.value === undefined || tenantIdCtrl.value === '')) {
+            this.setFieldRequired('tenant-OPENSTACK_SWIFT', true, entityForm);
+            this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', true, entityForm);
+          }
+        }
+      }
+    )
+
+    entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'].valueChanges.subscribe(
+      (res) => {
+        if (authCtrl.value !== '1') {
+          this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
+        }
+      }
+    )
+    entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'].valueChanges.subscribe(
+      (res) => {
+        if (authCtrl.value !== '1') {
+          this.setFieldRequired('tenant-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
+        }
+      }
+    )
   }
 
   verifyCredentials(value) {
@@ -1407,7 +1443,7 @@ export class CloudCredentialsFormComponent {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
           attr_name = item.split("-")[0];
-          attributes[attr_name] = value[item];
+          attributes[attr_name] = attr_name === 'auth_version' ? parseInt(value[item], 10) : value[item];
         }
         delete value[item];
       }
@@ -1457,7 +1493,7 @@ export class CloudCredentialsFormComponent {
         field_name += '-' + provider;
       }
       if (entityForm.formGroup.controls[field_name]) {
-        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+        entityForm.formGroup.controls[field_name].setValue(field_name == 'auth_version-OPENSTACK_SWIFT' ? entityForm.wsResponseIdx[i].toString() : entityForm.wsResponseIdx[i]);
       }
     }
   }
