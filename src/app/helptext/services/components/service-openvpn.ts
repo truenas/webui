@@ -70,6 +70,14 @@ export default {
                 value: 'SUBNET'
                 }
             ]
+        },
+        buttons : {
+            renew: T('Renew Static Key'),
+            download: T('Download Client Config')
+        },
+        static_dialog: {
+            title: T('New Static Key Settings'),
+            buttonTxt: T('Close')
         }
     }, 
     // Helptext for both components

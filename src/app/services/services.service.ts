@@ -40,8 +40,8 @@ export class ServicesService {
   generateOpenServerClientConfig(id: number, address: string) {
     return this.ws.call('openvpn.server.client_configuration_generation', [id, address]);
   }
-  renewStaticKey(server: string) {
-    return this.ws.call('openvpn.server.renew_static_key', [server]);
+  renewStaticKey() {
+    return this.ws.call('openvpn.server.renew_static_key');
   }
   updateOpenVPN(call, body) {
     return this.ws.call(call, [body]);

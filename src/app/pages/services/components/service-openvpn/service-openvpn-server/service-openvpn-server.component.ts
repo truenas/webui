@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ServicesService, DialogService} from '../../../../../services';
+import { ServicesService, DialogService, AppLoaderService } from '../../../../../services';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -148,18 +148,26 @@ export class ServiceOpenvpnServerComponent {
   public custActions: Array<any> = [
     {
       id : 'renew_key',
-      name : 'Renew Static Key',
+      name : helptext.server.buttons.renew,
       function : () => {
-        this.services.renewStaticKey('whatevs').subscribe((res) => {
-          console.log(res);
+        this.loader.open();
+        this.services.renewStaticKey().subscribe((res) => {
+          let msg = '';
+          for (let item in res) {
+            msg += `${item}: ${res[item]}<br />`
+          }
+          this.loader.close();
+          this.dialog.confirm(helptext.server.static_dialog.title, msg, true, 
+            helptext.server.static_dialog.buttonTxt, false, '','','','', true);
         }, err => {
+          this.loader.close();
           this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
         })
       }
     },
     {
       id : 'client_config',
-      name : 'Download Client Config',
+      name : helptext.server.buttons.download,
       function : () => {
         this.services.generateOpenServerClientConfig(this.certID, this.serverAddress).subscribe((res) => {
         }, err => {
@@ -169,7 +177,8 @@ export class ServiceOpenvpnServerComponent {
     }
   ];
 
-  constructor(protected services: ServicesService, protected dialog: DialogService) { }
+  constructor(protected services: ServicesService, protected dialog: DialogService,
+    protected loader: AppLoaderService) { }
 
   resourceTransformIncomingRestData(data) {
     return data;
@@ -212,9 +221,4 @@ export class ServiceOpenvpnServerComponent {
       this.serverAddress = res;
     })
   }
-
-  beforeSubmit(data) {
-    console.log(data)
-  }
-
 }
