@@ -1698,4 +1698,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     overflow: auto;
   }
 
+  app-general .form-select-spinner {
+    position: absolute;
+    top: -20px;
+    right: 45%;
+  }
+
+  app-general .form-checkbox-spinner {
+    position: absolute;
+  }
+
  } // end of ix theme

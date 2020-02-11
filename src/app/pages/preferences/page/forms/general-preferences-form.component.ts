@@ -169,22 +169,6 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
           value: false,
           tooltip: T('Reset all tables to display default columns.'),
           class:'inline'
-        },
-        {
-          type: 'checkbox',
-          name: 'hide_user_builtin',
-          placeholder: T('Hide Builtin Users'),
-          value: prefs.hide_user_builtin,
-          tooltip: T('Hide builtin users in table at <i>Accounts > Users</i>'),
-          class:'inline'
-        },
-        {
-          type: 'checkbox',
-          name: 'hide_group_builtin',
-          placeholder: T('Hide Builtin Groups'),
-          value: prefs.hide_group_builtin,
-          tooltip: T('Hide builtin groups in table at <i>Accounts > Groups</i>'),
-          class:'inline'
         }
       ]
     }

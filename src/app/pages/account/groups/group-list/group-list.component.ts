@@ -43,7 +43,7 @@ export class GroupListComponent {
 
   resourceTransformIncomingRestData(data) {
     // Default setting is to hide builtin groups 
-    if (this.prefService.preferences.hide_group_builtin) {
+    if (this.prefService.preferences.hide_builtin_groups) {
       let newData = []
       data.forEach((item) => {
         if (!item.builtin) {

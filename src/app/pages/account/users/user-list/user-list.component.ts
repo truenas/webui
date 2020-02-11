@@ -157,7 +157,7 @@ export class UserListComponent implements OnInit {
       };
       
     });
-    if (this.prefService.preferences.hide_user_builtin) {
+    if (this.prefService.preferences.hide_builtin_users) {
       let newData = []
       data.forEach((item) => {
         if (!item.builtin) {
