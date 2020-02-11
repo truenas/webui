@@ -17,6 +17,7 @@ export class ReportingComponent {
   public isCpuCheckboxChecked: boolean;
   public graphPoints: any;
   public graphAge: any;
+  public graphite_separateinstances: any;
 
   custActions: any[] = [
     {
@@ -24,6 +25,7 @@ export class ReportingComponent {
       name:helptext.reset_button,
       function : () => {
         this.entityForm.formGroup.controls['cpu_in_percentage'].setValue(false);
+        this.entityForm.formGroup.controls['graphite_separateinstances'].setValue(false);
         this.entityForm.formGroup.controls['graphite'].setValue(this.entityForm.wsResponse['graphite']);
         this.entityForm.formGroup.controls['graph_age'].setValue(12);
         this.entityForm.formGroup.controls['graph_points'].setValue(1200);
@@ -43,6 +45,12 @@ export class ReportingComponent {
           name: "cpu_in_percentage",
           placeholder: helptext.cpu_in_percentage_placeholder,
           tooltip: helptext.cpu_in_percentage_tooltip
+        },
+        {
+          type: "checkbox",
+          name: "graphite_separateinstances",
+          placeholder:helptext.graphite_separateinstances_placeholder,
+          tooltip: helptext.graphite_separateinstances_tooltip
         },
         {
           type: "input",
@@ -81,6 +89,7 @@ export class ReportingComponent {
     this.graphPoints = data.graph_points;
     this.graphAge = data.graph_age;
     this.isCpuCheckboxChecked = data.cpu_in_percentage;
+    this.graphite_separateinstances = data.graphite_separateinstances;
     return data;
   }
 

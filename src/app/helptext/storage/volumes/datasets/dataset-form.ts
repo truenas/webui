@@ -45,9 +45,9 @@ dataset_form_refquota_critical_tooltip: T('Apply the same quota critical \
  alert settings as the parent dataset.'),
 dataset_form_refquota_critical_validation: [Validators.min(0)],
 
-dataset_form_quota_placeholder: 'Quota for this dataset and all children',
-dataset_form_quota_tooltip: 'Define a maximum size for both the dataset and any child\
- datasets. Enter <i>0</i> to remove the quota.',
+dataset_form_quota_placeholder: T('Quota for this dataset and all children'),
+dataset_form_quota_tooltip: T('Define a maximum size for both the dataset and any child\
+ datasets. Enter <i>0</i> to remove the quota.'),
 
 dataset_form_quota_warning_placeholder: T('Quota warning alert at, %'),
 dataset_form_quota_warning_tooltip: T('0=Disabled, blank=inherit'),
@@ -106,5 +106,7 @@ dataset_form_name_section_placeholder: T("Name and Options"),
 dataset_form_other_section_placeholder: T("Other Options"),
 
 dataset_form_inherit: T('Inherit'),
-dataset_form_default: T('Default')
+dataset_form_default: T('Default'),
+
+dataset_form_quota_too_small: T("Quota size is too small, enter a value of 1 GiB or larger."),
 }

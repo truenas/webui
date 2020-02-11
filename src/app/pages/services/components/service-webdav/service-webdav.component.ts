@@ -1,9 +1,10 @@
-import { ApplicationRef, Component, Injector, OnInit, OnDestroy } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { RestService, SystemGeneralService, WebSocketService, ValidationService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-webdav';
 
 @Component({
@@ -12,63 +13,70 @@ import helptext from '../../../../helptext/services/components/service-webdav';
   providers : [ SystemGeneralService ]
 })
 
-export class ServiceWebdavComponent implements OnInit, OnDestroy {
+export class ServiceWebdavComponent implements OnDestroy {
 
   //protected resource_name: string = 'services/webdav';
   protected queryCall: string = 'webdav.config';
   protected editCall: string = 'webdav.update';
   protected route_success: string[] = [ 'services' ];
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
     {
-      type : 'select',
-      name : 'protocol',
-      placeholder : helptext.protocol_placeholder,
-      tooltip : helptext.protocol_tooltip,
-      options : helptext.protocol_options
-    },
-    {
-      type : 'input',
-      name : 'tcpport',
-      placeholder : helptext.tcpport_placeholder,
-      tooltip : helptext.tcpport_tooltip,
-    },
-    {
-      type : 'input',
-      name : 'tcpportssl',
-      placeholder : helptext.tcpportssl_placeholder,
-      tooltip : helptext.tcpportssl_tooltip,
-    },
-    {
-      type : 'select',
-      name : 'certssl',
-      placeholder : helptext.certssl_placeholder,
-      tooltip : helptext.certssl_tooltip,
-      options: helptext.certssl_options
-    },
-    {
-      type : 'select',
-      name : 'htauth',
-      placeholder : helptext.htauth_placeholder,
-      tooltip : helptext.htauth_tooltip,
-      options : helptext.htauth_options
-    },
-    {
-      type : 'input',
-      name : 'password',
-      placeholder : helptext.password_placeholder,
-      togglePw: true,
-      tooltip : helptext.password_tooltip,
-      inputType : 'password',
-      validation : helptext.password_validation
-    },
-    {
-      type : 'input',
-      name : 'password2',
-      placeholder : helptext.password2_placeholder,
-      inputType : 'password'
-    },
-  ];
+      name: helptext.fieldset_title,
+      width: "100%",
+      label: true,
+      config: [
+      {
+        type : 'select',
+        name : 'protocol',
+        placeholder : helptext.protocol_placeholder,
+        tooltip : helptext.protocol_tooltip,
+        options : helptext.protocol_options
+      },
+      {
+        type : 'input',
+        name : 'tcpport',
+        placeholder : helptext.tcpport_placeholder,
+        tooltip : helptext.tcpport_tooltip,
+      },
+      {
+        type : 'input',
+        name : 'tcpportssl',
+        placeholder : helptext.tcpportssl_placeholder,
+        tooltip : helptext.tcpportssl_tooltip,
+      },
+      {
+        type : 'select',
+        name : 'certssl',
+        placeholder : helptext.certssl_placeholder,
+        tooltip : helptext.certssl_tooltip,
+        options: [{label: '---', value: null}]
+      },
+      {
+        type : 'select',
+        name : 'htauth',
+        placeholder : helptext.htauth_placeholder,
+        tooltip : helptext.htauth_tooltip,
+        options : helptext.htauth_options
+      },
+      {
+        type : 'input',
+        name : 'password',
+        placeholder : helptext.password_placeholder,
+        togglePw: true,
+        tooltip : helptext.password_tooltip,
+        inputType : 'password',
+      },
+      {
+        type : 'input',
+        name : 'password2',
+        placeholder : helptext.password2_placeholder,
+        inputType : 'password',
+        validation: this.validationService.matchOtherValidator('password')
+      },
+    ]
+  }];
 
   private webdav_protocol: any;
   private webdav_protocol_subscription: any;
@@ -89,20 +97,8 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
       protected systemGeneralService: SystemGeneralService,
+      protected validationService: ValidationService
   ) {}
-
-  ngOnInit() {
-    this.webdav_certssl =
-      _.find(this.fieldConfig, {'name' : 'certssl'});
-    this.systemGeneralService.getCertificates().subscribe((res) => {
-      if (res.length > 0) {
-        res.forEach((item) => {
-          this.webdav_certssl.options.push(
-              {label : item.name, value : item.id});
-        });
-      }
-    });
-  }
 
   resourceTransformIncomingRestData(data) {
     const certificate = data['certssl'];
@@ -129,6 +125,17 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
     });
     this.webdav_htauth_subscription = this.webdav_htauth.valueChanges.subscribe((value) => {
       this.handleAuth(value);
+    });
+
+    this.webdav_certssl =
+      _.find(this.fieldConfig, {'name' : 'certssl'});
+    this.systemGeneralService.getCertificates().subscribe((res) => {
+      if (res.length > 0) {
+        res.forEach((item) => {
+          this.webdav_certssl.options.push(
+            {label : item.name, value : item.id});
+        });
+      }
     });
   }
 

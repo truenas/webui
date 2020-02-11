@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
 import helptext from '../../../helptext/vm/vm-list';
@@ -33,6 +34,8 @@ export class VMListComponent {
         { name: T('State'), prop: 'state', always_display: true, toggle: true },
         { name: T('Autostart'), prop: 'autostart', selectable: true },
         { name: T("Virtual CPUs"), prop: 'vcpus', hidden: true },
+        { name: T("Cores"), prop: 'cores', hidden: true },
+        { name: T("Threads"), prop: 'threads', hidden: true },
         { name: T("Memory Size"), prop: 'memory', hidden: true },
         { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
         { name: T('System Clock'), prop: 'time', hidden: true },
@@ -251,7 +254,52 @@ export class VMListComponent {
             icon: "delete",
             label: T("Delete"),
             onClick: delete_row => {
-                this.entityList.doDelete(delete_row);
+                const parent = this;
+                const conf: DialogFormConfiguration = {
+                    title: T('Delete Virtual Machine'),
+                    fieldConfig: [
+                        {
+                            type: 'checkbox',
+                            name: 'zvols',
+                            placeholder: T('Delete Virtual Machine Data?'),
+                            value: false,
+                            tooltip: T('Set to remove the data associated with this \
+ Virtual Machine (which will result in data loss if the data is not backed up). Unset to \
+ leave the data intact.')
+                        },
+                        {
+                            type: 'checkbox',
+                            name: 'force',
+                            placeholder: T('Force Delete?'),
+                            value: false,
+                            tooltip: T('Set to ignore the Virtual \
+ Machine status during the delete operation. Unset to prevent deleting \
+ the Virtual Machine when it is still active or has an undefined state.')
+                        },
+                        {
+                            type: 'input',
+                            name: 'confirm_name',
+                            placeholder: '',
+                            maskValue: delete_row.name,
+                            required: true,
+                            validation : [regexValidator(new RegExp(delete_row.name))],
+                            hideErrMsg: true
+                        }
+                    ],
+                    saveButtonText: T('Delete'),
+                    customSubmit: function (entityDialog) {
+                        entityDialog.dialogRef.close(true);
+                        const params = [
+                            delete_row.id,
+                            {
+                                zvols: entityDialog.formValue.zvols,
+                                force: entityDialog.formValue.force
+                            }
+                        ];
+                        parent.doRowAction(delete_row, parent.wsDelete, params, true);
+                    }                  
+                }
+                this.dialogService.dialogForm(conf);
             }
         },
         {

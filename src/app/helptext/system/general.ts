@@ -92,6 +92,16 @@ export const helptext_system_general = {
     tooltip: T("Select a time zone.")
   },
 
+  date_format: {
+    placeholder: T('Date Format'),
+    tooltip: T('Choose a date format.')
+  },
+
+  time_format: {
+    placeholder: T('Time Format'),
+    tooltip: T('Choose a time format.')
+  },
+
   stg_sysloglevel: {
     placeholder: T("Syslog level"),
     tooltip: T(
@@ -218,5 +228,10 @@ export const helptext_system_general = {
   config_download: {
     failed_title: T("Error Downloading File"),
     failed_message: T("Config could not be downloaded")
+  },
+
+  config_upload: {
+    title: T('Upload Config'),
+    message: T('Uploading...')
   }
 };

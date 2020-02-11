@@ -37,6 +37,7 @@ export interface InputTableConf {
   custActions?: any[];
   multiActions?:any[];
   multiActionsIconsOnly?:boolean;
+  noActions?: boolean;
   config?: any;
   confirmDeleteDialog?: any;
   checkbox_confirm?: any;
@@ -157,6 +158,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private excuteDeletion = false;
   private needRefreshTable = false;
 
+  public hasActions = true;
+  public sortKey: string;
+
   protected toDeleteRow: any;
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
@@ -165,11 +169,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
       : this.conf.detailRowHeight || 100;
 
-
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService,
+    public storageService: StorageService, protected job: JobService, protected prefService: PreferencesService,
     protected matDialog: MatDialog) {
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
@@ -185,7 +188,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
     this.setTableHeight();
+    this.hasActions = this.conf.noActions === true ? false : true;
 
+    this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props) ? this.conf.config.deleteMsg.key_props[0] : this.conf.columns[0].prop;
     setTimeout(async() => {
       if (this.conf.prerequisite) {
         await this.conf.prerequisite().then(
@@ -480,6 +485,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.rows = this.generateRows(res);
+    this.storageService.tableSorter(this.rows, this.sortKey, 'asc')
 
     if (this.conf.dataHandler) {
       this.conf.dataHandler(this);
@@ -831,7 +837,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paginationPageIndex = 0;
     let sort = event.sorts[0],
       rows = this.currentRows;
-    this.sorter.tableSorter(rows, sort.prop, sort.dir);
+    this.storageService.tableSorter(rows, sort.prop, sort.dir);
     this.rows = rows;
     this.setPaginationInfo();
     setTimeout(() => {
@@ -1028,10 +1034,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetTableToStartingHeight() {
-    if (!this.startingHeight) {
-      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }
-    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+    setTimeout(() => {
+      if (!this.startingHeight) {
+        this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+      }
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+    }, 100);
   }
 
   updateTableHeightAfterDetailToggle() {
@@ -1043,7 +1051,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 0);
+    }, 100);
   }
 
   getButtonClass(prop) {

@@ -10,7 +10,6 @@ password_tooltip : T('Enter the password used to connect to the IPMI\
  interface from a web browser.'),
 
 conf_password_placeholder: T('Confirm Password'),
-conf_password_validation : [ matchOtherValidator('password') ],
 
 dhcp_placeholder : T('DHCP'),
 dhcp_tooltip : T('Use DHCP. Unset to manually configure a static IPv4 connection.'),
@@ -28,6 +27,9 @@ ip_error: T('Enter a valid IPv4 address.'),
 
 vlan_placeholder : T('VLAN ID'),
 vlan_tooltip : T('If the IPMI out-of-band management interface is on a\
- different VLAN from the management network, enter the IPMI VLAN.')
+ different VLAN from the management network, enter the IPMI VLAN.'),
+
+ipmi_configuration: T('IPMI Configuration'),
+ipmi_password_reset: T('IPMI Password Reset')
 
 }

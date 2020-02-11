@@ -20,5 +20,7 @@ export default {
  it will be stored alone. If only a private key is pasted, the public key will be automatically \
  calculated and entered in the public key field. \
  Click <b>Generate Keypair</b> to create a new keypair. \
- Encrypted keypairs or keypairs with passphrases are not supported.')
+ Encrypted keypairs or keypairs with passphrases are not supported.'),
+   download_public: T('Download Public Key'),
+   download_private: T('Download Private Key')
 }

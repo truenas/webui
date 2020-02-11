@@ -4,7 +4,7 @@ import { Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import helptext from '../../../../helptext/sharing/iscsi/iscsi-wizard';
+import { helptext_sharing_iscsi } from '../../../../helptext/sharing/iscsi/iscsi';
 import { IscsiService, WebSocketService, NetworkService, StorageService } from '../../../../services/';
 import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { CloudCredentialService } from '../../../../services/cloudcredential.service';
@@ -49,13 +49,13 @@ export class IscsiWizardComponent {
 
     protected wizardConfig: Wizard[] = [
         {
-            label: helptext.step1_label,
+            label: helptext_sharing_iscsi.step1_label,
             fieldConfig: [
                 {
                     type: 'input',
                     name: 'name',
-                    placeholder: helptext.name_placeholder,
-                    tooltip: helptext.name_tooltip,
+                    placeholder: helptext_sharing_iscsi.name_placeholder,
+                    tooltip: helptext_sharing_iscsi.name_tooltip,
                     required: true,
                     validation: [
                         Validators.required,
@@ -65,8 +65,8 @@ export class IscsiWizardComponent {
                 {
                     type: 'select',
                     name: 'type',
-                    placeholder: helptext.type_placeholder,
-                    tooltip: helptext.type_tooltip,
+                    placeholder: helptext_sharing_iscsi.extent_placeholder_type,
+                    tooltip: helptext_sharing_iscsi.extent_tooltip_type,
                     options: [
                         {
                             label: 'Device',
@@ -84,8 +84,8 @@ export class IscsiWizardComponent {
                     explorerType: 'file',
                     initial: '/mnt',
                     name: 'path',
-                    placeholder: helptext.file_placeholder,
-                    tooltip: helptext.file_tooltip,
+                    placeholder: helptext_sharing_iscsi.extent_placeholder_path,
+                    tooltip: helptext_sharing_iscsi.extent_tooltip_path,
                     isHidden: false,
                     disabled: false,
                     required: true,
@@ -94,8 +94,8 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'filesize',
-                    placeholder: helptext.filesize_placeholder,
-                    tooltip: helptext.filesize_tooltip,
+                    placeholder: helptext_sharing_iscsi.extent_placeholder_filesize,
+                    tooltip: helptext_sharing_iscsi.extent_tooltip_filesize,
                     isHidden: false,
                     disabled: false,
                     required: true,
@@ -128,8 +128,8 @@ export class IscsiWizardComponent {
                 {
                     type: 'select',
                     name: 'disk',
-                    placeholder: helptext.disk_placeholder,
-                    tooltip: helptext.disk_tooltip,
+                    placeholder: helptext_sharing_iscsi.disk_placeholder,
+                    tooltip: helptext_sharing_iscsi.disk_tooltip,
                     options: [{
                         label: 'Create New',
                         value: 'NEW'
@@ -145,8 +145,8 @@ export class IscsiWizardComponent {
                     explorerType: 'dataset',
                     initial: '',
                     name: 'dataset',
-                    placeholder: helptext.dataset_placeholder,
-                    tooltip: helptext.dataset_tooltip,
+                    placeholder: helptext_sharing_iscsi.dataset_placeholder,
+                    tooltip: helptext_sharing_iscsi.dataset_tooltip,
                     hasErrors: false,
                     errors: 'Pool/Dataset not exist',
                     required: true,
@@ -156,8 +156,8 @@ export class IscsiWizardComponent {
                     type: 'input',
                     name: 'volsize',
                     inputType: 'number',
-                    placeholder: helptext.volsize_placeholder,
-                    tooltip: helptext.volsize_tooltip,
+                    placeholder: helptext_sharing_iscsi.volsize_placeholder,
+                    tooltip: helptext_sharing_iscsi.volsize_tooltip,
                     validation: [Validators.required, Validators.min(0)],
                     required: true,
                     class: 'inline',
@@ -188,16 +188,16 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'volblocksize',
-                    placeholder: helptext.volblocksize_placeholder,
-                    tooltip: helptext.volblocksize_tooltip,
+                    placeholder: helptext_sharing_iscsi.volblocksize_placeholder,
+                    tooltip: helptext_sharing_iscsi.volblocksize_tooltip,
                     isHidden: true,
                 },
                 // use for group
                 {
                     type: 'select',
                     name: 'usefor',
-                    placeholder: helptext.usefor_placeholder,
-                    tooltip: helptext.usefor_tooltip,
+                    placeholder: helptext_sharing_iscsi.usefor_placeholder,
+                    tooltip: helptext_sharing_iscsi.usefor_tooltip,
                     options: [
                         {
                             label: "VMware: Extent block size 512b, TPC enabled, no Xen compat mode, SSD speed",
@@ -240,13 +240,13 @@ export class IscsiWizardComponent {
             ]
         },
         {
-            label: helptext.step2_label,
+            label: helptext_sharing_iscsi.step2_label,
             fieldConfig: [
                 {
                     type: 'select',
                     name: 'portal',
-                    placeholder: helptext.portal_placeholder,
-                    tooltip: helptext.portal_tooltip,
+                    placeholder: helptext_sharing_iscsi.portal_placeholder,
+                    tooltip: helptext_sharing_iscsi.portal_tooltip,
                     options: [
                         {
                             label: 'Create New',
@@ -259,8 +259,8 @@ export class IscsiWizardComponent {
                 {
                     type: 'select',
                     name: 'discovery_authmethod',
-                    placeholder: helptext.discovery_authmethod_placeholder,
-                    tooltip: helptext.discovery_authmethod_tooltip,
+                    placeholder: helptext_sharing_iscsi.portal_form_placeholder_discovery_authmethod,
+                    tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authmethod,
                     options: [
                         {
                             label: 'NONE',
@@ -282,8 +282,8 @@ export class IscsiWizardComponent {
                 {
                     type: 'select',
                     name: 'discovery_authgroup',
-                    placeholder: helptext.discovery_authgroup_placeholder,
-                    tooltip: helptext.discovery_authgroup_tooltip,
+                    placeholder: helptext_sharing_iscsi.portal_form_placeholder_discovery_authgroup,
+                    tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authgroup,
                     options: [
                         {
                             label: 'None',
@@ -301,8 +301,8 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'tag',
-                    placeholder: helptext.tag_placeholder,
-                    tooltip: helptext.tag_tooltip,
+                    placeholder: helptext_sharing_iscsi.authaccess_placeholder_tag,
+                    tooltip: helptext_sharing_iscsi.authaccess_tooltip_tag,
                     inputType: 'number',
                     min: 0,
                     required: true,
@@ -312,8 +312,8 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'user',
-                    placeholder: helptext.user_placeholder,
-                    tooltip: helptext.user_tooltip,
+                    placeholder: helptext_sharing_iscsi.authaccess_placeholder_user,
+                    tooltip: helptext_sharing_iscsi.authaccess_tooltip_user,
                     required: true,
                     isHidden: true,
                     disabled: true,
@@ -321,8 +321,8 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'secret',
-                    placeholder: helptext.secret_placeholder,
-                    tooltip: helptext.secret_tooltip,
+                    placeholder: helptext_sharing_iscsi.authaccess_placeholder_secret,
+                    tooltip: helptext_sharing_iscsi.authaccess_tooltip_secret,
                     inputType: 'password',
                     togglePw: true,
                     required: true,
@@ -338,7 +338,7 @@ export class IscsiWizardComponent {
                 {
                     type: 'input',
                     name: 'secret_confirm',
-                    placeholder: helptext.secret_confirm_placeholder,
+                    placeholder: helptext_sharing_iscsi.authaccess_placeholder_secret_confirm,
                     inputType: 'password',
                     isHidden: true,
                     disabled: true,
@@ -350,8 +350,8 @@ export class IscsiWizardComponent {
                         {
                             type: 'select',
                             name: 'ip',
-                            placeholder: helptext.ip_placeholder,
-                            tooltip: helptext.ip_tooltip,
+                            placeholder: helptext_sharing_iscsi.portal_form_placeholder_ip,
+                            tooltip: helptext_sharing_iscsi.portal_form_tooltip_ip,
                             options: [],
                             class: 'inline',
                             width: '60%',
@@ -361,8 +361,8 @@ export class IscsiWizardComponent {
                         {
                             type: 'input',
                             name: 'port',
-                            placeholder: helptext.port_placeholder,
-                            tooltip: helptext.port_tooltip,
+                            placeholder: helptext_sharing_iscsi.portal_form_placeholder_port,
+                            tooltip: helptext_sharing_iscsi.portal_form_tooltip_port,
                             value: '3260',
                             class: 'inline',
                             width: '30%',
@@ -376,21 +376,21 @@ export class IscsiWizardComponent {
             ]
         },
         {
-            label: helptext.step3_label,
+            label: helptext_sharing_iscsi.step3_label,
             fieldConfig: [
                 {
                     type: 'input',
                     name: 'initiators',
-                    placeholder: helptext.initiators_placeholder,
-                    tooltip: helptext.initiators_tooltip,
+                    placeholder: helptext_sharing_iscsi.initiators_placeholder,
+                    tooltip: helptext_sharing_iscsi.initiators_tooltip,
                     value: '',
                     inputType: 'textarea',
                 },
                 {
                     type: 'input',
                     name: 'auth_network',
-                    placeholder: helptext.auth_network.placeholder,
-                    tooltip: helptext.auth_network.tooltip,
+                    placeholder: helptext_sharing_iscsi.auth_network.placeholder,
+                    tooltip: helptext_sharing_iscsi.auth_network.tooltip,
                     value: '',
                     hasErrors: false,
                     inputType: 'textarea',
@@ -896,7 +896,9 @@ export class IscsiWizardComponent {
             let counter = 0;
             if (arr) {
                 arr.forEach((item) => {
-                    if (!self.networkService.authNetworkValidator(item, self.networkService.ipv4_or_ipv6_cidr)) counter++;
+                    if (!self.networkService.authNetworkValidator(item, self.networkService.ipv4_or_ipv6_cidr)) {
+                        counter++;
+                    }
                 });
             }
 
@@ -906,7 +908,7 @@ export class IscsiWizardComponent {
         
             if (errors) {
               config.hasErrors = true;
-              config.errors = helptext[name].error;
+              config.errors = helptext_sharing_iscsi[name].error;
             } else {
               config.hasErrors = false;
               config.errors = '';

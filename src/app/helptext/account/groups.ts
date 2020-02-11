@@ -32,4 +32,7 @@ allow_placeholder: T('Allow Duplicate GIDs'),
 allow_tooltip: T('<b>Not recommended.</b> Allow more than one group to \
  have the same group ID.'),
 
+smb_placeholder: T('Samba Authentication'),
+smb_tooltip: T('Set to allow group to be used for Samba permissions and authentication.')
+
 }

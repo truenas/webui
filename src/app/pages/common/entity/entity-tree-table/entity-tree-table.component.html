@@ -26,6 +26,7 @@
 			</td>
 			<td *ngIf="showActions && rowData.actions">
 				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}"
+				(click)="conf.clickAction ? conf.clickAction(rowData) : clickAction()"
 				ix-auto
 				ix-auto-type="options"
 				ix-auto-identifier="{{rowData.name}}">more_vert</mat-icon>

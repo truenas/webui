@@ -89,6 +89,7 @@ export interface Formconfiguration {
   preHandler?;
   initialCount?
   initialCount_default?;
+  responseOnSubmit?;
 
   goBack?();
   onSuccess?(res);
@@ -206,9 +207,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.resourceName = this.resourceName + this.pk + '/';
           }      
         } else {
-          if (this.conf.addCall) { console.log('add')
+          if (this.conf.saveSubmitText === undefined) {
+            this.saveSubmitText = T('Submit');
+          }
+          if (this.conf.addCall) {
             this.submitFunction = this.addCall;
-          } else { console.log('here')
+          } else {
             this.submitFunction = this.addSubmit;
           }
           this.isNew = true;
@@ -511,6 +515,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
                             if (this.conf.afterSubmit) {
                               this.conf.afterSubmit(value);
+                            }
+                            if (this.conf.responseOnSubmit) {
+                              this.conf.responseOnSubmit(res);
                             }
                           }
 

@@ -62,8 +62,18 @@ export const helptext_system_support = {
 
   email: {
     placeholder: T("Email"),
-    tooltip: T("Enter the email of the contact person."),
+    tooltip: T("Enter the email of the contact person. Use the format <i>name</i>@<i>domain.com</i>."),
     validation: [Validators.required, Validators.email]
+  },
+
+  cc: {
+    placeholder: T("CC"),
+    tooltip: T("Email addresses to receive copies of iXsystems Support \
+  messages about this issue. Use the format <i>name</i>@<i>domain.com</i> \
+  and a comma \(,\) to separate each address."),
+    err: T('Email addresses must be entered in the format \
+  <i>local-name</i>@<i>domain.com<i> with a comma \(,\) separating each \
+  address.')
   },
 
   phone: {

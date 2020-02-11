@@ -8,6 +8,9 @@ export class DocsService {
     constructor(public ws: WebSocketService) {  }
 
     docReplace(message):string {
+        // I really hate this but for some reason # markers are getting a "\" appended to them by the translate service now 
+        message = message.replace(/\\#/g, "#");
+
         for (const url in urls) {
             const replace = new RegExp("--" + url + "--", "g");
             message = message.replace(replace, urls[url]);

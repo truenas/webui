@@ -103,7 +103,8 @@ export class Services implements OnInit {
       this.displayAll();
     } else {
       this.cards = this.cache.filter((card) => {
-        const result = card[key].toLowerCase().indexOf(query.toLowerCase()) > -1;
+        const result = card[key].toLowerCase().replace(/[.]/g, '').replace(/[ ]/g, '')
+          .indexOf(query.toLowerCase().replace(/[.]/g, '').replace(/[ ]/g, '')) > -1;
         return result;
       });
     }

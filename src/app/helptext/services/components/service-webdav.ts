@@ -26,9 +26,6 @@ certssl_placeholder : T('Webdav SSL Certificate'),
 certssl_tooltip : T('Select the <a href="--docurl--/system.html#certificates"\
  target="_blank">SSL certificate</a> to use for\
  encrypted connections.'),
-certssl_options: [
-  {label: '---', value: null}
-],
 
 htauth_placeholder : T('HTTP Authentication'),
 htauth_tooltip : T('<i>Basic Authentication</i> is unencrypted.\
@@ -42,7 +39,7 @@ htauth_options : [
 password_placeholder : T('Webdav Password'),
 password_tooltip : T('The default of <i>davtest</i> is recommended to\
  change. <i>davtest</i> is a known value.'),
-password_validation : [ matchOtherValidator('password2') ],
 
-password2_placeholder : T('Confirm Password')
+password2_placeholder : T('Confirm Password'),
+fieldset_title: T('WebDAV Configuration')
 }

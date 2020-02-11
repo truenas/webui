@@ -14,6 +14,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../../../pages/common/entity/utils';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-manualupdate',
@@ -82,14 +83,14 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     private systemService: SystemGeneralService,
   ) {
     super();
-    
+
     this.core.register({
      observerClass: this,
      eventName: "SysInfo"
     }).subscribe((evt: CoreEvent) => {
        _.find(this.fieldConfig, {name: 'version'}).paraText += evt.data.version;
     });
- 
+
     this.core.emit({name: "SysInfoRequest", sender:this});
   }
 
@@ -129,7 +130,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         })
-  
+
       })
     })
 
@@ -148,6 +149,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
 
 
   customSubmit(entityForm: any) {
+    this.save_button_enabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.manual_update_action }, disableClose: true });
@@ -174,21 +176,25 @@ export class ManualUpdateComponent extends ViewControllerComponent {
           };
         } else  {
           this.dialogService.closeAllDialogs();
-          this.router.navigate(['/']); 
-          this.dialogService.confirm(helptext.ha_update.complete_title, 
-            helptext.ha_update.complete_msg, true, 
+          this.router.navigate(['/']);
+          this.dialogService.confirm(helptext.ha_update.complete_title,
+            helptext.ha_update.complete_msg, true,
             helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
             });
         }
       })
       this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
         this.dialogRef.close(false);
-        this.dialogService.errorReport(helptext.manual_update_error_dialog.message, 
-          `${prefailure.status.toString()} ${prefailure.statusText}`)
+        this.dialogService.errorReport(helptext.manual_update_error_dialog.message,
+          `${prefailure.status.toString()} ${prefailure.statusText}`);
+          this.save_button_enabled = true;
       })
-      this.dialogRef.componentInstance.failure.subscribe((failure)=>{
-        this.dialogRef.close(false);
-        this.dialogService.errorReport(failure.error,failure.state,failure.exception)
+      this.dialogRef.componentInstance.failure
+        .pipe(take(1))
+        .subscribe((failure)=>{
+          this.dialogRef.close(false);
+          this.dialogService.errorReport(failure.error,failure.state,failure.exception);
+          this.save_button_enabled = true;
       })
     })
   }

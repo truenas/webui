@@ -40,7 +40,7 @@ export class PluginsComponent {
   public activatedPool: any;
 
   public columns: Array<any> = [
-    { name: T('Jail'), prop: 'name', always_display: true },
+    { name: T('Jail'), prop: 'name', always_display: true, icon: 'icon'},
     { name: T('Status'), prop: 'state' },
     { name: T('Admin Portals'), prop: 'admin_portals'},
     { name: T('IPv4 Address'), prop: 'ip4', hidden: true },
@@ -71,6 +71,7 @@ export class PluginsComponent {
   };
 
   protected cardHeaderComponent = AvailablePluginsComponent;
+  protected availablePlugins;
 
   public multiActions: Array<any> = [
     {
@@ -438,29 +439,7 @@ export class PluginsComponent {
       label: T("MANAGE"),
       icon: 'settings',
       onClick: (row) => {
-        if (row.admin_portals.length > 1) {
-          const conf: DialogFormConfiguration = {
-            title: helptext.portal_dialog.title,
-            fieldConfig: [
-              {
-                type: 'select',
-                name: 'admin_portal',
-                placeholder: helptext.portal_dialog.admin_portal_placeholder,
-                options: row.admin_portals ? row.admin_portals.map(item => {return {label: item, value: item}}) : [],
-                value: row.admin_portals[0]
-              }
-            ],
-            saveButtonText: helptext.portal_dialog.saveButtonText,
-            customSubmit: function (entityDialog) {
-              const value = entityDialog.formValue;
-              window.open(value.admin_portal);
-              entityDialog.dialogRef.close(true);
-            }
-          }
-          this.dialogService.dialogForm(conf);
-        } else {
-          window.open(row.admin_portals);
-        }
+        this.gotoAdminPortal(row);
       }
     },
     {
@@ -559,6 +538,7 @@ export class PluginsComponent {
   resourceTransformIncomingRestData(data) {
     return data.map(plugin =>  {
       plugin['boot'] = plugin['boot'] === 'on' ? true : false;
+      plugin['icon'] = _.find(this.availablePlugins, {plugin: plugin.plugin}).icon;
       return plugin;
     });
   }
@@ -578,5 +558,37 @@ export class PluginsComponent {
         this.loader.close();
         new EntityUtils().handleWSError(this, err, this.dialogService);
       });
+  }
+
+  gotoAdminPortal(row) {
+    if (row.admin_portals.length > 1) {
+      const conf: DialogFormConfiguration = {
+        title: helptext.portal_dialog.title,
+        fieldConfig: [
+          {
+            type: 'select',
+            name: 'admin_portal',
+            placeholder: helptext.portal_dialog.admin_portal_placeholder,
+            options: row.admin_portals ? row.admin_portals.map(item => {return {label: item, value: item}}) : [],
+            value: row.admin_portals[0]
+          }
+        ],
+        saveButtonText: helptext.portal_dialog.saveButtonText,
+        customSubmit: function (entityDialog) {
+          const value = entityDialog.formValue;
+          window.open(value.admin_portal);
+          entityDialog.dialogRef.close(true);
+        }
+      }
+      this.dialogService.dialogForm(conf);
+    } else {
+      window.open(row.admin_portals);
+    }
+  }
+
+  iconAction(row) {
+    if (row.state === "up" && row.admin_portals.length > 0) {
+      this.gotoAdminPortal(row);
+    }
   }
 }

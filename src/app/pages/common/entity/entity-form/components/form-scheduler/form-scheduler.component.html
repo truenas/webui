@@ -21,7 +21,7 @@
     cdkConnectedOverlay
     [cdkConnectedOverlayOrigin]="trigger"
     [cdkConnectedOverlayOpen]="isOpen">
-  <div  class="mat-card advanced-date-picker" role="dialog">
+  <mat-card  class="mat-card advanced-date-picker" role="dialog">
     <div class="mat-calendar-content">
       <h4 class="preview-label">{{"Schedule Preview" | translate}}
         <div class="controls">
@@ -42,7 +42,7 @@
       <mat-divider id="spacer"></mat-divider>
       <ul class="schedule-list" #preview>
         <ng-container *ngFor="let date of generatedSchedule;">
-          <li>{{date | date: 'E LLL  d y h:mm z' }}</li>
+          <li>{{date | date: ngDateFormat }}</li>
         </ng-container>
       </ul>
     </div>
@@ -62,7 +62,10 @@
       <mat-divider></mat-divider>
 
       <section style="text-align:left;" class="m-h-d">
-        <h4 class="preview-label"><span *ngIf="!config.noMinutes">Minutes/</span>Hours/Days</h4>
+        <div class="preview-label">
+          <h4 class="preview-label"><span *ngIf="!config.noMinutes">Minutes/</span>Hours/Days</h4>
+          <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></tooltip>
+        </div>
         <span id="no-spaces">{{"Separate values with commas, and without spaces." | translate}}</span>
         <!--<mat-form-field >
           <input matInput placeholder="Seconds">
@@ -70,13 +73,16 @@
           <mat-form-field *ngIf="!config.noMinutes">
             <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
           </mat-form-field>
+          <tooltip *ngIf="!config.noMinutes" [header]="helptext.scheduler.minutes.header" [message]="helptext.scheduler.minutes.tooltip"></tooltip>
           <mat-form-field>
             <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours" required [ngClass]="{'invalid': validHours === false}">
           </mat-form-field>
+          <tooltip [header]="helptext.scheduler.hours.header" [message]="helptext.scheduler.hours.tooltip"></tooltip>
           <br *ngIf="config.noMinutes"/>
           <mat-form-field>
             <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days" required [ngClass]="{'invalid': validDays === false}">
           </mat-form-field>
+          <tooltip [header]="helptext.scheduler.days.header" [message]="helptext.scheduler.days.tooltip"></tooltip>
       </section>
       <mat-divider></mat-divider>
 
@@ -164,6 +170,6 @@
 
       <button mat-button color="accent" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">{{"Done" | translate}}</button>
     </div>
-  </div>
+  </mat-card>
 </ng-template>
 <!--</mat-form-field>-->

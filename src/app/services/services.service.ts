@@ -13,6 +13,7 @@ export class ServicesService {
     return this.ws.call('smb.bindip_choices');
   }
 
+<<<<<<< HEAD
   // OpenVPN Service
   getOpenVPNClientAuthAlgorithmChoices() {
     return this.ws.call('openvpn.client.authentication_algorithm_choices');
@@ -51,4 +52,9 @@ export class ServicesService {
   }
  
   // -- end of OpenVPN Service
+=======
+  getLLDPCountries() {
+    return this.ws.call('lldp.country_choices');
+  }
+>>>>>>> master
 }

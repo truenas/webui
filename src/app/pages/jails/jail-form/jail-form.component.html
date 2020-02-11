@@ -1,0 +1,32 @@
+<mat-card>
+    <mat-spinner class="jail-spinner" [diameter]='40' id="jail-spinner" *ngIf="showSpinner"></mat-spinner>
+    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
+        <mat-expansion-panel *ngFor="let fieldSet of fieldSets; let i = index" [expanded]="step === i && isReady" (opened)="setStep(i)">
+            <mat-expansion-panel-header>
+                <mat-panel-title>{{fieldSet.name | translate}}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="form-wrap">
+            <ng-container>
+                <div [ngClass]="fieldSet.class" class="fieldset divider-{{fieldSet.divider}}"
+                    fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
+                    <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
+                    <h4 *ngIf="fieldSet.label" class="fieldset-label">{{fieldSet.name | translate}}</h4>
+                    <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)"
+                    [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">
+                        <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'"></div>
+                    </div>
+                </div>
+            </ng-container>
+            </div>
+            <mat-action-row>
+                <button mat-button color="warn" type="button" *ngIf="i !== 0" (click)="prevStep()">{{ "Previous" | translate }}</button>
+                <button mat-button color="primary" type="button" *ngIf="i !== fieldSets.length - 1" (click)="nextStep()">{{ "Next" | translate }}</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+        <mat-card-actions>
+            <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!formGroup.valid || !save_button_enabled" >{{ "Save" | translate }}</button>
+            <button *ngIf="route_success" (click)="goBack()" mat-button color="accent" type="button">{{ "Cancel" | translate }}</button>
+        </mat-card-actions>
+    </form>
+    <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
+</mat-card>

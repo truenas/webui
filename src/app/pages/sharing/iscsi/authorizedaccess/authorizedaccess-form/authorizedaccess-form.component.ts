@@ -5,8 +5,9 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { matchOtherValidator, doesNotEqual } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../../services/ws.service';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../../common/entity/utils';
+import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
+import * as _ from 'lodash';
 
 @Component({
   selector : 'app-iscsi-authorizedaccess-form',
@@ -22,78 +23,98 @@ export class AuthorizedAccessFormComponent {
   protected isEntity: boolean = true;
   protected customFilter: Array<any> = [[["id", "="]]];
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldSets: FieldSet[] = [
     {
-      type : 'input',
-      name : 'tag',
-      placeholder : helptext_sharing_iscsi.authaccess_placeholder_tag,
-      tooltip: helptext_sharing_iscsi.authaccess_tooltip_tag,
-      inputType : 'number',
-      min: 0,
-      required: true,
-      validation : [Validators.required, Validators.min(0)]
+      name: helptext_sharing_iscsi.fieldset_group,
+      label: true,
+      class: 'group',
+      width: '100%',
+      config: [
+        {
+          type : 'input',
+          name : 'tag',
+          placeholder : helptext_sharing_iscsi.authaccess_placeholder_tag,
+          tooltip: helptext_sharing_iscsi.authaccess_tooltip_tag,
+          inputType : 'number',
+          min: 0,
+          required: true,
+          validation : [Validators.required, Validators.min(0)]
+        }
+      ]
     },
     {
-      type : 'input',
-      name : 'user',
-      placeholder : helptext_sharing_iscsi.authaccess_placeholder_user,
-      tooltip: helptext_sharing_iscsi.authaccess_tooltip_user,
-      validation : [Validators.required],
-      required: true,
+      name: helptext_sharing_iscsi.fieldset_user,
+      label: true,
+      class: 'user',
+      width: '49%',
+      config: [{
+        type : 'input',
+        name : 'user',
+        placeholder : helptext_sharing_iscsi.authaccess_placeholder_user,
+        tooltip: helptext_sharing_iscsi.authaccess_tooltip_user,
+        validation : [Validators.required],
+        required: true,
+      },
+      {
+        type : 'input',
+        name : 'secret',
+        placeholder : helptext_sharing_iscsi.authaccess_placeholder_secret,
+        tooltip: helptext_sharing_iscsi.authaccess_tooltip_secret,
+        inputType : 'password',
+        togglePw: true,
+        required: true,
+        validation : [
+          Validators.minLength(12),
+          Validators.maxLength(16),
+          Validators.required,
+          matchOtherValidator("secret_confirm")
+        ],
+      },
+      {
+        type : 'input',
+        name : 'secret_confirm',
+        placeholder : helptext_sharing_iscsi.authaccess_placeholder_secret_confirm,
+        inputType : 'password'
+      },]
     },
+    { name: 'spacer', label: false, width: '2%' },
     {
-      type : 'input',
-      name : 'secret',
-      placeholder : helptext_sharing_iscsi.authaccess_placeholder_secret,
-      tooltip: helptext_sharing_iscsi.authaccess_tooltip_secret,
-      inputType : 'password',
-      togglePw: true,
-      required: true,
-      validation : [
-        Validators.minLength(12),
-        Validators.maxLength(16),
-        Validators.required,
-        matchOtherValidator("secret_confirm")
-      ],
+      name: helptext_sharing_iscsi.fieldset_peeruser,
+      label: true,
+      class: 'peeruser',
+      width: '49%',
+      config: [
+        {
+          type : 'input',
+          name : 'peeruser',
+          placeholder : helptext_sharing_iscsi.authaccess_placeholder_peeruser,
+          tooltip: helptext_sharing_iscsi.authaccess_tooltip_peeruser,
+        },
+        {
+          type : 'input',
+          name : 'peersecret',
+          placeholder : helptext_sharing_iscsi.authaccess_placeholder_peersecret,
+          tooltip: helptext_sharing_iscsi.authaccess_tooltip_peersecret,
+          inputType : 'password',
+          togglePw: true,
+          validation : [
+            Validators.minLength(12),
+            Validators.maxLength(16),
+            doesNotEqual("secret"),
+            matchOtherValidator("peersecret_confirm")
+          ]
+        },
+        {
+          type : 'input',
+          name : 'peersecret_confirm',
+          placeholder : helptext_sharing_iscsi.authaccess_placeholder_peersecret_confirm,
+          inputType : 'password'
+        },
+      ]
     },
-    {
-      type : 'input',
-      name : 'secret_confirm',
-      placeholder : helptext_sharing_iscsi.authaccess_placeholder_secret_confirm,
-      inputType : 'password'
-    },
-    {
-      type : 'input',
-      name : 'peeruser',
-      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peeruser,
-      tooltip: helptext_sharing_iscsi.authaccess_tooltip_peeruser,
-    },
-    {
-      type : 'input',
-      name : 'peersecret',
-      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peersecret,
-      tooltip: helptext_sharing_iscsi.authaccess_tooltip_peersecret,
-      inputType : 'password',
-      togglePw: true,
-      validation : [
-        Validators.minLength(12),
-        Validators.maxLength(16),
-        doesNotEqual("secret"),
-        matchOtherValidator("peersecret_confirm")
-      ],
-      blurStatus: true,
-      errors: helptext_sharing_iscsi.authaccess_error_peersecret
-    },
-    {
-      type : 'input',
-      name : 'peersecret_confirm',
-      placeholder : helptext_sharing_iscsi.authaccess_placeholder_peersecret_confirm,
-      inputType : 'password'
-    },
-  ];
+  ]
 
   protected pk: any;
-  protected entityForm: any;
   protected peeruser_field: any;
   protected peersecret_field: any;
 
@@ -110,8 +131,10 @@ export class AuthorizedAccessFormComponent {
   }
 
   afterInit(entityForm) {
+    const secretControl: FormControl = entityForm.formGroup.controls['secret'];
     const peersecretControl: FormControl = entityForm.formGroup.controls['peersecret'];
-    const peersecretConfig = this.fieldConfig.find(config => config.name === 'peersecret');
+    const peeruserFieldset = _.find(this.fieldSets, {class: 'peeruser'});
+    const peersecretConfig = _.find(peeruserFieldset.config, {name: 'peersecret'});
 
     entityForm.formGroup.controls['peeruser'].valueChanges.subscribe((res) => {
       if (res != '') {
@@ -122,23 +145,35 @@ export class AuthorizedAccessFormComponent {
           matchOtherValidator("peersecret_confirm"),
           doesNotEqual("secret")
         ]);
+        peersecretConfig.required = true;
       } else {
         peersecretControl.clearValidators();
+        peersecretConfig.required = false;
       }
       peersecretControl.updateValueAndValidity();
     });
 
-    peersecretControl.valueChanges.subscribe((res) => {
-      peersecretConfig.hasErrors = !!res && peersecretControl.touched && peersecretControl.invalid;
-    });
-
-    peersecretConfig.blurEvent = () => {
-      peersecretConfig.hasErrors = (!!entityForm.formGroup.controls['peeruser'].value && !peersecretControl.value) || (!!peersecretControl.value && peersecretControl.invalid);
-      peersecretControl.updateValueAndValidity();
-    };
-
-    entityForm.formGroup.controls['peersecret_confirm'].valueChanges.subscribe(() => {
-      peersecretControl.updateValueAndValidity();
+    [secretControl, peersecretControl].forEach((ctrl, index) => {
+      ctrl.valueChanges.subscribe((res) => {
+        let errors = ctrl.errors;
+        const compartedCtrlName = index === 0 ? 'peersecret' : 'secret';
+        if (res === entityForm.formGroup.controls[compartedCtrlName].value) {
+          if (!ctrl.hasError('manualValidateError')) {
+            if (errors === null) {
+              errors = { manualValidateError: true, manualValidateErrorMsg: helptext_sharing_iscsi.authaccess_error_duplicate_secrets };
+            } else {
+              errors['manualValidateError'] = true;
+              errors['manualValidateErrorMsg'] = helptext_sharing_iscsi.authaccess_error_duplicate_secrets;
+            }
+          }
+        } else {
+          if (ctrl.hasError('manualValidateError')) {
+            delete errors['manualValidateError'];
+            delete errors['manualValidateErrorMsg'];
+          }
+        }
+        ctrl.setErrors(errors);
+      });
     })
   }
 

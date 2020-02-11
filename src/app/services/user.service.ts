@@ -1,8 +1,9 @@
 
 
-import {Injectable} from '@angular/core';
-import {RestService} from './rest.service';
-import {WebSocketService} from './ws.service';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { RestService } from './rest.service';
+import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class UserService {
@@ -24,11 +25,14 @@ export class UserService {
 
   listGroups() { return this.rest.get(this.accountGroupResource, {limit: 50}); };
   
-  groupQueryDSCache(search = "") {
+  groupQueryDSCache(search = "", hideBuiltIn = false) {
     let queryArgs = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [["group", "^", search]];
+    }
+    if (hideBuiltIn) {
+      queryArgs = queryArgs.concat([["builtin", "=", false]]);
     }
     return this.ws.call(this.groupQuery, [queryArgs, this.queryOptions]);
   }
@@ -74,5 +78,19 @@ export class UserService {
       .toPromise()
       .then(g => (group = g), console.error);
     return group;
+  }
+
+  async shellChoices(userId?: number): Promise<{ label: string, value: string}[]> {
+    return await this.ws
+      .call("user.shell_choices", userId ? [userId] : [])
+      .pipe(
+        map(choices =>
+          Object.keys(choices || {}).map(key => ({
+            label: choices[key],
+            value: key
+          }))
+        )
+      )
+      .toPromise();
   }
 }

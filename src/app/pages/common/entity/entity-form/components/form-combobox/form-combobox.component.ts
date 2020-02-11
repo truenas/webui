@@ -36,7 +36,8 @@ export class FormComboboxComponent implements Field {
       value = value.toLowerCase();
       let searchOptions = [];
       for (let i = 0; i < this.config.options.length; i++) {
-        if (_.startsWith(this.config.options[i].label.toLowerCase(), value)) {
+        if (this.config.options[i].label.toLowerCase().includes(value)) {
+
           searchOptions.push(this.config.options[i]);
         }
       }

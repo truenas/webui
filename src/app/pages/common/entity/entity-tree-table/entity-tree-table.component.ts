@@ -42,4 +42,7 @@ export class EntityTreeTableComponent implements OnInit {
 			}
 		);
 	}
+	clickAction() {
+		return null;
+	}
 }

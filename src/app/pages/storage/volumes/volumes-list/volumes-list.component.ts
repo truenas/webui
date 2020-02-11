@@ -145,7 +145,7 @@ export class VolumesListTableConfig implements InputTableConf {
               this.loader.open();
               this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
                 if (res.length > 0) {
-                  p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is locked:`;
+                  p1 = T('These services depend on pool ') + `<i>${row1.name}</i>` + T(' and will be disrupted if the pool is locked:');
                   res.forEach((item) => {
                     p1 += `<br><br>${item.type}:`;
                     item.attachments.forEach((i) => {
@@ -230,13 +230,23 @@ export class VolumesListTableConfig implements InputTableConf {
                 customSubmit: function (entityDialog) {
                   const value = entityDialog.formValue;
                   self.loader.open();
-                  self.ws.call('pool.lock', [{ id: row1.id, passphrase: value.passphrase }]).subscribe(() => {
-                      entityDialog.dialogRef.close(true);
+                  self.ws.job('pool.lock', [row1.id, value.passphrase]).subscribe(
+                    res => {
+                    if (res.error) {
                       self.loader.close();
+                      if (res.exc_info && res.exc_info.extra) {
+                        res.extra = res.exc_info.extra;
+                      }
+                      new EntityUtils().handleWSError(this, res, self.dialogService);
+                    }
+                    if (res.state === 'SUCCESS') {
+                      self.loader.close();
+                      entityDialog.dialogRef.close(true);
                       self.parentVolumesListComponent.repaintMe();
+                    }
                   }, e => {
                     self.loader.close();
-                    new EntityUtils().handleWSError(this, e, this.dialog);
+                    new EntityUtils().handleWSError(this, e, self.dialogService);
                   });
                 }
               }
@@ -311,10 +321,16 @@ export class VolumesListTableConfig implements InputTableConf {
           title: "Unlock " + row1.name,
           fieldConfig: [
             {
+              type: 'paragraph',
+              name: 'unlock_msg',
+              paraText: helptext.unlock_msg,
+            },
+            {
               type : 'input',
               inputType: 'password',
               name : 'passphrase',
               togglePw: true,
+              required: true,
               placeholder: helptext.unlockDialog_password_placeholder,
             },
             {
@@ -324,6 +340,7 @@ export class VolumesListTableConfig implements InputTableConf {
               parent: self,
               hideButton: true, 
               name: 'key',
+              required: true,
               placeholder: helptext.unlockDialog_recovery_key_placeholder,
               tooltip: helptext.unlockDialog_recovery_key_tooltip,
             },
@@ -340,6 +357,28 @@ export class VolumesListTableConfig implements InputTableConf {
           afterInit: function(entityDialog) {
                 self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
                   entityDialog.formGroup.controls['key'].setValue(message);
+                });
+                // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
+                let keyDisabled = false;
+                let passphraseDisabled = false;
+                entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
+                  if (!passphraseDisabled) {
+                    if (passphrase && passphrase !== '') {
+                      keyDisabled = true;
+                      entityDialog.setDisabled('key', true, true);
+                    } else {
+                      keyDisabled = false;
+                      entityDialog.setDisabled('key', false, false);
+                    }
+                  }
+                });
+                entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
+                  if (!keyDisabled) {
+                    if (key && !passphraseDisabled) {
+                      passphraseDisabled = true;
+                      entityDialog.setDisabled('passphrase', true, true);
+                    }
+                  }
                 });
           },
           saveButtonText: T("Unlock"),
@@ -671,6 +710,63 @@ export class VolumesListTableConfig implements InputTableConf {
               ["storage", "pools", "status", row1.id]));
           }
         });
+        actions.push({
+          id: rowData.name,
+          name: T('Expand Pool'),
+          label: T("Expand Pool"),
+          onClick: (row1) => {
+            const parent = this;
+            const conf: DialogFormConfiguration = {
+              title: helptext.expand_pool_dialog.title + row1.name,
+              fieldConfig: [
+                {
+                  type: 'input',
+                  inputType: 'password',
+                  name: 'passphrase',
+                  placeholder: helptext.expand_pool_dialog.passphrase_placeholder,
+                  required: true
+                }
+              ],
+              saveButtonText: helptext.expand_pool_dialog.save_button,
+              customSubmit: function (entityDialog) {
+                doExpand(entityDialog);
+              }
+            }
+
+            function doExpand(entityDialog?) {
+              parent.loader.open();
+              const payload = [row1.id];
+              if (entityDialog) {
+                payload.push({"geli": {"passphrase": entityDialog.formValue['passphrase']}});
+              }
+              parent.ws.job('pool.expand', payload).subscribe(
+                (res) => {
+                  parent.loader.close();
+                  if (res.error) {
+                    if (res.exc_info && res.exc_info.extra) {
+                      res.extra = res.exc_info.extra;
+                    }
+                    new EntityUtils().handleWSError(this, res, parent.dialogService, conf.fieldConfig);
+                  }
+                  if (res.state === 'SUCCESS') {
+                    if (entityDialog) {
+                      entityDialog.dialogRef.close(true);
+                    }
+                  }
+                },
+                (err) => {
+                  parent.loader.close();
+                  new EntityUtils().handleWSError(this, err, parent.dialogService);
+                }
+              )
+            }
+            if (row1.encrypt === 0) {
+              doExpand();
+            } else {
+              self.dialogService.dialogForm(conf);
+            }
+          }
+        });
 
         if (rowData.is_upgraded === false) {
           actions.push({
@@ -678,35 +774,41 @@ export class VolumesListTableConfig implements InputTableConf {
             name: T('Upgrade Pool'),
             label: T("Upgrade Pool"),
             onClick: (row1) => {
-              this.dialogService
-                .confirm(
-                  T("Upgrade Pool"),
-                  helptext.upgradePoolDialog_warning + row1.name
-                )
-                .subscribe(confirmResult => {
-                  if (confirmResult === true) {
-                    this.loader.open();
-                    this.ws.call("pool.upgrade", [rowData.id]).subscribe(
-                      res => {
-                        this.dialogService
-                          .Info(
-                            T("Upgraded"),
-                            T("Successfully Upgraded ") + row1.name
-                          )
-                          .subscribe(infoResult => {
-                            this.parentVolumesListComponent.repaintMe();
+              this.translate.get(helptext.upgradePoolDialog_warning).subscribe(warning => {
+                this.dialogService
+                  .confirm(
+                    T("Upgrade Pool"),
+                      warning + row1.name
+                  )
+                  .subscribe(confirmResult => {
+                    if (confirmResult === true) {
+                      this.loader.open();
+                      this.ws.call("pool.upgrade", [rowData.id]).subscribe(
+                        res => {
+                          this.translate.get(T("Successfully Upgraded ")).subscribe(success_upgrade => {
+                            this.dialogService
+                              .Info(
+                                T("Upgraded"),
+                                  success_upgrade + row1.name
+                              )
+                              .subscribe(infoResult => {
+                                this.parentVolumesListComponent.repaintMe();
+                            });
                           });
-                      },
-                      res => {
-                        this.dialogService.errorReport(
-                          T("Error Upgrading Pool ") + row1.name,
-                          res.message,
-                          res.stack
-                        );
-                      },
-                      () => this.loader.close()
-                    );
-                  }
+                        },
+                        res => {
+                          this.translate.get(T("Error Upgrading Pool ")).subscribe(error_upgrade => {
+                            this.dialogService.errorReport(
+                              error_upgrade + row1.name,
+                              res.message,
+                              res.stack
+                            );
+                          });
+                        },
+                        () => this.loader.close()
+                      );
+                    }
+                  });
                 });
             }
           });
@@ -749,52 +851,31 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       if (rowDataPathSplit[1] !== "iocage") {
-        let optionDisabled;
-        rowData.id.includes('/') ? optionDisabled = false : optionDisabled = true;
-        actions.push({
-          id: rowData.name,
-          name: T('Edit Permissions'),
-          label: T("Edit Permissions"),
-          disabled: optionDisabled,
-          matTooltip: helptext.permissions_edit_msg,
-          ttposition: 'left',
-          onClick: (row1) => {
-            this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.id]).subscribe(acl_is_trivial => {
-              if (acl_is_trivial) {
+            actions.push({
+              id: rowData.name,
+              name: T('Edit Permissions'),
+              label: T("Edit Permissions"),
+              ttposition: 'left',
+              onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
                   "storage", "pools", "permissions", row1.id
                 ]));
-              } else {
-                this.dialogService.confirm(T("Dataset Has Complex ACLs"),
-                  T("This dataset has an active ACL. Changes to permissions must be made with the ACL editor. \
-                  Open ACL editor?"),
-                  true, T("EDIT ACL")).subscribe(edit_acl => {
-                    if (edit_acl) {
-                        this._router.navigate(new Array('/').concat([
-                          "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                          "acl", row1.id
-                        ]));
-                      }
-                });
               }
-            });
-          }
-        },
-        {
-          id: rowData.name,
-          name: T('Edit ACL'),
-          label: T("Edit ACL"),
-          disabled: optionDisabled,
-          matTooltip: helptext.acl_edit_msg,
-          ttposition: 'left',
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-              "acl", row1.id
-            ]));
-          }
-        },
-        );
+            },
+            {
+              id: rowData.name,
+              name: T('Edit ACL'),
+              label: T("Edit ACL"),
+              matTooltip: helptext.acl_edit_msg,
+              ttposition: 'left',
+              onClick: (row1) => {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                  "acl", row1.id
+                ]));
+              }
+            },
+          );          
       }
 
       if (rowData.id.indexOf('/') !== -1) {
@@ -977,6 +1058,21 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
+  clickAction(rowData) {
+    let aclEditDisabled = false;
+    let permissionsEditDisabled = false;
+    this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
+      !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
+      rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
+      let editACL = rowData.actions.find(o => o.name === 'Edit ACL');
+        editACL.disabled = aclEditDisabled;
+      let editPermissions = rowData.actions.find(o => o.name === 'Edit Permissions')
+        editPermissions.disabled = permissionsEditDisabled;
+        aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 : 
+        editPermissions.matTooltip = helptext.permissions_edit_msg2
+    })
+  }
+
   getTimestamp() {
     let dateTime = new Date();
     return moment(dateTime).format("YYYY-MM-DD_hh-mm");
@@ -1089,6 +1185,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
+    
+
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {
@@ -1097,8 +1195,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
           /* Filter out system datasets */
           const pChild = datasets.find(set => set.name === pool.name);
-          pChild.children = pChild.children.filter(child => child.name.indexOf(`${pool.name}/.system`) === -1);
-          pool.children = [pChild];
+          if (pChild) {
+            pChild.children = pChild.children.filter(child => child.name.indexOf(`${pool.name}/.system`) === -1);
+          }
+          pool.children = pChild ? [pChild] : [];
 
           pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);          
           pool.type = 'zpool';
@@ -1116,7 +1216,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               const used_pct =  pool.children[0].used.parsed / (pool.children[0].used.parsed + pool.children[0].available.parsed);
-              pool.usedStr = ": " + (<any>window).filesize(pool.children[0].used.parsed, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
+              const spacerStr = pool.healthy ? ': ' : '';
+              pool.usedStr = spacerStr + (<any>window).filesize(pool.children[0].used.parsed, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
             } catch (error) {
               pool.usedStr = "" + pool.children[0].used.parsed;
             }

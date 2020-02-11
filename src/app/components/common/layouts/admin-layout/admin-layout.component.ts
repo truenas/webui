@@ -163,25 +163,27 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   getLogConsoleMsg() {
     let subName = "filesystem.file_tail_follow:/var/log/messages:500";
-    let neededNumberconsoleMsg = 3; // Just 3 messages for footer bar
 
     this.ws.sub(subName).subscribe((res) => {
       if(res && res.data && typeof res.data === 'string'){
-        this.consoleMsg = this.accumulateConsoleMsg(res.data, neededNumberconsoleMsg);
+        this.consoleMsg = this.accumulateConsoleMsg(res.data, 3);
       }
     });
   }
 
   accumulateConsoleMsg(msg, num) {
     let msgs = "";
+    const msgarr = msg.split("\n");
 
-    if(msg != "") {
       // consoleMSgList will store just 500 messages.
-      this.consoleMSgList.push(msg);
-      if(this.consoleMSgList.length > 500) {
-        this.consoleMSgList.shift();
+    for (let i = 0; i < msgarr.length; i++) {
+      if (msgarr[i] !== "") {
+        this.consoleMSgList.push(msgarr[i]);
       }
-    }    
+    }
+    while (this.consoleMSgList.length > 500) {
+      this.consoleMSgList.shift();
+    }
     if(num > 500) {
       num = 500;
     }
@@ -189,7 +191,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       num = this.consoleMSgList.length;
     }
     for (let i = this.consoleMSgList.length - 1; i >= this.consoleMSgList.length - num; --i) {
-      msgs = this.consoleMSgList[i] + msgs;
+      msgs = this.consoleMSgList[i] + "\n" + msgs;
     }
 
     return msgs;

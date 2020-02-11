@@ -30,15 +30,6 @@ export class ServiceSMARTComponent {
           validation : [ Validators.required ]
         },
         {
-          type : 'select',
-          name : 'powermode',
-          placeholder : helptext.smart_powermode_placeholder,
-          tooltip: helptext.smart_powermode_tooltip,
-          options : helptext.smart_powermode_options,
-          required: true,
-          validation : helptext.smart_powermode_validation
-        },
-        {
           type : 'input',
           name : 'difference',
           placeholder : helptext.smart_difference_placeholder,

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
@@ -50,6 +51,13 @@ export class TnSupportComponent implements OnInit {
           tooltip : helptext.email.tooltip,
           required: true,
           validation : helptext.email.validation
+        },
+        {
+          type : 'input',
+          name : 'cc',
+          placeholder : helptext.cc.placeholder,
+          tooltip : helptext.cc.tooltip,
+          validation: [this.emailListValidator('cc')]
         },
         {
           type : 'input',
@@ -180,9 +188,46 @@ export class TnSupportComponent implements OnInit {
     ]
   }
 
+  emailListValidator(name: string) {
+    const self = this;
+    return function validEmails(control: FormControl) {
+        const config = self.fieldConfig.find(c => c.name === name);
+        if (control.value) {
+          let arr = _.filter(control.value.split(',').map(_.trim));
+        
+        let counter = 0;
+        const regex = 
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        
+        if (arr) {
+            arr.forEach((item) => {
+                if (!item.match(regex)) {
+                    counter++;
+                }
+            });
+        }
+
+        const errors = control.value && control.value.length > 0 && counter > 0
+        ? { validEmails : true }
+        : null;
+    
+        if (errors) {
+          config.hasErrors = true;
+          config.errors = helptext.cc.err;
+        } else {
+          config.hasErrors = false;
+          config.errors = '';
+        }
+
+        return errors;
+      }
+    }
+};
+
   customSubmit(entityEdit): void{
     this.payload['name'] = entityEdit.name;
     this.payload['email'] = entityEdit.email;
+    this.payload['cc'] = _.filter(entityEdit.cc.split(',').map(_.trim));
     this.payload['phone'] = entityEdit.phone;
     this.payload['category'] = entityEdit.TNCategory;
     this.payload['environment'] = entityEdit.environment;
