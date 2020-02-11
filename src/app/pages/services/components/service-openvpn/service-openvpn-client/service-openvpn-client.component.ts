@@ -32,15 +32,15 @@ export class ServiceOpenvpnClientComponent {
         {
           type : 'select',
           name : 'client_certificate',
-          placeholder : helptext.client.client_certificate.placeholder,
-          tooltip: helptext.client.client_certificate.tooltip,
+          placeholder : helptext.certificate.placeholder,
+          tooltip: helptext.certificate.tooltip,
           options: [],
         },
         {
           type : 'select',
           name : 'root_ca',
-          placeholder : helptext.client.root_ca.placeholder,
-          tooltip: helptext.client.root_ca.tooltip,
+          placeholder : helptext.root_ca.placeholder,
+          tooltip: helptext.root_ca.tooltip,
           options: [],
         },
         {

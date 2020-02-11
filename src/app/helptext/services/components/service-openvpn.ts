@@ -6,19 +6,8 @@ export default {
         header: T('OpenVPN Client Settings'),
         nobind: {
             placeholder: T('Nobind'),
-            tooltip: T('Must be enabled if OpenVPN client / server are to run concurrently.')
-        },
-        client_certificate: {
-            placeholder: T('Client Certificate'),
-            tooltip: T('Choose a valid client certificate which exists \
- on this system and hasn\'t been revoked.')
-        },
-        root_ca: {
-            placeholder: T('Root CA'),
-            tooltip: T('Choose a valid root certificate \
- authority which exists on the system and hasn\'t been revoked.')
-        },
-       
+            tooltip: T('Must be enabled if OpenVPN client and server are to run concurrently.')
+        }, 
         remote: {
             placeholder: T('Remote'),
             tooltip: T('A valid ip address or domain name to which OpenVPN will connect.')
@@ -36,14 +25,6 @@ export default {
             placeholder: T('Netmask'),
             tooltip: T('A tooltip about this topic')
         },
-        server_certificate: {
-            placeholder: T('Server Certificate'),
-            tooltip: T('Choose a valid certificate.')
-        },
-        root_ca: {
-            placeholder: T('Root CA'),
-            tooltip: T('Choose a valid root certificate authority.')
-        },
         server: {
             placeholder: T('Server'),
             tooltip: T('A tooltip about this topic')
@@ -51,7 +32,7 @@ export default {
         tls_crypt_auth: {
             placeholder: T('TLS Crypt Auth'),
             tooltip: T('When <code>tls_crypt_auth_enabled</code> is enabled and <code>tls_crypt_auth</code> is not provided, \
-     a static key is automatically generated to be used with OpenVPN client???.')
+ a static key is automatically generated to be used with OpenVPN client.')
         },
         topology: {
             placeholder: T('Topology'),
@@ -81,6 +62,19 @@ export default {
         }
     }, 
     // Helptext for both components
+    certificate: {
+        placeholder: T('Client Certificate'),
+        tooltip: T('Choose a valid client certificate which exists \
+on this system and hasn\'t been revoked. Find more about generating certificates and CAs \
+for OpenVPN <a href="https://community.openvpn.net/openvpn/wiki/HOWTO#SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanOpenVPNserverandmultipleclients" \
+target="_blank">here.</a>')
+    },
+    root_ca: {
+        placeholder: T('Root CA'),
+        tooltip: T('Choose the root Certificate Authority that was used to sign the Client and Server certificates. \
+        Find more about generating certificates and CAs for OpenVPN \
+ <a href="https://community.openvpn.net/openvpn/wiki/HOWTO#SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanOpenVPNserverandmultipleclients" target="_blank">here.</a>')
+    },
     tls_crypt_auth_enabled: {
         placeholder: T('TLS Crypt Auth Enabled'),
         tooltip: T('Enable/disable TLS Web Client Authentication.')

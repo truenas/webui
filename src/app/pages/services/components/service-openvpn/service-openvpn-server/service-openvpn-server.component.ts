@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { ServicesService, DialogService, AppLoaderService } from '../../../../../services';
+import { Http } from '@angular/http';
+
+import { ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService } from '../../../../../services';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -32,16 +34,16 @@ export class ServiceOpenvpnServerComponent {
         {
           type : 'select',
           name : 'server_certificate',
-          placeholder : helptext.server.server_certificate.placeholder,
-          tooltip: helptext.server.server_certificate.tooltip,
+          placeholder : helptext.certificate.placeholder,
+          tooltip: helptext.certificate.tooltip,
           options: [],
           required: true
         },
         {
           type : 'select',
           name : 'root_ca',
-          placeholder : helptext.server.root_ca.placeholder,
-          tooltip: helptext.server.root_ca.tooltip,
+          placeholder : helptext.root_ca.placeholder,
+          tooltip: helptext.root_ca.tooltip,
           options: [],
           required: true
         },
@@ -170,6 +172,21 @@ export class ServiceOpenvpnServerComponent {
       name : helptext.server.buttons.download,
       function : () => {
         this.services.generateOpenServerClientConfig(this.certID, this.serverAddress).subscribe((res) => {
+          console.log(res)
+          this.ws.call('core.download', ['filesystem.get', [res], 'me.txt']).subscribe((res) => {
+            console.log(res)
+              const url = res[1];
+              const mimetype = 'text/plain';
+              let failed = false;
+              console.log(url)
+              this.storage.streamDownloadFile(this.http, url, 'mefile.txt', mimetype).subscribe(file => { 
+                console.log(file)
+                this.storage.downloadBlob(file, 'mefile.txt');
+              }, err => {
+                failed = true;
+                console.log(err)
+              });
+            })
         }, err => {
           this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
         })
@@ -178,7 +195,8 @@ export class ServiceOpenvpnServerComponent {
   ];
 
   constructor(protected services: ServicesService, protected dialog: DialogService,
-    protected loader: AppLoaderService) { }
+    protected loader: AppLoaderService, protected ws: WebSocketService, protected storage: StorageService,
+    protected http: Http) { }
 
   resourceTransformIncomingRestData(data) {
     return data;
