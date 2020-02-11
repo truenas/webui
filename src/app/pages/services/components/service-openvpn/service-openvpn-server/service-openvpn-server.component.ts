@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { Http } from '@angular/http';
-
-import { ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService } from '../../../../../services';
-
+import { ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService } from 'app/services';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
 
@@ -18,7 +17,9 @@ export class ServiceOpenvpnServerComponent {
   protected route_success: string[] = [ 'services' ];
   protected certID: number;
   protected serverAddress: string;
-
+  protected entityEdit: any;
+  public dialogConf: DialogFormConfiguration;
+  protected certOptions: any;
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
@@ -34,7 +35,7 @@ export class ServiceOpenvpnServerComponent {
         {
           type : 'select',
           name : 'server_certificate',
-          placeholder : helptext.certificate.placeholder,
+          placeholder : helptext.certificate.server_placeholder,
           tooltip: helptext.certificate.tooltip,
           options: [],
           required: true
@@ -74,7 +75,14 @@ export class ServiceOpenvpnServerComponent {
           placeholder : helptext.compression.placeholder,
           tooltip: helptext.compression.tooltip,
           options: helptext.compression.enum
-        }
+        },
+        {
+          type : 'select',
+          name : 'device_type',
+          placeholder : helptext.device_type.placeholder,
+          tooltip: helptext.device_type.tooltip,
+          options: helptext.device_type.enum
+        },
       ]
     },
     {
@@ -88,32 +96,13 @@ export class ServiceOpenvpnServerComponent {
       label: false,
       width: '43%',
       config: [
-        {
-          type : 'select',
-          name : 'device_type',
-          placeholder : helptext.device_type.placeholder,
-          tooltip: helptext.device_type.tooltip,
-          options: helptext.device_type.enum
-        },
+
         {
           type : 'select',
           name : 'protocol',
           placeholder : helptext.protocol.placeholder,
           tooltip: helptext.protocol.tooltip,
           options: helptext.protocol.enum
-        },
-        {
-          type : 'checkbox',
-          name : 'tls_crypt_auth_enabled',
-          placeholder : helptext.tls_crypt_auth_enabled.placeholder,
-          tooltip: helptext.tls_crypt_auth_enabled.tooltip,
-        },
-        {
-          type : 'select',
-          name : 'tls_crypt_auth',
-          placeholder : helptext.server.tls_crypt_auth.placeholder,
-          tooltip: helptext.server.tls_crypt_auth.tooltip,
-          options: [{label: '---', value: null}]
         },
         {
           type : 'input',
@@ -142,6 +131,18 @@ export class ServiceOpenvpnServerComponent {
           name : 'additional_parameters',
           placeholder : helptext.additional_parameters.placeholder,
           tooltip: helptext.additional_parameters.tooltip,
+        },
+        {
+          type : 'checkbox',
+          name : 'tls_crypt_auth_enabled',
+          placeholder : helptext.tls_crypt_auth_enabled.placeholder,
+          tooltip: helptext.tls_crypt_auth_enabled.tooltip,
+        },
+        {
+          type : 'textarea',
+          name : 'tls_crypt_auth',
+          placeholder : helptext.server.tls_crypt_auth.placeholder,
+          tooltip: helptext.server.tls_crypt_auth.tooltip,
         }
       ]
     }
@@ -156,11 +157,14 @@ export class ServiceOpenvpnServerComponent {
         this.services.renewStaticKey().subscribe((res) => {
           let msg = '';
           for (let item in res) {
-            msg += `${item}: ${res[item]}<br />`
+            msg += `${item}: ${res[item]} \n`
           }
           this.loader.close();
-          this.dialog.confirm(helptext.server.static_dialog.title, msg, true, 
-            helptext.server.static_dialog.buttonTxt, false, '','','','', true);
+          this.entityEdit.formGroup.controls['tls_crypt_auth'].setValue(res.tls_crypt_auth);
+          const filename = 'openVPNStatic.key';
+          const blob = new Blob([msg], {type: 'text/plain'});
+          this.storageService.downloadBlob(blob, filename);
+
         }, err => {
           this.loader.close();
           this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
@@ -171,31 +175,42 @@ export class ServiceOpenvpnServerComponent {
       id : 'client_config',
       name : helptext.server.buttons.download,
       function : () => {
-        this.services.generateOpenServerClientConfig(this.certID, this.serverAddress).subscribe((res) => {
-          console.log(res)
-          this.ws.call('core.download', ['filesystem.get', [res], 'me.txt']).subscribe((res) => {
-            console.log(res)
-              const url = res[1];
-              const mimetype = 'text/plain';
-              let failed = false;
-              console.log(url)
-              this.storage.streamDownloadFile(this.http, url, 'mefile.txt', mimetype).subscribe(file => { 
-                console.log(file)
-                this.storage.downloadBlob(file, 'mefile.txt');
-              }, err => {
-                failed = true;
-                console.log(err)
-              });
+        const self = this;
+        const conf: DialogFormConfiguration = {
+          title: 'Select Client Certificate',
+          fieldConfig: [
+            {
+              type: 'select',
+              name: 'client_certificate_id',
+              placeholder: 'Client Certificate',
+              tooltip: 'This is very important.',
+              options: this.certOptions
+            }
+          ],
+          saveButtonText: ('Submit'),
+          customSubmit: function (entityDialog) {
+            const value = entityDialog.formValue;
+            entityDialog.dialogRef.close(true);
+            self.loader.open();
+            self.services.generateOpenServerClientConfig(value.client_certificate_id, 
+              self.serverAddress).subscribe((key) => {
+              const filename = 'openVPNClientConfig.ovpn';
+              const blob = new Blob([key], {type: 'text/plain'});
+              self.storageService.downloadBlob(blob, filename);
+              self.loader.close();
+            }, err => {
+              self.loader.close();
+              self.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
             })
-        }, err => {
-          this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
-        })
+          }
+        }
+        this.dialog.dialogForm(conf);
       }
     }
   ];
 
   constructor(protected services: ServicesService, protected dialog: DialogService,
-    protected loader: AppLoaderService, protected ws: WebSocketService, protected storage: StorageService,
+    protected loader: AppLoaderService, protected ws: WebSocketService, protected storageService: StorageService,
     protected http: Http) { }
 
   resourceTransformIncomingRestData(data) {
@@ -203,6 +218,7 @@ export class ServiceOpenvpnServerComponent {
   }
 
   afterInit(entityEdit: any) {
+    this.entityEdit = entityEdit;
     entityEdit.submitFunction = body => this.services.updateOpenVPN('openvpn.server.update', body); 
 
     this.services.getClientInfo().subscribe((res) => {
@@ -228,6 +244,7 @@ export class ServiceOpenvpnServerComponent {
       res.forEach((item) => {
         config.options.push({label: item.name, value: item.id})
       })
+      this.certOptions = config.options;
     });
     this.services.getCAs().subscribe((res) => {
       const config = this.fieldConfig.find(c => c.name === 'root_ca');

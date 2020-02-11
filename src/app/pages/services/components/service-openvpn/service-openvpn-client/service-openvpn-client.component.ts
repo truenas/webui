@@ -32,7 +32,7 @@ export class ServiceOpenvpnClientComponent {
         {
           type : 'select',
           name : 'client_certificate',
-          placeholder : helptext.certificate.placeholder,
+          placeholder : helptext.certificate.client_placeholder,
           tooltip: helptext.certificate.tooltip,
           options: [],
         },
@@ -113,11 +113,10 @@ export class ServiceOpenvpnClientComponent {
           tooltip: helptext.tls_crypt_auth_enabled.tooltip,
         },
         {
-          type : 'input',
+          type : 'textarea',
           name : 'tls_crypt_auth',
           placeholder : helptext.client.tls_crypt_auth.placeholder,
           tooltip: helptext.client.tls_crypt_auth.tooltip,
-          options: [{label: '---', value: null}]
         },
         {
           type : 'checkbox',
