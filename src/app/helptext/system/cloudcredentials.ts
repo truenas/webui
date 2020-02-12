@@ -273,78 +273,95 @@ a new application key, log in to the Backblaze account, go to the \
 
   user_openstack_swift: {
     placeholder: T('User Name'),
-    tooltip: T(''),
+    tooltip: T('Openstack user name for login. This is the OS_USERNAME from an \
+<a href="https://rclone.org/swift/#configuration-from-an-openstack-credentials-file" \
+target="_blank">OpenStack credentials file</a>.'),
   },
 
   key_openstack_swift: {
     placeholder: T('API Key or Password'),
-    tooltip: T('')
+    tooltip: T('Openstack API key or password. This is the OS_PASSWORD from an \
+<a href="https://rclone.org/swift/#configuration-from-an-openstack-credentials-file" \
+target="_blank">OpenStack credentials file</a>.')
   },
 
   auth_openstack_swift: {
     placeholder: T('Authentication URL'),
-    tooltip: T('')
+    tooltip: T('Authentication URL for the server. This is the OS_AUTH_URL from an \
+<a href="https://rclone.org/swift/#configuration-from-an-openstack-credentials-file" \
+target="_blank">OpenStack credentials file</a>.')
   },
 
   user_id_openstack_swift: {
     placeholder: T('User ID'),
-    tooltip: T('')
+    tooltip: T('User ID to log in - optional - most swift systems use user and leave this blank \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
 
   domain_openstack_swift: {
     placeholder: T('User Domain'),
-    tooltip: T('')
+    tooltip: T('User domain - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
 
   tenant_openstack_swift: {
     placeholder: T('Tenant Name'),
-    tooltip: T('')
+    tooltip: T('This is the OS_TENANT_NAME from an \
+<a href="https://rclone.org/swift/#configuration-from-an-openstack-credentials-file" \
+target="_blank">OpenStack credentials file</a>.')
   },
 
   tenant_id_openstack_swift: {
     placeholder: T('Tenant ID'),
-    tooltip: T('')
+    tooltip: T('Tenant ID - optional for v1 auth, this or tenant required otherwise \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
 
   tenant_domain_openstack_swift: {
     placeholder: T('Tenant Domain'),
-    tooltip: T('')
+    tooltip: T('Tenant domain - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
 
   region_openstack_swift: {
     placeholder: T('Region Name'),
-    tooltip: T('')
+    tooltip: T('Region name - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
 
   storage_url_openstack_swift: {
     placeholder: T('Storage URL'),
-    tooltip: T('')
+    tooltip: T('Storage URL - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
 
   auth_token_openstack_swift: {
     placeholder: T('Auth Token'),
-    tooltip: T('')
+    tooltip: T('Auth Token from alternate authentication - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
 
   application_credential_id_openstack_swift: {
     placeholder: T('Application Credential ID'),
-    tooltip: T('')
+    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
   application_credential_name_openstack_swift: {
     placeholder: T('Application Credential Name'),
-    tooltip: T('')
+    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
   application_credential_secret_openstack_swift: {
     placeholder: T('Application Credential Secret'),
-    tooltip: T('')
+    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
   auth_version_openstack_swift: {
     placeholder: T('AuthVersion'),
-    tooltip: T('')
+    tooltip: T('AuthVersion - optional - set to (1,2,3) if your auth URL has no version \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
   },
   endpoint_type_openstack_swift: {
     placeholder: T('Endpoint Type'),
-    tooltip: T('')
+    tooltip: T('Endpoint type to choose from the service catalogue. <i>Public</i> is recommended, see the \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">rclone documentation</a>.')
   },
 
   token_pcloud: {
