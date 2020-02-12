@@ -80,7 +80,7 @@ target="_blank">here.</a>')
     },
     port: {
         placeholder: T('Port'),
-        tooltip: T('Enter a port number to use for connection')
+        tooltip: T('Enter a port number to use for the connection.')
     },
     additional_parameters: {
         placeholder: T('Additional Parameters'),
