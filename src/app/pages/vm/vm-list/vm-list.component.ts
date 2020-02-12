@@ -56,6 +56,7 @@ export class VMListComponent {
         start: "vm.start",
         restart: "vm.restart",
         stop: "vm.stop",
+        poweroff: "vm.poweroff",
         update: "vm.update",
         clone: "vm.clone",
         getAvailableMemory: "vm.get_available_memory",
@@ -125,8 +126,39 @@ export class VMListComponent {
     }
 
     onSliderChange(row) {
-        const method = row['status']['state'] === "RUNNING" ? this.wsMethods.stop : this.wsMethods.start;
-        this.doRowAction(row, method);
+        let method;
+        if (row['status']['state'] === "RUNNING") {
+            method = this.wsMethods.stop;
+            const parent = this;
+            const stopDialog: DialogFormConfiguration = {
+                title: T('Stop ' + row.name + '?'),
+                fieldConfig: [
+                    {
+                        type: 'checkbox',
+                        name: 'force',
+                        placeholder: T('Force Stop'),
+                    },
+                    {
+                        type: 'checkbox',
+                        name: 'force_after_timeout',
+                        placeholder: T('Force Stop After Timeout'),
+                    }
+                ],
+                saveButtonText: T('Stop'),
+                customSubmit: function (entityDialog) {
+                    entityDialog.dialogRef.close(true);
+                    let forceValue = entityDialog.formValue.force ? true : false;
+                    let forceValueTimeout = entityDialog.formValue.force_after_timeout ? true : false;
+                    const params = [row.id, {force: forceValue, force_after_timeout: forceValueTimeout}];
+                    parent.doRowAction(row, method, params);
+                }
+            };
+            this.dialogService.dialogForm(stopDialog);
+
+        } else {
+            method = this.wsMethods.start;
+            this.doRowAction(row, method);
+        } 
     }
 
     onMemoryError(row) {
@@ -230,7 +262,7 @@ export class VMListComponent {
             icon: "power_settings_new",
             label: T("Power Off"),
             onClick: power_off_row => {
-                this.doRowAction(row, this.wsMethods.stop, [power_off_row.id, true]);
+                this.doRowAction(row, this.wsMethods.poweroff, [power_off_row.id]);
             }
         },
         {
