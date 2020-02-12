@@ -49,6 +49,13 @@ export class ServiceOpenvpnServerComponent {
           required: true
         },
         {
+          type : 'ipwithnetmask',
+          name : 'server',
+          placeholder : helptext.server.server.placeholder,
+          tooltip: helptext.server.server.tooltip,
+          required: true
+        },
+        {
           type : 'input',
           name : 'port',
           inputType: 'number',
@@ -75,14 +82,7 @@ export class ServiceOpenvpnServerComponent {
           placeholder : helptext.compression.placeholder,
           tooltip: helptext.compression.tooltip,
           options: helptext.compression.enum
-        },
-        {
-          type : 'select',
-          name : 'device_type',
-          placeholder : helptext.device_type.placeholder,
-          tooltip: helptext.device_type.tooltip,
-          options: helptext.device_type.enum
-        },
+        }
       ]
     },
     {
@@ -105,26 +105,27 @@ export class ServiceOpenvpnServerComponent {
           options: helptext.protocol.enum
         },
         {
-          type : 'input',
-          name : 'netmask',
-          inputType: 'number',
-          placeholder : helptext.server.netmask.placeholder,
-          tooltip: helptext.server.netmask.tooltip,
-        },
-      
-        {
-          type : 'input',
-          name : 'server',
-          placeholder : helptext.server.server.placeholder,
-          tooltip: helptext.server.server.tooltip,
-          required: true
+          type : 'select',
+          name : 'device_type',
+          placeholder : helptext.device_type.placeholder,
+          tooltip: helptext.device_type.tooltip,
+          options: helptext.device_type.enum
         },
         {
           type : 'select',
           name : 'topology',
           placeholder : helptext.server.topology.placeholder,
           tooltip: helptext.server.topology.tooltip,
-          options: helptext.server.topology.enum
+          options: helptext.server.topology.enum,
+          relation : [
+            {
+              action : 'DISABLE',
+              when : [ {
+                name : 'device_type',
+                value : 'TAP',
+              } ]
+            },
+          ]
         },
         {
           type : 'input',
@@ -143,6 +144,7 @@ export class ServiceOpenvpnServerComponent {
           name : 'tls_crypt_auth',
           placeholder : helptext.server.tls_crypt_auth.placeholder,
           tooltip: helptext.server.tls_crypt_auth.tooltip,
+          textAreaRows: 8
         }
       ]
     }
@@ -214,6 +216,7 @@ export class ServiceOpenvpnServerComponent {
     protected http: Http) { }
 
   resourceTransformIncomingRestData(data) {
+    data.server = `${data.server}/${data.netmask}`;
     return data;
   }
 
@@ -255,5 +258,11 @@ export class ServiceOpenvpnServerComponent {
     entityEdit.formGroup.controls['server'].valueChanges.subscribe((res) => {
       this.serverAddress = res;
     })
+  }
+
+  beforeSubmit(data) {
+    const serverInfo = data.server.split('/');
+    data.server = serverInfo[0];
+    data.netmask = parseInt(serverInfo[1]);
   }
 }

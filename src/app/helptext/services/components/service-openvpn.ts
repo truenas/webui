@@ -6,7 +6,8 @@ export default {
         header: T('OpenVPN Client Settings'),
         nobind: {
             placeholder: T('Nobind'),
-            tooltip: T('Must be enabled if OpenVPN client and server are to run concurrently.')
+            tooltip: T('Enable to prevent binding to local address and port. \
+ Must be enabled if OpenVPN client and server are to run concurrently.')
         }, 
         remote: {
             placeholder: T('Remote'),
@@ -21,13 +22,9 @@ export default {
     // Helptext for server component
     server: {
         header: T('OpenVPN Server Settings'),
-        netmask: {
-            placeholder: T('Netmask'),
-            tooltip: T('A tooltip about this topic')
-        },
         server: {
             placeholder: T('Server'),
-            tooltip: T('A tooltip about this topic')
+            tooltip: T('Enter the IP address and netmask of the server.')
         },
         tls_crypt_auth: {
             placeholder: T('TLS Crypt Auth'),
@@ -36,7 +33,8 @@ export default {
         },
         topology: {
             placeholder: T('Topology'),
-            tooltip: T('Select a network topology.'),
+            tooltip: T('Configure virtual addressing topology when running in TUN mode. \
+ (TAP mode always uses a SUBNET topology.)'),
             enum: [{
                 label: '---',
                 value: null,
@@ -86,20 +84,23 @@ target="_blank">here.</a>')
     },
     additional_parameters: {
         placeholder: T('Additional Parameters'),
-        tooltip: T('A tooltip about this topic')
+        tooltip: T('Additional parameters.')
     },
     authentication_algorithm: {
         placeholder: T('Authentication Algorithm'),
-        tooltip: T('Choose an authentication algorithm.')
+        tooltip: T('Choose an algorithm to authenticate packets.')
     },
     cipher: {
         placeholder: T('Cipher'),
-        tooltip: T('Choose a cipher')
+        tooltip: T('Choose a cipher algorithm to encrypt data channel packets.')
     },
     compression: {
         placeholder: T('Compression'),
         tooltip: T('Choose a compression algorithm.'),
         enum: [{
+            label: '---',
+            value: null,
+            },{
             label: 'LZO',
             value: 'LZO',
             }, {
@@ -121,7 +122,7 @@ target="_blank">here.</a>')
     },
     protocol: {
         placeholder: T('Protocol'),
-        tooltip: T('Choose a protocol.'),
+        tooltip: T('Choose the protocol to use when connecting with the remote system.'),
         enum: [{
             label: 'UDP',
             value: 'UDP',

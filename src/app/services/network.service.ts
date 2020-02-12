@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {RestService} from './rest.service'
 import {WebSocketService} from './ws.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root'})
 export class NetworkService {
 
   public ipv4_regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})$/;

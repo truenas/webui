@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ServicesService } from '../../../../../services';
 import * as _ from 'lodash';
-
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 
@@ -93,19 +92,30 @@ export class ServiceOpenvpnClientComponent {
       config: [
         {
           type : 'select',
+          name : 'protocol',
+          placeholder : helptext.protocol.placeholder,
+          tooltip: helptext.protocol.tooltip,
+          options: helptext.protocol.enum
+        },
+        {
+          type : 'select',
           name : 'device_type',
           placeholder : helptext.device_type.placeholder,
           tooltip: helptext.device_type.tooltip,
           options: helptext.device_type.enum
         },
         {
-          type : 'select',
-          name : 'protocol',
-          placeholder : helptext.protocol.placeholder,
-          tooltip: helptext.protocol.tooltip,
-          options: helptext.protocol.enum
+          type : 'input',
+          name : 'additional_parameters',
+          placeholder : helptext.additional_parameters.placeholder,
+          tooltip: helptext.additional_parameters.tooltip,
         },
-
+        {
+          type : 'checkbox',
+          name : 'nobind',
+          placeholder : helptext.client.nobind.placeholder,
+          tooltip: helptext.client.nobind.tooltip,
+        },
         {
           type : 'checkbox',
           name : 'tls_crypt_auth_enabled',
@@ -117,28 +127,13 @@ export class ServiceOpenvpnClientComponent {
           name : 'tls_crypt_auth',
           placeholder : helptext.client.tls_crypt_auth.placeholder,
           tooltip: helptext.client.tls_crypt_auth.tooltip,
-        },
-        {
-          type : 'checkbox',
-          name : 'nobind',
-          placeholder : helptext.client.nobind.placeholder,
-          tooltip: helptext.client.nobind.tooltip,
-        },
-        {
-          type : 'input',
-          name : 'additional_parameters',
-          placeholder : helptext.additional_parameters.placeholder,
-          tooltip: helptext.additional_parameters.tooltip,
-        },
+          textAreaRows: 8
+        }
       ]
-    },
+    }
   ];
 
   constructor(protected services: ServicesService) { }
-
-  resourceTransformIncomingRestData(data) {
-    return data;
-  }
 
   afterInit(entityEdit: any) {
     entityEdit.submitFunction = body => this.services.updateOpenVPN('openvpn.client.update', body); 
@@ -183,10 +178,4 @@ export class ServiceOpenvpnClientComponent {
       entityEdit.formGroup.controls['client_certificate'].updateValueAndValidity();      
     })
   }
-
-  beforeSubmit(data) {
-    console.log(data)
-  }
-
-
 }
