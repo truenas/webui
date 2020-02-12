@@ -11,7 +11,7 @@ export default {
         }, 
         remote: {
             placeholder: T('Remote'),
-            tooltip: T('A valid ip address or domain name to which OpenVPN will connect.')
+            tooltip: T('A valid IP address or domain name to which OpenVPN will connect.')
         },
         tls_crypt_auth: {
             placeholder: T('TLS Crypt Auth'),
