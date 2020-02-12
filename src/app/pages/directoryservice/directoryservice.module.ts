@@ -12,12 +12,13 @@ import { ActiveDirectoryComponent } from './activedirectory/';
 import { routing } from './directoryservice.routing';
 import { LdapComponent } from './ldap/';
 import { NISComponent } from './nis/';
-import { IdmapComponent } from './idmap';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
 import { KerberosSettingsComponent } from './kerberossettings';
 import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
+import { IdmapListComponent } from './idmap-list/idmap-list.component';
+import { IdmapFormComponent } from './idmap-form/idmap-form.component';
 
 @NgModule({
   imports: [
@@ -28,12 +29,13 @@ import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-
     LdapComponent,
     ActiveDirectoryComponent,
     NISComponent,
-    IdmapComponent,
     KerberosRealmsListComponent,
     KerberosRealmsFormComponent,
     KerberosSettingsComponent,
     KerberosKeytabsListComponent,
     KerberosKeytabsFormComponent,
+    IdmapListComponent,
+    IdmapFormComponent,
   ],
   providers: [SystemGeneralService]
 }) export class DirectoryServiceModule {}
