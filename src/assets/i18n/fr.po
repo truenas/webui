@@ -3396,7 +3396,7 @@ msgid "Credential"
 msgstr "Credential"
 
 msgid "Credentials"
-msgstr "Crédits"
+msgstr "Identifiants"
 
 msgid "Critical"
 msgstr "Critique"
@@ -3614,7 +3614,7 @@ msgid "Default ACL Options"
 msgstr "Options ACL par défaut"
 
 msgid "Default Gateway"
-msgstr "Passerelle par Défaut"
+msgstr "Passerelle par défaut"
 
 msgid "Default Permissions"
 msgstr "Permissions par défaut"
@@ -3643,7 +3643,7 @@ msgid "Default umask"
 msgstr "Umask par défaut"
 
 msgid "Define Periodic Snapshots to Replicate"
-msgstr "Définissez des Instantanés Périodiques à Répliquer"
+msgstr "Définissez des instantanés périodiques à répliquer"
 
 msgid ""
 "Define a length of time to retain the snapshot on this system. After the "
@@ -3658,7 +3658,7 @@ msgid ""
 "Define a maximum size for both the dataset and any child datasets. Enter "
 "<i>0</i> to remove the quota."
 msgstr ""
-"Définissez une taille maximalle pour ce dataset ainsi que tous ses dataset "
+"Définissez une taille maximalle pour ce dataset ainsi que tous ses datasets "
 "enfants. Entrez <i>0</i> pour enlever le quota."
 
 msgid ""
@@ -3767,10 +3767,10 @@ msgid "Delete Selected"
 msgstr "Supprimer la sélection"
 
 msgid "Delete Virtual Machine"
-msgstr "Supprimer la Machine Virtuelle"
+msgstr "Supprimer la machine virtuelle"
 
 msgid "Delete Virtual Machine Data?"
-msgstr "Supprimer les Données de la Machine Virtuelle ?"
+msgstr "Supprimer les données de la machine virtuelle ?"
 
 msgid "Delete Zvol"
 msgstr "Supprimer le Zvol"
@@ -4189,16 +4189,16 @@ msgid "Download Logs"
 msgstr "Télécharger les logs"
 
 msgid "Download Private Key"
-msgstr "Télécharger la Clé Privée"
+msgstr "Télécharger la clé privée"
 
 msgid "Download Public Key"
-msgstr "Télécharger la Clé Publique"
+msgstr "Télécharger la clé publique"
 
 msgid "Download Recovery Key"
 msgstr "Télécharger la clé de récupération"
 
 msgid "Download SSH Public Key"
-msgstr "Télécharger la Clé SSH Publique"
+msgstr "Télécharger la clé SSH publique"
 
 msgid "Download Sucessful"
 msgstr "Téléchargement réussi"
@@ -4229,7 +4229,7 @@ msgid "Dry Run"
 msgstr "Essai à Vide"
 
 msgid "Dry Run Cloud Sync Task"
-msgstr "Essai à Vide de la Tâche de Synchronisation Cloud"
+msgstr "Essai à vide de la tâche de synchronisation Cloud"
 
 msgid "EC Curve"
 msgstr "Courbe CE"
@@ -5997,7 +5997,7 @@ msgid "From Name"
 msgstr "Nom de l'expéditeur"
 
 msgid "Full Filesystem Replication"
-msgstr "Réplication Complète du Système de Fichier"
+msgstr "Réplication complète du système de fichier"
 
 msgid "Full Name"
 msgstr "Nom complet"
@@ -6053,7 +6053,7 @@ msgid "General Preferences"
 msgstr "Préférences générales"
 
 msgid "General VM Settings"
-msgstr "Paramètres Généraux MV"
+msgstr "Paramètres généraux de la VM"
 
 msgid "Generate Debug File"
 msgstr "Générer un fichier de débugage"
@@ -6500,7 +6500,7 @@ msgid "IPMI Configuration"
 msgstr "Configuration IPMI"
 
 msgid "IPMI Password Reset"
-msgstr "Remettre par Défaut le Mot de Passe IPMI"
+msgstr "Remettre par défaut le Mot de Passe IPMI"
 
 msgid "IPv4"
 msgstr "IPv4"
@@ -6709,7 +6709,7 @@ msgid "In KiB/s. A default of <i>0</i> means unlimited."
 msgstr "En KiB / s. Un défaut de <i>0</i> signifie illimité."
 
 msgid "Include Dataset Properties"
-msgstr "Inclure les Propriétés du Dataset"
+msgstr "Inclure les propriétés du Dataset"
 
 msgid "Include Password Secret Seed"
 msgstr "Inclure le Password Secret Seed"
@@ -6875,7 +6875,7 @@ msgid "Interface Description"
 msgstr "Description de l'interface"
 
 msgid "Interface Settings"
-msgstr "Paramètres de l'Interface"
+msgstr "Paramètres de l'interface"
 
 msgid "Interfaces"
 msgstr "Interfaces"
@@ -12228,7 +12228,7 @@ msgid "Stop "
 msgstr "Arrêter "
 
 msgid "Stop Rollback if Snapshots Exist:"
-msgstr "Arrêter la Restauration si un Instantané Existe :"
+msgstr "Arrêter la restauration si un instantané existe :"
 
 msgid "Stop Scrub"
 msgstr "Arrêter le Scrub"
