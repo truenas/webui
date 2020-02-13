@@ -356,7 +356,8 @@ export class JailWizardComponent {
       (res) => {
         const ventInterfaces = res['interfaces'].split(',');
         for (const item of ventInterfaces) {
-          this.interfaces.vnetEnabled.push({ label: item, value: item});
+          const vent = item.split(':');
+          this.interfaces.vnetEnabled.push({ label: vent[0], value: vent[0]});
         }
       },
       (err) => {
