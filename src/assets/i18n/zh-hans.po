@@ -7660,7 +7660,7 @@ msgid "Parent Interface"
 msgstr "父接口"
 
 msgid "Partition"
-msgstr "划分"
+msgstr "分区"
 
 msgid "Passphrase"
 msgstr "密码"
