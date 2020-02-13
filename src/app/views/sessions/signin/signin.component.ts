@@ -25,7 +25,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   @ViewChild(MatButton, { static: false}) submitButton: MatButton;
 
   private failed: Boolean = false;
-  public is_freenas: Boolean = false;
+  public product_type: string;
   public logo_ready: Boolean = false;
   public product = productText.product;
   public showPassword = false;
@@ -73,13 +73,13 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   checkSystemType() {
     if (!this.logo_ready) {
-      this.ws.call('system.is_freenas').subscribe((res)=>{
+      this.ws.call('system.product_type').subscribe((res)=>{
         this.logo_ready = true;
-        this.is_freenas = res;
+        this.product_type = res;
         if (this.interval) {
           clearInterval(this.interval);
         }
-        if (!this.is_freenas) {
+        if (this.product_type === 'ENTERPRISE') {
           this.getHAStatus();
           setInterval(() => {
             this.getHAStatus();
@@ -89,8 +89,8 @@ export class SigninComponent implements OnInit, OnDestroy {
             this.loginToken();
           }
         }
-        window.localStorage.setItem('is_freenas', res);
-        if (!this.is_freenas && window.localStorage.exposeLegacyUI === 'true') {
+        window.localStorage.setItem('product_type', res);
+        if (this.product_type === 'ENTERPRISE' && window.localStorage.exposeLegacyUI === 'true') {
           this.exposeLegacyUI = true;
         }
       });
@@ -180,7 +180,7 @@ export class SigninComponent implements OnInit, OnDestroy {
     if (this.logo_ready && this.connected &&
        (this.failover_status === 'SINGLE' ||
         this.failover_status === 'MASTER' || 
-        this.is_freenas )) {
+        this.product_type === 'CORE' )) {
           return true;
     } else {
       return false;
@@ -188,7 +188,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   getHAStatus() {
-    if (!this.is_freenas && !this.checking_status) {
+    if (this.product_type === 'ENTERPRISE' && !this.checking_status) {
       this.checking_status = true;
       this.ws.call('failover.status').subscribe(res => {
         this.failover_status = res;

@@ -6,9 +6,9 @@
         <div *ngIf="connected() && logo_ready;else notconnected">
           <div class="text-center logo-wrapper" *ngIf="logo_ready">
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <img *ngIf="is_freenas; else isTruenas" class="logo" src="assets/images/light-logo-full.svg" alt="FreeNAS logo">
+            <img *ngIf="product_type === 'CORE'; else isTruenas" class="logo" src="assets/images/light-logo-full.svg" alt="TrueNAS CORE logo">
             <ng-template #isTruenas>
-              <img class="logo" src="assets/images/TrueNAS_Logo_Full_White.svg" alt="TrueNAS logo">
+              <img class="logo" src="assets/images/TrueNAS_Logo_Full_White.svg" alt="TrueNAS ENTERPRISE logo">
             </ng-template>
           </div>
           <span *ngIf="canLogin()">
@@ -71,7 +71,7 @@
               <button mat-button color="default" class="mb-1 full-width" style="text-transform:capitalize !important;" (click)="onGoToLegacy()">{{"LEGACY WEB INTERFACE" | translate}}</button>
             </div>
           </span>
-          <span *ngIf="!is_freenas && failover_status != 'SINGLE'"><div class="ha-status">
+          <span *ngIf="product_type === 'ENTERPRISE' && failover_status != 'SINGLE'"><div class="ha-status">
             <div class="ha-status-txt">
               <p>{{ha_status_text}}</p>
               <span *ngIf="ha_info_ready">
@@ -84,8 +84,7 @@
           </div></span>
           <div>
             <span fxFlex class="copyright-txt">
-              <span *ngIf="is_freenas">FreeNAS</span>
-              <span *ngIf="!is_freenas">TrueNAS</span>
+              <span >TrueNAS {{product_type}}</span>
               ® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
             </span>
           </div>
