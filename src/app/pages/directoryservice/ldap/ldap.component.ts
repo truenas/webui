@@ -28,7 +28,6 @@ export class LdapComponent {
   protected ldap_kerberos_principal: any;
   protected ldap_ssl: any;
   protected ldapCertificate: any;
-  protected ldap_idmap_backend: any;
   protected ldap_schema: any;
   protected ldap_hostname: any;
   protected entityForm: any;
@@ -55,7 +54,7 @@ export class LdapComponent {
       id : helptext.ldap_custactions_edit_imap_id,
       name : helptext.ldap_custactions_edit_imap_name,
       function : () => {
-        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'ldap']));
+        this.router.navigate(new Array('').concat(['directoryservice','idmap']));
       }
     },
     {
@@ -208,13 +207,6 @@ export class LdapComponent {
           tooltip: helptext.ldap_dns_timeout_tooltip
         },
         {
-          type : 'select',
-          name : helptext.ldap_idmap_backend_name,
-          placeholder : helptext.ldap_idmap_backend_placeholder,
-          tooltip: helptext.ldap_idmap_backend_tooltip,
-          options : []
-        },
-        {
           type : 'checkbox',
           name : helptext.ldap_has_samba_schema_name,
           placeholder : helptext.ldap_has_samba_schema_placeholder,
@@ -304,14 +296,6 @@ export class LdapComponent {
       }
     });
 
-    this.ws.call('ldap.idmap_backend_choices').subscribe((res) => {
-      this.ldap_idmap_backend = _.find(this.fieldConfig, {name : 'idmap_backend'});
-      res.forEach((item) => {
-        this.ldap_idmap_backend.options.push(
-          {label : item, value : item});
-      });
-    });
-
     this.ws.call('ldap.schema_choices').subscribe((res) => {
       this.ldap_schema = _.find(this.fieldConfig, {name: 'schema'});
       res.forEach((item => {
@@ -320,9 +304,6 @@ export class LdapComponent {
       }));
     });
 
-    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((res)=> {
-      this.idmapBacked = res;
-    })
     const enabled = entityEdit.formGroup.controls['enable'].value;
     this.entityForm.setDisabled('hostname', !enabled, !enabled);
     this.entityForm.setDisabled('hostname_noreq', enabled, enabled);

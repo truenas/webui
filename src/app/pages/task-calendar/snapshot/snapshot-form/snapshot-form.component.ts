@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 import { DialogService, StorageService, TaskService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -47,35 +47,16 @@ export class SnapshotFormComponent implements OnDestroy {
     placeholder: helptext.exclude_placeholder,
     tooltip: helptext.exclude_tooltip
   }, {
-    placeholder: helptext.lifetime_value_placeholder,
     type: 'input',
-    name: 'lifetime_value',
-    inputType: 'number',
-    class: 'inline',
-    value: 2,
-    validation: [Validators.min(0)]
-  }, {
-    type: 'select',
-    name: 'lifetime_unit',
-    tooltip: helptext.lifetime_unit_tooltip,
-    options: [{
-      label: 'Hours',
-      value: 'HOUR',
-    }, {
-      label: 'Days',
-      value: 'DAY',
-    }, {
-      label: 'Weeks',
-      value: 'WEEK',
-    }, {
-      label: 'Months',
-      value: 'MONTH',
-    }, {
-      label: 'Years',
-      value: 'YEAR',
-    }],
-    value: 'WEEK',
-    class: 'inline',
+    name: 'lifetime',
+    placeholder: helptext.lifetime_placeholder,
+    tooltip: helptext.lifetime_tooltip,
+    inputUnit: {
+      type: UnitType.duration,
+      decimal: false,
+      default: 'HOUR',
+      allowUnits: ['HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR']
+    }
   }, {
     type: 'input',
     name: 'naming_schema',
@@ -193,10 +174,16 @@ export class SnapshotFormComponent implements OnDestroy {
       data.exclude = '';
     }
     this.dataset = data.dataset;
+    data['lifetime'] = data['lifetime_value'] + ' ' + data['lifetime_unit'] + (data['lifetime_value'] > 1 ? 'S' : '');
     return data;
   }
 
   beforeSubmit(value) {
+    const lifetime = value.lifetime.split(' ');
+    value['lifetime_value'] = lifetime[0];
+    value['lifetime_unit'] = _.endsWith(lifetime[1], 'S') ? lifetime[1].substring(0, lifetime[1].length -1) : lifetime[1];
+    delete value.lifetime;
+
     const spl = value.snapshot_picker.split(" ");
     delete value.snapshot_picker;
 

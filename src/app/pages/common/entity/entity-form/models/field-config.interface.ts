@@ -1,10 +1,20 @@
 import { ValidatorFn } from '@angular/forms';
 import { RelationGroup } from './field-relation.interface';
+export enum UnitType {
+  duration = 'duration',
+  size = 'size'
+};
+export interface InputUnitConfig {
+  type: UnitType,
+  decimal?: boolean,
+  default?: string,
+  allowUnits?: Array<string>,
+}
 
 export interface FieldConfig {
   disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
-  inputType?: string, validation?: any[] | ValidatorFn | ValidatorFn[],
+  inputType?: string, inputUnit?: InputUnitConfig, validation?: any[] | ValidatorFn | ValidatorFn[],
   value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string,
   relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
   initialCount?: number, readonly?: boolean, initial?: string, rootSelectable?: boolean,
@@ -21,3 +31,4 @@ export interface FieldConfig {
   maskValue?: any, hideErrMsg?: boolean
   customEventMethod?(data:any), onChangeOption?(data:any),
 }
+
