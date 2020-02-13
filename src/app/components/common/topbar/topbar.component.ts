@@ -86,7 +86,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
 
   ngOnInit() {
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.checkEULA();
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
