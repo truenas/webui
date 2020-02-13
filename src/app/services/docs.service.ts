@@ -30,14 +30,9 @@ export class DocsService {
             message = message.replace(/--runningversion--/g, running_version);
         }
 
-        const is_freenas = window.localStorage.getItem('is_freenas');
-        if (is_freenas === "true") {
-            message = message.replace(/--nas--/g, "freenas");
-            message = message.replace(/--NAS--/g, "FreeNAS");
-        } else {
-            message = message.replace(/--nas--/g, "truenas");
-            message = message.replace(/--NAS--/g, "TrueNAS");
-        }
+        const product_type = window.localStorage.getItem('product_type');
+        message = message.replace(/--nas--/g, `truenas ${product_type}`);
+        message = message.replace(/--NAS--/g, `TrueNAS ${product_type}`);
 
         return message;
     }
