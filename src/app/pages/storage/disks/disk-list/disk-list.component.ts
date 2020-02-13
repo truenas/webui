@@ -176,4 +176,12 @@ export class DiskListComponent {
 	    }
     });
   }
+
+  afterInit(entityList) {
+	  this.ws.subscribe('disk.query').subscribe((res) => {
+		  if (res) {
+			entityList.getData();
+		  }
+	  })
+  }
 }
