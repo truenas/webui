@@ -979,7 +979,7 @@ export class ReplicationFormComponent {
             delete data['target_dataset_PULL'];
         }
 
-        data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(' ') : data['exclude'];
+        data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(',') : data['exclude'];
         data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
         if (data["naming_schema"] === '') {
             delete data["naming_schema"];
