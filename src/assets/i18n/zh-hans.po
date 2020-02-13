@@ -689,7 +689,7 @@ msgid "ACL Type"
 msgstr "访问控制列表类型"
 
 msgid "ACL cannot be changed when the Source is the top-level dataset for a pool."
-msgstr ""
+msgstr "当“源”是池的顶级数据集时，无法更改访问控制列表。"
 
 msgid "ACME DNS"
 msgstr "ACME DNS"
@@ -1638,7 +1638,7 @@ msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "太棒了！ 现在让我们一起来探索FreeNAS的出色功能吧。"
 
 msgid "BPF is required."
-msgstr ""
+msgstr "BPF是必需的。"
 
 msgid "Back"
 msgstr "返回"
@@ -2122,7 +2122,7 @@ msgid "Checking HA status"
 msgstr "正在检查HA状态"
 
 msgid "Checksum"
-msgstr ""
+msgstr "校验和"
 
 msgid "Chmod Request"
 msgstr "Chmod请求"
@@ -2234,7 +2234,7 @@ msgid ""
 "Choose a new disk for the pool. To protect any existing data, adding the "
 "selected disk is stopped when the disk is already in use or has partitions "
 "present."
-msgstr ""
+msgstr "为池选择一个新磁盘。为了保护任何现有数据，当磁盘已在使用中或存在分区时，将停止添加所选磁盘。"
 
 msgid ""
 "Choose a path to the user's home directory. If the directory exists and "
@@ -2788,7 +2788,7 @@ msgid "Continue"
 msgstr "继续"
 
 msgid "Continue to Legacy UI"
-msgstr "继续使用旧版UI"
+msgstr "继续使用传统UI"
 
 msgid "Continue with download?"
 msgstr "继续下载吗？"
@@ -2947,7 +2947,7 @@ msgstr ""
 "</i>可调参数。配置的可调参数将保持有效，直到删除或未设置“启用”为止。"
 
 msgid "Creating..."
-msgstr ""
+msgstr "正在创建..."
 
 msgid "Credential"
 msgstr "凭据"
@@ -3043,7 +3043,7 @@ msgid "DOCUMENTATION"
 msgstr "文档"
 
 msgid "Dashboard"
-msgstr "仪表盘"
+msgstr "仪表板"
 
 msgid "Data"
 msgstr "数据"
@@ -3117,7 +3117,7 @@ msgid "Days of the Week"
 msgstr "星期几"
 
 msgid "Days when this task will run."
-msgstr ""
+msgstr "该任务将运行的天数。"
 
 msgid "Deactivate the recovery key for this pool?"
 msgstr "停用此池的恢复密钥？"
@@ -3420,7 +3420,7 @@ msgid "Detach"
 msgstr "分离"
 
 msgid "Detach Disk"
-msgstr ""
+msgstr "分离磁盘"
 
 msgid "Detach Pool"
 msgstr "分离存储池"
@@ -4305,7 +4305,7 @@ msgid "Enter a valid IPv4 address."
 msgstr "输入有效的IPv4地址。"
 
 msgid "Enter a valid MAC address vendor prefix. <b>Example:</b> <i>E4F4C6</i>"
-msgstr "输入有效的MAC地址供应商前缀。<b>例如：</b> <i>E4F4C6</i>"
+msgstr "输入有效的供应商MAC地址前缀。<b>例如：</b> <i>E4F4C6</i>"
 
 msgid "Enter a valid email address to receive alerts from this system."
 msgstr "输入有效的电子邮件地址，以接收来自此系统的警报。"
@@ -4634,7 +4634,7 @@ msgstr "输入带有任何选项的命令。"
 msgid ""
 "Enter the current passphrase for the encrypted pool. This will be used to "
 "encrypt the new disk and integrate it into the pool."
-msgstr ""
+msgstr "输入加密池的当前密码。这将用于加密新磁盘并将其集成到池中。"
 
 msgid "Enter the decryption passphrase."
 msgstr "输入解密密码。"
@@ -5010,16 +5010,16 @@ msgid "Extend Pool"
 msgstr "扩展存储池"
 
 msgid "Extend Vdev"
-msgstr ""
+msgstr "扩展Vdev"
 
 msgid "Extending Vdev"
-msgstr ""
+msgstr "正在扩展Vdev"
 
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr "扩展加密池会重置密码和恢复密钥！"
 
 msgid "Extending vdev..."
-msgstr ""
+msgstr "正在扩展Vdev..."
 
 msgid "Extent"
 msgstr "区块"
@@ -5203,7 +5203,7 @@ msgid "Force Delete"
 msgstr "强制删除"
 
 msgid "Force Delete?"
-msgstr ""
+msgstr "强制删除？"
 
 msgid "Force deletion of dataset "
 msgstr "强制删除数据集 "
@@ -5637,10 +5637,10 @@ msgid "Hours"
 msgstr "小时"
 
 msgid "Hours when this task will run."
-msgstr ""
+msgstr "此任务将运行的小时数。"
 
 msgid "Hours/Days"
-msgstr ""
+msgstr "小时/天"
 
 msgid "Hover to expand"
 msgstr "悬停展开"
@@ -6723,19 +6723,19 @@ msgid "May"
 msgstr "五月"
 
 msgid "Media Subtype"
-msgstr "媒体子类型"
+msgstr "介质子类型"
 
 msgid "Media Type"
-msgstr "媒体类型"
+msgstr "介质类型"
 
 msgid "Medium"
-msgstr ""
+msgstr "介质"
 
 msgid "Member Disk"
 msgstr "成员磁盘"
 
 msgid "Member disk"
-msgstr ""
+msgstr "成员磁盘"
 
 msgid "Members"
 msgstr "成员"
@@ -6830,16 +6830,16 @@ msgid "Minimum value is "
 msgstr "最小值为 "
 
 msgid "Mintues"
-msgstr ""
+msgstr "分钟"
 
 msgid "Mintues/Hours/Days"
-msgstr ""
+msgstr "分钟/小时/天"
 
 msgid "Minute"
 msgstr "分钟"
 
 msgid "Minutes when this task will run."
-msgstr ""
+msgstr "此任务将在哪分钟运行。"
 
 msgid "Mirror"
 msgstr "镜像"
@@ -7234,7 +7234,7 @@ msgid "Never Delete"
 msgstr "永不删除"
 
 msgid "New Disk"
-msgstr ""
+msgstr "新磁盘"
 
 msgid "New Password"
 msgstr "新密码"
@@ -7251,7 +7251,7 @@ msgid "Newer Clone"
 msgstr "较新的克隆"
 
 msgid "Newer Intermediate, Child, and Clone"
-msgstr ""
+msgstr "较新的Intermediate，子级和克隆"
 
 msgid ""
 "Newline-separated list of files and directories to exclude from sync.<br /> "
@@ -7480,10 +7480,10 @@ msgid "Offline"
 msgstr "离线"
 
 msgid "Offline Disk"
-msgstr ""
+msgstr "离线磁盘"
 
 msgid "Offline disk "
-msgstr ""
+msgstr "离线磁盘 "
 
 msgid "Ok"
 msgstr "是"
@@ -7501,10 +7501,10 @@ msgid "Online"
 msgstr "在线"
 
 msgid "Online Disk"
-msgstr ""
+msgstr "在线磁盘"
 
 msgid "Online disk "
-msgstr ""
+msgstr "在线磁盘 "
 
 msgid "Only Allow Guest Access"
 msgstr "仅允许访客访问"
@@ -7660,7 +7660,7 @@ msgid "Parent Interface"
 msgstr "父接口"
 
 msgid "Partition"
-msgstr "划分"
+msgstr "分区"
 
 msgid "Passphrase"
 msgstr "密码"
@@ -7675,7 +7675,7 @@ msgid "Password associated with the LDAP User DN."
 msgstr "与LDAP用户DN关联的密码。"
 
 msgid "Password for logging in to the provider and  updating the record. "
-msgstr ""
+msgstr "登录供应商和更新记录的密码。 "
 
 msgid ""
 "Password for the Active Directory administrator account.  Required the "
@@ -8143,7 +8143,7 @@ msgid "Quota for this dataset and all children"
 msgstr "此数据集和所有子级的配额"
 
 msgid "Quota size is too small, enter a value of 1 GiB or larger."
-msgstr ""
+msgstr "配额大小太小，请输入1 GiB或更大的值。"
 
 msgid "Quota warning alert at, %"
 msgstr "配额警告提醒，％"
@@ -8345,7 +8345,7 @@ msgid "Remove Additional Path"
 msgstr "删除附加路径"
 
 msgid "Remove Disk"
-msgstr ""
+msgstr "删除磁盘"
 
 msgid "Remove Keep Flag"
 msgstr "删除保留标志"
@@ -8354,7 +8354,7 @@ msgid "Remove Recovery Key"
 msgstr "删除恢复密钥"
 
 msgid "Remove disk "
-msgstr ""
+msgstr "删除磁盘"
 
 msgid "Remove passphrase"
 msgstr "删除密码"
@@ -8378,13 +8378,13 @@ msgid "Replace"
 msgstr "更换"
 
 msgid "Replace Disk"
-msgstr ""
-
-msgid "Replacing Disk"
 msgstr "更换磁盘"
 
+msgid "Replacing Disk"
+msgstr "正在更换磁盘"
+
 msgid "Replacing disk "
-msgstr ""
+msgstr "正在更换磁盘"
 
 msgid "Replacing disk..."
 msgstr "正在更换磁盘..."
@@ -9180,7 +9180,7 @@ msgstr "选择现有目标。"
 msgid ""
 "Select an unused disk to add to this vdev. <br>WARNING: any data stored on "
 "the unused disk will be erased!"
-msgstr ""
+msgstr "选择一个未使用的磁盘以添加到该vdev。<br>警告：未使用的磁盘上存储的所有数据都将被清除！"
 
 msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
 msgstr "选择要复制的数据集快照。可以选择多个数据集。"
@@ -9560,7 +9560,7 @@ msgid "Serial Speed"
 msgstr "串行速度"
 
 msgid "Serial numbers of each disk being edited."
-msgstr ""
+msgstr "正在编辑的每个磁盘的序列号。"
 
 msgid ""
 "Serial or USB port connected to the UPS. To  automatically detect and "
@@ -10138,7 +10138,7 @@ msgstr ""
 msgid ""
 "Set to override safety checks and add the disk to the pool. <br>WARNING: "
 "any data stored on the disk will be erased!"
-msgstr ""
+msgstr "设置为覆盖安全检查并将磁盘添加到池中。<br>警告：磁盘上存储的所有数据都将被清除！"
 
 msgid ""
 "Set to perform reverse DNS lookups on client IPs. This can cause long "
@@ -10710,7 +10710,7 @@ msgid "Static Routes"
 msgstr "静态路由"
 
 msgid "Stats Per Thread"
-msgstr "统计每个线程"
+msgstr "每线程统计"
 
 msgid "Stats/Settings"
 msgstr "统计/设置"
@@ -10824,7 +10824,7 @@ msgid "Successfully exported/disconnected '"
 msgstr "成功导出/断开'"
 
 msgid "Successfully extended vdev "
-msgstr ""
+msgstr "成功扩展vdev "
 
 msgid "Successfully replaced disk "
 msgstr "成功更换磁盘 "
@@ -10962,10 +10962,10 @@ msgid "TLS"
 msgstr ""
 
 msgid "TLS Allow Client Renegotiations"
-msgstr "TLS 允许客户端协商"
+msgstr "TLS允许客户端协商"
 
 msgid "TLS Allow Dot Login"
-msgstr "TLS 允许点登录"
+msgstr "TLS允许点登录"
 
 msgid "TLS Allow Per User"
 msgstr "TLS允许每个用户"
@@ -10983,16 +10983,16 @@ msgid "TLS Export Certificate Data"
 msgstr "TLS导出证书数据"
 
 msgid "TLS Export Standard Vars"
-msgstr "TLS 导出标准Vars"
+msgstr "TLS导出标准Vars"
 
 msgid "TLS IP Address Required"
 msgstr "需要TLS IP地址"
 
 msgid "TLS No Certificate Request"
-msgstr "TLS 无证书请求"
+msgstr "TLS无证书请求"
 
 msgid "TLS No Empty Fragments"
-msgstr "TLS 无空片段"
+msgstr "TLS无空片段"
 
 msgid "TLS No Session Reuse Required"
 msgstr "TLS无需会话重用"
@@ -11425,7 +11425,7 @@ msgid ""
 "(/) designates a step in the value: */2 means every other minute.</br></br> "
 "Example: 30-35 in Minutes, 1,14 in Hours, and */2 in Days means the task "
 "will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day."
-msgstr ""
+msgstr "任务将运行的时间值。接受标准的<a href=\"https://www.freebsd.org/cgi/man.cgi?query=crontab\" target=\"_blank\">crontab(5)</a>值。</br> </br>符号：</br>逗号 (,) 分隔各个值。</br>星号 (*) 表示\"匹配所有值\"。</br>连字符 (1-5) 设置时间范围。</br>斜杠 (/) 表示值的步进：*/2 表示每隔一分钟。</br> </br>例如：30-35（分钟），1,14（小时）和 */2 （天）表示任务将在每隔一天下午的1:30-1:35 AM和2:30-2:35运行。"
 
 msgid ""
 "The type of connection the port uses. Choose  <a "
@@ -11803,7 +11803,7 @@ msgid ""
 msgstr "使用恢复密钥文件而不是密码来解锁池。选择要从本地系统上传的恢复密钥文件。"
 
 msgid "Unlock the pool with either a passphrase or a recovery key."
-msgstr ""
+msgstr "使用密码或恢复密钥解锁池。"
 
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
@@ -12246,7 +12246,7 @@ msgid "VNET Virtual Networking"
 msgstr "VNET虚拟网络"
 
 msgid "VNET is required."
-msgstr ""
+msgstr "VNET是必需的。"
 
 msgid "Valid"
 msgstr "有效"
@@ -12282,7 +12282,7 @@ msgid "Verify passphrase"
 msgstr "确认密码"
 
 msgid "Verify the pool encryption passphrase."
-msgstr ""
+msgstr "验证池加密密码。"
 
 msgid "Version"
 msgstr "版本"
@@ -12622,7 +12622,7 @@ msgid "allow_mount"
 msgstr "允许_安装"
 
 msgid "allow_mount_*"
-msgstr ""
+msgstr "允许_安装_*"
 
 msgid "allow_mount_devfs"
 msgstr "允许_安装_devfs"
@@ -12700,7 +12700,7 @@ msgid "days"
 msgstr "天数"
 
 msgid "depends"
-msgstr "依靠"
+msgstr "depends"
 
 msgid "destroy"
 msgstr "销毁"
@@ -12934,7 +12934,7 @@ msgid "stacksize"
 msgstr "STACKSIZE"
 
 msgid "stop_timeout"
-msgstr "STOP_TIMEOUT"
+msgstr "停止_超时"
 
 msgid "swapuse"
 msgstr "swapuse"
