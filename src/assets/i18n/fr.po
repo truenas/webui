@@ -7303,7 +7303,7 @@ msgid "Language code"
 msgstr "Code de la langue"
 
 msgid "Last Scrub Run on"
-msgstr ""
+msgstr "Dernier nettoyage exécuté"
 
 msgid "Leave Domain"
 msgstr "Quitter le domaine"
@@ -8224,7 +8224,7 @@ msgstr ""
 "pour plus de détails sur l'option --exclude."
 
 msgid "Next"
-msgstr "Prochain"
+msgstr "Suivant"
 
 msgid "Next Run"
 msgstr "Prochaine exécution"
