@@ -30,7 +30,7 @@ int_name_tooltip : T('Enter a name for the interface.\
  <samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where\
  <i>X</i> is a number representing a non-parent interface. Read-only\
  when editing an interface.'),
-int_name_validation : [ Validators.required ],
+int_name_validation : [],
 
 int_dhcp_placeholder : T('DHCP'),
 int_dhcp_tooltip : T('Set to enable DHCP. Leave unset to create a static\
