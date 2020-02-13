@@ -54,7 +54,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         name : 'name',
         placeholder : helptext.int_name_placeholder,
         tooltip : helptext.int_name_tooltip,
-        required: true,
         validation : helptext.int_name_validation
       },
       {
