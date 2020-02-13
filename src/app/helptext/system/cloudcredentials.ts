@@ -2,6 +2,11 @@ import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
 
 export const helptext_system_cloudcredentials = {
+  fieldset_basic: T('Name and Provider'),
+  fieldset_authentication: T('Authentication'),
+  fieldset_authentication_advanced: T('Authentication Advanced Options'),
+  fieldset_endpoint_advanced_options: T('Endpoint Advanced Options'),
+
   add_tooltip: T('Add Cloud Credential'),
 
   name: {
@@ -264,6 +269,99 @@ a new application key, log in to the Backblaze account, go to the \
       'Unique drive identifier. Log in to a Microsoft account and choose \
  a drive from the <i>Drives List</i> drop-down to add a valid ID.'
     )
+  },
+
+  user_openstack_swift: {
+    placeholder: T('User Name'),
+    tooltip: T('Openstack user name for login. This is the OS_USERNAME from an \
+<a href="https://rclone.org/swift/#configuration-from-an-openstack-credentials-file" \
+target="_blank">OpenStack credentials file</a>.'),
+  },
+
+  key_openstack_swift: {
+    placeholder: T('API Key or Password'),
+    tooltip: T('Openstack API key or password. This is the OS_PASSWORD from an \
+<a href="https://rclone.org/swift/#configuration-from-an-openstack-credentials-file" \
+target="_blank">OpenStack credentials file</a>.')
+  },
+
+  auth_openstack_swift: {
+    placeholder: T('Authentication URL'),
+    tooltip: T('Authentication URL for the server. This is the OS_AUTH_URL from an \
+<a href="https://rclone.org/swift/#configuration-from-an-openstack-credentials-file" \
+target="_blank">OpenStack credentials file</a>.')
+  },
+
+  user_id_openstack_swift: {
+    placeholder: T('User ID'),
+    tooltip: T('User ID to log in - optional - most swift systems use user and leave this blank \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+
+  domain_openstack_swift: {
+    placeholder: T('User Domain'),
+    tooltip: T('User domain - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+
+  tenant_openstack_swift: {
+    placeholder: T('Tenant Name'),
+    tooltip: T('This is the OS_TENANT_NAME from an \
+<a href="https://rclone.org/swift/#configuration-from-an-openstack-credentials-file" \
+target="_blank">OpenStack credentials file</a>.')
+  },
+
+  tenant_id_openstack_swift: {
+    placeholder: T('Tenant ID'),
+    tooltip: T('Tenant ID - optional for v1 auth, this or tenant required otherwise \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+
+  tenant_domain_openstack_swift: {
+    placeholder: T('Tenant Domain'),
+    tooltip: T('Tenant domain - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+
+  region_openstack_swift: {
+    placeholder: T('Region Name'),
+    tooltip: T('Region name - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+
+  storage_url_openstack_swift: {
+    placeholder: T('Storage URL'),
+    tooltip: T('Storage URL - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+
+  auth_token_openstack_swift: {
+    placeholder: T('Auth Token'),
+    tooltip: T('Auth Token from alternate authentication - optional \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+
+  application_credential_id_openstack_swift: {
+    placeholder: T('Application Credential ID'),
+    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+  application_credential_name_openstack_swift: {
+    placeholder: T('Application Credential Name'),
+    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+  application_credential_secret_openstack_swift: {
+    placeholder: T('Application Credential Secret'),
+    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+  auth_version_openstack_swift: {
+    placeholder: T('AuthVersion'),
+    tooltip: T('AuthVersion - optional - set to (1,2,3) if your auth URL has no version \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.')
+  },
+  endpoint_type_openstack_swift: {
+    placeholder: T('Endpoint Type'),
+    tooltip: T('Endpoint type to choose from the service catalogue. <i>Public</i> is recommended, see the \
+<a href="https://rclone.org/swift/#standard-options" target="_blank">rclone documentation</a>.')
   },
 
   token_pcloud: {
