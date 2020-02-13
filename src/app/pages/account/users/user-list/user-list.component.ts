@@ -178,17 +178,7 @@ export class UserListComponent implements OnInit {
         onClick: () => {
           this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
           this.prefService.savePreferences();
-          this.loader.open();
-          this.busy = this.ws.call(this.queryCall).subscribe(
-            (res) => {
-              this.entityList.getData();
-              this.loader.close();
-            },
-            (err) => {
-              console.error(err)
-              this.loader.close();
-            }
-            );
+          this.entityList.getData(true);
         }
       }
     ];

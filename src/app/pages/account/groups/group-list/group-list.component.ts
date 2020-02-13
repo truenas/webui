@@ -142,17 +142,7 @@ export class GroupListComponent {
         onClick: () => {
           this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
           this.prefService.savePreferences();
-          this.loader.open();
-          this.busy = this.ws.call(this.queryCall).subscribe(
-            (res) => {
-              this.entityList.getData();
-              this.loader.close();
-            },
-            (err) => {
-              console.error(err)
-              this.loader.close();
-            }
-            );
+          this.entityList.getData(true);
         }
       }
     ];

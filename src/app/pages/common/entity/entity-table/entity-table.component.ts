@@ -160,6 +160,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public hasActions = true;
   public sortKey: string;
+  public extra = false;
 
   protected toDeleteRow: any;
   public hasDetails = () =>
@@ -382,7 +383,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showSpinner = true;
   }
 
-  getData() {
+  getData(extra?: boolean) {
+    if (extra) {
+      this.extra = extra;
+    }
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -503,7 +507,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
-      this.updateTableHeightAfterDetailToggle();
+      if (this.extra === false) {
+        this.updateTableHeightAfterDetailToggle();
+      };
+      this.extra = false;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
