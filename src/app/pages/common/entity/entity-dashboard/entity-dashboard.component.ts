@@ -39,7 +39,7 @@ export class EntityDashboardComponent implements OnInit {
 		}
 		
 		let exclude = [];
-		if (window.localStorage.getItem('is_freenas') === 'false') {
+		if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
 			exclude = exclude.concat(this.truenas_exclude);
 			this.ws.call('failover.licensed').subscribe((is_ha) => {
 				if (!is_ha) { // allow failover
