@@ -336,8 +336,11 @@ export class VolumeStatusComponent implements OnInit {
       id: 'remove',
       label: helptext.actions_label.remove,
       onClick: (row) => {
-        const pIndex = row.name.lastIndexOf('p');
-        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+        let diskName = row.name;
+        if (!_.startsWith(row.name, '/')) {
+          const pIndex = row.name.lastIndexOf('p');
+          diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+        }
 
         this.dialogService.confirm(
           helptext.remove_disk.title,
