@@ -3,8 +3,9 @@ import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
+import { EntityFormService } from '../../services/entity-form.service';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
+import globalHelptext from '../../../../../../helptext/global-helptext';
 
 @Component({
   selector: 'form-input',
@@ -19,7 +20,9 @@ export class FormInputComponent implements Field {
   public fileString;
   public showPassword = false;
 
-  constructor(public translate: TranslateService) {}
+  constructor(public translate: TranslateService,
+    private formService: EntityFormService) {
+  }
 
   changeListener($event): void {
     this.readFile($event.target);
@@ -68,5 +71,17 @@ export class FormInputComponent implements Field {
       }
     }
     this.showPassword = !this.showPassword;
+  }
+
+  valueChange() {
+    if (this.config.inputUnit) {
+      const phrasedValue = this.formService.phraseInputData(this.group.controls[this.config.name].value, this.config.inputUnit);
+      if (isNaN(phrasedValue)) {
+        this.group.controls[this.config.name].setErrors({manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit});
+      }
+      if (phrasedValue) {
+        this.group.controls[this.config.name].setValue(phrasedValue);
+      }
+    }
   }
 }
