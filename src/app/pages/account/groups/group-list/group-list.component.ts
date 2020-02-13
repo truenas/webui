@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
+import { Subscription } from 'rxjs';
 import helptext from '../../../../helptext/account/group-list';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
@@ -20,6 +21,8 @@ export class GroupListComponent {
   protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
   protected entityList: any;
   protected loaderOpen = false;
+  public busy: Subscription;
+  
   public columns: Array<any> = [
     {name : 'Group', prop : 'group', always_display: true},
     {name : 'GID', prop : 'gid'},
@@ -130,5 +133,28 @@ export class GroupListComponent {
   };
   checkbox_confirm_show(id: any){
     return true;
+  }
+
+  getAddActions() {
+    return [
+      {
+        label: T(`Toggle Builtin Groups`),
+        onClick: () => {
+          this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
+          this.prefService.savePreferences();
+          this.loader.open();
+          this.busy = this.ws.call(this.queryCall).subscribe(
+            (res) => {
+              this.entityList.getData();
+              this.loader.close();
+            },
+            (err) => {
+              console.error(err)
+              this.loader.close();
+            }
+            );
+        }
+      }
+    ];
   }
 }

@@ -11,7 +11,6 @@ import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-j
 import { DialogService, LanguageService, RestService, StorageService, SystemGeneralService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../common/entity/utils';
@@ -27,8 +26,7 @@ export class GeneralComponent {
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
-  public languageKey: string;
-  public fieldConfig: FieldConfig[] = []
+  public languageKey: string;  public fieldConfig: FieldConfig[] = []
 
   public fieldSets: FieldSet[] = [
     {
@@ -167,31 +165,14 @@ export class GeneralComponent {
           type: "checkbox",
           name: "crash_reporting",
           placeholder: helptext.crash_reporting.placeholder,
-          tooltip: helptext.crash_reporting.tooltip,
-          width: '50%'
-        },
-        {
-          type: 'checkbox',
-          name: 'hide_builtin_users',
-          placeholder: helptext.hide_builtin_users.placeholder,
-          tooltip: helptext.hide_builtin_users.tooltip,
-          width: '50%',
-          isLoading: true
+          tooltip: helptext.crash_reporting.tooltip
         },
         {
           type: "checkbox",
           name: "usage_collection",
           placeholder: helptext.usage_collection.placeholder,
-          tooltip: helptext.usage_collection.tooltip,
-          width: '50%'
+          tooltip: helptext.usage_collection.tooltip
         },
-        {
-          type: 'checkbox',
-          name: 'hide_builtin_groups',
-          placeholder: helptext.hide_builtin_groups.placeholder,
-          tooltip: helptext.hide_builtin_groups.tooltip,
-          width: '50%',
-        }
       ]
     },
     { name: "divider", divider: true }
@@ -304,8 +285,7 @@ export class GeneralComponent {
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
     public localeService: LocaleService,
-    public mdDialog: MatDialog,
-    protected prefService: PreferencesService
+    public mdDialog: MatDialog
   ) {}
 
   IPValidator(name: string, wildcard: string) {
@@ -421,9 +401,6 @@ export class GeneralComponent {
       _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
       entityEdit.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
       _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
-      entityEdit.formGroup.controls['hide_builtin_users'].setValue(this.prefService.preferences.hide_builtin_users);
-      entityEdit.formGroup.controls['hide_builtin_groups'].setValue(this.prefService.preferences.hide_builtin_groups);
-      _.find(this.fieldConfig, { name: 'hide_builtin_users' })['isLoading'] = false;
     }, 2000);
 
     entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
@@ -592,13 +569,8 @@ export class GeneralComponent {
 
   public customSubmit(body) {
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
-    this.prefService.preferences.hide_builtin_users = body.hide_builtin_users;
-    this.prefService.preferences.hide_builtin_groups = body.hide_builtin_groups;
-    this.prefService.savePreferences();
     delete body.date_format;
     delete body.time_format;
-    delete body.hide_builtin_users;
-    delete body.hide_builtin_groups;
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
