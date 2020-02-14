@@ -19,6 +19,8 @@ export interface UserPreferences {
   tableDisplayedColumns:any;
   dateFormat:string;
   timeFormat:string;
+  nicType:string
+  nicAttach: string
 }
 
 @Injectable()
@@ -39,7 +41,9 @@ export class PreferencesService {
     "rebootAfterManualUpdate": false,
     "tableDisplayedColumns":[],
     "dateFormat": 'YYYY-MM-DD',
-    "timeFormat": 'HH:mm:ss'
+    "timeFormat": 'HH:mm:ss',
+    "nicType": null,
+    "nicAttach": null
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {

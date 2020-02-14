@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService, StorageService } from '../../../services';
+import { PreferencesService} from 'app/core/services/preferences.service';
 import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
@@ -358,7 +359,8 @@ export class VMWizardComponent {
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
     public messageService: MessageService,private router: Router,
-    private dialogService: DialogService, private storageService: StorageService) {
+    private dialogService: DialogService, private storageService: StorageService,
+    protected prefService: PreferencesService) {
 
   }
 
@@ -514,6 +516,12 @@ export class VMWizardComponent {
         }
       }
       });
+      ( < FormGroup > entityWizard.formArray.get([3]).get('NIC_type')).valueChanges.subscribe((res) => {
+        this.prefService.preferences.nicType = res;
+      });
+      ( < FormGroup > entityWizard.formArray.get([3]).get('nic_attach')).valueChanges.subscribe((res) => {
+        this.prefService.preferences.nicAttach = res;
+      });
       ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         if (iso_path && iso_path !== undefined){
           this.summary[T('Installation Media')] = iso_path;
@@ -579,9 +587,16 @@ export class VMWizardComponent {
         label: nicId,
         value: nicId
       }));
-      ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'].setValue(
-        this.nic_attach.options[0].value
-      )
+      let tempNICAttach = ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'];
+      setTimeout(() => {
+        if (!this.prefService.preferences.nicAttach) {
+          tempNICAttach.setValue(this.nic_attach.options[0].value)
+        } else {
+          tempNICAttach.setValue(this.prefService.preferences.nicAttach);
+        }
+      },2000)
+
+
       this.ws.call('vm.random_mac').subscribe((mac_res)=>{
         ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_mac'].setValue(mac_res);
       });
@@ -592,9 +607,15 @@ export class VMWizardComponent {
           this.nicType.options.push({label : item[1], value : item[0]});
         });
         
-        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type'].setValue(
-          this.nicType.options[0].value
-        )
+        let tempNICType = ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type']
+        setTimeout(() => {
+          if (!this.prefService.preferences.nicType) {
+            tempNICType.setValue(this.nicType.options[0].value);
+          } else {
+            tempNICType.setValue(this.prefService.preferences.nicType)
+          }
+        }, 2000)
+
 
       this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
       this.vmService.getBootloaderOptions().forEach((item) => {
@@ -707,6 +728,7 @@ blurEvent3(parent){
 }
 
 async customSubmit(value) {
+    this.prefService.savePreferences();
     let hdd;
     const vm_payload = {}
     const zvol_payload = {}
