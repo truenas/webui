@@ -861,18 +861,19 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     protected networkService: NetworkService) { }
 
   getReleaseAndInterface() {
-    if (this.plugin !== undefined) {
-      this.jailFromService.getInterface().subscribe(
-        (res) => {
-          for (let i in res) {
-            this.interfaces.vnetDisabled.push({ label: res[i].name, value: res[i].name });
-          }
-        },
-        (res) => {
-          new EntityUtils().handleWSError(this, res, this.dialogService);
+    this.jailService.getInterfaceChoice().subscribe(
+      (res) => {
+        for (const i in res) {
+          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i] });
+          this.interfaces.vnetDefaultInterface.push({ label: res[i], value: res[i] });
         }
-      );
-    } else {
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this, res, this.dialogService);
+      }
+    );
+
+    if (this.plugin === undefined) {
       this.template_list = new Array<string>();
       // get jail templates as release options
       this.jailService.getTemplates().subscribe(
@@ -895,17 +896,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         },
         (err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
-        }
-      );
-
-      this.jailService.getInterfaceChoice().subscribe(
-        (res) => {
-          for (const i in res) {
-            this.interfaces.vnetDisabled.push({ label: res[i], value: res[i] });
-          }
-        },
-        (res) => {
-          new EntityUtils().handleWSError(this, res, this.dialogService);
         }
       );
     }
@@ -974,7 +964,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       for (const item of ventInterfaces) {
         const vent = item.split(':');
         this.interfaces.vnetEnabled.push({ label: vent[0], value: vent[0] });
-        this.interfaces.vnetDefaultInterface.push({ label: vent[0], value: vent[0] });
       }
     }
   }
