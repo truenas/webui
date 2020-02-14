@@ -59,7 +59,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   is_ha = false;
   upgradeWaitingToFinish = false;
   pendingUpgradeChecked = false;
-  sysName: string = 'FreeNAS';
+  sysName = 'TrueNAS CORE';
   hostname: string;
   public updateIsRunning = false;
   public updateNotificationSent = false;
@@ -93,7 +93,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
       });
-      this.sysName = 'TrueNAS';
+      this.sysName = 'TrueNAS ENTERPRISE';
     } else {
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
