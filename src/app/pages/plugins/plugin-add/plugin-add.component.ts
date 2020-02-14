@@ -328,8 +328,8 @@ export class PluginAddComponent implements OnInit {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i], value: res[i]});
-          this.ip6_interfaceField.options.push({ label: res[i], value: res[i]});
+          this.ip4_interfaceField.options.push({ label: res[i], value: i});
+          this.ip6_interfaceField.options.push({ label: res[i], value: i});
         }
       },
       (res)=>{
