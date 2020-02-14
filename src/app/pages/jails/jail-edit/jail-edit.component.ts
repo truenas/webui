@@ -1216,7 +1216,8 @@ export class JailEditComponent implements OnInit, AfterViewInit {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
-          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i]});
+          this.interfaces.vnetDisabled.push({ label: res[i], value: i});
+          this.interfaces.vnetDefaultInterface.push({ label: res[i], value: i});
         }
       },
       (res)=>{
