@@ -1323,8 +1323,8 @@ export class JailEditComponent implements OnInit, AfterViewInit {
           if (i === 'interfaces') {
             const ventInterfaces = res[0]['interfaces'].split(',');
             for (const item of ventInterfaces) {
-              this.interfaces.vnetEnabled.push({ label: item, value: item});
-              this.interfaces.vnetDefaultInterface.push({ label: item, value: item});
+              const vent = item.split(':');
+              this.interfaces.vnetEnabled.push({ label: vent[0], value: vent[0] });
             }
           }
           if (i == 'type' && res[0][i] == 'pluginv2') {
