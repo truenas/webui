@@ -1056,6 +1056,7 @@ export class ReplicationFormComponent {
 
     blurEvent(parent) {
         if (parent.entityForm) {
+            console.log(parent.storageService.humanReadable)
             parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable)
         }
     }

@@ -2,7 +2,8 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import helptext from '../../../../helptext/services/components/service-ftp';
-import { DialogService, RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import * as _ from 'lodash';
+import { DialogService, RestService, SystemGeneralService, WebSocketService, StorageService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -16,11 +17,13 @@ export class ServiceFTPComponent implements OnInit {
   protected route_success: string[] = [ 'services' ];
 
   protected isBasicMode: boolean = true;
+  protected entityForm: any;
 
   protected rootlogin_fg: any;
   protected rootloginSubscription: any;
   protected warned = false;
   protected rootlogin: boolean;
+  protected fieldConfig;
 
   public fieldSets = new FieldSets([
     {
@@ -254,7 +257,10 @@ export class ServiceFTPComponent implements OnInit {
           placeholder: helptext.localuserbw_placeholder,
           tooltip: helptext.localuserbw_tooltip,
           required: true,
-          validation: helptext.localuserbw_validation
+          validation: helptext.localuserbw_validation,
+          blurStatus: true,
+          blurEvent: this.blurEvent,
+          parent: this,
         },
         {
           type: "input",
@@ -380,7 +386,7 @@ export class ServiceFTPComponent implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected dialog: DialogService,
+              protected dialog: DialogService, protected storageService: StorageService,
               protected systemGeneralService: SystemGeneralService) {}
 
   ngOnInit() {
@@ -393,6 +399,7 @@ export class ServiceFTPComponent implements OnInit {
   }
 
   afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
     this.rootloginSubscription = 
@@ -410,9 +417,21 @@ export class ServiceFTPComponent implements OnInit {
         this.rootlogin = res;
       }
     });
+
+    entityEdit.formGroup.controls['localuserbw'].valueChanges.subscribe((value) => {
+      const localUsrBW = _.find(this.fieldConfig, { name: "localuserbw" });
+      const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
+      localUsrBW['hasErrors'] = false;
+      localUsrBW['errors'] = '';
+      if (filteredValue !== undefined && isNaN(filteredValue)) {
+        localUsrBW['hasErrors'] = true;
+        localUsrBW['errors'] = helptext.localuserbw_err;
+      };
+  });
   }
 
   resourceTransformIncomingRestData(data) {
+    data.localuserbw = this.storageService.convertBytestoHumanReadable(data.localuserbw * 1024, 0);
     this.rootlogin = data['rootlogin'];
     const certificate = data['ssltls_certificate'];
     if (certificate && certificate.id) {
@@ -437,6 +456,7 @@ export class ServiceFTPComponent implements OnInit {
   }
 
   beforeSubmit(data) {
+    data.localuserbw = (this.storageService.convertHumanStringToNum(data.localuserbw)/1024);
     let fileperm = parseInt(data['filemask'], 8);
     let filemask = (~fileperm & 0o666).toString(8);
     while (filemask.length < 3) {
@@ -458,5 +478,11 @@ export class ServiceFTPComponent implements OnInit {
 
   ngOnDestroy() {
     this.rootloginSubscription.unsubscribe();
+  }
+
+  blurEvent(parent) {
+    if (parent.entityForm) {
+      parent.entityForm.formGroup.controls['localuserbw'].setValue(parent.storageService.humanReadable || 0)
+  }
   }
 }
