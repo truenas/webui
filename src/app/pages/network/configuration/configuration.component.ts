@@ -184,7 +184,7 @@ export class ConfigurationComponent {
 
   afterInit(entityEdit: any) { 
     this.entityEdit = entityEdit; 
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
