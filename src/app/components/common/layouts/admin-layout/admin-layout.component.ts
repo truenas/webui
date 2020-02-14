@@ -26,7 +26,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   consoleMsg: String = "";
   hostname: string;
   consoleMSgList: any[] = [];
-  public is_freenas: Boolean = window.localStorage['is_freenas'];
+  public product_type = window.localStorage['product_type'];
   public logoPath: string = 'assets/images/light-logo.svg';
   public logoTextPath: string = 'assets/images/light-logo-text.svg';
   public currentTheme: string = "";
@@ -50,8 +50,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     public language: LanguageService,
     public dialog: MatDialog) {
     // detect server type
-    ws.call('system.is_freenas').subscribe((res)=>{
-      this.is_freenas = res;
+    ws.call('system.product_type').subscribe((res)=>{
+      this.product_type = res;
     });
 
     // Close sidenav after route change in mobile

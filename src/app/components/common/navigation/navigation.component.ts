@@ -39,7 +39,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
           _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
         }
       });
-      if (window.localStorage.getItem('is_freenas') === 'false') {
+      if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
         this.ws.call('failover.licensed').subscribe((is_ha) => {
           if (is_ha) {
             _.find(_.find(menuItem,
@@ -69,7 +69,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         eventName: "SysInfo"
         }).subscribe((evt:CoreEvent) => {
          
-          if (window.localStorage.getItem('is_freenas') === 'false') {
+          if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
             // Feature detection
 
             if (evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) {

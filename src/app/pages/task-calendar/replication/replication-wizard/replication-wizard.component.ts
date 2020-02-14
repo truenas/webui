@@ -439,7 +439,7 @@ export class ReplicationWizardComponent {
                     label: T("Manual"),
                     value: 'manual',
                 }, {
-                    label: T("Semi-automatic (FreeNAS only)"),
+                    label: T("Semi-automatic (TrueNAS CORE only)"),
                     value: 'semiautomatic',
                 }
             ],

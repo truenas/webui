@@ -3,14 +3,14 @@
     <div id="top-row" class="container" fxLayout="row wrap">
       <div id="top-left" fxFlex="55%" fxFlex.xs="100">
           <app-fn-sys-info
-          *ngIf="is_freenas; else TNsysinfo"
+          *ngIf="product_type === 'CORE'; else TNsysinfo"
           [FN_version]='FN_version'
           [FN_model]="FN_model"
           [FN_memory]="FN_memory"
           [FN_serial]="FN_serial"
           [FN_instructions]="FN_instructions"
           ></app-fn-sys-info>
-          <div id="fn-spacer" *ngIf="is_freenas"></div>
+          <div id="fn-spacer" *ngIf="product_type === 'CORE'"></div>
         <ng-template #TNsysinfo>
           <app-tn-sys-info
             [customer_name]='customer_name'
@@ -25,23 +25,23 @@
           </app-tn-sys-info>
         </ng-template>
         <div id="production-status-wrapper">
-          <app-production-status *ngIf="!is_freenas"></app-production-status>
+          <app-production-status *ngIf="product_type === 'ENTERPRISE'"></app-production-status>
         </div>
       </div>
       <div id="top-right" fxFlex="45%" fxFlex.xs="100">
         <div class="sys-image">
             <app-sys-image
             [product_image]="product_image"
-            [ngClass]="[is_freenas ? 'fn-sys-image' : 'tn-sys-image']"
+            [ngClass]="[product_type === 'CORE' ? 'fn-sys-image' : 'tn-sys-image']"
           ></app-sys-image>
         </div>
       </div>
     </div>
-    <div *ngIf="!is_freenas" fxLayout="row">
+    <div *ngIf="product_type === 'ENTERPRISE'" fxLayout="row">
       <app-proactive></app-proactive>
     </div>
     <div fxLayout="row">
-      <app-fn-support *ngIf="is_freenas; else TNsupport"></app-fn-support>
+      <app-fn-support *ngIf="product_type === 'CORE'; else TNsupport"></app-fn-support>
       <ng-template #TNsupport>
         <app-tn-support></app-tn-support>
       </ng-template>

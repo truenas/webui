@@ -17,7 +17,7 @@ import { T } from '../../../translate-marker';
 })
 export class ConfigResetComponent implements OnInit {
 
-  public is_freenas: Boolean = false;
+  public product_type: string;
   public copyrightYear = globalHelptext.copyright_year;
   public dialogRef: any;
 
@@ -25,8 +25,8 @@ export class ConfigResetComponent implements OnInit {
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, protected dialog: MatDialog) {
       this.ws = ws;
-      this.ws.call('system.is_freenas').subscribe((res)=>{
-        this.is_freenas = res;
+      this.ws.call('system.product_type').subscribe((res)=>{
+        this.product_type = res;
       });
   }
 
@@ -43,9 +43,7 @@ export class ConfigResetComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (window.localStorage.getItem('is_freenas') === 'true') {
-      this.is_freenas = true;
-    }
+    this.product_type = window.localStorage.getItem('product_type');
 
     this.dialog.closeAll();
     this.resetConfigSubmit();

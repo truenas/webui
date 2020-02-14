@@ -50,7 +50,7 @@ export default {
     connect_timeout_tooltip: T('Time \(in seconds\) before the system \
  stops attempting to establish a connection with the remote system.'),
 
-    url_placeholder: T('FreeNAS/TrueNAS URL'),
+    url_placeholder: T('TrueNAS URL'),
     url_tooltip: T('Hostname or IP address of the remote system. A \
  valid URL scheme is required. Example: \
  <b>https://<i>10.231.3.76</i></b>'),

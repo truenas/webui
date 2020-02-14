@@ -64,8 +64,8 @@ export class GlobalconfigurationComponent {
 
   afterInit(entityForm) {
     entityForm.submitFunction = entityForm.editCall;
-    this.ws.call('system.is_freenas').subscribe((res)=>{
-      if (!res) {
+    this.ws.call('system.product_type').subscribe((res)=>{
+      if (res === 'ENTERPRISE') {
         entityForm.setDisabled('alua', false, false);
       }
     });

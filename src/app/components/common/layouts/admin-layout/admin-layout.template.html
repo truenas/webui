@@ -5,7 +5,7 @@
       <div *ngFor="let theme of freenasThemes">
         <div *ngIf="theme.name == currentTheme" ix-auto ix-auto-type="button" ix-auto-identifier="logo">
           <div *ngIf="theme.hasDarkLogo; else lightLogo">
-            <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasDark">
+            <div class="branding mat-bg-primary" *ngIf="product_type == 'CORE'; else isTruenasDark">
               <a routerLink="/dashboard" class="logo"><img [src]="logoPath" alt="FreeNAS Shark logo" class="app-logo"></a>
               <a routerLink="/dashboard" class="logo-text"><img [src]="logoTextPath" alt="FreeNAS" class="app-logo-text"></a>
             </div>
@@ -16,7 +16,7 @@
             </ng-template>
           </div>
           <ng-template #lightLogo>
-            <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasLight">
+            <div class="branding mat-bg-primary" *ngIf="product_type == 'CORE'; else isTruenasLight">
               <a routerLink="/dashboard" class="logo"><img [src]="logoPath" alt="FreeNAS Shark logo" class="app-logo"></a>
               <a routerLink="/dashboard" class="logo-text"><img [src]="logoTextPath" alt="FreeNAS" class="app-logo-text"></a>
             </div>
@@ -31,8 +31,8 @@
       </div>
       <div class="app-user">
         <div class="app-user-photo">
-          <svg-icon *ngIf="is_freenas" class="ix-logo" src="assets/images/ix.svg" [svgStyle]="{'width.px':64,'height.px':64}" ></svg-icon>
-          <svg-icon *ngIf="!is_freenas" class="ix-logo" src="assets/images/iX_Logomark.svg" [svgStyle]="{'width.px':64,'height.px':64}" ></svg-icon>
+          <svg-icon *ngIf="product_type == 'CORE'" class="ix-logo" src="assets/images/ix.svg" [svgStyle]="{'width.px':64,'height.px':64}" ></svg-icon>
+          <svg-icon *ngIf="product_type == 'ENTERPRISE'" class="ix-logo" src="assets/images/iX_Logomark.svg" [svgStyle]="{'width.px':64,'height.px':64}" ></svg-icon>
         </div>
         <span class="app-user-name">
           <mat-icon class="icon-xs text-muted">lock</mat-icon>
@@ -49,7 +49,7 @@
     <!-- Listens language change event -->
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="language.setMiddlewareLanguage($event)"></topbar>
     <!-- App content -->
-    <app-breadcrumb [is_freenas]="is_freenas"></app-breadcrumb>
+    <app-breadcrumb [product_type]="product_type"></app-breadcrumb>
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
       <router-outlet></router-outlet>
     </div>
