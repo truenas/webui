@@ -14,8 +14,8 @@ export class EulaComponent implements OnInit {
   constructor(private ws: WebSocketService, private router: Router) { }
 
   ngOnInit() {
-    const isFreenas = window.localStorage.getItem('is_freenas');
-    if (isFreenas === 'true') {
+    const product_type = window.localStorage.getItem('product_type');
+    if (product_type === 'CORE') {
       this.router.navigate(['']);
     } else {
       this.ws.call('truenas.get_eula').subscribe((res) => {

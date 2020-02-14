@@ -38,7 +38,7 @@ export class EmailComponent implements OnDestroy {
         }
         this.ws.call('system.info').subscribe(sysInfo => {
           value.pass = value.pass || this.entityEdit.data.pass
-          if (window.localStorage.getItem('is_freenas') === 'false') {
+          if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
             mailObj = mailObjTruenas;
           }
           mailObj['subject'] += " hostname: " + sysInfo['hostname'];

@@ -10,7 +10,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
   templateUrl: './tn-sys-info.component.html'
 })
 export class TnSysInfoComponent implements OnInit {
-  is_freenas: boolean;
+  product_type: string;
   @Input() customer_name;
   @Input() features;
   @Input() contract_type;
@@ -24,7 +24,7 @@ export class TnSysInfoComponent implements OnInit {
     protected loader: AppLoaderService) { }
 
   ngOnInit() {
-    window.localStorage['is_freenas'] === 'true' ? this.is_freenas = true : this.is_freenas = false;
+    this.product_type = window.localStorage['product_type'];
   }
 
   updateLicense() {
