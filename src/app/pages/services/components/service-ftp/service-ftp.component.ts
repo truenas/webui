@@ -25,6 +25,8 @@ export class ServiceFTPComponent implements OnInit {
   protected rootlogin: boolean;
   protected fieldConfig;
 
+  protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw']
+
   public fieldSets = new FieldSets([
     {
       name: helptext.fieldset_general,
@@ -268,7 +270,10 @@ export class ServiceFTPComponent implements OnInit {
           placeholder: helptext.localuserdlbw_placeholder,
           tooltip: helptext.localuserdlbw_tooltip,
           required: true,
-          validation: helptext.localuserdlbw_validation
+          validation: helptext.localuserdlbw_validation,
+          blurStatus: true,
+          blurEvent: this.blurEvent2,
+          parent: this,
         },
         {
           type: "input",
@@ -276,7 +281,10 @@ export class ServiceFTPComponent implements OnInit {
           placeholder: helptext.anonuserbw_placeholder,
           tooltip: helptext.anonuserbw_tooltip,
           required: true,
-          validation: helptext.anonuserbw_validation
+          validation: helptext.anonuserbw_validation,
+          blurStatus: true,
+          blurEvent: this.blurEvent3,
+          parent: this,
         },
         {
           type: "input",
@@ -284,7 +292,10 @@ export class ServiceFTPComponent implements OnInit {
           placeholder: helptext.anonuserdlbw_placeholder,
           tooltip: helptext.anonuserdlbw_tooltip,
           required: true,
-          validation: helptext.anonuserdlbw_validation
+          validation: helptext.anonuserdlbw_validation,
+          blurStatus: true,
+          blurEvent: this.blurEvent4,
+          parent: this,
         }
       ]
     },
@@ -419,15 +430,20 @@ export class ServiceFTPComponent implements OnInit {
     });
 
     entityEdit.formGroup.controls['localuserbw'].valueChanges.subscribe((value) => {
-      const localUsrBW = _.find(this.fieldConfig, { name: "localuserbw" });
+      const field = _.find(this.fieldConfig, { name: 'localuserbw' });
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
-      localUsrBW['hasErrors'] = false;
-      localUsrBW['errors'] = '';
+      field['hasErrors'] = false;
+      field['errors'] = '';
       if (filteredValue !== undefined && isNaN(filteredValue)) {
-        localUsrBW['hasErrors'] = true;
-        localUsrBW['errors'] = helptext.localuserbw_err;
+        field['hasErrors'] = true;
+        field['errors'] = helptext.bandwidth_err;
       };
-  });
+    });
+
+  }
+
+  setBWFields(fieldname: string, value: string) {
+
   }
 
   resourceTransformIncomingRestData(data) {
@@ -483,6 +499,24 @@ export class ServiceFTPComponent implements OnInit {
   blurEvent(parent) {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['localuserbw'].setValue(parent.storageService.humanReadable || 0)
+    }
   }
+
+  blurEvent2(parent) {
+    if (parent.entityForm) {
+      // parent.entityForm.formGroup.controls['localuserdlbw'].setValue(parent.storageService.humanReadable || 0)
+    }
+  }
+
+  blurEvent3(parent) {
+    if (parent.entityForm) {
+      // parent.entityForm.formGroup.controls['anonuserbw'].setValue(parent.storageService.humanReadable || 0)
+    }
+  }
+
+  blurEvent4(parent) {
+    if (parent.entityForm) {
+      // parent.entityForm.formGroup.controls['anonuserdlbw'].setValue(parent.storageService.humanReadable || 0)
+    }
   }
 }

@@ -97,19 +97,20 @@ passiveportsmax_validation: [rangeValidator(0, 65535), Validators.required],
 localuserbw_placeholder : T(`Local User Upload Bandwidth: ${globalHelptext.human_readable.suggestion_label}`),
 localuserbw_tooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited.'),
 localuserbw_validation: [Validators.required],
-localuserbw_err: globalHelptext.human_readable.input_error,
+
+bandwidth_err: globalHelptext.human_readable.input_error,
 
 localuserdlbw_placeholder : T('Local User Download Bandwidth'),
 localuserdlbw_tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
-localuserdlbw_validation: [rangeValidator(0), Validators.required],
+localuserdlbw_validation: [Validators.required],
 
 anonuserbw_placeholder : T('Anonymous User Upload Bandwidth'),
 anonuserbw_tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
-anonuserbw_validation: [rangeValidator(0), Validators.required],
+anonuserbw_validation: [Validators.required],
 
 anonuserdlbw_placeholder : T('Anonymous User Download Bandwidth'),
 anonuserdlbw_tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
-anonuserdlbw_validation: [rangeValidator(0), Validators.required],
+anonuserdlbw_validation: [Validators.required],
 
 tls_placeholder : T('Enable TLS'),
 tls_tooltip: T('Set to enable encrypted connections. Requires a certificate\
