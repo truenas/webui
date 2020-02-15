@@ -1126,6 +1126,10 @@ export class VolumesListTableConfig implements InputTableConf {
               : dataObj.comments = ("");
           }
         }
+        // add name, available and used into the data object
+        dataObj.name = dataObj.name.split('/').pop();
+        dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
+        dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
       }
     });
   }
