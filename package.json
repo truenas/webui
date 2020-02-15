@@ -26,7 +26,8 @@
     "extract": "node scripts/extract_strings.js",
     "po2json": "node scripts/convert_po2json.js",
     "create_po_pr": "yarn run extract && node scripts/create_pr.js",
-    "generate_licenses": "yarn licenses generate-disclaimer > src/assets/disclaimer.txt"
+    "generate_licenses": "yarn licenses generate-disclaimer > src/assets/disclaimer.txt",
+    "generate_licenses_list": "yarn licenses list > licenses.txt"
   },
   "repository": {
     "type": "git",
