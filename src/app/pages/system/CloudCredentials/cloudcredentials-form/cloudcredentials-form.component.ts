@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { CloudCredentialService, DialogService, WebSocketService, ReplicationService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
 @Component({
   selector: 'app-cloudcredentials-form',
@@ -31,813 +32,1139 @@ export class CloudCredentialsFormComponent {
   protected credentialsOauth = false;
   protected oauthURL: any;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldSets: FieldSet[] = [
     {
-      type: 'input',
-      name: 'name',
-      placeholder: helptext.name.placeholder,
-      tooltip: helptext.name.tooltip,
-      required: true,
-      validation: helptext.name.validation,
-    },
-    {
-      type: 'select',
-      name: 'provider',
-      placeholder: helptext.provider.placeholder,
-      tooltip: helptext.provider.tooltip,
-      options: [],
-      value: this.selectedProvider,
-      required: true,
-      validation: helptext.provider.validation,
-    },
-    // Amazon_s3
-    {
-      type: 'input',
-      name: 'access_key_id-S3',
-      placeholder: helptext.access_key_id_s3.placeholder,
-      tooltip: helptext.access_key_id_s3.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
+      name: helptext.fieldset_basic,
+      label: true,
+      class: 'basic',
+      width: '49%',
+      config: [
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'S3',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'secret_access_key-S3',
-      placeholder: helptext.secret_access_key_s3.placeholder,
-      tooltip: helptext.secret_access_key_s3.tooltip,
-      required: true,
-      isHidden: true,
-      inputType: 'password',
-
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'S3',
-           }]
-        }
-      ],
-      togglePw: true
-    },
-    {
-      type: 'checkbox',
-      name: 'advanced-S3',
-      placeholder: T('Advanced Settings'),
-      isHidden: true,
-      value: false,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'S3',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'endpoint-S3',
-      placeholder: helptext.endpoint_s3.placeholder,
-      tooltip: helptext.endpoint_s3.tooltip,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          connective: 'AND',
-          when: [{
-            name: 'provider',
-            value: 'S3',
-           }, {
-            name: 'advanced-S3',
-            value: true,
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'region-S3',
-      placeholder: helptext.region_s3.placeholder,
-      tooltip: helptext.region_s3.tooltip,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          connective: 'AND',
-          when: [{
-            name: 'provider',
-            value: 'S3',
-           }, {
-            name: 'advanced-S3',
-            value: true,
-           }]
-        }
-      ]
-    },
-    {
-      type: 'checkbox',
-      name: 'skip_region-S3',
-      placeholder: helptext.skip_region_s3.placeholder,
-      tooltip: helptext.skip_region_s3.tooltip,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          connective: 'AND',
-          when: [{
-            name: 'provider',
-            value: 'S3',
-           }, {
-            name: 'advanced-S3',
-            value: true,
-           }]
-        }
-      ]
-    },
-    {
-      type: 'checkbox',
-      name: 'signatures_v2-S3',
-      placeholder: helptext.signatures_v2_s3.placeholder,
-      tooltip: helptext.signatures_v2_s3.tooltip,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          connective: 'AND',
-          when: [{
-            name: 'provider',
-            value: 'S3',
-           }, {
-            name: 'advanced-S3',
-            value: true,
-           }]
-        }
-      ]
-    },
-    // backblaze b2
-    {
-      type: 'input',
-      name: 'account-B2',
-      placeholder: helptext.account_b2.placeholder,
-      tooltip: helptext.account_b2.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'B2',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'key-B2',
-      placeholder: helptext.key_b2.placeholder,
-      tooltip: helptext.key_b2.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'B2',
-           }]
-        }
-      ]
-    },
-    // box
-    {
-      type: 'input',
-      name: 'token-BOX',
-      placeholder: helptext.token_box.placeholder,
-      tooltip: helptext.token_box.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'BOX',
-           }]
-        }
-      ]
-    },
-    // dropbox
-    {
-      type: 'input',
-      name: 'token-DROPBOX',
-      placeholder: helptext.token_dropbox.placeholder,
-      tooltip: helptext.token_dropbox.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'DROPBOX',
-           }]
-        }
-      ]
-    },
-    // ftp
-    {
-      type: 'input',
-      name: 'host-FTP',
-      placeholder: helptext.host_ftp.placeholder,
-      tooltip: helptext.host_ftp.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'FTP',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'port-FTP',
-      placeholder: helptext.port_ftp.placeholder,
-      tooltip: helptext.port_ftp.tooltip,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'FTP',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'user-FTP',
-      placeholder: helptext.user_ftp.placeholder,
-      tooltip: helptext.user_ftp.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'FTP',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'pass-FTP',
-      placeholder: helptext.pass_ftp.placeholder,
-      tooltip: helptext.pass_ftp.tooltip,
-      required: true,
-      isHidden: true,
-      inputType: 'password',
-      togglePw: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'FTP',
-           }]
-        }
-      ]
-    },
-    // google cloud storage
-    {
-      type : 'textarea',
-      name : 'preview-GOOGLE_CLOUD_STORAGE',
-      placeholder : helptext.preview_google_cloud_storage.placeholder,
-      tooltip: helptext.preview_google_cloud_storage.tooltip,
-      readonly: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'GOOGLE_CLOUD_STORAGE',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'readfile',
-      name: 'service_account_credentials-GOOGLE_CLOUD_STORAGE',
-      placeholder: helptext.service_account_credentials_google_cloud_storage.placeholder,
-      tooltip: helptext.service_account_credentials_google_cloud_storage.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'GOOGLE_CLOUD_STORAGE',
-           }]
-        }
-      ]
-    },
-    // google drive
-    {
-      type: 'input',
-      name: 'token-GOOGLE_DRIVE',
-      placeholder: helptext.token_google_drive.placeholder,
-      tooltip: helptext.token_google_drive.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'GOOGLE_DRIVE',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'team_drive-GOOGLE_DRIVE',
-      placeholder: helptext.team_drive_google_drive.placeholder,
-      tooltip: helptext.team_drive_google_drive.tooltip,
-      required: false,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'GOOGLE_DRIVE',
-           }]
-        }
-      ]
-    },
-    // http
-    {
-      type: 'input',
-      name: 'url-HTTP',
-      placeholder: helptext.url_http.placeholder,
-      tooltip: helptext.url_http.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'HTTP',
-           }]
-        }
-      ]
-    },
-    // hubic
-    {
-      type: 'input',
-      name: 'token-HUBIC',
-      placeholder: helptext.token_hubic.placeholder,
-      tooltip: helptext.token_hubic.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'HUBIC',
-           }]
-        }
-      ]
-    },
-    // mega
-    {
-      type: 'input',
-      name: 'user-MEGA',
-      placeholder: helptext.user_mega.placeholder,
-      tooltip: helptext.user_mega.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'MEGA',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'pass-MEGA',
-      placeholder: helptext.pass_mega.placeholder,
-      tooltip: helptext.pass_mega.tooltip,
-      required: true,
-      isHidden: true,
-      inputType: 'password',
-      togglePw : true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'MEGA',
-           }]
-        }
-      ]
-    },
-    // microsoft azure
-    {
-      type: 'input',
-      name: 'account-AZUREBLOB',
-      placeholder: helptext.account_azureblob.placeholder,
-      tooltip: helptext.account_azureblob.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'AZUREBLOB',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'key-AZUREBLOB',
-      placeholder: helptext.key_azureblob.placeholder,
-      tooltip: helptext.key_azureblob.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'AZUREBLOB',
-           }]
-        }
-      ]
-    },
-    // microsoft onedrive
-    {
-      type: 'input',
-      name: 'token-ONEDRIVE',
-      placeholder: helptext.token_onedrive.placeholder,
-      tooltip: helptext.token_onedrive.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'ONEDRIVE',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'select',
-      name: 'drives-ONEDRIVE',
-      placeholder: helptext.drives_onedrive.placeholder,
-      tooltip: helptext.drives_onedrive.tooltip,
-      options: [{
-        label: '---------',
-        value: '',
-      }],
-      value: '',
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'ONEDRIVE',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'select',
-      name: 'drive_type-ONEDRIVE',
-      placeholder: helptext.drive_type_onedrive.placeholder,
-      tooltip: helptext.drive_type_onedrive.tooltip,
-      options: [
-        {
-          label: 'PERSONAL',
-          value: 'PERSONAL',
+          type: 'input',
+          name: 'name',
+          placeholder: helptext.name.placeholder,
+          tooltip: helptext.name.tooltip,
+          required: true,
+          validation: helptext.name.validation,
         },
         {
-          label: 'BUSINESS',
-          value: 'BUSINESS',
+          type: 'select',
+          name: 'provider',
+          placeholder: helptext.provider.placeholder,
+          tooltip: helptext.provider.tooltip,
+          options: [],
+          value: this.selectedProvider,
+          required: true,
+          validation: helptext.provider.validation,
+        },
+      ]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext.fieldset_authentication,
+      label: true,
+      class: 'authentication',
+      width: '49%',
+      config: [
+        // Amazon_s3
+        {
+          type: 'input',
+          name: 'access_key_id-S3',
+          placeholder: helptext.access_key_id_s3.placeholder,
+          tooltip: helptext.access_key_id_s3.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'S3',
+               }]
+            }
+          ]
         },
         {
-          label: 'DOCUMENT_LIBRARY',
-          value: 'DOCUMENT_LIBRARY',
-        }
-      ],
-      value: 'PERSONAL',
-      required: true,
-      isHidden: true,
-      relation: [
+          type: 'input',
+          name: 'secret_access_key-S3',
+          placeholder: helptext.secret_access_key_s3.placeholder,
+          tooltip: helptext.secret_access_key_s3.tooltip,
+          required: true,
+          isHidden: true,
+          inputType: 'password',
+    
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'S3',
+               }]
+            }
+          ],
+          togglePw: true
+        },
+        // backblaze b2
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'ONEDRIVE',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'drive_id-ONEDRIVE',
-      placeholder: helptext.drive_id_onedrive.placeholder,
-      tooltip: helptext.drive_id_onedrive.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
+          type: 'input',
+          name: 'account-B2',
+          placeholder: helptext.account_b2.placeholder,
+          tooltip: helptext.account_b2.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'B2',
+              }]
+            }
+          ]
+        },
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'ONEDRIVE',
-           }]
-        }
-      ]
-    },
-    // pcloud
-    {
-      type: 'input',
-      name: 'token-PCLOUD',
-      placeholder: helptext.token_pcloud.placeholder,
-      tooltip: helptext.token_pcloud.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
+          type: 'input',
+          name: 'key-B2',
+          placeholder: helptext.key_b2.placeholder,
+          tooltip: helptext.key_b2.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'B2',
+              }]
+            }
+          ]
+        },
+        // box
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'PCLOUD',
-           }]
-        }
-      ]
-    },
-    // sftp
-    {
-      type: 'input',
-      name: 'host-SFTP',
-      placeholder: helptext.host_sftp.placeholder,
-      tooltip: helptext.host_sftp.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
+          type: 'input',
+          name: 'token-BOX',
+          placeholder: helptext.token_box.placeholder,
+          tooltip: helptext.token_box.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'BOX',
+              }]
+            }
+          ]
+        },
+        // dropbox
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'SFTP',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'port-SFTP',
-      placeholder: helptext.port_sftp.placeholder,
-      tooltip: helptext.port_sftp.tooltip,
-      isHidden: true,
-      relation: [
+          type: 'input',
+          name: 'token-DROPBOX',
+          placeholder: helptext.token_dropbox.placeholder,
+          tooltip: helptext.token_dropbox.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'DROPBOX',
+              }]
+            }
+          ]
+        },
+        // ftp
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'SFTP',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'user-SFTP',
-      placeholder: helptext.user_sftp.placeholder,
-      tooltip: helptext.user_sftp.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
+          type: 'input',
+          name: 'host-FTP',
+          placeholder: helptext.host_ftp.placeholder,
+          tooltip: helptext.host_ftp.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'FTP',
+              }]
+            }
+          ]
+        },
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'SFTP',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'pass-SFTP',
-      placeholder: helptext.pass_sftp.placeholder,
-      tooltip: helptext.pass_sftp.tooltip,
-      required: true,
-      isHidden: true,
-      inputType: 'password',
-      togglePw: true,
-      relation: [
+          type: 'input',
+          name: 'port-FTP',
+          placeholder: helptext.port_ftp.placeholder,
+          tooltip: helptext.port_ftp.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'FTP',
+              }]
+            }
+          ]
+        },
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'SFTP',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'select',
-      name: 'private_key-SFTP',
-      placeholder: helptext.private_key_sftp.placeholder,
-      tooltip: helptext.private_key_sftp.tooltip,
-      options: [
+          type: 'input',
+          name: 'user-FTP',
+          placeholder: helptext.user_ftp.placeholder,
+          tooltip: helptext.user_ftp.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'FTP',
+              }]
+            }
+          ]
+        },
         {
-          label: '---------',
+          type: 'input',
+          name: 'pass-FTP',
+          placeholder: helptext.pass_ftp.placeholder,
+          tooltip: helptext.pass_ftp.tooltip,
+          required: true,
+          isHidden: true,
+          inputType: 'password',
+          togglePw: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'FTP',
+              }]
+            }
+          ]
+        },
+        // google cloud storage
+        {
+          type : 'textarea',
+          name : 'preview-GOOGLE_CLOUD_STORAGE',
+          placeholder : helptext.preview_google_cloud_storage.placeholder,
+          tooltip: helptext.preview_google_cloud_storage.tooltip,
+          readonly: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'GOOGLE_CLOUD_STORAGE',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'readfile',
+          name: 'service_account_credentials-GOOGLE_CLOUD_STORAGE',
+          placeholder: helptext.service_account_credentials_google_cloud_storage.placeholder,
+          tooltip: helptext.service_account_credentials_google_cloud_storage.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'GOOGLE_CLOUD_STORAGE',
+              }]
+            }
+          ]
+        },
+        // google drive
+        {
+          type: 'input',
+          name: 'token-GOOGLE_DRIVE',
+          placeholder: helptext.token_google_drive.placeholder,
+          tooltip: helptext.token_google_drive.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'GOOGLE_DRIVE',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'team_drive-GOOGLE_DRIVE',
+          placeholder: helptext.team_drive_google_drive.placeholder,
+          tooltip: helptext.team_drive_google_drive.tooltip,
+          required: false,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'GOOGLE_DRIVE',
+              }]
+            }
+          ]
+        },
+        // http
+        {
+          type: 'input',
+          name: 'url-HTTP',
+          placeholder: helptext.url_http.placeholder,
+          tooltip: helptext.url_http.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'HTTP',
+              }]
+            }
+          ]
+        },
+        // hubic
+        {
+          type: 'input',
+          name: 'token-HUBIC',
+          placeholder: helptext.token_hubic.placeholder,
+          tooltip: helptext.token_hubic.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'HUBIC',
+              }]
+            }
+          ]
+        },
+        // mega
+        {
+          type: 'input',
+          name: 'user-MEGA',
+          placeholder: helptext.user_mega.placeholder,
+          tooltip: helptext.user_mega.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'MEGA',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'pass-MEGA',
+          placeholder: helptext.pass_mega.placeholder,
+          tooltip: helptext.pass_mega.tooltip,
+          required: true,
+          isHidden: true,
+          inputType: 'password',
+          togglePw : true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'MEGA',
+              }]
+            }
+          ]
+        },
+        // microsoft azure
+        {
+          type: 'input',
+          name: 'account-AZUREBLOB',
+          placeholder: helptext.account_azureblob.placeholder,
+          tooltip: helptext.account_azureblob.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'AZUREBLOB',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'key-AZUREBLOB',
+          placeholder: helptext.key_azureblob.placeholder,
+          tooltip: helptext.key_azureblob.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'AZUREBLOB',
+              }]
+            }
+          ]
+        },
+        // microsoft onedrive
+        {
+          type: 'input',
+          name: 'token-ONEDRIVE',
+          placeholder: helptext.token_onedrive.placeholder,
+          tooltip: helptext.token_onedrive.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'ONEDRIVE',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'select',
+          name: 'drives-ONEDRIVE',
+          placeholder: helptext.drives_onedrive.placeholder,
+          tooltip: helptext.drives_onedrive.tooltip,
+          options: [{
+            label: '---------',
+            value: '',
+          }],
           value: '',
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'ONEDRIVE',
+              }]
+            }
+          ]
         },
         {
-          label: 'Generate New',
-          value: 'NEW',
-        }
-      ],
-      value: '',
-      required: true,
-      isHidden: true,
-      relation: [
+          type: 'select',
+          name: 'drive_type-ONEDRIVE',
+          placeholder: helptext.drive_type_onedrive.placeholder,
+          tooltip: helptext.drive_type_onedrive.tooltip,
+          options: [
+            {
+              label: 'PERSONAL',
+              value: 'PERSONAL',
+            },
+            {
+              label: 'BUSINESS',
+              value: 'BUSINESS',
+            },
+            {
+              label: 'DOCUMENT_LIBRARY',
+              value: 'DOCUMENT_LIBRARY',
+            }
+          ],
+          value: 'PERSONAL',
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'ONEDRIVE',
+              }]
+            }
+          ]
+        },
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'SFTP',
-           }]
-        }
-      ]
-    },
-    // webdav
-    {
-      type: 'input',
-      name: 'url-WEBDAV',
-      placeholder: helptext.url_webdav.placeholder,
-      tooltip: helptext.url_webdav.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
+          type: 'input',
+          name: 'drive_id-ONEDRIVE',
+          placeholder: helptext.drive_id_onedrive.placeholder,
+          tooltip: helptext.drive_id_onedrive.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'ONEDRIVE',
+              }]
+            }
+          ]
+        },
+        // openstack swift
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'WEBDAV',
-           }]
-        }
-      ]
-    },
-    {
-      type: 'select',
-      name: 'vendor-WEBDAV',
-      placeholder: helptext.vendor_webdav.placeholder,
-      tooltip: helptext.vendor_webdav.tooltip,
-      options: [
+          type: 'input',
+          name: 'user-OPENSTACK_SWIFT',
+          placeholder: helptext.user_openstack_swift.placeholder,
+          tooltip: helptext.user_openstack_swift.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
         {
-          label: 'NEXTCLOUD',
+          type: 'input',
+          name: 'key-OPENSTACK_SWIFT',
+          placeholder: helptext.key_openstack_swift.placeholder,
+          tooltip: helptext.key_openstack_swift.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'auth-OPENSTACK_SWIFT',
+          placeholder: helptext.auth_openstack_swift.placeholder,
+          tooltip: helptext.auth_openstack_swift.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        // {
+        //   type: 'input',
+        //   name: 'application_credential_id-OPENSTACK_SWIFT',
+        //   placeholder: helptext.application_credential_id_openstack_swift.placeholder,
+        //   tooltip: helptext.application_credential_id_openstack_swift.tooltip,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'provider',
+        //         value: 'OPENSTACK_SWIFT',
+        //        }]
+        //     }
+        //   ]
+        // },
+        // {
+        //   type: 'input',
+        //   name: 'application_credential_name-OPENSTACK_SWIFT',
+        //   placeholder: helptext.application_credential_name_openstack_swift.placeholder,
+        //   tooltip: helptext.application_credential_name_openstack_swift.tooltip,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'provider',
+        //         value: 'OPENSTACK_SWIFT',
+        //        }]
+        //     }
+        //   ]
+        // },
+        // {
+        //   type: 'input',
+        //   name: 'application_credential_secret-OPENSTACK_SWIFT',
+        //   placeholder: helptext.application_credential_secret_openstack_swift.placeholder,
+        //   tooltip: helptext.application_credential_secret_openstack_swift.tooltip,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'provider',
+        //         value: 'OPENSTACK_SWIFT',
+        //        }]
+        //     }
+        //   ]
+        // },
+        {
+          type: 'select',
+          name: 'auth_version-OPENSTACK_SWIFT',
+          placeholder: helptext.auth_version_openstack_swift.placeholder,
+          tooltip: helptext.auth_version_openstack_swift.tooltip,
+          options: [
+            {
+              label: 'Auto(vX)',
+              value: '0',
+            },
+            {
+              label: 'v1',
+              value: '1'
+            },
+            {
+              label: 'v2',
+              value: '2'
+            },
+            {
+              label: 'v3',
+              value: '3'
+            }
+          ],
+          value: '0',
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        // pcloud
+        {
+          type: 'input',
+          name: 'token-PCLOUD',
+          placeholder: helptext.token_pcloud.placeholder,
+          tooltip: helptext.token_pcloud.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'PCLOUD',
+              }]
+            }
+          ]
+        },
+        // sftp
+        {
+          type: 'input',
+          name: 'host-SFTP',
+          placeholder: helptext.host_sftp.placeholder,
+          tooltip: helptext.host_sftp.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'SFTP',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'port-SFTP',
+          placeholder: helptext.port_sftp.placeholder,
+          tooltip: helptext.port_sftp.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'SFTP',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'user-SFTP',
+          placeholder: helptext.user_sftp.placeholder,
+          tooltip: helptext.user_sftp.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'SFTP',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'pass-SFTP',
+          placeholder: helptext.pass_sftp.placeholder,
+          tooltip: helptext.pass_sftp.tooltip,
+          required: true,
+          isHidden: true,
+          inputType: 'password',
+          togglePw: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'SFTP',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'select',
+          name: 'private_key-SFTP',
+          placeholder: helptext.private_key_sftp.placeholder,
+          tooltip: helptext.private_key_sftp.tooltip,
+          options: [
+            {
+              label: '---------',
+              value: '',
+            },
+            {
+              label: 'Generate New',
+              value: 'NEW',
+            }
+          ],
+          value: '',
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'SFTP',
+              }]
+            }
+          ]
+        },
+        // webdav
+        {
+          type: 'input',
+          name: 'url-WEBDAV',
+          placeholder: helptext.url_webdav.placeholder,
+          tooltip: helptext.url_webdav.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'WEBDAV',
+              }]
+            }
+          ]
+        },
+        {
+          type: 'select',
+          name: 'vendor-WEBDAV',
+          placeholder: helptext.vendor_webdav.placeholder,
+          tooltip: helptext.vendor_webdav.tooltip,
+          options: [
+            {
+              label: 'NEXTCLOUD',
+              value: 'NEXTCLOUD',
+            },
+            {
+              label: 'OWNCLOUD',
+              value: 'OWNCLOUD',
+            },
+            {
+              label: 'SHAREPOINT',
+              value: 'SHAREPOINT',
+            },
+            {
+              label: 'OTHER',
+              value: 'OTHER',
+            }
+          ],
           value: 'NEXTCLOUD',
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'WEBDAV',
+              }]
+            }
+          ]
         },
         {
-          label: 'OWNCLOUD',
-          value: 'OWNCLOUD',
+          type: 'input',
+          name: 'user-WEBDAV',
+          placeholder: helptext.user_webdav.placeholder,
+          tooltip: helptext.user_webdav.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'WEBDAV',
+              }]
+            }
+          ]
         },
         {
-          label: 'SHAREPOINT',
-          value: 'SHAREPOINT',
+          type: 'input',
+          name: 'pass-WEBDAV',
+          placeholder: helptext.pass_webdav.placeholder,
+          tooltip: helptext.pass_webdav.tooltip,
+          required: true,
+          isHidden: true,
+          inputType: 'password',
+          togglePw: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'WEBDAV',
+              }]
+            }
+          ]
+        },
+        // yandex
+        {
+          type: 'input',
+          name: 'token-YANDEX',
+          placeholder: helptext.token_yandex.placeholder,
+          tooltip: helptext.token_yandex.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'YANDEX',
+              }]
+            }
+          ]
+        },
+        // show if provider support oauth
+        {
+          type: 'input',
+          name: 'client_id',
+          placeholder: helptext.client_id.placeholder,
+          tooltip: helptext.client_id.tooltip,
+          isHidden: true,
         },
         {
-          label: 'OTHER',
-          value: 'OTHER',
-        }
-      ],
-      value: 'NEXTCLOUD',
-      required: true,
-      isHidden: true,
-      relation: [
-        {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'WEBDAV',
-           }]
-        }
+          type: 'input',
+          name: 'client_secret',
+          placeholder: helptext.client_secret.placeholder,
+          tooltip: helptext.client_secret.tooltip,
+          isHidden: true,
+        },
       ]
     },
+    { name: 'divider', divider: true },
     {
-      type: 'input',
-      name: 'user-WEBDAV',
-      placeholder: helptext.user_webdav.placeholder,
-      tooltip: helptext.user_webdav.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
+      name: helptext.fieldset_authentication_advanced,
+      label: true,
+      class: 'authentication_advanced',
+      width: '49%',
+      config: [
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'WEBDAV',
-           }]
-        }
+          type: 'checkbox',
+          name: 'advanced-S3',
+          placeholder: T('Advanced Settings'),
+          isHidden: true,
+          value: false,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'S3',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'user_id-OPENSTACK_SWIFT',
+          placeholder: helptext.user_id_openstack_swift.placeholder,
+          tooltip: helptext.user_id_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }, {
+                name: 'auth_version-OPENSTACK_SWIFT',
+                value: '3',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'domain-OPENSTACK_SWIFT',
+          placeholder: helptext.domain_openstack_swift.placeholder,
+          tooltip: helptext.domain_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }, {
+                name: 'auth_version-OPENSTACK_SWIFT',
+                value: '3',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'tenant-OPENSTACK_SWIFT',
+          placeholder: helptext.tenant_openstack_swift.placeholder,
+          tooltip: helptext.tenant_openstack_swift.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'tenant_id-OPENSTACK_SWIFT',
+          placeholder: helptext.tenant_id_openstack_swift.placeholder,
+          tooltip: helptext.tenant_id_openstack_swift.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'tenant_domain-OPENSTACK_SWIFT',
+          placeholder: helptext.tenant_domain_openstack_swift.placeholder,
+          tooltip: helptext.tenant_domain_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }, {
+                name: 'auth_version-OPENSTACK_SWIFT',
+                value: '3',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'auth_token-OPENSTACK_SWIFT',
+          placeholder: helptext.auth_token_openstack_swift.placeholder,
+          tooltip: helptext.auth_token_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
       ]
     },
+    { name: 'spacer', label: false, width: '2%' },
     {
-      type: 'input',
-      name: 'pass-WEBDAV',
-      placeholder: helptext.pass_webdav.placeholder,
-      tooltip: helptext.pass_webdav.tooltip,
-      required: true,
-      isHidden: true,
-      inputType: 'password',
-      togglePw: true,
-      relation: [
+      name: helptext.fieldset_endpoint_advanced_options,
+      label: true,
+      class: 'endpoint',
+      width: '49%',
+      config: [
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'WEBDAV',
-           }]
-        }
-      ]
-    },
-    // yandex
-    {
-      type: 'input',
-      name: 'token-YANDEX',
-      placeholder: helptext.token_yandex.placeholder,
-      tooltip: helptext.token_yandex.tooltip,
-      required: true,
-      isHidden: true,
-      relation: [
+          type: 'input',
+          name: 'endpoint-S3',
+          placeholder: helptext.endpoint_s3.placeholder,
+          tooltip: helptext.endpoint_s3.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'S3',
+               }, {
+                name: 'advanced-S3',
+                value: true,
+               }]
+            }
+          ]
+        },
         {
-          action: 'SHOW',
-          when: [{
-            name: 'provider',
-            value: 'YANDEX',
-           }]
-        }
+          type: 'input',
+          name: 'region-S3',
+          placeholder: helptext.region_s3.placeholder,
+          tooltip: helptext.region_s3.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'S3',
+               }, {
+                name: 'advanced-S3',
+                value: true,
+               }]
+            }
+          ]
+        },
+        {
+          type: 'checkbox',
+          name: 'skip_region-S3',
+          placeholder: helptext.skip_region_s3.placeholder,
+          tooltip: helptext.skip_region_s3.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'S3',
+               }, {
+                name: 'advanced-S3',
+                value: true,
+               }]
+            }
+          ]
+        },
+        {
+          type: 'checkbox',
+          name: 'signatures_v2-S3',
+          placeholder: helptext.signatures_v2_s3.placeholder,
+          tooltip: helptext.signatures_v2_s3.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              connective: 'AND',
+              when: [{
+                name: 'provider',
+                value: 'S3',
+               }, {
+                name: 'advanced-S3',
+                value: true,
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'region-OPENSTACK_SWIFT',
+          placeholder: helptext.region_openstack_swift.placeholder,
+          tooltip: helptext.region_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'input',
+          name: 'storage_url-OPENSTACK_SWIFT',
+          placeholder: helptext.storage_url_openstack_swift.placeholder,
+          tooltip: helptext.storage_url_openstack_swift.tooltip,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
+        {
+          type: 'select',
+          name: 'endpoint_type-OPENSTACK_SWIFT',
+          placeholder: helptext.endpoint_type_openstack_swift.placeholder,
+          tooltip: helptext.endpoint_type_openstack_swift.tooltip,
+          options: [
+            {
+              label: 'Public',
+              value: 'public'
+            },
+            {
+              label: 'Internal',
+              value: 'internal'
+            },
+            {
+              label: 'Admin',
+              value: 'admin'
+            }
+          ],
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'OPENSTACK_SWIFT',
+               }]
+            }
+          ]
+        },
       ]
-    },
-    // show if provider support oauth
-    {
-      type: 'input',
-      name: 'client_id',
-      placeholder: helptext.client_id.placeholder,
-      tooltip: helptext.client_id.tooltip,
-      isHidden: true,
-    },
-    {
-      type: 'input',
-      name: 'client_secret',
-      placeholder: helptext.client_secret.placeholder,
-      tooltip: helptext.client_secret.tooltip,
-      isHidden: true,
-    },
-  ];
+    }
+  ]
+
+  protected fieldConfig: FieldConfig[];
 
   protected providers: Array<any>;
   protected providerField: any;
   protected entityForm: any;
-  protected oauthClentIdField: any;
-  protected oauthClentSecretField: any;
 
   public custActions: Array<any> = [
     {
@@ -915,11 +1242,12 @@ export class CloudCredentialsFormComponent {
               protected cloudcredentialService: CloudCredentialService,
               protected dialog: DialogService,
               protected replicationService: ReplicationService) {
-    this.providerField = _.find(this.fieldConfig, {'name': 'provider'});
+    const basicFieldset = _.find(this.fieldSets, {'class': 'basic'});
+    this.providerField = _.find(basicFieldset.config, {'name': 'provider'});
     this.cloudcredentialService.getProviders().subscribe(
       (res) => {
         this.providers = res;
-        for (let i in res) {
+        for (const i in res) {
           this.providerField.options.push(
             {
               label: res[i].title,
@@ -929,7 +1257,8 @@ export class CloudCredentialsFormComponent {
         }
       }
     );
-    const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
+    const authenticationFieldset = _.find(this.fieldSets, {'class': 'authentication'});
+    const privateKeySFTPField = _.find(authenticationFieldset.config, {'name': 'private_key-SFTP'});
     this.ws.call('keychaincredential.query', [[["type", "=", "SSH_KEY_PAIR"]]]).subscribe(
       (res) => {
         for (let i = 0; i < res.length; i++) {
@@ -954,9 +1283,6 @@ export class CloudCredentialsFormComponent {
   }
 
   preInit() {
-    this.oauthClentIdField = _.find(this.fieldConfig, {'name': 'client_id'});
-    this.oauthClentSecretField = _.find(this.fieldConfig, {'name': 'client_secret'});
-
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(params['pk']);
@@ -981,12 +1307,12 @@ export class CloudCredentialsFormComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+    this.fieldConfig = entityForm.fieldConfig;
 
-    const providerField = _.find(this.fieldConfig, {'name' : 'provider'});
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
-      if (providerField.hasErrors) {
-        providerField.hasErrors = false;
-        providerField.errors = '';
+      if (this.providerField.hasErrors) {
+        this.providerField.hasErrors = false;
+        this.providerField.errors = '';
       }
 
       this.selectedProvider = res;
@@ -1023,6 +1349,39 @@ export class CloudCredentialsFormComponent {
         driveIdCtrl.setValue(null);
       }
     });
+
+    const authCtrl = entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'];
+    const tenantCtrl = entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'];
+    const tenantIdCtrl = entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'];
+    entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.subscribe(
+      (res) => {
+        if (res === '1') {
+          this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
+          this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', false, entityForm);
+        } else {
+          if ((tenantCtrl.value === undefined || tenantCtrl.value === '') &&
+          (tenantIdCtrl.value === undefined || tenantIdCtrl.value === '')) {
+            this.setFieldRequired('tenant-OPENSTACK_SWIFT', true, entityForm);
+            this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', true, entityForm);
+          }
+        }
+      }
+    )
+
+    entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'].valueChanges.subscribe(
+      (res) => {
+        if (authCtrl.value !== '1') {
+          this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
+        }
+      }
+    )
+    entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'].valueChanges.subscribe(
+      (res) => {
+        if (authCtrl.value !== '1') {
+          this.setFieldRequired('tenant-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
+        }
+      }
+    )
   }
 
   verifyCredentials(value) {
@@ -1076,17 +1435,15 @@ export class CloudCredentialsFormComponent {
       });
   }
 
-
-
   finishSubmit(value) {
     this.entityForm.loader.open();
     const attributes = {};
     let attr_name: string;
-    for (let item in value) {
+    for (const item in value) {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
           attr_name = item.split("-")[0];
-          attributes[attr_name] = value[item];
+          attributes[attr_name] = attr_name === 'auth_version' ? parseInt(value[item], 10) : value[item];
         }
         delete value[item];
       }
@@ -1107,7 +1464,6 @@ export class CloudCredentialsFormComponent {
           }
       });
   }
-
 
   beforeSubmit(value) {
     if (!this.credentialsOauth) {
@@ -1136,7 +1492,9 @@ export class CloudCredentialsFormComponent {
       if (field_name != 'client_id' && field_name != 'client_secret') {
         field_name += '-' + provider;
       }
-      entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+      if (entityForm.formGroup.controls[field_name]) {
+        entityForm.formGroup.controls[field_name].setValue(field_name == 'auth_version-OPENSTACK_SWIFT' ? entityForm.wsResponseIdx[i].toString() : entityForm.wsResponseIdx[i]);
+      }
     }
   }
 

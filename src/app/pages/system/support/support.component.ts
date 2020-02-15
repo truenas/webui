@@ -10,7 +10,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
   providers: []
 })
 export class SupportComponent implements OnInit {
-  public is_freenas: boolean;
+  public product_type: string;
   public isFooterConsoleOpen: boolean;
   public scrshot: any;
   public subs: any;
@@ -38,9 +38,9 @@ export class SupportComponent implements OnInit {
               {}
 
   ngOnInit() {
-    window.localStorage['is_freenas'] === 'true' ? this.is_freenas = true : this.is_freenas = false;
+    this.product_type = window.localStorage['product_type'];
     this.ws.call('system.info').subscribe((res) => {
-      if (this.is_freenas) {
+      if (this.product_type === 'CORE') {
         this.getFNSysInfo(res);
         this.getFreeNASImage(res.system_product)
       } else {

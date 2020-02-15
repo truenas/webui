@@ -14,15 +14,15 @@ import globalHelptext from '../../../helptext/global-helptext';
 })
 export class RebootComponent implements OnInit {
 
-  public is_freenas: Boolean = false;
+  public product_type: string;
   public copyrightYear = globalHelptext.copyright_year;
 
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, protected dialog: MatDialog) {
       this.ws = ws;
-      this.ws.call('system.is_freenas').subscribe((res)=>{
-        this.is_freenas = res;
+      this.ws.call('system.product_type').subscribe((res)=>{
+        this.product_type = res;
       });
   }
 
@@ -39,9 +39,8 @@ export class RebootComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (window.localStorage.getItem('is_freenas') === 'true') {
-      this.is_freenas = true;
-    } 
+    this.product_type = window.localStorage.getItem('product_type');
+
     this.dialog.closeAll();
     this.ws.call('system.reboot', {}).subscribe(
       (res) => {

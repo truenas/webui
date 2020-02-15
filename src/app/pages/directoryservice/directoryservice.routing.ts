@@ -4,13 +4,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { ActiveDirectoryComponent } from './activedirectory/';
 import { LdapComponent } from './ldap/';
 import { NISComponent } from './nis/';
-import { IdmapComponent } from './idmap';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
 import { KerberosSettingsComponent } from './kerberossettings';
 import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { IdmapListComponent } from './idmap-list';
+import { IdmapFormComponent } from './idmap-form';
 
 export const routes: Routes = [{
   path: '',
@@ -32,9 +33,24 @@ export const routes: Routes = [{
     component: NISComponent,
     data: { title: 'NIS', breadcrumb: 'NIS', icon: 'library_books' }
   }, {
-    path: 'idmap/:pk/:service',
+    path: 'idmap',
     data: { title: 'Idmap', breadcrumb: 'Idmap' },
-    component: IdmapComponent,
+    children: [{
+      path: '',
+      component: IdmapListComponent,
+      data: { title: 'Idmap', breadcrumb: 'Idmap'}
+    },
+    {
+      path: 'add',
+      component: IdmapFormComponent,
+      data: { title: 'Idmap Add', breadcrumb: 'Idmap Add'}
+    },
+    {
+      path: 'edit/:pk',
+      component: IdmapFormComponent,
+      data: { title: 'Idmap Edit', breadcrumb: 'Idmap Edit' },
+    }  
+    ]
   }, {
     path: 'kerberosrealms',
     data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms', icon: 'apps' },

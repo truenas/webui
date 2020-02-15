@@ -61,5 +61,7 @@ scheduler: {
         header: T('Days'),
         tooltip: T('Days when this task will run.'),
     }
-}
+},
+
+invalidInputValueWithUnit: T('Invalid value. Missing numerical value or invalid numerical value/unit.'),
 }

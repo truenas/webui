@@ -30,7 +30,7 @@ export class AdvancedComponent implements OnDestroy {
   public swapondrive_subscription: any;
   public entityForm: any;
   protected dialogRef: any;
-  public is_freenas = false;
+  public product_type: string;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: T('Save Debug'),
@@ -279,8 +279,8 @@ export class AdvancedComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.ws.call('system.is_freenas').subscribe((res)=>{
-      this.is_freenas = res;
+    this.ws.call('system.product_type').subscribe((res)=>{
+      this.product_type = res;
       this.swapondrive = this.fieldSets.config('swapondrive');
       this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
         if (parseInt(value) === 0) {

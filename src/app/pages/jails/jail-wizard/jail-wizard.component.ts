@@ -504,7 +504,7 @@ export class JailWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
       this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
       this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
-      this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
+      this.ip6_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
 
       if (((( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value ||
            ( < FormGroup > entityWizard.formArray.get([1])).controls['nat'].value) ||

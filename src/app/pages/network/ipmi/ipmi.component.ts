@@ -170,7 +170,7 @@ export class IPMIComponent {
 
 
   preInit(entityEdit: any) {
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
         if (this.is_ha) {

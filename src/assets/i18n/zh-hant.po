@@ -119,9 +119,6 @@ msgstr ""
 msgid "(Remove pool from database)"
 msgstr ""
 
-msgid "*allow_sysvipc"
-msgstr ""
-
 msgid ", new vdev is "
 msgstr ""
 
@@ -521,11 +518,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"A new jail hostid, if desired. <br><b>Example hostid:</b> "
-"<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
-msgstr ""
-
-msgid ""
 "A new jail hostid, if desired.<br> <b>Example hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 msgstr ""
@@ -548,12 +540,6 @@ msgid ""
 "when the jail is removed."
 msgstr ""
 
-msgid ""
-"A space-delimited list of network interfaces attached to a VNET-enabled "
-"jail after it is created. Interfaces are automatically released when the "
-"jail is removed."
-msgstr ""
-
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
@@ -572,26 +558,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"A valid IPv4 address to use as the default route. <br>Enter <b>none</b> to "
-"configure the jail with no IPv4 default route. <br><b>A jail without a "
-"default route will not be able to access any networks.</b>"
-msgstr ""
-
-msgid ""
 "A valid IPv4 address to use as the default route.<br> Enter <b>none</b> to "
 "configure the jail with no IPv4 default route.<br> <b>A jail without a "
-"default route will not be able to access any networks.</b>"
-msgstr ""
-
-msgid ""
-"A valid IPv6 address to use as the default route. <br>Enter <b>none</b> to "
-"configure the jail without an IPv6 default route. <br><b>A jail without a "
-"default route will not be able to access any networks."
-msgstr ""
-
-msgid ""
-"A valid IPv6 address to use as the default route. <br>Enter <b>none</b> to "
-"configure the jail without an IPv6 default route. <br><b>A jail without a "
 "default route will not be able to access any networks.</b>"
 msgstr ""
 
@@ -606,6 +574,9 @@ msgstr "ACL 模式"
 
 msgid "ACL Type"
 msgstr "ACL 類型"
+
+msgid "ACL cannot be changed when the Source is the top-level dataset for a pool."
+msgstr ""
 
 msgid "ACME DNS"
 msgstr ""
@@ -827,13 +798,6 @@ msgstr ""
 
 msgid "Add any notes about this zvol."
 msgstr "新增此 Zvol 的註解."
-
-msgid ""
-"Add lines to the jail <b>resolv.conf</b>. <b>Example:</b> <i>nameserver "
-"IP;search domain. local</i>. Fields must be delimited with a semicolon (;), "
-"This is translated as new lines in <b>resolv.conf</b>. Enter <i>none</i> to "
-"inherit <b>resolv.conf</b> from the host."
-msgstr ""
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -1132,15 +1096,6 @@ msgid "Allow non-root mount"
 msgstr "允許非 root 掛接"
 
 msgid ""
-"Allow or deny access to SYSV IPC message primitives. <br> <b>Inherit</b>: "
-"All IPC objects on the system are visible to the jail. <br><b>New</b>: Only "
-"objects the jail creates using the private key namespace are visible. The "
-"system and parent jails have access to the jail objects but <i>not</i> "
-"private keys. <br><b>Disable</b>: The jail cannot perform any "
-"<b>sysvmsg</b> related system calls."
-msgstr ""
-
-msgid ""
 "Allow or deny access to SYSV IPC message primitives. <br><b>Inherit</b>: "
 "All IPC objects on the system are visible to the jail.<br> <b>New</b>: Only "
 "objects the jail creates using the private key namespace are visible. The "
@@ -1150,30 +1105,12 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Allow or deny access to SYSV IPC semaphore primitives. <br> <b>Inherit</b>: "
-"All IPC objects on the system are visible to the jail. <br><b>New</b>: Only "
-"objects the jail creates using the private key namespace are visible. The "
-"system and parent jails have access to the jail objects but <i>not</i> "
-"private keys. <br> <b>Disable</b>: The jail cannot perform any "
-"<b>sysvmem</b> related system calls."
-msgstr ""
-
-msgid ""
 "Allow or deny access to SYSV IPC semaphore primitives.<br> <b>Inherit</b>: "
 "All IPC objects on the system are visible to the jail.<br> <b>New</b>: Only "
 "objects the jail creates using the private key namespace are visible. The "
 "system and parent jails have access to the jail objects but <i>not</i> "
 "private keys. <br> <b>Disable</b>: The jail cannot perform any "
 "<b>sysvmem</b> related system calls."
-msgstr ""
-
-msgid ""
-"Allow or deny access to SYSV IPC shared memory primitives. "
-"<br><b>Inherit</b>: All IPC objects on the system are visible to the jail. "
-"<br><b>New</b>: Only objects the jail creates using the private key "
-"namespace are visible. The system and parent jails have access to the jail "
-"objects but <i>not</i> private keys. <br><b>Disable</b>: The jail cannot "
-"perform any <b>sysvshm</b> related system calls."
 msgstr ""
 
 msgid ""
@@ -1201,14 +1138,6 @@ msgid ""
 "target=\"_blank\">hostname(1)</a> or <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname\" "
 "target=\"_blank\">sethostname(3)</a>."
-msgstr ""
-
-msgid ""
-"Allow the jail hostname to be changed with <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11"
-".1-RELEASE+and+Ports\"target=\"_blank\">hostname(1)</a> or <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname&manpath="
-"FreeBSD+11.1-RELEASE+and+Ports\"target=\"_blank\">sethostname(3)</a>."
 msgstr ""
 
 msgid ""
@@ -1513,6 +1442,9 @@ msgstr "可用空間臨界值 (%)"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "非常好! 現在開始探索 FreeNAS 的酷炫新功能."
+
+msgid "BPF is required."
+msgstr ""
 
 msgid "Back"
 msgstr "返回"
@@ -1950,11 +1882,6 @@ msgstr ""
 
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
-"do not start the jail"
-msgstr ""
-
-msgid ""
-"Check the <i>hostid</i> property of the jail. If not the same as the host, "
 "do not start the jail."
 msgstr ""
 
@@ -1986,6 +1913,9 @@ msgstr "CheckIP 伺服器 SSL"
 
 msgid "Checking HA status"
 msgstr "正在檢查 HA 狀態"
+
+msgid "Checksum"
+msgstr ""
 
 msgid "Chmod Request"
 msgstr "Chmod 請求"
@@ -2075,6 +2005,12 @@ msgid "Choose a metric"
 msgstr ""
 
 msgid "Choose a metric to display."
+msgstr ""
+
+msgid ""
+"Choose a new disk for the pool. To protect any existing data, adding the "
+"selected disk is stopped when the disk is already in use or has partitions "
+"present."
 msgstr ""
 
 msgid ""
@@ -2195,11 +2131,6 @@ msgid ""
 "target=\"_blank\">SSH connection</a>."
 msgstr ""
 
-msgid ""
-"Choose the FreeBSD release to use as the jail operating system. Releases "
-"that have already been downloaded show <b>(fetched)</b>."
-msgstr ""
-
 msgid "Choose the VM operating system type."
 msgstr "選擇 VM 作業系統類型。"
 
@@ -2277,13 +2208,6 @@ msgid ""
 "Equivalent to setting <b>sysvmsg</b>, <b>sysvsem</b>, and <b>sysvshm</b> to "
 "<i>Inherit</i>. <b>Deprecated in FreeBSD 11.0 and newer!</b><br> Use "
 "<b>sysvmsg</b>, <b>sysvsem</b>, and <b>sysvshm</b> instead."
-msgstr ""
-
-msgid ""
-"Choose whether a process in the jail has access to System V IPC primitives. "
-"Equivalent to setting sysvmsg, sysvsem, and sysvshm to <b>Inherit</b>. "
-"<b>*Deprecated in FreeBSD 11.0 and later!</b><br> Use <b>sysvmsg</b>, "
-"<b>sysvsem</b>, and <b>sysvshm</b> instead."
 msgstr ""
 
 msgid "Choose your language."
@@ -2405,13 +2329,6 @@ msgstr ""
 
 msgid ""
 "Commands to run in the jail environment when the jail is created. Example: "
-"<b>sh /etc/rc</b>. The pseudo-parameters section of <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=jail\" "
-"target=\"_blank\">JAIL(8)</a> describes <b>exec.start</b> usage."
-msgstr ""
-
-msgid ""
-"Commands to run in the jail environment when the jail is created. Example: "
 "<i>sh /etc/rc</i>. The pseudo-parameters section of <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=jail\" "
 "target=\"_blank\">JAIL(8)</a> describes <b>exec.start</b> usage."
@@ -2477,27 +2394,6 @@ msgid "Configure"
 msgstr ""
 
 msgid "Configure ACL"
-msgstr ""
-
-msgid ""
-"Configure IPv4 networking or internet access for the jail. Enter the IPv4 "
-"address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
-"target=\"_blank\">VNET(9)</a> and shared IP jails. <br>Single interface "
-"format: <b>[interface|]ip-address[/netmask]</b>. <br>Example: "
-"<b>vnet2|192.168.0.15/24</b> <br>Multiple interface format: "
-"<b>[interface|]ip-address[/netmask],[interface|]ip-address[/netmask]</b>.<"
-"br>Example: <b>192.168.0.10/24,vnet3|192.168.10.50</b>"
-msgstr ""
-
-msgid ""
-"Configure IPv6 networking or internet access for the jail. Enter the IPv6 "
-"address for <a href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet\" "
-"target=\"_blank\">VNET(9)</a> and shared IP jails. <br>Single interface "
-"format: <b>[interface|]ip-address[/netmask]</b>. <br>Example: "
-"<b>re0|fe80::/64</b> <br>Multiple interface format: "
-"<b>[interface|]ip-address[/netmask],[interface|]ip-address[/netmask]</b>.<"
-"br>Example: <b>re1|2607:f0d0:1002:51:0000:0000:0000:0004, "
-"re5|2001:db8:85a3::8a2e:370:7334/24</b>"
 msgstr ""
 
 msgid "Configure Networking"
@@ -2634,23 +2530,9 @@ msgid "Control left sidebar's display style."
 msgstr "控制左邊條樣式."
 
 msgid ""
-"Control the availability of IPv4 addresses. <br><b>Inherit</b>: Allow "
-"unrestricted access to all system addresses. <br><b>New</b>: Restrict "
-"addresses with <b>ip4_addr</b>. <br><b>Disable</b>: Stop the jail from "
-"using IPv4 entirely."
-msgstr ""
-
-msgid ""
 "Control the availability of IPv4 addresses.<br> <b>Inherit</b>: Allow "
 "unrestricted access to all system addresses.<br> <b>New</b>: Restrict "
 "addresses with <b>ip4_addr</b>.<br> <b>Disable</b>: Stop the jail from "
-"using IPv4 entirely."
-msgstr ""
-
-msgid ""
-"Control the availability of IPv6 addresses. <br><b>Inherit</b>: Allow "
-"unrestricted access to all system addresses. <br><b>New</b>: Restrict "
-"addresses with <b>ip6_addr</b>. <br><b>Disable</b>: Stop the jail from "
 "using IPv4 entirely."
 msgstr ""
 
@@ -2777,6 +2659,9 @@ msgid ""
 "configured Value. A restart is required to apply <i>loader</i> or "
 "<i>rc.conf</i> tunables. Configured tunables remain in effect until deleted "
 "or Enabled is unset."
+msgstr ""
+
+msgid "Creating..."
 msgstr ""
 
 msgid "Credential"
@@ -2937,6 +2822,9 @@ msgstr ""
 
 msgid "Days of the Week"
 msgstr "每週啟用日"
+
+msgid "Days when this task will run."
+msgstr ""
 
 msgid "Deactivate the recovery key for this pool?"
 msgstr ""
@@ -3222,6 +3110,9 @@ msgstr "銷毀這個儲存集區上的資料？"
 msgid "Detach"
 msgstr "中斷連結"
 
+msgid "Detach Disk"
+msgstr ""
+
 msgid "Detach Pool"
 msgstr "中斷儲存集區連結"
 
@@ -3234,23 +3125,6 @@ msgstr "細節"
 msgid ""
 "Determine whether this share name is included when browsing shares. Home "
 "shares are only visible to the owner regardless of this setting."
-msgstr ""
-
-msgid ""
-"Determine which information the processes in a jail are able to obtain "
-"about mount points. The behavior of multiple syscalls is affected. <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" "
-"target=\"_blank\">statfs(2)</a>, <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs\" "
-"target=\"_blank\">fstatfs(2)</a>, <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=getfsstat\" "
-"target=\"_blank\">getfsstat(2)</a>, <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=fhstatfs\" "
-"target=\"_blank\">fhstatfs(2)</a>, and other similar compatibility "
-"syscalls. <br> Set to <i>0</i>: All mount points are available without "
-"restriction. <br>Set to <i>1</i>: Only mount points below the jail chroot "
-"directory are available. <br>Set to <i>2</i> (default): Only mounts point "
-"where the jail chroot directory is located are available."
 msgstr ""
 
 msgid ""
@@ -3683,9 +3557,6 @@ msgid ""
 "Enable running services that require <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=mlock\" "
 "target=\"_blank\">mlock(2)</a> in a jail."
-msgstr ""
-
-msgid "Enable running services that require mlock() in a jail."
 msgstr ""
 
 msgid "Enable sending anonymous usage statistics to iXsystems."
@@ -4174,9 +4045,6 @@ msgid ""
 "target=\"_blank\">UPSD.CONF(5)</a>."
 msgstr ""
 
-msgid "Enter any notes about the jail here."
-msgstr ""
-
 msgid "Enter any notes about the jail."
 msgstr ""
 
@@ -4338,6 +4206,11 @@ msgstr ""
 msgid "Enter the command with any options."
 msgstr "輸入指令與相關選項。"
 
+msgid ""
+"Enter the current passphrase for the encrypted pool. This will be used to "
+"encrypt the new disk and integrate it into the pool."
+msgstr ""
+
 msgid "Enter the decryption passphrase."
 msgstr ""
 
@@ -4482,13 +4355,6 @@ msgid ""
 msgstr ""
 
 msgid "Enter the username if the SMTP server requires authentication."
-msgstr ""
-
-msgid ""
-"Enter up to four interface configurations in the format "
-"<i>interface:bridge</i>, separated by a comma (,). The left value is the "
-"virtual VNET interface name and the right value is the bridge name where "
-"the virtual interface should be attached."
 msgstr ""
 
 msgid ""
@@ -4696,7 +4562,16 @@ msgstr "延伸"
 msgid "Extend Pool"
 msgstr "延伸儲存集區"
 
+msgid "Extend Vdev"
+msgstr ""
+
+msgid "Extending Vdev"
+msgstr ""
+
 msgid "Extending an encrypted pool resets the passphrase and recovery key!"
+msgstr ""
+
+msgid "Extending vdev..."
 msgstr ""
 
 msgid "Extent"
@@ -5284,6 +5159,12 @@ msgstr ""
 msgid "Hours"
 msgstr ""
 
+msgid "Hours when this task will run."
+msgstr ""
+
+msgid "Hours/Days"
+msgstr ""
+
 msgid "Hover to expand"
 msgstr ""
 
@@ -5387,9 +5268,6 @@ msgstr "IPv4 介面"
 msgid "IPv4 Netmask"
 msgstr "IPv4 網路遮罩"
 
-msgid "IPv4 address for the jail."
-msgstr ""
-
 msgid ""
 "IPv4 address to use for the failover  interface. Set a manual IP address "
 "here if DHCP is not used."
@@ -5426,9 +5304,6 @@ msgid "IPv6 Prefix"
 msgstr ""
 
 msgid "IPv6 Prefix Length"
-msgstr ""
-
-msgid "IPv6 address for the jail."
 msgstr ""
 
 msgid "IPv6 interface for the jail."
@@ -6269,20 +6144,7 @@ msgstr ""
 
 msgid ""
 "Maximum amount of time in seconds to wait for a command to complete. If a "
-"command is still running after the allotted time, the jail is terminated."
-msgstr ""
-
-msgid ""
-"Maximum amount of time in seconds to wait for a command to complete. If a "
 "command is still running after the allowed time, the jail is stopped."
-msgstr ""
-
-msgid ""
-"Maximum amount of time in seconds to wait for jail processes to exit after "
-"sending a SIGTERM signal. This happens after any <b>exec_stop</b> commands "
-"are complete. After the specified time, the jail is removed, killing any "
-"remaining processes. If set to <i>0</i>, no SIGTERM is sent and the jail is "
-"removed immediately."
 msgstr ""
 
 msgid ""
@@ -6337,6 +6199,9 @@ msgstr ""
 
 msgid "Member Disk"
 msgstr "成員磁碟"
+
+msgid "Member disk"
+msgstr ""
 
 msgid "Members"
 msgstr "成員"
@@ -6419,8 +6284,17 @@ msgstr ""
 msgid "Minimum value is "
 msgstr ""
 
+msgid "Mintues"
+msgstr ""
+
+msgid "Mintues/Hours/Days"
+msgstr ""
+
 msgid "Minute"
 msgstr "分"
+
+msgid "Minutes when this task will run."
+msgstr ""
 
 msgid "Mirror"
 msgstr ""
@@ -6462,13 +6336,6 @@ msgid "Month"
 msgstr "月"
 
 msgid "Months"
-msgstr ""
-
-msgid ""
-"Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
-"target=\"_blank\">devfs(5)</a> filesystem on the <i>chrooted /dev "
-"directory</i> and apply the ruleset in the <b>devfs_ruleset</b> parameter "
-"to restrict the devices visible inside the jail."
 msgstr ""
 
 msgid ""
@@ -6708,12 +6575,6 @@ msgid ""
 "to the Internet with other systems on the network."
 msgstr ""
 
-msgid ""
-"Network Address Translation (NAT). When set, the jail  is given an internal "
-"IP address and connections are forwarded from  the host to the jail. When "
-"<i>NAT</i> is set,  <i>Berkeley Packet Filter</i> cannot be set."
-msgstr ""
-
 msgid "Network Changes Made Permanent"
 msgstr ""
 
@@ -6796,6 +6657,9 @@ msgid "Never"
 msgstr ""
 
 msgid "Never Delete"
+msgstr ""
+
+msgid "New Disk"
 msgstr ""
 
 msgid "New Password"
@@ -7024,6 +6888,12 @@ msgstr ""
 msgid "Offline"
 msgstr "離線"
 
+msgid "Offline Disk"
+msgstr ""
+
+msgid "Offline disk "
+msgstr ""
+
 msgid "Ok"
 msgstr "確定"
 
@@ -7038,6 +6908,12 @@ msgstr ""
 
 msgid "Online"
 msgstr "上線"
+
+msgid "Online Disk"
+msgstr ""
+
+msgid "Online disk "
+msgstr ""
 
 msgid "Only Allow Guest Access"
 msgstr ""
@@ -7055,18 +6931,6 @@ msgid ""
 "percentage of free space is reached, the system issues an alert. See <a "
 "href=\"--docurl--/vaai.html#vaai\" target=\"_blank\">VAAI</a> Threshold "
 "Warning."
-msgstr ""
-
-msgid ""
-"Only available when the jail is not configured to use VNET. Disables IPv4 "
-"source address selection for the jail in favor of the primary IPv4 address "
-"of the jail."
-msgstr ""
-
-msgid ""
-"Only available when the jail is not configured to use VNET. Disables IPv6 "
-"source address selection for the jail in favor of the primary IPv6 address "
-"of the jail."
 msgstr ""
 
 msgid ""
@@ -7210,7 +7074,7 @@ msgstr "密碼伺服器"
 msgid "Password associated with the LDAP User DN."
 msgstr ""
 
-msgid "Password for logging in to the provider and  updating the record."
+msgid "Password for logging in to the provider and  updating the record. "
 msgstr ""
 
 msgid ""
@@ -7479,9 +7343,6 @@ msgstr ""
 msgid "Power"
 msgstr "電源"
 
-msgid "Power Mode"
-msgstr "電力模式"
-
 msgid "Power Off"
 msgstr "關閉電源"
 
@@ -7643,10 +7504,10 @@ msgstr ""
 msgid "Quota for this dataset and all children"
 msgstr ""
 
-msgid "Quota warning alert at, %"
+msgid "Quota size is too small, enter a value of 1 GiB or larger."
 msgstr ""
 
-msgid "RCTL Limits"
+msgid "Quota warning alert at, %"
 msgstr ""
 
 msgid "REFRESH INDEX"
@@ -7835,10 +7696,16 @@ msgstr "移除"
 msgid "Remove Additional Path"
 msgstr "移除其它路徑"
 
+msgid "Remove Disk"
+msgstr ""
+
 msgid "Remove Keep Flag"
 msgstr ""
 
 msgid "Remove Recovery Key"
+msgstr ""
+
+msgid "Remove disk "
 msgstr ""
 
 msgid "Remove passphrase"
@@ -7862,7 +7729,13 @@ msgstr ""
 msgid "Replace"
 msgstr ""
 
+msgid "Replace Disk"
+msgstr ""
+
 msgid "Replacing Disk"
+msgstr ""
+
+msgid "Replacing disk "
 msgstr ""
 
 msgid "Replacing disk..."
@@ -7935,17 +7808,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Required. Can contain letters, numbers, dashes (-), periods (.), or "
-"underscores (_)."
-msgstr ""
-
-msgid ""
 "Required. Can contain letters, numbers, periods (.),  dashes (-), and "
-"underscores (_)."
-msgstr ""
-
-msgid ""
-"Required. Can contain letters, numbers, periods (.), dashes (-), and "
 "underscores (_)."
 msgstr ""
 
@@ -8635,6 +8498,11 @@ msgstr ""
 msgid "Select an existing target."
 msgstr ""
 
+msgid ""
+"Select an unused disk to add to this vdev. <br>WARNING: any data stored on "
+"the unused disk will be erased!"
+msgstr ""
+
 msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
 msgstr ""
 
@@ -9117,13 +8985,6 @@ msgid ""
 "interface."
 msgstr ""
 
-msgid ""
-"Set the default VNET interface. Only takes effect when <i>VNET</i> is set. "
-"Choose a specific interface, or set to <i>auto</i> to use the interface "
-"that has the default route. Choose <i>none</i> to not set a default VNET "
-"interface."
-msgstr ""
-
 msgid "Set the jail hostname. Defaults to the jail UUID."
 msgstr ""
 
@@ -9147,13 +9008,6 @@ msgstr ""
 msgid ""
 "Set the share name. If left empty, share name is the list of selected "
 "<b>Path</b> entries."
-msgstr ""
-
-msgid ""
-"Set this boolean option to <i>True</i> to look for the "
-"<b>exec.jail_user</b> in the system <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=passwd\" "
-"target=\"_blank\">passwd(5)</a> file <i>instead</i> of the jail passwd."
 msgstr ""
 
 msgid "Set this replication on a schedule or  just once."
@@ -9180,12 +9034,6 @@ msgid ""
 msgstr ""
 
 msgid "Set to allow FTP clients to resume interrupted transfers."
-msgstr ""
-
-msgid ""
-"Set to allow access to other protocol stacks beyond IPv4, IPv6, local "
-"(UNIX), and route. <br><b>Warning:</b> jail functionality does not exist "
-"for all protocol stacks."
 msgstr ""
 
 msgid ""
@@ -9312,17 +9160,7 @@ msgstr ""
 
 msgid ""
 "Set to autoconfigure jail networking with the Dynamic Host Configuration "
-"Protocol. <b>VNET</b> and <b>Berkeley Packet Filter<b> are also required."
-msgstr ""
-
-msgid ""
-"Set to autoconfigure jail networking with the Dynamic Host Configuration "
 "Protocol. <b>VNET</b> and <b>Berkeley Packet Filter<b> must also be enabled."
-msgstr ""
-
-msgid ""
-"Set to autoconfigure jail networking with the Dynamic Host Configuration "
-"Protocol. <b>VNET</b> is required."
 msgstr ""
 
 msgid ""
@@ -9514,9 +9352,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=procfs\" "
-"target=\"_blank\">procfs(5)</a> filesystems in the jail <i>/dev/proc</i> "
-"directory."
+"Set to override safety checks and add the disk to the pool. <br>WARNING: "
+"any data stored on the disk will be erased!"
 msgstr ""
 
 msgid ""
@@ -9636,13 +9473,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to use <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9\" "
-"target=\"_blank\">VNET(9)</a> to emulate network devices for the jail. A "
-"fully virtualized per-jail network stack will be installed."
-msgstr ""
-
-msgid ""
 "Set to use DNS records during jail IP configuration to search the resolver "
 "and apply the first open IPv4 and IPv6 addresses. See <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=jail\" "
@@ -9659,13 +9489,6 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=bpf\" "
 "target=\"_blank\">BPF(4)</a>) to data link layers in a protocol independent "
 "fashion."
-msgstr ""
-
-msgid ""
-"Set to use the Berkeley Packet Filter (<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=bpf\" "
-"target=\"_blank\">BPF(4)</a>) to data link layers in a protocol independent "
-"fashion. Cannot be set when <i>NAT</i> is set."
 msgstr ""
 
 msgid "Set up Users and Groups."
@@ -10179,6 +10002,9 @@ msgstr ""
 msgid "Successfully exported/disconnected '"
 msgstr ""
 
+msgid "Successfully extended vdev "
+msgstr ""
+
 msgid "Successfully replaced disk "
 msgstr ""
 
@@ -10420,9 +10246,6 @@ msgstr ""
 msgid "Test email sent!"
 msgstr "測試電子郵件寄送"
 
-msgid "Tests are only performed when <i>Never</i>  is selected."
-msgstr ""
-
 msgid ""
 "The <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
 "\"target=\"_blank\">devfs(8)</a> ruleset number to enforce when mounting "
@@ -10628,15 +10451,6 @@ msgid ""
 "dimension. Default is 86400."
 msgstr ""
 
-msgid ""
-"The number of the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
-"\"target=\"_blank\">devfs(8) ruleset</a> to enforce when mounting "
-"<b>devfs</b> in the jail. The default value of <i>0</i> means no ruleset is "
-"enforced. Mounting <b>devfs</b> inside a jail is only possible when the "
-"<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are enabled and "
-"<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
-msgstr ""
-
 msgid "The numeric <i>UUID</i> or <i>custom name</i> of the jail."
 msgstr ""
 
@@ -10748,6 +10562,17 @@ msgstr ""
 msgid ""
 "The system will reboot and be briefly unavailable while applying updates. "
 "Apply updates and reboot?"
+msgstr ""
+
+msgid ""
+"The time values when the task will run. Accepts standard <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=crontab\" "
+"target=\"_blank\">crontab(5)</a> values. </br></br>Symbols:</br> A comma "
+"(,) separates individual values.</br> An asterisk (*) means  \"match all "
+"values\".</br> Hyphenated numbers (1-5) sets a range of time.</br> A slash "
+"(/) designates a step in the value: */2 means every other minute.</br></br> "
+"Example: 30-35 in Minutes, 1,14 in Hours, and */2 in Days means the task "
+"will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day."
 msgstr ""
 
 msgid ""
@@ -10874,12 +10699,6 @@ msgid "This is the serial number of the disk."
 msgstr ""
 
 msgid "This job will not run again until it is enabled."
-msgstr ""
-
-msgid ""
-"This number selects the routing table (<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=setfib\" "
-"target=\"_blank\">FIB</a>) used when running commands inside the jail."
 msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
@@ -11115,6 +10934,9 @@ msgid ""
 "recovery key file to upload  from the local system."
 msgstr ""
 
+msgid "Unlock the pool with either a passphrase or a recovery key."
+msgstr ""
+
 msgid ""
 "Unmask is used for newly created files. Default is <i>000</i> (anyone can "
 "read, write, and execute)."
@@ -11234,9 +11056,6 @@ msgid ""
 "starts concurrently on both TrueNAS Controllers.            Continue with "
 "download?"
 msgstr ""
-
-msgid "Upgrading Jail"
-msgstr "正在升級 Jail"
 
 msgid "Upload"
 msgstr "上載"
@@ -11529,6 +11348,9 @@ msgstr ""
 msgid "VNET Virtual Networking"
 msgstr "VNET 虛擬網路"
 
+msgid "VNET is required."
+msgstr ""
+
 msgid "Valid"
 msgstr ""
 
@@ -11561,6 +11383,9 @@ msgstr ""
 
 msgid "Verify passphrase"
 msgstr "驗證複雜密碼"
+
+msgid "Verify the pool encryption passphrase."
+msgstr ""
 
 msgid "Version"
 msgstr "版本"
@@ -11880,6 +11705,9 @@ msgid "allow_mlock"
 msgstr ""
 
 msgid "allow_mount"
+msgstr ""
+
+msgid "allow_mount_*"
 msgstr ""
 
 msgid "allow_mount_devfs"

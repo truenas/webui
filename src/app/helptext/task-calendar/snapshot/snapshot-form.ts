@@ -17,10 +17,11 @@ export default {
  Example: <i>pool1/dataset1/child1</i>. A recursive snapshot of\
  <i>pool1/dataset1</i> will include all child datasets except <i>child1</i>.'),
 
-    lifetime_value_placeholder: T('Snapshot Lifetime'),
-    lifetime_unit_tooltip: T('Define a length of time to retain the snapshot on this\
- system. After the time expires, the snapshot is removed. Snapshots which have\
- been replicated to other systems are not affected.'),
+    lifetime_placeholder: T('Snapshot Lifetime'),
+    lifetime_tooltip: T('Define a length of time to retain the snapshot on this system\
+ using a numeric value and a single lowercase letter for units. Examples: <i>3h</i> is three hours,\
+ <i>1m</i> is one month, and <i>1y</i> is one year. Does not accept Minute values. After the time\
+ expires, the snapshot is removed. Snapshots which have been replicated to other systems are not affected.'),
 
     naming_schema_placeholder: T('Naming Schema'),
     naming_schema_tooltip: T('Snapshot name format string. The default is <i><textarea disabled>snap-%Y-%m-%d-%H-%M</textarea></i>.\

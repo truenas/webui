@@ -26,7 +26,8 @@
 			autocomplete="new-password"
 			ix-auto
 			ix-auto-type="input"
-			ix-auto-identifier="{{config.placeholder}}">
+			ix-auto-identifier="{{config.placeholder}}"
+			(change)="valueChange()">
 	</mat-form-field>
 	<ng-template #elseBlock>
 		<span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>

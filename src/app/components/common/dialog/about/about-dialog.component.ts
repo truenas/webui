@@ -17,7 +17,7 @@ import { StorageService, SystemGeneralService, WebSocketService, AppLoaderServic
 export class AboutModalDialog {
   public copyrightYear = globalHelptext.copyright_year;
   public info: any = {};
-  public is_freenas: false;
+  public product_type: string;
   public ipv4Choices = [];
   public ipv6Choices = [];
 
@@ -28,8 +28,8 @@ export class AboutModalDialog {
     protected http: Http, protected dialogService: DialogService, 
     protected translate: TranslateService,
     protected systemGeneralService: SystemGeneralService, private storageService: StorageService) { 
-      this.ws.call('system.is_freenas').subscribe((res)=>{
-        this.is_freenas = res;
+      this.ws.call('system.product_type').subscribe((res)=>{
+        this.product_type = res;
       });
       this.ws.call('system.info').subscribe((res) => {
         this.info = res;

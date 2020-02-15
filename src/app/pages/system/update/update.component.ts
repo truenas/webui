@@ -55,7 +55,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public isUpdateRunning = false;
   public updateMethod: string = 'update.update';
   public is_ha = false;
-  public isfreenas: boolean;
+  public product_type: string;
   public ds: any;
   public failover_upgrade_pending = false;
   public busy: Subscription;
@@ -211,8 +211,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    window.localStorage.getItem('is_freenas') === 'true' ? this.isfreenas = true : this.isfreenas = false;
-
+    this.product_type = window.localStorage.getItem('product_type');
     this.ws.call('system.info', []).subscribe((res) => {
       this.sysInfo = res;
     })
@@ -269,7 +268,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       }
     });
 
-    if (!this.isfreenas) {
+    if (this.product_type === 'ENTERPRISE') {
       setTimeout(() => { // To get around too many concurrent calls???
         this.ws.call('failover.licensed').subscribe((res) => {
           if (res) {

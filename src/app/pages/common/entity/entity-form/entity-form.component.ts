@@ -543,6 +543,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
+  isFieldsetAvailabel(fieldset) {
+    for (let i = 0; i < fieldset.config.length; i++) {
+      if (!fieldset.config[i].isHidden) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   isShow(id: any): any {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {

@@ -12,12 +12,27 @@ import * as _ from 'lodash';
 import {WebSocketService} from '../../../../../services/ws.service';
 import {RestService} from '../../../../../services/rest.service';
 
-
-import {FieldConfig} from '../models/field-config.interface';
+import {FieldConfig, UnitType, InputUnitConfig} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {
 
+  public durationRegex = /^\s*((MINUTE|HOUR|DAY|WEEK|MONTH|YEAR){1}(S)?)|((M|h|d|w|m|y){1})\s*$/;
+  public sizeRegex = /^\s*(KIB|MIB|GIB|TIB|PIB|KB|MB|GB|TB|PB|K|M|G|T|P){1}\s*$/;
+
+  public shortDurationUnit = {
+    M: 'MINUTE',
+    h: 'HOUR',
+    d: 'DAY',
+    w: 'WEEK',
+    m: 'MONTH',
+    y: 'YEAR',
+  }
+
+  public defaultUnit = {
+    size: 'KIB',
+    duration: 'MINUTE',
+  }
   constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
               protected ws: WebSocketService, private rest: RestService) {}
 
@@ -169,6 +184,70 @@ export class EntityFormService {
     for (let f = 0; f < fieldConfig.length; f++) {
       fieldConfig[f]['errors'] = '';
       fieldConfig[f]['hasErrors'] = false;
+    }
+  }
+
+  phraseInputData(value: any, config: InputUnitConfig) {
+    if (!value) {
+      return value;
+    }
+    let num = 0;
+    let unit = '';
+
+    value = value.replace(/\s+/g, '');
+
+    // get leading number
+    let match = [];
+    if (config.decimal === undefined || config.decimal) {
+      match = value.match(/^(\d+(\.\d+)?)/);
+    } else {
+      match = value.match(/^(\d+)/);
+    }
+
+    if (match && match.length > 0) {
+      num = match[1];
+    } else {
+      return NaN;
+    }
+
+    // get unit and return phrased string
+    unit = value.replace(num, '');
+    if (unit === '') {
+      unit = config.default ? config.default : (config.allowUnits ? config.allowUnits[0] : this.defaultUnit[config.type]);
+    }
+    if (config.allowUnits !== undefined ) {
+      config.allowUnits.forEach(item => item.toUpperCase());
+    }
+    // do uppercase except when type is duration and unit is only one character (M is for minutes while m is for month)
+    unit = (config.type === UnitType.size || unit.length > 1) ? unit.toUpperCase() : unit;
+    const matchUnits = unit.match(config.type === UnitType.size ? this.sizeRegex : this.durationRegex);
+
+    if (matchUnits && matchUnits[0] === unit) {
+      const humanReableUnit = this.getHumanReadableUnit(num, unit, config.type);
+      if (config.allowUnits) {
+        const singleUnit = _.endsWith(humanReableUnit, 'S') ? humanReableUnit.substring(0, humanReableUnit.length - 1) : humanReableUnit;
+        if ( _.indexOf(config.allowUnits, singleUnit) < 0) {
+          return NaN;
+        }
+      }
+      return num + ' ' + humanReableUnit;
+    } else {
+      return NaN;
+    }
+  }
+
+  getHumanReadableUnit(num: number, unit: string, type: UnitType) {
+    if (type === UnitType.duration) {
+      let readableUnit = unit.length > 1 ? unit : this.shortDurationUnit[unit];
+      if (num <= 1 && _.endsWith(readableUnit, 'S')) {
+        readableUnit = readableUnit.substring(0, readableUnit.length - 1);
+      } else if(num >1 && !_.endsWith(readableUnit, 'S')) {
+        readableUnit += 'S';
+      }
+      return readableUnit;
+    }
+    if (type === UnitType.size) {
+      return unit[0] + 'iB';
     }
   }
 }
