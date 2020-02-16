@@ -3246,22 +3246,22 @@ msgid "Digest Algorithm"
 msgstr ""
 
 msgid "Direct the flow of data to the remote host."
-msgstr ""
+msgstr "Dirigere il flusso di dati verso l'host remoto."
 
 msgid "Direction"
-msgstr ""
+msgstr "Direzione"
 
 msgid "Directories & Permissions"
-msgstr ""
+msgstr "Directory & Permessi"
 
 msgid "Directory"
-msgstr ""
+msgstr "Directory"
 
 msgid "Directory Permission"
-msgstr ""
+msgstr "Permessi di Directory"
 
 msgid "Directory Services"
-msgstr ""
+msgstr "Servizi di Directory"
 
 msgid "Directory Services Monitor"
 msgstr ""
@@ -3321,7 +3321,7 @@ msgid "Discard Network Changes"
 msgstr ""
 
 msgid "Discard unapplied network changes?"
-msgstr ""
+msgstr "Ignorare modifiche di rete non applicate?"
 
 msgid "Discover Remote Host Key"
 msgstr ""
@@ -3333,46 +3333,46 @@ msgid "Discovery Auth Method"
 msgstr ""
 
 msgid "Disk"
-msgstr ""
+msgstr "Disco"
 
 msgid "Disk Details"
-msgstr ""
+msgstr "Dettagli Disco"
 
 msgid "Disk Imported: Log Summary"
-msgstr ""
+msgstr "Disco Importato: Riepilogo Dati"
 
 msgid "Disk Reports"
-msgstr ""
+msgstr "Rapporti su Disco"
 
 msgid "Disk Selection Required"
-msgstr ""
+msgstr "Richiesta Selezione Disco"
 
 msgid "Disk Size"
-msgstr ""
+msgstr "Dimensione Disco"
 
 msgid "Disk Type"
-msgstr ""
+msgstr "Tipo di Disco"
 
 msgid "Disk sector size"
-msgstr ""
+msgstr "Dimensione del settore del disco"
 
 msgid "Disk to wipe."
-msgstr ""
+msgstr "Disco da cancellare."
 
 msgid "Disks"
-msgstr ""
+msgstr "Dischi."
 
 msgid "Dismiss"
-msgstr ""
+msgstr "Espellere"
 
 msgid "Display Login"
-msgstr ""
+msgstr "Visualizza Login"
 
 msgid "Display System Processes"
-msgstr ""
+msgstr "Visualizza Processi di Sistema"
 
 msgid "Display console messages in real time at the bottom of the browser."
-msgstr ""
+msgstr "Visualizza i messaggi della console in tempo reale nella parte inferiore del browser."
 
 msgid "Distinguished Name"
 msgstr ""
@@ -3384,52 +3384,52 @@ msgid ""
 msgstr ""
 
 msgid "Do not set this if the Serial Port is disabled."
-msgstr ""
+msgstr "Non impostare questo se la Porta Seriale è disabilitata."
 
 msgid "Docker Host"
 msgstr ""
 
 msgid "Domain"
-msgstr ""
+msgstr "Dominio"
 
 msgid "Domain Account Name"
-msgstr ""
+msgstr "Nome Account di Dominio"
 
 msgid "Domain Account Password"
-msgstr ""
+msgstr "Password dell'Account di Dominio"
 
 msgid "Domain Forest Level"
 msgstr ""
 
 msgid "Domain Name"
-msgstr ""
+msgstr "Nome Dominio"
 
 msgid "Domain name"
-msgstr ""
+msgstr "Nome dominio"
 
 msgid "Done"
-msgstr ""
+msgstr "Fatto"
 
 msgid "Download"
-msgstr ""
+msgstr "Scarica"
 
 msgid "Download Encryption Key"
-msgstr ""
+msgstr "Scarica la Chiave di Crittografia"
 
 msgid "Download Key"
-msgstr ""
+msgstr "Scarica la Chiave"
 
 msgid "Download Logs"
-msgstr ""
+msgstr "Scarica Dati"
 
 msgid "Download Recovery Key"
-msgstr ""
+msgstr "Scarica la Chiave di Ripristino"
 
 msgid "Download Sucessful"
-msgstr ""
+msgstr "Download Riuscito"
 
 msgid "Download Update"
-msgstr ""
+msgstr "Scarica Aggiornamento"
 
 msgid "Drive Account Type"
 msgstr ""
@@ -3467,34 +3467,34 @@ msgid "EXPIRES TODAY  "
 msgstr ""
 
 msgid "Edit"
-msgstr ""
+msgstr "Modifica"
 
 msgid "Edit ACL"
-msgstr ""
+msgstr "Modifica ACL"
 
 msgid "Edit Alert Service"
-msgstr ""
+msgstr "Modifica Servizio Avvisi"
 
 msgid "Edit Disk(s)"
-msgstr ""
+msgstr "Modifica Disco(i)"
 
 msgid "Edit Idmap"
 msgstr ""
 
 msgid "Edit Options"
-msgstr ""
+msgstr "Modifica Opzioni"
 
 msgid "Edit Permissions"
-msgstr ""
+msgstr "Modifica Permessi"
 
 msgid "Edit Zvol"
 msgstr ""
 
 msgid "Editing interfaces while HA is enabled is not allowed."
-msgstr ""
+msgstr "La modifica delle interfacce con HA abilitato non è consentita."
 
 msgid "Editing the following disks:"
-msgstr ""
+msgstr "Modifica i seguenti dischi:"
 
 msgid ""
 "Editing top-level datasets can prevent users from accessing data in child "
@@ -3502,16 +3502,16 @@ msgid ""
 msgstr ""
 
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Email Address"
-msgstr ""
+msgstr "Indirizzo Email"
 
 msgid "Email Subject"
-msgstr ""
+msgstr "Oggetto dell'Email"
 
 msgid "Emergency"
-msgstr ""
+msgstr "Emergenza"
 
 msgid ""
 "Emulating an <i>Intel e82545 (e1000)</i> Ethernet card provides "
@@ -3521,16 +3521,16 @@ msgid ""
 msgstr ""
 
 msgid "Enable"
-msgstr ""
+msgstr "Abilitare"
 
 msgid "Enable (requires password)"
-msgstr ""
+msgstr "Abilitare (password richiesta)"
 
 msgid "Enable Atime"
 msgstr ""
 
 msgid "Enable Browser"
-msgstr ""
+msgstr "Abilitare Browser"
 
 msgid "Enable Debug Kernel"
 msgstr ""
@@ -3569,7 +3569,7 @@ msgid "Enable TPC"
 msgstr ""
 
 msgid "Enable Time Machine backups on this share."
-msgstr ""
+msgstr "Abilitare i backups di Time Machine su questa share."
 
 msgid ""
 "Enable Unix privileges supported by OSX 10.5 and higher. Do not enable this "
@@ -3578,12 +3578,13 @@ msgid ""
 msgstr ""
 
 msgid "Enable VNC"
-msgstr ""
+msgstr "Abilitare VNC"
 
 msgid ""
 "Enable a VNC (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
-msgstr ""
+msgstr "Abilitare una connessione remota VNC (Virtual Network Computing). Richiede "
+"avvio <i>UEFI</i>."
 
 msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr ""
@@ -3604,7 +3605,7 @@ msgid "Enable netwait feature"
 msgstr ""
 
 msgid "Enable password login"
-msgstr ""
+msgstr "Abilitare accesso con password"
 
 msgid ""
 "Enable password logins and authentication to SMB shares. Selecting "
@@ -3624,12 +3625,13 @@ msgid "Enable sending anonymous usage statistics to iXsystems."
 msgstr ""
 
 msgid "Enable service"
-msgstr ""
+msgstr "Abilita servizio"
 
 msgid ""
 "Enable the Active Directory service. The first time this option is set, the "
 "Domain Account Password must be entered."
-msgstr ""
+msgstr "Abilita il servizio Active Directory. La prima volta che questa opzione è impostata, la "
+"Password dell'Account di Dominio deve essere inserita."
 
 msgid "Enable the SNMPv3 security model."
 msgstr ""
@@ -3650,10 +3652,10 @@ msgid ""
 msgstr ""
 
 msgid "Enable this service to start automatically."
-msgstr ""
+msgstr "Abilita questo servizio per l'avvio automatico."
 
 msgid "Enable this task. Unset to disable the task     without deleting it."
-msgstr ""
+msgstr "Abilita questa attività. Non impostato per disabilitare l'attività senza eliminarla."
 
 msgid "Enable this tunable. Unset to disable this tunable without deleting it."
 msgstr ""
@@ -3669,12 +3671,13 @@ msgid ""
 msgstr ""
 
 msgid "Enabled"
-msgstr ""
+msgstr "Abilitato"
 
 msgid ""
 "Enables <i>receive</i> mode. Any received peer  information is saved in "
 "interface descriptions."
-msgstr ""
+msgstr "Abilita la modalità <i>receive</i>. Ogni informazione simile ricevuta sarà salvata in "
+"descrizioni interfaccia."
 
 msgid ""
 "Enables the autotune script which attempts to optimize the system depending "
@@ -3692,7 +3695,8 @@ msgstr ""
 msgid ""
 "Enabling this option can expose administrator credentials and is not "
 "recommended."
-msgstr ""
+msgstr "L'abilitazione di questa opzione può esporre le credenziali dell'amministratore e non è "
+"consigliato."
 
 msgid ""
 "Enabling this option is <b>not</b> recommended as it bypasses a security "
@@ -3700,10 +3704,10 @@ msgid ""
 msgstr ""
 
 msgid "Enabling this option may have performance implications on your pools."
-msgstr ""
+msgstr "L'abilitazione di questa opzione potrebbe avere conseguenze sulle prestazioni dei pool."
 
 msgid "Enclosure"
-msgstr ""
+msgstr "Allegato"
 
 msgid ""
 "Encrypt (<i>PUSH</i>) or decrypt  (<i>PULL</i>) file names with the rclone  "
