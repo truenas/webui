@@ -1027,10 +1027,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetTableToStartingHeight() {
-    if (!this.startingHeight) {
-      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }
-    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+    setTimeout(() => {
+      if (!this.startingHeight) {
+        this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+      }
+      
+      document.getElementsByClassName('datatable-body')[0].setAttribute('style', `height: ${this.tableHeight}px`);
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+    }, 100);
   }
 
   updateTableHeightAfterDetailToggle() {
@@ -1041,8 +1045,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
       const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
+      const tableHeight = this.expandedRows * this.getRowDetailHeight() + this.tableHeight;
+      document.getElementsByClassName('datatable-body')[0].setAttribute('style', `height: ${tableHeight}px`);
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 0);
+    }, 100);
   }
 
   getButtonClass(prop) {
