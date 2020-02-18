@@ -289,6 +289,7 @@ export class AdvancedComponent implements OnDestroy {
       this.is_freenas = res;
       this.swapondrive = this.fieldSets.config('swapondrive');
       this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
+        console.log(value)
         const filteredValue = value ? this.storage.convertHumanStringToNum(value.toString(), false, 'g') : undefined;
         if (filteredValue === 0) {
           this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
@@ -296,6 +297,7 @@ export class AdvancedComponent implements OnDestroy {
           this.swapondrive.warnings = helptext_system_advanced.swapondrive_max_warning;
         } else {
           this.swapondrive.warnings = null;
+
         }
       });
   
@@ -342,7 +344,7 @@ export class AdvancedComponent implements OnDestroy {
 
   blurEvent(parent) {
     if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['swapondrive'].setValue(parent.storage.humanReadable || 2);
+      parent.entityForm.formGroup.controls['swapondrive'].setValue(parent.storage.humanReadable || '2 GiB');
     }
   }
 }
