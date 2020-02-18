@@ -3,6 +3,7 @@ import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from 'app/services/';
 import { ReportsService } from '../../reports.service';
+import { SystemGeneralService } from '../../../../services/';
 import { MaterialModule } from 'app/appMaterial.module';
 import { Subject } from 'rxjs/Subject';
 import { NgForm } from '@angular/forms';
@@ -133,19 +134,23 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
   public chartColors: string[];
+  public timezone: string;
 
   get startTime(){
-    return new Date(this.currentStartDate);
+    return new Date(this.currentStartDate).toLocaleString('en-US', {timeZone: this.timezone});
   }
   get endTime(){
-    return new Date(this.currentEndDate);
+    return new Date(this.currentEndDate).toLocaleString('en-US', {timeZone: this.timezone});
   }
 
   constructor(public router: Router, 
     public translate: TranslateService,
     private rs: ReportsService,
-    private ws: WebSocketService){
+    private ws: WebSocketService, protected sysGenService: SystemGeneralService){
     super(translate); 
+    this.sysGenService.getSysInfo().subscribe((res) => {
+      this.timezone = res.timezone;
+    })
     
     this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
       this.data = evt.data;
