@@ -439,14 +439,17 @@ export class ServiceFTPComponent implements OnInit {
           formField['hasErrors'] = true;
           formField['errors'] = helptext.bandwidth_err;
         };
-      })
-      )
+      }));
+    
+    // 'Erase' humanReadable after load to keep from accidentaly resetting values 
+    setTimeout(() => {
+      this.storageService.humanReadable = '';
+    }, 1000)
   }
 
   resourceTransformIncomingRestData(data) {
     this.bwFields.forEach(field => 
       data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0));
-
       this.rootlogin = data['rootlogin'];
     const certificate = data['ssltls_certificate'];
     if (certificate && certificate.id) {
@@ -499,29 +502,31 @@ export class ServiceFTPComponent implements OnInit {
 
   blurEvent(parent) {
     if (parent.entityForm && parent.storageService.humanReadable) {
-      parent.entityForm.formGroup.controls['localuserbw'].setValue(parent.storageService.humanReadable || 0);
-      parent.storageService.humanReadable = '';
+      parent.transformValue(parent, 'localuserbw');
     }
   }
 
   blurEvent2(parent) {
     if (parent.entityForm && parent.storageService.humanReadable) {
-      parent.entityForm.formGroup.controls['localuserdlbw'].setValue(parent.storageService.humanReadable || 0);
-      parent.storageService.humanReadable = '';
+      parent.transformValue(parent, 'localuserdlbw');
     }
   }
 
   blurEvent3(parent) {
     if (parent.entityForm && parent.storageService.humanReadable) {
-      parent.entityForm.formGroup.controls['anonuserbw'].setValue(parent.storageService.humanReadable || 0);
-      parent.storageService.humanReadable = '';
+      parent.transformValue(parent, 'anonuserbw');
     }
   }
 
   blurEvent4(parent) {
     if (parent.entityForm && parent.storageService.humanReadable) {
-      parent.entityForm.formGroup.controls['anonuserdlbw'].setValue(parent.storageService.humanReadable || 0);
-      parent.storageService.humanReadable = '';
+      parent.transformValue(parent, 'anonuserdlbw');
     }
+  }
+
+  transformValue(parent, fieldname: string) {
+    parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
+    // Clear humanReadable value to keep from accidentally setting it elsewhere
+    parent.storageService.humanReadable = '';
   }
 }
