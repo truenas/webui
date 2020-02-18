@@ -660,7 +660,7 @@ msgid ""
 msgstr ""
 
 msgid "Access Control List"
-msgstr ""
+msgstr "アクセスコントロールリスト"
 
 msgid "Access ID Key"
 msgstr "アクセスIDキー"
@@ -761,7 +761,7 @@ msgid "Add"
 msgstr "追加"
 
 msgid "Add ACL Item"
-msgstr ""
+msgstr "ACL 項目を追加"
 
 msgid "Add Additional Path"
 msgstr ""
@@ -1297,7 +1297,7 @@ msgid "Apply Pending update"
 msgstr "保留中の更新を適用"
 
 msgid "Apply Permissions Recursively"
-msgstr ""
+msgstr "再帰的に権限を適用"
 
 msgid "Apply Update"
 msgstr ""
@@ -1309,17 +1309,17 @@ msgid "Apply permissions recursively"
 msgstr "再帰的に権限を適用"
 
 msgid "Apply permissions recursively to all child datasets of the current dataset."
-msgstr ""
+msgstr "現在のデータセットのすべての子データセットに権限を再帰的に適用します。"
 
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
 "dataset."
-msgstr ""
+msgstr "現在のデータセット内のすべてのディレクトリとファイルにアクセス権を再帰的に適用します。"
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset."
-msgstr ""
+msgstr "現在のデータセット内のすべてのディレクトリとファイルにアクセス権を再帰的に適用します。"
 
 msgid "Apply permissions to child datasets"
 msgstr "子データセットに対して権限を適用"
@@ -1546,7 +1546,7 @@ msgid "Bind DN"
 msgstr ""
 
 msgid "Bind IP Addresses"
-msgstr ""
+msgstr "バインドするIPアドレス"
 
 msgid "Bind Interfaces"
 msgstr ""
@@ -2204,7 +2204,7 @@ msgstr "インターフェイスのタイプを選択します。 <i>Bridge</i> 
 msgid ""
 "Choose the type of permissions. <i>Basic</i> shows general permissions. "
 "<i>Advanced</i> shows each specific type of permission for finer control."
-msgstr ""
+msgstr "アクセス許可の種類を選択します。<i>Basic</i>は、一般的な権限を示します。<i>Advanced</i> には、より詳細に制御できるように、特定のタイプの権限が表示されます。"
 
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
 msgstr ""
@@ -2232,7 +2232,7 @@ msgstr "言語を選択してください。"
 msgid ""
 "Choosing an entry loads a preset ACL that is  configured to match general "
 "permissions situations."
-msgstr ""
+msgstr "項目を選択すると、一般的なアクセス権の状況に合わせて設定されたプリセットACLがロードされます。"
 
 msgid "Cipher"
 msgstr ""
@@ -2868,7 +2868,7 @@ msgid "Default"
 msgstr ""
 
 msgid "Default ACL Options"
-msgstr ""
+msgstr "デフォルトのACL設定"
 
 msgid "Default Permissions"
 msgstr ""
@@ -2959,10 +2959,10 @@ msgid "Delay VM Boot Until VNC Connects"
 msgstr "VNCクライアントが接続するまでVMを起動するのを待ちます。"
 
 msgid "Delete"
-msgstr ""
+msgstr "削除"
 
 msgid "Delete "
-msgstr ""
+msgstr "削除"
 
 msgid "Delete Dataset"
 msgstr ""
@@ -3376,7 +3376,7 @@ msgid "EC Curve"
 msgstr ""
 
 msgid "EDIT ACL"
-msgstr ""
+msgstr "ACL の編集"
 
 msgid "ERROR: Not Enough Memory"
 msgstr ""
@@ -3394,7 +3394,7 @@ msgid "Edit"
 msgstr ""
 
 msgid "Edit ACL"
-msgstr ""
+msgstr "ACLを編集"
 
 msgid "Edit Alert Service"
 msgstr ""
@@ -3475,7 +3475,7 @@ msgid "Enable S.M.A.R.T."
 msgstr ""
 
 msgid "Enable SMB1 support"
-msgstr ""
+msgstr "SMB1サポートを有効にする"
 
 msgid "Enable Serial Console"
 msgstr "シリアルコンソールを有効にします"
@@ -4624,7 +4624,7 @@ msgid "File"
 msgstr ""
 
 msgid "File Information"
-msgstr ""
+msgstr "ファイルの情報"
 
 msgid "File Permission"
 msgstr ""
@@ -4867,7 +4867,7 @@ msgid "Graph Age in Months"
 msgstr "月のグラフ寿命"
 
 msgid "Group"
-msgstr ""
+msgstr "グループ"
 
 msgid "Group Bind Path"
 msgstr ""
@@ -4901,7 +4901,7 @@ msgid "Guest Access"
 msgstr ""
 
 msgid "Guest Account"
-msgstr ""
+msgstr "ゲストアカウント"
 
 msgid "Guest Operating System"
 msgstr ""
@@ -4952,7 +4952,7 @@ msgid "HTTPS Port"
 msgstr ""
 
 msgid "Help"
-msgstr ""
+msgstr "ヘルプ"
 
 msgid "Hide Standard Error"
 msgstr ""
@@ -5101,7 +5101,7 @@ msgid ""
 "How the <i>Permissions</i> are applied to the chosen <i>Who</>. Choose "
 "<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
 "the specified permissions."
-msgstr ""
+msgstr "選択した<i>Who</>に<i>アクセス許可</i>を適用する方法。指定した権限を付与するには<i>Allow</i>を、禁止するには<i>Deny</i>を選択します。"
 
 msgid ""
 "How this ACE is applied to newly created directories and files within the "
@@ -5111,7 +5111,7 @@ msgid ""
 "href=\"--docurl--/storage.html#ace-inheritance-flags\" "
 "target=\"_blank\">inheritance flags list</a> for descriptions of Advanced "
 "inheritance flags."
-msgstr ""
+msgstr "このACEをデータセット内の新しく作成されたディレクトリおよびファイルに適用する方法。BasicタイプはACEの継承を有効または無効にします。Advanced タイプを使用すると、データセット内のファイルとディレクトリにACEを適用する方法を詳細に制御できます。高度な継承フラグの詳細については、<a href=\"--docurl--/storage.html#ace-inheritance-flags\" target=\"_blank\">inheritance flags list</a>を参照してください。"
 
 msgid ""
 "How to configure the connection:<br><br>  <i>Manual</i> requires "
@@ -5848,7 +5848,7 @@ msgid "Local"
 msgstr ""
 
 msgid "Local Master"
-msgstr ""
+msgstr "ローカルマスタ"
 
 msgid "Local User Download Bandwidth"
 msgstr ""
@@ -5872,7 +5872,7 @@ msgid "Lock User"
 msgstr "ユーザーをロック"
 
 msgid "Log Level"
-msgstr ""
+msgstr "Logレベル"
 
 msgid "Log Out"
 msgstr ""
@@ -6291,7 +6291,7 @@ msgid "NOT RUN SINCE LAST BOOT"
 msgstr ""
 
 msgid "NTLMv1 Auth"
-msgstr ""
+msgstr "NTLMv1認証"
 
 msgid "NTP Servers"
 msgstr "NTPサーバー"
@@ -6386,16 +6386,16 @@ msgid "Navigation"
 msgstr ""
 
 msgid "NetBIOS Alias"
-msgstr ""
+msgstr "NetBIOSエイリアス"
 
 msgid "NetBIOS Name"
-msgstr ""
+msgstr "NetBIOS名"
 
 msgid "NetBIOS alias"
-msgstr ""
+msgstr "NetBIOSエイリアス"
 
 msgid "Netbios Name"
-msgstr ""
+msgstr "NetBIOS名"
 
 msgid ""
 "Netbios Name of this NAS. This name must differ from the <i>Workgroup</i> "
@@ -6970,7 +6970,7 @@ msgid ""
 msgstr ""
 
 msgid "Path"
-msgstr ""
+msgstr "パス"
 
 msgid ""
 "Path to the <b>CheckIP Server</b>. For example,  <i>no-ip.com</i> uses a "
@@ -7035,10 +7035,10 @@ msgid "Periodic Snapshot Tasks"
 msgstr "Periodic Snapshot タスク"
 
 msgid "Permissions"
-msgstr ""
+msgstr "権限"
 
 msgid "Permissions Type"
-msgstr ""
+msgstr "権限設定タイプ"
 
 msgid "Permit Sudo"
 msgstr "Sudoを許可する"
@@ -7351,10 +7351,10 @@ msgid "Raid-z3"
 msgstr ""
 
 msgid "Range High"
-msgstr ""
+msgstr "範囲の上限"
 
 msgid "Range Low"
-msgstr ""
+msgstr "範囲の下限"
 
 msgid ""
 "Range Low and Range High set the range of UID/GID numbers which this  IDMap "
@@ -8311,7 +8311,7 @@ msgid ""
 "depending on the <i>Permissions Type</i>. See the <a "
 "href=\"--docurl--/storage.html#ace-permissions\" target=\"_blank\">ACL "
 "permissions list</a> for descriptions of each permission."
-msgstr ""
+msgstr "選択した<i>Who</i>に適用する権限を選択します。選択肢は、<i>Permissions Type</i>によって異なります。各権限の説明については、<a href=\"--docurl--/storage.html#ace-permissions\" target=\"_blank\">ACL 権限リスト</a>を参照してください。"
 
 msgid "Select pool to import"
 msgstr "インポートするプールの選択"
@@ -8523,7 +8523,7 @@ msgid ""
 "Select the set of ACE inheritance <i>Flags</i> to display. <i>Basic</i> "
 "shows nonspecific inheritance options. <i>Advanced</i> shows specific "
 "inheritance settings for finer control."
-msgstr ""
+msgstr "表示するACE継承<i>Flags</i>のセットを選択します。<i>Basic</i>は、一般的な継承オプションを示す。<i>Advanced</i>は、より詳細に制御するための特定の継承設定を示します。"
 
 msgid "Select the shell to use for local and SSH logins."
 msgstr "ローカルと SSH ログインの際に利用するシェルを選択します。"
@@ -9002,7 +9002,7 @@ msgid ""
 "Set to determine if the system participates in a browser election. Leave "
 "unset when the network contains an AD or LDAP server, or when Vista or "
 "Windows 7 machines are present."
-msgstr ""
+msgstr "システムがブラウザ選択に参加しているかどうかを判断するために設定します。ネットワークにADまたはLDAPサーバーが含まれている場合、またはVistaまたはWindows7マシンが存在する場合は、未設定のままにします。"
 
 msgid ""
 "Set to disable caching AD users and groups. This can help when unable to "
@@ -9133,7 +9133,7 @@ msgstr "ドメインへの参加試行ログを/var/log/messagesに記録する�
 msgid ""
 "Set to log authentication failures in <i>/var/log/messages</i> instead of "
 "the default of <i>/var/log/samba4/log.smbd</i>."
-msgstr ""
+msgstr "認証失敗のログを、デフォルトの<i>/var/log/samba4/log.smbd</i>ではなく、<i>/var/log/messages</i>に記録するように設定します。"
 
 msgid ""
 "Set to make the module <i>read-only</i>. No new ranges are allocated or new "
@@ -9212,7 +9212,7 @@ msgstr "送信するデータのサイズを減らすように設定します。
 msgid ""
 "Set to remove all ACLs from the current dataset. ACLs are also recursively "
 "stripped from directories and child datasets when those options are set."
-msgstr ""
+msgstr "現在のデータセットからすべてのACLを削除する場合に設定します。このオプションが設定されている場合、ディレクトリおよび子データセットからACLが再帰的に取り除かれます。"
 
 msgid "Set to run resilver tasks between the configured times."
 msgstr "設定された時間の間にresilverタスクを実行するように設定します。"
@@ -9736,7 +9736,7 @@ msgid "Streaming Metrics"
 msgstr ""
 
 msgid "Strip ACLs"
-msgstr ""
+msgstr "ACLを除去"
 
 msgid "Stripe"
 msgstr "ストライプ"
@@ -10156,7 +10156,7 @@ msgid ""
 "The group which controls the dataset. This group has the same permissions "
 "as granted to the <i>group@</i> <i>Who</i>. Groups created manually or "
 "imported from a directory service appear in the drop-down menu."
-msgstr ""
+msgstr "データセットを制御するグループ。このグループは、<i>group@</i> <i>Who</i>に付与されたものと同じ権限を持ちます。手動で作成したグループやディレクトリサービスからインポートしたグループは、ドロップダウンメニューに表示されます。"
 
 msgid "The hostname or IP address of the LDAP server."
 msgstr ""
@@ -10893,7 +10893,7 @@ msgid "Use settings from a saved replication."
 msgstr "保存されたレプリケーションの設定を使用します。"
 
 msgid "Use syslog only"
-msgstr ""
+msgstr "syslogのみを使用"
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "<i>A.B.C.D/E</i>の形式を使用してください。<i>E</i> はCIDRマスクです。"
@@ -10907,7 +10907,7 @@ msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
 "that SMB1 is being deprecated and it is advised to upgrade clients to "
 "operating system versions that support modern versions of the SMB protocol."
-msgstr ""
+msgstr "レガシーSMBクライアントがサーバーに接続できるようにするには、このオプションを使用します。SMB1は非推奨であり、SMBプロトコルの最新バージョンをサポートするオペレーティングシステムバージョンにクライアントをアップグレードすることをお勧めします。"
 
 msgid "Use unencrypted connection."
 msgstr ""
@@ -10926,7 +10926,7 @@ msgid ""
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "ユーザー"
 
 msgid "User Bind Path"
 msgstr ""
@@ -10978,7 +10978,7 @@ msgid ""
 "User who controls the dataset. This user always has permissions to read or "
 "write the ACL and read or write attributes. Users created manually or "
 "imported from a directory service appear in the drop-down menu."
-msgstr ""
+msgstr "データセットを制御するユーザー。このユーザーは、常にACLの読み取りまたは書き込み、および属性の読み取りまたは書き込みの権限を持っています。手動で作成したユーザーまたはディレクトリサービスからインポートしたユーザーがドロップダウンメニューに表示されます。"
 
 msgid "Username"
 msgstr ""
@@ -11308,7 +11308,7 @@ msgid ""
 msgstr ""
 
 msgid "Who"
-msgstr ""
+msgstr "誰に"
 
 msgid "Widget Base Class"
 msgstr ""
@@ -11332,7 +11332,7 @@ msgid "Wiping Disk..."
 msgstr ""
 
 msgid "Workgroup"
-msgstr ""
+msgstr "ワークグループ"
 
 msgid "Write"
 msgstr ""
@@ -11394,7 +11394,7 @@ msgid "Zero Device Numbers"
 msgstr ""
 
 msgid "Zeroconf share discovery"
-msgstr ""
+msgstr "Zeroconf共有検出"
 
 msgid "Zvol Location"
 msgstr ""
