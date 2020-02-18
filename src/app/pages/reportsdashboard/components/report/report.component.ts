@@ -151,7 +151,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     
     this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
       this.data = evt.data;
-      console.log(this.data)
     });
     
     this.core.register({observerClass:this, eventName:"LegendEvent-" + this.chartId}).subscribe((evt:CoreEvent) => {

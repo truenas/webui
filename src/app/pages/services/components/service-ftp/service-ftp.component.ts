@@ -429,26 +429,25 @@ export class ServiceFTPComponent implements OnInit {
       }
     });
 
-    entityEdit.formGroup.controls['localuserbw'].valueChanges.subscribe((value) => {
-      const field = _.find(this.fieldConfig, { name: 'localuserbw' });
-      const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
-      field['hasErrors'] = false;
-      field['errors'] = '';
-      if (filteredValue !== undefined && isNaN(filteredValue)) {
-        field['hasErrors'] = true;
-        field['errors'] = helptext.bandwidth_err;
-      };
-    });
-
-  }
-
-  setBWFields(fieldname: string, value: string) {
-
+    this.bwFields.forEach(field => 
+      entityEdit.formGroup.controls[field].valueChanges.subscribe((value) => {
+        const formField = _.find(this.fieldConfig, { name: field });
+        const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
+        formField['hasErrors'] = false;
+        formField['errors'] = '';
+        if (filteredValue !== undefined && isNaN(filteredValue)) {
+          formField['hasErrors'] = true;
+          formField['errors'] = helptext.bandwidth_err;
+        };
+      })
+      )
   }
 
   resourceTransformIncomingRestData(data) {
-    data.localuserbw = this.storageService.convertBytestoHumanReadable(data.localuserbw * 1024, 0);
-    this.rootlogin = data['rootlogin'];
+    this.bwFields.forEach(field => 
+      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0));
+
+      this.rootlogin = data['rootlogin'];
     const certificate = data['ssltls_certificate'];
     if (certificate && certificate.id) {
       data['ssltls_certificate'] = certificate.id;
@@ -472,7 +471,9 @@ export class ServiceFTPComponent implements OnInit {
   }
 
   beforeSubmit(data) {
-    data.localuserbw = (this.storageService.convertHumanStringToNum(data.localuserbw)/1024);
+    this.bwFields.forEach(field => 
+      data[field] = this.storageService.convertHumanStringToNum(data[field])/1024);
+
     let fileperm = parseInt(data['filemask'], 8);
     let filemask = (~fileperm & 0o666).toString(8);
     while (filemask.length < 3) {
@@ -497,26 +498,30 @@ export class ServiceFTPComponent implements OnInit {
   }
 
   blurEvent(parent) {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['localuserbw'].setValue(parent.storageService.humanReadable || 0)
+    if (parent.entityForm && parent.storageService.humanReadable) {
+      parent.entityForm.formGroup.controls['localuserbw'].setValue(parent.storageService.humanReadable || 0);
+      parent.storageService.humanReadable = '';
     }
   }
 
   blurEvent2(parent) {
-    if (parent.entityForm) {
-      // parent.entityForm.formGroup.controls['localuserdlbw'].setValue(parent.storageService.humanReadable || 0)
+    if (parent.entityForm && parent.storageService.humanReadable) {
+      parent.entityForm.formGroup.controls['localuserdlbw'].setValue(parent.storageService.humanReadable || 0);
+      parent.storageService.humanReadable = '';
     }
   }
 
   blurEvent3(parent) {
-    if (parent.entityForm) {
-      // parent.entityForm.formGroup.controls['anonuserbw'].setValue(parent.storageService.humanReadable || 0)
+    if (parent.entityForm && parent.storageService.humanReadable) {
+      parent.entityForm.formGroup.controls['anonuserbw'].setValue(parent.storageService.humanReadable || 0);
+      parent.storageService.humanReadable = '';
     }
   }
 
   blurEvent4(parent) {
-    if (parent.entityForm) {
-      // parent.entityForm.formGroup.controls['anonuserdlbw'].setValue(parent.storageService.humanReadable || 0)
+    if (parent.entityForm && parent.storageService.humanReadable) {
+      parent.entityForm.formGroup.controls['anonuserdlbw'].setValue(parent.storageService.humanReadable || 0);
+      parent.storageService.humanReadable = '';
     }
   }
 }
