@@ -8,7 +8,7 @@ msgid " Check Notifications for more details."
 msgstr ""
 
 msgid " Download Updates"
-msgstr ""
+msgstr "Pobierz Aktualziacje"
 
 msgid " First vdev has "
 msgstr ""
@@ -17,10 +17,10 @@ msgid " First vdev is a "
 msgstr ""
 
 msgid " Plugin"
-msgstr ""
+msgstr "Dodatki"
 
 msgid " Service"
-msgstr ""
+msgstr "Usługi"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -40,7 +40,7 @@ msgid ""
 msgstr ""
 
 msgid " and "
-msgstr ""
+msgstr "i"
 
 msgid " and all snapshots of it?"
 msgstr ""
@@ -52,7 +52,7 @@ msgid " but datastore "
 msgstr ""
 
 msgid " disks"
-msgstr ""
+msgstr "Dyski"
 
 msgid " disks, new vdev has "
 msgstr ""
@@ -61,10 +61,10 @@ msgid " has been unlocked."
 msgstr ""
 
 msgid " is "
-msgstr ""
+msgstr "jest"
 
 msgid " is required."
-msgstr ""
+msgstr "jest wymagane"
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
@@ -92,13 +92,13 @@ msgid " to include all "
 msgstr ""
 
 msgid " update successful"
-msgstr ""
+msgstr "zaktualizowano pomyslnie"
 
 msgid " updated."
-msgstr ""
+msgstr "zaktualizowane"
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% użycia wszytskich rdzeni"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
@@ -111,13 +111,13 @@ msgid "'. All data on that pool was destroyed."
 msgstr ""
 
 msgid "(24 Hours)"
-msgstr ""
+msgstr "(24 Godziny)"
 
 msgid "(No description)"
-msgstr ""
+msgstr "(Brak Opisu)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(Usuń pulę z bazy danych)"
 
 msgid ", new vdev is "
 msgstr ""
@@ -138,7 +138,7 @@ msgid "0=Disabled, blank=inherit"
 msgstr ""
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "Maksymalna długośc znaków to 20"
 
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
