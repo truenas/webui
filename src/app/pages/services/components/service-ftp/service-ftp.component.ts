@@ -25,7 +25,7 @@ export class ServiceFTPComponent implements OnInit {
   protected rootlogin: boolean;
   protected fieldConfig;
 
-  protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw']
+  protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw'];
 
   public fieldSets = new FieldSets([
     {
@@ -257,9 +257,9 @@ export class ServiceFTPComponent implements OnInit {
           type: "input",
           name: "localuserbw",
           placeholder: helptext.localuserbw_placeholder,
-          tooltip: helptext.localuserbw_tooltip,
+          tooltip: helptext.userbw_tooltip,
           required: true,
-          validation: helptext.localuserbw_validation,
+          validation: helptext.userbw_validation,
           blurStatus: true,
           blurEvent: this.blurEvent,
           parent: this,
@@ -268,9 +268,9 @@ export class ServiceFTPComponent implements OnInit {
           type: "input",
           name: "localuserdlbw",
           placeholder: helptext.localuserdlbw_placeholder,
-          tooltip: helptext.localuserdlbw_tooltip,
+          tooltip: helptext.userbw_tooltip,
           required: true,
-          validation: helptext.localuserdlbw_validation,
+          validation: helptext.userbw_validation,
           blurStatus: true,
           blurEvent: this.blurEvent2,
           parent: this,
@@ -279,9 +279,9 @@ export class ServiceFTPComponent implements OnInit {
           type: "input",
           name: "anonuserbw",
           placeholder: helptext.anonuserbw_placeholder,
-          tooltip: helptext.anonuserbw_tooltip,
+          tooltip: helptext.userbw_tooltip,
           required: true,
-          validation: helptext.anonuserbw_validation,
+          validation: helptext.userbw_validation,
           blurStatus: true,
           blurEvent: this.blurEvent3,
           parent: this,
@@ -290,9 +290,9 @@ export class ServiceFTPComponent implements OnInit {
           type: "input",
           name: "anonuserdlbw",
           placeholder: helptext.anonuserdlbw_placeholder,
-          tooltip: helptext.anonuserdlbw_tooltip,
+          tooltip: helptext.userbw_tooltip,
           required: true,
-          validation: helptext.anonuserdlbw_validation,
+          validation: helptext.userbw_validation,
           blurStatus: true,
           blurEvent: this.blurEvent4,
           parent: this,

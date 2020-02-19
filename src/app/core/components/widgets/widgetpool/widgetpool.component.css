@@ -302,3 +302,6 @@ span.capitalize{
 .xs.widget .overview .right .list-subheader{
   margin-top:0;
 }
+.value-units {
+  margin-left: 5px;
+}
