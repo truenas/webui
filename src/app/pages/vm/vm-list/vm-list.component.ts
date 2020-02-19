@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { MatDialog } from '@angular/material';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -27,6 +29,7 @@ export class VMListComponent {
     protected wsDelete = 'vm.delete';
     protected route_add: string[] = ['vm', 'wizard'];
     protected route_edit: string[] = ['vm', 'edit'];
+    protected dialogRef: any;
 
     public entityList: any;
     public columns: Array<any> = [
@@ -71,7 +74,7 @@ export class VMListComponent {
         private storageService: StorageService,
         private loader: AppLoaderService,
         private dialogService: DialogService,
-        private router: Router) { }
+        private router: Router, protected dialog: MatDialog) { }
 
     afterInit(entityList) {
         this.checkMemory();
@@ -185,30 +188,51 @@ export class VMListComponent {
     }
 
     doRowAction(row, method, params = [row.id], updateTable = false) {
-        this.loader.open();
-        this.ws.call(method, params).subscribe(
-            (res) => {
-                if (updateTable) {
-                    this.entityList.getData();
-                    this.loader.close();
-                } else {
-                    this.updateRows([row]).then(() => {
+        console.log(row, method, params, updateTable)
+        if (method === 'vm.stop') {
+            console.log(params[0], params[1])
+            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stopping") }, disableClose: false });
+            this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
+            // ("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: self.restartServices }])
+            this.dialogRef.componentInstance.submit();
+            this.dialogRef.componentInstance.success.subscribe((succ) => {
+              this.dialogRef.close(false);
+              this.dialogService.Info(T('Stopped...'),'', '450px', 'info', true);   
+            });
+            this.dialogRef.componentInstance.failure.subscribe((err) => {
+            console.log(err)
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            });
+        } else {
+            this.loader.open();
+            this.ws.call(method, params).subscribe(
+                (res) => {
+                    console.log(res)
+                    if (updateTable) {
+                        this.entityList.getData();
                         this.loader.close();
-                    });
+                    } else {
+                        this.updateRows([row]).then(() => {
+                            this.loader.close();
+                        });
+                    }
+                    this.checkMemory();
+                },
+                (err) => {
+                    console.log(err)
+                    this.loader.close();
+                    if (method === this.wsMethods.start && err.error === 12) {
+                        this.onMemoryError(row);
+                        return;
+                    } else if (method === this.wsMethods.update) {
+                        row.autostart = !row.autostart;
+                    }
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
                 }
-                this.checkMemory();
-            },
-            (err) => {
-                this.loader.close();
-                if (method === this.wsMethods.start && err.error === 12) {
-                    this.onMemoryError(row);
-                    return;
-                } else if (method === this.wsMethods.update) {
-                    row.autostart = !row.autostart;
-                }
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-            }
-        )
+            )
+        }
+
+
     }
 
     updateRows(rows: Array<any>): Promise<boolean> {
