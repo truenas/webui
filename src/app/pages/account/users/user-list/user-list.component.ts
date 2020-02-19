@@ -4,7 +4,6 @@ import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
-import { Subscription } from 'rxjs';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-list';
@@ -26,7 +25,12 @@ export class UserListComponent implements OnInit {
   protected grp_lst = [];
   protected hasDetails = true;
   protected queryCall = 'user.query';
-  public busy: Subscription;
+  protected globalConfig = {
+    id: "config",
+    onClick: () => {
+      this.toggleBuiltins();
+    }
+  };
 
   public columns: Array < any > = [
     { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
@@ -171,16 +175,19 @@ export class UserListComponent implements OnInit {
     return data;
   }
 
-  getAddActions() {
-    return [
-      {
-        label: T('Toggle Builtin Users'),
-        onClick: () => {
-          this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
-          this.prefService.savePreferences();
-          this.entityList.getData(true);
-        }
-      }
-    ];
+  toggleBuiltins() {
+    let show;
+    this.prefService.preferences.hide_builtin_users ? show = helptext.builtins_dialog.show :
+      show = helptext.builtins_dialog.hide;
+      this.dialogService.confirm(show + helptext.builtins_dialog.title, 
+        show + helptext.builtins_dialog.message, true, show)
+        .subscribe((res) => {
+         if (res) {
+            this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
+            this.prefService.savePreferences();
+            this.entityList.needTableResize = false;
+            this.entityList.getData();
+         }
+      })
   }
 }

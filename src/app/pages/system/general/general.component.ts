@@ -26,7 +26,8 @@ export class GeneralComponent {
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
-  public languageKey: string;  public fieldConfig: FieldConfig[] = []
+  public languageKey: string;  
+  public fieldConfig: FieldConfig[] = []
 
   public fieldSets: FieldSet[] = [
     {

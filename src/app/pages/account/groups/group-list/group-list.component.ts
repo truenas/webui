@@ -3,7 +3,6 @@ import {Router} from '@angular/router';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
-import { Subscription } from 'rxjs';
 import helptext from '../../../../helptext/account/group-list';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
@@ -21,7 +20,12 @@ export class GroupListComponent {
   protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
   protected entityList: any;
   protected loaderOpen = false;
-  public busy: Subscription;
+  protected globalConfig = {
+    id: "config",
+    onClick: () => {
+      this.toggleBuiltins();
+    }
+  };
   
   public columns: Array<any> = [
     {name : 'Group', prop : 'group', always_display: true},
@@ -135,16 +139,21 @@ export class GroupListComponent {
     return true;
   }
 
-  getAddActions() {
-    return [
-      {
-        label: T(`Toggle Builtin Groups`),
-        onClick: () => {
-          this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
-          this.prefService.savePreferences();
-          this.entityList.getData(true);
-        }
-      }
-    ];
+  toggleBuiltins() {
+    let show;
+    this.prefService.preferences.hide_builtin_groups ? show = helptext.builtins_dialog.show :
+      show = helptext.builtins_dialog.hide;
+      this.dialogService.confirm(show + helptext.builtins_dialog.title, 
+        show + helptext.builtins_dialog.message, true, show)
+        .subscribe((res) => {
+         if (res) {
+            this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
+            this.prefService.savePreferences();
+            this.entityList.needTableResize = false;
+            this.entityList.getData();
+         }
+      })
   }
+        
+  
 }

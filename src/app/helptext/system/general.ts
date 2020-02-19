@@ -155,16 +155,6 @@ export const helptext_system_general = {
     tooltip: T("Enable sending anonymous usage statistics to iXsystems.")
   },
 
-  hide_builtin_users: {
-    placeholder: T('Hide Builtin Users'),
-    tooltip: T('Hide builtin users in table at <i>Accounts > Users</i>')
-  },
-
-  hide_builtin_groups: {
-    placeholder: T('Hide Builtin Groups'),
-    tooltip: T('Hide builtin groups in table at <i>Accounts > Groups</i>')
-  },
-
   save_config_form: {
     title: T('Save Configuration'),
     message: T(
