@@ -12199,7 +12199,7 @@ msgid "host_time"
 msgstr ""
 
 msgid "hostid"
-msgstr ""
+msgstr "ID hosta"
 
 msgid "hostid_strict_check"
 msgstr ""
@@ -12214,19 +12214,19 @@ msgid "interfaces"
 msgstr ""
 
 msgid "ip4"
-msgstr ""
+msgstr "ip4"
 
 msgid "ip4.saddrsel"
 msgstr ""
 
 msgid "ip6"
-msgstr ""
+msgstr "ip6"
 
 msgid "ip6.saddrsel"
 msgstr ""
 
 msgid "ip_hostname"
-msgstr ""
+msgstr "ip_nazwahosta"
 
 msgid "is already in use."
 msgstr ""
@@ -12241,7 +12241,7 @@ msgid "jail_zfs_mountpoint"
 msgstr ""
 
 msgid "list"
-msgstr ""
+msgstr "lista"
 
 msgid "login_flags"
 msgstr ""
@@ -12286,13 +12286,13 @@ msgid "multipath"
 msgstr ""
 
 msgid "name"
-msgstr ""
+msgstr "nazwa"
 
 msgid "nmsgq"
 msgstr ""
 
 msgid "no"
-msgstr ""
+msgstr "nie"
 
 msgid "nsemop"
 msgstr ""
@@ -12304,22 +12304,22 @@ msgid "nthr"
 msgstr ""
 
 msgid "openfiles"
-msgstr ""
+msgstr "otwórz pliki"
 
 msgid "overview"
-msgstr ""
+msgstr "przegląd"
 
 msgid "owner"
-msgstr ""
+msgstr "właściciel"
 
 msgid "password"
-msgstr ""
+msgstr "hasło"
 
 msgid "pcpu"
 msgstr ""
 
 msgid "priority"
-msgstr ""
+msgstr "priorytet"
 
 msgid "pseudoterminals"
 msgstr ""
@@ -12337,7 +12337,7 @@ msgid "rpc.statd(8) bind port"
 msgstr ""
 
 msgid "safe"
-msgstr ""
+msgstr "bezpieczny"
 
 msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
 msgstr ""
@@ -12346,10 +12346,10 @@ msgid "securelevel"
 msgstr ""
 
 msgid "service failed to start."
-msgstr ""
+msgstr "usługa nie uruchomiła się"
 
 msgid "service failed to stop."
-msgstr ""
+msgstr "usługa <b>nie została</b> zatrzymana"
 
 msgid "shmsize"
 msgstr ""
@@ -12373,13 +12373,13 @@ msgid "sysvshm"
 msgstr ""
 
 msgid "template"
-msgstr ""
+msgstr "szablon"
 
 msgid "total memory installed"
-msgstr ""
+msgstr "całkowita zainstalowana pamięć"
 
 msgid "used"
-msgstr ""
+msgstr "używany"
 
 msgid "vmemoryuse"
 msgstr ""
@@ -12405,14 +12405,14 @@ msgstr ""
 msgid "wallclock"
 msgstr ""
 
-msgid "warn"
+msgid "ostrzeżenie"
 msgstr ""
 
-msgid "was successfully attached."
+msgid "został pomyślanie powiązany."
 msgstr ""
 
-msgid "while pool is encrypted"
+msgid "pula jest szyfrowana"
 msgstr ""
 
 msgid "yes"
-msgstr ""
+msgstr "tak"
