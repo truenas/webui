@@ -147,7 +147,5 @@ export const helptext_sharing_afp = {
  by other option fields.'
   ),
 
-  actions_basic_mode: T("Basic Mode"),
-  actions_advanced_mode: T("Advanced Mode")
 
 };

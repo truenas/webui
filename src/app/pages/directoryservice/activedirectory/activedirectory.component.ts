@@ -8,6 +8,7 @@ import {FieldConfig} from '../../common/entity/entity-form/models/field-config.i
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
+import global_helptext from '../../../helptext/global-helptext';
 
 @Component({
   selector : 'app-activedirectory',
@@ -32,14 +33,14 @@ export class ActiveDirectoryComponent {
   public custActions: Array<any> = [
     {
       'id' : helptext.activedirectory_custactions_basic_id,
-      'name' : helptext.activedirectory_custactions_basic_name,
+      'name' : global_helptext.basic_options,
       function : () => { 
         this.setBasicMode(true);
       }
     },
     {
       'id' : helptext.activedirectory_custactions_advanced_id,
-      'name' : helptext.activedirectory_custactions_advanced_name,
+      'name' : global_helptext.advanced_options,
       function : () => { 
         this.setBasicMode(false);   
       }

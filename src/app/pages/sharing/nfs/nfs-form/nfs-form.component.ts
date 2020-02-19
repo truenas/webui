@@ -9,6 +9,7 @@ import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import globalHelptext from 'app/helptext/global-helptext';
 
 @Component({
   selector : 'app-nfs-form',
@@ -215,7 +216,7 @@ export class NFSFormComponent {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : helptext_sharing_nfs.actions_basic_mode,
+      name : globalHelptext.basic_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets
@@ -225,7 +226,7 @@ export class NFSFormComponent {
     },
     {
       'id' : 'advanced_mode',
-      name : helptext_sharing_nfs.actions_advanced_mode,
+      name : globalHelptext.advanced_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets

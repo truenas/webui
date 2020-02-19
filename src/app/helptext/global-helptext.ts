@@ -63,5 +63,8 @@ scheduler: {
     }
 },
 
+basic_options: T('Basic Options'),
+advanced_options: T('Advanced Options'),
+
 invalidInputValueWithUnit: T('Invalid value. Missing numerical value or invalid numerical value/unit.'),
 }

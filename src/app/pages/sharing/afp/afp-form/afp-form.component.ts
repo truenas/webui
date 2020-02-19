@@ -284,7 +284,7 @@ export class AFPFormComponent implements OnDestroy {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : helptext_sharing_afp.actions_basic_mode,
+      name : globalHelptext.basic_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets
@@ -294,7 +294,7 @@ export class AFPFormComponent implements OnDestroy {
     },
     {
       'id' : 'advanced_mode',
-      name : helptext_sharing_afp.actions_advanced_mode,
+      name : globalHelptext.advanced_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets
