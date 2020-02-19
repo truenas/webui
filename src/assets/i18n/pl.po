@@ -77,19 +77,19 @@ msgid ""
 msgstr ""
 
 msgid " service has been enabled."
-msgstr "usługa została wyłączona"
+msgstr ""
 
 msgid " should be greater than "
-msgstr " powinno być większe niż "
+msgstr ""
 
 msgid " should be less than "
-msgstr " powinno być mniejsze niż "
+msgstr ""
 
 msgid " system is powered on and connected to the network."
-msgstr " system jest włączony i podłączony do sieci."
+msgstr ""
 
 msgid " to include all "
-msgstr " zawiera wszytskie "
+msgstr ""
 
 msgid " update successful"
 msgstr "zaktualizowano pomyslnie"
@@ -108,7 +108,7 @@ msgid ""
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
-msgstr "'. Wszytskie dane w tej publi zostały zniszczone."
+msgstr ""
 
 msgid "(24 Hours)"
 msgstr "(24 Godziny)"
@@ -120,43 +120,43 @@ msgid "(Remove pool from database)"
 msgstr "(Usuń pulę z bazy danych)"
 
 msgid ", new vdev is "
-msgstr ", nowy vdev jest "
+msgstr ""
 
 msgid ". All data on that pool was destroyed."
-msgstr ". Wszytskie dane w tej publi zostały zniszczone."
+msgstr ""
 
 msgid ". At least one is required."
-msgstr ". Wymagany jest co najmniej jeden."
+msgstr ""
 
 msgid ". Is this correct?"
-msgstr ". Czy to jest poprawne?"
+msgstr ""
 
 msgid "... Make sure the "
-msgstr "... Upewnij się, że "
+msgstr ""
 
 msgid "0=Disabled, blank=inherit"
-msgstr "0=Wyłączone, blank=inherit "
+msgstr ""
 
 msgid "20 characters is the maximum length."
 msgstr "Maksymalna długośc znaków to 20"
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ": Automatyczne sprawdzanie aktualizacji nie powiodło się. Sprawdz ustawiania sieciowe"
+msgstr ""
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
-msgstr "</b> wtyczka usuwa wszytskie dane z migawki, które sa na niej przechwowywane"
+msgstr ""
 
 msgid "</b> with the keypair"
-msgstr "</b> za pomocą pary kluczy"
+msgstr ""
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr "</i> nie może byc uruchomiony podczas usuwania punktu montowania"
+msgstr ""
 
 msgid "</i> has started."
 msgstr "</i> wystartował."
 
 msgid "</i> keypair?</p>"
-msgstr "</i> para kluczy?</p>"
+msgstr ""
 
 msgid "</i> now?"
 msgstr "</i> teraz?"
@@ -168,7 +168,7 @@ msgid "</i> updated."
 msgstr "</i> zaktualizowano."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr "</i>. Dane w tej puli nie będą dostępne, dopóki pula nie zostanie odblokowana!"
+msgstr ""
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
@@ -345,13 +345,13 @@ msgid ""
 msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
-msgstr "<b>rsyncd</b> nasłuchiwanie na tym porcie"
+msgstr ""
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
-msgstr "<br><b>Ostrzeżenie: Tych dysków nie można umieścić w zaszyfrowanych pulach</b></br>"
+msgstr ""
 
 msgid "<font color=\"red\"> There are "
-msgstr "<font color=\"red\"> są"
+msgstr ""
 
 msgid ""
 "<font color=\"red\">WARNING</font>: use <i>rid</i> or <i>autorid</i> for "
@@ -543,10 +543,10 @@ msgid ""
 msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
-msgstr "Rozmar pamięci wymiany wynosi 0 i jest SILNIE DISCOURAGED "
+msgstr ""
 
 msgid "A system update is in progress. "
-msgstr "Trwa aktualizacja systemu. "
+msgstr ""
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -575,70 +575,70 @@ msgid ""
 msgstr ""
 
 msgid "ACL Mode"
-msgstr "Tryb ACL"
+msgstr ""
 
 msgid "ACL Type"
-msgstr "Typ ACL"
+msgstr ""
 
 msgid "ACL cannot be changed when the Source is the top-level dataset for a pool."
 msgstr ""
 
 msgid "ACME DNS"
-msgstr "ACME DNS"
+msgstr ""
 
 msgid "ACME Server Directory URI"
-msgstr "ACME Server Directory URI"
+msgstr ""
 
 msgid "AD"
-msgstr "AD"
+msgstr ""
 
 msgid "AD Timeout"
-msgstr "AD przekroczono maksymalny dozwolony czas"
+msgstr ""
 
 msgid "AFP"
-msgstr "AFP"
+msgstr ""
 
 msgid "AFP3 Unix Privs"
-msgstr "AFP3 Unix Privs"
+msgstr ""
 
 msgid "API"
-msgstr "API"
+msgstr ""
 
 msgid "API Key"
-msgstr "Klucz API"
+msgstr ""
 
 msgid "API Key or Password"
-msgstr "Klucz API lub Hasło"
+msgstr ""
 
 msgid "API URL"
-msgstr "API URL"
+msgstr ""
 
 msgid "APPLY CHANGES"
-msgstr "ZATWIERDŹ ZMIANY"
+msgstr ""
 
 msgid "ARN"
-msgstr "ARN"
+msgstr ""
 
 msgid "ATA Security User"
-msgstr "Użytownik bezpieczeństwa ATA"
+msgstr ""
 
 msgid "AUTORID"
-msgstr "AUTORID"
+msgstr ""
 
 msgid "AWS Region"
-msgstr "Region AWS"
+msgstr ""
 
 msgid "About"
 msgstr ""
 
 msgid "Access"
-msgstr "Dostęp"
+msgstr ""
 
 msgid "Access Based Share Enumeration"
-msgstr "Wyliczanie udziału opartego na dostępnie"
+msgstr ""
 
 msgid "Access Control Entries"
-msgstr "Wpisy Kontroli Dostępu"
+msgstr ""
 
 msgid ""
 "Access Control Entry (ACE) user or group. Select a specific <i>User</i> or "
@@ -684,7 +684,7 @@ msgid ""
 msgstr ""
 
 msgid "Account Key"
-msgstr "Klucz Konta"
+msgstr ""
 
 msgid "Account Name"
 msgstr "Nazwa Konta"
@@ -705,7 +705,7 @@ msgid "Actions"
 msgstr "Akcje"
 
 msgid "Activate"
-msgstr "Aktuwyj"
+msgstr ""
 
 msgid "Activate this Boot Environment?"
 msgstr ""
@@ -790,10 +790,10 @@ msgid "Add Recovery Key"
 msgstr ""
 
 msgid "Add Spare"
-msgstr "Dodaj wolny"
+msgstr ""
 
 msgid "Add Zvol"
-msgstr "Dodaj Zvol"
+msgstr ""
 
 msgid "Add a name for the new snapshot."
 msgstr ""
@@ -1762,31 +1762,31 @@ msgid "CN Realm"
 msgstr ""
 
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 msgid "CPU Details"
-msgstr ""
+msgstr "Szczegoły CPU"
 
 msgid "CPU Usage"
-msgstr ""
+msgstr "Użycie Procesora"
 
 msgid "CPU and Memory"
-msgstr ""
+msgstr "Procesor i Pamięc"
 
 msgid "CPUs and Memory"
-msgstr ""
+msgstr "Procesory i Pamięc"
 
 msgid "CSR exists on this system"
 msgstr ""
 
 msgid "CSRs"
-msgstr ""
+msgstr "CSRs"
 
 msgid "Cache VDev"
-msgstr ""
+msgstr "Pamięć podręczna VDev"
 
 msgid "Caches"
-msgstr ""
+msgstr "Pamięc Podręczna"
 
 msgid ""
 "Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
@@ -1794,7 +1794,7 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 msgid "Cannot Delete while HA is Enabled"
 msgstr ""
@@ -5243,16 +5243,16 @@ msgid "Host name database"
 msgstr ""
 
 msgid "HostName"
-msgstr ""
+msgstr "Nazwa Hosta"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Nazwa hosta"
 
 msgid "Hostname (Virtual)"
-msgstr ""
+msgstr "Nazwa hosta (Wirtualna)"
 
 msgid "Hostname and Domain"
-msgstr ""
+msgstr "Nazwa Hosta i Domena"
 
 msgid ""
 "Hostname or IP  address used to connect to the active side system. When the "
@@ -5286,19 +5286,19 @@ msgid ""
 msgstr ""
 
 msgid "Hosts"
-msgstr ""
+msgstr "Host"
 
 msgid "Hosts Allow"
-msgstr ""
+msgstr "Zezwalaj Hostom"
 
 msgid "Hosts Deny"
-msgstr ""
+msgstr "Zabraniaj Hostom"
 
 msgid "Hottest:"
 msgstr ""
 
 msgid "Hour"
-msgstr ""
+msgstr "Godzina"
 
 msgid "Hour and minute the system can begin taking snapshots."
 msgstr ""
@@ -5309,13 +5309,13 @@ msgid ""
 msgstr ""
 
 msgid "Hours"
-msgstr ""
+msgstr "Godziny"
 
 msgid "Hours when this task will run."
 msgstr ""
 
 msgid "Hours/Days"
-msgstr ""
+msgstr "Godziny/Dni"
 
 msgid "Hover to expand"
 msgstr ""
@@ -6374,16 +6374,16 @@ msgid ""
 msgstr ""
 
 msgid "Memory"
-msgstr ""
+msgstr "Pamięc"
 
 msgid "Memory Reports"
-msgstr ""
+msgstr "Raportu z Pamięci"
 
 msgid "Memory Size"
-msgstr ""
+msgstr "Wielkośc Pamięci"
 
 msgid "Memory Size (MiB)"
-msgstr ""
+msgstr "Rozmar Pamięci (MB)"
 
 msgid ""
 "Memory overcommitment allows multiple VMs to be launched when there is not "
@@ -6415,10 +6415,10 @@ msgid "Metrics"
 msgstr ""
 
 msgid "MiB"
-msgstr ""
+msgstr "MB"
 
 msgid "Microsoft Account"
-msgstr ""
+msgstr "Konto Microsoft"
 
 msgid ""
 "Microsoft Onedrive  <a "
@@ -6434,7 +6434,7 @@ msgid "Min. Poll"
 msgstr ""
 
 msgid "Minimum"
-msgstr ""
+msgstr "Minimum"
 
 msgid "Minimum Passive Port"
 msgstr ""
@@ -6446,31 +6446,31 @@ msgid "Minimum value is "
 msgstr ""
 
 msgid "Mintues"
-msgstr ""
+msgstr "Minuty"
 
 msgid "Mintues/Hours/Days"
-msgstr ""
+msgstr "Minuty/Godziny/Dni"
 
 msgid "Minute"
-msgstr ""
+msgstr "Minuta"
 
 msgid "Minutes when this task will run."
 msgstr ""
 
 msgid "Mirror"
-msgstr ""
+msgstr "Mirror"
 
 msgid "Mixing disks of different sizes in a VDEV is not allowed."
 msgstr ""
 
 msgid "Mode"
-msgstr ""
+msgstr "Tryb"
 
 msgid "Model"
-msgstr ""
+msgstr "Model"
 
 msgid "Model:"
-msgstr ""
+msgstr "Model:"
 
 msgid ""
 "Modify for disks that understand <a "
@@ -6494,10 +6494,10 @@ msgid "Monitor User"
 msgstr ""
 
 msgid "Month"
-msgstr ""
+msgstr "Miesiąc"
 
 msgid "Months"
-msgstr ""
+msgstr "Miesiące"
 
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
@@ -6513,7 +6513,7 @@ msgid ""
 msgstr ""
 
 msgid "Mount points"
-msgstr ""
+msgstr "Punkty Montowania"
 
 msgid ""
 "Multi-domain support. Enter additional domains to secure, separated by "
@@ -6547,49 +6547,49 @@ msgid ""
 msgstr ""
 
 msgid "NAA"
-msgstr ""
+msgstr "NAA"
 
 msgid "NAT"
-msgstr ""
+msgstr "NAT"
 
 msgid "NAT Autoconfigure IPv4"
 msgstr ""
 
 msgid "NAT Interface"
-msgstr ""
+msgstr "Interfejs NAT"
 
 msgid "NAT Port Forwarding"
 msgstr ""
 
 msgid "NFS"
-msgstr ""
+msgstr "NFS"
 
 msgid "NFSv3 ownership model for NFSv4"
 msgstr ""
 
 msgid "NFSv4"
-msgstr ""
+msgstr "NFSv4"
 
 msgid "NIC"
-msgstr ""
+msgstr "NIC"
 
 msgid "NIS"
-msgstr ""
+msgstr "NIS"
 
 msgid "NIS domain"
-msgstr ""
+msgstr "Domena NIS"
 
 msgid "NIS servers"
-msgstr ""
+msgstr "Serwery NIS"
 
 msgid "NO"
-msgstr ""
+msgstr "NIE"
 
 msgid "NOT RUN SINCE LAST BOOT"
 msgstr ""
 
 msgid "NSS"
-msgstr ""
+msgstr "NSS
 
 msgid "NTLMv1 Auth"
 msgstr ""
@@ -6598,10 +6598,10 @@ msgid "NTP Server Settings"
 msgstr ""
 
 msgid "NTP Servers"
-msgstr ""
+msgstr "Serwery NTP"
 
 msgid "Name"
-msgstr ""
+msgstr "Nazwa"
 
 msgid "Name Jail and Choose FreeBSD Release"
 msgstr ""
@@ -6610,7 +6610,7 @@ msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
 msgid "Name and Options"
-msgstr ""
+msgstr "Nazwa i Opcje"
 
 msgid "Name and Provider"
 msgstr ""
@@ -6672,31 +6672,32 @@ msgid "Name or Naming Schema must be provided."
 msgstr ""
 
 msgid "Nameserver 1"
-msgstr ""
+msgstr "Serwer nazw - 1"
 
 msgid "Nameserver 2"
-msgstr ""
+msgstr "Serwer nazw - 2"
 
 msgid "Nameserver 3"
-msgstr ""
+msgstr "Serwer nazw - 3"
 
 msgid "Nameservers"
-msgstr ""
+msgstr "Serwer nazw"
 
 msgid "Naming Schema"
 msgstr ""
 
 msgid "Navigation"
-msgstr ""
+msgstr "Nawigacja"
 
 msgid "NetBIOS"
 msgstr ""
+msgstr ""
 
 msgid "NetBIOS Alias"
-msgstr ""
+msgstr "Alias NetBIOS"
 
 msgid "NetBIOS Name"
-msgstr ""
+msgstr "Nazwa NetBIOS"
 
 msgid "NetBIOS alias"
 msgstr ""
@@ -6864,7 +6865,7 @@ msgid "Nic to attach:"
 msgstr ""
 
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 msgid "No Communication Warning Time"
 msgstr ""
@@ -6873,10 +6874,10 @@ msgid "No Encryption (less secure, but faster)"
 msgstr ""
 
 msgid "No Logs"
-msgstr ""
+msgstr "Brak logów"
 
 msgid "No Pools"
-msgstr ""
+msgstr "Brak puli"
 
 msgid "No Repositories"
 msgstr ""
@@ -6962,7 +6963,7 @@ msgid "Number of SysV shared memory segments."
 msgstr ""
 
 msgid "Number of Threads"
-msgstr ""
+msgstr "Liczba Wątków"
 
 msgid ""
 "Number of child jails allowed to be created by the jail or other jails "
@@ -7044,13 +7045,13 @@ msgid "OAuth Client Secret"
 msgstr ""
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Oct"
 msgstr ""
 
 msgid "Off"
-msgstr ""
+msgstr "Wyłączony"
 
 msgid ""
 "Off by default. When set, <a "
@@ -7062,16 +7063,16 @@ msgid ""
 msgstr ""
 
 msgid "Offline"
-msgstr ""
+msgstr "Wyłączony"
 
 msgid "Offline Disk"
-msgstr ""
+msgstr "Dysk jest wyłączony"
 
 msgid "Offline disk "
-msgstr ""
+msgstr "Dysk jest wyłączony"
 
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 msgid "On a Different System"
 msgstr ""
@@ -7083,13 +7084,13 @@ msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr ""
 
 msgid "Online"
-msgstr ""
+msgstr "Włączony"
 
 msgid "Online Disk"
-msgstr ""
+msgstr "Dysk jest włączony"
 
 msgid "Online disk "
-msgstr ""
+msgstr "Dysk jest włączony"
 
 msgid "Only Allow Guest Access"
 msgstr ""
@@ -7397,19 +7398,19 @@ msgid "Periodic Snapshot Tasks"
 msgstr ""
 
 msgid "Permissions"
-msgstr ""
+msgstr "Uprawniania"
 
 msgid "Permissions Type"
-msgstr ""
+msgstr "Typ Uprawnień"
 
 msgid "Permit Sudo"
 msgstr ""
 
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 msgid "Phone Number"
-msgstr ""
+msgstr "Numer Telefonu"
 
 msgid "Physical interface of the selected member."
 msgstr ""
@@ -7418,7 +7419,7 @@ msgid "PiB"
 msgstr ""
 
 msgid "Platform"
-msgstr ""
+msgstr "Platforma"
 
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr ""
@@ -10334,10 +10335,10 @@ msgid "System Dataset Pool"
 msgstr ""
 
 msgid "System Info"
-msgstr ""
+msgstr "System Info"
 
 msgid "System Information"
-msgstr ""
+msgstr "Infroamcje o systemie"
 
 msgid "System Processes"
 msgstr ""
@@ -11006,13 +11007,13 @@ msgid "This type of VDEV requires at least "
 msgstr ""
 
 msgid "Thread number:"
-msgstr ""
+msgstr "Wątek numer:"
 
 msgid "Threads"
-msgstr ""
+msgstr "Wątki"
 
 msgid "Threads:"
-msgstr ""
+msgstr "Wątki:"
 
 msgid "Threshold days"
 msgstr ""
@@ -11396,10 +11397,10 @@ msgid ""
 msgstr ""
 
 msgid "Uptime"
-msgstr ""
+msgstr "Czas aktywności"
 
 msgid "Usage"
-msgstr ""
+msgstr "Użycie"
 
 msgid "Usage collection"
 msgstr ""
@@ -11447,10 +11448,10 @@ msgid "Use Signature Version 2"
 msgstr ""
 
 msgid "Use all disk space"
-msgstr ""
+msgstr "Użyj całej powierzchni dysku"
 
 msgid "Use as home share"
-msgstr ""
+msgstr "Użyj jako udziału domowego"
 
 msgid ""
 "Use compressed WRITE records to make the  stream more efficient. The "
@@ -11484,7 +11485,7 @@ msgid "Use unencrypted connection."
 msgstr ""
 
 msgid "Used"
-msgstr ""
+msgstr "Używany"
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
@@ -11497,7 +11498,7 @@ msgid ""
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "Użytwkonik"
 
 msgid "User Bind Path"
 msgstr ""
@@ -11518,10 +11519,10 @@ msgid "User Guide"
 msgstr ""
 
 msgid "User ID"
-msgstr ""
+msgstr "ID Użytkownika"
 
 msgid "User ID and Groups"
-msgstr ""
+msgstr "ID Użytwkonika i Grup"
 
 msgid ""
 "User ID to log in - optional - most swift systems use user and leave this "
@@ -11530,7 +11531,7 @@ msgid ""
 msgstr ""
 
 msgid "User Name"
-msgstr ""
+msgstr "Nazwa Użytkownika"
 
 msgid "User account password for logging into the  remote system."
 msgstr ""
@@ -11555,7 +11556,7 @@ msgid ""
 msgstr ""
 
 msgid "User or Group"
-msgstr ""
+msgstr "Użytkownik lub Grupa"
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
 msgstr ""
@@ -11573,7 +11574,7 @@ msgid ""
 msgstr ""
 
 msgid "Username"
-msgstr ""
+msgstr "Nazwa Użytkownika"
 
 msgid "Username for logging in to the provider and  updating the record."
 msgstr ""
@@ -11606,10 +11607,10 @@ msgid ""
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Użytkownicy"
 
 msgid "Users & Groups"
-msgstr ""
+msgstr "Użytkownicy & Grupy"
 
 msgid ""
 "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to "
@@ -11618,22 +11619,22 @@ msgid ""
 msgstr ""
 
 msgid "Using pool "
-msgstr ""
+msgstr "Użycie puli"
 
 msgid "VLAN ID"
-msgstr ""
+msgstr "VLAN ID"
 
 msgid "VLAN Parent Interface"
-msgstr ""
+msgstr "Interfejs Nadrzędny VLAN"
 
 msgid "VLAN Settings"
-msgstr ""
+msgstr "Ustawiania VLAN"
 
 msgid "VLAN Tag"
-msgstr ""
+msgstr "Tag VLAN"
 
 msgid "VLANs"
-msgstr ""
+msgstr "VLANs"
 
 msgid "VM Snapshot"
 msgstr ""
@@ -11651,10 +11652,10 @@ msgid "VMware-Snapshots"
 msgstr ""
 
 msgid "VNC"
-msgstr ""
+msgstr "VNC
 
 msgid "VNC Port"
-msgstr ""
+msgstr "Port VNC
 
 msgid ""
 "VNC network interface IP address. The primary interface IP address is the "
@@ -11662,7 +11663,7 @@ msgid ""
 msgstr ""
 
 msgid "VNET"
-msgstr ""
+msgstr "VNET
 
 msgid "VNET Virtual Networking"
 msgstr ""
@@ -11680,16 +11681,16 @@ msgid "Validate Remote Path"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "Wartość
 
 msgid "Value must be greater than "
-msgstr ""
+msgstr "Wartośc musi być większa niż "
 
 msgid "Variable"
-msgstr ""
+msgstr "Zmienna"
 
 msgid "Verbose logging"
-msgstr ""
+msgstr "Pełne rejestrowanie"
 
 msgid "Verify Credential"
 msgstr ""
@@ -11707,7 +11708,7 @@ msgid "Verify the pool encryption passphrase."
 msgstr ""
 
 msgid "Version"
-msgstr ""
+msgstr "Wersja"
 
 msgid "Video, < 100ms latency"
 msgstr ""
@@ -11716,43 +11717,43 @@ msgid "Video, < 10ms latency"
 msgstr ""
 
 msgid "View"
-msgstr ""
+msgstr "Podgląd"
 
 msgid "View Enclosure"
 msgstr ""
 
 msgid "View Logs"
-msgstr ""
+msgstr "Zobacz Logi"
 
 msgid "Virtual CPUs"
-msgstr ""
+msgstr "Wirtualne CPU"
 
 msgid "Virtual IP Address"
-msgstr ""
+msgstr "Wirtualny Adres IP"
 
 msgid "Virtual Interface"
-msgstr ""
+msgstr "Wirtualny Interfejs"
 
 msgid "Virtual Machine (VM) Wizard type."
-msgstr ""
+msgstr "Tryb kreatora mszyny wirtualnej (VM)."
 
 msgid "Virtual Machines"
-msgstr ""
+msgstr "Maszyne Wirtualne"
 
 msgid "Virtual Machines cannot be created or started without a pool to store them."
 msgstr ""
 
 msgid "Virtualization"
-msgstr ""
+msgstr "Wirtualizacja"
 
 msgid "Vlan Tag"
-msgstr ""
+msgstr "Tag Vlan"
 
 msgid "Volume size cannot be zero."
 msgstr ""
 
 msgid "WARNING"
-msgstr ""
+msgstr "Ostrzeżenie"
 
 msgid "WARNING: A failover will  temporarily interrupt system services."
 msgstr ""
@@ -11787,13 +11788,13 @@ msgid "Wallclock time in seconds."
 msgstr ""
 
 msgid "Warning"
-msgstr ""
+msgstr "Ostrzeżenie"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
 msgstr ""
 
 msgid "Web Interface"
-msgstr ""
+msgstr "Interfejs Web"
 
 msgid "Web Interface HTTP -> HTTPS Redirect"
 msgstr ""
@@ -11811,7 +11812,7 @@ msgid "Web Interface IPv6 Address"
 msgstr ""
 
 msgid "WebDAV"
-msgstr ""
+msgstr "WebDAV"
 
 msgid "WebDAV Configuration"
 msgstr ""
@@ -11829,7 +11830,7 @@ msgid "WebDAV service"
 msgstr ""
 
 msgid "Webdav Password"
-msgstr ""
+msgstr "Hasło Webdav"
 
 msgid "Webdav SSL Certificate"
 msgstr ""
@@ -11847,7 +11848,7 @@ msgid "What and Where"
 msgstr ""
 
 msgid "When"
-msgstr ""
+msgstr "Gdy"
 
 msgid ""
 "When <code>tls_crypt_auth_enabled</code> is enabled and "
@@ -11938,7 +11939,7 @@ msgid ""
 msgstr ""
 
 msgid "Who"
-msgstr ""
+msgstr "Kto"
 
 msgid "Widget Base Class"
 msgstr ""
