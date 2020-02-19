@@ -8,8 +8,10 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
 
 import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import * as parser from 'cron-parser';
+
+import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../../../utils';
 
 interface CronPreset {
@@ -34,6 +36,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public group: FormGroup;
   public fieldShow: string;
   public disablePrevious:boolean;
+  public timeZone: string;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -241,18 +244,22 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay){ 
+  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay, protected ws: WebSocketService){ 
     
     //Set default value
-    this.preset = this.presets[1];
-    this._months = "*";
-    
-    this.minDate = moment();
-    this.maxDate = moment().endOf('month');
-    this.currentDate= moment();
-    
-    this.activeDate = moment(this.currentDate).toDate();
-    this.disablePrevious = true;
+    this.ws.call('system.general.config').subscribe((res) => {
+      this.timeZone = res.timezone;
+      moment.tz.setDefault(res.timezone);
+      this.preset = this.presets[1];
+      this._months = "*";
+      
+      this.minDate = moment();
+      this.maxDate = moment().endOf('month');
+      this.currentDate= moment();
+      
+      this.activeDate = moment(this.currentDate).format();
+      this.disablePrevious = true;      
+    })
   }
 
   ngOnChanges(changes:SimpleChanges){
