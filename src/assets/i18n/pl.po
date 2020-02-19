@@ -5,10 +5,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Check Notifications for more details."
-msgstr ""
+msgstr "Sprawdź powiadomienia aby uzyskac więcej informacji"
 
 msgid " Download Updates"
-msgstr ""
+msgstr "Pobierz Aktualziacje"
 
 msgid " First vdev has "
 msgstr ""
@@ -17,10 +17,10 @@ msgid " First vdev is a "
 msgstr ""
 
 msgid " Plugin"
-msgstr ""
+msgstr "Wtyczki"
 
 msgid " Service"
-msgstr ""
+msgstr "Usługi"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -40,10 +40,10 @@ msgid ""
 msgstr ""
 
 msgid " and "
-msgstr ""
+msgstr "i"
 
 msgid " and all snapshots of it?"
-msgstr ""
+msgstr "i wszytskie jego migawki?"
 
 msgid " and will be disrupted if the pool is locked:"
 msgstr ""
@@ -52,19 +52,19 @@ msgid " but datastore "
 msgstr ""
 
 msgid " disks"
-msgstr ""
+msgstr "Dyski"
 
 msgid " disks, new vdev has "
 msgstr ""
 
 msgid " has been unlocked."
-msgstr ""
+msgstr "został odblokowany"
 
 msgid " is "
-msgstr ""
+msgstr "jest"
 
 msgid " is required."
-msgstr ""
+msgstr "jest wymagane"
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
@@ -92,13 +92,13 @@ msgid " to include all "
 msgstr ""
 
 msgid " update successful"
-msgstr ""
+msgstr "zaktualizowano pomyslnie"
 
 msgid " updated."
-msgstr ""
+msgstr "zaktualizowane"
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% użycia wszytskich rdzeni"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
@@ -111,13 +111,13 @@ msgid "'. All data on that pool was destroyed."
 msgstr ""
 
 msgid "(24 Hours)"
-msgstr ""
+msgstr "(24 Godziny)"
 
 msgid "(No description)"
-msgstr ""
+msgstr "(Brak Opisu)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(Usuń pulę z bazy danych)"
 
 msgid ", new vdev is "
 msgstr ""
@@ -138,7 +138,7 @@ msgid "0=Disabled, blank=inherit"
 msgstr ""
 
 msgid "20 characters is the maximum length."
-msgstr ""
+msgstr "Maksymalna długośc znaków to 20"
 
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
@@ -153,19 +153,19 @@ msgid "</i> cannot be running when deleting a mountpoint."
 msgstr ""
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> wystartował."
 
 msgid "</i> keypair?</p>"
 msgstr ""
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> teraz?"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> zatrzymany"
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> zaktualizowano."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr ""
@@ -687,7 +687,7 @@ msgid "Account Key"
 msgstr ""
 
 msgid "Account Name"
-msgstr ""
+msgstr "Nazwa Konta"
 
 msgid ""
 "Account to be used for guest access. Default is nobody. Account is required "
@@ -696,13 +696,13 @@ msgid ""
 msgstr ""
 
 msgid "Accounts"
-msgstr ""
+msgstr "Konta"
 
 msgid "Acoustic Level"
 msgstr ""
 
 msgid "Actions"
-msgstr ""
+msgstr "Akcje"
 
 msgid "Activate"
 msgstr ""
@@ -727,10 +727,10 @@ msgid "Activates the replication schedule."
 msgstr ""
 
 msgid "Active"
-msgstr ""
+msgstr "Aktywny"
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directory"
 
 msgid "Active Directory IDMAP change!"
 msgstr ""
@@ -751,7 +751,7 @@ msgid "Adapter Type:"
 msgstr ""
 
 msgid "Add"
-msgstr ""
+msgstr "Dodaj"
 
 msgid "Add ACL Item"
 msgstr ""
@@ -763,28 +763,28 @@ msgid "Add Alert Service"
 msgstr ""
 
 msgid "Add Cache"
-msgstr ""
+msgstr "Dodaj Cache"
 
 msgid "Add Cloud Credential"
 msgstr ""
 
 msgid "Add Data"
-msgstr ""
+msgstr "Dodaj Dane"
 
 msgid "Add Dataset"
-msgstr ""
+msgstr "Dodaj Zestaw Danych"
 
 msgid "Add Group"
-msgstr ""
+msgstr "Dodaj Grupę"
 
 msgid "Add Idmap"
 msgstr ""
 
 msgid "Add Log"
-msgstr ""
+msgstr "Dodaj dziennik"
 
 msgid "Add Mountpoint"
-msgstr ""
+msgstr "Dodaj Punkt Montowania"
 
 msgid "Add Recovery Key"
 msgstr ""
@@ -921,7 +921,7 @@ msgid ""
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Adres"
 
 msgid "Address space limit in bytes for the jail."
 msgstr ""
@@ -941,13 +941,13 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "Hasło Adminsitratora"
 
 msgid "Administrator password"
-msgstr ""
+msgstr "Hasło Adminsitratora"
 
 msgid "Administrators Group"
-msgstr ""
+msgstr "Grupa Adminsitratora"
 
 msgid "Adv. Power Management"
 msgstr ""
@@ -956,16 +956,16 @@ msgid "Advance Options"
 msgstr ""
 
 msgid "Advanced"
-msgstr ""
+msgstr "Zaawansowane"
 
 msgid "Advanced Details"
-msgstr ""
+msgstr "Szczegółowe Informacje"
 
 msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Tryb Zaawansowany"
 
 msgid "Advanced Plugin Installation"
 msgstr ""
@@ -985,10 +985,10 @@ msgid ""
 msgstr ""
 
 msgid "Alarms"
-msgstr ""
+msgstr "Alarm"
 
 msgid "Alert"
-msgstr ""
+msgstr "Alert"
 
 msgid "Alert Services"
 msgstr ""
@@ -1009,7 +1009,7 @@ msgid "All dirs"
 msgstr ""
 
 msgid "All users"
-msgstr ""
+msgstr "Wszyscy użytwkonicy"
 
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr ""
@@ -1018,7 +1018,7 @@ msgid "Allocate at least 256 MiB."
 msgstr ""
 
 msgid "Allow"
-msgstr ""
+msgstr "Zezwól"
 
 msgid "Allow All Initiators"
 msgstr ""
@@ -12199,7 +12199,7 @@ msgid "host_time"
 msgstr ""
 
 msgid "hostid"
-msgstr ""
+msgstr "ID hosta"
 
 msgid "hostid_strict_check"
 msgstr ""
@@ -12214,19 +12214,19 @@ msgid "interfaces"
 msgstr ""
 
 msgid "ip4"
-msgstr ""
+msgstr "ip4"
 
 msgid "ip4.saddrsel"
 msgstr ""
 
 msgid "ip6"
-msgstr ""
+msgstr "ip6"
 
 msgid "ip6.saddrsel"
 msgstr ""
 
 msgid "ip_hostname"
-msgstr ""
+msgstr "ip_nazwahosta"
 
 msgid "is already in use."
 msgstr ""
@@ -12241,7 +12241,7 @@ msgid "jail_zfs_mountpoint"
 msgstr ""
 
 msgid "list"
-msgstr ""
+msgstr "lista"
 
 msgid "login_flags"
 msgstr ""
@@ -12286,13 +12286,13 @@ msgid "multipath"
 msgstr ""
 
 msgid "name"
-msgstr ""
+msgstr "nazwa"
 
 msgid "nmsgq"
 msgstr ""
 
 msgid "no"
-msgstr ""
+msgstr "nie"
 
 msgid "nsemop"
 msgstr ""
@@ -12304,22 +12304,22 @@ msgid "nthr"
 msgstr ""
 
 msgid "openfiles"
-msgstr ""
+msgstr "otwórz pliki"
 
 msgid "overview"
-msgstr ""
+msgstr "przegląd"
 
 msgid "owner"
-msgstr ""
+msgstr "właściciel"
 
 msgid "password"
-msgstr ""
+msgstr "hasło"
 
 msgid "pcpu"
 msgstr ""
 
 msgid "priority"
-msgstr ""
+msgstr "priorytet"
 
 msgid "pseudoterminals"
 msgstr ""
@@ -12337,7 +12337,7 @@ msgid "rpc.statd(8) bind port"
 msgstr ""
 
 msgid "safe"
-msgstr ""
+msgstr "bezpieczny"
 
 msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
 msgstr ""
@@ -12346,10 +12346,10 @@ msgid "securelevel"
 msgstr ""
 
 msgid "service failed to start."
-msgstr ""
+msgstr "usługa nie uruchomiła się"
 
 msgid "service failed to stop."
-msgstr ""
+msgstr "usługa <b>nie została</b> zatrzymana"
 
 msgid "shmsize"
 msgstr ""
@@ -12373,13 +12373,13 @@ msgid "sysvshm"
 msgstr ""
 
 msgid "template"
-msgstr ""
+msgstr "szablon"
 
 msgid "total memory installed"
-msgstr ""
+msgstr "całkowita zainstalowana pamięć"
 
 msgid "used"
-msgstr ""
+msgstr "używany"
 
 msgid "vmemoryuse"
 msgstr ""
@@ -12406,13 +12406,13 @@ msgid "wallclock"
 msgstr ""
 
 msgid "warn"
-msgstr ""
+msgstr "ostrzeżenie"
 
 msgid "was successfully attached."
-msgstr ""
+msgstr "został pomyślanie powiązany."
 
 msgid "while pool is encrypted"
-msgstr ""
+msgstr "pula jest szyfrowana"
 
 msgid "yes"
-msgstr ""
+msgstr "tak"

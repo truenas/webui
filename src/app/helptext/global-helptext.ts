@@ -23,7 +23,7 @@ human_readable: {
   suggestion_tooltip: T(`This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB). \
   If units are not specified, the value defaults to`),
   
-  suggestion_label: '(Examples: 500 KiB, 500M, 2 TB)',
+  suggestion_label: T('(Examples: 500 KiB, 500M, 2 TB)'),
 },
 
 noLogDilaog: {

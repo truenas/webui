@@ -78,7 +78,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {
+    protected loader: AppLoaderService) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
