@@ -77,19 +77,19 @@ msgid ""
 msgstr ""
 
 msgid " service has been enabled."
-msgstr ""
+msgstr "usługa została wyłączona"
 
 msgid " should be greater than "
-msgstr ""
+msgstr " powinno być większe niż "
 
 msgid " should be less than "
-msgstr ""
+msgstr " powinno być mniejsze niż "
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr " system jest włączony i podłączony do sieci."
 
 msgid " to include all "
-msgstr ""
+msgstr " zawiera wszytskie "
 
 msgid " update successful"
 msgstr "zaktualizowano pomyslnie"
@@ -108,7 +108,7 @@ msgid ""
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Wszytskie dane w tej publi zostały zniszczone."
 
 msgid "(24 Hours)"
 msgstr "(24 Godziny)"
@@ -120,43 +120,43 @@ msgid "(Remove pool from database)"
 msgstr "(Usuń pulę z bazy danych)"
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", nowy vdev jest "
 
 msgid ". All data on that pool was destroyed."
-msgstr ""
+msgstr ". Wszytskie dane w tej publi zostały zniszczone."
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". Wymagany jest co najmniej jeden."
 
 msgid ". Is this correct?"
-msgstr ""
+msgstr ". Czy to jest poprawne?"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... Upewnij się, że "
 
 msgid "0=Disabled, blank=inherit"
-msgstr ""
+msgstr "0=Wyłączone, blank=inherit "
 
 msgid "20 characters is the maximum length."
 msgstr "Maksymalna długośc znaków to 20"
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr ": Automatyczne sprawdzanie aktualizacji nie powiodło się. Sprawdz ustawiania sieciowe"
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
-msgstr ""
+msgstr "</b> wtyczka usuwa wszytskie dane z migawki, które sa na niej przechwowywane"
 
 msgid "</b> with the keypair"
-msgstr ""
+msgstr "</b> za pomocą pary kluczy"
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr ""
+msgstr "</i> nie może byc uruchomiony podczas usuwania punktu montowania"
 
 msgid "</i> has started."
 msgstr "</i> wystartował."
 
 msgid "</i> keypair?</p>"
-msgstr ""
+msgstr "</i> para kluczy?</p>"
 
 msgid "</i> now?"
 msgstr "</i> teraz?"
@@ -168,7 +168,7 @@ msgid "</i> updated."
 msgstr "</i> zaktualizowano."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr ""
+msgstr "</i>. Dane w tej puli nie będą dostępne, dopóki pula nie zostanie odblokowana!"
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
@@ -345,13 +345,13 @@ msgid ""
 msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
-msgstr ""
+msgstr "<b>rsyncd</b> nasłuchiwanie na tym porcie"
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
-msgstr ""
+msgstr "<br><b>Ostrzeżenie: Tych dysków nie można umieścić w zaszyfrowanych pulach</b></br>"
 
 msgid "<font color=\"red\"> There are "
-msgstr ""
+msgstr "<font color=\"red\"> są"
 
 msgid ""
 "<font color=\"red\">WARNING</font>: use <i>rid</i> or <i>autorid</i> for "
@@ -543,10 +543,10 @@ msgid ""
 msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
-msgstr ""
+msgstr "Rozmar pamięci wymiany wynosi 0 i jest SILNIE DISCOURAGED "
 
 msgid "A system update is in progress. "
-msgstr ""
+msgstr "Trwa aktualizacja systemu. "
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -575,70 +575,70 @@ msgid ""
 msgstr ""
 
 msgid "ACL Mode"
-msgstr ""
+msgstr "Tryb ACL"
 
 msgid "ACL Type"
-msgstr ""
+msgstr "Typ ACL"
 
 msgid "ACL cannot be changed when the Source is the top-level dataset for a pool."
 msgstr ""
 
 msgid "ACME DNS"
-msgstr ""
+msgstr "ACME DNS"
 
 msgid "ACME Server Directory URI"
-msgstr ""
+msgstr "ACME Server Directory URI"
 
 msgid "AD"
-msgstr ""
+msgstr "AD"
 
 msgid "AD Timeout"
-msgstr ""
+msgstr "AD przekroczono maksymalny dozwolony czas"
 
 msgid "AFP"
-msgstr ""
+msgstr "AFP"
 
 msgid "AFP3 Unix Privs"
-msgstr ""
+msgstr "AFP3 Unix Privs"
 
 msgid "API"
-msgstr ""
+msgstr "API"
 
 msgid "API Key"
-msgstr ""
+msgstr "Klucz API"
 
 msgid "API Key or Password"
-msgstr ""
+msgstr "Klucz API lub Hasło"
 
 msgid "API URL"
-msgstr ""
+msgstr "API URL"
 
 msgid "APPLY CHANGES"
-msgstr ""
+msgstr "ZATWIERDŹ ZMIANY"
 
 msgid "ARN"
-msgstr ""
+msgstr "ARN"
 
 msgid "ATA Security User"
-msgstr ""
+msgstr "Użytownik bezpieczeństwa ATA"
 
 msgid "AUTORID"
-msgstr ""
+msgstr "AUTORID"
 
 msgid "AWS Region"
-msgstr ""
+msgstr "Region AWS"
 
 msgid "About"
 msgstr ""
 
 msgid "Access"
-msgstr ""
+msgstr "Dostęp"
 
 msgid "Access Based Share Enumeration"
-msgstr ""
+msgstr "Wyliczanie udziału opartego na dostępnie"
 
 msgid "Access Control Entries"
-msgstr ""
+msgstr "Wpisy Kontroli Dostępu"
 
 msgid ""
 "Access Control Entry (ACE) user or group. Select a specific <i>User</i> or "
@@ -684,7 +684,7 @@ msgid ""
 msgstr ""
 
 msgid "Account Key"
-msgstr ""
+msgstr "Klucz Konta"
 
 msgid "Account Name"
 msgstr "Nazwa Konta"
@@ -705,7 +705,7 @@ msgid "Actions"
 msgstr "Akcje"
 
 msgid "Activate"
-msgstr ""
+msgstr "Aktuwyj"
 
 msgid "Activate this Boot Environment?"
 msgstr ""
@@ -790,10 +790,10 @@ msgid "Add Recovery Key"
 msgstr ""
 
 msgid "Add Spare"
-msgstr ""
+msgstr "Dodaj wolny"
 
 msgid "Add Zvol"
-msgstr ""
+msgstr "Dodaj Zvol"
 
 msgid "Add a name for the new snapshot."
 msgstr ""
