@@ -36,7 +36,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public group: FormGroup;
   public fieldShow: string;
   public disablePrevious:boolean;
-  public timeZone: string;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -244,11 +243,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay, protected ws: WebSocketService){ 
+  constructor(public translate: TranslateService, private renderer: Renderer2, 
+    private cd: ChangeDetectorRef,public overlay: Overlay, protected ws: WebSocketService){ 
     
     //Set default value
     this.ws.call('system.general.config').subscribe((res) => {
-      this.timeZone = res.timezone;
       moment.tz.setDefault(res.timezone);
       this.preset = this.presets[1];
       this._months = "*";
