@@ -4,9 +4,7 @@ import globalHelptext from '../../helptext/global-helptext';
 
 export default {
 activedirectory_custactions_basic_id: 'basic_mode',
-activedirectory_custactions_basic_name: T('Basic Mode'),
 activedirectory_custactions_advanced_id: 'advanced_mode',
-activedirectory_custactions_advanced_name: T('Advanced Mode'),
 activedirectory_custactions_edit_imap_id: 'edit_idmap',
 activedirectory_custactions_edit_imap_name: T('Edit Idmap'),
 activedirectory_custactions_clearcache_id: 'ds_clearcache',

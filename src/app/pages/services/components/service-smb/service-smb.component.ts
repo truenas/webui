@@ -7,6 +7,7 @@ import { greaterThan } from "app/pages/common/entity/entity-form/validators/comp
 import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/services/components/service-smb';
+import global_helptext from '../../../../helptext/global-helptext';
 import { IdmapService, RestService, ServicesService, UserService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
@@ -205,7 +206,7 @@ export class ServiceSMBComponent {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : T('Basic Mode'),
+      name : global_helptext.basic_options,
       function : () => {
         this.hiddenFieldSets.forEach(setId => (this.fieldSets.find(set => set.name === setId).label = false));
         this.fieldSets.filter(set => set.name === 'divider')[0].divider = false;
@@ -214,7 +215,7 @@ export class ServiceSMBComponent {
     },
     {
       'id' : 'advanced_mode',
-      name : T('Advanced Mode'),
+      name : global_helptext.advanced_options,
       function : () => {
         this.hiddenFieldSets.forEach(setId => (this.fieldSets.find(set => set.name === setId).label = true));
         this.fieldSets.filter(set => set.name === 'divider').forEach(set => set.divider = true);

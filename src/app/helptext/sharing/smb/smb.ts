@@ -104,9 +104,6 @@ export const helptext_sharing_smb = {
     tooltip_auxsmbconf: T('Additional <b>smb5.conf</b> parameters not covered by\
  other option fields.'),
 
-    actions_basic_mode: T('Basic Mode'),
-    actions_advanced_mode: T('Advanced Mode'),
-
     action_edit_acl: T('Edit ACL'),
 
     dialog_warning: T('Warning'),

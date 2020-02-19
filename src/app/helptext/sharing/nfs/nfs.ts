@@ -91,7 +91,4 @@ export const helptext_sharing_nfs = {
   actions_add_path: T("Add Additional Path"),
   actions_remove_path: T("Remove Additional Path"),
 
-  actions_basic_mode: T("Basic Mode"),
-  actions_advanced_mode: T("Advanced Mode"),
-
 };

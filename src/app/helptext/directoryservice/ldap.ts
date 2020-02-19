@@ -6,10 +6,8 @@ ldap_server_creds: T('Server Credentials'),
 ldap_advanced: T('Advanced Settings'),
 
 ldap_custactions_basic_id : 'basic_mode',
-ldap_custactions_basic_name : T('Basic Mode'),
 
 ldap_custactions_advanced_id : 'advanced_mode',
-ldap_custactions_advanced_name : T('Advanced Mode'),
 
 ldap_custactions_edit_imap_id : 'edit_idmap',
 ldap_custactions_edit_imap_name : T('Edit Idmap'),

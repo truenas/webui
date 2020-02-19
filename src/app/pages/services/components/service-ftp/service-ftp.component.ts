@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import helptext from '../../../../helptext/services/components/service-ftp';
+import global_helptext from '../../../../helptext/global-helptext';
 import * as _ from 'lodash';
 import { DialogService, RestService, SystemGeneralService, WebSocketService, StorageService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
@@ -367,7 +368,7 @@ export class ServiceFTPComponent implements OnInit {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : 'Basic Mode',
+      name : global_helptext.basic_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets.toggleSets().toggleDividers();
@@ -375,7 +376,7 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       'id' : 'advanced_mode',
-      name : 'Advanced Mode',
+      name : global_helptext.advanced_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets.toggleSets().toggleDividers();
