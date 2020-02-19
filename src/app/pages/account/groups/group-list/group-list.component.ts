@@ -4,6 +4,7 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import helptext from '../../../../helptext/account/group-list';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -19,6 +20,13 @@ export class GroupListComponent {
   protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
   protected entityList: any;
   protected loaderOpen = false;
+  protected globalConfig = {
+    id: "config",
+    onClick: () => {
+      this.toggleBuiltins();
+    }
+  };
+  
   public columns: Array<any> = [
     {name : 'Group', prop : 'group', always_display: true},
     {name : 'GID', prop : 'gid'},
@@ -36,7 +44,24 @@ export class GroupListComponent {
     },
   };
 
-  constructor(private _router: Router, protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService) { }
+  constructor(private _router: Router, protected dialogService: DialogService, 
+    protected loader: AppLoaderService,protected ws: WebSocketService,
+    protected prefService: PreferencesService){ }
+
+  resourceTransformIncomingRestData(data) {
+    // Default setting is to hide builtin groups 
+    if (this.prefService.preferences.hide_builtin_groups) {
+      let newData = []
+      data.forEach((item) => {
+        if (!item.builtin) {
+          newData.push(item);
+        }
+      }) 
+      return data = newData;
+    }
+    return data;
+  }
+
   afterInit(entityList: any) { this.entityList = entityList; }
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'delete' && row.builtin === true) {
@@ -113,4 +138,22 @@ export class GroupListComponent {
   checkbox_confirm_show(id: any){
     return true;
   }
+
+  toggleBuiltins() {
+    let show;
+    this.prefService.preferences.hide_builtin_groups ? show = helptext.builtins_dialog.show :
+      show = helptext.builtins_dialog.hide;
+      this.dialogService.confirm(show + helptext.builtins_dialog.title, 
+        show + helptext.builtins_dialog.message, true, show)
+        .subscribe((res) => {
+         if (res) {
+            this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
+            this.prefService.savePreferences();
+            this.entityList.needTableResize = false;
+            this.entityList.getData();
+         }
+      })
+  }
+        
+  
 }

@@ -17,6 +17,8 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
   tableDisplayedColumns:any;
+  hide_builtin_users: boolean;
+  hide_builtin_groups: boolean;
   dateFormat:string;
   timeFormat:string;
   nicType:string
@@ -40,6 +42,8 @@ export class PreferencesService {
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
     "tableDisplayedColumns":[],
+    "hide_builtin_users": true,
+    "hide_builtin_groups": true,
     "dateFormat": 'YYYY-MM-DD',
     "timeFormat": 'HH:mm:ss',
     "nicType": null,
