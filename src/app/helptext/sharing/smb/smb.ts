@@ -107,7 +107,8 @@ export const helptext_sharing_smb = {
     actions_basic_mode: T('Basic Mode'),
     actions_advanced_mode: T('Advanced Mode'),
 
-    action_edit_acl: T('Edit ACL'),
+    action_share_acl: T('Edit Share ACL'),
+    action_edit_acl: T('Edit Filesystem ACL'),
 
     dialog_warning: T('Warning'),
     dialog_warning_message: T("Setting default permissions will reset the permissions of this share and any others within its path."),
@@ -125,5 +126,28 @@ export const helptext_sharing_smb = {
     restarted_smb_dialog: {
        title: T('SMB Service'),
        message: T('The SMB service has been restarted.')
-    }
+    },
+
+    // share acl
+    share_acl_basic: T('Basic'),
+    share_acl_entries: T('ACL Entries'),
+
+    share_name_placeholder: T('Share Name'),
+    share_name_tooltip: T(''),
+
+    ae_who_sid_placeholder: T('SID'),
+    ae_who_sid_tooltip: T(''),
+
+    ae_who_name_domain_placeholder: T('Domain'),
+    ae_who_name_domain_tooltip: T(''),
+
+    ae_who_name_name_placeholder: T('Name'),
+    ae_who_name_name_tooltip: T(''),
+
+    ae_perm_placeholder: T('Permission'),
+    ae_perm_tooltip: T(''),
+
+    ae_type_placeholder: T('Type'),
+    ae_type_tooltip: T(''),
+
 };
