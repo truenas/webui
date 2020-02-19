@@ -5,7 +5,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Check Notifications for more details."
-msgstr ""
+msgstr "Sprawdź powiadomienia aby uzyskac więcej informacji"
 
 msgid " Download Updates"
 msgstr "Pobierz Aktualziacje"
@@ -17,7 +17,7 @@ msgid " First vdev is a "
 msgstr ""
 
 msgid " Plugin"
-msgstr "Dodatki"
+msgstr "Wtyczki"
 
 msgid " Service"
 msgstr "Usługi"
@@ -43,7 +43,7 @@ msgid " and "
 msgstr "i"
 
 msgid " and all snapshots of it?"
-msgstr ""
+msgstr "i wszytskie jego migawki?"
 
 msgid " and will be disrupted if the pool is locked:"
 msgstr ""
@@ -58,7 +58,7 @@ msgid " disks, new vdev has "
 msgstr ""
 
 msgid " has been unlocked."
-msgstr ""
+msgstr "został odblokowany"
 
 msgid " is "
 msgstr "jest"
@@ -153,19 +153,19 @@ msgid "</i> cannot be running when deleting a mountpoint."
 msgstr ""
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> wystartował."
 
 msgid "</i> keypair?</p>"
 msgstr ""
 
 msgid "</i> now?"
-msgstr ""
+msgstr "</i> teraz?"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> zatrzymany"
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> zaktualizowano."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr ""
@@ -687,7 +687,7 @@ msgid "Account Key"
 msgstr ""
 
 msgid "Account Name"
-msgstr ""
+msgstr "Nazwa Konta"
 
 msgid ""
 "Account to be used for guest access. Default is nobody. Account is required "
@@ -696,13 +696,13 @@ msgid ""
 msgstr ""
 
 msgid "Accounts"
-msgstr ""
+msgstr "Konta"
 
 msgid "Acoustic Level"
 msgstr ""
 
 msgid "Actions"
-msgstr ""
+msgstr "Akcje"
 
 msgid "Activate"
 msgstr ""
@@ -727,10 +727,10 @@ msgid "Activates the replication schedule."
 msgstr ""
 
 msgid "Active"
-msgstr ""
+msgstr "Aktywny"
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directory"
 
 msgid "Active Directory IDMAP change!"
 msgstr ""
@@ -751,7 +751,7 @@ msgid "Adapter Type:"
 msgstr ""
 
 msgid "Add"
-msgstr ""
+msgstr "Dodaj"
 
 msgid "Add ACL Item"
 msgstr ""
@@ -763,28 +763,28 @@ msgid "Add Alert Service"
 msgstr ""
 
 msgid "Add Cache"
-msgstr ""
+msgstr "Dodaj Cache"
 
 msgid "Add Cloud Credential"
 msgstr ""
 
 msgid "Add Data"
-msgstr ""
+msgstr "Dodaj Dane"
 
 msgid "Add Dataset"
-msgstr ""
+msgstr "Dodaj Zestaw Danych"
 
 msgid "Add Group"
-msgstr ""
+msgstr "Dodaj Grupę"
 
 msgid "Add Idmap"
 msgstr ""
 
 msgid "Add Log"
-msgstr ""
+msgstr "Dodaj dziennik"
 
 msgid "Add Mountpoint"
-msgstr ""
+msgstr "Dodaj Punkt Montowania"
 
 msgid "Add Recovery Key"
 msgstr ""
@@ -921,7 +921,7 @@ msgid ""
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Adres"
 
 msgid "Address space limit in bytes for the jail."
 msgstr ""
@@ -941,13 +941,13 @@ msgid ""
 msgstr ""
 
 msgid "Administrator Password"
-msgstr ""
+msgstr "Hasło Adminsitratora"
 
 msgid "Administrator password"
-msgstr ""
+msgstr "Hasło Adminsitratora"
 
 msgid "Administrators Group"
-msgstr ""
+msgstr "Grupa Adminsitratora"
 
 msgid "Adv. Power Management"
 msgstr ""
@@ -956,16 +956,16 @@ msgid "Advance Options"
 msgstr ""
 
 msgid "Advanced"
-msgstr ""
+msgstr "Zaawansowane"
 
 msgid "Advanced Details"
-msgstr ""
+msgstr "Szczegółowe Informacje"
 
 msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Tryb Zaawansowany"
 
 msgid "Advanced Plugin Installation"
 msgstr ""
@@ -985,10 +985,10 @@ msgid ""
 msgstr ""
 
 msgid "Alarms"
-msgstr ""
+msgstr "Alarm"
 
 msgid "Alert"
-msgstr ""
+msgstr "Alert"
 
 msgid "Alert Services"
 msgstr ""
@@ -1009,7 +1009,7 @@ msgid "All dirs"
 msgstr ""
 
 msgid "All users"
-msgstr ""
+msgstr "Wszyscy użytwkonicy"
 
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr ""
@@ -1018,7 +1018,7 @@ msgid "Allocate at least 256 MiB."
 msgstr ""
 
 msgid "Allow"
-msgstr ""
+msgstr "Zezwól"
 
 msgid "Allow All Initiators"
 msgstr ""
@@ -12405,14 +12405,14 @@ msgstr ""
 msgid "wallclock"
 msgstr ""
 
-msgid "ostrzeżenie"
-msgstr ""
+msgid "warn"
+msgstr "ostrzeżenie"
 
-msgid "został pomyślanie powiązany."
-msgstr ""
+msgid "was successfully attached."
+msgstr "został pomyślanie powiązany."
 
-msgid "pula jest szyfrowana"
-msgstr ""
+msgid "while pool is encrypted"
+msgstr "pula jest szyfrowana"
 
 msgid "yes"
 msgstr "tak"
