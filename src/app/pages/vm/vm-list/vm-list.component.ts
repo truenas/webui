@@ -201,8 +201,8 @@ export class VMListComponent {
                 }
               this.dialogRef.close(false);
               this.dialogService.Info(T('Finished'), T('If ' + row.name + T(' is still running, \
- use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.')) , '450px', 'info', true);
-
+ the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop \
+ After Timeout</i> option to stop the VM.')) , '450px', 'info', true);
             this.checkMemory(); 
             });
             this.dialogRef.componentInstance.failure.subscribe((err) => {
