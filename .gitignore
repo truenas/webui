@@ -66,6 +66,7 @@ vm_config
 
 # generated license text
 /src/assets/disclaimer.txt
+/src/assets/licenses.json
 licenses.txt
 
 # generated screenshot files
