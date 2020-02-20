@@ -11,10 +11,10 @@ msgid " Download Updates"
 msgstr "Pobierz Aktualziacje"
 
 msgid " First vdev has "
-msgstr ""
+msgstr " Pierwszy vdev ma "
 
 msgid " First vdev is a "
-msgstr ""
+msgstr " Pierwszy vdev to"
 
 msgid " Plugin"
 msgstr "Wtyczki"
@@ -46,16 +46,16 @@ msgid " and all snapshots of it?"
 msgstr "i wszytskie jego migawki?"
 
 msgid " and will be disrupted if the pool is locked:"
-msgstr ""
+msgstr " i zostanie przerwany jeśli pula zostanie zablokowana:"
 
 msgid " but datastore "
-msgstr ""
+msgstr " magazyn danych"
 
 msgid " disks"
-msgstr "Dyski"
+msgstr "dyski"
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " dyski, nowy vdev ma "
 
 msgid " has been unlocked."
 msgstr "został odblokowany"
@@ -298,7 +298,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Current Version:</b> "
-msgstr ""
+msgstr "<b>Obecna wersja:</b> "
 
 msgid ""
 "<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the "
@@ -490,7 +490,7 @@ msgid ""
 msgstr ""
 
 msgid "<p>Delete the <i>"
-msgstr ""
+msgstr "<p>Usuń <i>"
 
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
@@ -650,25 +650,25 @@ msgid ""
 msgstr ""
 
 msgid "Access Control List"
-msgstr ""
+msgstr "Lista Kontroli Dostępu"
 
 msgid "Access ID Key"
-msgstr ""
+msgstr "Klucz identyfikacyjny dostęp"
 
 msgid "Access Key"
-msgstr ""
+msgstr "Klucz Dostępu"
 
 msgid "Access Key ID"
-msgstr ""
+msgstr "Identyfikator klucza dostępu"
 
 msgid "Access Key ID for the linked AWS account."
-msgstr ""
+msgstr "Identyfikator klucza dostępu do połączonego konta AWS."
 
 msgid "Access Mode"
-msgstr ""
+msgstr "Tryb dostępu"
 
 msgid "Access Token"
-msgstr ""
+msgstr "Token dostępu"
 
 msgid ""
 "Access Token <a href=\"https://api.hubic.com/sandbox/\"  "
@@ -699,7 +699,7 @@ msgid "Accounts"
 msgstr "Konta"
 
 msgid "Acoustic Level"
-msgstr ""
+msgstr "Poziom akustyczny"
 
 msgid "Actions"
 msgstr "Akcje"
@@ -708,7 +708,7 @@ msgid "Activate"
 msgstr "Aktuwyj"
 
 msgid "Activate this Boot Environment?"
-msgstr ""
+msgstr "Aktywować to środowisko rozruchowe?"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -724,7 +724,7 @@ msgid ""
 msgstr ""
 
 msgid "Activates the replication schedule."
-msgstr ""
+msgstr "Aktywuje harmonogram replikacji."
 
 msgid "Active"
 msgstr "Aktywny"
@@ -733,40 +733,40 @@ msgid "Active Directory"
 msgstr "Active Directory"
 
 msgid "Active Directory IDMAP change!"
-msgstr ""
+msgstr "Zmiana IDMAP usługi Active Directory!"
 
 msgid "Active Directory must be enabled before adding new domains."
-msgstr ""
+msgstr "Usługa Active Directory musi być włączona przed dodaniem nowych domen."
 
 msgid "Active Media Subtype"
-msgstr ""
+msgstr "Aktywny podtyp mediów"
 
 msgid "Active Media Type"
-msgstr ""
+msgstr "Aktywny typ mediów"
 
 msgid "Adapter Type"
-msgstr ""
+msgstr "Rodzaj adaptera"
 
 msgid "Adapter Type:"
-msgstr ""
+msgstr "Rodzaj Adaptera:"
 
 msgid "Add"
 msgstr "Dodaj"
 
 msgid "Add ACL Item"
-msgstr ""
+msgstr "Dodaj pozycję ACL"
 
 msgid "Add Additional Path"
-msgstr ""
+msgstr "Dodaj dodatkową ścieżkę"
 
 msgid "Add Alert Service"
-msgstr ""
+msgstr "Dodaj usługę alertów"
 
 msgid "Add Cache"
 msgstr "Dodaj Cache"
 
 msgid "Add Cloud Credential"
-msgstr ""
+msgstr "Dodaj dane logowania do chmury"
 
 msgid "Add Data"
 msgstr "Dodaj Dane"
@@ -778,7 +778,7 @@ msgid "Add Group"
 msgstr "Dodaj Grupę"
 
 msgid "Add Idmap"
-msgstr ""
+msgstr "Dodaj Idmap"
 
 msgid "Add Log"
 msgstr "Dodaj dziennik"
@@ -787,7 +787,7 @@ msgid "Add Mountpoint"
 msgstr "Dodaj Punkt Montowania"
 
 msgid "Add Recovery Key"
-msgstr ""
+msgstr "Dodaj Klucz Odzyskiwania"
 
 msgid "Add Spare"
 msgstr "Dodaj wolny"
@@ -796,7 +796,7 @@ msgid "Add Zvol"
 msgstr "Dodaj Zvol"
 
 msgid "Add a name for the new snapshot."
-msgstr ""
+msgstr "Dodaj nazwę nowej migawki."
 
 msgid ""
 "Add a passphrase to the new  encryption key. This is used to lock and "
@@ -817,7 +817,7 @@ msgid ""
 msgstr ""
 
 msgid "Add any notes about this zvol."
-msgstr ""
+msgstr "Dodaj wszelkie uwagi dotyczące tego zvol."
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -833,13 +833,13 @@ msgid ""
 msgstr ""
 
 msgid "Add one or more disks to be used for data."
-msgstr ""
+msgstr "Dodaj co najmniej jeden dysk, który będzie używany do przesyłania danych."
 
 msgid "Add one or more disks to extend the pool."
-msgstr ""
+msgstr "Dodaj jeden lub więcej dysków, aby rozszerzyć pulę."
 
 msgid "Add this user to additional groups."
-msgstr ""
+msgstr "Dodaj tego użytkownika do dodatkowych grup."
 
 msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
@@ -847,7 +847,7 @@ msgid ""
 msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
-msgstr ""
+msgstr "Dodawanie vdev danych różnych typów nie jest obsługiwane."
 
 msgid ""
 "Additional <a                "
@@ -880,16 +880,16 @@ msgid "Additional <b>smb5.conf</b> parameters not covered by other option fields
 msgstr ""
 
 msgid "Additional Data VDevs to Create"
-msgstr ""
+msgstr "Dodatkowe dane VDevs do utworzenia"
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "Dodatkowe Domeny"
 
 msgid "Additional Hardware"
-msgstr ""
+msgstr "Dodatkowy Sprzęt"
 
 msgid "Additional Parameters"
-msgstr ""
+msgstr "Dodatkowe Parametry"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
@@ -913,7 +913,7 @@ msgid ""
 msgstr ""
 
 msgid "Additional parameters."
-msgstr ""
+msgstr "Dodatkowe Parametry."
 
 msgid ""
 "Additional space-delimited domains to search. Adding search domains can "
@@ -930,10 +930,10 @@ msgid "Adjust the file permissions using the checkboxes."
 msgstr ""
 
 msgid "Admin Portals"
-msgstr ""
+msgstr "Portale Administracyjne"
 
 msgid "Admin Server"
-msgstr ""
+msgstr "Serwer Administracyjny"
 
 msgid ""
 "Administrative account name on the LDAP server. Example: "
@@ -950,10 +950,10 @@ msgid "Administrators Group"
 msgstr "Grupa Adminsitratora"
 
 msgid "Adv. Power Management"
-msgstr ""
+msgstr "Zaawansowane Zarządznie Energią"
 
 msgid "Advance Options"
-msgstr ""
+msgstr "Opcje Zaawansowane"
 
 msgid "Advanced"
 msgstr "Zaawansowane"
@@ -997,25 +997,25 @@ msgid "Alert Settings"
 msgstr ""
 
 msgid "Alerts"
-msgstr ""
+msgstr "Alerty"
 
 msgid "Aliases"
-msgstr ""
+msgstr "Skróty"
 
 msgid "All Disks"
-msgstr ""
+msgstr "Wszystkie Dyski"
 
 msgid "All dirs"
-msgstr ""
+msgstr "Wszytskie foldery"
 
 msgid "All users"
 msgstr "Wszyscy użytwkonicy"
 
 msgid "Allocate a number of megabytes of RAM to the VM."
-msgstr ""
+msgstr "Przydziel maszynie wirtualnej liczbę megabajtów pamięci RAM."
 
 msgid "Allocate at least 256 MiB."
-msgstr ""
+msgstr "Przydziel co najmniej 256 MB."
 
 msgid "Allow"
 msgstr "Zezwól"
