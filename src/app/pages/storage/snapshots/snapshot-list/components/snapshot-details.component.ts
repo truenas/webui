@@ -6,7 +6,7 @@ import {
   EntityRowDetails
 } from "app/pages/common/entity/entity-table/entity-row-details.interface";
 import { EntityTableComponent } from "app/pages/common/entity/entity-table";
-import { WebSocketService } from "app/services";
+import { WebSocketService, StorageService } from "app/services";
 import { map } from "rxjs/operators";
 import { SnapshotListComponent } from "../snapshot-list.component";
 import { LocaleService } from 'app/services/locale.service';
@@ -27,7 +27,8 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
   public details: { label: string; value: string | number }[] = [];
   public actions: EntityAction[] = [];
 
-  constructor(private _ws: WebSocketService, private _router: Router, private localeService: LocaleService) {}
+  constructor(private _ws: WebSocketService, private _router: Router, private localeService: LocaleService,
+    protected storageService: StorageService) {}
 
   public ngOnInit(): void {
     this._ws.call('system.general.config').subscribe((res) => {
@@ -48,11 +49,11 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
           },
           {
             label: "Used",
-            value: snapshot.used.value
+            value: this.storageService.convertBytestoHumanReadable(snapshot.used.rawvalue, 0)
           },
           {
             label: "Referenced",
-            value: snapshot.referenced.value
+            value: this.storageService.convertBytestoHumanReadable(snapshot.referenced.rawvalue, 0)
           }
         ];
       });
