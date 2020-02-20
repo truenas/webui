@@ -122,6 +122,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public expandedRows: any;
   public swapondrive = 2;
 
+  public has_savable_errors = false;
+  public force = false;
+
   constructor(
     private rest: RestService,
     private ws: WebSocketService,
@@ -435,6 +438,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.vdevtypeError = null;
     this.vdevdisksError = false;
     this.vdevdisksSizeError = false;
+    this.has_savable_errors = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
@@ -477,9 +481,11 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (vdev.vdev_disks_error) {
         this.vdevdisksError = true;
+        this.has_savable_errors = true;
       }
       if (vdev.vdev_disks_size_error) {
         this.vdevdisksSizeError = true;
+        this.has_savable_errors = true;
       }
 
     });
@@ -525,10 +531,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.poolError) {
       return false;
     }
-    if (this.vdevdisksError) {
-      return false;
-    }
-    if (this.vdevdisksSizeError) {
+    if (this.has_savable_errors && !this.force) {
       return false;
     }
     return true;
@@ -549,6 +552,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     } else {
       this.doSubmit();
+    }
+  }
+
+  forceCheckboxChecked() {
+    if (!this.force) {
+      this.dialog.confirm(helptext.force_title, helptext.force_warning).subscribe(res => {
+        this.force = res;
+      });
     }
   }
 
