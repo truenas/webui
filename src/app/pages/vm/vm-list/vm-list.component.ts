@@ -44,7 +44,8 @@ export class VMListComponent {
         { name: T('System Clock'), prop: 'time', hidden: true },
         { name: T("VNC Port"), prop: 'port', hidden: true },
         { name: T("Com Port"), prop: 'com_port', hidden: true },
-        { name: T("Description"), prop: 'description', hidden: true }
+        { name: T("Description"), prop: 'description', hidden: true },
+        { name: T("Shutdown Timeout"), prop: 'shutdown_timeout', hidden: true }
     ];
     public config: any = {
         paging: true,
@@ -85,6 +86,7 @@ export class VMListComponent {
         for (let vm_index = 0; vm_index < vms.length; vm_index++) {
             vms[vm_index]['state'] = vms[vm_index]['status']['state'];
             vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
+            vms[vm_index]['shutdown_timeout'] += T(' seconds') 
             if (this.checkVnc(vms[vm_index])) {
                 vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
             } else {
@@ -138,19 +140,17 @@ export class VMListComponent {
                 fieldConfig: [
                     {
                         type: 'checkbox',
-                        name: 'force',
-                        placeholder: T('Force Stop'),
-                    },
-                    {
-                        type: 'checkbox',
                         name: 'force_after_timeout',
                         placeholder: T('Force Stop After Timeout'),
+                        tooltip: T('Force the VM to stop if it has not already \
+ stopped within the specified shutdown timeout. Without this option selected, the VM will \
+ receive the shutdown signal, but may or may not complete the shutdown process.')
                     }
                 ],
                 saveButtonText: T('Stop'),
                 customSubmit: function (entityDialog) {
                     entityDialog.dialogRef.close(true);
-                    let forceValue = entityDialog.formValue.force ? true : false;
+                    let forceValue = false; // We are not exposing this in the UI
                     let forceValueTimeout = entityDialog.formValue.force_after_timeout ? true : false;
                     const params = [row.id, {force: forceValue, force_after_timeout: forceValueTimeout}];
                     parent.doRowAction(row, method, params);
@@ -188,26 +188,30 @@ export class VMListComponent {
     }
 
     doRowAction(row, method, params = [row.id], updateTable = false) {
-        console.log(row, method, params, updateTable)
         if (method === 'vm.stop') {
-            console.log(params[0], params[1])
-            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stopping") }, disableClose: false });
+            this.dialogRef = this.dialog.open(EntityJobComponent, 
+                { data: { "title": T("Stopping " + row.name) }, disableClose: false });
             this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
-            // ("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: self.restartServices }])
             this.dialogRef.componentInstance.submit();
             this.dialogRef.componentInstance.success.subscribe((succ) => {
+                if (updateTable) {
+                    this.entityList.getData();
+                } else {
+                    this.updateRows([row]);
+                }
               this.dialogRef.close(false);
-              this.dialogService.Info(T('Stopped...'),'', '450px', 'info', true);   
+              this.dialogService.Info(T('Finished'), T('If ' + row.name + T(' is still running, \
+ use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.')) , '450px', 'info', true);
+
+            this.checkMemory(); 
             });
             this.dialogRef.componentInstance.failure.subscribe((err) => {
-            console.log(err)
               new EntityUtils().handleWSError(this, err, this.dialogService);
             });
         } else {
             this.loader.open();
             this.ws.call(method, params).subscribe(
                 (res) => {
-                    console.log(res)
                     if (updateTable) {
                         this.entityList.getData();
                         this.loader.close();
@@ -219,7 +223,6 @@ export class VMListComponent {
                     this.checkMemory();
                 },
                 (err) => {
-                    console.log(err)
                     this.loader.close();
                     if (method === this.wsMethods.start && err.error === 12) {
                         this.onMemoryError(row);
@@ -231,8 +234,6 @@ export class VMListComponent {
                 }
             )
         }
-
-
     }
 
     updateRows(rows: Array<any>): Promise<boolean> {

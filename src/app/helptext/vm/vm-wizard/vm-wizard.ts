@@ -81,6 +81,15 @@ threads: {
  The product of vCPUs, cores, and threads must not exceed 16.')
 },
 
+shutdown_timeout: {
+  placeholder: T('Shutdown Timeout'),
+  tooltip: T('The time in seconds the system waits for the VM to cleanly shut down. \
+ During system shutdown, the system initiates poweroff for the VM after the shutdown \
+ timeout has expired.'),
+validation : [Validators.min(0) ],
+
+},
+
 memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
 memory_validation : [Validators.required],
 memory_tooltip: T(`Allocate RAM for the VM. Minimum value is 256 MiB. ${globalHelptext.human_readable.suggestion_tooltip} bytes.`),

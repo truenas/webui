@@ -61,7 +61,16 @@ export class VmFormComponent {
           type: 'select', 
           name : 'bootloader', 
           placeholder : helptext.bootloader_placeholder, 
-          tooltip: helptext.bootloader_tooltip,options: []
+          tooltip: helptext.bootloader_tooltip,
+          options: []
+        },
+        { 
+          type: 'input', 
+          name : 'shutdown_timeout', 
+          inputType: 'number',
+          placeholder : helptext.shutdown_timeout.placeholder, 
+          tooltip: helptext.shutdown_timeout.tooltip,
+          validation: helptext.shutdown_timeout.validation
         },
         { 
           type: 'checkbox', 
