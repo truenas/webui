@@ -169,7 +169,7 @@ export class DiskListComponent {
   }
 
   dataHandler(entityList: any) {
-	  	this.diskUpdate(entityList);
+	this.diskUpdate(entityList);
     this.disk_ready.subscribe(() => {
 		this.diskUpdate(entityList);
 	});
