@@ -11,6 +11,7 @@ import { combineLatest, of } from 'rxjs';
 import { catchError, map, switchMap, take, tap, filter } from 'rxjs/operators';
 import { AppLoaderService, DialogService, RestService, WebSocketService } from '../../../../services/';
 import { Validators } from '@angular/forms';
+import globalHelptext from 'app/helptext/global-helptext';
 
 @Component({
   selector : 'app-smb-form',
@@ -179,7 +180,7 @@ export class SMBFormComponent {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : helptext_sharing_smb.actions_basic_mode,
+      name : globalHelptext.basic_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
         this.toggleFieldsets(false);
@@ -187,7 +188,7 @@ export class SMBFormComponent {
     },
     {
       id : 'advanced_mode',
-      name : helptext_sharing_smb.actions_advanced_mode,
+      name : globalHelptext.advanced_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.toggleFieldsets(true);

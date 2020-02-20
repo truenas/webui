@@ -30,7 +30,7 @@ export class AdvancedComponent implements OnDestroy {
   public swapondrive_subscription: any;
   public entityForm: any;
   protected dialogRef: any;
-  public is_freenas = false;
+  public product_type: string;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: T('Save Debug'),
@@ -154,9 +154,11 @@ export class AdvancedComponent implements OnDestroy {
           name: 'swapondrive',
           placeholder: helptext_system_advanced.swapondrive_placeholder,
           tooltip: helptext_system_advanced.swapondrive_tooltip,
-          inputType: 'number',
           validation : helptext_system_advanced.swapondrive_validation,
           required: true,
+          blurStatus: true,
+          blurEvent: this.blurEvent,
+          parent: this
         },
         {
           type: 'checkbox',
@@ -269,6 +271,11 @@ export class AdvancedComponent implements OnDestroy {
     public validationService: ValidationService
   ) {}
 
+  resourceTransformIncomingRestData(data) {
+    data.swapondrive = this.storage.convertBytestoHumanReadable(data.swapondrive * 1073741824, 0);
+    return data;
+  }
+
   ngOnDestroy() {
     if (this.swapondrive_subscription) {
       this.swapondrive_subscription.unsubscribe();
@@ -276,17 +283,20 @@ export class AdvancedComponent implements OnDestroy {
 
   }
 
-
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.ws.call('system.is_freenas').subscribe((res)=>{
-      this.is_freenas = res;
+    this.ws.call('system.product_type').subscribe((res)=>{
+      this.product_type = res;
       this.swapondrive = this.fieldSets.config('swapondrive');
       this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
-        if (parseInt(value) === 0) {
+        const filteredValue = value ? this.storage.convertHumanStringToNum(value.toString(), false, 'g') : undefined;
+        if (filteredValue === 0) {
           this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
+        } else if (filteredValue > 99*1073741824 ){
+          this.swapondrive.warnings = helptext_system_advanced.swapondrive_max_warning;
         } else {
           this.swapondrive.warnings = null;
+
         }
       });
   
@@ -315,6 +325,7 @@ export class AdvancedComponent implements OnDestroy {
   }
 
   public customSubmit(body) {
+    body.swapondrive = this.storage.convertHumanStringToNum(body.swapondrive)/1073741824;
     body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui) :
       window.localStorage.setItem('exposeLegacyUI', 'false');
     delete body.sed_passwd2;
@@ -328,5 +339,11 @@ export class AdvancedComponent implements OnDestroy {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
+  }
+
+  blurEvent(parent) {
+    if (parent.entityForm) {
+      parent.entityForm.formGroup.controls['swapondrive'].setValue(parent.storage.humanReadable || '2 GiB');
+    }
   }
 }

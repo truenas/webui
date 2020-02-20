@@ -47,7 +47,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public manufacturer:string = '';
   public buildDate:string;
   public loader:boolean = false;
-  public is_freenas: string = window.localStorage['is_freenas'];
+  public product_type: string = window.localStorage['product_type'];
   public systemLogo: any;
   public isFN: boolean = false;
   public isUpdateRunning = false;
@@ -101,7 +101,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.core.emit({name:"UpdateCheck"});
       
     }
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((res) => {
         if (res) {
           this.updateMethod = 'failover.upgrade';
@@ -168,7 +168,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       } else {
         this.manufacturer = "other";
       }
-      if (this.is_freenas === 'true') {
+      if (this.product_type === 'CORE') {
         this.systemLogo = 'logo.svg';
         this.getFreeNASImage(evt.data.system_product);
         this.isFN = true;

@@ -41,7 +41,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // For widgetsysinfo
   public isHA: boolean; // = false;
-  public isFN: boolean = window.localStorage['is_freenas'];
+  public product_type = window.localStorage['product_type'];
   public sysinfoReady: boolean = false;
 
   // For CPU widget
@@ -163,7 +163,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    if(this.isFN.toString() == 'false'){
+    if(this.product_type == 'ENTERPRISE'){
       this.ws.call('failover.licensed').subscribe((res)=> {
         if (res) {
           this.isHA = true;

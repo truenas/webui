@@ -504,8 +504,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
       if (this.needTableResize || (!this.needTableResize && this.expandedRows > 0)) {
-      this.updateTableHeightAfterDetailToggle();
-      }
+        this.updateTableHeightAfterDetailToggle();
+        }
       this.needTableResize = true;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;

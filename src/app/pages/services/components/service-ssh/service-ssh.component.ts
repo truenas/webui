@@ -111,7 +111,7 @@ export class ServiceSSHComponent implements OnInit {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : T('Basic Mode'),
+      name : globalHelptext.basic_options,
       function : () => {
         this.fieldSets.find(set => set.name === globalHelptext.fieldset_other_options).label = false;
         this.fieldSets.find(set => set.name === 'divider').divider = false;
@@ -120,7 +120,7 @@ export class ServiceSSHComponent implements OnInit {
     },
     {
       'id' : 'advanced_mode',
-      name : T('Advanced Mode'),
+      name : globalHelptext.advanced_options,
       function : () => {
         this.fieldSets.find(set => set.name === globalHelptext.fieldset_other_options).label = true;
         this.fieldSets.find(set => set.name === 'divider').divider = true;

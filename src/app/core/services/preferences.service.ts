@@ -17,8 +17,12 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
   tableDisplayedColumns:any;
+  hide_builtin_users: boolean;
+  hide_builtin_groups: boolean;
   dateFormat:string;
   timeFormat:string;
+  nicType:string
+  nicAttach: string
 }
 
 @Injectable()
@@ -38,8 +42,12 @@ export class PreferencesService {
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
     "tableDisplayedColumns":[],
+    "hide_builtin_users": true,
+    "hide_builtin_groups": true,
     "dateFormat": 'YYYY-MM-DD',
-    "timeFormat": 'HH:mm:ss'
+    "timeFormat": 'HH:mm:ss',
+    "nicType": null,
+    "nicAttach": null
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {

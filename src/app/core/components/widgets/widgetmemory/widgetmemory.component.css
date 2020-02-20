@@ -112,6 +112,7 @@ h1.memory-used{
 
 h1.memory-used span.memory-used-units{
   font-size:50%;
+  margin-left: 5px;
 }
 
 .spinner-wrapper{

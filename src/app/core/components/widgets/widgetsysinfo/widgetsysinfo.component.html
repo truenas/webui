@@ -23,17 +23,17 @@
             </button>
 
             <div class="platform-logo-wrapper" fxFlex="20">
-                <img *ngIf="isFN" class="platform-logo" src="assets/images/light-logo-full.svg">
-                <img *ngIf="!isFN" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">
+                <img *ngIf="product_type === 'CORE'" class="platform-logo" src="assets/images/light-logo-full.svg">
+                <img *ngIf="product_type === 'ENTERPRISE'" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">
               </div>
 
-            <div class="content-left" [fxFlex.xs]="!isFN && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
+            <div class="content-left" [fxFlex.xs]="product_type === 'ENTERPRISE' && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
 
-              <div class="product-image {{!isFN ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
+              <div class="product-image {{product_type === 'ENTERPRISE' ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                 <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
-                    <mat-icon *ngIf="isFN && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>
-                    <mat-icon *ngIf="isFN && certified" class="generic certified" svgIcon="freenas_certified"></mat-icon>
+                    <mat-icon *ngIf="product_type === 'CORE' && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="product_type === 'CORE' && certified" class="generic certified" svgIcon="freenas_certified"></mat-icon>
                   </ng-template>
                   <div class="generic alert" *ngIf="!product_image && isPassive && ha_status !== 'HA Enabled'">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>

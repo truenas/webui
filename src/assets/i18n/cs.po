@@ -314,6 +314,11 @@ msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  username
 msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> uživatelské jméno."
 
 msgid ""
+"<a href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
+msgstr ""
+
+msgid ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
 "target=\"_blank\">Backblaze B2</a> Application Key. To generate a new "
 "application key, log in to the Backblaze account, go to the <i>App Keys</i> "
@@ -640,6 +645,9 @@ msgid ""
 "Host."
 msgstr ""
 
+msgid "A valid IP address or domain name to which OpenVPN will connect."
+msgstr ""
+
 msgid ""
 "A valid IPv4 address to use as the default route.<br> Enter <b>none</b> to "
 "configure the jail with no IPv4 default route.<br> <b>A jail without a "
@@ -667,6 +675,9 @@ msgstr ""
 msgid "ACME Server Directory URI"
 msgstr ""
 
+msgid "AD"
+msgstr ""
+
 msgid "AD Timeout"
 msgstr ""
 
@@ -682,6 +693,9 @@ msgstr ""
 msgid "API Key"
 msgstr ""
 
+msgid "API Key or Password"
+msgstr ""
+
 msgid "API URL"
 msgstr ""
 
@@ -692,6 +706,9 @@ msgid "ARN"
 msgstr ""
 
 msgid "ATA Security User"
+msgstr ""
+
+msgid "AUTORID"
 msgstr ""
 
 msgid "AWS Region"
@@ -804,6 +821,9 @@ msgstr "Active Directory"
 msgid "Active Directory IDMAP change!"
 msgstr ""
 
+msgid "Active Directory must be enabled before adding new domains."
+msgstr ""
+
 msgid "Active Media Subtype"
 msgstr ""
 
@@ -841,6 +861,9 @@ msgid "Add Dataset"
 msgstr "Přidat datovou sadu"
 
 msgid "Add Group"
+msgstr ""
+
+msgid "Add Idmap"
 msgstr ""
 
 msgid "Add Log"
@@ -973,6 +996,9 @@ msgid ""
 "Additional parameters from <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
 "target=\"_blank\">ifconfig(8)</a>."
+msgstr ""
+
+msgid "Additional parameters."
 msgstr ""
 
 msgid ""
@@ -1306,6 +1332,15 @@ msgstr ""
 msgid "Apple Shares (AFP)"
 msgstr ""
 
+msgid "Application Credential ID"
+msgstr ""
+
+msgid "Application Credential Name"
+msgstr ""
+
+msgid "Application Credential Secret"
+msgstr ""
+
 msgid "Application Key"
 msgstr ""
 
@@ -1419,6 +1454,30 @@ msgstr ""
 msgid "Auth Token"
 msgstr ""
 
+msgid ""
+"Auth Token from alternate authentication - optional <a "
+"href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
+msgstr ""
+
+msgid "AuthVersion"
+msgstr ""
+
+msgid ""
+"AuthVersion - optional - set to (1,2,3) if your auth URL has no version <a "
+"href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
+msgstr ""
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Authentication Advanced Options"
+msgstr ""
+
+msgid "Authentication Algorithm"
+msgstr ""
+
 msgid "Authentication Group number"
 msgstr ""
 
@@ -1426,6 +1485,15 @@ msgid "Authentication Protocol"
 msgstr ""
 
 msgid "Authentication Type"
+msgstr ""
+
+msgid "Authentication URL"
+msgstr ""
+
+msgid ""
+"Authentication URL for the server. This is the OS_AUTH_URL from an <a "
+"href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
+"credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
 msgstr ""
 
 msgid "Authenticator"
@@ -1530,6 +1598,9 @@ msgstr "Zpět"
 msgid "Back to Support"
 msgstr ""
 
+msgid "Backend"
+msgstr ""
+
 msgid ""
 "Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
 "GIDs. To configure the selected  backend, click <i>EDIT IDMAP</i>."
@@ -1575,11 +1646,6 @@ msgid "Begin"
 msgstr ""
 
 msgid "Begin Time"
-msgstr ""
-
-msgid ""
-"Beginning UID/GID number for which this system is authoritative. UID/GID "
-"values below Range Low or higher than Range High are ignored."
 msgstr ""
 
 msgid "Berkeley Packet Filter"
@@ -1839,6 +1905,9 @@ msgid ""
 "from running."
 msgstr ""
 
+msgid "Cerfiticate"
+msgstr ""
+
 msgid "Certificate"
 msgstr "Certifikát"
 
@@ -2061,8 +2130,14 @@ msgstr ""
 msgid "Choose a Device"
 msgstr ""
 
+msgid "Choose a cipher algorithm to encrypt data channel packets."
+msgstr ""
+
 msgid "Choose a color scheme."
 msgstr "Zvolte barevné schéma."
+
+msgid "Choose a compression algorithm."
+msgstr ""
 
 msgid ""
 "Choose a dataset on the destination  system where snapshots are stored. "
@@ -2139,16 +2214,31 @@ msgstr ""
 msgid "Choose a time format."
 msgstr ""
 
+msgid ""
+"Choose a valid client certificate which exists on this system and hasn't "
+"been revoked. Find more about generating certificates and CAs for OpenVPN "
+"<a "
+"href=\"https://community.openvpn.net/openvpn/wiki/HOWTO#"
+"SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanO"
+"penVPNserverandmultipleclients\" target=\"_blank\">here.</a>"
+msgstr ""
+
+msgid ""
+"Choose a virtual network interface. More information can be found  <a "
+"href=\"https://community.openvpn.net/openvpn/wiki/BridgingAndRouting\" "
+"target=\"_blank\">here</a>."
+msgstr ""
+
 msgid "Choose an alert service to display options for that service."
+msgstr ""
+
+msgid "Choose an algorithm to authenticate packets."
 msgstr ""
 
 msgid "Choose an authentication method."
 msgstr ""
 
 msgid "Choose an encryption mode to use with LDAP."
-msgstr ""
-
-msgid "Choose an encryption mode."
 msgstr ""
 
 msgid ""
@@ -2232,6 +2322,18 @@ msgid ""
 "applied to this share."
 msgstr ""
 
+msgid "Choose the protocol to use when connecting with the remote system."
+msgstr ""
+
+msgid ""
+"Choose the root Certificate Authority that was used to sign the Client and "
+"Server certificates.         Find more about generating certificates and "
+"CAs for OpenVPN  <a "
+"href=\"https://community.openvpn.net/openvpn/wiki/HOWTO#"
+"SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanO"
+"penVPNserverandmultipleclients\" target=\"_blank\">here.</a>"
+msgstr ""
+
 msgid ""
 "Choose the schema to use when querying AD for user/group info. "
 "<i>rfc2307</i> uses the schema support included in Windows 2003 R2, "
@@ -2241,7 +2343,10 @@ msgstr ""
 
 msgid ""
 "Choose the schema to use with LDAP authentication for SMB shares. The LDAP "
-"server must be configured with Samba attributes to use a Samba Schema."
+"server must be configured with Samba attributes to use a Samba Schema.  "
+"Options include <i>RFC2307</i> (included in Windows 2003 R2) and <i>Service "
+"for Unix (SFU)</i>.  For SFU 3.0 or 3.5, choose \"SFU\". For SFU 2.0, "
+"choose \"SFU20\"."
 msgstr ""
 
 msgid "Choose the speed in bps used by the serial port."
@@ -2309,7 +2414,13 @@ msgstr ""
 msgid "Clear SED Password"
 msgstr ""
 
+msgid "Clear the Idmap Cache"
+msgstr ""
+
 msgid "Clear the SED password for this disk."
+msgstr ""
+
+msgid "Clearing Cache..."
 msgstr ""
 
 msgid ""
@@ -2318,6 +2429,9 @@ msgid ""
 msgstr ""
 
 msgid "Click on alarms to select or unselect."
+msgstr ""
+
+msgid "Client Certificate"
 msgstr ""
 
 msgid "Client Name"
@@ -2459,6 +2573,9 @@ msgstr "Komprimovat"
 msgid "Compress connections"
 msgstr ""
 
+msgid "Compression"
+msgstr ""
+
 msgid "Compression level"
 msgstr "Míra komprese"
 
@@ -2480,12 +2597,6 @@ msgstr ""
 msgid "Configure System Dataset"
 msgstr ""
 
-msgid ""
-"Configure an external program to perform ID mapping. See <a "
-"href=\"http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html\" "
-"target=\"_blank\">idmap_script(8)</a> for more details."
-msgstr ""
-
 msgid "Configure now"
 msgstr ""
 
@@ -2498,6 +2609,11 @@ msgid ""
 msgstr ""
 
 msgid "Configure the root user email address."
+msgstr ""
+
+msgid ""
+"Configure virtual addressing topology when running in TUN mode.  (TAP mode "
+"always uses a SUBNET topology.)"
 msgstr ""
 
 msgid "Confirm"
@@ -2813,6 +2929,9 @@ msgstr ""
 msgid "DISCARD CHANGES"
 msgstr ""
 
+msgid "DNS Domain Name"
+msgstr ""
+
 msgid "DNS Forwarder"
 msgstr "DNS přeposílání"
 
@@ -2820,6 +2939,9 @@ msgid "DNS Servers"
 msgstr ""
 
 msgid "DNS Timeout"
+msgstr ""
+
+msgid "DNS name of the domain"
 msgstr ""
 
 msgid "DNS timeout"
@@ -2966,9 +3088,11 @@ msgid "Define Periodic Snapshots to Replicate"
 msgstr ""
 
 msgid ""
-"Define a length of time to retain the snapshot on this system. After the "
-"time expires, the snapshot is removed. Snapshots which have been replicated "
-"to other systems are not affected."
+"Define a length of time to retain the snapshot on this system using a "
+"numeric value and a single lowercase letter for units. Examples: <i>3h</i> "
+"is three hours, <i>1m</i> is one month, and <i>1y</i> is one year. Does not "
+"accept Minute values. After the time expires, the snapshot is removed. "
+"Snapshots which have been replicated to other systems are not affected."
 msgstr ""
 
 msgid ""
@@ -3012,7 +3136,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Define the number of UIDS/GIDS available per domain range. The minimum is "
+"Define the number of UIDS/GIDS available per domain  range. The minimum is "
 "<i>2000</i> and the recommended default is <i>100000</i>."
 msgstr ""
 
@@ -3234,6 +3358,9 @@ msgstr "Zařízení je zaneprázdněno"
 msgid "Device Order"
 msgstr "Pořadí zařízení"
 
+msgid "Device Type"
+msgstr ""
+
 msgid "Device detached "
 msgstr ""
 
@@ -3426,6 +3553,9 @@ msgstr "Hotovo"
 msgid "Download"
 msgstr ""
 
+msgid "Download Client Config"
+msgstr ""
+
 msgid "Download Encryption Key"
 msgstr ""
 
@@ -3560,6 +3690,9 @@ msgstr "Zapnout"
 msgid "Enable (requires password or Kerberos principal)"
 msgstr ""
 
+msgid "Enable Active Directory"
+msgstr ""
+
 msgid "Enable Atime"
 msgstr ""
 
@@ -3675,6 +3808,11 @@ msgstr ""
 msgid "Enable this tunable. Unset to disable this tunable without deleting it."
 msgstr ""
 
+msgid ""
+"Enable to prevent binding to local address and port.  Must be enabled if "
+"OpenVPN client and server are to run concurrently."
+msgstr ""
+
 msgid "Enable when the device number is inconstant across a reboot."
 msgstr ""
 
@@ -3683,6 +3821,9 @@ msgid ""
 "href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\" "
 "target=\"_blank\">SMTP AUTH</a> using PLAIN SASL. Enter the required "
 "Username and Password if set."
+msgstr ""
+
+msgid "Enable/disable TLS Web Client Authentication."
 msgstr ""
 
 msgid "Enabled"
@@ -3793,12 +3934,19 @@ msgid ""
 "progress can continue to run past this  time."
 msgstr ""
 
-msgid ""
-"Ending UID/GID number for which this system is authoritative. UID/GID "
-"values below Range Low or higher than Range High are ignored."
+msgid "Endpoint Advanced Options"
+msgstr ""
+
+msgid "Endpoint Type"
 msgstr ""
 
 msgid "Endpoint URL"
+msgstr ""
+
+msgid ""
+"Endpoint type to choose from the service catalogue. <i>Public</i> is "
+"recommended, see the <a href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">rclone documentation</a>."
 msgstr ""
 
 msgid ""
@@ -3946,6 +4094,9 @@ msgstr ""
 
 msgid "Enter a password of at least eight characters."
 msgstr "Zadejte heslo dlouhé přinejmenším osm znaků."
+
+msgid "Enter a port number to use for the connection."
+msgstr ""
 
 msgid ""
 "Enter a port to bind <a "
@@ -4243,6 +4394,9 @@ msgstr ""
 "Zadejte název zařízení (tak, jak ho vidí FreeBSD). Po vytvoření rozhraní "
 "toto nepůjde změnit."
 
+msgid "Enter the IP address and netmask of the server."
+msgstr ""
+
 msgid ""
 "Enter the IP address of a DNS forwarder. Required for recursive queries "
 "when <i>SAMBA_INTERNAL</i> is selected."
@@ -4424,6 +4578,9 @@ msgstr ""
 
 msgid "Enter the phone number of the contact person."
 msgstr "Zadejte telefoní číslo kontaktní osoby."
+
+msgid "Enter the pre-Windows 2000 domain name."
+msgstr ""
 
 msgid "Enter the pre-defined S3 bucket to use."
 msgstr "Zadejte předurčenou S3 nádobu (bucket), kterou použít."
@@ -4885,9 +5042,6 @@ msgid ""
 "shown."
 msgstr ""
 
-msgid "FreeNAS/TrueNAS URL"
-msgstr ""
-
 msgid "Fri"
 msgstr ""
 
@@ -4986,6 +5140,9 @@ msgid ""
 "the snapshot to be replicated. Cannot be used with a <i>Name</i>."
 msgstr ""
 
+msgid "Generate idmap low range based on same algorithm that SSSD uses by default."
+msgstr ""
+
 msgid "GiB"
 msgstr ""
 
@@ -5014,6 +5171,9 @@ msgstr "Globální heslo pro odemknutí SED jednotek."
 
 msgid "Go Back to Jails"
 msgstr "Přejít zpět k ohraničeným prostředím"
+
+msgid "Go to Active Directory Form"
+msgstr ""
 
 msgid "Go to Admin Portal"
 msgstr ""
@@ -5439,6 +5599,9 @@ msgstr "Identifikátor"
 msgid "Identify Light"
 msgstr ""
 
+msgid "Idmap"
+msgstr ""
+
 msgid "Idmap Backend"
 msgstr ""
 
@@ -5701,6 +5864,9 @@ msgstr ""
 msgid "Invalid regex filter"
 msgstr "Neplatný filtr regulárních výrazů"
 
+msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
+msgstr ""
+
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>."
@@ -5902,9 +6068,6 @@ msgstr "LDAP oblast"
 msgid "LDAP Server"
 msgstr "LDAP server"
 
-msgid "LDAP URL"
-msgstr "LDAP URL"
-
 msgid "LDAP User DN"
 msgstr ""
 
@@ -6062,6 +6225,9 @@ msgstr ""
 msgid "Link State"
 msgstr "Stav linky"
 
+msgid "Linked Service"
+msgstr ""
+
 msgid "List of system services to restart when the pool is unlocked."
 msgstr "Seznam systémových služeb které při odemčení fondu restartovat."
 
@@ -6072,6 +6238,9 @@ msgid "Load Previous Replication Task"
 msgstr ""
 
 msgid "Local"
+msgstr ""
+
+msgid "Local Account"
 msgstr ""
 
 msgid "Local Master"
@@ -6533,6 +6702,9 @@ msgstr ""
 msgid "NOT RUN SINCE LAST BOOT"
 msgstr ""
 
+msgid "NSS"
+msgstr ""
+
 msgid "NTLMv1 Auth"
 msgstr ""
 
@@ -6552,6 +6724,9 @@ msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr ""
 
 msgid "Name and Options"
+msgstr ""
+
+msgid "Name and Provider"
 msgstr ""
 
 msgid ""
@@ -6774,6 +6949,9 @@ msgstr "Nové heslo"
 msgid "New Primary Group"
 msgstr "Nová hlavní skupina"
 
+msgid "New Static Key Settings"
+msgstr ""
+
 msgid ""
 "New users are not given <b>su</b> permissions if <i>wheel</i> is their "
 "primary group."
@@ -6857,6 +7035,9 @@ msgstr "Nejsou k dispozici žádné aktualizace."
 
 msgid "No, continue with import"
 msgstr "Ne, pokračovat v importu"
+
+msgid "Nobind"
+msgstr ""
 
 msgid "Not Available"
 msgstr ""
@@ -6982,6 +7163,9 @@ msgstr ""
 msgid "Oct"
 msgstr ""
 
+msgid "Off"
+msgstr ""
+
 msgid ""
 "Off by default. When set, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smbd\" "
@@ -7065,6 +7249,24 @@ msgstr ""
 msgid ""
 "Only works with Unix ACLs. New files created on the share are set with the "
 "selected permissions."
+msgstr ""
+
+msgid "OpenVPN Client Settings"
+msgstr ""
+
+msgid "OpenVPN Server Settings"
+msgstr ""
+
+msgid ""
+"Openstack API key or password. This is the OS_PASSWORD from an <a "
+"href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
+"credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
+msgstr ""
+
+msgid ""
+"Openstack user name for login. This is the OS_USERNAME from an <a "
+"href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
+"credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
 msgstr ""
 
 msgid "Operating System"
@@ -7576,8 +7778,19 @@ msgstr "Povýšit datovou sadu"
 msgid "Protocol"
 msgstr "Protokol"
 
+msgid ""
+"Provide static key for authentication/encryption of all control  channel "
+"packets when <code>tls_crypt_auth_enabled</code> is enabled."
+msgstr ""
+
 msgid "Provider"
 msgstr "Poskytovatel"
+
+msgid ""
+"Provides a plugin interface for Winbind to use varying backends to store  "
+"SID/uid/gid mapping tables. The correct setting depends on the environment "
+"in which the NAS is deployed."
+msgstr ""
 
 msgid "Provides a pop-up window of diagnostic information if a fatal error occurs."
 msgstr ""
@@ -7623,6 +7836,12 @@ msgid "REGISTER"
 msgstr ""
 
 msgid "RESTART"
+msgstr ""
+
+msgid "RFC2307"
+msgstr ""
+
+msgid "RID"
 msgstr ""
 
 msgid "Raid-z"
@@ -7735,6 +7954,15 @@ msgstr ""
 msgid "Region"
 msgstr ""
 
+msgid "Region Name"
+msgstr ""
+
+msgid ""
+"Region name - optional <a "
+"href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
+msgstr ""
+
 msgid "Release"
 msgstr "Vydání"
 
@@ -7821,6 +8049,9 @@ msgid "Rename"
 msgstr ""
 
 msgid "Renew Certificate Days"
+msgstr ""
+
+msgid "Renew Static Key"
 msgstr ""
 
 msgid "Repeat"
@@ -8042,6 +8273,9 @@ msgstr ""
 msgid "Room"
 msgstr ""
 
+msgid "Root CA"
+msgstr ""
+
 msgid "Root dataset ACL cannot be edited."
 msgstr ""
 
@@ -8145,6 +8379,12 @@ msgstr ""
 msgid "SFTP log level"
 msgstr ""
 
+msgid "SFU"
+msgstr ""
+
+msgid "SFU20"
+msgstr ""
+
 msgid "SMB"
 msgstr ""
 
@@ -8198,7 +8438,13 @@ msgstr ""
 msgid "SSL"
 msgstr ""
 
+msgid "SSSD Compat"
+msgstr ""
+
 msgid "START"
+msgstr ""
+
+msgid "STARTTLS"
 msgstr ""
 
 msgid "STOP"
@@ -8851,8 +9097,8 @@ msgid "Select the shell to use for local and SSH logins."
 msgstr ""
 
 msgid ""
-"Select the type of LDAP server to use. This can be the LDAP server provided "
-"by the Active Directory server or a stand-alone LDAP server."
+"Select the type of LDAP server to use. This can be the        LDAP server "
+"provided by the Active Directory server or a stand-alone LDAP server."
 msgstr ""
 
 msgid "Select the type that matches the type of client accessing the dataset."
@@ -8900,7 +9146,7 @@ msgstr ""
 msgid "Self Healed"
 msgstr ""
 
-msgid "Semi-automatic (FreeNAS only)"
+msgid "Semi-automatic (TrueNAS CORE only)"
 msgstr ""
 
 msgid "Send Deduplicated Stream"
@@ -8959,6 +9205,12 @@ msgid "Series"
 msgstr ""
 
 msgid "Serve UDP NFS clients"
+msgstr ""
+
+msgid "Server"
+msgstr ""
+
+msgid "Server Certificate"
 msgstr ""
 
 msgid "Server Credentials"
@@ -9388,7 +9640,7 @@ msgid ""
 "running as root on a TCP port over 1024."
 msgstr ""
 
-msgid "Set to ignore mapping requests for the <i>BUILTIN</i> domain."
+msgid "Set to ignore mapping requests for the <i>BUILTIN</i>  domain."
 msgstr ""
 
 msgid ""
@@ -9441,8 +9693,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Set to make the module <i>read-only</i>. No new ranges are allocated or new "
-"mappings created in the idmap pool."
+"Set to make the module <i>read-only</i>. No new ranges  are allocated or "
+"new mappings created in the idmap pool."
 msgstr ""
 
 msgid ""
@@ -9883,6 +10135,9 @@ msgstr ""
 msgid "Sparse"
 msgstr ""
 
+msgid "Specifies the auxiliary directory service ID provider."
+msgstr ""
+
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
 "recommended. Do not reuse a port."
@@ -10051,6 +10306,15 @@ msgid "Storage & Groups"
 msgstr "Úložiště a skupiny"
 
 msgid "Storage Class"
+msgstr ""
+
+msgid "Storage URL"
+msgstr ""
+
+msgid ""
+"Storage URL - optional <a "
+"href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
 msgstr ""
 
 msgid ""
@@ -10241,6 +10505,9 @@ msgstr ""
 msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
 msgstr ""
 
+msgid "TDB"
+msgstr ""
+
 msgid "TLS"
 msgstr ""
 
@@ -10254,6 +10521,12 @@ msgid "TLS Allow Per User"
 msgstr ""
 
 msgid "TLS Common Name Required"
+msgstr ""
+
+msgid "TLS Crypt Auth"
+msgstr ""
+
+msgid "TLS Crypt Auth Enabled"
 msgstr ""
 
 msgid "TLS DNS Name Required"
@@ -10340,6 +10613,27 @@ msgstr ""
 msgid "Template"
 msgstr ""
 
+msgid "Tenant Domain"
+msgstr ""
+
+msgid "Tenant ID"
+msgstr ""
+
+msgid ""
+"Tenant ID - optional for v1 auth, this or tenant required otherwise <a "
+"href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
+msgstr ""
+
+msgid "Tenant Name"
+msgstr ""
+
+msgid ""
+"Tenant domain - optional <a "
+"href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
+msgstr ""
+
 msgid "Terms of Service"
 msgstr ""
 
@@ -10383,8 +10677,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The LDAP URL for accessing the LDAP server when using a stand-alone LDAP "
-"server."
+"The Idmap cache should be cleared after finalizing idmap changes.  Click "
+"\"Continue\" to clear the cache."
 msgstr ""
 
 msgid "The NFS"
@@ -10442,6 +10736,9 @@ msgid ""
 "The beginning UID/GID for which this system is authoritative. Any UID/GID "
 "lower than this value is ignored. This avoids accidental UID/GID overlaps "
 "between local and remotely defined IDs."
+msgstr ""
+
+msgid "The cache has been cleared."
 msgstr ""
 
 msgid "The cache is being rebuilt."
@@ -10801,6 +11098,12 @@ msgstr ""
 msgid "This is the FreeBSD device name for the disk."
 msgstr ""
 
+msgid ""
+"This is the OS_TENANT_NAME from an <a "
+"href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
+"credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
+msgstr ""
+
 msgid "This is the serial number of the disk."
 msgstr "Toto je sériové číslo disku."
 
@@ -10894,6 +11197,9 @@ msgid ""
 "<b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>."
 msgstr ""
 
+msgid "Topology"
+msgstr ""
+
 msgid "Train"
 msgstr "Varianta"
 
@@ -10925,6 +11231,9 @@ msgid "TrueNAS Controller"
 msgstr ""
 
 msgid "TrueNAS Controllers"
+msgstr ""
+
+msgid "TrueNAS URL"
 msgstr ""
 
 msgid "TrueNAS controller"
@@ -11024,6 +11333,12 @@ msgid ""
 msgstr ""
 
 msgid "Unique snapshot name. Cannot be used with  a <i>Naming Schema</i>."
+msgstr ""
+
+msgid "Unix NSS Info"
+msgstr ""
+
+msgid "Unix Primary Group"
 msgstr ""
 
 msgid "Unix Shares (NFS)"
@@ -11307,13 +11622,10 @@ msgstr ""
 msgid "User Controls"
 msgstr ""
 
-msgid "User DN"
-msgstr ""
-
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr ""
 
-msgid "User Distinguished Name to use for authentication."
+msgid "User Domain"
 msgstr ""
 
 msgid "User Guide"
@@ -11323,6 +11635,15 @@ msgid "User ID"
 msgstr "Identif. uživatele"
 
 msgid "User ID and Groups"
+msgstr ""
+
+msgid ""
+"User ID to log in - optional - most swift systems use user and leave this "
+"blank <a href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
+msgstr ""
+
+msgid "User Name"
 msgstr ""
 
 msgid "User account password for logging into the  remote system."
@@ -11339,6 +11660,12 @@ msgstr ""
 msgid ""
 "User accounts have an ID greater than 1000 and system accounts have an ID "
 "equal to the default port number used by the service."
+msgstr ""
+
+msgid ""
+"User domain - optional <a "
+"href=\"https://rclone.org/swift/#standard-options\" "
+"target=\"_blank\">(rclone documentation)</a>."
 msgstr ""
 
 msgid "User or Group"
@@ -11636,6 +11963,12 @@ msgstr ""
 msgid "When"
 msgstr "Kdy"
 
+msgid ""
+"When <code>tls_crypt_auth_enabled</code> is enabled and "
+"<code>tls_crypt_auth</code> is not provided,  a static key is automatically "
+"generated to be used with OpenVPN client."
+msgstr ""
+
 msgid "When Syslog server is defined, only logs matching this level are sent."
 msgstr ""
 
@@ -11647,6 +11980,19 @@ msgstr ""
 msgid ""
 "When a user is selected, the <i>root</i> user is limited to the permissions "
 "of that user."
+msgstr ""
+
+msgid ""
+"When checked, the primary group membership is fetched from the LDAP  "
+"attributes (gidNumber). When not checked, the primary group membership is "
+"calculated via  the \"primaryGroupID\" LDAP attribute."
+msgstr ""
+
+msgid ""
+"When checked, winbind will retrieve the login shell and home directory  "
+"from the LDAP attributes. When not checked or when the AD LDAP entry lacks "
+"the SFU attributes  the smb4.conf parameters <code>template shell</code> "
+"and <code>template homedir</code> are used."
 msgstr ""
 
 msgid ""
