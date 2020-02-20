@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { WebSocketService } from './ws.service';
 import { T } from "app/translate-marker";
 
 @Injectable()
 export class LocaleService {
     t24 = T('(24 Hours)');
-    constructor(public prefService: PreferencesService) { };
+    timeZone: string;
+    constructor(public prefService: PreferencesService, public ws: WebSocketService) {
+        this.ws.call('system.general.config').subscribe(res => {
+            this.timeZone = res.timezone;
+        })
+     };
 
     getDateFormatOptions() {
         let options = [
@@ -30,8 +36,13 @@ export class LocaleService {
         return options;
     }
 
-    formatDateTime(date) {
+    formatDateTime(date) {      
+        moment.tz.setDefault(this.timeZone);
         return moment(date).format(`${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`);
+    }
+
+    getTimeZone() {
+        return this.timeZone;
     }
 
     saveDateTimeFormat(dateFormat, timeFormat) {

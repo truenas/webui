@@ -134,6 +134,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
   public chartColors: string[];
+  
+  get timezone() {
+    return this.localeService.getTimeZone();
+  }
 
   get startTime(){
     return this.localeService.formatDateTime(new Date(this.currentStartDate));

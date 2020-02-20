@@ -9,7 +9,7 @@ import { LocaleService } from 'app/services/locale.service';
 
 import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import * as parser from 'cron-parser';
 import { EntityUtils } from '../../../utils';
 import globalHelptext from '../../../../../../helptext/global-helptext';
@@ -213,6 +213,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     return this._textInput;
   }
 
+  get timezone() {
+    return this.localeService.getTimeZone();
+  }
+
   set textInput(val:string){
     this._textInput = val;
   }
@@ -249,6 +253,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     protected localeService: LocaleService){ 
     
     //Set default value
+    moment.tz.setDefault(this.timezone);
     this.preset = this.presets[1];
     this._months = "*";
     
@@ -256,7 +261,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.maxDate = moment().endOf('month');
     this.currentDate= moment();
     
-    this.activeDate = moment(this.currentDate).toDate();
+    this.activeDate = this.localeService.formatDateTime(this.currentDate); // this is right format; also, right time zone AFTER refresh
+    console.log(this.activeDate)
     this.disablePrevious = true;
   }
 
