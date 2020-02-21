@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
@@ -8,11 +9,12 @@ import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
     template: `<entity-form [conf]='this'></entity-form>`
 })
 export class SMBAclComponent {
-    // protected queryCall = 'smb.sharesec.query';
-    protected addCall = 'smb.sharesec.create';
+    protected queryCall = 'smb.sharesec.query';
     protected editCall = 'smb.sharesec.update'
-    protected pk: number;
+
     protected route_success: string[] = ['sharing', 'smb'];
+    protected isEntity = true;
+    protected customFilter: Array<any> = [[["id", "="]]];
 
     protected fieldSets: FieldSet[] = [
         {
@@ -26,6 +28,7 @@ export class SMBAclComponent {
                     name: 'share_name',
                     placeholder: helptext_sharing_smb.share_name_placeholder,
                     tooltip: helptext_sharing_smb.share_name_tooltip,
+                    readonly: true,
                 }
             ]
         },
@@ -37,7 +40,7 @@ export class SMBAclComponent {
             config: [
                 {
                     type: 'list',
-                    name: 'acl_entries',
+                    name: 'share_acl',
                     width: '100%',
                     listFields: [],
                     templateListField: [
@@ -110,11 +113,19 @@ export class SMBAclComponent {
         }
     ]
 
-    constructor() { }
+    constructor(private aroute: ActivatedRoute) { }
+
+    preInit() {
+        this.aroute.params.subscribe(params => {
+            if (params['pk']) {
+                this.customFilter[0][0].push(parseInt(params['pk'], 10));
+            }
+        });
+    }
 
     beforeSubmit(data) {
-       
-        for (const acl of data.acl_entries) {
+       delete data['share_name']
+        for (const acl of data.share_acl) {
             console.log(acl);
             if (acl['ae_who_sid'] !== undefined && acl['ae_who_sid'] !== '') {
                 delete acl['ae_who_name_domain'];
