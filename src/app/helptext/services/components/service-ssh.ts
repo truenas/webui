@@ -81,5 +81,12 @@ ssh_options_tooltip: T('Add any more <a\
  target="_blank">sshd_config(5)</a> options not covered\
  in this screen. Enter one option per line. These\
  options are case-sensitive. Misspellings can prevent\
- the SSH service from starting.')
+ the SSH service from starting.'),
+
+ssh_weak_ciphers_placeholder: T('Weak Ciphers'),
+ssh_weak_ciphers_tooltip:T(''),
+ssh_weak_ciphers_options:[
+  {label:T('None'), value: 'NONE'},
+  {label:'AES128-CBC', value: 'AES128-CBC'}
+]
 }
