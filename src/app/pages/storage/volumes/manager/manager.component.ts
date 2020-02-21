@@ -481,7 +481,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (vdev.vdev_disks_error) {
         this.vdevdisksError = true;
-        this.has_savable_errors = true;
       }
       if (vdev.vdev_disks_size_error) {
         this.vdevdisksSizeError = true;
@@ -531,6 +530,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.poolError) {
       return false;
     }
+    if (this.vdevdisksError) {
+      return false;
+    }
     if (this.has_savable_errors && !this.force) {
       return false;
     }
@@ -557,9 +559,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   forceCheckboxChecked() {
     if (!this.force) {
-      this.dialog.confirm(helptext.force_title, helptext.force_warning).subscribe(res => {
+      let warnings = helptext.force_warning;
+      if (this.vdevdisksSizeError) {
+        warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+      }
+      this.dialog.confirm(helptext.force_title, warnings).subscribe(res => {
         this.force = res;
-      });
+      }); 
     }
   }
 
