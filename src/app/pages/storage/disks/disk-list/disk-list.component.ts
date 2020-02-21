@@ -169,11 +169,25 @@ export class DiskListComponent {
   }
 
   dataHandler(entityList: any) {
+	this.diskUpdate(entityList);
     this.disk_ready.subscribe(() => {
-      for (const disk of entityList.rows) {
+		this.diskUpdate(entityList);
+	});
+  }
+
+  diskUpdate(entityList: any) {
+	for (const disk of entityList.rows) {
         disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
         disk.pool = this.disk_pool.get(disk.name) || this.disk_pool.get(disk.devname);
-	    }
-    });
+	}
+  }
+
+  afterInit(entityList) {
+	  this.ws.subscribe('disk.query').subscribe((res) => {
+		  if (res) {
+			entityList.needTableResize = false;
+			entityList.getData();
+		  }
+	  })
   }
 }

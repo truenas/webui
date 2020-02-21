@@ -487,7 +487,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.rows = this.generateRows(res);
     this.storageService.tableSorter(this.rows, this.sortKey, 'asc')
-
     if (this.conf.dataHandler) {
       this.conf.dataHandler(this);
     }
