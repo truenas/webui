@@ -48,6 +48,7 @@ export class InitiatorFormComponent {
   afterInit(entityAdd: any) {}
 
   resourceTransformIncomingRestData(data) {
+    data['iscsi_target_initiator_initiators'] = data['iscsi_target_initiator_initiators'].replace(/\n/g, ' ');
     data['iscsi_target_initiator_auth_network'] = data['iscsi_target_initiator_auth_network'].replace(/\n/g, ' ');
     return data;
   }
