@@ -36,13 +36,9 @@ export class LocaleService {
         return options;
     }
 
-    formatDateTime(date) {      
-        moment.tz.setDefault(this.timeZone);
+    formatDateTime(date, tz?) {      
+        tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
         return moment(date).format(`${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`);
-    }
-
-    getTimeZone() {
-        return this.timeZone;
     }
 
     saveDateTimeFormat(dateFormat, timeFormat) {

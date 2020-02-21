@@ -11,6 +11,7 @@ import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
 import * as moment from 'moment-timezone';
 import * as parser from 'cron-parser';
+import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../../../utils';
 import globalHelptext from '../../../../../../helptext/global-helptext';
 
@@ -38,6 +39,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public disablePrevious:boolean;
   public ngDateFormat: string;
   public helptext = globalHelptext;
+  public timezone: string;
+  public displayedSchedule = [];
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -213,10 +216,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     return this._textInput;
   }
 
-  get timezone() {
-    return this.localeService.getTimeZone();
-  }
-
   set textInput(val:string){
     this._textInput = val;
   }
@@ -249,21 +248,24 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay,
-    protected localeService: LocaleService){ 
+  constructor(public translate: TranslateService, private renderer: Renderer2, 
+    private cd: ChangeDetectorRef,public overlay: Overlay,
+    protected localeService: LocaleService, protected ws: WebSocketService){ 
     
     //Set default value
-    moment.tz.setDefault(this.timezone);
-    this.preset = this.presets[1];
-    this._months = "*";
-    
-    this.minDate = moment();
-    this.maxDate = moment().endOf('month');
-    this.currentDate= moment();
-    
-    this.activeDate = this.localeService.formatDateTime(this.currentDate); // this is right format; also, right time zone AFTER refresh
-    console.log(this.activeDate)
-    this.disablePrevious = true;
+    this.ws.call('system.general.config').subscribe((res) => {
+      this.timezone = res.timezone;
+      moment.tz.setDefault(res.timezone);
+      this.preset = this.presets[1];
+      this._months = "*";
+      
+      this.minDate = moment();
+      this.maxDate = moment().endOf('month');
+      this.currentDate= moment();
+      
+      this.activeDate = this.currentDate; // this is right format; also, right time zone AFTER refresh
+      this.disablePrevious = true;
+    })
   }
 
   ngOnChanges(changes:SimpleChanges){
