@@ -40,7 +40,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public ngDateFormat: string;
   public helptext = globalHelptext;
   public timezone: string;
-  public displayedSchedule = [];
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -262,8 +261,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this.minDate = moment();
       this.maxDate = moment().endOf('month');
       this.currentDate= moment();
-      
-      this.activeDate = this.currentDate; // this is right format; also, right time zone AFTER refresh
+
+      this.activeDate = moment(this.currentDate).format();
       this.disablePrevious = true;
     })
   }

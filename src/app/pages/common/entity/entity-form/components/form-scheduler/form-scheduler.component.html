@@ -41,8 +41,9 @@
       </div>
       <mat-divider id="spacer"></mat-divider>
       <ul class="schedule-list" #preview>
+        <div class="text-small time-zone-label"><strong>{{"System Time Zone:" | translate}}</strong> {{timezone}}</div>
         <ng-container *ngFor="let date of generatedSchedule;">
-          <li>{{ date }}</li>
+          <li>{{ date | date: ngDateFormat}}</li>
         </ng-container>
       </ul>
     </div>
