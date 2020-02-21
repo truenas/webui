@@ -84,7 +84,15 @@ ssh_options_tooltip: T('Add any more <a\
  the SSH service from starting.'),
 
 ssh_weak_ciphers_placeholder: T('Weak Ciphers'),
-ssh_weak_ciphers_tooltip:T(''),
+ssh_weak_ciphers_tooltip:T('Allow more ciphers for \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=sshd" target="_blank">sshd(8)</a> \
+ in addition to the defaults in \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=sshd_config" target="_blank">sshd_config(5)</a>. \
+ <code>None</code> allows unencrypted SSH connections and \
+ <code>AES128-CBC</code> allows the 128-bit \
+ <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf" target="_blank">Advanced Encryption Standard</a>.<br><br> \
+ WARNING: these ciphers are considered security vulnerabilities and \
+ should only be allowed in a secure network environment.'),
 ssh_weak_ciphers_options:[
   {label:T('None'), value: 'NONE'},
   {label:'AES128-CBC', value: 'AES128-CBC'}
