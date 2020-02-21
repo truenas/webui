@@ -63,12 +63,12 @@ export class ZvolFormComponent {
   public custActions: Array<any> = [
     {
       id: 'basic_mode',
-      name: T('Basic Mode'),
+      name: globalHelptext.basic_options,
       function: () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       id: 'advanced_mode',
-      name: T('Advanced Mode'),
+      name: globalHelptext.advanced_options,
       function: () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
