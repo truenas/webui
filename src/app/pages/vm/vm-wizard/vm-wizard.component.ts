@@ -85,6 +85,14 @@ export class VMWizardComponent {
         tooltip : helptext.bootloader_tooltip,
         options: []
       },
+      { type: 'input',
+        name : 'shutdown_timeout',
+        inputType: 'number',
+        value: 90,
+        placeholder : helptext.shutdown_timeout.placeholder,
+        tooltip : helptext.shutdown_timeout.tooltip,
+        validation: helptext.shutdown_timeout.validation
+      },
       { type: 'checkbox',
         name : 'autostart',
         placeholder : helptext.autostart_placeholder,
@@ -92,11 +100,11 @@ export class VMWizardComponent {
         value: true
       },
       { type: 'checkbox',
-      name : 'enable_vnc',
-      placeholder : helptext.enable_vnc_placeholder,
-      tooltip : helptext.enable_vnc_tooltip,
-      value: true,
-      isHidden: false
+        name : 'enable_vnc',
+        placeholder : helptext.enable_vnc_placeholder,
+        tooltip : helptext.enable_vnc_tooltip,
+        value: true,
+        isHidden: false
       },
       {
         name : 'wait',
@@ -752,6 +760,7 @@ async customSubmit(value) {
     vm_payload["threads"] = value.threads;
     vm_payload["memory"] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024**2); // bytes -> mb
     vm_payload["bootloader"] = value.bootloader;
+    vm_payload["shutdown_timeout"]= value.shutdown_timeout;
     vm_payload["autoloader"] = value.autoloader;
     vm_payload["autostart"] = value.autostart;
     if ( value.iso_path && value.iso_path !== undefined) {
