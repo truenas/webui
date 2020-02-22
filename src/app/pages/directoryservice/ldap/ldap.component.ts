@@ -12,6 +12,7 @@ import {
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/ldap';
+import global_helptext from '../../../helptext/global-helptext';
 
 @Component({
   selector : 'app-ldap',
@@ -34,7 +35,7 @@ export class LdapComponent {
   public custActions: Array<any> = [
     {
       id : helptext.ldap_custactions_basic_id,
-      name : helptext.ldap_custactions_basic_name,
+      name : global_helptext.basic_options,
       function : () => { 
         this.isBasicMode = !this.isBasicMode; 
         this.fieldSets.find(set => set.name === helptext.ldap_advanced).label = false;
@@ -43,7 +44,7 @@ export class LdapComponent {
     },
     {
       id : helptext.ldap_custactions_advanced_id,
-      name : helptext.ldap_custactions_advanced_name,
+      name : global_helptext.advanced_options,
       function : () => { 
         this.isBasicMode = !this.isBasicMode; 
         this.fieldSets.find(set => set.name === 'Advanced Settings').label = true;

@@ -9,12 +9,12 @@
     "ng": "ng",
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
-    "start": "yarn run ie-support && yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
+    "start": "yarn run ie-support && yarn run generate_licenses && yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
     "start:dev:aot": "yarn run ie-support && yarn run po2json && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
     "start:dev": "yarn run ie-support && yarn run po2json && ng serve --proxy-config proxy.config.json --aot=false --source-map",
     "start:prod": "yarn run ie-support && yarn run po2json && ng serve --prod",
     "start:prod:aot": "yarn run ie-support && yarn run po2json && ng serve --prod --aot",
-    "build": "yarn run ie-support && yarn run po2json && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
+    "build": "yarn run ie-support && yarn run generate_licenses && yarn run po2json && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
     "build:prod": "node scripts/setup_prod.js && yarn run build -- --prod",
     "build:prod:aot": "yarn run build:prod --aot --base-href /ui/",
     "test": "ng test",
@@ -25,7 +25,9 @@
     "reinstall": "yarn run rimraf yarn.lock; yarn run rimraf node_modules; yarn cache clean -f; yarn install",
     "extract": "node scripts/extract_strings.js",
     "po2json": "node scripts/convert_po2json.js",
-    "create_po_pr": "yarn run extract && node scripts/create_pr.js"
+    "create_po_pr": "yarn run extract && node scripts/create_pr.js",
+    "generate_licenses": "yarn licenses generate-disclaimer > src/assets/disclaimer.txt && yarn licenses list --json > src/assets/licenses.json",
+    "generate_licenses_list": "yarn licenses list > licenses.txt"
   },
   "repository": {
     "type": "git",

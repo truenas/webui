@@ -97,6 +97,7 @@ export const helptext_system_advanced = {
   sed_passwd2_tooltip: T(''),
 
   swapondrive_warning: T("A swap size of 0 is STRONGLY DISCOURAGED."),
+  swapondrive_max_warning: T("Maximum swap size is 99 GiB"),
 
   debug_download_failed_title: T("Error Downloading File"),
   debug_download_failed_message: T("Debug could not be downloaded."),  
