@@ -1,6 +1,8 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { T } from "app/translate-marker";
+
 import { AFPListComponent } from './afp/afp-list/';
 import { AFPFormComponent } from './afp/afp-form/';
 import { NFSListComponent } from './nfs/nfs-list/';
@@ -102,7 +104,7 @@ export const routes: Routes = [
       },{
         path: 'acl/:pk',
         component: SMBAclComponent,
-        data: { title: 'Share ACL', breadcrumb: 'Share ACL'},
+        data: { title: T('Share ACL'), breadcrumb: T('Share ACL')},
       }]
     }, {
       path: 'iscsi',
