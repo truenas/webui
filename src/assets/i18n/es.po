@@ -4,6 +4,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid " Builtin Groups"
+msgstr ""
+
+msgid " Builtin Users"
+msgstr ""
+
 msgid " Check Notifications for more details."
 msgstr ""
 
@@ -15,6 +21,9 @@ msgstr " El primer vdev tiene "
 
 msgid " First vdev is a "
 msgstr " El primer vdev es un "
+
+msgid " KiB."
+msgstr ""
 
 msgid " Plugin"
 msgstr ""
@@ -48,6 +57,12 @@ msgstr " y todas sus instantaneas (snapshots)?"
 msgid " and will be disrupted if the pool is locked:"
 msgstr ""
 
+msgid " builtin groups (default setting is <i>hidden</i>)."
+msgstr ""
+
+msgid " builtin users (default setting is <i>hidden</i>)."
+msgstr ""
+
 msgid " but datastore "
 msgstr ""
 
@@ -67,11 +82,20 @@ msgid " is required."
 msgstr ""
 
 msgid ""
+" is still running,  the Guest OS did not respond as expected. It is "
+"possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> "
+"option to stop the VM."
+msgstr ""
+
+msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr ""
 " es el mínimo espacio de grabación recomendado. Elegir un tamaño mas "
 "pequeño puede reducir el rendimiento del sistema."
+
+msgid " seconds"
+msgstr ""
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
@@ -113,6 +137,9 @@ msgid "'. All data on that pool was destroyed."
 msgstr "' Todos los datos de este pool fueron destruidos."
 
 msgid "(24 Hours)"
+msgstr ""
+
+msgid "(Examples: 500 KiB, 500M, 2 TB)"
 msgstr ""
 
 msgid "(No description)"
@@ -966,7 +993,7 @@ msgstr ""
 msgid "Advanced Jail Creation"
 msgstr ""
 
-msgid "Advanced Mode"
+msgid "Advanced Options"
 msgstr ""
 
 msgid "Advanced Plugin Installation"
@@ -1110,6 +1137,19 @@ msgid ""
 msgstr ""
 
 msgid "Allow list"
+msgstr ""
+
+msgid ""
+"Allow more ciphers for  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sshd\" "
+"target=\"_blank\">sshd(8)</a>  in addition to the defaults in  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sshd_config\" "
+"target=\"_blank\">sshd_config(5)</a>.  <code>None</code> allows unencrypted "
+"SSH connections and  <code>AES128-CBC</code> allows the 128-bit  <a "
+"href=\"https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf\" "
+"target=\"_blank\">Advanced Encryption Standard</a>.<br><br>  WARNING: these "
+"ciphers are considered security vulnerabilities and  should only be allowed "
+"in a secure network environment."
 msgstr ""
 
 msgid "Allow non-root mount"
@@ -1546,7 +1586,7 @@ msgstr ""
 msgid "Basic Info"
 msgstr ""
 
-msgid "Basic Mode"
+msgid "Basic Options"
 msgstr ""
 
 msgid "Basic Properties"
@@ -4854,6 +4894,9 @@ msgstr ""
 msgid "Finish Upgrade?"
 msgstr ""
 
+msgid "Finished"
+msgstr ""
+
 msgid "Finished Time:"
 msgstr ""
 
@@ -4900,10 +4943,19 @@ msgstr ""
 msgid "Force Delete?"
 msgstr ""
 
+msgid "Force Stop After Timeout"
+msgstr ""
+
 msgid "Force deletion of dataset "
 msgstr ""
 
 msgid "Force size"
+msgstr ""
+
+msgid ""
+"Force the VM to stop if it has not already  stopped within the specified "
+"shutdown timeout. Without this option selected, the VM will  receive the "
+"shutdown signal, but may or may not complete the shutdown process."
 msgstr ""
 
 msgid ""
@@ -5176,6 +5228,9 @@ msgid "HTTPS Port"
 msgstr ""
 
 msgid "Help"
+msgstr ""
+
+msgid "Hide"
 msgstr ""
 
 msgid "Hide Standard Error"
@@ -5582,7 +5637,7 @@ msgstr ""
 msgid "In"
 msgstr ""
 
-msgid "In KiB/s. A default of <i>0</i> means unlimited."
+msgid "In KiBs or greater. A default of <i>0 KiB</i> means unlimited. "
 msgstr ""
 
 msgid "Include Dataset Properties"
@@ -6137,7 +6192,7 @@ msgstr ""
 msgid "Local User Download Bandwidth"
 msgstr ""
 
-msgid "Local User Upload Bandwidth"
+msgid "Local User Upload Bandwidth: "
 msgstr ""
 
 msgid "Locality"
@@ -6336,6 +6391,9 @@ msgstr ""
 msgid ""
 "Maximum number of simultaneous connections permitted via AFP. The default "
 "limit is 50."
+msgstr ""
+
+msgid "Maximum swap size is 99 GiB"
 msgstr ""
 
 msgid "Maximum swap space to use for the jail."
@@ -6925,6 +6983,9 @@ msgid "No, continue with import"
 msgstr ""
 
 msgid "Nobind"
+msgstr ""
+
+msgid "None"
 msgstr ""
 
 msgid "Not Available"
@@ -9872,6 +9933,9 @@ msgid ""
 "with time monitoring hardware."
 msgstr ""
 
+msgid "Show"
+msgstr ""
+
 msgid "Show Hidden Files"
 msgstr ""
 
@@ -9911,6 +9975,9 @@ msgid "Shutdown Command"
 msgstr ""
 
 msgid "Shutdown Mode"
+msgstr ""
+
+msgid "Shutdown Timeout"
 msgstr ""
 
 msgid "Shutdown Timer"
@@ -10345,6 +10412,9 @@ msgid "System Processes"
 msgstr ""
 
 msgid "System Serial"
+msgstr ""
+
+msgid "System Time Zone:"
 msgstr ""
 
 msgid "System clock"
@@ -10853,6 +10923,12 @@ msgstr ""
 msgid ""
 "The system will reboot and be briefly unavailable while applying updates. "
 "Apply updates and reboot?"
+msgstr ""
+
+msgid ""
+"The time in seconds the system waits for the VM to cleanly shut down.  "
+"During system shutdown, the system initiates poweroff for the VM after the "
+"shutdown  timeout has expired."
 msgstr ""
 
 msgid ""
@@ -11723,6 +11799,12 @@ msgstr ""
 msgid "View Enclosure"
 msgstr ""
 
+msgid "View License Info"
+msgstr ""
+
+msgid "View Licenses"
+msgstr ""
+
 msgid "View Logs"
 msgstr ""
 
@@ -11792,6 +11874,9 @@ msgid "Warning"
 msgstr ""
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
+msgstr ""
+
+msgid "Weak Ciphers"
 msgstr ""
 
 msgid "Web Interface"
