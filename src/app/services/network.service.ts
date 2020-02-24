@@ -3,6 +3,7 @@
 import {Injectable} from '@angular/core';
 import {RestService} from './rest.service'
 import {WebSocketService} from './ws.service';
+import * as ipRegex from 'ip-regex';
 
 @Injectable({ providedIn: 'root'})
 export class NetworkService {
@@ -75,5 +76,12 @@ export class NetworkService {
       return true;
     }
     return false;
+  }
+
+  checkIP4(address: string) {
+    return ipRegex({exact: true, includeBoundaries: true}).test(address);
+  }
+  checkIP6(address: string) {
+    return ipRegex.v6({exact: true, includeBoundaries: true}).test(address);
   }
 }

@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { NetworkService, RestService, DialogService, WebSocketService } from '../../../../services';
 
+import * as ipRegex from 'ip-regex';
+
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
@@ -363,6 +365,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   }
 
   afterInit(entityForm: any) {
+    console.log(this.networkService.checkIP4('192.168.1.255'));
+    console.log(this.networkService.checkIP6('0:0:0:0:0:ffff:ae7:23f'))
+
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
