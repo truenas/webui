@@ -28,6 +28,7 @@ import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { DatasetQuotasComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas.component';
 
 export const routes: Routes = [
   {
@@ -65,6 +66,10 @@ export const routes: Routes = [
           {
             path: 'permissions/:pk', component: DatasetPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
+          },
+          {
+            path: 'quotas/:pk', component: DatasetQuotasComponent,
+            data: { title: 'Edit User/Group Quotas', breadcrumb: 'Edit User/Group Quotas' }
           },
           {
             path: 'id/:pk/dataset/acl/:path', component: DatasetAclComponent,

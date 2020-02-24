@@ -45,6 +45,7 @@ import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumech
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { JobService } from 'app/services';
+import { DatasetQuotasComponent } from './volumes/datasets/dataset-quotas/dataset-quotas.component';
 
 @NgModule({
   imports : [
@@ -82,7 +83,8 @@ import { JobService } from 'app/services';
     DiskFormComponent,
     DiskWipeComponent,
     DiskBulkEditComponent,
-    SmartResultsComponent
+    SmartResultsComponent,
+    DatasetQuotasComponent
   ],
   entryComponents: [SnapshotDetailsComponent],
   providers : [UserService, StorageService, MessageService, JobService]

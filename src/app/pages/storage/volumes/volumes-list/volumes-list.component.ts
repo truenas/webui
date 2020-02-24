@@ -875,6 +875,18 @@ export class VolumesListTableConfig implements InputTableConf {
                 ]));
               }
             },
+            {
+              id: rowData.name,
+              name: T('Edit User/Group Quotas'),
+              label: T("Edit User/Group Quotas"),
+              matTooltip: helptext.acl_edit_msg,
+              ttposition: 'left',
+              onClick: (row1) => {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "quotas", row1.id
+                ]));
+              }
+            },
           );          
       }
 
