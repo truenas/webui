@@ -14,6 +14,9 @@ import  helptext  from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 })
 export class DatasetQuotasComponent {
   public queryCall: string = 'pool.dataset.get_quota';
+  public editCall: string = 'pool.dataset.set_quota';
+  public addCall: string = 'pool.dataset.set_quota';
+  public isEntity = true;
   public route_success: string[] = [ 'storage', 'pools' ];
   public entityForm: any;
   public dataFields = ['user_data_quota', 'group_data_quota'];
@@ -102,7 +105,6 @@ export class DatasetQuotasComponent {
   preInit(entityForm: EntityFormComponent) {
 
     const paramMap: any = (<any>this.aroute.params).getValue();
-    console.log(paramMap)
     this.pk = paramMap.pk;
   }
 
@@ -135,9 +137,6 @@ export class DatasetQuotasComponent {
         };
       })
     );
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP']).subscribe((pk_dataset)=>{
-      console.log(pk_dataset)
-    })
   }
 
   blurEvent(parent) {
@@ -158,18 +157,52 @@ export class DatasetQuotasComponent {
     parent.storageService.humanReadable = '';
   }
 
-  customSubmit(data) {
+  beforeSubmit(data) {
     let quotas = [];
-    data.ds = this.pk;
-    data.user.forEach((user) => {
-      quotas.push({
-        quota_type: 'USER',
-        id: user,
-        quota_value: this.storageService.convertHumanStringToNum(data.user_data_quota)
+    // data.ds = this.pk;
+    if (data.user) {
+      data.user.forEach((user) => {
+        quotas.push({
+          quota_type: 'USER',
+          id: user.toString(),
+          quota_value: this.storageService.convertHumanStringToNum(data.user_data_quota)
+        },
+        {
+          quota_type: 'USEROBJ',
+          id: user.toString(),
+          quota_value: this.storageService.convertHumanStringToNum(data.user_obj_quota)
+        })
+      });
+    }
+    if (data.group) {
+      data.user.forEach((group) => {
+        quotas.push({
+          quota_type: 'GROUP',
+          id: group.toString(),
+          quota_value: this.storageService.convertHumanStringToNum(data.group_data_quota)
+        },
+        {
+          quota_type: 'GROUPOBJ',
+          id: group.toString(),
+          quota_value: this.storageService.convertHumanStringToNum(data.group_obj_quota)
+        })
       })
-    })
+    }
+
+    delete data.user;
+    delete data.user_data_quota;
+    delete data.user_obj_quota;
+    delete data.group;
+    delete data.group_data_quota;
+    delete data.group_obj_quota
     data.quotas = quotas;
     console.log(data);
+    // ds: "one_and_only"
+    //   quotas: Array(4)
+    //   0: {quota_type: "USER", id: "1000", quota_value: 23068672}
+    //   1: {quota_type: "USEROBJ", id: 1000, quota_value: 88}
+    //   2: {quota_type: "USER", id: "1001", quota_value: 23068672}
+    //   3: {quota_type: "USEROBJ", id: 1001, quota_value: 88}
   }
 
 }
