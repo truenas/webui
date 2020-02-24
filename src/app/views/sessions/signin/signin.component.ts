@@ -46,7 +46,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   public failover_statuses = {
     'SINGLE': "",
     'MASTER': T(`Active ${globalHelptext.Ctrlr}.`),
-    'BACKUP': T(`Passive ${globalHelptext.Ctrlr}.`),
+    'BACKUP': T(`Standby ${globalHelptext.Ctrlr}.`),
     'ELECTING': T(`Electing ${globalHelptext.Ctrlr}.`),
     'IMPORTING': T("Importing pools."),
     'ERROR': T("Failover is in an error state.")
