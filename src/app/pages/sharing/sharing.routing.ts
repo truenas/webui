@@ -1,6 +1,8 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { T } from "app/translate-marker";
+
 import { AFPListComponent } from './afp/afp-list/';
 import { AFPFormComponent } from './afp/afp-form/';
 import { NFSListComponent } from './nfs/nfs-list/';
@@ -9,6 +11,7 @@ import { WebdavListComponent } from './webdav/webdav-list/';
 import { WebdavFormComponent } from './webdav/webdav-form/';
 import { SMBListComponent } from './smb/smb-list/';
 import { SMBFormComponent } from './smb/smb-form/';
+import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
 import { ISCSI } from './iscsi/iscsi.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/';
@@ -98,6 +101,10 @@ export const routes: Routes = [
         path: 'edit/:pk',
         component: SMBFormComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
+      },{
+        path: 'acl/:pk',
+        component: SMBAclComponent,
+        data: { title: T('Share ACL'), breadcrumb: T('Share ACL')},
       }]
     }, {
       path: 'iscsi',
