@@ -1,9 +1,11 @@
 
 
 import {Injectable} from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms'
 import {RestService} from './rest.service'
 import {WebSocketService} from './ws.service';
 import * as ipRegex from 'ip-regex';
+import * as isCidr from 'is-cidr';
 
 @Injectable({ providedIn: 'root'})
 export class NetworkService {
@@ -83,5 +85,11 @@ export class NetworkService {
   }
   checkIP6(address: string) {
     return ipRegex.v6({exact: true, includeBoundaries: true}).test(address);
+  }
+  checkIP4Cidr(address: string) {
+    return isCidr.v4(address);
+  }
+  checkIP6Cidr(address: string) {
+    return isCidr.v6(address);
   }
 }

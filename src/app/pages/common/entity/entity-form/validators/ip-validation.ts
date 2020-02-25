@@ -1,5 +1,6 @@
 import { FormControl } from '@angular/forms';
 import * as _ from 'lodash';
+import * as ipRegex from 'ip-regex';
 
 export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all') {
     const ipv4_regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})$/;
@@ -48,3 +49,86 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all') {
         return null;
     }
 }
+
+export function ipv4Validator(control: string) {
+    let thisControl: FormControl;
+  
+    return function ipValidate(control: FormControl) {
+  
+      if (!control.parent) {
+        return null;
+      }
+  
+      // Initializing the validator.
+      if (!thisControl) {
+        thisControl = control;
+      }
+  
+      if(thisControl.value == "" || thisControl.value == undefined) {
+        return null;
+      }
+
+      if (!ipRegex.v4({exact: true }).test(thisControl.value)) {
+            return {ip2 : true};
+        };
+      
+
+      return null;
+    }
+  }
+
+  export function ipv6Validator(control: string) {
+    let thisControl: FormControl;
+  
+    return function ipValidate(control: FormControl) {
+  
+      if (!control.parent) {
+        return null;
+      }
+  
+      // Initializing the validator.
+      if (!thisControl) {
+        thisControl = control;
+      }
+  
+      if(thisControl.value == "" || thisControl.value == undefined) {
+        return null;
+      }
+
+      if (!ipRegex.v6({exact: true }).test(thisControl.value)) {
+            return {ip2 : true};
+        };
+      
+
+      return null;
+    }
+  }
+
+  export function ipv4or6Validator(control: string) {
+    let thisControl: FormControl;
+  
+    return function ipValidate(control: FormControl) {
+  
+      if (!control.parent) {
+        return null;
+      }
+  
+      // Initializing the validator.
+      if (!thisControl) {
+        thisControl = control;
+      }
+  
+      if(thisControl.value == "" || thisControl.value == undefined) {
+        return null;
+      }
+
+      if (!ipRegex({exact: true }).test(thisControl.value)) {
+            return {ip2 : true};
+        };
+      
+
+      return null;
+    }
+  }
+
+  

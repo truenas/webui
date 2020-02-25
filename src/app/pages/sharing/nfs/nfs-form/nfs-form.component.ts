@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { DialogService, NetworkService, RestService, WebSocketService } from '../../../../services/';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import globalHelptext from 'app/helptext/global-helptext';
 
@@ -173,7 +173,7 @@ export class NFSFormComponent {
             name: 'network',
             placeholder: helptext_sharing_nfs.placeholder_network,
             tooltip: helptext_sharing_nfs.tooltip_network,
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ]
+            validation : [ ipv4or6Validator('network') ]
           }],
           listFields: []
       }]

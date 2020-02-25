@@ -9,6 +9,8 @@ import * as ipRegex from 'ip-regex';
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
+import { ipv4or6Validator } from '../../../common/entity/entity-form/validators/ip-validation';
+
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 import { CoreService } from 'app/core/services/core.service';
@@ -256,7 +258,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               tooltip: helptext.alias_address_tooltip,
               type: 'ipwithnetmask',
               width: '55%',
-              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+              validation : [ ipv4or6Validator('address') ],
             },
             {
               name: 'failover_address',
@@ -266,7 +268,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               isHidden: true,
               type: 'ipwithnetmask',
               width: '55%',
-              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+              validation : [ ipv4or6Validator('failover_address') ],
             },
             {
               name: 'failover_virtual_address',
@@ -277,7 +279,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               type: 'ipwithnetmask',
               width: '55%',
               netmaskPreset: 32,
-              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+              validation : [ ipv4or6Validator('failover_virtual_address') ],
 
             }
         ],
@@ -365,9 +367,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   }
 
   afterInit(entityForm: any) {
-    console.log(this.networkService.checkIP4('192.168.1.255'));
-    console.log(this.networkService.checkIP6('0:0:0:0:0:ffff:ae7:23f'))
-
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
