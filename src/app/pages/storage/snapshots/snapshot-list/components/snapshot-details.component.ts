@@ -1,5 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
+import { SystemGeneralService } from '../../../../../services/';
 import helptext from "app/helptext/storage/snapshots/snapshots";
 import {
   EntityAction,
@@ -25,16 +26,22 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
   public details: { label: string; value: string | number }[] = [];
   public actions: EntityAction[] = [];
 
-  constructor(private _ws: WebSocketService, private _router: Router) {}
+  constructor(private _ws: WebSocketService, private _router: Router,
+    protected sysGenService: SystemGeneralService) {}
+
+  public timeZone: string;
 
   public ngOnInit(): void {
-    this._ws
+    this.sysGenService.getSysInfo().subscribe((res) => {
+      this.timeZone = res.timezone;
+      this._ws
       .call("zfs.snapshot.query", [[["id", "=", this.config.name]]])
       .pipe(
         map(response => ({
           ...response[0].properties,
           name: this.config.name,
-          creation:  new Date(response[0].properties.creation.parsed.$date).toLocaleString()
+          creation:  new Date(response[0].properties.creation.parsed.$date)
+          .toLocaleString('en-US', {timeZone: this.timeZone})
         }))
       )
       .subscribe(snapshot => {
@@ -53,7 +60,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
           }
         ];
       });
-
+    })
     this.actions = this.parent.conf.getActions();
   }
 }
