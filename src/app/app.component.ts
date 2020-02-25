@@ -50,6 +50,7 @@ export class AppComponent {
     public matIconRegistry: MatIconRegistry,
     public chartDataUtils: ChartDataUtilsService) {
 
+    // MISC CUSTOM ICONS
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
@@ -70,6 +71,8 @@ export class AppComponent {
       "ha_reconnecting",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
     );
+
+    // TRUENAS
     this.matIconRegistry.addSvgIcon(
       "truenas_logomark",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
@@ -82,6 +85,22 @@ export class AppComponent {
       "truenas_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logo_full.svg")
     );
+
+    // TRUENAS CORE
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logotype.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logo_full.svg")
+    );
+
+    // FREENAS
     this.matIconRegistry.addSvgIcon(
       "freenas_logomark",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo.svg")

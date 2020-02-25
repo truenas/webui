@@ -220,8 +220,13 @@ span.passive{
 
 .platform-logo-wrapper{
   padding-top:12px;
+  color: var(--primary-color-txt);
 }
 
+.platform-logo-wrapper .mat-icon{
+  width:70%;
+  height:auto;
+}
 .product-image.truenas{
   padding-bottom:0;
 }

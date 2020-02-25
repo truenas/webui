@@ -47,7 +47,6 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
     description:'',
     label:'',
     labelSwatch:'',
-    hasDarkLogo:false,
     accentColors:['violet','blue','magenta', 'cyan', 'red','green', 'orange', 'yellow'],
     favorite:false,
     primary:"",
@@ -138,14 +137,6 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
           width:'100%',
           placeholder : 'Description',
           tooltip: 'Enter a short description of the theme.',
-        },
-        {
-          type: 'checkbox',
-          name: 'hasDarkLogo',
-          width:'100%',
-          placeholder: 'Enable Dark Logo',
-          tooltip: `Enable this to give the FreeNAS Logo a dark fill color`,
-          class:'inline'
         },
         {
           type: 'select',

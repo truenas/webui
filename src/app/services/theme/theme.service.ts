@@ -11,10 +11,10 @@ export interface Theme {
   label: string;
   labelSwatch?: string;
   accentColors: string[];
-  favorite:boolean;
-  hasDarkLogo: boolean;
-  logoPath?:string;
-  logoTextPath?:string;
+  favorite?:boolean; // Deprecate: Hasn't been used since the theme switcher was in the topbar
+  hasDarkLogo?: boolean; // Deprecate: logo colors are set with CSS now
+  logoPath?:string; // Deprecate: Themes haven't used this in a couple of releases now
+  logoTextPath?:string; // Deprecate: Themes haven't used this in a couple of releases now
   primary:string;
   accent:string;
   bg1:string
@@ -43,7 +43,7 @@ export class ThemeService {
 
   // Theme lists
   public allThemes: Theme[];
-  public favoriteThemes: Theme[];
+  //public favoriteThemes: Theme[];
   public themesMenu: Theme[];
   private _customThemes: Theme[];
 
@@ -53,10 +53,10 @@ export class ThemeService {
       label: "iX Official",
       labelSwatch:"blue",
       description:'Official iX System Colors on Dark',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
+      //hasDarkLogo:false,
+      //logoPath:'assets/images/light-logo.svg',
+      //logoTextPath:'light-logo-text.svg',
+      //favorite:false,
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       //secondary:"var(--bg1)",
@@ -83,10 +83,10 @@ export class ThemeService {
       label: "iX Dark",
       labelSwatch:"blue",
       description:'FreeNAS 11.2 default theme',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
+      //hasDarkLogo:false,
+      //logoPath:'assets/images/light-logo.svg',
+      //logoTextPath:'light-logo-text.svg',
+      //favorite:false,
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       //secondary:"var(--bg1)",
@@ -113,10 +113,10 @@ export class ThemeService {
       label: "iX Blue",
       labelSwatch:"blue",
       description:'Official iX System Colors on light',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
+      //hasDarkLogo:false,
+      //logoPath:'assets/images/light-logo.svg',
+      //logoTextPath:'light-logo-text.svg',
+      //favorite:false,
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       accent:"var(--yellow)",
@@ -143,10 +143,10 @@ export class ThemeService {
       label: "Dracula",
       labelSwatch:"blue",
       description:'Dracula color theme',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
+      //hasDarkLogo:false,
+      //logoPath:'assets/images/light-logo.svg',
+      //logoTextPath:'light-logo-text.svg',
+      //favorite:false,
       //accentColors:['blue', 'green','violet', 'yellow', 'red', 'cyan', 'magenta', 'orange'],
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
@@ -177,10 +177,10 @@ export class ThemeService {
       label: "Paper",
       labelSwatch:"blue",
       description:'FreeNAS 11.2 default theme',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
+      //hasDarkLogo:false,
+      //logoPath:'assets/images/light-logo.svg',
+      //logoTextPath:'light-logo-text.svg',
+      //favorite:false,
       //accentColors:['violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'green'],
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
@@ -212,10 +212,10 @@ export class ThemeService {
       label: "Solarized Dark",
       labelSwatch:"bg2",
       description:'Solarized dark color scheme',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
+      //hasDarkLogo:false,
+      //logoPath:'assets/images/light-logo.svg',
+      //logoTextPath:'light-logo-text.svg',
+      //favorite:false,
       accentColors:['blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow', 'red'],
       primary:"var(--fg1)",
       accent:"var(--cyan)",
@@ -242,10 +242,10 @@ export class ThemeService {
       label: "Midnight",
       labelSwatch:"blue",
       description:'Dark theme with blues and greys',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
+      //hasDarkLogo:false,
+      //logoPath:'assets/images/light-logo.svg',
+      //logoTextPath:'light-logo-text.svg',
+      //favorite:false,
       //accentColors:['violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'green'],
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
@@ -273,10 +273,10 @@ export class ThemeService {
       label: "High Contrast",
       labelSwatch:"fg1",
       description:'High contrast theme based on Legacy UI color scheme',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
+      //hasDarkLogo:false,
+      //logoPath:'assets/images/light-logo.svg',
+      //logoTextPath:'light-logo-text.svg',
+      //favorite:false,
       accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
       primary:"var(--fg2)",
       accent:"var(--yellow)",
@@ -499,16 +499,16 @@ export class ThemeService {
   }
 
   set customThemes(customThemes:Theme[]){
-    let result = [];
+    /*let result = [];
     for(let i = 0; i < customThemes.length; i++){
       if(customThemes[i].favorite){
         result.push(customThemes[i]);
       }
-    }
+    }*/
     this._customThemes = customThemes;
-    this.favoriteThemes = result; 
+    //this.favoriteThemes = result; 
     this.allThemes = this.freenasThemes.concat(this.customThemes);
-    this.themesMenu = this.freenasThemes.concat(this.favoriteThemes);
+    //this.themesMenu = this.freenasThemes.concat(this.favoriteThemes);
     this.core.emit({name:"ThemeListsChanged"});
   }
 

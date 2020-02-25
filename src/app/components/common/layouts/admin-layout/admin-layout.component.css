@@ -1,11 +1,29 @@
 .notification-sidenav {
   min-width: 350px;
-	width: 400px;
-	max-width: 30%;
+  width: 400px;
+  max-width: 30%;
 }
-.app-logo, .app-logo-text {
-	position: relative;
-	top: 13px;
+.app-logo,
+.app-logo-text {
+  position: relative;
+}
+
+.app-logo{  
+  top: 13px;
+}
+
+.branding .app-logo-text {
+  width: auto;
+  height: 75%;
+  top: 7px;
+  left: -42px;
+}
+
+.branding.retro .app-logo-text {
+  width: auto;
+  height: 40px;
+  top:13px;
+  left:-36px;
 }
 
 .tn-logo {
