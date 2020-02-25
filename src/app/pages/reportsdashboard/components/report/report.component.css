@@ -9,8 +9,9 @@
   height: 480px;
 }*/
 
-.widget .mat-card-content{
+.mat-card-content{
   margin:0;
+  height:100%;
 }
 
 .card-title-text{
@@ -27,10 +28,13 @@
 
 .legend {
   display:table; 
-  /*margin-left:16px;*/
-  /*border:solid 1px rgba(0,0,0,0);
-  border-radius:4px;*/
-  overflow:hidden;
+  /*background-color: rgba(0,0,0,0.1);*/
+}
+
+.legend-group-wrapper {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 200px
 }
 
 .legend-label  {
@@ -547,10 +551,10 @@ p.value{
 
 .legend-group {
   /*margin-right: 20px;*/
-  max-width: calc(50% - 16px) !important;
-  background-color: rgba(0,0,0,0.1);
-  padding: 12px;
-  margin: 4px;
+  /*max-width: calc(50% - 16px) !important;*/
+  /*background-color: rgba(0,0,0,0.1);*/
+  /*padding: 8px;*/
+  margin: 0 0 0 4px;
   border: solid 1px rgba(0,0,0,0);
   border-radius:4px;
 }
@@ -583,11 +587,10 @@ h3 {
 }
 
 .report .mat-toolbar-row{
-    margin-bottom: 16px;
 }
 
 .report .mat-card.zero-state{
-  min-height:475px;
+  min-height:325px;
   /*background-color:rgba(0,0,0,0.0);*/
   position:relative;
 }
