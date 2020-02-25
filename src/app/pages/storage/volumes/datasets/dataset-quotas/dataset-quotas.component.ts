@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService, StorageService, WebSocketService, UserService } from '../../../../../services/';
+import { DialogService, StorageService, WebSocketService, AppLoaderService } from '../../../../../services/';
 import  helptext  from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 
 @Component({
@@ -13,9 +13,6 @@ import  helptext  from 'app/helptext/storage/volumes/datasets/dataset-quotas';
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class DatasetQuotasComponent {
-  public queryCall: string = 'pool.dataset.get_quota';
-  public editCall: string = 'pool.dataset.set_quota';
-  public addCall: string = 'pool.dataset.set_quota';
   public isEntity = true;
   public route_success: string[] = [ 'storage', 'pools' ];
   public entityForm: any;
@@ -43,7 +40,7 @@ export class DatasetQuotasComponent {
           tooltip: helptext.users.data_tooltip,
           value: 0,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.userBlurEvent,
           parent: this,
         },
         {
@@ -74,7 +71,7 @@ export class DatasetQuotasComponent {
           tooltip: helptext.groups.data_tooltip,
           value: 0,
           blurStatus: true,
-          blurEvent: this.blurEvent2,
+          blurEvent: this.groupBlurEvent,
           parent: this,
         },
         {
@@ -95,15 +92,10 @@ export class DatasetQuotasComponent {
   ];
 
   constructor(protected ws: WebSocketService, protected storageService: StorageService,
-    protected aroute: ActivatedRoute) { }
-
-  // resourceTransformIncomingRestData(data) {
-  //   console.log(data);
-  //   return data;
-  // }
+    protected aroute: ActivatedRoute, protected loader: AppLoaderService,
+    protected router: Router) { }
 
   preInit(entityForm: EntityFormComponent) {
-
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.pk = paramMap.pk;
   }
@@ -111,18 +103,50 @@ export class DatasetQuotasComponent {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     const users = _.find(this.fieldConfig, {name: "user"});
-      const groups = _.find(this.fieldConfig, {name: "group"});
+    const groups = _.find(this.fieldConfig, {name: "group"});
 
-    this.ws.call('user.query', [[["builtin", "=",false]]]).subscribe(res => {
+    this.ws.call('user.query').subscribe(res => {
       res.map(user => {
         users.options.push({label: user.username, value: user.uid})
-      })
+      });
+
+      this.ws.call('pool.dataset.get_quota', [this.pk, 'USER']).subscribe(res => {
+        let names = []
+        const userName = entityEdit.formGroup.controls['user'];
+        const userDataQuota = entityEdit.formGroup.controls['user_data_quota'];
+        const userObjQuota = entityEdit.formGroup.controls['user_obj_quota'];
+        res.map(user => {
+          names.push(user.id);
+          userDataQuota.setValue(this.storageService.convertBytestoHumanReadable(user.quota, 0));
+          userObjQuota.setValue(user.obj_quota);
+        })
+        userName.setValue(names);
+      }, 
+      err => {
+        console.log(err)
+      });
     });
 
-    this.ws.call('group.query', [[["builtin", "=",false]]]).subscribe(res => {
+    this.ws.call('group.query').subscribe(res => {
       res.map(group => {
         groups.options.push({label: group.group, value: group.gid})
-      })
+      });
+
+      this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP']).subscribe(res => {
+        let names = []
+        const groupName = entityEdit.formGroup.controls['group'];
+        const groupDataQuota = entityEdit.formGroup.controls['group_data_quota'];
+        const groupObjQuota = entityEdit.formGroup.controls['group_obj_quota'];
+        res.map(group => {
+          names.push(group.id);
+          groupDataQuota.setValue(this.storageService.convertBytestoHumanReadable(group.quota, 0));
+          groupObjQuota.setValue(group.obj_quota);
+        })
+        groupName.setValue(names);
+      }, 
+      err => {
+        console.log(err)
+      });
     });
 
     this.dataFields.forEach(field => 
@@ -139,13 +163,13 @@ export class DatasetQuotasComponent {
     );
   }
 
-  blurEvent(parent) {
+  userBlurEvent(parent) {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'user_data_quota');
     }
   }
 
-  blurEvent2(parent) {
+  groupBlurEvent(parent) {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'group_data_quota');
     }
@@ -157,12 +181,11 @@ export class DatasetQuotasComponent {
     parent.storageService.humanReadable = '';
   }
 
-  beforeSubmit(data) {
-    let quotas = [];
-    // data.ds = this.pk;
+  customSubmit(data) {
+    let payload = [];
     if (data.user) {
       data.user.forEach((user) => {
-        quotas.push({
+        payload.push({
           quota_type: 'USER',
           id: user.toString(),
           quota_value: this.storageService.convertHumanStringToNum(data.user_data_quota)
@@ -170,13 +193,13 @@ export class DatasetQuotasComponent {
         {
           quota_type: 'USEROBJ',
           id: user.toString(),
-          quota_value: this.storageService.convertHumanStringToNum(data.user_obj_quota)
+          quota_value: data.user_obj_quota
         })
       });
     }
     if (data.group) {
-      data.user.forEach((group) => {
-        quotas.push({
+      data.group.forEach((group) => {
+        payload.push({
           quota_type: 'GROUP',
           id: group.toString(),
           quota_value: this.storageService.convertHumanStringToNum(data.group_data_quota)
@@ -184,25 +207,14 @@ export class DatasetQuotasComponent {
         {
           quota_type: 'GROUPOBJ',
           id: group.toString(),
-          quota_value: this.storageService.convertHumanStringToNum(data.group_obj_quota)
+          quota_value: data.group_obj_quota
         })
       })
     }
-
-    delete data.user;
-    delete data.user_data_quota;
-    delete data.user_obj_quota;
-    delete data.group;
-    delete data.group_data_quota;
-    delete data.group_obj_quota
-    data.quotas = quotas;
-    console.log(data);
-    // ds: "one_and_only"
-    //   quotas: Array(4)
-    //   0: {quota_type: "USER", id: "1000", quota_value: 23068672}
-    //   1: {quota_type: "USEROBJ", id: 1000, quota_value: 88}
-    //   2: {quota_type: "USER", id: "1001", quota_value: 23068672}
-    //   3: {quota_type: "USEROBJ", id: 1001, quota_value: 88}
+    this.loader.open();
+    this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(res => {
+      this.loader.close();
+      this.router.navigate(new Array('/').concat(this.route_success));
+    })
   }
-
 }

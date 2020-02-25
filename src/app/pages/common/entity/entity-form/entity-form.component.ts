@@ -432,7 +432,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     const payload = [body];
     if (this.pk) {
       payload.unshift(this.pk);
-      console.log(payload)
     }
     return this.ws.call(this.conf.editCall, payload);
   }
