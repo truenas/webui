@@ -239,7 +239,7 @@
             <div class="list-subheader">{{"Advanced Details" | translate}}</div>
             <mat-list>
               <ng-container *ngFor="let key of currentDiskDetailsKeys">
-                <mat-list-item *ngIf="currentDiskDetails[key]" role="listitem">
+                <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[key]" role="listitem">
                   <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
                 </mat-list-item>
               </ng-container>
