@@ -45,6 +45,7 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './support/eula/eula.component';
+import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
 
 export const routes: Routes = [
@@ -285,6 +286,10 @@ export const routes: Routes = [
         component: CertificateAuthoritySignComponent,
         data: { title: 'Sign CSR', breadcrumb: 'Sign CSR' },
       }]
+    }, {
+      path: 'kmip',
+      component: KmipComponent,
+      data: { title: 'KMIP', breadcrumb: 'KMIP', icon: ''},
     }, {
       path: 'certificates',
       data: { title: 'Certificates', breadcrumb: 'Certificates', icon: 'turned_in' },

@@ -60,7 +60,7 @@ import { ProactiveComponent } from './support/proactive/proactive.component';
 import { TnSupportComponent } from './support/tn-support/tn-support.component';
 import { FnSupportComponent } from './support/fn-support/fn-support.component';
 import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
-
+import { KmipComponent} from './kmip/kmip.component';
 
 @NgModule({
   imports: [
@@ -117,6 +117,7 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
     TnSupportComponent,
     FnSupportComponent,
     FnSysInfoComponent,
+    KmipComponent,
   ],
   providers: []
 })
