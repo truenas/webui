@@ -1084,10 +1084,11 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
     this.vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
 
     // get interface options
-    this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+    this.jailService.getInterfaceChoice().subscribe(
       (res) => {
         for (let i in res) {
-          this.interfaces.vnetDisabled.push({ label: res[i].name, value: res[i].name });
+          this.interfaces.vnetDisabled.push({ label: res[i], value: i});
+          this.interfaces.vnetDefaultInterface.push({ label: res[i], value: i});
         }
       },
       (res) => {
@@ -1169,8 +1170,8 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
           if (i === 'interfaces') {
             const ventInterfaces = res['interfaces'].split(',');
             for (const item of ventInterfaces) {
-              this.interfaces.vnetEnabled.push({ label: item, value: item});
-              this.interfaces.vnetDefaultInterface.push({ label: item, value: item});
+              const vent = item.split(':');
+              this.interfaces.vnetEnabled.push({ label: vent[0], value: vent[0] });
             }
           }
           if (this.formGroup.controls[i]) {

@@ -1134,7 +1134,8 @@ export class JailAddComponent implements OnInit, AfterViewInit {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
-          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i]});
+          this.interfaces.vnetDisabled.push({ label: res[i], value: i});
+          this.interfaces.vnetDefaultInterface.push({ label: res[i], value: i});
         }
       },
       (res)=>{
@@ -1231,8 +1232,8 @@ export class JailAddComponent implements OnInit, AfterViewInit {
         if (i === 'interfaces') {
           const ventInterfaces = res['interfaces'].split(',');
           for (const item of ventInterfaces) {
-            this.interfaces.vnetEnabled.push({ label: item, value: item});
-            this.interfaces.vnetDefaultInterface.push({ label: item, value: item});
+            const vent = item.split(':');
+            this.interfaces.vnetEnabled.push({ label: vent[0], value: vent[0] });
           }
         }
         if (this.formGroup.controls[i]) {
