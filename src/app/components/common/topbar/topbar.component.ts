@@ -40,11 +40,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   interval: any;
 
   continuosStreaming: Subscription;
-  showReplication = false;
+
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  replicationDetails;
   resilveringDetails;
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
@@ -146,7 +145,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     });
     this.continuosStreaming = observableInterval(10000).subscribe(x => {
-      this.showReplicationStatus();
       if (this.is_ha) {
         this.getHAStatus();
       }
@@ -333,24 +331,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           }
       });
     }
-  }
-
-  showReplicationStatus() {
-    this.rest.get('storage/replication/', {}).subscribe(res => {
-      let idx = res.data.forEach(x => {
-        if(typeof(x.repl_status) !== "undefined" &&
-            x.repl_status != null && x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
-          this.showReplication = true;
-          this.replicationDetails = x;
-        }
-      });
-    }, err => {
-      console.error(err);
-    })
-  }
-
-  showReplicationDetails(){
-    this.dialogService.Info(T('Replication Status',), this.replicationDetails.repl_status.toString());
   }
 
   showResilveringDetails() {
