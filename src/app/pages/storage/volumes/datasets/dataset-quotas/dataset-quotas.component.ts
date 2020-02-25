@@ -24,6 +24,7 @@ export class DatasetQuotasComponent {
     {
       name: helptext.users.heading,
       label: true,
+      width: '48%',
       config: [
         {
           type: 'select',
@@ -42,6 +43,7 @@ export class DatasetQuotasComponent {
           blurStatus: true,
           blurEvent: this.userBlurEvent,
           parent: this,
+          isLoading: true
         },
         {
           type: 'input',
@@ -50,12 +52,19 @@ export class DatasetQuotasComponent {
           tooltip: helptext.users.obj_tooltip,
           value: 0
         }
-      ]},
-      {
-        name: helptext.groups.heading,
-        label: true,
-        config: [
-
+      ]
+    },
+    {
+      name: 'vertical_divider',
+      label: false,
+      width: '2%',
+      config: []
+    },
+    {
+      name: helptext.groups.heading,
+      label: true,
+      width: '48%',
+      config: [
         {
           type: 'select',
           name: 'group',
@@ -73,6 +82,7 @@ export class DatasetQuotasComponent {
           blurStatus: true,
           blurEvent: this.groupBlurEvent,
           parent: this,
+          isLoading: true
         },
         {
           type: 'input',
@@ -81,9 +91,7 @@ export class DatasetQuotasComponent {
           tooltip: helptext.groups.obj_tooltip,
           value: 0
         }
-
-      ],
-      width: '50%'
+      ]
     },
     {
       name: 'divider',
@@ -121,6 +129,7 @@ export class DatasetQuotasComponent {
           userObjQuota.setValue(user.obj_quota);
         })
         userName.setValue(names);
+        _.find(this.fieldConfig, {name: 'user_data_quota'}).isLoading = false;
       }, 
       err => {
         console.log(err)
@@ -143,6 +152,7 @@ export class DatasetQuotasComponent {
           groupObjQuota.setValue(group.obj_quota);
         })
         groupName.setValue(names);
+        _.find(this.fieldConfig, {name: 'group_data_quota'}).isLoading = false;
       }, 
       err => {
         console.log(err)
@@ -157,7 +167,7 @@ export class DatasetQuotasComponent {
         formField['errors'] = '';
         if (filteredValue !== undefined && isNaN(filteredValue)) {
           formField['hasErrors'] = true;
-          formField['errors'] = 'Oops';
+          formField['errors'] = helptext.shared.input_error;
         };
       })
     );

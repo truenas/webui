@@ -1,5 +1,6 @@
 import { T } from '../../../../translate-marker';
 import globalHelptext from 'app/helptext/global-helptext';
+import { geoOrthographic } from 'd3';
 
 export default {
     users: {
@@ -22,6 +23,10 @@ export default {
             globalHelptext.human_readable.suggestion_tooltip + T(' ???'),
         obj_placeholder: T('Group Object Quota'),
         obj_tooltip: T('Enter a number of objects which may be owned by each of the selected groups.'),
+    },
+
+    shared: {
+        input_error: globalHelptext.human_readable.input_error
     }
 
 }
