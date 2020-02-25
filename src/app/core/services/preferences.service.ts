@@ -72,7 +72,7 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-
+      
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
 

@@ -23,9 +23,8 @@
             </button>
 
             <div class="platform-logo-wrapper" fxFlex="20">
-                <!--<img *ngIf="product_type === 'CORE'" class="platform-logo" src="assets/images/light-logo-full.svg">
-                  <img *ngIf="product_type === 'ENTERPRISE'" class="platform-logo" src="assets/images/TrueNAS_Logo_Full_White.svg">-->
-                <mat-icon svgIcon="truenas_core_logo_full" id="{{product_model}}"></mat-icon>
+                <mat-icon *ngIf="retroLogo == 1" svgIcon="freenas_logo_full" id="{{product_model}}"></mat-icon>
+                <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" svgIcon="truenas_core_logo_full" id="{{product_model}}"></mat-icon>
             </div>
 
             <div class="content-left" [fxFlex.xs]="product_type === 'ENTERPRISE' && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
@@ -34,8 +33,9 @@
                 <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
                     <!--<mat-icon *ngIf="product_type === 'CORE' && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>-->
-                    <mat-icon *ngIf="product_type === 'CORE' && !certified" class="generic" svgIcon="truenas_core_logomark"></mat-icon>
-                    <mat-icon *ngIf="product_type === 'CORE' && certified" class="generic certified" svgIcon="freenas_certified"></mat-icon>
+                    <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="product_type === 'CORE' && !certified && retroLogo == 0" class="generic" svgIcon="truenas_core_logomark"></mat-icon>
+                    <mat-icon *ngIf="product_type === 'CORE' && certified && retroLogo == 0" class="generic certified" svgIcon="freenas_certified"></mat-icon>
                   </ng-template>
                   <div class="generic alert" *ngIf="!product_image && isPassive && ha_status !== 'HA Enabled'">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
