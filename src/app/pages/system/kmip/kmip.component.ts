@@ -26,19 +26,24 @@ export class KmipComponent {
             name: helptext_system_kmip.fieldset_server,
             class: 'server',
             label: true,
+            width: '100%',
             config: [
                 {
                     type: 'input',
                     name: 'server',
                     placeholder: helptext_system_kmip.server.placeholder,
                     tooltip: helptext_system_kmip.server.tooltip,
+                    class: 'inline',
+                    width: '50%'
                 },
                 {
                     type: 'input',
                     inputType: 'number',
                     name: 'port',
                     placeholder: helptext_system_kmip.port.placeholder,
-                    tooltip: helptext_system_kmip.port.tooltip
+                    tooltip: helptext_system_kmip.port.tooltip,
+                    class: 'inline',
+                    width: '50%'
                 }
             ]
         },
@@ -46,6 +51,7 @@ export class KmipComponent {
             name: helptext_system_kmip.fieldset_certificate,
             class: 'certificate',
             label: true,
+            width: '100%',
             config: [
                 {
                     type: 'select',
@@ -54,7 +60,9 @@ export class KmipComponent {
                     tooltip: helptext_system_kmip.certificate.tooltip,
                     options: [
                         { label: '---', value: null },
-                    ]
+                    ],
+                    class: 'inline',
+                    width: '50%'
                 },
                 {
                     type: 'select',
@@ -63,7 +71,9 @@ export class KmipComponent {
                     tooltip: helptext_system_kmip.certificate_authority.tooltip,
                     options: [
                         { label: '---', value: null },
-                    ]
+                    ],
+                    class: 'inline',
+                    width: '50%'
                 }
             ]
         },
@@ -71,6 +81,7 @@ export class KmipComponent {
             name: helptext_system_kmip.fieldset_management,
             class: 'management',
             label: true,
+            width: '100%',
             config: [
                 {
                     type: 'checkbox',
