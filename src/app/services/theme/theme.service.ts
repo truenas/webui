@@ -11,6 +11,7 @@ export interface Theme {
   label: string;
   labelSwatch?: string;
   accentColors: string[];
+  topbar?: string; // CSS var from palette. Defaults to primary
   favorite?:boolean; // Deprecate: Hasn't been used since the theme switcher was in the topbar
   hasDarkLogo?: boolean; // Deprecate: logo colors are set with CSS now
   logoPath?:string; // Deprecate: Themes haven't used this in a couple of releases now
@@ -53,13 +54,9 @@ export class ThemeService {
       label: "iX Official",
       labelSwatch:"blue",
       description:'Official iX System Colors on Dark',
-      //hasDarkLogo:false,
-      //logoPath:'assets/images/light-logo.svg',
-      //logoTextPath:'light-logo-text.svg',
-      //favorite:false,
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      //secondary:"var(--bg1)",
+      topbar:"var(--primary)",
       accent:"var(--cyan)",
       bg1:'#252525',//'#171E26',
       bg2:'#343333',
@@ -83,13 +80,9 @@ export class ThemeService {
       label: "iX Dark",
       labelSwatch:"blue",
       description:'FreeNAS 11.2 default theme',
-      //hasDarkLogo:false,
-      //logoPath:'assets/images/light-logo.svg',
-      //logoTextPath:'light-logo-text.svg',
-      //favorite:false,
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      //secondary:"var(--bg1)",
+      topbar:"var(--primary)",
       accent:"var(--yellow)",
       bg1:'#171E26',
       bg2:'#232d35',//'#1D262D',
@@ -113,18 +106,14 @@ export class ThemeService {
       label: "iX Blue",
       labelSwatch:"blue",
       description:'Official iX System Colors on light',
-      //hasDarkLogo:false,
-      //logoPath:'assets/images/light-logo.svg',
-      //logoTextPath:'light-logo-text.svg',
-      //favorite:false,
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
+      topbar:"var(--primary)",
       accent:"var(--yellow)",
       bg1:'#dddddd',
       bg2:'#ffffff',
       fg1:'#222222',
       fg2:'#333333',
-      //'alt-bg1':'#f8f8f2',
       'alt-bg1':'rgba(122,152,182,0.05)',
       'alt-bg2':'#fafaf5',
       'alt-fg1':'#181a26',
@@ -143,24 +132,16 @@ export class ThemeService {
       label: "Dracula",
       labelSwatch:"blue",
       description:'Dracula color theme',
-      //hasDarkLogo:false,
-      //logoPath:'assets/images/light-logo.svg',
-      //logoTextPath:'light-logo-text.svg',
-      //favorite:false,
-      //accentColors:['blue', 'green','violet', 'yellow', 'red', 'cyan', 'magenta', 'orange'],
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
+      topbar:"var(--primary)",
       accent:"var(--violet)",
       bg1:'#181a26',
       bg2:'#282a36',
       fg1:'#a8a8a2',
       fg2:'#cacac5',
-      //'alt-bg1':'#f8f8f2',
-      //'alt-bg2':'#fafaf5',
       'alt-bg1':'rgba(122,122,122,0.25)',
       'alt-bg2':'rgba(122,122,122,0.5)',
-      //'alt-fg1':'#181a26',
-      //'alt-fg2':'#282a36',
       'alt-fg1':'#f8f8f2',
       'alt-fg2':'#fafaf5',
       yellow:'#f1fa8c',
@@ -177,23 +158,14 @@ export class ThemeService {
       label: "Paper",
       labelSwatch:"blue",
       description:'FreeNAS 11.2 default theme',
-      //hasDarkLogo:false,
-      //logoPath:'assets/images/light-logo.svg',
-      //logoTextPath:'light-logo-text.svg',
-      //favorite:false,
-      //accentColors:['violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'green'],
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      //secondary:"var(--bg1)",
+      topbar:"var(--primary)",
       accent:"var(--yellow)",
       bg1:'#D5D5D5',
       bg2:'#F5F5F5',
       fg1:'#222222',
       fg2:'#333333',
-      /*'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'#6F6E6C',
-      'alt-fg1':'#c1c1c1',
-      'alt-fg2':'#e1e1e1',*/
       'alt-bg1':'rgba(122,152,182,0.05)',
       'alt-bg2':'#fafaf5',
       'alt-fg1':'#181a26',
@@ -212,18 +184,14 @@ export class ThemeService {
       label: "Solarized Dark",
       labelSwatch:"bg2",
       description:'Solarized dark color scheme',
-      //hasDarkLogo:false,
-      //logoPath:'assets/images/light-logo.svg',
-      //logoTextPath:'light-logo-text.svg',
-      //favorite:false,
       accentColors:['blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow', 'red'],
       primary:"var(--fg1)",
+      topbar:"var(--primary)",
       accent:"var(--cyan)",
       bg1:'#002b36',
       bg2:'#073642',
       fg1:'#586e75',
       fg2:'#7f99a2', //'#657b83',
-      //'alt-bg1':'#eee8d5',
       'alt-bg1':'rgba(122,122,122,0.25)',
       'alt-bg2':'#fdf6e3',
       'alt-fg1':'#839496',
@@ -242,14 +210,9 @@ export class ThemeService {
       label: "Midnight",
       labelSwatch:"blue",
       description:'Dark theme with blues and greys',
-      //hasDarkLogo:false,
-      //logoPath:'assets/images/light-logo.svg',
-      //logoTextPath:'light-logo-text.svg',
-      //favorite:false,
-      //accentColors:['violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'green'],
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      //secondary:"var(--bg1)",
+      topbar:"var(--primary)",
       accent:"var(--violet)",
       bg1:'#212a35',
       bg2:'#303d48',//'#1D262D',
@@ -273,18 +236,14 @@ export class ThemeService {
       label: "High Contrast",
       labelSwatch:"fg1",
       description:'High contrast theme based on Legacy UI color scheme',
-      //hasDarkLogo:false,
-      //logoPath:'assets/images/light-logo.svg',
-      //logoTextPath:'light-logo-text.svg',
-      //favorite:false,
       accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
-      primary:"var(--fg2)",
-      accent:"var(--yellow)",
+      primary:"var(--blue)", //"var(--fg2)",
+      topbar:"#000000",
+      accent:"var(--magenta)",
       bg1:'#dddddd',
       bg2:'#ffffff',
       fg1:'#222222',
       fg2:'#333333',
-      //'alt-bg1':'#f8f8f2',
       'alt-bg1':'rgba(122,152,182,0.05)',
       'alt-bg2':'#fafaf5',
       'alt-fg1':'#181a26',
@@ -293,8 +252,8 @@ export class ThemeService {
       orange:'#ee9302',
       red:'#ff0013',
       magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#00a2ff',
+      violet:'#9844b1',
+      blue:'#4784ac',
       cyan:'#00d0d6',
       green:'#59d600'
     }
@@ -396,10 +355,10 @@ export class ThemeService {
   }
 
   setCssVars(theme:Theme){ 
-    let palette = Object.keys(theme);
+    let keys = Object.keys(theme);
 
-    // Isolate palette colors
-    palette.splice(0,7);
+    // Filter out deprecated properties and meta properties
+    let palette = keys.filter( (v) => { return v != 'label' && v != 'logoPath' && v != 'logoTextPath' && v != 'favorite' && v != 'labelSwatch' && v != 'description' && v != 'name'; } )
 
     palette.forEach((color) => {
       let swatch = theme[color];
@@ -422,8 +381,10 @@ export class ThemeService {
     let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
     let primaryTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
     let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-    (<any>document).documentElement.style.setProperty("--primary-txt", /*'var(--' + primaryColor + '-txt)'*/primaryTextColor);
-    (<any>document).documentElement.style.setProperty("--accent-txt", /*'var(--' + accentColor + '-txt)'*/accentTextColor);
+    let topbarTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
+    (<any>document).documentElement.style.setProperty("--topbar-txt", primaryTextColor);
+    (<any>document).documentElement.style.setProperty("--primary-txt", primaryTextColor);
+    (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
     (<any>document).documentElement.style.setProperty("--highlight", accentTextColor);
 
     // Logo light/dark

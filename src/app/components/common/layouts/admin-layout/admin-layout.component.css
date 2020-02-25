@@ -26,6 +26,11 @@
   left:-36px;
 }
 
+.branding.topbar{
+  background-color: var(--topbar) !important;
+  color: var(--topbar-txt) !important;
+}
+
 .tn-logo {
 	width: 40px;
 }
