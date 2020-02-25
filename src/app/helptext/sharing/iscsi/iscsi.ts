@@ -244,7 +244,7 @@ export const helptext_sharing_iscsi = {
   ),
 
   extent_placeholder_enabled: T('Enabled'),
-  extent_tooltip_enabled: T(''),
+  extent_tooltip_enabled: T('Set to enable the iSCSI extent.'),
 
   authaccess_placeholder_tag: T("Group ID"),
   authaccess_tooltip_tag: T(
