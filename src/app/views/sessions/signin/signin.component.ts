@@ -35,10 +35,12 @@ export class SigninComponent implements OnInit, OnDestroy {
   private interval: any;
   public exposeLegacyUI = false;
   public tokenObservable:Subscription;
+  public isTwoFactor = false;
 
   signinData = {
     username: '',
-    password: ''
+    password: '',
+    otp: ''
   }
   public setPasswordFormGroup: FormGroup;
   public has_root_password: Boolean = true;
@@ -120,6 +122,10 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.setPasswordFormGroup = this.fb.group({
       password: new FormControl('', [Validators.required]),
       password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
+    });
+
+    this.ws.call('auth.two_factor_auth').subscribe(res => {
+      this.isTwoFactor = res;
     })
   }
 
@@ -245,9 +251,12 @@ export class SigninComponent implements OnInit, OnDestroy {
   signin() {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
-
-    this.ws.login(this.signinData.username, this.signinData.password)
-                      .subscribe((result) => { this.loginCallback(result); });
+    
+    if (this.isTwoFactor) {
+      this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
+      .subscribe((result) => { this.loginCallback(result); });
+    } else {     this.ws.login(this.signinData.username, this.signinData.password)
+      .subscribe((result) => { this.loginCallback(result); });}
   }
 
   setpassword() {
