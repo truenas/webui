@@ -224,9 +224,14 @@ span.passive{
 }
 
 .platform-logo-wrapper .mat-icon{
-  width:70%;
-  height:auto;
+  width:auto;
+  height: 3rem;
 }
+
+.platform-logo-wrapper .mat-icon.retro{
+  height:2.4rem;
+}
+
 .product-image.truenas{
   padding-bottom:0;
 }

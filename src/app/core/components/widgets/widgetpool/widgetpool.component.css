@@ -109,7 +109,7 @@
 
 .slide.overview .left .left-content{
   display:table;
-  min-height:50%;
+  height: calc(400px * 0.5);
 }
 
 .pool-name{

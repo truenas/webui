@@ -10,20 +10,22 @@
 
 .app-logo{  
   top: 13px;
+  width:40px;
+  height:40px;
+}
+
+.retro .app-logo{
+  /*left: 32px;*/
 }
 
 .branding .app-logo-text {
-  width: auto;
-  height: 75%;
+  width: 105px;
+  height: auto;
   top: 7px;
-  left: -42px;
 }
 
 .branding.retro .app-logo-text {
-  width: auto;
-  height: 40px;
   top:13px;
-  left:-36px;
 }
 
 .branding.topbar{
