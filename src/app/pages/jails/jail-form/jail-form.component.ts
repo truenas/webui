@@ -11,7 +11,8 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
+import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
+import { ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
 import helptext from '../../../helptext/jails/jail-configuration';
 import { T } from '../../../translate-marker';

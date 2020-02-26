@@ -4,13 +4,9 @@ import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { NetworkService, RestService, DialogService, WebSocketService } from '../../../../services';
 
-import * as ipRegex from 'ip-regex';
-
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
-import { ipv4or6Validator } from '../../../common/entity/entity-form/validators/ip-validation';
-
+import { ipv4or6cidrValidator } from '../../../common/entity/entity-form/validators/ip-validation';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 import { CoreService } from 'app/core/services/core.service';
@@ -258,7 +254,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               tooltip: helptext.alias_address_tooltip,
               type: 'ipwithnetmask',
               width: '55%',
-              validation : [ ipv4or6Validator('address') ],
+              validation : [ ipv4or6cidrValidator('address') ],
             },
             {
               name: 'failover_address',
@@ -268,7 +264,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               isHidden: true,
               type: 'ipwithnetmask',
               width: '55%',
-              validation : [ ipv4or6Validator('failover_address') ],
+              validation : [ ipv4or6cidrValidator('failover_address') ],
             },
             {
               name: 'failover_virtual_address',
@@ -279,7 +275,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               type: 'ipwithnetmask',
               width: '55%',
               netmaskPreset: 32,
-              validation : [ ipv4or6Validator('failover_virtual_address') ],
+              validation : [ ipv4or6cidrValidator('failover_virtual_address') ],
 
             }
         ],
