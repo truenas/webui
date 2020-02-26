@@ -50,7 +50,7 @@ import * as isCidr from 'is-cidr';
         return null;
       }
 
-      if (!isCidr.v4(thisControl.value) && !isCidr.v6(thisControl.value)) { console.log('oops')
+      if (!isCidr.v4(thisControl.value) && !isCidr.v6(thisControl.value)) {
             return {ip2 : true};
         };
 
