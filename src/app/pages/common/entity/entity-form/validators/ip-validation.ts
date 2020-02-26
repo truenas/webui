@@ -114,8 +114,8 @@ import * as isCidr from 'is-cidr';
 
   // Used only on sharing/iscsi/portal/portal-form
 export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all') {
-  const ipv4_regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})$/;
-  const ipv6_regex = /^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}(:((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2}))?$/i;
+  const ipv4_regex = ipRegex.v4();
+  const ipv6_regex =  ipRegex.v6()
   let thisControl: FormControl;
 
   return function isValidIp(control: FormControl) {
