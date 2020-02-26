@@ -45,7 +45,6 @@ import * as isCidr from 'is-cidr';
       if (!thisControl) {
         thisControl = control;
       }
-      console.log(thisControl.value)
       if(thisControl.value == "" || thisControl.value == undefined) {
         return null;
       }
@@ -100,14 +99,12 @@ import * as isCidr from 'is-cidr';
       if (!thisControl) {
         thisControl = control;
       }
-  console.log(thisControl.value)
       if(thisControl.value == "" || thisControl.value == undefined) {
         return null;
       }
 
       if (!ipRegex.v6({exact: true }).test(thisControl.value)) {
-        console.log('problem')
-            return {ip2 : true};
+          return {ip2 : true};
         };
       
 

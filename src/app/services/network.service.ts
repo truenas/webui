@@ -4,6 +4,7 @@ import {Injectable} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms'
 import {RestService} from './rest.service'
 import {WebSocketService} from './ws.service';
+import * as isCidr from 'is-cidr';
 
 @Injectable({ providedIn: 'root'})
 export class NetworkService {
@@ -71,8 +72,8 @@ export class NetworkService {
         });
   }
 
-  authNetworkValidator(str, regex) {
-    if (str.match(regex)) {
+  authNetworkValidator(str) {
+    if (isCidr.v4(str) || isCidr.v6(str)) {
       return true;
     }
     return false;
