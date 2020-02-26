@@ -56,7 +56,7 @@ export class ThemeService {
       description:'Official iX System Colors on Dark',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      topbar:"var(--primary)",
+      topbar:"var(--blue)",
       accent:"var(--cyan)",
       bg1:'#252525',//'#171E26',
       bg2:'#343333',
@@ -82,7 +82,7 @@ export class ThemeService {
       description:'FreeNAS 11.2 default theme',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      topbar:"var(--primary)",
+      topbar:"var(--blue)",
       accent:"var(--yellow)",
       bg1:'#171E26',
       bg2:'#232d35',//'#1D262D',
@@ -108,7 +108,7 @@ export class ThemeService {
       description:'Official iX System Colors on light',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      topbar:"var(--primary)",
+      topbar:"var(--blue)",
       accent:"var(--yellow)",
       bg1:'#dddddd',
       bg2:'#ffffff',
@@ -134,7 +134,7 @@ export class ThemeService {
       description:'Dracula color theme',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      topbar:"var(--primary)",
+      topbar:"var(--blue)",
       accent:"var(--violet)",
       bg1:'#181a26',
       bg2:'#282a36',
@@ -160,7 +160,7 @@ export class ThemeService {
       description:'FreeNAS 11.2 default theme',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      topbar:"var(--primary)",
+      topbar:"var(--blue)",
       accent:"var(--yellow)",
       bg1:'#D5D5D5',
       bg2:'#F5F5F5',
@@ -186,7 +186,7 @@ export class ThemeService {
       description:'Solarized dark color scheme',
       accentColors:['blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow', 'red'],
       primary:"var(--fg1)",
-      topbar:"var(--primary)",
+      topbar:"var(--blue)",
       accent:"var(--cyan)",
       bg1:'#002b36',
       bg2:'#073642',
@@ -212,7 +212,7 @@ export class ThemeService {
       description:'Dark theme with blues and greys',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      topbar:"var(--primary)",
+      topbar:"var(--blue)",
       accent:"var(--violet)",
       bg1:'#212a35',
       bg2:'#303d48',//'#1D262D',
@@ -238,7 +238,7 @@ export class ThemeService {
       description:'High contrast theme based on Legacy UI color scheme',
       accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
       primary:"var(--blue)", //"var(--fg2)",
-      topbar:"#000000",
+      topbar:"var(--black)",
       accent:"var(--magenta)",
       bg1:'#dddddd',
       bg2:'#ffffff',
@@ -371,6 +371,11 @@ export class ThemeService {
 
       (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
     });
+
+    // Add Black White and Grey Variables
+    (<any>document).documentElement.style.setProperty("--black","#000000");
+    (<any>document).documentElement.style.setProperty("--white","#ffffff");
+    (<any>document).documentElement.style.setProperty("--grey","#989898");
 
     // Set Material palette colors
     (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);

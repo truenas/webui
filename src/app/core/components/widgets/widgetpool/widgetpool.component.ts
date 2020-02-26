@@ -242,7 +242,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       data: [availableValue]
     };
 
-    let percentage = this.volumeData.used_pct.split("%");
+    let percentage = this.volumeData.used_pct ? this.volumeData.used_pct.split("%") : '';
     this.core.emit({name:"PoolDisksRequest",data:[this.poolState.id]});
 
     this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});

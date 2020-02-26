@@ -77,7 +77,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   ngAfterViewInit(){
 
     this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
 
