@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import { SystemGeneralService, DialogService } from '../../../services/';
+import { SystemGeneralService, DialogService, WebSocketService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_kmip } from 'app/helptext/system/kmip';
@@ -99,10 +99,37 @@ export class KmipComponent {
         }
     ];
 
+    public custActions: Array < any > = [{
+        id: 'sync_keys',
+        name: helptext_system_kmip.btn_sync_keys,
+        function: () => {
+        }
+    }, {
+        id: 'clear_sync_keys',
+        name: helptext_system_kmip.btn_clear_sync_keys,
+        function: () => {
+        }
+    }];
+    public sync_pending = false;
+
     constructor(
         private systemGeneralService: SystemGeneralService,
         private dialogService: DialogService,
-        private dialog: MatDialog) { }
+        private dialog: MatDialog,
+        private ws: WebSocketService) {
+            this.ws.call('kmip.kmip_sync_pending').subscribe(
+                (res) => {
+                    this.sync_pending = res;
+                },
+                (err) => {
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+            )
+        }
+
+    isCustActionVisible(id) {
+        return this.sync_pending;
+    }
 
     preInit() {
         const certificateFieldset = _.find(this.fieldSets, { class: 'certificate' });
