@@ -14,7 +14,11 @@ export const ViewComponentMetadata = {
   styleUrls: ['./view.component.css']
 }
 
-@Component(ViewComponentMetadata)
+@Component({
+  selector: 'view',
+  templateUrl: './view.component.html',
+  styleUrls: ['./view.component.css']
+})
 export class ViewComponent extends View {
 
   readonly componentName = ViewComponent;

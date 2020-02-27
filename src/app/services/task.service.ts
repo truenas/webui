@@ -116,7 +116,7 @@ export class TaskService {
   }
 
   getVolumeList() {
-    return this.rest.get(this.volumeResource, {});
+    return this.ws.call('pool.query', {});
   }
 
   /**

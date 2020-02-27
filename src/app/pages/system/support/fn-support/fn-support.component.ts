@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';

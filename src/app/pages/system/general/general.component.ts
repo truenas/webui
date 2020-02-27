@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
@@ -282,7 +282,7 @@ export class GeneralComponent {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected loader: AppLoaderService,
-    public http: Http,
+    public http: HttpClient,
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
     public localeService: LocaleService,

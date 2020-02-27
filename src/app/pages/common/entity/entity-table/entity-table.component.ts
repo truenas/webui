@@ -1,6 +1,6 @@
 
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
@@ -723,29 +723,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loader.open();
     this.loaderOpen = true;
     const data = {};
-    if (this.conf.wsDelete) {
-      this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
-        (resinner) => {
-          this.getData();
-          this.excuteDeletion = true;
-        },
-        (resinner) => {
-          new EntityUtils().handleWSError(this, resinner, this.dialogService);
-          this.loader.close();
-        }
-      )
-    } else {
-      this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-        (resinner) => {
-          this.getData();
-          this.excuteDeletion = true;
-        },
-        (resinner) => {
-          new EntityUtils().handleError(this, resinner);
-          this.loader.close();
-        }
-      );
-    }
+    this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
+      (resinner) => {
+        this.getData();
+        this.excuteDeletion = true;
+      },
+      (resinner) => {
+        new EntityUtils().handleWSError(this, resinner, this.dialogService);
+        this.loader.close();
+      }
+    )
   }
 
   doDeleteJob(item: any): Observable<{ state: 'SUCCESS' | 'FAILURE' } | false> {
@@ -779,9 +766,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loaderOpen = true;
         }),
         switchMap(() =>
-          (this.conf.wsDelete
-            ? this.ws.call(this.conf.wsDelete, [id])
-            : this.rest.delete(this.conf.resource_name + "/" + id, {})
+          (this.ws.call(this.conf.wsDelete, [id])
           ).pipe(
             take(1),
             catchError(error => {

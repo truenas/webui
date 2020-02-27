@@ -1,7 +1,7 @@
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { WebSocketService } from '../../../services/ws.service';
 import { StorageService } from '../../../services/storage.service';
@@ -21,7 +21,7 @@ export class ErrorDialog {
   public logs;
 
   constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
-    private ws: WebSocketService, public http: Http, public storage: StorageService) {}
+    private ws: WebSocketService, public http: HttpClient, public storage: StorageService) {}
 
   public toggleOpen () {
     const dialogs = document.getElementsByClassName('mat-dialog-container');

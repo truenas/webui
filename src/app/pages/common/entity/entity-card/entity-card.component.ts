@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ElementRef, ViewEncapsulation, ViewChild, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, MatSort } from '@angular/material';
 import { Observable ,  BehaviorSubject ,  Subscription } from 'rxjs';
 
 
@@ -114,6 +113,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
       options['sort'] = sort.join(',');
     }
 
+    /* if we want to use this we will need to convert to websocket
     this.busy =
       this.rest.get(this.conf.resource_name, options).subscribe((res) => {
         if (this.loaderOpen) {
@@ -125,7 +125,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
         if (this.conf.dataHandler) {
           this.conf.dataHandler(this);
         }
-      });
+      });*/
   }
 
   onChangeTable(

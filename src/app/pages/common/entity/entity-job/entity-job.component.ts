@@ -1,9 +1,9 @@
 import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import * as _ from 'lodash';
 
 @Component({
@@ -32,7 +32,7 @@ export class EntityJobComponent implements OnInit {
   @Output() prefailure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
     private ws: WebSocketService, public rest: RestService,
-    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: Http) {}
+    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: HttpClient) {}
 
   ngOnInit() {
     // this.dialogRef.updateSize('35%', '200px');
@@ -147,7 +147,7 @@ export class EntityJobComponent implements OnInit {
         });
   }
 
-  public post(path, options) {
+  /*public post(path, options) {
     this.rest.post(path, options).subscribe(
         (res) => {
           this.job = res;
@@ -161,7 +161,7 @@ export class EntityJobComponent implements OnInit {
         () => {},
         () => {
         });
-  }
+  }*/
   public wspost(path, options) {
     this.http.post(path, options).subscribe(
         (res) => {

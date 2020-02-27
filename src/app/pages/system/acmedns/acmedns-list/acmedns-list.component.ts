@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { WebSocketService } from '../../../../services/';
@@ -18,7 +17,7 @@ export class AcmednsListComponent implements OnInit {
   protected entityList: any;
 
   constructor(protected router: Router,
-    protected ws: WebSocketService, public snackBar: MatSnackBar) {
+    protected ws: WebSocketService) {
   }
 
   ngOnInit() {
