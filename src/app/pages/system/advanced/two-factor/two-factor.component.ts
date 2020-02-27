@@ -2,20 +2,16 @@ import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { WebSocketService } from 'app/services/';
-
+import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 
 @Component({
   selector: 'app-two-factor',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  // styleUrls: ['./two-factor.component.css']
+  template: `<entity-form [conf]="this"></entity-form>`
 })
 export class TwoFactorComponent {
   protected queryCall = 'auth.twofactor.config';
-  protected updateCall = 'auth.twofactor.update';
   private TwoFactorEnabled: boolean;
-  
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -27,7 +23,15 @@ export class TwoFactorComponent {
           type: "paragraph",
           name: "instructions",
           paraText: helptext_system_advanced.two_factor.form.message,
-        },
+        }
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
+      name: helptext_system_advanced.two_factor.form.title,
+      width: "48%",
+      label: false,
+      config: [
         {
           type: "select",
           name: "otp_digits",
@@ -39,7 +43,7 @@ export class TwoFactorComponent {
             { label: 8, value: 8 },
           ],
           required: true,
-          value: 6
+          validation: helptext_system_advanced.two_factor.form.otp.validation
         },
         {
           type: 'input',
@@ -47,21 +51,45 @@ export class TwoFactorComponent {
           inputType: 'number',
           placeholder: helptext_system_advanced.two_factor.form.interval.placeholder,
           tooltip: helptext_system_advanced.two_factor.form.interval.tooltip,
-          value: 30
-        },
+          validation: helptext_system_advanced.two_factor.form.interval.validation
+        }
+      ]
+    },
+    {
+      name: 'vertical-spacer',
+      width: "2%",
+      label: false,
+      config: []
+    },
+    {
+      name: helptext_system_advanced.two_factor.form.title,
+      width: "48%",
+      label: false,
+      config: [
         {
           type: 'input',
           name: 'window',
           inputType: 'number',
           placeholder: helptext_system_advanced.two_factor.form.window.placeholder,
           tooltip: helptext_system_advanced.two_factor.form.window.tooltip,
+          validation: helptext_system_advanced.two_factor.form.window.validation
         },
         {
           type: 'checkbox',
           name: 'ssh',
           placeholder: helptext_system_advanced.two_factor.form.services.placeholder,
           tooltip: helptext_system_advanced.two_factor.form.services.tooltip,
-        },
+        }
+      ]
+    },
+
+    { name: 'divider', divider: true },
+
+    {
+      name: helptext_system_advanced.two_factor.form.sys,
+      width: "100%",
+      label: true,
+      config: [
         {
           type: 'input',
           name: 'secret',
@@ -85,39 +113,98 @@ export class TwoFactorComponent {
           type: "paragraph",
           name: "enabled_status",
           paraText: ''
-        },
-
-
+        }
       ]
     }
   ]
 
-  constructor(protected ws: WebSocketService) { }
+  public custActions: Array<any> = [
+    {
+      id : 'enable_action',
+      name : helptext_system_advanced.two_factor.form.enable_button,
+      function : () => {
+        this.dialog.confirm(helptext_system_advanced.two_factor.form.confirm_dialog.title,
+          helptext_system_advanced.two_factor.form.confirm_dialog.message, true,
+          helptext_system_advanced.two_factor.form.confirm_dialog.btn).subscribe(res => {
+            if (res) {
+              this.loader.open();
+              this.ws.call('auth.twofactor.update', [{enabled: true}] ).subscribe(res => {
+                this.loader.close();
+                this.TwoFactorEnabled = true;
+                this.updateEnabledStatus();
+              }, err => {
+                this.loader.close();
+                this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+                  err.reason, err.trace.formatted);
+              })
+            }
+          })
+      }
+    },
+    {
+      id : 'disable_action',
+      name : helptext_system_advanced.two_factor.form.disable_button,
+      function : () => {
+        this.loader.open();
+        this.ws.call('auth.twofactor.update', [{enabled: false}] ).subscribe(res => {
+          this.loader.close();
+          this.TwoFactorEnabled = false;
+          this.updateEnabledStatus();
+        }, err => {
+          this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+            err.reason, err.trace.formatted);
+        })
+      }
+    }
+  ];
+
+  constructor(protected ws: WebSocketService, protected dialog: DialogService,
+    protected loader: AppLoaderService) { }
 
   resourceTransformIncomingRestData(data) {
     data.ssh = data.services.ssh;
     this.TwoFactorEnabled = data.enabled;
+    this.updateEnabledStatus();
     return data;
   }
 
   afterInit(entityEdit: any) {
     this.ws.call('auth.twofactor.provisioning_uri').subscribe(res => {
       entityEdit.formGroup.controls['uri'].setValue(res);
-      let enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
-      res.enabled ? 
-        enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_true :
-        enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_false;
-    })
+    });
+    let enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
   }
 
-  beforeSubmit(data) {
+  isCustActionVisible(actionId: string) {
+    if (actionId === 'enable_action' && this.TwoFactorEnabled === true) {
+      return false;
+    } else if (actionId === 'disable_action' && this.TwoFactorEnabled === false) {
+      return false;
+    }
+    return true;
+  }
+
+  updateEnabledStatus() {
+    let enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
+    this.TwoFactorEnabled ? 
+    enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_true :
+    enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_false;
+  }
+
+  customSubmit(data) {
     data.enabled = this.TwoFactorEnabled;
     data.services = { ssh: data.ssh };
     const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
     extras.map(extra => {
       delete data[extra];
+    });
+    this.loader.open();
+    this.ws.call('auth.twofactor.update', [data]).subscribe(res => {
+      this.loader.close();
+    }, err => {
+      this.loader.close();
+      this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+        err.reason, err.trace.formatted);
     })
-    console.log(data)
   }
- 
 }
