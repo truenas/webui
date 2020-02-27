@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
 import { Http } from '@angular/http';
 import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
@@ -79,7 +80,16 @@ export class AdvancedComponent implements OnDestroy {
         })
       })
     } 
-  }];
+  },
+  {
+    id : 'two_factor',
+    name: helptext_system_advanced.two_factor.button_msg,
+    function: () => {
+      console.log(new Array('/').concat(['system', 'two-factor']))
+      this.router.navigate(new Array('/').concat(['system', 'advanced', 'two-factor']));
+    }
+  }
+];
 
   public fieldSets = new FieldSets([
     {
@@ -268,7 +278,8 @@ export class AdvancedComponent implements OnDestroy {
     public datePipe: DatePipe,
     public http: Http,
     public storage: StorageService,
-    public validationService: ValidationService
+    public validationService: ValidationService,
+    private router: Router
   ) {}
 
   resourceTransformIncomingRestData(data) {

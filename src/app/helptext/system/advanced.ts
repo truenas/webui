@@ -101,4 +101,52 @@ export const helptext_system_advanced = {
 
   debug_download_failed_title: T("Error Downloading File"),
   debug_download_failed_message: T("Debug could not be downloaded."),  
+
+  two_factor: {
+    button_msg: T('2-Factor Auth'),
+    form: {
+      title: T('Two-Factor Authentication Settings'),
+      message: T('Set up two-factor authentication for this system below, and \
+ then link it to a hardware security key or an authenticator app (Google Authenticator, for example) \
+ on your phone.'),
+  otp: {
+    placeholder: T('One-Time Password (OTP) Digits'),
+    tooltip: T('The number of digits in the One-Time Password. The default value is 6, \
+ which is the length of the standard OTP from Google. Check the settings of your app or device \
+ before selecting this.')
+  },
+  interval: {
+    placeholder: T('Interval'),
+    tooltip: T('The lifespan (in seconds) of each One-Time Password. Default is 30 seconds.')
+  },
+  window: {
+    placeholder: T('Window'),
+    tooltip: T('The number (in seconds) to extend the validity of each OTP. Extending the window \
+ can be useful in high-latency situations.')
+  },
+  services: {
+    placeholder: T('SSH'),
+    tooltip: T('Enable two-factor authentication for SSH access to the system. It is recommended \
+ to leave this DISABLED until after two-factor authentication is successfully tested with the UI.')
+  }, 
+
+  secret: {
+    placeholder: T('Secret'),
+    tooltip: T('The secret used to generate OTPs. The secret is produced by the system when Two-Factor \
+ Authentication is first activated, so this field is read-only.')
+  },
+ 
+  uri: {
+    placeholder: T('Provisioning URI (includes Secret):'),
+    tooltip: T('The URI used to provision an OTP. This can then be encoded in a QR Code \
+ and used to set up an OTP app like Google Authenticator. The URI is produced by the system \
+ when Two-Factor Authentication is first activated, so this field is read-only.')
+  },
+
+  enabled_status_false: T('Two-factor authentication is NOT enabled.'),
+  enabled_status_true: T('Two-factor authentication IS currently enabled.'),
+
+
+    }
+  }
 };
