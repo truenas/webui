@@ -684,7 +684,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       this.dialogRef.componentInstance.success.subscribe(
                         (jobres) => {
                           this.dialogRef.close(false);
-                          if (jobres.progress.percent == 100) {
+                          if (jobres.progress.percent == 100 && jobres.progress.description === "Scrub finished") {
                             this.dialogService.Info(T('Scrub Complete'), T('Scrub complete on pool <i>') + row1.name + "</i>.", '300px', "info", true);
                           } else {
                             this.dialogService.Info(T('Stop Scrub'), T('Stopped the scrub on pool <i>') + row1.name + "</i>.", '300px', "info", true);

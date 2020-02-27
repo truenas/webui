@@ -6,7 +6,7 @@ import { NetworkService, RestService, DialogService, WebSocketService } from '..
 
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
+import { ipv4or6cidrValidator } from '../../../common/entity/entity-form/validators/ip-validation';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 import { CoreService } from 'app/core/services/core.service';
@@ -54,7 +54,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         name : 'name',
         placeholder : helptext.int_name_placeholder,
         tooltip : helptext.int_name_tooltip,
-        required: true,
         validation : helptext.int_name_validation
       },
       {
@@ -254,7 +253,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               tooltip: helptext.alias_address_tooltip,
               type: 'ipwithnetmask',
               width: '55%',
-              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+              validation : [ ipv4or6cidrValidator('address') ],
             },
             {
               name: 'failover_address',
@@ -264,7 +263,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               isHidden: true,
               type: 'ipwithnetmask',
               width: '55%',
-              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+              validation : [ ipv4or6cidrValidator('failover_address') ],
             },
             {
               name: 'failover_virtual_address',
@@ -275,7 +274,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               type: 'ipwithnetmask',
               width: '55%',
               netmaskPreset: 32,
-              validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ],
+              validation : [ ipv4or6cidrValidator('failover_virtual_address') ],
 
             }
         ],

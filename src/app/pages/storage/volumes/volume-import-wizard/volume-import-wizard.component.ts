@@ -228,8 +228,8 @@ export class VolumeImportWizardComponent {
 
   getImportableDisks() {
     this.guid.options = [];
-    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_encrypted_disks_title}, disableClose: true});
-    dialogRef.componentInstance.setDescription(helptext.find_encrypted_disks_msg);
+    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_pools_title}, disableClose: true});
+    dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe((res) => {

@@ -7,7 +7,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FileSizeModule } from 'ngx-filesize';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { EntityModule } from '../common/entity/entity.module';
@@ -51,7 +51,7 @@ import { JobService } from 'app/services';
     RouterModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
-    FileSizeModule, CommonDirectivesModule
+    NgxFilesizeModule, CommonDirectivesModule
   ],
   declarations : [
     VolumesListComponent,

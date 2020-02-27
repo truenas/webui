@@ -10,6 +10,8 @@ import * as _ from 'lodash';
 import { JailService, NetworkService, DialogService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
+import { ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
 import { T } from '../../../translate-marker'
 import helptext from '../../../helptext/jails/jail-configuration';
@@ -165,7 +167,7 @@ export class JailWizardComponent {
           name: 'ip4_addr',
           placeholder: helptext.ip4_addr_placeholder,
           tooltip: helptext.ip4_addr_tooltip,
-          validation : [ regexValidator(this.networkService.ipv4_regex) ],
+          validation : [ ipv4Validator('ip4_addr') ],
           relation: [{
             action: "ENABLE",
             connective: 'AND',
@@ -250,7 +252,7 @@ export class JailWizardComponent {
           name: 'ip6_addr',
           placeholder: helptext.ip6_addr_placeholder,
           tooltip: helptext.ip6_addr_tooltip,
-          validation : [ regexValidator(this.networkService.ipv6_regex) ],
+          validation : [ ipv6Validator('ip6_addr') ],
           class: 'inline',
           width: '50%',
           relation: [{
@@ -344,7 +346,7 @@ export class JailWizardComponent {
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
-          this.interfaces.vnetDisabled.push({ label: res[i], value: res[i]});
+          this.interfaces.vnetDisabled.push({ label: res[i], value: i});
         }
       },
       (res)=>{
@@ -356,7 +358,8 @@ export class JailWizardComponent {
       (res) => {
         const ventInterfaces = res['interfaces'].split(',');
         for (const item of ventInterfaces) {
-          this.interfaces.vnetEnabled.push({ label: item, value: item});
+          const vent = item.split(':');
+          this.interfaces.vnetEnabled.push({ label: vent[0], value: vent[0]});
         }
       },
       (err) => {
