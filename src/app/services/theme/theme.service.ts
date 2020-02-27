@@ -186,7 +186,7 @@ export class ThemeService {
       description:'Solarized dark color scheme',
       accentColors:['blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow', 'red'],
       primary:"var(--fg1)",
-      topbar:"var(--blue)",
+      topbar:"var(--fg1)",
       accent:"var(--cyan)",
       bg1:'#002b36',
       bg2:'#073642',
