@@ -28,7 +28,8 @@ binary-stamp:
 	mkdir -p debian/truenas-webui/usr/share/doc/truenas-webui
 	echo "export default { product:'${PRODUCT}' }" > src/app/helptext/product.ts
 	echo "var product = '${PRODUCT}'" > src/assets/scripts/product.js
-	tar xvf node_files.tgz
+	tar xf node_files.tgz
+	yarnpkg config set strict-ssl false
 	yarnpkg run build:prod:aot
 	cp -r dist/* debian/truenas-webui/usr/share/truenas/webui
 	rm -rf dist/
