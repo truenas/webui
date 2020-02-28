@@ -26,6 +26,21 @@ label: 'sfu20',
 value: 'SFU20',
 }],
 
+idmap_ad: {
+    unix_pg: {
+        placeholder: T('Unix Primary Group'),
+        tooltip: T('When checked, the primary group membership is fetched from the LDAP attributes \
+ (gidNumber). When not checked, the primary group membership is calculated via the "primaryGroupID" \
+ LDAP attribute.'),
+    },
+    unix_nss: {
+        placeholder: T('Unix NSS Info'),
+        tooltip: T('When checked, winbind will retrieve the login shell and home directory from \
+ the LDAP attributes. When not checked or when the AD LDAP entry lacks the SFU attributes the smb4.conf \
+ parameters <code>template shell</code> and <code>template homedir</code> are used.'),
+    }
+},
+
 idmap_autorid_rangesize_name : 'rangesize',
 idmap_autorid_rangesize_placeholder : T('Range Size'),
 idmap_autorid_rangesize_tooltip : T('Define the number of UIDS/GIDS available per domain\
