@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgUploaderModule } from 'ngx-uploader';
 
+import { QRCodeModule } from 'angular2-qrcode';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { MaterialModule } from '../../appMaterial.module';
@@ -68,7 +69,7 @@ import { TwoFactorComponent } from './advanced/two-factor/two-factor.component';
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
-    EnclosureModule, CommonDirectivesModule
+    EnclosureModule, CommonDirectivesModule, QRCodeModule
   ],
   declarations: [
     GeneralComponent,
