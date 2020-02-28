@@ -12,6 +12,7 @@ import { helptext_system_advanced } from 'app/helptext/system/advanced';
 })
 export class TwoFactorComponent {
   protected queryCall = 'auth.twofactor.config';
+  private entityEdit: any;
   private TwoFactorEnabled: boolean;
   public qrInfo: string;
 
@@ -179,14 +180,6 @@ export class TwoFactorComponent {
     return data;
   }
 
-  afterInit(entityEdit: any) {
-    this.ws.call('auth.twofactor.provisioning_uri').subscribe(res => {
-      entityEdit.formGroup.controls['uri'].setValue(res);
-      this.qrInfo = (res);
-    });
-    let enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
-  }
-
   isCustActionVisible(actionId: string) {
     if (actionId === 'enable_action' && this.TwoFactorEnabled === true) {
       return false;
@@ -196,11 +189,23 @@ export class TwoFactorComponent {
     return true;
   }
 
+  afterInit(entityEdit: any) {
+    this.entityEdit = entityEdit;
+    this.getURI();
+  }
+
+  getURI() {
+    this.ws.call('auth.twofactor.provisioning_uri').subscribe(res => {
+      this.entityEdit.formGroup.controls['uri'].setValue(res);
+      this.qrInfo = (res);
+    });
+  }
+
   updateEnabledStatus() {
     let enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
     this.TwoFactorEnabled ? 
-    enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_true :
-    enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_false;
+      enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_true :
+      enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_false;
   }
 
   customSubmit(data) {
