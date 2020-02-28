@@ -225,10 +225,6 @@ export class TwoFactorComponent {
       width: '300px',
       data: { qrInfo: this.qrInfo }
     });
-
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log('The dialog was closed');
-    // });
   }
 
 }
