@@ -115,7 +115,7 @@
     "@angular-devkit/core": "9.0.3",
     "@angular/cli": "9.0.3",
     "@angular/compiler-cli": "9.0.2",
-    "@biesbjerg/ngx-translate-extract": "4.2.0",
+    "@biesbjerg/ngx-translate-extract": "2.3.4",
     "@types/chartist": "0.9.47",
     "@types/d3": "4.12.0",
     "@types/hopscotch": "0.2.30",
