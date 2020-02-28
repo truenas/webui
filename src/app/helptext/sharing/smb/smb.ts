@@ -60,12 +60,6 @@ export const helptext_sharing_smb = {
  For example, <samp>crossrename:sizelimit={50}</samp> allows moves of \
  files up to 50 MiB in size.'),
 
-    placeholder_showhiddenfiles: T('Show Hidden Files'),
-    tooltip_showhiddenfiles: T('Set to disable the Windows <i>hidden</i> attribute\
- on a new Unix hidden file. Unix hidden filenames start\
- with a dot: <b>.foo</b>.\
- Existing files are not affected.'),
-
     placeholder_guestok: T('Allow Guest Access'),
     tooltip_guestok: T('Privileges are the same as the guest account. \
  Guest access is disabled by default in Windows 10 version 1709 and \
@@ -77,10 +71,6 @@ export const helptext_sharing_smb = {
  specifically chosen in MacOS to log in as the guest account. See the \
  <a href="https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/" target="_blank">Apple documentation</a> \
  for more details.'),
-
-    placeholer_guestonly: T('Only Allow Guest Access'),
-    tooltip_guestonly: T('Requires <b>Allow guest access</b> to also be set.\
- Forces guest access for all connections.'),
 
     placeholder_abe: T('Access Based Share Enumeration'),
     tooltip_abe: T('Restrict share visibility to users with read or write access\

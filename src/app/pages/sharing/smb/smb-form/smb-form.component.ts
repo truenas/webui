@@ -109,12 +109,6 @@ export class SMBFormComponent {
         },
         {
           type: 'checkbox',
-          name: 'guestonly',
-          placeholder: helptext_sharing_smb.placeholer_guestonly,
-          tooltip: helptext_sharing_smb.tooltip_guestonly
-        },
-        {
-          type: 'checkbox',
           name: 'abe',
           placeholder: helptext_sharing_smb.placeholder_abe,
           tooltip: helptext_sharing_smb.tooltip_abe
@@ -146,12 +140,6 @@ export class SMBFormComponent {
           tooltip: helptext_sharing_smb.tooltip_recyclebin
         },
         {
-          type: 'checkbox',
-          name: 'showhiddenfiles',
-          placeholder: helptext_sharing_smb.placeholder_showhiddenfiles,
-          tooltip: helptext_sharing_smb.tooltip_showhiddenfiles
-        },
-        {
           type: 'textarea',
           name: 'auxsmbconf',
           placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
@@ -169,9 +157,7 @@ export class SMBFormComponent {
     'hostsdeny',
     'hostsallow',
     'guestok',
-    'guestonly',
     'abe',
-    'showhiddenfiles',
     'recyclebin',
     'browsable',
     'ro',
