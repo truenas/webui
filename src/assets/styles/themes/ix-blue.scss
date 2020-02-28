@@ -1282,6 +1282,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #fn-instructions {
       font-size: 110%;
     }
+    #update-license-btn {
+      background-color: var(--primary);
+      color: white;
+      top: 53px;
+    }
   }
 
   app-tn-sys-info {
@@ -1427,6 +1432,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       }
     }
 
+  }
+
+  app-entity-dialog #tn_core_upgrade_license_message {
+    margin-bottom: 8px;
   }
 
   app-tn-support {
