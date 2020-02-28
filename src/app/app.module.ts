@@ -18,7 +18,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { NavigationService } from "./services/navigation/navigation.service";
 import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
-import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
+import { AboutModalDialogComponent } from './components/common/dialog/about/about-dialog.component';
 import { TaskManagerComponent } from './components/common/dialog/task-manager/task-manager.component';
 import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
@@ -81,7 +81,7 @@ export function createTranslateLoader(http: HttpClient) {
     EntityModule,
     NgxWebstorageModule.forRoot(),
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TaskManagerComponent, DirectoryServicesMonitorComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialogComponent, TaskManagerComponent, DirectoryServicesMonitorComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -100,7 +100,7 @@ export function createTranslateLoader(http: HttpClient) {
     ConfirmDialog,
     ErrorDialog,
     InfoDialog,
-    AboutModalDialog,
+    AboutModalDialogComponent,
     TaskManagerComponent,
     DirectoryServicesMonitorComponent,
     ConsolePanelModalDialog,
