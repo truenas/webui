@@ -46,7 +46,8 @@ export class IdmapComponent implements OnInit {
       placeholder: helptext.idmap_range_low_placeholder,
       tooltip: helptext.idmap_range_tooltip,
       inputType: 'number',
-      validation: this.rangeLowValidation
+      validation: this.rangeLowValidation,
+      required: true
     },
     {
       type: 'input',
@@ -54,15 +55,31 @@ export class IdmapComponent implements OnInit {
       placeholder: helptext.idmap_range_high_placeholder,
       tooltip: helptext.idmap_range_tooltip,
       inputType: 'number',
-      validation: this.rangeHighValidation
+      validation: this.rangeHighValidation,
+      required: true
     },
     {
       type: 'select',
       name: helptext.idmap_ad_schema_mode_name,
       placeholder: helptext.idmap_ad_schema_mode_placeholder,
       tooltip: helptext.idmap_ad_schema_mode_tooltip,
-      options: helptext.idmap_ad_schema_mode_options
-    }];
+      options: helptext.idmap_ad_schema_mode_options,
+      value: 'RFC2307'
+    },
+    {
+      type: 'checkbox',
+      name: 'unix_primary_group',
+      placeholder: helptext.idmap_ad.unix_pg.placeholder,
+      tooltip: helptext.idmap_ad.unix_pg.tooltip,
+      value: false
+    },
+    {
+      type: 'checkbox',
+      name: 'unix_nss_info',
+      placeholder: helptext.idmap_ad.unix_nss.placeholder,
+      tooltip: helptext.idmap_ad.unix_nss.tooltip,
+      value: false
+    },];
   public autoridFieldConfig: FieldConfig[] = [
     {
       type: 'input',
