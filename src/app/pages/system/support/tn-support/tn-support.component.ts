@@ -19,7 +19,6 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 export class TnSupportComponent implements OnInit {
   public entityEdit: any;
   public screenshot: any;
-  public payload = {};
   public subs: any;
   public saveSubmitText = helptext.submitBtn;
   public custActions: Array<any> = [];
@@ -181,22 +180,23 @@ export class TnSupportComponent implements OnInit {
   }
 
   customSubmit(entityEdit): void{
-    this.payload['name'] = entityEdit.name;
-    this.payload['email'] = entityEdit.email;
-    this.payload['phone'] = entityEdit.phone;
-    this.payload['category'] = entityEdit.TNCategory;
-    this.payload['environment'] = entityEdit.environment;
-    this.payload['criticality'] = entityEdit.criticality;
-    this.payload['attach_debug'] = entityEdit.attach_debug || false;
-    this.payload['title'] = entityEdit.title;
-    this.payload['body'] = entityEdit.body;
-    this.openDialog();
+    let payload = {};
+    payload['name'] = entityEdit.name;
+    payload['email'] = entityEdit.email;
+    payload['phone'] = entityEdit.phone;
+    payload['category'] = entityEdit.TNCategory;
+    payload['environment'] = entityEdit.environment;
+    payload['criticality'] = entityEdit.criticality;
+    payload['attach_debug'] = entityEdit.attach_debug || false;
+    payload['title'] = entityEdit.title;
+    payload['body'] = entityEdit.body;
+    this.openDialog(payload);
   };
 
-  openDialog() {
+  openDialog(payload) {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
     let url;
-    dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
+    dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(res=>{
       if (res.result) {
@@ -252,5 +252,6 @@ export class TnSupportComponent implements OnInit {
     this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
     this.entityEdit.formGroup.controls['environment'].setValue('production');
     this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
+    this.subs = [];
   };
 }
