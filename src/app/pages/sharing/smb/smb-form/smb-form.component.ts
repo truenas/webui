@@ -31,7 +31,8 @@ export class SMBFormComponent {
 
   protected fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_smb.fieldset_general,
+      name: helptext_sharing_smb.fieldset_basic,
+      class: 'basic',
       label: true,
       config: [
         {
@@ -57,38 +58,32 @@ export class SMBFormComponent {
           parent: this
         },
         {
-          type: 'checkbox',
-          name: 'home',
-          placeholder: helptext_sharing_smb.placeholder_home,
-          tooltip: helptext_sharing_smb.tooltip_home,
+          type: 'select',
+          name: 'purpose',
+          placeholder: helptext_sharing_smb.placeholder_purpose,
+          tooltip: helptext_sharing_smb.tooltip_purpose,
+          options: [],
         },
         {
           type: 'input',
           name: 'comment',
           placeholder: helptext_sharing_smb.placeholder_comment,
           tooltip: helptext_sharing_smb.tooltip_comment,
-        },
-        {
-          type: 'checkbox',
-          name: 'timemachine',
-          placeholder: helptext_sharing_smb.placeholder_timemachine,
-          tooltip: helptext_sharing_smb.tooltip_timemachine,
-        },
-        {
-          type: 'checkbox',
-          name: 'shadowcopy',
-          placeholder: helptext_sharing_smb.placeholder_shadowcopy,
-          tooltip: helptext_sharing_smb.tooltip_shadowcopy,
-          value: true
         }
       ]
     },
     { name: 'divider', divider: false },
     {
       name: helptext_sharing_smb.fieldset_access,
-      label: false,
+      label: true,
       width: '49%',
       config: [
+        {
+          type: 'checkbox',
+          name: 'acl',
+          placeholder: helptext_sharing_smb.placeholder_acl,
+          tooltip: helptext_sharing_smb.tooltip_acl,
+        },
         {
           type: 'checkbox',
           name: 'ro',
@@ -130,9 +125,28 @@ export class SMBFormComponent {
     { name: 'spacer', label: false, width: '2%' },
     {
       name: helptext_sharing_smb.fieldset_other,
-      label: false,
+      label: true,
       width: '49%',
       config: [
+        {
+          type: 'checkbox',
+          name: 'home',
+          placeholder: helptext_sharing_smb.placeholder_home,
+          tooltip: helptext_sharing_smb.tooltip_home,
+        },
+        {
+          type: 'checkbox',
+          name: 'timemachine',
+          placeholder: helptext_sharing_smb.placeholder_timemachine,
+          tooltip: helptext_sharing_smb.tooltip_timemachine,
+        },
+        {
+          type: 'checkbox',
+          name: 'shadowcopy',
+          placeholder: helptext_sharing_smb.placeholder_shadowcopy,
+          tooltip: helptext_sharing_smb.tooltip_shadowcopy,
+          value: true
+        },
         {
           type: 'checkbox',
           name: 'recyclebin',
@@ -140,11 +154,42 @@ export class SMBFormComponent {
           tooltip: helptext_sharing_smb.tooltip_recyclebin
         },
         {
+          type: 'checkbox',
+          name: 'aapl_name_mangling',
+          placeholder: helptext_sharing_smb.placeholder_aapl_name_mangling,
+          tooltip: helptext_sharing_smb.tooltip_aapl_name_mangling,
+        },
+        {
+          type: 'checkbox',
+          name: 'streams',
+          placeholder: helptext_sharing_smb.placeholder_streams,
+          tooltip: helptext_sharing_smb.tooltip_streams,
+        },
+        {
+          type: 'checkbox',
+          name: 'durablehandle',
+          placeholder: helptext_sharing_smb.placeholder_durablehandle,
+          tooltip: helptext_sharing_smb.tooltip_durablehandle,
+        },
+        {
+          type: 'checkbox',
+          name: 'fsrvp',
+          placeholder: helptext_sharing_smb.placeholder_fsrvp,
+          tooltip: helptext_sharing_smb.tooltip_fsrvp,
+        },
+        {
+          type: 'input',
+          name: 'path_suffix',
+          placeholder: helptext_sharing_smb.placeholder_path_suffix,
+          tooltip: helptext_sharing_smb.tooltip_path_suffix,
+        },
+        {
           type: 'textarea',
           name: 'auxsmbconf',
           placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
           tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
-        }
+        },
+      
       ]
     },
     { name: 'divider', divider: true }    
@@ -153,14 +198,23 @@ export class SMBFormComponent {
   private cifs_vfsobjects: any;
 
   protected advanced_field: Array<any> = [
-    'auxsmbconf',
-    'hostsdeny',
-    'hostsallow',
+    'acl',
+    'ro',
+    'browsable',
     'guestok',
     'abe',
+    'hostsallow',
+    'hostsdeny',
+    'home',
+    'timemachine',
+    'shadowcopy',
     'recyclebin',
-    'browsable',
-    'ro',
+    'aapl_name_mangling',
+    'streams',
+    'durablehandle',
+    'fsrvp',
+    'path_suffix',
+    'auxsmbconf'
   ];
 
   public custActions: Array<any> = [
@@ -169,7 +223,7 @@ export class SMBFormComponent {
       name : globalHelptext.basic_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
-        this.toggleFieldsets(false);
+        // this.toggleFieldsets(false);
       }
     },
     {
@@ -177,12 +231,13 @@ export class SMBFormComponent {
       name : globalHelptext.advanced_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
-        this.toggleFieldsets(true);
+        // this.toggleFieldsets(true);
       }
     }
   ];
 
   public entityForm: EntityFormComponent;
+  public presets: any;
 
   constructor(
     protected router: Router,
@@ -231,23 +286,36 @@ export class SMBFormComponent {
           return;
         }
       });
+    const generalFieldsets = _.find(this.fieldSets, {class: 'basic'});
+    const purposeField = _.find(generalFieldsets.config, {name: 'purpose'});
+    this.ws.call('sharing.smb.presets').subscribe(
+      (res) => {
+        this.presets = res;
+        for (const item in res) {
+          purposeField.options.push({label: res[item]['verbose_name'], value: res[item]});
+        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      }
+    )
   }
 
-  /* Show/hide advanced fieldsets */
-  toggleFieldsets(isShow = false): void {
-    this.fieldSets
-      .filter(
-        set =>
-          set.name !== helptext_sharing_smb.fieldset_general &&
-          set.name !== "divider" &&
-          set.name !== "spacer"
-      )
-      .forEach(set => { set.label = isShow; });
+  // /* Show/hide advanced fieldsets */
+  // toggleFieldsets(isShow = false): void {
+  //   this.fieldSets
+  //     .filter(
+  //       set =>
+  //         set.name !== helptext_sharing_smb.fieldset_basic &&
+  //         set.name !== "divider" &&
+  //         set.name !== "spacer"
+  //     )
+  //     .forEach(set => { set.label = isShow; });
 
-    const divSets = this.fieldSets.filter(set => set.name === "divider");
-    divSets.pop(); /* Always show last divider */
-    divSets.forEach(set => { set.divider = isShow; });
-  }
+  //   const divSets = this.fieldSets.filter(set => set.name === "divider");
+  //   divSets.pop(); /* Always show last divider */
+  //   divSets.forEach(set => { set.divider = isShow; });
+  // }
 
   afterSave(entityForm) {
     if (entityForm.formGroup.controls['timemachine'].value && !this.isTimeMachineOn) {
@@ -383,6 +451,11 @@ export class SMBFormComponent {
     setTimeout(() => {
       if (entityForm.formGroup.controls['timemachine'].value) { this.isTimeMachineOn = true };
     }, 700)
+
+    entityForm.formGroup.controls['purpose'].valueChanges.subscribe((res) => {
+      console.log(res);
+      
+    })
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
@@ -393,4 +466,5 @@ export class SMBFormComponent {
       nameControl.setValue(pathControl.value.split('/').pop());
     }
   }
+
 }
