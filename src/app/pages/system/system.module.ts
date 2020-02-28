@@ -62,6 +62,7 @@ import { TnSupportComponent } from './support/tn-support/tn-support.component';
 import { FnSupportComponent } from './support/fn-support/fn-support.component';
 import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component';
 import { TwoFactorComponent } from './advanced/two-factor/two-factor.component';
+import { QRDialog } from './advanced/two-factor/two-factor.component';
 
 
 @NgModule({
@@ -120,7 +121,9 @@ import { TwoFactorComponent } from './advanced/two-factor/two-factor.component';
     FnSupportComponent,
     FnSysInfoComponent,
     TwoFactorComponent,
+    QRDialog
   ],
+  entryComponents: [QRDialog],
   providers: []
 })
 export class SystemModule {}

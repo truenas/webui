@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import * as _ from 'lodash';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 
 @Component({
@@ -12,6 +13,8 @@ import { helptext_system_advanced } from 'app/helptext/system/advanced';
 export class TwoFactorComponent {
   protected queryCall = 'auth.twofactor.config';
   private TwoFactorEnabled: boolean;
+  public qrInfo: string;
+
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -155,11 +158,19 @@ export class TwoFactorComponent {
             err.reason, err.trace.formatted);
         })
       }
+    },
+    {
+      id : 'show_qr',
+      name : "Show QR",
+      function : () => {
+        this.openDialog();
+      }
     }
   ];
 
   constructor(protected ws: WebSocketService, protected dialog: DialogService,
-    protected loader: AppLoaderService) { }
+    protected loader: AppLoaderService,
+    protected mdDialog: MatDialog) { }
 
   resourceTransformIncomingRestData(data) {
     data.ssh = data.services.ssh;
@@ -171,6 +182,7 @@ export class TwoFactorComponent {
   afterInit(entityEdit: any) {
     this.ws.call('auth.twofactor.provisioning_uri').subscribe(res => {
       entityEdit.formGroup.controls['uri'].setValue(res);
+      this.qrInfo = (res);
     });
     let enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
   }
@@ -207,4 +219,32 @@ export class TwoFactorComponent {
         err.reason, err.trace.formatted);
     })
   }
+
+  openDialog(): void {
+    const dialogRef = this.mdDialog.open(QRDialog, {
+      width: '300px',
+      data: { qrInfo: this.qrInfo }
+    });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log('The dialog was closed');
+    // });
+  }
+
+}
+
+@Component({
+  selector: 'qr-dialog',
+  templateUrl: 'qr-dialog.html',
+})
+export class QRDialog {
+
+constructor(
+  public dialogRef: MatDialogRef<QRDialog>,
+  @Inject(MAT_DIALOG_DATA) public data) {}
+
+onNoClick(): void {
+  this.dialogRef.close();
+}
+
 }
