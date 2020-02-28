@@ -74,16 +74,20 @@ export class AppComponent {
 
     // TRUENAS
     this.matIconRegistry.addSvgIcon(
-      "truenas_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+      "truenas_enterprise_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
-      "truenas_logotype",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logotype.svg")
+      "truenas_enterprise_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
     );
     this.matIconRegistry.addSvgIcon(
-      "truenas_logo_full",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logo_full.svg")
+      "truenas_enterprise_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logo_full.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_enterprise_text_only",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_text_only.svg")
     );
 
     // TRUENAS CORE
@@ -98,6 +102,10 @@ export class AppComponent {
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logo_full.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_text_only",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_text_only.svg")
     );
 
     // FREENAS

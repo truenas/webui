@@ -24,8 +24,8 @@
 
             <div class="platform-logo-wrapper" fxFlex="20">
                 <mat-icon *ngIf="retroLogo == 1" svgIcon="freenas_logo_full" class="retro" id="{{product_model}}"></mat-icon>
-                <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" svgIcon="truenas_core_logo_full" id="{{product_model}}"></mat-icon>
-                <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" svgIcon="truenas_enterprise_logo_full" id="{{product_model}}"></mat-icon>
+                <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" svgIcon="truenas_core_text_only" id="{{product_model}}"></mat-icon>
+                <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" svgIcon="truenas_enterprise_text_only" id="{{product_model}}"></mat-icon>
             </div>
 
             <div class="content-left" [fxFlex.xs]="product_type === 'ENTERPRISE' && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
