@@ -7,7 +7,7 @@ import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { SystemGeneralService } from '../../../services/system-general.service';
-import { AboutModalDialog } from '../dialog/about/about-dialog.component';
+import { AboutModalDialogComponent } from '../dialog/about/about-dialog.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
@@ -219,7 +219,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   onShowAbout() {
-    let dialogRef = this.dialog.open(AboutModalDialog, {});
+    let dialogRef = this.dialog.open(AboutModalDialogComponent, {});
 
     dialogRef.afterClosed().subscribe(result => {
       // The dialog was closed
