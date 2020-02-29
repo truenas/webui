@@ -1075,7 +1075,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getTimestamp() {
     let dateTime = new Date();
-    return moment(dateTime).format("YYYY-MM-DD_hh-mm");
+    return moment(dateTime).format("YYYY-MM-DD_HH-mm");
   }
 
   dataHandler(data: any): TreeNode {
