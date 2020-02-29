@@ -34,6 +34,7 @@ export class SMBFormComponent {
       name: helptext_sharing_smb.fieldset_basic,
       class: 'basic',
       label: true,
+      width: '100%',
       config: [
         {
           type : 'explorer',
@@ -43,7 +44,8 @@ export class SMBFormComponent {
           placeholder: helptext_sharing_smb.placeholder_path,
           tooltip: helptext_sharing_smb.tooltip_path,
           required: true,
-          validation : helptext_sharing_smb.validators_path
+          validation : helptext_sharing_smb.validators_path,
+
         },
         {
           type: "input",
@@ -63,18 +65,23 @@ export class SMBFormComponent {
           placeholder: helptext_sharing_smb.placeholder_purpose,
           tooltip: helptext_sharing_smb.tooltip_purpose,
           options: [],
+          class: 'inline',
+          width: '50%'
         },
         {
           type: 'input',
           name: 'comment',
           placeholder: helptext_sharing_smb.placeholder_comment,
           tooltip: helptext_sharing_smb.tooltip_comment,
+          class: 'inline',
+          width: '50%'
         }
       ]
     },
     { name: 'divider', divider: false },
     {
       name: helptext_sharing_smb.fieldset_access,
+      class: 'access',
       label: true,
       width: '49%',
       config: [
@@ -83,48 +90,56 @@ export class SMBFormComponent {
           name: 'acl',
           placeholder: helptext_sharing_smb.placeholder_acl,
           tooltip: helptext_sharing_smb.tooltip_acl,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'ro',
           placeholder: helptext_sharing_smb.placeholder_ro,
-          tooltip: helptext_sharing_smb.tooltip_ro
+          tooltip: helptext_sharing_smb.tooltip_ro,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'browsable',
           placeholder: helptext_sharing_smb.placeholder_browsable,
           tooltip: helptext_sharing_smb.tooltip_browsable,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'guestok',
           placeholder: helptext_sharing_smb.placeholder_guestok,
-          tooltip: helptext_sharing_smb.tooltip_guestok
+          tooltip: helptext_sharing_smb.tooltip_guestok,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'abe',
           placeholder: helptext_sharing_smb.placeholder_abe,
-          tooltip: helptext_sharing_smb.tooltip_abe
+          tooltip: helptext_sharing_smb.tooltip_abe,
+          isHidden: true,
         },
         {
           type: 'textarea',
           name: 'hostsallow',
           placeholder: helptext_sharing_smb.placeholder_hostsallow,
-          tooltip: helptext_sharing_smb.tooltip_hostsallow
+          tooltip: helptext_sharing_smb.tooltip_hostsallow,
+          isHidden: true,
         },
         {
           type: 'textarea',
           name: 'hostsdeny',
           placeholder: helptext_sharing_smb.placeholder_hostsdeny,
-          tooltip: helptext_sharing_smb.tooltip_hostsdeny
+          tooltip: helptext_sharing_smb.tooltip_hostsdeny,
+          isHidden: true,
         }
       ]
     },
     { name: 'spacer', label: false, width: '2%' },
     {
       name: helptext_sharing_smb.fieldset_other,
+      class: 'other',
       label: true,
       width: '49%',
       config: [
@@ -133,61 +148,70 @@ export class SMBFormComponent {
           name: 'home',
           placeholder: helptext_sharing_smb.placeholder_home,
           tooltip: helptext_sharing_smb.tooltip_home,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'timemachine',
           placeholder: helptext_sharing_smb.placeholder_timemachine,
           tooltip: helptext_sharing_smb.tooltip_timemachine,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'shadowcopy',
           placeholder: helptext_sharing_smb.placeholder_shadowcopy,
           tooltip: helptext_sharing_smb.tooltip_shadowcopy,
-          value: true
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'recyclebin',
           placeholder: helptext_sharing_smb.placeholder_recyclebin,
-          tooltip: helptext_sharing_smb.tooltip_recyclebin
+          tooltip: helptext_sharing_smb.tooltip_recyclebin,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'aapl_name_mangling',
           placeholder: helptext_sharing_smb.placeholder_aapl_name_mangling,
           tooltip: helptext_sharing_smb.tooltip_aapl_name_mangling,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'streams',
           placeholder: helptext_sharing_smb.placeholder_streams,
           tooltip: helptext_sharing_smb.tooltip_streams,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'durablehandle',
           placeholder: helptext_sharing_smb.placeholder_durablehandle,
           tooltip: helptext_sharing_smb.tooltip_durablehandle,
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'fsrvp',
           placeholder: helptext_sharing_smb.placeholder_fsrvp,
           tooltip: helptext_sharing_smb.tooltip_fsrvp,
+          isHidden: true,
         },
         {
           type: 'input',
           name: 'path_suffix',
           placeholder: helptext_sharing_smb.placeholder_path_suffix,
           tooltip: helptext_sharing_smb.tooltip_path_suffix,
+          isHidden: true,
         },
         {
           type: 'textarea',
           name: 'auxsmbconf',
           placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
           tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
+          isHidden: true,
         },
       
       ]
@@ -217,13 +241,16 @@ export class SMBFormComponent {
     'auxsmbconf'
   ];
 
+  protected accessFieldsets = _.find(this.fieldSets, {'class': 'access'});
+  protected otherFieldsets = _.find(this.fieldSets, {'class': 'other'});
+
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
       name : globalHelptext.basic_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
-        // this.toggleFieldsets(false);
+        this.updateForm();
       }
     },
     {
@@ -231,13 +258,14 @@ export class SMBFormComponent {
       name : globalHelptext.advanced_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
-        // this.toggleFieldsets(true);
+        this.updateForm();
       }
     }
   ];
 
   public entityForm: EntityFormComponent;
   public presets: any;
+  protected presetFields = [];
 
   constructor(
     protected router: Router,
@@ -273,6 +301,15 @@ export class SMBFormComponent {
     return true;
   }
 
+  updateForm() {
+    for (const field of this.accessFieldsets.config) {
+      field['isHidden'] = this.isBasicMode ? true : false;
+    }
+    for (const field of this.otherFieldsets.config) {
+      field['isHidden'] = this.isBasicMode ? true : false;
+    }
+  }
+
   preInit(entityForm: EntityFormComponent) {
     this.activatedRoute.paramMap
       .pipe(
@@ -286,36 +323,7 @@ export class SMBFormComponent {
           return;
         }
       });
-    const generalFieldsets = _.find(this.fieldSets, {class: 'basic'});
-    const purposeField = _.find(generalFieldsets.config, {name: 'purpose'});
-    this.ws.call('sharing.smb.presets').subscribe(
-      (res) => {
-        this.presets = res;
-        for (const item in res) {
-          purposeField.options.push({label: res[item]['verbose_name'], value: res[item]});
-        }
-      },
-      (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
-      }
-    )
   }
-
-  // /* Show/hide advanced fieldsets */
-  // toggleFieldsets(isShow = false): void {
-  //   this.fieldSets
-  //     .filter(
-  //       set =>
-  //         set.name !== helptext_sharing_smb.fieldset_basic &&
-  //         set.name !== "divider" &&
-  //         set.name !== "spacer"
-  //     )
-  //     .forEach(set => { set.label = isShow; });
-
-  //   const divSets = this.fieldSets.filter(set => set.name === "divider");
-  //   divSets.pop(); /* Always show last divider */
-  //   divSets.forEach(set => { set.divider = isShow; });
-  // }
 
   afterSave(entityForm) {
     if (entityForm.formGroup.controls['timemachine'].value && !this.isTimeMachineOn) {
@@ -434,6 +442,23 @@ export class SMBFormComponent {
   }
 
   afterInit(entityForm: EntityFormComponent) {
+    const generalFieldsets = _.find(this.fieldSets, {class: 'basic'});
+    const purposeField = _.find(generalFieldsets.config, {name: 'purpose'});
+    this.ws.call('sharing.smb.presets').subscribe(
+      (res) => {
+        this.presets = res;
+        for (const item in res) {
+          purposeField.options.push({label: res[item]['verbose_name'], value: item});
+        }
+        if (entityForm.isNew) {
+          entityForm.formGroup.controls['purpose'].setValue('DEFAULT_SHARE');
+        }
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      }
+    )
+
     this.entityForm = entityForm;
     if (entityForm.isNew) {
       entityForm.formGroup.controls['browsable'].setValue(true);
@@ -453,9 +478,23 @@ export class SMBFormComponent {
     }, 700)
 
     entityForm.formGroup.controls['purpose'].valueChanges.subscribe((res) => {
-      console.log(res);
-      
-    })
+      this.clearPresets();
+      for (const item in this.presets[res].params) {
+        this.presetFields.push(item);
+        const ctrl = entityForm.formGroup.controls[item];
+        if (ctrl) {
+          ctrl.setValue(this.presets[res].params[item]);
+          ctrl.disable();
+        }
+      }
+    });
+  }
+
+  clearPresets() {
+    for (const item of this.presetFields) {
+      this.entityForm.formGroup.controls[item].enable();
+    }
+    this.presetFields = [];
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
