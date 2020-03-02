@@ -46,7 +46,7 @@ import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './support/eula/eula.component';
 import { T } from '../../translate-marker';
-import { TwoFactorComponent } from './advanced/two-factor/two-factor.component'
+import { TwoFactorComponent } from './two-factor/two-factor.component'
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -67,17 +67,9 @@ export const routes: Routes = [
       }]
     }, {
       path: 'advanced',
-      // component: AdvancedComponent,
+      component: AdvancedComponent,
       data: { title: 'Advanced', breadcrumb: 'Advanced', icon: 'settings' },
-      children: [{
-        path: '',
-        component: AdvancedComponent,
-        data: { title: 'Advanced', breadcrumb: 'Advanced' },
-      }, {
-        path: 'two-factor',
-        component: TwoFactorComponent,
-        data: { title: 'Two-Factor Auth', breadcrumb: 'Two-Factor Auth' },
-      }] 
+
     }, {
       path: 'viewenclosure',
       component: ViewEnclosureComponent,
@@ -354,6 +346,11 @@ export const routes: Routes = [
           data: { title: 'EULA', breadcrumb: 'EULA'}
         }
       ]
+    },
+    {
+      path: 'two-factor',
+      component: TwoFactorComponent,
+      data: { title: 'Two-Factor Auth', breadcrumb: 'Two-Factor Auth' },
     }
     ]
   }

@@ -72,6 +72,7 @@ export class NavigationService {
         { name: T('ACME DNS'), state: 'acmedns' },
         { name: T('Failover'), state: 'failover', disabled: true },
         { name: T('Support'), state: 'support' },
+        { name: T('2FA'), state: 'two-factor' },
       ]
     },
     {

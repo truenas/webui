@@ -4,7 +4,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { helptext } from 'app/helptext/system/2FA';
 
 @Component({
   selector: 'app-two-factor',
@@ -20,43 +20,43 @@ export class TwoFactorComponent {
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
-      name: helptext_system_advanced.two_factor.form.title,
+      name: helptext.two_factor.title,
       width: "100%",
       label: true,
       config: [
         {
           type: "paragraph",
           name: "instructions",
-          paraText: helptext_system_advanced.two_factor.form.message,
+          paraText: helptext.two_factor.message,
         }
       ]
     },
     { name: 'divider', divider: true },
     {
-      name: helptext_system_advanced.two_factor.form.title,
+      name: helptext.two_factor.title,
       width: "48%",
       label: false,
       config: [
         {
           type: "select",
           name: "otp_digits",
-          placeholder: helptext_system_advanced.two_factor.form.otp.placeholder,
-          tooltip: helptext_system_advanced.two_factor.form.otp.tooltip,
+          placeholder: helptext.two_factor.otp.placeholder,
+          tooltip: helptext.two_factor.otp.tooltip,
           options: [
             { label: 6, value: 6 },
             { label: 7, value: 7 },
             { label: 8, value: 8 },
           ],
           required: true,
-          validation: helptext_system_advanced.two_factor.form.otp.validation
+          validation: helptext.two_factor.otp.validation
         },
         {
           type: 'input',
           name: 'interval',
           inputType: 'number',
-          placeholder: helptext_system_advanced.two_factor.form.interval.placeholder,
-          tooltip: helptext_system_advanced.two_factor.form.interval.tooltip,
-          validation: helptext_system_advanced.two_factor.form.interval.validation
+          placeholder: helptext.two_factor.interval.placeholder,
+          tooltip: helptext.two_factor.interval.tooltip,
+          validation: helptext.two_factor.interval.validation
         }
       ]
     },
@@ -67,7 +67,7 @@ export class TwoFactorComponent {
       config: []
     },
     {
-      name: helptext_system_advanced.two_factor.form.title,
+      name: helptext.two_factor.title,
       width: "48%",
       label: false,
       config: [
@@ -75,15 +75,15 @@ export class TwoFactorComponent {
           type: 'input',
           name: 'window',
           inputType: 'number',
-          placeholder: helptext_system_advanced.two_factor.form.window.placeholder,
-          tooltip: helptext_system_advanced.two_factor.form.window.tooltip,
-          validation: helptext_system_advanced.two_factor.form.window.validation
+          placeholder: helptext.two_factor.window.placeholder,
+          tooltip: helptext.two_factor.window.tooltip,
+          validation: helptext.two_factor.window.validation
         },
         {
           type: 'checkbox',
           name: 'ssh',
-          placeholder: helptext_system_advanced.two_factor.form.services.placeholder,
-          tooltip: helptext_system_advanced.two_factor.form.services.tooltip,
+          placeholder: helptext.two_factor.services.placeholder,
+          tooltip: helptext.two_factor.services.tooltip,
         }
       ]
     },
@@ -91,7 +91,7 @@ export class TwoFactorComponent {
     { name: 'divider', divider: true },
 
     {
-      name: helptext_system_advanced.two_factor.form.sys,
+      name: helptext.two_factor.sys,
       width: "100%",
       label: true,
       config: [
@@ -100,8 +100,8 @@ export class TwoFactorComponent {
           name: 'secret',
           inputType: 'password',
           togglePw: true,
-          placeholder: helptext_system_advanced.two_factor.form.secret.placeholder,
-          tooltip: helptext_system_advanced.two_factor.form.secret.tooltip,
+          placeholder: helptext.two_factor.secret.placeholder,
+          tooltip: helptext.two_factor.secret.tooltip,
           value: 'Whatevs',
           readonly: true,
         },
@@ -110,8 +110,8 @@ export class TwoFactorComponent {
           name: 'uri',
           inputType: 'password',
           togglePw: true,
-          placeholder: helptext_system_advanced.two_factor.form.uri.placeholder,
-          tooltip: helptext_system_advanced.two_factor.form.uri.tooltip,
+          placeholder: helptext.two_factor.uri.placeholder,
+          tooltip: helptext.two_factor.uri.tooltip,
           readonly: true,
         },
         {
@@ -126,20 +126,21 @@ export class TwoFactorComponent {
   public custActions: Array<any> = [
     {
       id : 'enable_action',
-      name : helptext_system_advanced.two_factor.form.enable_button,
+      name : helptext.two_factor.enable_button,
       function : () => {
-        this.dialog.confirm(helptext_system_advanced.two_factor.form.confirm_dialog.title,
-          helptext_system_advanced.two_factor.form.confirm_dialog.message, true,
-          helptext_system_advanced.two_factor.form.confirm_dialog.btn).subscribe(res => {
+        this.dialog.confirm(helptext.two_factor.confirm_dialog.title,
+          helptext.two_factor.confirm_dialog.message, true,
+          helptext.two_factor.confirm_dialog.btn).subscribe(res => {
             if (res) {
               this.loader.open();
               this.ws.call('auth.twofactor.update', [{enabled: true}] ).subscribe(res => {
                 this.loader.close();
                 this.TwoFactorEnabled = true;
                 this.updateEnabledStatus();
+                this.updateSecretAndUri();
               }, err => {
                 this.loader.close();
-                this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+                this.dialog.errorReport(helptext.two_factor.error,
                   err.reason, err.trace.formatted);
               })
             }
@@ -148,7 +149,7 @@ export class TwoFactorComponent {
     },
     {
       id : 'disable_action',
-      name : helptext_system_advanced.two_factor.form.disable_button,
+      name : helptext.two_factor.disable_button,
       function : () => {
         this.loader.open();
         this.ws.call('auth.twofactor.update', [{enabled: false}] ).subscribe(res => {
@@ -156,7 +157,7 @@ export class TwoFactorComponent {
           this.TwoFactorEnabled = false;
           this.updateEnabledStatus();
         }, err => {
-          this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+          this.dialog.errorReport(helptext.two_factor.error,
             err.reason, err.trace.formatted);
         })
       }
@@ -203,8 +204,9 @@ export class TwoFactorComponent {
     // Disables the 'Enable 2F' & 'Show QR' buttons if there is no secret
     if (action_id === 'renew_secret') {
       return this.TwoFactorEnabled ? false : true;
+    } else if (action_id === 'show_qr') {
+      return this.secret && this.secret !== '' ? false : true;
     }
-    return this.secret && this.secret !== '' ? false : true;
   } 
 
   afterInit(entityEdit: any) {
@@ -222,8 +224,8 @@ export class TwoFactorComponent {
   updateEnabledStatus() {
     let enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
     this.TwoFactorEnabled ? 
-      enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_true :
-      enabled.paraText = helptext_system_advanced.two_factor.form.enabled_status_false;
+      enabled.paraText = helptext.two_factor.enabled_status_true :
+      enabled.paraText = helptext.two_factor.enabled_status_false;
   }
 
   customSubmit(data) {
@@ -238,7 +240,7 @@ export class TwoFactorComponent {
       this.loader.close();
     }, err => {
       this.loader.close();
-      this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+      this.dialog.errorReport(helptext.two_factor.error,
         err.reason, err.trace.formatted);
     })
   }
@@ -251,9 +253,9 @@ export class TwoFactorComponent {
   }
 
   renewSecret() {
-    this.dialog.confirm(helptext_system_advanced.two_factor.form.renewSecret.title,
-       helptext_system_advanced.two_factor.form.renewSecret.message, true,
-       helptext_system_advanced.two_factor.form.renewSecret.btn).subscribe(res => {
+    this.dialog.confirm(helptext.two_factor.renewSecret.title,
+       helptext.two_factor.renewSecret.message, true,
+       helptext.two_factor.renewSecret.btn).subscribe(res => {
          if (res) {
            this.loader.open();
            this.ws.call('auth.twofactor.renew_secret').subscribe(res => {
@@ -262,7 +264,7 @@ export class TwoFactorComponent {
            },
            err => {
             this.loader.close();
-            this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+            this.dialog.errorReport(helptext.two_factor.error,
               err.reason, err.trace.formatted);
            })
          }
@@ -277,12 +279,12 @@ export class TwoFactorComponent {
         this.entityEdit.formGroup.controls['uri'].setValue(uri);
       }, err => {
         this.loader.close();
-        this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+        this.dialog.errorReport(helptext.two_factor.error,
           err.reason, err.trace.formatted);
       })
     }, err => {
       this.loader.close();
-      this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+      this.dialog.errorReport(helptext.two_factor.error,
         err.reason, err.trace.formatted);
     })
   }

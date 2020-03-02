@@ -50,9 +50,10 @@
                     required
                     placeholder="{{'Two-Factor Authentication Code' | translate}}"
                     >
-                  <!-- <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
-                    <span *ngIf="password2.errors">{{"Passwords do not match" | translate}}</span>
-                  </mat-error> -->
+                  <mat-error>
+                    <span *ngIf="!failed">{{"Please enter your 2FA code" | translate}}</span>
+                    <span *ngIf="failed">{{"Please enter your 2FA code again" | translate}}</span>
+                  </mat-error>
                 </mat-form-field>
               </div>
               <button name="signin_button" mat-button color="primary" class="full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>

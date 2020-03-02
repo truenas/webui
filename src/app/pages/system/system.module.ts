@@ -61,8 +61,8 @@ import { ProactiveComponent } from './support/proactive/proactive.component';
 import { TnSupportComponent } from './support/tn-support/tn-support.component';
 import { FnSupportComponent } from './support/fn-support/fn-support.component';
 import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component';
-import { TwoFactorComponent } from './advanced/two-factor/two-factor.component';
-import { QRDialog } from './advanced/two-factor/two-factor.component';
+import { TwoFactorComponent } from './two-factor/two-factor.component';
+import { QRDialog } from './two-factor/two-factor.component';
 
 
 @NgModule({

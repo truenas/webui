@@ -301,11 +301,14 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.failed = true;
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
+    this.signinData.otp = '';
     let message = '';
-    if (this.ws.token === null) {
-      message = 'Username or Password is incorrect.';
+    if (this.ws.token === null) { 
+      this.isTwoFactor ? message = 
+        T('Username, Password, or 2FA Code is incorrect.') :
+        message = T('Username or Password is incorrect.');
     } else {
-      message = 'Token expired, please log back in.';
+      message = T('Token expired, please log back in.');
       this.ws.token = null;
     }
     this.translate.get('close').subscribe((ok: string) => {
