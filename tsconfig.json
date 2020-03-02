@@ -20,5 +20,9 @@
       "es2016.array.include"
     ],
     "module": "es2015"
+  },
+  "angularCompilerOptions": {
+    "enableIvy": true,
+    "allowEmptyCodegenFiles": true
   }
 }
