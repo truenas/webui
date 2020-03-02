@@ -6,6 +6,7 @@ import { RestService, TooltipsService, WebSocketService } from '../../../service
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../helptext/network/configuration/configuration';
 
 @Component({
@@ -122,12 +123,14 @@ export class ConfigurationComponent {
         name : 'ipv4gateway',
         placeholder : helptext.ipv4gateway_placeholder,
         tooltip : helptext.ipv4gateway_tooltip,
+        validation: [ipv4Validator('ipv4gateway')]
       },
       {
         type : 'input',
         name : 'ipv6gateway',
         placeholder : helptext.ipv6gateway_placeholder,
         tooltip : helptext.ipv6gateway_tooltip,
+        validation: [ipv6Validator('ipv6gateway')]
       }
     ]},
     {

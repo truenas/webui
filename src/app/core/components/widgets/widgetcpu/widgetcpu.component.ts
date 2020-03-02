@@ -305,7 +305,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       const ds = this.makeDatasets(this.cpuData.data);
  
-      this.chart.data.datasets[0].data = ds[0].data
+      this.chart.data.datasets[0].data = ds[0].data;
+      this.chart.data.datasets[1].data = ds[1].data;
       this.chart.update();
     }
   }
@@ -364,7 +365,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       ds.borderColor = this.rgbToString(bgRGB);
       datasets.push(ds);
     });
-
+   
     return datasets
   }
   

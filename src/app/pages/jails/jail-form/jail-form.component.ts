@@ -11,6 +11,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
 import helptext from '../../../helptext/jails/jail-configuration';
 import { T } from '../../../translate-marker';
@@ -170,7 +171,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               name: 'ip4_addr',
               placeholder: helptext.ip4_addr_placeholder,
               tooltip: helptext.ip4_addr_tooltip,
-              validation: [regexValidator(this.networkService.ipv4_regex)],
+              validation: [ipv4Validator('ip4_addr')],
               class: 'inline',
               width: '50%',
             },
@@ -240,7 +241,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               name: 'ip6_addr',
               placeholder: helptext.ip6_addr_placeholder,
               tooltip: helptext.ip6_addr_tooltip,
-              validation: [regexValidator(this.networkService.ipv6_regex)],
+              validation: [ipv6Validator('ip6_addr')],
               class: 'inline',
               width: '50%',
             },
@@ -861,18 +862,19 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     protected networkService: NetworkService) { }
 
   getReleaseAndInterface() {
-    if (this.plugin !== undefined) {
-      this.jailFromService.getInterface().subscribe(
-        (res) => {
-          for (let i in res) {
-            this.interfaces.vnetDisabled.push({ label: res[i].name, value: res[i].name });
-          }
-        },
-        (res) => {
-          new EntityUtils().handleWSError(this, res, this.dialogService);
+    this.jailService.getInterfaceChoice().subscribe(
+      (res) => {
+        for (const i in res) {
+          this.interfaces.vnetDisabled.push({ label: res[i], value: i });
+          this.interfaces.vnetDefaultInterface.push({ label: res[i], value: i });
         }
-      );
-    } else {
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this, res, this.dialogService);
+      }
+    );
+
+    if (this.plugin === undefined) {
       this.template_list = new Array<string>();
       // get jail templates as release options
       this.jailService.getTemplates().subscribe(
@@ -895,17 +897,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         },
         (err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
-        }
-      );
-
-      this.jailService.getInterfaceChoice().subscribe(
-        (res) => {
-          for (const i in res) {
-            this.interfaces.vnetDisabled.push({ label: res[i], value: res[i] });
-          }
-        },
-        (res) => {
-          new EntityUtils().handleWSError(this, res, this.dialogService);
         }
       );
     }
@@ -972,8 +963,8 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     if (i === 'interfaces') {
       const ventInterfaces = res['interfaces'].split(',');
       for (const item of ventInterfaces) {
-        this.interfaces.vnetEnabled.push({ label: item, value: item });
-        this.interfaces.vnetDefaultInterface.push({ label: item, value: item });
+        const vent = item.split(':');
+        this.interfaces.vnetEnabled.push({ label: vent[0], value: vent[0] });
       }
     }
   }

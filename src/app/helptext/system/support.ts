@@ -150,6 +150,12 @@ export const helptext_system_support = {
     snackbar_action: T('Close')
   },
 
+  core_upgrade_license: {
+    dialog_title: T('Add or Update a License'),
+     dialog_msg: T('To update the current software license or upgrade from TrueNAS Core® to TrueNAS \
+ Enterprise®, copy the text of the TrueNAS license and paste it in this box.')
+  },
+
   is_production_checkbox: {
     placeholder: T('This is a production system'),
     tooltip: T('Set system production state and optionally send initial debug.')

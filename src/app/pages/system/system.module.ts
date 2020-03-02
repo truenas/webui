@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgUploaderModule } from 'ngx-uploader';
+import { NgxUploaderModule } from 'ngx-uploader';
 
 import { EntityModule } from '../common/entity/entity.module';
 
@@ -65,7 +65,7 @@ import { KmipComponent} from './kmip/kmip.component';
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgUploaderModule, routing,
+    ReactiveFormsModule, NgxUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
     EnclosureModule, CommonDirectivesModule
   ],

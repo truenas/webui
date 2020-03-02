@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../../helptext/network/staticroutes/staticroutes';
 import { NetworkService, RestService, WebSocketService } from '../../../../services/';
 
@@ -36,7 +37,7 @@ export class StaticRouteFormComponent {
           placeholder : helptext.sr_gateway_placeholder,
           tooltip : helptext.sr_gateway_tooltip,
           required: true,
-          validation : helptext.sr_gateway_validation
+          validation : [ipv4or6Validator('gateway')]
         },
         {
           type : 'input',

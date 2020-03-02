@@ -435,6 +435,16 @@ export class PluginsComponent {
     },
     {
       name: parentrow.name,
+      icon: 'device_hub',
+      id: "mount",
+      label: T("Mount points"),
+      onClick: (row) => {
+        this.router.navigate(
+          new Array('').concat(["jails", "storage", row.name]));
+      }
+    },
+    {
+      name: parentrow.name,
       id: "management",
       label: T("MANAGE"),
       icon: 'settings',

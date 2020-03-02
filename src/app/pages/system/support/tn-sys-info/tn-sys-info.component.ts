@@ -28,10 +28,7 @@ export class TnSysInfoComponent implements OnInit {
   }
 
   updateLicense() {
-    const localLoader = this.loader;
-    const localWS = this.ws;
-    const localDialogService = this.dialogService;
-
+    const self = this;
     const licenseForm: DialogFormConfiguration = {
       title: helptext.update_license.dialog_title,
       fieldConfig: [
@@ -44,11 +41,11 @@ export class TnSysInfoComponent implements OnInit {
       saveButtonText: helptext.update_license.save_button,
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue.license;
-        localLoader.open();
-        localWS.call('system.license_update', [value]).subscribe((res) => {
+        self.loader.open();
+        self.ws.call('system.license_update', [value]).subscribe((res) => {
           entityDialog.dialogRef.close(true);
-          localLoader.close();
-          localDialogService.confirm(helptext.update_license.reload_dialog_title, 
+          self.loader.close();
+          self.dialogService.confirm(helptext.update_license.reload_dialog_title, 
             helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action)
             .subscribe((res) => {
               if (res) {
@@ -57,9 +54,8 @@ export class TnSysInfoComponent implements OnInit {
           });
         },
         (err) => {
-          localLoader.close();
-          entityDialog.dialogRef.close(true);
-          localDialogService.errorReport((helptext.update_license.error_dialog_title), err.reason, err.trace.formatted);
+          self.loader.close();
+          self.dialogService.errorReport((helptext.update_license.error_dialog_title), err.reason, err.trace.formatted);
         });
       }
 

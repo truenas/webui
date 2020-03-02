@@ -47,9 +47,8 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
     description:'',
     label:'',
     labelSwatch:'',
-    hasDarkLogo:false,
     accentColors:['violet','blue','magenta', 'cyan', 'red','green', 'orange', 'yellow'],
-    favorite:false,
+    topbar:"",
     primary:"",
     accent:"",
     bg1:'',
@@ -140,14 +139,6 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
           tooltip: 'Enter a short description of the theme.',
         },
         {
-          type: 'checkbox',
-          name: 'hasDarkLogo',
-          width:'100%',
-          placeholder: 'Enable Dark Logo',
-          tooltip: `Enable this to give the FreeNAS Logo a dark fill color`,
-          class:'inline'
-        },
-        {
           type: 'select',
           name: 'primary',
           width:'100%',
@@ -165,6 +156,16 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
           required:true,
           options:this.colorOptions,
           tooltip: "Choose the accent color for the theme.",
+          class:'inline'
+        },
+        {
+          type: 'select',
+          name: 'topbar',
+          width:'100%',
+          placeholder: 'Choose Topbar',
+          required:true,
+          options:this.colorOptions,
+          tooltip: "Choose the color for the topbar.",
           class:'inline'
         },
       ]
@@ -468,6 +469,11 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
       for(let color in palette){
         this.colorOptions.push({label:this.colors[color], value:this.colorVars[color]});
       }
+
+      // Add Black White and Gray options
+      this.colorOptions.push({label:"black", value:"var(--black)"});
+      //this.colorOptions.push({label:"white", value:"var(--white)"});
+      this.colorOptions.push({label:"grey", value:"var(--grey)"});
     }
 
     loadValues(themeName?:string){
@@ -484,8 +490,11 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
       }
 
       let ct = Object.assign({},theme);
-      let palette = Object.keys(ct);
-      palette.splice(0,4);
+      let keys = Object.keys(ct);
+      //let palette = keys.splice(0,4);
+      let palette = keys.filter((v) => { 
+        return v != 'name' && v != 'label' && v != 'labelSwatch' && v != 'description' && v != '';
+      });
 
       palette.forEach((color)=>{
         values[color] = ct[color];

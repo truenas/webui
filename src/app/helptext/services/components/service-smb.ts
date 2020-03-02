@@ -61,6 +61,9 @@ cifs_srv_localmaster_tooltip: T('Set to determine if the system participates in\
  or LDAP server, or when Vista or Windows 7 machines\
  are present.'),
 
+cifs_srv_aapl_extensions_placeholder: T('Enable Apple SMB2/3 Protocol Extensions'),
+cifs_srv_aapl_extensions_tooltip: T('Enable Apple SMB2/3 Protocol Extensions. This is required for Time Machine support.'),
+
 cifs_srv_guest_placeholder: T('Guest Account'),
 cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is\
  nobody. Account is required to have permissions to\

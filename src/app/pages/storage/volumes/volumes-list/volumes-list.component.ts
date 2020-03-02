@@ -286,7 +286,7 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.is_decrypted) {
 
       actions.push({
-        label: T("Recovery Key"),
+        label: T("Manage Recovery Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "addkey", row1.id]));
@@ -684,7 +684,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       this.dialogRef.componentInstance.success.subscribe(
                         (jobres) => {
                           this.dialogRef.close(false);
-                          if (jobres.progress.percent == 100) {
+                          if (jobres.progress.percent == 100 && jobres.progress.description === "Scrub finished") {
                             this.dialogService.Info(T('Scrub Complete'), T('Scrub complete on pool <i>') + row1.name + "</i>.", '300px', "info", true);
                           } else {
                             this.dialogService.Info(T('Stop Scrub'), T('Stopped the scrub on pool <i>') + row1.name + "</i>.", '300px', "info", true);
@@ -1075,7 +1075,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getTimestamp() {
     let dateTime = new Date();
-    return moment(dateTime).format("YYYY-MM-DD_hh-mm");
+    return moment(dateTime).format("YYYY-MM-DD_HH-mm");
   }
 
   dataHandler(data: any): TreeNode {
