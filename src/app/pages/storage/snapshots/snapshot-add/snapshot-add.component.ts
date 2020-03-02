@@ -75,10 +75,10 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
       const rows = new EntityUtils().flattenData(res);
 
       rows.forEach((dataItem) => {
-        if (typeof (dataItem.path) !== 'undefined' && dataItem.path.length > 0) {
+        if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
           this.fieldConfig[0].options.push({
-            label: dataItem.path,
-            value: dataItem.path
+            label: dataItem.name,
+            value: dataItem.name
           });
         }
       })
