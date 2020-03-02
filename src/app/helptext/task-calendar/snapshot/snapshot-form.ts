@@ -28,7 +28,7 @@ export default {
  Must include the strings <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are replaced with the four-digit year,\
  month, day of month, hour, and minute as defined in <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a>. A string showing the snapshot\
  lifetime is appended to the name. For example, snapshots of <i>pool1</i> with a Naming Schema of\
- <i>customsnap-%Y%m%d.%H%M</i> and lifetime of two weeks have names like <i>pool1@customsnap-20190315.0527-2w</i>.'),
+ <i>customsnap-%Y%m%d.%H%M</i> have names like <i>pool1@customsnap-20190315.0527</i>.'),
 
     begin_placeholder: T('Begin'),
     begin_tooltip: T('Hour and minute the system can begin\
