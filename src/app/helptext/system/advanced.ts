@@ -127,8 +127,9 @@ export const helptext_system_advanced = {
   },
   window: {
     placeholder: T('Window'),
-    tooltip: T('The number (in seconds) to extend the validity of each OTP. Extending the window \
- can be useful in high-latency situations.'),
+    tooltip: T('Use <i>window</i> to extend the validity of passwords beyond the <i>interval</i> setting. \
+A window etting of 1, for example, means that one password before and after the current one is valid, \
+in addition to the current password. Extending the window can be useful in high-latency situations.'),
     validation: [Validators.min(0)]
   },
   services: {
@@ -163,8 +164,14 @@ export const helptext_system_advanced = {
  will be required to sign into this system. Be sure to immediately set up another two-factor device.'),
     btn: T('Confirm'),
   },
-  error: T('Error')
-  
+  error: T('Error'),
+
+  renewSecret: {
+    title: T('Renew Secret'),
+    message:  T('Renewing the secret will cause a new URI and a \
+    new QR code to be generated, making it necessary to update your two-factor device or app.'),
+    btn: T('Renew')
+  }
   } // end form
   
 } // end two-factor section

@@ -15,6 +15,7 @@ export class TwoFactorComponent {
   private entityEdit: any;
   private TwoFactorEnabled: boolean;
   public qrInfo: string;
+  private secret: string;
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -164,7 +165,14 @@ export class TwoFactorComponent {
       id : 'show_qr',
       name : "Show QR",
       function : () => {
-        this.openDialog();
+        this.openQRDialog();
+      }
+    },
+    {
+      id : 'renew_secret',
+      name : "Renew Secret",
+      function : () => {
+        this.renewSecret();
       }
     }
   ];
@@ -175,6 +183,7 @@ export class TwoFactorComponent {
 
   resourceTransformIncomingRestData(data) {
     data.ssh = data.services.ssh;
+    this.secret = data.secret;
     this.TwoFactorEnabled = data.enabled;
     this.updateEnabledStatus();
     return data;
@@ -188,6 +197,15 @@ export class TwoFactorComponent {
     }
     return true;
   }
+
+  
+  isCustActionDisabled(action_id: string) {
+    // Disables the 'Enable 2F' & 'Show QR' buttons if there is no secret
+    if (action_id === 'renew_secret') {
+      return this.TwoFactorEnabled ? false : true;
+    }
+    return this.secret && this.secret !== '' ? false : true;
+  } 
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -225,11 +243,48 @@ export class TwoFactorComponent {
     })
   }
 
-  openDialog(): void {
+  openQRDialog(): void {
     const dialogRef = this.mdDialog.open(QRDialog, {
       width: '300px',
       data: { qrInfo: this.qrInfo }
     });
+  }
+
+  renewSecret() {
+    this.dialog.confirm(helptext_system_advanced.two_factor.form.renewSecret.title,
+       helptext_system_advanced.two_factor.form.renewSecret.message, true,
+       helptext_system_advanced.two_factor.form.renewSecret.btn).subscribe(res => {
+         if (res) {
+           this.loader.open();
+           this.ws.call('auth.twofactor.renew_secret').subscribe(res => {
+            //  this.loader.close();
+             this.updateSecretAndUri();
+           },
+           err => {
+            this.loader.close();
+            this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+              err.reason, err.trace.formatted);
+           })
+         }
+       })
+  }
+
+  updateSecretAndUri() {
+    this.ws.call('auth.twofactor.config').subscribe(res => {
+      this.entityEdit.formGroup.controls['secret'].setValue(res.secret);
+      this.ws.call('auth.twofactor.provisioning_uri').subscribe(uri => {
+        this.loader.close()
+        this.entityEdit.formGroup.controls['uri'].setValue(uri);
+      }, err => {
+        this.loader.close();
+        this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+          err.reason, err.trace.formatted);
+      })
+    }, err => {
+      this.loader.close();
+      this.dialog.errorReport(helptext_system_advanced.two_factor.form.error,
+        err.reason, err.trace.formatted);
+    })
   }
 
 }
