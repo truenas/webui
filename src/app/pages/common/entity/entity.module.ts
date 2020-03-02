@@ -9,7 +9,7 @@ import { MatSortHeader, MatSort } from '@angular/material';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
-import { NgUploaderModule } from 'ngx-uploader';
+import { NgxUploaderModule } from 'ngx-uploader';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -18,7 +18,7 @@ import { RestService, WebSocketService, JobService } from '../../../services/ind
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { TreeTableModule } from 'primeng/treetable';
-import { FileSizeModule } from 'ngx-filesize';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
@@ -86,8 +86,8 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
-    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
-    OverlayModule, A11yModule, TreeTableModule, FileSizeModule, CommonDirectivesModule
+    Ng2DropdownModule, NgxUploaderModule, FlexLayoutModule, TranslateModule,
+    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule
   ],
   declarations: [
     TaskScheduleListComponent,

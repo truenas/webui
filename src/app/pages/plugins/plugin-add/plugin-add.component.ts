@@ -14,6 +14,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 import { DialogService, JailService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { EntityJobComponent } from '../../common/entity/entity-job';
 import { MatDialog } from '@angular/material';
 import helptext from '../../../helptext/plugins/plugins';
@@ -96,7 +97,7 @@ export class PluginAddComponent implements OnInit {
       name: 'ip4_addr',
       placeholder: helptext.ip4_addr_placeholder,
       tooltip: helptext.ip4_addr_tooltip,
-      validation : [ regexValidator(this.networkService.ipv4_regex) ],
+      validation : [ ipv4Validator('ip4_addr') ],
       relation: [{
         action: "ENABLE",
         connective: 'AND',
@@ -164,7 +165,7 @@ export class PluginAddComponent implements OnInit {
       name: 'ip6_addr',
       placeholder: helptext.ip6_addr_placeholder,
       tooltip: helptext.ip6_addr_tooltip,
-      validation : [ regexValidator(this.networkService.ipv6_regex) ],
+      validation : [ ipv6Validator('ip6_addr') ],
       relation: [{
         action: "ENABLE",
         connective: 'AND',

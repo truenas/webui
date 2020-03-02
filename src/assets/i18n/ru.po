@@ -823,6 +823,9 @@ msgstr ""
 "умолчанию IPv6.<br> <b>Jail без маршрута по умолчанию не сможет получить "
 "доступ ни к каким сетям.</b>"
 
+msgid "ACL Entries"
+msgstr ""
+
 msgid "ACL Mode"
 msgstr "Режим ACL"
 
@@ -1283,6 +1286,9 @@ msgstr "Расширенные детали"
 
 msgid "Advanced Jail Creation"
 msgstr "Расширенное cоздание jail"
+
+msgid "Advanced Mode"
+msgstr ""
 
 msgid "Advanced Options"
 msgstr ""
@@ -1979,7 +1985,13 @@ msgstr "Ключ в кодировке Base64 для учетной записи
 msgid "Basejail"
 msgstr "Базовый jail"
 
+msgid "Basic"
+msgstr ""
+
 msgid "Basic Info"
+msgstr ""
+
+msgid "Basic Mode"
 msgstr ""
 
 msgid "Basic Options"
@@ -4239,6 +4251,12 @@ msgstr "Уровень доменного леса"
 msgid "Domain Name"
 msgstr "Доменное имя"
 
+msgid ""
+"Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. "
+"Local users have the SMB server NetBIOS name: "
+"<code>freenas\\smbusers</code>."
+msgstr ""
+
 msgid "Domain name"
 msgstr "Доменное имя"
 
@@ -4330,6 +4348,9 @@ msgstr "Изменить службу оповещения"
 msgid "Edit Disk(s)"
 msgstr "Редактировать диск(и)"
 
+msgid "Edit Filesystem ACL"
+msgstr ""
+
 msgid "Edit Idmap"
 msgstr "Редактировать Idmap"
 
@@ -4338,6 +4359,9 @@ msgstr "Редактировать параметры"
 
 msgid "Edit Permissions"
 msgstr "Изменить разрешения"
+
+msgid "Edit Share ACL"
+msgstr ""
 
 msgid "Edit Zvol"
 msgstr "Редактировать Zvol"
@@ -5690,16 +5714,12 @@ msgstr "Исключить дочерние наборы данных"
 
 msgid ""
 "Exclude specific child dataset snapshots from  the replication. Use with "
-"<b>Recursive</b> snapshots. List child  dataset names to exclude. Example: "
+"<b>Recursive</b> snapshots. List child  dataset names to exclude. Separate "
+"multiple entries with a comma  (<code>,</code>). Example: "
 "<i>pool1/dataset1/child1</i>. A  recursive replication of "
 "<i>pool1/dataset1</i> snapshots includes all  child dataset snapshots "
 "except <i>child1</i>."
 msgstr ""
-"Исключить определенные дочерние наборы данных из репликации. Используйте с "
-"рекурсивными снимками. Разделенный запятыми список путей, которые нужно "
-"исключить. Пример: <i>pool1/dataset1/child1</i>. Рекурсивная репликация "
-"<i>pool1/dataset1</i> будет включать все дочерние наборы данных, кроме "
-"<i>child1</i>."
 
 msgid ""
 "Exclude specific child datasets from the snapshot. Use with recursive "
@@ -5913,11 +5933,11 @@ msgstr "Тип файловой системы"
 msgid "Filter"
 msgstr "Фильтр"
 
-msgid "Finding Disks"
-msgstr "Поиск дисков"
+msgid "Finding Pools"
+msgstr ""
 
-msgid "Finding encrypted disks..."
-msgstr "Поиск зашифрованных дисков..."
+msgid "Finding pools to import..."
+msgstr ""
 
 msgid "Finish Upgrade?"
 msgstr "Закончить обновление?"
@@ -6479,6 +6499,13 @@ msgid "How often the IP is checked in seconds."
 msgstr "Как часто IP проверяется в секундах."
 
 msgid ""
+"How permissions are applied to the share. <i>Allowed</i> denies all "
+"permissions by default except those that are manually defined. "
+"<i>Denied</i> allows all permissions by default except those that are "
+"manually defined."
+msgstr ""
+
+msgid ""
 "How the <i>Permissions</i> are applied to the chosen <i>Who</>. Choose "
 "<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
 "the specified permissions."
@@ -6989,6 +7016,9 @@ msgstr ""
 "символы, \"_\" и \"-\"."
 
 msgid "Internetwork control"
+msgstr ""
+
+msgid "Invalid IP address"
 msgstr ""
 
 msgid "Invalid dataset."
@@ -7858,6 +7888,9 @@ msgstr "Месяц"
 msgid "Months"
 msgstr "Месяцы"
 
+msgid "Mount Points of "
+msgstr ""
+
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
 "target=\"_blank\">devfs(5)</a> filesystem on the chrooted <i>/dev</i> "
@@ -8062,6 +8095,9 @@ msgstr ""
 
 msgid "Name or Naming Schema must be provided."
 msgstr "Необходимо указать имя или схему именования."
+
+msgid "Name that was created with the SMB share."
+msgstr ""
 
 msgid "Nameserver 1"
 msgstr "Сервер имен 1"
@@ -8545,6 +8581,9 @@ msgstr "В этой системе"
 msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr "Один или несколько IP-адресов, к которым привязывается служба Netdata."
 
+msgid "One or more data vdevs has disks of different sizes."
+msgstr ""
+
 msgid "Online"
 msgstr "Online"
 
@@ -8936,6 +8975,9 @@ msgstr "Выполняет аутентификацию с сервера LDAP."
 msgid "Periodic Snapshot Tasks"
 msgstr "Задания создания снимков"
 
+msgid "Permission"
+msgstr ""
+
 msgid "Permissions"
 msgstr "Права доступа"
 
@@ -9104,6 +9146,16 @@ msgid ""
 msgstr "Степень 2 в секундах; не может быть ниже 4 или выше, чем <i>Макс. опрос</i>."
 
 msgid "Pre-script"
+msgstr ""
+
+msgid ""
+"Predefined permission combinations:<br><i>Read</i>: Read access and Execute "
+"permission on the object (RX).<br><i>Change</i>: Read access, Execute "
+"permission, Write access, and Delete object (RXWD).<br><i>Full</i>: Read "
+"access, Execute permission, Write access, Delete object, change "
+"Permissions, and take Ownership (RXWDPO).<br><br> For more details, see <a "
+"href=\"https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html\" "
+"target=\"_blank\">smbacls(1)</a>."
 msgstr ""
 
 msgid "Prefer"
@@ -9916,6 +9968,9 @@ msgstr ""
 msgid "SFU20"
 msgstr ""
 
+msgid "SID"
+msgstr ""
+
 msgid "SMB"
 msgstr "SMB"
 
@@ -10377,6 +10432,11 @@ msgid ""
 msgstr ""
 "Выберите предварительно установленное расписание или выберите "
 "<i>Пользовательский</i>, чтобы использовать расширенный планировщик."
+
+msgid ""
+"Select a previously imported or created  <a "
+"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
+msgstr ""
 
 msgid ""
 "Select a previously imported or created <a "
@@ -11517,6 +11577,9 @@ msgstr ""
 msgid "Set to enable the S3 web user interface."
 msgstr "Установите, чтобы включить веб-интерфейс пользователя S3."
 
+msgid "Set to enable the iSCSI extent."
+msgstr ""
+
 msgid "Set to export the certificate environment variables."
 msgstr "Установите для экспорта переменных окружения сертификата."
 
@@ -11955,6 +12018,9 @@ msgstr ""
 "Поддерживаются несколько провайдеров. Если определенного поставщика нет в "
 "списке, выберите <i>Пользовательский поставщик</i> и введите информацию в "
 "поля <i>Пользовательский сервер</i> и <i>Пользовательский путь</i>."
+
+msgid "Share ACL"
+msgstr ""
 
 msgid "Share Name"
 msgstr "Имя ресурса"
@@ -12869,6 +12935,9 @@ msgstr ""
 "Криптографический алгоритм для использования. <I>SHA256</i> по умолчанию "
 "необходимо изменить только в том случае, если организации требуется другой "
 "алгоритм."
+
+msgid "The current pool layout is not recommended.Override the following errors?"
+msgstr ""
 
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
@@ -14466,6 +14535,18 @@ msgstr ""
 
 msgid "Who"
 msgstr "Кто"
+
+msgid ""
+"Who this ACL entry applies to, shown as a <a "
+"href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-"
+"identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a "
+"<i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL."
+msgstr ""
+
+msgid ""
+"Who this ACL entry applies to, shown as a user name. Requires adding the "
+"user <i>Domain</i>."
+msgstr ""
 
 msgid "Widget Base Class"
 msgstr "Базовый класс виджетов"

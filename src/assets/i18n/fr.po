@@ -838,6 +838,9 @@ msgstr ""
 "<b>none</b> pour configurer le jail sans route IPv6 par défaut.<br><b>Un "
 "jail sans route par défaut ne pourra accéder à aucun réseau.</b>"
 
+msgid "ACL Entries"
+msgstr ""
+
 msgid "ACL Mode"
 msgstr "Mode ACL"
 
@@ -1305,6 +1308,9 @@ msgstr "Détails avancés"
 
 msgid "Advanced Jail Creation"
 msgstr "Création de jails avancée"
+
+msgid "Advanced Mode"
+msgstr ""
 
 msgid "Advanced Options"
 msgstr ""
@@ -2014,8 +2020,14 @@ msgstr "Clé encodée Base64 pour le compte Azur."
 msgid "Basejail"
 msgstr "Basejail"
 
+msgid "Basic"
+msgstr ""
+
 msgid "Basic Info"
 msgstr "Infos de base"
+
+msgid "Basic Mode"
+msgstr ""
 
 msgid "Basic Options"
 msgstr ""
@@ -4324,6 +4336,12 @@ msgstr "Niveau de la forêt du domaine"
 msgid "Domain Name"
 msgstr "Nom de domaine"
 
+msgid ""
+"Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. "
+"Local users have the SMB server NetBIOS name: "
+"<code>freenas\\smbusers</code>."
+msgstr ""
+
 msgid "Domain name"
 msgstr "Nom de domaine"
 
@@ -4415,6 +4433,9 @@ msgstr "Éditer le service d'alerte"
 msgid "Edit Disk(s)"
 msgstr "Modifier le(s) disque(s)"
 
+msgid "Edit Filesystem ACL"
+msgstr ""
+
 msgid "Edit Idmap"
 msgstr "Modifier Idmap"
 
@@ -4423,6 +4444,9 @@ msgstr "Modifier les options"
 
 msgid "Edit Permissions"
 msgstr "Modifier les permissions"
+
+msgid "Edit Share ACL"
+msgstr ""
 
 msgid "Edit Zvol"
 msgstr "Modifier le Zvol"
@@ -5811,16 +5835,12 @@ msgstr "Exclure les datasets enfants"
 
 msgid ""
 "Exclude specific child dataset snapshots from  the replication. Use with "
-"<b>Recursive</b> snapshots. List child  dataset names to exclude. Example: "
+"<b>Recursive</b> snapshots. List child  dataset names to exclude. Separate "
+"multiple entries with a comma  (<code>,</code>). Example: "
 "<i>pool1/dataset1/child1</i>. A  recursive replication of "
 "<i>pool1/dataset1</i> snapshots includes all  child dataset snapshots "
 "except <i>child1</i>."
 msgstr ""
-"Excluez des instantanés de datasets enfants spécifiques de la réplication. "
-"Utiliser avec des instantanés <b>récursifs</b> . Répertorie les noms de "
-"datasets enfants à exclure. Exemple: <i>volume1/dataset1/ enfant1</i> . Une "
-"réplication récursive d'instantanés <i>volume1 /dataset1</i> inclut tous "
-"les instantanés de datasets enfant, à l'exception de l' <i>enfant1</i> ."
 
 msgid ""
 "Exclude specific child datasets from the snapshot. Use with recursive "
@@ -6037,11 +6057,11 @@ msgstr "Type de système de fichiers"
 msgid "Filter"
 msgstr "Filtre"
 
-msgid "Finding Disks"
-msgstr "Recherche de disques"
+msgid "Finding Pools"
+msgstr ""
 
-msgid "Finding encrypted disks..."
-msgstr "Recherche de disques chiffrés..."
+msgid "Finding pools to import..."
+msgstr ""
 
 msgid "Finish Upgrade?"
 msgstr "Terminer la mise à niveau ?"
@@ -6604,6 +6624,13 @@ msgid "How often the IP is checked in seconds."
 msgstr "Combien de fois l'adresse IP est vérifiée en quelques secondes."
 
 msgid ""
+"How permissions are applied to the share. <i>Allowed</i> denies all "
+"permissions by default except those that are manually defined. "
+"<i>Denied</i> allows all permissions by default except those that are "
+"manually defined."
+msgstr ""
+
+msgid ""
 "How the <i>Permissions</i> are applied to the chosen <i>Who</>. Choose "
 "<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
 "the specified permissions."
@@ -7117,6 +7144,9 @@ msgstr ""
 
 msgid "Internetwork control"
 msgstr "Contrôle inter-réseaux"
+
+msgid "Invalid IP address"
+msgstr ""
 
 msgid "Invalid dataset."
 msgstr "Dataset invalide."
@@ -7979,6 +8009,9 @@ msgstr "Mois"
 msgid "Months"
 msgstr "Mois"
 
+msgid "Mount Points of "
+msgstr ""
+
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
 "target=\"_blank\">devfs(5)</a> filesystem on the chrooted <i>/dev</i> "
@@ -8186,6 +8219,9 @@ msgstr ""
 
 msgid "Name or Naming Schema must be provided."
 msgstr "Le nom ou le schéma de nommage doit être fourni."
+
+msgid "Name that was created with the SMB share."
+msgstr ""
 
 msgid "Nameserver 1"
 msgstr "Serveur de noms 1 (DNS)"
@@ -8674,6 +8710,9 @@ msgstr "Sur ce système"
 msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr "Une ou plusieurs adresses IP auxquelles lier le service Netdata."
 
+msgid "One or more data vdevs has disks of different sizes."
+msgstr ""
+
 msgid "Online"
 msgstr "En ligne"
 
@@ -9071,6 +9110,9 @@ msgstr "Effectue l'authentification à partir d'un serveur LDAP."
 msgid "Periodic Snapshot Tasks"
 msgstr "Instantanées périodiques"
 
+msgid "Permission"
+msgstr ""
+
 msgid "Permissions"
 msgstr "Autorisations"
 
@@ -9244,6 +9286,16 @@ msgstr ""
 
 msgid "Pre-script"
 msgstr "Pré-script"
+
+msgid ""
+"Predefined permission combinations:<br><i>Read</i>: Read access and Execute "
+"permission on the object (RX).<br><i>Change</i>: Read access, Execute "
+"permission, Write access, and Delete object (RXWD).<br><i>Full</i>: Read "
+"access, Execute permission, Write access, Delete object, change "
+"Permissions, and take Ownership (RXWDPO).<br><br> For more details, see <a "
+"href=\"https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html\" "
+"target=\"_blank\">smbacls(1)</a>."
+msgstr ""
 
 msgid "Prefer"
 msgstr "Prefer"
@@ -10061,6 +10113,9 @@ msgstr ""
 msgid "SFU20"
 msgstr ""
 
+msgid "SID"
+msgstr ""
+
 msgid "SMB"
 msgstr "SMB"
 
@@ -10524,6 +10579,11 @@ msgid ""
 msgstr ""
 "Sélectionnez un planning prédéfini ou choisissez <i>Personnaliser</i> pour "
 "utiliser le planificateur avancé."
+
+msgid ""
+"Select a previously imported or created  <a "
+"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
+msgstr ""
 
 msgid ""
 "Select a previously imported or created <a "
@@ -11692,6 +11752,9 @@ msgstr ""
 msgid "Set to enable the S3 web user interface."
 msgstr "Réglé pour activer l'interface utilisateur Web S3."
 
+msgid "Set to enable the iSCSI extent."
+msgstr ""
+
 msgid "Set to export the certificate environment variables."
 msgstr "Défini pour exporter les variables d'environnement du certificat."
 
@@ -12144,6 +12207,9 @@ msgstr ""
 "pas répertorié, sélectionnez <i>Fournisseur personnalisé</i> et entrez les "
 "informations dans les champs <i>Serveur personnalisé</i> et <i>Chemin "
 "d'accès personnalisé</i>."
+
+msgid "Share ACL"
+msgstr ""
 
 msgid "Share Name"
 msgstr "Nom du Partage"
@@ -13070,6 +13136,9 @@ msgid ""
 msgstr ""
 "L'algorithme cryptographique à utiliser. Le <i>SHA256</i> par défaut ne "
 "doit être modifié que si l'organisation a besoin d'un algorithme différent."
+
+msgid "The current pool layout is not recommended.Override the following errors?"
+msgstr ""
 
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
@@ -14709,6 +14778,18 @@ msgstr ""
 
 msgid "Who"
 msgstr "Qui"
+
+msgid ""
+"Who this ACL entry applies to, shown as a <a "
+"href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-"
+"identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a "
+"<i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL."
+msgstr ""
+
+msgid ""
+"Who this ACL entry applies to, shown as a user name. Requires adding the "
+"user <i>Domain</i>."
+msgstr ""
 
 msgid "Widget Base Class"
 msgstr "Classe de base du widget"

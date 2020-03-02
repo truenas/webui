@@ -11,6 +11,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
 import helptext from '../../../helptext/jails/jail-configuration';
 import { T } from '../../../translate-marker';
@@ -170,7 +171,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               name: 'ip4_addr',
               placeholder: helptext.ip4_addr_placeholder,
               tooltip: helptext.ip4_addr_tooltip,
-              validation: [regexValidator(this.networkService.ipv4_regex)],
+              validation: [ipv4Validator('ip4_addr')],
               class: 'inline',
               width: '50%',
             },
@@ -240,7 +241,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               name: 'ip6_addr',
               placeholder: helptext.ip6_addr_placeholder,
               tooltip: helptext.ip6_addr_tooltip,
-              validation: [regexValidator(this.networkService.ipv6_regex)],
+              validation: [ipv6Validator('ip6_addr')],
               class: 'inline',
               width: '50%',
             },
