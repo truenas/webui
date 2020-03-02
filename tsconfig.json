@@ -24,5 +24,17 @@
   "angularCompilerOptions": {
     "enableIvy": true,
     "allowEmptyCodegenFiles": true
-  }
+  },
+  "include": [
+    "src/main.ts",
+    "src/polyfills.ts",
+    "src/environments/environment.ts",
+    "src/**/*.component.ts",
+    "src/**/*.module.ts",
+    "src/**/*.routes.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }
