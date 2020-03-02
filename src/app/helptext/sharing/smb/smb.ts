@@ -33,7 +33,8 @@ export const helptext_sharing_smb = {
  as the home share.'),
 
     placeholder_purpose: T('Purpose'),
-    tooltip_purpose: T('Select preset configuration for share'),
+    tooltip_purpose: T('Select a preset configuration for the share. This\
+ applies predetermined values and disables changing some share options.'),
 
    placeholder_timemachine: T('Time Machine'),
    tooltip_timemachine: T('Enable Time Machine backups on this share.'),
@@ -114,15 +115,17 @@ export const helptext_sharing_smb = {
  files is anticipated.'),
 
     placeholder_fsrvp: T('Enable FSRVP'),
-    tooltip_fsrvp: T('Enable support for FSRVP. This protocol allows RPC clients to manage snapshots of the\
- specified SMB share. Share path must be a dataset mountpoint. Snapshots will have a prefix "fss-" followed\
- by the timestamp for when the snapshot was taken. RPC users will not be able to delete snapshots that don\'t\
- have this prefix.'),
+    tooltip_fsrvp: T('Enable support for the File Server Remote VSS Protocol\
+ (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSVRP</a>).\
+ This protocol allows RPC clients to manage snapshots of the specified SMB share. Share path must be a dataset\
+ mountpoint. Snapshots will have a prefix "fss-" followed by the timestamp for when the snapshot was taken.\
+ RPC users will not be able to delete snapshots that don\'t have this prefix.'),
 
     placeholder_path_suffix: T('Path Suffix'),
     tooltip_path_suffix: T('Append a suffix (possibly containing a macro) to the share\'s connect path.\
  This can be used to provide unique shares on a per-user, per-computer, or per-IP address basis. See\
- <i>smb.conf</i> for list of supported macros. The connectpath _must_ be pre-staged before client connection.'),
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf(5)</a> for\
+ list of supported macros. The connectpath _must_ be pre-staged before client connection.'),
 
     actions_basic_mode: T('Basic Mode'),
     actions_advanced_mode: T('Advanced Mode'),
