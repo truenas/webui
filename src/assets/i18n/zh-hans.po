@@ -717,6 +717,9 @@ msgstr ""
 "使用一个有效的IPv6地址用作默认路由。<br>输入<b>none</b>可以配置没有IPv6默认路由的Jail。<br> "
 "<b>没有默认路由的Jail将无法访问任何网络。</b>"
 
+msgid "ACL Entries"
+msgstr ""
+
 msgid "ACL Mode"
 msgstr "访问控制列表模式"
 
@@ -1150,6 +1153,9 @@ msgstr "高级详细信息"
 
 msgid "Advanced Jail Creation"
 msgstr "高级Jail创建"
+
+msgid "Advanced Mode"
+msgstr ""
 
 msgid "Advanced Options"
 msgstr ""
@@ -1783,8 +1789,14 @@ msgstr "Azure帐户的Base64编码密钥。"
 msgid "Basejail"
 msgstr "基础Jail"
 
+msgid "Basic"
+msgstr ""
+
 msgid "Basic Info"
 msgstr "基础信息"
+
+msgid "Basic Mode"
+msgstr ""
 
 msgid "Basic Options"
 msgstr ""
@@ -3825,6 +3837,12 @@ msgstr "域林级别"
 msgid "Domain Name"
 msgstr "域名"
 
+msgid ""
+"Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. "
+"Local users have the SMB server NetBIOS name: "
+"<code>freenas\\smbusers</code>."
+msgstr ""
+
 msgid "Domain name"
 msgstr "域名"
 
@@ -3914,6 +3932,9 @@ msgstr "编辑警告服务"
 msgid "Edit Disk(s)"
 msgstr "编辑磁盘"
 
+msgid "Edit Filesystem ACL"
+msgstr ""
+
 msgid "Edit Idmap"
 msgstr "编辑Idmap"
 
@@ -3922,6 +3943,9 @@ msgstr "编辑选项"
 
 msgid "Edit Permissions"
 msgstr "编辑权限"
+
+msgid "Edit Share ACL"
+msgstr ""
 
 msgid "Edit Zvol"
 msgstr "编辑Zvol"
@@ -5129,13 +5153,12 @@ msgstr "排除子数据集"
 
 msgid ""
 "Exclude specific child dataset snapshots from  the replication. Use with "
-"<b>Recursive</b> snapshots. List child  dataset names to exclude. Example: "
+"<b>Recursive</b> snapshots. List child  dataset names to exclude. Separate "
+"multiple entries with a comma  (<code>,</code>). Example: "
 "<i>pool1/dataset1/child1</i>. A  recursive replication of "
 "<i>pool1/dataset1</i> snapshots includes all  child dataset snapshots "
 "except <i>child1</i>."
 msgstr ""
-"从复制中排除特定的子数据集快照。与<b>递归</b>快照一起使用。列出要排除的子数据集名称。示例：<i>pool1/dataset1/child1</"
-"i>。 <i>pool1/dataset1</i>快照的递归复制包括除<i>child1</i>之外的所有子数据集快照。"
 
 msgid ""
 "Exclude specific child datasets from the snapshot. Use with recursive "
@@ -5339,11 +5362,11 @@ msgstr "文件系统类型"
 msgid "Filter"
 msgstr "过滤器"
 
-msgid "Finding Disks"
-msgstr "查找磁盘"
+msgid "Finding Pools"
+msgstr ""
 
-msgid "Finding encrypted disks..."
-msgstr "正在寻找加密磁盘..."
+msgid "Finding pools to import..."
+msgstr ""
 
 msgid "Finish Upgrade?"
 msgstr "完成升级吗？"
@@ -5866,6 +5889,13 @@ msgid "How often the IP is checked in seconds."
 msgstr "检查IP的频率（以秒为单位）。"
 
 msgid ""
+"How permissions are applied to the share. <i>Allowed</i> denies all "
+"permissions by default except those that are manually defined. "
+"<i>Denied</i> allows all permissions by default except those that are "
+"manually defined."
+msgstr ""
+
+msgid ""
 "How the <i>Permissions</i> are applied to the chosen <i>Who</>. Choose "
 "<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
 "the specified permissions."
@@ -6308,6 +6338,9 @@ msgstr "证书的内部标识符。仅允许使用字母数字，\"_\" 和 \"-\"
 
 msgid "Internetwork control"
 msgstr "互联网控制"
+
+msgid "Invalid IP address"
+msgstr ""
 
 msgid "Invalid dataset."
 msgstr "无效的数据集。"
@@ -7109,6 +7142,9 @@ msgstr "月"
 msgid "Months"
 msgstr "月数"
 
+msgid "Mount Points of "
+msgstr ""
+
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
 "target=\"_blank\">devfs(5)</a> filesystem on the chrooted <i>/dev</i> "
@@ -7297,6 +7333,9 @@ msgstr "名称或命名惯例是必需的。一次只能使用一个字段。"
 
 msgid "Name or Naming Schema must be provided."
 msgstr "必须提供名称或命名惯例。"
+
+msgid "Name that was created with the SMB share."
+msgstr ""
 
 msgid "Nameserver 1"
 msgstr "域名服务器 1"
@@ -7739,6 +7778,9 @@ msgstr "在这个系统上"
 msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr "要绑定Netdata服务的一个或多个IP地址。"
 
+msgid "One or more data vdevs has disks of different sizes."
+msgstr ""
+
 msgid "Online"
 msgstr "在线"
 
@@ -8085,6 +8127,9 @@ msgstr "从LDAP服务器执行身份验证。"
 msgid "Periodic Snapshot Tasks"
 msgstr "定期快照任务"
 
+msgid "Permission"
+msgstr ""
+
 msgid "Permissions"
 msgstr "权限"
 
@@ -8250,6 +8295,16 @@ msgstr "2 秒内的功率不能低于 4 或高于 <i>最大轮询</i>。"
 
 msgid "Pre-script"
 msgstr "预脚本"
+
+msgid ""
+"Predefined permission combinations:<br><i>Read</i>: Read access and Execute "
+"permission on the object (RX).<br><i>Change</i>: Read access, Execute "
+"permission, Write access, and Delete object (RXWD).<br><i>Full</i>: Read "
+"access, Execute permission, Write access, Delete object, change "
+"Permissions, and take Ownership (RXWDPO).<br><br> For more details, see <a "
+"href=\"https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html\" "
+"target=\"_blank\">smbacls(1)</a>."
+msgstr ""
 
 msgid "Prefer"
 msgstr "首选"
@@ -8995,6 +9050,9 @@ msgstr ""
 msgid "SFU20"
 msgstr ""
 
+msgid "SID"
+msgstr ""
+
 msgid "SMB"
 msgstr "SMB"
 
@@ -9408,6 +9466,11 @@ msgid ""
 "Select a preset schedule or choose  <i>Custom</i> to use the advanced "
 "scheduler."
 msgstr "选择一个预设计划，或选择<i>自定义</i>以使用高级计划程序。"
+
+msgid ""
+"Select a previously imported or created  <a "
+"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
+msgstr ""
 
 msgid ""
 "Select a previously imported or created <a "
@@ -10343,6 +10406,9 @@ msgstr "设置为启用文件更改协议。此选项使服务器容易受到 FT
 msgid "Set to enable the S3 web user interface."
 msgstr "设置为启用S3 Web用户界面。"
 
+msgid "Set to enable the iSCSI extent."
+msgstr ""
+
 msgid "Set to export the certificate environment variables."
 msgstr "设置为导出证书环境变量。"
 
@@ -10705,6 +10771,9 @@ msgid ""
 "select <i>Custom Provider</i> and enter the  information in the <i>Custom "
 "Server</i> and <i>Custom Path</i> fields."
 msgstr "支持多个提供商。如果未列出特定的提供商，请选择<i>自定义提供商</ i>，然后在<i>自定义服务器</i>和<i>自定义路径</i>字段中输入信息。"
+
+msgid "Share ACL"
+msgstr ""
 
 msgid "Share Name"
 msgstr "共享名称"
@@ -11547,6 +11616,9 @@ msgid ""
 "The cryptographic algorithm to use. The default <i>SHA256</i> only needs to "
 "be changed if the organization requires a different algorithm."
 msgstr "要使用的加密算法。仅当组织需要其他算法时才需要更改默认的<i> SHA256 </ i>。"
+
+msgid "The current pool layout is not recommended.Override the following errors?"
+msgstr ""
 
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
@@ -12942,6 +13014,18 @@ msgstr ""
 
 msgid "Who"
 msgstr "谁"
+
+msgid ""
+"Who this ACL entry applies to, shown as a <a "
+"href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-"
+"identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a "
+"<i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL."
+msgstr ""
+
+msgid ""
+"Who this ACL entry applies to, shown as a user name. Requires adding the "
+"user <i>Domain</i>."
+msgstr ""
 
 msgid "Widget Base Class"
 msgstr "窗口小部件基类"

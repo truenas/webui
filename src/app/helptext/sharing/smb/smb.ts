@@ -2,7 +2,8 @@ import { T } from "app/translate-marker";
 import { Validators } from "@angular/forms";
 
 export const helptext_sharing_smb = {
-    fieldset_general: T('General Options'),
+    fieldset_basic: T('Basic'),
+    fieldset_advanced: T('Advanced'),
     fieldset_access: T('Access'),
     fieldset_other: T('Other Options'),
 
@@ -31,6 +32,10 @@ export const helptext_sharing_smb = {
  allows for a personal, dynamic share. Only one share can be used \
  as the home share.'),
 
+    placeholder_purpose: T('Purpose'),
+    tooltip_purpose: T('Select a preset configuration for the share. This\
+ applies predetermined values and disables changing some share options.'),
+
    placeholder_timemachine: T('Time Machine'),
    tooltip_timemachine: T('Enable Time Machine backups on this share.'),
 
@@ -40,6 +45,9 @@ export const helptext_sharing_smb = {
  <b>Only</b> leave unset when creating a share on a\
  system that already has custom\
  ACLs configured.'),
+
+    placeholder_acl: T('Enable ACL'),
+    tooltip_acl: T('Enable ACL support for the SMB share'),
 
     placeholder_ro: T('Export Read Only'),
     tooltip_ro: T('Set to prohibit writes to this share'),
@@ -60,12 +68,6 @@ export const helptext_sharing_smb = {
  For example, <samp>crossrename:sizelimit={50}</samp> allows moves of \
  files up to 50 MiB in size.'),
 
-    placeholder_showhiddenfiles: T('Show Hidden Files'),
-    tooltip_showhiddenfiles: T('Set to disable the Windows <i>hidden</i> attribute\
- on a new Unix hidden file. Unix hidden filenames start\
- with a dot: <b>.foo</b>.\
- Existing files are not affected.'),
-
     placeholder_guestok: T('Allow Guest Access'),
     tooltip_guestok: T('Privileges are the same as the guest account. \
  Guest access is disabled by default in Windows 10 version 1709 and \
@@ -77,10 +79,6 @@ export const helptext_sharing_smb = {
  specifically chosen in MacOS to log in as the guest account. See the \
  <a href="https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/" target="_blank">Apple documentation</a> \
  for more details.'),
-
-    placeholer_guestonly: T('Only Allow Guest Access'),
-    tooltip_guestonly: T('Requires <b>Allow guest access</b> to also be set.\
- Forces guest access for all connections.'),
 
     placeholder_abe: T('Access Based Share Enumeration'),
     tooltip_abe: T('Restrict share visibility to users with read or write access\
@@ -103,6 +101,31 @@ export const helptext_sharing_smb = {
     placeholder_auxsmbconf: T('Auxiliary Parameters'),
     tooltip_auxsmbconf: T('Additional <b>smb5.conf</b> parameters not covered by\
  other option fields.'),
+
+    placeholder_aapl_name_mangling: T('Enable Apple-style Character'),
+    tooltip_aapl_name_mangling: T('Enable Apple-style character encoding for NTFS illegal characters.'),
+
+    placeholder_streams: T('Enable Alternate Data Streams'),
+    tooltip_streams: T('Enable support for Alternate Data Streams. Disabling support for streams will\
+ cause MacOS to write streams to files on the filesystem.'),
+
+    placeholder_durablehandle: T('Enable SMB2/3 durable handles'),
+    tooltip_durablehandle: T('Enable support for SMB2/3 durable handles. This parameter disables support\
+ for POSIX byte-range locks in Samba and may be unsuitable if multi-protocol (or local) access to the\
+ files is anticipated.'),
+
+    placeholder_fsrvp: T('Enable FSRVP'),
+    tooltip_fsrvp: T('Enable support for the File Server Remote VSS Protocol\
+ (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSVRP</a>).\
+ This protocol allows RPC clients to manage snapshots of the specified SMB share. Share path must be a dataset\
+ mountpoint. Snapshots will have a prefix "fss-" followed by the timestamp for when the snapshot was taken.\
+ RPC users will not be able to delete snapshots that don\'t have this prefix.'),
+
+    placeholder_path_suffix: T('Path Suffix'),
+    tooltip_path_suffix: T('Append a suffix (possibly containing a macro) to the share\'s connect path.\
+ This can be used to provide unique shares on a per-user, per-computer, or per-IP address basis. See\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf(5)</a> for\
+ list of supported macros. The connectpath _must_ be pre-staged before client connection.'),
 
     actions_basic_mode: T('Basic Mode'),
     actions_advanced_mode: T('Advanced Mode'),

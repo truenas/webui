@@ -53,3 +53,8 @@
 .hidden-button {
   display: none;
 }
+
+.topbar {
+  background-color: var(--topbar) !important;
+  color: var(--topbar-txt) !important;
+}

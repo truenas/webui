@@ -167,7 +167,15 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
           value: false,
           tooltip: T('Reset all tables to display default columns.'),
           class:'inline'
-        }
+        },
+        {
+          type: 'checkbox',
+          name: 'retroLogo',
+          placeholder: T('Retro Logo'),
+          value:prefs.retroLogo,
+          tooltip: T('Revert branding back to FreeNAS'),
+          class:'inline'
+        },
       ]
     }
 

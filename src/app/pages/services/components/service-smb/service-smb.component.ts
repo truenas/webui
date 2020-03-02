@@ -51,7 +51,8 @@ export class ServiceSMBComponent {
     'guest',
     'admin_group',
     'bindip',
-    'smb_options'
+    'smb_options',
+    'aapl_extensions'
   ];
   protected hiddenFieldSets = [helptext.cifs_srv_fieldset_idmap, helptext.cifs_srv_fieldset_other];
 
@@ -166,6 +167,12 @@ export class ServiceSMBComponent {
           name: 'localmaster',
           placeholder: helptext.cifs_srv_localmaster_placeholder,
           tooltip: helptext.cifs_srv_localmaster_tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'aapl_extensions',
+          placeholder: helptext.cifs_srv_aapl_extensions_placeholder,
+          tooltip: helptext.cifs_srv_aapl_extensions_tooltip,
         },
         {
           type: 'select',
