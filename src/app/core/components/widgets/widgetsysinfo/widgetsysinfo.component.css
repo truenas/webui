@@ -220,6 +220,16 @@ span.passive{
 
 .platform-logo-wrapper{
   padding-top:12px;
+  color: var(--primary-color-txt);
+}
+
+.platform-logo-wrapper .mat-icon{
+  width:auto;
+  height: 3rem;
+}
+
+.platform-logo-wrapper .mat-icon.retro{
+  height:2.4rem;
 }
 
 .product-image.truenas{
