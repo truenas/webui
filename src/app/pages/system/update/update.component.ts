@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { WebSocketService, SystemGeneralService, StorageService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -101,7 +101,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
-    protected storage: StorageService, protected http: Http) {
+    protected storage: StorageService, protected http: HttpClient) {
       this.sysGenService.updateRunning.subscribe((res) => { 
         res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }

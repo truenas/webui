@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { WebSocketService } from '../../../services';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';

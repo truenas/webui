@@ -1,5 +1,5 @@
 import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { helptext_system_email } from 'app/helptext/system/email';
 import * as _ from 'lodash';

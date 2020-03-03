@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ConsolePanelModalDialog } from "app/components/common/dialog/consolepanel/consolepanel-dialog.component";
 import { Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, take } from "rxjs/operators";

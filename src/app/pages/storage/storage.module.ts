@@ -24,7 +24,6 @@ import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
-import { VolumeDeleteComponent } from './volumes/volume-delete/';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
@@ -60,7 +59,6 @@ import { JobService } from 'app/services';
     VdevComponent,
     DatasetFormComponent,
     // VolumesEditComponent,
-    VolumeDeleteComponent,
     VolumeRekeyFormComponent,
     VolumeAddkeyFormComponent,
     VolumeCreatekeyFormComponent,

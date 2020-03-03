@@ -9,7 +9,7 @@ import { TreeNode } from 'primeng/api';
 import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
 
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Validators } from '@angular/forms';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../../translate-marker';

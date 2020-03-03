@@ -12,7 +12,6 @@ import { ReportComponent, Report } from './components/report/report.component';
 import { ReportsService } from './reports.service';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
-//import { PageEvent } from '@angular/material';
 import { ErdService } from 'app/services/erd.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../translate-marker';

@@ -160,7 +160,8 @@ export class EntityTaskComponent implements OnInit {
 
     if (!this.isNew) {
       let query = this.conf.resource_name + '/' + this.pk;
-      this.rest.get(query, {}).subscribe((res) => {
+      // if we want to use this again we will need to convert to websocket
+      /*this.rest.get(query, {}).subscribe((res) => {
         if (res.data) {
           this.data = res.data;
           for (let i in this.data) {
@@ -215,7 +216,7 @@ export class EntityTaskComponent implements OnInit {
             }
           }
         }
-      });
+      });*/
       this.showDefaults = true;
     }
 
@@ -267,7 +268,8 @@ export class EntityTaskComponent implements OnInit {
     }
 
     this.loader.open();
-    if (this.isNew) {
+    // if we want to use this we will need to convert to websocket
+    /*if (this.isNew) {
       this.rest.post(this.conf.resource_name + '/', {
         body: JSON.stringify(value)
       }).subscribe(
@@ -291,7 +293,7 @@ export class EntityTaskComponent implements OnInit {
           this.loader.close();
           new EntityUtils().handleError(this, res);
         });
-    }
+    }*/
 
   }
 }

@@ -8,7 +8,7 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
 import { LocaleService } from 'app/services/locale.service';
 
 import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
-import {MatDatepickerModule, MatMonthView} from '@angular/material';
+import {MatMonthView} from '@angular/material/datepicker';
 import * as moment from 'moment-timezone';
 import * as parser from 'cron-parser';
 import { WebSocketService } from 'app/services/ws.service';

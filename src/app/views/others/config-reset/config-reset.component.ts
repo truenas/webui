@@ -4,7 +4,7 @@ import { WebSocketService } from '../../../services/ws.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import globalHelptext from '../../../helptext/global-helptext';
 import { EntityJobComponent } from '../../../../app/pages/common/entity/entity-job/entity-job.component';
 import { T } from '../../../translate-marker';

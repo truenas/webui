@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
