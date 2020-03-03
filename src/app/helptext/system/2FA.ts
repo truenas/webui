@@ -44,7 +44,7 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
     placeholder: T('Provisioning URI (includes Secret - Read only):'),
     tooltip: T('The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code. \
  To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually \
- into the app. The URI is produced by the system when Two-Factor Authentication is first activated, \
+ into the app. The URI is produced by the system when Two-Factor Authentication is first activated.')
  
   },
 
