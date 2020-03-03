@@ -25,7 +25,7 @@ export const helptext = {
     tooltip: T('Use <i>window</i> to extend the validity of passwords beyond the <i>interval</i> setting. \
 For example, a window setting of 1 means that one password before and after the current one is valid. \
 leaving three valid passwords. Extending the window can be useful in high-latency situations. \
-IMPORTANT: Two-factor authentication is time-based, and requires that the system\'s time is set correctly.'),
+IMPORTANT: Two-factor authentication is time-based and requires that the system time is set correctly.'),
     validation: [Validators.min(0)]
   },
   services: {
