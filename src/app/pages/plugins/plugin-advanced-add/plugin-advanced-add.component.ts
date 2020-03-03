@@ -1245,8 +1245,8 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
         subipInterfaceField.options = ipType === 'ip4' ? this.ip4_interfaceField.options : this.ip6_interfaceField.options;
       }
     }
-    this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
-    this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
+    this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value === undefined ? false : this.formGroup.controls['dhcp'].value);
+    this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value === undefined ? false : this.formGroup.controls['nat'].value);
   }
 
   setRelation(config: FieldConfig) {
