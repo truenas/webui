@@ -37,7 +37,7 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
   secret: {
     placeholder: T('Secret (Read only)'),
     tooltip: T('The secret used to generate OTPs. The secret is produced by the system when Two-Factor \
- Authentication is first activated, so this field is read-only.')
+ Authentication is first activated.')
   },
  
   uri: {
