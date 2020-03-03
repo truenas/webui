@@ -17,7 +17,7 @@ export const helptext = {
   interval: {
     placeholder: T('Interval'),
     tooltip: T('The lifespan (in seconds) of each One-Time Password. Default is 30 seconds. \
- The minimum value is 5.'),
+ The minimum lifetime is 5 seconds.'),
     validation: [Validators.min(5)]
   },
   window: {
