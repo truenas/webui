@@ -35,7 +35,7 @@ export class JobService {
   showLogs(job_id, title?, cancelMsg?) {
     let dialog_title, cancelButtonMsg;
     title ? dialog_title = title : dialog_title = T("Logs");
-    cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Cancel');
+    cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
     this.ws.call("core.get_jobs").subscribe((res) => {
       for(let i = 0; i < res.length; i++) {
         if (res[i].id === job_id) {
