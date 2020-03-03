@@ -60,6 +60,19 @@ export const helptext_system_update = {
   save_config_err: {
     title: T('Error'),
     message: T('System failed to save configuration settings. Check the network connection.')
-  }
+  },
+
+  non_ha_download_msg: T('Continue with download?'),
+  ha_download_msg: T("Upgrades both controllers. Files are downloaded to the Active Controller\
+ and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
+ Continue with download?"),
+ non_ha_confirm_msg:  T("Apply updates and reboot system after downloading."),
+  ha_confirm_msg: T('Check the box for full upgrade. Leave unchecked to download only.'),
+
+ pending_title: T('Apply Pending Updates'),
+ non_ha_pending_msg: T("The system will reboot and be briefly unavailable while applying updates. \
+Apply updates and reboot?"),
+ ha_pending_msg: T("Upgrades both controllers. Files are downloaded to the Active Controller \
+and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.")
   
 };

@@ -431,16 +431,25 @@ export class UpdateComponent implements OnInit, OnDestroy {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
+              let downloadMsg;
+              let confirmMsg;
+
               if (!this.is_ha) {
+                downloadMsg = helptext.non_ha_download_msg;
+                confirmMsg = helptext.non_ha_confirm_msg;
+              } else {
+                downloadMsg = helptext.ha_download_msg;
+                confirmMsg = helptext.ha_confirm_msg;
+              }
                 this.ds  = this.dialogService.confirm(
-                  T("Download Update"), T("Continue with download?"),true,T("Download"),true,
-                    T("Apply updates and reboot system after downloading."),
-                    'update.update',[{ reboot: false }]
+                  T("Download Update"), downloadMsg,true,T("Download"),true,
+                    confirmMsg,
+                    this.updateMethod,[{ reboot: false }]
                 )
                 this.ds.componentInstance.isSubmitEnabled = true;
                 this.ds.afterClosed().subscribe((status)=>{
                   if(status){
-                    if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
+                    if (!this.ds.componentInstance.data[0].reboot){
                       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
                       this.dialogRef.componentInstance.setCall('update.download');
                       this.dialogRef.componentInstance.submit();
@@ -459,17 +468,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
                     }
                   }
                 });
-                } else {
-                  this.ds  = this.dialogService.confirm(
-                    T("Download Update"), T("Upgrades both controllers. Files are downloaded to the Active Controller\
-                      and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
-                      Continue with download?"),true).subscribe((res) =>  {
-                      if (res) {
-                        this.update()
-                      };
-                    });
-                };
-            });
+                });
           } else if (res.status === 'UNAVAILABLE'){
             this.dialogService.Info(T('Check Now'), T('No updates available.'))
           }
@@ -535,9 +534,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   ApplyPendingUpdate() {
+    let message;
+    !this.is_ha ? message = helptext.non_ha_pending_msg : message = helptext.ha_pending_msg;
     this.dialogService.dialogForm(this.saveConfigFormConf).subscribe(()=>{
       this.dialogService.confirm(
-        T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
+        helptext.pending_title, message
       ).subscribe((res)=>{
         if(res){
           this.update();
