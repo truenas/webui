@@ -6,7 +6,7 @@ export const helptext = {
       title: T('Two-Factor Authentication Settings'),
       message: T('Use this form to set up Two-Factor Authentication for this system. \
  Then link the system to an authenticator app (such as Google Authenticator, LastPass Authenticator, etc.) \
- on your phone.'),
+ on a mobile device.'),
   otp: {
     placeholder: T('One-Time Password (OTP) Digits'),
     tooltip: T('The number of digits in the One-Time Password. The default value is 6, \
