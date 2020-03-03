@@ -23,7 +23,7 @@ import { LanguageService } from '../../services/language.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LocaleService } from '../../services/locale.service';
 
-import { AngularSvgIconModule } from 'angular-svg-icon';
+import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 
 @NgModule({
   imports: [
@@ -36,7 +36,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     TranslateModule,
     ChartistModule,
     HttpClientModule,
-    AngularSvgIconModule
+    AngularSvgIconModule.forRoot()
   ],
   declarations: [
     AdminLayoutComponent,
@@ -45,7 +45,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
     NavigationComponent,
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, //LineChartComponent
   ],
-  providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService, LocaleService],
+  providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService, LocaleService, SvgIconRegistryService],
   exports: [/*LineChartComponent*/]
 })
 export class AppCommonModule {}

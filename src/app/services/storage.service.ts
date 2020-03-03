@@ -5,7 +5,7 @@ import { RestService } from './rest.service';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Http, ResponseContentType } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class StorageService {
@@ -65,12 +65,12 @@ export class StorageService {
     dlink.remove();
   }
 
-  streamDownloadFile(http:Http, url:string, filename:string, mime_type:string): Observable<any>{
+  streamDownloadFile(http:HttpClient, url:string, filename:string, mime_type:string): Observable<any>{
     return http.post(url, '',
-    { responseType: ResponseContentType.Blob })
+    { responseType: 'blob' })
     .map(
       (res) => {
-            const blob = new Blob([res.blob()], {type: mime_type} );
+            const blob = new Blob([res], {type: mime_type} );
             return blob;
       });
   }

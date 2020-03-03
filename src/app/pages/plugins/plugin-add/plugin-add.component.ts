@@ -16,7 +16,7 @@ import { DialogService, JailService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { EntityJobComponent } from '../../common/entity/entity-job';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import helptext from '../../../helptext/plugins/plugins';
 
 @Component({

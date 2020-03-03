@@ -13,7 +13,7 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
@@ -113,7 +113,6 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       protected _appRef: ApplicationRef,
       protected dialogService: DialogService,
       protected loader: AppLoaderService,
-      private snackBar: MatSnackBar,
       private mdDialog: MatDialog,
       private encryptionService: EncryptionService
   ) {}

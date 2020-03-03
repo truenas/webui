@@ -18,7 +18,11 @@ export const CardComponentMetadata = {
   styleUrls: ['./card.component.css']
 }
 
-@Component(CardComponentMetadata)
+@Component({
+  selector: '[card]',
+  templateUrl: './card.component.html',
+  styleUrls: ['./card.component.css']
+})
 export class CardComponent extends ViewControllerComponent {
 
   readonly componentName = CardComponent;

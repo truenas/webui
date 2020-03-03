@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
@@ -286,7 +286,7 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.is_decrypted) {
 
       actions.push({
-        label: T("Recovery Key"),
+        label: T("Manage Recovery Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "addkey", row1.id]));
@@ -1075,7 +1075,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getTimestamp() {
     let dateTime = new Date();
-    return moment(dateTime).format("YYYY-MM-DD_hh-mm");
+    return moment(dateTime).format("YYYY-MM-DD_HH-mm");
   }
 
   dataHandler(data: any): TreeNode {

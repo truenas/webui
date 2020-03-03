@@ -1,6 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';

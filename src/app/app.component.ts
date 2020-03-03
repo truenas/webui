@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { URLSearchParams, } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { ThemeService } from 'app/services/theme/theme.service';
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
@@ -50,6 +49,7 @@ export class AppComponent {
     public matIconRegistry: MatIconRegistry,
     public chartDataUtils: ChartDataUtilsService) {
 
+    // MISC CUSTOM ICONS
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
@@ -70,18 +70,44 @@ export class AppComponent {
       "ha_reconnecting",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
     );
+
+    // TRUENAS
     this.matIconRegistry.addSvgIcon(
-      "truenas_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+      "truenas_enterprise_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
-      "truenas_logotype",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logotype.svg")
+      "truenas_enterprise_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
     );
     this.matIconRegistry.addSvgIcon(
-      "truenas_logo_full",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logo_full.svg")
+      "truenas_enterprise_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logo_full.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_enterprise_text_only",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_text_only.svg")
+    );
+
+    // TRUENAS CORE
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logotype.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logo_full.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_text_only",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_text_only.svg")
+    );
+
+    // FREENAS
     this.matIconRegistry.addSvgIcon(
       "freenas_logomark",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo.svg")

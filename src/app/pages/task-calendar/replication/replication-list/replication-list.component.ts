@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -55,7 +55,7 @@ export class ReplicationListComponent {
         private dialog: DialogService,
         protected job: JobService,
         protected storage: StorageService,
-        protected http: Http) { }
+        protected http: HttpClient) { }
 
     afterInit(entityList: any) {
         this.entityList = entityList;

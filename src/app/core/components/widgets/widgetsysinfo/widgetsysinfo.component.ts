@@ -35,6 +35,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public memory:string;
   public imagePath:string = "assets/images/";
   public ready:boolean = false;
+  public retroLogo: number = -1;
   public product_image = '';
   public product_model = '';
   public certified = false;
@@ -75,6 +76,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   ngAfterViewInit(){
 
+    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+      this.retroLogo = evt.data.retroLogo ? 1 : 0;
+    });
+
     this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
       if(evt.data.status == "AVAILABLE"){
         this.updateAvailable = true;
@@ -99,6 +104,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       });
       
       this.core.emit({name:"UpdateCheck"});
+      this.core.emit({name:"UserPreferencesRequest"});
       
     }
     if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatProgressBar, MatButton } from '@angular/material';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-lockscreen',

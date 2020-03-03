@@ -17,7 +17,6 @@ import {
 import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
@@ -135,7 +134,6 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    public snackBar: MatSnackBar,
     public translate: TranslateService) {}
 
   ngAfterViewInit() {

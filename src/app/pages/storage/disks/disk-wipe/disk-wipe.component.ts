@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 
 import { WebSocketService } from "../../../../services/ws.service";
