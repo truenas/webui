@@ -295,7 +295,7 @@ export class ServiceUPSComponent {
   }
 
   beforeSubmit(data: any) {
-    data.ups_driver = this.ups_driver_key;
+    data.driver = this.ups_driver_key;
   }
 
 }
