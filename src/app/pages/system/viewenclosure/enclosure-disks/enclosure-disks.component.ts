@@ -21,6 +21,12 @@ import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
 import { DomSanitizer } from "@angular/platform-browser";
 
+interface DiskFailure {
+  disk: string;
+  enclosure: number;
+  reasons?: string[];
+}
+
 @Component({
   selector: 'enclosure-disks',
   templateUrl: './enclosure-disks.component.html',
@@ -45,12 +51,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private resources = PIXI.loader.resources;
   public container;
   public system_product: string = 'unknown';
+  public failedDisks: DiskFailure[] = [];
 
   protected enclosure: any; // Visualization
 
   private _expanders: any[] = [];
   get expanders () {
-    if(this.system.enclosures){
+    if(this.system.enclosures && this.selectedEnclosure.disks[0]){
       let enclosureNumber =  Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);
     } else {
@@ -214,8 +221,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if(changes.selectedEnclosure){
       this.destroyEnclosure();
 
-      if(this.enclosure){ 
+      if(this.system){
+        this.getDiskFailures();
+      }
 
+      if(this.enclosure){ 
+        
         this.exitingView = this.currentView;
         this.currentView = this.defaultView;
         if(this.exitingView == 'details'){
@@ -594,16 +605,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     this.selectedEnclosure.disks.forEach((disk, index) =>{
-      this.setDiskHealthState(disk)
+      this.setDiskHealthState(disk);
     });
 
   }
 
-  setDiskHealthState(disk: any, enclosure?: any){
-      if(!enclosure){
-        enclosure = this.enclosure
-      }
-      
+  setDiskHealthState(disk: any, enclosure: any = this.enclosure, updateGL: boolean = false){
       let index = disk.enclosure.slot - 1;
       if(!enclosure.driveTrayObjects[index]){
         console.warn("There is no driveTray at index " + index + " on model " + enclosure.model + "!");
@@ -612,23 +619,79 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
       }
 
+      let failed: boolean = false;
+
+      // Health based on disk.status
       if(disk && disk.status){
         switch(disk.status){
           case "ONLINE":
             enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.green}});
           break;
           case "FAULT":
-            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.red}});
+            failed = true;
           break;
           case "AVAILABLE":
             enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: '#999999'}});
           break;
           default:
             enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.yellow}});
-          break
+          break;
         }
-
       }
+
+      // Also check slot status
+      const slot = this.system.enclosures[disk.enclosure.number].elements[0].elements.filter(s => s.slot == disk.enclosure.slot)
+      
+      if(!failed && slot.fault){
+        failed = true;
+      }
+
+      // Test
+      if(disk.name == 'da54' || disk.name == 'da53'){
+        failed = true;
+      }
+
+      if(failed){
+        //const failure: DiskFailure = reasons.length > 0 ? {disk: disk.name, enclosure:disk.enclosure.number, reasons: reasons} : {disk: disk.name, enclosure: disk.enclosure.number}
+        enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.red}});
+      } 
+
+  }
+
+  getDiskFailures(enclosure: any = this.enclosure){
+    let failedDisks = [];
+
+    this.selectedEnclosure.disks.forEach((disk, index) =>{
+      let failed: boolean = false;
+      let reasons = [];
+
+      // Health based on disk.status
+      if(disk && disk.status && disk.status == 'FAULT'){
+            failed = true;
+            reasons.push("Disk Status is 'FAULT'");
+      }
+
+      // Also check slot status
+      const slot = this.system.enclosures[disk.enclosure.number].elements[0].elements.filter(s => s.slot == disk.enclosure.slot)
+      
+      if(!failed && slot.fault){
+        failed = true;
+      }
+
+      // Test
+      if(disk.name == 'da54' || disk.name == 'da53'){
+        failed = true;
+        reasons.push("Testing UI")
+      }
+
+      if(failed){
+        const failure: DiskFailure = reasons.length > 0 ? {disk: disk.name, enclosure:disk.enclosure.number, reasons: reasons} : {disk: disk.name, enclosure: disk.enclosure.number}
+        failedDisks.push(failure);
+      }
+
+    });
+
+    this.failedDisks = failedDisks;
   }
 
   setDisksPoolState(){
