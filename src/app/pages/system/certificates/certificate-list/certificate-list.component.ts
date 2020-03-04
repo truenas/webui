@@ -152,7 +152,7 @@ export class CertificateListComponent {
             (progress) => {
             },
             (err) => {
-              new EntityUtils().handleWSError(this.entityList, err);
+              new EntityUtils().handleWSError(this.entityList, err, this.dialog);
             },
             () => {
               this.entityList.getData();
