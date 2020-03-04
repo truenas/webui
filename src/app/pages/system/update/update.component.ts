@@ -577,18 +577,10 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.updateType = 'standard';
             // Calls the 'Save Config' dialog - Returns here if user declines
             this.dialogService.dialogForm(this.saveConfigFormConf).subscribe((res)=>{
-
-
-
               if (res === false) {
                 this.confirmAndUpdate()
               };
             });
-
-
-
-
-
           } else if (res.status === 'UNAVAILABLE'){
             this.dialogService.Info(T('Check Now'), T('No updates available.'))
           }
