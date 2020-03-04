@@ -598,17 +598,28 @@ export class VolumesListTableConfig implements InputTableConf {
               }),
               dialogRef.componentInstance.failure.subscribe((res) => {
                 let conditionalErrMessage = '';
-                if (res.error && res.error.includes('EBUSY')) {
+                if (res.error) {
                   if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    conditionalErrMessage = '<div class="warning-box">Warning: These services must be restarted to export the pool:<br>';
-                    res.exc_info.extra.services.forEach((item) => {
-                      conditionalErrMessage += `<br>- ${item}`;
-                    })
-                    conditionalErrMessage += '<br><br>Exporting/disconnecting will continue after services have been restarted.</div><br />';
+                    if (res.exc_info.extra.stop_services.length > 0) {
+                      conditionalErrMessage += '<div class="warning-box">These services must be stopped to export the pool:';
+                      res.exc_info.extra.stop_services.forEach((item) => {
+                        conditionalErrMessage += `<br>- ${item}`;
+                      });
+                    }
+                    if (res.exc_info.extra.restart_services.length > 0) {
+                      if (res.exc_info.extra.stop_services.length > 0) {
+                        conditionalErrMessage += '<br><br>';
+                      }
+                      conditionalErrMessage += '<div class="warning-box">These services must be restarted to export the pool:';
+                      res.exc_info.extra.restart_services.forEach((item) => {
+                        conditionalErrMessage += `<br>- ${item}`;
+                      });
+                    }
+                    conditionalErrMessage += '<br><br>Exporting/disconnecting will continue after services have been handled.</div><br />';
                       self.dialogService.confirm(T("Error exporting/disconnecting pool."),
-                        conditionalErrMessage, true, 'Restart Services and Continue')
+                        conditionalErrMessage, true, 'Handle Services and Continue')
                           .subscribe((res) => {
                             if (res) {
                               self.restartServices = true;
