@@ -597,44 +597,45 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   // Continues the update process began in startUpdate(), after passing through the Save Config dialog
   confirmAndUpdate() {
-    if (!this.is_ha) {
-      this.ds  = this.dialogService.confirm(
-        T("Download Update"), T("Continue with download?"),true,T("Download"),true,
-          T("Apply updates and reboot system after downloading."),
-          'update.update',[{ reboot: false }]
-      )
-      this.ds.componentInstance.isSubmitEnabled = true;
-      this.ds.afterClosed().subscribe((status)=>{
-        if(status){
-          if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
-            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-            this.dialogRef.componentInstance.setCall('update.download');
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe((succ) => {
-              this.dialogRef.close(false);
-              this.dialogService.Info(T("Updates successfully downloaded"),'', '450px', 'info', true);
-              this.pendingupdates();
+    let downloadMsg;
+    let confirmMsg;
 
-            });
-            this.dialogRef.componentInstance.failure.subscribe((err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
-            });
-          }
-          else{
-            this.update();
-          }
-        }
-      });
-      } else {
-        this.ds  = this.dialogService.confirm(
-          T("Download Update"), T("Upgrades both controllers. Files are downloaded to the Active Controller\
-            and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
-            Continue with download?"),true).subscribe((res) =>  {
-            if (res) {
-              this.update()
-            };
+    if (!this.is_ha) {
+      downloadMsg = helptext.non_ha_download_msg;
+      confirmMsg = helptext.non_ha_confirm_msg;
+    } else {
+      downloadMsg = helptext.ha_download_msg;
+      confirmMsg = helptext.ha_confirm_msg;
+    }
+
+    this.ds  = this.dialogService.confirm(
+      T("Download Update"), downloadMsg,true,T("Download"),true,
+      confirmMsg,
+      this.updateMethod,[{ reboot: false }]
+    )
+
+    this.ds.componentInstance.isSubmitEnabled = true;
+    this.ds.afterClosed().subscribe((status)=>{
+      if(status){
+        if (!this.ds.componentInstance.data[0].reboot){
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+          this.dialogRef.componentInstance.setCall('update.download');
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((succ) => {
+            this.dialogRef.close(false);
+            this.dialogService.Info(T("Updates successfully downloaded"),'', '450px', 'info', true);
+            this.pendingupdates();
+
           });
-      };
+          this.dialogRef.componentInstance.failure.subscribe((err) => {
+            new EntityUtils().handleWSError(this, err, this.dialogService);
+          });
+        }
+        else{
+          this.update();
+        }
+      }
+    });
   }
 
   update() {
