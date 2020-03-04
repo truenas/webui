@@ -37,13 +37,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public selectedTrain;
   public general_update_error;
   public update_downloaded=false;
-  public train_msg = {
-    "NIGHTLY_DOWNGRADE": T("Changing away from the nightly train is considered a downgrade and not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "MINOR_DOWNGRADE": T("Changing the minor version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "MAJOR_DOWNGRADE": T("Changing the major version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
-  }
   public release_train: boolean;
   public pre_release_train: boolean;
   public nightly_train: boolean;
@@ -129,85 +122,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
     return version;
   }
 
-  compareTrains(t1, t2) {
-    const v1 = this.parseTrainName(t1)
-    const v2 = this.parseTrainName(t2);
-
-    try {
-      if(v1[0] !== v2[0] || v1[1] !== v2[1]) {
-
-        const version1 = v1[0].split('.');
-        const version2 = v2[0].split('.');
-        const branch1 = v1[1].toLowerCase();
-        const branch2 = v2[1].toLowerCase();
-
-        if(branch1 !== branch2) {
-
-          if(branch2 === "nightlies") {
-            return "NIGHTLY_UPGRADE";
-          } else if(branch1 === "nightlies") {
-            return "NIGHTLY_DOWNGRADE";
-          }
-        } else {
-          if(version2[0] ==="HEAD"){
-            return "ALLOWED"
-          }
-        }
-
-        if (version1[0] === version2[0]){
-          // comparing '11' .1 with '11' .2
-          if(version1[1] && version2[1]){
-            if (version1[1] === version2[1]) {
-              //upgrading to train of same version;
-              return "ALLOWED";
-            }
-            //comparing '.1' with '.2'
-            return version1[1] < version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
-          }
-          if(version1[1]){
-            //handling a case where '.1' is compared with 'undefined'
-            return "MINOR_DOWNGRADE"
-          }
-          if(version2[1]){
-            //comparing '.1' with '.2'
-            return "MINOR_UPGRADE"
-          }
-
-        } else {
-          // comparing '9' .10 with '11' .2
-          return version1[0] > version2[0] ? "MAJOR_UPGRADE":"MAJOR_DOWNGRADE";
-        }
-
-      } else {
-        if(v1[0] === v2[0]&&v1[1] !== v2[1]){
-          const branch1 = v1[1].toLowerCase();
-          const branch2 = v2[1].toLowerCase();
-          if(branch1 !== branch2) {
-
-            if(branch2 === "nightlies") {
-              return "NIGHTLY_UPGRADE";
-            } else if(branch1 === "nightlies") {
-              return "NIGHTLY_DOWNGRADE";
-            }
-          } else {
-            if(branch2 === "nightlies" && branch1 === "nightlies") {
-
-            }
-
-          }
-        }
-        else {
-          if(v2[2]||v1[2]){
-            return "SDK"
-          }
-        }
-
-      }
-    } catch (e) {
-      console.error("Failed to compare trains", e);
-    }
-  }
-
   ngOnInit() {
     window.localStorage.getItem('is_freenas') === 'true' ? this.isfreenas = true : this.isfreenas = false;
 
@@ -227,13 +141,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   
         this.trains = [];
         for (const i in res.trains) {
-          if (this.compareTrains(this.train, i) === 'ALLOWED' || 
-          this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || 
-          this.compareTrains(this.train, i) === 'MINOR_UPGRADE' || 
-          this.compareTrains(this.train, i) === 'MAJOR_UPGRADE' || 
-          this.train === i) {
             this.trains.push({ name: i, description: res.trains[i].description });
-          }
         }
         this.singleDescription = this.trains[0].description;
         
@@ -322,31 +230,22 @@ export class UpdateComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const compare = this.compareTrains(this.selectedTrain, event);
-    if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
-      this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
-        this.train = this.selectedTrain;
-      })
-    } else if(compare === "NIGHTLY_UPGRADE"){
-        this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
-          if (res){
-            this.train = event;
-            this.setTrainDescription();
-            this.setTrainAndCheck();
-          } else {
-            this.train = this.selectedTrain;
-            this.setTrainDescription();
-          }
-        })
-    } else if (compare === "ALLOWED" || compare === "MINOR_UPGRADE" || compare === "MAJOR_UPGRADE") {
-      this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
-        if(train_res){
-          this.train = event;
-          this.setTrainDescription();
-          this.setTrainAndCheck();
-        }
-      })
+    let warning = '';
+    if (this.fullTrainList[event].description.includes('[nightly]')) {
+      warning = T("Changing to a nightly train is one-way. Changing back to a stable train is not supported! ");
     }
+
+
+    this.dialogService.confirm(T("Switch Train"), warning + T("Switch update trains?")).subscribe((train_res)=>{
+      if(train_res){
+        this.train = event;
+        this.setTrainDescription();
+        this.setTrainAndCheck();
+      } else {
+        this.train = this.selectedTrain;
+        this.setTrainDescription();
+      }
+    })
   }
 
   setTrainDescription() {
