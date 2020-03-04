@@ -67,4 +67,7 @@ basic_options: T('Basic Options'),
 advanced_options: T('Advanced Options'),
 
 invalidInputValueWithUnit: T('Invalid value. Missing numerical value or invalid numerical value/unit.'),
+
+pasteValueStartsWithSpace: T('The pasted string starts with a white space'),
+pasteValueEndsWithSpace: T('The pasted string ends with a white space'),
 }
