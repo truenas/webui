@@ -150,9 +150,13 @@
           </div>
   
           <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">
-            <div class="primary-number" >0</div>
-            <div class="title">Failed Disks</div>
-            <div class="subtitle">All disks healthy</div>
+            <div class="primary-number" >{{failedDisks.length}}</div>
+            <div class="title">Failed Disk<span *ngIf="failedDisks.length != 1">s</span></div>
+            <div class="subtitle">
+              <span *ngIf="failedDisks.length < 1">All disks healthy</span>
+              <span *ngIf="failedDisks.length > 1">Check {{failedDisks[0].disk}} and {{failedDisks.length - 1}} others</span>
+              <span *ngIf="failedDisks.length == 1">Check {{failedDisks[0].disk}} in enclosure {{failedDisks[0].enclosure}}</span>
+            </div>
             <button mat-button color="primary" (click)="setCurrentView('status')">SHOW STATUS</button>
           </div>
   
