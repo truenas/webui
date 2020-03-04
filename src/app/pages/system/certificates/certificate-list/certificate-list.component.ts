@@ -150,6 +150,9 @@ export class CertificateListComponent {
         onClick: (row) => {
           this.entityList.doDeleteJob(row).subscribe(
             (progress) => {
+              if (progress.state && progress.state === 'FAILED') {
+                new EntityUtils().handleWSError(this.entityList, progress, this.dialog);
+              }
             },
             (err) => {
               new EntityUtils().handleWSError(this.entityList, err, this.dialog);
