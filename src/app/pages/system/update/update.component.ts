@@ -130,6 +130,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
       this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
         this.fullTrainList = res.trains;
+        console.log(this.fullTrainList)
   
         // On page load, make sure we are working with train of the current OS
         this.train = res.current;
@@ -230,11 +231,20 @@ export class UpdateComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
+    let warning = '';
+    if (this.fullTrainList[event].description.includes('[nightly]')) {
+      warning = T("Changing to a nightly train is one-way. Changing back to a stable train is not supported! ");
+    }
+
+
+    this.dialogService.confirm(T("Switch Train"), warning + T("Switch update trains?")).subscribe((train_res)=>{
       if(train_res){
         this.train = event;
         this.setTrainDescription();
         this.setTrainAndCheck();
+      } else {
+        this.train = this.selectedTrain;
+        this.setTrainDescription();
       }
     })
   }
