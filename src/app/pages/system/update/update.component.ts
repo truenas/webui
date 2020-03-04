@@ -130,7 +130,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
       this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
         this.fullTrainList = res.trains;
-        console.log(this.fullTrainList)
   
         // On page load, make sure we are working with train of the current OS
         this.train = res.current;
