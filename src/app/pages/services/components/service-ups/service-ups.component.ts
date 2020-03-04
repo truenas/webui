@@ -218,13 +218,16 @@ export class ServiceUPSComponent {
       }
     });
 
-    entityForm.formGroup.controls['ups_mode'].valueChanges.subscribe((res) => {;
+    entityForm.formGroup.controls['ups_mode'].valueChanges.subscribe((res) => {
       if (res === 'slave') {
         this.hideField('ups_remotehost', false, entityForm);
         this.hideField('ups_remoteport', false, entityForm);
+        this.hideField('ups_driver', true, entityForm);
       } else {
-        this.hideField('ups_remotehost', true, entityForm)
-        this.hideField('ups_remoteport', true, entityForm)
+        this.hideField('ups_remotehost', true, entityForm);
+        this.hideField('ups_remoteport', true, entityForm);
+        this.hideField('ups_driver', false, entityForm);
+
       }
     });
   }
