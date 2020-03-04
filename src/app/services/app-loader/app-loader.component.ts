@@ -17,7 +17,7 @@ export class AppLoaderComponent {
   consoleMsg: string;
   consoleMSgList: string[] = [];
 
-  isShowConsole$: Observable<boolean> = this._ws.call('system.advanced.config', []).pipe(map(config => config.consolemsg));
+  isShowConsole = false;
 
   consoleDialog: MatDialogRef<ConsolePanelModalDialog>;
   private _consoleSubscription: Subscription;
@@ -27,12 +27,13 @@ export class AppLoaderComponent {
     private _dialog: MatDialog,
     private _ws: WebSocketService,
   ) {
-    this.isShowConsole$
+    this._ws.call('system.advanced.config', []).pipe(map(config => config.consolemsg))
       .pipe(
         take(1),
         filter(isShowConsole => !!isShowConsole)
       )
       .subscribe(() => {
+        this.isShowConsole = true;
         this.dialogRef.updateSize("200px", "248px");
       });
   }
