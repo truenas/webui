@@ -55,6 +55,7 @@
     "angular-calendar": "0.28.2",
     "angular-draggable-droppable": "4.3.8",
     "angular-resizable-element": "3.3.0",
+    "angular2-qrcode": "2.0.3",
     "angular-svg-icon": "9.0.0",
     "angular-tree-component": "8.5.6",
     "angular2-uuid": "1.1.1",

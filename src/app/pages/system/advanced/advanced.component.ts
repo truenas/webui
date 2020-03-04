@@ -79,7 +79,8 @@ export class AdvancedComponent implements OnDestroy {
         })
       })
     } 
-  }];
+  }
+];
 
   public fieldSets = new FieldSets([
     {
@@ -269,7 +270,7 @@ export class AdvancedComponent implements OnDestroy {
     public http: HttpClient,
     public storage: StorageService,
     public validationService: ValidationService
-  ) {}
+    ) {}
 
   resourceTransformIncomingRestData(data) {
     data.swapondrive = this.storage.convertBytestoHumanReadable(data.swapondrive * 1073741824, 0);
