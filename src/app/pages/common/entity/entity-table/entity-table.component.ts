@@ -101,7 +101,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('filter', { static: false}) filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
   @ViewChild('entityTable', { static: false}) table: any;
-
+  public tableMouseEvent: MouseEvent;
   // MdPaginator Inputs
   public paginationPageSize: number = 8;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
@@ -1072,5 +1072,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       dialogRef.componentInstance.failure.subscribe((err) => {
         dialogRef.close();
       });
+  }
+
+  onclick($event) {
+    this.tableMouseEvent = $event;
   }
 }

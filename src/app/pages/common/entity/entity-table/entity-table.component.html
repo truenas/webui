@@ -249,7 +249,8 @@
               ix-auto-type="checkbox"
               [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
               [checked]="isSelected"
-              (change)="onCheckboxChangeFn($event)"
+              (click)="onclick($event)"
+              (change)="onCheckboxChangeFn(tableMouseEvent)"
             ></mat-checkbox>
           </div>
         </ng-template>
