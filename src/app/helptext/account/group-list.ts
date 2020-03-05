@@ -7,5 +7,12 @@ group_list_actions_label_edit: T("Edit"),
 group_list_actions_id_edit: "edit",
 group_list_actions_label_delete: T("Delete"),
 group_list_dialog_label: T("Delete"), 
-group_list_dialog_message: T('Delete all users with this primary group?')    
+group_list_dialog_message: T('Delete all users with this primary group?'),
+
+    builtins_dialog: {
+        title: T(' Builtin Groups'),
+        message: T(' builtin groups (default setting is <i>hidden</i>).'),
+        show: T('Show'),
+        hide: T('Hide')
+    }
 }

@@ -64,6 +64,11 @@ vm_config
 /src/assets/i18n/*.mo
 /src/assets/i18n/*.json
 
+# generated license text
+/src/assets/disclaimer.txt
+/src/assets/licenses.json
+licenses.txt
+
 # generated screenshot files
 tests/screenshot/*.png
 .vs/slnx.sqlite

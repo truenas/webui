@@ -155,7 +155,6 @@ export const helptext_system_general = {
     tooltip: T("Enable sending anonymous usage statistics to iXsystems.")
   },
 
-
   save_config_form: {
     title: T('Save Configuration'),
     message: T(

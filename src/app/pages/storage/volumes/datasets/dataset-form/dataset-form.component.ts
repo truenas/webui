@@ -100,14 +100,14 @@ export class DatasetFormComponent implements Formconfiguration{
   public custActions: Array<any> = [
     {
       id: 'basic_mode',
-      name: T('Basic Mode'),
+      name: globalHelptext.basic_options,
       function: () => { 
         this.setBasicMode(true);
       }
     },
     {
       id: 'advanced_mode',
-      name: T('Advanced Mode'),
+      name: globalHelptext.advanced_options,
       function: () => { 
         this.setBasicMode(false);
       }
@@ -505,17 +505,17 @@ export class DatasetFormComponent implements Formconfiguration{
         tooltip: helptext.dataset_form_recordsize_tooltip,
         options: [
           { label: '512', value: '512', disable:true, hiddenFromDisplay: true },
-          { label: '1K', value: '1K', disable:true, hiddenFromDisplay: true },
-          { label: '2K', value: '2K', disable:true, hiddenFromDisplay: true },
-          { label: '4K', value: '4K' },
-          { label: '8K', value: '8K' },
-          { label: '16K', value: '16K' },
-          { label: '32K', value: '32K' },
-          { label: '64K', value: '64K' },
-          { label: '128K', value: '128K' },
-          { label: '256K', value: '256K' },
-          { label: '512K', value: '512K' },
-          { label: '1M', value: '1M' }
+          { label: '1 KiB', value: '1K', disable:true, hiddenFromDisplay: true },
+          { label: '2 KiB', value: '2K', disable:true, hiddenFromDisplay: true },
+          { label: '4 KiB', value: '4K' },
+          { label: '8 KiB', value: '8K' },
+          { label: '16 KiB', value: '16K' },
+          { label: '32 KiB', value: '32K' },
+          { label: '64 KiB', value: '64K' },
+          { label: '128 KiB', value: '128K' },
+          { label: '256 KiB', value: '256K' },
+          { label: '512 KiB', value: '512K' },
+          { label: '1 MiB', value: '1M' }
         ],
       },
       {
@@ -849,7 +849,8 @@ export class DatasetFormComponent implements Formconfiguration{
         const exec_inherit = [{label:`Inherit (${pk_dataset[0].exec.rawvalue})`, value: 'INHERIT'}];
         const readonly_inherit = [{label:`Inherit (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT'}];
         const atime_inherit = [{label:`Inherit (${pk_dataset[0].atime.rawvalue})`, value: 'INHERIT'}];
-        const recordsize_inherit = [{label:`Inherit (${pk_dataset[0].recordsize.value})`, value: 'INHERIT'}];
+        this.storageService.convertHumanStringToNum(pk_dataset[0].recordsize.value);
+        const recordsize_inherit = [{label:`Inherit (${this.storageService.humanReadable})`, value: 'INHERIT'}];
         if (pk_dataset[0].refquota_critical && pk_dataset[0].refquota_critical.value) {
           entityForm.formGroup.controls['refquota_critical'].setValue(pk_dataset[0].refquota_critical.value);
         }

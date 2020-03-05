@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { MatDialog } from '@angular/material/dialog';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -27,6 +29,7 @@ export class VMListComponent {
     protected wsDelete = 'vm.delete';
     protected route_add: string[] = ['vm', 'wizard'];
     protected route_edit: string[] = ['vm', 'edit'];
+    protected dialogRef: any;
 
     public entityList: any;
     public columns: Array<any> = [
@@ -41,7 +44,8 @@ export class VMListComponent {
         { name: T('System Clock'), prop: 'time', hidden: true },
         { name: T("VNC Port"), prop: 'port', hidden: true },
         { name: T("Com Port"), prop: 'com_port', hidden: true },
-        { name: T("Description"), prop: 'description', hidden: true }
+        { name: T("Description"), prop: 'description', hidden: true },
+        { name: T("Shutdown Timeout"), prop: 'shutdown_timeout', hidden: true }
     ];
     public config: any = {
         paging: true,
@@ -56,6 +60,7 @@ export class VMListComponent {
         start: "vm.start",
         restart: "vm.restart",
         stop: "vm.stop",
+        poweroff: "vm.poweroff",
         update: "vm.update",
         clone: "vm.clone",
         getAvailableMemory: "vm.get_available_memory",
@@ -70,7 +75,7 @@ export class VMListComponent {
         private storageService: StorageService,
         private loader: AppLoaderService,
         private dialogService: DialogService,
-        private router: Router) { }
+        private router: Router, protected dialog: MatDialog) { }
 
     afterInit(entityList) {
         this.checkMemory();
@@ -81,6 +86,7 @@ export class VMListComponent {
         for (let vm_index = 0; vm_index < vms.length; vm_index++) {
             vms[vm_index]['state'] = vms[vm_index]['status']['state'];
             vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
+            vms[vm_index]['shutdown_timeout'] += T(' seconds') 
             if (this.checkVnc(vms[vm_index])) {
                 vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
             } else {
@@ -125,8 +131,37 @@ export class VMListComponent {
     }
 
     onSliderChange(row) {
-        const method = row['status']['state'] === "RUNNING" ? this.wsMethods.stop : this.wsMethods.start;
-        this.doRowAction(row, method);
+        let method;
+        if (row['status']['state'] === "RUNNING") {
+            method = this.wsMethods.stop;
+            const parent = this;
+            const stopDialog: DialogFormConfiguration = {
+                title: T('Stop ' + row.name + '?'),
+                fieldConfig: [
+                    {
+                        type: 'checkbox',
+                        name: 'force_after_timeout',
+                        placeholder: T('Force Stop After Timeout'),
+                        tooltip: T('Force the VM to stop if it has not already \
+ stopped within the specified shutdown timeout. Without this option selected, the VM will \
+ receive the shutdown signal, but may or may not complete the shutdown process.')
+                    }
+                ],
+                saveButtonText: T('Stop'),
+                customSubmit: function (entityDialog) {
+                    entityDialog.dialogRef.close(true);
+                    let forceValue = false; // We are not exposing this in the UI
+                    let forceValueTimeout = entityDialog.formValue.force_after_timeout ? true : false;
+                    const params = [row.id, {force: forceValue, force_after_timeout: forceValueTimeout}];
+                    parent.doRowAction(row, method, params);
+                }
+            };
+            this.dialogService.dialogForm(stopDialog);
+
+        } else {
+            method = this.wsMethods.start;
+            this.doRowAction(row, method);
+        } 
     }
 
     onMemoryError(row) {
@@ -153,30 +188,52 @@ export class VMListComponent {
     }
 
     doRowAction(row, method, params = [row.id], updateTable = false) {
-        this.loader.open();
-        this.ws.call(method, params).subscribe(
-            (res) => {
+        if (method === 'vm.stop') {
+            this.dialogRef = this.dialog.open(EntityJobComponent, 
+                { data: { "title": T("Stopping " + row.name) }, disableClose: false });
+            this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
+            this.dialogRef.componentInstance.submit();
+            this.dialogRef.componentInstance.success.subscribe((succ) => {
                 if (updateTable) {
                     this.entityList.getData();
-                    this.loader.close();
                 } else {
-                    this.updateRows([row]).then(() => {
+                    this.updateRows([row]);
+                }
+              this.dialogRef.close(false);
+              this.dialogService.Info(T('Finished'), T('If ' + row.name + T(' is still running, \
+ the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop \
+ After Timeout</i> option to stop the VM.')) , '450px', 'info', true);
+            this.checkMemory(); 
+            });
+            this.dialogRef.componentInstance.failure.subscribe((err) => {
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            });
+        } else {
+            this.loader.open();
+            this.ws.call(method, params).subscribe(
+                (res) => {
+                    if (updateTable) {
+                        this.entityList.getData();
                         this.loader.close();
-                    });
+                    } else {
+                        this.updateRows([row]).then(() => {
+                            this.loader.close();
+                        });
+                    }
+                    this.checkMemory();
+                },
+                (err) => {
+                    this.loader.close();
+                    if (method === this.wsMethods.start && err.error === 12) {
+                        this.onMemoryError(row);
+                        return;
+                    } else if (method === this.wsMethods.update) {
+                        row.autostart = !row.autostart;
+                    }
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
                 }
-                this.checkMemory();
-            },
-            (err) => {
-                this.loader.close();
-                if (method === this.wsMethods.start && err.error === 12) {
-                    this.onMemoryError(row);
-                    return;
-                } else if (method === this.wsMethods.update) {
-                    row.autostart = !row.autostart;
-                }
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-            }
-        )
+            )
+        }
     }
 
     updateRows(rows: Array<any>): Promise<boolean> {
@@ -230,7 +287,7 @@ export class VMListComponent {
             icon: "power_settings_new",
             label: T("Power Off"),
             onClick: power_off_row => {
-                this.doRowAction(row, this.wsMethods.stop, [power_off_row.id, true]);
+                this.doRowAction(row, this.wsMethods.poweroff, [power_off_row.id]);
             }
         },
         {

@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { HttpClient } from '@angular/common/http';
+import { DialogService } from '../../../../services/dialog.service';
+import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import globalHelptext from '../../../../helptext/global-helptext';
-import { StorageService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
+import { StorageService, SystemGeneralService, WebSocketService, AppLoaderService } from '../../../../services/';
 
 @Component({
   selector: 'about-dialog',
@@ -21,6 +24,8 @@ export class AboutModalDialog {
   constructor(
     public dialogRef: MatDialogRef<AboutModalDialog>,
     private ws: WebSocketService,
+    protected loader: AppLoaderService,
+    protected http: HttpClient, protected dialogService: DialogService, 
     protected translate: TranslateService,
     protected systemGeneralService: SystemGeneralService, private storageService: StorageService) { 
       this.ws.call('system.product_type').subscribe((res)=>{
@@ -33,5 +38,14 @@ export class AboutModalDialog {
       });
       this.systemGeneralService.ipChoicesv4().subscribe(choices => this.ipv4Choices = choices);
       this.systemGeneralService.ipChoicesv6().subscribe(choices => this.ipv6Choices = choices);
+    }
+
+    showLicenses() {
+      this.loader.open();
+      this.http.get('assets/disclaimer.txt', {responseType: 'text'}).subscribe(licenses => {
+        this.loader.close();
+        this.dialogService.confirm(T("View Licenses"), licenses, true, T("Ok"), false, null, '', null, null, true).subscribe(ok => {
+        });
+      });
     }
 }

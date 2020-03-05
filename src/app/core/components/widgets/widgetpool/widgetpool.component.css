@@ -109,12 +109,33 @@
 
 .slide.overview .left .left-content{
   display:table;
-  min-height:50%;
+  height: calc(400px * 0.5);
+  width:100%;
 }
 
 .pool-name{
-  font-size:300%;
+  font-size:250%;
+  /*border-bottom:solid 1px var(--grey);*/
 }
+
+.table{ 
+  display:table; 
+  text-align:left;
+  margin: 16px 24px;
+  width: calc(100% - 48px);
+}
+
+
+.tr{ display:table-row; }
+.td{ 
+  display:table-cell; 
+  padding:2px 0;
+}
+
+.td span{opacity: 0.95;}
+.td span.icon{ opacity: 1;}
+
+
 
 .pool-status .icon-wrapper{
   display: inline-block;
@@ -144,7 +165,9 @@ span.safe{
   color: var(--green);
 }
 
-.pool-status span.safe .mat-icon{
+.pool-status span.safe .mat-icon,
+.used-space span.safe .mat-icon,
+.disk-errors span.safe .mat-icon{
   width:auto;
   height:auto;
   font-size: 18px;
@@ -285,6 +308,11 @@ span.capitalize{
   font-size: 120%;
 }
 
+.disk-errors.mat-icon.healthy {
+  /*font-size: 18px;
+  margin-bottom: 2px;*/
+}
+
 
 /* NARROW SCREENS */
 .xs.widget{
@@ -301,4 +329,7 @@ span.capitalize{
 
 .xs.widget .overview .right .list-subheader{
   margin-top:0;
+}
+.value-units {
+  margin-left: 5px;
 }

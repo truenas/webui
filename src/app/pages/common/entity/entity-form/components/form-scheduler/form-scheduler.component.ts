@@ -8,9 +8,10 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
 import { LocaleService } from 'app/services/locale.service';
 
 import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
-import {MatDatepickerModule, MatMonthView} from '@angular/material';
-import * as moment from 'moment';
+import {MatMonthView} from '@angular/material/datepicker';
+import * as moment from 'moment-timezone';
 import * as parser from 'cron-parser';
+import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../../../utils';
 import globalHelptext from '../../../../../../helptext/global-helptext';
 
@@ -38,6 +39,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public disablePrevious:boolean;
   public ngDateFormat: string;
   public helptext = globalHelptext;
+  public timezone: string;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -245,19 +247,24 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay,
-    protected localeService: LocaleService){ 
+  constructor(public translate: TranslateService, private renderer: Renderer2, 
+    private cd: ChangeDetectorRef,public overlay: Overlay,
+    protected localeService: LocaleService, protected ws: WebSocketService){ 
     
     //Set default value
-    this.preset = this.presets[1];
-    this._months = "*";
-    
-    this.minDate = moment();
-    this.maxDate = moment().endOf('month');
-    this.currentDate= moment();
-    
-    this.activeDate = moment(this.currentDate).toDate();
-    this.disablePrevious = true;
+    this.ws.call('system.general.config').subscribe((res) => {
+      this.timezone = res.timezone;
+      moment.tz.setDefault(res.timezone);
+      this.preset = this.presets[1];
+      this._months = "*";
+      
+      this.minDate = moment();
+      this.maxDate = moment().endOf('month');
+      this.currentDate= moment();
+
+      this.activeDate = moment(this.currentDate).format();
+      this.disablePrevious = true;
+    })
   }
 
   ngOnChanges(changes:SimpleChanges){

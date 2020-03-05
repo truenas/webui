@@ -18,7 +18,7 @@ import { AppLoaderService } from '../../../../../services/app-loader/app-loader.
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import {EntityUtils} from '../../../../common/entity/utils';
 import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';

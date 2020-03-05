@@ -1,6 +1,6 @@
 
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
@@ -157,6 +157,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private interval: any;
   private excuteDeletion = false;
   private needRefreshTable = false;
+  private needTableResize = true;
 
   public hasActions = true;
   public sortKey: string;
@@ -486,7 +487,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.rows = this.generateRows(res);
     this.storageService.tableSorter(this.rows, this.sortKey, 'asc')
-
     if (this.conf.dataHandler) {
       this.conf.dataHandler(this);
     }
@@ -503,7 +503,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
-      this.updateTableHeightAfterDetailToggle();
+      if (this.needTableResize || (!this.needTableResize && this.expandedRows > 0)) {
+        this.updateTableHeightAfterDetailToggle();
+        }
+      this.needTableResize = true;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
@@ -720,29 +723,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loader.open();
     this.loaderOpen = true;
     const data = {};
-    if (this.conf.wsDelete) {
-      this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
-        (resinner) => {
-          this.getData();
-          this.excuteDeletion = true;
-        },
-        (resinner) => {
-          new EntityUtils().handleWSError(this, resinner, this.dialogService);
-          this.loader.close();
-        }
-      )
-    } else {
-      this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-        (resinner) => {
-          this.getData();
-          this.excuteDeletion = true;
-        },
-        (resinner) => {
-          new EntityUtils().handleError(this, resinner);
-          this.loader.close();
-        }
-      );
-    }
+    this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
+      (resinner) => {
+        this.getData();
+        this.excuteDeletion = true;
+      },
+      (resinner) => {
+        new EntityUtils().handleWSError(this, resinner, this.dialogService);
+        this.loader.close();
+      }
+    )
   }
 
   doDeleteJob(item: any): Observable<{ state: 'SUCCESS' | 'FAILURE' } | false> {
@@ -776,9 +766,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loaderOpen = true;
         }),
         switchMap(() =>
-          (this.conf.wsDelete
-            ? this.ws.call(this.conf.wsDelete, [id])
-            : this.rest.delete(this.conf.resource_name + "/" + id, {})
+          (this.ws.call(this.conf.wsDelete, [id])
           ).pipe(
             take(1),
             catchError(error => {

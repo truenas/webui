@@ -1,6 +1,6 @@
 {
   "name": "@mdi/font",
-  "version": "3.6.95",
+  "version": "4.9.95",
   "description": "Dist for Material Design Webfont. This includes the Stock and Community icons in a single webfont collection.",
   "style": "css/materialdesignicons.css",
   "scripts": {
@@ -33,5 +33,5 @@
   "bugs": {
     "url": "https://github.com/Templarian/MaterialDesign/issues"
   },
-  "homepage": "http://materialdesignicons.com"
+  "homepage": "https://materialdesignicons.com"
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
@@ -41,7 +41,7 @@ export class CertificateListComponent {
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected ws: WebSocketService, public storage: StorageService,
-    public dialog: DialogService, public http: Http, protected localeService: LocaleService) {
+    public dialog: DialogService, public http: HttpClient, protected localeService: LocaleService) {
   }
 
   resourceTransformIncomingRestData(data) {
@@ -152,7 +152,7 @@ export class CertificateListComponent {
             (progress) => {
             },
             (err) => {
-              new EntityUtils().handleWSError(this.entityList, err);
+              new EntityUtils().handleWSError(this.entityList, err, this.dialog);
             },
             () => {
               this.entityList.getData();

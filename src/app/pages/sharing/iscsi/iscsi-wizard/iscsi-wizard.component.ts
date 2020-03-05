@@ -896,7 +896,7 @@ export class IscsiWizardComponent {
             let counter = 0;
             if (arr) {
                 arr.forEach((item) => {
-                    if (!self.networkService.authNetworkValidator(item, self.networkService.ipv4_or_ipv6_cidr)) {
+                    if (!self.networkService.authNetworkValidator(item)) {
                         counter++;
                     }
                 });

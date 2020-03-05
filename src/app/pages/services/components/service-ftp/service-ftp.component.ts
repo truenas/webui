@@ -2,7 +2,9 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import helptext from '../../../../helptext/services/components/service-ftp';
-import { DialogService, RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import global_helptext from '../../../../helptext/global-helptext';
+import * as _ from 'lodash';
+import { DialogService, RestService, SystemGeneralService, WebSocketService, StorageService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -16,11 +18,15 @@ export class ServiceFTPComponent implements OnInit {
   protected route_success: string[] = [ 'services' ];
 
   protected isBasicMode: boolean = true;
+  protected entityForm: any;
 
   protected rootlogin_fg: any;
   protected rootloginSubscription: any;
   protected warned = false;
   protected rootlogin: boolean;
+  protected fieldConfig;
+
+  protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw'];
 
   public fieldSets = new FieldSets([
     {
@@ -252,33 +258,45 @@ export class ServiceFTPComponent implements OnInit {
           type: "input",
           name: "localuserbw",
           placeholder: helptext.localuserbw_placeholder,
-          tooltip: helptext.localuserbw_tooltip,
+          tooltip: helptext.userbw_tooltip,
           required: true,
-          validation: helptext.localuserbw_validation
+          validation: helptext.userbw_validation,
+          blurStatus: true,
+          blurEvent: this.blurEvent,
+          parent: this,
         },
         {
           type: "input",
           name: "localuserdlbw",
           placeholder: helptext.localuserdlbw_placeholder,
-          tooltip: helptext.localuserdlbw_tooltip,
+          tooltip: helptext.userbw_tooltip,
           required: true,
-          validation: helptext.localuserdlbw_validation
+          validation: helptext.userbw_validation,
+          blurStatus: true,
+          blurEvent: this.blurEvent2,
+          parent: this,
         },
         {
           type: "input",
           name: "anonuserbw",
           placeholder: helptext.anonuserbw_placeholder,
-          tooltip: helptext.anonuserbw_tooltip,
+          tooltip: helptext.userbw_tooltip,
           required: true,
-          validation: helptext.anonuserbw_validation
+          validation: helptext.userbw_validation,
+          blurStatus: true,
+          blurEvent: this.blurEvent3,
+          parent: this,
         },
         {
           type: "input",
           name: "anonuserdlbw",
           placeholder: helptext.anonuserdlbw_placeholder,
-          tooltip: helptext.anonuserdlbw_tooltip,
+          tooltip: helptext.userbw_tooltip,
           required: true,
-          validation: helptext.anonuserdlbw_validation
+          validation: helptext.userbw_validation,
+          blurStatus: true,
+          blurEvent: this.blurEvent4,
+          parent: this,
         }
       ]
     },
@@ -350,7 +368,7 @@ export class ServiceFTPComponent implements OnInit {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : 'Basic Mode',
+      name : global_helptext.basic_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets.toggleSets().toggleDividers();
@@ -358,7 +376,7 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       'id' : 'advanced_mode',
-      name : 'Advanced Mode',
+      name : global_helptext.advanced_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets.toggleSets().toggleDividers();
@@ -380,7 +398,7 @@ export class ServiceFTPComponent implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected dialog: DialogService,
+              protected dialog: DialogService, protected storageService: StorageService,
               protected systemGeneralService: SystemGeneralService) {}
 
   ngOnInit() {
@@ -393,6 +411,7 @@ export class ServiceFTPComponent implements OnInit {
   }
 
   afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
     this.rootloginSubscription = 
@@ -410,10 +429,29 @@ export class ServiceFTPComponent implements OnInit {
         this.rootlogin = res;
       }
     });
+
+    this.bwFields.forEach(field => 
+      entityEdit.formGroup.controls[field].valueChanges.subscribe((value) => {
+        const formField = _.find(this.fieldConfig, { name: field });
+        const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
+        formField['hasErrors'] = false;
+        formField['errors'] = '';
+        if (filteredValue !== undefined && isNaN(filteredValue)) {
+          formField['hasErrors'] = true;
+          formField['errors'] = helptext.bandwidth_err;
+        };
+      }));
+    
+    // 'Erase' humanReadable after load to keep from accidentaly resetting values 
+    setTimeout(() => {
+      this.storageService.humanReadable = '';
+    }, 1000)
   }
 
   resourceTransformIncomingRestData(data) {
-    this.rootlogin = data['rootlogin'];
+    this.bwFields.forEach(field => 
+      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0));
+      this.rootlogin = data['rootlogin'];
     const certificate = data['ssltls_certificate'];
     if (certificate && certificate.id) {
       data['ssltls_certificate'] = certificate.id;
@@ -437,6 +475,9 @@ export class ServiceFTPComponent implements OnInit {
   }
 
   beforeSubmit(data) {
+    this.bwFields.forEach(field => 
+      data[field] = this.storageService.convertHumanStringToNum(data[field])/1024);
+
     let fileperm = parseInt(data['filemask'], 8);
     let filemask = (~fileperm & 0o666).toString(8);
     while (filemask.length < 3) {
@@ -458,5 +499,35 @@ export class ServiceFTPComponent implements OnInit {
 
   ngOnDestroy() {
     this.rootloginSubscription.unsubscribe();
+  }
+
+  blurEvent(parent) {
+    if (parent.entityForm && parent.storageService.humanReadable) {
+      parent.transformValue(parent, 'localuserbw');
+    }
+  }
+
+  blurEvent2(parent) {
+    if (parent.entityForm && parent.storageService.humanReadable) {
+      parent.transformValue(parent, 'localuserdlbw');
+    }
+  }
+
+  blurEvent3(parent) {
+    if (parent.entityForm && parent.storageService.humanReadable) {
+      parent.transformValue(parent, 'anonuserbw');
+    }
+  }
+
+  blurEvent4(parent) {
+    if (parent.entityForm && parent.storageService.humanReadable) {
+      parent.transformValue(parent, 'anonuserdlbw');
+    }
+  }
+
+  transformValue(parent, fieldname: string) {
+    parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
+    // Clear humanReadable value to keep from accidentally setting it elsewhere
+    parent.storageService.humanReadable = '';
   }
 }

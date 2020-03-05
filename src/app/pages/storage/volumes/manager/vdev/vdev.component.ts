@@ -39,6 +39,7 @@ export class VdevComponent implements OnInit {
   public vdev_disks_error;
   public vdev_disks_size_error;
   public vdev_type_disabled = false;
+  private ten_mib = 10 * 1024 * 1024;
   protected mindisks = {'stripe': 1, 'mirror':2, 'raidz':3, 'raidz2':4, 'raidz3':5}
 
   public startingHeight: any;
@@ -129,7 +130,7 @@ export class VdevComponent implements OnInit {
         smallestdisk = size;
         this.firstdisksize = size;
       }
-      if (size !== smallestdisk) {
+      if (size > smallestdisk + this.ten_mib || size < smallestdisk - this.ten_mib) {
         this.vdev_disks_size_error = true;
         this.error = this.diskSizeErrorMsg;
       }

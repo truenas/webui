@@ -23,7 +23,7 @@ human_readable: {
   suggestion_tooltip: T(`This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB). \
   If units are not specified, the value defaults to`),
   
-  suggestion_label: '(Examples: 500 KiB, 500M, 2 TB)',
+  suggestion_label: T('(Examples: 500 KiB, 500M, 2 TB)'),
 },
 
 noLogDilaog: {
@@ -63,5 +63,11 @@ scheduler: {
     }
 },
 
+basic_options: T('Basic Options'),
+advanced_options: T('Advanced Options'),
+
 invalidInputValueWithUnit: T('Invalid value. Missing numerical value or invalid numerical value/unit.'),
+
+pasteValueStartsWithSpace: T('The pasted string starts with a space'),
+pasteValueEndsWithSpace: T('The pasted string ends with a space'),
 }

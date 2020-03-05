@@ -90,6 +90,14 @@ export class ServiceSSHComponent implements OnInit {
           options : helptext.ssh_sftp_log_facility_options,
         },
         {
+          type: 'select',
+          name: 'weak_ciphers',
+          placeholder: helptext.ssh_weak_ciphers_placeholder,
+          tooltip: helptext.ssh_weak_ciphers_tooltip,
+          options: helptext.ssh_weak_ciphers_options,
+          multiple: true
+        },
+        {
           type : 'textarea',
           name : 'options',
           placeholder : helptext.ssh_options_placeholder,
@@ -106,12 +114,13 @@ export class ServiceSSHComponent implements OnInit {
     'sftp_log_level',
     'sftp_log_facility',
     'options',
+    'weak_ciphers',
   ];
 
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : T('Basic Mode'),
+      name : globalHelptext.basic_options,
       function : () => {
         this.fieldSets.find(set => set.name === globalHelptext.fieldset_other_options).label = false;
         this.fieldSets.find(set => set.name === 'divider').divider = false;
@@ -120,7 +129,7 @@ export class ServiceSSHComponent implements OnInit {
     },
     {
       'id' : 'advanced_mode',
-      name : T('Advanced Mode'),
+      name : globalHelptext.advanced_options,
       function : () => {
         this.fieldSets.find(set => set.name === globalHelptext.fieldset_other_options).label = true;
         this.fieldSets.find(set => set.name === 'divider').divider = true;

@@ -19,6 +19,7 @@ export class FormInputComponent implements Field {
   fieldShow: string;
   public fileString;
   public showPassword = false;
+  private hasPasteEvent = false;
 
   constructor(public translate: TranslateService,
     private formService: EntityFormService) {
@@ -84,4 +85,26 @@ export class FormInputComponent implements Field {
       }
     }
   }
+
+  onPaste(event: ClipboardEvent) {
+    if (!this.config.inputType || this.config.inputType !== 'password') {
+      this.hasPasteEvent = true;
+      const clipboardData = event.clipboardData;
+      const pastedText = clipboardData.getData('text');
+      if (pastedText.startsWith(' ')) {
+        this.config.warnings = globalHelptext.pasteValueStartsWithSpace;
+      } else if (pastedText.endsWith(' ')) {
+        this.config.warnings = globalHelptext.pasteValueEndsWithSpace;
+      }
+    }
+  }
+
+  onInput() {
+    if (this.hasPasteEvent) {
+      this.hasPasteEvent = false;
+    } else {
+      this.config.warnings = null;
+    }
+  }
+
 }

@@ -1,6 +1,7 @@
 import { AfterViewChecked, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { MatDialog, MatSidenav } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import * as Ps from 'perfect-scrollbar';
@@ -30,6 +31,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public logoPath: string = 'assets/images/light-logo.svg';
   public logoTextPath: string = 'assets/images/light-logo-text.svg';
   public currentTheme: string = "";
+  public retroLogo: boolean = false;
   // we will just have to add to this list as more languages are added
 
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
@@ -77,8 +79,16 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       sender:themeService
     }).subscribe((evt:CoreEvent)=>{
       let theme = evt.data;
-      this.logoPath = theme.logoPath;
-      this.logoTextPath = theme.logoTextPath;
+      //this.logoPath = theme.logoPath;
+      //this.logoTextPath = theme.logoTextPath;
+    });
+
+    // Subscribe to Preference Changes
+    core.register({
+      observerClass:this, 
+      eventName:"UserPreferencesChanged", 
+    }).subscribe((evt:CoreEvent)=>{
+      this.retroLogo = evt.data.retroLogo ? evt.data.retroLogo : false;
     });
 
     // Listen for system information changes

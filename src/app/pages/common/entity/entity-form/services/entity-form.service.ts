@@ -139,12 +139,13 @@ export class EntityFormService {
   getDatasetsAndZvolsListChildren(node: any) {
     const children = [];
 
-    return this.rest.get('storage/volume/', {}).toPromise().then(res => {
+    // if we ever need this we should convert to websocket
+    /*return this.rest.get('storage/volume/', {}).toPromise().then(res => {
       res.data.forEach((vol) => {           
         children.push(vol.children[0]);
       });
       return children;
-    });
+    });*/
   }
 
   getPoolDatasets(param = []) {

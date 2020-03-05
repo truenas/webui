@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
@@ -26,7 +26,8 @@ export class GeneralComponent {
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
-  public languageKey: string;
+  public languageKey: string;  
+  public fieldConfig: FieldConfig[] = []
 
   public fieldSets: FieldSet[] = [
     {
@@ -141,7 +142,8 @@ export class GeneralComponent {
           placeholder: helptext.date_format.placeholder,
           tooltip: helptext.date_format.tooltip,
           options: [],
-          width: '48%'
+          width: '48%',
+          isLoading: true
         },
         { type: 'paragraph', name: 'spacer', width: '2%' },
         {
@@ -150,7 +152,8 @@ export class GeneralComponent {
           placeholder: helptext.time_format.placeholder,
           tooltip: helptext.time_format.tooltip,
           options: [],
-          width: '50%'
+          width: '50%',
+          isLoading: true
         }
       ]
     },
@@ -170,7 +173,7 @@ export class GeneralComponent {
           name: "usage_collection",
           placeholder: helptext.usage_collection.placeholder,
           tooltip: helptext.usage_collection.tooltip
-        }
+        },
       ]
     },
     { name: "divider", divider: true }
@@ -279,7 +282,7 @@ export class GeneralComponent {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected loader: AppLoaderService,
-    public http: Http,
+    public http: HttpClient,
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
     public localeService: LocaleService,
@@ -396,8 +399,9 @@ export class GeneralComponent {
 
     setTimeout(() => {
       entityEdit.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
+      _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
       entityEdit.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
-
+      _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
     }, 2000);
 
     entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {

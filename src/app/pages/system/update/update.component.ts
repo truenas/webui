@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { WebSocketService, SystemGeneralService, StorageService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,13 +37,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public selectedTrain;
   public general_update_error;
   public update_downloaded=false;
-  public train_msg = {
-    "NIGHTLY_DOWNGRADE": T("Changing away from the nightly train is considered a downgrade and not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "MINOR_DOWNGRADE": T("Changing the minor version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "MAJOR_DOWNGRADE": T("Changing the major version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
-    "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
-  }
   public release_train: boolean;
   public pre_release_train: boolean;
   public nightly_train: boolean;
@@ -101,7 +94,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
-    protected storage: StorageService, protected http: Http) {
+    protected storage: StorageService, protected http: HttpClient) {
       this.sysGenService.updateRunning.subscribe((res) => { 
         res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }
@@ -131,85 +124,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
     return version;
   }
 
-  compareTrains(t1, t2) {
-    const v1 = this.parseTrainName(t1)
-    const v2 = this.parseTrainName(t2);
-
-    try {
-      if(v1[0] !== v2[0] || v1[1] !== v2[1]) {
-
-        const version1 = v1[0].split('.');
-        const version2 = v2[0].split('.');
-        const branch1 = v1[1].toLowerCase();
-        const branch2 = v2[1].toLowerCase();
-
-        if(branch1 !== branch2) {
-
-          if(branch2 === "nightlies") {
-            return "NIGHTLY_UPGRADE";
-          } else if(branch1 === "nightlies") {
-            return "NIGHTLY_DOWNGRADE";
-          }
-        } else {
-          if(version2[0] ==="HEAD"){
-            return "ALLOWED"
-          }
-        }
-
-        if (version1[0] === version2[0]){
-          // comparing '11' .1 with '11' .2
-          if(version1[1] && version2[1]){
-            if (version1[1] === version2[1]) {
-              //upgrading to train of same version;
-              return "ALLOWED";
-            }
-            //comparing '.1' with '.2'
-            return version1[1] < version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
-          }
-          if(version1[1]){
-            //handling a case where '.1' is compared with 'undefined'
-            return "MINOR_DOWNGRADE"
-          }
-          if(version2[1]){
-            //comparing '.1' with '.2'
-            return "MINOR_UPGRADE"
-          }
-
-        } else {
-          // comparing '9' .10 with '11' .2
-          return version1[0] > version2[0] ? "MAJOR_UPGRADE":"MAJOR_DOWNGRADE";
-        }
-
-      } else {
-        if(v1[0] === v2[0]&&v1[1] !== v2[1]){
-          const branch1 = v1[1].toLowerCase();
-          const branch2 = v2[1].toLowerCase();
-          if(branch1 !== branch2) {
-
-            if(branch2 === "nightlies") {
-              return "NIGHTLY_UPGRADE";
-            } else if(branch1 === "nightlies") {
-              return "NIGHTLY_DOWNGRADE";
-            }
-          } else {
-            if(branch2 === "nightlies" && branch1 === "nightlies") {
-
-            }
-
-          }
-        }
-        else {
-          if(v2[2]||v1[2]){
-            return "SDK"
-          }
-        }
-
-      }
-    } catch (e) {
-      console.error("Failed to compare trains", e);
-    }
-  }
-
   ngOnInit() {
     this.product_type = window.localStorage.getItem('product_type');
     this.ws.call('system.info', []).subscribe((res) => {
@@ -232,13 +146,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   
         this.trains = [];
         for (const i in res.trains) {
-          if (this.compareTrains(this.train, i) === 'ALLOWED' || 
-          this.compareTrains(this.train, i) === 'NIGHTLY_UPGRADE' || 
-          this.compareTrains(this.train, i) === 'MINOR_UPGRADE' || 
-          this.compareTrains(this.train, i) === 'MAJOR_UPGRADE' || 
-          this.train === i) {
-            this.trains.push({ name: i, description: res.trains[i].description });
-          }
+          this.trains.push({ name: i, description: res.trains[i].description });
         }
         if (this.trains.length > 0) {
           this.singleDescription = this.trains[0].description;
@@ -329,31 +237,21 @@ export class UpdateComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const compare = this.compareTrains(this.selectedTrain, event);
-    if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
-      this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
-        this.train = this.selectedTrain;
-      })
-    } else if(compare === "NIGHTLY_UPGRADE"){
-        this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
-          if (res){
-            this.train = event;
-            this.setTrainDescription();
-            this.setTrainAndCheck();
-          } else {
-            this.train = this.selectedTrain;
-            this.setTrainDescription();
-          }
-        })
-    } else if (compare === "ALLOWED" || compare === "MINOR_UPGRADE" || compare === "MAJOR_UPGRADE") {
-      this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
-        if(train_res){
-          this.train = event;
-          this.setTrainDescription();
-          this.setTrainAndCheck();
-        }
-      })
+    let warning = '';
+    if (this.fullTrainList[event].description.includes('[nightly]')) {
+      warning = T("Changing to a nightly train is one-way. Changing back to a stable train is not supported! ");
     }
+
+    this.dialogService.confirm(T("Switch Train"), warning + T("Switch update trains?")).subscribe((train_res)=>{
+      if(train_res){
+        this.train = event;
+        this.setTrainDescription();
+        this.setTrainAndCheck();
+      } else {
+        this.train = this.selectedTrain;
+        this.setTrainDescription();
+      }
+    });
   }
 
   setTrainDescription() {
@@ -597,44 +495,45 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   // Continues the update process began in startUpdate(), after passing through the Save Config dialog
   confirmAndUpdate() {
-    if (!this.is_ha) {
-      this.ds  = this.dialogService.confirm(
-        T("Download Update"), T("Continue with download?"),true,T("Download"),true,
-          T("Apply updates and reboot system after downloading."),
-          'update.update',[{ reboot: false }]
-      )
-      this.ds.componentInstance.isSubmitEnabled = true;
-      this.ds.afterClosed().subscribe((status)=>{
-        if(status){
-          if (!this.is_ha && !this.ds.componentInstance.data[0].reboot){
-            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
-            this.dialogRef.componentInstance.setCall('update.download');
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe((succ) => {
-              this.dialogRef.close(false);
-              this.dialogService.Info(T("Updates successfully downloaded"),'', '450px', 'info', true);
-              this.pendingupdates();
+    let downloadMsg;
+    let confirmMsg;
 
-            });
-            this.dialogRef.componentInstance.failure.subscribe((err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
-            });
-          }
-          else{
-            this.update();
-          }
-        }
-      });
-      } else {
-        this.ds  = this.dialogService.confirm(
-          T("Download Update"), T("Upgrades both controllers. Files are downloaded to the Active Controller\
-            and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
-            Continue with download?"),true).subscribe((res) =>  {
-            if (res) {
-              this.update()
-            };
+    if (!this.is_ha) {
+      downloadMsg = helptext.non_ha_download_msg;
+      confirmMsg = helptext.non_ha_confirm_msg;
+    } else {
+      downloadMsg = helptext.ha_download_msg;
+      confirmMsg = helptext.ha_confirm_msg;
+    }
+
+    this.ds  = this.dialogService.confirm(
+      T("Download Update"), downloadMsg,true,T("Download"),true,
+      confirmMsg,
+      this.updateMethod,[{ reboot: false }]
+    )
+
+    this.ds.componentInstance.isSubmitEnabled = true;
+    this.ds.afterClosed().subscribe((status)=>{
+      if(status){
+        if (!this.ds.componentInstance.data[0].reboot){
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
+          this.dialogRef.componentInstance.setCall('update.download');
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((succ) => {
+            this.dialogRef.close(false);
+            this.dialogService.Info(T("Updates successfully downloaded"),'', '450px', 'info', true);
+            this.pendingupdates();
+
           });
-      };
+          this.dialogRef.componentInstance.failure.subscribe((err) => {
+            new EntityUtils().handleWSError(this, err, this.dialogService);
+          });
+        }
+        else{
+          this.update();
+        }
+      }
+    });
   }
 
   update() {

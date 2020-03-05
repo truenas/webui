@@ -12,7 +12,7 @@ $mdi-sizes: 18 24 36 48;
     &:before {
         color: rgba(0, 0, 0, 0.54);
     }
-    &.mdi-inactive:before {
+    &.#{$mdi-css-prefix}-inactive:before {
         color: rgba(0, 0, 0, 0.26);
     }
 }
@@ -20,7 +20,7 @@ $mdi-sizes: 18 24 36 48;
     &:before {
         color: rgba(255, 255, 255, 1);
     }
-    &.mdi-inactive:before {
+    &.#{$mdi-css-prefix}-inactive:before {
         color: rgba(255, 255, 255, 0.3);
     }
 }

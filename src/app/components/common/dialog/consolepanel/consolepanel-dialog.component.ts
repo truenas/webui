@@ -1,4 +1,4 @@
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 import { WebSocketService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';

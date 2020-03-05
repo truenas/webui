@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatDialogRef, MatSort, MatTableDataSource, MatTable } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { LocaleService } from 'app/services/locale.service';
@@ -29,6 +31,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   displayedColumns = ['state', 'method', 'percent'];
   private subscrition: Subscription;
   public expandedElement: any | null;
+  public timeZone: string;
 
   constructor(
     public dialogRef: MatDialogRef<TaskManagerComponent>,
@@ -55,6 +58,10 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
       (err)=> {
 
       });
+
+      this.ws.call('system.info').subscribe((res) => {
+        this.timeZone = res.timezone;
+      })
 
       this.getData().subscribe(
         (res) => { 
@@ -94,7 +101,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
 
   getReadableDate(data: any) {
     if (data != null) {
-      return this.localeService.formatDateTime(new Date(data.$date));
+      return this.localeService.formatDateTime(new Date(data.$date), this.timeZone);
     }
     return;
   }

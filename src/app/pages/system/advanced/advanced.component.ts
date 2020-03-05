@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
-import { Http } from '@angular/http';
-import { MatDialog } from '@angular/material';
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
@@ -79,7 +79,8 @@ export class AdvancedComponent implements OnDestroy {
         })
       })
     } 
-  }];
+  }
+];
 
   public fieldSets = new FieldSets([
     {
@@ -154,9 +155,11 @@ export class AdvancedComponent implements OnDestroy {
           name: 'swapondrive',
           placeholder: helptext_system_advanced.swapondrive_placeholder,
           tooltip: helptext_system_advanced.swapondrive_tooltip,
-          inputType: 'number',
           validation : helptext_system_advanced.swapondrive_validation,
           required: true,
+          blurStatus: true,
+          blurEvent: this.blurEvent,
+          parent: this
         },
         {
           type: 'checkbox',
@@ -264,10 +267,15 @@ export class AdvancedComponent implements OnDestroy {
     public adminLayout: AdminLayoutComponent,
     protected matDialog: MatDialog,
     public datePipe: DatePipe,
-    public http: Http,
+    public http: HttpClient,
     public storage: StorageService,
     public validationService: ValidationService
-  ) {}
+    ) {}
+
+  resourceTransformIncomingRestData(data) {
+    data.swapondrive = this.storage.convertBytestoHumanReadable(data.swapondrive * 1073741824, 0);
+    return data;
+  }
 
   ngOnDestroy() {
     if (this.swapondrive_subscription) {
@@ -276,17 +284,20 @@ export class AdvancedComponent implements OnDestroy {
 
   }
 
-
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.ws.call('system.product_type').subscribe((res)=>{
       this.product_type = res;
       this.swapondrive = this.fieldSets.config('swapondrive');
       this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
-        if (parseInt(value) === 0) {
+        const filteredValue = value ? this.storage.convertHumanStringToNum(value.toString(), false, 'g') : undefined;
+        if (filteredValue === 0) {
           this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
+        } else if (filteredValue > 99*1073741824 ){
+          this.swapondrive.warnings = helptext_system_advanced.swapondrive_max_warning;
         } else {
           this.swapondrive.warnings = null;
+
         }
       });
   
@@ -315,6 +326,7 @@ export class AdvancedComponent implements OnDestroy {
   }
 
   public customSubmit(body) {
+    body.swapondrive = this.storage.convertHumanStringToNum(body.swapondrive)/1073741824;
     body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui) :
       window.localStorage.setItem('exposeLegacyUI', 'false');
     delete body.sed_passwd2;
@@ -328,5 +340,11 @@ export class AdvancedComponent implements OnDestroy {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
+  }
+
+  blurEvent(parent) {
+    if (parent.entityForm) {
+      parent.entityForm.formGroup.controls['swapondrive'].setValue(parent.storage.humanReadable || '2 GiB');
+    }
   }
 }
