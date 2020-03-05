@@ -13570,7 +13570,7 @@ msgid "Upcoming tasks"
 msgstr "Tâches à venir"
 
 msgid "Update"
-msgstr "Mettre à jour"
+msgstr "Mise à jour"
 
 msgid "Update File"
 msgstr "Mettre à jour le fichier"
