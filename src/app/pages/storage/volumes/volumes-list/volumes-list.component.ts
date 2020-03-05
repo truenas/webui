@@ -125,7 +125,7 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   isCustActionVisible(actionname: string) {
-    if (actionname === 'download_key' && this.encryptedStatus !== 0) {
+    if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
     } else {
       return false;
@@ -318,7 +318,7 @@ export class VolumesListTableConfig implements InputTableConf {
     this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map(serviceChoices => {
         return {
-          title: "Unlock " + row1.name,
+          title: T("Unlock ") + row1.name,
           fieldConfig: [
             {
               type: 'paragraph',
@@ -525,7 +525,7 @@ export class VolumesListTableConfig implements InputTableConf {
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: "'" + row1.name + helptext.detachDialog_pool_detach_warning__encrypted_paratext,
-              isHidden: encryptedStatus !== 0 ? false : true
+              isHidden: encryptedStatus > 0 ? false : true
             }, {
               type: 'checkbox',
               name: 'destroy',
