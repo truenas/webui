@@ -27,14 +27,12 @@ export class AppLoaderComponent {
     private _dialog: MatDialog,
     private _ws: WebSocketService,
   ) {
-    this._ws.call('system.advanced.config', []).pipe(map(config => config.consolemsg))
-      .pipe(
-        take(1),
-        filter(isShowConsole => !!isShowConsole)
-      )
-      .subscribe(() => {
-        this.isShowConsole = true;
-        this.dialogRef.updateSize("200px", "248px");
+    this._ws.call('system.advanced.config')
+      .subscribe(res => {
+        if (res.consolemsg) {
+          this.isShowConsole = true;
+          this.dialogRef.updateSize("200px", "248px");
+        };
       });
   }
 
