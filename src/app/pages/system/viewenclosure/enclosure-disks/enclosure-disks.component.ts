@@ -640,14 +640,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       // Also check slot status
-      const slot = this.system.enclosures[disk.enclosure.number].elements[0].elements.filter(s => s.slot == disk.enclosure.slot)
+      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ?  this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements
+      const slot = elements.filter(s => s.slot == disk.enclosure.slot)
       
       if(!failed && slot.fault){
         failed = true;
       }
 
       // Test
-      if(disk.name == 'da54' || disk.name == 'da53'){
+      if(disk.name == 'da54'){
         failed = true;
       }
 
@@ -672,14 +673,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       // Also check slot status
-      const slot = this.system.enclosures[disk.enclosure.number].elements[0].elements.filter(s => s.slot == disk.enclosure.slot)
+      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ?  this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements
+      const slot = elements.filter(s => s.slot == disk.enclosure.slot)
       
       if(!failed && slot.fault){
         failed = true;
       }
 
       // Test
-      if(disk.name == 'da54' || disk.name == 'da53'){
+      if(disk.name == 'da54'){
         failed = true;
         reasons.push("Testing UI")
       }
