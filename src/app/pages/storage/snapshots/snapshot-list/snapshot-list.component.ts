@@ -1,7 +1,8 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WebSocketService } from 'app/services';
+import { WebSocketService, StorageService } from 'app/services';
 import { Subscription } from 'rxjs';
+import { LocaleService } from 'app/services/locale.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
@@ -25,7 +26,7 @@ export class SnapshotListComponent {
   protected loaderOpen = false;
   protected entityList: any;
   protected hasDetails = true;
-  protected rowDetailComponent = SnapshotDetailsComponent;
+  // protected rowDetailComponent = SnapshotDetailsComponent;
   protected rollback: any;
   public busy: Subscription;
   public sub: Subscription;
@@ -35,7 +36,8 @@ export class SnapshotListComponent {
     {name : 'Dataset', prop : 'dataset', always_display: true},
     {name : 'Snapshot', prop : 'snapshot', always_display: true},
     {name : 'Used', prop : 'used', always_display: true},
-    {name : 'Created', prop : 'created', always_display: true},
+    {name : 'Date Created', prop : 'created'},
+    {name : 'Referenced', prop : 'referenced'},
   ];
   public rowIdentifier = 'dataset';
   public config: any = {
@@ -106,14 +108,16 @@ export class SnapshotListComponent {
   }
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) { }
+    protected ws: WebSocketService, protected localeService: LocaleService,
+    protected _injector: Injector, protected _appRef: ApplicationRef,
+    protected storageService: StorageService) { }
 
   resourceTransformIncomingRestData(rows: any) {
-    ////
-    rows.forEach((row) => {
-      row.used = row.properties.used.rawvalue;
-      row.created = row.properties.creation.rawvalue;
+    //// 
+    rows.forEach((row) => { console.log(row)
+      row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue, 0); 
+      row.created = this.localeService.formatDateTime(row.properties.creation.parsed.$date);
+      row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue, 0);
     })
     ////
     return rows;
