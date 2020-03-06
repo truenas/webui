@@ -49,5 +49,12 @@ certificate_tooltip : T('Add an <a href="--docurl--/system.html#certificates"\
  target="_blank">SSL certificate</a> to be used for\
  secure S3 connections.'),
 
-fieldset_title: T('S3 Configuration Options')
+fieldset_title: T('S3 Configuration Options'),
+
+path_warning_title : T('Warning'),
+path_warning_msg: T('Assigning a directory to Minio changes the permissions \
+ of that directory and every directory in it to \
+ minio:minio and overrides any previous permissions. \
+ Creating a separate dataset for Minio is strongly \
+ recommended.')
 }
