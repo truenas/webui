@@ -243,7 +243,8 @@
 
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
           <div>
-            <mat-checkbox
+            <input
+              type="checkbox"
               *ngIf="!row.hideCheckbox"
               ix-auto=""
               ix-auto-type="checkbox"
@@ -251,7 +252,7 @@
               [checked]="isSelected"
               (click)="onclick($event)"
               (change)="onCheckboxChangeFn(tableMouseEvent)"
-            ></mat-checkbox>
+            />
           </div>
         </ng-template>
       </ngx-datatable-column>
