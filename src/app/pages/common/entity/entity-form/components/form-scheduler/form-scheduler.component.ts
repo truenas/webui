@@ -239,7 +239,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     if(p.value == "custom"){
       this.crontab = "0 0 * * *";
       this.convertPreset("0 0 * * *");
-      this._preset = {label:"Custom", value:this.crontab};
+      this._preset = {label:T("Custom"), value:this.crontab};
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);
