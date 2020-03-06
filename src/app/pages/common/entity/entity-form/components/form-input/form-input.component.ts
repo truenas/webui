@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { TooltipComponent } from '../tooltip/tooltip.component';
+import globalHelptext from '../../../../../../helptext/global-helptext';
 
 @Component({
   selector: 'form-input',
@@ -18,6 +19,7 @@ export class FormInputComponent implements Field {
   fieldShow: string;
   public fileString;
   public showPassword = false;
+  private hasPasteEvent = false;
 
   constructor(public translate: TranslateService) {}
 
@@ -68,5 +70,26 @@ export class FormInputComponent implements Field {
       }
     }
     this.showPassword = !this.showPassword;
+  }
+
+  onPaste(event: ClipboardEvent) {
+    if (!this.config.inputType || this.config.inputType !== 'password') {
+      this.hasPasteEvent = true;
+      const clipboardData = event.clipboardData;
+      const pastedText = clipboardData.getData('text');
+      if (pastedText.startsWith(' ')) {
+        this.config.warnings = globalHelptext.pasteValueStartsWithSpace;
+      } else if (pastedText.endsWith(' ')) {
+        this.config.warnings = globalHelptext.pasteValueEndsWithSpace;
+      }
+    }
+  }
+
+  onInput() {
+    if (this.hasPasteEvent) {
+      this.hasPasteEvent = false;
+    } else {
+      this.config.warnings = null;
+    }
   }
 }
