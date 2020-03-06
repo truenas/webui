@@ -31,6 +31,9 @@ noLogDilaog: {
     message: T('No logs are available for this task.'),
 },
 
-ha_connecting_text: T('Waiting for active TrueNAS controller to come up...')
+ha_connecting_text: T('Waiting for active TrueNAS controller to come up...'),
+
+pasteValueStartsWithSpace: T('The pasted string starts with a space'),
+pasteValueEndsWithSpace: T('The pasted string ends with a space'),
 
 }

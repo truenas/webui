@@ -23,7 +23,9 @@
 			[max]="config.max"
 			[min]="config.min"
 			(blur)="blurEvent()"
-			autocomplete="new-password">
+			autocomplete="new-password"
+			(paste)="onPaste($event)"
+			(input)="onInput()">
 	</mat-form-field>
 	<ng-template #elseBlock>
 		<span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>
