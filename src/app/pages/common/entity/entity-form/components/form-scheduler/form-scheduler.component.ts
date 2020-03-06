@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
+import { T } from 'app/translate-marker';
 
 import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
@@ -17,6 +18,7 @@ import { EntityUtils } from '../../../utils';
 interface CronPreset {
   label:string;
   value:string;
+  description?:string;
 }
 
 interface CronDate {
@@ -191,19 +193,25 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public presets: CronPreset[] = [
     {
       label: "Hourly",
-      value: "0 * * * *"
+      value: "0 * * * *",
+      description: T("at the start of each hour")
     },
     {
       label: "Daily",
-      value: "0 0 * * *"
+      value: "0 0 * * *",
+      description: T("at 00:00 (12:00 AM)")
+
     },
     {
       label: "Weekly",
-      value: "0 0 * * sun"
+      value: "0 0 * * sun",
+      description: T("on Sundays at 00:00 (12:00 AM)")
+
     },
     {
       label: "Monthly",
-      value: "0 0 1 * *"
+      value: "0 0 1 * *",
+      description: T("on the first day of the month at 00:00 (12:00 AM)")
     }
   ];
 
