@@ -25,11 +25,6 @@
   <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]" ></tab-content>
   
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
-    <!-- FRONT/REAR TOGGLE -->
-    <div *ngIf="subenclosure && currentView != 'expanders'" class="front-rear-toggle">
-      <button mat-button (click)="enclosureOverride('front')">FRONT</button>
-      <button mat-button (click)="enclosureOverride('rear')">REAR</button>
-    </div>
 
     <!-- VISUALIZATION/OVERVIEW -->
     <div class="disks-overview-wrapper">
@@ -96,8 +91,8 @@
             <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
               <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.cyan : theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
-                  <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] }})</span>
+                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
+                  <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})</span>
                 </div>
               </div>
 
@@ -111,7 +106,13 @@
           </div>
 
         <!-- CAPTION OVERLAY -->
-        <div class="caption dom-overlay">Choose a Disk</div>
+        <div *ngIf="!subenclosure" class="caption dom-overlay">Choose a Disk</div>
+
+        <!-- FRONT/REAR TOGGLE -->
+        <div *ngIf="subenclosure && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">
+          <button mat-button (click)="enclosureOverride('front')">FRONT</button>
+          <button mat-button (click)="enclosureOverride('rear')">REAR</button>
+        </div>
 
         <!-- CANVAS/SVG OVERLAY -->
         <div #visualizer id="visualizer" class="visualizer dom-overlay"></div>
