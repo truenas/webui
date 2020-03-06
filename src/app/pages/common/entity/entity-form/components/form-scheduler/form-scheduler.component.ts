@@ -192,24 +192,24 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   private _preset:CronPreset;// = { label:"Custom", value:"* * * * *"}; 
   public presets: CronPreset[] = [
     {
-      label: "Hourly",
+      label: T("Hourly"),
       value: "0 * * * *",
       description: T("at the start of each hour")
     },
     {
-      label: "Daily",
+      label: T("Daily"),
       value: "0 0 * * *",
       description: T("at 00:00 (12:00 AM)")
 
     },
     {
-      label: "Weekly",
+      label: T("Weekly"),
       value: "0 0 * * sun",
       description: T("on Sundays at 00:00 (12:00 AM)")
 
     },
     {
-      label: "Monthly",
+      label: T("Monthly"),
       value: "0 0 1 * *",
       description: T("on the first day of the month at 00:00 (12:00 AM)")
     }
@@ -255,10 +255,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     private cd: ChangeDetectorRef,public overlay: Overlay, protected ws: WebSocketService){ 
     
     //Set default value
+    this.preset = this.presets[1];
+    this._months = "*";
+
     this.ws.call('system.general.config').subscribe((res) => {
       moment.tz.setDefault(res.timezone);
-      this.preset = this.presets[1];
-      this._months = "*";
       
       this.minDate = moment();
       this.maxDate = moment().endOf('month');
