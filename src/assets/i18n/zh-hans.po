@@ -5,10 +5,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Builtin Groups"
-msgstr ""
+msgstr " 内置组"
 
 msgid " Builtin Users"
-msgstr ""
+msgstr " 内置用户"
 
 msgid " Check Notifications for more details."
 msgstr " 检查通知以获取更多详细信息。"
@@ -58,10 +58,10 @@ msgid " and will be disrupted if the pool is locked:"
 msgstr "如果池被锁定，则会破坏："
 
 msgid " builtin groups (default setting is <i>hidden</i>)."
-msgstr ""
+msgstr " 内置组（默认设置为<i>隐藏</i>）。"
 
 msgid " builtin users (default setting is <i>hidden</i>)."
-msgstr ""
+msgstr " 内置用户（默认设置为<i>隐藏</i>）。"
 
 msgid " but datastore "
 msgstr " 但数据存储 "
@@ -85,7 +85,7 @@ msgid ""
 " is still running,  the Guest OS did not respond as expected. It is "
 "possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> "
 "option to stop the VM."
-msgstr ""
+msgstr " 仍在运行，来宾操作系统未按预期响应。可以使用<i>关闭电源</i>或<i>超时后强制停止</i>选项来停止VM。"
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
@@ -93,7 +93,7 @@ msgid ""
 msgstr " 是最小推荐记录数据大小。选择一个更小的大小可能会降低系统性能。"
 
 msgid " seconds"
-msgstr ""
+msgstr " 秒"
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
@@ -138,7 +138,7 @@ msgid "(24 Hours)"
 msgstr "（24小时）"
 
 msgid "(Examples: 500 KiB, 500M, 2 TB)"
-msgstr ""
+msgstr "（例如：500 KiB，500M，2 TB）"
 
 msgid "(No description)"
 msgstr "（没有描述）"
@@ -312,7 +312,7 @@ msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> 帐户的用户�
 msgid ""
 "<a href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档）</a>。"
 
 msgid ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
@@ -699,7 +699,7 @@ msgid ""
 msgstr "FTP主机系统上的用户名。该用户必须已经存在于FTP主机上。"
 
 msgid "A valid IP address or domain name to which OpenVPN will connect."
-msgstr ""
+msgstr "OpenVPN将连接到的有效IP地址或域名。"
 
 msgid ""
 "A valid IPv4 address to use as the default route.<br> Enter <b>none</b> to "
@@ -718,7 +718,7 @@ msgstr ""
 "<b>没有默认路由的Jail将无法访问任何网络。</b>"
 
 msgid "ACL Entries"
-msgstr ""
+msgstr "访问控制列表条目"
 
 msgid "ACL Mode"
 msgstr "访问控制列表模式"
@@ -754,7 +754,7 @@ msgid "API Key"
 msgstr "API密钥"
 
 msgid "API Key or Password"
-msgstr ""
+msgstr "API密钥或密码"
 
 msgid "API URL"
 msgstr "API URL"
@@ -769,7 +769,7 @@ msgid "ATA Security User"
 msgstr "ATA安全用户"
 
 msgid "AUTORID"
-msgstr ""
+msgstr "自动识别"
 
 msgid "AWS Region"
 msgstr "AWS地区"
@@ -897,7 +897,7 @@ msgid "Active Directory IDMAP change!"
 msgstr "活动目录IDMAP发生变化！"
 
 msgid "Active Directory must be enabled before adding new domains."
-msgstr ""
+msgstr "在添加新域之前，必须先启用活动目录。"
 
 msgid "Active Media Subtype"
 msgstr "活动媒体子类型"
@@ -939,7 +939,7 @@ msgid "Add Group"
 msgstr "添加组"
 
 msgid "Add Idmap"
-msgstr ""
+msgstr "添加Idmap"
 
 msgid "Add Log"
 msgstr "添加日志"
@@ -1103,7 +1103,7 @@ msgstr ""
 "target=\"_blank\">ifconfig（8）的</a>其他参数。"
 
 msgid "Additional parameters."
-msgstr ""
+msgstr "附加参数。"
 
 msgid ""
 "Additional space-delimited domains to search. Adding search domains can "
@@ -1120,7 +1120,7 @@ msgid "Adjust the file permissions using the checkboxes."
 msgstr "使用复选框来调整文件权限。"
 
 msgid "Admin Portals"
-msgstr "管理员门户"
+msgstr "管理门户"
 
 msgid "Admin Server"
 msgstr "管理服务器"
@@ -1155,10 +1155,10 @@ msgid "Advanced Jail Creation"
 msgstr "高级Jail创建"
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "高级模式"
 
 msgid "Advanced Options"
-msgstr ""
+msgstr "高级选项"
 
 msgid "Advanced Plugin Installation"
 msgstr "高级插件安装"
@@ -1321,7 +1321,8 @@ msgid ""
 "target=\"_blank\">Advanced Encryption Standard</a>.<br><br>  WARNING: these "
 "ciphers are considered security vulnerabilities and  should only be allowed "
 "in a secure network environment."
-msgstr ""
+msgstr "允许更多密码用于<a href=\"https://www.freebsd.org/cgi/man.cgi?query=sshd\" "
+"target=\"_blank\">sshd(8)</a>除了<a href=\"https://www.freebsd.org/cgi/man.cgi?query=sshd_config\" target=\"_blank\"> sshd_config(5)</a>中的默认值。<code> None </code>允许未加密的SSH连接，<code> AES128-CBC </code>允许128位<a href=\"https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf\" target=\"_blank\">高级加密标准</a>。<br> <br>警告：这些密码被视为安全漏洞，仅应在安全的网络环境中允许使用。"
 
 msgid "Allow non-root mount"
 msgstr "允许非root用户挂载"
@@ -1490,13 +1491,13 @@ msgid "Apple Shares (AFP)"
 msgstr "苹果共享 (AFP)"
 
 msgid "Application Credential ID"
-msgstr ""
+msgstr "应用程序凭证ID"
 
 msgid "Application Credential Name"
-msgstr ""
+msgstr "应用程序凭证名称"
 
 msgid "Application Credential Secret"
-msgstr ""
+msgstr "应用程序凭据密钥"
 
 msgid "Application Key"
 msgstr "应用程序密钥"
@@ -1618,25 +1619,25 @@ msgid ""
 "Auth Token from alternate authentication - optional <a "
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "来自备用身份验证的身份验证令牌-可选<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档）</a>。"
 
 msgid "AuthVersion"
-msgstr ""
+msgstr "验证版本"
 
 msgid ""
 "AuthVersion - optional - set to (1,2,3) if your auth URL has no version <a "
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "验证版本-可选-如果您的身份验证URL没有版本，则设置为（1,2,3）。请参阅<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档）</a>。"
 
 msgid "Authentication"
-msgstr ""
+msgstr "认证方式"
 
 msgid "Authentication Advanced Options"
-msgstr ""
+msgstr "身份验证高级选项"
 
 msgid "Authentication Algorithm"
-msgstr ""
+msgstr "认证算法"
 
 msgid "Authentication Group number"
 msgstr "认证组编号"
@@ -1648,13 +1649,13 @@ msgid "Authentication Type"
 msgstr "认证类型"
 
 msgid "Authentication URL"
-msgstr ""
+msgstr "认证URL"
 
 msgid ""
 "Authentication URL for the server. This is the OS_AUTH_URL from an <a "
 "href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
 "credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
-msgstr ""
+msgstr "服务器的认证URL。这是来自OS_AUTH_URL的<a href=\"https://rclone.org/swift/#configuration-from-an-openstack-credentials-file\" target=\"_blank\"> OpenStack凭证文件</a>。"
 
 msgid "Authenticator"
 msgstr "身份验证器"
@@ -1761,7 +1762,7 @@ msgid "Back to Support"
 msgstr "返回支持"
 
 msgid "Backend"
-msgstr ""
+msgstr "后端"
 
 msgid ""
 "Backend used to map Windows security  identifiers (SIDs) to UNIX UIDs and "
@@ -1778,28 +1779,28 @@ msgid "Bandwidth Limit"
 msgstr "带宽限制"
 
 msgid "Base DN"
-msgstr "基础 DN"
+msgstr "基本 DN"
 
 msgid "Base Name"
-msgstr "基础名称"
+msgstr "基本名称"
 
 msgid "Base64 encoded key for the Azure account."
 msgstr "Azure帐户的Base64编码密钥。"
 
 msgid "Basejail"
-msgstr "基础Jail"
+msgstr "基本Jail"
 
 msgid "Basic"
-msgstr ""
+msgstr "基本"
 
 msgid "Basic Info"
-msgstr "基础信息"
+msgstr "基本信息"
 
 msgid "Basic Mode"
-msgstr ""
+msgstr "基本模式"
 
 msgid "Basic Options"
-msgstr ""
+msgstr "基本选项"
 
 msgid "Basic Properties"
 msgstr "基本属性"
@@ -2083,7 +2084,7 @@ msgid ""
 msgstr "注意：分配过多的内存可能会降低系统速度或阻止VM运行。"
 
 msgid "Cerfiticate"
-msgstr ""
+msgstr "证书"
 
 msgid "Certificate"
 msgstr "证书"
@@ -2326,13 +2327,13 @@ msgid "Choose a Device"
 msgstr "选择设备"
 
 msgid "Choose a cipher algorithm to encrypt data channel packets."
-msgstr ""
+msgstr "选择一种加密算法来加密数据通道数据包。"
 
 msgid "Choose a color scheme."
 msgstr "选择配色方案。"
 
 msgid "Choose a compression algorithm."
-msgstr ""
+msgstr "选择一种压缩算法。"
 
 msgid ""
 "Choose a dataset on the destination  system where snapshots are stored. "
@@ -2424,19 +2425,19 @@ msgid ""
 "href=\"https://community.openvpn.net/openvpn/wiki/HOWTO#"
 "SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanO"
 "penVPNserverandmultipleclients\" target=\"_blank\">here.</a>"
-msgstr ""
+msgstr "选择一个有效的客户端证书，该证书存在于该系统上，并且未被吊销。在<a href=\"https://community.openvpn.net/openvpn/wiki/HOWTO#SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanOpenVPNserverandmultipleclients\" target=\"_blank\">此处</a>查找有关为OpenVPN生成证书和CA的更多信息。"
 
 msgid ""
 "Choose a virtual network interface. More information can be found  <a "
 "href=\"https://community.openvpn.net/openvpn/wiki/BridgingAndRouting\" "
 "target=\"_blank\">here</a>."
-msgstr ""
+msgstr "选择一个虚拟网络接口。可以在<a href=\"https://community.openvpn.net/openvpn/wiki/BridgingAndRouting\" target=\"_blank\">此处</a>中找到更多信息。"
 
 msgid "Choose an alert service to display options for that service."
 msgstr "选择警报服务以显示该服务的选项。"
 
 msgid "Choose an algorithm to authenticate packets."
-msgstr ""
+msgstr "选择一种算法对数据包进行身份验证。"
 
 msgid "Choose an authentication method."
 msgstr "选择身份验证方法。"
@@ -2538,7 +2539,7 @@ msgid ""
 msgstr "选择将使用此共享的平台。关联的选项将应用于此共享。"
 
 msgid "Choose the protocol to use when connecting with the remote system."
-msgstr ""
+msgstr "选择与远程系统连接时要使用的协议。"
 
 msgid ""
 "Choose the root Certificate Authority that was used to sign the Client and "
@@ -2547,7 +2548,7 @@ msgid ""
 "href=\"https://community.openvpn.net/openvpn/wiki/HOWTO#"
 "SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanO"
 "penVPNserverandmultipleclients\" target=\"_blank\">here.</a>"
-msgstr ""
+msgstr "选择用于签署客户端和服务器证书的根证书颁发机构。在<a href=\"https://community.openvpn.net/openvpn/wiki/HOWTO#SettingupyourownCertificateAuthorityCAandgeneratingcertificatesandkeysforanOpenVPNserverandmultipleclients\" target=\"_blank\">此处</a>查找有关为OpenVPN生成证书和CA的更多信息。"
 
 msgid ""
 "Choose the schema to use when querying AD for user/group info. "
@@ -2564,7 +2565,7 @@ msgid ""
 "Options include <i>RFC2307</i> (included in Windows 2003 R2) and <i>Service "
 "for Unix (SFU)</i>.  For SFU 3.0 or 3.5, choose \"SFU\". For SFU 2.0, "
 "choose \"SFU20\"."
-msgstr ""
+msgstr "选择用于SMB共享的LDAP身份验证的架构。LDAP服务器必须配置有Samba属性才能使用Samba模式。选项包括<i> RFC2307 </i>（包含在Windows 2003 R2中）和<i> Unix服务（SFU）</i>。对于SFU 3.0或3.5，选择\"SFU\"。对于SFU 2.0，选择\"SFU20\"。"
 
 msgid "Choose the speed in bps used by the serial port."
 msgstr "选择串行端口使用的速度（以bps为单位）。"
@@ -2647,13 +2648,13 @@ msgid "Clear SED Password"
 msgstr "清除SED密码"
 
 msgid "Clear the Idmap Cache"
-msgstr ""
+msgstr "清除Idmap缓存"
 
 msgid "Clear the SED password for this disk."
 msgstr "清除该磁盘的SED密码。"
 
 msgid "Clearing Cache..."
-msgstr ""
+msgstr "正在清除缓存..."
 
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
@@ -2664,7 +2665,7 @@ msgid "Click on alarms to select or unselect."
 msgstr "单击警报以选择或取消选择。"
 
 msgid "Client Certificate"
-msgstr ""
+msgstr "客户证书"
 
 msgid "Client Name"
 msgstr "客户端名称"
@@ -2795,7 +2796,7 @@ msgid "Community"
 msgstr "社区"
 
 msgid "Compatability"
-msgstr "相容性"
+msgstr "兼容性"
 
 msgid "Complete the Upgrade"
 msgstr "完成升级"
@@ -2813,7 +2814,7 @@ msgid "Compress connections"
 msgstr "压缩连接"
 
 msgid "Compression"
-msgstr ""
+msgstr "压缩"
 
 msgid "Compression level"
 msgstr "压缩级别"
@@ -2853,7 +2854,7 @@ msgstr "配置root用户的电子邮件地址。"
 msgid ""
 "Configure virtual addressing topology when running in TUN mode.  (TAP mode "
 "always uses a SUBNET topology.)"
-msgstr ""
+msgstr "在TUN模式下运行时，配置虚拟寻址拓扑。（TAP模式始终使用子网拓扑）"
 
 msgid "Confirm"
 msgstr "确认"
@@ -3190,7 +3191,7 @@ msgid "DISCARD CHANGES"
 msgstr "放弃更改"
 
 msgid "DNS Domain Name"
-msgstr ""
+msgstr "DNS域名"
 
 msgid "DNS Forwarder"
 msgstr "DNS转发器"
@@ -3202,7 +3203,7 @@ msgid "DNS Timeout"
 msgstr "DNS超时"
 
 msgid "DNS name of the domain"
-msgstr ""
+msgstr "域的DNS名称"
 
 msgid "DNS timeout"
 msgstr "DNS超时"
@@ -3360,7 +3361,7 @@ msgid ""
 "is three hours, <i>1m</i> is one month, and <i>1y</i> is one year. Does not "
 "accept Minute values. After the time expires, the snapshot is removed. "
 "Snapshots which have been replicated to other systems are not affected."
-msgstr ""
+msgstr "使用数值和单位的单个小写字母来定义将快照保留在此系统上的时间。例如：<i> 3h </ i>是三个小时，<i> 1m </ i>是一个月，而<i> 1y </ i>是一年。不接受分钟值。时间到期后，快照将被删除。已复制到其他系统的快照不受影响。"
 
 msgid ""
 "Define a maximum size for both the dataset and any child datasets. Enter "
@@ -3418,7 +3419,7 @@ msgstr ""
 msgid ""
 "Define the number of UIDS/GIDS available per domain  range. The minimum is "
 "<i>2000</i> and the recommended default is <i>100000</i>."
-msgstr ""
+msgstr "定义每个域范围可用的UIDS/GIDS数量。最小值为<i> 2000 </i>，建议的默认值为<i> 100000 </i>。"
 
 msgid "Define the server where all changes to the database are performed."
 msgstr "定义执行对数据库的所有更改的服务器。"
@@ -3650,7 +3651,7 @@ msgid "Device Order"
 msgstr "设备顺序"
 
 msgid "Device Type"
-msgstr ""
+msgstr "设备类型"
 
 msgid "Device detached "
 msgstr "设备已分离 "
@@ -3841,7 +3842,7 @@ msgid ""
 "Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. "
 "Local users have the SMB server NetBIOS name: "
 "<code>freenas\\smbusers</code>."
-msgstr ""
+msgstr "用户<i>名称</i>的域。如果未输入<i> SID </i>，则为必填项。本地用户具有SMB服务器的NetBIOS名称：<code>freenas\\smbusers</code>。"
 
 msgid "Domain name"
 msgstr "域名"
@@ -3853,7 +3854,7 @@ msgid "Download"
 msgstr "下载"
 
 msgid "Download Client Config"
-msgstr ""
+msgstr "下载客户端配置"
 
 msgid "Download Encryption Key"
 msgstr "下载加密密钥"
@@ -3933,7 +3934,7 @@ msgid "Edit Disk(s)"
 msgstr "编辑磁盘"
 
 msgid "Edit Filesystem ACL"
-msgstr ""
+msgstr "编辑文件系统访问控制列表"
 
 msgid "Edit Idmap"
 msgstr "编辑Idmap"
@@ -3945,7 +3946,7 @@ msgid "Edit Permissions"
 msgstr "编辑权限"
 
 msgid "Edit Share ACL"
-msgstr ""
+msgstr "编辑共享访问控制列表"
 
 msgid "Edit Zvol"
 msgstr "编辑Zvol"
@@ -4000,7 +4001,7 @@ msgid "Enable (requires password or Kerberos principal)"
 msgstr "启用（需要密码或Kerberos主体）"
 
 msgid "Enable Active Directory"
-msgstr ""
+msgstr "启用活动目录"
 
 msgid "Enable Atime"
 msgstr "启用Atime"
@@ -4122,7 +4123,7 @@ msgstr "启用这个可调参数。取消设置以禁用此可调参数而不删
 msgid ""
 "Enable to prevent binding to local address and port.  Must be enabled if "
 "OpenVPN client and server are to run concurrently."
-msgstr ""
+msgstr "启用以防止绑定到本地地址和端口。如果OpenVPN客户端和服务器要同时运行，则必须启用。"
 
 msgid "Enable when the device number is inconstant across a reboot."
 msgstr "在重新引导期间设备编号不固定时启用。"
@@ -4138,7 +4139,7 @@ msgstr ""
 "target=\"_blank\">SMTP AUTH</a>。如果设置为启用，必须输入用户名和密码。"
 
 msgid "Enable/disable TLS Web Client Authentication."
-msgstr ""
+msgstr "启用/禁用TLS Web客户端身份验证。"
 
 msgid "Enabled"
 msgstr "已启用"
@@ -4261,10 +4262,10 @@ msgid ""
 msgstr "复制任务的结束时间。已经进行的复制可以继续运行到此时间为止。"
 
 msgid "Endpoint Advanced Options"
-msgstr ""
+msgstr "端点高级选项"
 
 msgid "Endpoint Type"
-msgstr ""
+msgstr "端点类型"
 
 msgid "Endpoint URL"
 msgstr "端点URL"
@@ -4273,7 +4274,7 @@ msgid ""
 "Endpoint type to choose from the service catalogue. <i>Public</i> is "
 "recommended, see the <a href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">rclone documentation</a>."
-msgstr ""
+msgstr "要从服务目录中选择的端点类型。建议使用<i>公开</i>，请参见<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\"> rclone文档</a>。"
 
 msgid ""
 "Ensure <a href=\"--docurl--/directoryservices.html#kerberos-realms\" "
@@ -4435,7 +4436,7 @@ msgid "Enter a password of at least eight characters."
 msgstr "输入至少8位字符的密码。"
 
 msgid "Enter a port number to use for the connection."
-msgstr ""
+msgstr "输入用于连接的端口号。"
 
 msgid ""
 "Enter a port to bind <a "
@@ -4779,7 +4780,7 @@ msgid ""
 msgstr "输入接口的FreeBSD设备名称。创建接口后无法更改。"
 
 msgid "Enter the IP address and netmask of the server."
-msgstr ""
+msgstr "输入服务器的IP地址和网络掩码。"
 
 msgid ""
 "Enter the IP address of a DNS forwarder. Required for recursive queries "
@@ -4978,7 +4979,7 @@ msgid "Enter the phone number of the contact person."
 msgstr "输入联系人的电话号码。"
 
 msgid "Enter the pre-Windows 2000 domain name."
-msgstr ""
+msgstr "输入Windows 2000以前的域名。"
 
 msgid "Enter the pre-defined S3 bucket to use."
 msgstr "输入要使用的预定义S3存储桶。"
@@ -5158,7 +5159,7 @@ msgid ""
 "<i>pool1/dataset1/child1</i>. A  recursive replication of "
 "<i>pool1/dataset1</i> snapshots includes all  child dataset snapshots "
 "except <i>child1</i>."
-msgstr ""
+msgstr "从复制中排除特定的子数据集快照。与<b>递归</ b>快照一起使用。列出要排除的子数据集名称。用逗号（<code>,</code>）分隔多个条目。示例：<i>pool1/dataset1/child1</i>。 <i>pool1/dataset1</i>快照的递归复制包括除<i> child1 </i>之外的所有子数据集快照。"
 
 msgid ""
 "Exclude specific child datasets from the snapshot. Use with recursive "
@@ -5363,16 +5364,16 @@ msgid "Filter"
 msgstr "过滤器"
 
 msgid "Finding Pools"
-msgstr ""
+msgstr "查找池"
 
 msgid "Finding pools to import..."
-msgstr ""
+msgstr "正在查找要导入的池..."
 
 msgid "Finish Upgrade?"
 msgstr "完成升级吗？"
 
 msgid "Finished"
-msgstr ""
+msgstr "已完成"
 
 msgid "Finished Time:"
 msgstr "结束时间："
@@ -5426,7 +5427,7 @@ msgid "Force Delete?"
 msgstr "强制删除？"
 
 msgid "Force Stop After Timeout"
-msgstr ""
+msgstr "超时后强制停止"
 
 msgid "Force deletion of dataset "
 msgstr "强制删除数据集 "
@@ -5438,7 +5439,7 @@ msgid ""
 "Force the VM to stop if it has not already  stopped within the specified "
 "shutdown timeout. Without this option selected, the VM will  receive the "
 "shutdown signal, but may or may not complete the shutdown process."
-msgstr ""
+msgstr "如果尚未在指定的关闭超时时间内停止虚拟机，则强制其停止。如果未选择此选项，则VM将收到关闭信号，但可能不会完成关闭过程。"
 
 msgid ""
 "Force using  <a "
@@ -5584,7 +5585,7 @@ msgstr ""
 "target=\"_blank\">定期快照任务</a>命名惯例中为快照生成名称。这样可以复制快照。不能与<i>名称</i>一起使用。"
 
 msgid "Generate idmap low range based on same algorithm that SSSD uses by default."
-msgstr ""
+msgstr "根据SSSD默认使用的相同算法生成idmap低范围。"
 
 msgid "GiB"
 msgstr "GiB"
@@ -5618,7 +5619,7 @@ msgid "Go Back to Jails"
 msgstr "转到Jail"
 
 msgid "Go to Active Directory Form"
-msgstr ""
+msgstr "转到活动目录表单"
 
 msgid "Go to Admin Portal"
 msgstr "转到管理门户"
@@ -5730,7 +5731,7 @@ msgid "Help"
 msgstr "帮助"
 
 msgid "Hide"
-msgstr ""
+msgstr "隐藏"
 
 msgid "Hide Standard Error"
 msgstr "隐藏标准错误"
@@ -5893,7 +5894,7 @@ msgid ""
 "permissions by default except those that are manually defined. "
 "<i>Denied</i> allows all permissions by default except those that are "
 "manually defined."
-msgstr ""
+msgstr "如何将权限应用于共享。默认情况下，<i>允许</ i>拒绝所有权限，但手动定义的权限除外。默认情况下，<i>拒绝</ i>允许所有权限，但手动定义的权限除外。"
 
 msgid ""
 "How the <i>Permissions</i> are applied to the chosen <i>Who</>. Choose "
@@ -6161,7 +6162,7 @@ msgid "In"
 msgstr "入"
 
 msgid "In KiBs or greater. A default of <i>0 KiB</i> means unlimited. "
-msgstr ""
+msgstr "在KiBs或更高。默认值为<i> 0 KiB </ i>表示无限制。"
 
 msgid "Include Dataset Properties"
 msgstr "包括数据集属性"
@@ -6340,7 +6341,7 @@ msgid "Internetwork control"
 msgstr "互联网控制"
 
 msgid "Invalid IP address"
-msgstr ""
+msgstr "IP地址无效"
 
 msgid "Invalid dataset."
 msgstr "无效的数据集。"
@@ -6357,7 +6358,7 @@ msgid "Invalid regex filter"
 msgstr "无效的正则表达式过滤器"
 
 msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
-msgstr ""
+msgstr "无效值。缺少数值或无效的数值/单位。"
 
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
@@ -6731,7 +6732,7 @@ msgid "Link State"
 msgstr "连接状态"
 
 msgid "Linked Service"
-msgstr ""
+msgstr "已连接服务"
 
 msgid "List of system services to restart when the pool is unlocked."
 msgstr "存储池解锁后要重新启动的系统服务列表。"
@@ -6746,16 +6747,16 @@ msgid "Local"
 msgstr "本地"
 
 msgid "Local Account"
-msgstr ""
+msgstr "本地帐号"
 
 msgid "Local Master"
 msgstr "本地管理员"
 
 msgid "Local User Download Bandwidth"
-msgstr "本地用户下载带宽"
+msgstr "本地用户下载带宽："
 
 msgid "Local User Upload Bandwidth: "
-msgstr ""
+msgstr "本地用户上传带宽："
 
 msgid "Locality"
 msgstr "位置"
@@ -6964,7 +6965,7 @@ msgid ""
 msgstr "通过AFP允许的最大同时连接数。默认限制是50。"
 
 msgid "Maximum swap size is 99 GiB"
-msgstr ""
+msgstr "最大交换大小为99 GiB"
 
 msgid "Maximum swap space to use for the jail."
 msgstr "可用于Jail的最大Swap空间。"
@@ -7143,7 +7144,7 @@ msgid "Months"
 msgstr "月数"
 
 msgid "Mount Points of "
-msgstr ""
+msgstr "的挂载点"
 
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
@@ -7270,7 +7271,7 @@ msgid "Name and Options"
 msgstr "名称和选项"
 
 msgid "Name and Provider"
-msgstr ""
+msgstr "名称和提供者"
 
 msgid ""
 "Name and port of the server that reports the  external IP address. For "
@@ -7335,7 +7336,7 @@ msgid "Name or Naming Schema must be provided."
 msgstr "必须提供名称或命名惯例。"
 
 msgid "Name that was created with the SMB share."
-msgstr ""
+msgstr "用SMB共享创建的名称。"
 
 msgid "Nameserver 1"
 msgstr "域名服务器 1"
@@ -7512,7 +7513,7 @@ msgid "New Primary Group"
 msgstr "新建主要组"
 
 msgid "New Static Key Settings"
-msgstr ""
+msgstr "新的静态密钥设置"
 
 msgid ""
 "New users are not given <b>su</b> permissions if <i>wheel</i> is their "
@@ -7604,7 +7605,7 @@ msgid "Nobind"
 msgstr ""
 
 msgid "None"
-msgstr ""
+msgstr "没有"
 
 msgid "Not Available"
 msgstr "无法使用"
@@ -7743,7 +7744,7 @@ msgid "Oct"
 msgstr "十月"
 
 msgid "Off"
-msgstr ""
+msgstr "关"
 
 msgid ""
 "Off by default. When set, <a "
@@ -7779,7 +7780,7 @@ msgid "One or more IP addresses to which to bind the Netdata service."
 msgstr "要绑定Netdata服务的一个或多个IP地址。"
 
 msgid "One or more data vdevs has disks of different sizes."
-msgstr ""
+msgstr "一个或多个数据vdev具有不同大小的磁盘。"
 
 msgid "Online"
 msgstr "在线"
@@ -7839,22 +7840,22 @@ msgid ""
 msgstr "仅适用于Unix访问控制列表。在共享上创建的新文件将使用选定的权限进行设置。"
 
 msgid "OpenVPN Client Settings"
-msgstr ""
+msgstr "OpenVPN客户端设置"
 
 msgid "OpenVPN Server Settings"
-msgstr ""
+msgstr "OpenVPN服务器设置"
 
 msgid ""
 "Openstack API key or password. This is the OS_PASSWORD from an <a "
 "href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
 "credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
-msgstr ""
+msgstr "Openstack API密钥或密码。这是来自OS_PASSWORD的<a href=\"https://rclone.org/swift/#configuration-from-an-openstack-credentials-file\" target=\"_blank\"> OpenStack凭证文件</a>。"
 
 msgid ""
 "Openstack user name for login. This is the OS_USERNAME from an <a "
 "href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
 "credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
-msgstr ""
+msgstr "Openstack登录用户名。这是来自OS_USERNAME的<a href=\"https://rclone.org/swift/#configuration-from-an-openstack-credentials-file\" target=\"_blank\"> OpenStack凭证文件</a>。"
 
 msgid "Operating System"
 msgstr "操作系统"
@@ -8128,7 +8129,7 @@ msgid "Periodic Snapshot Tasks"
 msgstr "定期快照任务"
 
 msgid "Permission"
-msgstr ""
+msgstr "权限"
 
 msgid "Permissions"
 msgstr "权限"
@@ -8304,7 +8305,7 @@ msgid ""
 "Permissions, and take Ownership (RXWDPO).<br><br> For more details, see <a "
 "href=\"https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html\" "
 "target=\"_blank\">smbacls(1)</a>."
-msgstr ""
+msgstr "预定义的权限组合：<br> <i>读取</ i>：对对象（RX）的读取访问权限和执行权限。<br> <i>更改</ i>：读取权限，执行权限，写入权限和删除对象（RXWD）。<br> <i>完整</ i>：读取访问权限，执行权限，写入权限，删除对象，更改权限并获得所有权（RXWDPO）。<br> <br>有关更多详细信息，请参见<a href=\"https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html\" target=\"_blank\"> smbacls(1)</a>。"
 
 msgid "Prefer"
 msgstr "首选"
@@ -8426,7 +8427,7 @@ msgstr "协议"
 msgid ""
 "Provide static key for authentication/encryption of all control  channel "
 "packets when <code>tls_crypt_auth_enabled</code> is enabled."
-msgstr ""
+msgstr "启用<code>tls_crypt_auth_enabled</code>时，为所有控制通道数据包的身份验证/加密提供静态密钥。"
 
 msgid "Provider"
 msgstr "提供者"
@@ -8435,7 +8436,7 @@ msgid ""
 "Provides a plugin interface for Winbind to use varying backends to store  "
 "SID/uid/gid mapping tables. The correct setting depends on the environment "
 "in which the NAS is deployed."
-msgstr ""
+msgstr "为Winbind提供一个插件接口，以使用各种后端来存储SID/uid/gid映射表。正确的设置取决于NAS部署的环境。"
 
 msgid "Provides a pop-up window of diagnostic information if a fatal error occurs."
 msgstr "如果发生致命错误，则提供诊断信息的弹出窗口。"
@@ -8608,13 +8609,13 @@ msgid "Region"
 msgstr "区域"
 
 msgid "Region Name"
-msgstr ""
+msgstr "区域名称"
 
 msgid ""
 "Region name - optional <a "
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "区域名称-可选的<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档）</a>。"
 
 msgid "Release"
 msgstr "发行版"
@@ -8707,7 +8708,7 @@ msgid "Renew Certificate Days"
 msgstr "续签证书天数"
 
 msgid "Renew Static Key"
-msgstr ""
+msgstr "续订静态密钥"
 
 msgid "Repeat"
 msgstr "重复"
@@ -8937,7 +8938,7 @@ msgid "Room"
 msgstr "Room"
 
 msgid "Root CA"
-msgstr ""
+msgstr "根CA"
 
 msgid "Root dataset ACL cannot be edited."
 msgstr "根数据集访问控制列表无法编辑。"
@@ -9107,13 +9108,13 @@ msgid "SSL"
 msgstr "SSL"
 
 msgid "SSSD Compat"
-msgstr ""
+msgstr "SSSD兼容性"
 
 msgid "START"
-msgstr "开始"
+msgstr "启动"
 
 msgid "STARTTLS"
-msgstr ""
+msgstr "启动TLS"
 
 msgid "STOP"
 msgstr "停止"
@@ -9470,12 +9471,12 @@ msgstr "选择一个预设计划，或选择<i>自定义</i>以使用高级计�
 msgid ""
 "Select a previously imported or created  <a "
 "href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
-msgstr ""
+msgstr "选择一个以前导入或创建的<a href=\"--docurl--/system.html#cas\" target=\"_blank\"> CA </a>。"
 
 msgid ""
 "Select a previously imported or created <a "
 "href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
-msgstr "选择以前导入或创建的<a href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>。"
+msgstr "选择一个以前导入或创建的<a href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>。"
 
 msgid ""
 "Select a saved remote system SSH  connection or choose <i>Create New</i> to "
@@ -9829,7 +9830,7 @@ msgstr "选择用于本地和SSH登录的shell。"
 msgid ""
 "Select the type of LDAP server to use. This can be the        LDAP server "
 "provided by the Active Directory server or a stand-alone LDAP server."
-msgstr ""
+msgstr "选择要使用的LDAP服务器的类型。这可以是Active Directory服务器提供的LDAP服务器，也可以是独立的LDAP服务器。"
 
 msgid "Select the type that matches the type of client accessing the dataset."
 msgstr "选择与访问数据集的客户端类型匹配的类型。"
@@ -9882,7 +9883,7 @@ msgid "Self Healed"
 msgstr "自我修复"
 
 msgid "Semi-automatic (TrueNAS CORE only)"
-msgstr ""
+msgstr "半自动（仅限TrueNAS CORE）"
 
 msgid "Send Deduplicated Stream"
 msgstr "发送重复数据删除流"
@@ -9942,13 +9943,13 @@ msgid "Series"
 msgstr "系列"
 
 msgid "Serve UDP NFS clients"
-msgstr "伺服 UDP NFS 客户端"
+msgstr "服务UDP NFS客户端"
 
 msgid "Server"
-msgstr ""
+msgstr "服务器"
 
 msgid "Server Certificate"
-msgstr ""
+msgstr "服务器证书"
 
 msgid "Server Credentials"
 msgstr "服务器凭证"
@@ -10407,7 +10408,7 @@ msgid "Set to enable the S3 web user interface."
 msgstr "设置为启用S3 Web用户界面。"
 
 msgid "Set to enable the iSCSI extent."
-msgstr ""
+msgstr "设置为启用iSCSI区块。"
 
 msgid "Set to export the certificate environment variables."
 msgstr "设置为导出证书环境变量。"
@@ -10430,7 +10431,7 @@ msgstr ""
 "target=\"_blank\">ypbind（8）</a>拒绝绑定到任何未在1024以上的TCP端口上以root身份运行的NIS服务器。"
 
 msgid "Set to ignore mapping requests for the <i>BUILTIN</i>  domain."
-msgstr ""
+msgstr "设置为忽略<i> BUILTIN </ i>域的映射请求。"
 
 msgid ""
 "Set to ignore the Virtual  Machine status during the delete operation. "
@@ -10492,7 +10493,7 @@ msgstr ""
 msgid ""
 "Set to make the module <i>read-only</i>. No new ranges  are allocated or "
 "new mappings created in the idmap pool."
-msgstr ""
+msgstr "设置为将模块设置为<i>只读</ i>。没有分配新的范围，也没有在idmap池中创建新的映射。"
 
 msgid ""
 "Set to mount a <a "
@@ -10773,7 +10774,7 @@ msgid ""
 msgstr "支持多个提供商。如果未列出特定的提供商，请选择<i>自定义提供商</ i>，然后在<i>自定义服务器</i>和<i>自定义路径</i>字段中输入信息。"
 
 msgid "Share ACL"
-msgstr ""
+msgstr "共享访问控制列表"
 
 msgid "Share Name"
 msgstr "共享名称"
@@ -10810,7 +10811,7 @@ msgid ""
 msgstr "仅应用于高度准确的<b>NTP</b>服务器，例如具有时间监控硬件的服务器。"
 
 msgid "Show"
-msgstr ""
+msgstr "显示"
 
 msgid "Show Hidden Files"
 msgstr "显示隐藏文件"
@@ -10854,7 +10855,7 @@ msgid "Shutdown Mode"
 msgstr "关机模式"
 
 msgid "Shutdown Timeout"
-msgstr ""
+msgstr "关机超时"
 
 msgid "Shutdown Timer"
 msgstr "关机倒计时"
@@ -10980,7 +10981,7 @@ msgid "Sparse"
 msgstr "备用"
 
 msgid "Specifies the auxiliary directory service ID provider."
-msgstr ""
+msgstr "指定辅助目录服务ID提供程序。"
 
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
@@ -11157,13 +11158,13 @@ msgid "Storage Class"
 msgstr "存储类别"
 
 msgid "Storage URL"
-msgstr ""
+msgstr "存储URL"
 
 msgid ""
 "Storage URL - optional <a "
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "存储URL-可选的<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档）</a>。"
 
 msgid ""
 "Store system logs on the system dataset. Unset to store system logs in "
@@ -11308,7 +11309,7 @@ msgid "System Serial"
 msgstr "系统序列号"
 
 msgid "System Time Zone:"
-msgstr ""
+msgstr "系统时区："
 
 msgid "System clock"
 msgstr "系统时钟"
@@ -11377,10 +11378,10 @@ msgid "TLS Common Name Required"
 msgstr "需要TLS通用名"
 
 msgid "TLS Crypt Auth"
-msgstr ""
+msgstr "TLS Crypt验证"
 
 msgid "TLS Crypt Auth Enabled"
-msgstr ""
+msgstr "启用TLS Crypt验证"
 
 msgid "TLS DNS Name Required"
 msgstr "需要TLS DNS名称"
@@ -11467,25 +11468,25 @@ msgid "Template"
 msgstr "模板"
 
 msgid "Tenant Domain"
-msgstr ""
+msgstr "租户域"
 
 msgid "Tenant ID"
-msgstr ""
+msgstr "租户ID"
 
 msgid ""
 "Tenant ID - optional for v1 auth, this or tenant required otherwise <a "
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "租户ID-可选v1身份验证，否则需要此租户<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档）</a>。"
 
 msgid "Tenant Name"
-msgstr ""
+msgstr "租户名称"
 
 msgid ""
 "Tenant domain - optional <a "
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "租户域-可选的<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档）</a>。"
 
 msgid "Terms of Service"
 msgstr "服务条款"
@@ -11536,7 +11537,7 @@ msgstr "组ID（GID）是用于标识Unix组的唯一编号。为具有用户帐
 msgid ""
 "The Idmap cache should be cleared after finalizing idmap changes.  Click "
 "\"Continue\" to clear the cache."
-msgstr ""
+msgstr "完成idmap更改后，应清除idmap缓存。单击\"继续\" 以清除缓存。"
 
 msgid "The NFS"
 msgstr "NFS"
@@ -11604,7 +11605,7 @@ msgid ""
 msgstr "此系统具有权威性的起始UID/GID。低于此值的任何UID/GID将被忽略。这可以避免本地和远程定义的ID之间意外的UID/GID重叠。"
 
 msgid "The cache has been cleared."
-msgstr ""
+msgstr "缓存已清除。"
 
 msgid "The cache is being rebuilt."
 msgstr "正在刷新缓存。"
@@ -11618,7 +11619,7 @@ msgid ""
 msgstr "要使用的加密算法。仅当组织需要其他算法时才需要更改默认的<i> SHA256 </ i>。"
 
 msgid "The current pool layout is not recommended.Override the following errors?"
-msgstr ""
+msgstr "不建议使用当前的池布局。是否覆盖以下错误？"
 
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
@@ -11856,7 +11857,7 @@ msgid ""
 "The time in seconds the system waits for the VM to cleanly shut down.  "
 "During system shutdown, the system initiates poweroff for the VM after the "
 "shutdown  timeout has expired."
-msgstr ""
+msgstr "系统等待虚拟机完全关闭的时间（以秒为单位）。在系统关闭期间，关闭超时到期后，系统将启动VM的电源关闭。"
 
 msgid ""
 "The time values when the task will run. Accepts standard <a "
@@ -12007,7 +12008,7 @@ msgid ""
 "This is the OS_TENANT_NAME from an <a "
 "href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
 "credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
-msgstr ""
+msgstr "这是来自OS_TENANT_NAME的<a href=\"https://rclone.org/swift/#configuration-from-an-openstack-credentials-file\" target=\"_blank\">OpenStack凭据文件</a>。"
 
 msgid "This is the serial number of the disk."
 msgstr "这是磁盘的序列号。"
@@ -12108,7 +12109,7 @@ msgstr ""
 "target=\"_blank\">亚马逊资源名称（ARN）</a>"
 
 msgid "Topology"
-msgstr ""
+msgstr "拓扑结构"
 
 msgid "Train"
 msgstr "分支"
@@ -12248,10 +12249,10 @@ msgid "Unique snapshot name. Cannot be used with  a <i>Naming Schema</i>."
 msgstr "唯一的快照名称。不能与<i>命名惯例</i>一起使用。"
 
 msgid "Unix NSS Info"
-msgstr ""
+msgstr "Unix NSS信息"
 
 msgid "Unix Primary Group"
-msgstr ""
+msgstr "Unix主要组"
 
 msgid "Unix Shares (NFS)"
 msgstr "Unix共享（NFS）"
@@ -12559,7 +12560,7 @@ msgid "User Distinguished Name (DN) to use for authentication."
 msgstr "用于身份验证的用户可分辨名称（DN）。"
 
 msgid "User Domain"
-msgstr ""
+msgstr "用户域"
 
 msgid "User Guide"
 msgstr "用户指南"
@@ -12574,10 +12575,10 @@ msgid ""
 "User ID to log in - optional - most swift systems use user and leave this "
 "blank <a href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "登录的用户ID-可选-大多数Swift System使用用户并将此空白保留为<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档 ）</a>。"
 
 msgid "User Name"
-msgstr ""
+msgstr "用户名"
 
 msgid "User account password for logging into the  remote system."
 msgstr "登录到远程系统的用户帐户密码。"
@@ -12599,7 +12600,7 @@ msgid ""
 "User domain - optional <a "
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
-msgstr ""
+msgstr "用户域-可选的<a href=\"https://rclone.org/swift/#standard-options\" target=\"_blank\">（rclone文档）</a>。"
 
 msgid "User or Group"
 msgstr "用户或组"
@@ -12777,10 +12778,10 @@ msgid "View Enclosure"
 msgstr "查看机箱"
 
 msgid "View License Info"
-msgstr ""
+msgstr "查看许可信息"
 
 msgid "View Licenses"
-msgstr ""
+msgstr "查看许可"
 
 msgid "View Logs"
 msgstr "查看日志"
@@ -12854,7 +12855,7 @@ msgid "Warning: iSCSI Target is already in use.</font><br>"
 msgstr "警告：iSCSI Target已在使用中。 <br>"
 
 msgid "Weak Ciphers"
-msgstr ""
+msgstr "弱密码"
 
 msgid "Web Interface"
 msgstr "网络界面"
@@ -12917,7 +12918,7 @@ msgid ""
 "When <code>tls_crypt_auth_enabled</code> is enabled and "
 "<code>tls_crypt_auth</code> is not provided,  a static key is automatically "
 "generated to be used with OpenVPN client."
-msgstr ""
+msgstr "启用<code>tls_crypt_auth_enabled</code>且未提供<code>tls_crypt_auth</code>时，将自动生成一个静态密钥以用于OpenVPN客户端。"
 
 msgid "When Syslog server is defined, only logs matching this level are sent."
 msgstr "定义Syslog服务器时，仅发送与此级别匹配的日志。"
@@ -12936,14 +12937,14 @@ msgid ""
 "When checked, the primary group membership is fetched from the LDAP  "
 "attributes (gidNumber). When not checked, the primary group membership is "
 "calculated via  the \"primaryGroupID\" LDAP attribute."
-msgstr ""
+msgstr "选中后，将从LDAP属性（gidNumber）获取主要组成员身份。如果未选中，则主要组成员通过\"主要组ID\"LDAP属性进行计算。"
 
 msgid ""
 "When checked, winbind will retrieve the login shell and home directory  "
 "from the LDAP attributes. When not checked or when the AD LDAP entry lacks "
 "the SFU attributes  the smb4.conf parameters <code>template shell</code> "
 "and <code>template homedir</code> are used."
-msgstr ""
+msgstr "选中后，winbind将从LDAP属性中检索登录shell和主目录。如果未选中或AD LDAP条目缺少SFU属性，则使用smb4.conf参数<code> template shell </ code>和<code> template homedir </ code>。"
 
 msgid ""
 "When enabled, the ACLs grant read and write access for owner or group and "
@@ -13020,12 +13021,12 @@ msgid ""
 "href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-"
 "identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a "
 "<i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL."
-msgstr ""
+msgstr "此访问控制列表条目适用于谁，显示为<a href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers\" target=\"_blank\"> Windows 安全标识符</a>。此访问控制列表需要<i> SID </ i>或<i> 域 </ i>和<i> 名称 </ i>。"
 
 msgid ""
 "Who this ACL entry applies to, shown as a user name. Requires adding the "
 "user <i>Domain</i>."
-msgstr ""
+msgstr "此访问控制列表条目适用于谁，显示为用户名。需要添加用户<i>域</i>。"
 
 msgid "Widget Base Class"
 msgstr "窗口小部件基类"
