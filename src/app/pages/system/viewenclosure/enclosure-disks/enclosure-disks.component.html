@@ -25,6 +25,11 @@
   <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]" ></tab-content>
   
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
+    <!-- FRONT/REAR TOGGLE -->
+    <div *ngIf="subenclosure && currentView != 'expanders'" class="front-rear-toggle">
+      <button mat-button (click)="enclosureOverride('front')">FRONT</button>
+      <button mat-button (click)="enclosureOverride('rear')">REAR</button>
+    </div>
 
     <!-- VISUALIZATION/OVERVIEW -->
     <div class="disks-overview-wrapper">
@@ -43,7 +48,9 @@
           <div class="content">
 
             <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
-              <div *ngFor="let pool of enclosurePools"><div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]"></div>{{pool}}</div>
+              <div *ngFor="let pool of enclosurePools; let i=index"><div class="swatch" 
+              [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+              </div>{{pool}}</div>
             </div>
 
             <ng-template #noPools>
@@ -155,7 +162,10 @@
             <div class="subtitle">
               <span *ngIf="failedDisks.length < 1">All disks healthy</span>
               <span *ngIf="failedDisks.length > 1">Check {{failedDisks[0].disk}} and {{failedDisks.length - 1}} other disk<span *ngIf="failedDisks.length > 2">s</span></span>
-              <span *ngIf="failedDisks.length == 1">Check {{failedDisks[0].disk}} in enclosure {{failedDisks[0].enclosure}}</span>
+              <span *ngIf="failedDisks.length == 1">Check {{failedDisks[0].disk}}
+                <span *ngIf="!subenclosure"> in enclosure {{failedDisks[0].enclosure}}</span>
+                <span *ngIf="subenclosure"> {{failedDisks[0].location}} slot {{failedDisks[0].slot}}</span>
+              </span>
             </div>
             <button mat-button color="primary" (click)="setCurrentView('status')">SHOW STATUS</button>
           </div>

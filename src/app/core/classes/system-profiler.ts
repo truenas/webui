@@ -68,6 +68,8 @@ export class SystemProfiler {
   }
 
   createProfile(){
+    let rearEnclosure;
+
     // with the enclosure info we set up basic data structure
     for(let i = 0; i < this.enclosures.length; i++){
       // Detect rear drive bays
@@ -95,7 +97,7 @@ export class SystemProfiler {
       console.warn("No Head Unit Detected! Defaulting to enclosure 0...");
       this.headIndex = 0;
     } 
-    
+
   }
 
   getSeriesFromModel(model: string): string{
