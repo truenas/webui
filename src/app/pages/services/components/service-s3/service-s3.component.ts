@@ -21,6 +21,8 @@ export class ServiceS3Component implements OnDestroy {
   protected route_success: string[] = [ 'services' ];
   private certificate: any;
   private ip_address: any;
+  private initial_path: any;
+  private warned = false;
 
 
   public fieldConfig: FieldConfig[] = [
@@ -113,12 +115,14 @@ export class ServiceS3Component implements OnDestroy {
   afterInit(entityForm: any) {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
     this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res) => {
-      if(res && res.split('/').length < 4) {
-        this.dialog.confirm(T("Warning"), T("Assigning a directory to Minio changes the permissions \
-                                             of that directory and every directory in it to \
-                                             minio:minio and overrides any previous permissions. \
-                                             Creating a separate dataset for Minio is strongly \
-                                             recommended."), true);
+      if(res && res != this.initial_path && !this.warned) {
+        this.dialog.confirm(helptext.path_warning_title, helptext.path_warning_msg).subscribe(confirm => {
+          if (!confirm) {
+            this.storage_path.setValue(this.initial_path);
+          } else {
+            this.warned = true;
+          }
+        });
       }
     });
     this.systemGeneralService.getCertificates().subscribe((res)=>{
@@ -159,7 +163,11 @@ export class ServiceS3Component implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
+    if (data.storage_path) {
+      this.initial_path = data.storage_path;
+    }
     delete data['secret_key'];
+    return data;
   }
 
   submitFunction(this: any, entityForm: any,){
