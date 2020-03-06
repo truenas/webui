@@ -5465,7 +5465,7 @@ msgid "Form Invalid"
 msgstr "表单无效"
 
 msgid "Free"
-msgstr "可用"
+msgstr "空闲"
 
 msgid "FreeBSD device names of each disk being edited."
 msgstr "正在编辑每个磁盘的 FreeBSD 设备名称。"
