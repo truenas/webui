@@ -7,7 +7,9 @@
       [ngClass]="config.class" 
       [required]="config.required" 
       [readonly]="config.readonly" 
-      (blur)='blurEvent()'>
+      (blur)='blurEvent()'
+      (paste)="onPaste($event)"
+      (input)="onInput()">
     </textarea>
   </mat-form-field>
   <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
