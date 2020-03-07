@@ -227,13 +227,13 @@ export class VolumeImportWizardComponent {
   }
 
   getImportableDisks() {
-    this.guid.options = [];
     let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_pools_title}, disableClose: true});
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe((res) => {
       if (res && res.result) {
+        this.guid.options = [];
         const result = res.result;
         for (let i = 0; i < result.length; i++) {
           this.guid.options.push({label:result[i].name + ' | ' + result[i].guid, value:result[i].guid});
