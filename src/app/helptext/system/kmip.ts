@@ -50,6 +50,13 @@ export const helptext_system_kmip = {
         title: T('Saving KMIP Config'),
     },
 
-    btn_sync_keys: T('SYNC KEYS'),
-    btn_clear_sync_keys: T('CLEAR SYNC KEYS'),
+    syncInfoDialog: {
+        title: T('Sync Keys'),
+        info: T('Synced ZFS/SED keys between KMIP Server and TN database.'),
+    },
+
+    clearSyncKeyInfoDialog: {
+        title: T('Clear Sync Keys'),
+        info: T('Cleared all keys which are pending to be synced between KMIP server and TN database.'),
+    }
 }

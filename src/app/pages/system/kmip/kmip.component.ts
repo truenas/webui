@@ -11,7 +11,8 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
     selector: `app-system-kmip`,
-    template: `<entity-form [conf]="this"></entity-form>`,
+    templateUrl: './kmip.component.html',
+    styleUrls: ['./kmip.component.css']
 })
 export class KmipComponent {
     protected queryCall = 'kmip.config';
@@ -99,17 +100,6 @@ export class KmipComponent {
         }
     ];
 
-    public custActions: Array < any > = [{
-        id: 'sync_keys',
-        name: helptext_system_kmip.btn_sync_keys,
-        function: () => {
-        }
-    }, {
-        id: 'clear_sync_keys',
-        name: helptext_system_kmip.btn_clear_sync_keys,
-        function: () => {
-        }
-    }];
     public sync_pending = false;
 
     constructor(
@@ -120,16 +110,13 @@ export class KmipComponent {
             this.ws.call('kmip.kmip_sync_pending').subscribe(
                 (res) => {
                     this.sync_pending = res;
+                    console.log('kmip_sync_pending', res)
                 },
                 (err) => {
                     new EntityUtils().handleWSError(this, err, this.dialogService);
                 }
             )
         }
-
-    isCustActionVisible(id) {
-        return this.sync_pending;
-    }
 
     preInit() {
         const certificateFieldset = _.find(this.fieldSets, { class: 'certificate' });
@@ -171,5 +158,27 @@ export class KmipComponent {
             }
             new EntityUtils().handleWSError(this, err, this.dialogService);
         });
+    }
+
+    syncKeys() {
+        this.ws.call('kmip.sync_keys').subscribe(
+            (res) => {
+                this.dialogService.Info(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
+            },
+            (err) => {
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+            }
+        )
+    }
+
+    clearSyncKeys() {
+        this.ws.call('kmip.clear_sync_pending_keys').subscribe(
+            (res) => {
+                this.dialogService.Info(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
+            },
+            (err) => {
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+            }
+        )
     }
 }
