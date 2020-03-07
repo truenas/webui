@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
@@ -413,7 +413,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         size_estimate += vdev.rawSize;
         if (data_vdev_disknum > 0) {
-          if( data_vdev_disknum !== this.first_data_vdev_disknum) {
+          if( data_vdev_disknum !== this.first_data_vdev_disknum && this.first_data_vdev_type !== 'stripe') {
             this.getDiskNumErrorMsg(data_vdev_disknum);
           }
           if( data_vdev_type !== this.first_data_vdev_type) {

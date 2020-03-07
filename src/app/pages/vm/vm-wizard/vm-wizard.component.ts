@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 
 import { VmService } from '../../../services/vm.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';

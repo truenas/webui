@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxUploaderModule } from 'ngx-uploader';
 
+import { QRCodeModule } from 'angular2-qrcode';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { MaterialModule } from '../../appMaterial.module';
@@ -61,13 +62,15 @@ import { TnSupportComponent } from './support/tn-support/tn-support.component';
 import { FnSupportComponent } from './support/fn-support/fn-support.component';
 import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
 import { KmipComponent} from './kmip/kmip.component';
+import { TwoFactorComponent } from './two-factor/two-factor.component';
+import { QRDialog } from './two-factor/two-factor.component';
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgxUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
-    EnclosureModule, CommonDirectivesModule
+    EnclosureModule, CommonDirectivesModule, QRCodeModule
   ],
   declarations: [
     GeneralComponent,
@@ -118,7 +121,10 @@ import { KmipComponent} from './kmip/kmip.component';
     FnSupportComponent,
     FnSysInfoComponent,
     KmipComponent,
+    TwoFactorComponent,
+    QRDialog
   ],
+  entryComponents: [QRDialog],
   providers: []
 })
 export class SystemModule {}

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService } from 'app/services';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -213,7 +213,7 @@ export class ServiceOpenvpnServerComponent {
 
   constructor(protected services: ServicesService, protected dialog: DialogService,
     protected loader: AppLoaderService, protected ws: WebSocketService, protected storageService: StorageService,
-    protected http: Http) { }
+    protected http: HttpClient) { }
 
   resourceTransformIncomingRestData(data) {
     data.server = `${data.server}/${data.netmask}`;

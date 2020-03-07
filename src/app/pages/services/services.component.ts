@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatButtonToggleGroup, MatSlideToggle } from '@angular/material';
+import { MatButtonToggleGroup }  from '@angular/material/button-toggle';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';

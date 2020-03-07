@@ -47,113 +47,115 @@ import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './support/eula/eula.component';
 import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
+import { TwoFactorComponent } from './two-factor/two-factor.component'
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
   // {path : '', component : AdvancedComponent }
   {
     path: '',
-    data: { title: 'System' },
+    data: { title: T('System') },
     children: [{
       path: '',
       component: EntityDashboardComponent,
     }, {
       path: 'general',
-      data: { title: 'General', breadcrumb: 'General', icon: 'build' },
+      data: { title: T('General'), breadcrumb: T('General'), icon: 'build' },
       children: [{
         path: '',
         component: GeneralComponent,
-        data: { title: 'General', breadcrumb: 'General' },
+        data: { title: T('General'), breadcrumb: T('General') },
       }]
     }, {
       path: 'advanced',
       component: AdvancedComponent,
-      data: { title: 'Advanced', breadcrumb: 'Advanced', icon: 'settings' },
+      data: { title: T('Advanced'), breadcrumb: T('Advanced'), icon: 'settings' },
+
     }, {
       path: 'viewenclosure',
       component: ViewEnclosureComponent,
-      data: { title: 'View Enclosure', breadcrumb: 'View Enclosure', icon: 'settings' },
+      data: { title: T('View Enclosure'), breadcrumb: T('View Enclosure'), icon: 'settings' },
     }, {
       path: 'reporting',
       component: ReportingComponent,
-      data: { title: 'Reporting', breadcrumb: 'Reporting' },
+      data: { title: T('Reporting'), breadcrumb: T('Reporting') },
     }, {
       path: 'dataset',
       component: DatasetComponent,
-      data: { title: 'System Dataset', breadcrumb: 'System Dataset', icon: 'storage' },
+      data: { title: T('System Dataset'), breadcrumb: T('System Dataset'), icon: 'storage' },
     }, {
       path: 'boot',
-      data: { title: 'Boot', breadcrumb: 'Boot', icon: 'replay' },
+      data: { title: T('Boot'), breadcrumb: T('Boot'), icon: 'replay' },
       children: [{
         path: '',
         component: BootEnvironmentListComponent,
-        data: { title: 'Boot Environments', breadcrumb: 'Boot Environments' },
+        data: { title: T('Boot Environments'), breadcrumb: T('Boot Environments') },
       }, {
         path: 'clone/:pk',
         component: BootEnvironmentCloneComponent,
-        data: { title: 'Clone', breadcrumb: 'Clone' },
+        data: { title: T('Clone'), breadcrumb: T('Clone') },
       },
       {
         path: 'rename/:pk',
         component: BootEnvironmentRenameComponent,
-        data: { title: 'Rename', breadcrumb: 'Rename' },
+        data: { title: T('Rename'), breadcrumb: T('Rename') },
       },
       {
         path: 'create',
         component: BootEnvironmentCreateComponent,
-        data: { title: 'Create', breadcrumb: 'Create' },
+        data: { title: T('Create'), breadcrumb: T('Create') },
       },
       {
         path: 'status',
         component: BootStatusListComponent,
-        data: { title: 'Status', breadcrumb: 'Status' },
+        data: { title: T('Status'), breadcrumb: T('Status') },
       },
       {
         path: 'attach/:pk',
         component: BootEnvAttachFormComponent,
-        data: { title: 'Attach', breadcrumb: 'Attach' },
+        data: { title: T('Attach'), breadcrumb: ('Attach') },
       },
       {
         path: 'replace/:pk',
         component: BootEnvReplaceFormComponent,
-        data: { title: 'Replace', breadcrumb: 'Replace' },
+        data: { title: T('Replace'), breadcrumb: T('Replace') },
       }
     ]
     }, {
       path: 'tunable',
-      data: { title: 'Tunables', breadcrumb: 'Tunables', icon: 'settings_overscan' },
+      data: { title: T('Tunables'), breadcrumb: T('Tunables'), icon: 'settings_overscan' },
       children: [{
           path: '',
           component: TunableListComponent,
-          data: { title: 'Tunables', breadcrumb: 'Tunables' },
+          data: { title: T('Tunables'), breadcrumb: T('Tunables') },
         }, {
           path: 'add',
           component: TunableFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
+          data: { title: T('Add'), breadcrumb: T('Add') },
         },
         {
           path: 'edit/:pk',
           component: TunableFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
+          data: { title: T('Edit'), breadcrumb: T('Edit') },
         }
       ]
     }, {
       path: 'update',
-      data: { title: 'Update', breadcrumb: 'Update', icon: 'update' },
+      data: { title: T('Update'), breadcrumb: T('Update'), icon: 'update' },
       children:[
         {
         path:'',
         component: UpdateComponent,
-        data: { title: 'Update', breadcrumb: 'Update' },
+        data: { title: T('Update'), breadcrumb: T('Update') },
         },
         {
           path:'manualupdate',
-          data: {title:'Manual Update', breadcrumb: 'Manual Update'},
+          data: {title:T('Manual Update'), breadcrumb: T('Manual Update')},
           children:[
             {
               path:'',
               component: ManualUpdateComponent,
-              data: { title: 'Manual Update', breadcrumb: 'Manual Update' },
+              data: { title: T('Manual Update'), breadcrumb: T('Manual Update') },
             }
           ]
         },
@@ -161,40 +163,40 @@ export const routes: Routes = [
     },
      {
       path: 'ntpservers',
-      data: { title: 'NTP Servers', breadcrumb: 'NTP Servers', icon: 'device_hub' },
+      data: { title: T('NTP Servers'), breadcrumb: T('NTP Servers'), icon: 'device_hub' },
       children: [{
           path: '',
           component: NTPServerListComponent,
-          data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
+          data: { title: T('NTP Servers'), breadcrumb: T('NTP Servers') },
         }, {
           path: 'add',
           component: NTPServerFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
+          data: { title: T('Add'), breadcrumb: T('Add') },
         },
         {
           path: 'edit/:pk',
           component: NTPServerFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
+          data: { title: T('Edit'), breadcrumb: T('Edit') },
         }
       ]
     }, 
     {
       path : 'email', 
       component : EmailComponent,
-      data: { title: 'Email', breadcrumb: 'Email', icon: 'email' },
+      data: { title: T('Email'), breadcrumb: T('Email'), icon: 'email' },
     },
     {
       path : 'alertsettings',
       component : AlertConfigComponent,
-      data: { title: 'Alert Settings', breadcrumb: 'Alert Settings', icon: 'notifications_active' },
+      data: { title: T('Alert Settings'), breadcrumb: T('Alert Settings'), icon: 'notifications_active' },
     },
     {
       path: 'alertservice',
-      data: { title: 'Alert Services', breadcrumb: 'Alert Services', icon: 'notifications' },
+      data: { title: T('Alert Services'), breadcrumb: T('Alert Services'), icon: 'notifications' },
       children: [{
           path: '',
           component: AlertServiceListComponent,
-          data: { title: 'Alert Services', breadcrumb: 'Alert Services' },
+          data: { title: T('Alert Services'), breadcrumb: T('Alert Services') },
         }, {
           path: 'add',
           component: AlertServiceComponent,
@@ -207,84 +209,84 @@ export const routes: Routes = [
       ]
     },{
       path: 'cloudcredentials',
-      data: { title: 'Cloud Credentials', breadcrumb: 'Cloud Credentials', icon: 'cloud_circle' },
+      data: { title: T('Cloud Credentials'), breadcrumb: T('Cloud Credentials'), icon: 'cloud_circle' },
       children: [{
           path: '',
           component: CloudCredentialsListComponent,
-          data: { title: 'Cloud Credentials', breadcrumb: 'Cloud Credentials' },
+          data: { title: T('Cloud Credentials'), breadcrumb: T('Cloud Credentials') },
         },
         {
           path: 'add',
           component: CloudCredentialsFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
+          data: { title: T('Add'), breadcrumb: T('Add') },
         },
         {
           path: 'edit/:pk',
           component: CloudCredentialsFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
+          data: { title: T('Edit'), breadcrumb: T('Edit') },
         },
       ]
     },
     {
       path: 'sshconnections',
-      data: { title: 'SSH Connections', breadcrumb: 'SSH Connections', icon: 'cloud_circle'},
+      data: { title: T('SSH Connections'), breadcrumb: T('SSH Connections'), icon: 'cloud_circle'},
       children: [
         {
           path: '',
           component: SshConnectionsListComponent,
-          data: { title: 'SSH Connections', breadcrumb: 'SSH Connections', icon: 'cloud_circle'},
+          data: { title: T('SSH Connections'), breadcrumb: T('SSH Connections'), icon: 'cloud_circle'},
         },
         {
           path: 'add',
           component: SshConnectionsFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
+          data: { title: T('Add'), breadcrumb: T('Add') },
         },
         {
           path: 'edit/:pk',
           component: SshConnectionsFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
+          data: { title: T('Edit'), breadcrumb: T('Edit') },
         }]
       },
       {
         path: 'sshkeypairs',
-        data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs', icon: 'vpn_key' },
+        data: { title: T('SSH Keypairs'), breadcrumb: T('SSH Keypairs'), icon: 'vpn_key' },
         children: [{
           path: '',
           component: SshKeypairsListComponent,
-          data: { title: 'SSH Keypairs', breadcrumb: 'SSH Keypairs' },
+          data: { title: T('SSH Keypairs'), breadcrumb: T('SSH Keypairs') },
         }, {
           path: 'add',
           component: SshKeypairsFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
+          data: { title: T('Add'), breadcrumb: T('Add') },
         }, {
           path: 'edit/:pk',
           component: SshKeypairsFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
+          data: { title: T('Edit'), breadcrumb: T('Edit') },
         }
       ]
     },
     {
       path: 'ca',
-      data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities', icon: 'card_membership' },
+      data: { title: T('Certificate Authorities'), breadcrumb: T('Certificate Authorities'), icon: 'card_membership' },
       children: [{
         path: '',
         component: CertificateAuthorityListComponent,
-        data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities' },
+        data: { title: T('Certificate Authorities'), breadcrumb: T('Certificate Authorities') },
       }, 
       {
         path: 'add',
         component: CertificateAuthorityAddComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
+        data: { title: T('Add'), breadcrumb: T('Add') },
       },
       {
         path: 'view/:pk',
         component: CertificateAuthorityEditComponent,
-        data: { title: 'View', breadcrumb: 'View' },
+        data: { title: T('View'), breadcrumb: T('View') },
       },
       {
         path: 'sign/:pk',
         component: CertificateAuthoritySignComponent,
-        data: { title: 'Sign CSR', breadcrumb: 'Sign CSR' },
+        data: { title: T('Sign CSR'), breadcrumb: T('Sign CSR') },
       }]
     }, {
       path: 'kmip',
@@ -292,63 +294,68 @@ export const routes: Routes = [
       data: { title: 'KMIP', breadcrumb: 'KMIP', icon: 'dns'},
     }, {
       path: 'certificates',
-      data: { title: 'Certificates', breadcrumb: 'Certificates', icon: 'turned_in' },
+      data: { title: T('Certificates'), breadcrumb: T('Certificates'), icon: 'turned_in' },
       children: [{
         path: '',
         component: CertificateListComponent,
-        data: { title: 'Certificates', breadcrumb: 'Certificates' },
+        data: { title: T('Certificates'), breadcrumb: T('Certificates') },
       }, {
         path: 'add',
         component: CertificateAddComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
+        data: { title: T('Add'), breadcrumb: T('Add') },
       }, {
         path: 'addacme/:pk',
         component: CertificateAcmeAddComponent,
-        data: { title: 'Add ACME Certificate', breadcrumb: 'Add ACME Certificate' },
+        data: { title: T('Add ACME Certificate'), breadcrumb: T('Add ACME Certificate') },
       }, {
         path: 'view/:pk',
         component: CertificateEditComponent,
-        data: { title: 'View', breadcrumb: 'View' },
+        data: { title: T('View'), breadcrumb: T('View') },
       }]
     }, {
       path: 'acmedns',
-      data: { title: 'ACME DNS Authenticators', breadcrumb: 'ACME DNS Authenticators', icon: 'turned_in' },
+      data: { title: T('ACME DNS Authenticators'), breadcrumb: T('ACME DNS Authenticators'), icon: 'turned_in' },
       children: [{
         path: '',
         component: AcmednsListComponent,
-        data: { title: 'ACME DNS Authenticators', breadcrumb: 'ACME DNS Authenticators' },
+        data: { title: T('ACME DNS Authenticators'), breadcrumb: T('ACME DNS Authenticators') },
       }, 
       {
         path: 'add',
         component: AcmednsFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
+        data: { title: T('Add'), breadcrumb: T('Add') },
       }, 
       {
         path: 'edit/:pk',
         component: AcmednsFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
+        data: { title: T('Edit'), breadcrumb: T('Edit') },
       }
     ]
   }, {
       path: 'failover',
       component: FailoverComponent,
-      data: { title: 'Failover', breadcrumb: 'Failover', icon: 'device_hub' }
+      data: { title: T('Failover'), breadcrumb: T('Failover'), icon: 'device_hub' }
     }, 
     {
       path: 'support',
-      data: { title: 'Support', breadcrumb: 'Support', icon: 'perm_phone_msg' },
+      data: { title: T('Support'), breadcrumb: T('Support'), icon: 'perm_phone_msg' },
       children: [
         {
           path: '',
           component: SupportComponent,
-          data: { title: 'Support', breadcrumb: 'Support' },
+          data: { title: T('Support'), breadcrumb: T('Support') },
         },
         {
           path: 'eula',
           component: EulaComponent,
-          data: { title: 'EULA', breadcrumb: 'EULA'}
+          data: { title: T('EULA'), breadcrumb: T('EULA')}
         }
       ]
+    },
+    {
+      path: 'two-factor',
+      component: TwoFactorComponent,
+      data: { title: T('Two-Factor Auth'), breadcrumb: T('Two-Factor Auth') },
     }
     ]
   }

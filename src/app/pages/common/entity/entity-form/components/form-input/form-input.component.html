@@ -27,7 +27,9 @@
 			ix-auto
 			ix-auto-type="input"
 			ix-auto-identifier="{{config.placeholder}}"
-			(change)="valueChange()">
+			(change)="valueChange()"
+			(paste)="onPaste($event)"
+			(input)="onInput()">
 	</mat-form-field>
 	<ng-template #elseBlock>
 		<span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>

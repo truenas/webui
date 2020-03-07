@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
@@ -125,7 +125,7 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   isCustActionVisible(actionname: string) {
-    if (actionname === 'download_key' && this.encryptedStatus !== '') {
+    if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
     } else {
       return false;
@@ -318,7 +318,7 @@ export class VolumesListTableConfig implements InputTableConf {
     this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map(serviceChoices => {
         return {
-          title: "Unlock " + row1.name,
+          title: T("Unlock ") + row1.name,
           fieldConfig: [
             {
               type: 'paragraph',
@@ -439,13 +439,14 @@ export class VolumesListTableConfig implements InputTableConf {
         name: 'Export/Disconnect',
         label: T("Export/Disconnect"),
         onClick: (row1) => {
-          let encryptedStatus = row1.vol_encryptkey,
+          let encryptedStatus = row1.encrypt,
           self = this;
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
-                p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is detached:`;
+                p1 = T('These services depend on pool ') + `<i>${row1.name}</i>` + 
+                  T(' and will be disrupted if the pool is detached:');
                 res.forEach((item) => {
                   p1 += `<br><br>${item.type}:`;
                   item.attachments.forEach((i) => {
@@ -471,7 +472,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   });
                   if (running_processes.length > 0) {
-                    p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
+                    p1 += `<br><br>` + T('These running services are using ') + `<b>${row1.name}</b>:`;
                     running_processes.forEach((process) =>  {
                       if (process.name) {
                         p1 += `<br> - ${process.name}`
@@ -480,13 +481,13 @@ export class VolumesListTableConfig implements InputTableConf {
                     });
                   };
                   if (running_unknown_processes.length > 0) {
-                    p1 += '<br><br>These unknown processes are using this pool:';
+                    p1 += `<br><br>` + T('These unknown processes are using this pool: ');
                     running_unknown_processes.forEach((process) => {
                       if (process.pid) {
                         p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
                       }
                     });
-                    p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
+                    p1 += `<br><br>` + T('WARNING: These unknown processes will be terminated while exporting the pool. ');
                   }
                 };
                 this.loader.close();
@@ -503,7 +504,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
         function doDetach() {
           const conf: DialogFormConfiguration = {
-            title: "Export/disconnect pool: '" + row1.name + "'",
+            title: T("Export/disconnect pool: '") + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
@@ -524,7 +525,7 @@ export class VolumesListTableConfig implements InputTableConf {
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: "'" + row1.name + helptext.detachDialog_pool_detach_warning__encrypted_paratext,
-              isHidden: encryptedStatus !== '' ? false : true
+              isHidden: encryptedStatus > 0 ? false : true
             }, {
               type: 'checkbox',
               name: 'destroy',
@@ -561,7 +562,7 @@ export class VolumesListTableConfig implements InputTableConf {
               required: true
             }],
             isCustActionVisible(actionId: string) {
-              if (actionId == 'download_key' && encryptedStatus === '') {
+              if (actionId == 'download_key' && encryptedStatus === 0) {
                 return false;
               } else {
                 return true;
@@ -571,7 +572,7 @@ export class VolumesListTableConfig implements InputTableConf {
             custActions: [
               {
                 id: 'download_key',
-                name: 'Download Key',
+                name: T('Download Key'),
                 function: () => {
                   const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
@@ -580,7 +581,7 @@ export class VolumesListTableConfig implements InputTableConf {
               }],
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
-              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
+              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":T("Exporting Pool")}, disableClose: true});
               dialogRef.updateSize('300px');
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
               dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: self.restartServices }]);
@@ -598,17 +599,28 @@ export class VolumesListTableConfig implements InputTableConf {
               }),
               dialogRef.componentInstance.failure.subscribe((res) => {
                 let conditionalErrMessage = '';
-                if (res.error && res.error.includes('EBUSY')) {
+                if (res.error) {
                   if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    conditionalErrMessage = '<div class="warning-box">Warning: These services must be restarted to export the pool:<br>';
-                    res.exc_info.extra.services.forEach((item) => {
-                      conditionalErrMessage += `<br>- ${item}`;
-                    })
-                    conditionalErrMessage += '<br><br>Exporting/disconnecting will continue after services have been restarted.</div><br />';
+                    if (res.exc_info.extra.stop_services.length > 0) {
+                      conditionalErrMessage += `<div class="warning-box">` + T('These services must be stopped to export the pool:');
+                      res.exc_info.extra.stop_services.forEach((item) => {
+                        conditionalErrMessage += `<br>- ${item}`;
+                      });
+                    }
+                    if (res.exc_info.extra.restart_services.length > 0) {
+                      if (res.exc_info.extra.stop_services.length > 0) {
+                        conditionalErrMessage += '<br><br>';
+                      }
+                      conditionalErrMessage += `<div class="warning-box">` + T('These services must be restarted to export the pool:');
+                      res.exc_info.extra.restart_services.forEach((item) => {
+                        conditionalErrMessage += `<br>- ${item}`;
+                      });
+                    }
+                    conditionalErrMessage += `<br><br>`+ T('Exporting/disconnecting will continue after services have been managed.') + `</div><br />`;
                       self.dialogService.confirm(T("Error exporting/disconnecting pool."),
-                        conditionalErrMessage, true, 'Restart Services and Continue')
+                        conditionalErrMessage, true, T('Manage Services and Continue'))
                           .subscribe((res) => {
                             if (res) {
                               self.restartServices = true;
@@ -619,7 +631,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.dialogRef.close(true);
 
                     conditionalErrMessage =
-                    `Unable to terminate processes which are using this pool: ${res.extra['processes']}`;
+                    T('Unable to terminate processes which are using this pool: ') + res.extra['processes'];
                     dialogRef.close(true);
                     self.dialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
                   } else {

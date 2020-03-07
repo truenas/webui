@@ -41,6 +41,21 @@
                   </mat-error>
                 </mat-form-field>
               </div>
+              <div *ngIf="isTwoFactor">
+                <mat-form-field class="full-width">
+                  <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">phonelink</mat-icon>&nbsp;&nbsp;</span>
+                  <input matInput name="otp"
+                    [(ngModel)]="signinData.otp" 
+                    #otp="ngModel"
+                    required
+                    placeholder="{{'Two-Factor Authentication Code' | translate}}"
+                    >
+                  <mat-error>
+                    <span *ngIf="!failed">{{"Please enter your 2FA code" | translate}}</span>
+                    <span *ngIf="failed">{{"Please enter your 2FA code again" | translate}}</span>
+                  </mat-error>
+                </mat-form-field>
+              </div>
               <button name="signin_button" mat-button color="primary" class="full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
             </form>
             <ng-template #setPassword>
