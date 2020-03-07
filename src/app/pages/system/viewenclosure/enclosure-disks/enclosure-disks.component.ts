@@ -661,13 +661,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         failed = true;
       }
 
-      // Test
-      if(disk.name == 'da54'){
-        failed = true;
-      }
-
       if(failed){
-        //const failure: DiskFailure = reasons.length > 0 ? {disk: disk.name, enclosure:disk.enclosure.number, reasons: reasons} : {disk: disk.name, enclosure: disk.enclosure.number}
         enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.red}});
       } 
 
@@ -693,12 +687,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       
       if(!failed && slot.fault){
         failed = true;
-      }
-
-      // Test
-      if(disk.name == 'da54'){
-        failed = true;
-        reasons.push("Testing UI")
       }
 
       if(failed){
