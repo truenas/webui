@@ -7,6 +7,7 @@ import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { M50 } from 'app/core/classes/hardware/m50';
+import { M50Rear } from 'app/core/classes/hardware/m50_rear';
 import { ES12 } from 'app/core/classes/hardware/es12';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
@@ -298,7 +299,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.enclosure = new M50();
         break;
       case "M Series Rear Bays":
-        this.enclosure = new M50();
+        this.enclosure = new M50Rear();
         break;
       case "X Series":
       case 'ES12':
