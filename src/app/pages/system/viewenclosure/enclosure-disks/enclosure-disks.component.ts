@@ -266,6 +266,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   pixiInit(){
       PIXI.settings.PRECISION_FRAGMENT = 'highp'; //this makes text looks better? Answer = NO
+      PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES , 16);// Fixes FireFox gl errors
       PIXI.utils.skipHello();
       this.app = new PIXI.Application({
         width: 960 ,
