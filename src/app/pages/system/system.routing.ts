@@ -289,7 +289,7 @@ export const routes: Routes = [
     }, {
       path: 'kmip',
       component: KmipComponent,
-      data: { title: 'KMIP', breadcrumb: 'KMIP', icon: ''},
+      data: { title: 'KMIP', breadcrumb: 'KMIP', icon: 'dns'},
     }, {
       path: 'certificates',
       data: { title: 'Certificates', breadcrumb: 'Certificates', icon: 'turned_in' },
