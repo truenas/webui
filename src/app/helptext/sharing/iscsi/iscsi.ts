@@ -255,7 +255,7 @@ export const helptext_sharing_iscsi = {
   ),
 
   extent_placeholder_enabled: T('Enabled'),
-  extent_tooltip_enabled: T(''),
+  extent_tooltip_enabled: T('Set to enable the iSCSI extent.'),
 
   fieldset_group: T('Group'),
   fieldset_user: T('User'),

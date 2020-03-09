@@ -315,4 +315,19 @@ div.vdev-disk {
   transform: scale3D(1, 1, 1); 
 }
 
+.view-card .caption.dom-overlay.front-rear-toggle{
+  opacity:1;
+  text-align:center;
+  bottom:10px;
+  width:100%;
+  background-color:rgba(0,0,0,0);
+  z-index:20;
+}
 
+.front-rear-toggle button{
+  margin:0 8px;
+  color:#fff;
+}
+.front-rear-toggle button:hover{
+  background-color:rgba(255,255,255,0.25);
+}

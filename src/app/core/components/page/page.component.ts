@@ -21,7 +21,11 @@ export const PageComponentMetadata = {
   styleUrls: ['./page.component.css']
 }
 
-@Component(PageComponentMetadata)
+@Component({
+  selector: 'page',
+  template: '',
+  styleUrls: ['./page.component.css']
+})
 export class PageComponent {
 
   public name: string = "PageComponent";

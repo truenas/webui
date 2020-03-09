@@ -139,6 +139,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   extractVisualizations(){
     this.system.profile.forEach((item, index) => {
+      if(this.system.rearIndex && item.enclosureKey == this.system.rearIndex){ return; }
       this.events.next({name:"CanvasExtract", data: this.system.profile[index], sender:this});
     })
   }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 import * as myIP from 'what-is-my-ip-address';
@@ -431,6 +431,16 @@ export class PluginsComponent {
           dialogRef.close(true);
           this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
         });
+      }
+    },
+    {
+      name: parentrow.name,
+      icon: 'device_hub',
+      id: "mount",
+      label: T("Mount points"),
+      onClick: (row) => {
+        this.router.navigate(
+          new Array('').concat(["jails", "storage", row.name]));
       }
     },
     {

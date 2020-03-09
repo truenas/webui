@@ -1,6 +1,6 @@
 
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
@@ -723,29 +723,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loader.open();
     this.loaderOpen = true;
     const data = {};
-    if (this.conf.wsDelete) {
-      this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
-        (resinner) => {
-          this.getData();
-          this.excuteDeletion = true;
-        },
-        (resinner) => {
-          new EntityUtils().handleWSError(this, resinner, this.dialogService);
-          this.loader.close();
-        }
-      )
-    } else {
-      this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-        (resinner) => {
-          this.getData();
-          this.excuteDeletion = true;
-        },
-        (resinner) => {
-          new EntityUtils().handleError(this, resinner);
-          this.loader.close();
-        }
-      );
-    }
+    this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
+      (resinner) => {
+        this.getData();
+        this.excuteDeletion = true;
+      },
+      (resinner) => {
+        new EntityUtils().handleWSError(this, resinner, this.dialogService);
+        this.loader.close();
+      }
+    )
   }
 
   doDeleteJob(item: any): Observable<{ state: 'SUCCESS' | 'FAILURE' } | false> {
@@ -779,9 +766,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loaderOpen = true;
         }),
         switchMap(() =>
-          (this.conf.wsDelete
-            ? this.ws.call(this.conf.wsDelete, [id])
-            : this.rest.delete(this.conf.resource_name + "/" + id, {})
+          (this.ws.call(this.conf.wsDelete, [id])
           ).pipe(
             take(1),
             catchError(error => {
@@ -822,11 +807,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     // This section controls page height for infinite scrolling
     if (this.currentRows.length === 0) {
       this.tableHeight = 153;
-    } else if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
-      this.tableHeight = (this.currentRows.length * this.rowHeight) + 110;
     } else {
-      this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
-    }
+      if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
+        this.tableHeight = (this.currentRows.length * this.rowHeight) + 110;
+      } else {
+        this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
+      }
+      if (this.tableHeight < (160 + this.getRowDetailHeight())) {
+        this.tableHeight = 160 + this.getRowDetailHeight();
+      }
+    } 
 
     // Displays an accurate number for some edge cases
     if (this.paginationPageSize > this.currentRows.length) {
@@ -1037,16 +1027,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetTableToStartingHeight() {
-    setTimeout(() => {
+    /*setTimeout(() => {
       if (!this.startingHeight) {
         this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
       }
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
-    }, 100);
+    }, 100);*/
   }
 
   updateTableHeightAfterDetailToggle() {
-    if (!this.startingHeight) {
+    /*if (!this.startingHeight) {
       this.resetTableToStartingHeight();
     }
     setTimeout(() => {
@@ -1054,7 +1044,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 100);
+    }, 100);*/
   }
 
   getButtonClass(prop) {

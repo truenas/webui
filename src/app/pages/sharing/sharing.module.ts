@@ -20,6 +20,7 @@ import { WebdavListComponent } from './webdav/webdav-list/';
 import { WebdavFormComponent } from './webdav/webdav-form/';
 import { SMBListComponent } from './smb/smb-list/';
 import { SMBFormComponent } from './smb/smb-form/';
+import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
 import { ISCSI } from './iscsi/iscsi.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration/';
@@ -60,6 +61,7 @@ import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-cha
     WebdavFormComponent,
     SMBListComponent,
     SMBFormComponent,
+    SMBAclComponent,
     ISCSI,
     IscsiWizardComponent,
     GlobalconfigurationComponent,

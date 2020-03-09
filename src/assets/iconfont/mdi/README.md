@@ -6,8 +6,9 @@ Webfont distribution for the [Material Design Icons](https://materialdesignicons
 
 ```
 npm install @mdi/font
-bower install mdi
 ```
+
+> Package built with [@mdi/font-build](https://github.com/Templarian/MaterialDesign-Font-Build).
 
 ## Related Packages
 
@@ -15,6 +16,7 @@ bower install mdi
 
 - JavaScript/Typescript: [MaterialDesign-JS](https://github.com/Templarian/MaterialDesign-JS)
 - SVG: [MaterialDesign-SVG](https://github.com/Templarian/MaterialDesign-SVG)
+- Font-Build [MaterialDesign-Font-Build](https://github.com/Templarian/MaterialDesign-Font-Build)
 
 ## Learn More
 

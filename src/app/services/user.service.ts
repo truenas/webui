@@ -9,10 +9,6 @@ import { WebSocketService } from './ws.service';
 export class UserService {
   public static VALIDATOR_NAME = /^[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?$/;
 
-  protected accountUserResource: string = 'account/users/';
-  protected accountGroupResource: string = 'account/groups/';
-  protected accountAllUsersResource: string = 'account/all_users/';
-  protected accountAllGroupsResource: string = 'account/all_groups/';
   protected uncachedUserQuery = 'dscache.get_uncached_user';
   protected uncachedGroupQuery = 'dscache.get_uncached_group';
   protected userQuery = 'user.query';
@@ -21,9 +17,9 @@ export class UserService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
-  listUsers() { return this.rest.get(this.accountUserResource, {limit: 50}); };
+  listUsers() { return this.ws.call(this.userQuery, {limit: 50}); };
 
-  listGroups() { return this.rest.get(this.accountGroupResource, {limit: 50}); };
+  listGroups() { return this.ws.call(this.groupQuery, {limit: 50}); };
   
   groupQueryDSCache(search = "", hideBuiltIn = false) {
     let queryArgs = [];

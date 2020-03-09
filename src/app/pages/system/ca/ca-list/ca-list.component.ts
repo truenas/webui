@@ -1,6 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
@@ -32,7 +32,7 @@ export class CertificateAuthorityListComponent {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     public dialog: DialogService, public storage: StorageService,
-    public http: Http, protected localeService: LocaleService) {}
+    public http: HttpClient, protected localeService: LocaleService) {}
 
   public columns: Array < any > = [
     { name: helptext_system_ca.list.column_name, prop: 'name', always_display: true },

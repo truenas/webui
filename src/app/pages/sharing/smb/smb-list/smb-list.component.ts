@@ -67,6 +67,20 @@ export class SMBListComponent {
       {
         id: row.name,
         icon: 'security',
+        name: "share_acl",
+        label: helptext_sharing_smb.action_share_acl,
+        onClick: row => {
+          this.ws.call('smb.sharesec.query', [[["share_name", "=", row.name]]]).subscribe(
+            (res) => {
+              this.router.navigate(
+                ["/"].concat(["sharing", "smb", "acl", res[0].id]));
+            }
+          );
+        }
+      },
+      {
+        id: row.name,
+        icon: 'security',
         name: "edit_acl",
         disabled: optionDisabled,
         matTooltip: vol_helptext.acl_edit_msg,

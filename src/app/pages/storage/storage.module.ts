@@ -7,7 +7,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FileSizeModule } from 'ngx-filesize';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { EntityModule } from '../common/entity/entity.module';
@@ -24,7 +24,6 @@ import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
-import { VolumeDeleteComponent } from './volumes/volume-delete/';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
@@ -51,7 +50,7 @@ import { JobService } from 'app/services';
     RouterModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
-    FileSizeModule, CommonDirectivesModule
+    NgxFilesizeModule, CommonDirectivesModule
   ],
   declarations : [
     VolumesListComponent,
@@ -60,7 +59,6 @@ import { JobService } from 'app/services';
     VdevComponent,
     DatasetFormComponent,
     // VolumesEditComponent,
-    VolumeDeleteComponent,
     VolumeRekeyFormComponent,
     VolumeAddkeyFormComponent,
     VolumeCreatekeyFormComponent,

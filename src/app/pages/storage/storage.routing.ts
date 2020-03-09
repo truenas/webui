@@ -9,7 +9,6 @@ import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { ManagerComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
-import { VolumeDeleteComponent } from './volumes/volume-delete/index';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
@@ -85,10 +84,6 @@ export const routes: Routes = [
           {
             path: 'status/:pk', component: VolumeStatusComponent,
             data: { title: 'Pool Status', breadcrumb: 'Pool Status' }
-          },
-          {
-            path: 'detachvolume/:pk', component: VolumeDeleteComponent,
-            data: { title: 'Detach Pool', breadcrumb: 'Detach Pool' }
           },
           {
             path: 'rekey/:pk', component: VolumeRekeyFormComponent,

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
 
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
@@ -17,8 +17,8 @@ import helptext from '../helptext/storage/volumes/volume-key'
 
 export class EncryptionService {
     constructor(protected ws: WebSocketService, protected dialogService: DialogService,
-        protected snackBar: MatSnackBar, protected loader: AppLoaderService, protected storage: StorageService,
-        protected mdDialog: MatDialog, protected router: Router, protected http: Http) {}
+        protected loader: AppLoaderService, protected storage: StorageService,
+        protected mdDialog: MatDialog, protected router: Router, protected http: HttpClient) {}
 
     setPassphrase(row, encryptKeyPassphrase, adminPassphrase, poolName, route_success, 
       addRecoveryKey?: boolean, downloadEncrytpKey?: boolean, success_message?) {

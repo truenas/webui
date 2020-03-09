@@ -121,12 +121,15 @@
 
 .slide.overview .left .left-content{
   display:table;
-  min-height:50%;
+  height: calc(400px * 0.5);
 }
 
 .nic-name{
-  font-size:300%;
+  font-size:250%;
+  /*border-bottom:solid 1px var(--grey);*/
 }
+
+.link-state{ margin: 16px 0 8px; }
 
 .link-state .icon-wrapper{
   display: inline-block;
@@ -203,7 +206,7 @@
 
 .nic-traffic{
   display:table;
-  margin-left:8px;
+  margin:4px 0 4px 8px;
 }
 
 .nic-traffic .tr{

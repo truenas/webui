@@ -161,6 +161,9 @@
       <div *ngIf="disknumError" [style.color]="'red'" [innerHTML]="disknumError"></div>
       <div *ngIf="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
       <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
+      <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
+        <mat-checkbox id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()"></mat-checkbox> {{'Force' | translate}}
+      </div>
       <div class="buttons" id="pool-manager__button-group">
         <button id="pool-manager__create-button" mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
         <button id="pool-manager__cancel-button" mat-button class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>

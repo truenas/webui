@@ -69,30 +69,97 @@
                 <div class="pool-name" >
                   <span textLimiter threshold="9">{{poolState.name | translate}}</span>
                 </div> 
-
-                <div class="pool-status" >
-                  {{poolState.status}}
-                    <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" class="{{poolHealth.level}} lock-icon-wrapper">
-                      <mat-icon>lock</mat-icon>
-                    </span>
-                    <span *ngIf="poolState.status == 'HEALTHY'" class="{{poolHealth.level}}">
-                      <mat-icon>check_circle</mat-icon>
-                    </span>
-                    <span *ngIf="poolHealth.level == 'error'" class="{{poolHealth.level}}">
-                      
-                      <mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-                    </span>
-                    <span *ngIf="poolHealth.level == 'warn' && poolState.status == 'UNKNOWN'" class="{{poolHealth.level}}">
-                      
-                      <mat-icon role="img">help</mat-icon>
-                    </span>
-                    <span *ngIf="poolHealth.level == 'warn' && poolState.status !== 'UNKNOWN'" class="{{poolHealth.level}}">
-                      
-                      <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-                    </span>
-                    <span *ngIf="poolState.status == 'ONLINE'" class="{{poolHealth.level}}">
-                      <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                    </span>
+                
+                <div class="table">
+  
+                  <div class="tr">
+                    <div class="td label"><strong>Total Disks :</strong></div>
+                    <div class="td">{{totalDisks ? totalDisks + ' Disks (data)' : "Unknown"}}</div>
+                  </div>
+  
+                  <div class="pool-status tr" >
+                    <div class="td label"><strong>Pool Status:</strong></div>
+                    <div class="td">
+                    <span class="capitalize">{{poolState.status.toLowerCase()}}</span>
+                      <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" class="{{poolHealth.level}} lock-icon-wrapper icon">
+                        &nbsp;<mat-icon>lock</mat-icon>
+                      </span>
+                      <span *ngIf="poolState.status == 'HEALTHY'" class="{{poolHealth.level}} icon">
+                        &nbsp;<mat-icon>check_circle</mat-icon>
+                      </span>
+                      <span *ngIf="poolHealth.level == 'error'" class="{{poolHealth.level}} icon">
+                        
+                        &nbsp;<mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+                      </span>
+                      <span *ngIf="poolHealth.level == 'warn' && poolState.status == 'UNKNOWN'" class="{{poolHealth.level}} icon">
+                        
+                        &nbsp;<mat-icon role="img">help</mat-icon>
+                      </span>
+                      <span *ngIf="poolHealth.level == 'warn' && poolState.status !== 'UNKNOWN'" class="{{poolHealth.level}} icon">
+                        
+                        &nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                      </span>
+                      <span *ngIf="poolState.status == 'ONLINE'" class="{{poolHealth.level}} icon">
+                        &nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                      </span>
+                    </div>
+                  </div>
+  
+                  <div class="disk-errors tr">
+                    <div class="td label">
+                      <strong>Disks w/Errors:</strong> 
+                    </div>
+                    <div class="td">
+                      {{unhealthyDisks.totalErrors}} 
+                      <span *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
+                        Disks
+                      </span>
+                      <span class="error icon" *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
+                        &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                      </span>
+    
+                      <span  *ngIf="unhealthyDisks.totalErrors == '0'">
+                        Disks
+                      </span>
+                      <span class="safe icon" *ngIf="unhealthyDisks.totalErrors == '0'">
+                        &nbsp;<mat-icon class="healthy" role="img">check_circle</mat-icon>
+                      </span>
+                    </div>
+                  </div>
+  
+                  <div class="used-space tr">
+                    <ng-container *ngIf="!volumeData || !volumeData.used_pct">
+                      <div class="td label">
+                        <strong>Used Space:</strong>&nbsp;
+                      </div>
+                      <div class="td">
+                        <span class="value-used">Unknown</span>
+                      </div>
+                    </ng-container>
+    
+                    <ng-container *ngIf="volumeData && volumeData.used_pct">
+                      <div class="td label">
+                        <strong>Used Space:</strong>
+                      </div>
+  
+                      <div class="td" *ngIf="volumeData.used_pct[0] == '8' || volumeData.used_pct[0] == '9' || volumeData.used_pct.length > 3; else safeSpace">
+                        &nbsp;<span class="value-used">{{volumeData.used_pct}}</span>
+                        <span class="error icon">
+                          &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                        </span>
+                      </div>
+    
+                      <ng-template #safeSpace>
+                        <!--<div class="td" *ngIf="volumeData.used_pct.length < 4 && volumeData.used_pct[0] != '9' && volumeData.used_pct != '8'">-->
+                      <div class="td">
+                        <span class="value-used">{{volumeData.used_pct}} used</span>
+                        <span class="safe icon">
+                          &nbsp;<mat-icon class="healthy" role="img">check_circle</mat-icon>
+                        </span>
+                      </div>
+                      </ng-template>
+                    </ng-container>
+                  </div>
                 </div>
 
               </div>
@@ -109,7 +176,6 @@
                     <span *ngIf="volumeData && volumeData.used_pct;else unavail">
                       <span class="value">{{diskSize}}</span>
                       <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
-                      <span class="value-used">({{volumeData.used_pct}} {{"used" | translate}})</span>&nbsp;&nbsp;
                     </span>
                     <ng-template #unavail>
                       <span class="value">{{"Gathering data..." | translate}}</span>
@@ -239,7 +305,7 @@
             <div class="list-subheader">{{"Advanced Details" | translate}}</div>
             <mat-list>
               <ng-container *ngFor="let key of currentDiskDetailsKeys">
-                <mat-list-item *ngIf="currentDiskDetails[key]" role="listitem">
+                <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[key]" role="listitem">
                   <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
                 </mat-list-item>
               </ng-container>
