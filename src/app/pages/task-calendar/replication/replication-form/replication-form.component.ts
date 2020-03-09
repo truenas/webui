@@ -857,6 +857,28 @@ export class ReplicationFormComponent {
             entityForm.setDisabled('only_matching_schedule', !res, !res);
         })
 
+        entityForm.formGroup.controls['schedule_picker'].valueChanges.subscribe(value => {
+            if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+              entityForm.setDisabled('schedule_begin', true, true);
+              entityForm.setDisabled('schedule_end', true, true);
+
+            } else {
+              entityForm.setDisabled('schedule_begin', false, false);
+              entityForm.setDisabled('schedule_end', false, false);
+            }
+          })
+
+        entityForm.formGroup.controls['restrict_schedule_picker'].valueChanges.subscribe(value => {
+            if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+              entityForm.setDisabled('restrict_schedule_begin', true, true);
+              entityForm.setDisabled('restrict_schedule_end', true, true);
+
+            } else {
+              entityForm.setDisabled('restrict_schedule_begin', false, false);
+              entityForm.setDisabled('restrict_schedule_end', false, false);
+            }
+          })
+
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
             (res) => {
                 for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
