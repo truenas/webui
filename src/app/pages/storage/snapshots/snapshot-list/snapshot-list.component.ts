@@ -19,33 +19,48 @@ export class SnapshotListComponent {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  // protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
+  protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
+  protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
+
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: any;
   protected hasDetails = true;
-  // protected rowDetailComponent = SnapshotDetailsComponent;
+  protected rowDetailComponent = SnapshotDetailsComponent;
+  protected rowDetailComponentShow = null;
+  protected rowDetailComponentHide = SnapshotDetailsComponent;
   protected rollback: any;
   public busy: Subscription;
   public sub: Subscription;
+  public extraColsAreHidden = true;
   protected globalConfig = {
     id: "config",
     onClick: () => {
       this.toggleExtraCols();
     }
   };
+
   public columns: Array<any> = [
-    // {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
-    // {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355},
+    {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
+    {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355}
+  ];
+
+  public columnsHide: Array<any> = [
+    {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
+    {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355}
+  ];
+
+  public columnsShow: Array<any> = [
     {name : 'Dataset', prop : 'dataset', always_display: true},
     {name : 'Snapshot', prop : 'snapshot', always_display: true},
     {name : 'Used', prop : 'used', always_display: true},
     {name : 'Date Created', prop : 'created'},
-    {name : 'Referenced', prop : 'referenced'},
+    {name : 'Referenced', prop : 'referenced'}
   ];
+
   public rowIdentifier = 'dataset';
   public config: any = {
     paging: true,
@@ -121,11 +136,14 @@ export class SnapshotListComponent {
     protected prefService: PreferencesService) { }
 
   resourceTransformIncomingRestData(rows: any) {
+    console.log(rows)
     //// 
     rows.forEach((row) => {
-      row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue); 
-      row.created = this.localeService.formatDateTime(row.properties.creation.parsed.$date);
-      row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue);
+      if (row.properties) {
+        row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue);
+        row.created = this.localeService.formatDateTime(row.properties.creation.parsed.$date);
+        row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue);
+      }
     })
     ////
     return rows;
@@ -275,7 +293,8 @@ export class SnapshotListComponent {
 
   toggleExtraCols() {
     let title, message, button;
-    if (this.prefService.preferences.snapshotsExtraCols) {
+    // let currentlyShowing = !this.prefService.preferences.snapshotsExtraCols;
+    if (!this.extraColsAreHidden) {
       title = helptext.extra_cols.title_hide;
       message = helptext.extra_cols.message_hide;
       button = helptext.extra_cols.button_hide;
@@ -286,7 +305,20 @@ export class SnapshotListComponent {
     }
     this.dialogService.confirm(title, message, true, button).subscribe(res => {
      if (res) {
-       this.prefService.preferences.snapshotsExtraCols = !this.prefService.preferences.snapshotsExtraCols;
+      //  this.prefService.preferences.snapshotsExtraCols = !this.prefService.preferences.snapshotsExtraCols;
+       if (this.extraColsAreHidden) {
+         this.queryCallOption = this.queryCallOptionShow;
+         this.columns = this.columnsShow.slice(0);
+         this.rowDetailComponent = this.rowDetailComponentShow;
+         console.log(this.columns, this.queryCallOption, this.rowDetailComponent)
+       } else {
+         this.queryCallOption = this.queryCallOptionHide;
+         this.columns = this.columnsHide.slice(0);
+         this.rowDetailComponent = this.rowDetailComponentHide;
+       }
+       this.entityList.getData();
+      this.extraColsAreHidden = !this.extraColsAreHidden;
+
      }
     })
   }
