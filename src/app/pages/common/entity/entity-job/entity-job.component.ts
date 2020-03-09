@@ -48,6 +48,27 @@ export class EntityJobComponent implements OnInit {
       this.showCloseButton = true;
       this.dialogRef.disableClose = true;
     }
+    this.progress.subscribe(progress => {
+      if (progress.description) {
+        this.description = progress.description;
+      }
+      if (progress.percent) {
+        if (this.progressNumberType === 'nopercent') {
+          this.progressTotalPercent = progress.percent * 100;
+        }
+        else {
+          this.progressTotalPercent = progress.percent;
+        }
+      }
+      this.disableProgressValue(progress.percent == null);
+    });
+
+    this.failure.subscribe(job => {
+      job.error = _.replace(job.error, '<', '< ');
+      job.error = _.replace(job.error, '>', ' >');
+  
+      this.description = '<b>Error:</b> ' + job.error;
+    })
   }
 
   setCall(method: string, args ?: any[]) {
@@ -73,30 +94,30 @@ export class EntityJobComponent implements OnInit {
     this.hideProgressValue = hide;
   }
 
-  @HostListener('progress', ['$event'])
-  public onProgress(progress) {
+  // @HostListener('progress', ['$event'])
+  // public onProgress(progress) {
 
-    if (progress.description) {
-      this.description = progress.description;
-    }
-    if (progress.percent) {
-      if (this.progressNumberType === 'nopercent') {
-        this.progressTotalPercent = progress.percent * 100;
-      }
-      else {
-        this.progressTotalPercent = progress.percent;
-      }
-    }
-    this.disableProgressValue(progress.percent == null);
-  }
+  //   if (progress.description) {
+  //     this.description = progress.description;
+  //   }
+  //   if (progress.percent) {
+  //     if (this.progressNumberType === 'nopercent') {
+  //       this.progressTotalPercent = progress.percent * 100;
+  //     }
+  //     else {
+  //       this.progressTotalPercent = progress.percent;
+  //     }
+  //   }
+  //   this.disableProgressValue(progress.percent == null);
+  // }
 
-  @HostListener('failure', ['$event'])
-  public onFailure(job) {
-    job.error = _.replace(job.error, '<', '< ');
-    job.error = _.replace(job.error, '>', ' >');
+  // @HostListener('failure', ['$event'])
+  // public onFailure(job) {
+  //   job.error = _.replace(job.error, '<', '< ');
+  //   job.error = _.replace(job.error, '>', ' >');
 
-    this.description = '<b>Error:</b> ' + job.error;
-  }
+  //   this.description = '<b>Error:</b> ' + job.error;
+  // }
 
   public show() {
     this.ws.call('core.get_jobs', [
