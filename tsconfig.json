@@ -9,6 +9,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
+    "allowSyntheticDefaultImports": true,
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -19,5 +20,21 @@
       "es2016.array.include"
     ],
     "module": "es2015"
-  }
+  },
+  "angularCompilerOptions": {
+    "enableIvy": true,
+    "allowEmptyCodegenFiles": true
+  },
+  "include": [
+    "src/main.ts",
+    "src/polyfills.ts",
+    "src/environments/environment.ts",
+    "src/**/*.component.ts",
+    "src/**/*.module.ts",
+    "src/**/*.routes.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

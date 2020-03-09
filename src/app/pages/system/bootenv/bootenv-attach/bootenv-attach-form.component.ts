@@ -1,5 +1,5 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import * as _ from 'lodash';

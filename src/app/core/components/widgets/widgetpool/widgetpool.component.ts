@@ -130,6 +130,50 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   path: Slide[] = [];
 
+  private _totalDisks: string = '';
+  get totalDisks(){
+    if(this.poolState && this.poolState.topology){
+      let total = 0;
+      this.poolState.topology.data.forEach((item) => {
+        if(item.type == "DISK"){
+          total++
+        } else {
+          total += item.children.length;
+        }
+      });
+      return total.toString();
+    } else {
+      return '';
+    }
+  }
+
+  private _unhealthyDisks: string[];
+  get unhealthyDisks(){
+    if(this.poolState && this.poolState.topology){
+      let unhealthy = []; // Disks with errors
+      this.poolState.topology.data.forEach((item) => {
+        if(item.type == "DISK"){
+          let diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
+
+          if(diskErrors > 0) { 
+            unhealthy.push(item.disk);
+          }
+        } else {
+          item.children.forEach((device) => {
+            let diskErrors = device.read_errors + device.write_errors + device.checksum_errors;
+
+            if(diskErrors > 0) { 
+              unhealthy.push(device.disk);
+            }
+          });
+        }
+      });
+      return { totalErrors: unhealthy.length/*errors.toString()*/, disks: unhealthy};
+    } else {
+      return {totalErrors: "Unknown", disks: []};
+    }
+  }
+
   public title: string = this.path.length > 0 && this.poolState && this.currentSlide !== "0" ? this.poolState.name : "Pool";
   public voldataavail = false;
   public displayValue: any;
@@ -242,7 +286,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       data: [availableValue]
     };
 
-    let percentage = this.volumeData.used_pct.split("%");
+    let percentage = this.volumeData.used_pct ? this.volumeData.used_pct.split("%") : '';
     this.core.emit({name:"PoolDisksRequest",data:[this.poolState.id]});
 
     this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});

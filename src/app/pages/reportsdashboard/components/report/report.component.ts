@@ -98,6 +98,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public currentEndDate: number;// as seconds from Unix Epoch
   public timeZoomIndex:number = 4;
 
+  public timezone: string;
+
   public stepForwardDisabled: boolean = true;
 
   private _zoomInDisabled: boolean = false;
@@ -134,12 +136,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
   public chartColors: string[];
-
+  
   get startTime(){
-    return this.localeService.formatDateTime(new Date(this.currentStartDate));
+    return this.localeService.formatDateTime(new Date(this.currentStartDate), this.timezone);
   }
   get endTime(){
-    return this.localeService.formatDateTime(new Date(this.currentEndDate));
+    return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
   }
 
   constructor(public router: Router, 
@@ -166,6 +168,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     });
 
     this.core.emit({name:"ThemeDataRequest", sender:this});
+
+    this.ws.call('system.general.config').subscribe(res => this.timezone = res.timezone);
   }
 
   ngOnDestroy(){

@@ -1,4 +1,4 @@
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Component } from '@angular/core';
 import {
   WebSocketService,
@@ -6,7 +6,7 @@ import {
 } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'downloadkey-dialog',
@@ -24,7 +24,7 @@ export class DownloadKeyModalDialog {
     public dialogRef: MatDialogRef<DownloadKeyModalDialog>,
     private ws: WebSocketService,
     private storage: StorageService,
-    private http: Http,
+    private http: HttpClient,
     private loader:AppLoaderService) { }
 
   downloadKey() {

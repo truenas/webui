@@ -42,8 +42,8 @@ export class VDevLabelsSVG {
 
   constructor(chassis, app, theme, disk){
     this.selectedDisk = disk;
-    this.color = 'var(--blue)';
-    this.selectedDiskColor = 'var(--cyan)';
+    this.color = 'var(--cyan)';
+    this.selectedDiskColor = 'var(--yellow)';
     this.highlightColor = theme.yellow;
 
     this.onInit(chassis, app);
@@ -243,7 +243,7 @@ export class VDevLabelsSVG {
     if(devname == this.selectedDisk.devname){ return; }
 
     let targetEl = this.getParent().querySelector('svg path.' + devname);
-    targetEl.setAttribute('stroke-opacity', 0.25);
+    targetEl.setAttribute('stroke-opacity', 1);
   }
 
   unhighlightAllTraces(traces, exceptions: string[]){
@@ -251,7 +251,7 @@ export class VDevLabelsSVG {
 
     traces.forEach((item, index) => {
       if(exceptions.includes(item.className.baseVal)){ return; }
-      item.setAttribute('stroke-opacity', 0.25);
+      item.setAttribute('stroke-opacity', 1);
     });
     let tiles = this.getParent().querySelectorAll('rect.tile');
     this.showAllTiles(tiles);

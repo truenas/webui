@@ -4,6 +4,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid " Builtin Groups"
+msgstr ""
+
+msgid " Builtin Users"
+msgstr ""
+
 msgid " Check Notifications for more details."
 msgstr "Sprawdź powiadomienia aby uzyskac więcej informacji"
 
@@ -11,9 +17,12 @@ msgid " Download Updates"
 msgstr "Pobierz Aktualziacje"
 
 msgid " First vdev has "
-msgstr ""
+msgstr " Pierwszy vdev ma "
 
 msgid " First vdev is a "
+msgstr " Pierwszy vdev to"
+
+msgid " KiB."
 msgstr ""
 
 msgid " Plugin"
@@ -46,16 +55,22 @@ msgid " and all snapshots of it?"
 msgstr "i wszytskie jego migawki?"
 
 msgid " and will be disrupted if the pool is locked:"
+msgstr " i zostanie przerwany jeśli pula zostanie zablokowana:"
+
+msgid " builtin groups (default setting is <i>hidden</i>)."
+msgstr ""
+
+msgid " builtin users (default setting is <i>hidden</i>)."
 msgstr ""
 
 msgid " but datastore "
-msgstr ""
+msgstr " magazyn danych"
 
 msgid " disks"
-msgstr "Dyski"
+msgstr "dyski"
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " dyski, nowy vdev ma "
 
 msgid " has been unlocked."
 msgstr "został odblokowany"
@@ -67,8 +82,17 @@ msgid " is required."
 msgstr "jest wymagane"
 
 msgid ""
+" is still running,  the Guest OS did not respond as expected. It is "
+"possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> "
+"option to stop the VM."
+msgstr ""
+
+msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
+msgstr ""
+
+msgid " seconds"
 msgstr ""
 
 msgid ""
@@ -113,6 +137,9 @@ msgstr "'. Wszytskie dane w tej publi zostały zniszczone."
 msgid "(24 Hours)"
 msgstr "(24 Godziny)"
 
+msgid "(Examples: 500 KiB, 500M, 2 TB)"
+msgstr ""
+
 msgid "(No description)"
 msgstr "(Brak Opisu)"
 
@@ -141,7 +168,9 @@ msgid "20 characters is the maximum length."
 msgstr "Maksymalna długośc znaków to 20"
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ": Automatyczne sprawdzanie aktualizacji nie powiodło się. Sprawdz ustawiania sieciowe"
+msgstr ""
+": Automatyczne sprawdzanie aktualizacji nie powiodło się. Sprawdz "
+"ustawiania sieciowe"
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr "</b> wtyczka usuwa wszytskie dane z migawki, które sa na niej przechwowywane"
@@ -168,7 +197,9 @@ msgid "</i> updated."
 msgstr "</i> zaktualizowano."
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
-msgstr "</i>. Dane w tej puli nie będą dostępne, dopóki pula nie zostanie odblokowana!"
+msgstr ""
+"</i>. Dane w tej puli nie będą dostępne, dopóki pula nie zostanie "
+"odblokowana!"
 
 msgid ""
 "</i>. Data on the pool will not be available after export. Data on the pool "
@@ -298,7 +329,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Current Version:</b> "
-msgstr ""
+msgstr "<b>Obecna wersja:</b> "
 
 msgid ""
 "<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the "
@@ -348,7 +379,9 @@ msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> nasłuchiwanie na tym porcie"
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
-msgstr "<br><b>Ostrzeżenie: Tych dysków nie można umieścić w zaszyfrowanych pulach</b></br>"
+msgstr ""
+"<br><b>Ostrzeżenie: Tych dysków nie można umieścić w zaszyfrowanych "
+"pulach</b></br>"
 
 msgid "<font color=\"red\"> There are "
 msgstr "<font color=\"red\"> są"
@@ -490,7 +523,7 @@ msgid ""
 msgstr ""
 
 msgid "<p>Delete the <i>"
-msgstr ""
+msgstr "<p>Usuń <i>"
 
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
@@ -574,6 +607,9 @@ msgid ""
 "default route will not be able to access any networks.</b>"
 msgstr ""
 
+msgid "ACL Entries"
+msgstr ""
+
 msgid "ACL Mode"
 msgstr "Tryb ACL"
 
@@ -650,25 +686,25 @@ msgid ""
 msgstr ""
 
 msgid "Access Control List"
-msgstr ""
+msgstr "Lista Kontroli Dostępu"
 
 msgid "Access ID Key"
-msgstr ""
+msgstr "Klucz identyfikacyjny dostęp"
 
 msgid "Access Key"
-msgstr ""
+msgstr "Klucz Dostępu"
 
 msgid "Access Key ID"
-msgstr ""
+msgstr "Identyfikator klucza dostępu"
 
 msgid "Access Key ID for the linked AWS account."
-msgstr ""
+msgstr "Identyfikator klucza dostępu do połączonego konta AWS."
 
 msgid "Access Mode"
-msgstr ""
+msgstr "Tryb dostępu"
 
 msgid "Access Token"
-msgstr ""
+msgstr "Token dostępu"
 
 msgid ""
 "Access Token <a href=\"https://api.hubic.com/sandbox/\"  "
@@ -699,7 +735,7 @@ msgid "Accounts"
 msgstr "Konta"
 
 msgid "Acoustic Level"
-msgstr ""
+msgstr "Poziom akustyczny"
 
 msgid "Actions"
 msgstr "Akcje"
@@ -708,7 +744,7 @@ msgid "Activate"
 msgstr "Aktuwyj"
 
 msgid "Activate this Boot Environment?"
-msgstr ""
+msgstr "Aktywować to środowisko rozruchowe?"
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -724,7 +760,7 @@ msgid ""
 msgstr ""
 
 msgid "Activates the replication schedule."
-msgstr ""
+msgstr "Aktywuje harmonogram replikacji."
 
 msgid "Active"
 msgstr "Aktywny"
@@ -733,40 +769,40 @@ msgid "Active Directory"
 msgstr "Active Directory"
 
 msgid "Active Directory IDMAP change!"
-msgstr ""
+msgstr "Zmiana IDMAP usługi Active Directory!"
 
 msgid "Active Directory must be enabled before adding new domains."
-msgstr ""
+msgstr "Usługa Active Directory musi być włączona przed dodaniem nowych domen."
 
 msgid "Active Media Subtype"
-msgstr ""
+msgstr "Aktywny podtyp mediów"
 
 msgid "Active Media Type"
-msgstr ""
+msgstr "Aktywny typ mediów"
 
 msgid "Adapter Type"
-msgstr ""
+msgstr "Rodzaj adaptera"
 
 msgid "Adapter Type:"
-msgstr ""
+msgstr "Rodzaj Adaptera:"
 
 msgid "Add"
 msgstr "Dodaj"
 
 msgid "Add ACL Item"
-msgstr ""
+msgstr "Dodaj pozycję ACL"
 
 msgid "Add Additional Path"
-msgstr ""
+msgstr "Dodaj dodatkową ścieżkę"
 
 msgid "Add Alert Service"
-msgstr ""
+msgstr "Dodaj usługę alertów"
 
 msgid "Add Cache"
 msgstr "Dodaj Cache"
 
 msgid "Add Cloud Credential"
-msgstr ""
+msgstr "Dodaj dane logowania do chmury"
 
 msgid "Add Data"
 msgstr "Dodaj Dane"
@@ -778,7 +814,7 @@ msgid "Add Group"
 msgstr "Dodaj Grupę"
 
 msgid "Add Idmap"
-msgstr ""
+msgstr "Dodaj Idmap"
 
 msgid "Add Log"
 msgstr "Dodaj dziennik"
@@ -787,7 +823,7 @@ msgid "Add Mountpoint"
 msgstr "Dodaj Punkt Montowania"
 
 msgid "Add Recovery Key"
-msgstr ""
+msgstr "Dodaj Klucz Odzyskiwania"
 
 msgid "Add Spare"
 msgstr "Dodaj wolny"
@@ -796,7 +832,7 @@ msgid "Add Zvol"
 msgstr "Dodaj Zvol"
 
 msgid "Add a name for the new snapshot."
-msgstr ""
+msgstr "Dodaj nazwę nowej migawki."
 
 msgid ""
 "Add a passphrase to the new  encryption key. This is used to lock and "
@@ -817,7 +853,7 @@ msgid ""
 msgstr ""
 
 msgid "Add any notes about this zvol."
-msgstr ""
+msgstr "Dodaj wszelkie uwagi dotyczące tego zvol."
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -833,13 +869,13 @@ msgid ""
 msgstr ""
 
 msgid "Add one or more disks to be used for data."
-msgstr ""
+msgstr "Dodaj co najmniej jeden dysk, który będzie używany do przesyłania danych."
 
 msgid "Add one or more disks to extend the pool."
-msgstr ""
+msgstr "Dodaj jeden lub więcej dysków, aby rozszerzyć pulę."
 
 msgid "Add this user to additional groups."
-msgstr ""
+msgstr "Dodaj tego użytkownika do dodatkowych grup."
 
 msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
@@ -847,7 +883,7 @@ msgid ""
 msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
-msgstr ""
+msgstr "Dodawanie vdev danych różnych typów nie jest obsługiwane."
 
 msgid ""
 "Additional <a                "
@@ -880,16 +916,16 @@ msgid "Additional <b>smb5.conf</b> parameters not covered by other option fields
 msgstr ""
 
 msgid "Additional Data VDevs to Create"
-msgstr ""
+msgstr "Dodatkowe dane VDevs do utworzenia"
 
 msgid "Additional Domains"
-msgstr ""
+msgstr "Dodatkowe Domeny"
 
 msgid "Additional Hardware"
-msgstr ""
+msgstr "Dodatkowy Sprzęt"
 
 msgid "Additional Parameters"
-msgstr ""
+msgstr "Dodatkowe Parametry"
 
 msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
@@ -913,7 +949,7 @@ msgid ""
 msgstr ""
 
 msgid "Additional parameters."
-msgstr ""
+msgstr "Dodatkowe Parametry."
 
 msgid ""
 "Additional space-delimited domains to search. Adding search domains can "
@@ -930,10 +966,10 @@ msgid "Adjust the file permissions using the checkboxes."
 msgstr ""
 
 msgid "Admin Portals"
-msgstr ""
+msgstr "Portale Administracyjne"
 
 msgid "Admin Server"
-msgstr ""
+msgstr "Serwer Administracyjny"
 
 msgid ""
 "Administrative account name on the LDAP server. Example: "
@@ -950,10 +986,10 @@ msgid "Administrators Group"
 msgstr "Grupa Adminsitratora"
 
 msgid "Adv. Power Management"
-msgstr ""
+msgstr "Zaawansowane Zarządznie Energią"
 
 msgid "Advance Options"
-msgstr ""
+msgstr "Opcje Zaawansowane"
 
 msgid "Advanced"
 msgstr "Zaawansowane"
@@ -965,7 +1001,10 @@ msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
-msgstr "Tryb Zaawansowany"
+msgstr ""
+
+msgid "Advanced Options"
+msgstr ""
 
 msgid "Advanced Plugin Installation"
 msgstr ""
@@ -997,25 +1036,25 @@ msgid "Alert Settings"
 msgstr ""
 
 msgid "Alerts"
-msgstr ""
+msgstr "Alerty"
 
 msgid "Aliases"
-msgstr ""
+msgstr "Skróty"
 
 msgid "All Disks"
-msgstr ""
+msgstr "Wszystkie Dyski"
 
 msgid "All dirs"
-msgstr ""
+msgstr "Wszytskie foldery"
 
 msgid "All users"
 msgstr "Wszyscy użytwkonicy"
 
 msgid "Allocate a number of megabytes of RAM to the VM."
-msgstr ""
+msgstr "Przydziel maszynie wirtualnej liczbę megabajtów pamięci RAM."
 
 msgid "Allocate at least 256 MiB."
-msgstr ""
+msgstr "Przydziel co najmniej 256 MB."
 
 msgid "Allow"
 msgstr "Zezwól"
@@ -1108,6 +1147,19 @@ msgid ""
 msgstr ""
 
 msgid "Allow list"
+msgstr ""
+
+msgid ""
+"Allow more ciphers for  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sshd\" "
+"target=\"_blank\">sshd(8)</a>  in addition to the defaults in  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sshd_config\" "
+"target=\"_blank\">sshd_config(5)</a>.  <code>None</code> allows unencrypted "
+"SSH connections and  <code>AES128-CBC</code> allows the 128-bit  <a "
+"href=\"https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf\" "
+"target=\"_blank\">Advanced Encryption Standard</a>.<br><br>  WARNING: these "
+"ciphers are considered security vulnerabilities and  should only be allowed "
+"in a secure network environment."
 msgstr ""
 
 msgid "Allow non-root mount"
@@ -1541,10 +1593,16 @@ msgstr ""
 msgid "Basejail"
 msgstr ""
 
+msgid "Basic"
+msgstr ""
+
 msgid "Basic Info"
 msgstr ""
 
 msgid "Basic Mode"
+msgstr ""
+
+msgid "Basic Options"
 msgstr ""
 
 msgid "Basic Properties"
@@ -3458,6 +3516,12 @@ msgstr ""
 msgid "Domain Name"
 msgstr ""
 
+msgid ""
+"Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. "
+"Local users have the SMB server NetBIOS name: "
+"<code>freenas\\smbusers</code>."
+msgstr ""
+
 msgid "Domain name"
 msgstr ""
 
@@ -3547,6 +3611,9 @@ msgstr ""
 msgid "Edit Disk(s)"
 msgstr ""
 
+msgid "Edit Filesystem ACL"
+msgstr ""
+
 msgid "Edit Idmap"
 msgstr ""
 
@@ -3554,6 +3621,9 @@ msgid "Edit Options"
 msgstr ""
 
 msgid "Edit Permissions"
+msgstr ""
+
+msgid "Edit Share ACL"
 msgstr ""
 
 msgid "Edit Zvol"
@@ -4644,7 +4714,8 @@ msgstr ""
 
 msgid ""
 "Exclude specific child dataset snapshots from  the replication. Use with "
-"<b>Recursive</b> snapshots. List child  dataset names to exclude. Example: "
+"<b>Recursive</b> snapshots. List child  dataset names to exclude. Separate "
+"multiple entries with a comma  (<code>,</code>). Example: "
 "<i>pool1/dataset1/child1</i>. A  recursive replication of "
 "<i>pool1/dataset1</i> snapshots includes all  child dataset snapshots "
 "except <i>child1</i>."
@@ -4843,13 +4914,16 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-msgid "Finding Disks"
+msgid "Finding Pools"
 msgstr ""
 
-msgid "Finding encrypted disks..."
+msgid "Finding pools to import..."
 msgstr ""
 
 msgid "Finish Upgrade?"
+msgstr ""
+
+msgid "Finished"
 msgstr ""
 
 msgid "Finished Time:"
@@ -4898,10 +4972,19 @@ msgstr ""
 msgid "Force Delete?"
 msgstr ""
 
+msgid "Force Stop After Timeout"
+msgstr ""
+
 msgid "Force deletion of dataset "
 msgstr ""
 
 msgid "Force size"
+msgstr ""
+
+msgid ""
+"Force the VM to stop if it has not already  stopped within the specified "
+"shutdown timeout. Without this option selected, the VM will  receive the "
+"shutdown signal, but may or may not complete the shutdown process."
 msgstr ""
 
 msgid ""
@@ -5176,6 +5259,9 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+msgid "Hide"
+msgstr ""
+
 msgid "Hide Standard Error"
 msgstr ""
 
@@ -5326,6 +5412,13 @@ msgid ""
 msgstr ""
 
 msgid "How often the IP is checked in seconds."
+msgstr ""
+
+msgid ""
+"How permissions are applied to the share. <i>Allowed</i> denies all "
+"permissions by default except those that are manually defined. "
+"<i>Denied</i> allows all permissions by default except those that are "
+"manually defined."
 msgstr ""
 
 msgid ""
@@ -5580,7 +5673,7 @@ msgstr ""
 msgid "In"
 msgstr ""
 
-msgid "In KiB/s. A default of <i>0</i> means unlimited."
+msgid "In KiBs or greater. A default of <i>0 KiB</i> means unlimited. "
 msgstr ""
 
 msgid "Include Dataset Properties"
@@ -5738,6 +5831,9 @@ msgid ""
 msgstr ""
 
 msgid "Internetwork control"
+msgstr ""
+
+msgid "Invalid IP address"
 msgstr ""
 
 msgid "Invalid dataset."
@@ -6135,7 +6231,7 @@ msgstr ""
 msgid "Local User Download Bandwidth"
 msgstr ""
 
-msgid "Local User Upload Bandwidth"
+msgid "Local User Upload Bandwidth: "
 msgstr ""
 
 msgid "Locality"
@@ -6336,6 +6432,9 @@ msgid ""
 "limit is 50."
 msgstr ""
 
+msgid "Maximum swap size is 99 GiB"
+msgstr ""
+
 msgid "Maximum swap space to use for the jail."
 msgstr ""
 
@@ -6497,6 +6596,9 @@ msgid "Month"
 msgstr ""
 
 msgid "Months"
+msgstr ""
+
+msgid "Mount Points of "
 msgstr ""
 
 msgid ""
@@ -6669,6 +6771,9 @@ msgid "Name or Naming Schema is required. Only one field can be used at a time."
 msgstr ""
 
 msgid "Name or Naming Schema must be provided."
+msgstr ""
+
+msgid "Name that was created with the SMB share."
 msgstr ""
 
 msgid "Nameserver 1"
@@ -6925,6 +7030,9 @@ msgstr ""
 msgid "Nobind"
 msgstr ""
 
+msgid "None"
+msgstr ""
+
 msgid "Not Available"
 msgstr ""
 
@@ -7080,6 +7188,9 @@ msgid "On this System"
 msgstr ""
 
 msgid "One or more IP addresses to which to bind the Netdata service."
+msgstr ""
+
+msgid "One or more data vdevs has disks of different sizes."
 msgstr ""
 
 msgid "Online"
@@ -7396,6 +7507,9 @@ msgstr ""
 msgid "Periodic Snapshot Tasks"
 msgstr ""
 
+msgid "Permission"
+msgstr ""
+
 msgid "Permissions"
 msgstr ""
 
@@ -7554,6 +7668,16 @@ msgid ""
 msgstr ""
 
 msgid "Pre-script"
+msgstr ""
+
+msgid ""
+"Predefined permission combinations:<br><i>Read</i>: Read access and Execute "
+"permission on the object (RX).<br><i>Change</i>: Read access, Execute "
+"permission, Write access, and Delete object (RXWD).<br><i>Full</i>: Read "
+"access, Execute permission, Write access, Delete object, change "
+"Permissions, and take Ownership (RXWDPO).<br><br> For more details, see <a "
+"href=\"https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html\" "
+"target=\"_blank\">smbacls(1)</a>."
 msgstr ""
 
 msgid "Prefer"
@@ -8271,6 +8395,9 @@ msgstr ""
 msgid "SFU20"
 msgstr ""
 
+msgid "SID"
+msgstr ""
+
 msgid "SMB"
 msgstr ""
 
@@ -8664,6 +8791,11 @@ msgstr ""
 msgid ""
 "Select a preset schedule or choose  <i>Custom</i> to use the advanced "
 "scheduler."
+msgstr ""
+
+msgid ""
+"Select a previously imported or created  <a "
+"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
 msgstr ""
 
 msgid ""
@@ -9508,6 +9640,9 @@ msgstr ""
 msgid "Set to enable the S3 web user interface."
 msgstr ""
 
+msgid "Set to enable the iSCSI extent."
+msgstr ""
+
 msgid "Set to export the certificate environment variables."
 msgstr ""
 
@@ -9836,6 +9971,9 @@ msgid ""
 "Server</i> and <i>Custom Path</i> fields."
 msgstr ""
 
+msgid "Share ACL"
+msgstr ""
+
 msgid "Share Name"
 msgstr ""
 
@@ -9868,6 +10006,9 @@ msgstr ""
 msgid ""
 "Should only be used for highly accurate <b>NTP</b> servers such as those "
 "with time monitoring hardware."
+msgstr ""
+
+msgid "Show"
 msgstr ""
 
 msgid "Show Hidden Files"
@@ -9909,6 +10050,9 @@ msgid "Shutdown Command"
 msgstr ""
 
 msgid "Shutdown Mode"
+msgstr ""
+
+msgid "Shutdown Timeout"
 msgstr ""
 
 msgid "Shutdown Timer"
@@ -10345,6 +10489,9 @@ msgstr ""
 msgid "System Serial"
 msgstr ""
 
+msgid "System Time Zone:"
+msgstr ""
+
 msgid "System clock"
 msgstr ""
 
@@ -10638,6 +10785,9 @@ msgid ""
 "be changed if the organization requires a different algorithm."
 msgstr ""
 
+msgid "The current pool layout is not recommended.Override the following errors?"
+msgstr ""
+
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
 "192.0.2.1"
@@ -10851,6 +11001,12 @@ msgstr ""
 msgid ""
 "The system will reboot and be briefly unavailable while applying updates. "
 "Apply updates and reboot?"
+msgstr ""
+
+msgid ""
+"The time in seconds the system waits for the VM to cleanly shut down.  "
+"During system shutdown, the system initiates poweroff for the VM after the "
+"shutdown  timeout has expired."
 msgstr ""
 
 msgid ""
@@ -11721,6 +11877,12 @@ msgstr ""
 msgid "View Enclosure"
 msgstr ""
 
+msgid "View License Info"
+msgstr ""
+
+msgid "View Licenses"
+msgstr ""
+
 msgid "View Logs"
 msgstr ""
 
@@ -11790,6 +11952,9 @@ msgid "Warning"
 msgstr ""
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
+msgstr ""
+
+msgid "Weak Ciphers"
 msgstr ""
 
 msgid "Web Interface"
@@ -11938,6 +12103,18 @@ msgid ""
 msgstr ""
 
 msgid "Who"
+msgstr ""
+
+msgid ""
+"Who this ACL entry applies to, shown as a <a "
+"href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-"
+"identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a "
+"<i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL."
+msgstr ""
+
+msgid ""
+"Who this ACL entry applies to, shown as a user name. Requires adding the "
+"user <i>Domain</i>."
 msgstr ""
 
 msgid "Widget Base Class"

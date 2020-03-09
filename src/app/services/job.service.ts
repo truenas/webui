@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { EntityUtils } from '../pages/common/entity/utils'
 import { WebSocketService } from './ws.service';
@@ -16,7 +16,7 @@ export class JobService {
   protected accountAllUsersResource: string = 'account/all_users/';
   protected accountAllGroupsResource: string = 'account/all_groups/';
 
-  constructor(protected ws: WebSocketService, protected dialog: DialogService, protected storage: StorageService, protected http: Http) {};
+  constructor(protected ws: WebSocketService, protected dialog: DialogService, protected storage: StorageService, protected http: HttpClient) {};
 
   getJobStatus(job_id): Observable<any> {
     let source = Observable.create((observer) => {
@@ -35,7 +35,7 @@ export class JobService {
   showLogs(job_id, title?, cancelMsg?) {
     let dialog_title, cancelButtonMsg;
     title ? dialog_title = title : dialog_title = T("Logs");
-    cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Cancel');
+    cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
     this.ws.call("core.get_jobs").subscribe((res) => {
       for(let i = 0; i < res.length; i++) {
         if (res[i].id === job_id) {

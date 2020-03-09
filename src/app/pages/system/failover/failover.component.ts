@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EntityUtils } from '../../common/entity/utils';
 import { WebSocketService } from '../../../services/';

@@ -4,6 +4,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid " Builtin Groups"
+msgstr ""
+
+msgid " Builtin Users"
+msgstr ""
+
 msgid " Check Notifications for more details."
 msgstr " Pro bližší informace se podívejte na notifikace."
 
@@ -15,6 +21,9 @@ msgstr " První vdev má "
 
 msgid " First vdev is a "
 msgstr " První vdev je "
+
+msgid " KiB."
+msgstr ""
 
 msgid " Plugin"
 msgstr " Zásuvný modul"
@@ -53,6 +62,12 @@ msgstr " a všechny jeho snapshoty?"
 msgid " and will be disrupted if the pool is locked:"
 msgstr ""
 
+msgid " builtin groups (default setting is <i>hidden</i>)."
+msgstr ""
+
+msgid " builtin users (default setting is <i>hidden</i>)."
+msgstr ""
+
 msgid " but datastore "
 msgstr " kromě úložiště "
 
@@ -72,11 +87,20 @@ msgid " is required."
 msgstr " je požadován."
 
 msgid ""
+" is still running,  the Guest OS did not respond as expected. It is "
+"possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> "
+"option to stop the VM."
+msgstr ""
+
+msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr ""
 " je minimální doporučená velikost. Zvolením menší velikosti, může dojít ke "
 "snížení výkonu systému."
+
+msgid " seconds"
+msgstr ""
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
@@ -123,6 +147,9 @@ msgid "'. All data on that pool was destroyed."
 msgstr "'. Všechna data na poolu byla smazána."
 
 msgid "(24 Hours)"
+msgstr ""
+
+msgid "(Examples: 500 KiB, 500M, 2 TB)"
 msgstr ""
 
 msgid "(No description)"
@@ -660,6 +687,9 @@ msgid ""
 "default route will not be able to access any networks.</b>"
 msgstr ""
 
+msgid "ACL Entries"
+msgstr ""
+
 msgid "ACL Mode"
 msgstr ""
 
@@ -1051,7 +1081,10 @@ msgid "Advanced Jail Creation"
 msgstr "Podrobné vytváření Jail"
 
 msgid "Advanced Mode"
-msgstr "Pokročilý režim"
+msgstr ""
+
+msgid "Advanced Options"
+msgstr ""
 
 msgid "Advanced Plugin Installation"
 msgstr ""
@@ -1194,6 +1227,19 @@ msgid ""
 msgstr ""
 
 msgid "Allow list"
+msgstr ""
+
+msgid ""
+"Allow more ciphers for  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sshd\" "
+"target=\"_blank\">sshd(8)</a>  in addition to the defaults in  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sshd_config\" "
+"target=\"_blank\">sshd_config(5)</a>.  <code>None</code> allows unencrypted "
+"SSH connections and  <code>AES128-CBC</code> allows the 128-bit  <a "
+"href=\"https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf\" "
+"target=\"_blank\">Advanced Encryption Standard</a>.<br><br>  WARNING: these "
+"ciphers are considered security vulnerabilities and  should only be allowed "
+"in a secure network environment."
 msgstr ""
 
 msgid "Allow non-root mount"
@@ -1627,11 +1673,17 @@ msgstr ""
 msgid "Basejail"
 msgstr ""
 
+msgid "Basic"
+msgstr ""
+
 msgid "Basic Info"
 msgstr ""
 
 msgid "Basic Mode"
-msgstr "Základní režim"
+msgstr ""
+
+msgid "Basic Options"
+msgstr ""
 
 msgid "Basic Properties"
 msgstr "Základní vlastnosti"
@@ -3544,6 +3596,12 @@ msgstr ""
 msgid "Domain Name"
 msgstr "Název domény"
 
+msgid ""
+"Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. "
+"Local users have the SMB server NetBIOS name: "
+"<code>freenas\\smbusers</code>."
+msgstr ""
+
 msgid "Domain name"
 msgstr "Název domény"
 
@@ -3633,6 +3691,9 @@ msgstr ""
 msgid "Edit Disk(s)"
 msgstr "Upravit disky"
 
+msgid "Edit Filesystem ACL"
+msgstr ""
+
 msgid "Edit Idmap"
 msgstr "Upravit Idmap"
 
@@ -3641,6 +3702,9 @@ msgstr "Volby úprav"
 
 msgid "Edit Permissions"
 msgstr "Upravit přístupová práva"
+
+msgid "Edit Share ACL"
+msgstr ""
 
 msgid "Edit Zvol"
 msgstr "Upravit ZFS svazek"
@@ -4750,7 +4814,8 @@ msgstr "Vynechat podřízené datové sady"
 
 msgid ""
 "Exclude specific child dataset snapshots from  the replication. Use with "
-"<b>Recursive</b> snapshots. List child  dataset names to exclude. Example: "
+"<b>Recursive</b> snapshots. List child  dataset names to exclude. Separate "
+"multiple entries with a comma  (<code>,</code>). Example: "
 "<i>pool1/dataset1/child1</i>. A  recursive replication of "
 "<i>pool1/dataset1</i> snapshots includes all  child dataset snapshots "
 "except <i>child1</i>."
@@ -4949,13 +5014,16 @@ msgstr "Typ souborového systému"
 msgid "Filter"
 msgstr ""
 
-msgid "Finding Disks"
+msgid "Finding Pools"
 msgstr ""
 
-msgid "Finding encrypted disks..."
+msgid "Finding pools to import..."
 msgstr ""
 
 msgid "Finish Upgrade?"
+msgstr ""
+
+msgid "Finished"
 msgstr ""
 
 msgid "Finished Time:"
@@ -5004,11 +5072,20 @@ msgstr "Vynutit smazání"
 msgid "Force Delete?"
 msgstr ""
 
+msgid "Force Stop After Timeout"
+msgstr ""
+
 msgid "Force deletion of dataset "
 msgstr ""
 
 msgid "Force size"
 msgstr "Vynutit velikost"
+
+msgid ""
+"Force the VM to stop if it has not already  stopped within the specified "
+"shutdown timeout. Without this option selected, the VM will  receive the "
+"shutdown signal, but may or may not complete the shutdown process."
+msgstr ""
 
 msgid ""
 "Force using  <a "
@@ -5282,6 +5359,9 @@ msgstr "HTTPS port"
 msgid "Help"
 msgstr ""
 
+msgid "Hide"
+msgstr ""
+
 msgid "Hide Standard Error"
 msgstr "Skrýt standardní chybový výstup"
 
@@ -5435,6 +5515,13 @@ msgstr ""
 
 msgid "How often the IP is checked in seconds."
 msgstr "Jak často (v sekundách) danou IP adresu kontrolovat."
+
+msgid ""
+"How permissions are applied to the share. <i>Allowed</i> denies all "
+"permissions by default except those that are manually defined. "
+"<i>Denied</i> allows all permissions by default except those that are "
+"manually defined."
+msgstr ""
 
 msgid ""
 "How the <i>Permissions</i> are applied to the chosen <i>Who</>. Choose "
@@ -5690,8 +5777,8 @@ msgstr "Importování fondů."
 msgid "In"
 msgstr ""
 
-msgid "In KiB/s. A default of <i>0</i> means unlimited."
-msgstr "V KiB/s. Výchozí <i>0</i> znamená neomezeno."
+msgid "In KiBs or greater. A default of <i>0 KiB</i> means unlimited. "
+msgstr ""
 
 msgid "Include Dataset Properties"
 msgstr ""
@@ -5848,6 +5935,9 @@ msgid ""
 msgstr ""
 
 msgid "Internetwork control"
+msgstr ""
+
+msgid "Invalid IP address"
 msgstr ""
 
 msgid "Invalid dataset."
@@ -6249,7 +6339,7 @@ msgstr "Místní hlavní"
 msgid "Local User Download Bandwidth"
 msgstr ""
 
-msgid "Local User Upload Bandwidth"
+msgid "Local User Upload Bandwidth: "
 msgstr ""
 
 msgid "Locality"
@@ -6450,6 +6540,9 @@ msgid ""
 "limit is 50."
 msgstr ""
 
+msgid "Maximum swap size is 99 GiB"
+msgstr ""
+
 msgid "Maximum swap space to use for the jail."
 msgstr ""
 
@@ -6611,6 +6704,9 @@ msgid "Month"
 msgstr "Měsíc"
 
 msgid "Months"
+msgstr ""
+
+msgid "Mount Points of "
 msgstr ""
 
 msgid ""
@@ -6783,6 +6879,9 @@ msgid "Name or Naming Schema is required. Only one field can be used at a time."
 msgstr ""
 
 msgid "Name or Naming Schema must be provided."
+msgstr ""
+
+msgid "Name that was created with the SMB share."
 msgstr ""
 
 msgid "Nameserver 1"
@@ -7039,6 +7138,9 @@ msgstr "Ne, pokračovat v importu"
 msgid "Nobind"
 msgstr ""
 
+msgid "None"
+msgstr ""
+
 msgid "Not Available"
 msgstr ""
 
@@ -7194,6 +7296,9 @@ msgid "On this System"
 msgstr ""
 
 msgid "One or more IP addresses to which to bind the Netdata service."
+msgstr ""
+
+msgid "One or more data vdevs has disks of different sizes."
 msgstr ""
 
 msgid "Online"
@@ -7510,6 +7615,9 @@ msgstr ""
 msgid "Periodic Snapshot Tasks"
 msgstr "Úlohy pravidelných zachycování stavu"
 
+msgid "Permission"
+msgstr ""
+
 msgid "Permissions"
 msgstr ""
 
@@ -7669,6 +7777,16 @@ msgstr ""
 
 msgid "Pre-script"
 msgstr "Skript před"
+
+msgid ""
+"Predefined permission combinations:<br><i>Read</i>: Read access and Execute "
+"permission on the object (RX).<br><i>Change</i>: Read access, Execute "
+"permission, Write access, and Delete object (RXWD).<br><i>Full</i>: Read "
+"access, Execute permission, Write access, Delete object, change "
+"Permissions, and take Ownership (RXWDPO).<br><br> For more details, see <a "
+"href=\"https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html\" "
+"target=\"_blank\">smbacls(1)</a>."
+msgstr ""
 
 msgid "Prefer"
 msgstr "Upřednostnit"
@@ -8385,6 +8503,9 @@ msgstr ""
 msgid "SFU20"
 msgstr ""
 
+msgid "SID"
+msgstr ""
+
 msgid "SMB"
 msgstr ""
 
@@ -8778,6 +8899,11 @@ msgstr ""
 msgid ""
 "Select a preset schedule or choose  <i>Custom</i> to use the advanced "
 "scheduler."
+msgstr ""
+
+msgid ""
+"Select a previously imported or created  <a "
+"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
 msgstr ""
 
 msgid ""
@@ -9622,6 +9748,9 @@ msgstr ""
 msgid "Set to enable the S3 web user interface."
 msgstr ""
 
+msgid "Set to enable the iSCSI extent."
+msgstr ""
+
 msgid "Set to export the certificate environment variables."
 msgstr ""
 
@@ -9950,6 +10079,9 @@ msgid ""
 "Server</i> and <i>Custom Path</i> fields."
 msgstr ""
 
+msgid "Share ACL"
+msgstr ""
+
 msgid "Share Name"
 msgstr "Název sdílení"
 
@@ -9982,6 +10114,9 @@ msgstr ""
 msgid ""
 "Should only be used for highly accurate <b>NTP</b> servers such as those "
 "with time monitoring hardware."
+msgstr ""
+
+msgid "Show"
 msgstr ""
 
 msgid "Show Hidden Files"
@@ -10024,6 +10159,9 @@ msgstr "Příkaz pro vypínání"
 
 msgid "Shutdown Mode"
 msgstr "Režim vypínání"
+
+msgid "Shutdown Timeout"
+msgstr ""
 
 msgid "Shutdown Timer"
 msgstr "Časovač vypnutí"
@@ -10459,6 +10597,9 @@ msgstr "Systémové procesy"
 msgid "System Serial"
 msgstr ""
 
+msgid "System Time Zone:"
+msgstr ""
+
 msgid "System clock"
 msgstr ""
 
@@ -10752,6 +10893,9 @@ msgid ""
 "be changed if the organization requires a different algorithm."
 msgstr ""
 
+msgid "The current pool layout is not recommended.Override the following errors?"
+msgstr ""
+
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
 "192.0.2.1"
@@ -10965,6 +11109,12 @@ msgstr ""
 msgid ""
 "The system will reboot and be briefly unavailable while applying updates. "
 "Apply updates and reboot?"
+msgstr ""
+
+msgid ""
+"The time in seconds the system waits for the VM to cleanly shut down.  "
+"During system shutdown, the system initiates poweroff for the VM after the "
+"shutdown  timeout has expired."
 msgstr ""
 
 msgid ""
@@ -11835,6 +11985,12 @@ msgstr "Zobrazit"
 msgid "View Enclosure"
 msgstr ""
 
+msgid "View License Info"
+msgstr ""
+
+msgid "View Licenses"
+msgstr ""
+
 msgid "View Logs"
 msgstr ""
 
@@ -11904,6 +12060,9 @@ msgid "Warning"
 msgstr "Varování"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
+msgstr ""
+
+msgid "Weak Ciphers"
 msgstr ""
 
 msgid "Web Interface"
@@ -12052,6 +12211,18 @@ msgid ""
 msgstr ""
 
 msgid "Who"
+msgstr ""
+
+msgid ""
+"Who this ACL entry applies to, shown as a <a "
+"href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-"
+"identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a "
+"<i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL."
+msgstr ""
+
+msgid ""
+"Who this ACL entry applies to, shown as a user name. Requires adding the "
+"user <i>Domain</i>."
 msgstr ""
 
 msgid "Widget Base Class"

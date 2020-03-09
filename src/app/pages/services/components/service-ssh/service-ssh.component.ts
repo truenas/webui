@@ -90,6 +90,14 @@ export class ServiceSSHComponent implements OnInit {
           options : helptext.ssh_sftp_log_facility_options,
         },
         {
+          type: 'select',
+          name: 'weak_ciphers',
+          placeholder: helptext.ssh_weak_ciphers_placeholder,
+          tooltip: helptext.ssh_weak_ciphers_tooltip,
+          options: helptext.ssh_weak_ciphers_options,
+          multiple: true
+        },
+        {
           type : 'textarea',
           name : 'options',
           placeholder : helptext.ssh_options_placeholder,
@@ -106,6 +114,7 @@ export class ServiceSSHComponent implements OnInit {
     'sftp_log_level',
     'sftp_log_facility',
     'options',
+    'weak_ciphers',
   ];
 
   public custActions: Array<any> = [

@@ -112,7 +112,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public fieldConfig: FieldConfig[];
   public resourceName: string;
   public getFunction;
-  public submitFunction = this.editSubmit;
+  public submitFunction = this.editCall;
   public isNew = false;
   public hasConf = true;
   public wsResponse;
@@ -203,7 +203,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.submitFunction = this.editCall;  // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
                                                   // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
-            this.submitFunction = this.editSubmit;
+            //this.submitFunction = this.editSubmit;
             this.resourceName = this.resourceName + this.pk + '/';
           }      
         } else {
@@ -213,7 +213,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.addCall) {
             this.submitFunction = this.addCall;
           } else {
-            this.submitFunction = this.addSubmit;
+            //this.submitFunction = this.addSubmit;
           }
           this.isNew = true;
         }

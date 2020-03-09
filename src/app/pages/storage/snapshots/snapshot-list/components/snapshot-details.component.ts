@@ -19,7 +19,8 @@ import { LocaleService } from 'app/services/locale.service';
 })
 export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string }> {
   public readonly entityName: "snapshot";
-  public locale: string;
+  // public locale: string;
+  public timezone: string;
 
   @Input() public config: { name: string };
   @Input() public parent: EntityTableComponent & { conf: SnapshotListComponent };
@@ -32,13 +33,14 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
 
   public ngOnInit(): void {
     this._ws.call('system.general.config').subscribe((res) => {
+      this.timezone = res.timezone;
       this._ws
       .call("zfs.snapshot.query", [[["id", "=", this.config.name]]])
       .pipe(
         map(response => ({
           ...response[0].properties,
           name: this.config.name,
-          creation:  this.localeService.formatDateTime(response[0].properties.creation.parsed.$date)
+          creation:  this.localeService.formatDateTime(response[0].properties.creation.parsed.$date, this.timezone)
         }))
       )
       .subscribe(snapshot => {
@@ -49,11 +51,11 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
           },
           {
             label: "Used",
-            value: this.storageService.convertBytestoHumanReadable(snapshot.used.rawvalue, 0)
+            value: this.storageService.convertBytestoHumanReadable(snapshot.used.rawvalue)
           },
           {
             label: "Referenced",
-            value: this.storageService.convertBytestoHumanReadable(snapshot.referenced.rawvalue, 0)
+            value: this.storageService.convertBytestoHumanReadable(snapshot.referenced.rawvalue)
           }
         ];
       });
