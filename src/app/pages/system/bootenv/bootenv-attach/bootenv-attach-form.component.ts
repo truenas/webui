@@ -72,7 +72,6 @@ preInit(entityForm: any) {
     const payload = {};
     payload['expand'] = entityForm.expand;
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Attach Device" }, disableClose: true });
-    this.dialogRef.componentInstance.progressNumberType = "nopercent";
     this.dialogRef.componentInstance.setDescription("Attaching Device...");
     this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, payload]);
     this.dialogRef.componentInstance.submit();
