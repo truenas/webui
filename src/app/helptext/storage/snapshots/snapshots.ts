@@ -61,5 +61,18 @@ rollback_warning: T("<b>WARNING:</b> Rolling the dataset back \
  backed up."),
 
 rollback_title: ('Dataset Rollback From Snapshot'),
-rollback_confirm: T('Confirm')
+rollback_confirm: T('Confirm'),
+
+extra_cols: {
+    title_show: T('Show Extra Columns'),
+    title_hide: T('Hide Extra Columns'),
+
+    message_show: T('Showing extra columns in the table can be useful for sorting and filtering, \
+ but may cause performance issues.'),
+    message_hide: T('Hidden columns will not be available for sorting or filtering, but can still be \
+ viewed by expanding the row. Hiding the columns gives better performance.'),
+    button_show: T('Show'),
+    button_hide: T('Hide')
+}
+
 }

@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WebSocketService, StorageService } from 'app/services';
+import { WebSocketService, StorageService, DialogService } from 'app/services';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subscription } from 'rxjs';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from '../../../../translate-marker';
@@ -30,6 +31,12 @@ export class SnapshotListComponent {
   protected rollback: any;
   public busy: Subscription;
   public sub: Subscription;
+  protected globalConfig = {
+    id: "config",
+    onClick: () => {
+      this.toggleExtraCols();
+    }
+  };
   public columns: Array<any> = [
     // {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
     // {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355},
@@ -110,14 +117,15 @@ export class SnapshotListComponent {
   constructor(protected _router: Router, protected _route: ActivatedRoute,
     protected ws: WebSocketService, protected localeService: LocaleService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected storageService: StorageService) { }
+    protected storageService: StorageService, protected dialogService: DialogService,
+    protected prefService: PreferencesService) { }
 
   resourceTransformIncomingRestData(rows: any) {
     //// 
-    rows.forEach((row) => { console.log(row)
-      row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue, 0); 
+    rows.forEach((row) => {
+      row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue); 
       row.created = this.localeService.formatDateTime(row.properties.creation.parsed.$date);
-      row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue, 0);
+      row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue);
     })
     ////
     return rows;
@@ -167,6 +175,7 @@ export class SnapshotListComponent {
 
   preInit(entityList: any) {
     this.sub = this._route.params.subscribe(params => { });
+    if (this.prefService.preferences.snapshotsExtraCols) {}
   }
 
   callGetFunction(entityList) {
@@ -249,7 +258,6 @@ export class SnapshotListComponent {
     data["force"] = true;
     parent.entityList.loader.open();
     parent.entityList.loaderOpen = true;
-    console.log(data);
     parent.ws
       .call('zfs.snapshot.rollback', [item.name, data])
       .subscribe(
@@ -263,6 +271,24 @@ export class SnapshotListComponent {
           entityDialog.dialogRef.close();
           new EntityUtils().handleWSError(parent.entityList, err, parent.entityList.dialogService);
         });
+  }
+
+  toggleExtraCols() {
+    let title, message, button;
+    if (this.prefService.preferences.snapshotsExtraCols) {
+      title = helptext.extra_cols.title_hide;
+      message = helptext.extra_cols.message_hide;
+      button = helptext.extra_cols.button_hide;
+    } else {
+      title = helptext.extra_cols.title_show;
+      message = helptext.extra_cols.message_show;
+      button = helptext.extra_cols.button_show;
+    }
+    this.dialogService.confirm(title, message, true, button).subscribe(res => {
+     if (res) {
+       this.prefService.preferences.snapshotsExtraCols = !this.prefService.preferences.snapshotsExtraCols;
+     }
+    })
   }
 
 }

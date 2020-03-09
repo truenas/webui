@@ -23,7 +23,8 @@ export interface UserPreferences {
   dateFormat:string;
   timeFormat:string;
   nicType:string
-  nicAttach: string
+  nicAttach: string,
+  snapshotsExtraCols: boolean
 }
 
 @Injectable()
@@ -49,7 +50,8 @@ export class PreferencesService {
     "dateFormat": 'YYYY-MM-DD',
     "timeFormat": 'HH:mm:ss',
     "nicType": null,
-    "nicAttach": null
+    "nicAttach": null,
+    "snapshotsExtraCols": false
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
