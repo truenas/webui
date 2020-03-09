@@ -26,6 +26,7 @@ export class SnapshotFormComponent implements OnDestroy {
   protected datasetFg: any;
   protected dataset_subscription: any;
   protected save_button_enabled = true;
+  protected entityForm;
 
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
@@ -144,6 +145,7 @@ export class SnapshotFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm) {
+    this.entityForm = entityForm;
     const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
 
     this.storageService.getDatasetNameOptions().subscribe(
@@ -168,6 +170,18 @@ export class SnapshotFormComponent implements OnDestroy {
         datasetField.warnings = '';
       }
     });
+
+    entityForm.formGroup.controls['snapshot_picker'].valueChanges.subscribe(value => {
+      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+        this.entityForm.setDisabled('begin', true, true);
+        this.entityForm.setDisabled('end', true, true);
+
+      } else {
+        this.entityForm.setDisabled('begin', false, false);
+        this.entityForm.setDisabled('end', false, false);
+      }
+    })
+
 
   }
 

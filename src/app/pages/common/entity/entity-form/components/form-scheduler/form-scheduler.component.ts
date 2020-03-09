@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
+import { T } from 'app/translate-marker';
 
 import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
@@ -17,6 +18,7 @@ import { EntityUtils } from '../../../utils';
 interface CronPreset {
   label:string;
   value:string;
+  description?:string;
 }
 
 interface CronDate {
@@ -190,20 +192,26 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   private _preset:CronPreset;// = { label:"Custom", value:"* * * * *"}; 
   public presets: CronPreset[] = [
     {
-      label: "Hourly",
-      value: "0 * * * *"
+      label: T("Hourly"),
+      value: "0 * * * *",
+      description: T("at the start of each hour")
     },
     {
-      label: "Daily",
-      value: "0 0 * * *"
+      label: T("Daily"),
+      value: "0 0 * * *",
+      description: T("at 00:00 (12:00 AM)")
+
     },
     {
-      label: "Weekly",
-      value: "0 0 * * sun"
+      label: T("Weekly"),
+      value: "0 0 * * sun",
+      description: T("on Sundays at 00:00 (12:00 AM)")
+
     },
     {
-      label: "Monthly",
-      value: "0 0 1 * *"
+      label: T("Monthly"),
+      value: "0 0 1 * *",
+      description: T("on the first day of the month at 00:00 (12:00 AM)")
     }
   ];
 
@@ -231,7 +239,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     if(p.value == "custom"){
       this.crontab = "0 0 * * *";
       this.convertPreset("0 0 * * *");
-      this._preset = {label:"Custom", value:this.crontab};
+      this._preset = {label:T("Custom"), value:this.crontab};
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);
@@ -247,10 +255,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     private cd: ChangeDetectorRef,public overlay: Overlay, protected ws: WebSocketService){ 
     
     //Set default value
+    this.preset = this.presets[1];
+    this._months = "*";
+
     this.ws.call('system.general.config').subscribe((res) => {
       moment.tz.setDefault(res.timezone);
-      this.preset = this.presets[1];
-      this._months = "*";
       
       this.minDate = moment();
       this.maxDate = moment().endOf('month');

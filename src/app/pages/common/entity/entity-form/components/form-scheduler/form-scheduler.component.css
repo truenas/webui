@@ -226,3 +226,7 @@ mat-form-field.cron-presets{
     visibility: hidden;
   }
 }
+
+.preset-description {
+  opacity: .6;
+}
