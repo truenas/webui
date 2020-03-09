@@ -94,3 +94,12 @@ form button{
   width: 256px;
   height: auto;
 }
+
+#full-logo {
+  text-align: center;
+  margin-bottom: -10px;
+  img {
+    width: 150px;
+    cursor: pointer;
+  }
+}

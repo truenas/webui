@@ -58,3 +58,11 @@
   background-color: var(--topbar) !important;
   color: var(--topbar-txt) !important;
 }
+
+#logo-icon {
+  height: 25px;
+  top: 5px;
+  right: 10px;
+  position: relative;
+  cursor: pointer;
+}
