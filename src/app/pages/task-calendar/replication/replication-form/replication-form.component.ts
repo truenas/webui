@@ -507,6 +507,25 @@ export class ReplicationFormComponent {
                 }]
             }],
         }, {
+            type: 'select',
+            name: 'readonly',
+            placeholder: helptext.readonly_placeholder,
+            tooltip: helptext.readonly_tooltip,
+            options: [
+                {
+                    label: 'SET',
+                    value: 'SET',
+                },
+                {
+                    label: 'REQUIRE',
+                    value: 'REQUIRE',
+                },
+                {
+                    label: 'IGNORE',
+                    value: 'IGNORE',
+                }
+            ]
+        }, {
             type: 'checkbox',
             name: 'allow_from_scratch',
             placeholder: helptext.allow_from_scratch_placeholder,
@@ -822,6 +841,11 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        if (entityForm.pk === undefined) {
+            const isFreenas = window.localStorage.getItem('is_freenas') === 'true' ? true : false;
+            this.entityForm.formGroup.controls['readonly'].setValue(isFreenas ? 'SET' : 'REQUIRE');
+        }
+
         if (this.entityForm.formGroup.controls['speed_limit'].value) { 
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
