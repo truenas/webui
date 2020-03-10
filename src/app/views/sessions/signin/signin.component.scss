@@ -4,6 +4,11 @@
   background-color:$bg1;
 }
 
+.copyright-line {
+  text-align: center;
+  padding-top: 32px;
+}
+
 .copyright-txt {
     text-align: center;
     opacity:0.5;
@@ -95,10 +100,9 @@ form button{
 }
 
 #full-logo {
-  text-align: center;
-  img {
-    height: 40px;
-    // top: 14px;
-    position: relative;
-  }
+  height: 40px;
+  top: 14px;
+  position: relative;
+  cursor: pointer;
+  margin-left: 5px;
 }
