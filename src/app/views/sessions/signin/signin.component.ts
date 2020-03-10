@@ -329,4 +329,8 @@ export class SigninComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  openIX() {
+    window.open('https://www.ixsystems.com/', '_blank')
+  }
 }

@@ -97,11 +97,10 @@
               </span>
             </div>
           </div></span>
-          <div>
-            <span fxFlex class="copyright-txt">
-              <span >TrueNAS {{product_type}}</span>
-              ® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
-            </span>
+
+          <div class="copyright-line">
+            <span  class="copyright-txt">TrueNAS {{product_type}} ® © {{copyrightYear}} </span>
+            <img id="full-logo" (click)="openIX()" src="assets/images/ix_logo_full.png">
           </div>
         </div>
         <ng-template #notconnected>

@@ -503,4 +503,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       helptext.updateRunning_dialog.message,
       true, T('Close'), false, '', '', '', '', true);
   };
+
+  openIX() {
+    window.open('https://www.ixsystems.com/', '_blank')
+  }
 }
