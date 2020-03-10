@@ -6084,7 +6084,6 @@ msgstr ""
 
 msgid "Keep this Boot Environment?"
 msgstr ""
-"27/5000\n"
 "Diese Boot-Umgebung beibehalten?"
 
 msgid "Keep user primary group"
