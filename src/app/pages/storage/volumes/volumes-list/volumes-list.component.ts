@@ -655,8 +655,8 @@ export class VolumesListTableConfig implements InputTableConf {
       if (rowData.is_decrypted) {
         actions.push({
           id: rowData.name,
-          name: 'Extend',
-          label: T("Extend"),
+          name: 'Add Vdevs',
+          label: T("Add Vdevs"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "pools", "manager", row1.id]));

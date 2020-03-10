@@ -75,7 +75,7 @@ export const routes: Routes = [
           },
           {
             path: 'manager/:pk', component: ManagerComponent,
-            data: { title: 'Extend Pool', breadcrumb: 'Extend Pool' }
+            data: { title: 'Add Vdevs to Pool', breadcrumb: 'Add Vdevs to Pool' }
           },
           {
             path: 'import', component: VolumeImportWizardComponent,
