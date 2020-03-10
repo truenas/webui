@@ -16,26 +16,16 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class SnapshotListComponent {
-
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
-  protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
-  protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
-
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: any;
-  protected hasDetails = true;
-  protected rowDetailComponent = SnapshotDetailsComponent;
-  protected rowDetailComponentShow = null;
-  protected rowDetailComponentHide = SnapshotDetailsComponent;
   protected rollback: any;
   public busy: Subscription;
   public sub: Subscription;
-  public extraColsAreHidden = true;
   protected globalConfig = {
     id: "config",
     onClick: () => {
@@ -43,23 +33,30 @@ export class SnapshotListComponent {
     }
   };
 
-  public columns: Array<any> = [
-    {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
-    {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355}
-  ];
+  // Vairables to show or hide the extra columns
+  protected queryCallOption = [];
+  protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
+  protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
+  protected hasDetails: boolean;
+  protected columnFilter: boolean;
+  protected rowDetailComponent;
+  public extraColsAreHidden: boolean;
+
+  public columns: Array<any> = [];
 
   public columnsHide: Array<any> = [
-    {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
-    {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355}
+    {name : 'Dataset', prop : 'dataset'},
+    {name : 'Snapshot', prop : 'snapshot'}
   ];
 
   public columnsShow: Array<any> = [
-    {name : 'Dataset', prop : 'dataset', always_display: true},
-    {name : 'Snapshot', prop : 'snapshot', always_display: true},
-    {name : 'Used', prop : 'used', always_display: true},
+    {name : 'Dataset', prop : 'dataset'},
+    {name : 'Snapshot', prop : 'snapshot' },
+    {name : 'Used', prop : 'used' },
     {name : 'Date Created', prop : 'created'},
     {name : 'Referenced', prop : 'referenced'}
   ];
+// End the show/hide section
 
   public rowIdentifier = 'dataset';
   public config: any = {
@@ -133,10 +130,28 @@ export class SnapshotListComponent {
     protected ws: WebSocketService, protected localeService: LocaleService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected storageService: StorageService, protected dialogService: DialogService,
-    protected prefService: PreferencesService) { }
+    protected prefService: PreferencesService) {
+      this.prefService.getSnapshotCols.then((res) => {
+        console.log(res);
+        if (res) {
+          this.queryCallOption = this.queryCallOptionShow;
+          this.rowDetailComponent = null;
+          this.columnFilter = true;
+          this.hasDetails = false;
+          this.columns = this.columnsShow.slice(0);
+          this.extraColsAreHidden = false;
+        } else {
+          this.columnsHide.slice(0);
+          this.rowDetailComponent = SnapshotDetailsComponent;
+          this.columnFilter = false;
+          this.hasDetails = true;
+          this.queryCallOption = this.queryCallOptionHide;
+          this.extraColsAreHidden = true;
+        }
+      })
+    }
 
   resourceTransformIncomingRestData(rows: any) {
-    console.log(rows)
     //// 
     rows.forEach((row) => {
       if (row.properties) {
@@ -293,7 +308,6 @@ export class SnapshotListComponent {
 
   toggleExtraCols() {
     let title, message, button;
-    // let currentlyShowing = !this.prefService.preferences.snapshotsExtraCols;
     if (!this.extraColsAreHidden) {
       title = helptext.extra_cols.title_hide;
       message = helptext.extra_cols.message_hide;
@@ -305,19 +319,23 @@ export class SnapshotListComponent {
     }
     this.dialogService.confirm(title, message, true, button).subscribe(res => {
      if (res) {
-      //  this.prefService.preferences.snapshotsExtraCols = !this.prefService.preferences.snapshotsExtraCols;
-       if (this.extraColsAreHidden) {
-         this.queryCallOption = this.queryCallOptionShow;
-         this.columns = this.columnsShow.slice(0);
-         this.rowDetailComponent = this.rowDetailComponentShow;
-         console.log(this.columns, this.queryCallOption, this.rowDetailComponent)
-       } else {
-         this.queryCallOption = this.queryCallOptionHide;
-         this.columns = this.columnsHide.slice(0);
-         this.rowDetailComponent = this.rowDetailComponentHide;
-       }
-       this.entityList.getData();
-      this.extraColsAreHidden = !this.extraColsAreHidden;
+       this.prefService.preferences.snapshotsExtraCols = !this.prefService.preferences.snapshotsExtraCols;
+
+       // reload
+       
+      //  if (this.extraColsAreHidden) {
+      //    this.queryCallOption = this.queryCallOptionShow;
+      //    this.columns = this.columnsShow.slice(0);
+      //    this.rowDetailComponent = null;
+      //    this.columnFilter = true;
+      //  } else {
+      //    this.queryCallOption = this.queryCallOptionHide;
+      //    this.columns = this.columnsHide.slice(0);
+      //    this.rowDetailComponent = SnapshotDetailsComponent;
+      //    this.columnFilter = false;
+      //  }
+      //  this.entityList.getData();
+      // this.extraColsAreHidden = !this.extraColsAreHidden;
 
      }
     })

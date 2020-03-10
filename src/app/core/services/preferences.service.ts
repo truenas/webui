@@ -53,6 +53,13 @@ export class PreferencesService {
     "nicAttach": null,
     "snapshotsExtraCols": false
   }
+
+  public getSnapshotCols = new Promise(
+    (resolve, reject) => {
+      resolve(this.preferences.snapshotsExtraCols);
+    }
+  );
+
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
 
@@ -201,5 +208,7 @@ export class PreferencesService {
     });
     return merged;
   }
+
+
 
 }
