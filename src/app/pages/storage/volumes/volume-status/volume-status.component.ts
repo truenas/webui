@@ -375,9 +375,9 @@ export class VolumeStatusComponent implements OnInit {
 
     const item: poolDiskInfo = {
       name: data.name ? data.name : data.device,
-      read: stats.read_errors ? stats.read_errors : 0,
-      write: stats.write_errors ? stats.write_errors : 0,
-      checksum: stats.checksum_errors ? stats.checksum_errors : 0,
+      read: stats.read_errors ? stats.read_errors.toString() : 0,
+      write: stats.write_errors ? stats.write_errors.toString() : 0,
+      checksum: stats.checksum_errors ? stats.checksum_errors.toString() : 0,
       status: data.status,
       path: data.path,
       guid: data.guid,
