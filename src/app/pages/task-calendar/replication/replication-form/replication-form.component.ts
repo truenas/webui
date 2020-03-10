@@ -841,10 +841,28 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        const isFreenas = window.localStorage.getItem('is_freenas') === 'true' ? true : false;
+        const readonlyField = _.find(this.fieldConfig, {name: 'readonly'});
+        const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
+
         if (entityForm.pk === undefined) {
-            const isFreenas = window.localStorage.getItem('is_freenas') === 'true' ? true : false;
-            this.entityForm.formGroup.controls['readonly'].setValue(isFreenas ? 'SET' : 'REQUIRE');
+            readonlyCtrl.setValue(isFreenas ? 'SET' : 'REQUIRE');
         }
+
+        this.entityForm.formGroup.controls['transport'].valueChanges.subscribe(
+            (res) => {
+                for (const option of readonlyField.options) {
+                    if (res === 'LEGACY') {
+                        option['disable'] = isFreenas ? (option.value === 'SET' ? false : true) : (option.value === 'IGNORE' ? false : true);
+                    } else {
+                        option['disable'] = false;
+                    }
+                }
+                if (res === 'LEGACY' && ((isFreenas && readonlyCtrl.value !== 'SET') || (!isFreenas && readonlyCtrl.value !== 'IGNORE'))) {
+                   readonlyCtrl.setValue(isFreenas ? 'SET' : 'IGNORE');
+                }
+            }
+        );
 
         if (this.entityForm.formGroup.controls['speed_limit'].value) { 
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
