@@ -569,7 +569,27 @@ export class ReplicationFormComponent {
                             value: 'PULL',
                         }]
                     }],
-                }, 
+                },
+                {
+                    type: 'select',
+                    name: 'readonly',
+                    placeholder: helptext.readonly_placeholder,
+                    tooltip: helptext.readonly_tooltip,
+                    options: [
+                        {
+                            label: 'SET',
+                            value: 'SET',
+                        },
+                        {
+                            label: 'REQUIRE',
+                            value: 'REQUIRE',
+                        },
+                        {
+                            label: 'IGNORE',
+                            value: 'IGNORE',
+                        }
+                    ]
+                },
                 {
                     type: 'checkbox',
                     name: 'allow_from_scratch',
@@ -795,6 +815,12 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        const isTruenasCore = window.localStorage.getItem('product_type') === 'CORE' ? true : false;
+        const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
+        if (entityForm.pk === undefined) {
+            readonlyCtrl.setValue(isTruenasCore ? 'SET' : 'REQUIRE');
+        }
+
         if (this.entityForm.formGroup.controls['speed_limit'].value) {
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;

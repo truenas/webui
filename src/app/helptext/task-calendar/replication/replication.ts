@@ -184,6 +184,9 @@ from the source dataset.'),
  add the <b>Schedule</b> values to the \
  <b>Snapshot Replication Schedule</b>.'),
 
+    readonly_placeholder: T('Destination dataset read-only'),
+    readonly_tooltip: T(''),
+
     allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),
     allow_from_scratch_tooltip: T('If the destination system has \
  snapshots but they do not have any data in common with the source \
