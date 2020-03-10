@@ -5,7 +5,6 @@
 }
 
 .copyright-txt {
-    padding-top: 32px;
     text-align: center;
     opacity:0.5;
     font-size:85%
@@ -97,9 +96,9 @@ form button{
 
 #full-logo {
   text-align: center;
-  margin-bottom: -10px;
   img {
-    width: 150px;
-    cursor: pointer;
+    height: 40px;
+    // top: 14px;
+    position: relative;
   }
 }
