@@ -676,7 +676,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   getUnhealthyPools(){
     let sickPools = [];
-    sickPools = this.system.pools.filter(p => p.healthy == false)
+    const pools = this.system.pools.forEach((pool, index) => {
+      const healthy = pool.healthy;
+      const inCurrentEnclosure = index == this.selectedEnclosure.poolKeys[pool.name];
+      if(!healthy && inCurrentEnclosure){
+        sickPools.push(pool);
+      }
+    });
     return sickPools;
   }
 
