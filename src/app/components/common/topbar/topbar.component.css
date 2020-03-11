@@ -59,10 +59,12 @@
   color: var(--topbar-txt) !important;
 }
 
-#logo-icon {
-  height: 21px;
-  top: 4px;
-  right: 10px;
+.ix-logo {
+  width: 175px;
+  height: 50px;
+  top: 5px;
+  right: -10px;
   position: relative;
   cursor: pointer;
+  fill: var(--topbar-txt) !important;
 }
