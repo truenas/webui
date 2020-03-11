@@ -38,11 +38,17 @@ export class SnapshotListComponent {
   protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
   protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
   protected hasDetails: boolean;
-  protected columnFilter: boolean;
+  protected columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true' ? true : false;
   protected rowDetailComponent;
-  public extraColsAreHidden: boolean;
+  public snapshotXtraCols = false;
 
-  public columns: Array<any> = [];
+  public columns: Array<any> = [
+    {name : 'Dataset', prop : 'dataset'},
+    {name : 'Snapshot', prop : 'snapshot' },
+    {name : 'Used', prop : 'used' },
+    {name : 'Date Created', prop : 'created'},
+    {name : 'Referenced', prop : 'referenced'}
+  ];
 
   public columnsHide: Array<any> = [
     {name : 'Dataset', prop : 'dataset'},
@@ -132,21 +138,20 @@ export class SnapshotListComponent {
     protected storageService: StorageService, protected dialogService: DialogService,
     protected prefService: PreferencesService) {
       this.prefService.getSnapshotCols.then((res) => {
-        console.log(res);
-        if (res) {
+        if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
           this.queryCallOption = this.queryCallOptionShow;
           this.rowDetailComponent = null;
           this.columnFilter = true;
           this.hasDetails = false;
           this.columns = this.columnsShow.slice(0);
-          this.extraColsAreHidden = false;
+          this.snapshotXtraCols = true;
         } else {
-          this.columnsHide.slice(0);
+          this.queryCallOption = this.queryCallOptionHide;
           this.rowDetailComponent = SnapshotDetailsComponent;
           this.columnFilter = false;
           this.hasDetails = true;
-          this.queryCallOption = this.queryCallOptionHide;
-          this.extraColsAreHidden = true;
+          this.columns = this.columnsHide.slice(0);
+          this.snapshotXtraCols = false;
         }
       })
     }
@@ -204,6 +209,7 @@ export class SnapshotListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
+    console.log(this.columnFilter)
   }
 
   preInit(entityList: any) {
@@ -308,7 +314,7 @@ export class SnapshotListComponent {
 
   toggleExtraCols() {
     let title, message, button;
-    if (!this.extraColsAreHidden) {
+    if (this.snapshotXtraCols) {
       title = helptext.extra_cols.title_hide;
       message = helptext.extra_cols.message_hide;
       button = helptext.extra_cols.button_hide;
@@ -320,23 +326,10 @@ export class SnapshotListComponent {
     this.dialogService.confirm(title, message, true, button).subscribe(res => {
      if (res) {
        this.prefService.preferences.snapshotsExtraCols = !this.prefService.preferences.snapshotsExtraCols;
-
-       // reload
-       
-      //  if (this.extraColsAreHidden) {
-      //    this.queryCallOption = this.queryCallOptionShow;
-      //    this.columns = this.columnsShow.slice(0);
-      //    this.rowDetailComponent = null;
-      //    this.columnFilter = true;
-      //  } else {
-      //    this.queryCallOption = this.queryCallOptionHide;
-      //    this.columns = this.columnsHide.slice(0);
-      //    this.rowDetailComponent = SnapshotDetailsComponent;
-      //    this.columnFilter = false;
-      //  }
-      //  this.entityList.getData();
-      // this.extraColsAreHidden = !this.extraColsAreHidden;
-
+       this.prefService.savePreferences()
+       this.snapshotXtraCols = !this.snapshotXtraCols;
+       window.localStorage.setItem('snapshotXtraCols', this.snapshotXtraCols.toString());
+       document.location.reload(true);
      }
     })
   }
