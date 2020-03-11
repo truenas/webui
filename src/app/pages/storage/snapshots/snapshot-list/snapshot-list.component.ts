@@ -35,8 +35,8 @@ export class SnapshotListComponent {
 
   // Vairables to show or hide the extra columns
   protected queryCallOption = [];
-  protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"]], {"select": ["name", "properties"], "order_by": ["name"]}];
-  protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
+  protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name", "properties"], "order_by": ["name"]}];
+  protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name"], "order_by": ["name"]}];
   protected hasDetails: boolean;
   protected columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true' ? true : false;
   protected rowDetailComponent;
@@ -216,7 +216,7 @@ export class SnapshotListComponent {
   callGetFunction(entityList) {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
-        this.queryCallOption[0][1] = (["name", "!^", res.basename]);
+        this.queryCallOption[0][2] = (["name", "!^", res.basename]);
       }
       this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
         entityList.handleData(res1);
