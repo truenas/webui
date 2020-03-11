@@ -68,9 +68,10 @@ extra_cols: {
     title_hide: T('Hide Extra Columns'),
 
     message_show: T('Showing extra columns in the table can be useful for sorting and filtering, \
- but may cause performance issues.'),
-    message_hide: T('Hidden columns will not be available for sorting or filtering, but can still be \
- viewed by expanding the row. Hiding the columns gives better performance.'),
+ but may cause performance issues. NOTE: This window must be reloaded for the new view to take effect.'),
+    message_hide: T('Hidden columns will not be available for sorting or filtering, but these values can still be \
+ viewed by expanding the row. Hiding the columns gives better performance. NOTE: This window must be reloaded for \
+ the new view to take effect.'),
     button_show: T('Show'),
     button_hide: T('Hide')
 }

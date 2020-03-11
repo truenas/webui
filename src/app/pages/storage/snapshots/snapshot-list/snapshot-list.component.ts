@@ -137,23 +137,21 @@ export class SnapshotListComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected storageService: StorageService, protected dialogService: DialogService,
     protected prefService: PreferencesService) {
-      this.prefService.getSnapshotCols.then((res) => {
-        if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
-          this.queryCallOption = this.queryCallOptionShow;
-          this.rowDetailComponent = null;
-          this.columnFilter = true;
-          this.hasDetails = false;
-          this.columns = this.columnsShow.slice(0);
-          this.snapshotXtraCols = true;
-        } else {
-          this.queryCallOption = this.queryCallOptionHide;
-          this.rowDetailComponent = SnapshotDetailsComponent;
-          this.columnFilter = false;
-          this.hasDetails = true;
-          this.columns = this.columnsHide.slice(0);
-          this.snapshotXtraCols = false;
-        }
-      })
+      if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
+        this.queryCallOption = this.queryCallOptionShow;
+        this.rowDetailComponent = null;
+        this.columnFilter = true;
+        this.hasDetails = false;
+        this.columns = this.columnsShow.slice(0);
+        this.snapshotXtraCols = true;
+      } else {
+        this.queryCallOption = this.queryCallOptionHide;
+        this.rowDetailComponent = SnapshotDetailsComponent;
+        this.columnFilter = false;
+        this.hasDetails = true;
+        this.columns = this.columnsHide.slice(0);
+        this.snapshotXtraCols = false;
+      }
     }
 
   resourceTransformIncomingRestData(rows: any) {
@@ -209,12 +207,10 @@ export class SnapshotListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
-    console.log(this.columnFilter)
   }
 
   preInit(entityList: any) {
     this.sub = this._route.params.subscribe(params => { });
-    if (this.prefService.preferences.snapshotsExtraCols) {}
   }
 
   callGetFunction(entityList) {
@@ -325,8 +321,7 @@ export class SnapshotListComponent {
     }
     this.dialogService.confirm(title, message, true, button).subscribe(res => {
      if (res) {
-       this.prefService.preferences.snapshotsExtraCols = !this.prefService.preferences.snapshotsExtraCols;
-       this.prefService.savePreferences()
+       this.entityList.loader.open();
        this.snapshotXtraCols = !this.snapshotXtraCols;
        window.localStorage.setItem('snapshotXtraCols', this.snapshotXtraCols.toString());
        document.location.reload(true);

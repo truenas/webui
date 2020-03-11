@@ -24,7 +24,6 @@ export interface UserPreferences {
   timeFormat:string;
   nicType:string
   nicAttach: string,
-  snapshotsExtraCols: boolean
 }
 
 @Injectable()
@@ -51,14 +50,7 @@ export class PreferencesService {
     "timeFormat": 'HH:mm:ss',
     "nicType": null,
     "nicAttach": null,
-    "snapshotsExtraCols": false
   }
-
-  public getSnapshotCols = new Promise(
-    (resolve, reject) => {
-      resolve(this.preferences.snapshotsExtraCols);
-    }
-  );
 
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
