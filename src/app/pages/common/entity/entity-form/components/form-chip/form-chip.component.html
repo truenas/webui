@@ -1,0 +1,28 @@
+<div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+	<mat-form-field class="full-width">
+		<mat-chip-list #chipList>
+            <mat-chip *ngFor="let item of chipLists" 
+                [selectable]="selectable"
+                [removable]="removable" 
+                (removed)="remove(item)">
+              {{item}}
+              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input [placeholder]="config.placeholder | translate"
+                   [matChipInputFor]="chipList"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   [matChipInputAddOnBlur]="addOnBlur"
+                   (matChipInputTokenEnd)="add($event)"
+                   ix-auto
+			        ix-auto-type="input"
+			        ix-auto-identifier="{{config.placeholder}}">
+          </mat-chip-list>
+	</mat-form-field>
+
+	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+	<div class="margin-for-error">
+		<form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+		<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+		<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+	</div>
+</div>
