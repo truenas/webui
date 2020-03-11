@@ -52,6 +52,8 @@ export class SnapshotFormComponent implements OnDestroy {
     name: 'lifetime',
     placeholder: helptext.lifetime_placeholder,
     tooltip: helptext.lifetime_tooltip,
+    value: "2 WEEKS",
+    required: true,
     inputUnit: {
       type: UnitType.duration,
       decimal: false,
