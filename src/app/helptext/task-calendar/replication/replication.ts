@@ -174,7 +174,9 @@ export default {
  <b>Snapshot Replication Schedule</b>.'),
 
     readonly_placeholder: T('Destination dataset read-only'),
-    readonly_tooltip: T(''),
+    readonly_tooltip: T('<b>SET</b> will set all destination datasets to readonly=on after finishing the replication <br>\
+ <b>REQUIRE</b> will require all existing destination datasets to have readonly=on property <br>\
+ <b>IGNORE</b> will avoid this kind of behavior'),
 
     allow_from_scratch_placeholder: T('Replicate from scratch if incremental is not possible'),
     allow_from_scratch_tooltip: T('If the destination system has \
