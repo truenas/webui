@@ -12,8 +12,9 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
 @Component({
     selector: 'form-chip',
     templateUrl: './form-chip.component.html',
+    styleUrls: ['../dynamic-field/dynamic-field.css', './form-chip.component.css']
 })
-export class FormChipComponent implements Field, OnInit{
+export class FormChipComponent implements Field, OnInit {
     config: FieldConfig;
     group: FormGroup;
     fieldShow: string;
@@ -22,7 +23,7 @@ export class FormChipComponent implements Field, OnInit{
     selectable = true;
     removable = true;
     addOnBlur = true;
-    readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+    readonly separatorKeysCodes: number[] = [ENTER];
 
     constructor(
         public translate: TranslateService,
