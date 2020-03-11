@@ -87,6 +87,7 @@ export class VolumeStatusComponent implements OnInit {
   }];
 
   protected pool: any;
+  protected timezone: string;
 
   constructor(protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
@@ -155,6 +156,9 @@ export class VolumeStatusComponent implements OnInit {
       this.getData();
     });
     this.getUnusedDisk();
+    this.ws.call('system.info').subscribe(res => {
+      this.timezone = res.timezone;
+    })
   }
 
   refresh() {
@@ -438,7 +442,7 @@ export class VolumeStatusComponent implements OnInit {
 
   getReadableDate(data: any) {
     if (data != null) {
-      return new Date(data.$date);
+      return new Date(data.$date).toLocaleString('en-US', {timeZone: this.timezone});
     }
     return;
   }
