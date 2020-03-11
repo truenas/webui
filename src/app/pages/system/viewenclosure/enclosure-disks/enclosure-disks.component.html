@@ -45,7 +45,7 @@
             <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
               <div *ngFor="let pool of enclosurePools; let i=index"><div class="swatch" 
               [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
-              </div>{{pool}}</div>
+              </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
             </div>
 
             <ng-template #noPools>
@@ -153,7 +153,10 @@
           <div *ngIf="system && system.pools && enclosurePools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{ enclosurePools.length }}</div>
             <div class="title">Pools in Enclosure</div>
-            <div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>
+            <!--<div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>-->
+            <div *ngIf="unhealthyPools && unhealthyPools.length == 1" class="subtitle">Pool "{{unhealthyPools[0].name}}" is {{unhealthyPools[0].status}}.</div>
+            <div *ngIf="unhealthyPools && unhealthyPools.length > 1" class="subtitle">{{unhealthyPools[0]}} and {{unhealthyPools.length - 1}} other pools are not healthy.</div>
+            <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">All pools are online.</div>
             <button mat-button color="primary" (click)="setCurrentView('pools')">SHOW POOLS</button>
           </div>
   
