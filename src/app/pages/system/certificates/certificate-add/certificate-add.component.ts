@@ -246,7 +246,7 @@ export class CertificateAddComponent {
       isHidden: false,
     },
     {
-      type : 'textarea',
+      type : 'chip',
       name : 'san',
       placeholder: helptext_system_certificates.add.san.placeholder,
       tooltip: helptext_system_certificates.add.san.tooltip,
@@ -526,15 +526,6 @@ export class CertificateAddComponent {
   }
 
   beforeSubmit(data: any) {
-    if (data.create_type === 'CERTIFICATE_CREATE_INTERNAL' || 
-      data.create_type === 'CERTIFICATE_CREATE_CSR') {
-        if (data.san == undefined || data.san == '') {
-          data.san = [];
-        } else {
-          data.san = _.split(data.san, /\s/);
-        }
-    }
-
     if (data.csronsys) {
       this.CSRList.forEach((item) => {
         if (item.id === data.csrlist) {
