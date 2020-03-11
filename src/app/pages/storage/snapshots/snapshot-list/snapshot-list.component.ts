@@ -17,7 +17,7 @@ export class SnapshotListComponent {
 
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"]], {"select": ["name"], "order_by": ["name"]}];
+  protected queryCallOption = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name"], "order_by": ["name"]}];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.delete';
@@ -157,7 +157,7 @@ export class SnapshotListComponent {
   callGetFunction(entityList) {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
-        this.queryCallOption[0][1] = (["name", "!^", res.basename]);
+        this.queryCallOption[0][2] = (["name", "!^", res.basename]);
       }
       this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
         entityList.handleData(res1);
