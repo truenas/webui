@@ -69,6 +69,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
+  private _unhealthyPools: string[] = [];
+  get unhealthyPools(){
+    const sickPools = this.getUnhealthyPools();
+    return sickPools;
+  }
+
   private _selectedVdev: any;
   get selectedVdev(){
     return this._selectedVdev;
@@ -666,6 +672,18 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme.red}});
       } 
 
+  }
+
+  getUnhealthyPools(){
+    let sickPools = [];
+    const pools = this.system.pools.forEach((pool, index) => {
+      const healthy = pool.healthy;
+      const inCurrentEnclosure = index == this.selectedEnclosure.poolKeys[pool.name];
+      if(!healthy && inCurrentEnclosure){
+        sickPools.push(pool);
+      }
+    });
+    return sickPools;
   }
 
   getDiskFailures(enclosure: any = this.enclosure){
