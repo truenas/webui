@@ -87,7 +87,7 @@ export default {
  <i>Destination Dataset</i>. Select a preset schedule or choose \
  <i>Custom</i> to use the advanced scheduler.'),
 
-    readonly_placeholder: T('Destination dataset read-only'),
+    readonly_placeholder: T('Set Destination Dataset Read-only'),
     readonly_tooltip: T(''),
 
     retention_policy_placeholder: T('Destination Snapshot Lifetime'),

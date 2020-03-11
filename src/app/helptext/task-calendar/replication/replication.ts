@@ -173,7 +173,7 @@ export default {
  add the <b>Schedule</b> values to the \
  <b>Snapshot Replication Schedule</b>.'),
 
-    readonly_placeholder: T('Destination dataset read-only'),
+    readonly_placeholder: T('Set Destination Dataset Read-only'),
     readonly_tooltip: T('<b>SET</b> will set all destination datasets to readonly=on after finishing the replication <br>\
  <b>REQUIRE</b> will require all existing destination datasets to have readonly=on property <br>\
  <b>IGNORE</b> will avoid this kind of behavior'),

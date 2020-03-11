@@ -853,13 +853,13 @@ export class ReplicationFormComponent {
             (res) => {
                 for (const option of readonlyField.options) {
                     if (res === 'LEGACY') {
-                        option['disable'] = isFreenas ? (option.value === 'SET' ? false : true) : (option.value === 'IGNORE' ? false : true);
+                        option['disable'] = isFreenas ? (option.value === 'SET' ? false : true) : (option.value === 'REQUIRE' ? false : true);
                     } else {
                         option['disable'] = false;
                     }
                 }
-                if (res === 'LEGACY' && ((isFreenas && readonlyCtrl.value !== 'SET') || (!isFreenas && readonlyCtrl.value !== 'IGNORE'))) {
-                   readonlyCtrl.setValue(isFreenas ? 'SET' : 'IGNORE');
+                if (res === 'LEGACY' && ((isFreenas && readonlyCtrl.value !== 'SET') || (!isFreenas && readonlyCtrl.value !== 'REQUIRE'))) {
+                   readonlyCtrl.setValue(isFreenas ? 'SET' : 'REQUIRE');
                 }
             }
         );
