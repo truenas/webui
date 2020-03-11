@@ -71,7 +71,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
   }
 
   ngAfterViewInit(): void {
-    this.ws.call("pool.dataset.query", {}).subscribe((res) => {
+    this.ws.call("pool.dataset.query", [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {}]).subscribe((res) => {
       const rows = new EntityUtils().flattenData(res);
 
       rows.forEach((dataItem) => {
