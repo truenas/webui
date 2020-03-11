@@ -105,6 +105,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }).subscribe((evt:CoreEvent)=>{
       this.updateSidenav(evt.data);
     });
+
+    core.register({
+      observerClass:this, 
+      eventName:"SidenavStatus", 
+    }).subscribe((evt:CoreEvent)=>{
+      this.isSidenavOpen = evt.data.isOpen;
+      this.sidenavMode = evt.data.mode;
+    });
   }
 
   ngOnInit() {
@@ -153,10 +161,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   getSidenavWidth(): string{
     let iconified =  domHelper.hasClass(document.body, 'collapsed-menu')
-    if(iconified){
+    if(this.isSidenavOpen && iconified && this.sidenavMode == 'side'){
       return '48px';
-    } else {
+    } else if(this.isSidenavOpen && !iconified && this.sidenavMode == 'side') {
       return '240px';
+    } else {
+      return '0px';
     }
   }
 
