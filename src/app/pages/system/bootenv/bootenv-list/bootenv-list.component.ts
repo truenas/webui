@@ -66,8 +66,8 @@ export class BootEnvironmentListComponent {
   };
 
   preInit() {
-    this._rest.get('system/advanced/',{}).subscribe(res=>{
-      this.scrub_interval = res.data.adv_boot_scrub;
+    this.ws.call('system.advanced.config',{}).subscribe(res=>{
+      this.scrub_interval = res.boot_scrub;
       this.updateBootState();
     });
   }
@@ -304,8 +304,8 @@ export class BootEnvironmentListComponent {
     return [{
         label: T("Stats/Settings"),
         onClick: () => {
-          this._rest.get('system/advanced/',{}).subscribe(res=>{
-            this.scrub_interval = res.data.adv_boot_scrub;
+          this.ws.call('system.advanced.config',{}).subscribe(res=>{
+            this.scrub_interval = res.boot_scrub;
             let localWS = this.ws,
             localDialog = this.dialog;
             let statusConfigFieldConf: FieldConfig[] = [

@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 import { DialogService } from '../../../../services/';
 import { EntityUtils } from '../utils';
 

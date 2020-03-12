@@ -1,5 +1,5 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import * as _ from 'lodash';
@@ -72,7 +72,6 @@ preInit(entityForm: any) {
     const payload = {};
     payload['expand'] = entityForm.expand;
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Attach Device" }, disableClose: true });
-    this.dialogRef.componentInstance.progressNumberType = "nopercent";
     this.dialogRef.componentInstance.setDescription("Attaching Device...");
     this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, payload]);
     this.dialogRef.componentInstance.submit();

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
@@ -62,7 +62,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public loaderOpen = false;
 
   public submitTitle = T("Create");
-  protected extendedSubmitTitle = T("Extend");
+  protected extendedSubmitTitle = T("Add Vdevs");
 
   protected current_layout: any;
   protected existing_pool: any;
@@ -110,6 +110,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public startingHeight: any;
   public expandedRows: any;
   public swapondrive = 2;
+
+  public has_savable_errors = false;
+  public force = false;
 
   constructor(
     private ws: WebSocketService,
@@ -382,6 +385,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.vdevtypeError = null;
     this.vdevdisksError = false;
     this.vdevdisksSizeError = false;
+    this.has_savable_errors = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
@@ -409,7 +413,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         size_estimate += vdev.rawSize;
         if (data_vdev_disknum > 0) {
-          if( data_vdev_disknum !== this.first_data_vdev_disknum) {
+          if( data_vdev_disknum !== this.first_data_vdev_disknum && this.first_data_vdev_type !== 'stripe') {
             this.getDiskNumErrorMsg(data_vdev_disknum);
           }
           if( data_vdev_type !== this.first_data_vdev_type) {
@@ -427,6 +431,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (vdev.vdev_disks_size_error) {
         this.vdevdisksSizeError = true;
+        this.has_savable_errors = true;
       }
 
     });
@@ -475,7 +480,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.vdevdisksError) {
       return false;
     }
-    if (this.vdevdisksSizeError) {
+    if (this.has_savable_errors && !this.force) {
       return false;
     }
     return true;
@@ -499,11 +504,23 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  forceCheckboxChecked() {
+    if (!this.force) {
+      let warnings = helptext.force_warning;
+      if (this.vdevdisksSizeError) {
+        warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+      }
+      this.dialog.confirm(helptext.force_title, warnings).subscribe(res => {
+        this.force = res;
+      }); 
+    }
+  }
+
   doSubmit() {
     let confirmButton = T('Create Pool');
     let diskWarning = this.diskAddWarning;
     if (!this.isNew) {
-      confirmButton = T('Extend Pool');
+      confirmButton = T('Add Vdevs');
       diskWarning = this.diskExtendWarning;
     }
 

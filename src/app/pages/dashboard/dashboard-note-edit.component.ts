@@ -1,7 +1,6 @@
 import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 import { FieldConfig } from '../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../common/entity/entity-form/models/fieldset.interface';
@@ -56,7 +55,6 @@ export class DashboardNoteEditComponent implements OnInit {
     protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected loader: AppLoaderService,
-    public snackBar: MatSnackBar,
     protected entityFormService: EntityFormService,
   ) {}
 
@@ -128,7 +126,6 @@ export class DashboardNoteEditComponent implements OnInit {
       .subscribe(
         (res) => {
           this.loader.close();
-          this.snackBar.open("All settings are saved.", 'close', { duration: 5000 })
           this.success = true;
           this.onSuccess(attribute_key);
         },

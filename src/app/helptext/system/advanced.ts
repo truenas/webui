@@ -100,5 +100,5 @@ export const helptext_system_advanced = {
   swapondrive_max_warning: T("Maximum swap size is 99 GiB"),
 
   debug_download_failed_title: T("Error Downloading File"),
-  debug_download_failed_message: T("Debug could not be downloaded."),  
+  debug_download_failed_message: T("Debug could not be downloaded.")
 };

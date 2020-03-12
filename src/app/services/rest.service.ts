@@ -8,14 +8,16 @@ import 'rxjs/Rx';
 
 
 import { Injectable } from '@angular/core';
-import {
+/* import {
   Headers,
   Http,
   Request,
   RequestMethod,
   RequestOptions,
   Response
-} from '@angular/http';
+} from '@angular/http'; */
+
+import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
@@ -30,13 +32,13 @@ export class RestService {
   private baseUrl = "/api/v1.0/";
   public openapi: Observable<Object>;
 
-  constructor(private http: Http, private ws: WebSocketService) {
+  constructor(private http: HttpClient, private ws: WebSocketService) {
     const self = this;
     this.http = http;
     this.openapi = Observable.create(function (observer) {
-      self.get('swagger.json', {}).subscribe((res) => {
+/*      self.get('swagger.json', {}).subscribe((res) => {
         observer.next(res.data);
-      });
+      });*/
     });
   }
 
@@ -71,7 +73,7 @@ export class RestService {
     });
   }
 
-  request(method: RequestMethod, path: string, options: Object, useBaseUrl?: boolean) {
+  request(method: HttpClient, path: string, options: Object, useBaseUrl?: boolean) {
     const headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': 'Token ' + this.ws.token
@@ -88,9 +90,9 @@ export class RestService {
     const requestOptions: Object = Object.assign(
       { method: method, url: requestUrl, headers: headers },
       options);
-    return this.http.request(new Request(new RequestOptions(requestOptions))).pipe(
+    return /*this.http.request(new Request(new RequestOptions(requestOptions))).pipe(
       map(this.handleResponse),
-      catchError(this.handleError),);
+      catchError(this.handleError),); */
   }
 
   buildOptions(options) {
@@ -110,18 +112,18 @@ export class RestService {
   }
 
   get(path: string, options: Object, useBaseUrl?: boolean) {
-    return this.request(RequestMethod.Get, path, this.buildOptions(options), useBaseUrl);
+    return /* this.request(RequestMethod.Get, path, this.buildOptions(options), useBaseUrl); */
   }
 
   post(path: string, options: Object, useBaseUrl?: boolean) {
-    return this.request(RequestMethod.Post, path, options, useBaseUrl);
+    return /* this.request(RequestMethod.Post, path, options, useBaseUrl); */
   }
 
   put(path: string, options: Object, useBaseUrl?: boolean) {
-    return this.request(RequestMethod.Put, path, options, useBaseUrl);
+    return /* this.request(RequestMethod.Put, path, options, useBaseUrl); */
   }
 
   delete(path: string, options: Object, useBaseUrl?: boolean) {
-    return this.request(RequestMethod.Delete, path, options, useBaseUrl);
+    return /* this.request(RequestMethod.Delete, path, options, useBaseUrl); */
   }
 }

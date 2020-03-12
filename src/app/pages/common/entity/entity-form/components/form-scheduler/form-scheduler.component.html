@@ -4,6 +4,7 @@
     <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
       <mat-option *ngFor="let preset of presets" [value]="preset.value">
         {{ preset.label }} <em class="crontab">({{preset.value}})</em>
+        <span class="text-small preset-description" *ngIf="preset.description"> {{preset.description}}</span>
       </mat-option>
       <mat-option #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="togglePopup()" [value]="crontab">
         Custom <em class="crontab">({{crontab}})</em>

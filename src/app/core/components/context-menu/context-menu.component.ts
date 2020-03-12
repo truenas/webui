@@ -27,7 +27,7 @@
  */
 
 import { Component, HostBinding, Input } from "@angular/core";
-import { MatMenuTrigger } from "@angular/material";
+import { MatMenuTrigger } from "@angular/material/menu";
 
 @Component({
   selector: "app-context-menu",
