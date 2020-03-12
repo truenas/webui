@@ -482,7 +482,7 @@ export class SMBFormComponent {
       for (const item in this.presets[res].params) {
         this.presetFields.push(item);
         const ctrl = entityForm.formGroup.controls[item];
-        if (ctrl) {
+        if (ctrl && item !== 'auxsmbconf') {
           ctrl.setValue(this.presets[res].params[item]);
           ctrl.disable();
         }

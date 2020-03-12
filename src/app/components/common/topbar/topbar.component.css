@@ -58,3 +58,13 @@
   background-color: var(--topbar) !important;
   color: var(--topbar-txt) !important;
 }
+
+.ix-logo {
+  width: 175px;
+  height: 50px;
+  top: 5px;
+  right: -10px;
+  position: relative;
+  cursor: pointer;
+  fill: var(--topbar-txt) !important;
+}
