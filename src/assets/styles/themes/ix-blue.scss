@@ -1737,4 +1737,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+  app-dataset-quotas-userlist #entity-table-component {
+    width: 960px;
+    margin: 20px auto;
+  }
+
  } // end of ix theme
