@@ -225,7 +225,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         value: 1500
       },
       {
-        type : 'input',
+        type : 'chip',
         name : 'options',
         placeholder : helptext.int_options_placeholder,
         tooltip : helptext.int_options_tooltip,
