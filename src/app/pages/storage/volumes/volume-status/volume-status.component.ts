@@ -12,6 +12,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import { MatDialog } from '@angular/material/dialog';
 import { Validators } from '@angular/forms';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+import { LocaleService } from 'app/services/locale.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
@@ -133,7 +134,8 @@ export class VolumeStatusComponent implements OnInit {
     protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
-    protected matDialog: MatDialog) {}
+    protected matDialog: MatDialog,
+    protected localeService: LocaleService) {}
 
   getZfsPoolScan(poolName) {
     this.ws.subscribe('zfs.pool.scan').subscribe(
@@ -545,7 +547,7 @@ export class VolumeStatusComponent implements OnInit {
 
   getReadableDate(data: any) {
     if (data != null) {
-      return new Date(data.$date);
+      return this.localeService.formatDateTime(new Date(data.$date));
     }
     return;
   }
