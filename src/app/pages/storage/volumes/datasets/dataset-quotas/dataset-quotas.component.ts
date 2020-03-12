@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService, StorageService, WebSocketService, AppLoaderService } from '../../../../../services/';
+import { StorageService, WebSocketService, AppLoaderService } from '../../../../../services/';
 import  helptext  from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 
 @Component({
@@ -17,11 +16,12 @@ export class DatasetQuotasComponent {
   selectedUsers = [];
   selectedUserNames = [];
 
+  db: string;
+
   public isEntity = true;
   public route_success: string[] = [ 'storage', 'pools' ];
   public entityForm: any;
   public dataFields = ['user_data_quota', ];
-  // 'group_data_quota'
   public pk: string;
 
   public fieldConfig: FieldConfig[] = []
@@ -76,34 +76,7 @@ export class DatasetQuotasComponent {
           placeholder: helptext.users.obj_placeholder,
           tooltip: helptext.users.obj_tooltip,
           value: 0
-        },
-
-        // {
-        //   type: 'select',
-        //   name: 'group',
-        //   placeholder: helptext.groups.placeholder,
-        //   tooltip: helptext.groups.tooltip,
-        //   multiple: true,
-        //   options: [],
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'group_data_quota',
-        //   placeholder: helptext.groups.data_placeholder,
-        //   tooltip: helptext.groups.data_tooltip,
-        //   value: 0,
-        //   blurStatus: true,
-        //   blurEvent: this.groupBlurEvent,
-        //   parent: this,
-        //   isLoading: true
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'group_obj_quota',
-        //   placeholder: helptext.groups.obj_placeholder,
-        //   tooltip: helptext.groups.obj_tooltip,
-        //   value: 0
-        // }
+        }
       ]
     },
     {
@@ -119,12 +92,12 @@ export class DatasetQuotasComponent {
   preInit(entityForm: EntityFormComponent) {
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.pk = paramMap.pk;
+    this.db = this.pk;
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     const users = _.find(this.fieldConfig, {name: "user"});
-    // const groups = _.find(this.fieldConfig, {name: "group"});
 
     this.ws.call('user.query').subscribe(res => {
       res.map(user => {
@@ -148,29 +121,6 @@ export class DatasetQuotasComponent {
         console.log(err)
       });
     });
-
-    // this.ws.call('group.query').subscribe(res => {
-    //   res.map(group => {
-    //     groups.options.push({label: group.group, value: group.gid})
-    //   });
-
-    //   this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP']).subscribe(res => {
-    //     let names = []
-    //     const groupName = entityEdit.formGroup.controls['group'];
-    //     const groupDataQuota = entityEdit.formGroup.controls['group_data_quota'];
-    //     const groupObjQuota = entityEdit.formGroup.controls['group_obj_quota'];
-    //     res.map(group => {
-    //       names.push(group.id);
-    //       groupDataQuota.setValue(this.storageService.convertBytestoHumanReadable(group.quota, 0));
-    //       groupObjQuota.setValue(group.obj_quota);
-    //     })
-    //     groupName.setValue(names);
-    //     _.find(this.fieldConfig, {name: 'group_data_quota'}).isLoading = false;
-    //   }, 
-    //   err => {
-    //     console.log(err)
-    //   });
-    // });
 
     this.dataFields.forEach(field => 
       entityEdit.formGroup.controls[field].valueChanges.subscribe((value) => {

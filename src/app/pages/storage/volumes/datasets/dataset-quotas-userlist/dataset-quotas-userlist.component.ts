@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { WebSocketService, StorageService } from '../../../../../services/';
 
 @Component({
   selector: 'app-dataset-quotas-userlist',
@@ -6,18 +7,11 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./dataset-quotas-userlist.component.css']
 })
 export class DatasetQuotasUserlistComponent implements OnInit {
-
+  @Input() db;
   @Output() selectedUsers = new EventEmitter<any>();
 
-  public title = "Users For Quota";
-  // protected route_add: string[] = ['account', 'users', 'add'];
-  // protected route_add_tooltip = "Add User";
-  // protected route_edit: string[] = ['account', 'users', 'edit'];
-  // protected route_delete: string[] = ['account', 'users', 'delete'];
+  public title = "Dataset Users";
   protected entityList: any;
-  protected loaderOpen = false;
-  // protected usr_lst = [];
-  // protected grp_lst = [];
   protected hasDetails = false;
   protected noActions = true;
   protected queryCall = 'user.query';
@@ -31,18 +25,9 @@ export class DatasetQuotasUserlistComponent implements OnInit {
 
   public columns: Array < any > = [
     { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
-    { name: 'UID', prop: 'uid', hidden: false, maxWidth: 100 },
-    // { name: 'GID', prop: 'gid', hidden: true, maxWidth: 100 },
-    // { name: 'Home directory', prop: 'home', hidden: true  },
-    // { name: 'Shell', prop: 'shell', hidden: true, minWidth: 150  },
-    { name: 'Builtin', prop: 'builtin', hidden: false  },
-    // { name: 'Full Name', prop: 'full_name', hidden: false, minWidth: 250 },
-    // { name: 'Email', prop: 'email', hidden: true, maxWidth: 250 },
-    // { name: 'Password Disabled', prop: 'password_disabled', hidden: true, minWidth: 200 },
-    // { name: 'Lock User', prop: 'locked', hidden: true },
-    // { name: 'Permit Sudo', prop: 'sudo', hidden: true  },
-    // { name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170 },
-    // { name : 'Samba Authentication', prop: 'smb', hidden: true }
+    { name: 'UID', prop: 'uid', hidden: false },
+    { name: 'Quota', prop: 'quota', hidden: false },
+    { name: '% Used', prop: 'used', hidden: false  },
   ];
   public rowIdentifier = 'username';
   public config: any = {
@@ -66,9 +51,22 @@ export class DatasetQuotasUserlistComponent implements OnInit {
       this.selectedUsers.emit(selected);
     }
   }];
-  constructor() { }
+  constructor(protected ws: WebSocketService, protected storageService: StorageService) { }
 
-  ngOnInit(): void {
+  resourceTransformIncomingRestData(data) {
+    this.ws.call('pool.dataset.get_quota', [this.db, 'USER']).subscribe(res => {
+      data.map(item => {
+        res.map(i => {
+          if(item.username === i.name) {
+            item.quota = this.storageService.convertBytestoHumanReadable(i.quota, 0);
+            item.used = i.used_percent;
+          }
+        })
+      })
+    })
+    return data;
   }
+
+  ngOnInit(): void {}
 
 }

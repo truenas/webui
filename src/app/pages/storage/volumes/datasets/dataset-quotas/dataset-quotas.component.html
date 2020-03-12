@@ -1,2 +1,4 @@
 <entity-form [title]="title" [conf]="this"></entity-form>
-<app-dataset-quotas-userlist (selectedUsers)="listUsers($event)" [style.width.px]="960"></app-dataset-quotas-userlist>
+<app-dataset-quotas-userlist (selectedUsers)="listUsers($event)" [style.width.px]="960"
+    [db]='db'
+></app-dataset-quotas-userlist>
