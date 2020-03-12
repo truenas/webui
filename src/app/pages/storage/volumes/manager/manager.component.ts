@@ -60,6 +60,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public poolError = null;
   public isFooterConsoleOpen: boolean;
   public loaderOpen = false;
+  public help = helptext;
 
   public submitTitle = T("Create");
   protected extendedSubmitTitle = T("Add Vdevs");

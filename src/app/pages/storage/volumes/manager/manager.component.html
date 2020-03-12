@@ -31,10 +31,14 @@
             <span>{{"Add Vdev" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
             </button>
             <mat-menu #menu="matMenu" multiple overlapTrigger="false">
-              <button mat-menu-item><span><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>{{"Data" | translate}}</span></button>
-              <button mat-menu-item><span><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clock-fast"></mat-icon>{{"Cache" | translate}}</span></button>
-              <button mat-menu-item><span><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clipboard-outline"></mat-icon>{{"Log" | translate}}</span></button>
-              <button mat-menu-item><span><mat-icon>local_hospital</mat-icon>{{"Hot Spare" | translate}}</span></button>
+              <button id="pool-manager__add-data-button" (click)="addVdev('data')" mat-menu-item><span>
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
+                  {{help.data_vdev_title | translate}}
+                  {{help.data_vdev_description | translate}}
+              </span></button>
+              <button id="pool-manager__add-cache-button" [disabled]="vdevs.cache.length > 0" (click)="addVdev('cache')" mat-menu-item><span><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clock-fast"></mat-icon>{{"Cache" | translate}}</span></button>
+              <button id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" (click)="addVdev('log')" mat-menu-item><span><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clipboard-outline"></mat-icon>{{"Log" | translate}}</span></button>
+              <button id="pool-manager__add-spare-button" [disabled]="vdevs.spare.length > 0" (click)="addVdev('spare')" mat-menu-item><span><mat-icon>local_hospital</mat-icon>{{"Hot Spare" | translate}}</span></button>
               <button mat-menu-item><span><mat-icon>favorite_border</mat-icon>{{"Metadata" | translate}}</span></button>
             </mat-menu>
           </div>
@@ -180,10 +184,6 @@
       <div class="buttons" id="pool-manager__button-group">
         <button id="pool-manager__create-button" mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
         <button id="pool-manager__cancel-button" mat-button class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
-        <button id="pool-manager__add-data-button" mat-button class="btn btn-accent mat-basic" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
-        <button id="pool-manager__add-cache-button" [disabled]="vdevs.cache.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
-        <button id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
-        <button id="pool-manager__add-spare-button" [disabled]="vdevs.spare.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
       </div>
     </div>
   </div>
