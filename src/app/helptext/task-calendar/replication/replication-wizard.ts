@@ -87,6 +87,10 @@ export default {
  <i>Destination Dataset</i>. Select a preset schedule or choose \
  <i>Custom</i> to use the advanced scheduler.'),
 
+    readonly_placeholder: T('Make Destination Dataset Read-only?'),
+    readonly_tooltip: T('Setting this option changes the destination dataset to be read-only.\
+ To continue using the default or existing dataset read permissions, leave this option unset.'),
+
     retention_policy_placeholder: T('Destination Snapshot Lifetime'),
     retention_policy_tooltip: T('When replicated snapshots are deleted \
  from the destination system: <br> \
