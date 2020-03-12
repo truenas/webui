@@ -26,8 +26,11 @@ export class DatasetQuotasUserlistComponent implements OnInit {
   public columns: Array < any > = [
     { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
     { name: 'UID', prop: 'uid', hidden: false },
-    { name: 'Quota', prop: 'quota', hidden: false },
-    { name: '% Used', prop: 'used', hidden: false  },
+    { name: 'Data Quota', prop: 'quota', hidden: false },
+    { name: 'DQ % Used', prop: 'used_percent', hidden: false  },
+    { name: 'Object Quota', prop: 'obj_quota', hidden: false },
+    { name: 'OQ % Used', prop: 'obj_used_percent', hidden: false  },
+
   ];
   public rowIdentifier = 'username';
   public config: any = {
@@ -60,6 +63,8 @@ export class DatasetQuotasUserlistComponent implements OnInit {
           if(item.username === i.name) {
             item.quota = this.storageService.convertBytestoHumanReadable(i.quota, 0);
             item.used = i.used_percent;
+            item.obj_quota = i.obj_quota;
+            item.obj_used_percent = i.obj_used_percent;
           }
         })
       })

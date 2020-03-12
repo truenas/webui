@@ -103,23 +103,26 @@ export class StorageService {
 
     let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
     for (let i of tempArr) {
-      if (i.slice(-2) === ' B') {
-        bytes.push(i);
-      } else {
-        switch (i.slice(-3)) {
-          case 'KiB':
-            kbytes.push(i);
-            break;
-          case 'MiB':
-            mbytes.push(i);
-            break;
-          case 'GiB':
-            gbytes.push(i);
-            break;
-          case 'TiB':
-            tbytes.push(i);
+      if (i) {
+        if (i.slice(-2) === ' B') {
+          bytes.push(i);
+        } else {
+          switch (i.slice(-3)) {
+            case 'KiB':
+              kbytes.push(i);
+              break;
+            case 'MiB':
+              mbytes.push(i);
+              break;
+            case 'GiB':
+              gbytes.push(i);
+              break;
+            case 'TiB':
+              tbytes.push(i);
+          }
         }
       }
+
     }
 
     // Sort each array independently, then put them back together

@@ -155,7 +155,10 @@ export class DatasetQuotasComponent {
   }
 
   customSubmit(data) {
-    console.log(data)
+    data.user = [];
+    this.selectedUsers.map(user => {
+      data.user.push(user.id)
+    })
     let payload = [];
     if (data.user) {
       data.user.forEach((user) => {
@@ -171,40 +174,19 @@ export class DatasetQuotasComponent {
         })
       });
     }
-    if (data.group) {
-      data.group.forEach((group) => {
-        payload.push({
-          quota_type: 'GROUP',
-          id: group.toString(),
-          quota_value: this.storageService.convertHumanStringToNum(data.group_data_quota)
-        },
-        {
-          quota_type: 'GROUPOBJ',
-          id: group.toString(),
-          quota_value: data.group_obj_quota
-        })
-      })
-    }
-    // console.log(payload)
-    // this.loader.open();
-    // this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(res => {
-    //   this.loader.close();
-    //   this.router.navigate(new Array('/').concat(this.route_success));
-    // })
+    this.loader.open();
+    this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(res => {
+      this.loader.close();
+      this.router.navigate(new Array('/').concat(this.route_success));
+    })
   }
 
   listUsers(users) {
-    console.log(users);
     users.map(user => {
       if (!this.selectedUserNames.includes(user.username)) {
       this.selectedUserNames.push(user.username);
-      this.selectedUsers.push({username:user.username, uid: user.uid})
+      this.selectedUsers.push({username:user.username, id: user.uid})
       }
     })
-    console.log(this.selectedUsers)
-    this.entityForm.formGroup.controls['selected_users'].setValue(this.selectedUserNames.join(' '))
-    
-
-    
   }
 }
