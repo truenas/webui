@@ -184,8 +184,11 @@ from the source dataset.'),
  add the <b>Schedule</b> values to the \
  <b>Snapshot Replication Schedule</b>.'),
 
-    readonly_placeholder: T('Destination dataset read-only'),
-    readonly_tooltip: T(''),
+    readonly_placeholder: T('Destination Dataset Read-only Policy'),
+    readonly_tooltip: T('<b>SET</b> will changes all destination datasets to <code>readonly=on</code>\
+ after finishing the replication. <br><b>REQUIRE</b> stops replication unless all existing destination\
+ datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the\
+ <code>readonly</code> property during replication.'),
 
     allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),
     allow_from_scratch_tooltip: T('If the destination system has \
