@@ -41,6 +41,7 @@ export class FormChipComponent implements Field, OnInit {
 
         if ((value || '').trim()) {
             this.chipLists.push(value.trim());
+            this.group.controls[this.config.name].setValue(this.chipLists);
         }
 
         if (input) {
@@ -53,6 +54,7 @@ export class FormChipComponent implements Field, OnInit {
 
         if (index >= 0) {
             this.chipLists.splice(index, 1);
+            this.group.controls[this.config.name].setValue(this.chipLists);
         }
     }
 }
