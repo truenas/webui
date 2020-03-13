@@ -5,9 +5,7 @@ import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
-import { EntityFormService } from '../../services/entity-form.service';
 import { Field } from '../../models/field.interface';
-import globalHelptext from '../../../../../../helptext/global-helptext';
 
 @Component({
     selector: 'form-chip',
@@ -25,13 +23,9 @@ export class FormChipComponent implements Field, OnInit {
     addOnBlur = true;
     readonly separatorKeysCodes: number[] = [ENTER];
 
-    constructor(
-        public translate: TranslateService,
-        private formService: EntityFormService) {
-    }
+    constructor(public translate: TranslateService) { }
 
     ngOnInit() {
-        console.log(this.config, this.group);
         this.chipLists = this.group.controls[this.config.name].value || [];
     }
 
