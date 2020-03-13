@@ -13,7 +13,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from '../../../../../app/services/encryption.service';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
@@ -27,6 +27,8 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
 
   saveSubmitText = T("Change Passphrase");
 
+  queryCall = 'pool.query';
+  queryKey = 'id';
   route_return: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
@@ -120,7 +122,6 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       protected dialogService: DialogService,
       protected loader: AppLoaderService,
       public mdDialog: MatDialog,
-      public snackBar: MatSnackBar,
       protected encryptionService: EncryptionService
   ) {
 

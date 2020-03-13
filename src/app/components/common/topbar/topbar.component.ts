@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
@@ -38,13 +38,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   interval: any;
 
-  replicationStatusSub: Subscription;
-  continuousStreaming: Subscription
-  showReplication = false;
+  continuousStreaming: Subscription;
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  replicationDetails;
   resilveringDetails;
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
@@ -62,7 +59,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   is_ha = false;
   upgradeWaitingToFinish = false;
   pendingUpgradeChecked = false;
-  sysName: string = 'FreeNAS';
+  sysName = 'TrueNAS CORE';
   hostname: string;
   public updateIsRunning = false;
   public updateNotificationSent = false;
@@ -81,7 +78,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {
+    protected loader: AppLoaderService) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
@@ -89,14 +86,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
 
   ngOnInit() {
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.checkEULA();
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
         this.getHAStatus();
       });
-      this.sysName = 'TrueNAS';
+      this.sysName = 'TrueNAS ENTERPRISE';
     } else {
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
@@ -143,21 +140,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     });
 
-    this.replicationStatusSub = this.ws
-      .sub("replication.query")
-      .subscribe(repStatus => {
-        repStatus.data.forEach(x => {
-          if (
-            typeof x.repl_status === "string" &&
-            x.repl_status.indexOf("Sending") > -1 &&
-            x.repl_enabled
-          ) {
-            this.showReplication = true;
-            this.replicationDetails = x;
-          }
-        });
-      });
-
     this.continuousStreaming = interval(10000).subscribe(x => {
       if (this.is_ha) {
         this.getHAStatus();
@@ -203,7 +185,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
 
     this.continuousStreaming.unsubscribe();
-    this.replicationStatusSub.unsubscribe();
 
     this.core.unregister({observerClass:this});
   }
@@ -219,6 +200,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   toggleSidenav() {
     this.sidenav.toggle();
+    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode }, sender:this});
   }
 
   toggleCollapse() {
@@ -228,9 +210,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
 
     // Fix for sidebar
-    if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
+    /*if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
       (<HTMLElement>document.querySelector('mat-sidenav-content')).style.marginLeft = '240px';
-    }
+    }*/
   }
 
   onShowAbout() {
@@ -346,10 +328,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           }
       });
     }
-  }
-
-  showReplicationDetails(){
-    this.dialogService.Info(T('Replication Status',), this.replicationDetails.repl_status.toString());
   }
 
   showResilveringDetails() {
@@ -526,4 +504,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       helptext.updateRunning_dialog.message,
       true, T('Close'), false, '', '', '', '', true);
   };
+
+  openIX() {
+    window.open('https://www.ixsystems.com/', '_blank')
+  }
 }

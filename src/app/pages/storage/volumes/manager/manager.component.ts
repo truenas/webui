@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
@@ -45,6 +45,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public addCall = 'pool.create';
   public editCall = 'pool.update';
   public queryCall = 'pool.query';
+  public datasetQueryCall = 'pool.dataset.query';
   public pk: any;
   public isNew = true;
   public vol_encrypt: number = 0;
@@ -61,7 +62,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public loaderOpen = false;
 
   public submitTitle = T("Create");
-  protected extendedSubmitTitle = T("Extend");
+  protected extendedSubmitTitle = T("Add Vdevs");
 
   protected current_layout: any;
   protected existing_pool: any;
@@ -109,6 +110,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public startingHeight: any;
   public expandedRows: any;
   public swapondrive = 2;
+
+  public has_savable_errors = false;
+  public force = false;
 
   constructor(
     private ws: WebSocketService,
@@ -216,7 +220,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getPoolData() {
-    this.ws.call('pool.query', [[["id", "=", this.pk]]]).subscribe((res) => {
+    this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
         if (res[0]) {
           this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();
           if (this.first_data_vdev_type === 'raidz1') {
@@ -240,21 +244,23 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             this.getDuplicableDisks();
           });
+          this.name = res[0].name;
+          this.vol_encrypt = res[0].encrypt;
+          if (this.vol_encrypt > 0) {
+            this.isEncrypted = true;
+          }
+          this.ws.call(this.datasetQueryCall, [[["id","=",res[0].name]]]).subscribe(datasets => {
+            if (datasets[0]) {
+              this.extendedAvailable = datasets[0].available.parsed;
+              this.size = (<any>window).filesize(this.extendedAvailable, {standard : "iec"});
+            }
+          })
         }
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);
       }
     );
-    this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
-      if (res && res.data) {
-        this.extendedAvailable = res.data.avail;
-        this.size = (<any>window).filesize(this.extendedAvailable, {standard : "iec"});
-      }
-    },
-    (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialog);
-    });
   }
 
   ngOnInit() {
@@ -270,19 +276,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.isNew) {
       this.submitTitle = this.extendedSubmitTitle;
       this.sizeMessage = this.extendedSizeMessage;
-      this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe(res => {
-        const pool = res[0];
-        if (pool) {
-          this.name = pool.name;
-          this.vol_encrypt = pool.encrypt;
-        }
-        if (this.vol_encrypt > 0) {
-          this.isEncrypted = true;
-        }
-      });
       this.getPoolData();
     } else {
-      this.ws.call('pool.query', []).subscribe((res) => {
+      this.ws.call(this.queryCall, []).subscribe((res) => {
         if (res) {
           this.existing_pools = res;
         }
@@ -389,6 +385,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.vdevtypeError = null;
     this.vdevdisksError = false;
     this.vdevdisksSizeError = false;
+    this.has_savable_errors = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
@@ -416,7 +413,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         size_estimate += vdev.rawSize;
         if (data_vdev_disknum > 0) {
-          if( data_vdev_disknum !== this.first_data_vdev_disknum) {
+          if( data_vdev_disknum !== this.first_data_vdev_disknum && this.first_data_vdev_type !== 'stripe') {
             this.getDiskNumErrorMsg(data_vdev_disknum);
           }
           if( data_vdev_type !== this.first_data_vdev_type) {
@@ -434,6 +431,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (vdev.vdev_disks_size_error) {
         this.vdevdisksSizeError = true;
+        this.has_savable_errors = true;
       }
 
     });
@@ -482,7 +480,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.vdevdisksError) {
       return false;
     }
-    if (this.vdevdisksSizeError) {
+    if (this.has_savable_errors && !this.force) {
       return false;
     }
     return true;
@@ -506,11 +504,23 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  forceCheckboxChecked() {
+    if (!this.force) {
+      let warnings = helptext.force_warning;
+      if (this.vdevdisksSizeError) {
+        warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+      }
+      this.dialog.confirm(helptext.force_title, warnings).subscribe(res => {
+        this.force = res;
+      }); 
+    }
+  }
+
   doSubmit() {
     let confirmButton = T('Create Pool');
     let diskWarning = this.diskAddWarning;
     if (!this.isNew) {
-      confirmButton = T('Extend Pool');
+      confirmButton = T('Add Vdevs');
       diskWarning = this.diskExtendWarning;
     }
 
@@ -518,7 +528,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       if (res) {
         this.error = null;
 
-        const layout = [];
+        const layout = {};
         this.vdevComponents.forEach((vdev) => {
           const disks = [];
           vdev.getDisks().forEach((disk) => {
@@ -526,21 +536,33 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           if (disks.length > 0) {
             let type = vdev.type.toUpperCase();
             type = type === 'RAIDZ' ? 'RAIDZ1' : type;
-            layout.push({ type, disks });
+            const group = vdev.group;
+            if (!layout[group]) {
+              layout[group] = [];
+            }
+            if (group === 'spares') {
+              layout[group] = disks;
+            } else {
+              layout[group].push({ type:type, disks:disks });
+            }
           }
         });
 
         let body = {};
         if (this.isNew) {
-          body = {name: this.name, encryption: this.isEncrypted, topology: { data: layout } };
+          body = {name: this.name, encryption: this.isEncrypted, topology: layout };
         } else {
-          body  = {name: this.name, topology: layout };
+          body = { topology: layout };
         }
 
         const dialogRef = this.mdDialog.open(EntityJobComponent, {
           data: { title: confirmButton, disableClose: true }
         });
-        dialogRef.componentInstance.setCall(this.pk ? this.editCall : this.addCall, [body]);
+        if (this.pk) {
+          dialogRef.componentInstance.setCall(this.editCall, [this.pk, body]);
+        } else {
+          dialogRef.componentInstance.setCall(this.addCall, [body]);
+        }
         dialogRef.componentInstance.success
           .pipe(
             switchMap((r: any) => {

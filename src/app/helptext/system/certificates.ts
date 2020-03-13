@@ -24,9 +24,8 @@ export const helptext_system_certificates = {
     signedby: {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
-        'Select a previously imported or created <a\
- href="--docurl--/system.html#cas"\
- target="_blank">CA</a>.'
+        'Select a previously imported or created \
+ <a href="--docurl--/system.html#cas" target="_blank">CA</a>.'
       ),
       validation: [Validators.required]
     },
@@ -233,7 +232,12 @@ export const helptext_system_certificates = {
     authenticator: {
       placeholder: T("Authenticator"),
       tooltip: T("Authenticator to validate the Domain. Choose a\
- previously configured ACME DNS authenticator.")
+ previously configured ACME DNS authenticator."),
+    },
+    job_dialog_title: T('Creating...'),
+    error_dialog: {
+      title: T('Error')
     }
+    
   }
 };

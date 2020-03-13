@@ -4,9 +4,7 @@ import globalHelptext from '../../helptext/global-helptext';
 
 export default {
 activedirectory_custactions_basic_id: 'basic_mode',
-activedirectory_custactions_basic_name: T('Basic Mode'),
 activedirectory_custactions_advanced_id: 'advanced_mode',
-activedirectory_custactions_advanced_name: T('Advanced Mode'),
 activedirectory_custactions_edit_imap_id: 'edit_idmap',
 activedirectory_custactions_edit_imap_name: T('Edit Idmap'),
 activedirectory_custactions_clearcache_id: 'ds_clearcache',
@@ -151,7 +149,7 @@ activedirectory_sasl_wrapping_tooltip : T('Choose how LDAP traffic is transmitte
  and newer can be configured to enforce signed LDAP connections.'),
 
 activedirectory_enable_name: 'enable',
-activedirectory_enable_placeholder : T('Enable (requires password)'),
+activedirectory_enable_placeholder : T('Enable (requires password or Kerberos principal)'),
 activedirectory_enable_tooltip : T('Enable the Active Directory service.\
  The first time this option is set, the Domain Account Password must be entered.'),
 

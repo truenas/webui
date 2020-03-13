@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
 import * as _ from 'lodash';
 import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
@@ -13,47 +12,60 @@ import { T } from "app/translate-marker";
 })
 export class GlobalconfigurationComponent {
 
-  protected queryCall: string = 'iscsi.global.config';
-  protected editCall: string = 'iscsi.global.update';
+  protected queryCall = 'iscsi.global.config';
+  protected editCall = 'iscsi.global.update';
 
-  public fieldConfig: FieldConfig[] = [{
-      type: 'input',
-      name: 'basename',
-      placeholder: helptext_sharing_iscsi.globalconf_placeholder_basename,
-      tooltip: helptext_sharing_iscsi.globalconf_tooltip_basename,
-      required: true,
-      validation: helptext_sharing_iscsi.globalconf_validators_basename
-    },
+  public fieldSets: FieldSet[] = [
     {
-      type: 'textarea',
-      name: 'isns_servers',
-      placeholder: helptext_sharing_iscsi.globalconf_placeholder_isns_servers,
-      tooltip: helptext_sharing_iscsi.globalconf_tooltip_isns_servers
-    },
-    {
-      type: 'input',
-      name: 'pool_avail_threshold',
-      placeholder: helptext_sharing_iscsi.globalconf_placeholder_pool_avail_threshold,
-      tooltip: helptext_sharing_iscsi.globalconf_tooltip_pool_avail_threshold,
-      inputType: 'number',
-    },
-    {
-      type: 'checkbox',
-      name: 'alua',
-      placeholder: helptext_sharing_iscsi.globalconf_placeholder_alua,
-      tooltip: helptext_sharing_iscsi.globalconf_tooltip_alua,
-      isHidden: true,
-      disabled: true,
+      name: helptext_sharing_iscsi.fieldset_globalconf,
+      label: true,
+      class: 'globalconf',
+      width: '100%',
+      config: [
+        {
+          type: 'input',
+          name: 'basename',
+          placeholder: helptext_sharing_iscsi.globalconf_placeholder_basename,
+          tooltip: helptext_sharing_iscsi.globalconf_tooltip_basename,
+          required: true,
+          validation: helptext_sharing_iscsi.globalconf_validators_basename
+        },
+        {
+          type: 'textarea',
+          name: 'isns_servers',
+          placeholder: helptext_sharing_iscsi.globalconf_placeholder_isns_servers,
+          tooltip: helptext_sharing_iscsi.globalconf_tooltip_isns_servers
+        },
+        {
+          type: 'input',
+          name: 'pool_avail_threshold',
+          placeholder: helptext_sharing_iscsi.globalconf_placeholder_pool_avail_threshold,
+          tooltip: helptext_sharing_iscsi.globalconf_tooltip_pool_avail_threshold,
+          inputType: 'number',
+        },
+        {
+          type: 'checkbox',
+          name: 'alua',
+          placeholder: helptext_sharing_iscsi.globalconf_placeholder_alua,
+          tooltip: helptext_sharing_iscsi.globalconf_tooltip_alua,
+          isHidden: true,
+          disabled: true,
+        }
+      ]
     }
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected dialogService: DialogService,
-              protected ws: WebSocketService, protected loader: AppLoaderService) {}
+  public fieldConfig;
+
+  constructor(
+    protected dialogService: DialogService,
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService) {}
 
   afterInit(entityForm) {
     entityForm.submitFunction = entityForm.editCall;
-    this.ws.call('system.is_freenas').subscribe((res)=>{
-      if (!res) {
+    this.ws.call('system.product_type').subscribe((res)=>{
+      if (res === 'ENTERPRISE') {
         entityForm.setDisabled('alua', false, false);
       }
     });

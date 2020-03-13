@@ -1,7 +1,7 @@
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { WebSocketService } from '../../../services/ws.service';
 import { StorageService } from '../../../services/storage.service';
@@ -21,20 +21,21 @@ export class ErrorDialog {
   public logs;
 
   constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
-    private ws: WebSocketService, public http: Http, public storage: StorageService) {}
+    private ws: WebSocketService, public http: HttpClient, public storage: StorageService) {}
 
   public toggleOpen () {
-    const messageWrapper = document.getElementById('err-message-wrapper');
-    const dialog = document.getElementsByClassName('mat-dialog-container');
-    const title = document.getElementById('err-title');
-    const content = document.getElementById('err-md-content');
-    const btPanel = document.getElementById('err-bt-panel');
-    const txtarea = document.getElementById('err-bt-text');
+    const dialogs = document.getElementsByClassName('mat-dialog-container');
+    const dialog = dialogs[dialogs.length -1];
+    const messageWrapper = (<HTMLElement>dialog.querySelector('#err-message-wrapper'));
+    const title =   (<HTMLElement>dialog.querySelector('#err-title'));
+    const content = (<HTMLElement>dialog.querySelector('#err-md-content'));
+    const btPanel = (<HTMLElement>dialog.querySelector('#err-bt-panel'));
+    const txtarea = (<HTMLElement>dialog.querySelector('#err-bt-text'));
     
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
-      dialog[dialog.length-1].setAttribute('style','width : 800px; height: 600px');
-      let errMsgHeight = (document.getElementById('err-message-wrapper').offsetHeight)-21;
+      dialog.setAttribute('style','width : 800px; height: 600px');
+      let errMsgHeight = messageWrapper.offsetHeight-21;
       if (errMsgHeight > 63) {
         errMsgHeight = 63;
       };
@@ -48,7 +49,7 @@ export class ErrorDialog {
         txtarea.style.height = tracebackHeight;
       }, 215);
     } else {
-      dialog[dialog.length-1].removeAttribute('style');
+      dialog.removeAttribute('style');
       title.removeAttribute('style');
       content.removeAttribute('style');
       btPanel.removeAttribute('style');

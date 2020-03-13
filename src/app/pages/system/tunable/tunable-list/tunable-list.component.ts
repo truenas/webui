@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'system-tunables-list',
@@ -23,19 +24,28 @@ export class TunableListComponent {
 
   public busy: Subscription;
   public sub: Subscription;
+  protected entityList: any;
 
-  constructor(protected router: Router, 
-    protected aroute: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected _injector: Injector, 
-    protected _appRef: ApplicationRef) {}
+  public wsMultiDelete = 'core.bulk';
+  public multiActions: Array < any > = [
+    {
+      id: "mdelete",
+      label: T("Delete"),
+      icon: "delete",
+      enable: true,
+      ttpos: "above",
+      onClick: (selected) => {
+        this.entityList.doMultiDelete(selected);
+      }
+    }
+  ];
 
   public columns: Array < any > = [
-    { name: 'Variable', prop: 'var', always_display: true },
-    { name: 'Value', prop: 'value' },
-    { name: 'Type', prop: 'type' },
-    { name: 'Description', prop: 'comment' },
-    { name: 'Enabled', prop: 'enabled' },
+    { name: T('Variable'), prop: 'var', always_display: true },
+    { name: T('Value'), prop: 'value' },
+    { name: T('Type'), prop: 'type' },
+    { name: T('Description'), prop: 'comment' },
+    { name: T('Enabled'), prop: 'enabled' },
   ];
   public rowIdentifier = 'var';
 
@@ -43,12 +53,30 @@ export class TunableListComponent {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Tunable',
+      title: T('Tunable'),
       key_props: ['var']
     },
+    multiSelect: true
   }
 
+  constructor(protected router: Router, 
+    protected aroute: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector, 
+    protected _appRef: ApplicationRef) {}
+
   preInit(entityList: any) {
+    this.entityList = entityList;
     this.sub = this.aroute.params.subscribe(params => {});
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = [this.wsDelete];
+    let selectedId = [];
+    for (const i in selected) {
+     selectedId.push([selected[i].id]);
+    }
+    params.push(selectedId);
+    return params;
   }
 }

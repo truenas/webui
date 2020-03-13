@@ -15,7 +15,6 @@ import {
 } from '@angular/core';
 //import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import * as _ from 'lodash';
-import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
@@ -71,7 +70,6 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
 
   constructor(
     protected loader: AppLoaderService,
-    public snackBar: MatSnackBar,
     public translate: TranslateService) {
     this.controller = new Subject();
     //this.conf = this.defaultConfig;

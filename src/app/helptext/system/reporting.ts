@@ -32,5 +32,12 @@ dialog: {
     message: T('Report history is cleared when <i>CPU reporting</i>, <i>Graph Age</i>, \
  or <i>Graph Points</i> are changed.'),
     action: T('Continue')
-}
+},
+graphite_separateinstances_placeholder: T('Graphite Separate Instances'),
+graphite_separateinstances_tooltip:T("Enabling sends the \
+ <i>plugin instance</i> and <i>type instance</i> to Graphite as separate \
+ path components: <i>host.cpu.0.cpu.idle</i>.<br><br> Disabling sends \
+ the <i>plugin</i> and <i>plugin instance</i> as one path component and \
+ <i>type</i> and <i>type instance</i> as another component: \
+ <i>host.cpu-0.cpu-idle</i>.")
 }

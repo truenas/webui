@@ -1,6 +1,6 @@
 
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
@@ -157,8 +157,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private interval: any;
   private excuteDeletion = false;
   private needRefreshTable = false;
+  private needTableResize = true;
 
   public hasActions = true;
+  public sortKey: string;
 
   protected toDeleteRow: any;
   public hasDetails = () =>
@@ -171,7 +173,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected prefService: PreferencesService,
+    public storageService: StorageService, protected job: JobService, protected prefService: PreferencesService,
     protected matDialog: MatDialog) {
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
@@ -189,6 +191,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setTableHeight();
     this.hasActions = this.conf.noActions === true ? false : true;
 
+    this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props) ? this.conf.config.deleteMsg.key_props[0] : this.conf.columns[0].prop;
     setTimeout(async() => {
       if (this.conf.prerequisite) {
         await this.conf.prerequisite().then(
@@ -243,7 +246,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
-      if (preferredCols.length > 0) {
+      // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
+      if (preferredCols.length > 0 && this.title !== 'Snapshots') {
         preferredCols.forEach((i) => {
           // If preferred columns have been set for THIS table...
           if (i.title === this.title) {
@@ -483,7 +487,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.rows = this.generateRows(res);
-
+    this.storageService.tableSorter(this.rows, this.sortKey, 'asc')
     if (this.conf.dataHandler) {
       this.conf.dataHandler(this);
     }
@@ -500,7 +504,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
-      this.updateTableHeightAfterDetailToggle();
+      if (this.needTableResize || (!this.needTableResize && this.expandedRows > 0)) {
+        this.updateTableHeightAfterDetailToggle();
+        }
+      this.needTableResize = true;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
@@ -717,29 +724,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loader.open();
     this.loaderOpen = true;
     const data = {};
-    if (this.conf.wsDelete) {
-      this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
-        (resinner) => {
-          this.getData();
-          this.excuteDeletion = true;
-        },
-        (resinner) => {
-          new EntityUtils().handleWSError(this, resinner, this.dialogService);
-          this.loader.close();
-        }
-      )
-    } else {
-      this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-        (resinner) => {
-          this.getData();
-          this.excuteDeletion = true;
-        },
-        (resinner) => {
-          new EntityUtils().handleError(this, resinner);
-          this.loader.close();
-        }
-      );
-    }
+    this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
+      (resinner) => {
+        this.getData();
+        this.excuteDeletion = true;
+      },
+      (resinner) => {
+        new EntityUtils().handleWSError(this, resinner, this.dialogService);
+        this.loader.close();
+      }
+    )
   }
 
   doDeleteJob(item: any): Observable<{ state: 'SUCCESS' | 'FAILURE' } | false> {
@@ -773,9 +767,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loaderOpen = true;
         }),
         switchMap(() =>
-          (this.conf.wsDelete
-            ? this.ws.call(this.conf.wsDelete, [id])
-            : this.rest.delete(this.conf.resource_name + "/" + id, {})
+          (this.ws.call(this.conf.wsDelete, [id])
           ).pipe(
             take(1),
             catchError(error => {
@@ -816,11 +808,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     // This section controls page height for infinite scrolling
     if (this.currentRows.length === 0) {
       this.tableHeight = 153;
-    } else if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
-      this.tableHeight = (this.currentRows.length * this.rowHeight) + 110;
     } else {
-      this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
-    }
+      if (this.currentRows.length > 0 && this.currentRows.length < this.paginationPageSize) {
+        this.tableHeight = (this.currentRows.length * this.rowHeight) + 110;
+      } else {
+        this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
+      }
+      if (this.tableHeight < (160 + this.getRowDetailHeight())) {
+        this.tableHeight = 160 + this.getRowDetailHeight();
+      }
+    } 
 
     // Displays an accurate number for some edge cases
     if (this.paginationPageSize > this.currentRows.length) {
@@ -834,7 +831,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paginationPageIndex = 0;
     let sort = event.sorts[0],
       rows = this.currentRows;
-    this.sorter.tableSorter(rows, sort.prop, sort.dir);
+    this.storageService.tableSorter(rows, sort.prop, sort.dir);
     this.rows = rows;
     this.setPaginationInfo();
     setTimeout(() => {
@@ -1031,14 +1028,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetTableToStartingHeight() {
-    if (!this.startingHeight) {
-      this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }
-    document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+    /*setTimeout(() => {
+      if (!this.startingHeight) {
+        this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
+      }
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
+    }, 100);*/
   }
 
   updateTableHeightAfterDetailToggle() {
-    if (!this.startingHeight) {
+    /*if (!this.startingHeight) {
       this.resetTableToStartingHeight();
     }
     setTimeout(() => {
@@ -1046,7 +1045,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 0);
+    }, 100);*/
   }
 
   getButtonClass(prop) {

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 import { DialogService, StorageService, TaskService } from '../../../../services/';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -26,6 +26,7 @@ export class SnapshotFormComponent implements OnDestroy {
   protected datasetFg: any;
   protected dataset_subscription: any;
   protected save_button_enabled = true;
+  protected entityForm;
 
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
@@ -47,35 +48,18 @@ export class SnapshotFormComponent implements OnDestroy {
     placeholder: helptext.exclude_placeholder,
     tooltip: helptext.exclude_tooltip
   }, {
-    placeholder: helptext.lifetime_value_placeholder,
     type: 'input',
-    name: 'lifetime_value',
-    inputType: 'number',
-    class: 'inline',
-    value: 2,
-    validation: [Validators.min(0)]
-  }, {
-    type: 'select',
-    name: 'lifetime_unit',
-    tooltip: helptext.lifetime_unit_tooltip,
-    options: [{
-      label: 'Hours',
-      value: 'HOUR',
-    }, {
-      label: 'Days',
-      value: 'DAY',
-    }, {
-      label: 'Weeks',
-      value: 'WEEK',
-    }, {
-      label: 'Months',
-      value: 'MONTH',
-    }, {
-      label: 'Years',
-      value: 'YEAR',
-    }],
-    value: 'WEEK',
-    class: 'inline',
+    name: 'lifetime',
+    placeholder: helptext.lifetime_placeholder,
+    tooltip: helptext.lifetime_tooltip,
+    value: "2 WEEKS",
+    required: true,
+    inputUnit: {
+      type: UnitType.duration,
+      decimal: false,
+      default: 'HOUR',
+      allowUnits: ['HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR']
+    }
   }, {
     type: 'input',
     name: 'naming_schema',
@@ -96,7 +80,7 @@ export class SnapshotFormComponent implements OnDestroy {
     placeholder: helptext.begin_placeholder,
     tooltip: helptext.begin_tooltip,
     options: [],
-    value: '09:00',
+    value: '00:00',
     required: true,
     validation: [Validators.required],
   }, {
@@ -105,7 +89,7 @@ export class SnapshotFormComponent implements OnDestroy {
     placeholder: helptext.end_placeholder,
     tooltip: helptext.end_tooltip,
     options: [],
-    value: '18:00',
+    value: '23:59',
     required: true,
     validation: [Validators.required],
   }, {
@@ -144,6 +128,7 @@ export class SnapshotFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm) {
+    this.entityForm = entityForm;
     const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
 
     this.storageService.getDatasetNameOptions().subscribe(
@@ -169,6 +154,17 @@ export class SnapshotFormComponent implements OnDestroy {
       }
     });
 
+    entityForm.formGroup.controls['snapshot_picker'].valueChanges.subscribe(value => {
+      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+        this.entityForm.setDisabled('begin', true, true);
+        this.entityForm.setDisabled('end', true, true);
+
+      } else {
+        this.entityForm.setDisabled('begin', false, false);
+        this.entityForm.setDisabled('end', false, false);
+      }
+    })
+
   }
 
   ngOnDestroy() {
@@ -193,10 +189,16 @@ export class SnapshotFormComponent implements OnDestroy {
       data.exclude = '';
     }
     this.dataset = data.dataset;
+    data['lifetime'] = data['lifetime_value'] + ' ' + data['lifetime_unit'] + (data['lifetime_value'] > 1 ? 'S' : '');
     return data;
   }
 
   beforeSubmit(value) {
+    const lifetime = value.lifetime.split(' ');
+    value['lifetime_value'] = lifetime[0];
+    value['lifetime_unit'] = _.endsWith(lifetime[1], 'S') ? lifetime[1].substring(0, lifetime[1].length -1) : lifetime[1];
+    delete value.lifetime;
+
     const spl = value.snapshot_picker.split(" ");
     delete value.snapshot_picker;
 

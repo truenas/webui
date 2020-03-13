@@ -2,9 +2,11 @@ import { ApplicationRef, Component, Injector, Input, ViewChild, ElementRef} from
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import {  DialogService, RestService, TooltipsService, WebSocketService, NetworkService, SnackbarService } from '../../../services/';
+import {  DialogService, RestService, TooltipsService, WebSocketService, 
+  NetworkService, SnackbarService } from '../../../services/';
 import { FormGroup } from '@angular/forms';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../helptext/network/ipmi/ipmi';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -12,7 +14,6 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { EntityUtils } from '../../common/entity/utils';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../translate-marker';
-
 
 @Component({
   selector : 'app-ipmi',
@@ -103,7 +104,7 @@ export class IPMIComponent {
         name : 'ipaddress',
         placeholder : helptext.ipaddress_placeholder,
         tooltip : helptext.ipaddress_tooltip,
-        validation : [ regexValidator(this.networkService.ipv4_regex) ],
+        validation : [ ipv4Validator('ipaddress') ],
         errors: helptext.ip_error,
         hasErrors: false
       },
@@ -112,7 +113,7 @@ export class IPMIComponent {
         name : 'netmask',
         placeholder : helptext.netmask_placeholder,
         tooltip : helptext.netmask_tooltip,
-        validation : [ regexValidator(this.networkService.ipv4_regex) ],
+        validation : [ ipv4Validator('netmask') ],
         errors: helptext.ip_error,
         hasErrors: false
       },
@@ -121,7 +122,7 @@ export class IPMIComponent {
         name : 'gateway',
         placeholder : helptext.gateway_placeholder,
         tooltip : helptext.gateway_tooltip,
-        validation : [ regexValidator(this.networkService.ipv4_regex) ],
+        validation : [ ipv4Validator('gateway') ],
         errors: helptext.ip_error,
         hasErrors: false
       },
@@ -169,7 +170,7 @@ export class IPMIComponent {
 
 
   preInit(entityEdit: any) {
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
         if (this.is_ha) {

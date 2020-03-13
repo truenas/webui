@@ -19,7 +19,7 @@
     <mat-spinner [diameter]="40" *ngIf="spinner" class="spinner"></mat-spinner>
   </div>
 
-  <div style="padding:64px;"> 
+  <div style="padding:64px;">
     <enclosure-disks style.padding="32px 0 0 0"  
       *ngIf="events && system && system.pools && selectedEnclosure" 
       [controller-events]="events" 
@@ -32,8 +32,10 @@
 
 <!-- Enclosure Selector -->
 <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector" [ngClass.lt-lg]="lt-lg">
-  <div *ngFor="let enclosure of system.enclosures; let i = index" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
-    <div>{{enclosure.model}} ({{i}})</div>
-  </div>
+  <ng-container *ngFor="let enclosure of system.profile; let i = index">
+    <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
+      <div>{{enclosure.model}} ({{i}})</div>
+    </div>
+  </ng-container>
 </div>
 </div>

@@ -1,10 +1,12 @@
 
 
 import {Injectable} from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms'
 import {RestService} from './rest.service'
 import {WebSocketService} from './ws.service';
+import * as isCidr from 'is-cidr';
 
-@Injectable()
+@Injectable({ providedIn: 'root'})
 export class NetworkService {
 
   public ipv4_regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})$/;
@@ -70,10 +72,11 @@ export class NetworkService {
         });
   }
 
-  authNetworkValidator(str, regex) {
-    if (str.match(regex)) {
+  authNetworkValidator(str) {
+    if (isCidr.v4(str) || isCidr.v6(str)) {
       return true;
     }
     return false;
   }
+
 }

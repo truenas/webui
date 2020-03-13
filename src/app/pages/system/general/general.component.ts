@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogService, LanguageService, RestService, StorageService, SystemGeneralService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { LocaleService } from 'app/services/locale.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../common/entity/utils';
@@ -25,7 +26,8 @@ export class GeneralComponent {
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
-  public languageKey: string;
+  public languageKey: string;  
+  public fieldConfig: FieldConfig[] = []
 
   public fieldSets: FieldSet[] = [
     {
@@ -133,6 +135,25 @@ export class GeneralComponent {
           tooltip: helptext.stg_timezone.tooltip,
           options: [{ label: "---", value: null }],
           width: '50%'
+        },
+        {
+          type: 'select',
+          name: 'date_format',
+          placeholder: helptext.date_format.placeholder,
+          tooltip: helptext.date_format.tooltip,
+          options: [],
+          width: '48%',
+          isLoading: true
+        },
+        { type: 'paragraph', name: 'spacer', width: '2%' },
+        {
+          type: 'select',
+          name: 'time_format',
+          placeholder: helptext.time_format.placeholder,
+          tooltip: helptext.time_format.tooltip,
+          options: [],
+          width: '50%',
+          isLoading: true
         }
       ]
     },
@@ -152,7 +173,7 @@ export class GeneralComponent {
           name: "usage_collection",
           placeholder: helptext.usage_collection.placeholder,
           tooltip: helptext.usage_collection.tooltip
-        }
+        },
       ]
     },
     { name: "divider", divider: true }
@@ -261,9 +282,10 @@ export class GeneralComponent {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected loader: AppLoaderService,
-    public http: Http,
+    public http: HttpClient,
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
+    public localeService: LocaleService,
     public mdDialog: MatDialog
   ) {}
 
@@ -344,6 +366,8 @@ export class GeneralComponent {
           .config.find(config => config.name === "ui_v6address").options = v6Ips;
       });
 
+
+
     this.makeLanguageList();
 
     this.sysGeneralService.kbdMapChoices().subscribe(mapChoices => {
@@ -358,10 +382,27 @@ export class GeneralComponent {
         .config.find(config => config.name === "timezone").options = tzChoices;
     });
 
+    let dateOptions = this.localeService.getDateFormatOptions();
+    this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "date_format").options = dateOptions;
+
+    let timeOptions = this.localeService.getTimeFormatOptions();
+    this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "time_format").options = timeOptions;
+   
     entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res)=> {
       res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
       this.makeLanguageList();
-    })
+    });
+
+    setTimeout(() => {
+      entityEdit.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
+      _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
+      entityEdit.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
+      _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
+    }, 2000);
 
     entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);
@@ -476,7 +517,7 @@ export class GeneralComponent {
             }, err => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
-              entityDialog.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
+              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
             });
           },
           (err) => {
@@ -528,6 +569,9 @@ export class GeneralComponent {
   }
 
   public customSubmit(body) {
+    this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
+    delete body.date_format;
+    delete body.time_format;
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();

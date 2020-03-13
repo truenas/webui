@@ -8,32 +8,32 @@ export class DocsService {
     constructor(public ws: WebSocketService) {  }
 
     docReplace(message):string {
-        for (const url in urls) {
-            const replace = new RegExp("--" + url + "--", "g");
-            message = message.replace(replace, urls[url]);
-        }
-        const running_version = window.localStorage.getItem('running_version');
-        const web_version = "?runningversion=" + running_version;
-        const version = running_version.split('-');
-        version.shift();
-        const doc_version = version.join('-');
-        if (version && version.length > 1) {
-            message = message.replace(/--version--/g, doc_version);
-        }
-        if (web_version) {
-            message = message.replace(/--webversion--/g, web_version);
-        }
-        if (running_version) {
-            message = message.replace(/--runningversion--/g, running_version);
-        }
+        if (message != undefined && typeof message === 'string') {
+            // I really hate this but for some reason # markers are getting a "\" appended to them by the translate service now 
+            message = message.replace(/\\#/g, "#");
 
-        const is_freenas = window.localStorage.getItem('is_freenas');
-        if (is_freenas === "true") {
-            message = message.replace(/--nas--/g, "freenas");
-            message = message.replace(/--NAS--/g, "FreeNAS");
-        } else {
-            message = message.replace(/--nas--/g, "truenas");
-            message = message.replace(/--NAS--/g, "TrueNAS");
+            for (const url in urls) {
+                const replace = new RegExp("--" + url + "--", "g");
+                message = message.replace(replace, urls[url]);
+            }
+            const running_version = window.localStorage.getItem('running_version');
+            const web_version = "?runningversion=" + running_version;
+            const version = running_version.split('-');
+            version.shift();
+            const doc_version = version.join('-');
+            if (version && version.length > 1) {
+                message = message.replace(/--version--/g, doc_version);
+            }
+            if (web_version) {
+                message = message.replace(/--webversion--/g, web_version);
+            }
+            if (running_version) {
+                message = message.replace(/--runningversion--/g, running_version);
+            }
+
+            const product_type = window.localStorage.getItem('product_type');
+            message = message.replace(/--nas--/g, `truenas ${product_type}`);
+            message = message.replace(/--NAS--/g, `TrueNAS ${product_type}`);
         }
 
         return message;

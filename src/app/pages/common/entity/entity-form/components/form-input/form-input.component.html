@@ -10,7 +10,7 @@
 			id="{{config.name}}_form-input-spinner"
 			*ngIf="config.isLoading">
 		</mat-spinner>
-		<div *ngIf="config.isDoubleConfirm">
+		<div *ngIf="config.maskValue">
 			<p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
 			<p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
 		</div> 
@@ -26,7 +26,10 @@
 			autocomplete="new-password"
 			ix-auto
 			ix-auto-type="input"
-			ix-auto-identifier="{{config.placeholder}}">
+			ix-auto-identifier="{{config.placeholder}}"
+			(change)="valueChange()"
+			(paste)="onPaste($event)"
+			(input)="onInput()">
 	</mat-form-field>
 	<ng-template #elseBlock>
 		<span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>

@@ -21,6 +21,9 @@ export class GroupFormComponent {
   protected isEntity: boolean = true;
   protected namesInUse = [];
   protected queryCall = 'group.query';
+  protected addCall = 'group.create';
+  protected editCall = 'group.update';
+  protected queryKey = 'id';
 
   protected fieldConfig: FieldConfig[] = [];
 
@@ -33,7 +36,7 @@ export class GroupFormComponent {
       config: [
         {
           type: 'input',
-          name: 'bsdgrp_gid',
+          name: 'gid',
           placeholder: helptext.bsdgrp_gid_placeholder,
           tooltip: helptext.bsdgrp_gid_tooltip,
           validation : helptext.bsdgrp_gid_validation,
@@ -41,7 +44,7 @@ export class GroupFormComponent {
         },
         {
           type: 'input',
-          name: 'bsdgrp_group',
+          name: 'name',
           placeholder: helptext.bsdgrp_group_placeholder,
           tooltip: helptext.bsdgrp_group_tooltip,
           validation: [
@@ -53,13 +56,20 @@ export class GroupFormComponent {
         },
         {
           type: 'checkbox',
-          name: 'bsdgrp_sudo',
+          name: 'sudo',
           placeholder: helptext.bsdgrp_sudo_placeholder,
           tooltip: helptext.bsdgrp_sudo_tooltip,
         },
         {
           type: 'checkbox',
-          name: 'allow',
+          name: 'smb',
+          placeholder: helptext.smb_placeholder,
+          tooltip: helptext.smb_tooltip,
+          value: true
+        },
+        {
+          type: 'checkbox',
+          name: 'allow_duplicate_gid',
           placeholder: helptext.allow_placeholder,
           tooltip: helptext.allow_tooltip,
           disabled: false
@@ -92,16 +102,12 @@ export class GroupFormComponent {
           this.namesInUse.push(...res.map(group => group.group));
       });
 
-      if(params.pk){
-
-        this.ws.call('group.get_group_obj', opt).subscribe(
-          (res)=>{
-            entityForm.formGroup.controls['bsdgrp_gid'].setValue(res.gr_gid);
-            entityForm.formGroup.controls['bsdgrp_group'].setValue(res.gr_name);
-        });
-
-      }
     });
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data['name'] = data['group'];
+    return data;
   }
 
   afterInit(entityForm: any) {
@@ -113,38 +119,21 @@ export class GroupFormComponent {
       });
   
       let gid = 999;
-      this.bsdgrp_gid = _.find(this.fieldSets[0].config, { name: "bsdgrp_gid" });
+      this.bsdgrp_gid = _.find(this.fieldSets[0].config, { name: "gid" });
       this.users.forEach((item, i) => {
         if (item.gid > gid) {
           gid = item.gid;
         }
       });
 
-      let call = (name: string, form: any) => {
-
-        let args = {
-          gid: form.bsdgrp_gid,
-          name: form.bsdgrp_group,
-          sudo: form.bsdgrp_sudo,
-          allow_duplicate_gid: form.bsdgrp_allow ? form.bsdgrp_allow : false,
-          users:[]
-        }
-        const sub = this.ws.call(name,[args]);
-
-        return sub;
-      }
-
       if (!entityForm.isNew) {
-        entityForm.submitFunction = submission => call('group.update', submission);
+        entityForm.setDisabled('gid', true);
 
-        entityForm.setDisabled('bsdgrp_gid', true);
-
-        entityForm.formGroup.controls['allow'].setValue(true);
-        _.find(this.fieldSets[0].config, { name: 'allow' }).isHidden = true;
+        entityForm.formGroup.controls['allow_duplicate_gid'].setValue(true);
+        _.find(this.fieldSets[0].config, { name: 'allow_duplicate_gid' }).isHidden = true;
       } else {
-        entityForm.submitFunction = submission => call('group.create', submission);
         this.ws.call('group.get_next_gid').subscribe((res)=>{
-          entityForm.formGroup.controls['bsdgrp_gid'].setValue(res);
+          entityForm.formGroup.controls['gid'].setValue(res);
         })
       }
 

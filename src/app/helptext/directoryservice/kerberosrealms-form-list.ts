@@ -31,10 +31,8 @@ krbrealm_form_advanced_field_array: [
 ],
 
 krbrealm_form_custactions_basic_id: 'basic_mode',
-krbrealm_form_custactions_basic_name: 'Basic Mode',
 
 krbrealm_form_custactions_adv_id: 'advanced_mode',
-krbrealm_form_custactions_adv_name: 'Advanced Mode',
 
 // For Kerberos Realms list
 krb_realmlist_deletemessage_title: 'Kerberos Realm',

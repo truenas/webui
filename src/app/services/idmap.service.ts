@@ -1,19 +1,19 @@
 
 
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {EntityUtils} from '../pages/common/entity/utils'
 import {RestService} from './rest.service';
 import {WebSocketService} from './ws.service';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class IdmapService {
   protected ad_idmap: string = 'directoryservice/idmap/ad';
   protected adex_idmap: string = 'directoryservice/idmap/adex';
 
-  constructor(protected rest: RestService) {};
+  constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getData(resource_name) { return this.rest.get(resource_name, {}); }
 
@@ -23,4 +23,21 @@ export class IdmapService {
   }
 
   getADEXIdmap() { return this.getData(this.adex_idmap); }
+
+  getCerts() {
+    return this.ws.call('certificate.query');
+  }
+
+  getBackendChoices() {
+    return this.ws.call('idmap.backend_options');
+  }
+
+  getADStatus() {
+    return this.ws.call('activedirectory.config');
+  }
+ 
+
+
+
+
 }

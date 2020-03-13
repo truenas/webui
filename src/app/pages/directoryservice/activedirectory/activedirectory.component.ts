@@ -8,6 +8,7 @@ import {FieldConfig} from '../../common/entity/entity-form/models/field-config.i
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
+import global_helptext from '../../../helptext/global-helptext';
 
 @Component({
   selector : 'app-activedirectory',
@@ -24,7 +25,6 @@ export class ActiveDirectoryComponent {
   protected kerberos_realm: any;
   protected kerberos_principal: any;
   protected ssl: any;
-  protected idmap_backend: any;
   protected nss_info: any;
   protected ldap_sasl_wrapping: any;
   public adStatus = false;
@@ -33,14 +33,14 @@ export class ActiveDirectoryComponent {
   public custActions: Array<any> = [
     {
       'id' : helptext.activedirectory_custactions_basic_id,
-      'name' : helptext.activedirectory_custactions_basic_name,
+      'name' : global_helptext.basic_options,
       function : () => { 
         this.setBasicMode(true);
       }
     },
     {
       'id' : helptext.activedirectory_custactions_advanced_id,
-      'name' : helptext.activedirectory_custactions_advanced_name,
+      'name' : global_helptext.advanced_options,
       function : () => { 
         this.setBasicMode(false);   
       }
@@ -49,7 +49,7 @@ export class ActiveDirectoryComponent {
       'id' : helptext.activedirectory_custactions_edit_imap_id,
       'name' : helptext.activedirectory_custactions_edit_imap_name,
       function : () => {
-        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'activedirectory']));
+        this.router.navigate(new Array('').concat(['directoryservice','idmap']));
       }
     },
     {
@@ -183,7 +183,7 @@ export class ActiveDirectoryComponent {
       placeholder : helptext.activedirectory_certificate_placeholder,
       tooltip : helptext.activedirectory_certificate_tooltip,
       options : [
-        {label : '---', value : ""},
+        {label : '---', value : null},
       ]
     },
     {
@@ -252,7 +252,7 @@ export class ActiveDirectoryComponent {
       placeholder : helptext.activedirectory_kerberos_principal_placeholder,
       tooltip : helptext.activedirectory_kerberos_principal_tooltip,
       options : [
-        {label : '---', value : ""},
+        {label : '---', value : null},
       ]
     },
     {
@@ -266,12 +266,6 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_timeout_name,
       placeholder : helptext.activedirectory_timeout_placeholder,
       tooltip : helptext.activedirectory_timeout_tooltip,
-    },
-    {
-      type : 'input',
-      name : helptext.activedirectory_dns_timeout_name,
-      placeholder : helptext.activedirectory_dns_timeout_placeholder,
-      tooltip : helptext.activedirectory_dns_timeout_tooltip,
     }
       ]},
       {
@@ -287,11 +281,10 @@ export class ActiveDirectoryComponent {
         width: '48%',
         config:[
     {
-      type : 'select',
-      name : helptext.activedirectory_idmap_backend_name,
-      placeholder : helptext.activedirectory_idmap_backend_placeholder,
-      tooltip : helptext.activedirectory_idmap_backend_tooltip,
-      options : []
+      type : 'input',
+      name : helptext.activedirectory_dns_timeout_name,
+      placeholder : helptext.activedirectory_dns_timeout_placeholder,
+      tooltip : helptext.activedirectory_dns_timeout_tooltip,
     },
     {
       type : 'select',
@@ -365,7 +358,7 @@ export class ActiveDirectoryComponent {
   }
 
   preInit(entityForm: any) {
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.ws.call('smb.get_smb_ha_mode').subscribe((ha_mode) => {
@@ -415,14 +408,6 @@ export class ActiveDirectoryComponent {
       });
     });
 
-    this.ws.call('activedirectory.idmap_backend_choices').subscribe((res) => {
-      this.idmap_backend = _.find(this.fieldConfig, {name : 'idmap_backend'});
-      res.forEach((item) => {
-        this.idmap_backend.options.push(
-            {label : item, value : item});
-      });
-    });
-
     this.ws.call('activedirectory.nss_info_choices').subscribe((res) => {
       this.nss_info = _.find(this.fieldConfig, {name : 'nss_info'});
       res.forEach((item) => {
@@ -437,22 +422,6 @@ export class ActiveDirectoryComponent {
         this.ldap_sasl_wrapping.options.push(
             {label : item, value : item});
       });
-    });
-
-    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((res)=> {
-      if ((this.idmapBacked != null) && (this.idmapBacked !== res)) {
-        this.dialogservice.confirm(helptext.activedirectory_idmap_change_dialog_title,
-          helptext.activedirectory_idmap_change_dialog_message).subscribe(
-        (confirm) => {
-          if (confirm) {
-            this.idmapBacked = res;
-          } else {
-            entityEdit.formGroup.controls['idmap_backend'].setValue(this.idmapBacked);
-          }
-        });
-      } else {
-        this.idmapBacked = res;
-      }
     });
 
     entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res)=> {
@@ -508,9 +477,30 @@ export class ActiveDirectoryComponent {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  afterSubmit(value) {
+  responseOnSubmit(value) {
+    this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
+    this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
+
     if (value.enable) {
       this.adStatus = true;
     }
+
+    this.ws.call('kerberos.realm.query').subscribe((res) => {
+      this.kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
+      res.forEach((item) => {
+        this.kerberos_realm.options.push(
+            {label : item.realm, value : item.id});
+      });
+    });
+
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
+      this.kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});
+      this.kerberos_principal.options.length = 0;
+      this.kerberos_principal.options.push({label : '---', value : null});
+      res.forEach((item) => {
+        this.kerberos_principal.options.push(
+            {label : item, value : item});
+      });
+    });
   }
 }

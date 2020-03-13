@@ -345,6 +345,20 @@ export class ReplicationWizardComponent {
                     validation: [Validators.required],
                 },
                 {
+                    type: 'checkbox',
+                    name: 'readonly',
+                    placeholder: helptext.readonly_placeholder,
+                    tooltip: helptext.readonly_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule_method',
+                            value: 'once',
+                        }]
+                    }],
+                    value: true,
+                },
+                {
                     type: 'radio',
                     name: 'retention_policy',
                     placeholder: helptext.retention_policy_placeholder,
@@ -439,7 +453,7 @@ export class ReplicationWizardComponent {
                     label: T("Manual"),
                     value: 'manual',
                 }, {
-                    label: T("Semi-automatic (FreeNAS only)"),
+                    label: T("Semi-automatic (TrueNAS CORE only)"),
                     value: 'semiautomatic',
                 }
             ],
@@ -609,8 +623,10 @@ export class ReplicationWizardComponent {
         this.replicationService.getReplicationTasks().subscribe(
             (res) => {
                 for (const task of res) {
-                    const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
-                    exist_replicationField.options.push({ label: lable, value: task });
+                    if (task.transport !== 'LEGACY') {
+                        const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
+                        exist_replicationField.options.push({ label: lable, value: task });
+                    }
                 }
             }
         )
@@ -959,6 +975,8 @@ export class ReplicationWizardComponent {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
             
+            payload['readonly'] = data['readonly'] ? 'SET' : 'IGNORE';
+
             return this.ws.call('replication.target_unmatched_snapshots', [
                 payload['direction'],
                 payload['source_datasets'],
@@ -996,6 +1014,9 @@ export class ReplicationWizardComponent {
     }
 
     async customSubmit(value) {
+        if (typeof(value.source_datasets) === 'string') {
+            value.source_datasets = _.filter(value.source_datasets.split(",").map(_.trim));
+        }
         this.loader.open();
         let toStop = false;
 
@@ -1152,7 +1173,11 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
-        const transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
+        let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
+        // count local snapshots if transport is SSH/SSH-NETCAT, and direction is PUSH
+        if (this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value) {
+            transport = 'LOCAL';
+        }
         const payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
             (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : [this.defaultNamingSchema],

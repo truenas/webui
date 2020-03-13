@@ -1,9 +1,9 @@
 import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import * as _ from 'lodash';
 
 @Component({
@@ -32,7 +32,7 @@ export class EntityJobComponent implements OnInit {
   @Output() prefailure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
     private ws: WebSocketService, public rest: RestService,
-    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: Http) {}
+    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: HttpClient) {}
 
   ngOnInit() {
     // this.dialogRef.updateSize('35%', '200px');
@@ -48,6 +48,27 @@ export class EntityJobComponent implements OnInit {
       this.showCloseButton = true;
       this.dialogRef.disableClose = true;
     }
+    this.progress.subscribe(progress => {
+      if (progress.description) {
+        this.description = progress.description;
+      }
+      if (progress.percent) {
+        if (this.progressNumberType === 'nopercent') {
+          this.progressTotalPercent = progress.percent * 100;
+        }
+        else {
+          this.progressTotalPercent = progress.percent;
+        }
+      }
+      this.disableProgressValue(progress.percent == null);
+    });
+
+    this.failure.subscribe(job => {
+      job.error = _.replace(job.error, '<', '< ');
+      job.error = _.replace(job.error, '>', ' >');
+  
+      this.description = '<b>Error:</b> ' + job.error;
+    })
   }
 
   setCall(method: string, args ?: any[]) {
@@ -71,31 +92,6 @@ export class EntityJobComponent implements OnInit {
 
   disableProgressValue(hide: boolean) {
     this.hideProgressValue = hide;
-  }
-
-  @HostListener('progress', ['$event'])
-  public onProgress(progress) {
-
-    if (progress.description) {
-      this.description = progress.description;
-    }
-    if (progress.percent) {
-      if (this.progressNumberType === 'nopercent') {
-        this.progressTotalPercent = progress.percent * 100;
-      }
-      else {
-        this.progressTotalPercent = progress.percent;
-      }
-    }
-    this.disableProgressValue(progress.percent == null);
-  }
-
-  @HostListener('failure', ['$event'])
-  public onFailure(job) {
-    job.error = _.replace(job.error, '<', '< ');
-    job.error = _.replace(job.error, '>', ' >');
-
-    this.description = '<b>Error:</b> ' + job.error;
   }
 
   public show() {
@@ -147,7 +143,7 @@ export class EntityJobComponent implements OnInit {
         });
   }
 
-  public post(path, options) {
+  /*public post(path, options) {
     this.rest.post(path, options).subscribe(
         (res) => {
           this.job = res;
@@ -161,7 +157,7 @@ export class EntityJobComponent implements OnInit {
         () => {},
         () => {
         });
-  }
+  }*/
   public wspost(path, options) {
     this.http.post(path, options).subscribe(
         (res) => {

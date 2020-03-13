@@ -62,8 +62,18 @@ export const helptext_system_support = {
 
   email: {
     placeholder: T("Email"),
-    tooltip: T("Enter the email of the contact person."),
+    tooltip: T("Enter the email of the contact person. Use the format <i>name</i>@<i>domain.com</i>."),
     validation: [Validators.required, Validators.email]
+  },
+
+  cc: {
+    placeholder: T("CC"),
+    tooltip: T("Email addresses to receive copies of iXsystems Support \
+  messages about this issue. Use the format <i>name</i>@<i>domain.com</i> \
+  and a comma \(,\) to separate each address."),
+    err: T('Email addresses must be entered in the format \
+  <i>local-name</i>@<i>domain.com<i> with a comma \(,\) separating each \
+  address.')
   },
 
   phone: {
@@ -138,6 +148,12 @@ export const helptext_system_support = {
     reload_dialog_action: T('Reload now'),
     error_dialog_title: T('Error Unlocking'),
     snackbar_action: T('Close')
+  },
+
+  core_upgrade_license: {
+    dialog_title: T('Add or Update a License'),
+     dialog_msg: T('To update the current software license or upgrade from TrueNAS Core® to TrueNAS \
+ Enterprise®, copy the text of the TrueNAS license and paste it in this box.')
   },
 
   is_production_checkbox: {

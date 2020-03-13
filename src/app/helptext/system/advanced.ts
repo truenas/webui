@@ -45,10 +45,6 @@ export const helptext_system_advanced = {
  DISCOURAGED</b>'),
   swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
 
-  enable_legacy_placeholder: T('Enable Legacy User Interface'),
-  enable_legacy_tooltip: T('WARNING: ') + global_helptext.legacyUIWarning,
-  enable_legacy_dialog: global_helptext.legacyUIWarning,
-
   autotune_placeholder: T('Enable autotune'),
   autotune_tooltip: T('Enables the autotune script which attempts to optimize\
  the system depending on the installed hardware.\
@@ -101,7 +97,8 @@ export const helptext_system_advanced = {
   sed_passwd2_tooltip: T(''),
 
   swapondrive_warning: T("A swap size of 0 is STRONGLY DISCOURAGED."),
+  swapondrive_max_warning: T("Maximum swap size is 99 GiB"),
 
   debug_download_failed_title: T("Error Downloading File"),
-  debug_download_failed_message: T("Debug could not be downloaded."),  
+  debug_download_failed_message: T("Debug could not be downloaded.")
 };

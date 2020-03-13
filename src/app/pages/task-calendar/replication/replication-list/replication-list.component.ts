@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -35,7 +35,7 @@ export class ReplicationListComponent {
         { name: 'Target Dataset', prop: 'target_dataset', hidden: true},
         { name: 'Recursive', prop: 'recursive', hidden: true},
         { name: 'Auto', prop: 'auto', hidden: true},
-        { name: 'Enabled', prop: 'enabled', hidden: true },
+        { name: 'Enabled', prop: 'enabled', selectable: true },
         { name: 'State', prop: 'task_state', state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' }
     ];
@@ -55,7 +55,7 @@ export class ReplicationListComponent {
         private dialog: DialogService,
         protected job: JobService,
         protected storage: StorageService,
-        protected http: Http) { }
+        protected http: HttpClient) { }
 
     afterInit(entityList: any) {
         this.entityList = entityList;
@@ -201,5 +201,20 @@ export class ReplicationListComponent {
                 this.dialog.errorReport(row.state.state, row.state.error);
             }
         }
+    }
+
+    onCheckboxChange(row) {
+      row.enabled = !row.enabled;
+      this.ws.call('replication.update', [row.id, {'enabled': row.enabled}] )
+      .subscribe(
+        (res) => {
+          if (!res) {
+            row.enabled = !row.enabled;
+          }
+        },
+        (err) => {
+          row.enabled = !row.enabled;
+          new EntityUtils().handleWSError(this, err, this.dialog);
+        });
     }
 }

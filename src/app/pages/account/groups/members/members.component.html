@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card class="form-card">
   <mat-card-title *ngIf="groupName">{{'Manage members of' | translate}} {{groupName}} {{'group' | translate}}</mat-card-title>
     <mat-spinner 
       [diameter]='40' 
@@ -10,7 +10,8 @@
       <app-dual-listbox 
         [items]="members" 
         [(selectedItems)]="selectedMembers" 
-        minHeight="300px" 
+        minHeight="65vh"
+        maxHeight="65vh" 
         title1="{{'All users' | translate}}"
         title2="{{'Group members' | translate}}">
         <ng-template #templateItem let-item="data">

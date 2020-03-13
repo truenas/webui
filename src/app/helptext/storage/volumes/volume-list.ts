@@ -54,12 +54,15 @@ pool_lock_warning_paratext_a: T("WARNING: Locking pool <i>"),
 pool_lock_warning_paratext_b: T("</i>.\
  Data on the pool will not be accessible until the pool is unlocked."),
 
-permissions_edit_msg: T('Root dataset permissions cannot be edited.'),
+permissions_edit_msg1: T('Root dataset permissions cannot be edited.'),
+permissions_edit_msg2: T('This dataset has an active ACL. Changes to permissions must be made with the ACL editor.'),
 acl_edit_msg: T('Root dataset ACL cannot be edited.'),
 
 expand_pool_dialog: {
     title: T("Enter passphrase to expand pool "),
     passphrase_placeholder: T('Passphrase'),
     save_button: T("Expand Pool"),
-}
+},
+
+unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.')
 }

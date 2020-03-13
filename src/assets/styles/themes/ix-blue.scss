@@ -40,7 +40,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   @include angular-material-theme($freenas-theme);
 
   .mat-bg-primary,
-  .topbar,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
   .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
   .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
@@ -180,7 +179,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-bg-primary,
   .mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary,
-  .topbar,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
   .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
   .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
@@ -491,6 +489,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   //Entity Module Overrides
 
+  app-members .form-card.mat-card,
   entity-task .form-card.mat-card,
   device-edit .form-card.mat-card,
   entity-form .form-card.mat-card{
@@ -630,9 +629,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: -4px;
   }
 
-  #cust_button_download_key {
-    @include variable(background-color, --red, $red);
-    color: white;
+  downloadkey-dialog .red-warning-button {
     margin-right: 7px;
   }
   // ------------------------
@@ -706,13 +703,20 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       background-color: var(--bg2);
   }
 
-  // Give vdev arrow buttons theme colors
-  .vdev-action-btn {
+  // Give vdev and dual-list arrow buttons theme colors
+  .vdev-action-btn, .dual-list-action-btn {
     @include variable(background, --bg1, $bg1);
   }
 
-  .vdev-action-btn .arrow {
+  .vdev-action-btn .arrow, .dual-list-action-btn .arrow {
     @include variable(color, --primary, $primary);
+    font-size: 36px;
+    height: 36px;
+    width: 36px;
+  }
+
+  app-dual-listbox .chosen .mat-list-item-content {
+    color: white;
   }
 
   .vdev-action-btn:disabled {
@@ -1276,6 +1280,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #fn-instructions {
       font-size: 110%;
     }
+    #update-license-btn {
+      background-color: var(--primary);
+      color: white;
+      top: 53px;
+    }
   }
 
   app-tn-sys-info {
@@ -1421,6 +1430,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       }
     }
 
+  }
+
+  app-entity-dialog #tn_core_upgrade_license_message {
+    margin-bottom: 8px;
   }
 
   app-tn-support {
@@ -1681,6 +1694,41 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   mat-error a {
     text-decoration: underline;
+  }
+
+  .mat-select-panel{
+    max-height: 60vh !important;
+  }
+
+  tree-viewport {
+    max-height: 300px;
+    overflow: auto;
+  }
+
+  app-general .form-select-spinner {
+    position: absolute;
+    top: -20px;
+    right: 45%;
+  }
+
+  app-two-factor {
+    #instructions, #enabled_status {
+      font-size: 115%;
+    }
+    #enabled_status {
+      margin-bottom: 8px;
+    }
+    button {
+        margin-top: 8px !important;
+    }
+  }
+
+  qr-dialog {
+    text-align: center;
+
+    #qr-dialog-buttons {
+      flex-direction: row-reverse;
+    }
   }
 
  } // end of ix theme

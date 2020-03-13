@@ -6,13 +6,12 @@ import { Wizard } from '../../../common/entity/entity-form/models/wizard.interfa
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
-import { Http } from '@angular/http';
-import { MatSnackBar } from '@angular/material';
+import { HttpClient } from '@angular/common/http';
 import { EntityUtils } from '../../../common/entity/utils';
 
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-import-wizard';
 
@@ -173,8 +172,7 @@ export class VolumeImportWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private router: Router, protected loader: AppLoaderService,
     protected dialog: MatDialog, protected dialogService: DialogService,
-    protected http: Http, public snackBar: MatSnackBar,
-    public messageService: MessageService) {
+    protected http: HttpClient, public messageService: MessageService) {
 
   }
 
@@ -227,13 +225,13 @@ export class VolumeImportWizardComponent {
   }
 
   getImportableDisks() {
-    this.guid.options = [];
-    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_encrypted_disks_title}, disableClose: true});
-    dialogRef.componentInstance.setDescription(helptext.find_encrypted_disks_msg);
+    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_pools_title}, disableClose: true});
+    dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe((res) => {
       if (res && res.result) {
+        this.guid.options = [];
         const result = res.result;
         for (let i = 0; i < result.length; i++) {
           this.guid.options.push({label:result[i].name + ' | ' + result[i].guid, value:result[i].guid});

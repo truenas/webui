@@ -119,6 +119,11 @@ h4 {
 	min-width: 660px !important;
 }
 
+.adjust-upward {
+	position: relative;
+	bottom: 5px;
+}
+
 @media screen and (max-width: 1399px) {
 	.pool {
 		top: 40px;
@@ -127,4 +132,9 @@ h4 {
 	.data-div {
 		margin-left: 118px;
 	}
+}
+
+.forceCreateCheckbox {
+	margin-left: 10px;
+	margin-bottom: 10px;
 }

@@ -63,12 +63,12 @@ export class ZvolFormComponent {
   public custActions: Array<any> = [
     {
       id: 'basic_mode',
-      name: T('Basic Mode'),
+      name: globalHelptext.basic_options,
       function: () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       id: 'advanced_mode',
-      name: T('Advanced Mode'),
+      name: globalHelptext.advanced_options,
       function: () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
@@ -138,7 +138,9 @@ export class ZvolFormComponent {
             config.hasErrors = true;
             config.errors = helptext.zvol_volsize_zero_error;
             errors = { invalid_byte_string: true };
-          } else if (this.origHuman && humanSize < this.origHuman){
+          } else if ((this.origHuman && humanSize) && 
+                     (humanSize !== this.origHuman) &&
+                     (size < this.origVolSize)){
             config.hasErrors = true;
             config.errors = helptext.zvol_volsize_shrink_error;
             errors = { invalid_byte_string: true };
@@ -211,12 +213,12 @@ export class ZvolFormComponent {
       placeholder: helptext.zvol_volblocksize_placeholder,
       tooltip: helptext.zvol_volblocksize_tooltip,
       options: [
-        { label: '4K', value: '4K' },
-        { label: '8K', value: '8K' },
-        { label: '16K', value: '16K' },
-        { label: '32K', value: '32K' },
-        { label: '64K', value: '64K' },
-        { label: '128K', value: '128K' },
+        { label: '4 KiB', value: '4K' },
+        { label: '8 KiB', value: '8K' },
+        { label: '16 KiB', value: '16K' },
+        { label: '32 KiB', value: '32K' },
+        { label: '64 KiB', value: '64K' },
+        { label: '128 KiB', value: '128K' },
       ],
       isHidden: false
     },

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService, StorageService } from '../../../services';
+import { PreferencesService} from 'app/core/services/preferences.service';
 import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
@@ -9,7 +10,7 @@ import * as _ from 'lodash';
 
 import { VmService } from '../../../services/vm.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
@@ -36,6 +37,9 @@ export class VMWizardComponent {
   summary_title = "VM Summary";
   public namesInUse = [];
   public statSize: any;
+  public vcpus: number = 1;
+  public cores: number = 1;
+  public threads: number = 1;
 
   entityWizard: any;
   public res;
@@ -81,6 +85,14 @@ export class VMWizardComponent {
         tooltip : helptext.bootloader_tooltip,
         options: []
       },
+      { type: 'input',
+        name : 'shutdown_timeout',
+        inputType: 'number',
+        value: 90,
+        placeholder : helptext.shutdown_timeout.placeholder,
+        tooltip : helptext.shutdown_timeout.tooltip,
+        validation: helptext.shutdown_timeout.validation
+      },
       { type: 'checkbox',
         name : 'autostart',
         placeholder : helptext.autostart_placeholder,
@@ -88,11 +100,11 @@ export class VMWizardComponent {
         value: true
       },
       { type: 'checkbox',
-      name : 'enable_vnc',
-      placeholder : helptext.enable_vnc_placeholder,
-      tooltip : helptext.enable_vnc_tooltip,
-      value: true,
-      isHidden: false
+        name : 'enable_vnc',
+        placeholder : helptext.enable_vnc_placeholder,
+        tooltip : helptext.enable_vnc_tooltip,
+        value: true,
+        isHidden: false
       },
       {
         name : 'wait',
@@ -120,8 +132,29 @@ export class VMWizardComponent {
           placeholder: helptext.vcpus_placeholder,
           inputType: 'number',
           min: 1,
-          validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
+          validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: helptext.vcpus_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'cores',
+          placeholder: helptext.cores.placeholder,
+          inputType: 'number',
+          validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1), Validators.max(16) ],
+          tooltip: helptext.cores.tooltip
+        },
+        {
+          type: 'input',
+          name: 'threads',
+          placeholder: helptext.threads.placeholder,
+          inputType: 'number',
+          validation : [ 
+            this.cpuValidator('threads'),
+            Validators.required, 
+            Validators.min(1),
+            Validators.max(16),
+          ],
+          tooltip: helptext.threads.tooltip,
         },
         {
           type: 'input',
@@ -334,7 +367,8 @@ export class VMWizardComponent {
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
     public messageService: MessageService,private router: Router,
-    private dialogService: DialogService, private storageService: StorageService) {
+    private dialogService: DialogService, private storageService: StorageService,
+    protected prefService: PreferencesService) {
 
   }
 
@@ -414,7 +448,16 @@ export class VMWizardComponent {
         this.summary[T('Name')] = name;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
+        this.vcpus = vcpus;
         this.summary[T('Number of CPUs')] = vcpus;
+      });
+      ( < FormGroup > entityWizard.formArray.get([1])).get('cores').valueChanges.subscribe((cores) => {
+        this.cores = cores;
+        this.summary[T('Number of Cores')] = cores;
+      });
+      ( < FormGroup > entityWizard.formArray.get([1])).get('threads').valueChanges.subscribe((threads) => {
+        this.threads = threads;
+        this.summary[T('Number of Threads')] = threads;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] =
@@ -481,6 +524,12 @@ export class VMWizardComponent {
         }
       }
       });
+      ( < FormGroup > entityWizard.formArray.get([3]).get('NIC_type')).valueChanges.subscribe((res) => {
+        this.prefService.preferences.nicType = res;
+      });
+      ( < FormGroup > entityWizard.formArray.get([3]).get('nic_attach')).valueChanges.subscribe((res) => {
+        this.prefService.preferences.nicAttach = res;
+      });
       ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         if (iso_path && iso_path !== undefined){
           this.summary[T('Installation Media')] = iso_path;
@@ -495,11 +544,15 @@ export class VMWizardComponent {
       this.res = res;
       if (res === 'Windows') {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['cores'].setValue(1);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['threads'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4 GiB');
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('40 GiB');
       }
       else {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['cores'].setValue(1);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['threads'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512 MiB');
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('10 GiB');
       }
@@ -542,9 +595,16 @@ export class VMWizardComponent {
         label: nicId,
         value: nicId
       }));
-      ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'].setValue(
-        this.nic_attach.options[0].value
-      )
+      let tempNICAttach = ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'];
+      setTimeout(() => {
+        if (!this.prefService.preferences.nicAttach) {
+          tempNICAttach.setValue(this.nic_attach.options[0].value)
+        } else {
+          tempNICAttach.setValue(this.prefService.preferences.nicAttach);
+        }
+      },2000)
+
+
       this.ws.call('vm.random_mac').subscribe((mac_res)=>{
         ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_mac'].setValue(mac_res);
       });
@@ -555,9 +615,15 @@ export class VMWizardComponent {
           this.nicType.options.push({label : item[1], value : item[0]});
         });
         
-        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type'].setValue(
-          this.nicType.options[0].value
-        )
+        let tempNICType = ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type']
+        setTimeout(() => {
+          if (!this.prefService.preferences.nicType) {
+            tempNICType.setValue(this.nicType.options[0].value);
+          } else {
+            tempNICType.setValue(this.prefService.preferences.nicType)
+          }
+        }, 2000)
+
 
       this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
       this.vmService.getBootloaderOptions().forEach((item) => {
@@ -590,6 +656,27 @@ memoryValidator(name: string) {
     }
 
     return errors;
+  }
+};
+
+cpuValidator(name: string) { 
+  const self = this;
+  return function validCPU(control: FormControl) {
+    const config = self.wizardConfig[1].fieldConfig.find(c => c.name === name);
+      setTimeout(() => {
+        const errors = self.vcpus * self.cores * self.threads > 16
+        ? { validCPU : true }
+        : null;
+
+        if (errors) {
+          config.hasErrors = true;
+          config.warnings = T(`The product of vCPUs, cores and threads must not exceed 16.`);
+        } else {
+          config.hasErrors = false;
+          config.warnings = '';
+        }
+        return errors;
+      }, 100)
   }
 };
 
@@ -649,6 +736,7 @@ blurEvent3(parent){
 }
 
 async customSubmit(value) {
+    this.prefService.savePreferences();
     let hdd;
     const vm_payload = {}
     const zvol_payload = {}
@@ -668,20 +756,23 @@ async customSubmit(value) {
     vm_payload["description"] = value.description;
     vm_payload["time"]= value.time;
     vm_payload["vcpus"] = value.vcpus;
+    vm_payload["cores"] = value.cores;
+    vm_payload["threads"] = value.threads;
     vm_payload["memory"] = Math.ceil(this.storageService.convertHumanStringToNum(value.memory) / 1024**2); // bytes -> mb
     vm_payload["bootloader"] = value.bootloader;
+    vm_payload["shutdown_timeout"]= value.shutdown_timeout;
     vm_payload["autoloader"] = value.autoloader;
     vm_payload["autostart"] = value.autostart;
     if ( value.iso_path && value.iso_path !== undefined) {
       vm_payload["devices"] = [
         {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, 'physical_sectorsize': null, 'logical_sectorsize': null}},
         {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
       ]
     } else {
       vm_payload["devices"] = [
         {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
+        {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, 'physical_sectorsize': null, 'logical_sectorsize': null}},
       ]
     }
     
@@ -689,7 +780,7 @@ async customSubmit(value) {
       vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
             "wait": value.wait,
-            "vnc_port": String(this.getRndInteger(5553,6553)),
+            "vnc_port": String(this.getRndInteger(5900,65535)),
             "vnc_resolution": "1024x768",
             "vnc_bind": value.vnc_bind,
             "vnc_password": "",

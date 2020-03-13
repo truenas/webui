@@ -4,8 +4,12 @@
   background-color:$bg1;
 }
 
+.copyright-line {
+  text-align: center;
+  padding-top: 32px;
+}
+
 .copyright-txt {
-    padding-top: 32px;
     text-align: center;
     opacity:0.5;
     font-size:85%
@@ -88,8 +92,17 @@ form button{
   height:100%;
 }
 
-.logo-wrapper img.logo{
+.logo-wrapper .logo{
   position:relative;
   z-index:2; 
-  width: 226px;
+  width: 256px;
+  height: auto;
+}
+
+#full-logo {
+  height: 40px;
+  top: 14px;
+  position: relative;
+  cursor: pointer;
+  margin-left: 5px;
 }

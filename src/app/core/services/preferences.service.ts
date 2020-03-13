@@ -6,10 +6,11 @@ import { ThemeService, Theme } from 'app/services/theme/theme.service';
 
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS
+  retroLogo?: boolean; // Brings back FreeNAS branding
   timestamp:Date;
   userTheme:string; // Theme name
   customThemes?: Theme[]; 
-  favoriteThemes?: string[]; // Theme Names
+  favoriteThemes?: string[]; // Deprecate
   showGuide:boolean; // Guided Tour on/off
   showTooltips?:boolean; // Form Tooltips on/off // Deprecated, remove in v12!
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
@@ -17,6 +18,12 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
   tableDisplayedColumns:any;
+  hide_builtin_users: boolean;
+  hide_builtin_groups: boolean;
+  dateFormat:string;
+  timeFormat:string;
+  nicType:string
+  nicAttach: string,
 }
 
 @Injectable()
@@ -25,6 +32,7 @@ export class PreferencesService {
   private debug = false;
   public preferences: UserPreferences = {
     "platform":"freenas",// Detect platform
+    "retroLogo": false,
     "timestamp":new Date(),
     "userTheme":"ix-dark", // Theme name
     "customThemes": [], // Theme Objects
@@ -35,8 +43,15 @@ export class PreferencesService {
     "allowPwToggle":true,
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
-    "tableDisplayedColumns":[]
+    "tableDisplayedColumns":[],
+    "hide_builtin_users": true,
+    "hide_builtin_groups": true,
+    "dateFormat": 'YYYY-MM-DD',
+    "timeFormat": 'HH:mm:ss',
+    "nicType": null,
+    "nicAttach": null,
   }
+
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
 
@@ -58,7 +73,7 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-
+      
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
 
@@ -185,5 +200,7 @@ export class PreferencesService {
     });
     return merged;
   }
+
+
 
 }

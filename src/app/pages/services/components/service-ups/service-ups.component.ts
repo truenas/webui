@@ -47,7 +47,17 @@ export class ServiceUPSComponent {
           tooltip : helptext.ups_remotehost_tooltip,
           required: true,
           isHidden: true,
-          validation : helptext.ups_remotehost_validation
+          disabled: true,
+          validation : helptext.ups_remotehost_validation,
+          relation: [
+            {
+              action : 'ENABLE',
+              when : [ {
+                name : 'mode',
+                value : 'SLAVE',
+              } ]
+            },
+          ]
         },
         {
           type : 'input',
@@ -57,7 +67,17 @@ export class ServiceUPSComponent {
           value : helptext.ups_remoteport_value,
           required: true,
           isHidden: true,
-          validation : helptext.ups_remoteport_validation
+          disabled: true,
+          validation : helptext.ups_remoteport_validation,
+          relation: [
+            {
+              action : 'ENABLE',
+              when : [ {
+                name : 'mode',
+                value : 'SLAVE',
+              } ]
+            },
+          ]
         },
         {
           type : 'combobox',
@@ -67,7 +87,16 @@ export class ServiceUPSComponent {
           required: true,
           options: [],
           validation : helptext.ups_driver_validation,
-          isHidden: false
+          isHidden: false,
+          relation: [
+            {
+              action : 'DISABLE',
+              when : [ {
+                name : 'mode',
+                value : 'SLAVE',
+              } ]
+            },
+          ]
         },
         {
           type : 'combobox',
@@ -255,8 +284,9 @@ export class ServiceUPSComponent {
     });
 
     entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
-        generalSet.config.find(conf => conf.name === 'remotehost').isHidden = res === 'master';
-        generalSet.config.find(conf => conf.name === 'remoteport').isHidden = res === 'master';
+        generalSet.config.find(conf => conf.name === 'remotehost').isHidden = res === 'MASTER';
+        generalSet.config.find(conf => conf.name === 'remoteport').isHidden = res === 'MASTER';
+        generalSet.config.find(conf => conf.name === 'driver').isHidden = res === 'SLAVE';
     });
   }
 
@@ -265,7 +295,7 @@ export class ServiceUPSComponent {
   }
 
   beforeSubmit(data: any) {
-    data.ups_driver = this.ups_driver_key;
+    data.driver = this.ups_driver_key;
   }
 
 }

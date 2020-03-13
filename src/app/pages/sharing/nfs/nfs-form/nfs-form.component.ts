@@ -7,8 +7,9 @@ import * as _ from 'lodash';
 import { DialogService, NetworkService, RestService, WebSocketService } from '../../../../services/';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import globalHelptext from 'app/helptext/global-helptext';
 
 @Component({
   selector : 'app-nfs-form',
@@ -172,7 +173,7 @@ export class NFSFormComponent {
             name: 'network',
             placeholder: helptext_sharing_nfs.placeholder_network,
             tooltip: helptext_sharing_nfs.tooltip_network,
-            validation : [ regexValidator(this.networkService.ipv4_or_ipv6_cidr_or_none) ]
+            validation : [ ipv4or6cidrValidator('network') ]
           }],
           listFields: []
       }]
@@ -215,7 +216,7 @@ export class NFSFormComponent {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : helptext_sharing_nfs.actions_basic_mode,
+      name : globalHelptext.basic_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets
@@ -225,7 +226,7 @@ export class NFSFormComponent {
     },
     {
       'id' : 'advanced_mode',
-      name : helptext_sharing_nfs.actions_advanced_mode,
+      name : globalHelptext.advanced_options,
       function : () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets

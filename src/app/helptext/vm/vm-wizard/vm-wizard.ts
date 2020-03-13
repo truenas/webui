@@ -1,7 +1,6 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
-import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
@@ -69,6 +68,27 @@ vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  CPU limits the maximum. The VM operating system\
  might also have operational or licensing\
  restrictions on the number of CPUs.'),
+
+cores: {
+  placeholder: T('Cores'),
+  tooltip: T('Specify the number of cores per virtual CPU socket. \
+ The product of vCPUs, cores, and threads must not exceed 16.'),
+}, 
+
+threads: {
+  placeholder: T('Threads'),
+  tooltip: T('Specify the number of threads per core. \
+ The product of vCPUs, cores, and threads must not exceed 16.')
+},
+
+shutdown_timeout: {
+  placeholder: T('Shutdown Timeout'),
+  tooltip: T('The time in seconds the system waits for the VM to cleanly shut down. \
+ During system shutdown, the system initiates poweroff for the VM after the shutdown \
+ timeout has expired.'),
+validation : [Validators.min(0) ],
+
+},
 
 memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
 memory_validation : [Validators.required],
@@ -145,6 +165,7 @@ upload_iso_placeholder : 'ISO upload location',
 upload_iso_tooltip: 'Browse to the installer image file and click <b>Upload</b>.',
 upload_iso_validation : [  ],
 
-vm_form_title: T('Virtual Machine Settings')
+vm_settings_title: T('General VM Settings'),
+vm_cpu_mem_title: T('CPUs and Memory')
 
 }

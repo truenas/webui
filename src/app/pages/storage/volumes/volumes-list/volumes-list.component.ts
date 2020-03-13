@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
@@ -125,7 +125,7 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   isCustActionVisible(actionname: string) {
-    if (actionname === 'download_key' && this.encryptedStatus !== '') {
+    if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
     } else {
       return false;
@@ -286,7 +286,7 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.is_decrypted) {
 
       actions.push({
-        label: T("Recovery Key"),
+        label: T("Manage Recovery Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "addkey", row1.id]));
@@ -318,13 +318,19 @@ export class VolumesListTableConfig implements InputTableConf {
     this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map(serviceChoices => {
         return {
-          title: "Unlock " + row1.name,
+          title: T("Unlock ") + row1.name,
           fieldConfig: [
+            {
+              type: 'paragraph',
+              name: 'unlock_msg',
+              paraText: helptext.unlock_msg,
+            },
             {
               type : 'input',
               inputType: 'password',
               name : 'passphrase',
               togglePw: true,
+              required: true,
               placeholder: helptext.unlockDialog_password_placeholder,
             },
             {
@@ -334,6 +340,7 @@ export class VolumesListTableConfig implements InputTableConf {
               parent: self,
               hideButton: true, 
               name: 'key',
+              required: true,
               placeholder: helptext.unlockDialog_recovery_key_placeholder,
               tooltip: helptext.unlockDialog_recovery_key_tooltip,
             },
@@ -350,6 +357,28 @@ export class VolumesListTableConfig implements InputTableConf {
           afterInit: function(entityDialog) {
                 self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
                   entityDialog.formGroup.controls['key'].setValue(message);
+                });
+                // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
+                let keyDisabled = false;
+                let passphraseDisabled = false;
+                entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
+                  if (!passphraseDisabled) {
+                    if (passphrase && passphrase !== '') {
+                      keyDisabled = true;
+                      entityDialog.setDisabled('key', true, true);
+                    } else {
+                      keyDisabled = false;
+                      entityDialog.setDisabled('key', false, false);
+                    }
+                  }
+                });
+                entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
+                  if (!keyDisabled) {
+                    if (key && !passphraseDisabled) {
+                      passphraseDisabled = true;
+                      entityDialog.setDisabled('passphrase', true, true);
+                    }
+                  }
                 });
           },
           saveButtonText: T("Unlock"),
@@ -410,13 +439,14 @@ export class VolumesListTableConfig implements InputTableConf {
         name: 'Export/Disconnect',
         label: T("Export/Disconnect"),
         onClick: (row1) => {
-          let encryptedStatus = row1.vol_encryptkey,
+          let encryptedStatus = row1.encrypt,
           self = this;
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
-                p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is detached:`;
+                p1 = T('These services depend on pool ') + `<i>${row1.name}</i>` + 
+                  T(' and will be disrupted if the pool is detached:');
                 res.forEach((item) => {
                   p1 += `<br><br>${item.type}:`;
                   item.attachments.forEach((i) => {
@@ -442,7 +472,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   });
                   if (running_processes.length > 0) {
-                    p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
+                    p1 += `<br><br>` + T('These running services are using ') + `<b>${row1.name}</b>:`;
                     running_processes.forEach((process) =>  {
                       if (process.name) {
                         p1 += `<br> - ${process.name}`
@@ -451,13 +481,13 @@ export class VolumesListTableConfig implements InputTableConf {
                     });
                   };
                   if (running_unknown_processes.length > 0) {
-                    p1 += '<br><br>These unknown processes are using this pool:';
+                    p1 += `<br><br>` + T('These unknown processes are using this pool: ');
                     running_unknown_processes.forEach((process) => {
                       if (process.pid) {
                         p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
                       }
                     });
-                    p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
+                    p1 += `<br><br>` + T('WARNING: These unknown processes will be terminated while exporting the pool. ');
                   }
                 };
                 this.loader.close();
@@ -474,7 +504,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
         function doDetach() {
           const conf: DialogFormConfiguration = {
-            title: "Export/disconnect pool: '" + row1.name + "'",
+            title: T("Export/disconnect pool: '") + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
@@ -495,7 +525,7 @@ export class VolumesListTableConfig implements InputTableConf {
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: "'" + row1.name + helptext.detachDialog_pool_detach_warning__encrypted_paratext,
-              isHidden: encryptedStatus !== '' ? false : true
+              isHidden: encryptedStatus > 0 ? false : true
             }, {
               type: 'checkbox',
               name: 'destroy',
@@ -532,7 +562,7 @@ export class VolumesListTableConfig implements InputTableConf {
               required: true
             }],
             isCustActionVisible(actionId: string) {
-              if (actionId == 'download_key' && encryptedStatus === '') {
+              if (actionId == 'download_key' && encryptedStatus === 0) {
                 return false;
               } else {
                 return true;
@@ -542,7 +572,7 @@ export class VolumesListTableConfig implements InputTableConf {
             custActions: [
               {
                 id: 'download_key',
-                name: 'Download Key',
+                name: T('Download Key'),
                 function: () => {
                   const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
@@ -551,7 +581,7 @@ export class VolumesListTableConfig implements InputTableConf {
               }],
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
-              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
+              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":T("Exporting Pool")}, disableClose: true});
               dialogRef.updateSize('300px');
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
               dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: self.restartServices }]);
@@ -569,17 +599,28 @@ export class VolumesListTableConfig implements InputTableConf {
               }),
               dialogRef.componentInstance.failure.subscribe((res) => {
                 let conditionalErrMessage = '';
-                if (res.error && res.error.includes('EBUSY')) {
-                  if (res.exc_info.extra && res.exc_info.extra['code'] === 'services_restart') {
+                if (res.error) {
+                  if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    conditionalErrMessage = '<div class="warning-box">Warning: These services must be restarted to export the pool:<br>';
-                    res.exc_info.extra.services.forEach((item) => {
-                      conditionalErrMessage += `<br>- ${item}`;
-                    })
-                    conditionalErrMessage += '<br><br>Exporting/disconnecting will continue after services have been restarted.</div><br />';
+                    if (res.exc_info.extra.stop_services.length > 0) {
+                      conditionalErrMessage += `<div class="warning-box">` + T('These services must be stopped to export the pool:');
+                      res.exc_info.extra.stop_services.forEach((item) => {
+                        conditionalErrMessage += `<br>- ${item}`;
+                      });
+                    }
+                    if (res.exc_info.extra.restart_services.length > 0) {
+                      if (res.exc_info.extra.stop_services.length > 0) {
+                        conditionalErrMessage += '<br><br>';
+                      }
+                      conditionalErrMessage += `<div class="warning-box">` + T('These services must be restarted to export the pool:');
+                      res.exc_info.extra.restart_services.forEach((item) => {
+                        conditionalErrMessage += `<br>- ${item}`;
+                      });
+                    }
+                    conditionalErrMessage += `<br><br>`+ T('Exporting/disconnecting will continue after services have been managed.') + `</div><br />`;
                       self.dialogService.confirm(T("Error exporting/disconnecting pool."),
-                        conditionalErrMessage, true, 'Restart Services and Continue')
+                        conditionalErrMessage, true, T('Manage Services and Continue'))
                           .subscribe((res) => {
                             if (res) {
                               self.restartServices = true;
@@ -590,7 +631,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.dialogRef.close(true);
 
                     conditionalErrMessage =
-                    `Unable to terminate processes which are using this pool: ${res.extra['processes']}`;
+                    T('Unable to terminate processes which are using this pool: ') + res.extra['processes'];
                     dialogRef.close(true);
                     self.dialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
                   } else {
@@ -614,8 +655,8 @@ export class VolumesListTableConfig implements InputTableConf {
       if (rowData.is_decrypted) {
         actions.push({
           id: rowData.name,
-          name: 'Extend',
-          label: T("Extend"),
+          name: 'Add Vdevs',
+          label: T("Add Vdevs"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "pools", "manager", row1.id]));
@@ -655,7 +696,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       this.dialogRef.componentInstance.success.subscribe(
                         (jobres) => {
                           this.dialogRef.close(false);
-                          if (jobres.progress.percent == 100) {
+                          if (jobres.progress.percent == 100 && jobres.progress.description === "Scrub finished") {
                             this.dialogService.Info(T('Scrub Complete'), T('Scrub complete on pool <i>') + row1.name + "</i>.", '300px', "info", true);
                           } else {
                             this.dialogService.Info(T('Stop Scrub'), T('Stopped the scrub on pool <i>') + row1.name + "</i>.", '300px', "info", true);
@@ -822,52 +863,31 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       if (rowDataPathSplit[1] !== "iocage") {
-        let optionDisabled;
-        rowData.id.includes('/') ? optionDisabled = false : optionDisabled = true;
-        actions.push({
-          id: rowData.name,
-          name: T('Edit Permissions'),
-          label: T("Edit Permissions"),
-          disabled: optionDisabled,
-          matTooltip: helptext.permissions_edit_msg,
-          ttposition: 'left',
-          onClick: (row1) => {
-            this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + row1.id]).subscribe(acl_is_trivial => {
-              if (acl_is_trivial) {
+            actions.push({
+              id: rowData.name,
+              name: T('Edit Permissions'),
+              label: T("Edit Permissions"),
+              ttposition: 'left',
+              onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
                   "storage", "pools", "permissions", row1.id
                 ]));
-              } else {
-                this.dialogService.confirm(T("Dataset Has Complex ACLs"),
-                  T("This dataset has an active ACL. Changes to permissions must be made with the ACL editor. \
-                  Open ACL editor?"),
-                  true, T("EDIT ACL")).subscribe(edit_acl => {
-                    if (edit_acl) {
-                        this._router.navigate(new Array('/').concat([
-                          "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                          "acl", row1.id
-                        ]));
-                      }
-                });
               }
-            });
-          }
-        },
-        {
-          id: rowData.name,
-          name: T('Edit ACL'),
-          label: T("Edit ACL"),
-          disabled: optionDisabled,
-          matTooltip: helptext.acl_edit_msg,
-          ttposition: 'left',
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-              "acl", row1.id
-            ]));
-          }
-        },
-        );
+            },
+            {
+              id: rowData.name,
+              name: T('Edit ACL'),
+              label: T("Edit ACL"),
+              matTooltip: helptext.acl_edit_msg,
+              ttposition: 'left',
+              onClick: (row1) => {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                  "acl", row1.id
+                ]));
+              }
+            },
+          );          
       }
 
       if (rowData.id.indexOf('/') !== -1) {
@@ -1050,9 +1070,24 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
+  clickAction(rowData) {
+    let aclEditDisabled = false;
+    let permissionsEditDisabled = false;
+    this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
+      !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
+      rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
+      let editACL = rowData.actions.find(o => o.name === 'Edit ACL');
+        editACL.disabled = aclEditDisabled;
+      let editPermissions = rowData.actions.find(o => o.name === 'Edit Permissions')
+        editPermissions.disabled = permissionsEditDisabled;
+        aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 : 
+        editPermissions.matTooltip = helptext.permissions_edit_msg2
+    })
+  }
+
   getTimestamp() {
     let dateTime = new Date();
-    return moment(dateTime).format("YYYY-MM-DD_hh-mm");
+    return moment(dateTime).format("YYYY-MM-DD_HH-mm");
   }
 
   dataHandler(data: any): TreeNode {
@@ -1103,6 +1138,10 @@ export class VolumesListTableConfig implements InputTableConf {
               : dataObj.comments = ("");
           }
         }
+        // add name, available and used into the data object
+        dataObj.name = dataObj.name.split('/').pop();
+        dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
+        dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
       }
     });
   }
@@ -1162,6 +1201,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
+    
+
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {

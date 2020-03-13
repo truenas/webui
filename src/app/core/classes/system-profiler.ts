@@ -22,6 +22,7 @@ export class SystemProfiler {
   public platform: string; // Model Unit
   public profile: Enclosure[] = [];
   public headIndex: number;
+  public rearIndex: number;
 
   private _diskData: any[];
   get diskData(){
@@ -67,11 +68,18 @@ export class SystemProfiler {
   }
 
   createProfile(){
+    let rearEnclosure;
+
     // with the enclosure info we set up basic data structure
     for(let i = 0; i < this.enclosures.length; i++){
-
-      if(this.enclosures[i].controller == true){ 
-        this.headIndex = i;
+      // Detect rear drive bays
+      if(this.enclosures[i].controller == true ){ 
+        if(this.enclosures[i].id.includes('plx_enclosure')){
+          this.enclosures[i].model = this.enclosures[this.headIndex].model + " Rear Bays";
+          this.rearIndex = i;
+        } else {
+          this.headIndex = i;
+        }
       }
 
       const series = this.getSeriesFromModel(this.platform);
@@ -89,7 +97,7 @@ export class SystemProfiler {
       console.warn("No Head Unit Detected! Defaulting to enclosure 0...");
       this.headIndex = 0;
     } 
-    
+
   }
 
   getSeriesFromModel(model: string): string{
@@ -107,7 +115,9 @@ export class SystemProfiler {
   private parseDiskData(disks){
     let data = disks; // DEBUG
     data.forEach((item, index) => {
-      if(!item.enclosure){return};
+
+      if(!item.enclosure){return} 
+
       let enclosure = this.profile[item.enclosure.number];
       item.status = 'AVAILABLE'; // Label it as available. If it is assigned to a vdev/pool then this will be overridden later.
       enclosure.diskKeys[item.devname] = enclosure.disks.length; // index to enclosure.disks
@@ -116,13 +126,27 @@ export class SystemProfiler {
 
   }
 
+
+
   filterSystemDisk(disks){
     let sd = [];
     
     let data = disks.filter((item, index) => {
-      if(!item.enclosure){
+      // WORKAROUND: Middleware needs to assign enclosure to rear drives as well
+
+      let rearDisk = [];
+      if(!item.enclosure && this.rearIndex){
+        let rearSlot = this.enclosures[this.rearIndex];
+        rearDisk = this.enclosures[this.rearIndex].elements.filter((d) => {
+          if(d.data.Device == item.name) rearSlot = d.slot ;
+          return d.data.Device == item.name;
+        });
+        item.enclosure = rearDisk.length > 0 ? {number: this.rearIndex, slot: rearSlot} : undefined;
+      }
+
+      if(!item.enclosure && rearDisk.length == 0){
         this.systemDisks.push(item);
-        sd.push(index);
+        sd.push(index); 
       } 
       return item.enclosure;
       
@@ -181,15 +205,18 @@ export class SystemProfiler {
       }
 
       if(vdev.children.length == 0 && vdev.device){
-          
           let spl = vdev.device.split('p');
           let name = spl[0]
           v.disks[name] = -1; // no children so we use this as placeholder
       } else if(vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
-          let spl = disk.device.split('p');
-          let name = spl[0]
-          v.disks[name] = dIndex;
+          if(!disk.device && disk.status == "REMOVED"){ 
+            return; 
+          } else {
+            let spl = disk.device.split('p');
+            let name = spl[0]
+            v.disks[name] = dIndex;
+          }
         });
       } 
       
@@ -294,6 +321,7 @@ export class SystemProfiler {
   }
 
   getEnclosureExpanders(index: number){
+    if(this.rearIndex && index == this.rearIndex){ index = this.headIndex; }
     let raw = this.enclosures[index].elements.filter((item) => {return item.name == "SAS Expander"})
     return raw[0].elements;
   }

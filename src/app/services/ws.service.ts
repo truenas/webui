@@ -122,7 +122,7 @@ export class WebSocketService {
         console.log("Error: ", data.error);
         call.observer.error(data.error);
       }
-      if (call.observer) {
+      if (call && call.observer) {
         call.observer.next(data.result);
         call.observer.complete();
       }
@@ -259,9 +259,10 @@ export class WebSocketService {
     return source;
   }
 
-  login(username, password): Observable<any> {
+  login(username, password, otp_token?): Observable<any> {
+    let params = otp_token ? [username, password, otp_token] : [username, password]
     return Observable.create((observer) => {
-      this.call('auth.login', [ username, password ]).subscribe((result) => {
+      this.call('auth.login', params).subscribe((result) => {
         this.loginCallback(result, observer);
       });
     });

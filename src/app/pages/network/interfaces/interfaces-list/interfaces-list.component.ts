@@ -158,7 +158,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       }
     });
 
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.ws.call('failover.disabled_reasons').subscribe((failover_disabled) => {
@@ -265,8 +265,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.loaderOpen = true;
           this.ws.call('interface.rollback').subscribe(res => {
             this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false}, sender:this});
-            this.entityList.loader.close();
-            this.entityList.loaderOpen = false;
+            this.entityList.getData();
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
             this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '300px', "info", true);

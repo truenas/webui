@@ -1,4 +1,4 @@
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Input, OnInit } from '@angular/core';
 
@@ -47,7 +47,6 @@ export class EntityDialogComponent implements OnInit {
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public mdDialog: MatDialog,
-    public snackBar: MatSnackBar,
     public datePipe: DatePipe,
     protected fieldRelationService: FieldRelationService) {}
 
@@ -95,33 +94,18 @@ export class EntityDialogComponent implements OnInit {
       this.conf.customSubmit(this);
     } else {
       this.loader.open();
-      if (this.conf.method_rest) {
-        this.rest.post(this.conf.method_rest, {
-          body: JSON.stringify(this.formValue)
-        }).subscribe(
-          (res) => {
-            this.loader.close();
-            this.dialogRef.close(true);
-          },
-          (res) => {
-            this.loader.close();
-            new EntityUtils().handleError(this, res);
-          }
-        );
-      } else if (this.conf.method_ws) {
-        this.ws.call(this.conf.method_ws, [this.formValue]).subscribe(
-          () => {},
-          e => {
-            this.loader.close();
-            this.dialogRef.close(false);
-            new EntityUtils().handleWSError(this, e);
-          },
-          () => {
-            this.loader.close();
-            this.dialogRef.close(true);
-          }
-        );
-      }
+      this.ws.call(this.conf.method_ws, [this.formValue]).subscribe(
+        () => {},
+        e => {
+          this.loader.close();
+          this.dialogRef.close(false);
+          new EntityUtils().handleWSError(this, e);
+        },
+        () => {
+          this.loader.close();
+          this.dialogRef.close(true);
+        }
+      );
     }
   }
 
@@ -155,5 +139,31 @@ export class EntityDialogComponent implements OnInit {
       }
     }
     this.showPassword = !this.showPassword;
+  }
+
+  setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
+    // if field is hidden, disable it too
+    if (hide) {
+      disable = hide;
+    } else {
+      hide = false;
+    }
+
+
+    this.fieldConfig = this.fieldConfig.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+        item['isHidden'] = hide;
+      }
+      return item;
+    });
+
+    if (this.formGroup.controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      this.formGroup.controls[name][method]();
+      return;
+    }
+
+
   }
 }

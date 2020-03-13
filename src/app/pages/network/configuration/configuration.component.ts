@@ -6,6 +6,7 @@ import { RestService, TooltipsService, WebSocketService } from '../../../service
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../helptext/network/configuration/configuration';
 
 @Component({
@@ -26,7 +27,7 @@ export class ConfigurationComponent {
   
     {
       name: helptext.hostname_and_domain,
-      width: "100%",
+      width: "50%",
       label: true,
       config: [
       {
@@ -65,6 +66,30 @@ export class ConfigurationComponent {
       },
     ]},
     {
+      name: helptext.service_announcement,
+      class: "service_announcement",
+      width: "50%",
+      label: true,
+      config: [{
+        type: 'checkbox',
+        name: 'netbios',
+        placeholder: helptext.netbios_placeholder,
+        tooltip: helptext.netbios_tooltip
+      },
+      {
+        type: 'checkbox',
+        name: 'mdns',
+        placeholder: helptext.mdns_placeholder,
+        tooltip: helptext.mdns_tooltip
+      },
+      {
+        type: 'checkbox',
+        name: 'wsd',
+        placeholder: helptext.wsd_placeholder,
+        tooltip: helptext.wsd_tooltip
+      },
+    ]},
+    {
       name: helptext.nameservers,
       width: "50%",
       label: true,
@@ -98,12 +123,14 @@ export class ConfigurationComponent {
         name : 'ipv4gateway',
         placeholder : helptext.ipv4gateway_placeholder,
         tooltip : helptext.ipv4gateway_tooltip,
+        validation: [ipv4Validator('ipv4gateway')]
       },
       {
         type : 'input',
         name : 'ipv6gateway',
         placeholder : helptext.ipv6gateway_placeholder,
         tooltip : helptext.ipv6gateway_tooltip,
+        validation: [ipv6Validator('ipv6gateway')]
       }
     ]},
     {
@@ -160,7 +187,7 @@ export class ConfigurationComponent {
 
   afterInit(entityEdit: any) { 
     this.entityEdit = entityEdit; 
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
@@ -173,6 +200,9 @@ export class ConfigurationComponent {
   resourceTransformIncomingRestData(data) {
     data['netwait_ip'] = data['netwait_ip'].join(' ');
     data['domains'] = data['domains'].join(' ');
+    data['netbios'] = data['service_announcement']['netbios'];
+    data['mdns'] = data['service_announcement']['mdns'];
+    data['wsd'] = data['service_announcement']['wsd'];
 
     return data;
   }
@@ -182,6 +212,14 @@ export class ConfigurationComponent {
     if (data['netwait_ip']) {
       data['netwait_ip'] = data['netwait_ip'].split(' ');
     }
+    data['service_announcement'] = {
+      'netbios':data['netbios'],
+      'mdns':data['mdns'],
+      'wsd':data['wsd']
+    };
+    delete data['netbios'];
+    delete data['mdns'];
+    delete data['wsd'];
 
     return data;
   }

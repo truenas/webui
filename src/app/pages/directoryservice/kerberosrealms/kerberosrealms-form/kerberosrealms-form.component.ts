@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
+import global_helptext from '../../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-group-form',
@@ -64,12 +65,12 @@ export class KerberosRealmsFormComponent {
 
   public custActions: Array < any > = [{
       id: helptext.krbrealm_form_custactions_basic_id,
-      name: helptext.krbrealm_form_custactions_basic_name,
+      name: global_helptext.basic_options,
       function: () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id': helptext.krbrealm_form_custactions_adv_id,
-      name: helptext.krbrealm_form_custactions_adv_name,
+      name: global_helptext.advanced_options,
       function: () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];

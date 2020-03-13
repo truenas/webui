@@ -60,7 +60,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   constructor(private core: CoreService, protected router: Router){
 
-    /*if (window.localStorage.getItem('is_freenas') === 'true') {
+    /*if (window.localStorage.getItem('product_type') === 'CORE') {
       this.router.navigate(['']);
     }*/
 
@@ -139,6 +139,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   extractVisualizations(){
     this.system.profile.forEach((item, index) => {
+      if(this.system.rearIndex && item.enclosureKey == this.system.rearIndex){ return; }
       this.events.next({name:"CanvasExtract", data: this.system.profile[index], sender:this});
     })
   }

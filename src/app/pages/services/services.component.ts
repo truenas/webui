@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatButtonToggleGroup, MatSlideToggle } from '@angular/material';
+import { MatButtonToggleGroup }  from '@angular/material/button-toggle';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
@@ -36,6 +37,8 @@ export class Services implements OnInit {
     'iscsitarget': 'iSCSI',
     'lldp': 'LLDP',
     'nfs': 'NFS',
+    'openvpn_client': 'OpenVPN Client',
+    'openvpn_server': 'OpenVPN Server',
     'rsync': 'Rsync',
     's3': 'S3',
     'smartd': 'S.M.A.R.T.',
@@ -79,7 +82,7 @@ export class Services implements OnInit {
       .subscribe((res) => {
         this.services = res;
         this.services.forEach((item) => {
-          if (item.service !== 'netdata') {
+          if (item.service !== 'netdata' && item.service) {
             if (this.name_MAP[item.service]) {
               item.label = this.name_MAP[item.service];
             } else {
@@ -101,7 +104,8 @@ export class Services implements OnInit {
       this.displayAll();
     } else {
       this.cards = this.cache.filter((card) => {
-        const result = card[key].toLowerCase().indexOf(query.toLowerCase()) > -1;
+        const result = card[key].toLowerCase().replace(/[.]/g, '').replace(/[ ]/g, '')
+          .indexOf(query.toLowerCase().replace(/[.]/g, '').replace(/[ ]/g, '')) > -1;
         return result;
       });
     }

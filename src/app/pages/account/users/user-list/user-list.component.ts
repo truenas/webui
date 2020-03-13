@@ -4,6 +4,7 @@ import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-list';
 
@@ -24,6 +25,12 @@ export class UserListComponent implements OnInit {
   protected grp_lst = [];
   protected hasDetails = true;
   protected queryCall = 'user.query';
+  protected globalConfig = {
+    id: "config",
+    onClick: () => {
+      this.toggleBuiltins();
+    }
+  };
 
   public columns: Array < any > = [
     { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
@@ -38,6 +45,7 @@ export class UserListComponent implements OnInit {
     { name: 'Lock User', prop: 'locked', hidden: true },
     { name: 'Permit Sudo', prop: 'sudo', hidden: true  },
     { name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170 },
+    { name : 'Samba Authentication', prop: 'smb', hidden: true }
   ];
   public rowIdentifier = 'username';
   public config: any = {
@@ -57,7 +65,8 @@ export class UserListComponent implements OnInit {
   }
 
   constructor(private router: Router,
-              protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService){
+              protected dialogService: DialogService, protected loader: AppLoaderService,
+              protected ws: WebSocketService, protected prefService: PreferencesService) {
   }
 
   ngOnInit() {
@@ -138,7 +147,6 @@ export class UserListComponent implements OnInit {
 
   resourceTransformIncomingRestData(d) {
     let data = Object.assign([], d);
-    
     this.ws.call('group.query').subscribe((res)=>{
       data.forEach(user => {
         const group = _.find(res, {"gid" : user.group.bsdgrp_gid});
@@ -154,7 +162,32 @@ export class UserListComponent implements OnInit {
                              {label:T("Email"), value:rows[i].email});
       };
       
-    })
+    });
+    if (this.prefService.preferences.hide_builtin_users) {
+      let newData = []
+      data.forEach((item) => {
+        if (!item.builtin) {
+          newData.push(item);
+        }
+      }) 
+      return data = newData;
+    }
     return data;
+  }
+
+  toggleBuiltins() {
+    let show;
+    this.prefService.preferences.hide_builtin_users ? show = helptext.builtins_dialog.show :
+      show = helptext.builtins_dialog.hide;
+      this.dialogService.confirm(show + helptext.builtins_dialog.title, 
+        show + helptext.builtins_dialog.message, true, show)
+        .subscribe((res) => {
+         if (res) {
+            this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
+            this.prefService.savePreferences();
+            this.entityList.needTableResize = false;
+            this.entityList.getData();
+         }
+      })
   }
 }

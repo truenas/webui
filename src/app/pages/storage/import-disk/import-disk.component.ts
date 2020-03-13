@@ -11,7 +11,7 @@ import {
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from '../../common/entity/utils';
@@ -122,6 +122,18 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       })
     })
 
+    this.makeList();
+
+    this.ws.subscribe('disk.query').subscribe((res) => {
+		  if (res) {
+			this.makeList();
+		  }
+	  })
+
+  }
+
+  makeList() {
+    this.volume.options = []
     this.ws.call("disk.get_unused", [true]).subscribe((data)=>{
 
       for (let i = 0; i < data.length; i++) {
@@ -139,7 +151,6 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       this.dialogService.errorReport(T("Error getting disk data"), res.message, res.stack);
       this.initialized = true;
     });
-
   }
 
   customSubmit(payload){

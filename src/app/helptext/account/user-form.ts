@@ -30,7 +30,6 @@ user_form_password_tooltip : T('Required unless <b>Enable password login</b> is\
 user_form_password_validation : [ Validators.pattern('^[^?]*$'), Validators.required ],
 user_form_password_confirm_name : 'password_conf',
 user_form_password_confirm_placeholder : T('Confirm Password'),
-user_form_password_confirm_validation : [ matchOtherValidator('password'), Validators.pattern('^[^?]*$'), Validators.required ],
 user_form_password_edit_name: 'password_edit',
 user_form_password_edit_placeholder : T('Password'),
 user_form_password_edit_tooltip : T('Required unless <b>Enable password login</b> is\
@@ -38,7 +37,6 @@ user_form_password_edit_tooltip : T('Required unless <b>Enable password login</b
 user_form_password_edit_validation : [ Validators.pattern('^[^?]*$') ],
 user_form_password_edit_confirm_name: 'password_conf_edit',
 user_form_password_edit_confirm_placeholder : T('Confirm Password'),
-user_form_password_edit_confirm_validation : [ matchOtherValidator('password_edit'), Validators.pattern('^[^?]*$') ],
 
 user_form_ids_groups_title: T('User ID and Groups'),
 user_form_ids_groups_title_class: 'id-and-groups',
@@ -116,5 +114,9 @@ user_form_microsoft_tooltip : T('Set to allow additional username authentication
  methods when the user is connecting from a Windows 8 or newer operating system.'),
 user_form_blur_event2_warning: T('Usernames can be up to 16 characters long.\
  When using NIS or other legacy software with limited username lengths,\
- keep usernames to eight characters or less for compatibility.')
+ keep usernames to eight characters or less for compatibility.'),
+user_form_download_key: T('Download SSH Public Key'),
+user_form_smb_name: 'smb',
+user_form_smb_placeholder: T('Samba Authentication'),
+user_form_smb_tooltip: T('Set to allow user to authenticate to Samba shares.')
 }

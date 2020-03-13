@@ -1,7 +1,7 @@
 
 
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';

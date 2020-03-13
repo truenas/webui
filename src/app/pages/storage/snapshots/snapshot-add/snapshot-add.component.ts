@@ -46,7 +46,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
         placeholder: helptext.snapshot_add_name_placeholder,
         tooltip: helptext.snapshot_add_name_tooltip,
         options: [],
-        value: "manual-" + moment().format('YYYY-MM-DD_hh-mm'),
+        value: "manual-" + moment().format('YYYY-MM-DD_HH-mm'),
         validation: this.nameValidator,
         errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
         blurStatus: true,
@@ -71,14 +71,14 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
   }
 
   ngAfterViewInit(): void {
-    this.rest.get("storage/volume/", {}).subscribe((res) => {
-      const rows = new EntityUtils().flattenData(res.data);
+    this.ws.call("pool.dataset.query", [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {}]).subscribe((res) => {
+      const rows = new EntityUtils().flattenData(res);
 
       rows.forEach((dataItem) => {
-        if (typeof (dataItem.path) !== 'undefined' && dataItem.path.length > 0) {
+        if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
           this.fieldConfig[0].options.push({
-            label: dataItem.path,
-            value: dataItem.path
+            label: dataItem.name,
+            value: dataItem.name
           });
         }
       })

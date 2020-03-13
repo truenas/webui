@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { T } from 'app/translate-marker';
 import { filter } from 'rxjs/operators';
 import { Observable } from 'rxjs/Rx';
@@ -16,7 +16,7 @@ export class DialogService {
     protected loaderOpen = false;
 
 
-    constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,protected loader: AppLoaderService) {
+    constructor(private dialog: MatDialog, private ws: WebSocketService,protected loader: AppLoaderService) {
         /* Close all open dialogs when websocket connection is dropped */
         this.ws.onCloseSubject.pipe(filter(didClose => !!didClose)).subscribe(() => this.closeAllDialogs());
     }
@@ -129,7 +129,7 @@ export class DialogService {
             dialogRef.afterClosed().subscribe((res)=>{
                 if(res){
                     this.ws.call(method, [data]).subscribe((out)=>{
-                        this.snackBar.open(message, 'close', { duration: 5000 });
+                        //this.snackBar.open(message, 'close', { duration: 5000 });
                     });
                 };
             });
@@ -166,7 +166,8 @@ export class DialogService {
               {
                 type: 'input',
                 name: 'name',
-                required: true
+                required: true,
+                hideErrMsg: true
               },
               {
                   type: 'checkbox',

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -297,7 +297,6 @@ export class JailListComponent {
         label: T("Mount points"),
         onClick: (row) => {
           this.router.navigate(
-            //new Array('').concat(["jails", "storage", "add", row.host_hostuuid]));
             new Array('').concat(["jails", "storage", row.host_hostuuid]));
         }
       },
@@ -469,4 +468,7 @@ export class JailListComponent {
     }
   }
 
+  wsDeleteParams(row, id) {
+    return row.state === 'up' ? [id, {force: true}] : [id];
+  }
 }

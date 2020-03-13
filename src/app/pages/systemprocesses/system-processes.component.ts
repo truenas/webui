@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ShellService, WebSocketService } from '../../services/';
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 

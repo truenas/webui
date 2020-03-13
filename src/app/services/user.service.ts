@@ -1,17 +1,14 @@
 
 
-import {Injectable} from '@angular/core';
-import {RestService} from './rest.service';
-import {WebSocketService} from './ws.service';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { RestService } from './rest.service';
+import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class UserService {
   public static VALIDATOR_NAME = /^[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?$/;
 
-  protected accountUserResource: string = 'account/users/';
-  protected accountGroupResource: string = 'account/groups/';
-  protected accountAllUsersResource: string = 'account/all_users/';
-  protected accountAllGroupsResource: string = 'account/all_groups/';
   protected uncachedUserQuery = 'dscache.get_uncached_user';
   protected uncachedGroupQuery = 'dscache.get_uncached_group';
   protected userQuery = 'user.query';
@@ -20,15 +17,18 @@ export class UserService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
-  listUsers() { return this.rest.get(this.accountUserResource, {limit: 50}); };
+  listUsers() { return this.ws.call(this.userQuery, {limit: 50}); };
 
-  listGroups() { return this.rest.get(this.accountGroupResource, {limit: 50}); };
+  listGroups() { return this.ws.call(this.groupQuery, {limit: 50}); };
   
-  groupQueryDSCache(search = "") {
+  groupQueryDSCache(search = "", hideBuiltIn = false) {
     let queryArgs = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [["group", "^", search]];
+    }
+    if (hideBuiltIn) {
+      queryArgs = queryArgs.concat([["builtin", "=", false]]);
     }
     return this.ws.call(this.groupQuery, [queryArgs, this.queryOptions]);
   }
@@ -74,5 +74,19 @@ export class UserService {
       .toPromise()
       .then(g => (group = g), console.error);
     return group;
+  }
+
+  async shellChoices(userId?: number): Promise<{ label: string, value: string}[]> {
+    return await this.ws
+      .call("user.shell_choices", userId ? [userId] : [])
+      .pipe(
+        map(choices =>
+          Object.keys(choices || {}).map(key => ({
+            label: choices[key],
+            value: key
+          }))
+        )
+      )
+      .toPromise();
   }
 }

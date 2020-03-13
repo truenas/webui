@@ -377,6 +377,9 @@ export class DeviceEditComponent implements OnInit {
 
     this.activeFormGroup = this.cdromFormGroup;
     await this.ws.call('vm.device.query',[[["id", "=", this.deviceid]]]).subscribe((res) => {
+      if (res[0].attributes.physical_sectorsize !== undefined && res[0].attributes.logical_sectorsize !== undefined) {
+        res[0].attributes['sectorsize'] = res[0].attributes.logical_sectorsize === null ? 0 : res[0].attributes.logical_sectorsize;
+      }
       const deviceInformation = {...res[0].attributes, ...{ 'order' : res[0].order }};
       this.vminfo = res[0];
       res = res[0].dtype;
@@ -452,6 +455,9 @@ export class DeviceEditComponent implements OnInit {
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
       const deviceOrder = deviceValue['order'];
       delete deviceValue.order;
+      deviceValue['physical_sectorsize'] = deviceValue['sectorsize'] === 0 ? null : deviceValue['sectorsize'];
+      deviceValue['logical_sectorsize'] = deviceValue['sectorsize'] === 0 ? null : deviceValue['sectorsize'];
+      delete deviceValue['sectorsize'];
       const payload = {
         "dtype": this.vminfo.dtype,
         "attributes":deviceValue,

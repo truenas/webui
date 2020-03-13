@@ -6,9 +6,10 @@ import {
   EntityRowDetails
 } from "app/pages/common/entity/entity-table/entity-row-details.interface";
 import { EntityTableComponent } from "app/pages/common/entity/entity-table";
-import { WebSocketService } from "app/services";
+import { WebSocketService, StorageService } from "app/services";
 import { map } from "rxjs/operators";
 import { SnapshotListComponent } from "../snapshot-list.component";
+import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: "app-snapshot-details",
@@ -18,6 +19,8 @@ import { SnapshotListComponent } from "../snapshot-list.component";
 })
 export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string }> {
   public readonly entityName: "snapshot";
+  // public locale: string;
+  public timezone: string;
 
   @Input() public config: { name: string };
   @Input() public parent: EntityTableComponent & { conf: SnapshotListComponent };
@@ -25,16 +28,19 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
   public details: { label: string; value: string | number }[] = [];
   public actions: EntityAction[] = [];
 
-  constructor(private _ws: WebSocketService, private _router: Router) {}
+  constructor(private _ws: WebSocketService, private _router: Router, private localeService: LocaleService,
+    protected storageService: StorageService) {}
 
   public ngOnInit(): void {
-    this._ws
+    this._ws.call('system.general.config').subscribe((res) => {
+      this.timezone = res.timezone;
+      this._ws
       .call("zfs.snapshot.query", [[["id", "=", this.config.name]]])
       .pipe(
         map(response => ({
           ...response[0].properties,
           name: this.config.name,
-          creation:  new Date(response[0].properties.creation.parsed.$date).toLocaleString()
+          creation:  this.localeService.formatDateTime(response[0].properties.creation.parsed.$date, this.timezone)
         }))
       )
       .subscribe(snapshot => {
@@ -45,14 +51,16 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
           },
           {
             label: "Used",
-            value: snapshot.used.value
+            value: this.storageService.convertBytestoHumanReadable(snapshot.used.rawvalue)
           },
           {
             label: "Referenced",
-            value: snapshot.referenced.value
+            value: this.storageService.convertBytestoHumanReadable(snapshot.referenced.rawvalue)
           }
         ];
       });
+    });
+
 
     this.actions = this.parent.conf.getActions();
   }

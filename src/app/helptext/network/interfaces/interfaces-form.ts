@@ -30,7 +30,7 @@ int_name_tooltip : T('Enter a name for the interface.\
  <samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where\
  <i>X</i> is a number representing a non-parent interface. Read-only\
  when editing an interface.'),
-int_name_validation : [ Validators.required ],
+int_name_validation : [],
 
 int_dhcp_placeholder : T('DHCP'),
 int_dhcp_tooltip : T('Set to enable DHCP. Leave unset to create a static\
@@ -165,8 +165,9 @@ lagg_interfaces_validation : [ Validators.required ],
 mtu_placeholder: T('MTU'),
 mtu_tooltip: T('Maximum Transmission Unit, the largest protocol data \
  unit that can be communicated. The largest workable MTU size varies \
- with network interfaces and equipment. *1500* and *9000* are standard \
- Ethernet MTU sizes.'),
+ with network interfaces and equipment. <i>1500</i> and <i>9000</i> \
+ are standard Ethernet MTU sizes. Leaving blank restores the field to \
+ the default value of <i>1500</i>.'),
 mtu_validation: [rangeValidator(68, 9000)],
 
 alias_list_placeholder: T('Aliases'),

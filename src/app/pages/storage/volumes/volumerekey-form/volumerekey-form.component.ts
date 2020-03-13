@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService, DialogService } from '../../../../services/';
@@ -18,6 +18,8 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
 
   saveSubmitText = T("Reset Encryption");
 
+  queryCall = 'pool.query';
+  queryKey = 'id';
   route_success: string[] = ['storage', 'pools'];
   isNew = false;
   isEntity = true;

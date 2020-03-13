@@ -5,16 +5,21 @@ import { TranslateService } from '@ngx-translate/core';
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
+import { T } from 'app/translate-marker';
+import { LocaleService } from 'app/services/locale.service';
 
 import {Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
-import {MatDatepickerModule, MatMonthView} from '@angular/material';
-import * as moment from 'moment';
+import {MatMonthView} from '@angular/material/datepicker';
+import * as moment from 'moment-timezone';
 import * as parser from 'cron-parser';
+import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../../../utils';
+import globalHelptext from '../../../../../../helptext/global-helptext';
 
 interface CronPreset {
   label:string;
   value:string;
+  description?:string;
 }
 
 interface CronDate {
@@ -34,6 +39,9 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public group: FormGroup;
   public fieldShow: string;
   public disablePrevious:boolean;
+  public ngDateFormat: string;
+  public helptext = globalHelptext;
+  public timezone: string;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -188,20 +196,24 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   private _preset:CronPreset;// = { label:"Custom", value:"* * * * *"}; 
   public presets: CronPreset[] = [
     {
-      label: "Hourly",
-      value: "0 * * * *"
+      label: T("Hourly"),
+      value: "0 * * * *",
+      description: T("at the start of each hour")
     },
     {
-      label: "Daily",
-      value: "0 0 * * *"
+      label: T("Daily"),
+      value: "0 0 * * *",
+      description: T("at 00:00 (12:00 AM)")
     },
     {
-      label: "Weekly",
-      value: "0 0 * * sun"
+      label: T("Weekly"),
+      value: "0 0 * * sun",
+      description: T("on Sundays at 00:00 (12:00 AM)")
     },
     {
-      label: "Monthly",
-      value: "0 0 1 * *"
+      label: T("Monthly"),
+      value: "0 0 1 * *",
+      description: T("on the first day of the month at 00:00 (12:00 AM)")
     }
   ];
 
@@ -229,7 +241,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     if(p.value == "custom"){
       this.crontab = "0 0 * * *";
       this.convertPreset("0 0 * * *");
-      this._preset = {label:"Custom", value:this.crontab};
+      this._preset = {label:T("Custom"), value:this.crontab};
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);
@@ -241,18 +253,25 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay){ 
+  constructor(public translate: TranslateService, private renderer: Renderer2, 
+    private cd: ChangeDetectorRef,public overlay: Overlay,
+    protected localeService: LocaleService, protected ws: WebSocketService){ 
     
     //Set default value
     this.preset = this.presets[1];
     this._months = "*";
     
-    this.minDate = moment();
-    this.maxDate = moment().endOf('month');
-    this.currentDate= moment();
-    
-    this.activeDate = moment(this.currentDate).toDate();
-    this.disablePrevious = true;
+    this.ws.call('system.general.config').subscribe((res) => {
+      this.timezone = res.timezone;
+      moment.tz.setDefault(res.timezone);
+      
+      this.minDate = moment();
+      this.maxDate = moment().endOf('month');
+      this.currentDate= moment();
+
+      this.activeDate = moment(this.currentDate).format();
+      this.disablePrevious = true;
+    })
   }
 
   ngOnChanges(changes:SimpleChanges){
@@ -270,6 +289,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this.control.setValue(new EntityUtils().parseDOW(this.control.value));
       this.crontab = this.control.value;
     }
+    // 'E' adds the day abbreviation
+    this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
   }
 
   ngAfterViewInit(){

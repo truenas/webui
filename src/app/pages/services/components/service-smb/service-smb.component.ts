@@ -1,5 +1,5 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -7,6 +7,7 @@ import { greaterThan } from "app/pages/common/entity/entity-form/validators/comp
 import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/services/components/service-smb';
+import global_helptext from '../../../../helptext/global-helptext';
 import { IdmapService, RestService, ServicesService, UserService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
@@ -49,9 +50,9 @@ export class ServiceSMBComponent {
     'localmaster',
     'guest',
     'admin_group',
-    'zeroconf',
     'bindip',
-    'smb_options'
+    'smb_options',
+    'aapl_extensions'
   ];
   protected hiddenFieldSets = [helptext.cifs_srv_fieldset_idmap, helptext.cifs_srv_fieldset_other];
 
@@ -168,6 +169,12 @@ export class ServiceSMBComponent {
           tooltip: helptext.cifs_srv_localmaster_tooltip,
         },
         {
+          type: 'checkbox',
+          name: 'aapl_extensions',
+          placeholder: helptext.cifs_srv_aapl_extensions_placeholder,
+          tooltip: helptext.cifs_srv_aapl_extensions_tooltip,
+        },
+        {
           type: 'select',
           name: 'guest',
           placeholder: helptext.cifs_srv_guest_placeholder,
@@ -183,12 +190,6 @@ export class ServiceSMBComponent {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions
-        },
-        {
-          type: 'checkbox',
-          name: 'zeroconf',
-          placeholder: helptext.cifs_srv_zeroconf_placeholder,
-          tooltip: helptext.cifs_srv_zeroconf_tooltip,
         },
         {
           type: 'select',
@@ -212,7 +213,7 @@ export class ServiceSMBComponent {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : T('Basic Mode'),
+      name : global_helptext.basic_options,
       function : () => {
         this.hiddenFieldSets.forEach(setId => (this.fieldSets.find(set => set.name === setId).label = false));
         this.fieldSets.filter(set => set.name === 'divider')[0].divider = false;
@@ -221,7 +222,7 @@ export class ServiceSMBComponent {
     },
     {
       'id' : 'advanced_mode',
-      name : T('Advanced Mode'),
+      name : global_helptext.advanced_options,
       function : () => {
         this.hiddenFieldSets.forEach(setId => (this.fieldSets.find(set => set.name === setId).label = true));
         this.fieldSets.filter(set => set.name === 'divider').forEach(set => set.divider = true);
@@ -240,7 +241,7 @@ export class ServiceSMBComponent {
   }
 
   preInit(entityForm: any) {
-    if (window.localStorage.getItem('is_freenas') === 'false') {
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         entityForm.setDisabled('netbiosname_b', !is_ha, !is_ha);
       });
@@ -272,7 +273,7 @@ export class ServiceSMBComponent {
       });
     });
 
-    this.userService.groupQueryDSCache().subscribe(items => {
+    this.userService.groupQueryDSCache("", true).subscribe(items => {
       const groups = [];
       items.forEach((item) => {
         groups.push({label: item.group, value: item.group});
@@ -308,7 +309,7 @@ export class ServiceSMBComponent {
   }
 
   updateGroupSearchOptions(value = "", parent) {
-    parent.userService.groupQueryDSCache(value).subscribe(items => {
+    parent.userService.groupQueryDSCache(value, true).subscribe(items => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].group, value: items[i].group});

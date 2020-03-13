@@ -4,7 +4,7 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';

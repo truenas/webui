@@ -2,6 +2,12 @@ import { T } from '../../../translate-marker';
 import globalHelptext from './../../../helptext/global-helptext';
 
 export default {
+   fieldset_general: T('General'),
+   fieldset_transport: T('Transport Options'),
+   fieldset_source: T('Source'),
+   fieldset_destination: T('Destination'),
+   fieldset_schedule: T('Replication Schedule'),
+
     name_placeholder: T('Name'),
     name_tooltip: T('Descriptive name for the replication.'),
 
@@ -58,18 +64,26 @@ export default {
  variable. When the active side is <i>REMOTE</i>, this defaults to the \
  SSH connection hostname.'),
 
-    source_datasets_placeholder: T('Source Datasets'),
-    source_datasets_tooltip: T('Choose datasets on the source system to \
- be replicated. Click the <i class="material-icons">folder</i> to see \
- all datasets on the source system. Each dataset must have an associated \
- periodic snapshot task, or previously-created snapshots for a one-time \
- replication.'),
+    source_datasets_placeholder: T('Source'),
+    source_datasets_tooltip: T('Define the path to a system location \
+ that has snapshots to replicate. Click the \
+ <i class="material-icons">folder</i> to see all locations on the \
+ source system or click in the field to manually type a location \
+ (Example: <code>pool1/dataset1</code>). Multiple source locations can \
+ be selected or manually defined with a comma (<code>,</code>) separator.'),
 
-    target_dataset_placeholder: T('Target Dataset'),
-    target_dataset_tooltip: T('Choose a dataset on the destination \
- system where snapshots are stored. Click the \
- <i class="material-icons">folder</i> to see all datasets on the \
- destination system. Click a dataset to set it as the target.'),
+    target_dataset_placeholder: T('Destination'),
+    target_dataset_tooltip: T('Define the path to a system location that \
+ will store replicated snapshots. Click the \
+ <i class="material-icons">folder</i> to see all locations on the \
+ destination system or click in the field to manually type a location \
+ path (Example: <code>pool1/dataset1</code>). Selecting a location \
+ defines the full path to that location as the destination. Appending a \
+ name to the path will create new zvol at that location.<br><br> \
+ For example, selecting <i>pool1/dataset1</i> will store \
+ snapshots in <i>dataset1</i>, but clicking the path and typing \
+ <code>/zvol1</code> after <i>dataset1</i> will create <i>zvol1</i> for \
+ snapshot storage.'),
 
     recursive_placeholder: T('Recursive'),
     recursive_tooltip: T('Replicate all child dataset snapshots. When \
@@ -78,11 +92,12 @@ export default {
     exclude_placeholder: T('Exclude Child Datasets'),
     exclude_tooltip: T('Exclude specific child dataset snapshots from \
  the replication. Use with <b>Recursive</b> snapshots. List child \
- dataset names to exclude. Example: <i>pool1/dataset1/child1</i>. A \
+ dataset names to exclude. Separate multiple entries with a comma \
+ (<code>,</code>). Example: <i>pool1/dataset1/child1</i>. A \
  recursive replication of <i>pool1/dataset1</i> snapshots includes all \
  child dataset snapshots except <i>child1</i>.'),
 
-    properties_placeholder: T('Properties'),
+    properties_placeholder: T('Include Dataset Properties'),
     properties_tooltip: T('Include dataset properties with the replicated \
  snapshots.'),
 
@@ -141,7 +156,7 @@ from the source dataset.'),
  replication that is already in progress can continue to run past this \
  time.'),
 
-    restrict_schedule_placeholder: T('Snapshot Replication Schedule'),
+    restrict_schedule_placeholder: T('Define Periodic Snapshots to Replicate'),
     restrict_schedule_tooltip: T('Schedule which periodic snapshots will \
  be replicated. All snapshots will be replicated by default. To choose \
  which snapshots are replicated, set the checkbox and select a schedule \
@@ -169,14 +184,20 @@ from the source dataset.'),
  add the <b>Schedule</b> values to the \
  <b>Snapshot Replication Schedule</b>.'),
 
-    allow_from_scratch_placeholder: T('Replicate from scratch if incremental is not possible'),
+    readonly_placeholder: T('Destination Dataset Read-only Policy'),
+    readonly_tooltip: T('<b>SET</b> will changes all destination datasets to <code>readonly=on</code>\
+ after finishing the replication. <br><b>REQUIRE</b> stops replication unless all existing destination\
+ datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the\
+ <code>readonly</code> property during replication.'),
+
+    allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),
     allow_from_scratch_tooltip: T('If the destination system has \
  snapshots but they do not have any data in common with the source \
  snapshots, destroy all destination snapshots and do a full replication. \
  <b>Warning:</b> enabling this option can cause data loss or excessive \
  data transfer if the replication is misconfigured.'),
 
-    hold_pending_snapshots_placeholder: T('Hold Pending Snapshots'),
+    hold_pending_snapshots_placeholder: T('Save Pending Snapshots'),
     hold_pending_snapshots_tooltip: T('Prevent source system snapshots \
  that have failed replication from being automatically removed by the \
  <b>Snapshot Retention Policy</b>.'),

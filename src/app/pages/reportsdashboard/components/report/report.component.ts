@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { TranslateService } from '@ngx-translate/core';
+import { LocaleService } from 'app/services/locale.service';
 
 import { T } from '../../../../translate-marker';
 
@@ -74,7 +75,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   public data: ReportData;
   public ready: boolean = false;
-  public isFN: string = window.localStorage['is_freenas'];
+  public product_type = window.localStorage['product_type'];
   private delay: number = 1000; // delayed chart render time
   
   get reportTitle(){
@@ -96,6 +97,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public currentStartDate: number;// as seconds from Unix Epoch
   public currentEndDate: number;// as seconds from Unix Epoch
   public timeZoomIndex:number = 4;
+
+  public timezone: string;
 
   public stepForwardDisabled: boolean = true;
 
@@ -133,18 +136,19 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
   public chartColors: string[];
-
+  
   get startTime(){
-    return new Date(this.currentStartDate);
+    return this.localeService.formatDateTime(new Date(this.currentStartDate), this.timezone);
   }
   get endTime(){
-    return new Date(this.currentEndDate);
+    return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
   }
 
   constructor(public router: Router, 
     public translate: TranslateService,
     private rs: ReportsService,
-    private ws: WebSocketService){
+    private ws: WebSocketService,
+    protected localeService: LocaleService){
     super(translate); 
     
     this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
@@ -164,6 +168,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     });
 
     this.core.emit({name:"ThemeDataRequest", sender:this});
+
+    this.ws.call('system.general.config').subscribe(res => this.timezone = res.timezone);
   }
 
   ngOnDestroy(){
@@ -260,6 +266,18 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
+  getServerTime(){
+    
+    let xmlHttp = new XMLHttpRequest(); 
+    xmlHttp.open('HEAD',window.location.origin.toString(),false);
+    xmlHttp.setRequestHeader("Content-Type", "text/html");
+    xmlHttp.send('');
+    const serverTime = xmlHttp.getResponseHeader("Date");
+    return new Date(serverTime);
+
+  }
+
+
   // Convert timespan to start/end options for RRDTool
   convertTimespan(timespan, direction?: string, currentDate?:number): TimeData{
     if(!direction){
@@ -269,7 +287,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let units: string;
     let value: number;
 
-    const now = new Date();
+    const now = this.getServerTime(); 
+
     let startDate:Date;
     let endDate:Date;
     if(direction == 'backward' && !currentDate){
