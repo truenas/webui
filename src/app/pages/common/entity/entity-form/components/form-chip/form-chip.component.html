@@ -1,7 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow"
     [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
     <mat-form-field class="full-width">
-        <mat-chip-list #chipList class="form-chip">
+        <mat-chip-list #chipList class="form-chip" [required]="config.required" [formControl]="group.controls[config.name]">
             <mat-chip *ngFor="let item of chipLists" [selectable]="selectable" [removable]="removable"
                 (removed)="remove(item)">
                 {{item}}
