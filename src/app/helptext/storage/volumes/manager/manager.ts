@@ -43,10 +43,13 @@ force_warnings:{
 },
 data_vdev_title: T("Data"),
 data_vdev_description: T("Normal vdev type, used for primary storage operations. A ZFS pool will always have at least one DATA vdev."),
+cache_vdev_title: T("Cache"),
 cache_vdev_description: T("ZFS L2ARC read-cache. Can be removed. Optional vdev that can be used with fast devices to accelerate read operations."),
+log_vdev_title: T("Log"),
 log_vdev_description: T("ZFS LOG device. Can be removed. Optional write-cache that can improve speeds of synchronous writes."),
+spare_vdev_title: T("Hot Spare"),
 spare_vdev_description: T("Drive set aside ready to be inserted into DATA pool vdevs when a device has failed."),
+special_vdev_title: T("Metadata"),
 special_vdev_description: T("Special Allocation class, used to create Fusion pools. Optional vdev type which is used to speed up metadata and small block IO. Cannot be removed from pool once added."),
-lipsum: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ultricies, ex at dictum luctus, massa augue viverra libero, eget euismod arcu risus vel ipsum. Morbi pulvinar metus sed urna ornare luctus. Mauris iaculis, dolor eget."
 
 }
