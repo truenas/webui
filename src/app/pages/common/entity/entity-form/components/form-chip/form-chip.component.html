@@ -1,7 +1,12 @@
 <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow"
     [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
     <mat-form-field class="full-width">
-        <mat-chip-list #chipList class="form-chip" [required]="config.required" [formControl]="group.controls[config.name]">
+        <mat-chip-list #chipList class="form-chip"
+            [required]="config.required"
+            [formControl]="group.controls[config.name]"
+            ix-auto
+            ix-auto-type="input"
+            ix-auto-identifier="{{config.placeholder}}">
             <mat-chip *ngFor="let item of chipLists" [selectable]="selectable" [removable]="removable"
                 (removed)="remove(item)">
                 {{item}}
@@ -11,11 +16,7 @@
                 [matChipInputFor]="chipList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="addOnBlur"
-                (matChipInputTokenEnd)="add($event)"
-                [attr.value]="config.value"
-                ix-auto
-                ix-auto-type="input"
-                ix-auto-identifier="{{config.placeholder}}">
+                (matChipInputTokenEnd)="add($event)">
         </mat-chip-list>
     </mat-form-field>
 
