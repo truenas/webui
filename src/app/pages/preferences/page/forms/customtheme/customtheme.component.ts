@@ -24,7 +24,7 @@ interface FormSnapshot {
 })
 export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-  public saveSubmitText = T("Save Custom Theme");
+  public saveSubmitText = T("Submit");
   public actionButtonsAlign = 'left';
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
   public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target
