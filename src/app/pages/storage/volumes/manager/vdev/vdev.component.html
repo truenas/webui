@@ -77,10 +77,10 @@
     </ngx-datatable>
     <div class="vdev-wrapper">
         <div class="vdev-type">
-        <div *ngIf="(group === 'data' || group === 'log')" class="datainfo">
-            <mat-select id="vdev__option-menu" *ngIf="(group === 'data' || group === 'log') && !vdev_type_disabled" [(ngModel)]="type" (ngModelChange)="onTypeChange($event)" class="form-control">
+        <div *ngIf="(group === 'data' || group === 'log' || group === 'special')" class="datainfo">
+            <mat-select id="vdev__option-menu" *ngIf="(group === 'data' || group === 'log' || group === 'special') && !vdev_type_disabled" [(ngModel)]="type" (ngModelChange)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
-                <mat-option value="mirror" *ngIf="getDisks().length >= 2 && (group === 'data' || group === 'log')">{{"Mirror" | translate}}</mat-option>
+                <mat-option value="mirror" *ngIf="getDisks().length >= 2 && (group === 'data' || group === 'log' || group === 'special')">{{"Mirror" | translate}}</mat-option>
                 <mat-option value="raidz" *ngIf="getDisks().length >= 3 && group === 'data'">{{"Raid-z" | translate}}</mat-option>
                 <mat-option value="raidz2" *ngIf="getDisks().length >= 4 && group === 'data'">{{"Raid-z2" | translate}}</mat-option>
                 <mat-option value="raidz3" *ngIf="getDisks().length >= 5 && group === 'data'">{{"Raid-z3" | translate}}</mat-option>
