@@ -68,7 +68,7 @@
                 </div>
               </button>
 
-              <button class="tbl vdev-option" id="pool-manager__add-spare-button" [disabled]="vdevs.spare.length > 0" (click)="addVdev('spare')" mat-menu-item>
+              <button class="tbl vdev-option" id="pool-manager__add-spare-button" [disabled]="vdevs.spares.length > 0" (click)="addVdev('spares')" mat-menu-item>
                 <div class="tr">
                   <div class="td icon">
                     <mat-icon>local_hospital</mat-icon>
@@ -219,7 +219,7 @@
             <h4 class="vdev-h4">{{"Log VDev" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
           </div>
-          <div *ngIf="vdevs.spare.length > 0">
+          <div *ngIf="vdevs.spares.length > 0">
             <h4 class="vdev-h4">{{"Spare VDev" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spares'" [manager]="this" [index]="i"></app-vdev>
           </div>
