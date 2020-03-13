@@ -60,10 +60,10 @@ import { ProductionStatusComponent } from './support/production-status/productio
 import { ProactiveComponent } from './support/proactive/proactive.component';
 import { TnSupportComponent } from './support/tn-support/tn-support.component';
 import { FnSupportComponent } from './support/fn-support/fn-support.component';
-import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component';
+import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
+import { KmipComponent} from './kmip/kmip.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { QRDialog } from './two-factor/two-factor.component';
-
 
 @NgModule({
   imports: [
@@ -120,6 +120,7 @@ import { QRDialog } from './two-factor/two-factor.component';
     TnSupportComponent,
     FnSupportComponent,
     FnSysInfoComponent,
+    KmipComponent,
     TwoFactorComponent,
     QRDialog
   ],

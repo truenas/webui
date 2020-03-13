@@ -32,7 +32,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
-//import { MatNativeDateModule } from "@angular/material"; //cannot find this one?
+import { MatNativeDateModule } from "@angular/material/core";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 @NgModule({
@@ -102,7 +102,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    //MatNativeDateModule,
+    MatNativeDateModule,
     MatAutocompleteModule
   ]
 })

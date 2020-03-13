@@ -62,7 +62,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public loaderOpen = false;
 
   public submitTitle = T("Create");
-  protected extendedSubmitTitle = T("Extend");
+  protected extendedSubmitTitle = T("Add Vdevs");
 
   protected current_layout: any;
   protected existing_pool: any;
@@ -520,7 +520,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     let confirmButton = T('Create Pool');
     let diskWarning = this.diskAddWarning;
     if (!this.isNew) {
-      confirmButton = T('Extend Pool');
+      confirmButton = T('Add Vdevs');
       diskWarning = this.diskExtendWarning;
     }
 

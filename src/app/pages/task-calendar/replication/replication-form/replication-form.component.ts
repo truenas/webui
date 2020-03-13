@@ -569,7 +569,27 @@ export class ReplicationFormComponent {
                             value: 'PULL',
                         }]
                     }],
-                }, 
+                },
+                {
+                    type: 'select',
+                    name: 'readonly',
+                    placeholder: helptext.readonly_placeholder,
+                    tooltip: helptext.readonly_tooltip,
+                    options: [
+                        {
+                            label: 'SET',
+                            value: 'SET',
+                        },
+                        {
+                            label: 'REQUIRE',
+                            value: 'REQUIRE',
+                        },
+                        {
+                            label: 'IGNORE',
+                            value: 'IGNORE',
+                        }
+                    ]
+                },
                 {
                     type: 'checkbox',
                     name: 'allow_from_scratch',
@@ -795,6 +815,12 @@ export class ReplicationFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        const isTruenasCore = window.localStorage.getItem('product_type') === 'CORE' ? true : false;
+        const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
+        if (entityForm.pk === undefined) {
+            readonlyCtrl.setValue(isTruenasCore ? 'SET' : 'REQUIRE');
+        }
+
         if (this.entityForm.formGroup.controls['speed_limit'].value) {
             let presetSpeed = (this.entityForm.formGroup.controls['speed_limit'].value).toString();
             this.storageService.humanReadable = presetSpeed;
@@ -856,6 +882,28 @@ export class ReplicationFormComponent {
             entityForm.setDisabled('schedule_end', !res, !res);
             entityForm.setDisabled('only_matching_schedule', !res, !res);
         })
+
+        entityForm.formGroup.controls['schedule_picker'].valueChanges.subscribe(value => {
+            if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+              entityForm.setDisabled('schedule_begin', true, true);
+              entityForm.setDisabled('schedule_end', true, true);
+
+            } else {
+              entityForm.setDisabled('schedule_begin', false, false);
+              entityForm.setDisabled('schedule_end', false, false);
+            }
+          })
+
+        entityForm.formGroup.controls['restrict_schedule_picker'].valueChanges.subscribe(value => {
+            if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+              entityForm.setDisabled('restrict_schedule_begin', true, true);
+              entityForm.setDisabled('restrict_schedule_end', true, true);
+
+            } else {
+              entityForm.setDisabled('restrict_schedule_begin', false, false);
+              entityForm.setDisabled('restrict_schedule_end', false, false);
+            }
+          })
 
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
             (res) => {

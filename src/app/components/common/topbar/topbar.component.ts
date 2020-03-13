@@ -200,6 +200,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   toggleSidenav() {
     this.sidenav.toggle();
+    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode }, sender:this});
   }
 
   toggleCollapse() {
@@ -209,9 +210,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
 
     // Fix for sidebar
-    if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
+    /*if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
       (<HTMLElement>document.querySelector('mat-sidenav-content')).style.marginLeft = '240px';
-    }
+    }*/
   }
 
   onShowAbout() {
@@ -503,4 +504,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       helptext.updateRunning_dialog.message,
       true, T('Close'), false, '', '', '', '', true);
   };
+
+  openIX() {
+    window.open('https://www.ixsystems.com/', '_blank')
+  }
 }
