@@ -111,7 +111,7 @@ export const rootRouterConfig: Routes = [{
       {
         path : 'ui-preferences',
         loadChildren : './pages/preferences/preferences.module#PreferencesModule',
-        data: { title: 'Web Interface Preferences', breadcrumb: 'Web Interface Preferences'}
+        data: { title: 'Web Interface Preferences', breadcrumb: 'Preferences'}
       }
     ]
   },

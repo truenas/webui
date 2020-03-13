@@ -5,11 +5,11 @@
     <!-- FORM -->
     <mat-card id="custom-theme-form" fxLayout="column" fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxFlex style="margin-bottom:16px;">
-        <h4>Create Theme</h4>
+        <h4>{{"Create Theme" | translate}}</h4>
         <span class="spacer"></span>
         <div>
           <mat-form-field>
-            <mat-select placeholder="Load Colors from Existing Theme"  [(value)]="baseTheme"
+            <mat-select placeholder="'Load Colors from Existing Theme' | translate"  [(value)]="baseTheme"
               ix-auto ix-auto-type="select" ix-auto-identifier="themeFilter">
               <mat-option *ngFor="let theme of baseThemes" value="{{theme.name}}"
                 ix-auto ix-auto-type="option" ix-auto-identifier="{{theme.name}}">
@@ -22,15 +22,15 @@
       </mat-toolbar-row>
 
       <div class="tabs" fxFlex="100" fxLayout="row" fxLayoutAlign="space-around center">
-        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="GENERAL"><a alt="General tab" (click)="hideFieldSet('Colors')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'General'}">GENERAL</span></a></div>
-        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="COLORS"><a alt="Colors tab" (click)="hideFieldSet('General')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Colors'}">COLORS</span></a></div>
-        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="PREVIEW"><a alt="Preview Options tab" (click)="hideFieldSet('All')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Preview'}">PREVIEW</span></a></div>
+        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="GENERAL"><a alt="General tab" (click)="hideFieldSet('Colors')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'General'}">{{"GENERAL" | translate}}</span></a></div>
+        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="COLORS"><a alt="Colors tab" (click)="hideFieldSet('General')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Colors'}">{{"COLORS" | translate}}</span></a></div>
+        <div fxFlex="50" class="tab" ix-auto ix-auto-type="tab" ix-auto-identifier="PREVIEW"><a alt="Preview Options tab" (click)="hideFieldSet('All')"><span class="mat-button-wrapper"[ngClass]="{'active': currentTab == 'Preview'}">{{"PREVIEW" | translate}}</span></a></div>
       </div>
 
       <mat-card-content fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-between stretch">
 
         <div class="preview-controls" [ngClass]="{'hidden': currentTab !== 'Preview'}">
-          <mat-slide-toggle [checked]="" [(ngModel)]="globalPreview" ix-auto ix-auto-type="slider" ix-auto-identifier="Global Preview">Global Preview</mat-slide-toggle>
+          <mat-slide-toggle [checked]="" [(ngModel)]="globalPreview" ix-auto ix-auto-type="slider" ix-auto-identifier="Global Preview">{{"Global Preview" | translate}}</mat-slide-toggle>
         </div>
 
         <div class="embedded-form"  [ngClass]="{'hidden': currentTab == 'Preview'}" >
@@ -45,135 +45,133 @@
   <!-- PREVIEW -->
   <div [ngClass]="{ 'hidden': !globalPreview}" class="theme-preview" id="theme-preview" fxHide.lt-md fxFlex="calc(100% - 432px)" fxLayout="row" fxLayoutAlign="space-around center">
     <div fxLayout="column" fxFlex.sm="0"></div>
-    <mat-card fxLayout="column" fxFlex="100">
+    <mat-card fxLayout="column" fxFlex="100" id="preview-card">
 
       <mat-toolbar-row color="primary">
-        <h4>Preview</h4>
+        <h4>{{"Preview" | translate}}</h4>
       </mat-toolbar-row>
 
       <mat-tab-group dynamicHeight="true">
         <mat-tab label="Buttons">
 
-          <h4>Basic Buttons</h4>
+          <h4>{{"Basic Buttons" | translate}}</h4>
           <div class="button-row">
             <button mat-button>Basic</button>
-            <button mat-button color="primary">Primary</button>
-            <button mat-button color="accent">Accent</button>
-            <button mat-button color="warn">Warn</button>
-            <button mat-button disabled>Disabled</button>
-            <a mat-button routerLink=".">Link</a>
+            <button mat-button color="primary">{{"Primary" | translate}}</button>
+            <button mat-button color="accent">{{"Accent" | translate}}</button>
+            <button mat-button color="warn">{{"Warn" | translate}}</button>
+            <button mat-button disabled>{{"Disabled" | translate}}</button>
+            <a mat-button routerLink=".">{{"Link" | translate}}</a>
           </div>
 
-          <h4>Raised Buttons</h4>
+          <h4>{{"Raised Buttons" | translate}}</h4>
           <div class="button-row">
             <button mat-raised-button>Basic</button>
-            <button mat-raised-button color="primary">Primary</button>
-            <button mat-raised-button color="accent">Accent</button>
-            <button mat-raised-button color="warn">Warn</button>
-            <button mat-raised-button disabled>Disabled</button>
-            <a mat-raised-button routerLink=".">Link</a>
+            <button mat-raised-button color="primary">{{"Primary" | translate}}</button>
+            <button mat-raised-button color="accent">{{"Accent" | translate}}</button>
+            <button mat-raised-button color="warn">{{"Warn" | translate}}</button>
+            <button mat-raised-button disabled>{{"Disabled" | translate}}</button>
+            <a mat-raised-button routerLink=".">{{"Link" | translate}}</a>
           </div>
 
-          <h4>Icon Buttons</h4>
+          <h4>{{"Icon Buttons" | translate}}</h4>
           <div class="button-row">
             <button mat-icon-button>
-              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
             </button>
             <button mat-icon-button color="primary">
-              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
             </button>
             <button mat-icon-button color="accent">
-              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
             </button>
             <button mat-icon-button color="warn">
-              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
             </button>
             <button mat-icon-button disabled>
-              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
             </button>
           </div>
 
-          <h4>Fab Buttons</h4>
+          <h4>{{"Fab Buttons" | translate}}</h4>
           <div class="button-row">
             <button mat-fab>Basic</button>
-            <button mat-fab color="primary">Primary</button>
-            <button mat-fab color="accent">Accent</button>
-            <button mat-fab color="warn">Warn</button>
-            <button mat-fab disabled>Disabled</button>
+            <button mat-fab color="primary">{{"Primary" | translate}}</button>
+            <button mat-fab color="accent">{{"Accent" | translate}}</button>
+            <button mat-fab color="warn">{{"Warn" | translate}}</button>
+            <button mat-fab disabled>{{"Disabled" | translate}}</button>
             <button mat-fab>
-              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
             </button>
-            <a mat-fab routerLink=".">Link</a>
+            <a mat-fab routerLink=".">{{"Link" | translate}}</a>
           </div>
 
-          <h4>Mini Fab Buttons</h4>
+          <h4>{{"Mini Fab Buttons" | translate}}</h4>
           <div class="button-row">
             <button mat-mini-fab>Basic</button>
-            <button mat-mini-fab color="primary">Primary</button>
-            <button mat-mini-fab color="accent">Accent</button>
-            <button mat-mini-fab color="warn">Warn</button>
-            <button mat-mini-fab disabled>Disabled</button>
+            <button mat-mini-fab color="primary">{{"Primary" | translate}}</button>
+            <button mat-mini-fab color="accent">{{"Accent" | translate}}</button>
+            <button mat-mini-fab color="warn">{{"Warn" | translate}}</button>
+            <button mat-mini-fab disabled>{{"Disabled" | translate}}</button>
             <button mat-mini-fab>
-              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
             </button>
-            <a mat-mini-fab routerLink=".">Link</a>
+            <a mat-mini-fab routerLink=".">{{"Link" | translate}}</a>
           </div>
 
         </mat-tab>
 
 
         <mat-tab label="Forms" fxLayout="row wrap" fxLayoutAlign="spaceBetween start">
-
-          <div fxFlex="200px">
-            <mat-checkbox>Check me!</mat-checkbox>
-
-            <div>
-              <mat-form-field>
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle><br>
-                <input matInput [matDatepicker]="picker" placeholder="Choose a date"><br>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
-            </div>
-
-            <div>
-              <mat-form-field>
-                <input matInput placeholder="Input">
-              </mat-form-field>
-            </div>
-
-            <div>
-              <mat-form-field>
-                <textarea matInput placeholder="Textarea"></textarea>
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div fxFlex="200px">
-            <div>
-              <mat-radio-group>
-                <mat-radio-button value="1">Option 1</mat-radio-button>
-                <mat-radio-button value="2">Option 2</mat-radio-button>
-              </mat-radio-group>
-            </div>
-
-            <div>
-              <p>
+            <div fxFlex="200px">
+              <mat-checkbox>{{"Check me!" | translate}}</mat-checkbox>
+  
+              <div>
                 <mat-form-field>
-                  <mat-select placeholder="Choose an option" disabled="false">
-                    <mat-option value="option1">Option 1</mat-option>
-                    <mat-option value="option2" disabled>Option 2 (disabled)</mat-option>
-                    <mat-option value="option3">Option 3</mat-option>
-                  </mat-select>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle><br>
+                  <input matInput [matDatepicker]="picker" placeholder="'Choose a date' | translate"><br>
+                  <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
-              </p>
+              </div>
+  
+              <div>
+                <mat-form-field>
+                  <input matInput placeholder="'Input' | translate">
+                </mat-form-field>
+              </div>
+  
+              <div>
+                <mat-form-field>
+                  <textarea matInput placeholder="'Textarea' | translate"  class="form-field-wrapper"></textarea>
+                </mat-form-field>
+              </div>
             </div>
-
-            <div>
-              <mat-slider></mat-slider><br>
-              <mat-slide-toggle>Slide me!</mat-slide-toggle>
+  
+            <div fxFlex="200px">
+              <div class="form-field-wrapper">
+                <mat-radio-group>
+                  <mat-radio-button [style.margin-right.px]="10" value="1">{{"Option 1" | translate}}</mat-radio-button>
+                  <mat-radio-button value="2">{{"Option 2" | translate}}</mat-radio-button>
+                </mat-radio-group>
+              </div>
+  
+              <div [style.margin-top.px]="10">
+                <p>
+                  <mat-form-field>
+                    <mat-select placeholder="'Choose an option' | translate" disabled="false">
+                      <mat-option value="option1">{{"Option 1" | translate}}</mat-option>
+                      <mat-option value="option2" disabled>{{"Option 2 (disabled)" | translate}}</mat-option>
+                      <mat-option value="option3">{{"Option 3" | translate}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </p>
+              </div>
+  
+              <div>
+                <mat-slider class="form-field-wrapper"></mat-slider><br>
+                <mat-slide-toggle>{{"Slide me!" | translate}}</mat-slide-toggle>
+              </div>
             </div>
-          </div>
-
         </mat-tab>
 
 

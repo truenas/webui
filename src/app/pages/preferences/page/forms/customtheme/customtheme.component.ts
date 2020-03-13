@@ -25,6 +25,7 @@ interface FormSnapshot {
 export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
   public saveSubmitText = T("Save Custom Theme");
+  public actionButtonsAlign = 'left';
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
   public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target
   private _baseTheme:any; //= this.themeService.activeTheme;
@@ -36,6 +37,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
   public hiddenFieldSets: string[] = ['Colors'];
   public currentTab:string = 'General';
   public scrollContainer: HTMLElement;
+  public goBack = true;
 
   get flexForm(){
     return this._globalPreview ? '432px' : '100%';
@@ -105,67 +107,67 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
           type: 'input',
           name: 'name',
           width:'100%',
-          placeholder: 'Custom Theme Name',
+          placeholder: T('Custom Theme Name'),
           required:true,
-          tooltip: 'Enter a name to identify the new theme.',
+          tooltip: T('Enter a name to identify the new theme.'),
         },
         {
           type: 'input',
           name: 'label',
           width:'100%',
-          placeholder: 'Menu Label',
+          placeholder: T('Menu Label'),
           required:true,
-          tooltip: 'Enter a short name for the theme. The Menu Label is \
-                    shown when the theme is listed in Preferences.'
+          tooltip: T('Enter a short name for the theme. The Menu Label is \
+                    shown when the theme is listed in Preferences.')
         },
         // Not using this now, but theme preview breaks if it isn't here...
         {
           type: 'select',
           name: 'labelSwatch',
           width:'100%',
-          placeholder: 'Menu Swatch',
+          placeholder: T('Menu Swatch'),
           required:false,
           isHidden: true,
           options:this.colorOptions,
-          tooltip: "Choose the color to display next to the Menu Label \
-                    in the Favorites menu.",
+          tooltip: T("Choose the color to display next to the Menu Label \
+                    in the Favorites menu."),
           class:'inline'
 
         },
         { type: 'input',
           name : 'description',
           width:'100%',
-          placeholder : 'Description',
-          tooltip: 'Enter a short description of the theme.',
+          placeholder : T('Description'),
+          tooltip: T('Enter a short description of the theme.'),
         },
         {
           type: 'select',
           name: 'primary',
           width:'100%',
-          placeholder: 'Choose Primary',
+          placeholder: T('Choose Primary'),
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose the primary color for the theme.",
+          tooltip: T("Choose the primary color for the theme."),
           class:'inline'
         },
         {
           type: 'select',
           name: 'accent',
           width:'100%',
-          placeholder: 'Choose Accent',
+          placeholder: T('Choose Accent'),
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose the accent color for the theme.",
+          tooltip: T("Choose the accent color for the theme."),
           class:'inline'
         },
         {
           type: 'select',
           name: 'topbar',
           width:'100%',
-          placeholder: 'Choose Topbar',
+          placeholder: T('Choose Topbar'),
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose the color for the topbar.",
+          tooltip: T("Choose the color for the topbar."),
           class:'inline'
         },
       ]
@@ -180,159 +182,159 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
          type: 'colorpicker',
          name: 'bg1',
          width: this.colorWidth,
-         placeholder: 'Background 1',
-         tooltip: 'Click the swatch to pick a color or enter a color \
-                   hex value.',
+         placeholder: T('Background 1'),
+         tooltip: T('Click the swatch to pick a color or enter a color \
+                   hex value.'),
          class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'bg2',
           width: this.colorWidth,
-          placeholder: 'Background 2',
+          placeholder: T('Background 2'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'fg1',
           width: this.colorWidth,
-          placeholder: 'Foreground 1',
+          placeholder: T('Foreground 1'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'fg2',
           width: this.colorWidth,
-          placeholder: 'Foreground 2',
+          placeholder: T('Foreground 2'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'alt-bg1',
           width: this.colorWidth,
-          placeholder: 'Alt Background 1',
+          placeholder: T('Alt Background 1'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'alt-bg2',
           width: this.colorWidth,
-          placeholder: 'Alt Background 2',
+          placeholder: T('Alt Background 2'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'alt-fg1',
           width: this.colorWidth,
-          placeholder: 'Alt Foreground 1',
+          placeholder: T('Alt Foreground 1'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'alt-fg2',
           width: this.colorWidth,
-          placeholder: 'Alt Foreground 2',
+          placeholder: T('Alt Foreground 2'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'yellow',
           width: this.colorWidth,
-          placeholder: 'Yellow',
+          placeholder: T('Yellow'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'orange',
           width: this.colorWidth,
-          placeholder: 'Orange',
+          placeholder: T('Orange'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'red',
           width: this.colorWidth,
-          placeholder: 'Red',
+          placeholder: T('Red'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'magenta',
           width: this.colorWidth,
-          placeholder: 'Magenta',
+          placeholder: T('Magenta'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'violet',
           width: this.colorWidth,
-          placeholder: 'Violet',
+          placeholder: T('Violet'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'blue',
           width: this.colorWidth,
-          placeholder: 'Blue',
+          placeholder: T('Blue'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'cyan',
           width: this.colorWidth,
-          placeholder: 'Cyan',
+          placeholder: T('Cyan'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         },
         {
           type: 'colorpicker',
           name: 'green',
           width: this.colorWidth,
-          placeholder: 'Green',
+          placeholder: T('Green'),
           required:true,
-          tooltip: 'Click the swatch to pick a color or enter a color \
-                    hex value.',
+          tooltip: T('Click the swatch to pick a color or enter a color \
+                    hex value.'),
           class:'inline'
         }
       ]
@@ -366,14 +368,6 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
       }
       this._globalPreview = state;
     }
-
-    custActions: any[] = [
-      {
-        id:'cancel',
-        name:'Cancel',
-        eventName: "FormCancelled"
-      }
-    ]
 
     constructor(
       protected router: Router,
@@ -540,7 +534,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
 
           //Check for required fields
           if(field.required && !data[field.name]){
-            messages.push(field.placeholder + " is a required field.");
+            messages.push(field.placeholder + T(" is a required field."));
           } else if(field.required){
             //console.warn(field.name);
           } else {
@@ -551,12 +545,12 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
         // Check for duplicate theme names and labels
         let dupeName = this.isDuplicateOf("name",data.name);
         if(dupeName){
-          messages.push("This name is already being used by an existing theme. Please choose a new name.")
+          messages.push(T("This name is already being used by an existing theme. Please choose a new name."))
         }
 
         let dupeLabel = this.isDuplicateOf("label",data.label);
         if(dupeLabel){
-          messages.push("This label is already being used by an existing theme. Please choose a new label.")
+          messages.push(T("This label is already being used by an existing theme. Please choose a new label."))
         }
       if(messages.length == 0){
         return true;
