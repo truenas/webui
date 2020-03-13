@@ -9,7 +9,7 @@
         <span class="spacer"></span>
         <div>
           <mat-form-field>
-            <mat-select placeholder="'Load Colors from Existing Theme' | translate"  [(value)]="baseTheme"
+            <mat-select placeholder="{{'Load colors from existing theme' | translate}}"  [(value)]="baseTheme"
               ix-auto ix-auto-type="select" ix-auto-identifier="themeFilter">
               <mat-option *ngFor="let theme of baseThemes" value="{{theme.name}}"
                 ix-auto ix-auto-type="option" ix-auto-identifier="{{theme.name}}">
@@ -77,19 +77,19 @@
           <h4>{{"Icon Buttons" | translate}}</h4>
           <div class="button-row">
             <button mat-icon-button>
-              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
             </button>
             <button mat-icon-button color="primary">
-              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
             </button>
             <button mat-icon-button color="accent">
-              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
             </button>
             <button mat-icon-button color="warn">
-              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
             </button>
             <button mat-icon-button disabled>
-              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
             </button>
           </div>
 
@@ -101,7 +101,7 @@
             <button mat-fab color="warn">{{"Warn" | translate}}</button>
             <button mat-fab disabled>{{"Disabled" | translate}}</button>
             <button mat-fab>
-              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
             </button>
             <a mat-fab routerLink=".">{{"Link" | translate}}</a>
           </div>
@@ -114,7 +114,7 @@
             <button mat-mini-fab color="warn">{{"Warn" | translate}}</button>
             <button mat-mini-fab disabled>{{"Disabled" | translate}}</button>
             <button mat-mini-fab>
-              <mat-icon aria-label="'Example icon-button with a heart icon' | translate">favorite</mat-icon>
+              <mat-icon aria-label="Example icon-button with a heart icon">favorite</mat-icon>
             </button>
             <a mat-mini-fab routerLink=".">{{"Link" | translate}}</a>
           </div>
@@ -129,20 +129,20 @@
               <div>
                 <mat-form-field>
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle><br>
-                  <input matInput [matDatepicker]="picker" placeholder="'Choose a date' | translate"><br>
+                  <input matInput [matDatepicker]="picker" placeholder="{{'Choose a date' | translate}}"><br>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
               </div>
   
               <div>
                 <mat-form-field>
-                  <input matInput placeholder="'Input' | translate">
+                  <input matInput placeholder="{{'Input' | translate}}">
                 </mat-form-field>
               </div>
   
               <div>
                 <mat-form-field>
-                  <textarea matInput placeholder="'Textarea' | translate"  class="form-field-wrapper"></textarea>
+                  <textarea matInput placeholder="{{'Textarea' | translate}}"  class="form-field-wrapper"></textarea>
                 </mat-form-field>
               </div>
             </div>
@@ -158,7 +158,7 @@
               <div [style.margin-top.px]="10">
                 <p>
                   <mat-form-field>
-                    <mat-select placeholder="'Choose an option' | translate" disabled="false">
+                    <mat-select placeholder="{{'Choose an option' | translate}}" disabled="false">
                       <mat-option value="option1">{{"Option 1" | translate}}</mat-option>
                       <mat-option value="option2" disabled>{{"Option 2 (disabled)" | translate}}</mat-option>
                       <mat-option value="option3">{{"Option 3" | translate}}</mat-option>
