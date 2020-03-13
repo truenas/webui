@@ -5,6 +5,7 @@ import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
 import { StorageService, DialogService } from '../../../../services';
+import { LocaleService } from 'app/services/locale.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -115,7 +116,8 @@ export class DiskListComponent {
 	protected unusedDisk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unused: any;
 	protected disk_pool: Map<string, string> = new Map<string, string>();
-	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService, protected dialogService: DialogService) {
+	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService, protected dialogService: DialogService,
+		protected localeService: LocaleService) {
 		this.ws.call('boot.get_disks', []).subscribe((boot_res) => {
 			for (const boot in boot_res) {
 				this.disk_pool.set(boot_res[boot], T('Boot Pool'));
@@ -260,7 +262,8 @@ export class DiskListComponent {
 
 			parent.ws.call('smart.test.manual_test', [disksIdentifier]).subscribe(
 				res => {
-
+					entityDialog.dialogRef.close(true);
+					parent.generateManualTestSummary(res);
 				},
 				err => {
 					new EntityUtils().handleWSError(parent, err, parent.dialogService, conf.fieldConfig);
@@ -269,5 +272,28 @@ export class DiskListComponent {
 		}
 	  }
 	  this.dialogService.dialogForm(conf);
+  }
+
+  generateManualTestSummary(res) {
+	let success_note = '<h4>Expected Finished Time:</h4>';
+	let hasSuccessNote = false;
+	let fail_note = '<h4>Errors:</h4>';
+	let hasFailNote = false;
+
+	for (let i = 0; i < res.length; i++) {
+		if (res[i].expected_result_time) {
+			hasSuccessNote = true;
+			success_note += `<b>${res[i].disk}</b>: ${this.localeService.formatDateTime(res[i].expected_result_time.$date)}<br>`
+		} else if (res[i].error) {
+			hasFailNote = true;
+			fail_note += `<b>${res[i].disk}</b><br> ${res[i].error}<br>`;
+		}
+	}
+	this.dialogService.Info(
+		T('Manual Test Summary'),
+		(hasSuccessNote ? success_note + '<br>' : '') + (hasFailNote ? fail_note : ''),
+		'600px',
+		'info',
+		true);
   }
 }
