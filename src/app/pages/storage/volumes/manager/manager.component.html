@@ -80,7 +80,7 @@
                 </div>
               </button>
               
-              <button class="tbl vdev-option" mat-menu-item>
+              <button class="tbl vdev-option" id="pool-manager__add-spare-button" [disabled]="vdevs.special.length > 0" (click)="addVdev('special')" mat-menu-item>
                 <div class="tr">
                   <div class="td icon">
                     <mat-icon>favorite_border</mat-icon>
@@ -221,7 +221,11 @@
           </div>
           <div *ngIf="vdevs.spares.length > 0">
             <h4 class="vdev-h4">{{"Spare VDev" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spares'" [manager]="this" [index]="i"></app-vdev>
+            <app-vdev *ngFor="let vdev of vdevs.spares; let i = index" [group]="'spares'" [manager]="this" [index]="i"></app-vdev>
+          </div>
+          <div *ngIf="vdevs.special.length > 0">
+            <h4 class="vdev-h4">{{"Metadata VDev" | translate}}</h4>
+            <app-vdev *ngFor="let vdev of vdevs.special; let i = index" [group]="'special'" [manager]="this" [index]="i"></app-vdev>
           </div>
         </div>
       </div>

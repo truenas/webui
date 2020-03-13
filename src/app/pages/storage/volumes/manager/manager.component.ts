@@ -30,7 +30,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public can_suggest = false;
   public selected: Array < any > = [];
   public vdevs:
-    any = { data: [{}], cache: [], spares: [], log: [] };
+    any = { data: [{}], cache: [], spares: [], log: [], special: [] };
   public original_vdevs: any = {};
   public original_disks: Array < any >;
   public orig_suggestable_disks: Array < any >;
