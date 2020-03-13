@@ -174,6 +174,7 @@ export class DatasetQuotasComponent {
         })
       });
     }
+    console.log(payload)
     this.loader.open();
     this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(res => {
       this.loader.close();
