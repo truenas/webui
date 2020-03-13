@@ -383,7 +383,7 @@ export class ReplicationFormComponent {
                         }]
                     }],
                 }, {
-                    type: 'input',
+                    type: 'chip',
                     name: 'exclude',
                     placeholder: helptext.exclude_placeholder,
                     tooltip: helptext.exclude_tooltip,
@@ -481,7 +481,7 @@ export class ReplicationFormComponent {
                     value: '23:59',
                 },
                 {
-                    type: 'input',
+                    type: 'chip',
                     name: 'naming_schema',
                     placeholder: helptext.naming_schema_placeholder,
                     tooltip: helptext.naming_schema_tooltip,
@@ -494,7 +494,7 @@ export class ReplicationFormComponent {
                     }],
                 },
                 {
-                    type: 'input',
+                    type: 'chip',
                     name: 'also_include_naming_schema',
                     placeholder: helptext.also_include_naming_schema_placeholder,
                     tooltip: helptext.also_include_naming_schema_tooltip,
@@ -797,8 +797,7 @@ export class ReplicationFormComponent {
         this.ws.call('replication.count_eligible_manual_snapshots',
             [
                 this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
-                typeof this.entityForm.formGroup.controls['also_include_naming_schema'].value === "string" ?
-                    this.entityForm.formGroup.controls['also_include_naming_schema'].value.split(' ') : this.entityForm.formGroup.controls['also_include_naming_schema'].value,
+                this.entityForm.formGroup.controls['also_include_naming_schema'].value,
                 this.entityForm.formGroup.controls['transport'].value,
                 this.entityForm.formGroup.controls['ssh_credentials'].value,
             ]).subscribe(
@@ -1027,17 +1026,17 @@ export class ReplicationFormComponent {
             delete data['target_dataset_PULL'];
         }
 
-        data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(',') : data['exclude'];
-        data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
-        if (data["naming_schema"] === '') {
-            delete data["naming_schema"];
-        }
-        if (data["also_include_naming_schema"] === '') {
-            delete data["also_include_naming_schema"];
-        }
+        // data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(',') : data['exclude'];
+        // data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
+        // if (data["naming_schema"] === '') {
+        //     delete data["naming_schema"];
+        // }
+        // if (data["also_include_naming_schema"] === '') {
+        //     delete data["also_include_naming_schema"];
+        // }
 
-        data["naming_schema"] = typeof data['naming_schema'] === "string" ? data['naming_schema'].split(' ') : data['naming_schema'];
-        data["also_include_naming_schema"] = typeof data['also_include_naming_schema'] === "string" ? data['also_include_naming_schema'].split(' ') : data['also_include_naming_schema'];
+        // data["naming_schema"] = typeof data['naming_schema'] === "string" ? data['naming_schema'].split(' ') : data['naming_schema'];
+        // data["also_include_naming_schema"] = typeof data['also_include_naming_schema'] === "string" ? data['also_include_naming_schema'].split(' ') : data['also_include_naming_schema'];
 
         if (data['schedule']) {
             data['schedule'] = this.parsePickerTime(data['schedule_picker'], data['schedule_begin'], data['schedule_end']);
