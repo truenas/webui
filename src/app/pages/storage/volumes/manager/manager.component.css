@@ -99,7 +99,7 @@ h4 {
 #pool-manager__encryption-checkbox {
 	margin-left: 10px;
 }
-
+  
 #pool-manager__reset-layout-button:disabled,
 #pool-manager__suggest-layout-button:disabled {
 	color: var(--fg2);
@@ -137,4 +137,32 @@ h4 {
 .forceCreateCheckbox {
 	margin-left: 10px;
 	margin-bottom: 10px;
+}
+
+.tbl{display:table;}
+.tr{display:table-row;}
+.td{display:table-cell}
+
+button.vdev-option{
+  width:98.5% !important;
+  height:auto !important;
+  padding:12px 12px 12px 0;
+}
+
+button.vdev-option .td.icon{
+  font-size:200%;
+  padding:0 16px;
+  vertical-align: middle;
+  line-height: 0.5;
+}
+
+button.vdev-option h3{
+  font-weight:500;
+  font-size:1rem;
+}
+
+button.vdev-option p{
+  white-space:normal;
+  line-height:normal;
+  font-size:90%;
 }

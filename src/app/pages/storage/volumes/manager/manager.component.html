@@ -30,16 +30,67 @@
               ix-auto-identifier="add_vdev_type">
             <span>{{"Add Vdev" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
             </button>
-            <mat-menu #menu="matMenu" multiple overlapTrigger="false">
-              <button id="pool-manager__add-data-button" (click)="addVdev('data')" mat-menu-item><span>
-                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
-                  {{help.data_vdev_title | translate}}
-                  {{help.data_vdev_description | translate}}
-              </span></button>
-              <button id="pool-manager__add-cache-button" [disabled]="vdevs.cache.length > 0" (click)="addVdev('cache')" mat-menu-item><span><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clock-fast"></mat-icon>{{"Cache" | translate}}</span></button>
-              <button id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" (click)="addVdev('log')" mat-menu-item><span><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clipboard-outline"></mat-icon>{{"Log" | translate}}</span></button>
-              <button id="pool-manager__add-spare-button" [disabled]="vdevs.spare.length > 0" (click)="addVdev('spare')" mat-menu-item><span><mat-icon>local_hospital</mat-icon>{{"Hot Spare" | translate}}</span></button>
-              <button mat-menu-item><span><mat-icon>favorite_border</mat-icon>{{"Metadata" | translate}}</span></button>
+            <mat-menu class="" #menu="matMenu" multiple overlapTrigger="false">
+
+              <button class="tbl vdev-option" id="pool-manager__add-data-button" (click)="addVdev('data')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.data_vdev_title | translate}}</h3>
+                    <p>{{help.data_vdev_description | translate}}</p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-cache-button" [disabled]="vdevs.cache.length > 0" (click)="addVdev('cache')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clock-fast"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>Cache</h3>
+                    <p>{{help.lipsum}}</p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" (click)="addVdev('log')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clipboard-outline"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{"Log" | translate}}</h3>
+                    <p>{{help.lipsum}}</p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-spare-button" [disabled]="vdevs.spare.length > 0" (click)="addVdev('spare')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>local_hospital</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{"Hot Spare" | translate}}</h3>
+                    <p>{{help.lipsum}}</p>
+                  </div>
+                </div>
+              </button>
+              
+              <button class="tbl vdev-option" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>favorite_border</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{"Metadata" | translate}}</h3>
+                    <p>{{help.lipsum}}</p>
+                  </div>
+                </div>
+              </button>
             </mat-menu>
           </div>
         </div>
