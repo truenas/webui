@@ -192,14 +192,13 @@ export class TnSupportComponent implements OnInit {
     return function validEmails(control: FormControl) {
         const config = self.fieldConfig.find(c => c.name === name);
         if (control.value) {
-          let arr = _.filter(control.value.split(',').map(_.trim));
-        
+
         let counter = 0;
         const regex = 
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         
-        if (arr) {
-            arr.forEach((item) => {
+        if (control.value) {
+          control.value.forEach((item) => {
                 if (!item.match(regex)) {
                     counter++;
                 }
