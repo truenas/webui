@@ -52,7 +52,7 @@ export class TnSupportComponent implements OnInit {
           validation : helptext.email.validation
         },
         {
-          type : 'input',
+          type : 'chip',
           name : 'cc',
           placeholder : helptext.cc.placeholder,
           tooltip : helptext.cc.tooltip,
@@ -227,7 +227,7 @@ export class TnSupportComponent implements OnInit {
     let payload = {};
     payload['name'] = entityEdit.name;
     payload['email'] = entityEdit.email;
-    payload['cc'] = _.filter(entityEdit.cc.split(',').map(_.trim));
+    payload['cc'] = entityEdit.cc;
     payload['phone'] = entityEdit.phone;
     payload['category'] = entityEdit.TNCategory;
     payload['environment'] = entityEdit.environment;
