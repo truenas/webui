@@ -15,7 +15,7 @@ msgid " Builtin Groups"
 msgstr ""
 
 msgid " Builtin Users"
-msgstr ""
+msgstr " Usuarios incorporados"
 
 msgid " Check Notifications for more details."
 msgstr ""
@@ -24,10 +24,10 @@ msgid " Download Updates"
 msgstr "Descargar actualizaciones"
 
 msgid " First vdev has "
-msgstr ""
+msgstr " El primer vdev tiene "
 
 msgid " First vdev is a "
-msgstr ""
+msgstr " El primer vdev es un "
 
 msgid " KiB."
 msgstr ""
@@ -42,6 +42,9 @@ msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port "
 "number of the UPS <i>Master</i> system. The default port is <i>3493</i>."
 msgstr ""
+"Cuando el <b>Modo UPS</b> está configurado en <i>esclavo</i>. Ingrese el número "
+"de puerto de red abierto del sistema UPS <i>Master</i>. El puerto predeterminado "
+"es <i>3493</i>."
 
 msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a backup "
@@ -81,7 +84,7 @@ msgid " disks, new vdev has "
 msgstr ""
 
 msgid " has been unlocked."
-msgstr ""
+msgstr " ha sido desbloqueado."
 
 msgid " is "
 msgstr "es"
@@ -94,11 +97,16 @@ msgid ""
 "use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> option to stop the "
 "VM."
 msgstr ""
+" todavía se está ejecutando, el sistema operativo invitado no respondió como se "
+"esperaba. Es posible utilizar <i>Apagar</i> o la opción <i Forzar detención "
+"después del tiempo de espera</i> para detener la VM."
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr ""
+" es el tamaño de registro mínimo recomendado. Elegir un tamaño más pequeño puede "
+"reducir el rendimiento del sistema."
 
 msgid " seconds"
 msgstr "segundos"
@@ -107,63 +115,69 @@ msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow for "
 "testing."
 msgstr ""
+" segundos a menos que se elija MANTENER PERMANENTEMENTE. Ajuste el tiempo de "
+"retraso para permitir la prueba."
 
 msgid " service has been enabled."
-msgstr ""
+msgstr " el servicio ha sido habilitado."
 
 msgid " should be greater than "
-msgstr ""
+msgstr " debería ser mayor que "
 
 msgid " should be less than "
-msgstr ""
+msgstr " debería ser menor que "
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr " el sistema está encendido y conectado a la red."
 
 msgid " to include all "
-msgstr ""
+msgstr " para incluir todo "
 
 msgid " update successful"
-msgstr ""
+msgstr " actualización exitosa "
 
 msgid " updated."
 msgstr "actualizado."
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% de todos los núcleos"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, the data "
 "will be PERMANENTLY UNRECOVERABLE! Before exporting/disconnecting encrypted "
 "pools, download and safely store the encryption key and any passphrase for it."
 msgstr ""
+"'está encriptado! Si la contraseña para este grupo encriptado se ha perdido, los "
+"datos serán PERMANENTEMENTE NO RECUPERABLES. Antes de exportar/desconectar grupos "
+"cifrados, descargue y almacene de forma segura la clave de cifrado y cualquier "
+"frase de contraseña."
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'. Todos los datos en ese grupo fueron destruidos."
 
 msgid "(24 Hours)"
 msgstr "(24 horas)"
 
 msgid "(Examples: 500 KiB, 500M, 2 TB)"
-msgstr ""
+msgstr "(Ejemplos: 500 KiB, 500M, 2 TB)"
 
 msgid "(No description)"
 msgstr "(Sin descripción)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(Eliminar grupo de la base de datos)"
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", nuevo vdev es "
 
 msgid ". At least one is required."
-msgstr ""
+msgstr ". Se requiere al menos uno."
 
 msgid ". Is this correct?"
 msgstr ". Esto es correcto?"
 
 msgid "... Make sure the "
-msgstr ""
+msgstr "... Asegúrese de que el "
 
 msgid "0=Disabled, blank=inherit"
 msgstr ""
@@ -176,18 +190,21 @@ msgstr ""
 
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
+": Error en la verificación de actualización automática. Verifique la "
+"configuración de red del sistema."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr ""
+"</b> el complemento elimina todos los datos e instantáneas almacenados con él."
 
 msgid "</b> with the keypair"
-msgstr ""
+msgstr "</b> con el par de llaves"
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr ""
+msgstr "</i> no se puede ejecutar al eliminar un punto de montaje."
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> fue iniciado."
 
 msgid "</i> keypair?</p>"
 msgstr ""
@@ -12264,6 +12281,8 @@ msgid ""
 "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-"
 "list) This can also speed up or slow down the transfer."
 msgstr ""
+"[Use menos transacciones a cambio de más RAM.](https://rclone.org/docs/#fast-"
+"list) Esto también puede acelerar o ralentizar la transferencia."
 
 msgid "allow_chflags"
 msgstr ""
