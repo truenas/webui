@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { WebSocketService, StorageService } from '../../../../../services/';
+import { WebSocketService, StorageService } from '../../../../../../services';
 
 @Component({
   selector: 'app-dataset-quotas-userlist',
@@ -50,7 +50,6 @@ export class DatasetQuotasUserlistComponent implements OnInit {
     enable: true,
     ttpos: "above",
     onClick: (selected) => {
-      console.log(selected)
       this.selectedUsers.emit(selected);
     }
   }];

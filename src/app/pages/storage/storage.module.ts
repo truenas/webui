@@ -45,7 +45,9 @@ import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { JobService } from 'app/services';
 import { DatasetQuotasComponent } from './volumes/datasets/dataset-quotas/dataset-quotas.component';
-import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetQuotaUserformComponent } from './volumes/datasets/dataset-quotas/dataset-quota-userform/dataset-quota-userform.component';
+import { DatasetQuotaGroupformComponent } from './volumes/datasets/dataset-quotas/dataset-quota-groupform/dataset-quota-groupform.component';
 
 @NgModule({
   imports : [
@@ -84,7 +86,9 @@ import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quota
     DiskBulkEditComponent,
     SmartResultsComponent,
     DatasetQuotasComponent,
-    DatasetQuotasUserlistComponent
+    DatasetQuotasUserlistComponent,
+    DatasetQuotaUserformComponent,
+    DatasetQuotaGroupformComponent
   ],
   entryComponents: [SnapshotDetailsComponent],
   providers : [UserService, StorageService, MessageService, JobService]

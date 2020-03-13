@@ -189,5 +189,6 @@ export class DatasetQuotasComponent {
       this.selectedUsers.push({username:user.username, id: user.uid})
       }
     })
+    this.entityForm.formGroup.controls['selected_users'].setValue(this.selectedUserNames.join(' '));
   }
 }
