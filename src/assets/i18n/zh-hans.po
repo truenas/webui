@@ -6277,7 +6277,7 @@ msgid "Importing pools."
 msgstr "正在导入池。"
 
 msgid "In"
-msgstr "入"
+msgstr "接收"
 
 msgid "In KiBs or greater. A default of <i>0 KiB</i> means unlimited. "
 msgstr "在KiBs或更高。默认值为<i> 0 KiB </ i>表示无限制。"
@@ -8056,7 +8056,7 @@ msgid "Other Settings"
 msgstr "其他设定"
 
 msgid "Out"
-msgstr "出"
+msgstr "发送"
 
 msgid "Outgoing Mail Server"
 msgstr "邮件发送服务器"
