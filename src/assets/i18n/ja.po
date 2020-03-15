@@ -377,6 +377,14 @@ msgid "<b>SED (Self-Encrypting Drives) Options</b>"
 msgstr ""
 
 msgid ""
+"<b>SET</b> will changes all destination datasets to "
+"<code>readonly=on</code> after finishing the replication. "
+"<br><b>REQUIRE</b> stops replication unless all existing destination "
+"datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> "
+"disables checking the <code>readonly</code> property during replication."
+msgstr ""
+
+msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
 "those on the source. If a file does not exist on the source, it is also "
 "<i><u>deleted</u></i> from the destination."
@@ -894,6 +902,9 @@ msgstr "リカバリーキーを追加"
 msgid "Add Spare"
 msgstr "スペアを追加"
 
+msgid "Add Vdevs"
+msgstr ""
+
 msgid "Add Zvol"
 msgstr "Zvolを追加"
 
@@ -949,6 +960,9 @@ msgstr "このユーザーを追加のグループに追加します。"
 msgid ""
 "Added disks are erased, then the pool is extended onto the new disks with "
 "the chosen topology. Existing data on the pool is kept intact."
+msgstr ""
+
+msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
@@ -1947,6 +1961,9 @@ msgstr ""
 msgid "CD-ROM Path"
 msgstr ""
 
+msgid "CLEAR SYNC KEYS"
+msgstr ""
+
 msgid "CLOSE"
 msgstr ""
 
@@ -2018,6 +2035,22 @@ msgid "Certificate"
 msgstr ""
 
 msgid "Certificate Authorities"
+msgstr ""
+
+msgid "Certificate Authority"
+msgstr ""
+
+msgid ""
+"Certificate Authority (CA) to use for connecting to the key server. A valid "
+"CA public certificate is required to authenticate the connection. WARNING: "
+"for security reasons, please protect the Certificate Authority used for key "
+"server authentication."
+msgstr ""
+
+msgid ""
+"Certificate to use for key server authentication. A valid certificate is "
+"required to verify the key server connection. WARNING: for security "
+"reasons, please protect the Certificate used for key server authentication."
 msgstr ""
 
 msgid ""
@@ -2529,7 +2562,15 @@ msgid ""
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
 msgstr ""
 
+msgid "Clear Pending Sync Keys"
+msgstr ""
+
 msgid "Clear SED Password"
+msgstr ""
+
+msgid ""
+"Clear all keys which are pending to be synced between KMIP server and TN "
+"database."
 msgstr ""
 
 msgid "Clear the Idmap Cache"
@@ -2783,6 +2824,9 @@ msgid "Connection"
 msgstr ""
 
 msgid "Connection Error"
+msgstr ""
+
+msgid "Connection port number on the central key server."
 msgstr ""
 
 msgid ""
@@ -3075,6 +3119,9 @@ msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
 
 msgid "DOCUMENTATION"
+msgstr ""
+
+msgid "Daily"
 msgstr ""
 
 msgid "Dashboard"
@@ -3427,6 +3474,9 @@ msgid "Descriptive name for the replication."
 msgstr ""
 
 msgid "Destination"
+msgstr ""
+
+msgid "Destination Dataset Read-only Policy"
 msgstr ""
 
 msgid "Destination Location"
@@ -5069,16 +5119,10 @@ msgstr ""
 msgid "Extend"
 msgstr ""
 
-msgid "Extend Pool"
-msgstr ""
-
 msgid "Extend Vdev"
 msgstr ""
 
 msgid "Extending Vdev"
-msgstr ""
-
-msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 
 msgid "Extending vdev..."
@@ -5558,7 +5602,17 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+msgid ""
+"Hidden columns are not available for sorting or filtering, but the values "
+"can be  viewed by expanding the row. Hiding columns improves performance. "
+"NOTE: This window will reload automatically so that  the new view can take "
+"effect."
+msgstr ""
+
 msgid "Hide"
+msgstr ""
+
+msgid "Hide Extra Columns"
 msgstr ""
 
 msgid "Hide Standard Error"
@@ -5631,6 +5685,9 @@ msgstr ""
 msgid "Host name database"
 msgstr ""
 
+msgid "Host name or IP address of the central key server."
+msgstr ""
+
 msgid "HostName"
 msgstr "ホスト名"
 
@@ -5697,6 +5754,9 @@ msgid ""
 msgstr ""
 
 msgid "Hour and minute when the system can begin  taking snapshots."
+msgstr ""
+
+msgid "Hourly"
 msgstr ""
 
 msgid "Hours"
@@ -6275,6 +6335,15 @@ msgstr ""
 msgid "KEEP NETWORK CHANGES PERMANENTLY"
 msgstr ""
 
+msgid "KMIP"
+msgstr ""
+
+msgid "KMIP Key Status"
+msgstr ""
+
+msgid "KMIP Server"
+msgstr ""
+
 msgid "Keep"
 msgstr "保持"
 
@@ -6642,6 +6711,9 @@ msgstr ""
 msgid "Mail Server Port"
 msgstr "メール サーバー ポート番号"
 
+msgid "Make Destination Dataset Read-only?"
+msgstr ""
+
 msgid "Manage"
 msgstr ""
 
@@ -6651,10 +6723,19 @@ msgstr "カスタムテーマの管理"
 msgid "Manage Recovery Key"
 msgstr ""
 
+msgid "Manage SED Password"
+msgstr ""
+
 msgid "Manage Services and Continue"
 msgstr ""
 
+msgid "Manage ZFS Keys"
+msgstr ""
+
 msgid "Manage members of"
+msgstr ""
+
+msgid "Management"
 msgstr ""
 
 msgid "Manual"
@@ -6924,6 +7005,9 @@ msgid "Monitor User"
 msgstr ""
 
 msgid "Month"
+msgstr ""
+
+msgid "Monthly"
 msgstr ""
 
 msgid "Months"
@@ -7847,6 +7931,9 @@ msgid "Peer Secret (Confirm)"
 msgstr ""
 
 msgid "Peer User"
+msgstr ""
+
+msgid "Pending"
 msgstr ""
 
 msgid "Pending Network Changes"
@@ -8874,6 +8961,9 @@ msgstr ""
 msgid "STOP"
 msgstr ""
 
+msgid "SYNC KEYS"
+msgstr ""
+
 msgid "Samba Authentication"
 msgstr ""
 
@@ -8926,6 +9016,9 @@ msgid "Saving ACLs..."
 msgstr ""
 
 msgid "Saving Debug"
+msgstr ""
+
+msgid "Saving KMIP Config"
 msgstr ""
 
 msgid "Saving Permissions"
@@ -9609,6 +9702,14 @@ msgid ""
 msgstr ""
 
 msgid "Self Healed"
+msgstr ""
+
+msgid ""
+"Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling "
+"this option allows the key server to manage creating or updating the global "
+"SED password, creating or updating individual SED passwords, and retrieving "
+"SED passwords when SEDs are unlocked. Disabling this option leaves SED "
+"password management with the local system."
 msgstr ""
 
 msgid "Semi-automatic (TrueNAS CORE only)"
@@ -10390,6 +10491,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Setting this option changes the destination dataset to be read-only. To "
+"continue using the default or existing dataset read permissions, leave this "
+"option unset."
+msgstr ""
+
+msgid ""
 "Setting this option is <b>not</b> recommended as it breaks several security "
 "measures. Refer to <a "
 "href=\"http://www.proftpd.org/docs/contrib/mod_tls.html\" "
@@ -10470,6 +10577,9 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
+msgid "Show Extra Columns"
+msgstr ""
+
 msgid "Show Text Console without Password Prompt"
 msgstr "パスワードプロンプトなしでテキストコンソールを表示する"
 
@@ -10483,6 +10593,12 @@ msgid "Show only entries that contain this text"
 msgstr ""
 
 msgid "Show tracebacks in case of fatal error"
+msgstr ""
+
+msgid ""
+"Showing extra columns in the table is useful for data filtering,  but can "
+"cause performance issues. NOTE: This window will reload automatically so "
+"that the new view can take effect."
 msgstr ""
 
 msgid ""
@@ -10902,6 +11018,12 @@ msgstr ""
 msgid "Sync"
 msgstr ""
 
+msgid "Sync Keys"
+msgstr ""
+
+msgid "Sync ZFS/SED keys between KMIP Server and TN database."
+msgstr ""
+
 msgid "Sync from Peer"
 msgstr ""
 
@@ -10915,6 +11037,9 @@ msgid "Sync to peer succeeded."
 msgstr ""
 
 msgid "Synchronize Destination Snapshots With Source"
+msgstr ""
+
+msgid "Syncing"
 msgstr ""
 
 msgid "Syslog"
@@ -12200,6 +12325,14 @@ msgstr "保存されたレプリケーションの設定を使用します。"
 msgid "Use syslog only"
 msgstr ""
 
+msgid ""
+"Use the KMIP server to manage ZFS encrypted dataset keys. The key server "
+"stores, applies, and destroys encryption keys whenever an encrypted dataset "
+"is created, when an existing key is modified, an encrypted dataset is "
+"unlocked, or an encrypted dataset is removed. Unsetting this option leaves "
+"all encryption key management with the local system."
+msgstr ""
+
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "<i>A.B.C.D/E</i>の形式を使用してください。<i>E</i> はCIDRマスクです。"
 
@@ -12603,6 +12736,9 @@ msgstr ""
 msgid "Wed"
 msgstr ""
 
+msgid "Weekly"
+msgstr ""
+
 msgid "Weeks"
 msgstr ""
 
@@ -12868,6 +13004,12 @@ msgstr ""
 msgid "assign_localhost"
 msgstr ""
 
+msgid "at 00:00 (12:00 AM)"
+msgstr ""
+
+msgid "at the start of each hour"
+msgstr ""
+
 msgid "below to confirm."
 msgstr ""
 
@@ -13079,6 +13221,12 @@ msgid "nshm"
 msgstr ""
 
 msgid "nthr"
+msgstr ""
+
+msgid "on Sundays at 00:00 (12:00 AM)"
+msgstr ""
+
+msgid "on the first day of the month at 00:00 (12:00 AM)"
 msgstr ""
 
 msgid "openfiles"

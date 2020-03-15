@@ -458,6 +458,14 @@ msgid "<b>SED (Self-Encrypting Drives) Options</b>"
 msgstr "<b>Options SED (Self-Encrypting Drives)</b>"
 
 msgid ""
+"<b>SET</b> will changes all destination datasets to "
+"<code>readonly=on</code> after finishing the replication. "
+"<br><b>REQUIRE</b> stops replication unless all existing destination "
+"datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> "
+"disables checking the <code>readonly</code> property during replication."
+msgstr ""
+
+msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
 "those on the source. If a file does not exist on the source, it is also "
 "<i><u>deleted</u></i> from the destination."
@@ -1093,6 +1101,9 @@ msgstr "Ajouter une clé de récupération"
 msgid "Add Spare"
 msgstr "Ajouter du Spare"
 
+msgid "Add Vdevs"
+msgstr ""
+
 msgid "Add Zvol"
 msgstr "Ajouter un zvol"
 
@@ -1170,6 +1181,9 @@ msgstr ""
 "Les disques ajoutés sont effacés, puis le volume est étendu sur les "
 "nouveaux disques avec la topologie choisie. Les données existantes sur le "
 "volume sont conservées intactes."
+
+msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
+msgstr ""
 
 msgid "Adding data vdevs of different types is not supported."
 msgstr "L'ajout de données vdevs de types différents n'est pas pris en charge."
@@ -2313,6 +2327,9 @@ msgstr "CC"
 msgid "CD-ROM Path"
 msgstr "CD-ROM Path"
 
+msgid "CLEAR SYNC KEYS"
+msgstr ""
+
 msgid "CLOSE"
 msgstr ""
 
@@ -2391,6 +2408,22 @@ msgid "Certificate"
 msgstr "Certificat"
 
 msgid "Certificate Authorities"
+msgstr ""
+
+msgid "Certificate Authority"
+msgstr ""
+
+msgid ""
+"Certificate Authority (CA) to use for connecting to the key server. A valid "
+"CA public certificate is required to authenticate the connection. WARNING: "
+"for security reasons, please protect the Certificate Authority used for key "
+"server authentication."
+msgstr ""
+
+msgid ""
+"Certificate to use for key server authentication. A valid certificate is "
+"required to verify the key server connection. WARNING: for security "
+"reasons, please protect the Certificate used for key server authentication."
 msgstr ""
 
 msgid ""
@@ -3011,8 +3044,16 @@ msgstr ""
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> pour plus "
 "d'informations."
 
+msgid "Clear Pending Sync Keys"
+msgstr ""
+
 msgid "Clear SED Password"
 msgstr "Effacer le mot de passe SED"
+
+msgid ""
+"Clear all keys which are pending to be synced between KMIP server and TN "
+"database."
+msgstr ""
 
 msgid "Clear the Idmap Cache"
 msgstr ""
@@ -3310,6 +3351,9 @@ msgstr "Connexion"
 
 msgid "Connection Error"
 msgstr "Erreur de connexion"
+
+msgid "Connection port number on the central key server."
+msgstr ""
 
 msgid ""
 "Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but "
@@ -3632,6 +3676,9 @@ msgstr ""
 
 msgid "DOCUMENTATION"
 msgstr "DOCUMENTATION"
+
+msgid "Daily"
+msgstr ""
 
 msgid "Dashboard"
 msgstr "Tableau de bord"
@@ -4019,6 +4066,9 @@ msgstr "Nom descriptif de la réplication."
 
 msgid "Destination"
 msgstr "Destination"
+
+msgid "Destination Dataset Read-only Policy"
+msgstr ""
 
 msgid "Destination Location"
 msgstr ""
@@ -5960,19 +6010,11 @@ msgstr "Exposer zilstat via SNMP"
 msgid "Extend"
 msgstr "Étendre"
 
-msgid "Extend Pool"
-msgstr "Étendre le volume"
-
 msgid "Extend Vdev"
 msgstr ""
 
 msgid "Extending Vdev"
 msgstr ""
-
-msgid "Extending an encrypted pool resets the passphrase and recovery key!"
-msgstr ""
-"L'extension d'un volume chiffré réinitialise la passphrase et la clé de "
-"récupération !"
 
 msgid "Extending vdev..."
 msgstr ""
@@ -6492,7 +6534,17 @@ msgstr "Port HTTPS"
 msgid "Help"
 msgstr "Aide"
 
+msgid ""
+"Hidden columns are not available for sorting or filtering, but the values "
+"can be  viewed by expanding the row. Hiding columns improves performance. "
+"NOTE: This window will reload automatically so that  the new view can take "
+"effect."
+msgstr ""
+
 msgid "Hide"
+msgstr ""
+
+msgid "Hide Extra Columns"
 msgstr ""
 
 msgid "Hide Standard Error"
@@ -6569,6 +6621,9 @@ msgstr "Synchronisation avec l'hôte"
 
 msgid "Host name database"
 msgstr "Base de données de noms d'hôtes"
+
+msgid "Host name or IP address of the central key server."
+msgstr ""
 
 msgid "HostName"
 msgstr "Nom d'hôte"
@@ -6648,6 +6703,9 @@ msgid ""
 msgstr ""
 
 msgid "Hour and minute when the system can begin  taking snapshots."
+msgstr ""
+
+msgid "Hourly"
 msgstr ""
 
 msgid "Hours"
@@ -7339,6 +7397,15 @@ msgstr "CONSERVER LES MODIFICATIONS"
 msgid "KEEP NETWORK CHANGES PERMANENTLY"
 msgstr "CONSERVER LES CHANGEMENTS DE RESEAU DE MANIERE PERMANENTE"
 
+msgid "KMIP"
+msgstr ""
+
+msgid "KMIP Key Status"
+msgstr ""
+
+msgid "KMIP Server"
+msgstr ""
+
 msgid "Keep"
 msgstr "Conserver"
 
@@ -7733,6 +7800,9 @@ msgstr "Adresse Mac"
 msgid "Mail Server Port"
 msgstr "Port du serveur de messagerie"
 
+msgid "Make Destination Dataset Read-only?"
+msgstr ""
+
 msgid "Manage"
 msgstr "Gérer"
 
@@ -7742,11 +7812,20 @@ msgstr "Gérer les thèmes personnalisés"
 msgid "Manage Recovery Key"
 msgstr ""
 
+msgid "Manage SED Password"
+msgstr ""
+
 msgid "Manage Services and Continue"
+msgstr ""
+
+msgid "Manage ZFS Keys"
 msgstr ""
 
 msgid "Manage members of"
 msgstr "Gérer les membres de"
+
+msgid "Management"
+msgstr ""
 
 msgid "Manual"
 msgstr "Manuel"
@@ -8063,6 +8142,9 @@ msgstr "Surveiller l'utilisateur"
 
 msgid "Month"
 msgstr "Mois"
+
+msgid "Monthly"
+msgstr ""
 
 msgid "Months"
 msgstr "Mois"
@@ -9154,6 +9236,9 @@ msgid "Peer Secret (Confirm)"
 msgstr ""
 
 msgid "Peer User"
+msgstr ""
+
+msgid "Pending"
 msgstr ""
 
 msgid "Pending Network Changes"
@@ -10266,6 +10351,9 @@ msgstr ""
 msgid "STOP"
 msgstr "ARRÊTER"
 
+msgid "SYNC KEYS"
+msgstr ""
+
 msgid "Samba Authentication"
 msgstr ""
 
@@ -10321,6 +10409,9 @@ msgstr "Enregistrement des ACLs..."
 
 msgid "Saving Debug"
 msgstr "Sauvegarde du debug"
+
+msgid "Saving KMIP Config"
+msgstr ""
 
 msgid "Saving Permissions"
 msgstr "Enregistrement des autorisations"
@@ -11175,6 +11266,14 @@ msgid ""
 msgstr ""
 
 msgid "Self Healed"
+msgstr ""
+
+msgid ""
+"Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling "
+"this option allows the key server to manage creating or updating the global "
+"SED password, creating or updating individual SED passwords, and retrieving "
+"SED passwords when SEDs are unlocked. Disabling this option leaves SED "
+"password management with the local system."
 msgstr ""
 
 msgid "Semi-automatic (TrueNAS CORE only)"
@@ -12232,6 +12331,12 @@ msgstr ""
 "inaccessibles."
 
 msgid ""
+"Setting this option changes the destination dataset to be read-only. To "
+"continue using the default or existing dataset read permissions, leave this "
+"option unset."
+msgstr ""
+
+msgid ""
 "Setting this option is <b>not</b> recommended as it breaks several security "
 "measures. Refer to <a "
 "href=\"http://www.proftpd.org/docs/contrib/mod_tls.html\" "
@@ -12330,6 +12435,9 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
+msgid "Show Extra Columns"
+msgstr ""
+
 msgid "Show Text Console without Password Prompt"
 msgstr "Afficher la Console sans demande de mot de passe"
 
@@ -12344,6 +12452,12 @@ msgstr "Afficher uniquement les entrées qui contiennent ce texte"
 
 msgid "Show tracebacks in case of fatal error"
 msgstr "Afficher les traces en cas d'erreur fatale"
+
+msgid ""
+"Showing extra columns in the table is useful for data filtering,  but can "
+"cause performance issues. NOTE: This window will reload automatically so "
+"that the new view can take effect."
+msgstr ""
 
 msgid ""
 "Shrinking a ZVOL is not allowed in the User Interface. This can lead to "
@@ -12811,6 +12925,12 @@ msgstr "Changer de canal de mise à jour ?"
 msgid "Sync"
 msgstr "Synchroniser"
 
+msgid "Sync Keys"
+msgstr ""
+
+msgid "Sync ZFS/SED keys between KMIP Server and TN database."
+msgstr ""
+
 msgid "Sync from Peer"
 msgstr "Sync de paires (peer)"
 
@@ -12824,6 +12944,9 @@ msgid "Sync to peer succeeded."
 msgstr "Sync pairs (peer) réussi."
 
 msgid "Synchronize Destination Snapshots With Source"
+msgstr ""
+
+msgid "Syncing"
 msgstr ""
 
 msgid "Syslog"
@@ -14366,6 +14489,14 @@ msgstr "Utilisez les paramètres d'une réplication enregistrée."
 msgid "Use syslog only"
 msgstr "Utiliser syslog uniquement"
 
+msgid ""
+"Use the KMIP server to manage ZFS encrypted dataset keys. The key server "
+"stores, applies, and destroys encryption keys whenever an encrypted dataset "
+"is created, when an existing key is modified, an encrypted dataset is "
+"unlocked, or an encrypted dataset is removed. Unsetting this option leaves "
+"all encryption key management with the local system."
+msgstr ""
+
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "Utiliser le format <i>A.B.C.C.D/E</i> où <i>E</i> est le masque CIDR."
 
@@ -14808,6 +14939,9 @@ msgstr "URL Webhook"
 msgid "Wed"
 msgstr "Mer"
 
+msgid "Weekly"
+msgstr ""
+
 msgid "Weeks"
 msgstr "Semaines"
 
@@ -15122,6 +15256,12 @@ msgstr "allow_vmm"
 msgid "assign_localhost"
 msgstr "assign_localhost"
 
+msgid "at 00:00 (12:00 AM)"
+msgstr ""
+
+msgid "at the start of each hour"
+msgstr ""
+
 msgid "below to confirm."
 msgstr "ci-dessous pour confirmer."
 
@@ -15334,6 +15474,12 @@ msgstr "nshm"
 
 msgid "nthr"
 msgstr "nthr"
+
+msgid "on Sundays at 00:00 (12:00 AM)"
+msgstr ""
+
+msgid "on the first day of the month at 00:00 (12:00 AM)"
+msgstr ""
 
 msgid "openfiles"
 msgstr "openfiles"
