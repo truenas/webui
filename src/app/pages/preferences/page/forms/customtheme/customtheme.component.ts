@@ -138,7 +138,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
           name : 'description',
           width:'100%',
           placeholder : T('Description'),
-          tooltip: T('Enter a short description of the theme.'),
+          tooltip: T('Notes or identifiers about the theme.'),
         },
         {
           type: 'select',
