@@ -109,7 +109,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
           width:'100%',
           placeholder: T('Custom Theme Name'),
           required:true,
-          tooltip: T('Enter a name to identify the new theme.'),
+          tooltip: T('Enter a name for the new theme.'),
         },
         {
           type: 'input',
