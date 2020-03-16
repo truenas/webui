@@ -63,8 +63,9 @@ export default {
  replicated. Enter the name and \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a> \
  <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i> strings that \
- match the snapshots to include in the replication. The number of \
- snapshots matching that pattern is shown.'),
+ match the snapshots to include in the replication. Separate entries by \
+ pressing <code>Enter</code>. The number of snapshots matching the \
+ patterns are shown.'),
 
     encryption_placeholder: T('SSH Transfer Security'),
     encryption_tooltip: T('Data transfer security. The connection is \

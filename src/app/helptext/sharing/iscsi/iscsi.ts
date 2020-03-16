@@ -138,12 +138,9 @@ export const helptext_sharing_iscsi = {
   globalconf_validators_basename: [Validators.required],
 
   globalconf_placeholder_isns_servers: T("ISNS Servers"),
-  globalconf_tooltip_isns_servers: T(
-    "Hostnames or IP addresses of the\
- ISNS servers to be registered with the\
- iSCSI targets and portals of the system.\
- Separate each entry with a space."
-  ),
+  globalconf_tooltip_isns_servers: T("Hostnames or IP addresses of the \
+ ISNS servers to be registered with the iSCSI targets and portals of \
+ the system. Separate entries by pressing <code>Enter</code>."),
 
   globalconf_placeholder_pool_avail_threshold: T(
     "Pool Available Space Threshold (%)"
@@ -368,12 +365,15 @@ export const helptext_sharing_iscsi = {
   step3_label: T("Initiator"),
 
   initiators_placeholder: T("Initiators"),
-  initiators_tooltip: T("Leave blank to allow all or enter a list of initiator hostnames separated by spaces."),
+  initiators_tooltip: T("Leave blank to allow all or enter a list of initiator hostnames. \
+   Separate entries by pressing <code>Enter</code>."),
 
   auth_network: {
     placeholder: T("Authorized Networks"),
-    tooltip: T("Network addresses allowed to use this initiator. Leave blank to allow all networks or list network addresses with\
- a CIDR mask. Separate multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."),
-    error: T('Invalid network address list. Check for typos or missing CIDR netmasks and separate addresses with a space.')
+    tooltip: T("Network addresses allowed to use this initiator. Leave blank to allow all \
+     networks or list network addresses with a CIDR mask. Separate entries by pressing \
+     <code>Enter</code>."),
+    error: T('Invalid network address list. Check for typos or missing CIDR netmasks and \
+     separate addresses by pressing <code>Enter</code>.')
   }
 };
