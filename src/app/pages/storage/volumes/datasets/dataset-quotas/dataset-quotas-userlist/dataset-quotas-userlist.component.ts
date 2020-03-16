@@ -1,25 +1,21 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService, StorageService, DialogService, AppLoaderService } from '../../../../../../services';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 
 @Component({
   selector: 'app-dataset-quotas-userlist',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  styleUrls: ['./dataset-quotas-userlist.component.css']
 })
-export class DatasetQuotasUserlistComponent implements OnInit {
-  @Input() db;
-  @Output() selectedUsers = new EventEmitter<any>();
-
+export class DatasetQuotasUserlistComponent {
   public title = "Dataset Users";
   protected entityList: any;
   protected hasDetails = false;
   protected noActions = true;
   protected queryCall = 'user.query';
-  columnFilter = false;
+  public columnFilter = false;
+  public pk: string;
 
   public columns: Array < any > = [
     { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
@@ -49,14 +45,14 @@ export class DatasetQuotasUserlistComponent implements OnInit {
     ttpos: "above",
     onClick: (selected) => {
       const self = this;
-      this.selectedUsers.emit(selected);
       const userNames = [];
       const uids = [];
+      let users = '';
       selected.map(user => {
         userNames.push(user.username);
         uids.push(user.uid);
       })
-      const users = userNames.join(', ');
+      users = userNames.join(', ');
       const conf: DialogFormConfiguration = {
         title: ('Set quotas on selected users'),
         fieldConfig: [
@@ -75,8 +71,8 @@ export class DatasetQuotasUserlistComponent implements OnInit {
             tooltip: helptext.users.data_tooltip,
             value: 0,
             blurStatus: true,
-            blurEvent: this.userBlurEvent,
-            parent: this,
+            blurEvent: self.userBlurEvent,
+            parent: self,
           },
           {
             type: 'input',
@@ -86,14 +82,11 @@ export class DatasetQuotasUserlistComponent implements OnInit {
             value: 0
           }
         ],
-        method_ws: 'pool.dataset.set_quota',
         saveButtonText: ('SET QUOTAS'),
         cancelButtonText: ('CANCEL'),
-        parent: this,
+
         customSubmit(data) {
-          console.log(uids)
           const userData = data.formValue;
-          console.log(userData)
           userData.user = [];
           uids.map(uid => {
             userData.user.push(uid)
@@ -115,9 +108,12 @@ export class DatasetQuotasUserlistComponent implements OnInit {
           }
           console.log(payload)
           self.loader.open();
-          self.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(res => {
+          self.ws.call('pool.dataset.set_quota', [self.pk, payload]).subscribe(res => {
+            console.log(res)
             self.loader.close();
-            // self.router.navigate(new Array('/').concat(this.route_success));
+            self.dialogService.closeAllDialogs();
+            self.entityList.getData();
+            selected.length = 0;
           })
         }
       }
@@ -128,10 +124,10 @@ export class DatasetQuotasUserlistComponent implements OnInit {
 
   constructor(protected ws: WebSocketService, protected storageService: StorageService,
     protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected router: Router) { }
+    protected router: Router, protected aroute: ActivatedRoute) { }
 
   resourceTransformIncomingRestData(data) {
-    this.ws.call('pool.dataset.get_quota', [this.db, 'USER']).subscribe(res => {
+    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER']).subscribe(res => {
       data.map(item => {
         res.map(i => {
           if(item.username === i.name) {
@@ -146,14 +142,15 @@ export class DatasetQuotasUserlistComponent implements OnInit {
     return data;
   }
 
-  // saveWhatevs() {
-  //   console.log('whatevs')
-  // }
+  preInit(entityList) {
+    this.entityList = entityList;
+    const paramMap: any = (<any>this.aroute.params).getValue();
+    this.pk = paramMap.pk;
+  }
 
-  ngOnInit(): void {}
-
-  userBlurEvent(parent) {
-    if (parent.entityForm && parent.storageService.humanReadable) {
+  userBlurEvent(parent) { console.log(parent)
+    if (parent.storageService.humanReadable) {
+      console.log('yes')
       parent.transformValue(parent, 'user_data_quota');
     }
   }

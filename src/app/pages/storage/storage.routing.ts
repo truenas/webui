@@ -27,7 +27,7 @@ import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
-import { DatasetQuotasComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas.component';
+import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 
 export const routes: Routes = [
   {
@@ -67,7 +67,7 @@ export const routes: Routes = [
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
           },
           {
-            path: 'quotas/:pk', component: DatasetQuotasComponent,
+            path: 'quotas/:pk', component: DatasetQuotasUserlistComponent,
             data: { title: 'Edit User/Group Quotas', breadcrumb: 'Edit User/Group Quotas' }
           },
           {

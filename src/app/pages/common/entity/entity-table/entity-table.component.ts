@@ -355,8 +355,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       n = 4;
     } else if (this.title === 'Virtual Machines') {
       n = 1;
-    } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins'  ||
-      this.title === 'Dataset Users') {
+    } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
       n = 3;
     } else {
       n = 0;
