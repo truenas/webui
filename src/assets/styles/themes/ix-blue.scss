@@ -1731,4 +1731,22 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+  custom-theme {
+    .mat-card-actions {
+      margin-left: 7px;
+      margin-top: 48px;
+    }
+  
+    #preview-card {
+      min-width: 400px;
+    }
+  
+    .mat-card-content {
+      max-height: 600px !important;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }
+
+
  } // end of ix theme
