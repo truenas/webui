@@ -301,8 +301,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const capacity = avail + used;
       const used_pct = used / capacity * 100;
 
-      console.log({used:used, avail:avail, total:capacity, pct: used_pct});
-
       let zvol = {
         avail: avail,
         id:evt.data[i].id,
