@@ -117,8 +117,8 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
           width:'100%',
           placeholder: T('Menu Label'),
           required:true,
-          tooltip: T('Enter a short name for the theme. The Menu Label is \
-                    shown when the theme is listed in Preferences.')
+          tooltip: T('Shortened theme name. Used when listing the theme \
+                    in Preferences.')
         },
         // Not using this now, but theme preview breaks if it isn't here...
         {
