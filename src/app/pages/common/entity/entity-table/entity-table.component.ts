@@ -350,12 +350,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     let rowNum = 6, n, addRows = 4;
     // if (this.title === 'Boot Environments') {
     //   n = 6;
-    // } else 
-    if (this.title === 'Jails' || this.title === 'Dataset Users') {
+    // } else
+    if (this.title === 'Jails') {
       n = 4;
     } else if (this.title === 'Virtual Machines') {
       n = 1;
-    } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins') {
+    } else if (this.title === 'Available Plugins' || this.title === 'Installed Plugins'  ||
+      this.title === 'Dataset Users') {
       n = 3;
     } else {
       n = 0;
@@ -816,7 +817,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.tableHeight < (160 + this.getRowDetailHeight())) {
         this.tableHeight = 160 + this.getRowDetailHeight();
       }
-    } 
+    }
 
     // Displays an accurate number for some edge cases
     if (this.paginationPageSize > this.currentRows.length) {
@@ -981,7 +982,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // resets col view to the default set in the table's component
   resetColViewToDefaults() {
-    if (!(this.conf.columns.length === this.originalConfColumns.length && 
+    if (!(this.conf.columns.length === this.originalConfColumns.length &&
         this.conf.columns.length === this.allColumns.length)) {
       this.conf.columns = this.originalConfColumns;
       this.updateTableHeightAfterDetailToggle();

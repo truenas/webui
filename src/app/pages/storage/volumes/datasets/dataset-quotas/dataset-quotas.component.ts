@@ -78,10 +78,6 @@ export class DatasetQuotasComponent {
           value: 0
         }
       ]
-    },
-    {
-      name: 'divider',
-      divider: true
     }
   ];
 
@@ -116,13 +112,13 @@ export class DatasetQuotasComponent {
         })
         userName.setValue(names);
         _.find(this.fieldConfig, {name: 'user_data_quota'}).isLoading = false;
-      }, 
+      },
       err => {
         console.log(err)
       });
     });
 
-    this.dataFields.forEach(field => 
+    this.dataFields.forEach(field =>
       entityEdit.formGroup.controls[field].valueChanges.subscribe((value) => {
         const formField = _.find(this.fieldConfig, { name: field });
         const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
