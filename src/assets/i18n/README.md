@@ -14,4 +14,4 @@ As you update a target language, please make changes to this file, indicating it
 |[Japanese](jp.po "Japanese")|Incomplete|01/11/2020|
 |[Polish](pl.po "Polish")|Incomplete|02/19/2020|
 |[Russian](ru.po "Russian")|Complete|12/31/2019|
-|[Argentinian Spanish (es-ar)](es-ar.po "Argentinian Spanish (es-ar)")|Incomplete|03/116/2020|
+|[Argentinian Spanish (es-ar)](es-ar.po "Argentinian Spanish (es-ar)")|Incomplete|03/16/2020|
