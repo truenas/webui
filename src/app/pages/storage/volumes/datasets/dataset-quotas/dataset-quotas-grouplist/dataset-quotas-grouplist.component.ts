@@ -2,83 +2,83 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService, StorageService, DialogService, AppLoaderService } from '../../../../../../services';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { T } from '../../../../../../translate-marker';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 
 @Component({
-  selector: 'app-dataset-quotas-userlist',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  selector: 'app-dataset-quotas-grouplist',
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class DatasetQuotasUserlistComponent {
-  public title = "Dataset Users";
+export class DatasetQuotasGrouplistComponent {
+  public title = "Dataset Groups";
   protected entityList: any;
   protected hasDetails = false;
   protected noActions = true;
-  protected queryCall = 'user.query';
+  protected queryCall = 'group.query';
   public columnFilter = false;
   public pk: string;
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
-    { name: 'UID', prop: 'uid', hidden: false },
+    { name: 'Group Name', prop: 'group', always_display: true, minWidth: 150},
+    { name: 'GID', prop: 'gid', hidden: false },
     { name: 'Data Quota', prop: 'quota', hidden: false },
     { name: 'DQ % Used', prop: 'used_percent', hidden: false  },
     { name: 'Object Quota', prop: 'obj_quota', hidden: false },
-    { name: 'OQ % Used', prop: 'obj_used_percent', hidden: false  },
-
+    { name: 'OQ % Used', prop: 'obj_used_percent', hidden: false  }
   ];
-  public rowIdentifier = 'username';
+  public rowIdentifier = 'group';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
     deleteMsg: {
-      title: 'User',
-      key_props: ['username']
+      title: T('Group'),
+      key_props: ['group']
     }
   };
 
   public multiActions: Array < any > = [{
     id: "addToForm",
-    label: helptext.users.action_label,
+    label: helptext.groups.action_label,
     icon: "add",
     enable: true,
     ttpos: "above",
     onClick: (selected) => {
       const self = this;
-      const userNames = [];
-      const uids = [];
-      let users = '';
-      selected.map(user => {
-        userNames.push(user.username);
-        uids.push(user.uid);
+      const groupNames = [];
+      const gids = [];
+      let groups = '';
+      selected.map(group => {
+        groupNames.push(group.group);
+        gids.push(group.gid);
       })
-      users = userNames.join(', ');
+      groups = groupNames.join(', ');
       const conf: DialogFormConfiguration = {
-        title: helptext.users.dialog.title,
+        title: helptext.groups.dialog.title,
         fieldConfig: [
           {
             type: 'textarea',
-            name: 'selected_users',
-            placeholder: helptext.users.dialog.list.placeholder,
-            tooltip: helptext.users.dialog.list.tooltip,
-            value: users,
+            name: 'selected_groups',
+            placeholder: helptext.groups.dialog.list.placeholder,
+            tooltip:  helptext.groups.dialog.list.tooltip,
+            value: groups,
             readonly: true
           },
           {
             type: 'input',
-            name: 'user_data_quota',
-            placeholder: helptext.users.dialog.data_quota.placeholder,
-            tooltip: helptext.users.dialog.data_quota.tooltip,
+            name: 'group_data_quota',
+            placeholder: helptext.groups.dialog.data_quota.placeholder,
+            tooltip: helptext.groups.dialog.data_quota.tooltip,
             value: 0,
             blurStatus: true,
-            blurEvent: self.userBlurEvent,
+            blurEvent: self.groupBlurEvent,
             parent: self,
           },
           {
             type: 'input',
-            name: 'user_obj_quota',
-            placeholder: helptext.users.dialog.obj_quota.placeholder,
-            tooltip: helptext.users.dialog.obj_quota.tooltip,
+            name: 'group_obj_quota',
+            placeholder: helptext.groups.dialog.obj_quota.placeholder,
+            tooltip: helptext.groups.dialog.obj_quota.tooltip,
             value: 0
           }
         ],
@@ -86,23 +86,23 @@ export class DatasetQuotasUserlistComponent {
         cancelButtonText: helptext.shared.cancel,
 
         customSubmit(data) {
-          const userData = data.formValue;
-          userData.user = [];
-          uids.map(uid => {
-            userData.user.push(uid)
+          const groupData = data.formValue;
+          groupData.group = [];
+          gids.map(gid => {
+            groupData.group.push(gid)
           })
           const payload = [];
-          if (userData.user) {
-            userData.user.forEach((user) => {
+          if (groupData.group) {
+            groupData.group.forEach((group) => {
               payload.push({
-                quota_type: 'USER',
-                id: user.toString(),
-                quota_value: userData.user_data_quota
+                quota_type: 'GROUP',
+                id: group.toString(),
+                quota_value: groupData.group_data_quota
               },
               {
-                quota_type: 'USEROBJ',
-                id: user.toString(),
-                quota_value: userData.user_obj_quota
+                quota_type: 'GROUPOBJ',
+                id: group.toString(),
+                quota_value: groupData.group_obj_quota
               })
             });
           }
@@ -125,10 +125,10 @@ export class DatasetQuotasUserlistComponent {
     protected router: Router, protected aroute: ActivatedRoute) { }
 
   resourceTransformIncomingRestData(data) {
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER']).subscribe(res => {
+    this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP']).subscribe(res => {
       data.map(item => {
         res.map(i => {
-          if(item.username === i.name) {
+          if(item.group === i.name) {
             item.quota = this.storageService.convertBytestoHumanReadable(i.quota, 0);
             item.used = i.used_percent;
             item.obj_quota = i.obj_quota;
@@ -146,10 +146,12 @@ export class DatasetQuotasUserlistComponent {
     this.pk = paramMap.pk;
   }
 
-  userBlurEvent(parent) {
+  groupBlurEvent(parent) {
     if (parent.storageService.humanReadable) {
-      parent.transformValue(parent, 'user_data_quota');
+      parent.transformValue(parent, 'group_data_quota');
     }
   }
+
+
 
 }

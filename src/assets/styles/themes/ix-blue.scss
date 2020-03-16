@@ -1716,7 +1716,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: -20px;
     right: 45%;
   }
-  
+
   app-two-factor {
     #instructions, #enabled_status {
       font-size: 115%;
@@ -1735,11 +1735,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #qr-dialog-buttons {
       flex-direction: row-reverse;
     }
-  }
-
-  app-dataset-quotas-userlist #entity-table-component {
-    width: 960px;
-    margin: 20px auto;
   }
 
  } // end of ix theme

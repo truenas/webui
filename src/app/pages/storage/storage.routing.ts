@@ -28,6 +28,7 @@ import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 
 export const routes: Routes = [
   {
@@ -67,8 +68,12 @@ export const routes: Routes = [
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
           },
           {
-            path: 'quotas/:pk', component: DatasetQuotasUserlistComponent,
-            data: { title: 'Edit User/Group Quotas', breadcrumb: 'Edit User/Group Quotas' }
+            path: 'user-quotas/:pk', component: DatasetQuotasUserlistComponent,
+            data: { title: 'Edit User Quotas', breadcrumb: 'Edit User Quotas' }
+          },
+          {
+            path: 'group-quotas/:pk', component: DatasetQuotasGrouplistComponent,
+            data: { title: 'Edit Group Quotas', breadcrumb: 'Edit Group Quotas' }
           },
           {
             path: 'id/:pk/dataset/acl/:path', component: DatasetAclComponent,
