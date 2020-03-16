@@ -124,10 +124,10 @@ export const helptext_system_ca = {
     san: {
       placeholder: T("Subject Alternate Names"),
       tooltip: T(
-        "Multi-domain support. Enter additional domains to\
- secure, separated by spaces. For example, if the\
- primary domain is example.com, entering www.example.com\
- will secure both addresses."
+        "Multi-domain support. Enter additional domains to \
+ secure. Separate domains by pressing <code>Enter</code> \
+ For example, if the primary domain is <i>example.com</i>, \
+ entering <i>www.example.com</i> secures both addresses."
       )
     },
 

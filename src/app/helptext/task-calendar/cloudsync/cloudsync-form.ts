@@ -147,15 +147,18 @@ enabled_tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
 
 bwlimit_placeholder: T('Bandwidth Limit'),
 bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\
- Example: <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
+ Separate entries by pressing <code>Enter</code>. Example: \
+ <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
  Units can be specified with the beginning letter: <samp>b</samp>,\
  <samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>.\
  See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
  target="_blank">rclone --bwlimit</a>.'),
 
 exclude_placeholder: T('Exclude'),
-exclude_tooltip: T('Newline-separated list of files and directories to exclude from sync.<br />\
- See https://rclone.org/filtering/ for more details on --exclude option.'),
+exclude_tooltip: T('List of files and directories to exclude from sync.<br> \
+ Separate entries by pressing <code>Enter</code>. See \
+ <a href="https://rclone.org/filtering/" target="_blank">rclone filtering</a> \
+ for more details about the <code>--exclude</code> option.'),
 
 dry_run_title: T('Test Cloud Sync'),
 dry_run_dialog: T('Start a dry run test of this cloud sync task? The \

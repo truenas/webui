@@ -13,7 +13,8 @@ nis_domain_tooltip: T('Name of NIS domain.'),
 nis_domain_validation : [ Validators.required ],
 
 nis_servers_placeholder : T('NIS servers'),
-nis_servers_tooltip : T('Enter a comma-delimited list of hostnames or IP addresses.'),
+nis_servers_tooltip : T('List of hostnames or IP addresses. \
+ Separate entries by pressing <code>Enter</code>.'),
 
 nis_secure_mode_placeholder : T('Secure mode'),
 nis_secure_mode_tooltip : T('Set to have <a\

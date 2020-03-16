@@ -112,12 +112,11 @@ export default {
                 into place.'),
 
     rsync_extra_placeholder: T('Extra options'),
-    rsync_extra_tooltip: T('Additional <a\
-                href="https://rsync.samba.org/ftp/rsync/rsync.html"\
-                target="_blank">rsync(1)</a> options to include.<br>\
-                Note: The "*" character must be escaped with a\
-                backslash (\\*.txt) or used inside single quotes\
-                (\'*.txt\').'),
+    rsync_extra_tooltip: T('Additional \
+     <a href="https://rsync.samba.org/ftp/rsync/rsync.html" target="_blank">rsync(1)</a> \
+     options to include. Separate entries by pressing <code>Enter</code>.<br> \
+     Note: The "*" character must be escaped with a backslash (\\*.txt) or used \
+     inside single quotes (\'*.txt\').'),
 
     rsync_enabled_placeholder: T('Enabled'),
     rsync_enabled_tooltip: T('Enable this rsync task. Unset to disable this\
