@@ -254,6 +254,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.core.emit({name:"VolumeDataRequest"});
+    //this.core.emit({name:"VolumeDataTestRequest"});
     this.core.emit({name:"NicInfoRequest"});
     this.getDisksData();
   }
@@ -291,11 +292,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     for(let i in evt.data){
       let avail = null;
-      const used_pct = evt.data[i].used.parsed / (evt.data[i].used.parsed + evt.data[i].available.parsed);
       
       if (evt.data[i].children && evt.data[i].children[0]) {
         avail = evt.data[i].children[0].available.parsed;
       }
+
+      const used = evt.data[i].used.parsed;
+      const capacity = avail + used;
+      const used_pct = used / capacity * 100;
+
+      console.log({used:used, avail:avail, total:capacity, pct: used_pct});
+
       let zvol = {
         avail: avail,
         id:evt.data[i].id,

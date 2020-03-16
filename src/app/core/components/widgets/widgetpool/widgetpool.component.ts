@@ -286,21 +286,24 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       data: [availableValue]
     };
 
-    let percentage = this.volumeData.used_pct ? this.volumeData.used_pct.split("%") : '';
+    let percentage = this.volumeData.used_pct;
     this.core.emit({name:"PoolDisksRequest",data:[this.poolState.id]});
 
-    this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
-    if (this.displayValue.slice(-2) === ' B') {
-      this.diskSizeLabel = this.displayValue.slice(-1);
-      this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)))
-    } else {
-      this.diskSizeLabel = this.displayValue.slice(-3);
-      this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
+    if(this.volumeData.avail){
+      this.displayValue = (<any>window).filesize(this.volumeData.avail, {standard: "iec"});
+      if (this.displayValue.slice(-2) === ' B') {
+        this.diskSizeLabel = this.displayValue.slice(-1);
+        this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)))
+      } else {
+        this.diskSizeLabel = this.displayValue.slice(-3);
+        this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -4)))
+      }
+      // Adds a zero to numbers with one (and only one) digit after the decimal
+      if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
+        this.diskSize = this.diskSize.concat('0')
+      };
     }
-    // Adds a zero to numbers with one (and only one) digit after the decimal
-    if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
-      this.diskSize = this.diskSize.concat('0')
-    };
+
     this.checkVolumeHealth();
   };
 

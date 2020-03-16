@@ -81,7 +81,7 @@
                     <div class="td label"><strong>Pool Status:</strong></div>
                     <div class="td">
                     <span class="capitalize">{{poolState.status.toLowerCase()}}</span>
-                      <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" class="{{poolHealth.level}} lock-icon-wrapper icon">
+                      <span *ngIf="poolState.status == 'LOCKED'" class="{{poolHealth.level}} lock-icon-wrapper icon">
                         &nbsp;<mat-icon>lock</mat-icon>
                       </span>
                       <span *ngIf="poolState.status == 'HEALTHY'" class="{{poolHealth.level}} icon">
@@ -142,7 +142,7 @@
                         <strong>Used Space:</strong>
                       </div>
   
-                      <div class="td" *ngIf="volumeData.used_pct[0] == '8' || volumeData.used_pct[0] == '9' || volumeData.used_pct.length > 3; else safeSpace">
+                      <div class="td" *ngIf="volumeData.used_pct >= 80; else safeSpace">
                         &nbsp;<span class="value-used">{{volumeData.used_pct}}</span>
                         <span class="error icon">
                           &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>

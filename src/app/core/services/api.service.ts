@@ -73,8 +73,13 @@ export class ApiService {
           ["name","~", "^[^\/]+$" ], // Root datasets only
         ];
 
-        return { args: [queryFilters], ...def };
+        return { args: [[queryFilters]], ...def };
       },
+      postProcessor(res,callArgs,core){
+        let cloneRes = Object.assign({},res);
+        const roots = res.filter(dataset => !dataset.name.includes('/'));
+        return roots;
+      }
     },
     DisksRequest:{
       apiCall:{
