@@ -8,7 +8,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { StorageService } from '../../../../services/storage.service';
-import helptext from '../../../../helptext/storage/disks/disk-form';
+import helptext from '../../../../helptext/storage/disks/disks';
 
 @Component({
   selector: 'app-disk-bulk-edit',
