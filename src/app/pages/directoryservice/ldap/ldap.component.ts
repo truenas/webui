@@ -79,7 +79,7 @@ export class LdapComponent {
       label:true,
       config:[
         {
-          type : 'input',
+          type : 'chip',
           name : helptext.ldap_hostname_name,
           placeholder : helptext.ldap_hostname_placeholder,
           tooltip: helptext.ldap_hostname_tooltip,
@@ -87,7 +87,7 @@ export class LdapComponent {
           validation: helptext.ldap_hostname_validation
         },
         {
-          type : 'input',
+          type : 'chip',
           name : helptext.ldap_hostname_noreq_name,
           placeholder : helptext.ldap_hostname_noreq_placeholder,
           tooltip: helptext.ldap_hostname_noreq_tooltip
@@ -250,7 +250,6 @@ export class LdapComponent {
 
   resourceTransformIncomingRestData(data) {
     delete data['bindpw'];
-    data['hostname'] = data['hostname'].join(' ');
     data['hostname_noreq'] = data['hostname'];
     this.ldap_hostname = data['hostname'];
     return data;
@@ -332,7 +331,6 @@ export class LdapComponent {
       data["hostname"] = data["hostname_noreq"];
     }
     delete(data['hostname_noreq']);
-    data.hostname ? data['hostname'] = data['hostname'].split(' ') : data.hostname = [];
   }
 
   submitFunction(body: any) {

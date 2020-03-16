@@ -51,7 +51,7 @@ export class NISComponent {
           validation : helptext.nis_domain_validation
         },
         {
-          type : 'input',
+          type : 'chip',
           name : 'servers',
           placeholder : helptext.nis_servers_placeholder,
           tooltip : helptext.nis_servers_tooltip
@@ -82,17 +82,9 @@ export class NISComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService,
               private dialogservice: DialogService) {}
-  
-  resourceTransformIncomingRestData(data) {
-    data.servers = data.servers.join(',');
-    return data;
-  }
 
   afterInit(entityForm: any) {
     entityForm.submitFunction = body => this.ws.call(this.addCall, [body]);
   }
 
-  beforeSubmit(data) {
-    data.servers = data.servers.replace(/\s/g, '').split(',');
-  }
 }

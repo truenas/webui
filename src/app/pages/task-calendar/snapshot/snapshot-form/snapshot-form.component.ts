@@ -43,7 +43,7 @@ export class SnapshotFormComponent implements OnDestroy {
     tooltip: helptext.recursive_tooltip,
     value: true,
   }, {
-    type: 'textarea',
+    type: 'chip',
     name: 'exclude',
     placeholder: helptext.exclude_placeholder,
     tooltip: helptext.exclude_tooltip
@@ -164,7 +164,6 @@ export class SnapshotFormComponent implements OnDestroy {
         this.entityForm.setDisabled('end', false, false);
       }
     })
-
   }
 
   ngOnDestroy() {
@@ -182,12 +181,7 @@ export class SnapshotFormComponent implements OnDestroy {
       data.schedule.dow;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
-    if (data.exclude && Array.isArray(data.exclude) && data.exclude.length > 0) {
-      const newline = String.fromCharCode(13, 10);
-      data.exclude = data.exclude.join(`,${newline}`);
-    } else {
-      data.exclude = '';
-    }
+
     this.dataset = data.dataset;
     data['lifetime'] = data['lifetime_value'] + ' ' + data['lifetime_unit'] + (data['lifetime_value'] > 1 ? 'S' : '');
     return data;
@@ -201,13 +195,6 @@ export class SnapshotFormComponent implements OnDestroy {
 
     const spl = value.snapshot_picker.split(" ");
     delete value.snapshot_picker;
-
-    if (value.exclude && value.exclude.trim()) {
-      // filter() needed because: "hello, world,".split(",") === ["hello", "world", ""]
-      value.exclude = value.exclude.split(",").map((val: string) => val.trim()).filter((val: string) => !!val);
-    } else {
-      value.exclude = [];
-    }
 
     value['schedule'] = {
       begin: value['begin'],

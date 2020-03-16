@@ -121,14 +121,14 @@ export class SMBFormComponent {
           isHidden: true,
         },
         {
-          type: 'textarea',
+          type: 'chip',
           name: 'hostsallow',
           placeholder: helptext_sharing_smb.placeholder_hostsallow,
           tooltip: helptext_sharing_smb.tooltip_hostsallow,
           isHidden: true,
         },
         {
-          type: 'textarea',
+          type: 'chip',
           name: 'hostsdeny',
           placeholder: helptext_sharing_smb.placeholder_hostsdeny,
           tooltip: helptext_sharing_smb.tooltip_hostsdeny,
