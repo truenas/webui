@@ -167,7 +167,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
           placeholder: T('Choose Topbar'),
           required:true,
           options:this.colorOptions,
-          tooltip: T("Choose the color for the topbar."),
+          tooltip: T("Choose a topbar color."),
           class:'inline'
         },
       ]
