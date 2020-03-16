@@ -835,7 +835,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   protected releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
   protected ip4_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip4_addr' }).templateListField[0];
   protected ip6_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip6_addr' }).templateListField[0];
-  protected vnet_default_interfaceField = _.find(this.networkfieldConfig, { 'name': 'vnet_default_interface' });
+  protected vnet_default_interfaceField = _.find(this.basicfieldConfig, { 'name': 'vnet_default_interface' });
   protected template_list: string[];
   protected unfetchedRelease = [];
   public showSpinner = true;
