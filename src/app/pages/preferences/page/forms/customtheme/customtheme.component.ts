@@ -550,7 +550,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
 
         let dupeLabel = this.isDuplicateOf("label",data.label);
         if(dupeLabel){
-          messages.push(T("This label is already being used by an existing theme. Please choose a new label."))
+          messages.push(T("Another theme is using this label. Please enter a new label."))
         }
       if(messages.length == 0){
         return true;
