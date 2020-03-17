@@ -22,6 +22,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   public token: any;
   public xterm: any;
   private shellSubscription: any;
+  private precommand_displayed = false;
 
   public shell_tooltip = helptext.serial_shell_tooltip;
 
@@ -37,6 +38,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
 
 
   ngOnInit() {
+    const self = this;
     this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((res) => {
@@ -44,6 +46,13 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
         this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
           if (value !== undefined) {
             this.xterm.write(value);
+            if (!this.precommand_displayed) {
+              setTimeout(function() {
+                self.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
+                self.xterm.send('\r');
+              }, 100);
+              this.precommand_displayed = true;
+            }
           }
         });
         this.initializeTerminal();
@@ -93,8 +102,6 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
     // this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
-    this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
-    this.xterm.send('\r');
   }
 
   initializeWebShell(res: string) {
