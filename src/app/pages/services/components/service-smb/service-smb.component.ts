@@ -3,15 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
-import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/services/components/service-smb';
 import global_helptext from '../../../../helptext/global-helptext';
 import { IdmapService, RestService, ServicesService, UserService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
-import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'smb-edit',
@@ -35,15 +31,11 @@ export class ServiceSMBComponent {
   private cifs_srv_unixcharset: any;
   private cifs_srv_admin_group: any;
   protected defaultIdmap: any;
-  protected idmap_tdb_range_low: any;
-  protected idmap_tdb_range_high: any;
   protected dialogRef: any;
   protected idNumber: any;
   public entityEdit: any;
 
   protected advanced_field = [
-    'idmap_tdb_range_low',
-    'idmap_tdb_range_high',
     'unixcharset',
     'loglevel',
     'syslog',
@@ -54,13 +46,12 @@ export class ServiceSMBComponent {
     'smb_options',
     'aapl_extensions'
   ];
-  protected hiddenFieldSets = [helptext.cifs_srv_fieldset_idmap, helptext.cifs_srv_fieldset_other];
+  protected hiddenFieldSets = [helptext.cifs_srv_fieldset_other];
 
   public fieldSets: FieldSet[] = [
     {
       name: helptext.cifs_srv_fieldset_netbios,
       label: true,
-      width: '50%',
       config: [
         {
           type: 'input',
@@ -85,7 +76,7 @@ export class ServiceSMBComponent {
           name: 'netbiosalias',
           placeholder: helptext.cifs_srv_netbiosalias_placeholder,
           tooltip: helptext.cifs_srv_netbiosalias_tooltip,
-          validation: helptext.cifs_srv_netbiosalias_validation
+          // validation:  need custom
         },
         {
           type: 'input',
@@ -115,29 +106,9 @@ export class ServiceSMBComponent {
         }
       ]
     },
-    {
-      name: helptext.cifs_srv_fieldset_idmap,
-      label: false,
-      width: '50%',
-      config: [
-        {
-          type: 'input',
-          name: 'idmap_tdb_range_low',
-          inputType: 'number',
-          placeholder: helptext.idmap_tdb_range_low_placeholder,
-          tooltip: helptext.idmap_tdb_range_low_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'idmap_tdb_range_high',
-          inputType: 'number',
-          placeholder: helptext.idmap_tdb_range_high_placeholder,
-          tooltip: helptext.idmap_tdb_range_high_tooltip,
-          validation: [greaterThan('idmap_tdb_range_low', [helptext.idmap_tdb_range_low_placeholder]), regexValidator(/^\d+$/)],
-        }
-      ]
-    },
+
     { name: 'divider', divider: false },
+
     {
       name: helptext.cifs_srv_fieldset_other,
       label: false,
@@ -181,7 +152,7 @@ export class ServiceSMBComponent {
           options: [],
           tooltip: helptext.cifs_srv_guest_tooltip,
         },
-        { 
+        {
           type: 'combobox',
           name: 'admin_group',
           placeholder: helptext.cifs_srv_admin_group_placeholder,
@@ -265,7 +236,7 @@ export class ServiceSMBComponent {
           }
       }
     });
-  
+
     this.ws.call('user.query').subscribe((res) => {
       this.cifs_srv_guest = otherSet.config.find(config => config.name === "guest");
       res.forEach((user) => {
@@ -292,20 +263,17 @@ export class ServiceSMBComponent {
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
+  resourceTransformIncomingRestData(data) {
+    data.netbiosalias = data.netbiosalias.join(' ');
+    return data;
+  }
+
   afterInit(entityEdit: EntityFormComponent) {
     entityEdit.submitFunction = body => {
-      delete body.idmap_tdb_range_high;
-      delete body.idmap_tdb_range_low;
       return this.ws.call('smb.update', [body])
     };
 
     this.entityEdit = entityEdit;
-    this.ws.call('idmap.get_or_create_idmap_by_domain', ['DS_TYPE_DEFAULT_DOMAIN']).subscribe((idmap_res) => {
-      this.defaultIdmap = idmap_res[0]; // never used and undefined anyway
-      this.idNumber = idmap_res.id;
-      entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res.range_high);
-      entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res.range_low);
-    });
   }
 
   updateGroupSearchOptions(value = "", parent) {
@@ -318,29 +286,8 @@ export class ServiceSMBComponent {
     });
   }
 
-  beforeSubmit(entityEdit: any) {
-    this.error = null;
-
-    let value = _.cloneDeep(entityEdit);
-    let new_range_low: any;
-    let new_range_high: any;
-
-    for (let i in value) {
-      if (_.endsWith(i, 'range_low')) {
-        new_range_low = value[i];
-      }
-      if (_.endsWith(i, 'range_high')) {
-        new_range_high = value[i];
-      }
-    }
-
-    // Puts validation errors on screen but doesn't stop form from submitting
-    //beforeSubmit doesn't block submit from happening even with an error
-    this.ws.call('idmap.tdb.update', [this.idNumber, {range_low: new_range_low, range_high: new_range_high}])
-      .subscribe(() => {},
-      (err)=>{
-        new EntityUtils().handleWSError(this.entityEdit, err);
-      },
-      () => {})
-    }
+  beforeSubmit(data) {
+    data.netbiosalias = data.netbiosalias.split(' ');
+    console.log(data);
   }
+}
