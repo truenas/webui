@@ -169,6 +169,18 @@
                   </div>
                 </div>
               </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-dedup-button" [disabled]="vdevs.dedup.length > 0" (click)="addVdev('dedup')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>share-variant</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.dedup_vdev_title | translate}}</h3>
+                    <p>{{help.dedup_vdev_description | translate}}</p>
+                  </div>
+                </div>
+              </button>
             </mat-menu>
           </div>
         </div>
@@ -294,6 +306,10 @@
           <div *ngIf="vdevs.special.length > 0">
             <h4 class="vdev-h4">{{"Metadata VDev" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.special; let i = index" [group]="'special'" [manager]="this" [index]="i"></app-vdev>
+          </div>
+          <div *ngIf="vdevs.dedup.length > 0">
+            <h4 class="vdev-h4">{{"Dedup VDev" | translate}}</h4>
+            <app-vdev *ngFor="let vdev of vdevs.dedup; let i = index" [group]="'dedup'" [manager]="this" [index]="i"></app-vdev>
           </div>
         </div>
       </div>

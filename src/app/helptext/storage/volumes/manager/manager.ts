@@ -50,6 +50,10 @@ log_vdev_description: T("ZFS LOG device. Can be removed. Optional write-cache th
 spare_vdev_title: T("Hot Spare"),
 spare_vdev_description: T("Drive set aside ready to be inserted into DATA pool vdevs when a device has failed."),
 special_vdev_title: T("Metadata"),
-special_vdev_description: T("Special Allocation class, used to create Fusion pools. Optional vdev type which is used to speed up metadata and small block IO. Cannot be removed from pool once added."),
+special_vdev_description: T("Special Allocation class, used to create Fusion pools. Optional vdev type\
+ which is used to speed up metadata and small block IO. Cannot be removed from pool once added."),
+dedup_vdev_title: T("Dedup"),
+dedup_vdev_description: T("De-duplication Tables will be stored on this special vdev type, these will need\
+ to be sized to XGiB per XTiB of general storage.")
 
 }
