@@ -2,29 +2,32 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService, StorageService, DialogService, AppLoaderService } from '../../../../../../services';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { ValidationErrors, FormControl } from '@angular/forms';
 import { T } from '../../../../../../translate-marker';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import globalHelptext from '../../../../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-dataset-quotas-grouplist',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class DatasetQuotasGrouplistComponent {
-  public title = "Dataset Groups";
+  public title = helptext.groups.title;
   protected entityList: any;
   protected hasDetails = false;
   protected noActions = true;
   protected queryCall = 'group.query';
   public columnFilter = false;
   public pk: string;
+  public quotaValue: number;
 
   public columns: Array < any > = [
-    { name: 'Group Name', prop: 'group', always_display: true, minWidth: 150},
-    { name: 'GID', prop: 'gid', hidden: false },
-    { name: 'Data Quota', prop: 'quota', hidden: false },
-    { name: 'DQ % Used', prop: 'used_percent', hidden: false  },
-    { name: 'Object Quota', prop: 'obj_quota', hidden: false },
-    { name: 'OQ % Used', prop: 'obj_used_percent', hidden: false  }
+    { name: T('Group Name'), prop: 'group', always_display: true, minWidth: 150},
+    { name: T('GID'), prop: 'gid', hidden: false },
+    { name: T('Data Quota'), prop: 'quota', hidden: false },
+    { name: T('DQ % Used'), prop: 'used_percent', hidden: false  },
+    { name: T('Object Quota'), prop: 'obj_quota', hidden: false },
+    { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false  }
   ];
   public rowIdentifier = 'group';
   public config: any = {
@@ -70,9 +73,29 @@ export class DatasetQuotasGrouplistComponent {
             placeholder: helptext.groups.dialog.data_quota.placeholder,
             tooltip: helptext.groups.dialog.data_quota.tooltip,
             value: 0,
+            id: 'group-data-quota_input',
             blurStatus: true,
             blurEvent: self.groupBlurEvent,
             parent: self,
+            validation: [
+              (control: FormControl): ValidationErrors => {
+                const config = conf.fieldConfig.find(c => c.name === 'group_data_quota');
+                self.quotaValue = control.value;
+                const size = self.storageService.convertHumanStringToNum(control.value);
+                const errors = control.value && isNaN(size)
+                  ? { invalid_byte_string: true }
+                  : null
+
+                if (errors) {
+                  config.hasErrors = true;
+                  config.errors = globalHelptext.human_readable.input_error;
+                } else {
+                  config.hasErrors = false;
+                    config.errors = '';
+                }
+                return errors;
+              }
+            ],
           },
           {
             type: 'input',
@@ -97,7 +120,7 @@ export class DatasetQuotasGrouplistComponent {
               payload.push({
                 quota_type: 'GROUP',
                 id: group.toString(),
-                quota_value: groupData.group_data_quota
+                quota_value: self.storageService.convertHumanStringToNum(groupData.group_data_quota)
               },
               {
                 quota_type: 'GROUPOBJ',
@@ -112,6 +135,9 @@ export class DatasetQuotasGrouplistComponent {
             self.dialogService.closeAllDialogs();
             self.entityList.getData();
             selected.length = 0;
+          }, err => {
+            self.loader.close();
+            self.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
           })
         }
       }
@@ -147,11 +173,8 @@ export class DatasetQuotasGrouplistComponent {
   }
 
   groupBlurEvent(parent) {
-    if (parent.storageService.humanReadable) {
-      parent.transformValue(parent, 'group_data_quota');
-    }
+    (<HTMLInputElement>document.getElementById('group-data-quota_input')).value =
+      parent.storageService.humanReadable;
   }
-
-
 
 }

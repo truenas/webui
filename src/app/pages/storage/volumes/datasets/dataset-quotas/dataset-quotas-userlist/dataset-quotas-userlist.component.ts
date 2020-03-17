@@ -2,29 +2,32 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService, StorageService, DialogService, AppLoaderService } from '../../../../../../services';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { ValidationErrors, FormControl } from '@angular/forms';
+import { T } from '../../../../../../translate-marker';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import globalHelptext from '../../../../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-dataset-quotas-userlist',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
 })
 export class DatasetQuotasUserlistComponent {
-  public title = "Dataset Users";
+  public title = helptext.users.title;
   protected entityList: any;
   protected hasDetails = false;
   protected noActions = true;
   protected queryCall = 'user.query';
   public columnFilter = false;
   public pk: string;
+  public quotaValue: number;
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
-    { name: 'UID', prop: 'uid', hidden: false },
-    { name: 'Data Quota', prop: 'quota', hidden: false },
-    { name: 'DQ % Used', prop: 'used_percent', hidden: false  },
-    { name: 'Object Quota', prop: 'obj_quota', hidden: false },
-    { name: 'OQ % Used', prop: 'obj_used_percent', hidden: false  },
-
+    { name: T('Username'), prop: 'username', always_display: true, minWidth: 150},
+    { name: T('UID'), prop: 'uid', hidden: false },
+    { name: T('Data Quota'), prop: 'quota', hidden: false },
+    { name: T('DQ % Used'), prop: 'used_percent', hidden: false  },
+    { name: T('Object Quota'), prop: 'obj_quota', hidden: false },
+    { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false  },
   ];
   public rowIdentifier = 'username';
   public config: any = {
@@ -32,7 +35,7 @@ export class DatasetQuotasUserlistComponent {
     sorting: { columns: this.columns },
     multiSelect: true,
     deleteMsg: {
-      title: 'User',
+      title: T('User'),
       key_props: ['username']
     }
   };
@@ -70,9 +73,29 @@ export class DatasetQuotasUserlistComponent {
             placeholder: helptext.users.dialog.data_quota.placeholder,
             tooltip: helptext.users.dialog.data_quota.tooltip,
             value: 0,
+            id: 'user-data-quota_input',
             blurStatus: true,
             blurEvent: self.userBlurEvent,
             parent: self,
+            validation: [
+              (control: FormControl): ValidationErrors => {
+                const config = conf.fieldConfig.find(c => c.name === 'user_data_quota');
+                self.quotaValue = control.value;
+                const size = self.storageService.convertHumanStringToNum(control.value);
+                const errors = control.value && isNaN(size)
+                  ? { invalid_byte_string: true }
+                  : null
+
+                if (errors) {
+                  config.hasErrors = true;
+                  config.errors = globalHelptext.human_readable.input_error;
+                } else {
+                  config.hasErrors = false;
+                    config.errors = '';
+                }
+                return errors;
+              }
+            ],
           },
           {
             type: 'input',
@@ -97,7 +120,7 @@ export class DatasetQuotasUserlistComponent {
               payload.push({
                 quota_type: 'USER',
                 id: user.toString(),
-                quota_value: userData.user_data_quota
+                quota_value: self.storageService.convertHumanStringToNum(userData.user_data_quota)
               },
               {
                 quota_type: 'USEROBJ',
@@ -112,6 +135,9 @@ export class DatasetQuotasUserlistComponent {
             self.dialogService.closeAllDialogs();
             self.entityList.getData();
             selected.length = 0;
+          }, err => {
+            self.loader.close();
+            self.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
           })
         }
       }
@@ -147,9 +173,8 @@ export class DatasetQuotasUserlistComponent {
   }
 
   userBlurEvent(parent) {
-    if (parent.storageService.humanReadable) {
-      parent.transformValue(parent, 'user_data_quota');
-    }
+    (<HTMLInputElement>document.getElementById('user-data-quota_input')).value =
+      parent.storageService.humanReadable;
   }
 
 }

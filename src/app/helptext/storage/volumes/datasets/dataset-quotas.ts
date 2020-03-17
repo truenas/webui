@@ -3,9 +3,10 @@ import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
     users: {
-        action_label: T('Add Users to Form'),
+        title: T('Dataset Users'),
+        action_label: T('Define Quotas for Selected Users'),
         dialog: {
-          title: T('Set quotas on selected users'),
+          title: T('Define quotas for selected users'),
           list: {
             placeholder: T('Selected Users'),
             tooltip: T('This list can be edited in the table. A quota change \
@@ -26,9 +27,10 @@ Enter 0 (zero) to remove the quota.'),
       },
 
     groups: {
-      action_label: T('Add Groups to Form'),
+      title: T('Dataset Groups'),
+      action_label: T('Define Quotas for Selected Groups'),
       dialog: {
-        title: T('Set quotas on selected groups'),
+        title: T('Define quotas for selected groups'),
         list: {
           placeholder: T('Selected Groups'),
           tooltip: T('This list can be edited in the table. A quota change \
