@@ -77,7 +77,7 @@
     </ngx-datatable>
     <div class="vdev-wrapper">
         <div class="vdev-type">
-        <div *ngIf="(group === 'data' || group === 'log' || group === 'special')" class="datainfo">
+        <div *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup')" class="datainfo">
             <mat-select id="vdev__option-menu" *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup') && !vdev_type_disabled" [(ngModel)]="type" (ngModelChange)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
                 <mat-option value="mirror" *ngIf="getDisks().length >= 2 && (group === 'data' || group === 'log' || group === 'special' || group === 'dedup')">{{"Mirror" | translate}}</mat-option>
