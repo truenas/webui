@@ -21,7 +21,7 @@ interface UserPreferences {
   showTooltips?:boolean; // Form Tooltips on/off // Deprecated
   metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
 }
-   
+
 @Component({
   selector : 'general-preferences-form',
   template:`<entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
@@ -33,7 +33,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
   public isWaiting: boolean = false;
   public values = [];
   public preferences: any;
-  public saveSubmitText = T("Update Settings");
+  public saveSubmitText = T("Update Preferences");
   public multiStateSubmit = true;
   protected isEntity: boolean = true; // was true
   private themeOptions: any[] = [];
@@ -76,7 +76,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
 
     ngAfterViewInit(){
     }
-    
+
     afterInit(entity: any) {
       entity.formGroup.controls['userTheme'].valueChanges.subscribe((theme) => {
       })
@@ -104,7 +104,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.setThemeOptions();
         if(!this.embeddedForm){ return; }
-        
+
         let theme = this.preferences.userTheme;
         this.embeddedForm.setValue('userTheme', theme);
       });
