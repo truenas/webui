@@ -67,6 +67,11 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_enabled.svg")
     );
     this.matIconRegistry.addSvgIcon(
+      "ix_full_logo",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ix_full_logo.svg")
+    );
+
+    this.matIconRegistry.addSvgIcon(
       "ha_reconnecting",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
     );

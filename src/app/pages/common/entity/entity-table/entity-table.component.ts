@@ -246,7 +246,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
-      if (preferredCols.length > 0) {
+      // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
+      if (preferredCols.length > 0 && this.title !== 'Snapshots') {
         preferredCols.forEach((i) => {
           // If preferred columns have been set for THIS table...
           if (i.title === this.title) {

@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import helptext from '../../../../helptext/storage/disks/disk-form';
+import helptext from '../../../../helptext/storage/disks/disks';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
 

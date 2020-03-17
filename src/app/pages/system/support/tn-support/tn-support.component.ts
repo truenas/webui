@@ -52,7 +52,7 @@ export class TnSupportComponent implements OnInit {
           validation : helptext.email.validation
         },
         {
-          type : 'input',
+          type : 'chip',
           name : 'cc',
           placeholder : helptext.cc.placeholder,
           tooltip : helptext.cc.tooltip,
@@ -192,14 +192,13 @@ export class TnSupportComponent implements OnInit {
     return function validEmails(control: FormControl) {
         const config = self.fieldConfig.find(c => c.name === name);
         if (control.value) {
-          let arr = _.filter(control.value.split(',').map(_.trim));
-        
+
         let counter = 0;
         const regex = 
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         
-        if (arr) {
-            arr.forEach((item) => {
+        if (control.value) {
+          control.value.forEach((item) => {
                 if (!item.match(regex)) {
                     counter++;
                 }
@@ -227,7 +226,7 @@ export class TnSupportComponent implements OnInit {
     let payload = {};
     payload['name'] = entityEdit.name;
     payload['email'] = entityEdit.email;
-    payload['cc'] = _.filter(entityEdit.cc.split(',').map(_.trim));
+    payload['cc'] = entityEdit.cc;
     payload['phone'] = entityEdit.phone;
     payload['category'] = entityEdit.TNCategory;
     payload['environment'] = entityEdit.environment;

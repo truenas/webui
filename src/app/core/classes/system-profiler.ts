@@ -205,15 +205,18 @@ export class SystemProfiler {
       }
 
       if(vdev.children.length == 0 && vdev.device){
-          
           let spl = vdev.device.split('p');
           let name = spl[0]
           v.disks[name] = -1; // no children so we use this as placeholder
       } else if(vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
-          let spl = disk.device.split('p');
-          let name = spl[0]
-          v.disks[name] = dIndex;
+          if(!disk.device && disk.status == "REMOVED"){ 
+            return; 
+          } else {
+            let spl = disk.device.split('p');
+            let name = spl[0]
+            v.disks[name] = dIndex;
+          }
         });
       } 
       

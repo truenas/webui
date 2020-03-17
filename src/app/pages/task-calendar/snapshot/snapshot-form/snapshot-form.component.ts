@@ -26,6 +26,7 @@ export class SnapshotFormComponent implements OnDestroy {
   protected datasetFg: any;
   protected dataset_subscription: any;
   protected save_button_enabled = true;
+  protected entityForm;
 
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
@@ -42,7 +43,7 @@ export class SnapshotFormComponent implements OnDestroy {
     tooltip: helptext.recursive_tooltip,
     value: true,
   }, {
-    type: 'textarea',
+    type: 'chip',
     name: 'exclude',
     placeholder: helptext.exclude_placeholder,
     tooltip: helptext.exclude_tooltip
@@ -51,6 +52,8 @@ export class SnapshotFormComponent implements OnDestroy {
     name: 'lifetime',
     placeholder: helptext.lifetime_placeholder,
     tooltip: helptext.lifetime_tooltip,
+    value: "2 WEEKS",
+    required: true,
     inputUnit: {
       type: UnitType.duration,
       decimal: false,
@@ -125,6 +128,7 @@ export class SnapshotFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm) {
+    this.entityForm = entityForm;
     const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
 
     this.storageService.getDatasetNameOptions().subscribe(
@@ -150,6 +154,16 @@ export class SnapshotFormComponent implements OnDestroy {
       }
     });
 
+    entityForm.formGroup.controls['snapshot_picker'].valueChanges.subscribe(value => {
+      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+        this.entityForm.setDisabled('begin', true, true);
+        this.entityForm.setDisabled('end', true, true);
+
+      } else {
+        this.entityForm.setDisabled('begin', false, false);
+        this.entityForm.setDisabled('end', false, false);
+      }
+    })
   }
 
   ngOnDestroy() {
@@ -167,12 +181,7 @@ export class SnapshotFormComponent implements OnDestroy {
       data.schedule.dow;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
-    if (data.exclude && Array.isArray(data.exclude) && data.exclude.length > 0) {
-      const newline = String.fromCharCode(13, 10);
-      data.exclude = data.exclude.join(`,${newline}`);
-    } else {
-      data.exclude = '';
-    }
+
     this.dataset = data.dataset;
     data['lifetime'] = data['lifetime_value'] + ' ' + data['lifetime_unit'] + (data['lifetime_value'] > 1 ? 'S' : '');
     return data;
@@ -186,13 +195,6 @@ export class SnapshotFormComponent implements OnDestroy {
 
     const spl = value.snapshot_picker.split(" ");
     delete value.snapshot_picker;
-
-    if (value.exclude && value.exclude.trim()) {
-      // filter() needed because: "hello, world,".split(",") === ["hello", "world", ""]
-      value.exclude = value.exclude.split(",").map((val: string) => val.trim()).filter((val: string) => !!val);
-    } else {
-      value.exclude = [];
-    }
 
     value['schedule'] = {
       begin: value['begin'],

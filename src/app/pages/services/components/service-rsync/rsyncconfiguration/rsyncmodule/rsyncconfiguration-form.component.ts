@@ -86,18 +86,16 @@ export class RYSNCConfigurationFormComponent {
                     options: []
                 },
                 {
-                    type: 'textarea',
+                    type: 'chip',
                     name: 'hostsallow',
                     placeholder: helptext.rsyncmod_hostsallow_placeholder,
                     tooltip: helptext.rsyncmod_hostsallow_tooltip,
-                    value: '',
                 },
                 {
-                    type: 'textarea',
+                    type: 'chip',
                     name: 'hostsdeny',
                     placeholder: helptext.rsyncmod_hostsdeny_placeholder,
                     tooltip: helptext.rsyncmod_hostsdeny_tooltip,
-                    value: '',
                 }
             ]
         },
@@ -176,19 +174,6 @@ export class RYSNCConfigurationFormComponent {
         if (!this.isNew) {
             entityForm.submitFunction = this.submitFunction;
         };
-    }
-
-    beforeSubmit(data: any) {
-        if (!data.hostsallow || data.hostsallow === '') {
-            data.hostsallow = [];
-        } else if (typeof(data.hostsallow) === 'string') {
-            data.hostsallow = data.hostsallow.split(/[ ,]+/);
-        }
-        if (!data.hostsdeny || data.hostsdeny === '') {
-            data.hostsdeny = []
-        } else if (typeof(data.hostsdeny) === 'string') {
-            data.hostsdeny = data.hostsdeny.split(/[ ,]+/);
-        }
     }
 
     submitFunction(entityForm: any){

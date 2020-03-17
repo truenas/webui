@@ -63,8 +63,9 @@ export default {
  replicated. Enter the name and \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a> \
  <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i> strings that \
- match the snapshots to include in the replication. The number of \
- snapshots matching that pattern is shown.'),
+ match the snapshots to include in the replication. Separate entries by \
+ pressing <code>Enter</code>. The number of snapshots matching the \
+ patterns are shown.'),
 
     encryption_placeholder: T('SSH Transfer Security'),
     encryption_tooltip: T('Data transfer security. The connection is \
@@ -86,6 +87,10 @@ export default {
  <i>Source Datasets</i> and replicate the snapshots to the \
  <i>Destination Dataset</i>. Select a preset schedule or choose \
  <i>Custom</i> to use the advanced scheduler.'),
+
+    readonly_placeholder: T('Make Destination Dataset Read-only?'),
+    readonly_tooltip: T('Setting this option changes the destination dataset to be read-only.\
+ To continue using the default or existing dataset read permissions, leave this option unset.'),
 
     retention_policy_placeholder: T('Destination Snapshot Lifetime'),
     retention_policy_tooltip: T('When replicated snapshots are deleted \

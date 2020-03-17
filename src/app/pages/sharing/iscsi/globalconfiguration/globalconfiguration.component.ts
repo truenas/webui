@@ -31,7 +31,7 @@ export class GlobalconfigurationComponent {
           validation: helptext_sharing_iscsi.globalconf_validators_basename
         },
         {
-          type: 'textarea',
+          type: 'chip',
           name: 'isns_servers',
           placeholder: helptext_sharing_iscsi.globalconf_placeholder_isns_servers,
           tooltip: helptext_sharing_iscsi.globalconf_tooltip_isns_servers
@@ -72,12 +72,6 @@ export class GlobalconfigurationComponent {
   }
 
   beforeSubmit(value) {
-    if (value.isns_servers == "") {
-      value.isns_servers = [];
-    } else {
-     value.isns_servers = _.split(value.isns_servers, ' ');
-    }
-
     if (value.pool_avail_threshold == "") {
       value.pool_avail_threshold = null;
     }

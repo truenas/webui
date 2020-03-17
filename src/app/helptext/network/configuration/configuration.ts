@@ -16,8 +16,9 @@ domain_placeholder : T('Domain'),
 domain_tooltip : T('System domain name, like <i>example.com</i>'),
 
 domains_placeholder: T('Additional Domains'),
-domains_tooltip : T('Additional space-delimited domains to search.\
- Adding search domains can cause slow DNS lookups.'),
+domains_tooltip : T('Additional space-delimited domains to search. \
+ Separate entries by pressing <code>Enter</code>. Adding search \
+ domains can cause slow DNS lookups.'),
 
 ipv4gateway_placeholder : T('IPv4 Default Gateway'),
 ipv4gateway_tooltip : T('Enter an IPv4 address. This overrides the default\
@@ -46,20 +47,18 @@ netwait_enabled_tooltip : T('Set to delay the start of network services\
  until pings are returned from the IP addresses in the <i>netwait\
  IP list</i>.'),
 netwait_ip_placeholder : T('Netwait IP list'),
-netwait_ip_tooltip : T('Enter a space-delimited list of IP addresses to <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=ping"\
- target="_blank">ping(8)</a>. Each address is tried\
- until one is successful or the list is exhausted.\
- Leave empty to use the default gateway.'),
+netwait_ip_tooltip : T('Enter a space-delimited list of IP addresses to \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=ping" target="_blank">ping(8)</a>. \
+ Separate entries by pressing <code>Enter</code>. Each address is tried \
+ until one is successful or the list is exhausted. Leave empty to use \
+ the default gateway.'),
 
 hosts_placeholder : T('Host name database'),
 hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>.\
- Each host entry is a single line\
- with whitespace-delimited IP address, hostname, and\
- any aliases. Hosts defined here are still accessible\
- by name even when DNS is not available. See <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=hosts"\
- target="_blank">hosts(5)</a> for additional information.'),
+ Separate entries by pressing <code>Enter</code>. Hosts defined here are \
+ still accessible by name even when DNS is not available. See \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=hosts" target="_blank">hosts(5)</a> \
+ for additional information.'),
 
 hostname_and_domain: T('Hostname and Domain'),
 gateway: T('Default Gateway'),

@@ -379,21 +379,17 @@ export class IscsiWizardComponent {
             label: helptext_sharing_iscsi.step3_label,
             fieldConfig: [
                 {
-                    type: 'input',
+                    type: 'chip',
                     name: 'initiators',
                     placeholder: helptext_sharing_iscsi.initiators_placeholder,
                     tooltip: helptext_sharing_iscsi.initiators_tooltip,
-                    value: '',
-                    inputType: 'textarea',
                 },
                 {
-                    type: 'input',
+                    type: 'chip',
                     name: 'auth_network',
                     placeholder: helptext_sharing_iscsi.auth_network.placeholder,
                     tooltip: helptext_sharing_iscsi.auth_network.tooltip,
-                    value: '',
                     hasErrors: false,
-                    inputType: 'textarea',
                     validation: [this.IPValidator('auth_network')]
                 }
             ]
@@ -849,8 +845,8 @@ export class IscsiWizardComponent {
         }
         if (item === 'initiator') {
             payload = {
-                initiators: value['initiators'].split(' '),
-                auth_network: value['auth_network'].split(' '),
+                initiators: value['initiators'],
+                auth_network: value['auth_network'],
                 comment: value['name'],
             }
         }
@@ -892,10 +888,9 @@ export class IscsiWizardComponent {
         const self = this;
         return function validIPs(control: FormControl) {
             const config = self.wizardConfig[2].fieldConfig.find(c => c.name === name);
-            let arr = (control.value).match(/\S+/g);
             let counter = 0;
-            if (arr) {
-                arr.forEach((item) => {
+            if (control.value) {
+                control.value.forEach((item) => {
                     if (!self.networkService.authNetworkValidator(item)) {
                         counter++;
                     }

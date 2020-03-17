@@ -92,10 +92,10 @@ export default {
     exclude_placeholder: T('Exclude Child Datasets'),
     exclude_tooltip: T('Exclude specific child dataset snapshots from \
  the replication. Use with <b>Recursive</b> snapshots. List child \
- dataset names to exclude. Separate multiple entries with a comma \
- (<code>,</code>). Example: <i>pool1/dataset1/child1</i>. A \
- recursive replication of <i>pool1/dataset1</i> snapshots includes all \
- child dataset snapshots except <i>child1</i>.'),
+ dataset names to exclude. Separate entries by pressing <code>Enter</code>. \
+ Example: <i>pool1/dataset1/child1</i>. A recursive replication of \
+ <i>pool1/dataset1</i> snapshots includes all child dataset snapshots \
+ except <i>child1</i>.'),
 
     properties_placeholder: T('Include Dataset Properties'),
     properties_tooltip: T('Include dataset properties with the replicated \
@@ -121,7 +121,7 @@ from the source dataset.'),
  <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
  target="_blank">strftime(3)</a> <i>%Y</i>, <i>%m</i>, <i>%d</i>, \
  <i>%H</i>, and <i>%M</i> strings that match the snapshots to include in \
- the replication.'),
+ the replication. Separate entries by pressing <code>Enter</code>.'),
 
     also_include_naming_schema_placeholder: T('Also Include Naming Schema'),
     also_include_naming_schema_tooltip: T('Pattern of naming custom \
@@ -135,7 +135,8 @@ from the source dataset.'),
  <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i> string requirements as \
  the <b>Naming Schema</b> in a \
  <a href="--docurl--/tasks.html#periodic-snapshot-tasks" \
- target="_blank">periodic snapshot task.'),
+ target="_blank">periodic snapshot task. Separate entries by pressing \
+ <code>Enter</code>.'),
 
     auto_placeholder: T('Run Automatically'),
     auto_tooltip: T('Set to either start this replication task \
@@ -183,6 +184,12 @@ from the source dataset.'),
  <b>Schedule</b> in place of the <b>Snapshot Replication Schedule</b> or \
  add the <b>Schedule</b> values to the \
  <b>Snapshot Replication Schedule</b>.'),
+
+    readonly_placeholder: T('Destination Dataset Read-only Policy'),
+    readonly_tooltip: T('<b>SET</b> will changes all destination datasets to <code>readonly=on</code>\
+ after finishing the replication. <br><b>REQUIRE</b> stops replication unless all existing destination\
+ datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the\
+ <code>readonly</code> property during replication.'),
 
     allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),
     allow_from_scratch_tooltip: T('If the destination system has \

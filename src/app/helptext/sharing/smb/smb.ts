@@ -87,11 +87,11 @@ export const helptext_sharing_smb = {
 
     placeholder_hostsallow: T('Hosts Allow'),
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
- Separate entries with a comma, space, or tab.'),
+ Separate entries by pressing <code>Enter</code>.'),
 
     placeholder_hostsdeny: T('Hosts Deny'),
     tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
- Separate entries with a comma, space, or tab.'),
+ Separate entries by pressing <code>Enter</code>.'),
 
     placeholder_shadowcopy: T('Enable Shadow Copies'),
     tooltip_shadowcopy: T('Export ZFS snapshots as\

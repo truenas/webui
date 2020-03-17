@@ -58,20 +58,21 @@ rsyncmod_hostsallow_tooltip: T('From <a \
  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" \
  target="_blank">rsyncd.conf(5)</a>. A list of patterns to match with \
  the hostname and IP address of a connecting client. The connection is \
- rejected if no patterns match. Separate patterns with whitespace or a \
- comma.'),
+ rejected if no patterns match. Separate entries by pressing \
+ <code>Enter</code>.'),
 
 rsyncmod_hostsdeny_placeholder: T('Hosts Deny'),
 rsyncmod_hostsdeny_tooltip: T('From <a \
  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" \
  target="_blank">rsyncd.conf(5)</a>. A list of patterns to match with \
  the hostname and IP address of a connecting client. The connection is \
- rejected when the patterns match. Separate patterns with whitespace \
- or a comma.'),
+ rejected when the patterns match. Separate entries by pressing \
+ <code>Enter</code>.'),
 
 rsyncmod_auxiliary_placeholder: T('Auxiliary parameters'),
 rsyncmod_auxiliary_tooltip: T('Enter any additional settings from <a\
  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
- target="_blank">rsyncd.conf(5)</a>.'),
+ target="_blank">rsyncd.conf(5)</a>. Separate entries by \
+ pressing <code>Enter</code>.'),
 
 }
