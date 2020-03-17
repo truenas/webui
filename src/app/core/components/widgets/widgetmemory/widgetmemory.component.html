@@ -41,7 +41,8 @@
             </h1>
           <div class="memory-used-caption">
             <span *ngIf="memData">
-              {{"total memory installed" | translate}}
+              {{"installed memory" | translate}}
+              (<span *ngIf="!ecc">non-</span>ECC)
             </span>
           </div>
           <!-- Legend --> 
