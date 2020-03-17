@@ -34,7 +34,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
             setTimeout(function() {
               self.xterm.setOption('disableStdin', true);
             }, 100);
-          }, 100);
+          }, 1000);
           this.top_displayed = true;
         }
       });

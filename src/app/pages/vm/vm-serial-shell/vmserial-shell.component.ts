@@ -50,7 +50,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
               setTimeout(function() {
                 self.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
                 self.xterm.send('\r');
-              }, 100);
+              }, 1000);
               this.precommand_displayed = true;
             }
           }
