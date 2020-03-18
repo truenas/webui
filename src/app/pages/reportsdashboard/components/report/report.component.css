@@ -40,13 +40,14 @@
 table.legend-table {
   display: table;
   width: 100%;
+  margin-right:12px;
 }
 
 tr.header th{
   text-transform: capitalize;
 }
 
-tr.legend-group:nth-child(even) {
+tr.legend-group:nth-child(odd) {
   background-color:rgba(0,0,0,0.05);
 }
 
@@ -65,6 +66,7 @@ td.legend-label:nth-child(1) {
 td.legend-label  {
   display: table-cell;
   font-weight:500;
+  padding-right: 4px;
 }
 
 .legend-label div {
@@ -621,7 +623,7 @@ h3 {
 
 .report .mat-card.zero-state .mat-icon{
   width:auto;
-  height:180px;
+  height:80px;
   color: var(--fg2);
   opacity:0.1;
 }

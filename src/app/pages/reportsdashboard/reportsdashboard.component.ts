@@ -40,6 +40,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public scrolledIndex: number = 0;
   public isFooterConsoleOpen;
 
+  public product_type: string = window.localStorage['product_type'];
+  public retroLogo: string;
+
   public diskReports: Report[];
   public otherReports: Report[];
   public activeReports: Report[] = [];
@@ -91,6 +94,18 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
+ 
+    this.core.register({observerClass: this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+      console.log(evt.data.retroLogo);
+      this.retroLogo = evt.data.retroLogo ? "1" : "0";
+    });
+ 
+    this.core.register({observerClass: this, eventName:"UserPreferences"}).subscribe((evt:CoreEvent) => {
+      console.log(evt.data.retroLogo);
+      this.retroLogo = evt.data.retroLogo ? "1" : "0";
+    });
+
+    this.core.emit({name:"UserPreferencesRequest"});
  
     this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => { 
       if (evt.data) {
