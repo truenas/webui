@@ -1,7 +1,9 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ValidationErrors, FormControl } from '@angular/forms';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/services/components/service-smb';
@@ -48,6 +50,7 @@ export class ServiceSMBComponent {
   ];
   protected hiddenFieldSets = [helptext.cifs_srv_fieldset_other];
 
+  public fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
       name: helptext.cifs_srv_fieldset_netbios,
@@ -76,7 +79,31 @@ export class ServiceSMBComponent {
           name: 'netbiosalias',
           placeholder: helptext.cifs_srv_netbiosalias_placeholder,
           tooltip: helptext.cifs_srv_netbiosalias_tooltip,
-          // validation:  need custom
+          validation: [
+            (control: FormControl): ValidationErrors => {
+              const config = this.fieldConfig.find(c => c.name === 'netbiosalias');
+              const aliasArr = control.value ? _.filter(control.value.split(' ').map(_.trim)) : [];
+              let counter = 0;
+              aliasArr.forEach(alias => {
+                if (alias.length > 15) {
+                  counter++;
+                }
+              })
+              const errors = control.value && counter > 0
+                ? { error: true }
+                : null
+
+              if (errors) {
+                config.hasErrors = true;
+                config.errors = helptext.cifs_srv_netbiosalias_errmsg;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
+
+              return errors;
+            }
+          ]
         },
         {
           type: 'input',
@@ -212,6 +239,7 @@ export class ServiceSMBComponent {
   }
 
   preInit(entityForm: any) {
+    this.entityEdit = entityForm;
     if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         entityForm.setDisabled('netbiosname_b', !is_ha, !is_ha);
@@ -272,8 +300,6 @@ export class ServiceSMBComponent {
     entityEdit.submitFunction = body => {
       return this.ws.call('smb.update', [body])
     };
-
-    this.entityEdit = entityEdit;
   }
 
   updateGroupSearchOptions(value = "", parent) {
@@ -287,7 +313,6 @@ export class ServiceSMBComponent {
   }
 
   beforeSubmit(data) {
-    data.netbiosalias = data.netbiosalias.split(' ');
-    console.log(data);
+    data.netbiosalias = _.filter(data.netbiosalias.split(' ').map(_.trim));
   }
 }
