@@ -345,6 +345,20 @@ export class ReplicationWizardComponent {
                     validation: [Validators.required],
                 },
                 {
+                    type: 'checkbox',
+                    name: 'readonly',
+                    placeholder: helptext.readonly_placeholder,
+                    tooltip: helptext.readonly_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'schedule_method',
+                            value: 'once',
+                        }]
+                    }],
+                    value: true,
+                },
+                {
                     type: 'radio',
                     name: 'retention_policy',
                     placeholder: helptext.retention_policy_placeholder,
@@ -961,6 +975,8 @@ export class ReplicationWizardComponent {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
             
+            payload['readonly'] = data['readonly'] ? 'SET' : 'IGNORE';
+
             return this.ws.call('replication.target_unmatched_snapshots', [
                 payload['direction'],
                 payload['source_datasets'],

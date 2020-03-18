@@ -121,14 +121,14 @@ export class SMBFormComponent {
           isHidden: true,
         },
         {
-          type: 'textarea',
+          type: 'chip',
           name: 'hostsallow',
           placeholder: helptext_sharing_smb.placeholder_hostsallow,
           tooltip: helptext_sharing_smb.tooltip_hostsallow,
           isHidden: true,
         },
         {
-          type: 'textarea',
+          type: 'chip',
           name: 'hostsdeny',
           placeholder: helptext_sharing_smb.placeholder_hostsdeny,
           tooltip: helptext_sharing_smb.tooltip_hostsdeny,
@@ -482,7 +482,7 @@ export class SMBFormComponent {
       for (const item in this.presets[res].params) {
         this.presetFields.push(item);
         const ctrl = entityForm.formGroup.controls[item];
-        if (ctrl) {
+        if (ctrl && item !== 'auxsmbconf') {
           ctrl.setValue(this.presets[res].params[item]);
           ctrl.disable();
         }

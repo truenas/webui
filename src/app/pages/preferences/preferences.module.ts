@@ -11,6 +11,7 @@ import { PreferencesPage } from './page/preferences.component';
 import { CustomThemeComponent } from './page/forms/customtheme/customtheme.component';
 import { CustomThemeManagerFormComponent } from './page/forms/custom-theme-manager-form.component';
 import { GeneralPreferencesFormComponent } from './page/forms/general-preferences-form.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { GeneralPreferencesFormComponent } from './page/forms/general-preference
     MaterialModule,
     CommonDirectivesModule,
     CoreComponents,
+    TranslateModule,
     routing
   ],
   declarations: [

@@ -1,7 +1,9 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WebSocketService } from 'app/services';
+import { WebSocketService, StorageService, DialogService } from 'app/services';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subscription } from 'rxjs';
+import { LocaleService } from 'app/services/locale.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
@@ -14,24 +16,54 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class SnapshotListComponent {
-
   public title = "Snapshots";
   protected queryCall = 'zfs.snapshot.query';
-  protected queryCallOption = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name"], "order_by": ["name"]}];
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = "Add Snapshot";
   protected wsDelete = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: any;
-  protected hasDetails = true;
-  protected rowDetailComponent = SnapshotDetailsComponent;
   protected rollback: any;
   public busy: Subscription;
   public sub: Subscription;
+  protected globalConfig = {
+    id: "config",
+    onClick: () => {
+      this.toggleExtraCols();
+    }
+  };
+
+  // Vairables to show or hide the extra columns
+  protected queryCallOption = [];
+  protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name", "properties"], "order_by": ["name"]}];
+  protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name"], "order_by": ["name"]}];
+  protected hasDetails: boolean;
+  protected columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true' ? true : false;
+  protected rowDetailComponent;
+  public snapshotXtraCols = false;
+
   public columns: Array<any> = [
-    {name : 'Dataset', prop : 'dataset', always_display: true, minWidth: 355},
-    {name : 'Snapshot', prop : 'snapshot', always_display: true, minWidth: 355},
+    {name : 'Dataset', prop : 'dataset'},
+    {name : 'Snapshot', prop : 'snapshot' },
+    {name : 'Used', prop : 'used' },
+    {name : 'Date Created', prop : 'created'},
+    {name : 'Referenced', prop : 'referenced'}
   ];
+
+  public columnsHide: Array<any> = [
+    {name : 'Dataset', prop : 'dataset'},
+    {name : 'Snapshot', prop : 'snapshot'}
+  ];
+
+  public columnsShow: Array<any> = [
+    {name : 'Dataset', prop : 'dataset'},
+    {name : 'Snapshot', prop : 'snapshot' },
+    {name : 'Used', prop : 'used' },
+    {name : 'Date Created', prop : 'created'},
+    {name : 'Referenced', prop : 'referenced'}
+  ];
+// End the show/hide section
+
   public rowIdentifier = 'dataset';
   public config: any = {
     paging: true,
@@ -101,10 +133,37 @@ export class SnapshotListComponent {
   }
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) { }
+    protected ws: WebSocketService, protected localeService: LocaleService,
+    protected _injector: Injector, protected _appRef: ApplicationRef,
+    protected storageService: StorageService, protected dialogService: DialogService,
+    protected prefService: PreferencesService) {
+      if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
+        this.queryCallOption = this.queryCallOptionShow;
+        this.rowDetailComponent = null;
+        this.columnFilter = true;
+        this.hasDetails = false;
+        this.columns = this.columnsShow.slice(0);
+        this.snapshotXtraCols = true;
+      } else {
+        this.queryCallOption = this.queryCallOptionHide;
+        this.rowDetailComponent = SnapshotDetailsComponent;
+        this.columnFilter = false;
+        this.hasDetails = true;
+        this.columns = this.columnsHide.slice(0);
+        this.snapshotXtraCols = false;
+      }
+    }
 
   resourceTransformIncomingRestData(rows: any) {
+    //// 
+    rows.forEach((row) => {
+      if (row.properties) {
+        row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue);
+        row.created = this.localeService.formatDateTime(row.properties.creation.parsed.$date);
+        row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue);
+      }
+    })
+    ////
     return rows;
   }
 
@@ -234,7 +293,6 @@ export class SnapshotListComponent {
     data["force"] = true;
     parent.entityList.loader.open();
     parent.entityList.loaderOpen = true;
-    console.log(data);
     parent.ws
       .call('zfs.snapshot.rollback', [item.name, data])
       .subscribe(
@@ -248,6 +306,27 @@ export class SnapshotListComponent {
           entityDialog.dialogRef.close();
           new EntityUtils().handleWSError(parent.entityList, err, parent.entityList.dialogService);
         });
+  }
+
+  toggleExtraCols() {
+    let title, message, button;
+    if (this.snapshotXtraCols) {
+      title = helptext.extra_cols.title_hide;
+      message = helptext.extra_cols.message_hide;
+      button = helptext.extra_cols.button_hide;
+    } else {
+      title = helptext.extra_cols.title_show;
+      message = helptext.extra_cols.message_show;
+      button = helptext.extra_cols.button_show;
+    }
+    this.dialogService.confirm(title, message, true, button).subscribe(res => {
+     if (res) {
+       this.entityList.loader.open();
+       this.snapshotXtraCols = !this.snapshotXtraCols;
+       window.localStorage.setItem('snapshotXtraCols', this.snapshotXtraCols.toString());
+       document.location.reload(true);
+     }
+    })
   }
 
 }

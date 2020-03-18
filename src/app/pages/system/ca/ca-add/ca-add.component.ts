@@ -208,7 +208,7 @@ export class CertificateAuthorityAddComponent {
       isHidden: false,
     },
     {
-      type : 'textarea',
+      type : 'chip',
       name : 'san',
       placeholder: helptext_system_ca.add.san.placeholder,
       tooltip: helptext_system_ca.add.san.tooltip,
@@ -396,12 +396,6 @@ export class CertificateAuthorityAddComponent {
   }
 
   beforeSubmit(data: any) {
-    if (data.san == undefined || data.san == '') {
-      data.san = [];
-    } else {
-      data.san = _.split(data.san, /\s/);
-    }
-
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase == '') {
       data.passphrase = undefined;
