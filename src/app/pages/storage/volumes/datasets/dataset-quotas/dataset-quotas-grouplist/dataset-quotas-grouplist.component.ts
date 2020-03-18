@@ -16,27 +16,26 @@ export class DatasetQuotasGrouplistComponent {
   protected entityList: any;
   protected hasDetails = false;
   protected noActions = true;
-  protected queryCall = 'group.query';
   public columnFilter = false;
   public pk: string;
   public quotaValue: number;
 
   public columns: Array < any > = [
-    { name: T('Group Name'), prop: 'group', always_display: true, minWidth: 150},
-    { name: T('GID'), prop: 'gid', hidden: false },
+    { name: T('Group Name'), prop: 'name', always_display: true, minWidth: 150},
+    { name: T('GID'), prop: 'id', hidden: false },
     { name: T('Data Quota'), prop: 'quota', hidden: false },
     { name: T('DQ % Used'), prop: 'used_percent', hidden: false  },
     { name: T('Object Quota'), prop: 'obj_quota', hidden: false },
     { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false  }
   ];
-  public rowIdentifier = 'group';
+  public rowIdentifier = 'name';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
     deleteMsg: {
       title: T('Group'),
-      key_props: ['group']
+      key_props: ['name']
     }
   };
 
@@ -51,10 +50,16 @@ export class DatasetQuotasGrouplistComponent {
       const groupNames = [];
       const gids = [];
       let groups = '';
+      let dataQuota = 0;
+      let objQuota = 0;
       selected.map(group => {
-        groupNames.push(group.group);
-        gids.push(group.gid);
-      })
+        groupNames.push(group.name);
+        gids.push(group.id);
+        if (selected.length === 1) {
+          dataQuota = group.quota;
+          objQuota = group.obj_quota;
+        }
+      });
       groups = groupNames.join(', ');
       const conf: DialogFormConfiguration = {
         title: helptext.groups.dialog.title,
@@ -72,7 +77,7 @@ export class DatasetQuotasGrouplistComponent {
             name: 'group_data_quota',
             placeholder: helptext.groups.dialog.data_quota.placeholder,
             tooltip: helptext.groups.dialog.data_quota.tooltip,
-            value: 0,
+            value: dataQuota,
             id: 'group-data-quota_input',
             blurStatus: true,
             blurEvent: self.groupBlurEvent,
@@ -102,7 +107,7 @@ export class DatasetQuotasGrouplistComponent {
             name: 'group_obj_quota',
             placeholder: helptext.groups.dialog.obj_quota.placeholder,
             tooltip: helptext.groups.dialog.obj_quota.tooltip,
-            value: 0
+            value: objQuota
           }
         ],
         saveButtonText: helptext.shared.set,
@@ -150,26 +155,25 @@ export class DatasetQuotasGrouplistComponent {
     protected dialogService: DialogService, protected loader: AppLoaderService,
     protected router: Router, protected aroute: ActivatedRoute) { }
 
-  resourceTransformIncomingRestData(data) {
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP']).subscribe(res => {
-      data.map(item => {
-        res.map(i => {
-          if(item.group === i.name) {
-            item.quota = this.storageService.convertBytestoHumanReadable(i.quota, 0);
-            item.used = i.used_percent;
-            item.obj_quota = i.obj_quota;
-            item.obj_used_percent = i.obj_used_percent;
-          }
-        })
-      })
-    })
-    return data;
-  }
-
   preInit(entityList) {
     this.entityList = entityList;
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.pk = paramMap.pk;
+  }
+
+  callGetFunction(entityList) {
+    this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP']).subscribe(res => {
+      entityList.handleData(res);
+    })
+  }
+
+  dataHandler(data): void {
+    data.rows.forEach(row => {
+      row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
+      row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
+      row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
+    })
+    return data;
   }
 
   groupBlurEvent(parent) {

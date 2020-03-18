@@ -16,8 +16,6 @@ export class DatasetQuotasUserlistComponent {
   protected entityList: any;
   protected hasDetails = false;
   protected noActions = true;
-  protected queryCall = 'pool.dataset.get_quota';
-  protected query
   public columnFilter = false;
   public pk: string;
   public quotaValue: number;
@@ -52,9 +50,15 @@ export class DatasetQuotasUserlistComponent {
       const userNames = [];
       const uids = [];
       let users = '';
+      let dataQuota = 0;
+      let objQuota = 0;
       selected.map(user => {
         userNames.push(user.name);
         uids.push(user.id);
+        if (selected.length === 1) {
+          dataQuota = user.quota;
+          objQuota = user.obj_quota;
+        }
       })
       users = userNames.join(', ');
       const conf: DialogFormConfiguration = {
@@ -73,7 +77,7 @@ export class DatasetQuotasUserlistComponent {
             name: 'user_data_quota',
             placeholder: helptext.users.dialog.data_quota.placeholder,
             tooltip: helptext.users.dialog.data_quota.tooltip,
-            value: 0,
+            value: dataQuota,
             id: 'user-data-quota_input',
             blurStatus: true,
             blurEvent: self.userBlurEvent,
@@ -103,7 +107,7 @@ export class DatasetQuotasUserlistComponent {
             name: 'user_obj_quota',
             placeholder: helptext.users.dialog.obj_quota.placeholder,
             tooltip: helptext.users.dialog.obj_quota.tooltip,
-            value: 0
+            value: objQuota
           }
         ],
         saveButtonText: helptext.shared.set,
@@ -157,11 +161,6 @@ export class DatasetQuotasUserlistComponent {
     this.pk = paramMap.pk;
   }
 
-  userBlurEvent(parent) {
-    (<HTMLInputElement>document.getElementById('user-data-quota_input')).value =
-      parent.storageService.humanReadable;
-  }
-
   callGetFunction(entityList) {
     this.ws.call('pool.dataset.get_quota', [this.pk, 'USER']).subscribe(res => {
       entityList.handleData(res);
@@ -169,13 +168,17 @@ export class DatasetQuotasUserlistComponent {
   }
 
   dataHandler(data): void {
-    console.log(data);
     data.rows.forEach(row => {
-      row.quota = this.storageService.convertBytestoHumanReadable(row.quota);
+      row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
       row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
       row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
     })
     return data;
+  }
+
+  userBlurEvent(parent) {
+    (<HTMLInputElement>document.getElementById('user-data-quota_input')).value =
+      parent.storageService.humanReadable;
   }
 
 }
