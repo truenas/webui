@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
-
+import { ValidationErrors, FormControl } from '@angular/forms';
 import { IdmapService, ServicesService, RestService, WebSocketService, UserService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -51,7 +51,31 @@ export class ServiceSMBComponent {
       name: 'cifs_srv_netbiosalias',
       placeholder: helptext.cifs_srv_netbiosalias_placeholder,
       tooltip: helptext.cifs_srv_netbiosalias_tooltip,
-      validation: helptext.cifs_srv_netbiosalias_validation
+      validation: [
+        (control: FormControl): ValidationErrors => {
+          const config = this.fieldConfig.find(c => c.name === 'cifs_srv_netbiosalias');
+          const aliasArr = control.value ? _.filter(control.value.split(' ').map(_.trim)) : [];
+          let counter = 0;
+          aliasArr.forEach(alias => {
+            if (alias.length > 15) {
+              counter++;
+            }
+          })
+          const errors = control.value && counter > 0
+            ? { error: true }
+            : null
+
+          if (errors) {
+            config.hasErrors = true;
+            config.errors = helptext.cifs_srv_netbiosalias_errmsg;
+          } else {
+            config.hasErrors = false;
+            config.errors = '';
+          }
+
+          return errors;
+        }
+      ]
     },
     {
       type: 'input',
@@ -106,7 +130,7 @@ export class ServiceSMBComponent {
       options: [],
       tooltip: helptext.cifs_srv_guest_tooltip,
     },
-    { 
+    {
       type: 'combobox',
       name: 'cifs_srv_admin_group',
       placeholder: helptext.cifs_srv_admin_group_placeholder,
