@@ -43,8 +43,8 @@ Enter 0 (zero) to remove the quota.') + globalHelptext.human_readable.suggestion
         },
         obj_quota: {
           placeholder: T('Group Object Quota'),
-          tooltip: T('Enter the number of objects which may be owned by each of the selected groups. \
-Enter 0 (zero) to remove the quota.'),
+          tooltip: T('Number of objects that can be owned by each of the selected groups. \
+Entering <code>0</code> (zero) removes the quota.'),
         }
 
       }
@@ -56,5 +56,4 @@ Enter 0 (zero) to remove the quota.'),
         cancel: T('Cancel')
     }
   }
-
 
