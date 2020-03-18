@@ -43,10 +43,6 @@
     position: relative;
 }
 
-.fields {
-	display: flex;
-}
-
 .manager {
     display: flex;
     flex-direction: column;
@@ -110,7 +106,8 @@ h4 {
 	margin: 16px !important;
 }
 .fields {
-	margin: 3rem 3rem 3rem 1rem !important;
+	display: flex;
+	margin: 0.75rem 3rem 3rem 1rem !important;
 }
 #filter-wrapper, #pool-manager__button-group {
 	margin-left: 1rem;
@@ -165,4 +162,12 @@ button.vdev-option p{
   white-space:normal;
   line-height:normal;
   font-size:90%;
+}
+
+.button-bar {
+	display:flex;
+}
+
+.button-spacer {
+	width: 50px;
 }
