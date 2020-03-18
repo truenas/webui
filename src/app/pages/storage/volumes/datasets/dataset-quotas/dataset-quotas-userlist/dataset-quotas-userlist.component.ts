@@ -16,27 +16,28 @@ export class DatasetQuotasUserlistComponent {
   protected entityList: any;
   protected hasDetails = false;
   protected noActions = true;
-  protected queryCall = 'user.query';
+  protected queryCall = 'pool.dataset.get_quota';
+  protected query
   public columnFilter = false;
   public pk: string;
   public quotaValue: number;
 
   public columns: Array < any > = [
-    { name: T('Username'), prop: 'username', always_display: true, minWidth: 150},
-    { name: T('UID'), prop: 'uid', hidden: false },
+    { name: T('Username'), prop: 'name', always_display: true, minWidth: 150},
+    { name: T('UID'), prop: 'id', hidden: false },
     { name: T('Data Quota'), prop: 'quota', hidden: false },
     { name: T('DQ % Used'), prop: 'used_percent', hidden: false  },
     { name: T('Object Quota'), prop: 'obj_quota', hidden: false },
     { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false  },
   ];
-  public rowIdentifier = 'username';
+  public rowIdentifier = 'name';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
     deleteMsg: {
       title: T('User'),
-      key_props: ['username']
+      key_props: ['name']
     }
   };
 
@@ -52,8 +53,8 @@ export class DatasetQuotasUserlistComponent {
       const uids = [];
       let users = '';
       selected.map(user => {
-        userNames.push(user.username);
-        uids.push(user.uid);
+        userNames.push(user.name);
+        uids.push(user.id);
       })
       users = userNames.join(', ');
       const conf: DialogFormConfiguration = {
@@ -150,22 +151,6 @@ export class DatasetQuotasUserlistComponent {
     protected dialogService: DialogService, protected loader: AppLoaderService,
     protected router: Router, protected aroute: ActivatedRoute) { }
 
-  resourceTransformIncomingRestData(data) {
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER']).subscribe(res => {
-      data.map(item => {
-        res.map(i => {
-          if(item.username === i.name) {
-            item.quota = this.storageService.convertBytestoHumanReadable(i.quota, 0);
-            item.used = i.used_percent;
-            item.obj_quota = i.obj_quota;
-            item.obj_used_percent = i.obj_used_percent;
-          }
-        })
-      })
-    })
-    return data;
-  }
-
   preInit(entityList) {
     this.entityList = entityList;
     const paramMap: any = (<any>this.aroute.params).getValue();
@@ -175,6 +160,22 @@ export class DatasetQuotasUserlistComponent {
   userBlurEvent(parent) {
     (<HTMLInputElement>document.getElementById('user-data-quota_input')).value =
       parent.storageService.humanReadable;
+  }
+
+  callGetFunction(entityList) {
+    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER']).subscribe(res => {
+      entityList.handleData(res);
+    })
+  }
+
+  dataHandler(data): void {
+    console.log(data);
+    data.rows.forEach(row => {
+      row.quota = this.storageService.convertBytestoHumanReadable(row.quota);
+      row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
+      row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
+    })
+    return data;
   }
 
 }
