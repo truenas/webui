@@ -34,15 +34,15 @@ export class ActiveDirectoryComponent {
     {
       'id' : helptext.activedirectory_custactions_basic_id,
       'name' : global_helptext.basic_options,
-      function : () => { 
+      function : () => {
         this.setBasicMode(true);
       }
     },
     {
       'id' : helptext.activedirectory_custactions_advanced_id,
       'name' : global_helptext.advanced_options,
-      function : () => { 
-        this.setBasicMode(false);   
+      function : () => {
+        this.setBasicMode(false);
       }
     },
     {
@@ -57,7 +57,7 @@ export class ActiveDirectoryComponent {
       'name' : helptext.activedirectory_custactions_clearcache_name,
        function : async () => {
          this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status)=>{
-          this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title, 
+          this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title,
             helptext.activedirectory_custactions_clearcache_dialog_message);
         })
       }
@@ -65,7 +65,7 @@ export class ActiveDirectoryComponent {
     {
       'id' : 'leave_domain',
       'name' : helptext.activedirectory_custactions_leave_domain,
-      function : () => { 
+      function : () => {
         const that = this;
         this.dialogservice.dialogForm(
           {
@@ -104,7 +104,7 @@ export class ActiveDirectoryComponent {
                   that.entityEdit.formGroup.controls['enable'].setValue(false);
                   that.adStatus = false;
                   that.isCustActionVisible('leave_domain');
-                  that.dialogservice.Info(helptext.ad_leave_domain_dialog.success, 
+                  that.dialogservice.Info(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
                 err => {
@@ -113,7 +113,7 @@ export class ActiveDirectoryComponent {
                 });
             }
           }
-        ); 
+        );
       }
     },
   ];
@@ -185,7 +185,14 @@ export class ActiveDirectoryComponent {
       options : [
         {label : '---', value : null},
       ]
-    },
+    }
+  ]},
+  {
+    name: 'checkbox_col1',
+    class: 'adv_row',
+    width: '33%',
+    label:false,
+    config:[
     {
       type : 'checkbox',
       name : 'validate_certificates',
@@ -209,7 +216,14 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_default_dom_name,
       placeholder : helptext.activedirectory_default_dom_placeholder,
       tooltip : helptext.activedirectory_default_dom_tooltip,
-    },
+    }
+  ]},
+  {
+    name: 'checkbox_col2',
+    class: 'adv_row',
+    width: '67%',
+    label:false,
+    config:[
     {
       type : 'checkbox',
       name : helptext.activedirectory_dns_updates_name,
@@ -221,6 +235,12 @@ export class ActiveDirectoryComponent {
       name : helptext.activedirectory_disable_fn_cache_name,
       placeholder : helptext.activedirectory_disable_fn_cache_placeholder,
       tooltip : helptext.activedirectory_disable_fn_cache_tooltip,
+    },
+    {
+      type : 'checkbox',
+      name : 'restrict_pam',
+      placeholder : helptext.restrict_pam.placeholder,
+      tooltip : helptext.restrict_pam.tooltip,
     }
     ]},
     {
@@ -374,7 +394,7 @@ export class ActiveDirectoryComponent {
     });
   }
 
-  afterInit(entityEdit: any) { 
+  afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
@@ -449,9 +469,9 @@ export class ActiveDirectoryComponent {
 
   setBasicMode(basic_mode) {
     this.isBasicMode = basic_mode;
-    _.find(this.fieldSets, {class:'adv_row'}).label = !basic_mode; 
-    _.find(this.fieldSets, {class:'adv_column1'}).label = !basic_mode; 
-    _.find(this.fieldSets, {class:'adv_column2'}).label = !basic_mode; 
+    _.find(this.fieldSets, {class:'adv_row'}).label = !basic_mode;
+    _.find(this.fieldSets, {class:'adv_column1'}).label = !basic_mode;
+    _.find(this.fieldSets, {class:'adv_column2'}).label = !basic_mode;
     _.find(this.fieldSets, {class:'divider1'}).divider = !basic_mode;
   }
 
