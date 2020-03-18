@@ -34,7 +34,7 @@ Enter 0 (zero) to remove the quota.'),
         list: {
           placeholder: T('Selected Groups'),
           tooltip: T('This list can be edited in the table. A quota change \
-will apply to all groups in this list.')
+applies to all groups in this list.')
         },
         data_quota: {
           placeholder: T('Group Data Quota ') + globalHelptext.human_readable.suggestion_label,
