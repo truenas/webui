@@ -53,7 +53,7 @@ special_vdev_title: T("Metadata"),
 special_vdev_description: T("Special Allocation class, used to create Fusion pools. Optional vdev type\
  which is used to speed up metadata and small block IO. Cannot be removed from pool once added."),
 dedup_vdev_title: T("Dedup"),
-dedup_vdev_description: T("De-duplication Tables will be stored on this special vdev type, these will need\
- to be sized to XGiB per XTiB of general storage.")
+dedup_vdev_description: T("De-duplication tables are stored on this special vdev type. These vdevs must\
+ be sized to <i>X</i> GiB for each <i>X</i> TiB of general storage.")
 
 }
