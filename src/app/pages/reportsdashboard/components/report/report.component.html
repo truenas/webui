@@ -34,7 +34,7 @@
 
           <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
           <!-- Chart -->
-          <div class="chart-wrapper" fxFlex="calc(100% - 250px)">
+          <div class="chart-wrapper" fxFlex="calc(100% - 360px)">
             <linechart 
               *ngIf="report && data && chartColors"
               [chartId]="chartId"
@@ -55,7 +55,7 @@
               </line-chart>-->
           </div>
 
-          <section class="legend" #legendElement fxFlex="250px" fxLayout="column" fxLayoutAlign="start"  >
+          <section class="legend" #legendElement fxFlex="360px" fxLayout="column" fxLayoutAlign="start"  >
 
           <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
             <div >
@@ -65,44 +65,53 @@
             </div>
           </div>
 
-          <div class="legend-group-wrapper" fxFlex="calc(50% - 64px)" fxLayout="row wrap" fxLayoutAlign="start start">
-            <div class="legend-group"
-              *ngFor="let legendItem of data.legend; let i=index">
-  
-                <div fxFlex="200px" class="legend-label" >
-                  <!--Legend Label--> 
-                  <div *ngIf="chartColors && legendItem" 
-                    class="swatch" 
-                    [style.background-color]="chartColors[i]" >
-                    </div>
-                  <span class="legend-item"><strong>{{legendItem}}</strong></span> 
-  
-                  <span *ngIf="legendData && legendData.series">
-                    <span  class="tooltip-value" >
-                       : <span style="font-weight:normal;">{{legendData.series[i].yHTML}}</span>
+          <div *ngIf="report && data && data.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)" >
+            <table class="legend-table">
+              <!-- Table Header-->
+              <tr class="legend-group header">
+                <th class="legend-label"><strong>Key</strong></th>
+                <ng-container *ngIf="data && data.aggregations">
+                  <th class="legend-label" *ngFor="let key of aggregationKeys">
+                    <strong>{{key}}</strong>
+                  </th>
+                </ng-container>
+              </tr>
+          
+              <!-- Table Rows -->
+              <tr class="legend-group"
+                *ngFor="let legendItem of data.legend; let i=index">
+    
+                  <td class="legend-label" >
+                    <!--Legend Label--> 
+                    <div *ngIf="chartColors && legendItem" 
+                      class="swatch" 
+                      [style.background-color]="chartColors[i]" >
+                      </div>
+                    <span class="legend-item"><strong>{{legendItem}}</strong></span> 
+    
+                    <span *ngIf="legendData && legendData.series">
+                      <span  class="tooltip-value" >
+                         <span style="font-weight:normal;"> : {{legendData.series[i].yHTML}}</span>
+                      </span>
                     </span>
-                  </span>
-                </div>
-  
-              </div>
-            </div>
-  
+                  </td>
+    
                 <!-- Aggregations -->
-                  <div style="opacity:0.75; border:red;" 
-                    fxFlex="75" 
-                    class="report-analytics" 
-                    *ngIf="data && data.aggregations" 
-                    fxLayout="row" 
-                    fxLayoutAlign="start start" 
-                    fxLayoutGap="16px">
-                    
+                <ng-container *ngIf="data && data.aggregations">
+                  <td style="opacity:0.75; border:red;" 
+                    *ngFor="let key of aggregationKeys"
+                    class="report-analytics" >
                    
-                    <span *ngFor="let key of aggregationKeys" fxFlex>
-                      <strong>{{key}}:</strong>  {{data.aggregations[key][i] ? data.aggregations[key][i] : 'null'}}
+                    <span>
+                      {{data.aggregations[key][i] ? data.aggregations[key][i] : 'null'}}
                     </span>
-                   
+    
+                  </td>
+                </ng-container>
+              </tr>
+            </table>
   
-                    </div>
+            </div>
           </section>
 
           <!-- Legend Section -->

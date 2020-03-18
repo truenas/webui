@@ -34,11 +34,36 @@
 .legend-group-wrapper {
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: 200px
+  padding-bottom: 48px;
 }
 
-.legend-label  {
-  
+table.legend-table {
+  display: table;
+  width: 100%;
+}
+
+tr.header th{
+  text-transform: capitalize;
+}
+
+tr.legend-group:nth-child(even) {
+  background-color:rgba(0,0,0,0.05);
+}
+
+tr.header th, td.legend-label {
+  text-align: left;
+}
+
+tr.legend-group {
+  display: table-row
+}
+
+td.legend-label:nth-child(1) {
+  width:40%;
+}
+
+td.legend-label  {
+  display: table-cell;
   font-weight:500;
 }
 
@@ -65,7 +90,6 @@ span.tooltip-value{
 
 .legend-timestamp{
   height:20px;
-  margin:16px 16px 0;
 }
 
 .legend-item{
