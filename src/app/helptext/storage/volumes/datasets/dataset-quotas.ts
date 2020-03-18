@@ -10,7 +10,7 @@ export default {
           list: {
             placeholder: T('Selected Users'),
             tooltip: T('This list can be edited in the table. A quota change \
- will apply to all users in this list.')
+ applies to all users in this list.')
           },
           data_quota: {
             placeholder: T('User Data Quota ') + globalHelptext.human_readable.suggestion_label,
