@@ -19,8 +19,8 @@ export default {
           },
           obj_quota: {
             placeholder: T('User Object Quota'),
-            tooltip: T('Enter the number of objects which may be owned by each of the selected users. \
-Enter 0 (zero) to remove the quota.'),
+            tooltip: T('Number of objects that can be owned by each of the selected users. \
+Entering <code>0</code> (zero) removes the quota.'),
           }
 
         }
