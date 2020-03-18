@@ -42,7 +42,7 @@ force_warnings:{
     'diskSizeWarning': T("One or more data vdevs has disks of different sizes.")
 },
 data_vdev_title: T("Data"),
-data_vdev_description: T("Normal vdev type, used for primary storage operations. A ZFS pool will always have at least one DATA vdev."),
+data_vdev_description: T("Normal vdev type, used for primary storage operations. ZFS pools always have at least one DATA vdev."),
 cache_vdev_title: T("Cache"),
 cache_vdev_description: T("ZFS L2ARC read-cache. Can be removed. Optional vdev that can be used with fast devices to accelerate read operations."),
 log_vdev_title: T("Log"),
