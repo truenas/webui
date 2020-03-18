@@ -14,12 +14,13 @@
     flex-direction: column;
 }
 
-.copyright-txt, #message, #logo {
+.copyright-txt, #message, .logo {
     text-align: center;
 }
 
-#logo {
-    width: 80%;
+.logo {
+    width: 256px;
+    height: auto;
 }
 
 .copyright-txt {
