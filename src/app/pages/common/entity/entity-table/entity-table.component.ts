@@ -116,6 +116,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public zoomLevel: number;
   public tableHeight:number = (this.paginationPageSize * this.rowHeight) + 100;
   public fixedTableHight = false;
+  public cardHeaderComponentHight = 0;
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
@@ -795,6 +796,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   protected setPaginationInfo() {
+    this.cardHeaderComponentHight = document.getElementById('cardHeaderContainer') ? document.getElementById('cardHeaderContainer').clientHeight : 0;
+
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
     this.fixedTableHight = true;
@@ -817,9 +820,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tableHeight = (this.currentRows.length * this.rowHeight) + 110;
       } else {
         this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
-      }
-      if (this.tableHeight < (160 + this.getRowDetailHeight())) {
-        this.tableHeight = 160 + this.getRowDetailHeight();
       }
     }
     this.startingHeight = this.tableHeight;
@@ -1050,9 +1050,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
       let newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
-      if (newHeight > window.innerHeight - 233) {
-        newHeight = window.innerHeight - 233;
+      if (newHeight > window.innerHeight - 233 - this.cardHeaderComponentHight) {
+        newHeight = window.innerHeight - 233 - this.cardHeaderComponentHight;
       }
+
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${newHeight}px`);
     }, 100);
   }
