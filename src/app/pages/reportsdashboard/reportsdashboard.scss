@@ -101,6 +101,6 @@ cdk-virtual-scroll-viewport{
   width: calc(100% - 48px /*- 282px*/);
 
   .report-container {
-    height:600px;
+    /*height:400px !important;*/
   }
 }

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, OnDestroy, OnChanges} from '@angular/core';
+import { Component, AfterViewInit, AfterContentInit, Input, ViewChild, OnDestroy, OnChanges, ElementRef} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from 'app/services/';
@@ -64,7 +64,7 @@ export interface ReportData {
   templateUrl:'./report.component.html',
   styleUrls: ['./report.component.css']
 })
-export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges ,OnDestroy {
+export class ReportComponent extends WidgetComponent implements AfterViewInit, AfterContentInit, OnChanges ,OnDestroy {
 
   // Labels
   @Input() localControls?: boolean = true;; 
@@ -76,7 +76,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   public data: ReportData;
   public ready: boolean = false;
   public product_type = window.localStorage['product_type'];
-  private delay: number = 1000; // delayed chart render time
+  private delay: number = 1000; // delayed report render time
   
   get reportTitle(){
     return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
@@ -164,7 +164,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     });
 
     this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
-      this.chartColors = this.processThemeColors(evt.data);
+        this.chartColors = this.processThemeColors(evt.data);
     });
 
     this.core.emit({name:"ThemeDataRequest", sender:this});
@@ -184,9 +184,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.currentEndDate = rrdOptions.end;
   }
 
+  ngAfterContentInit(){}
+
   ngOnChanges(changes){
     if(changes.report){
-      if(changes.report.previousValue){
+      if(changes.report.previousValue && this.ready == false){
         this.setupData(changes); 
       } else if(!changes.report.previousValue){
         setTimeout(() => {
