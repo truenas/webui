@@ -48,7 +48,7 @@ cache_vdev_description: T("ZFS L2ARC read-cache. Can be removed. Optional vdev t
 log_vdev_title: T("Log"),
 log_vdev_description: T("ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed."),
 spare_vdev_title: T("Hot Spare"),
-spare_vdev_description: T("Drive set aside ready to be inserted into DATA pool vdevs when a device has failed."),
+spare_vdev_description: T("Drive reserved for inserting into DATA pool vdevs when an active drive has failed."),
 special_vdev_title: T("Metadata"),
 special_vdev_description: T("Special Allocation class, used to create Fusion pools. Optional vdev type\
  which is used to speed up metadata and small block IO. Cannot be removed from pool once added."),
