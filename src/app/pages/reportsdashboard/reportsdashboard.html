@@ -30,9 +30,6 @@
 </nav>
   
 <div *ngIf="visibleReports && activeReports" class="master-container" [ngClass]="{'with-footer-console': isFooterConsoleOpen}" lazyViewer view=".report" fxLayout="row wrap" fxLayoutAlign="space-evenly"> 
-  
-    <div fxFlex="48px" class="">
-    </div>
 
     <!-- Cards Container -->
     <cdk-virtual-scroll-viewport itemSize="325" templateCacheSize="4" (scrolledIndexChange)="nextBatch($event, visibleReports[visibleReports.length - 1])">
