@@ -611,6 +611,20 @@ h3 {
   margin:0;
 }
 
+.report .legend-wrapper.timestamps .legend-timestamp{
+  display: inline-block;
+  width: 50%;
+  margin:16px 0 0;
+}
+
+.report .legend-wrapper.timestamps .legend-timestamp:nth-child(1){
+  padding-left: 48px;
+}
+
+.report .legend-wrapper.timestamps .legend-timestamp:nth-child(2){
+  text-align: right;
+}
+
 .report .mat-card-footer{
   width:100%;
 }

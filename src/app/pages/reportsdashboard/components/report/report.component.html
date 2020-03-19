@@ -34,25 +34,41 @@
 
           <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
           <!-- Chart -->
-          <div class="chart-wrapper" fxFlex="calc(100% - 400px)">
-            <linechart 
-              *ngIf="report && data && chartColors"
-              [chartId]="chartId"
-              [chartColors]="chartColors"
-              [data]="data"
-              [title]="report.title"
-              [labelY]="report.vertical_label"
-              type="line"
-              interactive="false">
+          <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+            <div class="chart-wrapper" >
+              <linechart 
+                *ngIf="report && data && chartColors"
+                [chartId]="chartId"
+                [chartColors]="chartColors"
+                [data]="data"
+                [title]="report.title"
+                [labelY]="report.vertical_label"
+                type="line"
+                interactive="false">
               </linechart>
-            <!--<line-chart 
-              [dataList]="lineChartConfig.dataList"
-              [title]="title"
-              [legends]="lineChartConfig.legends"
-              [divideBy]="lineChartConfig.divideBy"
-              [convertToCelsius]="lineChartConfig.convertToCelsius"
-              [interactive]="isActive">
-              </line-chart>-->
+            </div>
+
+
+          <!-- Legend Section -->
+          <div class="legend-wrapper timestamps">
+            <!-- Time Stamps -->
+            <div class="legend-timestamp">
+              <div >
+                <span *ngIf="data && legendData">
+                  <h4><strong>Start:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span><span class="text-small"> ({{timezone}})</span></h4>
+                </span>
+              </div>
+            </div>
+            <!-- <div class="legend-timestamp" fxFlex="calc(50% - 32px)"> -->
+            <div class="legend-timestamp">
+              <div >
+                <span *ngIf="data && legendData">
+                  <h4><strong>End:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span></h4>
+                </span>
+              </div>
+            </div>
+          </div>
+
           </div>
 
           <section class="legend" #legendElement fxFlex="400px" fxLayout="column" fxLayoutAlign="start"  >
@@ -113,38 +129,6 @@
   
             </div>
           </section>
-
-          <!-- Legend Section -->
-          <div fxFlex="100" class="legend-wrapper" fxLayout="row wrap" fxLayoutAlign="space-between center">         
-
-            <!-- Time Stamps -->
-            <div class="legend-timestamp" fxFlex="calc(50% - 32px)">
-              <div >
-                <span *ngIf="data && legendData">
-                  <h4><strong>Start:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span><span class="text-small"> ({{timezone}})</span></h4>
-                </span>
-              </div>
-            </div>
-
-            <div class="legend-timestamp" fxFlex="calc(50% - 32px)">
-              <div >
-                <span *ngIf="data && legendData">
-                  <h4><strong>End:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span></h4>
-                </span>
-              </div>
-            </div>
-
-            <!--
-            <div class="legend-timestamp" fxFlex="100">
-              <div >
-                <span *ngIf="data && legendData">
-                  <h4 *ngIf="legendData && legendData.xHTML"><strong>Time:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{legendData.xHTML}}</span></h4>
-                </span>
-              </div>
-            </div>
-            -->
-
-        </div>
 
         </mat-card-content>
 
