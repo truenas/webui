@@ -78,6 +78,10 @@ export class AppComponent {
 
     // TRUENAS
     this.matIconRegistry.addSvgIcon(
+      "truenas_logomark", // Generic Alias
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "truenas_enterprise_logomark",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
     );
