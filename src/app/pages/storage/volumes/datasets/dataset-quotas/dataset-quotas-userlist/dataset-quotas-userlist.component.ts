@@ -162,11 +162,12 @@ export class DatasetQuotasUserlistComponent {
   }
 
   callGetFunction(entityList) {
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER']).subscribe(res => {
+    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER', [['OR',[['used_bytes', '>', 0], [
+      'obj_used', '>', 5]]]]]).subscribe(res => {
       entityList.handleData(res);
     })
-  }
 
+  }
   dataHandler(data): void {
     data.rows.forEach(row => {
       row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);

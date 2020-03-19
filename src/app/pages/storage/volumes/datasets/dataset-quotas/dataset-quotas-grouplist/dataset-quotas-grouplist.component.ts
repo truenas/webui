@@ -162,7 +162,10 @@ export class DatasetQuotasGrouplistComponent {
   }
 
   callGetFunction(entityList) {
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP']).subscribe(res => {
+    this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP',
+      [['OR',[['used_bytes', '>', 0],
+      ['obj_used', '>', 0]]]]])
+      .subscribe(res => {
       entityList.handleData(res);
     })
   }
