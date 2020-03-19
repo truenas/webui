@@ -30,7 +30,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public can_suggest = false;
   public selected: Array < any > = [];
   public vdevs:
-    any = { data: [{}], cache: [], spare: [], log: [] };
+    any = { data: [{}], cache: [], spares: [], log: [], special: [], dedup: [] };
   public original_vdevs: any = {};
   public original_disks: Array < any >;
   public orig_suggestable_disks: Array < any >;
@@ -60,6 +60,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public poolError = null;
   public isFooterConsoleOpen: boolean;
   public loaderOpen = false;
+  public help = helptext;
 
   public submitTitle = T("Create");
   protected extendedSubmitTitle = T("Add Vdevs");
@@ -356,6 +357,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   removeVdev(vdev: VdevComponent) {
+    console.log(vdev);
     let index = null;
     this.vdevComponents.forEach((item, i) => {
       if (item === vdev) {
