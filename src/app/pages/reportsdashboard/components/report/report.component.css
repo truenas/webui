@@ -39,8 +39,8 @@
 
 table.legend-table {
   display: table;
-  width: 100%;
-  margin-right:12px;
+  width: 400px;
+  margin-right:36px;
 }
 
 tr.header th{
@@ -61,12 +61,13 @@ tr.legend-group {
 
 td.legend-label:nth-child(1) {
   width:40%;
+  padding-right: 0;
 }
 
 td.legend-label  {
   display: table-cell;
   font-weight:500;
-  padding-right: 4px;
+  padding-right: 12px;
 }
 
 .legend-label div {
