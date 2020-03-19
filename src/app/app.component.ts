@@ -79,7 +79,7 @@ export class AppComponent {
     // TRUENAS
     this.matIconRegistry.addSvgIcon(
       "truenas_enterprise_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_enterprise_logotype",
@@ -97,7 +97,7 @@ export class AppComponent {
     // TRUENAS CORE
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logotype",
