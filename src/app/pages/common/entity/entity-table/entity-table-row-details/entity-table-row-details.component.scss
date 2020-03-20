@@ -30,4 +30,8 @@
     .wrapper__action-buttons {
         padding: 4px 0;
     }
+
+    .mat-button:hover {
+      background-color: rgba(0,0,0,0.1);
+    }
 }
