@@ -14,18 +14,18 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
 export class DatasetQuotasUserlistComponent {
   public title = helptext.users.title;
   protected entityList: any;
-  protected hasDetails = false;
   protected noActions = true;
-  public columnFilter = false;
   public pk: string;
   public quotaValue: number;
 
   public columns: Array < any > = [
     { name: T('Username'), prop: 'name', always_display: true, minWidth: 150},
-    { name: T('UID'), prop: 'id', hidden: false },
+    { name: T('ID'), prop: 'id', hidden: true },
     { name: T('Data Quota'), prop: 'quota', hidden: false },
+    { name: T('DQ Bytes Used'), prop: 'used_bytes', hidden: false },
     { name: T('DQ % Used'), prop: 'used_percent', hidden: false  },
     { name: T('Object Quota'), prop: 'obj_quota', hidden: false },
+    { name: T('OQ Objs Used'), prop: 'obj_used', hidden: false },
     { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false  },
   ];
   public rowIdentifier = 'name';
@@ -38,6 +38,17 @@ export class DatasetQuotasUserlistComponent {
       key_props: ['name']
     }
   };
+
+  protected globalConfig = {
+    id: "config",
+    onClick: () => {
+      this.toggleDisplay();
+    }
+  };
+
+  public table_tooltip = true;
+  public table_tooltip_header = 'Instructions';
+  public table_tooltip_text = 'Heel it now, dig?';
 
   public multiActions: Array < any > = [{
     id: "addToForm",
@@ -180,6 +191,10 @@ export class DatasetQuotasUserlistComponent {
   userBlurEvent(parent) {
     (<HTMLInputElement>document.getElementById('user-data-quota_input')).value =
       parent.storageService.humanReadable;
+  }
+
+  toggleDisplay() {
+    console.log('toggling')
   }
 
 }
