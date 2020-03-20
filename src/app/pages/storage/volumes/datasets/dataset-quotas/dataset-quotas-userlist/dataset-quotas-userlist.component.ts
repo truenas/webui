@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService, StorageService, DialogService, AppLoaderService } from '../../../../../../services';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -11,12 +11,15 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
   selector: 'app-dataset-quotas-userlist',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
 })
-export class DatasetQuotasUserlistComponent {
+export class DatasetQuotasUserlistComponent implements OnDestroy {
   public title = helptext.users.title;
   protected entityList: any;
   protected noActions = true;
   public pk: string;
   public quotaValue: number;
+  protected fullFilter =  [['OR',[['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
+  protected emptyFilter = [];
+  protected useFullFilter = true;
 
   public columns: Array < any > = [
     { name: T('Username'), prop: 'name', always_display: true, minWidth: 150},
@@ -47,8 +50,8 @@ export class DatasetQuotasUserlistComponent {
   };
 
   public table_tooltip = true;
-  public table_tooltip_header = 'Instructions';
-  public table_tooltip_text = 'Heel it now, dig?';
+  public table_tooltip_header = helptext.users.table_helptext_title;
+  public table_tooltip_text = helptext.users.table_helptext;
 
   public multiActions: Array < any > = [{
     id: "addToForm",
@@ -170,11 +173,12 @@ export class DatasetQuotasUserlistComponent {
     this.entityList = entityList;
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.pk = paramMap.pk;
+    this.useFullFilter = window.localStorage.getItem('useFullFilter') === 'false' ? false : true;
   }
 
   callGetFunction(entityList) {
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER', [['OR',[['used_bytes', '>', 0], [
-      'obj_used', '>', 5]]]]]).subscribe(res => {
+    let filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
+    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER', filter]).subscribe(res => {
       entityList.handleData(res);
     })
 
@@ -194,7 +198,31 @@ export class DatasetQuotasUserlistComponent {
   }
 
   toggleDisplay() {
-    console.log('toggling')
+    let title, message, button;
+    if (this.useFullFilter) {
+      title = helptext.users.filter_dialog.title_show;
+      message = helptext.users.filter_dialog.message_show;
+      button = helptext.users.filter_dialog.button_show;
+    } else {
+      title = helptext.users.filter_dialog.title_filter;
+      message = helptext.users.filter_dialog.message_filter;
+      button = helptext.users.filter_dialog.button_filter;
+    }
+    this.dialogService.confirm(title, message, true, button).subscribe(res => {
+     if (res) {
+       this.entityList.loader.open();
+       this.useFullFilter = !this.useFullFilter;
+       window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
+      //  document.location.reload(true);
+      this.entityList.needTableResize = false;
+      this.entityList.getData();
+      this.loader.close();
+     }
+    })
+  }
+
+  ngOnDestroy() {
+    window.localStorage.setItem('useFullFilter', 'true'); 
   }
 
 }
