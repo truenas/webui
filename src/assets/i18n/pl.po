@@ -81,6 +81,9 @@ msgstr "został odblokowany"
 msgid " is "
 msgstr "jest"
 
+msgid " is a required field."
+msgstr ""
+
 msgid " is required."
 msgstr "jest wymagane"
 
@@ -355,6 +358,14 @@ msgid "<b>SED (Self-Encrypting Drives) Options</b>"
 msgstr ""
 
 msgid ""
+"<b>SET</b> will changes all destination datasets to "
+"<code>readonly=on</code> after finishing the replication. "
+"<br><b>REQUIRE</b> stops replication unless all existing destination "
+"datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> "
+"disables checking the <code>readonly</code> property during replication."
+msgstr ""
+
+msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
 "those on the source. If a file does not exist on the source, it is also "
 "<i><u>deleted</u></i> from the destination."
@@ -565,9 +576,10 @@ msgstr ""
 
 msgid ""
 "A single bandwidth limit or bandwidth limit schedule in rclone format. "
-"Example: <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>. "
-"Units can be specified with the beginning letter: <samp>b</samp>, "
-"<samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>. See <a "
+"Separate entries by pressing <code>Enter</code>. Example:  <samp>08:00,512 "
+"12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>. Units can be specified "
+"with the beginning letter: <samp>b</samp>, <samp>k</samp> (default), "
+"<samp>M</samp>, or <samp>G</samp>. See <a "
 "href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" "
 "target=\"_blank\">rclone --bwlimit</a>."
 msgstr ""
@@ -671,6 +683,9 @@ msgid "AWS Region"
 msgstr "Region AWS"
 
 msgid "About"
+msgstr ""
+
+msgid "Accent"
 msgstr ""
 
 msgid "Access"
@@ -807,14 +822,8 @@ msgstr "Dodaj dodatkową ścieżkę"
 msgid "Add Alert Service"
 msgstr "Dodaj usługę alertów"
 
-msgid "Add Cache"
-msgstr "Dodaj Cache"
-
 msgid "Add Cloud Credential"
 msgstr "Dodaj dane logowania do chmury"
-
-msgid "Add Data"
-msgstr "Dodaj Dane"
 
 msgid "Add Dataset"
 msgstr "Dodaj Zestaw Danych"
@@ -825,17 +834,17 @@ msgstr "Dodaj Grupę"
 msgid "Add Idmap"
 msgstr "Dodaj Idmap"
 
-msgid "Add Log"
-msgstr "Dodaj dziennik"
-
 msgid "Add Mountpoint"
 msgstr "Dodaj Punkt Montowania"
 
 msgid "Add Recovery Key"
 msgstr "Dodaj Klucz Odzyskiwania"
 
-msgid "Add Spare"
-msgstr "Dodaj wolny"
+msgid "Add Vdev"
+msgstr ""
+
+msgid "Add Vdevs"
+msgstr ""
 
 msgid "Add Zvol"
 msgstr "Dodaj Zvol"
@@ -894,15 +903,18 @@ msgid ""
 "the chosen topology. Existing data on the pool is kept intact."
 msgstr ""
 
+msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
+msgstr ""
+
 msgid "Adding data vdevs of different types is not supported."
 msgstr "Dodawanie vdev danych różnych typów nie jest obsługiwane."
 
 msgid ""
-"Additional <a                "
-"href=\"https://rsync.samba.org/ftp/rsync/rsync.html\"                "
-"target=\"_blank\">rsync(1)</a> options to include.<br>                Note: "
-"The \"*\" character must be escaped with a                backslash "
-"(\\*.txt) or used inside single quotes                ('*.txt')."
+"Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" "
+"target=\"_blank\">rsync(1)</a>      options to include. Separate entries by "
+"pressing <code>Enter</code>.<br>      Note: The \"*\" character must be "
+"escaped with a backslash (\\*.txt) or used      inside single quotes "
+"('*.txt')."
 msgstr ""
 
 msgid ""
@@ -957,12 +969,11 @@ msgid "Additional Parameters"
 msgstr "Dodatkowe Parametry"
 
 msgid ""
-"Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
-"single line with whitespace-delimited IP address, hostname, and any "
-"aliases. Hosts defined here are still accessible by name even when DNS is "
-"not available. See <a "
+"Additional hosts to be appended to <i>/etc/hosts</i>. Separate entries by "
+"pressing <code>Enter</code>. Hosts defined here are  still accessible by "
+"name even when DNS is not available. See  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hosts\" "
-"target=\"_blank\">hosts(5)</a> for additional information."
+"target=\"_blank\">hosts(5)</a>  for additional information."
 msgstr ""
 
 msgid ""
@@ -981,8 +992,8 @@ msgid "Additional parameters."
 msgstr "Dodatkowe Parametry."
 
 msgid ""
-"Additional space-delimited domains to search. Adding search domains can "
-"cause slow DNS lookups."
+"Additional space-delimited domains to search.  Separate entries by pressing "
+"<code>Enter</code>. Adding search  domains can cause slow DNS lookups."
 msgstr ""
 
 msgid "Address"
@@ -1267,6 +1278,18 @@ msgstr ""
 msgid "Also Include Naming Schema"
 msgstr ""
 
+msgid "Alt Background 1"
+msgstr ""
+
+msgid "Alt Background 2"
+msgstr ""
+
+msgid "Alt Foreground 1"
+msgstr ""
+
+msgid "Alt Foreground 2"
+msgstr ""
+
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
 "be no greater than 15 characters."
@@ -1311,6 +1334,9 @@ msgid "Anonymous User Download Bandwidth"
 msgstr ""
 
 msgid "Anonymous User Upload Bandwidth"
+msgstr ""
+
+msgid "Another theme is using this label. Please enter a new label."
 msgstr ""
 
 msgid "Any notes about initiators."
@@ -1604,6 +1630,12 @@ msgstr ""
 msgid "Background (lowest)"
 msgstr ""
 
+msgid "Background 1"
+msgstr ""
+
+msgid "Background 2"
+msgstr ""
+
 msgid "Bandwidth"
 msgstr ""
 
@@ -1623,6 +1655,9 @@ msgid "Basejail"
 msgstr ""
 
 msgid "Basic"
+msgstr ""
+
+msgid "Basic Buttons"
 msgstr ""
 
 msgid "Basic Info"
@@ -1686,6 +1721,9 @@ msgid "Block Size"
 msgstr ""
 
 msgid "Block size"
+msgstr ""
+
+msgid "Blue"
 msgstr ""
 
 msgid "Boot"
@@ -1851,10 +1889,16 @@ msgstr ""
 msgid "CD-ROM Path"
 msgstr ""
 
+msgid "CLEAR SYNC KEYS"
+msgstr ""
+
 msgid "CLOSE"
 msgstr ""
 
 msgid "CN Realm"
+msgstr ""
+
+msgid "COLORS"
 msgstr ""
 
 msgid "CPU"
@@ -1876,6 +1920,9 @@ msgid "CSR exists on this system"
 msgstr ""
 
 msgid "CSRs"
+msgstr ""
+
+msgid "Cache"
 msgstr ""
 
 msgid "Cache VDev"
@@ -1922,6 +1969,22 @@ msgid "Certificate"
 msgstr ""
 
 msgid "Certificate Authorities"
+msgstr ""
+
+msgid "Certificate Authority"
+msgstr ""
+
+msgid ""
+"Certificate Authority (CA) to use for connecting to the key server. A valid "
+"CA public certificate is required to authenticate the connection. WARNING: "
+"for security reasons, please protect the Certificate Authority used for key "
+"server authentication."
+msgstr ""
+
+msgid ""
+"Certificate to use for key server authentication. A valid certificate is "
+"required to verify the key server connection. WARNING: for security "
+"reasons, please protect the Certificate used for key server authentication."
 msgstr ""
 
 msgid ""
@@ -2013,6 +2076,9 @@ msgstr ""
 msgid "Check for Updates Daily and Download if Available"
 msgstr ""
 
+msgid "Check me!"
+msgstr ""
+
 msgid "Check server certificates in a TLS session."
 msgstr ""
 
@@ -2100,13 +2166,22 @@ msgid ""
 "can result in significant performance gains."
 msgstr ""
 
+msgid "Choose Accent"
+msgstr ""
+
 msgid "Choose Pool for Plugin and Jail Manager"
 msgstr ""
 
 msgid "Choose Pool for Plugin and Jail Storage"
 msgstr ""
 
+msgid "Choose Primary"
+msgstr ""
+
 msgid "Choose Theme"
+msgstr ""
+
+msgid "Choose Topbar"
 msgstr ""
 
 msgid ""
@@ -2129,6 +2204,9 @@ msgid "Choose a color scheme."
 msgstr ""
 
 msgid "Choose a compression algorithm."
+msgstr ""
+
+msgid "Choose a date"
 msgstr ""
 
 msgid "Choose a date format."
@@ -2200,6 +2278,9 @@ msgstr ""
 msgid "Choose a time format."
 msgstr ""
 
+msgid "Choose a topbar color."
+msgstr ""
+
 msgid ""
 "Choose a valid client certificate which exists on this system and hasn't "
 "been revoked. Find more about generating certificates and CAs for OpenVPN "
@@ -2225,6 +2306,9 @@ msgid "Choose an authentication method."
 msgstr ""
 
 msgid "Choose an encryption mode to use with LDAP."
+msgstr ""
+
+msgid "Choose an option"
 msgstr ""
 
 msgid ""
@@ -2281,9 +2365,17 @@ msgstr ""
 msgid "Choose the VM operating system type."
 msgstr ""
 
+msgid "Choose the accent color for the theme."
+msgstr ""
+
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
 "and GIDs. Click Edit to configure that backend."
+msgstr ""
+
+msgid ""
+"Choose the color to display next to the Menu Label                     in "
+"the Favorites menu."
 msgstr ""
 
 msgid ""
@@ -2299,6 +2391,9 @@ msgstr ""
 msgid ""
 "Choose the platform that will use this share. The associated options are "
 "applied to this share."
+msgstr ""
+
+msgid "Choose the primary color for the theme."
 msgstr ""
 
 msgid "Choose the protocol to use when connecting with the remote system."
@@ -2390,7 +2485,15 @@ msgid ""
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> for more information."
 msgstr ""
 
+msgid "Clear Pending Sync Keys"
+msgstr ""
+
 msgid "Clear SED Password"
+msgstr ""
+
+msgid ""
+"Clear all keys which are pending to be synced between KMIP server and TN "
+"database."
 msgstr ""
 
 msgid "Clear the Idmap Cache"
@@ -2408,6 +2511,16 @@ msgid ""
 msgstr ""
 
 msgid "Click on alarms to select or unselect."
+msgstr ""
+
+msgid ""
+"Click the swatch to pick a color or enter a color                     hex "
+"value."
+msgstr ""
+
+msgid ""
+"Click the swatch to pick a color or enter a color                    hex "
+"value."
 msgstr ""
 
 msgid "Client Certificate"
@@ -2646,6 +2759,9 @@ msgstr ""
 msgid "Connection Error"
 msgstr ""
 
+msgid "Connection port number on the central key server."
+msgstr ""
+
 msgid ""
 "Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but "
 "has the greatest impact on  connection speed.</li><br>  <li><i>Fast</i> is "
@@ -2779,6 +2895,9 @@ msgstr ""
 msgid "Create Snapshot"
 msgstr ""
 
+msgid "Create Theme"
+msgstr ""
+
 msgid "Create a new Pool."
 msgstr ""
 
@@ -2876,7 +2995,13 @@ msgstr ""
 msgid "Custom Server"
 msgstr ""
 
+msgid "Custom Theme Name"
+msgstr ""
+
 msgid "Customer Name"
+msgstr ""
+
+msgid "Cyan"
 msgstr ""
 
 msgid ""
@@ -2930,6 +3055,9 @@ msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
 
 msgid "DOCUMENTATION"
+msgstr ""
+
+msgid "Daily"
 msgstr ""
 
 msgid "Dashboard"
@@ -2999,6 +3127,11 @@ msgstr ""
 msgid "Days when this task will run."
 msgstr ""
 
+msgid ""
+"De-duplication tables are stored on this special vdev type. These vdevs "
+"must be sized to <i>X</i> GiB for each <i>X</i> TiB of general storage."
+msgstr ""
+
 msgid "Deactivate the recovery key for this pool?"
 msgstr ""
 
@@ -3015,6 +3148,12 @@ msgid "Decrypt pool"
 msgstr ""
 
 msgid "Decrypting Disks"
+msgstr ""
+
+msgid "Dedup"
+msgstr ""
+
+msgid "Dedup VDev"
 msgstr ""
 
 msgid ""
@@ -3274,6 +3413,9 @@ msgid "Descriptive name for the replication."
 msgstr ""
 
 msgid "Destination"
+msgstr ""
+
+msgid "Destination Dataset Read-only Policy"
 msgstr ""
 
 msgid "Destination Location"
@@ -3584,6 +3726,11 @@ msgstr ""
 msgid "Drive ID"
 msgstr ""
 
+msgid ""
+"Drive reserved for inserting into DATA pool vdevs when an active drive has "
+"failed."
+msgstr ""
+
 msgid "Driver"
 msgstr ""
 
@@ -3668,14 +3815,14 @@ msgstr ""
 
 msgid ""
 "Email addresses must be entered in the format   "
-"<i>local-name</i>@<i>domain.com<i> with a comma (,) separating each   "
-"address."
+"<i>local-name</i>@<i>domain.com<i>, with entries separated by pressing   "
+"<code>Enter</code>."
 msgstr ""
 
 msgid ""
 "Email addresses to receive copies of iXsystems Support   messages about "
-"this issue. Use the format <i>name</i>@<i>domain.com</i>   and a comma (,) "
-"to separate each address."
+"this issue. Use the format <i>name</i>@<i>domain.com</i>.   Separate "
+"entries by pressing <code>Enter</code>."
 msgstr ""
 
 msgid "Emergency"
@@ -3914,6 +4061,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Enabling allows the system to conduct periodic <a "
+"href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" target=\"_blank\">S.M.A.R.T. "
+"tests</a>."
+msgstr ""
+
+msgid ""
 "Enabling sends the  <i>plugin instance</i> and <i>type instance</i> to "
 "Graphite as separate  path components: <i>host.cpu.0.cpu.idle</i>.<br><br> "
 "Disabling sends  the <i>plugin</i> and <i>plugin instance</i> as one path "
@@ -4045,9 +4198,6 @@ msgstr ""
 msgid "Enter a capitalized domain name."
 msgstr ""
 
-msgid "Enter a comma-delimited list of hostnames or IP addresses."
-msgstr ""
-
 msgid ""
 "Enter a command to shut down the system when either battery power is low or "
 "the shutdown timer ends."
@@ -4087,13 +4237,13 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter a list of allowed hostnames or IP addresses. Separate entries with a "
-"comma, space, or tab."
+"Enter a list of allowed hostnames or IP addresses. Separate entries by "
+"pressing <code>Enter</code>."
 msgstr ""
 
 msgid ""
-"Enter a list of denied hostnames or IP addresses. Separate entries with a "
-"comma, space, or tab."
+"Enter a list of denied hostnames or IP addresses. Separate entries by "
+"pressing <code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -4115,6 +4265,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter a name for the new credential."
+msgstr ""
+
+msgid "Enter a name for the new theme."
 msgstr ""
 
 msgid "Enter a name for the share."
@@ -4188,10 +4341,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter a space-delimited list of IP addresses to <a "
+"Enter a space-delimited list of IP addresses to  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
-"target=\"_blank\">ping(8)</a>. Each address is tried until one is "
-"successful or the list is exhausted. Leave empty to use the default gateway."
+"target=\"_blank\">ping(8)</a>.  Separate entries by pressing "
+"<code>Enter</code>. Each address is tried  until one is successful or the "
+"list is exhausted. Leave empty to use  the default gateway."
 msgstr ""
 
 msgid ""
@@ -4276,9 +4430,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter additional space-delimited parameters from <a "
+"Enter additional parameters from  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>."
+"target=\"_blank\">ifconfig(8)</a>.  Separate entries by pressing "
+"<code>Enter</code>."
 msgstr ""
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
@@ -4315,7 +4470,8 @@ msgstr ""
 msgid ""
 "Enter any additional settings from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
-"target=\"_blank\">rsyncd.conf(5)</a>."
+"target=\"_blank\">rsyncd.conf(5)</a>. Separate entries by  pressing "
+"<code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -4344,9 +4500,6 @@ msgid "Enter any notes about the jail."
 msgstr ""
 
 msgid "Enter any notes about this dataset."
-msgstr ""
-
-msgid "Enter any notes about this disk."
 msgstr ""
 
 msgid "Enter comments about the jail."
@@ -4794,17 +4947,18 @@ msgstr ""
 msgid ""
 "Exclude specific child dataset snapshots from  the replication. Use with "
 "<b>Recursive</b> snapshots. List child  dataset names to exclude. Separate "
-"multiple entries with a comma  (<code>,</code>). Example: "
-"<i>pool1/dataset1/child1</i>. A  recursive replication of "
-"<i>pool1/dataset1</i> snapshots includes all  child dataset snapshots "
+"entries by pressing <code>Enter</code>.  Example: "
+"<i>pool1/dataset1/child1</i>. A recursive replication of  "
+"<i>pool1/dataset1</i> snapshots includes all child dataset snapshots  "
 "except <i>child1</i>."
 msgstr ""
 
 msgid ""
 "Exclude specific child datasets from the  snapshot. Use with recursive "
-"snapshots. Comma-separated list of paths  to any child datasets to exclude. "
-"Example: <i>pool1/dataset1/child1</i>.  A recursive snapshot of "
-"<i>pool1/dataset1</i> will include all child  datasets except <i>child1</i>."
+"snapshots. List paths to any child  datasets to exclude. Example: "
+"<i>pool1/dataset1/child1</i>.  A recursive snapshot of "
+"<i>pool1/dataset1</i> will include all child  datasets except "
+"<i>child1</i>. Separate entries by pressing  <code>Enter</code>."
 msgstr ""
 
 msgid "Exec"
@@ -4867,16 +5021,10 @@ msgstr ""
 msgid "Extend"
 msgstr ""
 
-msgid "Extend Pool"
-msgstr ""
-
 msgid "Extend Vdev"
 msgstr ""
 
 msgid "Extending Vdev"
-msgstr ""
-
-msgid "Extending an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 
 msgid "Extending vdev..."
@@ -4904,6 +5052,9 @@ msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr ""
 
 msgid "FTP Port number. Leave blank to use the default port <i>21</i>."
+msgstr ""
+
+msgid "Fab Buttons"
 msgstr ""
 
 msgid "Failed"
@@ -5092,6 +5243,12 @@ msgid ""
 "unreachable."
 msgstr ""
 
+msgid "Foreground 1"
+msgstr ""
+
+msgid "Foreground 2"
+msgstr ""
+
 msgid "Form Invalid"
 msgstr ""
 
@@ -5099,6 +5256,9 @@ msgid "Free"
 msgstr ""
 
 msgid "FreeBSD device names of each disk being edited."
+msgstr ""
+
+msgid "FreeBSD disk device name."
 msgstr ""
 
 msgid ""
@@ -5117,14 +5277,14 @@ msgid ""
 "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
 "target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
 "hostname and IP address of a connecting client. The connection is  rejected "
-"if no patterns match. Separate patterns with whitespace or a  comma."
+"if no patterns match. Separate entries by pressing  <code>Enter</code>."
 msgstr ""
 
 msgid ""
 "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
 "target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
 "hostname and IP address of a connecting client. The connection is  rejected "
-"when the patterns match. Separate patterns with whitespace  or a comma."
+"when the patterns match. Separate entries by pressing  <code>Enter</code>."
 msgstr ""
 
 msgid "From E-mail"
@@ -5154,6 +5314,9 @@ msgid ""
 "Fully qualified domain name of the host with the  dynamic IP address. "
 "Separate multiple domains with a space, comma  (,), or semicolon (;). "
 "Example:  <i>myname.dyndns.org; myothername.dyndns.org</i>."
+msgstr ""
+
+msgid "GENERAL"
 msgstr ""
 
 msgid "GID"
@@ -5225,6 +5388,9 @@ msgstr ""
 msgid "Global Configuration"
 msgstr ""
 
+msgid "Global Preview"
+msgstr ""
+
 msgid "Global Settings"
 msgstr ""
 
@@ -5253,6 +5419,9 @@ msgid "Graph Age in Months"
 msgstr ""
 
 msgid "Graphite Separate Instances"
+msgstr ""
+
+msgid "Green"
 msgstr ""
 
 msgid "Group"
@@ -5347,7 +5516,17 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
+msgid ""
+"Hidden columns are not available for sorting or filtering, but the values "
+"can be  viewed by expanding the row. Hiding columns improves performance. "
+"NOTE: This window will reload automatically so that  the new view can take "
+"effect."
+msgstr ""
+
 msgid "Hide"
+msgstr ""
+
+msgid "Hide Extra Columns"
 msgstr ""
 
 msgid "Hide Standard Error"
@@ -5416,6 +5595,9 @@ msgstr ""
 msgid "Host name database"
 msgstr ""
 
+msgid "Host name or IP address of the central key server."
+msgstr ""
+
 msgid "HostName"
 msgstr ""
 
@@ -5455,8 +5637,9 @@ msgid "Hostname or IP address of the system to  receive SNMP trap notifications.
 msgstr ""
 
 msgid ""
-"Hostnames or IP addresses of the ISNS servers to be registered with the "
-"iSCSI targets and portals of the system. Separate each entry with a space."
+"Hostnames or IP addresses of the  ISNS servers to be registered with the "
+"iSCSI targets and portals of  the system. Separate entries by pressing "
+"<code>Enter</code>."
 msgstr ""
 
 msgid "Hosts"
@@ -5466,6 +5649,9 @@ msgid "Hosts Allow"
 msgstr ""
 
 msgid "Hosts Deny"
+msgstr ""
+
+msgid "Hot Spare"
 msgstr ""
 
 msgid "Hottest:"
@@ -5480,6 +5666,9 @@ msgid ""
 msgstr ""
 
 msgid "Hour and minute when the system can begin  taking snapshots."
+msgstr ""
+
+msgid "Hourly"
 msgstr ""
 
 msgid "Hours"
@@ -5648,6 +5837,9 @@ msgstr ""
 msgid "ISNS Servers"
 msgstr ""
 
+msgid "Icon Buttons"
+msgstr ""
+
 msgid "Icon URL"
 msgstr ""
 
@@ -5791,15 +5983,6 @@ msgid ""
 "without any extra steps."
 msgstr ""
 
-msgid ""
-"Indicates the time of inactivity in minutes before the drive enters standby "
-"mode. This <a "
-"href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
-"drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
-"demonstrates how to determine if a drive has spun down. Temperature "
-"monitoring is  disabled if the disk is set to enter standby."
-msgstr ""
-
 msgid "InfluxDB time series name for collected points."
 msgstr ""
 
@@ -5863,6 +6046,9 @@ msgid ""
 "initiators to either the <i>Allowed Initiators</i> or <i>Authorized "
 "Networks</i> lists. Clicking <i>Refresh</i> updates the <i>Connected "
 "Initiators</i> list."
+msgstr ""
+
+msgid "Input"
 msgstr ""
 
 msgid "Input the pre-defined S3 bucket to use."
@@ -5934,8 +6120,8 @@ msgid "Invalid format or character."
 msgstr ""
 
 msgid ""
-"Invalid network address list. Check for typos or missing CIDR netmasks and "
-"separate addresses with a space."
+"Invalid network address list. Check for typos or missing CIDR netmasks and  "
+"    separate addresses by pressing <code>Enter</code>."
 msgstr ""
 
 msgid "Invalid regex filter"
@@ -6052,6 +6238,15 @@ msgid "KEEP CHANGES"
 msgstr ""
 
 msgid "KEEP NETWORK CHANGES PERMANENTLY"
+msgstr ""
+
+msgid "KMIP"
+msgstr ""
+
+msgid "KMIP Key Status"
+msgstr ""
+
+msgid "KMIP Server"
 msgstr ""
 
 msgid "Keep"
@@ -6221,8 +6416,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Leave blank to allow all or enter a list of initiator hostnames separated "
-"by spaces."
+"Leave blank to allow all or enter a list of initiator hostnames.    "
+"Separate entries by pressing <code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -6295,10 +6490,25 @@ msgstr ""
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr ""
 
+msgid "Link"
+msgstr ""
+
 msgid "Link State"
 msgstr ""
 
 msgid "Linked Service"
+msgstr ""
+
+msgid ""
+"List of files and directories to exclude from sync.<br>  Separate entries "
+"by pressing <code>Enter</code>. See  <a "
+"href=\"https://rclone.org/filtering/\" target=\"_blank\">rclone "
+"filtering</a>  for more details about the <code>--exclude</code> option."
+msgstr ""
+
+msgid ""
+"List of hostnames or IP addresses.  Separate entries by pressing "
+"<code>Enter</code>."
 msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
@@ -6308,6 +6518,9 @@ msgid "Listen"
 msgstr ""
 
 msgid "Load Previous Replication Task"
+msgstr ""
+
+msgid "Load colors from existing theme"
 msgstr ""
 
 msgid "Local"
@@ -6341,6 +6554,9 @@ msgid "Lock Pool"
 msgstr ""
 
 msgid "Lock User"
+msgstr ""
+
+msgid "Log"
 msgstr ""
 
 msgid "Log Level"
@@ -6409,7 +6625,13 @@ msgstr ""
 msgid "Mac Address"
 msgstr ""
 
+msgid "Magenta"
+msgstr ""
+
 msgid "Mail Server Port"
+msgstr ""
+
+msgid "Make Destination Dataset Read-only?"
 msgstr ""
 
 msgid "Manage"
@@ -6421,13 +6643,31 @@ msgstr ""
 msgid "Manage Recovery Key"
 msgstr ""
 
+msgid "Manage SED Password"
+msgstr ""
+
 msgid "Manage Services and Continue"
+msgstr ""
+
+msgid "Manage ZFS Keys"
 msgstr ""
 
 msgid "Manage members of"
 msgstr ""
 
+msgid "Management"
+msgstr ""
+
 msgid "Manual"
+msgstr ""
+
+msgid "Manual S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Manual Test"
+msgstr ""
+
+msgid "Manual Test Summary"
 msgstr ""
 
 msgid "Manual Update"
@@ -6586,7 +6826,19 @@ msgid ""
 "enough free memory for configured RAM of all VMs. Use with caution."
 msgstr ""
 
+msgid "Menu Label"
+msgstr ""
+
+msgid "Menu Swatch"
+msgstr ""
+
 msgid "Message verbosity level in the replication  task log."
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Metadata VDev"
 msgstr ""
 
 msgid "Method"
@@ -6629,6 +6881,9 @@ msgstr ""
 msgid "Min. Poll"
 msgstr ""
 
+msgid "Mini Fab Buttons"
+msgstr ""
+
 msgid "Minimum"
 msgstr ""
 
@@ -6648,6 +6903,14 @@ msgid "Mintues/Hours/Days"
 msgstr ""
 
 msgid "Minute"
+msgstr ""
+
+msgid ""
+"Minutes of inactivity before the drive enters standby mode. This <a "
+"href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
+"drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
+"describes identifying spun down drives. Temperature monitoring is disabled "
+"for standby disks."
 msgstr ""
 
 msgid "Minutes when this task will run."
@@ -6692,6 +6955,9 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
+msgid "Monthly"
+msgstr ""
+
 msgid "Months"
 msgstr ""
 
@@ -6715,9 +6981,9 @@ msgid "Mount points"
 msgstr ""
 
 msgid ""
-"Multi-domain support. Enter additional domains to secure, separated by "
-"spaces. For example, if the primary domain is example.com, entering "
-"www.example.com will secure both addresses."
+"Multi-domain support. Enter additional domains to  secure. Separate domains "
+"by pressing <code>Enter</code>  For example, if the primary domain is "
+"<i>example.com</i>,  entering <i>www.example.com</i> secures both addresses."
 msgstr ""
 
 msgid ""
@@ -6966,9 +7232,9 @@ msgid "Network Timeout Before Initiating Failover"
 msgstr ""
 
 msgid ""
-"Network addresses allowed to use this initiator. Leave blank to allow all "
-"networks or list network addresses with a CIDR mask. Separate multiple "
-"addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."
+"Network addresses allowed to use this initiator. Leave blank to allow all   "
+"   networks or list network addresses with a CIDR mask. Separate entries by "
+"pressing      <code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -7051,11 +7317,6 @@ msgstr ""
 msgid "Newer Intermediate, Child, and Clone"
 msgstr ""
 
-msgid ""
-"Newline-separated list of files and directories to exclude from sync.<br /> "
-"See https://rclone.org/filtering/ for more details on --exclude option."
-msgstr ""
-
 msgid "Next"
 msgstr ""
 
@@ -7130,13 +7391,24 @@ msgstr ""
 msgid "None"
 msgstr ""
 
+msgid ""
+"Normal vdev type, used for primary storage operations. ZFS pools always "
+"have at least one DATA vdev."
+msgstr ""
+
 msgid "Not Available"
 msgstr ""
 
 msgid "Notes"
 msgstr ""
 
+msgid "Notes about this disk."
+msgstr ""
+
 msgid "Notes about this extent."
+msgstr ""
+
+msgid "Notes or identifiers about the theme."
 msgstr ""
 
 msgid "Notice"
@@ -7369,6 +7641,18 @@ msgstr ""
 msgid "Operation"
 msgstr ""
 
+msgid "Option 1"
+msgstr ""
+
+msgid "Option 2"
+msgstr ""
+
+msgid "Option 2 (disabled)"
+msgstr ""
+
+msgid "Option 3"
+msgstr ""
+
 msgid "Optional description."
 msgstr ""
 
@@ -7399,6 +7683,9 @@ msgid ""
 "connection with <i>SSL</i> on port  <i>636</i>.</li>  <li><i>START_TLS:</i> "
 "encrypt the LDAP connection with <i>STARTTLS</i>  on the default LDAP port "
 "<i>389</i>.</li>  </ul>"
+msgstr ""
+
+msgid "Orange"
 msgstr ""
 
 msgid ""
@@ -7450,6 +7737,9 @@ msgid "PENDING"
 msgstr ""
 
 msgid "POST INSTALL NOTES"
+msgstr ""
+
+msgid "PREVIEW"
 msgstr ""
 
 msgid "PROCEED"
@@ -7564,7 +7854,8 @@ msgid ""
 "snapshots. Has the same <i>%Y</i>,  <i>%m</i>, <i>%d</i>, <i>%H</i>, and "
 "<i>%M</i> string requirements as  the <b>Naming Schema</b> in a  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
-"target=\"_blank\">periodic snapshot task."
+"target=\"_blank\">periodic snapshot task. Separate entries by pressing  "
+"<code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -7572,7 +7863,7 @@ msgid ""
 "<a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\"  "
 "target=\"_blank\">strftime(3)</a> <i>%Y</i>, <i>%m</i>, <i>%d</i>,  "
 "<i>%H</i>, and <i>%M</i> strings that match the snapshots to include in  "
-"the replication."
+"the replication. Separate entries by pressing <code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -7580,7 +7871,8 @@ msgid ""
 "<a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
 "target=\"_blank\">strftime(3)</a>  <i>%Y</i>, <i>%m</i>, <i>%d</i>, "
 "<i>%H</i>, and <i>%M</i> strings that  match the snapshots to include in "
-"the replication. The number of  snapshots matching that pattern is shown."
+"the replication. Separate entries by  pressing <code>Enter</code>. The "
+"number of snapshots matching the  patterns are shown."
 msgstr ""
 
 msgid "Peer Secret"
@@ -7590,6 +7882,9 @@ msgid "Peer Secret (Confirm)"
 msgstr ""
 
 msgid "Peer User"
+msgstr ""
+
+msgid "Pending"
 msgstr ""
 
 msgid "Pending Network Changes"
@@ -7632,6 +7927,9 @@ msgid "PiB"
 msgstr ""
 
 msgid "Platform"
+msgstr ""
+
+msgid "Please"
 msgstr ""
 
 msgid "Please accept the terms of service for the given ACME Server."
@@ -7819,10 +8117,16 @@ msgid ""
 "account."
 msgstr ""
 
+msgid "Preview"
+msgstr ""
+
 msgid "Preview JSON Service Account Key"
 msgstr ""
 
 msgid "Previous"
+msgstr ""
+
+msgid "Primary"
 msgstr ""
 
 msgid "Primary Contact"
@@ -7975,6 +8279,9 @@ msgstr ""
 msgid "Raid-z3"
 msgstr ""
 
+msgid "Raised Buttons"
+msgstr ""
+
 msgid "Range High"
 msgstr ""
 
@@ -8057,6 +8364,9 @@ msgid "Recovery Key for Pool "
 msgstr ""
 
 msgid "Recursive"
+msgstr ""
+
+msgid "Red"
 msgstr ""
 
 msgid ""
@@ -8384,6 +8694,9 @@ msgstr ""
 msgid "Restore default"
 msgstr ""
 
+msgid "Restrict PAM"
+msgstr ""
+
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
 "See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
@@ -8587,6 +8900,9 @@ msgstr ""
 msgid "STOP"
 msgstr ""
 
+msgid "SYNC KEYS"
+msgstr ""
+
 msgid "Samba Authentication"
 msgstr ""
 
@@ -8606,9 +8922,6 @@ msgid "Save Config"
 msgstr ""
 
 msgid "Save Configuration"
-msgstr ""
-
-msgid "Save Custom Theme"
 msgstr ""
 
 msgid "Save Debug"
@@ -8639,6 +8952,9 @@ msgid "Saving ACLs..."
 msgstr ""
 
 msgid "Saving Debug"
+msgstr ""
+
+msgid "Saving KMIP Config"
 msgstr ""
 
 msgid "Saving Permissions"
@@ -9297,6 +9613,14 @@ msgstr ""
 msgid "Self Healed"
 msgstr ""
 
+msgid ""
+"Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling "
+"this option allows the key server to manage creating or updating the global "
+"SED password, creating or updating individual SED passwords, and retrieving "
+"SED passwords when SEDs are unlocked. Disabling this option leaves SED "
+"password management with the local system."
+msgstr ""
+
 msgid "Semi-automatic (TrueNAS CORE only)"
 msgstr ""
 
@@ -9324,7 +9648,7 @@ msgstr ""
 msgid "Sep"
 msgstr ""
 
-msgid "Separate multiple values with a space."
+msgid "Separate multiple values by pressing <code>Enter</code>."
 msgstr ""
 
 msgid "Separate values with commas, and without spaces."
@@ -9340,6 +9664,9 @@ msgid "Serial Port"
 msgstr ""
 
 msgid "Serial Speed"
+msgstr ""
+
+msgid "Serial number for this disk."
 msgstr ""
 
 msgid "Serial numbers of each disk being edited."
@@ -9409,12 +9736,6 @@ msgid ""
 msgstr ""
 
 msgid "Set an ending time for when  replications are not allowed to start."
-msgstr ""
-
-msgid ""
-"Set by default if the disk supports S.M.A.R.T. Unset to disable any "
-"configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
-"target=\"_blank\">S.M.A.R.T. tests</a>."
 msgstr ""
 
 msgid ""
@@ -9924,6 +10245,11 @@ msgid ""
 "intact."
 msgstr ""
 
+msgid ""
+"Set to restrict SSH access in certain circumstances to only members of  "
+"BUILTIN\\Administrators"
+msgstr ""
+
 msgid "Set to run resilver tasks between the configured times."
 msgstr ""
 
@@ -10058,6 +10384,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Setting this option changes the destination dataset to be read-only. To "
+"continue using the default or existing dataset read permissions, leave this "
+"option unset."
+msgstr ""
+
+msgid ""
 "Setting this option is <b>not</b> recommended as it breaks several security "
 "measures. Refer to <a "
 "href=\"http://www.proftpd.org/docs/contrib/mod_tls.html\" "
@@ -10126,6 +10458,11 @@ msgid "Short description"
 msgstr ""
 
 msgid ""
+"Shortened theme name. Used when listing the theme                     in "
+"Preferences."
+msgstr ""
+
+msgid ""
 "Should only be used for highly accurate <b>NTP</b>   servers such as those "
 "with time monitoring hardware."
 msgstr ""
@@ -10136,6 +10473,9 @@ msgid ""
 msgstr ""
 
 msgid "Show"
+msgstr ""
+
+msgid "Show Extra Columns"
 msgstr ""
 
 msgid "Show Text Console without Password Prompt"
@@ -10151,6 +10491,12 @@ msgid "Show only entries that contain this text"
 msgstr ""
 
 msgid "Show tracebacks in case of fatal error"
+msgstr ""
+
+msgid ""
+"Showing extra columns in the table is useful for data filtering,  but can "
+"cause performance issues. NOTE: This window will reload automatically so "
+"that the new view can take effect."
 msgstr ""
 
 msgid ""
@@ -10217,6 +10563,9 @@ msgstr ""
 msgid ""
 "Skip automatic detection of the Endpoint URL region. Set this  when "
 "configuring a custom Endpoint URL."
+msgstr ""
+
+msgid "Slide me!"
 msgstr ""
 
 msgid "Snapshot"
@@ -10287,6 +10636,11 @@ msgid "Spares"
 msgstr ""
 
 msgid "Sparse"
+msgstr ""
+
+msgid ""
+"Special Allocation class, used to create Fusion pools. Optional vdev type "
+"which is used to speed up metadata and small block IO."
 msgstr ""
 
 msgid "Specifies the auxiliary directory service ID provider."
@@ -10568,6 +10922,12 @@ msgstr ""
 msgid "Sync"
 msgstr ""
 
+msgid "Sync Keys"
+msgstr ""
+
+msgid "Sync ZFS/SED keys between KMIP Server and TN database."
+msgstr ""
+
 msgid "Sync from Peer"
 msgstr ""
 
@@ -10581,6 +10941,9 @@ msgid "Sync to peer succeeded."
 msgstr ""
 
 msgid "Synchronize Destination Snapshots With Source"
+msgstr ""
+
+msgid "Syncing"
 msgstr ""
 
 msgid "Syslog"
@@ -10806,6 +11169,9 @@ msgstr ""
 msgid "Test email sent!"
 msgstr ""
 
+msgid "Textarea"
+msgstr ""
+
 msgid ""
 "The <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
 "\"target=\"_blank\">devfs(8)</a> ruleset number to enforce when mounting "
@@ -10972,7 +11338,9 @@ msgid ""
 "imported from a directory service appear in the drop-down menu."
 msgstr ""
 
-msgid "The hostname or IP address of the LDAP server."
+msgid ""
+"The hostname or IP address of the LDAP server.  Separate entries by "
+"pressing <code>Enter</code>."
 msgstr ""
 
 msgid "The iSCSI"
@@ -11306,19 +11674,18 @@ msgstr ""
 msgid "This is not a production release, and should only be used for testing."
 msgstr ""
 
-msgid "This is the FreeBSD device name for the disk."
-msgstr ""
-
 msgid ""
 "This is the OS_TENANT_NAME from an <a "
 "href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
 "credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
 msgstr ""
 
-msgid "This is the serial number of the disk."
+msgid "This job will not run again until it is enabled."
 msgstr ""
 
-msgid "This job will not run again until it is enabled."
+msgid ""
+"This name is already being used by an existing theme. Please choose a new "
+"name."
 msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
@@ -11672,7 +12039,7 @@ msgstr ""
 msgid "Update Plugins"
 msgstr ""
 
-msgid "Update Settings"
+msgid "Update Preferences"
 msgstr ""
 
 msgid "Update Status"
@@ -11840,6 +12207,14 @@ msgid "Use settings from a saved replication."
 msgstr ""
 
 msgid "Use syslog only"
+msgstr ""
+
+msgid ""
+"Use the KMIP server to manage ZFS encrypted dataset keys. The key server "
+"stores, applies, and destroys encryption keys whenever an encrypted dataset "
+"is created, when an existing key is modified, an encrypted dataset is "
+"unlocked, or an encrypted dataset is removed. Unsetting this option leaves "
+"all encryption key management with the local system."
 msgstr ""
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
@@ -12113,6 +12488,9 @@ msgstr ""
 msgid "View Logs"
 msgstr ""
 
+msgid "Violet"
+msgstr ""
+
 msgid "Virtual CPUs"
 msgstr ""
 
@@ -12180,6 +12558,9 @@ msgstr ""
 msgid "Wallclock time in seconds."
 msgstr ""
 
+msgid "Warn"
+msgstr ""
+
 msgid "Warning"
 msgstr ""
 
@@ -12235,6 +12616,9 @@ msgid "Webhook URL"
 msgstr ""
 
 msgid "Wed"
+msgstr ""
+
+msgid "Weekly"
 msgstr ""
 
 msgid "Weeks"
@@ -12400,6 +12784,9 @@ msgstr ""
 msgid "Years"
 msgstr ""
 
+msgid "Yellow"
+msgstr ""
+
 msgid "Yes"
 msgstr ""
 
@@ -12422,6 +12809,16 @@ msgid "ZFS Deduplication"
 msgstr ""
 
 msgid "ZFS Filesystem"
+msgstr ""
+
+msgid ""
+"ZFS L2ARC read-cache that can be used with fast devices to accelerate read "
+"operations. Optional vdev that can be removed."
+msgstr ""
+
+msgid ""
+"ZFS LOG device that can improve speeds of synchronous writes. Optional "
+"write-cache that can be removed."
 msgstr ""
 
 msgid "ZFS deduplication"
@@ -12502,6 +12899,12 @@ msgstr ""
 msgid "assign_localhost"
 msgstr ""
 
+msgid "at 00:00 (12:00 AM)"
+msgstr ""
+
+msgid "at the start of each hour"
+msgstr ""
+
 msgid "below to confirm."
 msgstr ""
 
@@ -12509,6 +12912,9 @@ msgid "boot"
 msgstr ""
 
 msgid "children_max"
+msgstr ""
+
+msgid "click here"
 msgstr ""
 
 msgid "close"
@@ -12622,6 +13028,9 @@ msgstr ""
 msgid "iSCSI Group"
 msgstr ""
 
+msgid "installed memory"
+msgstr ""
+
 msgid "interfaces"
 msgstr ""
 
@@ -12715,6 +13124,12 @@ msgstr ""
 msgid "nthr"
 msgstr ""
 
+msgid "on Sundays at 00:00 (12:00 AM)"
+msgstr ""
+
+msgid "on the first day of the month at 00:00 (12:00 AM)"
+msgstr ""
+
 msgid "openfiles"
 msgstr "otwórz pliki"
 
@@ -12787,8 +13202,8 @@ msgstr ""
 msgid "template"
 msgstr "szablon"
 
-msgid "total memory installed"
-msgstr "całkowita zainstalowana pamięć"
+msgid "to set up configuration first."
+msgstr ""
 
 msgid "vmemoryuse"
 msgstr ""
