@@ -46,6 +46,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
 import { JobService } from 'app/services';
 import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
+import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 
 @NgModule({
   imports : [
@@ -85,6 +86,7 @@ import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quot
     SmartResultsComponent,
     DatasetQuotasUserlistComponent,
     DatasetQuotasGrouplistComponent,
+    UserQuotaFormComponent,
   ],
   entryComponents: [SnapshotDetailsComponent],
   providers : [UserService, StorageService, MessageService, JobService]

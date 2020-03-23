@@ -895,7 +895,7 @@ export class VolumesListTableConfig implements InputTableConf {
               ttposition: 'left',
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "user-quotas", row1.id
+                  "storage", "pools", "quotas", "form", row1.id
                 ]));
               }
             },

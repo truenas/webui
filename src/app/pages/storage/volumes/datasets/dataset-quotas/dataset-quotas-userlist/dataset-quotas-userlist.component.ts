@@ -49,6 +49,8 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
     }
   };
 
+  protected route_add: string[] = ['storage', 'pools', 'user-quotas', 'add'];
+
   public table_tooltip = true;
   public table_tooltip_header = helptext.users.table_helptext_title;
   public table_tooltip_text = helptext.users.table_helptext;
@@ -213,7 +215,6 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
        this.entityList.loader.open();
        this.useFullFilter = !this.useFullFilter;
        window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
-      //  document.location.reload(true);
       this.entityList.needTableResize = false;
       this.entityList.getData();
       this.loader.close();
@@ -222,7 +223,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    window.localStorage.setItem('useFullFilter', 'true'); 
+    window.localStorage.setItem('useFullFilter', 'true');
   }
 
 }

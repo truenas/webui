@@ -29,6 +29,7 @@ import { MultipathsComponent } from './multipaths/multipaths.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
+import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 
 export const routes: Routes = [
   {
@@ -69,7 +70,11 @@ export const routes: Routes = [
           },
           {
             path: 'user-quotas/:pk', component: DatasetQuotasUserlistComponent,
-            data: { title: 'Edit User Quotas', breadcrumb: 'Edit User Quotas' }
+            data: { title: 'Edit User Quotas', breadcrumb: 'Edit User Quotas' },
+          },
+          {
+            path: 'quotas/form/:pk', component: UserQuotaFormComponent,
+            data: { title: 'Set Quotas', breadcrumb: 'Set Quotas'}
           },
           {
             path: 'group-quotas/:pk', component: DatasetQuotasGrouplistComponent,
