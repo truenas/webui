@@ -106,7 +106,8 @@ h4 {
 	margin: 16px !important;
 }
 .fields {
-	display: flex;
+	/*display: flex;*/
+        width: 600px;
 	margin: 0.75rem 3rem 3rem 1rem !important;
 }
 #filter-wrapper, #pool-manager__button-group {
@@ -171,6 +172,7 @@ button.vdev-option p{
 
 .button-bar {
 	display:flex;
+        margin-top:12px;
 }
 
 .button-spacer {
