@@ -18,6 +18,7 @@ export class UserQuotaFormComponent {
   public entityForm: any;
   public dataFields = ['user_data_quota'];
   public pk: string;
+  public selectedUsers = [];
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -26,12 +27,6 @@ export class UserQuotaFormComponent {
       label: true,
       width: '48%',
       config: [
-        {
-          type: 'textarea',
-          name: 'selected_users',
-          placeholder: 'helptext.users.placeholder',
-          tooltip: 'helptext.users.tooltip',
-        },
         {
           type: 'select',
           name: 'user',
@@ -77,6 +72,21 @@ export class UserQuotaFormComponent {
       width: '2%',
       config: []
     },
+    {
+      name: 'helptext.users.heading',
+      label: true,
+      width: '48%',
+      config: [
+        {
+          type: 'chip',
+          name: 'selected_users',
+          placeholder: 'Selected Users',
+          tooltip: 'Selected Users',
+          value: this.selectedUsers,
+          id: 'selected-users_chiplist'
+        }
+      ]
+    },
 
     {
       name: 'divider',
@@ -93,9 +103,24 @@ export class UserQuotaFormComponent {
     this.pk = paramMap.pk;
   }
 
+  async validateUser(value) {
+    const validUser = await this.userService.getUserObject(value);
+    if (!validUser) {
+      console.log('Not Coo!')
+      const c = (<HTMLInputElement>document.getElementById('mat-chip-list-0').lastChild);
+      c.childNodes[c.childNodes.length-3].classList.add('chip-warn')
+    }
+  }
+
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     const users = _.find(this.fieldConfig, {name: "user"});
+
+    this.entityForm.formGroup.controls['selected_users'].valueChanges.subscribe(value => {
+      if (value) {
+        this.validateUser(value[value.length - 1])
+      }
+    })
 
     this.ws.call('user.query').subscribe(res => {
       res.map(user => {
@@ -146,7 +171,8 @@ export class UserQuotaFormComponent {
       const name = parent.entityForm.formGroup.controls.user_search.value;
       const user = await parent.userService.getUserObject(name);
       if (user) {
-        console.log(parent.entityForm.formGroup.controls.selected_users.setValue(parent.entityForm.formGroup.controls.selected_users.value += ' ' + name))
+        parent.selectedUsers.push(name);
+        // (parent.entityForm.formGroup.controls.selected_users.setValue(parent.entityForm.formGroup.controls.selected_users.value += ' ' + name))
       }
     }
   }
