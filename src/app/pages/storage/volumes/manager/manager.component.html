@@ -6,32 +6,38 @@
     <div class="manager">
       <div class="fields m-3">
         <div *ngIf="isNew;else extend">
-          <mat-form-field>
-            <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
-          </mat-form-field>
-          <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
-          <mat-checkbox
-            id="pool-manager__encryption-checkbox"
-            [(ngModel)]="isEncrypted"
-            class="form-control"
-             placeholder="{{Encryption | translate}}"
-             (change)="isEncryptedChecked()" >
-             {{"Encryption" | translate}}
-          </mat-checkbox>
-          <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
-          <mat-select
-            *ngIf="isEncrypted"
-            id="pool-manager__encryption_algorithm-select"
-            [(ngModel)]="encryption_algorithm"
-            class="form-control"
-            placeholder="{{'Encryption Algorithm' | translate}}"
-          >
+          <div class="inline">
+            <mat-form-field>
+              <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
+            </mat-form-field>
+            <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
+          </div>
+          <div class="inline">
+            <mat-checkbox
+              id="pool-manager__encryption-checkbox"
+              [(ngModel)]="isEncrypted"
+              class="form-control"
+              placeholder="{{Encryption | translate}}"
+              (change)="isEncryptedChecked()" >
+                {{"Encryption" | translate}}
+            </mat-checkbox>
+            <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
+          </div>
+          <div class="inline encryption-select">
+            <mat-select
+              *ngIf="isEncrypted"
+              id="pool-manager__encryption_algorithm-select"
+              [(ngModel)]="encryption_algorithm"
+              class="form-control"
+              placeholder="{{'Encryption Algorithm' | translate}}"
+            >
               <mat-option *ngFor="let option of encryption_algorithm_options" [value]="option.value"
                 id="encryption_algorithm_option_{{option.label}}">
                   {{ option.label }}
               </mat-option>
 
-          </mat-select>
+            </mat-select>
+          </div>
           <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
           <div class="button-bar">
             <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>

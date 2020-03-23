@@ -176,3 +176,12 @@ button.vdev-option p{
 .button-spacer {
 	width: 50px;
 }
+
+.inline {
+	margin-right: 5px;
+	display: inline-block;
+}
+
+.encryption-select.inline {
+	width: 200px;
+}
