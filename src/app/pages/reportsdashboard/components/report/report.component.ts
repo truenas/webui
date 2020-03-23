@@ -70,6 +70,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   @Input() localControls?: boolean = true;; 
   @Input() report: Report;
   @Input() identifier?: string;
+  @Input() retroLogo?: string;
   @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
 
 
