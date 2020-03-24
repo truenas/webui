@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../../../../common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -16,52 +17,32 @@ export class UserQuotaFormComponent {
   public isEntity = true;
   public route_success: string[] = [ 'storage', 'pools' ];
   public entityForm: any;
-  public dataFields = ['user_data_quota'];
   public pk: string;
   public selectedUsers = [];
+  public selectedUsers2 = [];
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
-      name: 'helptext.users.heading',
+      name: helptext.users.quota_title,
       label: true,
       width: '48%',
       config: [
         {
-          type: 'select',
-          name: 'user',
-          placeholder: 'helptext.users.placeholder',
-          tooltip: 'helptext.users.tooltip',
-          multiple: true,
-          options: [],
-        },
-
-        {
-          type: 'input',
-          name: 'user_search',
-          placeholder: 'helptext.users.data_placeholder',
-          tooltip: 'helptext.users.data_tooltip',
-          blurStatus: true,
-          blurEvent: this.userSearchBlurEvent,
-          parent: this,
-          isLoading: false
-        },
-        {
           type: 'input',
           name: 'user_data_quota',
-          placeholder: 'helptext.users.data_placeholder',
-          tooltip: 'helptext.users.data_tooltip',
+          placeholder: helptext.users.data_quota.placeholder,
+          tooltip: helptext.users.data_quota.tooltip,
           value: 0,
           blurStatus: true,
           blurEvent: this.userBlurEvent,
           parent: this,
-          isLoading: true
         },
         {
           type: 'input',
           name: 'user_obj_quota',
-          placeholder: 'helptext.users.obj_placeholder',
-          tooltip: 'helptext.users.obj_tooltip',
+          placeholder: helptext.users.obj_quota.placeholder,
+          tooltip: helptext.users.obj_quota.tooltip,
           value: 0
         }
       ]
@@ -73,15 +54,23 @@ export class UserQuotaFormComponent {
       config: []
     },
     {
-      name: 'helptext.users.heading',
+      name: helptext.users.user_title,
       label: true,
       width: '48%',
       config: [
         {
+          type: 'select',
+          name: 'system_users',
+          placeholder: helptext.users.system_select.placeholder,
+          tooltip: helptext.users.system_select.tooltip,
+          multiple: true,
+          options: [],
+        },
+        {
           type: 'chip',
-          name: 'selected_users',
-          placeholder: 'Selected Users',
-          tooltip: 'Selected Users',
+          name: 'searched_users',
+          placeholder: helptext.users.search.placeholder,
+          tooltip: helptext.users.search.tooltip,
           value: this.selectedUsers,
           id: 'selected-users_chiplist'
         }
@@ -96,7 +85,7 @@ export class UserQuotaFormComponent {
 
   constructor(protected ws: WebSocketService, protected storageService: StorageService,
     protected aroute: ActivatedRoute, protected loader: AppLoaderService,
-    protected router: Router, protected userService: UserService) { }
+    protected router: Router, protected userService: UserService, private dialog: DialogService) { }
 
   preInit(entityForm: EntityFormComponent) {
     const paramMap: any = (<any>this.aroute.params).getValue();
@@ -106,58 +95,41 @@ export class UserQuotaFormComponent {
   async validateUser(value) {
     const validUser = await this.userService.getUserObject(value);
     if (!validUser) {
-      console.log('Not Coo!')
-      const c = (<HTMLInputElement>document.getElementById('mat-chip-list-0').lastChild);
-      c.childNodes[c.childNodes.length-3].classList.add('chip-warn')
+      this.dialog.Info('Unknown User', `${value} is not a valid user.`)
+      // const c = (<HTMLInputElement>document.getElementById('mat-chip-list-0').lastChild);
+      // c.childNodes[c.childNodes.length-3].classList.add('chip-warn')
+    } else {
+      console.log(validUser)
     }
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    const users = _.find(this.fieldConfig, {name: "user"});
-
-    this.entityForm.formGroup.controls['selected_users'].valueChanges.subscribe(value => {
-      if (value) {
-        this.validateUser(value[value.length - 1])
-      }
-    })
+    const users = _.find(this.fieldConfig, {name: "system_users"});
 
     this.ws.call('user.query').subscribe(res => {
       res.map(user => {
         users.options.push({label: user.username, value: user.uid})
       });
-
-      this.ws.call('pool.dataset.get_quota', [this.pk, 'USER']).subscribe(res => {
-        const names = []
-        const userName = entityEdit.formGroup.controls['user'];
-        const userDataQuota = entityEdit.formGroup.controls['user_data_quota'];
-        const userObjQuota = entityEdit.formGroup.controls['user_obj_quota'];
-        res.map(user => {
-          names.push(user.id);
-          userDataQuota.setValue(this.storageService.convertBytestoHumanReadable(user.quota, 0));
-          userObjQuota.setValue(user.obj_quota);
-        })
-        userName.setValue(names);
-        _.find(this.fieldConfig, {name: 'user_data_quota'}).isLoading = false;
-      },
-      err => {
-        console.log(err)
-      });
     });
 
+    this.entityForm.formGroup.controls['searched_users'].valueChanges.subscribe(value => {
+      if (value) {
+        console.log(value)
+        this.validateUser(value[value.length - 1])
+      }
+    })
 
-    this.dataFields.forEach(field =>
-      entityEdit.formGroup.controls[field].valueChanges.subscribe((value) => {
-        const formField = _.find(this.fieldConfig, { name: field });
-        const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
-        formField['hasErrors'] = false;
-        formField['errors'] = '';
-        if (filteredValue !== undefined && isNaN(filteredValue)) {
-          formField['hasErrors'] = true;
-          formField['errors'] = helptext.shared.input_error;
-        };
-      })
-    );
+    entityEdit.formGroup.controls['user_data_quota'].valueChanges.subscribe((value) => {
+      const formField = _.find(this.fieldConfig, { name: 'user_data_quota' });
+      const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
+      formField['hasErrors'] = false;
+      formField['errors'] = '';
+      if (filteredValue !== undefined && isNaN(filteredValue)) {
+        formField['hasErrors'] = true;
+        formField['errors'] = helptext.shared.input_error;
+      };
+    })
   }
 
   userBlurEvent(parent) {
@@ -166,27 +138,25 @@ export class UserQuotaFormComponent {
     }
   }
 
-  async userSearchBlurEvent(parent) {
-    if (parent.entityForm) {
-      const name = parent.entityForm.formGroup.controls.user_search.value;
-      const user = await parent.userService.getUserObject(name);
-      if (user) {
-        parent.selectedUsers.push(name);
-        // (parent.entityForm.formGroup.controls.selected_users.setValue(parent.entityForm.formGroup.controls.selected_users.value += ' ' + name))
-      }
-    }
-  }
-
   transformValue(parent, fieldname: string) {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
-    // Clear humanReadable value to keep from accidentally setting it elsewhere
     parent.storageService.humanReadable = '';
   }
 
   customSubmit(data) {
     const payload = [];
-    if (data.user) {
-      data.user.forEach((user) => {
+
+    console.log(data)
+    if (data.searched_users.length > 0) {
+      data.searched_users.forEach(user => {
+        if (!data.system_users.includes(user)) {
+          data.system_users.push(user)
+        }
+      })
+    }
+
+    if (data.system_users) {
+      data.system_users.forEach((user) => {
         payload.push({
           quota_type: 'USER',
           id: user.toString(),
@@ -195,28 +165,18 @@ export class UserQuotaFormComponent {
         {
           quota_type: 'USEROBJ',
           id: user.toString(),
-          quota_value: data.user_obj_quota
+          quota_value: parseInt(data.user_obj_quota, 10)
         })
       });
     }
-    if (data.group) {
-      data.group.forEach((group) => {
-        payload.push({
-          quota_type: 'GROUP',
-          id: group.toString(),
-          quota_value: this.storageService.convertHumanStringToNum(data.group_data_quota)
-        },
-        {
-          quota_type: 'GROUPOBJ',
-          id: group.toString(),
-          quota_value: data.group_obj_quota
-        })
-      })
-    }
+    console.log(payload)
     this.loader.open();
     this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(res => {
       this.loader.close();
       this.router.navigate(new Array('/').concat(this.route_success));
+    }, err => {
+      this.loader.close();
+      this.dialog.errorReport('Error', err.reason, err.trace.formatted)
     })
   }
 

@@ -3,35 +3,35 @@ import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
     users: {
-        title: T('Dataset Users'),
-        action_label: T('Define Quotas for Selected Users'),
-        dialog: {
-          title: T('Define quotas for selected users'),
-          list: {
-            placeholder: T('Selected Users'),
-            tooltip: T('This list can be edited in the table. A quota change \
- applies to all users in this list.')
+        quota_title: T('Set Quotas'),
+        user_title: T('Apply Quotas to Selected Users'),
+        system_select: {
+            placeholder: T('Select Users on this System'),
+            tooltip: T('This list includes only users on this system.')
+          },
+          search: {
+            placeholder: T('Search For Other Users'),
+            tooltip: T('Search for users which are connected (via Active Directory, etc.). \
+ Type a user name followed by <i>TAB</i>. A message will be displayed \
+ if the name does not match a valid user.')
           },
           data_quota: {
             placeholder: T('User Data Quota ') + globalHelptext.human_readable.suggestion_label,
             tooltip: T('Amount of disk space that can be used by the selected users. \
- Enter 0 (zero) to remove the quota.') + globalHelptext.human_readable.suggestion_tooltip
+ Enter 0 (zero) to remove the quota (i.e., to set it to <i>unlimited</i>).') + globalHelptext.human_readable.suggestion_tooltip
           },
           obj_quota: {
             placeholder: T('User Object Quota'),
             tooltip: T('Number of objects that can be owned by each of the selected users. \
-Entering <code>0</code> (zero) removes the quota.'),
-          }
-        },
+Entering <code>0</code> (zero) removes the quota (i.e., to set it to <i>unlimited</i>).'),
+          },
         filter_dialog: {
           title_show: T('Show All Users'),
-          message_show: T('Show all available users, even those that have not used any data. \
- This is useful for setting quotas for users.'),
+          message_show: T('Show all available users, even those that have not used any data.'),
           button_show: T('Show'),
 
           title_filter: T('Filter Users'),
-          message_filter: T('Show only those users who are using data. This is the default view \
- and is useful for monitoring data use.'),
+          message_filter: T('Show only those users who are using data. This is the default view.'),
           button_filter: T('Filter'),
         },
         table_helptext_title: T('Instructions'),
