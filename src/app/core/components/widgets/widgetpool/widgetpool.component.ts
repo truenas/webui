@@ -438,4 +438,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return obj[index];
   }
 
+  percentAsNumber(value: string){
+    const spl = value.split('%');
+    return parseInt(spl[0]);
+  }
+
 }
