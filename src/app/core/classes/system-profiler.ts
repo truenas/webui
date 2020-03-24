@@ -163,7 +163,7 @@ export class SystemProfiler {
   
   private parseSensorData(obj){
     let powerStatus = obj.filter(v => v.name.startsWith("PS"));
-    if(this.enclosures[this.headIndex].model == "M Series"){
+    if(this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model == "M Series"){
       const elements = powerStatus.map((item, index) => {
         item.descriptor = item.name;
         item.status = item.value == 1 ? 'OK' : 'FAILED';
@@ -213,7 +213,8 @@ export class SystemProfiler {
           if(!disk.device && disk.status == "REMOVED"){ 
             return; 
           } else {
-            let spl = disk.device.split('p');
+            console.log(disk);
+            let spl = disk.disk.split('p'); // was disk.device
             let name = spl[0]
             v.disks[name] = dIndex;
           }

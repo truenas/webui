@@ -58,8 +58,8 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         // hide acme for truenas
         _.find(_.find(menuItem, { state: 'system' }).sub, { state : 'acmedns'}).disabled = true;
 
-        for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
-          const targetMenu = this.navService.turenasFeatures[i];
+        for(let i = 0; i < this.navService.enterpriseFeatures.length; i++) {
+          const targetMenu = this.navService.enterpriseFeatures[i];
           _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
         }
       }
@@ -68,6 +68,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         observerClass: this,
         eventName: "SysInfo"
         }).subscribe((evt:CoreEvent) => {
+          console.log(evt.data);
          
           if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
             // Feature detection
@@ -84,6 +85,13 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
               const docUrl = this.docsService.docReplace("--docurl--");
               const guide = _.find(menuItem, {name: 'Guide'});
               guide.state = docUrl;
+          }
+
+          if( (evt.data.system_manufacturer && evt.data.system_manufacturer.toLowerCase == 'ixsystems') || true){
+            for(let i = 0; i < this.navService.hardwareFeatures.length; i++) {
+              const targetMenu = this.navService.hardwareFeatures[i];
+              _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
+            }
           }
 
       });
