@@ -301,8 +301,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         id:evt.data[i].id,
         name:evt.data[i].name,
         used:evt.data[i].used.parsed,
-        used_pct: used_pct.toFixed(0) + '%'
+        used_pct: (used_pct * 100).toFixed(0) + '%'
       }
+      if(zvol.id == 'tank')console.log(zvol.id + ': ' + used_pct);
       vd[zvol.id] = zvol;
     }
     this.volumeData = vd;
