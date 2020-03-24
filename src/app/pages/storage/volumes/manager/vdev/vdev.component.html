@@ -34,7 +34,7 @@
     
             <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-rowIndex="rowIndex" let-onCheckboxChangeFn="onCheckboxChangeFn">
               <div>
-                <mat-checkbox id="vdev__disks-{{disks[rowIndex].devname}}" [checked]="isSelected" (change)="onCheckboxChangeFn($event)">&nbsp;</mat-checkbox>
+                <mat-checkbox id="vdev__disks-{{disks[rowIndex] ? disks[rowIndex].devname : rowIndex}}" [checked]="isSelected" (change)="onCheckboxChangeFn($event)">&nbsp;</mat-checkbox>
               </div>
             </ng-template>
           </ngx-datatable-column>
