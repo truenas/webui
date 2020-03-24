@@ -889,22 +889,18 @@ export class VolumesListTableConfig implements InputTableConf {
             },
             {
               id: rowData.name,
-              name: T('Edit User Quotas'),
-              label: T("Edit User Quotas"),
-              matTooltip: helptext.acl_edit_msg,
-              ttposition: 'left',
+              name: T('User Quotas'),
+              label: T('User Quotas'),
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "quotas", "form", row1.id
+                  "storage", "pools", "user-quotas", row1.id
                 ]));
               }
             },
             {
               id: rowData.name,
-              name: T('Edit Group Quotas'),
-              label: T("Edit Group Quotas"),
-              matTooltip: helptext.acl_edit_msg,
-              ttposition: 'left',
+              name: T('Group Quotas'),
+              label: T('Group Quotas'),
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
                   "storage", "pools", "group-quotas", row1.id

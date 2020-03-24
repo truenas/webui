@@ -70,11 +70,11 @@ export const routes: Routes = [
           },
           {
             path: 'user-quotas/:pk', component: DatasetQuotasUserlistComponent,
-            data: { title: 'Edit User Quotas', breadcrumb: 'Edit User Quotas' },
+            data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
           },
           {
-            path: 'quotas/form/:pk', component: UserQuotaFormComponent,
-            data: { title: 'Set Quotas', breadcrumb: 'Set Quotas'}
+            path: 'user-quotas-form/:pk', component: UserQuotaFormComponent,
+            data: { title: 'Set User Quotas', breadcrumb: 'Set User Quotas'}
           },
           {
             path: 'group-quotas/:pk', component: DatasetQuotasGrouplistComponent,

@@ -3,6 +3,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
     users: {
+      table_title: T('User Quotas'),
         quota_title: T('Set Quotas'),
         user_title: T('Apply Quotas to Selected Users'),
         system_select: {
@@ -40,7 +41,13 @@ Entering <code>0</code> (zero) removes the quota (i.e., to set it to <i>unlimite
  empty, it is because there are no users, or that any existing users have not used any data. <br /><br /> \
  Use the settings icon (gear) at the right to view all users. Use the fiter field to find specific users. Click \
  on column headings to sort users. Use the checkboxes on each row to select one or more users to edit. Then open the \
- edit form by clicking the Add button.')
+ edit form by clicking the Add button.'),
+        dialog: {
+          title: T('Edit User'),
+          user: {
+            placeholder: T('User'),
+          }
+        }
       },
 
     groups: {

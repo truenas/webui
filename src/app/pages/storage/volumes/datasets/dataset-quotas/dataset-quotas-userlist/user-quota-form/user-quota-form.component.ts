@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
@@ -15,9 +14,9 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 })
 export class UserQuotaFormComponent {
   public isEntity = true;
-  public route_success: string[] = [ 'storage', 'pools' ];
   public entityForm: any;
   public pk: string;
+  protected route_success: string[];
   public selectedUsers = [];
   public selectedUsers2 = [];
 
@@ -105,6 +104,7 @@ export class UserQuotaFormComponent {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
     const users = _.find(this.fieldConfig, {name: "system_users"});
 
     this.ws.call('user.query').subscribe(res => {
