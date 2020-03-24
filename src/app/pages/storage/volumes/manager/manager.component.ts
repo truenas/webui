@@ -581,7 +581,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           .pipe(
             switchMap((r: any) => {
               if (this.isEncrypted) {
-                console.log(r);
                 const downloadDialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                 downloadDialogRef.componentInstance.new = true;
                 downloadDialogRef.componentInstance.volumeId = r.result.id;
