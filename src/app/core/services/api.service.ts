@@ -78,22 +78,6 @@ export class ApiService {
         responseEvent: "VolumeData"
       }
     },
-    /*VolumeDataRequest:{
-      apiCall:{
-        protocol: "websocket",
-        version: 2.0,
-        namespace: "pool.dataset.query",
-        args: [],
-        responseEvent: "VolumeData"
-      },
-      preProcessor(def:ApiCall){
-        const queryFilters = [
-          ["name", "~", "^[^\/]+$"], // Root datasets only
-        ];
-
-        return { args: [queryFilters], ...def};
-      },
-    },*/
     DisksRequest:{
       apiCall:{
         protocol:"websocket",
