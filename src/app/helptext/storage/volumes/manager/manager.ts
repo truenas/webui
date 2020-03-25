@@ -40,6 +40,20 @@ force_warning: T("The current pool layout is not recommended.\
 Override the following errors?"),
 force_warnings:{
     'diskSizeWarning': T("One or more data vdevs has disks of different sizes.")
-}
+},
+data_vdev_title: T("Data"),
+data_vdev_description: T("Normal vdev type, used for primary storage operations. ZFS pools always have at least one DATA vdev."),
+cache_vdev_title: T("Cache"),
+cache_vdev_description: T("ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations. Optional vdev that can be removed."),
+log_vdev_title: T("Log"),
+log_vdev_description: T("ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed."),
+spare_vdev_title: T("Hot Spare"),
+spare_vdev_description: T("Drive reserved for inserting into DATA pool vdevs when an active drive has failed."),
+special_vdev_title: T("Metadata"),
+special_vdev_description: T("Special Allocation class, used to create Fusion pools. Optional vdev type\
+ which is used to speed up metadata and small block IO."),
+dedup_vdev_title: T("Dedup"),
+dedup_vdev_description: T("De-duplication tables are stored on this special vdev type. These vdevs must\
+ be sized to <i>X</i> GiB for each <i>X</i> TiB of general storage.")
 
 }

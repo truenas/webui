@@ -142,7 +142,7 @@
                         <strong>Used Space:</strong>
                       </div>
   
-                      <div class="td" *ngIf="volumeData.used_pct[0] == '8' || volumeData.used_pct[0] == '9' || volumeData.used_pct.length > 3; else safeSpace">
+                      <div class="td" *ngIf="percentAsNumber(volumeData.used_pct) >= 80; else safeSpace">
                         &nbsp;<span class="value-used">{{volumeData.used_pct}}</span>
                         <span class="error icon">
                           &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>

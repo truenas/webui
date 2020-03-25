@@ -51,6 +51,7 @@
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
                   <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" | translate }})</div>
+                  <div *ngIf="!product_image && product_type == 'ENTERPRISE' " class="ha-node-status">(Unsupported Hardware)</div>
               </div>
             </div>
 

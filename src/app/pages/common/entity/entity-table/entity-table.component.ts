@@ -118,6 +118,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public rowHeight = 50;
   public zoomLevel: number;
   public tableHeight:number = (this.paginationPageSize * this.rowHeight) + 100;
+  public fixedTableHight = false;
+  public cardHeaderComponentHight = 0;
   public windowHeight: number;
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
@@ -797,8 +799,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   protected setPaginationInfo() {
+    this.cardHeaderComponentHight = document.getElementById('cardHeaderContainer') ? document.getElementById('cardHeaderContainer').clientHeight : 0;
+
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
+    this.fixedTableHight = true;
 
     if( beginIndex < this.currentRows.length && endIndex >= this.currentRows.length) {
       this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
@@ -807,7 +812,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.seenRows = this.currentRows;
     }
-
+    if (this.seenRows.length < this.paginationPageSize && this.paginationPageIndex === 0) {
+      this.fixedTableHight = false;
+    }
     // This section controls page height for infinite scrolling
     if (this.currentRows.length === 0) {
       this.tableHeight = 153;
@@ -817,10 +824,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         this.tableHeight = (this.paginationPageSize * this.rowHeight) + 100;
       }
-      if (this.tableHeight < (160 + this.getRowDetailHeight())) {
-        this.tableHeight = 160 + this.getRowDetailHeight();
-      }
     }
+    this.startingHeight = this.tableHeight;
 
     // Displays an accurate number for some edge cases
     if (this.paginationPageSize > this.currentRows.length) {
@@ -1027,28 +1032,33 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleExpandRow(row) {
     this.table.rowDetail.toggleExpandRow(row);
-    this.updateTableHeightAfterDetailToggle();
+    if (!this.fixedTableHight) {
+      this.updateTableHeightAfterDetailToggle();
+    }
   }
 
   resetTableToStartingHeight() {
-    /*setTimeout(() => {
+    setTimeout(() => {
       if (!this.startingHeight) {
         this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
       }
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
-    }, 100);*/
+    }, 100);
   }
 
   updateTableHeightAfterDetailToggle() {
-    /*if (!this.startingHeight) {
+    if (!this.startingHeight) {
       this.resetTableToStartingHeight();
     }
     setTimeout(() => {
       this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
-      const newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
-      const heightStr = `height: ${newHeight}px`;
-      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 100);*/
+      let newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
+      if (newHeight > window.innerHeight - 233 - this.cardHeaderComponentHight) {
+        newHeight = window.innerHeight - 233 - this.cardHeaderComponentHight;
+      }
+
+      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${newHeight}px`);
+    }, 100);
   }
 
   getButtonClass(prop) {

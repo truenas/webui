@@ -104,8 +104,9 @@
   <!-- END OF CONTROLS SECTION -->
 
   <!-- INSERT DYNAMIC CARDHEADER HERE -->
-  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]=""
-    [parent]="this"></ng-template>
+  <div id="cardHeaderContainer" *ngIf="conf.cardHeaderComponent">
+    <ng-template dynamicComponent [component]="conf.cardHeaderComponent" [config]="" [parent]="this"></ng-template>
+  </div>
 
   <!-- TABLE START -->
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar"
