@@ -17,57 +17,71 @@ import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { Formconfiguration } from '../../common/entity/entity-form/entity-form.component';
 import { T } from '../../../translate-marker';
+import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 
 @Component({
   selector : 'app-import-disk',
-  templateUrl : './import-disk.component.html'
+  template: `
+  <div *ngIf="initialized">
+    <entity-form [conf]="this"></entity-form>
+  </div>`
 })
 export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   public initialized = true;
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type : 'select',
-      name : 'volume',
-      placeholder : helptext.import_disk_volume_placeholder,
-      tooltip: helptext.import_disk_volume_tooltip,
-      options: [],
-      required: true,
-      validation : helptext.import_disk_volume_validation
-    },
-    {
-      type : 'radio',
-      name : 'fs_type',
-      placeholder : helptext.import_disk_fs_type_placeholder,
-      tooltip: helptext.import_disk_fs_type_tooltip,
-      options: [
-                    {value:'ufs', label:'UFS'},
-                    {value:'ntfs', label:'NTFS'},
-                    {value:'msdosfs', label:'MSDOSFS'},
-                    {value: 'ext2fs', label:'EXT2FS'}
-                  ],
-      required: true,
-      validation : helptext.import_disk_fs_type_validation
-    },
-    {
-      type: 'select',
-      name: 'msdosfs_locale',
-      placeholder: helptext.import_disk_msdosfs_locale_placeholder,
-      tooltip: helptext.import_disk_msdosfs_locale_tooltip,
-      options: [],
-      isHidden: true,
-    },
-    {
-      type : 'explorer',
-      name : 'dst_path',
-      placeholder : helptext.import_disk_dst_path_placeholder,
-      tooltip: helptext.import_disk_dst_path_tooltip,
-      explorerType: 'directory',
-      initial: '/mnt',
-      required: true,
-      validation : helptext.import_disk_dst_path_validation
-    },
+        name: helptext.fieldset_disk,
+        label: true,
+        class: 'general',
+        width: '49%',
+        config: [
+          {
+            type : 'select',
+            name : 'volume',
+            placeholder : helptext.import_disk_volume_placeholder,
+            tooltip: helptext.import_disk_volume_tooltip,
+            options: [],
+            required: true,
+            validation : helptext.import_disk_volume_validation
+          },
+          {
+            type : 'radio',
+            name : 'fs_type',
+            placeholder : helptext.import_disk_fs_type_placeholder,
+            tooltip: helptext.import_disk_fs_type_tooltip,
+            options: [
+                          {value:'ufs', label:'UFS'},
+                          {value:'ntfs', label:'NTFS'},
+                          {value:'msdosfs', label:'MSDOSFS'},
+                          {value: 'ext2fs', label:'EXT2FS'}
+                        ],
+            required: true,
+            validation : helptext.import_disk_fs_type_validation
+          },
+          {
+            type: 'select',
+            name: 'msdosfs_locale',
+            placeholder: helptext.import_disk_msdosfs_locale_placeholder,
+            tooltip: helptext.import_disk_msdosfs_locale_tooltip,
+            options: [],
+            isHidden: true,
+          },
+          {
+            type : 'explorer',
+            name : 'dst_path',
+            placeholder : helptext.import_disk_dst_path_placeholder,
+            tooltip: helptext.import_disk_dst_path_tooltip,
+            explorerType: 'directory',
+            initial: '/mnt',
+            required: true,
+            validation : helptext.import_disk_dst_path_validation
+          },
+        ]
+    }
   ];
+
   public volume: any;
   public fs_type: any;
   private fs_type_subscription: any;
@@ -89,6 +103,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   }
 
   afterInit(entityForm: any) {
+    this.fieldConfig = entityForm.fieldConfig;
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
     this.fs_type_list = _.find(this.fieldConfig, {'name':'fs_type'});
     this.msdosfs_locale = _.find(this.fieldConfig, {'name':'msdosfs_locale'});
