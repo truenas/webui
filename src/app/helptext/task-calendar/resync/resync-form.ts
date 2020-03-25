@@ -3,6 +3,11 @@ import { rangeValidator } from '../../../pages/common/entity/entity-form/validat
 import { T } from '../../../translate-marker';
 
 export default {
+    fieldset_source: T('Source'),
+    fieldset_remote: T('Remote'),
+    fieldset_schedule: T('Schedule'),
+    fieldset_options: T('More Options'),
+
     rsync_path_placeholder: T('Path'),
     rsync_path_tooltip: T('Browse to the path to be copied. The \
                 <a href="--docurl--/intro.html#path-and-name-lengths" \
