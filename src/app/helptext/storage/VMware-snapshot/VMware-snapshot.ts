@@ -2,6 +2,7 @@ import { Validators } from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 export default {
+fieldset_vmsnapshot: T('VM Snapshot'),
 // storage/VMware-snapshot/VMware-snapshot-form
 VMware_snapshot_form_hostname_placeholder: T('Hostname'),
 VMware_snapshot_form_hostname_tooltip: T('Enter the IP address or hostname of the VMware host.\
