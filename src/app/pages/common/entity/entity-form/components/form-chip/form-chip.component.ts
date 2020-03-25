@@ -58,9 +58,7 @@ export class FormChipComponent implements Field, OnInit {
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
-      console.log(event)
       this.chipLists.push(event.option.viewValue);
-      console.log(this.chipLists)
       this.chipInput.nativeElement.value = '';
       this.chipCtrl.setValue(null);
     }

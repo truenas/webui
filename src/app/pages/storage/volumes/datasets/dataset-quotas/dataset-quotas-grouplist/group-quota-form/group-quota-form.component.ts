@@ -8,10 +8,10 @@ import { DialogService, StorageService, WebSocketService, AppLoaderService, User
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 
 @Component({
-  selector: 'app-user-quota-form',
+  selector: 'app-group-quota-form',
   template: `<entity-form [conf]="this"></entity-form>`
 })
-export class UserQuotaFormComponent {
+export class GroupQuotaFormComponent {
   public isEntity = true;
   public entityForm: any;
   public pk: string;
@@ -22,15 +22,15 @@ export class UserQuotaFormComponent {
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
-      name: helptext.users.quota_title,
+      name: helptext.groups.quota_title,
       label: true,
       width: '48%',
       config: [
         {
           type: 'input',
           name: 'data_quota',
-          placeholder: helptext.users.data_quota.placeholder,
-          tooltip: helptext.users.data_quota.tooltip,
+          placeholder: helptext.groups.data_quota.placeholder,
+          tooltip: helptext.groups.data_quota.tooltip,
           value: 0,
           blurStatus: true,
           blurEvent: this.blurEvent,
@@ -39,8 +39,8 @@ export class UserQuotaFormComponent {
         {
           type: 'input',
           name: 'obj_quota',
-          placeholder: helptext.users.obj_quota.placeholder,
-          tooltip: helptext.users.obj_quota.tooltip,
+          placeholder: helptext.groups.obj_quota.placeholder,
+          tooltip: helptext.groups.obj_quota.tooltip,
           value: 0
         }
       ]
@@ -52,23 +52,23 @@ export class UserQuotaFormComponent {
       config: []
     },
     {
-      name: helptext.users.user_title,
+      name: helptext.groups.group_title,
       label: true,
       width: '48%',
       config: [
         {
           type: 'select',
           name: 'system_entries',
-          placeholder: helptext.users.system_select.placeholder,
-          tooltip: helptext.users.system_select.tooltip,
+          placeholder: helptext.groups.system_select.placeholder,
+          tooltip: helptext.groups.system_select.tooltip,
           multiple: true,
           options: [],
         },
         {
           type: 'chip',
           name: 'searched_entries',
-          placeholder: helptext.users.search.placeholder,
-          tooltip: helptext.users.search.tooltip,
+          placeholder: helptext.groups.search.placeholder,
+          tooltip: helptext.groups.search.tooltip,
           value: this.selectedEntries,
           id: 'selected-entries_chiplist',
           autocomplete: true,
@@ -94,22 +94,22 @@ export class UserQuotaFormComponent {
   }
 
   async validateEntry(value) {
-    const validEntry = await this.userService.getUserObject(value);
+    const validEntry = await this.userService.getGroupObject(value);
     if (!validEntry) {
-      this.dialog.Info('Unknown User', `${value} is not a valid user.`)
+      this.dialog.Info('Unknown Group', `${value} is not a valid group.`)
     }
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
+    this.route_success = ['storage', 'pools', 'group-quotas', this.pk];
     const entries = _.find(this.fieldConfig, {name: "system_entries"});
-    this.entryField = _.find(this.fieldSets.find(set => set.name === helptext.users.user_title).config,
+    this.entryField = _.find(this.fieldSets.find(set => set.name === helptext.groups.group_title).config,
       { 'name': 'searched_entries' });
 
-    this.ws.call('user.query').subscribe(res => {
+    this.ws.call('group.query').subscribe(res => {
       res.map(entry => {
-        entries.options.push({label: entry.username, value: entry.uid})
+        entries.options.push({label: entry.group, value: entry.gid});
       });
     });
 
@@ -143,10 +143,10 @@ export class UserQuotaFormComponent {
   }
 
   updateSearchOptions(value = "", parent) {
-    parent.userService.userQueryDSCache(value).subscribe(items => {
+    parent.userService.groupQueryDSCache(value).subscribe(items => {
       const entries = [];
       for (let i = 0; i < items.length; i++) {
-        entries.push({ label: items[i].username, value: items[i].username });
+        entries.push({ label: items[i].group, value: items[i].group });
       }
       parent.entryField.searchOptions = entries;
     });
@@ -168,12 +168,12 @@ export class UserQuotaFormComponent {
     if (data.system_entries) {
       data.system_entries.forEach((entry) => {
         payload.push({
-          quota_type: 'USER',
+          quota_type: 'GROUP',
           id: entry.toString(),
           quota_value: this.storageService.convertHumanStringToNum(data.data_quota)
         },
         {
-          quota_type: 'USEROBJ',
+          quota_type: 'GROUPOBJ',
           id: entry.toString(),
           quota_value: parseInt(data.obj_quota, 10)
         })
@@ -189,4 +189,6 @@ export class UserQuotaFormComponent {
       this.dialog.errorReport('Error', err.reason, err.trace.formatted)
     })
   }
+
+
 }

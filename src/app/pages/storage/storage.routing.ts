@@ -30,6 +30,7 @@ import { EntityDashboardComponent } from '../common/entity/entity-dashboard/enti
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
+import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 
 export const routes: Routes = [
   {
@@ -79,6 +80,10 @@ export const routes: Routes = [
           {
             path: 'group-quotas/:pk', component: DatasetQuotasGrouplistComponent,
             data: { title: 'Edit Group Quotas', breadcrumb: 'Edit Group Quotas' }
+          },
+          {
+            path: 'group-quotas-form/:pk', component: GroupQuotaFormComponent,
+            data: { title: 'Set Group Quotas', breadcrumb: 'Set Group Quotas'}
           },
           {
             path: 'id/:pk/dataset/acl/:path', component: DatasetAclComponent,

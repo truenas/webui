@@ -18,7 +18,7 @@
                 [matChipInputAddOnBlur]="addOnBlur"
                 (matChipInputTokenEnd)="add($event)"
             >
-            <ng-container #autoCompleteBlock>
+            <ng-template #autoCompleteBlock>
               <input
                 [placeholder]="config.placeholder | translate"
                 #chipInput
@@ -35,7 +35,7 @@
                 <span>{{ option.label }}</span>
                 </mat-option>
               </mat-autocomplete>
-            </ng-container>
+            </ng-template>
         </mat-chip-list>
     </mat-form-field>
 

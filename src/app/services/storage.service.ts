@@ -335,7 +335,6 @@ export class StorageService {
   // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
     convertHumanStringToNum(hstr, dec=false, allowedUnits?: string) {
-      console.log(hstr)
       const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
 
       let num = 0;

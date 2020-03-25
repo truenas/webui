@@ -47,6 +47,7 @@ import { JobService } from 'app/services';
 import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
+import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 
 @NgModule({
   imports : [
@@ -87,6 +88,7 @@ import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/datase
     DatasetQuotasUserlistComponent,
     DatasetQuotasGrouplistComponent,
     UserQuotaFormComponent,
+    GroupQuotaFormComponent,
   ],
   entryComponents: [SnapshotDetailsComponent],
   providers : [UserService, StorageService, MessageService, JobService]

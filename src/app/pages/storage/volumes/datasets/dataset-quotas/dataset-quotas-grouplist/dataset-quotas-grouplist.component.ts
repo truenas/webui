@@ -1,29 +1,28 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WebSocketService, StorageService, DialogService, AppLoaderService } from '../../../../../../services';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ValidationErrors, FormControl } from '@angular/forms';
-import { T } from '../../../../../../translate-marker';
+import { WebSocketService, StorageService, DialogService, AppLoaderService } from 'app/services';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { T } from 'app/translate-marker';
+import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
-import globalHelptext from '../../../../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-dataset-quotas-grouplist',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class DatasetQuotasGrouplistComponent {
-  public title = helptext.groups.title;
-  protected entityList: any;
-  protected noActions = true;
   public pk: string;
+  public title = helptext.groups.table_title;
+  protected entityList: any;
   public quotaValue: number;
   protected fullFilter =  [['OR',[['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
   protected emptyFilter = [];
   protected useFullFilter = true;
 
   public columns: Array < any > = [
-    { name: T('Group Name'), prop: 'name', always_display: true, minWidth: 150},
-    { name: T('ID'), prop: 'id', hidden: false },
+    { name: T('Name'), prop: 'name', always_display: true, minWidth: 150},
+    { name: T('ID'), prop: 'id', hidden: true },
     { name: T('Data Quota'), prop: 'quota', hidden: false },
     { name: T('DQ Bytes Used'), prop: 'used_bytes', hidden: false },
     { name: T('DQ % Used'), prop: 'used_percent', hidden: false  },
@@ -35,139 +34,124 @@ export class DatasetQuotasGrouplistComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true,
     deleteMsg: {
       title: T('Group'),
       key_props: ['name']
     }
   };
 
-  protected globalConfig = {
-    id: "config",
-    onClick: () => {
-      this.toggleDisplay();
-    }
-  };
-
-  public table_tooltip = true;
-  public table_tooltip_header = helptext.groups.table_helptext_title;
-  public table_tooltip_text = helptext.groups.table_helptext;
-
-  public multiActions: Array < any > = [{
-    id: "addToForm",
-    label: helptext.groups.action_label,
-    icon: "add",
-    enable: true,
-    ttpos: "above",
-    onClick: (selected) => {
-      const self = this;
-      const groupNames = [];
-      const gids = [];
-      let groups = '';
-      let dataQuota = 0;
-      let objQuota = 0;
-      selected.map(group => {
-        groupNames.push(group.name);
-        gids.push(group.id);
-        if (selected.length === 1) {
-          dataQuota = group.quota;
-          objQuota = group.obj_quota;
-        }
-      });
-      groups = groupNames.join(', ');
-      const conf: DialogFormConfiguration = {
-        title: helptext.groups.dialog.title,
-        fieldConfig: [
-          {
-            type: 'textarea',
-            name: 'selected_groups',
-            placeholder: helptext.groups.dialog.list.placeholder,
-            tooltip:  helptext.groups.dialog.list.tooltip,
-            value: groups,
-            readonly: true
-          },
-          {
-            type: 'input',
-            name: 'group_data_quota',
-            placeholder: helptext.groups.dialog.data_quota.placeholder,
-            tooltip: helptext.groups.dialog.data_quota.tooltip,
-            value: dataQuota,
-            id: 'group-data-quota_input',
-            blurStatus: true,
-            blurEvent: self.groupBlurEvent,
-            parent: self,
-            validation: [
-              (control: FormControl): ValidationErrors => {
-                const config = conf.fieldConfig.find(c => c.name === 'group_data_quota');
-                self.quotaValue = control.value;
-                const size = self.storageService.convertHumanStringToNum(control.value);
-                const errors = control.value && isNaN(size)
-                  ? { invalid_byte_string: true }
-                  : null
-
-                if (errors) {
-                  config.hasErrors = true;
-                  config.errors = globalHelptext.human_readable.input_error;
-                } else {
-                  config.hasErrors = false;
-                    config.errors = '';
-                }
-                return errors;
-              }
-            ],
-          },
-          {
-            type: 'input',
-            name: 'group_obj_quota',
-            placeholder: helptext.groups.dialog.obj_quota.placeholder,
-            tooltip: helptext.groups.dialog.obj_quota.tooltip,
-            value: objQuota
-          }
-        ],
-        saveButtonText: helptext.shared.set,
-        cancelButtonText: helptext.shared.cancel,
-
-        customSubmit(data) {
-          const groupData = data.formValue;
-          groupData.group = [];
-          gids.map(gid => {
-            groupData.group.push(gid)
-          })
-          const payload = [];
-          if (groupData.group) {
-            groupData.group.forEach((group) => {
-              payload.push({
-                quota_type: 'GROUP',
-                id: group.toString(),
-                quota_value: self.storageService.convertHumanStringToNum(groupData.group_data_quota)
-              },
-              {
-                quota_type: 'GROUPOBJ',
-                id: group.toString(),
-                quota_value: groupData.group_obj_quota
-              })
-            });
-          }
-          self.loader.open();
-          self.ws.call('pool.dataset.set_quota', [self.pk, payload]).subscribe(res => {
-            self.loader.close();
-            self.dialogService.closeAllDialogs();
-            self.entityList.getData();
-            selected.length = 0;
-          }, err => {
-            self.loader.close();
-            self.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
-          })
-        }
-      }
-      this.dialogService.dialogFormWide(conf);
-
-    }
-  }];
-
   constructor(protected ws: WebSocketService, protected storageService: StorageService,
     protected dialogService: DialogService, protected loader: AppLoaderService,
     protected router: Router, protected aroute: ActivatedRoute) { }
+
+  getAddActions() {
+    return [{
+        label: T('Toggle Display'),
+        onClick: () => {
+          this.toggleDisplay();
+        }
+      },
+      {
+        label: T('Set Quotas (Bulk)'),
+        onClick: () => {
+          this.router.navigate(['storage', 'pools', 'group-quotas-form', this.pk]);
+        }
+      }
+    ]
+  }
+
+  getActions(row) {
+    const self = this;
+    const actions = [];
+    actions.push({
+      id: row.path,
+      icon: 'edit',
+      label : T("Edit"),
+      name: "edit",
+      onClick : () => {
+        self.ws.call('pool.dataset.get_quota', [self.pk, 'GROUP', [['id', '=', row.id]]]).subscribe(res => {
+          const conf: DialogFormConfiguration = {
+            title: helptext.groups.dialog.title,
+            fieldConfig: [
+              {
+                type: 'input',
+                name: 'name',
+                placeholder: helptext.groups.dialog.group.placeholder,
+                value: res[0].name,
+                readonly: true
+              },
+              {
+                type: 'input',
+                name: 'data_quota',
+                placeholder: helptext.groups.data_quota.placeholder,
+                tooltip: helptext.groups.data_quota.tooltip,
+                value: self.storageService.convertBytestoHumanReadable(res[0].quota, 0),
+                id: 'data-quota_input',
+                blurStatus: true,
+                blurEvent: self.blurEvent,
+                parent: self,
+                validation: [
+                  (control: FormControl): ValidationErrors => {
+                    const config = conf.fieldConfig.find(c => c.name === 'data_quota');
+                    self.quotaValue = control.value;
+                    const size = self.storageService.convertHumanStringToNum(control.value);
+                    const errors = control.value && isNaN(size)
+                      ? { invalid_byte_string: true }
+                      : null
+
+                    if (errors) {
+                      config.hasErrors = true;
+                      config.errors = globalHelptext.human_readable.input_error;
+                    } else {
+                      config.hasErrors = false;
+                        config.errors = '';
+                    }
+                    return errors;
+                  }
+                ],
+              },
+              {
+                type: 'input',
+                name: 'obj_quota',
+                placeholder: helptext.groups.obj_quota.placeholder,
+                tooltip: helptext.groups.obj_quota.tooltip,
+                value: res[0].obj_quota
+              }
+            ],
+            saveButtonText: helptext.shared.set,
+            cancelButtonText: helptext.shared.cancel,
+
+            customSubmit(data) {
+              const entryData = data.formValue;
+              const payload = [];
+              payload.push({
+                quota_type: 'GROUP',
+                id: res[0].id,
+                quota_value: self.storageService.convertHumanStringToNum(entryData.data_quota)
+              },
+              {
+                quota_type: 'GROUPOBJ',
+                id: res[0].id,
+                quota_value: entryData.obj_quota
+              })
+              self.loader.open();
+              self.ws.call('pool.dataset.set_quota', [self.pk, payload]).subscribe(() => {
+                self.loader.close();
+                self.dialogService.closeAllDialogs();
+                self.entityList.getData();
+              }, err => {
+                self.loader.close();
+                self.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
+              })
+            }
+          }
+          this.dialogService.dialogFormWide(conf);
+
+        })
+      }
+    })
+    return actions;
+  }
 
   preInit(entityList) {
     this.entityList = entityList;
@@ -192,7 +176,7 @@ export class DatasetQuotasGrouplistComponent {
     return data;
   }
 
-  groupBlurEvent(parent) {
+  blurEvent(parent) {
     (<HTMLInputElement>document.getElementById('group-data-quota_input')).value =
       parent.storageService.humanReadable;
   }
@@ -221,7 +205,7 @@ export class DatasetQuotasGrouplistComponent {
   }
 
   ngOnDestroy() {
-    window.localStorage.setItem('useFullFilter', 'true'); 
+    window.localStorage.setItem('useFullFilter', 'true');
   }
 
 }
