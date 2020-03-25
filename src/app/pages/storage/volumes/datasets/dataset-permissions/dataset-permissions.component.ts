@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-permissions';
@@ -29,6 +29,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected groupOnLoad: string;
   protected dialogRef: any;
   private entityForm: any;
+  protected userField: any;
+  protected groupField: any;
 
   public fieldSets: FieldSet[] = [
     {
@@ -144,8 +146,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
-      const userField = _.find(this.fieldSets.find(set => set.name === helptext.heading_owner).config, { 'name': 'user' });
-      userField.options = users;
+      this.userField = _.find(this.fieldSets.find(set => set.name === helptext.heading_owner).config, { 'name': 'user' });
+      this.userField.options = users;
     });
 
     this.userService.groupQueryDSCache().subscribe(items => {
@@ -153,8 +155,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
       }
-      const groupField = _.find(this.fieldSets.find(set => set.name === helptext.heading_owner).config, { 'name': 'group' });
-      groupField.options = groups;
+      this.groupField = _.find(this.fieldSets.find(set => set.name === helptext.heading_owner).config, { 'name': 'group' });
+      this.groupField.options = groups;
     });
   }
 
@@ -191,7 +193,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
       }
-      parent.group.searchOptions = groups;
+      parent.groupField.searchOptions = groups;
     });
   }
 
@@ -201,7 +203,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
-      parent.user.searchOptions = users;
+      parent.userField.searchOptions = users;
     });
   }
 
