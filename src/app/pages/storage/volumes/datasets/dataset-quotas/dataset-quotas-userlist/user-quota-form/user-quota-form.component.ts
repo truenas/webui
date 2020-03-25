@@ -18,7 +18,7 @@ export class UserQuotaFormComponent {
   public pk: string;
   protected route_success: string[];
   public selectedUsers = [];
-  public selectedUsers2 = [];
+  public userField;
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -71,7 +71,11 @@ export class UserQuotaFormComponent {
           placeholder: helptext.users.search.placeholder,
           tooltip: helptext.users.search.tooltip,
           value: this.selectedUsers,
-          id: 'selected-users_chiplist'
+          id: 'selected-users_chiplist',
+          autocomplete: true,
+          searchOptions: [],
+          parent: this,
+          updater: this.updateUserSearchOptions,
         }
       ]
     },
@@ -106,6 +110,9 @@ export class UserQuotaFormComponent {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
     const users = _.find(this.fieldConfig, {name: "system_users"});
+    this.userField = _.find(this.fieldSets.find(set => set.name === helptext.users.user_title).config,
+      { 'name': 'searched_users' });
+
 
     this.ws.call('user.query').subscribe(res => {
       res.map(user => {
@@ -141,6 +148,17 @@ export class UserQuotaFormComponent {
   transformValue(parent, fieldname: string) {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     parent.storageService.humanReadable = '';
+  }
+
+  updateUserSearchOptions(value = "", parent) {
+    parent.userService.userQueryDSCache(value).subscribe(items => {
+      const users = [];
+      for (let i = 0; i < items.length; i++) {
+        users.push({ label: items[i].username, value: items[i].username });
+      }
+      console.log(users)
+      parent.userField.searchOptions = users;
+    });
   }
 
   customSubmit(data) {
