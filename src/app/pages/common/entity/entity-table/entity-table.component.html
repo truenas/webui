@@ -1,10 +1,8 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false" fxLayout="row wrap"
     fxLayoutAlign="space-between center">
-    <div fxFlex="300px" class="mat-card-title-text">{{ title | translate }}
-      <tooltip *ngIf="conf.table_tooltip" class="tableTooltip" position="right" [header]=conf.table_tooltip_header [message]=conf.table_tooltip_text 
-      ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="TableTooltip"></tooltip>
-    </div>
+    <div fxFlex="300px" class="mat-card-title-text">{{ title | translate }}</div>
+
     <!-- START OF CONTROLS SECTION -->
     <div fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
       <div id="filter">
@@ -266,7 +264,7 @@
           <ng-template let-row="row" ngx-datatable-cell-template>
             <mat-spinner [diameter]='40'
               color="primary"
-              *ngIf="col.toggle && (row[col.prop]==='STOPPING' || row[col.prop]==='STARTING' 
+              *ngIf="col.toggle && (row[col.prop]==='STOPPING' || row[col.prop]==='STARTING'
                 || row[col.prop]==='DELETING' || row[col.prop]==='RESTARTING')"
             ></mat-spinner>
             <div class="clickable"

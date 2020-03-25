@@ -1711,12 +1711,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     right: 45%;
   }
 
-  app-dataset-quotas .form-input-spinner {
-    position: absolute;
-    top: -20px;
-    right: 45%;
-  }
-
   app-two-factor {
     #instructions, #enabled_status {
       font-size: 115%;
@@ -1754,21 +1748,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
-  app-dataset-quotas-userlist,
-  app-dataset-quotas-grouplist {
-    .tooltip-header-text {
-      font-size: 1.1rem;
-    }
-    .tooltip-message {
-      font-size: 14px;
-      font-weight: 400;
-      margin-top: 10px;
-      line-height: 1rem;
-    }
-  }
-
   .chip-warn {
     background-color: var(--red) !important;
+    color: white !important;
+
+    mat-icon {
+      color: white !important;
+      opacity: .8 !important;
+    }
   }
 
  } // end of ix theme

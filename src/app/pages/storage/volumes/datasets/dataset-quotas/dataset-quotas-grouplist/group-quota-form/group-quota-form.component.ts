@@ -96,7 +96,8 @@ export class GroupQuotaFormComponent {
   async validateEntry(value) {
     const validEntry = await this.userService.getGroupObject(value);
     if (!validEntry) {
-      this.dialog.Info('Unknown Group', `${value} is not a valid group.`)
+      const chips = document.getElementsByTagName('mat-chip');
+      chips.item(chips.length-1).classList.add('chip-warn');
     }
   }
 

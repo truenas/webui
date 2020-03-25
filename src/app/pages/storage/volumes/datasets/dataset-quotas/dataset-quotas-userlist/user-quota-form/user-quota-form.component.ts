@@ -19,6 +19,7 @@ export class UserQuotaFormComponent {
   public selectedEntries = [];
   public entryField;
   private isNew = true;
+  private searchedEntries: any;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -71,6 +72,7 @@ export class UserQuotaFormComponent {
           tooltip: helptext.users.search.tooltip,
           value: this.selectedEntries,
           id: 'selected-entries_chiplist',
+          hasErrors: false,
           autocomplete: true,
           searchOptions: [],
           parent: this,
@@ -95,15 +97,20 @@ export class UserQuotaFormComponent {
 
   async validateEntry(value) {
     const validEntry = await this.userService.getUserObject(value);
+    const chips = document.getElementsByTagName('mat-chip');
     if (!validEntry) {
-      this.dialog.Info('Unknown User', `${value} is not a valid user.`)
+      chips.item(chips.length-1).classList.add('chip-warn');
     }
+    const errs = document.getElementsByClassName('chip-warn');
+    errs.length > 0 ? this.searchedEntries.hasErrors = true : this.searchedEntries.hasErrors = false;
+    console.log(this.searchedEntries)
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
     const entries = _.find(this.fieldConfig, {name: "system_entries"});
+    this.searchedEntries = _.find(this.fieldConfig, {name: "searched_entries"});
     this.entryField = _.find(this.fieldSets.find(set => set.name === helptext.users.user_title).config,
       { 'name': 'searched_entries' });
 

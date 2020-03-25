@@ -14,7 +14,7 @@ export default {
     search: {
       placeholder: T('Search For Connected Users'),
       tooltip: T('Search for all connected users). \
- Type a user name followed by <i>ENTER</i>. A message will be displayed \
+ Type a user name followed by <i>ENTER</i>. A warning will be displayed \
  if the name does not match a valid user.')
             },
     data_quota: {
@@ -56,7 +56,7 @@ export default {
     search: {
       placeholder: T('Search For Connected Groups'),
       tooltip: T('Search for all connected groups). \
- Type a group name followed by <i>ENTER</i>. A message will be displayed \
+ Type a group name followed by <i>ENTER</i>. A warning will be displayed \
  if the name does not match a valid group.')
             },
     data_quota: {

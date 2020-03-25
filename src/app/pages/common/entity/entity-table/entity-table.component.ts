@@ -48,9 +48,6 @@ export interface InputTableConf {
   cardHeaderComponent?: any;
   asyncView?: boolean;
   wsDelete?: string;
-  table_tooltip?:boolean;
-  table_tooltip_header?:string;
-  table_tooltip_text?:string;
   wsDeleteParams?(row, id): any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);

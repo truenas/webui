@@ -29,9 +29,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected groupOnLoad: string;
   protected dialogRef: any;
   private entityForm: any;
-  private searchOptions = [];
-  private user;
-  private group;
 
   public fieldSets: FieldSet[] = [
     {
@@ -149,7 +146,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
       }
       const userField = _.find(this.fieldSets.find(set => set.name === helptext.heading_owner).config, { 'name': 'user' });
       userField.options = users;
-      this.user = userField;
     });
 
     this.userService.groupQueryDSCache().subscribe(items => {
@@ -159,7 +155,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
       }
       const groupField = _.find(this.fieldSets.find(set => set.name === helptext.heading_owner).config, { 'name': 'group' });
       groupField.options = groups;
-      this.group = groupField;
     });
   }
 
