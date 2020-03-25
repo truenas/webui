@@ -296,7 +296,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       
       const rootDataset = evt.data[i].children[0];
-      const used_pct = rootDataset.used_pct / (rootDataset.used + rootDataset.avail);
  
       let zvol = {
         avail: avail,
