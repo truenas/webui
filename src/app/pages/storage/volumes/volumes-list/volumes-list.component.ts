@@ -1142,6 +1142,8 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.name = dataObj.name.split('/').pop();
         dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
         dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
+        dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
+        dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && dataObj.encryption_root !== null);
       }
     });
   }
@@ -1221,6 +1223,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
           if (pool.children && pool.children[0]) {
             try {
+              pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
               pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: "iec" });
