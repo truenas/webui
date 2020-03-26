@@ -109,4 +109,29 @@ dataset_form_inherit: T('Inherit'),
 dataset_form_default: T('Default'),
 
 dataset_form_quota_too_small: T("Quota size is too small, enter a value of 1 GiB or larger."),
+
+dataset_form_encryption: {
+    fieldset_title: T('Encryption Options'),
+    inherit_checkbox_placeholder: T('Inherit'),
+    inherit_checkbox_tooltip: T(''),
+    encryption_checkbox_placeholder: T('Encryption'),
+    encryption_checkbox_tooltip: T(''),
+    encryption_type_placeholder: T('Encryption_type'),
+    encryption_type_tooltiip: T(''),
+    encryption_type_options: [
+        {label: T('Key'), value: 'key'},
+        {label: T('Passphrase'), value: 'passphrase'}
+    ],
+    algorithm_placeholder: T('Algorithm'),
+    algorithm_tooltip: T(''),
+    passphrase_placeholder: T('Passphrase'),
+    passphrase_tooltip: T(''),
+    pkdf2iters_placeholder: T('Pkdf2iters'),
+    pkdf2iters_tooltip: T(''),
+    pkdf2iters_validation: [Validators.min(100000)],
+    generate_key_checkbox_placeholder: T('Generate Key'),
+    generate_key_checkbox_tooltip: T(''),
+    key_placeholder: T('Key'),
+    key_tooltip: T(''),
+}
 }
