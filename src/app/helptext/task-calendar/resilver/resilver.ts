@@ -2,6 +2,8 @@ import { T } from '../../../translate-marker';
 import {Validators} from '@angular/forms';
 
 export default {
+    fieldset_resilver: T('Resilver Priority'),
+
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('Set to run resilver tasks between the configured times.'),
 

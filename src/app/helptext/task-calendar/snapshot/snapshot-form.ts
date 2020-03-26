@@ -2,6 +2,9 @@ import { T } from '../../../translate-marker';
 
 
 export default {
+    fieldset_dataset: T('Dataset'),
+    fieldset_schedule: T('Schedule'),
+
     dataset_placeholder: T('Dataset'),
     dataset_tooltip: T('Select a pool, dataset, or zvol.'),
     dataset_warning: T('Invalid dataset.'),
