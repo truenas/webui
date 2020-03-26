@@ -51,7 +51,7 @@
 }
 
 .hidden-button {
-  display: none;
+  height: 0px !important;
 }
 
 .topbar {
