@@ -2,6 +2,7 @@ import {Validators} from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 export default {
+fieldset_disk: T('Disk'),
 import_disk_volume_placeholder : T('Disk'),
 import_disk_volume_tooltip: T('Select the disk to import. The import will copy the\
  data from the chosen disk to an existing ZFS dataset.\

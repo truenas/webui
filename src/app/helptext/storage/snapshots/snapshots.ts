@@ -2,6 +2,8 @@ import {Validators} from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 export default {
+fieldset_snapshot: T('Snapshot'),
+
 // storage/snapshots/snapshot-add
 snapshot_add_dataset_placeholder: T('Dataset'),
 snapshot_add_dataset_tooltip: T('Select a dataset or zvol.'),
