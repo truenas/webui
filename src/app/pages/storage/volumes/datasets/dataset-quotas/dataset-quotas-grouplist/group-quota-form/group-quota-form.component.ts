@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, IterableDiffers } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { EntityFormComponent } from '../../../../../../common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { DialogService, StorageService, WebSocketService, AppLoaderService, UserService } from 'app/services';
@@ -16,9 +16,15 @@ export class GroupQuotaFormComponent {
   public entityForm: any;
   public pk: string;
   protected route_success: string[];
-  public selectedEntries = [];
+  public searchedEntries = [];
   public entryField;
   private isNew = true;
+  private selectedEntriesField: any
+  private selectedEntriesValue: any;
+  private entryErrs: any;
+  private entryErrBool = false;
+  public save_button_enabled = false;
+  private differ: any;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -69,12 +75,12 @@ export class GroupQuotaFormComponent {
           name: 'searched_entries',
           placeholder: helptext.groups.search.placeholder,
           tooltip: helptext.groups.search.tooltip,
-          value: this.selectedEntries,
+          value: this.searchedEntries,
           id: 'selected-entries_chiplist',
           autocomplete: true,
           searchOptions: [],
           parent: this,
-          updater: this.updateSearchOptions,
+          updater: this.updateSearchOptions
         }
       ]
     },
@@ -86,7 +92,10 @@ export class GroupQuotaFormComponent {
 
   constructor(protected ws: WebSocketService, protected storageService: StorageService,
     protected aroute: ActivatedRoute, protected loader: AppLoaderService,
-    protected router: Router, protected userService: UserService, private dialog: DialogService) { }
+    protected router: Router, protected userService: UserService, private dialog: DialogService,
+    protected differs: IterableDiffers) {
+      this.differ = differs.find([]).create(null);
+  }
 
   preInit(entityForm: EntityFormComponent) {
     const paramMap: any = (<any>this.aroute.params).getValue();
@@ -99,20 +108,47 @@ export class GroupQuotaFormComponent {
       const chips = document.getElementsByTagName('mat-chip');
       chips.item(chips.length-1).classList.add('chip-warn');
     }
+    this.entryErrs = document.getElementsByClassName('chip-warn');
+    this.entryErrBool = this.entryErrs.length === 0 ? false : true;
+    this.allowSubmit();
+  }
+
+  allowSubmit() {
+    if ((this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0 ||
+        this.searchedEntries && this.searchedEntries.length > 0) &&
+        this.entryErrBool === false) {
+      this.save_button_enabled = true;
+    } else {
+      this.save_button_enabled = false;
+    }
+  }
+
+  // This is here because selecting an item from autocomplete doesn't trigger value change
+  // Unsubscribes automatically
+  ngDoCheck() {
+    this.differ.diff(this.searchedEntries);
+    if (this.searchedEntries.length > 0) {
+      this.allowSubmit()
+    }
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'group-quotas', this.pk];
-    const entries = _.find(this.fieldConfig, {name: "system_entries"});
+    this.selectedEntriesField = _.find(this.fieldConfig, {name: "system_entries"});
+    this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'];
     this.entryField = _.find(this.fieldSets.find(set => set.name === helptext.groups.group_title).config,
       { 'name': 'searched_entries' });
 
     this.ws.call('group.query').subscribe(res => {
       res.map(entry => {
-        entries.options.push({label: entry.group, value: entry.gid});
+        this.selectedEntriesField.options.push({label: entry.group, value: entry.gid});
       });
     });
+
+    this.entityForm.formGroup.controls['system_entries'].valueChanges.subscribe(() => {
+      this.allowSubmit();
+    })
 
     this.entityForm.formGroup.controls['searched_entries'].valueChanges.subscribe(value => {
       if (value) {
@@ -190,6 +226,4 @@ export class GroupQuotaFormComponent {
       this.dialog.errorReport('Error', err.reason, err.trace.formatted)
     })
   }
-
-
 }
