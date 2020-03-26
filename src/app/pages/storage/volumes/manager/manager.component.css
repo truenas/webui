@@ -43,10 +43,6 @@
     position: relative;
 }
 
-.fields {
-	display: flex;
-}
-
 .manager {
     display: flex;
     flex-direction: column;
@@ -99,7 +95,7 @@ h4 {
 #pool-manager__encryption-checkbox {
 	margin-left: 10px;
 }
-
+  
 #pool-manager__reset-layout-button:disabled,
 #pool-manager__suggest-layout-button:disabled {
 	color: var(--fg2);
@@ -110,7 +106,9 @@ h4 {
 	margin: 16px !important;
 }
 .fields {
-	margin: 3rem 3rem 3rem 1rem !important;
+	/*display: flex;*/
+        width: 600px;
+	margin: 0.75rem 3rem 3rem 1rem !important;
 }
 #filter-wrapper, #pool-manager__button-group {
 	margin-left: 1rem;
@@ -122,6 +120,11 @@ h4 {
 .adjust-upward {
 	position: relative;
 	bottom: 5px;
+}
+
+tooltip, tooltip.vdevTooltip{
+  position:relative;
+  top:7px;
 }
 
 @media screen and (max-width: 1399px) {
@@ -137,4 +140,50 @@ h4 {
 .forceCreateCheckbox {
 	margin-left: 10px;
 	margin-bottom: 10px;
+}
+
+.tbl{display:table;}
+.tr{display:table-row;}
+.td{display:table-cell}
+
+button.vdev-option{
+  width:98.5% !important;
+  height:auto !important;
+  padding:12px 12px 12px 0;
+}
+
+button.vdev-option .td.icon{
+  font-size:200%;
+  padding:0 16px;
+  vertical-align: middle;
+  line-height: 0.5;
+}
+
+button.vdev-option h3{
+  font-weight:500;
+  font-size:1rem;
+}
+
+button.vdev-option p{
+  white-space:normal;
+  line-height:normal;
+  font-size:90%;
+}
+
+.button-bar {
+	display:flex;
+        margin-top:12px;
+}
+
+.button-spacer {
+	width: 50px;
+}
+
+.inline {
+	margin-right: 5px;
+	display: inline-block;
+}
+
+.encryption-select.inline {
+	width: 200px;
 }

@@ -237,10 +237,12 @@ span.passive{
 }
 
 .product-image.ix-logo,
+.product-image.truenas .generic,
 .freenas .generic{
   padding-bottom:10%;
 }
 
+.product-image.truenas .generic,
 .freenas .mat-icon.generic{
   width:calc(240px * 0.5);
   height:auto;

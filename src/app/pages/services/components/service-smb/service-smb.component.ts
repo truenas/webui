@@ -43,6 +43,8 @@ export class ServiceSMBComponent {
     'syslog',
     'localmaster',
     'guest',
+    'filemask',
+    'dirmask',
     'admin_group',
     'bindip',
     'smb_options',
@@ -139,6 +141,7 @@ export class ServiceSMBComponent {
     {
       name: helptext.cifs_srv_fieldset_other,
       label: false,
+      width: '49%',
       config: [
         {
           type: 'select',
@@ -173,13 +176,6 @@ export class ServiceSMBComponent {
           tooltip: helptext.cifs_srv_aapl_extensions_tooltip,
         },
         {
-          type: 'select',
-          name: 'guest',
-          placeholder: helptext.cifs_srv_guest_placeholder,
-          options: [],
-          tooltip: helptext.cifs_srv_guest_tooltip,
-        },
-        {
           type: 'combobox',
           name: 'admin_group',
           placeholder: helptext.cifs_srv_admin_group_placeholder,
@@ -188,6 +184,33 @@ export class ServiceSMBComponent {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions
+        }
+      ]
+    },
+    { name: 'vertical-spacer', width: '2%'},
+    {
+    name: helptext.cifs_srv_fieldset_netbios,
+    label: false,
+    width: '49%',
+    config: [
+        {
+          type: 'select',
+          name: 'guest',
+          placeholder: helptext.cifs_srv_guest_placeholder,
+          options: [],
+          tooltip: helptext.cifs_srv_guest_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'filemask',
+          placeholder: helptext.cifs_srv_filemask_placeholder,
+          tooltip: helptext.cifs_srv_filemask_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'dirmask',
+          placeholder: helptext.cifs_srv_dirmask_placeholder,
+          tooltip: helptext.cifs_srv_dirmask_tooltip,
         },
         {
           type: 'select',
