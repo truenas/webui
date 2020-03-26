@@ -75,14 +75,14 @@ export class ServiceSMBComponent {
           disabled: true
         },
         {
-          type: 'input',
+          type: 'chip',
           name: 'netbiosalias',
           placeholder: helptext.cifs_srv_netbiosalias_placeholder,
           tooltip: helptext.cifs_srv_netbiosalias_tooltip,
           validation: [
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find(c => c.name === 'netbiosalias');
-              const aliasArr = control.value ? _.filter(control.value.split(' ').map(_.trim)) : [];
+              const aliasArr = control.value ? control.value : [];
               let counter = 0;
               aliasArr.forEach(alias => {
                 if (alias.length > 15) {
@@ -291,11 +291,6 @@ export class ServiceSMBComponent {
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
-  resourceTransformIncomingRestData(data) {
-    data.netbiosalias = data.netbiosalias.join(' ');
-    return data;
-  }
-
   afterInit(entityEdit: EntityFormComponent) {
     entityEdit.submitFunction = body => {
       return this.ws.call('smb.update', [body])
@@ -310,9 +305,5 @@ export class ServiceSMBComponent {
       }
         parent.cifs_srv_admin_group.searchOptions = groups;
     });
-  }
-
-  beforeSubmit(data) {
-    data.netbiosalias = _.filter(data.netbiosalias.split(' ').map(_.trim));
   }
 }
