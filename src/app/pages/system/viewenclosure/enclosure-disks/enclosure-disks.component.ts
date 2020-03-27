@@ -22,7 +22,7 @@ import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
 import { DomSanitizer } from "@angular/platform-browser";
 
-interface DiskFailure {
+export interface DiskFailure {
   disk: string;
   enclosure: number;
   slot: number;
@@ -61,7 +61,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   private _expanders: any[] = [];
   get expanders () {
-    if(this.system.enclosures && this.selectedEnclosure.disks[0]){
+    if(!this.system.platform.includes('MINI') && this.system.enclosures && this.selectedEnclosure.disks[0]){
       let enclosureNumber =  Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);
     } else {
@@ -119,7 +119,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public scaleArgs: string;
  
 
-  constructor(public el:ElementRef, private core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
+  constructor(public el:ElementRef, protected core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
 
     //this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
     core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
@@ -329,10 +329,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.enclosure = new E60();
         break;
       default:
-        console.warn("DEFAULT ENCLOSURE")
+        console.warn("ENCLOSURE NOT SUPPORTED")
         this.enclosure = new M50();
     }
-    //this.enclosure = new ES24();
     
     this.enclosure.events.subscribe((evt) => {
       switch(evt.name){

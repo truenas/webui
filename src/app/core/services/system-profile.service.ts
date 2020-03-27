@@ -41,13 +41,18 @@ export class SystemProfileService extends BaseService {
     uptime: "4:25PM  up 7 days, 37 mins",
     uptime_seconds: 607039.9912204742,
     system_serial: '123456789',
-    system_product: 'FREENAS-MINI-2.0',
-    license: { model: 'FREENAS-MINI-2.0'},
+    system_product: 'FREENAS-MINI-3.0',
+    license: { model: 'FREENAS-MINI-3.0'},
     boottime: {$date: 1584373672000},
     datetime: {$date: 1585005911991},
     timezone: "America/Los_Angeles",
     system_manufacturer: 'ixsystems',
     ecc_memory: true,
+  }
+
+  public features= {
+    HA: false,
+    enclosure: false
   }
 
   constructor() { 
@@ -111,7 +116,15 @@ export class SystemProfileService extends BaseService {
         responseEvent = 'SysInfo';
         break;
     }
+    this.detectFeatures(data);
+    data.features = this.features;
     this.core.emit({name:responseEvent, data: data, sender: this});
+  }
+
+  detectFeatures(profile:any){
+    if(profile.system_product.includes('FREENAS-MINI-3.0') || profile.system_product.includes('TRUENAS-')){
+      this.features.enclosure = true;
+    } 
   }
 
 }

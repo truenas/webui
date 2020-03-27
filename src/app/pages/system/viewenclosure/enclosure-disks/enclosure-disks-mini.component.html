@@ -1,0 +1,26 @@
+<mat-card 
+  class="view-card mini" 
+  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
+  id="{{currentTab.alias}}" 
+  (window:resize)="onResize($event)"
+  ngClass.gt-md="gt-md"
+  ngClass.md="md"
+  ngClass.sm="sm"
+  ngClass.xs="xs">
+
+  <mat-toolbar id="Disks-toolbar">
+    <div *ngIf="selectedEnclosure.enclosureKey > 0" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div *ngIf="selectedEnclosure.enclosureKey < 1" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? system.platform + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+
+    <!-- ENCLOSURE MODEL -->
+    <div class="model dom-overlay" style="opacity:0.75;">
+      <div class="model-inner">
+        <!--<mat-icon svgIcon="truenas_logo_full" style="width:140px; height:auto; margin-top:12px;"></mat-icon>-->
+      </div>
+    </div>
+
+  </mat-toolbar>
+
+  <mat-card-content style="background-color: var(--black); min-height: 480px;">
+  </mat-card-content>
+</mat-card>

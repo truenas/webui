@@ -68,7 +68,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         observerClass: this,
         eventName: "SysInfo"
         }).subscribe((evt:CoreEvent) => {
-          console.log(evt.data);
          
           if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
             // Feature detection
@@ -87,7 +86,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
               guide.state = docUrl;
           }
 
-          if( (evt.data.system_manufacturer && evt.data.system_manufacturer.toLowerCase == 'ixsystems') || true){
+          if(evt.data.features.enclosure){
             for(let i = 0; i < this.navService.hardwareFeatures.length; i++) {
               const targetMenu = this.navService.hardwareFeatures[i];
               _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;

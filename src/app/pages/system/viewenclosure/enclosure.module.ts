@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ViewEnclosureComponent } from './view-enclosure.component';
 import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.component';
+import { EnclosureDisksMiniComponent } from './enclosure-disks/enclosure-disks-mini.component';
 import { DiskComponent } from './enclosure-disks/components/disk.component';
 import { TabContentComponent } from './enclosure-disks/components/tab-content/tab-content.component';
 
@@ -17,6 +18,7 @@ import { TabContentComponent } from './enclosure-disks/components/tab-content/ta
   declarations: [
     ViewEnclosureComponent,
     EnclosureDisksComponent,
+    EnclosureDisksMiniComponent,
     DiskComponent,
     TabContentComponent
   ],
