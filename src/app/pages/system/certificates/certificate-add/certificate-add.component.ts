@@ -5,6 +5,7 @@ import { RestService, SystemGeneralService, WebSocketService } from '../../../..
 import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { helptext_system_ca } from 'app/helptext/system/ca';
@@ -23,306 +24,330 @@ export class CertificateAddComponent {
   protected dialogRef: any;
   private entityForm: any;
   private CSRList = [];
-  protected fieldConfig: FieldConfig[] = [
+  protected fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type : 'input',
-      name : 'name',
-      placeholder : helptext_system_certificates.add.name.placeholder,
-      tooltip: helptext_system_certificates.add.name.tooltip,
-      required: true,
-      validation : helptext_system_certificates.add.name.validation,
-      hasErrors: false,
-      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
-    },
-    {
-      type : 'select',
-      name : 'create_type',
-      placeholder : helptext_system_certificates.add.create_type.placeholder,
-      options : [
-        {label: 'Internal Certificate', value: 'CERTIFICATE_CREATE_INTERNAL'},
-        {label: 'Certificate Signing Request', value: 'CERTIFICATE_CREATE_CSR'},
-        {label: 'Import Certificate', value: 'CERTIFICATE_CREATE_IMPORTED'},
-        {label: 'Import Certificate Signing Request', value: 'CERTIFICATE_CREATE_IMPORTED_CSR'},
-      ],
-      value: 'CERTIFICATE_CREATE_INTERNAL',
-    },
-    {
-      type : 'checkbox',
-      name : 'csronsys',
-      placeholder : helptext_system_certificates.add.isCSRonSystem.placeholder,
-      tooltip: helptext_system_certificates.add.isCSRonSystem.tooltip,
-      isHidden: true,
-      disabled: true,
-    },
-    {
-      type : 'select',
-      name : 'csrlist',
-      placeholder : helptext_system_certificates.add.signedby.placeholder,
-      tooltip: helptext_system_certificates.add.signedby.tooltip,
-      options : [
-        {label: '---', value: null}
-      ],
-      isHidden: true,
-      disabled: true,
-      required: true,
-      validation: helptext_system_certificates.add.signedby.validation,
-      relation : [
+      name: helptext_system_certificates.add.fieldset_basic,
+      label: true,
+      class: 'basic',
+      width: '50%',
+      config: [
         {
-          action : 'ENABLE',
-          when : [ {
-            name : 'csronsys',
-            value : true,
-          } ]
+          type: 'input',
+          name: 'name',
+          placeholder: helptext_system_certificates.add.name.placeholder,
+          tooltip: helptext_system_certificates.add.name.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.name.validation,
+          hasErrors: false,
+          errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
+        },
+        {
+          type: 'select',
+          name: 'create_type',
+          placeholder: helptext_system_certificates.add.create_type.placeholder,
+          options: [
+            { label: 'Internal Certificate', value: 'CERTIFICATE_CREATE_INTERNAL' },
+            { label: 'Certificate Signing Request', value: 'CERTIFICATE_CREATE_CSR' },
+            { label: 'Import Certificate', value: 'CERTIFICATE_CREATE_IMPORTED' },
+            { label: 'Import Certificate Signing Request', value: 'CERTIFICATE_CREATE_IMPORTED_CSR' },
+          ],
+          value: 'CERTIFICATE_CREATE_INTERNAL',
+        }
+      ]
+    },
+    {
+      name: helptext_system_ca.add.fieldset_type,
+      label: true,
+      class: 'type',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'csronsys',
+          placeholder: helptext_system_certificates.add.isCSRonSystem.placeholder,
+          tooltip: helptext_system_certificates.add.isCSRonSystem.tooltip,
+          isHidden: true,
+          disabled: true,
+        },
+        {
+          type: 'select',
+          name: 'csrlist',
+          placeholder: helptext_system_certificates.add.signedby.placeholder,
+          tooltip: helptext_system_certificates.add.signedby.tooltip,
+          options: [
+            { label: '---', value: null }
+          ],
+          isHidden: true,
+          disabled: true,
+          required: true,
+          validation: helptext_system_certificates.add.signedby.validation,
+          relation: [
+            {
+              action: 'ENABLE',
+              when: [{
+                name: 'csronsys',
+                value: true,
+              }]
+            },
+          ]
+        },
+        {
+          type: 'select',
+          name: 'signedby',
+          placeholder: helptext_system_certificates.add.signedby.placeholder,
+          tooltip: helptext_system_certificates.add.signedby.tooltip,
+          options: [
+            { label: '---', value: null }
+          ],
+          isHidden: true,
+          disabled: true,
+          required: true,
+          validation: helptext_system_certificates.add.signedby.validation,
+        },
+        {
+          type: 'select',
+          name: 'key_type',
+          placeholder: helptext_system_certificates.add.key_type.placeholder,
+          tooltip: helptext_system_ca.add.key_type.tooltip,
+          options: [
+            { label: 'RSA', value: 'RSA' },
+            { label: 'EC', value: 'EC' }
+          ],
+          value: 'RSA',
+          isHidden: false,
+          disabled: true,
+          required: true,
+          validation: helptext_system_certificates.add.key_type.validation
+        },
+        {
+          type: 'select',
+          name: 'ec_curve',
+          placeholder: helptext_system_certificates.add.ec_curve.placeholder,
+          tooltip: helptext_system_ca.add.ec_curve.tooltip,
+          options: [
+            { label: 'BrainpoolP512R1', value: 'BrainpoolP512R1' },
+            { label: 'BrainpoolP384R1', value: 'BrainpoolP384R1' },
+            { label: 'BrainpoolP256R1', value: 'BrainpoolP256R1' },
+            { label: 'SECP256K1', value: 'SECP256K1' },
+          ],
+          value: 'BrainpoolP384R1',
+          isHidden: true,
+          disabled: true,
+          relation: [
+            {
+              action: 'ENABLE',
+              when: [{
+                name: 'key_type',
+                value: 'EC',
+              }]
+            },
+          ]
+        },
+        {
+          type: 'select',
+          name: 'key_length',
+          placeholder: helptext_system_certificates.add.key_length.placeholder,
+          tooltip: helptext_system_certificates.add.key_length.tooltip,
+          options: [
+            { label: '1024', value: 1024 },
+            { label: '2048', value: 2048 },
+            { label: '4096', value: 4096 },
+          ],
+          value: 2048,
+          required: true,
+          validation: helptext_system_certificates.add.key_length.validation,
+          isHidden: false,
+          relation: [
+            {
+              action: 'ENABLE',
+              when: [{
+                name: 'key_type',
+                value: 'RSA',
+              }]
+            },
+          ]
+        },
+        {
+          type: 'select',
+          name: 'digest_algorithm',
+          placeholder: helptext_system_certificates.add.digest_algorithm.placeholder,
+          tooltip: helptext_system_certificates.add.digest_algorithm.tooltip,
+          options: [
+            { label: 'SHA1', value: 'SHA1' },
+            { label: 'SHA224', value: 'SHA224' },
+            { label: 'SHA256', value: 'SHA256' },
+            { label: 'SHA384', value: 'SHA384' },
+            { label: 'SHA512', value: 'SHA512' },
+          ],
+          value: 'SHA256',
+          required: true,
+          validation: helptext_system_certificates.add.digest_algorithm.validation,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'lifetime',
+          placeholder: helptext_system_certificates.add.lifetime.placeholder,
+          tooltip: helptext_system_certificates.add.lifetime.tooltip,
+          inputType: 'number',
+          required: true,
+          value: 3650,
+          validation: helptext_system_certificates.add.lifetime.validation,
+          isHidden: false,
         },
       ]
     },
     {
-      type : 'select',
-      name : 'signedby',
-      placeholder : helptext_system_certificates.add.signedby.placeholder,
-      tooltip: helptext_system_certificates.add.signedby.tooltip,
-      options : [
-        {label: '---', value: null}
-      ],
-      isHidden: true,
-      disabled: true,
-      required: true,
-      validation: helptext_system_certificates.add.signedby.validation,
-    },
-    {
-      type : 'select',
-      name : 'key_type',
-      placeholder : helptext_system_certificates.add.key_type.placeholder,
-      tooltip: helptext_system_ca.add.key_type.tooltip,
-      options : [
-        {label: 'RSA', value: 'RSA'},
-        {label: 'EC', value: 'EC'}
-      ],
-      value: 'RSA',
-      isHidden: false,
-      disabled: true,
-      required: true,
-      validation: helptext_system_certificates.add.key_type.validation
-    },
-    {
-      type : 'select',
-      name : 'ec_curve',
-      placeholder : helptext_system_certificates.add.ec_curve.placeholder,
-      tooltip: helptext_system_ca.add.ec_curve.tooltip,
-      options : [
-        {label: 'BrainpoolP512R1', value: 'BrainpoolP512R1'},
-        {label: 'BrainpoolP384R1', value: 'BrainpoolP384R1'},
-        {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
-        {label: 'SECP256K1', value: 'SECP256K1'},
-      ],
-      value: 'BrainpoolP384R1',
-      isHidden: true,
-      disabled: true,
-      relation : [
+      name: helptext_system_certificates.add.fieldset_certificate,
+      label: true,
+      class: 'certificate',
+      width: '100%',
+      config: [
         {
-          action : 'ENABLE',
-          when : [ {
-            name : 'key_type',
-            value : 'EC',
-          } ]
+          type: 'select',
+          name: 'country',
+          placeholder: helptext_system_certificates.add.country.placeholder,
+          tooltip: helptext_system_certificates.add.country.tooltip,
+          options: [
+          ],
+          value: 'US',
+          required: true,
+          validation: helptext_system_certificates.add.country.validation,
+          isHidden: false,
         },
-      ]
-    },
-    {
-      type : 'select',
-      name : 'key_length',
-      placeholder : helptext_system_certificates.add.key_length.placeholder,
-      tooltip: helptext_system_certificates.add.key_length.tooltip,
-      options : [
-        {label : '1024', value : 1024},
-        {label : '2048', value : 2048},
-        {label : '4096', value : 4096},
-      ],
-      value: 2048,
-      required: true,
-      validation: helptext_system_certificates.add.key_length.validation,
-      isHidden: false,
-      relation : [
         {
-          action : 'ENABLE',
-          when : [ {
-            name : 'key_type',
-            value : 'RSA',
-          } ]
+          type: 'input',
+          name: 'state',
+          placeholder: helptext_system_certificates.add.state.placeholder,
+          tooltip: helptext_system_certificates.add.state.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.state.validation,
+          isHidden: false,
         },
-      ]
-    },
-    {
-      type : 'select',
-      name : 'digest_algorithm',
-      placeholder : helptext_system_certificates.add.digest_algorithm.placeholder,
-      tooltip: helptext_system_certificates.add.digest_algorithm.tooltip,
-      options : [
-        {label : 'SHA1', value : 'SHA1'},
-        {label : 'SHA224', value : 'SHA224'},
-        {label : 'SHA256', value : 'SHA256'},
-        {label : 'SHA384', value : 'SHA384'},
-        {label : 'SHA512', value : 'SHA512'},
-      ],
-      value: 'SHA256',
-      required: true,
-      validation: helptext_system_certificates.add.digest_algorithm.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'lifetime',
-      placeholder : helptext_system_certificates.add.lifetime.placeholder,
-      tooltip: helptext_system_certificates.add.lifetime.tooltip,
-      inputType: 'number',
-      required: true,
-      value: 3650,
-      validation: helptext_system_certificates.add.lifetime.validation,
-      isHidden: false,
-    },
-    {
-      type : 'select',
-      name : 'country',
-      placeholder : helptext_system_certificates.add.country.placeholder,
-      tooltip: helptext_system_certificates.add.country.tooltip,
-      options : [
-      ],
-      value: 'US',
-      required: true,
-      validation: helptext_system_certificates.add.country.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'state',
-      placeholder : helptext_system_certificates.add.state.placeholder,
-      tooltip: helptext_system_certificates.add.state.tooltip,
-      required: true,
-      validation: helptext_system_certificates.add.state.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'city',
-      placeholder : helptext_system_certificates.add.city.placeholder,
-      tooltip: helptext_system_certificates.add.city.tooltip,
-      required: true,
-      validation: helptext_system_certificates.add.city.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'organization',
-      placeholder : helptext_system_certificates.add.organization.placeholder,
-      tooltip: helptext_system_certificates.add.organization.tooltip,
-      required: true,
-      validation: helptext_system_certificates.add.organization.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'organizational_unit',
-      placeholder : helptext_system_certificates.add.organizational_unit.placeholder,
-      tooltip: helptext_system_certificates.add.organizational_unit.tooltip,
-      required: false,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'email',
-      placeholder : helptext_system_certificates.add.email.placeholder,
-      tooltip: helptext_system_certificates.add.email.tooltip,
-      required: true,
-      validation : helptext_system_certificates.add.email.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'common',
-      placeholder : helptext_system_certificates.add.common.placeholder,
-      tooltip: helptext_system_certificates.add.common.tooltip,
-      required: true,
-      validation : helptext_system_certificates.add.common.validation,
-      isHidden: false,
-    },
-    {
-      type : 'chip',
-      name : 'san',
-      placeholder: helptext_system_certificates.add.san.placeholder,
-      tooltip: helptext_system_certificates.add.san.tooltip,
-      isHidden: false,
-    },
-    {
-      type : 'textarea',
-      name : 'certificate',
-      placeholder : helptext_system_certificates.add.certificate.placeholder,
-      tooltip : helptext_system_certificates.add.certificate.tooltip,
-      required: true,
-      validation : helptext_system_certificates.add.certificate.validation,
-      isHidden: true,
-    },
-    {
-      type : 'textarea',
-      name : 'CSR',
-      placeholder : helptext_system_certificates.add.cert_csr.placeholder,
-      tooltip : helptext_system_certificates.add.cert_csr.tooltip,
-      required: true,
-      validation : helptext_system_certificates.add.cert_csr.validation,
-      isHidden: true,
-    },
-    {
-      type : 'textarea',
-      name : 'privatekey',
-      placeholder : helptext_system_certificates.add.privatekey.placeholder,
-      tooltip : helptext_system_certificates.add.privatekey.tooltip,
-      isHidden: true,
-      relation : [
         {
-          action : 'DISABLE',
-          when : [ {
-            name : 'csronsys',
-            value : true,
-          } ]
+          type: 'input',
+          name: 'city',
+          placeholder: helptext_system_certificates.add.city.placeholder,
+          tooltip: helptext_system_certificates.add.city.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.city.validation,
+          isHidden: false,
         },
-      ]
-    },
-    {
-      type : 'input',
-      name : 'passphrase',
-      placeholder : helptext_system_certificates.add.passphrase.placeholder,
-      tooltip : helptext_system_certificates.add.passphrase.tooltip,
-      inputType : 'password',
-      validation : helptext_system_certificates.add.passphrase.validation,
-      isHidden: true,
-      togglePw : true,
-      relation : [
         {
-          action : 'DISABLE',
-          when : [ {
-            name : 'csronsys',
-            value : true,
-          } ]
+          type: 'input',
+          name: 'organization',
+          placeholder: helptext_system_certificates.add.organization.placeholder,
+          tooltip: helptext_system_certificates.add.organization.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.organization.validation,
+          isHidden: false,
         },
-      ]
-    },
-    {
-      type : 'input',
-      name : 'passphrase2',
-      inputType : 'password',
-      placeholder : helptext_system_certificates.add.passphrase2.placeholder,
-      isHidden : true,
-      relation : [
         {
-          action : 'DISABLE',
-          when : [ {
-            name : 'csronsys',
-            value : true,
-          } ]
+          type: 'input',
+          name: 'organizational_unit',
+          placeholder: helptext_system_certificates.add.organizational_unit.placeholder,
+          tooltip: helptext_system_certificates.add.organizational_unit.tooltip,
+          required: false,
+          isHidden: false,
         },
+        {
+          type: 'input',
+          name: 'email',
+          placeholder: helptext_system_certificates.add.email.placeholder,
+          tooltip: helptext_system_certificates.add.email.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.email.validation,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'common',
+          placeholder: helptext_system_certificates.add.common.placeholder,
+          tooltip: helptext_system_certificates.add.common.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.common.validation,
+          isHidden: false,
+        },
+        {
+          type: 'chip',
+          name: 'san',
+          placeholder: helptext_system_certificates.add.san.placeholder,
+          tooltip: helptext_system_certificates.add.san.tooltip,
+          isHidden: false,
+        },
+        {
+          type: 'textarea',
+          name: 'certificate',
+          placeholder: helptext_system_certificates.add.certificate.placeholder,
+          tooltip: helptext_system_certificates.add.certificate.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.certificate.validation,
+          isHidden: true,
+        },
+        {
+          type: 'textarea',
+          name: 'CSR',
+          placeholder: helptext_system_certificates.add.cert_csr.placeholder,
+          tooltip: helptext_system_certificates.add.cert_csr.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.cert_csr.validation,
+          isHidden: true,
+        },
+        {
+          type: 'textarea',
+          name: 'privatekey',
+          placeholder: helptext_system_certificates.add.privatekey.placeholder,
+          tooltip: helptext_system_certificates.add.privatekey.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'csronsys',
+                value: true,
+              }]
+            },
+          ]
+        },
+        {
+          type: 'input',
+          name: 'passphrase',
+          placeholder: helptext_system_certificates.add.passphrase.placeholder,
+          tooltip: helptext_system_certificates.add.passphrase.tooltip,
+          inputType: 'password',
+          validation: helptext_system_certificates.add.passphrase.validation,
+          isHidden: true,
+          togglePw: true,
+          relation: [
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'csronsys',
+                value: true,
+              }]
+            },
+          ]
+        },
+        {
+          type: 'input',
+          name: 'passphrase2',
+          inputType: 'password',
+          placeholder: helptext_system_certificates.add.passphrase2.placeholder,
+          isHidden: true,
+          relation: [
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'csronsys',
+                value: true,
+              }]
+            },
+          ]
+        }
       ]
     }
-  ];
-
+  ]
   private internalFields: Array<any> = [
     'signedby',
     'key_type',
@@ -379,7 +404,7 @@ export class CertificateAddComponent {
 
   preInit() {
     this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
-      this.signedby = _.find(this.fieldConfig, {'name' : 'signedby'});
+      this.signedby = _.find(this.fieldSets[1].config, {'name' : 'signedby'});
       res.forEach((item) => {
         this.signedby.options.push(
             {label : item.name, value : item.id});
@@ -387,7 +412,7 @@ export class CertificateAddComponent {
     });
 
     this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
-      this.country = _.find(this.fieldConfig, {'name' : 'country'});
+      this.country = _.find(this.fieldSets[2].config, {'name' : 'country'});
       for (const item in res) {
         this.country.options.push(
           { label : res[item], value : item}
@@ -396,7 +421,7 @@ export class CertificateAddComponent {
     });
 
     this.ws.call('certificate.query').subscribe((res) => {
-      this.csrlist = _.find(this.fieldConfig, {'name' : 'csrlist'});
+      this.csrlist = _.find(this.fieldSets[1].config, {'name' : 'csrlist'});
       res.forEach((item) => {
         if (item.CSR !== null) {
           this.CSRList.push(item);
@@ -410,6 +435,7 @@ export class CertificateAddComponent {
 
   afterInit(entity: any) {
     this.entityForm = entity;
+    this.fieldConfig = entity.fieldConfig;
     for (let i in this.csrFields) {
       this.hideField(this.csrFields[i], true, entity);
     }
