@@ -4,23 +4,46 @@
   </div>
   <div class="mat-content p-1">
     <div class="manager">
-      <div class="fields m-3">
-        <div *ngIf="isNew;else extend">
-          <mat-form-field>
-            <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
-          </mat-form-field>
-          <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
-          <mat-checkbox
-            id="pool-manager__encryption-checkbox"
-            [(ngModel)]="isEncrypted"
-            class="form-control"
-             placeholder="Encryption"
-             (change)="isEncryptedChecked()" >
-             {{"Encryption" | translate}}
-          </mat-checkbox>
-          <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
-          <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
-          <div class="button-bar">
+      <div fxLayout="column" class="fields m-3">
+        <ng-container *ngIf="isNew;else extend">
+          <div fxLayout="row wrap" fxLayoutAlign="baseline" class="TEST">
+            <div fxFlex="40%" class="inline">
+              <mat-form-field>
+                <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
+              </mat-form-field>
+              <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
+            </div>
+            <div fxFlex="25%" class="inline" style="padding-top:12px;">
+              <mat-checkbox
+                id="pool-manager__encryption-checkbox"
+                [(ngModel)]="isEncrypted"
+                class="form-control"
+                placeholder="{{Encryption | translate}}"
+                (change)="isEncryptedChecked()" >
+                  {{"Encryption" | translate}}
+              </mat-checkbox>
+              <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
+            </div>
+            <div fxFlex class="inline encryption-select" style="padding-top:17px;">
+              <mat-select
+                *ngIf="isEncrypted"
+                id="pool-manager__encryption_algorithm-select"
+                [(ngModel)]="encryption_algorithm"
+                class="form-control"
+                placeholder="{{'Encryption Algorithm' | translate}}"
+              >
+                <mat-option *ngFor="let option of encryption_algorithm_options" [value]="option.value"
+                  id="encryption_algorithm_option_{{option.label}}">
+                    {{ option.label }}
+                </mat-option>
+  
+              </mat-select>
+            </div>
+          </div>
+
+          <div fxFlex="100%" *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
+
+          <div fxFlex="100%" class="button-bar">
             <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
             <div><button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button></div>
             <div><tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip></div>
@@ -40,7 +63,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.data_vdev_title | translate}}</h3>
-                    <p>{{help.data_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.data_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -52,7 +75,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.cache_vdev_title | translate}}</h3>
-                    <p>{{help.cache_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.cache_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -64,7 +87,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.log_vdev_title | translate}}</h3>
-                    <p>{{help.log_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.log_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -76,7 +99,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.spare_vdev_title | translate}}</h3>
-                    <p>{{help.spare_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.spare_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -88,7 +111,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.special_vdev_title | translate}}</h3>
-                    <p>{{help.special_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.special_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -100,13 +123,14 @@
                   </div>
                   <div class="td">
                     <h3>{{help.dedup_vdev_title | translate}}</h3>
-                    <p>{{help.dedup_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.dedup_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
             </mat-menu>
-          </div>
-        </div>
+          </div> <!-- END BUTTON BAR -->
+        </ng-container>
+
         <ng-template #extend>
         <div>
           <mat-form-field>
@@ -132,7 +156,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.data_vdev_title | translate}}</h3>
-                    <p>{{help.data_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.data_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -144,7 +168,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.cache_vdev_title | translate}}</h3>
-                    <p>{{help.cache_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.cache_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -156,7 +180,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.log_vdev_title | translate}}</h3>
-                    <p>{{help.log_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.log_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -168,7 +192,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.spare_vdev_title | translate}}</h3>
-                    <p>{{help.spare_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.spare_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -180,7 +204,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.special_vdev_title | translate}}</h3>
-                    <p>{{help.special_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.special_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>
@@ -192,7 +216,7 @@
                   </div>
                   <div class="td">
                     <h3>{{help.dedup_vdev_title | translate}}</h3>
-                    <p>{{help.dedup_vdev_description | translate}}</p>
+                    <p><span [innerHtml]="help.dedup_vdev_description | translate"></span></p>
                   </div>
                 </div>
               </button>

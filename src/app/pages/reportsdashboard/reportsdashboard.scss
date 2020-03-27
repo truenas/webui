@@ -98,7 +98,7 @@ nav.reports-toolbar{
 
 cdk-virtual-scroll-viewport{
   height: 100%;
-  width: calc(100% - 48px /*- 282px*/);
+  width: 100%;
 
   .report-container {
     /*height:400px !important;*/

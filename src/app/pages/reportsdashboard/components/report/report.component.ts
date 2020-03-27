@@ -70,6 +70,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   @Input() localControls?: boolean = true;; 
   @Input() report: Report;
   @Input() identifier?: string;
+  @Input() retroLogo?: string;
   @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
 
 
@@ -190,11 +191,13 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     if(changes.report){
       if(changes.report.previousValue && this.ready == false){
         this.setupData(changes); 
-      } else if(!changes.report.previousValue){
+      } else if(!changes.report.previousValue ){
         setTimeout(() => {
           this.ready = true;
           this.setupData(changes); 
         }, this.delay);
+      } else if(changes.report.previousValue.title !== changes.report.currentValue.title){
+        this.setupData(changes); 
       }
     } 
   }
@@ -360,7 +363,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     const start = Math.floor(rrdOptions.start / 1000);
     const end = Math.floor(rrdOptions.end / 1000);
     let timeFrame = {"start": start, "end": end}; 
-  
+    
     this.core.emit({name:"ReportDataRequest", data:{report: report, params: params, timeFrame: timeFrame}, sender: this});
   }
 

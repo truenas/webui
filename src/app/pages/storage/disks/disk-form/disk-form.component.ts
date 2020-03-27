@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
@@ -21,111 +22,144 @@ export class DiskFormComponent {
   protected customFilter: Array<any> = [[["identifier", "="]]];
   protected isEntity = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  protected fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'input',
-      name: 'name',
-      placeholder: helptext.disk_form_name_placeholder,
-      tooltip : helptext.disk_form_name_tooltip,
-      readonly: true
+        name: helptext.fieldset_disk,
+        label: true,
+        class: 'general',
+        width: '100%',
+        config: [
+          {
+            type: 'input',
+            name: 'name',
+            placeholder: helptext.disk_form_name_placeholder,
+            tooltip : helptext.disk_form_name_tooltip,
+            readonly: true
+          },
+          {
+            type: 'input',
+            name: 'serial',
+            placeholder: helptext.disk_form_serial_placeholder,
+            tooltip : helptext.disk_form_serial_tooltip,
+            readonly: true
+          },
+          {
+            type: 'input',
+            name: 'description',
+            placeholder: helptext.disk_form_description_placeholder,
+            tooltip : helptext.disk_form_description_tooltip,
+          },
+        ]
     },
     {
-      type: 'input',
-      name: 'serial',
-      placeholder: helptext.disk_form_serial_placeholder,
-      tooltip : helptext.disk_form_serial_tooltip,
-      readonly: true
-    },
-    {
-      type: 'input',
-      name: 'description',
-      placeholder: helptext.disk_form_description_placeholder,
-      tooltip : helptext.disk_form_description_tooltip,
-    },
-    {
-      type: 'select',
-      name: 'hddstandby',
-      placeholder: helptext.disk_form_hddstandby_placeholder,
-      tooltip : helptext.disk_form_hddstandby_tooltip,
-      options: helptext.disk_form_hddstandby_options,
-    },
-    {
-      type: 'select',
-      name: 'advpowermgmt',
-      placeholder: helptext.disk_form_advpowermgmt_placeholder,
-      tooltip : helptext.disk_form_advpowermgmt_tooltip,
-      options: helptext.disk_form_advpowermgmt_options,
-    },
-    {
-      type: 'select',
-      name: 'acousticlevel',
-      placeholder: helptext.disk_form_acousticlevel_placeholder,
-      tooltip : helptext.disk_form_acousticlevel_tooltip,
-      options: helptext.disk_form_acousticlevel_options,
-    },
-    {
-      type : 'checkbox',
-      name : 'togglesmart',
-      placeholder : helptext.disk_form_togglesmart_placeholder,
-      tooltip : helptext.disk_form_togglesmart_tooltip
-    },
-    {
-      type: 'input',
-      name: 'smartoptions',
-      placeholder: helptext.disk_form_smartoptions_placeholder,
-      tooltip : helptext.disk_form_smartoptions_tooltip
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'critical',
-      placeholder: helptext.disk_form_critical_placeholder,
-      tooltip: helptext.disk_form_critical_tooltip,
-      min: 0,
-      validation: [Validators.min(0)]
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'difference',
-      placeholder: helptext.disk_form_difference_placeholder,
-      tooltip: helptext.disk_form_difference_tooltip,
-      min: 0,
-      validation: [Validators.min(0)]
-    },
-    {
-      type: 'input',
-      inputType: 'number',
-      name: 'informational',
-      placeholder: helptext.disk_form_informational_placeholder,
-      tooltip: helptext.disk_form_informational_tooltip,
-      min: 0,
-      validation: [Validators.min(0)]
-    },
-    {
-      type: 'input',
-      name: 'passwd',
-      placeholder: helptext.disk_form_passwd_placeholder,
-      tooltip: helptext.disk_form_passwd_tooltip,
-      inputType: 'password',
-      value: '',
-      togglePw: true,
-      relation: [
+      name: helptext.fieldset_option,
+      label: true,
+      class: 'general',
+      width: '100%',
+      config: [
         {
-          action : 'DISABLE',
-          when : [{
-            name: 'clear_pw',
-            value: true
-          }]
+          type: 'select',
+          name: 'hddstandby',
+          placeholder: helptext.disk_form_hddstandby_placeholder,
+          tooltip : helptext.disk_form_hddstandby_tooltip,
+          options: helptext.disk_form_hddstandby_options,
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'select',
+          name: 'advpowermgmt',
+          placeholder: helptext.disk_form_advpowermgmt_placeholder,
+          tooltip : helptext.disk_form_advpowermgmt_tooltip,
+          options: helptext.disk_form_advpowermgmt_options,
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'select',
+          name: 'acousticlevel',
+          placeholder: helptext.disk_form_acousticlevel_placeholder,
+          tooltip : helptext.disk_form_acousticlevel_tooltip,
+          options: helptext.disk_form_acousticlevel_options,
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type : 'checkbox',
+          name : 'togglesmart',
+          placeholder : helptext.disk_form_togglesmart_placeholder,
+          tooltip : helptext.disk_form_togglesmart_tooltip
+        },
+        {
+          type: 'input',
+          name: 'smartoptions',
+          placeholder: helptext.disk_form_smartoptions_placeholder,
+          tooltip : helptext.disk_form_smartoptions_tooltip,
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'critical',
+          placeholder: helptext.disk_form_critical_placeholder,
+          tooltip: helptext.disk_form_critical_tooltip,
+          min: 0,
+          validation: [Validators.min(0)],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'difference',
+          placeholder: helptext.disk_form_difference_placeholder,
+          tooltip: helptext.disk_form_difference_tooltip,
+          min: 0,
+          validation: [Validators.min(0)],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'informational',
+          placeholder: helptext.disk_form_informational_placeholder,
+          tooltip: helptext.disk_form_informational_tooltip,
+          min: 0,
+          validation: [Validators.min(0)],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'input',
+          name: 'passwd',
+          placeholder: helptext.disk_form_passwd_placeholder,
+          tooltip: helptext.disk_form_passwd_tooltip,
+          inputType: 'password',
+          value: '',
+          togglePw: true,
+          relation: [
+            {
+              action : 'DISABLE',
+              when : [{
+                name: 'clear_pw',
+                value: true
+              }]
+            }
+          ],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'checkbox',
+          name: 'clear_pw',
+          placeholder: helptext.clear_pw.placeholder,
+          tooltip: helptext.clear_pw.tooltip
         }
-      ],
-    },
-    {
-      type: 'checkbox',
-      name: 'clear_pw',
-      placeholder: helptext.clear_pw.placeholder,
-      tooltip: helptext.clear_pw.tooltip
-    }
+      ]
+  }
   ];
 
   protected disk_hddstandby: any;

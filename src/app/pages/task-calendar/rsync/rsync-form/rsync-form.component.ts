@@ -31,157 +31,203 @@ export class RsyncFormComponent implements OnDestroy {
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
-      name:'Rsync Task',
-      class:'add-rsync',
-      label:true,
-      width:'300px',
+      name: helptext.fieldset_source,
+      class: 'source',
+      label: true,
+      width: '50%',
       config: [
-      {
-        type : 'explorer',
-        initial: '/mnt',
-        name: 'path',
-        explorerType: 'directory',
-        placeholder: helptext.rsync_path_placeholder,
-        tooltip: helptext.rsync_path_tooltip,
-        required: true,
-        validation : helptext.rsync_path_validation
-      }, {
-        type: 'combobox',
-        name: 'user',
-        placeholder: helptext.rsync_user_placeholder,
-        tooltip: helptext.rsync_user_tooltip,
-        options: [],
-        required: true,
-        validation : helptext.rsync_user_validation,
-        searchOptions: [],
-        parent: this,
-        updater: this.updateUserSearchOptions,
-      }, {
-        type: 'input',
-        name: 'remotehost',
-        placeholder: helptext.rsync_remotehost_placeholder,
-        required: true,
-        validation : helptext.rsync_remotehost_validation,
-        tooltip: helptext.rsync_remotehost_tooltip
-      }, {
-        type: 'select',
-        name: 'mode',
-        placeholder: helptext.rsync_mode_placeholder,
-        tooltip: helptext.rsync_mode_tooltip,
-        options: [{label: 'Module', value: 'MODULE'},
-                  {label: 'SSH', value: 'SSH'}],
-        value: 'MODULE'
-      }, {
-        type: 'input',
-        name: 'remoteport',
-        placeholder: helptext.rsync_remoteport_placeholder,
-        value: 22,
-        required: true,
-        tooltip: helptext.rsync_remoteport_tooltip,
-        validation: helptext.rsync_remoteport_validation
-      }, {
-        type: 'input',
-        name: 'remotemodule',
-        placeholder: helptext.rsync_remotemodule_placeholder,
-        tooltip: helptext.rsync_remotemodule_tooltip,
-        required: true,
-        validation: helptext.rsync_remotemodule_validation
-      }, {
-        type : 'explorer',
-        initial: '/mnt',
-        name: 'remotepath',
-        explorerType: 'directory',
-        placeholder: helptext.rsync_remotepath_placeholder,
-        tooltip: helptext.rsync_remotepath_tooltip
-      }, {
-        type: 'checkbox',
-        name: 'validate_rpath',
-        placeholder: helptext.rsync_validate_rpath_placeholder,
-        tooltip: helptext.rsync_validate_rpath_tooltip,
-        value: true,
-      }, {
-        type: 'select',
-        name: 'direction',
-        placeholder: helptext.rsync_direction_placeholder,
-        tooltip: helptext.rsync_direction_tooltip,
-        options: [{label: 'Push', value: 'PUSH'},
-                  {label: 'Pull', value: 'PULL'}],
-        required: true,
-        validation : helptext.rsync_direction_validation
-      }, {
-        type: 'input',
-        name: 'desc',
-        placeholder: helptext.rsync_description_placeholder,
-        tooltip: helptext.rsync_description_tooltip
-      }, {
-        type: 'scheduler',
-        name: 'rsync_picker',
-        placeholder: helptext.rsync_picker_placeholder,
-        tooltip: helptext.rsync_picker_tooltip,
-        required: true
-      }, {
-        type: 'checkbox',
-        name: 'recursive',
-        placeholder: helptext.rsync_recursive_placeholder,
-        tooltip: helptext.rsync_recursive_tooltip,
-        value: true,
-      }, {
-        type: 'checkbox',
-        name: 'times',
-        placeholder: helptext.rsync_times_placeholder,
-        tooltip: helptext.rsync_times_tooltip,
-        value: true,
-      }, {
-        type: 'checkbox',
-        name: 'compress',
-        placeholder: helptext.rsync_compress_placeholder,
-        tooltip: helptext.rsync_compress_tooltip,
-        value: true,
-      }, {
-        type: 'checkbox',
-        name: 'archive',
-        placeholder: helptext.rsync_archive_placeholder,
-        tooltip: helptext.rsync_archive_tooltip
-      }, {
-        type: 'checkbox',
-        name: 'delete',
-        placeholder: helptext.rsync_delete_placeholder,
-        tooltip: helptext.rsync_delete_tooltip
-      }, {
-        type: 'checkbox',
-        name: 'quiet',
-        placeholder: helptext.rsync_quiet_placeholder,
-        tooltip: helptext.rsync_quiet_tooltip
-      }, {
-        type: 'checkbox',
-        name: 'preserveperm',
-        placeholder: helptext.rsync_preserveperm_placeholder,
-        tooltip: helptext.rsync_preserveperm_tooltip
-      }, {
-        type: 'checkbox',
-        name: 'preserveattr',
-        placeholder: helptext.rsync_preserveattr_placeholder,
-        tooltip: helptext.rsync_preserveattr_tooltip
-      }, {
-        type: 'checkbox',
-        name: 'delayupdates',
-        placeholder: helptext.rsync_delayupdates_placeholder,
-        tooltip: helptext.rsync_delayupdates_tooltip,
-        value: true,
-      }, {
-        type: 'chip',
-        name: 'extra',
-        placeholder: helptext.rsync_extra_placeholder,
-        tooltip: helptext.rsync_extra_tooltip
-      }, {
-        type: 'checkbox',
-        name: 'enabled',
-        placeholder: helptext.rsync_enabled_placeholder,
-        tooltip: helptext.rsync_enabled_tooltip,
-        value: true,
-      }
-    ]
-  }];
+        {
+          type: 'explorer',
+          initial: '/mnt',
+          name: 'path',
+          explorerType: 'directory',
+          placeholder: helptext.rsync_path_placeholder,
+          tooltip: helptext.rsync_path_tooltip,
+          required: true,
+          validation: helptext.rsync_path_validation
+        },
+        {
+          type: 'combobox',
+          name: 'user',
+          placeholder: helptext.rsync_user_placeholder,
+          tooltip: helptext.rsync_user_tooltip,
+          options: [],
+          required: true,
+          validation: helptext.rsync_user_validation,
+          searchOptions: [],
+          parent: this,
+          updater: this.updateUserSearchOptions,
+        },
+        {
+          type: 'select',
+          name: 'direction',
+          placeholder: helptext.rsync_direction_placeholder,
+          tooltip: helptext.rsync_direction_tooltip,
+          options: [{ label: 'Push', value: 'PUSH' },
+          { label: 'Pull', value: 'PULL' }],
+          required: true,
+          validation: helptext.rsync_direction_validation
+        },
+        {
+          type: 'input',
+          name: 'desc',
+          placeholder: helptext.rsync_description_placeholder,
+          tooltip: helptext.rsync_description_tooltip
+        },
+      ],
+    },
+    {
+      name: helptext.fieldset_remote,
+      class: 'remote',
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'input',
+          name: 'remotehost',
+          placeholder: helptext.rsync_remotehost_placeholder,
+          required: true,
+          validation: helptext.rsync_remotehost_validation,
+          tooltip: helptext.rsync_remotehost_tooltip
+        },
+        {
+          type: 'select',
+          name: 'mode',
+          placeholder: helptext.rsync_mode_placeholder,
+          tooltip: helptext.rsync_mode_tooltip,
+          options: [{ label: 'Module', value: 'MODULE' },
+          { label: 'SSH', value: 'SSH' }],
+          value: 'MODULE'
+        },
+        {
+          type: 'input',
+          name: 'remoteport',
+          placeholder: helptext.rsync_remoteport_placeholder,
+          value: 22,
+          required: true,
+          tooltip: helptext.rsync_remoteport_tooltip,
+          validation: helptext.rsync_remoteport_validation
+        },
+        {
+          type: 'input',
+          name: 'remotemodule',
+          placeholder: helptext.rsync_remotemodule_placeholder,
+          tooltip: helptext.rsync_remotemodule_tooltip,
+          required: true,
+          validation: helptext.rsync_remotemodule_validation
+        },
+        {
+          type: 'explorer',
+          initial: '/mnt',
+          name: 'remotepath',
+          explorerType: 'directory',
+          placeholder: helptext.rsync_remotepath_placeholder,
+          tooltip: helptext.rsync_remotepath_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'validate_rpath',
+          placeholder: helptext.rsync_validate_rpath_placeholder,
+          tooltip: helptext.rsync_validate_rpath_tooltip,
+          value: true,
+        }
+      ],
+    },
+    {
+      name: helptext.fieldset_schedule,
+      class: 'schedule',
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'scheduler',
+          name: 'rsync_picker',
+          placeholder: helptext.rsync_picker_placeholder,
+          tooltip: helptext.rsync_picker_tooltip,
+          required: true
+        },
+        {
+          type: 'checkbox',
+          name: 'recursive',
+          placeholder: helptext.rsync_recursive_placeholder,
+          tooltip: helptext.rsync_recursive_tooltip,
+          value: true,
+        }
+      ]
+    },
+    {
+      name: helptext.fieldset_options,
+      class: 'options',
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'times',
+          placeholder: helptext.rsync_times_placeholder,
+          tooltip: helptext.rsync_times_tooltip,
+          value: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'compress',
+          placeholder: helptext.rsync_compress_placeholder,
+          tooltip: helptext.rsync_compress_tooltip,
+          value: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'archive',
+          placeholder: helptext.rsync_archive_placeholder,
+          tooltip: helptext.rsync_archive_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'delete',
+          placeholder: helptext.rsync_delete_placeholder,
+          tooltip: helptext.rsync_delete_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'quiet',
+          placeholder: helptext.rsync_quiet_placeholder,
+          tooltip: helptext.rsync_quiet_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'preserveperm',
+          placeholder: helptext.rsync_preserveperm_placeholder,
+          tooltip: helptext.rsync_preserveperm_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'preserveattr',
+          placeholder: helptext.rsync_preserveattr_placeholder,
+          tooltip: helptext.rsync_preserveattr_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'delayupdates',
+          placeholder: helptext.rsync_delayupdates_placeholder,
+          tooltip: helptext.rsync_delayupdates_tooltip,
+          value: true,
+        },
+        {
+          type: 'chip',
+          name: 'extra',
+          placeholder: helptext.rsync_extra_placeholder,
+          tooltip: helptext.rsync_extra_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext.rsync_enabled_placeholder,
+          tooltip: helptext.rsync_enabled_tooltip,
+          value: true,
+        }
+      ]
+    },
+  ];
 
   protected rsync_module_field: Array<any> = [
     'remotemodule',
