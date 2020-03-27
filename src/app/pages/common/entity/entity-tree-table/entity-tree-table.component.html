@@ -23,17 +23,19 @@
 					ix-auto-identifier="{{rowData.name}}"></p-treeTableToggler>
 				<span *ngIf="col.filesizePipe">{{ (rowData[col.prop] || 0) | filesize : {standard : "iec"} }}</span>
 				<span *ngIf="!col.filesizePipe">{{ rowData[col.prop]?.value || rowData[col.prop] }}</span>
-				<span *ngIf="col.prop === 'name' && rowData.hasOwnProperty('is_encrypted_root') && rowData.hasOwnProperty('non_encrypted_on_encrypted')">
-					&nbsp;
-					<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"
-						*ngIf="rowData.is_encrypted_root && !rowData.locked">
-					</mat-icon>
-					<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock" 
-						*ngIf="rowData.is_encrypted_root && rowData.locked">
-					</mat-icon>
-					<mat-icon svgIcon="anti-lock"
-						*ngIf="rowData.non_encrypted_on_encrypted">
-					</mat-icon>
+				<span class="icons">
+					<span *ngIf="col.prop === 'name' && rowData.hasOwnProperty('is_encrypted_root') && rowData.hasOwnProperty('non_encrypted_on_encrypted')">
+						&nbsp;
+						<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"
+							*ngIf="rowData.is_encrypted_root && !rowData.locked">
+						</mat-icon>
+						<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock" 
+							*ngIf="rowData.is_encrypted_root && rowData.locked">
+						</mat-icon>
+						<mat-icon svgIcon="anti-lock"
+							*ngIf="rowData.non_encrypted_on_encrypted">
+						</mat-icon>
+					</span>
 				</span>
 			</td>
 			<td *ngIf="showActions && rowData.actions">
