@@ -116,7 +116,7 @@ export default {
                 transfer when all transferred files are renamed\
                 into place.'),
 
-    rsync_extra_placeholder: T('Extra options'),
+    rsync_extra_placeholder: T('Auxiliary Parameters'),
     rsync_extra_tooltip: T('Additional \
      <a href="https://rsync.samba.org/ftp/rsync/rsync.html" target="_blank">rsync(1)</a> \
      options to include. Separate entries by pressing <code>Enter</code>.<br> \
