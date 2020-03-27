@@ -134,6 +134,19 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-full.svg")
     );
 
+    // TRUECOMMAND
+    this.matIconRegistry.addSvgIcon(
+      "truecommand_logo_white",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_white.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truecommand_logo_red",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_red.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truecommand_logo_grey",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_grey.svg")
+    );
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
