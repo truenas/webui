@@ -34,6 +34,13 @@ export default {
         alerts: T('Alerts'),
         settings: T('Settings'),
         power: T('Power')        
+    },
+
+    signupDialog: {
+        title: T('Connect / Singup TrueCommand Cloud'),
+        content: T('Do you want to connect to TrueCommand Cloud? or signup for TrueCommand Cloud?'),
+        singup_btn: T('SIGNUP'),
+        connect_btn: T('CONNECT'),
     }
 }
 

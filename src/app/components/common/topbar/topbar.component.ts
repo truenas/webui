@@ -22,6 +22,7 @@ import { T } from '../../../translate-marker';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector: 'topbar',
@@ -507,5 +508,50 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   openIX() {
     window.open('https://www.ixsystems.com/', '_blank')
+  }
+
+  showTCStatus() {
+    // this.ws.call('truecommand.config').subscribe(
+    //   (res) => {
+    //     if (!res.api_key) {
+          this.openSignupDialog();
+      //   } else {
+      //     this.openStatusDialog();
+      //   }
+      // })
+  }
+
+  openSignupDialog() {
+    const conf: DialogFormConfiguration = {
+      title: helptext.signupDialog.title,
+      fieldConfig: [
+        {
+          type: 'paragraph',
+          name: 'message',
+          paraText: helptext.signupDialog.content
+        }
+      ],
+      saveButtonText: helptext.signupDialog.connect_btn,
+      custActions: [
+        {
+          id: 'signup',
+          name: helptext.signupDialog.singup_btn,
+          function: () => {
+            window.open('https://portal.ixsystems.com');
+            this.dialogService.closeAllDialogs();
+          }
+        }
+      ],
+      parent: this,
+      customSubmit: function (entityDialog) {
+        entityDialog.dialogRef.close();
+        entityDialog.parent.updateTC();
+      }
+    }
+    this.dialogService.dialogForm(conf);
+  }
+
+  updateTC() {
+    console.log('update or connect');
   }
 }
