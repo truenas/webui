@@ -133,5 +133,7 @@ dataset_form_encryption: {
     generate_key_checkbox_tooltip: T(''),
     key_placeholder: T('Key'),
     key_tooltip: T(''),
+    non_encrypted_warning_title: T('Warning'),
+    non_encrypted_warning_warning: T('Disabling encryption will result in a non-encrypted dataset, continue?')
 }
 }
