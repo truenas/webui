@@ -17,7 +17,7 @@ export default {
                 the command or script.'),
     cron_user_validation : [ Validators.required ],
 
-    cron_picker_placeholder: T('Schedule a Cron Job'),
+    cron_picker_placeholder: T('Schedule'),
     cron_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i>\
                 to open the advanced scheduler.'),
     cron_picker_validation: [ Validators.required ],

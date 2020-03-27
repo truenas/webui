@@ -69,7 +69,7 @@ export default {
     rsync_description_placeholder: T('Description'),
     rsync_description_tooltip: T('Enter a description of the rsync task.'),
 
-    rsync_picker_placeholder: T('Schedule the Rsync Task'),
+    rsync_picker_placeholder: T('Schedule'),
     rsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i>\
                 to open the advanced scheduler.'),
 
