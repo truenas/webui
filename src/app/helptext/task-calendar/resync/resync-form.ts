@@ -66,7 +66,7 @@ export default {
     rsync_direction_tooltip: T('Direct the flow of data to the remote host.'),
     rsync_direction_validation : [ Validators.required ],
 
-    rsync_description_placeholder: T('Short Description'),
+    rsync_description_placeholder: T('Description'),
     rsync_description_tooltip: T('Enter a description of the rsync task.'),
 
     rsync_picker_placeholder: T('Schedule the Rsync Task'),

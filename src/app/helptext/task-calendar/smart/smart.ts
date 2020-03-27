@@ -18,8 +18,8 @@ export default {
                 simultaneously with scrub or resilver operations.'),
     smarttest_type_validation : [ Validators.required ],
 
-    smarttest_desc_placeholder: T('Short description'),
-    smarttest_desc_tooltip : T('Enter a description of the S.M.A.R.T. test.'),
+    smarttest_desc_placeholder: T('Description'),
+    smarttest_desc_tooltip : T('Enter any information about this S.M.A.R.T. test.'),
 
     smarttest_picker_placeholder: T('Schedule the S.M.A.R.T. Test'),
     smarttest_picker_tooltip: T('Choose one of the convenient presets\
