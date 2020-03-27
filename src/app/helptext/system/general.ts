@@ -59,6 +59,11 @@ export const helptext_system_general = {
     validation: [Validators.required]
   },
 
+  stg_guihttpsprotocols: {
+    placeholder: T("HTTPS Protocols"),
+    tooltip: T(''),
+  },
+
   stg_guihttpsredirect: {
     placeholder: T("Web Interface HTTP -> HTTPS Redirect"),
     tooltip: T(
