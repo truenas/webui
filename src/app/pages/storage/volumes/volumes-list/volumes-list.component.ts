@@ -119,7 +119,9 @@ export class VolumesListTableConfig implements InputTableConf {
     if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
       this.tableData = [];
       for (let i = 0; i < volumeData['children'].length; i++) {
-        this.tableData.push(this.dataHandler(volumeData['children'][i]));
+        const child = volumeData['children'][i];
+        child.parent = volumeData;
+        this.tableData.push(this.dataHandler(child));
       }
     }
   }
@@ -1090,9 +1092,10 @@ export class VolumesListTableConfig implements InputTableConf {
     return moment(dateTime).format("YYYY-MM-DD_HH-mm");
   }
 
-  dataHandler(data: any, parent: any): TreeNode {
+  dataHandler(data: any): TreeNode {
     const node: TreeNode = {};
     node.data = data;
+    parent = data.parent;
     this.getMoreDatasetInfo(data, parent);
     node.data.actions = this.getActions(data);
 
@@ -1100,7 +1103,9 @@ export class VolumesListTableConfig implements InputTableConf {
 
     if (data.children) {
       for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.dataHandler(data.children[i], data));
+        const child = data.children[i];
+        child.parent = data;
+        node.children.push(this.dataHandler(child));
       }
     }
     delete node.data.children;
