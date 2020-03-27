@@ -5,8 +5,8 @@ import { T } from "app/translate-marker";
 export const helptext_system_certificates = {
   add: {
     name: {
-      placeholder: T("Identifier"),
-      tooltip: T("Enter a description of the CA."),
+      placeholder: T("Name"),
+      tooltip: T("Descriptive identifier for this certificate."),
       validation: [Validators.required, Validators.pattern("[A-Za-z0-9_-]+$")]
     },
 
