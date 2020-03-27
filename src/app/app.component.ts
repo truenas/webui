@@ -134,6 +134,12 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-full.svg")
     );
 
+    // encryption icon
+    this.matIconRegistry.addSvgIcon(
+      "anti-lock",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/anti-lock.svg")
+    )
+
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
