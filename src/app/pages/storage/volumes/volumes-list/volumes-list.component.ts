@@ -1090,24 +1090,24 @@ export class VolumesListTableConfig implements InputTableConf {
     return moment(dateTime).format("YYYY-MM-DD_HH-mm");
   }
 
-  dataHandler(data: any): TreeNode {
+  dataHandler(data: any, parent: any): TreeNode {
     const node: TreeNode = {};
     node.data = data;
-    this.getMoreDatasetInfo(data);
+    this.getMoreDatasetInfo(data, parent);
     node.data.actions = this.getActions(data);
 
     node.children = [];
 
     if (data.children) {
       for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.dataHandler(data.children[i]));
+        node.children.push(this.dataHandler(data.children[i], data));
       }
     }
     delete node.data.children;
     return node;
   }
 
-  getMoreDatasetInfo(dataObj) {
+  getMoreDatasetInfo(dataObj, parent) {
     const dataset_data2 = this.datasetData;
     this.translate.get(T("Inherits")).subscribe(inherits => {
       for (const k in dataset_data2) {
@@ -1143,7 +1143,7 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
         dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
         dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
-        dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && dataObj.encryption_root !== null);
+        dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
       }
     });
   }
