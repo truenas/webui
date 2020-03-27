@@ -29,7 +29,7 @@ tftp_username_tooltip : T('Select the account to use for TFTP requests. This\
 tftp_umask_placeholder : T('File Permissions'),
 tftp_umask_tooltip : T('Adjust the file permissions using the checkboxes.'),
 
-tftp_options_placeholder : T('Extra options'),
+tftp_options_placeholder : T('Auxiliary Parameters'),
 tftp_options_tooltip : T('Add more options from <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=tftpd"\
  target="_blank">tftpd(8)</a>. Add one option on each\

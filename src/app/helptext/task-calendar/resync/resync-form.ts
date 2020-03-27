@@ -34,7 +34,7 @@ export default {
     rsync_remoteport_tooltip: T('Enter the SSH Port of the remote system.'),
     rsync_remoteport_validation: [rangeValidator(1, 65535), Validators.required],
 
-    rsync_mode_placeholder: T('Rsync mode'),
+    rsync_mode_placeholder: T('Rsync Mode'),
     rsync_mode_tooltip: T('Choose <a \
                 href="--docurl--/tasks.html#rsync-module-mode"\
                 target="_blank">rsync module mode</a> or <a \
@@ -101,11 +101,11 @@ export default {
     rsync_quiet_tooltip: T('Set to suppress informational messages from the\
                 remote server.'),
 
-    rsync_preserveperm_placeholder: T('Preserve permissions'),
+    rsync_preserveperm_placeholder: T('Preserve Permissions'),
     rsync_preserveperm_tooltip: T('Set to preserve original file permissions. This is\
                 useful when the user is set to <i>root</i>.'),
 
-    rsync_preserveattr_placeholder: T('Preserve extended attributes'),
+    rsync_preserveattr_placeholder: T('Preserve Extended Attributes'),
     rsync_preserveattr_tooltip: T('<a\ href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
                 target="_blank">Extended attributes</a> are\
                 preserved, but must be supported by both systems.'),
