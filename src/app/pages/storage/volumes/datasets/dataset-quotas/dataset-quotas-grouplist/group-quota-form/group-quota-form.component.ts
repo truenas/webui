@@ -19,6 +19,8 @@ export class GroupQuotaFormComponent {
   public searchedEntries = [];
   public entryField;
   private isNew = true;
+  private dq: string;
+  private oq: string;
   private selectedEntriesField: any
   private selectedEntriesValue: any;
   private entryErrs: any;
@@ -37,7 +39,6 @@ export class GroupQuotaFormComponent {
           name: 'data_quota',
           placeholder: helptext.groups.data_quota.placeholder,
           tooltip: helptext.groups.data_quota.tooltip,
-          value: 0,
           blurStatus: true,
           blurEvent: this.blurEvent,
           parent: this,
@@ -47,7 +48,6 @@ export class GroupQuotaFormComponent {
           name: 'obj_quota',
           placeholder: helptext.groups.obj_quota.placeholder,
           tooltip: helptext.groups.obj_quota.tooltip,
-          value: 0
         }
       ]
     },
@@ -114,7 +114,8 @@ export class GroupQuotaFormComponent {
   }
 
   allowSubmit() {
-    if ((this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0 ||
+    if ((this.dq || this.oq) &&
+        (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0 ||
         this.searchedEntries && this.searchedEntries.length > 0) &&
         this.entryErrBool === false) {
       this.save_button_enabled = true;
@@ -145,6 +146,16 @@ export class GroupQuotaFormComponent {
         this.selectedEntriesField.options.push({label: entry.group, value: entry.gid});
       });
     });
+
+    this.entityForm.formGroup.controls['data_quota'].valueChanges.subscribe((res) => {
+      this.dq = res;
+      this.allowSubmit();
+    })
+
+    this.entityForm.formGroup.controls['obj_quota'].valueChanges.subscribe((res) => {
+      this.oq = res;
+      this.allowSubmit();
+    })
 
     this.entityForm.formGroup.controls['system_entries'].valueChanges.subscribe(() => {
       this.allowSubmit();
@@ -204,17 +215,24 @@ export class GroupQuotaFormComponent {
 
     if (data.system_entries) {
       data.system_entries.forEach((entry) => {
-        payload.push({
-          quota_type: 'GROUP',
-          id: entry.toString(),
-          quota_value: this.storageService.convertHumanStringToNum(data.data_quota)
-        },
-        {
-          quota_type: 'GROUPOBJ',
-          id: entry.toString(),
-          quota_value: parseInt(data.obj_quota, 10)
-        })
-      });
+        if (data.data_quota) {
+          const dq = this.storageService.convertHumanStringToNum(data.data_quota);
+          if (dq >= 0) {
+            payload.push({
+              quota_type: 'GROUP',
+              id: entry.toString(),
+              quota_value: this.storageService.convertHumanStringToNum(data.data_quota)
+            })
+          }
+        };
+        if (data.obj_quota && data.obj_quota >= 0) {
+          payload.push({
+            quota_type: 'GROUPOBJ',
+            id: entry.toString(),
+            quota_value: parseInt(data.obj_quota, 10)
+          })
+        };
+      })
     }
 
     this.loader.open();
