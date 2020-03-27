@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from 'app/helptext/system/ssh-keypairs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -23,29 +24,38 @@ export class SshKeypairsFormComponent {
     protected isEntity = true;
     protected entityForm: any;
 
-    protected fieldConfig: FieldConfig[] = [
+    protected fieldConfig: FieldConfig[];
+    public fieldSets: FieldSet[] = [
         {
-            type: 'paragraph',
-            name: 'key_instructions',
-            paraText: helptext.key_instructions
-        }, {
-            type: 'input',
-            name: 'name',
-            placeholder: helptext.name_placeholder,
-            tooltip: helptext.name_tooltip,
-            required: true,
-            validation: [Validators.required]
-        }, {
-            type: 'textarea',
-            name: 'private_key',
-            placeholder: helptext.private_key_placeholder,
-            tooltip: helptext.private_key_tooltip,
-        }, {
-            type: 'textarea',
-            name: 'public_key',
-            placeholder: helptext.public_key_placeholder,
-            tooltip: helptext.public_key_tooltip,
-            validation: [atLeastOne('private_key', [helptext.private_key_placeholder, helptext.public_key_placeholder])]
+            name: helptext.fieldset_basic,
+            label: true,
+            class: 'basic',
+            width: '100%',
+            config: [
+                {
+                    type: 'paragraph',
+                    name: 'key_instructions',
+                    paraText: helptext.key_instructions
+                }, {
+                    type: 'input',
+                    name: 'name',
+                    placeholder: helptext.name_placeholder,
+                    tooltip: helptext.name_tooltip,
+                    required: true,
+                    validation: [Validators.required]
+                }, {
+                    type: 'textarea',
+                    name: 'private_key',
+                    placeholder: helptext.private_key_placeholder,
+                    tooltip: helptext.private_key_tooltip,
+                }, {
+                    type: 'textarea',
+                    name: 'public_key',
+                    placeholder: helptext.public_key_placeholder,
+                    tooltip: helptext.public_key_tooltip,
+                    validation: [atLeastOne('private_key', [helptext.private_key_placeholder, helptext.public_key_placeholder])]
+                }
+            ]
         }
     ]
 
@@ -108,6 +118,7 @@ export class SshKeypairsFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        this.fieldConfig = entityForm.fieldConfig;
         this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res) => {
             this.clearPreviousErrors();
         });
