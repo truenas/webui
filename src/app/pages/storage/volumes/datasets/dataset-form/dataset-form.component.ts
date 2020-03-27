@@ -504,18 +504,19 @@ export class DatasetFormComponent implements Formconfiguration{
           inputType: 'password',
           placeholder: helptext.dataset_form_encryption.passphrase_placeholder,
           tooltip: helptext.dataset_form_encryption.passphrase_tooltip,
+          validation: helptext.dataset_form_encryption.passphrase_validation,
           required: true,
           disabled: true,
           isHidden: true,
         },
         {
           type: 'input',
-          name: 'pkdf2iters',
-          placeholder: helptext.dataset_form_encryption.pkdf2iters_placeholder,
-          tooltip: helptext.dataset_form_encryption.pkdf2iters_tooltip,
+          name: 'pbkdf2iters',
+          placeholder: helptext.dataset_form_encryption.pbkdf2iters_placeholder,
+          tooltip: helptext.dataset_form_encryption.pbkdf2iters_tooltip,
           required: true,
           value: 350000,
-          validation: helptext.dataset_form_encryption.pkdf2iters_validation,
+          validation: helptext.dataset_form_encryption.pbkdf2iters_validation,
           disabled: true,
           isHidden: true,
         }
@@ -671,7 +672,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
   public passphrase_fields: Array<any> = [
     'passphrase',
-    'pkdf2iters'
+    'pbkdf2iters'
   ]
 
   protected byteMap: Object= {
@@ -961,7 +962,7 @@ export class DatasetFormComponent implements Formconfiguration{
             this.entityForm.setDisabled('encryption_type', inherit, inherit);
             const key = (this.encryption_type === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
-            this.entityForm.setDisabled('pkdf2iters', key, key);
+            this.entityForm.setDisabled('pbkdf2iters', key, key);
             this.entityForm.setDisabled('generate_key', !key, !key);
             if (this.encrypted_parent) {
               _.find(this.fieldConfig, {name:'encryption'}).isHidden = this.isBasicMode;
@@ -994,7 +995,7 @@ export class DatasetFormComponent implements Formconfiguration{
           this.encryption_type = type;
           const key = (type === 'key');
           this.entityForm.setDisabled('passphrase', key, key);
-          this.entityForm.setDisabled('pkdf2iters', key, key);
+          this.entityForm.setDisabled('pbkdf2iters', key, key);
           this.entityForm.setDisabled('generate_key', !key, !key);
           if (key) {
             this.entityForm.setDisabled('key', this.generate_key, this.generate_key);
@@ -1322,6 +1323,29 @@ export class DatasetFormComponent implements Formconfiguration{
     if (data.recordsize === "1M") {
       data.recordsize = "1024K";
     }
+    // encryption values
+    if (data.inherit_encryption) {
+      delete data.encryption;
+    } else {
+      if (data.encryption) {
+        data['encryption_options'] = {}
+        if (data.encryption_type === 'key') {
+          data.encryption_options.generate_key = data.generate_key;
+          if (!data.generate_key) {
+            data.encryption_options.key = data.key;
+          }
+        } else if (data.encryption_type === 'passphrase') {
+          data.encryption_options.passphrase = data.passphrase;
+          data.encryption_options.pbkdf2iters = data.pbkdf2iters;
+        }
+      }
+    }
+    delete data.key;
+    delete data.generate_key;
+    delete data.passphrase;
+    delete data.pbkdf2iters;
+    delete data.encryption_type;
+
     return this.ws.call('pool.dataset.create', [ data ]);
   }
 
