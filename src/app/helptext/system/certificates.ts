@@ -4,6 +4,10 @@ import { T } from "app/translate-marker";
 
 export const helptext_system_certificates = {
   add: {
+    fieldset_basic: T('Identifier and Type'),
+    fieldset_type: T('Certificate Options'),
+    fieldset_certificate: T('Certificate Subject'),
+
     name: {
       placeholder: T("Identifier"),
       tooltip: T("Enter a description of the CA."),
@@ -161,6 +165,7 @@ export const helptext_system_certificates = {
   },
 
   edit: {
+    fieldset_certificate: T('Certificate'),
     name: {
       placeholder: T("Identifier"),
       tooltip: T(
@@ -208,6 +213,7 @@ export const helptext_system_certificates = {
   },
 
   acme: {
+    fieldset_acme: T('ACME Certificate'),
     identifier: {
       placeholder: T("Identifier"),
       tooltip: T('Internal identifier of the certificate. Only\

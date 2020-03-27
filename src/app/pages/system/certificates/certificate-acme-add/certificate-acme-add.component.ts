@@ -8,6 +8,7 @@ import { RestService, WebSocketService, DialogService } from '../../../../servic
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
@@ -26,55 +27,63 @@ export class CertificateAcmeAddComponent {
   public formArray: FormArray;
   public commonName: string;
   protected arrayControl: any;
-  protected fieldConfig: FieldConfig[] = [
+  protected fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type : 'input',
-      name : 'identifier',
-      placeholder : helptext_system_certificates.acme.identifier.placeholder,
-      tooltip: helptext_system_certificates.acme.identifier.tooltip,
-      required: true,
-      validation : helptext_system_certificates.add.name.validation,
-      hasErrors: false,
-      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
-    },
-    {
-      type : 'checkbox',
-      name : 'tos',
-      placeholder : helptext_system_certificates.acme.tos.placeholder,
-      tooltip: helptext_system_certificates.acme.tos.tooltip,
-      required: true,
-    },
-    {
-      type : 'input',
-      name : 'renew_days',
-      placeholder : helptext_system_certificates.acme.renew_day.placeholder,
-      tooltip: helptext_system_certificates.acme.renew_day.tooltip,
-      inputType: 'number',
-      required: true,
-      value: 10,
-      validation: helptext_system_certificates.acme.renew_day.validation
-    },
-    {
-      type : 'select',
-      name : 'acme_directory_uri',
-      placeholder : helptext_system_certificates.acme.dir_uri.placeholder,
-      tooltip: helptext_system_certificates.acme.dir_uri.tooltip,
-      required: true,
-      options : [
-        {label: 'https://acme-staging-v02.api.letsencrypt.org/directory', value: 'https://acme-staging-v02.api.letsencrypt.org/directory'},
-        {label: 'https://acme-v02.api.letsencrypt.org/directory', value: 'https://acme-v02.api.letsencrypt.org/directory'}
-      ],
-      value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
-    },
-    {
-      type: 'select',
-      name: 'authenticators',
-      placeholder: helptext_system_certificates.acme.authenticator.placeholder,
-      tooltip: helptext_system_certificates.acme.authenticator.tooltip,
-      options: [],
-      required: true
+      name: helptext_system_certificates.acme.fieldset_acme,
+      label: true,
+      class: 'acme',
+      width: '100%',
+      config: [
+        {
+          type: 'input',
+          name: 'identifier',
+          placeholder: helptext_system_certificates.acme.identifier.placeholder,
+          tooltip: helptext_system_certificates.acme.identifier.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.name.validation,
+          hasErrors: false,
+          errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
+        },
+        {
+          type: 'checkbox',
+          name: 'tos',
+          placeholder: helptext_system_certificates.acme.tos.placeholder,
+          tooltip: helptext_system_certificates.acme.tos.tooltip,
+          required: true,
+        },
+        {
+          type: 'input',
+          name: 'renew_days',
+          placeholder: helptext_system_certificates.acme.renew_day.placeholder,
+          tooltip: helptext_system_certificates.acme.renew_day.tooltip,
+          inputType: 'number',
+          required: true,
+          value: 10,
+          validation: helptext_system_certificates.acme.renew_day.validation
+        },
+        {
+          type: 'select',
+          name: 'acme_directory_uri',
+          placeholder: helptext_system_certificates.acme.dir_uri.placeholder,
+          tooltip: helptext_system_certificates.acme.dir_uri.tooltip,
+          required: true,
+          options: [
+            { label: 'https://acme-staging-v02.api.letsencrypt.org/directory', value: 'https://acme-staging-v02.api.letsencrypt.org/directory' },
+            { label: 'https://acme-v02.api.letsencrypt.org/directory', value: 'https://acme-v02.api.letsencrypt.org/directory' }
+          ],
+          value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
+        },
+        {
+          type: 'select',
+          name: 'authenticators',
+          placeholder: helptext_system_certificates.acme.authenticator.placeholder,
+          tooltip: helptext_system_certificates.acme.authenticator.tooltip,
+          options: [],
+          required: true
+        }]
     }
-  ]
+  ];
 
   protected entityForm: any;
   private pk: any;
@@ -90,7 +99,7 @@ export class CertificateAcmeAddComponent {
   ) { }
 
   preInit() { 
-    this.arrayControl = _.find(this.fieldConfig, {'name' : 'dns_mapping_array'});
+    this.arrayControl = _.find(this.fieldSets[0].config, {'name' : 'dns_mapping_array'});
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.queryCallOption[0].push(parseInt(params['pk']));
@@ -102,7 +111,7 @@ export class CertificateAcmeAddComponent {
       this.csrOrg = res[0];
 
       this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
-        let dns_map = _.find(this.fieldConfig, {'name' : 'authenticators'});
+        let dns_map = _.find(this.fieldSets[0].config, {'name' : 'authenticators'});
 
         res.forEach((item) => {
           dns_map.options.push(
@@ -115,6 +124,7 @@ export class CertificateAcmeAddComponent {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.fieldConfig = entityEdit.fieldConfig;
   }
 
   customSubmit(value) {
