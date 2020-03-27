@@ -192,6 +192,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
           this.ready = true;
           this.setupData(changes); 
         }, this.delay);
+      } else if(changes.report.previousValue.title !== changes.report.currentValue.title){
+        this.setupData(changes);
       }
     } 
   }
