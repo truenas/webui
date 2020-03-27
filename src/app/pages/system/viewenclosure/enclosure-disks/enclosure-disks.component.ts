@@ -106,13 +106,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   private defaultView = 'pools';
   private labels: VDevLabelsSVG;
   private identifyBtnRef: any;
+  protected maxCardWidth:number = 960;
+  protected pixiWidth: number = 960;
+  protected pixiHeight: number = 304;
   
   get cardWidth(){
     return this.overview.nativeElement.offsetWidth;
   }
  
   get cardScale(){
-    const scale = this.cardWidth / 960;
+    const scale = this.cardWidth / this.maxCardWidth;
     return scale > 1 ? 1 : scale;
   }
 
@@ -271,12 +274,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   pixiInit(){
+      console.log("PIXI INIT");
       PIXI.settings.PRECISION_FRAGMENT = 'highp'; //this makes text looks better? Answer = NO
       PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES , 16);// Fixes FireFox gl errors
       PIXI.utils.skipHello();
       this.app = new PIXI.Application({
-        width: 960 ,
-        height:304 ,
+        width: this.pixiWidth,  //960 ,
+        height: this.pixiHeight, //304 ,
         forceCanvas:false,
         transparent:true,
         antialias:true,
@@ -329,10 +333,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.enclosure = new E60();
         break;
       default:
-        console.warn("ENCLOSURE NOT SUPPORTED")
+        console.warn("ENCLOSURE IS NOT A SUPPORTED RACKMOUNT CHASSIS. IS THIS A MINI?")
         this.enclosure = new M50();
     }
-    
+
+    this.setupEnclosureEvents(enclosure);
+  }
+  
+  setupEnclosureEvents(enclosure){
     this.enclosure.events.subscribe((evt) => {
       switch(evt.name){
         case "Ready":

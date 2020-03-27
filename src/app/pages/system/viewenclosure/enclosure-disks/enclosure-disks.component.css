@@ -295,8 +295,32 @@ div.vdev-disk {
 
 .view-card .dom-overlay#visualizer{
   z-index:2;
+}
+
+.view-card.rackmount .dom-overlay#visualizer{
   width:auto;
 }
+
+/* MINI OVERRIDES */
+
+.view-card.mini .dom-overlay#visualizer{ left: 0 !important; }
+
+.view-card.mini #disks-details,
+.view-card.mini #disks-overview,
+.view-card.mini .dom-overlay#visualizer{
+  height: calc(600px - 48px);
+  background-color: var(--black);
+}
+
+.view-card.mini #disks-overview{
+  border: solid 1px var(--cyan);
+}
+
+.view-card.mini #disks-details{
+  border: solid 1px var(--magenta);
+  padding:16px;
+}
+/* END MINI OVERRIDES */
 
 .view-card.md .dom-overlay.stage-left, .view-card.md .dom-overlay.stage-right,
 .view-card.md .dom-overlay .visualizer{

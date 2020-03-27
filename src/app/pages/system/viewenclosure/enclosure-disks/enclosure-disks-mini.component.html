@@ -21,6 +21,28 @@
 
   </mat-toolbar>
 
-  <mat-card-content style="background-color: var(--black); min-height: 480px;">
+  <mat-card-content #cardcontent fxLayout="row">
+    <!-- VISUALIZER -->
+    <div #disksoverview
+      fxFlex="60%"
+      id="disks-overview"
+      [class]="currentView">
+      <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+    </div>
+
+    <!-- DETAILS/OVERVIEW -->
+    <div *ngIf="selectedDisk; then details else overview;" class="wrapper">
+    </div>
+      <ng-template #details>
+        <div fxFlex #disksdetails id="disks-details">
+          <h3>DETAILS</h3>
+        </div>
+      </ng-template>
+
+      <ng-template #overview>
+        <div fxFlex #diskdetails id="disks-details">
+          <h3>OVERVIEW</h3>
+        </div>
+      </ng-template>
   </mat-card-content>
 </mat-card>

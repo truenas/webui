@@ -63,9 +63,7 @@ export class Chassis {
 
    constructor(){
      this.container = new PIXI.Container();
-     //this.driveTrays = new PIXI.Container();
      this.driveTrays = new PIXI.projection.Container2d();
-     //this.driveTrays = new PIXI.projection.Sprite2d(PIXI.Texture.WHITE);
      this.events = new Subject<CoreEvent>();
 
      this.events.subscribe((evt:CoreEvent) => {
@@ -108,8 +106,6 @@ export class Chassis {
    }
 
    onLoaded(){
-     //let opacity = 0.5;
-
      const outlineFilterBlue = new PIXI.filters.OutlineFilter(2, 0x99ff99);
      const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
        threshold: 0.9, 
@@ -118,7 +114,6 @@ export class Chassis {
        blur: 20, 
        quality: 10
      });
-     //(0.1, 1.2, 1.2, 20, 3); // 
 
      this.filters = [ bloomFilter ];
 
@@ -132,13 +127,11 @@ export class Chassis {
      for(let i = 0; i < this.totalDriveTrays; i++){
        let dt = this.makeDriveTray();
        dt.id = i.toString();
-       //dt.background.tint = 0x666666;
        let position = this.generatePosition(dt.container, i, this.driveTraysOffsetX, this.driveTraysOffsetY);
        dt.container.x = position.x;
        dt.container.y = position.y;
        dt.background.alpha = 0;
        dt.handle.alpha = 0;
-       //dt.color = i == 5 ? "#cc0000" : "#5ed427";
        dt.handle.filters = this.filters;
 
        dt.container.interactive = true;
@@ -148,20 +141,12 @@ export class Chassis {
        this.driveTrays.addChild(dt.container);
        this.driveTrayObjects.push(dt);
      }
-
-     //this.driveTrays.x = 43;
-     //this.driveTrays.y = 78;
      
      this.generatePerspectiveOffset();
      this.driveTrays.name = this.model + "_drivetrays";
      this.container.addChild(this.driveTrays);
-     //this.generatePerspective();
 
      this.onEnter();
-
-     // Let the parent know class is ready.
-     //this.events.next({name: "Ready"});
-     //this.events.complete();
    }
 
    generatePerspectiveOffset(){
@@ -179,8 +164,8 @@ export class Chassis {
     setTimeout(() =>{
       const glow = (v) => driveTray.background.alpha = v;
       tween({
-        from: 1,//item.container.scale,
-        to: startAlpha, //{ x: 300, rotate: 180 },
+        from: 1,
+        to: startAlpha,
         duration: 1000,
       }).start(glow);
     }, 300);
@@ -195,10 +180,9 @@ export class Chassis {
      setTimeout(() =>{
        const fade = (v) => this.chassis.alpha = v;
        tween({
-         from: 0,//item.container.scale,
-         to: opacity, //{ x: 300, rotate: 180 },
+         from: 0,
+         to: opacity,
          duration:duration,
-         //ease: easing.backOut
        }).start(fade);
      },delay)
 
@@ -220,8 +204,6 @@ export class Chassis {
           update: v => { updateAlpha(v) },
           complete: () => {
             if(index == this.driveTrayObjects.length - 1){
-              //this.initialized = true;
-              // Let the parent know class is ready.
               this.events.next({name: "Ready"});
             } 
           }
@@ -231,8 +213,6 @@ export class Chassis {
       // Staggered tray backgrounds fade in  
       setTimeout(() =>{
         const updateAlpha = (v) => item.background.alpha = v;
-        //const updateFilter = (v) => item.handle.filters[0].threshold = v;
-        //console.log(item.handle.filters[0]);
 
         tween({
           from: item.background.alpha,
@@ -242,13 +222,6 @@ export class Chassis {
         }).start(updateAlpha);
 
         this.initialized = true;
-
-        /*tween({
-          from: item.handle.filters[0].threshold,
-          to: 1.9, 
-          duration: duration + 500,
-          ease: easing.backOut,
-        }).start(updateFilter);*/
 
       },delay);
 
@@ -278,13 +251,7 @@ export class Chassis {
    }
 
    generatePerspective(){
-     let dts = this.driveTrays;
-
-    //dts.anchor.set(0.5,0.5); // Set the pivot point to center
-    /*dts.proj.setAxisY({
-      x: 0, 
-      y: dts.height * 0.5
-    }, 5);*/
+    let dts = this.driveTrays;
     let x = 0;
     let y = 0;
     let quad = [
@@ -307,8 +274,6 @@ export class Chassis {
     if(this.initialized){
       dt.handle.alpha = color == 'none' ? this.disabledOpacity : 1;
     }
-
-    //dt.handle.filters = this.filters;
   }
 
 }

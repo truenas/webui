@@ -17,7 +17,6 @@ export class M50Rear extends Chassis {
     this.totalDriveTrays = 4;
     this.columns = 1;
     this.rows = 4;
-    //this.load();
   }
 
 }

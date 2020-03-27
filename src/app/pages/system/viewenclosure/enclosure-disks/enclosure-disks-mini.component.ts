@@ -6,6 +6,7 @@ import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, 
 import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
+import { MINI } from 'app/core/classes/hardware/mini';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { M50Rear } from 'app/core/classes/hardware/m50_rear';
 import { ES12 } from 'app/core/classes/hardware/es12';
@@ -30,8 +31,24 @@ import { EnclosureDisksComponent, DiskFailure } from './enclosure-disks.componen
 })
 
 export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
+
+  @ViewChild('cardcontent', {static: true}) cardContent:ElementRef;
+
   constructor(public el:ElementRef, protected core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
     super(el, core, sanitizer, mediaObserver, cdr)
+    this.pixiWidth = 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
+    this.pixiHeight = 480;
+  }
+
+  createEnclosure(enclosure: any = this.selectedEnclosure){
+    switch(enclosure.model){
+      default:
+        console.warn("DEFAULT CASE");
+        this.enclosure = new MINI();
+        break;
+    }
+
+    this.setupEnclosureEvents(enclosure);
   }
 
 }
