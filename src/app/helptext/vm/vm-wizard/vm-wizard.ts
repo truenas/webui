@@ -36,7 +36,7 @@ name_validation : [ Validators.required ],
 description_placeholder : T('Description'),
 description_tooltip : T('Description (optional).'),
 
-time_placeholder : T('System clock'),
+time_placeholder : T('System Clock'),
 time_tooltip: T('VM system time. Default is <i>Local</i>.'),
 time_local_text: T('Local'),
 time_utc_text: T('UTC'),

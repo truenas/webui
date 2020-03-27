@@ -52,7 +52,7 @@ export class AlertServiceComponent {
         label: 'AWS SNS',
         value: 'AWSSNS',
       }, {
-        label: 'E-Mail',
+        label: 'Email',
         value: 'Mail',
       },{
         label: 'InfluxDB',

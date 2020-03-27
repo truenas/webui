@@ -20,13 +20,9 @@ export default {
     scrub_description_placeholder: T('Description'),
     scrub_description_tooltip : T('Describe the scrub task.'),
 
-    scrub_picker_placeholder: T('Schedule the Scrub Task'),
-    scrub_picker_tooltip: T('Choose how often to run the scrub task. \
- Choices are <i>Hourly</i>, <i>Daily</i>, <i>Weekly</i>, <i>Monthly</i>, \
- or <i>Custom</i>. Select <i>Custom</i> to open a visual scheduler for \
- selecting minutes, hours, days, month, and days of week. Spaces are not \
- allowed in <b>Minutes</b>, <b>Hours</b>, or <b>Days</b> of the custom \
- scheduler.'),
+    scrub_picker_placeholder: T('Schedule'),
+    scrub_picker_tooltip: T('How often to run the scrub task. Choose one \
+ of the presets or choose <i>Custom</i> to use the advanced scheduler.'),
 
     scrub_enabled_placeholder: T('Enabled'),
     scrub_enabled_tooltip : T('Unset to disable the scheduled scrub \
