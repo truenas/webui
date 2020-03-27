@@ -18,12 +18,12 @@ export default {
                 simultaneously with scrub or resilver operations.'),
     smarttest_type_validation : [ Validators.required ],
 
-    smarttest_desc_placeholder: T('Short description'),
-    smarttest_desc_tooltip : T('Enter a description of the S.M.A.R.T. test.'),
+    smarttest_desc_placeholder: T('Description'),
+    smarttest_desc_tooltip : T('Enter any information about this S.M.A.R.T. test.'),
 
-    smarttest_picker_placeholder: T('Schedule the S.M.A.R.T. Test'),
-    smarttest_picker_tooltip: T('Choose one of the convenient presets\
-    or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+    smarttest_picker_placeholder: T('Schedule'),
+    smarttest_picker_tooltip: T('Choose one of the presets or select <i>Custom</i> \
+ to open the advanced scheduler.'),
     smarttest_picker_validation: [ Validators.required ],
 
     smartlist_column_type: T('Type'),

@@ -21,7 +21,7 @@ afp_srv_guest_placeholder : T('Guest Access'),
 afp_srv_guest_tooltip: T('Set to disable the password prompt that appears\
  before clients access AFP shares.'),
 
-afp_srv_connections_limit_placeholder : T('Max. Connections'),
+afp_srv_connections_limit_placeholder : T('Max Connections'),
 afp_srv_connections_limit_tooltip: T('Maximum number of simultaneous connections permitted\
  via AFP. The default limit is 50.'),
 
@@ -60,7 +60,7 @@ afp_srv_bindip_tooltip: T('Specify the IP addresses to listen for AFP connection
  address of the system, but listen for any\
  incoming request.'),
 
-afp_srv_global_aux_placeholder : T('Global auxiliary parameters'),
+afp_srv_global_aux_placeholder : T('Global Auxiliary Parameters'),
 afp_srv_global_aux_tooltip: T('Additional <a href="http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html"\
  target="_blank">afp.conf(5)</a> parameters.')
 }

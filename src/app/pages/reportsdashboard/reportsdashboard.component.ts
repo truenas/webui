@@ -96,7 +96,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     });
  
     this.core.register({observerClass: this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
-      console.log(evt.data.retroLogo);
       this.retroLogo = evt.data.retroLogo ? "1" : "0";
     });
  

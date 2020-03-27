@@ -29,7 +29,6 @@ export class AlertServiceComponent {
   public entityForm: any;
 
   public fieldConfig: FieldConfig[];
-
   public fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_basic,
