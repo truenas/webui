@@ -41,6 +41,17 @@ export default {
         content: T('Do you want to connect to TrueCommand Cloud? or signup for TrueCommand Cloud?'),
         singup_btn: T('SIGNUP'),
         connect_btn: T('CONNECT'),
+    },
+
+    updateDialog: {
+        title_connect: T('Connect to TrueCommand Cloud'),
+        title_update: T('Update TrueCommand Settings'),
+        connect_btn: T('CONNECT'),
+        save_btn: T('SAVE'),
+        api_placeholder: T('API Key'),
+        api_tooltip: T(''),
+        enabled_placeholder: T('Enable'),
+        enabled_tooltip: T(''),
     }
 }
 

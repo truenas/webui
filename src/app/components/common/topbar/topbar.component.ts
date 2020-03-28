@@ -68,6 +68,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   public mat_tooltips = helptext.mat_tooltips;
 
   protected dialogRef: any;
+  protected tcConnected = false;
+  protected tc_queryCall = 'truecommand.config';
+  protected tc_updateCall = 'truecommand.update';
 
   constructor(
     public themeService: ThemeService,
@@ -511,14 +514,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showTCStatus() {
-    // this.ws.call('truecommand.config').subscribe(
-    //   (res) => {
-    //     if (!res.api_key) {
-          this.openSignupDialog();
-      //   } else {
-      //     this.openStatusDialog();
-      //   }
-      // })
+    this.ws.call('this.tc_queryCall').subscribe(
+      (res) => {
+        this.tcConnected = res.api_key ? true : false;
+        res.api_key ? this.openStatusDialog() : this.openSignupDialog();
+      })
   }
 
   openSignupDialog() {
@@ -552,6 +552,51 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   updateTC() {
-    console.log('update or connect');
+    const conf: DialogFormConfiguration = {
+      title: this.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
+      fieldConfig: [
+        {
+          type: 'input',
+          name: 'api_key',
+          placeholder: helptext.updateDialog.api_placeholder,
+          tooltip: helptext.updateDialog.api_tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext.updateDialog.enabled_placeholder,
+          tooltip: helptext.updateDialog.enabled_tooltip,
+          value: true,
+        }
+      ],
+      saveButtonText: this.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
+      parent: this,
+      afterInit: function(entityDialog) {
+        // load settings
+        if (this.tcConnected) {
+          this.ws.call('this.tc_queryCall').subscribe(
+            (res) => {
+            }
+          )
+        }
+      },
+      customSubmit: function(entityDialog) {
+        console.log(entityDialog.formValue);
+        // this.ws.call('truecommand.update', [entityDialog.formValue]).subscribe(
+        //   (res) => {
+        //     entityDialog.dialogRef.close();
+        //   },
+        //   (err) => {
+        //     new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService)
+        //   }
+        // )
+      }
+    }
+    this.dialogService.dialogForm(conf);
+  }
+
+  openStatusDialog() {
+    console.log('openstatusdialog');
+
   }
 }
