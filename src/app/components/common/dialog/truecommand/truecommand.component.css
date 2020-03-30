@@ -1,0 +1,28 @@
+.tc-dialog-content {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+mat-icon.status-connected {
+    color: var(--green);
+}
+
+mat-icon.status-failed {
+    color: var(--red);
+}
+
+mat-icon.status-disabled {
+    color: var(--grey);
+}
+
+mat-icon.tc-icon {
+    height: 21px;
+    width: 21px;
+    padding: 2px 0px 2px 2px;
+}
+
+div.tc-dialog-content mat-icon {
+    position: relative;
+    top: 5px;
+    margin-right: 10px;
+}
