@@ -50,8 +50,8 @@ export default {
     group_title: T('Apply Quotas to Selected Groups'),
     system_select: {
       placeholder: T('Select Groups Cached by this System'),
-      tooltip: T('This list includes only groups cached on this system. The search box \
-  (below) can be used to locate all groups, including groups connected via Active Directory, etc.')
+      tooltip: T('The list shows only groups cached on this system. The search box \
+  below can locate all groups, including groups connected with Active Directory or other services.')
     },
     search: {
       placeholder: T('Search For Connected Groups'),
