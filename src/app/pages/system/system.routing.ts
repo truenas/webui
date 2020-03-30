@@ -103,7 +103,7 @@ export const routes: Routes = [
       {
         path: 'create',
         component: BootEnvironmentCreateComponent,
-        data: { title: T('Create'), breadcrumb: T('Create') },
+        data: { title: T('Add'), breadcrumb: T('Add') },
       },
       {
         path: 'status',

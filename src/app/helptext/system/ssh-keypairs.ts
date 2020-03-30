@@ -1,6 +1,8 @@
 import { T } from '../../translate-marker';
 
 export default {
+    fieldset_basic: T('SSH Keypair'),
+
     name_placeholder: T('Name'),
     name_tooltip: T('A unique name to identify this keypair. Automatically\
  generated keypairs are named after the object that generated the keypair\

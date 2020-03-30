@@ -7,67 +7,76 @@ import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { DialogService, RestService, WebSocketService } from '../../../../services/';
 import { EntityFormComponent, Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
 
 @Component({
   selector: 'app-snapshot-add',
-  templateUrl: './snapshot-add.component.html'
+  template: `
+  <div *ngIf="initialized">
+    <entity-form [conf]="this"></entity-form>
+  </div>`
 })
 
 export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
   public route_success = ['storage', 'snapshots'];
   public isEntity = true;
   public isNew = true;
-  public fieldConfig: FieldConfig[] = [];
   public initialized = true;
   public addCall = 'zfs.snapshot.create';
-
   private entityForm: EntityFormComponent;
   private nameValidator: ValidatorFn;
+
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
+    {
+        name: helptext.fieldset_snapshot,
+        label: true,
+        class: 'snapshot',
+        width: '49%',
+        config: [{
+          type: 'select',
+          name: 'dataset',
+          placeholder: helptext.snapshot_add_dataset_placeholder,
+          tooltip: helptext.snapshot_add_dataset_tooltip,
+          options: [],
+          validation: helptext.snapshot_add_dataset_validation,
+          required: true
+        },
+        {
+          type: 'input',
+          name: 'name',
+          placeholder: helptext.snapshot_add_name_placeholder,
+          tooltip: helptext.snapshot_add_name_tooltip,
+          options: [],
+          value: "manual-" + moment().format('YYYY-MM-DD_HH-mm'),
+          validation: this.nameValidator,
+          errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
+          blurStatus: true,
+          blurEvent: this.updateNameValidity.bind(this)
+        },
+        {
+          type: 'select',
+          name: 'naming_schema',
+          placeholder: helptext.snapshot_add_naming_schema_placeholder,
+          tooltip: helptext.snapshot_add_naming_schema_tooltip,
+          options: [],
+          onChangeOption: this.updateNameValidity.bind(this)
+        },
+        {
+          type: 'checkbox',
+          name: 'recursive',
+          value: false,
+          placeholder: helptext.snapshot_add_recursive_placeholder,
+          tooltip: helptext.snapshot_add_recursive_tooltip,
+        }]
+    }
+  ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialog: DialogService) {
-
-    this.fieldConfig = [
-      {
-        type: 'select',
-        name: 'dataset',
-        placeholder: helptext.snapshot_add_dataset_placeholder,
-        tooltip: helptext.snapshot_add_dataset_tooltip,
-        options: [],
-        validation: helptext.snapshot_add_dataset_validation,
-        required: true
-      },
-      {
-        type: 'input',
-        name: 'name',
-        placeholder: helptext.snapshot_add_name_placeholder,
-        tooltip: helptext.snapshot_add_name_tooltip,
-        options: [],
-        value: "manual-" + moment().format('YYYY-MM-DD_HH-mm'),
-        validation: this.nameValidator,
-        errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
-        blurStatus: true,
-        blurEvent: this.updateNameValidity.bind(this)
-      },
-      {
-        type: 'select',
-        name: 'naming_schema',
-        placeholder: helptext.snapshot_add_naming_schema_placeholder,
-        tooltip: helptext.snapshot_add_naming_schema_tooltip,
-        options: [],
-        onChangeOption: this.updateNameValidity.bind(this)
-      },
-      {
-        type: 'checkbox',
-        name: 'recursive',
-        value: false,
-        placeholder: helptext.snapshot_add_recursive_placeholder,
-        tooltip: helptext.snapshot_add_recursive_tooltip,
-      }
-    ];
   }
 
   ngAfterViewInit(): void {
@@ -102,7 +111,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
 
   afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
-  
+    this.fieldConfig = entityForm.fieldConfig;
     const nameControl = this.entityForm.formGroup.get('name');
     const nameConfig = this.fieldConfig.find(config => config.name === 'name');
     const namingSchemaControl = this.entityForm.formGroup.get('naming_schema');

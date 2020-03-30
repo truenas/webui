@@ -12,11 +12,30 @@
                 {{item}}
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
             </mat-chip>
-            <input [placeholder]="config.placeholder | translate" 
+            <input *ngIf="!config.autocomplete; else autoCompleteBlock" [placeholder]="config.placeholder | translate"
                 [matChipInputFor]="chipList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="addOnBlur"
-                (matChipInputTokenEnd)="add($event)">
+                (matChipInputTokenEnd)="add($event)"
+            >
+            <ng-template #autoCompleteBlock>
+              <input
+                [placeholder]="config.placeholder | translate"
+                #chipInput
+                [formControl]="chipCtrl"
+                [matChipInputFor]="chipList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="add($event)"
+                (keyup)="updateSearchOptions($event.target.value)"
+                [matAutocomplete]="autoComplete"
+              >
+              <mat-autocomplete #autoComplete="matAutocomplete" (optionSelected)="selected($event)">
+              <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"
+                ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+                <span>{{ option.label }}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </ng-template>
         </mat-chip-list>
     </mat-form-field>
 

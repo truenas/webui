@@ -1,6 +1,10 @@
 import { T } from '../../translate-marker';
 
 export default {
+   fieldset_basic: T('Name and Method'),
+   fieldset_authentication: T('Authentication'),
+   fieldset_advanced: T('More Options'),
+
     name_placeholder: T('Name'),
     name_tooltip: T('Name of this SSH connection. SSH connection names \
  must be unique.'),

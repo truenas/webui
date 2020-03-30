@@ -1,6 +1,8 @@
 import { T } from '../../../translate-marker';
 
 export default {
+fieldset_disk: T('General'),
+fieldset_option: T('More Options'),
 disk_form_name_placeholder: T('Name'),
 disk_form_name_tooltip : T('FreeBSD disk device name.'),
 

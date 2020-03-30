@@ -82,7 +82,7 @@ export default {
     schedule_method_tooltip: T('Set this replication on a schedule or \
  just once.'),
 
-    schedule_placeholder: T('Scheduling'),
+    schedule_placeholder: T('Schedule'),
     schedule_tooltip: T('Set specific times to snapshot the \
  <i>Source Datasets</i> and replicate the snapshots to the \
  <i>Destination Dataset</i>. Select a preset schedule or choose \

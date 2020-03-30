@@ -23,7 +23,7 @@ cifs_srv_netbiosname_b_validation : [ Validators.required, Validators.maxLength(
 cifs_srv_netbiosalias_placeholder: T('NetBIOS Alias'),
 cifs_srv_netbiosalias_tooltip: T('Enter any aliases, separated by spaces.\
  Each alias can be up to 15 characters long.'),
-cifs_srv_netbiosalias_validation: [ Validators.maxLength(15) ],
+cifs_srv_netbiosalias_errmsg: T('Aliases must be 15 characters or less.'),
 
 cifs_srv_workgroup_placeholder: T('Workgroup'),
 cifs_srv_workgroup_tooltip: T('Must match Windows workgroup\
@@ -69,6 +69,14 @@ cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is\
  nobody. Account is required to have permissions to\
  the shared pool or dataset.\
  When the Guest Account user is deleted it resets to nobody.'),
+
+cifs_srv_filemask_placeholder: T('File Mask'),
+cifs_srv_filemask_tooltip: T('Overrides default file creation mask of <i>0666</i> \
+ which creates files with read and write access for everybody.'),
+
+cifs_srv_dirmask_placeholder: T('Directory Mask'),
+cifs_srv_dirmask_tooltip: T('Overrides default directory creation mask of <i>0777</i> \
+ which grants directory read, write and execute access for everybody.'),
 
 cifs_srv_admin_group_placeholder: T('Administrators Group'),
 cifs_srv_admin_group_tooltip: T('Members of this group are local admins\
