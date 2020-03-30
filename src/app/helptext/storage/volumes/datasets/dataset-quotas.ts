@@ -20,7 +20,7 @@ export default {
     data_quota: {
       placeholder: T('User Data Quota ') + globalHelptext.human_readable.suggestion_label,
       tooltip: T('Amount of disk space that can be used by the selected users. \
- Enter 0 (zero) to remove the quota (i.e., to set it to <i>unlimited</i>).') + globalHelptext.human_readable.suggestion_tooltip
+ Entering <code>0</code> (zero) allows all disk space to be used.') + globalHelptext.human_readable.suggestion_tooltip
     },
     obj_quota: {
       placeholder: T('User Object Quota'),
