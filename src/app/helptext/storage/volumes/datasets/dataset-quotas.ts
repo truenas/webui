@@ -62,7 +62,7 @@ export default {
     data_quota: {
       placeholder: T('Group Data Quota ') + globalHelptext.human_readable.suggestion_label,
       tooltip: T('Amount of disk space that can be used by the selected groups. \
- Enter 0 (zero) to remove the quota (i.e., to set it to <i>unlimited</i>).') + globalHelptext.human_readable.suggestion_tooltip
+ Entering <code>0</code> (zero) allows all disk space.') + globalHelptext.human_readable.suggestion_tooltip
     },
     obj_quota: {
       placeholder: T('Group Object Quota'),
