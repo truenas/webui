@@ -81,6 +81,14 @@ export class GeneralComponent {
           validation: helptext.stg_guihttpsport.validation
         },
         {
+          type: "select",
+          multiple: true,
+          name: "ui_httpsprotocols",
+          placeholder: helptext.stg_guihttpsprotocols.placeholder,
+          tooltip: helptext.stg_guihttpsprotocols.tooltip,
+          options: [],
+        },
+        {
           type: "checkbox",
           name: "ui_httpsredirect",
           placeholder: helptext.stg_guihttpsredirect.placeholder,
@@ -347,6 +355,17 @@ export class GeneralComponent {
       .subscribe((res) => {
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
+        }
+      });
+
+    const httpsprotocolsField = this.fieldSets
+      .find(set => set.name === helptext.stg_fieldset_gui)
+      .config.find(config => config.name === "ui_httpsprotocols");
+
+    entityEdit.ws.call('system.general.ui_httpsprotocols_choices').subscribe(
+      (res) => {
+        for (const key in res) {
+          httpsprotocolsField.options.push({ label: res[key], value: key });
         }
       });
 
