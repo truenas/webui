@@ -23,6 +23,7 @@ import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 
 @Component({
   selector: 'topbar',
@@ -71,6 +72,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   protected tcConnected = false;
   protected tc_queryCall = 'truecommand.config';
   protected tc_updateCall = 'truecommand.update';
+  protected isTcStatusOpened = false;
+  protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
+  protected tcStatus;
 
   constructor(
     public themeService: ThemeService,
@@ -516,6 +520,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showTCStatus() {
     this.ws.call('this.tc_queryCall').subscribe(
       (res) => {
+        this.tcStatus = res;
         this.tcConnected = res.api_key ? true : false;
         res.api_key ? this.openStatusDialog() : this.openSignupDialog();
       })
@@ -598,5 +603,27 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   openStatusDialog() {
     console.log('openstatusdialog');
 
+    if (this.isTcStatusOpened) {
+      this.tcStatusDialogRef.close(true);
+    } else {
+      this.isTcStatusOpened = true;
+      this.tcStatusDialogRef =
+       this.dialog.open(TruecommandComponent, {
+        disableClose: false,
+        width: '400px',
+        hasBackdrop: true,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+        data: this.tcStatus,
+      });
+    }
+
+    this.tcStatusDialogRef.afterClosed().subscribe(
+      (res) => {
+        this.isTcStatusOpened = false;
+      }
+    );
   }
 }
