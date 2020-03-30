@@ -116,6 +116,24 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_text_only.svg")
     );
 
+    // TRUENAS SCALE
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logotype.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logo_full.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_text_only",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_text_only.svg")
+    );
+
     // FREENAS
     this.matIconRegistry.addSvgIcon(
       "freenas_logomark",
@@ -206,7 +224,7 @@ export class AppComponent {
     snackBarRef.onAction().subscribe(()=> {
       this.router.navigate(['ui-preferences','create-theme']);
     });
-    
+
     if(this.router.url === '/ui-preferences/create-theme' || this.router.url === '/ui-preferences/edit-theme'){
       snackBarRef.dismiss();
     }
