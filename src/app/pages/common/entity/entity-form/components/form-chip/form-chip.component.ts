@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
+import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
@@ -17,6 +18,10 @@ export class FormChipComponent implements Field, OnInit {
     group: FormGroup;
     fieldShow: string;
     chipLists: any[];
+    chipCtrl = new FormControl();
+
+    @ViewChild('chipInput') chipInput: ElementRef<HTMLInputElement>;
+    @ViewChild('autoComplete') matAutocomplete: MatAutocomplete;
 
     selectable = true;
     removable = true;
@@ -50,5 +55,30 @@ export class FormChipComponent implements Field, OnInit {
             this.chipLists.splice(index, 1);
             this.group.controls[this.config.name].setValue(this.chipLists);
         }
+    }
+
+    selected(event: MatAutocompleteSelectedEvent): void {
+      this.chipLists.push(event.option.viewValue);
+      this.chipInput.nativeElement.value = '';
+      this.chipCtrl.setValue(null);
+    }
+
+    updateSearchOptions(value) {
+      if(this.config.updater && this.config.parent) {
+        if (this.config.updateLocal) {
+          this.config.updater(value, this.config.parent, this.config);
+        } else {
+          this.config.updater(value, this.config.parent);
+        }
+      } else {
+        value = value.toLowerCase();
+        const searchOptions = [];
+        for (let i = 0; i < this.config.options.length; i++) {
+          if (this.config.options[i].label.toLowerCase().includes(value)) {
+            searchOptions.push(this.config.options[i]);
+          }
+        }
+        this.config.searchOptions = searchOptions;
+      }
     }
 }

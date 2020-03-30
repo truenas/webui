@@ -75,12 +75,12 @@ export class StorageService {
       });
   }
 
-  // Handles sorting for entity tables and some other ngx datatables 
+  // Handles sorting for entity tables and some other ngx datatables
   tableSorter(arr, key, asc) {
     let tempArr = [],
       sorter,
       myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-    
+
     // Breaks out the key to sort by
     arr.forEach((item) => {
       tempArr.push(item[key]);
@@ -97,29 +97,32 @@ export class StorageService {
       n++;
     }
     // Select table columns labled with GiB, Mib, etc
-    // Regex checks for ' XiB' with a leading space and X === K, M, G or T 
-    if (typeof(tempArr[n]) === 'string' && 
+    // Regex checks for ' XiB' with a leading space and X === K, M, G or T
+    if (typeof(tempArr[n]) === 'string' &&
       (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4) ))) {
 
     let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
     for (let i of tempArr) {
-      if (i.slice(-2) === ' B') {
-        bytes.push(i);
-      } else {
-        switch (i.slice(-3)) {
-          case 'KiB':
-            kbytes.push(i);
-            break;
-          case 'MiB':
-            mbytes.push(i);
-            break;
-          case 'GiB':
-            gbytes.push(i);
-            break;
-          case 'TiB':
-            tbytes.push(i);
+      if (i) {
+        if (i.slice(-2) === ' B') {
+          bytes.push(i);
+        } else {
+          switch (i.slice(-3)) {
+            case 'KiB':
+              kbytes.push(i);
+              break;
+            case 'MiB':
+              mbytes.push(i);
+              break;
+            case 'GiB':
+              gbytes.push(i);
+              break;
+            case 'TiB':
+              tbytes.push(i);
+          }
         }
       }
+
     }
 
     // Sort each array independently, then put them back together
@@ -128,14 +131,14 @@ export class StorageService {
     mbytes = mbytes.sort(myCollator.compare);
     gbytes = gbytes.sort(myCollator.compare);
     tbytes = tbytes.sort(myCollator.compare);
-    
+
     sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes)
 
-  // Select disks where last two chars = a digit and the one letter space abbrev  
-  } else if (typeof(tempArr[n]) === 'string' && 
+  // Select disks where last two chars = a digit and the one letter space abbrev
+  } else if (typeof(tempArr[n]) === 'string' &&
       tempArr[n][tempArr[n].length-1].match(/[KMGTB]/) &&
       tempArr[n][tempArr[n].length-2].match(/[0-9]/)) {
-        
+
       let B = [], K = [], M = [], G = [], T = [];
       for (let i of tempArr) {
         switch (i.slice(-1)) {
@@ -162,11 +165,11 @@ export class StorageService {
       M = M.sort(myCollator.compare);
       G = G.sort(myCollator.compare);
       T = T.sort(myCollator.compare);
-      
+
       sorter = B.concat(K, M, G, T)
-  
+
     // Select strings that Date.parse can turn into a number (ie, that are a legit date)
-    } else if (typeof(tempArr[n]) === 'string' && 
+    } else if (typeof(tempArr[n]) === 'string' &&
       !isNaN(Date.parse(tempArr[n]))) {
         let timeArr = [];
         for (let i of tempArr) {
@@ -195,9 +198,9 @@ export class StorageService {
             return -1 * v;
         }
       });
-          
+
     return arr;
-  } 
+  }
 
   // This section passes data from disk-list to disk-bulk-edit form
   diskIdsBucket(arr) {
@@ -301,7 +304,7 @@ export class StorageService {
       }
       return (1024**( this.IECUnits.indexOf(unitStr)+1) );
   }
-  
+
   // sample data, input and return values
   // input       normalized       number value
   // '12345'     '12345'          12345
@@ -326,13 +329,12 @@ export class StorageService {
   // '12.4k'     ''               NaN
   // ' 10G'      '10 GiB'         10*1024**3 (10,737,418,240)
 
-  // hstr = the human string from the form; 
-  // dec = allow decimals; 
+  // hstr = the human string from the form;
+  // dec = allow decimals;
   // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
   // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
     convertHumanStringToNum(hstr, dec=false, allowedUnits?: string) {
-
       const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
 
       let num = 0;
@@ -368,9 +370,9 @@ export class StorageService {
         unit = allowedUnits[0];
       };
       // error when unit is present and...
-      if ( (unit) && 
+      if ( (unit) &&
           // ...allowedUnits are passed in but unit is not in allowed Units
-          (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase()) || 
+          (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase()) ||
           // ...when allowedUnits are not passed in and unit is not recognized
           !(unit = this.normalizeUnit(unit))) ) {
         this.humanReadable = '';
@@ -384,7 +386,7 @@ export class StorageService {
   };
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(bytes, decimalPlaces?) { 
+  convertBytestoHumanReadable(bytes, decimalPlaces?) {
     let i = -1;
     let dec, units;
     decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
