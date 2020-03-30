@@ -4,9 +4,13 @@ import { T } from "app/translate-marker";
 
 export const helptext_system_certificates = {
   add: {
+    fieldset_basic: T('Identifier and Type'),
+    fieldset_type: T('Certificate Options'),
+    fieldset_certificate: T('Certificate Subject'),
+
     name: {
-      placeholder: T("Identifier"),
-      tooltip: T("Enter a description of the CA."),
+      placeholder: T("Name"),
+      tooltip: T("Descriptive identifier for this certificate."),
       validation: [Validators.required, Validators.pattern("[A-Za-z0-9_-]+$")]
     },
 
@@ -161,6 +165,7 @@ export const helptext_system_certificates = {
   },
 
   edit: {
+    fieldset_certificate: T('Certificate'),
     name: {
       placeholder: T("Identifier"),
       tooltip: T(
@@ -208,6 +213,7 @@ export const helptext_system_certificates = {
   },
 
   acme: {
+    fieldset_acme: T('ACME Certificate'),
     identifier: {
       placeholder: T("Identifier"),
       tooltip: T('Internal identifier of the certificate. Only\

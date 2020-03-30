@@ -4,6 +4,7 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
 @Component({
   selector : 'system-ca-add',
@@ -16,237 +17,262 @@ export class CertificateAuthorityAddComponent {
   protected addCall = "certificateauthority.create";
   protected route_success: string[] = [ 'system', 'ca' ];
   protected isEntity: boolean = true;
-  protected fieldConfig: FieldConfig[] = [
+  protected fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type : 'input',
-      name : 'name',
-      placeholder : helptext_system_ca.add.name.placeholder,
-      tooltip: helptext_system_ca.add.name.tooltip,
-      required: true,
-      validation : helptext_system_ca.add.name.validation,
-      hasErrors: false,
-      errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
-    },
-    {
-      type : 'select',
-      name : 'create_type',
-      placeholder : helptext_system_ca.add.create_type.placeholder,
-      options : [
-        {label: 'Internal CA', value: 'CA_CREATE_INTERNAL'},
-        {label: 'Intermediate CA', value: 'CA_CREATE_INTERMEDIATE'},
-        {label: 'Import CA', value: 'CA_CREATE_IMPORTED'},
-      ],
-      value: 'CA_CREATE_INTERNAL',
-    },
-    {
-      type : 'select',
-      name : 'signedby',
-      placeholder : helptext_system_ca.add.signedby.placeholder,
-      tooltip: helptext_system_ca.add.signedby.tooltip,
-      options : [
-        {label: '---', value: null}
-      ],
-      isHidden: true,
-      disabled: true,
-      required: true,
-      validation: helptext_system_ca.add.signedby.validation
-    },
-    {
-      type : 'select',
-      name : 'key_type',
-      placeholder : helptext_system_ca.add.key_type.placeholder,
-      tooltip: helptext_system_ca.add.key_type.tooltip,
-      options : [
-        {label: 'RSA', value: 'RSA'},
-        {label: 'EC', value: 'EC'}
-      ],
-      value: 'RSA',
-      isHidden: false,
-      disabled: true,
-      required: true,
-      validation: helptext_system_ca.add.key_type.validation
-    },
-    {
-      type : 'select',
-      name : 'ec_curve',
-      placeholder : helptext_system_ca.add.ec_curve.placeholder,
-      tooltip: helptext_system_ca.add.ec_curve.tooltip,
-      options : [
-        {label: 'BrainpoolP512R1', value: 'BrainpoolP512R1'},
-        {label: 'BrainpoolP384R1', value: 'BrainpoolP384R1'},
-        {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
-        {label: 'SECP256K1', value: 'SECP256K1'},
-      ],
-      value: 'BrainpoolP512R1',
-      isHidden: false,
-      disabled: true,
-      relation : [
+      name: helptext_system_ca.add.fieldset_basic,
+      label: true,
+      class: 'basic',
+      width: '50%',
+      config: [
         {
-          action : 'ENABLE',
-          when : [ {
-            name : 'key_type',
-            value : 'EC',
-          } ]
+          type: 'input',
+          name: 'name',
+          placeholder: helptext_system_ca.add.name.placeholder,
+          tooltip: helptext_system_ca.add.name.tooltip,
+          required: true,
+          validation: helptext_system_ca.add.name.validation,
+          hasErrors: false,
+          errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
         },
-      ],
+        {
+          type: 'select',
+          name: 'create_type',
+          placeholder: helptext_system_ca.add.create_type.placeholder,
+          options: [
+            { label: 'Internal CA', value: 'CA_CREATE_INTERNAL' },
+            { label: 'Intermediate CA', value: 'CA_CREATE_INTERMEDIATE' },
+            { label: 'Import CA', value: 'CA_CREATE_IMPORTED' },
+          ],
+          value: 'CA_CREATE_INTERNAL',
+        }
+      ]
     },
     {
-      type : 'select',
-      name : 'key_length',
-      placeholder : helptext_system_ca.add.key_length.placeholder,
-      tooltip: helptext_system_ca.add.key_length.tooltip,
-      options : [
-        {label : '1024', value : 1024},
-        {label : '2048', value : 2048},
-        {label : '4096', value : 4096},
-      ],
-      value: 2048,
-      required: true,
-      validation: helptext_system_ca.add.key_length.validation,
-      isHidden: false,
-      relation : [
+      name: helptext_system_ca.add.fieldset_type,
+      label: true,
+      class: 'type',
+      width: '50%',
+      config: [
         {
-          action : 'ENABLE',
-          when : [ {
-            name : 'key_type',
-            value : 'RSA',
-          } ]
+          type: 'select',
+          name: 'signedby',
+          placeholder: helptext_system_ca.add.signedby.placeholder,
+          tooltip: helptext_system_ca.add.signedby.tooltip,
+          options: [
+            { label: '---', value: null }
+          ],
+          isHidden: true,
+          disabled: true,
+          required: true,
+          validation: helptext_system_ca.add.signedby.validation
+        },
+        {
+          type: 'select',
+          name: 'key_type',
+          placeholder: helptext_system_ca.add.key_type.placeholder,
+          tooltip: helptext_system_ca.add.key_type.tooltip,
+          options: [
+            { label: 'RSA', value: 'RSA' },
+            { label: 'EC', value: 'EC' }
+          ],
+          value: 'RSA',
+          isHidden: false,
+          disabled: true,
+          required: true,
+          validation: helptext_system_ca.add.key_type.validation
+        },
+        {
+          type: 'select',
+          name: 'ec_curve',
+          placeholder: helptext_system_ca.add.ec_curve.placeholder,
+          tooltip: helptext_system_ca.add.ec_curve.tooltip,
+          options: [
+            { label: 'BrainpoolP512R1', value: 'BrainpoolP512R1' },
+            { label: 'BrainpoolP384R1', value: 'BrainpoolP384R1' },
+            { label: 'BrainpoolP256R1', value: 'BrainpoolP256R1' },
+            { label: 'SECP256K1', value: 'SECP256K1' },
+          ],
+          value: 'BrainpoolP512R1',
+          isHidden: false,
+          disabled: true,
+          relation: [
+            {
+              action: 'ENABLE',
+              when: [{
+                name: 'key_type',
+                value: 'EC',
+              }]
+            },
+          ],
+        },
+        {
+          type: 'select',
+          name: 'key_length',
+          placeholder: helptext_system_ca.add.key_length.placeholder,
+          tooltip: helptext_system_ca.add.key_length.tooltip,
+          options: [
+            { label: '1024', value: 1024 },
+            { label: '2048', value: 2048 },
+            { label: '4096', value: 4096 },
+          ],
+          value: 2048,
+          required: true,
+          validation: helptext_system_ca.add.key_length.validation,
+          isHidden: false,
+          relation: [
+            {
+              action: 'ENABLE',
+              when: [{
+                name: 'key_type',
+                value: 'RSA',
+              }]
+            },
+          ]
+        },
+        {
+          type: 'select',
+          name: 'digest_algorithm',
+          placeholder: helptext_system_ca.add.digest_algorithm.placeholder,
+          tooltip: helptext_system_ca.add.digest_algorithm.tooltip,
+          options: [
+            { label: 'SHA1', value: 'SHA1' },
+            { label: 'SHA224', value: 'SHA224' },
+            { label: 'SHA256', value: 'SHA256' },
+            { label: 'SHA384', value: 'SHA384' },
+            { label: 'SHA512', value: 'SHA512' },
+          ],
+          value: 'SHA256',
+          required: true,
+          validation: helptext_system_ca.add.digest_algorithm.validation,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'lifetime',
+          placeholder: helptext_system_ca.add.lifetime.placeholder,
+          tooltip: helptext_system_ca.add.lifetime.tooltip,
+          inputType: 'number',
+          required: true,
+          value: 3650,
+          validation: helptext_system_ca.add.lifetime.validation,
+          isHidden: false,
         },
       ]
     },
     {
-      type : 'select',
-      name : 'digest_algorithm',
-      placeholder : helptext_system_ca.add.digest_algorithm.placeholder,
-      tooltip: helptext_system_ca.add.digest_algorithm.tooltip,
-      options : [
-        {label : 'SHA1', value : 'SHA1'},
-        {label : 'SHA224', value : 'SHA224'},
-        {label : 'SHA256', value : 'SHA256'},
-        {label : 'SHA384', value : 'SHA384'},
-        {label : 'SHA512', value : 'SHA512'},
-      ],
-      value: 'SHA256',
-      required: true,
-      validation: helptext_system_ca.add.digest_algorithm.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'lifetime',
-      placeholder : helptext_system_ca.add.lifetime.placeholder,
-      tooltip: helptext_system_ca.add.lifetime.tooltip,
-      inputType: 'number',
-      required: true,
-      value: 3650,
-      validation: helptext_system_ca.add.lifetime.validation,
-      isHidden: false,
-    },
-    {
-      type : 'select',
-      name : 'country',
-      placeholder : helptext_system_ca.add.country.placeholder,
-      tooltip: helptext_system_ca.add.country.tooltip,
-      options : [
-      ],
-      value: 'US',
-      required: true,
-      validation: helptext_system_ca.add.country.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'state',
-      placeholder : helptext_system_ca.add.state.placeholder,
-      tooltip: helptext_system_ca.add.state.tooltip,
-      required: true,
-      validation: helptext_system_ca.add.state.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'city',
-      placeholder : helptext_system_ca.add.city.placeholder,
-      tooltip: helptext_system_ca.add.city.tooltip,
-      required: true,
-      validation: helptext_system_ca.add.city.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'organization',
-      placeholder : helptext_system_ca.add.organization.placeholder,
-      tooltip: helptext_system_ca.add.organization.tooltip,
-      required: true,
-      validation: helptext_system_ca.add.organization.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'organizational_unit',
-      placeholder : helptext_system_ca.add.organizational_unit.placeholder,
-      tooltip: helptext_system_ca.add.organizational_unit.tooltip,
-      required: false,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'email',
-      placeholder : helptext_system_ca.add.email.placeholder,
-      tooltip: helptext_system_ca.add.email.tooltip,
-      required: true,
-      validation : helptext_system_ca.add.email.validation,
-      isHidden: false,
-    },
-    {
-      type : 'input',
-      name : 'common',
-      placeholder : helptext_system_ca.add.common.placeholder,
-      tooltip: helptext_system_ca.add.common.tooltip,
-      required: true,
-      validation : helptext_system_ca.add.common.validation,
-      isHidden: false,
-    },
-    {
-      type : 'chip',
-      name : 'san',
-      placeholder: helptext_system_ca.add.san.placeholder,
-      tooltip: helptext_system_ca.add.san.tooltip,
-      isHidden: false,
-    },
-    {
-      type : 'textarea',
-      name : 'certificate',
-      placeholder : helptext_system_ca.add.certificate.placeholder,
-      tooltip : helptext_system_ca.add.certificate.tooltip,
-      required: true,
-      validation : helptext_system_ca.add.certificate.validation,
-      isHidden: true,
-    },
-    {
-      type : 'textarea',
-      name : 'privatekey',
-      placeholder : helptext_system_ca.add.privatekey.placeholder,
-      tooltip : helptext_system_ca.add.privatekey.tooltip,
-      isHidden: true,
-    },
-    {
-      type : 'input',
-      name : 'passphrase',
-      placeholder : helptext_system_ca.add.passphrase.placeholder,
-      tooltip : helptext_system_ca.add.passphrase.tooltip,
-      inputType : 'password',
-      validation : helptext_system_ca.add.passphrase.validation,
-      isHidden: true,
-      togglePw : true
-    },
-    {
-      type : 'input',
-      name : 'passphrase2',
-      inputType : 'password',
-      placeholder : helptext_system_ca.add.passphrase2.placeholder,
-      isHidden : true
-    },
+      name: helptext_system_ca.add.fieldset_certificate,
+      label: true,
+      class: 'certificate',
+      width: '100%',
+      config: [
+        {
+          type: 'select',
+          name: 'country',
+          placeholder: helptext_system_ca.add.country.placeholder,
+          tooltip: helptext_system_ca.add.country.tooltip,
+          options: [
+          ],
+          value: 'US',
+          required: true,
+          validation: helptext_system_ca.add.country.validation,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'state',
+          placeholder: helptext_system_ca.add.state.placeholder,
+          tooltip: helptext_system_ca.add.state.tooltip,
+          required: true,
+          validation: helptext_system_ca.add.state.validation,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'city',
+          placeholder: helptext_system_ca.add.city.placeholder,
+          tooltip: helptext_system_ca.add.city.tooltip,
+          required: true,
+          validation: helptext_system_ca.add.city.validation,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'organization',
+          placeholder: helptext_system_ca.add.organization.placeholder,
+          tooltip: helptext_system_ca.add.organization.tooltip,
+          required: true,
+          validation: helptext_system_ca.add.organization.validation,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'organizational_unit',
+          placeholder: helptext_system_ca.add.organizational_unit.placeholder,
+          tooltip: helptext_system_ca.add.organizational_unit.tooltip,
+          required: false,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'email',
+          placeholder: helptext_system_ca.add.email.placeholder,
+          tooltip: helptext_system_ca.add.email.tooltip,
+          required: true,
+          validation: helptext_system_ca.add.email.validation,
+          isHidden: false,
+        },
+        {
+          type: 'input',
+          name: 'common',
+          placeholder: helptext_system_ca.add.common.placeholder,
+          tooltip: helptext_system_ca.add.common.tooltip,
+          required: true,
+          validation: helptext_system_ca.add.common.validation,
+          isHidden: false,
+        },
+        {
+          type: 'chip',
+          name: 'san',
+          placeholder: helptext_system_ca.add.san.placeholder,
+          tooltip: helptext_system_ca.add.san.tooltip,
+          isHidden: false,
+        },
+        {
+          type: 'textarea',
+          name: 'certificate',
+          placeholder: helptext_system_ca.add.certificate.placeholder,
+          tooltip: helptext_system_ca.add.certificate.tooltip,
+          required: true,
+          validation: helptext_system_ca.add.certificate.validation,
+          isHidden: true,
+        },
+        {
+          type: 'textarea',
+          name: 'privatekey',
+          placeholder: helptext_system_ca.add.privatekey.placeholder,
+          tooltip: helptext_system_ca.add.privatekey.tooltip,
+          isHidden: true,
+        },
+        {
+          type: 'input',
+          name: 'passphrase',
+          placeholder: helptext_system_ca.add.passphrase.placeholder,
+          tooltip: helptext_system_ca.add.passphrase.tooltip,
+          inputType: 'password',
+          validation: helptext_system_ca.add.passphrase.validation,
+          isHidden: true,
+          togglePw: true
+        },
+        {
+          type: 'input',
+          name: 'passphrase2',
+          inputType: 'password',
+          placeholder: helptext_system_ca.add.passphrase2.placeholder,
+          isHidden: true
+        },
+      ]
+    }
   ];
 
   private internalcaFields: Array<any> = [
@@ -297,7 +323,7 @@ export class CertificateAuthorityAddComponent {
 
   preInit() {
     this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
-      this.signedby = _.find(this.fieldConfig, {'name' : 'signedby'});
+      this.signedby = _.find(this.fieldSets[1].config, {'name' : 'signedby'});
       res.forEach((item) => {
         this.signedby.options.push(
             {label : item.name, value : item.id});
@@ -305,7 +331,7 @@ export class CertificateAuthorityAddComponent {
     });
 
    this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
-      this.country = _.find(this.fieldConfig, {'name' : 'country'});
+      this.country = _.find(this.fieldSets[2].config, {'name' : 'country'});
       for (const item in res) {
         this.country.options.push(
           { label : res[item], value : item}
@@ -315,6 +341,8 @@ export class CertificateAuthorityAddComponent {
   }
 
   afterInit(entity: any) {
+    this.fieldConfig = entity.fieldConfig;
+
     for (let i in this.intermediatecaFields) {
       this.hideField(this.intermediatecaFields[i], true, entity);
     }

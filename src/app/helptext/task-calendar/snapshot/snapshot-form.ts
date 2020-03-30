@@ -52,7 +52,7 @@ export default {
  creating snapshots. Snapshots already in progress will continue until \
  complete.'),
 
-    snapshot_picker_placeholder: T('Schedule the Periodic Snapshot Task'),
+    snapshot_picker_placeholder: T('Schedule'),
     snapshot_picker_tooltip: T('Choose one of the presets \
  or choose <i>Custom</i> to use the advanced scheduler.'),
 

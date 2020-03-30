@@ -2,7 +2,7 @@ import { T } from "../../../translate-marker";
 import { Validators } from "@angular/forms";
 
 export const helptext_sharing_webdav = {
-    placeholder_name: T('Share Name'),
+    placeholder_name: T('Name'),
     tooltip_name: T('Enter a name for the share.'),
     validator_name: [ Validators.required ],
 

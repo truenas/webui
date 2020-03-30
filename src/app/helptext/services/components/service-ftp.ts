@@ -69,10 +69,10 @@ ssltls_certificate_placeholder : T('Certificate'),
 ssltls_certificate_tooltip: T('The SSL certificate to be used for TLS FTP connections.\
  To create a certificate, use <b>System --> Certificates</b>.'),
 
-filemask_placeholder : T('File Permission'),
+filemask_placeholder : T('File Permissions'),
 filemask_tooltip: T('Sets default permissions for newly created files.'),
 
-dirmask_placeholder : T('Directory Permission'),
+dirmask_placeholder : T('Directory Permissions'),
 dirmask_tooltip: T('Sets default permissions for newly created directories.'),
 
 fxp_placeholder : T('Enable FXP'),

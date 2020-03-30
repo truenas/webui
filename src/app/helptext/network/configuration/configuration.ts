@@ -7,10 +7,11 @@ hostname_placeholder : T('Hostname'),
 hostname_tooltip : T('System hostname.'),
 
 hostname_b_placeholder : T(`Hostname (${globalHelptext.Ctrlr} 2)`),
-hostname_b_tooltip : T(''),
+hostname_b_tooltip : T('Host name of second TrueNAS controller.'),
 
 hostname_virtual_placeholder : T('Hostname (Virtual)'),
-hostname_virtual_tooltip : T(''),
+hostname_virtual_tooltip : T('When using a virtual host, this is also \
+ used as the Kerberos principal name.'),
 
 domain_placeholder : T('Domain'),
 domain_tooltip : T('System domain name, like <i>example.com</i>'),
@@ -42,7 +43,7 @@ httpproxy_tooltip : T('Enter network proxy information if a proxy is used. Examp
  <i>http://my.proxy.server:3128</i> or\
  <i>http://user:password@my.proxy.server:3128</i>'),
 
-netwait_enabled_placeholder : T('Enable netwait feature'),
+netwait_enabled_placeholder : T('Enable Netwait Feature'),
 netwait_enabled_tooltip : T('Set to delay the start of network services\
  until pings are returned from the IP addresses in the <i>netwait\
  IP list</i>.'),
@@ -53,7 +54,7 @@ netwait_ip_tooltip : T('Enter a space-delimited list of IP addresses to \
  until one is successful or the list is exhausted. Leave empty to use \
  the default gateway.'),
 
-hosts_placeholder : T('Host name database'),
+hosts_placeholder : T('Host Name Database'),
 hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>.\
  Separate entries by pressing <code>Enter</code>. Hosts defined here are \
  still accessible by name even when DNS is not available. See \

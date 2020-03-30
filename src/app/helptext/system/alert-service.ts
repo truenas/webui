@@ -1,6 +1,9 @@
 import { T } from '../../translate-marker';
 
 export default {
+    fieldset_basic: T('Name and Type'),
+    fieldset_setting: T('Authentication'),
+
     name_placeholder: T('Name'),
     name_tooltip: T('Name of the new alert service.'),
 
