@@ -25,7 +25,7 @@ export default {
     obj_quota: {
       placeholder: T('User Object Quota'),
       tooltip: T('Number of objects that can be owned by each of the selected users. \
- Entering <code>0</code> (zero) removes the quota (i.e., to set it to <i>unlimited</i>).'),
+ Entering <code>0</code> (zero) allows unlimited objects.'),
     },
     filter_dialog: {
       title_show: T('Show All Users'),
