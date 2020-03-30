@@ -55,9 +55,9 @@ export default {
     },
     search: {
       placeholder: T('Search For Connected Groups'),
-      tooltip: T('Search for all connected groups). \
- Type a group name followed by <i>ENTER</i>. A warning will be displayed \
- if the name does not match a valid group.')
+      tooltip: T('Search for all connected groups. \
+ Type a group name and press <i>ENTER</i>. A warning is shown \
+ if there are no matches.')
             },
     data_quota: {
       placeholder: T('Group Data Quota ') + globalHelptext.human_readable.suggestion_label,
