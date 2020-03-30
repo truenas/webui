@@ -8,6 +8,7 @@ export class DriveTray {
   public handle: Sprite;
   public model: string;
   public id: string;
+  public vertical: boolean = false;
   protected loader;
 
   public enabled: boolean = false;
@@ -28,14 +29,25 @@ export class DriveTray {
   }
 
   setup(){
-
+    console.warn(this.vertical);
     this.background = PIXI.projection.Sprite2d.from(this.loader.resources[this.model + '_drivetray_bg'].texture.baseTexture);
-    //this.container = this.background; // Convenient Alias
+
     this.container.addChild(this.background);
 
     this.handle = PIXI.Sprite.from(this.loader.resources[this.model + '_drivetray_handle'].texture.baseTexture);
-    //this.colorize("#5ED427");
+
+    if(this.vertical){
+      this.background.rotation = -90 * (3.14 / 180);
+      this.background.y += this.background.width;
+      this.background.calculateBounds();
+      this.handle.rotation = -90 * (3.14 / 180);
+      this.handle.calculateBounds();
+      this.handle.y += this.handle.width;
+    }
+
     this.container.addChild(this.handle);
+    this.container.calculateBounds();
+
   }
 
   loadProgressHandler(){

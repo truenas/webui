@@ -55,6 +55,7 @@ export class Chassis {
    protected totalDriveTrays: number;
    protected rows: number;
    protected columns: number;
+   protected vertical: boolean = false;
    protected filters: any[] = [];
    protected disabledOpacity = 0.25;
    protected initialized: boolean = false;
@@ -234,8 +235,8 @@ export class Chassis {
    }
 
    makeDriveTray(){
-     // EXAMPLE CODE:
      let dt = new DriveTray(this.model, this.loader);
+     dt.vertical = this.vertical;
      dt.setup();
      return dt;
    }
