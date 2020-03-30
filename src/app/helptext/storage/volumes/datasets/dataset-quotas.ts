@@ -8,8 +8,8 @@ export default {
     user_title: T('Apply Quotas to Selected Users'),
     system_select: {
       placeholder: T('Select Users Cached by this System'),
-      tooltip: T('This list includes only users cached on this system. The search box \
-  (below) can be used to locate all users, including users connected via Active Directory, etc.')
+      tooltip: T('The list only shows users cached on this system. The search box \
+  below can locate all users, including users connected with Active Directory or other services.')
     },
     search: {
       placeholder: T('Search For Connected Users'),
