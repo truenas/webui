@@ -67,7 +67,7 @@ export default {
     obj_quota: {
       placeholder: T('Group Object Quota'),
       tooltip: T('Number of objects that can be owned by each of the selected groups. \
- Entering <code>0</code> (zero) removes the quota (i.e., to set it to <i>unlimited</i>).'),
+ Entering <code>0</code> (zero) allows unlimited objects.'),
     },
     filter_dialog: {
       title_show: T('Show All Groups'),
