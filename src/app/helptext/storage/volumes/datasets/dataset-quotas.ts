@@ -13,9 +13,9 @@ export default {
     },
     search: {
       placeholder: T('Search For Connected Users'),
-      tooltip: T('Search for all connected users). \
- Type a user name followed by <i>ENTER</i>. A warning will be displayed \
- if the name does not match a valid user.')
+      tooltip: T('Search for all connected users. \
+ Type a user name and press <i>ENTER</i>. A warning is shown \
+ if there are no matches.')
             },
     data_quota: {
       placeholder: T('User Data Quota ') + globalHelptext.human_readable.suggestion_label,
