@@ -29,7 +29,7 @@ export default {
     },
     filter_dialog: {
       title_show: T('Show All Users'),
-      message_show: T('Show all available users, even those that have not used any data.'),
+      message_show: T('Show all available users, including those that have not used any data.'),
       button_show: T('Show'),
 
       title_filter: T('Filter Users'),
