@@ -58,6 +58,7 @@ export class Chassis {
    protected vertical: boolean = false;
    protected filters: any[] = [];
    protected disabledOpacity = 0.25;
+   protected chassisOpacity?: number;
    protected initialized: boolean = false;
    public loader: any;
    
@@ -182,7 +183,7 @@ export class Chassis {
        const fade = (v) => this.chassis.alpha = v;
        tween({
          from: 0,
-         to: opacity,
+         to: this.chassisOpacity ? this.chassisOpacity : opacity,
          duration:duration,
        }).start(fade);
      },delay)
