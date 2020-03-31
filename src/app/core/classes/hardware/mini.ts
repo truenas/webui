@@ -14,7 +14,7 @@ export class MINI extends Chassis {
     this.driveTraysOffsetX = 104;
     this.driveTraysOffsetY = 38;
     this.vertical = false;
-    this.chassisOpacity = 0.75;
+    this.chassisOpacity = 0.65;
     this.totalDriveTrays = 4;
     this.columns = 1;
     this.rows = 4;
