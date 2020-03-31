@@ -507,7 +507,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'details':
         this.container.alpha = 1;
         this.setDisksDisabled();
-        this.setDisksHealthState();
+        //this.setDisksHealthState();
+        this.setDisksPoolState();
         let vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
@@ -748,8 +749,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if(keys.length > 0){
       selectedEnclosure.disks.forEach((disk, index) => {
         if(!disk.vdev){return};
+        console.warn(disk);
         let pIndex = disk.vdev.poolIndex;
-        this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme[this.theme.accentColors[pIndex]]}});
+        this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot - 1, color: this.theme[this.theme.accentColors[pIndex]]} });
       });
     } else {
       return;

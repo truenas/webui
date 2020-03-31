@@ -29,7 +29,6 @@ export class DriveTray {
   }
 
   setup(){
-    console.warn(this.vertical);
     this.background = PIXI.projection.Sprite2d.from(this.loader.resources[this.model + '_drivetray_bg'].texture.baseTexture);
 
     this.container.addChild(this.background);
@@ -56,23 +55,15 @@ export class DriveTray {
 
   private colorize(cssColor: string ){
     if(!this.handle){
-      console.warn("Handle sprite has not been initialized");
       return;
     }
-
     this._color = cssColor;
     if(cssColor == 'none'){
       this.handle.tint = 0xFFFFFF;
-      //this._color = '#ffffff';
     } else {
-      //this._color = cssColor;
       let color = parseInt("0x" + cssColor.substring(1), 16);
-
-      /*let outlineFilter = new PIXI.filters.OutlineFilter(2, color);
-      let filters = [outlineFilter];*/
       this.handle.tint = color;
     }
-
   }
 
 }

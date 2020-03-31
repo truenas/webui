@@ -84,7 +84,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     })
 
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      console.warn(evt);
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({name: 'DisksRequest', sender: this});
@@ -102,6 +102,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
+      console.warn(evt);
       this.system.diskData = evt.data;
       core.emit({name: 'SensorDataRequest', sender: this});
       setTimeout(() => {
@@ -111,7 +112,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
     core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
       if(!this.system_product){
-        console.warn(evt.data);
+        console.warn(evt);
         this.system_product = evt.data.system_product;
         this.system_manufacturer = evt.data.system_manufacturer.toLowerCase();
         this.supportedHardware = evt.data.features.enclosure;

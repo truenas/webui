@@ -31,11 +31,11 @@
     </div>
 
     <!-- DETAILS/OVERVIEW -->
-    <div *ngIf="selectedDisk; then details else overview;" class="wrapper">
-    </div>
+    <div *ngIf="selectedDisk; then details else overview;" class="wrapper"></div>
       <ng-template #details>
         <div fxFlex #disksdetails id="disks-details">
-          <h3>DETAILS</h3>
+          <h3 style="border-bottom:solid 1px rgba(255,255,255,0.25);">{{currentView}}</h3>
+          <div><button mat-button (click)="clearDisk()"><mat-icon role="img">chevron_left</mat-icon></button></div>
         </div>
       </ng-template>
 
