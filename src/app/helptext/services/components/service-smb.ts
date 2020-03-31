@@ -103,7 +103,8 @@ cifs_srv_ntlmv1_auth_tooltip: T('Off by default. When set,\
  untrusted networks.'),
 
 cifs_srv_bindip_placeholder: T('Bind IP Addresses'),
-cifs_srv_bindip_tooltip: T('Select the IP addresses SMB will listen for.'),
+cifs_srv_bindip_tooltip: T('Static IP addresses which SMB listens on for connections. \
+ Leaving all unselected defaults to listening on all active interfaces.'),
 
 idmap_tdb_range_low_placeholder: T('Range Low'),
 idmap_tdb_range_low_tooltip: T('The beginning UID/GID for which this system is\
