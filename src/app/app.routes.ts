@@ -112,7 +112,12 @@ export const rootRouterConfig: Routes = [{
         path : 'ui-preferences',
         loadChildren : './pages/preferences/preferences.module#PreferencesModule',
         data: { title: 'Web Interface Preferences', breadcrumb: 'Preferences'}
-      }
+      },
+      {
+        path : 'apikeys',
+        loadChildren : './pages/api-keys/api-keys.module#ApiKeysModule',
+        data: { title: 'API Keys', breadcrumb: 'API Keys'}
+      },
     ]
   },
   {
