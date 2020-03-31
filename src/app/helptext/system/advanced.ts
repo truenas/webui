@@ -35,7 +35,7 @@ export const helptext_system_advanced = {
   serialspeed_placeholder: T('Serial Speed'),
   serialspeed_tooltip: T('Choose the speed in bps used by the serial port.'),
 
-  swapondrive_placeholder: T('Swap size in GiB'),
+  swapondrive_placeholder: T('Swap Size in GiB'),
   swapondrive_tooltip: T('By default, all data disks are created with the amount\
  of swap specified. Changing the value does not affect\
  the amount of swap on existing disks, only disks added\
@@ -45,7 +45,7 @@ export const helptext_system_advanced = {
  DISCOURAGED</b>'),
   swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
 
-  autotune_placeholder: T('Enable autotune'),
+  autotune_placeholder: T('Enable Autotune'),
   autotune_tooltip: T('Enables the autotune script which attempts to optimize\
  the system depending on the installed hardware.\
  <b>Warning:</b> Autotuning is only used as a temporary\
@@ -59,26 +59,26 @@ export const helptext_system_advanced = {
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
   reboot.'),
 
-  consolemsg_placeholder: T('Show console messages'),
+  consolemsg_placeholder: T('Show Console Messages'),
   consolemsg_tooltip: T('Display console messages in real time\
  at the bottom of the browser.'),
 
   motd_placeholder: T('MOTD Banner'),
   motd_tooltip: T('The message to show when a user logs in with SSH.'),
 
-  traceback_placeholder: T('Show tracebacks in case of fatal error'),
+  traceback_placeholder: T('Show Tracebacks in Case of Fatal Error'),
   traceback_tooltip: T('Provides a pop-up window of diagnostic information if a\
  fatal error occurs.'),
 
-  advancedmode_placeholder: T('Show advanced fields by default'),
+  advancedmode_placeholder: T('Show Advanced Fields by Default'),
   advancedmode_tooltip: T('Set to always show advanced fields, when available.'),
 
-  fqdn_placeholder: T('Use FQDN for logging'),
+  fqdn_placeholder: T('Use FQDN for Logging'),
   fqdn_tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
  in logs to precisely identify systems with similar\
  hostnames.'),
 
-  cpu_in_percentage_placeholder: T('Report CPU usage in percentage'),
+  cpu_in_percentage_placeholder: T('Report CPU Usage in Percentage'),
   cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
   sed_options_message_paragraph: T('<b>SED (Self-Encrypting Drives) Options</b>'),

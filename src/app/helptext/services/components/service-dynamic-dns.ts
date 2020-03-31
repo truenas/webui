@@ -44,7 +44,7 @@ custom_ddns_path_tooltip: T('DDNS server path. Path syntax varies by \
  automatically appended by default. More examples are in the \
  <a href="https://github.com/troglobit/inadyn#custom-ddns-providers" target="_blank">In-A-Dyn documentation</a>.'),
 
-domain_placeholder : T('Domain name'),
+domain_placeholder : T('Domain Name'),
 domain_tooltip: T('Fully qualified domain name of the host with the \
  dynamic IP address. Separate multiple domains with a space, comma \
  \(,\), or semicolon \(;\). Example: \

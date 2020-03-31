@@ -8,7 +8,7 @@ export const helptext_system_email = {
     access: T('Access')
   },
   fromemail: {
-    placeholder: T("From E-mail"),
+    placeholder: T("From Email"),
     validation: [Validators.required, Validators.email],
     tooltip: T('The user account <i>Email</i> address to use for the \
  envelope <i>From</i> email address. The user account <i>Email</i> in \

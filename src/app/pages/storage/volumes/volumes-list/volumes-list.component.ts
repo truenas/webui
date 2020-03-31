@@ -154,7 +154,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         p1 += `<br> - ${i}`
                       })
                     })
-  
+
                   })
                 }
                 this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
@@ -176,7 +176,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         if (process.name) {
                           p1 += `<br> - ${process.name}`
                         }
-  
+
                       });
                     };
                     if (running_unknown_processes.length > 0) {
@@ -338,7 +338,7 @@ export class VolumesListTableConfig implements InputTableConf {
               message: self.messageService,
               updater: self.key_file_updater,
               parent: self,
-              hideButton: true, 
+              hideButton: true,
               name: 'key',
               required: true,
               placeholder: helptext.unlockDialog_recovery_key_placeholder,
@@ -445,7 +445,7 @@ export class VolumesListTableConfig implements InputTableConf {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
-                p1 = T('These services depend on pool ') + `<i>${row1.name}</i>` + 
+                p1 = T('These services depend on pool ') + `<i>${row1.name}</i>` +
                   T(' and will be disrupted if the pool is detached:');
                 res.forEach((item) => {
                   p1 += `<br><br>${item.type}:`;
@@ -556,7 +556,7 @@ export class VolumesListTableConfig implements InputTableConf {
             },{
               type: 'checkbox',
               name: 'confirm',
-              placeholder: rowData.status === 'UNKNOWN' ? 
+              placeholder: rowData.status === 'UNKNOWN' ?
                 `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder} ${helptext.unknown_status_alt_text}` :
                 `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder}`,
               required: true
@@ -637,7 +637,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   } else {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    self.dialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);                    
+                    self.dialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
                   }
                 } else {
                   entityDialog.dialogRef.close(true);
@@ -887,7 +887,27 @@ export class VolumesListTableConfig implements InputTableConf {
                 ]));
               }
             },
-          );          
+            {
+              id: rowData.name,
+              name: T('User Quotas'),
+              label: T('User Quotas'),
+              onClick: (row1) => {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "user-quotas", row1.id
+                ]));
+              }
+            },
+            {
+              id: rowData.name,
+              name: T('Group Quotas'),
+              label: T('Group Quotas'),
+              onClick: (row1) => {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "group-quotas", row1.id
+                ]));
+              }
+            },
+          );
       }
 
       if (rowData.id.indexOf('/') !== -1) {
@@ -949,7 +969,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Delete Zvol'),
         label: T("Delete Zvol"),
         onClick: (row1) => {
-          this.dialogService.doubleConfirm(T("Delete "), 
+          this.dialogService.doubleConfirm(T("Delete "),
             T("Delete the zvol ") + "<b><i>" + row1.name + "</i></b>"+ T(" and all snapshots of it?"), row1.name,
             true, T('Delete Zvol')).subscribe((confirmed) => {
             if (confirmed === true) {
@@ -1080,7 +1100,7 @@ export class VolumesListTableConfig implements InputTableConf {
         editACL.disabled = aclEditDisabled;
       let editPermissions = rowData.actions.find(o => o.name === 'Edit Permissions')
         editPermissions.disabled = permissionsEditDisabled;
-        aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 : 
+        aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 :
         editPermissions.matTooltip = helptext.permissions_edit_msg2
     })
   }
@@ -1121,7 +1141,7 @@ export class VolumesListTableConfig implements InputTableConf {
             dataset_data2[k].compressratio.source !== "INHERITED"
               ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
               : dataObj.compressratio = (inherits + " (" + dataset_data2[k].compressratio.parsed + ")");
-          } 
+          }
           if (dataset_data2[k].readonly) {
             dataset_data2[k].readonly.source !== "INHERITED"
               ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
@@ -1201,7 +1221,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
-    
+
 
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
@@ -1216,7 +1236,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           pool.children = pChild ? [pChild] : [];
 
-          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);          
+          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);
           pool.type = 'zpool';
 
           if (pool.children && pool.children[0]) {
