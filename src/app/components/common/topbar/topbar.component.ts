@@ -602,7 +602,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   openStatusDialog() {
     console.log('openstatusdialog');
-
+    const injectData = {
+      parent: this,
+      data: this.tcStatus,
+    }
     if (this.isTcStatusOpened) {
       this.tcStatusDialogRef.close(true);
     } else {
@@ -616,7 +619,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           top: '48px',
           right: '0px'
         },
-        data: this.tcStatus,
+        data: injectData,
       });
     }
 
