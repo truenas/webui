@@ -4,7 +4,7 @@
 }
 
 mat-icon.status-connected {
-    color: var(--green);
+    color: #4caf50;
 }
 
 mat-icon.status-failed {

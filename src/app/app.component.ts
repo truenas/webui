@@ -147,6 +147,10 @@ export class AppComponent {
       "truecommand_logo_grey",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_grey.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "truecommand_logo_green",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_green.svg")
+    );
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
