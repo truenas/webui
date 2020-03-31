@@ -64,5 +64,8 @@ expand_pool_dialog: {
     save_button: T("Expand Pool"),
 },
 
-unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.')
+unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.'),
+
+pool_actions_title: T('Pool Actions'),
+encryption_actions_title: T('Encryption Actions')
 }

@@ -101,6 +101,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public restartServices = false;
   public subs: any;
   public message_subscription: any;
+  public has_encrypted_root = false;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -1168,6 +1169,9 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
         dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
         dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
+        if (dataObj.is_encrypted_root) {
+          this.has_encrypted_root = true;
+        }
         dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
       }
     });
@@ -1190,14 +1194,18 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   actionComponent = {
     getActions: (row) => {
-      return this.conf.getActions(row);
-    },
-    conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService)
-  };
-
-  actionEncryptedComponent = {
-    getActions: (row) => {
-      return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
+      return [
+        {
+          name: 'pool_actions',
+          title: helptext.pool_actions_title,
+          actions: this.conf.getActions(row),
+        },
+        {
+          name: 'encryption_actions',
+          title: helptext.encryption_actions_title,
+          actions: (<VolumesListTableConfig>this.conf).getEncryptedActions(row),
+        }
+      ];
     },
     conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService)
   };
