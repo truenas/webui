@@ -712,8 +712,12 @@ export class VolumesListTableConfig implements InputTableConf {
             name: T('Upgrade Pool'),
             label: T("Upgrade Pool"),
             onClick: (row1) => {
+              let upgrade_warning = helptext.upgradePoolDialog_warning;
+              if (window.localStorage.getItem('is_freenas') === 'false') {
+                upgrade_warning = helptext.upgradePoolDialog_warning_truenas;
+              }
 
-              this.dialogService.confirm(T("Upgrade Pool"), helptext.upgradePoolDialog_warning + row1.name).subscribe((confirmResult) => {
+              this.dialogService.confirm(T("Upgrade Pool"), upgrade_warning + row1.name).subscribe((confirmResult) => {
                   if (confirmResult === true) {
                     this.loader.open();
 

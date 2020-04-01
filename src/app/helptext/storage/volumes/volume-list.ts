@@ -50,6 +50,10 @@ upgradePoolDialog_warning: T("Proceed with upgrading the pool? WARNING: Upgradin
  one-way operation that might make some features of\
  the pool incompatible with older versions of FreeNAS: "),
 
+upgradePoolDialog_warning_truenas: T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
+ one-way operation that might make some features of\
+ the pool incompatible with older versions of TrueNAS: "),
+
 pool_lock_warning_paratext_a: T("WARNING: Locking pool <i>"),
 pool_lock_warning_paratext_b: T("</i>.\
  Data on the pool will not be accessible until the pool is unlocked."),
