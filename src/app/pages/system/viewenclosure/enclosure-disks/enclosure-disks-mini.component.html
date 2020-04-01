@@ -22,27 +22,90 @@
   </mat-toolbar>
 
   <mat-card-content #cardcontent fxLayout="row">
-    <!-- VISUALIZER -->
-    <div #disksoverview
-      fxFlex="60%"
-      id="disks-overview"
-      [class]="currentView">
-      <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+    <div fxFlex="60%">
+      <!-- LEGEND -->
+      <div class="header-container" id="legend">
+        <h3 class="header">Pools</h3>
+        <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
+          <div class="legend-item" *ngFor="let pool of enclosurePools; let i=index">
+            <div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+            </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
+        </div>
+
+        <ng-template #noPools>
+          <div id="legend-no-pools">
+            <div>No pools on this enclosure.</div>
+          </div>
+        </ng-template>
+      </div>
+      <!-- VISUALIZER -->
+      <div #disksoverview
+               id="disks-overview"
+               [class]="currentView">
+        <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+      </div>
     </div>
 
     <!-- DETAILS/OVERVIEW -->
-    <div *ngIf="selectedDisk; then details else overview;" class="wrapper"></div>
-      <ng-template #details>
-        <div fxFlex #disksdetails id="disks-details">
-          <h3 style="border-bottom:solid 1px rgba(255,255,255,0.25);">{{currentView}}</h3>
-          <div><button mat-button (click)="clearDisk()"><mat-icon role="img">chevron_left</mat-icon></button></div>
-        </div>
-      </ng-template>
+    <div fxFlex id="disks-details" #diskDetails>
 
-      <ng-template #overview>
-        <div fxFlex #diskdetails id="disks-details">
-          <h3>OVERVIEW</h3>
+      <ng-container *ngIf="selectedDisk && currentView == 'details'" #details>
+        <div class="header-container"  #disksdetails id="details">
+          <button class="back-btn" mat-button (click)="clearDisk()"><mat-icon role="img">close</mat-icon></button>
+          <h3 class="header">Drive Details {{selectedDisk.name}}</h3>
+          <div>
+            <ul>
+              <li><strong>Pool:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</li>
+              <li><strong>Serial:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.serial}}</li>
+              <li><strong>Status:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.status}}</li>
+              <li><strong>Acoustic Level:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.acousticlevel}}</li>
+              <li><strong>Advanced Power Management:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.advpowermgmt}}</li>
+              <li><strong>S.M.A.R.T. Enabled:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.togglesmart ? 'Yes' : 'No'}}</li>
+              <li><strong>S.M.A.R.T. Options:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'}}</li>
+              <li><strong>Transfer Mode:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.transfermode}}</li>
+              <li><strong>HDD Standby:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.hddstandby}}</li>
+            </ul>
+
+            <div class="disk-basic-details" fxLayout="row" fxLayoutAlign="center center">
+              <div>
+                <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
+                <div class="capacity">{{converter(selectedDisk.size)}}</div>
+              </div>
+              <div fxFlex>
+              </div>
+              <!--<div class="disk-actions">
+                <button id="identify-btn" class="front-rear-toggle" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
+                </div>-->
+            </div>
+
+          </div>
         </div>
-      </ng-template>
+      </ng-container>
+
+      <ng-container *ngIf="currentView == 'pools' || currentView == 'status'" #overview>
+        <div class="header-container half-height"  id="general-overview">
+          <h3 class="header">Disks Overview</h3>
+          <div>
+            <ul>
+              <li><strong>Pools:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.poolKeys)}}</li>
+              <li><strong>Total Disks:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.disks)}}</li>
+              <li><strong>Raw Capacity:</strong>  &nbsp;&nbsp;&nbsp;unknown</li>
+              <li><strong>Usable Space:</strong>  &nbsp;&nbsp;&nbsp;unknown</li>
+              <li><strong>Failed Disks:</strong>  &nbsp;&nbsp;&nbsp;{{failedDisks.length}}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="header-container half-height"  id="drive-temps">
+          <h3 class="header">Drive Temperatures</h3>
+          <div>
+            <ul>
+              <li>NN °</li>
+            </ul>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
   </mat-card-content>
 </mat-card>

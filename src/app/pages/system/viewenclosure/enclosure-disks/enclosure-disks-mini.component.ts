@@ -51,4 +51,8 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.setupEnclosureEvents(enclosure);
   }
 
+  count(obj: any){
+    return Object.keys(obj).length;
+  }
+
 }
