@@ -427,6 +427,7 @@ export class DeviceAddComponent implements OnInit {
         }
       }
     ];
+    this.vncFormGroup.controls['vnc_bind'].setValue('0.0.0.0');
   }
 
   goBack() {

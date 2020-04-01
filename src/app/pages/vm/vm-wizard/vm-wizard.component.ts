@@ -386,14 +386,8 @@ export class VMWizardComponent {
         const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
         Object.keys(res).forEach((address) => {
           vnc_bind.options.push({label : address, value : address});
-        })
-        this.ws.call('interface.ip_in_use', [{"ipv4": true}]).subscribe(
-          (ip) => {
-            if (_.find(vnc_bind.options, { value: ip[0].address })){
-              ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(ip[0].address);
-            }
-          }
-        )
+        });
+        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(res['0.0.0.0']);
       }
     });
 
