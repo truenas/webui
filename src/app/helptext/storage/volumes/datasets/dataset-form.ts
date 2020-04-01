@@ -113,6 +113,8 @@ dataset_form_quota_too_small: T("Quota size is too small, enter a value of 1 GiB
 dataset_form_encryption: {
     fieldset_title: T('Encryption Options'),
     inherit_checkbox_placeholder: T('Inherit'),
+    inherit_checkbox_notencrypted: T('Inherit (non-encrypted)'),
+    inherit_checkbox_encrypted: T('Inherit (encrypted)'),
     inherit_checkbox_tooltip: T(''),
     encryption_checkbox_placeholder: T('Encryption'),
     encryption_checkbox_tooltip: T(''),

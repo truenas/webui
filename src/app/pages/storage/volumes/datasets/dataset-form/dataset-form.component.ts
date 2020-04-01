@@ -17,6 +17,8 @@ import globalHelptext from '../../../../../helptext/global-helptext';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { filter } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { MAT_HAMMER_OPTIONS } from '@angular/material/core';
 
 interface DatasetFormData {
   name: string;
@@ -78,6 +80,7 @@ export class DatasetFormComponent implements Formconfiguration{
   protected non_encrypted_warned = false;
   protected encryption_type = 'key';
   protected generate_key = true;
+  protected legacy_encryption = false;
   public namesInUse = [];
   public nameIsCaseInsensitive = false;
 
@@ -921,8 +924,17 @@ export class DatasetFormComponent implements Formconfiguration{
         this.minimum_recommended_dataset_recordsize = res;
         this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
       });
-      this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
+      combineLatest(this.ws.call('pool.query', [[["name","=",root]]]), this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]])).subscribe(
+        ([pk_pool, pk_dataset])=>{
+        if (pk_pool[0].encrypt !== 0) {
+          this.legacy_encryption = true;
+        }
         this.encrypted_parent = pk_dataset[0].encrypted;
+        let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
+        if (this.encrypted_parent) {
+           inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
+        } 
+        _.find(this.fieldConfig, {name:'inherit_encryption'}).placeholder = inherit_encrypt_placeholder;
         let children = (pk_dataset[0].children);
         if (pk_dataset[0].casesensitivity.value === 'SENSITIVE') {
           this.nameIsCaseInsensitive = false;
@@ -940,73 +952,83 @@ export class DatasetFormComponent implements Formconfiguration{
         };
 
       if(this.isNew){
-        if (this.encrypted_parent) {
-          _.find(this.fieldConfig, {name:'encryption'}).isHidden = true;
-        }
-        const inherit_encryption_fg = this.entityForm.formGroup.controls['inherit_encryption'];
-        const encryption_fg = this.entityForm.formGroup.controls['encryption'];
-        const encryption_type_fg = this.entityForm.formGroup.controls['encryption_type'];
-        const all_encryption_fields = this.encryption_fields.concat(this.key_fields, this.passphrase_fields);
-        for (let i = 0; i < this.encryption_fields.length; i++) {
-           this.entityForm.setDisabled(this.encryption_fields[i], true, true);
-        }
-        this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe(inherit => {
-          this.inherit_encryption = inherit;
-          if (inherit) {
-            for (let i = 0; i < all_encryption_fields.length; i++) {
-              this.entityForm.setDisabled(all_encryption_fields[i], inherit, inherit);
-            }
-            _.find(this.fieldConfig, {name:'encryption'}).isHidden = inherit;
+        if (this.legacy_encryption) {
+          for (let i=0; i < this.encryption_fields.length; i++) {
+            this.entityForm.setDisabled(this.encryption_fields[i], true, true);
+            _.find(this.fieldSets, {name:"encryption_divider"}).divider = false;
           }
-          if (!inherit) {
-            this.entityForm.setDisabled('encryption_type', inherit, inherit);
-            const key = (this.encryption_type === 'key');
+          this.entityForm.setDisabled('encryption', true, true);
+          this.entityForm.setDisabled('inherit_encryption', true, true);
+        }
+        else {
+          _.find(this.fieldConfig, {name:'encryption'}).isHidden = true;
+          const inherit_encryption_fg = this.entityForm.formGroup.controls['inherit_encryption'];
+          const encryption_fg = this.entityForm.formGroup.controls['encryption'];
+          const encryption_type_fg = this.entityForm.formGroup.controls['encryption_type'];
+          const all_encryption_fields = this.encryption_fields.concat(this.key_fields, this.passphrase_fields);
+          for (let i = 0; i < this.encryption_fields.length; i++) {
+              this.entityForm.setDisabled(this.encryption_fields[i], true, true);
+          }
+          this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe(inherit => {
+            this.inherit_encryption = inherit;
+            if (inherit) {
+              for (let i = 0; i < all_encryption_fields.length; i++) {
+                this.entityForm.setDisabled(all_encryption_fields[i], inherit, inherit);
+              }
+              _.find(this.fieldConfig, {name:'encryption'}).isHidden = inherit;
+            }
+            if (!inherit) {
+              this.entityForm.setDisabled('encryption_type', inherit, inherit);
+              const key = (this.encryption_type === 'key');
+              this.entityForm.setDisabled('passphrase', key, key);
+              this.entityForm.setDisabled('pbkdf2iters', key, key);
+              this.entityForm.setDisabled('generate_key', !key, !key);
+              if (this.encrypted_parent) {
+                _.find(this.fieldConfig, {name:'encryption'}).isHidden = this.isBasicMode;
+              } else {
+                _.find(this.fieldConfig, {name:'encryption'}).isHidden = inherit;
+              }
+            }
+          });
+          this.encryption_subscription = encryption_fg.valueChanges.subscribe(encryption => {
+            // if on an encrypted parent we should warn the user, otherwise just disable the fields
+            if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
+              this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
+                helptext.dataset_form_encryption.non_encrypted_warning_warning).subscribe(confirm => {
+                  if (confirm) {
+                    this.non_encrypted_warned = true;
+                    for (let i = 0; i < all_encryption_fields.length; i++) {
+                      if (all_encryption_fields[i] !== 'encryption') {
+                        this.entityForm.setDisabled(all_encryption_fields[i], true, true);
+                      }
+                    }
+                  }
+                });
+            } else {
+              for (let i = 0; i < this.encryption_fields.length; i++) {
+                if (this.encryption_fields[i] !== 'encryption') {
+                  this.entityForm.setDisabled(this.encryption_fields[i], !encryption, !encryption);
+                }
+              }
+            }
+          });
+          this.encryption_type_subscription = encryption_type_fg.valueChanges.subscribe(type => {
+            this.encryption_type = type;
+            const key = (type === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
             this.entityForm.setDisabled('pbkdf2iters', key, key);
             this.entityForm.setDisabled('generate_key', !key, !key);
-            if (this.encrypted_parent) {
-              _.find(this.fieldConfig, {name:'encryption'}).isHidden = this.isBasicMode;
+            if (key) {
+              this.entityForm.setDisabled('key', this.generate_key, this.generate_key);
+            } else {
+              this.entityForm.setDisabled('key', true, true)
             }
-          }
-        });
-        this.encryption_subscription = encryption_fg.valueChanges.subscribe(encryption => {
-          // if on an encrypted parent we should warn the user, otherwise just disable the fields
-          if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
-            this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
-              helptext.dataset_form_encryption.non_encrypted_warning_warning).subscribe(confirm => {
-                if (confirm) {
-                  this.non_encrypted_warned = true;
-                  for (let i = 0; i < all_encryption_fields.length; i++) {
-                    if (all_encryption_fields[i] !== 'encryption') {
-                      this.entityForm.setDisabled(all_encryption_fields[i], true, true);
-                    }
-                  }
-                }
-              });
-          } else {
-            for (let i = 0; i < this.encryption_fields.length; i++) {
-              if (this.encryption_fields[i] !== 'encryption') {
-                this.entityForm.setDisabled(this.encryption_fields[i], !encryption, !encryption);
-              }
-            }
-          }
-        });
-        this.encryption_type_subscription = encryption_type_fg.valueChanges.subscribe(type => {
-          this.encryption_type = type;
-          const key = (type === 'key');
-          this.entityForm.setDisabled('passphrase', key, key);
-          this.entityForm.setDisabled('pbkdf2iters', key, key);
-          this.entityForm.setDisabled('generate_key', !key, !key);
-          if (key) {
-            this.entityForm.setDisabled('key', this.generate_key, this.generate_key);
-          } else {
-            this.entityForm.setDisabled('key', true, true)
-          }
-        })
-        this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.subscribe(generate_key => {
-          this.generate_key = generate_key;
-          this.entityForm.setDisabled('key', generate_key, generate_key);
-        });
+          })
+          this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.subscribe(generate_key => {
+            this.generate_key = generate_key;
+            this.entityForm.setDisabled('key', generate_key, generate_key);
+          });
+        }
         const sync = _.find(this.fieldConfig, {name:'sync'});
         const compression = _.find(this.fieldConfig, {name:'compression'});
         const deduplication = _.find(this.fieldConfig, {name:'deduplication'});
@@ -1057,7 +1079,9 @@ export class DatasetFormComponent implements Formconfiguration{
             this.entityForm.setDisabled(this.encryption_fields[i], true, true);
             _.find(this.fieldSets, {name:"encryption_divider"}).divider = false;
           }
+          this.entityForm.setDisabled('encryption', true, true);
           this.entityForm.setDisabled('inherit_encryption', true, true);
+          _.find(this.fieldConfig, {name:'encryption'}).isHidden = true;
           this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
             this.parent_dataset = parent_dataset[0];
             const current_dataset = _.find(this.parent_dataset.children, {'name':this.pk});
