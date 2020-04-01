@@ -325,5 +325,16 @@ export class SystemProfiler {
     let raw = this.enclosures[index].elements.filter((item) => {return item.name == "SAS Expander"})
     return raw[0].elements;
   }
+
+  rawCapacity(){
+    if(!this.diskData || this.diskData.length == 0){ return; }
+    let capacity = 0;
+    this.diskData.forEach((disk) => { 
+      if(disk.vdev && disk.vdev.topology == "data"){
+        capacity += disk.size;
+      } 
+    });
+    return capacity;
+  }
     
 }

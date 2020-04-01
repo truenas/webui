@@ -50,6 +50,7 @@
     <div fxFlex id="disks-details" #diskDetails>
 
       <ng-container *ngIf="selectedDisk && currentView == 'details'" #details>
+        <!-- DISK SELECTED -->
         <div class="header-container"  #disksdetails id="details">
           <button class="back-btn" mat-button (click)="clearDisk()"><mat-icon role="img">close</mat-icon></button>
           <h3 class="header">Drive Details {{selectedDisk.name}}</h3>
@@ -83,13 +84,14 @@
       </ng-container>
 
       <ng-container *ngIf="currentView == 'pools' || currentView == 'status'" #overview>
+        <!-- DISK NOT SELECTED -->
         <div class="header-container half-height"  id="general-overview">
           <h3 class="header">Disks Overview</h3>
           <div>
             <ul>
               <li><strong>Pools:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.poolKeys)}}</li>
               <li><strong>Total Disks:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.disks)}}</li>
-              <li><strong>Raw Capacity:</strong>  &nbsp;&nbsp;&nbsp;unknown</li>
+              <li><strong>Raw Capacity:</strong>  &nbsp;&nbsp;&nbsp;{{converter(system.rawCapacity())}}</li>
               <li><strong>Usable Space:</strong>  &nbsp;&nbsp;&nbsp;unknown</li>
               <li><strong>Failed Disks:</strong>  &nbsp;&nbsp;&nbsp;{{failedDisks.length}}</li>
             </ul>
