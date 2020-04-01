@@ -213,7 +213,6 @@ export class SystemProfiler {
           if(!disk.device && disk.status == "REMOVED"){ 
             return; 
           } else {
-            console.log(disk);
             let spl = disk.disk.split('p'); // was disk.device
             let name = spl[0]
             v.disks[name] = dIndex;

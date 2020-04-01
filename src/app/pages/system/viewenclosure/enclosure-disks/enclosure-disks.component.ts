@@ -274,7 +274,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   pixiInit(){
-      console.log("PIXI INIT");
       PIXI.settings.PRECISION_FRAGMENT = 'highp'; //this makes text looks better? Answer = NO
       PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES , 16);// Fixes FireFox gl errors
       PIXI.utils.skipHello();
@@ -407,7 +406,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         enclosure = new E60();
         break;
       default:
-        console.log(profile.model);
         enclosure = new ES24();
     }
     
