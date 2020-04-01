@@ -145,9 +145,9 @@ export class AdvancedComponent implements OnDestroy {
     },
     { name: 'spacer', label: false, width: '2%' },
     {
-      name: helptext_system_advanced.fieldset_kernel,
+      name: helptext_system_advanced.fieldset_storage,
       label: true,
-      class: 'kernel',
+      class: 'storage',
       width: '49%',
       config: [
         {
@@ -162,16 +162,13 @@ export class AdvancedComponent implements OnDestroy {
           parent: this
         },
         {
-          type: 'checkbox',
-          name: 'autotune',
-          placeholder: helptext_system_advanced.autotune_placeholder,
-          tooltip: helptext_system_advanced.autotune_tooltip
-        },
-        {
-          type: 'checkbox',
-          name: 'debugkernel',
-          placeholder: helptext_system_advanced.debugkernel_placeholder,
-          tooltip: helptext_system_advanced.debugkernel_tooltip
+          type: 'input',
+          name: 'overprovision',
+          placeholder: helptext_system_advanced.overprovision.placeholder,
+          tooltip: helptext_system_advanced.overprovision.tooltip,
+          blurStatus: true,
+          blurEvent: this.opBlurEvent,
+          parent: this
         },
       ]
     },
@@ -247,15 +244,40 @@ export class AdvancedComponent implements OnDestroy {
     },
     { name: 'divider', divider: true },
     {
+      name: helptext_system_advanced.fieldset_kernel,
+      label: true,
+      class: 'kernel',
+      width: '49%',
+      config: [
+
+        {
+          type: 'checkbox',
+          name: 'autotune',
+          placeholder: helptext_system_advanced.autotune_placeholder,
+          tooltip: helptext_system_advanced.autotune_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'debugkernel',
+          placeholder: helptext_system_advanced.debugkernel_placeholder,
+          tooltip: helptext_system_advanced.debugkernel_tooltip
+        },
+      ]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
       name: helptext_system_advanced.fieldset_other,
       label: true,
       class: 'other',
-      config: [{
-        type: 'checkbox',
-        name: 'fqdn_syslog',
-        placeholder: helptext_system_advanced.fqdn_placeholder,
-        tooltip: helptext_system_advanced.fqdn_tooltip
-      }]
+      width: '49%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'fqdn_syslog',
+          placeholder: helptext_system_advanced.fqdn_placeholder,
+          tooltip: helptext_system_advanced.fqdn_tooltip
+        }
+      ]
     },
     { name: 'divider', divider: true }
   ]);
@@ -274,6 +296,7 @@ export class AdvancedComponent implements OnDestroy {
 
   resourceTransformIncomingRestData(data) {
     data.swapondrive = this.storage.convertBytestoHumanReadable(data.swapondrive * 1073741824, 0);
+    data.overprovision = this.storage.convertBytestoHumanReadable(data.overprovision * 1073741824, 0);
     return data;
   }
 
@@ -300,6 +323,17 @@ export class AdvancedComponent implements OnDestroy {
 
         }
       });
+
+      entityEdit.formGroup.controls['overprovision'].valueChanges.subscribe((value) => {
+        const formField = this.fieldSets.config('overprovision');
+        const filteredValue = value ? this.storage.convertHumanStringToNum(value, false, 'g') : undefined;
+        formField['hasErrors'] = false;
+        formField['errors'] = '';
+        if (filteredValue !== undefined && isNaN(filteredValue)) {
+          formField['hasErrors'] = true;
+          formField['errors'] = helptext_system_advanced.overprovision.error;
+        };
+      })
   
       this.ws.call(this.queryCall).subscribe((adv_values)=>{
         entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
@@ -323,10 +357,14 @@ export class AdvancedComponent implements OnDestroy {
           )}
       });
     })
+    setTimeout(() => {
+      this.storage.humanReadable = '';
+    }, 500)
   }
 
   public customSubmit(body) {
     body.swapondrive = this.storage.convertHumanStringToNum(body.swapondrive)/1073741824;
+    body.overprovision = this.storage.convertHumanStringToNum(body.overprovision)/1073741824;
     body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui) :
       window.localStorage.setItem('exposeLegacyUI', 'false');
     delete body.sed_passwd2;
@@ -344,7 +382,19 @@ export class AdvancedComponent implements OnDestroy {
 
   blurEvent(parent) {
     if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['swapondrive'].setValue(parent.storage.humanReadable || '2 GiB');
+      if (parent.storage.humanReadable) {
+        parent.entityForm.formGroup.controls['swapondrive'].setValue(parent.storage.humanReadable || '2 GiB');
+      }
+      parent.storage.humanReadable = '';
+    }
+  }
+
+  opBlurEvent(parent) {
+    if (parent.entityForm) {
+      if (parent.storage.humanReadable) {
+        parent.entityForm.formGroup.controls['overprovision'].setValue(parent.storage.humanReadable);
+      }
+      parent.storage.humanReadable = '';
     }
   }
 }
