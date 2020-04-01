@@ -85,7 +85,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       });
     }
 
-  ngOnInit() { console.log(window.localStorage.getItem('product_type'))
+  ngOnInit() {
     if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.checkEULA();
       this.ws.call('failover.licensed').subscribe((is_ha) => {
@@ -258,7 +258,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   checkEULA() {
     this.ws.call('truenas.is_eula_accepted').subscribe(eula_accepted => {
       if (!eula_accepted || window.localStorage.getItem('upgrading_status') === 'upgrading') {
-        this.ws.call('truenas.get_eula').subscribe(eula => { console.log(eula)
+        this.ws.call('truenas.get_eula').subscribe(eula => {
           this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true,
           T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
             if (accept_eula) {
