@@ -99,7 +99,7 @@ export class ScrubFormComponent {
         this.pk = params.pk;
       }
     });
-    
+
   }
 
 
@@ -107,9 +107,9 @@ export class ScrubFormComponent {
 
     this.volume_field = _.find(this.fieldConfig, { 'name': 'pool' });
     this.taskService.getVolumeList().subscribe((res) => {
-      for (let i in res.data) {
-        this.volume_field.options.push({ label: res.data[i].vol_name, value: res.data[i].id });
-      };
+      res.forEach (item=>  {
+        this.volume_field.options.push({ label: item.name, value: item.id });
+      });
     });
 
     entityForm.formGroup.controls['pool'].valueChanges.subscribe((res) => {
@@ -143,10 +143,10 @@ export class ScrubFormComponent {
     this.entityForm.formGroup.controls['description'].setValue(data.description);
     this.entityForm.formGroup.controls['pool'].setValue(data.id);
 
-    data['scrub_picker'] = data.schedule.minute + " " + 
-                          data.schedule.hour + " " + 
-                          data.schedule.dom + " " + 
-                          data.schedule.month + " " + 
+    data['scrub_picker'] = data.schedule.minute + " " +
+                          data.schedule.hour + " " +
+                          data.schedule.dom + " " +
+                          data.schedule.month + " " +
                           data.schedule.dow;
     return data;
   }
