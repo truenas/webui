@@ -8,7 +8,8 @@
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
             <mat-icon svgIcon="truenas_core_logo_full" *ngIf="product_type === 'CORE'; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
             <ng-template #isTruenas>
-              <mat-icon class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
+              <mat-icon *ngIf="product_type === 'ENTERPRISE'" class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
+              <mat-icon *ngIf="product_type === 'SCALE'" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
             </ng-template>
           </div>
           <span *ngIf="canLogin()">
@@ -16,12 +17,12 @@
               <div class="">
                 <mat-form-field class="full-width">
                   <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:2px;"></mat-icon>&nbsp;&nbsp;</span>
-                  <input autofocus 
-                    matInput name="username" 
-                    required 
-                    [(ngModel)]="signinData.username" 
-                    #username="ngModel" 
-                    placeholder="{{'Username' | translate}}" 
+                  <input autofocus
+                    matInput name="username"
+                    required
+                    [(ngModel)]="signinData.username"
+                    #username="ngModel"
+                    placeholder="{{'Username' | translate}}"
                     value=""
                     autocorrect="off" autocapitalize="none" autocomplete="off"
                   >
@@ -45,7 +46,7 @@
                 <mat-form-field class="full-width">
                   <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">phonelink</mat-icon>&nbsp;&nbsp;</span>
                   <input matInput name="otp"
-                    [(ngModel)]="signinData.otp" 
+                    [(ngModel)]="signinData.otp"
                     #otp="ngModel"
                     required
                     placeholder="{{'Two-Factor Authentication Code' | translate}}"
