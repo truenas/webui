@@ -47,7 +47,7 @@ export const helptext_system_advanced = {
   swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
 
   overprovision: {
-    placeholder: T('Overprovision Size in GiB - (Examples: 50 GiB, 50g, 50GB)'),
+    placeholder: T('Overprovision Size in GiB'),
     tooltip: T('Overprovisioning can increase the performance and lifespan of SSDs. \
  Defining a number of GiB here overprovisions disks during pool creation. \
  Examples: 50 GiB, 10g, 5GB'),
