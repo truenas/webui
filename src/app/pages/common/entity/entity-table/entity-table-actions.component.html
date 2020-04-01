@@ -31,8 +31,10 @@
     </span>
     <ng-template #groupMenu>
       <span *ngFor= "let group of actions">
-        <mat-divider></mat-divider>
-        <h5>{{group?.title | translate}}</h5>
+        <span *ngIf="group.actions && group.actions.length > 0">
+          <mat-divider></mat-divider>
+          <h5>{{group?.title | translate}}</h5>
+        </span>
         <span *ngFor="let action of group.actions"
           [matTooltip]="action.matTooltip" 
           [matTooltipDisabled]="!action.disabled"
