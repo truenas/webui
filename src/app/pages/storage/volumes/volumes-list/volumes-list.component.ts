@@ -286,7 +286,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    if (rowData.is_decrypted) {
+    if (rowData.encrypt !== 0 && rowData.is_decrypted) {
 
       actions.push({
         label: T("Manage Recovery Key"),
