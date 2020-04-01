@@ -302,6 +302,17 @@ div.vdev-disk {
 }
 
 /* MINI OVERRIDES */
+.view-card.mini {
+  color: #fff;
+}
+
+.view-card.mini .alert{
+  color:var(--accent);
+}
+
+.view-card.mini .online{
+  color:var(--green);
+}
 
 .view-card.mini .dom-overlay#visualizer{ left: 0 !important; }
 
@@ -381,6 +392,20 @@ div.vdev-disk {
 
 .mini .disk-basic-details{
   padding:32px;
+}
+
+.mini .overlay{
+  position:absolute;
+  z-index:3;
+  min-width:25%;
+  height: 100%;
+}
+
+.mini .overlay.status .status-text{
+  display: block;
+  left: 32px;
+  position: relative;
+  bottom: 26px;
 }
 
 /* END MINI OVERRIDES */

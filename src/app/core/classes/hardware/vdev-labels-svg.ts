@@ -66,6 +66,9 @@ export class VDevLabelsSVG {
           this.selectedDiskColor = theme.cyan;
           this.highlightColor = theme.yellow;
         break;
+        case "LabelDrivesStatic":
+          //this.createStaticVdevLabels(evt.data);
+        break;
         case "LabelDrives":
           this.createVdevLabels(evt.data);
         break

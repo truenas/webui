@@ -38,11 +38,35 @@
           </div>
         </ng-template>
       </div>
+
+
       <!-- VISUALIZER -->
       <div #disksoverview
                id="disks-overview"
                [class]="currentView">
         <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+
+        <!-- DISK NAMES -->
+        <div class="overlay names">
+          <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
+            <div style="position:absolute; z-index:12; left:48%; top:calc({{stackPositions()[i].y}}px + 8px);">{{findDiskBySlotNumber(i + 1).name}}</div>
+          </ng-container>
+        </div>
+
+        <!-- DISK STATUS -->
+        <div class="overlay status" style="right: 0;">
+          <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
+            <div style="position:absolute; z-index:12; left:12.5%; top:calc({{stackPositions()[i].y}}px + 8px);">
+              <mat-icon 
+                 [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE'}" 
+                role="img">
+                check_circle
+              </mat-icon> &nbsp;
+              <span class="status-text">{{findDiskBySlotNumber(i + 1).status}}</span>
+            </div>
+          </ng-container>
+        </div>
+
       </div>
     </div>
 

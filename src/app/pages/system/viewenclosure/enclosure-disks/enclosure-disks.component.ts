@@ -57,7 +57,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public failedDisks: DiskFailure[] = [];
   public subenclosure: any; // Declare rear and internal enclosure visualizations here
 
-  protected enclosure: any; // Visualization
+  public enclosure: any; // Visualization
 
   private _expanders: any[] = [];
   get expanders () {
