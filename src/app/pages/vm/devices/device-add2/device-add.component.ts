@@ -87,7 +87,7 @@ export class DeviceAddComponent implements OnInit {
       inputType: 'number'
     },
   ];
-  //disk 
+  //disk
   public diskFieldConfig: FieldConfig[] = [
     {
       name : 'path',
@@ -387,7 +387,7 @@ export class DeviceAddComponent implements OnInit {
           {
             label : zvol.id, value : '/dev/zvol/' + zvol.id
           }
-        );   
+        );
       });
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
@@ -399,7 +399,7 @@ export class DeviceAddComponent implements OnInit {
             _.pull(dtypeField.options, dtypeField.options[i]);
           }
         }
-      } 
+      }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
       if (_.find(vm[0].devices, {dtype:'RAW'}) && vm[0].type ==="Container Provider") {
         vm[0].devices.forEach(element => {
@@ -412,7 +412,7 @@ export class DeviceAddComponent implements OnInit {
             }
 
           }
-          
+
         });
 
       }
@@ -429,6 +429,7 @@ export class DeviceAddComponent implements OnInit {
         }
       }
     ];
+    this.vncFormGroup.controls['vnc_bind'].setValue('0.0.0.0');
   }
 
   goBack() {
@@ -449,7 +450,7 @@ export class DeviceAddComponent implements OnInit {
         "attributes":deviceValue,
         "order": deviceOrder
       };
-  
+
       this.loader.open();
       this.ws.call(this.addCall, [payload]).subscribe(() => {
           this.loader.close();
