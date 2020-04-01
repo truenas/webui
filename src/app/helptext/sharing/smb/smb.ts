@@ -109,7 +109,7 @@ export const helptext_sharing_smb = {
     placeholder_streams: T('Enable Alternate Data Streams'),
     tooltip_streams: T('Allows multiple \
  <a href="http://www.ntfs.com/ntfs-multiple.htm" target"_blank">NTFS data streams</a>. \
- Disabling this options causes MacOS to write streams to files on the filesystem.'),
+ Disabling this option causes MacOS to write streams to files on the filesystem.'),
 
     placeholder_durablehandle: T('Enable SMB2/3 Durable Handles'),
     tooltip_durablehandle: T('Allow using open file handles that can withstand short disconnections. \
