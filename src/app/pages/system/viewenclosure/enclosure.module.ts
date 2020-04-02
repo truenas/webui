@@ -10,6 +10,7 @@ import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.compo
 import { EnclosureDisksMiniComponent } from './enclosure-disks/enclosure-disks-mini.component';
 import { DiskComponent } from './enclosure-disks/components/disk.component';
 import { TabContentComponent } from './enclosure-disks/components/tab-content/tab-content.component';
+import { TemperatureMeterComponent } from './enclosure-disks/components/temperature-meter/temperature-meter.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { TabContentComponent } from './enclosure-disks/components/tab-content/ta
     EnclosureDisksComponent,
     EnclosureDisksMiniComponent,
     DiskComponent,
-    TabContentComponent
+    TabContentComponent,
+    TemperatureMeterComponent
   ],
   providers: []
 })

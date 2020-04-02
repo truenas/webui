@@ -58,7 +58,7 @@
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
             <div style="position:absolute; z-index:12; left:12.5%; top:calc({{stackPositions()[i].y}}px + 8px);">
               <mat-icon 
-                 [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE'}" 
+                [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE'}" 
                 role="img">
                 check_circle
               </mat-icon> &nbsp;
@@ -124,10 +124,20 @@
 
         <div class="header-container half-height"  id="drive-temps">
           <h3 class="header">Drive Temperatures</h3>
-          <div>
-            <ul>
-              <li>NN °</li>
-            </ul>
+          <div fxLayout="row wrap" fxLayoutGap="10%">
+              <ng-container *ngIf="temperatures">
+                <temperature-meter *ngFor="let diskName of temperatures.keys;" 
+                  [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " 
+                  [source]="diskName" 
+                  [value]="temperatures.values[diskName]"
+                  [unit]="temperatures.unit"
+                  [symbolText]="temperatures.symbolText"></temperature-meter>
+              </ng-container>
+            <!--<ul>
+              <ng-container *ngIf="temperatures">
+                <li *ngFor="let diskName of temperatures.keys;">{{temperatures.values[diskName]}}{{temperatures.symbolText}}</li>
+              </ng-container>
+              </ul>-->
           </div>
         </div>
       </ng-container>

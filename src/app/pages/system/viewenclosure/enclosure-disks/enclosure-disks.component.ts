@@ -21,6 +21,7 @@ import { tween, easing, styler, value, keyframes } from 'popmotion';
 import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
 import { DomSanitizer } from "@angular/platform-browser";
+import { Temperature } from 'app/core/services/disk-temperature.service';
 
 export interface DiskFailure {
   disk: string;
@@ -109,6 +110,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   protected maxCardWidth:number = 960;
   protected pixiWidth: number = 960;
   protected pixiHeight: number = 304;
+  protected temperatures?:Temperature;
   
   get cardWidth(){
     return this.overview.nativeElement.offsetWidth;
@@ -123,6 +125,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
  
 
   constructor(public el:ElementRef, protected core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
+    
+    core.register({observerClass: this, eventName: 'DiskTemperatures'}).subscribe((evt:CoreEvent) => {
+      this.temperatures = evt.data;
+    });
+    core.emit({name:"DiskTemperaturesSubscribe", sender:this});
 
     //this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
     core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
@@ -239,6 +246,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngOnDestroy(){
+    this.core.emit({name:"DiskTemperaturesUnsubscribe", sender:this})
     this.core.unregister({observerClass: this});
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
@@ -366,6 +374,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
             this.selectedDisk = disk;
+            console.log(disk);
             this.setCurrentView('details');
           }
         break;
