@@ -314,6 +314,14 @@ div.vdev-disk {
   color:var(--green);
 }
 
+.view-card.mini ul.disk-stats{
+  margin-left:32px
+}
+
+.view-card.mini .capacity{
+  margin-top:16px
+}
+
 .view-card.mini .dom-overlay#visualizer{ left: 0 !important; }
 
 .view-card.mini #legend,
@@ -391,7 +399,7 @@ div.vdev-disk {
 }
 
 .mini .disk-basic-details{
-  padding:32px;
+  padding:8px;
 }
 
 .mini .overlay{

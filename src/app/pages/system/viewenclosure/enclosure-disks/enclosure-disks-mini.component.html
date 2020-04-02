@@ -91,12 +91,18 @@
               <li><strong>HDD Standby:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.hddstandby}}</li>
             </ul>
 
-            <div class="disk-basic-details" fxLayout="row" fxLayoutAlign="center center">
+            <h3 class="header" style="margin-top:24px;">Stats</h3>
+            <div class="disk-basic-details" fxLayout="row wrap" fxLayoutAlign="center center">
               <div>
                 <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
                 <div class="capacity">{{converter(selectedDisk.size)}}</div>
               </div>
-              <div fxFlex>
+              <div class="disk-stats-wrapper" fxFlex>
+                <ul class="disk-stats">
+                  <li><strong>Read Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.read_errors}}</li>
+                  <li><strong>Write Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.write_errors}}</li>
+                  <li><strong>Checksum Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.checksum_errors}}</li>
+                </ul>
               </div>
               <!--<div class="disk-actions">
                 <button id="identify-btn" class="front-rear-toggle" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>

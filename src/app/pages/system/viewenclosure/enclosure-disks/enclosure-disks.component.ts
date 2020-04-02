@@ -374,7 +374,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
           if(this.enclosure.driveTrayObjects[evt.data.id].enabled){
             this.selectedDisk = disk;
-            console.log(disk);
             this.setCurrentView('details');
           }
         break;

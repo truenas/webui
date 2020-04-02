@@ -204,10 +204,13 @@ export class SystemProfiler {
         disks: {}
       }
 
+      let stats = {}; // Store stats from pool.query disk info
+
       if(vdev.children.length == 0 && vdev.device){
           let spl = vdev.device.split('p');
           let name = spl[0]
           v.disks[name] = -1; // no children so we use this as placeholder
+          console.log(name);
       } else if(vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
           if(!disk.device && disk.status == "REMOVED"){ 
@@ -216,11 +219,11 @@ export class SystemProfiler {
             let spl = disk.disk.split('p'); // was disk.device
             let name = spl[0]
             v.disks[name] = dIndex;
+            stats[name] = disk.stats;
           }
         });
       } 
-      
-      this.storeVdevInfo(v);
+      this.storeVdevInfo(v,stats);
     });
   }
 
@@ -228,13 +231,13 @@ export class SystemProfiler {
     return this.pools[alias.poolIndex].topology.data[alias.vdevIndex]
   }
 
-  storeVdevInfo(vdev:VDev){
+  storeVdevInfo(vdev:VDev, stats:any){
     for(let diskName in vdev.disks){
-      this.addVDevToDiskInfo(diskName, vdev);
+      this.addVDevToDiskInfo(diskName, vdev, stats[diskName]);
     }
   }
 
-  addVDevToDiskInfo(diskName:string, vdev:VDev):void{
+  addVDevToDiskInfo(diskName:string, vdev:VDev,stats?:any):void{
     let keys = Object.keys(vdev.disks);
 
     let enclosureIndex = this.getEnclosureNumber(diskName);
@@ -246,6 +249,7 @@ export class SystemProfiler {
 
     let diskKey = enclosure.diskKeys[diskName];
     enclosure.disks[diskKey].vdev = vdev;
+    enclosure.disks[diskKey].stats = stats;
     enclosure.disks[diskKey].status = this.getDiskStatus(diskName, enclosure, vdev);
     if(!enclosure.poolKeys[vdev.pool]){
       enclosure.poolKeys[vdev.pool] = vdev.poolIndex;
