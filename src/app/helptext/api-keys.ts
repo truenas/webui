@@ -11,5 +11,13 @@ export default {
     name: {
         placeholder: T('Name'),
         tooltip: T(''),
+    },
+
+    apikeyCopyDialog: {
+        title: T('API Key'),
+        save_button: T('COPY TO CLICKBOARD'),
+        close_button: T('CLOSE'),
+        api_key_warning: T('<b>Success!</b> The API key has been created/reseted. <b>It will only appear here once.</b>'),
+        api_key: T('API Key')
     }
 }

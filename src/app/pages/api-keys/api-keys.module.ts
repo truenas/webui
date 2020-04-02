@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 import { routing } from './api-keys.routing';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
@@ -16,6 +17,7 @@ import { ApiKeysComponent } from './api-keys.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    ClipboardModule,
     EntityModule,
     MaterialModule,
     CommonDirectivesModule,
