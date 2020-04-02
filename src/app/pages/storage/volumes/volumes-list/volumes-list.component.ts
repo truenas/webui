@@ -316,6 +316,7 @@ export class VolumesListTableConfig implements InputTableConf {
           const fileName = "pool_" + row1.name + "_encryption.key";
           this.dialogService.confirm(title, message, false, helptext.export_keys_button).subscribe(export_keys => {
             if (export_keys) {
+              this.loader.open();
               const mimetype = 'application/json';
               this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).subscribe(res => {
                 this.loader.close();
