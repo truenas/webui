@@ -33,8 +33,8 @@ disk_form_hddstandby_options: [
 
 force_hdd_standby: {
     placeholder: T('Force HDD Standby'),
-    tooltip: T('Performing SMART operations on some drives prevents them from sleeping, \
- even when the operations involve no physical activity. Enable to keep drive on standby.')
+    tooltip: T('Allows the drive to enter standby, even when non-physical S.M.A.R.T. \
+ operations could prevent the drive from sleeping.')
 },
 
 disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
