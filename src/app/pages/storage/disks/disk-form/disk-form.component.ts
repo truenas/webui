@@ -7,8 +7,6 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
-
 
 @Component({
   selector : 'app-disk-form',
@@ -66,6 +64,23 @@ export class DiskFormComponent {
           options: helptext.disk_form_hddstandby_options,
           class: 'inline',
           width: '50%',
+        },
+        {
+          type : 'checkbox',
+          name : 'hddstandby_force',
+          placeholder : helptext.force_hdd_standby.placeholder,
+          tooltip : helptext.force_hdd_standby.tooltip,
+          class: 'inline',
+          width: '50%',
+          relation: [
+            {
+              action : 'DISABLE',
+              when : [{
+                name: 'hddstandby',
+                value: 'ALWAYS ON'
+              }]
+            }
+          ],
         },
         {
           type: 'select',
@@ -193,9 +208,17 @@ export class DiskFormComponent {
   }
 
   afterInit(entityEdit: any) {
+    entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe(value => {
+      if (value === 'ALWAYS ON') {
+        entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
+      }
+    })
   }
 
   beforeSubmit(value) {
+    if (!value.hddstandby_force) {
+      value.hddstandby_force = false;
+    }
     if (value.passwd === '') {
       delete value.passwd;
     }
