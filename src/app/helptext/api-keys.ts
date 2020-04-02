@@ -13,6 +13,11 @@ export default {
         tooltip: T(''),
     },
 
+    reset: {
+        placeholder: T('reset'),
+        tooltip: T(''),
+    },
+
     apikeyCopyDialog: {
         title: T('API Key'),
         save_button: T('COPY TO CLICKBOARD'),

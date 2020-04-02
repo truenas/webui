@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard'
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../common/entity/entity-form/models/field-config.interface';
+
 import { DialogService, WebSocketService } from '../../services';
 import helptext from '../../helptext/api-keys';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -21,7 +21,7 @@ export class ApiKeysComponent {
     public addCall = "api_key.create";
     public editCall = "api_key.update";
 
-    public pk;
+    public currItem;
     public entityList;
 
     public columns: Array<any> = [
@@ -45,11 +45,24 @@ export class ApiKeysComponent {
                 name: 'name',
                 placeholder: helptext.name.placeholder,
                 tooltip: helptext.name.tooltip,
+            },
+            {
+                type: 'checkbox',
+                name: 'reset',
+                placeholder: helptext.reset.placeholder,
+                tooltip: helptext.reset.tooltip,
             }
         ],
         method_ws: this.addCall,
         saveButtonText: helptext.formDialog.add_button,
         customSubmit: this.doSubmit,
+        afterInit: function (entityFrom) {
+            const disableCheckbox = this.parent.currItem ? false : true;
+            entityFrom.setDisabled('reset', disableCheckbox, disableCheckbox);
+            if (this.parent.currItem) {
+                entityFrom.formGroup.controls['name'].setValue(this.parent.currItem.name);
+            }
+        },
         parent: this,
     }
 
@@ -61,7 +74,7 @@ export class ApiKeysComponent {
                 this.apikeysFormConf.title = helptext.formDialog.add_title;
                 this.apikeysFormConf.saveButtonText = helptext.formDialog.add_button;
                 this.apikeysFormConf.method_ws = this.addCall;
-
+                this.currItem = undefined;
                 this.dialogService.dialogForm(this.apikeysFormConf);
             }
         },
@@ -86,23 +99,37 @@ export class ApiKeysComponent {
 
     doSubmit(entityDialogForm) {
         const that = entityDialogForm.parent;
-        // do add/delete
-        console.log(entityDialogForm, this);
-        that.ws.call(that.addCall, [entityDialogForm.formValue]).subscribe(
-            (res) => {
-                entityDialogForm.dialogRef.close(true);
-                that.displayKey(res.key);
-            },
-            (err) => {
-                new EntityUtils().handleWSError(this, err, that.dialogService, that.apikeysFormConf.fieldConfig);
-            }
-        )
+        if (that.currItem) {
+            that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).subscribe(
+                (res) => {
+                    entityDialogForm.dialogRef.close(true);
+                    if (res.key) {
+                        that.displayKey(res.key);
+                    }
+                    that.entityList.getData();
+                },
+                (err) => {
+                    new EntityUtils().handleWSError(that, err, that.apikeysFormConf.fieldConfig);
+                }
+            )
+        } else {
+            that.ws.call(that.addCall, [entityDialogForm.formValue]).subscribe(
+                (res) => {
+                    entityDialogForm.dialogRef.close(true);
+                    that.displayKey(res.key);
+                    that.entityList.getData();
+                },
+                (err) => {
+                    new EntityUtils().handleWSError(this, err, that.dialogService, that.apikeysFormConf.fieldConfig);
+                }
+            )
+        }
     }
 
     displayKey(key) {
         const self = this;
         let dialogRef: MatDialogRef<ConfirmDialog>;
-        dialogRef = this.dialog.open(ConfirmDialog, {disableClose: true});
+        dialogRef = this.dialog.open(ConfirmDialog, { disableClose: true });
         dialogRef.componentInstance.title = helptext.apikeyCopyDialog.title;
         dialogRef.componentInstance.buttonMsg = helptext.apikeyCopyDialog.save_button;
         dialogRef.componentInstance.cancelMsg = helptext.apikeyCopyDialog.close_button;
@@ -111,7 +138,7 @@ export class ApiKeysComponent {
         dialogRef.componentInstance.message = `
         ${helptext.apikeyCopyDialog.api_key_warning} <br><br>
         ${helptext.apikeyCopyDialog.api_key}:<br> ${key}`;
-        dialogRef.componentInstance.customSumbit = function() {
+        dialogRef.componentInstance.customSumbit = function () {
             self.clipboard.copy(key);
         }
     }
@@ -125,7 +152,7 @@ export class ApiKeysComponent {
                 this.apikeysFormConf.title = helptext.formDialog.edit_title;
                 this.apikeysFormConf.saveButtonText = helptext.formDialog.edit_button;
                 this.apikeysFormConf.method_ws = this.editCall;
-
+                this.currItem = rowinner;
                 this.dialogService.dialogForm(this.apikeysFormConf);
             },
         }, {
@@ -134,7 +161,7 @@ export class ApiKeysComponent {
             icon: 'delete',
             label: "Delete",
             onClick: (rowinner) => {
-                this.entityList.doDelete(row);
+                this.entityList.doDelete(rowinner);
             },
         }];
     }
