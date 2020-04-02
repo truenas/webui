@@ -24,6 +24,7 @@ import { MessageService } from '../../../common/entity/entity-form/services/mess
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../common/entity/utils';
 import { combineLatest } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 export interface ZfsPoolData {
   pool: string;
@@ -101,7 +102,6 @@ export class VolumesListTableConfig implements InputTableConf {
   public restartServices = false;
   public subs: any;
   public message_subscription: any;
-  public has_encrypted_root = false;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -115,7 +115,8 @@ export class VolumesListTableConfig implements InputTableConf {
     protected translate: TranslateService,
     protected storageService: StorageService,
     protected volumeData: Object,
-    protected messageService: MessageService
+    protected messageService: MessageService,
+    protected http: HttpClient,
   ) {
     if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
       this.tableData = [];
@@ -302,6 +303,34 @@ export class VolumesListTableConfig implements InputTableConf {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "rekey", row1.id]));
 
+        }
+      });
+    }
+
+    if (this.parentVolumesListComponent.has_encrypted_root) {
+      actions.push({
+        label: T("Export Dataset Keys"),
+        onClick: (row1) => {
+          const title = helptext.export_keys_title  + row1.name;
+          const message = helptext.export_keys_message + row1.name;
+          const fileName = "pool_" + row1.name + "_encryption.key";
+          this.dialogService.confirm(title, message, false, helptext.export_keys_button).subscribe(export_keys => {
+            if (export_keys) {
+              const mimetype = 'application/json';
+              this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).subscribe(res => {
+                this.loader.close();
+                const url = res[1];
+                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                  if(res !== null && res !== "") {
+                    this.storageService.downloadBlob(file, fileName);
+                  }
+                });
+              }, (e) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, e, this.dialogService);
+              });
+            }
+          });
         }
       });
     }
@@ -1170,7 +1199,7 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
         dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
         if (dataObj.is_encrypted_root) {
-          this.has_encrypted_root = true;
+          this.parentVolumesListComponent.has_encrypted_root = true;
         }
         dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
       }
@@ -1190,7 +1219,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http);
 
   actionComponent = {
     getActions: (row) => {
@@ -1207,18 +1236,19 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         }
       ];
     },
-    conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService)
+    conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http)
   };
 
   expanded = false;
   public paintMe = true;
   public isFooterConsoleOpen: boolean;
   public systemdatasetPool: any;
+  public has_encrypted_root = false;
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService) {
+    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService, protected http:HttpClient) {
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog);
   }
 
@@ -1251,12 +1281,15 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           pool.children = pChild ? [pChild] : [];
 
-          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);
+          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http);
           pool.type = 'zpool';
 
           if (pool.children && pool.children[0]) {
             try {
               pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
+              if (pool.children[0].is_encrypted_root) {
+                this.has_encrypted_root = true;
+              }
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
               pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: "iec" });
