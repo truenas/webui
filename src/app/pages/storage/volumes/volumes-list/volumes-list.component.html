@@ -12,11 +12,13 @@
         ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
         <mat-expansion-panel-header>
           <mat-panel-title>
+            <span *ngIf="row.encrypt > 0"  title="Encryption On" id="volume_encrypt_on_{{row.name}}" class="panel_status_enc">
+                <mat-icon *ngIf="!row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock" ></mat-icon>
+                <mat-icon *ngIf="row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"></mat-icon>
+            </span>
             {{row.name}}
-            <span *ngIf="row.encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
-              <mat-icon *ngIf="!row.is_decrypted">lock_outline</mat-icon>
-              <mat-icon *ngIf="row.is_decrypted">lock_open</mat-icon>
-              <p>{{'(Legacy Encryption)' | translate}}</p>
+            <span *ngIf="row.encrypt > 0">
+              {{'(Legacy Encryption)' | translate}}
             </span>
           </mat-panel-title>
           <mat-panel-description>
