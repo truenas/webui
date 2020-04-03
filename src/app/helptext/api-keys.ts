@@ -1,6 +1,17 @@
 import { T } from '../translate-marker';
 
 export default {
+    title: T('API Keys'),
+    route_add_tooltip: T('Add API Key'),
+    col_name: T('Name'),
+    col_created_at: T('Created Date'),
+    deleteMsg_title: T('APK Key'),
+
+    action_add: T('ADD'),
+    action_docs: T('DOCS'),
+    action_edit: T('EDIT'),
+    action_delete: T('DELETE'),
+
     formDialog: {
         add_title: T('Add API Key'),
         edit_title: T('Edit API Key'),

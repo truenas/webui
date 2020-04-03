@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { Clipboard } from '@angular/cdk/clipboard'
-import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
-
-import { DialogService, WebSocketService } from '../../services';
-import helptext from '../../helptext/api-keys';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+
+import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { DialogService, WebSocketService } from '../../services';
+import { LocaleService } from '../../services/locale.service';
+import helptext from '../../helptext/api-keys';
 import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
 import { EntityUtils } from '../common/entity/utils';
 
@@ -14,10 +15,10 @@ import { EntityUtils } from '../common/entity/utils';
     providers: [Clipboard]
 })
 export class ApiKeysComponent {
-    public title = "API Keys";
+    public title = helptext.title;
     public queryCall = "api_key.query";
     public wsDelete = "api_key.delete";
-    protected route_add_tooltip = "Add API Key";
+    protected route_add_tooltip = helptext.route_add_tooltip;
     public addCall = "api_key.create";
     public editCall = "api_key.update";
 
@@ -25,14 +26,14 @@ export class ApiKeysComponent {
     public entityList;
 
     public columns: Array<any> = [
-        { name: 'Name', prop: 'name', always_display: true },
-        { name: 'Created Date', prop: 'created_time' },
+        { name: helptext.col_name, prop: 'name', always_display: true },
+        { name: helptext.col_created_at, prop: 'created_time' },
     ];
     public config: any = {
         paging: true,
         sorting: { columns: this.columns },
         deleteMsg: {
-            title: 'APK Key',
+            title: helptext.deleteMsg_title,
             key_props: ['name']
         },
     };
@@ -66,10 +67,12 @@ export class ApiKeysComponent {
         parent: this,
     }
 
+    public timeZone: string;
+
     protected custActions = [
         {
             id: 'add',
-            name: 'ADD',
+            name: helptext.action_add,
             function: () => {
                 this.apikeysFormConf.title = helptext.formDialog.add_title;
                 this.apikeysFormConf.saveButtonText = helptext.formDialog.add_button;
@@ -79,8 +82,8 @@ export class ApiKeysComponent {
             }
         },
         {
-            id: 'doc',
-            name: 'docs',
+            id: 'docs',
+            name: helptext.action_docs,
             function: () => {
                 window.open(window.location.origin + '/api/docs');
             }
@@ -91,10 +94,17 @@ export class ApiKeysComponent {
         private dialogService: DialogService,
         private ws: WebSocketService,
         private dialog: MatDialog,
-        private clipboard: Clipboard) { }
+        private clipboard: Clipboard,
+        private localeService: LocaleService) { }
 
     afterInit(entityList) {
         this.entityList = entityList;
+    }
+    resourceTransformIncomingRestData(data) {
+        return data.map(item => {
+            item['created_time'] = this.localeService.formatDateTime(item.created_at.$date);;
+            return item;
+        });
     }
 
     doSubmit(entityDialogForm) {
@@ -144,7 +154,7 @@ export class ApiKeysComponent {
     }
     getActions(row) {
         return [{
-            name: 'edit',
+            name: helptext.action_edit,
             id: "edit",
             icon: 'edit',
             label: "Edit",
@@ -156,7 +166,7 @@ export class ApiKeysComponent {
                 this.dialogService.dialogForm(this.apikeysFormConf);
             },
         }, {
-            name: 'delete',
+            name: helptext.action_delete,
             id: "delete",
             icon: 'delete',
             label: "Delete",
