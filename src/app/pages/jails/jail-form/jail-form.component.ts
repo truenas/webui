@@ -991,6 +991,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
             this.jailFromService.getPluginDefaults(this.plugin, this.pluginRepository, this.formGroup, this.networkfieldConfig);
           }
           this.showSpinner = false;
+          this.formGroup.enable();
         },
         (res) => {
           new EntityUtils().handleError(this, res);
@@ -1044,6 +1045,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           this.formGroup.controls['uuid'].setValue(res[0]['host_hostuuid']);
           this.formGroup.controls['allow_mount_*'].setValue(allowMountList);
           this.showSpinner = false;
+          this.formGroup.enable();
         },
         (res) => {
           new EntityUtils().handleWSError(this, res, this.dialogService);
@@ -1053,6 +1055,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     this.formGroup = this.jailFromService.createForm(this.formFields);
+    await this.formGroup.disable();
     this.aroute.params.subscribe(async params => {
       this.pk = params['pk'];
       this.plugin = params['plugin'];
@@ -1087,6 +1090,16 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.isReady = true;
+      for (let ctrl in this.formGroup.controls) {
+        if (this.formGroup.controls[ctrl].controls) {
+          this.formGroup.controls[ctrl].controls.forEach(insideCtrl => {
+            insideCtrl.disable();
+          })
+        }
+        if (!this.formGroup.controls[ctrl].disabled) {
+          this.formGroup.controls[ctrl].disable();
+        }
+      }
       this.setStep(0);
     }, 100);
 
