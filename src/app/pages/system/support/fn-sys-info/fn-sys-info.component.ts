@@ -39,11 +39,13 @@ export class FnSysInfoComponent {
       customSubmit: function (entityDialog) {
         const value = entityDialog.formValue.license;
         self.loader.open();
-        self.ws.call('system.license_update', [value]).subscribe((res) => {
+        self.ws.call('system.license_update', [value]).subscribe(() => {
           entityDialog.dialogRef.close(true);
           self.loader.close();
-          self.dialogService.confirm(helptext.update_license.reload_dialog_title, 
-            helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action)
+          window.localStorage.setItem('upgrading_status', 'upgrading');
+          self.dialogService.confirm(helptext.update_license.reload_dialog_title,
+            helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action,
+            false, '','', '','', true, '', true)
             .subscribe((res) => {
               if (res) {
                 document.location.reload(true);
@@ -59,5 +61,5 @@ export class FnSysInfoComponent {
     }
     this.dialogService.dialogForm(licenseForm);
   }
- 
+
 }

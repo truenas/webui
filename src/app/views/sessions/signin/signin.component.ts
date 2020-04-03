@@ -83,7 +83,7 @@ export class SigninComponent implements OnInit, OnDestroy {
         if (this.interval) {
           clearInterval(this.interval);
         }
-        if (this.product_type === 'ENTERPRISE') {
+        if (this.product_type === 'ENTERPRISE' || this.product_type === 'SCALE') {
           this.getHAStatus();
           setInterval(() => {
             this.getHAStatus();
@@ -112,7 +112,7 @@ export class SigninComponent implements OnInit, OnDestroy {
         this.checkSystemType();
       }, 5000);
     }
-    
+
     if (this.canLogin()) {
         this.loginToken();
     }
@@ -187,7 +187,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   canLogin() {
     if (this.logo_ready && this.connected &&
        (this.failover_status === 'SINGLE' ||
-        this.failover_status === 'MASTER' || 
+        this.failover_status === 'MASTER' ||
         this.product_type === 'CORE' )) {
           return true;
     } else {
@@ -196,7 +196,8 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   getHAStatus() {
-    if (this.product_type === 'ENTERPRISE' && !this.checking_status) {
+    if ((this.product_type === 'ENTERPRISE' || this.product_type === 'SCALE')
+      && !this.checking_status) {
       this.checking_status = true;
       this.ws.call('failover.status').subscribe(res => {
         this.failover_status = res;
@@ -253,7 +254,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   signin() {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
-    
+
     if (this.isTwoFactor) {
       this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
       .subscribe((result) => { this.loginCallback(result); });
@@ -285,7 +286,7 @@ export class SigninComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate([ '/dashboard' ]);
       }
-      this.tokenObservable.unsubscribe(); 
+      this.tokenObservable.unsubscribe();
     }
   }
   successLogin() {
@@ -305,8 +306,8 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.signinData.password = '';
     this.signinData.otp = '';
     let message = '';
-    if (this.ws.token === null) { 
-      this.isTwoFactor ? message = 
+    if (this.ws.token === null) {
+      this.isTwoFactor ? message =
         T('Username, Password, or 2FA Code is incorrect.') :
         message = T('Username or Password is incorrect.');
     } else {
