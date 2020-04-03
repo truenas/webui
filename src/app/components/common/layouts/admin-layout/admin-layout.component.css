@@ -33,17 +33,11 @@
   color: var(--topbar-txt) !important;
 }
 
-.tn-logo {
-	width: 40px;
-}
-
-.tn-logo-txt {
-	width: 111px;
-}
-
-.tn-logo, .tn-logo-txt {
-	position: relative;
-	top: 12px;
+.enterprise-logo mat-icon {
+  width: 108px !important;
+  height: auto !important;
+  top: 14px !important;
+  margin-left: -4px !important;
 }
 
 /* To get rid of VScroll on entity tables */
