@@ -45,18 +45,40 @@
 				ix-auto-type="options"
 				ix-auto-identifier="{{rowData.name}}">more_vert</mat-icon>
 				<mat-menu #appMenu="matMenu">
-					<span *ngFor="let action of rowData.actions" 
-						id="action_button__{{rowData.name}}_{{action.label}}" 
-						[matTooltip]="action.matTooltip" 
-						[matTooltipDisabled]="!action.disabled"
-						[matTooltipPosition]="action.ttposition ? action.ttposition : 'below'">
-						<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);" [disabled]="action.disabled"
-						ix-auto
-						ix-auto-type="action"
-						ix-auto-identifier="{{rowData.name}}_{{action.label}}">
-							<span>{{action.label | translate}}</span>
-						</button>
+					<span *ngIf="!rowData.group_actions;else groupMenu">
+						<span *ngFor="let action of rowData.actions" 
+							id="action_button__{{rowData.name}}_{{action.label}}" 
+							[matTooltip]="action.matTooltip" 
+							[matTooltipDisabled]="!action.disabled"
+							[matTooltipPosition]="action.ttposition ? action.ttposition : 'below'">
+							<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);" [disabled]="action.disabled"
+							ix-auto
+							ix-auto-type="action"
+							ix-auto-identifier="{{rowData.name}}_{{action.label}}">
+								<span>{{action.label | translate}}</span>
+							</button>
+						</span>
 					</span>
+					<ng-template #groupMenu>
+						<span *ngFor= "let group of rowData.actions">
+							<span *ngIf="group.actions && group.actions.length > 0">
+								<mat-divider></mat-divider>
+								<h5>{{group?.title | translate}}</h5>
+							</span>
+							<span *ngFor="let action of group.actions"
+								id="action_button__{{rowData.name}}_{{action.label}}" 
+								[matTooltip]="action.matTooltip" 
+								[matTooltipDisabled]="!action.disabled"
+								[matTooltipPosition]="action.ttposition ? action.ttposition : 'left'">
+								<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);" [disabled]="action.disabled"
+								ix-auto
+								ix-auto-type="action"
+								ix-auto-identifier="{{rowData.name}}_{{action.label}}">
+									<span>{{action.label | translate}}</span>
+								</button>
+							</span>
+						</span>
+					</ng-template>
 				</mat-menu>
 			</td>
 		</tr>

@@ -1123,15 +1123,51 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
+  getEncryptedDatasetActions(rowData) {
+    const encryption_actions = [];
+    if (rowData.encrypted) {
+      if (rowData.locked){
+        encryption_actions.push({
+          id:rowData.name,
+          name: T('Unlock'),
+          label: T('Unlock'),
+          onClick: (row1) => {
+            //unlock
+          }
+        });
+      } else {
+        encryption_actions.push({
+          id: rowData.name,
+          name: T('Encryption Options'),
+          label: T('Encryption Options'),
+          onClick: (row1) => {
+            // open encryption options dialog
+          }
+        });
+        if (rowData.is_encrypted_root) {
+          encryption_actions.push({
+            id: rowData.name,
+            name: T('Lock'),
+            label: T('Lock'),
+            onClick: (row1) => {
+              // lock
+            }
+          });
+        }
+      }
+    }
+    return encryption_actions;
+  }
+
   clickAction(rowData) {
     let aclEditDisabled = false;
     let permissionsEditDisabled = false;
     this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
       !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
       rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
-      let editACL = rowData.actions.find(o => o.name === 'Edit ACL');
+      let editACL = rowData.actions[0].actions.find(o => o.name === 'Edit ACL');
         editACL.disabled = aclEditDisabled;
-      let editPermissions = rowData.actions.find(o => o.name === 'Edit Permissions')
+      let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions')
         editPermissions.disabled = permissionsEditDisabled;
         aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 :
         editPermissions.matTooltip = helptext.permissions_edit_msg2
@@ -1148,7 +1184,19 @@ export class VolumesListTableConfig implements InputTableConf {
     node.data = data;
     parent = data.parent;
     this.getMoreDatasetInfo(data, parent);
-    node.data.actions = this.getActions(data);
+    node.data.group_actions = true;
+    let actions_title = helptext.dataset_actions;
+    if (data.type === 'zvol') {
+      actions_title = helptext.zvol_actions;
+    }
+    const actions = [{title: actions_title, actions: this.getActions(data)}];
+    if (data.type === 'FILESYSTEM') {
+      const encryption_actions = this.getEncryptedDatasetActions(data);
+      if (encryption_actions.length > 0) {
+        actions.push({title: helptext.encryption_actions_title, actions: encryption_actions});
+      }
+    }
+    node.data.actions = actions; 
 
     node.children = [];
 

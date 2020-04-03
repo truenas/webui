@@ -72,4 +72,10 @@ encryption_actions_title: T('Encryption Actions'),
 export_keys_title: T('Export Dataset Keys for '),
 export_keys_message: T('Export dataset keys which can be used to unlock datasets for '),
 export_keys_button: T('Export'),
+
+dataset_actions: T('Dataset Actions'),
+zvol_actions: T('Zvol Actions'),
+unlock_action: T('Unlock'),
+lock_action: T('Lock'),
+encryption_options: T('Encryption Options')
 }
