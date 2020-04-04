@@ -73,7 +73,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import {A11yModule} from '@angular/cdk/a11y';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
-import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 
 import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
@@ -139,7 +138,6 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     FormParagraphComponent,
     EntityDialogComponent,
     EntitySnackbarComponent,
-    EntityDashboardComponent,
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarMenuComponent,
@@ -167,7 +165,6 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     EntityTaskComponent,
     EntityDialogComponent,
     EntitySnackbarComponent,
-    EntityDashboardComponent,
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarMenuComponent,
