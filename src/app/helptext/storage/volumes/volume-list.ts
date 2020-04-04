@@ -77,5 +77,13 @@ dataset_actions: T('Dataset Actions'),
 zvol_actions: T('Zvol Actions'),
 unlock_action: T('Unlock'),
 lock_action: T('Lock'),
-encryption_options: T('Encryption Options')
+encryption_options: T('Encryption Options'),
+encryption_options_dialog: {
+    dialog_title: T('Edit Encryption Options for '),
+    inherit_placeholder: T('Inherit encryption properties from parent'),
+    inherit_tooltip:T(''),
+    dialog_saved_title: T('Encryption Options Saved'),
+    dialog_saved_message1: T('Encryption options for '),
+    dialog_saved_message2: T(' successfully saved.')
+}
 }

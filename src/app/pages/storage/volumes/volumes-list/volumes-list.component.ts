@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
 import { map, switchMap } from 'rxjs/operators';
 import helptext from '../../../../helptext/storage/volumes/volume-list';
+import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
 import { JobService, RestService } from '../../../../services/';
 import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
@@ -1140,8 +1141,124 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: T('Encryption Options'),
           label: T('Encryption Options'),
-          onClick: (row1) => {
+          onClick: (row) => {
             // open encryption options dialog
+            const is_key = (row.key_format.parsed === 'passphrase' ? false : true);
+            const pbkdf2iters = 350000; // will pull from row when it has been added to the payload
+            this.dialogConf = {
+              title: helptext.encryption_options_dialog.dialog_title + row.id,
+              fieldConfig: [
+                {
+                  type: 'checkbox',
+                  name: 'inherit_encryption',
+                  class: 'inline',
+                  width: '50%',
+                  placeholder: helptext.encryption_options_dialog.inherit_placeholder,
+                  tooltip: helptext.encryption_options_dialog.inherit_tooltip,
+                  value: !row.is_encrypted_root,
+                },
+                {
+                  type: 'select',
+                  name: 'encryption_type',
+                  placeholder: dataset_helptext.dataset_form_encryption.encryption_type_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.encryption_type_tooltiip,
+                  value: (is_key? 'key' : 'passphrase'),
+                  options: dataset_helptext.dataset_form_encryption.encryption_type_options,
+                },
+                {
+                  type: 'checkbox',
+                  name: 'generate_key',
+                  placeholder: dataset_helptext.dataset_form_encryption.generate_key_checkbox_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.generate_key_checkbox_tooltip,
+                  disabled: !is_key,
+                  isHidden: !is_key,
+                },
+                {
+                  type: 'textarea',
+                  name: 'key',
+                  placeholder: dataset_helptext.dataset_form_encryption.key_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.key_tooltip,
+                  required: true,
+                  disabled: !is_key,
+                  isHidden: !is_key,
+                },
+                {
+                  type: 'input',
+                  name: 'passphrase',
+                  inputType: 'password',
+                  placeholder: dataset_helptext.dataset_form_encryption.passphrase_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.passphrase_tooltip,
+                  validation: dataset_helptext.dataset_form_encryption.passphrase_validation,
+                  required: true,
+                  disabled: is_key,
+                  isHidden: is_key,
+                },
+                {
+                  type: 'input',
+                  name: 'pbkdf2iters',
+                  placeholder: dataset_helptext.dataset_form_encryption.pbkdf2iters_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.pbkdf2iters_tooltip,
+                  required: true,
+                  value: pbkdf2iters,
+                  validation: dataset_helptext.dataset_form_encryption.pbkdf2iters_validation,
+                  disabled: is_key,
+                  isHidden: is_key,
+                }
+              ],
+              saveButtonText: T("Save"),
+              afterInit: function(entityDialog) {
+                const inherit_encryption_fg = entityDialog.formGroup.controls['inherit_encryption'];
+                const encryption_type_fg = entityDialog.formGroup.controls['encryption_type'];
+                const generate_key_fg = entityDialog.formGroup.controls['generate_key'];
+
+                const all_encryption_fields = ['encryption_type', 'passphrase', 'pbkdf2iters', 'generate_key', 'key'];
+
+                const inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe(inherit => {
+                  if (inherit) {
+                    for (let i = 0; i < all_encryption_fields.length; i++) {
+                      entityDialog.setDisabled(all_encryption_fields[i], inherit, inherit);
+                    }
+                  } else {
+                    entityDialog.setDisabled('encryption_type', inherit, inherit);
+                    const key = (encryption_type_fg.value === 'key');
+                    entityDialog.setDisabled('passphrase', key, key);
+                    entityDialog.setDisabled('pbkdf2iters', key, key);
+                    entityDialog.setDisabled('generate_key', !key, !key);
+                    if (key) {
+                      const gen_key = generate_key_fg.value;
+                      entityDialog.setDisabled('key', gen_key, gen_key);
+                    } else {
+                      entityDialog.setDisabled('key', true, true);
+                    }
+                  }
+                });
+
+                const encryption_type_subscription = encryption_type_fg.valueChanges.subscribe(enc_type => {
+                  const key = (enc_type === 'key');
+                  entityDialog.setDisabled('generate_key', !key, !key);
+                  if (key) {
+                    const gen_key = generate_key_fg.value;
+                    entityDialog.setDisabled('key', gen_key, gen_key);
+                  } else {
+                    entityDialog.setDisabled('key', true, true);
+                  }
+                  entityDialog.setDisabled('passphrase', key, key);
+                  entityDialog.setDisabled('pbkdf2iters', key, key);
+                });
+
+                const generate_key_subscription = generate_key_fg.valueChanges.subscribe(gen_key => {
+                  if (!inherit_encryption_fg.value && encryption_type_fg.value === 'key') {
+                    entityDialog.setDisabled('key', gen_key, gen_key);
+                  }
+                });
+              }
+            }
+            this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+              if (res) {
+                this.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                  helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+              }
+            });
           }
         });
         if (rowData.is_encrypted_root) {
