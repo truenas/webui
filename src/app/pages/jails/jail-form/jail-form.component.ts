@@ -967,6 +967,23 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
+  disableForm() {
+    for (let i = 0; i < this.formFields.length; i++) {
+      if (!this.formGroup.controls[this.formFields[i].name].disabled) {
+        this.jailFromService.setDisabled(this.formGroup, this.formFields, this.formFields[i].name, true, this.formFields[i].isHidden);
+      }
+    }
+  }
+  toEnableForm() {
+    this.showSpinner = false;
+    for (let i = 0; i < this.formFields.length; i++) {
+      if (!this.formFields[i].isHidden && (this.plugin === undefined || this.formFields[i].name !== 'plugin_name')) {
+        this.formGroup.controls[this.formFields[i].name].enable();
+      }
+    }
+    this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
+    this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
+  }
   loadFormValue() {
     if (this.pk === undefined) {
       this.jailService.getDefaultConfiguration().subscribe(
@@ -987,10 +1004,16 @@ export class JailFormComponent implements OnInit, AfterViewInit {
             }
           }
           if (this.plugin !== undefined) {
+            this.disableForm();
             this.formGroup.controls['plugin_name'].setValue(this.plugin);
-            this.jailFromService.getPluginDefaults(this.plugin, this.pluginRepository, this.formGroup, this.networkfieldConfig);
+            this.jailFromService.getPluginDefaults(this.plugin, this.pluginRepository, this.formGroup, this.networkfieldConfig).then(
+              (res) => {
+                this.toEnableForm();
+              }
+            );
+          } else {
+            this.toEnableForm();
           }
-          this.showSpinner = false;
         },
         (res) => {
           new EntityUtils().handleError(this, res);
@@ -1039,11 +1062,21 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               this.jailFromService.setDisabled(this.formGroup, this.formFields, 'plugin_name', true, !this.isPlugin);
             }
           }
+          this.showSpinner = false;
+          if (res[0] && res[0].state === 'up') {
+            this.disableForm();
+          } else {
+            for (let i = 0; i < this.formFields.length; i++) {
+              if (!this.formFields[i].isHidden && this.formFields[i].name !== 'release' && this.formFields[i].name !== 'plugin_name' &&
+              (!this.isPlugin || this.formFields[i].name !== 'uuid')) {
+                this.formGroup.controls[this.formFields[i].name].enable();
+              }
+            }
+          }
           this.formGroup.controls['dhcp'].setValue(res[0]['dhcp']);
           this.formGroup.controls['nat'].setValue(res[0]['nat']);
           this.formGroup.controls['uuid'].setValue(res[0]['host_hostuuid']);
           this.formGroup.controls['allow_mount_*'].setValue(allowMountList);
-          this.showSpinner = false;
         },
         (res) => {
           new EntityUtils().handleWSError(this, res, this.dialogService);
@@ -1053,6 +1086,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     this.formGroup = this.jailFromService.createForm(this.formFields);
+    await this.formGroup.disable();
     this.aroute.params.subscribe(async params => {
       this.pk = params['pk'];
       this.plugin = params['plugin'];
@@ -1087,6 +1121,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.isReady = true;
+      this.disableForm();
       this.setStep(0);
     }, 100);
 
@@ -1097,9 +1132,6 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         subipInterfaceField.options = ipType === 'ip4' ? this.ip4_interfaceField.options : this.ip6_interfaceField.options;
       }
     }
-
-    this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
-    this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
   }
 
   goBack() {
