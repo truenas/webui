@@ -968,16 +968,21 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   }
 
   disableForm() {
-    for (const ctrl in this.formGroup.controls) {
-      if (this.formGroup.controls[ctrl].controls) {
-        this.formGroup.controls[ctrl].controls.forEach(insideCtrl => {
-          insideCtrl.disable();
-        })
-      }
-      if (!this.formGroup.controls[ctrl].disabled) {
-        this.formGroup.controls[ctrl].disable();
+    for (let i = 0; i < this.formFields.length; i++) {
+      if (!this.formGroup.controls[this.formFields[i].name].disabled) {
+        this.jailFromService.setDisabled(this.formGroup, this.formFields, this.formFields[i].name, true, this.formFields[i].isHidden);
       }
     }
+  }
+  toEnableForm() {
+    this.showSpinner = false;
+    for (let i = 0; i < this.formFields.length; i++) {
+      if (!this.formFields[i].isHidden && (this.plugin === undefined || this.formFields[i].name !== 'plugin_name')) {
+        this.formGroup.controls[this.formFields[i].name].enable();
+      }
+    }
+    this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
+    this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
   }
   loadFormValue() {
     if (this.pk === undefined) {
@@ -1003,17 +1008,11 @@ export class JailFormComponent implements OnInit, AfterViewInit {
             this.formGroup.controls['plugin_name'].setValue(this.plugin);
             this.jailFromService.getPluginDefaults(this.plugin, this.pluginRepository, this.formGroup, this.networkfieldConfig).then(
               (res) => {
-                this.showSpinner = false;
-                this.formGroup.enable();
-                this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
-                this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
+                this.toEnableForm();
               }
             );
           } else {
-            this.showSpinner = false;
-            this.formGroup.enable();
-            this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
-            this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
+            this.toEnableForm();
           }
         },
         (res) => {
@@ -1067,7 +1066,12 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           if (res[0] && res[0].state === 'up') {
             this.disableForm();
           } else {
-            this.formGroup.enable();
+            for (let i = 0; i < this.formFields.length; i++) {
+              if (!this.formFields[i].isHidden && this.formFields[i].name !== 'release' && this.formFields[i].name !== 'plugin_name' &&
+              (!this.isPlugin || this.formFields[i].name !== 'uuid')) {
+                this.formGroup.controls[this.formFields[i].name].enable();
+              }
+            }
           }
           this.formGroup.controls['dhcp'].setValue(res[0]['dhcp']);
           this.formGroup.controls['nat'].setValue(res[0]['nat']);
