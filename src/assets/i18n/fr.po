@@ -1191,6 +1191,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Additional  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=\"_blank\">smb.conf</a>  parameters."
+msgstr ""
+
+msgid ""
 "Additional <a "
 "href=\"http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html\" "
 "target=\"_blank\">afp.conf(5)</a> parameters."
@@ -1217,11 +1222,6 @@ msgstr ""
 "Autres options pour <a "
 "href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
 "in\" target=\"_blank\">smartctl(8)</a> ."
-
-msgid "Additional <b>smb5.conf</b> parameters not covered by other option fields."
-msgstr ""
-"Autres paramètres <b>smb5.conf</b> non couverts par d'autres champs "
-"d'option."
 
 msgid "Additional Data VDevs to Create"
 msgstr "VDev de données supplémentaires à créer"
@@ -1253,6 +1253,11 @@ msgid "Additional Parameters"
 msgstr "Paramètres supplémentaires"
 
 msgid ""
+"Additional domains to search. Separate entries by  pressing "
+"<code>Enter</code>. Adding search domains can cause slow DNS  lookups."
+msgstr ""
+
+msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Separate entries by "
 "pressing <code>Enter</code>. Hosts defined here are  still accessible by "
 "name even when DNS is not available. See  <a "
@@ -1279,11 +1284,6 @@ msgstr ""
 "target=\"_blank\">ifconfig(8)</a>."
 
 msgid "Additional parameters."
-msgstr ""
-
-msgid ""
-"Additional space-delimited domains to search.  Separate entries by pressing "
-"<code>Enter</code>. Adding search  domains can cause slow DNS lookups."
 msgstr ""
 
 msgid "Address"
@@ -1612,8 +1612,26 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
 "target=\"_blank\">vmm(4)</a> chargé."
 
+msgid ""
+"Allow using open file handles that can withstand short disconnections.  "
+"Support for POSIX byte-range locks in Samba is also disabled. This option "
+"is not recommended when  configuring multi-protocol or local access to "
+"files."
+msgstr ""
+
 msgid "Allowed Initiators (IQN)"
 msgstr "Initiateurs autorisés (IQN)"
+
+msgid ""
+"Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\" "
+"target\"_blank\">NTFS data streams</a>.  Disabling this option causes MacOS "
+"to write streams to files on the filesystem."
+msgstr ""
+
+msgid ""
+"Allows the drive to enter standby, even when non-physical S.M.A.R.T.  "
+"operations could prevent the drive from sleeping."
+msgstr ""
 
 msgid ""
 "Allows the share to host user home  directories. Each user is given a "
@@ -1697,6 +1715,16 @@ msgstr ""
 "-> Clé d'accès</i> et créez une nouvelle paire de clés. Doit être "
 "alphanumérique et comporter entre 8 et 40 caractères."
 
+msgid ""
+"Amount of disk space that can be used by the selected groups.  Entering "
+"<code>0</code> (zero) allows all disk space."
+msgstr ""
+
+msgid ""
+"Amount of disk space that can be used by the selected users.  Entering "
+"<code>0</code> (zero) allows all disk space to be used."
+msgstr ""
+
 msgid "Amount of locked memory in bytes for the jail."
 msgstr "Quantité de mémoire verrouillée en octets pour le jail."
 
@@ -1729,12 +1757,12 @@ msgstr ""
 "et les utilisateurs lorsque CN utilisateur est défini)."
 
 msgid ""
-"Append a suffix (possibly containing a macro) to the share's connect path. "
-"This can be used to provide unique shares on a per-user, per-computer, or "
-"per-IP address basis. See <a "
+"Appends a suffix to the share connection path.  This is used to provide "
+"unique shares on a per-user, per-computer, or per-IP address basis.  "
+"Suffixes can contain a macro. See  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a> for list of supported macros. The "
-"connectpath _must_ be pre-staged before client connection."
+"target=\"_blank\">smb.conf(5)</a> for a list of supported macros. The "
+"connectpath **must** be preset before a client connects."
 msgstr ""
 
 msgid "Apple Shares (AFP)"
@@ -1769,6 +1797,12 @@ msgstr "Appliquer les mises à jour en attente"
 
 msgid "Apply Permissions Recursively"
 msgstr "Appliquer les permissions de manière récursive"
+
+msgid "Apply Quotas to Selected Groups"
+msgstr ""
+
+msgid "Apply Quotas to Selected Users"
+msgstr ""
 
 msgid "Apply Update"
 msgstr "Appliquer la mise à jour"
@@ -2288,6 +2322,12 @@ msgstr "Bucket"
 
 msgid "Burst"
 msgstr "Burst"
+
+msgid ""
+"By default, Samba uses a hashing algorithm for NTFS illegal  characters. "
+"Enabling this option translates NTFS illegal characters to the Unicode "
+"private range."
+msgstr ""
 
 msgid ""
 "By default, all data disks are created with the amount of swap specified. "
@@ -3641,6 +3681,13 @@ msgstr "Job Cron"
 msgid "Cron Jobs"
 msgstr "Cron"
 
+msgid ""
+"Cryptographic protocols for securing client/server connections. Select "
+"which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
+"target=\"_blank\">Transport Layer Security (TLS)</a> versions TrueNAS can "
+"use for connection security."
+msgstr ""
+
 msgid "Current Password"
 msgstr "Mot de passe actuel"
 
@@ -3732,6 +3779,15 @@ msgstr ""
 msgid "DOCUMENTATION"
 msgstr "DOCUMENTATION"
 
+msgid "DQ % Used"
+msgstr ""
+
+msgid "DQ Bytes Used"
+msgstr ""
+
+msgid "DQ Used"
+msgstr ""
+
 msgid "Daily"
 msgstr ""
 
@@ -3740,6 +3796,9 @@ msgstr "Tableau de bord"
 
 msgid "Data"
 msgstr "Données"
+
+msgid "Data Quota"
+msgstr ""
 
 msgid "Data VDevs"
 msgstr "Données VDevs"
@@ -3990,6 +4049,11 @@ msgstr "Retarder les mises à jour"
 
 msgid "Delay VM Boot Until VNC Connects"
 msgstr "Délai de démarrage de la VM jusqu'à ce que la VNC se connecte"
+
+msgid ""
+"Delays the start of network services until  pings are returned from the IP "
+"addresses added to the  <i>Netwait IP List</i>."
+msgstr ""
 
 msgid "Delete"
 msgstr "Supprimer"
@@ -4551,6 +4615,9 @@ msgstr "Modifier le(s) disque(s)"
 msgid "Edit Filesystem ACL"
 msgstr ""
 
+msgid "Edit Group"
+msgstr ""
+
 msgid "Edit Idmap"
 msgstr "Modifier Idmap"
 
@@ -4561,6 +4628,9 @@ msgid "Edit Permissions"
 msgstr "Modifier les permissions"
 
 msgid "Edit Share ACL"
+msgstr ""
+
+msgid "Edit User"
 msgstr ""
 
 msgid "Edit Zvol"
@@ -4620,7 +4690,9 @@ msgstr "Activer (requiert le mot de passe ou le principal Kerberos)"
 msgid "Enable ACL"
 msgstr ""
 
-msgid "Enable ACL support for the SMB share"
+msgid ""
+"Enable ACL support for the SMB share. Disabling ACL  support for a share "
+"deletes that ACL."
 msgstr ""
 
 msgid "Enable Active Directory"
@@ -4630,17 +4702,6 @@ msgid "Enable Alternate Data Streams"
 msgstr ""
 
 msgid "Enable Apple SMB2/3 Protocol Extensions"
-msgstr ""
-
-msgid ""
-"Enable Apple SMB2/3 Protocol Extensions. This is required for Time Machine "
-"support."
-msgstr ""
-
-msgid "Enable Apple-style Character"
-msgstr ""
-
-msgid "Enable Apple-style character encoding for NTFS illegal characters."
 msgstr ""
 
 msgid "Enable Atime"
@@ -4676,7 +4737,7 @@ msgstr "Activer S.M.A.A.R.T."
 msgid "Enable SMB1 support"
 msgstr "Activer le support SMB1"
 
-msgid "Enable SMB2/3 durable handles"
+msgid "Enable SMB2/3 Durable Handles"
 msgstr ""
 
 msgid "Enable Serial Console"
@@ -4749,24 +4810,13 @@ msgid "Enable service"
 msgstr "Activer le service"
 
 msgid ""
-"Enable support for Alternate Data Streams. Disabling support for streams "
-"will cause MacOS to write streams to files on the filesystem."
-msgstr ""
-
-msgid ""
-"Enable support for SMB2/3 durable handles. This parameter disables support "
-"for POSIX byte-range locks in Samba and may be unsuitable if multi-protocol "
-"(or local) access to the files is anticipated."
-msgstr ""
-
-msgid ""
-"Enable support for the File Server Remote VSS Protocol (<a "
+"Enable support for the File Server Remote VSS Protocol  (<a "
 "href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-"
-"fsrvp\" target=\"_blank\">FSVRP</a>). This protocol allows RPC clients to "
-"manage snapshots of the specified SMB share. Share path must be a dataset "
-"mountpoint. Snapshots will have a prefix \"fss-\" followed by the timestamp "
-"for when the snapshot was taken. RPC users will not be able to delete "
-"snapshots that don't have this prefix."
+"fsrvp\" target=\"_blank\">FSVRP</a>).  This protocol allows RPC clients to "
+"manage snapshots for a specific SMB share.  The share path must be a "
+"dataset mountpoint. Snapshots have the prefix  <code>fss-</code> followed "
+"by a snapshot creation timestamp. A snapshot must have  this prefix for an "
+"RPC user to delete it."
 msgstr ""
 
 msgid ""
@@ -5075,6 +5125,14 @@ msgstr ""
 "destination de travail."
 
 msgid ""
+"Enter a list of IP addresses to  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
+"target=\"_blank\">ping</a>.  Separate entries by pressing "
+"<code>Enter</code>. Each address is tried  until one is successful or the "
+"list is exhausted. Leave empty to use  the default gateway."
+msgstr ""
+
+msgid ""
 "Enter a list of allowed hostnames or IP addresses. Separate entries by "
 "pressing <code>Enter</code>."
 msgstr ""
@@ -5214,14 +5272,6 @@ msgid ""
 msgstr ""
 "Entrez une passphrase privée distincte. Le mot de passe <b>Password</b> est "
 "utilisé lorsque celle-ci est laissée vide."
-
-msgid ""
-"Enter a space-delimited list of IP addresses to  <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
-"target=\"_blank\">ping(8)</a>.  Separate entries by pressing "
-"<code>Enter</code>. Each address is tried  until one is successful or the "
-"list is exhausted. Leave empty to use  the default gateway."
-msgstr ""
 
 msgid ""
 "Enter a static IPv6 address if DHCP is unset. Example: "
@@ -5453,15 +5503,6 @@ msgstr ""
 "Entrez soit <i>root</i>, soit un autre <i>nom d'utilisateur</i> valide. A "
 "l'intérieur de l'environnement jail, les commandes s'exécutent comme cet "
 "utilisateur."
-
-msgid ""
-"Enter network proxy information if a proxy is used. Example: "
-"<i>http://my.proxy.server:3128</i> or "
-"<i>http://user:password@my.proxy.server:3128</i>"
-msgstr ""
-"Entrez les informations de proxy réseau si un proxy est utilisé. Exemple: "
-"<i>http://my.proxy.server:3128</i> ou "
-"<i>http://user:password@my.proxy.server:3128</i>"
 
 msgid "Enter or paste an Authentication token."
 msgstr "Entrez ou collez un jeton d'authentification."
@@ -6209,6 +6250,12 @@ msgstr "Type de système de fichiers"
 msgid "Filter"
 msgstr "Filtre"
 
+msgid "Filter Groups"
+msgstr ""
+
+msgid "Filter Users"
+msgstr ""
+
 msgid "Finding Pools"
 msgstr ""
 
@@ -6273,6 +6320,9 @@ msgstr "Forcer la suppression"
 
 msgid "Force Delete?"
 msgstr "Forcer la Suppression ?"
+
+msgid "Force HDD Standby"
+msgstr ""
 
 msgid "Force Stop After Timeout"
 msgstr ""
@@ -6522,12 +6572,21 @@ msgstr "Chemin de liaison de groupe"
 msgid "Group Configuration"
 msgstr ""
 
+msgid "Group Data Quota "
+msgstr ""
+
 msgid "Group ID"
 msgstr "Identifiant (ID) du groupe"
 
 msgid ""
 "Group ID created in  Authorized Access. Required when the Discovery "
 "Authentication Method is set to  CHAP or Mutual CHAP."
+msgstr ""
+
+msgid "Group Object Quota"
+msgstr ""
+
+msgid "Group Quotas"
 msgstr ""
 
 msgid "Group members"
@@ -6605,6 +6664,9 @@ msgstr "URL de l'hôte HTTP."
 
 msgid "HTTPS Port"
 msgstr "Port HTTPS"
+
+msgid "HTTPS Protocols"
+msgstr ""
 
 msgid "Help"
 msgstr "Aide"
@@ -7354,6 +7416,11 @@ msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
 msgstr ""
 
 msgid ""
+"Invalid value. Valid values are numbers followed by optional unit letters  "
+"for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>."
+msgstr ""
+
+msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>."
 msgstr ""
@@ -7703,9 +7770,9 @@ msgid "Legacy"
 msgstr ""
 
 msgid ""
-"Legacy NetBIOS name server. Advertises the SMB  Service <i>NetBIOS "
-"Name</i>. Could be required for legacy SMB1 clients  to discover the server "
-"(server appears in <i>Network Neighborhood</i>)."
+"Legacy NetBIOS name server. Advertises the SMB  service <i>NetBIOS "
+"Name</i>. Can be required for legacy SMB1 clients  to discover the server. "
+"When advertised, the server appears in  <i>Network Neighborhood</i>)."
 msgstr ""
 
 msgid "Legacy Web Interface"
@@ -8560,8 +8627,8 @@ msgstr ""
 msgid "Netmask"
 msgstr "Masque de réseau"
 
-msgid "Netwait IP list"
-msgstr "Liste d'adresses IP Netwait"
+msgid "Netwait IP List"
+msgstr ""
 
 msgid "Network"
 msgstr "Réseau"
@@ -8847,6 +8914,16 @@ msgid "Number of days to renew certificate before expiring."
 msgstr "Nombre de jours pour renouveler le certificat avant son expiration."
 
 msgid ""
+"Number of objects that can be owned by each of the selected groups.  "
+"Entering <code>0</code> (zero) allows unlimited objects."
+msgstr ""
+
+msgid ""
+"Number of objects that can be owned by each of the selected users.  "
+"Entering <code>0</code> (zero) allows unlimited objects."
+msgstr ""
+
+msgid ""
 "Number of points for each hourly, daily,  weekly, monthly, or yearly graph "
 "(allowed values are 1-4096). Changing this value causes the  <i>Confirm RRD "
 "Destroy</i> dialog to appear. Changes do not take  effect until the "
@@ -8946,6 +9023,18 @@ msgstr "OAuth Client Secret"
 
 msgid "OK"
 msgstr "OK"
+
+msgid "OQ % Used"
+msgstr ""
+
+msgid "OQ Objs Used"
+msgstr ""
+
+msgid "Object Quota"
+msgstr ""
+
+msgid "Objects Used"
+msgstr ""
 
 msgid "Oct"
 msgstr "Oct"
@@ -9175,6 +9264,15 @@ msgstr "Montant"
 
 msgid "Outgoing Mail Server"
 msgstr "Serveur de courrier sortant"
+
+msgid "Overprovision Size in GiB"
+msgstr ""
+
+msgid ""
+"Overprovisioning can increase the performance and lifespan of SSDs.  "
+"Defining a number of GiB here overprovisions disks during pool creation.  "
+"Examples: 50 GiB, 10g, 5GB"
+msgstr ""
 
 msgid ""
 "Overrides default directory creation mask of <i>0777</i>  which grants "
@@ -9716,18 +9814,17 @@ msgstr ""
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
-"versions of FreeNAS: "
+"versions of TrueNAS: "
 msgstr ""
-"Procéder à la mise à niveau du volume ? ATTENTION : La mise à jour d'un "
-"volume est une opération à sens unique qui peut rendre certaines "
-"fonctionnalités du volume incompatibles avec les anciennes versions de "
-"FreeNAS: "
 
 msgid "Production status successfully updated"
 msgstr "Statut de production mis à jour avec succès"
 
 msgid "Progress"
 msgstr "Progression"
+
+msgid "Prohibits writes to this share."
+msgstr ""
 
 msgid "Promote Dataset"
 msgstr "Promouvoir le dataset"
@@ -10652,6 +10749,22 @@ msgstr "Nettoyage complet sur le volume <i>"
 msgid "Scrub interval (in days)"
 msgstr "Intervalle de nettoyage (en jours)"
 
+msgid "Search For Connected Groups"
+msgstr ""
+
+msgid "Search For Connected Users"
+msgstr ""
+
+msgid ""
+"Search for all connected groups.  Type a group name and press <i>ENTER</i>. "
+"A warning is shown  if there are no matches."
+msgstr ""
+
+msgid ""
+"Search for all connected users.  Type a user name and press <i>ENTER</i>. A "
+"warning is shown  if there are no matches."
+msgstr ""
+
 msgid ""
 "Search the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
 "target=\"_blank\">FreeNAS issue tracker</a>    to ensure the issue has not "
@@ -10840,12 +10953,18 @@ msgstr "Sélectionner le type de disque"
 msgid "Select Existing zvol"
 msgstr "Sélectionner le zvol existant"
 
+msgid "Select Groups Cached by this System"
+msgstr ""
+
 msgid ""
 "Select IP addresses to listen to for NFS requests. Leave empty for NFS to "
 "listen to all available addresses."
 msgstr ""
 "Sélectionnez les adresses IP à écouter pour les requêtes NFS. Laissez vide "
 "pour que NFS puisse écouter toutes les adresses disponibles."
+
+msgid "Select Users Cached by this System"
+msgstr ""
 
 msgid "Select VM wizard type"
 msgstr "Sélectionner le type d'assistant VM"
@@ -11117,9 +11236,6 @@ msgstr ""
 "Sélectionnez la classe de service. La classe de service 802.1p disponible "
 "va du <i>meilleur effort (par défaut)</i> au <i>contrôle réseau (le plus "
 "élevé)</i>."
-
-msgid "Select the IP addresses SMB will listen for."
-msgstr "Sélectionnez les adresses IP que SMB écoutera."
 
 msgid ""
 "Select the IP addresses to be listened on  by the portal. Click ADD to add "
@@ -11531,6 +11647,15 @@ msgstr "Définir Keep Flag"
 
 msgid "Set Passphrase"
 msgstr "Définir la passphrase"
+
+msgid "Set Quota"
+msgstr ""
+
+msgid "Set Quotas"
+msgstr ""
+
+msgid "Set Quotas (Bulk)"
+msgstr ""
 
 msgid "Set Warning Level"
 msgstr ""
@@ -11967,13 +12092,6 @@ msgstr ""
 "l'utilisateur. Désélectionnez pour sélectionner un groupe existant pour "
 "l'utilisateur."
 
-msgid ""
-"Set to delay the start of network services until pings are returned from "
-"the IP addresses in the <i>netwait IP list</i>."
-msgstr ""
-"Configuré pour retarder le démarrage des services réseau jusqu'à ce que les "
-"pings soient renvoyés à partir des adresses IP de la <i>netwait IP list</i>."
-
 msgid "Set to delete this alias."
 msgstr "Définir pour supprimer cet alias."
 
@@ -12235,9 +12353,6 @@ msgstr "Réglé pour empêcher les utilisateurs de modifier la <b>Destination</b
 
 msgid "Set to prohibit users from writing to this share."
 msgstr "Défini pour interdire aux utilisateurs d'écrire sur ce partage."
-
-msgid "Set to prohibit writes to this share"
-msgstr "Définir pour interdire les écritures sur ce partage"
 
 msgid "Set to prohibit writing to the share."
 msgstr "Définit pour interdire aux utilisateurs d'écrire sur ce partage."
@@ -12582,6 +12697,12 @@ msgstr ""
 msgid "Show Advanced Fields by Default"
 msgstr ""
 
+msgid "Show All Groups"
+msgstr ""
+
+msgid "Show All Users"
+msgstr ""
+
 msgid "Show Console Messages"
 msgstr ""
 
@@ -12594,13 +12715,25 @@ msgstr "Afficher la Console sans demande de mot de passe"
 msgid "Show Tracebacks in Case of Fatal Error"
 msgstr ""
 
+msgid "Show all available groups, even those that have not used any data."
+msgstr ""
+
+msgid "Show all available users, including those that have not used any data."
+msgstr ""
+
 msgid "Show only entries that contain this text"
 msgstr "Afficher uniquement les entrées qui contiennent ce texte"
+
+msgid "Show only those users who are using data. This is the default view."
+msgstr ""
 
 msgid ""
 "Showing extra columns in the table is useful for data filtering,  but can "
 "cause performance issues. NOTE: This window will reload automatically so "
 "that the new view can take effect."
+msgstr ""
+
+msgid "Shows only the groups that are using data. This is the default view."
 msgstr ""
 
 msgid ""
@@ -12887,6 +13020,11 @@ msgstr "Démarrage de la tâche..."
 
 msgid "State"
 msgstr "État"
+
+msgid ""
+"Static IP addresses which SMB listens on for connections.  Leaving all "
+"unselected defaults to listening on all active interfaces."
+msgstr ""
 
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr "Adresse IPv4 statique de l'interface web IPMI."
@@ -13587,6 +13725,18 @@ msgstr ""
 msgid "The lifetime of the CA specified in days."
 msgstr "La durée de vie de la CA spécifiée en jours."
 
+msgid ""
+"The list only shows users cached on this system. The search box   below can "
+"locate all users, including users connected with Active Directory or other "
+"services."
+msgstr ""
+
+msgid ""
+"The list shows only groups cached on this system. The search box   below "
+"can locate all groups, including groups connected with Active Directory or "
+"other services."
+msgstr ""
+
 msgid "The maximum length of the queue of pending connections. Default is 100."
 msgstr ""
 "Longueur maximale de la file d'attente des connexions en attente. La valeur "
@@ -13917,6 +14067,13 @@ msgid "There is an upgrade waiting to finish."
 msgstr "Il y a une mise à jour qui attend d'être terminée."
 
 msgid ""
+"These  <a href=\"https://support.apple.com/en-us/HT210803\" "
+"target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
+"the performance and behavioral characteristics of SMB shares.  This is "
+"required for Time Machine support."
+msgstr ""
+
+msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\">rclone</a>."
 msgstr ""
@@ -14106,6 +14263,9 @@ msgstr ""
 
 msgid "Toggle Collapse"
 msgstr "Réduire"
+
+msgid "Toggle Display"
+msgstr ""
 
 msgid "Toggle Hide/Open"
 msgstr "Masquer/Ouvrir"
@@ -14585,6 +14745,9 @@ msgid ""
 "system time is set correctly."
 msgstr ""
 
+msgid "Use Apple-style Character Encoding"
+msgstr ""
+
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr ""
 "Utilisez DHCP. Désactiver la configuration manuelle d'une connexion IPv4 "
@@ -14607,14 +14770,14 @@ msgstr ""
 msgid "Use Signature Version 2"
 msgstr "Utiliser Signature Version 2"
 
+msgid "Use Syslog Only"
+msgstr ""
+
 msgid "Use all disk space"
 msgstr "Utiliser tout l'espace disque"
 
 msgid "Use as Home Share"
 msgstr ""
-
-msgid "Use as home share"
-msgstr "Utiliser comme partage personnel (home)"
 
 msgid ""
 "Use compressed WRITE records to make the  stream more efficient. The "
@@ -14636,9 +14799,6 @@ msgstr "Utiliser l'image disque existante"
 
 msgid "Use settings from a saved replication."
 msgstr "Utilisez les paramètres d'une réplication enregistrée."
-
-msgid "Use syslog only"
-msgstr "Utiliser syslog uniquement"
 
 msgid ""
 "Use the KMIP server to manage ZFS encrypted dataset keys. The key server "
@@ -14700,6 +14860,9 @@ msgstr "CN utilisateur"
 msgid "User Controls"
 msgstr "Contrôles utilisateur"
 
+msgid "User Data Quota "
+msgstr ""
+
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr "Nom distinctif de l'utilisateur (DN) à utiliser pour l'authentification."
 
@@ -14722,6 +14885,12 @@ msgid ""
 msgstr ""
 
 msgid "User Name"
+msgstr ""
+
+msgid "User Object Quota"
+msgstr ""
+
+msgid "User Quotas"
 msgstr ""
 
 msgid "User account password for logging into the  remote system."
@@ -15147,14 +15316,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"When enabled, the ACLs grant read and write access for owner or group and "
-"read-only for others. <b>Only</b> leave unset when creating a share on a "
+"When enabled, the ACLs grant read and  write access for owner or group and "
+"read-only for others. <b>Only</b> leave  unset when creating a share on a "
 "system that already has custom ACLs configured."
 msgstr ""
-"Lorsqu'elles sont activées, les ACLs accordent un accès en lecture et en "
-"écriture au propriétaire ou au groupe et en lecture seule aux autres. <b>Ne "
-"désactivez</b> cette option que lorsque vous créez un partage sur un "
-"système sur lequel des ACLs personnalisées sont déjà configurées."
 
 msgid ""
 "When replicated snapshots are deleted  from the destination system: <br>  "
@@ -15238,6 +15403,12 @@ msgstr ""
 "les collisions de noms d'utilisateur lorsque Allow Trusted Domains est "
 "défini et qu'il y a des noms d'utilisateur identiques dans plus d'un "
 "domaine."
+
+msgid ""
+"When using a proxy, enter the proxy information for  the network in the "
+"format <i>http://my.proxy.server:3128</i> or  "
+"<i>http://user:password@my.proxy.server:3128</i>"
+msgstr ""
 
 msgid ""
 "When using a virtual host, this is also  used as the Kerberos principal "
