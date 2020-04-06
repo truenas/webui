@@ -7,15 +7,11 @@ import { MembersComponent } from './groups/members/members.component';
 import { UserListComponent } from './users/user-list/';
 import { UserFormComponent } from './users/user-form/';
 import { ChangePasswordComponent } from "./users/change-password/change-password.component";
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [{
   path: '',
   data: { title: 'Accounts' },
-  children: [{
-    path: '',
-    component: EntityDashboardComponent,
-  },
+  children: [
   {
     path: 'users',
     data: { title: 'Users', breadcrumb: 'Users', icon: 'group' },
