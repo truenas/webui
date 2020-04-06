@@ -52,6 +52,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
         break;
     }
 
+    console.log(this.enclosure);
     this.setupEnclosureEvents(enclosure);
   }
 

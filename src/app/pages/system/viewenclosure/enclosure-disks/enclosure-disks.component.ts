@@ -346,7 +346,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         console.warn("ENCLOSURE IS NOT A SUPPORTED RACKMOUNT CHASSIS. IS THIS A MINI?")
         this.enclosure = new M50();
     }
-
     this.setupEnclosureEvents(enclosure);
   }
   
@@ -779,10 +778,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   findDiskBySlotNumber(slot:number){
     let selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    //console.log(selectedEnclosure);
     let disk;
     for(let i in selectedEnclosure.disks){
       if(selectedEnclosure.disks[i].enclosure.slot == slot) {
         disk = selectedEnclosure.disks[i];
+        //console.log(disk);
         return disk;
       }
     }
