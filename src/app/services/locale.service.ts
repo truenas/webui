@@ -14,8 +14,11 @@ export class LocaleService {
         })
      };
 
-    getDateFormatOptions() {
-        let options = [
+    getDateFormatOptions(tz?: string) {
+        if (tz) {
+            moment.tz.setDefault(tz);
+        }
+        const options = [
             { label: moment().format('YYYY-MM-DD'), value: 'YYYY-MM-DD' },     
             { label: moment().format('MMMM D, YYYY'), value: 'MMMM D, YYYY' },
             { label: moment().format('D MMMM, YYYY'), value: 'D MMMM, YYYY' },
@@ -27,8 +30,11 @@ export class LocaleService {
           return options;
     }
 
-    getTimeFormatOptions() {
-        let options = [
+    getTimeFormatOptions(tz?: string) {
+        if (tz) {
+            moment.tz.setDefault(tz);
+        }
+        const options = [
             { label: `${moment().format('HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
             { label: moment().format('hh:mm:ss a'), value: 'hh:mm:ss a' },
             { label: moment().format('hh:mm:ss A'), value: 'hh:mm:ss A' }
