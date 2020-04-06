@@ -131,6 +131,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
     core.emit({name:"DiskTemperaturesSubscribe", sender:this});
 
+    core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+    });
+
     //this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
     core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
       this.mqAlias = evt.data.mqAlias;
@@ -144,9 +148,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       this.resizeView();
 
-    });
-
-    core.register({observerClass: this, eventName: 'EnclosureSlotStatusChanged'}).subscribe((evt:CoreEvent) => {
     });
 
     core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
@@ -258,6 +259,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.destroyEnclosure();
 
       if(this.system && this.selectedEnclosure){
+        console.log(this.system);
         this.getDiskFailures();
       }
 
@@ -324,6 +326,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.enclosure = new ES12();
         break;
       case "Z Series":
+      case "TRUENAS-Z20-HA-D":
       case 'E16':
         this.enclosure = new E16();
       break;
@@ -398,6 +401,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         enclosure = new ES12();
         break;
       case "Z Series":
+      case "TRUENAS-Z20-HA-D":
       case 'E16':
         enclosure = new E16();
         break;

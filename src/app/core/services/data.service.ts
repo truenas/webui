@@ -3,6 +3,7 @@ import { BaseService } from './base.service';
 import { CoreEvent } from './core.service';
 import { SystemProfileService } from './system-profile.service';
 import { DiskTemperatureService } from './disk-temperature.service';
+import { DiskStateService } from './disk-state.service';
 
 /*
  * This is a collection of services that will 
@@ -17,7 +18,8 @@ export class DataService {
 
   constructor(
     private sysInfo: SystemProfileService,
-    private dts: DiskTemperatureService
-  ) {  
-  }
+    private dts: DiskTemperatureService,
+    private dss: DiskStateService
+  ) {}
+
 }
