@@ -84,6 +84,8 @@ encryption_options_dialog: {
     inherit_tooltip:T(''),
     dialog_saved_title: T('Encryption Options Saved'),
     dialog_saved_message1: T('Encryption options for '),
-    dialog_saved_message2: T(' successfully saved.')
+    dialog_saved_message2: T(' successfully saved.'),
+    save_encryption_options: T('Save Encryption Options'),
+    saving_encryption_options: T('Saving Encryption Options...')
 }
 }

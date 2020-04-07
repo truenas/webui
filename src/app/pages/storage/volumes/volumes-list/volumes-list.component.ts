@@ -1142,9 +1142,15 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Encryption Options'),
           label: T('Encryption Options'),
           onClick: (row) => {
+            console.log(row);
+            const can_inherit = (row.parent && row.parent.encrypted);
             // open encryption options dialog
             const is_key = (row.key_format.parsed === 'passphrase' ? false : true);
-            const pbkdf2iters = 350000; // will pull from row when it has been added to the payload
+            let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
+            if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
+              pbkdf2iters = row.pbkdf2iters.rawvalue;
+            }
+            const self = this;
             this.dialogConf = {
               title: helptext.encryption_options_dialog.dialog_title + row.id,
               fieldConfig: [
@@ -1156,6 +1162,8 @@ export class VolumesListTableConfig implements InputTableConf {
                   placeholder: helptext.encryption_options_dialog.inherit_placeholder,
                   tooltip: helptext.encryption_options_dialog.inherit_tooltip,
                   value: !row.is_encrypted_root,
+                  isHidden: !can_inherit,
+                  disabled: !can_inherit,
                 },
                 {
                   type: 'select',
@@ -1213,6 +1221,11 @@ export class VolumesListTableConfig implements InputTableConf {
 
                 const all_encryption_fields = ['encryption_type', 'passphrase', 'pbkdf2iters', 'generate_key', 'key'];
 
+                if (inherit_encryption_fg.value) { // if already inheriting show as inherit
+                  for (let i = 0; i < all_encryption_fields.length; i++) {
+                    entityDialog.setDisabled(all_encryption_fields[i], true, true);
+                  }
+                }
                 const inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe(inherit => {
                   if (inherit) {
                     for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1251,13 +1264,53 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.setDisabled('key', gen_key, gen_key);
                   }
                 });
+              },
+              customSubmit: function(entityDialog) {
+                const formValue = entityDialog.formValue;
+                let method = 'pool.dataset.change_key';
+                const body = {};
+                const payload = [row.id];
+                if (formValue.inherit_encryption) {
+                  method = 'pool.dataset.inherit_parent_encryption_properties';
+                  entityDialog.loader.open();
+                  entityDialog.ws.call(method, payload).subscribe(res => {
+                    entityDialog.loader.close();
+                    self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                      helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+                    entityDialog.dialogRef.close();
+                    self.parentVolumesListComponent.repaintMe();
+                  }, (err) => {
+                    entityDialog.loader.close();
+                    new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
+                  });
+                } else {
+                  if (formValue.encryption_type === 'key') {
+                    body['generate_key'] = formValue.generate_key;
+                    if (!formValue.generate_key) {
+                      body['key'] = formValue.key;
+                    }
+                  } else {
+                    body['passphrase'] = formValue.passphrase;
+                    body['pbkdf2iters'] = formValue.pbkdf2iters;
+                  }
+                  payload.push(body);
+                  const dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":helptext.encryption_options_dialog.save_encryption_options}, disableClose: true});
+                  dialogRef.componentInstance.setDescription(helptext.encryption_options_dialog.saving_encryption_options);
+                  dialogRef.componentInstance.setCall(method, payload);
+                  dialogRef.componentInstance.submit();
+                  dialogRef.componentInstance.success.subscribe(res=>{
+                    if (res) {
+                      dialogRef.close()
+                      entityDialog.dialogRef.close();
+                      self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                        helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+                      self.parentVolumesListComponent.repaintMe();
+                    }
+                  });
+                }
               }
             }
             this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
-              if (res) {
-                this.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
-                  helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
-              }
             });
           }
         });
