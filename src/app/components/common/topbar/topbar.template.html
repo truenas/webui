@@ -97,10 +97,10 @@
           <mat-icon>notifications_off</mat-icon>
           <span>Disable alerts</span>
         </button -->
-        <button name="settings-api" mat-menu-item (click)="onShowAPI()"
+        <button name="settings-api" mat-menu-item [routerLink]="['/apikeys']"
           ix-auto ix-auto-type="option" ix-auto-identifier="API">
           <mat-icon>laptop</mat-icon>
-          <span>{{'API' | translate}}</span>
+          <span>{{'API Keys' | translate}}</span>
         </button>
         <button name="settings-about" mat-menu-item (click)="onShowAbout()"
           ix-auto ix-auto-type="option" ix-auto-identifier="About">
