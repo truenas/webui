@@ -104,7 +104,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         if (!this.updateNotificationSent) {
           this.updateInProgress();
           this.updateNotificationSent = true;
-        }      
+        }
       }
     })
     let theme = this.themeService.currentTheme();
@@ -166,7 +166,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }).subscribe((evt: CoreEvent) => {
       this.hostname = evt.data.hostname;
     });
- 
+
     this.core.emit({name: "SysInfoRequest", sender:this});
   }
 
@@ -223,10 +223,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
-  onShowAPI() {
-    window.open(window.location.origin + '/api/docs');
-  }
-
   signOut() {
     this.ws.logout();
   }
@@ -257,10 +253,12 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   checkEULA() {
     this.ws.call('truenas.is_eula_accepted').subscribe(eula_accepted => {
-      if (!eula_accepted) {
+      if (!eula_accepted || window.localStorage.getItem('upgrading_status') === 'upgrading') {
         this.ws.call('truenas.get_eula').subscribe(eula => {
-          this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true, T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
+          this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true,
+          T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
             if (accept_eula) {
+              window.localStorage.removeItem('upgrading_status');
               this.ws.call('truenas.accept_eula')
                 .subscribe(),
                 err => { console.error(err)};
@@ -331,13 +329,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showResilveringDetails() {
-    this.dialogService.Info(T('Resilvering Status'), 
+    this.dialogService.Info(T('Resilvering Status'),
       `Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`);
   }
 
   onGoToLegacy() {
     this.dialogService.confirm(T("Warning"),
-      helptext.legacyUIWarning, 
+      helptext.legacyUIWarning,
       true, T("Continue to Legacy UI")).subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
@@ -404,7 +402,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           this.checkUpgradePending();
         }
       }
-      
+
       this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
       window.sessionStorage.setItem('ha_status', ha_enabled.toString());
     });
@@ -466,7 +464,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       });
   }
 
-  getDirServicesStatus() { 
+  getDirServicesStatus() {
     this.ws.call('directoryservices.get_state').subscribe((res) => {
       for (let i in res) {
         this.dirServicesStatus.push(res[i])
@@ -485,8 +483,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showDSIcon() {
     this.showDirServicesIcon = false;
     this.dirServicesStatus.forEach((item) => {
-      if (item !== 'DISABLED') { 
-        this.showDirServicesIcon = true; 
+      if (item !== 'DISABLED') {
+        this.showDirServicesIcon = true;
       };
     });
   }
@@ -496,11 +494,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();
       this.updateNotificationSent = true;
-    }      
+    }
   };
 
   showUpdateDialog() {
-    this.dialogService.confirm(helptext.updateRunning_dialog.title, 
+    this.dialogService.confirm(helptext.updateRunning_dialog.title,
       helptext.updateRunning_dialog.message,
       true, T('Close'), false, '', '', '', '', true);
   };

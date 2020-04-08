@@ -59,6 +59,13 @@ export const helptext_system_general = {
     validation: [Validators.required]
   },
 
+  stg_guihttpsprotocols: {
+    placeholder: T("HTTPS Protocols"),
+    tooltip: T('Cryptographic protocols for securing client/server connections. Select which\
+ <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">Transport Layer Security (TLS)</a>\
+ versions TrueNAS can use for connection security.'),
+  },
+
   stg_guihttpsredirect: {
     placeholder: T("Web Interface HTTP -> HTTPS Redirect"),
     tooltip: T(

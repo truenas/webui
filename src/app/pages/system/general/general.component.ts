@@ -81,6 +81,14 @@ export class GeneralComponent {
           validation: helptext.stg_guihttpsport.validation
         },
         {
+          type: "select",
+          multiple: true,
+          name: "ui_httpsprotocols",
+          placeholder: helptext.stg_guihttpsprotocols.placeholder,
+          tooltip: helptext.stg_guihttpsprotocols.tooltip,
+          options: [],
+        },
+        {
           type: "checkbox",
           name: "ui_httpsredirect",
           placeholder: helptext.stg_guihttpsredirect.placeholder,
@@ -321,6 +329,7 @@ export class GeneralComponent {
     }
     this.addresses = value['ui_address'];
     this.v6addresses = value['ui_v6address'];
+    this.setTimeOptions(value.timezone);
     return value;
   }
 
@@ -347,6 +356,17 @@ export class GeneralComponent {
       .subscribe((res) => {
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
+        }
+      });
+
+    const httpsprotocolsField = this.fieldSets
+      .find(set => set.name === helptext.stg_fieldset_gui)
+      .config.find(config => config.name === "ui_httpsprotocols");
+
+    entityEdit.ws.call('system.general.ui_httpsprotocols_choices').subscribe(
+      (res) => {
+        for (const key in res) {
+          httpsprotocolsField.options.push({ label: res[key], value: key });
         }
       });
 
@@ -381,17 +401,7 @@ export class GeneralComponent {
         .find(set => set.name === helptext.stg_fieldset_loc)
         .config.find(config => config.name === "timezone").options = tzChoices;
     });
-
-    let dateOptions = this.localeService.getDateFormatOptions();
-    this.fieldSets
-        .find(set => set.name === helptext.stg_fieldset_loc)
-        .config.find(config => config.name === "date_format").options = dateOptions;
-
-    let timeOptions = this.localeService.getTimeFormatOptions();
-    this.fieldSets
-        .find(set => set.name === helptext.stg_fieldset_loc)
-        .config.find(config => config.name === "time_format").options = timeOptions;
-   
+ 
     entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res)=> {
       res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
       this.makeLanguageList();
@@ -411,7 +421,20 @@ export class GeneralComponent {
       }
     });
   }
-  
+
+  setTimeOptions (tz: string) {
+    const timeOptions = this.localeService.getTimeFormatOptions(tz);
+    this.fieldSets
+    .find(set => set.name === helptext.stg_fieldset_loc)
+    .config.find(config => config.name === 'time_format').options = timeOptions;
+
+    const dateOptions = this.localeService.getDateFormatOptions(tz);
+    this.fieldSets
+        .find(set => set.name === helptext.stg_fieldset_loc)
+        .config.find(config => config.name === "date_format").options = dateOptions;
+
+  }
+
   makeLanguageList() {
     this.sysGeneralService.languageChoices().subscribe((res) => {
       this.languageList = res
@@ -437,6 +460,7 @@ export class GeneralComponent {
   }
 
   afterSubmit(value) {
+    this.setTimeOptions(value.timezone);
     const new_http_port = value.ui_port;
     const new_https_port = value.ui_httpsport;
     const new_redirect = value.ui_httpsredirect;

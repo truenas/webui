@@ -49,7 +49,13 @@ export class AppComponent {
     public matIconRegistry: MatIconRegistry,
     public chartDataUtils: ChartDataUtilsService) {
 
-    // MISC CUSTOM ICONS
+    /*
+    * MISC CUSTOM ICONS
+    * When importing SVG asset files here
+    * please prep the SVG file by removing
+    * any styling form the <style> tag or inline
+    * as it conflicts with our application CSS.
+    */
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
@@ -114,6 +120,24 @@ export class AppComponent {
     this.matIconRegistry.addSvgIcon(
       "truenas_core_text_only",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_text_only.svg")
+    );
+
+    // TRUENAS SCALE
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logotype",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logotype.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logo_full",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logo_full.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_text_only",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_text_only.svg")
     );
 
     // FREENAS
@@ -212,7 +236,7 @@ export class AppComponent {
     snackBarRef.onAction().subscribe(()=> {
       this.router.navigate(['ui-preferences','create-theme']);
     });
-    
+
     if(this.router.url === '/ui-preferences/create-theme' || this.router.url === '/ui-preferences/edit-theme'){
       snackBarRef.dismiss();
     }

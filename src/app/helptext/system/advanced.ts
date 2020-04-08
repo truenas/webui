@@ -5,9 +5,10 @@ import global_helptext from '../global-helptext';
 
 export const helptext_system_advanced = {
   fieldset_console: T('Console'),
-  fieldset_kernel: T('Kernel'),
+  fieldset_storage: T('Storage'),
   fieldset_ui: T('GUI'),
   fieldset_sed: T('SED'),
+  fieldset_kernel: T('Kernel'),
   fieldset_other: T('Other Options'),
 
   dialog_generate_debug_title: T("Generate Debug File"),
@@ -45,6 +46,15 @@ export const helptext_system_advanced = {
  DISCOURAGED</b>'),
   swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
 
+  overprovision: {
+    placeholder: T('Overprovision Size in GiB'),
+    tooltip: T('Overprovisioning can increase the performance and lifespan of SSDs. \
+ Defining a number of GiB here overprovisions disks during pool creation. \
+ Examples: 50 GiB, 10g, 5GB'),
+    error: T('Invalid value. Valid values are numbers followed by optional unit letters \
+ for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>.'),
+  },
+  
   autotune_placeholder: T('Enable Autotune'),
   autotune_tooltip: T('Enables the autotune script which attempts to optimize\
  the system depending on the installed hardware.\

@@ -40,7 +40,6 @@ import { SupportComponent } from './support/support.component';
 import { EmailComponent } from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
@@ -56,9 +55,6 @@ export const routes: Routes = [
     path: '',
     data: { title: T('System') },
     children: [{
-      path: '',
-      component: EntityDashboardComponent,
-    }, {
       path: 'general',
       data: { title: T('General'), breadcrumb: T('General'), icon: 'build' },
       children: [{

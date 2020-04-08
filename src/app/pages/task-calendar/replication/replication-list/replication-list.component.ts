@@ -114,7 +114,7 @@ export class ReplicationListComponent {
                     initial: '',
                     name: 'target_dataset',
                     placeholder: helptext.target_dataset_placeholder,
-                    tooltip: helptext.target_dataset_placeholder,
+                    tooltip: helptext.target_dataset_tooltip,
                     validation: [Validators.required],
                     required: true,
                   }

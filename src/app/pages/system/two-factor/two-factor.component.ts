@@ -102,7 +102,6 @@ export class TwoFactorComponent {
           togglePw: true,
           placeholder: helptext.two_factor.secret.placeholder,
           tooltip: helptext.two_factor.secret.tooltip,
-          value: 'Whatevs',
           readonly: true,
         },
         {
@@ -133,7 +132,7 @@ export class TwoFactorComponent {
           helptext.two_factor.confirm_dialog.btn).subscribe(res => {
             if (res) {
               this.loader.open();
-              this.ws.call('auth.twofactor.update', [{enabled: true}] ).subscribe(res => {
+              this.ws.call('auth.twofactor.update', [{enabled: true}] ).subscribe(() => {
                 this.loader.close();
                 this.TwoFactorEnabled = true;
                 this.updateEnabledStatus();
@@ -152,7 +151,7 @@ export class TwoFactorComponent {
       name : helptext.two_factor.disable_button,
       function : () => {
         this.loader.open();
-        this.ws.call('auth.twofactor.update', [{enabled: false}] ).subscribe(res => {
+        this.ws.call('auth.twofactor.update', [{enabled: false}] ).subscribe(() => {
           this.loader.close();
           this.TwoFactorEnabled = false;
           this.updateEnabledStatus();
@@ -218,11 +217,15 @@ export class TwoFactorComponent {
     this.ws.call('auth.twofactor.provisioning_uri').subscribe(res => {
       this.entityEdit.formGroup.controls['uri'].setValue(res);
       this.qrInfo = (res);
+    }, err => {
+      this.loader.close();
+      this.dialog.errorReport(helptext.two_factor.error,
+        err.reason, err.trace.formatted);
     });
   }
 
   updateEnabledStatus() {
-    let enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
+    const enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
     this.TwoFactorEnabled ? 
       enabled.paraText = helptext.two_factor.enabled_status_true :
       enabled.paraText = helptext.two_factor.enabled_status_false;
@@ -258,8 +261,8 @@ export class TwoFactorComponent {
        helptext.two_factor.renewSecret.btn).subscribe(res => {
          if (res) {
            this.loader.open();
-           this.ws.call('auth.twofactor.renew_secret').subscribe(res => {
-            //  this.loader.close();
+           this.ws.call('auth.twofactor.renew_secret').subscribe(() => {
+             this.loader.close();
              this.updateSecretAndUri();
            },
            err => {
@@ -274,14 +277,8 @@ export class TwoFactorComponent {
   updateSecretAndUri() {
     this.ws.call('auth.twofactor.config').subscribe(res => {
       this.entityEdit.formGroup.controls['secret'].setValue(res.secret);
-      this.ws.call('auth.twofactor.provisioning_uri').subscribe(uri => {
-        this.loader.close()
-        this.entityEdit.formGroup.controls['uri'].setValue(uri);
-      }, err => {
-        this.loader.close();
-        this.dialog.errorReport(helptext.two_factor.error,
-          err.reason, err.trace.formatted);
-      })
+      this.secret = res.secret;
+      this.getURI();
     }, err => {
       this.loader.close();
       this.dialog.errorReport(helptext.two_factor.error,

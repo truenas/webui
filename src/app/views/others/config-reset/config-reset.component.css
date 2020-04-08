@@ -26,6 +26,11 @@
     margin-top: 10px;
 }
 
+.logo {
+  width: 256px;
+  height: auto;
+}
+
 @media screen and (max-height: 700px) {
     #shutdown-card {
         width: 225px;
