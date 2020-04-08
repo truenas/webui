@@ -17,12 +17,10 @@ export class DiskStateService extends BaseService {
 
   constructor(protected ws: WebSocketService) { 
     super();
-    console.log("DISK STATE SERVICE INIT...");
   }
 
   protected onAuthenticated(evt: CoreEvent){
     this.authenticated = true;
-    console.log("DISK STATE SUBSCRIBING TO EVENTS...");
     this.ws.sub("disk.query").subscribe((res) =>{
       console.log("DISK STATE EVENT FROM MIDDLEWARE...");
       this.core.emit({name:"DisksChanged", data: res, sender: this});

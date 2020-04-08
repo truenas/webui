@@ -18,7 +18,7 @@ interface VDev {
 
 export class SystemProfiler {
 
-  public systemDisks:any[] = [];
+  //public systemDisks:any[] = [];
   public platform: string; // Model Unit
   public profile: Enclosure[] = [];
   public headIndex: number;
@@ -29,7 +29,7 @@ export class SystemProfiler {
     return this._diskData;
   }
   set diskData(obj){
-    this._diskData = this.filterSystemDisk(obj);
+    this._diskData = obj;
     this.parseDiskData(this._diskData);
     this.parseEnclosures(this._enclosures);
   }
@@ -127,33 +127,6 @@ export class SystemProfiler {
 
   }
 
-
-
-  filterSystemDisk(disks){
-    let sd = [];
-    
-    let data = disks.filter((item, index) => {
-      // WORKAROUND: Middleware needs to assign enclosure to rear drives as well
-
-      let rearDisk = [];
-      if(!item.enclosure && this.rearIndex){
-        let rearSlot = this.enclosures[this.rearIndex];
-        rearDisk = this.enclosures[this.rearIndex].elements.filter((d) => {
-          if(d.data.Device == item.name) rearSlot = d.slot ;
-          return d.data.Device == item.name;
-        });
-        item.enclosure = rearDisk.length > 0 ? {number: this.rearIndex, slot: rearSlot} : undefined;
-      }
-
-      if(!item.enclosure && rearDisk.length == 0){
-        this.systemDisks.push(item);
-        sd.push(index); 
-      } 
-      return item.enclosure;
-      
-    });
-    return data;
-  }
   
   private parseEnclosures(obj){
     // Provide a shortcut to the enclosures object

@@ -26,6 +26,11 @@ import {
   //clamp
   } from 'popmotion';
 
+export interface Range {
+  start: number;
+  end: number;
+}
+
 export interface Position {
   x: number;
   y: number;
@@ -53,7 +58,7 @@ export class ChassisView {
    public driveTrayHandlePath: string;
 
    public totalDriveTrays: number;
-   public slotRange: number[];
+   public slotRange: Range;
    public rows: number;
    public columns: number;
    public vertical: boolean = false;
@@ -73,7 +78,7 @@ export class ChassisView {
      this.events.subscribe((evt:CoreEvent) => {
        switch(evt.name){
        case "ChangeDriveTrayColor":
-         this.colorDriveTray(evt.data.id, evt.data.color);
+         this.colorDriveTray(parseInt(evt.data.id), evt.data.color);
          break;
        }
      });
@@ -86,15 +91,17 @@ export class ChassisView {
    requiredAssets(){
      // Return a list of assets for the loader to fetch
      let assets: any[] = [];
-     assets.push({ alias: this.model + "_chassis", path: this.chassisPath})
-     assets.push({ alias: this.model + "_drivetray_bg", path: this.driveTrayBackgroundPath})
-     assets.push({ alias: this.model + "_drivetray_handle", path: this.driveTrayHandlePath})
-     return assets
+     assets.push({ alias: this.model + "_chassis", path: this.chassisPath});
+     assets.push({ alias: this.model + "_drivetray_bg", path: this.driveTrayBackgroundPath});
+     assets.push({ alias: this.model + "_drivetray_handle", path: this.driveTrayHandlePath});
+     return assets;
    }
 
    destroy(){
      // Destroy the loader and assets
-     this.loader.reset();
+     if(this.loader){
+       this.loader.reset();
+     }
    }
 
    load(){
@@ -128,11 +135,16 @@ export class ChassisView {
      this.container.addChild(this.chassis);
 
      // Render DriveTrays
-     const start = this.slotRange ? this.slotRange[0] : 0;
-     const end = this.slotRange ? this.slotRange[1] - start + 1: this.totalDriveTrays;
-     for(let i = start; i < end; i++){
+     if(!this.slotRange){
+        this.slotRange = { start: 1, end: this.totalDriveTrays };
+     }
+     for(let i = 0; i < this.totalDriveTrays; i++){
        let dt = this.makeDriveTray();
-       dt.id = i.toString();
+       //dt.id = i.toString(); // Index
+
+       if(!this.slotRange){console.log(i);}
+       const slot = this.slotRange.start + i;
+       dt.id = slot.toString(); // Slot
  
        if(this.autoPosition){
         let position = this.generatePosition(dt.container, i, this.driveTraysOffsetX, this.driveTraysOffsetY);
@@ -276,7 +288,12 @@ export class ChassisView {
     console.log("width: " + dts.width + " height: " + dts.height);
    }
 
-  colorDriveTray(driveIndex, color){
+  colorDriveTray(slot, color){
+    const driveIndex = slot - this.slotRange.start;
+    if(driveIndex < 0 || driveIndex >= this.totalDriveTrays){ 
+      console.warn("IGNORING DRIVE AT INDEX " + driveIndex + " SLOT " + slot + " IS OUT OF RANGE");
+      return;
+    }
     let dt = this.driveTrayObjects[driveIndex];
     
     dt.color = color.toLowerCase() ;

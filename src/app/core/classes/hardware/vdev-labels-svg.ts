@@ -161,9 +161,11 @@ export class VDevLabelsSVG {
       let present = vdev.slots && vdev.slots[disk] ? true : false; // Is the disk in this enclosure?
       let slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
 
-      if(slot){
+      if(slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end){
         // Create tile if the disk is in the current enclosure
-        let src = this.chassis.driveTrayObjects[slot - 1].container;
+        const dt = this.chassis.driveTrayObjects.filter(dto => parseInt(dto.id) == slot)[0];
+        //let src = this.chassis.driveTrayObjects[slot - 1].container;
+        let src = dt.container;
         let tray = src.getGlobalPosition();
 
         let tileClass = "tile tile_" + disk;
