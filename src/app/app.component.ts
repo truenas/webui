@@ -49,7 +49,13 @@ export class AppComponent {
     public matIconRegistry: MatIconRegistry,
     public chartDataUtils: ChartDataUtilsService) {
 
-    // MISC CUSTOM ICONS
+    /*
+    * MISC CUSTOM ICONS
+    * When importing SVG asset files here
+    * please prep the SVG file by removing
+    * any styling form the <style> tag or inline
+    * as it conflicts with our application CSS.
+    */
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
