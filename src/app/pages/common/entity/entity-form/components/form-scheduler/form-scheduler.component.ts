@@ -42,6 +42,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public ngDateFormat: string;
   public helptext = globalHelptext;
   public timezone: string;
+  public offset: string;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -264,7 +265,20 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.ws.call('system.general.config').subscribe((res) => {
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
-      
+
+      let tempOffset = moment.tz(this.timezone).utcOffset();
+      // Convert offset in minutes (-420) to hours (-700) for Angular date pipe
+        tempOffset = ((tempOffset/60)*100).toString();
+        if (tempOffset[0] !== '-') {
+          tempOffset = '+' + tempOffset;
+        }
+        // Pad to 5 characters (60 to +0060, etc) 
+        while (tempOffset.length < 5) {
+          let tempStr = tempOffset.slice(1);
+          tempOffset = tempOffset[0] + '0' + tempStr;
+        }
+        this.offset = tempOffset;    
+  
       this.minDate = moment();
       this.maxDate = moment().endOf('month');
       this.currentDate= moment();
