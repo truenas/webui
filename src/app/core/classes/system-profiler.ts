@@ -119,6 +119,7 @@ export class SystemProfiler {
       if(!item.enclosure){return} 
 
       let enclosure = this.profile[item.enclosure.number];
+      if(!enclosure){return} 
       item.status = 'AVAILABLE'; // Label it as available. If it is assigned to a vdev/pool then this will be overridden later.
       enclosure.diskKeys[item.devname] = enclosure.disks.length; // index to enclosure.disks
       enclosure.disks.push(item);

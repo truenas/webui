@@ -4,7 +4,7 @@ import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 import { Subject, Observable } from 'rxjs';
 import { CoreEvent } from 'app/core/services/core.service';
 import { LabelFactory } from './label-factory';
-import { Chassis } from './chassis';
+import { ChassisView } from './chassis-view';
 import { DriveTray } from './drivetray';
 import * as d3 from 'd3';
 
@@ -29,7 +29,7 @@ export class VDevLabelsSVG {
   protected svg:any; // Our d3 generated svg layer
   protected mainStage: any; // WebGL Canvas
   protected app: any;
-  protected chassis: Chassis; // The chassis we are labelling
+  protected chassis: ChassisView; // The chassis we are labelling
   public color: string;
   public selectedDiskColor: string;
   public highlightColor: string;

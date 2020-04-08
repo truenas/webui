@@ -48,7 +48,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     switch(enclosure.model){
       default:
         console.warn("DEFAULT CASE");
-        this.enclosure = new MINI();
+        this.chassis = new MINI();
         break;
     }
 

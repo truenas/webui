@@ -6,6 +6,8 @@ import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, 
 import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
+import { Chassis } from 'app/core/classes/hardware/chassis';
+import { ChassisView } from 'app/core/classes/hardware/chassis-view';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { M50Rear } from 'app/core/classes/hardware/m50_rear';
 import { ES12 } from 'app/core/classes/hardware/es12';
@@ -58,7 +60,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public failedDisks: DiskFailure[] = [];
   public subenclosure: any; // Declare rear and internal enclosure visualizations here
 
-  public enclosure: any; // Visualization
+  public chassis: Chassis;
+  public view: string = "front"; // front || rear || internal
+  protected _enclosure: ChassisView; // Visualization
+  get enclosure(){
+    return this.chassis ? this.chassis[this.view] : null;
+  }
 
   private _expanders: any[] = [];
   get expanders () {
@@ -316,35 +323,35 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     switch(enclosure.model){
       case "M Series":
-        this.enclosure = new M50();
+        this.chassis = new M50();
         break;
       case "M Series Rear Bays":
-        this.enclosure = new M50Rear();
+        this.chassis = new M50Rear();
         break;
       case "X Series":
       case 'ES12':
-        this.enclosure = new ES12();
+        this.chassis = new ES12();
         break;
       case "Z Series":
       case "TRUENAS-Z20-HA-D":
       case 'E16':
-        this.enclosure = new E16();
+        this.chassis = new E16();
       break;
       case "ES24":
-        this.enclosure = new ES24();
+        this.chassis = new ES24();
         break;
       case "E24":
-        this.enclosure = new E24();
+        this.chassis = new E24();
         break;
       case "ES60":
-        this.enclosure = new ES60();
+        this.chassis = new ES60();
         break;
       case "E60":
-        this.enclosure = new E60();
+        this.chassis = new E60();
         break;
       default:
         console.warn("ENCLOSURE IS NOT A SUPPORTED RACKMOUNT CHASSIS. IS THIS A MINI?")
-        this.enclosure = new M50();
+        this.chassis = new M50();
     }
     this.setupEnclosureEvents(enclosure);
   }
@@ -390,35 +397,38 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createExtractedEnclosure(profile){
+    let chassis;
     let enclosure;
     switch(profile.model){
       case "M Series":
-        enclosure = new M50();
+        chassis = new M50();
         break;
       case "X Series":
       case 'ES12':
-        enclosure = new ES12();
+        chassis = new ES12();
         break;
       case "Z Series":
       case "TRUENAS-Z20-HA-D":
       case 'E16':
-        enclosure = new E16();
+        chassis = new E16();
         break;
       case "E24":
-        enclosure = new E24();
+        chassis = new E24();
         break;
       case "ES24":
-        enclosure = new ES24();
+        chassis = new ES24();
         break;
       case "ES60":
-        enclosure = new ES60();
+        chassis = new ES60();
         break;
       case "E60":
-        enclosure = new E60();
+        chassis = new E60();
         break;
       default:
-        enclosure = new ES24();
+        chassis = new ES24();
     }
+
+    enclosure = chassis.front;
     
     enclosure.events.subscribe((evt) => {
       switch(evt.name){
