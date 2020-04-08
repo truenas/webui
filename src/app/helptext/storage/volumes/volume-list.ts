@@ -86,6 +86,13 @@ encryption_options_dialog: {
     dialog_saved_message1: T('Encryption options for '),
     dialog_saved_message2: T(' successfully saved.'),
     save_encryption_options: T('Save Encryption Options'),
-    saving_encryption_options: T('Saving Encryption Options...')
+    saving_encryption_options: T('Saving Encryption Options...'),
+    save_button: T('Save')
+},
+lock_dataset_dialog: {
+    dialog_title: T('Lock Dataset '),
+    dialog_message: T('Lock dataset '),
+    checkbox_message: T('Force unmount '),
+    button: T('Lock')
 }
 }

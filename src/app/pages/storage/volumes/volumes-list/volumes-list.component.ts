@@ -459,6 +459,7 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getActions(rowData: any) {
+    rowData.is_passphrase = (rowData.key_format && rowData.key_format.parsed === 'passphrase' ? true : false);
     let rowDataPathSplit = [];
     const self = this;
     if (rowData.mountpoint) {
@@ -863,28 +864,30 @@ export class VolumesListTableConfig implements InputTableConf {
     }
 
     if (rowData.type === "FILESYSTEM") {
-      actions.push({
-        id: rowData.name,
-        name: T('Add Dataset'),
-        label: T("Add Dataset"),
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-            "add", row1.id
-          ]));
-        }
-      });
-      actions.push({
-        id: rowData.name,
-        name: T('Add Zvol'),
-        label: T("Add Zvol"),
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "zvol", "add",
-            row1.id
-          ]));
-        }
-      });
+      if (!rowData.locked) {
+        actions.push({
+          id: rowData.name,
+          name: T('Add Dataset'),
+          label: T("Add Dataset"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat([
+              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+              "add", row1.id
+            ]));
+          }
+        });
+        actions.push({
+          id: rowData.name,
+          name: T('Add Zvol'),
+          label: T("Add Zvol"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat([
+              "storage", "pools", "id", row1.id.split('/')[0], "zvol", "add",
+              row1.id
+            ]));
+          }
+        });
+      }
       actions.push({
         id: rowData.name,
         name: T('Edit Options'),
@@ -896,7 +899,7 @@ export class VolumesListTableConfig implements InputTableConf {
           ]));
         }
       });
-      if (rowDataPathSplit[1] !== "iocage") {
+      if (rowDataPathSplit[1] !== "iocage" && !rowData.locked) {
             actions.push({
               id: rowData.name,
               name: T('Edit Permissions'),
@@ -1142,10 +1145,9 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Encryption Options'),
           label: T('Encryption Options'),
           onClick: (row) => {
-            console.log(row);
-            const can_inherit = (row.parent && row.parent.encrypted);
             // open encryption options dialog
-            const is_key = (row.key_format.parsed === 'passphrase' ? false : true);
+            const can_inherit = (row.parent && row.parent.encrypted);
+            const is_key = !row.is_passphrase;
             let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
               pbkdf2iters = row.pbkdf2iters.rawvalue;
@@ -1213,7 +1215,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   isHidden: is_key,
                 }
               ],
-              saveButtonText: T("Save"),
+              saveButtonText: helptext.encryption_options_dialog.save_button,
               afterInit: function(entityDialog) {
                 const inherit_encryption_fg = entityDialog.formGroup.controls['inherit_encryption'];
                 const encryption_type_fg = entityDialog.formGroup.controls['encryption_type'];
@@ -1314,13 +1316,37 @@ export class VolumesListTableConfig implements InputTableConf {
             });
           }
         });
-        if (rowData.is_encrypted_root) {
+        if (rowData.is_encrypted_root && !rowData.is_key) {
           encryption_actions.push({
             id: rowData.name,
             name: T('Lock'),
             label: T('Lock'),
-            onClick: (row1) => {
+            onClick: (row) => {
               // lock
+              const title = helptext.lock_dataset_dialog.dialog_title + row.name;
+              const message = helptext.lock_dataset_dialog.dialog_message + row.name + '?'
+              const params = [row.id];
+              let force_umount = false;
+              const ds = this.dialogService.confirm(title, message, false, helptext.lock_dataset_dialog.button, 
+                true, helptext.lock_dataset_dialog.checkbox_message, 'pool.dataset.lock', params);
+              
+              ds.componentInstance.switchSelectionEmitter.subscribe((res) => {
+                force_umount = res;
+              });
+              ds.afterClosed().subscribe((status)=>{
+                if(status){
+                  this.loader.open();
+                  params.push({'force_umount':force_umount});
+                  this.ws.call(
+                    ds.componentInstance.method,params).subscribe((res)=>{
+                      this.loader.close();
+                      this.parentVolumesListComponent.repaintMe();
+                    }, (err)=>{
+                      this.loader.close();
+                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                    });
+                }
+              });  
             }
           });
         }
@@ -1332,16 +1358,22 @@ export class VolumesListTableConfig implements InputTableConf {
   clickAction(rowData) {
     let aclEditDisabled = false;
     let permissionsEditDisabled = false;
-    this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
-      !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
-      rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
-      let editACL = rowData.actions[0].actions.find(o => o.name === 'Edit ACL');
-        editACL.disabled = aclEditDisabled;
-      let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions')
-        editPermissions.disabled = permissionsEditDisabled;
-        aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 :
-        editPermissions.matTooltip = helptext.permissions_edit_msg2
-    })
+    if (!rowData.locked) {
+      this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
+        !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
+        rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
+        let editACL = rowData.actions[0].actions.find(o => o.name === 'Edit ACL');
+          if (editACL) {
+            editACL.disabled = aclEditDisabled;
+          }
+        let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions')
+        if (editPermissions) {
+          editPermissions.disabled = permissionsEditDisabled;
+          aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 :
+          editPermissions.matTooltip = helptext.permissions_edit_msg2
+        }
+      })
+    }
   }
 
   getTimestamp() {
