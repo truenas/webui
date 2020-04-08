@@ -16,9 +16,6 @@ export class M50 extends Chassis {
     this.front.driveTrayHandlePath = "assets/images/hardware/m50/m50_960w_drivetray_handle.png"
     this.front.totalDriveTrays = 24;
     this.front.slotRange = { start: 5, end: 28 };
- 
-    // TESTING ******************************************************
-    
 
     this.rear = new ChassisView();
     this.rear.driveTrays.scale = {x: 0.88, y: 0.88};
@@ -33,7 +30,6 @@ export class M50 extends Chassis {
 
     this.rear.totalDriveTrays = 4;
     this.rear.slotRange = { start: 1, end: 4 };
-    // END TESTING **************************************************
   }
 
 }
