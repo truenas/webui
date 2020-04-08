@@ -1316,7 +1316,7 @@ export class VolumesListTableConfig implements InputTableConf {
             });
           }
         });
-        if (rowData.is_encrypted_root && !rowData.is_key) {
+        if (rowData.is_encrypted_root && rowData.is_passphrase) {
           encryption_actions.push({
             id: rowData.name,
             name: T('Lock'),
