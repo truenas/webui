@@ -44,7 +44,7 @@
 				ix-auto
 				ix-auto-type="options"
 				ix-auto-identifier="{{rowData.name}}">more_vert</mat-icon>
-				<mat-menu #appMenu="matMenu">
+				<mat-menu style="padding:12px 0;" #appMenu="matMenu">
 					<span *ngIf="!rowData.group_actions;else groupMenu">
 						<span *ngFor="let action of rowData.actions" 
 							id="action_button__{{rowData.name}}_{{action.label}}" 
@@ -61,10 +61,10 @@
 					</span>
 					<ng-template #groupMenu>
 						<span *ngFor= "let group of rowData.actions">
-							<span *ngIf="group.actions && group.actions.length > 0">
+							<div class="group-menu-header" *ngIf="group.actions && group.actions.length > 0">
 								<mat-divider></mat-divider>
-								<h5>{{group?.title | translate}}</h5>
-							</span>
+                                                                <div class="title" ><strong>{{group?.title | translate}}</strong></div>
+							</div>
 							<span *ngFor="let action of group.actions"
 								id="action_button__{{rowData.name}}_{{action.label}}" 
 								[matTooltip]="action.matTooltip" 

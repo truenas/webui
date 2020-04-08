@@ -1,3 +1,21 @@
 .icons {
     font-size: 24px; 
 }
+
+.group-menu-header{
+  min-width: 200px;
+  padding-bottom: 16px;
+  margin-top: 12px;
+}
+
+.group-menu-header div.title{
+  margin-left: 16px;
+  margin-top: 4px;
+  opacity: 0.5;
+  font-size: 0.85rem;
+}
+
+.group-menu-header mat-divider {
+  background-color: var(--fg2);
+  opacity: 0.35;
+}
