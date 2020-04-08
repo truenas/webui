@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
@@ -12,6 +12,7 @@ import wizardHelptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'vm-list',
@@ -22,7 +23,7 @@ import * as _ from 'lodash';
     <entity-table [title]='title' [conf]='this'></entity-table>`,
     styleUrls: ['./vm-list.component.css']
 })
-export class VMListComponent {
+export class VMListComponent implements OnDestroy {
 
     public title = "Virtual Machines";
     protected queryCall = 'vm.query';
@@ -30,6 +31,7 @@ export class VMListComponent {
     protected route_add: string[] = ['vm', 'wizard'];
     protected route_edit: string[] = ['vm', 'edit'];
     protected dialogRef: any;
+    private eventSubscription: Subscription;
 
     public entityList: any;
     public columns: Array<any> = [
@@ -80,6 +82,18 @@ export class VMListComponent {
     afterInit(entityList) {
         this.checkMemory();
         this.entityList = entityList;
+        this.eventSubscription = this.ws.subscribe('vm.query').subscribe(event => {
+            const changedRow = this.entityList.rows.find(o => o.id === event.id);
+            if (event.fields.state === 'RUNNING') {
+                changedRow.state = 'RUNNING';
+                changedRow.status.state = 'RUNNING';
+                changedRow.status.domain_state = event.fields.state;
+            } else {
+                changedRow.state = 'STOPPED';
+                changedRow.status.state = 'STOPPED';
+                changedRow.status.domain_state = event.fields.state;
+            }
+        })
     }
 
     resourceTransformIncomingRestData(vms) {
@@ -424,7 +438,8 @@ export class VMListComponent {
     isActionVisible(actionId: string, row: any) {
         if (actionId === 'VNC' && (row["status"]["state"] !== "RUNNING" || !this.checkVnc(row))) {
             return false;
-        } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' || actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
+        } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' || 
+            actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
             return false;
         } else if (actionId === 'START' && row["status"]["state"] === "RUNNING") {
             return false;
@@ -437,4 +452,8 @@ export class VMListComponent {
             this.availMem = this.storageService.convertBytestoHumanReadable(res);
         });
     }
-}
+
+    ngOnDestroy() {
+        this.eventSubscription.unsubscribe();
+    }
+ }
