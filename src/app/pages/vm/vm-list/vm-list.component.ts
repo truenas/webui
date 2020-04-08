@@ -82,9 +82,17 @@ export class VMListComponent implements OnDestroy {
     afterInit(entityList) {
         this.checkMemory();
         this.entityList = entityList;
-
-        this.eventSubscription = this.ws.subscribe('vm.query').subscribe(res => {
-            console.log('Event', res)
+        this.eventSubscription = this.ws.subscribe('vm.query').subscribe(event => {
+            const changedRow = this.entityList.rows.find(o => o.id === event.id);
+            if (event.fields.state === 'RUNNING') {
+                changedRow.state = 'RUNNING';
+                changedRow.status.state = 'RUNNING';
+                changedRow.status.domain_state = event.fields.state;
+            } else {
+                changedRow.state = 'STOPPED';
+                changedRow.status.state = 'STOPPED';
+                changedRow.status.domain_state = event.fields.state;
+            }
         })
     }
 
@@ -430,7 +438,8 @@ export class VMListComponent implements OnDestroy {
     isActionVisible(actionId: string, row: any) {
         if (actionId === 'VNC' && (row["status"]["state"] !== "RUNNING" || !this.checkVnc(row))) {
             return false;
-        } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' || actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
+        } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' || 
+            actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
             return false;
         } else if (actionId === 'START' && row["status"]["state"] === "RUNNING") {
             return false;
