@@ -73,7 +73,7 @@ export class DeviceListComponent {
       icon: 'delete',
       label : T("Delete"),
       onClick : (delete_row) => {
-        this.deviceDelete(delete_row.id);
+        this.deviceDelete(delete_row);
       },
     });
     actions.push({
@@ -88,7 +88,8 @@ export class DeviceListComponent {
         localDialogService = this.dialogService
 
           const conf: DialogFormConfiguration = { 
-            title: `Change Device Order ${row1.dtype}: ${row1.id}`,
+            title: T('Change Device Order'),
+            message: T('Change order for ') + `<b>${row1.dtype} ${row1.id}</b>`,
             parent: this,
             fieldConfig: [{
               type: 'input',
@@ -129,20 +130,21 @@ export class DeviceListComponent {
           for (const attribute in device.attributes) {
             details = `${attribute}: ${device.attributes[attribute]} \n` + details;
           }
-          this.dialogService.Info(`Details`, details,'500px','info');
+          this.dialogService.Info(T('Details for ') + `${row.dtype} ${row.id}`, details,'500px','info');
         },
       });
     return actions;
     }
   
-  deviceDelete(id){
-    this.dialogService.confirm(T("Delete"), T("Delete this device?"), true, T('Delete Device')).subscribe((res) => {
+  deviceDelete(row){
+    this.dialogService.confirm(T("Delete"), T('Delete ') + `<b>${row.dtype} ${row.id}</b>`, 
+      true, T('Delete Device')).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
         if (this.wsDelete) {
-          this.busy = this.ws.call(this.wsDelete, ['vm.device',id]).subscribe(
+          this.busy = this.ws.call(this.wsDelete, ['vm.device',row.id]).subscribe(
             (resinner) => {
               this.entityList.getData();
               this.loader.close();
