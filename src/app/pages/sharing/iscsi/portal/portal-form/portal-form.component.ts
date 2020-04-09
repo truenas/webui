@@ -7,7 +7,9 @@ import { IscsiService, WebSocketService, AppLoaderService } from '../../../../..
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { ipValidator } from "app/pages/common/entity/entity-form/validators/ip-validation";
+
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
+import { selectedOptionValidator } from "app/pages/common/entity/entity-form/validators/invalid-option-selected";
 
 @Component({
   selector: 'app-iscsi-portal-add',
@@ -23,6 +25,13 @@ export class PortalFormComponent {
   protected customFilter: Array<any> = [[["id", "="]]];
   protected isEntity = true;
 
+  protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then(res => {
+    const options = [];
+    for (const ip in res) {
+      options.push({ label: res[ip], value: ip });
+    }
+    return options;
+  });
   public fieldSets: FieldSet[] = [
     {
       name: helptext_sharing_iscsi.fieldset_portal_basic,
@@ -95,7 +104,8 @@ export class PortalFormComponent {
               class: 'inline',
               width: '60%',
               required: true,
-              validation: [Validators.required, ipValidator('all')]
+              validation: [Validators.required, ipValidator('all')],
+              asyncValidation: [selectedOptionValidator(this.getValidOptions)]
             },
             {
               type: 'input',
@@ -126,6 +136,25 @@ export class PortalFormComponent {
     protected loader: AppLoaderService,
     protected ws: WebSocketService) { }
 
+    prerequisite(): Promise<boolean> {
+      return new Promise(async (resolve, reject) => {
+        const listenIpField = _.find(this.fieldSets[2].config, { 'name': 'listen' }).templateListField[0];
+        await this.iscsiService.getIpChoices().toPromise().then((ips) => {
+          for (const ip in ips) {
+            listenIpField.options.push({ label: ips[ip], value: ip });
+          }
+          const listenListFields = _.find(this.fieldSets[2].config, { 'name': 'listen' }).listFields;
+          for (const listenField of listenListFields) {
+            const ipField = _.find(listenField, { name: 'ip' });
+            ipField.options = listenIpField.options;
+          }
+          resolve(true);
+        }, (err) => {
+          resolve(false);
+        });
+      });
+    }
+
   preInit() {
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
@@ -147,19 +176,6 @@ export class PortalFormComponent {
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-
-    const listenIpField = _.find(this.fieldConfig, { 'name': 'listen' }).templateListField[0];
-    this.iscsiService.getIpChoices().subscribe((ips) => {
-      for (const ip in ips) {
-        listenIpField.options.push({ label: ips[ip], value: ip });
-      }
-
-      const listenListFields = _.find(this.fieldConfig, { 'name': 'listen' }).listFields;
-      for (const listenField of listenListFields) {
-        const ipField = _.find(listenField, { name: 'ip' });
-        ipField.options = listenIpField.options;
-      }
-    });
 
     entityForm.formGroup.controls['listen'].valueChanges.subscribe((res) => {
       this.genPortalAddress(res);
