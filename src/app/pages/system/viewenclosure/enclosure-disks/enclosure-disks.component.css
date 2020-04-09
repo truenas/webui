@@ -130,12 +130,12 @@ nav.view-nav-bar{
   font-size: 120%;
   line-height: 85%;
   word-break: break-word;
-/*
-    text-align: left;
-    font-weight: 300;
-    font-size: 120%;
-    line-height: 85%;
-*/
+  /*
+  text-align: left;
+  font-weight: 300;
+  font-size: 120%;
+  line-height: 85%;
+   */
 }
 
 .view-card #view-selector{
@@ -146,8 +146,8 @@ nav.view-nav-bar{
 }
 
 .view-card .disk-basic-details .capacity{
-    font-weight: 500;
-    font-size: 120%;
+  font-weight: 500;
+  font-size: 120%;
 }
 
 .view-card .dom-overlay{
@@ -217,11 +217,11 @@ nav.view-nav-bar{
 }
 
 .view-card .model.dom-overlay img.logo.type {
-    height: 18px;
-    position: relative;
-    left: 2px;
-    top: 0px;
-    margin-right: 12px;
+  height: 18px;
+  position: relative;
+  left: 2px;
+  top: 0px;
+  margin-right: 12px;
 }
 
 .view-card .model.dom-overlay .text {
@@ -295,8 +295,128 @@ div.vdev-disk {
 
 .view-card .dom-overlay#visualizer{
   z-index:2;
+}
+
+.view-card.rackmount .dom-overlay#visualizer{
   width:auto;
 }
+
+/* MINI OVERRIDES */
+.view-card.mini {
+  color: #fff;
+}
+
+.view-card.mini .alert{
+  color:var(--accent);
+}
+
+.view-card.mini .online{
+  color:var(--green);
+}
+
+.view-card.mini ul.disk-stats{
+  margin-left:32px
+}
+
+.view-card.mini .capacity{
+  margin-top:16px
+}
+
+.view-card.mini .dom-overlay#visualizer{ left: 0 !important; }
+
+.view-card.mini #legend,
+.view-card.mini #disks-overview,
+.view-card.mini #disks-details,
+.view-card.mini .dom-overlay#visualizer,
+.view-card.mini #general-overview,
+.view-card.mini #drive-temps {
+  background-color: var(--black);
+}
+
+.view-card.mini #legend {
+  position:absolute;
+  width:60%;
+  padding:16px;
+  z-index: 12;
+}
+
+.view-card.mini #disks-overview {
+  height: calc(600px - 96px);
+  margin-top:48px;
+}
+
+.view-card.mini #disks-details,
+.view-card.mini .dom-overlay#visualizer{
+  height: calc(600px - 48px);
+}
+
+.view-card.mini #general-overview,
+.view-card.mini #drive-temps {
+  height: calc(300px - 16px - 48px);
+}
+
+.view-card.mini #disks-overview{
+  /*border: solid 1px var(--cyan);*/
+}
+
+.view-card.mini #disks-details{
+  /*border: solid 1px var(--magenta);*/
+  padding:16px;
+}
+
+.view-card.mini #disks-details li{
+  margin:6px 0;
+}
+
+.mini div.header-container{
+  /*margin-bottom:16px;*/
+  position:relative;
+}
+
+.mini h3.header{
+  /*text-transform: capitalize;*/
+  padding-bottom: 4px;
+  border-bottom:solid 1px rgba(255,255,255,0.25);
+}
+
+.mini .header-container .mat-button.back-btn{
+  position:absolute;
+  right:0;
+  top: -10px;
+}
+
+.mini .legend-item{
+  display: inline-block;
+  margin-right:12px;
+}
+
+.mini .legend-item .swatch{
+  width: 8px;
+  height: 8px;
+  float: left;
+  border-radius: 6px;
+  margin: 6px;
+}
+
+.mini .disk-basic-details{
+  padding:8px;
+}
+
+.mini .overlay{
+  position:absolute;
+  z-index:3;
+  min-width:25%;
+  height: 100%;
+}
+
+.mini .overlay.status .status-text{
+  display: block;
+  left: 32px;
+  position: relative;
+  bottom: 26px;
+}
+
+/* END MINI OVERRIDES */
 
 .view-card.md .dom-overlay.stage-left, .view-card.md .dom-overlay.stage-right,
 .view-card.md .dom-overlay .visualizer{

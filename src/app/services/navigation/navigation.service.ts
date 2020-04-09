@@ -5,24 +5,27 @@ import { T } from '../../translate-marker';
 import * as _ from 'lodash';
 
 interface IMenuItem {
-  type: string, // Possible values: link/dropDown/icon/separator/extLink
-  name ? : string, // Used as display text for item and title for separator type
-  state ? : string, // Router state
-  icon ? : string, // Item icon name
-  tooltip ? : string, // Tooltip text 
-  disabled ? : boolean, // If true, item will not be appeared in sidenav.
+  type: string; // Possible values: link/dropDown/icon/separator/extLink
+  name ? : string; // Used as display text for item and title for separator type
+  state ? : string; // Router state
+  icon ? : string; // Item icon name
+  tooltip ? : string; // Tooltip text 
+  disabled ? : boolean; // If true, item will not be appeared in sidenav.
   sub ? : IChildItem[] // Dropdown items
 }
 interface IChildItem {
-  name: string, // Display text
-  state: string, // Router state
-  disabled ? : boolean, // If true, item will not be appeared in sidenav.
+  name: string; // Display text
+  state: string; // Router state
+  disabled ? : boolean; // If true, item will not be appeared in sidenav.
 }
 
 @Injectable()
 export class NavigationService {
   // all menu for truenas features
-  public turenasFeatures = [
+  public enterpriseFeatures = [];
+
+  // all menu for iXsystems hardware features
+  public hardwareFeatures = [
     { menu: 'system', sub: 'viewenclosure' }
   ];
 
