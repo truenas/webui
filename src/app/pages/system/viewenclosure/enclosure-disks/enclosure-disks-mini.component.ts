@@ -72,7 +72,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     });
 
     if(log){
-      console.log(result);
+      console.warn(result);
     }
     return result;
   }

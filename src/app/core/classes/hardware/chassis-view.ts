@@ -140,9 +140,7 @@ export class ChassisView {
      }
      for(let i = 0; i < this.totalDriveTrays; i++){
        let dt = this.makeDriveTray();
-       //dt.id = i.toString(); // Index
 
-       if(!this.slotRange){console.log(i);}
        const slot = this.slotRange.start + i;
        dt.id = slot.toString(); // Slot
  
@@ -251,7 +249,7 @@ export class ChassisView {
    }
 
    loadProgressHandler(){
-     //console.log( "PROGRESS: " + PIXI.loader.progress + "%");
+     // PIXI progress handler logic can go here
    }
 
    makeDriveTray(){
@@ -283,9 +281,6 @@ export class ChassisView {
     ];
 
     dts.proj.mapSprite(dts, quad);
-
-    console.log(dts);
-    console.log("width: " + dts.width + " height: " + dts.height);
    }
 
   colorDriveTray(slot, color){

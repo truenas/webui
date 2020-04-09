@@ -139,10 +139,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     core.emit({name:"DiskTemperaturesSubscribe", sender:this});
 
     core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      // REACT TO EVENT PROVIDED BY DISK.QUERY
     });
 
-    //this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
     core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
       this.mqAlias = evt.data.mqAlias;
      
@@ -270,7 +269,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       if(this.system && this.selectedEnclosure){
-        console.log(this.system);
         this.getDiskFailures();
       }
 
@@ -800,12 +798,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   findDiskBySlotNumber(slot:number){
     let selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
-    //console.log(selectedEnclosure);
     let disk;
     for(let i in selectedEnclosure.disks){
       if(selectedEnclosure.disks[i].enclosure.slot == slot) {
         disk = selectedEnclosure.disks[i];
-        //console.log(disk);
         return disk;
       }
     }
