@@ -354,7 +354,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new E60();
         break;
       default:
-        console.warn("ENCLOSURE IS NOT A SUPPORTED RACKMOUNT CHASSIS. IS THIS A MINI?")
+        console.warn("ENCLOSURE IS NOT A SUPPORTED RACKMOUNT CHASSIS.")
         this.chassis = new M50();
     }
     this.setupEnclosureEvents(enclosure);

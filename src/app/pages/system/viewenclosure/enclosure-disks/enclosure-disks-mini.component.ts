@@ -46,13 +46,16 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
 
   createEnclosure(enclosure: any = this.selectedEnclosure){
     switch(enclosure.model){
+      case "FREENAS-MINI-3.0-E":
+      case "FREENAS-MINI-3.0-E+":
+        this.chassis = new MINI();
+      break;
       default:
-        console.warn("DEFAULT CASE");
+        console.warn("UNSUPPORTED MODEL: Using generic Mini");
         this.chassis = new MINI();
         break;
     }
 
-    console.log(this.enclosure);
     this.setupEnclosureEvents(enclosure);
   }
 
