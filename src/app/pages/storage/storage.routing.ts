@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl/';
+import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
@@ -83,6 +84,10 @@ export const routes: Routes = [
           {
             path: 'id/:pk/dataset/acl/:path', component: DatasetAclComponent,
             data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' }
+          },
+          {
+            path: 'id/:pk/dataset/unlock/:path', component: DatasetUnlockComponent,
+            data: { title: 'Unlock Datasets', breadcrumb: 'Unlock Datasets' }
           },
           {
             path: 'manager', component: ManagerComponent,

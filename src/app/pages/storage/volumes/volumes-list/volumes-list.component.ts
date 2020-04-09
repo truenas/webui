@@ -1137,6 +1137,10 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T('Unlock'),
           onClick: (row1) => {
             //unlock
+            this._router.navigate(new Array('/').concat([
+              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+              "unlock", row1.id
+            ]));
           }
         });
       } else {

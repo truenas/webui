@@ -20,6 +20,7 @@ import { SnapshotDetailsComponent, SnapshotListComponent } from './snapshots/sna
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl/';
+import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/';
 import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
@@ -76,6 +77,7 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
     ImportDiskComponent,
     DatasetPermissionsComponent,
     DatasetAclComponent,
+    DatasetUnlockComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
     DiskListComponent,
