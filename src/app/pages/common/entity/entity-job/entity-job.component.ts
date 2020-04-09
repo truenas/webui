@@ -164,15 +164,8 @@ export class EntityJobComponent implements OnInit {
           this.job = res;
           if (this.job && this.job.job_id) {
             this.jobId = this.job.job_id;
-            this.wsshow();
-          // }
-          // if (this.job.statusText === "OK") {
-          //   this.jobId = JSON.parse(this.job._body).job_id;
-          //   this.wsshow();
-          // } else if (this.job.job_id) {
-          } else {
-            this.wsshow();
           }
+          this.wsshow();
         },
         (err) => {
           this.prefailure.emit(err)
