@@ -1,7 +1,7 @@
 @import "cssvars";
 
 .page-wrap {
-  background-color:$bg1;
+  background-color:var(--bg1);
 }
 
 .copyright-line {
