@@ -5,6 +5,37 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
 import { Router } from '@angular/router';
 
+export const DefaultTheme = {
+  name:'ix-official',
+  label: "iX Official",
+  labelSwatch:"blue",
+  description:'Official iX System Colors on Dark',
+  hasDarkLogo:false,
+  logoPath:'assets/images/light-logo.svg',
+  logoTextPath:'light-logo-text.svg',
+  favorite:false,
+  accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+  primary:"var(--blue)",
+  //secondary:"var(--bg1)",
+  accent:"var(--cyan)",
+  bg1:'#252525',//'#171E26',
+  bg2:'#343333',
+  fg1:'#aaaaaa',
+  fg2:'#cccccc',
+  'alt-bg1':'rgba(122,122,122,0.25)',
+  'alt-bg2':'#6F6E6C',
+  'alt-fg1':'#c1c1c1',
+  'alt-fg2':'#e1e1e1',
+  yellow:'#f0cb00',
+  orange:'#ee9302',
+  red:'#ff0013',
+  magenta:'#d238ff',
+  violet:'#c17ecc',
+  blue:'#0095D5',
+  cyan:'#00d0d6',
+  green:'#21C150'
+}
+    
 export interface Theme {
   name: string;
   description:string;
@@ -38,7 +69,7 @@ export interface Theme {
 @Injectable()
 export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
-  public activeTheme: string = 'ix-dark';
+  public activeTheme: string = 'ix-official';
   public activeThemeSwatch: string[];
 
   // Theme lists
@@ -48,36 +79,7 @@ export class ThemeService {
   private _customThemes: Theme[];
 
   public freenasThemes: Theme[] = [
-    {
-      name:'ix-official',
-      label: "iX Official",
-      labelSwatch:"blue",
-      description:'Official iX System Colors on Dark',
-      hasDarkLogo:false,
-      logoPath:'assets/images/light-logo.svg',
-      logoTextPath:'light-logo-text.svg',
-      favorite:false,
-      accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
-      primary:"var(--blue)",
-      //secondary:"var(--bg1)",
-      accent:"var(--cyan)",
-      bg1:'#252525',//'#171E26',
-      bg2:'#343333',
-      fg1:'#aaaaaa',
-      fg2:'#cccccc',
-      'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'#6F6E6C',
-      'alt-fg1':'#c1c1c1',
-      'alt-fg2':'#e1e1e1',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#0095D5',
-      cyan:'#00d0d6',
-      green:'#21C150'
-    },
+    DefaultTheme,
     {
       name:'ix-dark',
       label: "iX Dark",
