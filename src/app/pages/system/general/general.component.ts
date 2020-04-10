@@ -213,6 +213,7 @@ export class GeneralComponent {
       name: 'upload_config',
       placeholder : helptext.upload_config.placeholder,
       tooltip: helptext.upload_config_form.tooltip,
+      validation: helptext.upload_config_form.validation,
       fileLocation: '',
       updater: this.updater,
       parent: this,
@@ -489,7 +490,7 @@ export class GeneralComponent {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, err => {
+            }, err => { console.log(err)
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
