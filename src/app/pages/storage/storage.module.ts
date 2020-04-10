@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -21,6 +21,7 @@ import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl/';
 import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/';
+import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-dialog/unlock-dialog.component'
 import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
@@ -78,6 +79,7 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
     DatasetPermissionsComponent,
     DatasetAclComponent,
     DatasetUnlockComponent,
+    UnlockDialogComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
     DiskListComponent,
@@ -92,8 +94,8 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
   ],
-  entryComponents: [SnapshotDetailsComponent],
-  providers : [UserService, StorageService, MessageService, JobService]
+  entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
+  providers : [UserService, StorageService, MessageService, JobService, TranslateService]
 })
 export class StorageModule {
 }

@@ -14,9 +14,10 @@ import { AppLoaderService } from '../../../../../services/app-loader/app-loader.
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-unlock';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import {EntityUtils} from '../../../../common/entity/utils';
+import {UnlockDialogComponent} from './unlock-dialog/unlock-dialog.component'
 
 @Component({
   selector : 'app-dataset-unlock',
@@ -316,11 +317,52 @@ export class DatasetUnlockComponent implements OnDestroy {
     dialogRef.componentInstance.success.subscribe(res => {
       dialogRef.close();
       // show summary dialog;
+      const errors = [];
+      const unlock = [];
+      if (res && res.result) {
+        for (let i = 0; i < res.result.length; i++) {
+          const result = res.result[i];
+          if (result.unlock_successful) {
+            unlock.push(result);
+          } else {
+            errors.push(result)
+          }
+        }
+      }
+      const unlockDialogRef: MatDialogRef<UnlockDialogComponent> = this.dialog.open(UnlockDialogComponent, {disableClose: true});
+      unlockDialogRef.componentInstance.parent = this;
+      unlockDialogRef.componentInstance.unlock_datasets = unlock;
+      unlockDialogRef.componentInstance.error_datasets = errors;
+      unlockDialogRef.componentInstance.data = payload;
     });
     dialogRef.componentInstance.failure.subscribe(err => {
       dialogRef.close();
       new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
-    })
+    });
+  }
+
+  unlockSubmit(payload) {
+    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.unlocking_datasets_title}, disableClose: true});
+    if (payload.key_file && this.subs) {
+      const formData: FormData = new FormData();
+      formData.append('data', JSON.stringify({
+        "method": this.updateCall,
+        "params": [this.pk, payload]
+      }));
+      formData.append('file', this.subs.file);
+      dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData)
+    } else {
+      dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
+      dialogRef.componentInstance.submit();
+    }
+    dialogRef.componentInstance.success.subscribe(res => {
+      dialogRef.close();
+      this.router.navigate(this.route_success);
+    });
+    dialogRef.componentInstance.failure.subscribe(err => {
+      dialogRef.close();
+      new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
+    });
   }
 
   key_file_updater(file: any, parent: any){

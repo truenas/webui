@@ -18,5 +18,19 @@ export default {
     dataset_passphrase_tooltip: T(''),
     fetching_encryption_summary_title: T('Fetching Encryption Summary'),
     fetching_encryption_summary_message: T('Fetching Encryption Summary for '),
-    unlocking_datasets_title: T('Unlocking Datasets')
+    unlocking_datasets_title: T('Unlocking Datasets'),
+    unlocking_datasets_message: T('Unlocking datasets for '),
+    unlock_dataset_dialog: {
+        title: T('Unlock Datasets'),
+        errors: T('Errors'),
+        errors_message: T('The following datasets cannot be unlocked.'),
+        error_dialog_title: T('Error details for '),
+        unlock: T('Unlock'),
+        unlock_message: T('The following datasets will be successfully unlocked with the provided credentials.'),
+        ok_button: T('Continue'),
+        cancel_button: T('Cancel')
+    },
+    unlock_successful_title: T('Unlock Successful'),
+    unlock_successful_message: T('Datasets for '),
+    unlock_successful_message2: T(' successfully unlocked'),
 }
