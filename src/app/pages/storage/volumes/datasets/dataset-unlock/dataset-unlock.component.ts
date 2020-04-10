@@ -206,6 +206,7 @@ export class DatasetUnlockComponent implements OnDestroy {
             const is_passphrase = (result.key_format === 'PASSPHRASE');
             this.datasets.controls[i].controls['is_passphrase'].setValue(is_passphrase);
             this.setDisabled(passphrase_fc, this.datasets.controls[i].controls['passphrase'], !is_passphrase, !is_passphrase);
+            this.setDisabled(key_fc, this.datasets.controls[i].controls['key'], is_passphrase, is_passphrase);
           }
         }
       }
