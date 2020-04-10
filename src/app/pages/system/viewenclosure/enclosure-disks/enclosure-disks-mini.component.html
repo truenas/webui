@@ -132,12 +132,24 @@
           <h3 class="header">Drive Temperatures</h3>
           <div fxLayout="row wrap" fxLayoutGap="10%">
               <ng-container *ngIf="temperatures">
-                <temperature-meter *ngFor="let diskName of temperatures.keys;" 
-                  [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " 
-                  [source]="diskName" 
-                  [value]="temperatures.values[diskName]"
-                  [unit]="temperatures.unit"
-                  [symbolText]="temperatures.symbolText"></temperature-meter>
+                <ng-container *ngFor="let diskName of temperatures.keys;">
+                  <temperature-meter *ngIf="temperatures.values[diskName]; else notemps" 
+                    [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " 
+                    [source]="diskName" 
+                    [value]="temperatures.values[diskName]"
+                    [unit]="temperatures.unit"
+                    [symbolText]="temperatures.symbolText"></temperature-meter>
+                  <ng-template #notemps>
+                    <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
+                      <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}} 
+                      <tooltip style="position:relative; top:5px;" 
+                        position="above" 
+                        header="Temperature data missing." 
+                        message="No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here">
+                      </tooltip>
+                    </div>
+                  </ng-template>
+                </ng-container>
               </ng-container>
             <!--<ul>
               <ng-container *ngIf="temperatures">

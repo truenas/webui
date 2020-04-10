@@ -165,6 +165,7 @@ export class ChassisView {
      this.driveTrays.name = this.model + "_drivetrays";
      this.container.addChild(this.driveTrays);
 
+     this.events.next({name: "ChassisLoaded", sender: this});
      this.onEnter();
    }
 

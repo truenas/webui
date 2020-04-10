@@ -350,7 +350,10 @@ div.vdev-disk {
   height: calc(600px - 48px);
 }
 
-.view-card.mini #general-overview,
+.view-card.mini #general-overview { 
+  height: calc(260px - 16px - 48px);
+}
+
 .view-card.mini #drive-temps {
   height: calc(300px - 16px - 48px);
 }
@@ -414,6 +417,10 @@ div.vdev-disk {
   left: 32px;
   position: relative;
   bottom: 26px;
+}
+
+.mini .no-temp{
+  margin-top: 8px;
 }
 
 /* END MINI OVERRIDES */
