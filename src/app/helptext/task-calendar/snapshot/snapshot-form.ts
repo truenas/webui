@@ -61,7 +61,7 @@ export default {
  have been no changes to the dataset from the last snapshot. Recommended \
  for creating long-term restore points, multiple snapshot tasks pointed \
  at the same datasets, or to be compatible with snapshot schedules or \
- replications created in %brand% 11.2 and earlier.<br><br> For example, \
+ replications created in TrueNAS 11.2 and earlier.<br><br> For example, \
  allowing empty snapshots for a monthly snapshot schedule allows that \
  monthly snapshot to be taken, even when a daily snapshot task has \
  already taken a snapshot of any changes to the dataset.'),
