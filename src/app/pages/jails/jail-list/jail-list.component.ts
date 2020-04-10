@@ -361,12 +361,18 @@ export class JailListComponent {
         id: "update",
         label: T("Update"),
         onClick: (row) => {
-          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
-          dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.host_hostuuid]);
-          dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.subscribe((res) => {
-            dialogRef.close(true);
-            this.dialogService.Info(T('Jail Updated'), T("Jail <i>") + row.host_hostuuid + T("</i> updated."), '500px', 'info', true);
+          this.dialogService.confirm(
+            helptext.updateConfirmDialog.title,
+            helptext.updateConfirmDialog.message, true).subscribe((dialog_res)=> {
+              if (dialog_res) {
+                const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
+                dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.host_hostuuid]);
+                dialogRef.componentInstance.submit();
+                dialogRef.componentInstance.success.subscribe((res) => {
+                  dialogRef.close(true);
+                  this.dialogService.Info(T('Jail Updated'), T("Jail <i>") + row.host_hostuuid + T("</i> updated."), '500px', 'info', true);
+                });
+              }
           });
         }
       },
