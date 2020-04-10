@@ -342,16 +342,18 @@ export class JailListComponent {
         onClick: (row) => {
           let dialog = {};
           this.dialogService.confirm("Stop", "Stop the selected jail?", 
-            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((res) => {
-              const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stopping Jail") }, disableClose: true });
-              dialogRef.componentInstance.setCall('jail.stop', [row.host_hostuuid]);
-              dialogRef.componentInstance.submit();
-              dialogRef.componentInstance.success.subscribe((res) => {
-                dialogRef.close(true);
-                row.state = 'down';
-                this.updateRow(row);
-                this.updateMultiAction([row]);
-              });
+            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((dialog_res) => {
+              if (dialog_res) {
+                const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stopping Jail") }, disableClose: true });
+                dialogRef.componentInstance.setCall('jail.stop', [row.host_hostuuid]);
+                dialogRef.componentInstance.submit();
+                dialogRef.componentInstance.success.subscribe((res) => {
+                  dialogRef.close(true);
+                  row.state = 'down';
+                  this.updateRow(row);
+                  this.updateMultiAction([row]);
+                });
+              }
           })
         }
       },
