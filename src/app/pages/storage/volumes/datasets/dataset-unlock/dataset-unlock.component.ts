@@ -25,7 +25,7 @@ import {EntityUtils} from '../../../../common/entity/utils';
 export class DatasetUnlockComponent implements OnDestroy {
 
   protected queryCall = 'pool.dataset.encryption_summary';
-  protected updateCall = 'pool.dataset.encryption_summary';
+  protected updateCall = 'pool.dataset.unlock';
   public route_success: string[] = ['storage', 'pools'];
   protected isEntity = true;
   protected isNew = true;
@@ -298,18 +298,19 @@ export class DatasetUnlockComponent implements OnDestroy {
       datasets.push(ds);
     }
     const payload = {key_file: body.key_file, datasets: datasets};
-    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.unlocking_datasets_title}, disableClose: true});
+    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.fetching_encryption_summary_title}, disableClose: true});
+    dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
     if (body.key_file && this.subs) {
       const formData: FormData = new FormData();
       formData.append('data', JSON.stringify({
-        "method": this.updateCall,
+        "method": this.queryCall,
         "params": [this.pk, payload]
       }));
       formData.append('file', this.subs.file);
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData)
     } else {
       payload['key_file'] = false; // if subs is undefined the user never tried to upload a file
-      dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
+      dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
     dialogRef.componentInstance.success.subscribe(res => {
