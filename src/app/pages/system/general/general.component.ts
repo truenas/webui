@@ -490,7 +490,7 @@ export class GeneralComponent {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, err => { console.log(err)
+            }, err => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, helptext.config_download.failed_message, err);
