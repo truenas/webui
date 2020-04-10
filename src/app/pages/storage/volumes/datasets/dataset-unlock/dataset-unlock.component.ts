@@ -342,6 +342,7 @@ export class DatasetUnlockComponent implements OnDestroy {
   }
 
   unlockSubmit(payload) {
+    payload['recursive'] = this.unlock_children_fg.value;
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.unlocking_datasets_title}, disableClose: true});
     if (payload.key_file && this.subs) {
       const formData: FormData = new FormData();
