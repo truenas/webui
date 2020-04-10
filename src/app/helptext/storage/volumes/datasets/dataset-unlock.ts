@@ -13,6 +13,10 @@ export default {
     upload_key_file_tooltip: T(''),
     dataset_key_placeholder: T('Dataset Key'),
     dataset_key_tooltip: T(''),
+    dataset_name_paratext: T('<strong>Dataset:</strong> '),
     dataset_passphrase_placeholder: T('Dataset Passphrase'),
     dataset_passphrase_tooltip: T(''),
+    fetching_encryption_summary_title: T('Fetching Encryption Summary'),
+    fetching_encryption_summary_message: T('Fetching Encryption Summary for '),
+    unlocking_datasets_title: T('Unlocking Datasets')
 }
