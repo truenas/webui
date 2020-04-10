@@ -352,7 +352,7 @@ export class DatasetUnlockComponent implements OnDestroy {
       formData.append('file', this.subs.file);
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData)
     } else {
-      dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
+      dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
     dialogRef.componentInstance.success.subscribe(res => {
