@@ -166,6 +166,7 @@ export class VolumeImportWizardComponent {
   protected passphrase;
   protected passphrase_fg;
   protected guid;
+  protected pool;
   protected guid_subscription;
   protected message_subscription;
 
@@ -280,6 +281,10 @@ export class VolumeImportWizardComponent {
     .valueChanges.subscribe((res) => {
       let pool = _.find(this.guid.options, {'value': res});
       this.summary[T('Pool to import')] = pool['label'];
+      const pool_label = pool.label.split(' ');
+      if (pool.label.length > 0) {
+        this.pool = pool_label[0];
+      }
     });
 
     this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
