@@ -1,6 +1,6 @@
 <mat-card 
-  class="view-card mini" 
-  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
+  class="view-card {{chassis.front.totalDriveTrays > 7 ? 'mini mini-xl': 'mini'}}"
+  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}" 
   id="{{currentTab.alias}}" 
   (window:resize)="onResize($event)"
   ngClass.gt-md="gt-md"
@@ -21,7 +21,8 @@
 
   </mat-toolbar>
 
-  <mat-card-content #cardcontent fxLayout="row">
+  <mat-card-content #cardcontent 
+    fxLayout="row">
     <div fxFlex="60%">
       <!-- LEGEND -->
       <div class="header-container" id="legend">
@@ -98,7 +99,7 @@
                 <div class="capacity">{{converter(selectedDisk.size)}}</div>
               </div>
               <div class="disk-stats-wrapper" fxFlex>
-                <ul class="disk-stats">
+                <ul class="disk-stats" *ngIf="selectedDisk.stats">
                   <li><strong>Read Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.read_errors}}</li>
                   <li><strong>Write Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.write_errors}}</li>
                   <li><strong>Checksum Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.checksum_errors}}</li>

@@ -345,9 +345,18 @@ div.vdev-disk {
   margin-top:48px;
 }
 
+.view-card.mini.mini-xl #disks-overview {
+  height: calc(640px - 96px);
+}
+
 .view-card.mini #disks-details,
 .view-card.mini .dom-overlay#visualizer{
   height: calc(600px - 48px);
+}
+
+.view-card.mini.mini-xl #disks-details,
+.view-card.mini.mini-xl .dom-overlay#visualizer{
+  height: calc(640px - 48px);
 }
 
 .view-card.mini #general-overview { 
@@ -356,6 +365,10 @@ div.vdev-disk {
 
 .view-card.mini #drive-temps {
   height: calc(300px - 16px - 48px);
+}
+
+.view-card.mini.mini-xl #drive-temps {
+  height: calc(320px - 16px - 48px);
 }
 
 .view-card.mini #disks-overview{

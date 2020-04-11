@@ -28,12 +28,15 @@ export class DriveTray {
     this.container = new PIXI.Container();
   }
 
-  setup(){
-    this.background = PIXI.projection.Sprite2d.from(this.loader.resources[this.model + '_drivetray_bg'].texture.baseTexture);
+  setup(altAssets: boolean = false){
+    const alt = altAssets ? '_alt' : '';
 
+    this.background = PIXI.projection.Sprite2d.from(this.loader.resources[this.model + alt + '_drivetray_bg'].texture.baseTexture);
     this.container.addChild(this.background);
 
-    this.handle = PIXI.Sprite.from(this.loader.resources[this.model + '_drivetray_handle'].texture.baseTexture);
+    this.handle = PIXI.Sprite.from(this.loader.resources[this.model + alt + '_drivetray_handle'].texture.baseTexture);
+
+    if(altAssets)console.log(this.container);
 
     if(this.vertical){
       this.background.rotation = -90 * (3.14 / 180);
