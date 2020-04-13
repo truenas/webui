@@ -7,6 +7,7 @@ import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { MINI } from 'app/core/classes/hardware/mini';
+import { MINIX } from 'app/core/classes/hardware/mini-x';
 import { MINIXL } from 'app/core/classes/hardware/mini-xl';
 import { MINIXLPLUS } from 'app/core/classes/hardware/mini-xl-plus';
 import { DiskComponent } from './components/disk.component';
@@ -43,6 +44,10 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
       case "FREENAS-MINI-3.0-E":
       case "FREENAS-MINI-3.0-E+":
         this.chassis = new MINI();
+      break;
+      case "FREENAS-MINI-3.0-X":
+      case "FREENAS-MINI-3.0-X+":
+        this.chassis = new MINIX();
       break;
       /*case "FREENAS-MINI-2.0-XL":
         this.chassis = new MINIXL();
