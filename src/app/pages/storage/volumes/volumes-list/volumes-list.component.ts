@@ -1175,7 +1175,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   type: 'select',
                   name: 'encryption_type',
                   placeholder: dataset_helptext.dataset_form_encryption.encryption_type_placeholder,
-                  tooltip: dataset_helptext.dataset_form_encryption.encryption_type_tooltiip,
+                  tooltip: dataset_helptext.dataset_form_encryption.encryption_type_tooltip,
                   value: (is_key? 'key' : 'passphrase'),
                   options: dataset_helptext.dataset_form_encryption.encryption_type_options,
                 },
