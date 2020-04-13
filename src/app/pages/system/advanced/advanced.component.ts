@@ -295,7 +295,12 @@ export class AdvancedComponent implements OnDestroy {
     ) {}
 
   resourceTransformIncomingRestData(data) {
+    !data.swapondrive || data.swapondrive === 0 ? 
+      data.swapondrive = '0 GiB' :
     data.swapondrive = this.storage.convertBytestoHumanReadable(data.swapondrive * 1073741824, 0);
+    
+    !data.overprovision || data.overprovision === 0 ?
+      data.overprovision = null :
     data.overprovision = this.storage.convertBytestoHumanReadable(data.overprovision * 1073741824, 0);
     return data;
   }
@@ -313,7 +318,16 @@ export class AdvancedComponent implements OnDestroy {
       this.product_type = res;
       this.swapondrive = this.fieldSets.config('swapondrive');
       this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
+        if (!value || value === '') {
+          this.storage.humanReadable = '';
+        }
         const filteredValue = value ? this.storage.convertHumanStringToNum(value.toString(), false, 'g') : undefined;
+        this.swapondrive['hasErrors'] = false;
+        this.swapondrive['errors'] = '';
+        if (filteredValue !== undefined && isNaN(filteredValue)) {
+          this.swapondrive['hasErrors'] = true;
+          this.swapondrive['errors'] = helptext_system_advanced.overprovision.error;
+        };
         if (filteredValue === 0) {
           this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
         } else if (filteredValue > 99*1073741824 ){
@@ -325,7 +339,10 @@ export class AdvancedComponent implements OnDestroy {
       });
 
       entityEdit.formGroup.controls['overprovision'].valueChanges.subscribe((value) => {
-        const formField = this.fieldSets.config('overprovision');
+        if (!value || value === '') {
+          this.storage.humanReadable = '';
+        }
+                const formField = this.fieldSets.config('overprovision');
         const filteredValue = value ? this.storage.convertHumanStringToNum(value, false, 'g') : undefined;
         formField['hasErrors'] = false;
         formField['errors'] = '';
