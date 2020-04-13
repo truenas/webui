@@ -3,5 +3,27 @@ h1 {
 }
 
 #unlock-msg {
-    padding-top: 20px;
+    padding-top: 2px;
+}
+
+.section-title {
+    padding-top: 4px;
+}
+
+.red-icon {
+    color: var(--red);
+}
+
+.green-icon {
+    color: var(--green);
+}
+
+.row {
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+
+div.message-content {
+    min-width: 500px;
+    overflow: auto;
 }
