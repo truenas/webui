@@ -481,7 +481,7 @@ export class DatasetFormComponent implements Formconfiguration{
           type: 'select',
           name: 'encryption_type',
           placeholder: helptext.dataset_form_encryption.encryption_type_placeholder,
-          tooltip: helptext.dataset_form_encryption.encryption_type_tooltiip,
+          tooltip: helptext.dataset_form_encryption.encryption_type_tooltip,
           value: 'key',
           options: helptext.dataset_form_encryption.encryption_type_options,
         },

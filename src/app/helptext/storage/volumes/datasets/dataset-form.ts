@@ -98,7 +98,16 @@ dataset_form_casesensitivity_tooltip: T('<i>Sensitive</i> assumes filenames are 
  filenames.'),
 
 dataset_form_aclmode_placeholder: T('ACL Mode'),
-dataset_form_aclmode_tooltip: T(''),
+dataset_form_aclmode_tooltip: T('Determine how \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=chmod" target="_blank">chmod</a> \
+ behaves when adjusting file ACLs. See the \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" target="_blank">zfs(8)</a> aclmode property. \
+ <br><br><i>Passthrough</i> only updates ACL entries that are related to the file or directory mode. \
+ <br><br><i>Restricted</i> does not allow chmod to make changes to files or directories with a \
+ non-trivial ACL. An ACL is trivial if it can be fully expressed as a file mode without losing \
+ any access rules. Setting the ACL Mode to Restricted is typically used to optimize a dataset for \
+ SMB sharing, but can require further optimizations. For example, configuring an rsync task with this \
+ dataset could require adding <i>--no-perms</i> in the task <i>Auxiliary Parameters</i> field.'),
 
 dataset_form_dataset_section_placeholder: T("This Dataset and Child Datasets"),
 dataset_form_refdataset_section_placeholder: T("This Dataset"),
@@ -115,27 +124,38 @@ dataset_form_encryption: {
     inherit_checkbox_placeholder: T('Inherit'),
     inherit_checkbox_notencrypted: T('Inherit (non-encrypted)'),
     inherit_checkbox_encrypted: T('Inherit (encrypted)'),
-    inherit_checkbox_tooltip: T(''),
+    inherit_checkbox_tooltip: T('Use the encryption properties of the root dataset.'),
     encryption_checkbox_placeholder: T('Encryption'),
-    encryption_checkbox_tooltip: T(''),
-    encryption_type_placeholder: T('Encryption_type'),
-    encryption_type_tooltiip: T(''),
+    encryption_checkbox_tooltip: T('Secure data within this dataset. Data is unusable until \
+     unlocked with an encryption key or passphrase.'),
+    encryption_type_placeholder: T('Encryption Type'),
+    encryption_type_tooltip: T('How the dataset is secured. Choose between securing with \
+    an encryption <i>Key</i> or a user-defined <i>Passphrase</i>.'),
     encryption_type_options: [
         {label: T('Key'), value: 'key'},
         {label: T('Passphrase'), value: 'passphrase'}
     ],
     algorithm_placeholder: T('Algorithm'),
-    algorithm_tooltip: T(''),
+    algorithm_tooltip: T('Mathematical instruction sets that determine how plaintext is converted \
+     into ciphertext. See \
+     <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">Advanced Encryption Standard (AES)</a> \
+     for more details.'),
     passphrase_placeholder: T('Passphrase'),
-    passphrase_tooltip: T(''),
+    passphrase_tooltip: T('User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br> \
+     WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a \
+     memorable passphrase or physically secure the passphrase.'),
     passphrase_validation: [Validators.minLength(8)],
     pbkdf2iters_placeholder: T('pbkdf2iters'),
-    pbkdf2iters_tooltip: T(''),
+    pbkdf2iters_tooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability \
+     to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \
+     <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),
     pbkdf2iters_validation: [Validators.min(100000)],
     generate_key_checkbox_placeholder: T('Generate Key'),
-    generate_key_checkbox_tooltip: T(''),
+    generate_key_checkbox_tooltip: T('Randomly generate an encryption key for securing this dataset. Disabling requires manually \
+     defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this \
+     dataset. Store the encryption key in a secure location.'),
     key_placeholder: T('Key'),
-    key_tooltip: T(''),
+    key_tooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
     non_encrypted_warning_title: T('Warning'),
     non_encrypted_warning_warning: T('Disabling encryption will result in a non-encrypted dataset, continue?')
 }
