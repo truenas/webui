@@ -48,7 +48,7 @@ export const helptext_system_kmip = {
 
     enabled: {
         placeholder: T('Enabled'),
-        tooltip: T(''),
+        tooltip: T('Activate KMIP configuration and begin syncing keys with the KMIP server.'),
     },
 
     jobDialog: {
