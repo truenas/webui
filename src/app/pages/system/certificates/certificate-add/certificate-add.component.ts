@@ -346,7 +346,166 @@ export class CertificateAddComponent {
           ]
         }
       ]
-    }
+    },
+    {
+      name: helptext_system_certificates.add.fieldset_basic_constraints,
+      label: true,
+      class: 'basic_constraints',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'basic_constraints-ca',
+          placeholder: helptext_system_certificates.add.basic_constraints.ca.placeholder,
+          tooltip: helptext_system_certificates.add.basic_constraints.ca.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'basic_constraints-enabled',
+          placeholder: helptext_system_certificates.add.basic_constraints.enabled.placeholder,
+          tooltip: helptext_system_certificates.add.basic_constraints.enabled.tooltip,
+        },
+        {
+          type: 'input',
+          name: 'basic_constraints-path_length',
+          placeholder: helptext_system_certificates.add.basic_constraints.path_length.placeholder,
+          tooltip: helptext_system_certificates.add.basic_constraints.path_length.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'basic_constraints-extension_critical',
+          placeholder: helptext_system_certificates.add.basic_constraints.extension_critical.placeholder,
+          tooltip: helptext_system_certificates.add.basic_constraints.extension_critical.tooltip,
+        }
+      ]
+    },
+    {
+      name: helptext_system_certificates.add.fieldset_authority_key_identifier,
+      label: true,
+      class: 'authority_key_identifier',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'authority_key_identifier-authority_cert_issuer',
+          placeholder: helptext_system_certificates.add.authority_key_identifier.authority_cert_issuer.placeholder,
+          tooltip: helptext_system_certificates.add.authority_key_identifier.authority_cert_issuer.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'authority_key_identifier-enabled',
+          placeholder: helptext_system_certificates.add.authority_key_identifier.enabled.placeholder,
+          tooltip: helptext_system_certificates.add.authority_key_identifier.enabled.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'authority_key_identifier-extension_critical',
+          placeholder: helptext_system_certificates.add.authority_key_identifier.extension_critical.placeholder,
+          tooltip: helptext_system_certificates.add.authority_key_identifier.extension_critical.tooltip,
+        }
+      ]
+    },
+    {
+      name: helptext_system_certificates.add.fieldset_extended_key_usage,
+      label: true,
+      class: 'extended_key_usage',
+      width: '50%',
+      config: [
+        {
+          type: 'select',
+          name: 'extended_key_usage-usages',
+          placeholder: helptext_system_certificates.add.extended_key_usage.usages.placeholder,
+          tooltip: helptext_system_certificates.add.extended_key_usage.usages.tooltip,
+          options: []
+        },
+        {
+          type: 'checkbox',
+          name: 'extended_key_usage-enabled',
+          placeholder: helptext_system_certificates.add.extended_key_usage.enabled.placeholder,
+          tooltip: helptext_system_certificates.add.extended_key_usage.enabled.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'extended_key_usage-extension_critical',
+          placeholder: helptext_system_certificates.add.extended_key_usage.extension_critical.placeholder,
+          tooltip: helptext_system_certificates.add.extended_key_usage.extension_critical.tooltip,
+        },
+      ]
+    },
+    {
+      name: helptext_system_certificates.add.fieldset_key_usage,
+      label: true,
+      class: 'key_usage',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'key_usage-enabled',
+          placeholder: helptext_system_certificates.add.key_usage.enabled.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.enabled.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-digital_signature',
+          placeholder: helptext_system_certificates.add.key_usage.digital_signature.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.digital_signature.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-content_commitment',
+          placeholder: helptext_system_certificates.add.key_usage.content_commitment.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.content_commitment.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-key_encipherment',
+          placeholder: helptext_system_certificates.add.key_usage.key_encipherment.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.key_encipherment.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-data_encipherment',
+          placeholder: helptext_system_certificates.add.key_usage.data_encipherment.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.data_encipherment.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-key_agreement',
+          placeholder: helptext_system_certificates.add.key_usage.key_agreement.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.key_agreement.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-key_cert_sign',
+          placeholder: helptext_system_certificates.add.key_usage.key_cert_sign.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.key_cert_sign.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-crl_sign',
+          placeholder: helptext_system_certificates.add.key_usage.crl_sign.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.crl_sign.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-encipher_only',
+          placeholder: helptext_system_certificates.add.key_usage.encipher_only.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.encipher_only.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-decipher_only',
+          placeholder: helptext_system_certificates.add.key_usage.decipher_only.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.decipher_only.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'key_usage-extension_critical',
+          placeholder: helptext_system_certificates.add.key_usage.extension_critical.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.extension_critical.tooltip,
+        },
+      ]
+    },
   ]
   private internalFields: Array<any> = [
     'signedby',
