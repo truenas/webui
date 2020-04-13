@@ -1,6 +1,6 @@
 <mat-card 
-  class="view-card mini" 
-  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
+  class="view-card {{chassis.front.totalDriveTrays > 7 ? 'mini mini-xl': 'mini'}}"
+  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}" 
   id="{{currentTab.alias}}" 
   (window:resize)="onResize($event)"
   ngClass.gt-md="gt-md"
@@ -21,7 +21,8 @@
 
   </mat-toolbar>
 
-  <mat-card-content #cardcontent fxLayout="row">
+  <mat-card-content #cardcontent 
+    fxLayout="row">
     <div fxFlex="60%">
       <!-- LEGEND -->
       <div class="header-container" id="legend">
@@ -58,7 +59,7 @@
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
             <div *ngIf="findDiskBySlotNumber(i + 1)" style="position:absolute; z-index:12; left:12.5%; top:calc({{stackPositions()[i].y}}px + 8px);">
               <mat-icon 
-                [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE'}" 
+                [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE' && findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'}" 
                 role="img">
                 check_circle
               </mat-icon> &nbsp;
@@ -81,6 +82,14 @@
           <div>
             <ul>
               <li><strong>Pool:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</li>
+
+              <li><strong>Vdev:</strong>  &nbsp;&nbsp;&nbsp;
+                <span *ngIf="selectedVdev.type == 'DISK'">NONE</span>
+                <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
+                
+                <span *ngIf="selectedVdev.topology"> {{selectedVdev.topology == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
+              </li>
+
               <li><strong>Serial:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.serial}}</li>
               <li><strong>Status:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.status}}</li>
               <li><strong>Acoustic Level:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.acousticlevel}}</li>
@@ -98,11 +107,17 @@
                 <div class="capacity">{{converter(selectedDisk.size)}}</div>
               </div>
               <div class="disk-stats-wrapper" fxFlex>
-                <ul class="disk-stats">
+                <ul class="disk-stats" *ngIf="selectedDisk.stats; else nostats">
                   <li><strong>Read Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.read_errors}}</li>
                   <li><strong>Write Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.write_errors}}</li>
                   <li><strong>Checksum Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.checksum_errors}}</li>
                 </ul>
+                <ng-template #nostats>
+                  <div style="padding:48px; text-align:center">
+                    <mat-icon role="img" style="margin:6px;position:relative;top:5px">info_icon</mat-icon>
+                    <strong>Must be part of a pool to check errors</strong>
+                  </div>
+                </ng-template>
               </div>
               <!--<div class="disk-actions">
                 <button id="identify-btn" class="front-rear-toggle" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
@@ -132,12 +147,24 @@
           <h3 class="header">Drive Temperatures</h3>
           <div fxLayout="row wrap" fxLayoutGap="10%">
               <ng-container *ngIf="temperatures">
-                <temperature-meter *ngFor="let diskName of temperatures.keys;" 
-                  [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " 
-                  [source]="diskName" 
-                  [value]="temperatures.values[diskName]"
-                  [unit]="temperatures.unit"
-                  [symbolText]="temperatures.symbolText"></temperature-meter>
+                <ng-container *ngFor="let diskName of temperatures.keys;">
+                  <temperature-meter *ngIf="temperatures.values[diskName]; else notemps" 
+                    [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " 
+                    [source]="diskName" 
+                    [value]="temperatures.values[diskName]"
+                    [unit]="temperatures.unit"
+                    [symbolText]="temperatures.symbolText"></temperature-meter>
+                  <ng-template #notemps>
+                    <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
+                      <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}} 
+                      <tooltip style="position:relative; top:5px;" 
+                        position="above" 
+                        header="Temperature data missing." 
+                        message="No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here">
+                      </tooltip>
+                    </div>
+                  </ng-template>
+                </ng-container>
               </ng-container>
             <!--<ul>
               <ng-container *ngIf="temperatures">

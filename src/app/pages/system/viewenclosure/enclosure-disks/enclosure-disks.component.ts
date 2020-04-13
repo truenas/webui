@@ -134,7 +134,21 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   constructor(public el:ElementRef, protected core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
     
     core.register({observerClass: this, eventName: 'DiskTemperatures'}).subscribe((evt:CoreEvent) => {
-      this.temperatures = evt.data;
+      if(!this.chassis || !this.chassis[this.view] || !this.chassis[this.view].driveTrayObjects){ return; }
+
+      let clone: Temperature = Object.assign({}, evt.data);
+      clone.values = {};
+      clone.keys = [];
+
+      this.chassis[this.view].driveTrayObjects.forEach((dt, index) => {
+        const disk = this.findDiskBySlotNumber(parseInt(dt.id));
+        if(disk){
+          clone.keys.push(disk.name);
+          clone.values[disk.name] = evt.data.values[disk.name];
+        }
+      });
+
+      this.temperatures = clone;
     });
     core.emit({name:"DiskTemperaturesSubscribe", sender:this});
 
