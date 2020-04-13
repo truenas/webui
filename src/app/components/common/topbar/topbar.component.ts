@@ -38,7 +38,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   interval: any;
 
-  continuousStreaming: Subscription;
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
@@ -88,6 +87,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   ngOnInit() {
     if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.checkEULA();
+
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
@@ -140,12 +140,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     });
 
-    this.continuousStreaming = interval(10000).subscribe(x => {
-      if (this.is_ha) {
-        this.getHAStatus();
-      }
-    });
-
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
       if(res && res.fields.scan.function.indexOf('RESILVER') > -1 ) {
         this.resilveringDetails = res.fields;
@@ -184,7 +178,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       clearInterval(this.interval);
     }
 
-    this.continuousStreaming.unsubscribe();
+    this.ws.unsubscribe('failover.disabled_reasons');
 
     this.core.unregister({observerClass:this});
   }
@@ -389,23 +383,32 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     );
   }
 
+  updateHAInfo(info) {
+    let ha_enabled = false;
+    this.ha_disabled_reasons = info;
+    if (info.length > 0) {
+      this.ha_status_text = helptext.ha_status_text_disabled;
+    } else {
+      ha_enabled = true;
+      this.ha_status_text = helptext.ha_status_text_enabled;
+      if (!this.pendingUpgradeChecked) {
+        this.checkUpgradePending();
+      }
+    }
+
+    this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
+    window.sessionStorage.setItem('ha_status', ha_enabled.toString());
+  }
+
   getHAStatus() {
     this.ws.call('failover.disabled_reasons').subscribe(res => {
-      let ha_enabled = false;
-      this.ha_disabled_reasons = res;
-      if (res.length > 0) {
-        this.ha_status_text = helptext.ha_status_text_disabled;
-      } else {
-        ha_enabled = true;
-        this.ha_status_text = helptext.ha_status_text_enabled;
-        if (!this.pendingUpgradeChecked) {
-          this.checkUpgradePending();
-        }
-      }
-
-      this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
-      window.sessionStorage.setItem('ha_status', ha_enabled.toString());
+      this.updateHAInfo(res);
     });
+    if (this.is_ha) {
+      this.ws.subscribe('failover.disabled_reasons').subscribe((evt) => {
+        this.updateHAInfo(evt.fields.disabled_reasons);
+      })
+    }
   }
 
   showHAStatus() {

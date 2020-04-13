@@ -188,6 +188,7 @@ export const helptext_system_general = {
     title: T('Upload Config'),
     button_text: T("Upload"),
     tooltip: T('Browse to the locally saved configuration file.'),
+    validation: [Validators.required],
     message: T(
       '<p>The system will reboot to perform this operation!</p>\
  <p><font color="red">All passwords are reset when the \
