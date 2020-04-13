@@ -36,8 +36,6 @@ export class DriveTray {
 
     this.handle = PIXI.Sprite.from(this.loader.resources[this.model + alt + '_drivetray_handle'].texture.baseTexture);
 
-    if(altAssets)console.log(this.container);
-
     if(this.vertical){
       this.background.rotation = -90 * (3.14 / 180);
       this.background.y += this.background.width;

@@ -82,6 +82,14 @@
           <div>
             <ul>
               <li><strong>Pool:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</li>
+
+              <li><strong>Vdev:</strong>  &nbsp;&nbsp;&nbsp;
+                <span *ngIf="selectedVdev.type == 'DISK'">NONE</span>
+                <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
+                
+                <span *ngIf="selectedVdev.topology"> {{selectedVdev.topology == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
+              </li>
+
               <li><strong>Serial:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.serial}}</li>
               <li><strong>Status:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.status}}</li>
               <li><strong>Acoustic Level:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.acousticlevel}}</li>

@@ -373,7 +373,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
   
   setupEnclosureEvents(enclosure){
-    console.log(this.system);
     this.enclosure.events.subscribe((evt) => {
       switch(evt.name){
         case "Ready":
