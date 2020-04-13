@@ -53,6 +53,9 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     }
 
     this.setupEnclosureEvents(enclosure);
+
+    // Slight adjustment to align with external html elements
+    this.container.setTransform(-30);
   }
 
   count(obj: any){

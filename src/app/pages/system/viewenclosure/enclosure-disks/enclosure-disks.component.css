@@ -425,6 +425,14 @@ div.vdev-disk {
   height: 100%;
 }
 
+.mini .overlay.names{
+  min-width:20%;
+}
+
+.mini .overlay.status{
+  min-width:30%;
+}
+
 .mini .overlay.status .status-text{
   display: block;
   left: 32px;
