@@ -8,6 +8,7 @@ import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { MINI } from 'app/core/classes/hardware/mini';
 import { MINIXL } from 'app/core/classes/hardware/mini-xl';
+import { MINIXLPLUS } from 'app/core/classes/hardware/mini-xl-plus';
 import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
@@ -43,8 +44,11 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
       case "FREENAS-MINI-3.0-E+":
         this.chassis = new MINI();
       break;
-      case "FREENAS-MINI-3.0-XL+":
+      /*case "FREENAS-MINI-2.0-XL":
         this.chassis = new MINIXL();
+      break;*/
+      case "FREENAS-MINI-3.0-XL+":
+        this.chassis = new MINIXLPLUS();
       break;
       default:
         console.warn("UNSUPPORTED MODEL: Using generic Mini");
