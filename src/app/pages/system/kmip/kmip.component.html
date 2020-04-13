@@ -1,16 +1,21 @@
 <mat-card class="kmip-status-card">
+    <mat-spinner class="kmip-spinner" [diameter]='40' id="kmip-spinner" *ngIf="showSpinner"></mat-spinner>
     <mat-card-content>
         <h4>{{ 'KMIP Key Status' | translate }}</h4>
-        <div class="key-status">
-            <div *ngIf="sync_pending; else keySync">
+        <div class="key-status" *ngIf="!showSpinner">
+            <div *ngIf="sync_pending">
                 <mat-icon class="key-pending" role="img" fontSet="mdi-set" fontIcon="mdi-dots-horizontal-circle">
                 </mat-icon>
                 <span>{{ 'Pending' | translate }}</span>
             </div>
-            <ng-template #keySync class="key-syncing">
+            <div *ngIf="!kmip_enabled">
+                <mat-icon class="key-disabled" role="img" fontSet="mdi-set" fontIcon="mdi-sync-off"></mat-icon>
+                <span>{{ 'Disabled' | translate }}</span>
+            </div>
+            <div class="key-syncing" *ngIf="!sync_pending && kmip_enabled">
                 <mat-icon class="key-syncing" role="img" fontSet="mdi-set" fontIcon="mdi-cached"></mat-icon>
                 <span>{{ 'Syncing' | translate }}</span>
-            </ng-template>
+            </div>
         </div>
     </mat-card-content>
     <mat-card-actions>
