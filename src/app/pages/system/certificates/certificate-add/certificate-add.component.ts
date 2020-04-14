@@ -782,6 +782,9 @@ export class CertificateAddComponent {
 
     Object.keys(data).forEach(key => {
       if (key.startsWith('basic_constraints')) {
+        if (data[key] === '') {
+          data[key] = null;
+        }
         cert_extensions.BasicConstraints[key.split('-')[1]] = data[key];
         delete data[key];
       } else if (key.startsWith('authority_key_identifier')) {
