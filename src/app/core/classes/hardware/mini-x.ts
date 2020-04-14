@@ -38,15 +38,15 @@ export class MINIX extends Chassis {
   onLoaded(){
     // Scale the Chassis
     let chassis = this.front.container.getChildAt(0);
-    const scale: number = 0.8;
+    const scale: number = 0.95; //0.9;
     //const backY = 20; // 100
 
     // Scale the 2.5"
-    const scaleDT = (673 / 960) * 0.9;
+    const scaleDT = (673 / 960) * 1.1;//* 0.9;
    
     // We must hardcode the coordinates because 
     // the parent container's dimensions are not constant
-    chassis.setTransform( 20, 0 , scale, scale); // x, y, scaleX, scaleY 
+    chassis.setTransform( 0, 0 , scale, scale); // x, y, scaleX, scaleY 
 
     // Place the drives
     this.front.driveTrayObjects.forEach((dt, index) => {     
@@ -55,12 +55,12 @@ export class MINIX extends Chassis {
       if(index < 5){
 
         // x, y, scaleX, scaleY
-        dt.container.setTransform(118, offsetY + dt.container.y + (index * dt.container.height * 0.98), 0.93, 0.9);
+        dt.container.setTransform(118, offsetY + dt.container.y + (index * dt.container.height * 1.14), 1.14, 1.1);
       } else {
-        offsetY += 150;
+        offsetY += 180;
         // SSD
         //dt.container.setTransform(0, 121 - backY, 0.73, 0.73);       
-        dt.container.setTransform(145, offsetY + dt.container.y + (index * dt.container.height * scaleDT), scaleDT, scaleDT );
+        dt.container.setTransform(155, offsetY + dt.container.y + (index * dt.container.height * scaleDT), scaleDT, scaleDT );
       }
     });
   }

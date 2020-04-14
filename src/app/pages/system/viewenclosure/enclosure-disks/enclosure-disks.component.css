@@ -444,6 +444,15 @@ div.vdev-disk {
   margin-top: 8px;
 }
 
+.mini .slot-label{
+  border-radius: 50%;
+  text-align: center;
+  padding: 2px 0px 16px 0px;
+  font-size: 0.65rem;
+  width: 18px;
+  height: 18px;
+}
+
 /* END MINI OVERRIDES */
 
 .view-card.md .dom-overlay.stage-left, .view-card.md .dom-overlay.stage-right,

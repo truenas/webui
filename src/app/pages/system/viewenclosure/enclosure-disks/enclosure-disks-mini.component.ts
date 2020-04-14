@@ -74,9 +74,9 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   stackPositions(log:boolean = false){
     const result = this.enclosure.driveTrayObjects.map((dt, index) => { 
       const disk = this.findDiskBySlotNumber(index + 1);
-      if(disk){
+      //if(disk){
         return dt.container.getGlobalPosition();
-      }
+      //}
     });
 
     if(log){
