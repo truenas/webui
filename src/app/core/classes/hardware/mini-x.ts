@@ -8,7 +8,7 @@ export class MINIX extends Chassis {
 
   constructor(){
     super();
-    this.model = "mini-xl+";
+    this.model = "mini-x";
     
     this.front = new ChassisView();
     this.front.model = this.model;
@@ -39,28 +39,28 @@ export class MINIX extends Chassis {
     // Scale the Chassis
     let chassis = this.front.container.getChildAt(0);
     const scale: number = 0.8;
-    const backY = 100;
+    //const backY = 20; // 100
 
     // Scale the 2.5"
     const scaleDT = (673 / 960) * 0.9;
    
     // We must hardcode the coordinates because 
     // the parent container's dimensions are not constant
-    chassis.setTransform( -20, 170 - backY, scale, scale); // x, y, scaleX, scaleY 
+    chassis.setTransform( 20, 0 , scale, scale); // x, y, scaleX, scaleY 
 
     // Place the drives
     this.front.driveTrayObjects.forEach((dt, index) => {     
-      let offsetY: number = 17;
+      let offsetY: number = -50;
       // HDD
       if(index < 5){
 
         // x, y, scaleX, scaleY
-        dt.container.setTransform(78, offsetY + dt.container.y + (index * dt.container.height * 0.98), 0.93, 0.9);
+        dt.container.setTransform(118, offsetY + dt.container.y + (index * dt.container.height * 0.98), 0.93, 0.9);
       } else {
         offsetY += 150;
         // SSD
         //dt.container.setTransform(0, 121 - backY, 0.73, 0.73);       
-        dt.container.setTransform(105, offsetY + dt.container.y + (index * dt.container.height * scaleDT), scaleDT, scaleDT );
+        dt.container.setTransform(145, offsetY + dt.container.y + (index * dt.container.height * scaleDT), scaleDT, scaleDT );
       }
     });
   }
