@@ -95,11 +95,19 @@ export class KmipComponent {
                     name: 'manage_zfs_keys',
                     placeholder: helptext_system_kmip.manage_zfs_keys.placeholder,
                     tooltip: helptext_system_kmip.manage_zfs_keys.tooltip
+                },
+                {
+                    type: 'checkbox',
+                    name: 'enabled',
+                    placeholder: helptext_system_kmip.enabled.placeholder,
+                    tooltip: helptext_system_kmip.enabled.tooltip
                 }
             ]
         }
     ];
 
+    public showSpinner = true;
+    public kmip_enabled;
     public sync_pending = false;
 
     constructor(
@@ -107,15 +115,26 @@ export class KmipComponent {
         private dialogService: DialogService,
         private dialog: MatDialog,
         private ws: WebSocketService) {
-            this.ws.call('kmip.kmip_sync_pending').subscribe(
+            this.ws.call(this.queryCall).subscribe(
                 (res) => {
-                    this.sync_pending = res;
-                    console.log('kmip_sync_pending', res)
+                    this.kmip_enabled = res.enabled;
+                    if (this.kmip_enabled) {
+                        this.ws.call('kmip.kmip_sync_pending').subscribe(
+                            (isPending) => {
+                                this.showSpinner = false;
+                                this.sync_pending = isPending;
+                            },
+                            (penddingCallErr) => {
+                                new EntityUtils().handleWSError(this, penddingCallErr, this.dialogService);
+                            }
+                        )
+                    } else {
+                        this.showSpinner = false;
+                    }
                 },
                 (err) => {
                     new EntityUtils().handleWSError(this, err, this.dialogService);
-                }
-            )
+                })
         }
 
     preInit() {
@@ -136,7 +155,7 @@ export class KmipComponent {
     }
     afterInit(entityForm) {
         this.entityForm = entityForm;
-        this.fieldConfig = entityForm.fieldConfig
+        this.fieldConfig = entityForm.fieldConfig;
     }
 
     customSubmit(data) {

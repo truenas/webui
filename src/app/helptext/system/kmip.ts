@@ -46,6 +46,11 @@ export const helptext_system_kmip = {
  leaves all encryption key management with the local system.'),
     },
 
+    enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T('Activate KMIP configuration and begin syncing keys with the KMIP server.'),
+    },
+
     jobDialog: {
         title: T('Saving KMIP Config'),
     },

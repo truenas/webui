@@ -33,3 +33,15 @@ mat-icon.key-pending {
     top: 2px;
     color: var(--green);
 }
+
+mat-icon.key-disabled {
+    top: 3px;
+    color: var(--grey);
+}
+
+.kmip-spinner {
+    position: absolute;
+    top: 30px; left: 0; bottom: 0; right: 0;
+    z-index: 10;
+    margin: 0 auto;
+}

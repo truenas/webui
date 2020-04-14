@@ -404,6 +404,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<b>Success!</b> The API key has been created or reset. <b>This is the only "
+"time the key is shown.</b>"
+msgstr ""
+
+msgid ""
 "<b>WARNING:</b> Rolling the dataset back  destroys data on the dataset "
 "<i>and</i> can destroy additional snapshots  that are related to the "
 "dataset. <b>This can result in permanent data  loss!</b> Do not roll back "
@@ -682,19 +687,22 @@ msgstr ""
 msgid "AD Timeout"
 msgstr ""
 
+msgid "ADD"
+msgstr ""
+
 msgid "AFP"
 msgstr ""
 
 msgid "AFP3 Unix Privs"
 msgstr ""
 
-msgid "API"
-msgstr ""
-
 msgid "API Key"
 msgstr ""
 
 msgid "API Key or Password"
+msgstr ""
+
+msgid "API Keys"
 msgstr ""
 
 msgid "API URL"
@@ -849,6 +857,9 @@ msgstr ""
 msgid "Add ACME Certificate"
 msgstr ""
 
+msgid "Add API Key"
+msgstr ""
+
 msgid "Add Additional Path"
 msgstr ""
 
@@ -951,6 +962,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Additional  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=\"_blank\">smb.conf</a>  parameters."
+msgstr ""
+
+msgid ""
 "Additional <a "
 "href=\"http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html\" "
 "target=\"_blank\">afp.conf(5)</a> parameters."
@@ -967,9 +983,6 @@ msgid ""
 "Additional <a "
 "href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
 "in\" target=\"_blank\">smartctl(8)</a> options."
-msgstr ""
-
-msgid "Additional <b>smb5.conf</b> parameters not covered by other option fields."
 msgstr ""
 
 msgid "Additional Data VDevs to Create"
@@ -1002,6 +1015,11 @@ msgid "Additional Parameters"
 msgstr ""
 
 msgid ""
+"Additional domains to search. Separate entries by  pressing "
+"<code>Enter</code>. Adding search domains can cause slow DNS  lookups."
+msgstr ""
+
+msgid ""
 "Additional hosts to be appended to <i>/etc/hosts</i>. Separate entries by "
 "pressing <code>Enter</code>. Hosts defined here are  still accessible by "
 "name even when DNS is not available. See  <a "
@@ -1022,11 +1040,6 @@ msgid ""
 msgstr ""
 
 msgid "Additional parameters."
-msgstr ""
-
-msgid ""
-"Additional space-delimited domains to search.  Separate entries by pressing "
-"<code>Enter</code>. Adding search  domains can cause slow DNS lookups."
 msgstr ""
 
 msgid "Address"
@@ -1293,7 +1306,25 @@ msgid ""
 "target=\"_blank\">vmm(4)</a> kernel module loaded."
 msgstr ""
 
+msgid ""
+"Allow using open file handles that can withstand short disconnections.  "
+"Support for POSIX byte-range locks in Samba is also disabled. This option "
+"is not recommended when  configuring multi-protocol or local access to "
+"files."
+msgstr ""
+
 msgid "Allowed Initiators (IQN)"
+msgstr ""
+
+msgid ""
+"Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\" "
+"target\"_blank\">NTFS data streams</a>.  Disabling this option causes MacOS "
+"to write streams to files on the filesystem."
+msgstr ""
+
+msgid ""
+"Allows the drive to enter standby, even when non-physical S.M.A.R.T.  "
+"operations could prevent the drive from sleeping."
 msgstr ""
 
 msgid ""
@@ -1357,6 +1388,16 @@ msgid ""
 "characters."
 msgstr ""
 
+msgid ""
+"Amount of disk space that can be used by the selected groups.  Entering "
+"<code>0</code> (zero) allows all disk space."
+msgstr ""
+
+msgid ""
+"Amount of disk space that can be used by the selected users.  Entering "
+"<code>0</code> (zero) allows all disk space to be used."
+msgstr ""
+
 msgid "Amount of locked memory in bytes for the jail."
 msgstr ""
 
@@ -1387,12 +1428,12 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Append a suffix (possibly containing a macro) to the share's connect path. "
-"This can be used to provide unique shares on a per-user, per-computer, or "
-"per-IP address basis. See <a "
+"Appends a suffix to the share connection path.  This is used to provide "
+"unique shares on a per-user, per-computer, or per-IP address basis.  "
+"Suffixes can contain a macro. See  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a> for list of supported macros. The "
-"connectpath _must_ be pre-staged before client connection."
+"target=\"_blank\">smb.conf(5)</a> for a list of supported macros. The "
+"connectpath **must** be preset before a client connects."
 msgstr ""
 
 msgid "Apple Shares (AFP)"
@@ -1426,6 +1467,12 @@ msgid "Apply Pending update"
 msgstr ""
 
 msgid "Apply Permissions Recursively"
+msgstr ""
+
+msgid "Apply Quotas to Selected Groups"
+msgstr ""
+
+msgid "Apply Quotas to Selected Users"
 msgstr ""
 
 msgid "Apply Update"
@@ -1888,6 +1935,12 @@ msgid "Burst"
 msgstr ""
 
 msgid ""
+"By default, Samba uses a hashing algorithm for NTFS illegal  characters. "
+"Enabling this option translates NTFS illegal characters to the Unicode "
+"private range."
+msgstr ""
+
+msgid ""
 "By default, all data disks are created with the amount of swap specified. "
 "Changing the value does not affect the amount of swap on existing disks, "
 "only disks added after the change. Does not affect log or cache devices as "
@@ -1929,6 +1982,9 @@ msgid "CN Realm"
 msgstr ""
 
 msgid "COLORS"
+msgstr ""
+
+msgid "COPY TO CLIPBOARD"
 msgstr ""
 
 msgid "CPU"
@@ -2068,6 +2124,9 @@ msgid ""
 msgstr ""
 
 msgid "Change log"
+msgstr ""
+
+msgid "Change order for "
 msgstr ""
 
 msgid ""
@@ -2959,6 +3018,9 @@ msgstr ""
 msgid "Create or Import pool"
 msgstr ""
 
+msgid "Created Date"
+msgstr ""
+
 msgid ""
 "Creates dataset snapshots even when there  have been no changes to the "
 "dataset from the last snapshot. Recommended  for creating long-term restore "
@@ -3008,6 +3070,13 @@ msgid "Cron Job"
 msgstr ""
 
 msgid "Cron Jobs"
+msgstr ""
+
+msgid ""
+"Cryptographic protocols for securing client/server connections. Select "
+"which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
+"target=\"_blank\">Transport Layer Security (TLS)</a> versions TrueNAS can "
+"use for connection security."
 msgstr ""
 
 msgid "Current Password"
@@ -3087,7 +3156,19 @@ msgstr ""
 msgid "DNS timeout in seconds. Increase this value if DNS queries timeout."
 msgstr ""
 
+msgid "DOCS"
+msgstr ""
+
 msgid "DOCUMENTATION"
+msgstr ""
+
+msgid "DQ % Used"
+msgstr ""
+
+msgid "DQ Bytes Used"
+msgstr ""
+
+msgid "DQ Used"
 msgstr ""
 
 msgid "Daily"
@@ -3097,6 +3178,9 @@ msgid "Dashboard"
 msgstr ""
 
 msgid "Data"
+msgstr ""
+
+msgid "Data Quota"
 msgstr ""
 
 msgid "Data VDevs"
@@ -3313,6 +3397,11 @@ msgstr ""
 msgid "Delay VM Boot Until VNC Connects"
 msgstr ""
 
+msgid ""
+"Delays the start of network services until  pings are returned from the IP "
+"addresses added to the  <i>Netwait IP List</i>."
+msgstr ""
+
 msgid "Delete"
 msgstr ""
 
@@ -3380,9 +3469,6 @@ msgstr ""
 msgid "Delete the zvol "
 msgstr ""
 
-msgid "Delete this device?"
-msgstr ""
-
 msgid "Delete this path."
 msgstr ""
 
@@ -3436,6 +3522,9 @@ msgstr ""
 msgid "Description of the share or notes on how it is used."
 msgstr ""
 
+msgid "Descriptive identifier for this API key."
+msgstr ""
+
 msgid "Descriptive identifier for this certificate authority."
 msgstr ""
 
@@ -3483,6 +3572,9 @@ msgid "Detach disk "
 msgstr ""
 
 msgid "Details"
+msgstr ""
+
+msgid "Details for "
 msgstr ""
 
 msgid ""
@@ -3790,6 +3882,9 @@ msgstr ""
 msgid "EC Curve"
 msgstr ""
 
+msgid "EDIT"
+msgstr ""
+
 msgid "ENTER LICENSE"
 msgstr ""
 
@@ -3811,6 +3906,9 @@ msgstr ""
 msgid "Edit ACL"
 msgstr ""
 
+msgid "Edit API Key"
+msgstr ""
+
 msgid "Edit Alert Service"
 msgstr ""
 
@@ -3818,6 +3916,9 @@ msgid "Edit Disk(s)"
 msgstr ""
 
 msgid "Edit Filesystem ACL"
+msgstr ""
+
+msgid "Edit Group"
 msgstr ""
 
 msgid "Edit Idmap"
@@ -3830,6 +3931,9 @@ msgid "Edit Permissions"
 msgstr ""
 
 msgid "Edit Share ACL"
+msgstr ""
+
+msgid "Edit User"
 msgstr ""
 
 msgid "Edit Zvol"
@@ -3883,7 +3987,9 @@ msgstr ""
 msgid "Enable ACL"
 msgstr ""
 
-msgid "Enable ACL support for the SMB share"
+msgid ""
+"Enable ACL support for the SMB share. Disabling ACL  support for a share "
+"deletes that ACL."
 msgstr ""
 
 msgid "Enable Active Directory"
@@ -3893,17 +3999,6 @@ msgid "Enable Alternate Data Streams"
 msgstr ""
 
 msgid "Enable Apple SMB2/3 Protocol Extensions"
-msgstr ""
-
-msgid ""
-"Enable Apple SMB2/3 Protocol Extensions. This is required for Time Machine "
-"support."
-msgstr ""
-
-msgid "Enable Apple-style Character"
-msgstr ""
-
-msgid "Enable Apple-style character encoding for NTFS illegal characters."
 msgstr ""
 
 msgid "Enable Atime"
@@ -3939,7 +4034,7 @@ msgstr ""
 msgid "Enable SMB1 support"
 msgstr ""
 
-msgid "Enable SMB2/3 durable handles"
+msgid "Enable SMB2/3 Durable Handles"
 msgstr ""
 
 msgid "Enable Serial Console"
@@ -4002,24 +4097,13 @@ msgid "Enable service"
 msgstr ""
 
 msgid ""
-"Enable support for Alternate Data Streams. Disabling support for streams "
-"will cause MacOS to write streams to files on the filesystem."
-msgstr ""
-
-msgid ""
-"Enable support for SMB2/3 durable handles. This parameter disables support "
-"for POSIX byte-range locks in Samba and may be unsuitable if multi-protocol "
-"(or local) access to the files is anticipated."
-msgstr ""
-
-msgid ""
-"Enable support for the File Server Remote VSS Protocol (<a "
+"Enable support for the File Server Remote VSS Protocol  (<a "
 "href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-"
-"fsrvp\" target=\"_blank\">FSVRP</a>). This protocol allows RPC clients to "
-"manage snapshots of the specified SMB share. Share path must be a dataset "
-"mountpoint. Snapshots will have a prefix \"fss-\" followed by the timestamp "
-"for when the snapshot was taken. RPC users will not be able to delete "
-"snapshots that don't have this prefix."
+"fsrvp\" target=\"_blank\">FSVRP</a>).  This protocol allows RPC clients to "
+"manage snapshots for a specific SMB share.  The share path must be a "
+"dataset mountpoint. Snapshots have the prefix  <code>fss-</code> followed "
+"by a snapshot creation timestamp. A snapshot must have  this prefix for an "
+"RPC user to delete it."
 msgstr ""
 
 msgid ""
@@ -4270,6 +4354,14 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Enter a list of IP addresses to  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
+"target=\"_blank\">ping</a>.  Separate entries by pressing "
+"<code>Enter</code>. Each address is tried  until one is successful or the "
+"list is exhausted. Leave empty to use  the default gateway."
+msgstr ""
+
+msgid ""
 "Enter a list of allowed hostnames or IP addresses. Separate entries by "
 "pressing <code>Enter</code>."
 msgstr ""
@@ -4371,14 +4463,6 @@ msgstr ""
 msgid ""
 "Enter a separate privacy passphrase. <b>Password</b> is used when this is "
 "left empty."
-msgstr ""
-
-msgid ""
-"Enter a space-delimited list of IP addresses to  <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
-"target=\"_blank\">ping(8)</a>.  Separate entries by pressing "
-"<code>Enter</code>. Each address is tried  until one is successful or the "
-"list is exhausted. Leave empty to use  the default gateway."
 msgstr ""
 
 msgid ""
@@ -4544,12 +4628,6 @@ msgstr ""
 msgid ""
 "Enter either <i>root</i> or another valid <i>username</i>. Inside the jail, "
 "commands run as this user."
-msgstr ""
-
-msgid ""
-"Enter network proxy information if a proxy is used. Example: "
-"<i>http://my.proxy.server:3128</i> or "
-"<i>http://user:password@my.proxy.server:3128</i>"
 msgstr ""
 
 msgid "Enter or paste an Authentication token."
@@ -5183,6 +5261,12 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+msgid "Filter Groups"
+msgstr ""
+
+msgid "Filter Users"
+msgstr ""
+
 msgid "Finding Pools"
 msgstr ""
 
@@ -5239,6 +5323,9 @@ msgid "Force Delete"
 msgstr ""
 
 msgid "Force Delete?"
+msgstr ""
+
+msgid "Force HDD Standby"
 msgstr ""
 
 msgid "Force Stop After Timeout"
@@ -5463,12 +5550,21 @@ msgstr ""
 msgid "Group Configuration"
 msgstr ""
 
+msgid "Group Data Quota "
+msgstr ""
+
 msgid "Group ID"
 msgstr ""
 
 msgid ""
 "Group ID created in  Authorized Access. Required when the Discovery "
 "Authentication Method is set to  CHAP or Mutual CHAP."
+msgstr ""
+
+msgid "Group Object Quota"
+msgstr ""
+
+msgid "Group Quotas"
 msgstr ""
 
 msgid "Group members"
@@ -5541,6 +5637,9 @@ msgid "HTTP host URL."
 msgstr ""
 
 msgid "HTTPS Port"
+msgstr ""
+
+msgid "HTTPS Protocols"
 msgstr ""
 
 msgid "Help"
@@ -6172,6 +6271,11 @@ msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
 msgstr ""
 
 msgid ""
+"Invalid value. Valid values are numbers followed by optional unit letters  "
+"for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>."
+msgstr ""
+
+msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
 "like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>."
 msgstr ""
@@ -6484,9 +6588,9 @@ msgid "Legacy"
 msgstr ""
 
 msgid ""
-"Legacy NetBIOS name server. Advertises the SMB  Service <i>NetBIOS "
-"Name</i>. Could be required for legacy SMB1 clients  to discover the server "
-"(server appears in <i>Network Neighborhood</i>)."
+"Legacy NetBIOS name server. Advertises the SMB  service <i>NetBIOS "
+"Name</i>. Can be required for legacy SMB1 clients  to discover the server. "
+"When advertised, the server appears in  <i>Network Neighborhood</i>)."
 msgstr ""
 
 msgid "Legacy Web Interface"
@@ -7248,7 +7352,7 @@ msgstr ""
 msgid "Netmask"
 msgstr ""
 
-msgid "Netwait IP list"
+msgid "Netwait IP List"
 msgstr ""
 
 msgid "Network"
@@ -7503,6 +7607,16 @@ msgid "Number of days to renew certificate before expiring."
 msgstr ""
 
 msgid ""
+"Number of objects that can be owned by each of the selected groups.  "
+"Entering <code>0</code> (zero) allows unlimited objects."
+msgstr ""
+
+msgid ""
+"Number of objects that can be owned by each of the selected users.  "
+"Entering <code>0</code> (zero) allows unlimited objects."
+msgstr ""
+
+msgid ""
 "Number of points for each hourly, daily,  weekly, monthly, or yearly graph "
 "(allowed values are 1-4096). Changing this value causes the  <i>Confirm RRD "
 "Destroy</i> dialog to appear. Changes do not take  effect until the "
@@ -7571,6 +7685,18 @@ msgid "OAuth Client Secret"
 msgstr ""
 
 msgid "OK"
+msgstr ""
+
+msgid "OQ % Used"
+msgstr ""
+
+msgid "OQ Objs Used"
+msgstr ""
+
+msgid "Object Quota"
+msgstr ""
+
+msgid "Objects Used"
 msgstr ""
 
 msgid "Oct"
@@ -7766,6 +7892,15 @@ msgid "Out"
 msgstr ""
 
 msgid "Outgoing Mail Server"
+msgstr ""
+
+msgid "Overprovision Size in GiB"
+msgstr ""
+
+msgid ""
+"Overprovisioning can increase the performance and lifespan of SSDs.  "
+"Defining a number of GiB here overprovisions disks during pool creation.  "
+"Examples: 50 GiB, 10g, 5GB"
 msgstr ""
 
 msgid ""
@@ -8243,13 +8378,16 @@ msgstr ""
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
-"versions of FreeNAS: "
+"versions of TrueNAS: "
 msgstr ""
 
 msgid "Production status successfully updated"
 msgstr ""
 
 msgid "Progress"
+msgstr ""
+
+msgid "Prohibits writes to this share."
 msgstr ""
 
 msgid "Promote Dataset"
@@ -8535,6 +8673,12 @@ msgid "Remove disk "
 msgstr ""
 
 msgid "Remove passphrase"
+msgstr ""
+
+msgid ""
+"Remove the existing API key and generate a new random key. A dialog shows "
+"the new key and has an option to copy the key. Back up and secure the API "
+"key! The key string is displayed only one time, at creation."
 msgstr ""
 
 msgid "Rename"
@@ -8868,6 +9012,9 @@ msgstr ""
 msgid "SASL wrapping"
 msgstr ""
 
+msgid "SAVE"
+msgstr ""
+
 msgid "SAVE CONFIGURATION"
 msgstr ""
 
@@ -9087,6 +9234,22 @@ msgstr ""
 msgid "Scrub interval (in days)"
 msgstr ""
 
+msgid "Search For Connected Groups"
+msgstr ""
+
+msgid "Search For Connected Users"
+msgstr ""
+
+msgid ""
+"Search for all connected groups.  Type a group name and press <i>ENTER</i>. "
+"A warning is shown  if there are no matches."
+msgstr ""
+
+msgid ""
+"Search for all connected users.  Type a user name and press <i>ENTER</i>. A "
+"warning is shown  if there are no matches."
+msgstr ""
+
 msgid ""
 "Search the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
 "target=\"_blank\">FreeNAS issue tracker</a>    to ensure the issue has not "
@@ -9227,9 +9390,15 @@ msgstr ""
 msgid "Select Existing zvol"
 msgstr ""
 
+msgid "Select Groups Cached by this System"
+msgstr ""
+
 msgid ""
 "Select IP addresses to listen to for NFS requests. Leave empty for NFS to "
 "listen to all available addresses."
+msgstr ""
+
+msgid "Select Users Cached by this System"
 msgstr ""
 
 msgid "Select VM wizard type"
@@ -9435,9 +9604,6 @@ msgstr ""
 msgid ""
 "Select the Class of Service. The available 802.1p Class of Service ranges "
 "from <i>Best effort (default)</i>  to <i>Network control (highest)</i>."
-msgstr ""
-
-msgid "Select the IP addresses SMB will listen for."
 msgstr ""
 
 msgid ""
@@ -9769,6 +9935,15 @@ msgstr ""
 msgid "Set Passphrase"
 msgstr ""
 
+msgid "Set Quota"
+msgstr ""
+
+msgid "Set Quotas"
+msgstr ""
+
+msgid "Set Quotas (Bulk)"
+msgstr ""
+
 msgid "Set Warning Level"
 msgstr ""
 
@@ -10058,11 +10233,6 @@ msgid ""
 "select an existing group for the user."
 msgstr ""
 
-msgid ""
-"Set to delay the start of network services until pings are returned from "
-"the IP addresses in the <i>netwait IP list</i>."
-msgstr ""
-
 msgid "Set to delete this alias."
 msgstr ""
 
@@ -10253,9 +10423,6 @@ msgid "Set to prevent users from modifying the <b>Destination</b>."
 msgstr ""
 
 msgid "Set to prohibit users from writing to this share."
-msgstr ""
-
-msgid "Set to prohibit writes to this share"
 msgstr ""
 
 msgid "Set to prohibit writing to the share."
@@ -10517,6 +10684,12 @@ msgstr ""
 msgid "Show Advanced Fields by Default"
 msgstr ""
 
+msgid "Show All Groups"
+msgstr ""
+
+msgid "Show All Users"
+msgstr ""
+
 msgid "Show Console Messages"
 msgstr ""
 
@@ -10529,13 +10702,25 @@ msgstr ""
 msgid "Show Tracebacks in Case of Fatal Error"
 msgstr ""
 
+msgid "Show all available groups, even those that have not used any data."
+msgstr ""
+
+msgid "Show all available users, including those that have not used any data."
+msgstr ""
+
 msgid "Show only entries that contain this text"
+msgstr ""
+
+msgid "Show only those users who are using data. This is the default view."
 msgstr ""
 
 msgid ""
 "Showing extra columns in the table is useful for data filtering,  but can "
 "cause performance issues. NOTE: This window will reload automatically so "
 "that the new view can take effect."
+msgstr ""
+
+msgid "Shows only the groups that are using data. This is the default view."
 msgstr ""
 
 msgid ""
@@ -10782,6 +10967,11 @@ msgid "Starting job..."
 msgstr ""
 
 msgid "State"
+msgstr ""
+
+msgid ""
+"Static IP addresses which SMB listens on for connections.  Leaving all "
+"unselected defaults to listening on all active interfaces."
 msgstr ""
 
 msgid "Static IPv4 address of the IPMI web interface."
@@ -11395,6 +11585,18 @@ msgstr ""
 msgid "The lifetime of the CA specified in days."
 msgstr ""
 
+msgid ""
+"The list only shows users cached on this system. The search box   below can "
+"locate all users, including users connected with Active Directory or other "
+"services."
+msgstr ""
+
+msgid ""
+"The list shows only groups cached on this system. The search box   below "
+"can locate all groups, including groups connected with Active Directory or "
+"other services."
+msgstr ""
+
 msgid "The maximum length of the queue of pending connections. Default is 100."
 msgstr ""
 
@@ -11630,6 +11832,13 @@ msgid "There is an upgrade waiting to finish."
 msgstr ""
 
 msgid ""
+"These  <a href=\"https://support.apple.com/en-us/HT210803\" "
+"target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
+"the performance and behavioral characteristics of SMB shares.  This is "
+"required for Time Machine support."
+msgstr ""
+
+msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\">rclone</a>."
 msgstr ""
@@ -11795,6 +12004,9 @@ msgid ""
 msgstr ""
 
 msgid "Toggle Collapse"
+msgstr ""
+
+msgid "Toggle Display"
 msgstr ""
 
 msgid "Toggle Hide/Open"
@@ -12199,6 +12411,9 @@ msgid ""
 "system time is set correctly."
 msgstr ""
 
+msgid "Use Apple-style Character Encoding"
+msgstr ""
+
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr ""
 
@@ -12217,13 +12432,13 @@ msgstr ""
 msgid "Use Signature Version 2"
 msgstr ""
 
+msgid "Use Syslog Only"
+msgstr ""
+
 msgid "Use all disk space"
 msgstr ""
 
 msgid "Use as Home Share"
-msgstr ""
-
-msgid "Use as home share"
 msgstr ""
 
 msgid ""
@@ -12240,9 +12455,6 @@ msgid "Use existing disk image"
 msgstr ""
 
 msgid "Use settings from a saved replication."
-msgstr ""
-
-msgid "Use syslog only"
 msgstr ""
 
 msgid ""
@@ -12296,6 +12508,9 @@ msgstr ""
 msgid "User Controls"
 msgstr ""
 
+msgid "User Data Quota "
+msgstr ""
+
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr ""
 
@@ -12318,6 +12533,12 @@ msgid ""
 msgstr ""
 
 msgid "User Name"
+msgstr ""
+
+msgid "User Object Quota"
+msgstr ""
+
+msgid "User Quotas"
 msgstr ""
 
 msgid "User account password for logging into the  remote system."
@@ -12702,8 +12923,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"When enabled, the ACLs grant read and write access for owner or group and "
-"read-only for others. <b>Only</b> leave unset when creating a share on a "
+"When enabled, the ACLs grant read and  write access for owner or group and "
+"read-only for others. <b>Only</b> leave  unset when creating a share on a "
 "system that already has custom ACLs configured."
 msgstr ""
 
@@ -12755,6 +12976,12 @@ msgid ""
 "names to be prepended to user names. One possible reason for unsetting this "
 "value is to prevent username collisions when Allow Trusted Domains is set "
 "and there are identical usernames in more than one domain."
+msgstr ""
+
+msgid ""
+"When using a proxy, enter the proxy information for  the network in the "
+"format <i>http://my.proxy.server:3128</i> or  "
+"<i>http://user:password@my.proxy.server:3128</i>"
 msgstr ""
 
 msgid ""
@@ -13194,6 +13421,9 @@ msgstr "priorità"
 
 msgid "pseudoterminals"
 msgstr "pseudoterminali"
+
+msgid "reset"
+msgstr ""
 
 msgid "resolver"
 msgstr "risolvere"

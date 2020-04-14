@@ -390,11 +390,11 @@ export class StorageService {
     let i = -1;
     let dec, units;
     decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
-    if (bytes => 1024) {
+    if (bytes >= 1024) {
       do {
         bytes = bytes / 1024;
         i++;
-      } while (bytes > 1024 && i < 4);
+      } while (bytes >= 1024 && i < 4);
       units = this.IECUnits[i];
     } else {
       units = 'bytes';

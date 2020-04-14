@@ -1,0 +1,9 @@
+<div class="meter" *ngIf="source && value && unit">
+  <div class="source">{{source}}</div>
+  <div class="value">{{value}}<span *ngIf="symbolText">{{symbolText}}</span></div>
+  <div class="bar">
+    <mat-progress-bar mode="determinate" [value]="value"></mat-progress-bar>
+  </div>
+  <div class="min">0</div>
+  <div class="max">100</div>
+</div>
