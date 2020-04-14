@@ -47,6 +47,13 @@ export class CertificateAuthorityAddComponent {
             { label: 'Import CA', value: 'CA_CREATE_IMPORTED' },
           ],
           value: 'CA_CREATE_INTERNAL',
+        },
+        {
+          type: 'select',
+          name: 'profiles',
+          placeholder: helptext_system_ca.add.profiles.placeholder,
+          tooltip: helptext_system_ca.add.profiles.tooltip,
+          options: [],
         }
       ]
     },
@@ -299,26 +306,26 @@ export class CertificateAuthorityAddComponent {
       config: [
         {
           type: 'checkbox',
-          name: 'basic_constraints-ca',
+          name: 'BasicConstraints-ca',
           placeholder: helptext_system_ca.add.basic_constraints.ca.placeholder,
           tooltip: helptext_system_ca.add.basic_constraints.ca.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'basic_constraints-enabled',
+          name: 'BasicConstraints-enabled',
           placeholder: helptext_system_ca.add.basic_constraints.enabled.placeholder,
           tooltip: helptext_system_ca.add.basic_constraints.enabled.tooltip,
         },
         {
           type: 'input',
           inputType: 'number',
-          name: 'basic_constraints-path_length',
+          name: 'BasicConstraints-path_length',
           placeholder: helptext_system_ca.add.basic_constraints.path_length.placeholder,
           tooltip: helptext_system_ca.add.basic_constraints.path_length.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'basic_constraints-extension_critical',
+          name: 'BasicConstraints-extension_critical',
           placeholder: helptext_system_ca.add.basic_constraints.extension_critical.placeholder,
           tooltip: helptext_system_ca.add.basic_constraints.extension_critical.tooltip,
         }
@@ -332,19 +339,19 @@ export class CertificateAuthorityAddComponent {
       config: [
         {
           type: 'checkbox',
-          name: 'authority_key_identifier-authority_cert_issuer',
+          name: 'AuthorityKeyIdentifier-authority_cert_issuer',
           placeholder: helptext_system_ca.add.authority_key_identifier.authority_cert_issuer.placeholder,
           tooltip: helptext_system_ca.add.authority_key_identifier.authority_cert_issuer.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'authority_key_identifier-enabled',
+          name: 'AuthorityKeyIdentifier-enabled',
           placeholder: helptext_system_ca.add.authority_key_identifier.enabled.placeholder,
           tooltip: helptext_system_ca.add.authority_key_identifier.enabled.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'authority_key_identifier-extension_critical',
+          name: 'AuthorityKeyIdentifier-extension_critical',
           placeholder: helptext_system_ca.add.authority_key_identifier.extension_critical.placeholder,
           tooltip: helptext_system_ca.add.authority_key_identifier.extension_critical.tooltip,
         }
@@ -359,7 +366,7 @@ export class CertificateAuthorityAddComponent {
         {
           type: 'select',
           multiple: true,
-          name: 'extended_key_usage-usages',
+          name: 'ExtendedKeyUsage-usages',
           placeholder: helptext_system_ca.add.extended_key_usage.usages.placeholder,
           tooltip: helptext_system_ca.add.extended_key_usage.usages.tooltip,
           options: [],
@@ -367,13 +374,13 @@ export class CertificateAuthorityAddComponent {
         },
         {
           type: 'checkbox',
-          name: 'extended_key_usage-enabled',
+          name: 'ExtendedKeyUsage-enabled',
           placeholder: helptext_system_ca.add.extended_key_usage.enabled.placeholder,
           tooltip: helptext_system_ca.add.extended_key_usage.enabled.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'extended_key_usage-extension_critical',
+          name: 'ExtendedKeyUsage-extension_critical',
           placeholder: helptext_system_ca.add.extended_key_usage.extension_critical.placeholder,
           tooltip: helptext_system_ca.add.extended_key_usage.extension_critical.tooltip,
         },
@@ -387,67 +394,67 @@ export class CertificateAuthorityAddComponent {
       config: [
         {
           type: 'checkbox',
-          name: 'key_usage-enabled',
+          name: 'KeyUsage-enabled',
           placeholder: helptext_system_ca.add.key_usage.enabled.placeholder,
           tooltip: helptext_system_ca.add.key_usage.enabled.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-digital_signature',
+          name: 'KeyUsage-digital_signature',
           placeholder: helptext_system_ca.add.key_usage.digital_signature.placeholder,
           tooltip: helptext_system_ca.add.key_usage.digital_signature.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-content_commitment',
+          name: 'KeyUsage-content_commitment',
           placeholder: helptext_system_ca.add.key_usage.content_commitment.placeholder,
           tooltip: helptext_system_ca.add.key_usage.content_commitment.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-key_encipherment',
+          name: 'KeyUsage-key_encipherment',
           placeholder: helptext_system_ca.add.key_usage.key_encipherment.placeholder,
           tooltip: helptext_system_ca.add.key_usage.key_encipherment.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-data_encipherment',
+          name: 'KeyUsage-data_encipherment',
           placeholder: helptext_system_ca.add.key_usage.data_encipherment.placeholder,
           tooltip: helptext_system_ca.add.key_usage.data_encipherment.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-key_agreement',
+          name: 'KeyUsage-key_agreement',
           placeholder: helptext_system_ca.add.key_usage.key_agreement.placeholder,
           tooltip: helptext_system_ca.add.key_usage.key_agreement.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-key_cert_sign',
+          name: 'KeyUsage-key_cert_sign',
           placeholder: helptext_system_ca.add.key_usage.key_cert_sign.placeholder,
           tooltip: helptext_system_ca.add.key_usage.key_cert_sign.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-crl_sign',
+          name: 'KeyUsage-crl_sign',
           placeholder: helptext_system_ca.add.key_usage.crl_sign.placeholder,
           tooltip: helptext_system_ca.add.key_usage.crl_sign.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-encipher_only',
+          name: 'KeyUsage-encipher_only',
           placeholder: helptext_system_ca.add.key_usage.encipher_only.placeholder,
           tooltip: helptext_system_ca.add.key_usage.encipher_only.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-decipher_only',
+          name: 'KeyUsage-decipher_only',
           placeholder: helptext_system_ca.add.key_usage.decipher_only.placeholder,
           tooltip: helptext_system_ca.add.key_usage.decipher_only.tooltip,
         },
         {
           type: 'checkbox',
-          name: 'key_usage-extension_critical',
+          name: 'KeyUsage-extension_critical',
           placeholder: helptext_system_ca.add.key_usage.extension_critical.placeholder,
           tooltip: helptext_system_ca.add.key_usage.extension_critical.tooltip,
         },
@@ -520,11 +527,18 @@ export class CertificateAuthorityAddComponent {
       };
     });
 
-    this.usageField = _.find(this.fieldSets[5].config, {'name': 'extended_key_usage-usages'});
+    this.usageField = _.find(this.fieldSets[5].config, {'name': 'ExtendedKeyUsage-usages'});
     this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
       Object.keys(res).forEach(key => {
         this.usageField.options.push({label: res[key], value: key})
       });
+    });
+
+    const profilesField = _.find(this.fieldSets[0].config, {'name': 'profiles'});
+    this.ws.call('certificateauthority.profiles').subscribe((res) => {
+      Object.keys(res).forEach(item => {
+        profilesField.options.push({label: item, value: res[item]});
+      })
     });
   }
 
@@ -603,15 +617,15 @@ export class CertificateAuthorityAddComponent {
       }
     })
 
-    entity.formGroup.controls['extended_key_usage-enabled'].valueChanges.subscribe((res) => {
+    entity.formGroup.controls['ExtendedKeyUsage-enabled'].valueChanges.subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
       this.usageField.required = usagesRequired;
       if (usagesRequired) {
-        entity.formGroup.controls['extended_key_usage-usages'].setValidators([Validators.required]);
+        entity.formGroup.controls['ExtendedKeyUsage-usages'].setValidators([Validators.required]);
       } else {
-        entity.formGroup.controls['extended_key_usage-usages'].clearValidators();
+        entity.formGroup.controls['ExtendedKeyUsage-usages'].clearValidators();
       }
-      entity.formGroup.controls['extended_key_usage-usages'].updateValueAndValidity();
+      entity.formGroup.controls['ExtendedKeyUsage-usages'].updateValueAndValidity();
     })
   }
 
@@ -638,20 +652,13 @@ export class CertificateAuthorityAddComponent {
     }
 
     Object.keys(data).forEach(key => {
-      if (key.startsWith('basic_constraints')) {
+      if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
+        const type_prop = key.split('-');
         if (data[key] === '') {
           data[key] = null;
         }
-        cert_extensions.BasicConstraints[key.split('-')[1]] = data[key];
-        delete data[key];
-      } else if (key.startsWith('authority_key_identifier')) {
-        cert_extensions.AuthorityKeyIdentifier[key.split('-')[1]] = data[key];
-        delete data[key];
-      } else if (key.startsWith('extended_key_usage')) {
-        cert_extensions.ExtendedKeyUsage[key.split('-')[1]] = data[key];
-        delete data[key];
-      } else if (key.startsWith('key_usage')) {
-        cert_extensions.KeyUsage[key.split('-')[1]] = data[key];
+
+        cert_extensions[type_prop[0]][type_prop[1]] = data[key];
         delete data[key];
       }
     });

@@ -23,6 +23,11 @@ export const helptext_system_ca = {
       placeholder: T("Type")
     },
 
+    profiles: {
+      placeholder: T('Profiles'),
+      tooltip: T(''),
+    },
+
     signedby: {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
