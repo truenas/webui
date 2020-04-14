@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 
 import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
-import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -42,7 +42,7 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.name.validation,
           hasErrors: false,
-          errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
+          errors: helptext_system_certificates.add.name.errors,
         },
         {
           type: 'select',
@@ -217,6 +217,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.country.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -226,6 +228,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.state.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -235,6 +239,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.city.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -244,6 +250,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.organization.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -252,6 +260,8 @@ export class CertificateAddComponent {
           tooltip: helptext_system_certificates.add.organizational_unit.tooltip,
           required: false,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -261,6 +271,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.email.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -270,6 +282,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.common.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'chip',
@@ -277,6 +291,8 @@ export class CertificateAddComponent {
           placeholder: helptext_system_certificates.add.san.placeholder,
           tooltip: helptext_system_certificates.add.san.tooltip,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'textarea',
@@ -369,6 +385,7 @@ export class CertificateAddComponent {
         },
         {
           type: 'input',
+          inputType: 'number',
           name: 'basic_constraints-path_length',
           placeholder: helptext_system_certificates.add.basic_constraints.path_length.placeholder,
           tooltip: helptext_system_certificates.add.basic_constraints.path_length.tooltip,

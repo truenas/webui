@@ -15,7 +15,8 @@ export const helptext_system_certificates = {
     name: {
       placeholder: T("Name"),
       tooltip: T("Descriptive identifier for this certificate."),
-      validation: [Validators.required, Validators.pattern("[A-Za-z0-9_-]+$")]
+      validation: [Validators.required, Validators.pattern("[A-Za-z0-9_-]+$")],
+      errors: T('Allowed characters: letters, numbers, underscore (_), and dash (-).'),
     },
 
     create_type: {
