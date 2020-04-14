@@ -6643,7 +6643,7 @@ msgid "Info"
 msgstr "信息"
 
 msgid "Informational"
-msgstr "信息化"
+msgstr "信息"
 
 msgid "Inherit"
 msgstr "继承"
@@ -13703,7 +13703,7 @@ msgid "Virtual CPUs"
 msgstr "虚拟处理器"
 
 msgid "Virtual IP Address"
-msgstr "虚拟IPS"
+msgstr "虚拟IP地址"
 
 msgid "Virtual Interface"
 msgstr "虚拟接口"
@@ -13773,7 +13773,7 @@ msgid "Warning"
 msgstr "警告"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
-msgstr "警告：iSCSI Target已在使用中。 <br>"
+msgstr "警告：iSCSI目标已在使用中。</font><br>"
 
 msgid "Weak Ciphers"
 msgstr "弱密码"
