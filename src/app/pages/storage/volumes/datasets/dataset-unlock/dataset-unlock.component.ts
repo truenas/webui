@@ -93,7 +93,8 @@ export class DatasetUnlockComponent implements OnDestroy {
             },
           ],
           width: '100%',
-          updater: this.key_file_updater
+          updater: this.key_file_updater,
+          parent: this
         }
       ]
     },
