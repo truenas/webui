@@ -17,6 +17,8 @@ import globalHelptext from '../../../../../helptext/global-helptext';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { filter } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { MAT_HAMMER_OPTIONS } from '@angular/material/core';
 
 interface DatasetFormData {
   name: string;
@@ -73,6 +75,12 @@ export class DatasetFormComponent implements Formconfiguration{
   protected recordsize_fg: any;
   protected recommended_size_number: any;
   protected recordsize_warning: any;
+  protected encrypted_parent = false;
+  protected inherit_encryption = true;
+  protected non_encrypted_warned = false;
+  protected encryption_type = 'key';
+  protected generate_key = true;
+  protected legacy_encryption = false;
   public namesInUse = [];
   public nameIsCaseInsensitive = false;
 
@@ -82,6 +90,11 @@ export class DatasetFormComponent implements Formconfiguration{
   private refquota_subscription;
   private reservation_subscription;
   private refreservation_subscription;
+
+  private inherit_encryption_subscription;
+  private encryption_subscription;
+  private encryption_type_subscription;
+  private generate_key_subscription;
 
   private minquota = 1024 * 1024 * 1024; // 1G minimum
   private minrefquota = 1024 * 1024 * 1024;
@@ -173,6 +186,7 @@ export class DatasetFormComponent implements Formconfiguration{
         ],
       }]
     },
+    { name: "quota_divider", divider: true },
     {
       name: helptext.dataset_form_refdataset_section_placeholder,
       class: "refdataset",
@@ -439,6 +453,79 @@ export class DatasetFormComponent implements Formconfiguration{
         ],
       }],
     },
+    { name: "encryption_divider", divider: true },
+    {
+      name: helptext.dataset_form_encryption.fieldset_title,
+      class: 'encryption',
+      label: true,
+      config: [
+        {
+          type: 'checkbox',
+          name: 'inherit_encryption',
+          class: 'inline',
+          width: '50%',
+          placeholder: helptext.dataset_form_encryption.inherit_checkbox_placeholder,
+          tooltip: helptext.dataset_form_encryption.inherit_checkbox_tooltip,
+          value: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'encryption',
+          class: 'inline',
+          width: '50%',
+          placeholder: helptext.dataset_form_encryption.encryption_checkbox_placeholder,
+          tooltip: helptext.dataset_form_encryption.encryption_checkbox_tooltip,
+          value: true,
+        },
+        {
+          type: 'select',
+          name: 'encryption_type',
+          placeholder: helptext.dataset_form_encryption.encryption_type_placeholder,
+          tooltip: helptext.dataset_form_encryption.encryption_type_tooltip,
+          value: 'key',
+          options: helptext.dataset_form_encryption.encryption_type_options,
+        },
+        {
+          type: 'checkbox',
+          name: 'generate_key',
+          placeholder: helptext.dataset_form_encryption.generate_key_checkbox_placeholder,
+          tooltip: helptext.dataset_form_encryption.generate_key_checkbox_tooltip,
+          value: true,
+        },
+        {
+          type: 'textarea',
+          name: 'key',
+          placeholder: helptext.dataset_form_encryption.key_placeholder,
+          tooltip: helptext.dataset_form_encryption.key_tooltip,
+          required: true,
+          disabled: true,
+          isHidden: true,
+        },
+        {
+          type: 'input',
+          name: 'passphrase',
+          inputType: 'password',
+          placeholder: helptext.dataset_form_encryption.passphrase_placeholder,
+          tooltip: helptext.dataset_form_encryption.passphrase_tooltip,
+          validation: helptext.dataset_form_encryption.passphrase_validation,
+          required: true,
+          disabled: true,
+          isHidden: true,
+        },
+        {
+          type: 'input',
+          name: 'pbkdf2iters',
+          placeholder: helptext.dataset_form_encryption.pbkdf2iters_placeholder,
+          tooltip: helptext.dataset_form_encryption.pbkdf2iters_tooltip,
+          required: true,
+          value: 350000,
+          validation: helptext.dataset_form_encryption.pbkdf2iters_validation,
+          disabled: true,
+          isHidden: true,
+        }
+      ]
+    },
+    { name: "divider", divider: true },
     {
       name: helptext.dataset_form_other_section_placeholder,
       class: "options",
@@ -550,7 +637,8 @@ export class DatasetFormComponent implements Formconfiguration{
         disabled: true,
         isHidden: true,
       }]
-    }
+    },
+    { name: "divider", divider: true },
   ];
 
   public advanced_field: Array<any> = [
@@ -575,6 +663,20 @@ export class DatasetFormComponent implements Formconfiguration{
     'aclmode'
 
   ];
+
+  public encryption_fields: Array<any> = [
+    'encryption_type',
+    'generate_key',
+  ]
+
+  public key_fields: Array<any> = [
+    'key',
+  ]
+
+  public passphrase_fields: Array<any> = [
+    'passphrase',
+    'pbkdf2iters'
+  ]
 
   protected byteMap: Object= {
     'T': 1099511627776,
@@ -615,8 +717,12 @@ export class DatasetFormComponent implements Formconfiguration{
 
   setBasicMode(basic_mode) {
     this.isBasicMode = basic_mode;
+    if (this.encrypted_parent && !this.inherit_encryption) {
+      _.find(this.fieldConfig, {name:'encryption'}).isHidden = basic_mode;
+    }
     _.find(this.fieldSets, {class:"dataset"}).label = !basic_mode;
     _.find(this.fieldSets, {class:"refdataset"}).label = !basic_mode;
+    _.find(this.fieldSets, {name:"quota_divider"}).divider = !basic_mode;
   }
 
   convertHumanStringToNum(hstr, field) {
@@ -818,7 +924,17 @@ export class DatasetFormComponent implements Formconfiguration{
         this.minimum_recommended_dataset_recordsize = res;
         this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
       });
-      this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
+      combineLatest(this.ws.call('pool.query', [[["name","=",root]]]), this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]])).subscribe(
+        ([pk_pool, pk_dataset])=>{
+        if (pk_pool[0].encrypt !== 0) {
+          this.legacy_encryption = true;
+        }
+        this.encrypted_parent = pk_dataset[0].encrypted;
+        let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
+        if (this.encrypted_parent) {
+           inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
+        } 
+        _.find(this.fieldConfig, {name:'inherit_encryption'}).placeholder = inherit_encrypt_placeholder;
         let children = (pk_dataset[0].children);
         if (pk_dataset[0].casesensitivity.value === 'SENSITIVE') {
           this.nameIsCaseInsensitive = false;
@@ -836,6 +952,83 @@ export class DatasetFormComponent implements Formconfiguration{
         };
 
       if(this.isNew){
+        if (this.legacy_encryption) {
+          for (let i=0; i < this.encryption_fields.length; i++) {
+            this.entityForm.setDisabled(this.encryption_fields[i], true, true);
+            _.find(this.fieldSets, {name:"encryption_divider"}).divider = false;
+          }
+          this.entityForm.setDisabled('encryption', true, true);
+          this.entityForm.setDisabled('inherit_encryption', true, true);
+        }
+        else {
+          _.find(this.fieldConfig, {name:'encryption'}).isHidden = true;
+          const inherit_encryption_fg = this.entityForm.formGroup.controls['inherit_encryption'];
+          const encryption_fg = this.entityForm.formGroup.controls['encryption'];
+          const encryption_type_fg = this.entityForm.formGroup.controls['encryption_type'];
+          const all_encryption_fields = this.encryption_fields.concat(this.key_fields, this.passphrase_fields);
+          for (let i = 0; i < this.encryption_fields.length; i++) {
+              this.entityForm.setDisabled(this.encryption_fields[i], true, true);
+          }
+          this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe(inherit => {
+            this.inherit_encryption = inherit;
+            if (inherit) {
+              for (let i = 0; i < all_encryption_fields.length; i++) {
+                this.entityForm.setDisabled(all_encryption_fields[i], inherit, inherit);
+              }
+              _.find(this.fieldConfig, {name:'encryption'}).isHidden = inherit;
+            }
+            if (!inherit) {
+              this.entityForm.setDisabled('encryption_type', inherit, inherit);
+              const key = (this.encryption_type === 'key');
+              this.entityForm.setDisabled('passphrase', key, key);
+              this.entityForm.setDisabled('pbkdf2iters', key, key);
+              this.entityForm.setDisabled('generate_key', !key, !key);
+              if (this.encrypted_parent) {
+                _.find(this.fieldConfig, {name:'encryption'}).isHidden = this.isBasicMode;
+              } else {
+                _.find(this.fieldConfig, {name:'encryption'}).isHidden = inherit;
+              }
+            }
+          });
+          this.encryption_subscription = encryption_fg.valueChanges.subscribe(encryption => {
+            // if on an encrypted parent we should warn the user, otherwise just disable the fields
+            if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
+              this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
+                helptext.dataset_form_encryption.non_encrypted_warning_warning).subscribe(confirm => {
+                  if (confirm) {
+                    this.non_encrypted_warned = true;
+                    for (let i = 0; i < all_encryption_fields.length; i++) {
+                      if (all_encryption_fields[i] !== 'encryption') {
+                        this.entityForm.setDisabled(all_encryption_fields[i], true, true);
+                      }
+                    }
+                  }
+                });
+            } else {
+              for (let i = 0; i < this.encryption_fields.length; i++) {
+                if (this.encryption_fields[i] !== 'encryption') {
+                  this.entityForm.setDisabled(this.encryption_fields[i], !encryption, !encryption);
+                }
+              }
+            }
+          });
+          this.encryption_type_subscription = encryption_type_fg.valueChanges.subscribe(type => {
+            this.encryption_type = type;
+            const key = (type === 'key');
+            this.entityForm.setDisabled('passphrase', key, key);
+            this.entityForm.setDisabled('pbkdf2iters', key, key);
+            this.entityForm.setDisabled('generate_key', !key, !key);
+            if (key) {
+              this.entityForm.setDisabled('key', this.generate_key, this.generate_key);
+            } else {
+              this.entityForm.setDisabled('key', true, true)
+            }
+          })
+          this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.subscribe(generate_key => {
+            this.generate_key = generate_key;
+            this.entityForm.setDisabled('key', generate_key, generate_key);
+          });
+        }
         const sync = _.find(this.fieldConfig, {name:'sync'});
         const compression = _.find(this.fieldConfig, {name:'compression'});
         const deduplication = _.find(this.fieldConfig, {name:'deduplication'});
@@ -882,6 +1075,13 @@ export class DatasetFormComponent implements Formconfiguration{
         entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
         }
         else {
+          for (let i=0; i < this.encryption_fields.length; i++) {
+            this.entityForm.setDisabled(this.encryption_fields[i], true, true);
+            _.find(this.fieldSets, {name:"encryption_divider"}).divider = false;
+          }
+          this.entityForm.setDisabled('encryption', true, true);
+          this.entityForm.setDisabled('inherit_encryption', true, true);
+          _.find(this.fieldConfig, {name:'encryption'}).isHidden = true;
           this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
             this.parent_dataset = parent_dataset[0];
             const current_dataset = _.find(this.parent_dataset.children, {'name':this.pk});
@@ -1147,6 +1347,29 @@ export class DatasetFormComponent implements Formconfiguration{
     if (data.recordsize === "1M") {
       data.recordsize = "1024K";
     }
+    // encryption values
+    if (data.inherit_encryption) {
+      delete data.encryption;
+    } else {
+      if (data.encryption) {
+        data['encryption_options'] = {}
+        if (data.encryption_type === 'key') {
+          data.encryption_options.generate_key = data.generate_key;
+          if (!data.generate_key) {
+            data.encryption_options.key = data.key;
+          }
+        } else if (data.encryption_type === 'passphrase') {
+          data.encryption_options.passphrase = data.passphrase;
+          data.encryption_options.pbkdf2iters = data.pbkdf2iters;
+        }
+      }
+    }
+    delete data.key;
+    delete data.generate_key;
+    delete data.passphrase;
+    delete data.pbkdf2iters;
+    delete data.encryption_type;
+
     return this.ws.call('pool.dataset.create', [ data ]);
   }
 

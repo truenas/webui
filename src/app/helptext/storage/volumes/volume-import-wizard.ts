@@ -34,5 +34,9 @@ guid_tooltip: T('Select a pool to import.'),
 find_pools_title: T("Finding Pools"),
 find_pools_msg: T("Finding pools to import..."),
 
-decrypt_disks_title: T("Decrypting Disks")
+decrypt_disks_title: T("Decrypting Disks"),
+
+unlock_dataset_dialog_title: T('Encrypted Datasets'),
+unlock_dataset_dialog_message: T('The imported pool contains encrypted datasets, unlock them now?'),
+unlock_dataset_dialog_button: T('Continue')
 }

@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
 	selector: 'entity-tree-table',
 	templateUrl: './entity-tree-table.component.html',
+	styleUrls: ['./entity-tree-table.component.css'],
 	providers: [EntityTreeTableService]
 })
 export class EntityTreeTableComponent implements OnInit {

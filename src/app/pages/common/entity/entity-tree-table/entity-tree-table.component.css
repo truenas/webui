@@ -1,17 +1,5 @@
-.ion-android-more-vertical:before {
-    color: black;
-}
-
-
-.panel_container {
-    padding-top: 4px;
-    text-align: center;
-}
-
-.global_volume_based_action_menu {
-    margin-top: 8px; 
-    float: right; 
-    padding-bottom: 20px;
+.icons {
+    font-size: 24px; 
 }
 
 .group-menu-header{
