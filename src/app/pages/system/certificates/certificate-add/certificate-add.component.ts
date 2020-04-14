@@ -55,6 +55,13 @@ export class CertificateAddComponent {
             { label: 'Import Certificate Signing Request', value: 'CERTIFICATE_CREATE_IMPORTED_CSR' },
           ],
           value: 'CERTIFICATE_CREATE_INTERNAL',
+        },
+        {
+          type: 'select',
+          name: 'profiles',
+          placeholder: helptext_system_certificates.add.profiles.placeholder,
+          tooltip: helptext_system_certificates.add.profiles.tooltip,
+          options: [],
         }
       ]
     },
@@ -578,6 +585,7 @@ export class CertificateAddComponent {
   private csrlist: any;
   public identifier: any;
   public usageField: any;
+  private currenProfile: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
@@ -618,6 +626,13 @@ export class CertificateAddComponent {
       Object.keys(res).forEach(key => {
         this.usageField.options.push({label: res[key], value: key})
       });
+    });
+
+    const profilesField = _.find(this.fieldSets[0].config, {'name': 'profiles'});
+    this.ws.call('certificate.profiles').subscribe((res) => {
+      Object.keys(res).forEach(item => {
+        profilesField.options.push({label: item, value: res[item]});
+      })
     });
   }
 
@@ -741,7 +756,31 @@ export class CertificateAddComponent {
         entity.formGroup.controls['ExtendedKeyUsage-usages'].clearValidators();
       }
       entity.formGroup.controls['ExtendedKeyUsage-usages'].updateValueAndValidity();
-    })
+    });
+
+    entity.formGroup.controls['profiles'].valueChanges.subscribe((res) => {
+      // undo revious profile settings
+      this.loadProfiels(this.currenProfile, true);
+      // load selected profile settings
+      this.loadProfiels(res);
+      this.currenProfile = res;
+    });
+  }
+
+  loadProfiels(value, reset?) {
+    if (value) {
+      Object.keys(value).forEach(item => {
+        if (item === 'cert_extensions') {
+          Object.keys(value['cert_extensions']).forEach(type => {
+            Object.keys(value['cert_extensions'][type]).forEach(prop => {
+              this.entityForm.formGroup.controls[`${type}-${prop}`].setValue(reset? undefined : value['cert_extensions'][type][prop]);
+            })
+          })
+        } else {
+          this.entityForm.formGroup.controls[item].setValue(reset? undefined : value[item]);
+        }
+      });
+    }
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -791,6 +830,8 @@ export class CertificateAddComponent {
       }
     });
     data['cert_extensions'] = cert_extensions;
+
+    delete data['profiles'];
   }
 
   customSubmit(payload){

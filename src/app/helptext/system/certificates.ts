@@ -23,6 +23,11 @@ export const helptext_system_certificates = {
       placeholder: T("Type")
     },
 
+    profiles: {
+      placeholder: T('Profiles'),
+      tooltip: T(''),
+    },
+
     isCSRonSystem: {
       placeholder: T("CSR exists on this system"),
       tooltip: T(
