@@ -232,14 +232,15 @@ export class SMBFormComponent {
         tap(([doConfigureACL, dataset]) =>
           doConfigureACL
           // Make sure dataset is available, ie, pool is online
-            ? this.ws.call('pool.dataset.query', [[["name", "=", datasetId]]]).subscribe(ds => {
-              if (ds.length > 0) {
+            ? this.ws.call('pool.query', [[["name", "=", poolName]]]).subscribe(pool => {
+              if (pool[0].status !== 'OFFLINE') {
                 this.router.navigate(
                   ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId])
                 )
               } else {
                 this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
-                  `<i>${datasetId}</i> ${helptext_sharing_smb.action_edit_acl_dialog.message}`).subscribe(() => {
+                  `${helptext_sharing_smb.action_edit_acl_dialog.message1} <i>${datasetId}</i> 
+                    ${helptext_sharing_smb.action_edit_acl_dialog.message2}`).subscribe(() => {
                     this.router.navigate(['/'].concat(this.route_success))
                   }) 
               }

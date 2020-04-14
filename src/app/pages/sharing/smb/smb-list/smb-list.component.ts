@@ -73,10 +73,11 @@ export class SMBListComponent {
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
           const datasetId = rowName;
-          this.ws.call('pool.dataset.query', [[["name", "=", datasetId]]]).subscribe(ds => {
-            if (ds.length === 0) {
+          this.ws.call('pool.query', [[["name", "=", poolName]]]).subscribe(pool => {
+            if (pool[0].status === 'OFFLINE') {
               this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
-                `<i>${datasetId}</i> ${helptext_sharing_smb.action_edit_acl_dialog.message}`);
+                `${helptext_sharing_smb.action_edit_acl_dialog.message1} <i>${datasetId}</i> 
+                  ${helptext_sharing_smb.action_edit_acl_dialog.message2}`);
             } else {
               this.router.navigate(
                 ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));

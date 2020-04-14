@@ -112,7 +112,8 @@ export const helptext_sharing_smb = {
     action_edit_acl: T('Edit ACL'),
     action_edit_acl_dialog: {
        title: T('Error'),
-       message: T('cannot be found. Make sure the pool is online.')
+       message1: T('The pool containing'),
+       message2: T('is offline. Be sure the pool is not locked.')
     },
 
     dialog_warning: T('Warning'),
