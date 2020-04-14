@@ -14,7 +14,7 @@ export default {
     upload_key_file_tooltip: T('Browse to the exported key file that can be used to unlock this \
      dataset.'),
     dataset_key_placeholder: T('Dataset Key'),
-    dataset_key_tooltip: T(''),
+    dataset_key_tooltip: T('Encryption key that can unlock the dataset.'),
     dataset_name_paratext: T('<strong>Dataset:</strong> '),
     dataset_passphrase_placeholder: T('Dataset Passphrase'),
     dataset_passphrase_tooltip: T('The user-defined string that can unlock this dataset.'),
