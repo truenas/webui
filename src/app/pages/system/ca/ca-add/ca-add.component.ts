@@ -35,7 +35,7 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.name.validation,
           hasErrors: false,
-          errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
+          errors: helptext_system_ca.add.name.errors,
         },
         {
           type: 'select',
@@ -179,6 +179,8 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.country.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -188,6 +190,8 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.state.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -197,6 +201,8 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.city.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -206,6 +212,8 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.organization.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -214,6 +222,8 @@ export class CertificateAuthorityAddComponent {
           tooltip: helptext_system_ca.add.organizational_unit.tooltip,
           required: false,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -223,6 +233,8 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.email.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -232,6 +244,8 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.common.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'chip',
@@ -239,6 +253,8 @@ export class CertificateAuthorityAddComponent {
           placeholder: helptext_system_ca.add.san.placeholder,
           tooltip: helptext_system_ca.add.san.tooltip,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'textarea',
