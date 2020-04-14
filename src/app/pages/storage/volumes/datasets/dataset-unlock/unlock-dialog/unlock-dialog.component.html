@@ -3,9 +3,6 @@
   <div class="message-content">
     <mat-divider></mat-divider>
     <div class="errors-content" *ngIf="error_datasets.length > 0">
-      <div class="section-title">
-        <h5>{{errors_title | translate}}</h5>
-      </div>
       <p>{{errors_message | translate}}</p>
       <div *ngFor="let dataset of error_datasets" class="row">
         <strong>{{dataset.name}}</strong>
@@ -16,9 +13,6 @@
     </div>
     <mat-divider></mat-divider>
     <div class="unlock-content" *ngIf="unlock_datasets.length > 0">
-      <div class="section-title">
-        <h5>{{unlock_title | translate}}</h5>
-      </div>
       <p>{{unlock_message | translate}}</p>
       <div *ngFor="let dataset of unlock_datasets" class="row">
         <strong>{{dataset.name}}</strong>
@@ -31,7 +25,7 @@
 
 <div mat-dialog-actions>
   <span fxFlex></span>
-  <button id="unlock-dialog__cancel-button" mat-button name="cancel_button" class="mat-button mat-accent" (click)="dialogRef.close(false)"
+  <button id="unlock-dialog__cancel-button" mat-button name="cancel_button" class="mat-button mat-accent" (click)="cancel()"
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="{{cancelMsg | uppercase}}">{{cancelMsg | translate | uppercase}}</button>

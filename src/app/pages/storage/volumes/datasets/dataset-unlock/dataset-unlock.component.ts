@@ -33,6 +33,7 @@ export class DatasetUnlockComponent implements OnDestroy {
   protected pk: string;
   protected path: string;
   protected entityForm: any;
+  protected dialogOpen = false;
 
   protected datasets: any;
   protected datasets_fc: any;
@@ -297,12 +298,13 @@ export class DatasetUnlockComponent implements OnDestroy {
       const dataset = body.datasets[i];
       const ds = {name:dataset.name}
       if (dataset.is_passphrase) {
-        ds['passphrase'] = dataset.passphrase;       
+        ds['passphrase'] = dataset.passphrase;
+        datasets.push(ds);
       }
       if (!dataset.is_passphrase && !body.key_file) {
         ds['key'] = dataset.key;
+        datasets.push(ds);
       }
-      datasets.push(ds);
     }
     const payload = {key_file: body.key_file, datasets: datasets};
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.fetching_encryption_summary_title}, disableClose: true});
@@ -335,11 +337,14 @@ export class DatasetUnlockComponent implements OnDestroy {
           }
         }
       }
-      const unlockDialogRef: MatDialogRef<UnlockDialogComponent> = this.dialog.open(UnlockDialogComponent, {disableClose: true});
-      unlockDialogRef.componentInstance.parent = this;
-      unlockDialogRef.componentInstance.unlock_datasets = unlock;
-      unlockDialogRef.componentInstance.error_datasets = errors;
-      unlockDialogRef.componentInstance.data = payload;
+      if (!this.dialogOpen) { // prevent dialog from opening more than once
+        this.dialogOpen = true;
+        const unlockDialogRef: MatDialogRef<UnlockDialogComponent> = this.dialog.open(UnlockDialogComponent, {disableClose: true});
+        unlockDialogRef.componentInstance.parent = this;
+        unlockDialogRef.componentInstance.unlock_datasets = unlock;
+        unlockDialogRef.componentInstance.error_datasets = errors;
+        unlockDialogRef.componentInstance.data = payload;
+      }
     });
     dialogRef.componentInstance.failure.subscribe(err => {
       dialogRef.close();

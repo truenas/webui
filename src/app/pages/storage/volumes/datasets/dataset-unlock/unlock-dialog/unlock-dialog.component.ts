@@ -32,7 +32,13 @@ export class UnlockDialogComponent {
 
   submit() {
     this.dialogRef.close(true);
+    this.parent.dialogOpen = false;
     this.parent.unlockSubmit(this.data);
+  }
+
+  cancel() {
+    this.dialogRef.close(false);
+    this.parent.dialogOpen = false;
   }
 
   showError(dataset) {
