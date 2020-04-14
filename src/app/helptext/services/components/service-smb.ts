@@ -51,7 +51,7 @@ cifs_srv_loglevel_options: [
   { label: 'Debug', value: 'DEBUG' },
 ],
 
-cifs_srv_syslog_placeholder: T('Use syslog only'),
+cifs_srv_syslog_placeholder: T('Use Syslog Only'),
 cifs_srv_syslog_tooltip: T('Set to log authentication failures in <i>/var/log/messages</i>\
  instead of the default of <i>/var/log/samba4/log.smbd</i>.'),
 
@@ -62,7 +62,10 @@ cifs_srv_localmaster_tooltip: T('Set to determine if the system participates in\
  are present.'),
 
 cifs_srv_aapl_extensions_placeholder: T('Enable Apple SMB2/3 Protocol Extensions'),
-cifs_srv_aapl_extensions_tooltip: T('Enable Apple SMB2/3 Protocol Extensions. This is required for Time Machine support.'),
+cifs_srv_aapl_extensions_tooltip: T('These \
+ <a href="https://support.apple.com/en-us/HT210803" target="_blank">protocol extensions</a> \
+ can be used by macOS to improve the performance and behavioral characteristics of SMB shares. \
+ This is required for Time Machine support.'),
 
 cifs_srv_guest_placeholder: T('Guest Account'),
 cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is\
@@ -100,7 +103,8 @@ cifs_srv_ntlmv1_auth_tooltip: T('Off by default. When set,\
  untrusted networks.'),
 
 cifs_srv_bindip_placeholder: T('Bind IP Addresses'),
-cifs_srv_bindip_tooltip: T('Select the IP addresses SMB will listen for.'),
+cifs_srv_bindip_tooltip: T('Static IP addresses which SMB listens on for connections. \
+ Leaving all unselected defaults to listening on all active interfaces.'),
 
 idmap_tdb_range_low_placeholder: T('Range Low'),
 idmap_tdb_range_low_tooltip: T('The beginning UID/GID for which this system is\

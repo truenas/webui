@@ -1,7 +1,7 @@
 @import "cssvars";
 
 .page-wrap {
-  background-color:$bg1;
+  background-color:var(--bg1);
 }
 
 .copyright-line {
@@ -39,14 +39,12 @@
 }
 
 #signin_button {
-    background: $primary; //var(--primary);
-    color: $primary-txt; //var(--primary0txt);
     font-weight: 700;
 }
 
 .mat-card {
-  background-color: $alt-bg1; //var(--alt-bg1);
-  color: $alt-fg2; //var(--alt-fg2);
+  background-color: var(--bg2);
+  color: var(--fg2);
   padding:0 0 32px 0 !important;
 }
 

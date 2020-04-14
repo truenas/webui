@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 23.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<svg version="1.1" id="ha_disabled_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 216 216" style="enable-background:new 0 0 216 216;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:none;}
+	#ha_disabled .st0{fill:none;}
 </style>
-<g>
+<g id="ha_disabled">
 	<polygon class="st0" points="89.7,129.9 67.3,129.9 67.3,108.7 55.1,108.7 55.1,164.1 67.3,164.1 67.3,140.2 89.7,140.2 
 		89.7,164.1 101.9,164.1 101.9,108.7 89.7,108.7 	"/>
 	<path class="st0" d="M127.7,108.7l-20.9,55.4H119l4.3-12.3H144l4.2,12.3h12.6l-20.7-55.4C140.1,108.7,127.7,108.7,127.7,108.7z

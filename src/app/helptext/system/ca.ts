@@ -4,9 +4,12 @@ import { T } from "app/translate-marker";
 
 export const helptext_system_ca = {
   add: {
+    fieldset_basic: T('Identifier and Type'),
+    fieldset_type: T('Certificate Options'),
+    fieldset_certificate: T('Certificate Subject'),
     name: {
-      placeholder: T("Identifier"),
-      tooltip: T("Enter a description of the CA."),
+      placeholder: T("Name"),
+      tooltip: T("Descriptive identifier for this certificate authority."),
       validation: [Validators.required, Validators.pattern("[A-Za-z0-9_-]+$")]
     },
 
@@ -158,6 +161,7 @@ export const helptext_system_ca = {
   },
 
   edit: {
+    fieldset_certificate: T('Certificate Authority'),
     name: {
       placeholder: T("Identifier"),
       tooltip: T(
@@ -195,6 +199,7 @@ export const helptext_system_ca = {
   },
 
   sign: {
+    fieldset_certificate: T('Sign CSR'),
     ca_id: {
       placeholder: T("CA ID")
     },

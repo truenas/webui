@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 23.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<svg version="1.1" id="ha_reconnecting_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 216 216" style="enable-background:new 0 0 216 216;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:none;}
+	#ha_reconnecting .st0{fill:none;}
 </style>
-<g>
+<g id="ha_reconnecting">
 	<path class="st0" d="M118.8,108l-20.9,55.4h12.3l4.3-12.3h20.7l4.2,12.3H152L131.2,108H118.8z M117.6,142l7.2-20.3h0.2l7,20.3
 		H117.6z"/>
 	<polygon class="st0" points="80.7,129.2 58.3,129.2 58.3,108 46.1,108 46.1,163.4 58.3,163.4 58.3,139.5 80.7,139.5 80.7,163.4 

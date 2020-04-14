@@ -1736,11 +1736,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-left: 7px;
       margin-top: 48px;
     }
-  
+
     #preview-card {
       min-width: 400px;
     }
-  
+
     .mat-card-content {
       max-height: 600px !important;
       overflow-y: auto;
@@ -1748,5 +1748,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+  .chip-warn {
+    background-color: var(--red) !important;
+    color: white !important;
+
+    mat-icon {
+      color: white !important;
+      opacity: .8 !important;
+    }
+  }
+
+  app-disk-form #hddstandby_force {
+    position: relative;
+    top: 14px;
+  }
 
  } // end of ix theme

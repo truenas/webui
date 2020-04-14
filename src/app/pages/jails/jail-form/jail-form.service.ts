@@ -266,27 +266,32 @@ export class JailFormService {
         }
     }
 
-    getPluginDefaults(plugin, pluginRepository, formGroup, networkfieldConfig) {
-        this.ws.call('plugin.defaults', [{
-            plugin: plugin,
-            plugin_repository: pluginRepository,
-            refresh: false
-        }]).subscribe((defaults) => {
-            for (let i in defaults.properties) {
-                if (formGroup.controls[i]) {
-                    if (i === 'nat_forwards') {
-                        this.deparseNatForwards(defaults.properties[i], formGroup, networkfieldConfig);
-                        continue;
+    getPluginDefaults(plugin, pluginRepository, formGroup, networkfieldConfig): Promise<boolean> {
+        return new Promise(async (resolve, reject) => {
+            await this.ws.call('plugin.defaults', [{
+                plugin: plugin,
+                plugin_repository: pluginRepository,
+                refresh: false
+            }]).toPromise().then((defaults) => {
+                for (let i in defaults.properties) {
+                    if (formGroup.controls[i]) {
+                        if (i === 'nat_forwards') {
+                            this.deparseNatForwards(defaults.properties[i], formGroup, networkfieldConfig);
+                            continue;
+                        }
+                        this.handleTFfiledValues(defaults.properties, i);
+                        formGroup.controls[i].setValue(defaults.properties[i]);
                     }
-                    this.handleTFfiledValues(defaults.properties, i);
-                    formGroup.controls[i].setValue(defaults.properties[i]);
                 }
-            }
-            if (!defaults.properties.hasOwnProperty('dhcp') && !defaults.properties.hasOwnProperty('nat')) {
-                formGroup.controls['nat'].setValue(true);
-            }
-        }, (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialog);
+                if (!defaults.properties.hasOwnProperty('dhcp') && !defaults.properties.hasOwnProperty('nat')) {
+                    formGroup.controls['nat'].setValue(true);
+                }
+                resolve(true);
+            }, (err) => {
+                resolve(false);
+                new EntityUtils().handleWSError(this, err, this.dialog);
+            });
         });
     }
+
 }

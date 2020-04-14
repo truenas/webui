@@ -35,7 +35,7 @@ export const helptext_sharing_afp = {
   placeholder_comment: T("Description"),
   tooltip_comment: T("Optional description."),
 
-  placeholder_allow: T("Allow list"),
+  placeholder_allow: T("Allow List"),
   tooltip_allow: T(
     "Comma-delimited list of allowed users and/or groups\
  where groupname begins with a @.\
@@ -43,7 +43,7 @@ export const helptext_sharing_afp = {
  any user or group that is not specified."
   ),
 
-  placeholder_deny: T("Deny list"),
+  placeholder_deny: T("Deny List"),
   tooltip_deny: T(
     "Comma-delimited list of allowed users and/or groups\
  where groupname begins with a @. Note that adding\
@@ -81,7 +81,7 @@ export const helptext_sharing_afp = {
  share re-mount."
   ),
 
-  placeholder_home: T("Use as home share"),
+  placeholder_home: T("Use as Home Share"),
   tooltip_home: T(
     "Set to allow the share to host user\
  home directories. Only one share can be the home\
@@ -109,22 +109,22 @@ export const helptext_sharing_afp = {
  support this feature."
   ),
 
-  placeholder_fperm: T("Default file permissions"),
+  placeholder_fperm: T("File Permissions"),
   tooltip_fperm: T(
     "Only works with Unix ACLs. New files created on the\
  share are set with the selected permissions."
   ),
 
-  placeholder_dperm: T("Default directory permissions"),
+  placeholder_dperm: T("Directory Permissions"),
   tooltip_dperm: T(
     "Only works with Unix ACLs.\
  New directories created on the share are set with\
  the selected permissions."
   ),
 
-  placeholder_umask: T("Default umask"),
+  placeholder_umask: T("Default Umask"),
   tooltip_umask: T(
-    "Unmask is used for newly created files.\
+    "Umask is used for newly created files.\
  Default is <i>000</i>\
  (anyone can read, write, and execute)."
   ),

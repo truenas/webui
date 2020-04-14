@@ -34,7 +34,7 @@ export default {
     rsync_remoteport_tooltip: T('Enter the SSH Port of the remote system.'),
     rsync_remoteport_validation: [rangeValidator(1, 65535), Validators.required],
 
-    rsync_mode_placeholder: T('Rsync mode'),
+    rsync_mode_placeholder: T('Rsync Mode'),
     rsync_mode_tooltip: T('Choose <a \
                 href="--docurl--/tasks.html#rsync-module-mode"\
                 target="_blank">rsync module mode</a> or <a \
@@ -66,10 +66,10 @@ export default {
     rsync_direction_tooltip: T('Direct the flow of data to the remote host.'),
     rsync_direction_validation : [ Validators.required ],
 
-    rsync_description_placeholder: T('Short Description'),
+    rsync_description_placeholder: T('Description'),
     rsync_description_tooltip: T('Enter a description of the rsync task.'),
 
-    rsync_picker_placeholder: T('Schedule the Rsync Task'),
+    rsync_picker_placeholder: T('Schedule'),
     rsync_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i>\
                 to open the advanced scheduler.'),
 
@@ -101,11 +101,11 @@ export default {
     rsync_quiet_tooltip: T('Set to suppress informational messages from the\
                 remote server.'),
 
-    rsync_preserveperm_placeholder: T('Preserve permissions'),
+    rsync_preserveperm_placeholder: T('Preserve Permissions'),
     rsync_preserveperm_tooltip: T('Set to preserve original file permissions. This is\
                 useful when the user is set to <i>root</i>.'),
 
-    rsync_preserveattr_placeholder: T('Preserve extended attributes'),
+    rsync_preserveattr_placeholder: T('Preserve Extended Attributes'),
     rsync_preserveattr_tooltip: T('<a\ href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
                 target="_blank">Extended attributes</a> are\
                 preserved, but must be supported by both systems.'),
@@ -116,7 +116,7 @@ export default {
                 transfer when all transferred files are renamed\
                 into place.'),
 
-    rsync_extra_placeholder: T('Extra options'),
+    rsync_extra_placeholder: T('Auxiliary Parameters'),
     rsync_extra_tooltip: T('Additional \
      <a href="https://rsync.samba.org/ftp/rsync/rsync.html" target="_blank">rsync(1)</a> \
      options to include. Separate entries by pressing <code>Enter</code>.<br> \

@@ -9,7 +9,6 @@ import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-for
 import { KerberosSettingsComponent } from './kerberossettings';
 import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { IdmapListComponent } from './idmap-list';
 import { IdmapFormComponent } from './idmap-form';
 
@@ -18,9 +17,6 @@ export const routes: Routes = [{
   data: { title: 'Directory Services' },
   children: [
   {
-    path: '',
-    component: EntityDashboardComponent,
-  }, {
     path: 'ldap',
     component: LdapComponent,
     data: { title: 'LDAP', breadcrumb: 'LDAP', icon: 'device_hub' }

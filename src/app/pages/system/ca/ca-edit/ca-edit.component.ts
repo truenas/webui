@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 
@@ -18,26 +19,36 @@ export class CertificateAuthorityEditComponent {
   protected isEntity: boolean = true;
   protected queryCallOption: Array<any> = [["id", "="]];
 
-  protected fieldConfig: FieldConfig[] = [{
-      type: 'input',
-      name: 'name',
-      placeholder: helptext_system_ca.edit.name.placeholder,
-       tooltip: helptext_system_ca.edit.name.tooltip,
-      required: true,
-      validation: helptext_system_ca.edit.name.validation
-    },
+  protected fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'textarea',
-      name: 'certificate',
-      placeholder: helptext_system_ca.edit.certificate.placeholder,
-      readonly: true,
-    },
-    {
-      type: 'textarea',
-      name: 'privatekey',
-      placeholder: helptext_system_ca.edit.privatekey.placeholder,
-      readonly: true,
-    },
+      name: helptext_system_ca.edit.fieldset_certificate,
+      label: true,
+      class: 'certificate',
+      width: '100%',
+      config: [
+        {
+          type: 'input',
+          name: 'name',
+          placeholder: helptext_system_ca.edit.name.placeholder,
+          tooltip: helptext_system_ca.edit.name.tooltip,
+          required: true,
+          validation: helptext_system_ca.edit.name.validation
+        },
+        {
+          type: 'textarea',
+          name: 'certificate',
+          placeholder: helptext_system_ca.edit.certificate.placeholder,
+          readonly: true,
+        },
+        {
+          type: 'textarea',
+          name: 'privatekey',
+          placeholder: helptext_system_ca.edit.privatekey.placeholder,
+          readonly: true,
+        },
+      ]
+    }
   ];
 
   private pk: any;

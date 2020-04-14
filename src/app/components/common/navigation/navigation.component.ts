@@ -58,8 +58,8 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         // hide acme for truenas
         _.find(_.find(menuItem, { state: 'system' }).sub, { state : 'acmedns'}).disabled = true;
 
-        for(let i = 0; i < this.navService.turenasFeatures.length; i++) {
-          const targetMenu = this.navService.turenasFeatures[i];
+        for(let i = 0; i < this.navService.enterpriseFeatures.length; i++) {
+          const targetMenu = this.navService.enterpriseFeatures[i];
           _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
         }
       }
@@ -69,10 +69,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         eventName: "SysInfo"
         }).subscribe((evt:CoreEvent) => {
          
-          if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
-            // Feature detection
-
-            if (evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) {
+          if (window.localStorage.getItem('product_type') !== 'CORE') {
+            // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
+            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || window.localStorage.getItem('product_type') === 'SCALE') {
               _.find(menuItem, {state : "plugins"}).disabled = true;
               _.find(menuItem, {state : "jails"}).disabled = true;
             }
@@ -84,6 +83,13 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
               const docUrl = this.docsService.docReplace("--docurl--");
               const guide = _.find(menuItem, {name: 'Guide'});
               guide.state = docUrl;
+          }
+
+          if(evt.data.features.enclosure){
+            for(let i = 0; i < this.navService.hardwareFeatures.length; i++) {
+              const targetMenu = this.navService.hardwareFeatures[i];
+              _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
+            }
           }
 
       });

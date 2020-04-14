@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/system/ssh-connections';
 import { KeychainCredentialService, WebSocketService, DialogService, ReplicationService } from '../../../../services';
 import * as _ from 'lodash';
@@ -30,145 +31,172 @@ export class SshConnectionsFormComponent {
     protected namesInUseConnection = [];
     protected namesInUse = [];
 
-    protected fieldConfig: FieldConfig[] = [
+    protected fieldConfig: FieldConfig[];
+    public fieldSets: FieldSet[] = [
         {
-            type: 'input',
-            name: 'name',
-            placeholder: helptext.name_placeholder,
-            tooltip: helptext.name_tooltip,
-            required: true,
-            validation: [Validators.required, forbiddenValues(this.namesInUseConnection)]
-        }, {
-            type: 'select',
-            name: 'setup_method',
-            placeholder: helptext.setup_method_placeholder,
-            tooltip: helptext.setup_method_tooltip,
-            options: [
+            name: helptext.fieldset_basic,
+            label: true,
+            class: 'basic',
+            width: '100%',
+            config: [
                 {
-                    label: 'Manual',
-                    value: 'manual',
+                    type: 'input',
+                    name: 'name',
+                    placeholder: helptext.name_placeholder,
+                    tooltip: helptext.name_tooltip,
+                    required: true,
+                    validation: [Validators.required, forbiddenValues(this.namesInUseConnection)],
                 }, {
-                    label: 'Semi-automatic (FreeNAS only)',
+                    type: 'select',
+                    name: 'setup_method',
+                    placeholder: helptext.setup_method_placeholder,
+                    tooltip: helptext.setup_method_tooltip,
+                    options: [
+                        {
+                            label: 'Manual',
+                            value: 'manual',
+                        }, {
+                            label: 'Semi-automatic (FreeNAS only)',
+                            value: 'semiautomatic',
+                        }
+                    ],
                     value: 'semiautomatic',
+                    isHidden: false,
                 }
-            ],
-            value: 'semiautomatic',
-            isHidden: false,
-        }, {
-            type: 'input',
-            name: 'host',
-            placeholder: helptext.host_placeholder,
-            tooltip: helptext.host_tooltip,
-            required: true,
-            validation: [Validators.required],
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'setup_method',
-                    value: 'manual',
-                }]
-            }],
-        }, {
-            type: 'input',
-            inputType: 'number',
-            name: 'port',
-            placeholder: helptext.port_placeholder,
-            tooltip: helptext.port_tooltip,
-            value: 22,
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'setup_method',
-                    value: 'manual',
-                }]
-            }],
-        }, {
-            type: 'input',
-            name: 'url',
-            placeholder: helptext.url_placeholder,
-            tooltip: helptext.url_tooltip,
-            required: true,
-            validation: [Validators.required],
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'setup_method',
-                    value: 'semiautomatic',
-                }]
-            }],
-        }, {
-            type: 'input',
-            name: 'username',
-            placeholder: helptext.username_placeholder,
-            tooltip: helptext.username_tooltip,
-            value: 'root',
-            required: true,
-            validation: [Validators.required],
-        },  {
-            type: 'input',
-            inputType: 'password',
-            name: 'password',
-            placeholder: helptext.password_placeholder,
-            tooltip: helptext.password_tooltip,
-            togglePw: true,
-            required: true,
-            validation: [Validators.required],
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'setup_method',
-                    value: 'semiautomatic',
-                }]
-            }],
-        }, {
-            type: 'select',
-            name: 'private_key',
-            placeholder: helptext.private_key_placeholder,
-            tooltip: helptext.private_key_tooltip,
-            options: [],
-            value: '',
-            required: true,
-            validation: [Validators.required],
-        }, {
-            type: 'textarea',
-            name: 'remote_host_key',
-            placeholder: helptext.remote_host_key_placeholder,
-            tooltip: helptext.remote_host_key_tooltip,
-            value: '',
-            relation: [{
-                action: 'SHOW',
-                when: [{
-                    name: 'setup_method',
-                    value: 'manual',
-                }]
-            }],
-        }, {
-            type: 'select',
-            name: 'cipher',
-            placeholder: helptext.cipher_placeholder,
-            tooltip: helptext.cipher_tooltip,
-            options: [
+            ]
+        },
+        {
+            name: helptext.fieldset_authentication,
+            label: true,
+            class: 'authentication',
+            width: '49%',
+            config: [
                 {
-                    label: 'Standard',
+                    type: 'input',
+                    name: 'host',
+                    placeholder: helptext.host_placeholder,
+                    tooltip: helptext.host_tooltip,
+                    required: true,
+                    validation: [Validators.required],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'manual',
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    inputType: 'number',
+                    name: 'port',
+                    placeholder: helptext.port_placeholder,
+                    tooltip: helptext.port_tooltip,
+                    value: 22,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'manual',
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    name: 'url',
+                    placeholder: helptext.url_placeholder,
+                    tooltip: helptext.url_tooltip,
+                    required: true,
+                    validation: [Validators.required],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'semiautomatic',
+                        }]
+                    }],
+                }, {
+                    type: 'input',
+                    name: 'username',
+                    placeholder: helptext.username_placeholder,
+                    tooltip: helptext.username_tooltip,
+                    value: 'root',
+                    required: true,
+                    validation: [Validators.required],
+                }, {
+                    type: 'input',
+                    inputType: 'password',
+                    name: 'password',
+                    placeholder: helptext.password_placeholder,
+                    tooltip: helptext.password_tooltip,
+                    togglePw: true,
+                    required: true,
+                    validation: [Validators.required],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'semiautomatic',
+                        }]
+                    }],
+                }, {
+                    type: 'select',
+                    name: 'private_key',
+                    placeholder: helptext.private_key_placeholder,
+                    tooltip: helptext.private_key_tooltip,
+                    options: [],
+                    value: '',
+                    required: true,
+                    validation: [Validators.required],
+                }, {
+                    type: 'textarea',
+                    name: 'remote_host_key',
+                    placeholder: helptext.remote_host_key_placeholder,
+                    tooltip: helptext.remote_host_key_tooltip,
+                    value: '',
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'manual',
+                        }]
+                    }],
+                },
+            ]
+        },
+        {
+            name: helptext.fieldset_advanced,
+            label: true,
+            class: 'advanced',
+            width: '49%',
+            config: [
+                {
+                    type: 'select',
+                    name: 'cipher',
+                    placeholder: helptext.cipher_placeholder,
+                    tooltip: helptext.cipher_tooltip,
+                    options: [
+                        {
+                            label: 'Standard',
+                            value: 'STANDARD',
+                        }, {
+                            label: 'Fast',
+                            value: 'FAST',
+                        }, {
+                            label: 'Disabled',
+                            value: 'DISABLED',
+                        }
+                    ],
                     value: 'STANDARD',
                 }, {
-                    label: 'Fast',
-                    value: 'FAST',
-                }, {
-                    label: 'Disabled',
-                    value: 'DISABLED',
+                    type: 'input',
+                    inputType: 'number',
+                    name: 'connect_timeout',
+                    placeholder: helptext.connect_timeout_placeholder,
+                    tooltip: helptext.connect_timeout_tooltip,
+                    value: 10,
                 }
-            ],
-            value: 'STANDARD',
-        }, {
-            type: 'input',
-            inputType: 'number',
-            name: 'connect_timeout',
-            placeholder: helptext.connect_timeout_placeholder,
-            tooltip: helptext.connect_timeout_tooltip,
-            value: 10,
+            ]
         }
-    ]
+    ];
 
     protected custActions = [
         {
@@ -230,9 +258,9 @@ export class SshConnectionsFormComponent {
             if (params['pk']) {
                 pk = params['pk'];
                 this.queryCallOption[0].push(params['pk']);
-                _.find(this.fieldConfig, { name: 'setup_method' }).isHidden = true;
+                _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;
             } else {
-                _.find(this.fieldConfig, { name: 'private_key'}).options.push({
+                _.find(this.fieldSets[1].config, { name: 'private_key'}).options.push({
                     label: 'Generate New',
                     value: 'NEW'
                 });
@@ -245,7 +273,7 @@ export class SshConnectionsFormComponent {
                 this.namesInUseConnection.push(...sshConnections);
             }
         )
-        const privateKeyField = _.find(this.fieldConfig, { name: 'private_key' });
+        const privateKeyField = _.find(this.fieldSets[1].config, { name: 'private_key' });
         this.keychainCredentialService.getSSHKeys().toPromise().then(
             (res) => {
                 this.namesInUse.push(...res.filter(sshKey => sshKey.name.endsWith(' Key')).map(sshKey =>
@@ -259,6 +287,7 @@ export class SshConnectionsFormComponent {
 
     afterInit(entityForm) {
         this.entityForm = entityForm;
+        this.fieldConfig = entityForm.fieldConfig;
         if (this.entityForm.isNew) {
             this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value];
             this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res) => {

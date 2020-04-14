@@ -26,17 +26,16 @@ import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumech
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
+import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
+import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 
 export const routes: Routes = [
   {
     path: '',
     data: { title: 'Storage' },
     children: [
-      {
-        path: '',
-        component: EntityDashboardComponent,
-      },
       {
         path: 'pools',
         data: { title: 'Pools', breadcrumb: 'Pools', icon: 'view_stream' },
@@ -64,6 +63,22 @@ export const routes: Routes = [
           {
             path: 'permissions/:pk', component: DatasetPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
+          },
+          {
+            path: 'user-quotas/:pk', component: DatasetQuotasUserlistComponent,
+            data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
+          },
+          {
+            path: 'user-quotas-form/:pk', component: UserQuotaFormComponent,
+            data: { title: 'Set User Quotas', breadcrumb: 'Set User Quotas'}
+          },
+          {
+            path: 'group-quotas/:pk', component: DatasetQuotasGrouplistComponent,
+            data: { title: 'Edit Group Quotas', breadcrumb: 'Edit Group Quotas' }
+          },
+          {
+            path: 'group-quotas-form/:pk', component: GroupQuotaFormComponent,
+            data: { title: 'Set Group Quotas', breadcrumb: 'Set Group Quotas'}
           },
           {
             path: 'id/:pk/dataset/acl/:path', component: DatasetAclComponent,

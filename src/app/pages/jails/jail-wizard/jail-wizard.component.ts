@@ -416,9 +416,11 @@ export class JailWizardComponent {
 
   async afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
+    this.entityWizard.formGroup.disable();
     await this.jailService.listJails().toPromise().then((res) => {
       res.forEach(i => this.namesInUse.push(i.id));
       this.entityWizard.showSpinner = false;
+      this.entityWizard.formGroup.enable();
     })
 
     const httpsField =  _.find(this.wizardConfig[0].fieldConfig, {'name': 'https'});

@@ -13,7 +13,7 @@
 		<div *ngIf="config.maskValue">
 			<p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
 			<p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
-		</div> 
+		</div>
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder | translate"
 			[attr.value]="config.value"
@@ -26,7 +26,8 @@
 			autocomplete="new-password"
 			ix-auto
 			ix-auto-type="input"
-			ix-auto-identifier="{{config.placeholder}}"
+      ix-auto-identifier="{{config.placeholder}}"
+      id="{{config.id}}"
 			(change)="valueChange()"
 			(paste)="onPaste($event)"
 			(input)="onInput()">
