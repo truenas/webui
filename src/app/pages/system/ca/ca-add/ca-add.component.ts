@@ -504,6 +504,8 @@ export class CertificateAuthorityAddComponent {
   private signedby: any;
   public identifier: any;
   public usageField: any;
+  private currenProfile: any;
+  private entityForm: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -544,6 +546,7 @@ export class CertificateAuthorityAddComponent {
 
   afterInit(entity: any) {
     this.fieldConfig = entity.fieldConfig;
+    this.entityForm = entity;
 
     for (let i in this.intermediatecaFields) {
       this.hideField(this.intermediatecaFields[i], true, entity);
@@ -627,6 +630,30 @@ export class CertificateAuthorityAddComponent {
       }
       entity.formGroup.controls['ExtendedKeyUsage-usages'].updateValueAndValidity();
     })
+
+    entity.formGroup.controls['profiles'].valueChanges.subscribe((res) => {
+      // undo revious profile settings
+      this.loadProfiels(this.currenProfile, true);
+      // load selected profile settings
+      this.loadProfiels(res);
+      this.currenProfile = res;
+    });
+  }
+
+  loadProfiels(value, reset?) {
+    if (value) {
+      Object.keys(value).forEach(item => {
+        if (item === 'cert_extensions') {
+          Object.keys(value['cert_extensions']).forEach(type => {
+            Object.keys(value['cert_extensions'][type]).forEach(prop => {
+              this.entityForm.formGroup.controls[`${type}-${prop}`].setValue(reset? undefined : value['cert_extensions'][type][prop]);
+            })
+          })
+        } else {
+          this.entityForm.formGroup.controls[item].setValue(reset? undefined : value[item]);
+        }
+      });
+    }
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -663,5 +690,7 @@ export class CertificateAuthorityAddComponent {
       }
     });
     data['cert_extensions'] = cert_extensions;
+
+    delete data['profiles'];
   }
 }
