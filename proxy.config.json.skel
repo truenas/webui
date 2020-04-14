@@ -17,7 +17,7 @@
         "target": "http://$SERVER$",
         "secure": false,
         "changeOrigin": true,
-        "pathRewrite": {"^/_upload" : "http://$SERVER$:6000/_download"},
+        "pathRewrite": {"^/_download" : "http://$SERVER$:6000/_download"},
         "loglevel": "debug"
     }
 }
