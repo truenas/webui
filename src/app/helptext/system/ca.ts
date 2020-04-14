@@ -7,6 +7,11 @@ export const helptext_system_ca = {
     fieldset_basic: T('Identifier and Type'),
     fieldset_type: T('Certificate Options'),
     fieldset_certificate: T('Certificate Subject'),
+    fieldset_basic_constraints: T('Basic Constraints'),
+    fieldset_authority_key_identifier: T('Authority Key Identifier'),
+    fieldset_extended_key_usage: T('Extended Key Usage'),
+    fieldset_key_usage: T('Key Usage'),
+
     name: {
       placeholder: T("Name"),
       tooltip: T("Descriptive identifier for this certificate authority."),
@@ -157,7 +162,103 @@ export const helptext_system_ca = {
 
     passphrase2: {
       placeholder: T("Confirm Passphrase")
-    }
+    },
+
+    basic_constraints: {
+      ca: {
+        placeholder: T('CA'),
+        tooltip: T(''),
+      },
+      enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T(''),
+      },
+      path_length: {
+        placeholder: T('Path Length'),
+        tooltip: T(''),
+      },
+      extension_critical: {
+        placeholder: T('Extension Critical'),
+        tooltip: T(''),
+      },
+    },
+
+    authority_key_identifier: {
+      authority_cert_issuer: {
+        placeholder: T('Authority Cert Issuer'),
+        tooltip: T(''),
+      },
+      enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T(''),
+      },
+      extension_critical: {
+        placeholder: T('Extension Critical'),
+        tooltip: T(''),
+      },
+    },
+
+    extended_key_usage: {
+      usages: {
+        placeholder: T('Usages'),
+        tooltip: T(''),
+      },
+      enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T(''),
+      },
+      extension_critical: {
+        placeholder: T('Extension Critical'),
+        tooltip: T(''),
+      },
+    },
+
+    key_usage: {
+      enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T(''),
+      },
+      digital_signature: {
+        placeholder: T('Digital Signature'),
+        tooltip: T(''),
+      },
+      content_commitment: {
+        placeholder: T('Content Commitment'),
+        tooltip: T(''),
+      },
+      key_encipherment: {
+        placeholder: T('Key Encipherment'),
+        tooltip: T(''),
+      },
+      data_encipherment: {
+        placeholder: T('Data Encipherment'),
+        tooltip: T(''),
+      },
+      key_agreement: {
+        placeholder: T('Key Agreement'),
+        tooltip: T(''),
+      },
+      key_cert_sign: {
+        placeholder: T('Key Cert Sign'),
+        tooltip: T(''),
+      },
+      crl_sign: {
+        placeholder: T('Crl Sign'),
+        tooltip: T(''),
+      },
+      encipher_only: {
+        placeholder: T('Encipher Only'),
+        tooltip: T(''),
+      },
+      decipher_only: {
+        placeholder: T('Decipher Only'),
+        tooltip: T(''),
+      },
+      extension_critical: {
+        placeholder: T('Extension Critical'),
+        tooltip: T(''),
+      },
+    },
   },
 
   edit: {
