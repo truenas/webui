@@ -53,8 +53,8 @@
             <div class="slot-label fn-theme-primary" style="position:absolute; z-index:12; left:calc(48% - 24px); top:calc({{stackPositions()[i].y}}px + 8px);">
               <strong>{{i + 1}}</strong>
             </div>
-            <div *ngIf="findDiskBySlotNumber(i + 1)" style="position:absolute; z-index:12; left:48%; top:calc({{stackPositions()[i].y}}px + 8px);">
-              {{findDiskBySlotNumber(i + 1).name}}
+            <div style="position:absolute; z-index:12; left:48%; top:calc({{stackPositions()[i].y}}px + 8px);">
+              {{findDiskBySlotNumber(i+1) ? findDiskBySlotNumber(i + 1).name : 'Empty'}}
             </div>
           </ng-container>
         </div>
@@ -141,7 +141,7 @@
             <ul>
               <li><strong>Pools:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.poolKeys)}}</li>
               <li><strong>Total Disks:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.disks)}}</li>
-              <li><strong>Raw Capacity:</strong>  &nbsp;&nbsp;&nbsp;{{converter(system.rawCapacity())}}</li>
+              <li><strong>Estimated Raw Capacity:</strong>  &nbsp;&nbsp;&nbsp;{{converter(system.rawCapacity())}}</li>
               <li><strong>Usable Space:</strong>  &nbsp;&nbsp;&nbsp;unknown</li>
               <li><strong>Failed Disks:</strong>  &nbsp;&nbsp;&nbsp;{{failedDisks.length}}</li>
             </ul>
@@ -151,7 +151,7 @@
         <div class="header-container half-height"  id="drive-temps">
           <h3 class="header">Drive Temperatures</h3>
           <div fxLayout="row wrap" fxLayoutGap="10%">
-              <ng-container *ngIf="temperatures">
+              <ng-container *ngIf="temperatures && temperatureScales">
                 <ng-container *ngFor="let diskName of temperatures.keys;">
                   <temperature-meter *ngIf="temperatures.values[diskName]; else notemps" 
                     [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " 
@@ -171,11 +171,21 @@
                   </ng-template>
                 </ng-container>
               </ng-container>
-            <!--<ul>
-              <ng-container *ngIf="temperatures">
-                <li *ngFor="let diskName of temperatures.keys;">{{temperatures.values[diskName]}}{{temperatures.symbolText}}</li>
+            
+            <ul *ngIf="temperatures && !temperatureScales">
+              <ng-container>
+                <li *ngFor="let diskName of temperatures.keys;">
+                  <strong>{{diskName}}:</strong> &nbsp;&nbsp;&nbsp;
+                  {{temperatures.values[diskName] ? temperatures.values[diskName] : 'Temperature not available.'}}
+                  {{temperatures.values[diskName] ? temperatures.symbolText + 'C' : ''}}
+                  <tooltip *ngIf="!temperatures.values[diskName]" style="position:relative; top:5px;" 
+                    position="above" 
+                    header="Temperature data missing." 
+                    message="No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here">
+                  </tooltip>
+                </li>
               </ng-container>
-              </ul>-->
+            </ul>
           </div>
         </div>
       </ng-container>
