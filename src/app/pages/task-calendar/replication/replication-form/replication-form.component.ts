@@ -939,13 +939,14 @@ export class ReplicationFormComponent {
         })
 
         entityForm.formGroup.controls['schedule_picker'].valueChanges.subscribe(value => {
-            if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
-              entityForm.setDisabled('schedule_begin', true, true);
-              entityForm.setDisabled('schedule_end', true, true);
-      
-            } else {
-              entityForm.setDisabled('schedule_begin', false, false);
-              entityForm.setDisabled('schedule_end', false, false);
+            if (!entityForm.formGroup.controls['schedule'].disabled) {
+                if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+                    entityForm.setDisabled('schedule_begin', true, true);
+                    entityForm.setDisabled('schedule_end', true, true);
+                  } else {
+                    entityForm.setDisabled('schedule_begin', false, false);
+                    entityForm.setDisabled('schedule_end', false, false);
+                  }
             }
           })
 
