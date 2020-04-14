@@ -231,9 +231,19 @@ export class SMBFormComponent {
         ),
         tap(([doConfigureACL, dataset]) =>
           doConfigureACL
-            ? this.router.navigate(
-                ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId])
-              )
+          // Make sure dataset is available, ie, pool is online
+            ? this.ws.call('pool.dataset.query', [[["name", "=", datasetId]]]).subscribe(ds => {
+              if (ds.length > 0) {
+                this.router.navigate(
+                  ['/'].concat(['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId])
+                )
+              } else {
+                this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+                  `<i>${datasetId}</i> ${helptext_sharing_smb.action_edit_acl_dialog.message}`).subscribe(() => {
+                    this.router.navigate(['/'].concat(this.route_success))
+                  }) 
+              }
+            })
             : this.router.navigate(['/'].concat(this.route_success))
         )
       );
