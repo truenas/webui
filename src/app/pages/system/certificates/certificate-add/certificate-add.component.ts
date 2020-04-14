@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Validators } from '@angular/forms';
+
 import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { MatDialog } from '@angular/material/dialog';
@@ -413,10 +415,12 @@ export class CertificateAddComponent {
       config: [
         {
           type: 'select',
+          multiple: true,
           name: 'extended_key_usage-usages',
           placeholder: helptext_system_certificates.add.extended_key_usage.usages.placeholder,
           tooltip: helptext_system_certificates.add.extended_key_usage.usages.tooltip,
-          options: []
+          options: [],
+          required: false,
         },
         {
           type: 'checkbox',
@@ -556,6 +560,7 @@ export class CertificateAddComponent {
   private signedby: any;
   private csrlist: any;
   public identifier: any;
+  public usageField: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
@@ -589,7 +594,14 @@ export class CertificateAddComponent {
           )
         }
       })
-    })
+    });
+
+    this.usageField = _.find(this.fieldSets[5].config, {'name': 'extended_key_usage-usages'});
+    this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
+      Object.keys(res).forEach(key => {
+        this.usageField.options.push({label: res[key], value: key})
+      });
+    });
   }
 
   afterInit(entity: any) {
@@ -702,6 +714,17 @@ export class CertificateAddComponent {
         _.find(this.fieldConfig)['hasErrors'] = false;
       }
     })
+
+    entity.formGroup.controls['extended_key_usage-enabled'].valueChanges.subscribe((res) => {
+      const usagesRequired = res !== undefined ? res : false;
+      this.usageField.required = usagesRequired;
+      if (usagesRequired) {
+        entity.formGroup.controls['extended_key_usage-usages'].setValidators([Validators.required]);
+      } else {
+        entity.formGroup.controls['extended_key_usage-usages'].clearValidators();
+      }
+      entity.formGroup.controls['extended_key_usage-usages'].updateValueAndValidity();
+    })
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -732,6 +755,31 @@ export class CertificateAddComponent {
     if (data.passphrase2) {
       delete data.passphrase2;
     }
+
+    const cert_extensions = {
+      'BasicConstraints': {},
+      'AuthorityKeyIdentifier': {},
+      'ExtendedKeyUsage': {},
+      'KeyUsage': {},
+    }
+
+    Object.keys(data).forEach(key => {
+      if (key.startsWith('basic_constraints')) {
+        cert_extensions.BasicConstraints[key.split('-')[1]] = data[key];
+        delete data[key];
+      } else if (key.startsWith('authority_key_identifier')) {
+        cert_extensions.AuthorityKeyIdentifier[key.split('-')[1]] = data[key];
+        delete data[key];
+      } else if (key.startsWith('extended_key_usage')) {
+        cert_extensions.ExtendedKeyUsage[key.split('-')[1]] = data[key];
+        delete data[key];
+      } else if (key.startsWith('key_usage')) {
+        cert_extensions.KeyUsage[key.split('-')[1]] = data[key];
+        delete data[key];
+      }
+    });
+    data['cert_extensions'] = cert_extensions;
+
   }
 
   customSubmit(payload){
