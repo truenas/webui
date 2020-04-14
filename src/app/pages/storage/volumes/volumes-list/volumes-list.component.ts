@@ -308,13 +308,13 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    if (this.parentVolumesListComponent.has_encrypted_root) {
+    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]) {
       actions.push({
         label: T("Export Dataset Keys"),
         onClick: (row1) => {
           const title = helptext.export_keys_title  + row1.name;
           const message = helptext.export_keys_message + row1.name;
-          const fileName = "pool_" + row1.name + "_encryption.key";
+          const fileName = "dataset_" + row1.name + "_keys.json";
           this.dialogService.confirm(title, message, false, helptext.export_keys_button).subscribe(export_keys => {
             if (export_keys) {
               this.loader.open();
@@ -1454,7 +1454,7 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
         dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
         if (dataObj.is_encrypted_root) {
-          this.parentVolumesListComponent.has_encrypted_root = true;
+          this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
         }
         dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
       }
@@ -1498,7 +1498,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public paintMe = true;
   public isFooterConsoleOpen: boolean;
   public systemdatasetPool: any;
-  public has_encrypted_root = false;
+  public has_encrypted_root = {};
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -1543,7 +1543,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
             try {
               pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
               if (pool.children[0].is_encrypted_root) {
-                this.has_encrypted_root = true;
+                this.has_encrypted_root[pool.name] = true;
               }
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
