@@ -110,6 +110,10 @@ export const helptext_sharing_smb = {
     actions_advanced_mode: T('Advanced Mode'),
 
     action_edit_acl: T('Edit ACL'),
+    action_edit_acl_dialog: {
+       title: T('Error'),
+       message: T('cannot be found. Make sure the pool is online.')
+    },
 
     dialog_warning: T('Warning'),
     dialog_warning_message: T("Setting default permissions will reset the permissions of this share and any others within its path."),
