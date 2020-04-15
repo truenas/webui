@@ -11,6 +11,7 @@ import helptext from 'app/helptext/about';
 
 export interface DialogData {
   extraMsg: boolean;
+  systemType: string;
 }
 
 @Component({
@@ -21,7 +22,8 @@ export interface DialogData {
 export class AboutModalDialog {
   public copyrightYear = globalHelptext.copyright_year;
   public product_type: string;
-  public extraMsg;
+  public extraMsg: boolean;
+  public systemType: string;
   helptext = helptext;
 
   constructor(
@@ -32,6 +34,7 @@ export class AboutModalDialog {
     protected translate: TranslateService,
     private prefServices: PreferencesService) { 
       this.extraMsg = data.extraMsg;
+      this.systemType = data.systemType;
     }
 
     showLicenses() {

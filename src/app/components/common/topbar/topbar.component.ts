@@ -66,6 +66,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
   public mat_tooltips = helptext.mat_tooltips;
+  systemType: string;
 
   protected dialogRef: any;
 
@@ -166,12 +167,16 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
     this.core.emit({name: "SysInfoRequest", sender:this});
 
-    setTimeout(() => {
-      this.showWelcome = this.prefServices.preferences.showWelcomeDialog;
-      if (this.showWelcome) {
-        this.onShowAbout();
-      }
-    }, 2000);
+    this.ws.call('system.product_type').subscribe((res)=>{
+      this.systemType = res;
+      setTimeout(() => {
+        this.showWelcome = this.prefServices.preferences.showWelcomeDialog;
+        if (this.showWelcome) {
+          this.onShowAbout();
+        }
+      }, 2000);
+    })
+
   }
 
   checkLegacyUISetting() {
@@ -222,7 +227,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   onShowAbout() {
     let dialogRef = this.dialog.open(AboutModalDialog, {
       maxWidth: '600px',
-      data: {extraMsg: this.showWelcome}
+      data: { 
+        extraMsg: this.showWelcome, 
+        systemType: this.systemType
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
