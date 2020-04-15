@@ -19,6 +19,12 @@
   font-size: 36px;;
 }
 
+#ix-img {
+  right: 10px;
+  position: relative;
+  bottom: 3px;
+}
+
 .external-link {
   color: #396f9d;
 }
@@ -60,6 +66,17 @@
 
 #actions {
   margin-bottom: -10px;
+}
+
+#button-wrapper {
+  text-align: right;
+}
+
+.logo-wrapper .logo {
+  position: relative;
+  z-index: 2;
+  width: 256px;
+  height: auto;
 }
 
 @media (max-width: 599px) {
