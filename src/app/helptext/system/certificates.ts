@@ -174,6 +174,10 @@ matches your certificate usage scenario.'),
     },
 
     basic_constraints: {
+      config: {
+        placeholder: T('Basic Constraints Config'),
+        tooltip: T(''),
+      },
       ca: {
         placeholder: T('CA'),
         tooltip: T('Identify this certificate as a Certificate Authority (CA).'),
@@ -198,6 +202,10 @@ certificate still approved.'),
     },
 
     authority_key_identifier: {
+      config: {
+        placeholder: T('Authority Key Config'),
+        tooltip: T(''),
+      },
       authority_cert_issuer: {
         placeholder: T('Authority Cert Issuer'),
         tooltip: T('Pair this certificate\'s public key with the Certificate Authority private \
@@ -241,6 +249,10 @@ certificate still approved.'),
     },
 
     key_usage: {
+      config: {
+        placeholder: T('Key Usage Config'),
+        tooltip: T(''),
+      },
       enabled: {
         placeholder: T('Enabled'),
         tooltip: T('Activate this certificate extension.'),
