@@ -1077,6 +1077,9 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           this.formGroup.controls['nat'].setValue(res[0]['nat']);
           this.formGroup.controls['uuid'].setValue(res[0]['host_hostuuid']);
           this.formGroup.controls['allow_mount_*'].setValue(allowMountList);
+          if (this.formGroup.controls['auto_configure_ip6'].value) {
+            this.formGroup.controls['auto_configure_ip6'].setValue(this.formGroup.controls['auto_configure_ip6'].value);
+          }
         },
         (res) => {
           new EntityUtils().handleWSError(this, res, this.dialogService);
