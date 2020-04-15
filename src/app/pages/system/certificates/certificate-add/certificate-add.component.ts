@@ -61,7 +61,10 @@ export class CertificateAddComponent {
           name: 'profiles',
           placeholder: helptext_system_certificates.add.profiles.placeholder,
           tooltip: helptext_system_certificates.add.profiles.tooltip,
-          options: [],
+          options: [{
+            label: '---------',
+            value: {},
+          }],
         }
       ]
     },
@@ -145,7 +148,7 @@ export class CertificateAddComponent {
           disabled: true,
           relation: [
             {
-              action: 'ENABLE',
+              action: 'SHOW',
               when: [{
                 name: 'key_type',
                 value: 'EC',
@@ -169,7 +172,7 @@ export class CertificateAddComponent {
           isHidden: false,
           relation: [
             {
-              action: 'ENABLE',
+              action: 'SHOW',
               when: [{
                 name: 'key_type',
                 value: 'RSA',
@@ -773,11 +776,19 @@ export class CertificateAddComponent {
         if (item === 'cert_extensions') {
           Object.keys(value['cert_extensions']).forEach(type => {
             Object.keys(value['cert_extensions'][type]).forEach(prop => {
-              this.entityForm.formGroup.controls[`${type}-${prop}`].setValue(reset? undefined : value['cert_extensions'][type][prop]);
+              if (reset && this.entityForm.formGroup.controls[`${type}-${prop}`].value === value['cert_extensions'][type][prop]) {
+                this.entityForm.formGroup.controls[`${type}-${prop}`].setValue(undefined);
+              } else if (!reset){
+                this.entityForm.formGroup.controls[`${type}-${prop}`].setValue(value['cert_extensions'][type][prop]);
+              }
             })
           })
         } else {
-          this.entityForm.formGroup.controls[item].setValue(reset? undefined : value[item]);
+          if (reset && this.entityForm.formGroup.controls[item].value === value[item]) {
+            this.entityForm.formGroup.controls[item].setValue(undefined);
+          } else if (!reset){
+            this.entityForm.formGroup.controls[item].setValue(value[item]);
+          }
         }
       });
     }
