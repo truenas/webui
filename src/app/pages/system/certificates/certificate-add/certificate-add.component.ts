@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+
 import * as _ from 'lodash';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
-import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -40,7 +42,7 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.name.validation,
           hasErrors: false,
-          errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).'
+          errors: helptext_system_certificates.add.name.errors,
         },
         {
           type: 'select',
@@ -53,6 +55,13 @@ export class CertificateAddComponent {
             { label: 'Import Certificate Signing Request', value: 'CERTIFICATE_CREATE_IMPORTED_CSR' },
           ],
           value: 'CERTIFICATE_CREATE_INTERNAL',
+        },
+        {
+          type: 'select',
+          name: 'profiles',
+          placeholder: helptext_system_certificates.add.profiles.placeholder,
+          tooltip: helptext_system_certificates.add.profiles.tooltip,
+          options: [],
         }
       ]
     },
@@ -215,6 +224,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.country.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -224,6 +235,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.state.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -233,6 +246,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.city.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -242,6 +257,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.organization.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -250,6 +267,8 @@ export class CertificateAddComponent {
           tooltip: helptext_system_certificates.add.organizational_unit.tooltip,
           required: false,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -259,6 +278,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.email.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'input',
@@ -268,6 +289,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.common.validation,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'chip',
@@ -275,6 +298,8 @@ export class CertificateAddComponent {
           placeholder: helptext_system_certificates.add.san.placeholder,
           tooltip: helptext_system_certificates.add.san.tooltip,
           isHidden: false,
+          class: 'inline',
+          width: '50%',
         },
         {
           type: 'textarea',
@@ -346,7 +371,169 @@ export class CertificateAddComponent {
           ]
         }
       ]
-    }
+    },
+    {
+      name: helptext_system_certificates.add.fieldset_basic_constraints,
+      label: true,
+      class: 'basic_constraints',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'BasicConstraints-ca',
+          placeholder: helptext_system_certificates.add.basic_constraints.ca.placeholder,
+          tooltip: helptext_system_certificates.add.basic_constraints.ca.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'BasicConstraints-enabled',
+          placeholder: helptext_system_certificates.add.basic_constraints.enabled.placeholder,
+          tooltip: helptext_system_certificates.add.basic_constraints.enabled.tooltip,
+        },
+        {
+          type: 'input',
+          inputType: 'number',
+          name: 'BasicConstraints-path_length',
+          placeholder: helptext_system_certificates.add.basic_constraints.path_length.placeholder,
+          tooltip: helptext_system_certificates.add.basic_constraints.path_length.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'BasicConstraints-extension_critical',
+          placeholder: helptext_system_certificates.add.basic_constraints.extension_critical.placeholder,
+          tooltip: helptext_system_certificates.add.basic_constraints.extension_critical.tooltip,
+        }
+      ]
+    },
+    {
+      name: helptext_system_certificates.add.fieldset_authority_key_identifier,
+      label: true,
+      class: 'authority_key_identifier',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'AuthorityKeyIdentifier-authority_cert_issuer',
+          placeholder: helptext_system_certificates.add.authority_key_identifier.authority_cert_issuer.placeholder,
+          tooltip: helptext_system_certificates.add.authority_key_identifier.authority_cert_issuer.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'AuthorityKeyIdentifier-enabled',
+          placeholder: helptext_system_certificates.add.authority_key_identifier.enabled.placeholder,
+          tooltip: helptext_system_certificates.add.authority_key_identifier.enabled.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'AuthorityKeyIdentifier-extension_critical',
+          placeholder: helptext_system_certificates.add.authority_key_identifier.extension_critical.placeholder,
+          tooltip: helptext_system_certificates.add.authority_key_identifier.extension_critical.tooltip,
+        }
+      ]
+    },
+    {
+      name: helptext_system_certificates.add.fieldset_extended_key_usage,
+      label: true,
+      class: 'extended_key_usage',
+      width: '50%',
+      config: [
+        {
+          type: 'select',
+          multiple: true,
+          name: 'ExtendedKeyUsage-usages',
+          placeholder: helptext_system_certificates.add.extended_key_usage.usages.placeholder,
+          tooltip: helptext_system_certificates.add.extended_key_usage.usages.tooltip,
+          options: [],
+          required: false,
+        },
+        {
+          type: 'checkbox',
+          name: 'ExtendedKeyUsage-enabled',
+          placeholder: helptext_system_certificates.add.extended_key_usage.enabled.placeholder,
+          tooltip: helptext_system_certificates.add.extended_key_usage.enabled.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'ExtendedKeyUsage-extension_critical',
+          placeholder: helptext_system_certificates.add.extended_key_usage.extension_critical.placeholder,
+          tooltip: helptext_system_certificates.add.extended_key_usage.extension_critical.tooltip,
+        },
+      ]
+    },
+    {
+      name: helptext_system_certificates.add.fieldset_key_usage,
+      label: true,
+      class: 'key_usage',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-enabled',
+          placeholder: helptext_system_certificates.add.key_usage.enabled.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.enabled.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-digital_signature',
+          placeholder: helptext_system_certificates.add.key_usage.digital_signature.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.digital_signature.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-content_commitment',
+          placeholder: helptext_system_certificates.add.key_usage.content_commitment.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.content_commitment.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-key_encipherment',
+          placeholder: helptext_system_certificates.add.key_usage.key_encipherment.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.key_encipherment.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-data_encipherment',
+          placeholder: helptext_system_certificates.add.key_usage.data_encipherment.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.data_encipherment.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-key_agreement',
+          placeholder: helptext_system_certificates.add.key_usage.key_agreement.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.key_agreement.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-key_cert_sign',
+          placeholder: helptext_system_certificates.add.key_usage.key_cert_sign.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.key_cert_sign.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-crl_sign',
+          placeholder: helptext_system_certificates.add.key_usage.crl_sign.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.crl_sign.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-encipher_only',
+          placeholder: helptext_system_certificates.add.key_usage.encipher_only.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.encipher_only.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-decipher_only',
+          placeholder: helptext_system_certificates.add.key_usage.decipher_only.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.decipher_only.tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'KeyUsage-extension_critical',
+          placeholder: helptext_system_certificates.add.key_usage.extension_critical.placeholder,
+          tooltip: helptext_system_certificates.add.key_usage.extension_critical.tooltip,
+        },
+      ]
+    },
   ]
   private internalFields: Array<any> = [
     'signedby',
@@ -397,6 +584,8 @@ export class CertificateAddComponent {
   private signedby: any;
   private csrlist: any;
   public identifier: any;
+  public usageField: any;
+  private currenProfile: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
@@ -430,7 +619,21 @@ export class CertificateAddComponent {
           )
         }
       })
-    })
+    });
+
+    this.usageField = _.find(this.fieldSets[5].config, {'name': 'ExtendedKeyUsage-usages'});
+    this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
+      Object.keys(res).forEach(key => {
+        this.usageField.options.push({label: res[key], value: key})
+      });
+    });
+
+    const profilesField = _.find(this.fieldSets[0].config, {'name': 'profiles'});
+    this.ws.call('certificate.profiles').subscribe((res) => {
+      Object.keys(res).forEach(item => {
+        profilesField.options.push({label: item, value: res[item]});
+      })
+    });
   }
 
   afterInit(entity: any) {
@@ -543,6 +746,41 @@ export class CertificateAddComponent {
         _.find(this.fieldConfig)['hasErrors'] = false;
       }
     })
+
+    entity.formGroup.controls['ExtendedKeyUsage-enabled'].valueChanges.subscribe((res) => {
+      const usagesRequired = res !== undefined ? res : false;
+      this.usageField.required = usagesRequired;
+      if (usagesRequired) {
+        entity.formGroup.controls['ExtendedKeyUsage-usages'].setValidators([Validators.required]);
+      } else {
+        entity.formGroup.controls['ExtendedKeyUsage-usages'].clearValidators();
+      }
+      entity.formGroup.controls['ExtendedKeyUsage-usages'].updateValueAndValidity();
+    });
+
+    entity.formGroup.controls['profiles'].valueChanges.subscribe((res) => {
+      // undo revious profile settings
+      this.loadProfiels(this.currenProfile, true);
+      // load selected profile settings
+      this.loadProfiels(res);
+      this.currenProfile = res;
+    });
+  }
+
+  loadProfiels(value, reset?) {
+    if (value) {
+      Object.keys(value).forEach(item => {
+        if (item === 'cert_extensions') {
+          Object.keys(value['cert_extensions']).forEach(type => {
+            Object.keys(value['cert_extensions'][type]).forEach(prop => {
+              this.entityForm.formGroup.controls[`${type}-${prop}`].setValue(reset? undefined : value['cert_extensions'][type][prop]);
+            })
+          })
+        } else {
+          this.entityForm.formGroup.controls[item].setValue(reset? undefined : value[item]);
+        }
+      });
+    }
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -573,6 +811,27 @@ export class CertificateAddComponent {
     if (data.passphrase2) {
       delete data.passphrase2;
     }
+    const cert_extensions = {
+      'BasicConstraints': {},
+      'AuthorityKeyIdentifier': {},
+      'ExtendedKeyUsage': {},
+      'KeyUsage': {},
+    }
+
+    Object.keys(data).forEach(key => {
+      if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
+        const type_prop = key.split('-');
+        if (data[key] === '') {
+          data[key] = null;
+        }
+
+        cert_extensions[type_prop[0]][type_prop[1]] = data[key];
+        delete data[key];
+      }
+    });
+    data['cert_extensions'] = cert_extensions;
+
+    delete data['profiles'];
   }
 
   customSubmit(payload){
