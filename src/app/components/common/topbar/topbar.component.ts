@@ -15,6 +15,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { LanguageService } from "../../../services/language.service";
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { RestService } from "../../../services/rest.service";
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from '../../../services/system-general.service';
 import { Theme, ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -60,6 +61,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
+  showWelcome: boolean;
   public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
@@ -77,6 +79,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public translate: TranslateService,
+    private prefServices: PreferencesService,
     protected loader: AppLoaderService) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
@@ -162,6 +165,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
 
     this.core.emit({name: "SysInfoRequest", sender:this});
+
+    setTimeout(() => {
+      this.showWelcome = this.prefServices.preferences.showWelcomeDialog;
+      if (this.showWelcome) {
+        this.onShowAbout();
+      }
+    }, 2000);
   }
 
   checkLegacyUISetting() {
@@ -210,7 +220,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   onShowAbout() {
-    let dialogRef = this.dialog.open(AboutModalDialog, {});
+    let dialogRef = this.dialog.open(AboutModalDialog, {
+      maxWidth: '600px',
+      data: {extraMsg: this.showWelcome}
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       // The dialog was closed

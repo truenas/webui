@@ -78,6 +78,11 @@ export class AppComponent {
     );
 
     this.matIconRegistry.addSvgIcon(
+      "ix_logomark",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ix_logomark.svg")
+    );
+
+    this.matIconRegistry.addSvgIcon(
       "ha_reconnecting",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
     );

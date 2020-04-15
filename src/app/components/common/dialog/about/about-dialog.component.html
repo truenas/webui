@@ -1,67 +1,60 @@
 <div class="wrapper">
-	<h1 mat-dialog-title>About</h1>
-	<div mat-dialog-content class="system-info">
-		<div class="bg-photo">
-			<mat-list id="about-list">
-				<mat-list-item id="about-version">
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Version:</strong></label>
-					<p mat-line>{{info.version}} </p>
-				</mat-list-item>
-				<mat-list-item *ngIf="info.hostname">
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Hostname:</strong></label>
-					<p mat-line>{{info.hostname}} </p>
-				</mat-list-item>
-				<mat-list-item>
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Uptime:</strong></label>
-					<p mat-line>{{info.uptime}} </p>
-				</mat-list-item>
-				<mat-list-item *ngFor="let ip of ipv4Choices">
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden mr-1">Label Icon</span>
-					<label mat-line class="mr-1"><strong>IPv4:</strong></label>
-					<p mat-line>{{ip.label}} </p>
-				</mat-list-item>
-				<mat-list-item *ngFor="let ip of ipv6Choices">
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden mr-1">Label Icon</span>
-					<label mat-line class="mr-1"><strong>IPv6:</strong></label>
-					<p mat-line>{{ip.label}} </p>
-				</mat-list-item>
-				<mat-list-item>
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Physical Memory:</strong></label>
-					<p mat-line>{{info.physmem}} </p>
-				</mat-list-item>
-				<mat-list-item>
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Model:</strong></label>
-					<p mat-line>{{info.model}} </p>
-				</mat-list-item>
-				<mat-list-item>
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Average Load:</strong></label>
-					<p mat-line>{{info.loadavg}} </p>
-				</mat-list-item>
-			</mat-list>
+	<div class="header">
+		<div>
+			<mat-icon svgIcon="truenas_core_logo_full" class="logo" alt="TrueNAS CORE logo"></mat-icon>
 		</div>
+		<div id="title">Welcome to TrueNAS CORE!</div>
+	</div>
+
+	<div class="medium-font">Looking for help?</div>
+	<div class="line-item">
+		<div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
+		<div fxFlex="90%" class="medium-font">The <a href="https://docs.ixsystems.com/" 
+			target="_blank" class="external-link">
+			TrueNAS Documentation Site</a> is a collaborative website with helpful guides and 
+			information about your new storage system.
+		</div>
+	</div>
+
+	<div class="line-item">
+		<div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
+		<div fxFlex="90%" class="medium-font">The <a href="https://www.ixsystems.com/community/" 
+			target="_blank" class="external-link">
+			TrueNAS Community Forums</a> are the best place to ask questions and interact with 
+			fellow TrueNAS CORE users.
+		</div>
+	</div>
+
+	<div class="line-item">
+		<div fxFlex="10%"><mat-icon class="bullet-icon" svgIcon="ix_logomark"></mat-icon></div>
+		<div fxFlex="90%" class="medium-font">Does your business need 
+			<a href="https://www.ixsystems.com/truenas/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
+				target="_blank" class="external-link">
+			Enterprise level</a> support and services? Contact 
+			<a href="https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
+				target="_blank" class="external-link">iXsystems for more information</a>.
+		</div>	
+	</div>
+	<div id="open-source">TrueNAS CORE is Free and <a href="https://www.ixsystems.com/community/" target="_blank" 
+		class="external-link">Open Source</a> software, which is provided as-is with no warranty. 
+	</div>
+	<div id="findme" *ngIf="extraMsg">
+		Find this information later by clicking <mat-icon>settings</mat-icon> (top-right), 
+		then <span class="emphasis">About</span>.
 	</div>
 </div>
 
-<div mat-dialog-actions>
-	<span fxFlex class="copyright-txt">TrueNAS {{product_type}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
-  <button mat-button class="mat-button mat-accent" name="settings-licenses"  (click)="showLicenses()"
-	ix-auto ix-auto-type="option" ix-auto-identifier="Licenses">
-	{{'View License Info' | translate}}
-  </button>
-  <button mat-button class="mat-button mat-primary" (click)="dialogRef.close(false)"
-  	ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">{{"Close" | translate}}</button>
+<div mat-dialog-actions id="actions">
+	<div fxFlex="45%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{product_type}}® © {{copyrightYear}} - 
+		<a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc." class="external-link">
+			iXsystems, Inc</a>.
+	</div>
+	<div id="button-wrapper" fxFlex="55%" fxFlex.xs="100">
+	<button mat-button class="mat-button mat-accent" name="settings-licenses"  (click)="showLicenses()"
+		ix-auto ix-auto-type="option" ix-auto-identifier="Licenses">
+		{{'View License Info' | translate}}
+	</button>
+	<button mat-button class="mat-button mat-primary" (click)="dialogRef.close(false)"
+		ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE" (click)="turnOffWelcomeDialog()">{{"Close" | translate}}</button>
+	</div>
 </div>

@@ -1,70 +1,81 @@
-.bg-photo {
-	background: url(assets/images/beastie-shark.svg);
-	background-repeat: no-repeat;
-  background-size: auto 63%;
-  background-position: top right;
-  min-width: 550px;
+.header {
+  text-align: center;
+}
+
+#title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 1rem;
+  opacity: 0.5;
+}
+
+.line-item {
+  margin: 20px 10px;
+}
+
+.bullet-icon {
+  width: 36px;
+  height: 36px;
+  font-size: 36px;;
+}
+
+.external-link {
+  color: #396f9d;
+}
+
+.medium-font {
+  font-size: 1rem;
+}
+
+#open-source {
+  font-size: 0.75rem;
+  padding: 1rem;
+  text-align: center;
 }
 
 .copyright-txt {
   font-size: 11px;
   text-align: center;
+  align-self: flex-end;
 }
 
-.copyright-txt a:link {
-  color: #396f9d;
+#findme {
+  text-align: center;
+  font-weight: 700;
 }
 
-@media (max-width: 1025px) {
-  .bg-photo {
-  	background-size: auto 50%;
-	  min-width: 500px;
-  }
+#findme mat-icon {
+  position: relative;
+  top: 6px;
 }
 
-@media (max-width: 769px) {
-  .bg-photo {
-  	background-size: auto 45%;
-    padding-right: 15%;
-    min-width: 400px;
-  }
-  #about-version {
-    max-width: 240px;
-    word-wrap: break-word;
-  }
-
-  .mat-icon.mat-primary {
-  	display: none;
-  }
-}
-
-@media (max-width: 550px) {
-  .bg-photo {
-  	background-size: auto 35%;
-    padding-right: -20px;
-    min-width: auto;
-  }
-}
-
-@media (max-width: 450px) {
-  #about-list {
-    margin-top: 10px;
-  }
-  .bg-photo {
-  	background-size: auto 25%;
-  }
-}
-
-@media (max-width: 400px) {
-  #about-list .mr-1, #about-list p {
-    font-size: 80%;
-  }
-  .mat-dialog-actions, .mat-dialog actions .copyright-text, .mat-dialog-actions .mat-button {
-    display: block !important;
-    margin: 10px auto;
-  }
+.emphasis {
+  font-style: italic;
+  opacity: 0.6;
 }
 
 .wrapper {
-  min-height: 620px;
+  margin-bottom: 1.5rem;
+}
+
+#actions {
+  margin-bottom: -10px;
+}
+
+@media (max-width: 599px) {
+  #button-wrapper {
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 540px) {
+  .medium-font {
+    font-size: .8rem;
+  }
+  .bullet-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;;
+  }
 }
