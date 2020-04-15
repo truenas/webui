@@ -226,7 +226,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // The dialog was closed
+      this.showWelcome = false;
     });
   }
 
