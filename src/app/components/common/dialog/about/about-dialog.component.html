@@ -1,47 +1,52 @@
 <div class="wrapper">
 	<div class="header">
-		<div class="logo-wrapper">
-			<mat-icon svgIcon="truenas_core_logo_full" class="logo" alt="TrueNAS CORE logo"></mat-icon>
-		</div>
-		<div id="title">Welcome to TrueNAS CORE!</div>
-	</div>
-
-	<div class="medium-font">Looking for help?</div>
-	<div class="line-item">
-		<div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
-		<div fxFlex="90%" class="medium-font">The <a href="https://docs.ixsystems.com/" 
-			target="_blank" class="external-link">
-			TrueNAS Documentation Site</a> is a collaborative website with helpful guides and 
-			information about your new storage system.
+		<div class="header-overlay">
+			<div class="logo-wrapper">
+				<mat-icon svgIcon="truenas_core_logo_full" class="logo" alt="TrueNAS CORE logo"></mat-icon>
+			</div>
+			<div id="title" *ngIf="extraMsg">Welcome to your new NAS</div>
 		</div>
 	</div>
 
-	<div class="line-item">
-		<div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
-		<div fxFlex="90%" class="medium-font">The <a href="https://www.ixsystems.com/community/" 
-			target="_blank" class="external-link">
-			TrueNAS Community Forums</a> are the best place to ask questions and interact with 
-			fellow TrueNAS CORE users.
-		</div>
-	</div>
-
-	<div class="line-item">
-		<div fxFlex="10%"><img id="ix-img" src="assets/images/iX_Logomark.svg"></div>
-		<div fxFlex="90%" class="medium-font">Does your business need 
-			<a href="https://www.ixsystems.com/truenas/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
+	<div class="content-wrapper">
+		<div class="medium-font">Looking for help?</div>
+		<div class="line-item">
+			<div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
+			<div fxFlex="90%" class="medium-font">The <a href="https://docs.ixsystems.com/" 
 				target="_blank" class="external-link">
-			Enterprise level</a> support and services? Contact 
-			<a href="https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
-				target="_blank" class="external-link">iXsystems for more information</a>.
-		</div>	
+				TrueNAS Documentation Site</a> is a collaborative website with helpful guides and 
+				information about your new storage system.
+			</div>
+		</div>
+	
+		<div class="line-item">
+			<div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
+			<div fxFlex="90%" class="medium-font">The <a href="https://www.ixsystems.com/community/" 
+				target="_blank" class="external-link">
+				TrueNAS Community Forums</a> are the best place to ask questions and interact with 
+				fellow TrueNAS CORE users.
+			</div>
+		</div>
+	
+		<div class="line-item">
+			<div fxFlex="10%"><img id="ix-img" src="assets/images/iX_Logomark.svg"></div>
+			<div fxFlex="90%" class="medium-font">Does your business need 
+				<a href="https://www.ixsystems.com/truenas/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
+					target="_blank" class="external-link">
+				Enterprise level</a> support and services? Contact 
+				<a href="https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
+					target="_blank" class="external-link">iXsystems for more information</a>.
+			</div>	
+		</div>
+		<div id="open-source">TrueNAS CORE is Free and <a href="https://www.ixsystems.com/community/" target="_blank" 
+			class="external-link">Open Source</a> software, which is provided as-is with no warranty. 
+		</div>
+		<div id="findme" *ngIf="extraMsg">
+			Find this information later by clicking <mat-icon>settings</mat-icon> (top-right), 
+			then <span class="emphasis">About</span>.
+		</div>
 	</div>
-	<div id="open-source">TrueNAS CORE is Free and <a href="https://www.ixsystems.com/community/" target="_blank" 
-		class="external-link">Open Source</a> software, which is provided as-is with no warranty. 
-	</div>
-	<div id="findme" *ngIf="extraMsg">
-		Find this information later by clicking <mat-icon>settings</mat-icon> (top-right), 
-		then <span class="emphasis">About</span>.
-	</div>
+
 </div>
 
 <div mat-dialog-actions id="actions">

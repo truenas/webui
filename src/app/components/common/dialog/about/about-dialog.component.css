@@ -1,12 +1,26 @@
 .header {
   text-align: center;
+  background-size:cover;
+  background-image:
+  url('assets/images/backgrounds/hard_drive_2.jpg');
+  background-position-y:20%;
+  background-position-x:50%;
+  background-color: black;
+  margin: -24px -24px 20px -24px;
+}
+.header-overlay {
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 30px 10px;
+  color: white;
+}
+#title {
+  font-weight: 700;
+  padding-bottom: 1rem;
 }
 
-#title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  padding: 1rem;
-  opacity: 0.5;
+.content-wrapper {
+  padding-top: 10px;
 }
 
 .line-item {
