@@ -25,7 +25,8 @@ export const helptext_system_ca = {
 
     profiles: {
       placeholder: T('Profiles'),
-      tooltip: T(''),
+      tooltip: T('Predefined certificate extensions. Choose a profile that best \
+matches your certificate usage scenario.'),
     },
 
     signedby: {
@@ -173,96 +174,126 @@ export const helptext_system_ca = {
     basic_constraints: {
       ca: {
         placeholder: T('CA'),
-        tooltip: T(''),
+        tooltip: T('Identify this certificate as a Certificate Authority (CA).'),
       },
       enabled: {
         placeholder: T('Enabled'),
-        tooltip: T(''),
+        tooltip: T('Activate this certificate extension.'),
       },
       path_length: {
         placeholder: T('Path Length'),
-        tooltip: T(''),
+        tooltip: T('How many non-self-issued intermediate certificates that can follow \
+this certificate in a valid certification path. Entering <i>0</i> allows a single \
+additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
       },
       extension_critical: {
-        placeholder: T('Extension Critical'),
-        tooltip: T(''),
+        placeholder: T('Critical Extension'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
+be recognized by the certificate-using system or this certificate will be rejected. Extensions \
+identified as <i>not</i> critical can be ignored by the certificate-using system and the \
+certificate still approved.'),
       },
     },
 
     authority_key_identifier: {
       authority_cert_issuer: {
         placeholder: T('Authority Cert Issuer'),
-        tooltip: T(''),
+        tooltip: T('Pair this certificate\'s public key with the Certificate Authority private \
+key used to sign this certificate.'),
       },
       enabled: {
         placeholder: T('Enabled'),
-        tooltip: T(''),
+        tooltip: T('Activate this certificate extension.'),
       },
       extension_critical: {
-        placeholder: T('Extension Critical'),
-        tooltip: T(''),
+        placeholder: T('Critical Extension'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
+be recognized by the certificate-using system or this certificate will be rejected. Extensions \
+identified as <i>not</i> critical can be ignored by the certificate-using system and the \
+certificate still approved.'),
       },
     },
 
     extended_key_usage: {
       usages: {
         placeholder: T('Usages'),
-        tooltip: T(''),
+        tooltip: T('Identify the purpose for this public key. Typically used for end \
+entity certificates. Multiple usages can be selected. Do not mark this extension \
+critical when the <i>Usage</i> is <i>ANY_EXTENDED_KEY_USAGE</i>.<br><br> \
+Using both <b>Extended Key Usage</b> and <b>Key Usage</b> extensions \
+requires that the purpose of the certificate is consistent with both extensions. See \
+<a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
+for more details.'),
       },
       enabled: {
         placeholder: T('Enabled'),
-        tooltip: T(''),
+        tooltip: T('Activate this certificate extension.'),
       },
       extension_critical: {
-        placeholder: T('Extension Critical'),
-        tooltip: T(''),
+        placeholder: T('Critical Extension'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
+be recognized by the certificate-using system or this certificate will be rejected. Extensions \
+identified as <i>not</i> critical can be ignored by the certificate-using system and the \
+certificate still approved.'),
       },
     },
 
     key_usage: {
       enabled: {
         placeholder: T('Enabled'),
-        tooltip: T(''),
+        tooltip: T('Activate this certificate extension.'),
       },
       digital_signature: {
         placeholder: T('Digital Signature'),
-        tooltip: T(''),
+        tooltip: T('This certificate\'s public key is used with digital signature methods \
+that are separate from certificate or CRL signing.'),
       },
       content_commitment: {
         placeholder: T('Content Commitment'),
-        tooltip: T(''),
+        tooltip: T('This certificate\'s public key verifies digital signatures used for a \
+non-repudiation service.'),
       },
       key_encipherment: {
         placeholder: T('Key Encipherment'),
-        tooltip: T(''),
+        tooltip: T('This certificate\'s public key is used for key management.'),
       },
       data_encipherment: {
         placeholder: T('Data Encipherment'),
-        tooltip: T(''),
+        tooltip: T('This certificate\'s public key is used to encipher user data.'),
       },
       key_agreement: {
         placeholder: T('Key Agreement'),
-        tooltip: T(''),
+        tooltip: T('This certificate\'s public key is used to manage key agreement.'),
       },
       key_cert_sign: {
         placeholder: T('Key Cert Sign'),
-        tooltip: T(''),
+        tooltip: T('This certificate\'s public key is used to verify signatures on \
+other public key certificates. Activating this also requires enabling the \
+<b>CA</b> basic constraint.'),
       },
       crl_sign: {
-        placeholder: T('Crl Sign'),
-        tooltip: T(''),
+        placeholder: T('CRL Sign'),
+        tooltip: T('This certificate\'s public key is used to verify signatures \
+on a certificate revocation list (CRL).'),
       },
       encipher_only: {
         placeholder: T('Encipher Only'),
-        tooltip: T(''),
+        tooltip: T('The certificate\'s public key is used to encipher user \
+data only during key agreement operations. Requires that \
+<b>Key Agreement</b> is also set.'),
       },
       decipher_only: {
         placeholder: T('Decipher Only'),
-        tooltip: T(''),
+        tooltip: T('This certificate\'s public key is used to decipher \
+user data only during key agreement operations. Requires that \
+<b>Key Agreement</b> is also set.'),
       },
       extension_critical: {
-        placeholder: T('Extension Critical'),
-        tooltip: T(''),
+        placeholder: T('Critical Extension'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
+be recognized by the certificate-using system or this certificate will be rejected. Extensions \
+identified as <i>not</i> critical can be ignored by the certificate-using system and the \
+certificate still approved.'),
       },
     },
   },
