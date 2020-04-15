@@ -4,7 +4,7 @@
 			<div class="logo-wrapper">
 				<mat-icon svgIcon="truenas_core_logo_full" class="logo" alt="TrueNAS CORE logo"></mat-icon>
 			</div>
-			<div id="title" *ngIf="!extraMsg">{{ helptext.tagline | translate }}</div>
+			<div id="title" *ngIf="extraMsg">{{ helptext.tagline | translate }}</div>
 		</div>
 	</div>
 
@@ -39,7 +39,7 @@
 		<div id="open-source">{{ helptext.opensourceA | translate }} <a href="https://github.com/freenas/" target="_blank" 
 			class="external-link">{{ helptext.opensourceB | translate }}</a> {{ helptext.opensourceC | translate }} 
 		</div>
-		<div id="findme" *ngIf="!extraMsg">
+		<div id="findme" *ngIf="extraMsg">
 			{{ helptext.findagainA | translate }} <mat-icon>settings</mat-icon> {{ helptext.findagainB | translate }} 
 			<span class="emphasis">{{ helptext.findagainC | translate }}</span>.
 		</div>
