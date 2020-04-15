@@ -4,46 +4,44 @@
 			<div class="logo-wrapper">
 				<mat-icon svgIcon="truenas_core_logo_full" class="logo" alt="TrueNAS CORE logo"></mat-icon>
 			</div>
-			<div id="title" *ngIf="extraMsg">Welcome to your new NAS</div>
+			<div id="title" *ngIf="!extraMsg">{{ helptext.tagline | translate }}</div>
 		</div>
 	</div>
 
 	<div class="content-wrapper">
-		<div class="help">Looking for help?</div>
+		<div class="help">{{ helptext.help | translate }}</div>
 		<div class="line-item">
 			<div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
-			<div fxFlex="90%" class="medium-font">The <a href="https://docs.ixsystems.com/" 
-				target="_blank" class="external-link">
-				TrueNAS Documentation Site</a> is a collaborative website with helpful guides and 
-				information about your new storage system.
+			<div fxFlex="90%" class="medium-font">{{ helptext.docsA | translate }} 
+				<a href="https://docs.ixsystems.com/" target="_blank" class="external-link">
+					{{ helptext.docsB | translate }}</a> {{ helptext.docsC | translate }}
 			</div>
 		</div>
 	
 		<div class="line-item">
 			<div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
-			<div fxFlex="90%" class="medium-font">The <a href="https://www.ixsystems.com/community/" 
+			<div fxFlex="90%" class="medium-font">{{ helptext.forumsA | translate}} <a href="https://www.ixsystems.com/community/" 
 				target="_blank" class="external-link">
-				TrueNAS Community Forums</a> are the best place to ask questions and interact with 
-				fellow TrueNAS CORE users.
+				{{ helptext.forumsB | translate }}</a> {{ helptext.forumsC | translate }}
 			</div>
 		</div>
 	
 		<div class="line-item">
 			<div fxFlex="10%"><img id="ix-img" src="assets/images/iX_Logomark.svg"></div>
-			<div fxFlex="90%" class="medium-font">Does your business need 
+			<div fxFlex="90%" class="medium-font">{{ helptext.contactA | translate }} 
 				<a href="https://www.ixsystems.com/truenas/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
 					target="_blank" class="external-link">
-				Enterprise level</a> support and services? Contact 
+				{{ helptext.contactB | translate }}</a> {{ helptext.contactC | translate }} 
 				<a href="https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
-					target="_blank" class="external-link">iXsystems for more information</a>.
+					target="_blank" class="external-link">{{ helptext.contactD | translate }}</a>.
 			</div>	
 		</div>
-		<div id="open-source">TrueNAS CORE is Free and <a href="https://www.ixsystems.com/community/" target="_blank" 
-			class="external-link">Open Source</a> software, which is provided as-is with no warranty. 
+		<div id="open-source">{{ helptext.opensourceA | translate }} <a href="https://github.com/freenas/" target="_blank" 
+			class="external-link">{{ helptext.opensourceB | translate }}</a> {{ helptext.opensourceC | translate }} 
 		</div>
-		<div id="findme" *ngIf="extraMsg">
-			Find this information later by clicking <mat-icon>settings</mat-icon> (top-right), 
-			then <span class="emphasis">About</span>.
+		<div id="findme" *ngIf="!extraMsg">
+			{{ helptext.findagainA | translate }} <mat-icon>settings</mat-icon> {{ helptext.findagainB | translate }} 
+			<span class="emphasis">{{ helptext.findagainC | translate }}</span>.
 		</div>
 	</div>
 

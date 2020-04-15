@@ -7,6 +7,7 @@ import globalHelptext from '../../../../helptext/global-helptext';
 import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import helptext from 'app/helptext/about';
 
 export interface DialogData {
   extraMsg: boolean;
@@ -21,6 +22,7 @@ export class AboutModalDialog {
   public copyrightYear = globalHelptext.copyright_year;
   public product_type: string;
   public extraMsg;
+  helptext = helptext;
 
   constructor(
     public dialogRef: MatDialogRef<AboutModalDialog>,
