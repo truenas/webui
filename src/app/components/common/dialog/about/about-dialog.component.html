@@ -1,67 +1,65 @@
 <div class="wrapper">
-	<h1 mat-dialog-title>About</h1>
-	<div mat-dialog-content class="system-info">
-		<div class="bg-photo">
-			<mat-list id="about-list">
-				<mat-list-item id="about-version">
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Version:</strong></label>
-					<p mat-line>{{info.version}} </p>
-				</mat-list-item>
-				<mat-list-item *ngIf="info.hostname">
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Hostname:</strong></label>
-					<p mat-line>{{info.hostname}} </p>
-				</mat-list-item>
-				<mat-list-item>
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Uptime:</strong></label>
-					<p mat-line>{{info.uptime}} </p>
-				</mat-list-item>
-				<mat-list-item *ngFor="let ip of ipv4Choices">
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden mr-1">Label Icon</span>
-					<label mat-line class="mr-1"><strong>IPv4:</strong></label>
-					<p mat-line>{{ip.label}} </p>
-				</mat-list-item>
-				<mat-list-item *ngFor="let ip of ipv6Choices">
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden mr-1">Label Icon</span>
-					<label mat-line class="mr-1"><strong>IPv6:</strong></label>
-					<p mat-line>{{ip.label}} </p>
-				</mat-list-item>
-				<mat-list-item>
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Physical Memory:</strong></label>
-					<p mat-line>{{info.physmem}} </p>
-				</mat-list-item>
-				<mat-list-item>
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Model:</strong></label>
-					<p mat-line>{{info.model}} </p>
-				</mat-list-item>
-				<mat-list-item>
-					<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
-					<span class="cdk-visually-hidden">Label Icon</span>
-					<label mat-line class="mr-1"><strong>Average Load:</strong></label>
-					<p mat-line>{{info.loadavg}} </p>
-				</mat-list-item>
-			</mat-list>
+	<div class="header">
+		<div class="header-overlay">
+			<div class="logo-wrapper">
+				<mat-icon *ngIf="systemType==='CORE'" svgIcon="truenas_core_logo_full" class="logo" alt="TrueNAS CORE logo"></mat-icon>
+				<mat-icon *ngIf="systemType==='ENTERPRISE'" svgIcon="truenas_enterprise_logo_full" class="logo" alt="TrueNAS ENTERPRISE logo"></mat-icon>
+				<mat-icon *ngIf="systemType==='SCALE'" svgIcon="truenas_scale_logo_full" class="logo" alt="TrueNAS SCALE logo"></mat-icon>
+			</div>
+			<div id="title" *ngIf="extraMsg">{{ helptext.tagline | translate }}</div>
 		</div>
 	</div>
+
+	<div class="content-wrapper">
+		<div class="help">{{ helptext.help | translate }}</div>
+		<div class="line-item">
+			<div fxFlex="10%"><mat-icon class="bullet-icon">assignment</mat-icon></div>
+			<div fxFlex="90%" class="medium-font">{{ helptext.docsA | translate }} 
+				<a href="https://docs.ixsystems.com/" target="_blank" class="external-link">
+					{{ helptext.docsB | translate }}</a> {{ helptext.docsC | translate }}
+			</div>
+		</div>
+	
+		<div class="line-item">
+			<div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
+			<div fxFlex="90%" class="medium-font">{{ helptext.forumsA | translate}} <a href="https://www.ixsystems.com/community/" 
+				target="_blank" class="external-link">
+				{{ helptext.forumsB | translate }}</a> {{ helptext.forumsC | translate }}
+			</div>
+		</div>
+	
+		<div class="line-item">
+			<div fxFlex="10%"><img id="ix-img" src="assets/images/iX_Logomark.svg"></div>
+			<div fxFlex="90%" class="medium-font">{{ helptext.contactA | translate }} 
+				<a href="https://www.ixsystems.com/truenas/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
+					target="_blank" class="external-link">
+				{{ helptext.contactB | translate }}</a> {{ helptext.contactC | translate }} 
+				<a href="https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome" 
+					target="_blank" class="external-link">{{ helptext.contactD | translate }}</a>.
+			</div>	
+		</div>
+		<div id="open-source">{{ helptext.opensourceA | translate }} <a href="https://github.com/freenas/" target="_blank" 
+			class="external-link">{{ helptext.opensourceB | translate }}</a> {{ helptext.opensourceC | translate }} 
+		</div>
+		<div id="findme" *ngIf="extraMsg">
+			{{ helptext.findagainA | translate }} <mat-icon>settings</mat-icon> {{ helptext.findagainB | translate }} 
+			<span class="emphasis">{{ helptext.findagainC | translate }}</span>.
+		</div>
+	</div>
+
 </div>
 
-<div mat-dialog-actions>
-	<span fxFlex class="copyright-txt">TrueNAS {{product_type}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
-  <button mat-button class="mat-button mat-accent" name="settings-licenses"  (click)="showLicenses()"
-	ix-auto ix-auto-type="option" ix-auto-identifier="Licenses">
-	{{'View License Info' | translate}}
-  </button>
-  <button mat-button class="mat-button mat-primary" (click)="dialogRef.close(false)"
-  	ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">{{"Close" | translate}}</button>
+<div mat-dialog-actions id="actions">
+	<div fxFlex="45%" fxFlex.xs="100" class="copyright-txt">TrueNAS {{product_type}}® © {{copyrightYear}} - 
+		<a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc." class="external-link">
+			iXsystems, Inc</a>.
+	</div>
+	<div id="button-wrapper" fxFlex="55%" fxFlex.xs="100">
+	<button mat-button class="mat-button mat-accent" name="settings-licenses"  (click)="showLicenses()"
+		ix-auto ix-auto-type="option" ix-auto-identifier="Licenses">
+		{{'View License Info' | translate}}
+	</button>
+	<button mat-button class="mat-button mat-primary" (click)="dialogRef.close(false)"
+		ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE" (click)="turnOffWelcomeDialog()">{{"Close" | translate}}</button>
+	</div>
 </div>
