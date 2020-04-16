@@ -67,6 +67,9 @@ export class EntityUtils {
         dialog = entity.dialog;
       }
     }
+    if (res.exc_info && res.exc_info.extra) {
+      res.extra = res.exc_info.extra;
+    }
 
     if (res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
