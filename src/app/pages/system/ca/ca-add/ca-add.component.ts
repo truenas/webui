@@ -58,6 +58,15 @@ export class CertificateAuthorityAddComponent {
               label: '---------',
               value: {},
             }
+          ],
+          relation: [
+            {
+              action: 'HIDE',
+              when: [{
+                name: 'create_type',
+                value: 'CA_CREATE_IMPORTED',
+              }]
+            },
           ]
         }
       ]
@@ -571,6 +580,18 @@ export class CertificateAuthorityAddComponent {
     'passphrase',
     'passphrase2',
   ];
+  private extensionFields: Array<any> = [
+    'BasicConstraints-enabled',
+    'BasicConstraints-path_length',
+    'BasicConstraints',
+    'AuthorityKeyIdentifier-enabled',
+    'AuthorityKeyIdentifier',
+    'ExtendedKeyUsage-enabled',
+    'ExtendedKeyUsage-usages',
+    'ExtendedKeyUsage-extension_critical',
+    'KeyUsage-enabled',
+    'KeyUsage',
+  ];
 
   private country: any;
   private signedby: any;
@@ -642,7 +663,9 @@ export class CertificateAuthorityAddComponent {
         for (let i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], false, entity);
         }
-
+        for (let i in this.extensionFields) {
+          this.hideField(this.extensionFields[i], false, entity);
+        }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (entity.formGroup.controls['key_type'].value === 'RSA') {
           this.hideField('ec_curve', true, entity);
@@ -660,7 +683,9 @@ export class CertificateAuthorityAddComponent {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], false, entity);
         }
-
+        for (let i in this.extensionFields) {
+          this.hideField(this.extensionFields[i], false, entity);
+        }
         if (entity.formGroup.controls['key_type'].value === 'RSA') {
           this.hideField('ec_curve', true, entity);
         } else if (entity.formGroup.controls['key_type'].value === 'EC') {
@@ -676,6 +701,9 @@ export class CertificateAuthorityAddComponent {
         }
         for (let i in this.importcaFields) {
           this.hideField(this.importcaFields[i], false, entity);
+        }
+        for (let i in this.extensionFields) {
+          this.hideField(this.extensionFields[i], true, entity);
         }
       }
     })
@@ -768,33 +796,33 @@ export class CertificateAuthorityAddComponent {
     if (data.passphrase2) {
       delete data.passphrase2;
     }
-
-    const cert_extensions = {
-      'BasicConstraints': {},
-      'AuthorityKeyIdentifier': {},
-      'ExtendedKeyUsage': {},
-      'KeyUsage': {},
-    }
-
-    Object.keys(data).forEach(key => {
-      if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
-        const type_prop = key.split('-');
-        if (data[key] === '') {
-          data[key] = null;
-        }
-
-        if (type_prop.length === 1) {
-          for (let i = 0; i < data[key].length; i++) {
-            cert_extensions[type_prop[0]][data[key][i]] = true;
-          }
-        } else {
-          cert_extensions[type_prop[0]][type_prop[1]] = data[key];
-        }
-        delete data[key];
+    if (data.create_type === 'CA_CREATE_INTERNAL' || data.create_type === 'CA_CREATE_INTERMEDIATE') {
+      const cert_extensions = {
+        'BasicConstraints': {},
+        'AuthorityKeyIdentifier': {},
+        'ExtendedKeyUsage': {},
+        'KeyUsage': {},
       }
-    });
-    data['cert_extensions'] = cert_extensions;
+      Object.keys(data).forEach(key => {
+        if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
+          const type_prop = key.split('-');
+          if (data[key] === '') {
+            data[key] = null;
+          }
 
-    delete data['profiles'];
+          if (type_prop.length === 1) {
+            for (let i = 0; i < data[key].length; i++) {
+              cert_extensions[type_prop[0]][data[key][i]] = true;
+            }
+          } else {
+            cert_extensions[type_prop[0]][type_prop[1]] = data[key];
+          }
+          delete data[key];
+        }
+      });
+      data['cert_extensions'] = cert_extensions;
+
+      delete data['profiles'];
+    }
   }
 }
