@@ -144,12 +144,12 @@ export class KmipComponent {
 
         this.systemGeneralService.getCA().subscribe((res) => {
             for (let i = 0; i < res.length; i++) {
-                certificateField.options.push({ label: res[i].name, value: res[i].id });
+                certificateAuthorityField.options.push({ label: res[i].name, value: res[i].id });
             }
         });
         this.systemGeneralService.getCertificates().subscribe((res) => {
             for (let i = 0; i < res.length; i++) {
-                certificateAuthorityField.options.push({ label: res[i].name, value: res[i].id });
+                certificateField.options.push({ label: res[i].name, value: res[i].id });
             }
         });
     }
