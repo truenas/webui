@@ -3,10 +3,10 @@
         {{config.placeholder}} {{" is required." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('minlength')">
-        {{"The length of " | translate}} {{config.placeholder}} {{" should be greater than " | translate}} {{control.errors.minlength.requiredLength}}
+        {{"The length of " | translate}} {{config.placeholder}} {{" should be at least " | translate}} {{control.errors.minlength.requiredLength}}
     </mat-error>
     <mat-error *ngIf="control.hasError('maxlength')">
-        {{"The length of " | translate}} {{config.placeholder}} {{" should be less than " | translate}} {{control.errors.maxlength.requiredLength}}
+        {{"The length of " | translate}} {{config.placeholder}} {{" should be no more than " | translate}} {{control.errors.maxlength.requiredLength}}
     </mat-error>
     <mat-error *ngIf="control.hasError('min')">
         {{"Minimum value is " | translate}} {{control.errors.min.min}}.
