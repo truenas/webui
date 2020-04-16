@@ -87,6 +87,7 @@ encryption_options_dialog: {
     dialog_saved_message2: T(' successfully saved.'),
     save_encryption_options: T('Save Encryption Options'),
     saving_encryption_options: T('Saving Encryption Options...'),
+    confirm_checkbox: T('Confirm'),
     save_button: T('Save')
 },
 lock_dataset_dialog: {

@@ -1220,6 +1220,12 @@ export class VolumesListTableConfig implements InputTableConf {
                   validation: dataset_helptext.dataset_form_encryption.pbkdf2iters_validation,
                   disabled: is_key,
                   isHidden: is_key,
+                },
+                {
+                  type: 'checkbox',
+                  name: 'confirm',
+                  placeholder: helptext.encryption_options_dialog.confirm_checkbox,
+                  required: true,
                 }
               ],
               saveButtonText: helptext.encryption_options_dialog.save_button,
