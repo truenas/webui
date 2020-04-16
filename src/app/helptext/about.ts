@@ -25,5 +25,9 @@ export default {
 
     findagainA: T('Find this information later by clicking'),
     findagainB: T('(top-right), then'),
-    findagainC: T('About.')
+    findagainC: T('About.'),
+
+    actionBtnText: {
+        splash: T('Get Started')
+    }
 }
