@@ -477,6 +477,11 @@ export class SMBFormComponent {
       if (entityForm.formGroup.controls['timemachine'].value) { this.isTimeMachineOn = true };
     }, 700)
 
+    this.ws.call('system.advanced.config').subscribe(res => {
+      this.isBasicMode = !res.advancedmode;
+      this.updateForm();
+    })
+
     entityForm.formGroup.controls['purpose'].valueChanges.subscribe((res) => {
       this.clearPresets();
       for (const item in this.presets[res].params) {
