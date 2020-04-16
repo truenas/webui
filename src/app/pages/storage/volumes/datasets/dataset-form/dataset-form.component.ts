@@ -508,6 +508,7 @@ export class DatasetFormComponent implements Formconfiguration{
           placeholder: helptext.dataset_form_encryption.passphrase_placeholder,
           tooltip: helptext.dataset_form_encryption.passphrase_tooltip,
           validation: helptext.dataset_form_encryption.passphrase_validation,
+          togglePw: true,
           required: true,
           disabled: true,
           isHidden: true,
