@@ -228,6 +228,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     inputType: 'password',
                     name: 'passphrase',
                     placeholder: 'passphrase',
+                    togglePw: true,
                     required: true
                   }
                 ],
@@ -771,6 +772,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   inputType: 'password',
                   name: 'passphrase',
                   placeholder: helptext.expand_pool_dialog.passphrase_placeholder,
+                  togglePw: true,
                   required: true
                 }
               ],
@@ -1203,6 +1205,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   placeholder: dataset_helptext.dataset_form_encryption.passphrase_placeholder,
                   tooltip: dataset_helptext.dataset_form_encryption.passphrase_tooltip,
                   validation: dataset_helptext.dataset_form_encryption.passphrase_validation,
+                  togglePw: true,
                   required: true,
                   disabled: is_key,
                   isHidden: is_key,
