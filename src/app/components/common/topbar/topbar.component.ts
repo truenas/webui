@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subscription, interval } from 'rxjs';
+import { Subscription, interval, Subject } from 'rxjs';
 import * as domHelper from '../../../helpers/dom.helper';
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
 import helptext from '../../../helptext/topbar';
@@ -67,6 +67,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   private user_check_in_prompted = false;
   public mat_tooltips = helptext.mat_tooltips;
   systemType: string;
+  isWaiting = false;
+  public target: Subject<CoreEvent> = new Subject();
 
   protected dialogRef: any;
 
@@ -165,18 +167,26 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.hostname = evt.data.hostname;
     });
 
-    this.core.emit({name: "SysInfoRequest", sender:this});
-
     this.ws.call('system.product_type').subscribe((res)=>{
       this.systemType = res;
-      setTimeout(() => {
-        this.showWelcome = this.prefServices.preferences.showWelcomeDialog;
-        if (this.showWelcome) {
-          this.onShowAbout();
-        }
-      }, 2000);
     })
 
+    this.core.emit({name: "SysInfoRequest", sender:this});
+
+    this.core.emit({name:"UserPreferencesRequest", sender:this});
+    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+      if(this.isWaiting){
+        this.target.next({name:"SubmitComplete", sender: this});
+        this.isWaiting = false;
+      }
+      this.showWelcome = evt.data.showWelcomeDialog;
+    });
+
+    setTimeout(() => {
+      if (this.showWelcome) {
+        this.onShowAbout();
+      }
+    }, 3500)
   }
 
   checkLegacyUISetting() {
