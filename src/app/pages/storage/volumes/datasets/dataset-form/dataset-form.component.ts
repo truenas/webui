@@ -102,6 +102,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public parent: string;
   public data: any;
   public parent_data: any;
+  protected passphrase_parent = false;
 
   protected size_fields = ['quota', 'refquota', 'reservation', 'refreservation'];
   protected OrigSize = {};
@@ -933,7 +934,13 @@ export class DatasetFormComponent implements Formconfiguration{
         this.encrypted_parent = pk_dataset[0].encrypted;
         let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
         if (this.encrypted_parent) {
-           inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
+          if (pk_dataset[0].key_format.value === "PASSPHRASE") {
+            this.passphrase_parent = true;
+            // if parent is passphrase this dataset cannot be a key type
+            this.encryption_type = 'passphrase';
+            _.find(this.fieldConfig, {name:'encryption_type'}).isHidden = true;
+          }
+          inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
         } 
         _.find(this.fieldConfig, {name:'inherit_encryption'}).placeholder = inherit_encrypt_placeholder;
         let children = (pk_dataset[0].children);
@@ -967,6 +974,9 @@ export class DatasetFormComponent implements Formconfiguration{
           const encryption_fg = this.entityForm.formGroup.controls['encryption'];
           const encryption_type_fg = this.entityForm.formGroup.controls['encryption_type'];
           const all_encryption_fields = this.encryption_fields.concat(this.key_fields, this.passphrase_fields);
+          if (this.passphrase_parent) {
+            encryption_type_fg.setValue('passphrase');
+          }
           for (let i = 0; i < this.encryption_fields.length; i++) {
               this.entityForm.setDisabled(this.encryption_fields[i], true, true);
           }
@@ -980,6 +990,9 @@ export class DatasetFormComponent implements Formconfiguration{
             }
             if (!inherit) {
               this.entityForm.setDisabled('encryption_type', inherit, inherit);
+              if (this.passphrase_parent) { // keep it hidden if it passphrase
+                _.find(this.fieldConfig, {name:'encryption_type'}).isHidden = true;
+              }
               const key = (this.encryption_type === 'key');
               this.entityForm.setDisabled('passphrase', key, key);
               this.entityForm.setDisabled('pbkdf2iters', key, key);
@@ -1008,8 +1021,23 @@ export class DatasetFormComponent implements Formconfiguration{
             } else {
               for (let i = 0; i < this.encryption_fields.length; i++) {
                 if (this.encryption_fields[i] !== 'encryption') {
-                  this.entityForm.setDisabled(this.encryption_fields[i], !encryption, !encryption);
+                  if (this.encryption_fields[i] === 'generate_key' && this.encryption_type !== 'key') {
+                    continue;
+                  } else {
+                    this.entityForm.setDisabled(this.encryption_fields[i], !encryption, !encryption);
+                  }
                 }
+              }
+              if (this.encryption_type === 'key' && !this.generate_key) {
+                this.entityForm.setDisabled('key', !encryption, !encryption);
+              }
+              if (this.encryption_type === 'passphrase') {
+                for (let i = 0; i < this.passphrase_fields.length; i++) {
+                  this.entityForm.setDisabled(this.passphrase_fields[i], !encryption, !encryption);
+                }
+              }
+              if (this.passphrase_parent) { // keep this field hidden if parent has a passphrase
+                _.find(this.fieldConfig, {name:'encryption_type'}).isHidden = true;
               }
             }
           });
