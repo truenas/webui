@@ -1153,7 +1153,7 @@ export class VolumesListTableConfig implements InputTableConf {
           onClick: (row) => {
             // open encryption options dialog
             const can_inherit = (row.parent && row.parent.encrypted);
-            const passphrase_parent = (row.parent && row.parent.key_format.value === 'PASSPHRASE');
+            const passphrase_parent = (row.parent && row.parent.key_format && row.parent.key_format.value === 'PASSPHRASE');
             const is_key = (passphrase_parent? false : !row.is_passphrase);
             let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
