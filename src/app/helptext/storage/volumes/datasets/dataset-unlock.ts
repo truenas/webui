@@ -32,6 +32,11 @@ export default {
         ok_button: T('Continue'),
         cancel_button: T('Cancel')
     },
+    unlock_result_dialog: {
+        errors_message: T('These datasets could not be unlocked.'),
+        unlock_message: T('These datasets were successfully unlocked.'),
+        skipped_message: T('These datasets were skipped since their parents could not be unlocked.'),
+    },
     unlock_successful_title: T('Unlock Successful'),
     unlock_successful_message: T('Datasets for '),
     unlock_successful_message2: T(' successfully unlocked'),

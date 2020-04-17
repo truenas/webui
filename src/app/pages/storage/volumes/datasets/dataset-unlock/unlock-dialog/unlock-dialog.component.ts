@@ -18,10 +18,13 @@ export class UnlockDialogComponent {
   public unlock_message: string = helptext.unlock_dataset_dialog.unlock_message;
   public buttonMsg: string = helptext.unlock_dataset_dialog.ok_button;
   public cancelMsg: string = helptext.unlock_dataset_dialog.cancel_button;
+  public skipped_message: string = helptext.unlock_result_dialog.skipped_message;
   public unlock_datasets = [];
   public error_datasets = [];
+  public skipped_datasets = [];
   public tooltip: string;
   public hideCancel = false;
+  public final = false;
   public data = {};
   public parent: any;
 
@@ -33,7 +36,17 @@ export class UnlockDialogComponent {
   submit() {
     this.dialogRef.close(true);
     this.parent.dialogOpen = false;
-    this.parent.unlockSubmit(this.data);
+    if (this.final) {
+      this.parent.go_back();
+    } else {
+      this.parent.unlockSubmit(this.data);
+    }
+  }
+
+  show_final_results() {
+    this.final = true;
+    this.errors_message = helptext.unlock_result_dialog.errors_message;
+    this.unlock_message = helptext.unlock_result_dialog.unlock_message;
   }
 
   cancel() {

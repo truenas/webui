@@ -307,7 +307,10 @@ export class DatasetUnlockComponent implements OnDestroy {
       const dataset = body.datasets[i];
       const ds = {name:dataset.name}
       if (dataset.is_passphrase) {
-        ds['passphrase'] = dataset.passphrase;
+        // don't pass empty passphrases, they won't work
+        if (dataset.passphrase && dataset.passphrase !== '') {
+          ds['passphrase'] = dataset.passphrase;
+        }
         datasets.push(ds);
       }
       if (!dataset.is_passphrase && !body.key_file) {
@@ -378,12 +381,47 @@ export class DatasetUnlockComponent implements OnDestroy {
     }
     dialogRef.componentInstance.success.subscribe(res => {
       dialogRef.close();
-      this.router.navigate(this.route_success);
+      const errors = [];
+      const skipped = [];
+      const unlock = [];
+      if (res && res.result) {
+        if (res.result.failed) {
+          const failed = res.result.failed;
+          for (const err_ds in failed) {
+            if (failed.hasOwnProperty(err_ds)) {
+              const fail = failed[err_ds];
+              const error = fail.error;
+              const skip = fail.skipped;
+              errors.push({name:err_ds, unlock_error: error});
+              for (let i = 0; i < skip.length; i++) {
+                skipped.push({name:skip[i]});
+              }
+            }
+          }
+        }
+        for (let i = 0; i < res.result.unlocked.length; i++) {
+          unlock.push({name:res.result.unlocked[i]});
+        }
+        if (!this.dialogOpen) { // prevent dialog from opening more than once
+          this.dialogOpen = true;
+          const unlockDialogRef: MatDialogRef<UnlockDialogComponent> = this.dialog.open(UnlockDialogComponent, {disableClose: true});
+          unlockDialogRef.componentInstance.parent = this;
+          unlockDialogRef.componentInstance.show_final_results();
+          unlockDialogRef.componentInstance.unlock_datasets = unlock;
+          unlockDialogRef.componentInstance.error_datasets = errors;
+          unlockDialogRef.componentInstance.skipped_datasets = skipped;
+          unlockDialogRef.componentInstance.data = payload;
+        }
+      }
     });
     dialogRef.componentInstance.failure.subscribe(err => {
       dialogRef.close();
       new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
     });
+  }
+
+  go_back() {
+    this.router.navigate(this.route_success);
   }
 
   key_file_updater(file: any, parent: any){

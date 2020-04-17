@@ -27,3 +27,8 @@ div.message-content {
     min-width: 500px;
     overflow: auto;
 }
+
+mat-divider {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
