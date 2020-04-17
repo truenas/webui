@@ -38,6 +38,7 @@ export class DatasetUnlockComponent implements OnDestroy {
   protected datasets: any;
   protected datasets_fc: any;
 
+  protected key_file_fc: any;
   protected key_file_fg: any;
   protected key_file_subscription: any;
   protected unlock_children_fg: any;
@@ -58,8 +59,9 @@ export class DatasetUnlockComponent implements OnDestroy {
           name : 'key_file',
           placeholder : helptext.unlock_key_file_placeholder,
           tooltip: helptext.unlock_key_file_tooltip,
-          width: '30%',
-          value: true,
+          width: '0%',
+          isHidden: true,
+          value: false,
         },
         {
           type: 'checkbox',
@@ -180,6 +182,7 @@ export class DatasetUnlockComponent implements OnDestroy {
     this.entityForm = entityEdit;
     this.datasets = entityEdit.formGroup.controls['datasets'];
     this.datasets_fc = _.find(this.fieldConfig, {name: 'datasets'});
+    this.key_file_fc = _.find(this.fieldConfig, {name: 'key_file'});
     const listFields = this.datasets_fc.listFields;
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.fetching_encryption_summary_title}, disableClose: true});
     dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
@@ -208,6 +211,11 @@ export class DatasetUnlockComponent implements OnDestroy {
             const is_passphrase = (result.key_format === 'PASSPHRASE');
             if (!is_passphrase) { // hide key datasets by default
               name_text_fc.isHidden = true;
+              if (this.key_file_fg.value === false) { // only show key_file checkbox and upload if keys encrypted datasets exist
+                this.key_file_fg.setValue(true);
+                this.key_file_fc.isHidden = false;
+                this.key_file_fc.width = '30%';
+              }
             }
             this.datasets.controls[i].controls['is_passphrase'].setValue(is_passphrase);
             this.setDisabled(passphrase_fc, this.datasets.controls[i].controls['passphrase'], !is_passphrase, !is_passphrase);
