@@ -38,4 +38,7 @@
     <mat-error *ngIf="control.hasError('manualValidateError')">
         {{control.errors.manualValidateErrorMsg | translate}}
     </mat-error>
+    <mat-error *ngIf="control.hasError('invalidOptionSelected')">
+        {{'Invalid option selected'| translate}}
+    </mat-error>
 </div>

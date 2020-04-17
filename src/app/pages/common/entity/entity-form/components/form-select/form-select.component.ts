@@ -7,6 +7,7 @@ import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { TooltipComponent } from '../tooltip/tooltip.component';
 import { MatOptionSelectionChange } from '@angular/material/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'form-select',
@@ -51,6 +52,14 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     // if control has a value on init
     if(this.control.value && this.control.value.length > 0){
         this.selectedValues = this.control.value;
+        // check if any value is invalid
+        if (this.config.multiple) {
+          for (const v of this.control.value) {
+            if (_.find(this.config.options, {value: v}) === undefined) {
+              this.config.options.push({label: v + '(invalid)', value: v});
+            }
+          }
+        }
     }
     this.control.valueChanges.subscribe((evt) => {
       if(evt) {
