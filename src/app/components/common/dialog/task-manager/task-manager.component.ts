@@ -2,13 +2,16 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
-import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { LocaleService } from 'app/services/locale.service';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { HttpClient } from '@angular/common/http';
 
-import { WebSocketService, JobService } from '../../../../services/';
+import { WebSocketService, JobService, SystemGeneralService, DialogService, StorageService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
+import { EntityUtils } from '../../../../pages/common/entity/utils';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'task-manager',
@@ -37,40 +40,34 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     public dialogRef: MatDialogRef<TaskManagerComponent>,
     private ws: WebSocketService,
     protected translate: TranslateService,
-    protected job: JobService, protected localeService: LocaleService) {
+    protected job: JobService,
+    protected localeService: LocaleService,
+    protected sysGeneralService: SystemGeneralService,
+    protected dialogService: DialogService,
+    protected storageService: StorageService,
+    protected http: HttpClient) {
       this.dataSource = new MatTableDataSource<any>([]);
     }
 
   ngOnInit() {
-    this.ws.call('core.get_jobs', []).subscribe(
+    this.sysGeneralService.getSysInfo().subscribe((res) => {
+      this.timeZone = res.timezone;
+    })
+    this.ws.call('core.get_jobs', [[], {order_by: ["-id"], limit: 50}]).subscribe(
       (res)=> {
-        for (const i in res) {
-          res[i].percent = res[i].progress.percent ? res[i].progress.percent : 0;
-        }
-        this.dataSource.data = res.sort(function(a, b) {
-          return b.time_started.$date - a.time_started.$date;
-        });
+        this.dataSource.data = res;
         this.dataSource.sort = this.sort;
-        this.dataSource.data.forEach((i) => {
-          delete i.exception;
-        })
       },
       (err)=> {
 
       });
 
-      this.ws.call('system.info').subscribe((res) => {
-        this.timeZone = res.timezone;
-      })
-
-      this.getData().subscribe(
-        (res) => { 
-          res.percent = res.progress.percent;
+    this.getData().subscribe(
+      (res) => {
+        // only update exist jobs or add latest jobs
+        if (res.id >= this.dataSource.data[49].id) {
           const targetRow = _.findIndex(this.dataSource.data, {'id': res.id});
           if (targetRow === -1) {
-            if (res.exception) {
-              delete res.exception;
-            }
             this.dataSource.data.push(res);
           } else {
             for (const key in this.dataSource.data[targetRow]) {
@@ -79,7 +76,8 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
           }
           this.taskTable.renderRows();
         }
-      )
+      }
+    )
   }
 
   ngOnDestroy() {
@@ -107,10 +105,27 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   }
 
   showLogs(element) {
-    this.job.showLogs(element.id);
-  }
-
-  logRow(row) {
-    console.info(row)
+    this.dialogService.confirm(T('Logs'), `<pre>${element.logs_excerpt}</pre>`, true, T('Download Logs'),
+      false, '', '', '', '', false, T('Close'), true).subscribe(
+      (dialog_res) => {
+        if (dialog_res) {
+          this.ws.call('core.download', ['filesystem.get', [element.logs_path], element.id + '.log']).subscribe(
+            (snack_res) => {
+              const url = snack_res[1];
+              const mimetype = 'text/plain';
+              let failed = false;
+              this.storageService.streamDownloadFile(this.http, url, element.id + '.log', mimetype).subscribe(file => {
+                this.storageService.downloadBlob(file, element.id + '.log');
+              }, err => {
+                failed = true;
+                new EntityUtils().handleWSError(this, err);
+              });
+            },
+            (snack_res) => {
+              new EntityUtils().handleWSError(this, snack_res);
+            }
+          );
+        }
+      });
   }
 }
