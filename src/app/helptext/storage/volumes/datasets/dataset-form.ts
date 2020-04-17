@@ -156,6 +156,7 @@ dataset_form_encryption: {
      dataset. Store the encryption key in a secure location.'),
     key_placeholder: T('Key'),
     key_tooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
+    key_validation: [Validators.minLength(64), Validators.maxLength(64)],
     non_encrypted_warning_title: T('Warning'),
     non_encrypted_warning_warning: T('Disabling encryption will result in a non-encrypted dataset, continue?')
 }

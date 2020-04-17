@@ -1153,7 +1153,8 @@ export class VolumesListTableConfig implements InputTableConf {
           onClick: (row) => {
             // open encryption options dialog
             const can_inherit = (row.parent && row.parent.encrypted);
-            const is_key = !row.is_passphrase;
+            const passphrase_parent = (row.parent && row.parent.key_format && row.parent.key_format.value === 'PASSPHRASE');
+            const is_key = (passphrase_parent? false : !row.is_passphrase);
             let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
               pbkdf2iters = row.pbkdf2iters.rawvalue;
@@ -1180,6 +1181,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   tooltip: dataset_helptext.dataset_form_encryption.encryption_type_tooltip,
                   value: (is_key? 'key' : 'passphrase'),
                   options: dataset_helptext.dataset_form_encryption.encryption_type_options,
+                  isHidden: passphrase_parent
                 },
                 {
                   type: 'checkbox',
@@ -1194,6 +1196,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   name: 'key',
                   placeholder: dataset_helptext.dataset_form_encryption.key_placeholder,
                   tooltip: dataset_helptext.dataset_form_encryption.key_tooltip,
+                  validation: dataset_helptext.dataset_form_encryption.key_validation,
                   required: true,
                   disabled: !is_key,
                   isHidden: !is_key,
@@ -1232,6 +1235,7 @@ export class VolumesListTableConfig implements InputTableConf {
               afterInit: function(entityDialog) {
                 const inherit_encryption_fg = entityDialog.formGroup.controls['inherit_encryption'];
                 const encryption_type_fg = entityDialog.formGroup.controls['encryption_type'];
+                const encryption_type_fc = _.find(entityDialog.fieldConfig, {name: 'encryption_type'});
                 const generate_key_fg = entityDialog.formGroup.controls['generate_key'];
 
                 const all_encryption_fields = ['encryption_type', 'passphrase', 'pbkdf2iters', 'generate_key', 'key'];
@@ -1248,6 +1252,9 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   } else {
                     entityDialog.setDisabled('encryption_type', inherit, inherit);
+                    if (passphrase_parent) { // keep hidden if passphrase parent;
+                      encryption_type_fc.isHidden = true;
+                    }
                     const key = (encryption_type_fg.value === 'key');
                     entityDialog.setDisabled('passphrase', key, key);
                     entityDialog.setDisabled('pbkdf2iters', key, key);
@@ -1322,6 +1329,12 @@ export class VolumesListTableConfig implements InputTableConf {
                       self.parentVolumesListComponent.repaintMe();
                     }
                   });
+                  dialogRef.componentInstance.failure.subscribe(err =>{
+                    if (err) {
+                      dialogRef.close();
+                      new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
+                    }
+                  })
                 }
               }
             }
