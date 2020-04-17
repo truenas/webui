@@ -11,15 +11,15 @@ export default {
 
     forumsA: T('The'),
     forumsB: T('TrueNAS Community Forums'), 
-    forumsC: T('are the best place to ask questions and interact with \
- fellow TrueNAS CORE users.'),
+    forumsC: T('are the best place to ask questions and interact with fellow TrueNAS'),
+    forumsD: T('users'),
 
     contactA: T('Does your business need'),
     contactB: T('Enterprise level'),
     contactC: T('support and services? Contact'),
     contactD: T('iXsystems for more information.'),
 
-    opensourceA: T('TrueNAS CORE is Free and'),
+    opensourceA: T('is Free and'),
     opensourceB: T('Open Source'),
     opensourceC: T('software, which is provided as-is with no warranty.'),
 
@@ -28,6 +28,7 @@ export default {
     findagainC: T('About.'),
 
     actionBtnText: {
-        splash: T('Get Started')
+        splash: T('Get Started'),
+        about: T('Close')
     }
 }
