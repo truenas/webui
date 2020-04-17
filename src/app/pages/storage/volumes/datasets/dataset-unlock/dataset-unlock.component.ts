@@ -127,6 +127,7 @@ export class DatasetUnlockComponent implements OnDestroy {
               name: 'key',
               placeholder: helptext.dataset_key_placeholder,
               tooltip: helptext.dataset_key_tooltip,
+              validation: helptext.dataset_key_validation,
               disabled: true,
               isHidden: true,
               width: '0%'
@@ -136,6 +137,7 @@ export class DatasetUnlockComponent implements OnDestroy {
               name: 'passphrase',
               placeholder: helptext.dataset_passphrase_placeholder,
               tooltip: helptext.dataset_passphrase_tooltip,
+              validation: helptext.dataset_passphrase_validation,
               inputType: 'password',
               togglePw: true,
               disabled: true,

@@ -1196,6 +1196,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   name: 'key',
                   placeholder: dataset_helptext.dataset_form_encryption.key_placeholder,
                   tooltip: dataset_helptext.dataset_form_encryption.key_tooltip,
+                  validation: dataset_helptext.dataset_form_encryption.key_validation,
                   required: true,
                   disabled: !is_key,
                   isHidden: !is_key,
@@ -1328,6 +1329,12 @@ export class VolumesListTableConfig implements InputTableConf {
                       self.parentVolumesListComponent.repaintMe();
                     }
                   });
+                  dialogRef.componentInstance.failure.subscribe(err =>{
+                    if (err) {
+                      dialogRef.close();
+                      new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
+                    }
+                  })
                 }
               }
             }

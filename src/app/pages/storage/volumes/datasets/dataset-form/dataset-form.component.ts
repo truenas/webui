@@ -498,6 +498,7 @@ export class DatasetFormComponent implements Formconfiguration{
           name: 'key',
           placeholder: helptext.dataset_form_encryption.key_placeholder,
           tooltip: helptext.dataset_form_encryption.key_tooltip,
+          validation: helptext.dataset_form_encryption.key_validation,
           required: true,
           disabled: true,
           isHidden: true,
