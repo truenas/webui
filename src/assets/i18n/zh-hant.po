@@ -23,10 +23,10 @@ msgid " First vdev is a "
 msgstr ""
 
 msgid " KiB."
-msgstr ""
+msgstr " KiB"
 
 msgid " Plugin"
-msgstr " 外掛"
+msgstr " 附加元件"
 
 msgid " Service"
 msgstr " 服務"
@@ -49,7 +49,7 @@ msgid ""
 msgstr ""
 
 msgid " and "
-msgstr ""
+msgstr " 及 "
 
 msgid " and all snapshots of it?"
 msgstr " 以及其所有快照？"
@@ -79,13 +79,13 @@ msgid " has been unlocked."
 msgstr " 已解鎖。"
 
 msgid " is "
-msgstr ""
+msgstr " 為 "
 
 msgid " is a required field."
-msgstr ""
+msgstr " 為必填欄位。"
 
 msgid " is required."
-msgstr ""
+msgstr " 為必須項。"
 
 msgid ""
 " is still running,  the Guest OS did not respond as expected. It is "
@@ -99,7 +99,7 @@ msgid ""
 msgstr ""
 
 msgid " seconds"
-msgstr ""
+msgstr " 秒"
 
 msgid ""
 " seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
@@ -107,22 +107,22 @@ msgid ""
 msgstr ""
 
 msgid " service has been enabled."
-msgstr ""
+msgstr " 服務已啓用。"
 
 msgid " should be greater than "
-msgstr ""
+msgstr " 應大於 "
 
 msgid " should be less than "
-msgstr ""
+msgstr " 應小於 "
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr " 系統已啓用並連至網路。"
 
 msgid " to include all "
-msgstr ""
+msgstr " 包含所有 "
 
 msgid " update successful"
-msgstr ""
+msgstr " 的更新已完成"
 
 msgid " updated."
 msgstr " 已更新。"
@@ -138,22 +138,22 @@ msgid ""
 msgstr ""
 
 msgid "'. All data on that pool was destroyed."
-msgstr ""
+msgstr "'。所有位於該資料池的資料已銷毀。"
 
 msgid "(24 Hours)"
-msgstr ""
+msgstr "(24小時)"
 
 msgid "(Examples: 500 KiB, 500M, 2 TB)"
-msgstr ""
+msgstr "(例如: 500KiB, 500M, 2TB)"
 
 msgid "(No description)"
-msgstr ""
+msgstr "(尚無敘述)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(自資料庫移除資料池)"
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", 新的 vdev 為"
 
 msgid ". At least one is required."
 msgstr ""
@@ -171,10 +171,10 @@ msgid "20 characters is the maximum length."
 msgstr "最多 20 個字元。"
 
 msgid "2FA"
-msgstr ""
+msgstr "雙重認證 (2FA)"
 
 msgid ": Automatic update check failed. Please check system network settings."
-msgstr ""
+msgstr ": 自動檢査更新失敗。請確認系統網路設定值。"
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr ""
@@ -195,10 +195,10 @@ msgid "</i> now?"
 msgstr "</i> 現在嗎？"
 
 msgid "</i> stopped."
-msgstr ""
+msgstr "</i> 已停止。"
 
 msgid "</i> updated."
-msgstr ""
+msgstr "</i> 已更新。"
 
 msgid "</i>. Data on the pool will not be accessible until the pool is unlocked."
 msgstr ""
@@ -249,6 +249,9 @@ msgid ""
 "href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
 "storage-account\"  target=\"_blank\">Microsoft Azure</a> account name."
 msgstr ""
+"<a "
+"href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
+"storage-account\"  target=\"_blank\">Microsoft Azure</a> 帳號名稱。"
 
 msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
@@ -281,10 +284,10 @@ msgid ""
 msgstr ""
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
-msgstr ""
+msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> 帳號密碼。"
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  username."
-msgstr ""
+msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> 帳號使用者名稱。"
 
 msgid ""
 "<a href=\"https://rclone.org/swift/#standard-options\" "
@@ -305,7 +308,7 @@ msgid ""
 "Encryption)</i>, <i>SSL (Implicit TLS)</i>, or <i>TLS (STARTTLS)</i>."
 msgstr ""
 "<a href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
-"target=\"_blank\">郵件加密</a> 類型。選擇 <i>Plain (未加密)</i>、<i>SSL (Implicit "
+"target=\"_blank\">郵件加密</a> 類型。選擇 <i>Plain (未加密)</i>、<i>SSL (隱式 "
 "TLS)</i> 或 <i>TLS (STARTTLS)</i>."
 
 msgid ""
@@ -334,7 +337,7 @@ msgid ""
 msgstr ""
 
 msgid "<b>Current Version:</b> "
-msgstr ""
+msgstr "<b>目前版本:</b> "
 
 msgid ""
 "<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the "
@@ -625,7 +628,7 @@ msgid ""
 msgstr ""
 
 msgid "ACL Entries"
-msgstr ""
+msgstr "ACL 項目
 
 msgid "ACL Mode"
 msgstr "ACL 模式"
@@ -637,10 +640,10 @@ msgid "ACL cannot be changed when the Source is the top-level dataset for a pool
 msgstr ""
 
 msgid "ACME Certificate"
-msgstr ""
+msgstr "ACME 憑證"
 
 msgid "ACME DNS"
-msgstr ""
+msgstr "ACME DNS"
 
 msgid "ACME DNS Authenticators"
 msgstr ""
@@ -649,7 +652,7 @@ msgid "ACME Server Directory URI"
 msgstr ""
 
 msgid "AD"
-msgstr ""
+msgstr "AD"
 
 msgid "AD Timeout"
 msgstr "AD 逾時"
@@ -658,7 +661,7 @@ msgid "ADD"
 msgstr ""
 
 msgid "AFP"
-msgstr ""
+msgstr "AFP"
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 權限"
@@ -667,19 +670,19 @@ msgid "API Key"
 msgstr "API 金鑰"
 
 msgid "API Key or Password"
-msgstr ""
+msgstr "API 金鑰或密碼"
 
 msgid "API Keys"
-msgstr ""
+msgstr "API 金鑰"
 
 msgid "API URL"
-msgstr ""
+msgstr "API URL"
 
 msgid "APPLY CHANGES"
 msgstr "套用變更"
 
 msgid "ARN"
-msgstr ""
+msgstr "ARN"
 
 msgid "ATA Security User"
 msgstr "ATA 安全使用者"
@@ -688,7 +691,7 @@ msgid "AUTORID"
 msgstr ""
 
 msgid "AWS Region"
-msgstr ""
+msgstr "AWS 區域"
 
 msgid "About"
 msgstr "關於"
@@ -733,12 +736,14 @@ msgid "Access Mode"
 msgstr ""
 
 msgid "Access Token"
-msgstr "存取權仗"
+msgstr "存取權杖"
 
 msgid ""
 "Access Token <a href=\"https://api.hubic.com/sandbox/\"  "
 "target=\"_blank\">generated by a Hubic account</a>."
 msgstr ""
+"<a href=\"https://api.hubic.com/sandbox/\"  "
+"target=\"_blank\">自 Hubic 帳號</a>產生的存取權杖。"
 
 msgid ""
 "Access Token for a Dropbox account. A  <a "
@@ -984,7 +989,7 @@ msgid ""
 msgstr ""
 
 msgid "Additional Parameters"
-msgstr ""
+msgstr "附加參數"
 
 msgid ""
 "Additional domains to search. Separate entries by  pressing "
@@ -1012,7 +1017,7 @@ msgid ""
 msgstr ""
 
 msgid "Additional parameters."
-msgstr ""
+msgstr "附加參數"
 
 msgid "Address"
 msgstr "位址"
@@ -1047,7 +1052,7 @@ msgid "Adv. Power Management"
 msgstr "進階電源管理"
 
 msgid "Advance Options"
-msgstr ""
+msgstr "進階選項"
 
 msgid "Advanced"
 msgstr "進階"
@@ -1059,10 +1064,10 @@ msgid "Advanced Jail Creation"
 msgstr ""
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "進階模式"
 
 msgid "Advanced Options"
-msgstr ""
+msgstr "進階選項"
 
 msgid "Advanced Plugin Installation"
 msgstr "進階外掛安裝"
@@ -1071,7 +1076,7 @@ msgid "Advanced Power Management"
 msgstr "進階電源管理"
 
 msgid "Advanced Remote Options"
-msgstr ""
+msgstr "進階遠端設定選項"
 
 msgid "Advanced Settings"
 msgstr "進階設定"
@@ -1094,7 +1099,7 @@ msgid "Alert Settings"
 msgstr "警示設定"
 
 msgid "Alerts"
-msgstr ""
+msgstr "警示"
 
 msgid "Aliases"
 msgstr "別名"
@@ -1118,7 +1123,7 @@ msgid "Allocate at least 256 MiB."
 msgstr ""
 
 msgid "Allow"
-msgstr ""
+msgstr "允許"
 
 msgid "Allow All Initiators"
 msgstr ""
@@ -1148,10 +1153,10 @@ msgid "Allow Hosts"
 msgstr ""
 
 msgid "Allow Kerberos Authentication"
-msgstr ""
+msgstr "允許 Kerberos 身分認證"
 
 msgid "Allow List"
-msgstr ""
+msgstr "允許清單"
 
 msgid "Allow Local User Login"
 msgstr "允許本機帳戶登入"
@@ -1160,13 +1165,13 @@ msgid "Allow New Files"
 msgstr "允許建立新檔案"
 
 msgid "Allow Password Authentication"
-msgstr ""
+msgstr "允許密碼認證"
 
 msgid "Allow Root Login"
 msgstr "允許 Root 登入"
 
 msgid "Allow TCP Port Forwarding"
-msgstr ""
+msgstr "允許 TCP 通訊埠轉發"
 
 msgid "Allow Taking Empty Snapshots"
 msgstr "允許製作空白快照"
@@ -1181,6 +1186,8 @@ msgid ""
 "Allow anonymous FTP logins with access to the  directory specified in "
 "<b>Path</b>."
 msgstr ""
+"Allow anonymous FTP logins with access to the  directory specified in "
+"<b>Path</b>."
 
 msgid ""
 "Allow any local user to log in. By default, only  members of the <i>ftp</i> "
@@ -1338,7 +1345,7 @@ msgid "Always Chroot"
 msgstr "允許 Chroot"
 
 msgid "Always On"
-msgstr ""
+msgstr "總是開啓"
 
 msgid ""
 "Always back up the key! Losing the key will also lose all data on the disks "
@@ -1439,7 +1446,7 @@ msgid "Apply Pending update"
 msgstr "套用擱置中的更新"
 
 msgid "Apply Permissions Recursively"
-msgstr ""
+msgstr "遞迴套用權限"
 
 msgid "Apply Quotas to Selected Groups"
 msgstr ""
