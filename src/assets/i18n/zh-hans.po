@@ -109,11 +109,17 @@ msgstr " 除非选择永久保持，否则为秒。调整延迟时间以进行�
 msgid " service has been enabled."
 msgstr " 服务已启用。"
 
-msgid " should be greater than "
-msgstr "应该大于"
+msgid " should be at least "
+msgstr ""
 
-msgid " should be less than "
-msgstr "应该小于"
+msgid " should be no more than "
+msgstr ""
+
+msgid " successfully saved."
+msgstr ""
+
+msgid " successfully unlocked"
+msgstr ""
 
 msgid " system is powered on and connected to the network."
 msgstr " 系统已启动并连接到网络。"
@@ -146,11 +152,17 @@ msgstr "（24小时）"
 msgid "(Examples: 500 KiB, 500M, 2 TB)"
 msgstr "（例如：500 KiB，500M，2 TB）"
 
+msgid "(Legacy Encryption)"
+msgstr ""
+
 msgid "(No description)"
 msgstr "（没有描述）"
 
 msgid "(Remove pool from database)"
 msgstr "（从数据库中删除池）"
+
+msgid "(top-right), then"
+msgstr ""
 
 msgid ", new vdev is "
 msgstr "，新的vdev是"
@@ -655,6 +667,9 @@ msgstr ""
 "<p>系统将重新启动以执行此操作！</p> <p> <font "
 "color=\"red\">在没有密码秘密种子的情况下保存上传的配置数据库文件时，所有密码都会重置。</font> </p>"
 
+msgid "<strong>Dataset:</strong> "
+msgstr ""
+
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -810,6 +825,9 @@ msgstr "AWS地区"
 msgid "About"
 msgstr "关于"
 
+msgid "About."
+msgstr ""
+
 msgid "Accent"
 msgstr "强调"
 
@@ -901,8 +919,14 @@ msgstr "动作"
 msgid "Activate"
 msgstr "启用"
 
+msgid "Activate KMIP configuration and begin syncing keys with the KMIP server."
+msgstr ""
+
 msgid "Activate this Boot Environment?"
 msgstr "是否激活此引导环境？"
+
+msgid "Activate this certificate extension."
+msgstr ""
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -1075,7 +1099,9 @@ msgstr ""
 msgid ""
 "Additional  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=\"_blank\">smb.conf</a>  parameters."
-msgstr "附加的<a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" target=\"_blank\">smb.conf</a>参数。"
+msgstr ""
+"附加的<a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=\"_blank\">smb.conf</a>参数。"
 
 msgid ""
 "Additional <a "
@@ -1259,6 +1285,9 @@ msgstr "警报设置"
 
 msgid "Alerts"
 msgstr "警报"
+
+msgid "Algorithm"
+msgstr ""
 
 msgid "Aliases"
 msgstr "别名"
@@ -1486,11 +1515,16 @@ msgstr "允许使用可以承受短时间断开连接的打开文件句柄。Sam
 msgid "Allowed Initiators (IQN)"
 msgstr "允许的启动器（IQN）"
 
+msgid "Allowed characters: letters, numbers, underscore (_), and dash (-)."
+msgstr ""
+
 msgid ""
 "Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\" "
 "target\"_blank\">NTFS data streams</a>.  Disabling this option causes MacOS "
 "to write streams to files on the filesystem."
-msgstr "允许多个<a href=\"http://www.ntfs.com/ntfs-multiple.htm\" target\"_blank\">NTFS数据流</a>。禁用此选项会使MacOS将流写入文件系统上的文件。"
+msgstr ""
+"允许多个<a href=\"http://www.ntfs.com/ntfs-multiple.htm\" "
+"target\"_blank\">NTFS数据流</a>。禁用此选项会使MacOS将流写入文件系统上的文件。"
 
 msgid ""
 "Allows the drive to enter standby, even when non-physical S.M.A.R.T.  "
@@ -1518,6 +1552,9 @@ msgstr ""
 
 msgid "Also Include Naming Schema"
 msgstr "包括命名惯例"
+
+msgid "Also unlock any encrypted dataset stored within this dataset."
+msgstr ""
 
 msgid "Alt Background 1"
 msgstr "Alt背景1"
@@ -1614,7 +1651,10 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=\"_blank\">smb.conf(5)</a> for a list of supported macros. The "
 "connectpath **must** be preset before a client connects."
-msgstr "在共享连接路径上添加后缀。这用于基于每个用户，每台计算机或每个IP地址提供唯一共享。后缀可以包含一个宏。有关受支持的宏的列表，请参见<a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" target=\"_blank\">smb.conf(5)</a>。**必须**在客户端连接之前预先设置连接路径。"
+msgstr ""
+"在共享连接路径上添加后缀。这用于基于每个用户，每台计算机或每个IP地址提供唯一共享。后缀可以包含一个宏。有关受支持的宏的列表，请参见<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=\"_blank\">smb.conf(5)</a>。**必须**在客户端连接之前预先设置连接路径。"
 
 msgid "Apple Shares (AFP)"
 msgstr "苹果共享 (AFP)"
@@ -1802,6 +1842,15 @@ msgid ""
 "DNS authenticator."
 msgstr "身份验证域。 选择一个先前配置的ACME DNS身份验证器。"
 
+msgid "Authority Cert Issuer"
+msgstr ""
+
+msgid "Authority Key Config"
+msgstr ""
+
+msgid "Authority Key Identifier"
+msgstr ""
+
 msgid "Authorized Hosts and IP addresses"
 msgstr "授权的主机和IP地址"
 
@@ -1935,6 +1984,12 @@ msgstr "基础"
 
 msgid "Basic Buttons"
 msgstr "基础按钮"
+
+msgid "Basic Constraints"
+msgstr ""
+
+msgid "Basic Constraints Config"
+msgstr ""
 
 msgid "Basic Info"
 msgstr "基础信息"
@@ -2096,6 +2151,11 @@ msgid ""
 "Maximum path length is 255 characters"
 msgstr "浏览远程主机上的现有路径以进行同步。最大路径长度为255个字符"
 
+msgid ""
+"Browse to the exported key file that can be used to unlock this      "
+"dataset."
+msgstr ""
+
 msgid "Browse to the keytab file to upload."
 msgstr "浏览要上传的密钥表文件。"
 
@@ -2156,6 +2216,9 @@ msgstr ""
 "在默认情况下，虚拟机将会获得一个自动生成的随机MAC地址。输入一个自定义的地址来覆盖默认地址。点击<b>生成MAC地址</b>"
 "添加一个随机MAC地址到这个区域。"
 
+msgid "CA"
+msgstr ""
+
 msgid "CA ID"
 msgstr "认证机构ID"
 
@@ -2203,6 +2266,9 @@ msgstr "处理器和内存"
 
 msgid "CPUs and Memory"
 msgstr "处理器和内存"
+
+msgid "CRL Sign"
+msgstr ""
 
 msgid "CSR exists on this system"
 msgstr "此系统上存在CSR"
@@ -2304,6 +2370,9 @@ msgstr "更改密码"
 
 msgid "Change Password"
 msgstr "更改密码"
+
+msgid "Change Server"
+msgstr ""
 
 msgid "Change Settings and Clear Report History?"
 msgstr "更改设置并清除报告历史记录？"
@@ -3154,6 +3223,9 @@ msgstr "联系支持"
 msgid "Container"
 msgstr "容器"
 
+msgid "Content Commitment"
+msgstr ""
+
 msgid "Contents of the uploaded Service Account JSON file."
 msgstr "已上传的服务帐户JSON文件的内容。"
 
@@ -3314,15 +3386,12 @@ msgid ""
 "Creates dataset snapshots even when there  have been no changes to the "
 "dataset from the last snapshot. Recommended  for creating long-term restore "
 "points, multiple snapshot tasks pointed  at the same datasets, or to be "
-"compatible with snapshot schedules or  replications created in %brand% 11.2 "
+"compatible with snapshot schedules or  replications created in TrueNAS 11.2 "
 "and earlier.<br><br> For example,  allowing empty snapshots for a monthly "
 "snapshot schedule allows that  monthly snapshot to be taken, even when a "
 "daily snapshot task has  already taken a snapshot of any changes to the "
 "dataset."
 msgstr ""
-"即使最后一个快照的数据集没有更改，也可以创建数据集快照。 "
-"建议用于创建长期还原点，将多个快照任务指向相同的数据集，或者与％brand％11.2和更早版本中创建的快照计划或复制兼容。<br> "
-"<br>例如，允许每月快照计划使用空快照，即使每月快照任务已经为数据集的任何更改拍摄了快照，也可以进行每月拍摄。"
 
 msgid "Creating"
 msgstr "创建中"
@@ -3354,6 +3423,9 @@ msgstr "证书"
 msgid "Critical"
 msgstr "临界"
 
+msgid "Critical Extension"
+msgstr ""
+
 msgid "Critical applications"
 msgstr "关键应用"
 
@@ -3371,7 +3443,10 @@ msgid ""
 "which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
 "target=\"_blank\">Transport Layer Security (TLS)</a> versions TrueNAS can "
 "use for connection security."
-msgstr "用于保护客户端/服务器连接的加密协议。选择TrueNAS可用于连接安全性的<a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" target=\"_blank\">传输层安全（TLS）</a>版本。"
+msgstr ""
+"用于保护客户端/服务器连接的加密协议。选择TrueNAS可用于连接安全性的<a "
+"href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
+"target=\"_blank\">传输层安全（TLS）</a>版本。"
 
 msgid "Current Password"
 msgstr "当前密码"
@@ -3478,6 +3553,9 @@ msgstr "仪表板"
 msgid "Data"
 msgstr "数据"
 
+msgid "Data Encipherment"
+msgstr ""
+
 msgid "Data Quota"
 msgstr "数据配额"
 
@@ -3508,8 +3586,20 @@ msgstr "数据库路径"
 msgid "Dataset"
 msgstr "数据集"
 
+msgid "Dataset Actions"
+msgstr ""
+
+msgid "Dataset Key"
+msgstr ""
+
+msgid "Dataset Passphrase"
+msgstr ""
+
 msgid "Dataset Path"
 msgstr "数据集路径"
+
+msgid "Datasets for "
+msgstr ""
 
 msgid "Datastore"
 msgstr "数据存储"
@@ -3562,6 +3652,9 @@ msgstr "调试无法下载。"
 
 msgid "Dec"
 msgstr "十二月"
+
+msgid "Decipher Only"
+msgstr ""
 
 msgid "Decrypt pool"
 msgstr "解密池"
@@ -3903,6 +3996,21 @@ msgid "Details for "
 msgstr "详细信息"
 
 msgid ""
+"Determine how  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=chmod\" "
+"target=\"_blank\">chmod</a>  behaves when adjusting file ACLs. See the  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
+"target=\"_blank\">zfs(8)</a> aclmode property.  <br><br><i>Passthrough</i> "
+"only updates ACL entries that are related to the file or directory mode.  "
+"<br><br><i>Restricted</i> does not allow chmod to make changes to files or "
+"directories with a  non-trivial ACL. An ACL is trivial if it can be fully "
+"expressed as a file mode without losing  any access rules. Setting the ACL "
+"Mode to Restricted is typically used to optimize a dataset for  SMB "
+"sharing, but can require further optimizations. For example, configuring an "
+"rsync task with this  dataset could require adding <i>--no-perms</i> in the "
+"task <i>Auxiliary Parameters</i> field."
+msgstr ""
+
+msgid ""
 "Determine whether this share name is included when browsing shares. Home "
 "shares are only visible to the owner regardless of this setting."
 msgstr "确定浏览共享时是否包含此共享名称。无论此设置如何，家庭共享仅对所有者可见。"
@@ -3961,6 +4069,9 @@ msgstr "差异"
 
 msgid "Digest Algorithm"
 msgstr "摘要算法"
+
+msgid "Digital Signature"
+msgstr ""
 
 msgid "Direct the flow of data to the remote host."
 msgstr "将数据流定向到远程主机。"
@@ -4039,6 +4150,9 @@ msgstr "禁用"
 
 msgid "Disabled (Not encrypted)"
 msgstr "禁用（未加密）"
+
+msgid "Disabling encryption will result in a non-encrypted dataset, continue?"
+msgstr ""
 
 msgid ""
 "Disabling hardware offloading can severely reduce network performance. "
@@ -4128,6 +4242,9 @@ msgstr "如果禁用了串行端口，请不要设置此项。"
 
 msgid "Docker Host"
 msgstr "Docker主机"
+
+msgid "Does your business need"
+msgstr ""
 
 msgid "Domain"
 msgstr "域"
@@ -4254,6 +4371,9 @@ msgstr "编辑警告服务"
 
 msgid "Edit Disk(s)"
 msgstr "编辑磁盘"
+
+msgid "Edit Encryption Options for "
+msgstr ""
 
 msgid "Edit Filesystem ACL"
 msgstr "编辑文件系统ACL"
@@ -4450,7 +4570,13 @@ msgid ""
 "dataset mountpoint. Snapshots have the prefix  <code>fss-</code> followed "
 "by a snapshot creation timestamp. A snapshot must have  this prefix for an "
 "RPC user to delete it."
-msgstr "启用对文件服务器远程VSS协议（<a href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp\" target=\"_blank\">FSVRP</a>）的支持。该协议允许RPC客户端管理特定SMB共享的快照。共享路径必须是数据集挂载点。快照的前缀为<code> fss-</code>，后跟快照创建时间戳。快照必须具有此前缀，RPC用户才能删除快照。"
+msgstr ""
+"启用对文件服务器远程VSS协议（<a "
+"href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-"
+"fsrvp\" "
+"target=\"_blank\">FSVRP</a>"
+"）的支持。该协议允许RPC客户端管理特定SMB共享的快照。共享路径必须是数据集挂载点。快照的前缀为<code> "
+"fss-</code>，后跟快照创建时间戳。快照必须具有此前缀，RPC用户才能删除快照。"
 
 msgid ""
 "Enable the Active Directory service. The first time this option is set, the "
@@ -4568,6 +4694,9 @@ msgstr "建议<b>不要</b>启用此选项，因为它会绕过安全机制。"
 msgid "Enabling this option may have performance implications on your pools."
 msgstr "启用此选项可能会对池产生性能影响。"
 
+msgid "Encipher Only"
+msgstr ""
+
 msgid "Enclosure"
 msgstr "机箱"
 
@@ -4589,6 +4718,9 @@ msgstr ""
 "启用了<b>文件名加密</b>且<b>加密密码</ b>或<b>加密盐</ b>不正确的<i> 拉取 </ "
 "i>任务将不会传输任何文件，但仍然会报告该任务已成功。要验证文件是否已成功传输，请单击完成的任务状态以查看已传输文件的列表。"
 
+msgid "Encrypted Datasets"
+msgstr ""
+
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr "加密的池磁盘必须在导入之前解密。"
 
@@ -4597,6 +4729,9 @@ msgstr "加密"
 
 msgid "Encryption (more secure, but slower)"
 msgstr "加密（更安全，但速度较慢）"
+
+msgid "Encryption Actions"
+msgstr ""
 
 msgid "Encryption Algorithm"
 msgstr "加密算法"
@@ -4619,6 +4754,12 @@ msgstr "加密密钥/密码"
 msgid "Encryption Mode"
 msgstr "加密模式"
 
+msgid "Encryption Options"
+msgstr ""
+
+msgid "Encryption Options Saved"
+msgstr ""
+
 msgid "Encryption Password"
 msgstr "加密密码"
 
@@ -4627,6 +4768,15 @@ msgstr "加密协议"
 
 msgid "Encryption Salt"
 msgstr "加密盐"
+
+msgid "Encryption Type"
+msgstr ""
+
+msgid "Encryption key that can unlock the dataset."
+msgstr ""
+
+msgid "Encryption options for "
+msgstr ""
 
 msgid "End"
 msgstr "结束"
@@ -4733,12 +4883,18 @@ msgid ""
 "target=\"_blank\">ping</a>.  Separate entries by pressing "
 "<code>Enter</code>. Each address is tried  until one is successful or the "
 "list is exhausted. Leave empty to use  the default gateway."
-msgstr "输入要<a href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" target=\"_blank\">ping</a>的IP地址列表。通过按<code> Enter </code>分隔条目。尝试每个地址，直到成功或列表用尽。保留为空以使用默认网关。"
+msgstr ""
+"输入要<a href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
+"target=\"_blank\">ping</a>的IP地址列表。通过按<code> Enter "
+"</code>分隔条目。尝试每个地址，直到成功或列表用尽。保留为空以使用默认网关。"
 
 msgid ""
 "Enter a list of allowed hostnames or IP addresses. Separate entries by "
-"pressing <code>Enter</code>."
-msgstr "输入允许的主机名或IP地址的列表。通过按<code> Enter </code>分隔条目。"
+"pressing <code>Enter</code>. A more detailed description  with examples can "
+"be found  <a "
+"href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
+"HOSTSALLOW\">here</a>."
+msgstr ""
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
@@ -5045,6 +5201,9 @@ msgid ""
 "Enter either <i>root</i> or another valid <i>username</i>. Inside the jail, "
 "commands run as this user."
 msgstr "输入<i>root</i>或其他有效的<i>用户名</i>。在监狱内，命令以该用户身份运行。"
+
+msgid "Enter or paste a string to use as the encryption key for this dataset."
+msgstr ""
 
 msgid "Enter or paste an Authentication token."
 msgstr "输入或粘贴身份验证令牌。"
@@ -5399,6 +5558,9 @@ msgid ""
 "already exists. Otherwise, specify the file size for the new file."
 msgstr "输入<i>0</i>使用实际文件大小，并要求该文件已存在。否则，请指定新文件的文件大小。"
 
+msgid "Enterprise level"
+msgstr ""
+
 msgid "Environment"
 msgstr "环境"
 
@@ -5440,6 +5602,9 @@ msgstr "解密磁盘时出错"
 
 msgid "Error deleting dataset "
 msgstr "删除zvol时出错 "
+
+msgid "Error details for "
+msgstr ""
 
 msgid "Error exporting the Private Key"
 msgstr "导出私钥时出错"
@@ -5488,6 +5653,9 @@ msgstr "错误："
 
 msgid "Error: "
 msgstr "错误： "
+
+msgid "Errors"
+msgstr ""
 
 msgid ""
 "Establishing a connection requires  that one of the connection systems has "
@@ -5550,8 +5718,17 @@ msgstr "扩展池"
 msgid "Expiration Date"
 msgstr "失效日期"
 
+msgid "Export"
+msgstr ""
+
 msgid "Export Certificate"
 msgstr "导出证书"
+
+msgid "Export Dataset Keys"
+msgstr ""
+
+msgid "Export Dataset Keys for "
+msgstr ""
 
 msgid "Export Password Secret Seed"
 msgstr "导出密码秘密种子"
@@ -5576,6 +5753,9 @@ msgstr ""
 "将ZFS快照导出为VSS客户端的<a "
 "href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-"
 "and-shadow-copy-sets\" target=_blank>卷影副本</a> 。"
+
+msgid "Export dataset keys which can be used to unlock datasets for "
+msgstr ""
 
 msgid "Export/Disconnect"
 msgstr "导出/断开连接"
@@ -5603,6 +5783,9 @@ msgstr "扩展"
 
 msgid "Extend Vdev"
 msgstr "扩展Vdev"
+
+msgid "Extended Key Usage"
+msgstr ""
 
 msgid "Extending Vdev"
 msgstr "正在扩展Vdev"
@@ -5679,6 +5862,12 @@ msgstr "提取数据存储"
 msgid "Fetch Method"
 msgstr "获取方法"
 
+msgid "Fetching Encryption Summary"
+msgstr ""
+
+msgid "Fetching Encryption Summary for "
+msgstr ""
+
 msgid "Fibre Channel "
 msgstr "光纤通道 "
 
@@ -5736,6 +5925,9 @@ msgstr "过滤组"
 
 msgid "Filter Users"
 msgstr "过滤用户"
+
+msgid "Find this information later by clicking"
+msgstr ""
 
 msgid "Finding Pools"
 msgstr "查找池"
@@ -5817,6 +6009,9 @@ msgid ""
 "shutdown timeout. Without this option selected, the VM will  receive the "
 "shutdown signal, but may or may not complete the shutdown process."
 msgstr "如果尚未在指定的关闭超时时间内停止虚拟机，则强制其停止。如果未选择此选项，则VM将收到关闭信号，但可能不会完成关闭过程。"
+
+msgid "Force unmount "
+msgstr ""
 
 msgid ""
 "Force using  <a "
@@ -5955,6 +6150,9 @@ msgstr "常规VM设置"
 msgid "Generate Debug File"
 msgstr "生成调试文件"
 
+msgid "Generate Key"
+msgstr ""
+
 msgid "Generate Keypair"
 msgstr "生成密钥对"
 
@@ -5975,6 +6173,9 @@ msgstr ""
 
 msgid "Generate idmap low range based on same algorithm that SSSD uses by default."
 msgstr "根据SSSD默认使用的相同算法生成idmap低范围。"
+
+msgid "Get Started"
+msgstr ""
 
 msgid "GiB"
 msgstr "GiB"
@@ -6316,6 +6517,13 @@ msgid ""
 "choose a measure of time from  the drop-down."
 msgstr "快照在目标系统上保留多长时间。 输入一个数字，然后从下拉菜单中选择一个时间度量。"
 
+msgid ""
+"How many non-self-issued intermediate certificates that can follow this "
+"certificate in a valid certification path. Entering <i>0</i> allows a "
+"single additional certificate to follow in the certificate path. Cannot be "
+"less than <i>0</i>."
+msgstr ""
+
 msgid "How often the IP is checked in seconds."
 msgstr "检查IP的频率（以秒为单位）。"
 
@@ -6338,6 +6546,11 @@ msgid ""
 "<i>Allow</i> to grant the specified permissions and <i>Deny</i> to restrict "
 "the specified permissions."
 msgstr "<i>权限</ i>如何应用于所选的<i>谁</>。选择<i>允许</ i>授予指定的权限，选择<i>拒绝</ i>限制指定的权限。"
+
+msgid ""
+"How the dataset is secured. Choose between securing with     an encryption "
+"<i>Key</i> or a user-defined <i>Passphrase</i>."
+msgstr ""
 
 msgid ""
 "How this ACE is applied to newly created directories and files within the "
@@ -6513,6 +6726,27 @@ msgstr "标识符和类型"
 msgid "Identify Light"
 msgstr "识别灯"
 
+msgid ""
+"Identify the purpose for this public key. Typically used for end entity "
+"certificates. Multiple usages can be selected. Do not mark this extension "
+"critical when the <i>Usage</i> is <i>ANY_EXTENDED_KEY_USAGE</i>.<br><br> "
+"Using both <b>Extended Key Usage</b> and <b>Key Usage</b> extensions "
+"requires that the purpose of the certificate is consistent with both "
+"extensions. See <a href=\"https://www.ietf.org/rfc/rfc3280.txt\" "
+"target=\"_blank\">RFC 3280, section 4.2.1.13</a> for more details."
+msgstr ""
+
+msgid "Identify this certificate as a Certificate Authority (CA)."
+msgstr ""
+
+msgid ""
+"Identify this extension as critical for the certificate. Critical "
+"extensions must be recognized by the certificate-using system or this "
+"certificate will be rejected. Extensions identified as <i>not</i> critical "
+"can be ignored by the certificate-using system and the certificate still "
+"approved."
+msgstr ""
+
 msgid "Idmap"
 msgstr "Idmap"
 
@@ -6647,6 +6881,15 @@ msgstr "信息"
 
 msgid "Inherit"
 msgstr "继承"
+
+msgid "Inherit (encrypted)"
+msgstr ""
+
+msgid "Inherit (non-encrypted)"
+msgstr ""
+
+msgid "Inherit encryption properties from parent"
+msgstr ""
 
 msgid "Inherits"
 msgstr "继承"
@@ -6790,6 +7033,9 @@ msgid ""
 "    separate addresses by pressing <code>Enter</code>."
 msgstr "无效的网络地址列表。通过按<code> Enter </ code>检查拼写错误或缺少CIDR网络掩码以及单独的地址。"
 
+msgid "Invalid option selected"
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr "无效的正则表达式过滤器"
 
@@ -6799,7 +7045,9 @@ msgstr "无效值。缺少数值或无效的数值/单位。"
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters  "
 "for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>."
-msgstr "无效值。 有效值是数字，后跟GiB的可选单位字母，例如<code>256g</code>或<code>1 G</code>或<code>2 GiB</code>。"
+msgstr ""
+"无效值。 有效值是数字，后跟GiB的可选单位字母，例如<code>256g</code>或<code>1 G</code>或<code>2 "
+"GiB</code>。"
 
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters,  "
@@ -6973,6 +7221,18 @@ msgstr "Kerberos设置"
 msgid "Kernel"
 msgstr "内核"
 
+msgid "Key"
+msgstr ""
+
+msgid "Key Agreement"
+msgstr ""
+
+msgid "Key Cert Sign"
+msgstr ""
+
+msgid "Key Encipherment"
+msgstr ""
+
 msgid "Key ID"
 msgstr "密钥ID"
 
@@ -6981,6 +7241,12 @@ msgstr "密钥长度"
 
 msgid "Key Type"
 msgstr "密钥类型"
+
+msgid "Key Usage"
+msgstr ""
+
+msgid "Key Usage Config"
+msgstr ""
 
 msgid ""
 "Key generated by the Amazon Web Services account. See the <a "
@@ -7130,7 +7396,9 @@ msgid ""
 "Legacy NetBIOS name server. Advertises the SMB  service <i>NetBIOS "
 "Name</i>. Can be required for legacy SMB1 clients  to discover the server. "
 "When advertised, the server appears in  <i>Network Neighborhood</i>)."
-msgstr "传统NetBIOS名称服务器。通告SMB服务的<i>NetBIOS 名称</i>。传统SMB1客户端可以发现服务器。播发时，服务器将显示在<i>网上邻居</i>）。"
+msgstr ""
+"传统NetBIOS名称服务器。通告SMB服务的<i>NetBIOS "
+"名称</i>。传统SMB1客户端可以发现服务器。播发时，服务器将显示在<i>网上邻居</i>）。"
 
 msgid "Legacy Web Interface"
 msgstr "传统Web界面"
@@ -7237,11 +7505,17 @@ msgstr "位置"
 msgid "Lock"
 msgstr "锁定"
 
+msgid "Lock Dataset "
+msgstr ""
+
 msgid "Lock Pool"
 msgstr "锁定池"
 
 msgid "Lock User"
 msgstr "锁定用户"
+
+msgid "Lock dataset "
+msgstr ""
 
 msgid "Log"
 msgstr "日志"
@@ -7278,6 +7552,9 @@ msgstr "登录尝试"
 
 msgid "Logs"
 msgstr "日志"
+
+msgid "Looking for help?"
+msgstr ""
 
 msgid ""
 "Lowercase alphanumeric characters plus dot (.), dash (-), and colon (:) are "
@@ -7333,8 +7610,8 @@ msgstr "管理自定义主题"
 msgid "Manage Recovery Key"
 msgstr "管理恢复密钥"
 
-msgid "Manage SED Password"
-msgstr "管理SED密码"
+msgid "Manage SED Password(s)"
+msgstr ""
 
 msgid "Manage Services and Continue"
 msgstr "管理服务并继续"
@@ -7391,6 +7668,14 @@ msgid ""
 "Matching the fixed size of data, as in a database, may result in better "
 "performance."
 msgstr "在数据库中匹配固定大小的数据可能会有更好的性能。"
+
+msgid ""
+"Mathematical instruction sets that determine how plaintext is converted     "
+" into ciphertext. See      <a "
+"href=\"https://en.wikipedia.org/wiki/Advanced_Encryption_Standard\" "
+"target=\"_blank\">Advanced Encryption Standard (AES)</a>      for more "
+"details."
+msgstr ""
 
 msgid "Mattermost username."
 msgstr "Mattermost用户名。"
@@ -8112,6 +8397,9 @@ msgstr "没有日志可用于此任务。"
 msgid "No longer keep this Boot Environment?"
 msgstr "不再保留此引导环境？"
 
+msgid "No network interfaces are marked critical for failover."
+msgstr ""
+
 msgid "No pools"
 msgstr "没有池"
 
@@ -8135,6 +8423,9 @@ msgstr "否，继续导入"
 
 msgid "Nobind"
 msgstr "无绑定"
+
+msgid "Nodes CARP states do not agree."
+msgstr ""
 
 msgid "None"
 msgstr "没有"
@@ -8214,6 +8505,14 @@ msgid ""
 "Number of objects that can be owned by each of the selected users.  "
 "Entering <code>0</code> (zero) allows unlimited objects."
 msgstr "每个选定用户可以拥有的对象数。输入<code> 0 </code>（零）允许无限制的对象数。"
+
+msgid ""
+"Number of password-based key derivation function 2 (PBKDF2) iterations to "
+"use for reducing vulnerability      to brute-force attacks. Entering a "
+"number larger than <i>100000</i> is required. See      <a "
+"href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> "
+"for more details."
+msgstr ""
 
 msgid ""
 "Number of points for each hourly, daily,  weekly, monthly, or yearly graph "
@@ -8404,6 +8703,9 @@ msgid ""
 "selected permissions."
 msgstr "仅适用于Unix ACLs。在共享上创建的新文件将使用选定的权限进行设置。"
 
+msgid "Open Source"
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr "OpenVPN客户端设置"
 
@@ -8567,6 +8869,11 @@ msgstr "继续"
 msgid "PagerDuty client name."
 msgstr "PagerDuty客户端名称。"
 
+msgid ""
+"Pair this certificate's public key with the Certificate Authority private "
+"key used to sign this certificate."
+msgstr ""
+
 msgid "Parent Interface"
 msgstr "父接口"
 
@@ -8652,6 +8959,9 @@ msgstr "粘贴与证书关联的私钥（如果可用）。请提供至少1024�
 msgid "Path"
 msgstr "路径"
 
+msgid "Path Length"
+msgstr ""
+
 msgid "Path Suffix"
 msgstr "路径后缀"
 
@@ -8725,11 +9035,11 @@ msgstr "对等秘密 (确认)"
 msgid "Peer User"
 msgstr "对等用户"
 
-msgid "Pending"
-msgstr "待处理"
-
 msgid "Pending Network Changes"
 msgstr "待处理的网络更改"
+
+msgid "Pending Sync"
+msgstr ""
 
 msgid "Pending Upgrade"
 msgstr "待升级"
@@ -8838,6 +9148,9 @@ msgstr "插件"
 msgid "Pool"
 msgstr "池"
 
+msgid "Pool Actions"
+msgstr ""
+
 msgid "Pool Available Space Threshold (%)"
 msgstr "池可用空间阈值 (%)"
 
@@ -8920,6 +9233,11 @@ msgstr "2 秒内的功率不能低于 4 或高于 <i>最大轮询</i>。"
 
 msgid "Pre-script"
 msgstr "预脚本"
+
+msgid ""
+"Predefined certificate extensions. Choose a profile that best matches your "
+"certificate usage scenario."
+msgstr ""
 
 msgid ""
 "Predefined permission combinations:<br><i>Read</i>: Read access and Execute "
@@ -9050,6 +9368,9 @@ msgstr "继续升级池？警告：升级池是一种单向操作，它可能会
 msgid "Production status successfully updated"
 msgstr "生产状态已成功更新"
 
+msgid "Profiles"
+msgstr ""
+
 msgid "Progress"
 msgstr "进度"
 
@@ -9145,6 +9466,13 @@ msgstr "Raid-z3"
 
 msgid "Raised Buttons"
 msgstr "凸起的按钮"
+
+msgid ""
+"Randomly generate an encryption key for securing this dataset. Disabling "
+"requires manually      defining the encryption key.<br> WARNING: the "
+"encryption key is the only means to decrypt the information stored in this  "
+"    dataset. Store the encryption key in a secure location."
+msgstr ""
 
 msgid "Range High"
 msgstr "范围高"
@@ -9563,11 +9891,20 @@ msgstr "重启服务"
 msgid "Restart Web Service"
 msgstr "重启网络服务"
 
+msgid "Restart attached VMs, Jails and Services"
+msgstr ""
+
 msgid "Restart the system?"
 msgstr "重启系统？"
 
 msgid "Restarting Jail"
 msgstr "重新启动监狱"
+
+msgid ""
+"Restarting system services after unlocking the dataset makes      the "
+"information contained within the dataset available to the rest of the "
+"system."
+msgstr ""
 
 msgid "Restore"
 msgstr "恢复"
@@ -9825,6 +10162,9 @@ msgstr "保存配置"
 msgid "Save Debug"
 msgstr "保存调试"
 
+msgid "Save Encryption Options"
+msgstr ""
+
 msgid "Save License"
 msgstr "保存许可证"
 
@@ -9851,6 +10191,9 @@ msgstr "正在保存ACL..."
 
 msgid "Saving Debug"
 msgstr "保存调试"
+
+msgid "Saving Encryption Options..."
+msgstr ""
 
 msgid "Saving KMIP Config"
 msgstr "保存KMIP配置"
@@ -9993,6 +10336,11 @@ msgstr "秘密和对等秘密不能相同。"
 
 msgid "Secure Mode"
 msgstr "安全模式"
+
+msgid ""
+"Secure data within this dataset. Data is unusable until      unlocked with "
+"an encryption key or passphrase."
+msgstr ""
 
 msgid "Security"
 msgstr "安全"
@@ -12019,11 +12367,11 @@ msgstr "同步到对等方"
 msgid "Sync to peer succeeded."
 msgstr "与对等方同步成功。"
 
+msgid "Synced"
+msgstr ""
+
 msgid "Synchronize Destination Snapshots With Source"
 msgstr "将目标快照与源同步"
-
-msgid "Syncing"
-msgstr "正在同步"
 
 msgid "Syslog"
 msgstr "系统日志"
@@ -12251,6 +12599,9 @@ msgstr "已发送测试邮件！"
 msgid "Textarea"
 msgstr "文本区域"
 
+msgid "The"
+msgstr ""
+
 msgid ""
 "The <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
 "\"target=\"_blank\">devfs(8)</a> ruleset number to enforce when mounting "
@@ -12371,6 +12722,11 @@ msgstr "缓存已清除。"
 msgid "The cache is being rebuilt."
 msgstr "正在刷新缓存。"
 
+msgid ""
+"The certificate's public key is used to encipher user data only during key "
+"agreement operations. Requires that <b>Key Agreement</b> is also set."
+msgstr ""
+
 msgid "The contents of all added disks will be erased."
 msgstr "所有已添加磁盘的内容将被删除。"
 
@@ -12425,6 +12781,9 @@ msgstr ""
 msgid "The filesystem "
 msgstr "文件系统 "
 
+msgid "The following datasets cannot be unlocked."
+msgstr ""
+
 msgid ""
 "The friendly name to show in front of the sending email  address. Example: "
 "<i>Storage System 01</i>&ltit@example.com&gt"
@@ -12443,6 +12802,9 @@ msgstr "LDAP服务器的主机名或IP地址。通过按<code>Enter</code>分隔
 
 msgid "The iSCSI"
 msgstr "iSCSI"
+
+msgid "The imported pool contains encrypted datasets, unlock them now?"
+msgstr ""
 
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
@@ -12693,6 +13055,9 @@ msgid ""
 "Edit</b> must be configured first."
 msgstr "<i>从</i>电子邮件地址使用用户帐户的<i>电子邮件</i>地址发信。必须首先配置<b>帐户>用户>编辑</b>中的<i>电子邮件</i>用户帐户。"
 
+msgid "The user-defined string that can unlock this dataset."
+msgstr ""
+
 msgid "The value is out of range. Enter a value between "
 msgstr "该值超出范围。输入一个介于 "
 
@@ -12734,12 +13099,28 @@ msgid ""
 "target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
 "the performance and behavioral characteristics of SMB shares.  This is "
 "required for Time Machine support."
-msgstr "macOS可以使用这些<a href=\"https://support.apple.com/en-us/HT210803\" target=\"_blank\">协议扩展</a>来改善SMB共享的性能和行为特征。这是时光机支持所必需的。"
+msgstr ""
+"macOS可以使用这些<a href=\"https://support.apple.com/en-us/HT210803\" "
+"target=\"_blank\">协议扩展</a>来改善SMB共享的性能和行为特征。这是时光机支持所必需的。"
 
 msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\">rclone</a>."
 msgstr "这些参数传递给<a href=\"https://rclone.org/docs/\" target=\"_blank\">rclone</a> 。"
+
+msgid "These datasets could not be unlocked."
+msgstr ""
+
+msgid ""
+"These datasets were not unlocked because the parent datasets could not be "
+"unlocked."
+msgstr ""
+
+msgid "These datasets were successfully unlocked."
+msgstr ""
+
+msgid "These datasets will be unlocked with the provided credentials."
+msgstr ""
 
 msgid "These items will be <b>"
 msgstr "这些项目将是 <b>"
@@ -12780,6 +13161,41 @@ msgstr "该数据集"
 
 msgid "This Dataset and Child Datasets"
 msgstr "此数据集和子数据集"
+
+msgid "This certificate's public key is used for key management."
+msgstr ""
+
+msgid ""
+"This certificate's public key is used to decipher user data only during key "
+"agreement operations. Requires that <b>Key Agreement</b> is also set."
+msgstr ""
+
+msgid "This certificate's public key is used to encipher user data."
+msgstr ""
+
+msgid "This certificate's public key is used to manage key agreement."
+msgstr ""
+
+msgid ""
+"This certificate's public key is used to verify signatures on a certificate "
+"revocation list (CRL)."
+msgstr ""
+
+msgid ""
+"This certificate's public key is used to verify signatures on other public "
+"key certificates. Activating this also requires enabling the <b>CA</b> "
+"basic constraint."
+msgstr ""
+
+msgid ""
+"This certificate's public key is used with digital signature methods that "
+"are separate from certificate or CRL signing."
+msgstr ""
+
+msgid ""
+"This certificate's public key verifies digital signatures used for a "
+"non-repudiation service."
+msgstr ""
 
 msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
@@ -12972,11 +13388,17 @@ msgstr "传输选项"
 msgid "Traverse"
 msgstr "遍历"
 
+msgid "TrueNAS Community Forums"
+msgstr ""
+
 msgid "TrueNAS Controller"
 msgstr "TrueNAS控制器"
 
 msgid "TrueNAS Controllers"
 msgstr "TrueNAS控制器"
+
+msgid "TrueNAS Documentation Site"
+msgstr ""
 
 msgid "TrueNAS URL"
 msgstr "TrueNAS URL"
@@ -13123,6 +13545,15 @@ msgstr "解锁"
 msgid "Unlock "
 msgstr "解锁"
 
+msgid "Unlock Children"
+msgstr ""
+
+msgid "Unlock Datasets"
+msgstr ""
+
+msgid "Unlock Successful"
+msgstr ""
+
 msgid ""
 "Unlock the pool with a recovery  key file instead of a passphrase. Select a "
 "recovery key file to upload  from the local system."
@@ -13130,6 +13561,15 @@ msgstr "使用恢复密钥文件而不是密码来解锁池。选择要从本地
 
 msgid "Unlock the pool with either a passphrase or a recovery key."
 msgstr "使用密码或恢复密钥解锁池。"
+
+msgid "Unlock with Key file"
+msgstr ""
+
+msgid "Unlocking Datasets"
+msgstr ""
+
+msgid "Unlocking datasets for "
+msgstr ""
 
 msgid "Unselect All"
 msgstr "取消全选"
@@ -13188,6 +13628,9 @@ msgstr "更新频率"
 msgid "Update Interval"
 msgstr "更新Interval"
 
+msgid "Update Jail"
+msgstr ""
+
 msgid "Update License"
 msgstr "更新许可证"
 
@@ -13211,6 +13654,9 @@ msgstr "更新完成，请重新启动系统。"
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr "更新成功。请重启以便更新生效。现在重启？"
+
+msgid "Update the jail operating system to the latest available patch?"
+msgstr ""
 
 msgid "Updated"
 msgstr "已更新"
@@ -13260,6 +13706,9 @@ msgstr "上传块大小（MiB）"
 msgid "Upload Config"
 msgstr "上传配置"
 
+msgid "Upload Key file"
+msgstr ""
+
 msgid ""
 "Upload a Google  <a "
 "href=\"https://rclone.org/googlecloudstorage/#service-account-support\"  "
@@ -13293,6 +13742,9 @@ msgstr "使用率"
 
 msgid "Usage collection"
 msgstr "使用情况收集"
+
+msgid "Usages"
+msgstr ""
 
 msgid ""
 "Use  <a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone "
@@ -13367,6 +13819,9 @@ msgstr "仅使用系统日志"
 msgid "Use all disk space"
 msgstr "使用所有的磁盘空间"
 
+msgid "Use an exported encryption key file to unlock datasets."
+msgstr ""
+
 msgid "Use as Home Share"
 msgstr "用作家庭共享"
 
@@ -13398,6 +13853,9 @@ msgid ""
 msgstr ""
 "使用KMIP服务器来管理ZFS加密的数据集密钥。每当创建加密数据集，修改现有密钥，解锁加密数据集或删除加密数据集时，密钥服务器都会存储，应用和销毁加密密"
 "钥。取消设置此选项会将所有加密密钥管理留在本地系统上。"
+
+msgid "Use the encryption properties of the root dataset."
+msgstr ""
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "使用格式<i>ABCD / E</i> ，其中<i>E</i>是CIDR掩码。"
@@ -13524,6 +13982,13 @@ msgid ""
 "imported from a directory service appear in the drop-down menu."
 msgstr "控制数据集的用户。该用户始终有权读取或写入ACL以及读取或写入属性。手动创建或从目录服务导入的用户将显示在下拉菜单中。"
 
+msgid ""
+"User-defined string used to decrypt the dataset. Can be used instead of an "
+"encryption key.<br>      WARNING: the passphrase is the only means to "
+"decrypt the information stored in this dataset. Be sure to create a      "
+"memorable passphrase or physically secure the passphrase."
+msgstr ""
+
 msgid "Username"
 msgstr "用户名"
 
@@ -13641,6 +14106,9 @@ msgstr "有效"
 
 msgid "Validate Certificates"
 msgstr "验证证书"
+
+msgid "Validate Connection"
+msgstr ""
 
 msgid "Validate Remote Path"
 msgstr "验证远程路径"
@@ -13831,6 +14299,9 @@ msgstr "每周"
 
 msgid "Weeks"
 msgstr "周数"
+
+msgid "Welcome to your new NAS"
+msgstr ""
 
 msgid "What and Where"
 msgstr "做什么和在哪里"
@@ -14076,6 +14547,9 @@ msgstr ""
 msgid "Zero Device Numbers"
 msgstr "设备号为0"
 
+msgid "Zvol Actions"
+msgstr ""
+
 msgid "Zvol Location"
 msgstr "Zvol位置"
 
@@ -14139,6 +14613,9 @@ msgstr "允许_tun"
 msgid "allow_vmm"
 msgstr "允许_vmm"
 
+msgid "are the best place to ask questions and interact with fellow TrueNAS"
+msgstr ""
+
 msgid "assign_localhost"
 msgstr "分配_localhost"
 
@@ -14189,6 +14666,9 @@ msgstr "depends"
 
 msgid "destroy"
 msgstr "销毁"
+
+msgid "details"
+msgstr ""
 
 msgid "devfs_ruleset"
 msgstr "devfs_规则集"
@@ -14271,6 +14751,9 @@ msgstr "iSCSI"
 msgid "iSCSI Group"
 msgstr "iSCSI组"
 
+msgid "iXsystems for more information."
+msgstr ""
+
 msgid "interfaces"
 msgstr "接口"
 
@@ -14288,6 +14771,14 @@ msgstr "ip6.saddrsel"
 
 msgid "ip_hostname"
 msgstr "ip_主机名"
+
+msgid "is Free and"
+msgstr ""
+
+msgid ""
+"is a collaborative website     with helpful guides and information about "
+"your new storage system."
+msgstr ""
 
 msgid "is already in use."
 msgstr "已在使用中。"
@@ -14382,6 +14873,9 @@ msgstr "所有者"
 msgid "password"
 msgstr "密码"
 
+msgid "pbkdf2iters"
+msgstr ""
+
 msgid "pcpu"
 msgstr "PCPU"
 
@@ -14424,11 +14918,17 @@ msgstr "服务停止失败。"
 msgid "shmsize"
 msgstr "shm大小"
 
+msgid "software, which is provided as-is with no warranty."
+msgstr ""
+
 msgid "stacksize"
 msgstr "STACKSIZE"
 
 msgid "stop_timeout"
 msgstr "停止_超时"
+
+msgid "support and services? Contact"
+msgstr ""
 
 msgid "swapuse"
 msgstr "swapuse"
@@ -14450,6 +14950,9 @@ msgstr "首先设置配置。"
 
 msgid "total available"
 msgstr "总可用"
+
+msgid "users"
+msgstr ""
 
 msgid "vmemoryuse"
 msgstr "虚拟内存使用"

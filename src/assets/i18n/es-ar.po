@@ -125,11 +125,17 @@ msgstr ""
 msgid " service has been enabled."
 msgstr " el servicio ha sido habilitado."
 
-msgid " should be greater than "
-msgstr " debería ser mayor que "
+msgid " should be at least "
+msgstr ""
 
-msgid " should be less than "
-msgstr " debería ser menor que "
+msgid " should be no more than "
+msgstr ""
+
+msgid " successfully saved."
+msgstr ""
+
+msgid " successfully unlocked"
+msgstr ""
 
 msgid " system is powered on and connected to the network."
 msgstr " el sistema está encendido y conectado a la red."
@@ -166,11 +172,17 @@ msgstr "(24 horas)"
 msgid "(Examples: 500 KiB, 500M, 2 TB)"
 msgstr "(Ejemplos: 500 KiB, 500M, 2 TB)"
 
+msgid "(Legacy Encryption)"
+msgstr ""
+
 msgid "(No description)"
 msgstr "(Sin descripción)"
 
 msgid "(Remove pool from database)"
 msgstr "(Eliminar grupo de la base de datos)"
+
+msgid "(top-right), then"
+msgstr ""
 
 msgid ", new vdev is "
 msgstr ", nuevo vdev es "
@@ -778,6 +790,9 @@ msgstr ""
 "la base de datos de configuración cargada se guardó sin la Semilla de "
 "contraseña secreta. </font> </p>"
 
+msgid "<strong>Dataset:</strong> "
+msgstr ""
+
 msgid ""
 "A User Access Token for <a href=\"https://developer.box.com/\"  "
 "target=\"_blank\">Box</a>. An  <a "
@@ -945,6 +960,9 @@ msgstr "Región de AWS"
 msgid "About"
 msgstr "Acerca de"
 
+msgid "About."
+msgstr ""
+
 msgid "Accent"
 msgstr ""
 
@@ -1043,8 +1061,14 @@ msgstr "Acciones"
 msgid "Activate"
 msgstr "Activar"
 
+msgid "Activate KMIP configuration and begin syncing keys with the KMIP server."
+msgstr ""
+
 msgid "Activate this Boot Environment?"
 msgstr "¿Activar este entorno de arranque?"
+
+msgid "Activate this certificate extension."
+msgstr ""
 
 msgid ""
 "Activates the configuration. Unset to disable the configuration without "
@@ -1423,6 +1447,9 @@ msgstr "Configuraciones de alerta"
 msgid "Alerts"
 msgstr "Aletas"
 
+msgid "Algorithm"
+msgstr ""
+
 msgid "Aliases"
 msgstr "Alias"
 
@@ -1676,6 +1703,9 @@ msgstr ""
 msgid "Allowed Initiators (IQN)"
 msgstr "Iniciadores permitidos (IQN)"
 
+msgid "Allowed characters: letters, numbers, underscore (_), and dash (-)."
+msgstr ""
+
 msgid ""
 "Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\" "
 "target\"_blank\">NTFS data streams</a>.  Disabling this option causes MacOS "
@@ -1715,6 +1745,9 @@ msgstr ""
 
 msgid "Also Include Naming Schema"
 msgstr "También incluye esquema de nomenclatura"
+
+msgid "Also unlock any encrypted dataset stored within this dataset."
+msgstr ""
 
 msgid "Alt Background 1"
 msgstr ""
@@ -2022,6 +2055,15 @@ msgstr ""
 "Autenticador para validar el dominio. Elija un autenticador DNS ACME "
 "previamente configurado."
 
+msgid "Authority Cert Issuer"
+msgstr ""
+
+msgid "Authority Key Config"
+msgstr ""
+
+msgid "Authority Key Identifier"
+msgstr ""
+
 msgid "Authorized Hosts and IP addresses"
 msgstr "Hosts autorizados y Direcciones IP"
 
@@ -2165,6 +2207,12 @@ msgid "Basic"
 msgstr "Básico"
 
 msgid "Basic Buttons"
+msgstr ""
+
+msgid "Basic Constraints"
+msgstr ""
+
+msgid "Basic Constraints Config"
 msgstr ""
 
 msgid "Basic Info"
@@ -2347,6 +2395,11 @@ msgstr ""
 "Busque la ruta existente en el host remoto para sincronizar. La longitud "
 "máxima de la ruta es de 255 caracteres."
 
+msgid ""
+"Browse to the exported key file that can be used to unlock this      "
+"dataset."
+msgstr ""
+
 msgid "Browse to the keytab file to upload."
 msgstr "Busque el archivo de tabla de claves para cargar."
 
@@ -2419,6 +2472,9 @@ msgstr ""
 "anular la predeterminada. Haga clic en <b>Generar dirección MAC</b> para "
 "agregar una nueva dirección aleatoria en este campo."
 
+msgid "CA"
+msgstr ""
+
 msgid "CA ID"
 msgstr "ID de CA"
 
@@ -2470,6 +2526,9 @@ msgstr "CPU y Memoria"
 
 msgid "CPUs and Memory"
 msgstr "CPUs y memoria"
+
+msgid "CRL Sign"
+msgstr ""
 
 msgid "CSR exists on this system"
 msgstr "CSR existe en este sistema"
@@ -2581,6 +2640,9 @@ msgstr "Cambiar contraseña"
 
 msgid "Change Password"
 msgstr "Cambiar contraseña"
+
+msgid "Change Server"
+msgstr ""
 
 msgid "Change Settings and Clear Report History?"
 msgstr "¿Cambiar configuración y borrar historial de informes?"
@@ -3569,6 +3631,9 @@ msgstr "Contacto de soporte"
 msgid "Container"
 msgstr "Contenedor"
 
+msgid "Content Commitment"
+msgstr ""
+
 msgid "Contents of the uploaded Service Account JSON file."
 msgstr "Contenido del archivo JSON de cuenta de servicio cargado."
 
@@ -3733,7 +3798,7 @@ msgid ""
 "Creates dataset snapshots even when there  have been no changes to the "
 "dataset from the last snapshot. Recommended  for creating long-term restore "
 "points, multiple snapshot tasks pointed  at the same datasets, or to be "
-"compatible with snapshot schedules or  replications created in %brand% 11.2 "
+"compatible with snapshot schedules or  replications created in TrueNAS 11.2 "
 "and earlier.<br><br> For example,  allowing empty snapshots for a monthly "
 "snapshot schedule allows that  monthly snapshot to be taken, even when a "
 "daily snapshot task has  already taken a snapshot of any changes to the "
@@ -3771,6 +3836,9 @@ msgstr "Credenciales"
 
 msgid "Critical"
 msgstr "Crítico"
+
+msgid "Critical Extension"
+msgstr ""
 
 msgid "Critical applications"
 msgstr "Aplicaciones críticas"
@@ -3903,6 +3971,9 @@ msgstr "Tablero"
 msgid "Data"
 msgstr "Datos"
 
+msgid "Data Encipherment"
+msgstr ""
+
 msgid "Data Quota"
 msgstr ""
 
@@ -3936,8 +4007,20 @@ msgstr "Ruta de la base de datos"
 msgid "Dataset"
 msgstr "Conjunto de datos"
 
+msgid "Dataset Actions"
+msgstr ""
+
+msgid "Dataset Key"
+msgstr ""
+
+msgid "Dataset Passphrase"
+msgstr ""
+
 msgid "Dataset Path"
 msgstr "Ruta del conjunto de datos"
+
+msgid "Datasets for "
+msgstr ""
 
 msgid "Datastore"
 msgstr "Almacén de datos"
@@ -3995,6 +4078,9 @@ msgid "Debug could not be downloaded."
 msgstr "La depuración no se pudo descargar."
 
 msgid "Dec"
+msgstr ""
+
+msgid "Decipher Only"
 msgstr ""
 
 msgid "Decrypt pool"
@@ -4381,6 +4467,21 @@ msgid "Details for "
 msgstr ""
 
 msgid ""
+"Determine how  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=chmod\" "
+"target=\"_blank\">chmod</a>  behaves when adjusting file ACLs. See the  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
+"target=\"_blank\">zfs(8)</a> aclmode property.  <br><br><i>Passthrough</i> "
+"only updates ACL entries that are related to the file or directory mode.  "
+"<br><br><i>Restricted</i> does not allow chmod to make changes to files or "
+"directories with a  non-trivial ACL. An ACL is trivial if it can be fully "
+"expressed as a file mode without losing  any access rules. Setting the ACL "
+"Mode to Restricted is typically used to optimize a dataset for  SMB "
+"sharing, but can require further optimizations. For example, configuring an "
+"rsync task with this  dataset could require adding <i>--no-perms</i> in the "
+"task <i>Auxiliary Parameters</i> field."
+msgstr ""
+
+msgid ""
 "Determine whether this share name is included when browsing shares. Home "
 "shares are only visible to the owner regardless of this setting."
 msgstr ""
@@ -4447,6 +4548,9 @@ msgstr "Diferencia"
 
 msgid "Digest Algorithm"
 msgstr "Algoritmo Digerido"
+
+msgid "Digital Signature"
+msgstr ""
 
 msgid "Direct the flow of data to the remote host."
 msgstr "Dirija el flujo de datos al host remoto."
@@ -4535,6 +4639,9 @@ msgstr "Deshabilitado"
 
 msgid "Disabled (Not encrypted)"
 msgstr "Deshabilitado (Sin encriptación)"
+
+msgid "Disabling encryption will result in a non-encrypted dataset, continue?"
+msgstr ""
 
 msgid ""
 "Disabling hardware offloading can severely reduce network performance. "
@@ -4632,6 +4739,9 @@ msgstr "No configure esto si el puerto serie está deshabilitado."
 
 msgid "Docker Host"
 msgstr "Host de Docker"
+
+msgid "Does your business need"
+msgstr ""
 
 msgid "Domain"
 msgstr "Dominio"
@@ -4761,6 +4871,9 @@ msgstr "Editar servicio de alerta"
 
 msgid "Edit Disk(s)"
 msgstr "Editar disco(s)"
+
+msgid "Edit Encryption Options for "
+msgstr ""
 
 msgid "Edit Filesystem ACL"
 msgstr "Editar sistema de archivos ACL"
@@ -5117,6 +5230,9 @@ msgstr ""
 "Habilitar esta opción puede tener implicaciones de rendimiento en sus "
 "grupos."
 
+msgid "Encipher Only"
+msgstr ""
+
 msgid "Enclosure"
 msgstr "Recinto"
 
@@ -5144,6 +5260,9 @@ msgstr ""
 "correctamente, haga clic en el estado de la tarea finalizada para ver una "
 "lista de los archivos transferidos."
 
+msgid "Encrypted Datasets"
+msgstr ""
+
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr "Los discos del pool cifrado deben descifrarse antes de la importación."
 
@@ -5152,6 +5271,9 @@ msgstr "Encriptación"
 
 msgid "Encryption (more secure, but slower)"
 msgstr "Cifrado (más seguro, pero más lento)"
+
+msgid "Encryption Actions"
+msgstr ""
 
 msgid "Encryption Algorithm"
 msgstr ""
@@ -5174,6 +5296,12 @@ msgstr "Clave de cifrado/contraseña"
 msgid "Encryption Mode"
 msgstr "Modo de encriptación"
 
+msgid "Encryption Options"
+msgstr ""
+
+msgid "Encryption Options Saved"
+msgstr ""
+
 msgid "Encryption Password"
 msgstr "Contraseña de encriptación"
 
@@ -5182,6 +5310,15 @@ msgstr "Protocolo de encriptación"
 
 msgid "Encryption Salt"
 msgstr "Sal de cifrado"
+
+msgid "Encryption Type"
+msgstr ""
+
+msgid "Encryption key that can unlock the dataset."
+msgstr ""
+
+msgid "Encryption options for "
+msgstr ""
 
 msgid "End"
 msgstr "Fin"
@@ -5304,7 +5441,10 @@ msgstr ""
 
 msgid ""
 "Enter a list of allowed hostnames or IP addresses. Separate entries by "
-"pressing <code>Enter</code>."
+"pressing <code>Enter</code>. A more detailed description  with examples can "
+"be found  <a "
+"href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
+"HOSTSALLOW\">here</a>."
 msgstr ""
 
 msgid ""
@@ -5675,6 +5815,9 @@ msgid ""
 msgstr ""
 "Ingrese <i>root</i> u otro <i>nombre de usuario válido</i>. Dentro de la "
 "cárcel, los comandos se ejecutan como este usuario."
+
+msgid "Enter or paste a string to use as the encryption key for this dataset."
+msgstr ""
 
 msgid "Enter or paste an Authentication token."
 msgstr "Ingrese o pegue un token de autenticación."
@@ -6089,6 +6232,9 @@ msgstr ""
 "ya exista. De lo contrario, especifique el tamaño del archivo para el nuevo "
 "archivo."
 
+msgid "Enterprise level"
+msgstr ""
+
 msgid "Environment"
 msgstr "Entorno"
 
@@ -6130,6 +6276,9 @@ msgstr "Error al desencriptar los discos"
 
 msgid "Error deleting dataset "
 msgstr "Error al eliminar el conjunto de datos"
+
+msgid "Error details for "
+msgstr ""
 
 msgid "Error exporting the Private Key"
 msgstr "Error al exportar la clave privada"
@@ -6177,6 +6326,9 @@ msgid "Error:"
 msgstr ""
 
 msgid "Error: "
+msgstr ""
+
+msgid "Errors"
 msgstr ""
 
 msgid ""
@@ -6237,8 +6389,17 @@ msgstr "Expandir Pool"
 msgid "Expiration Date"
 msgstr "Fecha de expiración"
 
+msgid "Export"
+msgstr ""
+
 msgid "Export Certificate"
 msgstr "Exportar Certificado"
+
+msgid "Export Dataset Keys"
+msgstr ""
+
+msgid "Export Dataset Keys for "
+msgstr ""
 
 msgid "Export Password Secret Seed"
 msgstr "Exportar semilla secreta de contraseña"
@@ -6264,6 +6425,9 @@ msgstr ""
 "href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-"
 "and-shadow-copy-sets\" target=_blank>Copias de la sombra</a > para clientes "
 "VSS."
+
+msgid "Export dataset keys which can be used to unlock datasets for "
+msgstr ""
 
 msgid "Export/Disconnect"
 msgstr "Exportar/Desconectar"
@@ -6293,6 +6457,9 @@ msgstr "Ampliar"
 
 msgid "Extend Vdev"
 msgstr "Extender Vdev"
+
+msgid "Extended Key Usage"
+msgstr ""
 
 msgid "Extending Vdev"
 msgstr "Extendiendo Vdev"
@@ -6371,6 +6538,12 @@ msgstr "Recuperar almacenes de datos"
 msgid "Fetch Method"
 msgstr "Método de recuperación"
 
+msgid "Fetching Encryption Summary"
+msgstr ""
+
+msgid "Fetching Encryption Summary for "
+msgstr ""
+
 msgid "Fibre Channel "
 msgstr "Canal de fibra"
 
@@ -6436,6 +6609,9 @@ msgid "Filter Groups"
 msgstr ""
 
 msgid "Filter Users"
+msgstr ""
+
+msgid "Find this information later by clicking"
 msgstr ""
 
 msgid "Finding Pools"
@@ -6523,6 +6699,9 @@ msgstr ""
 "Obliga a la VM a detenerse si aún no se detuvo dentro del tiempo de espera "
 "de apagado especificado. Sin esta opción seleccionada, la VM recibirá la "
 "señal de apagado, pero puede o no completar el proceso de apagado."
+
+msgid "Force unmount "
+msgstr ""
 
 msgid ""
 "Force using  <a "
@@ -6666,6 +6845,9 @@ msgstr "Configuraciones generales de VM"
 msgid "Generate Debug File"
 msgstr "Generar archivo de depuración"
 
+msgid "Generate Key"
+msgstr ""
+
 msgid "Generate Keypair"
 msgstr "Generar par de claves"
 
@@ -6691,6 +6873,9 @@ msgid "Generate idmap low range based on same algorithm that SSSD uses by defaul
 msgstr ""
 "Genere un rango bajo de idmap basado en el mismo algoritmo que SSSD usa de "
 "manera predeterminada."
+
+msgid "Get Started"
+msgstr ""
 
 msgid "GiB"
 msgstr ""
@@ -7061,6 +7246,13 @@ msgstr ""
 "Cuánto tiempo permanece una instantánea en el sistema de destino. Ingrese "
 "un número y elija una medida de tiempo del menú desplegable."
 
+msgid ""
+"How many non-self-issued intermediate certificates that can follow this "
+"certificate in a valid certification path. Entering <i>0</i> allows a "
+"single additional certificate to follow in the certificate path. Cannot be "
+"less than <i>0</i>."
+msgstr ""
+
 msgid "How often the IP is checked in seconds."
 msgstr "Con qué frecuencia se verifica la IP en segundos."
 
@@ -7088,6 +7280,11 @@ msgstr ""
 "Cómo se aplican los <i>Permisos</i> al <i>Who</> elegido. Elija "
 "<i>Permitir</i> para otorgar los permisos especificados y <i>Denegar</i> "
 "para restringir los permisos especificados."
+
+msgid ""
+"How the dataset is secured. Choose between securing with     an encryption "
+"<i>Key</i> or a user-defined <i>Passphrase</i>."
+msgstr ""
 
 msgid ""
 "How this ACE is applied to newly created directories and files within the "
@@ -7282,6 +7479,27 @@ msgstr ""
 msgid "Identify Light"
 msgstr "Identificar la luz"
 
+msgid ""
+"Identify the purpose for this public key. Typically used for end entity "
+"certificates. Multiple usages can be selected. Do not mark this extension "
+"critical when the <i>Usage</i> is <i>ANY_EXTENDED_KEY_USAGE</i>.<br><br> "
+"Using both <b>Extended Key Usage</b> and <b>Key Usage</b> extensions "
+"requires that the purpose of the certificate is consistent with both "
+"extensions. See <a href=\"https://www.ietf.org/rfc/rfc3280.txt\" "
+"target=\"_blank\">RFC 3280, section 4.2.1.13</a> for more details."
+msgstr ""
+
+msgid "Identify this certificate as a Certificate Authority (CA)."
+msgstr ""
+
+msgid ""
+"Identify this extension as critical for the certificate. Critical "
+"extensions must be recognized by the certificate-using system or this "
+"certificate will be rejected. Extensions identified as <i>not</i> critical "
+"can be ignored by the certificate-using system and the certificate still "
+"approved."
+msgstr ""
+
 msgid "Idmap"
 msgstr ""
 
@@ -7449,6 +7667,15 @@ msgstr "Informativo"
 msgid "Inherit"
 msgstr "Heredar"
 
+msgid "Inherit (encrypted)"
+msgstr ""
+
+msgid "Inherit (non-encrypted)"
+msgstr ""
+
+msgid "Inherit encryption properties from parent"
+msgstr ""
+
 msgid "Inherits"
 msgstr "Hereda"
 
@@ -7607,6 +7834,9 @@ msgstr "Formato o carácter no válido"
 msgid ""
 "Invalid network address list. Check for typos or missing CIDR netmasks and  "
 "    separate addresses by pressing <code>Enter</code>."
+msgstr ""
+
+msgid "Invalid option selected"
 msgstr ""
 
 msgid "Invalid regex filter"
@@ -7803,6 +8033,18 @@ msgstr "Configuración de Kerberos"
 msgid "Kernel"
 msgstr ""
 
+msgid "Key"
+msgstr ""
+
+msgid "Key Agreement"
+msgstr ""
+
+msgid "Key Cert Sign"
+msgstr ""
+
+msgid "Key Encipherment"
+msgstr ""
+
 msgid "Key ID"
 msgstr "ID de clave"
 
@@ -7811,6 +8053,12 @@ msgstr "Longitud de la clave"
 
 msgid "Key Type"
 msgstr "Tipo de clave"
+
+msgid "Key Usage"
+msgstr ""
+
+msgid "Key Usage Config"
+msgstr ""
 
 msgid ""
 "Key generated by the Amazon Web Services account. See the <a "
@@ -8081,11 +8329,17 @@ msgstr "Ubicación"
 msgid "Lock"
 msgstr "Bloquear"
 
+msgid "Lock Dataset "
+msgstr ""
+
 msgid "Lock Pool"
 msgstr "Bloquear Pool"
 
 msgid "Lock User"
 msgstr "Bloquear usuario"
+
+msgid "Lock dataset "
+msgstr ""
 
 msgid "Log"
 msgstr ""
@@ -8122,6 +8376,9 @@ msgstr "Intentos de acceso"
 
 msgid "Logs"
 msgstr "Registros"
+
+msgid "Looking for help?"
+msgstr ""
 
 msgid ""
 "Lowercase alphanumeric characters plus dot (.), dash (-), and colon (:) are "
@@ -8181,7 +8438,7 @@ msgstr "Administrar temas personalizados"
 msgid "Manage Recovery Key"
 msgstr "Administrar clave de recuperación"
 
-msgid "Manage SED Password"
+msgid "Manage SED Password(s)"
 msgstr ""
 
 msgid "Manage Services and Continue"
@@ -8241,6 +8498,14 @@ msgid ""
 msgstr ""
 "Hacer coincidir el tamaño fijo de los datos, como en una base de datos, "
 "puede resultar en un mejor rendimiento."
+
+msgid ""
+"Mathematical instruction sets that determine how plaintext is converted     "
+" into ciphertext. See      <a "
+"href=\"https://en.wikipedia.org/wiki/Advanced_Encryption_Standard\" "
+"target=\"_blank\">Advanced Encryption Standard (AES)</a>      for more "
+"details."
+msgstr ""
 
 msgid "Mattermost username."
 msgstr "Nombre de usuario más importante."
@@ -9027,6 +9292,9 @@ msgstr "No hay registros disponibles para esta tarea."
 msgid "No longer keep this Boot Environment?"
 msgstr "¿Ya no conserva este entorno de arranque?"
 
+msgid "No network interfaces are marked critical for failover."
+msgstr ""
+
 msgid "No pools"
 msgstr "Sin pools"
 
@@ -9049,6 +9317,9 @@ msgid "No, continue with import"
 msgstr "No, continuar con la importación"
 
 msgid "Nobind"
+msgstr ""
+
+msgid "Nodes CARP states do not agree."
 msgstr ""
 
 msgid "None"
@@ -9131,6 +9402,14 @@ msgstr ""
 msgid ""
 "Number of objects that can be owned by each of the selected users.  "
 "Entering <code>0</code> (zero) allows unlimited objects."
+msgstr ""
+
+msgid ""
+"Number of password-based key derivation function 2 (PBKDF2) iterations to "
+"use for reducing vulnerability      to brute-force attacks. Entering a "
+"number larger than <i>100000</i> is required. See      <a "
+"href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> "
+"for more details."
 msgstr ""
 
 msgid ""
@@ -9363,6 +9642,9 @@ msgstr ""
 "Solo funciona con ACL de Unix. Los nuevos archivos creados en el recurso "
 "compartido se configuran con los permisos seleccionados."
 
+msgid "Open Source"
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr "Configuración del cliente OpenVPN"
 
@@ -9539,6 +9821,11 @@ msgstr "CONTINUAR"
 msgid "PagerDuty client name."
 msgstr "Nombre del cliente PagerDuty."
 
+msgid ""
+"Pair this certificate's public key with the Certificate Authority private "
+"key used to sign this certificate."
+msgstr ""
+
 msgid "Parent Interface"
 msgstr "Interfaz principal"
 
@@ -9640,6 +9927,9 @@ msgstr ""
 msgid "Path"
 msgstr "Ruta"
 
+msgid "Path Length"
+msgstr ""
+
 msgid "Path Suffix"
 msgstr "Sufijo de ruta"
 
@@ -9698,11 +9988,11 @@ msgstr "Secreto del par (Confirmar)"
 msgid "Peer User"
 msgstr "Usuario del par"
 
-msgid "Pending"
-msgstr ""
-
 msgid "Pending Network Changes"
 msgstr "Cambios de red pendientes"
+
+msgid "Pending Sync"
+msgstr ""
 
 msgid "Pending Upgrade"
 msgstr "Actualización pendiente"
@@ -9812,6 +10102,9 @@ msgstr "Complementos"
 msgid "Pool"
 msgstr ""
 
+msgid "Pool Actions"
+msgstr ""
+
 msgid "Pool Available Space Threshold (%)"
 msgstr "Umbral de espacio disponible del Pool (%)"
 
@@ -9899,6 +10192,11 @@ msgstr ""
 "Encuesta </i>."
 
 msgid "Pre-script"
+msgstr ""
+
+msgid ""
+"Predefined certificate extensions. Choose a profile that best matches your "
+"certificate usage scenario."
 msgstr ""
 
 msgid ""
@@ -10047,6 +10345,9 @@ msgstr ""
 msgid "Production status successfully updated"
 msgstr "Estado de producción actualizado con éxito"
 
+msgid "Profiles"
+msgstr ""
+
 msgid "Progress"
 msgstr "Progreso"
 
@@ -10156,6 +10457,13 @@ msgid "Raid-z3"
 msgstr ""
 
 msgid "Raised Buttons"
+msgstr ""
+
+msgid ""
+"Randomly generate an encryption key for securing this dataset. Disabling "
+"requires manually      defining the encryption key.<br> WARNING: the "
+"encryption key is the only means to decrypt the information stored in this  "
+"    dataset. Store the encryption key in a secure location."
 msgstr ""
 
 msgid "Range High"
@@ -10620,11 +10928,20 @@ msgstr "Reiniciar Servicios"
 msgid "Restart Web Service"
 msgstr "Reiniciar servicio Web"
 
+msgid "Restart attached VMs, Jails and Services"
+msgstr ""
+
 msgid "Restart the system?"
 msgstr "¿Reiniciar el sistema?"
 
 msgid "Restarting Jail"
 msgstr "Reiniciando Jail"
+
+msgid ""
+"Restarting system services after unlocking the dataset makes      the "
+"information contained within the dataset available to the rest of the "
+"system."
+msgstr ""
 
 msgid "Restore"
 msgstr "Restaurar"
@@ -10896,6 +11213,9 @@ msgstr "Guardar configuración"
 msgid "Save Debug"
 msgstr "Guardar depuración"
 
+msgid "Save Encryption Options"
+msgstr ""
+
 msgid "Save License"
 msgstr "Guardar licencia"
 
@@ -10922,6 +11242,9 @@ msgstr "Guardando ACLs..."
 
 msgid "Saving Debug"
 msgstr "Guardar depuración"
+
+msgid "Saving Encryption Options..."
+msgstr ""
 
 msgid "Saving KMIP Config"
 msgstr ""
@@ -11072,6 +11395,11 @@ msgid "Secret and Peer Secret can not be the same."
 msgstr "Secreto y Secreto de Par no pueden ser lo mismo."
 
 msgid "Secure Mode"
+msgstr ""
+
+msgid ""
+"Secure data within this dataset. Data is unusable until      unlocked with "
+"an encryption key or passphrase."
 msgstr ""
 
 msgid "Security"
@@ -13547,11 +13875,11 @@ msgstr "Sincronizar con el Par"
 msgid "Sync to peer succeeded."
 msgstr "Sincronización con el par exitosa."
 
+msgid "Synced"
+msgstr ""
+
 msgid "Synchronize Destination Snapshots With Source"
 msgstr "Sincronice las instantáneas de destino con el origen"
-
-msgid "Syncing"
-msgstr ""
 
 msgid "Syslog"
 msgstr ""
@@ -13793,6 +14121,9 @@ msgstr "¡Correo electrónico de prueba enviado!"
 msgid "Textarea"
 msgstr ""
 
+msgid "The"
+msgstr ""
+
 msgid ""
 "The <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
 "\"target=\"_blank\">devfs(8)</a> ruleset number to enforce when mounting "
@@ -13941,6 +14272,11 @@ msgstr "El caché ha sido borrado."
 msgid "The cache is being rebuilt."
 msgstr "El caché se está reconstruyendo."
 
+msgid ""
+"The certificate's public key is used to encipher user data only during key "
+"agreement operations. Requires that <b>Key Agreement</b> is also set."
+msgstr ""
+
 msgid "The contents of all added disks will be erased."
 msgstr "Se borrará el contenido de todos los discos agregados."
 
@@ -14010,6 +14346,9 @@ msgstr ""
 msgid "The filesystem "
 msgstr "El sistema de archivos"
 
+msgid "The following datasets cannot be unlocked."
+msgstr ""
+
 msgid ""
 "The friendly name to show in front of the sending email  address. Example: "
 "<i>Storage System 01</i>&ltit@example.com&gt"
@@ -14035,6 +14374,9 @@ msgstr ""
 
 msgid "The iSCSI"
 msgstr "El iSCSI"
+
+msgid "The imported pool contains encrypted datasets, unlock them now?"
+msgstr ""
 
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
@@ -14368,6 +14710,9 @@ msgstr ""
 "cuenta de usuario <i> Correo electrónico </i> en <b> Cuentas> Usuarios> "
 "Editar </b> debe configurarse primero."
 
+msgid "The user-defined string that can unlock this dataset."
+msgstr ""
+
 msgid "The value is out of range. Enter a value between "
 msgstr "El valor esta fuera de rango. Ingrese un valor entre "
 
@@ -14428,6 +14773,20 @@ msgstr ""
 "Estos argumentos se pasan a <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\"> rclone </a>."
 
+msgid "These datasets could not be unlocked."
+msgstr ""
+
+msgid ""
+"These datasets were not unlocked because the parent datasets could not be "
+"unlocked."
+msgstr ""
+
+msgid "These datasets were successfully unlocked."
+msgstr ""
+
+msgid "These datasets will be unlocked with the provided credentials."
+msgstr ""
+
 msgid "These items will be <b>"
 msgstr "Estos artículos serán <b>"
 
@@ -14471,6 +14830,41 @@ msgstr "Este conjunto de datos"
 
 msgid "This Dataset and Child Datasets"
 msgstr "Este conjunto de datos y conjuntos de datos secundarios"
+
+msgid "This certificate's public key is used for key management."
+msgstr ""
+
+msgid ""
+"This certificate's public key is used to decipher user data only during key "
+"agreement operations. Requires that <b>Key Agreement</b> is also set."
+msgstr ""
+
+msgid "This certificate's public key is used to encipher user data."
+msgstr ""
+
+msgid "This certificate's public key is used to manage key agreement."
+msgstr ""
+
+msgid ""
+"This certificate's public key is used to verify signatures on a certificate "
+"revocation list (CRL)."
+msgstr ""
+
+msgid ""
+"This certificate's public key is used to verify signatures on other public "
+"key certificates. Activating this also requires enabling the <b>CA</b> "
+"basic constraint."
+msgstr ""
+
+msgid ""
+"This certificate's public key is used with digital signature methods that "
+"are separate from certificate or CRL signing."
+msgstr ""
+
+msgid ""
+"This certificate's public key verifies digital signatures used for a "
+"non-repudiation service."
+msgstr ""
 
 msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
@@ -14688,11 +15082,17 @@ msgstr "Opciones de transporte"
 msgid "Traverse"
 msgstr "Atravesar"
 
+msgid "TrueNAS Community Forums"
+msgstr ""
+
 msgid "TrueNAS Controller"
 msgstr "Controlador TrueNAS"
 
 msgid "TrueNAS Controllers"
 msgstr "Controladores TrueNAS"
+
+msgid "TrueNAS Documentation Site"
+msgstr ""
 
 msgid "TrueNAS URL"
 msgstr "URL TrueNAS"
@@ -14861,6 +15261,15 @@ msgstr "Desbloquear"
 msgid "Unlock "
 msgstr "Desbloquear "
 
+msgid "Unlock Children"
+msgstr ""
+
+msgid "Unlock Datasets"
+msgstr ""
+
+msgid "Unlock Successful"
+msgstr ""
+
 msgid ""
 "Unlock the pool with a recovery  key file instead of a passphrase. Select a "
 "recovery key file to upload  from the local system."
@@ -14871,6 +15280,15 @@ msgstr ""
 
 msgid "Unlock the pool with either a passphrase or a recovery key."
 msgstr "Desbloquee el grupo con una frase de contraseña o una clave de recuperación."
+
+msgid "Unlock with Key file"
+msgstr ""
+
+msgid "Unlocking Datasets"
+msgstr ""
+
+msgid "Unlocking datasets for "
+msgstr ""
 
 msgid "Unselect All"
 msgstr "Deseleccionar todo"
@@ -14936,6 +15354,9 @@ msgstr "Frecuencia de actualización"
 msgid "Update Interval"
 msgstr "Intervalo de actualización"
 
+msgid "Update Jail"
+msgstr ""
+
 msgid "Update License"
 msgstr "Actualizar licencia"
 
@@ -14961,6 +15382,9 @@ msgid "Update successful. Please reboot for the update to take effect. Reboot no
 msgstr ""
 "Actualización exitosa. Reinicie para que la actualización surta efecto. "
 "¿Reinicie ahora?"
+
+msgid "Update the jail operating system to the latest available patch?"
+msgstr ""
 
 msgid "Updated"
 msgstr "Actualizado"
@@ -15017,6 +15441,9 @@ msgstr "Tamaño del fragmento de carga (MiB)"
 msgid "Upload Config"
 msgstr "Subir Config"
 
+msgid "Upload Key file"
+msgstr ""
+
 msgid ""
 "Upload a Google  <a "
 "href=\"https://rclone.org/googlecloudstorage/#service-account-support\"  "
@@ -15055,6 +15482,9 @@ msgstr "Uso"
 
 msgid "Usage collection"
 msgstr "Colección de uso"
+
+msgid "Usages"
+msgstr ""
 
 msgid ""
 "Use  <a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone "
@@ -15140,6 +15570,9 @@ msgstr ""
 msgid "Use all disk space"
 msgstr "Usa todo el espacio en disco"
 
+msgid "Use an exported encryption key file to unlock datasets."
+msgstr ""
+
 msgid "Use as Home Share"
 msgstr ""
 
@@ -15170,6 +15603,9 @@ msgid ""
 "is created, when an existing key is modified, an encrypted dataset is "
 "unlocked, or an encrypted dataset is removed. Unsetting this option leaves "
 "all encryption key management with the local system."
+msgstr ""
+
+msgid "Use the encryption properties of the root dataset."
 msgstr ""
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
@@ -15321,6 +15757,13 @@ msgstr ""
 "usuarios creados manualmente o importados desde un servicio de directorio "
 "aparecen en el menú desplegable."
 
+msgid ""
+"User-defined string used to decrypt the dataset. Can be used instead of an "
+"encryption key.<br>      WARNING: the passphrase is the only means to "
+"decrypt the information stored in this dataset. Be sure to create a      "
+"memorable passphrase or physically secure the passphrase."
+msgstr ""
+
 msgid "Username"
 msgstr "Nombre de usuario"
 
@@ -15453,6 +15896,9 @@ msgstr "Válido"
 
 msgid "Validate Certificates"
 msgstr "Validar certificados"
+
+msgid "Validate Connection"
+msgstr ""
 
 msgid "Validate Remote Path"
 msgstr "Validar ruta remota"
@@ -15651,6 +16097,9 @@ msgstr ""
 
 msgid "Weeks"
 msgstr "Semanas"
+
+msgid "Welcome to your new NAS"
+msgstr ""
 
 msgid "What and Where"
 msgstr "Que y dónde"
@@ -15932,6 +16381,9 @@ msgstr ""
 msgid "Zero Device Numbers"
 msgstr "Números de dispositivo cero"
 
+msgid "Zvol Actions"
+msgstr ""
+
 msgid "Zvol Location"
 msgstr "Ubicación Zvol"
 
@@ -15998,6 +16450,9 @@ msgstr ""
 msgid "allow_vmm"
 msgstr ""
 
+msgid "are the best place to ask questions and interact with fellow TrueNAS"
+msgstr ""
+
 msgid "assign_localhost"
 msgstr ""
 
@@ -16048,6 +16503,9 @@ msgstr "depende"
 
 msgid "destroy"
 msgstr "destruir"
+
+msgid "details"
+msgstr ""
 
 msgid "devfs_ruleset"
 msgstr ""
@@ -16130,6 +16588,9 @@ msgstr ""
 msgid "iSCSI Group"
 msgstr "Grupo iSCSI"
 
+msgid "iXsystems for more information."
+msgstr ""
+
 msgid "interfaces"
 msgstr ""
 
@@ -16146,6 +16607,14 @@ msgid "ip6.saddrsel"
 msgstr ""
 
 msgid "ip_hostname"
+msgstr ""
+
+msgid "is Free and"
+msgstr ""
+
+msgid ""
+"is a collaborative website     with helpful guides and information about "
+"your new storage system."
 msgstr ""
 
 msgid "is already in use."
@@ -16241,6 +16710,9 @@ msgstr "propietario"
 msgid "password"
 msgstr "contraseña"
 
+msgid "pbkdf2iters"
+msgstr ""
+
 msgid "pcpu"
 msgstr ""
 
@@ -16283,10 +16755,16 @@ msgstr "el servicio no pudo detenerse."
 msgid "shmsize"
 msgstr ""
 
+msgid "software, which is provided as-is with no warranty."
+msgstr ""
+
 msgid "stacksize"
 msgstr ""
 
 msgid "stop_timeout"
+msgstr ""
+
+msgid "support and services? Contact"
 msgstr ""
 
 msgid "swapuse"
@@ -16308,6 +16786,9 @@ msgid "to set up configuration first."
 msgstr ""
 
 msgid "total available"
+msgstr ""
+
+msgid "users"
 msgstr ""
 
 msgid "vmemoryuse"
