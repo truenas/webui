@@ -116,7 +116,10 @@ export class PreferencesService {
 
       }
 
-      this.startupComplete = true;
+      if(!this.startupComplete){
+        this.core.emit({name:"UserPreferencesReady", data:this.preferences, sender: this});
+        this.startupComplete = true;
+      }
 
     });
 
