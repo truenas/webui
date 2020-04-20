@@ -81,8 +81,40 @@ export class CertificateAcmeAddComponent {
           tooltip: helptext_system_certificates.acme.authenticator.tooltip,
           options: [],
           required: true
-        }]
-    }
+        }
+      ]
+    },
+        {
+          name: 'SANs',
+          width: "100%",
+          label: true,
+          class: 'ip_addresses',
+          config: [
+          {
+            type: 'list',
+            name: 'SANs',
+            placeholder: 'SANs',
+            label: 'Get some SANs',
+            templateListField: [
+                {
+                  name: 'domain',
+                  placeholder: 'Domain',
+                  tooltip: 'Check it',
+                  type: 'select',
+                  options: []
+                },
+                {
+                  name: 'the_other_thing',
+                  placeholder: 'Match THIS',
+                  tooltip: 'helptext.failover_alias_address_tooltip',
+                  type: 'select',
+                  options: []
+                }
+            ],
+            listFields: []
+          }
+        ]
+      }
   ];
 
   protected entityForm: any;
@@ -101,7 +133,8 @@ export class CertificateAcmeAddComponent {
   preInit() { 
     this.arrayControl = _.find(this.fieldSets[0].config, {'name' : 'dns_mapping_array'});
     this.route.params.subscribe(params => {
-      if (params['pk']) {
+      if (params['pk']) { console.log(params['pk'])
+        this.pk = params['pk']; 
         this.queryCallOption[0].push(parseInt(params['pk']));
       }
     });
@@ -125,6 +158,14 @@ export class CertificateAcmeAddComponent {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.fieldConfig = entityEdit.fieldConfig;
+
+    this.ws.call('certificate.get_domain_names', [this.pk]).subscribe(res => {
+      console.log(res)
+    })
+
+    this.ws.call('acme.dns.authenticator.query').subscribe(res => {
+      console.log(res)
+    })
   }
 
   customSubmit(value) {
