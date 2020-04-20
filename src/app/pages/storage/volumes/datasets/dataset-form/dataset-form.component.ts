@@ -1121,7 +1121,7 @@ export class DatasetFormComponent implements Formconfiguration{
               '2K':'2K',
             };
             if ( current_dataset.hasOwnProperty("recordsize") && current_dataset['recordsize'].value ) {
-                _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'label': current_dataset['recordsize'].value})['hiddenFromDisplay'] = false
+                _.find(_.find(this.fieldConfig, {name:'recordsize'}).options, {'value': current_dataset['recordsize'].value})['hiddenFromDisplay'] = false
             }
             const edit_sync = _.find(this.fieldConfig, {name:'sync'});
             const edit_compression = _.find(this.fieldConfig, {name:'compression'});
@@ -1157,7 +1157,11 @@ export class DatasetFormComponent implements Formconfiguration{
             edit_atime_collection = [{label:`Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT'}];
             edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
-            edit_recordsize_collection = [{label:`Inherit (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
+            const lastChar = this.parent_dataset.recordsize.value[this.parent_dataset.recordsize.value.length-1];
+            const formattedLabel = lastChar === 'K' || lastChar === 'M' ?
+              `${this.parent_dataset.recordsize.value.slice(0, -1)} ${lastChar}iB` :
+              this.parent_dataset.recordsize.value;  
+            edit_recordsize_collection = [{label:`Inherit (${formattedLabel})`, value: 'INHERIT'}];
             edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
             let sync_value = pk_dataset[0].sync.value;
             if (pk_dataset[0].sync.source === 'DEFAULT') {
