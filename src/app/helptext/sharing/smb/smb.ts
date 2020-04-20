@@ -140,7 +140,9 @@ export const helptext_sharing_smb = {
     action_edit_acl_dialog: {
       title: T('Error'),
       message1: T('The pool containing'),
-      message2: T('is offline. Be sure the pool is not locked.')
+      message2: T('is offline. Be sure the pool is not locked.'),
+      dataset_message1: T('The filesystem containing'),
+      dataset_message2: T('is locked.')
    },
 
     dialog_warning: T('Warning'),

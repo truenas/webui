@@ -386,9 +386,33 @@ export class SMBFormComponent {
         ),
         tap(([doConfigureACL, dataset]) =>
           doConfigureACL
-            ? this.router.navigate(
-                ['/'].concat(ACLRoute)
-              )
+          // Make sure pool or dataset is online
+          ? this.ws.call('pool.dataset.query', [[["name", "=", poolName]]]).subscribe(ds => {
+            // Legacy encryption
+            if (ds.length === 0) {
+              this.ws.call('pool.query', [[["name", "=", poolName]]]).subscribe(pool => {
+                if (pool[0].status !== 'OFFLINE') {
+                  this.router.navigate(
+                    ['/'].concat(ACLRoute)
+                  )
+                } else {
+                  this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+                    `${helptext_sharing_smb.action_edit_acl_dialog.message1} <i>${datasetId}</i> 
+                      ${helptext_sharing_smb.action_edit_acl_dialog.message2}`);
+                }   
+              })
+            } else {
+              // ZFS Encryption
+              if (ds[0].locked) {
+                this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+                  `${helptext_sharing_smb.action_edit_acl_dialog.dataset_message1} <i>${datasetId}</i> 
+                    ${helptext_sharing_smb.action_edit_acl_dialog.dataset_message2}`);
+              } else {
+                this.router.navigate(
+                  ["/"].concat(ACLRoute));
+              }
+            }
+          })
             : this.router.navigate(['/'].concat(this.route_success))
         )
       );
