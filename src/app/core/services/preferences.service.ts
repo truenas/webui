@@ -102,8 +102,6 @@ export class PreferencesService {
           // Add missing properties to inbound preferences from middleware
           if(this.debug){
             console.log('Preferences exist and there are unknown properties');
-            //console.log(preferencesFromMiddleware)
-            //console.log(preferencesFromUI)
           }
           const merged = this.mergeProperties(this.preferences, data);
           this.updatePreferences(data);
