@@ -92,7 +92,7 @@ export class CertificateAcmeAddComponent {
           config: [
           {
             type: 'list',
-            name: 'SANs',
+            name: 'sans',
             placeholder: 'SANs',
             label: 'Get some SANs',
             templateListField: [
@@ -122,6 +122,7 @@ export class CertificateAcmeAddComponent {
   protected dialogRef: any;
   protected queryCallOption: Array<any> = [["id", "="]];
   protected initialCount = 1;
+  private sansList;
 
   constructor(
     protected router: Router, protected route: ActivatedRoute,
@@ -138,6 +139,11 @@ export class CertificateAcmeAddComponent {
         this.queryCallOption[0].push(parseInt(params['pk']));
       }
     });
+  }
+
+  afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
+    this.fieldConfig = entityEdit.fieldConfig;
 
     this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
       this.commonName = res[0].common;
@@ -145,22 +151,33 @@ export class CertificateAcmeAddComponent {
 
       this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
         let dns_map = _.find(this.fieldSets[0].config, {'name' : 'authenticators'});
+        let dns_map_xtra = _.find(this.fieldSets[1].config[0].templateListField, {'name' : 'the_other_thing'});
+        console.log(this.fieldSets[1].config[0].templateListField)
 
         res.forEach((item) => {
           dns_map.options.push(
-            { label : item.name, value : item.id}
+            { label : item.name, value : item.id }
+          );
+          dns_map_xtra.options.push(
+            { label : item.name, value : item.id }
           );
         });
       });
-    })
-  }
 
-  afterInit(entityEdit: any) {
-    this.entityForm = entityEdit;
-    this.fieldConfig = entityEdit.fieldConfig;
+    this.sansList = _.find(this.fieldConfig, {'name' : 'sans'});
+    console.log(this.sansList)
+
+    })
 
     this.ws.call('certificate.get_domain_names', [this.pk]).subscribe(res => {
       console.log(res)
+      let domains = _.find(this.fieldSets[1].config[0].templateListField, {'name' : 'domain'});
+      res.forEach(item => {
+        domains.options.push (
+          { label: item, value: item}
+        )
+      })
+
     })
 
     this.ws.call('acme.dns.authenticator.query').subscribe(res => {
