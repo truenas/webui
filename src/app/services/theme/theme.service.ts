@@ -38,7 +38,8 @@ export interface Theme {
 @Injectable()
 export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
-  public activeTheme: string = 'ix-dark';
+  public activeTheme: string = 'default';
+  public defaultTheme: string = 'ix-official';
   public activeThemeSwatch: string[];
 
   // Theme lists
@@ -338,10 +339,10 @@ export class ThemeService {
         this.customThemes = evt.data.customThemes;
       }
 
-        this.activeTheme = evt.data.userTheme;
-        this.setCssVars(this.findTheme(this.activeTheme, true));
-        this.userThemeLoaded = true;
-        this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
+      this.activeTheme = evt.data.userTheme == "default" ? this.defaultTheme : evt.data.userTheme;
+      this.setCssVars(this.findTheme(this.activeTheme, true));
+      this.userThemeLoaded = true;
+      this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
 
       if(evt.data.allowPwToggle){
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop","inline");
@@ -359,8 +360,8 @@ export class ThemeService {
   }
 
   resetToDefaultTheme(){
-    this.activeTheme = "ix-official";
-    this.changeTheme(this.activeTheme);
+    this.activeTheme = this.defaultTheme;
+    this.changeTheme(this.defaultTheme);
   }
 
   currentTheme():Theme{
@@ -368,6 +369,10 @@ export class ThemeService {
   }
 
   findTheme(name:string, reset?:boolean):Theme{
+    if(name == 'default'){
+      name = this.defaultTheme;
+    }
+
     for(let i in this.allThemes){
       let t = this.allThemes[i];
       if(t.name == name){ return t;}
@@ -377,16 +382,14 @@ export class ThemeService {
     this.resetToDefaultTheme();
 
     if(!reset){
-      console.warn('Theme not found and reset not initiated.');
+      console.warn('Theme ' + name + ' not found and reset not initiated.');
     }
 
     return this.freenasThemes[this.freeThemeDefaultIndex];
   }
 
   changeTheme(theme:string) {
-    //console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
-    //this.core.emit({name:'ThemeChanged'});
     }
 
   saveCurrentTheme(){

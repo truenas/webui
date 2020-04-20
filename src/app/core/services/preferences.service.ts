@@ -23,10 +23,11 @@ export interface UserPreferences {
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
   private debug = false;
+  private startupComplete: boolean = false;
   public preferences: UserPreferences = {
     "platform":"freenas",// Detect platform
     "timestamp":new Date(),
-    "userTheme":"ix-dark", // Theme name
+    "userTheme":"default", // Theme name or 'default'
     "customThemes": [], // Theme Objects
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
@@ -43,11 +44,14 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       // evt.data: boolean = authentication status
       if(evt.data){
-        this.core.emit({name:"UserPreferencesRequest"});
+        this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
       }
     });
 
     this.core.register({observerClass:this, eventName:"UserPreferencesRequest"}).subscribe((evt:CoreEvent) => {
+      // Ignore if we're not authenticated or if components that don't identify themselves
+      if(!this.startupComplete){return;}
+
       if(!evt.data){
         this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
       } else {
@@ -94,9 +98,12 @@ export class PreferencesService {
         }
 
       }
+
+      this.startupComplete = true;
     });
 
     this.core.register({observerClass:this, eventName:"ChangeThemePreference",sender:this.themeService}).subscribe((evt:CoreEvent) => {
+        console.warn(evt);
         this.preferences.userTheme = evt.data;
         this.core.emit({name:"UserDataUpdate", data:this.preferences  });
     });
@@ -141,9 +148,9 @@ export class PreferencesService {
   // Update local cache
   updatePreferences(data:UserPreferences){
       this.preferences = data;
-
+      
       //Notify Guided Tour & Theme Service
-      this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+      this.core.emit({name:"UserPreferencesChanged", data:this.preferences, sender:this});
   }
 
   // Save to middleware

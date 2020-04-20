@@ -173,7 +173,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
-      this.core.emit({name:"UserPreferencesRequest"});
+      this.core.emit({name:"UserPreferencesRequest", sender:this});
   }
 
   ngOnDestroy(){
