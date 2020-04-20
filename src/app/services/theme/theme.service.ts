@@ -14,7 +14,7 @@ export const DefaultTheme = {
       primary:"var(--blue)",
       topbar:"var(--blue)",
       accent:"var(--cyan)",
-      bg1:'#252525',//'#171E26',
+      bg1:'#252525',
       bg2:'#343333',
       fg1:'#aaaaaa',
       fg2:'#cccccc',
@@ -71,7 +71,6 @@ export class ThemeService {
 
   // Theme lists
   public allThemes: Theme[];
-  //public favoriteThemes: Theme[];
   public themesMenu: Theme[];
   private _customThemes: Theme[];
 
@@ -87,7 +86,7 @@ export class ThemeService {
       topbar:"var(--blue)",
       accent:"var(--yellow)",
       bg1:'#171E26',
-      bg2:'#232d35',//'#1D262D',
+      bg2:'#232d35',
       fg1:'#aaaaaa',
       fg2:'#cccccc',
       'alt-bg1':'rgba(122,122,122,0.25)',
@@ -125,7 +124,7 @@ export class ThemeService {
       red:'#ff0013',
       magenta:'#d238ff',
       violet:'#c17ecc',
-      blue:'#0095d5',//'#00a2ff',
+      blue:'#0095d5',
       cyan:'#00d0d6',
       green:'#59d600'
     },
@@ -193,7 +192,7 @@ export class ThemeService {
       bg1:'#002b36',
       bg2:'#073642',
       fg1:'#586e75',
-      fg2:'#7f99a2', //'#657b83',
+      fg2:'#7f99a2', 
       'alt-bg1':'rgba(122,122,122,0.25)',
       'alt-bg2':'#fdf6e3',
       'alt-fg1':'#839496',
@@ -217,7 +216,7 @@ export class ThemeService {
       topbar:"var(--blue)",
       accent:"var(--violet)",
       bg1:'#212a35',
-      bg2:'#303d48',//'#1D262D',
+      bg2:'#303d48',
       fg1:'#aaaaaa',
       fg2:'#cccccc',
       'alt-bg1':'rgba(122,122,122,0.25)',
@@ -239,7 +238,7 @@ export class ThemeService {
       labelSwatch:"fg1",
       description:'High contrast theme based on Legacy UI color scheme',
       accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
-      primary:"var(--blue)", //"var(--fg2)",
+      primary:"var(--blue)", 
       topbar:"var(--black)",
       accent:"var(--magenta)",
       bg1:'#dddddd',
@@ -345,13 +344,10 @@ export class ThemeService {
   }
 
   changeTheme(theme:string) {
-    //console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
-    //this.core.emit({name:'ThemeChanged'});
     }
 
   saveCurrentTheme(){
-    //console.log("SAVING CURRENT THEME");
     let theme = this.currentTheme();
     this.core.emit({name:"ChangeThemePreference", data:theme.name});
   }
