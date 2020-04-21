@@ -108,7 +108,7 @@ export class VolumesListTableConfig implements InputTableConf {
     private parentVolumesListComponent: VolumesListComponent,
     private _router: Router,
     private _classId: string,
-    private datasetData: Object,
+    private datasetData: Array<any>,
     public mdDialog: MatDialog,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
@@ -1152,9 +1152,19 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T('Encryption Options'),
           onClick: (row) => {
             // open encryption options dialog
+            let key_child = false;
+            for (let i = 0; i < this.datasetData.length; i++) {
+              let ds = this.datasetData[i];
+              if (ds['id'].startsWith(row.id) && ds.id !== row.id && 
+                ds.encryption_root && (ds.id === ds.encryption_root) && 
+                ds.key_format && ds.key_format.value && ds.key_format.value === 'HEX') {
+                key_child = true;
+                break;
+              }
+            }
             const can_inherit = (row.parent && row.parent.encrypted);
             const passphrase_parent = (row.parent && row.parent.key_format && row.parent.key_format.value === 'PASSPHRASE');
-            const is_key = (passphrase_parent? false : !row.is_passphrase);
+            const is_key = (passphrase_parent? false : (key_child? true : !row.is_passphrase));
             let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
               pbkdf2iters = row.pbkdf2iters.rawvalue;
@@ -1181,7 +1191,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   tooltip: dataset_helptext.dataset_form_encryption.encryption_type_tooltip,
                   value: (is_key? 'key' : 'passphrase'),
                   options: dataset_helptext.dataset_form_encryption.encryption_type_options,
-                  isHidden: passphrase_parent
+                  isHidden: passphrase_parent || key_child
                 },
                 {
                   type: 'checkbox',
@@ -1252,7 +1262,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   } else {
                     entityDialog.setDisabled('encryption_type', inherit, inherit);
-                    if (passphrase_parent) { // keep hidden if passphrase parent;
+                    if (passphrase_parent || key_child) { // keep hidden if passphrase parent;
                       encryption_type_fc.isHidden = true;
                     }
                     const key = (encryption_type_fg.value === 'key');
@@ -1496,7 +1506,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http);
 
   actionComponent = {
     getActions: (row) => {
@@ -1513,7 +1523,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         }
       ];
     },
-    conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http)
+    conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http)
   };
 
   expanded = false;
