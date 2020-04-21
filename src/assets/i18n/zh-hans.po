@@ -936,10 +936,10 @@ msgid "Active Directory must be enabled before adding new domains."
 msgstr "在添加新域之前，必须先启用活动目录。"
 
 msgid "Active Media Subtype"
-msgstr "活动媒体子类型"
+msgstr "活动介质子类型"
 
 msgid "Active Media Type"
-msgstr "活动媒体类型"
+msgstr "活动介质类型"
 
 msgid "Adapter Type"
 msgstr "适配器类型"
@@ -3299,7 +3299,7 @@ msgid "Create new pool"
 msgstr "创建新池"
 
 msgid "Create or Choose Block Device"
-msgstr "创建或选择阻止设备"
+msgstr "创建或选择块设备"
 
 msgid "Create or Import Pool"
 msgstr "创建或导入池"
