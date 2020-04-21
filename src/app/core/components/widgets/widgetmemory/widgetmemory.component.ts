@@ -51,6 +51,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   @ViewChild('memorygauge', {static: true}) cpuLoad: ViewChartGaugeComponent;
   @ViewChild('cores',{static: true}) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
+  @Input() ecc: boolean = false;
   public chart: any;// chart instance
   public ctx: any; // canvas context for chart.js
   private _memData: any;

@@ -4,36 +4,223 @@
   </div>
   <div class="mat-content p-1">
     <div class="manager">
-      <div class="fields m-3">
-        <div *ngIf="isNew;else extend">
-          <mat-form-field>
-            <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
-          </mat-form-field>
-          <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
-          <mat-checkbox
-            id="pool-manager__encryption-checkbox"
-            [(ngModel)]="isEncrypted"
-            class="form-control"
-             placeholder="Encryption"
-             (change)="isEncryptedChecked()" >
-             {{"Encryption" | translate}}
-          </mat-checkbox>
-          <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
-          <div *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
-          <div>
-            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
-            <button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
-            <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
+      <div fxLayout="column" class="fields m-3">
+        <ng-container *ngIf="isNew;else extend">
+          <div fxLayout="row wrap" fxLayoutAlign="baseline" class="TEST">
+            <div fxFlex="40%" class="inline">
+              <mat-form-field>
+                <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
+              </mat-form-field>
+              <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
+            </div>
+            <div fxFlex="25%" class="inline" style="padding-top:12px;">
+              <mat-checkbox
+                id="pool-manager__encryption-checkbox"
+                [(ngModel)]="isEncrypted"
+                class="form-control"
+                placeholder="{{Encryption | translate}}"
+                (change)="isEncryptedChecked()" >
+                  {{"Encryption" | translate}}
+              </mat-checkbox>
+              <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
+            </div>
+            <div fxFlex class="inline encryption-select" style="padding-top:17px;">
+              <mat-select
+                *ngIf="isEncrypted"
+                id="pool-manager__encryption_algorithm-select"
+                [(ngModel)]="encryption_algorithm"
+                class="form-control"
+                placeholder="{{'Encryption Algorithm' | translate}}"
+              >
+                <mat-option *ngFor="let option of encryption_algorithm_options" [value]="option.value"
+                  id="encryption_algorithm_option_{{option.label}}">
+                    {{ option.label }}
+                </mat-option>
+  
+              </mat-select>
+            </div>
           </div>
-        </div>
+
+          <div fxFlex="100%" *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
+
+          <div fxFlex="100%" class="button-bar">
+            <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
+            <div><button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button></div>
+            <div><tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip></div>
+            <div class="button-spacer"></div>
+            <div><button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
+              ix-auto
+              ix-auto-type="button"
+              ix-auto-identifier="add_vdev_type">
+            <span>{{"Add Vdev" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
+            </button></div>
+            <mat-menu class="" #menu="matMenu" multiple overlapTrigger="false">
+
+              <button class="tbl vdev-option" id="pool-manager__add-data-button" (click)="addVdev('data')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.data_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.data_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-cache-button" [disabled]="vdevs.cache.length > 0" (click)="addVdev('cache')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clock-fast"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.cache_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.cache_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" (click)="addVdev('log')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clipboard-outline"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.log_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.log_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-spare-button" [disabled]="vdevs.spares.length > 0" (click)="addVdev('spares')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>local_hospital</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.spare_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.spare_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+              
+              <button class="tbl vdev-option" id="pool-manager__add-special-button" [disabled]="vdevs.special.length > 0" (click)="addVdev('special')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>favorite_border</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.special_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.special_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-dedup-button" [disabled]="vdevs.dedup.length > 0" (click)="addVdev('dedup')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>share</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.dedup_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.dedup_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+            </mat-menu>
+          </div> <!-- END BUTTON BAR -->
+        </ng-container>
+
         <ng-template #extend>
         <div>
           <mat-form-field>
             <input id="pool-manager__extend-name-input-field" matInput placeholder="Name" [value]="name" disabled>
           </mat-form-field>
-          <mat-error *ngIf="isEncrypted" class="adjust-upward">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
+          <mat-error *ngIf="isEncrypted" class="adjust-upward">{{"Adding Vdevs to an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
           <div>
-            <button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button>
+            <div class="button-bar">
+              <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
+              <div><button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="add_vdev_type">
+              <span>{{"Add Vdev" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
+              </button></div>
+            </div>
+            <mat-menu class="" #menu="matMenu" multiple overlapTrigger="false">
+
+              <button class="tbl vdev-option" id="pool-manager__add-data-button" (click)="addVdev('data')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.data_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.data_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-cache-button" [disabled]="vdevs.cache.length > 0" (click)="addVdev('cache')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clock-fast"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.cache_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.cache_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" (click)="addVdev('log')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clipboard-outline"></mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.log_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.log_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-spare-button" [disabled]="vdevs.spares.length > 0" (click)="addVdev('spares')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>local_hospital</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.spare_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.spare_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+              
+              <button class="tbl vdev-option" id="pool-manager__add-special-button" [disabled]="vdevs.special.length > 0" (click)="addVdev('special')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>favorite_border</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.special_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.special_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+
+              <button class="tbl vdev-option" id="pool-manager__add-dedup-button" [disabled]="vdevs.dedup.length > 0" (click)="addVdev('dedup')" mat-menu-item>
+                <div class="tr">
+                  <div class="td icon">
+                    <mat-icon>share</mat-icon>
+                  </div>
+                  <div class="td">
+                    <h3>{{help.dedup_vdev_title | translate}}</h3>
+                    <p><span [innerHtml]="help.dedup_vdev_description | translate"></span></p>
+                  </div>
+                </div>
+              </button>
+            </mat-menu>
           </div>
         </div>
         </ng-template>
@@ -151,9 +338,17 @@
             <h4 class="vdev-h4">{{"Log VDev" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
           </div>
-          <div *ngIf="vdevs.spare.length > 0">
+          <div *ngIf="vdevs.spares.length > 0">
             <h4 class="vdev-h4">{{"Spare VDev" | translate}}</h4>
-            <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spares'" [manager]="this" [index]="i"></app-vdev>
+            <app-vdev *ngFor="let vdev of vdevs.spares; let i = index" [group]="'spares'" [manager]="this" [index]="i"></app-vdev>
+          </div>
+          <div *ngIf="vdevs.special.length > 0">
+            <h4 class="vdev-h4">{{"Metadata VDev" | translate}}</h4>
+            <app-vdev *ngFor="let vdev of vdevs.special; let i = index" [group]="'special'" [manager]="this" [index]="i"></app-vdev>
+          </div>
+          <div *ngIf="vdevs.dedup.length > 0">
+            <h4 class="vdev-h4">{{"Dedup VDev" | translate}}</h4>
+            <app-vdev *ngFor="let vdev of vdevs.dedup; let i = index" [group]="'dedup'" [manager]="this" [index]="i"></app-vdev>
           </div>
         </div>
       </div>
@@ -167,10 +362,6 @@
       <div class="buttons" id="pool-manager__button-group">
         <button id="pool-manager__create-button" mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
         <button id="pool-manager__cancel-button" mat-button class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
-        <button id="pool-manager__add-data-button" mat-button class="btn btn-accent mat-basic" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
-        <button id="pool-manager__add-cache-button" [disabled]="vdevs.cache.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
-        <button id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
-        <button id="pool-manager__add-spare-button" [disabled]="vdevs.spare.length > 0" mat-button class="btn btn-accent mat-basic" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
       </div>
     </div>
   </div>

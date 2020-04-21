@@ -250,7 +250,7 @@ export class CloudsyncFormComponent {
           width: "50%"
         },
         {
-          type: 'textarea',
+          type: 'chip',
           name: 'exclude',
           placeholder: helptext.exclude_placeholder,
           tooltip: helptext.exclude_tooltip,
@@ -383,7 +383,7 @@ export class CloudsyncFormComponent {
           width: "50%"
         },
         {
-          type: 'input',
+          type: 'chip',
           name: 'bwlimit',
           placeholder: helptext.bwlimit_placeholder,
           tooltip: helptext.bwlimit_tooltip,
@@ -726,24 +726,16 @@ export class CloudsyncFormComponent {
                           data.schedule.dow;
 
     if (data.bwlimit) {
-      let bwlimit_str = "";
+      const bwlimit = [];
       for (let i = 0; i < data.bwlimit.length; i++) {
         let sub_bwlimit = data.bwlimit[i].time + ",off";
         if (data.bwlimit[i].bandwidth != null) {
           const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
           sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
         }
-        if (bwlimit_str != "") {
-          bwlimit_str += " " + sub_bwlimit;
-        } else {
-          bwlimit_str += sub_bwlimit;
-        }
+        bwlimit.push(sub_bwlimit);
       }
-      data.bwlimit = bwlimit_str;
-    }
-
-    if (data.exclude) {
-      data.exclude = _.join(data.exclude, '\n');
+      data.bwlimit = bwlimit;
     }
 
     return data;
@@ -751,7 +743,6 @@ export class CloudsyncFormComponent {
 
   handleBwlimit(bwlimit: any): Array<any> {
     const bwlimtArr = [];
-    bwlimit = bwlimit.trim().split(' ');
 
     for (let i = 0; i < bwlimit.length; i++) {
       const sublimitArr = bwlimit[i].split(',');
@@ -831,18 +822,7 @@ export class CloudsyncFormComponent {
     value['schedule'] = schedule;
 
     if (value.bwlimit !== undefined) {
-      value.bwlimit = value.bwlimit.trim() === '' ? [] : this.handleBwlimit(value.bwlimit);
-    }
-
-    if (value.exclude !== undefined) {
-      const exclude = [];
-      value.exclude.split("\n").map(item => {
-        const trimmedItem = item.trim();
-        if (trimmedItem !== '') {
-          exclude.push(trimmedItem);
-        }
-      });
-      value.exclude = exclude;
+      value.bwlimit = this.handleBwlimit(value.bwlimit);
     }
 
     if (!this.formGroup.valid) {

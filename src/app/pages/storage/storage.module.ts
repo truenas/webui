@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -20,6 +20,8 @@ import { SnapshotDetailsComponent, SnapshotListComponent } from './snapshots/sna
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl/';
+import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/';
+import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-dialog/unlock-dialog.component'
 import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
@@ -44,6 +46,10 @@ import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumech
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { JobService } from 'app/services';
+import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
+import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
+import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 
 @NgModule({
   imports : [
@@ -72,6 +78,8 @@ import { JobService } from 'app/services';
     ImportDiskComponent,
     DatasetPermissionsComponent,
     DatasetAclComponent,
+    DatasetUnlockComponent,
+    UnlockDialogComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
     DiskListComponent,
@@ -80,10 +88,14 @@ import { JobService } from 'app/services';
     DiskFormComponent,
     DiskWipeComponent,
     DiskBulkEditComponent,
-    SmartResultsComponent
+    SmartResultsComponent,
+    DatasetQuotasUserlistComponent,
+    DatasetQuotasGrouplistComponent,
+    UserQuotaFormComponent,
+    GroupQuotaFormComponent,
   ],
-  entryComponents: [SnapshotDetailsComponent],
-  providers : [UserService, StorageService, MessageService, JobService]
+  entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
+  providers : [UserService, StorageService, MessageService, JobService, TranslateService]
 })
 export class StorageModule {
 }

@@ -1,5 +1,5 @@
 <mat-card 
-  class="view-card" 
+  class="view-card rackmount" 
   [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
   id="{{currentTab.alias}}" 
   (window:resize)="onResize($event)"
@@ -15,7 +15,7 @@
     <!-- ENCLOSURE MODEL -->
     <div class="model dom-overlay" style="opacity:0.75;">
       <div class="model-inner">
-        <mat-icon svgIcon="truenas_logo_full" style="width:140px; height:auto; margin-top:12px;"></mat-icon>
+        <!--<mat-icon svgIcon="truenas_logo_full" style="width:140px; height:auto; margin-top:12px;"></mat-icon>-->
       </div>
     </div>
 
@@ -43,7 +43,9 @@
           <div class="content">
 
             <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
-              <div *ngFor="let pool of enclosurePools"><div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]"></div>{{pool}}</div>
+              <div *ngFor="let pool of enclosurePools; let i=index"><div class="swatch" 
+              [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+              </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
             </div>
 
             <ng-template #noPools>
@@ -89,8 +91,8 @@
             <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
               <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.cyan : theme.blue"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
-                  <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] }})</span>
+                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
+                  <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})</span>
                 </div>
               </div>
 
@@ -104,7 +106,15 @@
           </div>
 
         <!-- CAPTION OVERLAY -->
-        <div class="caption dom-overlay">Choose a Disk</div>
+        <div *ngIf="!chassis.rear && !chassis.internal" class="caption dom-overlay">Choose a Disk</div>
+
+        <!-- FRONT/REAR TOGGLE -->
+        <!--<div *ngIf="subenclosure && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">-->
+        <div *ngIf="(chassis.rear || chassis.internal) && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">
+          <button mat-button (click)="enclosureOverride('front')">FRONT</button>
+          <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride('rear')">REAR</button>
+          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">Internal</button>
+        </div>
 
         <!-- CANVAS/SVG OVERLAY -->
         <div #visualizer id="visualizer" class="visualizer dom-overlay"></div>
@@ -145,14 +155,24 @@
           <div *ngIf="system && system.pools && enclosurePools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{ enclosurePools.length }}</div>
             <div class="title">Pools in Enclosure</div>
-            <div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>
+            <!--<div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>-->
+            <div *ngIf="unhealthyPools && unhealthyPools.length == 1" class="subtitle">Pool "{{unhealthyPools[0].name}}" is {{unhealthyPools[0].status}}.</div>
+            <div *ngIf="unhealthyPools && unhealthyPools.length > 1" class="subtitle">{{unhealthyPools[0]}} and {{unhealthyPools.length - 1}} other pools are not healthy.</div>
+            <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">All pools are online.</div>
             <button mat-button color="primary" (click)="setCurrentView('pools')">SHOW POOLS</button>
           </div>
   
           <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">
-            <div class="primary-number" >0</div>
-            <div class="title">Failed Disks</div>
-            <div class="subtitle">All disks healthy</div>
+            <div class="primary-number" >{{failedDisks.length}}</div>
+            <div class="title">Failed Disk<span *ngIf="failedDisks.length != 1">s</span></div>
+            <div class="subtitle">
+              <span *ngIf="failedDisks.length < 1">All disks healthy</span>
+              <span *ngIf="failedDisks.length > 1">Check {{failedDisks[0].disk}} and {{failedDisks.length - 1}} other disk<span *ngIf="failedDisks.length > 2">s</span></span>
+              <span *ngIf="failedDisks.length == 1">Check {{failedDisks[0].disk}}
+                <span *ngIf="!subenclosure"> in enclosure {{failedDisks[0].enclosure}}</span>
+                <span *ngIf="subenclosure"> {{failedDisks[0].location}} slot {{failedDisks[0].slot}}</span>
+              </span>
+            </div>
             <button mat-button color="primary" (click)="setCurrentView('status')">SHOW STATUS</button>
           </div>
   

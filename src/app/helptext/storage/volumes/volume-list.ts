@@ -48,7 +48,7 @@ unknown_status_alt_text: T('(Remove pool from database)'),
 
 upgradePoolDialog_warning: T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
- the pool incompatible with older versions of FreeNAS: "),
+ the pool incompatible with older versions of TrueNAS: "),
 
 pool_lock_warning_paratext_a: T("WARNING: Locking pool <i>"),
 pool_lock_warning_paratext_b: T("</i>.\
@@ -64,5 +64,36 @@ expand_pool_dialog: {
     save_button: T("Expand Pool"),
 },
 
-unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.')
+unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.'),
+
+pool_actions_title: T('Pool Actions'),
+encryption_actions_title: T('Encryption Actions'),
+
+export_keys_title: T('Export Dataset Keys for '),
+export_keys_message: T('Export dataset keys which can be used to unlock datasets for '),
+export_keys_button: T('Export'),
+
+dataset_actions: T('Dataset Actions'),
+zvol_actions: T('Zvol Actions'),
+unlock_action: T('Unlock'),
+lock_action: T('Lock'),
+encryption_options: T('Encryption Options'),
+encryption_options_dialog: {
+    dialog_title: T('Edit Encryption Options for '),
+    inherit_placeholder: T('Inherit encryption properties from parent'),
+    inherit_tooltip:T(''),
+    dialog_saved_title: T('Encryption Options Saved'),
+    dialog_saved_message1: T('Encryption options for '),
+    dialog_saved_message2: T(' successfully saved.'),
+    save_encryption_options: T('Save Encryption Options'),
+    saving_encryption_options: T('Saving Encryption Options...'),
+    confirm_checkbox: T('Confirm'),
+    save_button: T('Save')
+},
+lock_dataset_dialog: {
+    dialog_title: T('Lock Dataset '),
+    dialog_message: T('Lock dataset '),
+    checkbox_message: T('Force unmount '),
+    button: T('Lock')
+}
 }

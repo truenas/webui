@@ -22,7 +22,7 @@ import helptext from '../../../helptext/plugins/plugins';
 @Component({
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
-  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss', './plugin-add.component.css'],
   providers: [EntityFormService, FieldRelationService, NetworkService, TranslateService, JailService],
 })
 export class PluginAddComponent implements OnInit {
@@ -30,6 +30,7 @@ export class PluginAddComponent implements OnInit {
   protected addCall: string = 'plugin.create';
   public route_goback: string[] = ['plugins'];
   public route_success: string[] = ['plugins'];
+  public showSpinner = true;
 
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
@@ -297,23 +298,23 @@ export class PluginAddComponent implements OnInit {
       (this.formGroup.controls['ip6_addr'].value == '' || this.formGroup.controls['ip6_addr'].value == undefined)) {
         if (ip4AddrField.required == false) {
           ip4AddrField.required = true;
-          this.formGroup.controls['ip4_addr'].setValidators([Validators.required]);
+          this.formGroup.controls['ip4_addr'].setValidators([Validators.required, regexValidator(this.networkService.ipv4_regex)]);
           this.formGroup.controls['ip4_addr'].updateValueAndValidity();
         }
         if (ip6AddrField.required == false) {
           ip6AddrField.required = true;
-          this.formGroup.controls['ip6_addr'].setValidators([Validators.required]);
+          this.formGroup.controls['ip6_addr'].setValidators([Validators.required, regexValidator(this.networkService.ipv6_regex)]);
           this.formGroup.controls['ip6_addr'].updateValueAndValidity();
         }
       } else {
         if (ip4AddrField.required == true) {
           ip4AddrField.required = false;
-          this.formGroup.controls['ip4_addr'].clearValidators();
+          this.formGroup.controls['ip4_addr'].setValidators([regexValidator(this.networkService.ipv4_regex)]);
           this.formGroup.controls['ip4_addr'].updateValueAndValidity();
         }
         if (ip6AddrField.required == true) {
           ip6AddrField.required = false;
-          this.formGroup.controls['ip6_addr'].clearValidators();
+          this.formGroup.controls['ip6_addr'].setValidators([regexValidator(this.networkService.ipv6_regex)]);
           this.formGroup.controls['ip6_addr'].updateValueAndValidity();
         }
       }
@@ -339,6 +340,7 @@ export class PluginAddComponent implements OnInit {
     );
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+    this.formGroup.disable();
     this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
       this.updateIpValidation()
     });
@@ -346,11 +348,13 @@ export class PluginAddComponent implements OnInit {
       this.updateIpValidation();
     });
     this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
-      if (res && !this.formGroup.controls['nat'].disabled) {
-        this.setDisabled('nat', true);
-      }
-      if (!res && this.formGroup.controls['nat'].disabled) {
-        this.setDisabled('nat', false);
+      if(!this.showSpinner) {
+        if (res && !this.formGroup.controls['nat'].disabled) {
+          this.setDisabled('nat', true);
+        }
+        if (!res && this.formGroup.controls['nat'].disabled) {
+          this.setDisabled('nat', false);
+        }
       }
     })
 
@@ -361,6 +365,11 @@ export class PluginAddComponent implements OnInit {
       }
     }
 
+    for (let ctrl in this.formGroup.controls) {
+      if (!this.formGroup.controls[ctrl].disabled) {
+        this.formGroup.controls[ctrl].disable();
+      }
+    }
     this.aroute.params.subscribe(params => {
       this.pluginName = params['name'];
       this.pluginRepository =  params['plugin_repository'];
@@ -370,6 +379,8 @@ export class PluginAddComponent implements OnInit {
         plugin_repository: this.pluginRepository,
         refresh: false
       }]).subscribe((defaults) => {
+        this.showSpinner = false;
+        this.formGroup.enable();
         for (let i in defaults.properties) {
           if (this.formGroup.controls[i]) {
             if (_.indexOf(this.TFfields, i) > -1) {

@@ -7,6 +7,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -21,34 +22,44 @@ export class CertificateEditComponent {
   protected isEntity: boolean = true;
   protected queryCallOption: Array<any> = [["id", "="]];
 
-  protected fieldConfig: FieldConfig[] = [{
-      type: 'input',
-      name: 'name',
-      placeholder: helptext_system_certificates.edit.name.placeholder,
-      tooltip: helptext_system_certificates.edit.name.tooltip,
-      required: true,
-      validation: helptext_system_certificates.edit.name.validation
-    },
+  protected fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'textarea',
-      name: 'certificate',
-      placeholder: helptext_system_certificates.edit.certificate.placeholder,
-      isHidden: false,
-      readonly: true,
-    },
-    {
-      type: 'textarea',
-      name: 'CSR',
-      placeholder: helptext_system_certificates.edit.csr.placeholder,
-      isHidden: false,
-      readonly: true,
-    },
-    {
-      type: 'textarea',
-      name: 'privatekey',
-      placeholder: helptext_system_certificates.edit.privatekey.placeholder,
-      isHidden: false,
-      readonly: true,
+      name: helptext_system_certificates.edit.fieldset_certificate,
+      label: true,
+      class: 'certificate',
+      width: '100%',
+      config: [
+        {
+        type: 'input',
+        name: 'name',
+        placeholder: helptext_system_certificates.edit.name.placeholder,
+        tooltip: helptext_system_certificates.edit.name.tooltip,
+        required: true,
+        validation: helptext_system_certificates.edit.name.validation
+      },
+      {
+        type: 'textarea',
+        name: 'certificate',
+        placeholder: helptext_system_certificates.edit.certificate.placeholder,
+        isHidden: false,
+        readonly: true,
+      },
+      {
+        type: 'textarea',
+        name: 'CSR',
+        placeholder: helptext_system_certificates.edit.csr.placeholder,
+        isHidden: false,
+        readonly: true,
+      },
+      {
+        type: 'textarea',
+        name: 'privatekey',
+        placeholder: helptext_system_certificates.edit.privatekey.placeholder,
+        isHidden: false,
+        readonly: true,
+      }
+    ]
     }
   ];
 

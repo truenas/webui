@@ -4,14 +4,29 @@ import { T } from "app/translate-marker";
 
 export const helptext_system_certificates = {
   add: {
+    fieldset_basic: T('Identifier and Type'),
+    fieldset_type: T('Certificate Options'),
+    fieldset_certificate: T('Certificate Subject'),
+    fieldset_basic_constraints: T('Basic Constraints'),
+    fieldset_authority_key_identifier: T('Authority Key Identifier'),
+    fieldset_extended_key_usage: T('Extended Key Usage'),
+    fieldset_key_usage: T('Key Usage'),
+
     name: {
-      placeholder: T("Identifier"),
-      tooltip: T("Enter a description of the CA."),
-      validation: [Validators.required, Validators.pattern("[A-Za-z0-9_-]+$")]
+      placeholder: T("Name"),
+      tooltip: T("Descriptive identifier for this certificate."),
+      validation: [Validators.required, Validators.pattern("[A-Za-z0-9_-]+$")],
+      errors: T('Allowed characters: letters, numbers, underscore (_), and dash (-).'),
     },
 
     create_type: {
       placeholder: T("Type")
+    },
+
+    profiles: {
+      placeholder: T('Profiles'),
+      tooltip: T('Predefined certificate extensions. Choose a profile that best \
+matches your certificate usage scenario.'),
     },
 
     isCSRonSystem: {
@@ -120,10 +135,10 @@ export const helptext_system_certificates = {
     san: {
       placeholder: T("Subject Alternate Names"),
       tooltip: T(
-        "Multi-domain support. Enter additional domains to\
- secure, separated by spaces. For example, if the\
- primary domain is example.com, entering www.example.com\
- will secure both addresses."
+        "Multi-domain support. Enter additional domains to \
+ secure. Separate domains by pressing <code>Enter</code> \
+ For example, if the primary domain is <i>example.com</i>, \
+ entering <i>www.example.com</i> secures both addresses."
       )
     },
 
@@ -156,11 +171,149 @@ export const helptext_system_certificates = {
 
     passphrase2: {
       placeholder: T("Confirm Passphrase")
-    }
+    },
 
+    basic_constraints: {
+      config: {
+        placeholder: T('Basic Constraints Config'),
+        tooltip: T(''),
+      },
+      ca: {
+        placeholder: T('CA'),
+        tooltip: T('Identify this certificate as a Certificate Authority (CA).'),
+      },
+      enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T('Activate this certificate extension.'),
+      },
+      path_length: {
+        placeholder: T('Path Length'),
+        tooltip: T('How many non-self-issued intermediate certificates that can follow \
+this certificate in a valid certification path. Entering <i>0</i> allows a single \
+additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
+      },
+      extension_critical: {
+        placeholder: T('Critical Extension'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
+be recognized by the certificate-using system or this certificate will be rejected. Extensions \
+identified as <i>not</i> critical can be ignored by the certificate-using system and the \
+certificate still approved.'),
+      },
+    },
+
+    authority_key_identifier: {
+      config: {
+        placeholder: T('Authority Key Config'),
+        tooltip: T(''),
+      },
+      authority_cert_issuer: {
+        placeholder: T('Authority Cert Issuer'),
+        tooltip: T('Pair this certificate\'s public key with the Certificate Authority private \
+key used to sign this certificate.'),
+      },
+      enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T('Activate this certificate extension.'),
+      },
+      extension_critical: {
+        placeholder: T('Critical Extension'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
+be recognized by the certificate-using system or this certificate will be rejected. Extensions \
+identified as <i>not</i> critical can be ignored by the certificate-using system and the \
+certificate still approved.'),
+      },
+    },
+
+    extended_key_usage: {
+      usages: {
+        placeholder: T('Usages'),
+        tooltip: T('Identify the purpose for this public key. Typically used for end \
+entity certificates. Multiple usages can be selected. Do not mark this extension \
+critical when the <i>Usage</i> is <i>ANY_EXTENDED_KEY_USAGE</i>.<br><br> \
+Using both <b>Extended Key Usage</b> and <b>Key Usage</b> extensions \
+requires that the purpose of the certificate is consistent with both extensions. See \
+<a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
+for more details.'),
+      },
+      enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T('Activate this certificate extension.'),
+      },
+      extension_critical: {
+        placeholder: T('Critical Extension'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
+be recognized by the certificate-using system or this certificate will be rejected. Extensions \
+identified as <i>not</i> critical can be ignored by the certificate-using system and the \
+certificate still approved.'),
+      },
+    },
+
+    key_usage: {
+      config: {
+        placeholder: T('Key Usage Config'),
+        tooltip: T(''),
+      },
+      enabled: {
+        placeholder: T('Enabled'),
+        tooltip: T('Activate this certificate extension.'),
+      },
+      digital_signature: {
+        placeholder: T('Digital Signature'),
+        tooltip: T('This certificate\'s public key is used with digital signature methods \
+that are separate from certificate or CRL signing.'),
+      },
+      content_commitment: {
+        placeholder: T('Content Commitment'),
+        tooltip: T('This certificate\'s public key verifies digital signatures used for a \
+non-repudiation service.'),
+      },
+      key_encipherment: {
+        placeholder: T('Key Encipherment'),
+        tooltip: T('This certificate\'s public key is used for key management.'),
+      },
+      data_encipherment: {
+        placeholder: T('Data Encipherment'),
+        tooltip: T('This certificate\'s public key is used to encipher user data.'),
+      },
+      key_agreement: {
+        placeholder: T('Key Agreement'),
+        tooltip: T('This certificate\'s public key is used to manage key agreement.'),
+      },
+      key_cert_sign: {
+        placeholder: T('Key Cert Sign'),
+        tooltip: T('This certificate\'s public key is used to verify signatures on \
+other public key certificates. Activating this also requires enabling the \
+<b>CA</b> basic constraint.'),
+      },
+      crl_sign: {
+        placeholder: T('CRL Sign'),
+        tooltip: T('This certificate\'s public key is used to verify signatures \
+on a certificate revocation list (CRL).'),
+      },
+      encipher_only: {
+        placeholder: T('Encipher Only'),
+        tooltip: T('The certificate\'s public key is used to encipher user \
+data only during key agreement operations. Requires that \
+<b>Key Agreement</b> is also set.'),
+      },
+      decipher_only: {
+        placeholder: T('Decipher Only'),
+        tooltip: T('This certificate\'s public key is used to decipher \
+user data only during key agreement operations. Requires that \
+<b>Key Agreement</b> is also set.'),
+      },
+      extension_critical: {
+        placeholder: T('Critical Extension'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
+be recognized by the certificate-using system or this certificate will be rejected. Extensions \
+identified as <i>not</i> critical can be ignored by the certificate-using system and the \
+certificate still approved.'),
+      },
+    },
   },
 
   edit: {
+    fieldset_certificate: T('Certificate'),
     name: {
       placeholder: T("Identifier"),
       tooltip: T(
@@ -208,6 +361,7 @@ export const helptext_system_certificates = {
   },
 
   acme: {
+    fieldset_acme: T('ACME Certificate'),
     identifier: {
       placeholder: T("Identifier"),
       tooltip: T('Internal identifier of the certificate. Only\

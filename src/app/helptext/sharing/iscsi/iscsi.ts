@@ -37,12 +37,12 @@ export const helptext_sharing_iscsi = {
  has access to the target."
   ),
 
-  target_form_placeholder_authmethod: T("Auth Method"),
+  target_form_placeholder_authmethod: T("Authentication Method"),
   target_form_tooltip_authmethod: T(
     "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
   ),
 
-  target_form_placeholder_auth: T("Authentication Group number"),
+  target_form_placeholder_auth: T("Authentication Group Number"),
   target_form_tooltip_auth: T(
     "Select <i>None</i> or an integer. This value\
  represents the number of existing authorized accesses."
@@ -51,7 +51,7 @@ export const helptext_sharing_iscsi = {
   target_form_placeholder_delete: T("Delete"),
 
   fieldset_portal_basic: T('Basic Info'),
-  fieldset_portal_authgroup: T('Auth Method and Group'),
+  fieldset_portal_authgroup: T('Authentication Method and Group'),
   fieldset_portal_ip: T('IP Address'),
 
   portal_form_placeholder_comment: T("Description"),
@@ -60,7 +60,7 @@ export const helptext_sharing_iscsi = {
  group."
   ),
 
-  portal_form_placeholder_discovery_authmethod: T("Discovery Auth Method"),
+  portal_form_placeholder_discovery_authmethod: T("Discovery Authentication Method"),
   portal_form_tooltip_discovery_authmethod: T(
     '<a href="--docurl--/sharing.html#block-iscsi"\
  target="_blank">iSCSI</a> supports multiple\
@@ -70,9 +70,9 @@ export const helptext_sharing_iscsi = {
  require authentication.'
   ),
 
-  portal_form_placeholder_discovery_authgroup: T("Discovery Auth Group"),
+  portal_form_placeholder_discovery_authgroup: T("Discovery Authentication Group"),
   portal_form_tooltip_discovery_authgroup: T("Group ID created in \
- Authorized Access. Required when the Discovery Auth Method is set to \
+ Authorized Access. Required when the Discovery Authentication Method is set to \
  CHAP or Mutual CHAP."
   ),
 
@@ -138,12 +138,9 @@ export const helptext_sharing_iscsi = {
   globalconf_validators_basename: [Validators.required],
 
   globalconf_placeholder_isns_servers: T("ISNS Servers"),
-  globalconf_tooltip_isns_servers: T(
-    "Hostnames or IP addresses of the\
- ISNS servers to be registered with the\
- iSCSI targets and portals of the system.\
- Separate each entry with a space."
-  ),
+  globalconf_tooltip_isns_servers: T("Hostnames or IP addresses of the \
+ ISNS servers to be registered with the iSCSI targets and portals of \
+ the system. Separate entries by pressing <code>Enter</code>."),
 
   globalconf_placeholder_pool_avail_threshold: T(
     "Pool Available Space Threshold (%)"
@@ -166,14 +163,14 @@ export const helptext_sharing_iscsi = {
   fieldset_extent_type: T('Type'),
   fieldset_extent_options: T('Compatability'),
 
-  extent_placeholder_name: T("Extent name"),
+  extent_placeholder_name: T("Name"),
   extent_tooltip_name: T(
     "Name of the extent. If the <i>Extent size</i> is not <i>0</i>,\
  it cannot be an existing file within the pool or dataset."
   ),
   extent_validators_name: [Validators.required],
 
-  extent_placeholder_type: T("Extent type"),
+  extent_placeholder_type: T("Extent Type"),
   extent_tooltip_type: T("<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.\
   <i>File</i> provides virtual storage access to a single file."),
 
@@ -190,7 +187,7 @@ export const helptext_sharing_iscsi = {
  the MAC address of the system."
   ),
 
-  extent_placeholder_path: T("Path to the extent"),
+  extent_placeholder_path: T("Path to the Extent"),
   extent_tooltip_path: T("Browse to an existing file. Create a new file by browsing to a\
  dataset and appending /<i>{filename.ext}</i> to the path. Extents cannot be\
  created inside a jail root directory."
@@ -202,19 +199,19 @@ export const helptext_sharing_iscsi = {
  file already exists. Otherwise, specify the file size for the new file."
   ),
 
-  extent_placeholder_blocksize: T("Logical block size"),
+  extent_placeholder_blocksize: T("Logical Block Size"),
   extent_tooltip_blocksize: T(
     "Leave at the default of 512 unless the initiator\
  requires a different block size."
   ),
 
-  extent_placeholder_pblocksize: T("Disable physical block size reporting"),
+  extent_placeholder_pblocksize: T("Disable Physical Block Size Reporting"),
   extent_tooltip_pblocksize: T(
     "Set if the initiator does not support physical block size values\
  over 4K (MS SQL)."
   ),
 
-  extent_placeholder_avail_threshold: T("Available space threshold (%)"),
+  extent_placeholder_avail_threshold: T("Available Space Threshold (%)"),
   extent_tooltip_avail_threshold: T(
     'Only appears if a <i>File</i> or zvol is selected. When\
  the specified percentage of free space is reached,\
@@ -368,12 +365,15 @@ export const helptext_sharing_iscsi = {
   step3_label: T("Initiator"),
 
   initiators_placeholder: T("Initiators"),
-  initiators_tooltip: T("Leave blank to allow all or enter a list of initiator hostnames separated by spaces."),
+  initiators_tooltip: T("Leave blank to allow all or enter a list of initiator hostnames. \
+   Separate entries by pressing <code>Enter</code>."),
 
   auth_network: {
     placeholder: T("Authorized Networks"),
-    tooltip: T("Network addresses allowed to use this initiator. Leave blank to allow all networks or list network addresses with\
- a CIDR mask. Separate multiple addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."),
-    error: T('Invalid network address list. Check for typos or missing CIDR netmasks and separate addresses with a space.')
+    tooltip: T("Network addresses allowed to use this initiator. Leave blank to allow all \
+     networks or list network addresses with a CIDR mask. Separate entries by pressing \
+     <code>Enter</code>."),
+    error: T('Invalid network address list. Check for typos or missing CIDR netmasks and \
+     separate addresses by pressing <code>Enter</code>.')
   }
 };

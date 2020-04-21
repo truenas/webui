@@ -69,11 +69,11 @@ export const helptext_system_support = {
   cc: {
     placeholder: T("CC"),
     tooltip: T("Email addresses to receive copies of iXsystems Support \
-  messages about this issue. Use the format <i>name</i>@<i>domain.com</i> \
-  and a comma \(,\) to separate each address."),
+  messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. \
+  Separate entries by pressing <code>Enter</code>."),
     err: T('Email addresses must be entered in the format \
-  <i>local-name</i>@<i>domain.com<i> with a comma \(,\) separating each \
-  address.')
+  <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing \
+  <code>Enter</code>.')
   },
 
   phone: {

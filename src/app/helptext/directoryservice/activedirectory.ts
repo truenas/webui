@@ -94,6 +94,13 @@ activedirectory_disable_fn_cache_placeholder : T('Disable FreeNAS Cache'),
 activedirectory_disable_fn_cache_tooltip : T('Set to disable caching AD users and groups. This can\
  help when unable to bind to a domain with a large number of users or groups.'),
 
+restrict_pam: {
+  name: 'restrict_pam',
+  placeholder: T('Restrict PAM'),
+  tooltip: T('Set to restrict SSH access in certain circumstances to only members of \
+ BUILTIN\\Administrators'),
+},
+
 activedirectory_site_name: 'site',
 activedirectory_site_placeholder : T('Site Name'),
 activedirectory_site_tooltip : T('Enter the relative distinguished name of the\
@@ -180,6 +187,7 @@ activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can
 'use_default_domain',
 'allow_dns_updates',
 'disable_freenas_cache',
+'restrict_pam',
 'site',
 'dcname',
 'gcname',

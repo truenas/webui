@@ -116,7 +116,6 @@ export class ZvolFormComponent {
       placeholder: helptext.zvol_volsize_placeholder,
       tooltip : helptext.zvol_volsize_tooltip,
       required: true,
-      value: "0 GiB",
       blurEvent:this.blurVolsize,
       blurStatus: true,
       parent: this,
@@ -124,7 +123,7 @@ export class ZvolFormComponent {
         (control: FormControl): ValidationErrors => {
           const config = this.fieldConfig.find(c => c.name === 'volsize');
 
-          const size = this.storageService.convertHumanStringToNum(control.value, true);
+          const size = control.value ? this.storageService.convertHumanStringToNum(control.value, true) : null;
           const humanSize = control.value;
           
           let errors = control.value && isNaN(size)

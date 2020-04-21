@@ -2,6 +2,9 @@ import { T } from '../../../translate-marker';
 
 
 export default {
+    fieldset_dataset: T('Dataset'),
+    fieldset_schedule: T('Schedule'),
+
     dataset_placeholder: T('Dataset'),
     dataset_tooltip: T('Select a pool, dataset, or zvol.'),
     dataset_warning: T('Invalid dataset.'),
@@ -14,10 +17,11 @@ export default {
 
     exclude_placeholder: T('Exclude'),
     exclude_tooltip: T('Exclude specific child datasets from the \
- snapshot. Use with recursive snapshots. Comma-separated list of paths \
- to any child datasets to exclude. Example: <i>pool1/dataset1/child1</i>. \
+ snapshot. Use with recursive snapshots. List paths to any child \
+ datasets to exclude. Example: <i>pool1/dataset1/child1</i>. \
  A recursive snapshot of <i>pool1/dataset1</i> will include all child \
- datasets except <i>child1</i>.'),
+ datasets except <i>child1</i>. Separate entries by pressing \
+ <code>Enter</code>.'),
 
     lifetime_placeholder: T('Snapshot Lifetime'),
     lifetime_tooltip: T('Define a length of time to retain the snapshot \
@@ -48,14 +52,19 @@ export default {
  creating snapshots. Snapshots already in progress will continue until \
  complete.'),
 
-    snapshot_picker_placeholder: T('Schedule the Periodic Snapshot Task'),
+    snapshot_picker_placeholder: T('Schedule'),
     snapshot_picker_tooltip: T('Choose one of the presets \
  or choose <i>Custom</i> to use the advanced scheduler.'),
 
     allow_empty_placeholder: T('Allow Taking Empty Snapshots'),
-    allow_empty_tooltip: T('Creates dataset snapshots when there are no \
- changes. Set to support periodic snapshot schedules and replications \
- created in version 11.2 and earlier.'),
+    allow_empty_tooltip: T('Creates dataset snapshots even when there \
+ have been no changes to the dataset from the last snapshot. Recommended \
+ for creating long-term restore points, multiple snapshot tasks pointed \
+ at the same datasets, or to be compatible with snapshot schedules or \
+ replications created in TrueNAS 11.2 and earlier.<br><br> For example, \
+ allowing empty snapshots for a monthly snapshot schedule allows that \
+ monthly snapshot to be taken, even when a daily snapshot task has \
+ already taken a snapshot of any changes to the dataset.'),
 
     enabled_placeholder: T('Enabled'),
     enabled_tooltip: T('To activate this periodic snapshot schedule, set \

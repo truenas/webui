@@ -19,7 +19,8 @@ ldap_custactions_clearcache_dialog_message : T("The cache is being rebuilt."),
 
 ldap_hostname_name : 'hostname',
 ldap_hostname_placeholder : T('Hostname'),
-ldap_hostname_tooltip: T('The hostname or IP address of the LDAP server.'),
+ldap_hostname_tooltip: T('The hostname or IP address of the LDAP server. \
+ Separate entries by pressing <code>Enter</code>.'),
 ldap_hostname_validation: [Validators.required],
 
 ldap_hostname_noreq_name : 'hostname_noreq',

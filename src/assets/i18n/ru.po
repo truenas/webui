@@ -62,6 +62,9 @@ msgstr " и "
 msgid " and all snapshots of it?"
 msgstr " и все снимки этого?"
 
+msgid " and will be disrupted if the pool is detached:"
+msgstr ""
+
 msgid " and will be disrupted if the pool is locked:"
 msgstr ""
 
@@ -85,6 +88,9 @@ msgstr " был разблокирован."
 
 msgid " is "
 msgstr " - "
+
+msgid " is a required field."
+msgstr ""
 
 msgid " is required."
 msgstr " требуется."
@@ -165,9 +171,6 @@ msgstr "(Удалить пул из базы данных)"
 msgid ", new vdev is "
 msgstr ", новый vdev - "
 
-msgid ". All data on that pool was destroyed."
-msgstr ". Все данные на этом пуле были уничтожены."
-
 msgid ". At least one is required."
 msgstr ". Требуетмя по крайней мере один."
 
@@ -182,6 +185,9 @@ msgstr "0=Выключено, пусто=наследовать"
 
 msgid "20 characters is the maximum length."
 msgstr "Максимальная длина 20 символов."
+
+msgid "2FA"
+msgstr ""
 
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
@@ -441,6 +447,14 @@ msgid "<b>SED (Self-Encrypting Drives) Options</b>"
 msgstr "<b>Параметры SED (дисков с самошифрованием)</b>"
 
 msgid ""
+"<b>SET</b> will changes all destination datasets to "
+"<code>readonly=on</code> after finishing the replication. "
+"<br><b>REQUIRE</b> stops replication unless all existing destination "
+"datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> "
+"disables checking the <code>readonly</code> property during replication."
+msgstr ""
+
+msgid ""
 "<b>SYNC</b>: Files on the destination are <i><u>changed</u></i> to match "
 "those on the source. If a file does not exist on the source, it is also "
 "<i><u>deleted</u></i> from the destination."
@@ -448,6 +462,11 @@ msgstr ""
 "<b>SYNC</b>. Файлы в месте назначения <i><u>измененятся</u></i> в "
 "соответствии с файлами в источнике. Если файл не существует в источнике, он "
 "также <i><u>удаляется</u></i> из места назначения."
+
+msgid ""
+"<b>Success!</b> The API key has been created or reset. <b>This is the only "
+"time the key is shown.</b>"
+msgstr ""
 
 msgid ""
 "<b>WARNING:</b> Rolling the dataset back  destroys data on the dataset "
@@ -755,19 +774,13 @@ msgstr "Пул с таким именем уже существует."
 
 msgid ""
 "A single bandwidth limit or bandwidth limit schedule in rclone format. "
-"Example: <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>. "
-"Units can be specified with the beginning letter: <samp>b</samp>, "
-"<samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>. See <a "
+"Separate entries by pressing <code>Enter</code>. Example:  <samp>08:00,512 "
+"12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>. Units can be specified "
+"with the beginning letter: <samp>b</samp>, <samp>k</samp> (default), "
+"<samp>M</samp>, or <samp>G</samp>. See <a "
 "href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" "
 "target=\"_blank\">rclone --bwlimit</a>."
 msgstr ""
-"Одиночное ограничение пропускной способности или расписание ограничений "
-"пропускной способности в формате rclone. Пример: <samp>08:00,512 12:00,10MB "
-"13:00,512 18:00,30MB 23:00,off</samp>. Единицы могут быть указаны с "
-"начальной буквой: <samp>b</samp>, <samp>k</samp>(по умолчанию), "
-"<samp>M</samp> или <samp>G</samp>. См. <a "
-"href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" "
-"target=\"_blank\">rclone --bwlimit</a>."
 
 msgid ""
 "A space-delimited list of network interfaces attached to a <b>VNET</b> "
@@ -835,7 +848,13 @@ msgstr "Тип ACL"
 msgid "ACL cannot be changed when the Source is the top-level dataset for a pool."
 msgstr ""
 
+msgid "ACME Certificate"
+msgstr ""
+
 msgid "ACME DNS"
+msgstr ""
+
+msgid "ACME DNS Authenticators"
 msgstr ""
 
 msgid "ACME Server Directory URI"
@@ -847,19 +866,22 @@ msgstr ""
 msgid "AD Timeout"
 msgstr "Таймаут AD"
 
+msgid "ADD"
+msgstr ""
+
 msgid "AFP"
 msgstr "AFP"
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 Unix привилегии"
 
-msgid "API"
-msgstr ""
-
 msgid "API Key"
 msgstr "Ключ API"
 
 msgid "API Key or Password"
+msgstr ""
+
+msgid "API Keys"
 msgstr ""
 
 msgid "API URL"
@@ -882,6 +904,9 @@ msgstr "AWS регион"
 
 msgid "About"
 msgstr "О продукте"
+
+msgid "Accent"
+msgstr ""
 
 msgid "Access"
 msgstr "Доступ"
@@ -1031,20 +1056,20 @@ msgstr "Добавить"
 msgid "Add ACL Item"
 msgstr "Добавить элемент ACL"
 
+msgid "Add ACME Certificate"
+msgstr ""
+
+msgid "Add API Key"
+msgstr ""
+
 msgid "Add Additional Path"
 msgstr "Добавить дополнительный путь"
 
 msgid "Add Alert Service"
 msgstr "Добавить службу оповещений"
 
-msgid "Add Cache"
-msgstr "Добавить кэш"
-
 msgid "Add Cloud Credential"
 msgstr "Добавить облачные полномочия"
-
-msgid "Add Data"
-msgstr "Добавить данные"
 
 msgid "Add Dataset"
 msgstr "Добавить набор данных"
@@ -1055,17 +1080,17 @@ msgstr ""
 msgid "Add Idmap"
 msgstr ""
 
-msgid "Add Log"
-msgstr "Добавить журнал"
-
 msgid "Add Mountpoint"
 msgstr "Добавить точку монтирования"
 
 msgid "Add Recovery Key"
 msgstr "Добавить ключ восстановления"
 
-msgid "Add Spare"
-msgstr "Добавить резерв"
+msgid "Add Vdev"
+msgstr ""
+
+msgid "Add Vdevs"
+msgstr ""
 
 msgid "Add Zvol"
 msgstr "Добавить zvol"
@@ -1129,6 +1154,9 @@ msgstr "Добавить один или несколько дисков для 
 msgid "Add one or more disks to extend the pool."
 msgstr "Добавить один или несколько дисков для расширения пула."
 
+msgid "Add or Update a License"
+msgstr ""
+
 msgid "Add this user to additional groups."
 msgstr "Добавить этого пользователя в дополнительные группы."
 
@@ -1139,21 +1167,24 @@ msgstr ""
 "Добавленные диски стираются, затем пул расширяется на новые диски с "
 "выбранной топологией. Существующие данные в пуле сохраняются."
 
+msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
+msgstr ""
+
 msgid "Adding data vdevs of different types is not supported."
 msgstr "Добавление vdev данных разных типов не поддерживается."
 
 msgid ""
-"Additional <a                "
-"href=\"https://rsync.samba.org/ftp/rsync/rsync.html\"                "
-"target=\"_blank\">rsync(1)</a> options to include.<br>                Note: "
-"The \"*\" character must be escaped with a                backslash "
-"(\\*.txt) or used inside single quotes                ('*.txt')."
+"Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" "
+"target=\"_blank\">rsync(1)</a>      options to include. Separate entries by "
+"pressing <code>Enter</code>.<br>      Note: The \"*\" character must be "
+"escaped with a backslash (\\*.txt) or used      inside single quotes "
+"('*.txt')."
 msgstr ""
-"Дополнительные параметры <а  "
-"href=\"https://rsync.samba.org/ftp/rsync/rsync.html\"                "
-"target=\"_blank\">rsync(1)</a>.<br>                             Примечание: "
-"Символ \"*\" должен быть экранирован обратной косой чертой (\\*.txt) или "
-"использоваться внутри одинарных кавычек ('*.txt')."
+
+msgid ""
+"Additional  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=\"_blank\">smb.conf</a>  parameters."
+msgstr ""
 
 msgid ""
 "Additional <a "
@@ -1183,9 +1214,6 @@ msgstr ""
 "href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
 "in\" target=\"_blank\">smartctl(8)</a>."
 
-msgid "Additional <b>smb5.conf</b> parameters not covered by other option fields."
-msgstr "Дополнительные параметры <b>smb5.conf</b>, не покрытые другими полями."
-
 msgid "Additional Data VDevs to Create"
 msgstr "Дополнительные данные VDevs для создания"
 
@@ -1195,23 +1223,38 @@ msgstr "Дополнительные домены"
 msgid "Additional Hardware"
 msgstr "Дополнительное оборудование"
 
+msgid ""
+"Additional Kerberos application settings. See the \"appdefaults\" section "
+"of <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=krb5.conf&apropos=0&"
+"sektion=5&manpath=FreeBSD+12.0-RELEASE&arch=default&format=html\" "
+"target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage "
+"syntax."
+msgstr ""
+
+msgid ""
+"Additional Kerberos library settings. See the \"libdefaults\" section of <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=krb5.conf&apropos=0&"
+"sektion=5&manpath=FreeBSD+12.0-RELEASE&arch=default&format=html\" "
+"target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage "
+"syntax."
+msgstr ""
+
 msgid "Additional Parameters"
 msgstr "Дополнительные параметры"
 
 msgid ""
-"Additional hosts to be appended to <i>/etc/hosts</i>. Each host entry is a "
-"single line with whitespace-delimited IP address, hostname, and any "
-"aliases. Hosts defined here are still accessible by name even when DNS is "
-"not available. See <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=hosts\" "
-"target=\"_blank\">hosts(5)</a> for additional information."
+"Additional domains to search. Separate entries by  pressing "
+"<code>Enter</code>. Adding search domains can cause slow DNS  lookups."
 msgstr ""
-"Дополнительные хосты, которые будут добавлены в <i>/etc/hosts</i>. Каждая "
-"запись хоста представляет собой одну строку с IP-адресом, и разделенными "
-"пробелами именем хоста и любыми псевдонимами. Определенные здесь хосты "
-"по-прежнему доступны по имени, даже если DNS недоступен. Смотрите <a "
+
+msgid ""
+"Additional hosts to be appended to <i>/etc/hosts</i>. Separate entries by "
+"pressing <code>Enter</code>. Hosts defined here are  still accessible by "
+"name even when DNS is not available. See  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hosts\" "
-"target=\"_blank\">hosts(5)</a> для дополнительной информации."
+"target=\"_blank\">hosts(5)</a>  for additional information."
+msgstr ""
 
 msgid ""
 "Additional options for <a "
@@ -1233,13 +1276,6 @@ msgstr ""
 
 msgid "Additional parameters."
 msgstr ""
-
-msgid ""
-"Additional space-delimited domains to search. Adding search domains can "
-"cause slow DNS lookups."
-msgstr ""
-"Дополнительные разделенные пробелами домены для поиска. Добавление "
-"поисковых доменов может вызвать медленный DNS поиск."
 
 msgid "Address"
 msgstr "Адрес"
@@ -1331,6 +1367,9 @@ msgstr "Оповещения"
 msgid "Aliases"
 msgstr "Псевдонимы"
 
+msgid "Aliases must be 15 characters or less."
+msgstr ""
+
 msgid "All Disks"
 msgstr "Все диски"
 
@@ -1376,8 +1415,11 @@ msgstr "Разрешить гостевой доступ"
 msgid "Allow Hosts"
 msgstr ""
 
-msgid "Allow Kerberos authentication"
-msgstr "Разрешить аутентификацию Kerberos"
+msgid "Allow Kerberos Authentication"
+msgstr ""
+
+msgid "Allow List"
+msgstr ""
 
 msgid "Allow Local User Login"
 msgstr "Разрешить вход локального пользователя"
@@ -1385,11 +1427,14 @@ msgstr "Разрешить вход локального пользовател�
 msgid "Allow New Files"
 msgstr "Разрешить новые файлы"
 
+msgid "Allow Password Authentication"
+msgstr ""
+
 msgid "Allow Root Login"
 msgstr "Разрешить вход root"
 
-msgid "Allow TCP port forwarding"
-msgstr "Разрешить переадресацию портов TCP"
+msgid "Allow TCP Port Forwarding"
+msgstr ""
 
 msgid "Allow Taking Empty Snapshots"
 msgstr "Разрешить делать пустые снимки"
@@ -1453,9 +1498,6 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-"
 "RELEASE+and+Ports\" target=\"_blank\">sudo</a>. У членов группы будет "
 "запрошен их пароль при использовании <b>sudo</b>."
-
-msgid "Allow list"
-msgstr "Список разрешений"
 
 msgid ""
 "Allow more ciphers for  <a "
@@ -1521,9 +1563,6 @@ msgstr ""
 "<b>Отключить</b>: jail не может выполнять какие-либо системные вызовы "
 "связанные с <b>sysvshm</b>."
 
-msgid "Allow password authentication"
-msgstr "Разрешить аутентификацию по паролю"
-
 msgid ""
 "Allow sending large data blocks. The  destination system must also support "
 "large blocks. See  <a "
@@ -1559,8 +1598,26 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
 "target=\"_blank\">vmm(4)</a>."
 
+msgid ""
+"Allow using open file handles that can withstand short disconnections.  "
+"Support for POSIX byte-range locks in Samba is also disabled. This option "
+"is not recommended when  configuring multi-protocol or local access to "
+"files."
+msgstr ""
+
 msgid "Allowed Initiators (IQN)"
 msgstr "Разрешенные инициаторы (IQN)"
+
+msgid ""
+"Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\" "
+"target\"_blank\">NTFS data streams</a>.  Disabling this option causes MacOS "
+"to write streams to files on the filesystem."
+msgstr ""
+
+msgid ""
+"Allows the drive to enter standby, even when non-physical S.M.A.R.T.  "
+"operations could prevent the drive from sleeping."
+msgstr ""
 
 msgid ""
 "Allows the share to host user home  directories. Each user is given a "
@@ -1585,6 +1642,18 @@ msgstr ""
 
 msgid "Also Include Naming Schema"
 msgstr "Также включить схему именования"
+
+msgid "Alt Background 1"
+msgstr ""
+
+msgid "Alt Background 2"
+msgstr ""
+
+msgid "Alt Foreground 1"
+msgstr ""
+
+msgid "Alt Foreground 2"
+msgstr ""
 
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
@@ -1630,6 +1699,16 @@ msgstr ""
 "данные безопасности -> Ключи доступа</i> и создайте новую пару ключей. "
 "Должен быть буквенно-цифровым и содержать от 8 до 40 символов."
 
+msgid ""
+"Amount of disk space that can be used by the selected groups.  Entering "
+"<code>0</code> (zero) allows all disk space."
+msgstr ""
+
+msgid ""
+"Amount of disk space that can be used by the selected users.  Entering "
+"<code>0</code> (zero) allows all disk space to be used."
+msgstr ""
+
 msgid "Amount of locked memory in bytes for the jail."
 msgstr "Количество блокированной памяти в байтах для jail."
 
@@ -1645,6 +1724,9 @@ msgstr "Полоса скачивания анонимного пользова�
 msgid "Anonymous User Upload Bandwidth"
 msgstr "Полоса закачки анонимного пользователя"
 
+msgid "Another theme is using this label. Please enter a new label."
+msgstr ""
+
 msgid "Any notes about initiators."
 msgstr "Любые заметки об инициаторах."
 
@@ -1657,6 +1739,15 @@ msgid ""
 msgstr ""
 "Добавлять <i>@realm</i> к <i>cn</i> в запросах LDAP для групп и "
 "пользователей, если задан User CN)."
+
+msgid ""
+"Appends a suffix to the share connection path.  This is used to provide "
+"unique shares on a per-user, per-computer, or per-IP address basis.  "
+"Suffixes can contain a macro. See  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=\"_blank\">smb.conf(5)</a> for a list of supported macros. The "
+"connectpath **must** be preset before a client connects."
+msgstr ""
 
 msgid "Apple Shares (AFP)"
 msgstr "Ресурсы Apple (AFP)"
@@ -1690,6 +1781,12 @@ msgstr "Применить ожидающее обновление"
 
 msgid "Apply Permissions Recursively"
 msgstr "Применить разрешения рекурсивно"
+
+msgid "Apply Quotas to Selected Groups"
+msgstr ""
+
+msgid "Apply Quotas to Selected Users"
+msgstr ""
 
 msgid "Apply Update"
 msgstr "Применить обновление"
@@ -1750,18 +1847,6 @@ msgstr "Вы уверены, что хотите синхронизироват�
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
-msgid ""
-"Assigning a directory to Minio changes the permissions                      "
-"                        of that directory and every directory in it to      "
-"                                        minio:minio and overrides any "
-"previous permissions.                                              Creating "
-"a separate dataset for Minio is strongly                                    "
-"          recommended."
-msgstr ""
-"Назначение каталога для Minio меняет разрешения для этого каталога и "
-"каждого каталога в нем на minio:minio и отменяет все предыдущие разрешения. "
-"Настоятельно рекомендуется создать отдельный набор данных для Minio."
-
 msgid "Associated Target"
 msgstr ""
 
@@ -1791,12 +1876,6 @@ msgstr "Прикрепить скриншоты."
 msgid "Aug"
 msgstr "Авг"
 
-msgid "Auth Method"
-msgstr "Метод аутентификации"
-
-msgid "Auth Method and Group"
-msgstr ""
-
 msgid "Auth Token"
 msgstr "Токен аутентификации"
 
@@ -1824,8 +1903,14 @@ msgstr ""
 msgid "Authentication Algorithm"
 msgstr ""
 
-msgid "Authentication Group number"
-msgstr "Номер группы аутентификации"
+msgid "Authentication Group Number"
+msgstr ""
+
+msgid "Authentication Method"
+msgstr ""
+
+msgid "Authentication Method and Group"
+msgstr ""
 
 msgid "Authentication Protocol"
 msgstr "Протокол аутентификации"
@@ -1935,11 +2020,11 @@ msgstr "Доступная память:"
 msgid "Available Space"
 msgstr "Доступно места"
 
+msgid "Available Space Threshold (%)"
+msgstr ""
+
 msgid "Available Themes"
 msgstr "Доступные темы"
-
-msgid "Available space threshold (%)"
-msgstr "Порог свободного пространства (%)"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "Потрясающие! Теперь давайте рассмотрим интересные возможности FreeNAS."
@@ -1967,6 +2052,12 @@ msgstr ""
 msgid "Background (lowest)"
 msgstr ""
 
+msgid "Background 1"
+msgstr ""
+
+msgid "Background 2"
+msgstr ""
+
 msgid "Bandwidth"
 msgstr ""
 
@@ -1986,6 +2077,9 @@ msgid "Basejail"
 msgstr "Базовый jail"
 
 msgid "Basic"
+msgstr ""
+
+msgid "Basic Buttons"
 msgstr ""
 
 msgid "Basic Info"
@@ -2009,9 +2103,6 @@ msgstr "Перед обновлением прочтите примечания 
 msgid "Begin"
 msgstr "Начать"
 
-msgid "Begin Time"
-msgstr "Время начала"
-
 msgid "Berkeley Packet Filter"
 msgstr "Berkeley Packet Filter"
 
@@ -2033,9 +2124,6 @@ msgstr "Привязка к интерфейсам"
 msgid "Bind Password"
 msgstr "Пароль привязки"
 
-msgid "Bind interfaces"
-msgstr "Привязка к интерфейсам"
-
 msgid "Bind to"
 msgstr "Привязка к"
 
@@ -2050,6 +2138,9 @@ msgstr "Размер блока"
 
 msgid "Block size"
 msgstr "Размер блока"
+
+msgid "Blue"
+msgstr ""
 
 msgid "Boot"
 msgstr "Загрузка"
@@ -2206,6 +2297,12 @@ msgid "Burst"
 msgstr ""
 
 msgid ""
+"By default, Samba uses a hashing algorithm for NTFS illegal  characters. "
+"Enabling this option translates NTFS illegal characters to the Unicode "
+"private range."
+msgstr ""
+
+msgid ""
 "By default, all data disks are created with the amount of swap specified. "
 "Changing the value does not affect the amount of swap on existing disks, "
 "only disks added after the change. Does not affect log or cache devices as "
@@ -2231,6 +2328,12 @@ msgstr ""
 msgid "CA ID"
 msgstr ""
 
+msgid ""
+"CAUTION: Once Two-Factor Authentication is enabled, a One-Time Password "
+"(OTP)  will be required to sign into this system. Be sure to immediately "
+"set up another two-factor device."
+msgstr ""
+
 msgid "CAs"
 msgstr "Центры сертификации"
 
@@ -2240,8 +2343,20 @@ msgstr ""
 msgid "CD-ROM Path"
 msgstr "Путь к CD-ROM"
 
+msgid "CLEAR SYNC KEYS"
+msgstr ""
+
+msgid "CLOSE"
+msgstr ""
+
 msgid "CN Realm"
 msgstr "CN Область"
+
+msgid "COLORS"
+msgstr ""
+
+msgid "COPY TO CLIPBOARD"
+msgstr ""
 
 msgid "CPU"
 msgstr "Процессор"
@@ -2263,6 +2378,9 @@ msgstr "CSR существует на этой системе"
 
 msgid "CSRs"
 msgstr "CSRы"
+
+msgid "Cache"
+msgstr ""
 
 msgid "Cache VDev"
 msgstr "VDev кеша"
@@ -2311,6 +2429,31 @@ msgstr ""
 
 msgid "Certificate"
 msgstr "Сертификат"
+
+msgid "Certificate Authorities"
+msgstr ""
+
+msgid "Certificate Authority"
+msgstr ""
+
+msgid ""
+"Certificate Authority (CA) to use for connecting to the key server. A valid "
+"CA public certificate is required to authenticate the connection. WARNING: "
+"for security reasons, please protect the Certificate Authority used for key "
+"server authentication."
+msgstr ""
+
+msgid "Certificate Options"
+msgstr ""
+
+msgid "Certificate Subject"
+msgstr ""
+
+msgid ""
+"Certificate to use for key server authentication. A valid certificate is "
+"required to verify the key server connection. WARNING: for security "
+"reasons, please protect the Certificate used for key server authentication."
+msgstr ""
 
 msgid ""
 "Certificate to use when performing LDAP  certificate-based authentication. "
@@ -2372,6 +2515,9 @@ msgstr ""
 msgid "Change log"
 msgstr "Журнал изменений"
 
+msgid "Change order for "
+msgstr ""
+
 msgid ""
 "Change the default password to improve system security. The new password "
 "cannot contain a space or <b>#</b>."
@@ -2386,24 +2532,6 @@ msgid "Changing"
 msgstr "Изменение"
 
 msgid ""
-"Changing SDK version is not a supported operation. Activate an existing "
-"boot environment that uses the desired train and boot into it to switch to "
-"that train."
-msgstr ""
-"Изменение версии SDK не поддерживается. Активируйте существующую окружение "
-"загрузки, которое использует нужный поезд, и загрузитесь в него, чтобы "
-"переключиться на этот поезд."
-
-msgid ""
-"Changing away from the nightly train is considered a downgrade and not a "
-"supported operation. Activate an existing boot environment that uses the "
-"desired train and boot into it to switch to that train."
-msgstr ""
-"Переход с ночного поезда считается откатом назад и не поддерживается. "
-"Активируйте существующее окуждение загрузки, которая использует нужный "
-"поезд, и загрузитесь в нее, чтобы переключиться на этот поезд."
-
-msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
 "particularly when going from Windows to Unix permissions."
 msgstr ""
@@ -2416,29 +2544,9 @@ msgstr ""
 "существующие разрешения."
 
 msgid ""
-"Changing the major version is considered a downgrade and is not a supported "
-"operation. Activate an existing boot environment that uses the desired "
-"train and boot into it to switch to that train."
-msgstr ""
-"Изменение этой основной версии считается откатом назад и не поддерживается. "
-"Активируйте существующее окуждение загрузки, которое использует нужный "
-"поезд, и загрузитесь в него, чтобы перейти на этот поезд."
-
-msgid ""
-"Changing the minor version is considered a downgrade and is not a supported "
-"operation. Activate an existing boot environment that uses the desired "
-"train and boot into it to switch to that train."
-msgstr ""
-"Изменение этой минорной версии считается понижением и не поддерживается. "
-"Активирeqnt существующее окуждение загрузки, которое использует нужный "
-"поезд, и загрузиться в него, чтобы перейти на этот поезд."
-
-msgid ""
 "Changing to a nightly train is one-way. Changing back to a stable train is "
-"not supported!"
+"not supported! "
 msgstr ""
-"Переход на ночной поезд - односторонняя операция. Переход обратно не "
-"поддерживается!"
 
 msgid "Channel"
 msgstr "Канал"
@@ -2458,6 +2566,9 @@ msgstr "Проверить обновления"
 msgid "Check for Updates Daily and Download if Available"
 msgstr "Ежедневно проверять наличие обновлений и загружать, если доступны"
 
+msgid "Check me!"
+msgstr ""
+
 msgid "Check server certificates in a TLS session."
 msgstr "Проверять серверные сертификаты в сеансе TLS."
 
@@ -2467,6 +2578,9 @@ msgid ""
 msgstr ""
 "Проверьте свойство <i>hostid</i> jail. Если не совпадает с хостом, не "
 "запускайте jail."
+
+msgid "Check the box for full upgrade. Leave unchecked to download only."
+msgstr ""
 
 msgid "Check the network connection."
 msgstr "Проверьте подключение к сети."
@@ -2570,14 +2684,23 @@ msgstr ""
 "чтении файлов. Это может привести к значительному увеличению "
 "производительности."
 
+msgid "Choose Accent"
+msgstr ""
+
 msgid "Choose Pool for Plugin and Jail Manager"
 msgstr "Выберите пул для менеджера плагинов и jail"
 
 msgid "Choose Pool for Plugin and Jail Storage"
 msgstr "Выберите пул для хранения плагинов и jail"
 
+msgid "Choose Primary"
+msgstr ""
+
 msgid "Choose Theme"
 msgstr "Выберите тему"
+
+msgid "Choose Topbar"
+msgstr ""
 
 msgid ""
 "Choose a <i>Stripe</i>, <i>Mirror</i>, or <i>Raid-Z</i> configuration for "
@@ -2611,15 +2734,8 @@ msgstr "Выберите цветовую схему."
 msgid "Choose a compression algorithm."
 msgstr ""
 
-msgid ""
-"Choose a dataset on the destination  system where snapshots are stored. "
-"Click the  <i class=\"material-icons\">folder</i> to see all datasets on "
-"the  destination system. Click a dataset to set it as the target."
+msgid "Choose a date"
 msgstr ""
-"Выберите набор данных в целевой системе, где хранятся снимки. Выберите <i "
-"class=\"material-icons\">папку</i>, чтобы увидеть все наборы данных в "
-"целевой системе. Выберите набор данных, чтобы установить его в качестве "
-"цели."
 
 msgid "Choose a date format."
 msgstr ""
@@ -2706,6 +2822,9 @@ msgstr ""
 msgid "Choose a time format."
 msgstr ""
 
+msgid "Choose a topbar color."
+msgstr ""
+
 msgid ""
 "Choose a valid client certificate which exists on this system and hasn't "
 "been revoked. Find more about generating certificates and CAs for OpenVPN "
@@ -2733,6 +2852,9 @@ msgstr "Выберите метод аутентификации."
 msgid "Choose an encryption mode to use with LDAP."
 msgstr "Выберите режим шифрования для использования с LDAP."
 
+msgid "Choose an option"
+msgstr ""
+
 msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
@@ -2745,18 +2867,6 @@ msgstr ""
 "target=\"_blank\">SSL</a> или <a "
 "href=\"https://hpbn.co/transport-layer-security-tls/\" "
 "target=\"_blank\">TLS</a>."
-
-msgid ""
-"Choose datasets on the source system to  be replicated. Click the <i "
-"class=\"material-icons\">folder</i> to see  all datasets on the source "
-"system. Each dataset must have an associated  periodic snapshot task, or "
-"previously-created snapshots for a one-time  replication."
-msgstr ""
-"Выберите, как часто нужно запускать задачу проверки. Варианты *Почасовой*, "
-"*Ежедневный*, *Еженедельный*, *Ежемесячный* или *Пользовательский*. "
-"Выберите *Пользовательский*, чтобы открыть визуальный планировщик для "
-"выбора минут, часов, дней, месяца и дней недели. Пробелы не допускаются в "
-"полях пользовательского планировщика."
 
 msgid ""
 "Choose how LDAP traffic is transmitted. Choices are <i>plain</i> (plain "
@@ -2779,20 +2889,6 @@ msgstr ""
 "большого (<i>Debug</i>)."
 
 msgid ""
-"Choose how often to run the scrub task.  Choices are <i>Hourly</i>, "
-"<i>Daily</i>, <i>Weekly</i>, <i>Monthly</i>,  or <i>Custom</i>. Select "
-"<i>Custom</i> to open a visual scheduler for  selecting minutes, hours, "
-"days, month, and days of week. Spaces are not  allowed in <b>Minutes</b>, "
-"<b>Hours</b>, or <b>Days</b> of the custom  scheduler."
-msgstr ""
-"Выберите, как часто нужно запускать задачу проверки. Доступны следующие "
-"варианты: <i>Почасовая</i>, <i>Ежедневная</i>, <i>Еженедельная</i>, "
-"<i>Ежемесячная</i> или <i>Пользовательская</i>. Выберите "
-"<i>Пользовательский</i>, чтобы открыть визуальный планировщик для выбора "
-"минут, часов, дней, месяца и дней недели. Пробелы не допускаются в "
-"<b>минутах</b>, <b>часах</b> или <b>днях</b> пользовательского планировщика."
-
-msgid ""
 "Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
 "on this dataset."
 msgstr ""
@@ -2800,18 +2896,14 @@ msgstr ""
 "этом наборе данных."
 
 msgid ""
-"Choose one of the convenient presets    or choose <b>Custom</b> to trigger "
-"the advanced scheduler UI"
-msgstr ""
-"Выберите один из удобных пресетов или выберите <b>Пользовательский</b> для "
-"запуска расширенного интерфейса планировщика"
-
-msgid ""
-"Choose one of the presets or choose <i>Custom</i> to use the advanced "
+"Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
 msgstr ""
-"Выберите один из предустановок или выберите <i>Пользовательский</i>, чтобы "
-"использовать расширенный планировщик."
+
+msgid ""
+"Choose one of the presets or select <i>Custom</i>  to open the advanced "
+"scheduler."
+msgstr ""
 
 msgid "Choose permissions for this rsync module."
 msgstr ""
@@ -2826,12 +2918,20 @@ msgstr ""
 msgid "Choose the VM operating system type."
 msgstr "Выберите тип операционной системы VM."
 
+msgid "Choose the accent color for the theme."
+msgstr ""
+
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
 "and GIDs. Click Edit to configure that backend."
 msgstr ""
 "Выберите бэкэнд для сопоставления идентификаторов безопасности Windows "
 "(SID) с UID и GID UNIX. Нажмите Редактировать, чтобы настроить этот бэкэнд."
+
+msgid ""
+"Choose the color to display next to the Menu Label                     in "
+"the Favorites menu."
+msgstr ""
 
 msgid ""
 "Choose the hour and minute when new resilver tasks                are not "
@@ -2851,6 +2951,9 @@ msgid ""
 msgstr ""
 "Выберите платформу, которая будет использовать эту долю. Связанные "
 "параметры применяются к этой общей папке."
+
+msgid "Choose the primary color for the theme."
+msgstr ""
 
 msgid "Choose the protocol to use when connecting with the remote system."
 msgstr ""
@@ -2974,8 +3077,16 @@ msgstr ""
 "href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro."
 "html\" target=\"_blank\">Amazon S3 Storage Classes</a> для информации."
 
+msgid "Clear Pending Sync Keys"
+msgstr ""
+
 msgid "Clear SED Password"
 msgstr "Очистить пароль SED"
+
+msgid ""
+"Clear all keys which are pending to be synced between KMIP server and TN "
+"database."
+msgstr ""
 
 msgid "Clear the Idmap Cache"
 msgstr ""
@@ -2995,6 +3106,16 @@ msgstr ""
 
 msgid "Click on alarms to select or unselect."
 msgstr "Нажмите на оповещения, чтобы выбрать или отменить выбор."
+
+msgid ""
+"Click the swatch to pick a color or enter a color                     hex "
+"value."
+msgstr ""
+
+msgid ""
+"Click the swatch to pick a color or enter a color                    hex "
+"value."
+msgstr ""
 
 msgid "Client Certificate"
 msgstr ""
@@ -3164,8 +3285,8 @@ msgstr ""
 msgid "Compress"
 msgstr "Сжатие"
 
-msgid "Compress connections"
-msgstr "Сжимать соединения"
+msgid "Compress Connections"
+msgstr ""
 
 msgid "Compression"
 msgstr ""
@@ -3262,6 +3383,9 @@ msgstr ""
 
 msgid "Connection Error"
 msgstr "Ошибка соединения"
+
+msgid "Connection port number on the central key server."
+msgstr ""
 
 msgid ""
 "Connection security level:<br>  <ul><li><i>Standard</i> is most secure, but "
@@ -3417,6 +3541,9 @@ msgstr "Создать SSH соединение"
 msgid "Create Snapshot"
 msgstr "Создать снимок"
 
+msgid "Create Theme"
+msgstr ""
+
 msgid "Create a new Pool."
 msgstr "Создать новый пул."
 
@@ -3450,14 +3577,19 @@ msgstr "Создать или импортировать пул"
 msgid "Create or Import pool"
 msgstr "Создать или импортировать пул"
 
-msgid ""
-"Creates dataset snapshots when there are no changes. Set to support "
-"periodic snapshot schedules and replications created in version 11.2 and "
-"earlier."
+msgid "Created Date"
 msgstr ""
-"Создает снимки набора данных при отсутствии изменений. Установите для "
-"поддержки заданий периодических снимков и репликаций, созданных в версии "
-"11.2 и более ранних."
+
+msgid ""
+"Creates dataset snapshots even when there  have been no changes to the "
+"dataset from the last snapshot. Recommended  for creating long-term restore "
+"points, multiple snapshot tasks pointed  at the same datasets, or to be "
+"compatible with snapshot schedules or  replications created in %brand% 11.2 "
+"and earlier.<br><br> For example,  allowing empty snapshots for a monthly "
+"snapshot schedule allows that  monthly snapshot to be taken, even when a "
+"daily snapshot task has  already taken a snapshot of any changes to the "
+"dataset."
+msgstr ""
 
 msgid "Creating"
 msgstr "Создание"
@@ -3504,6 +3636,13 @@ msgstr ""
 msgid "Cron Jobs"
 msgstr "Задания Cron"
 
+msgid ""
+"Cryptographic protocols for securing client/server connections. Select "
+"which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
+"target=\"_blank\">Transport Layer Security (TLS)</a> versions TrueNAS can "
+"use for connection security."
+msgstr ""
+
 msgid "Current Password"
 msgstr "Текущий пароль"
 
@@ -3522,8 +3661,14 @@ msgstr "Пользовательские свойства"
 msgid "Custom Server"
 msgstr "Пользовательский сервер"
 
+msgid "Custom Theme Name"
+msgstr ""
+
 msgid "Customer Name"
 msgstr "Имя Клиента"
+
+msgid "Cyan"
+msgstr ""
 
 msgid ""
 "DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
@@ -3586,14 +3731,32 @@ msgstr ""
 "Тайм-аут DNS в секундах. Увеличьте это значение, если время DNS-запроса "
 "истекло."
 
+msgid "DOCS"
+msgstr ""
+
 msgid "DOCUMENTATION"
 msgstr "ДОКУМЕНТАЦИЯ"
+
+msgid "DQ % Used"
+msgstr ""
+
+msgid "DQ Bytes Used"
+msgstr ""
+
+msgid "DQ Used"
+msgstr ""
+
+msgid "Daily"
+msgstr ""
 
 msgid "Dashboard"
 msgstr "Панель приборов"
 
 msgid "Data"
 msgstr "Данные"
+
+msgid "Data Quota"
+msgstr ""
 
 msgid "Data VDevs"
 msgstr "VDev данных"
@@ -3626,12 +3789,6 @@ msgstr "Набор данных"
 
 msgid "Dataset Path"
 msgstr "Путь к набору данных"
-
-msgid "Dataset which will store replicated  snapshots."
-msgstr "Набор данных, в котором будут храниться реплицированные снимки."
-
-msgid "Datasets with snapshots to replicate."
-msgstr "Наборы данных со снимками для репликации."
 
 msgid "Datastore"
 msgstr "Хранилище"
@@ -3673,6 +3830,11 @@ msgstr "Дни недели"
 msgid "Days when this task will run."
 msgstr ""
 
+msgid ""
+"De-duplication tables are stored on this special vdev type. These vdevs "
+"must be sized to <i>X</i> GiB for each <i>X</i> TiB of general storage."
+msgstr ""
+
 msgid "Deactivate the recovery key for this pool?"
 msgstr "Деактивировать ключ восстановления для этого пула?"
 
@@ -3690,6 +3852,12 @@ msgstr "Расшифровать пул"
 
 msgid "Decrypting Disks"
 msgstr "Расшифровка дисков"
+
+msgid "Dedup"
+msgstr ""
+
+msgid "Dedup VDev"
+msgstr ""
 
 msgid ""
 "Deduplicate the stream to avoid sending redundant  data blocks. The "
@@ -3723,29 +3891,23 @@ msgstr "Маршрутизатор по умолчанию для IPv6"
 msgid "Default Routes"
 msgstr "Маршруты по умолчанию"
 
-msgid "Default directory permissions"
-msgstr "Права доступа к каталогу по умолчанию"
-
-msgid "Default file permissions"
-msgstr "Права доступа к файлам по умолчанию"
+msgid "Default Umask"
+msgstr ""
 
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr ""
 "По умолчанию используется UTF-8, который поддерживает все символы на всех "
 "языках."
 
-msgid "Default umask"
-msgstr "umask по умолчанию"
-
 msgid "Define Periodic Snapshots to Replicate"
 msgstr ""
 
 msgid ""
-"Define a length of time to retain the snapshot on this system using a "
-"numeric value and a single lowercase letter for units. Examples: <i>3h</i> "
-"is three hours, <i>1m</i> is one month, and <i>1y</i> is one year. Does not "
-"accept Minute values. After the time expires, the snapshot is removed. "
-"Snapshots which have been replicated to other systems are not affected."
+"Define a length of time to retain the snapshot  on this system using a "
+"numeric value and a single lowercase letter for  units. Examples: <i>3h</i> "
+"is three hours, <i>1m</i> is one month, and  <i>1y</i> is one year. Does "
+"not accept Minute values. After the time  expires, the snapshot is removed. "
+"Snapshots which have been replicated  to other systems are not affected."
 msgstr ""
 
 msgid ""
@@ -3763,22 +3925,6 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1"
 "-RELEASE+and+Ports\" target=\"_blank\">smartd</a> будет просыпается и "
 "проверять, настроены ли какие-либо тесты для запуска."
-
-msgid ""
-"Define any additional settings for use by some Kerberos applications. The "
-"available settings and syntax is listed in the  <a "
-"href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
-"conf.html#appdefaults\" target=\"_blank\">appdefaults section of "
-"krb.conf(5)</a>."
-msgstr ""
-
-msgid ""
-"Define any settings used by the Kerberos library. The available settings "
-"and their syntax are listed in the <a "
-"href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_"
-"conf.html#libdefaults\" target=\"_blank\">libdefaults section of "
-"krb.conf(5)</a>."
-msgstr ""
 
 msgid ""
 "Define other sections and their key/value pairs. Enclose each section name "
@@ -3803,6 +3949,38 @@ msgid ""
 "<i>2000</i> and the recommended default is <i>100000</i>."
 msgstr ""
 
+msgid ""
+"Define the path to a system location  that has snapshots to replicate. "
+"Click the  <i class=\"material-icons\">folder</i> to see all locations on "
+"the  source system or click in the field to manually type a location  "
+"(Example: <code>pool1/dataset1</code>). Multiple source locations can  be "
+"selected or manually defined with a comma (<code>,</code>) separator."
+msgstr ""
+
+msgid ""
+"Define the path to a system location  that has snapshots to replicate. "
+"Click the  <i class=\"material-icons\">folder</i> to see all locations on "
+"the  source system or click in the field to manually type a location  "
+"(Example: <code>pool1/dataset1</code>). Multiple source locations can  be "
+"selected or manually defined with a comma (<code>,</code>) separator. "
+"<br><br> Selecting a location displays the number of existing snapshots  "
+"that can be replicated. Selecting a location that has no snapshots  "
+"configures the replication task to take a manual snapshot of that  location "
+"and replicate it to the destination."
+msgstr ""
+
+msgid ""
+"Define the path to a system location that  will store replicated snapshots. "
+"Click the  <i class=\"material-icons\">folder</i> to see all locations on "
+"the  destination system or click in the field to manually type a location  "
+"path (Example: <code>pool1/dataset1</code>). Selecting a location  defines "
+"the full path to that location as the destination. Appending a  name to the "
+"path will create new zvol at that location.<br><br>  For example, selecting "
+"<i>pool1/dataset1</i> will store  snapshots in <i>dataset1</i>, but "
+"clicking the path and typing  <code>/zvol1</code> after <i>dataset1</i> "
+"will create <i>zvol1</i> for  snapshot storage."
+msgstr ""
+
 msgid "Define the server where all changes to the database are performed."
 msgstr "Определите сервер, на котором выполняются все изменения в базе данных."
 
@@ -3820,6 +3998,11 @@ msgstr "Задержать обновления"
 
 msgid "Delay VM Boot Until VNC Connects"
 msgstr "Задержвать загрузку VM до подключения VNC"
+
+msgid ""
+"Delays the start of network services until  pings are returned from the IP "
+"addresses added to the  <i>Netwait IP List</i>."
+msgstr ""
 
 msgid "Delete"
 msgstr "Удалить"
@@ -3893,9 +4076,6 @@ msgstr "Удалить выбранный элемент?"
 msgid "Delete the zvol "
 msgstr "Удалить ZVol "
 
-msgid "Delete this device?"
-msgstr "Удалить это устройство?"
-
 msgid "Delete this path."
 msgstr "Удалить этот путь."
 
@@ -3911,8 +4091,8 @@ msgstr ""
 msgid "Deny Hosts"
 msgstr ""
 
-msgid "Deny list"
-msgstr "Список запретов"
+msgid "Deny List"
+msgstr ""
 
 msgid ""
 "Describe the UPS device. It can contain alphanumeric, period, comma, "
@@ -3951,14 +4131,26 @@ msgstr "Описание интерфейса lagg."
 msgid "Description of the share or notes on how it is used."
 msgstr "Описание ресурса или заметки о том, как он используется."
 
+msgid "Descriptive identifier for this API key."
+msgstr ""
+
+msgid "Descriptive identifier for this certificate authority."
+msgstr ""
+
+msgid "Descriptive identifier for this certificate."
+msgstr ""
+
 msgid "Descriptive name for the replication."
 msgstr "Описательное имя для репликации."
 
 msgid "Destination"
 msgstr "Назначение"
 
-msgid "Destination Dataset"
-msgstr "Набор данных назначения"
+msgid "Destination Dataset Read-only Policy"
+msgstr ""
+
+msgid "Destination Location"
+msgstr ""
 
 msgid "Destination Path"
 msgstr "Путь назначения"
@@ -3989,14 +4181,14 @@ msgstr "Отсоединить"
 msgid "Detach Disk"
 msgstr ""
 
-msgid "Detach Pool"
-msgstr "Отсоединить пул"
-
 msgid "Detach disk "
 msgstr "Отсоединить диск"
 
 msgid "Details"
 msgstr "Детали"
+
+msgid "Details for "
+msgstr ""
 
 msgid ""
 "Determine whether this share name is included when browsing shares. Home "
@@ -4076,8 +4268,11 @@ msgstr ""
 msgid "Directory"
 msgstr "Каталог"
 
-msgid "Directory Permission"
-msgstr "Права доступа к каталогу"
+msgid "Directory Mask"
+msgstr ""
+
+msgid "Directory Permissions"
+msgstr ""
 
 msgid "Directory Services"
 msgstr "Службы каталогов"
@@ -4122,6 +4317,12 @@ msgstr "Отключить кэш пользователей/групп LDAP"
 msgid "Disable Password"
 msgstr ""
 
+msgid "Disable Physical Block Size Reporting"
+msgstr ""
+
+msgid "Disable Two-Factor Authentication"
+msgstr ""
+
 msgid "Disable automatic failover."
 msgstr "Отключить автоматическое переключение."
 
@@ -4133,9 +4334,6 @@ msgstr ""
 "Отключить кэширование пользователей и групп LDAP в больших средах LDAP. "
 "Когда кэширование отключено, пользователи и группы LDAP не отображаются в "
 "раскрывающихся меню, но все же принимаются при вводе вручную."
-
-msgid "Disable physical block size reporting"
-msgstr "Отключить сообщение размера физического блока"
 
 msgid "Disabled"
 msgstr ""
@@ -4166,6 +4364,12 @@ msgstr "Группа аутентификации обнаружения"
 
 msgid "Discovery Auth Method"
 msgstr "Метод аутентификации обнаружения"
+
+msgid "Discovery Authentication Group"
+msgstr ""
+
+msgid "Discovery Authentication Method"
+msgstr ""
 
 msgid "Disk"
 msgstr "Диск"
@@ -4257,9 +4461,6 @@ msgid ""
 "<code>freenas\\smbusers</code>."
 msgstr ""
 
-msgid "Domain name"
-msgstr "Доменное имя"
-
 msgid "Done"
 msgstr "Готово"
 
@@ -4302,6 +4503,11 @@ msgstr "Тип учетной записи диска"
 msgid "Drive ID"
 msgstr "ID диска"
 
+msgid ""
+"Drive reserved for inserting into DATA pool vdevs when an active drive has "
+"failed."
+msgstr ""
+
 msgid "Driver"
 msgstr "Драйвер"
 
@@ -4324,6 +4530,12 @@ msgstr ""
 msgid "EC Curve"
 msgstr "Кривая EC"
 
+msgid "EDIT"
+msgstr ""
+
+msgid "ENTER LICENSE"
+msgstr ""
+
 msgid "ERROR: Not Enough Memory"
 msgstr "ОШИБКА: Недостаточно памяти"
 
@@ -4342,6 +4554,9 @@ msgstr "Изменить"
 msgid "Edit ACL"
 msgstr "Редактировать ACL"
 
+msgid "Edit API Key"
+msgstr ""
+
 msgid "Edit Alert Service"
 msgstr "Изменить службу оповещения"
 
@@ -4349,6 +4564,9 @@ msgid "Edit Disk(s)"
 msgstr "Редактировать диск(и)"
 
 msgid "Edit Filesystem ACL"
+msgstr ""
+
+msgid "Edit Group"
 msgstr ""
 
 msgid "Edit Idmap"
@@ -4361,6 +4579,9 @@ msgid "Edit Permissions"
 msgstr "Изменить разрешения"
 
 msgid "Edit Share ACL"
+msgstr ""
+
+msgid "Edit User"
 msgstr ""
 
 msgid "Edit Zvol"
@@ -4387,14 +4608,14 @@ msgstr "Тема письма"
 
 msgid ""
 "Email addresses must be entered in the format   "
-"<i>local-name</i>@<i>domain.com<i> with a comma (,) separating each   "
-"address."
+"<i>local-name</i>@<i>domain.com<i>, with entries separated by pressing   "
+"<code>Enter</code>."
 msgstr ""
 
 msgid ""
 "Email addresses to receive copies of iXsystems Support   messages about "
-"this issue. Use the format <i>name</i>@<i>domain.com</i>   and a comma (,) "
-"to separate each address."
+"this issue. Use the format <i>name</i>@<i>domain.com</i>.   Separate "
+"entries by pressing <code>Enter</code>."
 msgstr ""
 
 msgid "Emergency"
@@ -4417,11 +4638,28 @@ msgstr "Включить"
 msgid "Enable (requires password or Kerberos principal)"
 msgstr ""
 
+msgid "Enable ACL"
+msgstr ""
+
+msgid ""
+"Enable ACL support for the SMB share. Disabling ACL  support for a share "
+"deletes that ACL."
+msgstr ""
+
 msgid "Enable Active Directory"
+msgstr ""
+
+msgid "Enable Alternate Data Streams"
+msgstr ""
+
+msgid "Enable Apple SMB2/3 Protocol Extensions"
 msgstr ""
 
 msgid "Enable Atime"
 msgstr "Включить atime"
+
+msgid "Enable Autotune"
+msgstr ""
 
 msgid "Enable Browser"
 msgstr "Включить браузер"
@@ -4429,11 +4667,17 @@ msgstr "Включить браузер"
 msgid "Enable Debug Kernel"
 msgstr "Включить отладочное ядро"
 
+msgid "Enable FSRVP"
+msgstr ""
+
 msgid "Enable FXP"
 msgstr "Включить FXP"
 
 msgid "Enable NFSv4"
 msgstr "Включить NFSv4"
+
+msgid "Enable Netwait Feature"
+msgstr ""
 
 msgid "Enable Password Toggle"
 msgstr "Разрешить просмотр пароля"
@@ -4443,6 +4687,9 @@ msgstr "Включить S.M.A.R.T."
 
 msgid "Enable SMB1 support"
 msgstr "Включить поддержку SMB1"
+
+msgid "Enable SMB2/3 Durable Handles"
+msgstr ""
 
 msgid "Enable Serial Console"
 msgstr "Включить последовательную консоль"
@@ -4461,6 +4708,12 @@ msgstr "Включить TPC"
 
 msgid "Enable Time Machine backups on this share."
 msgstr "Включите резервное копирование Time Machine на этом ресурсе."
+
+msgid "Enable Two-Factor Auth for SSH"
+msgstr ""
+
+msgid "Enable Two-Factor Authentication"
+msgstr ""
 
 msgid ""
 "Enable Unix privileges supported by OSX 10.5 and higher. Do not enable this "
@@ -4486,17 +4739,11 @@ msgstr ""
 "Включить автоматические оповещения о поддержке в iXsystems (только "
 "поддержка Silver/Gold)"
 
-msgid "Enable autotune"
-msgstr "Разрешить самонастройку"
-
 msgid "Enable iSCSI ALUA"
 msgstr "Включить iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "Включить проактивную поддержку iXsystems"
-
-msgid "Enable netwait feature"
-msgstr "Включить ожидание сети"
 
 msgid ""
 "Enable running services that require <a "
@@ -4509,6 +4756,16 @@ msgstr "Включить отправку анонимной статистик�
 
 msgid "Enable service"
 msgstr "Включить службу"
+
+msgid ""
+"Enable support for the File Server Remote VSS Protocol  (<a "
+"href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-"
+"fsrvp\" target=\"_blank\">FSVRP</a>).  This protocol allows RPC clients to "
+"manage snapshots for a specific SMB share.  The share path must be a "
+"dataset mountpoint. Snapshots have the prefix  <code>fss-</code> followed "
+"by a snapshot creation timestamp. A snapshot must have  this prefix for an "
+"RPC user to delete it."
+msgstr ""
 
 msgid ""
 "Enable the Active Directory service. The first time this option is set, the "
@@ -4553,6 +4810,12 @@ msgstr "Включить эту настройку. Отключите, чтоб
 msgid ""
 "Enable to prevent binding to local address and port.  Must be enabled if "
 "OpenVPN client and server are to run concurrently."
+msgstr ""
+
+msgid ""
+"Enable two-factor authentication for SSH access to the system. It is "
+"recommended  to leave this DISABLED until after two-factor authentication "
+"is successfully tested with the UI."
 msgstr ""
 
 msgid "Enable when the device number is inconstant across a reboot."
@@ -4602,6 +4865,12 @@ msgid ""
 msgstr ""
 "Включение <em>Time Machine</em> для общего ресурса SMB требует перезапуска "
 "службы SMB."
+
+msgid ""
+"Enabling allows the system to conduct periodic <a "
+"href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" target=\"_blank\">S.M.A.R.T. "
+"tests</a>."
+msgstr ""
 
 msgid ""
 "Enabling sends the  <i>plugin instance</i> and <i>type instance</i> to "
@@ -4664,6 +4933,9 @@ msgstr "Шифрование"
 msgid "Encryption (more secure, but slower)"
 msgstr "Шифрование (более безопасно, но медленнее)"
 
+msgid "Encryption Algorithm"
+msgstr ""
+
 msgid "Encryption Key"
 msgstr "Ключ шифрования"
 
@@ -4693,9 +4965,6 @@ msgstr "Соль шифрования"
 
 msgid "End"
 msgstr "Конец"
-
-msgid "End Time"
-msgstr "Время окончания"
 
 msgid "End User License Agreement - TrueNAS"
 msgstr "Лицензионное соглашение конечного пользователя - TrueNAS"
@@ -4761,9 +5030,6 @@ msgstr "Введите имя DNS realm заглавными буквами."
 msgid "Enter a capitalized domain name."
 msgstr "Введите имя домена заглавными буквами."
 
-msgid "Enter a comma-delimited list of hostnames or IP addresses."
-msgstr "Введите разделенный запятыми список имен хостов или IP адресов."
-
 msgid ""
 "Enter a command to shut down the system when either battery power is low or "
 "the shutdown timer ends."
@@ -4771,14 +5037,8 @@ msgstr ""
 "Введите комманду для отключения системы, когда заряд батареи низок или "
 "истекает таймер отключения."
 
-msgid "Enter a description of the CA."
-msgstr "Введите описание центра сертификации."
-
 msgid "Enter a description of the Cloud Sync Task."
 msgstr "Введите описание задачи облачной синхронизации."
-
-msgid "Enter a description of the S.M.A.R.T. test."
-msgstr "Введите описание теста S.M.A.R.T."
 
 msgid "Enter a description of the cron job."
 msgstr "Введите описание задания cron."
@@ -4808,18 +5068,22 @@ msgstr ""
 "(порт не обязателен). Netdata использует первый рабочий пункт назначения."
 
 msgid ""
-"Enter a list of allowed hostnames or IP addresses. Separate entries with a "
-"comma, space, or tab."
+"Enter a list of IP addresses to  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
+"target=\"_blank\">ping</a>.  Separate entries by pressing "
+"<code>Enter</code>. Each address is tried  until one is successful or the "
+"list is exhausted. Leave empty to use  the default gateway."
 msgstr ""
-"Введите список разрешенных имен хостов или IP адресов. Разделйте элементы "
-"запятыми, пробелами или табуляциями."
 
 msgid ""
-"Enter a list of denied hostnames or IP addresses. Separate entries with a "
-"comma, space, or tab."
+"Enter a list of allowed hostnames or IP addresses. Separate entries by "
+"pressing <code>Enter</code>."
 msgstr ""
-"Введите список запрещенных имен хостов или IP адресов. Разделйте элементы "
-"запятыми, пробелами или табуляциями."
+
+msgid ""
+"Enter a list of denied hostnames or IP addresses. Separate entries by "
+"pressing <code>Enter</code>."
+msgstr ""
 
 msgid ""
 "Enter a long string of random characters for  use as <a "
@@ -4850,6 +5114,9 @@ msgstr ""
 
 msgid "Enter a name for the new credential."
 msgstr "Введите имя для новых полномочий."
+
+msgid "Enter a name for the new theme."
+msgstr ""
 
 msgid "Enter a name for the share."
 msgstr "Введите имя для ресурса."
@@ -4942,17 +5209,6 @@ msgid ""
 msgstr ""
 "Введите отдельный пароль приватности. <b>Password</b> используется если "
 "оставлено пустым."
-
-msgid ""
-"Enter a space-delimited list of IP addresses to <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
-"target=\"_blank\">ping(8)</a>. Each address is tried until one is "
-"successful or the list is exhausted. Leave empty to use the default gateway."
-msgstr ""
-"Введите разделенный пробелами список IP адресов для <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping\" "
-"target=\"_blank\">ping(8)</a>. Каждый адрес пробуется до первого ответа или "
-"исчерпания списка. Оставьте пустым для шлюза по умолчанию."
 
 msgid ""
 "Enter a static IPv6 address if DHCP is unset. Example: "
@@ -5071,13 +5327,11 @@ msgstr ""
 "target=\"_blank\">Руководство Samba</a> для дополнительной информации."
 
 msgid ""
-"Enter additional space-delimited parameters from <a "
+"Enter additional parameters from  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>."
+"target=\"_blank\">ifconfig(8)</a>.  Separate entries by pressing "
+"<code>Enter</code>."
 msgstr ""
-"Введите дополнительные разделенные пробелами параметры из <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>."
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
 msgstr "Введите адрес IPv4. Это заменяет шлюз по умолчанию предоставленный DHCP."
@@ -5123,7 +5377,8 @@ msgstr ""
 msgid ""
 "Enter any additional settings from <a "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
-"target=\"_blank\">rsyncd.conf(5)</a>."
+"target=\"_blank\">rsyncd.conf(5)</a>. Separate entries by  pressing "
+"<code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -5158,14 +5413,14 @@ msgstr ""
 "href=\"http://networkupstools.org/docs/man/upsd.conf.html\" "
 "target=\"_blank\">UPSD.CONF(5)</a>."
 
+msgid "Enter any information about this S.M.A.R.T. test."
+msgstr ""
+
 msgid "Enter any notes about the jail."
 msgstr "Введите любые заметки о jail."
 
 msgid "Enter any notes about this dataset."
 msgstr "Введите любые заметки об этом наборе данных."
-
-msgid "Enter any notes about this disk."
-msgstr "Введите любые заметки об этом диске."
 
 msgid "Enter comments about the jail."
 msgstr "Введите комментарии о jail."
@@ -5177,15 +5432,6 @@ msgstr ""
 "Введите либо <i>root</i>, либо другое действительное <i>имя "
 "пользователя</i>. Внутри jail команды запускаются от имени этого "
 "пользователя."
-
-msgid ""
-"Enter network proxy information if a proxy is used. Example: "
-"<i>http://my.proxy.server:3128</i> or "
-"<i>http://user:password@my.proxy.server:3128</i>"
-msgstr ""
-"Введите данные сетевого прокси, если используется прокси. Пример: "
-"<i>http://my.proxy.server:3128</i> or "
-"<i>http://user:password@my.proxy.server:3128</i>"
 
 msgid "Enter or paste an Authentication token."
 msgstr "Введите или вставьте токен аутентификации."
@@ -5627,9 +5873,6 @@ msgstr "Ошибка расшифровки дисков"
 msgid "Error deleting dataset "
 msgstr "Ошибка удаления набора данных"
 
-msgid "Error detaching pool"
-msgstr "Ошибка отсоединения пула"
-
 msgid "Error exporting the Private Key"
 msgstr "Ошибка экспорта закрытого ключа"
 
@@ -5715,23 +5958,19 @@ msgstr "Исключить дочерние наборы данных"
 msgid ""
 "Exclude specific child dataset snapshots from  the replication. Use with "
 "<b>Recursive</b> snapshots. List child  dataset names to exclude. Separate "
-"multiple entries with a comma  (<code>,</code>). Example: "
-"<i>pool1/dataset1/child1</i>. A  recursive replication of "
-"<i>pool1/dataset1</i> snapshots includes all  child dataset snapshots "
+"entries by pressing <code>Enter</code>.  Example: "
+"<i>pool1/dataset1/child1</i>. A recursive replication of  "
+"<i>pool1/dataset1</i> snapshots includes all child dataset snapshots  "
 "except <i>child1</i>."
 msgstr ""
 
 msgid ""
-"Exclude specific child datasets from the snapshot. Use with recursive "
-"snapshots. Comma-separated list of paths to any child datasets to exclude. "
-"Example: <i>pool1/dataset1/child1</i>. A recursive snapshot of "
-"<i>pool1/dataset1</i> will include all child datasets except <i>child1</i>."
+"Exclude specific child datasets from the  snapshot. Use with recursive "
+"snapshots. List paths to any child  datasets to exclude. Example: "
+"<i>pool1/dataset1/child1</i>.  A recursive snapshot of "
+"<i>pool1/dataset1</i> will include all child  datasets except "
+"<i>child1</i>. Separate entries by pressing  <code>Enter</code>."
 msgstr ""
-"Исключить определенные дочерние наборы данных из снимка. Используйте с "
-"рекурсивными снимками. Разделенный запятыми список путей к любым дочерним "
-"наборам данных, которые нужно исключить. Пример: "
-"<i>pool1/dataset1/child1</i>. Рекурсивный снимок <i>pool1/dataset1</i> "
-"будет включать все дочерние наборы данных, кроме <i>child1</i>."
 
 msgid "Exec"
 msgstr "Исполнение"
@@ -5778,8 +6017,17 @@ msgstr "Экспортировать/Отключить"
 msgid "Export/Disconnect Pool"
 msgstr "Экспортировать/Отключить пул"
 
+msgid "Export/disconnect pool: '"
+msgstr ""
+
+msgid "Exporting Pool"
+msgstr ""
+
 msgid "Exporting Pool..."
 msgstr "Пул экспортируется..."
+
+msgid "Exporting/disconnecting will continue after services have been managed."
+msgstr ""
 
 msgid "Expose zilstat via SNMP"
 msgstr "Отображать zilstat через SNMP"
@@ -5787,17 +6035,11 @@ msgstr "Отображать zilstat через SNMP"
 msgid "Extend"
 msgstr "Расширить"
 
-msgid "Extend Pool"
-msgstr "Расширить пул"
-
 msgid "Extend Vdev"
 msgstr ""
 
 msgid "Extending Vdev"
 msgstr ""
-
-msgid "Extending an encrypted pool resets the passphrase and recovery key!"
-msgstr "Расширение зашифрованного пула сбрасывает пароль и ключ восстановления!"
 
 msgid "Extending vdev..."
 msgstr ""
@@ -5808,17 +6050,11 @@ msgstr "Экстент"
 msgid "Extent Name"
 msgstr "Имя экстента"
 
-msgid "Extent name"
-msgstr "Имя экстента"
-
-msgid "Extent type"
-msgstr "Тип экстента"
+msgid "Extent Type"
+msgstr ""
 
 msgid "Extra Users"
 msgstr "Дополнительные пользователи"
-
-msgid "Extra options"
-msgstr "Дополнительные параметры"
 
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr "FTP-хост для подключения. Пример: <i>ftp.example.com</i>."
@@ -5827,6 +6063,9 @@ msgid "FTP Port number. Leave blank to use the default port <i>21</i>."
 msgstr ""
 "Номер порта FTP. Оставьте пустым, чтобы использовать порт по умолчанию "
 "<i>21</i>."
+
+msgid "Fab Buttons"
+msgstr ""
 
 msgid "Failed"
 msgstr "Ошибка"
@@ -5885,8 +6124,8 @@ msgstr "Порт Fibre Channel "
 msgid "File Information"
 msgstr "Информация о файле"
 
-msgid "File Permission"
-msgstr "Права доступа к файлу"
+msgid "File Mask"
+msgstr ""
 
 msgid "File Permissions"
 msgstr "Права доступа к файлу"
@@ -5932,6 +6171,12 @@ msgstr "Тип файловой системы"
 
 msgid "Filter"
 msgstr "Фильтр"
+
+msgid "Filter Groups"
+msgstr ""
+
+msgid "Filter Users"
+msgstr ""
 
 msgid "Finding Pools"
 msgstr ""
@@ -6000,6 +6245,9 @@ msgstr "Принудительно удалить"
 msgid "Force Delete?"
 msgstr ""
 
+msgid "Force HDD Standby"
+msgstr ""
+
 msgid "Force Stop After Timeout"
 msgstr ""
 
@@ -6040,6 +6288,12 @@ msgstr ""
 "Принудительно добавляет сервер <b>NTP</b>, даже если он в данный момент "
 "недоступен."
 
+msgid "Foreground 1"
+msgstr ""
+
+msgid "Foreground 2"
+msgstr ""
+
 msgid "Form Invalid"
 msgstr "Форма неверна"
 
@@ -6047,6 +6301,9 @@ msgid "Free"
 msgstr "Свободно"
 
 msgid "FreeBSD device names of each disk being edited."
+msgstr ""
+
+msgid "FreeBSD disk device name."
 msgstr ""
 
 msgid ""
@@ -6068,18 +6325,18 @@ msgid ""
 "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
 "target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
 "hostname and IP address of a connecting client. The connection is  rejected "
-"if no patterns match. Separate patterns with whitespace or a  comma."
+"if no patterns match. Separate entries by pressing  <code>Enter</code>."
 msgstr ""
 
 msgid ""
 "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
 "target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the "
 "hostname and IP address of a connecting client. The connection is  rejected "
-"when the patterns match. Separate patterns with whitespace  or a comma."
+"when the patterns match. Separate entries by pressing  <code>Enter</code>."
 msgstr ""
 
-msgid "From E-mail"
-msgstr "От E-mail"
+msgid "From Email"
+msgstr ""
 
 msgid "From Name"
 msgstr "От имени"
@@ -6112,6 +6369,9 @@ msgstr ""
 "Полное доменное имя хоста с динамическим IP-адресом. Разделите несколько "
 "доменов пробелом, запятой (,) или точкой с запятой (;). Пример: "
 "<i>myname.dyndns.org; myothername.dyndns.org</i>."
+
+msgid "GENERAL"
+msgstr ""
 
 msgid "GID"
 msgstr ""
@@ -6185,14 +6445,17 @@ msgstr ""
 "Дает контроль над тем, сколько нового устройства будет доступно для ZFS. "
 "Установите для использования всей емкости нового устройства."
 
+msgid "Global Auxiliary Parameters"
+msgstr ""
+
 msgid "Global Configuration"
 msgstr "Общие настройки"
 
+msgid "Global Preview"
+msgstr ""
+
 msgid "Global Settings"
 msgstr "Глобальные настройки"
-
-msgid "Global auxiliary parameters"
-msgstr "Глобальные дополнительные параметры"
 
 msgid "Global password to unlock SEDs."
 msgstr "Глобальный пароль для разблокировки SED."
@@ -6218,6 +6481,9 @@ msgstr "Возраст графика в месяцах"
 msgid "Graphite Separate Instances"
 msgstr ""
 
+msgid "Green"
+msgstr ""
+
 msgid "Group"
 msgstr "Группа"
 
@@ -6227,16 +6493,22 @@ msgstr "Путь привязки группы"
 msgid "Group Configuration"
 msgstr ""
 
+msgid "Group Data Quota "
+msgstr ""
+
 msgid "Group ID"
 msgstr "Идентификатор группы"
 
 msgid ""
-"Group ID created in  Authorized Access. Required when the Discovery Auth "
-"Method is set to  CHAP or Mutual CHAP."
+"Group ID created in  Authorized Access. Required when the Discovery "
+"Authentication Method is set to  CHAP or Mutual CHAP."
 msgstr ""
-"Идентификатор группы, созданный в авторизованном доступе. Требуется, если "
-"для параметра Метод проверки подлинности для обнаружения выбрано значение "
-"CHAP или Mutual CHAP."
+
+msgid "Group Object Quota"
+msgstr ""
+
+msgid "Group Quotas"
+msgstr ""
 
 msgid "Group members"
 msgstr ""
@@ -6314,10 +6586,23 @@ msgstr "URL хоста HTTP."
 msgid "HTTPS Port"
 msgstr "HTTPS порт"
 
+msgid "HTTPS Protocols"
+msgstr ""
+
 msgid "Help"
 msgstr "Помощь"
 
+msgid ""
+"Hidden columns are not available for sorting or filtering, but the values "
+"can be  viewed by expanding the row. Hiding columns improves performance. "
+"NOTE: This window will reload automatically so that  the new view can take "
+"effect."
+msgstr ""
+
 msgid "Hide"
+msgstr ""
+
+msgid "Hide Extra Columns"
 msgstr ""
 
 msgid "Hide Standard Error"
@@ -6386,14 +6671,20 @@ msgstr "Разрешенные хосты"
 msgid "Host Deny"
 msgstr "Запрещенные хосты"
 
+msgid "Host Name Database"
+msgstr ""
+
 msgid "Host Port Number"
 msgstr "Номер порта хоста"
 
 msgid "Host Sync"
 msgstr "Синхронизация хостов"
 
-msgid "Host name database"
-msgstr "База данных имен хостов"
+msgid "Host name of second TrueNAS controller."
+msgstr ""
+
+msgid "Host name or IP address of the central key server."
+msgstr ""
 
 msgid "HostName"
 msgstr "Имя хоста"
@@ -6445,11 +6736,10 @@ msgid "Hostname or IP address of the system to  receive SNMP trap notifications.
 msgstr "Имя хоста или IP-адрес системы для получения уведомлений о прерываниях SNMP."
 
 msgid ""
-"Hostnames or IP addresses of the ISNS servers to be registered with the "
-"iSCSI targets and portals of the system. Separate each entry with a space."
+"Hostnames or IP addresses of the  ISNS servers to be registered with the "
+"iSCSI targets and portals of  the system. Separate entries by pressing "
+"<code>Enter</code>."
 msgstr ""
-"Имена или IP-адреса серверов ISNS для регистрации целей и порталов iSCSI "
-"системы. Разделяйте записи пробелами."
 
 msgid "Hosts"
 msgstr ""
@@ -6460,21 +6750,25 @@ msgstr "Разрешенные хосты"
 msgid "Hosts Deny"
 msgstr "Запрещенные хосты"
 
+msgid "Hot Spare"
+msgstr ""
+
 msgid "Hottest:"
 msgstr "Самый холодный:"
 
 msgid "Hour"
 msgstr "Час"
 
-msgid "Hour and minute the system can begin taking snapshots."
-msgstr "Час и минута когда система может начать делать снимки."
-
 msgid ""
-"Hour and minute the system must stop creating snapshots. Snapshots already "
-"in progress will continue until complete."
+"Hour and minute the system must stop  creating snapshots. Snapshots already "
+"in progress will continue until  complete."
 msgstr ""
-"Час и минута когда система должна прекратить создание снимков. Снимки, "
-"которые уже выполняются, будут продолжаться до завершения."
+
+msgid "Hour and minute when the system can begin  taking snapshots."
+msgstr ""
+
+msgid "Hourly"
+msgstr ""
 
 msgid "Hours"
 msgstr "Часы"
@@ -6497,6 +6791,11 @@ msgstr ""
 
 msgid "How often the IP is checked in seconds."
 msgstr "Как часто IP проверяется в секундах."
+
+msgid ""
+"How often to run the scrub task. Choose one  of the presets or choose "
+"<i>Custom</i> to use the advanced scheduler."
+msgstr ""
 
 msgid ""
 "How permissions are applied to the share. <i>Allowed</i> denies all "
@@ -6669,6 +6968,9 @@ msgstr "Префикс IPv4 для jail."
 msgid "ISNS Servers"
 msgstr "Сервера ISNS"
 
+msgid "Icon Buttons"
+msgstr ""
+
 msgid "Icon URL"
 msgstr ""
 
@@ -6696,6 +6998,9 @@ msgstr ""
 
 msgid "Identifier"
 msgstr "Идентификатор"
+
+msgid "Identifier and Type"
+msgstr ""
 
 msgid "Identify Light"
 msgstr "Подсветка идентификации"
@@ -6853,21 +7158,6 @@ msgstr ""
 "<b>Просто:</b> устанавливает в chmod() в соответствии с запросом без "
 "каких-либо дополнительных шагов."
 
-msgid ""
-"Indicates the time of inactivity in minutes before the drive enters standby "
-"mode. This <a "
-"href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
-"drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
-"demonstrates how to determine if a drive has spun down. Temperature "
-"monitoring is  disabled if the disk is set to enter standby."
-msgstr ""
-"Указывает время бездействия в минутах до перехода привода в режим ожидания. "
-"В этом <a "
-"href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
-"drive-is-spinning-down-properly.2068/\" target=\"_blank\">сообщении на "
-"форуме</a> показано, как определить, отключился ли диск. Контроль "
-"температуры отключен, если диск установлен в режим ожидания."
-
 msgid "InfluxDB time series name for collected points."
 msgstr "Имя временного ряда InfluxDB для собранных точек."
 
@@ -6954,6 +7244,9 @@ msgstr ""
 "<i>Авторизованные сети</i>. Нажатие <i>Обновить</i> обновляет список "
 "<i>Подключенные инициаторы</i>."
 
+msgid "Input"
+msgstr ""
+
 msgid "Input the pre-defined S3 bucket to use."
 msgstr "Введите предопределенный S3 bucket для использования."
 
@@ -7018,6 +7311,9 @@ msgstr ""
 msgid "Internetwork control"
 msgstr ""
 
+msgid "Interval"
+msgstr ""
+
 msgid "Invalid IP address"
 msgstr ""
 
@@ -7028,16 +7324,19 @@ msgid "Invalid format or character."
 msgstr "Неверный формат или символ."
 
 msgid ""
-"Invalid network address list. Check for typos or missing CIDR netmasks and "
-"separate addresses with a space."
+"Invalid network address list. Check for typos or missing CIDR netmasks and  "
+"    separate addresses by pressing <code>Enter</code>."
 msgstr ""
-"Неверный список сетевых адресов. Проверьте на наличие опечаток или "
-"пропущенных масок CIDR и разделите адреса пробелом."
 
 msgid "Invalid regex filter"
 msgstr "Неверное регулярное выражение фильтра"
 
 msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
+msgstr ""
+
+msgid ""
+"Invalid value. Valid values are numbers followed by optional unit letters  "
+"for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>."
 msgstr ""
 
 msgid ""
@@ -7158,6 +7457,15 @@ msgstr "СОХРАНИТЬ ИЗМЕНЕНИЯ"
 
 msgid "KEEP NETWORK CHANGES PERMANENTLY"
 msgstr "СОХРАНИТЬ СЕТЕВЫЕ ИЗМЕНЕНИЯ НА ПОСТОЯННО"
+
+msgid "KMIP"
+msgstr ""
+
+msgid "KMIP Key Status"
+msgstr ""
+
+msgid "KMIP Server"
+msgstr ""
 
 msgid "Keep"
 msgstr "Хранить"
@@ -7345,11 +7653,9 @@ msgstr ""
 "размера блока."
 
 msgid ""
-"Leave blank to allow all or enter a list of initiator hostnames separated "
-"by spaces."
+"Leave blank to allow all or enter a list of initiator hostnames.    "
+"Separate entries by pressing <code>Enter</code>."
 msgstr ""
-"Оставьте пустым, чтобы разрешить все, или введите список имен хостов "
-"инициатора, разделенных пробелами."
 
 msgid ""
 "Leave empty for default (<a href=\"https://api.opsgenie.com\" "
@@ -7382,9 +7688,9 @@ msgid "Legacy"
 msgstr "Старый"
 
 msgid ""
-"Legacy NetBIOS name server. Advertises the SMB  Service <i>NetBIOS "
-"Name</i>. Could be required for legacy SMB1 clients  to discover the server "
-"(server appears in <i>Network Neighborhood</i>)."
+"Legacy NetBIOS name server. Advertises the SMB  service <i>NetBIOS "
+"Name</i>. Can be required for legacy SMB1 clients  to discover the server. "
+"When advertised, the server appears in  <i>Network Neighborhood</i>)."
 msgstr ""
 
 msgid "Legacy Web Interface"
@@ -7429,10 +7735,25 @@ msgstr "Время жизни"
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr "Ограничьте скорость репликации этим количеством байтов в секунду."
 
+msgid "Link"
+msgstr ""
+
 msgid "Link State"
 msgstr "Состояние линка"
 
 msgid "Linked Service"
+msgstr ""
+
+msgid ""
+"List of files and directories to exclude from sync.<br>  Separate entries "
+"by pressing <code>Enter</code>. See  <a "
+"href=\"https://rclone.org/filtering/\" target=\"_blank\">rclone "
+"filtering</a>  for more details about the <code>--exclude</code> option."
+msgstr ""
+
+msgid ""
+"List of hostnames or IP addresses.  Separate entries by pressing "
+"<code>Enter</code>."
 msgstr ""
 
 msgid "List of system services to restart when the pool is unlocked."
@@ -7445,6 +7766,9 @@ msgstr "Слушать"
 
 msgid "Load Previous Replication Task"
 msgstr "Загрузить предыдущую задачу репликации"
+
+msgid "Load colors from existing theme"
+msgstr ""
 
 msgid "Local"
 msgstr "Локальный"
@@ -7479,6 +7803,9 @@ msgstr "Блокировать пул"
 msgid "Lock User"
 msgstr "Блокировать пользователя"
 
+msgid "Log"
+msgstr ""
+
 msgid "Log Level"
 msgstr "Уровень журнала"
 
@@ -7491,8 +7818,8 @@ msgstr "VDev журнала"
 msgid "Log in"
 msgstr "Войти"
 
-msgid "Log in as root with password"
-msgstr "Вход в систему как root с паролем"
+msgid "Log in as Root with Password"
+msgstr ""
 
 msgid "Log mountd(8) requests"
 msgstr "Журналировать запросы mountd(8)"
@@ -7503,8 +7830,8 @@ msgstr "Журналировать rpc.statd(8) и rpc.lockd(8)"
 msgid "Logging Level"
 msgstr "Уровень журналирования"
 
-msgid "Logical block size"
-msgstr "Размер логического блока"
+msgid "Logical Block Size"
+msgstr ""
 
 msgid "Login Attempts"
 msgstr "Попытки входа"
@@ -7551,8 +7878,14 @@ msgstr ""
 msgid "Mac Address"
 msgstr "MAC-адрес"
 
+msgid "Magenta"
+msgstr ""
+
 msgid "Mail Server Port"
 msgstr "Порт почтового сервера"
+
+msgid "Make Destination Dataset Read-only?"
+msgstr ""
 
 msgid "Manage"
 msgstr ""
@@ -7560,11 +7893,35 @@ msgstr ""
 msgid "Manage Custom Themes"
 msgstr "Управление пользовательскими темами"
 
+msgid "Manage Recovery Key"
+msgstr ""
+
+msgid "Manage SED Password"
+msgstr ""
+
+msgid "Manage Services and Continue"
+msgstr ""
+
+msgid "Manage ZFS Keys"
+msgstr ""
+
 msgid "Manage members of"
+msgstr ""
+
+msgid "Management"
 msgstr ""
 
 msgid "Manual"
 msgstr "Вручную"
+
+msgid "Manual S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Manual Test"
+msgstr ""
+
+msgid "Manual Test Summary"
+msgstr ""
 
 msgid "Manual Update"
 msgstr "Ручное обновление"
@@ -7603,11 +7960,11 @@ msgstr ""
 msgid "Mattermost username."
 msgstr "Имя пользователя Mattermost."
 
+msgid "Max Connections"
+msgstr ""
+
 msgid "Max Poll"
 msgstr "Макс. опрос"
-
-msgid "Max. Connections"
-msgstr "Макс. количество соединений"
 
 msgid "Max. Poll"
 msgstr "Макс. Poll"
@@ -7663,11 +8020,11 @@ msgstr "Максимальное время простоя клиента в с�
 msgid "Maximum connections"
 msgstr "Максимальное количество подключений"
 
-msgid "Maximum connections to this module. <i>0</i>  is unlimited."
-msgstr ""
-
 msgid "Maximum number of SysV message queues."
 msgstr "Максимальное количество очередей сообщений SysV."
+
+msgid "Maximum number of connections to this module. <i>0</i>  is unlimited."
+msgstr ""
 
 msgid "Maximum number of processes for the jail."
 msgstr "Максимальное количество процессов для jail."
@@ -7747,6 +8104,12 @@ msgstr ""
 "свободной памяти недостаточно для сконфигурированной памяти всех "
 "виртуальных машин. Используйте с осторожностью."
 
+msgid "Menu Label"
+msgstr ""
+
+msgid "Menu Swatch"
+msgstr ""
+
 msgid "Message verbosity level in the replication  task log."
 msgstr ""
 "Метод передачи снимка: <ul><li><i>SSH</i> поддерживается большинством "
@@ -7761,6 +8124,12 @@ msgstr ""
 "<i>py-libzfs</i>.</li><li><i>LOCAL</i> реплицирует снимки в другой набор "
 "данных в том же наборе system.</li><li><i>LEGACY</i> использует устаревший "
 "механизм репликации из FreeNAS 11.2 и более ранних версий.</li></ul>"
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Metadata VDev"
+msgstr ""
 
 msgid "Method"
 msgstr "Метод"
@@ -7819,6 +8188,9 @@ msgstr "Мин опрос"
 msgid "Min. Poll"
 msgstr "Мин. опрос"
 
+msgid "Mini Fab Buttons"
+msgstr ""
+
 msgid "Minimum"
 msgstr ""
 
@@ -7839,6 +8211,14 @@ msgstr ""
 
 msgid "Minute"
 msgstr "Минута"
+
+msgid ""
+"Minutes of inactivity before the drive enters standby mode. This <a "
+"href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-"
+"drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> "
+"describes identifying spun down drives. Temperature monitoring is disabled "
+"for standby disks."
+msgstr ""
 
 msgid "Minutes when this task will run."
 msgstr ""
@@ -7885,8 +8265,14 @@ msgstr "Пользователь мониторинга"
 msgid "Month"
 msgstr "Месяц"
 
+msgid "Monthly"
+msgstr ""
+
 msgid "Months"
 msgstr "Месяцы"
+
+msgid "More Options"
+msgstr ""
 
 msgid "Mount Points of "
 msgstr ""
@@ -7915,13 +8301,10 @@ msgid "Mount points"
 msgstr "Точки монтирования"
 
 msgid ""
-"Multi-domain support. Enter additional domains to secure, separated by "
-"spaces. For example, if the primary domain is example.com, entering "
-"www.example.com will secure both addresses."
+"Multi-domain support. Enter additional domains to  secure. Separate domains "
+"by pressing <code>Enter</code>  For example, if the primary domain is "
+"<i>example.com</i>,  entering <i>www.example.com</i> secures both addresses."
 msgstr ""
-"Поддержка нескольких доменов. Введите дополнительные домены для защиты, "
-"разделенные пробелами. Например, если основным доменом является "
-"example.com, ввод www.example.com защитит оба адреса."
 
 msgid ""
 "Multicast DNS. Uses the system <i>Hostname</i> to  advertise enabled and "
@@ -7986,11 +8369,11 @@ msgstr "Сетевой интерфейс"
 msgid "NIS"
 msgstr "NIS"
 
-msgid "NIS domain"
-msgstr "Домен NIS"
+msgid "NIS Domain"
+msgstr ""
 
-msgid "NIS servers"
-msgstr "Серверы NIS"
+msgid "NIS Servers"
+msgstr ""
 
 msgid "NO"
 msgstr "НЕТ"
@@ -8016,6 +8399,9 @@ msgstr "Имя"
 msgid "Name Jail and Choose FreeBSD Release"
 msgstr "Назовите Jail и выберите релиз FreeBSD"
 
+msgid "Name and Method"
+msgstr ""
+
 msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr "Имя и схема именования не могут быть предоставлены одновременно."
 
@@ -8023,6 +8409,9 @@ msgid "Name and Options"
 msgstr "Имя и параметры"
 
 msgid "Name and Provider"
+msgstr ""
+
+msgid "Name and Type"
 msgstr ""
 
 msgid ""
@@ -8160,8 +8549,8 @@ msgstr "Минимальный порт активной стороны netcat"
 msgid "Netmask"
 msgstr "Маска сети"
 
-msgid "Netwait IP list"
-msgstr "Список IP для ожидания"
+msgid "Netwait IP List"
+msgstr ""
 
 msgid "Network"
 msgstr "Сеть"
@@ -8197,9 +8586,9 @@ msgid "Network Timeout Before Initiating Failover"
 msgstr "Тайм-аут сети до начала аварийного переключения"
 
 msgid ""
-"Network addresses allowed to use this initiator. Leave blank to allow all "
-"networks or list network addresses with a CIDR mask. Separate multiple "
-"addresses with a space: <i>192.168.2.0/24 192.168.2.1/12</i>."
+"Network addresses allowed to use this initiator. Leave blank to allow all   "
+"   networks or list network addresses with a CIDR mask. Separate entries by "
+"pressing      <code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -8300,15 +8689,6 @@ msgstr ""
 msgid "Newer Intermediate, Child, and Clone"
 msgstr ""
 
-msgid ""
-"Newline-separated list of files and directories to exclude from sync.<br /> "
-"See https://rclone.org/filtering/ for more details on --exclude option."
-msgstr ""
-"Разделенный символом новой строки список файлов и каталогов, которые "
-"необходимо исключить из синхронизации.<br /> См. "
-"https://rclone.org/filtering/ для получения дополнительной информации о "
-"параметре --exclude."
-
 msgid "Next"
 msgstr "Следующая"
 
@@ -8385,14 +8765,25 @@ msgstr ""
 msgid "None"
 msgstr ""
 
+msgid ""
+"Normal vdev type, used for primary storage operations. ZFS pools always "
+"have at least one DATA vdev."
+msgstr ""
+
 msgid "Not Available"
 msgstr "Недоступно"
 
 msgid "Notes"
 msgstr "Заметки"
 
+msgid "Notes about this disk."
+msgstr ""
+
 msgid "Notes about this extent."
 msgstr "Заметки об этом экстенте."
+
+msgid "Notes or identifiers about the theme."
+msgstr ""
 
 msgid "Notice"
 msgstr "Уведомление"
@@ -8442,6 +8833,16 @@ msgstr ""
 
 msgid "Number of days to renew certificate before expiring."
 msgstr "Количество дней для продления сертификата до истечения срока действия."
+
+msgid ""
+"Number of objects that can be owned by each of the selected groups.  "
+"Entering <code>0</code> (zero) allows unlimited objects."
+msgstr ""
+
+msgid ""
+"Number of objects that can be owned by each of the selected users.  "
+"Entering <code>0</code> (zero) allows unlimited objects."
+msgstr ""
 
 msgid ""
 "Number of points for each hourly, daily,  weekly, monthly, or yearly graph "
@@ -8539,6 +8940,18 @@ msgstr "Секрет клиента OAuth"
 msgid "OK"
 msgstr "OK"
 
+msgid "OQ % Used"
+msgstr ""
+
+msgid "OQ Objs Used"
+msgstr ""
+
+msgid "Object Quota"
+msgstr ""
+
+msgid "Objects Used"
+msgstr ""
+
 msgid "Oct"
 msgstr "Окт"
 
@@ -8584,6 +8997,9 @@ msgstr "Один или несколько IP-адресов, к которым 
 msgid "One or more data vdevs has disks of different sizes."
 msgstr ""
 
+msgid "One-Time Password (OTP) Digits"
+msgstr ""
+
 msgid "Online"
 msgstr "Online"
 
@@ -8592,9 +9008,6 @@ msgstr ""
 
 msgid "Online disk "
 msgstr ""
-
-msgid "Only Allow Guest Access"
-msgstr "Разрешить только гостевой доступ"
 
 msgid "Only Replicate Snapshots Matching Schedule"
 msgstr "Реплицировать только снимки соответствующие расписанию"
@@ -8681,6 +9094,18 @@ msgstr "Операционная система"
 msgid "Operation"
 msgstr "Операция"
 
+msgid "Option 1"
+msgstr ""
+
+msgid "Option 2"
+msgstr ""
+
+msgid "Option 2 (disabled)"
+msgstr ""
+
+msgid "Option 3"
+msgstr ""
+
 msgid "Optional description."
 msgstr "Необязательное описание."
 
@@ -8720,6 +9145,9 @@ msgstr ""
 "соединение LDAP с помощью <i>STARTTLS</i> на порту LDAP по умолчанию "
 "<i>389</i>.</li> </ul>"
 
+msgid "Orange"
+msgstr ""
+
 msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
 "the master interface to <i>0</i> and the other interfaces to <i>1</i>, "
@@ -8753,6 +9181,25 @@ msgstr "Выход"
 msgid "Outgoing Mail Server"
 msgstr "Сервер исходящей почты"
 
+msgid "Overprovision Size in GiB"
+msgstr ""
+
+msgid ""
+"Overprovisioning can increase the performance and lifespan of SSDs.  "
+"Defining a number of GiB here overprovisions disks during pool creation.  "
+"Examples: 50 GiB, 10g, 5GB"
+msgstr ""
+
+msgid ""
+"Overrides default directory creation mask of <i>0777</i>  which grants "
+"directory read, write and execute access for everybody."
+msgstr ""
+
+msgid ""
+"Overrides default file creation mask of <i>0666</i>  which creates files "
+"with read and write access for everybody."
+msgstr ""
+
 msgid "Owner"
 msgstr "Владелец"
 
@@ -8780,6 +9227,9 @@ msgstr "ОЖИДАЕТ"
 
 msgid "POST INSTALL NOTES"
 msgstr "ЗАМЕЧАНИЯ ПОСЛЕ УСТАНОВКИ"
+
+msgid "PREVIEW"
+msgstr ""
 
 msgid "PROCEED"
 msgstr "ПРОДЛЖИТЬ"
@@ -8887,6 +9337,9 @@ msgstr ""
 msgid "Path"
 msgstr "Путь"
 
+msgid "Path Suffix"
+msgstr ""
+
 msgid ""
 "Path to the <b>CheckIP Server</b>. For example,  <i>no-ip.com</i> uses a "
 "<b>CheckIP Server</b> of  <i>dynamic.zoneedit.com</i> and <b>CheckIP "
@@ -8896,8 +9349,8 @@ msgstr ""
 "<b>сервер CheckIP</b> <i>dynamic.zoneedit.com</i> и <b>путь CheckIP</b> "
 "<i>/checkip.html</i>."
 
-msgid "Path to the extent"
-msgstr "Путь к экстенту"
+msgid "Path to the Extent"
+msgstr ""
 
 msgid "Paths"
 msgstr ""
@@ -8912,44 +9365,26 @@ msgid ""
 "snapshots. Has the same <i>%Y</i>,  <i>%m</i>, <i>%d</i>, <i>%H</i>, and "
 "<i>%M</i> string requirements as  the <b>Naming Schema</b> in a  <a "
 "href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
-"target=\"_blank\">periodic snapshot task."
+"target=\"_blank\">periodic snapshot task. Separate entries by pressing  "
+"<code>Enter</code>."
 msgstr ""
-"Шаблон именования пользовательских снимков для включения в репликацию с "
-"расписанием периодических снимков. Введите строки <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
-"target=\"_blank\">strftime(3)</a>, соответствующие снимкам для включения в "
-"репликацию.<br><br> Если периодический моментальный снимок не связан с "
-"репликацией, введите схему именования для созданных вручную моментальных "
-"снимков. Имеет такие же строковые требования <i>%Y</i>, <i>%m</i>, "
-"<i>%d</i>, <i>%H</i> и <i>%M</i> что и <b>схема именования</b> в <a "
-"href=\"--docurl--/tasks.html#periodic-snapshot-tasks\" "
-"target=\"_blank\">периодическом задача снимка."
 
 msgid ""
 "Pattern of naming custom snapshots to be  replicated. Enter the name and  "
 "<a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\"  "
 "target=\"_blank\">strftime(3)</a> <i>%Y</i>, <i>%m</i>, <i>%d</i>,  "
 "<i>%H</i>, and <i>%M</i> strings that match the snapshots to include in  "
-"the replication."
+"the replication. Separate entries by pressing <code>Enter</code>."
 msgstr ""
-"Шаблон именования пользовательских снимков для репликации. Введите имя и <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
-"target=\"_blank\">strftime(3)</a> строки <i>%Y</i>, <i>%m</i>, <i>%d</i>, "
-"<i>%H</i> и <i>%M</i>, которые соответствуют снимкам для включения в "
-"репликацию."
 
 msgid ""
 "Pattern of naming custom snapshots to be  replicated. Enter the name and  "
 "<a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
 "target=\"_blank\">strftime(3)</a>  <i>%Y</i>, <i>%m</i>, <i>%d</i>, "
 "<i>%H</i>, and <i>%M</i> strings that  match the snapshots to include in "
-"the replication. The number of  snapshots matching that pattern is shown."
+"the replication. Separate entries by  pressing <code>Enter</code>. The "
+"number of snapshots matching the  patterns are shown."
 msgstr ""
-"Шаблон именования пользовательских снимков для репликации. Введите имя и <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
-"target=\"_blank\">strftime(3)</a> строки <i>%Y</i>, <i>%m</i>, <i>%d</i>, "
-"<i>%H</i> и <i>%M</i>, которые соответствуют снимкам для включения в "
-"репликацию. Отображается количество снимков, соответствующих этому шаблону."
 
 msgid "Peer Secret"
 msgstr "Секрет напарника"
@@ -8959,6 +9394,9 @@ msgstr "Секрет напарника (Подтверждение)"
 
 msgid "Peer User"
 msgstr "Пользователь напарника"
+
+msgid "Pending"
+msgstr ""
 
 msgid "Pending Network Changes"
 msgstr "Ожидающие изменения сети"
@@ -9002,8 +9440,17 @@ msgstr "ПиБ"
 msgid "Platform"
 msgstr "Платформа"
 
+msgid "Please"
+msgstr ""
+
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr "Пожалуйста, примите условия обслуживания для данного Сервера ACME."
+
+msgid "Please enter your 2FA code"
+msgstr ""
+
+msgid "Please enter your 2FA code again"
+msgstr ""
 
 msgid "Please enter your password"
 msgstr "Пожалуйста, введите пароль"
@@ -9167,11 +9614,11 @@ msgstr "Предпочитать кнопки только с иконками"
 msgid "Preferences"
 msgstr "Предпочтения"
 
-msgid "Preserve extended attributes"
-msgstr "Сохранять расширенные атрибуты"
+msgid "Preserve Extended Attributes"
+msgstr ""
 
-msgid "Preserve permissions"
-msgstr "Сохранить права"
+msgid "Preserve Permissions"
+msgstr ""
 
 msgid "Preserve screen space with icons and tooltips instead of text labels."
 msgstr ""
@@ -9195,11 +9642,17 @@ msgid ""
 "account."
 msgstr ""
 
+msgid "Preview"
+msgstr ""
+
 msgid "Preview JSON Service Account Key"
 msgstr "Предварительный просмотр ключа учетной записи службы JSON"
 
 msgid "Previous"
 msgstr "Предыдущая"
+
+msgid "Primary"
+msgstr ""
 
 msgid "Primary Contact"
 msgstr "Первичный контакт"
@@ -9268,17 +9721,17 @@ msgstr ""
 msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
-"versions of FreeNAS: "
+"versions of TrueNAS: "
 msgstr ""
-"Приступить к обновлению пула? ПРЕДУПРЕЖДЕНИЕ: Обновление пула - это "
-"необратимая операция, которая может сделать некоторые функции пула "
-"несовместимыми с более старыми версиями FreeNAS:"
 
 msgid "Production status successfully updated"
 msgstr "Статус производства успешно обновлен"
 
 msgid "Progress"
 msgstr "Прогрес"
+
+msgid "Prohibits writes to this share."
+msgstr ""
 
 msgid "Promote Dataset"
 msgstr "Продвинуть набор данных"
@@ -9305,6 +9758,9 @@ msgstr ""
 "Предоставляет всплывающее окно диагностической информации в случае "
 "фатальной ошибки."
 
+msgid "Provisioning URI (includes Secret - Read only):"
+msgstr ""
+
 msgid ""
 "Public IP address or hostname. Set if FTP clients cannot connect through a "
 "NAT device."
@@ -9314,6 +9770,9 @@ msgstr ""
 
 msgid "Public Key"
 msgstr "Открытый ключ"
+
+msgid "Purpose"
+msgstr ""
 
 msgid "Quick"
 msgstr "Быстрый"
@@ -9366,6 +9825,9 @@ msgid "Raid-z2"
 msgstr ""
 
 msgid "Raid-z3"
+msgstr ""
+
+msgid "Raised Buttons"
 msgstr ""
 
 msgid "Range High"
@@ -9461,6 +9923,9 @@ msgstr "Ключ восстановления для пула "
 
 msgid "Recursive"
 msgstr "Рекурсивно"
+
+msgid "Red"
+msgstr ""
 
 msgid ""
 "Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
@@ -9587,13 +10052,30 @@ msgstr ""
 msgid "Remove passphrase"
 msgstr "Удалить пароль"
 
+msgid ""
+"Remove the existing API key and generate a new random key. A dialog shows "
+"the new key and has an option to copy the key. Back up and secure the API "
+"key! The key string is displayed only one time, at creation."
+msgstr ""
+
 msgid "Rename"
 msgstr "Переименовывать"
+
+msgid "Renew"
+msgstr ""
 
 msgid "Renew Certificate Days"
 msgstr "Дни обновления сертификата"
 
+msgid "Renew Secret"
+msgstr ""
+
 msgid "Renew Static Key"
+msgstr ""
+
+msgid ""
+"Renewing the secret will cause a new URI and a     new QR code to be "
+"generated, making it necessary to update your two-factor device or app."
 msgstr ""
 
 msgid "Repeat"
@@ -9652,10 +10134,10 @@ msgstr "Расписание репликации"
 msgid "Replication Tasks"
 msgstr "Задания репликации"
 
-msgid "Report CPU usage in percent"
-msgstr "Сообщать использование процессора в процентах"
+msgid "Report CPU Usage in Percentage"
+msgstr ""
 
-msgid "Report CPU usage in percentage"
+msgid "Report CPU usage in percent"
 msgstr "Сообщать использование процессора в процентах"
 
 msgid ""
@@ -9704,13 +10186,6 @@ msgid ""
 msgstr ""
 "Необходимо. Может содержать буквы, цифры, точки (.), тире (-) и "
 "подчеркивания (_)."
-
-msgid ""
-"Requires <b>Allow guest access</b> to also be set. Forces guest access for "
-"all connections."
-msgstr ""
-"Требует также включенный <b>Разрешить гостевой доступ</b>. Принудительный "
-"доступ гостей для всех подключений."
 
 msgid "Reserved space for this dataset"
 msgstr "Зарезервированное место для этого набора данных"
@@ -9827,6 +10302,9 @@ msgstr ""
 msgid "Restore default"
 msgstr "Восстановить по умолчанию"
 
+msgid "Restrict PAM"
+msgstr ""
+
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
 "See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
@@ -9836,12 +10314,18 @@ msgstr ""
 "запись. См. <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=_blank>smb.conf(5)</a>."
 
+msgid "Retro Logo"
+msgstr ""
+
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
 msgstr ""
 "Выявить <i>tun</i> устройства для jail с отдельным набором правил devfs. "
 "Разрешить создание <i>tun</i> устройств в jail."
+
+msgid "Revert branding back to FreeNAS"
+msgstr ""
 
 msgid "Rollback"
 msgstr "Откатить"
@@ -9870,11 +10354,11 @@ msgstr "Частота вращения (об/мин)"
 msgid "Routing Key"
 msgstr "Ключ маршрутизации"
 
+msgid "Rsync Mode"
+msgstr ""
+
 msgid "Rsync Tasks"
 msgstr "Задания Rsync"
-
-msgid "Rsync mode"
-msgstr "Режим Rsync"
 
 msgid "Run As User"
 msgstr "Запуск от имени пользователя"
@@ -9944,6 +10428,9 @@ msgstr ""
 msgid "SASL wrapping"
 msgstr "Обертка SASL"
 
+msgid "SAVE"
+msgstr ""
+
 msgid "SAVE CONFIGURATION"
 msgstr "СОХРАНИТЬ КОНФИГУРАЦИЮ"
 
@@ -9956,11 +10443,11 @@ msgstr "Пароль SED"
 msgid "SEND TEST ALERT"
 msgstr "ОТПРАВИТЬ ТЕСТОВОЕ ОПОВЕЩЕНИЕ"
 
-msgid "SFTP log facility"
-msgstr "Facility журнала SFTP"
+msgid "SFTP Log Facility"
+msgstr ""
 
-msgid "SFTP log level"
-msgstr "Уровень журнала SFTP"
+msgid "SFTP Log Level"
+msgstr ""
 
 msgid "SFU"
 msgstr ""
@@ -10008,6 +10495,9 @@ msgstr "SSH соединения"
 msgid "SSH Host to connect to."
 msgstr "SSH хост для подключения."
 
+msgid "SSH Keypair"
+msgstr ""
+
 msgid "SSH Keypairs"
 msgstr "SSH ключи"
 
@@ -10040,6 +10530,9 @@ msgstr ""
 msgid "STOP"
 msgstr "СТОП"
 
+msgid "SYNC KEYS"
+msgstr ""
+
 msgid "Samba Authentication"
 msgstr ""
 
@@ -10060,9 +10553,6 @@ msgstr "Сохранить конфигурацию"
 
 msgid "Save Configuration"
 msgstr "Сохранить конфигурацию"
-
-msgid "Save Custom Theme"
-msgstr "Сохранить пользовательскую тему"
 
 msgid "Save Debug"
 msgstr "Сохранить отладку"
@@ -10094,6 +10584,9 @@ msgstr "Сохранение ACL..."
 msgid "Saving Debug"
 msgstr "Сохранение отладки"
 
+msgid "Saving KMIP Config"
+msgstr ""
+
 msgid "Saving Permissions"
 msgstr "Сохранение разрешений"
 
@@ -10105,24 +10598,6 @@ msgstr "График"
 
 msgid "Schedule Preview"
 msgstr "Предварительный просмотр расписания"
-
-msgid "Schedule a Cron Job"
-msgstr "Запланировать задание Cron"
-
-msgid "Schedule the Cloud Sync Task"
-msgstr "Запланировать облачную синхронизацию"
-
-msgid "Schedule the Periodic Snapshot Task"
-msgstr "Запланировать создания снимков"
-
-msgid "Schedule the Rsync Task"
-msgstr "Запланировать Rsync"
-
-msgid "Schedule the S.M.A.R.T. Test"
-msgstr "Запланировать тест S.M.A.R.T."
-
-msgid "Schedule the Scrub Task"
-msgstr "Запланировать проверку"
 
 msgid ""
 "Schedule which periodic snapshots will  be replicated. All snapshots will "
@@ -10140,9 +10615,6 @@ msgstr ""
 "администратор решил, что нужен только каждый второй снимок для репликации. "
 "Планировщик настраивается на четные часы, и реплицирует только снимки, "
 "сделанные в это время."
-
-msgid "Scheduling"
-msgstr "Планирование"
 
 msgid "Schema"
 msgstr "Схема"
@@ -10189,6 +10661,22 @@ msgstr "Завершена проверка пула <i>"
 msgid "Scrub interval (in days)"
 msgstr "Интервал проверки (в днях)"
 
+msgid "Search For Connected Groups"
+msgstr ""
+
+msgid "Search For Connected Users"
+msgstr ""
+
+msgid ""
+"Search for all connected groups.  Type a group name and press <i>ENTER</i>. "
+"A warning is shown  if there are no matches."
+msgstr ""
+
+msgid ""
+"Search for all connected users.  Type a user name and press <i>ENTER</i>. A "
+"warning is shown  if there are no matches."
+msgstr ""
+
 msgid ""
 "Search the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
 "target=\"_blank\">FreeNAS issue tracker</a>    to ensure the issue has not "
@@ -10223,6 +10711,9 @@ msgstr "Секрет"
 msgid "Secret (Confirm)"
 msgstr "Секрет (Подтверждение)"
 
+msgid "Secret (Read only)"
+msgstr ""
+
 msgid "Secret Access Key"
 msgstr "Секретный ключ доступа"
 
@@ -10241,8 +10732,8 @@ msgstr "Секретный ключ"
 msgid "Secret and Peer Secret can not be the same."
 msgstr ""
 
-msgid "Secure mode"
-msgstr "Безопасный режим"
+msgid "Secure Mode"
+msgstr ""
 
 msgid "Security"
 msgstr "Безопасность"
@@ -10373,12 +10864,18 @@ msgstr "Выберите тип диска"
 msgid "Select Existing zvol"
 msgstr "Выберите существующий zvol"
 
+msgid "Select Groups Cached by this System"
+msgstr ""
+
 msgid ""
 "Select IP addresses to listen to for NFS requests. Leave empty for NFS to "
 "listen to all available addresses."
 msgstr ""
 "Выберите IP-адреса для прослушивания запросов NFS. Оставьте пустым, чтобы "
 "NFS прослушивал все доступные адреса."
+
+msgid "Select Users Cached by this System"
+msgstr ""
 
 msgid "Select VM wizard type"
 msgstr "Выберите тип мастера VM"
@@ -10418,6 +10915,11 @@ msgstr "Выберите пул, набор данных или zvol."
 
 msgid "Select a power management profile from the menu."
 msgstr "Выберите профиль управления питанием из меню."
+
+msgid ""
+"Select a preset configuration for the share. This applies predetermined "
+"values and disables changing some share options."
+msgstr ""
 
 msgid ""
 "Select a preset schedule or  choose <i>Custom</i> to use the advanced "
@@ -10535,11 +11037,6 @@ msgid ""
 "the unused disk will be erased!"
 msgstr ""
 
-msgid "Select dataset snapshots to replicate.  Multiple datasets can be selected."
-msgstr ""
-"Выберите снимки набора данных для репликации. Можно выбрать несколько "
-"наборов данных."
-
 msgid "Select desired disk type."
 msgstr "Выберите нужный тип диска."
 
@@ -10645,9 +11142,6 @@ msgstr ""
 "варьируется от <i>Наилучшее возможное (по умолчанию)</i> до <i>Сетевое "
 "управление (наивысшее)</i>."
 
-msgid "Select the IP addresses SMB will listen for."
-msgstr "Выберите IP-адреса, которые SMB будет прослушивать."
-
 msgid ""
 "Select the IP addresses to be listened on  by the portal. Click ADD to add "
 "IP addresses with a different network  port. The address <i>0.0.0.0</i> can "
@@ -10727,9 +11221,6 @@ msgstr ""
 
 msgid "Select the country of the organization."
 msgstr "Выберите страну организации."
-
-msgid "Select the dataset that will store  replicated snapshots."
-msgstr "Выберите набор данных, в котором будут храниться реплицированные снимки."
 
 msgid "Select the days to run resilver tasks."
 msgstr "Выберите дни для запуска задач восстановления."
@@ -10922,8 +11413,23 @@ msgstr "Выбранные jail обновлены."
 msgid "Selected plugins updated."
 msgstr "Выбранные плагины обновлены."
 
+msgid ""
+"Selecting a dataset to use with Minio <strong>removes all existing "
+"permissions for the dataset and any nested directories!</strong> "
+"Permissions are reset to minio:minio. To avoid dataset permissions "
+"conflicts, please create a separate, dedicated dataset for Minio."
+msgstr ""
+
 msgid "Self Healed"
 msgstr "Исправлено"
+
+msgid ""
+"Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling "
+"this option allows the key server to manage creating or updating the global "
+"SED password, creating or updating individual SED passwords, and retrieving "
+"SED passwords when SEDs are unlocked. Disabling this option leaves SED "
+"password management with the local system."
+msgstr ""
 
 msgid "Semi-automatic (TrueNAS CORE only)"
 msgstr ""
@@ -10955,7 +11461,7 @@ msgstr "Отправить начальную отладку."
 msgid "Sep"
 msgstr "Сен"
 
-msgid "Separate multiple values with a space."
+msgid "Separate multiple values by pressing <code>Enter</code>."
 msgstr ""
 
 msgid "Separate values with commas, and without spaces."
@@ -10972,6 +11478,9 @@ msgstr "Последовательный порт"
 
 msgid "Serial Speed"
 msgstr "Скорость последовательного порта"
+
+msgid "Serial number for this disk."
+msgstr ""
 
 msgid "Serial numbers of each disk being edited."
 msgstr ""
@@ -11035,6 +11544,15 @@ msgstr "Установить флаг удержания"
 msgid "Set Passphrase"
 msgstr "Установить пароль"
 
+msgid "Set Quota"
+msgstr ""
+
+msgid "Set Quotas"
+msgstr ""
+
+msgid "Set Quotas (Bulk)"
+msgstr ""
+
 msgid "Set Warning Level"
 msgstr ""
 
@@ -11048,16 +11566,6 @@ msgstr ""
 
 msgid "Set an ending time for when  replications are not allowed to start."
 msgstr "Установите время окончания, когда репликации не разрешается запускать."
-
-msgid ""
-"Set by default if the disk supports S.M.A.R.T. Unset to disable any "
-"configured <a href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" "
-"target=\"_blank\">S.M.A.R.T. tests</a>."
-msgstr ""
-"Установлен по умолчанию, если диск поддерживает S.M.A.R.T. Отключите чтобы "
-"отключить любые настроенные <a "
-"href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" target=\"_blank\">Тесты "
-"S.M.A.R.T.</a>."
 
 msgid ""
 "Set enable sending messages to the address defined in the <b>Email</b> "
@@ -11468,13 +11976,6 @@ msgstr ""
 "Установите для создания новой основной группы с тем же именем, что и у "
 "пользователя. Снимите, чтобы выбрать существующую группу для пользователя."
 
-msgid ""
-"Set to delay the start of network services until pings are returned from "
-"the IP addresses in the <i>netwait IP list</i>."
-msgstr ""
-"Установите для задержки запуска сетевых служб до тех пор, пока с IP-адресов "
-"в <i>списке адресов ожидания</i> не будут возвращены эхо-запросы."
-
 msgid "Set to delete this alias."
 msgstr "Установите, чтобы удалить этот псевдоним."
 
@@ -11494,15 +11995,6 @@ msgstr ""
 "Установите, чтобы отключить кэширование пользователей и групп AD. Это может "
 "помочь при невозможности привязки к домену с большим количеством "
 "пользователей или групп."
-
-msgid ""
-"Set to disable the Windows <i>hidden</i> attribute on a new Unix hidden "
-"file. Unix hidden filenames start with a dot: <b>.foo</b>. Existing files "
-"are not affected."
-msgstr ""
-"Установите, чтобы отключить атрибут Windows <i>hidden</i> для новых скрытых "
-"файлов Unix. Скрытые имена файлов Unix начинаются с точки: <b>.foo</b>. "
-"Существующие файлы не затрагиваются."
 
 msgid ""
 "Set to disable the password prompt that appears before clients access AFP "
@@ -11743,9 +12235,6 @@ msgstr "Установите, чтобы пользователи не могл�
 msgid "Set to prohibit users from writing to this share."
 msgstr "Установите, чтобы запретить пользователям писать в этот общий ресурс."
 
-msgid "Set to prohibit writes to this share"
-msgstr "Установите, чтобы запретить запись в этот ресурс"
-
 msgid "Set to prohibit writing to the share."
 msgstr "Установите, чтобы запретить запись в этот ресурс."
 
@@ -11784,6 +12273,11 @@ msgid ""
 "intact."
 msgstr ""
 
+msgid ""
+"Set to restrict SSH access in certain circumstances to only members of  "
+"BUILTIN\\Administrators"
+msgstr ""
+
 msgid "Set to run resilver tasks between the configured times."
 msgstr "Задайте запуск задач восстановления в заданное время"
 
@@ -11817,13 +12311,10 @@ msgid "Set to take a snapshot of the dataset before a <i>PUSH</i>."
 msgstr "Установите для создания снимока набора данных перед <i>PUSH</i>."
 
 msgid ""
-"Set to take separate snapshots of the dataset and each of its child "
-"datasets. Leave unset to take a single snapshot only of the specified "
-"dataset <i>without</i> child datasets."
+"Set to take separate snapshots of the  dataset and each of its child "
+"datasets. Leave unset to take a  single snapshot only of the specified "
+"dataset <i>without</i> child  datasets."
 msgstr ""
-"Установите, чтобы сделать отдельные снимки набора данных и каждого из его "
-"дочерних наборов данных. Оставьте неустановленным, чтобы сделать один "
-"снимок только указанного набора данных <i>без</i> дочерних наборов данных."
 
 msgid ""
 "Set to to enable support for <a "
@@ -11965,6 +12456,12 @@ msgstr ""
 "под ним. Это может сделать данные недоступными."
 
 msgid ""
+"Setting this option changes the destination dataset to be read-only. To "
+"continue using the default or existing dataset read permissions, leave this "
+"option unset."
+msgstr ""
+
+msgid ""
 "Setting this option is <b>not</b> recommended as it breaks several security "
 "measures. Refer to <a "
 "href=\"http://www.proftpd.org/docs/contrib/mod_tls.html\" "
@@ -12043,8 +12540,10 @@ msgstr "Командный интерпретатор"
 msgid "Short Description"
 msgstr "Краткое описание"
 
-msgid "Short description"
-msgstr "Краткое описание"
+msgid ""
+"Shortened theme name. Used when listing the theme                     in "
+"Preferences."
+msgstr ""
 
 msgid ""
 "Should only be used for highly accurate <b>NTP</b>   servers such as those "
@@ -12063,23 +12562,47 @@ msgstr ""
 msgid "Show"
 msgstr ""
 
-msgid "Show Hidden Files"
-msgstr "Показать скрытые файлы"
+msgid "Show Advanced Fields by Default"
+msgstr ""
+
+msgid "Show All Groups"
+msgstr ""
+
+msgid "Show All Users"
+msgstr ""
+
+msgid "Show Console Messages"
+msgstr ""
+
+msgid "Show Extra Columns"
+msgstr ""
 
 msgid "Show Text Console without Password Prompt"
 msgstr "Показать текстовую консоль без запроса пароля"
 
-msgid "Show advanced fields by default"
-msgstr "Показать расширенные поля по умолчанию"
+msgid "Show Tracebacks in Case of Fatal Error"
+msgstr ""
 
-msgid "Show console messages"
-msgstr "Показать консольные сообщения"
+msgid "Show all available groups, even those that have not used any data."
+msgstr ""
+
+msgid "Show all available users, including those that have not used any data."
+msgstr ""
 
 msgid "Show only entries that contain this text"
 msgstr "Показывать только записи, содержащие этот текст"
 
-msgid "Show tracebacks in case of fatal error"
-msgstr "Показать трассировки в случае фатальной ошибки"
+msgid "Show only those users who are using data. This is the default view."
+msgstr ""
+
+msgid ""
+"Showing extra columns in the table is useful for data filtering,  but can "
+"cause performance issues. NOTE: This window will reload automatically so "
+"that the new view can take effect."
+msgstr ""
+
+msgid "Shows only the groups that are using data. This is the default view."
+msgstr ""
 
 msgid ""
 "Shrinking a ZVOL is not allowed in the User Interface. This can lead to "
@@ -12156,6 +12679,9 @@ msgstr ""
 "Пропустить автоматическое определение региона URLконечной точки. Установите "
 "это при настройке пользовательского URL-адреса конечной точки."
 
+msgid "Slide me!"
+msgstr ""
+
 msgid "Snapshot"
 msgstr ""
 
@@ -12169,25 +12695,16 @@ msgid "Snapshot directory"
 msgstr "Каталог снимков"
 
 msgid ""
-"Snapshot name format string. The default is <i><textarea "
-"disabled>snap-%Y-%m-%d-%H-%M</textarea></i>. Must include the strings "
-"<i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are "
-"replaced with the four-digit year, month, day of month, hour, and minute as "
-"defined in <a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
-"target=\"_blank\">strftime(3)</a>. A string showing the snapshot lifetime "
-"is appended to the name. For example, snapshots of <i>pool1</i> with a "
-"Naming Schema of <i>customsnap-%Y%m%d.%H%M</i> and lifetime of two weeks "
-"have names like <i>pool1@customsnap-20190315.0527-2w</i>."
+"Snapshot name format string. The default  is "
+"<code>snap-%Y-%m-%d-%H-%M</code>. Must include the strings <i>%Y</i>,  "
+"<i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are replaced with  "
+"the four-digit year, month, day of month, hour, and minute as defined  in "
+"<a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
+"target=\"_blank\">strftime(3)</a>.  A string showing the snapshot lifetime "
+"is appended to the name.<br><br>  For example, snapshots of <i>pool1</i> "
+"with a Naming Schema of  <i>customsnap-%Y%m%d.%H%M</i> have names like  "
+"<i>pool1@customsnap-20190315.0527</i>."
 msgstr ""
-"Строка формата имени снимка. По умолчанию используется значение "
-"<i><textarea disabled>snap-%Y-%m-%d-%H-%M</textarea></i>. Должна включать "
-"строки <i>%Y</i>, <i>%m</i>, <i>%d</i>, <i>%H</i> и <i>%M</i>, которые "
-"заменяются четырехзначным годом, месяцем, днем месяца, часом и минутой, как "
-"определено в <a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
-"target=\"_blank\">strftime(3)</a>. К имени добавляется строка, показывающая "
-"время жизни снимка. Например, снимки <i>pool1</i> со схемой именования "
-"<i>customsnap-%Y%m%d.%H%M</i> и сроком жизни в две недели имеют такие "
-"имена, как <i>pool1@customsnap-20190315.0527-2w</i>."
 
 msgid ""
 "Snapshot schedule for this  replication task. Choose from configured  <a "
@@ -12217,8 +12734,8 @@ msgstr "Сортировать языки по:"
 msgid "Source"
 msgstr "Источник"
 
-msgid "Source Datasets"
-msgstr "Исходные наборы данных"
+msgid "Source Location"
+msgstr ""
 
 msgid ""
 "Space-delimited list of allowed IP addresses <i>(192.168.1.10)</i> or "
@@ -12246,6 +12763,11 @@ msgstr "Резерв"
 
 msgid "Sparse"
 msgstr "Разреженный"
+
+msgid ""
+"Special Allocation class, used to create Fusion pools. Optional vdev type "
+"which is used to speed up metadata and small block IO."
+msgstr ""
 
 msgid "Specifies the auxiliary directory service ID provider."
 msgstr ""
@@ -12364,6 +12886,11 @@ msgstr "Запускается задание..."
 msgid "State"
 msgstr "Состояние"
 
+msgid ""
+"Static IP addresses which SMB listens on for connections.  Leaving all "
+"unselected defaults to listening on all active interfaces."
+msgstr ""
+
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr "Статический IPv4-адрес веб-интерфейса IPMI."
 
@@ -12447,6 +12974,12 @@ msgid ""
 "target=\"_blank\">(rclone documentation)</a>."
 msgstr ""
 
+msgid "Storage location for the original  snapshots that will be replicated."
+msgstr ""
+
+msgid "Storage location for the replicated  snapshots."
+msgstr ""
+
 msgid ""
 "Store system logs on the system dataset. Unset to store system logs in "
 "<i>/var/</i> on the operating system device."
@@ -12501,9 +13034,6 @@ msgstr "Успешно продвинут "
 msgid "Successfully Upgraded "
 msgstr "Успешно обновлен "
 
-msgid "Successfully detached pool "
-msgstr "Успешно отключен pool "
-
 msgid "Successfully exported/disconnected '"
 msgstr "Успешно экспортирован/отключен '"
 
@@ -12534,8 +13064,8 @@ msgstr "Поддержка"
 msgid "Support >16 groups"
 msgstr "Поддержка >16 групп"
 
-msgid "Swap size in GiB"
-msgstr "Размер свопа в ГиБ"
+msgid "Swap Size in GiB"
+msgstr ""
 
 msgid "Switch Train"
 msgstr "Сменить поезд"
@@ -12545,6 +13075,12 @@ msgstr "Изменить поезд обновлений?"
 
 msgid "Sync"
 msgstr "Синхронизация"
+
+msgid "Sync Keys"
+msgstr ""
+
+msgid "Sync ZFS/SED keys between KMIP Server and TN database."
+msgstr ""
 
 msgid "Sync from Peer"
 msgstr "Синхронизировать с пары"
@@ -12559,6 +13095,9 @@ msgid "Sync to peer succeeded."
 msgstr "Синхронизация на пару прошла успешно."
 
 msgid "Synchronize Destination Snapshots With Source"
+msgstr ""
+
+msgid "Syncing"
 msgstr ""
 
 msgid "Syslog"
@@ -12597,9 +13136,6 @@ msgstr "Серийный номер системы"
 msgid "System Time Zone:"
 msgstr ""
 
-msgid "System clock"
-msgstr "Системные часы"
-
 msgid "System domain name, like <i>example.com</i>"
 msgstr "Доменное имя системы, например <i>example.com</i>"
 
@@ -12635,10 +13171,10 @@ msgstr ""
 "сетевой интерфейс по умолчанию, введите имя сетевого интерфейса, который "
 "будет использоваться для NAT."
 
-msgid "TCP Port"
-msgstr "Порт TCP"
+msgid "System-Generated Settings"
+msgstr ""
 
-msgid "TCP port"
+msgid "TCP Port"
 msgstr "Порт TCP"
 
 msgid "TCP port to use on bind to IP addresses"
@@ -12706,9 +13242,6 @@ msgstr "Цель"
 
 msgid "Target Alias"
 msgstr "Псевдоним цели"
-
-msgid "Target Dataset"
-msgstr "Целевой набор данных"
 
 msgid "Target Mode"
 msgstr "Режим цели"
@@ -12787,6 +13320,9 @@ msgstr "Тестовое уведомление отправлено!"
 
 msgid "Test email sent!"
 msgstr "Тестовое письмо отправлено!"
+
+msgid "Textarea"
+msgstr ""
 
 msgid ""
 "The <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs "
@@ -12875,6 +13411,14 @@ msgstr ""
 
 msgid "The UDP port number that listens for TFTP requests. Example: 8050"
 msgstr "Номер порта UDP, который прослушивает запросы TFTP. Пример: 8050"
+
+msgid ""
+"The URI used to provision an OTP. The URI (which contains the secret) is "
+"encoded in a QR Code.  To set up an OTP app like Google Authenticator, use "
+"the app to scan the QR code or enter the secret manually  into the app. The "
+"URI is produced by the system when Two-Factor Authentication is first "
+"activated."
+msgstr ""
 
 msgid ""
 "The VM could not start because the current configuration could potentially "
@@ -13011,8 +13555,10 @@ msgstr ""
 "разрешения, что и <i>group@</i> <i>Who</i>. Группы, созданные вручную или "
 "импортированные из службы каталогов, отображаются в раскрывающемся меню."
 
-msgid "The hostname or IP address of the LDAP server."
-msgstr "Имя хоста или IP-адрес сервера LDAP."
+msgid ""
+"The hostname or IP address of the LDAP server.  Separate entries by "
+"pressing <code>Enter</code>."
+msgstr ""
 
 msgid "The iSCSI"
 msgstr "iSCSI"
@@ -13027,8 +13573,25 @@ msgstr ""
 msgid "The length of "
 msgstr ""
 
+msgid ""
+"The lifespan (in seconds) of each One-Time Password. Default is 30 seconds. "
+" The minimum lifetime is 5 seconds."
+msgstr ""
+
 msgid "The lifetime of the CA specified in days."
 msgstr "Время жизни СА в днях."
+
+msgid ""
+"The list only shows users cached on this system. The search box   below can "
+"locate all users, including users connected with Active Directory or other "
+"services."
+msgstr ""
+
+msgid ""
+"The list shows only groups cached on this system. The search box   below "
+"can locate all groups, including groups connected with Active Directory or "
+"other services."
+msgstr ""
 
 msgid "The maximum length of the queue of pending connections. Default is 100."
 msgstr "Максимальная длина очереди ожидающих соединений. По умолчанию 100."
@@ -13070,6 +13633,12 @@ msgstr ""
 "ключа <i>2048</i>."
 
 msgid ""
+"The number of digits in the One-Time Password. The default value is 6,  "
+"which is the length of the standard OTP from Google. Check the settings of "
+"your app or device  before selecting this."
+msgstr ""
+
+msgid ""
 "The number of entries the Netdata daemon keeps in memory for each chart "
 "dimension. Default is 86400."
 msgstr ""
@@ -13093,6 +13662,12 @@ msgstr ""
 
 msgid "The passwords do not match."
 msgstr "Пароли не совпадают."
+
+msgid "The pasted string ends with a space"
+msgstr ""
+
+msgid "The pasted string starts with a space"
+msgstr ""
 
 msgid "The physical location of the host."
 msgstr "Физическое местонахождение хоста."
@@ -13164,6 +13739,11 @@ msgstr "База поиска, где групповые объекты можн
 
 msgid "The search base where user objects can be found in the LDAP server."
 msgstr "База поиска, где пользовательские объекты можно найти на сервере LDAP."
+
+msgid ""
+"The secret used to generate OTPs. The secret is produced by the system when "
+"Two-Factor  Authentication is first activated."
+msgstr ""
 
 msgid ""
 "The selected policy defines whether the control channel, data channel, both "
@@ -13325,6 +13905,13 @@ msgid "There is an upgrade waiting to finish."
 msgstr "Обновление ожидает завершения."
 
 msgid ""
+"These  <a href=\"https://support.apple.com/en-us/HT210803\" "
+"target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
+"the performance and behavioral characteristics of SMB shares.  This is "
+"required for Time Machine support."
+msgstr ""
+
+msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
 "target=\"_blank\">rclone</a>."
 msgstr ""
@@ -13341,7 +13928,19 @@ msgstr ""
 "Эти разрешения слишком сложны для отображения и не могут быть сохранены без "
 "изменения."
 
+msgid "These running services are using "
+msgstr ""
+
 msgid "These services depend on pool "
+msgstr ""
+
+msgid "These services must be restarted to export the pool:"
+msgstr ""
+
+msgid "These services must be stopped to export the pool:"
+msgstr ""
+
+msgid "These unknown processes are using this pool: "
 msgstr ""
 
 msgid "Third DNS server."
@@ -13408,19 +14007,18 @@ msgstr ""
 "Это не промышленный выпуск, и его следует использовать только для "
 "тестирования."
 
-msgid "This is the FreeBSD device name for the disk."
-msgstr "Это имя устройства FreeBSD для диска."
-
 msgid ""
 "This is the OS_TENANT_NAME from an <a "
 "href=\"https://rclone.org/swift/#configuration-from-an-openstack-"
 "credentials-file\" target=\"_blank\">OpenStack credentials file</a>."
 msgstr ""
 
-msgid "This is the serial number of the disk."
-msgstr "Это серийный номер диска."
-
 msgid "This job will not run again until it is enabled."
+msgstr ""
+
+msgid ""
+"This name is already being used by an existing theme. Please choose a new "
+"name."
 msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
@@ -13490,8 +14088,22 @@ msgstr "Заглавие"
 msgid "Title "
 msgstr "Заглавие "
 
+msgid ""
+"To activate this periodic snapshot schedule, set  this option. To disable "
+"this task without deleting it, unset this  option."
+msgstr ""
+
+msgid ""
+"To update the current software license or upgrade from TrueNAS Core® to "
+"TrueNAS  Enterprise®, copy the text of the TrueNAS license and paste it in "
+"this box."
+msgstr ""
+
 msgid "Toggle Collapse"
 msgstr "Переключить Сжатие"
+
+msgid "Toggle Display"
+msgstr ""
 
 msgid "Toggle Hide/Open"
 msgstr "Переключить Скрыть/Открыть"
@@ -13506,6 +14118,9 @@ msgstr ""
 "href=\"https://developers.google.com/drive/api/v3/about-auth\" "
 "target=\"_blank\">Google Диска</a>. Токены доступа периодически истекают и "
 "должны обновляться."
+
+msgid "Token expired, please log back in."
+msgstr ""
 
 msgid ""
 "Top level of the LDAP directory tree to be used when searching for "
@@ -13589,6 +14204,21 @@ msgstr ""
 "Отключение аппаратной разгрузки рекомендуется только в том случае, если "
 "интерфейс используется jail, плагинами или виртуальными машинами."
 
+msgid "Two-Factor Auth"
+msgstr ""
+
+msgid "Two-Factor Authentication Code"
+msgstr ""
+
+msgid "Two-Factor Authentication Settings"
+msgstr ""
+
+msgid "Two-factor authentication IS currently enabled."
+msgstr ""
+
+msgid "Two-factor authentication is NOT enabled."
+msgstr ""
+
 msgid ""
 "Two-letter <a  href=\"https://www.iso.org/obp/ui/#search/code/\" "
 "target=\"_blank\">ISO 3166-1 alpha-2 code</a>  used to enable LLDP location "
@@ -13652,8 +14282,16 @@ msgstr ""
 msgid "UUID"
 msgstr ""
 
+msgid ""
+"Umask is used for newly created files. Default is <i>000</i> (anyone can "
+"read, write, and execute)."
+msgstr ""
+
 msgid "Unable to download key, check network connection."
 msgstr "Невозможно скачать ключ, проверьте подключение к сети."
+
+msgid "Unable to terminate processes which are using this pool: "
+msgstr ""
 
 msgid "Unencrypted pools can be imported directly."
 msgstr "Незашифрованные пулы могут быть импортированы напрямую."
@@ -13696,6 +14334,9 @@ msgstr "Отпустить"
 msgid "Unlock"
 msgstr "Разблокировать"
 
+msgid "Unlock "
+msgstr ""
+
 msgid ""
 "Unlock the pool with a recovery  key file instead of a passphrase. Select a "
 "recovery key file to upload  from the local system."
@@ -13705,13 +14346,6 @@ msgstr ""
 
 msgid "Unlock the pool with either a passphrase or a recovery key."
 msgstr ""
-
-msgid ""
-"Unmask is used for newly created files. Default is <i>000</i> (anyone can "
-"read, write, and execute)."
-msgstr ""
-"Unmask используемая для вновь созданных файлов. По умолчанию <i>000</i> "
-"(любой может читать, писать и выполнять)."
 
 msgid "Unselect All"
 msgstr "Снять все"
@@ -13729,9 +14363,6 @@ msgstr "Отключите, чтобы отключить запланирова
 
 msgid "Unset to disable this service without deleting it."
 msgstr "Отключите, чтобы отключить эту услугу, не удаляя ее."
-
-msgid "Unset to disable this task without deleting it."
-msgstr "Отключите, чтобы отключить эту задачу, не удаляя ее."
 
 msgid ""
 "Unset to prepend the domain name to the username. Unset to prevent name "
@@ -13789,8 +14420,8 @@ msgstr "Период обновления"
 msgid "Update Plugins"
 msgstr "Обновление плагинов"
 
-msgid "Update Settings"
-msgstr "Обновить настройки"
+msgid "Update Preferences"
+msgstr ""
 
 msgid "Update Status"
 msgstr "Статус обновления"
@@ -13834,10 +14465,15 @@ msgid "Upgraded"
 msgstr "Обновлен"
 
 msgid ""
-"Upgrades both controllers. Files are downloaded to the Active Controller    "
-"        and then transferred to the Standby Controller. The upgrade process "
-"starts concurrently on both TrueNAS Controllers.            Continue with "
-"download?"
+"Upgrades both controllers. Files are downloaded to the Active Controller "
+"and then transferred to the Standby Controller. The upgrade process starts "
+"concurrently on both TrueNAS Controllers."
+msgstr ""
+
+msgid ""
+"Upgrades both controllers. Files are downloaded to the Active Controller "
+"and then transferred to the Standby Controller. The upgrade process starts "
+"concurrently on both TrueNAS Controllers. Continue with download?"
 msgstr ""
 
 msgid "Upload"
@@ -13927,14 +14563,26 @@ msgstr ""
 "сообщения ICMPv6 Router Solicitation через интерфейсы для обнаружения новых "
 "маршрутизаторов."
 
+msgid ""
+"Use <i>Window</i> to extend the validity of passwords beyond the "
+"<i>Interval</i> setting. For example, a window setting of 1 means that one "
+"password before and after the current one is valid. leaving three valid "
+"passwords. Extending the window can be useful in high-latency situations. "
+"IMPORTANT: Two-factor authentication is time-based and requires that the "
+"system time is set correctly."
+msgstr ""
+
+msgid "Use Apple-style Character Encoding"
+msgstr ""
+
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr "Использовать DHCP. Отключите для ручной настройки статического IPv4."
 
 msgid "Use Default Domain"
 msgstr "Использовать домен по умолчанию"
 
-msgid "Use FQDN for logging"
-msgstr "Использовать FQDN для журнала"
+msgid "Use FQDN for Logging"
+msgstr ""
 
 msgid "Use HTTPS for the connection to the  <b>CheckIP Server</b>."
 msgstr "Использовать HTTPS для подключения к <b>CheckIP Server</b>."
@@ -13945,11 +14593,14 @@ msgstr "Использовать HTTPS для соединения с серве
 msgid "Use Signature Version 2"
 msgstr "Использовать подпись версии 2"
 
+msgid "Use Syslog Only"
+msgstr ""
+
 msgid "Use all disk space"
 msgstr "Использовать все дисковое пространство"
 
-msgid "Use as home share"
-msgstr "Использовать как домашний ресурс"
+msgid "Use as Home Share"
+msgstr ""
 
 msgid ""
 "Use compressed WRITE records to make the  stream more efficient. The "
@@ -13973,11 +14624,22 @@ msgstr "Использовать существующий образ диска"
 msgid "Use settings from a saved replication."
 msgstr "Использовать настройки из сохраненной репликации."
 
-msgid "Use syslog only"
-msgstr "Использовать только syslog"
+msgid ""
+"Use the KMIP server to manage ZFS encrypted dataset keys. The key server "
+"stores, applies, and destroys encryption keys whenever an encrypted dataset "
+"is created, when an existing key is modified, an encrypted dataset is "
+"unlocked, or an encrypted dataset is removed. Unsetting this option leaves "
+"all encryption key management with the local system."
+msgstr ""
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "Используйте формат <i>A.B.C.D/E</i>, где <i>E</i> - маска CIDR."
+
+msgid ""
+"Use this form to set up Two-Factor Authentication for this system.  Then "
+"link the system to an authenticator app (such as Google Authenticator, "
+"LastPass Authenticator, etc.)  on a mobile device."
+msgstr ""
 
 msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
@@ -14022,6 +14684,9 @@ msgstr "Пользователь CN"
 msgid "User Controls"
 msgstr "Элементы управления пользователя"
 
+msgid "User Data Quota "
+msgstr ""
+
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr "Отличительное имя (DN) пользователя для аутентификации."
 
@@ -14044,6 +14709,12 @@ msgid ""
 msgstr ""
 
 msgid "User Name"
+msgstr ""
+
+msgid "User Object Quota"
+msgstr ""
+
+msgid "User Quotas"
 msgstr ""
 
 msgid "User account password for logging into the  remote system."
@@ -14119,6 +14790,12 @@ msgstr ""
 "href=\"http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi."
 "UsmUserData\" target=\"_blank\">модели безопасности на основе пользователей "
 "(USM)</a> SNMP."
+
+msgid "Username or Password is incorrect."
+msgstr ""
+
+msgid "Username, Password, or 2FA Code is incorrect."
+msgstr ""
 
 msgid ""
 "Usernames can be up to 16 characters long. When using NIS or other legacy "
@@ -14273,6 +14950,9 @@ msgstr ""
 msgid "View Logs"
 msgstr "Просмотр журналов"
 
+msgid "Violet"
+msgstr ""
+
 msgid "Virtual CPUs"
 msgstr "Виртуальные процессоры"
 
@@ -14324,6 +15004,11 @@ msgstr "ВНИМАНИЕ: Экспорт/отключение пула <i>"
 msgid "WARNING: Locking pool <i>"
 msgstr "ВНИМАНИЕ: Блокировка пула <i>"
 
+msgid ""
+"WARNING: These unknown processes will be terminated while exporting the "
+"pool. "
+msgstr ""
+
 msgid "WS-Discovery"
 msgstr ""
 
@@ -14338,6 +15023,9 @@ msgstr "Ожидание появления активного контролл�
 
 msgid "Wallclock time in seconds."
 msgstr "Время настенных часов в секундах."
+
+msgid "Warn"
+msgstr ""
 
 msgid "Warning"
 msgstr "Внимание"
@@ -14396,6 +15084,9 @@ msgstr ""
 msgid "Wed"
 msgstr "Ср"
 
+msgid "Weekly"
+msgstr ""
+
 msgid "Weeks"
 msgstr "Недели"
 
@@ -14444,14 +15135,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"When enabled, the ACLs grant read and write access for owner or group and "
-"read-only for others. <b>Only</b> leave unset when creating a share on a "
+"When enabled, the ACLs grant read and  write access for owner or group and "
+"read-only for others. <b>Only</b> leave  unset when creating a share on a "
 "system that already has custom ACLs configured."
 msgstr ""
-"При включении списки ACL предоставляют права на чтение и запись для "
-"владельца или группы и доступ только для чтения для других. Оставьте "
-"неустановленным <b>только</b> при создании общего ресурса в системе, в "
-"которой уже настроены списки ACL."
 
 msgid ""
 "When replicated snapshots are deleted  from the destination system: <br>  "
@@ -14533,6 +15220,17 @@ msgstr ""
 "пользователей, если задан параметр «Разрешить доверенные домены» и если "
 "идентичные имена пользователей присутствуют в нескольких доменах."
 
+msgid ""
+"When using a proxy, enter the proxy information for  the network in the "
+"format <i>http://my.proxy.server:3128</i> or  "
+"<i>http://user:password@my.proxy.server:3128</i>"
+msgstr ""
+
+msgid ""
+"When using a virtual host, this is also  used as the Kerberos principal "
+"name."
+msgstr ""
+
 msgid "Who"
 msgstr "Кто"
 
@@ -14553,6 +15251,9 @@ msgstr "Базовый класс виджетов"
 
 msgid "Winbind NSS Info"
 msgstr "Информация Winbind NSS"
+
+msgid "Window"
+msgstr ""
 
 msgid "Windows Shares (SMB)"
 msgstr "Ресурсы Windows (SMB)"
@@ -14599,6 +15300,9 @@ msgstr ""
 msgid "Years"
 msgstr "Годы"
 
+msgid "Yellow"
+msgstr ""
+
 msgid "Yes"
 msgstr "Да"
 
@@ -14622,6 +15326,16 @@ msgstr "Дедупликация ZFS"
 
 msgid "ZFS Filesystem"
 msgstr "Файловая система ZFS"
+
+msgid ""
+"ZFS L2ARC read-cache that can be used with fast devices to accelerate read "
+"operations. Optional vdev that can be removed."
+msgstr ""
+
+msgid ""
+"ZFS LOG device that can improve speeds of synchronous writes. Optional "
+"write-cache that can be removed."
+msgstr ""
 
 msgid "ZFS deduplication"
 msgstr "ZFS дедупликация"
@@ -14704,6 +15418,12 @@ msgstr ""
 msgid "assign_localhost"
 msgstr ""
 
+msgid "at 00:00 (12:00 AM)"
+msgstr ""
+
+msgid "at the start of each hour"
+msgstr ""
+
 msgid "below to confirm."
 msgstr "ниже, чтобы подтвердить."
 
@@ -14711,6 +15431,9 @@ msgid "boot"
 msgstr "загрузка"
 
 msgid "children_max"
+msgstr ""
+
+msgid "click here"
 msgstr ""
 
 msgid "close"
@@ -14917,6 +15640,12 @@ msgstr ""
 msgid "nthr"
 msgstr ""
 
+msgid "on Sundays at 00:00 (12:00 AM)"
+msgstr ""
+
+msgid "on the first day of the month at 00:00 (12:00 AM)"
+msgstr ""
+
 msgid "openfiles"
 msgstr ""
 
@@ -14936,6 +15665,9 @@ msgid "priority"
 msgstr "приоритет"
 
 msgid "pseudoterminals"
+msgstr ""
+
+msgid "reset"
 msgstr ""
 
 msgid "resolver"
@@ -14989,11 +15721,11 @@ msgstr ""
 msgid "template"
 msgstr "шаблон"
 
-msgid "total memory installed"
-msgstr "установленная память"
+msgid "to set up configuration first."
+msgstr ""
 
-msgid "used"
-msgstr "занято"
+msgid "total available"
+msgstr ""
 
 msgid "vmemoryuse"
 msgstr ""

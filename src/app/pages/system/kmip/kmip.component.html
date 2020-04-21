@@ -1,0 +1,30 @@
+<mat-card class="kmip-status-card">
+    <mat-spinner class="kmip-spinner" [diameter]='40' id="kmip-spinner" *ngIf="showSpinner"></mat-spinner>
+    <mat-card-content>
+        <h4>{{ 'KMIP Key Status' | translate }}</h4>
+        <div class="key-status" *ngIf="!showSpinner">
+            <div *ngIf="sync_pending">
+                <mat-icon class="key-pending" role="img" fontSet="mdi-set" fontIcon="mdi-progress-clock">
+                </mat-icon>
+                <span>{{ 'Pending Sync' | translate }}</span>
+            </div>
+            <div *ngIf="!kmip_enabled">
+                <mat-icon class="key-disabled" role="img" fontSet="mdi-set" fontIcon="mdi-sync-off"></mat-icon>
+                <span>{{ 'Disabled' | translate }}</span>
+            </div>
+            <div class="key-syncing" *ngIf="!sync_pending && kmip_enabled">
+                <mat-icon class="key-syncing" role="img" fontSet="mdi-set" fontIcon="mdi-check-circle-outline"></mat-icon>
+                <span>{{ 'Synced' | translate }}</span>
+            </div>
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-button class="btn mat-primary" color="primary" [disabled]="!sync_pending" (click)="syncKeys()">
+            {{ "SYNC KEYS" | translate }}
+        </button>
+        <button mat-button class="btn mat-primary" color="primary" [disabled]="!sync_pending" (click)="clearSyncKeys()">
+            {{ "CLEAR SYNC KEYS" | translate }}
+        </button>
+    </mat-card-actions>
+</mat-card>
+<entity-form [conf]="this"></entity-form>

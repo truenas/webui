@@ -4,7 +4,7 @@ import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 import { Subject, Observable } from 'rxjs';
 import { CoreEvent } from 'app/core/services/core.service';
 import { LabelFactory } from './label-factory';
-import { Chassis } from './chassis';
+import { ChassisView } from './chassis-view';
 import { DriveTray } from './drivetray';
 import * as d3 from 'd3';
 
@@ -29,7 +29,7 @@ export class VDevLabelsSVG {
   protected svg:any; // Our d3 generated svg layer
   protected mainStage: any; // WebGL Canvas
   protected app: any;
-  protected chassis: Chassis; // The chassis we are labelling
+  protected chassis: ChassisView; // The chassis we are labelling
   public color: string;
   public selectedDiskColor: string;
   public highlightColor: string;
@@ -42,8 +42,8 @@ export class VDevLabelsSVG {
 
   constructor(chassis, app, theme, disk){
     this.selectedDisk = disk;
-    this.color = 'var(--blue)';
-    this.selectedDiskColor = 'var(--cyan)';
+    this.color = 'var(--cyan)';
+    this.selectedDiskColor = 'var(--yellow)';
     this.highlightColor = theme.yellow;
 
     this.onInit(chassis, app);
@@ -161,9 +161,10 @@ export class VDevLabelsSVG {
       let present = vdev.slots && vdev.slots[disk] ? true : false; // Is the disk in this enclosure?
       let slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
 
-      if(slot){
+      if(slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end){
         // Create tile if the disk is in the current enclosure
-        let src = this.chassis.driveTrayObjects[slot - 1].container;
+        const dt = this.chassis.driveTrayObjects.filter(dto => parseInt(dto.id) == slot)[0];
+        let src = dt.container;
         let tray = src.getGlobalPosition();
 
         let tileClass = "tile tile_" + disk;
@@ -243,7 +244,7 @@ export class VDevLabelsSVG {
     if(devname == this.selectedDisk.devname){ return; }
 
     let targetEl = this.getParent().querySelector('svg path.' + devname);
-    targetEl.setAttribute('stroke-opacity', 0.25);
+    targetEl.setAttribute('stroke-opacity', 1);
   }
 
   unhighlightAllTraces(traces, exceptions: string[]){
@@ -251,7 +252,7 @@ export class VDevLabelsSVG {
 
     traces.forEach((item, index) => {
       if(exceptions.includes(item.className.baseVal)){ return; }
-      item.setAttribute('stroke-opacity', 0.25);
+      item.setAttribute('stroke-opacity', 1);
     });
     let tiles = this.getParent().querySelectorAll('rect.tile');
     this.showAllTiles(tiles);

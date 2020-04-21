@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, OnDestroy, OnChanges} from '@angular/core';
+import { Component, AfterViewInit, AfterContentInit, Input, ViewChild, OnDestroy, OnChanges, ElementRef} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from 'app/services/';
@@ -64,19 +64,20 @@ export interface ReportData {
   templateUrl:'./report.component.html',
   styleUrls: ['./report.component.css']
 })
-export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges ,OnDestroy {
+export class ReportComponent extends WidgetComponent implements AfterViewInit, AfterContentInit, OnChanges ,OnDestroy {
 
   // Labels
   @Input() localControls?: boolean = true;; 
   @Input() report: Report;
   @Input() identifier?: string;
+  @Input() retroLogo?: string;
   @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
 
 
   public data: ReportData;
   public ready: boolean = false;
   public product_type = window.localStorage['product_type'];
-  private delay: number = 1000; // delayed chart render time
+  private delay: number = 1000; // delayed report render time
   
   get reportTitle(){
     return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
@@ -164,7 +165,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     });
 
     this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
-      this.chartColors = this.processThemeColors(evt.data);
+        this.chartColors = this.processThemeColors(evt.data);
     });
 
     this.core.emit({name:"ThemeDataRequest", sender:this});
@@ -184,15 +185,19 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.currentEndDate = rrdOptions.end;
   }
 
+  ngAfterContentInit(){}
+
   ngOnChanges(changes){
     if(changes.report){
-      if(changes.report.previousValue){
+      if(changes.report.previousValue && this.ready == false){
         this.setupData(changes); 
-      } else if(!changes.report.previousValue){
+      } else if(!changes.report.previousValue ){
         setTimeout(() => {
           this.ready = true;
           this.setupData(changes); 
         }, this.delay);
+      } else if(changes.report.previousValue.title !== changes.report.currentValue.title){
+        this.setupData(changes); 
       }
     } 
   }
@@ -358,7 +363,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const start = Math.floor(rrdOptions.start / 1000);
     const end = Math.floor(rrdOptions.end / 1000);
     let timeFrame = {"start": start, "end": end}; 
-  
+    
     this.core.emit({name:"ReportDataRequest", data:{report: report, params: params, timeFrame: timeFrame}, sender: this});
   }
 

@@ -1,0 +1,194 @@
+<mat-card 
+  class="view-card {{chassis.front.totalDriveTrays > 7 ? 'mini mini-xl': 'mini'}}"
+  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}" 
+  id="{{currentTab.alias}}" 
+  (window:resize)="onResize($event)"
+  ngClass.gt-md="gt-md"
+  ngClass.md="md"
+  ngClass.sm="sm"
+  ngClass.xs="xs">
+
+  <mat-toolbar id="Disks-toolbar">
+    <div *ngIf="selectedEnclosure.enclosureKey > 0" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div *ngIf="selectedEnclosure.enclosureKey < 1" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? system.platform + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+
+    <!-- ENCLOSURE MODEL -->
+    <div class="model dom-overlay" style="opacity:0.75;">
+      <div class="model-inner">
+        <!--<mat-icon svgIcon="truenas_logo_full" style="width:140px; height:auto; margin-top:12px;"></mat-icon>-->
+      </div>
+    </div>
+
+  </mat-toolbar>
+
+  <mat-card-content #cardcontent 
+    fxLayout="row">
+    <div fxFlex="60%">
+      <!-- LEGEND -->
+      <div class="header-container" id="legend">
+        <h3 class="header">Pools</h3>
+        <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
+          <div class="legend-item" *ngFor="let pool of enclosurePools; let i=index">
+            <div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+            </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
+        </div>
+
+        <ng-template #noPools>
+          <div id="legend-no-pools">
+            <div>No pools on this enclosure.</div>
+          </div>
+        </ng-template>
+      </div>
+
+
+      <!-- VISUALIZER -->
+      <div #disksoverview
+               id="disks-overview"
+               [class]="currentView">
+        <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+
+        <!-- DISK NAMES -->
+        <div class="overlay names">
+          <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
+            <div class="slot-label fn-theme-primary" style="position:absolute; z-index:12; left:calc(48% - 24px); top:calc({{stackPositions()[i].y}}px + 8px);">
+              <strong>{{i + 1}}</strong>
+            </div>
+            <div style="position:absolute; z-index:12; left:48%; top:calc({{stackPositions()[i].y}}px + 8px);">
+              {{findDiskBySlotNumber(i+1) ? findDiskBySlotNumber(i + 1).name : 'Empty'}}
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- DISK STATUS -->
+        <div class="overlay status" style="right: 0;">
+          <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
+            <div *ngIf="findDiskBySlotNumber(i + 1)" style="position:absolute; z-index:12; left:12.5%; top:calc({{stackPositions()[i].y}}px + 8px);">
+              <mat-icon 
+                [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE' && findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'}" 
+                role="img">
+                check_circle
+              </mat-icon> &nbsp;
+              <span class="status-text">{{findDiskBySlotNumber(i + 1).status}}</span>
+            </div>
+          </ng-container>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DETAILS/OVERVIEW -->
+    <div fxFlex id="disks-details" #diskDetails>
+
+      <ng-container *ngIf="selectedDisk && currentView == 'details'" #details>
+        <!-- DISK SELECTED -->
+        <div class="header-container"  #disksdetails id="details">
+          <button class="back-btn" mat-button (click)="clearDisk()"><mat-icon role="img">close</mat-icon></button>
+          <h3 class="header">Drive Details {{selectedDisk.name}}</h3>
+          <div>
+            <ul>
+              <li><strong>Pool:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</li>
+
+              <li><strong>Vdev:</strong>  &nbsp;&nbsp;&nbsp;
+                <span *ngIf="selectedVdev.type == 'DISK'">NONE</span>
+                <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
+                
+                <span *ngIf="selectedVdev.topology"> {{selectedVdev.topology == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
+              </li>
+
+              <li><strong>Serial:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.serial}}</li>
+              <li><strong>Status:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.status}}</li>
+              <li><strong>Acoustic Level:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.acousticlevel}}</li>
+              <li><strong>Advanced Power Management:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.advpowermgmt}}</li>
+              <li><strong>S.M.A.R.T. Enabled:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.togglesmart ? 'Yes' : 'No'}}</li>
+              <li><strong>S.M.A.R.T. Options:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'}}</li>
+              <li><strong>Transfer Mode:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.transfermode}}</li>
+              <li><strong>HDD Standby:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.hddstandby}}</li>
+            </ul>
+
+            <h3 class="header" style="margin-top:24px;">Stats</h3>
+            <div class="disk-basic-details" fxLayout="row wrap" fxLayoutAlign="center center">
+              <div>
+                <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
+                <div class="capacity">{{converter(selectedDisk.size)}}</div>
+              </div>
+              <div class="disk-stats-wrapper" fxFlex>
+                <ul class="disk-stats" *ngIf="selectedDisk.stats; else nostats">
+                  <li><strong>Read Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.read_errors}}</li>
+                  <li><strong>Write Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.write_errors}}</li>
+                  <li><strong>Checksum Errors: </strong> &nbsp;&nbsp;{{selectedDisk.stats.checksum_errors}}</li>
+                </ul>
+                <ng-template #nostats>
+                  <div style="padding:48px; text-align:center">
+                    <mat-icon role="img" style="margin:6px;position:relative;top:5px">info_icon</mat-icon>
+                    <strong>Must be part of a pool to check errors</strong>
+                  </div>
+                </ng-template>
+              </div>
+              <!--<div class="disk-actions">
+                <button id="identify-btn" class="front-rear-toggle" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
+                </div>-->
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="currentView == 'pools' || currentView == 'status'" #overview>
+        <!-- DISK NOT SELECTED -->
+        <div class="header-container half-height"  id="general-overview">
+          <h3 class="header">Disks Overview</h3>
+          <div>
+            <ul>
+              <li><strong>Pools:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.poolKeys)}}</li>
+              <li><strong>Total Disks:</strong>  &nbsp;&nbsp;&nbsp;{{count(selectedEnclosure.disks)}}</li>
+              <li><strong>Estimated Raw Capacity:</strong>  &nbsp;&nbsp;&nbsp;{{converter(system.rawCapacity())}}</li>
+              <li><strong>Failed Disks:</strong>  &nbsp;&nbsp;&nbsp;{{failedDisks.length}}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="header-container half-height"  id="drive-temps">
+          <h3 class="header">Drive Temperatures</h3>
+          <div fxLayout="row wrap" fxLayoutGap="10%">
+              <ng-container *ngIf="temperatures && temperatureScales">
+                <ng-container *ngFor="let diskName of temperatures.keys;">
+                  <temperature-meter *ngIf="temperatures.values[diskName]; else notemps" 
+                    [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " 
+                    [source]="diskName" 
+                    [value]="temperatures.values[diskName]"
+                    [unit]="temperatures.unit"
+                    [symbolText]="temperatures.symbolText"></temperature-meter>
+                  <ng-template #notemps>
+                    <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
+                      <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}} 
+                      <tooltip style="position:relative; top:5px;" 
+                        position="above" 
+                        header="Temperature data missing." 
+                        message="No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here">
+                      </tooltip>
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </ng-container>
+            
+            <ul *ngIf="temperatures && !temperatureScales">
+              <ng-container>
+                <li *ngFor="let diskName of temperatures.keys;">
+                  <strong>{{diskName}}:</strong> &nbsp;&nbsp;&nbsp;
+                  {{temperatures.values[diskName] ? temperatures.values[diskName] : 'Temperature not available.'}}
+                  {{temperatures.values[diskName] ? temperatures.symbolText + 'C' : ''}}
+                  <tooltip *ngIf="!temperatures.values[diskName]" style="position:relative; top:5px;" 
+                    position="above" 
+                    header="Temperature data missing." 
+                    message="No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here">
+                  </tooltip>
+                </li>
+              </ng-container>
+            </ul>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+  </mat-card-content>
+</mat-card>

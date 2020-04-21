@@ -20,8 +20,8 @@
 }
 
 .panel_status_enc {
-    padding-right: 20px;
-    width: 30px;
+    font-size: 16px;
+    padding-left: 4px;
 }
 
 .encryption_icon {
@@ -76,4 +76,8 @@
     max-width: 30%;
     width: 30%;
     min-width: 30%;
+}
+
+.icons {
+    font-size: 24px; 
 }

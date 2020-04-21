@@ -47,8 +47,8 @@ export class TooltipComponent {
       'min-height':'64px'
     };
 
-    const fpr = formParent.offsetLeft + formParent.offsetWidth
-    let insideJob = formParent.clientWidth - posRight > 300 ? true : false;
+    const fpr = formParent ? formParent.offsetLeft + formParent.offsetWidth : null;
+    let insideJob = formParent ? (formParent.clientWidth - posRight > 300 ? true : false) : null;
 
     if(this.positionOverride){
       this.positionString = this.positionOverride;
@@ -91,7 +91,7 @@ export class TooltipComponent {
       card = formParent.offsetParent.offsetParent.offsetParent.offsetParent;
     }
 
-    if(card.parentNode.nodeName.toLowerCase() == 'entity-wizard'){
+    if(card && card.parentNode.nodeName.toLowerCase() == 'entity-wizard'){
       this.isWizard = true;
     }
 

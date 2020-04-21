@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
 import { DialogService, StorageService, TaskService } from '../../../../services/';
 import { FieldConfig, UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -26,88 +27,111 @@ export class SnapshotFormComponent implements OnDestroy {
   protected datasetFg: any;
   protected dataset_subscription: any;
   protected save_button_enabled = true;
+  protected entityForm;
 
-  public fieldConfig: FieldConfig[] = [{
-    type: 'select',
-    name: 'dataset',
-    placeholder: helptext.dataset_placeholder,
-    tooltip: helptext.dataset_tooltip,
-    options: [],
-    required: true,
-    validation: [Validators.required],
-  }, {
-    type: 'checkbox',
-    name: 'recursive',
-    placeholder: helptext.recursive_placeholder,
-    tooltip: helptext.recursive_tooltip,
-    value: true,
-  }, {
-    type: 'textarea',
-    name: 'exclude',
-    placeholder: helptext.exclude_placeholder,
-    tooltip: helptext.exclude_tooltip
-  }, {
-    type: 'input',
-    name: 'lifetime',
-    placeholder: helptext.lifetime_placeholder,
-    tooltip: helptext.lifetime_tooltip,
-    inputUnit: {
-      type: UnitType.duration,
-      decimal: false,
-      default: 'HOUR',
-      allowUnits: ['HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR']
+  public fieldSets: FieldSet[] = [
+    {
+      name: helptext.fieldset_dataset,
+      class: 'dataset',
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'select',
+          name: 'dataset',
+          placeholder: helptext.dataset_placeholder,
+          tooltip: helptext.dataset_tooltip,
+          options: [],
+          required: true,
+          validation: [Validators.required],
+        }, {
+          type: 'checkbox',
+          name: 'recursive',
+          placeholder: helptext.recursive_placeholder,
+          tooltip: helptext.recursive_tooltip,
+          value: true,
+        }, {
+          type: 'chip',
+          name: 'exclude',
+          placeholder: helptext.exclude_placeholder,
+          tooltip: helptext.exclude_tooltip
+        },
+      ]
+    },
+    {
+      name: helptext.fieldset_schedule,
+      class: 'schedule',
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'input',
+          name: 'lifetime',
+          placeholder: helptext.lifetime_placeholder,
+          tooltip: helptext.lifetime_tooltip,
+          value: "2 WEEKS",
+          required: true,
+          inputUnit: {
+            type: UnitType.duration,
+            decimal: false,
+            default: 'HOUR',
+            allowUnits: ['HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR']
+          }
+        }, {
+          type: 'input',
+          name: 'naming_schema',
+          placeholder: helptext.naming_schema_placeholder,
+          tooltip: helptext.naming_schema_tooltip,
+          value: 'auto-%Y-%m-%d_%H-%M',
+        }, {
+          type: 'scheduler',
+          name: 'snapshot_picker',
+          placeholder: helptext.snapshot_picker_placeholder,
+          tooltip: helptext.snapshot_picker_tooltip,
+          validation: [Validators.required],
+          required: true,
+          value: "0 0 * * *"
+        }, {
+          type: 'select',
+          name: 'begin',
+          placeholder: helptext.begin_placeholder,
+          tooltip: helptext.begin_tooltip,
+          options: [],
+          value: '00:00',
+          required: true,
+          validation: [Validators.required],
+        }, {
+          type: 'select',
+          name: 'end',
+          placeholder: helptext.end_placeholder,
+          tooltip: helptext.end_tooltip,
+          options: [],
+          value: '23:59',
+          required: true,
+          validation: [Validators.required],
+        }, {
+          type: 'checkbox',
+          name: 'allow_empty',
+          placeholder: helptext.allow_empty_placeholder,
+          tooltip: helptext.allow_empty_tooltip,
+          value: true,
+        }, {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext.enabled_placeholder,
+          tooltip: helptext.enabled_tooltip,
+          value: true,
+        }
+      ]
     }
-  }, {
-    type: 'input',
-    name: 'naming_schema',
-    placeholder: helptext.naming_schema_placeholder,
-    tooltip: helptext.naming_schema_tooltip,
-    value: 'auto-%Y-%m-%d_%H-%M',
-  }, {
-    type: 'scheduler',
-    name: 'snapshot_picker',
-    placeholder: helptext.snapshot_picker_placeholder,
-    tooltip: helptext.snapshot_picker_tooltip,
-    validation: [Validators.required],
-    required: true,
-    value: "0 0 * * *"
-  }, {
-    type: 'select',
-    name: 'begin',
-    placeholder: helptext.begin_placeholder,
-    tooltip: helptext.begin_tooltip,
-    options: [],
-    value: '00:00',
-    required: true,
-    validation: [Validators.required],
-  }, {
-    type: 'select',
-    name: 'end',
-    placeholder: helptext.end_placeholder,
-    tooltip: helptext.end_tooltip,
-    options: [],
-    value: '23:59',
-    required: true,
-    validation: [Validators.required],
-  }, {
-    type: 'checkbox',
-    name: 'allow_empty',
-    placeholder: helptext.allow_empty_placeholder,
-    tooltip: helptext.allow_empty_tooltip,
-    value: true,
-  }, {
-    type: 'checkbox',
-    name: 'enabled',
-    placeholder: helptext.enabled_placeholder,
-    tooltip: helptext.enabled_tooltip,
-    value: true,
-  }];
+  ]
+  public fieldConfig: FieldConfig;
 
   constructor(protected router: Router, protected taskService: TaskService,
               protected aroute: ActivatedRoute, protected storageService: StorageService,
               private dialog: DialogService) {
-    const begin_field = _.find(this.fieldConfig, { 'name': 'begin' });
-    const end_field = _.find(this.fieldConfig, { 'name': 'end' });
+    const begin_field = _.find(this.fieldSets[1].config, { 'name': 'begin' });
+    const end_field = _.find(this.fieldSets[1].config, { 'name': 'end' });
     const time_options = this.taskService.getTimeOptions();
     for (let i = 0; i < time_options.length; i++) {
       begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
@@ -125,6 +149,7 @@ export class SnapshotFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm) {
+    this.entityForm = entityForm;
     const datasetField = _.find(this.fieldConfig, { 'name': 'dataset' });
 
     this.storageService.getDatasetNameOptions().subscribe(
@@ -150,6 +175,16 @@ export class SnapshotFormComponent implements OnDestroy {
       }
     });
 
+    entityForm.formGroup.controls['snapshot_picker'].valueChanges.subscribe(value => {
+      if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+        this.entityForm.setDisabled('begin', true, true);
+        this.entityForm.setDisabled('end', true, true);
+
+      } else {
+        this.entityForm.setDisabled('begin', false, false);
+        this.entityForm.setDisabled('end', false, false);
+      }
+    })
   }
 
   ngOnDestroy() {
@@ -167,12 +202,7 @@ export class SnapshotFormComponent implements OnDestroy {
       data.schedule.dow;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
-    if (data.exclude && Array.isArray(data.exclude) && data.exclude.length > 0) {
-      const newline = String.fromCharCode(13, 10);
-      data.exclude = data.exclude.join(`,${newline}`);
-    } else {
-      data.exclude = '';
-    }
+
     this.dataset = data.dataset;
     data['lifetime'] = data['lifetime_value'] + ' ' + data['lifetime_unit'] + (data['lifetime_value'] > 1 ? 'S' : '');
     return data;
@@ -186,13 +216,6 @@ export class SnapshotFormComponent implements OnDestroy {
 
     const spl = value.snapshot_picker.split(" ");
     delete value.snapshot_picker;
-
-    if (value.exclude && value.exclude.trim()) {
-      // filter() needed because: "hello, world,".split(",") === ["hello", "world", ""]
-      value.exclude = value.exclude.split(",").map((val: string) => val.trim()).filter((val: string) => !!val);
-    } else {
-      value.exclude = [];
-    }
 
     value['schedule'] = {
       begin: value['begin'],

@@ -18,17 +18,18 @@ interface VDev {
 
 export class SystemProfiler {
 
-  public systemDisks:any[] = [];
+  //public systemDisks:any[] = [];
   public platform: string; // Model Unit
   public profile: Enclosure[] = [];
   public headIndex: number;
+  public rearIndex: number;
 
   private _diskData: any[];
   get diskData(){
     return this._diskData;
   }
   set diskData(obj){
-    this._diskData = this.filterSystemDisk(obj);
+    this._diskData = obj;
     this.parseDiskData(this._diskData);
     this.parseEnclosures(this._enclosures);
   }
@@ -67,11 +68,18 @@ export class SystemProfiler {
   }
 
   createProfile(){
+    let rearEnclosure;
+
     // with the enclosure info we set up basic data structure
     for(let i = 0; i < this.enclosures.length; i++){
-
-      if(this.enclosures[i].controller == true){ 
-        this.headIndex = i;
+      // Detect rear drive bays
+      if(this.enclosures[i].controller == true ){ 
+        if(this.enclosures[i].id.includes('plx_enclosure')){
+          this.enclosures[i].model = this.enclosures[this.headIndex].model + " Rear Bays";
+          this.rearIndex = i;
+        } else {
+          this.headIndex = i;
+        }
       }
 
       const series = this.getSeriesFromModel(this.platform);
@@ -89,7 +97,7 @@ export class SystemProfiler {
       console.warn("No Head Unit Detected! Defaulting to enclosure 0...");
       this.headIndex = 0;
     } 
-    
+
   }
 
   getSeriesFromModel(model: string): string{
@@ -107,8 +115,11 @@ export class SystemProfiler {
   private parseDiskData(disks){
     let data = disks; // DEBUG
     data.forEach((item, index) => {
-      if(!item.enclosure){return};
+
+      if(!item.enclosure){return} 
+
       let enclosure = this.profile[item.enclosure.number];
+      if(!enclosure){return} 
       item.status = 'AVAILABLE'; // Label it as available. If it is assigned to a vdev/pool then this will be overridden later.
       enclosure.diskKeys[item.devname] = enclosure.disks.length; // index to enclosure.disks
       enclosure.disks.push(item);
@@ -116,19 +127,6 @@ export class SystemProfiler {
 
   }
 
-  filterSystemDisk(disks){
-    let sd = [];
-    
-    let data = disks.filter((item, index) => {
-      if(!item.enclosure){
-        this.systemDisks.push(item);
-        sd.push(index);
-      } 
-      return item.enclosure;
-      
-    });
-    return data;
-  }
   
   private parseEnclosures(obj){
     // Provide a shortcut to the enclosures object
@@ -139,7 +137,7 @@ export class SystemProfiler {
   
   private parseSensorData(obj){
     let powerStatus = obj.filter(v => v.name.startsWith("PS"));
-    if(this.enclosures[this.headIndex].model == "M Series"){
+    if(this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model == "M Series"){
       const elements = powerStatus.map((item, index) => {
         item.descriptor = item.name;
         item.status = item.value == 1 ? 'OK' : 'FAILED';
@@ -180,20 +178,26 @@ export class SystemProfiler {
         disks: {}
       }
 
+      let stats = {}; // Store stats from pool.query disk info
+
       if(vdev.children.length == 0 && vdev.device){
-          
           let spl = vdev.device.split('p');
           let name = spl[0]
           v.disks[name] = -1; // no children so we use this as placeholder
+          console.log(name);
       } else if(vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
-          let spl = disk.device.split('p');
-          let name = spl[0]
-          v.disks[name] = dIndex;
+          if(!disk.device && disk.status == "REMOVED"){ 
+            return; 
+          } else {
+            let spl = disk.disk.split('p'); // was disk.device
+            let name = spl[0]
+            v.disks[name] = dIndex;
+            stats[name] = disk.stats;
+          }
         });
       } 
-      
-      this.storeVdevInfo(v);
+      this.storeVdevInfo(v,stats);
     });
   }
 
@@ -201,13 +205,13 @@ export class SystemProfiler {
     return this.pools[alias.poolIndex].topology.data[alias.vdevIndex]
   }
 
-  storeVdevInfo(vdev:VDev){
+  storeVdevInfo(vdev:VDev, stats:any){
     for(let diskName in vdev.disks){
-      this.addVDevToDiskInfo(diskName, vdev);
+      this.addVDevToDiskInfo(diskName, vdev, stats[diskName]);
     }
   }
 
-  addVDevToDiskInfo(diskName:string, vdev:VDev):void{
+  addVDevToDiskInfo(diskName:string, vdev:VDev,stats?:any):void{
     let keys = Object.keys(vdev.disks);
 
     let enclosureIndex = this.getEnclosureNumber(diskName);
@@ -219,6 +223,7 @@ export class SystemProfiler {
 
     let diskKey = enclosure.diskKeys[diskName];
     enclosure.disks[diskKey].vdev = vdev;
+    enclosure.disks[diskKey].stats = stats;
     enclosure.disks[diskKey].status = this.getDiskStatus(diskName, enclosure, vdev);
     if(!enclosure.poolKeys[vdev.pool]){
       enclosure.poolKeys[vdev.pool] = vdev.poolIndex;
@@ -294,8 +299,20 @@ export class SystemProfiler {
   }
 
   getEnclosureExpanders(index: number){
+    if(this.rearIndex && index == this.rearIndex){ index = this.headIndex; }
     let raw = this.enclosures[index].elements.filter((item) => {return item.name == "SAS Expander"})
     return raw[0].elements;
+  }
+
+  rawCapacity(){
+    if(!this.diskData || this.diskData.length == 0){ return; }
+    let capacity = 0;
+    this.diskData.forEach((disk) => { 
+      if(disk.vdev && disk.vdev.topology == "data"){
+        capacity += disk.size;
+      } 
+    });
+    return capacity;
   }
     
 }

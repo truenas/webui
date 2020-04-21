@@ -25,8 +25,14 @@
   width:400px;
 }
 
+.mat-card.content {
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .preview-controls{
-  min-height: 60vh;
+  min-height: 59vh;
 }
 
 .tabs{
@@ -75,3 +81,18 @@
   height:75vh;
   overflow:auto;
 }
+
+.button-row:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.button-row button,
+.button-row a {
+  margin-right: 8px;
+  margin-top: 5px;
+}
+
+.form-field-wrapper {
+  margin-bottom: 10px;
+}
+

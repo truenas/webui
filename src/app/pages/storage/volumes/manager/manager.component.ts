@@ -30,7 +30,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public can_suggest = false;
   public selected: Array < any > = [];
   public vdevs:
-    any = { data: [{}], cache: [], spare: [], log: [] };
+    any = { data: [{}], cache: [], spares: [], log: [], special: [], dedup: [] };
   public original_vdevs: any = {};
   public original_disks: Array < any >;
   public orig_suggestable_disks: Array < any >;
@@ -50,6 +50,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public isNew = true;
   public vol_encrypt: number = 0;
   public isEncrypted: boolean = false;
+  public encryption_algorithm = "AES-256-CCM";
+  public encryption_algorithm_options = [];
   public re_has_errors = false;
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
@@ -60,9 +62,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public poolError = null;
   public isFooterConsoleOpen: boolean;
   public loaderOpen = false;
+  public help = helptext;
 
   public submitTitle = T("Create");
-  protected extendedSubmitTitle = T("Extend");
+  protected extendedSubmitTitle = T("Add Vdevs");
 
   protected current_layout: any;
   protected existing_pool: any;
@@ -264,6 +267,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.ws.call('pool.dataset.encryption_algorithm_choices').subscribe(algorithms => {
+      for (const algorithm in algorithms) {
+        if (algorithms.hasOwnProperty(algorithm)) {
+          this.encryption_algorithm_options.push({label:algorithm, value:algorithm});
+        }
+      }
+    });
     this.ws.call('system.advanced.config').subscribe(res => {
       this.swapondrive = res.swapondrive;
     });
@@ -356,6 +366,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   removeVdev(vdev: VdevComponent) {
+    console.log(vdev);
     let index = null;
     this.vdevComponents.forEach((item, i) => {
       if (item === vdev) {
@@ -413,7 +424,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         size_estimate += vdev.rawSize;
         if (data_vdev_disknum > 0) {
-          if( data_vdev_disknum !== this.first_data_vdev_disknum) {
+          if( data_vdev_disknum !== this.first_data_vdev_disknum && this.first_data_vdev_type !== 'stripe') {
             this.getDiskNumErrorMsg(data_vdev_disknum);
           }
           if( data_vdev_type !== this.first_data_vdev_type) {
@@ -520,7 +531,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     let confirmButton = T('Create Pool');
     let diskWarning = this.diskAddWarning;
     if (!this.isNew) {
-      confirmButton = T('Extend Pool');
+      confirmButton = T('Add Vdevs');
       diskWarning = this.diskExtendWarning;
     }
 
@@ -551,6 +562,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         let body = {};
         if (this.isNew) {
           body = {name: this.name, encryption: this.isEncrypted, topology: layout };
+          if (this.isEncrypted) {
+            body['encryption_options'] = {generate_key: true, algorithm:this.encryption_algorithm};
+          }
         } else {
           body = { topology: layout };
         }
@@ -568,8 +582,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
             switchMap((r: any) => {
               if (this.isEncrypted) {
                 const downloadDialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-                downloadDialogRef.componentInstance.volumeId = r.data.id;
-                downloadDialogRef.componentInstance.fileName = "pool_" + r.data.name + "_encryption.key";
+                downloadDialogRef.componentInstance.new = true;
+                downloadDialogRef.componentInstance.volumeId = r.result.id;
+                downloadDialogRef.componentInstance.volumeName = r.result.name;
+                downloadDialogRef.componentInstance.fileName = "dataset_" + r.result.name + "_keys.json";
 
                 return downloadDialogRef.afterClosed();
               }

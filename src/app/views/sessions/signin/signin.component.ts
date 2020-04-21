@@ -37,10 +37,12 @@ export class SigninComponent implements OnInit, OnDestroy {
   private interval: any;
   public exposeLegacyUI = false;
   public tokenObservable:Subscription;
+  public isTwoFactor = false;
 
   signinData = {
     username: '',
-    password: ''
+    password: '',
+    otp: ''
   }
   public setPasswordFormGroup: FormGroup;
   public has_root_password: Boolean = true;
@@ -81,7 +83,7 @@ export class SigninComponent implements OnInit, OnDestroy {
         if (this.interval) {
           clearInterval(this.interval);
         }
-        if (this.product_type === 'ENTERPRISE') {
+        if (this.product_type === 'ENTERPRISE' || this.product_type === 'SCALE') {
           this.getHAStatus();
           setInterval(() => {
             this.getHAStatus();
@@ -110,7 +112,7 @@ export class SigninComponent implements OnInit, OnDestroy {
         this.checkSystemType();
       }, 5000);
     }
-    
+
     if (this.canLogin()) {
         this.loginToken();
     }
@@ -122,6 +124,10 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.setPasswordFormGroup = this.fb.group({
       password: new FormControl('', [Validators.required]),
       password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
+    });
+
+    this.ws.call('auth.two_factor_auth').subscribe(res => {
+      this.isTwoFactor = res;
     })
   }
 
@@ -181,7 +187,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   canLogin() {
     if (this.logo_ready && this.connected &&
        (this.failover_status === 'SINGLE' ||
-        this.failover_status === 'MASTER' || 
+        this.failover_status === 'MASTER' ||
         this.product_type === 'CORE' )) {
           return true;
     } else {
@@ -190,7 +196,8 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   getHAStatus() {
-    if (this.product_type === 'ENTERPRISE' && !this.checking_status) {
+    if ((this.product_type === 'ENTERPRISE' || this.product_type === 'SCALE')
+      && !this.checking_status) {
       this.checking_status = true;
       this.ws.call('failover.status').subscribe(res => {
         this.failover_status = res;
@@ -248,8 +255,11 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
 
-    this.ws.login(this.signinData.username, this.signinData.password)
-                      .subscribe((result) => { this.loginCallback(result); });
+    if (this.isTwoFactor) {
+      this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
+      .subscribe((result) => { this.loginCallback(result); });
+    } else {     this.ws.login(this.signinData.username, this.signinData.password)
+      .subscribe((result) => { this.loginCallback(result); });}
   }
 
   setpassword() {
@@ -276,7 +286,7 @@ export class SigninComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate([ '/dashboard' ]);
       }
-      this.tokenObservable.unsubscribe(); 
+      this.tokenObservable.unsubscribe();
     }
   }
   successLogin() {
@@ -294,11 +304,14 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.failed = true;
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
+    this.signinData.otp = '';
     let message = '';
     if (this.ws.token === null) {
-      message = 'Username or Password is incorrect.';
+      this.isTwoFactor ? message =
+        T('Username, Password, or 2FA Code is incorrect.') :
+        message = T('Username or Password is incorrect.');
     } else {
-      message = 'Token expired, please log back in.';
+      message = T('Token expired, please log back in.');
       this.ws.token = null;
     }
     this.translate.get('close').subscribe((ok: string) => {
@@ -316,5 +329,9 @@ export class SigninComponent implements OnInit, OnDestroy {
         window.location.href = '/legacy/';
       }
     });
+  }
+
+  openIX() {
+    window.open('https://www.ixsystems.com/', '_blank')
   }
 }

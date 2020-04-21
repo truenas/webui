@@ -1,0 +1,47 @@
+mat-card.kmip-status-card {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+}
+mat-card.kmip-status-card mat-card-content {
+    padding-top: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 0;
+}
+mat-card.kmip-status-card mat-card-actions {
+    padding-bottom: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.key-status mat-icon {
+  width:auto;
+  height:auto;
+  font-size: 24px;
+  position: relative;
+  padding-right: 15px;
+}
+
+mat-icon.key-syncing {
+    top: 3px;
+    color: var(--green);
+}
+
+mat-icon.key-pending {
+    top: 3px;
+    color: var(--red);
+}
+
+mat-icon.key-disabled {
+    top: 3px;
+    color: var(--grey);
+}
+
+.kmip-spinner {
+    position: absolute;
+    top: 30px; left: 0; bottom: 0; right: 0;
+    z-index: 10;
+    margin: 0 auto;
+}

@@ -59,7 +59,7 @@ export class ConfigurationComponent {
         tooltip : helptext.domain_tooltip,
       },
       {
-        type : 'textarea',
+        type : 'chip',
         name : 'domains',
         placeholder: helptext.domains_placeholder,
         tooltip : helptext.domains_tooltip,
@@ -151,7 +151,7 @@ export class ConfigurationComponent {
         tooltip : helptext.netwait_enabled_tooltip,
       },
       {
-        type : 'textarea',
+        type : 'chip',
         name : 'netwait_ip',
         placeholder : helptext.netwait_ip_placeholder,
         tooltip : helptext.netwait_ip_tooltip,
@@ -166,7 +166,7 @@ export class ConfigurationComponent {
                   ],
       },
       {
-        type : 'textarea',
+        type : 'chip',
         name : 'hosts',
         placeholder : helptext.hosts_placeholder,
         tooltip : helptext.hosts_tooltip,
@@ -198,8 +198,6 @@ export class ConfigurationComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    data['netwait_ip'] = data['netwait_ip'].join(' ');
-    data['domains'] = data['domains'].join(' ');
     data['netbios'] = data['service_announcement']['netbios'];
     data['mdns'] = data['service_announcement']['mdns'];
     data['wsd'] = data['service_announcement']['wsd'];
@@ -208,10 +206,6 @@ export class ConfigurationComponent {
   }
 
   clean(data) {
-    data['domains'] = data['domains'].split(' ');
-    if (data['netwait_ip']) {
-      data['netwait_ip'] = data['netwait_ip'].split(' ');
-    }
     data['service_announcement'] = {
       'netbios':data['netbios'],
       'mdns':data['mdns'],

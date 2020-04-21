@@ -8,17 +8,12 @@ import {StaticRouteFormComponent} from './staticroutes/staticroute-form/';
 import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
 import {IPMIComponent} from './ipmi/';
 import { NetworkSummaryComponent } from './networksummary/networksummary.component';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   {
     path: '',
     data: {title: 'Network'},
     children: [
-      {
-        path: '',
-        component: EntityDashboardComponent,
-      },
       {
         path : 'configuration', component : ConfigurationComponent,
         data: {title: 'Global Configuration', breadcrumb:'Global Configuration', icon: 'settings' }

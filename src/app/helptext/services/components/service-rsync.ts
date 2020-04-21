@@ -12,7 +12,7 @@ rsyncd_port_placeholder :T( 'TCP Port'),
 rsyncd_port_tooltip: T('<b>rsyncd</b> listens on this port.'),
 rsyncd_port_value: '873',
 
-rsyncd_auxiliary_placeholder : T('Auxiliary parameters'),
+rsyncd_auxiliary_placeholder : T('Auxiliary Parameters'),
 rsyncd_auxiliary_tooltip: T('Enter any additional parameters from <a\
  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
  target="_blank">rsyncd.conf(5)</a>.'),
@@ -39,10 +39,10 @@ rsyncmod_mode_options: [
 ],
 rsyncmod_mode_tooltip: T('Choose permissions for this rsync module.'),
 
-rsyncmod_maxconn_placeholder: T('Maximum connections'),
+rsyncmod_maxconn_placeholder: T('Max Connections'),
 rsyncmod_maxconn_value: 0,
 rsyncmod_maxconn_validation: Validators.min(0),
-rsyncmod_maxconn_tooltip: T('Maximum connections to this module. <i>0</i> \
+rsyncmod_maxconn_tooltip: T('Maximum number of connections to this module. <i>0</i> \
  is unlimited.'),
 
 rsyncmod_user_placeholder: T('User'),
@@ -58,20 +58,21 @@ rsyncmod_hostsallow_tooltip: T('From <a \
  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" \
  target="_blank">rsyncd.conf(5)</a>. A list of patterns to match with \
  the hostname and IP address of a connecting client. The connection is \
- rejected if no patterns match. Separate patterns with whitespace or a \
- comma.'),
+ rejected if no patterns match. Separate entries by pressing \
+ <code>Enter</code>.'),
 
 rsyncmod_hostsdeny_placeholder: T('Hosts Deny'),
 rsyncmod_hostsdeny_tooltip: T('From <a \
  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" \
  target="_blank">rsyncd.conf(5)</a>. A list of patterns to match with \
  the hostname and IP address of a connecting client. The connection is \
- rejected when the patterns match. Separate patterns with whitespace \
- or a comma.'),
+ rejected when the patterns match. Separate entries by pressing \
+ <code>Enter</code>.'),
 
-rsyncmod_auxiliary_placeholder: T('Auxiliary parameters'),
+rsyncmod_auxiliary_placeholder: T('Auxiliary Parameters'),
 rsyncmod_auxiliary_tooltip: T('Enter any additional settings from <a\
  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
- target="_blank">rsyncd.conf(5)</a>.'),
+ target="_blank">rsyncd.conf(5)</a>. Separate entries by \
+ pressing <code>Enter</code>.'),
 
 }

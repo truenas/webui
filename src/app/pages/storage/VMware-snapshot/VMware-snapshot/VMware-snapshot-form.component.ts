@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { RestService, WebSocketService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services/dialog.service';
@@ -37,56 +38,65 @@ export class VMwareSnapshotFormComponent {
   private dataListComplete: any;
   private fileSystemList: any;
 
-  protected fieldConfig: FieldConfig[] = [
+  protected fieldConfig: FieldConfig[];
+  public fieldSets: FieldSet[] = [
     {
-      type: 'input',
-      name: 'hostname',
-      placeholder: helptext.VMware_snapshot_form_hostname_placeholder,
-      tooltip: helptext.VMware_snapshot_form_hostname_tooltip,
-      validation: helptext.VMware_snapshot_form_hostname_validation,
-      required: true
-    },
-    {
-      type: 'input',
-      name: 'username',
-      placeholder: helptext.VMware_snapshot_form_username_placeholder,
-      tooltip: helptext.VMware_snapshot_form_username_tooltip,
-      validation: helptext.VMware_snapshot_form_username_validation,
-      required: true
-    },
-    {
-      type: 'input',
-      name: 'password',
-      placeholder: helptext.VMware_snapshot_form_password_placeholder,
-      tooltip: helptext.VMware_snapshot_form_password_tooltip,
-      inputType: 'password',
-      validation: helptext.VMware_snapshot_form_password_validation,
-      required: true,
-      blurStatus: true,
-      parent: this,
-      blurEvent: this.blurEvent,
-      togglePw: true
-    },
-    {
-      type: 'select',
-      name: 'filesystem',
-      placeholder: helptext.VMware_snapshot_form_filesystem_placeholder,
-      tooltip: helptext.VMware_snapshot_form_filesystem_tooltip,
-      validation: helptext.VMware_snapshot_form_filesystem_validation,
-      required: true,
-      options: []
-    },
-    {
-      type: 'select',
-      name: 'datastore',
-      placeholder: helptext.VMware_snapshot_form_datastore_placeholder,
-      tooltip: helptext.VMware_snapshot_form_datastore_tooltip,
-      validation: helptext.VMware_snapshot_form_datastore_validation,
-      required: true,
-      options: []
-    },
-
+        name: helptext.fieldset_vmsnapshot,
+        label: true,
+        class: 'general',
+        width: '49%',
+        config: [
+          {
+            type: 'input',
+            name: 'hostname',
+            placeholder: helptext.VMware_snapshot_form_hostname_placeholder,
+            tooltip: helptext.VMware_snapshot_form_hostname_tooltip,
+            validation: helptext.VMware_snapshot_form_hostname_validation,
+            required: true
+          },
+          {
+            type: 'input',
+            name: 'username',
+            placeholder: helptext.VMware_snapshot_form_username_placeholder,
+            tooltip: helptext.VMware_snapshot_form_username_tooltip,
+            validation: helptext.VMware_snapshot_form_username_validation,
+            required: true
+          },
+          {
+            type: 'input',
+            name: 'password',
+            placeholder: helptext.VMware_snapshot_form_password_placeholder,
+            tooltip: helptext.VMware_snapshot_form_password_tooltip,
+            inputType: 'password',
+            validation: helptext.VMware_snapshot_form_password_validation,
+            required: true,
+            blurStatus: true,
+            parent: this,
+            blurEvent: this.blurEvent,
+            togglePw: true
+          },
+          {
+            type: 'select',
+            name: 'filesystem',
+            placeholder: helptext.VMware_snapshot_form_filesystem_placeholder,
+            tooltip: helptext.VMware_snapshot_form_filesystem_tooltip,
+            validation: helptext.VMware_snapshot_form_filesystem_validation,
+            required: true,
+            options: []
+          },
+          {
+            type: 'select',
+            name: 'datastore',
+            placeholder: helptext.VMware_snapshot_form_datastore_placeholder,
+            tooltip: helptext.VMware_snapshot_form_datastore_tooltip,
+            validation: helptext.VMware_snapshot_form_datastore_validation,
+            required: true,
+            options: []
+          },
+        ]
+    }
   ]
+
   public custActions: Array<any> = [
     {
       id: 'FetchDataStores',
@@ -131,6 +141,7 @@ export class VMwareSnapshotFormComponent {
   afterInit(entityForm: any) {
     this.datastoreList = [];
     this.entityForm = entityForm;
+    this.fieldConfig = entityForm.fieldConfig;
 
     if(this.entityForm.pk){
       this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });

@@ -1,22 +1,21 @@
 import { T } from '../../../translate-marker';
 
 export default {
+fieldset_disk: T('General'),
+fieldset_option: T('More Options'),
 disk_form_name_placeholder: T('Name'),
-disk_form_name_tooltip : T('This is the FreeBSD device name for the disk.'),
+disk_form_name_tooltip : T('FreeBSD disk device name.'),
 
 disk_form_serial_placeholder: T('Serial'),
-disk_form_serial_tooltip : T('This is the serial number of the disk.'),
+disk_form_serial_tooltip : T('Serial number for this disk.'),
 
 disk_form_description_placeholder: T('Description'),
-disk_form_description_tooltip : T('Enter any notes about this disk.'),
+disk_form_description_tooltip : T('Notes about this disk.'),
 
 disk_form_hddstandby_placeholder: T('HDD Standby'),
-disk_form_hddstandby_tooltip : T('Indicates the time of inactivity in minutes before\
- the drive enters standby mode. This <a\
- href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
- target="_blank">forum post</a> demonstrates how to\
- determine if a drive has spun down. Temperature monitoring is \
- disabled if the disk is set to enter standby.'),
+disk_form_hddstandby_tooltip : T('Minutes of inactivity before the drive enters standby mode.\
+ This <a href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
+ target="_blank">forum post</a> describes identifying spun down drives. Temperature monitoring is disabled for standby disks.'),
 
 disk_form_hddstandby_options: [
  {label:T('Always On'), value:'ALWAYS ON'},
@@ -31,6 +30,12 @@ disk_form_hddstandby_options: [
  {label:'300', value: '300'},
  {label:'330', value: '330'},
 ],
+
+force_hdd_standby: {
+    placeholder: T('Force HDD Standby'),
+    tooltip: T('Allows the drive to enter standby, even when non-physical S.M.A.R.T. \
+ operations could prevent the drive from sleeping.')
+},
 
 disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
 disk_form_advpowermgmt_tooltip : T('Select a power management profile from the menu.'),
@@ -56,10 +61,8 @@ disk_form_acousticlevel_options: [
 ],
 
 disk_form_togglesmart_placeholder : T('Enable S.M.A.R.T.'),
-disk_form_togglesmart_tooltip : T('Set by default if the disk supports S.M.A.R.T.\
- Unset to disable any configured <a\
- href="--docurl--/tasks.html#s-m-a-r-t-tests"\
- target="_blank">S.M.A.R.T. tests</a>.'),
+disk_form_togglesmart_tooltip : T('Enabling allows the system to conduct periodic\
+ <a href="--docurl--/tasks.html#s-m-a-r-t-tests" target="_blank">S.M.A.R.T. tests</a>.'),
 
 disk_form_smartoptions_placeholder: T('S.M.A.R.T. extra options'),
 disk_form_smartoptions_tooltip : T('Additional <a\
@@ -102,5 +105,23 @@ dialog_error: T('Error updating disks'),
 clear_pw: {
     placeholder: T('Clear SED Password'),
     tooltip: T('Clear the SED password for this disk.')
-}
+},
+
+dw_disk_name_placeholder: T('Name'),
+dw_disk_name_tooltip : T('Disk to wipe.'),
+
+dw_wipe_method_placeholder: T('Method'),
+dw_wipe_method_tooltip : T('<i>Quick</i> erases only the partitioning information\
+ on a disk without clearing other old data. <i>Full\
+ with zeros</i> overwrites the entire disk with zeros.\
+ <i>Full with random data</i> overwrites the entire\
+ disk with random binary data.'),
+
+ manual_test_dialog: {
+     title: T('Manual S.M.A.R.T. Test'),
+     disk_placeholder: T('Disks'),
+     type_placeholder: T('Type'),
+     saveButtonText: T('Start'),
+ }
+
 }

@@ -2,8 +2,10 @@ import { DatePipe } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
+import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
 import { StorageService, ValidationService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
@@ -79,8 +81,10 @@ export class AdvancedComponent implements OnDestroy {
         })
       })
     } 
-  }];
+  }
+];
 
+  public fieldConfig: FieldConfig[] = [];
   public fieldSets = new FieldSets([
     {
       name: helptext_system_advanced.fieldset_console,
@@ -144,9 +148,9 @@ export class AdvancedComponent implements OnDestroy {
     },
     { name: 'spacer', label: false, width: '2%' },
     {
-      name: helptext_system_advanced.fieldset_kernel,
+      name: helptext_system_advanced.fieldset_storage,
       label: true,
-      class: 'kernel',
+      class: 'storage',
       width: '49%',
       config: [
         {
@@ -154,23 +158,56 @@ export class AdvancedComponent implements OnDestroy {
           name: 'swapondrive',
           placeholder: helptext_system_advanced.swapondrive_placeholder,
           tooltip: helptext_system_advanced.swapondrive_tooltip,
-          validation : helptext_system_advanced.swapondrive_validation,
+          validation : [
+            ...helptext_system_advanced.swapondrive_validation,
+            (control: FormControl): ValidationErrors => {
+              const config = this.fieldConfig.find(c => c.name === 'swapondrive');
+              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value))
+                ? { invalid_byte_string: true }
+                : null
+
+              if (errors) {
+                config.hasErrors = true;
+                config.errors = helptext_system_advanced.overprovision.error;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
+
+              return errors;
+            }
+          ],
           required: true,
           blurStatus: true,
           blurEvent: this.blurEvent,
           parent: this
         },
         {
-          type: 'checkbox',
-          name: 'autotune',
-          placeholder: helptext_system_advanced.autotune_placeholder,
-          tooltip: helptext_system_advanced.autotune_tooltip
-        },
-        {
-          type: 'checkbox',
-          name: 'debugkernel',
-          placeholder: helptext_system_advanced.debugkernel_placeholder,
-          tooltip: helptext_system_advanced.debugkernel_tooltip
+          type: 'input',
+          name: 'overprovision',
+          placeholder: helptext_system_advanced.overprovision.placeholder,
+          tooltip: helptext_system_advanced.overprovision.tooltip,
+          validation : [
+            (control: FormControl): ValidationErrors => {
+              const config = this.fieldConfig.find(c => c.name === 'overprovision');
+              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value))
+                ? { invalid_byte_string: true }
+                : null
+
+              if (errors) {
+                config.hasErrors = true;
+                config.errors = helptext_system_advanced.overprovision.error;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
+
+              return errors;
+            }
+          ],
+          blurStatus: true,
+          blurEvent: this.opBlurEvent,
+          parent: this
         },
       ]
     },
@@ -246,15 +283,40 @@ export class AdvancedComponent implements OnDestroy {
     },
     { name: 'divider', divider: true },
     {
+      name: helptext_system_advanced.fieldset_kernel,
+      label: true,
+      class: 'kernel',
+      width: '49%',
+      config: [
+
+        {
+          type: 'checkbox',
+          name: 'autotune',
+          placeholder: helptext_system_advanced.autotune_placeholder,
+          tooltip: helptext_system_advanced.autotune_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'debugkernel',
+          placeholder: helptext_system_advanced.debugkernel_placeholder,
+          tooltip: helptext_system_advanced.debugkernel_tooltip
+        },
+      ]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
       name: helptext_system_advanced.fieldset_other,
       label: true,
       class: 'other',
-      config: [{
-        type: 'checkbox',
-        name: 'fqdn_syslog',
-        placeholder: helptext_system_advanced.fqdn_placeholder,
-        tooltip: helptext_system_advanced.fqdn_tooltip
-      }]
+      width: '49%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'fqdn_syslog',
+          placeholder: helptext_system_advanced.fqdn_placeholder,
+          tooltip: helptext_system_advanced.fqdn_tooltip
+        }
+      ]
     },
     { name: 'divider', divider: true }
   ]);
@@ -269,10 +331,16 @@ export class AdvancedComponent implements OnDestroy {
     public http: HttpClient,
     public storage: StorageService,
     public validationService: ValidationService
-  ) {}
+    ) {}
 
   resourceTransformIncomingRestData(data) {
+    !data.swapondrive || data.swapondrive === 0 ? 
+      data.swapondrive = '0 GiB' :
     data.swapondrive = this.storage.convertBytestoHumanReadable(data.swapondrive * 1073741824, 0);
+    
+    !data.overprovision || data.overprovision === 0 ?
+      data.overprovision = null :
+    data.overprovision = this.storage.convertBytestoHumanReadable(data.overprovision * 1073741824, 0);
     return data;
   }
 
@@ -289,6 +357,9 @@ export class AdvancedComponent implements OnDestroy {
       this.product_type = res;
       this.swapondrive = this.fieldSets.config('swapondrive');
       this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
+        if (!value || value === '') {
+          this.storage.humanReadable = '';
+        }
         const filteredValue = value ? this.storage.convertHumanStringToNum(value.toString(), false, 'g') : undefined;
         if (filteredValue === 0) {
           this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
@@ -299,6 +370,14 @@ export class AdvancedComponent implements OnDestroy {
 
         }
       });
+
+      entityEdit.formGroup.controls['overprovision'].valueChanges.subscribe((value) => {
+        if (!value || value === '') {
+          this.storage.humanReadable = '';
+        }
+                const formField = this.fieldSets.config('overprovision');
+        const filteredValue = value ? this.storage.convertHumanStringToNum(value, false, 'g') : undefined;
+      })
   
       this.ws.call(this.queryCall).subscribe((adv_values)=>{
         entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
@@ -322,10 +401,14 @@ export class AdvancedComponent implements OnDestroy {
           )}
       });
     })
+    setTimeout(() => {
+      this.storage.humanReadable = '';
+    }, 500)
   }
 
   public customSubmit(body) {
     body.swapondrive = this.storage.convertHumanStringToNum(body.swapondrive)/1073741824;
+    body.overprovision = this.storage.convertHumanStringToNum(body.overprovision)/1073741824;
     body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui) :
       window.localStorage.setItem('exposeLegacyUI', 'false');
     delete body.sed_passwd2;
@@ -343,7 +426,19 @@ export class AdvancedComponent implements OnDestroy {
 
   blurEvent(parent) {
     if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['swapondrive'].setValue(parent.storage.humanReadable || '2 GiB');
+      if (parent.storage.humanReadable) {
+        parent.entityForm.formGroup.controls['swapondrive'].setValue(parent.storage.humanReadable || '2 GiB');
+      }
+      parent.storage.humanReadable = '';
+    }
+  }
+
+  opBlurEvent(parent) {
+    if (parent.entityForm) {
+      if (parent.storage.humanReadable) {
+        parent.entityForm.formGroup.controls['overprovision'].setValue(parent.storage.humanReadable);
+      }
+      parent.storage.humanReadable = '';
     }
   }
 }

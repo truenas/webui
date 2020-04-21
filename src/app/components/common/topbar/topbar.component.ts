@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subscription, interval } from 'rxjs';
+import { Subscription, interval, Subject } from 'rxjs';
 import * as domHelper from '../../../helpers/dom.helper';
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
 import helptext from '../../../helptext/topbar';
@@ -15,6 +15,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { LanguageService } from "../../../services/language.service";
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { RestService } from "../../../services/rest.service";
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from '../../../services/system-general.service';
 import { Theme, ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -38,7 +39,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   interval: any;
 
-  continuousStreaming: Subscription;
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
@@ -61,10 +61,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
+  showWelcome: boolean;
   public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
   public mat_tooltips = helptext.mat_tooltips;
+  systemType: string;
+  isWaiting = false;
+  public target: Subject<CoreEvent> = new Subject();
 
   protected dialogRef: any;
 
@@ -78,6 +82,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public translate: TranslateService,
+    private prefServices: PreferencesService,
     protected loader: AppLoaderService) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
@@ -88,6 +93,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   ngOnInit() {
     if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
       this.checkEULA();
+
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
         this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
@@ -104,7 +110,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         if (!this.updateNotificationSent) {
           this.updateInProgress();
           this.updateNotificationSent = true;
-        }      
+        }
       }
     })
     let theme = this.themeService.currentTheme();
@@ -140,12 +146,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     });
 
-    this.continuousStreaming = interval(10000).subscribe(x => {
-      if (this.is_ha) {
-        this.getHAStatus();
-      }
-    });
-
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
       if(res && res.fields.scan.function.indexOf('RESILVER') > -1 ) {
         this.resilveringDetails = res.fields;
@@ -166,8 +166,27 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }).subscribe((evt: CoreEvent) => {
       this.hostname = evt.data.hostname;
     });
- 
+
+    this.ws.call('system.product_type').subscribe((res)=>{
+      this.systemType = res;
+    })
+
     this.core.emit({name: "SysInfoRequest", sender:this});
+
+    this.core.emit({name:"UserPreferencesRequest", sender:this});
+    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+      if(this.isWaiting){
+        this.target.next({name:"SubmitComplete", sender: this});
+        this.isWaiting = false;
+      }
+      this.showWelcome = evt.data.showWelcomeDialog;
+    });
+
+    setTimeout(() => {
+      if (this.showWelcome) {
+        this.onShowAbout();
+      }
+    }, 3500)
   }
 
   checkLegacyUISetting() {
@@ -184,7 +203,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       clearInterval(this.interval);
     }
 
-    this.continuousStreaming.unsubscribe();
+    this.ws.unsubscribe('failover.disabled_reasons');
 
     this.core.unregister({observerClass:this});
   }
@@ -200,6 +219,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   toggleSidenav() {
     this.sidenav.toggle();
+    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode }, sender:this});
   }
 
   toggleCollapse() {
@@ -209,21 +229,23 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
 
     // Fix for sidebar
-    if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
+    /*if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
       (<HTMLElement>document.querySelector('mat-sidenav-content')).style.marginLeft = '240px';
-    }
+    }*/
   }
 
   onShowAbout() {
-    let dialogRef = this.dialog.open(AboutModalDialog, {});
+    let dialogRef = this.dialog.open(AboutModalDialog, {
+      maxWidth: '600px',
+      data: { 
+        extraMsg: this.showWelcome, 
+        systemType: this.systemType
+      }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
-      // The dialog was closed
+      this.showWelcome = false;
     });
-  }
-
-  onShowAPI() {
-    window.open(window.location.origin + '/api/docs');
   }
 
   signOut() {
@@ -256,10 +278,12 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   checkEULA() {
     this.ws.call('truenas.is_eula_accepted').subscribe(eula_accepted => {
-      if (!eula_accepted) {
+      if (!eula_accepted || window.localStorage.getItem('upgrading_status') === 'upgrading') {
         this.ws.call('truenas.get_eula').subscribe(eula => {
-          this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true, T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
+          this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true,
+          T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
             if (accept_eula) {
+              window.localStorage.removeItem('upgrading_status');
               this.ws.call('truenas.accept_eula')
                 .subscribe(),
                 err => { console.error(err)};
@@ -330,13 +354,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showResilveringDetails() {
-    this.dialogService.Info(T('Resilvering Status'), 
+    this.dialogService.Info(T('Resilvering Status'),
       `Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`);
   }
 
   onGoToLegacy() {
     this.dialogService.confirm(T("Warning"),
-      helptext.legacyUIWarning, 
+      helptext.legacyUIWarning,
       true, T("Continue to Legacy UI")).subscribe((res) => {
       if (res) {
         window.location.href = '/legacy/';
@@ -390,23 +414,32 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     );
   }
 
+  updateHAInfo(info) {
+    let ha_enabled = false;
+    this.ha_disabled_reasons = info;
+    if (info.length > 0) {
+      this.ha_status_text = helptext.ha_status_text_disabled;
+    } else {
+      ha_enabled = true;
+      this.ha_status_text = helptext.ha_status_text_enabled;
+      if (!this.pendingUpgradeChecked) {
+        this.checkUpgradePending();
+      }
+    }
+
+    this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
+    window.sessionStorage.setItem('ha_status', ha_enabled.toString());
+  }
+
   getHAStatus() {
     this.ws.call('failover.disabled_reasons').subscribe(res => {
-      let ha_enabled = false;
-      this.ha_disabled_reasons = res;
-      if (res.length > 0) {
-        this.ha_status_text = helptext.ha_status_text_disabled;
-      } else {
-        ha_enabled = true;
-        this.ha_status_text = helptext.ha_status_text_enabled;
-        if (!this.pendingUpgradeChecked) {
-          this.checkUpgradePending();
-        }
-      }
-      
-      this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
-      window.sessionStorage.setItem('ha_status', ha_enabled.toString());
+      this.updateHAInfo(res);
     });
+    if (this.is_ha) {
+      this.ws.subscribe('failover.disabled_reasons').subscribe((evt) => {
+        this.updateHAInfo(evt.fields.disabled_reasons);
+      })
+    }
   }
 
   showHAStatus() {
@@ -465,7 +498,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       });
   }
 
-  getDirServicesStatus() { 
+  getDirServicesStatus() {
     this.ws.call('directoryservices.get_state').subscribe((res) => {
       for (let i in res) {
         this.dirServicesStatus.push(res[i])
@@ -484,8 +517,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showDSIcon() {
     this.showDirServicesIcon = false;
     this.dirServicesStatus.forEach((item) => {
-      if (item !== 'DISABLED') { 
-        this.showDirServicesIcon = true; 
+      if (item !== 'DISABLED') {
+        this.showDirServicesIcon = true;
       };
     });
   }
@@ -495,12 +528,16 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();
       this.updateNotificationSent = true;
-    }      
+    }
   };
 
   showUpdateDialog() {
-    this.dialogService.confirm(helptext.updateRunning_dialog.title, 
+    this.dialogService.confirm(helptext.updateRunning_dialog.title,
       helptext.updateRunning_dialog.message,
       true, T('Close'), false, '', '', '', '', true);
   };
+
+  openIX() {
+    window.open('https://www.ixsystems.com/', '_blank')
+  }
 }

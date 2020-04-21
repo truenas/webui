@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
 import { map, switchMap } from 'rxjs/operators';
 import helptext from '../../../../helptext/storage/volumes/volume-list';
+import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
 import { JobService, RestService } from '../../../../services/';
 import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
@@ -24,6 +25,7 @@ import { MessageService } from '../../../common/entity/entity-form/services/mess
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../common/entity/utils';
 import { combineLatest } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 export interface ZfsPoolData {
   pool: string;
@@ -114,18 +116,21 @@ export class VolumesListTableConfig implements InputTableConf {
     protected translate: TranslateService,
     protected storageService: StorageService,
     protected volumeData: Object,
-    protected messageService: MessageService
+    protected messageService: MessageService,
+    protected http: HttpClient,
   ) {
     if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
       this.tableData = [];
       for (let i = 0; i < volumeData['children'].length; i++) {
-        this.tableData.push(this.dataHandler(volumeData['children'][i]));
+        const child = volumeData['children'][i];
+        child.parent = volumeData;
+        this.tableData.push(this.dataHandler(child));
       }
     }
   }
 
   isCustActionVisible(actionname: string) {
-    if (actionname === 'download_key' && this.encryptedStatus !== '') {
+    if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
     } else {
       return false;
@@ -154,7 +159,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         p1 += `<br> - ${i}`
                       })
                     })
-  
+
                   })
                 }
                 this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
@@ -176,7 +181,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         if (process.name) {
                           p1 += `<br> - ${process.name}`
                         }
-  
+
                       });
                     };
                     if (running_unknown_processes.length > 0) {
@@ -223,6 +228,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     inputType: 'password',
                     name: 'passphrase',
                     placeholder: 'passphrase',
+                    togglePw: true,
                     required: true
                   }
                 ],
@@ -283,7 +289,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    if (rowData.is_decrypted) {
+    if (rowData.encrypt !== 0 && rowData.is_decrypted) {
 
       actions.push({
         label: T("Manage Recovery Key"),
@@ -303,6 +309,35 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
+    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]) {
+      actions.push({
+        label: T("Export Dataset Keys"),
+        onClick: (row1) => {
+          const title = helptext.export_keys_title  + row1.name;
+          const message = helptext.export_keys_message + row1.name;
+          const fileName = "dataset_" + row1.name + "_keys.json";
+          this.dialogService.confirm(title, message, false, helptext.export_keys_button).subscribe(export_keys => {
+            if (export_keys) {
+              this.loader.open();
+              const mimetype = 'application/json';
+              this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).subscribe(res => {
+                this.loader.close();
+                const url = res[1];
+                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                  if(res !== null && res !== "") {
+                    this.storageService.downloadBlob(file, fileName);
+                  }
+                });
+              }, (e) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, e, this.dialogService);
+              });
+            }
+          });
+        }
+      });
+    }
+
     return actions;
   }
 
@@ -318,7 +353,7 @@ export class VolumesListTableConfig implements InputTableConf {
     this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map(serviceChoices => {
         return {
-          title: "Unlock " + row1.name,
+          title: T("Unlock ") + row1.name,
           fieldConfig: [
             {
               type: 'paragraph',
@@ -338,7 +373,7 @@ export class VolumesListTableConfig implements InputTableConf {
               message: self.messageService,
               updater: self.key_file_updater,
               parent: self,
-              hideButton: true, 
+              hideButton: true,
               name: 'key',
               required: true,
               placeholder: helptext.unlockDialog_recovery_key_placeholder,
@@ -425,6 +460,7 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getActions(rowData: any) {
+    rowData.is_passphrase = (rowData.key_format && rowData.key_format.parsed === 'passphrase' ? true : false);
     let rowDataPathSplit = [];
     const self = this;
     if (rowData.mountpoint) {
@@ -439,13 +475,14 @@ export class VolumesListTableConfig implements InputTableConf {
         name: 'Export/Disconnect',
         label: T("Export/Disconnect"),
         onClick: (row1) => {
-          let encryptedStatus = row1.vol_encryptkey,
+          let encryptedStatus = row1.encrypt,
           self = this;
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
-                p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is detached:`;
+                p1 = T('These services depend on pool ') + `<i>${row1.name}</i>` +
+                  T(' and will be disrupted if the pool is detached:');
                 res.forEach((item) => {
                   p1 += `<br><br>${item.type}:`;
                   item.attachments.forEach((i) => {
@@ -471,7 +508,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   });
                   if (running_processes.length > 0) {
-                    p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
+                    p1 += `<br><br>` + T('These running services are using ') + `<b>${row1.name}</b>:`;
                     running_processes.forEach((process) =>  {
                       if (process.name) {
                         p1 += `<br> - ${process.name}`
@@ -480,13 +517,13 @@ export class VolumesListTableConfig implements InputTableConf {
                     });
                   };
                   if (running_unknown_processes.length > 0) {
-                    p1 += '<br><br>These unknown processes are using this pool:';
+                    p1 += `<br><br>` + T('These unknown processes are using this pool: ');
                     running_unknown_processes.forEach((process) => {
                       if (process.pid) {
                         p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
                       }
                     });
-                    p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
+                    p1 += `<br><br>` + T('WARNING: These unknown processes will be terminated while exporting the pool. ');
                   }
                 };
                 this.loader.close();
@@ -503,7 +540,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
         function doDetach() {
           const conf: DialogFormConfiguration = {
-            title: "Export/disconnect pool: '" + row1.name + "'",
+            title: T("Export/disconnect pool: '") + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
@@ -524,7 +561,7 @@ export class VolumesListTableConfig implements InputTableConf {
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: "'" + row1.name + helptext.detachDialog_pool_detach_warning__encrypted_paratext,
-              isHidden: encryptedStatus !== '' ? false : true
+              isHidden: encryptedStatus > 0 ? false : true
             }, {
               type: 'checkbox',
               name: 'destroy',
@@ -555,13 +592,13 @@ export class VolumesListTableConfig implements InputTableConf {
             },{
               type: 'checkbox',
               name: 'confirm',
-              placeholder: rowData.status === 'UNKNOWN' ? 
+              placeholder: rowData.status === 'UNKNOWN' ?
                 `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder} ${helptext.unknown_status_alt_text}` :
                 `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder}`,
               required: true
             }],
             isCustActionVisible(actionId: string) {
-              if (actionId == 'download_key' && encryptedStatus === '') {
+              if (actionId == 'download_key' && encryptedStatus === 0) {
                 return false;
               } else {
                 return true;
@@ -571,7 +608,7 @@ export class VolumesListTableConfig implements InputTableConf {
             custActions: [
               {
                 id: 'download_key',
-                name: 'Download Key',
+                name: T('Download Key'),
                 function: () => {
                   const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
@@ -580,7 +617,7 @@ export class VolumesListTableConfig implements InputTableConf {
               }],
             customSubmit: function (entityDialog) {
               const value = entityDialog.formValue;
-              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
+              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":T("Exporting Pool")}, disableClose: true});
               dialogRef.updateSize('300px');
               dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
               dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: self.restartServices }]);
@@ -598,17 +635,28 @@ export class VolumesListTableConfig implements InputTableConf {
               }),
               dialogRef.componentInstance.failure.subscribe((res) => {
                 let conditionalErrMessage = '';
-                if (res.error && res.error.includes('EBUSY')) {
+                if (res.error) {
                   if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    conditionalErrMessage = '<div class="warning-box">Warning: These services must be restarted to export the pool:<br>';
-                    res.exc_info.extra.services.forEach((item) => {
-                      conditionalErrMessage += `<br>- ${item}`;
-                    })
-                    conditionalErrMessage += '<br><br>Exporting/disconnecting will continue after services have been restarted.</div><br />';
+                    if (res.exc_info.extra.stop_services.length > 0) {
+                      conditionalErrMessage += `<div class="warning-box">` + T('These services must be stopped to export the pool:');
+                      res.exc_info.extra.stop_services.forEach((item) => {
+                        conditionalErrMessage += `<br>- ${item}`;
+                      });
+                    }
+                    if (res.exc_info.extra.restart_services.length > 0) {
+                      if (res.exc_info.extra.stop_services.length > 0) {
+                        conditionalErrMessage += '<br><br>';
+                      }
+                      conditionalErrMessage += `<div class="warning-box">` + T('These services must be restarted to export the pool:');
+                      res.exc_info.extra.restart_services.forEach((item) => {
+                        conditionalErrMessage += `<br>- ${item}`;
+                      });
+                    }
+                    conditionalErrMessage += `<br><br>`+ T('Exporting/disconnecting will continue after services have been managed.') + `</div><br />`;
                       self.dialogService.confirm(T("Error exporting/disconnecting pool."),
-                        conditionalErrMessage, true, 'Restart Services and Continue')
+                        conditionalErrMessage, true, T('Manage Services and Continue'))
                           .subscribe((res) => {
                             if (res) {
                               self.restartServices = true;
@@ -619,13 +667,13 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.dialogRef.close(true);
 
                     conditionalErrMessage =
-                    `Unable to terminate processes which are using this pool: ${res.extra['processes']}`;
+                    T('Unable to terminate processes which are using this pool: ') + res.extra['processes'];
                     dialogRef.close(true);
                     self.dialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
                   } else {
                     entityDialog.dialogRef.close(true);
                     dialogRef.close(true);
-                    self.dialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);                    
+                    self.dialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
                   }
                 } else {
                   entityDialog.dialogRef.close(true);
@@ -643,8 +691,8 @@ export class VolumesListTableConfig implements InputTableConf {
       if (rowData.is_decrypted) {
         actions.push({
           id: rowData.name,
-          name: 'Extend',
-          label: T("Extend"),
+          name: 'Add Vdevs',
+          label: T("Add Vdevs"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "pools", "manager", row1.id]));
@@ -724,6 +772,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   inputType: 'password',
                   name: 'passphrase',
                   placeholder: helptext.expand_pool_dialog.passphrase_placeholder,
+                  togglePw: true,
                   required: true
                 }
               ],
@@ -817,28 +866,30 @@ export class VolumesListTableConfig implements InputTableConf {
     }
 
     if (rowData.type === "FILESYSTEM") {
-      actions.push({
-        id: rowData.name,
-        name: T('Add Dataset'),
-        label: T("Add Dataset"),
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-            "add", row1.id
-          ]));
-        }
-      });
-      actions.push({
-        id: rowData.name,
-        name: T('Add Zvol'),
-        label: T("Add Zvol"),
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "zvol", "add",
-            row1.id
-          ]));
-        }
-      });
+      if (!rowData.locked) {
+        actions.push({
+          id: rowData.name,
+          name: T('Add Dataset'),
+          label: T("Add Dataset"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat([
+              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+              "add", row1.id
+            ]));
+          }
+        });
+        actions.push({
+          id: rowData.name,
+          name: T('Add Zvol'),
+          label: T("Add Zvol"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat([
+              "storage", "pools", "id", row1.id.split('/')[0], "zvol", "add",
+              row1.id
+            ]));
+          }
+        });
+      }
       actions.push({
         id: rowData.name,
         name: T('Edit Options'),
@@ -850,7 +901,7 @@ export class VolumesListTableConfig implements InputTableConf {
           ]));
         }
       });
-      if (rowDataPathSplit[1] !== "iocage") {
+      if (rowDataPathSplit[1] !== "iocage" && !rowData.locked) {
             actions.push({
               id: rowData.name,
               name: T('Edit Permissions'),
@@ -875,7 +926,27 @@ export class VolumesListTableConfig implements InputTableConf {
                 ]));
               }
             },
-          );          
+            {
+              id: rowData.name,
+              name: T('User Quotas'),
+              label: T('User Quotas'),
+              onClick: (row1) => {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "user-quotas", row1.id
+                ]));
+              }
+            },
+            {
+              id: rowData.name,
+              name: T('Group Quotas'),
+              label: T('Group Quotas'),
+              onClick: (row1) => {
+                this._router.navigate(new Array('/').concat([
+                  "storage", "pools", "group-quotas", row1.id
+                ]));
+              }
+            },
+          );
       }
 
       if (rowData.id.indexOf('/') !== -1) {
@@ -937,7 +1008,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Delete Zvol'),
         label: T("Delete Zvol"),
         onClick: (row1) => {
-          this.dialogService.doubleConfirm(T("Delete "), 
+          this.dialogService.doubleConfirm(T("Delete "),
             T("Delete the zvol ") + "<b><i>" + row1.name + "</i></b>"+ T(" and all snapshots of it?"), row1.name,
             true, T('Delete Zvol')).subscribe((confirmed) => {
             if (confirmed === true) {
@@ -1058,19 +1129,277 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
+  getEncryptedDatasetActions(rowData) {
+    const encryption_actions = [];
+    if (rowData.encrypted) {
+      if (rowData.locked){
+        encryption_actions.push({
+          id:rowData.name,
+          name: T('Unlock'),
+          label: T('Unlock'),
+          onClick: (row1) => {
+            //unlock
+            this._router.navigate(new Array('/').concat([
+              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+              "unlock", row1.id
+            ]));
+          }
+        });
+      } else {
+        encryption_actions.push({
+          id: rowData.name,
+          name: T('Encryption Options'),
+          label: T('Encryption Options'),
+          onClick: (row) => {
+            // open encryption options dialog
+            const can_inherit = (row.parent && row.parent.encrypted);
+            const passphrase_parent = (row.parent && row.parent.key_format && row.parent.key_format.value === 'PASSPHRASE');
+            const is_key = (passphrase_parent? false : !row.is_passphrase);
+            let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
+            if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
+              pbkdf2iters = row.pbkdf2iters.rawvalue;
+            }
+            const self = this;
+            this.dialogConf = {
+              title: helptext.encryption_options_dialog.dialog_title + row.id,
+              fieldConfig: [
+                {
+                  type: 'checkbox',
+                  name: 'inherit_encryption',
+                  class: 'inline',
+                  width: '50%',
+                  placeholder: helptext.encryption_options_dialog.inherit_placeholder,
+                  tooltip: helptext.encryption_options_dialog.inherit_tooltip,
+                  value: !row.is_encrypted_root,
+                  isHidden: !can_inherit,
+                  disabled: !can_inherit,
+                },
+                {
+                  type: 'select',
+                  name: 'encryption_type',
+                  placeholder: dataset_helptext.dataset_form_encryption.encryption_type_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.encryption_type_tooltip,
+                  value: (is_key? 'key' : 'passphrase'),
+                  options: dataset_helptext.dataset_form_encryption.encryption_type_options,
+                  isHidden: passphrase_parent
+                },
+                {
+                  type: 'checkbox',
+                  name: 'generate_key',
+                  placeholder: dataset_helptext.dataset_form_encryption.generate_key_checkbox_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.generate_key_checkbox_tooltip,
+                  disabled: !is_key,
+                  isHidden: !is_key,
+                },
+                {
+                  type: 'textarea',
+                  name: 'key',
+                  placeholder: dataset_helptext.dataset_form_encryption.key_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.key_tooltip,
+                  validation: dataset_helptext.dataset_form_encryption.key_validation,
+                  required: true,
+                  disabled: !is_key,
+                  isHidden: !is_key,
+                },
+                {
+                  type: 'input',
+                  name: 'passphrase',
+                  inputType: 'password',
+                  placeholder: dataset_helptext.dataset_form_encryption.passphrase_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.passphrase_tooltip,
+                  validation: dataset_helptext.dataset_form_encryption.passphrase_validation,
+                  togglePw: true,
+                  required: true,
+                  disabled: is_key,
+                  isHidden: is_key,
+                },
+                {
+                  type: 'input',
+                  name: 'pbkdf2iters',
+                  placeholder: dataset_helptext.dataset_form_encryption.pbkdf2iters_placeholder,
+                  tooltip: dataset_helptext.dataset_form_encryption.pbkdf2iters_tooltip,
+                  required: true,
+                  value: pbkdf2iters,
+                  validation: dataset_helptext.dataset_form_encryption.pbkdf2iters_validation,
+                  disabled: is_key,
+                  isHidden: is_key,
+                },
+                {
+                  type: 'checkbox',
+                  name: 'confirm',
+                  placeholder: helptext.encryption_options_dialog.confirm_checkbox,
+                  required: true,
+                }
+              ],
+              saveButtonText: helptext.encryption_options_dialog.save_button,
+              afterInit: function(entityDialog) {
+                const inherit_encryption_fg = entityDialog.formGroup.controls['inherit_encryption'];
+                const encryption_type_fg = entityDialog.formGroup.controls['encryption_type'];
+                const encryption_type_fc = _.find(entityDialog.fieldConfig, {name: 'encryption_type'});
+                const generate_key_fg = entityDialog.formGroup.controls['generate_key'];
+
+                const all_encryption_fields = ['encryption_type', 'passphrase', 'pbkdf2iters', 'generate_key', 'key'];
+
+                if (inherit_encryption_fg.value) { // if already inheriting show as inherit
+                  for (let i = 0; i < all_encryption_fields.length; i++) {
+                    entityDialog.setDisabled(all_encryption_fields[i], true, true);
+                  }
+                }
+                const inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe(inherit => {
+                  if (inherit) {
+                    for (let i = 0; i < all_encryption_fields.length; i++) {
+                      entityDialog.setDisabled(all_encryption_fields[i], inherit, inherit);
+                    }
+                  } else {
+                    entityDialog.setDisabled('encryption_type', inherit, inherit);
+                    if (passphrase_parent) { // keep hidden if passphrase parent;
+                      encryption_type_fc.isHidden = true;
+                    }
+                    const key = (encryption_type_fg.value === 'key');
+                    entityDialog.setDisabled('passphrase', key, key);
+                    entityDialog.setDisabled('pbkdf2iters', key, key);
+                    entityDialog.setDisabled('generate_key', !key, !key);
+                    if (key) {
+                      const gen_key = generate_key_fg.value;
+                      entityDialog.setDisabled('key', gen_key, gen_key);
+                    } else {
+                      entityDialog.setDisabled('key', true, true);
+                    }
+                  }
+                });
+
+                const encryption_type_subscription = encryption_type_fg.valueChanges.subscribe(enc_type => {
+                  const key = (enc_type === 'key');
+                  entityDialog.setDisabled('generate_key', !key, !key);
+                  if (key) {
+                    const gen_key = generate_key_fg.value;
+                    entityDialog.setDisabled('key', gen_key, gen_key);
+                  } else {
+                    entityDialog.setDisabled('key', true, true);
+                  }
+                  entityDialog.setDisabled('passphrase', key, key);
+                  entityDialog.setDisabled('pbkdf2iters', key, key);
+                });
+
+                const generate_key_subscription = generate_key_fg.valueChanges.subscribe(gen_key => {
+                  if (!inherit_encryption_fg.value && encryption_type_fg.value === 'key') {
+                    entityDialog.setDisabled('key', gen_key, gen_key);
+                  }
+                });
+              },
+              customSubmit: function(entityDialog) {
+                const formValue = entityDialog.formValue;
+                let method = 'pool.dataset.change_key';
+                const body = {};
+                const payload = [row.id];
+                if (formValue.inherit_encryption) {
+                  method = 'pool.dataset.inherit_parent_encryption_properties';
+                  entityDialog.loader.open();
+                  entityDialog.ws.call(method, payload).subscribe(res => {
+                    entityDialog.loader.close();
+                    self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                      helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+                    entityDialog.dialogRef.close();
+                    self.parentVolumesListComponent.repaintMe();
+                  }, (err) => {
+                    entityDialog.loader.close();
+                    new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
+                  });
+                } else {
+                  if (formValue.encryption_type === 'key') {
+                    body['generate_key'] = formValue.generate_key;
+                    if (!formValue.generate_key) {
+                      body['key'] = formValue.key;
+                    }
+                  } else {
+                    body['passphrase'] = formValue.passphrase;
+                    body['pbkdf2iters'] = formValue.pbkdf2iters;
+                  }
+                  payload.push(body);
+                  const dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":helptext.encryption_options_dialog.save_encryption_options}, disableClose: true});
+                  dialogRef.componentInstance.setDescription(helptext.encryption_options_dialog.saving_encryption_options);
+                  dialogRef.componentInstance.setCall(method, payload);
+                  dialogRef.componentInstance.submit();
+                  dialogRef.componentInstance.success.subscribe(res=>{
+                    if (res) {
+                      dialogRef.close()
+                      entityDialog.dialogRef.close();
+                      self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                        helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+                      self.parentVolumesListComponent.repaintMe();
+                    }
+                  });
+                  dialogRef.componentInstance.failure.subscribe(err =>{
+                    if (err) {
+                      dialogRef.close();
+                      new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
+                    }
+                  })
+                }
+              }
+            }
+            this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+            });
+          }
+        });
+        if (rowData.is_encrypted_root && rowData.is_passphrase) {
+          encryption_actions.push({
+            id: rowData.name,
+            name: T('Lock'),
+            label: T('Lock'),
+            onClick: (row) => {
+              // lock
+              const title = helptext.lock_dataset_dialog.dialog_title + row.name;
+              const message = helptext.lock_dataset_dialog.dialog_message + row.name + '?'
+              const params = [row.id];
+              let force_umount = false;
+              const ds = this.dialogService.confirm(title, message, false, helptext.lock_dataset_dialog.button, 
+                true, helptext.lock_dataset_dialog.checkbox_message, 'pool.dataset.lock', params);
+              
+              ds.componentInstance.switchSelectionEmitter.subscribe((res) => {
+                force_umount = res;
+              });
+              ds.afterClosed().subscribe((status)=>{
+                if(status){
+                  this.loader.open();
+                  params.push({'force_umount':force_umount});
+                  this.ws.call(
+                    ds.componentInstance.method,params).subscribe((res)=>{
+                      this.loader.close();
+                      this.parentVolumesListComponent.repaintMe();
+                    }, (err)=>{
+                      this.loader.close();
+                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                    });
+                }
+              });  
+            }
+          });
+        }
+      }
+    }
+    return encryption_actions;
+  }
+
   clickAction(rowData) {
     let aclEditDisabled = false;
     let permissionsEditDisabled = false;
-    this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
-      !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
-      rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
-      let editACL = rowData.actions.find(o => o.name === 'Edit ACL');
-        editACL.disabled = aclEditDisabled;
-      let editPermissions = rowData.actions.find(o => o.name === 'Edit Permissions')
-        editPermissions.disabled = permissionsEditDisabled;
-        aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 : 
-        editPermissions.matTooltip = helptext.permissions_edit_msg2
-    })
+    if (!rowData.locked) {
+      this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
+        !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
+        rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
+        let editACL = rowData.actions[0].actions.find(o => o.name === 'Edit ACL');
+          if (editACL) {
+            editACL.disabled = aclEditDisabled;
+          }
+        let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions')
+        if (editPermissions) {
+          editPermissions.disabled = permissionsEditDisabled;
+          aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 :
+          editPermissions.matTooltip = helptext.permissions_edit_msg2
+        }
+      })
+    }
   }
 
   getTimestamp() {
@@ -1081,21 +1410,36 @@ export class VolumesListTableConfig implements InputTableConf {
   dataHandler(data: any): TreeNode {
     const node: TreeNode = {};
     node.data = data;
-    this.getMoreDatasetInfo(data);
-    node.data.actions = this.getActions(data);
+    parent = data.parent;
+    this.getMoreDatasetInfo(data, parent);
+    node.data.group_actions = true;
+    let actions_title = helptext.dataset_actions;
+    if (data.type === 'zvol') {
+      actions_title = helptext.zvol_actions;
+    }
+    const actions = [{title: actions_title, actions: this.getActions(data)}];
+    if (data.type === 'FILESYSTEM') {
+      const encryption_actions = this.getEncryptedDatasetActions(data);
+      if (encryption_actions.length > 0) {
+        actions.push({title: helptext.encryption_actions_title, actions: encryption_actions});
+      }
+    }
+    node.data.actions = actions; 
 
     node.children = [];
 
     if (data.children) {
       for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.dataHandler(data.children[i]));
+        const child = data.children[i];
+        child.parent = data;
+        node.children.push(this.dataHandler(child));
       }
     }
     delete node.data.children;
     return node;
   }
 
-  getMoreDatasetInfo(dataObj) {
+  getMoreDatasetInfo(dataObj, parent) {
     const dataset_data2 = this.datasetData;
     this.translate.get(T("Inherits")).subscribe(inherits => {
       for (const k in dataset_data2) {
@@ -1109,7 +1453,7 @@ export class VolumesListTableConfig implements InputTableConf {
             dataset_data2[k].compressratio.source !== "INHERITED"
               ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
               : dataObj.compressratio = (inherits + " (" + dataset_data2[k].compressratio.parsed + ")");
-          } 
+          }
           if (dataset_data2[k].readonly) {
             dataset_data2[k].readonly.source !== "INHERITED"
               ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
@@ -1130,6 +1474,11 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.name = dataObj.name.split('/').pop();
         dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
         dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
+        dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
+        if (dataObj.is_encrypted_root) {
+          this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
+        }
+        dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
       }
     });
   }
@@ -1147,31 +1496,36 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http);
 
   actionComponent = {
     getActions: (row) => {
-      return this.conf.getActions(row);
+      return [
+        {
+          name: 'pool_actions',
+          title: helptext.pool_actions_title,
+          actions: this.conf.getActions(row),
+        },
+        {
+          name: 'encryption_actions',
+          title: helptext.encryption_actions_title,
+          actions: (<VolumesListTableConfig>this.conf).getEncryptedActions(row),
+        }
+      ];
     },
-    conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService)
-  };
-
-  actionEncryptedComponent = {
-    getActions: (row) => {
-      return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
-    },
-    conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService)
+    conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http)
   };
 
   expanded = false;
   public paintMe = true;
   public isFooterConsoleOpen: boolean;
   public systemdatasetPool: any;
+  public has_encrypted_root = {};
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService) {
+    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService, protected http:HttpClient) {
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog);
   }
 
@@ -1189,7 +1543,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
-    
+
 
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
@@ -1204,11 +1558,15 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           pool.children = pChild ? [pChild] : [];
 
-          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService);          
+          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http);
           pool.type = 'zpool';
 
           if (pool.children && pool.children[0]) {
             try {
+              pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
+              if (pool.children[0].is_encrypted_root) {
+                this.has_encrypted_root[pool.name] = true;
+              }
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
               pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: "iec" });

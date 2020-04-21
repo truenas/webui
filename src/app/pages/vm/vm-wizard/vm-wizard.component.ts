@@ -386,14 +386,8 @@ export class VMWizardComponent {
         const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
         Object.keys(res).forEach((address) => {
           vnc_bind.options.push({label : address, value : address});
-        })
-        this.ws.call('interface.ip_in_use', [{"ipv4": true}]).subscribe(
-          (ip) => {
-            if (_.find(vnc_bind.options, { value: ip[0].address })){
-              ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(ip[0].address);
-            }
-          }
-        )
+        });
+        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(res['0.0.0.0']);
       }
     });
 
@@ -542,7 +536,12 @@ export class VMWizardComponent {
         ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).setValue(message);
       })
       this.res = res;
+      const grub = this.bootloader.options.find(o => o.value === 'GRUB');
+      const grubIndex = this.bootloader.options.indexOf(grub);
       if (res === 'Windows') {
+        if (grub) {
+          this.bootloader.options.splice(grubIndex, 1);
+        }
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['cores'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['threads'].setValue(1);
@@ -550,6 +549,9 @@ export class VMWizardComponent {
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('40 GiB');
       }
       else {
+        if (!grub) {
+          this.bootloader.options.push({label : 'Grub', value : 'GRUB'});
+        }
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['cores'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['threads'].setValue(1);

@@ -22,7 +22,6 @@ export class KerberosRealmsFormComponent {
   protected queryKey = 'id';
   protected isEntity = true;
   protected isBasicMode = true;
-  public keyList = ['admin_server', 'kdc', 'kpasswd_server'];
 
   protected fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -40,19 +39,19 @@ export class KerberosRealmsFormComponent {
           validation : helptext.krbrealm_form_realm_validation
         },
         {
-          type: 'input',
+          type: 'chip',
           name: helptext.krbrealm_form_kdc_name,
           placeholder: helptext.krbrealm_form_kdc_placeholder,
           tooltip: `${helptext.krbrealm_form_kdc_tooltip} ${helptext.multiple_values}`
         },
         {
-          type: 'input',
+          type: 'chip',
           name: helptext.krbrealm_form_admin_server_name,
           placeholder: helptext.krbrealm_form_admin_server_placeholder,
           tooltip: `${helptext.krbrealm_form_admin_server_tooltip} ${helptext.multiple_values}`
         },
         {
-          type: 'input',
+          type: 'chip',
           name: helptext.krbrealm_form_kpasswd_server_name,
           placeholder: helptext.krbrealm_form_kpasswd_server_placeholder,
           tooltip: `${helptext.krbrealm_form_kpasswd_server_tooltip} ${helptext.multiple_values}`
@@ -77,13 +76,6 @@ export class KerberosRealmsFormComponent {
 
   constructor(private router: Router, protected aroute: ActivatedRoute) {}
 
-  resourceTransformIncomingRestData(data) {
-    this.keyList.forEach((i) => {
-        data[i] = data[i].join(' ');
-      })
-    return data;
-  }
-
   preInit() {
     this.aroute.params.subscribe(params => {
       if (params.pk) {
@@ -100,14 +92,6 @@ export class KerberosRealmsFormComponent {
       return false;
     }
     return true;
-  }
-
-  beforeSubmit(data) {
-    this.keyList.forEach((i) => {
-      if (typeof data[i]==='string') {
-        data[i] = data[i].replace(/,/g, ' ').match(/[^ ]+/g);
-      }
-    })
   }
 
 }

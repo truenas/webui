@@ -1,0 +1,46 @@
+<h1 mat-dialog-title>{{ title | translate }}</h1>
+<div mat-dialog-content id="unlock-msg">
+  <div class="message-content">
+    <div class="errors-content" *ngIf="error_datasets.length > 0">
+      <mat-divider></mat-divider>
+      <p>{{errors_message | translate}}</p>
+      <div *ngFor="let dataset of error_datasets" class="row">
+        <strong>{{dataset.name}}</strong>
+        <span fxFlex></span>
+        <a (click)="showError(dataset)"><u>{{"details" | translate}}</u></a>
+        <i class="material-icons red-icon">cancel</i>
+      </div>
+    </div>
+    <div class="skipped-content" *ngIf="skipped_datasets.length > 0">
+      <mat-divider></mat-divider>
+      <p>{{skipped_message | translate}}</p>
+      <div *ngFor="let dataset of skipped_datasets" class="row">
+        <strong>{{dataset.name}}</strong>
+        <span fxFlex></span>
+        <i class="material-icons red-icon">cancel</i>
+      </div>
+    </div>
+    <div class="unlock-content" *ngIf="unlock_datasets.length > 0">
+      <mat-divider></mat-divider>
+      <p>{{unlock_message | translate}}</p>
+      <div *ngFor="let dataset of unlock_datasets" class="row">
+        <strong>{{dataset.name}}</strong>
+        <span fxFlex></span>
+        <i class="material-icons green-icon">check_circle</i>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-divider></mat-divider>
+<div mat-dialog-actions>
+  <span fxFlex></span>
+  <button *ngIf="!final" id="unlock-dialog__cancel-button" mat-button name="cancel_button" class="mat-button mat-accent" (click)="cancel()"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="{{cancelMsg | uppercase}}">{{cancelMsg | translate | uppercase}}</button>
+  <button id="unlock-dialog__action-button" mat-button name="ok_button" class="mat-button mat-primary" (click)="submit()"
+    ix-auto
+    ix-auto-type="button"
+    ix-auto-identifier="{{buttonMsg | uppercase}}">{{buttonMsg | translate | uppercase}}
+  </button>
+</div>

@@ -28,7 +28,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header
                 ix-auto ix-auto-type="tab" ix-auto-identifier="Progress"> {{ 'Progress' | translate }} </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <span *ngIf="element.progress.percent != null"> {{element.progress.percent | number: '1.2-2'}}% </span>
+                <span> {{element.progress.percent || 0 | number: '1.2-2'}}% </span>
                 <mat-progress-bar [mode]="element.state == 'RUNNING' ? 'buffer' : 'determinate'" [value]="element.progress.percent"></mat-progress-bar>
             </mat-cell>
         </ng-container>
@@ -40,12 +40,12 @@
                 <span *ngIf="element.time_started != null"><b>{{ 'Start Time:' | translate }}</b> {{getReadableDate(element.time_started)}}</span>
                 <span *ngIf="element.time_finished != null"><b>{{ 'Finished Time:' | translate }}</b> {{getReadableDate(element.time_finished)}}</span>
                 <span *ngIf="element.error != null"><b>{{ 'Error:' | translate }}</b> {{element.error}}</span>
-                <span *ngIf="element.logs_excerpt != null && element.logs_path != null"><button mat-flat-button color="primary" (click)="showLogs(element)">{{ 'View Logs' | translate }}</button></span>
+                <span *ngIf="element.logs_excerpt != null && element.logs_excerpt != '' && element.logs_path != null"><button mat-flat-button color="primary" (click)="showLogs(element)">{{ 'View Logs' | translate }}</button></span>
             </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" (click)="logRow(row)" [class.expanded]="expandedElement == row"
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" [class.expanded]="expandedElement == row"
             (click)="expandedElement = expandedElement === row ? null : row" ix-auto ix-auto-type="expander" ix-auto-identifier="{{row.method}}"></mat-row>
         <mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row" [@detailExpand]="row == expandedElement ? 'expanded' : 'collapsed'"></mat-row>
     </mat-table>

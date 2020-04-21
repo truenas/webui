@@ -102,8 +102,9 @@
   <!-- END OF CONTROLS SECTION -->
 
   <!-- INSERT DYNAMIC CARDHEADER HERE -->
-  <ng-template dynamicComponent *ngIf="conf.cardHeaderComponent" [component]="conf.cardHeaderComponent" [config]=""
-    [parent]="this"></ng-template>
+  <div id="cardHeaderContainer" *ngIf="conf.cardHeaderComponent">
+    <ng-template dynamicComponent [component]="conf.cardHeaderComponent" [config]="" [parent]="this"></ng-template>
+  </div>
 
   <!-- TABLE START -->
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar"
@@ -265,7 +266,7 @@
           <ng-template let-row="row" ngx-datatable-cell-template>
             <mat-spinner [diameter]='40'
               color="primary"
-              *ngIf="col.toggle && (row[col.prop]==='STOPPING' || row[col.prop]==='STARTING' 
+              *ngIf="col.toggle && (row[col.prop]==='STOPPING' || row[col.prop]==='STARTING'
                 || row[col.prop]==='DELETING' || row[col.prop]==='RESTARTING')"
             ></mat-spinner>
             <div class="clickable"

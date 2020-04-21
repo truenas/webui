@@ -11,7 +11,7 @@ krbrealm_form_realm_placeholder: T('Realm'),
 krbrealm_form_realm_tooltip: T('Enter the name of the realm.'),
 krbrealm_form_realm_validation : [ Validators.required ],
 
-multiple_values: T('Separate multiple values with a space.'),
+multiple_values: T('Separate multiple values by pressing <code>Enter</code>.'),
 krbrealm_form_kdc_name: 'kdc',
 krbrealm_form_kdc_placeholder: T('KDC'),
 krbrealm_form_kdc_tooltip: T('Enter the name of the Key Distribution Center.'),

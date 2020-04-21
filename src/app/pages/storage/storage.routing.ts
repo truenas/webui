@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl/';
+import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
@@ -26,17 +27,16 @@ import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumech
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
+import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
+import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 
 export const routes: Routes = [
   {
     path: '',
     data: { title: 'Storage' },
     children: [
-      {
-        path: '',
-        component: EntityDashboardComponent,
-      },
       {
         path: 'pools',
         data: { title: 'Pools', breadcrumb: 'Pools', icon: 'view_stream' },
@@ -66,8 +66,28 @@ export const routes: Routes = [
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
           },
           {
+            path: 'user-quotas/:pk', component: DatasetQuotasUserlistComponent,
+            data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
+          },
+          {
+            path: 'user-quotas-form/:pk', component: UserQuotaFormComponent,
+            data: { title: 'Set User Quotas', breadcrumb: 'Set User Quotas'}
+          },
+          {
+            path: 'group-quotas/:pk', component: DatasetQuotasGrouplistComponent,
+            data: { title: 'Edit Group Quotas', breadcrumb: 'Edit Group Quotas' }
+          },
+          {
+            path: 'group-quotas-form/:pk', component: GroupQuotaFormComponent,
+            data: { title: 'Set Group Quotas', breadcrumb: 'Set Group Quotas'}
+          },
+          {
             path: 'id/:pk/dataset/acl/:path', component: DatasetAclComponent,
             data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' }
+          },
+          {
+            path: 'id/:pk/dataset/unlock/:path', component: DatasetUnlockComponent,
+            data: { title: 'Unlock Datasets', breadcrumb: 'Unlock Datasets' }
           },
           {
             path: 'manager', component: ManagerComponent,
@@ -75,7 +95,7 @@ export const routes: Routes = [
           },
           {
             path: 'manager/:pk', component: ManagerComponent,
-            data: { title: 'Extend Pool', breadcrumb: 'Extend Pool' }
+            data: { title: 'Add Vdevs to Pool', breadcrumb: 'Add Vdevs to Pool' }
           },
           {
             path: 'import', component: VolumeImportWizardComponent,

@@ -25,7 +25,7 @@ export const helptext_sharing_smb = {
       "Description of the share or notes on how it is used."
     ),
 
-    placeholder_home: T('Use as home share'),
+    placeholder_home: T('Use as Home Share'),
     tooltip_home: T('Allows the share to host user home \
  directories. Each user is given a personal home directory when \
  connecting to the share which is not accessible by other users. This \
@@ -40,17 +40,16 @@ export const helptext_sharing_smb = {
    tooltip_timemachine: T('Enable Time Machine backups on this share.'),
 
     placeholder_default_permissions: T('Default Permissions'),
-    tooltip_default_permissions: T('When enabled, the ACLs grant read and write access for\
- owner or group and read-only for others.\
- <b>Only</b> leave unset when creating a share on a\
- system that already has custom\
- ACLs configured.'),
+    tooltip_default_permissions: T('When enabled, the ACLs grant read and \
+ write access for owner or group and read-only for others. <b>Only</b> leave \
+ unset when creating a share on a system that already has custom ACLs configured.'),
 
     placeholder_acl: T('Enable ACL'),
-    tooltip_acl: T('Enable ACL support for the SMB share'),
+    tooltip_acl: T('Enable ACL support for the SMB share. Disabling ACL \
+ support for a share deletes that ACL.'),
 
     placeholder_ro: T('Export Read Only'),
-    tooltip_ro: T('Set to prohibit writes to this share'),
+    tooltip_ro: T('Prohibits writes to this share.'),
 
     placeholder_browsable: T('Browsable to Network Clients'),
     tooltip_browsable: T('Determine whether this share name is included\
@@ -87,11 +86,13 @@ export const helptext_sharing_smb = {
 
     placeholder_hostsallow: T('Hosts Allow'),
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
- Separate entries with a comma, space, or tab.'),
+ Separate entries by pressing <code>Enter</code>. A more detailed description \
+ with examples can be found \
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW">here</a>.'),
 
     placeholder_hostsdeny: T('Hosts Deny'),
     tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
- Separate entries with a comma, space, or tab.'),
+ Separate entries by pressing <code>Enter</code>.'),
 
     placeholder_shadowcopy: T('Enable Shadow Copies'),
     tooltip_shadowcopy: T('Export ZFS snapshots as\
@@ -99,33 +100,38 @@ export const helptext_sharing_smb = {
  target=_blank>Shadow Copies</a> for VSS clients.'),
 
     placeholder_auxsmbconf: T('Auxiliary Parameters'),
-    tooltip_auxsmbconf: T('Additional <b>smb5.conf</b> parameters not covered by\
- other option fields.'),
+    tooltip_auxsmbconf: T('Additional \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf</a> \
+ parameters.'),
 
-    placeholder_aapl_name_mangling: T('Enable Apple-style Character'),
-    tooltip_aapl_name_mangling: T('Enable Apple-style character encoding for NTFS illegal characters.'),
+    placeholder_aapl_name_mangling: T('Use Apple-style Character Encoding'),
+    tooltip_aapl_name_mangling: T('By default, Samba uses a hashing algorithm for NTFS illegal \
+ characters. Enabling this option translates NTFS illegal characters to the Unicode private range.'),
 
     placeholder_streams: T('Enable Alternate Data Streams'),
-    tooltip_streams: T('Enable support for Alternate Data Streams. Disabling support for streams will\
- cause MacOS to write streams to files on the filesystem.'),
+    tooltip_streams: T('Allows multiple \
+ <a href="http://www.ntfs.com/ntfs-multiple.htm" target"_blank">NTFS data streams</a>. \
+ Disabling this option causes MacOS to write streams to files on the filesystem.'),
 
-    placeholder_durablehandle: T('Enable SMB2/3 durable handles'),
-    tooltip_durablehandle: T('Enable support for SMB2/3 durable handles. This parameter disables support\
- for POSIX byte-range locks in Samba and may be unsuitable if multi-protocol (or local) access to the\
- files is anticipated.'),
+    placeholder_durablehandle: T('Enable SMB2/3 Durable Handles'),
+    tooltip_durablehandle: T('Allow using open file handles that can withstand short disconnections. \
+ Support for POSIX byte-range locks in Samba is also disabled. This option is not recommended when \
+ configuring multi-protocol or local access to files.'),
 
     placeholder_fsrvp: T('Enable FSRVP'),
-    tooltip_fsrvp: T('Enable support for the File Server Remote VSS Protocol\
- (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSVRP</a>).\
- This protocol allows RPC clients to manage snapshots of the specified SMB share. Share path must be a dataset\
- mountpoint. Snapshots will have a prefix "fss-" followed by the timestamp for when the snapshot was taken.\
- RPC users will not be able to delete snapshots that don\'t have this prefix.'),
+    tooltip_fsrvp: T('Enable support for the File Server Remote VSS Protocol \
+ (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSVRP</a>). \
+ This protocol allows RPC clients to manage snapshots for a specific SMB share. \
+ The share path must be a dataset mountpoint. Snapshots have the prefix \
+ <code>fss-</code> followed by a snapshot creation timestamp. A snapshot must have \
+ this prefix for an RPC user to delete it.'),
 
     placeholder_path_suffix: T('Path Suffix'),
-    tooltip_path_suffix: T('Append a suffix (possibly containing a macro) to the share\'s connect path.\
- This can be used to provide unique shares on a per-user, per-computer, or per-IP address basis. See\
+    tooltip_path_suffix: T('Appends a suffix to the share connection path. \
+ This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
+ Suffixes can contain a macro. See \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf(5)</a> for\
- list of supported macros. The connectpath _must_ be pre-staged before client connection.'),
+ a list of supported macros. The connectpath **must** be preset before a client connects.'),
 
     actions_basic_mode: T('Basic Mode'),
     actions_advanced_mode: T('Advanced Mode'),

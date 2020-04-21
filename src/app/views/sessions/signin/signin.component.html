@@ -8,7 +8,8 @@
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
             <mat-icon svgIcon="truenas_core_logo_full" *ngIf="product_type === 'CORE'; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
             <ng-template #isTruenas>
-              <mat-icon class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
+              <mat-icon *ngIf="product_type === 'ENTERPRISE'" class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
+              <mat-icon *ngIf="product_type === 'SCALE'" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
             </ng-template>
           </div>
           <span *ngIf="canLogin()">
@@ -16,12 +17,12 @@
               <div class="">
                 <mat-form-field class="full-width">
                   <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:2px;"></mat-icon>&nbsp;&nbsp;</span>
-                  <input autofocus 
-                    matInput name="username" 
-                    required 
-                    [(ngModel)]="signinData.username" 
-                    #username="ngModel" 
-                    placeholder="{{'Username' | translate}}" 
+                  <input autofocus
+                    matInput name="username"
+                    required
+                    [(ngModel)]="signinData.username"
+                    #username="ngModel"
+                    placeholder="{{'Username' | translate}}"
                     value=""
                     autocorrect="off" autocapitalize="none" autocomplete="off"
                   >
@@ -41,7 +42,22 @@
                   </mat-error>
                 </mat-form-field>
               </div>
-              <button name="signin_button" mat-button color="primary" class="full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
+              <div *ngIf="isTwoFactor">
+                <mat-form-field class="full-width">
+                  <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">phonelink</mat-icon>&nbsp;&nbsp;</span>
+                  <input matInput name="otp"
+                    [(ngModel)]="signinData.otp"
+                    #otp="ngModel"
+                    required
+                    placeholder="{{'Two-Factor Authentication Code' | translate}}"
+                    >
+                  <mat-error>
+                    <span *ngIf="!failed">{{"Please enter your 2FA code" | translate}}</span>
+                    <span *ngIf="failed">{{"Please enter your 2FA code again" | translate}}</span>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <button name="signin_button" mat-button class="fn-theme-primary full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
             </form>
             <ng-template #setPassword>
               <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
@@ -82,11 +98,10 @@
               </span>
             </div>
           </div></span>
-          <div>
-            <span fxFlex class="copyright-txt">
-              <span >TrueNAS {{product_type}}</span>
-              ® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
-            </span>
+
+          <div class="copyright-line">
+            <span  class="copyright-txt">TrueNAS {{product_type}} ® © {{copyrightYear}} </span>
+            <img id="full-logo" (click)="openIX()" src="assets/images/ix_logo_full.png">
           </div>
         </div>
         <ng-template #notconnected>
