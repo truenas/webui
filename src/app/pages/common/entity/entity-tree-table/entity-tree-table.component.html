@@ -33,7 +33,7 @@
 							*ngIf="rowData.is_encrypted_root && rowData.locked">
 						</mat-icon>
 						<mat-icon svgIcon="anti-lock"
-							*ngIf="rowData.non_encrypted_on_encrypted">
+							*ngIf="rowData.non_encrypted_on_encrypted || (!rowData.encrypted && rowData.has_encrypted_children)">
 						</mat-icon>
 					</span>
 				</span>
