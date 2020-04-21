@@ -31,7 +31,7 @@ export const helptext_system_kmip = {
     },
 
     manage_sed_disks: {
-        placeholder: T('Manage SED Password'),
+        placeholder: T('Manage SED Password(s)'),
         tooltip: T('Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling this\
  option allows the key server to manage creating or updating the global SED password, creating or\
  updating individual SED passwords, and retrieving SED passwords when SEDs are unlocked. Disabling\
@@ -49,6 +49,16 @@ export const helptext_system_kmip = {
     enabled: {
         placeholder: T('Enabled'),
         tooltip: T('Activate KMIP configuration and begin syncing keys with the KMIP server.'),
+    },
+
+    change_server: {
+        placeholder: T('Change Server'),
+        tooltip: T(''),
+    },
+
+    validate: {
+        placeholder: T('Validate Connection'),
+        tooltip: T(''),
     },
 
     jobDialog: {

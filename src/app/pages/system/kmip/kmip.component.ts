@@ -101,7 +101,19 @@ export class KmipComponent {
                     name: 'enabled',
                     placeholder: helptext_system_kmip.enabled.placeholder,
                     tooltip: helptext_system_kmip.enabled.tooltip
-                }
+                },
+                {
+                    type: 'checkbox',
+                    name: 'change_server',
+                    placeholder: helptext_system_kmip.change_server.placeholder,
+                    tooltip: helptext_system_kmip.change_server.tooltip
+                },
+                {
+                    type: 'checkbox',
+                    name: 'validate',
+                    placeholder: helptext_system_kmip.validate.placeholder,
+                    tooltip: helptext_system_kmip.validate.tooltip
+                },
             ]
         }
     ];
@@ -144,12 +156,12 @@ export class KmipComponent {
 
         this.systemGeneralService.getCA().subscribe((res) => {
             for (let i = 0; i < res.length; i++) {
-                certificateField.options.push({ label: res[i].name, value: res[i].id });
+                certificateAuthorityField.options.push({ label: res[i].name, value: res[i].id });
             }
         });
         this.systemGeneralService.getCertificates().subscribe((res) => {
             for (let i = 0; i < res.length; i++) {
-                certificateAuthorityField.options.push({ label: res[i].name, value: res[i].id });
+                certificateField.options.push({ label: res[i].name, value: res[i].id });
             }
         });
     }

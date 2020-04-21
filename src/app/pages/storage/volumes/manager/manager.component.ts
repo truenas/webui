@@ -585,7 +585,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                 downloadDialogRef.componentInstance.new = true;
                 downloadDialogRef.componentInstance.volumeId = r.result.id;
                 downloadDialogRef.componentInstance.volumeName = r.result.name;
-                downloadDialogRef.componentInstance.fileName = "pool_" + r.result.name + "_encryption.key";
+                downloadDialogRef.componentInstance.fileName = "dataset_" + r.result.name + "_keys.json";
 
                 return downloadDialogRef.afterClosed();
               }

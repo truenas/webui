@@ -17,5 +17,9 @@ export default {
         title: T('No Pools'),
         message: T('Cannot create plugins or jails until a pool is present for storing them.'),
         buttonMsg: T('Create Pool'),
+    },
+    updateConfirmDialog: {
+        title: T('Update Jail'),
+        message: T('Update the jail operating system to the latest available patch?')
     }
 }

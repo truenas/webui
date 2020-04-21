@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subscription, interval } from 'rxjs';
+import { Subscription, interval, Subject } from 'rxjs';
 import * as domHelper from '../../../helpers/dom.helper';
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
 import helptext from '../../../helptext/topbar';
@@ -15,6 +15,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { LanguageService } from "../../../services/language.service";
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { RestService } from "../../../services/rest.service";
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from '../../../services/system-general.service';
 import { Theme, ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -62,10 +63,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
+  showWelcome: boolean;
   public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
   public mat_tooltips = helptext.mat_tooltips;
+  systemType: string;
+  isWaiting = false;
+  public target: Subject<CoreEvent> = new Subject();
 
   protected dialogRef: any;
   protected tcConnected = false;
@@ -85,6 +90,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
     public translate: TranslateService,
+    private prefServices: PreferencesService,
     protected loader: AppLoaderService) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
@@ -169,7 +175,26 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.hostname = evt.data.hostname;
     });
 
+    this.ws.call('system.product_type').subscribe((res)=>{
+      this.systemType = res;
+    })
+
     this.core.emit({name: "SysInfoRequest", sender:this});
+
+    this.core.emit({name:"UserPreferencesRequest", sender:this});
+    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+      if(this.isWaiting){
+        this.target.next({name:"SubmitComplete", sender: this});
+        this.isWaiting = false;
+      }
+      this.showWelcome = evt.data.showWelcomeDialog;
+    });
+
+    setTimeout(() => {
+      if (this.showWelcome) {
+        this.onShowAbout();
+      }
+    }, 3500)
   }
 
   checkLegacyUISetting() {
@@ -218,10 +243,16 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   onShowAbout() {
-    let dialogRef = this.dialog.open(AboutModalDialog, {});
+    let dialogRef = this.dialog.open(AboutModalDialog, {
+      maxWidth: '600px',
+      data: { 
+        extraMsg: this.showWelcome, 
+        systemType: this.systemType
+      }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
-      // The dialog was closed
+      this.showWelcome = false;
     });
   }
 

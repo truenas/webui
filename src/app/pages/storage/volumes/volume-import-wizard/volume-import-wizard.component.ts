@@ -166,6 +166,7 @@ export class VolumeImportWizardComponent {
   protected passphrase;
   protected passphrase_fg;
   protected guid;
+  protected pool;
   protected guid_subscription;
   protected message_subscription;
 
@@ -280,6 +281,10 @@ export class VolumeImportWizardComponent {
     .valueChanges.subscribe((res) => {
       let pool = _.find(this.guid.options, {'value': res});
       this.summary[T('Pool to import')] = pool['label'];
+      const pool_label = pool.label.split(' ');
+      if (pool.label.length > 0) {
+        this.pool = pool_label[0];
+      }
     });
 
     this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
@@ -317,8 +322,33 @@ export class VolumeImportWizardComponent {
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.subscribe((res) => {
         dialogRef.close(false);
+        if (this.pool) {
+          this.ws.call('pool.dataset.query', [[['pool','=',this.pool]]]).subscribe(datasets => {
+            let found = false;
+            for (let i=0; i < datasets.length; i++) {
+              if (datasets[i].encrypted && datasets[i].locked) {
+                found = true;
+                this.dialogService.confirm(helptext.unlock_dataset_dialog_title, helptext.unlock_dataset_dialog_message, true, helptext.unlock_dataset_dialog_button).subscribe(unlock => {
+                  if (unlock) {
+                    const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
+                    this.router.navigate(new Array('/').concat(route_unlock));
+                  } else {
+                    this.router.navigate(new Array('/').concat(this.route_success));
+                  }
+                });
+                break;
+              }
+              if (!found) {
+                this.router.navigate(new Array('/').concat(this.route_success));
+              }
+            }
+          }, err => {
+            new EntityUtils().handleWSError(this, err, this.dialogService);
+          });
+        } else { // shouldn't ever get here but who knows lol
         this.router.navigate(new Array('/').concat(
           this.route_success));
+        }
       });
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close(false);

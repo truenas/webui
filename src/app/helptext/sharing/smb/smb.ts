@@ -86,7 +86,9 @@ export const helptext_sharing_smb = {
 
     placeholder_hostsallow: T('Hosts Allow'),
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
- Separate entries by pressing <code>Enter</code>.'),
+ Separate entries by pressing <code>Enter</code>. A more detailed description \
+ with examples can be found \
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW">here</a>.'),
 
     placeholder_hostsdeny: T('Hosts Deny'),
     tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
