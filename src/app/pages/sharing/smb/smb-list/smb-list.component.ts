@@ -53,6 +53,7 @@ export class SMBListComponent {
 
   getActions(row): any[] {
     let rowName = row.path.replace("/mnt/", "");
+    let rowParts = rowName.split('/');
     let poolName = rowName.split('/')[0];
     let optionDisabled;
     rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
@@ -88,29 +89,39 @@ export class SMBListComponent {
         onClick: row => {
           const datasetId = rowName;
           const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId]
-          this.ws.call('pool.dataset.query', [[["name", "=", poolName]]]).subscribe(ds => {
+          this.ws.call('pool.dataset.query', [[["name", "=", poolName]]]).subscribe(pool => {
             // Legacy encryption
-            if (ds.length === 0) {
+            if (pool.length === 0) {
               this.ws.call('pool.query', [[["name", "=", poolName]]]).subscribe(pool => {
-                if (pool[0].status !== 'OFFLINE') {
+                if (pool[0].status !== 'OFFLINE') { // Pool is probably locked
                   this.router.navigate(
                     ['/'].concat(ACLRoute)
                   )
                 } else {
                   this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
-                    `${helptext_sharing_smb.action_edit_acl_dialog.message1} <i>${datasetId}</i> 
-                      ${helptext_sharing_smb.action_edit_acl_dialog.message2}`);
+                    `${helptext_sharing_smb.action_edit_acl_dialog.legacy_msg1} <i>${row.name}</i> 
+                      ${helptext_sharing_smb.action_edit_acl_dialog.legacy_msg2}`);
                 }   
               })
             } else {
               // ZFS Encryption
-              if (ds[0].locked) {
+              if (pool[0].locked) { // Pool is locked
                 this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
-                  `${helptext_sharing_smb.action_edit_acl_dialog.dataset_message1} <i>${datasetId}</i> 
-                    ${helptext_sharing_smb.action_edit_acl_dialog.dataset_message2}`);
+                  `${helptext_sharing_smb.action_edit_acl_dialog.lockedPool_msg1} <i>${row.name}</i> 
+                    ${helptext_sharing_smb.action_edit_acl_dialog.lockedPool_msg2}`);
               } else {
-                this.router.navigate(
-                  ["/"].concat(ACLRoute));
+                this.ws.call('pool.dataset.query', [[['name', '=', rowName]]]).subscribe(ds => {
+                  if (ds.length === 0) {
+                    console.log('folder?')
+                  } else if (ds[0].locked) { // pool isn't locked but ds is locked
+                  this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+                    `${helptext_sharing_smb.action_edit_acl_dialog.lockedDS_msg1} <i>${row.name}</i> 
+                      ${helptext_sharing_smb.action_edit_acl_dialog.lockedDS_msg2}`);
+                  } else {
+                    this.router.navigate(
+                      ["/"].concat(ACLRoute));
+                  }
+                })
               }
             }
           })
