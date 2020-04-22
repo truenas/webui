@@ -73,48 +73,49 @@ export class CertificateAcmeAddComponent {
             { label: 'https://acme-v02.api.letsencrypt.org/directory', value: 'https://acme-v02.api.letsencrypt.org/directory' }
           ],
           value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
-        },
-        {
-          type: 'select',
-          name: 'authenticators',
-          placeholder: helptext_system_certificates.acme.authenticator.placeholder,
-          tooltip: helptext_system_certificates.acme.authenticator.tooltip,
-          options: [],
-          required: true
         }
       ]
     },
+    {
+      name: 'mid_divider',
+      divider: true
+    },
+    {
+      name: 'Domains',
+      width: "100%",
+      label: true,
+      class: 'domain_list',
+      config: [
         {
-          name: 'SANs',
-          width: "100%",
-          label: true,
-          class: 'ip_addresses',
-          config: [
-          {
-            type: 'list',
-            name: 'sans',
-            placeholder: 'SANs',
-            label: 'Get some SANs',
-            templateListField: [
-                {
-                  name: 'domain',
-                  placeholder: 'Domain',
-                  tooltip: 'Check it',
-                  type: 'select',
-                  options: []
-                },
-                {
-                  name: 'the_other_thing',
-                  placeholder: 'Match THIS',
-                  tooltip: 'helptext.failover_alias_address_tooltip',
-                  type: 'select',
-                  options: []
-                }
-            ],
-            listFields: []
-          }
-        ]
-      }
+          type: 'list',
+          name: 'domains',
+          placeholder: '',
+          hideButton: true,
+          templateListField: [
+            {
+              type: 'paragraph',
+              name: 'vert_spacer',
+              width: '5%'
+            },
+            {
+              type: 'paragraph',
+              name: 'name_text',
+              paraText: '',
+              width: '25%',
+            },
+            {
+              type: 'select',
+              name: 'authenticators',
+              placeholder: helptext_system_certificates.acme.authenticator.placeholder,
+              tooltip: helptext_system_certificates.acme.authenticator.tooltip,
+              // required: true,
+              options: []
+            }
+          ],
+          listFields: []
+        }
+      ]
+    }
   ];
 
   protected entityForm: any;
@@ -122,7 +123,8 @@ export class CertificateAcmeAddComponent {
   protected dialogRef: any;
   protected queryCallOption: Array<any> = [["id", "="]];
   protected initialCount = 1;
-  private sansList;
+  private domainList: any;
+  private domainList_fc: any;
 
   constructor(
     protected router: Router, protected route: ActivatedRoute,
@@ -134,10 +136,17 @@ export class CertificateAcmeAddComponent {
   preInit() { 
     this.arrayControl = _.find(this.fieldSets[0].config, {'name' : 'dns_mapping_array'});
     this.route.params.subscribe(params => {
-      if (params['pk']) { console.log(params['pk'])
+      if (params['pk']) {
         this.pk = params['pk']; 
         this.queryCallOption[0].push(parseInt(params['pk']));
       }
+
+      this.ws.call('acme.dns.authenticator.query').subscribe(authenticators => {
+        let dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
+        authenticators.forEach(item => {
+          dns_map.options.push({ label: item.name, value: item.id})
+        })
+      })
     });
   }
 
@@ -145,56 +154,48 @@ export class CertificateAcmeAddComponent {
     this.entityForm = entityEdit;
     this.fieldConfig = entityEdit.fieldConfig;
 
+    this.domainList = entityEdit.formGroup.controls['domains'];
+    this.domainList_fc = _.find(this.fieldConfig, {name: 'domains'});
+    const listFields = this.domainList_fc.listFields;
+
     this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
       this.commonName = res[0].common;
       this.csrOrg = res[0];
+      
+      this.ws.call('certificate.get_domain_names', [this.pk]).subscribe(domains => {
+        if (domains && domains.length > 0) {
+          for (let i = 0; i < domains.length; i++) {
+            if (this.domainList.controls[i] === undefined) {
+              const templateListField = _.cloneDeep(this.domainList_fc.templateListField);
+              const newfg = entityEdit.entityFormService.createFormGroup(templateListField);
+              this.domainList.controls.push(newfg);
+              this.domainList_fc.listFields.push(templateListField);
+            }
 
-      this.ws.call('acme.dns.authenticator.query').subscribe( (res) => {
-        let dns_map = _.find(this.fieldSets[0].config, {'name' : 'authenticators'});
-        let dns_map_xtra = _.find(this.fieldSets[1].config[0].templateListField, {'name' : 'the_other_thing'});
-        console.log(this.fieldSets[1].config[0].templateListField)
-
-        res.forEach((item) => {
-          dns_map.options.push(
-            { label : item.name, value : item.id }
-          );
-          dns_map_xtra.options.push(
-            { label : item.name, value : item.id }
-          );
-        });
+            const controls = listFields[i];            
+            const name_text_fc = _.find(controls, {name: 'name_text'});
+            this.domainList.controls[i].controls['name_text'].setValue(domains[i]);
+            name_text_fc.paraText = domains[i];
+          };
+        }
       });
-
-    this.sansList = _.find(this.fieldConfig, {'name' : 'sans'});
-    console.log(this.sansList)
-
-    })
-
-    this.ws.call('certificate.get_domain_names', [this.pk]).subscribe(res => {
-      console.log(res)
-      let domains = _.find(this.fieldSets[1].config[0].templateListField, {'name' : 'domain'});
-      res.forEach(item => {
-        domains.options.push (
-          { label: item, value: item}
-        )
-      })
-
-    })
-
-    this.ws.call('acme.dns.authenticator.query').subscribe(res => {
-      console.log(res)
     })
   }
 
   customSubmit(value) {
-    let dns_map = { };
-    dns_map[this.commonName] = value.authenticators;
-    delete value.authenticators;
+    let dns_mapping = { };
+    value.domains.forEach(domain => {
+      dns_mapping[domain.name_text] = domain.authenticators
+    })
+
     let payload = value;
     payload['name'] = value.identifier;
-    delete payload.identifier;
+    delete payload['identifier'];
     payload['csr_id'] = this.csrOrg.id;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
-    payload['dns_mapping'] = dns_map;
+    payload['dns_mapping'] = dns_mapping;
+    delete payload['domains']
+    console.log(payload)
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": (
       helptext_system_certificates.acme.job_dialog_title) }, disableClose: true});
