@@ -197,7 +197,6 @@ export class CertificateAcmeAddComponent {
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = dns_mapping;
     delete payload['domains']
-    console.log(payload)
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": (
       helptext_system_certificates.acme.job_dialog_title) }, disableClose: true});
