@@ -177,6 +177,11 @@ div#cardHeaderContainer {
   height: 0;
   width: 0;
   border:solid black 3px;
+  top: 6px;
+  left: 6px;
+  width: 6px;
+  height: 6px;
+  z-index: 10;
 }
 
 /* Create a custom checkbox */
