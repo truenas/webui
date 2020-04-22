@@ -287,10 +287,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this.control.setValue(new EntityUtils().parseDOW(this.control.value));
       this.crontab = this.control.value;
     }
-    if (this.group.controls['begin'] && this.group.controls['end']) {
-      this.beginTime = moment(this.group.controls['begin'].value, 'hh:mm');
-      this.endTime = moment(this.group.controls['end'].value, 'hh:mm');
-    }
   }
 
   ngAfterViewInit(){
@@ -399,6 +395,13 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   }
 
   private generateSchedule(nextSubset?:boolean){
+    // get beginTime and endTime value;
+    // config should define options with begin prop and end prop
+    // e.g. options: ['schedule_begin', 'schedule_end']
+    if (this.config.options) {
+      this.beginTime = moment(this.group.controls[this.config.options[0]].value, 'hh:mm');
+      this.endTime = moment(this.group.controls[this.config.options[1]].value, 'hh:mm');
+    }
     let newSchedule = [];
     let adjusted:any;
     if(nextSubset){
@@ -430,9 +433,9 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
           let obj:any = interval.next();
           if (this.isValidSchedule(obj.value)) {
             newSchedule.push(obj.value);
+            parseCounter++
           }
         }
-        parseCounter++
       } catch (e) {
         console.warn(e);
         break;
