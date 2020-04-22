@@ -186,6 +186,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public activeDate;
   public generatedSchedule: any[] = [];
   public generatedScheduleSubset:number = 0;
+  protected beginTime;
+  protected endTime;
   public picker:boolean = false;
   private _textInput:string = '';
   public crontab:string = "custom";
@@ -285,6 +287,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this.control.setValue(new EntityUtils().parseDOW(this.control.value));
       this.crontab = this.control.value;
     }
+    if (this.group.controls['begin'] && this.group.controls['end']) {
+      this.beginTime = moment(this.group.controls['begin'].value, 'hh:mm');
+      this.endTime = moment(this.group.controls['end'].value, 'hh:mm');
+    }
   }
 
   ngAfterViewInit(){
@@ -382,6 +388,15 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
     return newMinDate;
   }
+  // check if candidate schedule is between the beginTime and endTime
+  isValidSchedule(schedule): boolean {
+    const scheduleArray = schedule.toString().split(' ');
+    const time = moment(scheduleArray[4], 'hh:mm:ss');
+    if (this.beginTime && this.endTime) {
+      return time.isBetween(this.beginTime, this.endTime, null, '[]');
+    }
+    return true;
+  }
 
   private generateSchedule(nextSubset?:boolean){
     let newSchedule = [];
@@ -402,6 +417,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     if(!nextSubset){ 
       this.generatedScheduleSubset = 0;
     }
+
     let subsetEnd = this.generatedScheduleSubset + 128;
     let parseCounter = 0;
     while (true) {
@@ -412,10 +428,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
         }
         if(parseCounter >= this.generatedScheduleSubset && parseCounter < subsetEnd){
           let obj:any = interval.next();
-          newSchedule.push(obj.value);
-          //console.log(obj.value);
+          if (this.isValidSchedule(obj.value)) {
+            newSchedule.push(obj.value);
+          }
         }
-        //console.log(parseCounter)
         parseCounter++
       } catch (e) {
         console.warn(e);
