@@ -96,6 +96,7 @@ export class CertificateAcmeAddComponent {
             {
               type: 'paragraph',
               name: 'vert_spacer',
+              paraText: '',
               width: '5%'
             },
             {
