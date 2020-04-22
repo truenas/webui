@@ -33,7 +33,7 @@ export class AdvancedComponent implements OnDestroy {
   public entityForm: any;
   protected dialogRef: any;
   public is_freenas = false;
-  public is_ha;
+  public is_ha = false;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: T('Save Debug'),
