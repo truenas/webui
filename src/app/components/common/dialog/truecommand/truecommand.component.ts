@@ -19,4 +19,8 @@ export class TruecommandComponent {
     gotoTC() {
       window.open(this.tc.remote_address);
     }
+
+    update(data) {
+      this.tc = data;
+    }
 }
