@@ -30,7 +30,8 @@
 }
 
 span.passive{
-  font-size:90%;
+  font-size: 75%;
+  text-transform: lowercase;
 }
 
 .primary-nav .card-title-text{

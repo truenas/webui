@@ -88,7 +88,7 @@
 
               <mat-list>
                 <mat-list-item><strong>{{'Platform' | translate}}:</strong> &nbsp;&nbsp;{{data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic'}}</mat-list-item>
-                <mat-list-item><strong>{{"Version" | translate}}:</strong> &nbsp;&nbsp;{{data.version}}</mat-list-item>
+                <mat-list-item><strong>{{"Version" | translate}}:</strong> &nbsp;&nbsp;<div>{{data.version}}</div></mat-list-item>
 
                 <mat-list-item *ngIf="data.license">
                   <strong>{{'License' | translate}}:</strong> &nbsp;&nbsp;
