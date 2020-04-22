@@ -1111,13 +1111,6 @@ export class DatasetFormComponent implements Formconfiguration{
         entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
         }
         else {
-          for (let i=0; i < this.encryption_fields.length; i++) {
-            this.entityForm.setDisabled(this.encryption_fields[i], true, true);
-            _.find(this.fieldSets, {name:"encryption_divider"}).divider = false;
-          }
-          this.entityForm.setDisabled('encryption', true, true);
-          this.entityForm.setDisabled('inherit_encryption', true, true);
-          _.find(this.fieldConfig, {name:'encryption'}).isHidden = true;
           this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
             this.parent_dataset = parent_dataset[0];
             const current_dataset = _.find(this.parent_dataset.children, {'name':this.pk});
