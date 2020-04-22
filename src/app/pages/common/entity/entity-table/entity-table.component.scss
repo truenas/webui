@@ -153,3 +153,72 @@ div#cardHeaderContainer {
     padding: 0px !important;
 }
 
+/* The fake mat-checkbox */
+.fake-mat-checkbox {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  min-height: 24px;
+}
+
+/* Hide the browser's default checkbox */
+.fake-mat-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+  border:solid black 3px;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  height: 1.06rem;
+  width: 16px;
+  border: solid 1.85px var(--fg2);
+  border-radius: 10%;
+}
+
+/* On mouse-over, add a grey background color */
+.fake-mat-checkbox:hover input ~ .checkmark {
+  cursor: pointer;
+}
+
+/* When the checkbox is checked, add a background */
+.fake-mat-checkbox input:checked ~ .checkmark {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.fake-mat-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.fake-mat-checkbox .checkmark:after {
+  left: 4px;
+  top: 0px;
+  width: 5px;
+  height: 11px;
+  border: solid white 0.05px;
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+}

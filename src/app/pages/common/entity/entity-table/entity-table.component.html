@@ -243,17 +243,20 @@
         </ng-template>
 
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-          <div>
-            <input
-              type="checkbox"
-              *ngIf="!row.hideCheckbox"
-              ix-auto=""
-              ix-auto-type="checkbox"
-              [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
-              [checked]="isSelected"
-              (click)="onclick($event)"
-              (change)="onCheckboxChangeFn(tableMouseEvent)"
-            />
+          <div class="fake-mat-checkbox">
+            <label>
+              <input
+                type="checkbox"
+                *ngIf="!row.hideCheckbox"
+                ix-auto=""
+                ix-auto-type="checkbox"
+                [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
+                [checked]="isSelected"
+                (click)="onclick($event)"
+                (change)="onCheckboxChangeFn(tableMouseEvent)"
+              />
+              <span class="checkmark"></span>
+            </label>
           </div>
         </ng-template>
       </ngx-datatable-column>
