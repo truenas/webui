@@ -857,6 +857,12 @@ export class DatasetFormComponent implements Formconfiguration{
       entityForm.setDisabled('casesensitivity',true);
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
+      for (let i=0; i < this.encryption_fields.length; i++) {
+        this.entityForm.setDisabled(this.encryption_fields[i], true, true);
+      }
+      _.find(this.fieldSets, {name:"encryption_divider"}).divider = false;
+      this.entityForm.setDisabled('encryption', true, true);
+      this.entityForm.setDisabled('inherit_encryption', true, true);
     } else {
       entityForm.setDisabled('share_type', false, false);
     }
