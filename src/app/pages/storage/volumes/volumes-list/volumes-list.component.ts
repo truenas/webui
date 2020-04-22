@@ -712,8 +712,12 @@ export class VolumesListTableConfig implements InputTableConf {
             name: T('Upgrade Pool'),
             label: T("Upgrade Pool"),
             onClick: (row1) => {
+              let upgrade_warning = helptext.upgradePoolDialog_warning;
+              if (window.localStorage.getItem('is_freenas') === 'false') {
+                upgrade_warning = helptext.upgradePoolDialog_warning_truenas;
+              }
 
-              this.dialogService.confirm(T("Upgrade Pool"), helptext.upgradePoolDialog_warning + row1.name).subscribe((confirmResult) => {
+              this.dialogService.confirm(T("Upgrade Pool"), upgrade_warning + row1.name).subscribe((confirmResult) => {
                   if (confirmResult === true) {
                     this.loader.open();
 
@@ -1131,7 +1135,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               let used_pct =  volume.children[0].used / (volume.children[0].used + volume.children[0].avail);
-              volume.usedStr = ": " + (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
+              volume.usedStr = ": " +  " (" + volume.children[0].used_pct.toString() + "%)";
             } catch (error) {
               volume.usedStr = "" + volume.children[0].used;
             }

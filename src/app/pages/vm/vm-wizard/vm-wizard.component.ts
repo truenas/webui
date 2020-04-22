@@ -170,15 +170,15 @@ export class VMWizardComponent {
           name: 'disk_radio',
           options: [
             {
-              label: helptext.disk_radio_options_new_label, 
+              label: helptext.disk_radio_options_new_label,
               value: true,
               tooltip: helptext.disk_radio_tooltip
             },
             {
-              label: helptext.disk_radio_options_existing_label, 
+              label: helptext.disk_radio_options_existing_label,
               value: false
             }
-          ],          
+          ],
           value: true,
         },
         {
@@ -341,7 +341,7 @@ export class VMWizardComponent {
   preInit(entityWizard: EntityWizardComponent){
     this.entityWizard = entityWizard;
   }
-  
+
   afterInit(entityWizard: EntityWizardComponent) {
     this.ws.call('vm.query').subscribe((res) => {
       res.forEach(i => this.namesInUse.push(i.name));
@@ -352,14 +352,8 @@ export class VMWizardComponent {
         const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
         Object.keys(res).forEach((address) => {
           vnc_bind.options.push({label : address, value : address});
-        })
-        this.ws.call('interface.ip_in_use', [{"ipv4": true}]).subscribe(
-          (ip) => {
-            if (_.find(vnc_bind.options, { value: ip[0].address })){
-              ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(ip[0].address);
-            }
-          }
-        )
+        });
+        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(res['0.0.0.0']);
       }
     });
 
@@ -461,11 +455,11 @@ export class VMWizardComponent {
               if (vm_os === "Windows"){
                   ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
               } else {
-                  ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(this.storageService.convertBytestoHumanReadable(volsize, 0)); 
+                  ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(this.storageService.convertBytestoHumanReadable(volsize, 0));
               };
         } else if (stat.free_bytes > 10*1073741824) {
               const vm_os = ( < FormGroup > entityWizard.formArray.get([0]).get('os')).value;
-              ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue((this.storageService.convertBytestoHumanReadable(volsize, 0))); 
+              ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue((this.storageService.convertBytestoHumanReadable(volsize, 0)));
           };
         });
       } else {
@@ -487,18 +481,26 @@ export class VMWizardComponent {
         } else {
           delete this.summary[T('Installation Media')];
         }
-        
+
       });
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).setValue(message);
       })
       this.res = res;
+      const grub = this.bootloader.options.find(o => o.value === 'GRUB');
+      const grubIndex = this.bootloader.options.indexOf(grub);
       if (res === 'Windows') {
+        if (grub) {
+          this.bootloader.options.splice(grubIndex, 1);
+        }
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('4 GiB');
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('40 GiB');
       }
       else {
+        if (!grub) {
+          this.bootloader.options.push({label : 'Grub', value : 'GRUB'});
+        }
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue('512 MiB');
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('10 GiB');
@@ -605,7 +607,7 @@ volSizeValidator(name: string) {
       const errors = self.statSize.free_bytes < requestedSize
       ? { validStorage : true }
       : null;
-    
+
 
 
     if (errors) {
@@ -659,7 +661,7 @@ async customSubmit(value) {
       value.datastore = value.datastore.replace('/mnt/','')
       hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     }
-    
+
     // zvol_payload only applies if the user is creating one
     zvol_payload['create_zvol'] = true
     zvol_payload["zvol_name"] = hdd
@@ -686,7 +688,7 @@ async customSubmit(value) {
         {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, "sectorsize": 0}},
       ]
     }
-    
+
     if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
       vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
@@ -716,7 +718,7 @@ async customSubmit(value) {
 
     } else {
       for (const device of vm_payload["devices"]){
-        if (device.dtype === "DISK"){          
+        if (device.dtype === "DISK"){
           const orig_hdd = device.attributes.path;
           const create_zvol = zvol_payload['create_zvol']
           const zvol_name = zvol_payload['zvol_name']

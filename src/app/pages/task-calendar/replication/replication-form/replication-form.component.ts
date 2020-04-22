@@ -399,6 +399,7 @@ export class ReplicationFormComponent {
             type: 'scheduler',
             name: 'schedule_picker',
             tooltip: helptext.schedule_picker_tooltip,
+            options: ['schedule_begin', 'schedule_end'],
             value: "0 0 * * *",
             relation: [{
                 action: 'SHOW',
@@ -451,6 +452,7 @@ export class ReplicationFormComponent {
             type: 'scheduler',
             name: 'restrict_schedule_picker',
             tooltip: helptext.restrict_schedule_picker_tooltip,
+            options: ['restrict_schedule_begin', 'restrict_schedule_end'],
             value: "0 0 * * *",
             relation: [{
                 action: 'SHOW',
@@ -939,13 +941,14 @@ export class ReplicationFormComponent {
         })
 
         entityForm.formGroup.controls['schedule_picker'].valueChanges.subscribe(value => {
-            if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
-              entityForm.setDisabled('schedule_begin', true, true);
-              entityForm.setDisabled('schedule_end', true, true);
-      
-            } else {
-              entityForm.setDisabled('schedule_begin', false, false);
-              entityForm.setDisabled('schedule_end', false, false);
+            if (!entityForm.formGroup.controls['schedule'].disabled) {
+                if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
+                    entityForm.setDisabled('schedule_begin', true, true);
+                    entityForm.setDisabled('schedule_end', true, true);
+                  } else {
+                    entityForm.setDisabled('schedule_begin', false, false);
+                    entityForm.setDisabled('schedule_end', false, false);
+                  }
             }
           })
 

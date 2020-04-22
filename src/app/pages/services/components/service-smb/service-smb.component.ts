@@ -131,6 +131,18 @@ export class ServiceSMBComponent {
       tooltip: helptext.cifs_srv_guest_tooltip,
     },
     {
+      type: 'input',
+      name: 'cifs_srv_filemask',
+      placeholder: helptext.cifs_srv_filemask_placeholder,
+      tooltip: helptext.cifs_srv_filemask_tooltip,
+    },
+    {
+      type: 'input',
+      name: 'cifs_srv_dirmask',
+      placeholder: helptext.cifs_srv_dirmask_placeholder,
+      tooltip: helptext.cifs_srv_dirmask_tooltip,
+    },
+    {
       type: 'combobox',
       name: 'cifs_srv_admin_group',
       placeholder: helptext.cifs_srv_admin_group_placeholder,
