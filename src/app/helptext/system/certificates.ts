@@ -208,6 +208,7 @@ export const helptext_system_certificates = {
   },
 
   acme: {
+    fieldset_acme: T('ACME Certificate'),
     identifier: {
       placeholder: T("Identifier"),
       tooltip: T('Internal identifier of the certificate. Only\

@@ -6,7 +6,7 @@
                 [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'">
                 <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
             </div>
-            <div class="list-action" [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
+            <div *ngIf="!config.hideButton" class="list-action" [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
               <div *ngIf="config.deleteButtonOnFirst; else defaultButtons">
                     <button *ngIf="i === 0" mat-button color="primary" id="{{config.name+i}}" type="button"
                         (click)="add()" [disabled]="listsFromArray.controls[i].disabled">
