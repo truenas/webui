@@ -23,6 +23,7 @@ export class CertificateAcmeAddComponent {
   protected queryCall: string = 'certificate.query';
   protected route_success: string[] = [ 'system', 'certificates' ];
   protected isEntity: boolean = true;
+  protected isNew = true;
   private csrOrg: any;
   public formArray: FormArray;
   public commonName: string;
@@ -108,7 +109,7 @@ export class CertificateAcmeAddComponent {
               name: 'authenticators',
               placeholder: helptext_system_certificates.acme.authenticator.placeholder,
               tooltip: helptext_system_certificates.acme.authenticator.tooltip,
-              // required: true,
+              required: true,
               options: []
             }
           ],
@@ -168,6 +169,7 @@ export class CertificateAcmeAddComponent {
             if (this.domainList.controls[i] === undefined) {
               const templateListField = _.cloneDeep(this.domainList_fc.templateListField);
               const newfg = entityEdit.entityFormService.createFormGroup(templateListField);
+              newfg.setParent(this.domainList);
               this.domainList.controls.push(newfg);
               this.domainList_fc.listFields.push(templateListField);
             }
@@ -176,7 +178,7 @@ export class CertificateAcmeAddComponent {
             const name_text_fc = _.find(controls, {name: 'name_text'});
             this.domainList.controls[i].controls['name_text'].setValue(domains[i]);
             name_text_fc.paraText = domains[i];
-          };
+          }
         }
       });
     })
