@@ -2,11 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
-import { WebSocketService } from 'app/services';
+import { WebSocketService, IscsiService } from 'app/services';
 
 @Component({
   selector: 'iscsi',
   templateUrl: './iscsi.component.html',
+  providers: [IscsiService]
 })
 export class ISCSI implements OnInit {
 
