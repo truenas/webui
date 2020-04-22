@@ -443,6 +443,7 @@ export class ReplicationFormComponent {
                     type: 'scheduler',
                     name: 'restrict_schedule_picker',
                     tooltip: helptext.restrict_schedule_picker_tooltip,
+                    options: ['restrict_schedule_begin', 'restrict_schedule_end'],
                     value: "0 0 * * *",
                     relation: [{
                         action: 'SHOW',
@@ -681,6 +682,7 @@ export class ReplicationFormComponent {
                     type: 'scheduler',
                     name: 'schedule_picker',
                     tooltip: helptext.schedule_picker_tooltip,
+                    options: ['schedule_begin', 'schedule_end'],
                     value: "0 0 * * *",
                     relation: [{
                         action: 'SHOW',
