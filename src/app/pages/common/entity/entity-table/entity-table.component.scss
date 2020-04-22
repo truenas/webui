@@ -156,7 +156,8 @@ div#cardHeaderContainer {
 /* The fake mat-checkbox */
 .fake-mat-checkbox {
   display: block;
-  position: relative;
+  position: absolute;
+  left: 24px;
   padding-left: 35px;
   margin-bottom: 12px;
   cursor: pointer;
@@ -187,6 +188,7 @@ div#cardHeaderContainer {
   width: 16px;
   border: solid 1.85px var(--fg2);
   border-radius: 10%;
+  display: block;
 }
 
 /* On mouse-over, add a grey background color */
