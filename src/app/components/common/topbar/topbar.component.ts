@@ -78,7 +78,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   protected tc_updateCall = 'truecommand.update';
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
-  protected tcStatus;
+  public tcStatus;
 
   constructor(
     public themeService: ThemeService,
@@ -125,6 +125,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.currentTheme = theme.name;
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
       this.themesMenu = this.themeService.themesMenu
+    });
+
+    this.ws.call(this.tc_queryCall).subscribe(res => {
+      this.tcStatus = res;
+      this.tcConnected = res.api_key ? true : false;
+    });
+    this.ws.subscribe(this.tc_queryCall).subscribe(res => {
+      this.tcStatus = res.fields;
+      this.tcConnected = res.fields.api_key ? true : false;
+      if (this.isTcStatusOpened && this.tcStatusDialogRef) {
+        this.tcStatusDialogRef.componentInstance.update(this.tcStatus);
+      }
     });
 
     const notifications = this.notificationsService.getNotificationList();
@@ -550,12 +562,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showTCStatus() {
-    this.ws.call('this.tc_queryCall').subscribe(
-      (res) => {
-        this.tcStatus = res;
-        this.tcConnected = res.api_key ? true : false;
-        res.api_key ? this.openStatusDialog() : this.openSignupDialog();
-      })
+    this.tcConnected ? this.openStatusDialog() : this.openSignupDialog();
   }
 
   openSignupDialog() {
@@ -589,8 +596,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   updateTC() {
+    const self = this;
     const conf: DialogFormConfiguration = {
-      title: this.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
+      title: self.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
       fieldConfig: [
         {
           type: 'input',
@@ -606,34 +614,34 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           value: true,
         }
       ],
-      saveButtonText: this.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
+      saveButtonText: self.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
       parent: this,
       afterInit: function(entityDialog) {
         // load settings
-        if (this.tcConnected) {
-          this.ws.call('this.tc_queryCall').subscribe(
-            (res) => {
+        if (self.tcConnected) {
+          Object.keys(self.tcStatus).forEach(key => {
+            const ctrl = entityDialog.formGroup.controls[key];
+            if (ctrl) {
+              ctrl.setValue(self.tcStatus[key]);
             }
-          )
+          })
         }
       },
       customSubmit: function(entityDialog) {
-        console.log(entityDialog.formValue);
-        // this.ws.call('truecommand.update', [entityDialog.formValue]).subscribe(
-        //   (res) => {
-        //     entityDialog.dialogRef.close();
-        //   },
-        //   (err) => {
-        //     new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService)
-        //   }
-        // )
+        self.ws.call(self.tc_updateCall, [entityDialog.formValue]).subscribe(
+          (res) => {
+            entityDialog.dialogRef.close();
+          },
+          (err) => {
+            new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService)
+          }
+        )
       }
     }
     this.dialogService.dialogForm(conf);
   }
 
   openStatusDialog() {
-    console.log('openstatusdialog');
     const injectData = {
       parent: this,
       data: this.tcStatus,
