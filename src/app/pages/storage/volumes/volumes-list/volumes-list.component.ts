@@ -1133,18 +1133,20 @@ export class VolumesListTableConfig implements InputTableConf {
     const encryption_actions = [];
     if (rowData.encrypted) {
       if (rowData.locked){
-        encryption_actions.push({
-          id:rowData.name,
-          name: T('Unlock'),
-          label: T('Unlock'),
-          onClick: (row1) => {
-            //unlock
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-              "unlock", row1.id
-            ]));
-          }
-        });
+        if (rowData.is_encrypted_root && (!rowData.parent || (rowData.parent && !rowData.parent.locked))) {
+          encryption_actions.push({
+            id:rowData.name,
+            name: T('Unlock'),
+            label: T('Unlock'),
+            onClick: (row1) => {
+              //unlock
+              this._router.navigate(new Array('/').concat([
+                "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                "unlock", row1.id
+              ]));
+            }
+          });
+        }
       } else {
         encryption_actions.push({
           id: rowData.name,
