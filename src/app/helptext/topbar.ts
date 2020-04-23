@@ -39,8 +39,9 @@ export default {
     },
 
     signupDialog: {
-        title: T('Connect / Singup TrueCommand Cloud'),
-        content: T('Do you want to connect to TrueCommand Cloud? or signup for TrueCommand Cloud?'),
+        title: T('Connect to TrueCommand Cloud'),
+        content: T('Do you want to connect to TrueCommand Cloud? \
+First-time connections require signing up with TrueCommand Cloud.'),
         singup_btn: T('SIGNUP'),
         connect_btn: T('CONNECT'),
     },
@@ -51,9 +52,11 @@ export default {
         connect_btn: T('CONNECT'),
         save_btn: T('SAVE'),
         api_placeholder: T('API Key'),
-        api_tooltip: T(''),
+        api_tooltip: T('Enter or paste the API key provided from \
+<a href="https://portal.ixsystems.com/portal/login/" target="_blank">iXsystems Account Services</a>. \
+Login or signup is required.'),
         enabled_placeholder: T('Enable'),
-        enabled_tooltip: T(''),
+        enabled_tooltip: T('Immediately connect to TrueCommand.'),
     }
 }
 
