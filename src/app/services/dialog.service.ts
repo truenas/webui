@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { T } from 'app/translate-marker';
 import { filter } from 'rxjs/operators';
 import { Observable } from 'rxjs/Rx';
@@ -7,6 +7,7 @@ import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.com
 import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
 import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
+import { GeneralDialogComponent, GeneralDialogConfig } from '../pages/common/general-dialog/general-dialog.component';
 import { SelectDialogComponent } from '../pages/common/select-dialog/select-dialog.component';
 import { AppLoaderService } from '../services/app-loader/app-loader.service';
 import { WebSocketService } from '../services/ws.service';
@@ -196,5 +197,16 @@ export class DialogService {
         for (const openDialog of this.dialog.openDialogs) {
             openDialog.close();
         }
+    }
+
+    public generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig) {
+
+        let dialogRef: MatDialogRef<GeneralDialogComponent>;
+        const dialogConf: MatDialogConfig = { width: '500px' };
+
+        dialogRef = this.dialog.open(GeneralDialogComponent, Object.assign(dialogConf, matConfig));
+        dialogRef.componentInstance.conf = conf;
+
+        return dialogRef.afterClosed();
     }
 }
