@@ -318,6 +318,8 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   width:calc(600px * 0.9) !important;
   /*height:calc(400px * 0.95) !important;*/
   margin: 8px;
+  position: relative;
+  left: calc(50% - 270px);
 }
 
 /* New Rules */
@@ -333,4 +335,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 .xs.widget{
   min-width:320px;
   overflow-x: auto;
+  top: -10px;
+  left: -6px;
+  width: 100vw !important;
 }
