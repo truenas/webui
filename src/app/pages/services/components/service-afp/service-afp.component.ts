@@ -90,12 +90,13 @@ export class ServiceAFPComponent {
           );
       }
     });
-    this.iscsiService.getIpChoices().subscribe((res) => {
+
+    this.ws.call('afp.bindip_choices').subscribe((res) => {
       this.afp_srv_bindip =
         _.find(this.fieldConfig, { 'name': 'afp_srv_bindip' });
-      res.forEach((item) => {
-        this.afp_srv_bindip.options.push({ label: item[0], value: item[0] });
-      })
+        Object.keys(res).forEach(key => {
+          this.afp_srv_bindip.options.push({ label: key, value: res[key] });
+        })
     });
   }
 }
