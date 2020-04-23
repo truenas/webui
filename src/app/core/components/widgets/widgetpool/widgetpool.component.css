@@ -335,10 +335,11 @@ span.capitalize{
 }
 
 .xs .left-content .table{
-  width: 40%;
-  margin-left: 33%;
+  min-width: 180px;
+  max-width: 50%;
+  margin: 12px auto;
 }
 
 .xs .left-content .pool-name{
-  margin-top: 16px;
+  margin-top: 24px;
 }
