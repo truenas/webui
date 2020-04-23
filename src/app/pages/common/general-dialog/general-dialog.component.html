@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>
+    <mat-icon *ngIf="this.icon">{{icon}}</mat-icon>
+    {{ title | translate }}
+</h1>
+<div mat-dialog-content>
+    <span *ngIf="secondaryCheckBox">
+        <mat-checkbox id="confirm-dialog__secondary-checkbox" class="confirm-checkbox" *ngIf="secondaryCheckBox"
+            (change)="secondaryCheckBoxEvent($event)" ix-auto ix-auto-type="checkbox"
+            ix-auto-identifier="{{secondaryCheckBoxMsg | uppercase}}">
+            <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span> </mat-checkbox>
+        <!-- <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip> -->
+        <tooltip *ngIf="tooltip" [message]="tooltip"></tooltip>
+        <br><br>
+    </span>
+    <div class="message-content">
+        <div *ngIf="!is_html" class="info-panel">
+            <textarea readonly matInput>{{info | translate}}</textarea>
+        </div>
+        <div *ngIf="is_html" class="info-panel ip-overflow-auto">
+            <span [innerHtml]="info | translate"></span>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <mat-checkbox *ngIf="!hideCheckBox" (change)="toggleSubmit($event)">{{"Confirm" | translate}}</mat-checkbox>
+    <span fxFlex></span>
+    <button *ngIf="!hideCancel" mat-button
+        (click)="dialogRef.close(false)">{{cancelMsg | translate | uppercase}}</button>
+    <button mat-button name="ok_button" [disabled]="isDisabled()"
+        (click)="customSumbit ? customSumbit() : dialogRef.close(true)">{{buttonMsg | translate | uppercase}}
+    </button>
+</div>
