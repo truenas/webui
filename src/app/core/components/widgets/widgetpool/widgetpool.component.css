@@ -333,3 +333,12 @@ span.capitalize{
 .value-units {
   margin-left: 5px;
 }
+
+.xs .left-content .table{
+  width: 40%;
+  margin-left: 33%;
+}
+
+.xs .left-content .pool-name{
+  margin-top: 16px;
+}
