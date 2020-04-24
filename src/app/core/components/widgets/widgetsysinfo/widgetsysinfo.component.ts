@@ -9,6 +9,7 @@ import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchar
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
 import { WebSocketService, SystemGeneralService } from '../../../../services/';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
+import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
 
 
 import filesize from 'filesize';

@@ -74,7 +74,7 @@
   
                   <div class="tr">
                     <div class="td label"><strong>Total Disks :</strong></div>
-                    <div class="td">{{totalDisks ? totalDisks + ' Disks (data)' : "Unknown"}}</div>
+                    <div class="td">{{totalDisks ? totalDisks + ' (data)' : "Unknown"}}</div>
                   </div>
   
                   <div class="pool-status tr" >
@@ -118,9 +118,9 @@
                         &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                       </span>
     
-                      <span  *ngIf="unhealthyDisks.totalErrors == '0'">
+                      <!--<span  *ngIf="unhealthyDisks.totalErrors == '0'">
                         Disks
-                      </span>
+                        </span>-->
                       <span class="safe icon" *ngIf="unhealthyDisks.totalErrors == '0'">
                         &nbsp;<mat-icon class="healthy" role="img">check_circle</mat-icon>
                       </span>
@@ -152,7 +152,7 @@
                       <ng-template #safeSpace>
                         <!--<div class="td" *ngIf="volumeData.used_pct.length < 4 && volumeData.used_pct[0] != '9' && volumeData.used_pct != '8'">-->
                       <div class="td">
-                        <span class="value-used">{{volumeData.used_pct}} used</span>
+                        <span class="value-used">{{volumeData.used_pct}}</span>
                         <span class="safe icon">
                           &nbsp;<mat-icon class="healthy" role="img">check_circle</mat-icon>
                         </span>
