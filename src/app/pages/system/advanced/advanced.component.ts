@@ -33,23 +33,29 @@ export class AdvancedComponent implements OnDestroy {
   public entityForm: any;
   protected dialogRef: any;
   public product_type: string;
+  public is_ha = false;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: T('Save Debug'),
-    function: () => {
+    function: () => { 
       this.ws.call('system.info', []).subscribe((res) => {
         let fileName = "";
+        let mimetype = 'application/gzip'; 
         if (res) {
           const hostname = res.hostname.split('.')[0];
           const date = this.datePipe.transform(new Date(), "yyyyMMddHHmmss");
-          fileName = `debug-${hostname}-${date}.tgz`;
+          if (this.is_ha) {
+            mimetype = 'application/x-tar';
+            fileName = `debug-${hostname}-${date}.tar`;
+          } else {
+            fileName = `debug-${hostname}-${date}.tgz`;
+          }
         }
         this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
             this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
               (res) => {
                 const url = res[1];
-                const mimetype = 'application/gzip';
                 let failed = false;
                 this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
                   this.storage.downloadBlob(file, fileName);
@@ -352,6 +358,9 @@ export class AdvancedComponent implements OnDestroy {
   }
 
   afterInit(entityEdit: any) {
+    this.ws.call('failover.licensed').subscribe((is_ha) => {
+      this.is_ha = is_ha;
+    });
     this.entityForm = entityEdit;
     this.ws.call('system.product_type').subscribe((res)=>{
       this.product_type = res;
