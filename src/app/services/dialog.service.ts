@@ -200,11 +200,9 @@ export class DialogService {
     }
 
     public generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig) {
-
         let dialogRef: MatDialogRef<GeneralDialogComponent>;
-        const dialogConf: MatDialogConfig = { width: '500px' };
 
-        dialogRef = this.dialog.open(GeneralDialogComponent, Object.assign(dialogConf, matConfig));
+        dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
         dialogRef.componentInstance.conf = conf;
 
         return dialogRef.afterClosed();
