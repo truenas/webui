@@ -15,5 +15,5 @@ As you update a target language, please make changes to this file, indicating it
 |[Japanese](jp.po "Japanese")|Incomplete|01/11/2020|
 |[Polish](pl.po "Polish")|Incomplete|02/19/2020|
 |[Russian](ru.po "Russian")|Complete|12/31/2019|
-|[Spanish](es.po "Spanish")|Incomplete|25/04/2020|
+|[Spanish](es.po "Spanish")|Incomplete|04/25/2020|
 
