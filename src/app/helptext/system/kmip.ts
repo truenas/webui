@@ -31,7 +31,7 @@ export const helptext_system_kmip = {
     },
 
     manage_sed_disks: {
-        placeholder: T('Manage SED Password(s)'),
+        placeholder: T('Manage SED Passwords'),
         tooltip: T('Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling this\
  option allows the key server to manage creating or updating the global SED password, creating or\
  updating individual SED passwords, and retrieving SED passwords when SEDs are unlocked. Disabling\
@@ -53,12 +53,17 @@ export const helptext_system_kmip = {
 
     change_server: {
         placeholder: T('Change Server'),
-        tooltip: T(''),
+        tooltip: T('Move existing keys from the current key server to a new key server. \
+ To switch to a different key server, key synchronization must be <i>Enabled</i>, then \
+ enable this setting, update the key server connection configuration, and click <b>SAVE</b>.'),
     },
 
     validate: {
         placeholder: T('Validate Connection'),
-        tooltip: T(''),
+        tooltip: T('Tests the server connection and verifies the chosen <b>Certificate</b> \
+ chain. To test, configure the <i>Server</i> and <i>Port</i> values, select a \
+ <i>Certificate</i> and <i>Certificate Authority</i>, enable this setting, and \
+ click <b>SAVE</b>.'),
     },
 
     jobDialog: {
