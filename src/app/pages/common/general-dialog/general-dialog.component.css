@@ -1,7 +1,4 @@
-.generial-dialog-content-container {
+.general-dialog-content-container {
     height: calc(100% - 100px);
-}
-.generial-dialog-content {
-    max-height: calc(100% - 25px);
     overflow: auto !important;
 }

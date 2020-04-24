@@ -22,11 +22,12 @@ export interface GeneralDialogConfig {
 export class GeneralDialogComponent {
     @Input() conf: GeneralDialogConfig;
 
+    public confirmed = false;
     constructor(
         public dialogRef: MatDialogRef<GeneralDialogComponent>,
         protected translate: TranslateService) { }
 
     isDisabled() {
-        return false;
+        return this.conf.confirmCheckbox ? !this.confirmed :false;
     }
 }
