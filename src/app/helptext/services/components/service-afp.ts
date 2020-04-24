@@ -56,6 +56,7 @@ afp_srv_map_acls_options : [
 
 afp_srv_bindip_placeholder : T('Bind Interfaces'),
 afp_srv_bindip_tooltip: T('Specify the IP addresses to listen for AFP connections.\
+ Leave blank to bind to all available IPs. \
  If none are specified, advertise the first IP\
  address of the system, but listen for any\
  incoming request.'),
