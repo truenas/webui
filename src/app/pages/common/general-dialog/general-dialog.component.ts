@@ -13,7 +13,14 @@ export interface GeneralDialogConfig {
     cancelBtnMsg?: string,
     confirmBtnMsg?: string,
 }
-
+/**
+ * General Dialog Component
+ * 
+ * - able to be used as simple dialog to display text content, alert dialog with icon,
+ * confirm dialog with single checkbox, able to display text as html or not
+ * - works with MatDialogConf
+ * - use interface GerneralDialogConfig for general config
+ */
 @Component({
     selector: 'app-general-dialog',
     templateUrl: './general-dialog.component.html',
