@@ -23,13 +23,13 @@ msgid " First vdev is a "
 msgstr " El primer vdev es un "
 
 msgid " KiB."
-msgstr ""
+msgstr " KiB."
 
 msgid " Plugin"
-msgstr ""
+msgstr " Plugin"
 
 msgid " Service"
-msgstr "Servicio"
+msgstr " Servicio"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -82,7 +82,7 @@ msgid " is "
 msgstr " es "
 
 msgid " is a required field."
-msgstr ""
+msgstr " es un campo requerido"
 
 msgid " is required."
 msgstr " es requerido."
@@ -188,7 +188,7 @@ msgid "</i> cannot be running when deleting a mountpoint."
 msgstr ""
 
 msgid "</i> has started."
-msgstr ""
+msgstr "</i> ha comenzado."
 
 msgid "</i> keypair?</p>"
 msgstr ""
@@ -758,6 +758,9 @@ msgid ""
 "to have permissions to the shared pool or dataset. When the Guest Account "
 "user is deleted it resets to nobody."
 msgstr ""
+"Cuenta para el acceso de invitados. Por defecto nadie. La cuenta es requerida "
+"para tener permiso al volumen o grupo de datos compartido. Cuando la cuenta invitado "
+"es eliminada, se resetea a nadie."
 
 msgid "Accounts"
 msgstr "Cuentas"
@@ -1479,7 +1482,7 @@ msgid "Apr"
 msgstr ""
 
 msgid "Archive"
-msgstr "Archive"
+msgstr "Archivo"
 
 msgid "Are you sure you want to sync from peer?"
 msgstr ""
@@ -1513,7 +1516,7 @@ msgid "Attach screenshots."
 msgstr ""
 
 msgid "Aug"
-msgstr ""
+msgstr "Agt"
 
 msgid "Auth Token"
 msgstr ""
@@ -1630,7 +1633,7 @@ msgid "Auxiliary Groups"
 msgstr ""
 
 msgid "Auxiliary Parameters"
-msgstr ""
+msgstr "Parametros auxiliares"
 
 msgid "Auxiliary Parameters (ups.conf)"
 msgstr ""
@@ -1645,16 +1648,16 @@ msgid "Available Disks"
 msgstr "Discos disponibles"
 
 msgid "Available Memory:"
-msgstr ""
+msgstr "Memoria disponible"
 
 msgid "Available Space"
-msgstr ""
+msgstr "Espacio disponible"
 
 msgid "Available Space Threshold (%)"
 msgstr ""
 
 msgid "Available Themes"
-msgstr ""
+msgstr "Temas disponibles"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr ""
@@ -1686,7 +1689,7 @@ msgid "Background 2"
 msgstr ""
 
 msgid "Bandwidth"
-msgstr ""
+msgstr "Ancho de banda"
 
 msgid "Bandwidth Limit"
 msgstr ""
@@ -1710,16 +1713,16 @@ msgid "Basic Buttons"
 msgstr ""
 
 msgid "Basic Info"
-msgstr ""
+msgstr "Información básica"
 
 msgid "Basic Mode"
 msgstr ""
 
 msgid "Basic Options"
-msgstr ""
+msgstr "Opciones básicas"
 
 msgid "Basic Properties"
-msgstr ""
+msgstr "Propiedades básicas"
 
 msgid "Batch Operations"
 msgstr ""
@@ -1954,7 +1957,7 @@ msgid "COPY TO CLIPBOARD"
 msgstr ""
 
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 msgid "CPU Details"
 msgstr ""
@@ -1975,7 +1978,7 @@ msgid "CSRs"
 msgstr ""
 
 msgid "Cache"
-msgstr ""
+msgstr "Caché"
 
 msgid "Cache VDev"
 msgstr ""
@@ -2021,10 +2024,10 @@ msgid "Certificate"
 msgstr "Certificado"
 
 msgid "Certificate Authorities"
-msgstr ""
+msgstr "Autoridades certificadoras"
 
 msgid "Certificate Authority"
-msgstr ""
+msgstr "Autoridad certificadora"
 
 msgid ""
 "Certificate Authority (CA) to use for connecting to the key server. A valid "
@@ -2034,10 +2037,10 @@ msgid ""
 msgstr ""
 
 msgid "Certificate Options"
-msgstr ""
+msgstr "Opciones del certificado"
 
 msgid "Certificate Subject"
-msgstr ""
+msgstr "Asunto del certificado"
 
 msgid ""
 "Certificate to use for key server authentication. A valid certificate is "
@@ -2053,7 +2056,7 @@ msgid ""
 msgstr ""
 
 msgid "Certificates"
-msgstr ""
+msgstr "Certificados"
 
 msgid "Change Administrator Password"
 msgstr ""
@@ -2120,19 +2123,19 @@ msgid ""
 msgstr ""
 
 msgid "Channel"
-msgstr ""
+msgstr "Canal"
 
 msgid "Check Interval"
-msgstr ""
+msgstr "Intervalo de comprobación"
 
 msgid "Check Now"
-msgstr ""
+msgstr "Comprobar ahora"
 
 msgid "Check Release Notes"
 msgstr ""
 
 msgid "Check for Updates"
-msgstr ""
+msgstr "Comprobar actualizaciones"
 
 msgid "Check for Updates Daily and Download if Available"
 msgstr ""
@@ -2364,13 +2367,13 @@ msgid "Choose an algorithm to authenticate packets."
 msgstr ""
 
 msgid "Choose an authentication method."
-msgstr ""
+msgstr "Elija un método de autenticación"
 
 msgid "Choose an encryption mode to use with LDAP."
 msgstr ""
 
 msgid "Choose an option"
-msgstr ""
+msgstr "Elija una opción"
 
 msgid ""
 "Choose between <i>Off</i>, <a "
@@ -2613,7 +2616,7 @@ msgid "Collection"
 msgstr ""
 
 msgid "Columns"
-msgstr ""
+msgstr "Columnas"
 
 msgid "Com Port"
 msgstr ""
@@ -2719,10 +2722,10 @@ msgid "Compress Connections"
 msgstr ""
 
 msgid "Compression"
-msgstr ""
+msgstr "Compresión"
 
 msgid "Compression level"
-msgstr ""
+msgstr "Nivel de compresión"
 
 msgid "Computer Account OU"
 msgstr ""
@@ -2774,7 +2777,7 @@ msgid "Confirm Passphrase"
 msgstr ""
 
 msgid "Confirm Password"
-msgstr ""
+msgstr "Confirmar contraseña"
 
 msgid "Confirm Privacy Passphrase"
 msgstr ""
@@ -2792,7 +2795,7 @@ msgid "Confirm it is okay to proceed with Detach."
 msgstr ""
 
 msgid "Confirm password"
-msgstr ""
+msgstr "Confirmar contraseña"
 
 msgid "Confirm these settings."
 msgstr ""
@@ -2810,7 +2813,7 @@ msgid "Connection"
 msgstr "Conexión"
 
 msgid "Connection Error"
-msgstr ""
+msgstr "Error de conexión"
 
 msgid "Connection port number on the central key server."
 msgstr ""
@@ -2829,13 +2832,13 @@ msgid "Connections"
 msgstr "Conexioens"
 
 msgid "Console"
-msgstr ""
+msgstr "Consola"
 
 msgid "Console Keyboard Map"
-msgstr ""
+msgstr "Mapa de teclado en consola"
 
 msgid "Contact"
-msgstr ""
+msgstr "Contacto"
 
 msgid "Contact Support"
 msgstr ""
@@ -2854,7 +2857,7 @@ msgid ""
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
 
 msgid "Continue to Legacy UI"
 msgstr ""
@@ -2889,10 +2892,10 @@ msgid "Coolest:"
 msgstr ""
 
 msgid "Copies"
-msgstr ""
+msgstr "Copias"
 
 msgid "Copy and Paste"
-msgstr ""
+msgstr "Copiar y pegar"
 
 msgid "Cores"
 msgstr "Núcleos"
@@ -2940,7 +2943,7 @@ msgid "Create Passphrase"
 msgstr ""
 
 msgid "Create Pool"
-msgstr ""
+msgstr "Crear volumen"
 
 msgid "Create SSH Connection"
 msgstr ""
@@ -2949,10 +2952,10 @@ msgid "Create Snapshot"
 msgstr "Crear Instantánea"
 
 msgid "Create Theme"
-msgstr ""
+msgstr "Crear tema"
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "Crear un nuevo volumen"
 
 msgid "Create a new, empty pool."
 msgstr ""
@@ -2985,7 +2988,7 @@ msgid "Create or Import pool"
 msgstr ""
 
 msgid "Created Date"
-msgstr ""
+msgstr "Fecha de creación"
 
 msgid ""
 "Creates dataset snapshots even when there  have been no changes to the "
@@ -3018,10 +3021,10 @@ msgid "Creating..."
 msgstr "Creando..."
 
 msgid "Credential"
-msgstr ""
+msgstr "Credencial"
 
 msgid "Credentials"
-msgstr ""
+msgstr "Credenciales"
 
 msgid "Critical"
 msgstr ""
@@ -3093,7 +3096,7 @@ msgid "DELETE DATASET"
 msgstr ""
 
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr ""
@@ -3126,7 +3129,7 @@ msgid "DOCS"
 msgstr ""
 
 msgid "DOCUMENTATION"
-msgstr ""
+msgstr "DOCUMENTACIÓN"
 
 msgid "DQ % Used"
 msgstr ""
@@ -3166,7 +3169,7 @@ msgid ""
 msgstr ""
 
 msgid "Database"
-msgstr ""
+msgstr "Base de datos"
 
 msgid "Database Path"
 msgstr ""
@@ -3202,10 +3205,10 @@ msgid ""
 msgstr ""
 
 msgid "Days of Week"
-msgstr ""
+msgstr "Días a la semana"
 
 msgid "Days of the Week"
-msgstr ""
+msgstr "Días de la semana"
 
 msgid "Days when this task will run."
 msgstr ""
@@ -3225,7 +3228,7 @@ msgid "Debug could not be downloaded."
 msgstr ""
 
 msgid "Dec"
-msgstr ""
+msgstr "Dic"
 
 msgid "Decrypt pool"
 msgstr ""
@@ -3399,7 +3402,7 @@ msgid "Delete Selected"
 msgstr ""
 
 msgid "Delete Virtual Machine"
-msgstr ""
+msgstr "Eliminar máquina virtual"
 
 msgid "Delete Virtual Machine Data?"
 msgstr ""
@@ -3445,7 +3448,7 @@ msgid "Deleting the <b>"
 msgstr ""
 
 msgid "Deny"
-msgstr ""
+msgstr "Denegar"
 
 msgid "Deny Hosts"
 msgstr ""
@@ -3538,7 +3541,7 @@ msgid "Detach disk "
 msgstr ""
 
 msgid "Details"
-msgstr ""
+msgstr "Detalles"
 
 msgid "Details for "
 msgstr ""
@@ -3596,7 +3599,7 @@ msgid "Direct the flow of data to the remote host."
 msgstr ""
 
 msgid "Direction"
-msgstr ""
+msgstr "Dirección"
 
 msgid "Directories and Permissions"
 msgstr ""
@@ -3849,7 +3852,7 @@ msgid "EC Curve"
 msgstr ""
 
 msgid "EDIT"
-msgstr ""
+msgstr "EDITAR"
 
 msgid "ENTER LICENSE"
 msgstr ""
@@ -12839,10 +12842,10 @@ msgid "Webhook URL"
 msgstr ""
 
 msgid "Wed"
-msgstr ""
+msgstr "Mie"
 
 msgid "Weekly"
-msgstr ""
+msgstr "Semanal"
 
 msgid "Weeks"
 msgstr "Semanas"
@@ -12851,7 +12854,7 @@ msgid "What and Where"
 msgstr ""
 
 msgid "When"
-msgstr ""
+msgstr "Cuando"
 
 msgid ""
 "When <code>tls_crypt_auth_enabled</code> is enabled and "
@@ -13170,7 +13173,7 @@ msgid "createcomputer"
 msgstr ""
 
 msgid "datasize"
-msgstr ""
+msgstr "tamaño"
 
 msgid "days"
 msgstr "días"
@@ -13185,16 +13188,16 @@ msgid "devfs_ruleset"
 msgstr ""
 
 msgid "email"
-msgstr ""
+msgstr "email"
 
 msgid "empty"
-msgstr ""
+msgstr "vacío"
 
 msgid "enforce_statfs"
 msgstr ""
 
 msgid "error"
-msgstr ""
+msgstr "error"
 
 msgid "exec_clean"
 msgstr ""
@@ -13368,7 +13371,7 @@ msgid "overview"
 msgstr ""
 
 msgid "owner"
-msgstr ""
+msgstr "propietario"
 
 msgid "password"
 msgstr "contraseña"
@@ -13422,7 +13425,7 @@ msgid "stop_timeout"
 msgstr ""
 
 msgid "swapuse"
-msgstr ""
+msgstr "uso de swap"
 
 msgid "sysvmsg"
 msgstr ""
@@ -13434,7 +13437,7 @@ msgid "sysvshm"
 msgstr ""
 
 msgid "template"
-msgstr ""
+msgstr "plantilla"
 
 msgid "to set up configuration first."
 msgstr ""
@@ -13476,4 +13479,4 @@ msgid "while pool is encrypted"
 msgstr ""
 
 msgid "yes"
-msgstr ""
+msgstr "sí"
