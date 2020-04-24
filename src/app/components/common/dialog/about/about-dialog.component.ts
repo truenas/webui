@@ -41,9 +41,15 @@ export class AboutModalDialog {
       this.loader.open();
       this.http.get('assets/disclaimer.txt', {responseType: 'text'}).subscribe(licenses => {
         this.loader.close();
-        this.dialogService.confirm(T("View Licenses"), licenses, true, T("Ok"), 
-          false, null, '', null, null, true).subscribe(ok => {
-        });
+        this.dialogService.generalDialog(
+          {
+            title: T("View Licenses"),
+            message: licenses,
+            hideCancel: true,
+            confirmBtnMsg: T('OK')
+          }, {
+            height: '430px',
+          })
       });
     }
 
