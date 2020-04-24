@@ -47,14 +47,14 @@
                     <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logomark"></mat-icon>
                     <mat-icon *ngIf="product_type === 'CORE' && !certified && retroLogo == 0" class="generic" svgIcon="truenas_core_logomark"></mat-icon>
                     <mat-icon *ngIf="product_type === 'CORE' && certified && retroLogo == 0" class="generic certified" svgIcon="freenas_certified"></mat-icon>
-                    <mat-icon *ngIf="product_type === 'ENTERPRISE' && !certified && retroLogo == 0" class="generic" svgIcon="truenas_enterprise_logomark"></mat-icon>
+                    <mat-icon *ngIf="ready && !isPassive && product_type === 'ENTERPRISE' && !certified && retroLogo == 0" class="generic" svgIcon="truenas_enterprise_logomark"></mat-icon>
                     <mat-icon *ngIf="product_type === 'SCALE' && !certified && retroLogo == 0" class="generic" svgIcon="truenas_scale_logomark"></mat-icon>
                   </ng-template>
                   <div class="generic alert" *ngIf="!product_image && isPassive && ha_status !== 'HA Enabled'">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                   </div>
                   <div *ngIf="product_image && isHA" class="ha-node-status">({{ isPassive ? "Standby" : "Active" | translate }})</div>
-                  <div *ngIf="!product_image && product_type == 'ENTERPRISE' " class="ha-node-status">(Unsupported Hardware)</div>
+                  <div *ngIf="ready && !product_image && product_type == 'ENTERPRISE' " class="ha-node-status">(Unsupported Hardware)</div>
               </div>
             </div>
 
