@@ -16,4 +16,3 @@ As you update a target language, please make changes to this file, indicating it
 |[Polish](pl.po "Polish")|Incomplete|02/19/2020|
 |[Russian](ru.po "Russian")|Complete|12/31/2019|
 |[Spanish](es.po "Spanish")|Incomplete|04/25/2020|
-
