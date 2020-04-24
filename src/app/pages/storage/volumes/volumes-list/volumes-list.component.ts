@@ -418,6 +418,7 @@ export class VolumesListTableConfig implements InputTableConf {
           },
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
+            let done = false;
             const value = entityDialog.formValue;
             const params = [row1.id, {passphrase: value.passphrase, services_restart: value.services_restart}]
             let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Unlocking Pool"}, disableClose: true});
@@ -435,10 +436,13 @@ export class VolumesListTableConfig implements InputTableConf {
               dialogRef.componentInstance.submit();
             }
             dialogRef.componentInstance.success.subscribe((res) => {
-              dialogRef.close(false);
-              entityDialog.dialogRef.close(true);
-              self.parentVolumesListComponent.repaintMe();
-              self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
+              if (!done) {
+                dialogRef.close(false);
+                entityDialog.dialogRef.close(true);
+                self.parentVolumesListComponent.repaintMe();
+                self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
+                done = true;
+              }
             });
             dialogRef.componentInstance.failure.subscribe((res) => {
               dialogRef.close(false);
