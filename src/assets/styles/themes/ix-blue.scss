@@ -1196,6 +1196,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 50%;
   }
 
+  app-certificate-acme-add #authenticators {
+    position: relative;
+    top: -18px;
+  }
+
   // Support Section ////////////////////////
   app-support {
     .mat-card {
