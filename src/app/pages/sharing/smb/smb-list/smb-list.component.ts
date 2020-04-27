@@ -55,7 +55,7 @@ export class SMBListComponent {
     let rowName = row.path.replace("/mnt/", "");
     let poolName = rowName.split('/')[0];
     let optionDisabled;
-    rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
+    optionDisabled = rowName.includes('/') ?  false : true;
     return [
       {
         id: row.name,
