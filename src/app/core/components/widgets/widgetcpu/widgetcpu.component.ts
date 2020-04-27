@@ -150,9 +150,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       }
     }
     
-    if(this.screenType == 'Mobile'){
-      this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) );
-    }
+    this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) ); 
 
     return [usageColumn, temperatureColumn];
     
