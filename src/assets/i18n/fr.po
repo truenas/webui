@@ -1853,7 +1853,7 @@ msgstr "Appliquer la mise à jour"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
-"Appliquer les changements de réseau ? La connectivité réseau sera "
+"Appliquer les changements réseau ? La connectivité réseau sera "
 "interrompue."
 
 msgid "Apply permissions recursively"
