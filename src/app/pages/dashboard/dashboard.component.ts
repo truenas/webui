@@ -261,13 +261,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   startListeners(){
 
     this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
-      
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
+
       if(evt.virtual_memory){
-        this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
+        let keys = Object.keys(evt.virtual_memory);
+        let memStats: any = {};
+
+        keys.forEach((key, index) => {
+          memStats[key] = evt.virtual_memory[key];
+        });
+
+        if(evt.zfs && evt.zfs.arc_size != null){
+          memStats.arc_size = evt.zfs.arc_size;
+        }
+        this.statsDataEvents.next({name:"MemoryStats", data: memStats});
       }
+
       if(evt.interfaces){
         const keys = Object.keys(evt.interfaces);
         keys.forEach((key, index) => {
@@ -275,6 +286,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.statsDataEvents.next({name:"NetTraffic_" + key, data: data});
         });
       }
+
     });
 
   }
