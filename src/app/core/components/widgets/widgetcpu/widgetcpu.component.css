@@ -29,6 +29,20 @@
   /*opacity:0.5;*/
 }
 
+#cpu-load-cores .label-icon{
+  position:absolute;
+  font-size:18px;
+  left: -12px;
+}
+
+#cpu-load-cores .label-icon.warn{
+  color:var(--yellow);
+}
+
+#cpu-load-cores .label-icon.danger{
+  color:var(--red);
+}
+
 #cpu-load-cores-legend{
   /*margin-top:36px;*/
 }
