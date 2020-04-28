@@ -99,6 +99,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   ngAfterViewInit(){
  
     this.data.subscribe((evt:CoreEvent) => {
+      if(evt.name == "ZfsStats"){
+        if(evt.data.arc_size){
+        }
+      }
       if(evt.name == "MemoryStats"){
         if(evt.data.used){
           this.setMemData(evt.data);
@@ -129,19 +133,14 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
      * cached
      * shared
      * wired
+     * zfs_cache?
      * */
 
-    let services = this.aggregate([
-      data["active"],
-      data["shared"],
-      data["cached"],
-      data["buffers"],
-      data["inactive"],
-    ]);
+    let services = data["total"] - data["free"] - data["arc_size"]; 
 
     let columns = [
       [ "Free", this.bytesToGigabytes(data["free"]).toFixed(1)],
-      [ "ZFS Cache", this.bytesToGigabytes(data["wired"]).toFixed(1)],
+      [ "ZFS Cache", this.bytesToGigabytes(data["arc_size"]).toFixed(1)],
       [ "Services", this.bytesToGigabytes(services).toFixed(1)]
     ];
 
