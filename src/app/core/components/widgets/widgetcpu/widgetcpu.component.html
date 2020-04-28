@@ -90,11 +90,11 @@
                   
                   <div *ngIf="screenType == 'Desktop'" fxFlex="26" fxFlex.xs="calc(100% - 16px)" class="legend-item core-number"><span class="label">{{"Thread number:" | translate}}</span> {{legendIndex}}</div>
 
-                  <div fxFlex="26" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
+                  <div fxFlex="22" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
                     <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].label}}:</span> {{legendData[0].data[legendIndex]}}%
                   </div>
 
-                  <div fxFlex="26" fxFlex.xs="calc(50% - 16px)" *ngIf="legendData[1]" class="legend-item temperature">
+                  <div fxFlex="28" fxFlex.xs="calc(50% - 16px)" *ngIf="legendData[1]" class="legend-item temperature">
                     <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{legendData[1].label}}:</span> {{legendData[1].data[legendIndex]}}°C
                   </div>
                 
@@ -106,11 +106,11 @@
   
                   <div fxFlex="26" fxFlex.xs="calc(100% - 16px)" class="legend-item core-number"><span class="label">{{"Stats Per Thread" | translate}}</span></div>
 
-                  <div fxFlex="26" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
+                  <div fxFlex="22" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
                     <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{"Usage" | translate}}</span> 
                   </div>
 
-                  <div fxFlex="26" fxFlex.xs="calc(50% - 16px)"  class="legend-item temperature">
+                  <div fxFlex="28" fxFlex.xs="calc(50% - 16px)"  class="legend-item temperature">
                     <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{"Temperature" | translate}}</span> 
                   </div>
   

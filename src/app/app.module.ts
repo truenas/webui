@@ -26,6 +26,7 @@ import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/d
 import {SelectDialogComponent} from './pages/common/select-dialog/select-dialog.component'
 import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from './pages/common/info-dialog/info-dialog.component';
+import { GeneralDialogComponent } from './pages/common/general-dialog/general-dialog.component';
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
@@ -81,7 +82,7 @@ export function createTranslateLoader(http: HttpClient) {
     CommonDirectivesModule,
     NgxWebstorageModule.forRoot(),
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TaskManagerComponent, DirectoryServicesMonitorComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, GeneralDialogComponent, AboutModalDialog, TaskManagerComponent, DirectoryServicesMonitorComponent, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -100,6 +101,7 @@ export function createTranslateLoader(http: HttpClient) {
     ConfirmDialog,
     ErrorDialog,
     InfoDialog,
+    GeneralDialogComponent,
     AboutModalDialog,
     TaskManagerComponent,
     DirectoryServicesMonitorComponent,

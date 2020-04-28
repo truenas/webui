@@ -191,6 +191,8 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public activeDate;
   public generatedSchedule: any[] = [];
   public generatedScheduleSubset:number = 0;
+  protected beginTime;
+  protected endTime;
   public picker:boolean = false;
   private _textInput:string = '';
   public crontab:string = "custom";
@@ -403,7 +405,25 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     return newMinDate;
   }
 
+  // check if candidate schedule is between the beginTime and endTime
+  isValidSchedule(schedule): boolean {
+    const scheduleArray = schedule.toString().split(' ');
+    const time = moment(scheduleArray[4], 'hh:mm:ss');
+    if (this.beginTime && this.endTime) {
+      return time.isBetween(this.beginTime, this.endTime, null, '[]');
+    }
+    return true;
+  }
+
   private generateSchedule(nextSubset?:boolean){
+    // get beginTime and endTime value;
+    // config should define options with begin prop and end prop
+    // e.g. options: ['schedule_begin', 'schedule_end']
+    if (this.config.options) {
+      this.beginTime = moment(this.group.controls[this.config.options[0]].value, 'hh:mm');
+      this.endTime = moment(this.group.controls[this.config.options[1]].value, 'hh:mm');
+    }
+
     let newSchedule = [];
     let adjusted:any;
     if(nextSubset){
@@ -432,11 +452,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
         }
         if(parseCounter >= this.generatedScheduleSubset && parseCounter < subsetEnd){
           let obj:any = interval.next();
-          newSchedule.push(obj.value);
-          //console.log(obj.value);
+          if (this.isValidSchedule(obj.value)) {
+            newSchedule.push(obj.value);
+            parseCounter++
+          }
         }
-        //console.log(parseCounter)
-        parseCounter++
       } catch (e) {
         console.warn(e);
         break;

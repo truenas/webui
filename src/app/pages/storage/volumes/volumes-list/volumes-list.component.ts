@@ -108,7 +108,7 @@ export class VolumesListTableConfig implements InputTableConf {
     private parentVolumesListComponent: VolumesListComponent,
     private _router: Router,
     private _classId: string,
-    private datasetData: Object,
+    private datasetData: Array<any>,
     public mdDialog: MatDialog,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
@@ -418,6 +418,7 @@ export class VolumesListTableConfig implements InputTableConf {
           },
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
+            let done = false;
             const value = entityDialog.formValue;
             const params = [row1.id, {passphrase: value.passphrase, services_restart: value.services_restart}]
             let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Unlocking Pool"}, disableClose: true});
@@ -435,10 +436,13 @@ export class VolumesListTableConfig implements InputTableConf {
               dialogRef.componentInstance.submit();
             }
             dialogRef.componentInstance.success.subscribe((res) => {
-              dialogRef.close(false);
-              entityDialog.dialogRef.close(true);
-              self.parentVolumesListComponent.repaintMe();
-              self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
+              if (!done) {
+                dialogRef.close(false);
+                entityDialog.dialogRef.close(true);
+                self.parentVolumesListComponent.repaintMe();
+                self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
+                done = true;
+              }
             });
             dialogRef.componentInstance.failure.subscribe((res) => {
               dialogRef.close(false);
@@ -1133,18 +1137,20 @@ export class VolumesListTableConfig implements InputTableConf {
     const encryption_actions = [];
     if (rowData.encrypted) {
       if (rowData.locked){
-        encryption_actions.push({
-          id:rowData.name,
-          name: T('Unlock'),
-          label: T('Unlock'),
-          onClick: (row1) => {
-            //unlock
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-              "unlock", row1.id
-            ]));
-          }
-        });
+        if (rowData.is_encrypted_root && (!rowData.parent || (rowData.parent && !rowData.parent.locked))) {
+          encryption_actions.push({
+            id:rowData.name,
+            name: T('Unlock'),
+            label: T('Unlock'),
+            onClick: (row1) => {
+              //unlock
+              this._router.navigate(new Array('/').concat([
+                "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                "unlock", row1.id
+              ]));
+            }
+          });
+        }
       } else {
         encryption_actions.push({
           id: rowData.name,
@@ -1152,9 +1158,19 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T('Encryption Options'),
           onClick: (row) => {
             // open encryption options dialog
+            let key_child = false;
+            for (let i = 0; i < this.datasetData.length; i++) {
+              let ds = this.datasetData[i];
+              if (ds['id'].startsWith(row.id) && ds.id !== row.id && 
+                ds.encryption_root && (ds.id === ds.encryption_root) && 
+                ds.key_format && ds.key_format.value && ds.key_format.value === 'HEX') {
+                key_child = true;
+                break;
+              }
+            }
             const can_inherit = (row.parent && row.parent.encrypted);
             const passphrase_parent = (row.parent && row.parent.key_format && row.parent.key_format.value === 'PASSPHRASE');
-            const is_key = (passphrase_parent? false : !row.is_passphrase);
+            const is_key = (passphrase_parent? false : (key_child? true : !row.is_passphrase));
             let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
               pbkdf2iters = row.pbkdf2iters.rawvalue;
@@ -1181,7 +1197,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   tooltip: dataset_helptext.dataset_form_encryption.encryption_type_tooltip,
                   value: (is_key? 'key' : 'passphrase'),
                   options: dataset_helptext.dataset_form_encryption.encryption_type_options,
-                  isHidden: passphrase_parent
+                  isHidden: passphrase_parent || key_child
                 },
                 {
                   type: 'checkbox',
@@ -1252,7 +1268,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   } else {
                     entityDialog.setDisabled('encryption_type', inherit, inherit);
-                    if (passphrase_parent) { // keep hidden if passphrase parent;
+                    if (passphrase_parent || key_child) { // keep hidden if passphrase parent;
                       encryption_type_fc.isHidden = true;
                     }
                     const key = (encryption_type_fg.value === 'key');
@@ -1496,7 +1512,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http);
 
   actionComponent = {
     getActions: (row) => {
@@ -1513,7 +1529,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         }
       ];
     },
-    conf: new VolumesListTableConfig(this, this.router, "", {}, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http)
+    conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http)
   };
 
   expanded = false;
@@ -1570,6 +1586,14 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
               pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: "iec" });
+              pool.children[0].has_encrypted_children = false;
+              for (let i = 0; i < datasets.length; i++) {
+                const ds = datasets[i];
+                if (ds['id'].startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
+                  pool.children[0].has_encrypted_children = true;
+                  break;
+                }
+              }
             } catch (error) {
               pool.availStr = "" + pool.children[0].available.parsed;
               pool.children[0].available_parsed = "Unknown";
