@@ -440,7 +440,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  callGetFunction() {
+  callGetFunction() { console.log('calling', this.getFunction)
     this.getFunction.subscribe(
       (res) => {
         this.handleData(res);

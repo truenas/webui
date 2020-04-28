@@ -5,6 +5,8 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { Subscription, interval, Subject } from 'rxjs';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-list';
 
@@ -25,7 +27,10 @@ export class UserListComponent {
   protected grp_lst = [];
   protected hasDetails = true;
   protected queryCall = 'user.query';
+  public target: Subject<CoreEvent> = new Subject();
+  isWaiting = false;
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
+  protected queryCallOption = [];
   protected globalConfig = {
     id: "config",
     onClick: () => {
@@ -67,7 +72,25 @@ export class UserListComponent {
 
   constructor(private router: Router,
               protected dialogService: DialogService, protected loader: AppLoaderService,
-              protected ws: WebSocketService, protected prefService: PreferencesService) {
+              protected ws: WebSocketService, protected prefService: PreferencesService, protected core: CoreService) {
+
+                this.core.emit({name:"UserPreferencesRequest", sender:this});
+                this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+                  // This answer comes back correctly, but after the queryCall is made in entityTableComponent, line 443
+                  console.log('ready', this.prefService.preferences.hide_builtin_users)
+                  if(this.isWaiting){
+                    this.target.next({name:"SubmitComplete", sender: this});
+                    this.isWaiting = false;
+                  }
+                });
+                console.log(this.prefService.preferences.hide_builtin_users);
+                if (this.prefService.preferences.hide_builtin_users) {
+                  this.queryCallOption = [[['OR', [['uid', '=', 0], ['builtin', '=', false]]]]];
+                }
+  }
+
+  preInit() {
+    console.log('preInit')
   }
 
   afterInit(entityList: any) { this.entityList = entityList; }
@@ -159,15 +182,15 @@ export class UserListComponent {
       };
       
     });
-    if (this.prefService.preferences.hide_builtin_users) {
-      let newData = []
-      data.forEach((item) => {
-        if (!item.builtin || item.username === 'root') {
-          newData.push(item);
-        }
-      }) 
-      return data = newData;
-    }
+    // if (this.prefService.preferences.hide_builtin_users) {
+    //   let newData = []
+    //   data.forEach((item) => {
+    //     if (!item.builtin || item.username === 'root') {
+    //       newData.push(item);
+    //     }
+    //   }) 
+    //   return data = newData;
+    // }
     return data;
   }
 
