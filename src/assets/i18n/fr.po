@@ -10783,7 +10783,7 @@ msgstr ""
 "target=_blank>smb.conf(5)</a>."
 
 msgid "Retro Logo"
-msgstr ""
+msgstr "Logo FreeNAS"
 
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
@@ -10794,7 +10794,7 @@ msgstr ""
 "l'environnement jail."
 
 msgid "Revert branding back to FreeNAS"
-msgstr ""
+msgstr "Revenir au logo de FreeNAS"
 
 msgid "Rollback"
 msgstr "Retour arrière"
