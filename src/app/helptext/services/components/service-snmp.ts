@@ -9,9 +9,7 @@ location_label : 'Location',
 location_validation : [  ],
 
 contact_placeholder : T('Contact'),
-contact_tooltip: T('Enter an email address to receive messages from the\
- <a href="--docurl--/services.html#snmp"\
- target="_blank">SNMP service</a>.'),
+contact_tooltip: T('E-mail address that will receive SNMP service messages.'),
 contact_validation: [Validators.email],
 
 community_placeholder : T('Community'),

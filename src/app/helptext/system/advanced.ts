@@ -56,14 +56,10 @@ export const helptext_system_advanced = {
   },
   
   autotune_placeholder: T('Enable Autotune'),
-  autotune_tooltip: T('Enables the autotune script which attempts to optimize\
- the system depending on the installed hardware.\
- <b>Warning:</b> Autotuning is only used as a temporary\
- measure and is not a permanent fix for system hardware\
- issues. See the\
- <a href="--docurl--/system.html#autotune"\
- target="_blank">Autotune section</a> of the guide for\
- more information.'),
+  autotune_tooltip: T('Activates a tuning script which attempts to optimize \
+ the system depending on the installed hardware. <b>Warning:</b> Autotuning \
+ is only used as a temporary measure and is not a permanent fix for system \
+ hardware issues.'),
 
   debugkernel_placeholder: T('Enable Debug Kernel'),
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
@@ -91,10 +87,8 @@ export const helptext_system_advanced = {
   cpu_in_percentage_placeholder: T('Report CPU Usage in Percentage'),
   cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
-  sed_options_message_paragraph: T('<b>SED (Self-Encrypting Drives) Options</b>'),
-  sed_options_tooltip: T('See the <a href="--docurl--/system.html#self-encrypting-drives"\
- target="_blank"> Self Encrypting Drives</a> section of\
- the user guide for more information.'),
+  sed_options_message_paragraph: T('Self-Encrypting Drive Options'),
+  sed_options_tooltip: T(''),
 
   sed_user_placeholder: T('ATA Security User'),
   sed_user_tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\

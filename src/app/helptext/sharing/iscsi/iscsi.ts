@@ -61,13 +61,10 @@ export const helptext_sharing_iscsi = {
   ),
 
   portal_form_placeholder_discovery_authmethod: T("Discovery Authentication Method"),
-  portal_form_tooltip_discovery_authmethod: T(
-    '<a href="--docurl--/sharing.html#block-iscsi"\
- target="_blank">iSCSI</a> supports multiple\
- authentication methods that are used by the target to\
- discover valid devices. <i>None</i> allows anonymous\
- discovery while <i>CHAP</i> and <i>Mutual CHAP</i>\
- require authentication.'
+  portal_form_tooltip_discovery_authmethod: T('iSCSI supports multiple \
+ authentication methods that are used by the target to discover valid \
+ devices. <i>None</i> allows anonymous discovery while <i>CHAP</i> and \
+ <i>Mutual CHAP</i> require authentication.'
   ),
 
   portal_form_placeholder_discovery_authgroup: T("Discovery Authentication Group"),
@@ -145,14 +142,10 @@ export const helptext_sharing_iscsi = {
   globalconf_placeholder_pool_avail_threshold: T(
     "Pool Available Space Threshold (%)"
   ),
-  globalconf_tooltip_pool_avail_threshold: T(
-    'Enter the percentage of free space to remain\
- in the pool. When this percentage is reached,\
- the system issues an alert, but only if zvols are used.\
- See <a href="--docurl--/vaai.html#vaai"\
- target="_blank">VAAI Threshold Warning</a> for more\
- information.'
-  ),
+  globalconf_tooltip_pool_avail_threshold: T('Generate an alert when the \
+   pool has this percent space remaining. This is typically \
+   configured at the pool level when using zvols or at the extent level \
+   for both file and device based extents.'),
 
   globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
   globalconf_tooltip_alua: T(`Allow initiator to discover paths to both\
@@ -212,12 +205,9 @@ export const helptext_sharing_iscsi = {
   ),
 
   extent_placeholder_avail_threshold: T("Available Space Threshold (%)"),
-  extent_tooltip_avail_threshold: T(
-    'Only appears if a <i>File</i> or zvol is selected. When\
- the specified percentage of free space is reached,\
- the system issues an alert.\
- See <a href="--docurl--/vaai.html#vaai"\
- target="_blank">VAAI</a> Threshold Warning.'
+  extent_tooltip_avail_threshold: T('Only appears if a <i>File</i> or \
+ zvol is selected. When the specified percentage of free space is reached,\
+ the system issues an alert.'
   ),
 
   extent_placeholder_comment: T("Description"),
