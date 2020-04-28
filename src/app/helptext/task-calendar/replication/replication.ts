@@ -14,8 +14,7 @@ export default {
     transport_placeholder: T('Transport'),
     transport_tooltip: T('Method of snapshot transfer:<ul> \
  <li><i>SSH</i> is supported by most systems. It requires a previously \
- created <a href="--docurl--/system.html#ssh-connection" \
- target="_blank">SSH connection</a>.</li> \
+ created connection in <b>System > SSH Connections</b>.</li> \
  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the \
  destination system, then uses \
  <a href="https://github.com/freenas/py-libzfs" \
@@ -28,9 +27,8 @@ export default {
  and earlier.</li></ul>'),
 
     ssh_credentials_placeholder: T('SSH Connection'),
-    ssh_credentials_tooltip: T('Choose the \
- <a href="--docurl--/system.html#ssh-connection" \
- target="_blank">SSH connection</a>.'),
+    ssh_credentials_tooltip: T('Choose a connection that has been saved in \
+ <b>System > SSH Connections</b>.'),
 
     netcat_active_side_placeholder: T('Netcat Active Side'),
     netcat_active_side_tooltip: T('Establishing a connection requires \
@@ -97,10 +95,9 @@ export default {
 
     periodic_snapshot_tasks_placeholder: T('Periodic Snapshot Tasks'),
     periodic_snapshot_tasks_tooltip: T('Snapshot schedule for this \
- replication task. Choose from configured \
- <a href="--docurl--/tasks.html#periodic-snapshot-tasks" \
- target="_blank">Periodic Snapshot Tasks</a>. This replication task must \
- have the same <b>Recursive</b> and <b>Exclude Child Datasets</b> values \
+ replication task. Choose from previously configured \
+ <b>Periodic Snapshot Tasks</b>. This replication task must have the \
+ same <b>Recursive</b> and <b>Exclude Child Datasets</b> values \
  as the chosen periodic snapshot task. Selecting a periodic snapshot \
  schedule removes the <b>Schedule</b> field.'),
 
@@ -122,9 +119,7 @@ export default {
  When a periodic snapshot is not linked to the replication, enter the \
  naming schema for manually created snapshots. Has the same <i>%Y</i>, \
  <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i> string requirements as \
- the <b>Naming Schema</b> in a \
- <a href="--docurl--/tasks.html#periodic-snapshot-tasks" \
- target="_blank">periodic snapshot task.'),
+ the <b>Naming Schema</b> in a <b>Periodic Snapshot Task</b>.'),
 
     auto_placeholder: T('Run Automatically'),
     auto_tooltip: T('Set to either start this replication task \

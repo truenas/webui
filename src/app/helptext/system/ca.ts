@@ -17,9 +17,7 @@ export const helptext_system_ca = {
     signedby: {
       placeholder: T("Signing Certificate Authority"),
       tooltip: T(
-        'Select a previously imported or created <a\
- href="--docurl--/system.html#cas"\
- target="_blank">CA</a>.'
+        'Select a previously imported or created CA.'
       ),
       validation: [Validators.required]
     },

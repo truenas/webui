@@ -40,9 +40,10 @@ export default {
     portal_tooltip: T("Select an existing portal or choose <i>Create New</i> to configure a new portal."),
 
     discovery_authmethod_placeholder: T("Discovery Auth Method"),
-    discovery_authmethod_tooltip: T("<a href='--docurl--/sharing.html--webversion--#block-iscsi' target='_blank'>iSCSI</a>\
- supports multiple authentication methods that are used by the target to discover valid devices. None allows anonymous\
- discovery while CHAP and Mutual CHAP require authentication."),
+    discovery_authmethod_tooltip: T("iSCSI supports multiple authentication \
+ methods that are used by the target to discover valid devices. <i>None</i> \
+ allows anonymous discovery while <i>CHAP</i> and <i>Mutual CHAP</i> require \
+ authentication."),
 
     discovery_authgroup_placeholder: T("Discovery Auth Group"),
     discovery_authgroup_tooltip: T("Group ID created in Authorized \

@@ -31,9 +31,7 @@ manager_name_tooltip : T('ZFS pools must conform to strict naming \
  Choose a memorable name.'),
 
 manager_encryption_tooltip : T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli" target="_blank">GELI</a> \
- encryption can increase security for data stored in a ZFS pool, but increases pool management complexity. It is \
- recommended to read the <i>Managing Encrypted Pools</i> section of the <a href="--docurl--" target="_blank">guide</a> \
- before activating this option.'),
+ encryption can increase security for data stored in a ZFS pool, but increases pool management complexity.'),
 
 manager_suggested_layout_tooltip : T('Create a recommended formation\
  of vdevs in a pool.'),

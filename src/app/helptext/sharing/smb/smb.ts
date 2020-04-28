@@ -94,10 +94,10 @@ export const helptext_sharing_smb = {
  Separate entries with a comma, space, or tab.'),
 
     placeholder_vfsobjects: T('VFS Objects'),
-    tooltip_vfsobjects: T('Adds <a\
- href="--docurl--/sharing.html#avail-vfs-modules-tab"\
- target="blank">virtual file system modules</a> to\
- enhance functionality.'),
+    tooltip_vfsobjects: T('Adds virtual file system modules to enhance \
+ functionality. See the \
+ <a href="https://wiki.samba.org/index.php/Virtual_File_System_Modules" target="_blank">Samba documentation</a> \
+ for more details.'),
 
     placeholder_shadowcopy: T('Enable Shadow Copies'),
     tooltip_shadowcopy: T('Export ZFS snapshots as\
