@@ -99,10 +99,10 @@
             </div>
           </div></span>
 
-          <div class="truecommand">
-            <a href="https://portal.ixsystems.com" target="_blank">
+          <div class="truecommand" *ngIf="tc_ip">
+            <a href="#" (click)="gotoTC();" target="_blank">
               <img id="truecommand-logo" src="assets/images/truecommand/TrueCommand_Iconmark_blue.png">
-              <span class="truecommand-txt">TrueCommand</span>
+              <span class="truecommand-txt">TrueCommand IP: {{tc_ip}}</span>
             </a>
           </div>
 
