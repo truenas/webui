@@ -955,7 +955,7 @@ export class CertificateAddComponent {
             data[key] = null;
           }
 
-          if (type_prop.length === 1) {
+          if (type_prop.length === 1 && data[key]) {
             for (let i = 0; i < data[key].length; i++) {
               cert_extensions[type_prop[0]][data[key][i]] = true;
             }

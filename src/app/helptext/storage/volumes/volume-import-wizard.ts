@@ -10,7 +10,7 @@ is_new_option2_label: T('Import an existing pool'),
 is_new_option2_tooltip: T('Import a pool that exists but is not connected.'),
 
 enctrypted_main_label: T('Decrypt pool'),
-enctypted_placeholder: T('Is the pool encrypted?'),
+enctypted_placeholder: T('Does the pool have GELI Encryption from FreeNAS/TrueNAS 11.3 or earlier?'),
 encrypted_option1_label: T('No, continue with import'),
 encrypted_option1_tooltip: T('Unencrypted pools can be imported directly.'),
 encrypted_option2_label: T('Yes, decrypt the disks'),

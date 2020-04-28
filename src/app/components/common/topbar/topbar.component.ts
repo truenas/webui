@@ -194,7 +194,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.emit({name: "SysInfoRequest", sender:this});
 
     this.core.emit({name:"UserPreferencesRequest", sender:this});
-    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
       if(this.isWaiting){
         this.target.next({name:"SubmitComplete", sender: this});
         this.isWaiting = false;

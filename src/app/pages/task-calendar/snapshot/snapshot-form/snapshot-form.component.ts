@@ -88,6 +88,7 @@ export class SnapshotFormComponent implements OnDestroy {
           name: 'snapshot_picker',
           placeholder: helptext.snapshot_picker_placeholder,
           tooltip: helptext.snapshot_picker_tooltip,
+          options: ['begin', 'end'],
           validation: [Validators.required],
           required: true,
           value: "0 0 * * *"

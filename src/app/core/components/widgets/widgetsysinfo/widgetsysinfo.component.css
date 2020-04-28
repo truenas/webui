@@ -30,7 +30,8 @@
 }
 
 span.passive{
-  font-size:90%;
+  font-size: 75%;
+  text-transform: lowercase;
 }
 
 .primary-nav .card-title-text{
@@ -396,5 +397,14 @@ div.generic.alert .mat-icon{
   z-index:2;
 }
 
+.xs .freenas.product-image img{
+  height: 150px;
+  width: auto;
+}
+
+.xs .freenas.product-image{
+  position: relative;
+  top: -24px;
+}
 
 

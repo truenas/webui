@@ -147,7 +147,8 @@ export class EmailComponent implements OnDestroy {
               } ]
             },
           ],
-          togglePw : true
+          togglePw : true, 
+          validation: helptext_system_email.pass.validation,
         }
       ]
     },

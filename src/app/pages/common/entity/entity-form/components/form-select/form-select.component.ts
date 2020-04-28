@@ -53,7 +53,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     if(this.control.value && this.control.value.length > 0){
         this.selectedValues = this.control.value;
         // check if any value is invalid
-        if (this.config.multiple) {
+        if (this.config.multiple && this.config.asyncValidation) {
           for (const v of this.control.value) {
             if (_.find(this.config.options, {value: v}) === undefined) {
               this.config.options.push({label: v + '(invalid)', value: v});

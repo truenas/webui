@@ -124,7 +124,7 @@ export class ServiceAFPComponent {
         );
       }
     });
-    this.iscsiService.getIpChoices().subscribe((res) => {
+    this.ws.call('afp.bindip_choices').subscribe((res) => {
       this.bindip =
         _.find(this.fieldSets, { name: helptext.afp_fieldset_other }).config.find(config => config.name === 'bindip');
       Object.keys(res || {}).forEach(key => {

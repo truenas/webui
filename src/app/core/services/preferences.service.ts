@@ -31,11 +31,12 @@ export interface UserPreferences {
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
   private debug = false;
+  private startupComplete: boolean = false;
   public preferences: UserPreferences = {
     "platform":"freenas",// Detect platform
     "retroLogo": false,
     "timestamp":new Date(),
-    "userTheme":"ix-dark", // Theme name
+    "userTheme":"default", // Theme name
     "customThemes": [], // Theme Objects
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
@@ -60,11 +61,14 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       // evt.data: boolean = authentication status
       if(evt.data){
-        this.core.emit({name:"UserPreferencesRequest"});
+        this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
       }
     });
 
     this.core.register({observerClass:this, eventName:"UserPreferencesRequest"}).subscribe((evt:CoreEvent) => {
+      // Ignore requests until we have UserData
+      if(!this.startupComplete){return;}
+
       if(!evt.data){
         this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
       } else {
@@ -98,8 +102,6 @@ export class PreferencesService {
           // Add missing properties to inbound preferences from middleware
           if(this.debug){
             console.log('Preferences exist and there are unknown properties');
-            //console.log(preferencesFromMiddleware)
-            //console.log(preferencesFromUI)
           }
           const merged = this.mergeProperties(this.preferences, data);
           this.updatePreferences(data);
@@ -111,6 +113,12 @@ export class PreferencesService {
         }
 
       }
+
+      if(!this.startupComplete){
+        this.core.emit({name:"UserPreferencesReady", data:this.preferences, sender: this});
+        this.startupComplete = true;
+      }
+
     });
 
     this.core.register({observerClass:this, eventName:"ChangeThemePreference",sender:this.themeService}).subscribe((evt:CoreEvent) => {
@@ -160,7 +168,7 @@ export class PreferencesService {
       this.preferences = data;
 
       //Notify Guided Tour & Theme Service
-      this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
+      this.core.emit({name:"UserPreferencesChanged", data:this.preferences, sender: this});
   }
 
   // Save to middleware

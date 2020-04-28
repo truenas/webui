@@ -69,7 +69,6 @@ dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
  for descriptions of each permission.'),
 dataset_acl_basic_perms_options: [
                                   {label:'Read', value: 'READ'},
-                                  {label:'Write', value: 'WRITE'},
                                   {label:'Modify', value: 'MODIFY'},
                                   {label:'Traverse', value: 'TRAVERSE'},
                                   {label:'Full Control', value: 'FULL_CONTROL'},

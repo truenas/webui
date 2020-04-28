@@ -412,7 +412,7 @@ export class ActiveDirectoryComponent {
       });
     });
 
-    this.systemGeneralService.getCA().subscribe((res) => {
+    this.systemGeneralService.getCertificates().subscribe((res) => {
       this.certificate = _.find(this.fieldConfig, {name : 'certificate'});
       res.forEach((item) => {
         this.certificate.options.push(
