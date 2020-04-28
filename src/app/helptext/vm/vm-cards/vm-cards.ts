@@ -7,11 +7,7 @@ serial_shell_tooltip : '<b>Ctrl+C</b> kills a foreground process.<br>\
  <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
  <b>tw_cli</b>, <br><b>MegaCli</b>,\
  <b>freenas-debug</b>, <b>tmux</b>,\
- <b>Dmidecode</b>.<br> Refer to the <a\
- href="--docurl--/cli.html"\
- target="_blank">Command Line Utilities</a>\
- chapter in the <b>User Guide</b> for usage\
- information and examples.',
+ <b>Dmidecode</b>.',
 
 // VM card edit
 config_name_placeholder: T('Name'),
