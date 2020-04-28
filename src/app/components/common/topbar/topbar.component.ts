@@ -23,6 +23,7 @@ import { T } from '../../../translate-marker';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
 @Component({
   selector: 'topbar',
@@ -69,6 +70,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   systemType: string;
   isWaiting = false;
   public target: Subject<CoreEvent> = new Subject();
+  public screenSize: string = 'waiting';
 
   protected dialogRef: any;
 
@@ -83,10 +85,15 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public dialog: MatDialog,
     public translate: TranslateService,
     private prefServices: PreferencesService,
-    protected loader: AppLoaderService) {
+    protected loader: AppLoaderService,
+    public mediaObserver: MediaObserver) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
+      });
+
+      mediaObserver.media$.subscribe((evt) =>{
+        this.screenSize = evt.mqAlias;
       });
     }
 
