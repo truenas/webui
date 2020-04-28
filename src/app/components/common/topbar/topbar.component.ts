@@ -23,6 +23,8 @@ import { T } from '../../../translate-marker';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 
 @Component({
   selector: 'topbar',
@@ -71,6 +73,12 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   public target: Subject<CoreEvent> = new Subject();
 
   protected dialogRef: any;
+  protected tcConnected = false;
+  protected tc_queryCall = 'truecommand.config';
+  protected tc_updateCall = 'truecommand.update';
+  protected isTcStatusOpened = false;
+  protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
+  public tcStatus;
 
   constructor(
     public themeService: ThemeService,
@@ -117,6 +125,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.currentTheme = theme.name;
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
       this.themesMenu = this.themeService.themesMenu
+    });
+
+    this.ws.call(this.tc_queryCall).subscribe(res => {
+      this.tcStatus = res;
+      this.tcConnected = res.api_key ? true : false;
+    });
+    this.ws.subscribe(this.tc_queryCall).subscribe(res => {
+      this.tcStatus = res.fields;
+      this.tcConnected = res.fields.api_key ? true : false;
+      if (this.isTcStatusOpened && this.tcStatusDialogRef) {
+        this.tcStatusDialogRef.componentInstance.update(this.tcStatus);
+      }
     });
 
     const notifications = this.notificationsService.getNotificationList();
@@ -539,5 +559,114 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   openIX() {
     window.open('https://www.ixsystems.com/', '_blank')
+  }
+
+  showTCStatus() {
+    this.tcConnected ? this.openStatusDialog() : this.openSignupDialog();
+  }
+
+  openSignupDialog() {
+    const conf: DialogFormConfiguration = {
+      title: helptext.signupDialog.title,
+      fieldConfig: [
+        {
+          type: 'paragraph',
+          name: 'message',
+          paraText: helptext.signupDialog.content
+        }
+      ],
+      saveButtonText: helptext.signupDialog.connect_btn,
+      custActions: [
+        {
+          id: 'signup',
+          name: helptext.signupDialog.singup_btn,
+          function: () => {
+            window.open('https://portal.ixsystems.com');
+            this.dialogService.closeAllDialogs();
+          }
+        }
+      ],
+      parent: this,
+      customSubmit: function (entityDialog) {
+        entityDialog.dialogRef.close();
+        entityDialog.parent.updateTC();
+      }
+    }
+    this.dialogService.dialogForm(conf);
+  }
+
+  updateTC() {
+    const self = this;
+    const conf: DialogFormConfiguration = {
+      title: self.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
+      fieldConfig: [
+        {
+          type: 'input',
+          name: 'api_key',
+          placeholder: helptext.updateDialog.api_placeholder,
+          tooltip: helptext.updateDialog.api_tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext.updateDialog.enabled_placeholder,
+          tooltip: helptext.updateDialog.enabled_tooltip,
+          value: true,
+        }
+      ],
+      saveButtonText: self.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
+      parent: this,
+      afterInit: function(entityDialog) {
+        // load settings
+        if (self.tcConnected) {
+          Object.keys(self.tcStatus).forEach(key => {
+            const ctrl = entityDialog.formGroup.controls[key];
+            if (ctrl) {
+              ctrl.setValue(self.tcStatus[key]);
+            }
+          })
+        }
+      },
+      customSubmit: function(entityDialog) {
+        self.ws.call(self.tc_updateCall, [entityDialog.formValue]).subscribe(
+          (res) => {
+            entityDialog.dialogRef.close();
+          },
+          (err) => {
+            new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService)
+          }
+        )
+      }
+    }
+    this.dialogService.dialogForm(conf);
+  }
+
+  openStatusDialog() {
+    const injectData = {
+      parent: this,
+      data: this.tcStatus,
+    }
+    if (this.isTcStatusOpened) {
+      this.tcStatusDialogRef.close(true);
+    } else {
+      this.isTcStatusOpened = true;
+      this.tcStatusDialogRef =
+       this.dialog.open(TruecommandComponent, {
+        disableClose: false,
+        width: '400px',
+        hasBackdrop: true,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+        data: injectData,
+      });
+    }
+
+    this.tcStatusDialogRef.afterClosed().subscribe(
+      (res) => {
+        this.isTcStatusOpened = false;
+      }
+    );
   }
 }

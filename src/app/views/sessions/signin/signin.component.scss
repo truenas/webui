@@ -15,6 +15,21 @@
     font-size:85%
 }
 
+.truecommand {
+  text-align: center;
+}
+#truecommand-logo {
+  height: 24px;
+  top: 7px;
+  position: relative;
+  cursor: pointer;
+}
+.truecommand-txt {
+  text-align: center;
+  opacity:0.5;
+  padding-left: 5px;
+}
+
 .ha-status-txt {
     text-align: center;
 }
