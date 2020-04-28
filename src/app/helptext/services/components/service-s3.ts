@@ -19,12 +19,16 @@ bindport_value: '9000',
 bindport_validation: [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)],
 
 access_key_placeholder : T('Access Key'),
-access_key_tooltip: T('Enter the S3 username.'),
+access_key_tooltip: T('Enter the S3 access ID. See \
+<a href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys" target="_blank"> \
+ Access keys</a> for more information.'),
 access_key_validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required,
  regexValidator(/^\w+$/)],
 
 secret_key_placeholder : T('Secret Key'),
-secret_key_tooltip: T('Enter the password that must be used by connecting S3 systems.'),
+secret_key_tooltip: T('Enter the S3 secret access key. See \
+ <a href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys" target="_blank"> \
+ Access keys</a> for more information.'),
 secret_key_validation: [Validators.minLength(8), Validators.maxLength(40), 
   regexValidator(/^\w+$/)],
 
@@ -37,8 +41,9 @@ storage_path_tooltip: T('Browse to the directory for the S3 filesystem.'),
 storage_path_validation: [ Validators.required],
 
 browser_placeholder : T('Enable Browser'),
-browser_tooltip: T('Set to enable the S3 web user interface.'),
-
+browser_tooltip: T('Set to enable the web user interface for the S3 service. \
+ Access the minio web interface by entering the IP address and port number \
+ separated by a colon in the browser address bar.'),
 mode_placeholder : 'Mode',
 mode_options : [
   {label : 'local'}
