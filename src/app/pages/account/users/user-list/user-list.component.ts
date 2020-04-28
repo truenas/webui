@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services';
@@ -12,7 +12,7 @@ import helptext from '../../../../helptext/account/user-list';
   selector: 'app-user-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent {
 
   public title = "Users";
   protected route_add: string[] = ['account', 'users', 'add'];
@@ -25,6 +25,7 @@ export class UserListComponent implements OnInit {
   protected grp_lst = [];
   protected hasDetails = true;
   protected queryCall = 'user.query';
+  // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected globalConfig = {
     id: "config",
     onClick: () => {
@@ -58,7 +59,7 @@ export class UserListComponent implements OnInit {
   };
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'delete' && row.bsdusr_builtin === true) {
+    if (actionId === 'delete' && row.builtin === true) {
       return false;
     }
     return true;
@@ -69,19 +70,11 @@ export class UserListComponent implements OnInit {
               protected ws: WebSocketService, protected prefService: PreferencesService) {
   }
 
-  ngOnInit() {
-    this.ws.call('user.query').subscribe((user_list)=>{
-      this.usr_lst.push(user_list);
-    })
-    this.ws.call('group.query').subscribe((group_list)=>{
-      this.grp_lst.push(group_list);
-    })
-  }
   afterInit(entityList: any) { this.entityList = entityList; }
   getActions(row) {
     const actions = [];
     actions.push({
-      id: row.bsdusr_username,
+      id: row.username,
       icon: 'edit',
       label : helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
@@ -90,10 +83,10 @@ export class UserListComponent implements OnInit {
           [ "account", "users", "edit", users_edit.id ]));
       }
     });
-    if (row.bsdusr_builtin !== true){
+    if (row.builtin !== true){
 
       actions.push({
-        id: row.bsdusr_username,
+        id: row.username,
         icon: 'delete',
         name: 'delete',
         label : helptext.user_list_actions_delete_label,
@@ -139,6 +132,7 @@ export class UserListComponent implements OnInit {
     let group_users: any
     user = _.find(this.usr_lst[0], {id});
     group_users =_.find(this.grp_lst[0], {id: user.group.id})['users'];
+    // Show checkbox if deleting the last member of a group
     if(group_users.length === 1){
       return true
     };
@@ -147,7 +141,9 @@ export class UserListComponent implements OnInit {
 
   resourceTransformIncomingRestData(d) {
     let data = Object.assign([], d);
+    this.usr_lst.push(data);
     this.ws.call('group.query').subscribe((res)=>{
+      this.grp_lst.push(res);
       data.forEach(user => {
         const group = _.find(res, {"gid" : user.group.bsdgrp_gid});
         //user.group.bsdgrp_gid = group['gid'];
@@ -166,7 +162,7 @@ export class UserListComponent implements OnInit {
     if (this.prefService.preferences.hide_builtin_users) {
       let newData = []
       data.forEach((item) => {
-        if (!item.builtin) {
+        if (!item.builtin || item.username === 'root') {
           newData.push(item);
         }
       }) 
