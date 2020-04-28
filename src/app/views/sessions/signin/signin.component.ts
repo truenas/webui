@@ -59,6 +59,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   public ha_disabled_reasons =[];
   public ha_status_text = T('Checking HA status');
   public ha_status = false;
+  public tc_ip;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -73,6 +74,11 @@ export class SigninComponent implements OnInit, OnDestroy {
       this.ha_status = true;
     }
     this.checkSystemType();
+    this.ws.call('truecommand.connected').subscribe((res) => {
+      if (res.connected) {
+        this.tc_ip = res.truecommand_ip;
+      }
+    })
    }
 
   checkSystemType() {
@@ -333,5 +339,9 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   openIX() {
     window.open('https://www.ixsystems.com/', '_blank')
+  }
+
+  gotoTC() {
+    window.open(this.tc_ip);
   }
 }

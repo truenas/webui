@@ -15,9 +15,7 @@ order_placeholder : T('Device Order'),
 order_tooltip : '',
 
 zvol_path_placeholder : 'Zvol',
-zvol_path_tooltip : 'Browse to an existing <a\
- href="--docurl--/storage.html#adding-zvols"\
- target="_blank">Zvol</a>.',
+zvol_path_tooltip : 'Define the path to an existing zvol for VM use.',
 zvol_path_validation : [Validators.required],
 options:[],
 

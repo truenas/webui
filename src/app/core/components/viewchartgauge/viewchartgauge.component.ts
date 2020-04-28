@@ -35,6 +35,7 @@ export interface GaugeConfig {
   max?: number; // 100 is default
   width?: number; // for adjusting arc thickness
   data: any;
+  subtitle?: string;
 }
 
 @Component({
@@ -43,7 +44,7 @@ export interface GaugeConfig {
 })
 export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterViewInit, OnChanges {
 
-  public title:string = '';
+  public subtitle:string = '';
   public chartType: string = 'gauge';
   public chartClass: string = 'view-chart-gauge';
   private _data;
@@ -60,6 +61,10 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
 
   ngOnChanges(changes: SimpleChanges) {
     if(changes.config){
+      if(changes.config.currentValue && changes.config.currentValue.subtitle){
+        this.subtitle = changes.config.currentValue.subtitle;
+      }
+
       if(changes.config.currentValue && changes.config.currentValue.data){
         this.data = changes.config.currentValue.data;
         if(!this.arc){
@@ -96,27 +101,61 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
       .attr("width", width)
       .attr("height", height)
 
+    // Arc Group
     let g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-    
-    let text = svg.append("text");
+
+    // Text Group
+    let gt = svg.append("g").attr("class", "text-group")
+   
+    // Setup value text element
+    let text = gt.append("text").attr("id", "text-value");
     if(!text.node()){
       // Avoid console errors if text.node isn't available yet.
       return;
     }
-    let bbox = text.node().getBBox();
-    
+
+    // Value as text
     text.style("fill", "var(--fg2)")
         .style("font-size", this.config.fontSize.toString() + "px")
-        .attr("x", width / 2)
-        .attr("y", height / 2 )
+        .style("font-weight", 500)
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "central")
+
+    // Setup subtitle text element
+    let subtext = gt.append("text").attr("id", "text-subtitle");
+    if(!subtext.node()){
+      // Avoid console errors if text.node isn't available yet.
+      return;
+    }
+    // Subtitle as text
+    subtext.style("fill", "var(--fg2)")
+        .style("font-size", (this.config.fontSize / 2) + "px")
+        .style("font-weight", 400)
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "central")
+     
+    if(this.subtitle){
+      this.updateSubtitle();
+    }
+
+    // Adjust group to compensate
+    const isFirefox: boolean = navigator.userAgent.toLowerCase().includes("firefox");
+    const offsetY = isFirefox ? 10 : 0;
+    let bbox = gt.node().getBBox();
+    let top = (height / 2) - (bbox.height / 2);
+    text.attr("x", width / 2)
+        .attr("y",  top + offsetY);
+   
+    subtext.attr("x", width / 2)
+        .attr("y", top + 24 + offsetY );
     
+    // Arc background
     let background = g.append("path")
         .datum({endAngle: this.doublePI})
         .style("fill", "var(--bg1)")
         .attr("d", this.arc);
     
+    // Arc foreground
     let foreground = g.append("path")
         .datum({endAngle: 0.127 * this.doublePI})
         .style("fill", "var(--primary)")
@@ -127,13 +166,13 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
   }
 
   update(value){
-      d3.transition()
-          .select('#gauge-' + this.chartId + ' path.value')
-          .duration(750)
-          .attrTween("d", this.load(this.percentToAngle(value)));
+    d3.transition()
+        .select('#gauge-' + this.chartId + ' path.value')
+        .duration(750)
+        .attrTween("d", this.load(this.percentToAngle(value)));
 
-    d3.select('#gauge-' + this.chartId + ' text')
-          .text(value + this.config.units)
+    let txt = d3.select('#gauge-' + this.chartId + ' text#text-value')
+        .text(value + this.config.units)
   }
 
   load(newAngle){
@@ -152,7 +191,12 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
 
   percentToAngle(value){
     return value  / 100 * this.doublePI;
-    //return 360 * (value / 100) * this.doublePI;
+  }
+
+  updateSubtitle(){
+    let txt = d3.select('#gauge-' + this.chartId + ' #text-value')
+    let subtxt = d3.select('#gauge-' + this.chartId + ' #text-subtitle')
+      .text(this.subtitle);
   }
 
 }

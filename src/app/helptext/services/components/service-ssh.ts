@@ -9,26 +9,22 @@ ssh_tcpport_placeholder : T('TCP Port'),
 ssh_tcpport_tooltip: 'Open a port for SSH connection requests.',
 
 ssh_rootlogin_placeholder : T('Log in as Root with Password'),
-ssh_rootlogin_tooltip: T('<b>Root logins are discouraged.</b> Set to allow root\
- logins. A password must be set for the <i>root</i>\
- user in <a href="--docurl--/accounts.html#users"\
- target="_blank">Users</a>.'),
+ssh_rootlogin_tooltip: T('<b>Root logins are discouraged.</b> Allows root \
+ logins. A password must be set for the <i>root</i> user account.'),
 
 ssh_passwordauth_placeholder : T('Allow Password Authentication'),
-ssh_passwordauth_tooltip: T('Unset to require key-based authentication for\
- all users. This requires <a\
- href="http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html"\
- target="_blank">additional setup</a> on both the SSH\
- client and server.'),
+ssh_passwordauth_tooltip: T('Enabling allows using a password to authenticate \
+ the SSH login. Disabling changes authentication to require keys for \
+ all users. This requires \
+ <a href="http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html" target="_blank">additional setup</a> \
+ on both the SSH client and server.'),
 
 ssh_kerberosauth_placeholder : T('Allow Kerberos Authentication'),
-ssh_kerberosauth_tooltip: T('Ensure <a\
- href="--docurl--/directoryservices.html#kerberos-realms"\
- target="_blank">Kerberos Realms</a> and <a\
- href="--docurl--/directoryservices.html#kerberos-keytabs"\
- target="_blank">Kerberos Keytabs</a> are configured\
- and the system can communicate with the Kerberos\
- Domain Controller before setting.'),
+ssh_kerberosauth_tooltip: T('Ensure valid entries exist in \
+ <b>Directory Services > Kerberos Realms</b> and \
+ <b>Directory Services > Kerberos Keytabs</b> and the system \
+ can communicate with the Kerberos Domain Controller before \
+ enabling this option.'),
 
 ssh_tcpfwd_placeholder : T('Allow TCP Port Forwarding'),
 ssh_tcpfwd_tooltip: T('Set to allow users to bypass firewall restrictions\
