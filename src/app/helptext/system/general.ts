@@ -5,10 +5,10 @@ export const helptext_system_general = {
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
-    tooltip: T('The system uses a self-signed \
- <a href="--docurl--/system.html#certificates" target="_blank">certificate</a> \
- to enable encrypted web interface connections. To change the default \
- certificate, select a different created or imported certificate.'
+    tooltip: T('The system uses a self-signed certificate \
+ to enable encrypted web interface connections. To change \
+ the default certificate, select a different certificate \
+ that was created or imported in the <b>Certificates</b> menu.'
     ),
     validation: [Validators.required]
   },

@@ -13,10 +13,8 @@ snapshot_add_name_tooltip: T('Unique snapshot name. Cannot be used with \
 
 snapshot_add_naming_schema_placeholder: T('Naming Schema'),
 snapshot_add_naming_schema_tooltip: T('Generate a name for the snapshot \
- from a previously created \
- <a href="--docurl--/tasks.html#periodic-snapshot-tasks" \
- target="_blank">periodic snapshot task</a> naming schema. This allows \
- the snapshot to be replicated. Cannot be used with a <i>Name</i>.'),
+ using the naming schema from a previously created <b>Periodic Snapshot Task</b>. \
+ This allows the snapshot to be replicated. Cannot be used with a <i>Name</i>.'),
 
 snapshot_add_recursive_placeholder: T('Recursive'),
 snapshot_add_recursive_tooltip: T('Set to include child datasets of the \

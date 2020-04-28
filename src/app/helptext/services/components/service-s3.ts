@@ -5,9 +5,8 @@ import { matchOtherValidator } from '../../../pages/common/entity/entity-form/va
 
 export default {
 bindip_placeholder : T('IP Address'),
-bindip_tooltip: T('Enter the IP address which runs the <a\
- href="--docurl--/services.html#s3" target="_blank">S3\
- service</a>. <i>0.0.0.0</i> tells the server to listen\
+bindip_tooltip: T('Enter the IP address which runs the \
+ S3 service. <i>0.0.0.0</i> tells the server to listen \
  on all addresses.'),
 bindip_options : [
  {label:'0.0.0.0', value: '0.0.0.0'}
@@ -45,9 +44,8 @@ mode_options : [
 ],
 
 certificate_placeholder : T('Certificate'),
-certificate_tooltip : T('Add an <a href="--docurl--/system.html#certificates"\
- target="_blank">SSL certificate</a> to be used for\
- secure S3 connections.'),
+certificate_tooltip : T('Use an SSL certificate that was created or imported in \
+ <b>System > Certificates</b> for secure S3 connections.'),
 
 path_warning_title : T('Warning'),
 path_warning_msg: T('Selecting a dataset to use with Minio <strong>removes all existing\

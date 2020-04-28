@@ -51,13 +51,10 @@ activedirectory_ssl_tooltip: T('Choose between <i>Off</i>, <a\
 
 activedirectory_certificate_name: 'certificate',
 activedirectory_certificate_placeholder: T('Certificate'),
-activedirectory_certificate_tooltip: T('Select the certificate of the Active Directory server\
- if SSL connections are used. Add a certificate here by creating a\
- <a href="--docurl--/system.html#cas" target="_blank">CA</a>,\
- then creating a certificate on the Active Directory server.\
- Import the certificate on this system with the\
- <a href="--docurl--/system.html#certificates" target="_blank">Certificates</a>\
- menu.'),
+activedirectory_certificate_tooltip: T('Select the certificate of the Active Directory server \
+ if SSL connections are used. Add a certificate here by creating a Certificate Authority (CA) \
+ then creating a certificate on the Active Directory server. Import the certificate to this \
+ system using the <b>System > Certificates</b> menu.'),
 
 ad_validate_certificates_placeholder: T('Validate Certificates'),
 ad_validate_certificates_tooltip: T('Check server certificates in a TLS session.'),
@@ -96,15 +93,13 @@ activedirectory_site_tooltip : T('Enter the relative distinguished name of the\
 
 activedirectory_kerberos_realm_name: 'kerberos_realm',
 activedirectory_kerberos_realm_placeholder : T('Kerberos Realm'),
-activedirectory_kerberos_realm_tooltip : T('Select the realm created in\
- <a href="--docurl--/directoryservices.html#kerberos-realms"\
- target="_blank">Kerberos Realms</a>.'),
+activedirectory_kerberos_realm_tooltip : T('Select an existing realm that was added \
+ in <b>Directory Services > Kerberos Realms</b>.'),
 
 activedirectory_kerberos_principal_name: 'kerberos_principal',
 activedirectory_kerberos_principal_placeholder : T('Kerberos Principal'),
-activedirectory_kerberos_principal_tooltip : T('Select the keytab created in\
- <a href="--docurl--/directoryservices.html#kerberos-keytabs"\
- target="_blank">Kerberos Keytabs</a>.'),
+activedirectory_kerberos_principal_tooltip : T('Select the location of the principal in the \
+ keytab created in <b>Directory Services > Kerberos Keytabs</b>.'),
 
 computer_account_OU_name: T('createcomputer'),
 computer_account_OU_placeholder: T('Computer Account OU'),
@@ -209,8 +204,6 @@ activedirectory_idmap_change_dialog_message: T('<font color="red">WARNING</font>
  target="_blank">idmap_autorid(8)</a>\, <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ad"\
  target="_blank">ad</a>\, <a\
- href="--docurl--/directoryservices.html#id12"\
- target="_blank">fruit</a>\, <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap"\
  target="_blank">idmap_ldap(8)</a>\, <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=idmap_nss"\
