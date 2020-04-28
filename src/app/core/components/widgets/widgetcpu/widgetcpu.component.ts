@@ -205,7 +205,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     config.title = data[0];
     config.units = "%";
     config.diameter = 136;
-    config.fontSize = 24;
+    config.fontSize = 28;
     config.max = 100;
     config.data = data;
     config.subtitle = "Avg Usage";

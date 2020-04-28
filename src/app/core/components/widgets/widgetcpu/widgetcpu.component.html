@@ -28,7 +28,7 @@
           <!-- Chart -->
           <div [ngClass]="{'mobile': screenType == 'Mobile'}" id="cpu-load-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
 
-            <div class="viewchartgauge" fxFlex="48" fxFlex.xs="100">
+            <div class="viewchartgauge" fxFlex="47" fxFlex.xs="100">
               <viewchartgauge [config]="cpuAvg" #load *ngIf="cpuAvg && cpuAvg.data; else loader"></viewchartgauge>
             </div>
 
@@ -36,7 +36,7 @@
               <mat-spinner [diameter]="40" style="margin: 0 auto;"></mat-spinner>
             </ng-template>
 
-            <div *ngIf="screenType == 'Desktop'" fxFlex="52" fxFlex.xs="100" id="cpu-load-cores">
+            <div *ngIf="screenType == 'Desktop'" fxFlex="53" fxFlex.xs="100" id="cpu-load-cores">
                 <mat-list>
                   <mat-list-item>
                     <span class="label"><strong>{{"Threads" | translate}}:</strong></span> &nbsp;&nbsp;{{coreCount}} {{"threads" | translate}}

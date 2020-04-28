@@ -101,31 +101,53 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
       .attr("width", width)
       .attr("height", height)
 
+    // Arc Group
     let g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    // Text Group
+    let gt = svg.append("g").attr("class", "text-group")
    
-    // Setup text elements
-    let text = svg.append("text").attr("id", "text-value");
+    // Setup value text element
+    let text = gt.append("text").attr("id", "text-value");
     if(!text.node()){
       // Avoid console errors if text.node isn't available yet.
       return;
     }
-    
-    let subtitleOffset = 0;
-    if(this.subtitle){
-      subtitleOffset = 4;
-      this.updateSubtitle();
-    }
-
-    let bbox = text.node().getBBox();
 
     // Value as text
     text.style("fill", "var(--fg2)")
         .style("font-size", this.config.fontSize.toString() + "px")
         .style("font-weight", 500)
-        .attr("x", width / 2)
-        .attr("y", (height / 2) - (bbox.height / 2) - subtitleOffset )
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "central")
+
+    // Setup subtitle text element
+    let subtext = gt.append("text").attr("id", "text-subtitle");
+    if(!subtext.node()){
+      // Avoid console errors if text.node isn't available yet.
+      return;
+    }
+    // Subtitle as text
+    subtext.style("fill", "var(--fg2)")
+        .style("font-size", (this.config.fontSize / 2) + "px")
+        .style("font-weight", 400)
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "central")
+     
+    if(this.subtitle){
+      this.updateSubtitle();
+    }
+
+    // Adjust group to compensate
+    const isFirefox: boolean = navigator.userAgent.toLowerCase().includes("firefox");
+    const offsetY = isFirefox ? 10 : 0;
+    let bbox = gt.node().getBBox();
+    let top = (height / 2) - (bbox.height / 2);
+    text.attr("x", width / 2)
+        .attr("y",  top + offsetY);
+   
+    subtext.attr("x", width / 2)
+        .attr("y", top + 24 + offsetY );
     
     // Arc background
     let background = g.append("path")
@@ -149,11 +171,8 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
         .duration(750)
         .attrTween("d", this.load(this.percentToAngle(value)));
 
-    let txt = d3.select('#gauge-' + this.chartId + ' text')
+    let txt = d3.select('#gauge-' + this.chartId + ' text#text-value')
         .text(value + this.config.units)
-    if(this.subtitle){
-      this.updateSubtitle();
-    }
   }
 
   load(newAngle){
@@ -172,27 +191,12 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
 
   percentToAngle(value){
     return value  / 100 * this.doublePI;
-    //return 360 * (value / 100) * this.doublePI;
   }
 
   updateSubtitle(){
-    let txt = d3.select('#gauge-' + this.chartId + ' text')
-    let tspan = d3.select('#gauge-' + this.chartId + ' text tspan#subtitle');
-    
-    // Remove if it already exists
-    /*let exists = tspan._groups[0][0] != null;
-    if(exists){
-      // Remove it
-      console.log(tspan._groups[0][0] != null);
-    }*/
-
-    txt.append("tspan").attr("id", "subtitle")
-      .attr("dy","2em")
-      .attr("x","50%")
-      .attr("font-size","0.6em")
-      .style("font-weight", 400)
+    let txt = d3.select('#gauge-' + this.chartId + ' #text-value')
+    let subtxt = d3.select('#gauge-' + this.chartId + ' #text-subtitle')
       .text(this.subtitle);
-
   }
 
 }
