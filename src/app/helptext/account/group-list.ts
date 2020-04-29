@@ -22,6 +22,6 @@ builtinMessageDialog: {
  hidden by default. Use the gear icon (top-right) to toggle the display of built-in groups.'),
     button: T('Close')
 },
-globalConfigTooltip: T('Toggle builtin groups')
+globalConfigTooltip: T('Toggle built-in groups')
 
 }
