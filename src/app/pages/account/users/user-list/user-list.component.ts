@@ -5,8 +5,6 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { Subscription, interval, Subject } from 'rxjs';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-list';
 
@@ -27,8 +25,6 @@ export class UserListComponent {
   protected grp_lst = [];
   protected hasDetails = true;
   protected queryCall = 'user.query';
-  public target: Subject<CoreEvent> = new Subject();
-  isWaiting = false;
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected queryCallOption = [];
   protected globalConfig = {
@@ -73,21 +69,17 @@ export class UserListComponent {
 
   constructor(private router: Router,
               protected dialogService: DialogService, protected loader: AppLoaderService,
-              protected ws: WebSocketService, protected prefService: PreferencesService, protected core: CoreService) {
-
-              this.core.emit({name:"UserPreferencesRequest", sender:this});
-              this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
-                if(this.isWaiting){
-                  this.target.next({name:"SubmitComplete", sender: this});
-                  this.isWaiting = false;
-                }
-                if(this.prefService.preferences.showUserListMessage) {
-                  this.showOneTimeBuiltinMsg();
-                }
-              });
+              protected ws: WebSocketService, protected prefService: PreferencesService) {
   }
 
-  afterInit(entityList: any) { this.entityList = entityList; }
+  afterInit(entityList: any) { 
+    this.entityList = entityList; 
+    setTimeout(() => {
+      if(this.prefService.preferences.showUserListMessage) {
+        this.showOneTimeBuiltinMsg();
+      }
+    }, 2000)
+  }
   getActions(row) {
     const actions = [];
     actions.push({
