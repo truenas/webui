@@ -15,8 +15,8 @@ builtins_dialog: {
 },
 builtinMessageDialog: {
     title: T('Display Note'),
-    message: T('All builtin users except <i>root</i> are \
- hidden by default. Use the gear icon (top-right) to toggle the display of builtin users.'),
+    message: T('All built-in users except <i>root</i> are \
+ hidden by default. Use the gear icon (top-right) to toggle the display of built-in users.'),
     button: T('Close')
 },
 globalConfigTooltip: T('Toggle builtin users')
