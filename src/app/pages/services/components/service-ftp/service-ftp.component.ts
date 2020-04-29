@@ -449,9 +449,9 @@ export class ServiceFTPComponent implements OnInit {
   }
 
   resourceTransformIncomingRestData(data) {
-    this.bwFields.forEach(field => 
-      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0));
-      this.rootlogin = data['rootlogin'];
+    this.bwFields.forEach(field =>
+      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB'));
+    this.rootlogin = data['rootlogin'];
     const certificate = data['ssltls_certificate'];
     if (certificate && certificate.id) {
       data['ssltls_certificate'] = certificate.id;
