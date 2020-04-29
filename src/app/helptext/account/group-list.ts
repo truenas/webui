@@ -19,7 +19,7 @@ builtins_dialog: {
 builtinMessageDialog: {
     title: T('Display Note'),
     message: T('All built-in groups are \
- hidden by default. Use the gear icon (top-right) to toggle the display of builtin groups.'),
+ hidden by default. Use the gear icon (top-right) to toggle the display of built-in groups.'),
     button: T('Close')
 },
 globalConfigTooltip: T('Toggle builtin groups')
