@@ -76,6 +76,7 @@ export const helptext_system_advanced = {
   cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
   sed_options_message_paragraph: T('Self-Encrypting Drive Options'),
+  sed_options_tooltip: T(''),
 
   sed_user_placeholder: T('ATA Security User'),
   sed_user_tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
