@@ -11,7 +11,7 @@ group_list_dialog_message: T('Delete all users with this primary group?'),
 
 builtins_dialog: {
     title: T(' Built-in Groups'),
-    message: T(' builtin groups (default setting is <i>hidden</i>).'),
+    message: T(' built-in groups (default setting is <i>hidden</i>).'),
     show: T('Show'),
     hide: T('Hide')
 },
