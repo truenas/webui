@@ -5,6 +5,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { WebSocketService } from '../../../../services/ws.service';
 import helptext from '../../../../helptext/account/group-list';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -22,6 +23,7 @@ export class GroupListComponent {
   protected loaderOpen = false;
   protected globalConfig = {
     id: "config",
+    tooltip: helptext.globalConfigTooltip,
     onClick: () => {
       this.toggleBuiltins();
     }
@@ -46,7 +48,14 @@ export class GroupListComponent {
 
   constructor(private _router: Router, protected dialogService: DialogService, 
     protected loader: AppLoaderService,protected ws: WebSocketService,
-    protected prefService: PreferencesService){ }
+    protected prefService: PreferencesService, protected core: CoreService){ 
+      this.core.emit({name:"UserPreferencesRequest", sender:this});
+      this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+        if(this.prefService.preferences.showGroupListMessage) {
+          this.showOneTimeBuiltinMsg();
+        }
+      });
+    }
 
   resourceTransformIncomingRestData(data) {
     // Default setting is to hide builtin groups 
@@ -153,6 +162,13 @@ export class GroupListComponent {
             this.entityList.getData();
          }
       })
+  }
+
+  showOneTimeBuiltinMsg() {
+    this.prefService.preferences.showGroupListMessage = false;
+    this.prefService.savePreferences();
+    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
+      true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
         
   

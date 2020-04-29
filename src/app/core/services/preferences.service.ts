@@ -24,7 +24,9 @@ export interface UserPreferences {
   timeFormat:string;
   nicType:string
   nicAttach: string,
-  showWelcomeDialog: boolean
+  showWelcomeDialog: boolean;
+  showUserListMessage: boolean;
+  showGroupListMessage: boolean;
 }
 
 @Injectable()
@@ -52,7 +54,9 @@ export class PreferencesService {
     "timeFormat": 'HH:mm:ss',
     "nicType": null,
     "nicAttach": null,
-    "showWelcomeDialog": true
+    "showWelcomeDialog": true,
+    "showUserListMessage": true,
+    "showGroupListMessage": true
   }
 
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,

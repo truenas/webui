@@ -33,6 +33,7 @@ export class UserListComponent {
   protected queryCallOption = [];
   protected globalConfig = {
     id: "config",
+    tooltip: helptext.globalConfigTooltip,
     onClick: () => {
       this.toggleBuiltins();
     }
@@ -74,23 +75,16 @@ export class UserListComponent {
               protected dialogService: DialogService, protected loader: AppLoaderService,
               protected ws: WebSocketService, protected prefService: PreferencesService, protected core: CoreService) {
 
-                this.core.emit({name:"UserPreferencesRequest", sender:this});
-                this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
-                  // This answer comes back correctly, but after the queryCall is made in entityTableComponent, line 443
-                  console.log('ready', this.prefService.preferences.hide_builtin_users)
-                  if(this.isWaiting){
-                    this.target.next({name:"SubmitComplete", sender: this});
-                    this.isWaiting = false;
-                  }
-                });
-                console.log(this.prefService.preferences.hide_builtin_users);
-                if (this.prefService.preferences.hide_builtin_users) {
-                  this.queryCallOption = [[['OR', [['uid', '=', 0], ['builtin', '=', false]]]]];
+              this.core.emit({name:"UserPreferencesRequest", sender:this});
+              this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+                if(this.isWaiting){
+                  this.target.next({name:"SubmitComplete", sender: this});
+                  this.isWaiting = false;
                 }
-  }
-
-  preInit() {
-    console.log('preInit')
+                if(this.prefService.preferences.showUserListMessage) {
+                  this.showOneTimeBuiltinMsg();
+                }
+              });
   }
 
   afterInit(entityList: any) { this.entityList = entityList; }
@@ -182,15 +176,15 @@ export class UserListComponent {
       };
       
     });
-    // if (this.prefService.preferences.hide_builtin_users) {
-    //   let newData = []
-    //   data.forEach((item) => {
-    //     if (!item.builtin || item.username === 'root') {
-    //       newData.push(item);
-    //     }
-    //   }) 
-    //   return data = newData;
-    // }
+   if (this.prefService.preferences.hide_builtin_users) {
+      let newData = []
+      data.forEach((item) => {
+        if (!item.builtin || item.username === 'root') {
+          newData.push(item);
+        }
+      }) 
+      return data = newData;
+    }
     return data;
   }
 
@@ -208,5 +202,12 @@ export class UserListComponent {
             this.entityList.getData();
          }
       })
+  }
+
+  showOneTimeBuiltinMsg() {
+    this.prefService.preferences.showUserListMessage = false;
+    this.prefService.savePreferences();
+    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
+      true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
 }
