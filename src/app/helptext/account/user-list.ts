@@ -15,7 +15,7 @@ builtins_dialog: {
 },
 builtinMessageDialog: {
     title: T('Display Note'),
-    message: T('By default, all builtin users except <i>root</i> are \
+    message: T('All builtin users except <i>root</i> are \
  hidden by default. Use the gear icon (top-right) to toggle the display of builtin users.'),
     button: T('Close')
 },

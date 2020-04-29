@@ -18,7 +18,7 @@ builtins_dialog: {
 
 builtinMessageDialog: {
     title: T('Display Note'),
-    message: T('By default, all builtin groups are \
+    message: T('All builtin groups are \
  hidden by default. Use the gear icon (top-right) to toggle the display of builtin groups.'),
     button: T('Close')
 },
