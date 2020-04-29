@@ -37,22 +37,6 @@ export class AboutModalDialog {
       this.systemType = data.systemType;
     }
 
-    showLicenses() {
-      this.loader.open();
-      this.http.get('assets/disclaimer.txt', {responseType: 'text'}).subscribe(licenses => {
-        this.loader.close();
-        this.dialogService.generalDialog(
-          {
-            title: T("View Licenses"),
-            message: licenses,
-            hideCancel: true,
-            confirmBtnMsg: T('OK')
-          }, {
-            height: '430px',
-          })
-      });
-    }
-
     turnOffWelcomeDialog() {
       this.prefServices.preferences.showWelcomeDialog = false;
       this.prefServices.savePreferences();
