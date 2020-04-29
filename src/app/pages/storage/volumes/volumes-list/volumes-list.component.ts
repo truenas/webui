@@ -772,6 +772,11 @@ export class VolumesListTableConfig implements InputTableConf {
               title: helptext.expand_pool_dialog.title + row1.name,
               fieldConfig: [
                 {
+                  type: 'paragraph',
+                  name: 'expand_description',
+                  paraText: helptext.expand_pool_dialog.message,
+                },
+                {
                   type: 'input',
                   inputType: 'password',
                   name: 'passphrase',
@@ -805,6 +810,13 @@ export class VolumesListTableConfig implements InputTableConf {
                     if (entityDialog) {
                       entityDialog.dialogRef.close(true);
                     }
+                    parent.dialogService.generalDialog({
+                      title: helptext.expand_pool_success_dialog.title,
+                      icon: 'info',
+                      is_html: true,
+                      message: `${helptext.expand_pool_success_dialog.message} <i>${row1.name}</i>`,
+                      hideCancel: true,
+                    });
                   }
                 },
                 (err) => {
@@ -813,8 +825,18 @@ export class VolumesListTableConfig implements InputTableConf {
                 }
               )
             }
+
+
             if (row1.encrypt === 0) {
-              doExpand();
+              this.dialogService.generalDialog({
+                title: helptext.expand_pool_dialog.title + row1.name,
+                message: helptext.expand_pool_dialog.message,
+                confirmBtnMsg: helptext.expand_pool_dialog.save_button,
+              }).subscribe((res) => {
+                if (res) {
+                  doExpand();
+                }
+              })
             } else {
               self.dialogService.dialogForm(conf);
             }
