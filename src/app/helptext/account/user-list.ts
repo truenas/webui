@@ -19,6 +19,6 @@ builtinMessageDialog: {
  hidden by default. Use the gear icon (top-right) to toggle the display of built-in users.'),
     button: T('Close')
 },
-globalConfigTooltip: T('Toggle builtin users')
+globalConfigTooltip: T('Toggle built-in users')
 
 }
