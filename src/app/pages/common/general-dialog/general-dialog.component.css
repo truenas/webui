@@ -2,3 +2,8 @@
     height: calc(100% - 100px);
     overflow: auto !important;
 }
+mat-icon.general-dialog-icon {
+    position: relative;
+    top: 5px;
+    margin-right: 5px;
+}
