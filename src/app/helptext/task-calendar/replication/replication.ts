@@ -153,26 +153,24 @@ from the source dataset.'),
  time.'),
 
     restrict_schedule_placeholder: T('Define Periodic Snapshots to Replicate'),
-    restrict_schedule_tooltip: T('Schedule which periodic snapshots will \
- be replicated. All snapshots will be replicated by default. To choose \
- which snapshots are replicated, set the checkbox and select a schedule \
- from the drop-down menu.<br> \
- For example, there is a system that takes a snapshot every hour, but \
- the administrator has decided that only every other snapshot is needed \
- for replication. The scheduler is set to even hours and only snapshots \
- taken at those times are replicated.'),
+    restrict_schedule_tooltip: T('Only replicate snapshots that \
+ match a defined creation time. To specify which snapshots will be replicated, \
+ set this checkbox and define the snapshot creation times that will be replicated. \
+ <br> For example, setting this time frame to <i>Hourly</i> will only replicate \
+ snapshots that were created at the beginning of each hour.'),
 
     restrict_schedule_picker_tooltip: T('Select a preset schedule or \
  choose <i>Custom</i> to use the advanced scheduler.'),
 
     restrict_schedule_begin_placeholder: T('Begin'),
-    restrict_schedule_begin_tooltip: T('Set a starting time when the \
- replication is not allowed to start. A replication that is already in \
- progress can continue to run past this time.'),
+    restrict_schedule_begin_tooltip: T('Daily time range for the specific \
+ periodic snapshots to replicate, in 15 minute increments. Periodic snapshots \
+ created before the <i>Begin</i> time will not be included in the replication.'),
 
     restrict_schedule_end_placeholder: T('End'),
-    restrict_schedule_end_tooltip: T('Set an ending time for when \
- replications are not allowed to start.'),
+    restrict_schedule_end_tooltip: T('Daily time range for the specific \
+ periodic snapshots to replicate, in 15 minute increments. Snapshots created \
+ after the <i>End</i> time will not be included in the replication.'),
 
     only_matching_schedule_placeholder: T('Only Replicate Snapshots Matching Schedule'),
     only_matching_schedule_tooltip: T('Set to either use the \
