@@ -9,6 +9,7 @@ import { matchOtherValidator } from '../../../pages/common/entity/entity-form/va
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
 import productText from '../../../helptext/product';
+import helptext from '../../../helptext/topbar';
 import { Observable, Subscription } from 'rxjs';
 
 import { T } from '../../../translate-marker';
@@ -342,6 +343,15 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   gotoTC() {
-    window.open(this.tc_ip);
+    this.dialogService.generalDialog({
+      title: helptext.tcDialog.title,
+      message: helptext.tcDialog.message,
+      is_html: true,
+      confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
+    }).subscribe(res => {
+      if (res) {
+        window.open(this.tc_ip);
+      }
+    })
   }
 }
