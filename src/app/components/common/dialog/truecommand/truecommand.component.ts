@@ -28,7 +28,7 @@ export class TruecommandComponent {
         confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
       }).subscribe(res => {
         if (res) {
-          window.open(this.tc.remote_address);
+          window.open(this.tc.remote_url);
         }
       })
     }

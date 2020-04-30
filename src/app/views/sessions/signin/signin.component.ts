@@ -61,6 +61,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   public ha_status_text = T('Checking HA status');
   public ha_status = false;
   public tc_ip;
+  protected tc_url;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -78,6 +79,7 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.ws.call('truecommand.connected').subscribe((res) => {
       if (res.connected) {
         this.tc_ip = res.truecommand_ip;
+        this.tc_url = res.truecommand_url;
       }
     })
    }
@@ -350,7 +352,7 @@ export class SigninComponent implements OnInit, OnDestroy {
       confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
     }).subscribe(res => {
       if (res) {
-        window.open(this.tc_ip);
+        window.open(this.tc_url);
       }
     })
   }
