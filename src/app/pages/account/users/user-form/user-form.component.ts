@@ -360,7 +360,6 @@ export class UserFormComponent {
       }
 
       if (!entityForm.isNew) {
-        entityForm.setDisabled('username', true);
         entityForm.setDisabled('uid', true);
         entityForm.formGroup.controls['username'].setValue(res[0].username);
         entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
@@ -380,6 +379,7 @@ export class UserFormComponent {
         _.find(this.fieldConfig, {name : "password_edit"})['isHidden'] = false;
         _.find(this.fieldConfig, {name : "password_conf_edit"})['isHidden'] = false;
         if (res[0].builtin) {
+          entityForm.setDisabled('username', true);
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('uid', true);
           entityForm.setValue('group',res[0].group.id);
