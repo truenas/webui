@@ -65,7 +65,12 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
+<<<<<<< HEAD
   showWelcome: boolean;
+=======
+  checkin_remaining: any;
+  checkin_interval: any;
+>>>>>>> b0b9859c7... Have the application refresh if user does not commit network changes
   public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
@@ -171,6 +176,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.checkNetworkCheckinWaiting();
       } else {
         this.checkNetworkChangesPending();
+      }
+      if (evt && evt.data.checkin) {
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
       }
     });
 
@@ -331,6 +341,19 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
       if (res != null) {
+        const seconds = res;
+        if (seconds > 0 && this.checkin_remaining == null) {
+          this.checkin_remaining = seconds;
+          this.checkin_interval = setInterval(() => {
+            if (this.checkin_remaining > 0) {
+              this.checkin_remaining -= 1;
+            } else {
+              this.checkin_remaining = null;
+              clearInterval(this.checkin_interval);
+              window.location.reload(); // should just refresh after the timer goes off
+            }
+          }, 1000);
+        }
         this.waitingNetworkCheckin = true;
         if (!this.user_check_in_prompted) {
           this.user_check_in_prompted = true;
@@ -338,6 +361,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         }
       } else {
         this.waitingNetworkCheckin = false;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
       }
     });
   }

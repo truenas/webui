@@ -190,6 +190,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
               this.checkin_remaining = null;
               this.checkinWaiting = false;
               clearInterval(this.checkin_interval);
+              window.location.reload(); // should just refresh after the timer goes off
             }
           }, 1000);
         }
