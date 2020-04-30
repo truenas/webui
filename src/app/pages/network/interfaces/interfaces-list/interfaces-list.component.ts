@@ -278,6 +278,11 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       });
   }
 
+  afterDelete() {
+    this.hasPendingChanges = true;
+    this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false, checkin: false}, sender:this});
+  }
+
   goToHA() {
     this.router.navigate(new Array('/').concat('system', 'failover'));
   }
