@@ -368,7 +368,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       // Browser zoom of exacly 175% causes pagination anomalies; Dropping row size to 49 fixes it
       this.zoomLevel === 175 ? this.rowHeight = 49 : this.rowHeight = 50;
       let x = window.innerHeight;
-      let y = x - 830;
+      let y = x - 840;
       if (this.selected && this.selected.length > 0) {
         this.paginationPageSize = rowNum - n + Math.floor(y/this.rowHeight) + addRows -3;
       } else {
