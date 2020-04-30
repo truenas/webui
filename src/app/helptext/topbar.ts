@@ -57,6 +57,12 @@ First-time connections require signing up with TrueCommand Cloud.'),
 Login or signup is required.'),
         enabled_placeholder: T('Enable'),
         enabled_tooltip: T('Immediately connect to TrueCommand.'),
+    },
+
+    tcDialog: {
+        title: T('Open TrueCommand User Interface'),
+        message: T(`<em>Warning:</em> The WireGuard service must be active on the client system to access the TrueCommand UI.`),
+        confirmBtnMsg: T('Continue'),
     }
 }
 

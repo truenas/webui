@@ -636,11 +636,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         }
       },
       customSubmit: function(entityDialog) {
+        self.loader.open();
         self.ws.call(self.tc_updateCall, [entityDialog.formValue]).subscribe(
           (res) => {
+            self.loader.close();
             entityDialog.dialogRef.close();
           },
           (err) => {
+            self.loader.close();
             new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService)
           }
         )
