@@ -63,22 +63,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(protected core:CoreService, protected ws: WebSocketService, public mediaObserver: MediaObserver, private el: ElementRef){
     this.statsDataEvents = new Subject<CoreEvent>();
 
-    mediaObserver.media$.subscribe((evt) =>{
+      window.onresize = () => {
+        let st = window.innerWidth < 600 ? 'Mobile' : 'Desktop';
 
-      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
-
-      // If leaving .xs screen then reset mobile position
-      if(st == 'Desktop' && this.screenType == 'Mobile'){
-        this.onMobileBack();
+      // This should work fine, but gives trouble on Ffx
+    // mediaObserver.media$.subscribe((evt) =>{
+        // let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+  
+        // If leaving .xs screen then reset mobile position
+        if(st == 'Desktop' && this.screenType == 'Mobile'){
+          this.onMobileBack();
+        }
+  
+        this.screenType = st;
+  
+        // Eliminate top level scrolling 
+        let wrapper = (<any>document).querySelector('.fn-maincontent');
+        wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
+    // });        
       }
-
-      this.screenType = st;
-
-      // Eliminate top level scrolling 
-      let wrapper = (<any>document).querySelector('.fn-maincontent');
-      wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
-      
-    });
 
   }
 
