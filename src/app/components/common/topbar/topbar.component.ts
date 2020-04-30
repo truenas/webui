@@ -65,12 +65,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   pendingUpgradeChecked = false;
   sysName = 'TrueNAS CORE';
   hostname: string;
-<<<<<<< HEAD
   showWelcome: boolean;
-=======
   checkin_remaining: any;
   checkin_interval: any;
->>>>>>> b0b9859c7... Have the application refresh if user does not commit network changes
   public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
