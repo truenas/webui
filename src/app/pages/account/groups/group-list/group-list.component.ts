@@ -22,6 +22,7 @@ export class GroupListComponent {
   protected loaderOpen = false;
   protected globalConfig = {
     id: "config",
+    tooltip: helptext.globalConfigTooltip,
     onClick: () => {
       this.toggleBuiltins();
     }
@@ -46,7 +47,7 @@ export class GroupListComponent {
 
   constructor(private _router: Router, protected dialogService: DialogService, 
     protected loader: AppLoaderService,protected ws: WebSocketService,
-    protected prefService: PreferencesService){ }
+    protected prefService: PreferencesService){}
 
   resourceTransformIncomingRestData(data) {
     // Default setting is to hide builtin groups 
@@ -62,7 +63,14 @@ export class GroupListComponent {
     return data;
   }
 
-  afterInit(entityList: any) { this.entityList = entityList; }
+  afterInit(entityList: any) { 
+    this.entityList = entityList; 
+    setTimeout(() => {
+      if(this.prefService.preferences.showGroupListMessage) {
+        this.showOneTimeBuiltinMsg();
+      }
+    }, 2000)
+  }
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'delete' && row.builtin === true) {
       return false;
@@ -153,6 +161,13 @@ export class GroupListComponent {
             this.entityList.getData();
          }
       })
+  }
+
+  showOneTimeBuiltinMsg() {
+    this.prefService.preferences.showGroupListMessage = false;
+    this.prefService.savePreferences();
+    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
+      true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
         
   
