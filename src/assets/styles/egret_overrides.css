@@ -41,12 +41,12 @@ app-breadcrumb{
 }
 
 .rightside-content-hold {
-  padding: 104px .03rem 10%;
+  padding: 14px .03rem 104px .03rem !important;
   overflow-x: hidden;
   overflow-y: scroll;
   display: block;
   position: absolute;
-  top: 0;
+  top: 90px;
   height: 100%;
   width: 100%;
 }
