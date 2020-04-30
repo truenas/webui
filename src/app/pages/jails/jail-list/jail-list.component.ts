@@ -140,6 +140,8 @@ export class JailListComponent {
               for (let i = 0; i < res.result.length; i++) {
                 if (res.result[i].error != null) {
                   message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
+                } else {
+                  this.updateRow(selected[i]);
                 }
               }
               if (message === "") {
@@ -372,6 +374,7 @@ export class JailListComponent {
                 dialogRef.componentInstance.submit();
                 dialogRef.componentInstance.success.subscribe((res) => {
                   dialogRef.close(true);
+                  this.updateRow(row);
                   this.dialogService.Info(T('Jail Updated'), T("Jail <i>") + row.host_hostuuid + T("</i> updated."), '500px', 'info', true);
                 });
               }
