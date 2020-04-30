@@ -65,6 +65,7 @@ export interface InputTableConf {
   onSliderChange?(row): any;
   callGetFunction?(entity: EntityTableComponent): any;
   prerequisiteFailedHandler?(entity: EntityTableComponent);
+  afterDelete?();
 }
 
 export interface EntityTableAction {
@@ -718,6 +719,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         (resinner) => {
           this.getData();
           this.excuteDeletion = true;
+          if (this.conf.afterDelete) {
+            this.conf.afterDelete();
+          }
         },
         (resinner) => {
           new EntityUtils().handleWSError(this, resinner, this.dialogService);
