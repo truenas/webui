@@ -60,8 +60,8 @@ Login or signup is required.'),
     },
 
     tcDialog: {
-        title: T('Go to TrueCommand UI'),
-        message: T(`<em>Warnning:</em> TrueCommand UI only connectable if wireguard has been actived.`),
+        title: T('Open TrueCommand User Interface'),
+        message: T(`<em>Warning:</em> The WireGuard service must be active on the client system to access the TrueCommand UI.`),
         confirmBtnMsg: T('Continue'),
     }
 }
