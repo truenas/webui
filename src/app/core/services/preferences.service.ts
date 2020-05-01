@@ -102,7 +102,7 @@ export class PreferencesService {
         }
 
         const report = this.sanityCheck(data);
-        if(data && report.unknownProperties.length == 0/*keysMatch*/){
+        if(data && report.unknownProperties.length == 0){
           
           // If preferences exist and there are no unknown properties
           if(this.debug)console.log('Preferences exist');

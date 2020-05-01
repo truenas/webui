@@ -275,11 +275,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       data: { 
         extraMsg: this.showWelcome, 
         systemType: this.systemType
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      //this.showWelcome = false;
+      },
+      disableClose: true
     });
   }
 
