@@ -40,8 +40,8 @@ export default {
 
     signupDialog: {
         title: T('Connect to TrueCommand Cloud'),
-        content: T('Do you want to connect to TrueCommand Cloud? \
-First-time connections require signing up with TrueCommand Cloud.'),
+        content: T('This allows your TrueNAS system to be monitored and administrated by\
+ TrueCommand. Click <b>SIGNUP</b> to create a new TrueCommand Cloud instance or <b>CONNECT</b> to join an existing instance.'),
         singup_btn: T('SIGNUP'),
         connect_btn: T('CONNECT'),
     },
@@ -57,6 +57,12 @@ First-time connections require signing up with TrueCommand Cloud.'),
 Login or signup is required.'),
         enabled_placeholder: T('Enable'),
         enabled_tooltip: T('Immediately connect to TrueCommand.'),
+    },
+
+    tcDialog: {
+        title: T('Open TrueCommand User Interface'),
+        message: T(`<em>Warning:</em> The WireGuard service must be active on the client system to access the TrueCommand UI.`),
+        confirmBtnMsg: T('Continue'),
     }
 }
 

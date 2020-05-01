@@ -66,6 +66,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   sysName = 'TrueNAS CORE';
   hostname: string;
   showWelcome: boolean;
+  checkin_remaining: any;
+  checkin_interval: any;
   public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
@@ -171,6 +173,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.checkNetworkCheckinWaiting();
       } else {
         this.checkNetworkChangesPending();
+      }
+      if (evt && evt.data.checkin) {
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
       }
     });
 
@@ -331,6 +338,19 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
       if (res != null) {
+        const seconds = res;
+        if (seconds > 0 && this.checkin_remaining == null) {
+          this.checkin_remaining = seconds;
+          this.checkin_interval = setInterval(() => {
+            if (this.checkin_remaining > 0) {
+              this.checkin_remaining -= 1;
+            } else {
+              this.checkin_remaining = null;
+              clearInterval(this.checkin_interval);
+              window.location.reload(); // should just refresh after the timer goes off
+            }
+          }, 1000);
+        }
         this.waitingNetworkCheckin = true;
         if (!this.user_check_in_prompted) {
           this.user_check_in_prompted = true;
@@ -338,32 +358,38 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         }
       } else {
         this.waitingNetworkCheckin = false;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
       }
     });
   }
 
   showNetworkCheckinWaiting() {
-    this.dialogService.confirm(
-      network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.pending_checkin_dialog_text,
-      true, network_interfaces_helptext.checkin_button).subscribe(res => {
-        if (res) {
-          this.user_check_in_prompted = false;
-          this.loader.open();
-          this.ws.call('interface.checkin').subscribe((success) => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
-            this.loader.close();
-            this.dialogService.Info(
-              network_interfaces_helptext.checkin_complete_title,
-              network_interfaces_helptext.checkin_complete_message);
-            this.waitingNetworkCheckin = false;
-          }, (err) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(null, err, this.dialogService);
-          });
+    // only popup dialog if not in network/interfaces page
+    if (this.router.url !== '/network/interfaces') {
+      this.dialogService.confirm(
+        network_interfaces_helptext.checkin_title,
+        network_interfaces_helptext.pending_checkin_dialog_text,
+        true, network_interfaces_helptext.checkin_button).subscribe(res => {
+          if (res) {
+            this.user_check_in_prompted = false;
+            this.loader.open();
+            this.ws.call('interface.checkin').subscribe((success) => {
+              this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
+              this.loader.close();
+              this.dialogService.Info(
+                network_interfaces_helptext.checkin_complete_title,
+                network_interfaces_helptext.checkin_complete_message);
+              this.waitingNetworkCheckin = false;
+            }, (err) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(null, err, this.dialogService);
+            });
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   showNetworkChangesPending() {
@@ -576,13 +602,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   openSignupDialog() {
     const conf: DialogFormConfiguration = {
       title: helptext.signupDialog.title,
-      fieldConfig: [
-        {
-          type: 'paragraph',
-          name: 'message',
-          paraText: helptext.signupDialog.content
-        }
-      ],
+      message: helptext.signupDialog.content,
+      fieldConfig: [],
       saveButtonText: helptext.signupDialog.connect_btn,
       custActions: [
         {
@@ -636,11 +657,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         }
       },
       customSubmit: function(entityDialog) {
+        self.loader.open();
         self.ws.call(self.tc_updateCall, [entityDialog.formValue]).subscribe(
           (res) => {
+            self.loader.close();
             entityDialog.dialogRef.close();
           },
           (err) => {
+            self.loader.close();
             new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService)
           }
         )
