@@ -4,6 +4,12 @@ import { CoreService, CoreEvent } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 
+interface PropertyReport {
+  savedProperties: string[];
+  currentProperties: string[];
+  unknownProperties: string[];
+}
+
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS
   retroLogo?: boolean; // Brings back FreeNAS branding
@@ -34,7 +40,7 @@ export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
   private debug = false;
   private startupComplete: boolean = false;
-  public preferences: UserPreferences = {
+  public defaultPreferences: UserPreferences = {
     "platform":"freenas",// Detect platform
     "retroLogo": false,
     "timestamp":new Date(),
@@ -58,6 +64,8 @@ export class PreferencesService {
     "showUserListMessage": true,
     "showGroupListMessage": true
   }
+
+  public preferences: UserPreferences = this.defaultPreferences;
 
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
@@ -83,11 +91,8 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-      
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
-
-        const preferencesFromUI = Object.keys(this.preferences);
         if(!data){
           // If preferences do not exist return after saving Preferences so that UI can retry.
           if(this.debug)console.log('Preferences not returned');
@@ -96,26 +101,29 @@ export class PreferencesService {
           return;
         }
 
-        const preferencesFromMiddleware = Object.keys(data);
-        const keysMatch:boolean = (preferencesFromUI.join() == preferencesFromMiddleware.join());// evaluates as false negative, wth?!
-        if(data && keysMatch){
+        const report = this.sanityCheck(data);
+        if(data && report.unknownProperties.length == 0/*keysMatch*/){
+          
           // If preferences exist and there are no unknown properties
           if(this.debug)console.log('Preferences exist');
           this.updatePreferences(data);
-        } else if(data && !keysMatch){
+
+        } else if(data && report.unknownProperties.length > 0/*!keysMatch*/){
+          
           // Add missing properties to inbound preferences from middleware
           if(this.debug){
-            console.log('Preferences exist and there are unknown properties');
+            console.warn("UKNOWN OR DEPRECATED PREFERENCES: " + report.unknownProperties.toString());
           }
-          const merged = this.mergeProperties(this.preferences, data);
+          
           this.updatePreferences(data);
         } else if(!data){
           // If preferences do not exist
-          if(this.debug)console.log('Preferences not returned');
+          if(this.debug){
+            console.log('Preferences not returned');
+            console.warn("No Preferences Found in Middleware");
+          }
           this.savePreferences();
-          console.warn("No Preferences Found in Middleware");
         }
-
       }
 
       if(!this.startupComplete){
@@ -155,8 +163,16 @@ export class PreferencesService {
         }
     });
 
+    // Reset the entire preferences object to default
+    this.core.register({observerClass:this, eventName:"ResetPreferences"}).subscribe((evt:CoreEvent) => {
+      let prefs = Object.assign(this.defaultPreferences, {});
+      prefs.customThemes = this.preferences.customThemes;
+      prefs.timestamp = new Date();
+      this.savePreferences(prefs);
+    });
+
+    // Change the entire preferences object at once
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
-      
       let prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
@@ -165,14 +181,26 @@ export class PreferencesService {
       this.preferences.timestamp = new Date();
       this.savePreferences(this.preferences);
     })
+
+    // Change a single preference item
+    this.core.register({observerClass:this, eventName:"ChangePreference"}).subscribe((evt:CoreEvent) => {
+      let prefs = Object.assign(this.preferences, {});
+      prefs[evt.data.key] = evt.data.value;
+      prefs.timestamp = new Date();
+      this.preferences = prefs;
+      this.setShowGuide(evt.data.showGuide);
+      this.savePreferences(this.preferences);
+    })
   }
 
   // Update local cache
   updatePreferences(data:UserPreferences){
       this.preferences = data;
 
-      //Notify Guided Tour & Theme Service
-      this.core.emit({name:"UserPreferencesChanged", data:this.preferences, sender: this});
+      if(this.startupComplete){
+        //Notify Guided Tour & Theme Service
+        this.core.emit({name:"UserPreferencesChanged", data:this.preferences, sender: this});
+      }
   }
 
   // Save to middleware
@@ -181,6 +209,7 @@ export class PreferencesService {
       data = this.preferences;
     }
     this.core.emit({name:"UserDataUpdate", data:data});
+    if(this.debug){ console.log({SavingPreferences: this.preferences});}
   }
 
   replaceCustomTheme(oldTheme:Theme, newTheme:Theme):boolean{
@@ -200,19 +229,21 @@ export class PreferencesService {
     }
   }
 
-  mergeProperties(fui, fmw){
-    // Use this to add newer properties from middleware responses
-    // fetched after updates. Handy for when update contains new
-    // preference options.
-    // fui = from UI && fmw = from middleware
-    const merged = Object.assign(fmw, {});
-    const keys = Object.keys(fui);
-    const newProps = keys.filter(x => !fmw[x]);
-    
-    newProps.forEach((item, index) => {
-    	merged[item] = fui[item];	
-    });
-    return merged;
+  sanityCheck(data:UserPreferences):PropertyReport{
+    let unknowns = [];
+    const savedKeys = Object.keys(data);
+    const currentKeys = Object.keys(this.preferences);
+    if(savedKeys.length != currentKeys.length){
+      unknowns = savedKeys.filter((key) => {
+        return currentKeys.indexOf(key) == -1;
+      });
+    }
+    const report: PropertyReport = {
+      savedProperties: savedKeys,
+      currentProperties: currentKeys,
+      unknownProperties: unknowns
+    }
+    return report;
   }
 
 

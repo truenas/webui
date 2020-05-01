@@ -208,13 +208,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.isWaiting = false;
       }
       this.showWelcome = evt.data.showWelcomeDialog;
+      
+      setTimeout(() => {
+        if (this.showWelcome) {
+          this.onShowAbout();
+        }
+      }, 3500)
     });
-
-    setTimeout(() => {
-      if (this.showWelcome) {
-        this.onShowAbout();
-      }
-    }, 3500)
   }
 
   checkLegacyUISetting() {
@@ -272,7 +272,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.showWelcome = false;
+      //this.showWelcome = false;
     });
   }
 

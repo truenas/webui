@@ -8,6 +8,7 @@ import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/about';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 export interface DialogData {
   extraMsg: boolean;
@@ -32,13 +33,16 @@ export class AboutModalDialog {
     protected loader: AppLoaderService,
     protected http: HttpClient, protected dialogService: DialogService, 
     protected translate: TranslateService,
+    protected core: CoreService,
     private prefServices: PreferencesService) { 
       this.extraMsg = data.extraMsg;
       this.systemType = data.systemType;
     }
 
     turnOffWelcomeDialog() {
-      this.prefServices.preferences.showWelcomeDialog = false;
-      this.prefServices.savePreferences();
+      this.core.emit({ name: "ChangePreference", data: {key: "showWelcomeDialog", value: false}, sender:this});
+      
+      //this.prefServices.preferences.showWelcomeDialog = false;
+      //this.prefServices.savePreferences();
     }
 }
