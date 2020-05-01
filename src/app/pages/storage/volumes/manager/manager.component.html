@@ -305,7 +305,7 @@
                     id="pool-manager__nameFilter"
                     type='text'
                     [(ngModel)]="nameFilterField"
-                    placeholder='Filter disks by name'
+                    placeholder="{{ 'Filter disks by name' | translate }}"
                     (keyup)='updateFilter($event)'
                   />
                 </mat-form-field>
@@ -315,7 +315,7 @@
                     id="pool-manager__capacityFilter"
                     type='text'
                     [(ngModel)]="capacityFilterField"
-                    placeholder='Filter disks by capacity'
+                    placeholder="{{ 'Filter disks by capacity' | translate }}"
                     (keyup)='updateFilter($event)'
                   />
                 </mat-form-field>
