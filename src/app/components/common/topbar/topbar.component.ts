@@ -366,27 +366,30 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showNetworkCheckinWaiting() {
-    this.dialogService.confirm(
-      network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.pending_checkin_dialog_text,
-      true, network_interfaces_helptext.checkin_button).subscribe(res => {
-        if (res) {
-          this.user_check_in_prompted = false;
-          this.loader.open();
-          this.ws.call('interface.checkin').subscribe((success) => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
-            this.loader.close();
-            this.dialogService.Info(
-              network_interfaces_helptext.checkin_complete_title,
-              network_interfaces_helptext.checkin_complete_message);
-            this.waitingNetworkCheckin = false;
-          }, (err) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(null, err, this.dialogService);
-          });
+    // only popup dialog if not in network/interfaces page
+    if (this.router.url !== '/network/interfaces') {
+      this.dialogService.confirm(
+        network_interfaces_helptext.checkin_title,
+        network_interfaces_helptext.pending_checkin_dialog_text,
+        true, network_interfaces_helptext.checkin_button).subscribe(res => {
+          if (res) {
+            this.user_check_in_prompted = false;
+            this.loader.open();
+            this.ws.call('interface.checkin').subscribe((success) => {
+              this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
+              this.loader.close();
+              this.dialogService.Info(
+                network_interfaces_helptext.checkin_complete_title,
+                network_interfaces_helptext.checkin_complete_message);
+              this.waitingNetworkCheckin = false;
+            }, (err) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(null, err, this.dialogService);
+            });
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   showNetworkChangesPending() {
