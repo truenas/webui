@@ -41,7 +41,7 @@ export default {
     signupDialog: {
         title: T('Connect to TrueCommand Cloud'),
         content: T('This allows your TrueNAS system to be monitored and administrated by\
- TrueCommand. Click Signup to create a new TrueCommand Cloud instance, or Connect to join an existing instance.'),
+ TrueCommand. Click <b>SIGNUP</b> to create a new TrueCommand Cloud instance or <b>CONNECT</b> to join an existing instance.'),
         singup_btn: T('SIGNUP'),
         connect_btn: T('CONNECT'),
     },
