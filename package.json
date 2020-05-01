@@ -108,6 +108,9 @@
     "xterm": "2.9.2",
     "zone.js": "0.10.2"
   },
+  "resolutions": {
+    "moment": "2.24.0"
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.803.17",
     "@angular-devkit/build-optimizer": "0.803.17",
