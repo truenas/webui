@@ -41,8 +41,5 @@ export class AboutModalDialog {
 
     turnOffWelcomeDialog() {
       this.core.emit({ name: "ChangePreference", data: {key: "showWelcomeDialog", value: false}, sender:this});
-      
-      //this.prefServices.preferences.showWelcomeDialog = false;
-      //this.prefServices.savePreferences();
     }
 }
