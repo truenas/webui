@@ -602,13 +602,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   openSignupDialog() {
     const conf: DialogFormConfiguration = {
       title: helptext.signupDialog.title,
-      fieldConfig: [
-        {
-          type: 'paragraph',
-          name: 'message',
-          paraText: helptext.signupDialog.content
-        }
-      ],
+      message: helptext.signupDialog.content,
+      fieldConfig: [],
       saveButtonText: helptext.signupDialog.connect_btn,
       custActions: [
         {
