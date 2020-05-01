@@ -50,3 +50,7 @@
 	font-size: smaller;
 	margin: auto;
 }
+
+.fn-maincontent {
+  overflow:  hidden !important;
+}
