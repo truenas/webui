@@ -6000,7 +6000,7 @@ msgid "Flags"
 msgstr "Flags"
 
 msgid "Flags Type"
-msgstr "Type de drapeaux"
+msgstr "Type de Flags"
 
 msgid ""
 "Flags to pass to <a "
