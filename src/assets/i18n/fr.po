@@ -1764,7 +1764,7 @@ msgid "Apply Pending update"
 msgstr "Appliquer les mises à jour en attente"
 
 msgid "Apply Permissions Recursively"
-msgstr "Appliquer les permissions de manière récursive"
+msgstr "Appliquer les autorisations de manière récursive"
 
 msgid "Apply Update"
 msgstr "Appliquer la mise à jour"
@@ -1775,25 +1775,25 @@ msgstr ""
 "interrompue."
 
 msgid "Apply permissions recursively"
-msgstr "Appliquer les permissions de manière récursive"
+msgstr "Appliquer les autorisations de manière récursive"
 
 msgid "Apply permissions recursively to all child datasets of the current dataset."
 msgstr ""
-"Appliquer les permissions de manière récursive à tous les datasets enfants "
+"Appliquer les autorisations de manière récursive à tous les datasets enfants "
 "du dataset courant."
 
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
 "dataset."
 msgstr ""
-"Appliquer les permissions de manière récursive à tous les répertoires et "
+"Appliquer les autorisations de manière récursive à tous les répertoires et "
 "fichiers du dataset courant."
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset."
 msgstr ""
-"Appliquer les permissions de manière récursive à tous les répertoires et "
+"Appliquer les autorisations de manière récursive à tous les répertoires et "
 "fichiers du dataset courant."
 
 msgid "Apply permissions to child datasets"
