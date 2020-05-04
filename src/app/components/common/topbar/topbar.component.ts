@@ -623,6 +623,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   updateTC() {
     const self = this;
+    let updateDialog;
     const conf: DialogFormConfiguration = {
       title: self.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
       fieldConfig: [
@@ -640,9 +641,45 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           value: true,
         }
       ],
+      custActions: [{
+        id: 'deregister',
+        name: helptext.tcDeregisterBtn,
+        function: () => {
+          self.dialogService.generalDialog({
+            title: helptext.tcDeregisterDialog.title,
+            icon: helptext.tcDeregisterDialog.icon,
+            message: helptext.tcDeregisterDialog.message,
+            confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
+          }).subscribe((res) => {
+            if (res) {
+              self.loader.open();
+              self.ws.call(self.tc_updateCall, [{"api_key": null, "enabled" : false}]).subscribe(
+                (wsRes) => {
+                  self.loader.close();
+                  updateDialog.dialogRef.close();
+                  self.tcStatusDialogRef.close(true);
+                  self.dialogService.generalDialog({
+                    title: helptext.deregisterInfoDialog.title,
+                    message: helptext.deregisterInfoDialog.message,
+                    hideCancel: true,
+                  });
+                },
+                (err) => {
+                  self.loader.close();
+                  new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService)
+                }
+              )
+            }
+          })
+        }
+      }],
+      isCustActionVisible(actionId: string) {
+        return actionId === 'deregister' && !self.tcConnected ? false : true;
+      },
       saveButtonText: self.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
       parent: this,
       afterInit: function(entityDialog) {
+        updateDialog = entityDialog;
         // load settings
         if (self.tcConnected) {
           Object.keys(self.tcStatus).forEach(key => {
