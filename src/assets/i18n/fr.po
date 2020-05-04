@@ -15796,6 +15796,8 @@ msgid ""
 "Who this ACL entry applies to, shown as a user name. Requires adding the "
 "user <i>Domain</i>."
 msgstr ""
+"À qui s'applique cette entrée de cette ACL, indiquée sous forme de nom "
+"d'utilisateur. Nécessite l'ajout du <i>domaine</i> de l'utilisateur."
 
 msgid "Widget Base Class"
 msgstr "Classe de base du widget"
@@ -15852,7 +15854,7 @@ msgid "Years"
 msgstr "Années"
 
 msgid "Yellow"
-msgstr ""
+msgstr "Jaune"
 
 msgid "Yes"
 msgstr "Oui"
@@ -15882,11 +15884,15 @@ msgid ""
 "ZFS L2ARC read-cache that can be used with fast devices to accelerate read "
 "operations. Optional vdev that can be removed."
 msgstr ""
+"ZFS L2ARC read-cache qui peut être utilisé avec des appareils rapides pour "
+"accélérer les opérations de lecture. Vdev optionnel qui peut être supprimé."
 
 msgid ""
 "ZFS LOG device that can improve speeds of synchronous writes. Optional "
 "write-cache that can be removed."
 msgstr ""
+"Dispositif ZFS LOG qui peut améliorer la vitesse des écritures synchrones. Cache "
+"d'écriture optionnel qui peut être supprimé."
 
 msgid "ZFS deduplication"
 msgstr "Déduplication ZFS"
@@ -15896,12 +15902,15 @@ msgid ""
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
 "target=\"_blank\">conventions</a>.  Choose a memorable name."
 msgstr ""
+"Les volumes ZFS doivent se conformer à des <a href=\"https://docs.oracle.com/cd/"
+"E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventions</a> de "
+"dénomination strictes.  Choisissez un nom mémorable."
 
 msgid "Zero Device Numbers"
 msgstr "Numéros de dispositif zéro"
 
 msgid "Zvol Actions"
-msgstr ""
+msgstr "Actions Zvol"
 
 msgid "Zvol Location"
 msgstr "Emplacement zvol"
@@ -15928,7 +15937,7 @@ msgid "allow_mount"
 msgstr "allow_mount"
 
 msgid "allow_mount_*"
-msgstr ""
+msgstr "allow_mount_*"
 
 msgid "allow_mount_devfs"
 msgstr "allow_mount_devfs"
@@ -15971,15 +15980,17 @@ msgstr "allow_vmm"
 
 msgid "are the best place to ask questions and interact with fellow TrueNAS"
 msgstr ""
+"sont le meilleur endroit pour poser des questions et interagir avec les autres "
+"TrueNAS"
 
 msgid "assign_localhost"
 msgstr "assign_localhost"
 
 msgid "at 00:00 (12:00 AM)"
-msgstr ""
+msgstr "à 00:00 (12:00)"
 
 msgid "at the start of each hour"
-msgstr ""
+msgstr "au début de chaque heure"
 
 msgid "below to confirm."
 msgstr "ci-dessous pour confirmer."
@@ -15991,7 +16002,7 @@ msgid "children_max"
 msgstr "children_max"
 
 msgid "click here"
-msgstr ""
+msgstr "cliquez ici"
 
 msgid "close"
 msgstr "fermer"
@@ -16024,7 +16035,7 @@ msgid "destroy"
 msgstr "détruire"
 
 msgid "details"
-msgstr ""
+msgstr "détails"
 
 msgid "devfs_ruleset"
 msgstr "devfs_ruleset"
@@ -16105,16 +16116,20 @@ msgid "iSCSI"
 msgstr "iSCSI"
 
 msgid "iSCSI Group"
-msgstr ""
+msgstr "groupe iSCSI"
 
 msgid ""
 "iSCSI supports multiple  authentication methods that are used by the target "
 "to discover valid  devices. <i>None</i> allows anonymous discovery while "
 "<i>CHAP</i> and  <i>Mutual CHAP</i> require authentication."
 msgstr ""
+"l'iSCSI prend en charge plusieurs méthodes d'authentification qui sont utilisées "
+"par la cible pour découvrir les appareils valides. <i>None</i> permet une "
+"découverte anonyme alors que les méthodes <i>CHAP</i> et <i>Mutual CHAP</i> "
+"requièrent une authentification."
 
 msgid "iXsystems for more information."
-msgstr ""
+msgstr "iXsystems pour plus d'informations."
 
 msgid "interfaces"
 msgstr "interfaces"
@@ -16135,12 +16150,14 @@ msgid "ip_hostname"
 msgstr "ip_hostname"
 
 msgid "is Free and"
-msgstr ""
+msgstr "est libre et"
 
 msgid ""
 "is a collaborative website     with helpful guides and information about "
 "your new storage system."
 msgstr ""
+"est un site web collaboratif contenant des guides et des informations utiles sur "
+"votre nouveau système de stockage."
 
 msgid "is already in use."
 msgstr "est déjà utilisé."
@@ -16161,7 +16178,7 @@ msgid "login_flags"
 msgstr "login_flags"
 
 msgid "mDNS"
-msgstr ""
+msgstr "mDNS"
 
 msgid "mac_prefix"
 msgstr "mac_prefix"
@@ -16218,10 +16235,10 @@ msgid "nthr"
 msgstr "nthr"
 
 msgid "on Sundays at 00:00 (12:00 AM)"
-msgstr ""
+msgstr "le dimanche à 00:00 (12:00)"
 
 msgid "on the first day of the month at 00:00 (12:00 AM)"
-msgstr ""
+msgstr "le premier jour du mois à 00:00 (12:00)"
 
 msgid "openfiles"
 msgstr "openfiles"
@@ -16236,7 +16253,7 @@ msgid "password"
 msgstr "mot de passe"
 
 msgid "pbkdf2iters"
-msgstr ""
+msgstr "pbkdf2iters"
 
 msgid "pcpu"
 msgstr "pcpu"
@@ -16248,7 +16265,7 @@ msgid "pseudoterminals"
 msgstr "pseudoterminals"
 
 msgid "reset"
-msgstr ""
+msgstr "réinitialiser"
 
 msgid "resolver"
 msgstr "résolveur"
@@ -16263,7 +16280,7 @@ msgid "rpc.statd(8) bind port"
 msgstr "mountd(8) bind port"
 
 msgid "safe"
-msgstr ""
+msgstr "sûr"
 
 msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
 msgstr ""
@@ -16283,7 +16300,7 @@ msgid "shmsize"
 msgstr "shmsize"
 
 msgid "software, which is provided as-is with no warranty."
-msgstr ""
+msgstr "logiciel, qui est fourni tel quel sans garantie."
 
 msgid "stacksize"
 msgstr "stacksize"
@@ -16313,13 +16330,13 @@ msgid "threads"
 msgstr ""
 
 msgid "to set up configuration first."
-msgstr ""
+msgstr "pour mettre en place la configuration en premier."
 
 msgid "total available"
-msgstr ""
+msgstr "total disponible"
 
 msgid "users"
-msgstr ""
+msgstr "utilisateurs"
 
 msgid "vmemoryuse"
 msgstr "vmemoryuse"
