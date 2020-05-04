@@ -60,26 +60,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showSpinner: boolean = true;
 
-  constructor(protected core:CoreService, protected ws: WebSocketService, public mediaObserver: MediaObserver, private el: ElementRef){
+  constructor(protected core:CoreService, protected ws: WebSocketService, 
+    public mediaObserver: MediaObserver, private el: ElementRef){
     this.statsDataEvents = new Subject<CoreEvent>();
+    
+    this.checkScreenSize();
+    
+    window.onresize = () => {
+      this.checkScreenSize();     
+    }
 
-    mediaObserver.media$.subscribe((evt) =>{
-
-      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
-
-      // If leaving .xs screen then reset mobile position
-      if(st == 'Desktop' && this.screenType == 'Mobile'){
-        this.onMobileBack();
-      }
-
-      this.screenType = st;
-
-      // Eliminate top level scrolling 
-      let wrapper = (<any>document).querySelector('.fn-maincontent');
-      wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
-      
-    });
-
+        // The following (commented out code) should work, but gives trouble on Ffx
+    // mediaObserver.media$.subscribe((evt) =>{
+        // let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+    // })
   }
 
   ngAfterViewInit(){
@@ -90,6 +84,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     window.onfocus = () => {
       this.startListeners();
     }
+  }
+
+  checkScreenSize() {
+    let st = window.innerWidth < 600 ? 'Mobile' : 'Desktop';
+
+      // If leaving .xs screen then reset mobile position
+      if(st == 'Desktop' && this.screenType == 'Mobile'){
+        this.onMobileBack();
+      }
+
+      this.screenType = st;
+
+      // Eliminate top level scrolling 
+      let wrapper = (<any>document).querySelector('.fn-maincontent');
+      wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto'
   }
 
   onMobileLaunch(evt: DashConfigItem) {
