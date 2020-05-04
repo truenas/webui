@@ -87,8 +87,27 @@ export class SMBListComponent {
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
           const datasetId = rowName;
-          this.router.navigate(
-            ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
+          // If path_is_encrypted is true or an [ENOENT] err returns, pool or ds is locked
+          this.ws.call('filesystem.path_is_encrypted', [row.path]).subscribe(
+            res => {
+            if(res) {
+              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+                `${helptext_sharing_smb.action_edit_acl_dialog.message1} ${poolName} 
+                ${helptext_sharing_smb.action_edit_acl_dialog.message2}`)
+            } else {
+              this.router.navigate(
+                ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
+            }
+          }, err => {
+            if (err.reason.includes('[ENOENT]')) { 
+              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+                `${helptext_sharing_smb.action_edit_acl_dialog.message1} ${poolName} 
+                ${helptext_sharing_smb.action_edit_acl_dialog.message2}`)
+            } else { // If some other err comes back from filesystem.path_is_encrypted
+              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+                err.reason, err.trace.formatted);
+            }
+          })
         }
       },
       {
