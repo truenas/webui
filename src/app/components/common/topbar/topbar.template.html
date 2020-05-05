@@ -30,12 +30,12 @@
       <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" [matTooltip]="mat_tooltips.pending_network_changes | translate" (click)="showNetworkChangesPending()" class="topbar-button-right">
         <mat-icon class="movement">device_hub</mat-icon>
       </button>
-      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering |translate" (click)="showResilveringDetails()" class="topbar-button-right">
+      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering | translate" (click)="showResilveringDetails()" class="topbar-button-right">
         <mat-icon class="fa-spin">autorenew</mat-icon>
       </button>
       <!-- HA Status -->
       <span *ngIf="is_ha && ha_status_text">
-      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text |translate" (click)="showHAStatus()">
+      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate" (click)="showHAStatus()">
         <mat-icon svgIcon="ha_enabled"></mat-icon>
       </button>
       <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate" (click)="showHAStatus()">
