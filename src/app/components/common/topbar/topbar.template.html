@@ -1,12 +1,12 @@
 <mat-toolbar class="topbar lola">
   <mat-toolbar-row>
     <!-- Sidenav toggle button -->
-    <button mat-icon-button id="sidenavToggle" (click)="toggleSidenav()" [matTooltip]="mat_tooltips.toggle_hide" matTooltipPosition="right"
+    <button mat-icon-button id="sidenavToggle" (click)="toggleSidenav()" [matTooltip]="mat_tooltips.toggle_hide | translate" matTooltipPosition="right"
       ix-auto ix-auto-type="button" ix-auto-identifier="sidenavToggle">
       <mat-icon>menu</mat-icon>
     </button>
     <!-- Sidenav toggle collapse -->
-    <button *ngIf="sidenav.opened" mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" [matTooltip]="mat_tooltips.toggle_collapse" class="toggle-collapsed"
+    <button *ngIf="sidenav.opened" mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" [matTooltip]="mat_tooltips.toggle_collapse | translate" class="toggle-collapsed"
       ix-auto ix-auto-type="button" ix-auto-identifier="collapseToggle">
       <mat-icon>chevron_left</mat-icon>
     </button>
@@ -30,41 +30,41 @@
       </div>
 
       <!-- truecommand-->
-      <button mat-icon-button id="tc-connecting" matTooltip="Connecting to TrueCommand" class="topbar-button-right"
+      <button mat-icon-button id="tc-connecting" [matTooltip]="mat_tooltips.tc_connect | translate" class="topbar-button-right"
         ix-auto ix-auto-type="button" ix-auto-identifier="tcConnecting" *ngIf="tcStatus && tcStatus.status === 'CONNECTING'">
         <mat-icon class="movement" svgIcon="truecommand_logo_white"></mat-icon>
       </button>
-      <button mat-icon-button id="tc-status" matTooltip="Status of TrueCommand" class="topbar-button-right" (click)="showTCStatus()"
+      <button mat-icon-button id="tc-status" [matTooltip]="mat_tooltips.tc_status | translate" class="topbar-button-right" (click)="showTCStatus()"
         ix-auto ix-auto-type="button" ix-auto-identifier="tcStatus" *ngIf="tcStatus && tcStatus.status !== 'CONNECTING'">
         <mat-icon svgIcon="truecommand_logo_white" *ngIf="tcStatus.status === 'CONNECTED'"></mat-icon>
         <mat-icon svgIcon="truecommand_logo_red" *ngIf="tcStatus.status === 'FAILED'"></mat-icon>
         <mat-icon svgIcon="truecommand_logo_grey" *ngIf="tcStatus.status === 'DISABLED'"></mat-icon>
       </button>
       <!-- finish update -->
-      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" matTooltip="Upgrade waiting to finish" (click)="upgradePendingDialog()" class="topbar-button-right"
+      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" [matTooltip]="mat_tooltips.upgrade_waiting | translate" (click)="upgradePendingDialog()" class="topbar-button-right"
         ix-auto ix-auto-type="button" ix-auto-identifier="upgradeWaiting">
         <mat-icon class="movement">update</mat-icon>
       </button>
       <!--loading icon-->
-      <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="mat_tooltips.update" (click)="showUpdateDialog()" class="topbar-button-right"
+      <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="mat_tooltips.update | translate" (click)="showUpdateDialog()" class="topbar-button-right"
         ix-auto ix-auto-type="button" ix-auto-identifier="updateRunning">
         <mat-icon class="movement">system_update_alt</mat-icon>
       </button>
-      <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" [matTooltip]="mat_tooltips.pending_network_changes" (click)="showNetworkChangesPending()" class="topbar-button-right"
+      <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" [matTooltip]="mat_tooltips.pending_network_changes | translate" (click)="showNetworkChangesPending()" class="topbar-button-right"
         ix-auto ix-auto-type="button" ix-auto-identifier="networkPending">
         <mat-icon class="movement">device_hub</mat-icon>
       </button>
-      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering" (click)="showResilveringDetails()" class="topbar-button-right"
+      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering | translate" (click)="showResilveringDetails()" class="topbar-button-right"
         ix-auto ix-auto-type="button" ix-auto-identifier="resilvering">
         <mat-icon class="fa-spin">autorenew</mat-icon>
       </button>
       <!-- HA Status -->
       <span *ngIf="is_ha && ha_status_text">
-      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()"
+      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate" (click)="showHAStatus()"
         ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
         <mat-icon svgIcon="ha_enabled"></mat-icon>
       </button>
-      <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()"
+      <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate" (click)="showHAStatus()"
         ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
         <mat-icon *ngIf="ha_disabled_reasons[0] === 'NO_SYSTEM_READY';else HADisabled" svgIcon="ha_reconnecting"></mat-icon>
         <ng-template #HADisabled>
@@ -73,23 +73,23 @@
       </button>
       </span>
       <!-- Directory Services Monitor -->
-      <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager" [matTooltip]="mat_tooltips.directory_services_monitor" (click)="onShowDirServicesMonitor()"
+      <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager" [matTooltip]="mat_tooltips.directory_services_monitor | translate" (click)="onShowDirServicesMonitor()"
         ix-auto ix-auto-type="button" ix-auto-identifier="dirServices">
         <mat-icon>info</mat-icon>
       </button>
       <!-- Task Manager -->
-      <button mat-icon-button id="task-manager" [matTooltip]="mat_tooltips.task_manager" (click)="onShowTaskManager()" 
+      <button mat-icon-button id="task-manager" [matTooltip]="mat_tooltips.task_manager | translate" (click)="onShowTaskManager()" 
         ix-auto ix-auto-type="button" ix-auto-identifier="taskManager">
         <mat-icon>assignment</mat-icon>
       </button>
       <!-- Notification toggle button -->
-      <button mat-icon-button [matTooltip]="mat_tooltips.alerts" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right"
+      <button mat-icon-button [matTooltip]="mat_tooltips.alerts | translate" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right"
         ix-auto ix-auto-type="button" ix-auto-identifier="notifications">
         <mat-icon>notifications</mat-icon>
         <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
       </button>
       <!-- User and UI menu -->
-      <button name="Settings" mat-icon-button [matTooltip]="mat_tooltips.settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right" (click)="checkLegacyUISetting()"
+      <button name="Settings" mat-icon-button [matTooltip]="mat_tooltips.settings | translate" [matMenuTriggerFor]="accountMenu" class="topbar-button-right" (click)="checkLegacyUISetting()"
         ix-auto ix-auto-type="button" ix-auto-identifier="settings">
           <mat-icon>settings</mat-icon>
       </button>
@@ -132,7 +132,7 @@
         </button>
       </mat-menu>
       <!-- Top right power menu -->
-      <button name="Power" mat-icon-button [matTooltip]="mat_tooltips.power" [matMenuTriggerFor]="runMenu" class="topbar-button-right"
+      <button name="Power" mat-icon-button [matTooltip]="mat_tooltips.power | translate" [matMenuTriggerFor]="runMenu" class="topbar-button-right"
         ix-auto ix-auto-type="button" ix-auto-identifier="power">
           <mat-icon>power_settings_new</mat-icon>
         </button>
