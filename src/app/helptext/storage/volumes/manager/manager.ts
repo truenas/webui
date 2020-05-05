@@ -54,7 +54,7 @@ force_warning: T("The current pool layout is not recommended.\
 Override the following errors?"),
 force_warnings:{
     'diskSizeWarning': T("One or more data vdevs has disks of different sizes."),
-    'specialVdevWarning': T("Metadata vdev should be of the same type as data vdevs.")
+    'specialVdevWarning': T("Metadata vdev must be the same type as data vdevs.")
 },
 data_vdev_title: T("Data"),
 data_vdev_description: T("Normal vdev type, used for primary storage operations. ZFS pools always have at least one DATA vdev."),
