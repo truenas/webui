@@ -21,6 +21,11 @@ export class DatasetComponent implements OnInit{
   public formGroup: FormGroup;
   public entityForm: any;
 
+  protected syslog_subscription: any;
+  protected syslog_warned = false;
+  protected syslog_fg: any;
+  protected syslog_value: boolean;
+
   public fieldConfig: FieldConfig[] = [
     {
       type: 'select',
@@ -58,10 +63,29 @@ export class DatasetComponent implements OnInit{
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+    this.syslog_fg = entityForm.formGroup.controls['syslog'];
     this.ws.call('systemdataset.config').subscribe(res => {
       entityForm.formGroup.controls['pool'].setValue(res.pool);
-      entityForm.formGroup.controls['syslog'].setValue(res.syslog);
+      this.syslog_value = res.syslog;
+      this.syslog_fg.setValue(this.syslog_value);
     });
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        if (is_ha) {
+          this.syslog_subscription = this.syslog_fg.valueChanges.subscribe(res => {
+            if (!this.syslog_warned && res !== this.syslog_value) {
+              this.dialogService.confirm(helptext_system_dataset.syslog_warning.title, helptext_system_dataset.syslog_warning.message).subscribe(confirm => {
+                if (confirm) {
+                  this.syslog_warned = true;
+                } else {
+                  this.syslog_fg.setValue(this.syslog_value);
+                }
+              });
+            }
+          });
+        }
+      });
+    }
   }
 
   customSubmit(value) {
