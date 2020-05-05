@@ -111,8 +111,8 @@ ldap_has_samba_schema_tooltip: T('Only set LDAP authentication for\
 ldap_auxiliary_parameters_name : 'auxiliary_parameters',
 ldap_auxiliary_parameters_placeholder : T('Auxiliary Parameters'),
 ldap_auxiliary_parameters_tooltip: T('Additional options for <a\
- href="https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html"\
- target="_blank">sssd.conf(5)</a>.'),
+ href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
+ target="_blank">nslcd.conf</a>.'),
 
 ldap_schema_name : 'schema',
 ldap_schema_placeholder : T('Schema'),
