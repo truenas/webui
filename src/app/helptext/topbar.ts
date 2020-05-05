@@ -66,6 +66,19 @@ Login or signup is required.'),
         title: T('Open TrueCommand User Interface'),
         message: T(`<em>Warning:</em> The WireGuard service must be active on the client system to access the TrueCommand UI.`),
         confirmBtnMsg: T('Continue'),
+    },
+
+    tcDeregisterBtn: T('Deregister'),
+    tcDeregisterDialog: {
+        title: T('Deregister TrueCommand Cloud Service'),
+        icon: 'warning',
+        message: T('Are you sure you want to deregister TrueCommand Cloud Service?'),
+        confirmBtnMsg: T('Confirm'),
+    },
+
+    deregisterInfoDialog: {
+        title: T('TrueCommand Cloud Service deregistered'),
+        message: T('TrueCommand Cloud Service has been deregistered.')
     }
 }
 
