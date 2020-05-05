@@ -21,7 +21,7 @@ manager_disknumExtendConfirmMessage : T("It is not recommended to extend a pool 
 
 manager_vdevtypeErrorMessage : T("Adding data vdevs of different types is not supported."),
 
-manager_specialVdevTypeErrorMessage : T("Metadata vdev should be of the same type as the data vdevs."),
+manager_specialVdevTypeErrorMessage : T("Metadata vdev must be the same type as the data vdevs."),
 
 manager_diskAddWarning : T("The contents of all added disks will be erased."),
 
