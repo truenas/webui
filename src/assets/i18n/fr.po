@@ -5800,7 +5800,7 @@ msgid "Export Certificate"
 msgstr "Exporter le certificat"
 
 msgid "Export Password Secret Seed"
-msgstr "Exporter le mot de passe secret"
+msgstr "Exporter la valeur secrète du mot de passe"
 
 msgid "Export Pool Encryption Keys"
 msgstr "Exporter les clés de chiffrement du volume"
