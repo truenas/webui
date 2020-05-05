@@ -85,6 +85,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevtypeError = null;
   public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
+  public specialVdevTypeError = null;
+  public specialVdevTypeErrorMessage = helptext.manager_specialVdevTypeErrorMessage;
+
   public vdevdisksError = false;
   public vdevdisksSizeError = false;
 
@@ -219,6 +222,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   getVdevTypeErrorMsg(type) {
     this.translate.get(this.vdevtypeErrorMessage).subscribe((errorMessage) => {
       this.vdevtypeError = errorMessage + T(' First vdev is a ') + this.first_data_vdev_type + T(', new vdev is ') + type + '.';
+    });
+  }
+
+  getSpecialVdevTypeErrorMsg(type) {
+    this.translate.get(this.specialVdevTypeErrorMessage).subscribe((errorMessage) => {
+      this.specialVdevTypeError = errorMessage + T(' First data vdev is a ') + this.first_data_vdev_type + T(', new Metadata vdev is a ') + type + '.';
     });
   }
 
@@ -395,6 +404,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.disknumError = null;
     this.vdevtypeError = null;
     this.vdevdisksError = false;
+    this.specialVdevTypeError = null;
     this.vdevdisksSizeError = false;
     this.has_savable_errors = false;
 
@@ -443,6 +453,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       if (vdev.vdev_disks_size_error) {
         this.vdevdisksSizeError = true;
         this.has_savable_errors = true;
+      }
+      if (vdev.group === 'special') {
+        if (vdev.type !== this.first_data_vdev_type) {
+          this.getSpecialVdevTypeErrorMsg(vdev.type);
+          this.has_savable_errors = true;
+        }
       }
 
     });
@@ -520,6 +536,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       let warnings = helptext.force_warning;
       if (this.vdevdisksSizeError) {
         warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+      }
+      if (this.specialVdevTypeError) {
+        warnings = warnings + '<br/><br/>' + helptext.force_warnings['specialVdevWarning'];
       }
       this.dialog.confirm(helptext.force_title, warnings).subscribe(res => {
         this.force = res;

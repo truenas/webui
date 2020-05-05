@@ -99,7 +99,7 @@ export class VdevComponent implements OnInit {
   }
 
   guessVdevType() {
-    if (this.group === "data" && !this.vdev_type_disabled) {
+    if ((this.group === "data" || this.group === 'special') && !this.vdev_type_disabled) {
       if (this.disks.length === 2) {
         this.type = "mirror";
       } else if (this.disks.length === 3) {

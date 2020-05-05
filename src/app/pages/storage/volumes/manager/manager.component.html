@@ -355,6 +355,7 @@
       <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
       <div *ngIf="disknumError" [style.color]="'red'" [innerHTML]="disknumError"></div>
       <div *ngIf="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
+      <div *ngIf="specialVdevTypeError" [style.color]="'red'" [innerHTML]="specialVdevTypeError"></div>
       <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
         <mat-checkbox id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()"></mat-checkbox> {{'Force' | translate}}
