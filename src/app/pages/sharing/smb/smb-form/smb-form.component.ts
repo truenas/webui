@@ -364,6 +364,13 @@ export class SMBFormComponent {
         ['/'].concat(ACLRoute),{ queryParams: {homeShare: true}})
       
     }
+    // If this call returns true OR an [ENOENT] err comes back, just return to table
+    // because the pool or ds is encrypted. Otherwise, do the next checks
+    this.ws.call('filesystem.path_is_encrypted', [sharePath]).subscribe(
+      res => {
+      if(res) {
+        this.router.navigate(['/'].concat(this.route_success));
+      } else {
     /**
      * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
@@ -439,6 +446,17 @@ export class SMBFormComponent {
         })
       )
       .subscribe(() => {}, error => new EntityUtils().handleWSError(this, error, this.dialog));
+      }
+    },
+    err => {
+      if (err.reason.includes('[ENOENT]')) {
+        this.router.navigate(['/'].concat(this.route_success));
+      } else {
+        // If some other err comes back from filesystem.path_is_encrypted
+        this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+          err.reason, err.trace.formatted);
+      }
+    })
   }
 
   afterInit(entityForm: EntityFormComponent) {

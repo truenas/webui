@@ -138,6 +138,12 @@ export const helptext_sharing_smb = {
 
     action_share_acl: T('Edit Share ACL'),
     action_edit_acl: T('Edit Filesystem ACL'),
+    action_edit_acl_dialog: {
+      title: T('Error'),
+      message1: T('The pool containing'),
+      message2: T('is locked.')
+   },
+    
 
     dialog_warning: T('Warning'),
     dialog_warning_message: T("Setting default permissions will reset the permissions of this share and any others within its path."),
