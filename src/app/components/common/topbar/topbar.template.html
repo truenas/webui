@@ -1,11 +1,11 @@
 <mat-toolbar class="topbar lola">
   <mat-toolbar-row>
     <!-- Sidenav toggle button -->
-    <button mat-icon-button id="sidenavToggle" (click)="toggleSidenav()" [matTooltip]="mat_tooltips.toggle_hide" matTooltipPosition="right">
+    <button mat-icon-button id="sidenavToggle" (click)="toggleSidenav()" [matTooltip]="mat_tooltips.toggle_hide | translate" matTooltipPosition="right">
       <mat-icon>menu</mat-icon>
     </button>
     <!-- Sidenav toggle collapse -->
-    <button *ngIf="sidenav.opened" mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" [matTooltip]="mat_tooltips.toggle_collapse" class="toggle-collapsed">
+    <button *ngIf="sidenav.opened" mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" [matTooltip]="mat_tooltips.toggle_collapse | translate" class="toggle-collapsed">
       <mat-icon>chevron_left</mat-icon>
     </button>
     <!-- Search form
@@ -20,25 +20,25 @@
       </div -->
       <span fxFlex></span>
       <!-- finish update -->
-      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" matTooltip="Upgrade waiting to finish" (click)="upgradePendingDialog()" class="topbar-button-right">
+      <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" [matTooltip]="mat_tooltips.upgrade_waiting | translate" (click)="upgradePendingDialog()" class="topbar-button-right">
         <mat-icon class="movement">update</mat-icon>
       </button>
       <!--loading icon-->
-      <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="mat_tooltips.update" (click)="showUpdateDialog()" class="topbar-button-right">
+      <button *ngIf="updateIsRunning" mat-icon-button id="update-running" [matTooltip]="mat_tooltips.update | translate" (click)="showUpdateDialog()" class="topbar-button-right">
         <mat-icon class="movement">system_update_alt</mat-icon>
       </button>
-      <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" [matTooltip]="mat_tooltips.pending_network_changes" (click)="showNetworkChangesPending()" class="topbar-button-right">
+      <button *ngIf="pendingNetworkChanges" mat-icon-button id="network" [matTooltip]="mat_tooltips.pending_network_changes | translate" (click)="showNetworkChangesPending()" class="topbar-button-right">
         <mat-icon class="movement">device_hub</mat-icon>
       </button>
-      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
+      <button *ngIf="showResilvering" mat-icon-button id="resilver" [matTooltip]="mat_tooltips.resilvering |translate" (click)="showResilveringDetails()" class="topbar-button-right">
         <mat-icon class="fa-spin">autorenew</mat-icon>
       </button>
       <!-- HA Status -->
       <span *ngIf="is_ha && ha_status_text">
-      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
+      <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text |translate" (click)="showHAStatus()">
         <mat-icon svgIcon="ha_enabled"></mat-icon>
       </button>
-      <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text" (click)="showHAStatus()">
+      <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate" (click)="showHAStatus()">
         <mat-icon *ngIf="ha_disabled_reasons[0] === 'NO_SYSTEM_READY';else HADisabled" svgIcon="ha_reconnecting"></mat-icon>
         <ng-template #HADisabled>
           <mat-icon svgIcon="ha_disabled"></mat-icon>
@@ -46,20 +46,20 @@
       </button>
       </span>
       <!-- Directory Services Monitor -->
-      <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager" [matTooltip]="mat_tooltips.directory_services_monitor" (click)="onShowDirServicesMonitor()" >
+      <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager" [matTooltip]="mat_tooltips.directory_services_monitor | translate" (click)="onShowDirServicesMonitor()" >
         <mat-icon>info</mat-icon>
       </button>
       <!-- Task Manager -->
-      <button mat-icon-button id="task-manager" [matTooltip]="mat_tooltips.task_manager" (click)="onShowTaskManager()" >
+      <button mat-icon-button id="task-manager" [matTooltip]="mat_tooltips.task_manager | translate" (click)="onShowTaskManager()" >
         <mat-icon>assignment</mat-icon>
       </button>
       <!-- Notification toggle button -->
-      <button mat-icon-button [matTooltip]="mat_tooltips.alerts" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
+      <button mat-icon-button [matTooltip]="mat_tooltips.alerts | translate" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
         <mat-icon>notifications</mat-icon>
         <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
       </button>
       <!-- User and UI menu -->
-      <button name="Settings" mat-icon-button [matTooltip]="mat_tooltips.settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right" (click)="checkLegacyUISetting()">
+      <button name="Settings" mat-icon-button [matTooltip]="mat_tooltips.settings | translate" [matMenuTriggerFor]="accountMenu" class="topbar-button-right" (click)="checkLegacyUISetting()">
           <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #accountMenu="matMenu">
@@ -96,7 +96,7 @@
         </button>
       </mat-menu>
       <!-- Top right power menu -->
-      <button name="Power" mat-icon-button [matTooltip]="mat_tooltips.power" [matMenuTriggerFor]="runMenu" class="topbar-button-right">
+      <button name="Power" mat-icon-button [matTooltip]="mat_tooltips.power | translate" [matMenuTriggerFor]="runMenu" class="topbar-button-right">
           <mat-icon>power_settings_new</mat-icon>
         </button>
         <mat-menu #runMenu="matMenu">

@@ -26,6 +26,7 @@ export default {
         toggle_hide: T('Toggle Hide/Open'),
         toggle_collapse: T('Toggle Collapse'),
         update: T('Update in Progress'),
+        upgrade_waiting: T('Upgrade waiting to finish'),
         pending_network_changes: T('Pending Network Changes'),
         directory_services_monitor: T('Directory Services Monitor'),
         resilvering: T('Resilvering'),
