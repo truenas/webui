@@ -13658,7 +13658,7 @@ msgid "Upload Chunk Size (MiB)"
 msgstr "Taille des morceau d'upload (MiB)"
 
 msgid "Upload Config"
-msgstr "Envoyer la config"
+msgstr "Charger une config"
 
 msgid ""
 "Upload a Google  <a "
