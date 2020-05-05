@@ -12,5 +12,9 @@ export const helptext_system_dataset = {
     placeholder: T("Syslog"),
     tooltip: T("Store system logs on the system dataset. Unset to store\
  system logs in <i>/var/</i> on the operating system device.")
+  },
+  syslog_warning: {
+    title: T("WARNING"),
+    message: T("Passive controller will have to reboot in order to change the location of system logs.")
   }
 };
