@@ -42,7 +42,7 @@
           <div class="memory-used-caption">
             <span *ngIf="memData">
               {{"total available" | translate}}
-              (<span *ngIf="!ecc">non-</span>ECC)
+              <span *ngIf="ecc">(ECC)</span>
             </span>
           </div>
           <!-- Legend --> 
