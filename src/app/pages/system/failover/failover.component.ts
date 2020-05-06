@@ -22,6 +22,7 @@ export class FailoverComponent implements OnDestroy {
   protected updateCall = 'failover.update';
   public entityForm: any;
   protected failoverDisableSubscription: any;
+  public alreadyDisabled = false;
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Disable Failover"),
@@ -125,7 +126,9 @@ export class FailoverComponent implements OnDestroy {
     this.entityForm = entityEdit;
     this.failoverDisableSubscription = 
       this.entityForm.formGroup.controls['disabled'].valueChanges.subscribe(res => {
-        this.confirmSubmit = res;
+        if (!this.alreadyDisabled) {
+          this.confirmSubmit = res;
+        }
       });
     this.master_fg = this.entityForm.formGroup.controls['master']
     this.masterSubscription = 
@@ -145,6 +148,7 @@ export class FailoverComponent implements OnDestroy {
   public customSubmit(body) {
     this.load.open();
     return this.ws.call('failover.update', [body]).subscribe((res) => {
+      this.alreadyDisabled = body['disabled'];
       this.load.close();
       this.dialog.Info(T("Settings saved."), '', '300px', 'info', true).subscribe(saved => {
         if (body.disabled && !body.master) {
@@ -158,6 +162,7 @@ export class FailoverComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(value) {
+    this.alreadyDisabled = value['disabled'];
     value['master'] = true;
     return value;
   }
