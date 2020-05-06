@@ -29,6 +29,11 @@ export class DatasetComponent {
   protected syslog_fg: any;
   protected syslog_value: any;
 
+  protected pool_subscription: any;
+  protected pool_warned = false;
+  protected pool_fg: any;
+  protected pool_value: any;
+
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
@@ -90,6 +95,7 @@ export class DatasetComponent {
       entityForm.formGroup.controls['syslog'].setValue(res.syslog);
     });*/
     this.syslog_fg = this.entityForm.formGroup.controls['syslog'];
+    this.pool_fg = this.entityForm.formGroup.controls['pool']
     this.ws.call('failover.licensed').subscribe((is_ha) => {
       if (is_ha) {
         this.syslog_subscription = this.syslog_fg.valueChanges.subscribe(res => {
@@ -103,12 +109,24 @@ export class DatasetComponent {
             });
           }
         });
+        this.pool_subscription = this.pool_fg.valueChanges.subscribe(res => {
+          if (!this.pool_warned && res !== this.pool_value) {
+            this.dialogService.confirm(helptext_system_dataset.pool_warning.title, helptext_system_dataset.pool_warning.message).subscribe(confirm => {
+              if (confirm) {
+                this.pool_warned = true;
+              } else {
+                this.pool_fg.setValue(this.pool_value);
+              }
+            });
+          }
+        });
       }
     });
   }
 
   resourceTransformIncomingRestData(data) {
     this.syslog_value = data['syslog'];
+    this.pool_value = data['pool'];
     return data;
   };
 
