@@ -26,6 +26,11 @@ export class DatasetComponent implements OnInit{
   protected syslog_fg: any;
   protected syslog_value: boolean;
 
+  protected pool_subscription: any;
+  protected pool_warned = false;
+  protected pool_fg: any;
+  protected pool_value: any;
+
   public fieldConfig: FieldConfig[] = [
     {
       type: 'select',
@@ -64,8 +69,10 @@ export class DatasetComponent implements OnInit{
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
     this.syslog_fg = entityForm.formGroup.controls['syslog'];
+    this.pool_fg = entityForm.formGroup.controls['pool'];
     this.ws.call('systemdataset.config').subscribe(res => {
-      entityForm.formGroup.controls['pool'].setValue(res.pool);
+      this.pool_value = res.pool;
+      this.pool_fg.setValue(this.pool_value);
       this.syslog_value = res.syslog;
       this.syslog_fg.setValue(this.syslog_value);
     });
@@ -79,6 +86,17 @@ export class DatasetComponent implements OnInit{
                   this.syslog_warned = true;
                 } else {
                   this.syslog_fg.setValue(this.syslog_value);
+                }
+              });
+            }
+          });
+          this.pool_subscription = this.pool_fg.valueChanges.subscribe(res => {
+            if (!this.pool_warned && res !== this.pool_value) {
+              this.dialogService.confirm(helptext_system_dataset.pool_warning.title, helptext_system_dataset.pool_warning.message).subscribe(confirm => {
+                if (confirm) {
+                  this.pool_warned = true;
+                } else {
+                  this.pool_fg.setValue(this.pool_value);
                 }
               });
             }
