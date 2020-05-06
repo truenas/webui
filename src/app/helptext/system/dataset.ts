@@ -15,6 +15,6 @@ export const helptext_system_dataset = {
   },
   syslog_warning: {
     title: T("WARNING"),
-    message: T("Passive controller will have to reboot in order to change the location of system logs.")
+    message: T("The Passive controller must be rebooted in order to change the location of system logs.")
   }
 };
