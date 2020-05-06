@@ -25,6 +25,7 @@ export class FailoverComponent implements OnDestroy {
   protected failoverDisableSubscription: any;
   public alreadyDisabled = false;
   public confirmSubmit = false;
+  public saveSubmitText = helptext_system_failover.save_button_text; 
   public confirmSubmitDialog = {
     title: T("Disable Failover"),
     message: T(""),
@@ -149,6 +150,11 @@ export class FailoverComponent implements OnDestroy {
             this.warned = true;
           }
         });
+      }
+      if (res) {
+        this.entityForm.saveSubmitText = helptext_system_failover.save_button_text;
+      } else {
+        this.entityForm.saveSubmitText = helptext_system_failover.failover_button_text;
       }
     });
   }
