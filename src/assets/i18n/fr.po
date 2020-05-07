@@ -9447,7 +9447,7 @@ msgid ""
 "Replicate all child dataset snapshots. When  set, <b>Exclude Child "
 "Datasets</b> becomes available."
 msgstr ""
-"Répliquer tous les instantanés du dataset enfant. Lorsqu'il est défini, "
+"Répliquer tous les instantanés des datasets enfant. Lorsqu'il est défini, "
 "<b>Exclure les datasets enfant</b> devient disponible."
 
 msgid "Replicate from scratch if incremental is not possible"
