@@ -18,7 +18,6 @@ import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit';
-import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
@@ -179,10 +178,6 @@ export const routes: Routes = [
           {
             path: 'pool/:poolId/edit/:pk', component: DiskFormComponent,
             data: { title: 'Edit Pool Disk', breadcrumb: 'Edit Pool Disk' }
-          },
-          {
-            path: 'wipe/:pk', component: DiskWipeComponent,
-            data: { title: 'Wipe Disk', breadcrumb: 'Wipe Disk' }
           },
           {
             path: 'smartresults/:pk', component: SmartResultsComponent,
