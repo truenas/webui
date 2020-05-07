@@ -32,7 +32,7 @@ export class ReplicationWizardComponent {
     protected custActions: Array<any> = [
         {
             id: 'advanced_add',
-            name: "Advanced Replication Creation",
+            name: T("Advanced Replication Creation"),
             function: () => {
                 this.router.navigate(
                     new Array('').concat(["tasks", "replication", "add"])
@@ -564,7 +564,7 @@ export class ReplicationWizardComponent {
         }
     ];
 
-    protected saveSubmitText = 'START REPLICATION';
+    protected saveSubmitText = T('START REPLICATION');
     protected directions = ['PULL', 'PUSH'];
     protected selectedReplicationTask: any;
     protected semiSSHFieldGroup: any[] = [
