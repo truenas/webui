@@ -122,6 +122,13 @@ dw_wipe_method_tooltip : T('<i>Quick</i> erases only the partitioning informatio
      disk_placeholder: T('Disks'),
      type_placeholder: T('Type'),
      saveButtonText: T('Start'),
- }
+ },
 
+ diskWipeDialogForm: {
+    title: T('Wipe Disk '),
+    saveButtonText: T('Wipe'),
+    confirmContent: T("Wipe this disk?"),
+    startDescription: T('Wiping disk...'),
+    infoContent:T('Disk Wiped successfully'),
+ },
 }
