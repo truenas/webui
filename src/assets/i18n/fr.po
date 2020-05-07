@@ -12555,7 +12555,7 @@ msgid "Target Alias"
 msgstr "Alias de la cible"
 
 msgid "Target Dataset"
-msgstr "Dataset de la cible"
+msgstr "Dataset cible"
 
 msgid "Target Mode"
 msgstr "Mode de la cible"
