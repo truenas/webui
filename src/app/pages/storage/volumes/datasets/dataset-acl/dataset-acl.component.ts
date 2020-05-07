@@ -443,7 +443,20 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
+    if (data.acl.length === 0) {
+      setTimeout(() => {
+        this.handleEmptyACL();
+      }, 1000)
+    }
     return {"aces": []}; // stupid hacky thing that gets around entityForm's treatment of data
+  }
+
+  handleEmptyACL() {
+    this.loader.close()
+    this.dialogService.errorReport(helptext.empty_acl_dialog.title, helptext.empty_acl_dialog.message)
+      .subscribe(() => {
+        this.router.navigate(new Array('/').concat(this.route_success));
+    })
   }
 
   async dataHandler(entityForm, defaults?) {
