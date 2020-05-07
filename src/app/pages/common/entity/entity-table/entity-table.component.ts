@@ -1057,7 +1057,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (newHeight > window.innerHeight - 233 - this.cardHeaderComponentHight) {
         newHeight = window.innerHeight - 233 - this.cardHeaderComponentHight;
       }
-
+      newHeight = Math.max(newHeight, this.startingHeight);
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${newHeight}px`);
     }, 100);
   }
