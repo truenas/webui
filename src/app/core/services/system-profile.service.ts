@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { CoreEvent } from './core.service';
+import helptext from '../../helptext/topbar';
 
 interface InfoObject {
   version: string; // "TrueNAS-12.0-MASTER-202003160424"
@@ -20,6 +21,11 @@ interface InfoObject {
   timezone: string; // "America/Los_Angeles"
   system_manufacturer: string; // null
   ecc_memory: boolean; // false
+}
+
+interface HAStatus {
+  status: string;
+  reasons?: any;
 }
 
 @Injectable({
@@ -50,6 +56,8 @@ export class SystemProfileService extends BaseService {
     ecc_memory: true,
   }
 
+  private ha_status: HAStatus;
+
   public features= {
     HA: false,
     enclosure: false
@@ -67,6 +75,23 @@ export class SystemProfileService extends BaseService {
         this.respond({name:"SysInfoRequest", sender: this});
       }
     });
+
+    this.core.register({
+      observerClass: this,
+      eventName: "HAStatusRequest"
+    }).subscribe((evt:CoreEvent) => {
+      if(this.cache && this.features.HA){
+        // This is a TrueNAS box with HA support
+        if(this.ha_status && this.ha_status.status.length > 0){
+          this.core.emit({name: "HA_Status", data: this.ha_status , sender: this});
+        } 
+      }
+    });
+
+    // HA Status change events
+    this.websocket.subscribe('failover.disabled_reasons').subscribe((res) => {
+      this.updateHA(res.fields.disabled_reasons);
+    })
   }
 
   protected onAuthenticated(evt: CoreEvent){
@@ -116,15 +141,39 @@ export class SystemProfileService extends BaseService {
         responseEvent = 'SysInfo';
         break;
     }
-    this.detectFeatures(data);
-    data.features = this.features;
+    data.features = this.detectFeatures(data);
     this.core.emit({name:responseEvent, data: data, sender: this});
   }
 
-  detectFeatures(profile:any){
+  detectFeatures(_profile:any){
+    // ENCLOSURE SUPPORT
+    let profile = Object.assign({}, _profile);
     if(profile.system_product.includes('FREENAS-MINI-3.0') || profile.system_product.includes('TRUENAS-')){
       this.features.enclosure = true;
     } 
+
+    // HIGH AVAILABILITY SUPPORT
+    if(profile.system_product.includes('-HA-') || profile.system_product == "BHYVE"){
+      this.features.HA = true;
+
+      // HA Status Change Call
+      this.websocket.call('failover.disabled_reasons').subscribe((res) => {
+        this.updateHA(res);
+      });
+    }
+
+    return this.features;
+  }
+
+  updateHA(res){
+    const ha_enabled = res.length == 0 ? true : false;
+    const ha_status_text = res.length == 0 ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
+
+    let enabled_txt = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
+
+    window.sessionStorage.setItem('ha_status', ha_enabled.toString());
+    this.ha_status = { status: enabled_txt, reasons: res };
+    this.core.emit({name: "HA_Status", data: this.ha_status , sender: this});
   }
 
 }
