@@ -14,6 +14,7 @@ import { filter } from 'rxjs/operators';
   templateUrl: './navigation.template.html'
 })
 export class NavigationComponent extends ViewControllerComponent implements OnInit {
+  productType = window.localStorage.getItem('product_type');
   hasIconTypeMenuItem;
   iconTypeMenuTitle:string;
   menuItems:any[];
@@ -34,11 +35,34 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             {name : "IPMI"}).disabled = true;
         }
       });
+
+      /* Temporarily moved to the SCALE conditional below
       this.ws.call('multipath.query').subscribe((res)=>{
         if (!res || res.length === 0) {
           _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
         }
       });
+      */
+
+      // Temporarily hide some things in SCALE
+      if (this.productType === 'SCALE') {
+        _.find(_.find(menuItem, {state : "system"}).sub, {state : "kmip"}).disabled = true;
+        _.find(menuItem, {state : "vm"}).disabled = true;
+        _.find(_.find(menuItem, {state : "directoryservice"}).sub, {state : "nis"}).disabled = true;
+        _.find(_.find(menuItem, {state : "network"}).sub, {state : "staticroutes"}).disabled = true;
+        _.find(_.find(menuItem, {state : "tasks"}).sub, {state : "initshutdown"}).disabled = true;
+        _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "nfs"}).disabled = true;
+        _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "webdav"}).disabled = true;
+        _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
+      } else {
+        this.ws.call('multipath.query').subscribe((res)=>{
+          if (!res || res.length === 0) {
+            _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
+          }
+        });
+      }
+      // ====================
+
       if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
         this.ws.call('failover.licensed').subscribe((is_ha) => {
           if (is_ha) {
