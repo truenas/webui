@@ -353,7 +353,7 @@ export class DeviceEditComponent implements OnInit {
       this.pptdev = _.find(this.pciFieldConfig, { 'name': 'pptdev' });
       this.pptdev.options = Object.keys(res || {}).map(pptdevId => ({
         label: pptdevId,
-	value: pptdevId
+        value: pptdevId
       }));
     });
   }

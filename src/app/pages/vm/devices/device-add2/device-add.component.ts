@@ -58,8 +58,8 @@ export class DeviceAddComponent implements OnInit {
         label: 'Raw File',
         value: 'RAW',
         }, {
-	label: 'PCI Passthru Device',
-	value: 'PCI',
+        label: 'PCI Passthru Device',
+        value: 'PCI',
         }, {
         label: 'VNC',
         value: 'VNC',
@@ -348,7 +348,7 @@ export class DeviceAddComponent implements OnInit {
       this.pptdev = _.find(this.pciFieldConfig, { 'name': 'pptdev' });
       this.pptdev.options = Object.keys(res || {}).map(pptdevId => ({
         label: pptdevId,
-	value: pptdevId
+        value: pptdevId
       }));
     });
   }
