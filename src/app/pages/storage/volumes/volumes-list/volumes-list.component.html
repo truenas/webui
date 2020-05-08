@@ -25,7 +25,6 @@
             <span [style.margin-right.px]="5">
               <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
               <ng-template #status>
-                <i class="material-icons green-icon" *ngIf="row.status==='HEALTHY'">check_circle</i>
                 <i class="material-icons orange-icon" *ngIf="row.status==='DEGRADED'">warning</i>
                 <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
                 <i class="material-icons blue-icon" *ngIf="row.status==='FAULTED'">help</i>
