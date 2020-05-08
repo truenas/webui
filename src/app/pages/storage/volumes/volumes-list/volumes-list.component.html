@@ -29,7 +29,7 @@
                 <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
                 <i class="material-icons blue-icon" *ngIf="row.status==='FAULTED'">help</i>
                 <i class="material-icons red-icon" 
-                  *ngIf="row.status!=='HEALTHY' && row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='FAULTED'"
+                  *ngIf="row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='FAULTED'"
                 >cancel</i>
               </ng-template>
             </span>
