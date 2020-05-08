@@ -1593,6 +1593,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       if (pools.length > 0) {
         for (const pool of pools) {
           pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
+          if (!pool.is_decrypted) {
+            pool.status = 'LOCKED';
+          }
 
           /* Filter out system datasets */
           const pChild = datasets.find(set => set.name === pool.name);
