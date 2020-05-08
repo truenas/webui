@@ -5,6 +5,7 @@ export const helptext_sharing_afp = {
   column_name: T('Name'),
   column_path: T('Path'),
   column_comment: T('Description'),
+  column_enabled: T('Enabled'),
 
   placeholder_path: T("Path"),
   tooltip_path: T(
@@ -75,6 +76,9 @@ export const helptext_sharing_afp = {
  home directories. Only one share can be the home\
  share."
   ),
+
+  placeholder_enabled: T('Enabled'),
+  tooltip_enabled: T(''),
 
   placeholder_nodev: T("Zero Device Numbers"),
   tooltip_nodev: T(
