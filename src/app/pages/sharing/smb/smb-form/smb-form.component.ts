@@ -76,7 +76,14 @@ export class SMBFormComponent {
           tooltip: helptext_sharing_smb.tooltip_comment,
           class: 'inline',
           width: '50%'
-        }
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext_sharing_smb.placeholder_enabled,
+          tooltip: helptext_sharing_smb.tooltip_enabled,
+          value: true,
+        },
       ]
     },
     { name: 'divider', divider: false },

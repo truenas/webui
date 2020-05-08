@@ -27,7 +27,8 @@ export class SMBListComponent {
   public columns: any[] = [
     {name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
     {name: helptext_sharing_smb.column_path, prop: 'path'},
-    {name: helptext_sharing_smb.column_comment, prop: 'comment'}
+    {name: helptext_sharing_smb.column_comment, prop: 'comment'},
+    {name: helptext_sharing_smb.column_enabled, prop: 'enabled'}
   ];
   public rowIdentifier = 'cifs_name';
   public config: any = {

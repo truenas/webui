@@ -10,6 +10,7 @@ export const helptext_sharing_smb = {
     column_name: T('Name'),
     column_path: T('Path'),
     column_comment: T('Description'),
+    column_enabled: T('Enabled'),
 
     placeholder_path: T('Path'),
     tooltip_path: T('Select pool, dataset, or directory to share.'),
@@ -24,6 +25,9 @@ export const helptext_sharing_smb = {
     tooltip_comment: T(
       "Description of the share or notes on how it is used."
     ),
+
+    placeholder_enabled: T('Enabled'),
+    tooltip_enabled: T(''),
 
     placeholder_home: T('Use as Home Share'),
     tooltip_home: T('Allows the share to host user home \
