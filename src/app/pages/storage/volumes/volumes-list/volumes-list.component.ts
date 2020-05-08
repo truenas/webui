@@ -481,6 +481,7 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
           let encryptedStatus = row1.encrypt,
           self = this;
+
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
@@ -532,7 +533,11 @@ export class VolumesListTableConfig implements InputTableConf {
                 };
                 this.loader.close();
                 doDetach();
-            })
+            },
+            (err) => {
+              this.loader.close()
+              new EntityUtils().handleWSError(self, err, self.dialogService);
+            });
           },
           (err) => {
             this.loader.close();
