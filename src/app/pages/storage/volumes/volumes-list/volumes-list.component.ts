@@ -103,6 +103,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public restartServices = false;
   public subs: any;
   public message_subscription: any;
+  public productType = window.localStorage.getItem('product_type');
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -944,6 +945,7 @@ export class VolumesListTableConfig implements InputTableConf {
               name: T('Edit ACL'),
               label: T("Edit ACL"),
               matTooltip: helptext.acl_edit_msg,
+              isHidden: this.productType === 'SCALE' ? true : false, // Temporary, for SCALE
               ttposition: 'left',
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([

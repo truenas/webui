@@ -28,6 +28,7 @@ export class SMBFormComponent {
   protected isBasicMode: boolean = true;
   public isTimeMachineOn = false;
   public namesInUse: string[] = [];
+  public productType = window.localStorage.getItem('product_type');
 
   protected fieldSets: FieldSet[] = [
     {
@@ -379,7 +380,7 @@ export class SMBFormComponent {
       this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
         switchMap((isTrivialACL: boolean) =>
           /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
-          !isTrivialACL || !datasetId.includes('/')
+          !isTrivialACL || !datasetId.includes('/') || this.productType === 'SCALE'
             ? combineLatest(of(false), of({}))
             : combineLatest(
                 /* Check if user wants to edit the share's ACL */
