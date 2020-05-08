@@ -6,7 +6,7 @@ As you update a target language, please make changes to this file, indicating it
 
 | Language  | Status  |Last Updated|
 | ------------ | ------------ |------------|
-|[Argentinian Spanish (es-ar)](es-ar.po "Argentinian Spanish (es-ar)")|Incomplete|05/07/2020|
+|[Argentinian Spanish (es-ar)](es-ar.po "Argentinian Spanish (es-ar)")|Incomplete|05/08/2020|
 |[Chinese (Han)](zh-hans.po "Chinese (Han)")|Incomplete|05/07/2020|
 |[Czech](cs.po "Czech")|Incomplete|06/10/2019|
 |[French](fr.po "French")|Inomplete|12/18/2019|
