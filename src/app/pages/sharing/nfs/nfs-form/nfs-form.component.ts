@@ -67,6 +67,13 @@ export class NFSFormComponent {
       tooltip: helptext_sharing_nfs.tooltip_quiet,
     },
     {
+      type: 'checkbox',
+      name: 'nfs_enabled',
+      value: true,
+      placeholder: helptext_sharing_nfs.placeholder_enabled,
+      tooltip: helptext_sharing_nfs.tooltip_enabled,
+    },
+    {
       type: 'textarea',
       name: 'nfs_network',
       placeholder: helptext_sharing_nfs.placeholder_network,

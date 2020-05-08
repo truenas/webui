@@ -5,6 +5,7 @@ export const helptext_sharing_nfs = {
   // NFSListComponent
   column_path: T("Path"),
   column_comment: T("Description"),
+  column_enabled: T("Enabled"),
 
   // NFSFormComponent
   placeholder_path: T("Path"),
@@ -40,6 +41,9 @@ export const helptext_sharing_nfs = {
  <a href="https://www.freebsd.org/cgi/man.cgi?query=exports"\
  target="_blank">exports(5)</a> for examples.'
   ),
+
+  placeholder_enabled: T('Enabled'),
+  tooltip_enabled: T(''),
 
   placeholder_network: T("Authorized Networks"),
   tooltip_network: T(
