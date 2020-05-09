@@ -3225,17 +3225,17 @@ msgid "Could not find a user name for this user ID."
 msgstr "找不到该用户ID的用户名。"
 
 msgid "Country"
-msgstr "国家/地区"
+msgstr "国家"
 
 msgid "Country Code"
-msgstr "国家/地区代码"
+msgstr "国家代码"
 
 msgid ""
 "Country Code must contain a valid  <a "
 "href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
 "3166-1 alpha-2 code</a>  of two capital letters."
 msgstr ""
-"国家/地区代码必须包含有效的两个大写字母<a href=\"https://www.iso.org/obp/ui/#search/code/\" "
+"国家代码必须包含有效的两个大写字母<a href=\"https://www.iso.org/obp/ui/#search/code/\" "
 "target=\"_blank\">ISO 3166-1 alpha-2 代码</a>。"
 
 msgid "Crash reporting"
@@ -5036,7 +5036,7 @@ msgid ""
 "shutdown. Shutdown will not occur if power is restored while the timer is "
 "counting down. This value only applies when <b>Shutdown mode</b> is set to "
 "<i>UPS goes on battery</i>."
-msgstr "输入以秒为单位的值，以使UPS在启动关机之前等待。如果在计时器递减计数时恢复供电，则不会发生关机。仅当<b>关机模式</b>设置为<i> UPS依靠电池</i>时，此值才适用。"
+msgstr "输入以秒为单位的值，以使UPS在启动关机之前等待。如果在计时器递减计数时恢复供电，则不会发生关机。仅当<b>关机模式</b>设置为<i> 使用UPS电池</i>时，此值才适用。"
 
 msgid ""
 "Enter a value to use for the <a "
@@ -5484,7 +5484,7 @@ msgstr ""
 "target=\"_blank\">FIB</a> ）。"
 
 msgid "Enter the state or province of the organization."
-msgstr "输入组织的省/市。"
+msgstr "输入组织的州或省。"
 
 msgid "Enter the subject for status emails."
 msgstr "输入状态邮件的主题。"
@@ -6018,7 +6018,7 @@ msgid "Fri"
 msgstr "周五"
 
 msgid "From"
-msgstr "来自"
+msgstr "从"
 
 msgid ""
 "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
@@ -7026,7 +7026,7 @@ msgid "Is Debug"
 msgstr "调试"
 
 msgid "Issuer"
-msgstr "发行者"
+msgstr "颁发者"
 
 msgid ""
 "It is not recommended to create a pool with vdevs containing different "
@@ -7451,7 +7451,7 @@ msgid "Local User Upload Bandwidth: "
 msgstr "本地用户上传带宽："
 
 msgid "Locality"
-msgstr "位置"
+msgstr "地区"
 
 msgid "Localization"
 msgstr "本地化"
@@ -10637,7 +10637,7 @@ msgid ""
 msgstr "从可用的云凭据列表中选择云存储提供商凭据。"
 
 msgid "Select the country of the organization."
-msgstr "选择组织的国家/地区。"
+msgstr "选择组织的国家。"
 
 msgid "Select the days to run resilver tasks."
 msgstr "选择运行重新同步任务的日期。"
@@ -11799,7 +11799,7 @@ msgid "Signing Certificate Authority"
 msgstr "签名证书颁发机构"
 
 msgid "Signing Request"
-msgstr "签署请求"
+msgstr "签名请求"
 
 msgid ""
 "Silver / Gold Coverage Customers can enable iXsystems Proactive Support. "
@@ -12011,7 +12011,7 @@ msgid "Starting job..."
 msgstr "正在开始任务..."
 
 msgid "State"
-msgstr "状态"
+msgstr "州"
 
 msgid ""
 "Static IP addresses which SMB listens on for connections.  Leaving all "
@@ -14376,7 +14376,7 @@ msgid "You have left the domain."
 msgstr "您已离开域。"
 
 msgid "ZFS"
-msgstr ""
+msgstr "ZFS"
 
 msgid "ZFS Cache"
 msgstr "ZFS缓存"
@@ -14434,28 +14434,28 @@ msgid "allow_mlock"
 msgstr "允许_mlock"
 
 msgid "allow_mount"
-msgstr "允许_安装"
+msgstr "允许_挂载"
 
 msgid "allow_mount_*"
-msgstr "允许_安装_*"
+msgstr "允许_挂载_*"
 
 msgid "allow_mount_devfs"
-msgstr "允许_安装_devfs"
+msgstr "允许_挂载_devfs"
 
 msgid "allow_mount_fusefs"
-msgstr "允许_安装_fusefs"
+msgstr "允许_挂载_fusefs"
 
 msgid "allow_mount_nullfs"
-msgstr "允许_安装_nullfs"
+msgstr "允许_挂载_nullfs"
 
 msgid "allow_mount_procfs"
-msgstr "允许_安装_procfs"
+msgstr "允许_挂载_procfs"
 
 msgid "allow_mount_tmpfs"
-msgstr "允许_安装_tmpfs"
+msgstr "允许_挂载_tmpfs"
 
 msgid "allow_mount_zfs"
-msgstr "允许_安装_zfs"
+msgstr "允许_挂载_zfs"
 
 msgid "allow_quotas"
 msgstr "允许_quotas"
@@ -14482,7 +14482,7 @@ msgid "are the best place to ask questions and interact with fellow TrueNAS"
 msgstr "是与TrueNAS同伴提问和互动的最佳场所"
 
 msgid "assign_localhost"
-msgstr "分配_localhost"
+msgstr "assign_localhost"
 
 msgid "at 00:00 (12:00 AM)"
 msgstr "在00:00（12:00 AM）"
@@ -14506,7 +14506,7 @@ msgid "close"
 msgstr "关闭"
 
 msgid "comment"
-msgstr "注释"
+msgstr "备注"
 
 msgid "coredumpsize"
 msgstr "核心转储大小"
@@ -14560,16 +14560,16 @@ msgid "exec_jail_user"
 msgstr "执行_监狱_用户"
 
 msgid "exec_poststart"
-msgstr "执行_启动后"
+msgstr "执行_poststart"
 
 msgid "exec_poststop"
-msgstr "执行_停止后"
+msgstr "执行_poststop"
 
 msgid "exec_prestart"
-msgstr "执行_预启动"
+msgstr "执行_prestart"
 
 msgid "exec_prestop"
-msgstr "执行_预停止"
+msgstr "执行_prestop"
 
 msgid "exec_start"
 msgstr "执行_启动"
@@ -14605,7 +14605,7 @@ msgid "host_time"
 msgstr "主机_时间"
 
 msgid "hostid"
-msgstr "主机标识"
+msgstr "hostid"
 
 msgid "hostid_strict_check"
 msgstr "hostid_strict_check"
@@ -14670,13 +14670,13 @@ msgid "login_flags"
 msgstr "login_flags"
 
 msgid "mDNS"
-msgstr ""
+msgstr "mDNS"
 
 msgid "mac_prefix"
 msgstr "mac_prefix"
 
 msgid "maxproc"
-msgstr "MAXPROC"
+msgstr "maxproc"
 
 msgid "memorylocked"
 msgstr "内存锁定"
@@ -14703,7 +14703,7 @@ msgid "msgqqueued"
 msgstr "msgqqueued"
 
 msgid "msgqsize"
-msgstr "msgq大小"
+msgstr "msgqsize"
 
 msgid "multipath"
 msgstr "多路径"
@@ -14745,25 +14745,25 @@ msgid "password"
 msgstr "密码"
 
 msgid "pbkdf2iters"
-msgstr ""
+msgstr "pbkdf2iters"
 
 msgid "pcpu"
 msgstr "PCPU"
 
 msgid "priority"
-msgstr "优先"
+msgstr "优先级"
 
 msgid "pseudoterminals"
-msgstr "虚拟终端"
+msgstr "伪终端"
 
 msgid "reset"
-msgstr "重启"
+msgstr "重置"
 
 msgid "resolver"
-msgstr "解析器"
+msgstr "resolver"
 
 msgid "rlimits"
-msgstr "限制"
+msgstr "rlimits"
 
 msgid "rpc.lockd(8) bind port"
 msgstr "rpc.lockd(8) 绑定端口"
@@ -14772,7 +14772,7 @@ msgid "rpc.statd(8) bind port"
 msgstr "rpc.statd(8) 绑定端口"
 
 msgid "safe"
-msgstr "安全"
+msgstr "safe"
 
 msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
 msgstr "除非选择“保持变化”以使其永久不变，否则为秒。"
@@ -14787,13 +14787,13 @@ msgid "service failed to stop."
 msgstr "服务停止失败。"
 
 msgid "shmsize"
-msgstr "shm大小"
+msgstr "shmsize"
 
 msgid "software, which is provided as-is with no warranty."
 msgstr "软件按原样提供，不提供任何保修。"
 
 msgid "stacksize"
-msgstr "STACKSIZE"
+msgstr "stacksize"
 
 msgid "stop_timeout"
 msgstr "停止_超时"
@@ -14814,7 +14814,7 @@ msgid "sysvshm"
 msgstr "SYSVSHM"
 
 msgid "template"
-msgstr "模板"
+msgstr "template"
 
 msgid "threads"
 msgstr "线程"
@@ -14829,7 +14829,7 @@ msgid "users"
 msgstr "用户"
 
 msgid "vmemoryuse"
-msgstr "虚拟内存使用"
+msgstr "vmemoryuse"
 
 msgid "vnet0_mac"
 msgstr "vnet0_mac"
