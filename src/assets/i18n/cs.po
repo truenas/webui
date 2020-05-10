@@ -16,6 +16,9 @@ msgstr " Pro bližší informace se podívejte na notifikace."
 msgid " Download Updates"
 msgstr " Stáhnout aktualizace"
 
+msgid " First data vdev is a "
+msgstr ""
+
 msgid " First vdev has "
 msgstr " První vdev má "
 
@@ -108,12 +111,8 @@ msgstr ""
 msgid " seconds"
 msgstr ""
 
-msgid ""
-" seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
-"for testing."
+msgid " seconds."
 msgstr ""
-" vteřiny, pokud není vybrána možnost NASTAVIT NAPOŘÁD. Upravte časovou "
-"prodlevu pro možné otestování."
 
 msgid " service has been enabled."
 msgstr " služba byla povolena."
@@ -174,6 +173,9 @@ msgid "(Remove pool from database)"
 msgstr "(Odstranit pool z databáze)"
 
 msgid "(top-right), then"
+msgstr ""
+
+msgid ", new Metadata vdev is a "
 msgstr ""
 
 msgid ", new vdev is "
@@ -740,9 +742,6 @@ msgstr ""
 msgid "API URL"
 msgstr ""
 
-msgid "APPLY CHANGES"
-msgstr ""
-
 msgid "ARN"
 msgstr ""
 
@@ -1063,8 +1062,8 @@ msgstr ""
 
 msgid ""
 "Additional options for <a "
-"href=\"https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html\" "
-"target=\"_blank\">sssd.conf(5)</a>."
+"href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" "
+"target=\"_blank\">nslcd.conf</a>."
 msgstr ""
 
 msgid ""
@@ -1133,6 +1132,9 @@ msgid "Advanced Power Management"
 msgstr "Pokročilá správa napájení"
 
 msgid "Advanced Remote Options"
+msgstr ""
+
+msgid "Advanced Replication Creation"
 msgstr ""
 
 msgid "Advanced Settings"
@@ -1515,9 +1517,6 @@ msgstr ""
 msgid "Apply Failover Upgrade"
 msgstr ""
 
-msgid "Apply Network Changes"
-msgstr ""
-
 msgid "Apply Pending Updates"
 msgstr ""
 
@@ -1534,9 +1533,6 @@ msgid "Apply Quotas to Selected Users"
 msgstr ""
 
 msgid "Apply Update"
-msgstr ""
-
-msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
 
 msgid "Apply permissions recursively"
@@ -1571,6 +1567,9 @@ msgid "Apr"
 msgstr ""
 
 msgid "Archive"
+msgstr ""
+
+msgid "Are you sure you want to deregister TrueCommand Cloud Service?"
 msgstr ""
 
 msgid "Are you sure you want to sync from peer?"
@@ -2128,6 +2127,11 @@ msgstr ""
 msgid "Cannot edit while HA is enabled."
 msgstr ""
 
+msgid ""
+"Cannot open this ACL. Check the permissions this dataset  has inherited "
+"from parents."
+msgstr ""
+
 msgid "Case Sensitivity"
 msgstr "Rozlišování velká/malá písmena"
 
@@ -2228,7 +2232,7 @@ msgid ""
 "cannot contain a space or <b>#</b>."
 msgstr ""
 
-msgid "Changes that have been applied will revert after "
+msgid "Changes Saved"
 msgstr ""
 
 msgid "Changing"
@@ -2923,6 +2927,9 @@ msgstr ""
 msgid "Connecting to "
 msgstr ""
 
+msgid "Connecting to TrueCommand"
+msgstr ""
+
 msgid "Connection"
 msgstr ""
 
@@ -3219,9 +3226,6 @@ msgid "DHCP"
 msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
-msgstr ""
-
-msgid "DISCARD CHANGES"
 msgstr ""
 
 msgid "DNS Domain Name"
@@ -3614,6 +3618,12 @@ msgstr ""
 msgid "Deny List"
 msgstr ""
 
+msgid "Deregister"
+msgstr ""
+
+msgid "Deregister TrueCommand Cloud Service"
+msgstr ""
+
 msgid ""
 "Describe the UPS device. It can contain alphanumeric, period, comma, "
 "hyphen, and underscore characters."
@@ -3867,12 +3877,6 @@ msgid ""
 "plugin, jail, or virtual machine networking."
 msgstr ""
 
-msgid "Discard Network Changes"
-msgstr "Zahodit změny v síti"
-
-msgid "Discard unapplied network changes?"
-msgstr "Zahodit neuplatněné změny sítě?"
-
 msgid "Discover Remote Host Key"
 msgstr ""
 
@@ -3907,6 +3911,9 @@ msgid "Disk Size"
 msgstr "Veliost disku"
 
 msgid "Disk Type"
+msgstr ""
+
+msgid "Disk Wiped successfully"
 msgstr ""
 
 msgid "Disk sector size"
@@ -5533,6 +5540,12 @@ msgstr ""
 msgid "Filter Users"
 msgstr ""
 
+msgid "Filter disks by capacity"
+msgstr ""
+
+msgid "Filter disks by name"
+msgstr ""
+
 msgid "Find this information later by clicking"
 msgstr ""
 
@@ -6547,6 +6560,9 @@ msgstr "Popis rozhraní"
 msgid "Interface Settings"
 msgstr ""
 
+msgid "Interface changes reverted."
+msgstr ""
+
 msgid "Interfaces"
 msgstr "Rozhraní"
 
@@ -6710,12 +6726,6 @@ msgstr ""
 msgid "KDC"
 msgstr "KDC"
 
-msgid "KEEP CHANGES"
-msgstr ""
-
-msgid "KEEP NETWORK CHANGES PERMANENTLY"
-msgstr ""
-
 msgid "KMIP"
 msgstr ""
 
@@ -6726,12 +6736,6 @@ msgid "KMIP Server"
 msgstr ""
 
 msgid "Keep"
-msgstr ""
-
-msgid "Keep Network Changes"
-msgstr "Ponechat změny sítě"
-
-msgid "Keep changed network settings permanently?"
 msgstr ""
 
 msgid "Keep snapshot for"
@@ -7351,6 +7355,12 @@ msgstr ""
 msgid "Metadata VDev"
 msgstr ""
 
+msgid "Metadata vdev must be the same type as data vdevs."
+msgstr ""
+
+msgid "Metadata vdev must be the same type as the data vdevs."
+msgstr ""
+
 msgid "Method"
 msgstr "Metoda"
 
@@ -7732,9 +7742,6 @@ msgid ""
 "to the Internet with other systems on the network."
 msgstr ""
 
-msgid "Network Changes Made Permanent"
-msgstr "Změny v síti trvale uloženy"
-
 msgid "Network Information Service (NIS)"
 msgstr ""
 
@@ -7770,17 +7777,6 @@ msgstr ""
 msgid "Network changes applied successfully."
 msgstr "Změny pro síť úspěšně uplatněny."
 
-msgid "Network changes discarded."
-msgstr "Změny pro síť zahozeny."
-
-msgid ""
-"Network changes have been applied. Keep changes permanently? Changes will "
-"be automatically discarded if they are not permanently applied."
-msgstr ""
-
-msgid "Network changes have been made permanent."
-msgstr ""
-
 msgid ""
 "Network community string.  The community string acts like a user ID or "
 "password. A user with  the correct community string has access to network "
@@ -7799,12 +7795,21 @@ msgstr ""
 msgid "Network control (highest)"
 msgstr ""
 
-msgid "Network interfaces to include in the bridge."
+msgid "Network interface changes have been made permanent."
 msgstr ""
 
 msgid ""
-"Network settings have been temporarily changed. They will be automatically "
-"discarded after"
+"Network interface changes have been temporarily applied for testing. Keep "
+"changes permanently? Changes are automatically reverted after the testing "
+"delay if they are not permanently applied."
+msgstr ""
+
+msgid ""
+"Network interface settings have been temporarily changed for testing. The "
+"settings will revert to the previous configuration after"
+msgstr ""
+
+msgid "Network interfaces to include in the bridge."
 msgstr ""
 
 msgid "Networks"
@@ -9347,7 +9352,16 @@ msgid ""
 "Allow the creation of <i>tun</i> devices in the jail."
 msgstr ""
 
+msgid "Revert CHANGES"
+msgstr ""
+
+msgid "Revert Network Interface Changes"
+msgstr ""
+
 msgid "Revert branding back to FreeNAS"
+msgstr ""
+
+msgid "Revert interface changes? All changes that are being tested will be lost."
 msgstr ""
 
 msgid "Rollback"
@@ -9447,6 +9461,12 @@ msgstr ""
 msgid "SAVE"
 msgstr ""
 
+msgid "SAVE AND FAILOVER"
+msgstr ""
+
+msgid "SAVE CHANGES"
+msgstr ""
+
 msgid "SAVE CONFIGURATION"
 msgstr "ULOŽIT NASTAVENÍ"
 
@@ -9539,6 +9559,9 @@ msgstr ""
 msgid "START"
 msgstr ""
 
+msgid "START REPLICATION"
+msgstr ""
+
 msgid "STARTTLS"
 msgstr ""
 
@@ -9562,6 +9585,9 @@ msgstr ""
 
 msgid "Save"
 msgstr "Uložit"
+
+msgid "Save Changes"
+msgstr ""
 
 msgid "Save Config"
 msgstr "Uložit nastavení"
@@ -9591,6 +9617,9 @@ msgid "Save and Restart SMB Now"
 msgstr ""
 
 msgid "Save configuration settings from this machine before updating?"
+msgstr ""
+
+msgid "Save network interface changes?"
 msgstr ""
 
 msgid "Saving ACLs"
@@ -11374,6 +11403,9 @@ msgstr ""
 msgid "Status"
 msgstr "Stav"
 
+msgid "Status of TrueCommand"
+msgstr ""
+
 msgid "Status updated"
 msgstr ""
 
@@ -11639,6 +11671,9 @@ msgstr ""
 msgid "TDB"
 msgstr ""
 
+msgid "TEST CHANGES"
+msgstr ""
+
 msgid "TLS"
 msgstr ""
 
@@ -11765,6 +11800,9 @@ msgstr ""
 msgid "Terms of Service"
 msgstr ""
 
+msgid "Test Changes"
+msgstr ""
+
 msgid "Test Cloud Sync"
 msgstr ""
 
@@ -11772,6 +11810,12 @@ msgid "Test alert sent!"
 msgstr ""
 
 msgid "Test email sent!"
+msgstr ""
+
+msgid "Test network interface changes for "
+msgstr ""
+
+msgid "Test network interface changes? Network connectivity can be interrupted."
 msgstr ""
 
 msgid ""
@@ -11833,6 +11877,16 @@ msgid ""
 "multiple levels and might require doubling or even quadrupling to take "
 "effect.  When this field is blank, new computer accounts are created in the "
 "Active Directory  default OU."
+msgstr ""
+
+msgid ""
+"The Passive controller must be rebooted in order to change the location of "
+"system logs."
+msgstr ""
+
+msgid ""
+"The Passive controller must be rebooted in order to change the location of "
+"the system dataset."
 msgstr ""
 
 msgid "The SMB"
@@ -12068,6 +12122,9 @@ msgstr ""
 msgid "The pool <i>"
 msgstr ""
 
+msgid "The pool containing"
+msgstr ""
+
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
 "computer."
@@ -12217,12 +12274,12 @@ msgid ""
 "the disks in the pool for a general use case."
 msgstr ""
 
-msgid ""
-"There are unapplied network changes. Apply them now? Unapplied changes will "
-"be lost."
+msgid "There are pending network interface changes. Review them now?"
 msgstr ""
 
-msgid "There are unsaved network interface settings.  Review them now?"
+msgid ""
+"There are unapplied network interface changes that must be tested before "
+"being permanently saved. Test changes now?"
 msgstr ""
 
 msgid "There is an upgrade waiting to finish."
@@ -12536,6 +12593,12 @@ msgstr ""
 msgid "TrueCommand Cloud Service"
 msgstr ""
 
+msgid "TrueCommand Cloud Service deregistered"
+msgstr ""
+
+msgid "TrueCommand Cloud Service has been deregistered."
+msgstr ""
+
 msgid "TrueNAS Community Forums"
 msgstr ""
 
@@ -12821,6 +12884,9 @@ msgstr ""
 
 msgid "Upgrade Pool"
 msgstr "Převést fond na novější verzi"
+
+msgid "Upgrade Waiting to Finish"
+msgstr ""
 
 msgid "Upgraded"
 msgstr "Převedeno na novější verzi"
@@ -13539,14 +13605,14 @@ msgstr ""
 msgid "Wipe"
 msgstr "Přemazat"
 
-msgid "Wipe Disk"
-msgstr "Přemazat disk"
+msgid "Wipe Disk "
+msgstr ""
 
 msgid "Wipe this disk?"
 msgstr "Přemazat tento disk?"
 
-msgid "Wiping Disk..."
-msgstr "Přemazávání disku…"
+msgid "Wiping disk..."
+msgstr ""
 
 msgid "Workgroup"
 msgstr ""
@@ -13869,6 +13935,9 @@ msgstr ""
 msgid "is already in use."
 msgstr "se již používá."
 
+msgid "is locked."
+msgstr ""
+
 msgid "jail_zfs"
 msgstr "jail_zfs"
 
@@ -13989,7 +14058,7 @@ msgstr ""
 msgid "safe"
 msgstr ""
 
-msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
+msgid "seconds unless SAVE CHANGES is chosen to make them permanent."
 msgstr ""
 
 msgid "securelevel"

@@ -16,6 +16,9 @@ msgstr " 檢視通知項目可查看詳細資訊。"
 msgid " Download Updates"
 msgstr " 下載更新"
 
+msgid " First data vdev is a "
+msgstr ""
+
 msgid " First vdev has "
 msgstr ""
 
@@ -101,9 +104,7 @@ msgstr ""
 msgid " seconds"
 msgstr " 秒"
 
-msgid ""
-" seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
-"for testing."
+msgid " seconds."
 msgstr ""
 
 msgid " service has been enabled."
@@ -162,6 +163,9 @@ msgid "(Remove pool from database)"
 msgstr "(自資料庫移除資料池)"
 
 msgid "(top-right), then"
+msgstr ""
+
+msgid ", new Metadata vdev is a "
 msgstr ""
 
 msgid ", new vdev is "
@@ -673,9 +677,6 @@ msgstr ""
 msgid "API URL"
 msgstr ""
 
-msgid "APPLY CHANGES"
-msgstr ""
-
 msgid "ARN"
 msgstr ""
 
@@ -1003,8 +1004,8 @@ msgstr ""
 
 msgid ""
 "Additional options for <a "
-"href=\"https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html\" "
-"target=\"_blank\">sssd.conf(5)</a>."
+"href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" "
+"target=\"_blank\">nslcd.conf</a>."
 msgstr ""
 
 msgid ""
@@ -1074,6 +1075,9 @@ msgstr "進階電源管理"
 
 msgid "Advanced Remote Options"
 msgstr "進階遠端設定選項"
+
+msgid "Advanced Replication Creation"
+msgstr ""
 
 msgid "Advanced Settings"
 msgstr "進階設定"
@@ -1457,9 +1461,6 @@ msgstr "套用"
 msgid "Apply Failover Upgrade"
 msgstr "套用容錯升級"
 
-msgid "Apply Network Changes"
-msgstr "套用網路變更"
-
 msgid "Apply Pending Updates"
 msgstr "套用擱置中的更新"
 
@@ -1477,9 +1478,6 @@ msgstr ""
 
 msgid "Apply Update"
 msgstr "套用更新"
-
-msgid "Apply network changes? Network connectivity will be interrupted."
-msgstr ""
 
 msgid "Apply permissions recursively"
 msgstr "完整套用權限"
@@ -1514,6 +1512,9 @@ msgstr ""
 
 msgid "Archive"
 msgstr "封存"
+
+msgid "Are you sure you want to deregister TrueCommand Cloud Service?"
+msgstr ""
 
 msgid "Are you sure you want to sync from peer?"
 msgstr ""
@@ -2070,6 +2071,11 @@ msgstr ""
 msgid "Cannot edit while HA is enabled."
 msgstr ""
 
+msgid ""
+"Cannot open this ACL. Check the permissions this dataset  has inherited "
+"from parents."
+msgstr ""
+
 msgid "Case Sensitivity"
 msgstr "區分大小寫"
 
@@ -2170,7 +2176,7 @@ msgid ""
 "cannot contain a space or <b>#</b>."
 msgstr ""
 
-msgid "Changes that have been applied will revert after "
+msgid "Changes Saved"
 msgstr ""
 
 msgid "Changing"
@@ -2865,6 +2871,9 @@ msgstr ""
 msgid "Connecting to "
 msgstr "正在連線至 "
 
+msgid "Connecting to TrueCommand"
+msgstr ""
+
 msgid "Connection"
 msgstr ""
 
@@ -3162,9 +3171,6 @@ msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr "DHCP 自動配置 IPv4"
-
-msgid "DISCARD CHANGES"
-msgstr "捨棄變更"
 
 msgid "DNS Domain Name"
 msgstr ""
@@ -3556,6 +3562,12 @@ msgstr ""
 msgid "Deny List"
 msgstr ""
 
+msgid "Deregister"
+msgstr ""
+
+msgid "Deregister TrueCommand Cloud Service"
+msgstr ""
+
 msgid ""
 "Describe the UPS device. It can contain alphanumeric, period, comma, "
 "hyphen, and underscore characters."
@@ -3809,12 +3821,6 @@ msgid ""
 "plugin, jail, or virtual machine networking."
 msgstr ""
 
-msgid "Discard Network Changes"
-msgstr "捨棄網路變更"
-
-msgid "Discard unapplied network changes?"
-msgstr ""
-
 msgid "Discover Remote Host Key"
 msgstr "探索遠端主機金鑰"
 
@@ -3850,6 +3856,9 @@ msgstr "磁碟大小"
 
 msgid "Disk Type"
 msgstr "磁碟類型"
+
+msgid "Disk Wiped successfully"
+msgstr ""
 
 msgid "Disk sector size"
 msgstr "磁碟磁區大小"
@@ -5460,6 +5469,12 @@ msgstr ""
 msgid "Filter Users"
 msgstr ""
 
+msgid "Filter disks by capacity"
+msgstr ""
+
+msgid "Filter disks by name"
+msgstr ""
+
 msgid "Find this information later by clicking"
 msgstr ""
 
@@ -6470,6 +6485,9 @@ msgstr "介面說明"
 msgid "Interface Settings"
 msgstr "介面設定"
 
+msgid "Interface changes reverted."
+msgstr ""
+
 msgid "Interfaces"
 msgstr "介面"
 
@@ -6631,12 +6649,6 @@ msgstr ""
 msgid "KDC"
 msgstr ""
 
-msgid "KEEP CHANGES"
-msgstr "保留變更"
-
-msgid "KEEP NETWORK CHANGES PERMANENTLY"
-msgstr "保留網路變更"
-
 msgid "KMIP"
 msgstr ""
 
@@ -6648,12 +6660,6 @@ msgstr ""
 
 msgid "Keep"
 msgstr "保留"
-
-msgid "Keep Network Changes"
-msgstr "保留網路變更"
-
-msgid "Keep changed network settings permanently?"
-msgstr ""
 
 msgid "Keep snapshot for"
 msgstr ""
@@ -7270,6 +7276,12 @@ msgstr ""
 msgid "Metadata VDev"
 msgstr ""
 
+msgid "Metadata vdev must be the same type as data vdevs."
+msgstr ""
+
+msgid "Metadata vdev must be the same type as the data vdevs."
+msgstr ""
+
 msgid "Method"
 msgstr "方法"
 
@@ -7651,9 +7663,6 @@ msgid ""
 "to the Internet with other systems on the network."
 msgstr ""
 
-msgid "Network Changes Made Permanent"
-msgstr ""
-
 msgid "Network Information Service (NIS)"
 msgstr ""
 
@@ -7689,17 +7698,6 @@ msgstr ""
 msgid "Network changes applied successfully."
 msgstr ""
 
-msgid "Network changes discarded."
-msgstr "捨棄網路變更"
-
-msgid ""
-"Network changes have been applied. Keep changes permanently? Changes will "
-"be automatically discarded if they are not permanently applied."
-msgstr ""
-
-msgid "Network changes have been made permanent."
-msgstr ""
-
 msgid ""
 "Network community string.  The community string acts like a user ID or "
 "password. A user with  the correct community string has access to network "
@@ -7718,12 +7716,21 @@ msgstr ""
 msgid "Network control (highest)"
 msgstr ""
 
-msgid "Network interfaces to include in the bridge."
+msgid "Network interface changes have been made permanent."
 msgstr ""
 
 msgid ""
-"Network settings have been temporarily changed. They will be automatically "
-"discarded after"
+"Network interface changes have been temporarily applied for testing. Keep "
+"changes permanently? Changes are automatically reverted after the testing "
+"delay if they are not permanently applied."
+msgstr ""
+
+msgid ""
+"Network interface settings have been temporarily changed for testing. The "
+"settings will revert to the previous configuration after"
+msgstr ""
+
+msgid "Network interfaces to include in the bridge."
 msgstr ""
 
 msgid "Networks"
@@ -9266,7 +9273,16 @@ msgid ""
 "Allow the creation of <i>tun</i> devices in the jail."
 msgstr ""
 
+msgid "Revert CHANGES"
+msgstr ""
+
+msgid "Revert Network Interface Changes"
+msgstr ""
+
 msgid "Revert branding back to FreeNAS"
+msgstr ""
+
+msgid "Revert interface changes? All changes that are being tested will be lost."
 msgstr ""
 
 msgid "Rollback"
@@ -9366,6 +9382,12 @@ msgstr ""
 msgid "SAVE"
 msgstr ""
 
+msgid "SAVE AND FAILOVER"
+msgstr ""
+
+msgid "SAVE CHANGES"
+msgstr ""
+
 msgid "SAVE CONFIGURATION"
 msgstr "下載設定"
 
@@ -9458,6 +9480,9 @@ msgstr ""
 msgid "START"
 msgstr "啟動"
 
+msgid "START REPLICATION"
+msgstr ""
+
 msgid "STARTTLS"
 msgstr ""
 
@@ -9481,6 +9506,9 @@ msgstr ""
 
 msgid "Save"
 msgstr "儲存"
+
+msgid "Save Changes"
+msgstr ""
 
 msgid "Save Config"
 msgstr "下載設定"
@@ -9511,6 +9539,9 @@ msgstr ""
 
 msgid "Save configuration settings from this machine before updating?"
 msgstr "要在系統更新之前，下載設定另存嗎？"
+
+msgid "Save network interface changes?"
+msgstr ""
 
 msgid "Saving ACLs"
 msgstr "正在儲存 ACL"
@@ -11293,6 +11324,9 @@ msgstr "狀態/設定"
 msgid "Status"
 msgstr "狀態"
 
+msgid "Status of TrueCommand"
+msgstr ""
+
 msgid "Status updated"
 msgstr "狀態已更新"
 
@@ -11558,6 +11592,9 @@ msgstr ""
 msgid "TDB"
 msgstr ""
 
+msgid "TEST CHANGES"
+msgstr ""
+
 msgid "TLS"
 msgstr ""
 
@@ -11684,6 +11721,9 @@ msgstr ""
 msgid "Terms of Service"
 msgstr "服務條款"
 
+msgid "Test Changes"
+msgstr ""
+
 msgid "Test Cloud Sync"
 msgstr ""
 
@@ -11692,6 +11732,12 @@ msgstr ""
 
 msgid "Test email sent!"
 msgstr "測試電子郵件寄送"
+
+msgid "Test network interface changes for "
+msgstr ""
+
+msgid "Test network interface changes? Network connectivity can be interrupted."
+msgstr ""
 
 msgid ""
 "Tests the server connection and verifies the chosen <b>Certificate</b>  "
@@ -11752,6 +11798,16 @@ msgid ""
 "multiple levels and might require doubling or even quadrupling to take "
 "effect.  When this field is blank, new computer accounts are created in the "
 "Active Directory  default OU."
+msgstr ""
+
+msgid ""
+"The Passive controller must be rebooted in order to change the location of "
+"system logs."
+msgstr ""
+
+msgid ""
+"The Passive controller must be rebooted in order to change the location of "
+"the system dataset."
 msgstr ""
 
 msgid "The SMB"
@@ -11987,6 +12043,9 @@ msgstr ""
 msgid "The pool <i>"
 msgstr ""
 
+msgid "The pool containing"
+msgstr ""
+
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
 "computer."
@@ -12136,12 +12195,12 @@ msgid ""
 "the disks in the pool for a general use case."
 msgstr ""
 
-msgid ""
-"There are unapplied network changes. Apply them now? Unapplied changes will "
-"be lost."
+msgid "There are pending network interface changes. Review them now?"
 msgstr ""
 
-msgid "There are unsaved network interface settings.  Review them now?"
+msgid ""
+"There are unapplied network interface changes that must be tested before "
+"being permanently saved. Test changes now?"
 msgstr ""
 
 msgid "There is an upgrade waiting to finish."
@@ -12455,6 +12514,12 @@ msgstr ""
 msgid "TrueCommand Cloud Service"
 msgstr ""
 
+msgid "TrueCommand Cloud Service deregistered"
+msgstr ""
+
+msgid "TrueCommand Cloud Service has been deregistered."
+msgstr ""
+
 msgid "TrueNAS Community Forums"
 msgstr ""
 
@@ -12740,6 +12805,9 @@ msgstr ""
 
 msgid "Upgrade Pool"
 msgstr "升級儲存集區"
+
+msgid "Upgrade Waiting to Finish"
+msgstr ""
 
 msgid "Upgraded"
 msgstr "已升級"
@@ -13458,14 +13526,14 @@ msgstr "Windows 共用 (SMB)"
 msgid "Wipe"
 msgstr "抹除"
 
-msgid "Wipe Disk"
-msgstr "抹除磁碟"
+msgid "Wipe Disk "
+msgstr ""
 
 msgid "Wipe this disk?"
 msgstr "抹除這個磁碟？"
 
-msgid "Wiping Disk..."
-msgstr "正在抹除磁碟..."
+msgid "Wiping disk..."
+msgstr ""
 
 msgid "Workgroup"
 msgstr "工作群組"
@@ -13785,6 +13853,9 @@ msgstr ""
 msgid "is already in use."
 msgstr ""
 
+msgid "is locked."
+msgstr ""
+
 msgid "jail_zfs"
 msgstr ""
 
@@ -13905,7 +13976,7 @@ msgstr ""
 msgid "safe"
 msgstr ""
 
-msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
+msgid "seconds unless SAVE CHANGES is chosen to make them permanent."
 msgstr ""
 
 msgid "securelevel"
