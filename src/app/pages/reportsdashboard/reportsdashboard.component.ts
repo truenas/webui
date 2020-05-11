@@ -95,12 +95,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     });
  
+    this.core.register({observerClass: this, eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+      this.retroLogo = evt.data.retroLogo ? "1" : "0";
+    });
+
     this.core.register({observerClass: this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? "1" : "0";
     });
  
     this.core.register({observerClass: this, eventName:"UserPreferences"}).subscribe((evt:CoreEvent) => {
-      console.log(evt.data.retroLogo);
       this.retroLogo = evt.data.retroLogo ? "1" : "0";
     });
 
@@ -131,9 +134,24 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     });
 
-    this.ws.call('disk.query').subscribe((res) => {
-      this.parseDisks(res);
-      this.core.emit({name:"ReportingGraphsRequest", sender: this});
+    this.diskQueries();
+  }
+
+  diskQueries(){
+
+    this.ws.call('multipath.query').subscribe((multipath_res) => {
+      let multipathDisks = [];
+      multipath_res.forEach((m) => {
+        const children = m.children.map((child) => {
+          return {disk:m.name.replace('multipath/', ''), name: child.name, status: child.status};
+        });
+        multipathDisks = multipathDisks.concat(children);
+      });
+
+      this.ws.call('disk.query').subscribe((res) => {
+        this.parseDisks(res, multipathDisks);
+        this.core.emit({name:"ReportingGraphsRequest", sender: this});
+      });
     });
 
   }
@@ -415,7 +433,6 @@ diskReportBuilderSetup(){
   }
 
   buildDiskReport(device: string | any[], metric: string | any[]){
-    
     // Convert strings to arrays
     if(typeof device == "string"){
       device = [device];
@@ -443,21 +460,16 @@ diskReportBuilderSetup(){
 
   }
 
-  parseDisks(res){
+  parseDisks(res,multipathDisks){
 
-    let uniqueNames = [];
-    let multipathDisks = [];
+    let uniqueNames = res.filter((disk) => !disk.devname.includes('multipath'))
+      .map(d => d.devname);
 
-    res.forEach((disk) => {
-      const devname = disk.multipath_name ? disk.multipath_member + ' (multipath: ' + disk.multipath_name + ')': disk.devname;
-      if(uniqueNames.indexOf(devname) == -1){ 
-        uniqueNames.push(devname);
-      }
-
-      if(disk.devname.startsWith('multipath/')){
-        multipathDisks.push(disk.devname.replace('multipath/', '') + ' = ' + disk.multipath_member);
-      }
+    let multipathNames = multipathDisks.map((disk) => {
+      return disk.name + ' (multipath : ' + disk.disk  + ' : ' + disk.status + ')';
     });
+
+    uniqueNames = uniqueNames.concat(multipathNames);
 
     this.diskDevices = uniqueNames.map((devname) => {
       let spl = devname.split(' ');
