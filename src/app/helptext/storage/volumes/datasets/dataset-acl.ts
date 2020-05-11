@@ -155,5 +155,11 @@ acl_defaults_tooltip: T('Choosing an entry loads a preset ACL that is \
  configured to match general permissions situations.'),
 
 user_not_found: T('Could not find a user name for this user ID.'),
-group_not_found: T('Could not find a group name for this group ID.')
+group_not_found: T('Could not find a group name for this group ID.'),
+
+empty_acl_dialog: {
+  title: T('Error'),
+  message: T('Cannot open this ACL. Check the permissions this dataset \
+ has inherited from parents.')
+}
 }

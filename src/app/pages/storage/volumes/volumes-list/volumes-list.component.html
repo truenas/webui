@@ -26,14 +26,14 @@
               <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
               <ng-template #status>
                 <i class="material-icons orange-icon" *ngIf="row.status==='DEGRADED'">warning</i>
-                <i class="material-icons yellow-icon" *ngIf="row.status==='OFFLINE'">lock</i>
+                <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
                 <i class="material-icons blue-icon" *ngIf="row.status==='FAULTED'">help</i>
                 <i class="material-icons red-icon" 
-                  *ngIf="row.status!=='DEGRADED' && row.status!=='FAULTED' && row.status!=='OFFLINE'" 
+                  *ngIf="row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='FAULTED'"
                 >cancel</i>
               </ng-template>
             </span>
-            {{row.healthy ? 'HEALTHY' : ''}}<span *ngIf="row.usedStr && row.availStr">{{row.usedStr}} {{"Used" | translate}} / {{row.availStr}} {{"Free" | translate}}</span>
+            {{row.healthy ? 'HEALTHY' : row.status}}<span *ngIf="row.usedStr && row.availStr">{{row.usedStr}} {{"Used" | translate}} / {{row.availStr}} {{"Free" | translate}}</span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div fxLayoutAlign="end start" class="icon-row">

@@ -10178,7 +10178,7 @@ msgid "Performs authentication from an LDAP server."
 msgstr "Effectue l'authentification à partir d'un serveur LDAP."
 
 msgid "Periodic Snapshot Tasks"
-msgstr "Instantanées périodiques"
+msgstr "Instantanés périodiques"
 
 msgid "Permission"
 msgstr ""

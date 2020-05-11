@@ -22,6 +22,7 @@ export class SMBListComponent {
   protected route_edit: string[] = [ 'sharing', 'smb', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
   private entityList: EntityTableComponent;
+  productType = window.localStorage.getItem('product_type');
 
   public columns: any[] = [
     {name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
@@ -56,7 +57,7 @@ export class SMBListComponent {
     let poolName = rowName.split('/')[0];
     let optionDisabled;
     rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
-    return [
+    const rows =  [
       {
         id: row.name,
         icon: 'edit',
@@ -118,5 +119,13 @@ export class SMBListComponent {
         onClick: row => this.entityList.doDelete(row)
       }
     ];
+    // Temporary: Drop from menu if SCALE
+    if (this.productType === 'SCALE') {
+      const aclRow = rows.find(row => row.name === 'edit_acl');
+      const shareAclRow = rows.find(row => row.name === 'share_acl')
+      rows.splice(rows.indexOf(aclRow), 1);
+      rows.splice(rows.indexOf(shareAclRow), 1);
+    }
+    return rows;
   }
 }
