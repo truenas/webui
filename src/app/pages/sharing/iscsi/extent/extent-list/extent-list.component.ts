@@ -121,6 +121,5 @@ export class ExtentListComponent {
 
   afterInit(entityList: any) {
     this.entityTable = entityList;
-    this.entityTable.doDelete = this.doDelete;
   }
 }
