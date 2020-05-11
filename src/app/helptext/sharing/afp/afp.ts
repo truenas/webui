@@ -90,7 +90,8 @@ export const helptext_sharing_afp = {
   ),
 
   placeholder_enabled: T('Enabled'),
-  tooltip_enabled: T(''),
+  tooltip_enabled: T('Enable this AFP share. Unset to disable this AFP share \
+ without deleting it.'),
 
   placeholder_nodev: T("Zero Device Numbers"),
   tooltip_nodev: T(

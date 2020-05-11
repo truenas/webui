@@ -27,7 +27,8 @@ export const helptext_sharing_smb = {
     ),
 
     placeholder_enabled: T('Enabled'),
-    tooltip_enabled: T(''),
+    tooltip_enabled: T('Enable this SMB share. Unset to disable this SMB share \
+ without deleting it.'),
 
     placeholder_home: T('Use as Home Share'),
     tooltip_home: T('Allows the share to host user home \
