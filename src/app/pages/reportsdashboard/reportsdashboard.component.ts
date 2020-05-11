@@ -95,6 +95,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
       }
     });
  
+    this.core.register({observerClass: this, eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+      this.retroLogo = evt.data.retroLogo ? "1" : "0";
+    });
+
     this.core.register({observerClass: this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? "1" : "0";
     });
@@ -129,6 +133,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.activateTabFromUrl();
       }
     });
+
+    this.diskQueries();
+  }
+
+  diskQueries(){
 
     this.ws.call('multipath.query').subscribe((multipath_res) => {
       let multipathDisks = [];
