@@ -26,6 +26,7 @@ export class WebdavListComponent {
         {prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
         {prop: 'comment', name: helptext_sharing_webdav.column_comment},
         {prop: 'path', name:  helptext_sharing_webdav.column_path},
+        {prop: 'enabled', name:  helptext_sharing_webdav.column_enabled},
         {prop: 'ro', name:  helptext_sharing_webdav.column_ro, hidden: true},
         {prop: 'perm', name:  helptext_sharing_webdav.column_perm, hidden: true},
     ];

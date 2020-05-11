@@ -69,7 +69,14 @@ export class AFPFormComponent implements OnDestroy {
           name: 'home',
           placeholder: helptext_sharing_afp.placeholder_home,
           tooltip: helptext_sharing_afp.tooltip_home
-        }
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext_sharing_afp.placeholder_enabled,
+          tooltip: helptext_sharing_afp.tooltip_enabled,
+          value: true,
+        },
       ]
     },
     { name: 'divider_access', divider: false },

@@ -19,6 +19,7 @@ export class NFSListComponent {
   public columns: any[] = [
     {name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
     {name: helptext_sharing_nfs.column_comment, prop: 'comment'},
+    {name: helptext_sharing_nfs.column_enabled, prop: 'enabled'},
   ];
   public rowIdentifier = 'nfs_paths';
   public config: any = {
