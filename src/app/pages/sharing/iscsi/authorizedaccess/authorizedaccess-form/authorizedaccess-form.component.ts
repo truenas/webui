@@ -157,7 +157,9 @@ export class AuthorizedAccessFormComponent {
       ctrl.valueChanges.subscribe((res) => {
         let errors = ctrl.errors;
         const compartedCtrlName = index === 0 ? 'peersecret' : 'secret';
-        if (res === entityForm.formGroup.controls[compartedCtrlName].value) {
+        let otherCtrl = entityForm.formGroup.controls[compartedCtrlName];
+        let otherErrors = otherCtrl.errors;
+        if (res === otherCtrl.value) {
           if (!ctrl.hasError('manualValidateError')) {
             if (errors === null) {
               errors = { manualValidateError: true, manualValidateErrorMsg: helptext_sharing_iscsi.authaccess_error_duplicate_secrets };
@@ -171,8 +173,19 @@ export class AuthorizedAccessFormComponent {
             delete errors['manualValidateError'];
             delete errors['manualValidateErrorMsg'];
           }
+          if (otherCtrl.hasError('manualValidateError')) {
+            delete otherErrors['manualValidateError'];
+            delete otherErrors['manualValidateErrorMsg'];
+            delete otherErrors['matchesOther'];
+            otherCtrl.setValue(otherCtrl.value + ' ');
+            setTimeout(() => {
+              otherCtrl.setValue(otherCtrl.value.slice(0, -1))
+            }, 100)
+            
+          }
         }
         ctrl.setErrors(errors);
+        otherCtrl.setErrors(otherErrors);
       });
     })
   }
