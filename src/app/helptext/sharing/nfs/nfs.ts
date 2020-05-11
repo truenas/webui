@@ -43,7 +43,8 @@ export const helptext_sharing_nfs = {
   ),
 
   placeholder_enabled: T('Enabled'),
-  tooltip_enabled: T(''),
+  tooltip_enabled: T('Enable this NFS share. Unset to disable this NFS share \
+ without deleting it.'),
 
   placeholder_network: T("Authorized Networks"),
   tooltip_network: T(

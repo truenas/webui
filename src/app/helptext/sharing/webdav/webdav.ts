@@ -23,7 +23,8 @@ export const helptext_sharing_webdav = {
  to the <samp>webdav</samp> or <samp>www</samp> user/group.'),
 
     placeholder_enabled: T('Enabled'),
-    tooltip_enabled: T(''),
+    tooltip_enabled: T('Enable this WebDAV share. Unset to disable this WebDAV \
+ share without deleting it.'),
 
     column_name: T('Share Name'),
     column_comment: T('Description'),
