@@ -173,13 +173,14 @@ export class AuthorizedAccessFormComponent {
             delete errors['manualValidateError'];
             delete errors['manualValidateErrorMsg'];
           }
+          // If the error gets cleared in this comparison validator, make sure it is cleared for both fields
           if (otherCtrl.hasError('manualValidateError')) {
             delete otherErrors['manualValidateError'];
             delete otherErrors['manualValidateErrorMsg'];
             delete otherErrors['matchesOther'];
-            otherCtrl.setValue(otherCtrl.value + ' ');
             setTimeout(() => {
-              otherCtrl.setValue(otherCtrl.value.slice(0, -1))
+              // 'Resets' the other control with its same value to get angular to check it again
+              otherCtrl.setValue(otherCtrl.value)
             }, 100)
             
           }
