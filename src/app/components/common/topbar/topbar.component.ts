@@ -466,31 +466,21 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   updateHAInfo(info) {
-    let ha_enabled = false;
-    this.ha_disabled_reasons = info;
-    if (info.length > 0) {
-      this.ha_status_text = helptext.ha_status_text_disabled;
-    } else {
-      ha_enabled = true;
+    this.ha_disabled_reasons = info.reasons;
+    if(info.status == "HA Enabled"){
       this.ha_status_text = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();
       }
+    } else {
+      this.ha_status_text = helptext.ha_status_text_disabled;
     }
-
-    this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
-    window.sessionStorage.setItem('ha_status', ha_enabled.toString());
   }
 
   getHAStatus() {
-    this.ws.call('failover.disabled_reasons').subscribe(res => {
-      this.updateHAInfo(res);
+    this.core.register({observerClass: this, eventName:"HA_Status"}).subscribe((evt:CoreEvent) => {
+      this.updateHAInfo(evt.data);
     });
-    if (this.is_ha) {
-      this.ws.subscribe('failover.disabled_reasons').subscribe((evt) => {
-        this.updateHAInfo(evt.fields.disabled_reasons);
-      })
-    }
   }
 
   showHAStatus() {
