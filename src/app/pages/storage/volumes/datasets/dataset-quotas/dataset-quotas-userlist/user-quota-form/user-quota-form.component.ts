@@ -38,7 +38,7 @@ export class UserQuotaFormComponent {
           type: 'input',
           name: 'data_quota',
           placeholder: helptext.users.data_quota.placeholder,
-          tooltip: helptext.users.data_quota.tooltip,
+          tooltip: `${helptext.users.data_quota.tooltip} bytes.`,
           blurStatus: true,
           blurEvent: this.blurEvent,
           parent: this,
