@@ -197,11 +197,12 @@ export class TargetFormComponent {
       );
     });
     const promise3 = new Promise((resolve, reject) => {
-      this.iscsiService.listAuthCredential().toPromise().then(
+      this.iscsiService.getAuth().toPromise().then(
         (authRes) => {
+          const tags = _.uniq(authRes.map(item => item.tag));
           authGroupField.options.push({ label: 'None', value: null });
-          for (let i = 0; i < authRes.length; i++) {
-            authGroupField.options.push({ label: authRes[i].tag, value: authRes[i].tag });
+          for (const tag of tags) {
+            authGroupField.options.push({ label: tag, value: tag });
           }
           resolve(true);
         },
