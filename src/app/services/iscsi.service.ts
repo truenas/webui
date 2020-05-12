@@ -26,10 +26,6 @@ export class IscsiService {
     return this.ws.call('iscsi.initiator.query', []);
   };
 
-  listAuthCredential() {
-    return this.ws.call('iscsi.auth.query', []);
-  };
-
   listTargetGroups() {
     return this.ws.call('iscsi.target.query', []);
   };
