@@ -121,8 +121,8 @@
 .table{ 
   display:table; 
   text-align:left;
-  margin: 16px 24px;
-  width: calc(100% - 48px);
+  margin: 16px 12px;
+  width: calc(100% - 32px);
 }
 
 
@@ -135,7 +135,18 @@
 .td span{opacity: 0.95;}
 .td span.icon{ opacity: 1;}
 
+.td{
+  width:40%;
+}
 
+.td.label{
+  width:52%;
+}
+
+.td .mat-icon{
+  width: 12px;
+  height: auto;
+}
 
 .pool-status .icon-wrapper{
   display: inline-block;
@@ -168,7 +179,7 @@ span.safe{
 .pool-status span.safe .mat-icon,
 .used-space span.safe .mat-icon,
 .disk-errors span.safe .mat-icon{
-  width:auto;
+  width:14px;
   height:auto;
   font-size: 18px;
   position: relative;

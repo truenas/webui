@@ -321,6 +321,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   checkMultipathLabel(name){
+    if(name == null){
+      name =  "unknown";
+    }
     const truth = this.checkMultipath(name);
     let diskName = name;
     if(truth){
@@ -333,8 +336,12 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   checkMultipath(name:string){
-    const truth = name.startsWith("multipath/");
-    return truth;
+    if(name){
+      const truth = name.startsWith("multipath/");
+      return truth;
+    } else {
+      return false;
+    }
   }
 
   updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){
@@ -352,7 +359,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       this.path[slideIndex] = slide;
     } else if(direction == 'back'){
       // empty the path segment
-      this.path[parseInt(this.currentSlide)] = { name: "empty", template: this.empty}
+      this.path[parseInt(this.currentSlide)] = { name: "empty", template: this.empty};
     }
 
     this.updateSlidePosition(slideIndex);
