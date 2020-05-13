@@ -239,18 +239,22 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.core.register({observerClass:this,eventName:"MultipathData"}).subscribe((evt:CoreEvent) => {
       this.currentMultipathDetails = evt.data[0];
-      console.log(this.currentMultipathDetails);
+      
       const activeDisk = evt.data[0].children.filter(prop => prop.status == "ACTIVE");
       this.core.emit({name:"DisksRequest", data:[[["name", "=", activeDisk[0].name]]]});
     });
 
     this.core.register({observerClass:this,eventName:"DisksData"}).subscribe((evt:CoreEvent) => {
-      delete evt.data[0].enclosure;
-      delete evt.data[0].name;
-      delete evt.data[0].devname;
-      delete evt.data[0].multipath_name;
-      delete evt.data[0].multipath_member;
-      this.currentDiskDetails = evt.data[0];
+      if(evt.data.length == 0){
+        this.currentDiskDetails = null;
+      } else {
+        delete evt.data[0].enclosure;
+        delete evt.data[0].name;
+        delete evt.data[0].devname;
+        delete evt.data[0].multipath_name;
+        delete evt.data[0].multipath_member;
+        this.currentDiskDetails = evt.data[0];
+      }
     });
   }
 
@@ -322,7 +326,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   checkMultipathLabel(name){
     if(name == null){
-      name =  "unknown";
+      name =  "N/A";
     }
     const truth = this.checkMultipath(name);
     let diskName = name;
@@ -342,6 +346,30 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     } else {
       return false;
     }
+  }
+
+  trimMultipath(disk, vdev?){
+    if(!disk || disk == null){
+      if(vdev){
+        console.log(vdev);
+      }
+      return {name: disk};
+    }
+
+    const isMultipath = disk.includes('multipath/');
+    const fullName = isMultipath ? disk.replace('multipath/','') : disk;
+
+    //if(fullName.includes('-')){
+      const spl = fullName.split('-');
+      const suffix = spl.length > 1 ? '...  ' : '';
+      const name = spl[0] + suffix;
+    //}
+
+    return {
+      isMultipath: isMultipath,
+      name: name,
+      fullName: fullName
+    };
   }
 
   updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){
