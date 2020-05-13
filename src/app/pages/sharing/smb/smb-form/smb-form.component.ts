@@ -21,6 +21,8 @@ export class SMBFormComponent {
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
   public isTimeMachineOn = false;
+  private hostsAllowOnLoad = '';
+  private hostsDenyOnLoad ='';
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -106,13 +108,15 @@ export class SMBFormComponent {
       type: 'textarea',
       name: 'cifs_hostsallow',
       placeholder: helptext_sharing_smb.placeholder_hostsallow,
-      tooltip: helptext_sharing_smb.tooltip_hostsallow
+      tooltip: helptext_sharing_smb.tooltip_hostsallow,
+      value: ''
     },
     {
       type: 'textarea',
       name: 'cifs_hostsdeny',
       placeholder: helptext_sharing_smb.placeholder_hostsdeny,
-      tooltip: helptext_sharing_smb.tooltip_hostsdeny
+      tooltip: helptext_sharing_smb.tooltip_hostsdeny,
+      value: ''
     },
     {
       type: 'select',
@@ -169,6 +173,12 @@ export class SMBFormComponent {
               protected ws: WebSocketService, private dialog:DialogService,
               protected loader: AppLoaderService ) {}
 
+  resourceTransformIncomingRestData(data) {
+    this.hostsAllowOnLoad = data.cifs_hostsallow ? data.cifs_hostsallow : '';
+    this.hostsDenyOnLoad = data.cifs_hostsdeny ? data.cifs_hostsdeny : '';
+    return data;
+  }
+
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
       return false;
@@ -180,29 +190,45 @@ export class SMBFormComponent {
 
   afterSave(entityForm) {
     if (entityForm.formGroup.controls['cifs_timemachine'].value && !this.isTimeMachineOn) {
-      this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, helptext_sharing_smb.restart_smb_dialog.message,
-        true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
-        helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
-          if (res) {
-            this.loader.open();
-            this.ws.call('service.restart', ['cifs']).subscribe(() => {
-              this.loader.close();
-              this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
-                helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
-                  this.checkACLactions(entityForm);
-                })
-            }, (err) => { 
-              this.loader.close();
-              this.dialog.errorReport('Error', err.err, err.backtrace);
-            }
-            )
-          } else {
-            this.checkACLactions(entityForm);
-          }
-        });
+      this.restartService(entityForm, 'timemachine');
+    } else {
+      this.checkAllowDeny(entityForm);   
+    }
+  }
+
+  checkAllowDeny(entityForm) {
+    if (this.hostsAllowOnLoad !== entityForm.formGroup.controls['cifs_hostsallow'].value ||
+      this.hostsDenyOnLoad !== entityForm.formGroup.controls['cifs_hostsdeny'].value) {
+          this.restartService(entityForm, 'allowdeny');
     } else {
       this.checkACLactions(entityForm);   
+      this.checkACLactions(entityForm)
     }
+  }
+
+  restartService(entityForm, source: string) {
+    let message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine :
+      helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
+    this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
+      true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
+      helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
+        if (res) {
+          this.loader.open();
+          this.ws.call('service.restart', ['cifs']).subscribe(() => {
+            this.loader.close();
+            this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
+              helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
+                this.checkACLactions(entityForm);
+              })
+          }, (err) => { 
+            this.loader.close();
+            this.dialog.errorReport('Error', err.err, err.backtrace);
+          }
+          )
+        } else {
+          source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkACLactions(entityForm);
+        }
+      });
   }
 
   checkACLactions(entityForm) {
