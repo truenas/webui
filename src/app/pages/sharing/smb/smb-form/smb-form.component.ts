@@ -29,6 +29,8 @@ export class SMBFormComponent {
   public isTimeMachineOn = false;
   public namesInUse: string[] = [];
   public productType = window.localStorage.getItem('product_type');
+  private hostsAllowOnLoad = [];
+  private hostsDenyOnLoad = [];
 
   protected fieldSets: FieldSet[] = [
     {
@@ -300,6 +302,12 @@ export class SMBFormComponent {
       });
   }
 
+  resourceTransformIncomingRestData(data) {
+    this.hostsAllowOnLoad = data.hostsallow ? [...data.hostsallow] : [];
+    this.hostsDenyOnLoad = data.hostsdeny ? [...data.hostsdeny] : [];
+    return data;
+  }
+
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
       return false;
@@ -335,31 +343,46 @@ export class SMBFormComponent {
 
   afterSave(entityForm) {
     if (entityForm.formGroup.controls['timemachine'].value && !this.isTimeMachineOn) {
-      this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, helptext_sharing_smb.restart_smb_dialog.message,
-        true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
-        helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
-          if (res) {
-            this.loader.open();
-            this.ws.call('service.restart', ['cifs']).subscribe(() => {
-              this.loader.close();
-              this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
-                helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
-                  this.checkACLactions(entityForm);
-                })
-            }, (err) => { 
-              this.loader.close();
-              this.dialog.errorReport('Error', err.err, err.backtrace);
-            }
-            )
-          } else {
-            this.checkACLactions(entityForm);
-          }
-        });
+      this.restartService(entityForm, 'timemachine');
     } else {
-      this.checkACLactions(entityForm);   
+      this.checkAllowDeny(entityForm);   
     }
   }
 
+  checkAllowDeny(entityForm) {
+    if (!_.isEqual(this.hostsAllowOnLoad, entityForm.formGroup.controls['hostsallow'].value) ||
+      !_.isEqual(this.hostsDenyOnLoad, entityForm.formGroup.controls['hostsdeny'].value)) {
+          this.restartService(entityForm, 'allowdeny');
+    } else {
+      this.checkACLactions(entityForm)
+    }
+  }
+
+  restartService(entityForm, source: string) {
+    let message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine :
+      helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
+    this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
+      true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
+      helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
+        if (res) {
+          this.loader.open();
+          this.ws.call('service.restart', ['cifs']).subscribe(() => {
+            this.loader.close();
+            this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
+              helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
+                this.checkACLactions(entityForm);
+              })
+          }, (err) => { 
+            this.loader.close();
+            this.dialog.errorReport('Error', err.err, err.backtrace);
+          }
+          )
+        } else {
+          source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkACLactions(entityForm);
+        }
+      });
+  }
+ 
   checkACLactions(entityForm) {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
