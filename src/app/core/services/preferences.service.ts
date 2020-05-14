@@ -176,14 +176,15 @@ export class PreferencesService {
       console.log(report);
     }
     
-    const keys = Object.keys(this.preferences);
+    let clone = Object.assign({}, this.preferences);
+    const keys = Object.keys(clone);
     keys.forEach((key) => {
-      if(this.preferences[key] && data[key]){
+      if(clone[key] !== null && data[key] !== null){
         // If middleware object contains a valid key, store the value
-        this.preferences[key] = data[key];
+        clone[key] = data[key];
       }
     });
-
+    this.preferences = clone;
 
     if(this.startupComplete){ 
       //Notify Guided Tour & Theme Service

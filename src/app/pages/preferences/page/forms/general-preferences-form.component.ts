@@ -121,6 +121,8 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
           let prefs = Object.assign(evt.data, {});
           if(prefs.reset == true){
             this.core.emit({name:"ResetPreferences", sender:this});
+            this.target.next({name:"SubmitStart", sender: this});
+            this.isWaiting = true;
             return;
           }
 
