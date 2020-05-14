@@ -6906,7 +6906,7 @@ msgstr ""
 "pourra ou non terminer le processus d'arrêt."
 
 msgid "Force unmount "
-msgstr "Forcer le démontage"
+msgstr "Forcer le démontage "
 
 msgid ""
 "Force using  <a "
@@ -7167,7 +7167,7 @@ msgid "Group Configuration"
 msgstr "Configuration des groupes"
 
 msgid "Group Data Quota "
-msgstr "Quota de données de groupe"
+msgstr "Quota de données de groupe "
 
 msgid "Group ID"
 msgstr "Identifiant (ID) du groupe"
@@ -8583,7 +8583,7 @@ msgid "Lock"
 msgstr "Verrouiller"
 
 msgid "Lock Dataset "
-msgstr "Verrouiller Dataset"
+msgstr "Verrouiller Dataset "
 
 msgid "Lock Pool"
 msgstr "Verrouiller le volume"
@@ -8592,7 +8592,7 @@ msgid "Lock User"
 msgstr "Verrouiller l'utilisateur"
 
 msgid "Lock dataset "
-msgstr "Verrouiller dataset"
+msgstr "Verrouiller dataset "
 
 msgid "Log"
 msgstr "Log"
@@ -8674,13 +8674,13 @@ msgid "Mac Address"
 msgstr "Adresse Mac"
 
 msgid "Magenta"
-msgstr ""
+msgstr "Magenta"
 
 msgid "Mail Server Port"
 msgstr "Port du serveur de messagerie"
 
 msgid "Make Destination Dataset Read-only?"
-msgstr ""
+msgstr "Rendre le dataset de destination en lecture seule ?"
 
 msgid "Manage"
 msgstr "Gérer"
@@ -8689,34 +8689,34 @@ msgid "Manage Custom Themes"
 msgstr "Gérer les thèmes personnalisés"
 
 msgid "Manage Recovery Key"
-msgstr ""
+msgstr "Gérer la clé de récupération"
 
 msgid "Manage SED Passwords"
-msgstr ""
+msgstr "Gérer les mots de passe SED"
 
 msgid "Manage Services and Continue"
-msgstr ""
+msgstr "Gérer les services et continuer"
 
 msgid "Manage ZFS Keys"
-msgstr ""
+msgstr "Gérer les clés ZFS"
 
 msgid "Manage members of"
 msgstr "Gérer les membres de"
 
 msgid "Management"
-msgstr ""
+msgstr "Management"
 
 msgid "Manual"
 msgstr "Manuel"
 
 msgid "Manual S.M.A.R.T. Test"
-msgstr ""
+msgstr "Test S.M.A.R.T. manuel"
 
 msgid "Manual Test"
-msgstr ""
+msgstr "Test manuel"
 
 msgid "Manual Test Summary"
-msgstr ""
+msgstr "Résumé des tests manuels"
 
 msgid "Manual Update"
 msgstr "Mise à jour manuelle"
@@ -8759,12 +8759,16 @@ msgid ""
 "target=\"_blank\">Advanced Encryption Standard (AES)</a>      for more "
 "details."
 msgstr ""
+"Des ensembles d'instructions mathématiques qui déterminent comment le texte en clair est "
+"converti en texte chiffré. Voir la <a href=\"https://en.wikipedia.org/wiki/"
+"Advanced_Encryption_Standard\" target=\"_blank\">norme de cryptage avancée (AES)</a> pour "
+"plus de détails."
 
 msgid "Mattermost username."
 msgstr "Nom d'utilisateur Mattermost."
 
 msgid "Max Connections"
-msgstr ""
+msgstr "Connections max"
 
 msgid "Max Poll"
 msgstr "Poll Max"
@@ -8790,6 +8794,10 @@ msgid ""
 "sizes. Leaving blank restores the field to  the default value of "
 "<i>1500</i>."
 msgstr ""
+"Maximum Transmission Unit, la plus grande unité de données de protocole qui peut être "
+"communiquée. La taille de la plus grande MTU utilisable varie en fonction des interfaces "
+"et des équipements du réseau. <i>1500</i> et <i>9000</i> sont les tailles standard des "
+"MTU Ethernet. Si vous laissez le champ vide, la valeur par défaut est de <i>1500</i>."
 
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
@@ -8832,7 +8840,7 @@ msgid "Maximum number of SysV message queues."
 msgstr "Nombre maximum de files d'attente de messages SysV."
 
 msgid "Maximum number of connections to this module. <i>0</i>  is unlimited."
-msgstr ""
+msgstr "Nombre maximum de connexions à ce module. <i>0</i> est illimité."
 
 msgid "Maximum number of processes for the jail."
 msgstr "Nombre maximum de processus pour le jail."
@@ -8845,7 +8853,7 @@ msgstr ""
 "défaut est 50."
 
 msgid "Maximum swap size is 99 GiB"
-msgstr ""
+msgstr "La taille maximale du swap est de 99 GiB"
 
 msgid "Maximum swap space to use for the jail."
 msgstr "Maximum d'espace de swap à utiliser pour le jail."
@@ -8875,10 +8883,10 @@ msgid "Medium"
 msgstr "Moyen"
 
 msgid "Member Disk"
-msgstr "Membre du disque"
+msgstr "Disque membre"
 
 msgid "Member disk"
-msgstr ""
+msgstr "Disque membre"
 
 msgid "Members"
 msgstr "Membres"
@@ -8923,10 +8931,10 @@ msgid "Message verbosity level in the replication  task log."
 msgstr "Niveau de verbosité des messages dans le log des tâches de réplication."
 
 msgid "Metadata"
-msgstr ""
+msgstr "Métadonnées"
 
 msgid "Metadata VDev"
-msgstr ""
+msgstr "Métadonnées VDev"
 
 msgid "Method"
 msgstr "Méthode"
@@ -8944,6 +8952,16 @@ msgid ""
 "the same system without using the network.</li>  <li><i>LEGACY</i> uses the "
 "legacy replication engine from FreeNAS 11.2  and earlier.</li></ul>"
 msgstr ""
+"Méthode de transfert d'instantanés :<ul>  <li><i>SSH</i> est pris en charge par la "
+"plupart des systèmes. Il nécessite une connexion préalablement créée dans <b>Système &gt; "
+"Connexions SS</b>H.</li>  <li><i>SSH+NETCAT</i> utilise SSH pour établir une connexion "
+"avec le système de destination, puis utilise <a href=\"https://github.com/freenas/py-"
+"libzfs\"  target=\"_blank\">py-libzfs</a> pour envoyer un flux de données non crypté pour "
+"des vitesses de transfert plus élevées. Cela ne fonctionne que lors de la réplication "
+"vers un FreeNAS, un TrueNAS ou un autre système avec <i>py-libzfs</i> installé.</li>  "
+"<li><i>LOCAL</i> réplique efficacement les instantanés vers un autre ensemble de données "
+"sur le même système sans utiliser le réseau.</li>  <li><i>LEGACY</i> utilise l'ancien "
+"moteur de réplication de FreeNAS 11.2 et antérieurs.</li></ul>"
 
 msgid "Metrics"
 msgstr "Métriques"
@@ -8972,7 +8990,7 @@ msgid "Min. Poll"
 msgstr "Poll Min"
 
 msgid "Mini Fab Buttons"
-msgstr ""
+msgstr "Boutons Mini Fab"
 
 msgid "Minimum"
 msgstr "Minimum"
@@ -8987,10 +9005,10 @@ msgid "Minimum value is "
 msgstr "La valeur minimale est "
 
 msgid "Mintues"
-msgstr ""
+msgstr "Mintues"
 
 msgid "Mintues/Hours/Days"
-msgstr ""
+msgstr "Minutes/heures/jours"
 
 msgid "Minute"
 msgstr "Minute"
@@ -9002,15 +9020,20 @@ msgid ""
 "describes identifying spun down drives. Temperature monitoring is disabled "
 "for standby disks."
 msgstr ""
+"Minutes d'inactivité avant que le lecteur ne passe en mode veille. Ce <a href=\"https://"
+"forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-"
+"properly.2068/\" target=\"_blank\">message du forum</a> décrit l'identification des "
+"disques durs en panne. La surveillance de la température est désactivée pour les disques "
+"en veille."
 
 msgid "Minutes when this task will run."
-msgstr ""
+msgstr "Minutes où cette tâche s'exécutera."
 
 msgid "Mirror"
 msgstr "Miroir"
 
 msgid "Mixing disks of different sizes in a vdev is not allowed."
-msgstr ""
+msgstr "Le mélange de disques de différentes tailles dans un vdev n'est pas autorisé."
 
 msgid "Mode"
 msgstr "Mode"
@@ -9049,16 +9072,16 @@ msgid "Month"
 msgstr "Mois"
 
 msgid "Monthly"
-msgstr ""
+msgstr "Mensuel"
 
 msgid "Months"
 msgstr "Mois"
 
 msgid "More Options"
-msgstr ""
+msgstr "Plus d’options"
 
 msgid "Mount Points of "
-msgstr ""
+msgstr "Points de montage de "
 
 msgid ""
 "Mount a <a href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs\" "
@@ -9090,18 +9113,29 @@ msgid ""
 "<i>Enabled</i>, then  enable this setting, update the key server connection "
 "configuration, and click <b>SAVE</b>."
 msgstr ""
+"Déplacer les clés existantes du serveur de clés actuel vers un nouveau serveur de clés.  "
+"Pour passer à un autre serveur de clés, la synchronisation des clés doit être <i>activée</"
+"i>, puis activer ce paramètre, mettre à jour la configuration de connexion du serveur de "
+"clés et cliquer sur <b>SAUVEGARDER</b>."
 
 msgid ""
 "Multi-domain support. Enter additional domains to  secure. Separate domains "
 "by pressing <code>Enter</code>  For example, if the primary domain is "
 "<i>example.com</i>,  entering <i>www.example.com</i> secures both addresses."
 msgstr ""
+"Support multi-domaine. Entrez des domaines supplémentaires à sécuriser. Séparez les "
+"domaines en appuyant sur la touche <code>Entrée</code>. Par exemple, si le domaine "
+"principal est <i>example.com</i>, la saisie de <i>www.example.com</i> permet de sécuriser "
+"les deux adresses<i>.</i>"
 
 msgid ""
 "Multicast DNS. Uses the system <i>Hostname</i> to  advertise enabled and "
 "running services. For example, this controls if  the server appears under "
 "<i>Network</i> on MacOS clients."
 msgstr ""
+"DNS multicast. Utilise le <i>nom d'hôte</i> du système pour annoncer les services activés "
+"et en cours d'exécution. Par exemple, cela permet de contrôler si le serveur apparaît "
+"sous <i>Réseau</i> sur les clients MacOS."
 
 msgid "Multipath Name"
 msgstr "Nom du Multipath"
@@ -9113,6 +9147,8 @@ msgid ""
 "Must match Windows workgroup  name. This setting is ignored when the  "
 "Active Directory or LDAP services are running."
 msgstr ""
+"Doit correspondre au nom du groupe de travail Windows. Ce paramètre est ignoré lorsque "
+"les services Active Directory ou LDAP sont en cours d'exécution."
 
 msgid ""
 "Mutual secret password. Required when Peer User is set. Must be different "
@@ -9152,10 +9188,10 @@ msgid "NIS"
 msgstr "NIS"
 
 msgid "NIS Domain"
-msgstr ""
+msgstr "Domaine NIS"
 
 msgid "NIS Servers"
-msgstr ""
+msgstr "Serveurs NIS"
 
 msgid "NO"
 msgstr "NON"
@@ -9164,7 +9200,7 @@ msgid "NOT RUN SINCE LAST BOOT"
 msgstr "NON EXÉCUTÉ DEPUIS LE DERNIER DÉMARRAGE"
 
 msgid "NSS"
-msgstr ""
+msgstr "NSS"
 
 msgid "NTLMv1 Auth"
 msgstr "NTLMv1 Auth"
@@ -9182,7 +9218,7 @@ msgid "Name Jail and Choose FreeBSD Release"
 msgstr "Nommez le jail et choisissez la version FreeBSD"
 
 msgid "Name and Method"
-msgstr ""
+msgstr "Nom et méthode"
 
 msgid "Name and Naming Schema cannot be provided at the same time."
 msgstr "Le nom et le schéma de nommage ne peuvent pas être fournis en même temps."
@@ -9191,10 +9227,10 @@ msgid "Name and Options"
 msgstr "Nom et options"
 
 msgid "Name and Provider"
-msgstr ""
+msgstr "Nom et fournisseur"
 
 msgid "Name and Type"
-msgstr ""
+msgstr "Nom et type"
 
 msgid ""
 "Name and port of the server that reports the  external IP address. For "
@@ -9270,7 +9306,7 @@ msgid "Name or Naming Schema must be provided."
 msgstr "Le nom ou le schéma de nommage doit être fourni."
 
 msgid "Name that was created with the SMB share."
-msgstr ""
+msgstr "Nom qui a été créé avec le partage SMB."
 
 msgid "Nameserver 1"
 msgstr "Serveur de noms 1 (DNS)"
@@ -9316,19 +9352,19 @@ msgstr ""
 "travail</i> et ne doit pas comporter plus de 15 caractères."
 
 msgid "Netcat Active Side"
-msgstr ""
+msgstr "Netcat côté actif"
 
 msgid "Netcat Active Side Connect Address"
-msgstr ""
+msgstr "Adresse de connexion côté actif de Netcat"
 
 msgid "Netcat Active Side Listen Address"
-msgstr ""
+msgstr "Adresse d'écoute côté actif de Netcat"
 
 msgid "Netcat Active Side Max Port"
-msgstr ""
+msgstr "Port Max côté actif de Netcat"
 
 msgid "Netcat Active Side Min Port"
-msgstr ""
+msgstr "Port Min côté actif de Netcat"
 
 msgid "Netmask"
 msgstr "Masque de réseau"
@@ -9374,6 +9410,9 @@ msgid ""
 "   networks or list network addresses with a CIDR mask. Separate entries by "
 "pressing      <code>Enter</code>."
 msgstr ""
+"Les adresses de réseau sont autorisées à utiliser cet initiateur. Laissez vide pour "
+"autoriser tous les réseaux ou pour énumérer les adresses de réseau avec un masque CIDR. "
+"Séparez les entrées en appuyant sur la touche <code>Entrée</code>."
 
 msgid ""
 "Network addresses allowed use this initiator. Each address can include an "
@@ -9428,7 +9467,7 @@ msgid "Network connectivity will be interrupted. Proceed?"
 msgstr "La connectivité réseau sera interrompue. Poursuivre ?"
 
 msgid "Network control (highest)"
-msgstr ""
+msgstr "Contrôle du réseau (le plus élevé)"
 
 msgid "Network interfaces to include in the bridge."
 msgstr "Interfaces réseau à inclure dans la passerelle."
@@ -9441,7 +9480,7 @@ msgstr ""
 "automatiquement annulés après"
 
 msgid "Networks"
-msgstr ""
+msgstr "Réseaux"
 
 msgid "Never"
 msgstr "Jamais"
@@ -9450,7 +9489,7 @@ msgid "Never Delete"
 msgstr "Jamais effacé"
 
 msgid "New Disk"
-msgstr ""
+msgstr "Nouveau disque"
 
 msgid "New Password"
 msgstr "Nouveau mot de passe"
@@ -9459,7 +9498,7 @@ msgid "New Primary Group"
 msgstr "Nouveau groupe primaire"
 
 msgid "New Static Key Settings"
-msgstr ""
+msgstr "Nouveaux paramètres de clé statique"
 
 msgid ""
 "New users are not given <b>su</b> permissions if <i>wheel</i> is their "
@@ -9469,13 +9508,13 @@ msgstr ""
 "leur groupe principal."
 
 msgid "Newer Clone"
-msgstr ""
+msgstr "Clone plus récent"
 
 msgid "Newer Intermediate, Child, and Clone"
-msgstr ""
+msgstr "Intermédiaire, enfant et clone plus récents"
 
 msgid "Next"
-msgstr "Prochain"
+msgstr "Suivant"
 
 msgid "Next Run"
 msgstr "Prochaine exécution"
@@ -9502,7 +9541,7 @@ msgid "No Repositories"
 msgstr "Pas de repositories"
 
 msgid "No Safety Check (CAUTION)"
-msgstr ""
+msgstr "Pas de contrôle de sécurité (ATTENTION)"
 
 msgid "No Stat"
 msgstr "Aucune stat"
@@ -9524,7 +9563,7 @@ msgid "No longer keep this Boot Environment?"
 msgstr "Vous ne conservez plus cet environnement d'amorçage ?"
 
 msgid "No network interfaces are marked critical for failover."
-msgstr ""
+msgstr "Aucune interface réseau n'est considérée comme critique pour le basculement (failover)."
 
 msgid "No pools"
 msgstr "Aucun volume"
@@ -9548,18 +9587,20 @@ msgid "No, continue with import"
 msgstr "Non, continuer avec l'importation"
 
 msgid "Nobind"
-msgstr ""
+msgstr "Nobind"
 
 msgid "Nodes CARP states do not agree."
-msgstr ""
+msgstr "Les états des nœuds CARP ne sont pas d'accord."
 
 msgid "None"
-msgstr ""
+msgstr "Aucun"
 
 msgid ""
 "Normal vdev type, used for primary storage operations. ZFS pools always "
 "have at least one DATA vdev."
 msgstr ""
+"Type vdev normal, utilisé pour les opérations de stockage primaire. Les volume ZFS ont "
+"toujours au moins un vdev de données."
 
 msgid "Not Available"
 msgstr "Non disponible"
@@ -9568,13 +9609,13 @@ msgid "Notes"
 msgstr "Notes"
 
 msgid "Notes about this disk."
-msgstr ""
+msgstr "Notes sur ce disque."
 
 msgid "Notes about this extent."
 msgstr "Notes sur cette étendue."
 
 msgid "Notes or identifiers about the theme."
-msgstr ""
+msgstr "Notes ou identificateurs sur le thème."
 
 msgid "Notice"
 msgstr "Remarque"
@@ -9586,7 +9627,7 @@ msgid "Number of CPUs"
 msgstr "Nombre de CPUs"
 
 msgid "Number of Cores"
-msgstr ""
+msgstr "Nombre de cores"
 
 msgid "Number of Graph Points"
 msgstr "Nombre de points du graphique"
@@ -9607,7 +9648,7 @@ msgid "Number of SysV shared memory segments."
 msgstr "Nombre de segments de mémoire partagée SysV."
 
 msgid "Number of Threads"
-msgstr ""
+msgstr "Nombre de Threads"
 
 msgid ""
 "Number of child jails allowed to be created by the jail or other jails "
@@ -9629,11 +9670,15 @@ msgid ""
 "Number of objects that can be owned by each of the selected groups.  "
 "Entering <code>0</code> (zero) allows unlimited objects."
 msgstr ""
+"Nombre d'objets pouvant être détenus par chacun des groupes sélectionnés.  La saisie de "
+"<code>0</code> (zéro) permet un nombre illimité d'objets."
 
 msgid ""
 "Number of objects that can be owned by each of the selected users.  "
 "Entering <code>0</code> (zero) allows unlimited objects."
 msgstr ""
+"Nombre d'objets pouvant être détenus par chacun des utilisateurs sélectionnés.  La saisie "
+"de <code>0</code> (zéro) permet un nombre illimité d'objets."
 
 msgid ""
 "Number of password-based key derivation function 2 (PBKDF2) iterations to "
@@ -9642,6 +9687,10 @@ msgid ""
 "href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> "
 "for more details."
 msgstr ""
+"Nombre d'itérations de la fonction de dérivation de clé basée sur le mot de passe 2 "
+"(PBKDF2) à utiliser pour réduire la vulnérabilité aux attaques par force brute. La saisie "
+"d'un nombre supérieur à <i>100000</i> est nécessaire. Voir <a href=\"https://en.wikipedia."
+"org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> pour plus de détails."
 
 msgid ""
 "Number of points for each hourly, daily,  weekly, monthly, or yearly graph "
