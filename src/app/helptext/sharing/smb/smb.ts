@@ -160,8 +160,8 @@ export const helptext_sharing_smb = {
     restart_smb_dialog: {
        title: T('Restart SMB Service?'),
        message_time_machine: T('Enabling <em>Time Machine</em> on an SMB share requires restarting the SMB service.'),
-       message_allow_deny: T('Changes to <em>Hosts Allow</em> or <em>Hosts Deny</em> will take effect when the \
- SMB service is restarted.'),
+       message_allow_deny: T('Changes to <em>Hosts Allow</em> or <em>Hosts Deny</em> take effect when the \
+ SMB service restarts.'),
        action_btn: T('Save and Restart SMB Now'),
        cancel_btn: T('Save Without Restarting')
     },
