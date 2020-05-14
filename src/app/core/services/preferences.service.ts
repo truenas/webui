@@ -38,7 +38,7 @@ export interface UserPreferences {
 
 @Injectable()
 export class PreferencesService {
-  private debug = true;
+  private debug = false;
   private startupComplete: boolean = false;
   public defaultPreferences: UserPreferences = {
     "platform":"freenas",// Detect platform
@@ -89,28 +89,6 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-      if(!this.startupComplete){
-        const dummyData = {
-          allowPwToggle: true,
-          customThemes: [],
-          dateFormat: "DD/MM/YYYY",
-          favoriteThemes: [],
-          metaphor: "auto",
-          platform: "freenas",
-          preferIconsOnly: false,
-          rebootAfterManualUpdate: false,
-          showGuide: true,
-          showTooltips: true,
-          showWelcomeDialog: false,
-          tableDisplayedColumns: [],
-          timeFormat: "hh:mm:ss a",
-          timestamp: "2020-05-14T18:50:04.314Z",
-          userTheme: "ix-dark",
-          someDeprecatedProp: "I am deprecated"
-        };
-
-        evt.data[0].attributes.preferences = dummyData;
-      }
 
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
@@ -193,6 +171,7 @@ export class PreferencesService {
   updatePreferences(data:UserPreferences){
 
     if(data && !this.startupComplete && this.debug){
+      console.warn(data);
       const report = this.sanityCheck(data);
       console.log(report);
     }
