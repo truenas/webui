@@ -9,7 +9,9 @@ import {
   TemplateRef,
   ViewChildren,
   AfterViewInit,
-  OnChanges
+  OnChanges,
+  ChangeDetectorRef,
+  AfterViewChecked
 } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -35,6 +37,7 @@ import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-
 
 
 export interface Formconfiguration {
+  prerequisite?;
   fieldSets?;
   fieldSetDisplay?;
   values?;
@@ -101,7 +104,7 @@ export interface Formconfiguration {
   styleUrls : [ './entity-form.component.scss' ],
   providers : [ EntityFormService, FieldRelationService ]
 })
-export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
+export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterViewChecked {
 
   @Input('conf') conf: Formconfiguration;
 
@@ -145,7 +148,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public data: Object = {};
   public showDefaults: boolean = false;
   public showSpinner: boolean = false;
-
+  public isFromPending = false;
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected location: Location, private fb: FormBuilder,
@@ -154,7 +157,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               protected loader: AppLoaderService,
               public adminLayout: AdminLayoutComponent,
               private dialog:DialogService,
-              public translate: TranslateService) {
+              public translate: TranslateService,
+              private cdr: ChangeDetectorRef) {
                 this.loader.callStarted.subscribe(() => this.showSpinner = true);
                 this.loader.callDone.subscribe(() => this.showSpinner = false);
               }
@@ -167,7 +171,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  ngOnInit() {
+  ngAfterViewChecked() {
+    // detect form.pending which will be changed if form use async validator
+    if (this.formGroup && this.formGroup.pending !== this.isFromPending) {
+      this.isFromPending = this.formGroup.pending;
+      this.cdr.detectChanges();
+    }
+  }
+
+  async ngOnInit() {
     //get system general setting
     this.ws.call('system.advanced.config').subscribe((res)=> {
       if (res) {
@@ -188,6 +200,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if(this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
+    if (this.conf.prerequisite) {
+      await this.conf.prerequisite();
+    }
+
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -665,6 +681,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         (<FormGroup>formArray.controls[i]).controls[key].setValue(value);
       }
     }
+    formArray.markAllAsTouched();
   }
 
   setRelation(config: FieldConfig) {

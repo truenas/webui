@@ -1,6 +1,7 @@
 import { Validators } from "@angular/forms";
 import { T } from "app/translate-marker";
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation'
+import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 export const helptext_system_email = {
   fromemail: {
@@ -68,6 +69,7 @@ export const helptext_system_email = {
     tooltip: T(
       "Enter the password for the SMTP server. Only plain ASCII\
  characters are accepted."
-    )
+    ),
+    validation: [regexValidator(/^[ -~]+$/)]
   }
 };

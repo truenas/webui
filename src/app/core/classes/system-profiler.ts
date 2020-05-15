@@ -261,9 +261,9 @@ export class SystemProfiler {
 
         let poolDisk;
         if(vdev.disks[diskName] == -1){
-          poolDisk = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex];
+          poolDisk = this.pools[vdev.poolIndex].topology[vdev.topology][vdev.vdevIndex];
         } else {
-          poolDisk = this.pools[vdev.poolIndex].topology.data[vdev.vdevIndex].children[vdev.disks[diskName]];
+          poolDisk = this.pools[vdev.poolIndex].topology[vdev.topology][vdev.vdevIndex].children[vdev.disks[diskName]];
         }
         
         return poolDisk.status;

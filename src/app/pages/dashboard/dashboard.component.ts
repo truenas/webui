@@ -60,26 +60,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showSpinner: boolean = true;
 
-  constructor(protected core:CoreService, protected ws: WebSocketService, public mediaObserver: MediaObserver, private el: ElementRef){
+  constructor(protected core:CoreService, protected ws: WebSocketService, 
+    public mediaObserver: MediaObserver, private el: ElementRef){
     this.statsDataEvents = new Subject<CoreEvent>();
 
-    mediaObserver.media$.subscribe((evt) =>{
+    this.checkScreenSize();
 
-      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+    window.onresize = () => {
+      this.checkScreenSize();     
+    }
 
-      // If leaving .xs screen then reset mobile position
-      if(st == 'Desktop' && this.screenType == 'Mobile'){
-        this.onMobileBack();
-      }
-
-      this.screenType = st;
-
-      // Eliminate top level scrolling 
-      let wrapper = (<any>document).querySelector('.fn-maincontent');
-      wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
-      
-    });
-
+     // The following (commented out code) should work, but gives trouble on Ffx
+    // mediaObserver.media$.subscribe((evt) =>{
+    //   let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop'
+    // });
   }
 
   ngAfterViewInit(){
@@ -90,6 +84,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     window.onfocus = () => {
       this.startListeners();
     }
+  }
+
+  checkScreenSize() {
+    let st = window.innerWidth < 600 ? 'Mobile' : 'Desktop'
+
+    // If leaving .xs screen then reset mobile position
+    if(st == 'Desktop' && this.screenType == 'Mobile'){
+      this.onMobileBack();
+    }
+
+    this.screenType = st;
+
+    // Eliminate top level scrolling 
+    let wrapper = (<any>document).querySelector('.fn-maincontent');
+    wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
   }
 
   onMobileLaunch(evt: DashConfigItem) {
@@ -294,21 +303,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (evt.data[i].children && evt.data[i].children[0]) {
         avail = evt.data[i].children[0].avail;
       }
+      
+      const rootDataset = evt.data[i].children[0];
+ 
       let zvol = {
         avail: avail,
         id:evt.data[i].id,
+        name:evt.data[i].name,
+        used:rootDataset.used,
+        used_pct: rootDataset.used_pct.toString() + '%',
         is_decrypted:evt.data[i].is_decrypted,
         is_upgraded:evt.data[i].is_upgraded,
         mountpoint:evt.data[i].mountpoint,
-        name:evt.data[i].name,
         status:evt.data[i].status, // RETURNS HEALTHY, LOCKED, UNKNOWN, DEGRADED, FAULTED, OFFLINE, REMOVED
-        used:evt.data[i].used,
-        used_pct:evt.data[i].used_pct,
         vol_encrypt:evt.data[i].vol_encrypted,
         vol_encryptkey:evt.data[i].vol_encryptkey,
         vol_guid:evt.data[i].vol_guid,
-        vol_name:evt.data[i].vol_name
+        vol_name:evt.data[i].vol_name,
       }
+      
       vd[zvol.id] = zvol;
     }
     

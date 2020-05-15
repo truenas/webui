@@ -7,14 +7,12 @@ lagg_interface_placeholder : T('Lagg Interface'),
 lagg_interface_tooltip : T('Description of the lagg interface.'),
 
 lagg_protocol_placeholder : T('Lagg Protocol'),
-lagg_protocol_tooltip : T('Select the <a\
- href="--docurl--/network.html#link-aggregations"\
- target="_blank">Protocol Type</a>.<br>\
- <i>LACP</i> is the recommended protocol if the network\
- switch is capable of active LACP.<br>\
- <i>Failover</i> is the default protocol choice and\
- should only be used if the network switch does not\
- support active LACP.'),
+lagg_protocol_tooltip : T('Determines the outgoing and incoming traffic ports.<br> \
+ <i>LACP</i> is the recommended protocol if the network switch is capable of \
+ active LACP.<br><i>Failover</i> is the default protocol choice and \
+ should only be used if the network switch does not support active LACP.<br> \
+ See <a href="https://www.freebsd.org/cgi/man.cgi?query=lagg" target="_blank">lagg(4)</a> \
+ for more details.'),
 lagg_protocol_validation : [ Validators.required ],
 
 lagg_interfaces_placeholder : T('Lagg Interfaces'),

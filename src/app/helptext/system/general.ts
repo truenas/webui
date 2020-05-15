@@ -5,10 +5,10 @@ export const helptext_system_general = {
 
   stg_guicertificate: {
     placeholder: T("GUI SSL Certificate"),
-    tooltip: T('The system uses a self-signed \
- <a href="--docurl--/system.html#certificates" target="_blank">certificate</a> \
- to enable encrypted web interface connections. To change the default \
- certificate, select a different created or imported certificate.'
+    tooltip: T('The system uses a self-signed certificate \
+ to enable encrypted web interface connections. To change \
+ the default certificate, select a different certificate \
+ that was created or imported in the <b>Certificates</b> menu.'
     ),
     validation: [Validators.required]
   },
@@ -169,6 +169,7 @@ export const helptext_system_general = {
     title: T('Upload Config'),
     button_text: T("Upload"),
     tooltip: T('Browse to the locally saved configuration file.'),
+    validation: [Validators.required],
     message: T(
       '<p>The system will reboot to perform this operation!</p>\
  <p><font color="red">All passwords are reset when the \

@@ -27,10 +27,8 @@ disk_form_acousticlevel_tooltip : T('Modify for disks that understand <a\
  target="_blank">AAM</a>.'),
 
 disk_form_togglesmart_placeholder : T('Enable S.M.A.R.T.'),
-disk_form_togglesmart_tooltip : T('Set by default if the disk supports S.M.A.R.T.\
- Unset to disable any configured <a\
- href="--docurl--/tasks.html#s-m-a-r-t-tests"\
- target="_blank">S.M.A.R.T. tests</a>.'),
+disk_form_togglesmart_tooltip : T('Activated when the disk supports S.M.A.R.T.\
+ Unset to disable any scheduled tests in <b>Tasks > S.M.A.R.T. Tests</b>.'),
 
 disk_form_smartoptions_placeholder: T('S.M.A.R.T. extra options'),
 disk_form_smartoptions_tooltip : T('Additional <a\

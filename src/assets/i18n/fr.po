@@ -1764,36 +1764,36 @@ msgid "Apply Pending update"
 msgstr "Appliquer les mises à jour en attente"
 
 msgid "Apply Permissions Recursively"
-msgstr "Appliquer les permissions de manière récursive"
+msgstr "Appliquer les autorisations de manière récursive"
 
 msgid "Apply Update"
 msgstr "Appliquer la mise à jour"
 
 msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
-"Appliquer les changements de réseau ? La connectivité réseau sera "
+"Appliquer les changements réseau ? La connectivité réseau sera "
 "interrompue."
 
 msgid "Apply permissions recursively"
-msgstr "Appliquer les permissions de manière récursive"
+msgstr "Appliquer les autorisations de manière récursive"
 
 msgid "Apply permissions recursively to all child datasets of the current dataset."
 msgstr ""
-"Appliquer les permissions de manière récursive à tous les datasets enfants "
+"Appliquer les autorisations de manière récursive à tous les datasets enfants "
 "du dataset courant."
 
 msgid ""
 "Apply permissions recursively to all directories and files in the current "
 "dataset."
 msgstr ""
-"Appliquer les permissions de manière récursive à tous les répertoires et "
+"Appliquer les autorisations de manière récursive à tous les répertoires et "
 "fichiers du dataset courant."
 
 msgid ""
 "Apply permissions recursively to all directories and files within the "
 "current dataset."
 msgstr ""
-"Appliquer les permissions de manière récursive à tous les répertoires et "
+"Appliquer les autorisations de manière récursive à tous les répertoires et "
 "fichiers du dataset courant."
 
 msgid "Apply permissions to child datasets"
@@ -5800,7 +5800,7 @@ msgid "Export Certificate"
 msgstr "Exporter le certificat"
 
 msgid "Export Password Secret Seed"
-msgstr "Exporter le mot de passe secret"
+msgstr "Exporter la valeur secrète du mot de passe"
 
 msgid "Export Pool Encryption Keys"
 msgstr "Exporter les clés de chiffrement du volume"
@@ -6000,7 +6000,7 @@ msgid "Flags"
 msgstr "Flags"
 
 msgid "Flags Type"
-msgstr "Type de drapeaux"
+msgstr "Type de Flags"
 
 msgid ""
 "Flags to pass to <a "
@@ -8861,7 +8861,7 @@ msgid "Performs authentication from an LDAP server."
 msgstr "Effectue l'authentification à partir d'un serveur LDAP."
 
 msgid "Periodic Snapshot Tasks"
-msgstr "Instantanées périodiques"
+msgstr "Instantanés périodiques"
 
 msgid "Permissions"
 msgstr "Autorisations"
@@ -9447,7 +9447,7 @@ msgid ""
 "Replicate all child dataset snapshots. When  set, <b>Exclude Child "
 "Datasets</b> becomes available."
 msgstr ""
-"Répliquer tous les instantanés du dataset enfant. Lorsqu'il est défini, "
+"Répliquer tous les instantanés des datasets enfant. Lorsqu'il est défini, "
 "<b>Exclure les datasets enfant</b> devient disponible."
 
 msgid "Replicate from scratch if incremental is not possible"
@@ -12555,7 +12555,7 @@ msgid "Target Alias"
 msgstr "Alias de la cible"
 
 msgid "Target Dataset"
-msgstr "Dataset de la cible"
+msgstr "Dataset cible"
 
 msgid "Target Mode"
 msgstr "Mode de la cible"
@@ -13658,7 +13658,7 @@ msgid "Upload Chunk Size (MiB)"
 msgstr "Taille des morceau d'upload (MiB)"
 
 msgid "Upload Config"
-msgstr "Envoyer la config"
+msgstr "Charger une config"
 
 msgid ""
 "Upload a Google  <a "

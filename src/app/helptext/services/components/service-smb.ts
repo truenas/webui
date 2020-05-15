@@ -19,15 +19,12 @@ cifs_srv_netbiosname_b_validation : [ Validators.required, Validators.maxLength(
 cifs_srv_netbiosalias_placeholder: T('NetBIOS Alias'),
 cifs_srv_netbiosalias_tooltip: T('Enter any aliases, separated by spaces.\
  Each alias can be up to 15 characters long.'),
-cifs_srv_netbiosalias_validation: [ Validators.maxLength(15) ],
+cifs_srv_netbiosalias_errmsg: T('Aliases must be 15 characters or less.'),
 
 cifs_srv_workgroup_placeholder: T('Workgroup'),
-cifs_srv_workgroup_tooltip: T('Must match Windows workgroup\
- name. This setting is ignored if the\
- <a href="--docurl--/directoryservices.html#active-directory"\
- target="_blank">Active Directory</a> or <a\
- href="--docurl--/directoryservices.html#ldap"\
- target="_blank">LDAP</a> service is running.'),
+cifs_srv_workgroup_tooltip: T('Must match Windows workgroup \
+ name. This setting is ignored when the \
+ Active Directory or LDAP services are running.'),
 cifs_srv_workgroup_validation : [ Validators.required ],
 
 cifs_srv_description_placeholder: T('Description'),
