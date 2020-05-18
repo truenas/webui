@@ -75,6 +75,10 @@ mode_type_tooltip : T('<i>AHCI</i> emulates an AHCI hard disk for best\
 raw_size_placeholder : T('Raw filesize'),
 raw_size_tooltip : T('Define the size of the raw file in GiB.'),
 
+pptdev_placeholder: T('PCI Passthru Device'),
+pptdev_tooltip: T('Specify the PCI device to pass thru (bus#/slot#/fcn#).'),
+pptdev_validation: [regexValidator(/\b([0-9]+\/){2}([0-9])+\b/i)],
+
 rootpwd_placeholder : T('password'),
 rootpwd_tooltip : T('Enter a password for the <i>rancher</i> user. This\
  is used to log in to the VM from the serial shell.'),

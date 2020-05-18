@@ -11,7 +11,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
   selector: 'app-dataset-quotas-grouplist',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class DatasetQuotasGrouplistComponent {
+export class DatasetQuotasGrouplistComponent implements OnDestroy{
   public pk: string;
   public title = helptext.groups.table_title;
   protected entityList: any;
@@ -69,7 +69,9 @@ export class DatasetQuotasGrouplistComponent {
       label : T("Edit"),
       name: "edit",
       onClick : () => {
+        self.loader.open();
         self.ws.call('pool.dataset.get_quota', [self.pk, 'GROUP', [['id', '=', row.id]]]).subscribe(res => {
+          self.loader.close();
           const conf: DialogFormConfiguration = {
             title: helptext.groups.dialog.title,
             fieldConfig: [
@@ -84,8 +86,8 @@ export class DatasetQuotasGrouplistComponent {
                 type: 'input',
                 name: 'data_quota',
                 placeholder: helptext.groups.data_quota.placeholder,
-                tooltip: helptext.groups.data_quota.tooltip,
-                value: self.storageService.convertBytestoHumanReadable(res[0].quota, 0),
+                tooltip: `${helptext.groups.data_quota.tooltip} bytes.`,
+                value: self.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,
                 blurEvent: self.blurEvent,
@@ -147,6 +149,9 @@ export class DatasetQuotasGrouplistComponent {
           }
           this.dialogService.dialogFormWide(conf);
 
+        }, err => {
+          self.loader.close();
+          self.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
         })
       }
     })
@@ -177,7 +182,7 @@ export class DatasetQuotasGrouplistComponent {
   }
 
   blurEvent(parent) {
-    (<HTMLInputElement>document.getElementById('group-data-quota_input')).value =
+    (<HTMLInputElement>document.getElementById('data-quota_input')).value =
       parent.storageService.humanReadable;
   }
 

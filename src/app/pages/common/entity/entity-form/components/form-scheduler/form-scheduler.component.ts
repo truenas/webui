@@ -268,18 +268,18 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
 
-      let tempOffset = moment.tz(this.timezone).utcOffset();
+      let utcOffset = moment.tz(this.timezone).utcOffset();
       // Convert offset in minutes (-420) to hours (-700) for Angular date pipe
-        tempOffset = ((tempOffset/60)*100).toString();
-        if (tempOffset[0] !== '-') {
-          tempOffset = '+' + tempOffset;
-        }
-        // Pad to 5 characters (60 to +0060, etc) 
-        while (tempOffset.length < 5) {
-          let tempStr = tempOffset.slice(1);
-          tempOffset = tempOffset[0] + '0' + tempStr;
-        }
-        this.offset = tempOffset;    
+      let tempOffset = ((utcOffset/60)*100).toString();
+      if (tempOffset[0] !== '-') {
+        tempOffset = '+' + tempOffset;
+      }
+      // Pad to 5 characters (60 to +0060, etc) 
+      while (tempOffset.length < 5) {
+        let tempStr = tempOffset.slice(1);
+        tempOffset = tempOffset[0] + '0' + tempStr;
+      }
+      this.offset = tempOffset;    
   
       this.minDate = moment();
       this.maxDate = moment().endOf('month');

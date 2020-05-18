@@ -288,11 +288,6 @@ export class ReplicationFormComponent {
                 },
                 {
                     type: 'checkbox',
-                    name: 'dedup',
-                    placeholder: helptext.dedup_placeholder,
-                    tooltip: helptext.dedup_tooltip,
-                }, {
-                    type: 'checkbox',
                     name: 'large_block',
                     placeholder: helptext.large_block_placeholder,
                     tooltip: helptext.large_block_tooltip,

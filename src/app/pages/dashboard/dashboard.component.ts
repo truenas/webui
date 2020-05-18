@@ -20,6 +20,8 @@ import { tween, styler } from 'popmotion';
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
  
   public screenType: string = 'Desktop'; // Desktop || Mobile
+  public optimalDesktopWidth: string = '100%';
+  public widgetWidth: number = 540; // in pixels (Desktop only)
 
   public dashState: DashConfigItem[]; // Saved State
   public activeMobileWidget: DashConfigItem[] = [];
@@ -62,6 +64,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(protected core:CoreService, protected ws: WebSocketService, 
     public mediaObserver: MediaObserver, private el: ElementRef){
+
+    core.register({observerClass: this, eventName: "SidenavStatus"}).subscribe((evt: CoreEvent) => {
+      setTimeout(() => {
+        this.checkScreenSize();      
+      }, 100);
+    });
+
     this.statsDataEvents = new Subject<CoreEvent>();
     
     this.checkScreenSize();
@@ -69,11 +78,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     window.onresize = () => {
       this.checkScreenSize();     
     }
-
-        // The following (commented out code) should work, but gives trouble on Ffx
-    // mediaObserver.media$.subscribe((evt) =>{
-        // let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
-    // })
   }
 
   ngAfterViewInit(){
@@ -84,21 +88,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     window.onfocus = () => {
       this.startListeners();
     }
+
+    this.checkScreenSize();
   }
 
   checkScreenSize() {
     let st = window.innerWidth < 600 ? 'Mobile' : 'Desktop';
 
-      // If leaving .xs screen then reset mobile position
-      if(st == 'Desktop' && this.screenType == 'Mobile'){
-        this.onMobileBack();
-      }
+    // If leaving .xs screen then reset mobile position
+    if(st == 'Desktop' && this.screenType == 'Mobile'){
+      this.onMobileBack();
+    }
 
-      this.screenType = st;
+    this.screenType = st;
 
-      // Eliminate top level scrolling 
-      let wrapper = (<any>document).querySelector('.fn-maincontent');
-      wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto'
+    // Eliminate top level scrolling 
+    let wrapper = (<any>document).querySelector('.fn-maincontent');
+    wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
+    this.optimizeWidgetContainer();
+  }
+
+  optimizeWidgetContainer(){
+    let wrapper = (<any>document).querySelector('.rightside-content-hold');
+    
+    const withMargin = this.widgetWidth + 8;
+    const max = Math.floor(wrapper.offsetWidth / withMargin);
+    const odw = max * withMargin;
+    this.optimalDesktopWidth = odw.toString() + 'px';
   }
 
   onMobileLaunch(evt: DashConfigItem) {
