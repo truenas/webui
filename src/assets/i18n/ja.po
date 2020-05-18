@@ -16,6 +16,9 @@ msgstr " 詳細については、通知を確認してください。"
 msgid " Download Updates"
 msgstr " アップデートをダウンロード"
 
+msgid " First data vdev is a "
+msgstr ""
+
 msgid " First vdev has "
 msgstr ""
 
@@ -105,10 +108,8 @@ msgstr ""
 msgid " seconds"
 msgstr ""
 
-msgid ""
-" seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
-"for testing."
-msgstr "秒、KEEP PERMANENTLYが選択されない限り。 テストできるように遅延時間を調整します。"
+msgid " seconds."
+msgstr ""
 
 msgid " service has been enabled."
 msgstr "サービスが有効になりました。"
@@ -168,6 +169,9 @@ msgid "(Remove pool from database)"
 msgstr "（データベースからプールを削除）"
 
 msgid "(top-right), then"
+msgstr ""
+
+msgid ", new Metadata vdev is a "
 msgstr ""
 
 msgid ", new vdev is "
@@ -691,9 +695,6 @@ msgstr ""
 msgid "API URL"
 msgstr ""
 
-msgid "APPLY CHANGES"
-msgstr "変更を適用"
-
 msgid "ARN"
 msgstr ""
 
@@ -1014,8 +1015,8 @@ msgstr ""
 
 msgid ""
 "Additional options for <a "
-"href=\"https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html\" "
-"target=\"_blank\">sssd.conf(5)</a>."
+"href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" "
+"target=\"_blank\">nslcd.conf</a>."
 msgstr ""
 
 msgid ""
@@ -1084,6 +1085,9 @@ msgid "Advanced Power Management"
 msgstr ""
 
 msgid "Advanced Remote Options"
+msgstr ""
+
+msgid "Advanced Replication Creation"
 msgstr ""
 
 msgid "Advanced Settings"
@@ -1483,9 +1487,6 @@ msgstr "適用"
 msgid "Apply Failover Upgrade"
 msgstr "フェールオーバーアップグレードの適用"
 
-msgid "Apply Network Changes"
-msgstr "ネットワークの変更を適用"
-
 msgid "Apply Pending Updates"
 msgstr "保留中の更新を適用"
 
@@ -1503,9 +1504,6 @@ msgstr ""
 
 msgid "Apply Update"
 msgstr "アップデートを適用します"
-
-msgid "Apply network changes? Network connectivity will be interrupted."
-msgstr "ネットワークの変更を適用しますか？ ネットワーク接続は一時中断されます。"
 
 msgid "Apply permissions recursively"
 msgstr "再帰的に権限を適用"
@@ -1540,6 +1538,9 @@ msgstr ""
 
 msgid "Archive"
 msgstr "アーカイブ"
+
+msgid "Are you sure you want to deregister TrueCommand Cloud Service?"
+msgstr ""
 
 msgid "Are you sure you want to sync from peer?"
 msgstr "ピアから同期してもよろしいですか？"
@@ -2113,6 +2114,11 @@ msgstr "保存するためのPoolが構成されるまで、PluginやJailを作�
 msgid "Cannot edit while HA is enabled."
 msgstr ""
 
+msgid ""
+"Cannot open this ACL. Check the permissions this dataset  has inherited "
+"from parents."
+msgstr ""
+
 msgid "Case Sensitivity"
 msgstr "大文字・小文字の区別"
 
@@ -2217,7 +2223,12 @@ msgid ""
 "cannot contain a space or <b>#</b>."
 msgstr ""
 
-msgid "Changes that have been applied will revert after "
+msgid "Changes Saved"
+msgstr ""
+
+msgid ""
+"Changes to <em>Hosts Allow</em> or <em>Hosts Deny</em> take effect when the "
+" SMB service restarts."
 msgstr ""
 
 msgid "Changing"
@@ -2937,6 +2948,9 @@ msgstr ""
 msgid "Connecting to "
 msgstr ""
 
+msgid "Connecting to TrueCommand"
+msgstr ""
+
 msgid "Connection"
 msgstr ""
 
@@ -3239,9 +3253,6 @@ msgid "DHCP"
 msgstr ""
 
 msgid "DHCP Autoconfigure IPv4"
-msgstr ""
-
-msgid "DISCARD CHANGES"
 msgstr ""
 
 msgid "DNS Domain Name"
@@ -3607,6 +3618,9 @@ msgid ""
 "in the source directory."
 msgstr "ソースディレクトリに存在しない宛先ディレクトリのファイルを削除します。"
 
+msgid "Delete iSCSI extent "
+msgstr ""
+
 msgid "Delete selections"
 msgstr ""
 
@@ -3640,6 +3654,12 @@ msgid "Deny Hosts"
 msgstr ""
 
 msgid "Deny List"
+msgstr ""
+
+msgid "Deregister"
+msgstr ""
+
+msgid "Deregister TrueCommand Cloud Service"
 msgstr ""
 
 msgid ""
@@ -3895,12 +3915,6 @@ msgid ""
 "plugin, jail, or virtual machine networking."
 msgstr ""
 
-msgid "Discard Network Changes"
-msgstr ""
-
-msgid "Discard unapplied network changes?"
-msgstr ""
-
 msgid "Discover Remote Host Key"
 msgstr ""
 
@@ -3935,6 +3949,9 @@ msgid "Disk Size"
 msgstr ""
 
 msgid "Disk Type"
+msgstr ""
+
+msgid "Disk Wiped successfully"
 msgstr ""
 
 msgid "Disk sector size"
@@ -4320,10 +4337,24 @@ msgstr "アクティブ ディレクトリ サービスを有効にします。�
 msgid "Enable the SNMPv3 security model."
 msgstr ""
 
+msgid "Enable this AFP share. Unset to disable this AFP share  without deleting it."
+msgstr ""
+
 msgid ""
 "Enable this Cloud Sync Task. Unset to disable this Cloud Sync Task without "
 "deleting it."
 msgstr "このクラウド同期タスクを有効にします。チェックを外すことで、このCloud Sync Taskを削除せずに無効にすることができます。"
+
+msgid "Enable this NFS share. Unset to disable this NFS share  without deleting it."
+msgstr ""
+
+msgid "Enable this SMB share. Unset to disable this SMB share  without deleting it."
+msgstr ""
+
+msgid ""
+"Enable this WebDAV share. Unset to disable this WebDAV  share without "
+"deleting it."
+msgstr ""
 
 msgid ""
 "Enable this cron job. When unset, disable the                cron job "
@@ -4380,8 +4411,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enabling <em>Time Machine</em> on an SMB share requires a restart of the "
-"SMB service."
+"Enabling <em>Time Machine</em> on an SMB share requires restarting the SMB "
+"service."
 msgstr ""
 
 msgid ""
@@ -5589,6 +5620,12 @@ msgstr ""
 msgid "Filter Users"
 msgstr ""
 
+msgid "Filter disks by capacity"
+msgstr ""
+
+msgid "Filter disks by name"
+msgstr ""
+
 msgid "Find this information later by clicking"
 msgstr ""
 
@@ -5853,6 +5890,9 @@ msgid "Global password to unlock SEDs."
 msgstr "SEDのロックを解除するためのグローバルパスワード。"
 
 msgid "Go Back to Jails"
+msgstr ""
+
+msgid "Go Back to Virtual Machines"
 msgstr ""
 
 msgid "Go to Active Directory Form"
@@ -6613,6 +6653,9 @@ msgstr ""
 msgid "Interface Settings"
 msgstr ""
 
+msgid "Interface changes reverted."
+msgstr ""
+
 msgid "Interfaces"
 msgstr "インターフェイス"
 
@@ -6774,12 +6817,6 @@ msgstr ""
 msgid "KDC"
 msgstr ""
 
-msgid "KEEP CHANGES"
-msgstr ""
-
-msgid "KEEP NETWORK CHANGES PERMANENTLY"
-msgstr ""
-
 msgid "KMIP"
 msgstr ""
 
@@ -6791,12 +6828,6 @@ msgstr ""
 
 msgid "Keep"
 msgstr "保持"
-
-msgid "Keep Network Changes"
-msgstr ""
-
-msgid "Keep changed network settings permanently?"
-msgstr ""
 
 msgid "Keep snapshot for"
 msgstr ""
@@ -7426,6 +7457,12 @@ msgstr ""
 msgid "Metadata VDev"
 msgstr ""
 
+msgid "Metadata vdev must be the same type as data vdevs."
+msgstr ""
+
+msgid "Metadata vdev must be the same type as the data vdevs."
+msgstr ""
+
 msgid "Method"
 msgstr ""
 
@@ -7807,9 +7844,6 @@ msgid ""
 "to the Internet with other systems on the network."
 msgstr ""
 
-msgid "Network Changes Made Permanent"
-msgstr ""
-
 msgid "Network Information Service (NIS)"
 msgstr ""
 
@@ -7845,17 +7879,6 @@ msgstr ""
 msgid "Network changes applied successfully."
 msgstr ""
 
-msgid "Network changes discarded."
-msgstr ""
-
-msgid ""
-"Network changes have been applied. Keep changes permanently? Changes will "
-"be automatically discarded if they are not permanently applied."
-msgstr ""
-
-msgid "Network changes have been made permanent."
-msgstr ""
-
 msgid ""
 "Network community string.  The community string acts like a user ID or "
 "password. A user with  the correct community string has access to network "
@@ -7874,12 +7897,21 @@ msgstr ""
 msgid "Network control (highest)"
 msgstr ""
 
-msgid "Network interfaces to include in the bridge."
+msgid "Network interface changes have been made permanent."
 msgstr ""
 
 msgid ""
-"Network settings have been temporarily changed. They will be automatically "
-"discarded after"
+"Network interface changes have been temporarily applied for testing. Keep "
+"changes permanently? Changes are automatically reverted after the testing "
+"delay if they are not permanently applied."
+msgstr ""
+
+msgid ""
+"Network interface settings have been temporarily changed for testing. The "
+"settings will revert to the previous configuration after"
+msgstr ""
+
+msgid "Network interfaces to include in the bridge."
 msgstr ""
 
 msgid "Networks"
@@ -8404,6 +8436,9 @@ msgid ""
 "to their original owners. This operation  cannot be undone! If unset, "
 "ownership of files to be accessed through  WebDAV must be manually set to "
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
+msgstr ""
+
+msgid "PCI Passthru Device"
 msgstr ""
 
 msgid "PENDING"
@@ -9201,6 +9236,9 @@ msgstr ""
 msgid "Remove disk "
 msgstr ""
 
+msgid "Remove file?"
+msgstr ""
+
 msgid "Remove passphrase"
 msgstr ""
 
@@ -9466,7 +9504,16 @@ msgid ""
 "Allow the creation of <i>tun</i> devices in the jail."
 msgstr ""
 
+msgid "Revert CHANGES"
+msgstr ""
+
+msgid "Revert Network Interface Changes"
+msgstr ""
+
 msgid "Revert branding back to FreeNAS"
+msgstr ""
+
+msgid "Revert interface changes? All changes that are being tested will be lost."
 msgstr ""
 
 msgid "Rollback"
@@ -9566,6 +9613,12 @@ msgstr ""
 msgid "SAVE"
 msgstr ""
 
+msgid "SAVE AND FAILOVER"
+msgstr ""
+
+msgid "SAVE CHANGES"
+msgstr ""
+
 msgid "SAVE CONFIGURATION"
 msgstr ""
 
@@ -9658,6 +9711,9 @@ msgstr ""
 msgid "START"
 msgstr ""
 
+msgid "START REPLICATION"
+msgstr ""
+
 msgid "STARTTLS"
 msgstr ""
 
@@ -9681,6 +9737,9 @@ msgstr ""
 
 msgid "Save"
 msgstr "保存"
+
+msgid "Save Changes"
+msgstr ""
 
 msgid "Save Config"
 msgstr "設定ファイルの保存"
@@ -9711,6 +9770,9 @@ msgstr ""
 
 msgid "Save configuration settings from this machine before updating?"
 msgstr "更新する前に、このコンピュータの構成設定を保存しますか?"
+
+msgid "Save network interface changes?"
+msgstr ""
 
 msgid "Saving ACLs"
 msgstr ""
@@ -11439,6 +11501,9 @@ msgid ""
 "address of the system, but listen for any incoming request."
 msgstr ""
 
+msgid "Specify the PCI device to pass thru (bus#/slot#/fcn#)."
+msgstr ""
+
 msgid ""
 "Specify the message displayed to local login users after authentication. "
 "Not displayed to anonymous login users."
@@ -11534,6 +11599,9 @@ msgid "Stats/Settings"
 msgstr "ステータス／設定"
 
 msgid "Status"
+msgstr ""
+
+msgid "Status of TrueCommand"
 msgstr ""
 
 msgid "Status updated"
@@ -11801,6 +11869,9 @@ msgstr ""
 msgid "TDB"
 msgstr ""
 
+msgid "TEST CHANGES"
+msgstr ""
+
 msgid "TLS"
 msgstr ""
 
@@ -11927,6 +11998,9 @@ msgstr ""
 msgid "Terms of Service"
 msgstr ""
 
+msgid "Test Changes"
+msgstr ""
+
 msgid "Test Cloud Sync"
 msgstr ""
 
@@ -11934,6 +12008,12 @@ msgid "Test alert sent!"
 msgstr ""
 
 msgid "Test email sent!"
+msgstr ""
+
+msgid "Test network interface changes for "
+msgstr ""
+
+msgid "Test network interface changes? Network connectivity can be interrupted."
 msgstr ""
 
 msgid ""
@@ -11997,6 +12077,16 @@ msgid ""
 "multiple levels and might require doubling or even quadrupling to take "
 "effect.  When this field is blank, new computer accounts are created in the "
 "Active Directory  default OU."
+msgstr ""
+
+msgid ""
+"The Passive controller must be rebooted in order to change the location of "
+"system logs."
+msgstr ""
+
+msgid ""
+"The Passive controller must be rebooted in order to change the location of "
+"the system dataset."
 msgstr ""
 
 msgid "The SMB"
@@ -12240,6 +12330,9 @@ msgstr ""
 msgid "The pool <i>"
 msgstr ""
 
+msgid "The pool containing"
+msgstr ""
+
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
 "computer."
@@ -12392,12 +12485,12 @@ msgid ""
 "the disks in the pool for a general use case."
 msgstr ""
 
-msgid ""
-"There are unapplied network changes. Apply them now? Unapplied changes will "
-"be lost."
+msgid "There are pending network interface changes. Review them now?"
 msgstr ""
 
-msgid "There are unsaved network interface settings.  Review them now?"
+msgid ""
+"There are unapplied network interface changes that must be tested before "
+"being permanently saved. Test changes now?"
 msgstr ""
 
 msgid "There is an upgrade waiting to finish."
@@ -12716,6 +12809,12 @@ msgstr ""
 msgid "TrueCommand Cloud Service"
 msgstr ""
 
+msgid "TrueCommand Cloud Service deregistered"
+msgstr ""
+
+msgid "TrueCommand Cloud Service has been deregistered."
+msgstr ""
+
 msgid "TrueNAS Community Forums"
 msgstr ""
 
@@ -13003,6 +13102,9 @@ msgid "Updating selected plugins."
 msgstr ""
 
 msgid "Upgrade Pool"
+msgstr ""
+
+msgid "Upgrade Waiting to Finish"
 msgstr ""
 
 msgid "Upgraded"
@@ -13730,13 +13832,13 @@ msgstr "Windows 共有 (SMB)"
 msgid "Wipe"
 msgstr ""
 
-msgid "Wipe Disk"
+msgid "Wipe Disk "
 msgstr ""
 
 msgid "Wipe this disk?"
 msgstr ""
 
-msgid "Wiping Disk..."
+msgid "Wiping disk..."
 msgstr ""
 
 msgid "Workgroup"
@@ -14057,6 +14159,9 @@ msgstr ""
 msgid "is already in use."
 msgstr ""
 
+msgid "is locked."
+msgstr ""
+
 msgid "jail_zfs"
 msgstr ""
 
@@ -14177,7 +14282,7 @@ msgstr ""
 msgid "safe"
 msgstr ""
 
-msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
+msgid "seconds unless SAVE CHANGES is chosen to make them permanent."
 msgstr ""
 
 msgid "securelevel"
