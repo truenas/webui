@@ -254,7 +254,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   toggleSidenav() {
     this.sidenav.toggle();
-    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode }, sender:this});
+    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode, isCollapsed: this.getCollapsedState() }, sender:this});
   }
 
   toggleCollapse() {
@@ -262,11 +262,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
     domHelper.toggleClass(appBody, 'collapsed-menu');
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
+    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode, isCollapsed: this.getCollapsedState() }, sender:this});
+  }
 
-    // Fix for sidebar
-    /*if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
-      (<HTMLElement>document.querySelector('mat-sidenav-content')).style.marginLeft = '240px';
-    }*/
+  getCollapsedState(): boolean {
+    const isCollapsed = document.getElementsByClassName('collapsed-menu').length == 1;
+    console.log(isCollapsed);
+    return isCollapsed;
   }
 
   onShowAbout() {

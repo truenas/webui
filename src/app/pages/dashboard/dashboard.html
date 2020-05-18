@@ -1,9 +1,9 @@
-<div (window:resize)="onMobileResize($event)">  
+<div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">  
   
   <div class="widgets-wrapper"
+       [style.width]="optimalDesktopWidth"
        fxLayout="row wrap"
-       fxLayoutAlign.lt-lg="center center"
-       fxLayoutAlign.gt-md="start center">
+       fxLayoutGap="grid 4px">
 
     <!-- SORTABLE WIDGETS -->
     <ng-container  *ngIf="screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
@@ -12,17 +12,17 @@
           <ng-container  *ngIf="widget.rendered">
             <ng-container [ngSwitch]="widget.name.toLowerCase()">
               
-              <widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="calc(600px * 0.9)" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
-              <widget-sysinfo *ngSwitchCase="'system information(standby)'" id="passive" fxFlex="calc(600px * 0.9)" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
+              <widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
+              <widget-sysinfo *ngSwitchCase="'system information(standby)'" id="passive" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
               
 
-              <widget-cpu *ngSwitchCase="'cpu'" fxFlex="calc(600px * 0.9)" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
+              <widget-cpu *ngSwitchCase="'cpu'" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
   
-              <widget-memory *ngSwitchCase="'memory'" fxFlex="calc(600px * 0.9)" fxFlex.xs="100" [ecc]="systemInformation.ecc_memory" [data]="dataFromConfig(widget)" [widgetSize]="medium"   configurable="false"></widget-memory>
+              <widget-memory *ngSwitchCase="'memory'" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [ecc]="systemInformation.ecc_memory" [data]="dataFromConfig(widget)" [widgetSize]="medium"   configurable="false"></widget-memory>
               
-              <widget-pool *ngSwitchCase="'pool'" fxFlex="calc(600px * 0.9)" fxFlex.xs="100" [poolState]="dataFromConfig(widget)" [volumeData]="volumeDataFromConfig(widget)" [widgetSize]="medium" configurable="false"></widget-pool>
+              <widget-pool *ngSwitchCase="'pool'" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [poolState]="dataFromConfig(widget)" [volumeData]="volumeDataFromConfig(widget)" [widgetSize]="medium" configurable="false"></widget-pool>
   
-              <widget-nic *ngSwitchCase="'interface'" fxFlex="calc(600px * 0.9)" fxFlex.xs="100" [nicState]="dataFromConfig(widget)" [stats]="statsDataEvents" [widgetSize]="medium" configurable="false"></widget-nic>
+              <widget-nic *ngSwitchCase="'interface'" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [nicState]="dataFromConfig(widget)" [stats]="statsDataEvents" [widgetSize]="medium" configurable="false"></widget-nic>
   
             </ng-container>
           </ng-container>
