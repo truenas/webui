@@ -31,3 +31,15 @@
   background-color:var(--bg2);
 }
 
+.widgets-wrapper-container{
+  width:calc(100% - 32px);
+  margin:0 auto;
+}
+
+.widgets-wrapper{
+  margin: 0 auto;
+}
+
+.widgets-wrapper > *{
+  margin: 0 4px;
+}
