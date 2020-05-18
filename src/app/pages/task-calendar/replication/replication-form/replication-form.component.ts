@@ -660,18 +660,6 @@ export class ReplicationFormComponent {
         },
         {
             type: 'checkbox',
-            name: 'dedup',
-            placeholder: helptext.dedup_placeholder,
-            tooltip: helptext.dedup_tooltip,
-            relation: [{
-                action: 'HIDE',
-                when: [{
-                    name: 'transport',
-                    value: 'LEGACY',
-                }]
-            }],
-        }, {
-            type: 'checkbox',
             name: 'large_block',
             placeholder: helptext.large_block_placeholder,
             tooltip: helptext.large_block_tooltip,
@@ -1119,7 +1107,6 @@ export class ReplicationFormComponent {
             data["naming_schema"] = [];
             data["also_include_naming_schema"] = [];
             data["only_matching_schedule"] = false;
-            data["dedup"] = false;
             data["large_block"] = false;
             data["embed"] = false;
             data["compressed"] = false;
