@@ -305,7 +305,7 @@
                     id="pool-manager__nameFilter"
                     type='text'
                     [(ngModel)]="nameFilterField"
-                    placeholder='Filter disks by name'
+                    placeholder="{{ 'Filter disks by name' | translate }}"
                     (keyup)='updateFilter($event)'
                   />
                 </mat-form-field>
@@ -315,7 +315,7 @@
                     id="pool-manager__capacityFilter"
                     type='text'
                     [(ngModel)]="capacityFilterField"
-                    placeholder='Filter disks by capacity'
+                    placeholder="{{ 'Filter disks by capacity' | translate }}"
                     (keyup)='updateFilter($event)'
                   />
                 </mat-form-field>
@@ -355,6 +355,7 @@
       <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
       <div *ngIf="disknumError" [style.color]="'red'" [innerHTML]="disknumError"></div>
       <div *ngIf="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
+      <div *ngIf="specialVdevTypeError" [style.color]="'red'" [innerHTML]="specialVdevTypeError"></div>
       <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
         <mat-checkbox id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()"></mat-checkbox> {{'Force' | translate}}

@@ -69,7 +69,9 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
       label : T("Edit"),
       name: "edit",
       onClick : () => {
+        self.loader.open();
         self.ws.call('pool.dataset.get_quota', [self.pk, 'USER', [['id', '=', row.id]]]).subscribe(res => {
+          self.loader.close();
           const conf: DialogFormConfiguration = {
             title: helptext.users.dialog.title,
             fieldConfig: [
@@ -84,8 +86,8 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
                 type: 'input',
                 name: 'data_quota',
                 placeholder: helptext.users.data_quota.placeholder,
-                tooltip: helptext.users.data_quota.tooltip,
-                value: self.storageService.convertBytestoHumanReadable(res[0].quota, 0),
+                tooltip: `${helptext.users.data_quota.tooltip} bytes.`,
+                value: self.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,
                 blurEvent: self.blurEvent,
@@ -147,6 +149,9 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
           }
           this.dialogService.dialogFormWide(conf);
 
+        }, err => {
+          self.loader.close();
+          self.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
         })
       }
     })

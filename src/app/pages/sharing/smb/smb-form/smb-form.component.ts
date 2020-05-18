@@ -28,6 +28,9 @@ export class SMBFormComponent {
   protected isBasicMode: boolean = true;
   public isTimeMachineOn = false;
   public namesInUse: string[] = [];
+  public productType = window.localStorage.getItem('product_type');
+  private hostsAllowOnLoad = [];
+  private hostsDenyOnLoad = [];
 
   protected fieldSets: FieldSet[] = [
     {
@@ -75,7 +78,14 @@ export class SMBFormComponent {
           tooltip: helptext_sharing_smb.tooltip_comment,
           class: 'inline',
           width: '50%'
-        }
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext_sharing_smb.placeholder_enabled,
+          tooltip: helptext_sharing_smb.tooltip_enabled,
+          value: true,
+        },
       ]
     },
     { name: 'divider', divider: false },
@@ -292,6 +302,12 @@ export class SMBFormComponent {
       });
   }
 
+  resourceTransformIncomingRestData(data) {
+    this.hostsAllowOnLoad = data.hostsallow ? [...data.hostsallow] : [];
+    this.hostsDenyOnLoad = data.hostsdeny ? [...data.hostsdeny] : [];
+    return data;
+  }
+
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
       return false;
@@ -327,31 +343,46 @@ export class SMBFormComponent {
 
   afterSave(entityForm) {
     if (entityForm.formGroup.controls['timemachine'].value && !this.isTimeMachineOn) {
-      this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, helptext_sharing_smb.restart_smb_dialog.message,
-        true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
-        helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
-          if (res) {
-            this.loader.open();
-            this.ws.call('service.restart', ['cifs']).subscribe(() => {
-              this.loader.close();
-              this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
-                helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
-                  this.checkACLactions(entityForm);
-                })
-            }, (err) => { 
-              this.loader.close();
-              this.dialog.errorReport('Error', err.err, err.backtrace);
-            }
-            )
-          } else {
-            this.checkACLactions(entityForm);
-          }
-        });
+      this.restartService(entityForm, 'timemachine');
     } else {
-      this.checkACLactions(entityForm);   
+      this.checkAllowDeny(entityForm);   
     }
   }
 
+  checkAllowDeny(entityForm) {
+    if (!_.isEqual(this.hostsAllowOnLoad, entityForm.formGroup.controls['hostsallow'].value) ||
+      !_.isEqual(this.hostsDenyOnLoad, entityForm.formGroup.controls['hostsdeny'].value)) {
+          this.restartService(entityForm, 'allowdeny');
+    } else {
+      this.checkACLactions(entityForm)
+    }
+  }
+
+  restartService(entityForm, source: string) {
+    let message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine :
+      helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
+    this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
+      true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
+      helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
+        if (res) {
+          this.loader.open();
+          this.ws.call('service.restart', ['cifs']).subscribe(() => {
+            this.loader.close();
+            this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
+              helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
+                this.checkACLactions(entityForm);
+              })
+          }, (err) => { 
+            this.loader.close();
+            this.dialog.errorReport('Error', err.err, err.backtrace);
+          }
+          )
+        } else {
+          source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkACLactions(entityForm);
+        }
+      });
+  }
+ 
   checkACLactions(entityForm) {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
@@ -364,6 +395,13 @@ export class SMBFormComponent {
         ['/'].concat(ACLRoute),{ queryParams: {homeShare: true}})
       
     }
+    // If this call returns true OR an [ENOENT] err comes back, just return to table
+    // because the pool or ds is encrypted. Otherwise, do the next checks
+    this.ws.call('filesystem.path_is_encrypted', [sharePath]).subscribe(
+      res => {
+      if(res) {
+        this.router.navigate(['/'].concat(this.route_success));
+      } else {
     /**
      * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
@@ -372,7 +410,7 @@ export class SMBFormComponent {
       this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
         switchMap((isTrivialACL: boolean) =>
           /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
-          !isTrivialACL || !datasetId.includes('/')
+          !isTrivialACL || !datasetId.includes('/') || this.productType === 'SCALE'
             ? combineLatest(of(false), of({}))
             : combineLatest(
                 /* Check if user wants to edit the share's ACL */
@@ -439,6 +477,17 @@ export class SMBFormComponent {
         })
       )
       .subscribe(() => {}, error => new EntityUtils().handleWSError(this, error, this.dialog));
+      }
+    },
+    err => {
+      if (err.reason.includes('[ENOENT]')) {
+        this.router.navigate(['/'].concat(this.route_success));
+      } else {
+        // If some other err comes back from filesystem.path_is_encrypted
+        this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+          err.reason, err.trace.formatted);
+      }
+    })
   }
 
   afterInit(entityForm: EntityFormComponent) {

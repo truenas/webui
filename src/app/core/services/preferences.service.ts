@@ -4,6 +4,13 @@ import { CoreService, CoreEvent } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 
+interface PropertyReport {
+  middlewareProperties: string[];
+  serviceProperties: string[];
+  deprecatedProperties: string[];
+  newProperties: string[];
+}
+
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS
   retroLogo?: boolean; // Brings back FreeNAS branding
@@ -24,15 +31,16 @@ export interface UserPreferences {
   timeFormat:string;
   nicType:string
   nicAttach: string,
-  showWelcomeDialog: boolean
+  showWelcomeDialog: boolean;
+  showUserListMessage: boolean;
+  showGroupListMessage: boolean;
 }
 
 @Injectable()
 export class PreferencesService {
-  //public coreEvents: Subject<CoreEvent>;
   private debug = false;
   private startupComplete: boolean = false;
-  public preferences: UserPreferences = {
+  public defaultPreferences: UserPreferences = {
     "platform":"freenas",// Detect platform
     "retroLogo": false,
     "timestamp":new Date(),
@@ -52,14 +60,18 @@ export class PreferencesService {
     "timeFormat": 'HH:mm:ss',
     "nicType": null,
     "nicAttach": null,
-    "showWelcomeDialog": true
+    "showWelcomeDialog": true,
+    "showUserListMessage": true,
+    "showGroupListMessage": true
   }
+
+  public preferences: UserPreferences = this.defaultPreferences;
 
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
-      // evt.data: boolean = authentication status
+      // evt.data: boolean represents authentication status
       if(evt.data){
         this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
       }
@@ -72,18 +84,14 @@ export class PreferencesService {
       if(!evt.data){
         this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]]});
       } else {
-        // Uncomment the line below when multi-user support is implemented in middleware
-        //this.core.emit({name:"UserDataRequest", data: [[[ "id", "=", evt.data ]]]});
         if(this.debug){ console.warn("Multiple users not supported by middleware"); }
       }
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-      
+
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
-
-        const preferencesFromUI = Object.keys(this.preferences);
         if(!data){
           // If preferences do not exist return after saving Preferences so that UI can retry.
           if(this.debug)console.log('Preferences not returned');
@@ -92,26 +100,7 @@ export class PreferencesService {
           return;
         }
 
-        const preferencesFromMiddleware = Object.keys(data);
-        const keysMatch:boolean = (preferencesFromUI.join() == preferencesFromMiddleware.join());// evaluates as false negative, wth?!
-        if(data && keysMatch){
-          // If preferences exist and there are no unknown properties
-          if(this.debug)console.log('Preferences exist');
-          this.updatePreferences(data);
-        } else if(data && !keysMatch){
-          // Add missing properties to inbound preferences from middleware
-          if(this.debug){
-            console.log('Preferences exist and there are unknown properties');
-          }
-          const merged = this.mergeProperties(this.preferences, data);
-          this.updatePreferences(data);
-        } else if(!data){
-          // If preferences do not exist
-          if(this.debug)console.log('Preferences not returned');
-          this.savePreferences();
-          console.warn("No Preferences Found in Middleware");
-        }
-
+        this.updatePreferences(data);
       }
 
       if(!this.startupComplete){
@@ -122,37 +111,42 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"ChangeThemePreference",sender:this.themeService}).subscribe((evt:CoreEvent) => {
-        this.preferences.userTheme = evt.data;
-        this.core.emit({name:"UserDataUpdate", data:this.preferences  });
+      this.preferences.userTheme = evt.data;
+      this.core.emit({name:"UserDataUpdate", data:this.preferences  });
     });
 
     this.core.register({observerClass:this, eventName:"ChangeCustomThemesPreference"}).subscribe((evt:CoreEvent) => {
-        this.preferences.customThemes = evt.data;
-        //console.log("New Custom Themes List!");
-        //console.log(this.preferences);
-        this.core.emit({name:"UserDataUpdate", data:this.preferences  });
+      this.preferences.customThemes = evt.data;
+      this.core.emit({name:"UserDataUpdate", data:this.preferences  });
     });
 
     this.core.register({observerClass:this, eventName:"AddCustomThemePreference"}).subscribe((evt:CoreEvent) => {
-        //console.log(this.preferences);
-        let newTheme:Theme;
-        newTheme = evt.data;
-        this.preferences.customThemes.push(newTheme);
-        this.preferences.userTheme = evt.data.name;
-        this.core.emit({name:"UserDataUpdate", data:this.preferences  });
+      let newTheme:Theme;
+      newTheme = evt.data;
+      this.preferences.customThemes.push(newTheme);
+      this.preferences.userTheme = evt.data.name;
+      this.core.emit({name:"UserDataUpdate", data:this.preferences  });
     });
 
     this.core.register({observerClass:this, eventName:"ReplaceCustomThemePreference"}).subscribe((evt:CoreEvent) => {
-        let oldTheme: Theme;
-        const newTheme = evt.data;
-        const replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
-        if(replaced){
-          this.core.emit({name:"UserDataUpdate", data:this.preferences});
-        }
+      let oldTheme: Theme;
+      const newTheme = evt.data;
+      const replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
+      if(replaced){
+        this.core.emit({name:"UserDataUpdate", data:this.preferences});
+      }
     });
 
+    // Reset the entire preferences object to default
+    this.core.register({observerClass:this, eventName:"ResetPreferences"}).subscribe((evt:CoreEvent) => {
+      let prefs = Object.assign(this.defaultPreferences, {});
+      prefs.customThemes = this.preferences.customThemes;
+      prefs.timestamp = new Date();
+      this.savePreferences(prefs);
+    });
+
+    // Change the entire preferences object at once
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
-      
       let prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
@@ -161,14 +155,42 @@ export class PreferencesService {
       this.preferences.timestamp = new Date();
       this.savePreferences(this.preferences);
     })
+
+    // Change a single preference item
+    this.core.register({observerClass:this, eventName:"ChangePreference"}).subscribe((evt:CoreEvent) => {
+      let prefs = Object.assign(this.preferences, {});
+      prefs[evt.data.key] = evt.data.value;
+      prefs.timestamp = new Date();
+      this.preferences = prefs;
+      this.setShowGuide(evt.data.showGuide);
+      this.savePreferences(this.preferences);
+    })
   }
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-      this.preferences = data;
 
+    if(data && !this.startupComplete && this.debug){
+      console.warn(data);
+      const report = this.sanityCheck(data);
+      console.log(report);
+    }
+    
+    let clone = Object.assign({}, this.preferences);
+    const keys = Object.keys(clone);
+    keys.forEach((key) => {
+      if(clone[key] !== null && data[key] !== null){
+        // If middleware object contains a valid key, store the value
+        clone[key] = data[key];
+      }
+    });
+    this.preferences = clone;
+
+    if(this.startupComplete){ 
       //Notify Guided Tour & Theme Service
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences, sender: this});
+    } 
+    
   }
 
   // Save to middleware
@@ -177,6 +199,7 @@ export class PreferencesService {
       data = this.preferences;
     }
     this.core.emit({name:"UserDataUpdate", data:data});
+    if(this.debug){ console.log({SavingPreferences: this.preferences});}
   }
 
   replaceCustomTheme(oldTheme:Theme, newTheme:Theme):boolean{
@@ -196,21 +219,34 @@ export class PreferencesService {
     }
   }
 
-  mergeProperties(fui, fmw){
-    // Use this to add newer properties from middleware responses
-    // fetched after updates. Handy for when update contains new
-    // preference options.
-    // fui = from UI && fmw = from middleware
-    const merged = Object.assign(fmw, {});
-    const keys = Object.keys(fui);
-    const newProps = keys.filter(x => !fmw[x]);
-    
-    newProps.forEach((item, index) => {
-    	merged[item] = fui[item];	
+  sanityCheck(data:UserPreferences):PropertyReport{
+    let oldKeys = [];
+    let newKeys = [];
+
+    const savedKeys = Object.keys(data);
+    const currentKeys = Object.keys(this.preferences);
+
+    // Find Deprecated
+    oldKeys = savedKeys.filter((key) => {
+      return currentKeys.indexOf(key) == -1;
     });
-    return merged;
+    if(this.debug && oldKeys.length > 0)console.log(oldKeys.length + " Deprecated Preferences Found!");
+
+    // Find New 
+    newKeys = currentKeys.filter((key) => {
+      return savedKeys.indexOf(key) == -1;
+    });
+    if(this.debug && newKeys.length > 0)console.log(newKeys.length + " New Preferences Found!");
+    
+
+    const report: PropertyReport = {
+      middlewareProperties: savedKeys, // Inbound from Middleware
+      serviceProperties: currentKeys, // Stored in the service
+      deprecatedProperties: oldKeys, // Deprecated
+      newProperties: newKeys // New Keys
+    }
+
+    return report;
   }
-
-
 
 }

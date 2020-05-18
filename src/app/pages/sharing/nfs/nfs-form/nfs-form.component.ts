@@ -73,6 +73,13 @@ export class NFSFormComponent {
           name: 'quiet',
           placeholder: helptext_sharing_nfs.placeholder_quiet,
           tooltip: helptext_sharing_nfs.tooltip_quiet,
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext_sharing_nfs.placeholder_enabled,
+          tooltip: helptext_sharing_nfs.tooltip_enabled,
+          value: true,
         }
       ]
     },

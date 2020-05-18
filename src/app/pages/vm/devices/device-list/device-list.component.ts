@@ -173,4 +173,13 @@ export class DeviceListComponent {
       this.queryCallOption[0][0].push(parseInt(this.pk,10));
     });
   }
+
+  getAddActions() {
+    return [{
+      label: T("Go Back to Virtual Machines"),
+      onClick: () => {
+        this.router.navigate(new Array('').concat(['vm']));
+      }
+    }];
+  }
 }

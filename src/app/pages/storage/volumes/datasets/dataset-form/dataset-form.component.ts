@@ -27,7 +27,7 @@ interface DatasetFormData {
   compression: string;
   atime: string;
   share_type: string;
-  aclmode: string;
+  aclmode?: string; //-- not available yet in SCALE
   refquota: number;
   refquota_unit?: string;
   quota: number;
@@ -83,6 +83,7 @@ export class DatasetFormComponent implements Formconfiguration{
   protected legacy_encryption = false;
   public namesInUse = [];
   public nameIsCaseInsensitive = false;
+  public productType: string;
 
   public humanReadable = {'quota': '', 'refquota': '', 'reservation': '', 'refreservation': ''}
 
@@ -663,7 +664,7 @@ export class DatasetFormComponent implements Formconfiguration{
     'refquota_critical',
     'refquota_warning_inherit',
     'refquota_critical_inherit',
-    'aclmode'
+    // 'aclmode' -- not yet available in SCALE
 
   ];
 
@@ -846,6 +847,16 @@ export class DatasetFormComponent implements Formconfiguration{
 
 
   afterInit(entityForm: EntityFormComponent) {
+    // aclmode not yet available in SCALE
+    this.productType = window.localStorage.getItem('product_type');
+    const aclControl = entityForm.formGroup.get('aclmode');
+    if (this.productType !== 'SCALE') {
+      this.advanced_field.push('aclmode')
+    } else {
+      aclControl.disable();
+      _.find(this.fieldConfig, {name:'aclmode'}).isHidden = true;
+    }
+    ///
     this.entityForm = entityForm;
     if (!this.parent){
       _.find(this.fieldConfig, {name:'quota_warning_inherit'}).placeholder = helptext.dataset_form_default;
@@ -868,6 +879,9 @@ export class DatasetFormComponent implements Formconfiguration{
     }
 
     entityForm.formGroup.get('share_type').valueChanges.pipe(filter(shareType => !!shareType && entityForm.isNew)).subscribe(shareType => {
+      /* 
+      **aclmode not available in SCALE, so replace this ...
+
       const aclControl = entityForm.formGroup.get('aclmode');
       const caseControl = entityForm.formGroup.get('casesensitivity');
       if (shareType === 'SMB') {
@@ -884,6 +898,36 @@ export class DatasetFormComponent implements Formconfiguration{
 
       aclControl.updateValueAndValidity();
       caseControl.updateValueAndValidity();
+
+      */
+      
+      // ...with this
+      const caseControl = entityForm.formGroup.get('casesensitivity');
+      if (this.productType !== 'SCALE') {
+        if (shareType === 'SMB') {
+          aclControl.setValue('RESTRICTED');
+          caseControl.setValue('INSENSITIVE');
+          aclControl.disable();
+          caseControl.disable();
+        } else {
+          aclControl.setValue('PASSTHROUGH');
+          caseControl.setValue('SENSITIVE');
+          aclControl.enable();
+          caseControl.enable();
+        }  
+        aclControl.updateValueAndValidity();
+        caseControl.updateValueAndValidity();
+      } else {
+        if (shareType === 'SMB') {
+          caseControl.setValue('INSENSITIVE');
+          caseControl.disable();
+        } else {
+          caseControl.setValue('SENSITIVE');
+          caseControl.enable();
+        }
+        caseControl.updateValueAndValidity();
+      }
+      //////
     });
 
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
@@ -1258,7 +1302,7 @@ export class DatasetFormComponent implements Formconfiguration{
         name: this.getFieldValueOrRaw(wsResponse.name),
         atime: this.getFieldValueOrRaw(wsResponse.atime),
         share_type: this.getFieldValueOrRaw(wsResponse.share_type),
-        aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
+        // aclmode: this.getFieldValueOrRaw(wsResponse.aclmode), -- not available yet in SCALE
         casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
         comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
         compression: this.getFieldValueOrRaw(wsResponse.compression),
@@ -1282,6 +1326,10 @@ export class DatasetFormComponent implements Formconfiguration{
         snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };
+     // 
+     if (this.productType !== 'SCALE') {
+       returnValue.aclmode = this.getFieldValueOrRaw(wsResponse.aclmode);
+     }
 
      // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
     //  if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {

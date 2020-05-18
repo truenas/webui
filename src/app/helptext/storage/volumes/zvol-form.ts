@@ -27,17 +27,21 @@ zvol_sync_tooltip: T('Sets the data write synchronization. <i>Inherit</i>\
  waits for writes to complete.'),
 
 zvol_compression_placeholder: T('Compression level'),
-zvol_compression_tooltip: T('Automatically compress data written to the zvol.\
- Choose a <a href="--docurl--/storage.html#compression"\
- target="_blank">compression algorithm</a>.'),
+zvol_compression_tooltip: T('Encode information in less space than the \
+ original data occupies. It is recommended to choose a compression algorithm \
+ that balances disk performance with the amount of saved space.<br> <i>LZ4</i> is \
+ generally recommended as it maximizes performance and dynamically identifies \
+ the best files to compress.<br> <i>GZIP</i> options range from 1 for least \
+ compression, best performance, through 9 for maximum compression with \
+ greatest performance impact.<br> <i>ZLE</i> is a fast algorithm that only \
+ elminates runs of zeroes.'),
 zvol_compression_validation: [Validators.required],
 
 zvol_deduplication_placeholder: T('ZFS Deduplication'),
-zvol_deduplication_tooltip : T('Activates the process for ZFS to transparently reuse\
- a single copy of duplicated data to save space. The\
- <a href="--docurl--/storage.html#deduplication"\
- target="_blank">Deduplication section</a> of the Guide\
- describes each option.'),
+zvol_deduplication_tooltip : T('Transparently reuse a single copy of duplicated \
+ data to save space. Deduplication can improve storage capacity, but is RAM intensive. \
+ Compressing data is generally recommended before using deduplication. Deduplicating data is \
+ a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
 zvol_deduplication_validation: [Validators.required],
 
 zvol_sparse_placeholder: T('Sparse'),

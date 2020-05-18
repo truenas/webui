@@ -9,12 +9,10 @@ export default {
     fieldset_options: T('More Options'),
 
     rsync_path_placeholder: T('Path'),
-    rsync_path_tooltip: T('Browse to the path to be copied. The \
-                <a href="--docurl--/intro.html#path-and-name-lengths" \
-                target="_blank">FreeBSD file path limits</a> apply. \
-                Other operating systems can have different limits \
-                which might affect how they can be used as sources \
-                or destinations.'),
+    rsync_path_tooltip: T('Browse to the path to be copied. FreeBSD \
+ file path limits apply. Other operating systems can have different \
+ limits which might affect how they can be used as sources or \
+ destinations.'),
     rsync_path_validation : [ Validators.required ],
 
     rsync_user_placeholder: T('User'),
@@ -35,11 +33,8 @@ export default {
     rsync_remoteport_validation: [rangeValidator(1, 65535), Validators.required],
 
     rsync_mode_placeholder: T('Rsync Mode'),
-    rsync_mode_tooltip: T('Choose <a \
-                href="--docurl--/tasks.html#rsync-module-mode"\
-                target="_blank">rsync module mode</a> or <a \
-                href="--docurl--/tasks.html#rsync-over-ssh-mode"\
-                target="_blank">rsync over SSH mode</a>'),
+    rsync_mode_tooltip: T('Choose to either use a custom-defined remote module \
+ of the rsync server or to use an SSH configuration for the rsync task.'),
 
     rsync_remotemodule_placeholder: T('Remote Module Name'),
     rsync_remotemodule_tooltip: T('At least one module must be defined in <a\

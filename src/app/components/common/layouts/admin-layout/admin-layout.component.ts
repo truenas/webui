@@ -64,7 +64,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
     // Watches screen size and open/close sidenav
     this.screenSizeWatcher = media.media$.subscribe((change: MediaChange) => {
-      this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
+      this.isMobile = window.innerWidth < 960;
+      // this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
       this.updateSidenav();
       core.emit({name:"MediaChange", data: change, sender: this});
     });

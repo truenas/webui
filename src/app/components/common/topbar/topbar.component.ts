@@ -23,6 +23,10 @@ import { T } from '../../../translate-marker';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
+import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
+
 
 @Component({
   selector: 'topbar',
@@ -62,6 +66,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   sysName = 'TrueNAS CORE';
   hostname: string;
   showWelcome: boolean;
+  checkin_remaining: any;
+  checkin_interval: any;
   public updateIsRunning = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
@@ -69,8 +75,15 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   systemType: string;
   isWaiting = false;
   public target: Subject<CoreEvent> = new Subject();
+  public screenSize: string = 'waiting';
 
   protected dialogRef: any;
+  protected tcConnected = false;
+  protected tc_queryCall = 'truecommand.config';
+  protected tc_updateCall = 'truecommand.update';
+  protected isTcStatusOpened = false;
+  protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
+  public tcStatus;
 
   constructor(
     public themeService: ThemeService,
@@ -83,10 +96,15 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public dialog: MatDialog,
     public translate: TranslateService,
     private prefServices: PreferencesService,
-    protected loader: AppLoaderService) {
+    protected loader: AppLoaderService,
+    public mediaObserver: MediaObserver) {
       super();
       this.sysGenService.updateRunningNoticeSent.subscribe(() => {
         this.updateNotificationSent = true;
+      });
+
+      mediaObserver.media$.subscribe((evt) =>{
+        this.screenSize = evt.mqAlias;
       });
     }
 
@@ -119,6 +137,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.themesMenu = this.themeService.themesMenu
     });
 
+    this.ws.call(this.tc_queryCall).subscribe(res => {
+      this.tcStatus = res;
+      this.tcConnected = res.api_key ? true : false;
+    });
+    this.ws.subscribe(this.tc_queryCall).subscribe(res => {
+      this.tcStatus = res.fields;
+      this.tcConnected = res.fields.api_key ? true : false;
+      if (this.isTcStatusOpened && this.tcStatusDialogRef) {
+        this.tcStatusDialogRef.componentInstance.update(this.tcStatus);
+      }
+    });
+
     const notifications = this.notificationsService.getNotificationList();
 
     notifications.forEach((notificationAlert: NotificationAlert) => {
@@ -143,6 +173,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.checkNetworkCheckinWaiting();
       } else {
         this.checkNetworkChangesPending();
+      }
+      if (evt && evt.data.checkin) {
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
       }
     });
 
@@ -180,13 +215,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.isWaiting = false;
       }
       this.showWelcome = evt.data.showWelcomeDialog;
+      
+      setTimeout(() => {
+        if (this.showWelcome) {
+          this.onShowAbout();
+        }
+      }, 3500)
     });
-
-    setTimeout(() => {
-      if (this.showWelcome) {
-        this.onShowAbout();
-      }
-    }, 3500)
   }
 
   checkLegacyUISetting() {
@@ -219,7 +254,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   toggleSidenav() {
     this.sidenav.toggle();
-    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode }, sender:this});
+    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode, isCollapsed: this.getCollapsedState() }, sender:this});
   }
 
   toggleCollapse() {
@@ -227,11 +262,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
     domHelper.toggleClass(appBody, 'collapsed-menu');
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
+    this.core.emit({name: "SidenavStatus", data: { isOpen: this.sidenav.opened, mode: this.sidenav.mode, isCollapsed: this.getCollapsedState() }, sender:this});
+  }
 
-    // Fix for sidebar
-    /*if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
-      (<HTMLElement>document.querySelector('mat-sidenav-content')).style.marginLeft = '240px';
-    }*/
+  getCollapsedState(): boolean {
+    const isCollapsed = document.getElementsByClassName('collapsed-menu').length == 1;
+    console.log(isCollapsed);
+    return isCollapsed;
   }
 
   onShowAbout() {
@@ -240,11 +277,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       data: { 
         extraMsg: this.showWelcome, 
         systemType: this.systemType
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.showWelcome = false;
+      },
+      disableClose: true
     });
   }
 
@@ -303,6 +337,19 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   checkNetworkCheckinWaiting() {
     this.ws.call('interface.checkin_waiting').subscribe(res => {
       if (res != null) {
+        const seconds = res;
+        if (seconds > 0 && this.checkin_remaining == null) {
+          this.checkin_remaining = seconds;
+          this.checkin_interval = setInterval(() => {
+            if (this.checkin_remaining > 0) {
+              this.checkin_remaining -= 1;
+            } else {
+              this.checkin_remaining = null;
+              clearInterval(this.checkin_interval);
+              window.location.reload(); // should just refresh after the timer goes off
+            }
+          }, 1000);
+        }
         this.waitingNetworkCheckin = true;
         if (!this.user_check_in_prompted) {
           this.user_check_in_prompted = true;
@@ -310,32 +357,38 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         }
       } else {
         this.waitingNetworkCheckin = false;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
       }
     });
   }
 
   showNetworkCheckinWaiting() {
-    this.dialogService.confirm(
-      network_interfaces_helptext.checkin_title,
-      network_interfaces_helptext.pending_checkin_dialog_text,
-      true, network_interfaces_helptext.checkin_button).subscribe(res => {
-        if (res) {
-          this.user_check_in_prompted = false;
-          this.loader.open();
-          this.ws.call('interface.checkin').subscribe((success) => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
-            this.loader.close();
-            this.dialogService.Info(
-              network_interfaces_helptext.checkin_complete_title,
-              network_interfaces_helptext.checkin_complete_message);
-            this.waitingNetworkCheckin = false;
-          }, (err) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(null, err, this.dialogService);
-          });
+    // only popup dialog if not in network/interfaces page
+    if (this.router.url !== '/network/interfaces') {
+      this.dialogService.confirm(
+        network_interfaces_helptext.checkin_title,
+        network_interfaces_helptext.pending_checkin_dialog_text,
+        true, network_interfaces_helptext.checkin_button).subscribe(res => {
+          if (res) {
+            this.user_check_in_prompted = false;
+            this.loader.open();
+            this.ws.call('interface.checkin').subscribe((success) => {
+              this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
+              this.loader.close();
+              this.dialogService.Info(
+                network_interfaces_helptext.checkin_complete_title,
+                network_interfaces_helptext.checkin_complete_message);
+              this.waitingNetworkCheckin = false;
+            }, (err) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(null, err, this.dialogService);
+            });
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   showNetworkChangesPending() {
@@ -415,31 +468,21 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   updateHAInfo(info) {
-    let ha_enabled = false;
-    this.ha_disabled_reasons = info;
-    if (info.length > 0) {
-      this.ha_status_text = helptext.ha_status_text_disabled;
-    } else {
-      ha_enabled = true;
+    this.ha_disabled_reasons = info.reasons;
+    if(info.status == "HA Enabled"){
       this.ha_status_text = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();
       }
+    } else {
+      this.ha_status_text = helptext.ha_status_text_disabled;
     }
-
-    this.core.emit({name: "HA_Status", data: this.ha_status_text, sender:this});
-    window.sessionStorage.setItem('ha_status', ha_enabled.toString());
   }
 
   getHAStatus() {
-    this.ws.call('failover.disabled_reasons').subscribe(res => {
-      this.updateHAInfo(res);
+    this.core.register({observerClass: this, eventName:"HA_Status"}).subscribe((evt:CoreEvent) => {
+      this.updateHAInfo(evt.data);
     });
-    if (this.is_ha) {
-      this.ws.subscribe('failover.disabled_reasons').subscribe((evt) => {
-        this.updateHAInfo(evt.fields.disabled_reasons);
-      })
-    }
   }
 
   showHAStatus() {
@@ -539,5 +582,149 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   openIX() {
     window.open('https://www.ixsystems.com/', '_blank')
+  }
+
+  showTCStatus() {
+    this.tcConnected ? this.openStatusDialog() : this.openSignupDialog();
+  }
+
+  openSignupDialog() {
+    const conf: DialogFormConfiguration = {
+      title: helptext.signupDialog.title,
+      message: helptext.signupDialog.content,
+      fieldConfig: [],
+      saveButtonText: helptext.signupDialog.connect_btn,
+      custActions: [
+        {
+          id: 'signup',
+          name: helptext.signupDialog.singup_btn,
+          function: () => {
+            window.open('https://portal.ixsystems.com');
+            this.dialogService.closeAllDialogs();
+          }
+        }
+      ],
+      parent: this,
+      customSubmit: function (entityDialog) {
+        entityDialog.dialogRef.close();
+        entityDialog.parent.updateTC();
+      }
+    }
+    this.dialogService.dialogForm(conf);
+  }
+
+  updateTC() {
+    const self = this;
+    let updateDialog;
+    const conf: DialogFormConfiguration = {
+      title: self.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
+      fieldConfig: [
+        {
+          type: 'input',
+          name: 'api_key',
+          placeholder: helptext.updateDialog.api_placeholder,
+          tooltip: helptext.updateDialog.api_tooltip,
+        },
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext.updateDialog.enabled_placeholder,
+          tooltip: helptext.updateDialog.enabled_tooltip,
+          value: true,
+        }
+      ],
+      custActions: [{
+        id: 'deregister',
+        name: helptext.tcDeregisterBtn,
+        function: () => {
+          self.dialogService.generalDialog({
+            title: helptext.tcDeregisterDialog.title,
+            icon: helptext.tcDeregisterDialog.icon,
+            message: helptext.tcDeregisterDialog.message,
+            confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
+          }).subscribe((res) => {
+            if (res) {
+              self.loader.open();
+              self.ws.call(self.tc_updateCall, [{"api_key": null, "enabled" : false}]).subscribe(
+                (wsRes) => {
+                  self.loader.close();
+                  updateDialog.dialogRef.close();
+                  self.tcStatusDialogRef.close(true);
+                  self.dialogService.generalDialog({
+                    title: helptext.deregisterInfoDialog.title,
+                    message: helptext.deregisterInfoDialog.message,
+                    hideCancel: true,
+                  });
+                },
+                (err) => {
+                  self.loader.close();
+                  new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService)
+                }
+              )
+            }
+          })
+        }
+      }],
+      isCustActionVisible(actionId: string) {
+        return actionId === 'deregister' && !self.tcConnected ? false : true;
+      },
+      saveButtonText: self.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
+      parent: this,
+      afterInit: function(entityDialog) {
+        updateDialog = entityDialog;
+        // load settings
+        if (self.tcConnected) {
+          Object.keys(self.tcStatus).forEach(key => {
+            const ctrl = entityDialog.formGroup.controls[key];
+            if (ctrl) {
+              ctrl.setValue(self.tcStatus[key]);
+            }
+          })
+        }
+      },
+      customSubmit: function(entityDialog) {
+        self.loader.open();
+        self.ws.call(self.tc_updateCall, [entityDialog.formValue]).subscribe(
+          (res) => {
+            self.loader.close();
+            entityDialog.dialogRef.close();
+          },
+          (err) => {
+            self.loader.close();
+            new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService)
+          }
+        )
+      }
+    }
+    this.dialogService.dialogForm(conf);
+  }
+
+  openStatusDialog() {
+    const injectData = {
+      parent: this,
+      data: this.tcStatus,
+    }
+    if (this.isTcStatusOpened) {
+      this.tcStatusDialogRef.close(true);
+    } else {
+      this.isTcStatusOpened = true;
+      this.tcStatusDialogRef =
+       this.dialog.open(TruecommandComponent, {
+        disableClose: false,
+        width: '400px',
+        hasBackdrop: true,
+        position: {
+          top: '48px',
+          right: '0px'
+        },
+        data: injectData,
+      });
+    }
+
+    this.tcStatusDialogRef.afterClosed().subscribe(
+      (res) => {
+        this.isTcStatusOpened = false;
+      }
+    );
   }
 }

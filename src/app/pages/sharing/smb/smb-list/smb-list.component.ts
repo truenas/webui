@@ -22,11 +22,13 @@ export class SMBListComponent {
   protected route_edit: string[] = [ 'sharing', 'smb', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
   private entityList: EntityTableComponent;
+  productType = window.localStorage.getItem('product_type');
 
   public columns: any[] = [
     {name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
     {name: helptext_sharing_smb.column_path, prop: 'path'},
-    {name: helptext_sharing_smb.column_comment, prop: 'comment'}
+    {name: helptext_sharing_smb.column_comment, prop: 'comment'},
+    {name: helptext_sharing_smb.column_enabled, prop: 'enabled'}
   ];
   public rowIdentifier = 'cifs_name';
   public config: any = {
@@ -56,7 +58,7 @@ export class SMBListComponent {
     let poolName = rowName.split('/')[0];
     let optionDisabled;
     rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
-    return [
+    const rows =  [
       {
         id: row.name,
         icon: 'edit',
@@ -87,8 +89,27 @@ export class SMBListComponent {
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
           const datasetId = rowName;
-          this.router.navigate(
-            ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
+          // If path_is_encrypted is true or an [ENOENT] err returns, pool or ds is locked
+          this.ws.call('filesystem.path_is_encrypted', [row.path]).subscribe(
+            res => {
+            if(res) {
+              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+                `${helptext_sharing_smb.action_edit_acl_dialog.message1} ${poolName} 
+                ${helptext_sharing_smb.action_edit_acl_dialog.message2}`)
+            } else {
+              this.router.navigate(
+                ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
+            }
+          }, err => {
+            if (err.reason.includes('[ENOENT]')) { 
+              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+                `${helptext_sharing_smb.action_edit_acl_dialog.message1} ${poolName} 
+                ${helptext_sharing_smb.action_edit_acl_dialog.message2}`)
+            } else { // If some other err comes back from filesystem.path_is_encrypted
+              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+                err.reason, err.trace.formatted);
+            }
+          })
         }
       },
       {
@@ -99,5 +120,13 @@ export class SMBListComponent {
         onClick: row => this.entityList.doDelete(row)
       }
     ];
+    // Temporary: Drop from menu if SCALE
+    if (this.productType === 'SCALE') {
+      const aclRow = rows.find(row => row.name === 'edit_acl');
+      const shareAclRow = rows.find(row => row.name === 'share_acl')
+      rows.splice(rows.indexOf(aclRow), 1);
+      rows.splice(rows.indexOf(shareAclRow), 1);
+    }
+    return rows;
   }
 }

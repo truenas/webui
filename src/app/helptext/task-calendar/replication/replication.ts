@@ -20,8 +20,7 @@ export default {
     transport_placeholder: T('Transport'),
     transport_tooltip: T('Method of snapshot transfer:<ul> \
  <li><i>SSH</i> is supported by most systems. It requires a previously \
- created <a href="--docurl--/system.html#ssh-connection" \
- target="_blank">SSH connection</a>.</li> \
+ created connection in <b>System > SSH Connections</b>.</li> \
  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the \
  destination system, then uses \
  <a href="https://github.com/freenas/py-libzfs" \
@@ -34,9 +33,8 @@ export default {
  and earlier.</li></ul>'),
 
     ssh_credentials_placeholder: T('SSH Connection'),
-    ssh_credentials_tooltip: T('Choose the \
- <a href="--docurl--/system.html#ssh-connection" \
- target="_blank">SSH connection</a>.'),
+    ssh_credentials_tooltip: T('Choose a connection that has been saved in \
+ <b>System > SSH Connections</b>.'),
 
     netcat_active_side_placeholder: T('Netcat Active Side'),
     netcat_active_side_tooltip: T('Establishing a connection requires \
@@ -108,10 +106,9 @@ from the source dataset.'),
 
     periodic_snapshot_tasks_placeholder: T('Periodic Snapshot Tasks'),
     periodic_snapshot_tasks_tooltip: T('Snapshot schedule for this \
- replication task. Choose from configured \
- <a href="--docurl--/tasks.html#periodic-snapshot-tasks" \
- target="_blank">Periodic Snapshot Tasks</a>. This replication task must \
- have the same <b>Recursive</b> and <b>Exclude Child Datasets</b> values \
+ replication task. Choose from previously configured \
+ <b>Periodic Snapshot Tasks</b>. This replication task must have the \
+ same <b>Recursive</b> and <b>Exclude Child Datasets</b> values \
  as the chosen periodic snapshot task. Selecting a periodic snapshot \
  schedule removes the <b>Schedule</b> field.'),
 
@@ -133,10 +130,8 @@ from the source dataset.'),
  When a periodic snapshot is not linked to the replication, enter the \
  naming schema for manually created snapshots. Has the same <i>%Y</i>, \
  <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i> string requirements as \
- the <b>Naming Schema</b> in a \
- <a href="--docurl--/tasks.html#periodic-snapshot-tasks" \
- target="_blank">periodic snapshot task. Separate entries by pressing \
- <code>Enter</code>.'),
+ the <b>Naming Schema</b> in a <b>Periodic Snapshot Task</b>. Separate \
+ entries by pressing <code>Enter</code>.'),
 
     auto_placeholder: T('Run Automatically'),
     auto_tooltip: T('Set to either start this replication task \
@@ -158,26 +153,24 @@ from the source dataset.'),
  time.'),
 
     restrict_schedule_placeholder: T('Define Periodic Snapshots to Replicate'),
-    restrict_schedule_tooltip: T('Schedule which periodic snapshots will \
- be replicated. All snapshots will be replicated by default. To choose \
- which snapshots are replicated, set the checkbox and select a schedule \
- from the drop-down menu.<br> \
- For example, there is a system that takes a snapshot every hour, but \
- the administrator has decided that only every other snapshot is needed \
- for replication. The scheduler is set to even hours and only snapshots \
- taken at those times are replicated.'),
+    restrict_schedule_tooltip: T('Only replicate snapshots that \
+ match a defined creation time. To specify which snapshots will be replicated, \
+ set this checkbox and define the snapshot creation times that will be replicated. \
+ <br> For example, setting this time frame to <i>Hourly</i> will only replicate \
+ snapshots that were created at the beginning of each hour.'),
 
     restrict_schedule_picker_tooltip: T('Select a preset schedule or \
  choose <i>Custom</i> to use the advanced scheduler.'),
 
     restrict_schedule_begin_placeholder: T('Begin'),
-    restrict_schedule_begin_tooltip: T('Set a starting time when the \
- replication is not allowed to start. A replication that is already in \
- progress can continue to run past this time.'),
+    restrict_schedule_begin_tooltip: T('Daily time range for the specific \
+ periodic snapshots to replicate, in 15 minute increments. Periodic snapshots \
+ created before the <i>Begin</i> time will not be included in the replication.'),
 
     restrict_schedule_end_placeholder: T('End'),
-    restrict_schedule_end_tooltip: T('Set an ending time for when \
- replications are not allowed to start.'),
+    restrict_schedule_end_tooltip: T('Daily time range for the specific \
+ periodic snapshots to replicate, in 15 minute increments. Snapshots created \
+ after the <i>End</i> time will not be included in the replication.'),
 
     only_matching_schedule_placeholder: T('Only Replicate Snapshots Matching Schedule'),
     only_matching_schedule_tooltip: T('Set to either use the \
@@ -230,12 +223,6 @@ from the source dataset.'),
     speed_limit_tooltip: T('Limit replication speed to this number of \
  bytes per second.'),
     speed_limit_errors: globalHelptext.human_readable.input_error,
-
-    dedup_placeholder: T('Send Deduplicated Stream'),
-    dedup_tooltip: T('Deduplicate the stream to avoid sending redundant \
- data blocks. The destination system must also support deduplicated \
- streams. See <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" \
- target="_blank">zfs(8)</a>.'),
 
     large_block_placeholder: T('Allow Blocks Larger than 128KB'),
     large_block_tooltip: T('Allow sending large data blocks. The \

@@ -14,7 +14,7 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'custom-theme-manager-form',
-  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="350px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="450px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
 export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDestroy {
 

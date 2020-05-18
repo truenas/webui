@@ -20,6 +20,8 @@ import { tween, styler } from 'popmotion';
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
  
   public screenType: string = 'Desktop'; // Desktop || Mobile
+  public optimalDesktopWidth: string = '100%';
+  public widgetWidth: number = 540; // in pixels (Desktop only)
 
   public dashState: DashConfigItem[]; // Saved State
   public activeMobileWidget: DashConfigItem[] = [];
@@ -60,26 +62,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showSpinner: boolean = true;
 
-  constructor(protected core:CoreService, protected ws: WebSocketService, public mediaObserver: MediaObserver, private el: ElementRef){
-    this.statsDataEvents = new Subject<CoreEvent>();
+  constructor(protected core:CoreService, protected ws: WebSocketService, 
+    public mediaObserver: MediaObserver, private el: ElementRef){
 
-    mediaObserver.media$.subscribe((evt) =>{
-
-      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
-
-      // If leaving .xs screen then reset mobile position
-      if(st == 'Desktop' && this.screenType == 'Mobile'){
-        this.onMobileBack();
-      }
-
-      this.screenType = st;
-
-      // Eliminate top level scrolling 
-      let wrapper = (<any>document).querySelector('.fn-maincontent');
-      wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
-      
+    core.register({observerClass: this, eventName: "SidenavStatus"}).subscribe((evt: CoreEvent) => {
+      setTimeout(() => {
+        this.checkScreenSize();      
+      }, 100);
     });
 
+    this.statsDataEvents = new Subject<CoreEvent>();
+    
+    this.checkScreenSize();
+    
+    window.onresize = () => {
+      this.checkScreenSize();     
+    }
   }
 
   ngAfterViewInit(){
@@ -90,6 +88,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     window.onfocus = () => {
       this.startListeners();
     }
+
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    let st = window.innerWidth < 600 ? 'Mobile' : 'Desktop';
+
+    // If leaving .xs screen then reset mobile position
+    if(st == 'Desktop' && this.screenType == 'Mobile'){
+      this.onMobileBack();
+    }
+
+    this.screenType = st;
+
+    // Eliminate top level scrolling 
+    let wrapper = (<any>document).querySelector('.fn-maincontent');
+    wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
+    this.optimizeWidgetContainer();
+  }
+
+  optimizeWidgetContainer(){
+    let wrapper = (<any>document).querySelector('.rightside-content-hold');
+    
+    const withMargin = this.widgetWidth + 8;
+    const max = Math.floor(wrapper.offsetWidth / withMargin);
+    const odw = max * withMargin;
+    this.optimalDesktopWidth = odw.toString() + 'px';
   }
 
   onMobileLaunch(evt: DashConfigItem) {
@@ -261,13 +286,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   startListeners(){
 
     this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
-      
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
+
       if(evt.virtual_memory){
-        this.statsDataEvents.next({name:"MemoryStats", data:evt.virtual_memory});
+        let keys = Object.keys(evt.virtual_memory);
+        let memStats: any = {};
+
+        keys.forEach((key, index) => {
+          memStats[key] = evt.virtual_memory[key];
+        });
+
+        if(evt.zfs && evt.zfs.arc_size != null){
+          memStats.arc_size = evt.zfs.arc_size;
+        }
+        this.statsDataEvents.next({name:"MemoryStats", data: memStats});
       }
+
       if(evt.interfaces){
         const keys = Object.keys(evt.interfaces);
         keys.forEach((key, index) => {
@@ -275,6 +311,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.statsDataEvents.next({name:"NetTraffic_" + key, data: data});
         });
       }
+
     });
 
   }

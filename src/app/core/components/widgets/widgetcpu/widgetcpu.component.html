@@ -28,9 +28,7 @@
           <!-- Chart -->
           <div [ngClass]="{'mobile': screenType == 'Mobile'}" id="cpu-load-wrapper" fxLayout="row wrap" fxLayoutAlign="space-around center">
 
-            <h3 fxFlex="33" fxFlex.xs="100" id="cpu-load-label">{{"LOAD" | translate}}</h3>
-
-            <div class="viewchartgauge" fxFlex="34" fxFlex.xs="100">
+            <div class="viewchartgauge" fxFlex="47" fxFlex.xs="100">
               <viewchartgauge [config]="cpuAvg" #load *ngIf="cpuAvg && cpuAvg.data; else loader"></viewchartgauge>
             </div>
 
@@ -38,9 +36,26 @@
               <mat-spinner [diameter]="40" style="margin: 0 auto;"></mat-spinner>
             </ng-template>
 
-            <div *ngIf="screenType == 'Desktop'" fxFlex="33" fxFlex.xs="100" id="cpu-load-cores">
-              <h3 class="core-count">{{coreCount}}</h3>
-              <h4 class="core-count-label">{{"Threads" | translate}}</h4>
+            <div *ngIf="screenType == 'Desktop'" fxFlex="53" fxFlex.xs="100" id="cpu-load-cores">
+                <mat-list>
+                  <mat-list-item>
+                    <span class="label"><strong>{{"Threads" | translate}}:</strong></span> &nbsp;&nbsp;{{coreCount}} {{"threads" | translate}}
+                  </mat-list-item>
+                  <mat-list-item>
+                    <div class="label-icon" *ngIf="usageMax >= 70" [ngClass]="{'warn': usageMax < 90, 'danger': usageMax > 89 }">
+                      <mat-icon fontSet="mdi-set" fontIcon="mdi-alert" role="img"></mat-icon>
+                    </div>
+                    <span class="label"><strong>{{"Highest Usage" | translate}}:</strong></span> &nbsp;&nbsp;{{usageMax}}% &nbsp;
+                    <span class="subtext" >({{usageMaxThreads.length < 2 ? 'Thread #' + usageMaxThreads.toString(): usageMaxThreads.length + ' threads at ' + usageMax + '%'}})</span>
+                  </mat-list-item>
+                  <mat-list-item>
+                    <div class="label-icon" *ngIf="tempMax >= 70" [ngClass]="{'warn': tempMax < 80, 'danger': tempMax > 79 }">
+                      <mat-icon fontSet="mdi-set" fontIcon="mdi-alert" role="img"></mat-icon>
+                    </div>
+                    <span class="label"><strong>{{"Hottest" | translate}}:</strong></span> &nbsp;&nbsp;{{tempMax}}°C &nbsp;
+                    <span class="subtext">({{tempMaxThreads.length < 2 ? 'Thread #' + tempMaxThreads.toString(): tempMaxThreads.length + ' threads at ' + tempMax + '°C'}})</span>
+                  </mat-list-item>
+                </mat-list>
             </div>
 
           </div>

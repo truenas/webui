@@ -28,6 +28,11 @@
               <div dynamicField [config]="rawfileField" [group]="rawfileFormGroup"></div>
             </div>
           </div>
+          <div *ngIf="selectedType == 'PCI'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngFor="let pciField of fieldSet.pciFieldConfig;">
+              <div dynamicField [config]="pciField" [group]="pciFormGroup"></div>
+            </div>
+          </div>
           <div *ngIf="selectedType == 'VNC'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
             <div *ngFor="let vncField of fieldSet.vncFieldConfig;">
               <div dynamicField [config]="vncField" [group]="vncFormGroup"></div>

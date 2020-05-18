@@ -42,6 +42,7 @@ export class CoreService {
   debug_show_subscription_type:boolean;
   debug_show_dispatch_table:boolean;
   debug_show_emit_logs:boolean;
+  debug_filter_eventName: string = "";
   //private debug_show_data:boolean
   constructor() {
     /////////////////////////////
@@ -50,6 +51,7 @@ export class CoreService {
     this.debug_show_emit_logs = false;
     this.debug_show_subscription_type = false;
     this.debug_show_dispatch_table = false;
+    this.debug_filter_eventName = "";
     /////////////////////////////
     if(this.debug){
       console.log("*** New Instance of Core Service ***");
@@ -101,19 +103,35 @@ export class CoreService {
     this.dispatchTable = clone;
     if(this.debug && this.debug_show_dispatch_table){
       console.log("UNREGISTER: DISPATCH = ");
-      console.log(this.dispatchTable);
+      const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
+      console.log(tbl);
+      console.log(this.dispatchTable.length + " Observers in table.");
     }
   }
 
   public emit(evt: CoreEvent){
-    if(this.debug && this.debug_show_emit_logs){ 
+    // DEBUG MESSAGES
+    if(this.debug && this.debug_filter_eventName.length > 0 && this.debug_filter_eventName == evt.name){
       console.log("*******************************************************");
       console.log("CORESERVICE: Emitting " + evt.name);
+      console.log(this.dispatchTable.filter((r) => r.eventName == evt.name));
+    } else if(this.debug && this.debug_filter_eventName.length == 0){
+      console.log("*******************************************************");
+      console.log("CORESERVICE: Emitting " + evt.name);
+      console.log(evt);
+    } 
+       
+      
+
+    if(this.debug && this.debug_show_emit_logs){ 
       if(this.debug_show_dispatch_table){
         console.log("CORESERVICE: dispatchTable...");
-        console.log(this.dispatchTable)
+        console.log(this.dispatchTable.length + " Observers in table.");
+        const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
+        console.log(tbl);
       }
     }
+
     //avoid matching null values
     if(!evt.name){
       evt.name = "null";

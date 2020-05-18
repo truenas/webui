@@ -71,6 +71,13 @@ export class WebdavFormComponent {
           value: true,
           placeholder : helptext_sharing_webdav.placeholder_perm,
           tooltip: helptext_sharing_webdav.tooltip_perm
+        },
+        {
+          type : 'checkbox',
+          name : 'enabled',
+          value: true,
+          placeholder : helptext_sharing_webdav.placeholder_enabled,
+          tooltip: helptext_sharing_webdav.tooltip_enabled,
         }
       ]
     }];

@@ -386,7 +386,7 @@ export class StorageService {
   };
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(bytes, decimalPlaces?) {
+  convertBytestoHumanReadable(bytes, decimalPlaces?, min_units?, hideBytes?: boolean ) {
     let i = -1;
     let dec, units;
     decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
@@ -397,7 +397,11 @@ export class StorageService {
       } while (bytes >= 1024 && i < 4);
       units = this.IECUnits[i];
     } else {
-      units = 'bytes';
+      if (min_units) {
+        units = min_units;
+      } else {
+        units = hideBytes ? '' : 'bytes';
+      }
     }
     return `${Math.max(bytes, 0.1).toFixed(dec)} ${units}`;
   };

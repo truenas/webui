@@ -4,7 +4,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid " Builtin Groups"
+msgid " Built-in Groups"
 msgstr ""
 
 msgid " Builtin Users"
@@ -14,6 +14,9 @@ msgid " Check Notifications for more details."
 msgstr ""
 
 msgid " Download Updates"
+msgstr ""
+
+msgid " First data vdev is a "
 msgstr ""
 
 msgid " First vdev has "
@@ -60,7 +63,7 @@ msgstr ""
 msgid " and will be disrupted if the pool is locked:"
 msgstr ""
 
-msgid " builtin groups (default setting is <i>hidden</i>)."
+msgid " built-in groups (default setting is <i>hidden</i>)."
 msgstr ""
 
 msgid " builtin users (default setting is <i>hidden</i>)."
@@ -101,9 +104,7 @@ msgstr ""
 msgid " seconds"
 msgstr ""
 
-msgid ""
-" seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow "
-"for testing."
+msgid " seconds."
 msgstr ""
 
 msgid " service has been enabled."
@@ -162,6 +163,9 @@ msgid "(Remove pool from database)"
 msgstr ""
 
 msgid "(top-right), then"
+msgstr ""
+
+msgid ", new Metadata vdev is a "
 msgstr ""
 
 msgid ", new vdev is "
@@ -224,13 +228,6 @@ msgstr ""
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
 "by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
-msgstr ""
-
-msgid ""
-"<a href=\"--docurl--/sharing.html#block-iscsi\" target=\"_blank\">iSCSI</a> "
-"supports multiple authentication methods that are used by the target to "
-"discover valid devices. <i>None</i> allows anonymous discovery while "
-"<i>CHAP</i> and <i>Mutual CHAP</i> require authentication."
 msgstr ""
 
 msgid ""
@@ -318,16 +315,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
-"RELEASE+and+Ports\" target=\"_blank\">GELI</a>  encryption is available for "
-"ZFS pools. <b>WARNING:</b> Read the  <a "
-"href=\"--docurl--/storage.html#managing-encrypted-pools\" "
-"target=\"_blank\">Encryption section</a>  of the guide before activating "
-"this option."
-msgstr ""
-
-msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
@@ -337,9 +324,7 @@ msgid ""
 "<b>Ctrl+C</b> kills a foreground process.<br>    Many utilities are "
 "built-in:<br> <b>Iperf</b>,    <b>Netperf</b>, <b>IOzone</b>, "
 "<b>arcsat</b>,    <b>tw_cli</b>, <br><b>MegaCli</b>,    "
-"<b>freenas-debug</b>, <b>tmux</b>,    <b>Dmidecode</b>.<br> Refer to the <a "
-"   href=\"--docurl--/cli.html\"    target=\"_blank\">Command Line "
-"Utilities</a>    chapter in the guide for usage information    and examples."
+"<b>freenas-debug</b>, <b>tmux</b>,    <b>Dmidecode</b>."
 msgstr ""
 
 msgid "<b>Current Version:</b> "
@@ -357,12 +342,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<b>Root logins are discouraged.</b> Set to allow root logins. A password "
-"must be set for the <i>root</i> user in <a "
-"href=\"--docurl--/accounts.html#users\" target=\"_blank\">Users</a>."
-msgstr ""
-
-msgid "<b>SED (Self-Encrypting Drives) Options</b>"
+"<b>Root logins are discouraged.</b> Allows root  logins. A password must be "
+"set for the <i>root</i> user account."
 msgstr ""
 
 msgid ""
@@ -408,6 +389,11 @@ msgstr ""
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
 msgstr ""
 
+msgid ""
+"<em>Warning:</em> The WireGuard service must be active on the client system "
+"to access the TrueCommand UI."
+msgstr ""
+
 msgid "<font color=\"red\"> There are "
 msgstr ""
 
@@ -426,8 +412,6 @@ msgid ""
 "target=\"_blank\">idmap_autorid(8)</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ad\" "
 "target=\"_blank\">ad</a>, <a "
-"href=\"--docurl--/directoryservices.html#id12\" "
-"target=\"_blank\">fruit</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap\" "
 "target=\"_blank\">idmap_ldap(8)</a>, <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=idmap_nss\" "
@@ -687,9 +671,6 @@ msgstr ""
 msgid "API URL"
 msgstr ""
 
-msgid "APPLY CHANGES"
-msgstr ""
-
 msgid "ARN"
 msgstr ""
 
@@ -797,16 +778,14 @@ msgid "Activate this certificate extension."
 msgstr ""
 
 msgid ""
-"Activates the configuration. Unset to disable the configuration without "
-"deleting it."
+"Activates a tuning script which attempts to optimize  the system depending "
+"on the installed hardware. <b>Warning:</b> Autotuning  is only used as a "
+"temporary measure and is not a permanent fix for system  hardware issues."
 msgstr ""
 
 msgid ""
-"Activates the process for ZFS to transparently reuse a single copy of "
-"duplicated data to save space. The <a "
-"href=\"--docurl--/storage.html#deduplication\" "
-"target=\"_blank\">Deduplication section</a> of the Guide describes each "
-"option."
+"Activates the configuration. Unset to disable the configuration without "
+"deleting it."
 msgstr ""
 
 msgid "Activates the replication schedule."
@@ -887,11 +866,6 @@ msgstr ""
 msgid ""
 "Add a passphrase to the new  encryption key. This is used to lock and "
 "unlock the pool."
-msgstr ""
-
-msgid ""
-"Add an <a href=\"--docurl--/system.html#certificates\" "
-"target=\"_blank\">SSL certificate</a> to be used for secure S3 connections."
 msgstr ""
 
 msgid ""
@@ -1017,8 +991,8 @@ msgstr ""
 
 msgid ""
 "Additional options for <a "
-"href=\"https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html\" "
-"target=\"_blank\">sssd.conf(5)</a>."
+"href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" "
+"target=\"_blank\">nslcd.conf</a>."
 msgstr ""
 
 msgid ""
@@ -1089,6 +1063,9 @@ msgstr ""
 msgid "Advanced Remote Options"
 msgstr ""
 
+msgid "Advanced Replication Creation"
+msgstr ""
+
 msgid "Advanced Settings"
 msgstr ""
 
@@ -1122,6 +1099,16 @@ msgid "Aliases must be 15 characters or less."
 msgstr ""
 
 msgid "All Disks"
+msgstr ""
+
+msgid ""
+"All built-in groups are  hidden by default. Use the gear icon (top-right) "
+"to toggle the display of built-in groups."
+msgstr ""
+
+msgid ""
+"All built-in users except <i>root</i> are  hidden by default. Use the gear "
+"icon (top-right) to toggle the display of built-in users."
 msgstr ""
 
 msgid "All dirs"
@@ -1220,6 +1207,11 @@ msgid ""
 "Allow different groups to be configured with different authentication "
 "profiles. Example: all users with a group ID of <i>1</i> will inherit the "
 "authentication profile associated with Group <i>1</i>."
+msgstr ""
+
+msgid ""
+"Allow encrypted connections. Requires a certificate  created or imported "
+"with the <b>System > Certificates</b> menu."
 msgstr ""
 
 msgid "Allow from"
@@ -1454,9 +1446,6 @@ msgstr ""
 msgid "Apply Failover Upgrade"
 msgstr ""
 
-msgid "Apply Network Changes"
-msgstr ""
-
 msgid "Apply Pending Updates"
 msgstr ""
 
@@ -1473,9 +1462,6 @@ msgid "Apply Quotas to Selected Users"
 msgstr ""
 
 msgid "Apply Update"
-msgstr ""
-
-msgid "Apply network changes? Network connectivity will be interrupted."
 msgstr ""
 
 msgid "Apply permissions recursively"
@@ -1512,6 +1498,9 @@ msgstr ""
 msgid "Archive"
 msgstr ""
 
+msgid "Are you sure you want to deregister TrueCommand Cloud Service?"
+msgstr ""
+
 msgid "Are you sure you want to sync from peer?"
 msgstr ""
 
@@ -1519,6 +1508,18 @@ msgid "Are you sure you want to sync to peer?"
 msgstr ""
 
 msgid "Are you sure?"
+msgstr ""
+
+msgid ""
+"Arrange the disks according to capacity, redundancy, and  performance "
+"considerations. More types become available as more disks are added to the "
+"vdev.<br>  A <i>Stripe</i> uses the entire capacity of the disks for "
+"storage and <b>has no redundancy</b>.  Failed or degraded disks in a stripe "
+"can result in data loss!<br> A <i>Mirror</i> requires at  least two disks "
+"and mirrors the data from one disk onto each other disk in the vdev, which "
+"can  limit the total capacity.<br><i>Raid-Z</i> configurations offer "
+"different balances of data  redundancy and total capacity for the selected "
+"disks."
 msgstr ""
 
 msgid "Associated Target"
@@ -1641,12 +1642,6 @@ msgid "Autoconfigure IPv6 with rtsold"
 msgstr ""
 
 msgid "Automatic scrub interval (in days)"
-msgstr ""
-
-msgid ""
-"Automatically compress data written to the zvol. Choose a <a "
-"href=\"--docurl--/storage.html#compression\" target=\"_blank\">compression "
-"algorithm</a>."
 msgstr ""
 
 msgid ""
@@ -1927,11 +1922,9 @@ msgid "Browse to the operating system installer image file."
 msgstr ""
 
 msgid ""
-"Browse to the path to be copied. The                 <a "
-"href=\"--docurl--/intro.html#path-and-name-lengths\"                 "
-"target=\"_blank\">FreeBSD file path limits</a> apply.                 Other "
-"operating systems can have different limits                 which might "
-"affect how they can be used as sources                 or destinations."
+"Browse to the path to be copied. FreeBSD  file path limits apply. Other "
+"operating systems can have different  limits which might affect how they "
+"can be used as sources or  destinations."
 msgstr ""
 
 msgid "Browse to the pool or dataset to share."
@@ -2004,6 +1997,9 @@ msgstr ""
 msgid "COLORS"
 msgstr ""
 
+msgid "CONNECT"
+msgstr ""
+
 msgid "COPY TO CLIPBOARD"
 msgstr ""
 
@@ -2058,6 +2054,11 @@ msgid "Cannot create plugins or jails until a pool is present for storing them."
 msgstr ""
 
 msgid "Cannot edit while HA is enabled."
+msgstr ""
+
+msgid ""
+"Cannot open this ACL. Check the permissions this dataset  has inherited "
+"from parents."
 msgstr ""
 
 msgid "Case Sensitivity"
@@ -2160,7 +2161,12 @@ msgid ""
 "cannot contain a space or <b>#</b>."
 msgstr ""
 
-msgid "Changes that have been applied will revert after "
+msgid "Changes Saved"
+msgstr ""
+
+msgid ""
+"Changes to <em>Hosts Allow</em> or <em>Hosts Deny</em> take effect when the "
+" SMB service restarts."
 msgstr ""
 
 msgid "Changing"
@@ -2263,13 +2269,6 @@ msgstr ""
 msgid "Choose"
 msgstr ""
 
-msgid ""
-"Choose <a                 href=\"--docurl--/tasks.html#rsync-module-mode\"  "
-"              target=\"_blank\">rsync module mode</a> or <a                 "
-"href=\"--docurl--/tasks.html#rsync-over-ssh-mode\"                "
-"target=\"_blank\">rsync over SSH mode</a>"
-msgstr ""
-
 msgid "Choose <i>AES-256</i> or <i>None</i>."
 msgstr ""
 
@@ -2305,13 +2304,6 @@ msgstr ""
 msgid "Choose Topbar"
 msgstr ""
 
-msgid ""
-"Choose a <i>Stripe</i>, <i>Mirror</i>, or <i>Raid-Z</i> configuration for "
-"the chosen disk layout. See the <a "
-"href=\"--docurl--/storage.html#pool-manager\" target=\"_blank\">Pool "
-"Manager</a> section of the guide for more details."
-msgstr ""
-
 msgid "Choose a DNS provider and configure any required authenticator attributes."
 msgstr ""
 
@@ -2325,6 +2317,9 @@ msgid "Choose a color scheme."
 msgstr ""
 
 msgid "Choose a compression algorithm."
+msgstr ""
+
+msgid "Choose a connection that has been saved in  <b>System > SSH Connections</b>."
 msgstr ""
 
 msgid "Choose a date"
@@ -2470,11 +2465,6 @@ msgstr ""
 msgid "Choose permissions for this rsync module."
 msgstr ""
 
-msgid ""
-"Choose the  <a href=\"--docurl--/system.html#ssh-connection\"  "
-"target=\"_blank\">SSH connection</a>."
-msgstr ""
-
 msgid "Choose the VM operating system type."
 msgstr ""
 
@@ -2548,10 +2538,7 @@ msgid ""
 "simultaneously with scrub or resilver operations."
 msgstr ""
 
-msgid ""
-"Choose the type of filesystem on the disk. Refer to the guide section on <a "
-"href=\"--docurl--/storage.html#import-disk\" target=\"_blank\">importing "
-"disks</a> for more details."
+msgid "Choose the type of filesystem on the disk."
 msgstr ""
 
 msgid ""
@@ -2568,6 +2555,11 @@ msgid ""
 msgstr ""
 
 msgid "Choose the type that matches the type of client accessing the pool/dataset."
+msgstr ""
+
+msgid ""
+"Choose to either use a custom-defined remote module  of the rsync server or "
+"to use an SSH configuration for the rsync task."
 msgstr ""
 
 msgid "Choose when the UPS initiates shutdown."
@@ -2860,10 +2852,16 @@ msgstr ""
 msgid "Connect Timeout"
 msgstr ""
 
+msgid "Connect to TrueCommand Cloud"
+msgstr ""
+
 msgid "Connected Initiators"
 msgstr ""
 
 msgid "Connecting to "
+msgstr ""
+
+msgid "Connecting to TrueCommand"
 msgstr ""
 
 msgid "Connection"
@@ -3164,9 +3162,6 @@ msgstr ""
 msgid "DHCP Autoconfigure IPv4"
 msgstr ""
 
-msgid "DISCARD CHANGES"
-msgstr ""
-
 msgid "DNS Domain Name"
 msgstr ""
 
@@ -3204,6 +3199,18 @@ msgid "DQ Used"
 msgstr ""
 
 msgid "Daily"
+msgstr ""
+
+msgid ""
+"Daily time range for the specific  periodic snapshots to replicate, in 15 "
+"minute increments. Periodic snapshots  created before the <i>Begin</i> time "
+"will not be included in the replication."
+msgstr ""
+
+msgid ""
+"Daily time range for the specific  periodic snapshots to replicate, in 15 "
+"minute increments. Snapshots created  after the <i>End</i> time will not be "
+"included in the replication."
 msgstr ""
 
 msgid "Dashboard"
@@ -3441,6 +3448,14 @@ msgstr ""
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr ""
 
+msgid ""
+"Define whether the control channel,  data channel, both channels, or "
+"neither channel of an FTP  session must occur over SSL/TLS. The policies "
+"are described  <a "
+"href=\"http://www.proftpd.org/docs/directives/linked/config_ref_TLSRequired."
+"html\" target=\"_blank\">here</a>"
+msgstr ""
+
 msgid "Delay Updates"
 msgstr ""
 
@@ -3502,6 +3517,9 @@ msgid ""
 "in the source directory."
 msgstr ""
 
+msgid "Delete iSCSI extent "
+msgstr ""
+
 msgid "Delete selections"
 msgstr ""
 
@@ -3535,6 +3553,12 @@ msgid "Deny Hosts"
 msgstr ""
 
 msgid "Deny List"
+msgstr ""
+
+msgid "Deregister"
+msgstr ""
+
+msgid "Deregister TrueCommand Cloud Service"
 msgstr ""
 
 msgid ""
@@ -3664,6 +3688,15 @@ msgid ""
 "to the jail <i>chroot</i> directory to be available."
 msgstr ""
 
+msgid ""
+"Determines the outgoing and incoming traffic ports.<br>  <i>LACP</i> is the "
+"recommended protocol if the network switch is capable of  active "
+"LACP.<br><i>Failover</i> is the default protocol choice and  should only be "
+"used if the network switch does not support active LACP.<br>  See <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=lagg\" "
+"target=\"_blank\">lagg(4)</a>  for more details."
+msgstr ""
+
 msgid "Device"
 msgstr ""
 
@@ -3781,12 +3814,6 @@ msgid ""
 "plugin, jail, or virtual machine networking."
 msgstr ""
 
-msgid "Discard Network Changes"
-msgstr ""
-
-msgid "Discard unapplied network changes?"
-msgstr ""
-
 msgid "Discover Remote Host Key"
 msgstr ""
 
@@ -3823,6 +3850,9 @@ msgstr ""
 msgid "Disk Type"
 msgstr ""
 
+msgid "Disk Wiped successfully"
+msgstr ""
+
 msgid "Disk sector size"
 msgstr ""
 
@@ -3839,6 +3869,9 @@ msgid "Dismiss"
 msgstr ""
 
 msgid "Display Login"
+msgstr ""
+
+msgid "Display Note"
 msgstr ""
 
 msgid "Display System Processes"
@@ -3956,6 +3989,9 @@ msgstr ""
 msgid "Dry Run Cloud Sync Task"
 msgstr ""
 
+msgid "E-mail address that will receive SNMP service messages."
+msgstr ""
+
 msgid "EC Curve"
 msgstr ""
 
@@ -4059,6 +4095,12 @@ msgid ""
 msgstr ""
 
 msgid "Enable"
+msgstr ""
+
+msgid ""
+"Enable  <a href=\"https://zfsonlinux.org/manpages/0.8.3/man8/zfs.8.html\" "
+"target=\"_blank\">ZFS encryption</a>  for this pool and add an encryption "
+"algorithm selector."
 msgstr ""
 
 msgid "Enable (requires password or Kerberos principal)"
@@ -4194,8 +4236,22 @@ msgstr ""
 msgid "Enable the SNMPv3 security model."
 msgstr ""
 
+msgid "Enable this AFP share. Unset to disable this AFP share  without deleting it."
+msgstr ""
+
 msgid ""
 "Enable this Cloud Sync Task. Unset to disable this Cloud Sync Task without "
+"deleting it."
+msgstr ""
+
+msgid "Enable this NFS share. Unset to disable this NFS share  without deleting it."
+msgstr ""
+
+msgid "Enable this SMB share. Unset to disable this SMB share  without deleting it."
+msgstr ""
+
+msgid ""
+"Enable this WebDAV share. Unset to disable this WebDAV  share without "
 "deleting it."
 msgstr ""
 
@@ -4251,22 +4307,21 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enables the autotune script which attempts to optimize the system depending "
-"on the installed hardware. <b>Warning:</b> Autotuning is only used as a "
-"temporary measure and is not a permanent fix for system hardware issues. "
-"See the <a href=\"--docurl--/system.html#autotune\" "
-"target=\"_blank\">Autotune section</a> of the guide for more information."
-msgstr ""
-
-msgid ""
-"Enabling <em>Time Machine</em> on an SMB share requires a restart of the "
-"SMB service."
+"Enabling <em>Time Machine</em> on an SMB share requires restarting the SMB "
+"service."
 msgstr ""
 
 msgid ""
 "Enabling allows the system to conduct periodic <a "
 "href=\"--docurl--/tasks.html#s-m-a-r-t-tests\" target=\"_blank\">S.M.A.R.T. "
 "tests</a>."
+msgstr ""
+
+msgid ""
+"Enabling allows using a password to authenticate  the SSH login. Disabling "
+"changes authentication to require keys for  all users. This requires  <a "
+"href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
+"target=\"_blank\">additional setup</a>  on both the SSH client and server."
 msgstr ""
 
 msgid ""
@@ -4294,6 +4349,17 @@ msgid "Encipher Only"
 msgstr ""
 
 msgid "Enclosure"
+msgstr ""
+
+msgid ""
+"Encode information in less space than the  original data occupies. It is "
+"recommended to choose a compression algorithm  that balances disk "
+"performance with the amount of saved space.<br> <i>LZ4</i> is  generally "
+"recommended as it maximizes performance and dynamically identifies  the "
+"best files to compress.<br> <i>GZIP</i> options range from 1 for least  "
+"compression, best performance, through 9 for maximum compression with  "
+"greatest performance impact.<br> <i>ZLE</i> is a fast algorithm that only  "
+"elminates runs of zeroes."
 msgstr ""
 
 msgid ""
@@ -4396,11 +4462,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Ensure <a href=\"--docurl--/directoryservices.html#kerberos-realms\" "
-"target=\"_blank\">Kerberos Realms</a> and <a "
-"href=\"--docurl--/directoryservices.html#kerberos-keytabs\" "
-"target=\"_blank\">Kerberos Keytabs</a> are configured and the system can "
-"communicate with the Kerberos Domain Controller before setting."
+"Ensure valid entries exist in  <b>Directory Services > Kerberos Realms</b> "
+"and  <b>Directory Services > Kerberos Keytabs</b> and the system  can "
+"communicate with the Kerberos Domain Controller before  enabling this "
+"option."
 msgstr ""
 
 msgid "Enter"
@@ -4675,11 +4740,6 @@ msgid "Enter an alphanumeric name for the virtual machine."
 msgstr ""
 
 msgid ""
-"Enter an email address to receive messages from the <a "
-"href=\"--docurl--/services.html#snmp\" target=\"_blank\">SNMP service</a>."
-msgstr ""
-
-msgid ""
 "Enter any additional <a "
 "href=\"http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html\" "
 "target=\"_blank\">snmpd.conf(5)</a> options. Add one option for each line."
@@ -4780,7 +4840,11 @@ msgid ""
 "authentication. <b>Do not paste the private key.</b>"
 msgstr ""
 
-msgid "Enter passphrase to expand pool "
+msgid ""
+"Enter or paste the API key provided from <a "
+"href=\"https://portal.ixsystems.com/portal/login/\" "
+"target=\"_blank\">iXsystems Account Services</a>. Login or signup is "
+"required."
 msgstr ""
 
 msgid "Enter passphrase to lock pool "
@@ -4846,9 +4910,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enter the IP address which runs the <a href=\"--docurl--/services.html#s3\" "
-"target=\"_blank\">S3 service</a>. <i>0.0.0.0</i> tells the server to listen "
-"on all addresses."
+"Enter the IP address which runs the  S3 service. <i>0.0.0.0</i> tells the "
+"server to listen  on all addresses."
 msgstr ""
 
 msgid ""
@@ -4863,7 +4926,18 @@ msgid ""
 "target=\"_blank\">VNET(9)</a> and shared IP jails."
 msgstr ""
 
-msgid "Enter the S3 username."
+msgid ""
+"Enter the S3 access ID. See <a "
+"href=\"https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types."
+"html#access-keys-and-secret-access-keys\" target=\"_blank\">  Access "
+"keys</a> for more information."
+msgstr ""
+
+msgid ""
+"Enter the S3 secret access key. See  <a "
+"href=\"https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types."
+"html#access-keys-and-secret-access-keys\" target=\"_blank\">  Access "
+"keys</a> for more information."
 msgstr ""
 
 msgid "Enter the SSH Port of the remote system."
@@ -4982,23 +5056,12 @@ msgid ""
 "accepted."
 msgstr ""
 
-msgid "Enter the password that must be used by connecting S3 systems."
-msgstr ""
-
 msgid ""
-"Enter the password to be used for the <a "
-"href=\"--docurl--/directoryservices.html#active-directory\" "
-"target=”_blank”>Active Directory</a> administrator account."
+"Enter the password to be used for the  Active Directory administrator "
+"account."
 msgstr ""
 
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
-msgstr ""
-
-msgid ""
-"Enter the percentage of free space to remain in the pool. When this "
-"percentage is reached, the system issues an alert, but only if zvols are "
-"used. See <a href=\"--docurl--/vaai.html#vaai\" target=\"_blank\">VAAI "
-"Threshold Warning</a> for more information."
 msgstr ""
 
 msgid "Enter the phone number of the contact person."
@@ -5201,6 +5264,12 @@ msgid "Execute"
 msgstr ""
 
 msgid "Expand Pool"
+msgstr ""
+
+msgid "Expand pool "
+msgstr ""
+
+msgid "Expand pool to fit all available disk space."
 msgstr ""
 
 msgid "Expiration Date"
@@ -5407,6 +5476,12 @@ msgstr ""
 msgid "Filter Users"
 msgstr ""
 
+msgid "Filter disks by capacity"
+msgstr ""
+
+msgid "Filter disks by name"
+msgstr ""
+
 msgid "Find this information later by clicking"
 msgstr ""
 
@@ -5451,12 +5526,6 @@ msgid "Follow Symlinks"
 msgstr ""
 
 msgid "Follow symlinks and copy the items to which they link."
-msgstr ""
-
-msgid ""
-"For more information about the available compression algorithms, refer to "
-"the <a href=\"--docurl--/storage.html#compression\" "
-"target=\"_blank\">Compression section</a> of the guide."
 msgstr ""
 
 msgid "Force"
@@ -5628,10 +5697,15 @@ msgid "Generate Reports"
 msgstr ""
 
 msgid ""
-"Generate a name for the snapshot  from a previously created  <a "
-"href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
-"target=\"_blank\">periodic snapshot task</a> naming schema. This allows  "
-"the snapshot to be replicated. Cannot be used with a <i>Name</i>."
+"Generate a name for the snapshot  using the naming schema from a previously "
+"created <b>Periodic Snapshot Task</b>.  This allows the snapshot to be "
+"replicated. Cannot be used with a <i>Name</i>."
+msgstr ""
+
+msgid ""
+"Generate an alert when the    pool has this percent space remaining. This "
+"is typically    configured at the pool level when using zvols or at the "
+"extent level    for both file and device based extents."
 msgstr ""
 
 msgid "Generate idmap low range based on same algorithm that SSSD uses by default."
@@ -5670,6 +5744,9 @@ msgid "Global password to unlock SEDs."
 msgstr ""
 
 msgid "Go Back to Jails"
+msgstr ""
+
+msgid "Go Back to Virtual Machines"
 msgstr ""
 
 msgid "Go to Active Directory Form"
@@ -5834,6 +5911,9 @@ msgid ""
 "to run the command."
 msgstr ""
 
+msgid "Highest Usage"
+msgstr ""
+
 msgid "Highest Usage:"
 msgstr ""
 
@@ -5938,6 +6018,9 @@ msgstr ""
 msgid "Hot Spare"
 msgstr ""
 
+msgid "Hottest"
+msgstr ""
+
 msgid "Hottest:"
 msgstr ""
 
@@ -6009,10 +6092,7 @@ msgid ""
 "How this ACE is applied to newly created directories and files within the "
 "dataset. Basic flags enable or disable ACE inheritance. Advanced flags "
 "allow further control of how the ACE is applied to files and directories in "
-"the dataset. See the <a "
-"href=\"--docurl--/storage.html#ace-inheritance-flags\" "
-"target=\"_blank\">inheritance flags list</a> for descriptions of Advanced "
-"inheritance flags."
+"the dataset."
 msgstr ""
 
 msgid ""
@@ -6243,6 +6323,9 @@ msgstr ""
 msgid "Ignore Builtin"
 msgstr ""
 
+msgid "Immediately connect to TrueCommand."
+msgstr ""
+
 msgid "Import"
 msgstr ""
 
@@ -6412,6 +6495,9 @@ msgstr ""
 msgid "Interface Settings"
 msgstr ""
 
+msgid "Interface changes reverted."
+msgstr ""
+
 msgid "Interfaces"
 msgstr ""
 
@@ -6573,12 +6659,6 @@ msgstr ""
 msgid "KDC"
 msgstr ""
 
-msgid "KEEP CHANGES"
-msgstr ""
-
-msgid "KEEP NETWORK CHANGES PERMANENTLY"
-msgstr ""
-
 msgid "KMIP"
 msgstr ""
 
@@ -6589,12 +6669,6 @@ msgid "KMIP Server"
 msgstr ""
 
 msgid "Keep"
-msgstr ""
-
-msgid "Keep Network Changes"
-msgstr ""
-
-msgid "Keep changed network settings permanently?"
 msgstr ""
 
 msgid "Keep snapshot for"
@@ -6723,9 +6797,6 @@ msgid ""
 msgstr ""
 
 msgid "LEGACY WEB INTERFACE"
-msgstr ""
-
-msgid "LOAD"
 msgstr ""
 
 msgid "LOGIN TO PROVIDER"
@@ -7215,14 +7286,19 @@ msgstr ""
 msgid "Metadata VDev"
 msgstr ""
 
+msgid "Metadata vdev must be the same type as data vdevs."
+msgstr ""
+
+msgid "Metadata vdev must be the same type as the data vdevs."
+msgstr ""
+
 msgid "Method"
 msgstr ""
 
 msgid ""
 "Method of snapshot transfer:<ul>  <li><i>SSH</i> is supported by most "
-"systems. It requires a previously  created <a "
-"href=\"--docurl--/system.html#ssh-connection\"  target=\"_blank\">SSH "
-"connection</a>.</li>  <li><i>SSH+NETCAT</i> uses SSH to establish a "
+"systems. It requires a previously  created connection in <b>System > SSH "
+"Connections</b>.</li>  <li><i>SSH+NETCAT</i> uses SSH to establish a "
 "connection to the  destination system, then uses  <a "
 "href=\"https://github.com/freenas/py-libzfs\"  "
 "target=\"_blank\">py-libzfs</a> to send an unencrypted data stream for  "
@@ -7293,7 +7369,7 @@ msgstr ""
 msgid "Mirror"
 msgstr ""
 
-msgid "Mixing disks of different sizes in a VDEV is not allowed."
+msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 
 msgid "Mode"
@@ -7383,11 +7459,8 @@ msgid "Multipaths"
 msgstr ""
 
 msgid ""
-"Must match Windows workgroup name. This setting is ignored if the <a "
-"href=\"--docurl--/directoryservices.html#active-directory\" "
-"target=\"_blank\">Active Directory</a> or <a "
-"href=\"--docurl--/directoryservices.html#ldap\" target=\"_blank\">LDAP</a> "
-"service is running."
+"Must match Windows workgroup  name. This setting is ignored when the  "
+"Active Directory or LDAP services are running."
 msgstr ""
 
 msgid ""
@@ -7600,9 +7673,6 @@ msgid ""
 "to the Internet with other systems on the network."
 msgstr ""
 
-msgid "Network Changes Made Permanent"
-msgstr ""
-
 msgid "Network Information Service (NIS)"
 msgstr ""
 
@@ -7638,17 +7708,6 @@ msgstr ""
 msgid "Network changes applied successfully."
 msgstr ""
 
-msgid "Network changes discarded."
-msgstr ""
-
-msgid ""
-"Network changes have been applied. Keep changes permanently? Changes will "
-"be automatically discarded if they are not permanently applied."
-msgstr ""
-
-msgid "Network changes have been made permanent."
-msgstr ""
-
 msgid ""
 "Network community string.  The community string acts like a user ID or "
 "password. A user with  the correct community string has access to network "
@@ -7667,12 +7726,21 @@ msgstr ""
 msgid "Network control (highest)"
 msgstr ""
 
-msgid "Network interfaces to include in the bridge."
+msgid "Network interface changes have been made permanent."
 msgstr ""
 
 msgid ""
-"Network settings have been temporarily changed. They will be automatically "
-"discarded after"
+"Network interface changes have been temporarily applied for testing. Keep "
+"changes permanently? Changes are automatically reverted after the testing "
+"delay if they are not permanently applied."
+msgstr ""
+
+msgid ""
+"Network interface settings have been temporarily changed for testing. The "
+"settings will revert to the previous configuration after"
+msgstr ""
+
+msgid "Network interfaces to include in the bridge."
 msgstr ""
 
 msgid "Networks"
@@ -8009,10 +8077,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Only appears if a <i>File</i> or zvol is selected. When the specified "
-"percentage of free space is reached, the system issues an alert. See <a "
-"href=\"--docurl--/vaai.html#vaai\" target=\"_blank\">VAAI</a> Threshold "
-"Warning."
+"Only appears if a <i>File</i> or  zvol is selected. When the specified "
+"percentage of free space is reached, the system issues an alert."
 msgstr ""
 
 msgid ""
@@ -8026,6 +8092,14 @@ msgid ""
 msgstr ""
 
 msgid "Only override the default if the initiator requires a different block size."
+msgstr ""
+
+msgid ""
+"Only replicate snapshots that  match a defined creation time. To specify "
+"which snapshots will be replicated,  set this checkbox and define the "
+"snapshot creation times that will be replicated.  <br> For example, setting "
+"this time frame to <i>Hourly</i> will only replicate  snapshots that were "
+"created at the beginning of each hour."
 msgstr ""
 
 msgid ""
@@ -8044,6 +8118,9 @@ msgid ""
 msgstr ""
 
 msgid "Open Source"
+msgstr ""
+
+msgid "Open TrueCommand User Interface"
 msgstr ""
 
 msgid "OpenVPN Client Settings"
@@ -8181,6 +8258,9 @@ msgid ""
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
 msgstr ""
 
+msgid "PCI Passthru Device"
+msgstr ""
+
 msgid "PENDING"
 msgstr ""
 
@@ -8308,10 +8388,8 @@ msgid ""
 "include in the replication.<br><br>  When a periodic snapshot is not linked "
 "to the replication, enter the  naming schema for manually created "
 "snapshots. Has the same <i>%Y</i>,  <i>%m</i>, <i>%d</i>, <i>%H</i>, and "
-"<i>%M</i> string requirements as  the <b>Naming Schema</b> in a  <a "
-"href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
-"target=\"_blank\">periodic snapshot task. Separate entries by pressing  "
-"<code>Enter</code>."
+"<i>%M</i> string requirements as  the <b>Naming Schema</b> in a <b>Periodic "
+"Snapshot Task</b>. Separate  entries by pressing <code>Enter</code>."
 msgstr ""
 
 msgid ""
@@ -8409,12 +8487,6 @@ msgstr ""
 msgid "Please enter your username again"
 msgstr ""
 
-msgid ""
-"Please read about <a href=\"--docurl--/storage.html#deduplication\" "
-"target=\"_blank\">deduplication</a> before considering changing this "
-"setting."
-msgstr ""
-
 msgid "Please select a valid SSH Connection"
 msgstr ""
 
@@ -8458,6 +8530,9 @@ msgid "Pool Available Space Threshold (%)"
 msgstr ""
 
 msgid "Pool Chosen"
+msgstr ""
+
+msgid "Pool Expanded"
 msgstr ""
 
 msgid "Pool Manager"
@@ -8951,6 +9026,9 @@ msgstr ""
 msgid "Remove disk "
 msgstr ""
 
+msgid "Remove file?"
+msgstr ""
+
 msgid "Remove passphrase"
 msgstr ""
 
@@ -9081,6 +9159,9 @@ msgstr ""
 msgid "Reserved space for this dataset and all children"
 msgstr ""
 
+msgid "Reset All Preferences to Default"
+msgstr ""
+
 msgid "Reset Config"
 msgstr ""
 
@@ -9103,6 +9184,11 @@ msgid "Reset Table Columns to Default"
 msgstr ""
 
 msgid "Reset all tables to display default columns."
+msgstr ""
+
+msgid ""
+"Reset all user preferences to their default values. (Custom themes are "
+"preserved)"
 msgstr ""
 
 msgid "Reset font size to default value"
@@ -9203,7 +9289,16 @@ msgid ""
 "Allow the creation of <i>tun</i> devices in the jail."
 msgstr ""
 
+msgid "Revert CHANGES"
+msgstr ""
+
+msgid "Revert Network Interface Changes"
+msgstr ""
+
 msgid "Revert branding back to FreeNAS"
+msgstr ""
+
+msgid "Revert interface changes? All changes that are being tested will be lost."
 msgstr ""
 
 msgid "Rollback"
@@ -9303,6 +9398,12 @@ msgstr ""
 msgid "SAVE"
 msgstr ""
 
+msgid "SAVE AND FAILOVER"
+msgstr ""
+
+msgid "SAVE CHANGES"
+msgstr ""
+
 msgid "SAVE CONFIGURATION"
 msgstr ""
 
@@ -9328,6 +9429,9 @@ msgid "SFU20"
 msgstr ""
 
 msgid "SID"
+msgstr ""
+
+msgid "SIGNUP"
 msgstr ""
 
 msgid "SMB"
@@ -9392,6 +9496,9 @@ msgstr ""
 msgid "START"
 msgstr ""
 
+msgid "START REPLICATION"
+msgstr ""
+
 msgid "STARTTLS"
 msgstr ""
 
@@ -9414,6 +9521,9 @@ msgid "Sat"
 msgstr ""
 
 msgid "Save"
+msgstr ""
+
+msgid "Save Changes"
 msgstr ""
 
 msgid "Save Config"
@@ -9446,6 +9556,9 @@ msgstr ""
 msgid "Save configuration settings from this machine before updating?"
 msgstr ""
 
+msgid "Save network interface changes?"
+msgstr ""
+
 msgid "Saving ACLs"
 msgstr ""
 
@@ -9471,16 +9584,6 @@ msgid "Schedule"
 msgstr ""
 
 msgid "Schedule Preview"
-msgstr ""
-
-msgid ""
-"Schedule which periodic snapshots will  be replicated. All snapshots will "
-"be replicated by default. To choose  which snapshots are replicated, set "
-"the checkbox and select a schedule  from the drop-down menu.<br>  For "
-"example, there is a system that takes a snapshot every hour, but  the "
-"administrator has decided that only every other snapshot is needed  for "
-"replication. The scheduler is set to even hours and only snapshots  taken "
-"at those times are replicated."
 msgstr ""
 
 msgid "Schema"
@@ -9616,12 +9719,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"See the <a href=\"--docurl--/system.html#self-encrypting-drives\" "
-"target=\"_blank\"> Self Encrypting Drives</a> section of the user guide for "
-"more information."
-msgstr ""
-
-msgid ""
 "See the <a href=\"http://networkupstools.org/stable-hcl.html\" "
 "target=\"_blank\">Network UPS Tools compatibility list</a> for a list of "
 "supported UPS devices."
@@ -9751,14 +9848,7 @@ msgid ""
 "scheduler."
 msgstr ""
 
-msgid ""
-"Select a previously imported or created  <a "
-"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
-msgstr ""
-
-msgid ""
-"Select a previously imported or created <a "
-"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>."
+msgid "Select a previously imported or created CA."
 msgstr ""
 
 msgid ""
@@ -9799,6 +9889,11 @@ msgid ""
 "permissions allowing them to run                the command or script."
 msgstr ""
 
+msgid ""
+"Select a valid SSL certificate created or imported  in <b>System > "
+"Certificates</b> to use for encrypted connections."
+msgstr ""
+
 msgid "Select an IP address to use for VNC sessions."
 msgstr ""
 
@@ -9821,6 +9916,11 @@ msgstr ""
 msgid ""
 "Select an existing portal or choose <i>Create New</i> to configure a new "
 "portal."
+msgstr ""
+
+msgid ""
+"Select an existing realm that was added  in <b>Directory Services > "
+"Kerberos Realms</b>."
 msgstr ""
 
 msgid "Select an existing target."
@@ -9852,37 +9952,13 @@ msgstr ""
 
 msgid ""
 "Select permissions to apply to the chosen <i>Who</i>. Choices change "
-"depending on the <i>Permissions Type</i>. See the <a "
-"href=\"--docurl--/storage.html#ace-permissions\" target=\"_blank\">ACL "
-"permissions list</a> for descriptions of each permission."
+"depending on the <i>Permissions Type</i>."
 msgstr ""
 
 msgid "Select pool to import"
 msgstr ""
 
 msgid "Select pool, dataset, or directory to share."
-msgstr ""
-
-msgid ""
-"Select the <a href=\"--docurl--/network.html#link-aggregations\" "
-"target=\"_blank\">Protocol Type</a>.<br> <i>LACP</i> is the recommended "
-"protocol if the network switch is capable of active LACP.<br> "
-"<i>Failover</i> is the default protocol choice and should only be used if "
-"the network switch does not support active LACP."
-msgstr ""
-
-msgid ""
-"Select the <a "
-"href=\"--docurl--/network.html--webversion--#link-aggregations\" "
-"target=\"_blank\">Protocol Type</a>.<br> <i>LACP</i> is the recommended "
-"protocol if the network switch is capable of active LACP.<br> "
-"<i>Failover</i> is the default protocol choice and should only be used if "
-"the network switch does not support active LACP."
-msgstr ""
-
-msgid ""
-"Select the <a href=\"--docurl--/system.html#certificates\" "
-"target=\"_blank\">SSL certificate</a> to use for encrypted connections."
 msgstr ""
 
 msgid ""
@@ -9942,12 +10018,10 @@ msgid "Select the appropriate level of criticality."
 msgstr ""
 
 msgid ""
-"Select the certificate of the Active Directory server if SSL connections "
-"are used. Add a certificate here by creating a <a "
-"href=\"--docurl--/system.html#cas\" target=\"_blank\">CA</a>, then creating "
-"a certificate on the Active Directory server. Import the certificate on "
-"this system with the <a href=\"--docurl--/system.html#certificates\" "
-"target=\"_blank\">Certificates</a> menu."
+"Select the certificate of the Active Directory server  if SSL connections "
+"are used. Add a certificate here by creating a Certificate Authority (CA)  "
+"then creating a certificate on the Active Directory server. Import the "
+"certificate to this  system using the <b>System > Certificates</b> menu."
 msgstr ""
 
 msgid ""
@@ -9998,12 +10072,6 @@ msgid ""
 "fails if any of the selected interfaces have been manually configured."
 msgstr ""
 
-msgid ""
-"Select the keytab created in <a "
-"href=\"--docurl--/directoryservices.html#kerberos-keytabs\" "
-"target=\"_blank\">Kerberos Keytabs</a>."
-msgstr ""
-
 msgid "Select the level of severity."
 msgstr ""
 
@@ -10013,9 +10081,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Select the location of the principal in the keytab created as described in "
-"<a href=\"--docurl--/directoryservices.html#kerberos-keytabs\" "
-"target=\"_blank\">Kerberos Keytabs</a>."
+"Select the location of the principal in the  keytab created in <b>Directory "
+"Services > Kerberos Keytabs</b>."
 msgstr ""
 
 msgid "Select the physical interface to associate with the VM."
@@ -10031,18 +10098,6 @@ msgid "Select the pre-defined container to use."
 msgstr ""
 
 msgid "Select the prefix length used on the network."
-msgstr ""
-
-msgid ""
-"Select the realm created in <a "
-"href=\"--docurl--/directoryservices.html#kerberos-realms\" "
-"target=\"_blank\">Kerberos Realms</a>."
-msgstr ""
-
-msgid ""
-"Select the realm created using the instructions in <a "
-"href=\"--docurl--/directoryservices.html#kerberos-realms\" "
-"target=\"_blank\">Kerberos Realms</a>."
 msgstr ""
 
 msgid ""
@@ -10126,6 +10181,9 @@ msgid ""
 "SED password, creating or updating individual SED passwords, and retrieving "
 "SED passwords when SEDs are unlocked. Disabling this option leaves SED "
 "password management with the local system."
+msgstr ""
+
+msgid "Self-Encrypting Drive Options"
 msgstr ""
 
 msgid "Semi-automatic (TrueNAS CORE only)"
@@ -10244,14 +10302,6 @@ msgid "Set Quotas (Bulk)"
 msgstr ""
 
 msgid "Set Warning Level"
-msgstr ""
-
-msgid ""
-"Set a starting time when the  replication is not allowed to start. A "
-"replication that is already in  progress can continue to run past this time."
-msgstr ""
-
-msgid "Set an ending time for when  replications are not allowed to start."
 msgstr ""
 
 msgid ""
@@ -10586,20 +10636,17 @@ msgid "Set to enable connecting to the VNC web interface."
 msgstr ""
 
 msgid ""
-"Set to enable encrypted connections. Requires a certificate to be created "
-"or imported using <a href=\"--docurl--/system.html#certificates\" "
-"target=\"_blank\">Certificates</a>"
-msgstr ""
-
-msgid ""
 "Set to enable the File eXchange Protocol. This option makes the server "
 "vulnerable to FTP bounce attacks so it is not recommended."
 msgstr ""
 
-msgid "Set to enable the S3 web user interface."
+msgid "Set to enable the iSCSI extent."
 msgstr ""
 
-msgid "Set to enable the iSCSI extent."
+msgid ""
+"Set to enable the web user interface for the S3 service.  Access the minio "
+"web interface by entering the IP address and port number  separated by a "
+"colon in the browser address bar."
 msgstr ""
 
 msgid "Set to export the certificate environment variables."
@@ -11116,11 +11163,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Snapshot schedule for this  replication task. Choose from configured  <a "
-"href=\"--docurl--/tasks.html#periodic-snapshot-tasks\"  "
-"target=\"_blank\">Periodic Snapshot Tasks</a>. This replication task must  "
-"have the same <b>Recursive</b> and <b>Exclude Child Datasets</b> values  as "
-"the chosen periodic snapshot task. Selecting a periodic snapshot  schedule "
+"Snapshot schedule for this  replication task. Choose from previously "
+"configured  <b>Periodic Snapshot Tasks</b>. This replication task must have "
+"the  same <b>Recursive</b> and <b>Exclude Child Datasets</b> values  as the "
+"chosen periodic snapshot task. Selecting a periodic snapshot  schedule "
 "removes the <b>Schedule</b> field."
 msgstr ""
 
@@ -11197,6 +11243,9 @@ msgid ""
 "Specify the IP addresses to listen for AFP connections. Leave blank to bind "
 "to all available IPs.  If none are specified, advertise the first IP "
 "address of the system, but listen for any incoming request."
+msgstr ""
+
+msgid "Specify the PCI device to pass thru (bus#/slot#/fcn#)."
 msgstr ""
 
 msgid ""
@@ -11292,6 +11341,9 @@ msgid "Stats/Settings"
 msgstr ""
 
 msgid "Status"
+msgstr ""
+
+msgid "Status of TrueCommand"
 msgstr ""
 
 msgid "Status updated"
@@ -11406,6 +11458,9 @@ msgid "Successfully Promoted "
 msgstr ""
 
 msgid "Successfully Upgraded "
+msgstr ""
+
+msgid "Successfully expanded pool "
 msgstr ""
 
 msgid "Successfully exported/disconnected '"
@@ -11556,6 +11611,9 @@ msgstr ""
 msgid "TDB"
 msgstr ""
 
+msgid "TEST CHANGES"
+msgstr ""
+
 msgid "TLS"
 msgstr ""
 
@@ -11682,6 +11740,9 @@ msgstr ""
 msgid "Terms of Service"
 msgstr ""
 
+msgid "Test Changes"
+msgstr ""
+
 msgid "Test Cloud Sync"
 msgstr ""
 
@@ -11689,6 +11750,12 @@ msgid "Test alert sent!"
 msgstr ""
 
 msgid "Test email sent!"
+msgstr ""
+
+msgid "Test network interface changes for "
+msgstr ""
+
+msgid "Test network interface changes? Network connectivity can be interrupted."
 msgstr ""
 
 msgid ""
@@ -11750,6 +11817,16 @@ msgid ""
 "multiple levels and might require doubling or even quadrupling to take "
 "effect.  When this field is blank, new computer accounts are created in the "
 "Active Directory  default OU."
+msgstr ""
+
+msgid ""
+"The Passive controller must be rebooted in order to change the location of "
+"system logs."
+msgstr ""
+
+msgid ""
+"The Passive controller must be rebooted in order to change the location of "
+"the system dataset."
 msgstr ""
 
 msgid "The SMB"
@@ -11985,6 +12062,9 @@ msgstr ""
 msgid "The pool <i>"
 msgstr ""
 
+msgid "The pool containing"
+msgstr ""
+
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
 "computer."
@@ -12037,14 +12117,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The selected policy defines whether the control channel, data channel, both "
-"channels, or neither channel of an FTP session must occur over SSL/TLS. The "
-"policies are described <a "
-"href=\"http://www.proftpd.org/docs/directives/linked/config_ref_TLSRequired."
-"html\" target=\"_blank\">here</a>"
-msgstr ""
-
-msgid ""
 "The sharing configuration will be removed.    Data in the share dataset "
 "will not be affected."
 msgstr ""
@@ -12071,11 +12143,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The system uses a self-signed  <a "
-"href=\"--docurl--/system.html#certificates\" "
-"target=\"_blank\">certificate</a>  to enable encrypted web interface "
-"connections. To change the default  certificate, select a different created "
-"or imported certificate."
+"The system uses a self-signed certificate  to enable encrypted web "
+"interface connections. To change  the default certificate, select a "
+"different certificate  that was created or imported in the "
+"<b>Certificates</b> menu."
 msgstr ""
 
 msgid ""
@@ -12143,12 +12214,12 @@ msgid ""
 "the disks in the pool for a general use case."
 msgstr ""
 
-msgid ""
-"There are unapplied network changes. Apply them now? Unapplied changes will "
-"be lost."
+msgid "There are pending network interface changes. Review them now?"
 msgstr ""
 
-msgid "There are unsaved network interface settings.  Review them now?"
+msgid ""
+"There are unapplied network interface changes that must be tested before "
+"being permanently saved. Test changes now?"
 msgstr ""
 
 msgid "There is an upgrade waiting to finish."
@@ -12218,6 +12289,12 @@ msgid "This Dataset"
 msgstr ""
 
 msgid "This Dataset and Child Datasets"
+msgstr ""
+
+msgid ""
+"This allows your TrueNAS system to be monitored and administrated by "
+"TrueCommand. Click <b>SIGNUP</b> to create a new TrueCommand Cloud instance "
+"or <b>CONNECT</b> to join an existing instance."
 msgstr ""
 
 msgid "This certificate's public key is used for key management."
@@ -12384,6 +12461,12 @@ msgstr ""
 msgid "Toggle Hide/Open"
 msgstr ""
 
+msgid "Toggle built-in groups"
+msgstr ""
+
+msgid "Toggle built-in users"
+msgstr ""
+
 msgid ""
 "Token created with  <a "
 "href=\"https://developers.google.com/drive/api/v3/about-auth\" "
@@ -12427,6 +12510,14 @@ msgstr ""
 msgid "Transfers"
 msgstr ""
 
+msgid ""
+"Transparently reuse a single copy of duplicated  data to save space. "
+"Deduplication can improve storage capacity, but is RAM intensive.  "
+"Compressing data is generally recommended before using deduplication. "
+"Deduplicating data is  a one-way process. <b>Deduplicated data cannot be "
+"undeduplicated!</b>."
+msgstr ""
+
 msgid "Transport"
 msgstr ""
 
@@ -12434,6 +12525,18 @@ msgid "Transport Options"
 msgstr ""
 
 msgid "Traverse"
+msgstr ""
+
+msgid "TrueCommand"
+msgstr ""
+
+msgid "TrueCommand Cloud Service"
+msgstr ""
+
+msgid "TrueCommand Cloud Service deregistered"
+msgstr ""
+
+msgid "TrueCommand Cloud Service has been deregistered."
 msgstr ""
 
 msgid "TrueNAS Community Forums"
@@ -12638,12 +12741,6 @@ msgid ""
 "same username."
 msgstr ""
 
-msgid ""
-"Unset to require key-based authentication for all users. This requires <a "
-"href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
-"target=\"_blank\">additional setup</a> on both the SSH client and server."
-msgstr ""
-
 msgid "Unshare"
 msgstr ""
 
@@ -12689,6 +12786,9 @@ msgstr ""
 msgid "Update Status"
 msgstr ""
 
+msgid "Update TrueCommand Settings"
+msgstr ""
+
 msgid "Update in Progress"
 msgstr ""
 
@@ -12723,6 +12823,9 @@ msgid "Updating selected plugins."
 msgstr ""
 
 msgid "Upgrade Pool"
+msgstr ""
+
+msgid "Upgrade Waiting to Finish"
 msgstr ""
 
 msgid "Upgraded"
@@ -12844,6 +12947,11 @@ msgid "Use Syslog Only"
 msgstr ""
 
 msgid "Use all disk space"
+msgstr ""
+
+msgid ""
+"Use an SSL certificate that was created or imported in  <b>System > "
+"Certificates</b> for secure S3 connections."
 msgstr ""
 
 msgid "Use an exported encryption key file to unlock datasets."
@@ -13160,12 +13268,6 @@ msgstr ""
 msgid "View Enclosure"
 msgstr ""
 
-msgid "View License Info"
-msgstr ""
-
-msgid "View Licenses"
-msgstr ""
-
 msgid "View Logs"
 msgstr ""
 
@@ -13443,13 +13545,13 @@ msgstr ""
 msgid "Wipe"
 msgstr ""
 
-msgid "Wipe Disk"
+msgid "Wipe Disk "
 msgstr ""
 
 msgid "Wipe this disk?"
 msgstr ""
 
-msgid "Wiping Disk..."
+msgid "Wiping disk..."
 msgstr ""
 
 msgid "Workgroup"
@@ -13732,6 +13834,12 @@ msgstr ""
 msgid "iSCSI Group"
 msgstr ""
 
+msgid ""
+"iSCSI supports multiple  authentication methods that are used by the target "
+"to discover valid  devices. <i>None</i> allows anonymous discovery while "
+"<i>CHAP</i> and  <i>Mutual CHAP</i> require authentication."
+msgstr ""
+
 msgid "iXsystems for more information."
 msgstr ""
 
@@ -13762,6 +13870,9 @@ msgid ""
 msgstr ""
 
 msgid "is already in use."
+msgstr ""
+
+msgid "is locked."
 msgstr ""
 
 msgid "jail_zfs"
@@ -13884,7 +13995,7 @@ msgstr ""
 msgid "safe"
 msgstr ""
 
-msgid "seconds unless KEEP CHANGES is chosen to make them permanent."
+msgid "seconds unless SAVE CHANGES is chosen to make them permanent."
 msgstr ""
 
 msgid "securelevel"
@@ -13924,6 +14035,9 @@ msgid "sysvshm"
 msgstr ""
 
 msgid "template"
+msgstr ""
+
+msgid "threads"
 msgstr ""
 
 msgid "to set up configuration first."

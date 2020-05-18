@@ -150,9 +150,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       }
     }
     
-    if(this.screenType == 'Mobile'){
-      this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) );
-    }
+    this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) ); 
 
     return [usageColumn, temperatureColumn];
     
@@ -207,9 +205,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     config.title = data[0];
     config.units = "%";
     config.diameter = 136;
-    config.fontSize = 24;
+    config.fontSize = 28;
     config.max = 100;
     config.data = data;
+    config.subtitle = "Avg Usage";
     this.cpuAvg = config;
   }
 

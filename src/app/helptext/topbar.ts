@@ -27,7 +27,10 @@ export default {
     mat_tooltips : {
         toggle_hide: T('Toggle Hide/Open'),
         toggle_collapse: T('Toggle Collapse'),
+        tc_connect: T('Connecting to TrueCommand'),
+        tc_status: T('Status of TrueCommand'),
         update: T('Update in Progress'),
+        upgrade_waiting: T('Upgrade Waiting to Finish'),
         pending_network_changes: T('Pending Network Changes'),
         directory_services_monitor: T('Directory Services Monitor'),
         resilvering: T('Resilvering'),
@@ -36,6 +39,46 @@ export default {
         alerts: T('Alerts'),
         settings: T('Settings'),
         power: T('Power')        
+    },
+
+    signupDialog: {
+        title: T('Connect to TrueCommand Cloud'),
+        content: T('This allows your TrueNAS system to be monitored and administrated by\
+ TrueCommand. Click <b>SIGNUP</b> to create a new TrueCommand Cloud instance or <b>CONNECT</b> to join an existing instance.'),
+        singup_btn: T('SIGNUP'),
+        connect_btn: T('CONNECT'),
+    },
+
+    updateDialog: {
+        title_connect: T('Connect to TrueCommand Cloud'),
+        title_update: T('Update TrueCommand Settings'),
+        connect_btn: T('CONNECT'),
+        save_btn: T('SAVE'),
+        api_placeholder: T('API Key'),
+        api_tooltip: T('Enter or paste the API key provided from \
+<a href="https://portal.ixsystems.com/portal/login/" target="_blank">iXsystems Account Services</a>. \
+Login or signup is required.'),
+        enabled_placeholder: T('Enable'),
+        enabled_tooltip: T('Immediately connect to TrueCommand.'),
+    },
+
+    tcDialog: {
+        title: T('Open TrueCommand User Interface'),
+        message: T(`<em>Warning:</em> The WireGuard service must be active on the client system to access the TrueCommand UI.`),
+        confirmBtnMsg: T('Continue'),
+    },
+
+    tcDeregisterBtn: T('Deregister'),
+    tcDeregisterDialog: {
+        title: T('Deregister TrueCommand Cloud Service'),
+        icon: 'warning',
+        message: T('Are you sure you want to deregister TrueCommand Cloud Service?'),
+        confirmBtnMsg: T('Confirm'),
+    },
+
+    deregisterInfoDialog: {
+        title: T('TrueCommand Cloud Service deregistered'),
+        message: T('TrueCommand Cloud Service has been deregistered.')
     }
 }
 

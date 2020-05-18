@@ -294,7 +294,15 @@ export class ThemeService {
     });
 
     this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+      this.onPreferences(evt);
+    });
 
+    this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+      this.onPreferences(evt);
+    });
+  }
+
+  onPreferences(evt:CoreEvent){
       if(evt.data.customThemes){
         this.customThemes = evt.data.customThemes;
       }
@@ -316,7 +324,7 @@ export class ThemeService {
         (<any>document).documentElement.style.setProperty("--enableWarning", "none");
       }
       
-    });
+   
   }
 
   resetToDefaultTheme(){

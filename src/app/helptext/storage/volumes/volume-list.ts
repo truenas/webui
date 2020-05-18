@@ -59,9 +59,14 @@ permissions_edit_msg2: T('This dataset has an active ACL. Changes to permissions
 acl_edit_msg: T('Root dataset ACL cannot be edited.'),
 
 expand_pool_dialog: {
-    title: T("Enter passphrase to expand pool "),
+    title: T("Expand pool "),
+    message: T('Expand pool to fit all available disk space.'),
     passphrase_placeholder: T('Passphrase'),
     save_button: T("Expand Pool"),
+},
+expand_pool_success_dialog: {
+    title: T("Pool Expanded"),
+    message: T("Successfully expanded pool ")
 },
 
 unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.'),

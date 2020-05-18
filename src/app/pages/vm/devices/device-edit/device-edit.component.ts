@@ -32,6 +32,7 @@ export class DeviceEditComponent implements OnInit {
   public diskFormGroup: any;
   public nicFormGroup: any;
   public rawfileFormGroup: any;
+  public pciFormGroup: any;
   public vncFormGroup: any;
   public rootpwd: any;
   public vminfo: any;
@@ -58,6 +59,9 @@ export class DeviceEditComponent implements OnInit {
         }, {
         label: 'Raw File',
         value: 'RAW',
+        }, {
+        label: 'PCI Passthru Device',
+        value: 'PCI',
         }, {
         label: 'VNC',
         value: 'VNC',
@@ -228,6 +232,28 @@ export class DeviceEditComponent implements OnInit {
     },
   ];
 
+  //pci
+  public pciFieldConfig: FieldConfig[] = [
+    {
+      name: 'pptdev',
+      placeholder: helptext.pptdev_placeholder,
+      tooltip: helptext.pptdev_tooltip,
+      type: 'select',
+      options: [],
+      validation: helptext.pptdev_validation,
+      required: true
+    },
+    {
+      name : 'order',
+      placeholder : helptext.order_placeholder,
+      tooltip : helptext.order_tooltip,
+      type: 'input',
+      value: null,
+      inputType: 'number'
+    },
+  ];
+  protected pptdev: any;
+
   //vnc
   public vncFieldConfig: FieldConfig[]  = [
     {
@@ -321,6 +347,15 @@ export class DeviceEditComponent implements OnInit {
     this.vmService.getNICTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
+
+    // pci
+    this.ws.call('vm.device.pptdev_choices').subscribe((res) => {
+      this.pptdev = _.find(this.pciFieldConfig, { 'name': 'pptdev' });
+      this.pptdev.options = Object.keys(res || {}).map(pptdevId => ({
+        label: pptdevId,
+        value: pptdevId
+      }));
+    });
   }
   //Setting values coming from backend and populating formgroup with it.
   setgetValues(activeformgroup, deviceInformation) {
@@ -357,6 +392,7 @@ export class DeviceEditComponent implements OnInit {
         diskFieldConfig: this.diskFieldConfig,
         nicFieldConfig: this.nicFieldConfig,
         rawfileFieldConfig: this.rawfileFieldConfig,
+        pciFieldConfig: this.pciFieldConfig,
         vncFieldConfig: this.vncFieldConfig,
       },
       {
@@ -372,6 +408,7 @@ export class DeviceEditComponent implements OnInit {
     this.diskFormGroup = this.entityFormService.createFormGroup(this.diskFieldConfig);
     this.nicFormGroup = this.entityFormService.createFormGroup(this.nicFieldConfig);
     this.rawfileFormGroup = this.entityFormService.createFormGroup(this.rawfileFieldConfig);
+    this.pciFormGroup = this.entityFormService.createFormGroup(this.pciFieldConfig);
     this.vncFormGroup = this.entityFormService.createFormGroup(this.vncFieldConfig);
 
 
@@ -403,6 +440,9 @@ export class DeviceEditComponent implements OnInit {
           this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
           this.boot['isHidden'] = false;
         }
+      } else if (res === 'PCI') {
+        this.activeFormGroup = this.pciFormGroup;
+        this.isCustActionVisible = false;
       } else if (res === 'VNC') {
         this.activeFormGroup = this.vncFormGroup;
         this.isCustActionVisible = false;

@@ -36,7 +36,6 @@ import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-l
 import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
-import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { TreeTableModule } from 'primeng/treetable';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
@@ -86,7 +85,6 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
     VolumeStatusComponent,
     MultipathsComponent,
     DiskFormComponent,
-    DiskWipeComponent,
     DiskBulkEditComponent,
     SmartResultsComponent,
     DatasetQuotasUserlistComponent,

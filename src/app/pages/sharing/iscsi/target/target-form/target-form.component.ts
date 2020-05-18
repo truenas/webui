@@ -159,6 +159,66 @@ export class TargetFormComponent {
     )
   }
 
+  async prerequisite(): Promise<boolean> {
+    const targetGroupFieldset = _.find(this.fieldSets, { class: 'group' });
+    const portalGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[0];
+    const initiatorGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[1];
+    const authGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[3];
+    const promise1 = new Promise((resolve, reject) => {
+      this.iscsiService.listPortals().toPromise().then(
+        (protalRes) => {
+          for (let i = 0; i < protalRes.length; i++) {
+            let label = protalRes[i].tag;
+            if (protalRes[i].comment) {
+              label += ' (' + protalRes[i].comment + ')';
+            }
+            portalGroupField.options.push({ label: label, value: protalRes[i].id })
+          }
+          resolve(true);
+        },
+        (protalErr) => {
+          resolve(false);
+        }
+      );
+    });
+    const promise2 = new Promise((resolve, reject) => {
+      this.iscsiService.listInitiators().toPromise().then(
+        (initiatorsRes) => {
+          initiatorGroupField.options.push({ label: 'None', value: null });
+          for (let i = 0; i < initiatorsRes.length; i++) {
+            const optionLabel = initiatorsRes[i].id + ' (' + (initiatorsRes[i].initiators.length === 0 ? 'ALL Initiators Allowed' : initiatorsRes[i].initiators.toString()) + ')';
+            initiatorGroupField.options.push({ label: optionLabel, value: initiatorsRes[i].id })
+          }
+          resolve(true);
+        },
+        (initiatorsErr) => {
+          resolve(false);
+        }
+      );
+    });
+    const promise3 = new Promise((resolve, reject) => {
+      this.iscsiService.getAuth().toPromise().then(
+        (authRes) => {
+          const tags = _.uniq(authRes.map(item => item.tag));
+          authGroupField.options.push({ label: 'None', value: null });
+          for (const tag of tags) {
+            authGroupField.options.push({ label: tag, value: tag });
+          }
+          resolve(true);
+        },
+        (authErr) => {
+          resolve(false);
+        }
+      );
+    });
+
+    return await Promise.all([promise1, promise2, promise3]).then(
+      (res) => {
+        return true;
+      }
+    );
+  }
+
   preInit() {
     this.aroute.params.subscribe(params => {
       if (params['pk']) {
@@ -166,38 +226,8 @@ export class TargetFormComponent {
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
     });
-    const targetGroupFieldset = _.find(this.fieldSets, {class: 'group'});
-    const portalGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[0];
-    const initiatorGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[1];
-    const authGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[3];
-    this.iscsiService.listPortals().subscribe(
-      (res) => {
-        for (let i = 0; i < res.length; i++) {
-          let label = res[i].tag;
-          if (res[i].comment) {
-            label += ' (' + res[i].comment + ')';
-          }
-          portalGroupField.options.push({ label: label, value: res[i].id })
-        }
-      }
-    );
-    this.iscsiService.listInitiators().subscribe(
-      (res) => {
-        initiatorGroupField.options.push({ label: 'None', value: null });
-        for (let i = 0; i < res.length; i++) {
-          const optionLabel = res[i].id + ' (' + (res[i].initiators.length === 0 ? 'ALL Initiators Allowed' : res[i].initiators.toString()) + ')';
-          initiatorGroupField.options.push({ label: optionLabel, value: res[i].id })
-        }
-      }
-    );
-    this.iscsiService.listAuthCredential().subscribe(
-      (res) => {
-        authGroupField.options.push({ label: 'None', value: null });
-        for (let i = 0; i < res.length; i++) {
-          authGroupField.options.push({ label: res[i].tag, value: res[i].tag });
-        }
-      }
-    );
+
+
   }
 
   afterInit(entityForm: any) {

@@ -3,39 +3,43 @@ import { Validators } from '@angular/forms';
 import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
-pending_changes_text : T('There are unapplied network changes. Apply them now?\
- Unapplied changes will be lost.'),
-pending_checkin_dialog_text : T('Network changes have been applied. Keep changes permanently?\
- Changes will be automatically discarded if they are not permanently applied.'),
-pending_checkin_text : T('Network settings have been temporarily changed. They will be automatically discarded after'),
-pending_checkin_text_2 : T('seconds unless KEEP CHANGES is chosen to make them permanent.'),
-commit_changes_title: T("Apply Network Changes"),
-commit_changes_warning: T("Apply network changes? Network connectivity will be interrupted."),
-changes_saved_successfully: T("Network changes applied successfully."),
-commit_button: T("APPLY CHANGES"),
-keep_button: T("KEEP CHANGES"),
-rollback_button: T("DISCARD CHANGES"),
-rollback_changes_title: T("Discard Network Changes"),
-rollback_changes_warning: T("Discard unapplied network changes?"),
-changes_rolled_back: T("Network changes discarded."),
+pending_changes_text : T('There are unapplied network interface changes that must be tested before being permanently saved. Test changes now?'),
 
-checkin_title: T("Keep Network Changes"),
-checkin_message: T("Keep changed network settings permanently?"),
-checkin_complete_title: T("Network Changes Made Permanent"),
-checkin_complete_message: T("Network changes have been made permanent."),
-checkin_button: T('KEEP NETWORK CHANGES PERMANENTLY'),
+checkin_text: T("Test network interface changes for "),
+checkin_text_2: T(" seconds."),
+
+pending_checkin_dialog_text : T('Network interface changes have been temporarily applied for testing. Keep changes permanently?\
+ Changes are automatically reverted after the testing delay if they are not permanently applied.'),
+
+pending_checkin_text : T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after'),
+pending_checkin_text_2 : T('seconds unless SAVE CHANGES is chosen to make them permanent.'),
+
+commit_changes_title: T("Test Changes"),
+commit_changes_warning: T("Test network interface changes? Network connectivity can be interrupted."),
+
+changes_saved_successfully: T("Network changes applied successfully."),
+
+commit_button: T("TEST CHANGES"),
+keep_button: T("SAVE CHANGES"),
+rollback_button: T("Revert CHANGES"),
+rollback_changes_title: T("Revert Network Interface Changes"),
+rollback_changes_warning: T("Revert interface changes? All changes that are being tested will be lost."),
+changes_rolled_back: T("Interface changes reverted."),
+
+checkin_title: T("Save Changes"),
+checkin_message: T("Save network interface changes?"),
+checkin_complete_title: T("Changes Saved"),
+checkin_complete_message: T("Network interface changes have been made permanent."),
+checkin_button: T('SAVE'),
 
 pending_changes_title: T("Pending Network Changes"),
-pending_changes_message: T("There are unsaved network interface settings.  Review them now?"),
+pending_changes_message: T("There are pending network interface changes. Review them now?"),
 
 ha_enabled_edit_title: T("Cannot Edit while HA is Enabled"),
 ha_enabled_edit_msg: T("Editing interfaces while HA is enabled is not allowed."),
 
 ha_enabled_delete_title: T("Cannot Delete while HA is Enabled"),
 ha_enabled_delete_msg: T("Deleting interfaces while HA is enabled is not allowed."),
-
-checkin_text: T("Changes that have been applied will revert after "),
-checkin_text_2: T(" seconds unless KEEP PERMANENTLY is chosen. Adjust the delay time to allow for testing."),
 
 ha_enabled_text: T("Cannot edit while HA is enabled."),
 go_to_ha: T("Go to HA settings"),

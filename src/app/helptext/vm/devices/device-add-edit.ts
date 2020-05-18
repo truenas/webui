@@ -15,9 +15,7 @@ order_placeholder : T('Device Order'),
 order_tooltip : '',
 
 zvol_path_placeholder : 'Zvol',
-zvol_path_tooltip : 'Browse to an existing <a\
- href="--docurl--/storage.html#adding-zvols"\
- target="_blank">Zvol</a>.',
+zvol_path_tooltip : 'Define the path to an existing zvol for VM use.',
 zvol_path_validation : [Validators.required],
 options:[],
 
@@ -76,6 +74,10 @@ mode_type_tooltip : T('<i>AHCI</i> emulates an AHCI hard disk for best\
 
 raw_size_placeholder : T('Raw filesize'),
 raw_size_tooltip : T('Define the size of the raw file in GiB.'),
+
+pptdev_placeholder: T('PCI Passthru Device'),
+pptdev_tooltip: T('Specify the PCI device to pass thru (bus#/slot#/fcn#).'),
+pptdev_validation: [regexValidator(/\b([0-9]+\/){2}([0-9])+\b/i)],
 
 rootpwd_placeholder : T('password'),
 rootpwd_tooltip : T('Enter a password for the <i>rancher</i> user. This\

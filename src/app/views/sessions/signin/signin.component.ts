@@ -9,6 +9,7 @@ import { matchOtherValidator } from '../../../pages/common/entity/entity-form/va
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
 import productText from '../../../helptext/product';
+import helptext from '../../../helptext/topbar';
 import { Observable, Subscription } from 'rxjs';
 
 import { T } from '../../../translate-marker';
@@ -59,6 +60,8 @@ export class SigninComponent implements OnInit, OnDestroy {
   public ha_disabled_reasons =[];
   public ha_status_text = T('Checking HA status');
   public ha_status = false;
+  public tc_ip;
+  protected tc_url;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -73,6 +76,12 @@ export class SigninComponent implements OnInit, OnDestroy {
       this.ha_status = true;
     }
     this.checkSystemType();
+    this.ws.call('truecommand.connected').subscribe((res) => {
+      if (res.connected) {
+        this.tc_ip = res.truecommand_ip;
+        this.tc_url = res.truecommand_url;
+      }
+    })
    }
 
   checkSystemType() {
@@ -333,5 +342,18 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   openIX() {
     window.open('https://www.ixsystems.com/', '_blank')
+  }
+
+  gotoTC() {
+    this.dialogService.generalDialog({
+      title: helptext.tcDialog.title,
+      message: helptext.tcDialog.message,
+      is_html: true,
+      confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
+    }).subscribe(res => {
+      if (res) {
+        window.open(this.tc_url);
+      }
+    })
   }
 }

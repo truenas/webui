@@ -38,7 +38,7 @@ export class GroupQuotaFormComponent {
           type: 'input',
           name: 'data_quota',
           placeholder: helptext.groups.data_quota.placeholder,
-          tooltip: helptext.groups.data_quota.tooltip,
+          tooltip: `${helptext.groups.data_quota.tooltip} bytes.`,
           blurStatus: true,
           blurEvent: this.blurEvent,
           parent: this,

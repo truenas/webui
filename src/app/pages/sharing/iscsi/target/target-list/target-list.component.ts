@@ -62,10 +62,12 @@ export class TargetListComponent {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().subscribe(
           (res) => {
+            const payload = [rowinner.id];
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
               if (res[i].target.split(':')[1] == rowinner.name) {
                 warningMsg = '<font color="red">' + T('Warning: iSCSI Target is already in use.</font><br>');
+                payload.push(true); // enable force delele
               }
             }
             deleteMsg = warningMsg + deleteMsg;
@@ -74,10 +76,10 @@ export class TargetListComponent {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
-                this.entityList.ws.call(this.wsDelete, [rowinner.id]).subscribe(
+                this.entityList.ws.call(this.wsDelete, payload).subscribe(
                   (resinner) => { this.entityList.getData() },
                   (resinner) => {
-                    new EntityUtils().handleError(this, resinner);
+                    new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
                     this.entityList.loader.close();
                   }
                 );

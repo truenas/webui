@@ -78,7 +78,7 @@ nav.view-nav-bar{
   overflow-x:auto;
   height: calc(100vh - 88px);
   position:absolute;
-  top:88px;
+  top:0;
   left:0;
 }
 

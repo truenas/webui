@@ -23,9 +23,8 @@ tcpportssl_tooltip : T('Specify a port for encrypted connections. The\
  a port.'),
 
 certssl_placeholder : T('Webdav SSL Certificate'),
-certssl_tooltip : T('Select the <a href="--docurl--/system.html#certificates"\
- target="_blank">SSL certificate</a> to use for\
- encrypted connections.'),
+certssl_tooltip : T('Select a valid SSL certificate created or imported \
+ in <b>System > Certificates</b> to use for encrypted connections.'),
 
 htauth_placeholder : T('HTTP Authentication'),
 htauth_tooltip : T('<i>Basic Authentication</i> is unencrypted.\

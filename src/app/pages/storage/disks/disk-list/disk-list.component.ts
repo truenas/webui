@@ -1,14 +1,17 @@
 import { Component, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
 import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
 import { StorageService, DialogService } from '../../../../services';
 import { LocaleService } from 'app/services/locale.service';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
 import { EntityUtils } from '../../../common/entity/utils';
+
 
 @Component ({
 	selector: 'disk-list',
@@ -117,7 +120,7 @@ export class DiskListComponent {
 	protected unused: any;
 	protected disk_pool: Map<string, string> = new Map<string, string>();
 	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService, protected dialogService: DialogService,
-		protected localeService: LocaleService) {
+		protected localeService: LocaleService, private dialog: MatDialog) {
 		this.ws.call('boot.get_disks', []).subscribe((boot_res) => {
 			for (const boot in boot_res) {
 				this.disk_pool.set(boot_res[boot], T('Boot Pool'));
@@ -181,9 +184,70 @@ export class DiskListComponent {
 				name: 'wipe',
 				label: T("Wipe"),
 				onClick: (row) => {
-					this.router.navigate(new Array('/').concat([
-					"storage", "disks", "wipe", row.devname
-					]));
+					const self = this;
+					const conf: DialogFormConfiguration = {
+						title: helptext.diskWipeDialogForm.title + row.name,
+						fieldConfig: [
+							{
+								type: 'input',
+								name: 'disk_name',
+								placeholder: helptext.dw_disk_name_placeholder,
+								tooltip: helptext.dw_disk_name_tooltip,
+								readonly: true
+							},
+							{
+								type: 'select',
+								name: 'wipe_method',
+								placeholder: helptext.dw_wipe_method_placeholder,
+								tooltip: helptext.dw_wipe_method_tooltip,
+								options: [
+									{
+										label: T('Quick'),
+										value: 'QUICK',
+									}, {
+										label: T('Full with zeros'),
+										value: 'FULL',
+									}, {
+										label: T('Full with random data'),
+										value: 'FULL_RANDOM',
+									}
+								],
+								value: 'QUICK',
+							}
+						],
+						saveButtonText: helptext.diskWipeDialogForm.saveButtonText,
+						afterInit: function (entityDialogForm) {
+							entityDialogForm.formGroup.controls['disk_name'].setValue(row.name);
+						},
+						customSubmit: function (entityDialogForm) {
+							self.dialogService.confirm(
+								helptext.diskWipeDialogForm.title + row.name,
+								helptext.diskWipeDialogForm.confirmContent).subscribe((res) => {
+								if (res) {
+									const dialogRef = self.dialog.open(EntityJobComponent, { data: { "title": helptext.diskWipeDialogForm.title + row.name } });
+									dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
+									dialogRef.componentInstance.setCall('disk.wipe', [entityDialogForm.formValue.disk_name, entityDialogForm.formValue.wipe_method]);
+									dialogRef.componentInstance.submit();
+
+									dialogRef.componentInstance.success.subscribe((wipeRes) => {
+										if (dialogRef.componentInstance) {
+											dialogRef.close(true);
+											self.dialogService.generalDialog({
+												title: helptext.diskWipeDialogForm.title + row.name,
+												message: helptext.diskWipeDialogForm.infoContent,
+												hideCancel: true,
+											});
+										}
+									});
+									dialogRef.componentInstance.failure.subscribe((wipeRes) => {
+										dialogRef.componentInstance.setDescription(wipeRes.error);
+									});
+									entityDialogForm.dialogRef.close(true);
+								}
+							});
+						}
+					}
+					this.dialogService.dialogForm(conf);
 				}
 			})
 		}

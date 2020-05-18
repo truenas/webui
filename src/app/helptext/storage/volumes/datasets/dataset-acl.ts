@@ -63,10 +63,7 @@ dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
 
 dataset_acl_perms_placeholder: T('Permissions'),
 dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
- <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.\
- See the\
- <a href="--docurl--/storage.html#ace-permissions" target="_blank">ACL permissions list</a>\
- for descriptions of each permission.'),
+ <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.'),
 dataset_acl_basic_perms_options: [
                                   {label:'Read', value: 'READ'},
                                   {label:'Modify', value: 'MODIFY'},
@@ -107,9 +104,7 @@ dataset_acl_flags_placeholder: T('Flags'),
 dataset_acl_flags_tooltip: T('How this ACE is applied to newly created\
  directories and files within the dataset. Basic flags enable or disable\
  ACE inheritance. Advanced flags allow further control of how the ACE\
- is applied to files and directories in the dataset. See the\
- <a href="--docurl--/storage.html#ace-inheritance-flags" target="_blank">inheritance flags list</a>\
- for descriptions of Advanced inheritance flags.'),
+ is applied to files and directories in the dataset.'),
 dataset_acl_basic_flags_options: [{label: 'Inherit', value: 'INHERIT'},
                                   {label: 'No Inherit', value: 'NOINHERIT'},
                                   {label: 'Other (Too complicated to be displayed)',
@@ -160,5 +155,11 @@ acl_defaults_tooltip: T('Choosing an entry loads a preset ACL that is \
  configured to match general permissions situations.'),
 
 user_not_found: T('Could not find a user name for this user ID.'),
-group_not_found: T('Could not find a group name for this group ID.')
+group_not_found: T('Could not find a group name for this group ID.'),
+
+empty_acl_dialog: {
+  title: T('Error'),
+  message: T('Cannot open this ACL. Check the permissions this dataset \
+ has inherited from parents.')
+}
 }

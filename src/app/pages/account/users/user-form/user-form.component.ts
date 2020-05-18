@@ -359,9 +359,9 @@ export class UserFormComponent {
       }
 
       if (!entityForm.isNew) {
-        entityForm.setDisabled('username', true);
         entityForm.setDisabled('uid', true);
-        entityForm.formGroup.controls['username'].setValue(res[0].username);
+        this.namesInUse.splice(this.namesInUse.indexOf(res[0].username), 1);
+        entityForm.formGroup.controls['username'].setValue(res[0].username);   
         entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
         entityForm.formGroup.controls['email'].setValue(res[0].email);
         entityForm.formGroup.controls['password_disabled'].setValue(res[0].password_disabled);
@@ -382,6 +382,7 @@ export class UserFormComponent {
           .showConfig("password_conf_edit");
 
         if (res[0].builtin) {
+          entityForm.setDisabled('username', true);
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('uid', true);
           entityForm.setValue('group',res[0].group.id);

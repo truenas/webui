@@ -10,6 +10,7 @@ export const helptext_sharing_smb = {
     column_name: T('Name'),
     column_path: T('Path'),
     column_comment: T('Description'),
+    column_enabled: T('Enabled'),
 
     placeholder_path: T('Path'),
     tooltip_path: T('Select pool, dataset, or directory to share.'),
@@ -24,6 +25,10 @@ export const helptext_sharing_smb = {
     tooltip_comment: T(
       "Description of the share or notes on how it is used."
     ),
+
+    placeholder_enabled: T('Enabled'),
+    tooltip_enabled: T('Enable this SMB share. Unset to disable this SMB share \
+ without deleting it.'),
 
     placeholder_home: T('Use as Home Share'),
     tooltip_home: T('Allows the share to host user home \
@@ -138,6 +143,12 @@ export const helptext_sharing_smb = {
 
     action_share_acl: T('Edit Share ACL'),
     action_edit_acl: T('Edit Filesystem ACL'),
+    action_edit_acl_dialog: {
+      title: T('Error'),
+      message1: T('The pool containing'),
+      message2: T('is locked.')
+   },
+    
 
     dialog_warning: T('Warning'),
     dialog_warning_message: T("Setting default permissions will reset the permissions of this share and any others within its path."),
@@ -148,7 +159,9 @@ export const helptext_sharing_smb = {
     
     restart_smb_dialog: {
        title: T('Restart SMB Service?'),
-       message: T('Enabling <em>Time Machine</em> on an SMB share requires a restart of the SMB service.'),
+       message_time_machine: T('Enabling <em>Time Machine</em> on an SMB share requires restarting the SMB service.'),
+       message_allow_deny: T('Changes to <em>Hosts Allow</em> or <em>Hosts Deny</em> take effect when the \
+ SMB service restarts.'),
        action_btn: T('Save and Restart SMB Now'),
        cancel_btn: T('Save Without Restarting')
     },
