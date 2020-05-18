@@ -123,11 +123,16 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     let navigationHold = document.getElementById('scroll-area');
 
     // Delay needed to fix a init err with navbar vert scroll
-    setTimeout(() => {
-      Ps.initialize(navigationHold, {
-        suppressScrollX: true
-      });
-    }, 500);
+    if (window.navigator.platform.toLowerCase() !== 'win32') {
+      setTimeout(() => {
+        Ps.initialize(navigationHold, {
+          suppressScrollX: true
+        });
+      }, 500);
+    } else {
+      document.getElementById('scroll-area').classList.add('win-scroll');
+    }
+
 
     if (this.media.isActive('xs') || this.media.isActive('sm')) {
       this.isSidenavOpen = false;
