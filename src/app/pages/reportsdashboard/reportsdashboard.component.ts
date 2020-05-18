@@ -449,8 +449,8 @@ diskReportBuilderSetup(){
     let multipathDisks = [];
 
     res.forEach((disk) => {
-      const devname = disk.multipath_name ? disk.multipath_member + ' (multipath: ' + disk.multipath_name + ')': disk.devname;
-      if(uniqueNames.indexOf(devname) == -1){ 
+      const devname = disk.multipath_name ? disk.name + ' (multipath: ' + disk.multipath_name + ')': disk.devname;
+      if(uniqueNames.indexOf(devname) == -1){
         uniqueNames.push(devname);
       }
 
