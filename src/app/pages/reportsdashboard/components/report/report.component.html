@@ -2,7 +2,7 @@
   <div class="card-container  front" (mouseenter)="setChartInteractive(true)" (mouseleave)="setChartInteractive(false)" >
     <mat-card *ngIf="ready" class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
-        <mat-card-title fxFlex="65%"><h3>{{reportTitle}} <!--<span *ngIf="isActive">(active)</span>--></h3></mat-card-title>
+        <mat-card-title fxFlex="65%"><h3>{{multipathTitle ? multipathTitle : reportTitle}} </h3></mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
           <div class="line-chart-tools" *ngIf="localControls">
