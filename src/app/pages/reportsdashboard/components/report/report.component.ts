@@ -83,12 +83,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   get reportTitle(){
     let suffix = null;
     if(this.multipathTitle){
-      suffix = this.multipathTitle.replace(/\(/, '' );
-      suffix = suffix.replace(/\)/, '');
+      suffix = this.multipathTitle.replace(' ', '' );
       suffix = suffix.replace(this.identifier, '');
-      return this.report.title + ' (' + suffix + ')';
+      return this.report.title + suffix;
     } else {
-    //const identifier = suffix ? suffix : this.identifier;
       return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
     }
   }
