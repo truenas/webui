@@ -465,8 +465,10 @@ diskReportBuilderSetup(){
     let uniqueNames = res.filter((disk) => !disk.devname.includes('multipath'))
       .map(d => d.devname);
 
-    let multipathNames = multipathDisks.map((disk) => {
-      return disk.name + ' (multipath : ' + disk.disk  + ' : ' + disk.status + ')';
+    let activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
+
+    let multipathNames = activeDisks.map((disk) => {
+      return disk.name + ' (multipath : ' + disk.disk  + ')';
     });
 
     uniqueNames = uniqueNames.concat(multipathNames);
