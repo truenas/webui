@@ -43,6 +43,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public product_type: string = window.localStorage['product_type'];
   public retroLogo: string;
 
+  public multipathTitles: any = {};
   public diskReports: Report[];
   public otherReports: Report[];
   public activeReports: Report[] = [];
@@ -454,20 +455,28 @@ diskReportBuilderSetup(){
       if(condition){
         visible.push(index);
       }
+
     });
 
     this.visibleReports = visible;
-
   }
 
   parseDisks(res,multipathDisks){
-
     let uniqueNames = res.filter((disk) => !disk.devname.includes('multipath'))
       .map(d => d.devname);
 
-    let multipathNames = multipathDisks.map((disk) => {
-      return disk.name + ' (multipath : ' + disk.disk  + ' : ' + disk.status + ')';
+    let activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
+
+    let multipathTitles = {};
+
+    let multipathNames = activeDisks.map((disk) => {
+      let label = disk.name + ' (multipath : ' + disk.disk  + ')';
+      // Update activeReports with multipathTitles
+      multipathTitles[disk.name] = label;
+      return label;
     });
+
+    this.multipathTitles = multipathTitles;
 
     uniqueNames = uniqueNames.concat(multipathNames);
 
@@ -476,6 +485,7 @@ diskReportBuilderSetup(){
       let obj = {label: devname, value: spl[0]};
       return obj;
     });
+
   }
 
 }

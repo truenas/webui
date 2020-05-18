@@ -69,6 +69,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   // Labels
   @Input() localControls?: boolean = true;; 
   @Input() report: Report;
+  @Input() multipathTitle?: string;
   @Input() identifier?: string;
   @Input() retroLogo?: string;
   @ViewChild(LineChartComponent, {static: false}) lineChart:LineChartComponent;
@@ -80,7 +81,14 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   private delay: number = 1000; // delayed report render time
   
   get reportTitle(){
-    return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
+    let suffix = null;
+    if(this.multipathTitle){
+      suffix = this.multipathTitle.replace(' ', '' );
+      suffix = suffix.replace(this.identifier, '');
+      return this.report.title + suffix;
+    } else {
+      return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
+    }
   }
 
   get aggregationKeys (){
@@ -198,6 +206,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
         }, this.delay);
       } else if(changes.report.previousValue.title !== changes.report.currentValue.title){
         this.setupData(changes); 
+      }
+      if(changes.multipathTitle && changes.multipathTitle.currentValue){
+        let raw = changes.multipathTitle.currentValue;
+        let result = raw.replace(/[\(]/,': ');
+        result = result.replace(/\)/, '');
       }
     } 
   }
