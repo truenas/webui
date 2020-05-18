@@ -88,6 +88,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     window.onfocus = () => {
       this.startListeners();
     }
+
+    this.checkScreenSize();
   }
 
   checkScreenSize() {
@@ -109,12 +111,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   optimizeWidgetContainer(){
     let wrapper = (<any>document).querySelector('.rightside-content-hold');
     
-    console.log(wrapper);
-    const withMargin = this.widgetWidth + 16;
+    const withMargin = this.widgetWidth + 8;
     const max = Math.floor(wrapper.offsetWidth / withMargin);
     const odw = max * withMargin;
     this.optimalDesktopWidth = odw.toString() + 'px';
-    console.log('Wrapper: ' + wrapper.offsetWidth.toString() + 'px' + ' Max: ' + max + ' ODW: ' + this.optimalDesktopWidth);
   }
 
   onMobileLaunch(evt: DashConfigItem) {
