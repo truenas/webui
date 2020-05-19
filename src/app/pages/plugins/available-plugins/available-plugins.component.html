@@ -1,19 +1,32 @@
 <mat-card-content class="plugin-info">
     <section>
-        <mat-form-field>
-            <mat-label fxFlex>{{ "Browse a Collection" | translate}}</mat-label>
-            <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)">
-                <mat-option *ngFor="let repo of availableRepo" [value]="repo.git_repository">
-                    {{repo.name}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button mat-flat-button id="plugin-refresh-button" (click)="getPlugin(false)" class="plugin-button">
-            <mat-icon>refresh</mat-icon>
-            {{ "REFRESH INDEX" | translate }}
+        <div *ngIf="expand; else textTemplate">
+            <mat-form-field>
+                <mat-label fxFlex>{{ "Browse a Collection" | translate}}</mat-label>
+                <mat-select [(ngModel)]="selectedRepo" (selectionChange)="switchRepo($event)"
+                    ix-auto ix-auto-type="select" ix-auto-identifier="Browse a Collection">
+                    <mat-option *ngFor="let repo of availableRepo" [value]="repo.git_repository">
+                        {{repo.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button mat-flat-button id="plugin-refresh-button" (click)="getPlugin(false)" class="plugin-button"
+                ix-auto ix-auto-type="button" ix-auto-identifier="REFRESH INDEX">
+                <mat-icon>refresh</mat-icon>
+                {{ "REFRESH INDEX" | translate }}
+            </button>
+        </div>
+        <ng-template #textTemplate>
+            <span><span class="subtitle">{{ 'Available Plugins' | translate }}</span> - {{plugins.length}} {{' official plugins' | translate}}</span>
+        </ng-template>
+
+        <span fxFlex></span>
+        <button mat-icon-button (click)="expand = !expand">
+            <mat-icon *ngIf="expand">expand_less</mat-icon>
+            <mat-icon *ngIf="!expand">expand_more</mat-icon>
         </button>
     </section>
-    <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="selectedPlugin">
+    <div fxLayout="row wrap" fxLayoutAlign="space-around center" *ngIf="expand && selectedPlugin">
         <div fxFlex fxFlex.xs="100">
             <div>
                 <img class="plugin-img" height="150" [src]="selectedPlugin.icon" alt="{{selectedPlugin.name}}" />
@@ -34,7 +47,7 @@
         </div>
     </div>
 </mat-card-content>
-<mat-button-toggle-group class="plugin-buttons" [(ngModel)]='selectedPlugin'>
+<mat-button-toggle-group class="plugin-buttons" [(ngModel)]='selectedPlugin' *ngIf="expand">
     <ng-container *ngFor="let plugin of plugins; let index">
         <mat-button-toggle [value]='plugin'>
             <figure>

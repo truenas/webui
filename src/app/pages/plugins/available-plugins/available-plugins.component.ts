@@ -24,6 +24,7 @@ export class AvailablePluginsComponent implements OnInit {
     public availableRepo = [];
     public selectedRepo: any;
     public installedPlugins: any = {};
+    public expand = true;
 
     constructor(private ws: WebSocketService, protected jailService: JailService,
                 private router: Router, protected dialogService: DialogService) {
