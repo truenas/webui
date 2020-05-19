@@ -54,7 +54,3 @@
 .fn-maincontent {
   overflow:  hidden !important;
 }
-
-.win-scroll {
-  overflow: scroll !important;
-}

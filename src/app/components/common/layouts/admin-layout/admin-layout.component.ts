@@ -123,17 +123,22 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     let navigationHold = document.getElementById('scroll-area');
 
     // Delay needed to fix a init err with navbar vert scroll
-    if (window.navigator.platform.toLowerCase() !== 'win32') {
       setTimeout(() => {
         Ps.initialize(navigationHold, {
           suppressScrollX: true
         });
       }, 500);
-    } else {
-      document.getElementById('scroll-area').classList.add('win-scroll');
+
+    // Allows for one-page-at-a-time scrolling in sidenav on Windows
+    if (window.navigator.platform.toLowerCase() === 'win32') {
+      navigationHold.addEventListener('wheel', (e) => {
+        // deltaY is 1 for page scrolling and 33.3 per line for regular scrolling; default is 100, or 3 lines at a time
+        if (e.deltaY === 1 || e.deltaY === -1) {
+          navigationHold.scrollBy(0, e.deltaY * window.innerHeight);
+        }
+      })
     }
-
-
+    
     if (this.media.isActive('xs') || this.media.isActive('sm')) {
       this.isSidenavOpen = false;
     }
