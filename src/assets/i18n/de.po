@@ -67,16 +67,17 @@ msgid " and all snapshots of it?"
 msgstr " und alle beinhalteten Snapshots?"
 
 msgid " and will be disrupted if the pool is detached:"
-msgstr ""
+msgstr " und wird unterbrochen, wenn der Pool getrennt wird: "
+"
 
 msgid " and will be disrupted if the pool is locked:"
-msgstr " und werden unterbrochen wenn der Pool verriegelt ist:"
+msgstr " und wird unterbrochen, wenn der Pool verriegelt wird:"
 
 msgid " built-in groups (default setting is <i>hidden</i>)."
-msgstr ""
+msgstr " eingebaute Gruppen (Standardeinstellung ist <i>versteckt</i>"
 
 msgid " builtin users (default setting is <i>hidden</i>)."
-msgstr ""
+msgstr " eingebaute Benutzer (Standardeinstellung ist <i>versteckt</i>"
 
 msgid " but datastore "
 msgstr " aber Datenspeicher "
@@ -94,7 +95,7 @@ msgid " is "
 msgstr " ist "
 
 msgid " is a required field."
-msgstr ""
+msgstr " Ist ein Pflichtfeld."
 
 msgid " is required."
 msgstr " wird benötigt."
@@ -104,6 +105,9 @@ msgid ""
 "possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> "
 "option to stop the VM."
 msgstr ""
+" läuft noch, das Gastbetriebssystem hat nicht wie erwartet reagiert. Es ist möglich, "
+"die Option <i>Herunterfahren</i> oder <i>Stopp nach Zeitüberschreitung erzwingen</i> "
+"zu verwenden, um die VM zu stoppen."
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
@@ -116,22 +120,22 @@ msgid " seconds"
 msgstr " Sekunden"
 
 msgid " seconds."
-msgstr ""
+msgstr " Sekunden."
 
 msgid " service has been enabled."
 msgstr " Dienst wurde aktiviert."
 
 msgid " should be at least "
-msgstr ""
+msgstr " sollte mindestens"
 
 msgid " should be no more than "
-msgstr ""
+msgstr " sollte nicht mehr sein als"
 
 msgid " successfully saved."
-msgstr ""
+msgstr " erfolgreich gespeichert."
 
 msgid " successfully unlocked"
-msgstr ""
+msgstr " erfolgreich entsperrt"
 
 msgid " system is powered on and connected to the network."
 msgstr " Das System ist betriebsbereit und mit dem Netzwerk verbunden."
@@ -169,7 +173,7 @@ msgid "(Examples: 500 KiB, 500M, 2 TB)"
 msgstr "(Beispiele: 500 KiB, 500M, 2 TB)"
 
 msgid "(Legacy Encryption)"
-msgstr ""
+msgstr "(Legacy-Verschlüsselung)"
 
 msgid "(No description)"
 msgstr "(Keine Beschreibung)"
@@ -178,10 +182,10 @@ msgid "(Remove pool from database)"
 msgstr "(Entferne Pool aus der Datenbank)"
 
 msgid "(top-right), then"
-msgstr ""
+msgstr (oben rechts), dann"
 
 msgid ", new Metadata vdev is a "
-msgstr ""
+msgstr ", neue Metadate vdev ist ein "
 
 msgid ", new vdev is "
 msgstr ", das neue vdev ist "
@@ -202,7 +206,7 @@ msgid "20 characters is the maximum length."
 msgstr "Die maximale Länge beträgt 20 Zeichen."
 
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
@@ -243,11 +247,17 @@ msgid ""
 "disks can be destroyed by setting the <b>Destroy data</b> option. Back up "
 "critical data <b>before</b> exporting/disconnecting the pool."
 msgstr ""
+"</i>. Die Daten auf dem Pool sind nach dem Export nicht verfügbar. Daten auf der Poolfestplatte "
+"können durch Festlegen der Option Daten <b>Daten zerstören</b> zerstört werden. Sichern Sie "
+"wichtige Daten <b>bevor</b> bevor Sie den Pool exportieren/trennen."
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
 "by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
 msgstr ""
+"</i>befindet sich in der Datenbank, ist jedoch nicht mit dem Computer verbunden. Wenn es durch "
+" einen  Fehler exportiert wurde, schließen Sie die Hardware erneut an, und verwenden sie die>"
+" <b>Pool importieren</b> Funktion.<br /><br />"
 
 msgid ""
 "<a "
@@ -260,6 +270,15 @@ msgid ""
 "region_endpoints  target=\"_blank\">Simple Storage Service Website "
 "Endpoints</a>."
 msgstr ""
+"<a "
+"href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints."
+"html\"  target=\"_blank\">S3 API Endpunkt URL</a>. Bei Verwendung von AWS kann "
+"das Endpunktfeld leer sein, um den Standardendpunkt für die Region zu verwenden, "
+"und verfügbare buckets werden automatisch abgerufen. Siehe AWS Dokumentation "
+"Documentation für die Liste von  <a "
+"href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_"
+"region_endpoints  target=\"_blank\">Einfache Storage Service Website "
+"Endpunkte</a>."
 
 msgid ""
 "<a href=\"https://docs.aws.amazon.com/general/latest/gr/rande-manage.html\" "
@@ -277,18 +296,25 @@ msgid ""
 "href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
 "storage-account\"  target=\"_blank\">Microsoft Azure</a> account name."
 msgstr ""
+"<a "
+"href=\"https://docs.microsoft.com/en-us/azure/storage/common/storage-create-"
+"storage-account\"  target=\"_blank\">Microsoft Azure</a> Kontoname."
 
 msgid ""
 "<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
 "target=\"_blank\">pCloud Access Token</a>. These tokens can expire and  "
 "require extension."
 msgstr ""
+"<a href=\"https://docs.pcloud.com/methods/intro/authentication.html\"  "
+"target=\"_blank\">pCloud-Zugriffstoken</a>. Diese Token können ablaufen und  "
+"erweitern eine Erweiterung."
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Authentication_protocol\"  "
 "target=\"_blank\">Authentication protocol</a> used to authenticate  "
 "messages sent on behalf of the specified <i>Username</i>."
 msgstr ""
+
 
 msgid ""
 "<a href=\"https://en.wikipedia.org/wiki/Cryptographic_protocol\"  "
@@ -307,6 +333,10 @@ msgid ""
 "target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
 "valid    email address when registering to receive issue status updates."
 msgstr ""
+"<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
+"target=\"_blank\">   Erstellen Sie ein Jira-Konto</a> zum Problem einreichen. "
+"Verwende  eine gültige Email Adressse bei der Registrierung, "
+"um Statusaktualisierungen zu erhalten."
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> Kontopasswort."
@@ -368,6 +398,8 @@ msgid ""
 "<b>Root logins are discouraged.</b> Allows root  logins. A password must be "
 "set for the <i>root</i> user account."
 msgstr ""
+"<b>Von Root-Anmeldungen wird abgeraten.</b> Ermöglicht root  anmeldungen. "
+"Für den <i>root</i> Benutzer muss ein Passwort gesetzt werden."
 
 msgid ""
 "<b>SET</b> will changes all destination datasets to "
@@ -407,17 +439,22 @@ msgid ""
 "sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
 "<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
 msgstr ""
+"<b>Warnung:</b> Diese Konfigurationsdatei enthält Systemkennwörter und andere "
+"sensible Daten.<br /><br /><b>Warnung:</b> SSH Schlüssel  in "
+"<samp>/root/.ssh</samp> werden <b>NICHT</b> durch diese Operation gesichert.<br />"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> lauscht auf diesem Port."
 
 msgid "<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>"
-msgstr ""
+msgstr "<br><b>Warnung: Festplatten können in verschlüsselten Pools nicht online geschaltet werden.</b></br>"
 
 msgid ""
 "<em>Warning:</em> The WireGuard service must be active on the client system "
 "to access the TrueCommand UI."
 msgstr ""
+"<em>Warnung:</em> Der WireGuard-Dienst muss auf dem Client-System aktiv sein "
+"um auf die TrueCommand-Benutzeroberfläche zuzugreifen zu können."
 
 msgid "<font color=\"red\"> There are "
 msgstr "<font color=\"red\">Es gibt "
@@ -467,6 +504,9 @@ msgid ""
 "<i>0</i> is unlimited. Reserve additional space for datasets containing "
 "logs which could take up all available free space."
 msgstr ""
+"<i>0</i> is unbegrenzt. Reservieren Sie zusätzlichen Speicherplatz für "
+"Datensätze mit Protokollen, die den gesamten verfügbaren freien "
+"Speicherplatz belegen können."
 
 msgid ""
 "<i>AHCI</i> emulates an AHCI hard disk for best software compatibility. "
@@ -486,6 +526,8 @@ msgid ""
 "<i>Basic Authentication</i> is unencrypted. <i>Digest Authentication</i> is "
 "encrypted."
 msgstr ""
+"<i>Basisauthentifizierung</i> ist unverschlüsselt. <i>Digestauthentifizierung</i> ist "
+"verschüsselt."
 
 msgid ""
 "<i>Default (Clone Jail)</i> or <i>Basejail</i>. Clone jails are clones of "
@@ -5119,16 +5161,20 @@ msgid ""
 msgstr ""
 
 msgid "Enter the filesystem to snapshot."
-msgstr ""
+msgstr "Geben Sie das Dateisystem für den Snapshot ein."
 
 msgid "Enter the full path to the command or script to                be run."
-msgstr ""
+msgstr "Geben Sie den vollständigen Pfad zu dem auszuführenden Befehl oder Skript ein."
 
 msgid "Enter the hostname or IP address of the <b>NTP</b>   server."
 msgstr ""
+"Geben Sie den Hostnamen oder die IP-Adresse des <b>NTP</b> "
+"Servers ein.
 
 msgid "Enter the hostname or IP address of the <b>NTP</b> server."
 msgstr ""
+"Geben Sie den Hostnamen oder die IP-Adresse des <b>NTP</b> "
+"Servers ein.
 
 msgid "Enter the location of the organization. For example, the city."
 msgstr "Geben Sie den Standort der Organisation ein. Zum Beispiel die Stadt."
@@ -5188,20 +5234,23 @@ msgid "Enter the passphrase for the Private Key."
 msgstr "Geben Sie die Passphrase für den privaten Schlüssel ein."
 
 msgid "Enter the password associated with <b>Username</b>."
-msgstr ""
+msgstr "Geben Sie das mit dem <b>Benutzernamen</b> verknüpfte Passwort ein."
 
 msgid ""
 "Enter the password for the SMTP server. Only plain ASCII characters are "
 "accepted."
 msgstr ""
+"Geben Sie das Passwort für den SMTP-Server ein. Es werden nur einfache ASCII-Zeichen aktzeptiert."
 
 msgid ""
 "Enter the password to be used for the  Active Directory administrator "
 "account."
 msgstr ""
+"Geben Sie das Kennwort ein, das für das Active Directory-Administrator "
+"Konto verwendet werden soll."
 
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
-msgstr ""
+msgstr "Geben Sie das Kennwort ein, mit dem über einen Webbrowser eine Verbindung zur IPMI-Schnittstelle hergestellt wird."
 
 msgid "Enter the phone number of the contact person."
 msgstr "Geben Sie die Telefonnummer der Kontaktperson ein."
@@ -5251,7 +5300,7 @@ msgid ""
 msgstr ""
 
 msgid "Enter valid VMware ESXI/vSphere credentials to fetch datastores."
-msgstr ""
+msgstr "Geben Sie gültige VMware ESXI/vSphere-Anmeldeinformationen ein, um Datenspeicher abzurufen."
 
 msgid "Enter valid value"
 msgstr "Geben Sie einen gültigen Wert ein"
@@ -5262,7 +5311,7 @@ msgid ""
 msgstr ""
 
 msgid "Enterprise level"
-msgstr ""
+msgstr "Unternehmensebene"
 
 msgid "Environment"
 msgstr "Umgebung"
@@ -5277,7 +5326,7 @@ msgid "Error Downloading File"
 msgstr "Fehler beim Herunterladen der Datei"
 
 msgid "Error Promoting dataset "
-msgstr ""
+msgstr "Fehler beim Heraufstufen des Datensatzes "
 
 msgid "Error Saving Configuration Settings"
 msgstr "Fehler beim Speichern der Konfigurationseinstellungen"
@@ -5292,7 +5341,7 @@ msgid "Error Updating Production Status"
 msgstr "Fehler beim Aktualisieren des Produktionsstatus"
 
 msgid "Error Upgrading Pool "
-msgstr ""
+msgstr "Fehler beim Aktualisieren des Pools "
 
 msgid "Error checking for updates."
 msgstr "Fehler beim Überprüfen auf Updates."
@@ -5304,10 +5353,10 @@ msgid "Error decrypting disks"
 msgstr "Fehler beim Entschlüsseln der Datenträger"
 
 msgid "Error deleting dataset "
-msgstr ""
+msgstr "Fehler beim Löschen des Datensatzes "
 
 msgid "Error details for "
-msgstr ""
+msgstr "Fehlerdetails für "
 
 msgid "Error exporting the Private Key"
 msgstr "Fehler beim Exportieren des privaten Schlüssels"
@@ -5334,16 +5383,16 @@ msgid "Error importing pool"
 msgstr "Fehler beim Importieren des Pools"
 
 msgid "Error restarting web service"
-msgstr ""
+msgstr "Fehler beim Neustart des Webdienstes"
 
 msgid "Error saving ZVOL."
 msgstr "Fehler beim Speichern von ZVOL."
 
 msgid "Error starting service "
-msgstr ""
+msgstr "Fehler beim Starten des Dienstes"
 
 msgid "Error stopping service "
-msgstr ""
+msgstr "Fehler beim Beenden des Dienstes "
 
 msgid "Error submitting file"
 msgstr "Fehler beim Senden der Datei"
@@ -5358,7 +5407,7 @@ msgid "Error: "
 msgstr "Fehler: "
 
 msgid "Errors"
-msgstr ""
+msgstr "Fehler"
 
 msgid ""
 "Establishing a connection requires  that one of the connection systems has "
@@ -5380,7 +5429,7 @@ msgid "Excellent effort"
 msgstr "Hervorragende Leistung"
 
 msgid "Exclude"
-msgstr ""
+msgstr "Ausschließe"
 
 msgid "Exclude Child Datasets"
 msgstr "Untergeordnete Datensätze ausschließen"
@@ -5403,7 +5452,7 @@ msgid ""
 msgstr ""
 
 msgid "Exec"
-msgstr ""
+msgstr "Exec"
 
 msgid "Execute"
 msgstr "Ausführen"
@@ -5412,7 +5461,7 @@ msgid "Expand Pool"
 msgstr "Pool erweitern"
 
 msgid "Expand pool "
-msgstr ""
+msgstr "Pool erweitern"
 
 msgid "Expand pool to fit all available disk space."
 msgstr ""
@@ -6624,7 +6673,7 @@ msgid ""
 msgstr ""
 
 msgid "Input"
-msgstr ""
+msgstr "Eingeben"
 
 msgid "Input the pre-defined S3 bucket to use."
 msgstr ""
@@ -6741,10 +6790,10 @@ msgid ""
 msgstr ""
 
 msgid "Items Delete Failed"
-msgstr ""
+msgstr "Löschen von Elementen fehlgeschlagen "
 
 msgid "Items deleted"
-msgstr ""
+msgstr "Elemente gelöscht "
 
 msgid "JID"
 msgstr "JID"
@@ -6876,16 +6925,16 @@ msgid "Kernel"
 msgstr "Kernel"
 
 msgid "Key"
-msgstr ""
+msgstr "Schlüssel"
 
 msgid "Key Agreement"
-msgstr ""
+msgstr "Schlüsselvereinbarung"
 
 msgid "Key Cert Sign"
-msgstr ""
+msgstr "Schlüsselzertifikat"
 
 msgid "Key Encipherment"
-msgstr ""
+msgstr "Schlüsselverschlüsselung"
 
 msgid "Key ID"
 msgstr "Schlüssel ID"
@@ -6897,10 +6946,10 @@ msgid "Key Type"
 msgstr "Schlüsseltyp"
 
 msgid "Key Usage"
-msgstr ""
+msgstr "Schlüsselverwendung"
 
 msgid "Key Usage Config"
-msgstr ""
+msgstr "Key Usage Config"
 
 msgid ""
 "Key generated by the Amazon Web Services account. See the <a "
@@ -6963,10 +7012,10 @@ msgstr ""
 "Kerberos-Ticket-Timeout auftritt."
 
 msgid "LEGACY WEB INTERFACE"
-msgstr ""
+msgstr "LEGACY WEB-SCHNITTSTELLE"
 
 msgid "LOGIN TO PROVIDER"
-msgstr ""
+msgstr "LOGIN ZUM ANBIETER"
 
 msgid "LUN ID"
 msgstr ""
@@ -6999,7 +7048,7 @@ msgid "Language code"
 msgstr "Sprachcode"
 
 msgid "Last Scrub Run on"
-msgstr ""
+msgstr "Letzt Srub Lauf um"
 
 msgid "Leave Domain"
 msgstr "Domäne verlassen"
@@ -7166,7 +7215,7 @@ msgid "Log"
 msgstr ""
 
 msgid "Log Level"
-msgstr ""
+msgstr "Protokollstufe"
 
 msgid "Log Out"
 msgstr "Abmelden"
@@ -7187,7 +7236,7 @@ msgid "Log rpc.statd(8) and rpc.lockd(8)"
 msgstr ""
 
 msgid "Logging Level"
-msgstr ""
+msgstr "Protokollierungsstufe"
 
 msgid "Logical Block Size"
 msgstr ""
@@ -7199,7 +7248,7 @@ msgid "Logs"
 msgstr "Berichte"
 
 msgid "Looking for help?"
-msgstr ""
+msgstr "Suchen sie nach hilfe?"
 
 msgid ""
 "Lowercase alphanumeric characters plus dot (.), dash (-), and colon (:) are "
@@ -7241,7 +7290,7 @@ msgid "Mail Server Port"
 msgstr "Mail Server Port"
 
 msgid "Make Destination Dataset Read-only?"
-msgstr ""
+msgstr "Zieldatensatz schreibgeschützt machen?"
 
 msgid "Manage"
 msgstr "Verwalten"
@@ -7250,16 +7299,16 @@ msgid "Manage Custom Themes"
 msgstr "Benutzerdefinierte Themen verwalten"
 
 msgid "Manage Recovery Key"
-msgstr ""
+msgstr "Wiederherstellungsschlüssel verwalten"
 
 msgid "Manage SED Passwords"
-msgstr ""
+msgstr "SED-Passwörter verwalten"
 
 msgid "Manage Services and Continue"
-msgstr ""
+msgstr "Dienste verwalten und fortfahren"
 
 msgid "Manage ZFS Keys"
-msgstr ""
+msgstr "ZFS-Schlüssel verwalten"
 
 msgid "Manage members of"
 msgstr "Mitglieder verwalten von"
@@ -7271,13 +7320,13 @@ msgid "Manual"
 msgstr "Manuell"
 
 msgid "Manual S.M.A.R.T. Test"
-msgstr ""
+msgstr "Menuelle S.M.A.R.T. Prüfung"
 
 msgid "Manual Test"
-msgstr ""
+msgstr "Manueller Test"
 
 msgid "Manual Test Summary"
-msgstr ""
+msgstr "Manuelle Testzusammenfassung"
 
 msgid "Manual Update"
 msgstr "Manuelle Aktualisierung"
@@ -7304,7 +7353,7 @@ msgid "Mar"
 msgstr "Mär"
 
 msgid "Masquerade Address"
-msgstr ""
+msgstr "Maskerade-Adresse"
 
 msgid ""
 "Matching the fixed size of data, as in a database, may result in better "
@@ -7320,10 +7369,10 @@ msgid ""
 msgstr ""
 
 msgid "Mattermost username."
-msgstr ""
+msgstr "Wichtigster Benutzername."
 
 msgid "Max Connections"
-msgstr ""
+msgstr "Maximale Verbindungen"
 
 msgid "Max Poll"
 msgstr ""
@@ -7387,10 +7436,10 @@ msgid ""
 msgstr ""
 
 msgid "Maximum swap size is 99 GiB"
-msgstr ""
+msgstr "Die maximale Swap-Größe beträgt 99 GiB"
 
 msgid "Maximum swap space to use for the jail."
-msgstr ""
+msgstr "Maximaler Swap-Platz für das Jail."
 
 msgid ""
 "Maximum time a graph is stored in months (allowed values are 1-60).  "
@@ -7403,10 +7452,10 @@ msgid "May"
 msgstr "Mai"
 
 msgid "Media Subtype"
-msgstr ""
+msgstr "Medien-Subtyp"
 
 msgid "Media Type"
-msgstr ""
+msgstr "Medientyp"
 
 msgid "Medium"
 msgstr "Medium"
@@ -7430,7 +7479,7 @@ msgid "Memory"
 msgstr "Speicher"
 
 msgid "Memory Reports"
-msgstr ""
+msgstr "Speicherberichte"
 
 msgid "Memory Size"
 msgstr "Speichergröße"
@@ -7444,19 +7493,19 @@ msgid ""
 msgstr ""
 
 msgid "Menu Label"
-msgstr ""
+msgstr "Menübezeichnung"
 
 msgid "Menu Swatch"
-msgstr ""
+msgstr "Menüfeld"
 
 msgid "Message verbosity level in the replication  task log."
 msgstr ""
 
 msgid "Metadata"
-msgstr ""
+msgstr "Metadaten"
 
 msgid "Metadata VDev"
-msgstr ""
+msgstr "Metadaten VDev"
 
 msgid "Metadata vdev must be the same type as data vdevs."
 msgstr ""
@@ -7482,7 +7531,7 @@ msgid ""
 msgstr ""
 
 msgid "Metrics"
-msgstr ""
+msgstr "Metriken"
 
 msgid "MiB"
 msgstr "MiB"
@@ -7569,22 +7618,22 @@ msgid "Monitor"
 msgstr ""
 
 msgid "Monitor Password"
-msgstr ""
+msgstr "Monitor Passwort"
 
 msgid "Monitor User"
-msgstr ""
+msgstr "Monitor Benutzer"
 
 msgid "Month"
 msgstr "Monat"
 
 msgid "Monthly"
-msgstr ""
+msgstr "Monatlich"
 
 msgid "Months"
 msgstr "Monate"
 
 msgid "More Options"
-msgstr ""
+msgstr "Mehr Optionen"
 
 msgid "Mount Points of "
 msgstr ""
@@ -7653,7 +7702,7 @@ msgid "NAT Interface"
 msgstr "NAT Schnittstelle"
 
 msgid "NAT Port Forwarding"
-msgstr ""
+msgstr "NAT-Portweiterleitung"
 
 msgid "NFS"
 msgstr "NFS"
@@ -7713,7 +7762,7 @@ msgid "Name and Provider"
 msgstr ""
 
 msgid "Name and Type"
-msgstr ""
+msgstr "Name und Typ"
 
 msgid ""
 "Name and port of the server that reports the  external IP address. For "
@@ -7735,7 +7784,7 @@ msgid ""
 msgstr ""
 
 msgid "Name of the InfluxDB database."
-msgstr ""
+msgstr "Name der InfluxDB-Datenbank."
 
 msgid "Name of the WebDAV site, service, or software being used."
 msgstr ""
@@ -7746,7 +7795,7 @@ msgid ""
 msgstr ""
 
 msgid "Name of the new alert service."
-msgstr ""
+msgstr "Name des neuen Alarmdienstes."
 
 msgid ""
 "Name of the new cloned boot environment. Alphanumeric characters, dashes "
@@ -7787,7 +7836,7 @@ msgid "Nameservers"
 msgstr "Nameservers"
 
 msgid "Naming Schema"
-msgstr ""
+msgstr "Namensschema"
 
 msgid "Navigation"
 msgstr ""
@@ -7890,30 +7939,35 @@ msgid ""
 msgstr ""
 
 msgid "Network connectivity will be interrupted. "
-msgstr ""
+msgstr "Die Netzwerkverbindung wird unterbrochen. "
 
 msgid "Network connectivity will be interrupted. Proceed?"
-msgstr ""
+msgstr "Die Netzwerkverbindung wird unterbrochen. Weitermachen?"
 
 msgid "Network control (highest)"
 msgstr ""
 
 msgid "Network interface changes have been made permanent."
-msgstr ""
+msgstr "Änderungen an der Netzwerkschnittstelle wurden dauerhaft vorgenommen."
 
 msgid ""
 "Network interface changes have been temporarily applied for testing. Keep "
 "changes permanently? Changes are automatically reverted after the testing "
 "delay if they are not permanently applied."
 msgstr ""
+"Änderungen an der Netzwerkschnittstelle wurden vorübergehend zum Testen angewendet. "
+"Behalten sie die Änderungen dauerhaft? Änderungen werden nach dem Test automatisch "
+"zurückgesetzt, wenn sie nicht dauerhaft angewendet werden."
 
 msgid ""
 "Network interface settings have been temporarily changed for testing. The "
 "settings will revert to the previous configuration after"
 msgstr ""
+"Die Einstellungen der Netzwerkschnittstelle wurden zum Testen vorübergehend geändert."
+"Die Einstellungen werden nach msgstr auf die vorherige Konfiguration zurückgesetzt.
 
 msgid "Network interfaces to include in the bridge."
-msgstr ""
+msgstr "Netzwerkschnittstellen, die in die Bridge aufgenommen werden sollen"
 
 msgid "Networks"
 msgstr "Netzwerke"
@@ -7925,7 +7979,7 @@ msgid "Never Delete"
 msgstr "Niemals löschen"
 
 msgid "New Disk"
-msgstr ""
+msgstr "Neue Platte"
 
 msgid "New Password"
 msgstr "Neues Passwort"
@@ -7934,7 +7988,7 @@ msgid "New Primary Group"
 msgstr "Neue primäre Gruppe"
 
 msgid "New Static Key Settings"
-msgstr ""
+msgstr "Neue statische Schlüsseleinstellungen"
 
 msgid ""
 "New users are not given <b>su</b> permissions if <i>wheel</i> is their "
@@ -7986,28 +8040,28 @@ msgid ""
 msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
-msgstr ""
+msgstr "Keine mit Virtual IP konfigurierten Schnittstellen."
 
 msgid "No logs are available for this task."
-msgstr ""
+msgstr "Für diese Aufgabe sind keine Protokolle verfügbar."
 
 msgid "No longer keep this Boot Environment?"
-msgstr ""
+msgstr "Behalten Sie diese Boot-Umgebung nicht mehr bei."
 
 msgid "No network interfaces are marked critical for failover."
-msgstr ""
+msgstr "Keine Netzwerkschnittstellen sind für ein Failover als kritisch markiert."
 
 msgid "No pools"
-msgstr ""
+msgstr "Keine pools"
 
 msgid "No pools are configured."
-msgstr ""
+msgstr "Es sind keine Pools konfiguriert"
 
 msgid "No repositories is found."
-msgstr ""
+msgstr "Es wurden keine Repositorys gefunden"
 
 msgid "No snapshots sent yet"
-msgstr ""
+msgstr "Es wurden noch keine Schnappschüsse gesendet"
 
 msgid "No update found."
 msgstr "Kein Update gefunden."
@@ -8016,7 +8070,7 @@ msgid "No updates available."
 msgstr "Keine Updates verfügbar."
 
 msgid "No, continue with import"
-msgstr ""
+msgstr "Nein, fahren Sie mit dem Import fort"
 
 msgid "Nobind"
 msgstr ""
@@ -8025,7 +8079,7 @@ msgid "Nodes CARP states do not agree."
 msgstr ""
 
 msgid "None"
-msgstr ""
+msgstr "Keiner"
 
 msgid ""
 "Normal vdev type, used for primary storage operations. ZFS pools always "
