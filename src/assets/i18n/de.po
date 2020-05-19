@@ -5,7 +5,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Built-in Groups"
-msgstr ""
+msgstr " Eingebaute Grupen"
 
 msgid " Builtin Users"
 msgstr " Eingebaute Benutzer"
@@ -68,7 +68,6 @@ msgstr " und alle beinhalteten Snapshots?"
 
 msgid " and will be disrupted if the pool is detached:"
 msgstr " und wird unterbrochen, wenn der Pool getrennt wird: "
-"
 
 msgid " and will be disrupted if the pool is locked:"
 msgstr " und wird unterbrochen, wenn der Pool verriegelt wird:"
