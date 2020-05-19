@@ -126,6 +126,12 @@ export class ServiceNFSComponent {
         }
       }
     });
+  }  
+  
+  beforeSubmit(value) {
+    if (!value.nfs_srv_bindip) {
+      value.nfs_srv_bindip = [];
+    }
   }
 
 }

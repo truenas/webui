@@ -203,9 +203,6 @@ export class ServiceSMBComponent {
               this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
           }
       }
-      // res.forEach((item) => {
-      //   this.cifs_srv_bindip.options.push({ label: item[0], value: item[0] });
-      // })
     });
     this.ws.call('user.query').subscribe((res) => {
       this.cifs_srv_guest = _.find(this.fieldConfig, {'name':'cifs_srv_guest'});
@@ -260,6 +257,10 @@ export class ServiceSMBComponent {
     this.error = null;
 
     let value = _.cloneDeep(entityEdit);
+    if (!value.cifs_srv_bindip) {
+      value.cifs_srv_bindip = [];
+    }
+
     let new_range_low: any;
     let new_range_high: any;
 

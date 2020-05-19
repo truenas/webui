@@ -93,9 +93,17 @@ export class ServiceAFPComponent {
     this.iscsiService.getIpChoices().subscribe((res) => {
       this.afp_srv_bindip =
         _.find(this.fieldConfig, { 'name': 'afp_srv_bindip' });
-      res.forEach((item) => {
-        this.afp_srv_bindip.options.push({ label: item[0], value: item[0] });
-      })
+      for (let key in res) {
+        if (res.hasOwnProperty(key)) {
+          this.afp_srv_bindip.options.push({ label: res[key], value: res[key] });
+        }
+      }
     });
+  }
+
+  beforeSubmit(value) {
+    if (!value.afp_srv_bindip) {
+      value.afp_srv_bindip = [];
+    }
   }
 }
