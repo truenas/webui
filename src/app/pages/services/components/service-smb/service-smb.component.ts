@@ -189,7 +189,7 @@ export class ServiceSMBComponent {
     },
     { name: 'vertical-spacer', width: '2%'},
     {
-    name: helptext.cifs_srv_fieldset_netbios,
+    name: "otherColTwo",
     label: false,
     width: '49%',
     config: [
@@ -270,6 +270,7 @@ export class ServiceSMBComponent {
     }
 
     const otherSet = _.find(this.fieldSets, {"name": helptext.cifs_srv_fieldset_other})
+    const otherColTwoSet = _.find(this.fieldSets, {"name": "otherColTwo"})
 
     this.cifs_srv_unixcharset = otherSet.config.find(config => config.name === "unixcharset");
     this.ws.call("smb.unixcharset_choices").subscribe((res) => {
@@ -289,7 +290,7 @@ export class ServiceSMBComponent {
     });
 
     this.ws.call('user.query').subscribe((res) => {
-      this.cifs_srv_guest = otherSet.config.find(config => config.name === "guest");
+      this.cifs_srv_guest = otherColTwoSet.config.find(config => config.name === "guest");
       res.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
