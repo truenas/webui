@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WebSocketService, JailService, DialogService } from '../../../services';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
@@ -24,10 +25,11 @@ export class AvailablePluginsComponent implements OnInit {
     public availableRepo = [];
     public selectedRepo: any;
     public installedPlugins: any = {};
-    public expand = true;
+    public expand = this.prefService.preferences.expandAvailablePlguins;
 
     constructor(private ws: WebSocketService, protected jailService: JailService,
-                private router: Router, protected dialogService: DialogService) {
+                private router: Router, protected dialogService: DialogService,
+                protected prefService: PreferencesService) {
         this.ws.call('plugin.official_repositories').subscribe(
             (res) => {
                 for (const repo in res) {
@@ -128,4 +130,9 @@ export class AvailablePluginsComponent implements OnInit {
         }
     }
 
+    updatePreference() {
+        this.expand = !this.expand;
+        this.prefService.preferences.expandAvailablePlguins = this.expand;
+        this.prefService.savePreferences();
+    }
 }
