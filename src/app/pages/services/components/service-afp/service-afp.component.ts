@@ -107,6 +107,8 @@ export class ServiceAFPComponent {
 
   private guest_users: any;
   private bindip: any;
+  private validBindIps: any;
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
@@ -125,6 +127,7 @@ export class ServiceAFPComponent {
       }
     });
     this.ws.call('afp.bindip_choices').subscribe((res) => {
+      this.validBindIps = res;
       this.bindip =
         _.find(this.fieldSets, { name: helptext.afp_fieldset_other }).config.find(config => config.name === 'bindip');
       Object.keys(res || {}).forEach(key => {
@@ -136,5 +139,18 @@ export class ServiceAFPComponent {
 
   submitFunction(this: any, body: any){
     return this.ws.call('afp.update', [body]);
+  }
+
+  beforeSubmit(data) {
+    data.bindip = data.bindip ? data.bindip : [];
+    if(this.validBindIps) {
+      data.bindip.forEach(ip => {
+        if (!Object.values(this.validBindIps).includes(ip)) {
+          data.bindip.splice(data.bindip[ip], 1)
+        }
+      })
+    } else {
+      data.bindip = [];
+    }
   }
 }

@@ -25,7 +25,7 @@ export class ServiceS3Component implements OnDestroy {
   private ip_address: any;
   private initial_path: any;
   private warned = false;
-
+  private validBindIps = [];
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -147,12 +147,18 @@ export class ServiceS3Component implements OnDestroy {
         )
       )
       .subscribe(choices => {
+        choices.forEach(ip => { this.validBindIps.push(ip.value)});
         _.find(this.fieldConfig, { name: "bindip" }).options = choices;
       });
     entityForm.submitFunction = this.submitFunction;
   }
 
   resourceTransformIncomingRestData(data) {
+    if (data.bindip && this.validBindIps) {
+      if (!this.validBindIps.includes(data.bindip)) {
+        data.bindip = '';
+      }
+    }
     if (data.certificate && data.certificate.id) {
       data['certificate'] = data.certificate.id;
     }
@@ -168,4 +174,5 @@ export class ServiceS3Component implements OnDestroy {
     return this.ws.call('s3.update', [entityForm]);
 
   }
+
 }

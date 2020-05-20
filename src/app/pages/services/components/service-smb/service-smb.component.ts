@@ -36,6 +36,7 @@ export class ServiceSMBComponent {
   protected dialogRef: any;
   protected idNumber: any;
   public entityEdit: any;
+  private validBindIps: any;
 
   protected advanced_field = [
     'unixcharset',
@@ -281,7 +282,8 @@ export class ServiceSMBComponent {
     });
 
     this.servicesService.getSmbBindIPChoices().subscribe((res) => {
-      this.cifs_srv_bindip = otherSet.config.find(config => config.name === "bindip");
+      this.validBindIps = res;
+      this.cifs_srv_bindip = otherColTwoSet.config.find(config => config.name === "bindip");
         for (let key in res) {
           if (res.hasOwnProperty(key)) {
               this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
@@ -329,5 +331,18 @@ export class ServiceSMBComponent {
       }
         parent.cifs_srv_admin_group.searchOptions = groups;
     });
+  }
+
+  beforeSubmit(data) {
+    data.bindip = data.bindip ? data.bindip : [];
+    if(this.validBindIps) {
+      data.bindip.forEach(ip => {
+        if (!Object.values(this.validBindIps).includes(ip)) {
+          data.bindip.splice(data.bindip[ip], 1)
+        }
+      })
+    } else {
+      data.bindip = [];
+    }
   }
 }

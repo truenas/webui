@@ -149,6 +149,7 @@ export class ServiceNFSComponent {
         Object.keys(ips || {}).map(key => ({ label: key, value: key }))
       )
     );
+  private validBindIps = [];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -158,6 +159,9 @@ export class ServiceNFSComponent {
     entityForm.submitFunction = body => this.ws.call('nfs.update', [body]);
 
     this.ipChoices$.subscribe(ipChoices => {
+      ipChoices.forEach(ip => { 
+        this.validBindIps.push(ip.value);
+      });
       this.fieldSets
         .find(set => set.name === helptext.nfs_srv_fieldset_general)
         .config.find(config => config.name === 'bindip').options = ipChoices;
@@ -176,6 +180,19 @@ export class ServiceNFSComponent {
         }
       }
     });
+  }
+
+  beforeSubmit(data) {
+    data.bindip = data.bindip ? data.bindip : [];
+    if(this.validBindIps) {
+      data.bindip.forEach(ip => {
+        if (!this.validBindIps.includes(ip)) {
+          data.bindip.splice(data.bindip[ip], 1)
+        }
+      })
+    } else {
+      data.bindip = [];
+    }
   }
 
 }
