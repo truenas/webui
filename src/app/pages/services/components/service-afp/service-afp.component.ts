@@ -111,15 +111,12 @@ export class ServiceAFPComponent {
           );
       }
     });
-    this.iscsiService.getIpChoices().subscribe((res) => {
+    this.ws.call('afp.bindip_choices').subscribe((res) => {
       this.validBindIps = res;
-      this.afp_srv_bindip =
-        _.find(this.fieldConfig, { 'name': 'afp_srv_bindip' });
-      for (let key in res) {
-        if (res.hasOwnProperty(key)) {
-          this.afp_srv_bindip.options.push({ label: res[key], value: res[key] });
-        }
-      }
+      this.afp_srv_bindip = _.find(this.fieldConfig, { 'name': 'afp_srv_bindip' });
+      Object.keys(res).forEach(key => {
+        this.afp_srv_bindip.options.push({ label: key, value: res[key] });
+      })
     });
   }
 
