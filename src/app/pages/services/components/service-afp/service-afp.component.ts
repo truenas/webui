@@ -114,6 +114,25 @@ export class ServiceAFPComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected userService: UserService, protected iscsiService: IscsiService,) {}
 
+  resourceTransformIncomingRestData(data) {
+    return this.compareBindIps(data);
+  }
+
+  compareBindIps(data) {
+    // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+    data.bindip = data.bindip ? data.bindip : [];
+    if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      data.bindip.forEach(ip => {
+        if (!Object.values(this.validBindIps).includes(ip)) {
+          data.bindip.splice(data.bindip[ip], 1)
+        }
+      })
+    } else {
+      data.bindip = [];
+    }
+    return data;
+  }
+  
   afterInit(entityEdit: any) {
     entityEdit.submitFunction = this.submitFunction;
     let self = this;
@@ -142,15 +161,6 @@ export class ServiceAFPComponent {
   }
 
   beforeSubmit(data) {
-    data.bindip = data.bindip ? data.bindip : [];
-    if(this.validBindIps) {
-      data.bindip.forEach(ip => {
-        if (!Object.values(this.validBindIps).includes(ip)) {
-          data.bindip.splice(data.bindip[ip], 1)
-        }
-      })
-    } else {
-      data.bindip = [];
-    }
+    data = this.compareBindIps(data);
   }
 }

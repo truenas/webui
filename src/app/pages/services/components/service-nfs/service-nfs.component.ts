@@ -155,6 +155,25 @@ export class ServiceNFSComponent {
     protected rest: RestService, protected ws: WebSocketService,
   ) {}
 
+  resourceTransformIncomingRestData(data) {
+    return this.compareBindIps(data);
+  }
+
+  compareBindIps(data) {
+    // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+    data.bindip = data.bindip ? data.bindip : [];
+    if(this.validBindIps && this.validBindIps.length > 0) {
+      data.bindip.forEach(ip => {
+        if (!this.validBindIps.includes(ip)) {
+          data.bindip.splice(data.bindip[ip], 1)
+        }
+      })
+    } else {
+      data.bindip = [];
+    }
+    return data;
+  }
+
   afterInit(entityForm: EntityFormComponent) {
     entityForm.submitFunction = body => this.ws.call('nfs.update', [body]);
 
@@ -183,16 +202,7 @@ export class ServiceNFSComponent {
   }
 
   beforeSubmit(data) {
-    data.bindip = data.bindip ? data.bindip : [];
-    if(this.validBindIps) {
-      data.bindip.forEach(ip => {
-        if (!this.validBindIps.includes(ip)) {
-          data.bindip.splice(data.bindip[ip], 1)
-        }
-      })
-    } else {
-      data.bindip = [];
-    }
+    data = this.compareBindIps(data);
   }
 
 }

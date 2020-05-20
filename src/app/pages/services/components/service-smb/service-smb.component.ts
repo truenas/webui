@@ -317,6 +317,27 @@ export class ServiceSMBComponent {
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
+    resourceTransformIncomingRestData(data) {
+      return this.compareBindIps(data);
+    }
+  
+    compareBindIps(data) {
+      // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+      data.bindip = data.bindip ? data.bindip : [];
+      console.log(Object.keys(this.validBindIps).length)
+
+      if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+        data.bindip.forEach(ip => {
+          if (!Object.values(this.validBindIps).includes(ip)) {
+            data.bindip.splice(data.bindip[ip], 1)
+          }
+        })
+      } else {
+        data.bindip = [];
+      }
+      return data;
+    }
+
   afterInit(entityEdit: EntityFormComponent) {
     entityEdit.submitFunction = body => {
       return this.ws.call('smb.update', [body])
@@ -334,15 +355,6 @@ export class ServiceSMBComponent {
   }
 
   beforeSubmit(data) {
-    data.bindip = data.bindip ? data.bindip : [];
-    if(this.validBindIps) {
-      data.bindip.forEach(ip => {
-        if (!Object.values(this.validBindIps).includes(ip)) {
-          data.bindip.splice(data.bindip[ip], 1)
-        }
-      })
-    } else {
-      data.bindip = [];
-    }
+    data = this.compareBindIps(data);
   }
 }
