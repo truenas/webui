@@ -75,9 +75,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   ngAfterViewInit(){
 
-    this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
-      if(evt.data.status == "AVAILABLE"){
-        this.updateAvailable = true;
+    this.ws.call('update.get_auto_download').subscribe((res) => {
+      if(res == true){
+        this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
+          if(evt.data.status == "AVAILABLE"){
+            this.updateAvailable = true;
+          }
+        });
       }
     });
 
