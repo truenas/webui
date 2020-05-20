@@ -27,6 +27,7 @@ export class ServiceSMBComponent {
   protected query_call = "directoryservice.idmap_";
   protected idmap_type = 'tdb'
   protected targetDS = '5';
+  private validBindIps: any;
 
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
@@ -196,6 +197,7 @@ export class ServiceSMBComponent {
       }
     });
     this.servicesService.getSmbBindIPChoices().subscribe((res) => {
+      this.validBindIps = res;
       this.cifs_srv_bindip =
         _.find(this.fieldConfig, { 'name': 'cifs_srv_bindip' });
         for (let key in res) {
@@ -230,6 +232,25 @@ export class ServiceSMBComponent {
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
+  resourceTransformIncomingRestData(data) {
+    return this.compareBindIps(data);
+  }
+
+  compareBindIps(data) {
+    // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+    data.cifs_srv_bindip = data.cifs_srv_bindip ? data.cifs_srv_bindip : [];
+    if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      data.cifs_srv_bindip.forEach(ip => {
+        if (!Object.values(this.validBindIps).includes(ip)) {
+          data.cifs_srv_bindip.splice(data.cifs_srv_bindip[ip], 1)
+        }
+      })
+    } else {
+      data.cifs_srv_bindip = [];
+    }
+    return data;
+  }
+
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.rest.get('services/cifs', {}).subscribe((res) => {
@@ -253,25 +274,13 @@ export class ServiceSMBComponent {
     });
   }
 
-  beforeSubmit(entityEdit: any) {
+  beforeSubmit(value) {
     this.error = null;
 
-    let value = _.cloneDeep(entityEdit);
-    if (!value.cifs_srv_bindip) {
-      value.cifs_srv_bindip = [];
-    }
+    value = this.compareBindIps(value);
 
-    let new_range_low: any;
-    let new_range_high: any;
-
-    for (let i in value) {
-      if (_.endsWith(i, 'range_low')) {
-        new_range_low = value[i];
-      }
-      if (_.endsWith(i, 'range_high')) {
-        new_range_high = value[i];
-      }
-    }
+    let new_range_low = value.idmap_tdb_range_low;
+    let new_range_high = value.idmap_tdb_range_high;
 
     // Puts validation errors on screen but doesn't stop form from submitting
     //beforeSubmit doesn't block submit from happening even with an error
