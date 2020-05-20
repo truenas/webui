@@ -64,7 +64,7 @@ export class PreferencesService {
     "showWelcomeDialog": true,
     "showUserListMessage": true,
     "showGroupListMessage": true,
-    "expandAvailablePlugins": false,
+    "expandAvailablePlugins": true,
   }
 
   public preferences: UserPreferences = this.defaultPreferences;
