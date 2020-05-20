@@ -25,7 +25,7 @@ export class AvailablePluginsComponent implements OnInit {
     public availableRepo = [];
     public selectedRepo: any;
     public installedPlugins: any = {};
-    public expand = this.prefService.preferences.expandAvailablePlguins;
+    public expand = this.prefService.preferences.expandAvailablePlugins;
 
     constructor(private ws: WebSocketService, protected jailService: JailService,
                 private router: Router, protected dialogService: DialogService,
@@ -132,7 +132,7 @@ export class AvailablePluginsComponent implements OnInit {
 
     updatePreference() {
         this.expand = !this.expand;
-        this.prefService.preferences.expandAvailablePlguins = this.expand;
+        this.prefService.preferences.expandAvailablePlugins = this.expand;
         this.prefService.savePreferences();
     }
 }

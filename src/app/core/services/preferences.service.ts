@@ -34,7 +34,7 @@ export interface UserPreferences {
   showWelcomeDialog: boolean;
   showUserListMessage: boolean;
   showGroupListMessage: boolean;
-  expandAvailablePlguins: boolean;
+  expandAvailablePlugins: boolean;
 }
 
 @Injectable()
@@ -64,7 +64,7 @@ export class PreferencesService {
     "showWelcomeDialog": true,
     "showUserListMessage": true,
     "showGroupListMessage": true,
-    "expandAvailablePlguins": false,
+    "expandAvailablePlugins": false,
   }
 
   public preferences: UserPreferences = this.defaultPreferences;
