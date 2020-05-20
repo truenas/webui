@@ -17,11 +17,11 @@
             </button>
         </div>
         <ng-template #textTemplate>
-            <span><span class="subtitle">{{ 'Available Plugins' | translate }}</span> - {{plugins.length}} {{' official plugins' | translate}}</span>
+            <span><span class="subtitle">{{ 'Available Plugins' | translate }}</span> - {{plugins?.length}} {{' official plugins' | translate}}</span>
         </ng-template>
 
         <span fxFlex></span>
-        <button mat-icon-button (click)="expand = !expand">
+        <button mat-icon-button (click)="updatePreference()">
             <mat-icon *ngIf="expand">expand_less</mat-icon>
             <mat-icon *ngIf="!expand">expand_more</mat-icon>
         </button>
