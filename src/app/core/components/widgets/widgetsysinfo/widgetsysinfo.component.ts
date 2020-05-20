@@ -80,10 +80,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
-
-    this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
-      if(evt.data.status == "AVAILABLE"){
-        this.updateAvailable = true;
+    
+    this.ws.call('update.get_auto_download').subscribe((res) => {
+      if(res == true){
+        this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
+          if(evt.data.status == "AVAILABLE"){
+            this.updateAvailable = true;
+          }
+        });
       }
     });
 
