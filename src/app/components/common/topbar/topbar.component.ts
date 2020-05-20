@@ -267,7 +267,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   getCollapsedState(): boolean {
     const isCollapsed = document.getElementsByClassName('collapsed-menu').length == 1;
-    console.log(isCollapsed);
     return isCollapsed;
   }
 

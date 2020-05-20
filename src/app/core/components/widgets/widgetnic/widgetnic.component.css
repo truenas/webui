@@ -7,14 +7,10 @@
   width: 100%;
 }
 
-/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
-  visibility:hidden;
-}*/
-
 .widget mat-toolbar-row{
   position:absolute;
   height:48px;
-  width:calc(100% - 16px);
+  width: 100%;
   z-index:2;
   background:unset;
   padding:0 8px;
