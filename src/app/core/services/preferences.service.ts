@@ -34,6 +34,7 @@ export interface UserPreferences {
   showWelcomeDialog: boolean;
   showUserListMessage: boolean;
   showGroupListMessage: boolean;
+  expandAvailablePlguins: boolean;
 }
 
 @Injectable()
@@ -62,7 +63,8 @@ export class PreferencesService {
     "nicAttach": null,
     "showWelcomeDialog": true,
     "showUserListMessage": true,
-    "showGroupListMessage": true
+    "showGroupListMessage": true,
+    "expandAvailablePlguins": false,
   }
 
   public preferences: UserPreferences = this.defaultPreferences;
