@@ -50,16 +50,13 @@ ldap_anonbind_tooltip : T('Set for the LDAP server to disable authentication and
 
 ldap_kerberos_realm_name : 'kerberos_realm',
 ldap_kerberos_realm_placeholder : T('Kerberos Realm'),
-ldap_kerberos_realm_tooltip: T('Select the realm created using the instructions in <a\
- href="--docurl--/directoryservices.html#kerberos-realms"\
- target="_blank">Kerberos Realms</a>.'),
+ldap_kerberos_realm_tooltip: T('Select an existing realm that was added \
+ in <b>Directory Services > Kerberos Realms</b>.'),
 
 ldap_kerberos_principal_name : 'kerberos_principal',
 ldap_kerberos_principal_placeholder : T('Kerberos Principal'),
-ldap_kerberos_principal_tooltip: T('Select the location of the principal in the keytab\
- created as described in <a\
- href="--docurl--/directoryservices.html#kerberos-keytabs"\
- target="_blank">Kerberos Keytabs</a>.'),
+ldap_kerberos_principal_tooltip: T('Select the location of the principal in the \
+ keytab created in <b>Directory Services > Kerberos Keytabs</b>.'),
 
 ldap_ssl_name : 'ssl',
 ldap_ssl_placeholder : T('Encryption Mode'),
@@ -112,8 +109,8 @@ ldap_has_samba_schema_tooltip: T('Only set LDAP authentication for\
 ldap_auxiliary_parameters_name : 'auxiliary_parameters',
 ldap_auxiliary_parameters_placeholder : T('Auxiliary Parameters'),
 ldap_auxiliary_parameters_tooltip: T('Additional options for <a\
- href="https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html"\
- target="_blank">sssd.conf(5)</a>.'),
+ href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
+ target="_blank">nslcd.conf</a>.'),
 
 ldap_schema_name : 'schema',
 ldap_schema_placeholder : T('Schema'),

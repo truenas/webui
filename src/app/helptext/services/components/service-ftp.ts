@@ -104,15 +104,13 @@ anonuserdlbw_tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
 anonuserdlbw_validation: [rangeValidator(0), Validators.required],
 
 tls_placeholder : T('Enable TLS'),
-tls_tooltip: T('Set to enable encrypted connections. Requires a certificate\
- to be created or imported using\
- <a href="--docurl--/system.html#certificates"\
- target="_blank">Certificates</a>'),
+tls_tooltip: T('Allow encrypted connections. Requires a certificate \
+ created or imported with the <b>System > Certificates</b> menu.'),
 
 tls_policy_placeholder : T('TLS Policy'),
-tls_policy_tooltip: T('The selected policy defines whether the control channel,\
- data channel, both channels, or neither channel of an FTP\
- session must occur over SSL/TLS. The policies are described\
+tls_policy_tooltip: T('Define whether the control channel, \
+ data channel, both channels, or neither channel of an FTP \
+ session must occur over SSL/TLS. The policies are described \
  <a href="http://www.proftpd.org/docs/directives/linked/config_ref_TLSRequired.html"\
  target="_blank">here</a>'),
 

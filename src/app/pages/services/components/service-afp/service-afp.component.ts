@@ -111,6 +111,7 @@ export class ServiceAFPComponent {
           );
       }
     });
+    
     this.ws.call('afp.bindip_choices').subscribe((res) => {
       this.validBindIps = res;
       this.afp_srv_bindip = _.find(this.fieldConfig, { 'name': 'afp_srv_bindip' });

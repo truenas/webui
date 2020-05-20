@@ -148,6 +148,13 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       }],
     },
     {
+      type: 'select',
+      name: 'vnet_default_interface',
+      placeholder: helptext.vnet_default_interface_placeholder,
+      tooltip: helptext.vnet_default_interface_tooltip,
+      options: this.interfaces.vnetDefaultInterface,
+    },
+    {
       type: 'list',
       name: 'ip4_addr',
       placeholder: 'IPv4 Addresses',
@@ -651,13 +658,6 @@ export class JailAddComponent implements OnInit, AfterViewInit {
       tooltip: helptext.mac_prefix_tooltip,
     },
     {
-      type: 'select',
-      name: 'vnet_default_interface',
-      placeholder: helptext.vnet_default_interface_placeholder,
-      tooltip: helptext.vnet_default_interface_tooltip,
-      options: this.interfaces.vnetDefaultInterface,
-    },
-    {
       type: 'input',
       name: 'vnet0_mac',
       placeholder: helptext.vnet0_mac_placeholder,
@@ -1129,7 +1129,7 @@ export class JailAddComponent implements OnInit, AfterViewInit {
 
     this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_addr'}).templateListField[0];
     this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_addr'}).templateListField[0];
-    this.vnet_default_interfaceField = _.find(this.networkfieldConfig, {'name': 'vnet_default_interface'});
+    this.vnet_default_interfaceField = _.find(this.basicfieldConfig, {'name': 'vnet_default_interface'});
 
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{

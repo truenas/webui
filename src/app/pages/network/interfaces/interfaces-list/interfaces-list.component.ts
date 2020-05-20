@@ -189,6 +189,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
               this.checkin_remaining = null;
               this.checkinWaiting = false;
               clearInterval(this.checkin_interval);
+              window.location.reload(); // should just refresh after the timer goes off
             }
           }, 1000);
         }
@@ -275,6 +276,11 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           });
         }
       });
+  }
+
+  afterDelete() {
+    this.hasPendingChanges = true;
+    this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false, checkin: false}, sender:this});
   }
 
   goToHA() {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { T } from 'app/translate-marker';
+import { IscsiService } from '../../../../../services/';
 
 @Component({
   selector : 'app-iscsi-portal-list',
@@ -48,13 +49,27 @@ export class PortalListComponent {
       key_props: ['tag']
     },
   };
+  public ipChoicies;
+  constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
-  constructor(protected router: Router) {}
+  prerequisite(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      await this.iscsiService.getIpChoices().toPromise().then(
+        (res) => {
+          this.ipChoicies = res;
+          resolve(true);
+        },
+        (err) => {
+          resolve(true);
+        });
+      });
+  }
 
   dataHandler(data) {
     for (const i in data.rows) {
       for (const ip in data.rows[i].listen) {
-        data.rows[i].listen[ip] = data.rows[i].listen[ip].ip + ':' + data.rows[i].listen[ip].port;
+        const listenIP = this.ipChoicies[data.rows[i].listen[ip].ip] || data.rows[i].listen[ip].ip;
+        data.rows[i].listen[ip] = listenIP + ':' + data.rows[i].listen[ip].port;
       }
     }
   }

@@ -55,7 +55,7 @@ export class SMBListComponent {
     let rowName = row.path.replace("/mnt/", "");
     let poolName = rowName.split('/')[0];
     let optionDisabled;
-    rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
+    optionDisabled = rowName.includes('/') ?  false : true;
     return [
       {
         id: row.name,
@@ -73,8 +73,16 @@ export class SMBListComponent {
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
           const datasetId = rowName;
-          this.router.navigate(
-            ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
+          this.ws.call('pool.query', [[["name", "=", poolName]]]).subscribe(pool => {
+            if (pool[0].status === 'OFFLINE') {
+              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+                `${helptext_sharing_smb.action_edit_acl_dialog.message1} <i>${datasetId}</i> 
+                  ${helptext_sharing_smb.action_edit_acl_dialog.message2}`);
+            } else {
+              this.router.navigate(
+                ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
+            }
+          })
         }
       },
       {

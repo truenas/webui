@@ -144,13 +144,15 @@ export class PluginsComponent {
                   message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
                 }
               }
-              if (message === "") {
-                this.entityList.table.rowDetail.collapseAllRows();
-                this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.succeed);
-              } else {
-                message = '<ul>' + message + '</ul>';
-                this.dialogService.errorReport(T('Plugin Update Failed'), message);
-              }
+              this.updateRows(selected).then(() => {
+                if (message === "") {
+                  this.entityList.table.rowDetail.collapseAllRows();
+                  this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.succeed);
+                } else {
+                  message = '<ul>' + message + '</ul>';
+                  this.dialogService.errorReport(T('Plugin Update Failed'), message);
+                }
+              });
             },
             (res) => {
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
@@ -428,6 +430,7 @@ export class PluginsComponent {
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {
           dialogRef.close(true);
+          this.updateRows([row]);
           this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
         });
       }
