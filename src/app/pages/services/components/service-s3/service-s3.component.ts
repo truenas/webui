@@ -170,7 +170,13 @@ export class ServiceS3Component implements OnDestroy {
       this.initial_path = data.storage_path;
     }
     delete data['secret_key'];
-    return this.compareBindIps(data);
+
+    // If length is one, we can't be sure the list is complete, so skip check on load 
+    // The check still takes place on save
+    if (this.validBindIps.length > 1) {
+      return this.compareBindIps(data);
+    }
+    return data;
   }
 
   compareBindIps(data) {

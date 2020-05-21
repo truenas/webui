@@ -101,20 +101,24 @@ export class ServiceNFSComponent {
   ];
 
   private nfs_srv_bindip: any;
-  private validBindIps =[];
+  private validBindIps = [];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
   ) {}
 
   resourceTransformIncomingRestData(data) {
-    return this.compareBindIps(data);
+    // If validIps is slow to load, skip check on load (It's still done on save)
+    if(this.validBindIps.length > 0) {
+      return this.compareBindIps(data);
+    }
+    return data;
   }
 
   compareBindIps(data) {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.nfs_srv_bindip = data.nfs_srv_bindip ? data.nfs_srv_bindip : [];
-    if(this.validBindIps) {
+    if(this.validBindIps.length > 0) {
       data.nfs_srv_bindip.forEach(ip => {
         if (!this.validBindIps.includes(ip)) {
           data.nfs_srv_bindip.splice(data.nfs_srv_bindip[ip], 1)

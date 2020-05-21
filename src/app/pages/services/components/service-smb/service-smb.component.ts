@@ -233,7 +233,11 @@ export class ServiceSMBComponent {
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
   resourceTransformIncomingRestData(data) {
-    return this.compareBindIps(data);
+    // If validIps is slow to load, skip check on load (It's still done on save)
+    if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      return this.compareBindIps(data);    
+    }
+    return data;
   }
 
   compareBindIps(data) {
