@@ -3,9 +3,11 @@ import {Router} from '@angular/router';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import helptext from '../../../../helptext/account/group-list';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector : 'app-group-list',
@@ -14,10 +16,10 @@ import { T } from '../../../../translate-marker';
 export class GroupListComponent {
   public title = "Groups";
   protected queryCall = 'group.query';
+  protected wsDelete = 'group.delete';
   protected route_add: string[] = ['account', 'groups', 'add' ];
   protected route_add_tooltip = T("Add Group");
   protected route_edit: string[] = [ 'account', 'groups', 'edit' ];
-  protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
   protected entityList: any;
   protected loaderOpen = false;
   protected globalConfig = {
@@ -107,44 +109,46 @@ export class GroupListComponent {
         name: 'delete',
         label : helptext.group_list_actions_label_delete,
         onClick : (members_delete) => {
-          this.entityList.doDelete(members_delete);
+          const self = this;
+          const conf: DialogFormConfiguration = {
+            title: helptext.deleteDialog.title,
+            message: helptext.deleteDialog.message + `<i>${members_delete.group}</i>?`,
+            fieldConfig: [],
+            confirmCheckbox: true,
+            saveButtonText: helptext.deleteDialog.saveButtonText,
+            preInit: function () {
+              if (self.ableToDeleteAllMembers(members_delete)) {
+                conf.fieldConfig.push({
+                  type: 'checkbox',
+                  name: 'delete_users',
+                  placeholder: T(`Delete all ${members_delete.users.length} user(s) with this primary group?`),
+                  value: false,
+                });
+              }
+            },
+            customSubmit: function (entityDialog) {
+              entityDialog.dialogRef.close(true);
+              self.loader.open();
+              self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).subscribe((res) => {
+                self.entityList.getData();
+                self.loader.close();
+              },
+                (err) => {
+                  new EntityUtils().handleWSError(self, err, self.dialogService);
+                  self.loader.close();
+                })
+            }
+          }
+          this.dialogService.dialogForm(conf);
         },
       });
-
     }
 
     return actions;
   }
-  checkbox_confirm(id: any, deleteMsg: any){
-    const params = [id, {"delete_users": false}]
-    const ds = this.dialogService.confirm(
-      helptext.group_list_dialog_label, 
-      deleteMsg,
-      false, helptext.group_list_dialog_label,
-      true,
-      helptext.group_list_dialog_message,
-      'group.delete',
-      params);
-    ds.afterClosed().subscribe((status)=>{
-      if(status){
-        this.loader.open();
-        this.loaderOpen = true;
-        this.ws.call(
-          ds.componentInstance.method,ds.componentInstance.data).subscribe((res)=>{
-            this.entityList.getData();
-            this.loader.close();
-          },
-          (err)=>{
-            this.entityList.getData();
-            this.loader.close();
-          }
-        )
-      }
-    }
-  );
-  };
-  checkbox_confirm_show(id: any){
-    return true;
+
+  ableToDeleteAllMembers(group){
+    return group.users.length !== 0;
   }
 
   toggleBuiltins() {

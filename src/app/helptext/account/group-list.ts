@@ -6,8 +6,6 @@ group_list_actions_id_member: "members",
 group_list_actions_label_edit: T("Edit"),
 group_list_actions_id_edit: "edit",
 group_list_actions_label_delete: T("Delete"),
-group_list_dialog_label: T("Delete"), 
-group_list_dialog_message: T('Delete all users with this primary group?'),
 
 builtins_dialog: {
     title: T(' Built-in Groups'),
@@ -22,6 +20,11 @@ builtinMessageDialog: {
  hidden by default. Use the gear icon (top-right) to toggle the display of built-in groups.'),
     button: T('Close')
 },
-globalConfigTooltip: T('Toggle built-in groups')
+globalConfigTooltip: T('Toggle built-in groups'),
 
+deleteDialog: {
+    title: T('Delete Group '),
+    message: T('Delete Group '),
+    saveButtonText: T('DELETE'),
+}
 }
