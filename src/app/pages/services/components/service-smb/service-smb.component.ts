@@ -318,14 +318,16 @@ export class ServiceSMBComponent {
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
     resourceTransformIncomingRestData(data) {
-      return this.compareBindIps(data);
+      // If validIps is slow to load, skip check on load (It's still done on save)
+      if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+        return this.compareBindIps(data);
+      }
+      return data;
     }
   
     compareBindIps(data) {
       // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
       data.bindip = data.bindip ? data.bindip : [];
-      console.log(Object.keys(this.validBindIps).length)
-
       if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
         data.bindip.forEach(ip => {
           if (!Object.values(this.validBindIps).includes(ip)) {
