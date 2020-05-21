@@ -295,8 +295,10 @@
                  (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk, checkMultipath(path[currentSlideIndex].dataSource.disk))" 
                  [ngClass]="{'clickable': true}">
                 <strong>
+                  <span *ngIf="checkMultipath(path[2].dataSource.disk)">
+                    <mat-icon class="multipath-icon" role="img" fontSet="mdi-set" fontIcon="mdi-call-merge"></mat-icon>
+                  </span>
                   {{trimMultipath(path[2].dataSource.disk).fullName}}
-                  <span *ngIf="checkMultipath(path[2].dataSource.disk)">({{"multipath" | translate}})</span>
                   :
                 </strong>
                 &nbsp;&nbsp; {{path[2].dataSource.status | translate}}
