@@ -59,12 +59,6 @@ export class DialogService {
             dialogRef.componentInstance.method = method;
             dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection)=>{
             if(selection){
-                if(data[1] && data[1].hasOwnProperty('delete_users')){
-                    data[1].delete_users = !data[1].delete_users;
-                }
-                if(data[1] && data[1].hasOwnProperty('delete_group')){
-                    data[1].delete_group = !data[1].delete_group;
-                }
                 if(data[0] && data[0].hasOwnProperty('reboot')){
                     data[0].reboot = !data[0].reboot;
                 }
