@@ -4,8 +4,12 @@ import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Http } from '@angular/http';
 
-import { WebSocketService, JobService, SystemGeneralService } from '../../../../services/';
+import { WebSocketService, JobService, SystemGeneralService, DialogService, StorageService } from '../../../../services/';
+import globalHelptext from '../../../../helptext/global-helptext';
+import { T } from '../../../../translate-marker';
+import { EntityUtils } from '../../../../pages/common/entity/utils'
 
 @Component({
   selector: 'task-manager',
@@ -34,7 +38,11 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     public dialogRef: MatDialogRef<TaskManagerComponent>,
     private ws: WebSocketService,
     protected translate: TranslateService,
-    protected job: JobService, protected sysGeneralService: SystemGeneralService) {
+    protected job: JobService,
+    protected sysGeneralService: SystemGeneralService,
+    protected dialogService: DialogService,
+    protected storageService: StorageService,
+    protected http: Http) {
       this.dataSource = new MatTableDataSource<any>([]);
     }
 
@@ -42,38 +50,29 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     this.sysGeneralService.getSysInfo().subscribe((res) => {
       this.timeZone = res.timezone;
     })
-    this.ws.call('core.get_jobs', []).subscribe(
+    this.ws.call('core.get_jobs', [[], {order_by: ["-id"], limit: 50}]).subscribe(
       (res)=> {
-        for (const i in res) {
-          res[i].percent = res[i].progress.percent ? res[i].progress.percent : 0;
-        }
-        this.dataSource.data = res.sort(function(a, b) {
-          return b.time_started.$date - a.time_started.$date;
-        });
+        this.dataSource.data = res;
         this.dataSource.sort = this.sort;
-        this.dataSource.data.forEach((i) => {
-          delete i.exception;
-        })
       },
       (err)=> {
 
       });
 
       this.getData().subscribe(
-        (res) => { 
-          res.percent = res.progress.percent;
-          const targetRow = _.findIndex(this.dataSource.data, {'id': res.id});
-          if (targetRow === -1) {
-            if (res.exception) {
-              delete res.exception;
+        (res) => {
+          // only update exist jobs or add latest jobs
+          if (res.id >= this.dataSource.data[49].id) {
+            const targetRow = _.findIndex(this.dataSource.data, {'id': res.id});
+            if (targetRow === -1) {
+              this.dataSource.data.push(res);
+            } else {
+              for (const key in this.dataSource.data[targetRow]) {
+                this.dataSource.data[targetRow][key] = res[key];
+              }
             }
-            this.dataSource.data.push(res);
-          } else {
-            for (const key in this.dataSource.data[targetRow]) {
-              this.dataSource.data[targetRow][key] = res[key];
-            }
+            this.taskTable.renderRows();
           }
-          this.taskTable.renderRows();
         }
       )
   }
@@ -103,6 +102,27 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   }
 
   showLogs(element) {
-    this.job.showLogs(element.id);
+    this.dialogService.confirm(T('Logs'), `<pre>${element.logs_excerpt}</pre>`, true, T('Download Logs'),
+      false, '', '', '', '', false, T('Close'), true).subscribe(
+      (dialog_res) => {
+        if (dialog_res) {
+          this.ws.call('core.download', ['filesystem.get', [element.logs_path], element.id + '.log']).subscribe(
+            (snack_res) => {
+              const url = snack_res[1];
+              const mimetype = 'text/plain';
+              let failed = false;
+              this.storageService.streamDownloadFile(this.http, url, element.id + '.log', mimetype).subscribe(file => {
+                this.storageService.downloadBlob(file, element.id + '.log');
+              }, err => {
+                failed = true;
+                new EntityUtils().handleWSError(this, err);
+              });
+            },
+            (snack_res) => {
+              new EntityUtils().handleWSError(this, snack_res);
+            }
+          );
+        }
+      });
   }
 }

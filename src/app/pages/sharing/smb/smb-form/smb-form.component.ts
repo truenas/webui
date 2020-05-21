@@ -209,6 +209,12 @@ export class SMBFormComponent {
     const sharePath: string = entityForm.formGroup.get('cifs_path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
+
+    // Check if pool is offline (possibly locked); if so, return to list; else, do some more checking
+    this.ws.call('pool.query', [[["name", "=", poolName]]]).subscribe(pool => {
+      if (pool[0].status === 'OFFLINE') {
+        this.router.navigate(['/'].concat(this.route_success))
+      } else {
     /**
      * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
@@ -219,7 +225,8 @@ export class SMBFormComponent {
           /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
           !isTrivialACL || !datasetId.includes('/')
             ? combineLatest(of(false), of({}))
-            : combineLatest(
+            : 
+              combineLatest(
                 /* Check if user wants to edit the share's ACL */
                 this.dialog.confirm(
                   helptext_sharing_smb.dialog_edit_acl_title,
@@ -284,6 +291,9 @@ export class SMBFormComponent {
         })
       )
       .subscribe(() => {}, error => new EntityUtils().handleWSError(this, error, this.dialog));
+      }
+    })
+
   }
 
   afterInit(entityForm: any) {

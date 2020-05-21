@@ -377,6 +377,7 @@ export class VolumesListTableConfig implements InputTableConf {
           },
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
+            let done = false;
             const value = entityDialog.formValue;
             const params = [row1.id, {passphrase: value.passphrase, services_restart: value.services_restart}]
             let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Unlocking Pool"}, disableClose: true});
@@ -394,10 +395,13 @@ export class VolumesListTableConfig implements InputTableConf {
               dialogRef.componentInstance.submit();
             }
             dialogRef.componentInstance.success.subscribe((res) => {
-              dialogRef.close(false);
-              entityDialog.dialogRef.close(true);
-              self.parentVolumesListComponent.repaintMe();
-              self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
+              if (!done) {
+                dialogRef.close(false);
+                entityDialog.dialogRef.close(true);
+                self.parentVolumesListComponent.repaintMe();
+                self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
+                done = true;
+              }
             });
             dialogRef.componentInstance.failure.subscribe((res) => {
               dialogRef.close(false);
@@ -1135,7 +1139,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               let used_pct =  volume.children[0].used / (volume.children[0].used + volume.children[0].avail);
-              volume.usedStr = ": " + (<any>window).filesize(volume.children[0].used, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
+              volume.usedStr = ": " +  " (" + volume.children[0].used_pct.toString() + "%)";
             } catch (error) {
               volume.usedStr = "" + volume.children[0].used;
             }

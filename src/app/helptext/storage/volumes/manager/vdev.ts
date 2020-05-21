@@ -1,13 +1,14 @@
 import { T } from '../../../../translate-marker';
 
 export default {
-vdev_diskSizeErrorMsg : T('Mixing disks of different sizes in a VDEV is not allowed.'),
-vdev_type_tooltip : T('Choose a <i>Stripe</i>, <i>Mirror</i>,\
- or <i>Raid-Z</i> configuration for the\
- chosen disk layout. See the <a\
- href="--docurl--/storage.html#pool-manager"\
- target="_blank">Pool Manager</a> section\
- of the guide for more details.'),
+vdev_diskSizeErrorMsg : T('Mixing disks of different sizes in a vdev is not allowed.'),
+vdev_type_tooltip : T('Arrange the disks according to capacity, redundancy, and \
+ performance considerations. More types become available as more disks are added to the vdev.<br> \
+ A <i>Stripe</i> uses the entire capacity of the disks for storage and <b>has no redundancy</b>. \
+ Failed or degraded disks in a stripe can result in data loss!<br> A <i>Mirror</i> requires at \
+ least two disks and mirrors the data from one disk onto each other disk in the vdev, which can \
+ limit the total capacity.<br><i>Raid-Z</i> configurations offer different balances of data \
+ redundancy and total capacity for the selected disks.'),
 vdev_types : {
     'stripe' : T('Stripe'),
     'mirror' : T('Mirror'),

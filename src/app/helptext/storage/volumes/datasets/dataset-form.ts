@@ -16,10 +16,14 @@ dataset_form_sync_tooltip: T('<i>Standard</i> uses the sync settings that have b
  writes to complete.'),
 
 dataset_form_compression_placeholder: T('Compression level'),
-dataset_form_compression_tooltip: T('For more information about the available compression\
- algorithms, refer to the <a\
- href="--docurl--/storage.html#compression"\
- target="_blank">Compression section</a> of the guide.'),
+dataset_form_compression_tooltip: T('Encode information in less space than the \
+ original data occupies. It is recommended to choose a compression algorithm \
+ that balances disk performance with the amount of saved space.<br> <i>LZ4</i> is \
+ generally recommended as it maximizes performance and dynamically identifies \
+ the best files to compress.<br> <i>GZIP</i> options range from 1 for least \
+ compression, best performance, through 9 for maximum compression with \
+ greatest performance impact.<br> <i>ZLE</i> is a fast algorithm that only \
+ elminates runs of zeroes.'),
 
 dataset_form_atime_placeholder: T('Enable Atime'),
 dataset_form_atime_tooltip: T('Choose <i>ON</i> to update the access time for files\
@@ -68,9 +72,10 @@ dataset_form_reservation_tooltip: T('<i>0</i> is unlimited. A specified value ap
 
 dataset_form_deduplication_label: T('ZFS deduplication'),
 dataset_form_deduplication_placeholder: T('ZFS Deduplication'),
-dataset_form_deduplication_tooltip: T('Please read about <a href="--docurl--/storage.html#deduplication"\
- target="_blank">deduplication</a> before considering\
- changing this setting.'),
+dataset_form_deduplication_tooltip: T('Transparently reuse a single copy of duplicated \
+ data to save space. Deduplication can improve storage capacity, but is RAM intensive. \
+ Compressing data is generally recommended before using deduplication. Deduplicating data is \
+ a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
 
 dataset_form_readonly_placeholder: T('Read-only'),
 dataset_form_readonly_tooltip: T('Set to prevent the dataset from being modified.'),
