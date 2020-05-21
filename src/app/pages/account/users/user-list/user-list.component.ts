@@ -5,8 +5,10 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-list';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-user-list',
@@ -18,13 +20,14 @@ export class UserListComponent {
   protected route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip = "Add User";
   protected route_edit: string[] = ['account', 'users', 'edit'];
-  protected route_delete: string[] = ['account', 'users', 'delete'];
+
   protected entityList: any;
   protected loaderOpen = false;
   protected usr_lst = [];
   protected grp_lst = [];
   protected hasDetails = true;
   protected queryCall = 'user.query';
+  protected wsDelete = 'user.delete';
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected queryCallOption = [];
   protected globalConfig = {
@@ -99,44 +102,45 @@ export class UserListComponent {
         icon: 'delete',
         name: 'delete',
         label : helptext.user_list_actions_delete_label,
-        onClick : (users_edit) => {
-          this.entityList.doDelete(users_edit);
+        onClick: (users_edit) => {
+          const self = this;
+          const conf: DialogFormConfiguration = {
+            title: helptext.deleteDialog.title,
+            message: helptext.deleteDialog.message + `<i>${users_edit.username}</i>?`,
+            fieldConfig: [],
+            confirmCheckbox: true,
+            saveButtonText: helptext.deleteDialog.saveButtonText,
+            preInit: function () {
+              if (self.ableToDeleteGroup(users_edit.id)) {
+                conf.fieldConfig.push({
+                  type: 'checkbox',
+                  name: 'delete_group',
+                  placeholder: helptext.deleteDialog.deleteGroup_placeholder + users_edit.group.bsdgrp_group,
+                  value: false,
+                });
+              }
+            },
+            customSubmit: function (entityDialog) {
+              entityDialog.dialogRef.close(true);
+              self.loader.open();
+              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).subscribe((res) => {
+                self.entityList.getData();
+                self.loader.close();
+              },
+                (err) => {
+                  new EntityUtils().handleWSError(self, err, self.dialogService);
+                  self.loader.close();
+                })
+            }
+          }
+          this.dialogService.dialogForm(conf);
         },
       });
-
     }
     return actions;
   }
-  checkbox_confirm(id: any, deleteMsg: any){
-    const params = [id, {"delete_group": true}]
-    const ds = this.dialogService.confirm(
-      helptext.user_list_dialog_label, 
-      deleteMsg,
-      false, helptext.user_list_dialog_label,
-      true,
-      helptext.user_list_dialog_message,
-      'user.delete',
-      params);
-    ds.afterClosed().subscribe((status)=>{
-      if(status){
-        this.loader.open();
-        this.loaderOpen = true;
-        this.ws.call(
-          ds.componentInstance.method,ds.componentInstance.data).subscribe((res)=>{
-            this.entityList.getData();
-            this.loader.close();
-          },
-          (err)=>{
-            this.entityList.getData();
-            this.loader.close();
-          }
-        )
-      }
-    }
-  );
-  };
 
-  checkbox_confirm_show(id: any){
+  ableToDeleteGroup(id: any){
     let user: any
     let group_users: any
     user = _.find(this.usr_lst[0], {id});

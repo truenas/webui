@@ -4,8 +4,6 @@ export default {
 user_list_actions_edit_label: T("Edit"),
 user_list_actions_edit_id: "edit",
 user_list_actions_delete_label: T("Delete"),
-user_list_dialog_label: T("Delete"), 
-user_list_dialog_message: T('Keep user primary group'),
 
 builtins_dialog: {
     title: T(' Builtin Users'),
@@ -19,6 +17,12 @@ builtinMessageDialog: {
  hidden by default. Use the gear icon (top-right) to toggle the display of built-in users.'),
     button: T('Close')
 },
-globalConfigTooltip: T('Toggle built-in users')
+globalConfigTooltip: T('Toggle built-in users'),
 
+deleteDialog: {
+    title: T('Delete User '),
+    deleteGroup_placeholder: T('Delete user primary group '),
+    message: T('Delete User '),
+    saveButtonText: T('DELETE'),
+}
 }
