@@ -1634,8 +1634,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               const used_pct =  pool.children[0].used.parsed / (pool.children[0].used.parsed + pool.children[0].available.parsed);
-              const spacerStr = pool.healthy ? ': ' : '';
-              pool.usedStr = spacerStr + (<any>window).filesize(pool.children[0].used.parsed, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
+              pool.usedStr = "" + (<any>window).filesize(pool.children[0].used.parsed, { standard: "iec" }) + " (" + Math.round(used_pct * 100) + "%)";
             } catch (error) {
               pool.usedStr = "" + pool.children[0].used.parsed;
             }
