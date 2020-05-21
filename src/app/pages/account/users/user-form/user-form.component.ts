@@ -349,7 +349,7 @@ export class UserFormComponent {
 
     /* list users */
     const filter = ["id", "=", parseInt(this.pk, 10)];
-    this.ws.call('user.query',[[filter]]).subscribe(async (res) => { console.log(res)
+    this.ws.call('user.query',[[filter]]).subscribe(async (res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe(stat => {
           entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2,5));
