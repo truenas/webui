@@ -235,7 +235,6 @@
                     <span>
                       {{trimMultipath(vdev.disk).name}}
                     </span>
-                    <!--<span *ngIf="trimMultipath(vdev.disk).isMultipath">({{"multipath" | translate}})</span>-->
                     &nbsp;&nbsp;
                   </span>
 
@@ -272,7 +271,6 @@
                   <mat-icon *ngIf="checkMultipath(disk.disk)" class="multipath-icon" role="img" fontSet="mdi-set" fontIcon="mdi-call-merge"></mat-icon>
                   <span *ngIf="disk.status !== 'UNAVAIL'">{{trimMultipath(disk.disk).fullName}}</span>
                   <span *ngIf="disk.status == 'UNAVAIL'">Unknown Disk</span>
-                  <!--<span *ngIf="checkMultipath(disk.disk)">&nbsp;({{"multipath" | translate}})</span>-->
                   :
                 </strong>
                 &nbsp;&nbsp; {{disk.status | translate}}

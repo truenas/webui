@@ -350,20 +350,15 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   trimMultipath(disk, vdev?){
     if(!disk || disk == null){
-      if(vdev){
-        console.log(vdev);
-      }
       return {name: disk};
     }
 
     const isMultipath = disk.includes('multipath/');
     const fullName = isMultipath ? disk.replace('multipath/','') : disk;
 
-    //if(fullName.includes('-')){
       const spl = fullName.split('-');
       const suffix = spl.length > 1 ? '...  ' : '';
       const name = spl[0] + suffix;
-    //}
 
     return {
       isMultipath: isMultipath,
