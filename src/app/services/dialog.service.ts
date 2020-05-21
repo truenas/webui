@@ -59,12 +59,6 @@ export class DialogService {
             dialogRef.componentInstance.method = method;
             dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection)=>{
             if(selection){
-                if(data[1] && data[1].hasOwnProperty('delete_users')){
-                    data[1].delete_users = !data[1].delete_users;
-                }
-                if(data[1] && data[1].hasOwnProperty('delete_group')){
-                    data[1].delete_group = !data[1].delete_group;
-                }
                 if(data[0] && data[0].hasOwnProperty('reboot')){
                     data[0].reboot = !data[0].reboot;
                 }
@@ -142,7 +136,7 @@ export class DialogService {
     public dialogForm(conf: any, disableClose: boolean = false): Observable<boolean> {
         let dialogRef: MatDialogRef<EntityDialogComponent>;
 
-        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '420px', disableClose: disableClose});
+        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '420px', minWidth: '350px', disableClose: disableClose});
         dialogRef.componentInstance.conf = conf;
 
         return dialogRef.afterClosed();

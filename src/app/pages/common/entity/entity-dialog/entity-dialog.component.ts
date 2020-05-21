@@ -39,6 +39,7 @@ export class EntityDialogComponent implements OnInit {
   public parent: any;
   public submitEnabled = true;
   public instructions: string;
+  public confirmCheckbox = false;
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
@@ -61,6 +62,10 @@ export class EntityDialogComponent implements OnInit {
       this.parent = this.conf.parent;
     }
 
+    if (this.conf.confirmCheckbox) {
+      this.confirmCheckbox = this.conf.confirmCheckbox;
+      this.submitEnabled = false;
+    }
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -165,5 +170,9 @@ export class EntityDialogComponent implements OnInit {
     }
 
 
+  }
+
+  toggleSubmit(data) {
+    this.submitEnabled = data.checked;
   }
 }

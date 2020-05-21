@@ -40,8 +40,6 @@ export interface InputTableConf {
   noActions?: boolean;
   config?: any;
   confirmDeleteDialog?: any;
-  checkbox_confirm?: any;
-  checkbox_confirm_show?: any;
   hasDetails?:boolean;
   rowDetailComponent?: any;
   detailRowHeight?: any;
@@ -691,10 +689,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       id = item.id;
     }
-    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
-      this.conf.checkbox_confirm(id, deleteMsg);
-      return;
-    }
 
     const dialog = this.conf.confirmDeleteDialog || {};
     if (dialog.buildTitle) {
@@ -751,10 +745,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       id = item.id;
     }
     let dialog = {};
-    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
-      this.conf.checkbox_confirm(id, deleteMsg);
-      return;
-    }
     if (this.conf.confirmDeleteDialog) {
       dialog = this.conf.confirmDeleteDialog;
     }

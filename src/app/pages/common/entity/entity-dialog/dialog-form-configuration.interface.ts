@@ -15,5 +15,6 @@ export interface DialogFormConfiguration {
   warning?: any,
   preInit?: any,
   afterInit?: any,
-  parent?: any
+  parent?: any,
+  confirmCheckbox?: boolean,
 }
