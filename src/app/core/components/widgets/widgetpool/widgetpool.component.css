@@ -7,14 +7,10 @@
   width: 100%;
 }
 
-/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
-  visibility:hidden;
-}*/
-
 .widget mat-toolbar-row{
   position:absolute;
   height:48px;
-  width:calc(100% - 16px);
+  width: 100%;
   z-index:2;
   background:unset;
   padding: 0 8px;
@@ -24,6 +20,16 @@
 
   font-size: 1.5rem;
   line-height: 180%;
+}
+
+.mat-icon.multipath-icon{
+  background-color:var(--fg2);
+  color: var(--bg2);
+  border-radius: 50%;
+  padding: 0 1px 2px;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
 }
 
 .xs.widget mat-toolbar-row.view-overview .controls,
@@ -121,8 +127,8 @@
 .table{ 
   display:table; 
   text-align:left;
-  margin: 16px 24px;
-  width: calc(100% - 48px);
+  margin: 16px 12px;
+  width: calc(100% - 32px);
 }
 
 
@@ -135,7 +141,18 @@
 .td span{opacity: 0.95;}
 .td span.icon{ opacity: 1;}
 
+.td{
+  width:40%;
+}
 
+.td.label{
+  width:52%;
+}
+
+.td .mat-icon{
+  width: 12px;
+  height: auto;
+}
 
 .pool-status .icon-wrapper{
   display: inline-block;
@@ -168,7 +185,7 @@ span.safe{
 .pool-status span.safe .mat-icon,
 .used-space span.safe .mat-icon,
 .disk-errors span.safe .mat-icon{
-  width:auto;
+  width:14px;
   height:auto;
   font-size: 18px;
   position: relative;
