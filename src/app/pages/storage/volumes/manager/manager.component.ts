@@ -85,6 +85,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public vdevtypeError = null;
   public vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
 
+  public emptyDataVdev = true;
+  
   public specialVdevTypeError = null;
   public specialVdevTypeErrorMessage = helptext.manager_specialVdevTypeErrorMessage;
 
@@ -371,11 +373,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   addVdev(group, initial_values={}) {
     this.dirty = true;
     this.vdevs[group].push(initial_values);
-    this.getCurrentLayout();
+    setTimeout(() => { // there appears to be a slight race condition with adding/removing
+      this.getCurrentLayout();
+    }, 100);
   }
 
   removeVdev(vdev: VdevComponent) {
-    console.log(vdev);
     let index = null;
     this.vdevComponents.forEach((item, i) => {
       if (item === vdev) {
@@ -389,7 +392,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.vdevs[vdev.group] = []; // should only be one cache/spare/log
       }
     }
-    this.getCurrentLayout();
+    setTimeout(() => { // there appears to be a slight race condition with adding/removing
+      this.getCurrentLayout();
+    }, 100);
   }
 
   getCurrentLayout() {
@@ -407,6 +412,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.specialVdevTypeError = null;
     this.vdevdisksSizeError = false;
     this.has_savable_errors = false;
+    this.emptyDataVdev = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
@@ -430,6 +436,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           data_vdev_disknum = vdev.disks.length;
           data_vdev_type = vdev.type;
         } else {
+          this.emptyDataVdev = true;
           data_vdev_disknum = 0;
         }
         size_estimate += vdev.rawSize;
@@ -508,6 +515,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       return false;
     }
     if (this.has_savable_errors && !this.force) {
+      return false;
+    }
+    return true;
+  }
+
+  canAddData() {
+    if (this.emptyDataVdev) {
       return false;
     }
     return true;
@@ -763,7 +777,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   toggleExpandRow(row) {
-    //console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }
