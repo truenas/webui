@@ -365,7 +365,6 @@ export class UserFormComponent {
         setTimeout(() => {
           this.namesInUse.splice(this.namesInUse.indexOf(res[0].username), 1);
           entityForm.formGroup.controls['username'].setValue(res[0].username);
-          console.log(this.namesInUse)
         }, 500);
         entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
         entityForm.formGroup.controls['email'].setValue(res[0].email);
