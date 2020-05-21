@@ -121,7 +121,7 @@ export class GroupListComponent {
                 conf.fieldConfig.push({
                   type: 'checkbox',
                   name: 'delete_users',
-                  placeholder: T(`Delete all ${members_delete.users.length} user(s) with this primary group?`),
+                  placeholder: T(`Delete all ${members_delete.users.length} users with this primary group?`),
                   value: false,
                 });
               }
