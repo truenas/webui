@@ -107,11 +107,36 @@ export class ServiceAFPComponent {
 
   private guest_users: any;
   private bindip: any;
+  private validBindIps: any;
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected userService: UserService, protected iscsiService: IscsiService,) {}
 
+  resourceTransformIncomingRestData(data) {
+    // If validIps is slow to load, skip check on load (It's still done on save)
+    if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      return this.compareBindIps(data);
+    }
+    return data;
+  }
+
+  compareBindIps(data) {
+    // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+    data.bindip = data.bindip ? data.bindip : [];
+    if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      data.bindip.forEach(ip => {
+        if (!Object.values(this.validBindIps).includes(ip)) {
+          data.bindip.splice(data.bindip[ip], 1)
+        }
+      })
+    } else {
+      data.bindip = [];
+    }
+    return data;
+  }
+  
   afterInit(entityEdit: any) {
     entityEdit.submitFunction = this.submitFunction;
     let self = this;
@@ -125,6 +150,7 @@ export class ServiceAFPComponent {
       }
     });
     this.ws.call('afp.bindip_choices').subscribe((res) => {
+      this.validBindIps = res;
       this.bindip =
         _.find(this.fieldSets, { name: helptext.afp_fieldset_other }).config.find(config => config.name === 'bindip');
       Object.keys(res || {}).forEach(key => {
@@ -136,5 +162,9 @@ export class ServiceAFPComponent {
 
   submitFunction(this: any, body: any){
     return this.ws.call('afp.update', [body]);
+  }
+
+  beforeSubmit(data) {
+    data = this.compareBindIps(data);
   }
 }

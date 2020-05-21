@@ -25,7 +25,7 @@ export class ServiceS3Component implements OnDestroy {
   private ip_address: any;
   private initial_path: any;
   private warned = false;
-
+  private validBindIps = [];
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -147,6 +147,9 @@ export class ServiceS3Component implements OnDestroy {
         )
       )
       .subscribe(choices => {
+        choices.forEach(ip => { 
+          this.validBindIps.push(ip.value)
+        });
         _.find(this.fieldConfig, { name: "bindip" }).options = choices;
       });
     entityForm.submitFunction = this.submitFunction;
@@ -160,6 +163,20 @@ export class ServiceS3Component implements OnDestroy {
       this.initial_path = data.storage_path;
     }
     delete data['secret_key'];
+    
+    // If validIps is slow to load, skip check on load (It's still done on save)
+    if (this.validBindIps.length > 0) {
+      return this.compareBindIps(data);
+    }
+    return data;
+  }
+
+  compareBindIps(data) {
+    if (data.bindip && this.validBindIps.length > 0) {
+      if (!this.validBindIps.includes(data.bindip)) {
+        data.bindip = '';
+      }
+    }
     return data;
   }
 
@@ -168,4 +185,9 @@ export class ServiceS3Component implements OnDestroy {
     return this.ws.call('s3.update', [entityForm]);
 
   }
+
+  beforeSubmit(data) {
+    data = this.compareBindIps(data);
+  }
+
 }

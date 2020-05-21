@@ -149,15 +149,42 @@ export class ServiceNFSComponent {
         Object.keys(ips || {}).map(key => ({ label: key, value: key }))
       )
     );
+  private validBindIps = [];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
   ) {}
 
+  resourceTransformIncomingRestData(data) {
+    // If validIps is slow to load, skip check on load (It's still done on save)
+    if (this.validBindIps, this.validBindIps.length) {
+      return this.compareBindIps(data);
+    }
+    return data;
+  }
+
+  compareBindIps(data) {
+    // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+    data.bindip = data.bindip ? data.bindip : [];
+    if(this.validBindIps && this.validBindIps.length > 0) {
+      data.bindip.forEach(ip => {
+        if (!this.validBindIps.includes(ip)) {
+          data.bindip.splice(data.bindip[ip], 1)
+        }
+      })
+    } else {
+      data.bindip = [];
+    }
+    return data;
+  }
+
   afterInit(entityForm: EntityFormComponent) {
     entityForm.submitFunction = body => this.ws.call('nfs.update', [body]);
 
     this.ipChoices$.subscribe(ipChoices => {
+      ipChoices.forEach(ip => { 
+        this.validBindIps.push(ip.value);
+      });
       this.fieldSets
         .find(set => set.name === helptext.nfs_srv_fieldset_general)
         .config.find(config => config.name === 'bindip').options = ipChoices;
@@ -176,6 +203,10 @@ export class ServiceNFSComponent {
         }
       }
     });
+  }
+
+  beforeSubmit(data) {
+    data = this.compareBindIps(data);
   }
 
 }

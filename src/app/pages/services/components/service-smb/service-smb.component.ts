@@ -36,6 +36,7 @@ export class ServiceSMBComponent {
   protected dialogRef: any;
   protected idNumber: any;
   public entityEdit: any;
+  private validBindIps: any;
 
   protected advanced_field = [
     'unixcharset',
@@ -189,7 +190,7 @@ export class ServiceSMBComponent {
     },
     { name: 'vertical-spacer', width: '2%'},
     {
-    name: helptext.cifs_srv_fieldset_netbios,
+    name: "otherColTwo",
     label: false,
     width: '49%',
     config: [
@@ -270,6 +271,7 @@ export class ServiceSMBComponent {
     }
 
     const otherSet = _.find(this.fieldSets, {"name": helptext.cifs_srv_fieldset_other})
+    const otherColTwoSet = _.find(this.fieldSets, {"name": "otherColTwo"})
 
     this.cifs_srv_unixcharset = otherSet.config.find(config => config.name === "unixcharset");
     this.ws.call("smb.unixcharset_choices").subscribe((res) => {
@@ -280,7 +282,8 @@ export class ServiceSMBComponent {
     });
 
     this.servicesService.getSmbBindIPChoices().subscribe((res) => {
-      this.cifs_srv_bindip = otherSet.config.find(config => config.name === "bindip");
+      this.validBindIps = res;
+      this.cifs_srv_bindip = otherColTwoSet.config.find(config => config.name === "bindip");
         for (let key in res) {
           if (res.hasOwnProperty(key)) {
               this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
@@ -289,7 +292,7 @@ export class ServiceSMBComponent {
     });
 
     this.ws.call('user.query').subscribe((res) => {
-      this.cifs_srv_guest = otherSet.config.find(config => config.name === "guest");
+      this.cifs_srv_guest = otherColTwoSet.config.find(config => config.name === "guest");
       res.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
@@ -314,6 +317,29 @@ export class ServiceSMBComponent {
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
+    resourceTransformIncomingRestData(data) {
+      // If validIps is slow to load, skip check on load (It's still done on save)
+      if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+        return this.compareBindIps(data);
+      }
+      return data;
+    }
+  
+    compareBindIps(data) {
+      // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+      data.bindip = data.bindip ? data.bindip : [];
+      if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+        data.bindip.forEach(ip => {
+          if (!Object.values(this.validBindIps).includes(ip)) {
+            data.bindip.splice(data.bindip[ip], 1)
+          }
+        })
+      } else {
+        data.bindip = [];
+      }
+      return data;
+    }
+
   afterInit(entityEdit: EntityFormComponent) {
     entityEdit.submitFunction = body => {
       return this.ws.call('smb.update', [body])
@@ -328,5 +354,9 @@ export class ServiceSMBComponent {
       }
         parent.cifs_srv_admin_group.searchOptions = groups;
     });
+  }
+
+  beforeSubmit(data) {
+    data = this.compareBindIps(data);
   }
 }
