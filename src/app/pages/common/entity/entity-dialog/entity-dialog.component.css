@@ -1,3 +1,7 @@
 button.action-btn {
     margin-right: 5px;
 }
+
+div.entity-dialog-form-message {
+    margin: 0 0 13px;
+}
