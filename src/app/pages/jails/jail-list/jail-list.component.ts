@@ -252,7 +252,7 @@ export class JailListComponent {
           placeholder: helptext.activatePoolDialog.selectedPool_placeholder,
           options: this.availablePools ? this.availablePools.map(pool => {
             return {
-              label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : `( ${pool.status})`) : ' (Locked)'),
+              label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : ` (${pool.status})`) : ' (Locked)'),
               value: pool.name,
               disable: !pool.is_decrypted || pool.status !== 'ONLINE'
             }
