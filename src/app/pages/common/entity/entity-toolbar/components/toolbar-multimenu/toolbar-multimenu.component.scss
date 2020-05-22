@@ -2,3 +2,19 @@ button.menu-toggle .mat-button-wrapper {
   vertical-align:baseline;
   max-height:36px;
 }
+
+.icon-suffix.community {
+  font-size: 20px; 
+}
+.icon-suffix {
+  color: var(--fg1);
+  position: absolute;
+  right: 8px;
+  text-align: right;
+}
+
+.icon-suffix .mat-icon{
+  /*margin: -12px 0 0 8px;*/
+  opacity: 0.8;
+  color: var(--fg2);
+}

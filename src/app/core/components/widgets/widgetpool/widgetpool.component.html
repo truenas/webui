@@ -231,7 +231,7 @@
                   </span>
 
                   <span *ngIf="vdev.type == 'DISK'" class="vdev" >
-                    <mat-icon *ngIf="trimMultipath(vdev.disk).isMultipath" class="multipath-icon" role="img" fontSet="mdi-set" fontIcon="mdi-call-merge"></mat-icon>
+                    <mat-icon *ngIf="trimMultipath(vdev.disk).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
                     <span>
                       {{trimMultipath(vdev.disk).name}}
                     </span>
@@ -240,14 +240,14 @@
 
                   <span *ngIf="vdev.type !== 'DISK' && vdev.children.length <= 3;" class="vdev" >
                     <span *ngFor="let device of vdev.children; let child = index">
-                      <mat-icon *ngIf="trimMultipath(device.disk.name).isMultipath" class="multipath-icon" role="img" fontSet="mdi-set" fontIcon="mdi-call-merge"></mat-icon>
+                      <mat-icon *ngIf="trimMultipath(device.disk.name).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
                       <span>{{device.disk.name}}</span>
                       {{trimMultipath(device.disk.name).name}}<span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
                   </span>
 
                   <span *ngIf="vdev.children.length > 3;" class="vdev">
                     <span *ngFor="let device of vdev.children; let child = index" [ngClass]="{'hidden': child >= 3}">
-                      <mat-icon *ngIf="trimMultipath(device.disk).isMultipath" class="multipath-icon" role="img" fontSet="mdi-set" fontIcon="mdi-call-merge"></mat-icon>
+                      <mat-icon *ngIf="trimMultipath(device.disk).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
                       {{trimMultipath(device.disk).name}}<span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
                     <span>&nbsp;&nbsp; ({{vdev.children.length - 3}} more)</span>
                   </span>
@@ -268,7 +268,7 @@
                  (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
                  [ngClass]="{'clickable': true}">
                 <strong >
-                  <mat-icon *ngIf="checkMultipath(disk.disk)" class="multipath-icon" role="img" fontSet="mdi-set" fontIcon="mdi-call-merge"></mat-icon>
+                  <mat-icon *ngIf="checkMultipath(disk.disk)" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
                   <span *ngIf="disk.status !== 'UNAVAIL'">{{trimMultipath(disk.disk).fullName}}</span>
                   <span *ngIf="disk.status == 'UNAVAIL'">Unknown Disk</span>
                   :
@@ -296,7 +296,7 @@
                  [ngClass]="{'clickable': true}">
                 <strong>
                   <span *ngIf="checkMultipath(path[2].dataSource.disk)">
-                    <mat-icon class="multipath-icon" role="img" fontSet="mdi-set" fontIcon="mdi-call-merge"></mat-icon>
+                    <mat-icon class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
                   </span>
                   {{trimMultipath(path[2].dataSource.disk).fullName}}
                   :

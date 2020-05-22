@@ -470,21 +470,23 @@ diskReportBuilderSetup(){
     let multipathTitles = {};
 
     let multipathNames = activeDisks.map((disk) => {
-      let label = disk.name + ' (multipath : ' + disk.disk  + ')';
+      let label = disk.disk; //disk.name + ' (multipath : ' + disk.disk  + ')';
       // Update activeReports with multipathTitles
       multipathTitles[disk.name] = label;
-      return label;
+      return { label: disk.disk, value: disk.name, labelIcon: 'multipath', labelIconType: 'custom' };
     });
 
     this.multipathTitles = multipathTitles;
 
-    uniqueNames = uniqueNames.concat(multipathNames);
+    //uniqueNames = uniqueNames.concat(multipathNames);
 
-    this.diskDevices = uniqueNames.map((devname) => {
+    let diskDevices = uniqueNames.map((devname) => {
       let spl = devname.split(' ');
       let obj = {label: devname, value: spl[0]};
       return obj;
     });
+
+    this.diskDevices = diskDevices.concat(multipathNames);
 
   }
 
