@@ -147,7 +147,7 @@ export const helptext_sharing_afp = {
  If there is a host not on the *Allow Hosts* and not on the *Deny Hosts* list, \
  then allow it."),
 
-  tooltip_hostsdeny: T("Deny hostnames or IP addresses to connect to the share. \
+  tooltip_hostsdeny: T("Deny hostnames or IP addresses access to the share. \
   Click <i>ADD</i> to add multiple entries. <br><br> \
   If neither *Allow Hosts* or *Deny Hosts* contains \
   an entry, then AFP share access is allowed for any host. <br><br> \
