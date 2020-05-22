@@ -93,11 +93,31 @@ export const helptext_sharing_smb = {
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
  Separate entries by pressing <code>Enter</code>. A more detailed description \
  with examples can be found \
- <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW">here</a>.'),
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW">here</a>. <br><br> \
+ If neither *Hosts Allow* or *Hosts Deny* contains \
+ an entry, then AFP share access is allowed for any host. <br><br> \
+ If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
+ hosts on the *Hosts Allow* list. <br><br> \
+ If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
+ hosts that are not on the *Hosts Deny* list. <br><br> \
+ If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
+ that are on the *Hosts Allow* list. <br><br> \
+ If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
+ then allow it.'),
 
     placeholder_hostsdeny: T('Hosts Deny'),
     tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
- Separate entries by pressing <code>Enter</code>.'),
+ Separate entries by pressing <code>Enter</code>. \
+ If neither *Hosts Allow* or *Hosts Deny* contains \
+ an entry, then AFP share access is allowed for any host. <br><br> \
+ If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
+ hosts on the *Hosts Allow* list. <br><br> \
+ If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
+ hosts that are not on the *Hosts Deny* list. <br><br> \
+ If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
+ that are on the *Hosts Allow* list. <br><br> \
+ If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
+ then allow it.'),
 
     placeholder_shadowcopy: T('Enable Shadow Copies'),
     tooltip_shadowcopy: T('Export ZFS snapshots as\
