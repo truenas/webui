@@ -111,6 +111,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     this.core.emit({name:"UserPreferencesRequest"});
  
     this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => { 
+      console.log(evt);
       if (evt.data) {
         let allReports = evt.data.map((report) => {
           let list = [];
@@ -438,7 +439,10 @@ diskReportBuilderSetup(){
     if(typeof device == "string"){
       device = [device];
     } else {
+      console.log(device);
       device = device.map((v) => v.value);
+      console.log("BUILDING DISK REPORT...");
+      console.log(device);
     }
     
     if(typeof metric == "string"){ 
@@ -470,13 +474,15 @@ diskReportBuilderSetup(){
     let multipathTitles = {};
 
     let multipathNames = activeDisks.map((disk) => {
-      let label = disk.name + ' (multipath : ' + disk.disk  + ')';
+      let label = disk.disk; //disk.name + ' (multipath : ' + disk.disk  + ')';
       // Update activeReports with multipathTitles
       multipathTitles[disk.name] = label;
-      return label;
+      return disk.name;
     });
 
     this.multipathTitles = multipathTitles;
+    console.log(this.multipathTitles);
+    console.warn(multipathNames);
 
     uniqueNames = uniqueNames.concat(multipathNames);
 

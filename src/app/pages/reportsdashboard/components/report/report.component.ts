@@ -82,12 +82,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   
   get reportTitle(){
     let suffix = null;
+    let trimmed = this.report.title.replace(/[\(\)]/g, '');
     if(this.multipathTitle){
-      suffix = this.multipathTitle.replace(' ', '' );
-      suffix = suffix.replace(this.identifier, '');
-      return this.report.title + suffix;
+      trimmed = trimmed.replace(this.identifier, '');
+      return trimmed; 
     } else {
-      return this.identifier ? this.report.title.replace(/{identifier}/, this.identifier) : this.report.title;
+      return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
     }
   }
 
@@ -208,9 +208,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
         this.setupData(changes); 
       }
       if(changes.multipathTitle && changes.multipathTitle.currentValue){
-        let raw = changes.multipathTitle.currentValue;
-        let result = raw.replace(/[\(]/,': ');
-        result = result.replace(/\)/, '');
+        console.log( changes.multipathTitle.currentValue);
+        
       }
     } 
   }

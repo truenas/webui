@@ -14,6 +14,16 @@
   height:100%;
 }
 
+.mat-icon.multipath-icon{
+  background-color:var(--fg2);
+  color: var(--bg2);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  padding: 1px;
+  font-size: 21px;
+}
+
 .card-title-text{
   display:table;
   font-size:1.42em;
@@ -28,7 +38,6 @@
 
 .legend {
   display:table; 
-  /*background-color: rgba(0,0,0,0.1);*/
 }
 
 .legend-group-wrapper {
