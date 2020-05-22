@@ -208,8 +208,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
         this.setupData(changes); 
       }
       if(changes.multipathTitle && changes.multipathTitle.currentValue){
-        console.log( changes.multipathTitle.currentValue);
-        
       }
     } 
   }
