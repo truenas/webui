@@ -134,16 +134,31 @@ export const helptext_sharing_afp = {
  (anyone can read, write, and execute)."
   ),
 
-  placeholder_hostsallow: T("Hosts Allow"),
-  tooltip_hostsallow: T(
-    "Comma-, space-, or tab-delimited list of allowed\
- hostnames or IP addresses."
-  ),
+  tooltip_hostsallow: T( "Allow hostnames or IP addresses to connect to the \
+ share. Click <i>ADD</i> to add multiple entries. <br><br> \
+ If neither *Allow Hosts* or *Deny Hosts* contains \
+ an entry, then AFP share access is allowed for any host. <br><br> \
+ If there is a *Allow Hosts* list but no *Deny Hosts* list, then only allow \
+ hosts on the *Allow Hosts* list. <br><br> \
+ If there is a *Deny Hosts* list but no *Allow Hosts* list, then allow all \
+ hosts that are not on the *Deny Hosts* list. <br><br> \
+ If there is both a *Allow Hosts* and *Deny Hosts* list, then allow all hosts \
+ that are on the *Allow Hosts* list. <br><br> \
+ If there is a host not on the *Allow Hosts* and not on the *Deny Hosts* list, \
+ then allow it."),
 
-  tooltip_hostsdeny: T(
-    "Comma-, space-, tab-delimited list of denied\
- hostnames or IP addresses."
-  ),
+  tooltip_hostsdeny: T("Deny hostnames or IP addresses to connect to the share. \
+  Click <i>ADD</i> to add multiple entries. <br><br> \
+  If neither *Allow Hosts* or *Deny Hosts* contains \
+  an entry, then AFP share access is allowed for any host. <br><br> \
+  If there is a *Allow Hosts* list but no *Deny Hosts* list, then only allow \
+  hosts on the *Allow Hosts* list. <br><br> \
+  If there is a *Deny Hosts* list but no *Allow Hosts* list, then allow all \
+  hosts that are not on the *Deny Hosts* list. <br><br> \
+  If there is both a *Allow Hosts* and *Deny Hosts* list, then allow all hosts \
+  that are on the *Allow Hosts* list. <br><br> \
+  If there is a host not on the *Allow Hosts* and not on the *Deny Hosts* list, \
+  then allow it."),
 
   tooltip_auxparams: T(
     'Additional\
