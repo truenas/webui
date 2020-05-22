@@ -61,6 +61,10 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
     );
     this.matIconRegistry.addSvgIcon(
+      "multipath",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/multipath.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "jail_icon",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/jail_icon.svg")
     );
