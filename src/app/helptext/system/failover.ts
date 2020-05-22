@@ -42,10 +42,11 @@ export const helptext_system_failover = {
  immediately, or after two seconds when the system is using a link \
  aggregation.'),
 
-  master_dialog_title: T('Failover'),
+  master_dialog_title: T('Confirm Failover'),
   master_dialog_warning: T(`Forcing the other ${globalHelptext.ctrlr} to \
  become active requires a failover. This will temporarily interrupt \
- system services.`),
+ system services. After confirmation, <b>SAVE AND FAILOVER</b> must \
+ be clicked on the previous screen.`),
 
   fieldset_title: T('Failover Configuration')
 };
