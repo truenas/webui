@@ -41,11 +41,11 @@ cifs_srv_unixcharset_tooltip: T('Default is UTF-8 which supports all characters 
 cifs_srv_loglevel_placeholder: T('Log Level'),
 cifs_srv_loglevel_tooltip: T('Choices are <i>Minimum, Normal, or Debug</i>.'),
 cifs_srv_loglevel_options: [
-  { label: 'None', value: 'NONE' },
-  { label: 'Minimum', value: 'MINIMUM' },
-  { label: 'Normal', value: 'NORMAL' },
-  { label: 'Full', value: 'FULL' },
-  { label: 'Debug', value: 'DEBUG' },
+  { label: T('None'), value: 'NONE' },
+  { label: T('Minimum'), value: 'MINIMUM' },
+  { label: T('Normal'), value: 'NORMAL' },
+  { label: T('Full'), value: 'FULL' },
+  { label: T('Debug'), value: 'DEBUG' },
 ],
 
 cifs_srv_syslog_placeholder: T('Use Syslog Only'),

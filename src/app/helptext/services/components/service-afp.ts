@@ -38,9 +38,9 @@ afp_srv_chmod_request_tooltip: T('Indicates how to handle Access Control Lists.\
  <b>Simple:</b> is set to chmod() as requested\
  without any extra steps.'),
 afp_srv_chmod_request_options : [
-  {label : 'Ignore', value : 'IGNORE'},
-  {label : 'Preserve', value : 'PRESERVE'},
-  {label : 'Simple', value : 'SIMPLE'},
+  {label : T('Ignore'), value : 'IGNORE'},
+  {label : T('Preserve'), value : 'PRESERVE'},
+  {label : T('Simple'), value : 'SIMPLE'},
 ],
 
 afp_srv_map_acls_placeholder : T('Map ACLs'),
@@ -49,10 +49,22 @@ afp_srv_map_acls_tooltip: T('Select mapping of permissions for\
  (default, Unix-style permissions), <b>None</b>,\
  or <b>Mode</b> (ACLs).'),
 afp_srv_map_acls_options : [
-  {label : 'Rights', value : 'RIGHTS'},
-  {label : 'None', value : 'NONE'},
-  {label : 'Mode', value : 'MODE'},
+  {label : T('Rights'), value : 'RIGHTS'},
+  {label : T('None'), value : 'NONE'},
+  {label : T('Mode'), value : 'MODE'},
 ],
+
+loglevel: {
+  placeholder: T('Log Level'),
+  tooltip: T('Choices are <i>Minimum, Normal, or Debug</i>.'),
+  options: [
+    { label: T('None'), value: 'NONE' },
+    { label: T('Minimum'), value: 'MINIMUM' },
+    { label: T('Normal'), value: 'NORMAL' },
+    { label: T('Full'), value: 'FULL' },
+    { label: T('Debug'), value: 'DEBUG' },
+  ],
+},
 
 afp_srv_bindip_placeholder : T('Bind Interfaces'),
 afp_srv_bindip_tooltip: T('Specify the IP addresses to listen for AFP connections.\
