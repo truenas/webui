@@ -84,14 +84,34 @@ export const helptext_sharing_smb = {
  target=_blank>smb.conf(5)</a>.'),
 
     placeholder_hostsallow: T('Hosts Allow'),
-    tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
- Separate entries by pressing <code>Enter</code>. A more detailed description \
- with examples can be found \
- <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW">here</a>.'),
+    tooltip_hostsallow: T('Allow hostnames or IP addresses to connect to the \
+ share. Separate entries by pressing <code>Enter</code>. A more detailed \
+ description with examples can be found \
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW">here</a>. <br><br> \
+ If neither *Hosts Allow* or *Hosts Deny* contains \
+ an entry, then AFP share access is allowed for any host. <br><br> \
+ If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
+ hosts on the *Hosts Allow* list. <br><br> \
+ If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
+ hosts that are not on the *Hosts Deny* list. <br><br> \
+ If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
+ that are on the *Hosts Allow* list. <br><br> \
+ If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
+ then allow it.'),
 
     placeholder_hostsdeny: T('Hosts Deny'),
-    tooltip_hostsdeny: T('Enter a list of denied hostnames or IP addresses.\
- Separate entries with a comma, space, or tab.'),
+    tooltip_hostsdeny: T('Deny hostnames or IP addresses access to the share.\
+ Separate entries by pressing <code>Enter</code>. <br><br>\
+ If neither *Hosts Allow* or *Hosts Deny* contains \
+ an entry, then AFP share access is allowed for any host. <br><br> \
+ If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
+ hosts on the *Hosts Allow* list. <br><br> \
+ If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
+ hosts that are not on the *Hosts Deny* list. <br><br> \
+ If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
+ that are on the *Hosts Allow* list. <br><br> \
+ If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
+ then allow it.'),
 
     placeholder_vfsobjects: T('VFS Objects'),
     tooltip_vfsobjects: T('Adds virtual file system modules to enhance \
