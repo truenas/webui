@@ -122,6 +122,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public has_savable_errors = false;
   public force = false;
 
+  protected mindisks = {'stripe': 1, 'mirror':2, 'raidz':3, 'raidz2':4, 'raidz3':5}
+
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -522,6 +524,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   canAddData() {
     if (this.emptyDataVdev) {
+      return false;
+    }
+    if (this.disks.length < this.mindisks[this.first_data_vdev_type]) {
       return false;
     }
     return true;
