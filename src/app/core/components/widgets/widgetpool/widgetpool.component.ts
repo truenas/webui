@@ -211,6 +211,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   getAvailableSpace(){
+    
     let usedValue;
     if (isNaN(this.volumeData.used)) {
       usedValue = this.volumeData.used;

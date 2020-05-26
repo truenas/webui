@@ -305,13 +305,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       
       const rootDataset = evt.data[i].children[0];
- 
+      
       let zvol = {
         avail: avail,
         id:evt.data[i].id,
         name:evt.data[i].name,
-        used:rootDataset.used,
-        used_pct: rootDataset.used_pct.toString() + '%',
+        used:rootDataset ? rootDataset.used : -1,
+        used_pct: rootDataset ? rootDataset.used_pct.toString() + '%' : 'Unknown',
         is_decrypted:evt.data[i].is_decrypted,
         is_upgraded:evt.data[i].is_upgraded,
         mountpoint:evt.data[i].mountpoint,
