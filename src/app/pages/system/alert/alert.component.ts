@@ -61,9 +61,6 @@ export class AlertConfigComponent implements OnInit {
     public dialog: DialogService
   ) {}
 
-  getTooltip(section, item) {
-    return helptext[section][item] || T('');
-  }
   async ngOnInit() {
     this.loader.open();
     this.ws.call('alert.list_policies', []).subscribe((res) => {
@@ -104,7 +101,7 @@ export class AlertConfigComponent implements OnInit {
           name: c.id + '_level',
           inlineLabel: c.title,
           placeholder: T("Set Warning Level"),
-          tooltip: this.getTooltip(c.id, 'level'),
+          tooltip: helptext.level_tooltip,
           options: warningOptions,
           value: c.level
         },
@@ -113,7 +110,7 @@ export class AlertConfigComponent implements OnInit {
           name: c.id + '_policy',
           inlineLabel: " ",
           placeholder: T("Set Frequency"),
-          tooltip: this.getTooltip(c.id, 'policy'),
+          tooltip: helptext.policy_tooltip,
           options: this.settingOptions,
           value: "IMMEDIATELY"
         });
