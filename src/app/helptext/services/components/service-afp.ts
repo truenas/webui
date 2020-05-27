@@ -56,7 +56,7 @@ afp_srv_map_acls_options : [
 
 loglevel: {
   placeholder: T('Log Level'),
-  tooltip: T('Choices are <i>Minimum, Normal, or Debug</i>.'),
+  tooltip: T('Record AFP service messages up to the specified log level in the system log. By default, severe and warning level messages are logged.'),
   options: [
     { label: T('None'), value: 'NONE' },
     { label: T('Minimum'), value: 'MINIMUM' },
