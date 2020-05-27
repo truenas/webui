@@ -8,6 +8,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import * as _ from 'lodash';
+import helptext from '../../../helptext/system/alert-settings';
 
 interface AlertCategory {
   id: string;
@@ -100,6 +101,7 @@ export class AlertConfigComponent implements OnInit {
           name: c.id + '_level',
           inlineLabel: c.title,
           placeholder: T("Set Warning Level"),
+          tooltip: helptext.level_tooltip,
           options: warningOptions,
           value: c.level
         },
@@ -108,6 +110,7 @@ export class AlertConfigComponent implements OnInit {
           name: c.id + '_policy',
           inlineLabel: " ",
           placeholder: T("Set Frequency"),
+          tooltip: helptext.policy_tooltip,
           options: this.settingOptions,
           value: "IMMEDIATELY"
         });
@@ -137,7 +140,7 @@ export class AlertConfigComponent implements OnInit {
 
     this.fieldConfig = this.fieldSets.configs();
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-  
+
     this.ws.call(this.queryCall).subscribe((res) => {
       this.loader.close();
       for (const k in res.classes) {
