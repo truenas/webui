@@ -36,6 +36,7 @@ interface poolDiskInfo {
 export class VolumeStatusComponent implements OnInit {
 
   public poolScan: any;
+  public timeRemaining: any = {};
   public treeTableConfig: EntityTreeTable = {
     tableData: [],
     columns: [
@@ -142,6 +143,13 @@ export class VolumeStatusComponent implements OnInit {
       (res) => {
         if (res.fields && res.fields.name == poolName) {
           this.poolScan = res.fields.scan;
+          let seconds = this.poolScan.total_secs_left;
+          this.timeRemaining = {
+            days: Math.floor(seconds / (3600*24)),
+            hours: Math.floor(seconds % (3600*24) / 3600),
+            minutes: Math.floor(seconds % 3600 / 60),
+            seconds: Math.floor(seconds % 60)
+          }
         }
       }
     )
