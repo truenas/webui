@@ -5,3 +5,10 @@
 .CellHighlight {
   color: red;
 }
+.time-remaining {
+  margin-left: 5px;
+}
+
+mat-list-item {
+  height: 24px !important;
+}

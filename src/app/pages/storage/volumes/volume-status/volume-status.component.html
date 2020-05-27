@@ -10,10 +10,24 @@
   <div>
     <mat-list *ngIf="poolScan">
       <mat-list-item><b>{{poolScan.function || 'SCAN'}}</b></mat-list-item>
-      <mat-list-item>Status: {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested'}}</mat-list-item>
-      <mat-list-item *ngIf="poolScan.total_secs_left != null">Time Remaining: {{poolScan.total_secs_left}} Seconds</mat-list-item>
-      <mat-list-item *ngIf="poolScan['errors'] != null">Errors: {{poolScan['errors']}}</mat-list-item>
-      <mat-list-item *ngIf="poolScan.start_time != null">Date: {{getReadableDate(poolScan.start_time)}}</mat-list-item>
+      <mat-list-item>{{'Status' | translate}}: 
+        {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested' | translate}}
+      </mat-list-item>
+      <mat-list-item *ngIf="poolScan.state === 'SCANNING'">
+        {{ 'Completed' | translate }}: {{ poolScan.percentage | number:'2.0-2' }}%
+      </mat-list-item>
+      <mat-list-item *ngIf="poolScan.total_secs_left != null">{{ 'Time Remaining' | translate }}: 
+        <span class="time-remaining" *ngIf="timeRemaining.days > 0">
+          {{ timeRemaining.days }} {{ timeRemaining.days === 1 ? 'day' : 'days' | translate }}, </span>
+        <span class="time-remaining" *ngIf="timeRemaining.hours > 0 || timeRemaining.days > 0"> 
+          {{timeRemaining.hours}} {{ timeRemaining.hours === 1 ? 'hour' : 'hours' | translate }}, </span>
+        <span class="time-remaining" *ngIf="timeRemaining.minutes > 0 || timeRemaining.hours > 0"> 
+          {{timeRemaining.minutes}} {{ timeRemaining.minutes === 1 ? 'minute' : 'minutes' | translate }}, </span>
+        <span class="time-remaining" *ngIf="timeRemaining.seconds || timeRemaining.seconds === 0">
+          {{timeRemaining.seconds}} {{ timeRemaining.seconds === 1 ? 'second' :'seconds' | translate }}</span>
+      </mat-list-item>
+      <mat-list-item *ngIf="poolScan['errors'] != null">{{'Errors' | translate}}: {{poolScan['errors']}}</mat-list-item>
+      <mat-list-item *ngIf="poolScan.start_time != null">{{'Date' | translate}}: {{getReadableDate(poolScan.start_time)}}</mat-list-item>
     </mat-list>
   </div>
   <div class="padding-16">
