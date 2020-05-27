@@ -39,6 +39,7 @@ export class ServiceAFPComponent {
     {
       name: helptext.afp_fieldset_access,
       label: true,
+      width: '49%',
       config: [
         {
           type : 'select',
@@ -75,14 +76,19 @@ export class ServiceAFPComponent {
         }
       ]
     },
-    {
-      name: 'divider',
-      divider: true
-    },
+    { name: 'vertical-spacer', width: '2%'},
     {
       name: helptext.afp_fieldset_other,
       label: true,
+      width: '49%',
       config: [
+        {
+          type: 'select',
+          name: 'loglevel',
+          placeholder: helptext.loglevel.placeholder,
+          tooltip: helptext.loglevel.tooltip,
+          options: helptext.loglevel.options
+        },
         {
           type : 'select',
           name : 'bindip',
