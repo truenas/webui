@@ -39,7 +39,8 @@ cifs_srv_unixcharset_tooltip: T('Default is UTF-8 which supports all characters 
  all languages.'),
 
 cifs_srv_loglevel_placeholder: T('Log Level'),
-cifs_srv_loglevel_tooltip: T('Choices are <i>Minimum, Normal, or Debug</i>.'),
+cifs_srv_loglevel_tooltip: T('Record SMB service messages up to the specified log level. \
+ By default, error and warning level messages are logged.'),
 cifs_srv_loglevel_options: [
   { label: T('None'), value: 'NONE' },
   { label: T('Minimum'), value: 'MINIMUM' },
