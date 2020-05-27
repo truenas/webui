@@ -11038,13 +11038,15 @@ msgid "Region"
 msgstr "Région"
 
 msgid "Region Name"
-msgstr ""
+msgstr "Nom de la région"
 
 msgid ""
 "Region name - optional <a "
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
 msgstr ""
+"Nom de la région - facultatif <a href=\"https://rclone.org/swift/#standard-options"
+"\" target=\"_blank\">(documentation rclone</a>)."
 
 msgid "Release"
 msgstr "Distribution"
@@ -11062,10 +11064,10 @@ msgid "Reload the page for the license to take effect."
 msgstr "Rechargez la page pour que la licence prenne effet."
 
 msgid "Remaining"
-msgstr ""
+msgstr "Restant"
 
 msgid "Remote"
-msgstr ""
+msgstr "Distant"
 
 msgid "Remote Encryption"
 msgstr "Chiffrage à distance"
@@ -11123,7 +11125,7 @@ msgid "Remove Additional Path"
 msgstr "Supprimer le chemin d'accès supplémentaire"
 
 msgid "Remove Disk"
-msgstr ""
+msgstr "Retirer le disque"
 
 msgid "Remove Keep Flag"
 msgstr "Supprimer le Keep Flag"
@@ -11132,10 +11134,10 @@ msgid "Remove Recovery Key"
 msgstr "Supprimer la clé de récupération"
 
 msgid "Remove disk "
-msgstr ""
+msgstr "Retirer le disque"
 
 msgid "Remove file?"
-msgstr ""
+msgstr "Supprimer le fichier"
 
 msgid "Remove passphrase"
 msgstr "Supprimer la passphrase"
@@ -11145,26 +11147,33 @@ msgid ""
 "the new key and has an option to copy the key. Back up and secure the API "
 "key! The key string is displayed only one time, at creation."
 msgstr ""
+"Supprimez la clé API existante et générez une nouvelle clé aléatoire. Une boîte de "
+"dialogue affiche la nouvelle clé et propose une option pour copier la clé. "
+"Sauvegardez et sécurisez la clé API ! La chaîne de la clé n'est affichée qu'une "
+"seule fois, à la création."
 
 msgid "Rename"
 msgstr "Renommer"
 
 msgid "Renew"
-msgstr ""
+msgstr "Renouveler"
 
 msgid "Renew Certificate Days"
 msgstr "Renouveler les jours du certificat"
 
 msgid "Renew Secret"
-msgstr ""
+msgstr "Renouveler secret"
 
 msgid "Renew Static Key"
-msgstr ""
+msgstr "Renouveler la clé statique"
 
 msgid ""
 "Renewing the secret will cause a new URI and a     new QR code to be "
 "generated, making it necessary to update your two-factor device or app."
 msgstr ""
+"Le renouvellement du secret entraînera la génération d'un nouvel URI et d'un "
+"nouveau code QR, ce qui rendra nécessaire la mise à jour de votre appareil ou "
+"application à deux facteurs."
 
 msgid "Repeat"
 msgstr "Répéter"
@@ -11179,13 +11188,13 @@ msgid "Replace"
 msgstr "Remplacer"
 
 msgid "Replace Disk"
-msgstr ""
+msgstr "Remplacer le disque"
 
 msgid "Replacing Disk"
 msgstr "Remplacement du disque"
 
 msgid "Replacing disk "
-msgstr ""
+msgstr "Remplacement du disque "
 
 msgid "Replacing disk..."
 msgstr "Remplacement du disque...."
@@ -11224,7 +11233,7 @@ msgid "Replication Tasks"
 msgstr "Réplication"
 
 msgid "Report CPU Usage in Percentage"
-msgstr ""
+msgstr "Rapport sur l'utilisation du CPU en pourcentage"
 
 msgid "Report CPU usage in percent"
 msgstr "Rapport sur l'utilisation du CPU en pourcentage"
@@ -11284,7 +11293,7 @@ msgid "Reserved space for this dataset and all children"
 msgstr "Espace réservé pour ce dataset et tous les enfants"
 
 msgid "Reset All Preferences to Default"
-msgstr ""
+msgstr "Rétablir toutes les préférences par défaut"
 
 msgid "Reset Config"
 msgstr "Réinitialiser la config"
@@ -11313,7 +11322,8 @@ msgstr "Réinitialiser toutes les tables pour afficher les colonnes par défaut.
 msgid ""
 "Reset all user preferences to their default values. (Custom themes are "
 "preserved)"
-msgstr ""
+"Réinitialiser toutes les préférences de l'utilisateur à leurs valeurs par défaut. "
+"(Les thèmes personnalisés sont conservés)"
 
 msgid "Reset font size to default value"
 msgstr "Réinitialiser la taille de police à sa valeur par défaut"
@@ -11383,7 +11393,7 @@ msgid "Restart Web Service"
 msgstr "Redémarrer le service Web"
 
 msgid "Restart attached VMs, Jails and Services"
-msgstr ""
+msgstr "Redémarrer les VM, les jails et les services rattachés"
 
 msgid "Restart the system?"
 msgstr "Redémarrer le système ?"
@@ -11396,21 +11406,24 @@ msgid ""
 "information contained within the dataset available to the rest of the "
 "system."
 msgstr ""
+"Le redémarrage des services du système après le déverrouillage du dataset "
+"met les informations contenues dans le dataset à la disposition "
+"du reste du système."
 
 msgid "Restore"
-msgstr ""
+msgstr "Restaurer"
 
 msgid "Restore Cloud Sync Task"
-msgstr ""
+msgstr "Restaurer la tâche de synchronisation cloud"
 
 msgid "Restore Replication Task"
-msgstr ""
+msgstr "Restaurer la tâche de réplication"
 
 msgid "Restore default"
 msgstr "Restaurer les valeurs par défaut"
 
 msgid "Restrict PAM"
-msgstr ""
+msgstr "Restreindre PAM"
 
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
@@ -11434,7 +11447,7 @@ msgstr ""
 "l'environnement jail."
 
 msgid "Revert CHANGES"
-msgstr ""
+msgstr "Rétablir les CHANGEMENTS"
 
 msgid "Revert Network Interface Changes"
 msgstr ""
