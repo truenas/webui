@@ -114,6 +114,9 @@ msgstr ""
 " - минимально рекомендуемый размер записи. Выбор меньшего размера может "
 "уменьшить производительность системы."
 
+msgid " official plugins"
+msgstr ""
+
 msgid " seconds"
 msgstr " секунд"
 
@@ -1290,6 +1293,13 @@ msgstr "Адрес"
 msgid "Address space limit in bytes for the jail."
 msgstr "Ограничение адресного пространства в байтах для jail."
 
+msgid ""
+"Adjust how often alert notifications are sent, use  the Frequency "
+"drop-down. Setting the Frequency to NEVER prevents that  alert from being "
+"added to alert notifications, but the alert can still  show in the web "
+"interface if it is triggered."
+msgstr ""
+
 msgid "Adjust the file permissions using the checkboxes."
 msgstr "Настройте права доступа к файлу с помощью флажков."
 
@@ -1533,6 +1543,19 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-"
 "RELEASE+and+Ports\" target=\"_blank\">sudo</a>. У членов группы будет "
 "запрошен их пароль при использовании <b>sudo</b>."
+
+msgid ""
+"Allow hostnames or IP addresses to connect to the  share. Click <i>ADD</i> "
+"to add multiple entries. <br><br>  If neither *Allow Hosts* or *Deny Hosts* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Allow Hosts* list but no *Deny Hosts* list, then only allow "
+" hosts on the *Allow Hosts* list. <br><br>  If there is a *Deny Hosts* list "
+"but no *Allow Hosts* list, then allow all  hosts that are not on the *Deny "
+"Hosts* list. <br><br>  If there is both a *Allow Hosts* and *Deny Hosts* "
+"list, then allow all hosts  that are on the *Allow Hosts* list. <br><br>  "
+"If there is a host not on the *Allow Hosts* and not on the *Deny Hosts* "
+"list,  then allow it."
+msgstr ""
 
 msgid ""
 "Allow more ciphers for  <a "
@@ -2066,6 +2089,9 @@ msgstr "Доступные диски"
 
 msgid "Available Memory:"
 msgstr "Доступная память:"
+
+msgid "Available Plugins"
+msgstr ""
 
 msgid "Available Space"
 msgstr "Доступно места"
@@ -2718,9 +2744,6 @@ msgstr ""
 "функциональных уровней доменных служб Active Directory (AD DS)</a> для "
 "получения более подробной информации."
 
-msgid "Choices are <i>Minimum, Normal, or Debug</i>."
-msgstr "Возможные варианты: <i>Минимум, Обычный или Отладка</i>."
-
 msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr "Возможные варианты: <i>Нет, Авто, CHAP,</i> или <i>Взаимный CHAP</i>."
 
@@ -3229,16 +3252,6 @@ msgstr ""
 "интерфейса требует пометить каждый интерфейс как критический и поместить их "
 "в отдельные группы."
 
-msgid "Comma-, space-, or tab-delimited list of allowed hostnames or IP addresses."
-msgstr ""
-"Список разрешенных имен хостов или IP-адресов через запятую, пробел или "
-"табуляцию."
-
-msgid "Comma-, space-, tab-delimited list of denied hostnames or IP addresses."
-msgstr ""
-"Список запрещенных имен хостов или IP-адресов, разделенных запятыми, "
-"пробелами и табуляцией."
-
 msgid ""
 "Comma-delimited list of allowed users and/or groups where groupname begins "
 "with a @. Note that adding an entry will allow any user or group that is "
@@ -3330,6 +3343,9 @@ msgstr ""
 msgid "Complete the Upgrade"
 msgstr "Завершить обновление"
 
+msgid "Completed"
+msgstr ""
+
 msgid ""
 "Completely replicate the selected dataset. The target dataset will have all "
 "of the properties, snapshots, child datasets, and clones from the source "
@@ -3392,6 +3408,9 @@ msgstr "Подтвердить"
 
 msgid "Confirm Export/Disconnect"
 msgstr "Подтвердите Экспорт/Отключение"
+
+msgid "Confirm Failover"
+msgstr ""
 
 msgid "Confirm Options"
 msgstr "Подтвердите параметры"
@@ -3733,6 +3752,11 @@ msgstr ""
 msgid "Customer Name"
 msgstr "Имя Клиента"
 
+msgid ""
+"Customizes the importance of the alert. Each level of  importance has a "
+"different icon and color to express the level of importance."
+msgstr ""
+
 msgid "Cyan"
 msgstr ""
 
@@ -3883,6 +3907,9 @@ msgstr ""
 msgid "Datastore"
 msgstr "Хранилище"
 
+msgid "Date"
+msgstr ""
+
 msgid "Date Format"
 msgstr ""
 
@@ -3951,17 +3978,6 @@ msgstr ""
 
 msgid "Dedup VDev"
 msgstr ""
-
-msgid ""
-"Deduplicate the stream to avoid sending redundant  data blocks. The "
-"destination system must also support deduplicated  streams. See <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
-msgstr ""
-"Дедплицировать поток, чтобы избежать отправки избыточных блоков данных. "
-"Система назначения также должна поддерживать дедуплицированные потоки. См. "
-"<a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\" "
-"target=\"_blank\">zfs(8)</a>."
 
 msgid "Default"
 msgstr "По умолчанию"
@@ -4120,6 +4136,9 @@ msgstr "Удалить набор данных <i><b>"
 msgid "Delete Device"
 msgstr "Удалить устройство"
 
+msgid "Delete Group "
+msgstr ""
+
 msgid "Delete Key"
 msgstr "Удалить ключ"
 
@@ -4135,6 +4154,9 @@ msgstr "Удалить путь"
 msgid "Delete Selected"
 msgstr "Удалить выбранные"
 
+msgid "Delete User "
+msgstr ""
+
 msgid "Delete Virtual Machine"
 msgstr ""
 
@@ -4143,9 +4165,6 @@ msgstr ""
 
 msgid "Delete Zvol"
 msgstr "Удалить ZVol"
-
-msgid "Delete all users with this primary group?"
-msgstr "Удалить всех пользователей с этой основной группой?"
 
 msgid "Delete configuration of shares that used this pool?"
 msgstr "Удалить конфигурацию общих ресурсов, которые использовали этот пул?"
@@ -4183,6 +4202,9 @@ msgstr "Удалить ZVol "
 msgid "Delete this path."
 msgstr "Удалить этот путь."
 
+msgid "Delete user primary group "
+msgstr ""
+
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "Удаление интерфейсов при включенной ВД запрещено."
 
@@ -4196,6 +4218,19 @@ msgid "Deny Hosts"
 msgstr ""
 
 msgid "Deny List"
+msgstr ""
+
+msgid ""
+"Deny hostnames or IP addresses access to the share.   Click <i>ADD</i> to "
+"add multiple entries. <br><br>   If neither *Allow Hosts* or *Deny Hosts* "
+"contains   an entry, then AFP share access is allowed for any host. "
+"<br><br>   If there is a *Allow Hosts* list but no *Deny Hosts* list, then "
+"only allow   hosts on the *Allow Hosts* list. <br><br>   If there is a "
+"*Deny Hosts* list but no *Allow Hosts* list, then allow all   hosts that "
+"are not on the *Deny Hosts* list. <br><br>   If there is both a *Allow "
+"Hosts* and *Deny Hosts* list, then allow all hosts   that are on the *Allow "
+"Hosts* list. <br><br>   If there is a host not on the *Allow Hosts* and not "
+"on the *Deny Hosts* list,   then allow it."
 msgstr ""
 
 msgid "Deregister"
@@ -5272,12 +5307,28 @@ msgid ""
 "pressing <code>Enter</code>. A more detailed description  with examples can "
 "be found  <a "
 "href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
-"HOSTSALLOW\">here</a>."
+"HOSTSALLOW\">here</a>. <br><br>  If neither *Hosts Allow* or *Hosts Deny* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
+" hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
+"but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
+"Deny* list. <br><br>  If there is both a *Hosts Allow* and *Hosts Deny* "
+"list, then allow all hosts  that are on the *Hosts Allow* list. <br><br>  "
+"If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* "
+"list,  then allow it."
 msgstr ""
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
-"pressing <code>Enter</code>."
+"pressing <code>Enter</code>.  If neither *Hosts Allow* or *Hosts Deny* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
+" hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
+"but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
+"Deny* list. <br><br>  If there is both a *Hosts Allow* and *Hosts Deny* "
+"list, then allow all hosts  that are on the *Hosts Allow* list. <br><br>  "
+"If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* "
+"list,  then allow it."
 msgstr ""
 
 msgid ""
@@ -6562,6 +6613,9 @@ msgstr ""
 msgid "From Name"
 msgstr "От имени"
 
+msgid "Full"
+msgstr ""
+
 msgid "Full Filesystem Replication"
 msgstr ""
 
@@ -7338,6 +7392,9 @@ msgstr ""
 "потере или чрезмерной передаче данных в случае неправильной настройки "
 "репликации."
 
+msgid "Ignore"
+msgstr ""
+
 msgid "Ignore Builtin"
 msgstr "Игнорировать BUILTIN"
 
@@ -7758,9 +7815,6 @@ msgstr ""
 
 msgid "Keep this Boot Environment?"
 msgstr "Сохранить эту загрузочную среду?"
-
-msgid "Keep user primary group"
-msgstr "Сохранить основную группу пользователей"
 
 msgid "Kerberos Keytab"
 msgstr "Kerberos Keytab"
@@ -9047,6 +9101,12 @@ msgstr ""
 msgid "None"
 msgstr ""
 
+msgid "None requested"
+msgstr ""
+
+msgid "Normal"
+msgstr ""
+
 msgid ""
 "Normal vdev type, used for primary storage operations. ZFS pools always "
 "have at least one DATA vdev."
@@ -9924,6 +9984,9 @@ msgstr "Предпочитать кнопки только с иконками"
 msgid "Preferences"
 msgstr "Предпочтения"
 
+msgid "Preserve"
+msgstr ""
+
 msgid "Preserve Extended Attributes"
 msgstr ""
 
@@ -10231,6 +10294,16 @@ msgstr ""
 
 msgid "Reconnect"
 msgstr "Переподключить"
+
+msgid ""
+"Record AFP service messages up to the specified log level in the system "
+"log. By default, severe and warning level messages are logged."
+msgstr ""
+
+msgid ""
+"Record SMB service messages up to the specified log level.  By default, "
+"error and warning level messages are logged."
+msgstr ""
 
 msgid "Record Size"
 msgstr "Размер записи"
@@ -10674,6 +10747,9 @@ msgid "Revert branding back to FreeNAS"
 msgstr ""
 
 msgid "Revert interface changes? All changes that are being tested will be lost."
+msgstr ""
+
+msgid "Rights"
 msgstr ""
 
 msgid "Rollback"
@@ -11707,9 +11783,6 @@ msgstr ""
 
 msgid "Semi-automatic (TrueNAS CORE only)"
 msgstr ""
-
-msgid "Send Deduplicated Stream"
-msgstr "Отправить дедуплицированный поток"
 
 msgid "Send Email Status Updates"
 msgstr "Присылать сообщения об изменении статуса"
@@ -12918,6 +12991,9 @@ msgstr ""
 "в этой системе TrueNAS возникают определенные условия. Служба поддержки iX "
 "оперативно свяжется с контактами, сохраненными ниже, чтобы быстро разрешить "
 "любую проблему, которая могла возникнуть в системе."
+
+msgid "Simple"
+msgstr ""
 
 msgid "Site Name"
 msgstr "Имя сайта"
@@ -14409,6 +14485,9 @@ msgstr "Машина времени"
 
 msgid "Time Machine Quota"
 msgstr "Квота машины времени"
+
+msgid "Time Remaining"
+msgstr ""
 
 msgid "Timeout"
 msgstr "Таймаут"
@@ -15963,6 +16042,9 @@ msgstr ""
 msgid "hostid_strict_check"
 msgstr ""
 
+msgid "hours"
+msgstr ""
+
 msgid "iSCSI"
 msgstr "iSCSI"
 
@@ -16040,6 +16122,9 @@ msgstr ""
 msgid "memoryuse"
 msgstr ""
 
+msgid "minutes"
+msgstr ""
+
 msgid "mount_devfs"
 msgstr ""
 
@@ -16059,9 +16144,6 @@ msgid "msgqqueued"
 msgstr ""
 
 msgid "msgqsize"
-msgstr ""
-
-msgid "multipath"
 msgstr ""
 
 msgid "name"
@@ -16129,6 +16211,9 @@ msgstr "Порт rpc.statd(8)"
 
 msgid "safe"
 msgstr "безопасно"
+
+msgid "seconds"
+msgstr ""
 
 msgid "seconds unless SAVE CHANGES is chosen to make them permanent."
 msgstr ""

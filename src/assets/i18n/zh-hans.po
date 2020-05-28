@@ -101,6 +101,9 @@ msgid ""
 "system performance."
 msgstr " 是最小推荐记录数据大小。选择一个更小的大小可能会降低系统性能。"
 
+msgid " official plugins"
+msgstr ""
+
 msgid " seconds"
 msgstr " 秒"
 
@@ -1162,6 +1165,13 @@ msgstr "地址"
 msgid "Address space limit in bytes for the jail."
 msgstr "监狱的地址空间限制（以bytes为单位）。"
 
+msgid ""
+"Adjust how often alert notifications are sent, use  the Frequency "
+"drop-down. Setting the Frequency to NEVER prevents that  alert from being "
+"added to alert notifications, but the alert can still  show in the web "
+"interface if it is triggered."
+msgstr ""
+
 msgid "Adjust the file permissions using the checkboxes."
 msgstr "使用复选框来调整文件权限。"
 
@@ -1382,6 +1392,19 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-"
 "RELEASE+and+Ports\" "
 "target=\"_blank\">sudo</a>。在使用<b>sudo</b>时，群组成员会被要求输入他们的密码。"
+
+msgid ""
+"Allow hostnames or IP addresses to connect to the  share. Click <i>ADD</i> "
+"to add multiple entries. <br><br>  If neither *Allow Hosts* or *Deny Hosts* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Allow Hosts* list but no *Deny Hosts* list, then only allow "
+" hosts on the *Allow Hosts* list. <br><br>  If there is a *Deny Hosts* list "
+"but no *Allow Hosts* list, then allow all  hosts that are not on the *Deny "
+"Hosts* list. <br><br>  If there is both a *Allow Hosts* and *Deny Hosts* "
+"list, then allow all hosts  that are on the *Allow Hosts* list. <br><br>  "
+"If there is a host not on the *Allow Hosts* and not on the *Deny Hosts* "
+"list,  then allow it."
+msgstr ""
 
 msgid ""
 "Allow more ciphers for  <a "
@@ -1897,6 +1920,9 @@ msgstr "可用磁盘"
 
 msgid "Available Memory:"
 msgstr "可用内存："
+
+msgid "Available Plugins"
+msgstr ""
 
 msgid "Available Space"
 msgstr "可用空间"
@@ -2491,9 +2517,6 @@ msgstr ""
 "active-directory-functional-levels\" target=\"_blank\">活动目录域服务（AD "
 "DS）功能级别</a>了解更多详细信息。"
 
-msgid "Choices are <i>Minimum, Normal, or Debug</i>."
-msgstr "可以从<i>最小，正常，Debug</i>中选择。"
-
 msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr "可以从<i>无，自动，CHAP，</i> 或 <i>Mutual CHAP</i>中选择。"
 
@@ -2959,12 +2982,6 @@ msgstr ""
 "将多个故障转移关键接口组合在一起。组适用于单个系统。组中的每个接口均发生故障时，将发生故障转移。具有单个接口的组会在该接口发生故障时触发故障转移。将系统"
 "配置为在任何接口出现故障时进行故障转移都需要将每个接口标记为关键接口，并将它们放在单独的组中。"
 
-msgid "Comma-, space-, or tab-delimited list of allowed hostnames or IP addresses."
-msgstr "以逗号，空格或制表符分隔允许的主机名或IP地址列表。"
-
-msgid "Comma-, space-, tab-delimited list of denied hostnames or IP addresses."
-msgstr "以逗号，空格，制表符分隔的拒绝的主机名或IP地址列表。"
-
 msgid ""
 "Comma-delimited list of allowed users and/or groups where groupname begins "
 "with a @. Note that adding an entry will allow any user or group that is "
@@ -3043,6 +3060,9 @@ msgstr "兼容性"
 msgid "Complete the Upgrade"
 msgstr "完成升级"
 
+msgid "Completed"
+msgstr ""
+
 msgid ""
 "Completely replicate the selected dataset. The target dataset will have all "
 "of the properties, snapshots, child datasets, and clones from the source "
@@ -3103,6 +3123,9 @@ msgstr "确认"
 
 msgid "Confirm Export/Disconnect"
 msgstr "确认导出/断开"
+
+msgid "Confirm Failover"
+msgstr ""
 
 msgid "Confirm Options"
 msgstr "确认选项"
@@ -3441,6 +3464,11 @@ msgstr "自定义主题名称"
 msgid "Customer Name"
 msgstr "客户名称"
 
+msgid ""
+"Customizes the importance of the alert. Each level of  importance has a "
+"different icon and color to express the level of importance."
+msgstr ""
+
 msgid "Cyan"
 msgstr "青色"
 
@@ -3582,6 +3610,9 @@ msgstr "的数据集"
 msgid "Datastore"
 msgstr "数据存储"
 
+msgid "Date"
+msgstr ""
+
 msgid "Date Format"
 msgstr "日期格式"
 
@@ -3645,16 +3676,6 @@ msgstr "去重"
 
 msgid "Dedup VDev"
 msgstr "去重VDev"
-
-msgid ""
-"Deduplicate the stream to avoid sending redundant  data blocks. The "
-"destination system must also support deduplicated  streams. See <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
-msgstr ""
-"对流进行重复数据删除，以避免发送冗余数据块。目标系统还必须支持重复数据删除流。参见<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>。"
 
 msgid "Default"
 msgstr "默认"
@@ -3824,6 +3845,9 @@ msgstr "删除数据集 <i><b>"
 msgid "Delete Device"
 msgstr "删除设备"
 
+msgid "Delete Group "
+msgstr ""
+
 msgid "Delete Key"
 msgstr "删除密钥"
 
@@ -3839,6 +3863,9 @@ msgstr "删除路径"
 msgid "Delete Selected"
 msgstr "删除所选"
 
+msgid "Delete User "
+msgstr ""
+
 msgid "Delete Virtual Machine"
 msgstr "删除虚拟机"
 
@@ -3847,9 +3874,6 @@ msgstr "删除虚拟机数据？"
 
 msgid "Delete Zvol"
 msgstr "删除Zvol"
-
-msgid "Delete all users with this primary group?"
-msgstr "删除该主要组的所有用户吗？"
 
 msgid "Delete configuration of shares that used this pool?"
 msgstr "删除使用这个池的共享配置吗？"
@@ -3882,6 +3906,9 @@ msgstr "删除Zvol "
 msgid "Delete this path."
 msgstr "删除此路径。"
 
+msgid "Delete user primary group "
+msgstr ""
+
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "不允许在启用HA的情况下删除接口。"
 
@@ -3896,6 +3923,19 @@ msgstr "拒绝主机"
 
 msgid "Deny List"
 msgstr "拒绝列表"
+
+msgid ""
+"Deny hostnames or IP addresses access to the share.   Click <i>ADD</i> to "
+"add multiple entries. <br><br>   If neither *Allow Hosts* or *Deny Hosts* "
+"contains   an entry, then AFP share access is allowed for any host. "
+"<br><br>   If there is a *Allow Hosts* list but no *Deny Hosts* list, then "
+"only allow   hosts on the *Allow Hosts* list. <br><br>   If there is a "
+"*Deny Hosts* list but no *Allow Hosts* list, then allow all   hosts that "
+"are not on the *Deny Hosts* list. <br><br>   If there is both a *Allow "
+"Hosts* and *Deny Hosts* list, then allow all hosts   that are on the *Allow "
+"Hosts* list. <br><br>   If there is a host not on the *Allow Hosts* and not "
+"on the *Deny Hosts* list,   then allow it."
+msgstr ""
 
 msgid "Deregister"
 msgstr ""
@@ -4951,16 +4991,29 @@ msgid ""
 "pressing <code>Enter</code>. A more detailed description  with examples can "
 "be found  <a "
 "href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
-"HOSTSALLOW\">here</a>."
+"HOSTSALLOW\">here</a>. <br><br>  If neither *Hosts Allow* or *Hosts Deny* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
+" hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
+"but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
+"Deny* list. <br><br>  If there is both a *Hosts Allow* and *Hosts Deny* "
+"list, then allow all hosts  that are on the *Hosts Allow* list. <br><br>  "
+"If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* "
+"list,  then allow it."
 msgstr ""
-"输入允许的主机名或IP地址的列表。通过按<code> Enter </code>分隔条目。可以在<a "
-"href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
-"HOSTSALLOW\">此处</a>找到带有示例的更详细的说明。"
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
-"pressing <code>Enter</code>."
-msgstr "输入拒绝的主机名或IP地址的列表。通过按<code> Enter </code>分隔条目。"
+"pressing <code>Enter</code>.  If neither *Hosts Allow* or *Hosts Deny* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
+" hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
+"but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
+"Deny* list. <br><br>  If there is both a *Hosts Allow* and *Hosts Deny* "
+"list, then allow all hosts  that are on the *Hosts Allow* list. <br><br>  "
+"If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* "
+"list,  then allow it."
+msgstr ""
 
 msgid ""
 "Enter a long string of random characters for  use as <a "
@@ -6152,6 +6205,9 @@ msgstr "从电子邮件"
 msgid "From Name"
 msgstr "从名称"
 
+msgid "Full"
+msgstr ""
+
 msgid "Full Filesystem Replication"
 msgstr "完整的文件系统复制"
 
@@ -6876,6 +6932,9 @@ msgstr ""
 "如果目标系统具有快照，但是它们与源快照没有任何共同的数据，请销毁所有目标快照并进行完全复制。<b>警告：</b>"
 "如果复制配置错误，启用此选项可能会导致数据丢失或过多的数据传输。"
 
+msgid "Ignore"
+msgstr ""
+
 msgid "Ignore Builtin"
 msgstr "忽略内置"
 
@@ -7263,9 +7322,6 @@ msgstr "保持zvol名称简短。使用一个长于63个字符的zvol名称会�
 
 msgid "Keep this Boot Environment?"
 msgstr "保留此引导环境吗？"
-
-msgid "Keep user primary group"
-msgstr "保留用户主组"
 
 msgid "Kerberos Keytab"
 msgstr "Kerberos密钥表"
@@ -8497,6 +8553,12 @@ msgstr "节点CARP状态不一致。"
 msgid "None"
 msgstr "无"
 
+msgid "None requested"
+msgstr ""
+
+msgid "Normal"
+msgstr ""
+
 msgid ""
 "Normal vdev type, used for primary storage operations. ZFS pools always "
 "have at least one DATA vdev."
@@ -9337,6 +9399,9 @@ msgstr "只带有图标的按钮"
 msgid "Preferences"
 msgstr "首选项"
 
+msgid "Preserve"
+msgstr ""
+
 msgid "Preserve Extended Attributes"
 msgstr "保留扩展属性"
 
@@ -9623,6 +9688,16 @@ msgstr "当<i> 最大轮询 </i>大于10时推荐使用。仅在个人NTP服务�
 
 msgid "Reconnect"
 msgstr "重新连接"
+
+msgid ""
+"Record AFP service messages up to the specified log level in the system "
+"log. By default, severe and warning level messages are logged."
+msgstr ""
+
+msgid ""
+"Record SMB service messages up to the specified log level.  By default, "
+"error and warning level messages are logged."
+msgstr ""
 
 msgid "Record Size"
 msgstr "记录大小"
@@ -10035,6 +10110,9 @@ msgid "Revert branding back to FreeNAS"
 msgstr "将品牌还原回FreeNAS"
 
 msgid "Revert interface changes? All changes that are being tested will be lost."
+msgstr ""
+
+msgid "Rights"
 msgstr ""
 
 msgid "Rollback"
@@ -10964,9 +11042,6 @@ msgstr "自加密驱动器选项"
 
 msgid "Semi-automatic (TrueNAS CORE only)"
 msgstr "半自动（仅限TrueNAS CORE）"
-
-msgid "Send Deduplicated Stream"
-msgstr "发送重复数据删除流"
 
 msgid "Send Email Status Updates"
 msgstr "状态更新时发送邮件"
@@ -11976,6 +12051,9 @@ msgstr ""
 "银牌/"
 "金牌客户可以启用iXsystems主动支持。当此TrueNAS系统上发生某些情况时，它将自动通过电子邮件发送给iXsystem。iX支持团队将立即与下面"
 "保存的联系人联系，以快速解决系统上可能发生的任何问题。"
+
+msgid "Simple"
+msgstr ""
 
 msgid "Site Name"
 msgstr "站点名称"
@@ -13348,6 +13426,9 @@ msgstr "时光机"
 
 msgid "Time Machine Quota"
 msgstr "时光机配额"
+
+msgid "Time Remaining"
+msgstr ""
 
 msgid "Timeout"
 msgstr "超时"
@@ -14826,6 +14907,9 @@ msgstr "hostid"
 msgid "hostid_strict_check"
 msgstr "hostid_strict_check"
 
+msgid "hours"
+msgstr ""
+
 msgid "iSCSI"
 msgstr "iSCSI"
 
@@ -14905,6 +14989,9 @@ msgstr "内存锁定"
 msgid "memoryuse"
 msgstr "内存使用"
 
+msgid "minutes"
+msgstr ""
+
 msgid "mount_devfs"
 msgstr "挂载_devfs"
 
@@ -14925,9 +15012,6 @@ msgstr "msgqqueued"
 
 msgid "msgqsize"
 msgstr "msgqsize"
-
-msgid "multipath"
-msgstr "多路径"
 
 msgid "name"
 msgstr "名称"
@@ -14994,6 +15078,9 @@ msgstr "rpc.statd(8) 绑定端口"
 
 msgid "safe"
 msgstr "safe"
+
+msgid "seconds"
+msgstr ""
 
 msgid "seconds unless SAVE CHANGES is chosen to make them permanent."
 msgstr ""
