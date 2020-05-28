@@ -1084,6 +1084,13 @@ msgstr "Adresa"
 msgid "Address space limit in bytes for the jail."
 msgstr ""
 
+msgid ""
+"Adjust how often alert notifications are sent, use  the Frequency "
+"drop-down. Setting the Frequency to NEVER prevents that  alert from being "
+"added to alert notifications, but the alert can still  show in the web "
+"interface if it is triggered."
+msgstr ""
+
 msgid "Adjust the file permissions using the checkboxes."
 msgstr ""
 
@@ -2350,9 +2357,6 @@ msgid ""
 "Directory Domain Services (AD DS) Functional Levels</a> for more details."
 msgstr ""
 
-msgid "Choices are <i>Minimum, Normal, or Debug</i>."
-msgstr ""
-
 msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr ""
 
@@ -2842,6 +2846,9 @@ msgstr ""
 msgid "Complete the Upgrade"
 msgstr ""
 
+msgid "Completed"
+msgstr ""
+
 msgid ""
 "Completely replicate the selected dataset. The target dataset will have all "
 "of the properties, snapshots, child datasets, and clones from the source "
@@ -3220,6 +3227,11 @@ msgstr ""
 msgid "Customer Name"
 msgstr ""
 
+msgid ""
+"Customizes the importance of the alert. Each level of  importance has a "
+"different icon and color to express the level of importance."
+msgstr ""
+
 msgid "Cyan"
 msgstr ""
 
@@ -3353,6 +3365,9 @@ msgid "Datasets for "
 msgstr ""
 
 msgid "Datastore"
+msgstr ""
+
+msgid "Date"
 msgstr ""
 
 msgid "Date Format"
@@ -5755,6 +5770,9 @@ msgstr ""
 msgid "From Name"
 msgstr ""
 
+msgid "Full"
+msgstr ""
+
 msgid "Full Filesystem Replication"
 msgstr ""
 
@@ -6452,6 +6470,9 @@ msgid ""
 "common with the source  snapshots, destroy all destination snapshots and do "
 "a full replication.  <b>Warning:</b> enabling this option can cause data "
 "loss or excessive  data transfer if the replication is misconfigured."
+msgstr ""
+
+msgid "Ignore"
 msgstr ""
 
 msgid "Ignore Builtin"
@@ -7990,6 +8011,12 @@ msgstr ""
 msgid "None"
 msgstr ""
 
+msgid "None requested"
+msgstr ""
+
+msgid "Normal"
+msgstr ""
+
 msgid ""
 "Normal vdev type, used for primary storage operations. ZFS pools always "
 "have at least one DATA vdev."
@@ -8767,6 +8794,9 @@ msgstr ""
 msgid "Preferences"
 msgstr "Předvolby"
 
+msgid "Preserve"
+msgstr ""
+
 msgid "Preserve Extended Attributes"
 msgstr ""
 
@@ -9040,6 +9070,16 @@ msgstr ""
 
 msgid "Reconnect"
 msgstr "Připojit znovu"
+
+msgid ""
+"Record AFP service messages up to the specified log level in the system "
+"log. By default, severe and warning level messages are logged."
+msgstr ""
+
+msgid ""
+"Record SMB service messages up to the specified log level.  By default, "
+"error and warning level messages are logged."
+msgstr ""
 
 msgid "Record Size"
 msgstr "Velikost záznamu"
@@ -9434,6 +9474,9 @@ msgid "Revert branding back to FreeNAS"
 msgstr ""
 
 msgid "Revert interface changes? All changes that are being tested will be lost."
+msgstr ""
+
+msgid "Rights"
 msgstr ""
 
 msgid "Rollback"
@@ -11253,6 +11296,9 @@ msgid ""
 "on the system."
 msgstr ""
 
+msgid "Simple"
+msgstr ""
+
 msgid "Site Name"
 msgstr ""
 
@@ -12557,6 +12603,9 @@ msgstr "Time Machine"
 
 msgid "Time Machine Quota"
 msgstr "Kvóta pro Time Machine"
+
+msgid "Time Remaining"
+msgstr ""
 
 msgid "Timeout"
 msgstr "Časový limit"
@@ -13963,6 +14012,9 @@ msgstr "identifikátor stroje"
 msgid "hostid_strict_check"
 msgstr "hostid_strict_check"
 
+msgid "hours"
+msgstr ""
+
 msgid "iSCSI"
 msgstr "iSCSI"
 
@@ -14039,6 +14091,9 @@ msgstr "memorylocked"
 
 msgid "memoryuse"
 msgstr "memoryuse"
+
+msgid "minutes"
+msgstr ""
 
 msgid "mount_devfs"
 msgstr "mount_devfs"
@@ -14125,6 +14180,9 @@ msgid "rpc.statd(8) bind port"
 msgstr ""
 
 msgid "safe"
+msgstr ""
+
+msgid "seconds"
 msgstr ""
 
 msgid "seconds unless SAVE CHANGES is chosen to make them permanent."

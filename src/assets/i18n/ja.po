@@ -105,6 +105,9 @@ msgid ""
 "system performance."
 msgstr ""
 
+msgid " official plugins"
+msgstr ""
+
 msgid " seconds"
 msgstr ""
 
@@ -1034,6 +1037,13 @@ msgstr ""
 msgid "Address space limit in bytes for the jail."
 msgstr ""
 
+msgid ""
+"Adjust how often alert notifications are sent, use  the Frequency "
+"drop-down. Setting the Frequency to NEVER prevents that  alert from being "
+"added to alert notifications, but the alert can still  show in the web "
+"interface if it is triggered."
+msgstr ""
+
 msgid "Adjust the file permissions using the checkboxes."
 msgstr ""
 
@@ -1258,6 +1268,19 @@ msgstr ""
 "RELEASE+and+Ports\" "
 "target=\"_blank\">sudo</a>の利用を許可します。グループのメンバーは<b>sudo</b>"
 "を利用しようとするとき、彼らのパスワードの入力が求められます。"
+
+msgid ""
+"Allow hostnames or IP addresses to connect to the  share. Click <i>ADD</i> "
+"to add multiple entries. <br><br>  If neither *Allow Hosts* or *Deny Hosts* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Allow Hosts* list but no *Deny Hosts* list, then only allow "
+" hosts on the *Allow Hosts* list. <br><br>  If there is a *Deny Hosts* list "
+"but no *Allow Hosts* list, then allow all  hosts that are not on the *Deny "
+"Hosts* list. <br><br>  If there is both a *Allow Hosts* and *Deny Hosts* "
+"list, then allow all hosts  that are on the *Allow Hosts* list. <br><br>  "
+"If there is a host not on the *Allow Hosts* and not on the *Deny Hosts* "
+"list,  then allow it."
+msgstr ""
 
 msgid ""
 "Allow more ciphers for  <a "
@@ -1725,6 +1748,9 @@ msgstr "利用可能なディスク"
 
 msgid "Available Memory:"
 msgstr "利用可能メモリ:"
+
+msgid "Available Plugins"
+msgstr ""
 
 msgid "Available Space"
 msgstr "利用可能な容量"
@@ -2324,9 +2350,6 @@ msgid ""
 "Directory Domain Services (AD DS) Functional Levels</a> for more details."
 msgstr ""
 
-msgid "Choices are <i>Minimum, Normal, or Debug</i>."
-msgstr "選択肢は、<i>Minimum、Normal、またはDebug</i>です。"
-
 msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
 msgstr ""
 
@@ -2766,12 +2789,6 @@ msgid ""
 "separate groups."
 msgstr ""
 
-msgid "Comma-, space-, or tab-delimited list of allowed hostnames or IP addresses."
-msgstr ""
-
-msgid "Comma-, space-, tab-delimited list of denied hostnames or IP addresses."
-msgstr ""
-
 msgid ""
 "Comma-delimited list of allowed users and/or groups where groupname begins "
 "with a @. Note that adding an entry will allow any user or group that is "
@@ -2845,6 +2862,9 @@ msgstr ""
 msgid "Complete the Upgrade"
 msgstr ""
 
+msgid "Completed"
+msgstr ""
+
 msgid ""
 "Completely replicate the selected dataset. The target dataset will have all "
 "of the properties, snapshots, child datasets, and clones from the source "
@@ -2905,6 +2925,9 @@ msgstr "確認"
 
 msgid "Confirm Export/Disconnect"
 msgstr "エクスポート/切断の確認"
+
+msgid "Confirm Failover"
+msgstr ""
 
 msgid "Confirm Options"
 msgstr ""
@@ -3226,6 +3249,11 @@ msgstr ""
 msgid "Customer Name"
 msgstr ""
 
+msgid ""
+"Customizes the importance of the alert. Each level of  importance has a "
+"different icon and color to express the level of importance."
+msgstr ""
+
 msgid "Cyan"
 msgstr ""
 
@@ -3361,6 +3389,9 @@ msgstr ""
 msgid "Datastore"
 msgstr ""
 
+msgid "Date"
+msgstr ""
+
 msgid "Date Format"
 msgstr ""
 
@@ -3425,13 +3456,6 @@ msgid "Dedup"
 msgstr ""
 
 msgid "Dedup VDev"
-msgstr ""
-
-msgid ""
-"Deduplicate the stream to avoid sending redundant  data blocks. The "
-"destination system must also support deduplicated  streams. See <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
 msgstr ""
 
 msgid "Default"
@@ -3583,6 +3607,9 @@ msgstr ""
 msgid "Delete Device"
 msgstr ""
 
+msgid "Delete Group "
+msgstr ""
+
 msgid "Delete Key"
 msgstr ""
 
@@ -3598,6 +3625,9 @@ msgstr ""
 msgid "Delete Selected"
 msgstr ""
 
+msgid "Delete User "
+msgstr ""
+
 msgid "Delete Virtual Machine"
 msgstr ""
 
@@ -3605,9 +3635,6 @@ msgid "Delete Virtual Machine Data?"
 msgstr ""
 
 msgid "Delete Zvol"
-msgstr ""
-
-msgid "Delete all users with this primary group?"
 msgstr ""
 
 msgid "Delete configuration of shares that used this pool?"
@@ -3641,6 +3668,9 @@ msgstr ""
 msgid "Delete this path."
 msgstr ""
 
+msgid "Delete user primary group "
+msgstr ""
+
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
@@ -3654,6 +3684,19 @@ msgid "Deny Hosts"
 msgstr ""
 
 msgid "Deny List"
+msgstr ""
+
+msgid ""
+"Deny hostnames or IP addresses access to the share.   Click <i>ADD</i> to "
+"add multiple entries. <br><br>   If neither *Allow Hosts* or *Deny Hosts* "
+"contains   an entry, then AFP share access is allowed for any host. "
+"<br><br>   If there is a *Allow Hosts* list but no *Deny Hosts* list, then "
+"only allow   hosts on the *Allow Hosts* list. <br><br>   If there is a "
+"*Deny Hosts* list but no *Allow Hosts* list, then allow all   hosts that "
+"are not on the *Deny Hosts* list. <br><br>   If there is both a *Allow "
+"Hosts* and *Deny Hosts* list, then allow all hosts   that are on the *Allow "
+"Hosts* list. <br><br>   If there is a host not on the *Allow Hosts* and not "
+"on the *Deny Hosts* list,   then allow it."
 msgstr ""
 
 msgid "Deregister"
@@ -4639,12 +4682,28 @@ msgid ""
 "pressing <code>Enter</code>. A more detailed description  with examples can "
 "be found  <a "
 "href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
-"HOSTSALLOW\">here</a>."
+"HOSTSALLOW\">here</a>. <br><br>  If neither *Hosts Allow* or *Hosts Deny* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
+" hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
+"but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
+"Deny* list. <br><br>  If there is both a *Hosts Allow* and *Hosts Deny* "
+"list, then allow all hosts  that are on the *Hosts Allow* list. <br><br>  "
+"If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* "
+"list,  then allow it."
 msgstr ""
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
-"pressing <code>Enter</code>."
+"pressing <code>Enter</code>.  If neither *Hosts Allow* or *Hosts Deny* "
+"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+" If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
+" hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
+"but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
+"Deny* list. <br><br>  If there is both a *Hosts Allow* and *Hosts Deny* "
+"list, then allow all hosts  that are on the *Hosts Allow* list. <br><br>  "
+"If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* "
+"list,  then allow it."
 msgstr ""
 
 msgid ""
@@ -5769,6 +5828,9 @@ msgstr ""
 msgid "From Name"
 msgstr "差出人名"
 
+msgid "Full"
+msgstr ""
+
 msgid "Full Filesystem Replication"
 msgstr ""
 
@@ -6478,6 +6540,9 @@ msgid ""
 "loss or excessive  data transfer if the replication is misconfigured."
 msgstr ""
 
+msgid "Ignore"
+msgstr ""
+
 msgid "Ignore Builtin"
 msgstr ""
 
@@ -6843,9 +6908,6 @@ msgid ""
 msgstr ""
 
 msgid "Keep this Boot Environment?"
-msgstr ""
-
-msgid "Keep user primary group"
 msgstr ""
 
 msgid "Kerberos Keytab"
@@ -8026,6 +8088,12 @@ msgstr ""
 msgid "None"
 msgstr ""
 
+msgid "None requested"
+msgstr ""
+
+msgid "Normal"
+msgstr ""
+
 msgid ""
 "Normal vdev type, used for primary storage operations. ZFS pools always "
 "have at least one DATA vdev."
@@ -8817,6 +8885,9 @@ msgstr "アイコンのみのボタンを優先する"
 msgid "Preferences"
 msgstr "設定"
 
+msgid "Preserve"
+msgstr ""
+
 msgid "Preserve Extended Attributes"
 msgstr ""
 
@@ -9104,6 +9175,16 @@ msgstr ""
 "パブリックNTPサーバーを使用する場合は、<b>有効にしないで</b>ください。"
 
 msgid "Reconnect"
+msgstr ""
+
+msgid ""
+"Record AFP service messages up to the specified log level in the system "
+"log. By default, severe and warning level messages are logged."
+msgstr ""
+
+msgid ""
+"Record SMB service messages up to the specified log level.  By default, "
+"error and warning level messages are logged."
 msgstr ""
 
 msgid "Record Size"
@@ -9514,6 +9595,9 @@ msgid "Revert branding back to FreeNAS"
 msgstr ""
 
 msgid "Revert interface changes? All changes that are being tested will be lost."
+msgstr ""
+
+msgid "Rights"
 msgstr ""
 
 msgid "Rollback"
@@ -10425,9 +10509,6 @@ msgid "Self-Encrypting Drive Options"
 msgstr ""
 
 msgid "Semi-automatic (TrueNAS CORE only)"
-msgstr ""
-
-msgid "Send Deduplicated Stream"
 msgstr ""
 
 msgid "Send Email Status Updates"
@@ -11375,6 +11456,9 @@ msgid ""
 "TrueNAS system. The iX Support  Team will promptly communicate with the "
 "Contacts saved below to quickly resolve any issue that may  have occurred "
 "on the system."
+msgstr ""
+
+msgid "Simple"
 msgstr ""
 
 msgid "Site Name"
@@ -12697,6 +12781,9 @@ msgid "Time Machine"
 msgstr ""
 
 msgid "Time Machine Quota"
+msgstr ""
+
+msgid "Time Remaining"
 msgstr ""
 
 msgid "Timeout"
@@ -14115,6 +14202,9 @@ msgstr ""
 msgid "hostid_strict_check"
 msgstr ""
 
+msgid "hours"
+msgstr ""
+
 msgid "iSCSI"
 msgstr ""
 
@@ -14192,6 +14282,9 @@ msgstr ""
 msgid "memoryuse"
 msgstr ""
 
+msgid "minutes"
+msgstr ""
+
 msgid "mount_devfs"
 msgstr ""
 
@@ -14211,9 +14304,6 @@ msgid "msgqqueued"
 msgstr ""
 
 msgid "msgqsize"
-msgstr ""
-
-msgid "multipath"
 msgstr ""
 
 msgid "name"
@@ -14280,6 +14370,9 @@ msgid "rpc.statd(8) bind port"
 msgstr ""
 
 msgid "safe"
+msgstr ""
+
+msgid "seconds"
 msgstr ""
 
 msgid "seconds unless SAVE CHANGES is chosen to make them permanent."
