@@ -69,8 +69,8 @@ dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
 
  apply_group: {
   placeholder: T('Apply Group'),
-  tooltip: T('Set to confirm changes to <i>Group</i>. To prevent errors, changes to <i>Group</i> \
- will be submitted only if this box is selected.')
+  tooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> \
+ are only submitted when this box is set.')
 },
 
 dataset_acl_perms_placeholder: T('Permissions'),
