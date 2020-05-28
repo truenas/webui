@@ -89,6 +89,13 @@ export class DatasetAclComponent implements OnDestroy {
           updater: this.updateUserSearchOptions,
         },
         {
+          type: 'checkbox',
+          name: 'apply_user',
+          placeholder: helptext.apply_user.placeholder,
+          tooltip: helptext.apply_user.tooltip,
+          value: false,
+         },
+        {
           type: 'combobox',
           name: 'gid',
           placeholder: helptext.dataset_acl_gid_placeholder,
@@ -98,6 +105,13 @@ export class DatasetAclComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
+        },
+        {
+          type: 'checkbox',
+          name: 'apply_group',
+          placeholder: helptext.apply_group.placeholder,
+          tooltip: helptext.apply_group.tooltip,
+          value: false
         },
         {
           type: 'select',
@@ -624,6 +638,8 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async customSubmit(body) {
+    body.uid = body.apply_user ? body.uid : null;
+    body.gid = body.apply_group ? body.gid : null;
     const doesNotWantToEditDataset =
       this.storageService.isDatasetTopLevel(body.path.replace("mnt/", "")) &&
       !(await this.dialogService

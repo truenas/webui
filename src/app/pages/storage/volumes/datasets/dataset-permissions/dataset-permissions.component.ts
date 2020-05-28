@@ -25,8 +25,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
   public error: string;
   protected route_success: string[] = ['storage', 'pools'];
   protected isEntity = true;
-  protected userOnLoad: string;
-  protected groupOnLoad: string;
   protected dialogRef: any;
   private entityForm: any;
   protected userField: any;
@@ -65,6 +63,13 @@ export class DatasetPermissionsComponent implements OnDestroy {
           updater: this.updateUserSearchOptions,
         },
         {
+          type: 'checkbox',
+          name: 'apply_user',
+          placeholder: helptext.apply_user.placeholder,
+          tooltip: helptext.apply_user.tooltip,
+          value: false,
+        },
+        {
           type: 'combobox',
           name: 'group',
           placeholder: helptext.dataset_permissions_group_placeholder,
@@ -73,7 +78,14 @@ export class DatasetPermissionsComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
-        }
+        },
+        {
+          type: 'checkbox',
+          name: 'apply_group',
+          placeholder: helptext.apply_group.placeholder,
+          tooltip: helptext.apply_group.tooltip,
+          value: false
+        },
       ],
       width: '50%'
     },
@@ -163,8 +175,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.storageService.filesystemStat(this.datasetPath).subscribe(res => {
-      this.userOnLoad = res.user;
-      this.groupOnLoad = res.group;
       this.datasetMode = res.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
       entityEdit.formGroup.controls['user'].setValue(res.user);
@@ -208,12 +218,15 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   beforeSubmit(data) {
-    if (data.user === this.userOnLoad) {
+    if (!data.apply_user) {
       delete data.user;
     };
-    if (data.group === this.groupOnLoad) {
+    if (!data.apply_group) {
       delete data.group;
     }
+    delete data.apply_user;
+    delete data.apply_group
+    
     data['acl'] = [];
 
     data['options'] = {
