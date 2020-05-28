@@ -57,7 +57,7 @@ dataset_acl_uid_tooltip: T('User who controls the dataset. This user\
 
  apply_user: {
   placeholder: T('Apply User'),
-  tooltip: T('Set to confirm changes to <i>User</i>. To prevent errors, changes to <i>User</i> \
+  tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \
 will be submitted only if this box is selected.')
 },
 
