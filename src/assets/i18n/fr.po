@@ -11322,6 +11322,7 @@ msgstr "Réinitialiser toutes les tables pour afficher les colonnes par défaut.
 msgid ""
 "Reset all user preferences to their default values. (Custom themes are "
 "preserved)"
+msgstr ""
 "Réinitialiser toutes les préférences de l'utilisateur à leurs valeurs par défaut. "
 "(Les thèmes personnalisés sont conservés)"
 
