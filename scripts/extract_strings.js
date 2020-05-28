@@ -28,7 +28,7 @@ fs.readdir( translations, function( err, files ) {
             console.error(err);
             console.error( "Error extracting strings." );
             // node couldn't execute the command
-            return;
+            process.exit(1);
         }
         console.log(stdout);
         console.error(stderr);
