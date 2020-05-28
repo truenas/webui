@@ -1661,10 +1661,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   app-dataset-acl {
+    #apply_user, #apply_group {
+      margin-top: -13px;
+      margin-bottom: 20px;
+    }
     #aces0 {
       position: absolute;
       left: 15px;
-      top: 310px;
+      top: 340px;
 
       @media screen and ( max-width: 599px) {
         position: relative;

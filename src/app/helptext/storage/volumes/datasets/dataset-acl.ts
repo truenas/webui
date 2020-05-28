@@ -55,11 +55,23 @@ dataset_acl_uid_tooltip: T('User who controls the dataset. This user\
  attributes. Users created manually or imported from a directory service\
  appear in the drop-down menu.'),
 
+ apply_user: {
+   placeholder: T('Apply User'),
+   tooltip: T('Set to confirm changes to <i>User</i>. To prevent errors, changes to <i>User</i> \
+ will be submitted only if this box is selected.')
+ },
+
 dataset_acl_gid_placeholder: T('Group'),
 dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
  group has the same permissions as granted to the <i>group@</i>\
  <i>Who</i>. Groups created manually or imported from a directory\
  service appear in the drop-down menu.'),
+
+ apply_group: {
+  placeholder: T('Apply Group'),
+  tooltip: T('Set to confirm changes to <i>Group</i>. To prevent errors, changes to <i>Group</i> \
+ will be submitted only if this box is selected.')
+},
 
 dataset_acl_perms_placeholder: T('Permissions'),
 dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
