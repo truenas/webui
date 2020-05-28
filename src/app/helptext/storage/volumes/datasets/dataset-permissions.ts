@@ -12,10 +12,22 @@ dataset_permissions_user_tooltip: T('Select the user to control the dataset. Use
  created manually or imported from a directory service\
  appear in the drop-down menu.'),
 
+apply_user: {
+    placeholder: T('Apply User'),
+    tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \
+are submitted only when this box is set.')
+},
+
 dataset_permissions_group_placeholder: T('Group'),
 dataset_permissions_group_tooltip: T('Select the group to control the dataset. Groups\
  created manually or imported from a directory service\
  appear in the drop-down menu.'),
+
+ apply_group: {
+    placeholder: T('Apply Group'),
+    tooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> \
+are submitted only when this box is set.')
+},
 
 dataset_permissions_mode_placeholder: T('Access Mode'),
 dataset_permissions_mode_tooltip: T('Set the read, write, and execute permissions for the dataset.'),
