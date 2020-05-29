@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
-import { DialogService } from '../../../../services';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -24,7 +25,7 @@ export class SnapshotListComponent {
     { name: T('Keep snapshot for'), prop: 'keepfor', hidden: true },
     { name: T('Legacy'), prop: 'legacy', hidden: true },
     { name: T('VMware Sync'), prop: 'vmware_sync', hidden: true },
-    { name: T('Enabled'), prop: 'enabled' },
+    { name: T('Enabled'), prop: 'enabled', selectable: true },
     { name: T('State'), prop: 'task_state', state: 'state',},
   ];
   public rowIdentifier = 'dataset';
@@ -37,7 +38,7 @@ export class SnapshotListComponent {
     },
   };
 
-  constructor(private dialogService: DialogService) {}
+  constructor(private dialogService: DialogService, private ws: WebSocketService) {}
 
   resourceTransformIncomingRestData(tasks: any[]): any[] {
     return tasks.map(task => {
@@ -56,5 +57,20 @@ export class SnapshotListComponent {
     if (row.state.state === 'ERROR') {
       this.dialogService.errorReport(row.state.state, row.state.error);
     }
+  }
+
+  onCheckboxChange(row) {
+    row.enabled = !row.enabled;
+    this.ws.call('pool.snapshottask.update', [row.id, {'enabled': row.enabled}] )
+    .subscribe(
+      (res) => {
+        if (!res) {
+          row.enabled = !row.enabled;
+        }
+      },
+      (err) => {
+        row.enabled = !row.enabled;
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      });
   }
 }
