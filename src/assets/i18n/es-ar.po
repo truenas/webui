@@ -1949,6 +1949,9 @@ msgstr "Aplicar"
 msgid "Apply Failover Upgrade"
 msgstr "Aplicar actualización de conmutación por error"
 
+msgid "Apply Group"
+msgstr ""
+
 msgid "Apply Pending Updates"
 msgstr "Aplicar actualizaciones pendientes"
 
@@ -1966,6 +1969,9 @@ msgstr "Aplicar cuotas a los usuarios seleccionados"
 
 msgid "Apply Update"
 msgstr "Aplicar actualización"
+
+msgid "Apply User"
+msgstr ""
 
 msgid "Apply permissions recursively"
 msgstr "Aplicar permisos de forma recursiva"
@@ -3654,6 +3660,26 @@ msgstr "Confirmar contraseña de SED"
 
 msgid "Confirm Secret Key"
 msgstr "Confirmar clave secreta"
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i> are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i> are submitted only when this box is set."
+msgstr ""
 
 msgid "Confirm detach"
 msgstr "Confirmar desprendimiento"

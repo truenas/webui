@@ -1499,6 +1499,9 @@ msgstr ""
 msgid "Apply Failover Upgrade"
 msgstr ""
 
+msgid "Apply Group"
+msgstr ""
+
 msgid "Apply Pending Updates"
 msgstr ""
 
@@ -1515,6 +1518,9 @@ msgid "Apply Quotas to Selected Users"
 msgstr ""
 
 msgid "Apply Update"
+msgstr ""
+
+msgid "Apply User"
 msgstr ""
 
 msgid "Apply permissions recursively"
@@ -2888,6 +2894,26 @@ msgid "Confirm SED Password"
 msgstr ""
 
 msgid "Confirm Secret Key"
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i> are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i> are submitted only when this box is set."
 msgstr ""
 
 msgid "Confirm detach"
