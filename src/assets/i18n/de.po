@@ -1593,6 +1593,9 @@ msgstr "Anwenden"
 msgid "Apply Failover Upgrade"
 msgstr "Failover-Upgrade anwenden"
 
+msgid "Apply Group"
+msgstr ""
+
 msgid "Apply Pending Updates"
 msgstr "Ausstehende Aktualisierungen anwenden"
 
@@ -1610,6 +1613,9 @@ msgstr ""
 
 msgid "Apply Update"
 msgstr "Update anwenden"
+
+msgid "Apply User"
+msgstr ""
 
 msgid "Apply permissions recursively"
 msgstr "Berechtigungen rekursiv übernehmen"
@@ -3034,6 +3040,26 @@ msgstr "SED-Passwort bestätigen"
 
 msgid "Confirm Secret Key"
 msgstr "Geheimschlüssel bestätigen"
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i> are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i> are submitted only when this box is set."
+msgstr ""
 
 msgid "Confirm detach"
 msgstr "Bestätigen des Detaches"

@@ -1834,6 +1834,9 @@ msgstr "Применить"
 msgid "Apply Failover Upgrade"
 msgstr "Применить отказоустойчивое обновление"
 
+msgid "Apply Group"
+msgstr ""
+
 msgid "Apply Pending Updates"
 msgstr "Применить ожидающие обновления"
 
@@ -1851,6 +1854,9 @@ msgstr ""
 
 msgid "Apply Update"
 msgstr "Применить обновление"
+
+msgid "Apply User"
+msgstr ""
 
 msgid "Apply permissions recursively"
 msgstr "Применить разрешения рекурсивно"
@@ -3429,6 +3435,26 @@ msgstr "Подтвердите пароль SED"
 
 msgid "Confirm Secret Key"
 msgstr "Подтвердите секретный ключ"
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i> are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i> are submitted only when this box is set."
+msgstr ""
 
 msgid "Confirm detach"
 msgstr "Подтвердите отключение"
