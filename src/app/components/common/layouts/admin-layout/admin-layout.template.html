@@ -11,10 +11,22 @@
             <a routerLink="/dashboard" class="logo-text"><mat-icon svgIcon="freenas_logotype" alt="FreeNAS" class="app-logo-text"></mat-icon></a>
           </div>
 
-          <!-- TrueNAS -->
-          <div class="branding topbar" *ngIf="!retroLogo">
-            <a routerLink="/dashboard" class="logo"><mat-icon svgIcon="truenas_logomark" alt="TrueNAS Core logo" class="app-logo"></mat-icon></a>
-            <a routerLink="/dashboard" class="logo-text"><mat-icon svgIcon="truenas_logotype" alt="TrueNAS Core" class="app-logo-text"></mat-icon></a>
+          <!-- TrueNAS Core -->
+          <div class="branding topbar" *ngIf="!retroLogo && product_type == 'CORE' ">
+            <a routerLink="/dashboard" class="logo"><mat-icon svgIcon="truenas_core_logomark" alt="TrueNAS Core logo" class="app-logo"></mat-icon></a>
+            <a routerLink="/dashboard" class="logo-text"><mat-icon svgIcon="truenas_core_logotype" alt="TrueNAS Core" class="app-logo-text"></mat-icon></a>
+          </div>
+
+          <!-- TrueNAS Enterprise -->
+          <div class="branding topbar" *ngIf="!retroLogo && product_type == 'ENTERPRISE' ">
+            <a routerLink="/dashboard" class="logo"><mat-icon svgIcon="truenas_enterprise_logomark" alt="TrueNAS Core logo" class="app-logo"></mat-icon></a>
+            <a routerLink="/dashboard" class="logo-text"><mat-icon svgIcon="truenas_enterprise_logotype" alt="TrueNAS Core" class="app-logo-text"></mat-icon></a>
+          </div>
+
+          <!-- TrueNAS Scale -->
+          <div class="branding topbar {{'truenas-' + product_type.toLowerCase()}}" *ngIf="!retroLogo && product_type == 'SCALE' ">
+            <a routerLink="/dashboard" class="logo"><mat-icon svgIcon="truenas_scale_logomark" alt="TrueNAS Core logo" class="app-logo"></mat-icon></a>
+            <a routerLink="/dashboard" class="logo-text"><mat-icon svgIcon="truenas_scale_logotype" alt="TrueNAS Core" class="app-logo-text"></mat-icon></a>
           </div>
 
         </div>

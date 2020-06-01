@@ -50,17 +50,6 @@ export class AppComponent {
     public matIconRegistry: MatIconRegistry,
     public chartDataUtils: ChartDataUtilsService) {
 
-    //Fetch system profile
-    this.product_type = window.localStorage['product_type'];
-    console.log(this.product_type);
-    let logoFile = 'truenas_core';
-    switch(this.product_type) {
-      case 'ENTERPRISE':
-        logoFile = '';
-      break;
-    }
-    
-
     /*
     * MISC CUSTOM ICONS
     * When importing SVG asset files here
@@ -130,7 +119,7 @@ export class AppComponent {
     // TRUENAS CORE
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logotype",
@@ -148,7 +137,7 @@ export class AppComponent {
     // TRUENAS SCALE
     this.matIconRegistry.addSvgIcon(
       "truenas_scale_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_scale_logotype",
