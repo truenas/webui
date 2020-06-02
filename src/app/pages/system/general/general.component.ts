@@ -413,7 +413,7 @@ export class GeneralComponent {
       _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
       entityEdit.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
       _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
-    }, 2000);
+    }, 3000);
 
     entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);

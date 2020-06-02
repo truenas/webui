@@ -18,15 +18,15 @@ export class LocaleService {
     constructor(public prefService: PreferencesService, public ws: WebSocketService, private core: CoreService) {
         this.ws.call('system.general.config').subscribe(res => {
             this.timeZone = res.timezone;
-            this.core.emit({name:"UserPreferencesRequest", sender:this});
-            this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
-              if(this.isWaiting){
-                this.target.next({name:"SubmitComplete", sender: this});
-                this.isWaiting = false;
-              }
-              this.dateFormat = evt.data.dateFormat;
-              this.timeFormat = evt.data.timeFormat;
-            });
+            // this.core.emit({name:"UserPreferencesRequest", sender:this});
+            // this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+            //   if(this.isWaiting){
+            //     this.target.next({name:"SubmitComplete", sender: this});
+            //     this.isWaiting = false;
+            //   }
+            //   this.dateFormat = evt.data.dateFormat;
+            //   this.timeFormat = evt.data.timeFormat;
+            // });
         })
      };
 
@@ -41,7 +41,8 @@ export class LocaleService {
             { label: moment().format('MMM D, YYYY'), value: 'MMM D, YYYY' },
             { label: moment().format('D MMM YYYY'), value: 'D MMM YYYY' },
             { label: moment().format('MM/DD/YYYY'), value: 'MM/DD/YYYY' },
-            { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY' }
+            { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY' },
+            { label: moment().format('DD.MM.YYYY'), value: 'DD.MM.YYYY' }
           ];
           return options;
     }
@@ -73,16 +74,16 @@ export class LocaleService {
     }
 
     getPreferredDateFormat() {
-        return this.dateFormat;
+        return this.prefService.preferences.dateFormat;
     }
 
     getPreferredTimeFormat() {
-        return this.timeFormat;
+        return this.prefService.preferences.timeFormat;
     }
     
     // Translates moment.js format to angular template format for use in special cases such as form-scheduler
     getAngularFormat() {
-        let tempStr = `${this.dateFormat} ${this.timeFormat}`
+        let tempStr = `${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`;
         let dateStr = '';
         for (let i = 0; i < tempStr.length; i++) {
             tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i] :
