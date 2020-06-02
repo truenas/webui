@@ -30,6 +30,7 @@ export class AppComponent {
   appTitle = 'TrueNAS';
   protected accountUserResource: string = 'account/users/1';
   protected user: any;
+  public product_type: string = '';
 
   constructor(public title: Title,
     private router: Router,
@@ -89,14 +90,18 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
     );
 
-    // TRUENAS
+    // TRUENAS ENTERPRISE
     this.matIconRegistry.addSvgIcon(
       "truenas_logomark", // Generic Alias
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logotype", // Generic Alias
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_enterprise_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_enterprise_logotype",
@@ -108,13 +113,13 @@ export class AppComponent {
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_enterprise_text_only",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_text_only.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
     );
 
     // TRUENAS CORE
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logotype",
@@ -124,15 +129,15 @@ export class AppComponent {
       "truenas_core_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logo_full.svg")
     );
-    this.matIconRegistry.addSvgIcon(
+    /*this.matIconRegistry.addSvgIcon(
       "truenas_core_text_only",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_text_only.svg")
-    );
+    );*/
 
     // TRUENAS SCALE
     this.matIconRegistry.addSvgIcon(
       "truenas_scale_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_logomark.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logomark.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_scale_logotype",
@@ -142,10 +147,11 @@ export class AppComponent {
       "truenas_scale_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logo_full.svg")
     );
-    this.matIconRegistry.addSvgIcon(
+    /*this.matIconRegistry.addSvgIcon(
       "truenas_scale_text_only",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_text_only.svg")
-    );
+    );*/
+
 
     // FREENAS
     this.matIconRegistry.addSvgIcon(
@@ -191,10 +197,15 @@ export class AppComponent {
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
-    if (product === "FreeNAS") {
-      this.setFavicon("assets/images/favicon-96x96.png");
+    if(window.localStorage.product_type){
+      let cachedType = window.localStorage['product_type'].toLowerCase();
+      let path = "assets/images/truenas_" + cachedType + "_favicon.png";
+      this.setFavicon(path);
     } else {
-      this.setFavicon("assets/images/TrueNAS_favicon.png");
+      ws.call('system.product_type').subscribe((res) => {
+        let path = "assets/images/truenas_" + res.toLowerCase() + "_favicon.png";
+        this.setFavicon(path);
+      });
     }
 
     if (this.detectBrowser("Safari")) {

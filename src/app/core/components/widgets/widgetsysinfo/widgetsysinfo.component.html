@@ -23,7 +23,7 @@
             </button>
 
             <div class="platform-logo-wrapper" fxFlex="20">
-                <ng-container *ngIf="product_image; else textOnly">
+                <ng-container *ngIf="product_image || isPassive; else textOnly">
                   <mat-icon *ngIf="retroLogo == 1" svgIcon="freenas_logo_full" class="retro" id="{{product_model}}"></mat-icon>
                   <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" svgIcon="truenas_core_logo_full" id="{{product_model}}"></mat-icon>
                   <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" svgIcon="truenas_enterprise_logo_full" id="{{product_model}}"></mat-icon>
@@ -32,9 +32,9 @@
 
                 <ng-template #textOnly>
                   <mat-icon *ngIf="retroLogo == 1" svgIcon="freenas_logotype" class="retro" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" svgIcon="truenas_core_text_only" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" svgIcon="truenas_enterprise_text_only" id="{{product_model}}"></mat-icon>
-                  <mat-icon *ngIf="retroLogo == 0 && product_type == 'SCALE'" svgIcon="truenas_scale_text_only" id="{{product_model}}"></mat-icon>
+                  <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" svgIcon="truenas_core_logotype" id="{{product_model}}"></mat-icon>
+                  <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" svgIcon="truenas_enterprise_logotype" id="{{product_model}}"></mat-icon>
+                  <mat-icon *ngIf="retroLogo == 0 && product_type == 'SCALE'" svgIcon="truenas_scale_logotype" id="{{product_model}}"></mat-icon>
                 </ng-template>
             </div>
 
@@ -44,7 +44,7 @@
                 <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
                     <!--<mat-icon *ngIf="product_type === 'CORE' && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>-->
-                    <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logomark"></mat-icon>
+                    <mat-icon *ngIf="retroLogo == 1 && !isPassive" class="generic" svgIcon="freenas_logomark"></mat-icon>
                     <mat-icon *ngIf="product_type === 'CORE' && !certified && retroLogo == 0" class="generic" svgIcon="truenas_core_logomark"></mat-icon>
                     <mat-icon *ngIf="product_type === 'CORE' && certified && retroLogo == 0" class="generic certified" svgIcon="freenas_certified"></mat-icon>
                     <mat-icon *ngIf="ready && !isPassive && product_type === 'ENTERPRISE' && !certified && retroLogo == 0" class="generic" svgIcon="truenas_enterprise_logomark"></mat-icon>

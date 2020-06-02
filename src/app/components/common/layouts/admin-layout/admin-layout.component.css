@@ -10,17 +10,30 @@
 
 .app-logo{
   top: 13px;
-  width:40px;
-  height:40px;
+  width: 36px;
+  height: 36px;
+}
+
+.truenas-scale .app-logo{
+  top: 12px;
+  width: 40px;
+  height: 40px;
 }
 
 .retro .app-logo{
+  width:40px;
+  height:40px;
   /*left: 32px;*/
 }
 
 .branding .app-logo-text {
-  width: 105px;
+  width: 96px; 
   height: auto;
+  top: 11px;
+}
+
+.branding.retro .app-logo-text {
+  width: 105px;
   top: 7px;
 }
 
