@@ -198,6 +198,7 @@ export class ConfigurationComponent {
   }
 
   resourceTransformIncomingRestData(data) {
+    data['hosts'] = data.hosts.split('\n');   
     data['netbios'] = data['service_announcement']['netbios'];
     data['mdns'] = data['service_announcement']['mdns'];
     data['wsd'] = data['service_announcement']['wsd'];
@@ -206,6 +207,7 @@ export class ConfigurationComponent {
   }
 
   clean(data) {
+    data.hosts = data.hosts.join('\n');
     data['service_announcement'] = {
       'netbios':data['netbios'],
       'mdns':data['mdns'],
