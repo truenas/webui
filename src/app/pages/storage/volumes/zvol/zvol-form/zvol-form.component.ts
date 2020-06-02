@@ -251,8 +251,8 @@ export class ZvolFormComponent {
     }
     if (this.origHuman !== data.volsize) {
       data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
-    } else { 
-      data.volsize = this.origVolSize;
+    } else {
+      delete data.volsize;
     }
     return data;
   }
@@ -465,7 +465,7 @@ export class ZvolFormComponent {
       } else {
         volblocksize_integer_value = volblocksize_integer_value * 1024
       }
-      if(this.edit_data.volsize%volblocksize_integer_value !== 0){
+      if(this.edit_data.volsize && this.edit_data.volsize%volblocksize_integer_value !== 0){
         this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize%volblocksize_integer_value)
       }
       let rounded_vol_size  = res[0].volsize.parsed
@@ -474,7 +474,7 @@ export class ZvolFormComponent {
         rounded_vol_size  = res[0].volsize.parsed + (volblocksize_integer_value - res[0].volsize.parsed%volblocksize_integer_value)
       }
 
-      if(this.edit_data.volsize >= rounded_vol_size){
+      if(!this.edit_data.volsize || this.edit_data.volsize >= rounded_vol_size){
         this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(
