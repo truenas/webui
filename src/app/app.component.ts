@@ -197,11 +197,8 @@ export class AppComponent {
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
-    if (product === "FreeNAS") {
-      this.setFavicon("assets/images/favicon-96x96.png");
-    } else {
-      this.setFavicon("assets/images/TrueNAS_favicon.png");
-    }
+    let path = "assets/images/truenas_" + window.localStorage.getItem('product_type').toLowerCase() + "_favicon.png";
+    this.setFavicon(path);
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";
