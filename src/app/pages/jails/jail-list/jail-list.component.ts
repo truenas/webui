@@ -319,7 +319,6 @@ export class JailListComponent {
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
             dialogRef.close(true);
-            row.state = 'up';
             this.updateRow(row);
             this.updateMultiAction([row]);
           });
@@ -336,7 +335,6 @@ export class JailListComponent {
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
             dialogRef.close(true);
-            row.state = 'up';
             this.updateRow(row);
             this.updateMultiAction([row]);
           });
@@ -357,7 +355,6 @@ export class JailListComponent {
                 dialogRef.componentInstance.submit();
                 dialogRef.componentInstance.success.subscribe((res) => {
                   dialogRef.close(true);
-                  row.state = 'down';
                   this.updateRow(row);
                   this.updateMultiAction([row]);
                 });
@@ -436,11 +433,11 @@ export class JailListComponent {
       (res) => {
         if (res[0]) {
           const prefix = (res[0].state === 'up' && res[0].dhcp === 'on') ? 'DHCP: ' : '';
-          for (let i in this.columns) {
-            if (this.columns[i].prop == 'ip4_addr' && _.split(res[0].ip4_addr, '|').length > 1) {
+          for (const col of this.entityList.allColumns) {
+            if (col.prop == 'ip4_addr' && _.split(res[0].ip4_addr, '|').length > 1) {
               row.ip4_addr = prefix + _.split(res[0].ip4_addr, '|')[1];
             } else {
-              row[this.columns[i].prop] = res[0][this.columns[i].prop];
+              row[col.prop] = res[0][col.prop];
             }
           }
         }
