@@ -77,18 +77,21 @@ export class ServiceNFSComponent {
       config: [
         {
           type: 'input',
+          inputType: 'number',
           name: 'mountd_port',
           placeholder: helptext.nfs_srv_mountd_port_placeholder,
           tooltip: helptext.nfs_srv_mountd_port_tooltip,
         },
         {
           type: 'input',
+          inputType: 'number',
           name: 'rpcstatd_port',
           placeholder: helptext.nfs_srv_rpcstatd_port_placeholder,
           tooltip: helptext.nfs_srv_rpcstatd_port_tooltip,
         },
         {
           type: 'input',
+          inputType: 'number',
           name: 'rpclockd_port',
           placeholder: helptext.nfs_srv_rpclockd_port_placeholder,
           tooltip: helptext.nfs_srv_rpclockd_port_tooltip,
@@ -206,6 +209,11 @@ export class ServiceNFSComponent {
   }
 
   beforeSubmit(data) {
+    for (const prop of ['mountd_port', 'rpcstatd_port', 'rpclockd_port']) {
+      if (data[prop] === "") {
+        data[prop] = null;
+      }
+    }
     data = this.compareBindIps(data);
   }
 
