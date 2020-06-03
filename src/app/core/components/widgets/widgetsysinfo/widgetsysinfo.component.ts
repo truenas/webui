@@ -214,7 +214,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     } else if (sys_product.includes('M40')) {
       this.product_image = '/servers/M40.png';
       this.product_model = 'M40';
-    }  else if (sys_product.includes('M50')) {
+    }  else if (sys_product.includes('M60')) {
       this.product_image = '/servers/M50.png';
       this.product_model = 'M50';
     } else if (sys_product.includes('Z20')) {
