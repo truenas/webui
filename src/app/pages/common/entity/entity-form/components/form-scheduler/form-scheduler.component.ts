@@ -307,6 +307,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
     // 'E' adds the day abbreviation
     this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
+
+    setTimeout(() => {
+      this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
+      console.log(this.ngDateFormat)
+    }, 5000)
   }
 
   ngAfterViewInit(){
