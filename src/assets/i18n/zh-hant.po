@@ -1484,6 +1484,9 @@ msgstr "套用"
 msgid "Apply Failover Upgrade"
 msgstr "套用容錯升級"
 
+msgid "Apply Group"
+msgstr ""
+
 msgid "Apply Pending Updates"
 msgstr "套用擱置中的更新"
 
@@ -1501,6 +1504,9 @@ msgstr ""
 
 msgid "Apply Update"
 msgstr "套用更新"
+
+msgid "Apply User"
+msgstr ""
 
 msgid "Apply permissions recursively"
 msgstr "完整套用權限"
@@ -2874,6 +2880,26 @@ msgstr "確認 SED 密碼"
 
 msgid "Confirm Secret Key"
 msgstr "確認私鑰"
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>Group</i>. To prevent errors, changes to the "
+"<i>Group</i> are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i>  are submitted only when this box is set."
+msgstr ""
+
+msgid ""
+"Confirm changes to <i>User</i>. To prevent errors, changes to the "
+"<i>User</i> are submitted only when this box is set."
+msgstr ""
 
 msgid "Confirm detach"
 msgstr "確認中斷連結"
