@@ -22,10 +22,12 @@
             </span>
           </mat-panel-title>
           <mat-panel-description>
-            {{row.status}}&nbsp;(
+            {{row.status}}&nbsp;
+            <span *ngIf="row.healthy || row.status === 'ONLINE'">(</span>
             <span *ngIf="row.healthy">Healthy</span>
-            <span *ngIf="!row.healthy && row.status == 'ONLINE'">Unhealthy</span>
-            )&nbsp;
+            <span *ngIf="!row.healthy">{{row.status == 'ONLINE' ? 'Unhealthy' : ''}}</span>
+            <span *ngIf="row.healthy || row.status === 'ONLINE'">)</span>
+            &nbsp;
             <span [style.margin-right.px]="5">
               <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
               <ng-template #status>
