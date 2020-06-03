@@ -83,7 +83,8 @@
                   <div class="pool-status tr" >
                     <div class="td label"><strong>Pool Status:</strong></div>
                     <div class="td">
-                    <span class="capitalize">{{poolState.healthy ? 'Healthy' : 'Unhealthy'}}</span>
+                    <span *ngIf="poolState.healthy" class="capitalize">Healthy</span>
+                    <span *ngIf="!poolState.healthy && poolState.status == 'ONLINE'" class="capitalize">Unhealthy</span>
                       <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" class="{{poolHealth.level}} lock-icon-wrapper icon">
                         &nbsp;<mat-icon>lock</mat-icon>
                       </span>
