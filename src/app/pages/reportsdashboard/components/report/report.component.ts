@@ -161,7 +161,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   formatTime(stamp){
     let parsed = Date.parse(stamp);
-    return this.localeService.formatDateTime(new Date(parsed), this.timezone);
+    const result = this.localeService.formatDateTime(new Date(parsed), this.timezone);
+    return result.toLowerCase() !== 'invalid date' ?  result : null;
+
   }
 
   constructor(public router: Router, 
@@ -176,7 +178,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     });
     
     this.core.register({observerClass:this, eventName:"LegendEvent-" + this.chartId}).subscribe((evt:CoreEvent) => {
-      this.legendData = evt.data;
+      let clone = Object.assign({}, evt.data);
+      clone.xHTML = this.formatTime(evt.data.xHTML);
+      this.legendData = clone;
     });
 
     this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
