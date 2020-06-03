@@ -22,6 +22,12 @@
             </span>
           </mat-panel-title>
           <mat-panel-description>
+            {{row.status}}&nbsp;
+            <span *ngIf="row.healthy || row.status === 'ONLINE'">(</span>
+            <span *ngIf="row.healthy">Healthy</span>
+            <span *ngIf="!row.healthy">{{row.status == 'ONLINE' ? 'Unhealthy' : ''}}</span>
+            <span *ngIf="row.healthy || row.status === 'ONLINE'">)</span>
+            &nbsp;
             <span [style.margin-right.px]="5">
               <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
               <ng-template #status>
@@ -33,9 +39,15 @@
                 >cancel</i>
               </ng-template>
             </span>
-            {{row.healthy ? 'HEALTHY' : row.status}}<span *ngIf="row.usedStr && row.availStr">:&nbsp;{{row.usedStr}} {{"Used" | translate}} / {{row.availStr}} {{"Free" | translate}}</span>
+            <span *ngIf="row.usedStr && row.availStr">
+              &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
+              {{row.usedStr}} {{"Used" | translate}} 
+              &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
+              {{row.availStr}} {{"Free" | translate}}
+            </span>
           </mat-panel-description>
         </mat-expansion-panel-header>
+
         <div fxLayoutAlign="end start" class="icon-row">
           <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
             <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row" [action]="'settings'" [groups]="true"></app-entity-table-actions>
