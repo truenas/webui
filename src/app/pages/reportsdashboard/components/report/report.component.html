@@ -93,7 +93,7 @@
 
           <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
             <div >
-              <span *ngIf="data && legendData">
+              <span *ngIf="data && legendData && legendData.xHTML">
                 <h4>
                   <strong>Time:</strong> 
                   <span *ngIf="legendData && legendData.xHTML" style="font-weight:normal;">

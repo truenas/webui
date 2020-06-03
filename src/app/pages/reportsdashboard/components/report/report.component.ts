@@ -161,7 +161,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   formatTime(stamp){
     let parsed = Date.parse(stamp);
-    return this.localeService.formatDateTime(new Date(parsed), this.timezone);
+    const result = this.localeService.formatDateTime(new Date(parsed), this.timezone);
+    return result.toLowerCase() !== 'invalid date' ?  result : null;
+
   }
 
   constructor(public router: Router, 
