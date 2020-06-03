@@ -72,7 +72,9 @@ export class SMBListComponent {
         name: "share_acl",
         label: helptext_sharing_smb.action_share_acl,
         onClick: row => {
-          this.ws.call('smb.sharesec.query', [[["share_name", "=", row.name]]]).subscribe(
+          // A home share has a name (homes) set; row.name works for other shares
+          const searchName = row.home ? 'homes' : row.name;
+          this.ws.call('smb.sharesec.query', [[["share_name", "=", searchName]]]).subscribe(
             (res) => {
               this.router.navigate(
                 ["/"].concat(["sharing", "smb", "acl", res[0].id]));
