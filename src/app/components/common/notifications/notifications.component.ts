@@ -25,6 +25,9 @@ export class NotificationsComponent implements OnInit {
       this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
     }, 1000)
 
+    setTimeout(() => {
+      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
+    }, 5000)
 
     this.notificationsService.getNotifications().subscribe((notifications)=>{
       this.notifications = [];
