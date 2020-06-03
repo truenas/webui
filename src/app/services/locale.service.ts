@@ -18,15 +18,6 @@ export class LocaleService {
     constructor(public prefService: PreferencesService, public ws: WebSocketService, private core: CoreService) {
         this.ws.call('system.general.config').subscribe(res => {
             this.timeZone = res.timezone;
-            // this.core.emit({name:"UserPreferencesRequest", sender:this});
-            // this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
-            //   if(this.isWaiting){
-            //     this.target.next({name:"SubmitComplete", sender: this});
-            //     this.isWaiting = false;
-            //   }
-            //   this.dateFormat = evt.data.dateFormat;
-            //   this.timeFormat = evt.data.timeFormat;
-            // });
         })
      };
 

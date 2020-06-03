@@ -310,7 +310,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
     setTimeout(() => {
       this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
-      console.log(this.ngDateFormat)
     }, 5000)
   }
 
