@@ -63,7 +63,12 @@
             <div class="legend-timestamp">
               <div >
                 <span *ngIf="data && legendData">
-                  <h4><strong>Start:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span><span class="text-small"> ({{timezone}})</span></h4>
+                  <h4>
+                    <strong>Start:</strong> 
+                    <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span>
+                    <br ngClass.gt-sm="hidden">
+                    <span style="margin-left:0px;" class="text-small"> ({{timezone}})</span>
+                  </h4>
                 </span>
               </div>
             </div>
@@ -71,7 +76,12 @@
             <div class="legend-timestamp">
               <div >
                 <span *ngIf="data && legendData">
-                  <h4><strong>End:</strong> <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span></h4>
+                  <h4>
+                    <strong>End:</strong> 
+                    <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span>
+                    <br ngClass.gt-sm="hidden">
+                    <span style="opacity:0;" class="text-small"> ({{timezone}})</span>
+                  </h4>
                 </span>
               </div>
             </div>
@@ -84,7 +94,7 @@
           <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
             <div >
               <span *ngIf="data && legendData">
-                <h4><strong>Time:</strong> <span *ngIf="legendData && legendData.xHTML" style="font-weight:normal;">&nbsp;&nbsp;{{legendData.xHTML}}</span></h4>
+                <h4><strong>Time:</strong> <span *ngIf="legendData && legendData.xHTML" style="font-weight:normal;">&nbsp;&nbsp;{{formatTime(legendData.xHTML)}}</span></h4>
               </span>
             </div>
           </div>

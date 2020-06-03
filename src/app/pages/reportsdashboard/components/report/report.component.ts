@@ -20,6 +20,11 @@ import { LocaleService } from 'app/services/locale.service';
 
 import { T } from '../../../../translate-marker';
 
+interface DateTime {
+  dateFormat: string;
+  timeFormat: string
+}
+
 export interface TimeData {
   start: number;// Seconds since epoch time
   end?: number;// Seconds since epoch time
@@ -67,7 +72,8 @@ export interface ReportData {
 export class ReportComponent extends WidgetComponent implements AfterViewInit, AfterContentInit, OnChanges ,OnDestroy {
 
   // Labels
-  @Input() localControls?: boolean = true;; 
+  @Input() localControls?: boolean = true;
+  @Input() dateFormat?: DateTime;
   @Input() report: Report;
   @Input() multipathTitle?: string;
   @Input() identifier?: string;
@@ -151,6 +157,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   }
   get endTime(){
     return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
+  }
+
+  formatTime(stamp){
+    let parsed = Date.parse(stamp);
+    return this.localeService.formatDateTime(new Date(parsed), this.timezone);
   }
 
   constructor(public router: Router, 
