@@ -22,11 +22,7 @@
             </span>
           </mat-panel-title>
           <mat-panel-description>
-            {{row.healthy ? 'HEALTHY' : 'UNHEALTHY'}}&nbsp;
-            <i class="material-icons green-icon" *ngIf="row.healthy">check_circle</i>
-            <i class="material-icons red-icon" *ngIf="!row.healthy">cancel</i>
-            &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
-            {{row.status}}&nbsp;
+            {{row.status}}&nbsp;({{row.healthy ? 'Healthy' : 'Unhealthy'}})&nbsp;
             <span [style.margin-right.px]="5">
               <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
               <ng-template #status>
