@@ -205,6 +205,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   ngOnChanges(changes: SimpleChanges){
     if(changes.poolState){
+      console.log(changes.poolState);
     } 
     
     if(changes.volumeData){
