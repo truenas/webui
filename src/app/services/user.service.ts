@@ -7,8 +7,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class UserService {
-  public static VALIDATOR_NAME = /^[a-zA-Z_][a-zA-Z0-9_\.-]*[$]?$/;
-
+  public static VALIDATOR_NAME = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
   protected uncachedUserQuery = 'dscache.get_uncached_user';
   protected uncachedGroupQuery = 'dscache.get_uncached_group';
   protected userQuery = 'user.query';
