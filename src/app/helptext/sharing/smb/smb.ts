@@ -93,7 +93,7 @@ export const helptext_sharing_smb = {
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
  Separate entries by pressing <code>Enter</code>. A more detailed description \
  with examples can be found \
- <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW">here</a>. <br><br> \
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW" target="_blank">here</a>. <br><br> \
  If neither *Hosts Allow* or *Hosts Deny* contains \
  an entry, then AFP share access is allowed for any host. <br><br> \
  If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
