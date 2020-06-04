@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import helptext from '../../../../helptext/services/components/service-nfs';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 
 @Component({
   selector: 'nfs-edit',
@@ -80,18 +81,21 @@ export class ServiceNFSComponent {
           name: 'mountd_port',
           placeholder: helptext.nfs_srv_mountd_port_placeholder,
           tooltip: helptext.nfs_srv_mountd_port_tooltip,
+          validation: [rangeValidator(1, 65535)]
         },
         {
           type: 'input',
           name: 'rpcstatd_port',
           placeholder: helptext.nfs_srv_rpcstatd_port_placeholder,
           tooltip: helptext.nfs_srv_rpcstatd_port_tooltip,
+          validation: [rangeValidator(1, 65535)]
         },
         {
           type: 'input',
           name: 'rpclockd_port',
           placeholder: helptext.nfs_srv_rpclockd_port_placeholder,
           tooltip: helptext.nfs_srv_rpclockd_port_tooltip,
+          validation: [rangeValidator(1, 65535)]
         }
       ]
     },
@@ -206,6 +210,11 @@ export class ServiceNFSComponent {
   }
 
   beforeSubmit(data) {
+    for (const prop of ['mountd_port', 'rpcstatd_port', 'rpclockd_port']) {
+      if (data[prop] === "") {
+        data[prop] = null;
+      }
+    }
     data = this.compareBindIps(data);
   }
 
