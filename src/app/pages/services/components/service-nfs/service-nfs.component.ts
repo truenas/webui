@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import helptext from '../../../../helptext/services/components/service-nfs';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 
 @Component({
   selector: 'nfs-edit',
@@ -77,24 +78,24 @@ export class ServiceNFSComponent {
       config: [
         {
           type: 'input',
-          inputType: 'number',
           name: 'mountd_port',
           placeholder: helptext.nfs_srv_mountd_port_placeholder,
           tooltip: helptext.nfs_srv_mountd_port_tooltip,
+          validation: [rangeValidator(1, 65535)]
         },
         {
           type: 'input',
-          inputType: 'number',
           name: 'rpcstatd_port',
           placeholder: helptext.nfs_srv_rpcstatd_port_placeholder,
           tooltip: helptext.nfs_srv_rpcstatd_port_tooltip,
+          validation: [rangeValidator(1, 65535)]
         },
         {
           type: 'input',
-          inputType: 'number',
           name: 'rpclockd_port',
           placeholder: helptext.nfs_srv_rpclockd_port_placeholder,
           tooltip: helptext.nfs_srv_rpclockd_port_tooltip,
+          validation: [rangeValidator(1, 65535)]
         }
       ]
     },
