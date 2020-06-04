@@ -66,9 +66,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       switch(evt.name){
         case "VisualizerReady":
           this.extractVisualizations();
-          /*if(!this.errors){
-            this.errors = [];
-          }*/
           break;
         case "EnclosureCanvas":
           if(!this.nav){
@@ -80,9 +77,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           el.appendChild(evt.data.canvas);
           break;
         case "Error":
-          /*if(!this.errors){
-            this.errors = [];
-          }*/ 
           this.errors.push(evt.data);
           console.warn({ ERROR_REPORT: this.errors});
           
