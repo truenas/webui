@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment-timezone';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { WebSocketService } from './ws.service';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
+import { pluck } from 'rxjs/operators';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { T } from "app/translate-marker";
 
@@ -13,13 +14,36 @@ export class LocaleService {
     isWaiting =  false;
     dateFormat = 'YYYY-MM-DD';
     timeFormat = 'HH:mm:ss';
+    dateTimeFormatChange$ = new Subject();
     public target: Subject<CoreEvent> = new Subject();
 
     constructor(public prefService: PreferencesService, public ws: WebSocketService, private core: CoreService) {
         this.ws.call('system.general.config').subscribe(res => {
             this.timeZone = res.timezone;
         })
+        if (window.localStorage.getItem('dateFormat')) {
+            this.dateFormat = window.localStorage.getItem('dateFormat')
+        }
+        if (window.localStorage.getItem('timeFormat')) {
+            this.dateFormat = window.localStorage.getItem('timeFormat')
+        }
+        this.getPrefs();
      };
+
+     getPrefs() {
+        console.log('getting prefs')
+        this.core.emit({name:"UserPreferencesRequest", sender:this});
+        this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+            console.log(evt)
+          if(this.isWaiting){
+            this.target.next({name:"SubmitComplete", sender: this});
+            this.isWaiting = false;
+          }
+          this.dateFormat = evt.data.dateFormat;
+          this.timeFormat = evt.data.timeFormat;
+          this.dateTimeFormatChange$.next();
+        });
+    }
 
     getDateFormatOptions(tz?: string) {
         if (tz) {
@@ -56,6 +80,12 @@ export class LocaleService {
     }
 
     saveDateTimeFormat(dateFormat, timeFormat) {
+        this.dateFormat = dateFormat;
+        this.timeZone = timeFormat;
+        window.localStorage.setItem('dateFormat', this.dateFormat);
+        window.localStorage.setItem('timeFormat', this.timeFormat);
+        this.dateTimeFormatChange$.next();
+
         this.core.emit({ name: 'ChangePreference', data: {
             key: 'dateFormat', value: dateFormat
         }, sender:this});
@@ -65,16 +95,16 @@ export class LocaleService {
     }
 
     getPreferredDateFormat() {
-        return this.prefService.preferences.dateFormat;
+        return this.dateFormat;
     }
 
     getPreferredTimeFormat() {
-        return this.prefService.preferences.timeFormat;
+        return this.timeFormat;
     }
     
     // Translates moment.js format to angular template format for use in special cases such as form-scheduler
     getAngularFormat() {
-        let tempStr = `${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`;
+        let tempStr = `${this.dateFormat} ${this.timeFormat}`;
         let dateStr = '';
         for (let i = 0; i < tempStr.length; i++) {
             tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i] :

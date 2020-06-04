@@ -14,26 +14,19 @@ export class NotificationsComponent implements OnInit {
 
   notifications: Array<NotificationAlert> = [];
   dismissedNotifications: Array<NotificationAlert> = []
-  ngDateFormat;
+  ngDateFormat = 'yyyy-MM-dd HH:mm:ss';
 
   constructor(private notificationsService: NotificationsService, protected localeService: LocaleService) {
   }
 
   ngOnInit() {
     this.initData();
-    setTimeout(() => {
-      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
-    }, 1000)
-
-    setTimeout(() => {
-      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
-    }, 5000)
-
     this.notificationsService.getNotifications().subscribe((notifications)=>{
       this.notifications = [];
       this.dismissedNotifications = [];
 
       setTimeout(()=>{
+        this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
         notifications.forEach((notification: NotificationAlert) => {
           if (notification.dismissed === false) {
             if (!_.find(this.notifications, {id:notification.id})) {
@@ -47,6 +40,9 @@ export class NotificationsComponent implements OnInit {
         });
       }, -1);
     });
+    this.localeService.dateTimeFormatChange$.subscribe(() => {
+      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
+    })
   }
 
   initData() {
