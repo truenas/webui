@@ -190,22 +190,17 @@ export class ServiceNFSComponent {
         .config.find(config => config.name === 'bindip').options = ipChoices;
     });
 
-    entityForm.formGroup.controls['userd_manage_gids'].valueChanges.subscribe((res)=> {
-      if (entityForm.formGroup.controls['v4'].value) {
-        if (res) {
-          if (entityForm.formGroup.controls['v4_v3owner'].enabled) {
-            entityForm.formGroup.controls['v4_v3owner'].disable();
-          }
-        } else {
-          if (entityForm.formGroup.controls['v4_v3owner'].disabled) {
-            entityForm.formGroup.controls['v4_v3owner'].enable();
-          }
-        }
+    entityForm.formGroup.controls['v4_v3owner'].valueChanges.subscribe((value) => {
+      if (value) {
+        entityForm.formGroup.controls['userd_manage_gids'].setValue(false);
       }
-    });
+    })
   }
 
   beforeSubmit(data) {
+    if (!data.userd_manage_gids) {
+      data.userd_manage_gids = false;
+    }
     data = this.compareBindIps(data);
   }
 
