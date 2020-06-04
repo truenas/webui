@@ -204,6 +204,7 @@ export class ServiceNFSComponent {
   beforeSubmit(data) {
     if (!data.userd_manage_gids) {
       data.userd_manage_gids = false;
+    }
 
     for (const prop of ['mountd_port', 'rpcstatd_port', 'rpclockd_port']) {
       if (data[prop] === "") {
