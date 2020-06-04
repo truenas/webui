@@ -113,19 +113,17 @@ export class ServiceNFSComponent {
       }
     });
 
-    entityForm.formGroup.controls['nfs_srv_16'].valueChanges.subscribe((res)=> {
-      if (entityForm.formGroup.controls['nfs_srv_v4'].value) {
-        if (res) {
-          if (entityForm.formGroup.controls['nfs_srv_v4_v3owner'].enabled) {
-            entityForm.formGroup.controls['nfs_srv_v4_v3owner'].disable();
-          }
-        } else {
-          if (entityForm.formGroup.controls['nfs_srv_v4_v3owner'].disabled) {
-            entityForm.formGroup.controls['nfs_srv_v4_v3owner'].enable();
-          }
-        }
+    entityForm.formGroup.controls['nfs_srv_v4_v3owner'].valueChanges.subscribe((value)=> {
+      if (value) {
+        entityForm.formGroup.controls['nfs_srv_16'].setValue(false);
       }
     });
+  }
+
+  beforeSubmit(data) {
+    if (!data.nfs_srv_16) {
+      data.nfs_srv_16 = false;
+    }
   }
 
 }
