@@ -16,6 +16,8 @@ import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/r
 export class ServiceNFSComponent {
   protected queryCall = 'nfs.config';
   protected route_success: string[] = ['services'];
+  productType = window.localStorage.getItem('product_type');
+  hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
@@ -183,6 +185,11 @@ export class ServiceNFSComponent {
   }
 
   afterInit(entityForm: EntityFormComponent) {
+    if (this.productType === 'SCALE') {
+      this.hideOnScale.forEach(name => {
+        entityForm.setDisabled(name, true, true);
+      })
+    }
     entityForm.submitFunction = body => this.ws.call('nfs.update', [body]);
 
     this.ipChoices$.subscribe(ipChoices => {
