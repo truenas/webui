@@ -28,6 +28,8 @@ export class NFSFormComponent {
   protected isBasicMode = true;
   public entityForm: EntityFormComponent;
   public save_button_enabled = true;
+  productType = window.localStorage.getItem('product_type');
+  hideOnScale = ['alldirs', 'quiet'];
 
   public fieldSets = new FieldSets([
     {
@@ -298,6 +300,12 @@ export class NFSFormComponent {
       this.nfs_maproot_group = this.fieldSets.config('maproot_group');
       this.nfs_maproot_group.options = groups;
     });
+
+    if (this.productType === 'SCALE') {
+      this.hideOnScale.forEach(name => {
+        this.entityForm.setDisabled(name, true, true);
+      })
+    }
   }
 
   isCustActionVisible(actionId: string) {

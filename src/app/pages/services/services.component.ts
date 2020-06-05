@@ -29,6 +29,7 @@ export class Services implements OnInit {
 
   public services: any[];
   public busy: Subscription;
+  productType = window.localStorage.getItem('product_type');
 
   public name_MAP: Object = {
     'afp': 'AFP',
@@ -81,8 +82,11 @@ export class Services implements OnInit {
       ])
       .subscribe((res) => {
         this.services = res;
+        console.log(res)
+        // nfs and webdav are hidden temporarily in SCALE, to be restored when ready
+        let hidden = this.productType === 'SCALE' ? ['nfs', 'webdav', 'netdata'] : ['netdata'];
         this.services.forEach((item) => {
-          if (item.service !== 'netdata' && item.service) {
+          if (!hidden.includes(item.service)) {
             if (this.name_MAP[item.service]) {
               item.label = this.name_MAP[item.service];
             } else {
