@@ -39,6 +39,7 @@ export class LocaleService {
           }
           this.dateFormat = evt.data.dateFormat;
           this.timeFormat = evt.data.timeFormat;
+          this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
           this.dateTimeFormatChange$.next();
         });
     }
@@ -80,8 +81,7 @@ export class LocaleService {
     saveDateTimeFormat(dateFormat, timeFormat) {
         this.dateFormat = dateFormat;
         this.timeFormat = timeFormat;
-        window.localStorage.setItem('dateFormat', this.dateFormat);
-        window.localStorage.setItem('timeFormat', this.timeFormat);
+        this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
         this.dateTimeFormatChange$.next();
 
         this.core.emit({ name: 'ChangePreference', data: {
@@ -90,6 +90,11 @@ export class LocaleService {
         this.core.emit({ name: 'ChangePreference', data: {
            key: 'timeFormat', value: timeFormat
         }, sender:this});
+    }
+
+    storeDateTimeFormat(dateFormat: string, timeFormat: string) {
+        window.localStorage.setItem('dateFormat', dateFormat);
+        window.localStorage.setItem('timeFormat', timeFormat);
     }
 
     getPreferredDateFormat() {
