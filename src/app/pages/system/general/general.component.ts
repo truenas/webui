@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogService, LanguageService, RestService, StorageService, SystemGeneralService, WebSocketService } from '../../../services/';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -21,12 +22,13 @@ import { EntityUtils } from '../../common/entity/utils';
   styleUrls: ['./general.component.css'],
   providers: []
 })
-export class GeneralComponent {
+export class GeneralComponent implements OnDestroy {
   protected queryCall = 'system.general.config';
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
   public languageKey: string;  
+  private dateTimeChangeSubscription: Subscription;
   public fieldConfig: FieldConfig[] = []
 
   public fieldSets: FieldSet[] = [
@@ -408,12 +410,10 @@ export class GeneralComponent {
       this.makeLanguageList();
     });
 
-    setTimeout(() => {
-      entityEdit.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
-      _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
-      entityEdit.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
-      _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
-    }, 3000);
+    this.getDateTimeFormats();
+    this.dateTimeChangeSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
+      this.getDateTimeFormats();
+    })
 
     entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);
@@ -434,6 +434,13 @@ export class GeneralComponent {
         .find(set => set.name === helptext.stg_fieldset_loc)
         .config.find(config => config.name === "date_format").options = dateOptions;
 
+  }
+
+  getDateTimeFormats() {
+    this.entityForm.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
+    _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
+    this.entityForm.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
+    _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
   }
 
   makeLanguageList() {
@@ -612,5 +619,9 @@ export class GeneralComponent {
 
   getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
+  }
+
+  ngOnDestroy() {
+    this.dateTimeChangeSubscription.unsubscribe();
   }
 }

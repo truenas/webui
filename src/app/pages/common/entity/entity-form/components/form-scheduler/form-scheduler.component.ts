@@ -1,4 +1,5 @@
-import {Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, ChangeDetectorRef, SimpleChanges, HostListener, AfterViewInit, AfterViewChecked} from '@angular/core';
+import { Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, 
+  ChangeDetectorRef, SimpleChanges, HostListener, AfterViewInit, AfterViewChecked } from '@angular/core';
 import {FormGroup, FormControl, Validators} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -32,7 +33,8 @@ interface CronDate {
   templateUrl : './form-scheduler.component.html',
   styleUrls:['./form-scheduler.component.css', '../dynamic-field/dynamic-field.css'] 
 })
-export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterViewInit, AfterViewChecked{
+export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterViewInit, 
+  AfterViewChecked {
 
   // Basic form-select props
   public config:FieldConfig;
@@ -307,10 +309,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
     // 'E' adds the day abbreviation
     this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
-
-    setTimeout(() => {
-      this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
-    }, 5000)
   }
 
   ngAfterViewInit(){
@@ -733,4 +731,5 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.updateDaysOfWeekFields(arr[4]);
     this._daysOfWeek = arr[4];
   }
+
 }

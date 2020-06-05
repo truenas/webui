@@ -13,13 +13,36 @@ export class LocaleService {
     isWaiting =  false;
     dateFormat = 'YYYY-MM-DD';
     timeFormat = 'HH:mm:ss';
+    dateTimeFormatChange$ = new Subject();
     public target: Subject<CoreEvent> = new Subject();
 
     constructor(public prefService: PreferencesService, public ws: WebSocketService, private core: CoreService) {
         this.ws.call('system.general.config').subscribe(res => {
             this.timeZone = res.timezone;
         })
+        if (window.localStorage.dateFormat) {
+            this.dateFormat = window.localStorage.getItem('dateFormat')
+        }
+        if (window.localStorage.timeFormat) {
+            this.timeFormat = window.localStorage.getItem('timeFormat')
+        }
+        this.getPrefs();
      };
+
+     getPrefs() {
+        this.core.emit({name:"UserPreferencesRequest", sender:this});
+        this.core.register({observerClass:this,eventName:"UserPreferencesReady"})
+          .subscribe((evt:CoreEvent) => {
+          if(this.isWaiting){
+            this.target.next({name:"SubmitComplete", sender: this});
+            this.isWaiting = false;
+          }
+          this.dateFormat = evt.data.dateFormat;
+          this.timeFormat = evt.data.timeFormat;
+          this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
+          this.dateTimeFormatChange$.next();
+        });
+    }
 
     getDateFormatOptions(tz?: string) {
         if (tz) {
@@ -52,10 +75,15 @@ export class LocaleService {
 
     formatDateTime(date, tz?) {      
         tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
-        return moment(date).format(`${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`);
+        return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
     }
 
     saveDateTimeFormat(dateFormat, timeFormat) {
+        this.dateFormat = dateFormat;
+        this.timeFormat = timeFormat;
+        this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
+        this.dateTimeFormatChange$.next();
+
         this.core.emit({ name: 'ChangePreference', data: {
             key: 'dateFormat', value: dateFormat
         }, sender:this});
@@ -64,17 +92,25 @@ export class LocaleService {
         }, sender:this});
     }
 
+    storeDateTimeFormat(dateFormat: string, timeFormat: string) {
+        window.localStorage.setItem('dateFormat', dateFormat);
+        window.localStorage.setItem('timeFormat', timeFormat);
+    }
+
     getPreferredDateFormat() {
-        return this.prefService.preferences.dateFormat;
+        return this.dateFormat;
     }
 
     getPreferredTimeFormat() {
-        return this.prefService.preferences.timeFormat;
+        return this.timeFormat;
     }
     
     // Translates moment.js format to angular template format for use in special cases such as form-scheduler
     getAngularFormat() {
-        let tempStr = `${this.prefService.preferences.dateFormat} ${this.prefService.preferences.timeFormat}`;
+        let ngTimeFormat: string;
+        // Renders lowercase am and pm
+        ngTimeFormat = this.timeFormat === 'hh:mm:ss a' ?  'hh:mm:ss aaaaa\'m\'' : this.timeFormat;
+        let tempStr = `${this.dateFormat} ${ngTimeFormat}`;
         let dateStr = '';
         for (let i = 0; i < tempStr.length; i++) {
             tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i] :

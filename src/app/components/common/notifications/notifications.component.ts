@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
 import { LocaleService } from 'app/services/locale.service';
+import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 @Component({
@@ -8,32 +9,26 @@ import * as _ from 'lodash';
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.css']
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent implements OnInit, OnDestroy {
 
   @Input() notificPanel;
 
   notifications: Array<NotificationAlert> = [];
   dismissedNotifications: Array<NotificationAlert> = []
-  ngDateFormat;
+  ngDateFormat = 'yyyy-MM-dd HH:mm:ss';
+  dateFormatSubscription: Subscription;
 
   constructor(private notificationsService: NotificationsService, protected localeService: LocaleService) {
   }
 
   ngOnInit() {
     this.initData();
-    setTimeout(() => {
-      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
-    }, 1000)
-
-    setTimeout(() => {
-      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
-    }, 5000)
-
     this.notificationsService.getNotifications().subscribe((notifications)=>{
       this.notifications = [];
       this.dismissedNotifications = [];
 
       setTimeout(()=>{
+        this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
         notifications.forEach((notification: NotificationAlert) => {
           if (notification.dismissed === false) {
             if (!_.find(this.notifications, {id:notification.id})) {
@@ -47,6 +42,9 @@ export class NotificationsComponent implements OnInit {
         });
       }, -1);
     });
+    this.dateFormatSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
+      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
+    })
   }
 
   initData() {
@@ -81,5 +79,9 @@ export class NotificationsComponent implements OnInit {
   turnMeOn(notification: NotificationAlert, e) {
     e.preventDefault();
     this.notificationsService.restoreNotifications([notification]);
+  }
+
+  ngOnDestroy() {
+    this.dateFormatSubscription.unsubscribe();
   }
 }
