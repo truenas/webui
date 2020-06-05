@@ -7,6 +7,7 @@ import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.compon
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 
 interface ViewConfig {
   name: string;
@@ -24,6 +25,7 @@ interface ViewConfig {
 })
 export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
 
+  public errors: ErrorMessage[] = [];
   public events:Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false}) nav: ElementRef
 
@@ -61,10 +63,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   constructor(private core: CoreService, protected router: Router){
 
-    /*if (window.localStorage.getItem('product_type') === 'CORE') {
-      this.router.navigate(['']);
-    }*/
-
     this.events = new Subject<CoreEvent>();
     this.events.subscribe((evt:CoreEvent) => {
       switch(evt.name){
@@ -79,6 +77,10 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           let el = this.nav.nativeElement.querySelector(".enclosure-" + evt.data.profile.enclosureKey);
           evt.data.canvas.setAttribute('style', 'width: 80% ;');
           el.appendChild(evt.data.canvas);
+          break;
+        case "Error":
+          this.errors.push(evt.data);
+          console.warn({ERROR_REPORT: this.errors});
           break;
       }
     })
@@ -142,7 +144,9 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   extractVisualizations(){
     this.system.profile.forEach((item, index) => {
       if(this.system.rearIndex && item.enclosureKey == this.system.rearIndex){ return; }
-      this.events.next({name:"CanvasExtract", data: this.system.profile[index], sender:this});
+      if(this.system.profile){  
+        this.events.next({name:"CanvasExtract", data: this.system.profile[index], sender:this});
+      }
     })
   }
 

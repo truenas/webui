@@ -106,11 +106,11 @@
           </div>
 
         <!-- CAPTION OVERLAY -->
-        <div *ngIf="!chassis.rear && !chassis.internal" class="caption dom-overlay">Choose a Disk</div>
+        <div *ngIf="chassis && !chassis.rear && !chassis.internal" class="caption dom-overlay">Choose a Disk</div>
 
         <!-- FRONT/REAR TOGGLE -->
         <!--<div *ngIf="subenclosure && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">-->
-        <div *ngIf="(chassis.rear || chassis.internal) && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">
+        <div *ngIf="chassis && (chassis.rear || chassis.internal) && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">
           <button mat-button (click)="enclosureOverride('front')">FRONT</button>
           <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride('rear')">REAR</button>
           <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">Internal</button>

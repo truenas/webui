@@ -184,7 +184,6 @@ export class SystemProfiler {
           let spl = vdev.device.split('p');
           let name = spl[0]
           v.disks[name] = -1; // no children so we use this as placeholder
-          console.log(name);
       } else if(vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
           if(!disk.device && disk.status == "REMOVED"){ 
