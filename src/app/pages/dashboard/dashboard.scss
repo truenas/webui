@@ -1,3 +1,23 @@
+.mat-card.loader-progress-wrapper {
+  max-width: 600px;
+  margin: 20% auto auto;
+  padding-top: 40px;
+}
+
+.loader-progress-text .label {
+  position: absolute;
+}
+
+.loader-progress-text .percentage {
+  position: absolute;
+  right: 16px;
+}
+
+.loader-progress-text .label,
+.loader-progress-text .percentage {
+  top: 16px;
+}
+  
 #dashboard-spinner {
   position: absolute;
   left: 48%;
