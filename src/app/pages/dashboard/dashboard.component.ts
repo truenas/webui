@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public optimalDesktopWidth: string = '100%';
   public widgetWidth: number = 540; // in pixels (Desktop only)
 
+  public loaderPct = 0;
   public dashState: DashConfigItem[]; // Saved State
   public activeMobileWidget: DashConfigItem[] = [];
   public availableWidgets: DashConfigItem[] = [];
@@ -370,12 +371,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isDataReady(){
-    const isReady = this.statsDataEvents && this.pools && this.volumeData && this.nics ? true : false;
+    const deps = [this.statsDataEvents, this.pools, this.volumeData, this.nics];
+    const filtered = deps.filter((d) => d !== undefined);
+    this.loaderPct = (filtered.length / deps.length) * 100;
+    const isReady = this.loaderPct == 100; 
     if(isReady){
-      this.availableWidgets = this.generateDefaultConfig();
-      if(!this.dashState){
-        this.dashState = this.availableWidgets;
-      }
+      // Give user a chance to see it reach 100
+      setTimeout(() => {
+        this.loaderPct = 101;
+        this.availableWidgets = this.generateDefaultConfig();
+        if(!this.dashState){
+          this.dashState = this.availableWidgets;
+        }
+      }, 1500);
     }
   }
 
