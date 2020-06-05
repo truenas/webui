@@ -20,10 +20,10 @@ export class LocaleService {
         this.ws.call('system.general.config').subscribe(res => {
             this.timeZone = res.timezone;
         })
-        if (window.localStorage.getItem('dateFormat')) {
+        if (window.localStorage.dateFormat) {
             this.dateFormat = window.localStorage.getItem('dateFormat')
         }
-        if (window.localStorage.getItem('timeFormat')) {
+        if (window.localStorage.timeFormat) {
             this.timeFormat = window.localStorage.getItem('timeFormat')
         }
         this.getPrefs();
