@@ -1,7 +1,7 @@
 <mat-card class="loader-progress-wrapper" *ngIf="loaderPct < 101">
   <mat-card-content class="loader-progress">
     <div class="loader-progress-text">
-      <div class="label"><strong>LOADING DASHBOARD DATA</strong></div>
+      <div class="label"><strong>{{"LOADING DASHBOARD DATA" | translate}}</strong></div>
       <div class="percentage">{{loaderPct.toString()}}%</div>
     </div>
 

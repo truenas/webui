@@ -10,10 +10,11 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import {DashboardComponent} from './dashboard.component';
 import {routing} from './dashboard.routing';
 import { DashboardNoteEditComponent } from './dashboard-note-edit.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports : [ CoreComponents, CommonModule, FormsModule,  routing, 
-  MaterialModule, AppCommonModule , EntityModule],
+  MaterialModule, AppCommonModule , EntityModule, TranslateModule],
   declarations : [
     DashboardComponent,
     DashboardNoteEditComponent

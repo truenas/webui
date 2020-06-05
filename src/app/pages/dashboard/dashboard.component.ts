@@ -11,6 +11,8 @@ import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { RestService,WebSocketService } from '../../services/';
 import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
 import { tween, styler } from 'popmotion';
+import { T } from 'app/translate-marker';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'dashboard',
@@ -383,7 +385,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         if(!this.dashState){
           this.dashState = this.availableWidgets;
         }
-      }, 1500);
+      }, 1000);
     }
   }
 
