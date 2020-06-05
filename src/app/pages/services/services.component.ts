@@ -82,7 +82,7 @@ export class Services implements OnInit {
       ])
       .subscribe((res) => {
         this.services = res;
-        console.log(res)
+  
         // nfs and webdav are hidden temporarily in SCALE, to be restored when ready
         let hidden = this.productType === 'SCALE' ? ['nfs', 'webdav', 'netdata'] : ['netdata'];
         this.services.forEach((item) => {
