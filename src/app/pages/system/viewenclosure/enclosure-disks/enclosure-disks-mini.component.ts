@@ -41,6 +41,13 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.pixiHeight = 480;
   }
 
+  createExtractedEnclosure(profile){
+    // MINIs have no support for expansion shelves
+    // therefore we will never need to create 
+    // any enclosure selection UI. Leave this
+    // empty or the base class will throw errors
+  }
+
   createEnclosure(enclosure: any = this.selectedEnclosure){
     switch(enclosure.model){
       case "FREENAS-MINI-3.0-E":
@@ -58,9 +65,19 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
         this.chassis = new MINIXLPLUS();
       break;
       default:
-        console.warn("UNSUPPORTED MODEL: Using generic Mini");
-        this.chassis = new MINI();
+        this.controllerEvents.next({
+          name: 'Error',
+          data: {
+            name: 'Unsupported Hardware',
+            message: 'This chassis has an unknown or missing model value. METHOD: createEnclosure'
+          }
+        });
+        this.aborted = true;
         break;
+    }
+
+    if(this.aborted){
+      return;
     }
 
     this.setupEnclosureEvents(enclosure);

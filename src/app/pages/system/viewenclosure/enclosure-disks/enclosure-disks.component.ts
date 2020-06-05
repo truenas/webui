@@ -19,6 +19,7 @@ import { ES60 } from 'app/core/classes/hardware/es60';
 import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import { tween, easing, styler, value, keyframes } from 'popmotion';
 import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
@@ -41,6 +42,7 @@ export interface DiskFailure {
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
+  protected aborted: boolean = false;
   private mediaObs;
   public mqAlias: string;
   @ViewChild('visualizer', { static: true}) visualizer: ElementRef;
@@ -336,7 +338,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createEnclosure(enclosure:any = this.selectedEnclosure){
-
     switch(enclosure.model){
       case "M Series":
         this.chassis = new M50();
@@ -366,9 +367,19 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new E60();
         break;
       default:
-        console.warn("ENCLOSURE IS NOT A SUPPORTED RACKMOUNT CHASSIS.")
-        this.chassis = new M50();
+        this.controllerEvents.next({
+          name: 'Error', 
+          data: { 
+            name: 'Unsupported Hardware', 
+            message: 'This chassis has an unknown or missing model value. (METHOD: createEnclosure)'
+          }
+        });
+        this.aborted = true;
     }
+    if(this.aborted){
+      return;
+    }
+
     this.setupEnclosureEvents(enclosure);
   }
   
@@ -441,9 +452,20 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new E60();
         break;
       default:
-        chassis = new ES24();
-    }
+          this.controllerEvents.next({
+            name: 'Error', 
+            data: { 
+              name: 'Unsupported Hardware', 
+              message: 'This chassis has an unknown or missing model value. (METHOD: createExtractedEnclosure)'
+            }
+          });
+          this.aborted = true;
+      }
 
+    if(this.aborted){
+      return;
+    }
+    
     enclosure = chassis.front;
     
     enclosure.events.subscribe((evt) => {

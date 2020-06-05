@@ -1,3 +1,20 @@
+.mat-card.error {
+  margin: 16px auto 0 ;
+  /*padding: 16px 16px 24px;*/
+  padding: 0 16px;
+  width: 600px;
+}
+
+.mat-card.error .error-message {
+  text-align: left;
+}
+
+.mat-card.error .error-message,
+.mat-card.error .error-header,
+.mat-card.error .error-footer {
+  padding:16px 0;
+}
+
 nav.view-nav-bar{
   background-color:var(--alt-bg1);
   color:var(--alt-fg1);
